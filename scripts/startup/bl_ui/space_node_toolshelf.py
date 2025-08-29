@@ -33,7 +33,7 @@ class OperatorEntry:
 
     def __post_init__(self):
         is_add_node_operator = (self.operator == "node.add_node")
-        
+
         # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
         if is_add_node_operator:
             bl_rna = bpy.types.Node.bl_rna_get_subclass(self.node)
@@ -80,9 +80,9 @@ class NodePanel:
         if (operator == "node.add_node") or (text != ""):
             text = " " + text + (" "*pad)
             props = layout.operator(operator, text=text, icon=icon)
-        else:    
+        else:
             props = layout.operator(operator, icon=icon)
-        
+
         if hasattr(props, "use_transform"):
             props.use_transform = True
 
@@ -368,14 +368,14 @@ class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'ShaderNodeTree'
-    
+
     def draw(self, context):
         layout = self.layout
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
-        
+
         # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
@@ -546,7 +546,7 @@ class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
-        
+
         # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
@@ -723,7 +723,7 @@ class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeSceneTime", pad=8),
             OperatorEntry("CompositorNodeTime", pad=8),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -751,7 +751,7 @@ class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("CompositorNodeOutputFile", pad=8),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -783,7 +783,7 @@ class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeInvert", pad=15),
             OperatorEntry("CompositorNodeRGBToBW", pad=17),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -814,7 +814,7 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
             OperatorEntry("CompositorNodeCurveRGB", pad=17),
             OperatorEntry("CompositorNodeTonemap", pad=21),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -842,7 +842,7 @@ class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
             OperatorEntry("ShaderNodeMix", text=iface_("Mix Color"), pad=12, settings={"data_type": "'RGBA'"}),
             OperatorEntry("CompositorNodeZcombine", pad=2),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -877,9 +877,8 @@ class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeKuwahara", pad=5),
             OperatorEntry("CompositorNodePixelate", pad=8),
             OperatorEntry("CompositorNodePosterize", pad=6),
-            OperatorEntry("CompositorNodeSunBeams", pad=3),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -906,7 +905,7 @@ class NODES_PT_toolshelf_compositor_add_filter_blur(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeDBlur", pad=2),
             OperatorEntry("CompositorNodeVecBlur", pad=9),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -939,7 +938,7 @@ class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeKeyingScreen", pad=2),
             OperatorEntry("CompositorNodeLumaMatte", pad=1),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -971,7 +970,7 @@ class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeDoubleEdgeMask", pad=6),
             OperatorEntry("CompositorNodeIDMask", pad=24),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -998,7 +997,7 @@ class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeStabilize", pad=14),
             OperatorEntry("CompositorNodeTrackPos", pad=10),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1030,7 +1029,7 @@ class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
             OperatorEntry("ShaderNodeTexWave", pad=11),
             OperatorEntry("ShaderNodeTexWhiteNoise", pad=0),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1068,7 +1067,7 @@ class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeLensdist", pad=2),
             OperatorEntry("CompositorNodeMovieDistortion", pad=0),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1106,7 +1105,7 @@ class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("CompositorNodeRelativeToPixel", pad=5),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1137,7 +1136,7 @@ class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
             OperatorEntry("ShaderNodeVectorMath", pad=6),
             OperatorEntry("ShaderNodeVectorRotate", pad=2),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1164,7 +1163,7 @@ class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
             OperatorEntry("TextureNodeImage", pad=9),
             OperatorEntry("TextureNodeTexture", pad=8),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1190,7 +1189,7 @@ class NODES_PT_toolshelf_texture_add_output(bpy.types.Panel, NodePanel):
             OperatorEntry("TextureNodeOutput", pad=4),
             OperatorEntry("TextureNodeViewer", pad=3),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1221,7 +1220,7 @@ class NODES_PT_toolshelf_texture_add_color(bpy.types.Panel, NodePanel):
             OperatorEntry("TextureNodeCombineColor", pad=12),
             OperatorEntry("TextureNodeSeparateColor", pad=12),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1251,7 +1250,7 @@ class NODES_PT_toolshelf_texture_add_converter(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("TextureNodeValToNor", pad=1),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1279,7 +1278,7 @@ class NODES_PT_toolshelf_texture_add_distort(bpy.types.Panel, NodePanel):
             OperatorEntry("TextureNodeScale", pad=14),
             OperatorEntry("TextureNodeTranslate", pad=8),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1305,7 +1304,7 @@ class NODES_PT_toolshelf_texture_add_pattern(bpy.types.Panel, NodePanel):
             OperatorEntry("TextureNodeBricks", pad=4),
             OperatorEntry("TextureNodeChecker", pad=1),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1340,7 +1339,7 @@ class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("TextureNodeTexWood", pad=10),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -1441,7 +1440,7 @@ class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeGizmoLinear", pad=9),
             OperatorEntry("GeometryNodeGizmoTransform", pad=2),
         )
-        
+
         self.draw_entries(context, layout, entries)
 
 
@@ -2291,7 +2290,7 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
 
     def draw(self, context):
         layout = self.layout
-        
+
         # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.

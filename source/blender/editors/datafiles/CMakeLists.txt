@@ -1293,7 +1293,6 @@ if(WITH_BLENDER)
       node_spill
       node_sss
       node_stabilize2d
-      node_sunbeams
       node_tangent
       node_texcoordinate
       node_tonemap
