@@ -4356,7 +4356,7 @@ static void rna_def_space_outliner(BlenderRNA *brna)
       {SO_LIBRARIES,
        "LIBRARIES",
        ICON_FILE_BLEND,
-       "Blender File",
+       "Blend File", /* BFA - Renamed to Blend File instead. */
        "Display data of current file and linked libraries"},
       {SO_DATA_API,
        "DATA_API",
