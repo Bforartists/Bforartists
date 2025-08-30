@@ -172,11 +172,53 @@ static void rename_mesh_uv_seam_attribute(Mesh &mesh)
   STRNCPY_UTF8(old_seam_layer->name, new_name.c_str());
 }
 
+static void update_brush_sizes(Main &bmain)
+{
+  /* This conversion was originally done in 582c7d94b8, between subversion 1 (84bee96757) and
+   * subversion 2 (fa03c53d4a). The original change should have come with a subversion bump to be
+   * filled in later, but since it didn't, the best we can do is use subversion 1 for this check.
+   * Thankfully, this only results in a single day window in which a user would have had to
+   * download the build where this versioning was not correctly applied. */
+  LISTBASE_FOREACH (Brush *, brush, &bmain.brushes) {
+    brush->size *= 2;
+    brush->unprojected_size *= 2.0f;
+  }
+
+  auto apply_to_paint = [&](Paint *paint) {
+    if (paint == nullptr) {
+      return;
+    }
+    UnifiedPaintSettings &ups = paint->unified_paint_settings;
+
+    ups.size *= 2;
+    ups.unprojected_size *= 2.0f;
+  };
+
+  LISTBASE_FOREACH (Scene *, scene, &bmain.scenes) {
+    scene->toolsettings->unified_paint_settings.size *= 2;
+    scene->toolsettings->unified_paint_settings.unprojected_size *= 2.0f;
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->vpaint));
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->wpaint));
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->sculpt));
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->gp_paint));
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->gp_vertexpaint));
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->gp_sculptpaint));
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->gp_weightpaint));
+    apply_to_paint(reinterpret_cast<Paint *>(scene->toolsettings->curves_sculpt));
+    apply_to_paint(reinterpret_cast<Paint *>(&scene->toolsettings->imapaint));
+  }
+}
+
 static void initialize_closure_input_structure_types(bNodeTree &ntree)
 {
   LISTBASE_FOREACH (bNode *, node, &ntree.nodes) {
     if (node->type_legacy == NODE_EVALUATE_CLOSURE) {
       auto *storage = static_cast<NodeEvaluateClosure *>(node->storage);
+      if (!storage) {
+        /* Can happen with certain files saved in 4.5 which did not officially support closures
+         * yet. */
+        continue;
+      }
       for (const int i : blender::IndexRange(storage->input_items.items_num)) {
         NodeEvaluateClosureInputItem &item = storage->input_items.items[i];
         if (item.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
@@ -768,7 +810,7 @@ static void copy_unified_paint_settings(Scene &scene, Paint *paint)
   UnifiedPaintSettings &ups = paint->unified_paint_settings;
 
   ups.size = scene_ups.size;
-  ups.unprojected_radius = scene_ups.unprojected_radius;
+  ups.unprojected_size = scene_ups.unprojected_size;
   ups.alpha = scene_ups.alpha;
   ups.weight = scene_ups.weight;
   copy_v3_v3(ups.color, scene_ups.color);
@@ -1923,6 +1965,41 @@ static void do_version_glare_menus_to_inputs(bNodeTree &ntree, bNode &node)
   quality_socket.default_value_typed<bNodeSocketValueMenu>()->value = storage.quality;
 }
 
+static void initialize_missing_closure_and_bundle_node_storage(bNodeTree &ntree)
+{
+  /* When opening and saving 5.0 files with bundle/closure nodes in 4.5, the storage is lost, since
+   * Blender 4.5 does not officially support these features yet (they were experimental features
+   * though). This versioning code just adds back the storage so that it does not crash further
+   * down the line. */
+  LISTBASE_FOREACH (bNode *, node, &ntree.nodes) {
+    if (node->storage) {
+      continue;
+    }
+    switch (node->type_legacy) {
+      case NODE_CLOSURE_INPUT: {
+        node->storage = MEM_callocN<NodeClosureInput>(__func__);
+        break;
+      }
+      case NODE_CLOSURE_OUTPUT: {
+        node->storage = MEM_callocN<NodeClosureOutput>(__func__);
+        break;
+      }
+      case NODE_EVALUATE_CLOSURE: {
+        node->storage = MEM_callocN<NodeEvaluateClosure>(__func__);
+        break;
+      }
+      case NODE_COMBINE_BUNDLE: {
+        node->storage = MEM_callocN<NodeCombineBundle>(__func__);
+        break;
+      }
+      case NODE_SEPARATE_BUNDLE: {
+        node->storage = MEM_callocN<NodeSeparateBundle>(__func__);
+        break;
+      }
+    }
+  }
+}
+
 void do_versions_after_linking_500(FileData *fd, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 9)) {
@@ -2086,6 +2163,20 @@ static void remove_in_and_out_node_interface(bNodeTree &node_tree)
   remove_in_and_out_node_panel_recursive(node_tree.tree_interface.root_panel);
 }
 
+static void sequencer_remove_listbase_pointers(Scene &scene)
+{
+  Editing *ed = scene.ed;
+  if (!ed) {
+    return;
+  }
+  const MetaStack *last_meta_stack = blender::seq::meta_stack_active_get(ed);
+  if (!last_meta_stack) {
+    return;
+  }
+  ed->current_meta_strip = last_meta_stack->parent_strip;
+  blender::seq::meta_stack_set(&scene, last_meta_stack->parent_strip);
+}
+
 void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
 {
   using namespace blender;
@@ -2095,6 +2186,8 @@ void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       bke::mesh_custom_normals_to_generic(*mesh);
       rename_mesh_uv_seam_attribute(*mesh);
     }
+
+    update_brush_sizes(*bmain);
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 2)) {
@@ -2833,6 +2926,19 @@ void blo_do_versions_500(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       }
     }
     FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 67)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      initialize_missing_closure_and_bundle_node_storage(*ntree);
+    }
+    FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 68)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      sequencer_remove_listbase_pointers(*scene);
+    }
   }
 
   /**
