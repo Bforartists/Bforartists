@@ -52,7 +52,7 @@ def main():
         for fn in os.listdir(path):
             if fn.endswith(".xml"):
                 fn_full = os.path.join(path, fn)
-                if fn == "blender_dark.xml":
+                if fn == "Bforartists.xml":
                     update_default(fn_full)
                 else:
                     update(fn_full)
