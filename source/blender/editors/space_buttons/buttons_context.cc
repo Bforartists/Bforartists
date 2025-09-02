@@ -160,10 +160,7 @@ static bool buttons_context_path_collection(const bContext *C,
     BKE_view_layer_synced_ensure(scene, view_layer);
     Collection *c = BKE_view_layer_active_collection_get(view_layer)->collection;
 
-    /* Do not show collection tab for master collection. */
-    if (c == scene->master_collection) {
-      return false;
-    }
+    /* BFA - always show the collection tab even if blank. */
 
     if (c) {
       path->ptr[path->len] = RNA_id_pointer_create(&c->id);
