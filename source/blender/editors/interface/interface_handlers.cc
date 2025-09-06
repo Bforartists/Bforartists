@@ -745,11 +745,42 @@ static bool ui_rna_is_userdef(PointerRNA *ptr, PropertyRNA *prop)
   if (base == nullptr) {
     base = ptr->type;
   }
-  return ELEM(base,
-              &RNA_AddonPreferences,
-              &RNA_KeyConfigPreferences,
-              &RNA_KeyMapItem,
-              &RNA_UserAssetLibrary);
+
+  bool is_userdef = false;
+  if (ELEM(base,
+           &RNA_AddonPreferences,
+           &RNA_KeyConfigPreferences,
+           &RNA_KeyMapItem,
+           &RNA_UserAssetLibrary))
+  {
+    is_userdef = true;
+  }
+  else if (ptr->owner_id) {
+    switch (GS(ptr->owner_id->name)) {
+      case ID_WM: {
+        for (const AncestorPointerRNA &ancestor : ptr->ancestors) {
+          if (RNA_struct_is_a(ancestor.type, &RNA_KeyConfigPreferences)) {
+            is_userdef = true;
+            break;
+          }
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+  else if (ptr->owner_id == nullptr) {
+    for (const AncestorPointerRNA &ancestor : ptr->ancestors) {
+      if (RNA_struct_is_a(ancestor.type, &RNA_AddonPreferences)) {
+        is_userdef = true;
+        break;
+      }
+    }
+  }
+
+  return is_userdef;
 }
 
 bool UI_but_is_userdef(const uiBut *but)
@@ -5136,7 +5167,8 @@ static int ui_do_but_VIEW_ITEM(bContext *C,
           if (UI_view_item_can_rename(*view_item_but->view_item)) {
             data->cancel = true;
             UI_view_item_begin_rename(*view_item_but->view_item);
-            ED_region_tag_redraw(CTX_wm_region(C));
+            ED_region_tag_redraw(data->region);
+            ED_region_tag_refresh_ui(data->region);
             return WM_UI_HANDLER_BREAK;
           }
           return WM_UI_HANDLER_CONTINUE;
@@ -11528,7 +11560,9 @@ static int ui_pie_handler(bContext *C, const wmEvent *event, uiPopupBlockHandle 
 
         /* handle animation */
         if (!(block->pie_data.flags & UI_PIE_ANIMATION_FINISHED)) {
-          const double final_time = 0.01 * U.pie_animation_timeout;
+          const double final_time = (U.uiflag & USER_REDUCE_MOTION) ?
+                                        0.0f :
+                                        0.01 * U.pie_animation_timeout;
           float fac = duration / final_time;
           const float pie_radius = U.pie_menu_radius * UI_SCALE_FAC;
 

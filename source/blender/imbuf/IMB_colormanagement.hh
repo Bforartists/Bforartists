@@ -9,9 +9,9 @@
  */
 
 #include "BLI_compiler_compat.h"
-#include "BLI_vector.hh"
-
 #include "BLI_math_matrix_types.hh"
+#include "BLI_string_ref.hh"
+#include "BLI_vector.hh"
 
 #define BCM_CONFIG_FILE "config.ocio"
 
@@ -19,6 +19,7 @@ struct ColorManagedColorspaceSettings;
 struct ColorManagedDisplaySettings;
 struct ColorManagedViewSettings;
 struct ColormanageProcessor;
+struct ID;
 struct EnumPropertyItem;
 struct ImBuf;
 struct ImageFormatData;
@@ -62,18 +63,6 @@ const char *IMB_colormanagement_get_float_colorspace(const ImBuf *ibuf);
 const char *IMB_colormanagement_get_rect_colorspace(const ImBuf *ibuf);
 const char *IMB_colormanagement_space_from_filepath_rules(const char *filepath);
 
-/* Get colorspace name used for Rec.2100 PQ Display conversion.
- *
- * Searches for one of the color spaces or aliases: Rec.2100-PQ, Rec.2100-PQ - Display, rec2100_pq,
- * rec2100_pq_display. If none found returns nullptr. */
-const char *IMB_colormanagement_get_rec2100_pq_display_colorspace();
-
-/* Get colorspace name used for Rec.2100 HLG Display conversion.
- *
- * Searches for one of the color spaces or aliases: Rec.2100-HLG, Rec.2100-HLG - Display,
- * rec2100_hlg, rec2100_hlg_display. If none found returns nullptr. */
-const char *IMB_colormanagement_get_rec2100_hlg_display_colorspace();
-
 const ColorSpace *IMB_colormanagement_space_get_named(const char *name);
 bool IMB_colormanagement_space_is_data(const ColorSpace *colorspace);
 bool IMB_colormanagement_space_is_scene_linear(const ColorSpace *colorspace);
@@ -82,7 +71,13 @@ bool IMB_colormanagement_space_name_is_data(const char *name);
 bool IMB_colormanagement_space_name_is_scene_linear(const char *name);
 bool IMB_colormanagement_space_name_is_srgb(const char *name);
 
+/* Get binary ICC profile contents for a colorspace. */
 blender::Vector<char> IMB_colormanagement_space_icc_profile(const ColorSpace *colorspace);
+
+/* Get identifier for colorspaces that works with multiple OpenColorIO configurations,
+ * as defined by the ASWF Color Interop Forum. */
+blender::StringRefNull IMB_colormanagement_space_get_interop_id(const ColorSpace *colorspace);
+const ColorSpace *IMB_colormanagement_space_from_interop_id(blender::StringRefNull interop_id);
 
 BLI_INLINE void IMB_colormanagement_get_luminance_coefficients(float r_rgb[3]);
 
@@ -116,6 +111,14 @@ BLI_INLINE void IMB_colormanagement_aces_to_scene_linear(float scene_linear[3],
                                                          const float aces[3]);
 BLI_INLINE void IMB_colormanagement_scene_linear_to_aces(float aces[3],
                                                          const float scene_linear[3]);
+BLI_INLINE void IMB_colormanagement_acescg_to_scene_linear(float scene_linear[3],
+                                                           const float acescg[3]);
+BLI_INLINE void IMB_colormanagement_scene_linear_to_acescg(float acescg[3],
+                                                           const float scene_linear[3]);
+BLI_INLINE void IMB_colormanagement_rec2020_to_scene_linear(float scene_linear[3],
+                                                            const float rec2020[3]);
+BLI_INLINE void IMB_colormanagement_scene_linear_to_rec2020(float rec2020[3],
+                                                            const float scene_linear[3]);
 blender::float3x3 IMB_colormanagement_get_xyz_to_scene_linear();
 blender::float3x3 IMB_colormanagement_get_scene_linear_to_xyz();
 
@@ -391,6 +394,37 @@ void IMB_colormanagement_colorspace_from_ibuf_ftype(
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Working Space Functions
+ * \{ */
+
+const char *IMB_colormanagement_working_space_get_default();
+const char *IMB_colormanagement_working_space_get();
+
+bool IMB_colormanagement_working_space_set_from_name(const char *name);
+bool IMB_colormanagement_working_space_set_from_matrix(
+    const char *name, const blender::float3x3 &scene_linear_to_xyz);
+
+void IMB_colormanagement_working_space_check(Main *bmain,
+                                             const bool for_undo,
+                                             const bool have_editable_assets);
+
+void IMB_colormanagement_working_space_init(Main *bmain);
+void IMB_colormanagement_working_space_convert(
+    Main *bmain,
+    const blender::float3x3 &current_scene_linear_to_xyz,
+    const blender::float3x3 &new_xyz_to_scene_linear,
+    const bool depsgraph_tag = false,
+    const bool linked_only = false,
+    const bool editable_assets_only = false);
+void IMB_colormanagement_working_space_convert(Main *bmain, const Main *reference_bmain);
+
+int IMB_colormanagement_working_space_get_named_index(const char *name);
+const char *IMB_colormanagement_working_space_get_indexed_name(int index);
+void IMB_colormanagement_working_space_items_add(EnumPropertyItem **items, int *totitem);
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name RNA Helper Functions
  * \{ */
 
@@ -448,7 +482,8 @@ void IMB_partial_display_buffer_update_delayed(
 ColormanageProcessor *IMB_colormanagement_display_processor_new(
     const ColorManagedViewSettings *view_settings,
     const ColorManagedDisplaySettings *display_settings,
-    const ColorManagedDisplaySpace display_space = DISPLAY_SPACE_DRAW);
+    const ColorManagedDisplaySpace display_space = DISPLAY_SPACE_DRAW,
+    const bool inverse = false);
 
 ColormanageProcessor *IMB_colormanagement_display_processor_for_imbuf(
     const ImBuf *ibuf,

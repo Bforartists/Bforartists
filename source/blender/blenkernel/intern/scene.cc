@@ -698,7 +698,7 @@ static void scene_foreach_toolsettings(LibraryForeachIDData *data,
       toolsett->sculpt->gravity_object = gravity_object;
     }
     /* Do not re-assign `gravity_object_old` object if both current and old data are the same
-     * (foreach_id case), that would nullify assignement above, making remapping cases fail. */
+     * (foreach_id case), that would nullify assignment above, making remapping cases fail. */
     if (toolsett_old != toolsett) {
       toolsett_old->sculpt->gravity_object = gravity_object_old;
     }
@@ -982,6 +982,16 @@ static void scene_foreach_path(ID *id, BPathForeachPathData *bpath_data)
   }
 }
 
+static void scene_foreach_working_space_color(ID *id, const IDTypeForeachColorFunctionCallback &fn)
+{
+  Scene *scene = (Scene *)id;
+
+  BKE_paint_settings_foreach_mode(scene->toolsettings, [&fn](Paint *paint) {
+    fn.single(paint->unified_paint_settings.color);
+    fn.single(paint->unified_paint_settings.secondary_color);
+  });
+}
+
 static void scene_foreach_cache(ID *id,
                                 IDTypeForeachCacheFunctionCallback function_callback,
                                 void *user_data)
@@ -1031,85 +1041,85 @@ static void scene_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   BKE_keyingsets_blend_write(writer, &sce->keyingsets);
 
   /* direct data */
-  ToolSettings *tos = sce->toolsettings;
+  ToolSettings *ts = sce->toolsettings;
 
-  BLO_write_struct(writer, ToolSettings, tos);
+  BLO_write_struct(writer, ToolSettings, ts);
 
-  if (tos->unified_paint_settings.curve_rand_hue) {
-    BKE_curvemapping_blend_write(writer, tos->unified_paint_settings.curve_rand_hue);
+  if (ts->unified_paint_settings.curve_rand_hue) {
+    BKE_curvemapping_blend_write(writer, ts->unified_paint_settings.curve_rand_hue);
   }
 
-  if (tos->unified_paint_settings.curve_rand_saturation) {
-    BKE_curvemapping_blend_write(writer, tos->unified_paint_settings.curve_rand_saturation);
+  if (ts->unified_paint_settings.curve_rand_saturation) {
+    BKE_curvemapping_blend_write(writer, ts->unified_paint_settings.curve_rand_saturation);
   }
 
-  if (tos->unified_paint_settings.curve_rand_value) {
-    BKE_curvemapping_blend_write(writer, tos->unified_paint_settings.curve_rand_value);
+  if (ts->unified_paint_settings.curve_rand_value) {
+    BKE_curvemapping_blend_write(writer, ts->unified_paint_settings.curve_rand_value);
   }
 
-  if (tos->vpaint) {
-    BLO_write_struct(writer, VPaint, tos->vpaint);
-    BKE_paint_blend_write(writer, &tos->vpaint->paint);
+  if (ts->vpaint) {
+    BLO_write_struct(writer, VPaint, ts->vpaint);
+    BKE_paint_blend_write(writer, &ts->vpaint->paint);
   }
-  if (tos->wpaint) {
-    BLO_write_struct(writer, VPaint, tos->wpaint);
-    BKE_paint_blend_write(writer, &tos->wpaint->paint);
+  if (ts->wpaint) {
+    BLO_write_struct(writer, VPaint, ts->wpaint);
+    BKE_paint_blend_write(writer, &ts->wpaint->paint);
   }
-  if (tos->sculpt) {
-    BLO_write_struct(writer, Sculpt, tos->sculpt);
-    if (tos->sculpt->automasking_cavity_curve) {
-      BKE_curvemapping_blend_write(writer, tos->sculpt->automasking_cavity_curve);
+  if (ts->sculpt) {
+    BLO_write_struct(writer, Sculpt, ts->sculpt);
+    if (ts->sculpt->automasking_cavity_curve) {
+      BKE_curvemapping_blend_write(writer, ts->sculpt->automasking_cavity_curve);
     }
-    if (tos->sculpt->automasking_cavity_curve_op) {
-      BKE_curvemapping_blend_write(writer, tos->sculpt->automasking_cavity_curve_op);
+    if (ts->sculpt->automasking_cavity_curve_op) {
+      BKE_curvemapping_blend_write(writer, ts->sculpt->automasking_cavity_curve_op);
     }
 
-    BKE_paint_blend_write(writer, &tos->sculpt->paint);
+    BKE_paint_blend_write(writer, &ts->sculpt->paint);
   }
-  if (tos->uvsculpt.strength_curve) {
-    BKE_curvemapping_blend_write(writer, tos->uvsculpt.strength_curve);
+  if (ts->uvsculpt.strength_curve) {
+    BKE_curvemapping_blend_write(writer, ts->uvsculpt.strength_curve);
   }
-  if (tos->gp_paint) {
-    BLO_write_struct(writer, GpPaint, tos->gp_paint);
-    BKE_paint_blend_write(writer, &tos->gp_paint->paint);
+  if (ts->gp_paint) {
+    BLO_write_struct(writer, GpPaint, ts->gp_paint);
+    BKE_paint_blend_write(writer, &ts->gp_paint->paint);
   }
-  if (tos->gp_vertexpaint) {
-    BLO_write_struct(writer, GpVertexPaint, tos->gp_vertexpaint);
-    BKE_paint_blend_write(writer, &tos->gp_vertexpaint->paint);
+  if (ts->gp_vertexpaint) {
+    BLO_write_struct(writer, GpVertexPaint, ts->gp_vertexpaint);
+    BKE_paint_blend_write(writer, &ts->gp_vertexpaint->paint);
   }
-  if (tos->gp_sculptpaint) {
-    BLO_write_struct(writer, GpSculptPaint, tos->gp_sculptpaint);
-    BKE_paint_blend_write(writer, &tos->gp_sculptpaint->paint);
+  if (ts->gp_sculptpaint) {
+    BLO_write_struct(writer, GpSculptPaint, ts->gp_sculptpaint);
+    BKE_paint_blend_write(writer, &ts->gp_sculptpaint->paint);
   }
-  if (tos->gp_weightpaint) {
-    BLO_write_struct(writer, GpWeightPaint, tos->gp_weightpaint);
-    BKE_paint_blend_write(writer, &tos->gp_weightpaint->paint);
+  if (ts->gp_weightpaint) {
+    BLO_write_struct(writer, GpWeightPaint, ts->gp_weightpaint);
+    BKE_paint_blend_write(writer, &ts->gp_weightpaint->paint);
   }
-  if (tos->curves_sculpt) {
-    BLO_write_struct(writer, CurvesSculpt, tos->curves_sculpt);
-    BKE_paint_blend_write(writer, &tos->curves_sculpt->paint);
+  if (ts->curves_sculpt) {
+    BLO_write_struct(writer, CurvesSculpt, ts->curves_sculpt);
+    BKE_paint_blend_write(writer, &ts->curves_sculpt->paint);
   }
   /* write grease-pencil custom ipo curve to file */
-  if (tos->gp_interpolate.custom_ipo) {
-    BKE_curvemapping_blend_write(writer, tos->gp_interpolate.custom_ipo);
+  if (ts->gp_interpolate.custom_ipo) {
+    BKE_curvemapping_blend_write(writer, ts->gp_interpolate.custom_ipo);
   }
   /* write grease-pencil multi-frame falloff curve to file */
-  if (tos->gp_sculpt.cur_falloff) {
-    BKE_curvemapping_blend_write(writer, tos->gp_sculpt.cur_falloff);
+  if (ts->gp_sculpt.cur_falloff) {
+    BKE_curvemapping_blend_write(writer, ts->gp_sculpt.cur_falloff);
   }
   /* write grease-pencil primitive curve to file */
-  if (tos->gp_sculpt.cur_primitive) {
-    BKE_curvemapping_blend_write(writer, tos->gp_sculpt.cur_primitive);
+  if (ts->gp_sculpt.cur_primitive) {
+    BKE_curvemapping_blend_write(writer, ts->gp_sculpt.cur_primitive);
   }
   /* Write the curve profile to the file. */
-  if (tos->custom_bevel_profile_preset) {
-    BKE_curveprofile_blend_write(writer, tos->custom_bevel_profile_preset);
+  if (ts->custom_bevel_profile_preset) {
+    BKE_curveprofile_blend_write(writer, ts->custom_bevel_profile_preset);
   }
-  if (tos->sequencer_tool_settings) {
-    BLO_write_struct(writer, SequencerToolSettings, tos->sequencer_tool_settings);
+  if (ts->sequencer_tool_settings) {
+    BLO_write_struct(writer, SequencerToolSettings, ts->sequencer_tool_settings);
   }
 
-  BKE_paint_blend_write(writer, &tos->imapaint.paint);
+  BKE_paint_blend_write(writer, &ts->imapaint.paint);
 
   Editing *ed = sce->ed;
   if (ed) {
@@ -1530,6 +1540,7 @@ constexpr IDTypeInfo get_type_info()
   info.foreach_id = scene_foreach_id;
   info.foreach_cache = scene_foreach_cache;
   info.foreach_path = scene_foreach_path;
+  info.foreach_working_space_color = scene_foreach_working_space_color;
   info.owner_pointer_get = nullptr;
 
   info.blend_write = scene_blend_write;
@@ -1892,9 +1903,9 @@ Scene *BKE_scene_duplicate(Main *bmain, Scene *sce, eSceneCopyMethod type)
       /* Unfortunate, but with some types (e.g. meshes), an object is considered in Edit mode if
        * its obdata contains edit mode runtime data. This can be the case of all newly duplicated
        * objects, as even though duplicate code move the object back in Object mode, they are still
-       * using the original obdata ID, leading to them being falsly detected as being in Edit mode,
-       * and therefore not remapping their obdata to the newly duplicated one.
-       * See #139715. */
+       * using the original obdata ID, leading to them being falsely detected as being in Edit
+       * mode, and therefore not remapping their obdata to the newly duplicated one. See #139715.
+       */
       BKE_libblock_relink_to_newid(
           bmain, &sce_copy->id, ID_REMAP_FORCE_OBDATA_IN_EDITMODE | ID_REMAP_SKIP_USER_CLEAR);
 
@@ -3150,14 +3161,15 @@ void BKE_scene_multiview_view_prefix_get(Scene *scene,
 }
 
 void BKE_scene_multiview_videos_dimensions_get(const RenderData *rd,
+                                               const ImageFormatData *imf,
                                                const size_t width,
                                                const size_t height,
                                                size_t *r_width,
                                                size_t *r_height)
 {
-  if ((rd->scemode & R_MULTIVIEW) && rd->im_format.views_format == R_IMF_VIEWS_STEREO_3D) {
-    IMB_stereo3d_write_dimensions(rd->im_format.stereo3d_format.display_mode,
-                                  (rd->im_format.stereo3d_format.flag & S3D_SQUEEZED_FRAME) != 0,
+  if ((rd->scemode & R_MULTIVIEW) && imf->views_format == R_IMF_VIEWS_STEREO_3D) {
+    IMB_stereo3d_write_dimensions(imf->stereo3d_format.display_mode,
+                                  (imf->stereo3d_format.flag & S3D_SQUEEZED_FRAME) != 0,
                                   width,
                                   height,
                                   r_width,
@@ -3169,9 +3181,9 @@ void BKE_scene_multiview_videos_dimensions_get(const RenderData *rd,
   }
 }
 
-int BKE_scene_multiview_num_videos_get(const RenderData *rd)
+int BKE_scene_multiview_num_videos_get(const RenderData *rd, const ImageFormatData *imf)
 {
-  if (BKE_imtype_is_movie(rd->im_format.imtype) == false) {
+  if (BKE_imtype_is_movie(imf->imtype) == false) {
     return 0;
   }
 
@@ -3179,7 +3191,7 @@ int BKE_scene_multiview_num_videos_get(const RenderData *rd)
     return 1;
   }
 
-  if (rd->im_format.views_format == R_IMF_VIEWS_STEREO_3D) {
+  if (imf->views_format == R_IMF_VIEWS_STEREO_3D) {
     return 1;
   }
 

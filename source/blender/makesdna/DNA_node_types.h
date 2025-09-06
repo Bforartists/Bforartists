@@ -501,6 +501,11 @@ typedef struct bNode {
    */
   IDProperty *prop;
 
+  /**
+   * System-defined properties, used e.g. to store data for custom node types.
+   */
+  IDProperty *system_properties;
+
   /** Parent node (for frame nodes). */
   struct bNode *parent;
 
@@ -1428,6 +1433,11 @@ typedef struct NodeConvertColorSpace {
   char from_color_space[64];
   char to_color_space[64];
 } NodeConvertColorSpace;
+
+typedef struct NodeConvertToDisplay {
+  ColorManagedDisplaySettings display_settings;
+  ColorManagedViewSettings view_settings;
+} NodeConvertToDisplay;
 
 typedef struct NodeDilateErode {
   char falloff;

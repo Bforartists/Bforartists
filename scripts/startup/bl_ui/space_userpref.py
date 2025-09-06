@@ -303,6 +303,19 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
         row.prop(view, "use_translate_new_dataname", text="New Data")
 
 
+class USERPREF_PT_interface_accessibility(InterfacePanel, CenterAlignMixIn, Panel):
+    bl_label = "Accessibility"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_centered(self, context, layout):
+        prefs = context.preferences
+        view = prefs.view
+
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+
+        flow.prop(view, "use_reduce_motion")
+
+
 class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
     bl_label = "Editors"
 
@@ -315,6 +328,10 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
 
         flow.use_property_split = False
         flow.prop(system, "use_region_overlap")
+
+        # col = flow.column(heading="Show", align=True) # TODO week36
+        flow.prop(view, "show_area_handle")
+        flow.prop(view, "show_number_arrows", text="Numeric Input Arrows")
         flow.prop(view, "show_navigate_ui")
 
         flow.use_property_split = True
@@ -1230,6 +1247,9 @@ class USERPREF_PT_theme_interface_panel(ThemePanel, CenterAlignMixIn, Panel):
         col = col.column(align=True)
         col.prop(ui, "panel_back", text="Background")
         col.prop(ui, "panel_sub_back", text="Sub-Panel")
+
+        col = col.column()
+        col.prop(ui, "panel_active", text="Active")
 
         col = flow.column(align=True)
         col.prop(ui, "panel_title", text="Title")
@@ -3121,6 +3141,7 @@ classes = (
     USERPREF_PT_interface_temporary_windows,
     USERPREF_PT_interface_statusbar,
     USERPREF_PT_interface_translation,
+    USERPREF_PT_interface_accessibility,
     USERPREF_PT_interface_text,
     USERPREF_PT_interface_menus,
     USERPREF_PT_interface_menus_mouse_over,

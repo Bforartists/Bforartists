@@ -29,6 +29,7 @@
 #include "BKE_asset.hh"
 #include "BKE_bpath.hh"
 #include "BKE_brush.hh"
+#include "BKE_colorband.hh"
 #include "BKE_colortools.hh"
 #include "BKE_grease_pencil.hh"
 #include "BKE_idprop.hh"
@@ -88,6 +89,10 @@ static void brush_copy_data(Main * /*bmain*/,
   brush_dst->curve_rand_saturation = BKE_curvemapping_copy(brush_src->curve_rand_saturation);
   brush_dst->curve_rand_value = BKE_curvemapping_copy(brush_src->curve_rand_value);
 
+  brush_dst->curve_size = BKE_curvemapping_copy(brush_src->curve_size);
+  brush_dst->curve_strength = BKE_curvemapping_copy(brush_src->curve_strength);
+  brush_dst->curve_jitter = BKE_curvemapping_copy(brush_src->curve_jitter);
+
   if (brush_src->gpencil_settings != nullptr) {
     brush_dst->gpencil_settings = MEM_dupallocN<BrushGpencilSettings>(
         __func__, *(brush_src->gpencil_settings));
@@ -131,6 +136,10 @@ static void brush_free_data(ID *id)
   BKE_curvemapping_free(brush->curve_rand_hue);
   BKE_curvemapping_free(brush->curve_rand_saturation);
   BKE_curvemapping_free(brush->curve_rand_value);
+
+  BKE_curvemapping_free(brush->curve_size);
+  BKE_curvemapping_free(brush->curve_strength);
+  BKE_curvemapping_free(brush->curve_jitter);
 
   if (brush->gpencil_settings != nullptr) {
     BKE_curvemapping_free(brush->gpencil_settings->curve_sensitivity);
@@ -207,6 +216,19 @@ static void brush_foreach_id(ID *id, LibraryForeachIDData *data)
                                           BKE_texture_mtex_foreach_id(data, &brush->mask_mtex));
 }
 
+static void brush_foreach_working_space_color(ID *id, const IDTypeForeachColorFunctionCallback &fn)
+{
+  Brush *brush = reinterpret_cast<Brush *>(id);
+
+  fn.single(brush->color);
+  fn.single(brush->secondary_color);
+  if (brush->gradient) {
+    BKE_colorband_foreach_working_space_color(brush->gradient, fn);
+  }
+
+  BKE_brush_color_sync_legacy(brush);
+}
+
 static void brush_blend_write(BlendWriter *writer, ID *id, const void *id_address)
 {
   Brush *brush = reinterpret_cast<Brush *>(id);
@@ -230,6 +252,16 @@ static void brush_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   }
   if (brush->curve_rand_value) {
     BKE_curvemapping_blend_write(writer, brush->curve_rand_value);
+  }
+
+  if (brush->curve_size) {
+    BKE_curvemapping_blend_write(writer, brush->curve_size);
+  }
+  if (brush->curve_strength) {
+    BKE_curvemapping_blend_write(writer, brush->curve_strength);
+  }
+  if (brush->curve_jitter) {
+    BKE_curvemapping_blend_write(writer, brush->curve_jitter);
   }
 
   if (brush->gpencil_settings) {
@@ -320,6 +352,30 @@ static void brush_blend_read_data(BlendDataReader *reader, ID *id)
   }
   else {
     brush->curve_rand_value = BKE_paint_default_curve();
+  }
+
+  BLO_read_struct(reader, CurveMapping, &brush->curve_size);
+  if (brush->curve_size) {
+    BKE_curvemapping_blend_read(reader, brush->curve_size);
+  }
+  else {
+    brush->curve_size = BKE_paint_default_curve();
+  }
+
+  BLO_read_struct(reader, CurveMapping, &brush->curve_strength);
+  if (brush->curve_strength) {
+    BKE_curvemapping_blend_read(reader, brush->curve_strength);
+  }
+  else {
+    brush->curve_strength = BKE_paint_default_curve();
+  }
+
+  BLO_read_struct(reader, CurveMapping, &brush->curve_jitter);
+  if (brush->curve_jitter) {
+    BKE_curvemapping_blend_read(reader, brush->curve_jitter);
+  }
+  else {
+    brush->curve_jitter = BKE_paint_default_curve();
   }
 
   /* grease pencil */
@@ -473,6 +529,7 @@ IDTypeInfo IDType_ID_BR = {
     /*foreach_id*/ brush_foreach_id,
     /*foreach_cache*/ nullptr,
     /*foreach_path*/ nullptr,
+    /*foreach_working_space_color*/ brush_foreach_working_space_color,
     /*owner_pointer_get*/ nullptr,
 
     /*blend_write*/ brush_blend_write,

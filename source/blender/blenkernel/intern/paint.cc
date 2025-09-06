@@ -115,6 +115,17 @@ static void palette_free_data(ID *id)
   BLI_freelistN(&palette->colors);
 }
 
+static void palette_foreach_working_space_color(ID *id,
+                                                const IDTypeForeachColorFunctionCallback &fn)
+{
+  Palette *palette = (Palette *)id;
+
+  LISTBASE_FOREACH (PaletteColor *, color, &palette->colors) {
+    fn.single(color->color);
+    BKE_palette_color_sync_legacy(color);
+  }
+}
+
 static void palette_blend_write(BlendWriter *writer, ID *id, const void *id_address)
 {
   Palette *palette = (Palette *)id;
@@ -161,6 +172,7 @@ IDTypeInfo IDType_ID_PAL = {
     /*foreach_id*/ nullptr,
     /*foreach_cache*/ nullptr,
     /*foreach_path*/ nullptr,
+    /*foreach_working_space_color*/ palette_foreach_working_space_color,
     /*owner_pointer_get*/ nullptr,
 
     /*blend_write*/ palette_blend_write,
@@ -230,6 +242,7 @@ IDTypeInfo IDType_ID_PC = {
     /*foreach_id*/ nullptr,
     /*foreach_cache*/ nullptr,
     /*foreach_path*/ nullptr,
+    /*foreach_working_space_color*/ nullptr,
     /*owner_pointer_get*/ nullptr,
 
     /*blend_write*/ paint_curve_blend_write,
@@ -240,14 +253,6 @@ IDTypeInfo IDType_ID_PC = {
 
     /*lib_override_apply_post*/ nullptr,
 };
-
-const uchar PAINT_CURSOR_SCULPT[3] = {255, 100, 100};
-const uchar PAINT_CURSOR_VERTEX_PAINT[3] = {255, 255, 255};
-const uchar PAINT_CURSOR_WEIGHT_PAINT[3] = {200, 200, 255};
-const uchar PAINT_CURSOR_TEXTURE_PAINT[3] = {255, 255, 255};
-const uchar PAINT_CURSOR_SCULPT_CURVES[3] = {255, 100, 100};
-const uchar PAINT_CURSOR_PAINT_GREASE_PENCIL[3] = {255, 100, 100};
-const uchar PAINT_CURSOR_SCULPT_GREASE_PENCIL[3] = {255, 100, 100};
 
 static ePaintOverlayControlFlags overlay_flags = (ePaintOverlayControlFlags)0;
 
@@ -1830,8 +1835,7 @@ void BKE_paint_brushes_ensure(Main *bmain, Paint *paint)
   }
 }
 
-void BKE_paint_init(
-    Main *bmain, Scene *sce, PaintMode mode, const uchar col[3], const bool ensure_brushes)
+void BKE_paint_init(Main *bmain, Scene *sce, PaintMode mode, const bool ensure_brushes)
 {
 
   BKE_paint_ensure_from_paintmode(sce, mode);
@@ -1841,8 +1845,6 @@ void BKE_paint_init(
     BKE_paint_brushes_ensure(bmain, paint);
   }
 
-  copy_v3_v3_uchar(paint->paint_cursor_col, col);
-  paint->paint_cursor_col[3] = 128;
   if (!paint->cavity_curve) {
     BKE_paint_cavity_curve_preset(paint, CURVE_PRESET_LINE);
   }
@@ -1909,6 +1911,35 @@ void BKE_paint_copy(const Paint *src, Paint *dst, const int flag)
   }
 
   dst->runtime = MEM_new<blender::bke::PaintRuntime>(__func__);
+}
+
+void BKE_paint_settings_foreach_mode(ToolSettings *ts, blender::FunctionRef<void(Paint *paint)> fn)
+{
+  if (ts->vpaint) {
+    fn(reinterpret_cast<Paint *>(ts->vpaint));
+  }
+  if (ts->wpaint) {
+    fn(reinterpret_cast<Paint *>(ts->wpaint));
+  }
+  if (ts->sculpt) {
+    fn(reinterpret_cast<Paint *>(ts->sculpt));
+  }
+  if (ts->gp_paint) {
+    fn(reinterpret_cast<Paint *>(ts->gp_paint));
+  }
+  if (ts->gp_vertexpaint) {
+    fn(reinterpret_cast<Paint *>(ts->gp_vertexpaint));
+  }
+  if (ts->gp_sculptpaint) {
+    fn(reinterpret_cast<Paint *>(ts->gp_sculptpaint));
+  }
+  if (ts->gp_weightpaint) {
+    fn(reinterpret_cast<Paint *>(ts->gp_weightpaint));
+  }
+  if (ts->curves_sculpt) {
+    fn(reinterpret_cast<Paint *>(ts->curves_sculpt));
+  }
+  fn(reinterpret_cast<Paint *>(&ts->imapaint));
 }
 
 void BKE_paint_stroke_get_average(const Paint *paint, const Object *ob, float stroke[3])
@@ -2082,8 +2113,6 @@ void BKE_paint_blend_read_data(BlendDataReader *reader, const Scene *scene, Pain
     BKE_curvemapping_blend_read(reader, ups->curve_rand_value);
     BKE_curvemapping_init(ups->curve_rand_value);
   }
-
-  paint->paint_cursor = nullptr;
 
   paint->runtime = MEM_new<blender::bke::PaintRuntime>(__func__);
 

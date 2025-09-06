@@ -6571,21 +6571,6 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
-  static const EnumPropertyItem ffmpeg_hdr_items[] = {
-      {FFM_VIDEO_HDR_NONE, "NONE", 0, "None", "No High Dynamic Range"},
-      {FFM_VIDEO_HDR_REC2100_PQ,
-       "REQ2100_PQ",
-       0,
-       "Rec.2100 PQ",
-       "Rec.2100 color space with Perceptual Quantizer HDR encoding"},
-      {FFM_VIDEO_HDR_REC2100_HLG,
-       "REQ2100_HLG",
-       0,
-       "Rec.2100 HLG",
-       "Rec.2100 color space with Hybrid-Log Gamma HDR encoding"},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
-
   static const EnumPropertyItem ffmpeg_audio_codec_items[] = {
       {FFMPEG_CODEC_ID_NONE,
        "NONE",
@@ -6646,14 +6631,6 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, nullptr, "video_bitrate");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop, "Bitrate", "Video bitrate (kbit/s)");
-  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
-
-  prop = RNA_def_property(srna, "video_hdr", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "video_hdr");
-  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_enum_items(prop, ffmpeg_hdr_items);
-  RNA_def_property_enum_default(prop, FFM_VIDEO_HDR_NONE);
-  RNA_def_property_ui_text(prop, "HDR", "High Dynamic Range options");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
   prop = RNA_def_property(srna, "minrate", PROP_INT, PROP_NONE);
@@ -6924,7 +6901,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
        0,
        "Balanced",
        "Balanced between performance and quality"},
-      {SCE_COMPOSITOR_DENOISE_FAST, "FAST", 0, "Fast", "High perfomance"},
+      {SCE_COMPOSITOR_DENOISE_FAST, "FAST", 0, "Fast", "High performance"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -7398,14 +7375,14 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Font Size", "Size of the font used when rendering stamp text");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
-  prop = RNA_def_property(srna, "stamp_foreground", PROP_FLOAT, PROP_COLOR);
+  prop = RNA_def_property(srna, "stamp_foreground", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "fg_stamp");
   RNA_def_property_array(prop, 4);
   RNA_def_property_range(prop, 0.0, 1.0);
   RNA_def_property_ui_text(prop, "Text Color", "Color to use for stamp text");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
-  prop = RNA_def_property(srna, "stamp_background", PROP_FLOAT, PROP_COLOR);
+  prop = RNA_def_property(srna, "stamp_background", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "bg_stamp");
   RNA_def_property_array(prop, 4);
   RNA_def_property_range(prop, 0.0, 1.0);

@@ -1082,7 +1082,7 @@ static void panel_draw_border(const Panel *panel,
   }
 
   float color[4];
-  UI_GetThemeColor4fv(is_active ? TH_SELECT_ACTIVE : TH_PANEL_OUTLINE, color);
+  UI_GetThemeColor4fv(is_active ? TH_PANEL_ACTIVE : TH_PANEL_OUTLINE, color);
   if (color[3] == 0.0f) {
     return; /* No border to draw. */
   }

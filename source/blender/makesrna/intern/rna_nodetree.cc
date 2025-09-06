@@ -2484,6 +2484,12 @@ static IDProperty **rna_Node_idprops(PointerRNA *ptr)
   return &node->prop;
 }
 
+static IDProperty **rna_Node_system_idprops(PointerRNA *ptr)
+{
+  bNode *node = ptr->data_as<bNode>();
+  return &node->system_properties;
+}
+
 static void rna_Node_parent_set(PointerRNA *ptr, PointerRNA value, ReportList * /*reports*/)
 {
   bNode *node = ptr->data_as<bNode>();
@@ -6544,6 +6550,22 @@ static void def_cmp_convert_color_space(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
+static void def_cmp_convert_to_display(BlenderRNA * /*brna*/, StructRNA *srna)
+{
+  PropertyRNA *prop;
+  RNA_def_struct_sdna_from(srna, "NodeConvertToDisplay", "storage");
+
+  prop = RNA_def_property(srna, "view_settings", PROP_POINTER, PROP_NONE);
+  RNA_def_property_pointer_sdna(prop, nullptr, "view_settings");
+  RNA_def_property_struct_type(prop, "ColorManagedViewSettings");
+  RNA_def_property_ui_text(prop, "View Settings", "Color management view transform settings");
+
+  prop = RNA_def_property(srna, "display_settings", PROP_POINTER, PROP_NONE);
+  RNA_def_property_pointer_sdna(prop, nullptr, "display_settings");
+  RNA_def_property_struct_type(prop, "ColorManagedDisplaySettings");
+  RNA_def_property_ui_text(prop, "Display Settings", "Color management display device settings");
+}
+
 static void def_cmp_color_spill(BlenderRNA * /*brna*/, StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -8849,7 +8871,8 @@ static void rna_def_node(BlenderRNA *brna)
   RNA_def_struct_refine_func(srna, "rna_Node_refine");
   RNA_def_struct_path_func(srna, "rna_Node_path");
   RNA_def_struct_register_funcs(srna, "rna_Node_register", "rna_Node_unregister", nullptr);
-  RNA_def_struct_system_idprops_func(srna, "rna_Node_idprops");
+  RNA_def_struct_idprops_func(srna, "rna_Node_idprops");
+  RNA_def_struct_system_idprops_func(srna, "rna_Node_system_idprops");
 
   prop = RNA_def_property(srna, "type", PROP_STRING, PROP_NONE);
   RNA_def_property_string_funcs(prop, "rna_node_type_get", "rna_node_type_length", nullptr);
@@ -9931,6 +9954,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeCombYCCA", def_cmp_ycc, ICON_NODE_COMBINEYCBCRA);
   define(brna, "CompositorNode", "CompositorNodeCombYUVA", nullptr, ICON_NODE_COMBINEYUVA);
   define(brna, "CompositorNode", "CompositorNodeConvertColorSpace", def_cmp_convert_color_space, ICON_COLOR_SPACE);
+  define(brna, "CompositorNode", "CompositorNodeConvertToDisplay", def_cmp_convert_to_display, ICON_NONE);
   define(brna, "CompositorNode", "CompositorNodeCornerPin", nullptr, ICON_NODE_CORNERPIN);
   define(brna, "CompositorNode", "CompositorNodeCrop", nullptr, ICON_NODE_CROP);
   define(brna, "CompositorNode", "CompositorNodeCryptomatte", def_cmp_cryptomatte_legacy, ICON_CRYPTOMATTE);
@@ -10081,6 +10105,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeSeparateTransform", nullptr, ICON_SEPARATE_TRANSFORM);
   define(brna, "FunctionNode", "FunctionNodeSliceString", nullptr, ICON_STRING_SUBSTRING);
   define(brna, "FunctionNode", "FunctionNodeStringLength", nullptr, ICON_STRING_LENGTH);
+  define(brna, "FunctionNode", "FunctionNodeStringToValue", nullptr, ICON_NONE);
   define(brna, "FunctionNode", "FunctionNodeTransformDirection", nullptr, ICON_TRANSFORM_DIRECTION);
   define(brna, "FunctionNode", "FunctionNodeTransformPoint", nullptr, ICON_TRANSFORM_POINT);
   define(brna, "FunctionNode", "FunctionNodeTransposeMatrix", nullptr, ICON_TRANSPOSE_MATRIX);
