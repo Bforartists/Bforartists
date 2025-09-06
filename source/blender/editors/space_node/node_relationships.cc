@@ -699,7 +699,7 @@ static void position_viewer_node(const bContext &C,
                                  const bNode &node_to_view)
 {
   /*BFA - Skip auto-positioning of Viewer Node if disabled in preferences*/
-  if (!(U.uiflag & USER_NODE_AUTOPOSITION_VIEWER)) {
+  if (!(U.uiflag2 & USER_NODE_AUTOPOSITION_VIEWER)) {
     return;
   }
 
