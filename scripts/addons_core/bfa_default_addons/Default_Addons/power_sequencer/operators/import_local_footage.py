@@ -26,7 +26,7 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
     Finds and imports all valid video, audio files, and pictures in the blend file's folder and
     sub-folders, ignoring folders named BL_proxy.
 
-    If you set it in the add-on preferences, it also sets imported sequences to use proxies. See
+    If you set it in the add-on preferences, it also sets imported strips to use proxies. See
     `Preferences -> Add-ons -> Blender Power Sequencer -> Proxy`
     """
 
@@ -180,7 +180,7 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
     def import_videos(self, context, videos_filepaths):
         """
         Imports a list of files using movie_strip_add
-        Returns the list of imported sequences
+        Returns the list of imported strips
         """
         frame = context.scene.frame_current
 
@@ -195,8 +195,8 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
                 sound=self.keep_audio,
                 use_framerate=is_first_import,
             )
-            imported.extend(context.selected_sequences)
-            frame = context.selected_sequences[0].frame_final_end
+            imported.extend(context.selected_strips)
+            frame = context.selected_strips[0].frame_final_end
             context.window_manager.progress_update(index)
 
         context.window_manager.progress_end()
@@ -211,8 +211,8 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
         imported = []
         for f in audio_filepaths:
             bpy.ops.sequencer.sound_strip_add(self.sequencer_area, filepath=f, frame_start=frame)
-            imported.extend(context.selected_sequences)
-            frame = context.selected_sequences[0].frame_final_end
+            imported.extend(context.selected_strips)
+            frame = context.selected_strips[0].frame_final_end
         return imported
 
     def import_imgs(self, context, img_filepaths):
@@ -220,7 +220,7 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
         strip_length = convert_duration_to_frames(context, self.img_length)
         strip_padding = convert_duration_to_frames(context, self.img_padding)
 
-        new_sequences = []
+        new_strips = []
         for f in img_filepaths:
             head, tail = os.path.split(f)
             bpy.ops.sequencer.image_strip_add(
@@ -231,9 +231,9 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
                 frame_end=frame + strip_length,
             )
             frame += strip_length + strip_padding
-            new_sequences.extend(context.selected_sequences)
+            new_strips.extend(context.selected_strips)
 
-        return new_sequences
+        return new_strips
 
     def set_selected_strips_proxies(self, context):
         proxy_sizes = ["25", "50", "75", "100"]
@@ -248,7 +248,7 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
         if not use_proxy:
             return
 
-        for s in [s for s in context.selected_sequences if s.type in ["MOVIE", "IMAGE"]]:
+        for s in [s for s in context.selected_strips if s.type in ["MOVIE", "IMAGE"]]:
             s.use_proxy = True
             s.proxy.build_25 = prefs.proxy_25
             s.proxy.build_50 = prefs.proxy_50

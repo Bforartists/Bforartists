@@ -47,13 +47,13 @@ class POWER_SEQUENCER_OT_select_all_left_or_right(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
         if self.side == "LEFT":
-            for s in context.sequences:
+            for s in context.strips:
                 s.select = s.frame_final_end < context.scene.frame_current
         else:
-            for s in context.sequences:
+            for s in context.strips:
                 s.select = s.frame_final_start > context.scene.frame_current
         return {"FINISHED"}

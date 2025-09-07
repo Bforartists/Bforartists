@@ -12,7 +12,7 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
     """
     *Brief* Expand selected strips to surrounding cuts
 
-    Finds potential gaps surrounding each block of selected sequences and extends the corresponding
+    Finds potential gaps surrounding each block of selected strips and extends the corresponding
     sequence handle to it
     """
 
@@ -42,49 +42,49 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
     )
     gap_remove: bpy.props.BoolProperty(
         name="Remove gaps",
-        description="When trimming the sequences, remove gaps automatically",
+        description="When trimming the strips, remove gaps automatically",
         default=True,
     )
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def invoke(self, context, event):
-        sequence_blocks = slice_selection(context, context.selected_sequences)
-        for sequences in sequence_blocks:
-            sequences_frame_start = min(
-                sequences, key=lambda s: s.frame_final_start
+        sequence_blocks = slice_selection(context, context.selected_strips)
+        for strips in sequence_blocks:
+            strips_frame_start = min(
+                strips, key=lambda s: s.frame_final_start
             ).frame_final_start
-            sequences_frame_end = max(sequences, key=lambda s: s.frame_final_end).frame_final_end
+            strips_frame_end = max(strips, key=lambda s: s.frame_final_end).frame_final_end
 
             frame_left, frame_right = find_closest_cuts(
-                context, sequences_frame_start, sequences_frame_end
+                context, strips_frame_start, strips_frame_end
             )
-            if sequences_frame_start == frame_left and sequences_frame_end == frame_right:
+            if strips_frame_start == frame_left and strips_frame_end == frame_right:
                 continue
 
-            to_extend_left = [s for s in sequences if s.frame_final_start == sequences_frame_start]
-            to_extend_right = [s for s in sequences if s.frame_final_end == sequences_frame_end]
+            to_extend_left = [s for s in strips if s.frame_final_start == strips_frame_start]
+            to_extend_right = [s for s in strips if s.frame_final_end == strips_frame_end]
 
             for s in to_extend_left:
                 s.frame_final_start = (
-                    frame_left if frame_left < sequences_frame_start else sequences_frame_start
+                    frame_left if frame_left < strips_frame_start else strips_frame_start
                 )
             for s in to_extend_right:
                 s.frame_final_end = (
-                    frame_right if frame_right > sequences_frame_end else sequences_frame_end
+                    frame_right if frame_right > strips_frame_end else strips_frame_end
                 )
         return {"FINISHED"}
 
 
 def find_closest_cuts(context, frame_min, frame_max):
     frame_left = max(
-        context.sequences,
+        context.strips,
         key=lambda s: s.frame_final_end if s.frame_final_end <= frame_min else -1,
     ).frame_final_end
     frame_right = min(
-        context.sequences,
+        context.strips,
         key=lambda s: s.frame_final_start if s.frame_final_start >= frame_max else 1000000,
     ).frame_final_start
     return frame_left, frame_right

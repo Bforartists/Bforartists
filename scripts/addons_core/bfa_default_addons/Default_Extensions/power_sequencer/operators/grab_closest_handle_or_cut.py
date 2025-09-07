@@ -47,7 +47,7 @@ class POWER_SEQUENCER_OT_grab_closest_cut(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
         sequencer = bpy.ops.sequencer
@@ -57,7 +57,7 @@ class POWER_SEQUENCER_OT_grab_closest_cut(bpy.types.Operator):
 
         matching_strips = [
             s
-            for s in context.sequences
+            for s in context.strips
             if (abs(s.frame_final_start - frame) <= 1 or abs(s.frame_final_end - frame) <= 1)
         ]
         if not self.select_linked:
@@ -78,7 +78,7 @@ class POWER_SEQUENCER_OT_grab_closest_cut(bpy.types.Operator):
         closest_cut = (None, None)
         distance_to_closest_cut = 1000000.0
 
-        for s in context.sequences:
+        for s in context.strips:
             channel_offset = s.channel + 0.5
             start_x, start_y = view2d.view_to_region(s.frame_final_start, channel_offset)
             end_x, end_y = view2d.view_to_region(s.frame_final_start, channel_offset)

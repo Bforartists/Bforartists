@@ -19,13 +19,13 @@ class POWER_SEQUENCER_MT_contextual(bpy.types.Menu):
             layout.operator("wm.save_as_mainfile", icon="SAVE_AS", text="Save as")
             return
 
-        if not context.sequences:
+        if not context.strips:
             layout.operator(
                 "power_sequencer.import_local_footage", icon="SEQUENCE", text="Import local footage"
             )
             return
 
-        selection = context.selected_sequences
+        selection = context.selected_strips
         active_strip = context.scene.sequence_editor.active_strip
         types = set([s.type for s in selection])
 

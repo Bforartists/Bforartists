@@ -75,7 +75,7 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
 
     def setup_tasks(self, scene: bpy.types.Scene):
         """
-        Setup tasks and internals to batch render scene sequences in `scene` based on
+        Setup tasks and internals to batch render scene strips in `scene` based on
         its options.
 
         :param scene: The Scene to setup for.
@@ -87,7 +87,7 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
         # Select scene sequence strips to render
         seqs = [
             seq
-            for seq in self.scene.sequence_editor.sequences
+            for seq in self.scene.sequence_editor.strips
             if isinstance(seq, bpy.types.SceneStrip)
             and (seq.select or not self.render_options.selection_only)
         ]
@@ -104,7 +104,7 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
         if self.render_options.output_copy_sound_strips:
             sound_strips = [
                 seq
-                for seq in self.scene.sequence_editor.sequences
+                for seq in self.scene.sequence_editor.strips
                 if isinstance(seq, bpy.types.SoundStrip)
                 and (seq.select or not self.render_options.selection_only)
             ]
@@ -127,8 +127,8 @@ class SEQUENCER_OT_batch_render(bpy.types.Operator):
             bpy.ops.sequencer.select_all({"scene": output_scene}, action="DESELECT")
 
             # Compute channel offset in output scene based on existing content
-            if self.render_options.output_auto_offset_channels and sed.sequences:
-                self.output_channel_offset = max([s.channel for s in sed.sequences])
+            if self.render_options.output_auto_offset_channels and sed.strips:
+                self.output_channel_offset = max([s.channel for s in sed.strips])
         else:
             # Ensure sequence editor is created in output scene.
             output_scene.sequence_editor_create()

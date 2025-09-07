@@ -65,7 +65,7 @@ class POWER_SEQUENCER_OT_make_hold_frame(bpy.types.Operator):
             try:
                 next_strip_start = next(
                     s
-                    for s in sorted(context.sequences, key=operator.attrgetter("frame_final_start"))
+                    for s in sorted(context.strips, key=operator.attrgetter("frame_final_start"))
                     if s.frame_final_start > active.frame_final_end
                 ).frame_final_start
                 offset = next_strip_start - active.frame_final_end

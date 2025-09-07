@@ -9,10 +9,10 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 class POWER_SEQUENCER_OT_fade_clear(bpy.types.Operator):
     """
-    *brief* Removes fade animation from selected sequences
+    *brief* Removes fade animation from selected strips
 
-    Removes opacity or volume animation on selected sequences and resets the
-    property to a value of 1.0. Works on all types of sequences
+    Removes opacity or volume animation on selected strips and resets the
+    property to a value of 1.0. Works on all types of strips
     """
 
     doc = {
@@ -35,18 +35,18 @@ class POWER_SEQUENCER_OT_fade_clear(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         fcurves = context.scene.animation_data.action.fcurves
 
-        for sequence in context.selected_sequences:
+        for sequence in context.selected_strips:
             animated_property = "volume" if hasattr(sequence, "volume") else "blend_alpha"
             data_path = sequence.path_from_id() + "." + animated_property
             fcurve_map = {
                 curve.data_path: curve
                 for curve in fcurves
-                if curve.data_path.startswith("sequence_editor.sequences_all")
+                if curve.data_path.startswith("sequence_editor.strips_all")
             }
             curve = fcurve_map.get(data_path)
             if curve:

@@ -31,10 +31,10 @@ class POWER_SEQUENCER_OT_meta_resize_to_content(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        selected_meta_strips = (s for s in context.selected_sequences if s.type == "META")
+        selected_meta_strips = (s for s in context.selected_strips if s.type == "META")
         for s in selected_meta_strips:
-            s.frame_final_start, s.frame_final_end = get_frame_range(s.sequences)
+            s.frame_final_start, s.frame_final_end = get_frame_range(s.strips)
         return {"FINISHED"}

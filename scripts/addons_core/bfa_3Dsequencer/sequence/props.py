@@ -27,7 +27,7 @@ class SequenceSettings(bpy.types.PropertyGroup):
         """Set sequence active scene index."""
         # Move to beginning of scene strip in master scene.
         scene = get_sync_settings().master_scene
-        frame = scene.sequence_editor.sequences[idx].frame_final_start
+        frame = scene.sequence_editor.strips[idx].frame_final_start
         scene.frame_set(frame)
 
     shot_active_index: bpy.props.IntProperty(

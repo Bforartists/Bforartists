@@ -62,13 +62,13 @@ class POWER_SEQUENCER_OT_mouse_trim_instantly(bpy.types.Operator):
     )
     gap_remove: bpy.props.BoolProperty(
         name="Remove gaps",
-        description="When trimming the sequences, remove gaps automatically",
+        description="When trimming the strips, remove gaps automatically",
         default=True,
     )
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
         to_trim = []
@@ -81,7 +81,7 @@ class POWER_SEQUENCER_OT_mouse_trim_instantly(bpy.types.Operator):
         if self.select_mode == "CURSOR" or (self.select_mode == "CONTEXT" and to_trim == []):
             to_trim += [
                 s
-                for s in context.sequences
+                for s in context.strips
                 if s.frame_final_start <= frame <= s.frame_final_end and not s.lock
             ]
         if not to_trim:

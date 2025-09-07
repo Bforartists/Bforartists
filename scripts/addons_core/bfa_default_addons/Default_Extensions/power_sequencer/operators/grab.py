@@ -11,13 +11,13 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 class POWER_SEQUENCER_OT_grab(bpy.types.Operator):
     """
-    *brief* Grab and move sequences. Extends Blender's built-in grab tool
+    *brief* Grab and move strips. Extends Blender's built-in grab tool
 
 
-    Grab and move sequences. If you have no strips selected, it automatically
+    Grab and move strips. If you have no strips selected, it automatically
     finds the strip closest to the mouse and selects it. If you only select
     one or multiple crossfades, selects the handles on either side of the
-    crossfades before moving sequences, using POWER_SEQUENCER_OT_crossfade_edit
+    crossfades before moving strips, using POWER_SEQUENCER_OT_crossfade_edit
     """
 
     doc = {
@@ -34,20 +34,20 @@ class POWER_SEQUENCER_OT_grab(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def invoke(self, context, event):
         frame, channel = get_mouse_frame_and_channel(context, event)
-        if not context.selected_sequences:
+        if not context.selected_strips:
             bpy.ops.power_sequencer.select_closest_to_mouse(frame=frame, channel=channel)
         return self.execute(context)
 
     def execute(self, context):
-        if len(context.selected_sequences) == 0:
+        if len(context.selected_strips) == 0:
             return {"FINISHED"}
 
-        strip = context.selected_sequences[0]
-        if len(context.selected_sequences) == 1 and strip.type in SequenceTypes.TRANSITION:
+        strip = context.selected_strips[0]
+        if len(context.selected_strips) == 1 and strip.type in SequenceTypes.TRANSITION:
             context.scene.sequence_editor.active_strip = strip
             return bpy.ops.power_sequencer.crossfade_edit()
         else:

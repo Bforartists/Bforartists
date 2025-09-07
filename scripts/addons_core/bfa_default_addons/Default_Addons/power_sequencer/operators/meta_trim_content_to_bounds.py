@@ -27,15 +27,15 @@ class POWER_SEQUENCER_OT_meta_trim_content_to_bounds(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         to_delete = []
-        meta_strips = [s for s in context.selected_sequences if s.type == "META"]
+        meta_strips = [s for s in context.selected_strips if s.type == "META"]
         for m in meta_strips:
             start, end = m.frame_final_start, m.frame_final_end
-            sequences_to_process = (s for s in m.sequences if s.type not in SequenceTypes.EFFECT)
-            for s in sequences_to_process:
+            strips_to_process = (s for s in m.strips if s.type not in SequenceTypes.EFFECT)
+            for s in strips_to_process:
                 if s.frame_final_end < start or s.frame_final_start > m.frame_final_end:
                     to_delete.append(s)
                     continue

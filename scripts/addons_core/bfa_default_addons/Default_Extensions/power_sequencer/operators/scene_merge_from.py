@@ -9,7 +9,7 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 class POWER_SEQUENCER_OT_merge_from_scene_strip(bpy.types.Operator):
     """
-    *brief* Copies all sequences and markers from a SceneStrip's scene into
+    *brief* Copies all strips and markers from a SceneStrip's scene into
     the active scene. Optionally delete the source scene and the strip
 
     WARNING: Currently the operator doesn't recreate any animation data,

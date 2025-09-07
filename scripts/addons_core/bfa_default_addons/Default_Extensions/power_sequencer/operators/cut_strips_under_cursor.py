@@ -11,7 +11,7 @@ from .utils.functions import get_mouse_frame_and_channel
 class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
     """
     Splits all strips under cursor including muted strips, but excluding locked strips.
-    Auto selects sequences under the time cursor when you don't have a selection
+    Auto selects strips under the time cursor when you don't have a selection
     """
 
     doc = {
@@ -35,7 +35,7 @@ class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
         frame, channel = get_mouse_frame_and_channel(context, event)
@@ -47,10 +47,10 @@ class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
         # time cursor doesn't overlap any of the selected strip: if so, it
         # can't cut anything!
         deselect = True
-        for s in bpy.context.selected_sequences:
+        for s in bpy.context.selected_strips:
             if s.frame_final_start <= context.scene.frame_current <= s.frame_final_end:
                 deselect = False
         if deselect:
             bpy.ops.sequencer.select_all(action="DESELECT")
-        (context.selected_sequences or bpy.ops.power_sequencer.select_strips_under_cursor())
+        (context.selected_strips or bpy.ops.power_sequencer.select_strips_under_cursor())
         return bpy.ops.sequencer.split(frame=context.scene.frame_current, side=self.side)

@@ -18,7 +18,7 @@ def send_sound_strip(s, dest_scn):
     if s.type != 'SOUND':
         return
     vse = dest_scn.sequence_editor
-    ns = vse.sequences.new_sound(name=s.name, filepath=s.sound.filepath, channel=s.channel, frame_start=int(s.frame_start))
+    ns = vse.strips.new_sound(name=s.name, filepath=s.sound.filepath, channel=s.channel, frame_start=int(s.frame_start))
     ns.sound = s.sound # reget the same sound source
 
     for attr in ('pitch',
@@ -41,7 +41,7 @@ def get_all_overlapping_sound_strip(scn_strip, skip_mute=True):
     src_scn = scn_strip.id_data
     vse = src_scn.sequence_editor
     overlapping_sounds = []
-    for s in vse.sequences:
+    for s in vse.strips:
         if s.type != 'SOUND':
             continue
         if skip_mute and s.mute:
@@ -56,9 +56,9 @@ def get_all_overlapping_sound_strip(scn_strip, skip_mute=True):
     return overlapping_sounds
 
 def delete_sounds(scene):
-    for st in reversed(scene.sequence_editor.sequences):
+    for st in reversed(scene.sequence_editor.strips):
         if st.type == 'SOUND':
-            scene.sequence_editor.sequences.remove(st)
+            scene.sequence_editor.strips.remove(st)
 
 def get_scene_frame_from_sequencer_frame(scn_strip, sound) -> float:
     """return frame in scene referential"""
@@ -96,7 +96,7 @@ def dispatch_sounds_in_scenes(selected_scn_only=True, skip_mute=True):
     edit = edit_scene.sequence_editor
 
     ct = 0
-    for strip in edit.sequences:
+    for strip in edit.strips:
         if strip.type != 'SCENE':
             continue
 

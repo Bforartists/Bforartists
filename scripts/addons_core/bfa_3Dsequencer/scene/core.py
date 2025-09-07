@@ -466,7 +466,7 @@ def reload_strip(strip: bpy.types.Strip):
     # Store sequence editor selection
     selected_strips = [
         (s, s.select_left_handle, s.select_right_handle)
-        for s in scene.sequence_editor.sequences
+        for s in scene.sequence_editor.strips
         if s.select
     ]
 
@@ -543,7 +543,7 @@ def adjust_shot_duration(
     impacted_strips = sorted(
         (
             s
-            for s in sed.sequences
+            for s in sed.strips
             if s.frame_final_start > strip.frame_final_start
             and s.channel == strip.channel
         ),

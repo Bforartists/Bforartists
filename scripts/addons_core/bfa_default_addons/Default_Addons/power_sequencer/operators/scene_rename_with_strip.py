@@ -33,14 +33,14 @@ class POWER_SEQUENCER_OT_scene_rename_with_strip(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def invoke(self, context, event):
         window_manager = context.window_manager
         return window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        scene_strips = [s for s in context.selected_sequences if s.type == "SCENE"]
+        scene_strips = [s for s in context.selected_strips if s.type == "SCENE"]
         for strip in scene_strips:
             strip.name = self.new_name
             strip.scene.name = strip.name

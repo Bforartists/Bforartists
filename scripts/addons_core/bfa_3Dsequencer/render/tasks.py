@@ -305,7 +305,7 @@ class StripRenderTask(BaseRenderTask):
             for idx in range(scene_strip.frame_final_duration):
                 frame_number = scene_strip.scene.frame_start + idx
                 img_path = scene_strip.scene.render.frame_path(frame=frame_number)
-                strip = sed.sequences.new_image(
+                strip = sed.strips.new_image(
                     name=os.path.basename(bpy.path.abspath(img_path)),
                     filepath=img_path,
                     channel=scene_strip.channel + channel_offset,
@@ -315,7 +315,7 @@ class StripRenderTask(BaseRenderTask):
 
         elif media_type == "MOVIE":
             filepath = scene_strip.scene.render.filepath
-            strip = sed.sequences.new_movie(
+            strip = sed.strips.new_movie(
                 name=os.path.basename(bpy.path.abspath(filepath)),
                 filepath=filepath,
                 channel=scene_strip.channel + channel_offset,
@@ -372,7 +372,7 @@ class CopySoundStripsTask(BaseTask):
 
         # Store original selection from source and dest scenes.
         original_selection = [
-            seq for seq in sed_src.sequences[:] + sed_dst.sequences[:] if seq.select
+            seq for seq in sed_src.strips[:] + sed_dst.strips[:] if seq.select
         ]
 
         # Select only sound strips in source scene.
@@ -383,9 +383,9 @@ class CopySoundStripsTask(BaseTask):
             seq.select = True
 
         # Copy strips from source.
-        # Build context with scene and selected sequences (must match actual selection).
+        # Build context with scene and selected strips (must match actual selection).
         with context.temp_override(
-            scene=self.src_scene, selected_sequences=self.sound_strips
+            scene=self.src_scene, selected_strips=self.sound_strips
         ):
             bpy.ops.sequencer.copy()
 
@@ -453,7 +453,7 @@ class FitResolutionToContentTask(BaseTask):
 
         img_seqs = [
             s
-            for s in self.scene.sequence_editor.sequences
+            for s in self.scene.sequence_editor.strips
             if isinstance(s, (bpy.types.MovieStrip, bpy.types.ImageStrip))
         ]
 
@@ -493,14 +493,14 @@ class SequenceRenderTask(BaseRenderTask):
         file_format, file_ext = MEDIA_TYPES_FORMATS["MOVIE"]
 
         # Only consider range of video media types.
-        sequences = [
+        strips = [
             s
-            for s in self.scene.sequence_editor.sequences
+            for s in self.scene.sequence_editor.strips
             if isinstance(s, (bpy.types.MovieStrip, bpy.types.ImageStrip))
         ]
 
-        self.scene.frame_start = min(s.frame_final_start for s in sequences)
-        self.scene.frame_end = max(s.frame_final_end for s in sequences) - 1
+        self.scene.frame_start = min(s.frame_final_start for s in strips)
+        self.scene.frame_end = max(s.frame_final_end for s in strips) - 1
 
         # Filepath: add extension to avoid auto frame range suffix
         filepath += f".{file_ext}"

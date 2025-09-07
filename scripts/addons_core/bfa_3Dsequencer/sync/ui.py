@@ -53,7 +53,7 @@ def SEQUENCER_OT_toggle_active(self, context):
     layout = self.layout
     layout.separator()
 
-    strip = context.active_sequence_strip
+    strip = context.active_strip
     # Operator to syncronize viewport
     #layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
     try:

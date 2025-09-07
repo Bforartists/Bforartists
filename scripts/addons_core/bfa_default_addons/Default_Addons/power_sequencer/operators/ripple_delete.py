@@ -32,21 +32,21 @@ class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
         # Auto select if no strip selected
         frame, channel = get_mouse_frame_and_channel(context, event)
-        if not context.selected_sequences:
+        if not context.selected_strips:
             bpy.ops.power_sequencer.select_closest_to_mouse(frame=frame, channel=channel)
-        if not context.selected_sequences:
+        if not context.selected_strips:
             return {"CANCELLED"}
         return self.execute(context)
 
     def execute(self, context):
         scene = context.scene
         sequencer = bpy.ops.sequencer
-        selection = context.selected_sequences
+        selection = context.selected_strips
         selection_length = len(selection)
 
         audio_scrub_active = context.scene.use_audio_scrub

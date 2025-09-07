@@ -16,8 +16,8 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
 
     - In, Out, In and Out create a fade animation of the given duration from
     the start of the sequence, to the end of the sequence, or on both sides
-    - From playhead: the fade animation goes from the start of sequences under the playhead to the playhead
-    - To playhead: the fade animation goes from the playhead to the end of sequences under the playhead
+    - From playhead: the fade animation goes from the start of strips under the playhead to the playhead
+    - To playhead: the fade animation goes from the playhead to the end of strips under the playhead
 
     By default, the duration of the fade is 1 second
     """
@@ -52,12 +52,12 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
             (
                 "CURSOR_FROM",
                 "From playhead",
-                "Fade from the time cursor to the end of overlapping sequences",
+                "Fade from the time cursor to the end of overlapping strips",
             ),
             (
                 "CURSOR_TO",
                 "To playhead",
-                "Fade from the start of sequences under the time cursor to the current frame",
+                "Fade from the start of strips under the time cursor to the current frame",
             ),
         ],
         name="Fade type",
@@ -67,7 +67,7 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         # We must create a scene action first if there's none
@@ -78,19 +78,19 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
             action = bpy.data.actions.new(scene.name + "Action")
             scene.animation_data.action = action
 
-        sequences = context.selected_sequences
+        strips = context.selected_strips
         if self.type in ["CURSOR_TO", "CURSOR_FROM"]:
-            sequences = [
+            strips = [
                 s
-                for s in sequences
+                for s in strips
                 if s.frame_final_start < context.scene.frame_current < s.frame_final_end
             ]
 
-        max_duration = min(sequences, key=lambda s: s.frame_final_duration).frame_final_duration
+        max_duration = min(strips, key=lambda s: s.frame_final_duration).frame_final_duration
         max_duration = floor(max_duration / 2.0) if self.type == "IN_OUT" else max_duration
 
-        faded_sequences = []
-        for sequence in sequences:
+        faded_strips = []
+        for sequence in strips:
             duration = self.calculate_fade_duration(context, sequence)
             duration = min(duration, max_duration)
 
@@ -102,12 +102,12 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
             fades = self.calculate_fades(sequence, fade_fcurve, animated_property, duration)
             fade_animation_clear(context, fade_fcurve, fades)
             fade_animation_create(fade_fcurve, fades)
-            faded_sequences.append(sequence)
+            faded_strips.append(sequence)
 
-        sequence_string = "sequence" if len(faded_sequences) == 1 else "sequences"
+        sequence_string = "strip" if len(faded_strips) == 1 else "strips"
         self.report(
             {"INFO"},
-            "Added fade animation to {} {}.".format(len(faded_sequences), sequence_string),
+            "Added fade animation to {} {}.".format(len(faded_strips), sequence_string),
         )
         return {"FINISHED"}
 
