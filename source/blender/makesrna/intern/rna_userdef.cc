@@ -39,20 +39,35 @@
 
 const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_INTERFACE, "INTERFACE", ICON_UI, "Interface", ""}, /* BFA - Added Icons */
-    {USER_SECTION_VIEWPORT, "VIEWPORT", ICON_VIEW, "Viewport", ""}, /* BFA - Added Icons */
-    {USER_SECTION_LIGHT, "LIGHTS", ICON_LIGHT, "Lights", ""}, /* BFA - Added Icons */
-    {USER_SECTION_EDITING, "EDITING", ICON_EDIT, "Editing", ""}, /* BFA - Added Icons */
-    {USER_SECTION_ANIMATION, "ANIMATION", ICON_RENDER_ANIMATION, "Animation", ""}, /* BFA - Added Icons */
+    {USER_SECTION_VIEWPORT, "VIEWPORT", ICON_VIEW, "Viewport", ""},  /* BFA - Added Icons */
+    {USER_SECTION_LIGHT, "LIGHTS", ICON_LIGHT, "Lights", ""},        /* BFA - Added Icons */
+    {USER_SECTION_EDITING, "EDITING", ICON_EDIT, "Editing", ""},     /* BFA - Added Icons */
+    {USER_SECTION_ANIMATION,
+     "ANIMATION",
+     ICON_RENDER_ANIMATION,
+     "Animation",
+     ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_EXTENSIONS,
      "EXTENSIONS",
-     ICON_URL, /* BFA - Added Icons */
+     ICON_URL,     /* BFA - Added Icons */
      "Extensions", /* BFA - remove 'Get' for label consistency to Add-ons and Themes */
-     "Browse, install, uninstall and manage extensions from remote and local repositories. \nYou can also drag and drop extensions to install.\nExtensions include themes and addons made by the community."}, /*BFA - made it clear you can uninstall, drag and drop, and what are extensions*/
+     "Browse, install, uninstall and manage extensions from remote and local repositories. \nYou "
+     "can also drag and drop extensions to install.\nExtensions include themes and addons made by "
+     "the community."}, /*BFA - made it clear you can uninstall, drag and drop, and what are
+                           extensions*/
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_ADDONS, "ADDONS", ICON_PLUGIN, "Add-ons", "Manage add-ons installed via Extensions"}, /* BFA - Added Icons */
-    {USER_SECTION_THEME, "THEMES", ICON_COLOR, "Themes", "Edit and save themes installed via Extensions"}, /* BFA - Added Icons */
-#if 0 /* def WITH_USERDEF_WORKSPACES */
+    {USER_SECTION_ADDONS,
+     "ADDONS",
+     ICON_PLUGIN,
+     "Add-ons",
+     "Manage add-ons installed via Extensions"}, /* BFA - Added Icons */
+    {USER_SECTION_THEME,
+     "THEMES",
+     ICON_COLOR,
+     "Themes",
+     "Edit and save themes installed via Extensions"}, /* BFA - Added Icons */
+#if 0                                                  /* def WITH_USERDEF_WORKSPACES */
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_WORKSPACE_CONFIG, "WORKSPACE_CONFIG", 0, "Configuration File", ""},
     {USER_SECTION_WORKSPACE_ADDONS, "WORKSPACE_ADDONS", 0, "Add-on Overrides", ""},
@@ -60,14 +75,30 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
 #endif
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_INPUT, "INPUT", ICON_INPUT_BOOL, "Input", ""}, /* BFA - Added Icons */
-    {USER_SECTION_NAVIGATION, "NAVIGATION", ICON_FLY_NAVIGATION, "Navigation", ""}, /* BFA - Added Icons */
+    {USER_SECTION_NAVIGATION,
+     "NAVIGATION",
+     ICON_FLY_NAVIGATION,
+     "Navigation",
+     ""},                                                       /* BFA - Added Icons */
     {USER_SECTION_KEYMAP, "KEYMAP", ICON_MONKEY, "Keymap", ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_SYSTEM, "SYSTEM", ICON_SYSTEM, "System", ""}, /* BFA - Added Icons */
-    {USER_SECTION_SAVE_LOAD, "SAVE_LOAD", ICON_FILE_TICK, "Save & Load", ""}, /* BFA - Added Icons */
-    {USER_SECTION_FILE_PATHS, "FILE_PATHS", ICON_RELATIVEPATH, "File Paths", ""}, /* BFA - Added Icons */
+    {USER_SECTION_SAVE_LOAD,
+     "SAVE_LOAD",
+     ICON_FILE_TICK,
+     "Save & Load",
+     ""}, /* BFA - Added Icons */
+    {USER_SECTION_FILE_PATHS,
+     "FILE_PATHS",
+     ICON_RELATIVEPATH,
+     "File Paths",
+     ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_EXPERIMENTAL, "EXPERIMENTAL", ICON_EXPERIMENTAL, "Experimental", ""}, /* BFA - Added Icons */
+    {USER_SECTION_EXPERIMENTAL,
+     "EXPERIMENTAL",
+     ICON_EXPERIMENTAL,
+     "Experimental",
+     ""}, /* BFA - Added Icons */
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2135,7 +2166,8 @@ static void rna_def_userdef_theme_ui(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "icon_folder");
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "File Folders", "Color of folders in the file browser");
-  //RNA_def_property_update(prop, 0, "rna_userdef_gpu_update"); // bfa - needed for themeable .icon_folder color
+  // RNA_def_property_update(prop, 0, "rna_userdef_gpu_update"); // bfa - needed for themeable
+  // .icon_folder color
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "icon_autokey", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -3947,8 +3979,7 @@ static void rna_def_userdef_theme_space_nla(BlenderRNA *brna)
   prop = RNA_def_property(srna, "active_action_unset", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "anim_non_active");
   RNA_def_property_array(prop, 4);
-  RNA_def_property_ui_text(
-      prop, "No Active Action", "Animation data does not have active action");
+  RNA_def_property_ui_text(prop, "No Active Action", "Animation data does not have active action");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "strips", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -4782,7 +4813,10 @@ static void rna_def_userdef_walk_navigation(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_airblock", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_WALK_AIRBLOCK);
   RNA_def_property_boolean_default(prop, false);  // Set default to off
-  RNA_def_property_ui_text(prop, "Airblock", "Enable a horizontal lock mode for walk navigation to walk on an airblock");
+  RNA_def_property_ui_text(
+      prop,
+      "Airblock",
+      "Enable a horizontal lock mode for walk navigation to walk on an airblock");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
   /*BFA - Airblock mode end*/
 }
@@ -5365,9 +5399,8 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_translate_new_dataname", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "transopts", USER_TR_NEWDATANAME);
-  RNA_def_property_ui_text(prop,
-                           "Translate New Names",
-                           "Translate the names of new data (objects, materials...)");
+  RNA_def_property_ui_text(
+      prop, "Translate New Names", "Translate the names of new data (objects, materials...)");
   RNA_def_property_update(prop, 0, "rna_userdef_translation_update");
 
   /* Status-bar. */
@@ -5401,7 +5434,11 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_extensions_updates", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
       prop, nullptr, "statusbar_flag", STATUSBAR_SHOW_EXTENSIONS_UPDATES);
-  RNA_def_property_ui_text(prop, "Extensions Updates", "Show available Extensions Updates\nFor online access, open the preferences to adjust the internet access in the Extensions tab or System tab");/* BFA */
+  RNA_def_property_ui_text(
+      prop,
+      "Extensions Updates",
+      "Show available Extensions Updates\nFor online access, open the preferences to adjust the "
+      "internet access in the Extensions tab or System tab"); /* BFA */
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_INFO, "rna_userdef_update");
 
   /* Accessibility. */
@@ -5697,9 +5734,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
       prop, nullptr, "outliner_editor_flag", USER_OUTLINER_COL_COLLECTION_ROWS);
   RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(
-      prop,
-      "Colored Collection Rows",
-      "Display colored collection rows in the outliner");
+      prop, "Colored Collection Rows", "Display colored collection rows in the outliner");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   /* duplication linking */
@@ -5836,7 +5871,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "Resolution used for Shader node previews (should be changed for "
                            "performance convenience)");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
-  
+
   /*BFA - Toggle Viewer Auto-Positioning*/
   prop = RNA_def_property(srna, "node_use_autoposition_viewer", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "uiflag2", USER_NODE_AUTOPOSITION_VIEWER);
@@ -5913,14 +5948,18 @@ static void rna_def_userdef_system(BlenderRNA *brna)
     {22050, "RATE_22050", 0, "22.05 kHz", "Set audio sampling rate to 22050 samples per second"},
     {32000, "RATE_32000", 0, "32 kHz", "Set audio sampling rate to 32000 samples per second"},
 #  endif
-    {44100, "RATE_44100", 0, "44.1 kHz", "Set audio sampling rate to 44100 samples per second"},
-    {48000, "RATE_48000", 0, "48 kHz", "Set audio sampling rate to 48000 samples per second"},
+      {44100, "RATE_44100", 0, "44.1 kHz", "Set audio sampling rate to 44100 samples per second"},
+      {48000, "RATE_48000", 0, "48 kHz", "Set audio sampling rate to 48000 samples per second"},
 #  if 0
     {88200, "RATE_88200", 0, "88.2 kHz", "Set audio sampling rate to 88200 samples per second"},
 #  endif
-    {96000, "RATE_96000", 0, "96 kHz", "Set audio sampling rate to 96000 samples per second"},
-    {192000, "RATE_192000", 0, "192 kHz", "Set audio sampling rate to 192000 samples per second"},
-    {0, nullptr, 0, nullptr, nullptr},
+      {96000, "RATE_96000", 0, "96 kHz", "Set audio sampling rate to 96000 samples per second"},
+      {192000,
+       "RATE_192000",
+       0,
+       "192 kHz",
+       "Set audio sampling rate to 192000 samples per second"},
+      {0, nullptr, 0, nullptr, nullptr},
   };
 
   static const EnumPropertyItem audio_format_items[] = {
@@ -7071,9 +7110,8 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_hidden_files_datablocks", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "uiflag", USER_HIDE_DOT);
-  RNA_def_property_ui_text(prop,
-                           "Show Hidden Files/Data",
-                           "Show files and data that are normally hidden");
+  RNA_def_property_ui_text(
+      prop, "Show Hidden Files/Data", "Show files and data that are normally hidden");
 
   prop = RNA_def_property(srna, "use_filter_files", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "uiflag", USER_FILTERFILEEXTS);
@@ -7124,10 +7162,10 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_extension_online_access_handled", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
       prop, nullptr, "extension_flag", USER_EXTENSION_FLAG_ONLINE_ACCESS_HANDLED);
-  RNA_def_property_ui_text(
-      prop,
-      "Online Access",
-      "Opt-in or opt-out from using the internet for \"Online Access\" to use Extensions"); /*BFA - made explicit*/
+  RNA_def_property_ui_text(prop,
+                           "Online Access",
+                           "Opt-in or opt-out from using the internet for \"Online Access\" to "
+                           "use Extensions"); /*BFA - made explicit*/
 
   /* Directories. */
 
@@ -7555,22 +7593,21 @@ void RNA_def_userdef(BlenderRNA *brna)
   /* BFA - GooEngine disable_search_on_keypress */
   prop = RNA_def_property(srna, "disable_search_on_keypress", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS);
-  RNA_def_property_ui_text(
-      prop,
-      "Disable Search On Key Press",
-      "Ignore menus tagged with Search On Key Press, and fallback to using accelerator keys instead");
-   /* BFA - GooEngine end */
+  RNA_def_property_ui_text(prop,
+                           "Disable Search On Key Press",
+                           "Ignore menus tagged with Search On Key Press, and fallback to using "
+                           "accelerator keys instead");
+  /* BFA - GooEngine end */
 
   /* BFA - GooEngine disable_material_icon */
   prop = RNA_def_property(srna, "disable_material_icon", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_DISABLE_MATERIAL_ICON);
-  RNA_def_property_ui_text(
-      prop,
-      "Disable Material Icon Rendering",
-      "If true, Material Preview Icons will NOT be rendered. "
-      "This can prevent stuttering from opening the material ID menu");
+  RNA_def_property_ui_text(prop,
+                           "Disable Material Icon Rendering",
+                           "If true, Material Preview Icons will NOT be rendered. "
+                           "This can prevent stuttering from opening the material ID menu");
   RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
-   /* BFA - GooEngine end */
+  /* BFA - GooEngine end */
 
   /* nested structs */
   prop = RNA_def_property(srna, "view", PROP_POINTER, PROP_NONE);
