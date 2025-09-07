@@ -1713,8 +1713,12 @@ void blo_do_versions_userdef(UserDef *userdef)
   }
 
   /*BFA - Versioning for Toggle Viewer Auto-Positioning preference*/
-  if (!USER_VERSION_ATLEAST(405, 81)) {
-    userdef->uiflag |= USER_NODE_AUTOPOSITION_VIEWER;
+  // if (!USER_VERSION_ATLEAST(405, 81)) {
+  //   userdef->uiflag |= USER_NODE_AUTOPOSITION_VIEWER;
+  // }
+  // moved to uiflag2
+  if (!USER_VERSION_ATLEAST(500, 76)) {
+    userdef->uiflag2 |= USER_NODE_AUTOPOSITION_VIEWER;
   }
 
   if (!USER_VERSION_ATLEAST(500, 11)) {

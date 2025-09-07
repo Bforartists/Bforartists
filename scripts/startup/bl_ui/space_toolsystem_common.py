@@ -13,9 +13,6 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
 )
 
-from bl_ui.utils import (
-    PlayheadSnappingPanel,
-)
 
 __all__ = (
     "ToolDef",

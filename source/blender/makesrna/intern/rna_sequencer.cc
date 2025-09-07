@@ -43,16 +43,16 @@ struct EffectInfo {
 /* clang-format off */
 /* BFA - Added icons*/
 #define RNA_ENUM_SEQUENCER_VIDEO_MODIFIER_TYPE_ITEMS \
-  {seqModifierType_BrightContrast, "BRIGHT_CONTRAST", ICON_BRIGHTNESS_CONTRAST, "Brightness/Contrast", ""}, \
-  {seqModifierType_ColorBalance, "COLOR_BALANCE", ICON_NODE_COLORBALANCE, "Color Balance", ""}, \
-  {seqModifierType_Curves, "CURVES", ICON_OUTLINER_DATA_CURVE, "Curves", ""}, \
-  {seqModifierType_HueCorrect, "HUE_CORRECT", ICON_HUECORRECT, "Hue Correct", ""}, \
-  {seqModifierType_Mask, "MASK", ICON_MOD_MASK, "Mask", ""}, \
-  {seqModifierType_Tonemap, "TONEMAP", ICON_NODE_TONEMAP, "Tone Map", ""}, \
-  {seqModifierType_WhiteBalance, "WHITE_BALANCE", ICON_WHITE_BALANCE, "White Balance", ""}
+  {eSeqModifierType_BrightContrast, "BRIGHT_CONTRAST", ICON_BRIGHTNESS_CONTRAST, "Brightness/Contrast", ""}, \
+  {eSeqModifierType_ColorBalance, "COLOR_BALANCE", ICON_NODE_COLORBALANCE, "Color Balance", ""}, \
+  {eSeqModifierType_Curves, "CURVES", ICON_OUTLINER_DATA_CURVE, "Curves", ""}, \
+  {eSeqModifierType_HueCorrect, "HUE_CORRECT", ICON_HUECORRECT, "Hue Correct", ""}, \
+  {eSeqModifierType_Mask, "MASK", ICON_MOD_MASK, "Mask", ""}, \
+  {eSeqModifierType_Tonemap, "TONEMAP", ICON_NODE_TONEMAP, "Tone Map", ""}, \
+  {eSeqModifierType_WhiteBalance, "WHITE_BALANCE", ICON_WHITE_BALANCE, "White Balance", ""}
 
 #define RNA_ENUM_SEQUENCER_AUDIO_MODIFIER_TYPE_ITEMS \
-  {seqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_MOD_EQUALIZER, "Sound Equalizer", ""}
+  {eSeqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_MOD_EQUALIZER, "Sound Equalizer", ""}
 /* clang-format on */
 
 const EnumPropertyItem rna_enum_strip_modifier_type_items[] = {

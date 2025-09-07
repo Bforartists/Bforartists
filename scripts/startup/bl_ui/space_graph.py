@@ -10,9 +10,6 @@ from bl_ui.space_dopesheet import (
 )
 from bl_ui.space_time import playback_controls
 
-from bl_ui.utils import (
-    PlayheadSnappingPanel,
-)
 # BFA - WIP - to be removed: from bl_ui.space_toolsystem_common import PlayheadSnappingPanel
 
 # BFA - Added icons and floated properties left, also moved options to it's own menu,
@@ -47,7 +44,7 @@ class ANIM_OT_switch_editor_in_driver(Operator):
 
 ##########################################
 
-class GRAPH_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
+class GRAPH_PT_playhead_snapping(Panel):
     bl_space_type = 'GRAPH_EDITOR'
 
 def drivers_editor_footer(layout, context):

@@ -5837,7 +5837,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   
   /*BFA - Toggle Viewer Auto-Positioning*/
   prop = RNA_def_property(srna, "node_use_autoposition_viewer", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "uiflag", USER_NODE_AUTOPOSITION_VIEWER);
+  RNA_def_property_boolean_sdna(prop, nullptr, "uiflag2", USER_NODE_AUTOPOSITION_VIEWER);
   RNA_def_property_ui_text(prop,
                            "Auto-Position Viewer Node",
                            "Automatically reposition the viewer node near the selected socket "
