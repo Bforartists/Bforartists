@@ -499,7 +499,7 @@ static bool do_versions_sequencer_color_tags(Strip *strip, void * /*user_data*/)
 static bool do_versions_sequencer_color_balance_sop(Strip *strip, void * /*user_data*/)
 {
   LISTBASE_FOREACH (StripModifierData *, smd, &strip->modifiers) {
-    if (smd->type == seqModifierType_ColorBalance) {
+    if (smd->type == eSeqModifierType_ColorBalance) {
       StripColorBalance *cb = &((ColorBalanceModifierData *)smd)->color_balance;
       cb->method = SEQ_COLOR_BALANCE_METHOD_LIFTGAMMAGAIN;
       for (int i = 0; i < 3; i++) {
@@ -1754,8 +1754,8 @@ static bool version_merge_still_offsets(Strip *strip, void * /*user_data*/)
 static bool version_set_seq_single_frame_content(Strip *strip, void * /*user_data*/)
 {
   if ((strip->len == 1) &&
-      (strip->type == STRIP_TYPE_IMAGE || ((strip->type & STRIP_TYPE_EFFECT) &&
-                                           blender::seq::effect_get_num_inputs(strip->type) == 0)))
+      (strip->type == STRIP_TYPE_IMAGE ||
+       (strip->is_effect() && blender::seq::effect_get_num_inputs(strip->type) == 0)))
   {
     strip->flag |= SEQ_SINGLE_FRAME_CONTENT;
   }

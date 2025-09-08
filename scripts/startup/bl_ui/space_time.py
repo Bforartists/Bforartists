@@ -8,6 +8,33 @@ from bpy.app.translations import contexts as i18n_contexts
 
 # BFA - Added icons and floated properties left
 
+class TIME_PT_playhead_snapping(Panel):
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Playhead"
+
+    @classmethod
+    def poll(cls, context):
+        del context
+        return True
+
+    def draw(self, context):
+        tool_settings = context.tool_settings
+        layout = self.layout
+        col = layout.column()
+
+        col.prop(tool_settings, "playhead_snap_distance")
+        col.separator()
+        col.label(text="Snap Target")
+        col.prop(tool_settings, "snap_playhead_element", expand=True)
+        col.separator()
+
+        if 'FRAME' in tool_settings.snap_playhead_element:
+            col.prop(tool_settings, "snap_playhead_frame_step")
+        if 'SECOND' in tool_settings.snap_playhead_element:
+            col.prop(tool_settings, "snap_playhead_second_step")
+
+
 def playback_controls(layout, context):
     st = context.space_data
     is_sequencer = st.type == 'SEQUENCE_EDITOR' and st.view_type == 'SEQUENCER'
@@ -46,6 +73,13 @@ def playback_controls(layout, context):
     row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
     row.operator("screen.frame_jump", text="", icon='FF').end = True
     row.operator("screen.animation_cancel", text = "", icon = 'LOOP_BACK').restore_frame = True
+
+    row = layout.row(align=True)
+    row.prop(tool_settings, "use_snap_playhead", text="")
+    sub = row.row(align=True)
+    sub.popover(panel="TIME_PT_playhead_snapping", text="")
+
+    # layout.separator_spacer() #BFA
 
     if scene:
         row = layout.row()
@@ -406,6 +440,7 @@ classes = (
     TIME_PT_keyframing_settings,
     TIME_PT_view_view_options, # BFA - menu
     TIME_PT_auto_keyframing,
+    TIME_PT_playhead_snapping,
 )
 
 if __name__ == "__main__":  # only for live edit.

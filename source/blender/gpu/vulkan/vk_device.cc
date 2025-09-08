@@ -212,6 +212,11 @@ void VKDevice::init_physical_device_properties()
         &vk_physical_device_descriptor_buffer_properties_;
   }
 
+  if (supports_extension(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)) {
+    vk_physical_device_maintenance4_properties_.pNext = vk_physical_device_properties.pNext;
+    vk_physical_device_properties.pNext = &vk_physical_device_maintenance4_properties_;
+  }
+
   vkGetPhysicalDeviceProperties2(vk_physical_device_, &vk_physical_device_properties);
   vk_physical_device_properties_ = vk_physical_device_properties.properties;
 }
@@ -645,11 +650,6 @@ void VKDevice::debug_print()
     const bool is_main = pthread_equal(thread_data->thread_id, pthread_self());
     os << "ThreadData" << (is_main ? " (main-thread)" : "") << ")\n";
     os << " Rendering_depth: " << thread_data->rendering_depth << "\n";
-    for (int resource_pool_index : IndexRange(thread_data->resource_pools.size())) {
-      const bool is_active = thread_data->resource_pool_index == resource_pool_index;
-      os << " Resource Pool (index=" << resource_pool_index << (is_active ? " active" : "")
-         << ")\n";
-    }
   }
   os << "Discard pool\n";
   debug_print(os, orphaned_data);

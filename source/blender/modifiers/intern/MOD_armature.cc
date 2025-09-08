@@ -302,4 +302,5 @@ ModifierTypeInfo modifierType_Armature = {
     /*blend_write*/ nullptr,
     /*blend_read*/ blend_read,
     /*foreach_cache*/ nullptr,
+    /*foreach_working_space_color*/ nullptr,
 };

@@ -303,6 +303,7 @@ const bTheme U_theme_default = {
     .panel_outline = RGBA(0xffffff11),
     .panel_title = RGBA(0xe6e6e6ff),
     .panel_text = RGBA(0xe6e6e6ff),
+    .panel_active = RGBA(0x4772b3ff),
   },
   .common = {
     .anim = {
@@ -355,7 +356,6 @@ const bTheme U_theme_default = {
     .header_text_hi = RGBA(0xffffffff),
     .tab_back = RGBA(0x333333ff),
     .button = RGBA(0x40404000),
-    .active = RGBA(0x5680c2ff),
     .vertex_size = 3,
     .outline_width = 1,
     .facedot_size = 4,
