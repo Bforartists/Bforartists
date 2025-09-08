@@ -231,7 +231,7 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
                 except Exception as e:
                     self.report({'ERROR'}, f"Error assigning collection: {str(e)}")
             else:
-                self.report({'ERROR'}, f"Looks like it coudln't find the Collection socket in the Geometry Nodes setup...")
+                self.report({'ERROR'}, f"Looks like it couldn't find the Collection socket in the Geometry Nodes setup...")
 
 
 
