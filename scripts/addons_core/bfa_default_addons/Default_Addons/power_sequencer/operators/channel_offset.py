@@ -54,7 +54,7 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
             ("down", "down", "Move the selection 1 channel down"),
         ],
         name="Direction",
-        description="Move the sequences up or down",
+        description="Move the strips up or down",
         default="up",
     )
     trim_target_channel: bpy.props.BoolProperty(
@@ -70,7 +70,7 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
 
@@ -87,25 +87,25 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
             limit_channel = min_channel
             comparison_function = max
 
-        selection = [s for s in context.selected_sequences if not s.lock]
+        selection = [s for s in context.selected_strips if not s.lock]
 
         if not selection:
             return {"FINISHED"}
 
-        sequences = sorted(selection, key=attrgetter("channel", "frame_final_start"))
+        strips = sorted(selection, key=attrgetter("channel", "frame_final_start"))
         if self.direction == "up":
-            sequences = [s for s in reversed(sequences)]
+            strips = [s for s in reversed(strips)]
 
-        head = sequences[0]
+        head = strips[0]
         if not self.keep_selection_offset or (
             head.channel != limit_channel and self.keep_selection_offset
         ):
-            for s in sequences:
+            for s in strips:
                 if self.trim_target_channel:
                     channel_trim = s.channel + channel_offset
                     strips_in_trim_channel = [
                         sequence
-                        for sequence in context.sequences
+                        for sequence in context.strips
                         if (sequence.channel == channel_trim)
                     ]
                     if strips_in_trim_channel:
@@ -124,7 +124,7 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
                 start_frame = head.frame_final_start
                 x_difference = 0
                 while not head.channel == limit_channel:
-                    move_selection(context, sequences, -x_difference, channel_offset)
+                    move_selection(context, strips, -x_difference, channel_offset)
                     x_difference = head.frame_final_start - start_frame
                     if x_difference == 0:
                         break

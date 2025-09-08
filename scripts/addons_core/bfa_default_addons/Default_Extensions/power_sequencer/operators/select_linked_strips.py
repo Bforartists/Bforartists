@@ -31,11 +31,11 @@ class POWER_SEQUENCER_OT_select_linked_strips(bpy.types.Operator):
 
     def execute(self, context):
         # save current selection first
-        selection = set(context.selected_sequences)
+        selection = set(context.selected_strips)
 
         # if previously selected strips are linked select links as well to toggle them too
         bpy.ops.sequencer.select_linked()
-        selection_new = set(context.selected_sequences).difference(selection)
+        selection_new = set(context.selected_strips).difference(selection)
         # deselect & select only the linked strips near mouse pointer
         bpy.ops.sequencer.select_all(action="DESELECT")
         # re-enable linked + add selection near mouse pointer
@@ -43,7 +43,7 @@ class POWER_SEQUENCER_OT_select_linked_strips(bpy.types.Operator):
             s.select = True
         bpy.ops.sequencer.select_linked()
         bpy.ops.sequencer.select_linked_pick("INVOKE_DEFAULT", extend=True)
-        selection_new = set(context.selected_sequences)
+        selection_new = set(context.selected_strips)
 
         # identify if linked strips under mouse pointer need to be added or removed
         action = len(selection.intersection(selection_new)) != len(selection_new)

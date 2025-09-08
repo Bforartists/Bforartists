@@ -47,10 +47,10 @@ class POWER_SEQUENCER_OT_crossfade_add(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        sorted_selection = sorted(context.selected_sequences, key=lambda s: s.frame_final_start)
+        sorted_selection = sorted(context.selected_strips, key=lambda s: s.frame_final_start)
         for s in sorted_selection:
             s_next = self.get_next_sequence_after(context, s)
             s_to_offset = s_next.input_1 if hasattr(s_next, "input_1") else s_next
@@ -81,7 +81,7 @@ class POWER_SEQUENCER_OT_crossfade_add(bpy.types.Operator):
         return next_sequence
 
     def apply_crossfade(self, context, strip_from, strip_to):
-        for s in bpy.context.selected_sequences:
+        for s in bpy.context.selected_strips:
             s.select = False
         strip_from.select = True
         strip_to.select = True
@@ -90,7 +90,7 @@ class POWER_SEQUENCER_OT_crossfade_add(bpy.types.Operator):
 
     def offset_sequence_handles(self, context, sequence_1, sequence_2):
         """
-        Moves the handles of the two sequences before adding the crossfade
+        Moves the handles of the two strips before adding the crossfade
         """
         fade_duration = convert_duration_to_frames(context, self.crossfade_duration)
         fade_offset = int(fade_duration / 2)

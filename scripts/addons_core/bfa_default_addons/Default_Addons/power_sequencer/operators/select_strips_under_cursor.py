@@ -29,7 +29,7 @@ class POWER_SEQUENCER_OT_select_strips_under_cursor(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
         if self.deselect_first:

@@ -35,7 +35,7 @@ class POWER_SEQUENCER_OT_speed_remove_effect(bpy.types.Operator):
     def execute(self, context):
         active = context.scene.sequence_editor.active_strip
         sub_strips = []
-        for s in active.sequences:
+        for s in active.strips:
             if s.type == "SPEED":
                 speed_strip = s
             else:

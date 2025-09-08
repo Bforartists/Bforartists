@@ -42,17 +42,17 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        if len(context.selected_sequences) != 2:
+        if len(context.selected_strips) != 2:
             return {"CANCELLED"}
 
-        strip_1 = context.selected_sequences[0]
-        if len(context.selected_sequences) == 1:
+        strip_1 = context.selected_strips[0]
+        if len(context.selected_strips) == 1:
             strip_2 = self.find_closest_strip_vertical(context, strip_1, self.direction)
         else:
-            strip_2 = context.selected_sequences[1]
+            strip_2 = context.selected_strips[1]
         if not strip_2 or strip_1.lock or strip_2.lock:
             return {"CANCELLED"}
 
@@ -74,12 +74,12 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
 
         group_1 = {
             s: s.channel
-            for s in context.sequences
+            for s in context.strips
             if s.frame_final_start == s1_start_2 and s != strip_1
         }
         group_2 = {
             s: s.channel
-            for s in context.sequences
+            for s in context.strips
             if s.frame_final_start == s2_start_2 and s != strip_2
         }
 
@@ -131,7 +131,7 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
         - frame: The frame, the frame_final_start of the strip will be placed
                  at.
         """
-        selected_strips = context.selected_sequences
+        selected_strips = context.selected_strips
         bpy.ops.sequencer.select_all(action="DESELECT")
         strip.select = True
 
@@ -148,7 +148,7 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
         Args:
         - strip: The strip to move.
         """
-        end_frame = max(context.sequences, key=attrgetter("frame_final_end")).frame_final_end
+        end_frame = max(context.strips, key=attrgetter("frame_final_end")).frame_final_end
         self.move_to_frame(strip, end_frame, context)
 
     def fits(self, strip, group, frame, init_channel, target_channel, context):
@@ -171,7 +171,7 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
             if s.channel != group[s] + offset:
                 return False
 
-        return context.selected_sequences
+        return context.selected_strips
 
     def reconstruct(self, strip, init_channel, group, context):
         """
@@ -205,7 +205,7 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
         """
         strips_in_range = (
             s
-            for s in context.sequences
+            for s in context.strips
             if strip.frame_final_start <= s.frame_final_start
             and s.frame_final_end <= strip.frame_final_end
         )

@@ -41,7 +41,7 @@ class POWER_SEQUENCER_OT_playback_speed_set(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
         context.scene.power_sequencer.playback_speed = self.speed

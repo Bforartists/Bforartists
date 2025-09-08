@@ -11,7 +11,7 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
     """
     *Brief* Snap the entire selection to the time cursor.
 
-    Automatically selects sequences if there is no active selection.
+    Automatically selects strips if there is no active selection.
     To snap each strip individually, see Snap
     """
 
@@ -35,15 +35,15 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
-        sequences = (
-            context.selected_sequences
-            if context.selected_sequences
+        strips = (
+            context.selected_strips
+            if context.selected_strips
             else get_sequences_under_cursor(context)
         )
-        frame_first = min(sequences, key=lambda s: s.frame_final_start).frame_final_start
+        frame_first = min(strips, key=lambda s: s.frame_final_start).frame_final_start
         time_offset = context.scene.frame_current - frame_first
-        move_selection(context, sequences, time_offset)
+        move_selection(context, strips, time_offset)
         return {"FINISHED"}

@@ -16,9 +16,9 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 def find_sequences_before(context, strip):
     """
-    Returns a list of sequences that are before the strip in the current context
+    Returns a list of strips that are before the strip in the current context
     """
-    return [s for s in context.sequences if s.frame_final_end <= strip.frame_final_start]
+    return [s for s in context.strips if s.frame_final_end <= strip.frame_final_start]
 
 
 class POWER_SEQUENCER_OT_concatenate_strips(bpy.types.Operator):
@@ -81,16 +81,16 @@ class POWER_SEQUENCER_OT_concatenate_strips(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
-        if not context.selected_sequences:
+        if not context.selected_strips:
             frame, channel = get_mouse_frame_and_channel(context, event)
             bpy.ops.power_sequencer.select_closest_to_mouse(frame=frame, channel=channel)
         return self.execute(context)
 
     def execute(self, context):
-        selection = context.selected_sequences
+        selection = context.selected_strips
         channels = {s.channel for s in selection}
 
         is_one_strip_per_channel = len(selection) == len(channels)
@@ -125,8 +125,8 @@ class POWER_SEQUENCER_OT_concatenate_strips(bpy.types.Operator):
 
         return {"FINISHED"}
 
-    def concatenate(self, context, strip_target, sequences, force_all=False):
-        to_concatenate = sorted(sequences, key=attrgetter("frame_final_start"))
+    def concatenate(self, context, strip_target, strips, force_all=False):
+        to_concatenate = sorted(strips, key=attrgetter("frame_final_start"))
         to_concatenate = (
             list(reversed(to_concatenate)) if not self.is_towards_left else to_concatenate
         )

@@ -31,7 +31,7 @@ class POWER_SEQUENCER_OT_markers_snap_matching_strips(bpy.types.Operator):
     def execute(self, context):
         timeline_markers = context.scene.timeline_markers
 
-        for strip in context.selected_sequences:
+        for strip in context.selected_strips:
             for marker in timeline_markers:
                 if marker.name in strip.name:
                     strip.frame_start = marker.frame - strip.frame_offset_start

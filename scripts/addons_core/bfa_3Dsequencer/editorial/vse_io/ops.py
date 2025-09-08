@@ -83,7 +83,7 @@ class IMPORT_OT_otio(bpy.types.Operator, ImportHelper):
         :param duration: Strip duration.
         :param channel: Strip channel.
         """
-        new_strip = self.seq_editor.sequences.new_effect(
+        new_strip = self.seq_editor.strips.new_effect(
             name=name,
             type="COLOR",
             channel=channel,
@@ -273,7 +273,7 @@ class EXPORT_OT_otio(bpy.types.Operator, ExportHelper):
 
         # Build a map of strips per channels.
         tracks = {}
-        for strip in seq_editor.sequences:
+        for strip in seq_editor.strips:
             if strip.channel not in tracks:
                 tracks[strip.channel] = []
             tracks[strip.channel].append(strip)
@@ -329,7 +329,7 @@ class EXPORT_OT_otio(bpy.types.Operator, ExportHelper):
         # Sort strips by frame start.
         sorted_strip = sorted(strips, key=lambda x: x.frame_final_start)
         # Initialize insert time using first strip start frame.
-        # Getting first element is safe, sequences can not be empty here.
+        # Getting first element is safe, strips can not be empty here.
         insert_time = frame_start
 
         # Iterate over strips.

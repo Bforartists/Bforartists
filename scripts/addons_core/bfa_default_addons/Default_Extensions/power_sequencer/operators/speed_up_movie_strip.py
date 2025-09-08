@@ -49,7 +49,7 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
     speed_factor: bpy.props.IntProperty(
         name="Speed factor", description="How many times the footage gets sped up", default=2, min=0
     )
-    individual_sequences: bpy.props.BoolProperty(
+    individual_strips: bpy.props.BoolProperty(
         name="Affect individual strips",
         description="Speed up every VIDEO strip individually",
         default=False,
@@ -57,12 +57,12 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        sequences = [s for s in context.selected_sequences if s.type in SequenceTypes.VIDEO]
+        strips = [s for s in context.selected_strips if s.type in SequenceTypes.VIDEO]
 
-        if not sequences:
+        if not strips:
             self.report(
                 {"ERROR_INVALID_INPUT"},
                 "No Movie meta_strip or Metastrips selected. Operation cancelled",
@@ -70,28 +70,28 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
             return {"FINISHED"}
 
         selection_blocks = []
-        if self.individual_sequences:
-            selection_blocks = [[s] for s in sequences]
+        if self.individual_strips:
+            selection_blocks = [[s] for s in strips]
         else:
-            selection_blocks = slice_selection(context, sequences)
+            selection_blocks = slice_selection(context, strips)
 
-        for sequences in selection_blocks:
-            self.speed_effect_add(context, sequences)
+        for strips in selection_blocks:
+            self.speed_effect_add(context, strips)
 
         self.report(
             {"INFO"}, "Successfully processed " + str(len(selection_blocks)) + " selection blocks"
         )
         return {"FINISHED"}
 
-    def speed_effect_add(self, context, sequences):
-        if not sequences:
+    def speed_effect_add(self, context, strips):
+        if not strips:
             return
 
         sequence_editor = context.scene.sequence_editor
         sequencer = bpy.ops.sequencer
 
         sequencer.select_all(action="DESELECT")
-        for s in sequences:
+        for s in strips:
             s.select = True
         sequencer.meta_make()
         meta_strip = sequence_editor.active_strip
@@ -109,5 +109,5 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
         meta_strip.select = True
         sequencer.meta_make()
         sequence_editor.active_strip.name = (
-            meta_strip.sequences[0].name + " " + str(self.speed_factor) + "x"
+            meta_strip.strips[0].name + " " + str(self.speed_factor) + "x"
         )

@@ -26,10 +26,10 @@ class POWER_SEQUENCER_OT_deselect_handles_and_grab(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        for s in context.selected_sequences:
+        for s in context.selected_strips:
             s.select_left_handle = False
             s.select_right_handle = False
             s.select = True

@@ -26,15 +26,15 @@ class POWER_SEQUENCER_OT_transitions_remove(bpy.types.Operator):
     bl_description = doc_brief(doc["description"])
     bl_options = {"REGISTER", "UNDO"}
 
-    sequences_override = []
+    strips_override = []
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         to_process = (
-            self.sequences_override if self.sequences_override else context.selected_sequences
+            self.strips_override if self.strips_override else context.selected_strips
         )
 
         transitions = [s for s in to_process if s.type in SequenceTypes.TRANSITION]
@@ -42,7 +42,7 @@ class POWER_SEQUENCER_OT_transitions_remove(bpy.types.Operator):
             return {"FINISHED"}
 
         saved_selection = [
-            s for s in context.selected_sequences if s.type not in SequenceTypes.TRANSITION
+            s for s in context.selected_strips if s.type not in SequenceTypes.TRANSITION
         ]
         bpy.ops.sequencer.select_all(action="DESELECT")
         for transition in transitions:

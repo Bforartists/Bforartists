@@ -38,7 +38,7 @@ class POWER_SEQUENCER_OT_grab_sequence_handles(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
         self.frame, self.channel = context.region.view2d.region_to_view(
@@ -47,12 +47,12 @@ class POWER_SEQUENCER_OT_grab_sequence_handles(bpy.types.Operator):
         return self.execute(context)
 
     def execute(self, context):
-        selection = context.selected_sequences
+        selection = context.selected_strips
         if self.always_find_closest or not selection:
             if self.frame == -1:
                 return {"CANCELLED"}
             bpy.ops.power_sequencer.select_closest_to_mouse(frame=self.frame, channel=self.channel)
-            for s in context.selected_sequences:
+            for s in context.selected_strips:
                 self.select_closest_handle(s)
         else:
             bpy.ops.sequencer.select_all(action="DESELECT")

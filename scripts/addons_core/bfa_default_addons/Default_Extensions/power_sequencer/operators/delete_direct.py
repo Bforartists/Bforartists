@@ -42,16 +42,16 @@ class POWER_SEQUENCER_OT_delete_direct(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def invoke(self, context, event):
         frame, channel = get_mouse_frame_and_channel(context, event)
-        if not context.selected_sequences:
+        if not context.selected_strips:
             bpy.ops.power_sequencer.select_closest_to_mouse(frame=frame, channel=channel)
         return self.execute(context)
 
     def execute(self, context):
-        selection = context.selected_sequences
+        selection = context.selected_strips
         if self.is_removing_transitions and bpy.ops.power_sequencer.transitions_remove.poll():
             bpy.ops.power_sequencer.transitions_remove()
         bpy.ops.sequencer.delete()

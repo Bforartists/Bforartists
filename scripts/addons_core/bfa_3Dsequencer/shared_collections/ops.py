@@ -25,10 +25,10 @@ class COLLECTION_OT_shared_folder_from_collection(bpy.types.Operator):
 def get_scenes_from_selected_sequences(
     sed: bpy.types.SequenceEditor,
 ) -> list[bpy.types.Scene]:
-    """Return scenes from the list of selected sequences in `sed`."""
+    """Return scenes from the list of selected strips in `sed`."""
     return [
         s.scene
-        for s in sed.sequences
+        for s in sed.strips
         if isinstance(s, bpy.types.SceneStrip) and s.select and s.scene
     ]
 

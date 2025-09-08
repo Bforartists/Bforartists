@@ -13,9 +13,9 @@ class POWER_SEQUENCER_OT_preview_to_selection(bpy.types.Operator):
     """
     *brief* Sets the timeline preview range to match the selection
 
-    Sets the scene frame start to the earliest frame start of selected sequences and the scene
-    frame end to the last frame of selected sequences.
-    Uses all sequences in the current context if no sequences are selected.
+    Sets the scene frame start to the earliest frame start of selected strips and the scene
+    frame end to the last frame of selected strips.
+    Uses all strips in the current context if no strips are selected.
     """
 
     doc = {
@@ -34,14 +34,14 @@ class POWER_SEQUENCER_OT_preview_to_selection(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
-        sequences = (
-            context.selected_sequences
-            if len(context.selected_sequences) >= 1
-            else context.sequences
+        strips = (
+            context.selected_strips
+            if len(context.selected_strips) >= 1
+            else context.strips
         )
-        frame_start, frame_end = get_frame_range(sequences)
+        frame_start, frame_end = get_frame_range(strips)
         set_preview_range(context, frame_start, frame_end - 1)
         return {"FINISHED"}

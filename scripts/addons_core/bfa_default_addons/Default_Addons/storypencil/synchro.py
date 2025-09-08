@@ -322,9 +322,9 @@ def get_main_strip(wm: WindowManager) -> SceneStrip:
         if not main_window or not main_window.scene.sequence_editor:
             return None
         seq_editor = main_window.scene.sequence_editor
-        return seq_editor.sequences.get(wm.storypencil_settings.main_strip_name, None)
+        return seq_editor.strips.get(wm.storypencil_settings.main_strip_name, None)
     else:
-        seq_editor = main_scene.sequence_editor.sequences
+        seq_editor = main_scene.sequence_editor.strips
         for strip in seq_editor:
             if strip.type != 'SCENE':
                 continue
@@ -350,24 +350,24 @@ class STORYPENCIL_OT_SyncToggleSecondary(Operator):
 
 def get_sequences_at_frame(
         frame: int,
-        sequences: Sequence[Sequence]) -> Sequence[bpy.types.Strip]:
+        strips: Sequence[Sequence]) -> Sequence[bpy.types.Strip]:
     """ Get all sequencer strips at given frame.
 
     :param frame: the frame to consider
     """
-    return [s for s in sequences if frame >= s.frame_start + s.frame_offset_start and
+    return [s for s in strips if frame >= s.frame_start + s.frame_offset_start and
                                     frame < s.frame_start + s.frame_offset_start + s.frame_final_duration and
                                     s.type == 'SCENE']
 
 
 def get_sequence_at_frame(
         frame: int,
-        sequences: Sequence[bpy.types.Strip] = None,
+        strips: Sequence[bpy.types.Strip] = None,
         skip_muted: bool = True,
 ) -> Tuple[bpy.types.Strip, int]:
     """
     Get the higher sequence strip in channels stack at current frame.
-    Recursively enters scene sequences and returns the original frame in the
+    Recursively enters scene strips and returns the original frame in the
     returned strip's time referential.
 
     :param frame: the frame to consider
@@ -375,7 +375,7 @@ def get_sequence_at_frame(
     :returns: the sequence strip and the frame in strip's time referential
     """
 
-    strips = get_sequences_at_frame(frame, sequences or bpy.context.sequences)
+    strips = get_sequences_at_frame(frame, strips or bpy.context.strips)
 
     # exclude muted strips
     if skip_muted:
@@ -393,13 +393,13 @@ def get_sequence_at_frame(
     strip = sorted(strips, key=lambda x: x.channel)[-1]
     # go deeper when current strip is a MetaStrip
     if isinstance(strip, MetaStrip):
-        return get_sequence_at_frame(frame, strip.sequences, skip_muted)
+        return get_sequence_at_frame(frame, strip.strips, skip_muted)
     if isinstance(strip, SceneStrip):
         # apply time offset to get in sequence's referential
         frame = frame - strip.frame_start + strip.scene.frame_start
         # enter scene's sequencer if used as input
         if strip.scene_input == 'SEQUENCER':
-            return get_sequence_at_frame(frame, strip.scene.sequence_editor.sequences)
+            return get_sequence_at_frame(frame, strip.scene.sequence_editor.strips)
     return strip, frame
 
 
@@ -471,9 +471,9 @@ def update_sync(context: Context, win_id=None):
     if not main_scene.sequence_editor:
         return
 
-    # return if scene's sequence editor has no sequences
-    sequences = main_scene.sequence_editor.sequences
-    if not sequences:
+    # return if scene's sequence editor has no strips
+    strips = main_scene.sequence_editor.strips
+    if not strips:
         return
 
     # bidirectionnal sync: change main time from secondary window
@@ -484,7 +484,7 @@ def update_sync(context: Context, win_id=None):
         # get strip under time cursor in main window
         strip, old_frame = get_sequence_at_frame(
             main_scene.frame_current,
-            sequences=sequences
+            strips=strips
         )
         # only do bidirectional sync if secondary window matches the strip at current time in main
         if not isinstance(strip, SceneStrip) or strip.scene != context.scene:
@@ -503,7 +503,7 @@ def update_sync(context: Context, win_id=None):
         if new_main_frame < f_start or new_main_frame >= f_end:
             new_strip, _ = get_sequence_at_frame(
                 new_main_frame,
-                main_scene.sequence_editor.sequences,
+                main_scene.sequence_editor.strips,
             )
             update_main_time = isinstance(new_strip, SceneStrip)
         if update_main_time:
@@ -531,7 +531,7 @@ def update_sync(context: Context, win_id=None):
     if not secondary_windows:
         return
 
-    seq, frame = get_sequence_at_frame(main_scene.frame_current, sequences)
+    seq, frame = get_sequence_at_frame(main_scene.frame_current, strips)
 
     # return if no sequence at current time or not a scene strip
     if not isinstance(seq, SceneStrip) or not seq.scene:
@@ -713,12 +713,12 @@ class STORYPENCIL_OT_Switch(Operator):
     # Get active strip
     def act_strip(self, context):
         scene = context.scene
-        sequences = scene.sequence_editor.sequences
-        if not sequences:
+        strips = scene.sequence_editor.strips
+        if not strips:
             return None
         # Get strip under time cursor
         strip, old_frame = get_sequence_at_frame(
-            scene.frame_current, sequences=sequences)
+            scene.frame_current, strips=strips)
         return strip
 
     # ------------------------------
@@ -826,11 +826,11 @@ class STORYPENCIL_OT_TabSwitch(Operator):
             bpy.ops.storypencil.sync_set_main('INVOKE_DEFAULT', True)
         else:
             scene = context.scene
-            sequences = scene.sequence_editor.sequences
-            if sequences:
+            strips = scene.sequence_editor.strips
+            if strips:
                 # Get strip under time cursor
                 strip, old_frame = get_sequence_at_frame(
-                    scene.frame_current, sequences=sequences)
+                    scene.frame_current, strips=strips)
                 if strip and strip.type == 'SCENE':
                     bpy.ops.storypencil.switch('INVOKE_DEFAULT', True)
 

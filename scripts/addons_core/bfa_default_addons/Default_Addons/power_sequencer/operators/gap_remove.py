@@ -49,19 +49,19 @@ class POWER_SEQUENCER_OT_gap_remove(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
         frame = self.frame if self.frame >= 0 else context.scene.frame_current
-        sequences = (
-            [s for s in context.sequences if not s.lock]
+        strips = (
+            [s for s in context.strips if not s.lock]
             if self.ignore_locked
-            else context.sequences
+            else context.strips
         )
-        sequences = [
-            s for s in sequences if s.frame_final_start >= frame or s.frame_final_end > frame
+        strips = [
+            s for s in strips if s.frame_final_start >= frame or s.frame_final_end > frame
         ]
-        sequence_blocks = slice_selection(context, sequences)
+        sequence_blocks = slice_selection(context, strips)
         if not sequence_blocks:
             return {"FINISHED"}
 
@@ -81,17 +81,17 @@ class POWER_SEQUENCER_OT_gap_remove(bpy.types.Operator):
             context.scene.frame_current = gap_frame
         return {"FINISHED"}
 
-    def find_gap_frame(self, context, frame, sorted_sequences):
+    def find_gap_frame(self, context, frame, sorted_strips):
         """
         Finds and returns the frame at which the gap starts.
-        Takes a list sequences sorted by frame_final_start.
+        Takes a list strips sorted by frame_final_start.
         """
-        strips_start = min(sorted_sequences, key=attrgetter("frame_final_start")).frame_final_start
-        strips_end = max(sorted_sequences, key=attrgetter("frame_final_end")).frame_final_end
+        strips_start = min(sorted_strips, key=attrgetter("frame_final_start")).frame_final_start
+        strips_end = max(sorted_strips, key=attrgetter("frame_final_end")).frame_final_end
 
         gap_frame = -1
         if strips_start > frame:
-            strips_before_frame_start = [s for s in context.sequences if s.frame_final_end <= frame]
+            strips_before_frame_start = [s for s in context.strips if s.frame_final_end <= frame]
             frame_target = 0
             if strips_before_frame_start:
                 frame_target = max(
@@ -104,7 +104,7 @@ class POWER_SEQUENCER_OT_gap_remove(bpy.types.Operator):
 
     def gaps_remove(self, context, sequence_blocks, gap_frame_start):
         """
-        Recursively removes gaps between blocks of sequences.
+        Recursively removes gaps between blocks of strips.
         """
 
         gap_frame = gap_frame_start

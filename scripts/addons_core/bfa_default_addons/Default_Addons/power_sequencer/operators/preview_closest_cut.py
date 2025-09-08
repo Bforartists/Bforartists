@@ -47,7 +47,7 @@ class POWER_SEQUENCER_OT_preview_closest_cut(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
         scene = context.scene
@@ -65,14 +65,14 @@ class POWER_SEQUENCER_OT_preview_closest_cut(bpy.types.Operator):
             return {"CANCELLED"}
 
         if scene.frame_preview_start == start and scene.frame_preview_end == end:
-            start, end = get_frame_range(context.sequences)
+            start, end = get_frame_range(context.strips)
         set_preview_range(context, start, end)
         return {"FINISHED"}
 
     def find_closest_cut_frame(self, context):
         last_distance = 100000
         closest_cut_frame = 0
-        for s in context.sequences:
+        for s in context.strips:
             cuts = [s.frame_final_start, s.frame_final_end]
             for cut_frame in cuts:
                 distance_to_cut = abs(cut_frame - context.scene.frame_current)

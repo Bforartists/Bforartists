@@ -91,7 +91,7 @@ class STORYPENCIL_OT_RenderAction(Operator):
             'FFMPEG', 'AVI_JPEG', 'AVI_RAW'}
         step = scene.storypencil_render_step
 
-        sequences = scene.sequence_editor.sequences_all
+        strips = scene.sequence_editor.strips_all
         prv_start = scene.frame_start
         prv_end = scene.frame_end
         prv_frame = bpy.context.scene.frame_current
@@ -109,7 +109,7 @@ class STORYPENCIL_OT_RenderAction(Operator):
         # Create list of selected strips because the selection is changed when adding new strips
         Strips = []
         Metas = []
-        for sq in sequences:
+        for sq in strips:
             if sq.type in ('SCENE', 'META'):
                 if only_selected is False or sq.select is True:
                     if sq.type == 'META' and is_video_output:

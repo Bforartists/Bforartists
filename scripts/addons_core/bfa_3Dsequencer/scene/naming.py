@@ -223,14 +223,14 @@ class ShotNaming:
         """
         return [
             s
-            for s in sed.sequences
+            for s in sed.strips
             if isinstance(s, bpy.types.SceneStrip) and self.match_name(s.name)
         ]
 
     def next_shot_name_from_sequences(
         self, sed: bpy.types.SequenceEditor, custom_increment: Optional[int] = None
     ) -> str:
-        """Get next scene name from the sequences contained in the given sequence editor.
+        """Get next scene name from the strips contained in the given sequence editor.
 
         :param sed: The sequence editor.
         :param custom_increment: Optional custom increment.
