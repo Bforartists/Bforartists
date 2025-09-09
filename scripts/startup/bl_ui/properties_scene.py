@@ -361,7 +361,7 @@ class SCENE_PT_simulation(SceneButtonsPanel, Panel):
         scene = context.scene
 
         col = layout.column()
-        split = col.split(factor=.4) # BFA
+        split = col.split(factor=.425) # BFA
         split.use_property_split=False
         split.prop(scene, "use_custom_simulation_range", text="Simulation Range")
 
