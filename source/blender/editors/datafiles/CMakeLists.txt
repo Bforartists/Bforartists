@@ -1769,7 +1769,10 @@ if(WITH_BLENDER)
       seq_snap_to_frame
       seq_splitview
       seq_strip_duplicate
+      seq_strip_expand
+      seq_strip_overwrite
       seq_strip_meta
+      seq_strip_shuffle
       seq_swap_left
       seq_swap_right
       seq_text
