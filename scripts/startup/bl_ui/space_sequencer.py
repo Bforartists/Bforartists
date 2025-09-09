@@ -204,7 +204,7 @@ class SEQUENCER_HT_header(Header):
 
         if sequencer_tool_settings and st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
-            row.prop(sequencer_tool_settings, "overlap_mode", text="")
+            row.prop(sequencer_tool_settings, "overlap_mode", text="", icon_only=True) # BFA - icon only
 
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
