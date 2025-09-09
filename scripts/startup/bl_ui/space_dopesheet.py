@@ -796,7 +796,7 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.duplicate_move", icon="DUPLICATE")
         layout.operator("action.delete", icon="DELETE")
         if ob and ob.type == 'GREASEPENCIL':
-            layout.operator("grease_pencil.delete_breakdown")
+            layout.operator("grease_pencil.delete_breakdown", icon="DELETE")
 
         layout.separator()
 
