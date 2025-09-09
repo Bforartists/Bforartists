@@ -190,7 +190,7 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
         row = layout.row()  # BFA - 3D Sequencer
-        row.label(text="Timeline:", icon='VIEW3D')  # BFA - 3D Sequencer
+        row.label(icon='PINNED' if context.workspace.sequencer_scene else 'UNPINNED')  # BFA - 3D Sequencer
 
         # BFA - wip merge of new sequencer
         if st.view_type == 'SEQUENCER':
@@ -208,11 +208,12 @@ class SEQUENCER_HT_header(Header):
             row.prop(sequencer_tool_settings, "overlap_mode", text="")
 
         # if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
-        row = layout.row(align=True)
-        row.prop(tool_settings, "use_snap_sequencer", text="")
-        sub = row.row(align=True)
-        sub.popover(panel="SEQUENCER_PT_snapping", text="",) # BFA - removed title
-        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
+        if tool_settings:
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_snap_sequencer", text="")
+            sub = row.row(align=True)
+            sub.popover(panel="SEQUENCER_PT_snapping", text="",) # BFA - removed title
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'} and tool_settings:
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap_playhead", text="") # BFA - Exposed to top level
             row.popover(panel="SEQUENCER_PT_playhead_snapping")

@@ -18,8 +18,9 @@ def playback_controls(layout, context):
 
     row = layout.row(align=True)
 
-    if is_sequencer:
-        layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
+    # BFA - exposed to top sequener header, where contextually relevant
+    #if is_sequencer:
+    #    layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
 
     layout.separator_spacer()
     #BFA - moved dropdowns to consistently float right
