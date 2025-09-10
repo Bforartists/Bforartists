@@ -4483,8 +4483,14 @@ static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
   RNA_int_set_array(&ptr, "cursor", pos);
 
   layout->separator();
-
   layout->op("SCREEN_OT_area_join", IFACE_("Move/Join/Dock Area"), ICON_AREA_DOCK);
+
+  /* BFA - show/hide the editor type menu*/
+  layout->op("SCREEN_OT_header_toggle_editortypemenu",
+               IFACE_("Hide Editor Type Menu"),
+               (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+               blender::wm::OpCallContext::InvokeDefault,
+               UI_ITEM_NONE);
 
   layout->separator();
 
@@ -4496,9 +4502,9 @@ static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
   RNA_boolean_set(&ptr, "use_hide_panels", true);
 
   layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW_MAIN);
+
   layout->separator();
   layout->op("SCREEN_OT_area_close", IFACE_("Close Area"), ICON_X);
-
   UI_popup_menu_end(C, pup);
 }
 
