@@ -61,9 +61,11 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   col->prop(&view_transform_ptr, "exposure", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&view_transform_ptr, "gamma", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
+  // BFA - Align bool properties left
+  col->use_property_split_set(false); 
+
   uiLayout *row = &col->row(false);
   row = &col->row(true); // bfa - our layout
-  row->use_property_decorate_set(false); // bfa - use_property_split = False
   row->separator(); // bfa - Indent
   row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
   row->prop(&view_transform_ptr, "use_curve_mapping", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
@@ -76,7 +78,6 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   }
 
   row = &col->row(true); // bfa - our layout
-  row->use_property_decorate_set(false); // bfa - use_property_split = False
   row->separator(); // bfa - Indent
   row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
   row->prop(&view_transform_ptr, "use_white_balance", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
