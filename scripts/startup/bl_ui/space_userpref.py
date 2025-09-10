@@ -313,6 +313,7 @@ class USERPREF_PT_interface_accessibility(InterfacePanel, CenterAlignMixIn, Pane
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False # BFA - Align bool property left
         flow.prop(view, "use_reduce_motion")
 
 
