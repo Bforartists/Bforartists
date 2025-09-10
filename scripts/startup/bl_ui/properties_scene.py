@@ -329,7 +329,7 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
 
         col.separator()
 
-        layout.operator("sound.bake_animation")
+        layout.operator("sound.bake_animation", icon="FILE_REFRESH") #BFA - added icon
 
 
 class SCENE_PT_physics(SceneButtonsPanel, Panel):
@@ -398,7 +398,7 @@ class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):
         rbw = scene.rigidbody_world
 
         if rbw is None:
-            layout.operator("rigidbody.world_add")
+            layout.operator("rigidbody.world_add", icon="ADD") #BFA - added icon
         else:
             layout.operator("rigidbody.world_remove")
 
@@ -494,7 +494,7 @@ class SCENE_PT_eevee_light_probes(SceneButtonsPanel, Panel):
         col.prop(props, "gi_cubemap_resolution", text="Spheres Resolution")
 
         row = col.row(align=True)
-        row.operator("object.lightprobe_cache_bake", text="Bake All Light Probe Volumes").subset = 'ALL'
+        row.operator("object.lightprobe_cache_bake", text="Bake All Light Probe Volumes", icon="BAKE").subset = 'ALL' #BFA - added icon
         row.operator("object.lightprobe_cache_free", text="", icon='TRASH').subset = 'ALL'
 
 
