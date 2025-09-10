@@ -1697,7 +1697,7 @@ class SEQUENCER_MT_strip(Menu):
             layout.operator("sequencer.copy", text="Copy", icon="COPYDOWN")
             layout.operator("sequencer.paste", text="Paste", icon="PASTEDOWN")
             layout.operator("sequencer.duplicate_move", icon="DUPLICATE")
-            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked")
+            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked", icon="DUPLICATE")
 
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
