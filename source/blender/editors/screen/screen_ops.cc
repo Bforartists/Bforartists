@@ -4490,12 +4490,12 @@ static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
 
   layout->op("SCREEN_OT_screen_full_area",
              area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
-             ICON_NONE);
+             ICON_MAXIMIZE_AREA);
 
-  ptr = layout->op("SCREEN_OT_screen_full_area", IFACE_("Focus Mode"), ICON_NONE);
+  ptr = layout->op("SCREEN_OT_screen_full_area", IFACE_("Focus Mode"), ICON_VIEW_SELECTED);
   RNA_boolean_set(&ptr, "use_hide_panels", true);
 
-  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NONE);
+  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW_MAIN);
   layout->separator();
   layout->op("SCREEN_OT_area_close", IFACE_("Close Area"), ICON_X);
 
