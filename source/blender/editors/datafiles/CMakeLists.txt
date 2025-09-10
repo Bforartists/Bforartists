@@ -2146,6 +2146,7 @@ if(WITH_BLENDER)
       wordwrap_off
       wordwrap_on
       workspace
+      workspace_delete
       world
       wpaint_hlt
 
