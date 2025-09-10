@@ -74,11 +74,6 @@ def playback_controls(layout, context):
     row.operator("screen.frame_jump", text="", icon='FF').end = True
     row.operator("screen.animation_cancel", text = "", icon = 'LOOP_BACK').restore_frame = True
 
-    row = layout.row(align=True)
-    row.prop(tool_settings, "use_snap_playhead", text="")
-    sub = row.row(align=True)
-    sub.popover(panel="TIME_PT_playhead_snapping", text="")
-
     # layout.separator_spacer() #BFA
 
     if scene:
@@ -111,6 +106,12 @@ def playback_controls(layout, context):
         row.operator("anim.keyframe_delete_v3d", text="", icon='KEYFRAMES_REMOVE') # BFA - updated to work like it would in the 3D View (as expected)
 
         layout.separator_spacer()
+
+        # BFA - moved to end with options consistently
+        row = layout.row(align=True)
+        row.prop(tool_settings, "use_snap_playhead", text="")
+        sub = row.row(align=True)
+        sub.popover(panel="TIME_PT_playhead_snapping", text="")
 
         row = layout.row(align=True)
         sub = row.row(align=True)
