@@ -61,29 +61,30 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   col->prop(&view_transform_ptr, "exposure", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(&view_transform_ptr, "gamma", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
+  // BFA - Align bool properties left
+  col->use_property_split_set(false); 
+
   uiLayout *row = &col->row(false);
   row = &col->row(true); // bfa - our layout
-  row->use_property_decorate_set(false); // bfa - use_property_split = False
   row->separator(); // bfa - Indent
   row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
   row->prop(&view_transform_ptr, "use_curve_mapping", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
   if (!(view_settings->flag & COLORMANAGE_VIEW_USE_CURVES)) { // bfa - if unchecked, show icon
     row->label("", ICON_DISCLOSURE_TRI_RIGHT);  // bfa - icon
-  }
-  if (view_settings->flag & COLORMANAGE_VIEW_USE_CURVES) {
+  } else {
+    row->label("", ICON_DISCLOSURE_TRI_DOWN);  // bfa - icon
     uiTemplateCurveMapping(
         col, &view_transform_ptr, "curve_mapping", 'c', true, false, false, false);
   }
 
   row = &col->row(true); // bfa - our layout
-  row->use_property_decorate_set(false); // bfa - use_property_split = False
   row->separator(); // bfa - Indent
   row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
   row->prop(&view_transform_ptr, "use_white_balance", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
   if (!(view_settings->flag & COLORMANAGE_VIEW_USE_WHITE_BALANCE)) { // bfa - if unchecked, show icon
     row->label("", ICON_DISCLOSURE_TRI_RIGHT);  // bfa - icon
-  }
-  if (view_settings->flag & COLORMANAGE_VIEW_USE_WHITE_BALANCE) {
+  } else {
+    row->label("", ICON_DISCLOSURE_TRI_DOWN);  // bfa - icon
     col->prop(
         &view_transform_ptr, "white_balance_temperature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(&view_transform_ptr, "white_balance_tint", UI_ITEM_NONE, std::nullopt, ICON_NONE);
