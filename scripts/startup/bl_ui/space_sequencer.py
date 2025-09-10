@@ -1423,8 +1423,8 @@ class SEQUENCER_MT_strip_animation(Menu):
             text="Insert Keyframe with Keying Set",
             icon="KEYFRAMES_INSERT").always_prompt = True
         layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon="KEYINGSET")
-        layout.operator("anim.keyframe_delete_vse", text="Delete Keyframes")
-        layout.operator("anim.keyframe_clear_vse", text="Clear Keyframes...")
+        layout.operator("anim.keyframe_delete_vse", text="Delete Keyframes", icon="KEYFRAMES_REMOVE")
+        layout.operator("anim.keyframe_clear_vse", text="Clear Keyframes...", icon="KEYFRAMES_CLEAR")
 
 
 class SEQUENCER_MT_strip_mirror(Menu):
