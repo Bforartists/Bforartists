@@ -2511,6 +2511,7 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
             OperatorEntry("FunctionNodeStringLength", pad=10),
             OperatorEntry("FunctionNodeFindInString", pad=10),
             OperatorEntry("GeometryNodeStringToCurves", pad=5),
+            OperatorEntry("FunctionNodeStringToValue", pad=7),
             OperatorEntry("FunctionNodeValueToString", pad=7),
             OperatorEntry("FunctionNodeInputSpecialCharacters", pad=0),
         )

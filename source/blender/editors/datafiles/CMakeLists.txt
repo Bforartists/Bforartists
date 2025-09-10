@@ -1914,6 +1914,7 @@ if(WITH_BLENDER)
       string_length
       string_substring
       string_to_curve
+      string_to_value
       stroke
       stucci_tex
       stylus_pressure
