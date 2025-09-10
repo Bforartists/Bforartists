@@ -4498,7 +4498,7 @@ static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
              area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
              ICON_MAXIMIZE_AREA);
 
-  ptr = layout->op("SCREEN_OT_screen_full_area", IFACE_("Focus Mode"), ICON_VIEW_SELECTED);
+  ptr = layout->op("SCREEN_OT_screen_full_area", IFACE_("Toggle Fullscreen Area"), ICON_FULLSCREEN_ENTER);
   RNA_boolean_set(&ptr, "use_hide_panels", true);
 
   layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW_MAIN);
