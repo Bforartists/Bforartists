@@ -400,7 +400,7 @@ class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):
         if rbw is None:
             layout.operator("rigidbody.world_add", icon="ADD") #BFA - added icon
         else:
-            layout.operator("rigidbody.world_remove")
+            layout.operator("rigidbody.world_remove", icon="REMOVE") #BFA - added icon
 
 
 class RigidBodySubPanel(SceneButtonsPanel):
