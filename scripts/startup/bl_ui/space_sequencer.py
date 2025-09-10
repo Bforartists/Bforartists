@@ -3031,16 +3031,18 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
         if strip.scene_input == 'CAMERA':
             layout = layout.column(align=True)
             layout.label(text="Show")
-            layout.use_property_split = False
+            
+            # BFA - Align bool properties left and indent
             row = layout.row()
             row.separator()
-            layout.prop(strip, "use_annotations", text="Annotations")
+            col = row.column(align=True)
+            col.use_property_split = False
+            
+            col.prop(strip, "use_annotations", text="Annotations")
             if scene:
                 # Warning, this is not a good convention to follow.
                 # Expose here because setting the alpha from the "Render" menu is very inconvenient.
-                row = layout.row()
-                row.separator()
-                row.prop(scene.render, "film_transparent")
+                col.prop(scene.render, "film_transparent")
 
 
 class SEQUENCER_PT_scene_sound(SequencerButtonsPanel, Panel):
