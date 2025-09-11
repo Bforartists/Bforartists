@@ -1435,6 +1435,8 @@ static StructRNA *rna_StripModifier_refine(PointerRNA *ptr)
       return &RNA_CurvesModifier;
     case eSeqModifierType_HueCorrect:
       return &RNA_HueCorrectModifier;
+    case eSeqModifierType_Mask:
+      return &RNA_MaskStripModifier;
     case eSeqModifierType_BrightContrast:
       return &RNA_BrightContrastModifier;
     case eSeqModifierType_WhiteBalance:
@@ -2520,7 +2522,8 @@ static void rna_def_editor(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
   srna = RNA_def_struct(brna, "SequenceEditor", nullptr);
-  RNA_def_struct_ui_text(srna, "Sequence Editor", "Sequence editing data for a Scene data"); /* BFA */
+  RNA_def_struct_ui_text(
+      srna, "Sequence Editor", "Sequence editing data for a Scene data"); /* BFA */
   RNA_def_struct_path_func(srna, "rna_SequenceEditor_path");
   RNA_def_struct_ui_icon(srna, ICON_SEQUENCE);
   RNA_def_struct_sdna(srna, "Editing");
@@ -3888,6 +3891,7 @@ static void rna_def_colorbalance_modifier(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "ColorBalanceModifier", "StripModifier");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_COLOR_BALANCE);
   RNA_def_struct_sdna(srna, "ColorBalanceModifierData");
   RNA_def_struct_ui_text(
       srna, "ColorBalanceModifier", "Color balance modifier for sequence strip");
@@ -3912,6 +3916,7 @@ static void rna_def_whitebalance_modifier(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "WhiteBalanceModifier", "StripModifier");
   RNA_def_struct_sdna(srna, "WhiteBalanceModifierData");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_WHITE_BALANCE);
   RNA_def_struct_ui_text(
       srna, "WhiteBalanceModifier", "White balance modifier for sequence strip");
 
@@ -3931,6 +3936,7 @@ static void rna_def_curves_modifier(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "CurvesModifier", "StripModifier");
   RNA_def_struct_sdna(srna, "CurvesModifierData");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_CURVES);
   RNA_def_struct_ui_text(srna, "CurvesModifier", "RGB curves modifier for sequence strip");
 
   prop = RNA_def_property(srna, "curve_mapping", PROP_POINTER, PROP_NONE);
@@ -3949,6 +3955,7 @@ static void rna_def_hue_modifier(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "HueCorrectModifier", "StripModifier");
   RNA_def_struct_sdna(srna, "HueCorrectModifierData");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_HUE_CORRECT);
   RNA_def_struct_ui_text(srna, "HueCorrectModifier", "Hue correction modifier for sequence strip");
 
   prop = RNA_def_property(srna, "curve_mapping", PROP_POINTER, PROP_NONE);
@@ -3960,12 +3967,23 @@ static void rna_def_hue_modifier(BlenderRNA *brna)
   rna_def_modifier_panel_open_prop(srna, "open_mask_input_panel", 1);
 }
 
+static void rna_def_mask_modifier(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  srna = RNA_def_struct(brna, "MaskStripModifier", "StripModifier");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_MASK);
+  RNA_def_struct_ui_text(srna, "Mask Modifier", "Mask modifier for sequence strip");
+
+  /* Mask properties are part of #rna_def_modifier. */
+}
+
 static void rna_def_brightcontrast_modifier(BlenderRNA *brna)
 {
   StructRNA *srna;
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "BrightContrastModifier", "StripModifier");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_BRIGHTNESS_CONTRAST);
   RNA_def_struct_sdna(srna, "BrightContrastModifierData");
   RNA_def_struct_ui_text(
       srna, "BrightContrastModifier", "Bright/contrast modifier data for sequence strip");
@@ -3998,6 +4016,7 @@ static void rna_def_tonemap_modifier(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "SequencerTonemapModifierData", "StripModifier");
   RNA_def_struct_sdna(srna, "SequencerTonemapModifierData");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_TONEMAP);
   RNA_def_struct_ui_text(srna, "SequencerTonemapModifierData", "Tone mapping modifier");
 
   prop = RNA_def_property(srna, "tonemap_type", PROP_ENUM, PROP_NONE);
@@ -4056,6 +4075,7 @@ static void rna_def_modifiers(BlenderRNA *brna)
   rna_def_colorbalance_modifier(brna);
   rna_def_curves_modifier(brna);
   rna_def_hue_modifier(brna);
+  rna_def_mask_modifier(brna);
   rna_def_brightcontrast_modifier(brna);
   rna_def_whitebalance_modifier(brna);
   rna_def_tonemap_modifier(brna);
