@@ -85,6 +85,11 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
     row->label("", ICON_DISCLOSURE_TRI_RIGHT);  // bfa - icon
   } else {
     row->label("", ICON_DISCLOSURE_TRI_DOWN);  // bfa - icon
+    
+    row = &col->row(true);
+    row->separator(); // bfa - Indent
+    col = &row->column(false);
+    col->use_property_split_set(true); // bfa - split properties
     col->prop(
         &view_transform_ptr, "white_balance_temperature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(&view_transform_ptr, "white_balance_tint", UI_ITEM_NONE, std::nullopt, ICON_NONE);
