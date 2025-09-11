@@ -1097,7 +1097,7 @@ static wmOperatorStatus delete_key_vse_invoke(bContext *C,
                                               wmOperator *op,
                                               const wmEvent * /*event*/)
 {
-  if (RNA_boolean_get(op->ptr, "confirm")) {
+  /*if (RNA_boolean_get(op->ptr, "confirm")) {
     return WM_operator_confirm_ex(C,
                                   op,
                                   IFACE_("Delete keyframes from selected strips?"),
@@ -1105,7 +1105,7 @@ static wmOperatorStatus delete_key_vse_invoke(bContext *C,
                                   IFACE_("Delete"),
                                   ALERT_ICON_NONE,
                                   false);
-  }
+  }*/ /*BFA - Remove confirmation dialog*/
   return delete_key_vse_exec(C, op);
 }
 
