@@ -20,7 +20,7 @@ class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
         settings = get_sync_settings()
 
         # Master Scene prop
-        self.layout.prop(settings, "master_scene", text="Master Scene:", icon="SEQ_STRIP_DUPLICATE")
+        self.layout.prop(settings, "master_scene", text="Synchronization Scene:", icon="SEQ_STRIP_DUPLICATE")
 
 #        # Operator to syncronize viewport
 #        self.layout.operator("wm.timeline_sync_toggle", text="Synchronize Timeline to 3D View", icon="VIEW3D", depress=settings.enabled)
@@ -30,7 +30,8 @@ class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
 
 def SEQUENCER_HT_Syncbutton(self, context):
     settings = get_sync_settings()
-    self.layout.operator("wm.timeline_sync_toggle", text="Sync", icon="VIEW3D", depress=settings.is_sync())
+    text = "Sync (Legacy)" if settings.sync_mode == "LEGACY" else "Sync"
+    self.layout.operator("wm.timeline_sync_toggle", text=text, icon="VIEW3D", depress=settings.is_sync())
 
 class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
     """3D View Sync advanced settings Panel."""
@@ -47,7 +48,8 @@ class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
         row.label(text="Sync mode:")
         row.prop(settings, "sync_mode", text="")
         self.layout.prop(settings, "keep_gpencil_tool_settings")
-        self.layout.prop(settings, "bidirectional")
+        if settings.sync_mode == "LEGACY":
+            self.layout.prop(settings, "bidirectional")
         self.layout.prop(settings, "use_preview_range")
         self.layout.prop(settings, "sync_all_windows")
         self.layout.prop(settings, "active_follows_playhead")

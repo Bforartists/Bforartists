@@ -30,12 +30,12 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
 
     sync_mode: bpy.props.EnumProperty(
         name="Sync mode",
-        description="Use Builtin Blender Story tool scene selector sync or Legacy Bforartists 3D Sequencer sync",
+        description="Use Builtin Story Tool Scene Selector sync or Legacy 3D Sequencer sync",
         items=(
-            ('BUILTIN', "Built-in", "Blender default Scene Selector Sync"),
-            ('LEGACY', "Legacy", "Bforartists 3D Sequencer Sync")
+            ('BUILTIN', "Built-in", "Default Scene Selector Sync"),
+            ('LEGACY', "Legacy", "Legacy 3D Sequencer Sync")
         ),
-        default='LEGACY',
+        default='BUILTIN',
     )
 
     enabled: bpy.props.BoolProperty(
@@ -630,7 +630,7 @@ def on_load_post(*args):
         for area in bpy.context.screen.areas:
             space = area.spaces.active
             if isinstance(space, bpy.types.SpaceSequenceEditor):
-                seq_editor = bpy.context.workspace.squencer_scene.sequence_editor
+                seq_editor = bpy.context.workspace.sequencer_scene.sequence_editor
                 if seq_editor and any(
                     isinstance(s, bpy.types.SceneStrip) for s in seq_editor.strips
                 ):

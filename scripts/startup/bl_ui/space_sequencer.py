@@ -203,12 +203,6 @@ class SEQUENCER_HT_header(Header):
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "overlap_mode", text="", icon_only=True) # BFA - icon only
 
-        # if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
-        if tool_settings:
-            row = layout.row(align=True)
-            row.prop(tool_settings, "use_snap_sequencer", text="")
-            sub = row.row(align=True)
-            sub.popover(panel="SEQUENCER_PT_snapping", text="",) # BFA - removed title
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'} and tool_settings:
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap_sequencer", text="")

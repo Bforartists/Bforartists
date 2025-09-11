@@ -153,7 +153,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             SEQUENCE_UL_shot.bl_idname,
             "",
             sed,
-            "sequences",
+            "strips",
             context.window_manager.sequence_settings,
             "shot_active_index",
             type="DEFAULT",
