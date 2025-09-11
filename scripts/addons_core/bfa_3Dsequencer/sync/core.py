@@ -15,24 +15,29 @@ SequenceType = Type[bpy.types.Strip]
 class TimelineSyncSettings(bpy.types.PropertyGroup):
     """3D View Sync Settings."""
     
-    sync_mode: bpy.props.EnumProperty(
-        name="Enabled",
-        description="Status of 3D View Sync system\n(TODO remove, use is_sync() and set_sync() instead)",
-        items=(
-            ('BUILTIN', "Built-in", "Blender default Scene Selector Sync"),
-            ('LEGACY', "Legacy 3D Sequencer", "Bforartists 3D Sequencer Sync")
-        ),
-    )
-
     def is_sync(self):
         return bpy.context.workspace.use_scene_time_sync if self.sync_mode == 'BUILTIN' else self.enabled
 
     def set_sync(self, toggle):
-        if (self.sync_mode == 'BUILTIN'):
+        if self.sync_mode == 'BUILTIN':
             bpy.context.workspace.use_scene_time_sync = toggle
         else:
             self.enabled = toggle
     
+    def sync_mode_bidirectional_update(self, context):
+        if self.sync_mode == 'BUILTIN':
+            self.bidirectional = False
+
+    sync_mode: bpy.props.EnumProperty(
+        name="Sync mode",
+        description="Use Builtin Blender Story tool scene selector sync or Legacy Bforartists 3D Sequencer sync",
+        items=(
+            ('BUILTIN', "Built-in", "Blender default Scene Selector Sync"),
+            ('LEGACY', "Legacy", "Bforartists 3D Sequencer Sync")
+        ),
+        default='LEGACY',
+    )
+
     enabled: bpy.props.BoolProperty(
         name="Enabled",
         description="Status of 3D View Sync system\n(TODO remove, use is_sync() and set_sync() instead)",
@@ -49,12 +54,14 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     )
 
     bidirectional: bpy.props.BoolProperty(
-        name="Bidirectional (Scrubbing only)",
+        name="Bidirectional",
         description=(
             "Whether changing the active scene's time should update "
-            "the Master Scene's current frame in the Sequencer"
+            "the Master Scene's current frame in the Sequencer\n"
+            "(in Built-in sync mode should only use for scrubbing only)"
         ),
-        default=False,
+        update=sync_mode_bidirectional_update,
+        default=True,
     )
 
     sync_all_windows: bpy.props.BoolProperty(
@@ -542,8 +549,8 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Update strip's underlying scene frame before making it active in context's window
     # to avoid unwanted updates in case bidirectional sync is enabled.
-    # if strip.scene.frame_current != inner_frame:
-    #     scene_frame_set(context, strip.scene, inner_frame)
+    if strip.scene.frame_current != inner_frame and sync_settings.sync_mode == 'LEGACY':
+        scene_frame_set(context, strip.scene, inner_frame)
 
     if sync_settings.use_preview_range:
         # Update scene's preview range.

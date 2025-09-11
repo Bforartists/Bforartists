@@ -31,9 +31,6 @@ class WM_OT_timeline_sync_toggle(bpy.types.Operator):
         # Trigger sync system update
         sync_system_update(context)
 
-        # Using the Scene Sync button to activate "Sync scene time"
-        workspace = context.workspace
-        workspace.use_scene_time_sync = sync_settings.is_sync()
         return {"FINISHED"}
 
 

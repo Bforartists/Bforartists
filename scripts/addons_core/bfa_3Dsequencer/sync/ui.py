@@ -43,6 +43,9 @@ class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
 
     def draw(self, context):
         settings = get_sync_settings()
+        row = self.layout.row()
+        row.label(text="Sync mode:")
+        row.prop(settings, "sync_mode", text="")
         self.layout.prop(settings, "keep_gpencil_tool_settings")
         self.layout.prop(settings, "bidirectional")
         self.layout.prop(settings, "use_preview_range")
