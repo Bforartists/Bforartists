@@ -322,11 +322,16 @@ class ShotNamingProperty(bpy.types.PropertyGroup):
         sed = bpy.context.scene.sequence_editor
         self.init_from_name(shot_naming.next_shot_name_from_sequences(sed))
 
+    def get_use_next_shot_name(self):
+        """Get use next shot. Notes: Use get/set for now instead of set_transform"""
+        return self.use_next_shot_name
+
     # Helper "function-property" with a set method that makes naming use next scene name
     use_next_shot_name: bpy.props.BoolProperty(
         name="Use Next Available Scene Name",
         description="Update naming to use the next available scene name",
         set=set_use_next_shot_name,
+        get=get_use_next_shot_name, 
         options={"HIDDEN", "SKIP_SAVE"},
     )
 
