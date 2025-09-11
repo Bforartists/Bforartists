@@ -64,6 +64,7 @@ const EnumPropertyItem rna_enum_property_type_items[] = {
 
 #define RNA_ENUM_PROPERTY_SUBTYPE_NUMBER_ITEMS \
   {PROP_PIXEL, "PIXEL", 0, "Pixel", "A distance on screen"}, \
+  {PROP_PIXEL_DIAMETER, "PIXEL_DIAMETER", 0, "Pixel", "A distance on screen, specifically representing a diameter value"}, \
   {PROP_UNSIGNED, "UNSIGNED", 0, "Unsigned", ""}, \
   {PROP_PERCENTAGE, "PERCENTAGE", 0, "Percentage", "A percentage between 0 and 100"}, \
   {PROP_FACTOR, "FACTOR", 0, "Factor", "A factor between 0.0 and 1.0"}, \
@@ -73,6 +74,7 @@ const EnumPropertyItem rna_enum_property_type_items[] = {
   {PROP_TIME_ABSOLUTE, "TIME_ABSOLUTE", 0, "Time (Absolute)", \
    "Time specified in seconds, independent of the scene"}, \
   {PROP_DISTANCE, "DISTANCE", 0, "Distance", "A distance between two points"}, \
+  {PROP_DISTANCE_DIAMETER, "DISTANCE_DIAMETER", 0, "Distance", "A distance between two points, specifically representing a diameter value"}, \
   {PROP_DISTANCE_CAMERA, "DISTANCE_CAMERA", 0, "Camera Distance", ""}, \
   {PROP_POWER, "POWER", 0, "Power", ""}, \
   {PROP_TEMPERATURE, "TEMPERATURE", 0, "Temperature", ""}, \
@@ -157,6 +159,7 @@ const EnumPropertyItem rna_enum_property_unit_items[] = {
 };
 
 /* Descriptions for rna_enum_property_flag_items and rna_enum_property_flag_enum_items. */
+static constexpr auto PROP_READ_ONLY_DESCR = "When set, the property cannot be edited";
 static constexpr auto PROP_HIDDEN_DESCR =
     "For operators: hide from places in the user interface where Blender would add the property "
     "automatically, like Adjust Last Operation. Also this property is not written to presets.";
@@ -181,6 +184,19 @@ static constexpr auto PROP_PATH_SUPPORTS_TEMPLATES_DESCR =
 static constexpr auto PROP_ENUM_FLAG_DESCR = "";
 
 const EnumPropertyItem rna_enum_property_flag_items[] = {
+    /* NOTE: This is used only in the `bpy.props` module to define runtime RNA properties.
+     * The value of this 'READ_ONLY' enum item is logically inverted compared to the
+     * `PROP_EDITABLE` used everywhere else in RNA-related code.
+     *
+     * This inversion logic is handled by the bpy property definition code (see
+     * #bpy_prop_assign_flag), and does not affect any other code area.
+     *
+     * This special handling is done to allow python property definitions to create by default
+     * editable properties, without having to specify the `options={'EDITABLE', ...}` parameter all
+     * the time.
+     */
+    {PROP_EDITABLE, "READ_ONLY", 0, "Read Only", PROP_READ_ONLY_DESCR},
+
     {PROP_HIDDEN, "HIDDEN", 0, "Hidden", PROP_HIDDEN_DESCR},
     {PROP_SKIP_SAVE, "SKIP_SAVE", 0, "Skip Save", PROP_SKIP_SAVE_DESCR},
     {PROP_SKIP_PRESET, "SKIP_PRESET", 0, "Skip Preset", PROP_SKIP_PRESET_DESCR},
@@ -212,6 +228,19 @@ const EnumPropertyItem rna_enum_property_flag_items[] = {
 
 /** Only for enum type properties. */
 const EnumPropertyItem rna_enum_property_flag_enum_items[] = {
+    /* NOTE: This is used only in the `bpy.props` module to define runtime RNA properties.
+     * The value of this 'READ_ONLY' enum item is logically inverted compared to the
+     * `PROP_EDITABLE` used everywhere else in RNA-related code.
+     *
+     * This inversion logic is handled by the bpy property definition code (see
+     * #bpy_prop_assign_flag), and does not affect any other code area.
+     *
+     * This special handling is done to allow python property definitions to create by default
+     * editable properties, without having to specify the `options={'EDITABLE', ...}` parameter all
+     * the time.
+     */
+    {PROP_EDITABLE, "READ_ONLY", 0, "Read Only", PROP_READ_ONLY_DESCR},
+
     {PROP_HIDDEN, "HIDDEN", 0, "Hidden", PROP_HIDDEN_DESCR},
     {PROP_SKIP_SAVE, "SKIP_SAVE", 0, "Skip Save", PROP_SKIP_SAVE_DESCR},
     {PROP_ANIMATABLE, "ANIMATABLE", 0, "Animatable", PROP_ANIMATABLE_DESCR},

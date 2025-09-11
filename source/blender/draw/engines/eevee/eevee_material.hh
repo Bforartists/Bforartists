@@ -52,7 +52,6 @@ enum eMaterialGeometry {
   MAT_GEOM_MESH = 0,
   MAT_GEOM_POINTCLOUD,
   MAT_GEOM_CURVES,
-  MAT_GEOM_GPENCIL,
   MAT_GEOM_VOLUME,
 
   /* These maps to special shader. */
@@ -192,8 +191,6 @@ static inline eMaterialGeometry to_material_geometry(const Object *ob)
       return MAT_GEOM_CURVES;
     case OB_VOLUME:
       return MAT_GEOM_VOLUME;
-    case OB_GREASE_PENCIL:
-      return MAT_GEOM_GPENCIL;
     case OB_POINTCLOUD:
       return MAT_GEOM_POINTCLOUD;
     default:
@@ -231,14 +228,6 @@ struct MaterialKey {
     return uint64_t(mat) + options;
   }
 
-  bool operator<(const MaterialKey &k) const
-  {
-    if (mat == k.mat) {
-      return options < k.options;
-    }
-    return mat < k.mat;
-  }
-
   bool operator==(const MaterialKey &k) const
   {
     return (mat == k.mat) && (options == k.options);
@@ -273,11 +262,6 @@ struct ShaderKey {
   uint64_t hash() const
   {
     return uint64_t(shader) + options;
-  }
-
-  bool operator<(const ShaderKey &k) const
-  {
-    return (shader == k.shader) ? (options < k.options) : (shader < k.shader);
   }
 
   bool operator==(const ShaderKey &k) const

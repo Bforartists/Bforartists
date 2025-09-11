@@ -300,11 +300,13 @@
 
 #define _DNA_DEFAULTS_UnifiedPaintSettings \
   { \
-    .size = 50, \
+    .size = 100, \
     .input_samples = 1, \
-    .unprojected_radius = 0.29, \
+    .unprojected_size = 0.58, \
     .alpha = 0.5f, \
     .weight = 0.5f, \
+    .color = {0.0f, 0.0f, 0.0f}, \
+    .secondary_color = {1.0f, 1.0f, 1.0f}, \
     .rgb = {0.0f, 0.0f, 0.0f}, \
     .secondary_rgb = {1.0f, 1.0f, 1.0f}, \
     .flag = UNIFIED_PAINT_SIZE | UNIFIED_PAINT_COLOR, \

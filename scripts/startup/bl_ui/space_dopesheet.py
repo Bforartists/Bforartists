@@ -16,10 +16,6 @@ from bl_ui.properties_data_grease_pencil import (
     GreasePencil_LayerAdjustmentsPanel,
     GreasePencil_LayerDisplayPanel,
 )
-
-from bl_ui.utils import (
-    PlayheadSnappingPanel,
-)
 from bl_ui.space_time import playback_controls
 
 from rna_prop_ui import PropertyPanel
@@ -313,14 +309,6 @@ class DOPESHEET_HT_header(Header):
             DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
 
-class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
-    bl_space_type = 'DOPESHEET_EDITOR'
-
-
-class DOPESHEET_PT_playhead_snapping(PlayheadSnappingPanel, Panel):
-    bl_space_type = 'DOPESHEET_EDITOR'
-
-
 # Header for "normal" dopesheet editor modes (e.g. Dope Sheet, Action, Shape Keys, etc.)
 class DOPESHEET_HT_editor_buttons:
 
@@ -385,10 +373,6 @@ class DOPESHEET_HT_editor_buttons:
                 panel="DOPESHEET_PT_snapping",
                 text="",
             )
-
-        row = layout.row(align=True)
-        row.prop(tool_settings, "use_snap_playhead", text="") # BFA - Exposed to top level
-        row.popover(panel="DOPESHEET_PT_playhead_snapping")
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_action", text="", icon_only=True)
@@ -812,7 +796,7 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.duplicate_move", icon="DUPLICATE")
         layout.operator("action.delete", icon="DELETE")
         if ob and ob.type == 'GREASEPENCIL':
-            layout.operator("grease_pencil.delete_breakdown")
+            layout.operator("grease_pencil.delete_breakdown", icon="DELETE")
 
         layout.separator()
 
@@ -1372,7 +1356,6 @@ classes = (
     DOPESHEET_PT_grease_pencil_layer_adjustments,
     DOPESHEET_PT_grease_pencil_layer_relations,
     DOPESHEET_PT_grease_pencil_layer_display,
-    DOPESHEET_PT_playhead_snapping,
 )
 
 if __name__ == "__main__":  # only for live edit.

@@ -230,7 +230,7 @@ def get_scene_strip_at_frame(
     :returns: The scene strip (or None) and the frame in underlying scene's reference
     """
 
-    strips = sequence_editor.sequences
+    strips = sequence_editor.strips
     channels = sequence_editor.channels
 
     if skip_muted:
@@ -375,7 +375,7 @@ def get_sync_master_strip(
 
     if use_cache:
         return (
-            master_scene.sequence_editor.sequences.get(settings.last_master_strip),
+            master_scene.sequence_editor.strips.get(settings.last_master_strip),
             settings.last_strip_scene_frame,
         )
 
@@ -454,7 +454,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
         # Get sync master strip.
         # NOTE: use cached value as a convenient shortcut to avoid computing it again.
-        strip = master_scene.sequence_editor.sequences.get(
+        strip = master_scene.sequence_editor.strips.get(
             sync_settings.last_master_strip
         )
 
@@ -534,7 +534,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Update cached values
     sync_settings.last_master_strip = strip.name
-    sync_settings.last_master_strip_idx = master_scene.sequence_editor.sequences.find(
+    sync_settings.last_master_strip_idx = master_scene.sequence_editor.strips.find(
         strip.name
     )
     sync_settings.last_strip_scene_frame = inner_frame
@@ -592,7 +592,7 @@ def update_sync_cache_from_current_state():
     strip, frame = get_sync_master_strip()
     sync_settings.last_master_strip = strip.name if strip else ""
     sync_settings.last_master_strip_idx = (
-        sync_settings.master_scene.sequence_editor.sequences.find(strip.name)
+        sync_settings.master_scene.sequence_editor.strips.find(strip.name)
         if strip
         else -1
     )
@@ -625,7 +625,7 @@ def on_load_post(*args):
             if isinstance(space, bpy.types.SpaceSequenceEditor):
                 seq_editor = bpy.context.workspace.squencer_scene.sequence_editor
                 if seq_editor and any(
-                    isinstance(s, bpy.types.SceneStrip) for s in seq_editor.sequences
+                    isinstance(s, bpy.types.SceneStrip) for s in seq_editor.strips
                 ):
                     sync_settings.master_scene = bpy.context.workspace.sequencer_scene
                     sync_settings.set_sync(True)

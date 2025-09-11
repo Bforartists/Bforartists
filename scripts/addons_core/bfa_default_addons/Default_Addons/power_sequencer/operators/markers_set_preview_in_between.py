@@ -48,7 +48,7 @@ class POWER_SEQUENCER_OT_set_preview_between_markers(bpy.types.Operator):
             from operator import attrgetter
 
             frame_end = max(
-                context.scene.sequence_editor.sequences, key=attrgetter("frame_final_end")
+                context.scene.sequence_editor.strips, key=attrgetter("frame_final_end")
             ).frame_final_end
 
         from .utils.functions import set_preview_range

@@ -143,7 +143,7 @@ def draw_sequence_overlay_cb(drawer: OverlayDrawer):
     # List strips using the currently active scene in the master sequence timeline
     scene_strips = [
         s
-        for s in sync_settings.master_scene.sequence_editor.sequences
+        for s in sync_settings.master_scene.sequence_editor.strips
         if isinstance(s, bpy.types.SceneStrip)
         and s.scene == context.scene
         and s != master_strip

@@ -35,10 +35,10 @@ class USERPREF_HT_header(Header):
             # Show '*' to let users know the preferences have been modified.
             layout.operator(
                 "wm.save_userpref",
-                text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""), icon = "SAVE_PREFS",
+                text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""), icon="SAVE_PREFS",
                 # BFA - WIP - Make the save indicator more explicity with the icon (button gets cut off)
-                #text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""),
-                #icon = "FILE_TICK" if prefs.is_dirty else "SAVE_PREFS",
+                # text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""),
+                # icon = "FILE_TICK" if prefs.is_dirty else "SAVE_PREFS",
                 translate=False,
             )
 
@@ -111,13 +111,13 @@ class USERPREF_MT_save_load(Menu):
 
         layout.operator_context = 'EXEC_AREA'
         if prefs.use_preferences_save:
-            layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS') # BFA - added icon
+            layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS')  # BFA - added icon
         sub_revert = layout.column(align=True)
         # NOTE: regarding `factory_startup`. To correctly show the active state of this menu item,
         # the user preferences themselves would need to have a `factory_startup` state.
         # Since showing an active menu item whenever factory-startup is used is not such a problem, leave this as-is.
         sub_revert.active = prefs.is_dirty or bpy.app.factory_startup
-        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon="UNDO") # BFA - added icon
+        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon="UNDO")  # BFA - added icon
 
         layout.operator_context = 'INVOKE_AREA'
 
@@ -258,9 +258,9 @@ class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):
         flow.use_property_split = True
         sub = flow.column()
         sub.active = view.use_text_antialiasing
-        
+
         # BFA - Align property left
-        sub.use_property_split = False 
+        sub.use_property_split = False
         sub.prop(view, "use_text_render_subpixelaa", text="Subpixel Anti-Aliasing")
         sub.use_property_split = True
 
@@ -303,6 +303,20 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
         row.prop(view, "use_translate_new_dataname", text="New Data")
 
 
+class USERPREF_PT_interface_accessibility(InterfacePanel, CenterAlignMixIn, Panel):
+    bl_label = "Accessibility"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_centered(self, context, layout):
+        prefs = context.preferences
+        view = prefs.view
+
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+
+        flow.use_property_split = False # BFA - Align bool property left
+        flow.prop(view, "use_reduce_motion")
+
+
 class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
     bl_label = "Editors"
 
@@ -315,6 +329,10 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
 
         flow.use_property_split = False
         flow.prop(system, "use_region_overlap")
+
+        # col = flow.column(heading="Show", align=True) # TODO week36
+        flow.prop(view, "show_area_handle")
+        flow.prop(view, "show_number_arrows", text="Numeric Input Arrows")
         flow.prop(view, "show_navigate_ui")
 
         flow.use_property_split = True
@@ -333,10 +351,10 @@ class USERPREF_PT_interface_temporary_windows(InterfacePanel, CenterAlignMixIn, 
         prefs = context.preferences
         view = prefs.view
 
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False) # BFA
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)  # BFA
 
-        flow.prop(view, "render_display_type", text="Render In") # BFA
-        flow.prop(view, "filebrowser_display_type", text="File Browser") # BFA
+        flow.prop(view, "render_display_type", text="Render In")  # BFA
+        flow.prop(view, "filebrowser_display_type", text="File Browser")  # BFA
         flow.prop(view, "preferences_display_type", text="Preferences")  # BFA
 
 
@@ -360,7 +378,7 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(view, "show_statusbar_memory", text="System Memory")
         flow.prop(view, "show_statusbar_vram", text="Video Memory")
         flow.prop(view, "show_extensions_updates", text="Extensions Updates")
-        flow.prop(view, "show_statusbar_version", text="Bforartists Version") # BFA - not Blender
+        flow.prop(view, "show_statusbar_version", text="Bforartists Version")  # BFA - not Blender
 
 
 class USERPREF_PT_interface_menus(InterfacePanel, Panel):
@@ -583,9 +601,9 @@ class USERPREF_PT_edit_node_editor(EditingPanel, CenterAlignMixIn, Panel):
         if edit.node_use_insert_offset:
             col.prop(edit, "node_margin", text="Auto-Offset Margin")
         col.prop(edit, "node_preview_resolution", text="Preview Resolution")
-        
+
         col.use_property_split = False
-        col.prop(edit, "node_use_autoposition_viewer") # BFA - Toggle Viewer Auto-positioning
+        col.prop(edit, "node_use_autoposition_viewer")  # BFA - Toggle Viewer Auto-positioning
 
 
 class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
@@ -597,7 +615,7 @@ class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
         edit = prefs.edit
         layout.use_property_split = False
 
-        layout.prop(edit, "connect_strips_by_default") # BFA - wip
+        layout.prop(edit, "connect_strips_by_default")  # BFA - wip
 
 
 # BFA - menu
@@ -610,7 +628,7 @@ class USERPREF_PT_edit_outliner_editor(EditingPanel, CenterAlignMixIn, Panel):
         edit = prefs.edit
         layout.use_property_split = False
 
-        layout.prop(edit, "outliner_colored_collection_rows") # BFA - colored collection rows
+        layout.prop(edit, "outliner_colored_collection_rows")  # BFA - colored collection rows
 
 
 class USERPREF_PT_edit_misc(EditingPanel, CenterAlignMixIn, Panel):
@@ -677,6 +695,8 @@ class USERPREF_PT_animation_keyframes(AnimationPanel, CenterAlignMixIn, Panel):
         row.prop(edit, "use_auto_keyframe_insert_needed", text="Auto", toggle=1)
 
 # BFA - custom menu
+
+
 class USERPREF_PT_animation_autokey(AnimationPanel, CenterAlignMixIn, Panel):
     bl_label = "Auto-Keyframing"
     bl_parent_id = "USERPREF_PT_animation_keyframes"
@@ -845,7 +865,7 @@ class USERPREF_PT_system_network(SystemPanel, CenterAlignMixIn, Panel):
         system = prefs.system
 
         row = layout.row()
-        row.use_property_split = False # bfa: align left
+        row.use_property_split = False  # bfa: align left
         row.prop(system, "use_online_access", text="Allow Online Access")
 
         # Show when the preference has been overridden and doesn't match the current preference.
@@ -1019,7 +1039,6 @@ class USERPREF_PT_viewport_textures(ViewportPanel, CenterAlignMixIn, Panel):
         flow.prop(system, "anisotropic_filter")
         flow.prop(system, "gl_clip_alpha", slider=True)
         flow.prop(system, "image_draw_method", text="Image Display Method")
-
 
 
 class USERPREF_PT_viewport_subdivision(ViewportPanel, CenterAlignMixIn, Panel):
@@ -1229,6 +1248,9 @@ class USERPREF_PT_theme_interface_panel(ThemePanel, CenterAlignMixIn, Panel):
         col = col.column(align=True)
         col.prop(ui, "panel_back", text="Background")
         col.prop(ui, "panel_sub_back", text="Sub-Panel")
+
+        col = col.column()
+        col.prop(ui, "panel_active", text="Active")
 
         col = flow.column(align=True)
         col.prop(ui, "panel_title", text="Title")
@@ -2054,8 +2076,8 @@ class USERPREF_PT_input_touchpad(InputPanel, CenterAlignMixIn, Panel):
         capabilities = _wm_capabilities()
         if not capabilities['TRACKPAD_PHYSICAL_DIRECTION']:
 
-            layout.use_property_split = True # BFA - float left
-            col = layout.column() # BFA - float left
+            layout.use_property_split = True  # BFA - float left
+            col = layout.column()  # BFA - float left
 
             row = col.row()
             row.active = inputs.use_multitouch_gestures
@@ -2181,7 +2203,7 @@ class USERPREF_PT_navigation_fly_walk_navigation(NavigationPanel, CenterAlignMix
 
         flow.use_property_split = False
         flow.prop(walk, "use_mouse_reverse")
-        flow.prop(walk, "use_airblock", text="Horizontal Lock") #BFA - Airblock mode
+        flow.prop(walk, "use_airblock", text="Horizontal Lock")  # BFA - Airblock mode
         flow.use_property_split = True
         flow.prop(walk, "mouse_speed")
         flow.prop(walk, "teleport_time")
@@ -2238,11 +2260,12 @@ class USERPREF_PT_ndof_settings(Panel):
         col.prop(props, "ndof_orbit_sensitivity")
         col.prop(props, "ndof_deadzone")
 
-        layout.separator()
+        # Include this setting as it impacts 2D views as well (inverting translation).
+        col = layout.column()
+        col.row().prop(props, "ndof_navigation_mode", text="Navigation Mode")
 
         if show_3dview_settings:
             col = layout.column()
-            col.row().prop(props, "ndof_navigation_mode", text="Navigation Mode")
             col.prop(props, "ndof_lock_horizon", text="Lock Horizon")
 
             layout.separator()
@@ -2305,7 +2328,7 @@ class USERPREF_PT_ndof_settings(Panel):
             col.label(text="Fly/Walk")
             row = col.row()
             row.separator()
-            row.prop(props, "ndof_lock_horizon") # BFA
+            row.prop(props, "ndof_lock_horizon")  # BFA
             row = col.row()
             row.separator()
             row.prop(props, "ndof_fly_helicopter")
@@ -2385,11 +2408,14 @@ class USERPREF_MT_extensions_active_repo_remove(Menu):
 
         is_system_repo = (active_repo.use_remote_url is False) and (active_repo.source == 'SYSTEM')
 
-        props = layout.operator("preferences.extension_repo_remove", text="Remove Repository", icon = 'DELETE')
+        props = layout.operator("preferences.extension_repo_remove", text="Remove Repository", icon='DELETE')
         props.index = active_repo_index
 
         if not is_system_repo:
-            props = layout.operator("preferences.extension_repo_remove", text="Remove Repository & Files", icon = 'DELETE')
+            props = layout.operator(
+                "preferences.extension_repo_remove",
+                text="Remove Repository & Files",
+                icon='DELETE')
             props.index = active_repo_index
             props.remove_files = True
 
@@ -2481,26 +2507,26 @@ class USERPREF_PT_extensions_repos(Panel):
                 # Apart from being consistent with the custom directory UI,
                 # prefer a read-only property over a label because this is not necessarily
                 # valid UTF-8 which will raise a Python exception when passed in as text.
-                sub.separator(factor = 2.0)
+                sub.separator(factor=2.0)
                 sub.prop(active_repo, "directory", text="")
 
             if use_remote_url:
-                col = layout.column(align = True) # BFA
-                col.label(text = "Authentication") # BFA
-                row = col.row() # BFA
-                row.separator() # BFA
+                col = layout.column(align=True)  # BFA
+                col.label(text="Authentication")  # BFA
+                row = col.row()  # BFA
+                row.separator()  # BFA
                 row.prop(active_repo, "use_access_token")
 
-                row = col.row() # BFA
-                row.separator() # BFA
-                row.prop(active_repo, "use_cache") # BFA
+                row = col.row()  # BFA
+                row.separator()  # BFA
+                row.prop(active_repo, "use_cache")  # BFA
             else:
-                row = col.row() # BFA
-                row.separator() # BFA
+                row = col.row()  # BFA
+                row.separator()  # BFA
                 row.prop(active_repo, "source")
 
-            col = layout.column() # BFA
-            col.prop(active_repo, "module") # BFA
+            col = layout.column()  # BFA
+            col.prop(active_repo, "module")  # BFA
 
 
 # -----------------------------------------------------------------------------
@@ -2938,15 +2964,15 @@ class USERPREF_PT_studiolight_light_editor(StudioLightPanel, Panel):
         box = col.box()
         box.active = light.use
 
-        box.use_property_split = False # BFA
+        box.use_property_split = False  # BFA
         box.prop(light, "use", text="Use Light")
-        box.use_property_split = True # BFA
+        box.use_property_split = True  # BFA
         box.prop(light, "diffuse_color", text="Diffuse")
         box.prop(light, "specular_color", text="Specular")
         box.prop(light, "smooth")
         box.prop(light, "direction")
 
-        box.separator() # BFA
+        box.separator()  # BFA
 
     def draw(self, context):
         layout = self.layout
@@ -3116,6 +3142,7 @@ classes = (
     USERPREF_PT_interface_temporary_windows,
     USERPREF_PT_interface_statusbar,
     USERPREF_PT_interface_translation,
+    USERPREF_PT_interface_accessibility,
     USERPREF_PT_interface_text,
     USERPREF_PT_interface_menus,
     USERPREF_PT_interface_menus_mouse_over,
@@ -3136,12 +3163,12 @@ classes = (
     USERPREF_PT_edit_text_editor,
     USERPREF_PT_edit_node_editor,
     USERPREF_PT_edit_sequence_editor,
-    USERPREF_PT_edit_outliner_editor, # BFA - panel
+    USERPREF_PT_edit_outliner_editor,  # BFA - panel
     USERPREF_PT_edit_misc,
 
     USERPREF_PT_animation_timeline,
     USERPREF_PT_animation_keyframes,
-    USERPREF_PT_animation_autokey, # BFA - custom menu
+    USERPREF_PT_animation_autokey,  # BFA - custom menu
     USERPREF_PT_animation_fcurves,
 
     USERPREF_PT_system_cycles_devices,
@@ -3175,7 +3202,7 @@ classes = (
     USERPREF_PT_file_paths_development,
 
     USERPREF_PT_saveload_blend,
-    USERPREF_PT_saveload_blend_autosave, # BFA - custom menu
+    USERPREF_PT_saveload_blend_autosave,  # BFA - custom menu
     USERPREF_PT_saveload_autorun,
     USERPREF_PT_saveload_file_browser,
 

@@ -202,7 +202,7 @@ class SequencerEditProps(Panel):
 
     # _property_chart_draw needs these
     context_data_path_active = "scene.sequence_editor.active_strip"
-    context_data_path_selected = "selected_sequences"
+    context_data_path_selected = "selected_strips"
 
     draw = _property_chart_draw
 

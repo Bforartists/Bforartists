@@ -13,7 +13,7 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
     *brief* Convert selected strips into a scene strip
 
 
-    Create a scene from the selected sequences, copying the current scene's settings, and
+    Create a scene from the selected strips, copying the current scene's settings, and
     replace the selection with the newly created scene as a strip
     """
 
@@ -37,13 +37,13 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         start_scene_name = context.scene.name
 
-        if len(context.selected_sequences) != 0:
-            selection = context.selected_sequences[:]
+        if len(context.selected_strips) != 0:
+            selection = context.selected_strips[:]
             selection_start_frame = min(
                 selection, key=attrgetter("frame_final_start")
             ).frame_final_start
@@ -52,14 +52,14 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
             # Create new scene for the scene strip
             bpy.ops.scene.new(type="FULL_COPY")
 
-            context.window.scene.name = context.selected_sequences[0].name
+            context.window.scene.name = context.selected_strips[0].name
             new_scene_name = context.window.scene.name
 
             ###after full copy also unselected strips are in the sequencer... Delete those strips
             bpy.ops.sequencer.select_all(action="INVERT")
             bpy.ops.power_sequencer.delete_direct()
             frame_offset = selection_start_frame - 1
-            for s in context.sequences:
+            for s in context.strips:
                 try:
                     s.frame_start -= frame_offset
                 except Exception:
@@ -76,6 +76,6 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
                 channel=selection_start_channel,
                 scene=new_scene_name,
             )
-            scene_strip = context.selected_sequences[0]
+            scene_strip = context.selected_strips[0]
         # scene_strip.use_sequence = True
         return {"FINISHED"}

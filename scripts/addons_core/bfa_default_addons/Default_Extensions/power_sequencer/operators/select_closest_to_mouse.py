@@ -31,7 +31,7 @@ class POWER_SEQUENCER_OT_select_closest_to_mouse(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
         self.frame, self.channel = get_mouse_frame_and_channel(context, event)

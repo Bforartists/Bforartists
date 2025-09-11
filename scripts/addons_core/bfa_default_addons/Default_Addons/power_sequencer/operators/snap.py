@@ -10,9 +10,9 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 class POWER_SEQUENCER_OT_snap(bpy.types.Operator):
     """
-    *Brief* Snaps selected strips to the time cursor ignoring locked sequences.
+    *Brief* Snaps selected strips to the time cursor ignoring locked strips.
 
-    Automatically selects sequences if there is no active selection
+    Automatically selects strips if there is no active selection
     """
 
     doc = {
@@ -23,7 +23,7 @@ class POWER_SEQUENCER_OT_snap(bpy.types.Operator):
             (
                 {"type": "S", "value": "PRESS", "shift": True},
                 {},
-                "Snap sequences to cursor",
+                "Snap strips to cursor",
             )
         ],
         "keymap": "Sequencer",
@@ -35,16 +35,16 @@ class POWER_SEQUENCER_OT_snap(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
-        sequences = (
-            context.selected_sequences
-            if len(context.selected_sequences) > 0
+        strips = (
+            context.selected_strips
+            if len(context.selected_strips) > 0
             else get_sequences_under_cursor(context)
         )
         frame = context.scene.frame_current
-        for s in sequences:
+        for s in strips:
             s.select = True
         bpy.ops.sequencer.snap(frame=frame)
         return {"FINISHED"}

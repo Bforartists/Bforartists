@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "libocio_colorspace.hh"
+#include "OCIO_cpu_processor.hh"
+#include "intern/cpu_processor_cache.hh"
 
 #if defined(WITH_OPENCOLORIO)
 
@@ -133,38 +135,54 @@ LibOCIOColorSpace::LibOCIOColorSpace(const int index,
   is_invertible_ = color_space_is_invertible(ocio_color_space);
 
   /* In OpenColorIO 2.5 there will be native support for this. For older configs and
-   * older OpenColorIO versions, check the first alias. This a convention used in the
+   * older OpenColorIO versions, check the aliases. This a convention used in the
    * Blender and ACES 2.0 configs. */
-  if (ocio_color_space->getNumAliases() > 0) {
-    StringRefNull first_alias = ocio_color_space->getAlias(0);
-    if (first_alias == "srgb_display") {
+  const int num_aliases = ocio_color_space->getNumAliases();
+  for (int i = 0; i < num_aliases; i++) {
+    StringRefNull alias = ocio_color_space->getAlias(i);
+    if (alias == "srgb_display") {
       interop_id_ = "srgb_rec709_display";
     }
-    else if (first_alias == "displayp3_display") {
+    else if (alias == "displayp3_display") {
       interop_id_ = "srgb_p3d65_display";
     }
-    else if (first_alias == "displayp3_hdr_display") {
+    else if (alias == "displayp3_hdr_display") {
       interop_id_ = "srgbx_p3d65_display";
     }
-    else if (first_alias == "p3d65_display") {
+    else if (alias == "p3d65_display") {
       interop_id_ = "g26_p3d65_display";
     }
-    else if (first_alias == "rec1886_rec709_display") {
+    else if (alias == "rec1886_rec709_display") {
       interop_id_ = "g24_rec709_display";
     }
-    else if (first_alias == "rec2100_pq_display") {
+    else if (alias == "rec2100_pq_display") {
       interop_id_ = "pq_rec2020_display";
     }
-    else if (first_alias == "rec2100_hlg_display") {
+    else if (alias == "rec2100_hlg_display") {
       interop_id_ = "hlg_rec2020_display";
     }
-    else if ((first_alias.startswith("lin_") || first_alias.startswith("srgb_") ||
-              first_alias.startswith("g18_") || first_alias.startswith("g22_") ||
-              first_alias.startswith("g24_") || first_alias.startswith("g26_") ||
-              first_alias.startswith("pq_") || first_alias.startswith("hlg_")) &&
-             (first_alias.endswith("_scene") || first_alias.endswith("_display")))
+    else if (alias == "st2084_p3d65_display") {
+      interop_id_ = "pq_p3d65_display";
+    }
+    else if (alias == "lin_rec709_srgb" || alias == "lin_rec709") {
+      interop_id_ = "lin_rec709_scene";
+    }
+    else if (alias == "lin_rec2020") {
+      interop_id_ = "lin_rec2020_scene";
+    }
+    else if (alias == "lin_p3d65" || alias == "lin_displayp3") {
+      interop_id_ = "lin_p3d65_scene";
+    }
+    else if ((alias.startswith("lin_") || alias.startswith("srgb_") || alias.startswith("g18_") ||
+              alias.startswith("g22_") || alias.startswith("g24_") || alias.startswith("g26_") ||
+              alias.startswith("pq_") || alias.startswith("hlg_")) &&
+             (alias.endswith("_scene") || alias.endswith("_display")))
     {
-      interop_id_ = first_alias;
+      interop_id_ = alias;
+    }
+
+    if (!interop_id_.is_empty()) {
+      break;
     }
   }
 }
@@ -212,6 +230,13 @@ void LibOCIOColorSpace::ensure_srgb_scene_linear_info() const
   }
   color_space_is_builtin(ocio_config_, ocio_color_space_, is_scene_linear_, is_srgb_);
   is_info_cached_ = true;
+}
+
+void LibOCIOColorSpace::clear_caches()
+{
+  from_scene_linear_cpu_processor_ = CPUProcessorCache();
+  to_scene_linear_cpu_processor_ = CPUProcessorCache();
+  is_info_cached_ = false;
 }
 
 }  // namespace blender::ocio

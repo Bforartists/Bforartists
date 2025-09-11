@@ -616,7 +616,7 @@ static void hue_correct_set_wrapping(CurveMapping *curve_mapping)
 static bool strip_hue_correct_set_wrapping(Strip *strip, void * /*user_data*/)
 {
   LISTBASE_FOREACH (StripModifierData *, smd, &strip->modifiers) {
-    if (smd->type == seqModifierType_HueCorrect) {
+    if (smd->type == eSeqModifierType_HueCorrect) {
       HueCorrectModifierData *hcmd = (HueCorrectModifierData *)smd;
       CurveMapping *cumap = (CurveMapping *)&hcmd->curve_mapping;
       hue_correct_set_wrapping(cumap);
@@ -1172,8 +1172,8 @@ void blo_do_versions_420(FileData *fd, Library * /*lib*/, Main *bmain)
         /* Use the `Scene` radius unit by default (confusingly named `BRUSH_LOCK_SIZE`).
          * Convert the radius to be the same visual size as in GPv2. */
         brush->flag |= BRUSH_LOCK_SIZE;
-        brush->unprojected_radius = brush->size *
-                                    blender::bke::greasepencil::LEGACY_RADIUS_CONVERSION_FACTOR;
+        brush->unprojected_size = brush->size *
+                                  blender::bke::greasepencil::LEGACY_RADIUS_CONVERSION_FACTOR;
       }
     }
   }

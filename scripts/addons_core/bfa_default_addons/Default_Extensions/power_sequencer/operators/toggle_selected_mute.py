@@ -9,7 +9,7 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 class POWER_SEQUENCER_OT_toggle_selected_mute(bpy.types.Operator):
     """
-    Mute or unmute selected sequences
+    Mute or unmute selected strips
     """
 
     doc = {
@@ -36,21 +36,21 @@ class POWER_SEQUENCER_OT_toggle_selected_mute(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     use_unselected: bpy.props.BoolProperty(
-        name="Use unselected", description="Toggle non selected sequences", default=False
+        name="Use unselected", description="Toggle non selected strips", default=False
     )
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        selection = context.selected_sequences
+        selection = context.selected_strips
 
         if self.use_unselected:
-            selection = [s for s in context.sequences if s not in selection]
+            selection = [s for s in context.strips if s not in selection]
 
         if not selection:
-            self.report({"WARNING"}, "No sequences to toggle muted")
+            self.report({"WARNING"}, "No strips to toggle muted")
             return {"CANCELLED"}
 
         mute = not selection[0].mute

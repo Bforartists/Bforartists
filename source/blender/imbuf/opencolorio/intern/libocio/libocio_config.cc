@@ -347,6 +347,53 @@ const ColorSpace *LibOCIOConfig::get_sorted_color_space_by_index(const int index
   return get_color_space_by_index(sorted_color_space_index_[index]);
 }
 
+const ColorSpace *LibOCIOConfig::get_color_space_by_interop_id(StringRefNull interop_id) const
+{
+  for (const LibOCIOColorSpace &color_space : color_spaces_) {
+    if (color_space.interop_id() == interop_id) {
+      return &color_space;
+    }
+  }
+
+  for (const LibOCIOColorSpace &color_space : inactive_color_spaces_) {
+    if (color_space.interop_id() == interop_id) {
+      return &color_space;
+    }
+  }
+
+  return nullptr;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Working space API
+ * \{ */
+
+void LibOCIOConfig::set_scene_linear_role(StringRefNull name)
+{
+  if (ocio_config_->getRoleColorSpace(OCIO_NAMESPACE::ROLE_SCENE_LINEAR) == name) {
+    return;
+  }
+
+  /* This is a bad const cast, but seems to work ok, and reloading the whole config is
+   * something we don't support yet. When we do this could be changed. */
+  OCIO_NAMESPACE::Config *mutable_ocio_config = const_cast<OCIO_NAMESPACE::Config *>(
+      ocio_config_.get());
+  mutable_ocio_config->setRole(OCIO_NAMESPACE::ROLE_SCENE_LINEAR, name.c_str());
+
+  for (LibOCIOColorSpace &color_space : color_spaces_) {
+    color_space.clear_caches();
+  }
+  for (LibOCIOColorSpace &color_space : inactive_color_spaces_) {
+    color_space.clear_caches();
+  }
+  for (LibOCIODisplay &display : displays_) {
+    display.clear_caches();
+  }
+  gpu_shader_binder_.clear_caches();
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */

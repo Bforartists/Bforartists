@@ -30,6 +30,13 @@ bpy.types.Scene.use_wireframe_on_collection = bpy.props.BoolProperty(
     default=False
 )
 
+bpy.types.Scene.use_relative_position = bpy.props.BoolProperty(
+    name="Use Relative Position",
+    description="Enable Relative Position of the new Blended mesh",
+    default=False
+)
+
+
 global added_collection
 
 #### Asset List ####
@@ -122,7 +129,6 @@ def collection_asset_added_handler(scene):
     if added_collection and added_collection.objects:
         bpy.context.view_layer.objects.active = added_collection.objects[0]
     #print(f"Active object set to: {added_collection.objects[0].name}") # DEBUG
-    
 
     # Update known collections for next import
     pre_collection_asset_added_handler.known_collections = all_collections
@@ -157,7 +163,9 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
         row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
         row = layout.row()
-        row.prop(context.scene, "use_wireframe_on_collection", text="Enable Wireframe Display")
+        row.prop(context.scene, "use_relative_position", text="Use Relative Position")
+        row = layout.row()
+        row.prop(context.scene, "use_wireframe_on_collection", text="Enable Bounds Display")
 
     def execute(self, context):
         try:
@@ -165,7 +173,7 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
             if context.scene.target_collection and context.scene.use_wireframe_on_collection:
                 for obj in context.scene.target_collection.objects:
                     if obj.type == 'MESH':
-                        obj.display_type = 'WIRE'
+                        obj.display_type = 'BOUNDS'
 
             # Asset Reference
             asset = col_blend_normals_by_proximity
@@ -180,6 +188,7 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
                     # Find the collection socket
                     group_input_node = None
                     collection_socket = None
+
                     for node in geom_nodes.node_group.nodes:
                         if node.type == 'GROUP_INPUT':
                             group_input_node = node
@@ -188,6 +197,20 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
                                     collection_socket = output
                                     break
                             break
+
+                    # Set relative position if enabled
+                    if context.scene.use_relative_position:
+                        print("Relative Position Property found")
+                        # Find the relative position socket
+                        if geom_nodes:
+
+                            geom_nodes["Socket_12"] = True
+                            print(f"Socket_12 value after update: {True}")
+                        else:
+                            print("Geometry Nodes modifier not found")
+                    else:
+                        print("Relative Position not found")
+
 
                     if group_input_node and collection_socket:
                         #print(f"Execute: socket found: {collection_socket}")  # DEBUG
@@ -200,13 +223,17 @@ class OBJECT_OT_asset_blend_normals_by_proximity(bpy.types.Operator):
                         bpy.context.view_layer.update()
 
                         self.report({'INFO'}, "Target Collection successfully assigned to the Geomtry Nodes setup")
+
+
                     else:
                         self.report({'WARNING'}, "Collection input not found in Geometry Nodes setup")
 
                 except Exception as e:
                     self.report({'ERROR'}, f"Error assigning collection: {str(e)}")
             else:
-                self.report({'ERROR'}, f"Looks like it coudln't find the Collection socket in the Geometry Nodes setup...")
+                self.report({'ERROR'}, f"Looks like it couldn't find the Collection socket in the Geometry Nodes setup...")
+
+
 
 
             # Update the properties editor to reflect the changes
@@ -244,7 +271,7 @@ def unregister():
     for handler in bpy.app.handlers.blend_import_pre:
         bpy.app.handlers.blend_import_pre.remove(handler)
     for handler in bpy.app.handlers.blend_import_post:
-        bpy.app.handlers.blend_import_post.remove(handler)
+        bpy.app.hendlers.blend_import_post.remove(handler)
 
 
 if __name__ == "__main__":

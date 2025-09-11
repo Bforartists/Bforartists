@@ -24,38 +24,38 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
 
 def get_last_sequence(
-    sequences: list[bpy.types.Strip],
+    strips: list[bpy.types.Strip],
 ) -> Optional[bpy.types.Strip]:
     """Get the last sequence, i.e. the one with the greatest final frame number."""
-    return max(sequences, key=lambda x: x.frame_final_end) if sequences else None
+    return max(strips, key=lambda x: x.frame_final_end) if strips else None
 
 
 def get_last_used_frame(
-    sequences: list[bpy.types.Strip], scene: bpy.types.Scene
+    strips: list[bpy.types.Strip], scene: bpy.types.Scene
 ) -> int:
     """
-    Get the last used internal frame of `scene` from the given list of `sequences`.
+    Get the last used internal frame of `scene` from the given list of `strips`.
     """
-    scene_sequences = [
+    scene_strips = [
         s
-        for s in sequences
+        for s in strips
         if isinstance(s, bpy.types.SceneStrip) and s.scene == scene
     ]
 
-    if not scene_sequences:
+    if not scene_strips:
         return scene.frame_start - 1
 
-    return max(remap_frame_value(s.frame_final_end - 1, s) for s in scene_sequences)
+    return max(remap_frame_value(s.frame_final_end - 1, s) for s in scene_strips)
 
 
 def get_selected_scene_sequences(
-    sequences: list[bpy.types.Strip],
+    strips: list[bpy.types.Strip],
 ) -> list[bpy.types.SceneStrip]:
     """
-    :param sequences: The sequences to consider.
+    :param strips: The strips to consider.
     :return: The list of selected scene sequence strips.
     """
-    return [s for s in sequences if isinstance(s, bpy.types.SceneStrip) and s.select]
+    return [s for s in strips if isinstance(s, bpy.types.SceneStrip) and s.select]
 
 
 def ensure_sequencer_frame_visible(context: bpy.types.Context, frame: int):
@@ -199,7 +199,7 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
         if not context.scene.sequence_editor:
             context.scene.sequence_editor_create()
 
-        sequences = context.scene.sequence_editor.sequences
+        strips = context.scene.sequence_editor.strips
         frame_offset_start = 0
 
         # Source scene handling.
@@ -207,7 +207,7 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
             # Use existing scene as is.
             shot_scene = source_scene
             # Get the last frame used in the source scene to initialize the new strip.
-            frame_offset_start = get_last_used_frame(sequences, source_scene)
+            frame_offset_start = get_last_used_frame(strips, source_scene)
         else:
             # Duplicate source scene.
             shot_scene = duplicate_scene(context, source_scene, self.name)
@@ -215,14 +215,14 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
             # Note: the end frame must be last 'useful' frame, hence the -1.
             shot_scene.frame_end = shot_scene.frame_start + self.duration - 1
 
-        last_seq = get_last_sequence(sequences)
+        last_seq = get_last_sequence(strips)
         insert_frame = (
             last_seq.frame_final_end if last_seq else context.scene.frame_start
         )
 
         bpy.ops.sequencer.select_all(action="DESELECT")
         # Create a scene strip from the newly created scene.
-        new_strip = sequences.new_scene(
+        new_strip = strips.new_scene(
             self.naming.to_string(), shot_scene, self.channel, insert_frame
         )
         new_strip.frame_final_duration = self.duration
@@ -263,7 +263,7 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        return bool(context.selected_sequences)
+        return bool(context.selected_strips)
 
     @staticmethod
     def duplicate_shot(
@@ -279,10 +279,10 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
             shot_scene = strip.scene
 
         # Find the frame where to insert the duplicated strip
-        insert_frame = get_last_sequence(sed.sequences).frame_final_end
+        insert_frame = get_last_sequence(sed.strips).frame_final_end
 
         # Create new strip
-        new_strip = sed.sequences.new_scene(
+        new_strip = sed.strips.new_scene(
             name, shot_scene, strip.channel, insert_frame
         )
 
@@ -290,7 +290,7 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
 
         if not duplicate_scene:
             new_strip.scene_camera = strip.scene_camera
-            frame_offset = get_last_used_frame(sed.sequences, shot_scene)
+            frame_offset = get_last_used_frame(sed.strips, shot_scene)
             slip_shot_content(new_strip, frame_offset)
         else:
             new_strip.scene_camera = strip.scene.camera
@@ -301,7 +301,7 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
         sed = context.scene.sequence_editor
 
         new_strips = []
-        for strip in get_selected_scene_sequences(sed.sequences):
+        for strip in get_selected_scene_sequences(sed.strips):
             name = shot_naming.next_shot_name_from_sequences(sed)
             new_strip = self.duplicate_shot(context, strip, name, self.duplicate_scene)
             new_strips.append(new_strip)
@@ -353,11 +353,11 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        return bool(context.selected_sequences)
+        return bool(context.selected_strips)
 
     def invoke(self, context: bpy.types.Context, event):
         self.strips = get_selected_scene_sequences(
-            context.scene.sequence_editor.sequences
+            context.scene.sequence_editor.strips
         )
         if not self.strips:
             self.report({"ERROR"}, "No selected scenes")
@@ -386,7 +386,7 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
 
     def execute(self, context: bpy.types.Context):
         deleted_datablocks = 0
-        strips = get_selected_scene_sequences(context.scene.sequence_editor.sequences)
+        strips = get_selected_scene_sequences(context.scene.sequence_editor.strips)
 
         # Store scenes to delete in a set to avoid duplicates
         scenes = set()
@@ -394,7 +394,7 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
         for strip in strips:
             if strip.scene and self.delete_scenes:
                 scenes.add(strip.scene)
-            context.scene.sequence_editor.sequences.remove(strip)
+            context.scene.sequence_editor.strips.remove(strip)
 
         # Delete the scenes
         for scene in scenes:
@@ -645,7 +645,7 @@ class SEQUENCER_OT_shot_rename(bpy.types.Operator):
             shot_strip.name,
             current_name,
             "SEQUENCE",
-            context.scene.sequence_editor.sequences,
+            context.scene.sequence_editor.strips,
         )
 
         # Scene renaming details.
@@ -667,7 +667,7 @@ class SEQUENCER_OT_shot_rename(bpy.types.Operator):
         # Evaluate scene strip renaming.
         if new_name != shot_strip.name:
             # Ensure strip name is available.
-            if new_name in context.scene.sequence_editor.sequences:
+            if new_name in context.scene.sequence_editor.strips:
                 self.report({"ERROR"}, f"Shot '{new_name}' already exists")
                 return {"CANCELLED"}
             do_rename_strip = True
@@ -732,7 +732,7 @@ class SEQUENCER_OT_shot_chronological_numbering(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         scene_strips = [
             strip
-            for strip in context.scene.sequence_editor.sequences
+            for strip in context.scene.sequence_editor.strips
             if isinstance(strip, bpy.types.SceneStrip)
         ]
 

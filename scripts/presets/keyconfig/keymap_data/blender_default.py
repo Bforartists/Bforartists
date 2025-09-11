@@ -1042,7 +1042,7 @@ def km_user_interface(_params):
         ("ui.view_scroll", {"type": 'WHEELUPMOUSE', "value": 'ANY'}, None),
         ("ui.view_scroll", {"type": 'WHEELDOWNMOUSE', "value": 'ANY'}, None),
         ("ui.view_scroll", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
-        ("ui.view_item_select", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+        ("ui.view_item_select", {"type": 'LEFTMOUSE', "value": 'CLICK'}, None),
         ("ui.view_item_select", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("extend", True)]}),
         ("ui.view_item_select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
@@ -1265,21 +1265,21 @@ def km_outliner(params):
         ("outliner.item_rename", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
         ("outliner.item_rename", {"type": 'F2', "value": 'PRESS'},
          {"properties": [("use_active", True)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'CLICK'},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'CLICK'},
          {"properties": [("deselect_all", not params.legacy)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'CLICK', "ctrl": True},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
          {"properties": [("extend", True), ("deselect_all", not params.legacy)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'CLICK', "shift": True},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True},
          {"properties": [("extend_range", True), ("deselect_all", not params.legacy)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'CLICK', "ctrl": True, "shift": True},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True, "shift": True},
          {"properties": [("extend", True), ("extend_range", True), ("deselect_all", not params.legacy)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'DOUBLE_CLICK'},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'},
          {"properties": [("recurse", True), ("deselect_all", True)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'DOUBLE_CLICK', "ctrl": True},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "ctrl": True},
          {"properties": [("recurse", True), ("extend", True), ("deselect_all", True)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'DOUBLE_CLICK', "shift": True},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
          {"properties": [("recurse", True), ("extend_range", True), ("deselect_all", True)]}),
-        ("outliner.item_activate", {"type": params.select_mouse, "value": 'DOUBLE_CLICK', "ctrl": True, "shift": True},
+        ("outliner.item_activate", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "ctrl": True, "shift": True},
             {"properties": [("recurse", True), ("extend", True), ("extend_range", True), ("deselect_all", True)]}),
         ("outliner.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("outliner.select_box", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, {"properties": [("tweak", True)]}),
@@ -1310,8 +1310,8 @@ def km_outliner(params):
         ("outliner.item_openclose", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'},
          {"properties": [("all", False)]}),
         # Fall through to generic context menu if the item(s) selected have no type specific actions.
-        ("outliner.operation", params.context_menu_event, None),
-        op_menu("OUTLINER_MT_context_menu", params.context_menu_event),
+        ("outliner.operation", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+        op_menu("OUTLINER_MT_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         op_menu_pie("OUTLINER_MT_view_pie", {"type": 'ACCENT_GRAVE', "value": 'PRESS'}),
         ("outliner.item_drag_drop", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
         ("outliner.item_drag_drop", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True}, None),
@@ -3031,6 +3031,7 @@ def km_sequencer(params):
         ("sequencer.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("sequencer.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True},
          {"properties": [("include_handles", True)]}),
+        ("sequencer.select_circle", {"type": 'C', "value": 'PRESS'}, None),
         ("sequencer.select_grouped", {"type": 'G', "value": 'PRESS', "shift": True}, None),
         *_template_items_select_actions(params, "sequencer.select_all"),
         ("sequencer.split", {"type": 'K', "value": 'PRESS'},
@@ -3099,7 +3100,7 @@ def km_sequencer(params):
              )
         ),
         op_menu("SEQUENCER_MT_add", {"type": 'A', "value": 'PRESS', "shift": True}),
-        op_menu("SEQUENCER_MT_change", {"type": 'C', "value": 'PRESS'}),
+        op_menu("SEQUENCER_MT_change", {"type": 'C', "value": 'PRESS', "shift": True}),
         op_menu_pie("SEQUENCER_MT_view_pie", {"type": 'ACCENT_GRAVE', "value": 'PRESS'}),
         ("sequencer.slip", {"type": 'S', "value": 'PRESS'}, {"properties": [("use_cursor_position", False)]}),
         ("wm.context_set_int", {"type": 'O', "value": 'PRESS'},
@@ -3199,6 +3200,7 @@ def km_sequencer_preview(params):
         ),
         *_template_items_select_actions(params, "sequencer.select_all"),
         ("sequencer.select_box", {"type": 'B', "value": 'PRESS'}, None),
+        ("sequencer.select_circle", {"type": 'C', "value": 'PRESS'}, None),
 
         # View.
         ("sequencer.view_selected", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'}, None),
@@ -3244,6 +3246,10 @@ def km_sequencer_preview(params):
          {"properties": [("unselected", False)]}),
         ("sequencer.delete", {"type": 'X', "value": 'PRESS'}, None),
         ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
+        ("sequencer.select_lasso", {"type": params.action_mouse, "value": 'CLICK_DRAG', "ctrl": True},
+         {"properties": [("mode", 'ADD')]}),
+        ("sequencer.select_lasso", {"type": params.action_mouse, "value": 'CLICK_DRAG', "shift": True, "ctrl": True},
+         {"properties": [("mode", 'SUB')]}),
         ("sequencer.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
         ("sequencer.paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
         ("sequencer.paste", {"type": 'V', "value": 'PRESS', "ctrl": True, "shift": True},
@@ -4037,9 +4043,9 @@ def km_grease_pencil_edit_mode(params):
 
         # Join selection
         ("grease_pencil.join_selection", {"type": 'J', "value": 'PRESS', "ctrl": True},
-         {"properties": [("type", 'JOIN')]}),
+         {"properties": [("type", 'JOINSTROKES')]}),
         ("grease_pencil.join_selection", {"type": 'J', "value": 'PRESS', "shift": True, "ctrl": True},
-         {"properties": [("type", 'JOINCOPY')]}),
+         {"properties": [("type", 'SPLITCOPY')]}),
 
         ("grease_pencil.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
 
@@ -8449,6 +8455,33 @@ def km_sequencer_tool_generic_select_box(params, *, fallback):
     )
 
 
+def km_sequencer_tool_generic_select_lasso(params, *, fallback):
+    return (
+        _fallback_id("Sequencer Tool: Select Lasso", fallback),
+        {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+        {"items": [
+            *([] if (fallback and not params.use_fallback_tool) else _template_items_tool_select_actions_simple(
+                "sequencer.select_lasso",
+                **(params.select_tweak_event if (fallback and params.use_fallback_tool_select_mouse) else
+                   params.tool_tweak_event))),
+        ]},
+    )
+
+
+def km_sequencer_tool_generic_select_circle(params, *, fallback):
+    return (
+        _fallback_id("Sequencer Tool: Select Circle", fallback),
+        {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+        {"items": [
+            *([] if (fallback and not params.use_fallback_tool) else _template_items_tool_select_actions_simple(
+                "sequencer.select_circle",
+                **(params.select_tweak_event if (fallback and params.use_fallback_tool_select_mouse) else
+                   {"type": params.tool_mouse, "value": 'PRESS'}),
+                properties=[("wait_for_input", False)])),
+        ]},
+    )
+
+
 def km_sequencer_preview_tool_generic_select(params, *, fallback):
     return (
         _fallback_id("Preview Tool: Tweak", fallback),
@@ -8478,6 +8511,33 @@ def km_sequencer_preview_tool_generic_select_box(params, *, fallback):
                 "sequencer.select_box",
                 **(params.select_tweak_event if (fallback and params.use_fallback_tool_select_mouse) else
                    params.tool_tweak_event))),
+        ]},
+    )
+
+
+def km_sequencer_preview_tool_generic_select_lasso(params, *, fallback):
+    return (
+        _fallback_id("Preview Tool: Select Lasso", fallback),
+        {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+        {"items": [
+            *([] if (fallback and not params.use_fallback_tool) else _template_items_tool_select_actions_simple(
+                "sequencer.select_lasso",
+                **(params.select_tweak_event if (fallback and params.use_fallback_tool_select_mouse) else
+                   params.tool_tweak_event))),
+        ]},
+    )
+
+
+def km_sequencer_preview_tool_generic_select_circle(params, *, fallback):
+    return (
+        _fallback_id("Preview Tool: Select Circle", fallback),
+        {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+        {"items": [
+            *([] if (fallback and not params.use_fallback_tool) else _template_items_tool_select_actions_simple(
+                "sequencer.select_circle",
+                **(params.select_tweak_event if (fallback and params.use_fallback_tool_select_mouse) else
+                   {"type": params.tool_mouse, "value": 'PRESS'}),
+                properties=[("wait_for_input", False)])),
         ]},
     )
 
@@ -8866,6 +8926,14 @@ def generate_keymaps(params=None):
         *(km_sequencer_preview_tool_generic_select(params, fallback=fallback)
           for fallback in (False, True)),
         *(km_sequencer_preview_tool_generic_select_box(params, fallback=fallback)
+          for fallback in (False, True)),
+        *(km_sequencer_tool_generic_select_lasso(params, fallback=fallback)
+          for fallback in (False, True)),
+        *(km_sequencer_preview_tool_generic_select_lasso(params, fallback=fallback)
+          for fallback in (False, True)),
+        *(km_sequencer_preview_tool_generic_select_circle(params, fallback=fallback)
+          for fallback in (False, True)),
+        *(km_sequencer_tool_generic_select_circle(params, fallback=fallback)
           for fallback in (False, True)),
         km_3d_view_tool_paint_grease_pencil_trim(params),
         km_3d_view_tool_edit_grease_pencil_texture_gradient(params),

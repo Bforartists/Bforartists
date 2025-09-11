@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "BLI_math_constants.h"
 #include "BLI_string_ref.hh"
 #include "BLT_translation.hh"
 
@@ -782,7 +783,7 @@ static void rna_Space_bool_from_region_flag_update_by_type(bContext *C,
   if (region) {
     if (region_flag == RGN_FLAG_HIDDEN) {
       /* Only support animation when the area is in the current context. */
-      if (region->overlap && (area == CTX_wm_area(C))) {
+      if (region->overlap && (area == CTX_wm_area(C)) && !(U.uiflag & USER_REDUCE_MOTION)) {
         ED_region_visibility_change_update_animated(C, area, region);
       }
       else {
@@ -4354,7 +4355,7 @@ static void rna_def_space_outliner(BlenderRNA *brna)
       {SO_LIBRARIES,
        "LIBRARIES",
        ICON_FILE_BLEND,
-       "Blender File",
+       "Blend File", /* BFA - Renamed to Blend File instead. */
        "Display data of current file and linked libraries"},
       {SO_DATA_API,
        "DATA_API",
@@ -5515,7 +5516,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
-  prop = RNA_def_property(srna, "gpencil_grid_offset", PROP_FLOAT, PROP_DISTANCE);
+  prop = RNA_def_property(srna, "gpencil_grid_offset", PROP_FLOAT, PROP_XYZ); /* BFA - keep has PROP_XYZ from PROP_DISTANCE */
   RNA_def_property_float_sdna(prop, nullptr, "overlay.gpencil_grid_offset");
   RNA_def_property_array(prop, 2);
   RNA_def_property_ui_text(prop, "Offset", "Canvas grid offset");

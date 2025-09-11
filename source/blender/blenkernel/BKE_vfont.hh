@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #pragma once
 
+#include "BLI_math_vector_types.hh"
 #include "BLI_sys_types.h"
 
 /** \file
@@ -17,11 +18,11 @@ struct Object;
 struct VFont;
 
 struct CharTrans {
-  float xof, yof;
-  float rot;
+  blender::float2 offset;
+  float rotate;
   short linenr, charnr;
 
-  uint dobreak : 1;
+  uint do_break : 1;
   uint is_overflow : 1;
   uint is_wrap : 1;
   uint is_smallcaps : 1;
@@ -29,7 +30,7 @@ struct CharTrans {
 
 struct EditFontSelBox {
   float x, y, w, h;
-  float rot;
+  float rotate;
 };
 
 /**
@@ -45,7 +46,7 @@ struct EditFont {
   float font_size_eval;
 
   /** Array of rectangles & rotation. */
-  float textcurs[4][2];
+  blender::float2 textcurs[4];
   EditFontSelBox *selboxes;
   int selboxes_len;
 
@@ -129,25 +130,24 @@ void BKE_vfont_clipboard_get(char32_t **r_text_buf,
  * See `vfont_curve.c`.
  * \{ */
 
-int BKE_vfont_cursor_to_text_index(Object *ob, const float cursor_location[2]);
+int BKE_vfont_cursor_to_text_index(Object *ob, const blender::float2 &cursor_location);
 
 /**
  * \warning Expects to have access to evaluated data (i.e. passed object should be evaluated one).
  */
 bool BKE_vfont_to_curve(Object *ob, eEditFontMode mode);
-void BKE_vfont_char_build(Curve *cu,
+void BKE_vfont_char_build(const Curve &cu,
                           ListBase *nubase,
                           unsigned int charcode,
                           const CharInfo *info,
                           bool is_smallcaps,
-                          float ofsx,
-                          float ofsy,
-                          float rot,
+                          const blender::float2 &offset,
+                          float rotate,
                           int charidx,
                           float fsize);
 
 bool BKE_vfont_to_curve_ex(Object *ob,
-                           Curve *cu,
+                           const Curve &cu,
                            eEditFontMode mode,
                            ListBase *r_nubase,
                            const char32_t **r_text,

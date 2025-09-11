@@ -495,6 +495,16 @@ static void object_foreach_id(ID *id, LibraryForeachIDData *data)
       BKE_LIB_FOREACHID_PROCESS_ID_NOCHECK(data, chan->ipo, IDWALK_CB_USER);
     }
 
+    /* Note: This is technically _not_ needed currently, because readcode (see
+     * #object_blend_read_data) directly converts and removes these deprecated ObHook data.
+     * However, for sake of consistency, better have this ID pointer handled here nonetheless. */
+    LISTBASE_FOREACH (ObHook *, hook, &object->hooks) {
+      /* No `ObHook` data should ever exist currently at a point where 'foreach_id' code is
+       * executed. */
+      BLI_assert_unreachable();
+      BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, hook->parent, IDWALK_CB_NOP);
+    }
+
     LISTBASE_FOREACH (bActionStrip *, strip, &object->nlastrips) {
       BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, strip->object, IDWALK_CB_NOP);
       BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, strip->act, IDWALK_CB_USER);
@@ -600,6 +610,28 @@ static void object_foreach_cache(ID *id,
           function_callback(id, &cache_key, cache_p, flags, user_data);
         });
       }
+    }
+  }
+}
+
+static void object_foreach_working_space_color(ID *id,
+                                               const IDTypeForeachColorFunctionCallback &fn)
+{
+  Object *ob = (Object *)id;
+
+  fn.single(ob->color);
+
+  LISTBASE_FOREACH (ShaderFxData *, fx, &ob->shader_fx) {
+    const ShaderFxTypeInfo *fxi = BKE_shaderfx_get_info(ShaderFxType(fx->type));
+    if (fxi && fxi->foreach_working_space_color) {
+      fxi->foreach_working_space_color(fx, fn);
+    }
+  }
+
+  LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
+    const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md->type));
+    if (mti && mti->foreach_working_space_color) {
+      mti->foreach_working_space_color(md, fn);
     }
   }
 }
@@ -1102,6 +1134,7 @@ IDTypeInfo IDType_ID_OB = {
     /*foreach_id*/ object_foreach_id,
     /*foreach_cache*/ object_foreach_cache,
     /*foreach_path*/ object_foreach_path,
+    /*foreach_working_space_color*/ object_foreach_working_space_color,
     /*owner_pointer_get*/ nullptr,
 
     /*blend_write*/ object_blend_write,
@@ -2660,7 +2693,7 @@ Object *BKE_object_duplicate(Main *bmain,
     /* Unfortunate, but with some types (e.g. meshes), an object is considered in Edit mode if its
      * obdata contains edit mode runtime data. This can be the case of all newly duplicated
      * objects, as even though duplicate code move the object back in Object mode, they are still
-     * using the original obdata ID, leading to them being falsly detected as being in Edit mode,
+     * using the original obdata ID, leading to them being falsely detected as being in Edit mode,
      * and therefore not remapping their obdata to the newly duplicated one.
      * See #139715. */
     BKE_libblock_relink_to_newid(
@@ -5268,9 +5301,6 @@ static bool object_modifier_recurse_for_update_subframe(const ObjectModifierUpda
     bool no_update = false;
     if (ob->parent) {
       no_update |= object_modifier_recurse_for_update_subframe(ctx, ob->parent, false, recursion);
-    }
-    if (ob->track) {
-      no_update |= object_modifier_recurse_for_update_subframe(ctx, ob->track, false, recursion);
     }
 
     /* Skip sub-frame if object is parented to vertex of a dynamic paint canvas. */

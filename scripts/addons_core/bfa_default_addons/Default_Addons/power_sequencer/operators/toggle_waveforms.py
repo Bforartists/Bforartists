@@ -42,16 +42,16 @@ class POWER_SEQUENCER_OT_toggle_waveforms(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        selection = context.selected_sequences
+        selection = context.selected_strips
         if not selection:
-            selection = context.sequences
+            selection = context.strips
 
-        sequences = [s for s in selection if s.type in SequenceTypes.SOUND]
+        strips = [s for s in selection if s.type in SequenceTypes.SOUND]
 
-        if not sequences:
+        if not strips:
             self.report({"ERROR_INVALID_INPUT"}, "Select at least one sound strip")
             return {"CANCELLED"}
 
@@ -59,12 +59,12 @@ class POWER_SEQUENCER_OT_toggle_waveforms(bpy.types.Operator):
         if self.mode == "auto":
             from operator import attrgetter
 
-            show_waveform = not sorted(sequences, key=attrgetter("frame_final_start"))[
+            show_waveform = not sorted(strips, key=attrgetter("frame_final_start"))[
                 0
             ].show_waveform
         else:
             show_waveform = True if self.mode == "on" else False
 
-        for s in sequences:
+        for s in strips:
             s.show_waveform = show_waveform
         return {"FINISHED"}

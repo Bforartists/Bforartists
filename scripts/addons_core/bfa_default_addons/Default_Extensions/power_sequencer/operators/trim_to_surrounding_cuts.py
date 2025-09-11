@@ -49,7 +49,7 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
     )
     gap_remove: bpy.props.BoolProperty(
         name="Remove gaps",
-        description="When trimming the sequences, remove gaps automatically",
+        description="When trimming the strips, remove gaps automatically",
         default=True,
     )
 
@@ -58,7 +58,7 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
         return context
 
     def invoke(self, context, event):
-        if not context.sequences:
+        if not context.strips:
             return {"CANCELLED"}
 
         frame = context.region.view2d.region_to_view(
@@ -76,7 +76,7 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
             return {"CANCELLED"}
 
         to_delete, to_trim = find_strips_in_range(
-            left_cut_frame, right_cut_frame, context.sequences
+            left_cut_frame, right_cut_frame, context.strips
         )
         trim_start, trim_end = (left_cut_frame + margin_frame, right_cut_frame - margin_frame)
 

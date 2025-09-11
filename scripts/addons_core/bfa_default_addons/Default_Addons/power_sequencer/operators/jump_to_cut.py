@@ -51,7 +51,7 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
         frame_current = context.scene.frame_current
@@ -67,7 +67,7 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
         # fcurve, loop through the curve's keyframes.
         if self.direction == "RIGHT":
             frame_target = 100_000_000
-            for s in context.sequences:
+            for s in context.strips:
                 if s.frame_final_end <= frame_current:
                     continue
 
@@ -88,7 +88,7 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
                         frame_target = min(frame_target, frame)
 
         elif self.direction == "LEFT":
-            for s in context.sequences:
+            for s in context.strips:
                 if s.frame_final_start >= frame_current:
                     continue
 

@@ -49,7 +49,9 @@
 #include "WM_message.hh"
 
 #include "SEQ_channels.hh"
+#include "SEQ_modifier.hh"
 #include "SEQ_offscreen.hh"
+#include "SEQ_preview_cache.hh"
 #include "SEQ_retiming.hh"
 #include "SEQ_sequencer.hh"
 #include "SEQ_time.hh"
@@ -68,10 +70,11 @@ namespace blender::ed::vse {
 
 /**************************** common state *****************************/
 
-static void sequencer_scopes_tag_refresh(ScrArea *area)
+static void sequencer_scopes_tag_refresh(ScrArea *area, const Scene *scene)
 {
   SpaceSeq *sseq = (SpaceSeq *)area->spacedata.first;
-  sseq->runtime->scopes.reference_ibuf = nullptr;
+  sseq->runtime->scopes.cleanup();
+  seq::preview_cache_invalidate(const_cast<Scene *>(scene));
 }
 
 SpaceSeq_Runtime::~SpaceSeq_Runtime() = default;
@@ -302,14 +305,14 @@ static void sequencer_listener(const wmSpaceTypeListenerParams *params)
       switch (wmn->data) {
         case ND_FRAME:
         case ND_SEQUENCER:
-          sequencer_scopes_tag_refresh(area);
+          sequencer_scopes_tag_refresh(area, params->scene);
           break;
       }
       break;
     case NC_WINDOW:
     case NC_SPACE:
       if (wmn->data == ND_SPACE_SEQUENCER) {
-        sequencer_scopes_tag_refresh(area);
+        sequencer_scopes_tag_refresh(area, params->scene);
       }
       break;
     case NC_GPENCIL:
@@ -1207,6 +1210,15 @@ void ED_spacetype_sequencer()
   art->snap_size = ED_region_generic_panel_region_snap_size;
   art->draw = sequencer_buttons_region_draw;
   BLI_addhead(&st->regiontypes, art);
+
+  /* Register the panel types from strip modifiers. The actual panels are built per strip modifier
+   * rather than per modifier type. */
+  for (int i = 0; i < NUM_STRIP_MODIFIER_TYPES; i++) {
+    const seq::StripModifierTypeInfo *mti = seq::modifier_type_info_get(i);
+    if (mti != nullptr && mti->panel_register != nullptr) {
+      mti->panel_register(art);
+    }
+  }
 
   sequencer_buttons_register(art);
   /* Toolbar. */

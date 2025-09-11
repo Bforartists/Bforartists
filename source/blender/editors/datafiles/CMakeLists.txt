@@ -1293,7 +1293,6 @@ if(WITH_BLENDER)
       node_spill
       node_sss
       node_stabilize2d
-      node_sunbeams
       node_tangent
       node_texcoordinate
       node_tonemap
@@ -1770,7 +1769,10 @@ if(WITH_BLENDER)
       seq_snap_to_frame
       seq_splitview
       seq_strip_duplicate
+      seq_strip_expand
+      seq_strip_overwrite
       seq_strip_meta
+      seq_strip_shuffle
       seq_swap_left
       seq_swap_right
       seq_text
@@ -1912,6 +1914,7 @@ if(WITH_BLENDER)
       string_length
       string_substring
       string_to_curve
+      string_to_value
       stroke
       stucci_tex
       stylus_pressure
@@ -2144,6 +2147,7 @@ if(WITH_BLENDER)
       wordwrap_off
       wordwrap_on
       workspace
+      workspace_delete
       world
       wpaint_hlt
 

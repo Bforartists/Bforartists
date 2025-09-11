@@ -9,6 +9,7 @@
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_ref.hh"
+#include "DNA_windowmanager_types.h"
 
 namespace blender::ocio {
 
@@ -30,8 +31,10 @@ struct DisplayParameters {
   float temperature = 6500.0f;
   float tint = 10.0f;
   bool use_white_balance = false;
-  /* Allow HDR colors (above 1.0) in the result. */
-  bool use_hdr = false;
+  /* Writing to a HDR windows buffer. */
+  bool use_hdr_buffer = false;
+  /* Chosen display is HDR. */
+  bool use_hdr_display = false;
   /* Rather than outputting colors for the specified display, output extended
    * sRGB colors emulating the specified display. */
   bool use_display_emulation = false;
@@ -124,6 +127,20 @@ class Config {
    * If the index is invalid nullptr is returned.
    */
   virtual const ColorSpace *get_sorted_color_space_by_index(int index) const = 0;
+
+  /**
+   * Get color space for the given interop ID.
+   * If not found a nullptr is returned.
+   */
+  virtual const ColorSpace *get_color_space_by_interop_id(StringRefNull interop_id) const = 0;
+
+  /** \} */
+
+  /* -------------------------------------------------------------------- */
+  /** \name Working colorspace API
+   * \{ */
+
+  virtual void set_scene_linear_role(StringRefNull name) = 0;
 
   /** \} */
 

@@ -135,7 +135,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
         if (
             not master_scene
             or not master_scene.sequence_editor
-            or not master_scene.sequence_editor.sequences
+            or not master_scene.sequence_editor.strips
         ):
             self.layout.label(text="Set the Master Scene to sync from Sequencer", icon="QUESTION")
             return

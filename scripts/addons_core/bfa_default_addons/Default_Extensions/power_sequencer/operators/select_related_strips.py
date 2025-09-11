@@ -40,18 +40,18 @@ class POWER_SEQUENCER_OT_select_related_strips(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         if self.find_all:
             related_strips = set()
-            for s in context.selected_sequences:
+            for s in context.selected_strips:
                 self.find_neighbours_recursive(related_strips, s, context)
         else:
             related_strips = []
             # Only select direct neighbours and attached effects
-            effects = [s for s in context.sequences if s.type in SequenceTypes.EFFECT]
-            found_effects = self.find_related_effects(context.selected_sequences, effects)
+            effects = [s for s in context.strips if s.type in SequenceTypes.EFFECT]
+            found_effects = self.find_related_effects(context.selected_strips, effects)
             related_strips.extend(found_effects)
             while len(found_effects) > 0:
                 found_effects = self.find_related_effects(found_effects, effects)
@@ -89,14 +89,14 @@ class POWER_SEQUENCER_OT_select_related_strips(bpy.types.Operator):
                  neighbours of neighbours and so on.
         """
         # Respects initial selection
-        init_selected_strips = [s for s in context.selected_sequences]
+        init_selected_strips = [s for s in context.selected_strips]
 
         neighbours = []
         bpy.ops.sequencer.select_all(action="DESELECT")
         strip.select = True
         bpy.ops.transform.seq_slide(value=(0, 0))
         strip.select = False
-        for s in context.selected_sequences:
+        for s in context.selected_strips:
             neighbours.append(s)
 
         try:
@@ -111,9 +111,9 @@ class POWER_SEQUENCER_OT_select_related_strips(bpy.types.Operator):
 
         return neighbours
 
-    def find_related_effects(self, sequences, effects):
+    def find_related_effects(self, strips, effects):
         found = []
-        for s in sequences:
+        for s in strips:
             for e in effects:
                 try:
                     if e.input_1 == s:

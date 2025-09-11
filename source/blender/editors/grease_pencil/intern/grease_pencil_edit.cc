@@ -2587,7 +2587,7 @@ static wmOperatorStatus grease_pencil_copy_strokes_exec(bContext *C, wmOperator 
     if (!is_material_index_used(material_index)) {
       continue;
     }
-    const Material *material = BKE_object_material_get(object, material_index);
+    const Material *material = BKE_object_material_get(object, material_index + 1);
     clipboard.materials.append({material ? material->id.session_uid : 0, material_index});
   }
 
@@ -3960,7 +3960,26 @@ static wmOperatorStatus grease_pencil_set_handle_type_exec(bContext *C, wmOperat
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
-  const HandleType dst_handle_type = HandleType(RNA_enum_get(op->ptr, "type"));
+  using namespace ed::curves;
+  const SetHandleType dst_type = SetHandleType(RNA_enum_get(op->ptr, "type"));
+
+  auto new_handle_type = [&](const int8_t handle_type) {
+    switch (dst_type) {
+      case SetHandleType::Free:
+        return int8_t(BEZIER_HANDLE_FREE);
+      case SetHandleType::Auto:
+        return int8_t(BEZIER_HANDLE_AUTO);
+      case SetHandleType::Vector:
+        return int8_t(BEZIER_HANDLE_VECTOR);
+      case SetHandleType::Align:
+        return int8_t(BEZIER_HANDLE_ALIGN);
+      case SetHandleType::Toggle:
+        return int8_t(handle_type == BEZIER_HANDLE_FREE ? BEZIER_HANDLE_ALIGN :
+                                                          BEZIER_HANDLE_FREE);
+    }
+    BLI_assert_unreachable();
+    return int8_t(0);
+  };
 
   bool changed = false;
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
@@ -3990,10 +4009,10 @@ static wmOperatorStatus grease_pencil_set_handle_type_exec(bContext *C, wmOperat
       const IndexRange points = points_by_curve[curve_i];
       for (const int point_i : points) {
         if (selection_left[point_i] || selection[point_i]) {
-          handle_types_left[point_i] = int8_t(dst_handle_type);
+          handle_types_left[point_i] = new_handle_type(handle_types_left[point_i]);
         }
         if (selection_right[point_i] || selection[point_i]) {
-          handle_types_right[point_i] = int8_t(dst_handle_type);
+          handle_types_right[point_i] = new_handle_type(handle_types_right[point_i]);
         }
       }
     });
@@ -4025,8 +4044,12 @@ static void GREASE_PENCIL_OT_set_handle_type(wmOperatorType *ot)
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  ot->prop = RNA_def_enum(
-      ot->srna, "type", rna_enum_curves_handle_type_items, CURVE_TYPE_POLY, "Type", nullptr);
+  ot->prop = RNA_def_enum(ot->srna,
+                          "type",
+                          ed::curves::rna_enum_set_handle_type_items,
+                          int(ed::curves::SetHandleType::Auto),
+                          "Type",
+                          nullptr);
 }
 
 /** \} */
@@ -4780,9 +4803,10 @@ static bke::greasepencil::LayerGroup &copy_layer_group_recursive(
 
 static Array<int> add_materials_to_map(Object &object, VectorSet<Material *> &materials)
 {
-  Array<int> material_index_map(*BKE_id_material_len_p(&object.id));
+  BLI_assert(object.type == OB_GREASE_PENCIL);
+  Array<int> material_index_map(*BKE_object_material_len_p(&object));
   for (const int i : material_index_map.index_range()) {
-    Material *material = BKE_object_material_get(&object, i);
+    Material *material = BKE_object_material_get(&object, i + 1);
     if (material != nullptr) {
       material_index_map[i] = materials.index_of_or_add(material);
     }

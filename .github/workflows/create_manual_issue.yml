@@ -20,6 +20,9 @@ jobs:
         with:
           fetch-depth: 0   # optional, for the Git‑History
 
+      - name: Install curl
+        run: sudo apt-get update && sudo apt-get install -y curl
+
       - name: Create issue in manual repo
         env:
           GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}
@@ -35,7 +38,7 @@ jobs:
 
           curl -s \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: token ${GH_PAT_AUTO_ISSUE}" \
+            -H "Authorization: Bearer ${GH_PAT_AUTO_ISSUE}" \
             -X POST \
             -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" \
             https://api.github.com/repos/$TARGET_REPO/issues
