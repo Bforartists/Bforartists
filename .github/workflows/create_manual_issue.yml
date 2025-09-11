@@ -38,7 +38,7 @@ jobs:
 
           curl -s \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: token ${GH_PAT_AUTO_ISSUE}" \
+            -H "Authorization: Bearer ${GH_PAT_AUTO_ISSUE}" \
             -X POST \
             -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" \
             https://api.github.com/repos/$TARGET_REPO/issues
