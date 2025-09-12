@@ -140,6 +140,7 @@ void register_node_type_tex_output()
 
   tex_node_type_base(&ntype, "TextureNodeOutput", TEX_NODE_OUTPUT);
   ntype.ui_name = "Output";
+  ntype.ui_description = "Specify the target texture output";
   ntype.enum_name_legacy = "OUTPUT";
   ntype.nclass = NODE_CLASS_OUTPUT;
   blender::bke::node_type_socket_templates(&ntype, inputs, nullptr);

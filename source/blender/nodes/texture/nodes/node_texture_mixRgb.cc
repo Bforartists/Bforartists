@@ -60,6 +60,7 @@ void register_node_type_tex_mix_rgb()
 
   tex_node_type_base(&ntype, "TextureNodeMixRGB", TEX_NODE_MIX_RGB);
   ntype.ui_name = "Mix";
+  ntype.ui_description = "Mix two colors by a factor";
   ntype.enum_name_legacy = "MIX_RGB";
   ntype.nclass = NODE_CLASS_OP_COLOR;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);
