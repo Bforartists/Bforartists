@@ -79,9 +79,13 @@ class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
         row = self.layout.row()
         row.label(text="Sync mode:")
         row.prop(settings, "sync_mode", text="")
+        if settings.sync_mode == 'BUILTIN':
+            box = self.layout.box()
+            box.label(text="Bidirection is not supported yet", icon='WARNING')
+            if settings.bidirectional:
+                box.label(text="Disable bidirectional playback")
+        self.layout.prop(settings, "bidirectional")
         self.layout.prop(settings, "keep_gpencil_tool_settings")
-        if settings.sync_mode == "LEGACY":
-            self.layout.prop(settings, "bidirectional")
         self.layout.prop(settings, "use_preview_range")
         self.layout.prop(settings, "sync_all_windows")
         self.layout.prop(settings, "active_follows_playhead")

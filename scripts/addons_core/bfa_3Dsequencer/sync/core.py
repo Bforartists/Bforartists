@@ -14,7 +14,7 @@ SequenceType = Type[bpy.types.Strip]
 
 class TimelineSyncSettings(bpy.types.PropertyGroup):
     """3D View Sync Settings."""
-    
+
     def is_sync(self):
         return bpy.context.workspace.use_scene_time_sync if self.sync_mode == 'BUILTIN' else self.enabled
 
@@ -23,24 +23,33 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
             bpy.context.workspace.use_scene_time_sync = toggle
         else:
             self.enabled = toggle
-    
-    def sync_mode_bidirectional_update(self, context):
+
+    def update_sync(self, context):
+        """Update the sync toggle on changing mode"""
         if self.sync_mode == 'BUILTIN':
-            self.bidirectional = False
+            bpy.context.workspace.use_scene_time_sync = self.enabled
+            self.enabled = not self.enabled
+        else:
+            self.enabled = bpy.context.workspace.use_scene_time_sync
+            bpy.context.workspace.use_scene_time_sync = not bpy.context.workspace.use_scene_time_sync
+
+    def is_legacy(self):
+        return self.sync_mode == 'LEGACY'
 
     sync_mode: bpy.props.EnumProperty(
         name="Sync mode",
-        description="Use Builtin Story Tool Scene Selector sync or Legacy 3D Sequencer sync",
+        description="Use Builtin Blender Story tool scene selector sync or Legacy Bforartists 3D Sequencer sync",
         items=(
-            ('BUILTIN', "Built-in", "Default Scene Selector Sync"),
-            ('LEGACY', "Legacy", "Legacy 3D Sequencer Sync")
+            ('BUILTIN', "Built-in", "Blender default Scene Selector Sync"),
+            ('LEGACY', "Legacy", "Bforartists 3D Sequencer Sync")
         ),
-        default='BUILTIN',
+        default='LEGACY',
+        update=update_sync,
     )
 
     enabled: bpy.props.BoolProperty(
         name="Enabled",
-        description="Status of 3D View Sync system\n(TODO remove, use is_sync() and set_sync() instead)",
+        description="Status of 3D View Legacy Sync system\n(use is_sync() and set_sync() instead)",
         default=False,
     )
 
@@ -60,7 +69,6 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
             "the Master Scene's current frame in the Sequencer\n"
             "(in Built-in sync mode should only use for scrubbing only)"
         ),
-        update=sync_mode_bidirectional_update,
         default=True,
     )
 
@@ -454,7 +462,11 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     if not sync_settings.bidirectional and not master_time_changed:
         return
 
-    if sync_settings.bidirectional and not master_time_changed:
+    # This makes sure Legacy bidirection not conflict with Builtin sync animation playback
+    is_scrubbing = context.screen.is_scrubbing
+    is_playing = context.screen.is_animation_playing
+    builtin_bidirection = (not (is_playing and sync_settings.sync_mode == 'BUILTIN') and is_scrubbing)
+    if sync_settings.bidirectional and not master_time_changed and builtin_bidirection:
         # Return if time has not changed in active scene
         if not scene_time_changed:
             return
@@ -549,7 +561,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Update strip's underlying scene frame before making it active in context's window
     # to avoid unwanted updates in case bidirectional sync is enabled.
-    if strip.scene.frame_current != inner_frame and sync_settings.sync_mode == 'LEGACY':
+    if strip.scene.frame_current != inner_frame and sync_settings.is_legacy():
         scene_frame_set(context, strip.scene, inner_frame)
 
     if sync_settings.use_preview_range:
@@ -569,11 +581,12 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
         if window.scene != strip.scene:
             # Use scene_change_manager to optionnaly keep tool settings between scenes
             with scene_change_manager(context):
-                pass
-                # window.scene = strip.scene  # TODO Scene Selector
+                if sync_settings.is_legacy():
+                    window.scene = strip.scene
         # Use strip camera if specified
         if strip.scene_camera and window.scene.camera != strip.scene_camera:
-            window.scene.camera = strip.scene_camera
+            if sync_settings.is_legacy():
+                window.scene.camera = strip.scene_camera
 
     if sync_settings.active_follows_playhead:
         if master_scene.sequence_editor.active_strip != strip:
