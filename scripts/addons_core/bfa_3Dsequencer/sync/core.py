@@ -38,35 +38,35 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
 
     sync_mode: bpy.props.EnumProperty(
         name="Sync mode",
-        description="Use Builtin Blender Story tool scene selector sync or Legacy Bforartists 3D Sequencer sync",
+        description="Use Builtin B Scene Selector Sync or Legacy 3D Sequencer Sync",
         items=(
-            ('BUILTIN', "Built-in", "Blender default Scene Selector Sync"),
-            ('LEGACY', "Legacy", "Bforartists 3D Sequencer Sync")
+            ('BUILTIN', "Built-in", "Built-in Scene Selector Sync"),
+            ('LEGACY', "Legacy", "Legacy 3D Sequencer Sync")
         ),
-        default='LEGACY',
+        default='BUILTIN',
         update=update_sync,
     )
 
     enabled: bpy.props.BoolProperty(
         name="Enabled",
-        description="Status of 3D View Legacy Sync system\n(use is_sync() and set_sync() instead)",
+        description="Status of Legacy 3D Sequencer Sync system\n(use is_sync() and set_sync() instead)",
         default=False,
     )
 
     master_scene: bpy.props.PointerProperty(
         type=bpy.types.Scene,
-        name="Master Scene",
+        name="Timeline Scene",
         description=(
-            "The master scene contains all children Scene Strips in the Sequencer editor timeline\n"
+            "The timeline scene contains all children Scene Strips in the Sequencer editor timeline\n"
             "Each Scene Strip in the sequencer timeline will change the active 3D View Camera and Scene\n"
-            "To syncronize, set the Master Scene also to the Sequencer timeline"),
+            "To syncronize, set the Timeilne Scene also to the Sequencer timeline"),
     )
 
     bidirectional: bpy.props.BoolProperty(
         name="Bidirectional",
         description=(
             "Whether changing the active scene's time should update "
-            "the Master Scene's current frame in the Sequencer\n"
+            "the Timeline Scene's current frame in the Sequencer\n"
             "(in Built-in sync mode should only use for scrubbing only)"
         ),
         default=True,
@@ -105,7 +105,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     # See sync_system_update function for details
 
     last_master_frame: bpy.props.IntProperty(
-        description="Last frame value that triggered an update in master Scene",
+        description="Last frame value that triggered an update in Timeline Scene",
         default=-1,
         options={"HIDDEN"},
     )
@@ -123,13 +123,13 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     )
 
     last_strip_scene_frame: bpy.props.IntProperty(
-        description="Last frame value that triggered an update in master scene's Scene Strip",
+        description="Last frame value that triggered an update in Timeline scene's Scene Strip",
         default=-1,
         options={"HIDDEN"},
     )
 
     last_strip_scene_frame_out_of_range: bpy.props.BoolProperty(
-        description="Whether frame value in master scene's Scene Strip is out of strip range",
+        description="Whether frame value in Timeline scene's Scene Strip is out of strip range",
         default=True,
         options={"HIDDEN"},
     )
@@ -447,7 +447,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     ):
         return
 
-    # In order to evaluate if the master scene's current frame has changed,
+    # In order to evaluate if the Timeline scene's current frame has changed,
     # we current have to rely on a system that stores the last frame values
     # that triggered a change.
     # This is a temporary solution that will be replaced when the
@@ -458,7 +458,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     # Take `force` update into account.
     master_time_changed |= force
 
-    # Discard update if master scene's current frame is similar to cached frame value
+    # Discard update if Timeline scene's current frame is similar to cached frame value
     if not sync_settings.bidirectional and not master_time_changed:
         return
 
@@ -471,20 +471,20 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
         if not scene_time_changed:
             return
 
-        # Get sync master strip.
+        # Get sync Timeline strip.
         # NOTE: use cached value as a convenient shortcut to avoid computing it again.
         strip = master_scene.sequence_editor.strips.get(
             sync_settings.last_master_strip
         )
 
-        # Return if the master strip does not match currently active scene.
+        # Return if the Timeline strip does not match currently active scene.
         if not strip or strip.scene != win_scene:
             return
 
         # Compute offset between scene's previous and current frame values
         offset = win_scene.frame_current - sync_settings.last_strip_scene_frame
 
-        # Evaluate strip in master scene when applying this offset
+        # Evaluate strip in Timeline scene when applying this offset
         new_strip, _ = get_scene_strip_at_frame(
             master_scene.frame_current + offset,
             master_scene.sequence_editor,
@@ -530,8 +530,8 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
             if context.screen.is_scrubbing or context.screen.is_animation_playing:
                 return
 
-        # Apply the offset to master scene, and return.
-        # The master scene and cache update will happen in the next frame_change_post
+        # Apply the offset to Timeline scene, and return.
+        # The Timeline scene and cache update will happen in the next frame_change_post
         # handler call.
         scene_frame_set(context, master_scene, master_scene.frame_current + offset)
         return
@@ -574,7 +574,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
         if sync_settings.sync_all_windows
         else [context.window]
     ):
-        # If window's scene is explicitly set to master scene, don't update it.
+        # If window's scene is explicitly set to timeline scene, don't update it.
         if not bpy.app.background and window.scene == master_scene:
             continue
         # Open strip's scene in window at the remapped frame
@@ -663,7 +663,7 @@ def on_undo_redo(scene, _):
     # Explicitly update cached values on undo/redo events since
     # they don't re-trigger frame change events.
     # Two update cases:
-    # 1. Event comes from master scene and master time has changed
+    # 1. Event comes from timeline scene and master time has changed
     # 2. (Bidirectional ON) Event comes from window's scene and scene time has changed
     if (
         scene == sync_settings.master_scene
@@ -686,7 +686,7 @@ def register():
     # NOTE: this is not saved in the Blender file
     bpy.types.WindowManager.timeline_sync_settings = bpy.props.PointerProperty(
         type=TimelineSyncSettings,
-        name="Secne Synchronization Settings",
+        name="Scene Synchronization Settings",
     )
 
     # React to scenes current frame changes

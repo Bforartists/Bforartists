@@ -119,11 +119,18 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
+    @classmethod
+    def poll(cls, context):
+        return get_sync_settings().sync_mode == "LEGACY"
+
     def draw(self, context):
         self.layout.use_property_split = True
         self.layout.use_property_decorate = False
 
         master_scene = get_sync_settings().master_scene
+
+        if not master_scene:
+            return
 
         # Master Scene prop
         row = self.layout.row(align=True)
@@ -139,13 +146,14 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             row = self.layout.row(align=True)
             row.operator("sequencer.set_master_scene", text="Use Pinned Scene", icon="PINNED")
 
-            self.layout.label(text="Set the Synchronization Timeline", icon="QUESTION")
+            self.layout.label(text="Set the Timeline", icon="QUESTION")
             self.layout.label(text="to sync from Sequencer", icon="NONE")
             return
 
         self.layout.label(text="Sequencer Scene Strips:")
         # Draw scene lists in the master sequence.
-        self.draw_shots_list(context, master_scene.sequence_editor)
+        if master_scene.sequence_editor:
+            self.draw_shots_list(context, master_scene.sequence_editor)
         # Draw active scene details if any.
         if strip := get_sync_master_strip(use_cache=True)[0]:
             self.draw_shot_strip(context, strip)
@@ -224,6 +232,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
         if strip_cam:
             row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="")
             row.operator("sequence.active_shot_camera_none", icon="X", text="")
+
 
 
 class PROPERTIES_PT_obj_users_scene_check(bpy.types.Panel):
