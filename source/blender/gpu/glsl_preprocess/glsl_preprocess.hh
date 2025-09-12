@@ -15,6 +15,7 @@
 #include <regex>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "shader_parser.hh"
@@ -213,8 +214,9 @@ class Preprocessor {
       if (do_parse_function) {
         parse_library_functions(str);
       }
+      str = disabled_code_mutation(str, report_error);
+      str = include_parse_and_remove(str, report_error);
       if (language == BLENDER_GLSL) {
-        include_parse(str, report_error);
         pragma_runtime_generated_parsing(str);
         pragma_once_linting(str, filename, report_error);
       }
@@ -222,6 +224,8 @@ class Preprocessor {
       str = swizzle_function_mutation(str, report_error);
       str = enum_macro_injection(str, language == CPP, report_error);
       if (language == BLENDER_GLSL) {
+        str = using_mutation(str, report_error);
+        str = namespace_mutation(str, report_error);
         str = template_struct_mutation(str, report_error);
         str = struct_method_mutation(str, report_error);
         str = empty_struct_mutation(str, report_error);
@@ -242,10 +246,6 @@ class Preprocessor {
         small_type_linting(str, report_error);
       }
       str = remove_quotes(str);
-      if (language == BLENDER_GLSL) {
-        str = using_mutation(str, report_error);
-        str = namespace_mutation(str, report_error);
-      }
       str = argument_reference_mutation(str, report_error);
       str = default_argument_mutation(str, report_error);
       str = variable_reference_mutation(str, report_error);
@@ -698,21 +698,18 @@ class Preprocessor {
     return std::regex_replace(str, std::regex(R"(["'])"), " ");
   }
 
-  void include_parse(const std::string &str, report_callback report_error)
+  std::string include_parse_and_remove(const std::string &str, report_callback report_error)
   {
-    /* Parse include directive before removing them. */
-    std::regex regex(R"(#(\s*)include\s*\"(\w+\.\w+)\")");
+    using namespace std;
+    using namespace shader::parser;
 
-    regex_global_search(str, regex, [&](const std::smatch &match) {
-      std::string indent = match[1].str();
-      /* Assert that includes are not nested in other preprocessor directives. */
-      if (!indent.empty()) {
-        report_error(line_number(match),
-                     char_number(match),
-                     line_str(match),
-                     "#include directives must not be inside #if clause");
+    Parser parser(str, report_error);
+
+    parser.foreach_match("#w_", [&](const std::vector<Token> &tokens) {
+      if (tokens[1].str() != "include") {
+        return;
       }
-      std::string dependency_name = match[2].str();
+      string dependency_name = tokens[2].str_exclusive();
       /* Assert that includes are at the top of the file. */
       if (dependency_name == "gpu_glsl_cpp_stubs.hh") {
         /* Skip GLSL-C++ stubs. They are only for IDE linting. */
@@ -723,7 +720,10 @@ class Preprocessor {
         return;
       }
       metadata.dependencies.emplace_back(dependency_name);
+      parser.erase(tokens.front(), tokens.back());
     });
+
+    return parser.result_get();
   }
 
   void pragma_runtime_generated_parsing(const std::string &str)
@@ -737,15 +737,11 @@ class Preprocessor {
                            const std::string &filename,
                            report_callback report_error)
   {
-    if (filename.find("_lib.") == std::string::npos) {
+    if (filename.find("_lib.") == std::string::npos && filename.find(".hh") == std::string::npos) {
       return;
     }
     if (str.find("\n#pragma once") == std::string::npos) {
-      std::smatch match;
-      report_error(line_number(match),
-                   char_number(match),
-                   line_str(match),
-                   "Library files must contain #pragma once directive.");
+      report_error(0, 0, "", "Header files must contain #pragma once directive.");
     }
   }
 
@@ -755,236 +751,292 @@ class Preprocessor {
       return str;
     }
 
-    struct Loop {
-      /* `[[gpu::unroll]] for (int i = 0; i < 10; i++)` */
-      std::string definition;
-      /* `{ some_computation(i); }` */
-      std::string body;
-      /* `int i = 0` */
-      std::string init_statement;
-      /* `i < 10` */
-      std::string test_statement;
-      /* `i++` */
-      std::string iter_statement;
-      /* Spaces and newline between loop start and body. */
-      std::string body_prefix;
-      /* Spaces before the loop definition. */
-      std::string indent;
-      /* `10` */
-      int64_t iter_count;
-      /* Line at which the loop was defined. */
-      int64_t definition_line;
-      /* Line at which the body starts. */
-      int64_t body_line;
-      /* Line at which the body ends. */
-      int64_t end_line;
-    };
+    using namespace std;
+    using namespace shader::parser;
 
-    std::vector<Loop> loops;
+    Parser parser(str, report_error);
 
-    auto add_loop = [&](Loop &loop,
-                        const std::smatch &match,
-                        int64_t line,
-                        int64_t lines_in_content) {
-      std::string suffix = match.suffix().str();
-      loop.body = get_content_between_balanced_pair(loop.definition + suffix, '{', '}');
-      loop.body = '{' + loop.body + '}';
-      loop.definition_line = line - lines_in_content;
-      loop.body_line = line;
-      loop.end_line = loop.body_line + line_count(loop.body);
+    auto parse_for_args =
+        [&](const Scope loop_args, Scope &r_init, Scope &r_condition, Scope &r_iter) {
+          r_init = r_condition = r_iter = Scope::invalid();
+          loop_args.foreach_scope(ScopeType::LoopArg, [&](const Scope arg) {
+            if (arg.start().prev() == '(' && arg.end().next() == ';') {
+              r_init = arg;
+            }
+            else if (arg.start().prev() == ';' && arg.end().next() == ';') {
+              r_condition = arg;
+            }
+            else if (arg.start().prev() == ';' && arg.end().next() == ')') {
+              r_iter = arg;
+            }
+            else {
+              report_error(ERROR_TOK(arg.start()), "Invalid loop declaration.");
+            }
+          });
+        };
 
+    auto process_loop = [&](const Token loop_start,
+                            const int iter_count,
+                            const int iter_init,
+                            const int iter_incr,
+                            const bool condition_is_trivial,
+                            const bool iteration_is_trivial,
+                            const Scope init,
+                            const Scope cond,
+                            const Scope iter,
+                            const Scope body,
+                            const string body_prefix = "",
+                            const string body_suffix = "") {
       /* Check that there is no unsupported keywords in the loop body. */
-      if (loop.body.find(" break;") != std::string::npos ||
-          loop.body.find(" continue;") != std::string::npos)
-      {
-        /* Expensive check. Remove other loops and switch scopes inside the unrolled loop scope and
-         * check again to avoid false positive. */
-        std::string modified_body = loop.body;
-
-        std::regex regex_loop(R"( (for|while|do) )");
-        regex_global_search(loop.body, regex_loop, [&](const std::smatch &match) {
-          std::string inner_scope = get_content_between_balanced_pair(match.suffix(), '{', '}');
-          replace_all(modified_body, inner_scope, "");
-        });
-
-        /* Checks if `continue` exists, even in switch statement inside the unrolled loop scope. */
-        if (modified_body.find(" continue;") != std::string::npos) {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Error: Unrolled loop cannot contain \"continue\" statement.");
+      bool error = false;
+      /* Checks if `continue` exists, even in switch statement inside the unrolled loop. */
+      body.foreach_token(Continue, [&](const Token token) {
+        if (token.first_containing_scope_of_type(ScopeType::LoopBody) == body) {
+          report_error(ERROR_TOK(token), "Unrolled loop cannot contain \"continue\" statement.");
+          error = true;
         }
+      });
+      /* Checks if `break` exists directly the unrolled loop scope. Switch statements are ok. */
+      body.foreach_token(Break, [&](const Token token) {
+        if (token.first_containing_scope_of_type(ScopeType::LoopBody) == body) {
+          const Scope switch_scope = token.first_containing_scope_of_type(ScopeType::SwitchBody);
+          if (switch_scope.is_invalid() || !body.contains(switch_scope)) {
+            report_error(ERROR_TOK(token), "Unrolled loop cannot contain \"break\" statement.");
+            error = true;
+          }
+        }
+      });
+      if (error) {
+        return;
+      }
 
-        std::regex regex_switch(R"( switch )");
-        regex_global_search(loop.body, regex_switch, [&](const std::smatch &match) {
-          std::string inner_scope = get_content_between_balanced_pair(match.suffix(), '{', '}');
-          replace_all(modified_body, inner_scope, "");
+      if (!parser.replace_try(loop_start, body.end(), "", true)) {
+        /* This is the case of nested loops. This loop will be processed in another parser pass. */
+        return;
+      }
+
+      string indent_init, indent_cond, indent_iter;
+      if (init.is_valid()) {
+        indent_init = string(init.start().char_number() - 1, ' ');
+      }
+      if (cond.is_valid()) {
+        indent_cond = string(cond.start().char_number() - 3, ' ');
+      }
+      if (iter.is_valid()) {
+        indent_iter = string(iter.start().char_number(), ' ');
+      }
+      string indent_body = string(body.start().char_number(), ' ');
+      string indent_end = string(body.end().char_number(), ' ');
+
+      /* If possible, replaces the index of the loop iteration inside the given string. */
+      auto replace_index = [&](const string &str, int loop_index) {
+        if (iter.is_invalid() || !iteration_is_trivial || str.empty()) {
+          return str;
+        }
+        Parser str_parser(str, report_error);
+        str_parser.foreach_token(Word, [&](const Token tok) {
+          if (tok.str() == iter[0].str()) {
+            str_parser.replace(tok, std::to_string(loop_index), true);
+          }
         });
+        return str_parser.result_get();
+      };
 
-        /* Checks if `break` exists inside the unrolled loop scope. */
-        if (modified_body.find(" break;") != std::string::npos) {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Error: Unrolled loop cannot contain \"break\" statement.");
+      parser.insert_after(body.end(), "\n");
+      if (init.is_valid() && !iteration_is_trivial) {
+        parser.insert_line_number(body.end(), init.start().line_number());
+        parser.insert_after(body.end(), indent_init + "{" + init.str() + ";\n");
+      }
+      else {
+        parser.insert_after(body.end(), "{\n");
+      }
+      for (int64_t i = 0, value = iter_init; i < iter_count; i++, value += iter_incr) {
+        if (cond.is_valid() && !condition_is_trivial) {
+          parser.insert_line_number(body.end(), cond.start().line_number());
+          parser.insert_after(body.end(), indent_cond + "if(" + cond.str() + ")\n");
+        }
+        parser.insert_after(body.end(), replace_index(body_prefix, value));
+        parser.insert_line_number(body.end(), body.start().line_number());
+        parser.insert_after(body.end(), indent_body + replace_index(body.str(), value) + "\n");
+        parser.insert_after(body.end(), body_suffix);
+        if (iter.is_valid() && !iteration_is_trivial) {
+          parser.insert_line_number(body.end(), iter.start().line_number());
+          parser.insert_after(body.end(), indent_iter + iter.str() + ";\n");
         }
       }
-      loops.emplace_back(loop);
+      parser.insert_line_number(body.end(), body.end().line_number());
+      parser.insert_after(body.end(), indent_end + body.end().str_with_whitespace());
     };
 
-    /* Parse the loop syntax. */
-    {
+    do {
       /* [[gpu::unroll]]. */
-      std::regex regex(R"(( *))"
-                       R"(\[\[gpu::unroll\]\])"
-                       R"(\s*for\s*\()"
-                       R"(\s*((?:uint|int)\s+(\w+)\s+=\s+(-?\d+));)" /* Init statement. */
-                       R"(\s*((\w+)\s+(>|<)(=?)\s+(-?\d+)))"         /* Conditional statement. */
-                       R"(\s*(?:&&)?\s*([^;)]+)?;)"       /* Extra conditional statement. */
-                       R"(\s*(((\w+)(\+\+|\-\-))[^\)]*))" /* Iteration statement. */
-                       R"(\)(\s*))");
+      parser.foreach_match("[[w::w]]f(..){..}", [&](const std::vector<Token> tokens) {
+        if (tokens[1].scope().str() != "[gpu::unroll]") {
+          return;
+        }
+        const Token for_tok = tokens[8];
+        const Scope loop_args = tokens[9].scope();
+        const Scope loop_body = tokens[13].scope();
 
-      int64_t line = 0;
+        Scope init, cond, iter;
+        parse_for_args(loop_args, init, cond, iter);
 
-      regex_global_search(str, regex, [&](const std::smatch &match) {
-        std::string counter_1 = match[3].str();
-        std::string counter_2 = match[6].str();
-        std::string counter_3 = match[13].str();
-
-        std::string content = match[0].str();
-        int64_t lines_in_content = line_count(content);
-
-        line += line_count(match.prefix().str()) + lines_in_content;
-
-        if ((counter_1 != counter_2) || (counter_1 != counter_3)) {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Error: Non matching loop counter variable.");
+        /* Init statement. */
+        const Token var_type = init[0];
+        const Token var_name = init[1];
+        const Token var_init = init[2];
+        if (var_type.str() != "int" && var_type.str() != "uint") {
+          report_error(ERROR_TOK(var_init), "Can only unroll integer based loop.");
+          return;
+        }
+        if (var_init != '=') {
+          report_error(ERROR_TOK(var_init), "Expecting assignment here.");
+          return;
+        }
+        if (init[3] != '0' && init[3] != '-') {
+          report_error(ERROR_TOK(init[3]), "Expecting integer literal here.");
           return;
         }
 
-        Loop loop;
-
-        int64_t init = std::stol(match[4].str());
-        int64_t end = std::stol(match[9].str());
-        /* TODO(fclem): Support arbitrary strides (aka, arbitrary iter statement). */
-        loop.iter_count = std::abs(end - init);
-
-        std::string condition = match[7].str();
-        if (condition.empty()) {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Error: Unsupported condition in unrolled loop.");
+        /* Conditional statement. */
+        const Token cond_var = cond[0];
+        const Token cond_type = cond[1];
+        const Token cond_sign = (cond[2] == '+' || cond[2] == '-') ? cond[2] : Token::invalid();
+        const Token cond_end = cond_sign.is_valid() ? cond[3] : cond[2];
+        if (cond_var.str() != var_name.str()) {
+          report_error(ERROR_TOK(cond_var), "Non matching loop counter variable.");
+          return;
+        }
+        if (cond_end != '0') {
+          report_error(ERROR_TOK(cond_end), "Expecting integer literal here.");
+          return;
         }
 
-        std::string equal = match[8].str();
-        if (equal == "=") {
-          loop.iter_count += 1;
+        /* Iteration statement. */
+        const Token iter_var = iter[0];
+        const Token iter_type = iter[1];
+        const Token iter_end = iter[1];
+        int iter_incr = 0;
+        if (iter_var.str() != var_name.str()) {
+          report_error(ERROR_TOK(iter_var), "Non matching loop counter variable.");
+          return;
         }
-
-        std::string iter = match[14].str();
-        if (iter == "++") {
-          if (condition == ">") {
-            report_error(line_number(match),
-                         char_number(match),
-                         line_str(match),
-                         "Error: Unsupported condition in unrolled loop.");
+        if (iter_type == Increment) {
+          iter_incr = +1;
+          if (cond_type == '>') {
+            report_error(ERROR_TOK(for_tok), "Unsupported condition in unrolled loop.");
+            return;
           }
         }
-        else if (iter == "--") {
-          if (condition == "<") {
-            report_error(line_number(match),
-                         char_number(match),
-                         line_str(match),
-                         "Error: Unsupported condition in unrolled loop.");
+        else if (iter_type == Decrement) {
+          iter_incr = -1;
+          if (cond_type == '<') {
+            report_error(ERROR_TOK(for_tok), "Unsupported condition in unrolled loop.");
+            return;
           }
         }
         else {
-          report_error(line_number(match),
-                       char_number(match),
-                       line_str(match),
-                       "Error: Unsupported for loop expression. Expecting ++ or --");
+          report_error(ERROR_TOK(iter_type), "Unsupported loop expression. Expecting ++ or --.");
+          return;
         }
 
-        loop.definition = content;
-        loop.indent = match[1].str();
-        loop.init_statement = match[2].str();
-        if (!match[10].str().empty()) {
-          loop.test_statement = "if (" + match[10].str() + ") ";
+        int64_t init_value = std::stol(
+            parser.substr_range_inclusive(var_init.next(), var_init.scope().end()));
+        int64_t end_value = std::stol(
+            parser.substr_range_inclusive(cond_sign.is_valid() ? cond_sign : cond_end, cond_end));
+        /* TODO(fclem): Support arbitrary strides (aka, arbitrary iter statement). */
+        int iter_count = std::abs(end_value - init_value);
+        if (cond_type == GEqual || cond_type == LEqual) {
+          iter_count += 1;
         }
-        loop.iter_statement = match[11].str();
-        loop.body_prefix = match[15].str();
 
-        add_loop(loop, match, line, lines_in_content);
+        bool condition_is_trivial = (cond_end == cond.end());
+        bool iteration_is_trivial = (iter_end == iter.end());
+
+        process_loop(tokens[0],
+                     iter_count,
+                     init_value,
+                     iter_incr,
+                     condition_is_trivial,
+                     iteration_is_trivial,
+                     init,
+                     cond,
+                     iter,
+                     loop_body);
       });
-    }
-    {
+
       /* [[gpu::unroll(n)]]. */
-      std::regex regex(R"(( *))"
-                       R"(\[\[gpu::unroll\((\d+)\)\]\])"
-                       R"(\s*for\s*\()"
-                       R"(\s*([^;]*);)"
-                       R"(\s*([^;]*);)"
-                       R"(\s*([^)]*))"
-                       R"(\)(\s*))");
-
-      int64_t line = 0;
-
-      regex_global_search(str, regex, [&](const std::smatch &match) {
-        std::string content = match[0].str();
-
-        int64_t lines_in_content = line_count(content);
-
-        line += line_count(match.prefix().str()) + lines_in_content;
-
-        Loop loop;
-        loop.iter_count = std::stol(match[2].str());
-        loop.definition = content;
-        loop.indent = match[1].str();
-        loop.init_statement = match[3].str();
-        loop.test_statement = "if (" + match[4].str() + ") ";
-        loop.iter_statement = match[5].str();
-        loop.body_prefix = match[13].str();
-
-        add_loop(loop, match, line, lines_in_content);
-      });
-    }
-
-    std::string out = str;
-
-    /* Copy paste loop iterations. */
-    for (const Loop &loop : loops) {
-      std::string replacement = loop.indent + "{ " + loop.init_statement + ";";
-      for (int64_t i = 0; i < loop.iter_count; i++) {
-        replacement += std::string("\n#line ") + std::to_string(loop.body_line + 1) + "\n";
-        replacement += loop.indent + loop.test_statement + loop.body;
-        replacement += std::string("\n#line ") + std::to_string(loop.definition_line + 1) + "\n";
-        replacement += loop.indent + loop.iter_statement + ";";
-        if (i == loop.iter_count - 1) {
-          replacement += std::string("\n#line ") + std::to_string(loop.end_line + 1) + "\n";
-          replacement += loop.indent + "}";
+      parser.foreach_match("[[w::w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
+        if (tokens[5].str() != "unroll") {
+          return;
         }
-      }
+        const Scope loop_args = tokens[12].scope();
+        const Scope loop_body = tokens[16].scope();
 
-      std::string replaced = loop.definition + loop.body;
+        Scope init, cond, iter;
+        parse_for_args(loop_args, init, cond, iter);
 
-      /* Replace all occurrences in case of recursive unrolling. */
-      replace_all(out, replaced, replacement);
-    }
+        int iter_count = std::stol(tokens[7].str());
+
+        process_loop(tokens[0], iter_count, 0, 0, false, false, init, cond, iter, loop_body);
+      });
+
+      /* [[gpu::unroll_define(max_n)]]. */
+      parser.foreach_match("[[w::w(0)]]f(..){..}", [&](const std::vector<Token> tokens) {
+        if (tokens[5].str() != "unroll_define") {
+          return;
+        }
+        const Scope loop_args = tokens[12].scope();
+        const Scope loop_body = tokens[16].scope();
+
+        /* Validate format. */
+        Token define_name = Token::invalid();
+        Token iter_var = Token::invalid();
+        loop_args.foreach_match("ww=0;w<w;wP", [&](const std::vector<Token> tokens) {
+          if (tokens[1].str() != tokens[5].str() || tokens[5].str() != tokens[9].str()) {
+            return;
+          }
+          iter_var = tokens[1];
+          define_name = tokens[7];
+        });
+
+        if (define_name.is_invalid()) {
+          report_error(ERROR_TOK(loop_args.start()),
+                       "Incompatible loop format for [[gpu::unroll_define(max_n)]], expected "
+                       "'(int i = 0; i < DEFINE; i++)'");
+          return;
+        }
+
+        Scope init, cond, iter;
+        parse_for_args(loop_args, init, cond, iter);
+
+        int iter_count = std::stol(tokens[7].str());
+
+        string body_prefix = "#if " + define_name.str() + " > " + iter_var.str() + "\n";
+
+        process_loop(tokens[0],
+                     iter_count,
+                     0,
+                     1,
+                     true,
+                     true,
+                     init,
+                     cond,
+                     iter,
+                     loop_body,
+                     body_prefix,
+                     "#endif\n");
+      });
+    } while (parser.apply_mutations());
 
     /* Check for remaining keywords. */
-    if (out.find("[[gpu::unroll") != std::string::npos) {
-      regex_global_search(str, std::regex(R"(\[\[gpu::unroll)"), [&](const std::smatch &match) {
-        report_error(line_number(match),
-                     char_number(match),
-                     line_str(match),
-                     "Error: Incompatible format for [[gpu::unroll]].");
-      });
-    }
+    parser.foreach_match("[[w::w", [&](const std::vector<Token> tokens) {
+      if (tokens[2].str() == "gpu" && tokens[5].str() == "unroll") {
+        report_error(ERROR_TOK(tokens[0]), "Incompatible loop format for [[gpu::unroll]].");
+      }
+    });
 
-    return out;
+    return parser.result_get();
   }
 
   std::string namespace_mutation(const std::string &str, report_callback report_error)
@@ -998,8 +1050,6 @@ class Preprocessor {
 
     Parser parser(str, report_error);
 
-    std::string out = str;
-
     /* Parse each namespace declaration. */
     parser.foreach_scope(ScopeType::Namespace, [&](const Scope &scope) {
       /* TODO(fclem): This could be supported using multiple passes. */
@@ -1007,7 +1057,8 @@ class Preprocessor {
         report_error(ERROR_TOK(tokens[0]), "Nested namespaces are unsupported.");
       });
 
-      string namespace_prefix = scope.start().prev().full_symbol_name() + "::";
+      string namespace_prefix = namespace_separator_mutation(
+          scope.start().prev().full_symbol_name() + "::");
       auto process_symbol = [&](const Token &symbol) {
         if (symbol.next() == '<') {
           /* Template instantiation or specialization. */
@@ -1030,8 +1081,22 @@ class Preprocessor {
         });
       };
 
-      scope.foreach_function(
-          [&](bool, Token, Token fn_name, Scope, bool, Scope) { process_symbol(fn_name); });
+      unordered_set<string> processed_functions;
+
+      scope.foreach_function([&](bool, Token, Token fn_name, Scope, bool, Scope) {
+        /* Note: Struct scopes are currently parsed as Local. */
+        if (fn_name.scope().type() == ScopeType::Local) {
+          /* Don't process functions inside a struct scope as the namespace must not be apply
+           * to them, but to the type. Otherwise, method calls will not work. */
+          return;
+        }
+        if (processed_functions.count(fn_name.str())) {
+          /* Don't process function names twice. Can happen with overloads. */
+          return;
+        }
+        processed_functions.emplace(fn_name.str());
+        process_symbol(fn_name);
+      });
       scope.foreach_struct([&](Token, Token struct_name, Scope) { process_symbol(struct_name); });
 
       Token namespace_tok = scope.start().prev().namespace_start().prev();
@@ -1089,6 +1154,8 @@ class Preprocessor {
           return;
         }
       }
+
+      to = namespace_separator_mutation(to);
 
       /* Assignments do not allow to alias functions symbols. */
       const bool use_alias = from.str() != to_end.str();
@@ -1149,6 +1216,54 @@ class Preprocessor {
      * Cannot use `__` because of some compilers complaining about reserved symbols. */
     replace_all(out, "::", "_");
     return out;
+  }
+
+  std::string disabled_code_mutation(const std::string &str, report_callback &report_error)
+  {
+    using namespace std;
+    using namespace shader::parser;
+
+    Parser parser(str, report_error);
+
+    auto process_disabled_scope = [&](Token start_tok) {
+      /* Search for endif with the same indentation. Assume formatted input. */
+      string end_str = start_tok.str_with_whitespace() + "endif";
+      size_t scope_end = parser.data_get().str.find(end_str, start_tok.str_index_start());
+      if (scope_end == string::npos) {
+        report_error(ERROR_TOK(start_tok), "Couldn't find end of disabled scope.");
+        return;
+      }
+      /* Search for else/elif with the same indentation. Assume formatted input. */
+      string else_str = start_tok.str_with_whitespace() + "el";
+      size_t scope_else = parser.data_get().str.find(else_str, start_tok.str_index_start());
+      if (scope_else != string::npos && scope_else < scope_end) {
+        /* Only erase the content and keep the preprocessor directives. */
+        parser.erase(start_tok.line_end() + 1, scope_else - 1);
+      }
+      else {
+        /* Erase the content and the preprocessor directives. */
+        parser.erase(start_tok.str_index_start(), scope_end + end_str.size());
+      }
+    };
+
+    parser.foreach_match("#ww", [&](const std::vector<Token> &tokens) {
+      if (tokens[1].str() == "ifndef" && tokens[2].str() == "GPU_SHADER") {
+        process_disabled_scope(tokens[0]);
+      }
+    });
+    parser.foreach_match("#i!w(w)", [&](const std::vector<Token> &tokens) {
+      if (tokens[1].str() == "if" && tokens[3].str() == "defined" &&
+          tokens[5].str() == "GPU_SHADER")
+      {
+        process_disabled_scope(tokens[0]);
+      }
+    });
+    parser.foreach_match("#i0", [&](const std::vector<Token> &tokens) {
+      if (tokens[1].str() == "if" && tokens[2].str() == "0") {
+        process_disabled_scope(tokens[0]);
+      }
+    });
+    return parser.result_get();
   }
 
   std::string preprocessor_directive_mutation(const std::string &str)

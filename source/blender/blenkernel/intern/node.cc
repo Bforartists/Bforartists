@@ -3326,12 +3326,21 @@ void node_unique_id(bNodeTree &ntree, bNode &node)
   BLI_assert(node.runtime->index_in_tree == ntree.runtime->nodes_by_id.index_of(&node));
 }
 
-bNode *node_add_node(const bContext *C, bNodeTree &ntree, const StringRef idname)
+bNode *node_add_node(const bContext *C,
+                     bNodeTree &ntree,
+                     const StringRef idname,
+                     std::optional<int> unique_identifier)
 {
   bNode *node = MEM_callocN<bNode>(__func__);
   node->runtime = MEM_new<bNodeRuntime>(__func__);
   BLI_addtail(&ntree.nodes, node);
-  node_unique_id(ntree, *node);
+  if (unique_identifier) {
+    node->identifier = *unique_identifier;
+    ntree.runtime->nodes_by_id.add_new(node);
+  }
+  else {
+    node_unique_id(ntree, *node);
+  }
   node->ui_order = ntree.all_nodes().size();
 
   idname.copy_utf8_truncated(node->idname);
@@ -3576,9 +3585,6 @@ void node_socket_move_default_value(Main & /*bmain*/,
   bNode &dst_node = dst.owner_node();
   bNode &src_node = src.owner_node();
 
-  const CPPType &src_type = *src.typeinfo->base_cpp_type;
-  const CPPType &dst_type = *dst.typeinfo->base_cpp_type;
-
   const bke::DataTypeConversions &convert = bke::get_implicit_type_conversions();
 
   if (src.is_multi_input()) {
@@ -3589,10 +3595,29 @@ void node_socket_move_default_value(Main & /*bmain*/,
     /* Reroute node can't have ownership of socket value directly. */
     return;
   }
+
+  const CPPType &src_type = *src.typeinfo->base_cpp_type;
+  const CPPType &dst_type = *dst.typeinfo->base_cpp_type;
   if (&src_type != &dst_type) {
     if (!convert.is_convertible(src_type, dst_type)) {
       return;
     }
+  }
+
+  void *src_value = socket_value_storage(src);
+  if (!src_value) {
+    return;
+  }
+
+  BUFFER_FOR_CPP_TYPE_VALUE(dst_type, dst_buffer);
+  convert.convert_to_uninitialized(src_type, dst_type, src_value, dst_buffer);
+
+  if (dst_node.is_type("ShaderNodeCombineXYZ")) {
+    const float3 &src_value = *static_cast<float3 *>(dst_buffer);
+    dst_node.input_socket(0).default_value_typed<bNodeSocketValueFloat>()->value = src_value.x;
+    dst_node.input_socket(1).default_value_typed<bNodeSocketValueFloat>()->value = src_value.y;
+    dst_node.input_socket(2).default_value_typed<bNodeSocketValueFloat>()->value = src_value.z;
+    return;
   }
 
   /* Special handling for strings because the generic code below can't handle them. */
@@ -3606,13 +3631,12 @@ void node_socket_move_default_value(Main & /*bmain*/,
     return;
   }
 
-  void *src_value = socket_value_storage(src);
   void *dst_value = node_static_value_storage_for(dst_node, dst);
-  if (!dst_value || !src_value) {
+  if (!dst_value) {
     return;
   }
 
-  convert.convert_to_uninitialized(src_type, dst_type, src_value, dst_value);
+  dst_type.move_assign(dst_buffer, dst_value);
 
   src_type.destruct(src_value);
   if (ELEM(eNodeSocketDatatype(src.type),
@@ -3887,7 +3911,7 @@ static bNodeTree *node_tree_add_tree_do(Main *bmain,
    */
   int flag = 0;
   if (is_embedded || bmain == nullptr) {
-    flag |= LIB_ID_CREATE_NO_MAIN;
+    flag |= LIB_ID_CREATE_NO_MAIN | LIB_ID_CREATE_NO_USER_REFCOUNT;
   }
   BLI_assert_msg(!owner_library || !owner_id,
                  "Embedded NTrees should never have a defined owner library here");
@@ -4291,17 +4315,6 @@ void node_tree_free_embedded_tree(bNodeTree *ntree)
   node_tree_free_tree(*ntree);
   BKE_libblock_free_data(&ntree->id, true);
   BKE_libblock_free_data_py(&ntree->id);
-}
-
-void node_tree_free_local_tree(bNodeTree *ntree)
-{
-  if (ntree->id.tag & ID_TAG_LOCALIZED) {
-    node_tree_free_tree(*ntree);
-  }
-  else {
-    node_tree_free_tree(*ntree);
-    BKE_libblock_free_data(&ntree->id, true);
-  }
 }
 
 void node_tree_set_output(bNodeTree &ntree)

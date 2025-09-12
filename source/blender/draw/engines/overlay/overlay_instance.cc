@@ -1092,7 +1092,9 @@ bool Instance::object_needs_prepass(const ObjectRef &ob_ref, bool in_paint_mode)
 
   if (in_paint_mode) {
     /* Allow paint overlays to draw with depth equal test. */
-    if (object_is_rendered_transparent(ob_ref.object, state)) {
+    if (object_is_rendered_transparent(ob_ref.object, state) ||
+        object_is_in_front(ob_ref.object, state))
+    {
       return true;
     }
   }

@@ -988,17 +988,8 @@ static void wm_draw_area_offscreen(bContext *C, wmWindow *win, ScrArea *area, bo
 
   if (area->flag & AREA_FLAG_ACTIVE_TOOL_UPDATE) {
     if ((1 << area->spacetype) & WM_TOOLSYSTEM_SPACE_MASK) {
-      if (area->spacetype == SPACE_SEQ) {
-        Scene *scene = CTX_data_sequencer_scene(C);
-        if (scene) {
-          WM_toolsystem_update_from_context(
-              C, CTX_wm_workspace(C), scene, BKE_view_layer_default_render(scene), area);
-        }
-      }
-      else {
-        WM_toolsystem_update_from_context(
-            C, CTX_wm_workspace(C), CTX_data_scene(C), CTX_data_view_layer(C), area);
-      }
+      WM_toolsystem_update_from_context(
+          C, CTX_wm_workspace(C), CTX_data_scene(C), CTX_data_view_layer(C), area);
     }
     area->flag &= ~AREA_FLAG_ACTIVE_TOOL_UPDATE;
   }
@@ -1654,6 +1645,7 @@ void wm_draw_update(bContext *C)
     if (wm_draw_update_test_window(bmain, C, win)) {
       /* Sets context window+screen. */
       wm_window_make_drawable(wm, win);
+      wm_window_swap_buffer_acquire(win);
 
       /* Notifiers for screen redraw. */
       ED_screen_ensure_updated(C, wm, win);
@@ -1661,7 +1653,7 @@ void wm_draw_update(bContext *C)
       wm_draw_window(C, win);
       wm_draw_update_clear_window(C, win);
 
-      wm_window_swap_buffers(win);
+      wm_window_swap_buffer_release(win);
     }
   }
 
