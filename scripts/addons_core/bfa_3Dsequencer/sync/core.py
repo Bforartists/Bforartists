@@ -28,10 +28,10 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
         """Update the sync toggle on changing mode"""
         if self.sync_mode == 'BUILTIN':
             bpy.context.workspace.use_scene_time_sync = self.enabled
-            self.enabled = not self.enabled
+            self.enabled = False
         else:
             self.enabled = bpy.context.workspace.use_scene_time_sync
-            bpy.context.workspace.use_scene_time_sync = not bpy.context.workspace.use_scene_time_sync
+            bpy.context.workspace.use_scene_time_sync = False
 
     def is_legacy(self):
         return self.sync_mode == 'LEGACY'
