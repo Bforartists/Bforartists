@@ -3357,36 +3357,45 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             split.label(text="Volume", text_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "volume", text="")
 
-            layout.use_property_split = False
-            col = layout.column()
-            col.prop(sound, "use_mono") # BFA - Align bool property left
-
-            layout.use_property_split = True
-            col = layout.column()
-
+            col = layout.column(align=True) # BFA - Put all panning settings in its own column layout
+            row = col.row()
+            row.alignment = 'LEFT'
+            row.use_property_split = False
+            row.prop(sound, "use_mono") # BFA - Align bool property left
+            
             audio_channels = context.sequencer_scene.render.ffmpeg.audio_channels
-            pan_enabled = sound.use_mono and audio_channels != 'MONO'
+            is_mono = (audio_channels == 'MONO')
+            
+            # BFA - Add dropdown icon
+            if not is_mono:
+                row.label(text="", icon="DISCLOSURE_TRI_DOWN" if sound.use_mono else "DISCLOSURE_TRI_RIGHT")
+
+            pan_enabled = sound.use_mono and not is_mono
             pan_text = "{:.2f}°".format(strip.pan * 90.0)
+            
+            # BFA - Only draw if enabled
+            if pan_enabled:
+                row = col.row()
+                row.separator()
+                
+                split = row.column().split(factor=0.385)
+                col1 = split.column()
+                col2 = split.column()
+                col1.alignment = 'LEFT'
+                col2.alignment = 'RIGHT'
+                
+                col1.label(text="Pan", text_ctxt=i18n_contexts.id_sound)
+                col2.prop(strip, "pan", text="")
 
-            split = col.split(factor=0.4)
-            split.alignment = 'RIGHT'
-            split.label(text="Pan", text_ctxt=i18n_contexts.id_sound)
-            split.prop(strip, "pan", text="")
-            split.enabled = pan_enabled
+                if audio_channels not in {'MONO', 'STEREO'}:
+                    col1.label(text="Pan Angle")
+                    row = col2.row()
+                    row.alignment="CENTER"
+                    row.label(text=pan_text)
+                    row.separator()  # Compensate for no decorate.
 
-            if audio_channels not in {'MONO', 'STEREO'}:
-                split = col.split(factor=0.4)
-                split.alignment = 'RIGHT'
-                split.label(text="Pan Angle")
-                split.enabled = pan_enabled
-                subsplit = split.row()
-                subsplit.alignment = 'CENTER'
-                subsplit.label(text=pan_text)
-                subsplit.label(text=" ")  # Compensate for no decorate.
-                subsplit.enabled = pan_enabled
-
-            layout.use_property_split = False
             col = layout.column()
+            col.use_property_split = False # BFA - Align bool property left
 
             if overlay_settings.waveform_display_type == 'DEFAULT_WAVEFORMS':
                 col.prop(strip, "show_waveform")
