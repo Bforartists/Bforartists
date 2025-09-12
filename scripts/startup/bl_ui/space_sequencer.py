@@ -3234,15 +3234,21 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
 
         # Use label, editing this value from the UI allows negative values,
         # users can adjust duration.
-        split = sub.split(factor=factor + max_factor, align=True)
-        split.alignment = 'RIGHT'
-        split.label(text="End")
-        split = split.split(factor=factor + 0.3 + max_factor, align=True)
-        split.label(
-            text="{:>14s}".format(smpte_from_frame(frame_final_end)), translate=False
-        )
-        split.alignment = 'RIGHT'
-        split.label(text=str(frame_final_end) + " ")
+        split_factor = (factor + max_factor - 0.005) # BFA - Nudge split to the left for better text alignment
+        split = sub.split(factor=split_factor, align=True)
+        row = split.row()
+        row.alignment = 'LEFT'
+        row.label(text="End")
+
+        # BFA - Improve text alignment
+        row = split.row()
+        row.separator(factor=0) # BFA - slight indent
+        row.label(text="{:>14s}".format(smpte_from_frame(frame_final_end)), translate=False)
+        row = row.row() 
+        row.alignment = 'RIGHT'
+        row.label(text=str(frame_final_end) + " ")
+        row.separator(factor=0) # BFA - slight indent
+        # BFA - Improve text alignment (end)
 
         if not is_effect:
             layout.alignment = 'RIGHT'
