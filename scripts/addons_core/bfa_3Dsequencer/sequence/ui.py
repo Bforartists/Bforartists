@@ -125,19 +125,22 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
 
         master_scene = get_sync_settings().master_scene
 
-        self.layout.prop(
-            context.window_manager.timeline_sync_settings,
-            "master_scene",
-            text="Master Scene:",
-            icon="SEQ_STRIP_DUPLICATE",
-        )
+        # Master Scene prop
+        row = self.layout.row(align=True)
+        row.label(text="Synchronization Timeline:")
+        self.layout.prop(context.window_manager.timeline_sync_settings, "master_scene", text="", icon="SEQ_STRIP_DUPLICATE",)
 
         if (
             not master_scene
             or not master_scene.sequence_editor
             or not master_scene.sequence_editor.strips
         ):
-            self.layout.label(text="Set the Master Scene to sync from Sequencer", icon="QUESTION")
+            # Button to set pinned scene as master
+            row = self.layout.row(align=True)
+            row.operator("sequencer.set_master_scene", text="Use Pinned Scene", icon="PINNED")
+
+            self.layout.label(text="Set the Synchronization Timeline", icon="QUESTION")
+            self.layout.label(text="to sync from Sequencer", icon="NONE")
             return
 
         self.layout.label(text="Sequencer Scene Strips:")

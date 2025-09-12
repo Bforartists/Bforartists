@@ -12,7 +12,7 @@ from bfa_3Dsequencer.utils import register_classes, unregister_classes
 class WM_OT_timeline_sync_toggle(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_toggle"
     bl_label = "Toggle 3D View Sync"
-    bl_description = "Toggles syncronization between the Timeline scene strips from the Master Scene and 3D View. \nTo use, set the sequencer Timeline to the Master Scene, \nThen toggle to syncronize the 3D View with the Sequencer"
+    bl_description = "Toggles syncronization between the Pinned Timeline scene from as the Syncronization Timeline and 3D View. \nTo use, set the Syncrhonization Timeline with a pinned Scene, \nThen toggle to syncronize the 3D View with the Sequencer scene strips"
     bl_options = set()
 
     def execute(self, context: bpy.types.Context):
@@ -37,7 +37,7 @@ class WM_OT_timeline_sync_toggle(bpy.types.Operator):
 class WM_OT_timeline_sync_play_master(bpy.types.Operator):
     bl_idname = "wm.timeline_sync_play_master"
     bl_label = "Play Master Scene"
-    bl_description = "Toggle playback of master scene in the Timeline"
+    bl_description = "Toggle playback of Syncrhonization Timeline"
     bl_options = set()
 
     @classmethod
@@ -55,7 +55,7 @@ class SEQUENCER_OT_change_3d_view_scene(bpy.types.Operator):
     """Change scene to active strip scene"""
     bl_idname = "sequencer.change_3d_view_scene"
     bl_label = "Toggle Scene Strip"
-    bl_description = "Updates the current scene to active scene strip \nIf timeline in sequencer not set, this toggles the current scene to active scene strip in the sequencer"
+    bl_description = "Updates the active Scene to active Scene strip \nIf Synchronization timeline in Sequencer is not set, this toggles the current Scene to active Scene strip in the Sequencer"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -84,10 +84,30 @@ class SEQUENCER_OT_change_3d_view_scene(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SEQUENCER_OT_set_master_scene(bpy.types.Operator):
+    """Set the current pinned scene as the master timeline scene"""
+    bl_idname = "sequencer.set_master_scene"
+    bl_label = "Set Pinned Scene as the Synchronization Timeline"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        settings = get_sync_settings()
+        workspace = context.workspace
+        
+        if workspace.sequencer_scene:
+            settings.master_scene = workspace.sequencer_scene
+            self.report({'INFO'}, f"Set {workspace.sequencer_scene.name} as the Synchronization Timeline")
+        else:
+            self.report({'WARNING'}, "No scene pinned to be the Synchronization Timeline")
+        
+        return {'FINISHED'}
+
+
 classes = (
     WM_OT_timeline_sync_toggle,
     WM_OT_timeline_sync_play_master,
     SEQUENCER_OT_change_3d_view_scene,
+    SEQUENCER_OT_set_master_scene,
 )
 
 

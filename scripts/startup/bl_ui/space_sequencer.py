@@ -186,6 +186,7 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
         row = layout.row()  # BFA - 3D Sequencer
+        # Sync pinned scene button
         row.label(icon='PINNED' if context.workspace.sequencer_scene else 'UNPINNED')  # BFA - 3D Sequencer
 
         # BFA - wip merge of new sequencer
