@@ -49,6 +49,7 @@ void register_node_type_tex_translate()
 
   tex_node_type_base(&ntype, "TextureNodeTranslate", TEX_NODE_TRANSLATE);
   ntype.ui_name = "Translate";
+  ntype.ui_description = "Translate the texture coordinates of an image or texture";
   ntype.enum_name_legacy = "TRANSLATE";
   ntype.nclass = NODE_CLASS_DISTORT;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

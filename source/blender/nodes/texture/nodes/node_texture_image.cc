@@ -101,6 +101,7 @@ void register_node_type_tex_image()
 
   tex_node_type_base(&ntype, "TextureNodeImage", TEX_NODE_IMAGE);
   ntype.ui_name = "Image";
+  ntype.ui_description = "Load an external image";
   ntype.enum_name_legacy = "IMAGE";
   ntype.nclass = NODE_CLASS_INPUT;
   blender::bke::node_type_socket_templates(&ntype, nullptr, outputs);

@@ -51,6 +51,7 @@ void register_node_type_tex_valtorgb()
 
   tex_node_type_base(&ntype, "TextureNodeValToRGB", TEX_NODE_VALTORGB);
   ntype.ui_name = "Color Ramp";
+  ntype.ui_description = "Map values to colors with the use of a gradient";
   ntype.enum_name_legacy = "VALTORGB";
   ntype.nclass = NODE_CLASS_CONVERTER;
   blender::bke::node_type_socket_templates(&ntype, valtorgb_in, valtorgb_out);
@@ -97,6 +98,7 @@ void register_node_type_tex_rgbtobw()
 
   tex_node_type_base(&ntype, "TextureNodeRGBToBW", TEX_NODE_RGBTOBW);
   ntype.ui_name = "RGB to BW";
+  ntype.ui_description = "Convert RGB input into grayscale using luminance";
   ntype.enum_name_legacy = "RGBTOBW";
   ntype.nclass = NODE_CLASS_CONVERTER;
   blender::bke::node_type_socket_templates(&ntype, rgbtobw_in, rgbtobw_out);

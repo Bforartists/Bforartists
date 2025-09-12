@@ -96,6 +96,7 @@ void register_node_type_tex_separate_color()
 
   tex_node_type_base(&ntype, "TextureNodeSeparateColor", TEX_NODE_SEPARATE_COLOR);
   ntype.ui_name = "Separate Color";
+  ntype.ui_description = "Split a color into separate channels, based on a particular color model";
   ntype.enum_name_legacy = "SEPARATE_COLOR";
   ntype.nclass = NODE_CLASS_OP_COLOR;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);
