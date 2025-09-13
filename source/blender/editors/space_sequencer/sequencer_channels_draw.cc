@@ -249,7 +249,7 @@ static void draw_channel_labels(const SeqChannelDrawContext *context,
     }
 
     WM_event_add_notifier(
-        context->C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(context->C));  /*BFA - 3D Sequencer*/
+        context->C, NC_SCENE | ND_SEQUENCER, CTX_data_sequencer_scene(context->C));
   }
   else {
     const char *label = seq::channel_name_get(context->channels, channel_index);
@@ -336,7 +336,6 @@ void draw_channels(const bContext *C, ARegion *region)
 
   Editing *ed = seq::editing_get(scene);
   if (ed == nullptr) {
-    draw_background();  /*BFA - 3D Sequencer*/
     return;
   }
 

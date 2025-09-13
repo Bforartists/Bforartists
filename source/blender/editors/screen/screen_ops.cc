@@ -3146,10 +3146,7 @@ static wmOperatorStatus region_scale_modal(bContext *C, wmOperator *op, const wm
           }
 
           ED_area_tag_redraw(rmd->area);
-          WM_event_add_notifier(
-              C,
-              NC_SCENE | ND_FRAME,
-              blender::seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+          WM_event_add_notifier(C, NC_SCENE | ND_FRAME, nullptr);
         }
 
         region_scale_exit(op);
@@ -3279,7 +3276,7 @@ static wmOperatorStatus frame_offset_exec(bContext *C, wmOperator *op)
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
   WM_event_add_notifier(
-      C, NC_SCENE | ND_FRAME, blender::seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+      C, NC_SCENE | ND_FRAME, scene);
 
   return OPERATOR_FINISHED;
 }

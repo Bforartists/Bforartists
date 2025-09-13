@@ -168,6 +168,5 @@ void strip_lookup_free(Editing *ed);
  * Mark strip lookup as invalid (i.e. will need rebuilding).
  */
 void strip_lookup_invalidate(const Editing *ed);
-struct Scene *get_ref_scene_for_notifiers(const struct bContext *C); /*BFA - 3D Sequencer*/
 
 }  // namespace blender::seq

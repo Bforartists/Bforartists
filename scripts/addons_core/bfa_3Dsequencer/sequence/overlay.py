@@ -116,7 +116,7 @@ def draw_sequence_overlay_cb(drawer: OverlayDrawer):
     sequence_settings = context.window_manager.sequence_settings
 
     # Early return if sync or overlay options are disabled.
-    if not sync_settings.enabled or not sequence_settings.overlay_dopesheet:
+    if not sync_settings.is_sync() or not sequence_settings.overlay_dopesheet:
         return
 
     # Only draw overlay if current scene matches master strip's scene.
