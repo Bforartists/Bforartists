@@ -588,7 +588,7 @@ static bool uvedit_uv_islands_arrange(const Scene *scene,
   }
 
   const BMUVOffsets offsets = BM_uv_map_offsets_get(bm);
-  const int other_axis = (int(axis) + 1) % 2;
+  const uint other_axis = (uint(axis) + 1) % 2;
   Array<UVAlignIslandBounds> island_bounds_all(element_map->total_islands);
   for (int i = 0; i < element_map->total_islands; i++) {
     UvElement *element = element_map->storage + element_map->island_indices[i];
@@ -649,7 +649,7 @@ static wmOperatorStatus uv_arrange_islands_exec(bContext *C, wmOperator *op)
   const UVAlignIslandMode align = UVAlignIslandMode(RNA_enum_get(op->ptr, "align"));
   const UVAlignIslandOrder order = UVAlignIslandOrder(RNA_enum_get(op->ptr, "order"));
   const float margin = RNA_float_get(op->ptr, "margin");
-  const int other_axis = (int(axis) + 1) % 2;
+  const uint other_axis = (uint(axis) + 1) % 2;
 
   float2 position = {0.0f, 0.0f};
   Bounds<float2> bounds = {{0.0f, 0.0f}, {1.0f, 1.0f}};
@@ -2559,6 +2559,7 @@ void ED_operatortypes_uvedit()
   WM_operatortype_append(UV_OT_select_less);
   WM_operatortype_append(UV_OT_select_overlap);
   WM_operatortype_append(UV_OT_select_mode);
+  WM_operatortype_append(UV_OT_custom_region_set);
 
   WM_operatortype_append(UV_OT_snap_cursor);
   WM_operatortype_append(UV_OT_snap_selected);

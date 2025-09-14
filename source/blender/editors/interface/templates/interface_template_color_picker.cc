@@ -228,7 +228,7 @@ static void ui_template_palette_menu(bContext * /*C*/, uiLayout *layout, void * 
   op_ptr = row->op("PALETTE_OT_sort", IFACE_("Saturation"), ICON_SATURATION);
   RNA_enum_set(&op_ptr, "type", 2);
   row = &layout->row(false);
-  op_ptr = row->op("PALETTE_OT_sort", IFACE_("Value"), ICON_NODE_VALUE);
+  op_ptr = row->op("PALETTE_OT_sort", CTX_IFACE_(BLT_I18NCONTEXT_COLOR, "Value"), ICON_NODE_VALUE);
   RNA_enum_set(&op_ptr, "type", 3);
   row = &layout->row(false);
   op_ptr = row->op("PALETTE_OT_sort", IFACE_("Luminance"), ICON_NODE_LUMINANCE);

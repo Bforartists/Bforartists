@@ -30,26 +30,18 @@ class AnnotationDrawingToolsPanel:
         row = col.row(align=True)
         row.operator("gpencil.annotate", icon="GREASEPENCIL", text="Draw").mode = "DRAW"
         # XXX: Needs a dedicated icon
-        row.operator(
-            "gpencil.annotate", icon="FORCE_CURVE", text="Erase"
-        ).mode = "ERASER"
+        row.operator("gpencil.annotate", icon="FORCE_CURVE", text="Erase").mode = "ERASER"
 
         row = col.row(align=True)
-        row.operator(
-            "gpencil.annotate", icon="LINE_DATA", text="Line"
-        ).mode = "DRAW_STRAIGHT"
-        row.operator(
-            "gpencil.annotate", icon="MESH_DATA", text="Poly"
-        ).mode = "DRAW_POLY"
+        row.operator("gpencil.annotate", icon="LINE_DATA", text="Line").mode = "DRAW_STRAIGHT"
+        row.operator("gpencil.annotate", icon="MESH_DATA", text="Poly").mode = "DRAW_POLY"
 
         col.separator()
 
         col.label(text="Stroke Placement:")
         row = col.row(align=True)
         row.prop_enum(tool_settings, "annotation_stroke_placement_view2d", "VIEW")
-        row.prop_enum(
-            tool_settings, "annotation_stroke_placement_view2d", "IMAGE", text="Image"
-        )
+        row.prop_enum(tool_settings, "annotation_stroke_placement_view2d", "IMAGE", text="Image")
 
 
 class GreasePencilSculptAdvancedPanel:
@@ -148,9 +140,7 @@ class GreasePencilDisplayPanel:
             if brush.gpencil_brush_type == "DRAW":
                 row = layout.row(align=True)
                 row.active = settings.show_brush
-                row.prop(
-                    gp_settings, "show_lasso", text="Show Fill Color While Drawing"
-                )
+                row.prop(gp_settings, "show_lasso", text="Show Fill Color While Drawing")
 
         elif ob.mode == "SCULPT_GREASE_PENCIL":
             col = layout.column(align=True)
@@ -204,30 +194,16 @@ class GreasePencilBrushFalloff:
                 col.prop(brush, "curve_preset", text="")
 
             if brush.curve_preset == "CUSTOM":
-                layout.template_curve_mapping(
-                    brush, "curve", brush=True, use_negative_slope=True
-                )
+                layout.template_curve_mapping(brush, "curve", brush=True, use_negative_slope=True)
 
                 col = layout.column(align=True)
                 row = col.row(align=True)
-                row.operator(
-                    "brush.curve_preset", icon="SMOOTHCURVE", text=""
-                ).shape = "SMOOTH"
-                row.operator(
-                    "brush.curve_preset", icon="SPHERECURVE", text=""
-                ).shape = "ROUND"
-                row.operator(
-                    "brush.curve_preset", icon="ROOTCURVE", text=""
-                ).shape = "ROOT"
-                row.operator(
-                    "brush.curve_preset", icon="SHARPCURVE", text=""
-                ).shape = "SHARP"
-                row.operator(
-                    "brush.curve_preset", icon="LINCURVE", text=""
-                ).shape = "LINE"
-                row.operator(
-                    "brush.curve_preset", icon="NOCURVE", text=""
-                ).shape = "MAX"
+                row.operator("brush.curve_preset", icon="SMOOTHCURVE", text="").shape = "SMOOTH"
+                row.operator("brush.curve_preset", icon="SPHERECURVE", text="").shape = "ROUND"
+                row.operator("brush.curve_preset", icon="ROOTCURVE", text="").shape = "ROOT"
+                row.operator("brush.curve_preset", icon="SHARPCURVE", text="").shape = "SHARP"
+                row.operator("brush.curve_preset", icon="LINCURVE", text="").shape = "LINE"
+                row.operator("brush.curve_preset", icon="NOCURVE", text="").shape = "MAX"
 
 
 class GREASE_PENCIL_MT_move_to_layer(Menu):
@@ -238,9 +214,7 @@ class GREASE_PENCIL_MT_move_to_layer(Menu):
         layout.operator_context = "INVOKE_REGION_WIN"
         grease_pencil = context.active_object.data
 
-        layout.operator(
-            "grease_pencil.move_to_layer", text="New Layer", icon="ADD"
-        ).add_new_layer = True
+        layout.operator("grease_pencil.move_to_layer", text="New Layer", icon="ADD").add_new_layer = True
 
         if not grease_pencil.layers:
             return
@@ -253,9 +227,7 @@ class GREASE_PENCIL_MT_move_to_layer(Menu):
                 icon = "GREASEPENCIL"
             else:
                 icon = "NONE"
-            layout.operator(
-                "grease_pencil.move_to_layer", text=layer.name, icon=icon
-            ).target_layer_name = layer.name
+            layout.operator("grease_pencil.move_to_layer", text=layer.name, icon=icon).target_layer_name = layer.name
 
 
 class GREASE_PENCIL_MT_layer_active(Menu):
@@ -280,9 +252,7 @@ class GREASE_PENCIL_MT_layer_active(Menu):
                 icon = "GREASEPENCIL"
             else:
                 icon = "NONE"
-            layout.operator(
-                "grease_pencil.layer_active", text=layer.name, icon=icon
-            ).layer = i
+            layout.operator("grease_pencil.layer_active", text=layer.name, icon=icon).layer = i
 
 
 class GPENCIL_UL_annotation_layer(UIList):
@@ -405,12 +375,8 @@ class AnnotationDataPanel:
                 col.separator()
 
                 sub = col.column(align=True)
-                sub.operator(
-                    "gpencil.layer_annotation_move", icon="TRIA_UP", text=""
-                ).type = "UP"
-                sub.operator(
-                    "gpencil.layer_annotation_move", icon="TRIA_DOWN", text=""
-                ).type = "DOWN"
+                sub.operator("gpencil.layer_annotation_move", icon="TRIA_UP", text="").type = "UP"
+                sub.operator("gpencil.layer_annotation_move", icon="TRIA_DOWN", text="").type = "DOWN"
 
         tool_settings = context.tool_settings
         if gpd and gpl:
@@ -426,12 +392,10 @@ class AnnotationDataPanel:
 
             if gpl.active_frame:
                 lock_status = iface_("Locked") if gpl.lock_frame else iface_("Unlocked")
-                lock_label = iface_("Frame: {:d} ({:s})").format(
-                    gpl.active_frame.frame_number, lock_status
-                )
+                lock_label = iface_("Frame: {:d} ({:s})").format(gpl.active_frame.frame_number, lock_status)
             else:
                 lock_label = iface_("Lock Frame")
-            row.prop(gpl, "lock_frame", text=lock_label, icon="UNLOCKED")
+            row.prop(gpl, "lock_frame", text=lock_label, icon="UNLOCKED", translate=False)
             row.operator("gpencil.annotation_active_frame_delete", text="", icon="X")
 
 
@@ -526,19 +490,13 @@ class GreasePencilMaterialsPanel:
 
             col.separator()
 
-            col.menu(
-                "GREASE_PENCIL_MT_material_context_menu", icon="DOWNARROW_HLT", text=""
-            )
+            col.menu("GREASE_PENCIL_MT_material_context_menu", icon="DOWNARROW_HLT", text="")
 
             if is_sortable:
                 col.separator()
 
-                col.operator(
-                    "object.material_slot_move", icon="TRIA_UP", text=""
-                ).direction = "UP"
-                col.operator(
-                    "object.material_slot_move", icon="TRIA_DOWN", text=""
-                ).direction = "DOWN"
+                col.operator("object.material_slot_move", icon="TRIA_UP", text="").direction = "UP"
+                col.operator("object.material_slot_move", icon="TRIA_DOWN", text="").direction = "DOWN"
 
                 col.separator()
 
@@ -548,16 +506,12 @@ class GreasePencilMaterialsPanel:
                     icon="RESTRICT_VIEW_ON",
                     text="",
                 ).affect_visibility = True
-                sub.operator(
-                    "grease_pencil.material_isolate", icon="LOCKED", text=""
-                ).affect_visibility = False
+                sub.operator("grease_pencil.material_isolate", icon="LOCKED", text="").affect_visibility = False
 
             if show_full_ui:
                 row = layout.row()
 
-                row.template_ID(
-                    ob, "active_material", new="material.new", live_icon=True
-                )
+                row.template_ID(ob, "active_material", new="material.new", live_icon=True)
 
                 slot = context.material_slot
                 if slot:
@@ -567,12 +521,8 @@ class GreasePencilMaterialsPanel:
                 if ob.mode == "EDIT":
                     row = layout.row(align=True)
                     row.operator("grease_pencil.stroke_material_set", text="Assign")
-                    row.operator(
-                        "grease_pencil.material_select", text="Select"
-                    ).deselect = False
-                    row.operator(
-                        "grease_pencil.material_select", text="Deselect"
-                    ).deselect = True
+                    row.operator("grease_pencil.material_select", text="Select").deselect = False
+                    row.operator("grease_pencil.material_select", text="Deselect").deselect = True
             # stroke color
             ma = None
             if is_view3d and brush is not None:
@@ -656,9 +606,7 @@ class GREASE_PENCIL_MT_snap(Menu):
             text="Cursor to World Origin",
             icon="CURSORTOCENTER",
         )
-        layout.operator(
-            "view3d.snap_cursor_to_grid", text="Cursor to Grid", icon="CURSORTOGRID"
-        )
+        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon="CURSORTOGRID")
 
 
 class GREASE_PENCIL_MT_snap_pie(Menu):
@@ -690,9 +638,7 @@ class GREASE_PENCIL_MT_snap_pie(Menu):
             icon="RESTRICT_SELECT_OFF",
         ).use_offset = True
         pie.separator()
-        pie.operator(
-            "view3d.snap_cursor_to_center", text="Cursor to World Origin", icon="CURSOR"
-        )
+        pie.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon="CURSOR")
         pie.separator()
 
 

@@ -1567,10 +1567,14 @@ class SEQUENCER_MT_strip(Menu):
             layout.separator()
 
             with operator_context(layout, "EXEC_REGION_WIN"):
-                props = layout.operator("sequencer.split", text="Split", icon="CUT")
+                props = layout.operator(
+                    "sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT"
+                )
                 props.type = "SOFT"
 
-                props = layout.operator("sequencer.split", text="Hold Split", icon="HOLD_SPLIT")
+                props = layout.operator(
+                    "sequencer.split", text="Hold Split", text_ctxt=i18n_contexts.id_sequence, icon="HOLD_SPLIT"
+                )
                 props.type = "HARD"
 
             layout.separator()
@@ -1818,7 +1822,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.operator_context = "INVOKE_REGION_WIN"
 
-        layout.operator("sequencer.split", text="Split", icon="CUT").type = "SOFT"
+        layout.operator("sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT").type = "SOFT"
 
         layout.separator()
 
@@ -3086,20 +3090,20 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
 
         # Use label, editing this value from the UI allows negative values,
         # users can adjust duration.
-        split_factor = (factor + max_factor - 0.005) # BFA - Nudge split to the left for better text alignment
+        split_factor = factor + max_factor - 0.005  # BFA - Nudge split to the left for better text alignment
         split = sub.split(factor=split_factor, align=True)
         row = split.row()
-        row.alignment = 'LEFT'
+        row.alignment = "LEFT"
         row.label(text="End")
 
         # BFA - Improve text alignment
         row = split.row()
-        row.separator(factor=0) # BFA - slight indent
+        row.separator(factor=0)  # BFA - slight indent
         row.label(text="{:>14s}".format(smpte_from_frame(frame_final_end)), translate=False)
-        row = row.row() 
-        row.alignment = 'RIGHT'
+        row = row.row()
+        row.alignment = "RIGHT"
         row.label(text=str(frame_final_end) + " ")
-        row.separator(factor=0) # BFA - slight indent
+        row.separator(factor=0)  # BFA - slight indent
         # BFA - Improve text alignment (end)
 
         if not is_effect:
@@ -3209,45 +3213,45 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             split.label(text="Volume", text_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "volume", text="")
 
-            col = layout.column(align=True) # BFA - Put all panning settings in its own column layout
+            col = layout.column(align=True)  # BFA - Put all panning settings in its own column layout
             row = col.row()
-            row.alignment = 'LEFT'
+            row.alignment = "LEFT"
             row.use_property_split = False
-            row.prop(sound, "use_mono") # BFA - Align bool property left
-            
+            row.prop(sound, "use_mono")  # BFA - Align bool property left
+
             audio_channels = context.sequencer_scene.render.ffmpeg.audio_channels
-            is_mono = (audio_channels == 'MONO')
-            
+            is_mono = audio_channels == "MONO"
+
             # BFA - Add dropdown icon
             if not is_mono:
                 row.label(text="", icon="DISCLOSURE_TRI_DOWN" if sound.use_mono else "DISCLOSURE_TRI_RIGHT")
 
             pan_enabled = sound.use_mono and not is_mono
             pan_text = "{:.2f}°".format(strip.pan * 90.0)
-            
+
             # BFA - Only draw if enabled
             if pan_enabled:
                 row = col.row()
                 row.separator()
-                
+
                 split = row.column().split(factor=0.385)
                 col1 = split.column()
                 col2 = split.column()
-                col1.alignment = 'LEFT'
-                col2.alignment = 'RIGHT'
-                
+                col1.alignment = "LEFT"
+                col2.alignment = "RIGHT"
+
                 col1.label(text="Pan", text_ctxt=i18n_contexts.id_sound)
                 col2.prop(strip, "pan", text="")
 
-                if audio_channels not in {'MONO', 'STEREO'}:
+                if audio_channels not in {"MONO", "STEREO"}:
                     col1.label(text="Pan Angle")
                     row = col2.row()
-                    row.alignment="CENTER"
+                    row.alignment = "CENTER"
                     row.label(text=pan_text)
                     row.separator()  # Compensate for no decorate.
 
             col = layout.column()
-            col.use_property_split = False # BFA - Align bool property left
+            col.use_property_split = False  # BFA - Align bool property left
 
             if overlay_settings.waveform_display_type == "DEFAULT_WAVEFORMS":
                 col.prop(strip, "show_waveform")
