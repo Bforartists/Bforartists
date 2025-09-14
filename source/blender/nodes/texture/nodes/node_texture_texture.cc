@@ -77,6 +77,7 @@ void register_node_type_tex_texture()
 
   tex_node_type_base(&ntype, "TextureNodeTexture", TEX_NODE_TEXTURE);
   ntype.ui_name = "Texture";
+  ntype.ui_description = "Load another node-based or non-node-based texture";
   ntype.enum_name_legacy = "TEXTURE";
   ntype.nclass = NODE_CLASS_INPUT;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

@@ -251,13 +251,14 @@ static void init(bNodeTree * /*ntree*/, bNode *node)
 }
 
 /* Node type definitions */
-#define TexDef(TEXTYPE, idname, outputs, name, Name, EnumNameLegacy) \
+#define TexDef(TEXTYPE, idname, outputs, name, Name, EnumNameLegacy, Description) \
   void register_node_type_tex_proc_##name(void) \
   { \
     static blender::bke::bNodeType ntype; \
 \
     tex_node_type_base(&ntype, idname, TEX_NODE_PROC + TEXTYPE); \
     ntype.ui_name = Name; \
+    ntype.ui_description = Description; \
     ntype.enum_name_legacy = EnumNameLegacy; \
     ntype.nclass = NODE_CLASS_TEXTURE; \
     blender::bke::node_type_socket_templates(&ntype, name##_inputs, outputs); \
@@ -274,14 +275,13 @@ static void init(bNodeTree * /*ntree*/, bNode *node)
 #define C outputs_color_only
 #define CV outputs_both
 
-TexDef(TEX_VORONOI, "TextureNodeTexVoronoi", CV, voronoi, "Voronoi", "TEX_VORONOI");
-TexDef(TEX_BLEND, "TextureNodeTexBlend", C, blend, "Blend", "TEX_BLEND");
-TexDef(TEX_MAGIC, "TextureNodeTexMagic", C, magic, "Magic", "TEX_MAGIC");
-TexDef(TEX_MARBLE, "TextureNodeTexMarble", CV, marble, "Marble", "TEX_MARBLE");
-TexDef(TEX_CLOUDS, "TextureNodeTexClouds", CV, clouds, "Clouds", "TEX_CLOUDS");
-TexDef(TEX_WOOD, "TextureNodeTexWood", CV, wood, "Wood", "TEX_WOOD");
-TexDef(TEX_MUSGRAVE, "TextureNodeTexMusgrave", CV, musgrave, "Musgrave", "TEX_MUSGRAVE");
-TexDef(TEX_NOISE, "TextureNodeTexNoise", C, noise, "Noise", "TEX_NOISE");
-TexDef(TEX_STUCCI, "TextureNodeTexStucci", CV, stucci, "Stucci", "TEX_STUCCI");
-TexDef(
-    TEX_DISTNOISE, "TextureNodeTexDistNoise", CV, distnoise, "Distorted Noise", "TEX_DISTNOISE");
+TexDef(TEX_VORONOI, "TextureNodeTexVoronoi", CV, voronoi, "Voronoi", "TEX_VORONOI", "Generate Worley noise based on the distance to random points");
+TexDef(TEX_BLEND, "TextureNodeTexBlend", C, blend, "Blend", "TEX_BLEND", "Generate a smoothly interpolated progression");
+TexDef(TEX_MAGIC, "TextureNodeTexMagic", C, magic, "Magic", "TEX_MAGIC", "Generate a psychedelic color texture");
+TexDef(TEX_MARBLE, "TextureNodeTexMarble", CV, marble, "Marble", "TEX_MARBLE", "Generate marble-like bands based on the sine, saw, or triangular formula and noise turbulence");
+TexDef(TEX_CLOUDS, "TextureNodeTexClouds", CV, clouds, "Clouds", "TEX_CLOUDS", "Generate fractal Perlin noise");
+TexDef(TEX_WOOD, "TextureNodeTexWood", CV, wood, "Wood", "TEX_WOOD", "Generate wood and ring-shaped patterns");
+TexDef(TEX_MUSGRAVE, "TextureNodeTexMusgrave", CV, musgrave, "Musgrave", "TEX_MUSGRAVE", "Generate a flexible fractal noise based on the specified mode");
+TexDef(TEX_NOISE, "TextureNodeTexNoise", C, noise, "Noise", "TEX_NOISE", "Generate a random color based on an input seed");
+TexDef(TEX_STUCCI, "TextureNodeTexStucci", CV, stucci, "Stucci", "TEX_STUCCI", "Generate noise characterized by multiple tiny bumps, resembling stucco");
+TexDef(TEX_DISTNOISE, "TextureNodeTexDistNoise", CV, distnoise, "Distorted Noise", "TEX_DISTNOISE", "Generate a hybrid pattern where one noise texture is distorted by another");

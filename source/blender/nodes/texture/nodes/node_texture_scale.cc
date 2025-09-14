@@ -52,6 +52,7 @@ void register_node_type_tex_scale()
 
   tex_node_type_base(&ntype, "TextureNodeScale", TEX_NODE_SCALE);
   ntype.ui_name = "Scale";
+  ntype.ui_description = "Scale the texture coordinates of an image or texture";
   ntype.enum_name_legacy = "SCALE";
   ntype.nclass = NODE_CLASS_DISTORT;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

@@ -50,6 +50,7 @@ void register_node_type_tex_invert()
 
   tex_node_type_base(&ntype, "TextureNodeInvert", TEX_NODE_INVERT);
   ntype.ui_name = "Invert Color";
+  ntype.ui_description = "Invert colors, producing a negative";
   ntype.enum_name_legacy = "INVERT";
   ntype.nclass = NODE_CLASS_OP_COLOR;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

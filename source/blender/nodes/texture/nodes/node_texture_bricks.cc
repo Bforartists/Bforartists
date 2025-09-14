@@ -109,6 +109,7 @@ void register_node_type_tex_bricks()
 
   tex_node_type_base(&ntype, "TextureNodeBricks", TEX_NODE_BRICKS);
   ntype.ui_name = "Bricks";
+  ntype.ui_description = "Generate a procedural texture producing bricks";
   ntype.enum_name_legacy = "BRICKS";
   ntype.nclass = NODE_CLASS_PATTERN;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

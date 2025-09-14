@@ -56,6 +56,7 @@ void register_node_type_tex_checker()
 
   tex_node_type_base(&ntype, "TextureNodeChecker", TEX_NODE_CHECKER);
   ntype.ui_name = "Checker";
+  ntype.ui_description = "Generate a checkerboard texture";
   ntype.enum_name_legacy = "CHECKER";
   ntype.nclass = NODE_CLASS_PATTERN;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

@@ -70,6 +70,7 @@ void register_node_type_tex_combine_color()
 
   tex_node_type_base(&ntype, "TextureNodeCombineColor", TEX_NODE_COMBINE_COLOR);
   ntype.ui_name = "Combine Color";
+  ntype.ui_description = "Combine four channels into one color, based on a particular color model";
   ntype.enum_name_legacy = "COMBINE_COLOR";
   ntype.nclass = NODE_CLASS_OP_COLOR;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);
