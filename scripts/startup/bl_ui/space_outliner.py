@@ -557,39 +557,51 @@ class OUTLINER_PT_filter(Panel):
     bl_region_type = 'HEADER'
     bl_label = "Filter"
 
+    # BFA - Helper method to simplify drawing of properties            
+    @staticmethod
+    def draw_prop_row(layout, data, prop_name, text, *, icon=None):
+        row = layout.row()
+        
+        if icon is not None:
+            row.label(text='', icon=icon)
+        
+        row.prop(data, prop_name, text=text)
+        return row
+
     def draw(self, context):
         layout = self.layout
 
         space = context.space_data
         display_mode = space.display_mode
-
+        
         if display_mode == 'VIEW_LAYER':
             layout.label(text="Restriction Toggles")
             row = layout.row(align=True)
             row.separator()
-            row.prop(space, "show_restrict_column_enable", text="")
-            row.prop(space, "show_restrict_column_select", text="")
-            row.prop(space, "show_restrict_column_hide", text="")
-            row.prop(space, "show_restrict_column_viewport", text="")
-            row.prop(space, "show_restrict_column_render", text="")
-            row.prop(space, "show_restrict_column_holdout", text="")
-            row.prop(space, "show_restrict_column_indirect_only", text="")
+            row.prop(space, "show_restrict_column_enable", icon_only=True)
+            row.prop(space, "show_restrict_column_select", icon_only=True)
+            row.prop(space, "show_restrict_column_hide", icon_only=True)
+            row.prop(space, "show_restrict_column_viewport", icon_only=True)
+            row.prop(space, "show_restrict_column_render", icon_only=True)
+            row.prop(space, "show_restrict_column_holdout", icon_only=True)
+            row.prop(space, "show_restrict_column_indirect_only", icon_only=True)
             layout.separator()
+            
         elif display_mode == 'SCENES':
             layout.label(text="Restriction Toggles")
             row = layout.row(align=True)
             row.separator()
-            row.prop(space, "show_restrict_column_select", text="")
-            row.prop(space, "show_restrict_column_hide", text="")
-            row.prop(space, "show_restrict_column_viewport", text="")
-            row.prop(space, "show_restrict_column_render", text="")
+            row.prop(space, "show_restrict_column_select", icon_only=True)
+            row.prop(space, "show_restrict_column_hide", icon_only=True)
+            row.prop(space, "show_restrict_column_viewport", icon_only=True)
+            row.prop(space, "show_restrict_column_render", icon_only=True)
             layout.separator()
 
-
         col = layout.column(align=True)
+        
         if display_mode != 'DATA_API':
             col.prop(space, "use_sort_alpha")
-        if display_mode not in {'LIBRARY_OVERRIDES'}:
+        if display_mode != 'LIBRARY_OVERRIDES':
             col.prop(space, "use_sync_select", text="Sync Selection")
             col.prop(space, "show_mode_column", text="Show Mode Column")
 
@@ -599,120 +611,88 @@ class OUTLINER_PT_filter(Panel):
         else:
             col = layout.column(align=True)
             col.label(text="Search")
+            
             row = col.row()
             row.separator()
-            row.prop(space, "use_filter_complete", text="Exact Match")
-            row = col.row()
-            row.separator()
-            row.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
+            col = row.column(align=True)
+            
+            col.prop(space, "use_filter_complete", text="Exact Match")
+            col.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
 
         if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'PROPERTIES' and bpy.data.libraries:
             row = layout.row()
             row.label(icon='LIBRARY_DATA_OVERRIDE')
             row.prop(space, "use_filter_lib_override_system", text="System Overrides")
 
-        if display_mode not in {'VIEW_LAYER'}:
-            return
-
-        layout.label(text="Filter")
-
-        col = layout.column(align=True)
-
-        row = col.row()
-        row.separator()
-        row.label(icon='RENDERLAYERS')
-        row.prop(space, "use_filter_view_layers", text="All View Layers")
-
-        row = col.row()
-        row.separator()
-        row.label(icon='OUTLINER_COLLECTION')
-        row.prop(space, "use_filter_collection", text="Collections")
-
-        split = col.split(factor = 0.55)
-        col = split.column()
-        row = col.row()
-        row.separator()
-        row.label(icon='OBJECT_DATAMODE')
-        row.prop(space, "use_filter_object", text="Objects")
-        col = split.column()
-        if space.use_filter_object:
-            col.label(icon='DISCLOSURE_TRI_DOWN')
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        if space.use_filter_object:
-            col = layout.column(align=True)
-            row = col.row(align=True)
+        if display_mode == 'VIEW_LAYER':
+            layout.label(text="Filter")
+            row = layout.row()
             row.separator()
-            row.label(icon='BLANK1')
-            row.separator()
-            row.prop(space, "filter_state", text="")
-            sub = row.row(align=True)
-            if space.filter_state != 'ALL':
-                sub.prop(space, "filter_invert", text="", icon='ARROW_LEFTRIGHT')
-            sub = col.column(align=True)
+            col = row.column(align=True)        
 
-            row = sub.row()
-            row.separator(factor=2.0)
-            row.label(icon='OBJECT_CONTENTS')
-            row.prop(space, "use_filter_object_content", text="Object Contents")
-            row = sub.row()
-            row.separator(factor=2.0)
-            row.label(icon='CHILD')
-            row.prop(space, "use_filter_children", text="Object Children")
+            self.draw_prop_row(col, space, "use_filter_view_layers", text="All View Layers", icon='RENDERLAYERS')
+            self.draw_prop_row(col, space, "use_filter_collection", text="Collections", icon='OUTLINER_COLLECTION')
+                
+            row = col.row()
+            row.label(icon='OBJECT_DATAMODE')
+            row = row.row(align=True)
+            row.alignment = 'LEFT'
+            row.prop(space, "use_filter_object", text="Objects")
 
-            if bpy.data.meshes:
-                row = sub.row()
-                row.separator(factor=2.0)
-                row.label(icon='MESH_DATA')
-                row.prop(space, "use_filter_object_mesh", text="Meshes")
-            if bpy.data.armatures:
-                row = sub.row()
-                row.separator(factor=2.0)
-                row.label(icon='ARMATURE_DATA')
-                row.prop(space, "use_filter_object_armature", text="Armatures")
-                #bfa - hide pose bones - start
-                if space.use_filter_object_armature:
-                    row = sub.row()
-                    row.separator(factor=2.0)
-                    row.label(icon='BONE_DATA')
-                    row.prop(space, "use_filter_pose_bones", text="Pose Bones")
-                #bfa - hide pose bones - end
-            if bpy.data.lights:
-                row = sub.row()
-                row.separator(factor=2.0)
-                row.label(icon='LIGHT_DATA')
-                row.prop(space, "use_filter_object_light", text="Lights")
-            if bpy.data.cameras:
-                row = sub.row()
-                row.separator(factor=2.0)
-                row.label(icon='CAMERA_DATA')
-                row.prop(space, "use_filter_object_camera", text="Cameras")
-            if bpy.data.grease_pencils_v3:
-                row = sub.row()
-                row.separator(factor=2.0)
-                row.label(icon='STROKE')
-                row.prop(space, "use_filter_object_grease_pencil", text="Grease Pencil")
-            row = sub.row()
-            row.separator(factor=2.0)
-            row.label(icon='EMPTY_DATA')
-            row.prop(space, "use_filter_object_empty", text="Empties")
+            if space.use_filter_object:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
+            
+            if space.use_filter_object:
+                row = col.row(align=True)
+                row.prop(space, "filter_state", text="")
+                if space.filter_state != 'ALL':
+                    row.prop(space, "filter_invert", text="", icon='ARROW_LEFTRIGHT')
+                
+                row = col.row()
+                row.separator()
+                col = row.column(align=True)
+                
+                self.draw_prop_row(col, space, "use_filter_object_content", text="Object Contents", icon='OBJECT_CONTENTS')
+                self.draw_prop_row(col, space, "use_filter_children", text="Object Children", icon='CHILD')
 
-            if (
-                    bpy.data.curves or
-                    bpy.data.metaballs or
-                    (hasattr(bpy.data, "hair_curves") and bpy.data.hair_curves) or
-                    (hasattr(bpy.data, "pointclouds") and bpy.data.pointclouds) or
-                    bpy.data.volumes or
-                    bpy.data.lightprobes or
-                    bpy.data.lattices or
-                    bpy.data.fonts or
-                    bpy.data.speakers
-            ):
-                row = sub.row()
-                row.separator(factor=2.0)
-                row.label(icon='OBJECT_DATAMODE')
-                row.prop(space, "use_filter_object_others", text="Others")
+                if bpy.data.meshes:
+                    self.draw_prop_row(col, space, "use_filter_object_mesh", text="Meshes", icon='MESH_DATA')
+
+                if bpy.data.armatures:
+                    self.draw_prop_row(col, space, "use_filter_object_armature", text="Armatures", icon='ARMATURE_DATA')
+
+                    if space.use_filter_object_armature:
+                        self.draw_prop_row(col, space, "use_filter_pose_bones", text="Pose Bones", icon='BONE_DATA')
+
+                if bpy.data.lights:
+                    self.draw_prop_row(col, space, "use_filter_object_light", text="Lights", icon='LIGHT_DATA')
+
+                if bpy.data.cameras:
+                    self.draw_prop_row(col, space, "use_filter_object_camera", text="Cameras", icon='CAMERA_DATA')
+                
+                if bpy.data.grease_pencils_v3:
+                    self.draw_prop_row(col, space, "use_filter_object_grease_pencil", text="Grease Pencil", icon='STROKE')
+                
+                self.draw_prop_row(col, space, "use_filter_object_empty", text="Empties", icon='EMPTY_DATA')
+                
+                other_data = (
+                    "curves",
+                    "metaballs",
+                    "hair_curves",
+                    "pointclouds",
+                    "volumes",
+                    "lightprobes",
+                    "lattices",
+                    "fonts",
+                    "speakers",
+                )    
+                
+                has_others = any((getattr(bpy.data, data_type, False) for data_type in other_data))
+                
+                if has_others:
+                    self.draw_prop_row(col, space, "use_filter_object_others", text="Others", icon='OBJECT_DATAMODE')
 
 classes = (
     OUTLINER_HT_header,
