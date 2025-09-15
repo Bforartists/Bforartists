@@ -126,15 +126,20 @@ class GreasePencilDisplayPanel:
             row.prop(settings, "show_brush", text="Display Cursor")
 
         if ob.mode == 'PAINT_GREASE_PENCIL':
+            col = layout.column(align=True)
+            col.use_property_split = False # BFA - Align bool property left
+            
             if self.is_popover:
-                row = layout.row(align=True)
-                row.use_property_split = False # BFA - Align bool property left
+                row = col.row(align=True)
+                # BFA - Make popover space not expand 
+                # override `row.alignment == 'EXPAND'`
+                row.alignment = 'LEFT' 
                 row.prop(settings, "show_brush", text="Display Cursor")
 
             if brush.gpencil_brush_type == 'DRAW':
-                row = layout.row(align=True)
+                row = col.row(align=True)
                 row.active = settings.show_brush
-                row.use_property_split = False # BFA - Align bool property left
+                row.alignment = 'LEFT' # BFA - Make popover space not expand
                 row.prop(gp_settings, "show_lasso", text="Show Fill Color While Drawing")
 
         elif ob.mode == 'SCULPT_GREASE_PENCIL':
