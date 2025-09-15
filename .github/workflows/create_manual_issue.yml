@@ -20,9 +20,6 @@ jobs:
         with:
           fetch-depth: 0   # optional, for the Git‑History
 
-      - name: Install curl
-        run: sudo apt-get update && sudo apt-get install -y curl
-
       - name: Create issue in manual repo
         env:
           GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}
@@ -31,14 +28,15 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}" # the pull request title
           PR_URL="${{ github.event.pull_request.html_url }}" # the pull request url
           TARGET_REPO="bforartists/manual"
-          TITLE="Merged PR #$PR_NUM $PR_TITLE"
-          BODY=$(printf '%s' "Pull request #$PR_NUM was merged into the master branch in **bforartists/bforartists**.\nThe title of the pull request was #$PR_TITLE\nThe URL to the pull request is #$PR_URL\nPlease review the changes and update the manual.")
 
-          echo "Creating issue: $TITLE"
+          TITLE="Merged PR #${PR_NUM} ${PR_TITLE}"
+          BODY=$(printf '%s' "Pull request #${PR_NUM} was merged into the master branch in **bforartists/bforartists**.\nThe title of the pull request was ${PR_TITLE}\nThe URL to the pull request is ${PR_URL}\nPlease review the changes and update the manual.")
+
+          echo "Creating issue: ${TITLE}"
 
           curl -s \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GH_PAT_AUTO_ISSUE}" \
             -X POST \
-            -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" \
-            https://api.github.com/repos/$TARGET_REPO/issues
+            -d "{\"title\":\"${TITLE}\",\"body\":\"${BODY}\"}" \
+            "https://api.github.com/repos/${TARGET_REPO}/issues"

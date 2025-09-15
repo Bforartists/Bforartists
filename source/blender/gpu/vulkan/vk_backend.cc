@@ -428,6 +428,7 @@ void VKBackend::detect_workarounds(VKDevice &device)
     extensions.dynamic_rendering_unused_attachments = false;
     extensions.descriptor_buffer = false;
     extensions.pageable_device_local_memory = false;
+    GCaps.stencil_export_support = false;
 
     device.workarounds_ = workarounds;
     device.extensions_ = extensions;
@@ -472,7 +473,7 @@ void VKBackend::detect_workarounds(VKDevice &device)
     extensions.descriptor_buffer = false;
   }
 
-  /* Running render tests fails consistenly in some scenes. The cause is that too many descriptor
+  /* Running render tests fails consistently in some scenes. The cause is that too many descriptor
    * sets are required for rendering resulting in failing allocations of the descriptor buffer. We
    * work around this issue by not using descriptor buffers on these platforms.
    *
@@ -589,8 +590,8 @@ Context *VKBackend::context_alloc(void *ghost_window, void *ghost_context)
   VKContext *context = new VKContext(ghost_window, ghost_context);
   device.context_register(*context);
   GHOST_SetVulkanSwapBuffersCallbacks((GHOST_ContextHandle)ghost_context,
-                                      VKContext::swap_buffers_pre_callback,
-                                      VKContext::swap_buffers_post_callback,
+                                      VKContext::swap_buffer_draw_callback,
+                                      VKContext::swap_buffer_acquired_callback,
                                       VKContext::openxr_acquire_framebuffer_image_callback,
                                       VKContext::openxr_release_framebuffer_image_callback);
 

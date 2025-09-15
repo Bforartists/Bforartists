@@ -56,6 +56,7 @@ void register_node_type_tex_curve_time()
 
   tex_node_type_base(&ntype, "TextureNodeCurveTime", TEX_NODE_CURVE_TIME);
   ntype.ui_name = "Time";
+  ntype.ui_description = "Generate a factor value (from 0.0 to 1.0) between the scene start and end time, using a curve mapping";
   ntype.enum_name_legacy = "CURVE_TIME";
   ntype.nclass = NODE_CLASS_INPUT;
   blender::bke::node_type_socket_templates(&ntype, nullptr, time_outputs);
@@ -109,6 +110,7 @@ void register_node_type_tex_curve_rgb()
 
   tex_node_type_base(&ntype, "TextureNodeCurveRGB", TEX_NODE_CURVE_RGB);
   ntype.ui_name = "RGB Curves";
+  ntype.ui_description = "Apply color corrections for each color channel";
   ntype.enum_name_legacy = "CURVE_RGB";
   ntype.nclass = NODE_CLASS_OP_COLOR;
   blender::bke::node_type_socket_templates(&ntype, rgb_inputs, rgb_outputs);
