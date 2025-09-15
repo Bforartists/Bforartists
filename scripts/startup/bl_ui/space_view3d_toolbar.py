@@ -1999,6 +1999,12 @@ class VIEW3D_PT_tools_grease_pencil_sculpt_appearance(GreasePencilDisplayPanel, 
     bl_label = "Cursor"
     bl_category = "Tool"
 
+    # BFA - Hide this panel in "Draw Mode"
+    # I do not know why this bug occurs on our end but not in main Blender.
+    @classmethod
+    def poll(cls, context):
+        return super().poll(context) and context.mode == SCULPT_GREASE_PENCIL
+
 
 class VIEW3D_PT_tools_grease_pencil_weight_appearance(GreasePencilDisplayPanel, Panel, View3DPanel):
     bl_context = ".greasepencil_weight"
