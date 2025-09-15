@@ -718,7 +718,7 @@ class SavePresetInterfaceTheme(AddPresetBase, Operator):
         try:
             rna_xml.xml_file_write(context, filepath, preset_menu_class.preset_xml_map)
         except Exception as ex:
-            self.report({'ERROR'}, "Unable to overwrite preset: {:s}".format(str(ex)))
+            self.report({'ERROR'}, rpt_("Unable to overwrite preset: {:s}").format(str(ex)))
             import traceback
             traceback.print_exc()
             return {'CANCELLED'}
@@ -955,7 +955,7 @@ class WM_OT_operator_presets_cleanup(Operator):
 
 
 class AddPresetGpencilBrush(AddPresetBase, Operator):
-    """Add or remove grease pencil brush preset"""
+    """Add or remove Grease Pencil brush preset"""
     bl_idname = "scene.gpencil_brush_preset_add"
     bl_label = "Add Grease Pencil Brush Preset"
     preset_menu = "VIEW3D_PT_gpencil_brush_presets"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'61dd8a1435fb')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-01 09:40+0000\n"
+"POT-Creation-Date: 2025-09-15 07:14+0000\n"
 "PO-Revision-Date: 2025-07-23 14:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Arabic <https://translate.blender.org/projects/blender-ui/ui/ar/>\n"
@@ -896,14 +896,6 @@ msgid "Layer"
 msgstr "ﺔﻘﺒﻃ"
 
 
-msgid "Array"
-msgstr "ﻒﻴﻔﺻ"
-
-
-msgid "Single"
-msgstr "ﻱﺩﺮﻓ"
-
-
 msgid "Bake Data"
 msgstr "ﺕﺎﻧﺎﻴﺒﻟﺍ ﻥﺰﺧ"
 
@@ -1258,6 +1250,10 @@ msgstr "ﻲﺷﺍﺮﻔﻟﺍ"
 
 msgid "Cameras"
 msgstr "ﺕﺍﺮﻴﻤﻜﻟﺍ"
+
+
+msgid "Color Space"
+msgstr "ﻥﻮﻠﻟﺍ ءﺎﻀﻓ"
 
 
 msgid "Curves"
@@ -2979,10 +2975,6 @@ msgstr "ﻥﻮﻠﻟﺍ ﻂﻴﻄﺨﺗ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
 msgid "Input Color Space"
-msgstr "ﻥﻮﻠﻟﺍ ءﺎﻀﻓ"
-
-
-msgid "Color Space"
 msgstr "ﻥﻮﻠﻟﺍ ءﺎﻀﻓ"
 
 
@@ -15687,6 +15679,34 @@ msgid "Material slot name"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺔﺤﺘﻓ ﻢﺳﺇ"
 
 
+msgid "Face Data"
+msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
+
+
+msgid "Merge"
+msgstr "ﺞﻣﺩﺇ"
+
+
+msgid "Special Characters"
+msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
+
+
+msgid "Text"
+msgstr "ﺺﻧ"
+
+
+msgid "Metaball"
+msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
+
+
+msgid "Names"
+msgstr "ءﺎﻤﺳﺃ"
+
+
+msgid "Bone Roll"
+msgstr "ﺔﻤﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
+
+
 msgid "Snap"
 msgstr "ﻱﺫﺎﺣ"
 
@@ -15731,10 +15751,6 @@ msgid "Select Linked"
 msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺎﺘﺧﺇ"
 
 
-msgid "Metaball"
-msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
-
-
 msgid "Light"
 msgstr "ءﻮﺿ"
 
@@ -15773,30 +15789,6 @@ msgstr "ﻦﻴﺑ ﺎﻣ"
 
 msgid "Propagate"
 msgstr "ﻢﻤﻋ"
-
-
-msgid "Names"
-msgstr "ءﺎﻤﺳﺃ"
-
-
-msgid "Face Data"
-msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
-
-
-msgid "Merge"
-msgstr "ﺞﻣﺩﺇ"
-
-
-msgid "Special Characters"
-msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
-
-
-msgid "Text"
-msgstr "ﺺﻧ"
-
-
-msgid "Bone Roll"
-msgstr "ﺔﻤﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
 
 
 msgctxt "MovieClip"
@@ -15840,13 +15832,13 @@ msgid "Marker"
 msgstr "ﺔﻣﻼ﻿ﻋ"
 
 
-msgid "Material Specials"
-msgstr "ﺕﺎﻣﺎﺨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
-
-
 msgctxt "Operator"
 msgid "Smooth"
 msgstr "ﻢﻋﺎﻧ"
+
+
+msgid "Material Specials"
+msgstr "ﺕﺎﻣﺎﺨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
 
 
 msgid "UV"
@@ -16285,6 +16277,10 @@ msgstr "ﺰﻴﻛﺮﺘﻟﺍ/ﺯﺎﻴﺤﻧﻻ﻿ﺍ"
 
 msgid "Time Offset"
 msgstr "ﺖﻗﻮﻟﺍ ﺔﺣﺍﺯﺍ"
+
+
+msgid "Array"
+msgstr "ﻒﻴﻔﺻ"
 
 
 msgid "Bevel"
@@ -18660,6 +18656,10 @@ msgstr "ﻕﻭﺪﻨﺻ ﻉﺎﻨﻗ"
 
 msgid "Channel Key"
 msgstr "ﺓﺎﻨﻘﻟﺍ ﺡﺎﺘﻔﻣ"
+
+
+msgid "Single"
+msgstr "ﻱﺩﺮﻓ"
 
 
 msgid "Channel used to determine matte"
@@ -21561,6 +21561,18 @@ msgid "Toggle Free/Align"
 msgstr "ﻱﺫﺎﺣ/ﺮﺣ ﺐﻠﻗﺍ"
 
 
+msgid "Remove from selection"
+msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻦﻣ ﻑﺬﺣﺍ"
+
+
+msgid "Toggle Selection"
+msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﺐﻠﻗﺍ"
+
+
+msgid "Toggle the selection"
+msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﺐﻠﻗﺍ"
+
+
 msgid "(De)select all control points"
 msgstr "ﻢﻜﺤﺘﻟﺍ ﻁﺎﻘﻧ ﻞﻛ ﺮﺘﺨﺗ ﻻ﻿/ﺮﺘﺧﺍ"
 
@@ -21662,18 +21674,6 @@ msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻖﺑﺎﻃ"
 
 msgid "Recalculate the direction of selected handles"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺾﺑﺎﻘﻤﻟﺍ ﻩﺎﺠﺗﺇ ﺏﺎﺴﺣ ﺪﻋﺃ"
-
-
-msgid "Remove from selection"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻦﻣ ﻑﺬﺣﺍ"
-
-
-msgid "Toggle Selection"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﺐﻠﻗﺍ"
-
-
-msgid "Toggle the selection"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﺐﻠﻗﺍ"
 
 
 msgctxt "Operator"
@@ -28150,10 +28150,6 @@ msgid "Theme Space"
 msgstr "ﻂﻤﻨﻟﺍ ءﺎﻀﻓ"
 
 
-msgid "Theme Space List"
-msgstr "ﻂﻤﻨﻟﺍ ءﺎﻀﻓ ﺔﻤﺋﺎﻗ"
-
-
 msgid "Shaded"
 msgstr "ﻞﻠﻈﻣ"
 
@@ -31942,10 +31938,6 @@ msgid "Strip used as mask input for the modifier"
 msgstr "ﺮﻴّﻐﻤﻠﻟ ﻉﺎﻨﻘﻟﺍ ﻞﺧﺪﻛ ﻡﺪﺨﺘﺴﻤﻟﺍ ﻂﻳﺮﺸﻟﺍ"
 
 
-msgid "Mask Input Type"
-msgstr "ﻉﺎﻨﻘﻟﺍ ﻞﺧﺩ ﻉﻮﻧ"
-
-
 msgid "Type of input data used for mask"
 msgstr "ﻉﺎﻨﻘﻠﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﻝﺎﺧﺩﻻ﻿ﺍ ﺕﺎﻧﺎﻴﺑ ﻉﻮﻧ"
 
@@ -32282,10 +32274,6 @@ msgid "Settings for space"
 msgstr "ءﺎﻀﻔﻟﺍ ﺕﺩﺍﺪﻋﺇ"
 
 
-msgid "Settings for space list"
-msgstr "ءﺎﻀﻔﻟﺍ ﺔﻤﺋﺎﻗ ﺕﺍﺩﺍﺪﻋﺍ"
-
-
 msgid "Channel Group"
 msgstr "ﺕﺍﻮﻨﻗ ﺔﻋﻮﻤﺠﻣ"
 
@@ -32502,6 +32490,10 @@ msgid "Selected Highlight"
 msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺪﻳﺪﺤﺗ"
 
 
+msgid "Selected Text"
+msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺺﻨﻟﺍ"
+
+
 msgid "Clip Strip"
 msgstr "ﺔﺻﺎﺼﻘﻟﺍ ﻂﻳﺮﺷ"
 
@@ -32510,24 +32502,12 @@ msgid "Preview Background"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﺔﻴﻔﻠﺧ"
 
 
-msgid "Selected Text"
-msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺺﻨﻟﺍ"
-
-
 msgid "Theme Space Settings"
 msgstr "ﻂﻤﻨﻟﺍ ءﺎﻀﻓ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
 msgid "Text Highlight"
 msgstr "ﺺﻨﻟﺍ ﻥﺎﻌﻤﻟ"
-
-
-msgid "Theme Space List Settings"
-msgstr "ﻂﻤﻨﻟﺍ ءﺎﻀﻓ ﺔﻤﺋﺎﻗ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Source List Title"
-msgstr "ﺭﺪﺼﻤﻟﺍ ﺔﻤﺋﺎﻗ ﻥﺍﻮﻨﻋ"
 
 
 msgid "Theme settings for style sets"
@@ -36267,10 +36247,6 @@ msgstr "ﻞﻌﻔﻣ ﺭﺎﺴﻣ ﻻ﻿"
 
 msgid "No active vertex group for painting, aborting"
 msgstr "ﻂﻘﻨﻟﺍ ﺖﻴﺒﺜﺘﻟ ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
-msgid "Warning!"
-msgstr "!ﺮﻳﺬﺤﺗ"
 
 
 msgid "Active F-Curve"

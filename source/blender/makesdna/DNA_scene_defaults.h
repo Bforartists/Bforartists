@@ -352,7 +352,14 @@
     .sharp_max = DEG2RADF(180.0f), \
   }
 
-/* bfa - change default uvcalc_margin */
+  #define _DNA_DEFAULTS_UvSculpt \
+  { \
+   .size = 100, \
+   .strength = 1.0f, \
+   .curve_preset = BRUSH_CURVE_SMOOTH, \
+}
+
+/* bfa - changed default uvcalc_margin */
 #define _DNA_DEFAULT_ToolSettings \
   { \
     .object_flag = SCE_OBJECT_MODE_LOCK, \
@@ -419,6 +426,7 @@
     .gpencil_v2d_align = GP_PROJECT_VIEWSPACE, \
  \
     /* UV painting */ \
+    .uvsculpt = _DNA_DEFAULTS_UvSculpt, \
     .uv_sculpt_settings = 0, \
  \
     /* Placement */ \

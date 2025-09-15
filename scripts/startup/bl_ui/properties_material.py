@@ -180,16 +180,8 @@ class EEVEE_MATERIAL_PT_surface(MaterialButtonsPanel, Panel):
 
         mat = context.material
 
-        if mat.use_nodes:
-            layout.use_property_split = True
-            panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Surface")
-        else:
-            layout.prop(mat, "use_nodes", icon='NODETREE')
-            layout.use_property_split = True
-            layout.prop(mat, "diffuse_color", text="Base Color")
-            layout.prop(mat, "metallic")
-            layout.prop(mat, "specular_intensity", text="Specular")
-            layout.prop(mat, "roughness")
+        layout.use_property_split = True
+        panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Surface")
 
 
 class EEVEE_MATERIAL_PT_volume(MaterialButtonsPanel, Panel):
@@ -203,7 +195,7 @@ class EEVEE_MATERIAL_PT_volume(MaterialButtonsPanel, Panel):
     def poll(cls, context):
         engine = context.engine
         mat = context.material
-        return mat and mat.use_nodes and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
+        return mat and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
 
     def draw(self, context):
         layout = self.layout
@@ -225,7 +217,7 @@ class EEVEE_MATERIAL_PT_displacement(MaterialButtonsPanel, Panel):
     def poll(cls, context):
         engine = context.engine
         mat = context.material
-        return mat and mat.use_nodes and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
+        return mat and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
 
     def draw(self, context):
         layout = self.layout
@@ -248,7 +240,7 @@ class EEVEE_MATERIAL_PT_thickness(MaterialButtonsPanel, Panel):
     def poll(cls, context):
         engine = context.engine
         mat = context.material
-        return mat and mat.use_nodes and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
+        return mat and (engine in cls.COMPAT_ENGINES) and not mat.grease_pencil
 
     def draw(self, context):
         layout = self.layout

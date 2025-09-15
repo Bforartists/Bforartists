@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'61dd8a1435fb')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-01 09:40+0000\n"
+"POT-Creation-Date: 2025-09-15 07:14+0000\n"
 "PO-Revision-Date: 2025-07-23 15:14+0000\n"
 "Last-Translator: Kamil <uhkamil@gmail.com>\n"
 "Language-Team: Polish <https://translate.blender.org/projects/blender-ui/ui/pl/>\n"
@@ -1757,14 +1757,6 @@ msgid "Name of the Attribute"
 msgstr "Nazwa atrybutu"
 
 
-msgid "Array"
-msgstr "Szereg"
-
-
-msgid "Single"
-msgstr "Pojedyńczy"
-
-
 msgid "Active Attribute Index"
 msgstr "Indeks aktywnego atrybutu"
 
@@ -2203,6 +2195,10 @@ msgstr "Kolekcje"
 
 msgid "Collection data-blocks"
 msgstr "Bloki danych dla kolekcji"
+
+
+msgid "Color Space"
+msgstr "Przestrzeń kolorów"
 
 
 msgid "Curves"
@@ -4481,10 +4477,6 @@ msgstr "Ustawienia wejściowej przestrzeni kolorów"
 
 msgid "Input Color Space"
 msgstr "Wejściowa przestrzeń kolorów"
-
-
-msgid "Color Space"
-msgstr "Przestrzeń kolorów"
 
 
 msgid "Color space that the sequencer operates in"
@@ -11584,6 +11576,30 @@ msgid "Mask"
 msgstr "Maska"
 
 
+msgid "Face Data"
+msgstr "Dane ściany"
+
+
+msgid "Clean Up"
+msgstr "Sprzątanie"
+
+
+msgid "Merge"
+msgstr "Scal"
+
+
+msgid "Show/Hide"
+msgstr "Pokaż/Ukryj"
+
+
+msgid "Text"
+msgstr "Tekst"
+
+
+msgid "Metaball"
+msgstr "Metakula"
+
+
 msgid "Snap"
 msgstr "Przyciągnij"
 
@@ -11616,10 +11632,6 @@ msgid "Assign Material"
 msgstr "Przypisanie materiału"
 
 
-msgid "Metaball"
-msgstr "Metakula"
-
-
 msgid "Light"
 msgstr "Światło"
 
@@ -11644,14 +11656,6 @@ msgid "Quick Effects"
 msgstr "Szybkie efekty"
 
 
-msgid "Show/Hide"
-msgstr "Pokaż/Ukryj"
-
-
-msgid "Clean Up"
-msgstr "Sprzątanie"
-
-
 msgid "Asset"
 msgstr "Prefabrykat"
 
@@ -11662,18 +11666,6 @@ msgstr "Konwertuj"
 
 msgid "Bone Collections"
 msgstr "Kolekcja kości"
-
-
-msgid "Face Data"
-msgstr "Dane ściany"
-
-
-msgid "Merge"
-msgstr "Scal"
-
-
-msgid "Text"
-msgstr "Tekst"
 
 
 msgid "Catalog"
@@ -11969,6 +11961,10 @@ msgstr "Wyświetla modyfikator w rzutni"
 
 msgid "Hue/Saturation"
 msgstr "Barwa/nasycenie"
+
+
+msgid "Array"
+msgstr "Szereg"
 
 
 msgid "Create copies of the shape with offsets"
@@ -12367,6 +12363,10 @@ msgstr "Pokaż podgląd"
 
 msgid "Brightness/Contrast"
 msgstr "Jasność/kontrast"
+
+
+msgid "Single"
+msgstr "Pojedyńczy"
 
 
 msgid "To"
@@ -13252,11 +13252,6 @@ msgid "Export glTF 2.0"
 msgstr "Eksportuj glTF 2.0"
 
 
-msgctxt "Operator"
-msgid "Flip Colors"
-msgstr "Zamień kolory"
-
-
 msgid "Create mesh plane(s) from image files with the appropriate aspect ratio"
 msgstr "Tworzy siatki płaszczyzny z plików obrazów o odpowiednich proporcjach"
 
@@ -14100,27 +14095,6 @@ msgid "Curve 2D"
 msgstr "Krzywa 2D"
 
 
-msgctxt "Operator"
-msgid "Select Random"
-msgstr "Wybierz losowo"
-
-
-msgid "To Sphere"
-msgstr "Do sfery"
-
-
-msgid "Bake Time"
-msgstr "Czas wypalania"
-
-
-msgid "Grease Pencil Opacity"
-msgstr "Krycie narzędzia Grease Pencil"
-
-
-msgid "On Click"
-msgstr "Po kliknięciu"
-
-
 msgid "Delete Point"
 msgstr "Usuń punkt"
 
@@ -14143,6 +14117,27 @@ msgstr "Przesuń punkt"
 
 msgid "Select Point"
 msgstr "Zaznacz punkt"
+
+
+msgctxt "Operator"
+msgid "Select Random"
+msgstr "Wybierz losowo"
+
+
+msgid "To Sphere"
+msgstr "Do sfery"
+
+
+msgid "Bake Time"
+msgstr "Czas wypalania"
+
+
+msgid "Grease Pencil Opacity"
+msgstr "Krycie narzędzia Grease Pencil"
+
+
+msgid "On Click"
+msgstr "Po kliknięciu"
 
 
 msgctxt "Operator"
@@ -16541,6 +16536,10 @@ msgid "Only selected edges"
 msgstr "Tylko zaznaczone krawędzie"
 
 
+msgid "Order"
+msgstr "Kolejność"
+
+
 msgctxt "Operator"
 msgid "Cube Projection"
 msgstr "Odwzorowanie sześcienne"
@@ -17583,10 +17582,6 @@ msgstr "Oś czasu"
 
 msgid "New Objects"
 msgstr "Nowe obiekty"
-
-
-msgid "Debugging"
-msgstr "Debugowanie"
 
 
 msgid "New Features"
@@ -19451,6 +19446,11 @@ msgid "Scene"
 msgstr "Scena"
 
 
+msgctxt "Color"
+msgid "Value"
+msgstr "Wartość"
+
+
 msgid "Anchor X"
 msgstr "Kotwica X"
 
@@ -19536,10 +19536,6 @@ msgstr "Pojedyńczy kolor"
 
 msgid "Texture Paint/Modifier UVs"
 msgstr "Rysowanie tekstur/Modyfikator UV"
-
-
-msgid "Source List"
-msgstr "Lista źródeł"
 
 
 msgid "Panel Title"
@@ -20740,10 +20736,6 @@ msgid "Add Object Constraint"
 msgstr "Dodaj ogranicznik obiektu"
 
 
-msgid "Order"
-msgstr "Kolejność"
-
-
 msgctxt "Constraint"
 msgid "Mix"
 msgstr "Mieszanie"
@@ -21224,6 +21216,10 @@ msgstr "Posprzątaj"
 msgctxt "Operator"
 msgid "Clear Recent Items"
 msgstr "Wyczyść ostatnie przedmioty"
+
+
+msgid "Source List"
+msgstr "Lista źródeł"
 
 
 msgctxt "Operator"
@@ -21793,14 +21789,6 @@ msgid "Pack"
 msgstr "Pakuj"
 
 
-msgid "Hz"
-msgstr "Hz"
-
-
-msgid "dB"
-msgstr "dB"
-
-
 msgid "Source Channel"
 msgstr "Kanał źródłowy"
 
@@ -21892,11 +21880,6 @@ msgid "Text: Internal"
 msgstr "Tekst: Wewnętrzny"
 
 
-msgctxt "WindowManager"
-msgid "Keying"
-msgstr "Kluczowanie"
-
-
 msgctxt "Operator"
 msgid "Move Marker"
 msgstr "Przesuń znacznik"
@@ -21913,6 +21896,11 @@ msgstr "Zagraj"
 
 msgid "Active Editor"
 msgstr "Aktywny edytor"
+
+
+msgctxt "WindowManager"
+msgid "Keying"
+msgstr "Kluczowanie"
 
 
 msgid "Gizmos:"
@@ -23107,11 +23095,6 @@ msgid "Surface"
 msgstr "Powierzchnia"
 
 
-msgctxt "Action"
-msgid "var"
-msgstr "var"
-
-
 msgid "True Normal"
 msgstr "Prawdziwa normalna"
 
@@ -24091,11 +24074,6 @@ msgstr "Hex"
 
 msgid "Lightness"
 msgstr "Jasność"
-
-
-msgctxt "Color"
-msgid "Value"
-msgstr "Wartość"
 
 
 msgid "Redo"
@@ -25762,10 +25740,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Brak aktywnej grupy wierzchołków do malowania, rezygnuję"
 
 
-msgid "Warning!"
-msgstr "Uwaga!"
-
-
 msgid "Attribute Data Detected"
 msgstr "Wykryto dane atrybutów"
 
@@ -26888,10 +26862,6 @@ msgstr "Nie można zmienić pozy gdy 'Pozycja Spoczynku' jest aktywna"
 
 msgid "Bone selection count error"
 msgstr "Błąd ilości kości w selekcji"
-
-
-msgid "Unsupported object type for text-space transform"
-msgstr "Nieobsługiwany format dla transformacji text-space"
 
 
 msgid "(Sharp)"

@@ -1,11 +1,11 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'61dd8a1435fb')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-01 09:40+0000\n"
-"PO-Revision-Date: 2025-07-23 15:25+0000\n"
-"Last-Translator: 32437w5k7 <32437w5k7@mozmail.com>\n"
+"POT-Creation-Date: 2025-09-15 07:14+0000\n"
+"PO-Revision-Date: 2025-09-09 13:59+0000\n"
+"Last-Translator: Alessandro Vecchio <alessandrovecchio1907@gmail.com>\n"
 "Language-Team: Italian <https://translate.blender.org/projects/blender-ui/ui/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -704,10 +704,6 @@ msgid "Make more room for large scenes to fit by distributing memory across inte
 msgstr "Libera più spazio per ospitare scene di grandi dimensioni distribuendo la memoria tra dispositivi interconnessi (ad esempio tramite NVLink) anziché duplicarla"
 
 
-msgid "HIP RT"
-msgstr "HIP RT"
-
-
 msgid "Embree on GPU"
 msgstr "Embree su GPU"
 
@@ -990,6 +986,10 @@ msgstr "Ammontare con cui l'Azione Attiva contribuisce al risultato della pila N
 
 msgid "Action Slot"
 msgstr "Slot di Azione"
+
+
+msgid "Tweak Mode Action Slot Storage"
+msgstr "Slot di Archiviazione per Azione in Modalità Tweak"
 
 
 msgid "Slots"
@@ -1889,6 +1889,10 @@ msgid "Default size of the asset preview thumbnails in pixels"
 msgstr "Dimensioni predefinite delle miniature di anteprima delle risorse in pixel"
 
 
+msgid "Drag Operator"
+msgstr "Operatore Trascinamento"
+
+
 msgid "ID Name"
 msgstr "Nome ID"
 
@@ -2181,14 +2185,6 @@ msgid "Name of the Attribute"
 msgstr "Nome dell'Attributo"
 
 
-msgid "Array"
-msgstr "Sequenza"
-
-
-msgid "Single"
-msgstr "Singolo"
-
-
 msgid "Bool Attribute"
 msgstr "Attributo Bool"
 
@@ -2367,6 +2363,10 @@ msgstr "Oggetto Gabbia"
 
 msgid "Object to use as cage instead of calculating the cage from the active object with cage extrusion"
 msgstr "Oggetto da utilizzare come gabbia invece di calcolare la gabbia partendo dall'oggetto attivo con l'estrusione gabbia"
+
+
+msgid "Displacement Space"
+msgstr "Spazio Displacement"
 
 
 msgid "Object"
@@ -2847,6 +2847,10 @@ msgstr "Raccolte"
 
 msgid "Collection data-blocks"
 msgstr "Blocchi-dati Raccolta"
+
+
+msgid "Color Space"
+msgstr "Spazio Colore"
 
 
 msgid "Curves"
@@ -6502,10 +6506,6 @@ msgstr "Visualizza P3"
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
 msgstr "Non effettua alcuna trasformazione del colore al caricamento, tratta i colori come se fossero già nello spazio lineare della scena"
-
-
-msgid "Color Space"
-msgstr "Spazio Colore"
 
 
 msgid "Color space that the sequencer operates in"
@@ -10955,10 +10955,6 @@ msgstr "Imposta il numero massimo di B-Frames"
 
 msgid "Video bitrate (kbit/s)"
 msgstr "Bitrate video (kbit/s)"
-
-
-msgid "HDR"
-msgstr "HDR"
 
 
 msgid "F-Modifier"
@@ -15432,10 +15428,6 @@ msgstr "Sovrascrivi Fotogramma"
 
 msgid "Up"
 msgstr "Su"
-
-
-msgid "Use Prefetch"
-msgstr "Utilizza Pre-Carica"
 
 
 msgctxt "Unit"
@@ -24600,6 +24592,58 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
+msgid "Mesh Select Mode"
+msgstr "Modalità Selezione Mesh"
+
+
+msgid "Face Data"
+msgstr "Dati Faccia"
+
+
+msgid "Select by Face Strength"
+msgstr "Seleziona per Intensità delle Facce"
+
+
+msgid "Set Face Strength"
+msgstr "Imposta Intensità Faccia"
+
+
+msgid "Clean Up"
+msgstr "Ripulisci"
+
+
+msgid "Merge"
+msgstr "Unisci"
+
+
+msgid "Show/Hide"
+msgstr "Mostra/Nascondi"
+
+
+msgid "Special Characters"
+msgstr "Caratteri Speciali"
+
+
+msgid "Kerning"
+msgstr "Crenatura"
+
+
+msgid "Text"
+msgstr "Testo"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Names"
+msgstr "Nomi"
+
+
+msgid "Bone Roll"
+msgstr "Rollio Osso"
+
+
 msgid "Pivot Point"
 msgstr "Punto di Perno"
 
@@ -24684,10 +24728,6 @@ msgid "Assign Material"
 msgstr "Assegna Materiale"
 
 
-msgid "Metaball"
-msgstr "Metaball"
-
-
 msgid "Light"
 msgstr "Luce"
 
@@ -24718,14 +24758,6 @@ msgstr "Traccia"
 
 msgid "Quick Effects"
 msgstr "Effetti Veloci"
-
-
-msgid "Show/Hide"
-msgstr "Mostra/Nascondi"
-
-
-msgid "Clean Up"
-msgstr "Ripulisci"
 
 
 msgid "Asset"
@@ -24772,10 +24804,6 @@ msgid "Bone Collections"
 msgstr "Raccolte di Ossa"
 
 
-msgid "Names"
-msgstr "Nomi"
-
-
 msgid "Toggle Bone Options"
 msgstr "Attiva/disattiva Opzioni Osso"
 
@@ -24786,42 +24814,6 @@ msgstr "Abilita Opzioni Osso"
 
 msgid "Disable Bone Options"
 msgstr "Disabilita Opzioni Osso"
-
-
-msgid "Mesh Select Mode"
-msgstr "Modalità Selezione Mesh"
-
-
-msgid "Face Data"
-msgstr "Dati Faccia"
-
-
-msgid "Select by Face Strength"
-msgstr "Seleziona per Intensità delle Facce"
-
-
-msgid "Set Face Strength"
-msgstr "Imposta Intensità Faccia"
-
-
-msgid "Merge"
-msgstr "Unisci"
-
-
-msgid "Special Characters"
-msgstr "Caratteri Speciali"
-
-
-msgid "Kerning"
-msgstr "Crenatura"
-
-
-msgid "Text"
-msgstr "Testo"
-
-
-msgid "Bone Roll"
-msgstr "Rollio Osso"
 
 
 msgid "Keyframe Insert Pie"
@@ -24938,10 +24930,6 @@ msgid "Files"
 msgstr "Files"
 
 
-msgid "Material Specials"
-msgstr "Materiali Speciali"
-
-
 msgctxt "Operator"
 msgid "Blend"
 msgstr "Mescola"
@@ -24966,6 +24954,10 @@ msgstr "Cambia Livello Attivo"
 
 msgid "Add Mask"
 msgstr "Aggiungi Maschera"
+
+
+msgid "Material Specials"
+msgstr "Materiali Speciali"
 
 
 msgid "Move to Layer"
@@ -25086,14 +25078,6 @@ msgstr "Speciali Colore Nodo"
 
 msgid "Add Reroutes"
 msgstr "Aggiungi Reindirizzamenti"
-
-
-msgid "To Socket"
-msgstr "Al Connettore"
-
-
-msgid "From Socket"
-msgstr "Dal Connettore"
 
 
 msgid "Copy to Selected"
@@ -25842,6 +25826,10 @@ msgstr "Keyframes di offset"
 
 msgid "Texture Mapping"
 msgstr "Mappatura Texture"
+
+
+msgid "Array"
+msgstr "Sequenza"
 
 
 msgid "Bevel"
@@ -30302,10 +30290,6 @@ msgid "Opacity of the image"
 msgstr "Opacità dell'immagine"
 
 
-msgid "Markers"
-msgstr "Marcatori"
-
-
 msgid "Collection of markers in track"
 msgstr "Raccolta di marcatori nella traccia"
 
@@ -30913,6 +30897,10 @@ msgstr "Algoritmo"
 
 msgid "Algorithm to use to limit channel"
 msgstr "Algoritmo da utilizzare per limitare il canale"
+
+
+msgid "Single"
+msgstr "Singolo"
 
 
 msgctxt "Color"
@@ -33367,10 +33355,6 @@ msgstr "Carica un file FilmBoX"
 msgctxt "Operator"
 msgid "Import FBX"
 msgstr "Importa FBX"
-
-
-msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
-msgstr "Copia riflessa delle coordinate UV sull'asse X basata su una mesh riflessa"
 
 
 msgctxt "Operator"
@@ -36730,6 +36714,18 @@ msgid "Toggle Free/Align"
 msgstr "Commuta Libero/Allineato"
 
 
+msgid "Remove from selection"
+msgstr "Rimuovi dalla selezione"
+
+
+msgid "Toggle Selection"
+msgstr "Cambia selezionato"
+
+
+msgid "Toggle the selection"
+msgstr "Cambia la selezionabilità"
+
+
 msgid "(De)select all control points"
 msgstr "(De)seleziona tutti i rapporti"
 
@@ -36920,18 +36916,6 @@ msgstr "Ricalcola la direzione delle maniglie selezionate"
 
 msgid "Recalculate handle length"
 msgstr "Ricalcola la lunghezza della maniglia"
-
-
-msgid "Remove from selection"
-msgstr "Rimuovi dalla selezione"
-
-
-msgid "Toggle Selection"
-msgstr "Cambia selezionato"
-
-
-msgid "Toggle the selection"
-msgstr "Cambia la selezionabilità"
 
 
 msgctxt "Operator"
@@ -40274,14 +40258,6 @@ msgid "Weld loose edges into faces (splitting them into new faces)"
 msgstr "Salda gli spigoli isolati in facce (dividendoli in nuove facce)"
 
 
-msgid "Axis Direction"
-msgstr "Direzione Assi"
-
-
-msgid "Tolerance for finding vertex duplicates"
-msgstr "Tolleranza per la ricerca dei vertici duplicati"
-
-
 msgctxt "Operator"
 msgid "Select Linked Flat Faces"
 msgstr "Seleziona Facce Piane Collegate"
@@ -42272,6 +42248,14 @@ msgstr "Modalitá Assoluto"
 
 msgid "From active node"
 msgstr "Dal nodo attivo"
+
+
+msgid "From Socket"
+msgstr "Dal Connettore"
+
+
+msgid "HDR"
+msgstr "HDR"
 
 
 msgctxt "Operator"
@@ -48099,6 +48083,18 @@ msgid "Only selected edges"
 msgstr "Solo spigoli selezionati"
 
 
+msgid "2D Cursor"
+msgstr "Cursore 2D"
+
+
+msgid "Space between islands"
+msgstr "Spazio tra le isole"
+
+
+msgid "Order"
+msgstr "Ordine"
+
+
 msgctxt "Operator"
 msgid "Average Islands Scale"
 msgstr "Omogeneizza Scala Isole"
@@ -48111,6 +48107,18 @@ msgstr "Rende omogenea la dimensione delle varie isole UV, basandosi sulla loro 
 msgctxt "Operator"
 msgid "Copy UVs"
 msgstr "Copia UV"
+
+
+msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
+msgstr "Copia riflessa delle coordinate UV sull'asse X basata su una mesh riflessa"
+
+
+msgid "Axis Direction"
+msgstr "Direzione Assi"
+
+
+msgid "Tolerance for finding vertex duplicates"
+msgstr "Tolleranza per la ricerca dei vertici duplicati"
 
 
 msgctxt "Operator"
@@ -48343,10 +48351,6 @@ msgstr "Numero di ripetizione da eseguire, con 0 sono illimitate quando utilizza
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Compatta Isole"
-
-
-msgid "Space between islands"
-msgstr "Spazio tra le isole"
 
 
 msgid "Scaled"
@@ -50394,10 +50398,6 @@ msgid "Camera Presets"
 msgstr "Preimpostazioni Camera"
 
 
-msgid "2D Cursor"
-msgstr "Cursore 2D"
-
-
 msgid "Footage Settings"
 msgstr "Impostazioni Filmato Originale"
 
@@ -50577,6 +50577,10 @@ msgstr "Effetti"
 
 msgid "Text Boxes"
 msgstr "Caselle di Testo"
+
+
+msgid "Shape Key"
+msgstr "Chiave Forma"
 
 
 msgid "Filters"
@@ -51037,10 +51041,6 @@ msgstr "Colore Gruppi Ossa"
 
 msgid "Theme Space"
 msgstr "Tema Spazio"
-
-
-msgid "Theme Space List"
-msgstr "Lista degli Spazi Tema"
 
 
 msgid "Axis & Gizmo Colors"
@@ -53890,10 +53890,6 @@ msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "Utilizza seme diverso (e quindi schemi di rumore) per i diversi fotogrammi"
 
 
-msgid "Use Tiling"
-msgstr "Utilizza Piastrellatura"
-
-
 msgid "Guiding"
 msgstr "Guidare"
 
@@ -55395,6 +55391,10 @@ msgid "Hold Offset"
 msgstr "Mantieni l'Offset"
 
 
+msgid "Markers"
+msgstr "Marcatori"
+
+
 msgid "Use effect during render"
 msgstr "Utilizza l'effetto durante il rendering"
 
@@ -55438,10 +55438,6 @@ msgstr "Colore Ombra"
 msgctxt "GPencil"
 msgid "Wave"
 msgstr "Onda"
-
-
-msgid "Shape Key"
-msgstr "Chiave Forma"
 
 
 msgid "Shape key in a shape keys data-block"
@@ -55952,10 +55948,6 @@ msgstr "Spazio Editor DopeSheet"
 
 msgid "Dope Sheet space data"
 msgstr "Spazio dei dati DopeSheet"
-
-
-msgid "Action displayed and edited in this space"
-msgstr "Azione mostrata e modificata in questo spazio"
 
 
 msgid "Show the active object's Dynamic Paint cache"
@@ -57257,10 +57249,6 @@ msgid "Sequence strip to perform multicam editing"
 msgstr "Spezzone di sequenza per eseguire la modifica multicamera"
 
 
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Moltiplica la velocità corrente della sequenza con questo numero o rimappa il fotogramma corrente a questo fotogramma"
-
-
 msgid "Text Strip"
 msgstr "Spezzone Testo"
 
@@ -57439,10 +57427,6 @@ msgid "Playback panning of the sound (only for Mono sources)"
 msgstr "Scorrimento (pan) della riproduzione del suono (solo sorgenti Mono)"
 
 
-msgid "Sound data-block used by this sequence"
-msgstr "Blocco-dati Suono utilizzato da questa sequenza"
-
-
 msgid "Color balance gain (highlights)"
 msgstr "Guadagno bilanciamento colore (alte luci)"
 
@@ -57514,10 +57498,6 @@ msgstr "Larghezza originale dell'immagine"
 
 msgid "Modifier for sequence strip"
 msgstr "Modificatore per spezzoni di sequenza"
-
-
-msgid "Mask Input Type"
-msgstr "Tipo Ingresso Maschera"
 
 
 msgid "Use sequencer strip as mask input"
@@ -57972,10 +57952,6 @@ msgid "Amount texture affects particle initial velocity"
 msgstr "Quanto la texture influenza la velocità iniziale della particella"
 
 
-msgid "Settings for asset shelf"
-msgstr "Impostazioni per lo scaffale delle risorse"
-
-
 msgid "Clip Editor"
 msgstr "Editor Filmato"
 
@@ -58092,10 +58068,6 @@ msgid "Settings for space"
 msgstr "Impostazioni per dispositivi di input"
 
 
-msgid "Settings for space list"
-msgstr "Impostazioni per la fisica delle particelle dei fluidi"
-
-
 msgid "Channel Group"
 msgstr "Gruppo Canale"
 
@@ -58188,10 +58160,6 @@ msgid "Theme settings for the Dope Sheet"
 msgstr "Impostazioni del tema per il DopeSheet"
 
 
-msgid "Channels Selected"
-msgstr "Canali Selezionati"
-
-
 msgid "Keyframe Border"
 msgstr "Bordo Keyframe"
 
@@ -58274,10 +58242,6 @@ msgstr "Tema Editor Grafi"
 
 msgid "Theme settings for the graph editor"
 msgstr "Impostazioni del tema per l'editor grafi"
-
-
-msgid "Channels Region"
-msgstr "Regione Canali"
 
 
 msgid "Vertex Select"
@@ -58500,6 +58464,10 @@ msgid "Theme settings for the Properties"
 msgstr "Impostazioni del tema per le Proprietà"
 
 
+msgid "Selected Text"
+msgstr "Testo Selezionato"
+
+
 msgid "Theme Sequence Editor"
 msgstr "Tema Editor Sequenze"
 
@@ -58520,10 +58488,6 @@ msgid "Preview Background"
 msgstr "Sfondo Finestra"
 
 
-msgid "Selected Text"
-msgstr "Testo Selezionato"
-
-
 msgid "Theme Space Settings"
 msgstr "Tema Spazio delle Impostazioni"
 
@@ -58538,30 +58502,6 @@ msgstr "Testo Evidenziato Intestazione"
 
 msgid "Text Highlight"
 msgstr "Testo Evidenziato"
-
-
-msgid "Theme Space List Settings"
-msgstr "Tema Spazio Lista delle Impostazioni"
-
-
-msgid "Source List"
-msgstr "Lista Sorgente"
-
-
-msgid "Source List Text"
-msgstr "Testo Lista Sorgente"
-
-
-msgid "Source List Text Highlight"
-msgstr "Testo Evidenziato Lista Sorgente"
-
-
-msgid "Source List Title"
-msgstr "Titolo Lista Sorgente"
-
-
-msgid "Region Background"
-msgstr "Sfondo Regione"
 
 
 msgid "Theme settings for style sets"
@@ -60493,6 +60433,10 @@ msgid "Reset To Original"
 msgstr "Ripristina Originale"
 
 
+msgid "To Socket"
+msgstr "Al Connettore"
+
+
 msgid "Use Geometry Nodes"
 msgstr "Usa nodi geometria"
 
@@ -60963,10 +60907,6 @@ msgid "Animate Path"
 msgstr "Anima Percorso"
 
 
-msgid "Order"
-msgstr "Ordine"
-
-
 msgid "Clamp Region"
 msgstr "Regione di Restrizione"
 
@@ -61298,10 +61238,6 @@ msgstr "Sorgente Dati:"
 
 msgid "No annotation source"
 msgstr "Nessuna fonte di annotazione"
-
-
-msgid "Channel Colors are disabled in Animation preferences"
-msgstr "I Colori dei Canali sono disabilitati nelle preferenze di Animazione"
 
 
 msgctxt "Operator"
@@ -62074,6 +62010,10 @@ msgstr "Ripulisci"
 msgctxt "Operator"
 msgid "Clear Recent Items"
 msgstr "Cancella Elementi Recenti"
+
+
+msgid "Source List"
+msgstr "Lista Sorgente"
 
 
 msgctxt "Operator"
@@ -65026,6 +64966,10 @@ msgid "Remove animation from selected objects?"
 msgstr "Rimuovere l'animazione dagli oggetti selezionati?"
 
 
+msgid "Remove animation from selected strips?"
+msgstr "Rimuovere l'animazione dagli spezzoni selezionati?"
+
+
 msgid "No active Keying Set"
 msgstr "Nessun Gruppo Chiavi attivo"
 
@@ -65414,6 +65358,10 @@ msgstr "Bottone attivo non trovato"
 
 msgid "%d items"
 msgstr "%d elementi"
+
+
+msgid "Color Space: "
+msgstr "Spazio Colore: "
 
 
 msgid "Red:"
@@ -66218,8 +66166,16 @@ msgid "Circular dependency for image \"%s\" from object \"%s\""
 msgstr "Riferimento circolare per l'immagine \"%s\" dall'oggetto \"%s\""
 
 
+msgid "Baking texture..."
+msgstr "Baking texture..."
+
+
 msgid "Overwrite existing bake data?"
 msgstr "Sovrascrivere i dati di cottura esistenti?"
+
+
+msgid "Calculating simulation..."
+msgstr "Calcolo della simulazione..."
 
 
 msgid "Add IK"
@@ -66662,12 +66618,20 @@ msgid "Time:"
 msgstr "Tempo:"
 
 
+msgid "Rendering..."
+msgstr "Rendering..."
+
+
 msgid "Scene has no camera"
 msgstr "La scena non ha camere"
 
 
 msgid "Write error: cannot save %s"
 msgstr "Errore di scrittura: impossibile salvare %s"
+
+
+msgid "Loading previews..."
+msgstr "Caricamento anteprime..."
 
 
 msgid "Unable to remove material slot in edit mode"
@@ -66769,10 +66733,6 @@ msgstr "Il gruppo specchio è bloccato, comando annullato"
 
 msgid "Multipaint group is locked, aborting"
 msgstr "Il gruppo multipittura è bloccato, comando annullato"
-
-
-msgid "Warning!"
-msgstr "Attenzione!"
 
 
 msgid "Attribute Data Detected"
@@ -66935,6 +66895,10 @@ msgid "File: %s"
 msgstr "File: %s"
 
 
+msgid "Prefetching..."
+msgstr "Precaricamento..."
+
+
 msgid "Cannot read '%s': %s"
 msgstr "Impossibile leggere '%s': %s"
 
@@ -66953,6 +66917,10 @@ msgstr "Nessuna traccia attiva cui unire"
 
 msgid "Object used for camera tracking cannot be deleted"
 msgstr "L'oggetto utilizzato per il tracciamento della camera non può essere eliminato"
+
+
+msgid "Tracking markers..."
+msgstr "Tracciamento marcatori..."
 
 
 msgid "File path"
@@ -67272,12 +67240,24 @@ msgid " Named Attributes"
 msgstr " Attributi Nominati"
 
 
+msgid "Compositing..."
+msgstr "Compositing..."
+
+
 msgid "True"
 msgstr "Vero"
 
 
 msgid "matrices"
 msgstr "matrici"
+
+
+msgid "Inputs:"
+msgstr "Ingressi:"
+
+
+msgid "Outputs:"
+msgstr "Uscite:"
 
 
 msgid "Disconnect"
@@ -68135,6 +68115,18 @@ msgstr "L'altezza del render deve essere di 576 pixels per DV-PAL!"
 
 msgid "Could not open file for writing"
 msgstr "Impossibile aprire il file per la scrittura"
+
+
+msgid "Exporting Alembic..."
+msgstr "Esportazione Alembic..."
+
+
+msgid "Importing Alembic..."
+msgstr "Importazione Alembic..."
+
+
+msgid "Importing USD..."
+msgstr "Importazione USD..."
 
 
 msgid "Index out of range"
@@ -69183,13 +69175,13 @@ msgstr "Correzione Tonalità"
 
 
 msgctxt "Sequence"
-msgid "White Balance"
-msgstr "Bilanciamento del Bianco"
+msgid "Tonemap"
+msgstr "Mappa Tonalità"
 
 
 msgctxt "Sequence"
-msgid "Tonemap"
-msgstr "Mappa Tonalità"
+msgid "White Balance"
+msgstr "Bilanciamento del Bianco"
 
 
 msgid "Strips must be the same length"
@@ -69280,16 +69272,16 @@ msgid "Nothing indicated"
 msgstr "Nessuna selezione"
 
 
+msgid "'%s': cannot use current file as library"
+msgstr "'%s': impossibile utilizzare il file corrente come libreria"
+
+
 msgid "'%s': nothing indicated"
 msgstr "'%s': nulla indicato"
 
 
 msgid "'%s': not a library"
 msgstr "'%s': non è una libreria"
-
-
-msgid "'%s': cannot use current file as library"
-msgstr "'%s': impossibile utilizzare il file corrente come libreria"
 
 
 msgid "'%s' is not a valid library filepath"
