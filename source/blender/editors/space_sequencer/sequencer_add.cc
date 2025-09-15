@@ -656,7 +656,7 @@ static wmOperatorStatus sequencer_add_scene_strip_exec(bContext *C, wmOperator *
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
   DEG_relations_tag_update(bmain);
-  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  sequencer_select_do_updates(C, scene);
   move_strips(C, op);
 
   return OPERATOR_FINISHED;
@@ -694,9 +694,7 @@ void SEQUENCER_OT_scene_strip_add(wmOperatorType *ot)
 
   sequencer_generic_props__internal(ot, SEQPROP_STARTFRAME | SEQPROP_MOVE);
   prop = RNA_def_enum(ot->srna, "scene", rna_enum_dummy_NULL_items, 0, "Scene", "");
-  RNA_def_enum_funcs(prop, RNA_seq_scene_without_active_itemf); /*BFA - 3D Sequencer*/
-  //BFA - TODO
-  //RNA_def_enum_funcs(prop, RNA_scene_without_sequencer_scene_itemf);
+  RNA_def_enum_funcs(prop, RNA_scene_without_sequencer_scene_itemf);
   RNA_def_property_flag(prop, PROP_ENUM_NO_TRANSLATE);
   ot->prop = prop;
 }
@@ -932,7 +930,7 @@ static wmOperatorStatus sequencer_add_movieclip_strip_exec(bContext *C, wmOperat
   seq_load_apply_generic_options(C, op, strip);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  sequencer_select_do_updates(C, scene);
   move_strips(C, op);
 
   return OPERATOR_FINISHED;
@@ -1011,7 +1009,7 @@ static wmOperatorStatus sequencer_add_mask_strip_exec(bContext *C, wmOperator *o
   seq_load_apply_generic_options(C, op, strip);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  sequencer_select_do_updates(C, scene);
   move_strips(C, op);
 
   return OPERATOR_FINISHED;
@@ -1332,7 +1330,7 @@ static wmOperatorStatus sequencer_add_movie_strip_exec(bContext *C, wmOperator *
   seq_build_proxy(C, movie_strips);
   DEG_relations_tag_update(bmain);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  sequencer_select_do_updates(C, scene);
   move_strips(C, op);
 
   sequencer_add_free(C, op);
@@ -1560,7 +1558,7 @@ static wmOperatorStatus sequencer_add_sound_strip_exec(bContext *C, wmOperator *
 
   DEG_relations_tag_update(bmain);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  sequencer_select_do_updates(C, scene);
   move_strips(C, op);
 
   sequencer_add_free(C, op);
@@ -1806,7 +1804,7 @@ static wmOperatorStatus sequencer_add_image_strip_exec(bContext *C, wmOperator *
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  sequencer_select_do_updates(C, scene);
   move_strips(C, op);
 
   sequencer_add_free(C, op);
@@ -1953,7 +1951,7 @@ static wmOperatorStatus sequencer_add_effect_strip_exec(bContext *C, wmOperator 
   }
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
-  sequencer_select_do_updates(C, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  sequencer_select_do_updates(C, scene);
 
   /* It's reasonable to add effects with inputs directly above the input. */
   if (ELEM(load_data.effect.type,

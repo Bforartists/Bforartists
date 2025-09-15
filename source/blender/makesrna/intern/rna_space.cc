@@ -2624,9 +2624,7 @@ static void rna_SequenceEditor_clamp_view_set(PointerRNA *ptr, bool value)
   }
 }
 
-static void rna_Sequencer_view_type_update(Main * /*bmain*/,
-                                           Scene * /*scene*/,
-                                           PointerRNA *ptr) /*BFA - 3D Sequencer*/
+static void rna_Sequencer_view_type_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
   ScrArea *area = rna_area_from_space(ptr);
   ED_area_tag_refresh(area);
@@ -6557,7 +6555,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_space_sequencer_view_type_items);
   RNA_def_property_ui_text(
       prop, "View Type", "Type of the Sequencer view (sequencer, preview or both)");
-  RNA_def_property_update(prop, 0, "rna_Sequencer_view_type_update"); /*BFA - 3D Sequencer*/
+  RNA_def_property_update(prop, 0, "rna_Sequencer_view_type_update");
 
   /* display type, fairly important */
   prop = RNA_def_property(srna, "display_mode", PROP_ENUM, PROP_NONE);
@@ -6743,12 +6741,13 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Zoom", "Zoom percentage");
 
   /*############## BFA - 3D Sequencer ##############*/
+  // TODO Remove later
   prop = RNA_def_property(srna, "scene_override", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "scene_override");
   RNA_def_property_struct_type(prop, "Scene");
   RNA_def_property_pointer_funcs(prop, nullptr, nullptr, nullptr, nullptr);
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_PTR_NO_OWNERSHIP);
-  RNA_def_property_ui_text(prop, "Scene Override", "Scene to use in this region");
+  RNA_def_property_ui_text(prop, "Scene Override", "Scene to use in this region\n(Deprecated: use Scene Selector, sequencer scene instead)");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_Sequencer_view_type_update");
   /*############## BFA - 3D Sequencer END ##############*/
 }

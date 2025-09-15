@@ -9,6 +9,7 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
 )
 
+import addon_utils  # bfa import
 # BFA - Added icons and floated properties left
 
 
@@ -49,8 +50,9 @@ def playback_controls(layout, context):
 
     row = layout.row(align=True)
 
-    if is_sequencer:
-        layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
+    # BFA - exposed to top sequener header, where contextually relevant, make sure 3D Sequencer is enabled
+    if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
+       layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
 
     layout.separator_spacer()
     # BFA - moved dropdowns to consistently float right

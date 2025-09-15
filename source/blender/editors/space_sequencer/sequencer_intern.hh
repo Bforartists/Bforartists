@@ -256,7 +256,6 @@ void SEQUENCER_OT_strip_transform_fit(wmOperatorType *ot);
 void SEQUENCER_OT_strip_color_tag_set(wmOperatorType *ot);
 void SEQUENCER_OT_cursor_set(wmOperatorType *ot);
 void SEQUENCER_OT_scene_frame_range_update(wmOperatorType *ot);
-void SEQUENCER_OT_remove_scene_override(struct wmOperatorType *ot); /*BFA - 3D Sequencer*/
 
 /* `sequencer_select.cc` */
 

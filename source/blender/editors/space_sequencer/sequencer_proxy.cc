@@ -222,7 +222,7 @@ static wmOperatorStatus sequencer_enable_proxies_exec(bContext *C, wmOperator *o
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }

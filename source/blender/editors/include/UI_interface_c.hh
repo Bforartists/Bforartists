@@ -1578,7 +1578,6 @@ enum {
 enum {
   UI_TEMPLATE_ID_FILTER_ALL = 0,
   UI_TEMPLATE_ID_FILTER_AVAILABLE = 1,
-  UI_TEMPLATE_ID_FILTER_INACTIVE = 2, /*BFA - 3D Sequencer*/
 };
 
 /***************************** ID Utilities *******************************/

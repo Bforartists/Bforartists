@@ -1143,29 +1143,6 @@ void eval_strips(Depsgraph *depsgraph, Scene *scene, ListBase *seqbase)
   edit_update_muting(scene->ed);
   sound_update_bounds_all(scene);
 }
-/*############## BFA - 3D Sequencer ##############*/
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Scene override functions
- * \{ */
-
-Scene *get_ref_scene_for_notifiers(const bContext *C)
-{
-  SpaceSeq *seq = CTX_wm_space_seq(C);
-  if (seq != nullptr && seq->scene_override != nullptr) {
-    /* Passing nullptr in the reference of `WM_event_add_notifier` will not restrict the update to one
-     * particular scene/screen. This needs to be done because when the notifiers are evaluated, the
-     * current scene is always expected to be the active scene in the window. In the case of an
-     * override, passing the overriden scene as a reference to the notifier will no longer cause
-     * updates. So we need to update everything for this to work. */
-    return nullptr;
-  }
-  return CTX_data_scene(C);
-}
-
-/** \} */
-/*############## BFA - 3D Sequencer END ##############*/
 
 }  // namespace blender::seq
 
