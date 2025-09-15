@@ -1339,10 +1339,6 @@ static void icon_set_image(const bContext *C,
                            enum eIconSizes size,
                            const bool use_job)
 {
-  /* bfa - disable material icons rendering */
-  if (U.flag & USER_DISABLE_MATERIAL_ICON && GS(id->name) == ID_MA) {
-    return;
-  }
   if (!prv_img) {
     if (G.debug & G_DEBUG) {
       CLOG_WARN(&LOG, "%s: no preview image for this ID: %s", __func__, id->name);
