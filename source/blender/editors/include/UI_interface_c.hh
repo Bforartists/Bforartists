@@ -1578,7 +1578,6 @@ enum {
 enum {
   UI_TEMPLATE_ID_FILTER_ALL = 0,
   UI_TEMPLATE_ID_FILTER_AVAILABLE = 1,
-  UI_TEMPLATE_ID_FILTER_INACTIVE = 2, /*BFA - 3D Sequencer*/
 };
 
 /***************************** ID Utilities *******************************/
@@ -2557,11 +2556,6 @@ bool uiTemplateCacheFilePointer(PointerRNA *ptr,
  * Draw the velocity related properties of the CacheFile.
  */
 void uiTemplateCacheFileVelocity(uiLayout *layout, PointerRNA *fileptr);
-
-/**
- * Draw the render procedural related properties of the CacheFile.
- */
-void uiTemplateCacheFileProcedural(uiLayout *layout, const bContext *C, PointerRNA *fileptr);
 
 /**
  * Draw the time related properties of the CacheFile.

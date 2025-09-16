@@ -418,12 +418,10 @@ bool strip_point_image_isect(const Scene *scene, const Strip *strip, float point
                              strip_image_quad[3]);
 }
 
-void sequencer_select_do_updates(const bContext *C, Scene * /*scene*/)
+void sequencer_select_do_updates(const bContext *C, Scene * scene)
 {
   ED_outliner_select_sync_from_sequence_tag(C);
-  WM_event_add_notifier(C,
-                        NC_SCENE | ND_SEQUENCER | NA_SELECTED,
-                        seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
 }
 
 /** \} */
@@ -482,7 +480,7 @@ static wmOperatorStatus sequencer_de_select_all_exec(bContext *C, wmOperator *op
   }
   ED_outliner_select_sync_from_sequence_tag(C);
   WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+      C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -533,8 +531,7 @@ void SEQUENCER_OT_select_all(wmOperatorType *ot)
 
 static wmOperatorStatus sequencer_select_inverse_exec(bContext *C, wmOperator * /*op*/)
 {
-  /*Scene *scene = CTX_data_sequencer_scene(C);*/ /*BFA - warning, 'scene': local variable is initialized but
-                                           not referenced*/
+  Scene *scene = CTX_data_sequencer_scene(C);
 
   if (sequencer_view_has_preview_poll(C) && !sequencer_view_preview_only_poll(C)) {
     return OPERATOR_CANCELLED;
@@ -554,7 +551,7 @@ static wmOperatorStatus sequencer_select_inverse_exec(bContext *C, wmOperator * 
 
   ED_outliner_select_sync_from_sequence_tag(C);
   WM_event_add_notifier(
-      C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+      C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -1221,15 +1218,8 @@ wmOperatorStatus sequencer_select_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_sequencer_scene(C);
   Editing *ed = seq::editing_get(scene);
   ARegion *region = CTX_wm_region(C);
-  ScrArea *area = CTX_wm_area(C);
 
   if (ed == nullptr) {
-    return OPERATOR_CANCELLED;
-  }
-
-  if (STREQ(area->runtime.tool->idname, "builtin.blade")) {
-    /* Blade tool overrides select operator everywhere except the padded part of handles. We
-     * should not be able to select these with this tool active, so return. */
     return OPERATOR_CANCELLED;
   }
 
@@ -1701,7 +1691,7 @@ static wmOperatorStatus sequencer_select_more_exec(bContext *C, wmOperator * /*o
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -1737,7 +1727,7 @@ static wmOperatorStatus sequencer_select_less_exec(bContext *C, wmOperator * /*o
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -1795,7 +1785,7 @@ static wmOperatorStatus sequencer_select_linked_pick_invoke(bContext *C,
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -1838,7 +1828,7 @@ static wmOperatorStatus sequencer_select_linked_exec(bContext *C, wmOperator * /
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -1946,7 +1936,7 @@ static wmOperatorStatus sequencer_select_handles_exec(bContext *C, wmOperator *o
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -2016,7 +2006,7 @@ static wmOperatorStatus sequencer_select_side_of_frame_exec(bContext *C, wmOpera
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -2095,7 +2085,7 @@ static wmOperatorStatus sequencer_select_side_exec(bContext *C, wmOperator *op)
 
   ED_outliner_select_sync_from_sequence_tag(C);
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -3017,7 +3007,7 @@ static wmOperatorStatus sequencer_select_grouped_exec(bContext *C, wmOperator *o
 
   if (changed) {
     ED_outliner_select_sync_from_sequence_tag(C);
-    WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+    WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
     return OPERATOR_FINISHED;
   }
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'61dd8a1435fb')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-01 09:40+0000\n"
+"POT-Creation-Date: 2025-09-15 07:14+0000\n"
 "PO-Revision-Date: 2025-07-23 14:57+0000\n"
 "Last-Translator: Michael Tribayu Jatnika Natawiria <mike.natawiria@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.blender.org/projects/blender-ui/ui/id/>\n"
@@ -740,14 +740,6 @@ msgstr "Distribusikan memori antar perangkat"
 
 msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
 msgstr "Buat spasi lebih banyak untuk adegan besar supaya cukup dengan mendistribusikan memori antar perangkat yang terkoneksi (e.g via NVLink) daripada menduplikasikannya"
-
-
-msgid "HIP RT"
-msgstr "HIP RT"
-
-
-msgid "HIP RT enables AMD hardware ray tracing on RDNA2 and above"
-msgstr "HIP RT mengaktifkan penelusuran sinar perangkat lunak AMD di RDNA2 dan diatasnya"
 
 
 msgid "Embree on GPU"
@@ -2183,14 +2175,6 @@ msgid "Name of the Attribute"
 msgstr "Nama Atribut"
 
 
-msgid "Array"
-msgstr "Larik"
-
-
-msgid "Single"
-msgstr "Tunggal"
-
-
 msgid "Bool Attribute"
 msgstr "Atribut Bool"
 
@@ -2851,6 +2835,10 @@ msgid "Collection data-blocks"
 msgstr "Koleksi data-blok"
 
 
+msgid "Color Space"
+msgstr "Ruang Warna"
+
+
 msgid "Curves"
 msgstr "Kurva"
 
@@ -3449,6 +3437,10 @@ msgstr "Dunia Utama"
 
 msgid "Collection of worlds"
 msgstr "Koleksi dunia"
+
+
+msgid "ACEScg"
+msgstr "ACEScg"
 
 
 msgid "Blendfile Import Context"
@@ -6428,10 +6420,6 @@ msgid "ACES2065-1"
 msgstr "ACES2065-1"
 
 
-msgid "ACEScg"
-msgstr "ACEScg"
-
-
 msgid "Non-Color"
 msgstr "Non-Warna"
 
@@ -6446,10 +6434,6 @@ msgstr "Rec.2020"
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
 msgstr "Jangan melakukan transformasi warna apa pun saat dimuat, perlakukan warna seperti pada adegan ruang linier sudah"
-
-
-msgid "Color Space"
-msgstr "Ruang Warna"
 
 
 msgid "Color space that the sequencer operates in"
@@ -15315,6 +15299,22 @@ msgid "Mask"
 msgstr "Masker"
 
 
+msgid "Merge"
+msgstr "Menggabungkan"
+
+
+msgid "Text"
+msgstr "Teks"
+
+
+msgid "Metaball"
+msgstr "Metabola"
+
+
+msgid "Names"
+msgstr "Nama"
+
+
 msgid "Snap"
 msgstr "Jepret"
 
@@ -15333,10 +15333,6 @@ msgstr "Seleksi yang Terhubung"
 
 msgid "Assign Material"
 msgstr "Tugaskan Bahan"
-
-
-msgid "Metaball"
-msgstr "Metabola"
 
 
 msgid "Light"
@@ -15365,18 +15361,6 @@ msgstr "Aset"
 
 msgid "Hooks"
 msgstr "Kait"
-
-
-msgid "Names"
-msgstr "Nama"
-
-
-msgid "Merge"
-msgstr "Menggabungkan"
-
-
-msgid "Text"
-msgstr "Teks"
 
 
 msgctxt "MovieClip"
@@ -15416,12 +15400,12 @@ msgid "Marker"
 msgstr "Tanda"
 
 
-msgid "Material Specials"
-msgstr "Spesial Bahan"
-
-
 msgid "Change Active Layer"
 msgstr "Gantikan Layer Aktif"
+
+
+msgid "Material Specials"
+msgstr "Spesial Bahan"
 
 
 msgid "Move to Layer"
@@ -15741,6 +15725,10 @@ msgstr "Menghaluskan warna sapuan"
 
 msgid "Time Offset"
 msgstr "Kamera"
+
+
+msgid "Array"
+msgstr "Larik"
 
 
 msgid "Build"
@@ -17586,6 +17574,10 @@ msgid "Algorithm to use to limit channel"
 msgstr "Algoritma menggunakan batas saluran"
 
 
+msgid "Single"
+msgstr "Tunggal"
+
+
 msgid "Limit by single channel"
 msgstr "Batasi oleh saluran tunggal"
 
@@ -18618,10 +18610,6 @@ msgstr "Hapus Target"
 msgctxt "Operator"
 msgid "Add Fluid Preset"
 msgstr "Kamera"
-
-
-msgid "Switch tint colors"
-msgstr "Beralih warna kehalusan"
 
 
 msgctxt "Operator"
@@ -19713,6 +19701,10 @@ msgid "Set Handle Type"
 msgstr "Tekstur"
 
 
+msgid "Remove from selection"
+msgstr "Menghapus dari seleksi"
+
+
 msgid "(De)select all control points"
 msgstr "Material"
 
@@ -19771,10 +19763,6 @@ msgstr "Modus Sunting"
 msgctxt "Operator"
 msgid "Make Segment"
 msgstr "Hapus Titik"
-
-
-msgid "Remove from selection"
-msgstr "Menghapus dari seleksi"
 
 
 msgctxt "Operator"
@@ -23781,6 +23769,10 @@ msgid "Align UV vertices on a horizontal line"
 msgstr "Menjajarkan simpul UV di garis horizontal"
 
 
+msgid "Space between islands"
+msgstr "Spasi diantara pulau"
+
+
 msgid "Copy selected UV vertices"
 msgstr "Salin simpul UV yang dipilih"
 
@@ -23836,10 +23828,6 @@ msgstr "Partikel"
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Modus Pahat"
-
-
-msgid "Space between islands"
-msgstr "Spasi diantara pulau"
 
 
 msgid "Scaled"
@@ -25057,10 +25045,6 @@ msgid "New Objects"
 msgstr "Objek Baru"
 
 
-msgid "Debugging"
-msgstr "Debugging"
-
-
 msgid "New Features"
 msgstr "Fitur Baru"
 
@@ -25123,10 +25107,6 @@ msgstr "Editor"
 
 msgid "Theme Space"
 msgstr "Ruang Tema"
-
-
-msgid "Theme Space List"
-msgstr "Daftar Ruang Tema"
 
 
 msgid "Collection Colors"
@@ -25271,10 +25251,6 @@ msgstr "Warna lapisan anotasi baru"
 
 msgid "Duplicate Camera"
 msgstr "Duplikasi Kamera"
-
-
-msgid "Causes grease pencil data to be duplicated with the object"
-msgstr "Menyebabkan data pensil grease diduplikasi dengan objek"
 
 
 msgid "Duplicate Light"
@@ -26371,10 +26347,6 @@ msgstr "Koreksi untuk nada tengah"
 
 msgid "Correction for highlights"
 msgstr "Koreksi untuk highlight"
-
-
-msgid "Mask Input Type"
-msgstr "Grup"
 
 
 msgid "Mute this modifier"
@@ -27813,10 +27785,6 @@ msgstr "Sumber Data:"
 
 msgid "No annotation source"
 msgstr "Tidak ada sumber anotasi"
-
-
-msgid "Channel Colors are disabled in Animation preferences"
-msgstr "Warna Saluran dinonaktifkan di preferensi Animasi"
 
 
 msgctxt "Operator"
@@ -30746,10 +30714,6 @@ msgid "No active camera set"
 msgstr "Hapus"
 
 
-msgid "Warning!"
-msgstr "Bahaya!"
-
-
 msgid "vertex data"
 msgstr "data vertex"
 
@@ -31960,6 +31924,10 @@ msgid "Nothing indicated"
 msgstr "Tidak ada yang berindikasi"
 
 
+msgid "'%s': cannot use current file as library"
+msgstr "'%s': tidak dapat menggunakan file sekarang sebagai perpustakaan"
+
+
 msgid "'%s': nothing indicated"
 msgstr "'%s': tidak terindikasi"
 
@@ -31970,10 +31938,6 @@ msgstr "'%s': bukan perpustakaan"
 
 msgid "Scene '%s' is linked, instantiation of objects is disabled"
 msgstr "Adegan '%s' telah dihubungkan, instantiasi objek telah dinonaktifkan"
-
-
-msgid "'%s': cannot use current file as library"
-msgstr "'%s': tidak dapat menggunakan file sekarang sebagai perpustakaan"
 
 
 msgid "'%s' is not a valid library filepath"

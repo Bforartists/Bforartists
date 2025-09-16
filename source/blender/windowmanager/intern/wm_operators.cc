@@ -4369,6 +4369,7 @@ static void gesture_box_modal_keymap(wmKeyConfig *keyconf)
   WM_modalkeymap_assign(keymap, "SEQUENCER_OT_select_box");
   WM_modalkeymap_assign(keymap, "SEQUENCER_OT_view_ghost_border");
   WM_modalkeymap_assign(keymap, "UV_OT_select_box");
+  WM_modalkeymap_assign(keymap, "UV_OT_custom_region_set");
   WM_modalkeymap_assign(keymap, "CLIP_OT_select_box");
   WM_modalkeymap_assign(keymap, "CLIP_OT_graph_select_box");
   WM_modalkeymap_assign(keymap, "MASK_OT_select_box");
@@ -4623,33 +4624,6 @@ const EnumPropertyItem *RNA_scene_without_sequencer_scene_itemf(bContext *C,
                       rna_id_enum_filter_single,
                       sequencer_scene);
 }
-/*############## BFA - 3D Sequencer ##############*/
-const EnumPropertyItem *RNA_seq_scene_without_active_itemf(bContext *C,
-                                                           PointerRNA * /*ptr*/,
-                                                           PropertyRNA * /*prop*/,
-                                                           bool *r_free)
-{
-  Scene *scene_active;
-  if (C != nullptr) {
-    SpaceSeq *seq = CTX_wm_space_seq(C);
-    if (seq != nullptr
- && seq->scene_override != nullptr) {
-      scene_active = seq->scene_override;
-    }
-    else {
-      scene_active = CTX_data_scene(C);
-    }
-  }
-  else {
-    scene_active = nullptr;
-  }
-  return rna_id_itemf(r_free,
-                      C ? (ID *)CTX_data_main(C)->scenes.first : nullptr,
-                      false,
-                      rna_id_enum_filter_single,
-                      scene_active);
-}
-/*############## BFA - 3D Sequencer END ##############*/
 
 const EnumPropertyItem *RNA_movieclip_itemf(bContext *C,
                                             PointerRNA * /*ptr*/,

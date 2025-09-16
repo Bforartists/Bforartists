@@ -513,43 +513,17 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
     Main *bmain = CTX_data_main(C);
 
 
-    /* BFA - TODO
     /* Update dependency graph of sequencer scene. */
-    /*Scene *sequencer_scene = CTX_data_sequencer_scene(C);
-    /*if (sequencer_scene && sequencer_scene != scene) {
-    /* Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
-    /*    bmain, sequencer_scene, BKE_view_layer_default_render(sequencer_scene));
-    /*if (is_after_open_file) {
-    /*  DEG_graph_relations_update(depsgraph);
-    /*  DEG_tag_on_visible_update(bmain, depsgraph);
-    /*}
-    /*BKE_scene_graph_update_tagged(depsgraph, bmain);
-    /*}
-    
-/*############## BFA - 3D Sequencer ##############*/
-    bScreen *screen = WM_window_get_active_screen(win);
-    /* Find overridden scenes in this window and ensure they have a depsgraph. */
-    ED_screen_areas_iter (win, screen, area) {
-      LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
-        if (space->spacetype == SPACE_SEQ) {
-          SpaceSeq *seq = (SpaceSeq *)space;
-          if (seq->scene_override) {
-            Scene *scene_override = seq->scene_override;
-            /* For now we will always use the first (default) view_layer in the overridden scene */
-            ViewLayer *view_layer_override = static_cast<ViewLayer *>(
-                scene_override->view_layers.first);
-            Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
-                bmain, scene_override, view_layer_override);
-            if (is_after_open_file) {
-              DEG_graph_relations_update(depsgraph);
-              DEG_tag_on_visible_update(bmain, depsgraph);
-            }
-            BKE_scene_graph_update_tagged(depsgraph, bmain);
-          }
-        }
-      }
+    Scene *sequencer_scene = CTX_data_sequencer_scene(C);
+    if (sequencer_scene && sequencer_scene != scene) {
+     Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
+        bmain, sequencer_scene, BKE_view_layer_default_render(sequencer_scene));
+    if (is_after_open_file) {
+      DEG_graph_relations_update(depsgraph);
+      DEG_tag_on_visible_update(bmain, depsgraph);
     }
-/*############## BFA - 3D Sequencer END##############*/
+      BKE_scene_graph_update_tagged(depsgraph, bmain);
+    }
 
     /* Copied to set's in #scene_update_tagged_recursive(). */
     scene->customdata_mask = win_combine_v3d_datamask;
@@ -5007,8 +4981,8 @@ bool WM_event_handler_region_marker_poll(const wmWindow *win,
       break;
   }
 
-  const ListBase *markers = ED_scene_markers_get(WM_window_get_active_scene(win),
-                                                 const_cast<ScrArea *>(area));
+  const ListBase *markers = ED_scene_markers_get_from_area(
+      WM_window_get_active_scene(win), WM_window_get_active_view_layer(win), area);
   if (BLI_listbase_is_empty(markers)) {
     return false;
   }
@@ -5029,8 +5003,8 @@ bool WM_event_handler_region_v2d_mask_no_marker_poll(const wmWindow *win,
     return false;
   }
   /* Casting away `const` is only needed for a non-constant return value. */
-  const ListBase *markers = ED_scene_markers_get(WM_window_get_active_scene(win),
-                                                 const_cast<ScrArea *>(area));
+  const ListBase *markers = ED_scene_markers_get_from_area(
+      WM_window_get_active_scene(win), WM_window_get_active_view_layer(win), area);
   if (markers && !BLI_listbase_is_empty(markers)) {
     return !WM_event_handler_region_marker_poll(win, area, region, event);
   }

@@ -397,6 +397,23 @@ static void grease_pencil_simplify_ui(bContext *C, wmOperator *op)
   }
 }
 
+/* BFA - Make "Simplify Stroke" description dynamic*/
+/* It uses the mode's description if that was set, otherwise use the operator description is fallback */
+static std::string simplify_strokes_description(bContext * /* C */,
+                                                wmOperatorType *ot,
+                                                PointerRNA *ptr)
+{
+  PropertyRNA *prop = RNA_struct_find_property(ptr, "mode");
+
+  if (RNA_property_is_set(ptr, prop)) {
+    const int mode = RNA_property_enum_get(ptr, prop);
+    return std::string(prop_simplify_modes[mode].description);
+  }
+  else {
+    return std::string(ot->description);
+  }
+}
+
 static void GREASE_PENCIL_OT_stroke_simplify(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -404,6 +421,8 @@ static void GREASE_PENCIL_OT_stroke_simplify(wmOperatorType *ot)
   ot->name = "Simplify Stroke";
   ot->idname = "GREASE_PENCIL_OT_stroke_simplify";
   ot->description = "Simplify selected strokes";
+  ot->get_description =
+      simplify_strokes_description; /* BFA - Generate description from 'mode' property*/
 
   ot->exec = grease_pencil_stroke_simplify_exec;
   ot->poll = editable_grease_pencil_poll;
@@ -1484,6 +1503,7 @@ static wmOperatorStatus grease_pencil_duplicate_exec(bContext *C, wmOperator * /
 {
   const Scene *scene = CTX_data_scene(C);
   Object *object = CTX_data_active_object(C);
+  View3D *v3d = CTX_wm_view3d(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
   const bke::AttrDomain selection_domain = ED_grease_pencil_edit_selection_domain_get(
@@ -1493,18 +1513,23 @@ static wmOperatorStatus grease_pencil_duplicate_exec(bContext *C, wmOperator * /
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
   threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
     IndexMaskMemory memory;
-    const IndexMask elements = retrieve_editable_and_selected_elements(
-        *object, info.drawing, info.layer_index, selection_domain, memory);
-    if (elements.is_empty()) {
-      return;
-    }
 
     bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
     if (selection_domain == bke::AttrDomain::Curve) {
-      curves::duplicate_curves(curves, elements);
+      const IndexMask strokes = retrieve_editable_and_selected_strokes(
+          *object, info.drawing, info.layer_index, memory);
+      if (strokes.is_empty()) {
+        return;
+      }
+      curves::duplicate_curves(curves, strokes);
     }
     else if (selection_domain == bke::AttrDomain::Point) {
-      curves::duplicate_points(curves, elements);
+      const IndexMask points = ed::greasepencil::retrieve_editable_and_all_selected_points(
+          *object, info.drawing, info.layer_index, v3d->overlay.handle_display, memory);
+      if (points.is_empty()) {
+        return;
+      }
+      curves::duplicate_points(curves, points);
     }
     info.drawing.tag_topology_changed();
     changed.store(true, std::memory_order_relaxed);
@@ -1606,6 +1631,7 @@ static wmOperatorStatus gpencil_stroke_subdivide_exec(bContext *C, wmOperator *o
 
   const Scene *scene = CTX_data_scene(C);
   Object *object = CTX_data_active_object(C);
+  View3D *v3d = CTX_wm_view3d(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
   const bke::AttrDomain selection_domain = ED_grease_pencil_edit_selection_domain_get(
       scene->toolsettings);
@@ -1633,6 +1659,24 @@ static wmOperatorStatus gpencil_stroke_subdivide_exec(bContext *C, wmOperator *o
        * cut/uncut for each segment. */
       const VArray<bool> selection = *curves.attributes().lookup_or_default<bool>(
           ".selection", bke::AttrDomain::Point, true);
+      const VArray<bool> selection_left = *curves.attributes().lookup_or_default<bool>(
+          ".selection_handle_left", bke::AttrDomain::Point, true);
+      const VArray<bool> selection_right = *curves.attributes().lookup_or_default<bool>(
+          ".selection_handle_right", bke::AttrDomain::Point, true);
+      const VArray<int8_t> curve_types = curves.curve_types();
+
+      auto is_selected = [&](const int point_i, const int curve_i) {
+        if (selection[point_i]) {
+          return true;
+        }
+        if (v3d->overlay.handle_display == CURVE_HANDLE_NONE) {
+          return false;
+        }
+        if (curve_types[curve_i] == CURVE_TYPE_BEZIER) {
+          return selection_left[point_i] || selection_right[point_i];
+        }
+        return false;
+      };
 
       const OffsetIndices points_by_curve = curves.points_by_curve();
       const VArray<bool> cyclic = curves.cyclic();
@@ -1645,11 +1689,11 @@ static wmOperatorStatus gpencil_stroke_subdivide_exec(bContext *C, wmOperator *o
          * segment. */
         for (const int point : points_by_curve[curve].drop_back(1)) {
           /* The point itself should be selected. */
-          if (!selection[point]) {
+          if (!is_selected(point, curve)) {
             continue;
           }
           /* If the next point in the curve is selected, then cut this segment. */
-          if (selection[point + 1]) {
+          if (is_selected(point + 1, curve)) {
             use_cuts[point] = cuts;
           }
         }
@@ -1657,7 +1701,7 @@ static wmOperatorStatus gpencil_stroke_subdivide_exec(bContext *C, wmOperator *o
         if (cyclic[curve]) {
           const int first_point = points_by_curve[curve].first();
           const int last_point = points_by_curve[curve].last();
-          if (selection[first_point] && selection[last_point]) {
+          if (is_selected(first_point, curve) && is_selected(last_point, curve)) {
             use_cuts[last_point] = cuts;
           }
         }
@@ -3107,14 +3151,16 @@ static wmOperatorStatus grease_pencil_extrude_exec(bContext *C, wmOperator * /*o
 {
   const Scene *scene = CTX_data_scene(C);
   Object *object = CTX_data_active_object(C);
+  View3D *v3d = CTX_wm_view3d(C);
   GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
 
   std::atomic<bool> changed = false;
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
   threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
     IndexMaskMemory memory;
-    const IndexMask points_to_extrude = retrieve_editable_and_selected_points(
-        *object, info.drawing, info.layer_index, memory);
+    const IndexMask points_to_extrude =
+        ed::greasepencil::retrieve_editable_and_all_selected_points(
+            *object, info.drawing, info.layer_index, v3d->overlay.handle_display, memory);
     if (points_to_extrude.is_empty()) {
       return;
     }
@@ -4036,7 +4082,7 @@ static void GREASE_PENCIL_OT_set_handle_type(wmOperatorType *ot)
 {
   ot->name = "Set Handle Type";
   ot->idname = "GREASE_PENCIL_OT_set_handle_type";
-  ot->description = "Set the handle type for bezier curves";
+  ot->description = "Set the handle type for Bézier curves";
 
   ot->invoke = WM_menu_invoke;
   ot->exec = grease_pencil_set_handle_type_exec;
@@ -4505,7 +4551,10 @@ static void convert_to_catmull_rom(bke::CurvesGeometry &curves,
   const IndexMask non_catmull_rom_curves_selection =
       curves.indices_for_curve_type(CURVE_TYPE_CATMULL_ROM, selection, memory)
           .complement(selection, memory);
-  BLI_assert(!non_catmull_rom_curves_selection.is_empty());
+  if (non_catmull_rom_curves_selection.is_empty()) {
+    return;
+  }
+
   curves = geometry::resample_to_evaluated(curves, non_catmull_rom_curves_selection);
 
   /* To avoid having too many control points, simplify the position attribute based on the
@@ -4540,7 +4589,10 @@ static void convert_to_poly(bke::CurvesGeometry &curves, const IndexMask &select
                                                   .indices_for_curve_type(
                                                       CURVE_TYPE_POLY, selection, memory)
                                                   .complement(selection, memory);
-  BLI_assert(!non_poly_curves_selection.is_empty());
+  if (non_poly_curves_selection.is_empty()) {
+    return;
+  }
+
   curves = geometry::resample_to_evaluated(curves, non_poly_curves_selection);
 }
 

@@ -1958,9 +1958,7 @@ void ED_screen_animation_timer(
 
     sad->region = CTX_wm_region(C);
     sad->scene = scene;
-    sad->view_layer = CTX_data_view_layer(C); /*BFA - 3D Sequencer*/
-    //BFA - TODO
-    //sad->view_layer = view_layer;
+    sad->view_layer = view_layer;
 
     sad->do_scene_syncing = blender::ed::vse::is_scene_time_sync_needed(*C);
 

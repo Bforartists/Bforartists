@@ -5,7 +5,8 @@
 /** \file
  * \ingroup editorui
  */
-/* BFA NOTE: When merging this, best to go in from the Bforartists one, then work the new icons from Blender. */
+/* BFA NOTE: When merging this, best to go in from the Bforartists one, then work the new icons
+ * from Blender. */
 /* NOTE: this is included multiple times with different #defines for DEF_ICON. */
 
 /* Auto define more specific types for places that do not need the distinction. */
@@ -33,9 +34,9 @@
 #ifndef DEF_ICON_COLOR
 #  define DEF_ICON_COLOR DEF_ICON
 #endif
-/*#ifndef DEF_ICON_FUND*/ /*BFa - This icon is not used*/
-/*#  define DEF_ICON_FUND DEF_ICON*/  /*BFa - This icon is not used*/
-/*#endif*/ /*BFa - This icon is not used*/
+/*#ifndef DEF_ICON_FUND*/            /*BFa - This icon is not used*/
+/*#  define DEF_ICON_FUND DEF_ICON*/ /*BFa - This icon is not used*/
+/*#endif*/                           /*BFa - This icon is not used*/
 
 /* ICON_ prefix added */
 
@@ -394,8 +395,10 @@ DEF_ICON_COLOR(DECORATE_DRIVER)
 DEF_ICON_COLOR(DECORATE_KEYFRAME)
 DEF_ICON_COLOR(DECORATE_OVERRIDE)
 
-DEF_ICON_COLOR(DECORATE_UNLOCKED) /*BFA - don't change the order, exception to the order for the icon +1 toggle*/
-DEF_ICON_COLOR(DECORATE_LOCKED) /*BFA - don't change the order, exception to the order for the icon +1 toggle*/
+DEF_ICON_COLOR(DECORATE_UNLOCKED) /*BFA - don't change the order, exception to the order for the
+                                     icon +1 toggle*/
+DEF_ICON_COLOR(DECORATE_LOCKED) /*BFA - don't change the order, exception to the order for the icon
+                                   +1 toggle*/
 
 DEF_ICON_COLOR(DECREASE_KERNING)
 DEF_ICON_COLOR(DEC_CONTRAST)
@@ -416,8 +419,10 @@ DEF_ICON_COLOR(DIRTY_VERTEX)
 DEF_ICON_COLOR(DISABLE)
 DEF_ICON_COLOR(DISC)
 
-DEF_ICON_COLOR(DISCLOSURE_TRI_RIGHT) /*BFA - don't change the order, exception to the order for the icon +1 toggle*/
-DEF_ICON_COLOR(DISCLOSURE_TRI_DOWN) /*BFA - don't change the order, exception to the order for the icon +1 toggle*/
+DEF_ICON_COLOR(DISCLOSURE_TRI_RIGHT) /*BFA - don't change the order, exception to the order for the
+                                        icon +1 toggle*/
+DEF_ICON_COLOR(DISCLOSURE_TRI_DOWN)  /*BFA - don't change the order, exception to the order for the
+                                        icon +1 toggle*/
 
 DEF_ICON_COLOR(DISCONTINUE_EULER)
 DEF_ICON_COLOR(DISK_DRIVE)
@@ -642,7 +647,6 @@ DEF_ICON_COLOR(GROUP_UVS)
 DEF_ICON_COLOR(GROUP_VCOL)
 DEF_ICON_COLOR(GROUP_VERTEX)
 
-
 /* letter H */
 
 DEF_ICON_COLOR(HAIR_DATA)
@@ -656,8 +660,8 @@ DEF_ICON_COLOR(HANDLE_VECTOR)
 DEF_ICON_COLOR(HASH)
 DEF_ICON_COLOR(HELP)
 
-DEF_ICON_COLOR(HIDE_ON)/* bfa - don't change the order*/
-DEF_ICON_COLOR(HIDE_OFF)/* bfa - don't change the order*/
+DEF_ICON_COLOR(HIDE_ON)  /* bfa - don't change the order*/
+DEF_ICON_COLOR(HIDE_OFF) /* bfa - don't change the order*/
 
 DEF_ICON_COLOR(HIDE_RENDERVIEW)
 DEF_ICON_COLOR(HIDE_UNSELECTED)
@@ -1038,6 +1042,13 @@ DEF_ICON_COLOR(MUSGRAVE_TEX)
 DEF_ICON_COLOR(MUTE_IPO_OFF)
 DEF_ICON_COLOR(MUTE_IPO_ON)
 
+DEF_ICON_COLOR(MOD_BRIGHTNESS_CONTRAST)
+DEF_ICON_COLOR(MOD_COLOR_BALANCE)
+DEF_ICON_COLOR(MOD_CURVES)
+DEF_ICON_COLOR(MOD_HUE_CORRECT)
+DEF_ICON_COLOR(MOD_TONEMAP)
+DEF_ICON_COLOR(MOD_WHITE_BALANCE)
+
 /* letter N */
 
 DEF_ICON_COLOR(NAMED_ATTRIBUTE)
@@ -1122,8 +1133,8 @@ DEF_ICON_COLOR(NODE_HOLDOUTSHADER)
 DEF_ICON_COLOR(NODE_HUESATURATION)
 DEF_ICON_COLOR(NODE_IMPAINT)
 
-DEF_ICON_COLOR(NODE_INSERT_ON) /*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(NODE_INSERT_OFF)/*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(NODE_INSERT_ON)  /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(NODE_INSERT_OFF) /*bfa - don't change the order of the icons*/
 
 DEF_ICON_COLOR(NODE_INVERT)
 DEF_ICON_COLOR(NODE_KEYING)
@@ -1476,14 +1487,14 @@ DEF_ICON_COLOR(REPLACE_STRING)
 DEF_ICON_COLOR(REPROJECT)
 DEF_ICON_COLOR(RESET)
 
-DEF_ICON_COLOR(RESTRICT_COLOR_ON) /*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(RESTRICT_COLOR_OFF)/*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(RESTRICT_RENDER_ON)/*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(RESTRICT_RENDER_OFF)/*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(RESTRICT_SELECT_ON)/*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(RESTRICT_SELECT_OFF)/*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(RESTRICT_VIEW_ON)/*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(RESTRICT_VIEW_OFF)/*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_COLOR_ON)   /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_COLOR_OFF)  /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_RENDER_ON)  /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_RENDER_OFF) /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_SELECT_ON)  /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_SELECT_OFF) /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_VIEW_ON)    /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(RESTRICT_VIEW_OFF)   /*bfa - don't change the order of the icons*/
 
 DEF_ICON_COLOR(RETOPO)
 DEF_ICON_COLOR(REVERSE_COLORS)
@@ -1900,9 +1911,8 @@ DEF_ICON_COLOR(UNDO_HISTORY)
 DEF_ICON_COLOR(UNICODE)
 DEF_ICON_COLOR(UNINDENT)
 
-
-DEF_ICON_COLOR(UNLINKED)/*bfa - don't change the order of the icons*/
-DEF_ICON_COLOR(LINKED)/*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(UNLINKED) /*bfa - don't change the order of the icons*/
+DEF_ICON_COLOR(LINKED)   /*bfa - don't change the order of the icons*/
 DEF_ICON_COLOR(UNLOCKED) /*bfa - don't change the order of the icons*/
 DEF_ICON_COLOR(LOCKED)   /*bfa - don't change the order of the icons*/
 DEF_ICON_COLOR(UNPINNED) /*bfa - don't change the order of the icons*/
@@ -1984,10 +1994,10 @@ DEF_ICON_COLOR(VISUAL_ROTATE)
 DEF_ICON_COLOR(VISUAL_ROT_SCALE)
 DEF_ICON_COLOR(VISUAL_SCALE)
 
-DEF_ICON_COLOR(VIS_SEL_11)/*bfa - don't change the order of these icons*/
-DEF_ICON_COLOR(VIS_SEL_10)/*bfa - don't change the order of these icons*/
-DEF_ICON_COLOR(VIS_SEL_01)/*bfa - don't change the order of these icons*/
-DEF_ICON_COLOR(VIS_SEL_00)/*bfa - don't change the order of these icons*/
+DEF_ICON_COLOR(VIS_SEL_11) /*bfa - don't change the order of these icons*/
+DEF_ICON_COLOR(VIS_SEL_10) /*bfa - don't change the order of these icons*/
+DEF_ICON_COLOR(VIS_SEL_01) /*bfa - don't change the order of these icons*/
+DEF_ICON_COLOR(VIS_SEL_00) /*bfa - don't change the order of these icons*/
 
 DEF_ICON_COLOR(VOLUME_CUBE)
 DEF_ICON_COLOR(VOLUME_DATA)
@@ -2064,7 +2074,6 @@ DEF_ICON_OBJECT_DATA(OUTLINER_DATA_POINTCLOUD)
 DEF_ICON_SHADING(TEXTURE_DATA) /*BFA - DEF_ICON_SHADING*/
 DEF_ICON_SHADING(WORLD_DATA)   /*BFA - DEF_ICON_SHADING*/
 
-
 /* ------------------------- large --------------------------*/
 
 DEF_ICON_COLOR(CANCEL_LARGE)
@@ -2080,7 +2089,6 @@ DEF_ICON_COLOR(FILE_PARENT_LARGE)
 DEF_ICON_COLOR(NETWORK_DRIVE_LARGE)
 DEF_ICON_COLOR(BLENDER_LARGE)
 DEF_ICON_COLOR(BLENDER_LOGO_LARGE)
-
 
 /* The following are used when creating the Event Icons. */
 
