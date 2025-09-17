@@ -15,6 +15,7 @@
 #include "BLI_math_vector.h"
 
 #include "BKE_brush.hh"
+#include "BKE_colortools.hh"
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
 #include "BKE_paint.hh"
@@ -204,7 +205,7 @@ class ProjectionPaintMode : public AbstractPaintMode {
                       paint_stroke_flipped(stroke),
                       1.0,
                       0.0,
-                      BKE_brush_size_get(paint, brush));
+                      BKE_brush_radius_get(paint, brush));
     /* two redraws, one for GPU update, one for notification */
     paint_proj_redraw(C, stroke_handle, false);
     paint_proj_redraw(C, stroke_handle, true);
@@ -363,6 +364,7 @@ static void paint_stroke_update_step(bContext *C,
   }
 
   if (BKE_brush_use_alpha_pressure(brush)) {
+    pressure = BKE_curvemapping_evaluateF(brush->curve_strength, 0, pressure);
     BKE_brush_alpha_set(paint, brush, max_ff(0.0f, startalpha * pressure * alphafac));
   }
   else {
@@ -370,7 +372,7 @@ static void paint_stroke_update_step(bContext *C,
   }
 
   if ((brush->flag & BRUSH_DRAG_DOT) || (brush->flag & BRUSH_ANCHORED)) {
-    UndoStack *ustack = CTX_wm_manager(C)->undo_stack;
+    UndoStack *ustack = CTX_wm_manager(C)->runtime->undo_stack;
     ED_image_undo_restore(ustack->step_init);
   }
 

@@ -15,7 +15,8 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_output<decl::Bool>("Boolean").custom_draw([](CustomSocketDrawParams &params) {
     uiLayout &row = params.layout.row(true);
-    row.prop(&params.node_ptr, "boolean", UI_ITEM_NONE, IFACE_("Boolean"), ICON_NONE);
+    row.prop(
+        &params.node_ptr, "boolean", UI_ITEM_R_SPLIT_EMPTY_NAME, IFACE_("Boolean"), ICON_NONE);
     if (gizmos::value_node_has_gizmo(params.tree, params.node)) {
       row.prop(&params.socket_ptr, "pin_gizmo", UI_ITEM_NONE, "", ICON_GIZMO);
     }
@@ -41,6 +42,8 @@ static void node_register()
 
   fn_node_type_base(&ntype, "FunctionNodeInputBool", FN_NODE_INPUT_BOOL);
   ntype.ui_name = "Boolean";
+  ntype.ui_description =
+      "Provide a True/False value that can be connected to other nodes in the tree";
   ntype.enum_name_legacy = "INPUT_BOOL";
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = node_declare;

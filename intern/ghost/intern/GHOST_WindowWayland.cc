@@ -1991,7 +1991,13 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
     window_->backend.vulkan_window_info = new GHOST_ContextVK_WindowInfo;
     window_->backend.vulkan_window_info->size[0] = window_->frame.size[0];
     window_->backend.vulkan_window_info->size[1] = window_->frame.size[1];
-    window_->backend.vulkan_window_info->is_color_managed = true;
+
+    /* There is no HDR on/off settings as on Windows, so from the Window side
+     * consider it always enabled. But may still get disabled if Vulkan has no
+     * appropriate surface format. */
+    hdr_info_.hdr_enabled = true;
+    hdr_info_.wide_gamut_enabled = true;
+    hdr_info_.sdr_white_level = 1.0f;
   }
 #endif
 
@@ -2165,10 +2171,10 @@ GHOST_WindowWayland::~GHOST_WindowWayland()
 }
 
 #ifdef USE_EVENT_BACKGROUND_THREAD
-GHOST_TSuccess GHOST_WindowWayland::swapBuffers()
+GHOST_TSuccess GHOST_WindowWayland::swapBufferRelease()
 {
   GHOST_ASSERT(system_->main_thread_id == std::this_thread::get_id(), "Only from main thread!");
-  return GHOST_Window::swapBuffers();
+  return GHOST_Window::swapBufferRelease();
 }
 #endif /* USE_EVENT_BACKGROUND_THREAD */
 
@@ -2472,7 +2478,8 @@ GHOST_Context *GHOST_WindowWayland::newDrawingContext(GHOST_TDrawingContextType 
                                                      window_->backend.vulkan_window_info,
                                                      1,
                                                      2,
-                                                     preferred_device_);
+                                                     preferred_device_,
+                                                     &hdr_info_);
       if (context->initializeDrawingContext()) {
         return context;
       }

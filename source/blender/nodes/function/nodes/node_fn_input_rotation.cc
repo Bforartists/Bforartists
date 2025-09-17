@@ -17,7 +17,8 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_output<decl::Rotation>("Rotation").custom_draw([](CustomSocketDrawParams &params) {
     uiLayout &row = params.layout.row(true);
-    row.column(true).prop(&params.node_ptr, "rotation_euler", UI_ITEM_NONE, "", ICON_NONE);
+    row.column(true).prop(
+        &params.node_ptr, "rotation_euler", UI_ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
     if (gizmos::value_node_has_gizmo(params.tree, params.node)) {
       row.prop(&params.socket_ptr, "pin_gizmo", UI_ITEM_NONE, "", ICON_GIZMO);
     }
@@ -47,6 +48,8 @@ static void node_register()
 
   fn_node_type_base(&ntype, "FunctionNodeInputRotation", FN_NODE_INPUT_ROTATION);
   ntype.ui_name = "Rotation";
+  ntype.ui_description =
+      "Provide a rotation value that can be connected to other nodes in the tree";
   ntype.enum_name_legacy = "INPUT_ROTATION";
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = node_declare;

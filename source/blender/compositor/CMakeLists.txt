@@ -11,6 +11,7 @@ set(INC
   ../gpu/intern
   ../makesrna
   ../render/intern
+  ../imbuf/opencolorio/intern/libocio
 )
 
 set(INC_SYS
@@ -69,6 +70,7 @@ set(SRC
   intern/utilities.cc
 
   algorithms/intern/compute_preview.cc
+  algorithms/intern/convolve.cc
   algorithms/intern/deriche_gaussian_blur.cc
   algorithms/intern/extract_alpha.cc
   algorithms/intern/jump_flooding.cc
@@ -86,6 +88,7 @@ set(SRC
   algorithms/intern/van_vliet_gaussian_blur.cc
 
   algorithms/COM_algorithm_compute_preview.hh
+  algorithms/COM_algorithm_convolve.hh
   algorithms/COM_algorithm_deriche_gaussian_blur.hh
   algorithms/COM_algorithm_extract_alpha.hh
   algorithms/COM_algorithm_jump_flooding.hh
@@ -159,6 +162,7 @@ set(LIB
   PRIVATE bf::blenlib
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
+  PRIVATE bf::intern::clog
   PRIVATE bf::dependencies::optional::opencolorio
 )
 
@@ -282,10 +286,11 @@ set(GLSL_SRC
   shaders/library/gpu_shader_compositor_color_matte.glsl
   shaders/library/gpu_shader_compositor_color_spill.glsl
   shaders/library/gpu_shader_compositor_color_to_luminance.glsl
+  shaders/library/gpu_shader_compositor_convert_alpha.glsl
   shaders/library/gpu_shader_compositor_difference_matte.glsl
   shaders/library/gpu_shader_compositor_distance_matte.glsl
+  shaders/library/gpu_shader_compositor_eval.glsl
   shaders/library/gpu_shader_compositor_exposure.glsl
-  shaders/library/gpu_shader_compositor_gamma.glsl
   shaders/library/gpu_shader_compositor_hue_correct.glsl
   shaders/library/gpu_shader_compositor_hue_saturation_value.glsl
   shaders/library/gpu_shader_compositor_image_diagonals.glsl
@@ -299,6 +304,7 @@ set(GLSL_SRC
   shaders/library/gpu_shader_compositor_posterize.glsl
   shaders/library/gpu_shader_compositor_separate_combine.glsl
   shaders/library/gpu_shader_compositor_set_alpha.glsl
+  shaders/library/gpu_shader_compositor_store.glsl
   shaders/library/gpu_shader_compositor_store_output.glsl
   shaders/library/gpu_shader_compositor_summed_area_table_lib.glsl
   shaders/library/gpu_shader_compositor_texture_utilities.glsl

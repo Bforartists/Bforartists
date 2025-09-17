@@ -11,7 +11,7 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 class POWER_SEQUENCER_OT_space_sequences(bpy.types.Operator):
     """
-    *brief* Offsets all strips to the right of the time cursor by a given duration, ignoring locked sequences
+    *brief* Offsets all strips to the right of the time cursor by a given duration, ignoring locked strips
     """
 
     doc = {
@@ -32,20 +32,20 @@ class POWER_SEQUENCER_OT_space_sequences(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
-        sequences = [
+        strips = [
             s
-            for s in context.sequences
+            for s in context.strips
             if s.type in SequenceTypes.CUTABLE
             and s.frame_final_start >= context.scene.frame_current
             and not s.lock
         ]
 
         gap_frames = convert_duration_to_frames(context, self.gap_to_insert)
-        sorted_sequences = sorted(sequences, key=lambda s: s.frame_final_start, reverse=True)
-        for s in sorted_sequences:
+        sorted_strips = sorted(strips, key=lambda s: s.frame_final_start, reverse=True)
+        for s in sorted_strips:
             s.frame_start += gap_frames
 
         markers = context.scene.timeline_markers

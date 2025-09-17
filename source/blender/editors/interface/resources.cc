@@ -178,22 +178,22 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
             cp = ts->back;
           }
           else if (g_theme_state.regionid == RGN_TYPE_CHANNELS) {
-            cp = ts->list;
+            cp = btheme->regions.channels.back;
           }
           else if (ELEM(g_theme_state.regionid, RGN_TYPE_HEADER, RGN_TYPE_FOOTER)) {
             cp = ts->header;
           }
           else if (g_theme_state.regionid == RGN_TYPE_NAV_BAR) {
-            cp = ts->tab_back;
+            cp = btheme->regions.sidebars.tab_back;
           }
           else if (g_theme_state.regionid == RGN_TYPE_ASSET_SHELF) {
-            cp = btheme->asset_shelf.back;
+            cp = btheme->regions.asset_shelf.back;
           }
           else if (g_theme_state.regionid == RGN_TYPE_ASSET_SHELF_HEADER) {
-            cp = btheme->asset_shelf.header_back;
+            cp = btheme->regions.asset_shelf.header_back;
           }
           else {
-            cp = ts->button;
+            cp = btheme->regions.sidebars.back;
           }
 
           copy_v4_v4_uchar(back, cp);
@@ -217,7 +217,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
             cp = btheme->tui.panel_text;
           }
           else if (g_theme_state.regionid == RGN_TYPE_CHANNELS) {
-            cp = ts->list_text;
+            cp = btheme->regions.channels.text;
           }
           else if (ELEM(g_theme_state.regionid,
                         RGN_TYPE_HEADER,
@@ -232,7 +232,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_TEXT_HI:
           if (g_theme_state.regionid == RGN_TYPE_CHANNELS) {
-            cp = ts->list_text_hi;
+            cp = btheme->regions.channels.text_selected;
           }
           else if (ELEM(g_theme_state.regionid,
                         RGN_TYPE_HEADER,
@@ -246,13 +246,10 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           }
           break;
         case TH_TITLE:
-          if (ELEM(g_theme_state.regionid, RGN_TYPE_UI, RGN_TYPE_TOOLS) ||
+          if (ELEM(g_theme_state.regionid, RGN_TYPE_UI, RGN_TYPE_TOOLS, RGN_TYPE_CHANNELS) ||
               ELEM(g_theme_state.spacetype, SPACE_PROPERTIES, SPACE_USERPREF))
           {
             cp = btheme->tui.panel_title;
-          }
-          else if (g_theme_state.regionid == RGN_TYPE_CHANNELS) {
-            cp = ts->list_title;
           }
           else if (ELEM(g_theme_state.regionid,
                         RGN_TYPE_HEADER,
@@ -289,9 +286,8 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_PANEL_OUTLINE:
           cp = btheme->tui.panel_outline;
           break;
-
-        case TH_BUTBACK:
-          cp = ts->button;
+        case TH_PANEL_ACTIVE:
+          cp = btheme->tui.panel_active;
           break;
 
         case TH_TAB_TEXT:
@@ -313,8 +309,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           cp = btheme->tui.wcol_tab.outline_sel;
           break;
         case TH_TAB_BACK:
-          /* Tab background is set per editor. */
-          cp = ts->tab_back;
+          cp = btheme->regions.sidebars.tab_back;
           break;
 
         case TH_SHADE1:
@@ -331,13 +326,16 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           cp = ts->grid;
           break;
         case TH_TIME_SCRUB_BACKGROUND:
-          cp = ts->time_scrub_background;
+          cp = btheme->regions.scrubbing.back;
+          break;
+        case TH_TIME_SCRUB_TEXT:
+          cp = btheme->regions.scrubbing.text;
           break;
         case TH_TIME_MARKER_LINE:
-          cp = btheme->common.anim.time_marker;
+          cp = btheme->regions.scrubbing.time_marker;
           break;
         case TH_TIME_MARKER_LINE_SELECTED:
-          cp = btheme->common.anim.time_marker_selected;
+          cp = btheme->regions.scrubbing.time_marker_selected;
           break;
         case TH_VIEW_OVERLAY:
           cp = ts->view_overlay;
@@ -429,9 +427,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_EDITMESH_ACTIVE:
           cp = ts->editmesh_active;
           break;
-        case TH_EDGE_FACESEL:
-          cp = ts->edge_facesel;
-          break;
         case TH_FACE:
           cp = ts->face;
           break;
@@ -489,47 +484,59 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_BONE_LOCKED_WEIGHT:
           cp = ts->bone_locked_weight;
           break;
+        case TH_LONGKEY:
+          cp = btheme->common.anim.long_key;
+          break;
+        case TH_LONGKEY_SELECT:
+          cp = btheme->common.anim.long_key_selected;
+          break;
         case TH_STRIP:
           cp = ts->strip;
           break;
         case TH_STRIP_SELECT:
           cp = ts->strip_select;
           break;
+        case TH_CHANNEL:
+          cp = btheme->common.anim.channel;
+          break;
+        case TH_CHANNEL_SELECT:
+          cp = btheme->common.anim.channel_selected;
+          break;
         case TH_KEYTYPE_KEYFRAME:
-          cp = ts->keytype_keyframe;
+          cp = btheme->common.anim.keyframe;
           break;
         case TH_KEYTYPE_KEYFRAME_SELECT:
-          cp = ts->keytype_keyframe_select;
+          cp = btheme->common.anim.keyframe_selected;
           break;
         case TH_KEYTYPE_EXTREME:
-          cp = ts->keytype_extreme;
+          cp = btheme->common.anim.keyframe_extreme;
           break;
         case TH_KEYTYPE_EXTREME_SELECT:
-          cp = ts->keytype_extreme_select;
+          cp = btheme->common.anim.keyframe_extreme_selected;
           break;
         case TH_KEYTYPE_BREAKDOWN:
-          cp = ts->keytype_breakdown;
+          cp = btheme->common.anim.keyframe_breakdown;
           break;
         case TH_KEYTYPE_BREAKDOWN_SELECT:
-          cp = ts->keytype_breakdown_select;
+          cp = btheme->common.anim.keyframe_breakdown_selected;
           break;
         case TH_KEYTYPE_JITTER:
-          cp = ts->keytype_jitter;
+          cp = btheme->common.anim.keyframe_jitter;
           break;
         case TH_KEYTYPE_JITTER_SELECT:
-          cp = ts->keytype_jitter_select;
+          cp = btheme->common.anim.keyframe_jitter_selected;
           break;
         case TH_KEYTYPE_MOVEHOLD:
-          cp = ts->keytype_movehold;
+          cp = btheme->common.anim.keyframe_moving_hold;
           break;
         case TH_KEYTYPE_MOVEHOLD_SELECT:
-          cp = ts->keytype_movehold_select;
+          cp = btheme->common.anim.keyframe_moving_hold_selected;
           break;
         case TH_KEYTYPE_GENERATED:
-          cp = ts->keytype_generated;
+          cp = btheme->common.anim.keyframe_generated;
           break;
         case TH_KEYTYPE_GENERATED_SELECT:
-          cp = ts->keytype_generated_select;
+          cp = btheme->common.anim.keyframe_generated_selected;
           break;
         case TH_KEYBORDER:
           cp = ts->keyborder;
@@ -545,9 +552,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_FRAME_AFTER:
           cp = ts->after_current_frame;
-          break;
-        case TH_TIME_KEYFRAME:
-          cp = ts->time_keyframe;
           break;
         case TH_TIME_GP_KEYFRAME:
           cp = ts->time_gp_keyframe;
@@ -567,9 +571,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_ACTIVE_SPLINE:
           cp = ts->act_spline;
-          break;
-        case TH_ACTIVE_VERT:
-          cp = ts->lastsel_point;
           break;
 
         case TH_HANDLE_FREE:
@@ -659,14 +660,8 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_NODE_TEXTURE:
           cp = ts->nodeclass_texture;
           break;
-        case TH_NODE_PATTERN:
-          cp = ts->nodeclass_pattern;
-          break;
         case TH_NODE_SCRIPT:
           cp = ts->nodeclass_script;
-          break;
-        case TH_NODE_LAYOUT:
-          cp = ts->nodeclass_layout;
           break;
         case TH_NODE_GEOMETRY:
           cp = ts->nodeclass_geometry;
@@ -806,10 +801,10 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
 
         case TH_DOPESHEET_CHANNELOB:
-          cp = btheme->common.anim.channel;
+          cp = btheme->common.anim.channels;
           break;
         case TH_DOPESHEET_CHANNELSUBOB:
-          cp = btheme->common.anim.channel_sub;
+          cp = btheme->common.anim.channels_sub;
           break;
         case TH_DOPESHEET_IPOLINE:
           cp = ts->ds_ipoline;
@@ -950,7 +945,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
 
         case TH_NLA_TRACK:
-          cp = ts->nla_track;
+          cp = btheme->common.anim.channel;
           break;
         case TH_NLA_TRANSITION:
           cp = ts->nla_transition;

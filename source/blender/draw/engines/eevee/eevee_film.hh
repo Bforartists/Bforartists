@@ -36,11 +36,16 @@
 #include "DNA_scene_types.h"
 #include "DRW_render.hh"
 
-#include "eevee_shader_shared.hh"
+#include "draw_pass.hh"
+
+#include "eevee_film_shared.hh"
+#include "eevee_renderbuffers_shared.hh"
 
 #include <sstream>
 
 namespace blender::eevee {
+
+using namespace draw;
 
 class Instance;
 
@@ -51,7 +56,7 @@ class Instance;
 class Film {
  public:
   /** Stores indirection table of AOVs based on their name hash and their type. */
-  AOVsInfoDataBuf aovs_info;
+  StorageBuffer<AOVsInfoData> aovs_info;
   /** For debugging purpose but could be a user option in the future. */
   static constexpr bool use_box_filter = false;
 
@@ -70,7 +75,7 @@ class Film {
   gpu::Texture *combined_final_tx_ = nullptr;
 
   /** Are we using the compute shader/pipeline. */
-  bool use_compute_;
+  bool use_compute_ = false;
 
   /** Copy of v3d->shading properties used to detect viewport settings update. */
   eViewLayerEEVEEPassType ui_render_pass_ = eViewLayerEEVEEPassType(0);
@@ -96,7 +101,7 @@ class Film {
   PassSimple cryptomatte_post_ps_ = {"Film.Cryptomatte.Post"};
 
   FilmData &data_;
-  int2 display_extent;
+  int2 display_extent = int2(-1);
 
   eViewLayerEEVEEPassType enabled_passes_ = eViewLayerEEVEEPassType(0);
   /* Store the pass types needed by the viewport compositor separately, because some passes might

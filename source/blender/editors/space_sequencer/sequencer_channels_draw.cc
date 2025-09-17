@@ -14,6 +14,7 @@
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
 
+#include "BLI_math_base.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
@@ -248,7 +249,7 @@ static void draw_channel_labels(const SeqChannelDrawContext *context,
     }
 
     WM_event_add_notifier(
-        context->C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(context->C));  /*BFA - 3D Sequencer*/
+        context->C, NC_SCENE | ND_SEQUENCER, CTX_data_sequencer_scene(context->C));
   }
   else {
     const char *label = seq::channel_name_get(context->channels, channel_index);
@@ -328,10 +329,13 @@ void channel_draw_context_init(const bContext *C,
 void draw_channels(const bContext *C, ARegion *region)
 {
   draw_background();
+  Scene *scene = CTX_data_sequencer_scene(C);
+  if (!scene) {
+    return;
+  }
 
-  Editing *ed = seq::editing_get(CTX_data_sequencer_scene(C));
+  Editing *ed = seq::editing_get(scene);
   if (ed == nullptr) {
-    draw_background();  /*BFA - 3D Sequencer*/
     return;
   }
 

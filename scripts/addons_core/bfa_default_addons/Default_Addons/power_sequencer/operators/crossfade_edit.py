@@ -34,7 +34,7 @@ class POWER_SEQUENCER_OT_crossfade_edit(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.scene.sequence_editor.active_strip and context.selected_sequences
+        return context.scene.sequence_editor.active_strip and context.selected_strips
 
     def execute(self, context):
         active = context.scene.sequence_editor.active_strip
@@ -62,9 +62,9 @@ class POWER_SEQUENCER_OT_crossfade_edit(bpy.types.Operator):
         if sequence.type not in SequenceTypes.VIDEO + SequenceTypes.IMAGE:
             return
 
-        effect_sequences = (s for s in context.sequences if s.type in SequenceTypes.EFFECT)
+        effect_strips = (s for s in context.strips if s.type in SequenceTypes.EFFECT)
         found_effect_strips = []
-        for s in effect_sequences:
+        for s in effect_strips:
             if s.input_1.name == sequence.name:
                 found_effect_strips.append(s)
             if s.input_count == 2:

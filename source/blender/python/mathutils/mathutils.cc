@@ -638,7 +638,7 @@ int _BaseMathObject_ResizeOkOrRaiseExc(BaseMathObject *self, const char *error_p
 int _BaseMathObject_RaiseBufferViewExc(BaseMathObject *self, Py_buffer *view, int flags)
 {
   if (UNLIKELY(view == nullptr)) {
-    PyErr_SetString(PyExc_BufferError, "null view in getbuffer is obsolete");
+    PyErr_SetString(PyExc_BufferError, "null view in get-buffer is obsolete");
     return -1;
   }
   if (UNLIKELY(self->flag & BASE_MATH_FLAG_HAS_BUFFER_VIEW)) {
@@ -652,7 +652,7 @@ int _BaseMathObject_RaiseBufferViewExc(BaseMathObject *self, Py_buffer *view, in
       return -1;
     }
     if (UNLIKELY(self->flag & BASE_MATH_FLAG_IS_FROZEN)) {
-      PyErr_Format(PyExc_BufferError, "Data is frozen, cannot get a writable buffer");
+      PyErr_SetString(PyExc_BufferError, "Data is frozen, cannot get a writable buffer");
       return -1;
     }
   }

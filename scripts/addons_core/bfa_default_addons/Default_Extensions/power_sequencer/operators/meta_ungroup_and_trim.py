@@ -32,10 +32,10 @@ class POWER_SEQUENCER_OT_meta_ungroup_and_trim(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        meta_strips = [s for s in context.selected_sequences if s.type == "META"]
+        meta_strips = [s for s in context.selected_strips if s.type == "META"]
         if self.trim_content:
             bpy.ops.power_sequencer.meta_trim_content_to_bounds()
         self.separate(context, meta_strips)

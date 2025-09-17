@@ -47,6 +47,7 @@ DEF_ENUM(rna_enum_boidrule_type_items)
 DEF_ENUM(rna_enum_strip_modifier_type_items)
 DEF_ENUM(rna_enum_strip_video_modifier_type_items)
 DEF_ENUM(rna_enum_strip_sound_modifier_type_items)
+DEF_ENUM(rna_enum_strip_scale_method_items)
 DEF_ENUM(rna_enum_object_shaderfx_type_items)
 
 DEF_ENUM(rna_enum_modifier_triangulate_quad_method_items)
@@ -187,11 +188,13 @@ DEF_ENUM(rna_enum_node_vec_math_items)
 DEF_ENUM(rna_enum_node_boolean_math_items)
 DEF_ENUM(rna_enum_node_float_compare_items)
 DEF_ENUM(rna_enum_node_compare_operation_items)
-DEF_ENUM(rna_enum_node_filter_items)
 DEF_ENUM(rna_enum_node_integer_math_items)
 DEF_ENUM(rna_enum_node_float_to_int_items)
 DEF_ENUM(rna_enum_node_map_range_items)
 DEF_ENUM(rna_enum_node_clamp_items)
+
+DEF_ENUM(rna_enum_node_compositor_extension_items)
+DEF_ENUM(rna_enum_node_compositor_interpolation_items)
 
 DEF_ENUM(rna_enum_ramp_blend_items)
 

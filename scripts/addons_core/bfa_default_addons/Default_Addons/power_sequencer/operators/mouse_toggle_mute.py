@@ -31,7 +31,7 @@ class POWER_SEQUENCER_OT_mouse_toggle_mute(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def invoke(self, context, event):
         sequencer = bpy.ops.sequencer

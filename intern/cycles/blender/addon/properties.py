@@ -799,7 +799,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     volume_unbiased: BoolProperty(
         name="Unbiased",
-        description="If enabled, volume rendering converges to the correct result with sufficiently large numbers"
+        description="If enabled, volume rendering converges to the correct result with sufficiently large numbers "
         "of samples, but might appear noisier in the process",
         default=False,
     )
@@ -1046,15 +1046,16 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
 
     use_auto_tile: BoolProperty(
-        name="Use Tiling",
-        description="Render high resolution images in tiles to reduce memory usage, using the specified tile size. Tiles are cached to disk while rendering to save memory",
+        name="Auto Tile",
+        description="Deprecated, tiling is always enabled",
         default=True,
     )
     tile_size: IntProperty(
         name="Tile Size",
         default=2048,
-        description="",
-        min=8, max=8192,
+        description="Render high resolution images in tiles of this size, to reduce memory usage. Tiles are cached to disk while rendering to save memory",
+        min=8,
+        max=8192,
     )
 
     # Various fine-tuning debug flags
@@ -1612,8 +1613,9 @@ class CyclesPreferences(bpy.types.AddonPreferences):
     )
 
     use_hiprt: BoolProperty(
-        name="HIP RT",
-        description="HIP RT enables AMD hardware ray tracing on RDNA2 and above",
+        name="HIP RT (Unstable)",
+        description="HIP RT enables AMD hardware ray tracing on RDNA2 and above. This currently has known stability "
+        "issues, that are expected to be solved before the next release.",
         default=False,
     )
 
@@ -1909,17 +1911,9 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                 row.prop(self, "metalrt")
 
         if compute_device_type == 'HIP':
-            col = layout.column()
-            row = col.row()
+            row = layout.row()
             row.active = has_hardware_rt
             row.prop(self, "use_hiprt")
-
-            row_status = col.split(factor=0.7)
-            row_status.label(text="HIP has known stability issues", icon='ERROR')
-            row_status.operator(
-                "wm.url_open",
-                text='#140278',
-                icon='URL').url = "https://projects.blender.org/blender/blender/issues/140278"
 
         elif compute_device_type == 'ONEAPI' and _cycles.with_embree_gpu:
             row = layout.row()

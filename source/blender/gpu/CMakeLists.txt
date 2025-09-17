@@ -29,6 +29,7 @@ set(INC
   ../draw/intern
   ../draw/intern/shaders
   metal/kernels
+  vulkan/shaders
   shaders/infos
 
 
@@ -112,6 +113,7 @@ set(SRC
   GPU_compute.hh
   GPU_context.hh
   GPU_debug.hh
+  GPU_format.hh
   GPU_framebuffer.hh
   GPU_immediate.hh
   GPU_immediate_util.hh
@@ -233,6 +235,7 @@ set(VULKAN_SRC
   vulkan/vk_immediate.cc
   vulkan/vk_index_buffer.cc
   vulkan/vk_memory_layout.cc
+  vulkan/vk_memory_pool.cc
   vulkan/vk_pipeline_pool.cc
   vulkan/vk_pixel_buffer.cc
   vulkan/vk_push_constants.cc
@@ -282,6 +285,7 @@ set(VULKAN_SRC
   vulkan/vk_index_buffer.hh
   vulkan/vk_memory.hh
   vulkan/vk_memory_layout.hh
+  vulkan/vk_memory_pool.hh
   vulkan/vk_pipeline_pool.hh
   vulkan/vk_pixel_buffer.hh
   vulkan/vk_push_constants.hh
@@ -445,9 +449,12 @@ if(WITH_VULKAN_BACKEND)
   add_definitions(-DWITH_VULKAN_BACKEND)
 endif()
 
+set(GLSL_SRC_RAW
+  shaders/opengl/glsl_shader_defines.glsl
+)
+
 set(GLSL_SRC
   GPU_shader_shared.hh
-  shaders/opengl/glsl_shader_defines.glsl
 
   shaders/gpu_shader_depth_only_frag.glsl
   shaders/gpu_shader_uniform_color_frag.glsl
@@ -504,10 +511,13 @@ set(GLSL_SRC
   shaders/gpu_shader_keyframe_shape_vert.glsl
   shaders/gpu_shader_keyframe_shape_frag.glsl
 
+  shaders/gpu_shader_sequencer_scope_comp.glsl
+  shaders/gpu_shader_sequencer_scope_frag.glsl
   shaders/gpu_shader_sequencer_strips_vert.glsl
   shaders/gpu_shader_sequencer_strips_frag.glsl
   shaders/gpu_shader_sequencer_thumbs_vert.glsl
   shaders/gpu_shader_sequencer_thumbs_frag.glsl
+  shaders/gpu_shader_sequencer_zebra_frag.glsl
 
   shaders/gpu_shader_codegen_lib.glsl
 
@@ -517,18 +527,39 @@ set(GLSL_SRC
   shaders/common/gpu_shader_common_color_utils.glsl
   shaders/common/gpu_shader_common_curves.glsl
   shaders/common/gpu_shader_common_hash.glsl
-  shaders/common/gpu_shader_common_math.glsl
   shaders/common/gpu_shader_common_math_utils.glsl
+  shaders/common/gpu_shader_common_math.glsl
   shaders/common/gpu_shader_common_mix_rgb.glsl
   shaders/common/gpu_shader_debug_gradients_lib.glsl
   shaders/common/gpu_shader_fullscreen_vert.glsl
   shaders/common/gpu_shader_index_load_lib.glsl
+  shaders/common/gpu_shader_index_range_lib.glsl
+  shaders/common/gpu_shader_math_angle_lib.glsl
+  shaders/common/gpu_shader_math_axis_angle_lib.glsl
   shaders/common/gpu_shader_math_base_lib.glsl
+  shaders/common/gpu_shader_math_constants_lib.glsl
+  shaders/common/gpu_shader_math_euler_lib.glsl
   shaders/common/gpu_shader_math_fast_lib.glsl
+  shaders/common/gpu_shader_math_matrix_adjoint_lib.glsl
+  shaders/common/gpu_shader_math_matrix_compare_lib.glsl
+  shaders/common/gpu_shader_math_matrix_construct_lib.glsl
+  shaders/common/gpu_shader_math_matrix_conversion_lib.glsl
+  shaders/common/gpu_shader_math_matrix_interpolate_lib.glsl
   shaders/common/gpu_shader_math_matrix_lib.glsl
+  shaders/common/gpu_shader_math_matrix_normalize_lib.glsl
+  shaders/common/gpu_shader_math_matrix_projection_lib.glsl
+  shaders/common/gpu_shader_math_matrix_transform_lib.glsl
+  shaders/common/gpu_shader_math_quaternion_lib.glsl
+  shaders/common/gpu_shader_math_rotation_conversion_lib.glsl
   shaders/common/gpu_shader_math_rotation_lib.glsl
+  shaders/common/gpu_shader_math_safe_lib.glsl
+  shaders/common/gpu_shader_math_vector_compare_lib.glsl
   shaders/common/gpu_shader_math_vector_lib.glsl
+  shaders/common/gpu_shader_math_vector_reduce_lib.glsl
+  shaders/common/gpu_shader_math_vector_safe_lib.glsl
+  shaders/common/gpu_shader_offset_indices_lib.glsl
   shaders/common/gpu_shader_print_lib.glsl
+  shaders/common/gpu_shader_ray_utils_lib.glsl
   shaders/common/gpu_shader_sequencer_lib.glsl
   shaders/common/gpu_shader_shared_exponent_lib.glsl
   shaders/common/gpu_shader_smaa_lib.glsl
@@ -673,6 +704,10 @@ set(MSL_SRC
   shaders/metal/mtl_shader_common.msl
 )
 
+set(VULKAN_BACKEND_GLSL_SRC
+  vulkan/shaders/vk_backbuffer_blit_comp.glsl
+)
+
 if(WITH_GTESTS)
   if(WITH_GPU_BACKEND_TESTS)
     list(APPEND GLSL_SRC ${GLSL_SRC_TEST})
@@ -688,9 +723,17 @@ if(WITH_METAL_BACKEND)
   endforeach()
 endif()
 
+if(WITH_VULKAN_BACKEND)
+  list(APPEND GLSL_SRC ${VULKAN_BACKEND_GLSL_SRC})
+endif()
+
 set(GLSL_C)
 foreach(GLSL_FILE ${GLSL_SRC})
   glsl_to_c(${GLSL_FILE} GLSL_C)
+endforeach()
+
+foreach(GLSL_FILE ${GLSL_SRC_RAW})
+  data_to_c_simple(${GLSL_FILE} GLSL_C)
 endforeach()
 
 set(SHADER_C)
@@ -750,6 +793,13 @@ target_link_libraries(bf_gpu PUBLIC
 
 if(WITH_OPENGL_BACKEND AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
   target_link_libraries(bf_gpu PUBLIC rt)
+endif()
+
+# If `execinfo.h` exists on a *BSD system then also link in `libexecinfo`.
+# Needed for `backtrace` / `backtrace_symbols` (GNU extensions)
+# brought in by `blenlib/intern/system.cc`.
+if(HAVE_EXECINFO_H AND CMAKE_SYSTEM_NAME MATCHES "FreeBSD|NetBSD|OpenBSD|DragonFly")
+  target_link_libraries(bf_gpu PUBLIC execinfo)
 endif()
 
 if(WITH_OPENSUBDIV)

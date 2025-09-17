@@ -4944,8 +4944,15 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("grease_pencil.stroke_simplify", text="Simplify", icon="MOD_SIMPLIFY")
-
+            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Fixed)", icon="MOD_SIMPLIFY")
+            props.mode = 'FIXED'
+            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Adaptive)", icon="SIMPLIFY_ADAPTIVE")
+            props.mode = 'ADAPTIVE'            
+            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Sample)", icon="SIMPLIFY_SAMPLE")
+            props.mode = 'SAMPLE'            
+            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Merge)", icon="MERGE")
+            props.mode = 'MERGE'
+        
             col.separator(factor = 0.5)
 
             col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
@@ -4979,7 +4986,20 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
                 row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                row.label(text="") # Padding to keep items grid-aligned
+
+                col.separator()
+                row = col.row(align=True)
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                props.mode = 'FIXED'
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
+                props.mode = 'ADAPTIVE'            
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
+                props.mode = 'SAMPLE'
+                row = col.row(align=True)
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
+                props.mode = 'MERGE'
+                col.separator()
 
                 row = col.row(align=True)
                 row.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
@@ -5003,8 +5023,20 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
                 row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
 
+                col.separator()
                 row = col.row(align=True)
-                row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                props.mode = 'FIXED'
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
+                props.mode = 'ADAPTIVE'            
+                row = col.row(align=True)
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
+                props.mode = 'SAMPLE'
+                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
+                props.mode = 'MERGE'
+                col.separator()
+
+                row = col.row(align=True)
                 row.operator("grease_pencil.set_active_material", text="", icon = "MATERIAL")
 
                 row = col.row(align=True)
@@ -5031,7 +5063,14 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                props = col.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                props.mode = 'FIXED'
+                props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
+                props.mode = 'ADAPTIVE'            
+                props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
+                props.mode = 'SAMPLE'
+                props = col.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
+                props.mode = 'MERGE'
 
                 col.separator(factor = 0.5)
 

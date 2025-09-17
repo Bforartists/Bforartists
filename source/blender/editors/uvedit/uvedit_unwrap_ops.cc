@@ -1438,6 +1438,7 @@ static void uvedit_pack_islands_multi(const Scene *scene,
                                       const SpaceImage *udim_source_closest,
                                       const bool original_selection,
                                       const bool notify_wm,
+                                      const rctf *custom_region,
                                       blender::geometry::UVPackIsland_Params *params)
 {
   blender::Vector<FaceIsland *> island_vector;
@@ -1526,6 +1527,17 @@ static void uvedit_pack_islands_multi(const Scene *scene,
                                 (selection_max_co[1] - selection_min_co[1]);
     }
   }
+  else if (custom_region) {
+    if (!BLI_rctf_is_empty(custom_region)) {
+      const blender::float2 custom_region_size = {
+          BLI_rctf_size_x(custom_region),
+          BLI_rctf_size_y(custom_region),
+      };
+      ARRAY_SET_ITEMS(params->udim_base_offset, custom_region->xmin, custom_region->ymin);
+      params->target_extent = custom_region_size.y;
+      params->target_aspect_y = custom_region_size.x / custom_region_size.y;
+    }
+  }
 
   MemArena *arena = BLI_memarena_new(BLI_MEMARENA_STD_BUFSIZE, __func__);
   Heap *heap = BLI_heap_new();
@@ -1612,14 +1624,16 @@ static void uvedit_pack_islands_multi(const Scene *scene,
     invert_m2_m2(matrix_inverse, matrix);
 
     /* Add base_offset, post transform. */
-    mul_v2_m2v2(pre_translate, matrix_inverse, base_offset);
+    if (!pinned_vector[i] || params->pin_method != ED_UVPACK_PIN_LOCK_ALL) {
+      mul_v2_m2v2(pre_translate, matrix_inverse, base_offset);
 
-    /* Add pre-translation from #pack_islands. */
-    pre_translate[0] += pack_island->pre_translate.x;
-    pre_translate[1] += pack_island->pre_translate.y;
+      /* Add pre-translation from #pack_islands. */
+      pre_translate[0] += pack_island->pre_translate.x;
+      pre_translate[1] += pack_island->pre_translate.y;
 
-    /* Perform the transformation. */
-    island_uv_transform(island, matrix, pre_translate);
+      /* Perform the transformation. */
+      island_uv_transform(island, matrix, pre_translate);
+    }
   }
 
   for (const int64_t i : pack_island_vector.index_range()) {
@@ -1654,6 +1668,7 @@ enum {
   PACK_UDIM_SRC_CLOSEST = 0,
   PACK_UDIM_SRC_ACTIVE,
   PACK_ORIGINAL_AABB,
+  PACK_CUSTOM_REGION,
 };
 
 struct UVPackIslandsData {
@@ -1670,6 +1685,7 @@ struct UVPackIslandsData {
   bool use_job;
 
   blender::geometry::UVPackIsland_Params pack_island_params;
+  rctf custom_region;
 };
 
 static void pack_islands_startjob(void *pidv, wmJobWorkerStatus *worker_status)
@@ -1688,6 +1704,8 @@ static void pack_islands_startjob(void *pidv, wmJobWorkerStatus *worker_status)
                             (pid->udim_source == PACK_UDIM_SRC_CLOSEST) ? pid->sima : nullptr,
                             (pid->udim_source == PACK_ORIGINAL_AABB),
                             !pid->use_job,
+                            (pid->udim_source == PACK_CUSTOM_REGION) ? &pid->custom_region :
+                                                                       nullptr,
                             &pid->pack_island_params);
 
   worker_status->progress = 0.99f;
@@ -1721,6 +1739,7 @@ static wmOperatorStatus pack_islands_exec(bContext *C, wmOperator *op)
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const Scene *scene = CTX_data_scene(C);
   const SpaceImage *sima = CTX_wm_space_image(C);
+  const ToolSettings *ts = scene->toolsettings;
 
   UnwrapOptions options = unwrap_options_get(op, nullptr, scene->toolsettings);
   options.topology_from_uvs = true;
@@ -1753,6 +1772,19 @@ static wmOperatorStatus pack_islands_exec(bContext *C, wmOperator *op)
   pid->sima = sima;
   pid->udim_source = udim_source;
   pid->wm = CTX_wm_manager(C);
+
+  if (udim_source == PACK_CUSTOM_REGION) {
+    if (ts->uv_flag & UV_FLAG_CUSTOM_REGION) {
+      pid->custom_region = ts->uv_custom_region;
+    }
+    else {
+      pid->custom_region.xmin = pid->custom_region.ymin = 0.0f;
+      pid->custom_region.xmax = pid->custom_region.ymax = 1.0f;
+    }
+  }
+  else {
+    pid->custom_region = {0.0f};
+  }
 
   blender::geometry::UVPackIsland_Params &pack_island_params = pid->pack_island_params;
   {
@@ -1997,6 +2029,7 @@ void UV_OT_pack_islands(wmOperatorType *ot)
        0,
        "Original bounding box",
        "Pack to starting bounding box of islands"},
+      {PACK_CUSTOM_REGION, "CUSTOM_REGION", 0, "Custom Region", "Pack islands to custom region"},
       {0, nullptr, 0, nullptr, nullptr},
   };
   /* identifiers */
@@ -2158,7 +2191,7 @@ static bool uvedit_live_unwrap_timer_validate(const wmWindowManager *wm)
   if (g_live_unwrap.timer == nullptr) {
     return false;
   }
-  if (BLI_findindex(&wm->timers, g_live_unwrap.timer) != -1) {
+  if (BLI_findindex(&wm->runtime->timers, g_live_unwrap.timer) != -1) {
     return false;
   }
   g_live_unwrap.timer = nullptr;
@@ -2823,7 +2856,8 @@ void ED_uvedit_live_unwrap(const Scene *scene, const Span<Object *> objects)
     pack_island_params.margin_method = ED_UVPACK_MARGIN_SCALED;
     pack_island_params.margin = scene->toolsettings->uvcalc_margin;
 
-    uvedit_pack_islands_multi(scene, objects, nullptr, nullptr, false, true, &pack_island_params);
+    uvedit_pack_islands_multi(
+        scene, objects, nullptr, nullptr, false, true, nullptr, &pack_island_params);
   }
 }
 
@@ -2924,7 +2958,8 @@ static wmOperatorStatus unwrap_exec(bContext *C, wmOperator *op)
       RNA_enum_get(op->ptr, "margin_method"));
   pack_island_params.margin = RNA_float_get(op->ptr, "margin");
 
-  uvedit_pack_islands_multi(scene, objects, nullptr, nullptr, false, true, &pack_island_params);
+  uvedit_pack_islands_multi(
+      scene, objects, nullptr, nullptr, false, true, nullptr, &pack_island_params);
 
   if (count_failed == 0 && count_changed == 0) {
     BKE_report(op->reports,
@@ -3396,7 +3431,8 @@ static wmOperatorStatus smart_project_exec(bContext *C, wmOperator *op)
     params.margin_method = eUVPackIsland_MarginMethod(RNA_enum_get(op->ptr, "margin_method"));
     params.margin = RNA_float_get(op->ptr, "island_margin");
 
-    uvedit_pack_islands_multi(scene, objects_changed, nullptr, nullptr, false, true, &params);
+    uvedit_pack_islands_multi(
+        scene, objects_changed, nullptr, nullptr, false, true, nullptr, &params);
 
     /* #uvedit_pack_islands_multi only supports `per_face_aspect = false`. */
     const bool per_face_aspect = false;
@@ -4375,7 +4411,7 @@ void ED_uvedit_add_simple_uvs(Main *bmain, const Scene *scene, Object *ob)
   params.margin_method = ED_UVPACK_MARGIN_SCALED;
   params.margin = 0.01f; /* bfa - change the defaults of uv margin*/
 
-  uvedit_pack_islands_multi(scene, {ob}, &bm, nullptr, false, true, &params);
+  uvedit_pack_islands_multi(scene, {ob}, &bm, nullptr, false, true, nullptr, &params);
 
   /* Write back from BMesh to Mesh. */
   BMeshToMeshParams bm_to_me_params{};

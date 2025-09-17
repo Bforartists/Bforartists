@@ -211,22 +211,22 @@ def point_cache_ui(self, cache, enabled, cachetype):
         if is_liboverride and not cache.use_disk_cache:
             col.operator("ptcache.bake", icon='ERROR', text="Bake (Disk Cache mandatory)")
         elif cache.is_baked is True:
-            col.operator("ptcache.free_bake", text="Delete Bake")
+            col.operator("ptcache.free_bake", icon='CLEAR', text="Delete Bake")
         else:
-            col.operator("ptcache.bake", text="Bake").bake = True
+            col.operator("ptcache.bake", icon='BAKE', text="Bake").bake = True
 
         sub = col.row()
         sub.enabled = enabled
-        sub.operator("ptcache.bake", text="Calculate to Frame").bake = False
+        sub.operator("ptcache.bake", icon='BAKE_ACTION', text="Calculate to Frame").bake = False
 
         sub = col.column()
         sub.enabled = enabled
-        sub.operator("ptcache.bake_from_cache", text="Current Cache to Bake")
+        sub.operator("ptcache.bake_from_cache", icon='FILE_CACHE', text="Current Cache to Bake")
 
         col = flow.column()
-        col.operator("ptcache.bake_all", text="Bake All Dynamics").bake = True
-        col.operator("ptcache.free_bake_all", text="Delete All Bakes")
-        col.operator("ptcache.bake_all", text="Update All to Frame").bake = False
+        col.operator("ptcache.bake_all", icon="MOD_PHYSICS", text="Bake All Dynamics").bake = True
+        col.operator("ptcache.free_bake_all", icon='DELETE', text="Delete All Bakes")
+        col.operator("ptcache.bake_all", icon='FILE_REFRESH', text="Update All to Frame").bake = False
 
 
 def effector_weights_ui(self, weights, weight_type):

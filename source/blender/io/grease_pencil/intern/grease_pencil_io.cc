@@ -389,19 +389,15 @@ void GreasePencilExporter::foreach_stroke_in_layer(const Object &object,
       "end_cap", bke::AttrDomain::Curve, 0);
   /* Point attributes. */
   const Span<float3> positions = curves.positions();
-  const Span<float3> positions_left = curves.handle_positions_left();
-  const Span<float3> positions_right = curves.handle_positions_right();
+  const Span<float3> positions_left = *curves.handle_positions_left();
+  const Span<float3> positions_right = *curves.handle_positions_right();
   const VArray<int8_t> types = curves.curve_types();
   const VArraySpan<float> radii = drawing.radii();
   const VArraySpan<float> opacities = drawing.opacities();
   const VArraySpan<ColorGeometry4f> vertex_colors = drawing.vertex_colors();
 
   Array<float3> world_positions(positions.size());
-  threading::parallel_for(positions.index_range(), 4096, [&](const IndexRange range) {
-    for (const int i : range) {
-      world_positions[i] = math::transform_point(layer_to_world, positions[i]);
-    }
-  });
+  math::transform_points(positions, layer_to_world, world_positions);
 
   for (const int i_curve : curves.curves_range()) {
     const IndexRange points = points_by_curve[i_curve];
@@ -499,8 +495,8 @@ void GreasePencilExporter::foreach_stroke_in_layer(const Object &object,
 
         const OffsetIndices outline_points_by_curve = outline.points_by_curve();
         const Span<float3> outline_positions = outline.positions();
-        const Span<float3> outline_positions_left = curves.handle_positions_left();
-        const Span<float3> outline_positions_right = curves.handle_positions_right();
+        const Span<float3> outline_positions_left = *curves.handle_positions_left();
+        const Span<float3> outline_positions_right = *curves.handle_positions_right();
 
         for (const int i_outline_curve : outline.curves_range()) {
           const IndexRange outline_points = outline_points_by_curve[i_outline_curve];
@@ -567,9 +563,7 @@ std::string GreasePencilExporter::coord_to_svg_string(const float2 &screen_co) c
   if (camera_persmat_) {
     return fmt::format("{},{}", screen_co.x, camera_rect_.size().y - screen_co.y);
   }
-  else {
-    return fmt::format("{},{}", screen_co.x, screen_rect_.size().y - screen_co.y);
-  }
+  return fmt::format("{},{}", screen_co.x, screen_rect_.size().y - screen_co.y);
 }
 
 }  // namespace blender::io::grease_pencil

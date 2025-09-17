@@ -37,6 +37,7 @@
 #include "BLI_filereader.h"
 #include "BLI_linklist.h"
 #include "BLI_listbase.h"
+#include "BLI_math_base.h"
 #include "BLI_math_time.h"
 #include "BLI_memory_cache.hh"
 #include "BLI_string.h"
@@ -243,9 +244,9 @@ static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(bContext *C,
    * However it's _not_ cleared when the UI is kept. This complicates use from add-ons
    * which can re-register subscribers on file-load. To support this use case,
    * it's best to have predictable behavior - always clear. */
-  if (wm->message_bus != nullptr) {
-    WM_msgbus_destroy(wm->message_bus);
-    wm->message_bus = nullptr;
+  if (wm->runtime->message_bus != nullptr) {
+    WM_msgbus_destroy(wm->runtime->message_bus);
+    wm->runtime->message_bus = nullptr;
   }
 
   /* XXX Hack! We have to clear context popup-region here, because removing all
@@ -279,11 +280,11 @@ static void wm_file_read_setup_wm_substitute_old_window(wmWindowManager *oldwm,
   win->gpuctx = oldwin->gpuctx;
   win->active = oldwin->active;
   if (win->active) {
-    wm->winactive = win;
+    wm->runtime->winactive = win;
   }
-  if (oldwm->windrawable == oldwin) {
-    oldwm->windrawable = nullptr;
-    wm->windrawable = win;
+  if (oldwm->runtime->windrawable == oldwin) {
+    oldwm->runtime->windrawable = nullptr;
+    wm->runtime->windrawable = win;
   }
 
   /* File loading in background mode still calls this. */
@@ -377,19 +378,19 @@ static void wm_file_read_setup_wm_use_new(bContext *C,
   wm->op_undo_depth = old_wm->op_undo_depth;
 
   /* Move existing key configurations into the new WM. */
-  wm->keyconfigs = old_wm->keyconfigs;
-  wm->addonconf = old_wm->addonconf;
-  wm->defaultconf = old_wm->defaultconf;
-  wm->userconf = old_wm->userconf;
+  wm->runtime->keyconfigs = old_wm->runtime->keyconfigs;
+  wm->runtime->addonconf = old_wm->runtime->addonconf;
+  wm->runtime->defaultconf = old_wm->runtime->defaultconf;
+  wm->runtime->userconf = old_wm->runtime->userconf;
 
-  BLI_listbase_clear(&old_wm->keyconfigs);
-  old_wm->addonconf = nullptr;
-  old_wm->defaultconf = nullptr;
-  old_wm->userconf = nullptr;
+  BLI_listbase_clear(&old_wm->runtime->keyconfigs);
+  old_wm->runtime->addonconf = nullptr;
+  old_wm->runtime->defaultconf = nullptr;
+  old_wm->runtime->userconf = nullptr;
 
   /* Ensure new keymaps are made, and space types are set. */
   wm->init_flag = 0;
-  wm->winactive = nullptr;
+  wm->runtime->winactive = nullptr;
 
   /* Clearing drawable of old WM before deleting any context to avoid clearing the wrong wm. */
   wm_window_clear_drawable(old_wm);
@@ -857,14 +858,14 @@ static void wm_file_read_post(bContext *C,
 
   if (use_data) {
     if (!G.background) {
-      if (wm->undo_stack == nullptr) {
-        wm->undo_stack = BKE_undosys_stack_create();
+      if (wm->runtime->undo_stack == nullptr) {
+        wm->runtime->undo_stack = BKE_undosys_stack_create();
       }
       else {
-        BKE_undosys_stack_clear(wm->undo_stack);
+        BKE_undosys_stack_clear(wm->runtime->undo_stack);
       }
-      BKE_undosys_stack_init_from_main(wm->undo_stack, bmain);
-      BKE_undosys_stack_init_from_context(wm->undo_stack, C);
+      BKE_undosys_stack_init_from_main(wm->runtime->undo_stack, bmain);
+      BKE_undosys_stack_init_from_context(wm->runtime->undo_stack, C);
     }
   }
 
@@ -1040,6 +1041,14 @@ static void file_read_reports_finalize(BlendFileReadReport *bf_reports)
 
   BLI_linklist_free(bf_reports->resynced_lib_overrides_libraries, nullptr);
   bf_reports->resynced_lib_overrides_libraries = nullptr;
+
+  if (bf_reports->pre_animato_file_loaded) {
+    BKE_report(
+        bf_reports->reports,
+        RPT_WARNING,
+        "Loaded a pre-2.50 blend file, animation data has not been loaded. Open & save the file "
+        "with Blender v4.5 to convert animation data.");
+  }
 }
 
 bool WM_file_read(bContext *C,
@@ -1540,8 +1549,8 @@ void wm_homefile_read_ex(bContext *C,
     /* Clear keymaps because the current default keymap may have been initialized
      * from user preferences, which have been reset. */
     LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
-      if (wm->defaultconf) {
-        wm->defaultconf->flag &= ~KEYCONF_INIT_DEFAULT;
+      if (wm->runtime->defaultconf) {
+        wm->runtime->defaultconf->flag &= ~KEYCONF_INIT_DEFAULT;
       }
     }
   }
@@ -1956,7 +1965,7 @@ static ImBuf *blend_file_thumb_from_camera(const bContext *C,
   BlendThumbnail *thumb;
   wmWindowManager *wm = CTX_wm_manager(C);
   const float pixelsize_old = U.pixelsize;
-  wmWindow *windrawable_old = wm->windrawable;
+  wmWindow *windrawable_old = wm->runtime->windrawable;
   char err_out[256] = "unknown";
 
   /* Screen if no camera found. */
@@ -2310,15 +2319,19 @@ static void wm_autosave_location(char filepath[FILE_MAX])
 
 static bool wm_autosave_write_try(Main *bmain, wmWindowManager *wm)
 {
-  char filepath[FILE_MAX];
+  if (wm->file_saved) {
+    /* When file is already saved, skip creating an auto-save file, see: #146003 */
+    return true;
+  }
 
+  char filepath[FILE_MAX];
   wm_autosave_location(filepath);
 
   /* Technically, we could always just save here, but that would cause performance regressions
    * compared to when the #MemFile undo step was used for saving undo-steps. So for now just skip
    * auto-save when we are in a mode where auto-save wouldn't have worked previously anyway. This
    * check can be removed once the performance regressions have been solved. */
-  if (ED_undosys_stack_memfile_get_if_active(wm->undo_stack) != nullptr) {
+  if (ED_undosys_stack_memfile_get_if_active(wm->runtime->undo_stack) != nullptr) {
     WM_autosave_write(wm, bmain);
     return true;
   }
@@ -3791,6 +3804,7 @@ static wmOperatorStatus wm_save_as_mainfile_exec(bContext *C, wmOperator *op)
     /* If saved file is the active one, there are technically no more compatibility issues, the
      * file on disk now matches the currently opened data version-wise. */
     bmain->has_forward_compatibility_issues = false;
+    bmain->colorspace.is_missing_opencolorio_config = false;
 
     /* If saved file is the active one, notify WM so that saved status and window title can be
      * updated. */
@@ -4275,7 +4289,8 @@ void wm_test_autorun_warning(bContext *C)
   G.f |= G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET;
 
   wmWindowManager *wm = CTX_wm_manager(C);
-  wmWindow *win = (wm->winactive) ? wm->winactive : static_cast<wmWindow *>(wm->windows.first);
+  wmWindow *win = (wm->runtime->winactive) ? wm->runtime->winactive :
+                                             static_cast<wmWindow *>(wm->windows.first);
 
   if (win) {
     /* We want this warning on the Main window, not a child window even if active. See #118765. */
@@ -4286,6 +4301,36 @@ void wm_test_autorun_warning(bContext *C)
     wmWindow *prevwin = CTX_wm_window(C);
     CTX_wm_window_set(C, win);
     UI_popup_block_invoke(C, block_create_autorun_warning, nullptr, nullptr);
+    CTX_wm_window_set(C, prevwin);
+  }
+}
+
+void wm_test_foreign_file_warning(bContext *C)
+{
+  if (!G_MAIN->is_read_invalid) {
+    return;
+  }
+
+  G_MAIN->is_read_invalid = false;
+
+  wmWindowManager *wm = CTX_wm_manager(C);
+  wmWindow *win = (wm->runtime->winactive) ? wm->runtime->winactive :
+                                             static_cast<wmWindow *>(wm->windows.first);
+
+  if (win) {
+    /* We want this warning on the Main window, not a child window even if active. See #118765. */
+    if (win->parent) {
+      win = win->parent;
+    }
+
+    wmWindow *prevwin = CTX_wm_window(C);
+    CTX_wm_window_set(C, win);
+    UI_alert(C,
+             RPT_("Unable to Load File"),
+             RPT_("The file specified is not a valid Blend document."),
+             ALERT_ICON_ERROR,
+             false);
+
     CTX_wm_window_set(C, prevwin);
   }
 }
@@ -4379,6 +4424,14 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
     layout->label(RPT_("This file is managed by the Bforartists asset system. It can only be"),
                   ICON_NONE);
     layout->label(RPT_("saved as a new, regular file."), ICON_NONE);
+  }
+
+  if (bmain->colorspace.is_missing_opencolorio_config) {
+    layout->label(
+        RPT_("Displays, views or color spaces in this file were missing and have been changed."),
+        ICON_NONE);
+    layout->label(RPT_("Saving it with this OpenColorIO configuration may cause loss of data."),
+                  ICON_NONE);
   }
 }
 
@@ -4485,8 +4538,16 @@ static uiBlock *block_create_save_file_overwrite_dialog(bContext *C, ARegion *re
                true,
                false);
   }
-  else {
+  else if (!bmain->colorspace.is_missing_opencolorio_config) {
     BLI_assert_unreachable();
+  }
+
+  if (bmain->colorspace.is_missing_opencolorio_config) {
+    uiItemL_ex(layout,
+               RPT_("Overwrite file with current OpenColorIO configuration?"),
+               ICON_NONE,
+               true,
+               false);
   }
 
   /* Filename. */
@@ -4602,7 +4663,8 @@ static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_dat
   bool file_has_been_saved_before = BKE_main_blendfile_path(bmain)[0] != '\0';
 
   if (file_has_been_saved_before) {
-    if (bmain->has_forward_compatibility_issues) {
+    if (bmain->has_forward_compatibility_issues || bmain->colorspace.is_missing_opencolorio_config)
+    {
       /* Need to invoke to get the file-browser and choose where to save the new file.
        * This also makes it impossible to keep on going with current operation, which is why
        * callback cannot be executed anymore.

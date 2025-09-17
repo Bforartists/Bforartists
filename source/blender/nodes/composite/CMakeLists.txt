@@ -39,6 +39,8 @@ set(SRC
   nodes/node_composite_colorcorrection.cc
   nodes/node_composite_common.cc
   nodes/node_composite_convert_color_space.cc
+  nodes/node_composite_convert_to_display.cc
+  nodes/node_composite_convolve.cc
   nodes/node_composite_cornerpin.cc
   nodes/node_composite_crop.cc
   nodes/node_composite_cryptomatte.cc
@@ -58,7 +60,6 @@ set(SRC
   nodes/node_composite_file_output.cc
   nodes/node_composite_filter.cc
   nodes/node_composite_flip.cc
-  nodes/node_composite_gamma.cc
   nodes/node_composite_glare.cc
   nodes/node_composite_group_input.cc
   nodes/node_composite_group_output.cc

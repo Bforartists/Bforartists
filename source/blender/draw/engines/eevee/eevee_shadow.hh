@@ -17,9 +17,9 @@
 
 #include "eevee_camera.hh"
 #include "eevee_material.hh"
-#include "eevee_shader.hh"
-#include "eevee_shader_shared.hh"
+#include "eevee_shadow_shared.hh"
 #include "eevee_sync.hh"
+#include "eevee_uniform_shared.hh"
 
 namespace blender::eevee {
 
@@ -58,6 +58,15 @@ enum class ShadowTechnique {
   TILE_COPY = 1,
 };
 
+using ShadowStatisticsBuf = draw::StorageBuffer<ShadowStatistics>;
+using ShadowPagesInfoDataBuf = draw::StorageBuffer<ShadowPagesInfoData>;
+using ShadowPageHeapBuf = draw::StorageVectorBuffer<uint, SHADOW_MAX_PAGE>;
+using ShadowPageCacheBuf = draw::StorageArrayBuffer<uint2, SHADOW_MAX_PAGE, true>;
+using ShadowTileMapDataBuf = draw::StorageVectorBuffer<ShadowTileMapData, SHADOW_MAX_TILEMAP>;
+using ShadowTileMapClipBuf = draw::StorageArrayBuffer<ShadowTileMapClip, SHADOW_MAX_TILEMAP, true>;
+using ShadowTileDataBuf = draw::StorageArrayBuffer<ShadowTileDataPacked, SHADOW_MAX_TILE, true>;
+using ShadowRenderViewBuf = draw::StorageArrayBuffer<ShadowRenderView, SHADOW_VIEW_MAX, true>;
+
 /* -------------------------------------------------------------------- */
 /** \name Tile-Map
  *
@@ -76,10 +85,10 @@ struct ShadowTileMap : public ShadowTileMapData {
   /** Cube face index. */
   eCubeFace cubeface = Z_NEG;
   /** Cached, used for detecting updates. */
-  float4x4 object_mat;
+  float4x4 object_mat = float4x4::identity();
 
  public:
-  ShadowTileMap(int tiles_index_)
+  ShadowTileMap(int tiles_index_) : ShadowTileMapData{}
   {
     tiles_index = tiles_index_;
     /* For now just the same index. */
@@ -180,6 +189,9 @@ struct ShadowObject {
  *
  * Manages shadow atlas and shadow region data.
  * \{ */
+
+class ShadowPunctual;
+class ShadowDirectional;
 
 class ShadowModule {
   friend ShadowPunctual;

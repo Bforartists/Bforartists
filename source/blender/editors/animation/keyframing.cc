@@ -12,7 +12,7 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_listbase.h"
+#include "BLI_math_base.h"
 #include "BLI_string.h"
 
 #include "BLT_translation.hh"
@@ -930,7 +930,7 @@ void ANIM_OT_keyframe_clear_vse(wmOperatorType *ot)
   ot->invoke = clear_anim_vse_invoke;
   ot->exec = clear_anim_vse_exec;
 
-  ot->poll = ED_operator_areaactive;
+  ot->poll = ED_operator_sequencer_scene_editable;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1064,18 +1064,18 @@ static wmOperatorStatus delete_key_vse_without_keying_set(bContext *C, wmOperato
   if (confirm) {
     /* If called by invoke (from the UI), make a note that we've removed keyframes. */
     if (modified_strips.is_empty()) {
-      BKE_reportf(op->reports,
-                  RPT_WARNING,
-                  "No keyframes removed from %" PRId64 " strip(s)",
-                  selected_strips_rna_paths.size());
+      const std::string msg = fmt::format(
+          fmt::runtime(RPT_("No keyframes removed from {} strip(s)")),
+          selected_strips_rna_paths.size());
+      BKE_report(op->reports, RPT_WARNING, msg.c_str());
       return OPERATOR_CANCELLED;
     }
 
-    BKE_reportf(op->reports,
-                RPT_INFO,
-                "%" PRId64 " strip(s) successfully had %" PRId64 " keyframes removed",
-                modified_strips.size(),
-                modified_fcurves.size());
+    const std::string msg = fmt::format(
+        fmt::runtime(RPT_("{} strip(s) successfully had {} keyframes removed")),
+        modified_strips.size(),
+        modified_fcurves.size());
+    BKE_report(op->reports, RPT_INFO, msg.c_str());
   }
 
   return OPERATOR_FINISHED;
@@ -1097,7 +1097,7 @@ static wmOperatorStatus delete_key_vse_invoke(bContext *C,
                                               wmOperator *op,
                                               const wmEvent * /*event*/)
 {
-  if (RNA_boolean_get(op->ptr, "confirm")) {
+  /*if (RNA_boolean_get(op->ptr, "confirm")) {
     return WM_operator_confirm_ex(C,
                                   op,
                                   IFACE_("Delete keyframes from selected strips?"),
@@ -1105,7 +1105,7 @@ static wmOperatorStatus delete_key_vse_invoke(bContext *C,
                                   IFACE_("Delete"),
                                   ALERT_ICON_NONE,
                                   false);
-  }
+  }*/ /*BFA - Remove confirmation dialog*/
   return delete_key_vse_exec(C, op);
 }
 
@@ -1120,7 +1120,7 @@ void ANIM_OT_keyframe_delete_vse(wmOperatorType *ot)
   ot->invoke = delete_key_vse_invoke;
   ot->exec = delete_key_vse_exec;
 
-  ot->poll = ED_operator_areaactive;
+  ot->poll = ED_operator_sequencer_scene_editable;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;

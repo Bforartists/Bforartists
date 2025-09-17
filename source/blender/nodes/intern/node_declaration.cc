@@ -823,8 +823,83 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::usage_by_single_menu
   this->usage_inference([menu_value](const socket_usage_inference::InputSocketUsageParams &params)
                             -> std::optional<bool> {
     const bNodeSocket &socket = find_single_menu_input(params.node);
+    if (const std::optional<bool> any_output_used = params.any_output_is_used()) {
+      if (!*any_output_used) {
+        /* If no output is used, none of the inputs is used either. */
+        return false;
+      }
+    }
+    else {
+      /* It's not known if any output is used yet. This function will be called again once new
+       * information about output usages is available. */
+      return std::nullopt;
+    }
     return params.menu_input_may_be(socket.identifier, menu_value);
   });
+  return *this;
+}
+
+BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::usage_by_menu(
+    const StringRef menu_input_identifier, const int menu_value)
+{
+  Array<int> menu_values = {menu_value};
+  this->usage_by_menu(menu_input_identifier, menu_values);
+  return *this;
+}
+
+BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::usage_by_menu(
+    const StringRef menu_input_identifier, const Array<int> menu_values)
+{
+  this->make_available([menu_input_identifier, menu_values](bNode &node) {
+    bNodeSocket &menu_socket = *blender::bke::node_find_socket(
+        node, SOCK_IN, menu_input_identifier);
+    const SocketDeclaration &socket_declaration = *menu_socket.runtime->declaration;
+    socket_declaration.make_available(node);
+    bNodeSocketValueMenu *value = menu_socket.default_value_typed<bNodeSocketValueMenu>();
+    value->value = menu_values[0];
+  });
+  this->usage_inference(
+      [menu_input_identifier, menu_values](
+          const socket_usage_inference::InputSocketUsageParams &params) -> std::optional<bool> {
+        if (const std::optional<bool> any_output_used = params.any_output_is_used()) {
+          if (!*any_output_used) {
+            /* If no output is used, none of the inputs is used either. */
+            return false;
+          }
+        }
+        else {
+          /* It's not known if any output is used yet. This function will be called again once new
+           * information about output usages is available. */
+          return std::nullopt;
+        }
+
+        /* Check if the menu might be any of the given values. */
+        bool menu_might_be_any_value = false;
+        for (const int menu_value : menu_values) {
+          menu_might_be_any_value = params.menu_input_may_be(menu_input_identifier, menu_value);
+          if (menu_might_be_any_value) {
+            break;
+          }
+        }
+
+        const bNodeSocket &menu_socket = *blender::bke::node_find_socket(
+            params.node, SOCK_IN, menu_input_identifier);
+        const SocketDeclaration &menu_socket_declaration = *menu_socket.runtime->declaration;
+        if (!menu_socket_declaration.usage_inference_fn) {
+          return menu_might_be_any_value;
+        }
+
+        /* If the menu socket has a usage inference function, check if it might be used. */
+        const std::optional<bool> menu_might_be_used =
+            (*menu_socket_declaration.usage_inference_fn)(params);
+        if (!menu_might_be_used.has_value()) {
+          return menu_might_be_any_value;
+        }
+
+        /* The input is only used if the menu might be any of the values and the menu itself is
+         * used. */
+        return *menu_might_be_used && menu_might_be_any_value;
+      });
   return *this;
 }
 

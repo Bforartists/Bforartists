@@ -214,14 +214,31 @@ static Image *load_texture_image(Main *bmain, const std::string &file_dir, const
 {
   /* Check with filename directly. */
   Image *image = BKE_image_load_exists(bmain, tex.filename.data);
+  /* Try loading as a relative path. */
   if (image == nullptr) {
-    /* Try loading as a relative path. */
     std::string path = file_dir + "/" + tex.filename.data;
     image = BKE_image_load_exists(bmain, path.c_str());
-    if (image == nullptr) {
-      /* Try loading with absolute path from FBX. */
-      image = BKE_image_load_exists(bmain, tex.absolute_filename.data);
-    }
+  }
+  /* Try loading with absolute path from FBX. */
+  if (image == nullptr) {
+    image = BKE_image_load_exists(bmain, tex.absolute_filename.data);
+  }
+
+  /* If still not found, try taking progressively longer parts of the absolute path,
+   * as relative to the file. */
+  if (image == nullptr) {
+    size_t pos = tex.absolute_filename.length;
+    do {
+      const char *parent_path = BLI_path_parent_dir_end(tex.absolute_filename.data, pos);
+      if (parent_path == nullptr) {
+        break;
+      }
+      char path[FILE_MAX];
+      BLI_path_join(path, sizeof(path), file_dir.c_str(), parent_path);
+      BLI_path_normalize(path);
+      image = BKE_image_load_exists(bmain, path);
+      pos = parent_path - tex.absolute_filename.data;
+    } while (image == nullptr);
   }
 
   /* Create dummy/placeholder image. */
@@ -428,7 +445,6 @@ Material *import_material(Main *bmain, const std::string &base_dir, const ufbx_m
   Material *mat = BKE_material_add(bmain, fmat.name.data);
   id_us_min(&mat->id);
 
-  mat->use_nodes = true;
   bNodeTree *ntree = blender::bke::node_tree_add_tree_embedded(
       nullptr, &mat->id, "Shader Nodetree", ntreeType_Shader->idname);
   bNode *bsdf = add_node(ntree, SH_NODE_BSDF_PRINCIPLED, node_locx_bsdf, node_locy_top);

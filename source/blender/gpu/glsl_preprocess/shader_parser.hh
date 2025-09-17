@@ -35,7 +35,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cctype>
 #include <chrono>
 #include <cstdint>
 #include <functional>
@@ -55,7 +54,8 @@ enum TokenType : char {
   Dot = '.',
   Hash = '#',
   Ampersand = '&',
-  Literal = '0',
+  Number = '0',
+  String = '_',
   ParOpen = '(',
   ParClose = ')',
   BracketOpen = '{',
@@ -77,30 +77,34 @@ enum TokenType : char {
   Tilde = '~',
   Backslash = '\\',
   /* Keywords */
-  Namespace = 'n',
-  Struct = 's',
-  Class = 'S',
+  Break = 'b',
   Const = 'c',
   Constexpr = 'C',
-  Return = 'r',
-  Switch = 'h',
-  Case = 'H',
-  If = 'i',
-  Else = 'I',
-  For = 'f',
-  While = 'F',
-  Do = 'd',
-  Template = 't',
-  This = 'T',
+  Decrement = 'D',
   Deref = 'D',
-  Static = 'm',
-  PreprocessorNewline = 'N',
+  Do = 'd',
   Equal = 'E',
   NotEqual = 'e',
+  For = 'f',
+  While = 'F',
   GEqual = 'G',
+  Case = 'H',
+  Switch = 'h',
+  Else = 'I',
+  If = 'i',
   LEqual = 'L',
+  Enum = 'M',
+  Static = 'm',
+  Namespace = 'n',
+  PreprocessorNewline = 'N',
+  Continue = 'O',
   Increment = 'P',
-  Decrement = 'D',
+  Return = 'r',
+  Class = 'S',
+  Struct = 's',
+  Template = 't',
+  This = 'T',
+  Using = 'u',
   Private = 'v',
   Public = 'V',
 };
@@ -111,7 +115,12 @@ enum class ScopeType : char {
   Namespace = 'N',
   Struct = 'S',
   Function = 'F',
+  LoopArgs = 'l',
+  LoopBody = 'p',
+  SwitchArg = 'w',
+  SwitchBody = 'W',
   FunctionArgs = 'f',
+  FunctionCall = 'c',
   Template = 'T',
   TemplateArg = 't',
   Subscript = 'A',
@@ -121,6 +130,9 @@ enum class ScopeType : char {
   Local = 'L',
   /* Added scope inside FunctionArgs. */
   FunctionArg = 'g',
+  /* Added scope inside LoopArgs. */
+  LoopArg = 'r',
+
 };
 
 /* Poor man's IndexRange. */
@@ -174,6 +186,11 @@ struct ParserData {
   /* If keep_whitespace is false, whitespaces are merged with the previous token. */
   void tokenize(const bool keep_whitespace)
   {
+    if (str.empty()) {
+      *this = {};
+      return;
+    }
+
     {
       /* Tokenization. */
       token_types.clear();
@@ -185,7 +202,9 @@ struct ParserData {
       /* When doing whitespace merging, keep knowledge about whether previous char was whitespace.
        * This allows to still split words on spaces. */
       bool prev_was_whitespace = (token_types[0] == NewLine || token_types[0] == Space);
-      bool inside_preprocessor_directive = false;
+      bool inside_preprocessor_directive = token_types[0] == Hash;
+      bool next_character_is_escape = false;
+      bool inside_string = false;
 
       int offset = 0;
       for (const char &c : str.substr(1)) {
@@ -193,6 +212,17 @@ struct ParserData {
         TokenType type = to_type(c);
         TokenType prev = TokenType(token_types.back());
 
+        /* Merge string literal. */
+        if (inside_string) {
+          if (!next_character_is_escape && c == '\"') {
+            inside_string = false;
+          }
+          next_character_is_escape = c == '\\';
+          continue;
+        }
+        if (c == '\"') {
+          inside_string = true;
+        }
         /* Detect preprocessor directive newlines `\\\n`. */
         if (prev == Backslash && type == NewLine) {
           token_types.back() = PreprocessorNewline;
@@ -239,39 +269,39 @@ struct ParserData {
           continue;
         }
         /* If digit is part of word. */
-        if (type == Literal && prev == Word) {
+        if (type == Number && prev == Word && !prev_was_whitespace) {
           continue;
         }
         /* If 'x' is part of hex literal. */
-        if (c == 'x' && prev == Literal) {
+        if (c == 'x' && prev == Number) {
           continue;
         }
         /* If 'A-F' is part of hex literal. */
-        if (c >= 'A' && c <= 'F' && prev == Literal) {
+        if (c >= 'A' && c <= 'F' && prev == Number) {
           continue;
         }
         /* If 'a-f' is part of hex literal. */
-        if (c >= 'a' && c <= 'f' && prev == Literal) {
+        if (c >= 'a' && c <= 'f' && prev == Number) {
           continue;
         }
         /* If 'u' is part of unsigned int literal. */
-        if (c == 'u' && prev == Literal) {
+        if (c == 'u' && prev == Number) {
           continue;
         }
         /* If dot is part of float literal. */
-        if (type == Dot && prev == Literal) {
+        if (type == Dot && prev == Number) {
           continue;
         }
         /* If 'f' suffix is part of float literal. */
-        if (c == 'f' && prev == Literal) {
+        if (c == 'f' && prev == Number) {
           continue;
         }
         /* If 'e' is part of float literal. */
-        if (c == 'e' && prev == Literal) {
+        if (c == 'e' && prev == Number) {
           continue;
         }
         /* If sign is part of float literal after exponent. */
-        if ((c == '+' || c == '-') && prev == Literal) {
+        if ((c == '+' || c == '-') && prev == Number) {
           continue;
         }
         /* Detect increment. */
@@ -285,7 +315,7 @@ struct ParserData {
           continue;
         }
         /* Only merge these token. Otherwise, always emit a token. */
-        if (type != Word && type != NewLine && type != Space && type != Literal) {
+        if (type != Word && type != NewLine && type != Space && type != Number) {
           prev = Word;
         }
         /* Split words on whitespaces even when merging. */
@@ -299,6 +329,7 @@ struct ParserData {
           token_offsets.offsets.emplace_back(offset);
         }
       }
+      offset++;
       token_offsets.offsets.emplace_back(offset);
     }
     {
@@ -333,6 +364,12 @@ struct ParserData {
           }
           else if (word == "return") {
             c = Return;
+          }
+          else if (word == "break") {
+            c = Break;
+          }
+          else if (word == "continue") {
+            c = Continue;
           }
           else if (word == "case") {
             c = Case;
@@ -370,174 +407,21 @@ struct ParserData {
           else if (word == "public") {
             c = Public;
           }
+          else if (word == "enum") {
+            c = Enum;
+          }
+          else if (word == "using") {
+            c = Using;
+          }
         }
       }
     }
   }
 
-  void parse_scopes()
-  {
-    {
-      /* Scope detection. */
-      scope_ranges.clear();
-      scope_types.clear();
+  using report_callback = std::function<void(
+      int error_line, int error_char, std::string error_line_string, const char *error_str)>;
 
-      struct ScopeItem {
-        ScopeType type;
-        size_t start;
-        int index;
-      };
-
-      int scope_index = 0;
-      std::stack<ScopeItem> scopes;
-
-      auto enter_scope = [&](ScopeType type, size_t start_tok_id) {
-        scopes.emplace(ScopeItem{type, start_tok_id, scope_index++});
-        scope_ranges.emplace_back(start_tok_id, 1);
-        scope_types += char(type);
-      };
-
-      auto exit_scope = [&](int end_tok_id) {
-        ScopeItem scope = scopes.top();
-        scope_ranges[scope.index].size = end_tok_id - scope.start + 1;
-        scopes.pop();
-      };
-
-      enter_scope(ScopeType::Global, 0);
-
-      bool in_template = false;
-
-      int tok_id = -1;
-      for (char &c : token_types) {
-        tok_id++;
-
-        if (scopes.top().type == ScopeType::Preprocessor) {
-          if (TokenType(c) == NewLine) {
-            exit_scope(tok_id);
-          }
-          else {
-            /* Do nothing. Enclose all preprocessor lines together. */
-            continue;
-          }
-        }
-
-        switch (TokenType(c)) {
-          case Hash:
-            enter_scope(ScopeType::Preprocessor, tok_id);
-            break;
-          case Assign:
-            if (scopes.top().type == ScopeType::Assignment) {
-              /* Chained assignments. */
-              exit_scope(tok_id - 1);
-            }
-            enter_scope(ScopeType::Assignment, tok_id);
-            break;
-          case BracketOpen:
-            if (tok_id >= 2 && token_types[tok_id - 2] == Struct) {
-              enter_scope(ScopeType::Local, tok_id);
-            }
-            else if (tok_id >= 2 && token_types[tok_id - 2] == Namespace) {
-              enter_scope(ScopeType::Namespace, tok_id);
-            }
-            else if (scopes.top().type == ScopeType::Global) {
-              enter_scope(ScopeType::Function, tok_id);
-            }
-            else if (scopes.top().type == ScopeType::Struct) {
-              enter_scope(ScopeType::Function, tok_id);
-            }
-            else {
-              enter_scope(ScopeType::Local, tok_id);
-            }
-            break;
-          case ParOpen:
-            if (scopes.top().type == ScopeType::Global) {
-              enter_scope(ScopeType::FunctionArgs, tok_id);
-            }
-            else if (scopes.top().type == ScopeType::Struct) {
-              enter_scope(ScopeType::FunctionArgs, tok_id);
-            }
-            else {
-              enter_scope(ScopeType::Local, tok_id);
-            }
-            break;
-          case SquareOpen:
-            enter_scope(ScopeType::Subscript, tok_id);
-            break;
-          case AngleOpen:
-            if ((tok_id >= 1 && token_types[tok_id - 1] == Template) ||
-                /* Catch case of specialized declaration. */
-                ScopeType(scope_types.back()) == ScopeType::Template)
-            {
-              enter_scope(ScopeType::Template, tok_id);
-              in_template = true;
-            }
-            break;
-          case AngleClose:
-            if (in_template && scopes.top().type == ScopeType::Assignment) {
-              exit_scope(tok_id - 1);
-            }
-            if (scopes.top().type == ScopeType::TemplateArg) {
-              exit_scope(tok_id - 1);
-            }
-            if (scopes.top().type == ScopeType::Template) {
-              exit_scope(tok_id);
-            }
-            break;
-          case BracketClose:
-          case ParClose:
-            if (scopes.top().type == ScopeType::Assignment) {
-              exit_scope(tok_id - 1);
-            }
-            if (scopes.top().type == ScopeType::FunctionArg) {
-              exit_scope(tok_id - 1);
-            }
-            exit_scope(tok_id);
-            break;
-          case SquareClose:
-            exit_scope(tok_id);
-            break;
-          case SemiColon:
-          case Comma:
-            if (scopes.top().type == ScopeType::Assignment) {
-              exit_scope(tok_id - 1);
-            }
-            if (scopes.top().type == ScopeType::FunctionArg) {
-              exit_scope(tok_id - 1);
-            }
-            if (scopes.top().type == ScopeType::TemplateArg) {
-              exit_scope(tok_id - 1);
-            }
-            break;
-          default:
-            if (scopes.top().type == ScopeType::FunctionArgs) {
-              enter_scope(ScopeType::FunctionArg, tok_id);
-            }
-            if (scopes.top().type == ScopeType::Template) {
-              enter_scope(ScopeType::TemplateArg, tok_id);
-            }
-            break;
-        }
-      }
-      exit_scope(tok_id);
-      /* Some syntax confuses the parser. Bisect the error by removing things in the source file
-       * until the error is found. Then either fix the unsupported syntax in the parser or use
-       * alternative syntax. */
-      assert(scopes.empty());
-    }
-    {
-      token_scope.clear();
-      token_scope.resize(scope_ranges[0].size);
-
-      int scope_id = -1;
-      for (const IndexRange &range : scope_ranges) {
-        scope_id++;
-        for (int i = 0; i < range.size; i++) {
-          int j = range.start + i;
-          token_scope[j] = scope_id;
-        }
-      }
-    }
-  }
+  void parse_scopes(report_callback &report_error);
 
  private:
   TokenType to_type(const char c)
@@ -585,6 +469,8 @@ struct ParserData {
         return TokenType::Tilde;
       case '\\':
         return TokenType::Backslash;
+      case '\"':
+        return TokenType::String;
       case '?':
         return TokenType::Question;
       case ':':
@@ -602,7 +488,7 @@ struct ParserData {
       case '6':
       case '7':
       case '9':
-        return TokenType::Literal;
+        return TokenType::Number;
       default:
         return TokenType::Word;
     }
@@ -610,12 +496,24 @@ struct ParserData {
 };
 
 struct Token {
+  /* String view for nicer debugging experience. Isn't actually used. */
+  std::string_view str_view;
+
   const ParserData *data;
   int64_t index;
 
   static Token invalid()
   {
-    return {nullptr, 0};
+    return {"", nullptr, 0};
+  }
+
+  static Token from_position(const ParserData *data, int64_t index)
+  {
+    if (index < 0 || index > (data->token_offsets.offsets.size() - 2)) {
+      return invalid();
+    }
+    IndexRange index_range = data->token_offsets[index];
+    return {std::string_view(data->str).substr(index_range.start, index_range.size), data, index};
   }
 
   bool is_valid() const
@@ -638,11 +536,51 @@ struct Token {
 
   Token prev() const
   {
-    return {data, index - 1};
+    return from_position(data, index - 1);
   }
   Token next() const
   {
-    return {data, index + 1};
+    return from_position(data, index + 1);
+  }
+
+  Token find_next(TokenType type) const
+  {
+    Token tok = this->next();
+    while (tok.is_valid() && tok != type) {
+      tok = tok.next();
+    }
+    return tok;
+  }
+
+  /* Return the first container scope of this token that has the given type.
+   * Returns invalid scope on failure. */
+  Scope first_containing_scope_of_type(const ScopeType type) const;
+
+  /* Return start of namespace identifier is the token is part of one. */
+  Token namespace_start() const
+  {
+    if (*this != Word) {
+      return *this;
+    }
+    /* Scan back identifier that could contain namespaces. */
+    Token tok = *this;
+    while (tok.is_valid()) {
+      if (tok.prev() == ':') {
+        tok = tok.prev().prev().prev();
+      }
+      else {
+        return tok;
+      }
+    }
+    return tok;
+  }
+
+  /* For a word, return the name containing the prefix namespaces if present. */
+  std::string full_symbol_name() const
+  {
+    size_t start = this->namespace_start().str_index_start();
+    size_t end = this->str_index_last_no_whitespace();
+    return data->str.substr(start, end - start + 1);
   }
 
   /* Only usable when building with whitespace. */
@@ -687,15 +625,25 @@ struct Token {
     return (pos == std::string::npos) ? (data->str.size() - 1) : (pos - 1);
   }
 
-  std::string str() const
+  std::string str_with_whitespace() const
   {
     return data->str.substr(index_range().start, index_range().size);
   }
 
-  std::string str_no_whitespace() const
+  std::string str() const
+  {
+    std::string str = this->str_with_whitespace();
+    return str.substr(0, str.find_last_not_of(" \n") + 1);
+  }
+
+  /* Return the content without the first and last characters. */
+  std::string str_exclusive() const
   {
     std::string str = this->str();
-    return str.substr(0, str.find_last_not_of(" \n") + 1);
+    if (str.length() < 2) {
+      return "";
+    }
+    return str.substr(1, str.length() - 2);
   }
 
   /* Return the line number this token is found at. Take into account the #line directives. */
@@ -711,6 +659,25 @@ struct Token {
       line_count = std::stoll(sub_str) - 1;
     }
     return line_count + std::count(sub_str.begin(), sub_str.end(), '\n');
+  }
+
+  /* Return the offset to the start of the line. */
+  size_t char_number() const
+  {
+    std::string sub_str = data->str.substr(0, str_index_start());
+    size_t nearest_line_directive = sub_str.rfind('\n');
+    return (nearest_line_directive == std::string::npos) ?
+               (sub_str.size()) :
+               (sub_str.size() - nearest_line_directive - 1);
+  }
+
+  /* Return the line the token is at. */
+  std::string line_str() const
+  {
+    size_t start = data->str.rfind('\n', str_index_start());
+    size_t end = data->str.find('\n', str_index_start());
+    start = (start != std::string::npos) ? start + 1 : 0;
+    return data->str.substr(start, end - start);
   }
 
   TokenType type() const
@@ -737,25 +704,54 @@ struct Token {
   {
     return *this != TokenType(type);
   }
+
+  bool operator==(const Token &other) const
+  {
+    return this->index == other.index && this->data == other.data;
+  }
+  bool operator!=(const Token &other) const
+  {
+    return !(*this == other);
+  }
 };
 
 struct Scope {
+  /* String view for nicer debugging experience. Isn't actually used. */
+  std::string_view token_view;
+  std::string_view str_view;
+
   const ParserData *data;
-  size_t index;
+  int64_t index;
+
+  static Scope from_position(const ParserData *data, int64_t index)
+  {
+    IndexRange index_range = data->scope_ranges[index];
+    int str_start = data->token_offsets[index_range.start].start;
+    int str_end = data->token_offsets[index_range.last()].last();
+    return {std::string_view(data->token_types).substr(index_range.start, index_range.size),
+            std::string_view(data->str).substr(str_start, str_end - str_start + 1),
+            data,
+            index};
+  }
 
   Token start() const
   {
-    return {data, range().start};
+    return Token::from_position(data, range().start);
   }
 
   Token end() const
   {
-    return {data, range().last()};
+    return Token::from_position(data, range().last());
   }
 
   IndexRange range() const
   {
     return data->scope_ranges[index];
+  }
+
+  Token operator[](const int64_t index) const
+  {
+    return Token::from_position(data, range().start + index);
   }
 
   size_t token_count() const
@@ -774,16 +770,52 @@ struct Scope {
     return start().prev().scope();
   }
 
+  static Scope invalid()
+  {
+    return {"", "", nullptr, -1};
+  }
+
+  bool is_valid() const
+  {
+    return data != nullptr && index >= 0;
+  }
+  bool is_invalid() const
+  {
+    return !is_valid();
+  }
+
+  bool contains(const Scope sub) const
+  {
+    Scope parent = sub.scope();
+    while (parent.type() != ScopeType::Global && parent != *this) {
+      parent = parent.scope();
+    }
+    return parent == *this;
+  }
+
   std::string str() const
   {
+    if (this->is_invalid()) {
+      return "";
+    }
     return data->str.substr(start().str_index_start(),
                             end().str_index_last() - start().str_index_start() + 1);
+  }
+
+  /* Return the content without the first and last characters. */
+  std::string str_exclusive() const
+  {
+    if (this->is_invalid()) {
+      return "";
+    }
+    return data->str.substr(start().str_index_start() + 1,
+                            end().str_index_last() - start().str_index_start() - 1);
   }
 
   Token find_token(const char token_type) const
   {
     size_t pos = data->token_types.substr(range().start, range().size).find(token_type);
-    return (pos != std::string::npos) ? Token{data, int64_t(range().start + pos)} :
+    return (pos != std::string::npos) ? Token::from_position(data, range().start + pos) :
                                         Token::invalid();
   }
 
@@ -795,22 +827,64 @@ struct Scope {
   void foreach_match(const std::string &pattern,
                      std::function<void(const std::vector<Token>)> callback) const
   {
-    const std::string scope_tokens = data->token_types.substr(range().start, range().size);
+    assert(!pattern.empty());
+    const std::string_view scope_tokens =
+        std::string_view(data->token_types).substr(range().start, range().size);
+
+    auto count_match = [](const std::string_view &s, const std::string_view &pattern) {
+      size_t pos = 0, occurrences = 0;
+      while ((pos = s.find(pattern, pos)) != std::string::npos) {
+        occurrences += 1;
+        pos += pattern.length();
+      }
+      return occurrences;
+    };
+    const int control_token_count = count_match(pattern, "?") * 2 + count_match(pattern, "..") * 2;
+
+    if (range().size < pattern.size() - control_token_count) {
+      return;
+    }
+
+    const size_t searchable_range = scope_tokens.size() -
+                                    (pattern.size() - 1 - control_token_count);
 
     std::vector<Token> match;
     match.resize(pattern.size());
 
-    size_t pos = 0;
-    while ((pos = scope_tokens.find(pattern, pos)) != std::string::npos) {
-      match[0] = {data, int64_t(range().start + pos)};
-      /* Do not match preprocessor directive by default. */
-      if (match[0].scope().type() != ScopeType::Preprocessor) {
-        for (int i = 1; i < pattern.size(); i++) {
-          match[i] = Token{data, int64_t(range().start + pos + i)};
+    for (size_t pos = 0; pos < searchable_range; pos++) {
+      size_t cursor = range().start + pos;
+
+      for (int i = 0; i < pattern.size(); i++) {
+        bool is_last_token = i == pattern.size() - 1;
+        TokenType token_type = TokenType(data->token_types[cursor]);
+        TokenType curr_search_token = TokenType(pattern[i]);
+        TokenType next_search_token = TokenType(is_last_token ? '\0' : pattern[i + 1]);
+
+        /* Scope skipping. */
+        if (!is_last_token && curr_search_token == '.' && next_search_token == '.') {
+          cursor = match[i - 1].scope().end().index;
+          i++;
+          continue;
         }
-        callback(match);
+
+        /* Regular token. */
+        if (curr_search_token == token_type) {
+          match[i] = Token::from_position(data, cursor++);
+
+          if (is_last_token) {
+            callback(match);
+          }
+        }
+        else if (!is_last_token && curr_search_token != '?' && next_search_token == '?') {
+          /* This was and optional token. Continue scanning. */
+          match[i] = Token::invalid();
+          i++;
+        }
+        else {
+          /* Token mismatch. Test next position. */
+          break;
+        }
       }
-      pos += 1;
     }
   }
 
@@ -819,7 +893,7 @@ struct Scope {
   {
     size_t pos = this->index;
     while ((pos = data->scope_types.find(char(type), pos)) != std::string::npos) {
-      Scope scope{data, pos};
+      Scope scope = Scope::from_position(data, pos);
       if (scope.start().index > this->end().index) {
         /* Found scope starts after this scope. End iteration. */
         break;
@@ -831,11 +905,318 @@ struct Scope {
       pos += 1;
     }
   }
+
+  void foreach_token(const TokenType token_type, std::function<void(const Token)> callback) const
+  {
+    const char str[2] = {token_type, '\0'};
+    foreach_match(str, [&](const std::vector<Token> &tokens) { callback(tokens[0]); });
+  }
+
+  /* Run a callback for all existing function scopes. */
+  void foreach_function(
+      std::function<void(
+          bool is_static, Token type, Token name, Scope args, bool is_const, Scope body)> callback)
+      const
+  {
+    foreach_match("m?ww(..)c?{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0] == Static,
+               matches[2],
+               matches[3],
+               matches[4].scope(),
+               matches[8] == Const,
+               matches[10].scope());
+    });
+    foreach_match("m?ww::w(..)c?{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0] == Static,
+               matches[2],
+               matches[6],
+               matches[7].scope(),
+               matches[11] == Const,
+               matches[13].scope());
+    });
+    foreach_match("m?ww<..>(..)c?{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0] == Static,
+               matches[2],
+               matches[3],
+               matches[8].scope(),
+               matches[12] == Const,
+               matches[14].scope());
+    });
+  }
+
+  /* Run a callback for all existing struct scopes. */
+  void foreach_struct(std::function<void(Token struct_tok, Token name, Scope body)> callback) const
+  {
+    foreach_match("sw{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0], matches[1], matches[2].scope());
+    });
+    foreach_match("Sw{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0], matches[1], matches[2].scope());
+    });
+    foreach_match("sw<..>{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0], matches[1], matches[6].scope());
+    });
+    foreach_match("Sw<..>{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0], matches[1], matches[6].scope());
+    });
+  }
+
+  bool operator==(const Scope &other) const
+  {
+    return this->index == other.index && this->data == other.data;
+  }
+  bool operator!=(const Scope &other) const
+  {
+    return !(*this == other);
+  }
 };
 
 inline Scope Token::scope() const
 {
-  return {data, size_t(data->token_scope[index])};
+  return Scope::from_position(data, data->token_scope[index]);
+}
+
+inline Scope Token::first_containing_scope_of_type(const ScopeType type) const
+{
+  Scope scope = this->scope();
+  while (scope.type() != ScopeType::Global && scope.type() != type) {
+    scope = scope.scope();
+  }
+  return scope.type() == type ? scope : Scope::invalid();
+}
+
+inline void ParserData::parse_scopes(report_callback &report_error)
+{
+  {
+    /* Scope detection. */
+    scope_ranges.clear();
+    scope_types.clear();
+
+    struct ScopeItem {
+      ScopeType type;
+      size_t start;
+      int index;
+    };
+
+    int scope_index = 0;
+    std::stack<ScopeItem> scopes;
+
+    auto enter_scope = [&](ScopeType type, size_t start_tok_id) {
+      scopes.emplace(ScopeItem{type, start_tok_id, scope_index++});
+      scope_ranges.emplace_back(start_tok_id, 1);
+      scope_types += char(type);
+    };
+
+    auto exit_scope = [&](int end_tok_id) {
+      ScopeItem scope = scopes.top();
+      scope_ranges[scope.index].size = end_tok_id - scope.start + 1;
+      scopes.pop();
+    };
+
+    enter_scope(ScopeType::Global, 0);
+
+    int in_template = 0;
+
+    int tok_id = -1;
+    for (char &c : token_types) {
+      tok_id++;
+
+      if (scopes.top().type == ScopeType::Preprocessor) {
+        if (TokenType(c) == NewLine) {
+          exit_scope(tok_id);
+        }
+        else {
+          /* Do nothing. Enclose all preprocessor lines together. */
+          continue;
+        }
+      }
+
+      switch (TokenType(c)) {
+        case Hash:
+          enter_scope(ScopeType::Preprocessor, tok_id);
+          break;
+        case Assign:
+          if (scopes.top().type == ScopeType::Assignment) {
+            /* Chained assignments. */
+            exit_scope(tok_id - 1);
+          }
+          enter_scope(ScopeType::Assignment, tok_id);
+          break;
+        case BracketOpen: {
+          /* Scan back identifier that could contain namespaces. */
+          TokenType keyword;
+          int pos = 2;
+          do {
+            keyword = (tok_id >= pos) ? TokenType(token_types[tok_id - pos]) : TokenType::Invalid;
+            pos += 3;
+          } while (keyword != Invalid && keyword == Colon);
+
+          if (keyword == Struct) {
+            enter_scope(ScopeType::Local, tok_id);
+          }
+          else if (keyword == Enum) {
+            enter_scope(ScopeType::Local, tok_id);
+          }
+          else if (keyword == Namespace) {
+            enter_scope(ScopeType::Namespace, tok_id);
+          }
+          else if (ScopeType(scope_types.back()) == ScopeType::LoopArg) {
+            enter_scope(ScopeType::LoopBody, tok_id);
+          }
+          else if (ScopeType(scope_types.back()) == ScopeType::SwitchArg) {
+            enter_scope(ScopeType::SwitchBody, tok_id);
+          }
+          else if (scopes.top().type == ScopeType::Global) {
+            enter_scope(ScopeType::Function, tok_id);
+          }
+          else if (scopes.top().type == ScopeType::Struct) {
+            enter_scope(ScopeType::Function, tok_id);
+          }
+          else if (scopes.top().type == ScopeType::Namespace) {
+            enter_scope(ScopeType::Function, tok_id);
+          }
+          else {
+            enter_scope(ScopeType::Local, tok_id);
+          }
+          break;
+        }
+        case ParOpen:
+          if ((tok_id >= 1 && token_types[tok_id - 1] == For) ||
+              (tok_id >= 1 && token_types[tok_id - 1] == While))
+          {
+            enter_scope(ScopeType::LoopArgs, tok_id);
+          }
+          else if (tok_id >= 1 && token_types[tok_id - 1] == Switch) {
+            enter_scope(ScopeType::SwitchArg, tok_id);
+          }
+          else if (scopes.top().type == ScopeType::Global) {
+            enter_scope(ScopeType::FunctionArgs, tok_id);
+          }
+          else if (scopes.top().type == ScopeType::Struct) {
+            enter_scope(ScopeType::FunctionArgs, tok_id);
+          }
+          else if ((scopes.top().type == ScopeType::Function ||
+                    scopes.top().type == ScopeType::Local) &&
+                   (tok_id >= 1 && token_types[tok_id - 1] == Word))
+          {
+            enter_scope(ScopeType::FunctionCall, tok_id);
+          }
+          else {
+            enter_scope(ScopeType::Local, tok_id);
+          }
+          break;
+        case SquareOpen:
+          enter_scope(ScopeType::Subscript, tok_id);
+          break;
+        case AngleOpen:
+          if (tok_id >= 1) {
+            char prev_char = str[token_offsets[tok_id - 1].last()];
+            /* Rely on the fact that template are formatted without spaces but comparison isn't. */
+            if ((prev_char != ' ' && prev_char != '\n' && prev_char != '<') ||
+                token_types[tok_id - 1] == Template)
+            {
+              enter_scope(ScopeType::Template, tok_id);
+              in_template++;
+            }
+          }
+          break;
+        case AngleClose:
+          if (in_template > 0 && scopes.top().type == ScopeType::Assignment) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::TemplateArg) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::Template) {
+            exit_scope(tok_id);
+            in_template--;
+          }
+          break;
+        case BracketClose:
+        case ParClose:
+          if (scopes.top().type == ScopeType::Assignment) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::FunctionArg) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::LoopArg) {
+            exit_scope(tok_id - 1);
+          }
+          exit_scope(tok_id);
+          break;
+        case SquareClose:
+          exit_scope(tok_id);
+          break;
+        case SemiColon:
+          if (scopes.top().type == ScopeType::Assignment) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::FunctionArg) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::TemplateArg) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::LoopArg) {
+            exit_scope(tok_id - 1);
+          }
+          break;
+        case Comma:
+          if (scopes.top().type == ScopeType::Assignment) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::FunctionArg) {
+            exit_scope(tok_id - 1);
+          }
+          if (scopes.top().type == ScopeType::TemplateArg) {
+            exit_scope(tok_id - 1);
+          }
+          break;
+        default:
+          if (scopes.top().type == ScopeType::FunctionArgs) {
+            enter_scope(ScopeType::FunctionArg, tok_id);
+          }
+          if (scopes.top().type == ScopeType::LoopArgs) {
+            enter_scope(ScopeType::LoopArg, tok_id);
+          }
+          if (scopes.top().type == ScopeType::Template) {
+            enter_scope(ScopeType::TemplateArg, tok_id);
+          }
+          break;
+      }
+    }
+
+    if (scopes.top().type == ScopeType::Preprocessor) {
+      exit_scope(tok_id - 1);
+    }
+
+    if (scopes.top().type != ScopeType::Global) {
+      ScopeItem scope_item = scopes.top();
+      Token token = Token::from_position(this, scope_ranges[scope_item.index].start);
+      report_error(
+          token.line_number(), token.char_number(), token.line_str(), "unterminated scope");
+
+      /* Avoid out of bound access for the rest of the processing. Empty everything. */
+      *this = {};
+      return;
+    }
+
+    exit_scope(tok_id);
+  }
+  {
+    token_scope.clear();
+    token_scope.resize(scope_ranges[0].size);
+
+    int scope_id = -1;
+    for (const IndexRange &range : scope_ranges) {
+      scope_id++;
+      for (int i = 0; i < range.size; i++) {
+        int j = range.start + i;
+        token_scope[j] = scope_id;
+      }
+    }
+  }
 }
 
 struct Parser {
@@ -866,12 +1247,16 @@ struct Parser {
   };
   std::vector<Mutation> mutations_;
 
+  ParserData::report_callback &report_error;
+
  public:
-  Parser(const std::string &input, bool keep_whitespace = false)
-      : keep_whitespace_(keep_whitespace)
+  Parser(const std::string &input,
+         ParserData::report_callback &report_error,
+         bool keep_whitespace = false)
+      : keep_whitespace_(keep_whitespace), report_error(report_error)
   {
     data_.str = input;
-    parse();
+    parse(report_error);
   }
 
   /* Run a callback for all existing scopes of a given type. */
@@ -879,7 +1264,7 @@ struct Parser {
   {
     size_t pos = 0;
     while ((pos = data_.scope_types.find(char(type), pos)) != std::string::npos) {
-      callback(Scope{&data_, pos});
+      callback(Scope::from_position(&data_, pos));
       pos += 1;
     }
   }
@@ -891,23 +1276,40 @@ struct Parser {
                   [&](const Scope scope) { scope.foreach_match(pattern, callback); });
   }
 
+  void foreach_token(const TokenType token_type, std::function<void(const Token)> callback)
+  {
+    const char str[2] = {token_type, '\0'};
+    foreach_match(str, [&](const std::vector<Token> &tokens) { callback(tokens[0]); });
+  }
+
   /* Run a callback for all existing function scopes. */
   void foreach_function(
       std::function<void(
           bool is_static, Token type, Token name, Scope args, bool is_const, Scope body)> callback)
   {
-    foreach_scope(ScopeType::FunctionArgs, [&](const Scope args) {
-      const bool is_const = args.end().next() == Const;
-      Token next = (is_const ? args.end().next() : args.end()).next();
-      if (next != '{') {
-        /* Function Prototype. */
-        return;
-      }
-      const bool is_static = args.start().prev().prev().prev() == Static;
-      Token type = args.start().prev().prev();
-      Token name = args.start().prev();
-      Scope body = next.scope();
-      callback(is_static, type, name, args, is_const, body);
+    foreach_match("m?ww(..)c?{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0] == Static,
+               matches[2],
+               matches[3],
+               matches[4].scope(),
+               matches[8] == Const,
+               matches[10].scope());
+    });
+    foreach_match("m?ww::w(..)c?{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0] == Static,
+               matches[2],
+               matches[6],
+               matches[7].scope(),
+               matches[11] == Const,
+               matches[13].scope());
+    });
+    foreach_match("m?ww<..>(..)c?{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0] == Static,
+               matches[2],
+               matches[3],
+               matches[8].scope(),
+               matches[12] == Const,
+               matches[14].scope());
     });
   }
 
@@ -935,8 +1337,14 @@ struct Parser {
   }
   /* Replace everything from `from` to `to` (inclusive).
    * Return true on success. */
-  bool replace_try(Token from, Token to, const std::string &replacement)
+  bool replace_try(Token from,
+                   Token to,
+                   const std::string &replacement,
+                   bool keep_trailing_whitespaces = false)
   {
+    if (keep_trailing_whitespaces) {
+      return replace_try(from.str_index_start(), to.str_index_last_no_whitespace(), replacement);
+    }
     return replace_try(from.str_index_start(), to.str_index_last(), replacement);
   }
 
@@ -953,9 +1361,26 @@ struct Parser {
     replace(from.str_index_start(), to.str_index_last(), replacement);
   }
   /* Replace token by string. */
-  void replace(Token tok, const std::string &replacement)
+  void replace(Token tok, const std::string &replacement, bool keep_trailing_whitespaces = false)
   {
-    replace(tok.str_index_start(), tok.str_index_last(), replacement);
+    if (keep_trailing_whitespaces) {
+      replace(tok.str_index_start(), tok.str_index_last_no_whitespace(), replacement);
+    }
+    else {
+      replace(tok.str_index_start(), tok.str_index_last(), replacement);
+    }
+  }
+  /* Replace Scope by string. */
+  void replace(Scope scope, const std::string &replacement, bool keep_trailing_whitespaces = false)
+  {
+    if (keep_trailing_whitespaces) {
+      replace(scope.start().str_index_start(),
+              scope.end().str_index_last_no_whitespace(),
+              replacement);
+    }
+    else {
+      replace(scope.start(), scope.end(), replacement);
+    }
   }
 
   /* Replace the content from `from` to `to` (inclusive) by whitespaces without changing
@@ -1004,6 +1429,10 @@ struct Parser {
   {
     insert_after(at, "#line " + std::to_string(line) + "\n");
   }
+  void insert_line_number(Token at, int line)
+  {
+    insert_line_number(at.str_index_last(), line);
+  }
 
   void insert_before(size_t at, const std::string &content)
   {
@@ -1025,12 +1454,23 @@ struct Parser {
     /* Order mutations so that they can be applied in one pass. */
     std::stable_sort(mutations_.begin(), mutations_.end());
 
+    /* Make sure to pad the input string in case of insertion after the last char. */
+    bool added_trailing_new_line = false;
+    if (data_.str.back() != '\n') {
+      data_.str += '\n';
+      added_trailing_new_line = true;
+    }
+
     int64_t offset = 0;
     for (const Mutation &mut : mutations_) {
       data_.str.replace(mut.src_range.start + offset, mut.src_range.size, mut.replacement);
       offset += mut.replacement.size() - mut.src_range.size;
     }
     mutations_.clear();
+
+    if (added_trailing_new_line) {
+      data_.str.pop_back();
+    }
     return true;
   }
 
@@ -1038,7 +1478,7 @@ struct Parser {
   {
     bool applied = only_apply_mutations();
     if (applied) {
-      this->parse();
+      this->parse(report_error);
     }
     return applied;
   }
@@ -1094,7 +1534,7 @@ struct Parser {
     }
   };
 
-  void parse()
+  void parse(ParserData::report_callback &report_error)
   {
     {
       TimeIt time_it(parse_scope_time);
@@ -1102,7 +1542,7 @@ struct Parser {
     }
     {
       TimeIt time_it(tokenize_time);
-      data_.parse_scopes();
+      data_.parse_scopes(report_error);
     }
   }
 

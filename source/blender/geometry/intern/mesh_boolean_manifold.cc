@@ -283,7 +283,7 @@ static void get_manifold(Manifold &manifold,
   meshgl.vertProperties.resize(size_t(mesh.verts_num) * props_num);
   array_utils::copy(mesh.vert_positions(), MutableSpan(meshgl.vertProperties).cast<float3>());
 
-  /* Using separate a OriginalID for each input face will prevent coplanar
+  /* Using separate a OriginalID for each input face will prevent co-planar
    * faces from being merged.  We need this until the fix introduced in
    * Manifold at version 3.1.0. */
   constexpr bool use_runids = false;
@@ -355,7 +355,7 @@ static void get_manifolds(MutableSpan<Manifold> manifolds,
   }
   const int meshes_num = manifolds.size();
 
-  /* Transforming the original input meshes is a simple way to reuse the Mesh::corner_tris() cache
+  /* Transforming the original input meshes is a simple way to reuse the #Mesh::corner_tris() cache
    * for un-transformed meshes. This should reduce memory usage and help to avoid unnecessary cache
    * re-computations. */
   Array<const Mesh *> transformed_meshes(meshes_num);
@@ -452,10 +452,17 @@ class OutToInMaps {
   const MeshAssembly *mesh_assembly_;
   const Mesh *joined_mesh_;
   const Mesh *output_mesh_;
+  const MeshOffsets *mesh_offsets_;
 
  public:
-  OutToInMaps(const MeshAssembly *mesh_assembly, const Mesh *joined_mesh, const Mesh *output_mesh)
-      : mesh_assembly_(mesh_assembly), joined_mesh_(joined_mesh), output_mesh_(output_mesh)
+  OutToInMaps(const MeshAssembly *mesh_assembly,
+              const Mesh *joined_mesh,
+              const Mesh *output_mesh,
+              const MeshOffsets *mesh_offsets)
+      : mesh_assembly_(mesh_assembly),
+        joined_mesh_(joined_mesh),
+        output_mesh_(output_mesh),
+        mesh_offsets_(mesh_offsets)
   {
   }
 
@@ -588,6 +595,34 @@ static bool same_dir(const float3 &p1, const float3 &p2, const float3 &q1, const
   return (math::abs(abs_cos_pq - 1.0f) <= 1e-5f);
 }
 
+/**
+ * What mesh_id corresponds to a given face_id, assuming that the face_id
+ * is in one of the ranges of mesh_offsets.face_offsets.
+ */
+static inline int mesh_id_for_face(const int face_id, const MeshOffsets &mesh_offsets)
+{
+  for (const int mesh_id : mesh_offsets.face_offsets.index_range()) {
+    if (mesh_offsets.face_offsets[mesh_id].contains(face_id)) {
+      return mesh_id;
+    }
+  }
+  return -1;
+}
+
+/**
+ * What is the vertex index range for the face \a face_id, assuming that face_id is one of the
+ * ranges of mesh_offsets.face_offsets.
+ */
+static IndexRange vertex_range_for_face(const int face_id, const MeshOffsets &mesh_offsets)
+{
+  const int mesh_id = mesh_id_for_face(face_id, mesh_offsets);
+  if (mesh_id == -1) {
+    return IndexRange();
+  }
+  return IndexRange::from_begin_end(mesh_offsets.vert_start[mesh_id],
+                                    mesh_offsets.vert_start[mesh_id + 1]);
+}
+
 Span<int> OutToInMaps::ensure_edge_map()
 {
   constexpr int dbg_level = 0;
@@ -637,6 +672,7 @@ Span<int> OutToInMaps::ensure_edge_map()
   for (const int out_face_index : IndexRange(output_mesh_->faces_num)) {
     const int in_face_index = face_map[out_face_index];
     const IndexRange in_face = in_faces[in_face_index];
+    const IndexRange in_face_vert_range = vertex_range_for_face(in_face_index, *mesh_offsets_);
     if (dbg_level > 0) {
       std::cout << "process out_face = " << out_face_index << ", in_face = " << in_face_index
                 << "\n";
@@ -689,8 +725,8 @@ Span<int> OutToInMaps::ensure_edge_map()
         }
         edge_rep = in_e;
       }
-      else if (vert_map[out_e_v[1]] == -1) {
-        /* Here the "ends at" vertex of the output edge is a new vertex.
+      else if (!in_face_vert_range.contains(vert_map[out_e_v[1]])) {
+        /* Here the "ends at" vertex of the output edge is a new vertex or in a different mesh.
          * Does the edge at least go in the same direction as in_e?
          */
         if (same_dir(out_positions[out_e_v[0]],
@@ -1212,7 +1248,7 @@ static void merge_out_faces(Vector<OutFace> &faces)
   }
 }
 
-/** Return true if the ponts p0, p1, p2 are approximately in a straight line. */
+/** Return true if the points p0, p1, p2 are approximately in a straight line. */
 static inline bool approx_in_line(const float3 &p0, const float3 &p1, const float3 &p2)
 {
   float cos_ang = math::dot(math::normalize(p1 - p0), math::normalize(p2 - p1));
@@ -1227,14 +1263,14 @@ static inline bool approx_in_line(const float3 &p0, const float3 &p1, const floa
  * and then being dissolved by merge_out_faces.
  * TODO: don't do this if the vertex was original.
  * (To do that we need the mapping from input to output verts to be passed as an argument,
- * and at th moment, we don't do that mapping yet -- and would have to redo itif we end up
+ * and at th moment, we don't do that mapping yet -- and would have to redo it if we end up
  * dissolving vert.)
  */
 static void dissolve_valence2_verts(MeshAssembly &ma)
 {
   const int vnum = ma.output_verts_num;
   Array<bool> dissolve(vnum, false);
-  /* We'll rememeber up to two vertex neighbors for each vertex. */
+  /* We'll remember up to two vertex neighbors for each vertex. */
   Array<std::pair<int, int>> neighbors(ma.output_verts_num, std::pair<int, int>(-1, -1));
   /* First, tentatively set dissolve based on neighbors. Alignment will be checked later. */
   for (const int f : ma.new_faces.index_range()) {
@@ -1265,8 +1301,7 @@ static void dissolve_valence2_verts(MeshAssembly &ma)
   /* We can't dissolve so many verts in a face that it leaves less than a triangle.
    * This should be rare, since the above logic will prevent dissolving a vert from a triangle,
    * but it is possible that two or more verts are to be dissolved from a quad or ngon.
-   * Do a pass to remove the possiblitiy of dissolving anything from such faces.
-   */
+   * Do a pass to remove the possibility of dissolving anything from such faces. */
   for (const int f : ma.new_faces.index_range()) {
     const OutFace &face = ma.new_faces[f];
     const int fsize = face.verts.size();
@@ -1311,11 +1346,10 @@ static void dissolve_valence2_verts(MeshAssembly &ma)
     return;
   }
 
-  /* We need to compress out the disssolved vertices out of ma.vertpos,
+  /* We need to compress out the dissolved vertices out of `ma.vertpos`,
    * remap all the faces to account for that compression,
    * and rebuild any faces containing those compressed verts.
-   * The compressing part is a bit like #mesh_copy_selection.
-   */
+   * The compressing part is a bit like #mesh_copy_selection. */
   IndexMaskMemory memory;
   IndexMask keep = IndexMask::from_bools_inverse(
       dissolve.index_range(), dissolve.as_span(), memory);
@@ -1324,7 +1358,7 @@ static void dissolve_valence2_verts(MeshAssembly &ma)
   ma.old_to_new_vert_map.fill(-1);
   index_mask::build_reverse_map<int>(keep, ma.old_to_new_vert_map);
 
-  /* Compress vertpos in place. Is there a parallel way to do this? */
+  /* Compress `vertpos` in place. Is there a parallel way to do this? */
   float *vpos_data = ma.vertpos.data();
   BLI_assert(ma.vertpos_stride == 3);
   for (const int old_v : IndexRange(vnum)) {
@@ -1584,20 +1618,6 @@ static void interpolate_corner_attributes(bke::MutableAttributeAccessor &output_
 }
 
 /**
- * What mesh_id corresponds to a given face_id, assuming that the face_id
- * is in one of the ranges of mesh_offsets.face_offsets.
- */
-static inline int mesh_id_for_face(int face_id, const MeshOffsets &mesh_offsets)
-{
-  for (const int mesh_id : mesh_offsets.face_offsets.index_range()) {
-    if (mesh_offsets.face_offsets[mesh_id].contains(face_id)) {
-      return mesh_id;
-    }
-  }
-  return -1;
-}
-
-/**
  * The \a dst span should be the material_index property of the result.
  * Rather than using the attribute from the joined mesh, we want to take
  * the original face and map it using \a material_remaps.
@@ -1825,7 +1845,7 @@ static Mesh *meshgl_to_mesh(MeshGL &mgl,
     sharing_info->remove_user_and_delete_if_last();
   }
 
-  OutToInMaps out_to_in(&ma, joined_mesh, mesh);
+  OutToInMaps out_to_in(&ma, joined_mesh, mesh, &mesh_offsets);
 
   {
 #  ifdef DEBUG_TIME

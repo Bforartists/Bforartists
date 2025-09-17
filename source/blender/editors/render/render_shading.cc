@@ -370,10 +370,11 @@ static wmOperatorStatus material_slot_assign_exec(bContext *C, wmOperator * /*op
       }
     }
     else if (ob->type == OB_FONT) {
-      EditFont *ef = ((Curve *)ob->data)->editfont;
+      const Curve *cu = static_cast<const Curve *>(ob->data);
+      EditFont *ef = cu->editfont;
       int i, selstart, selend;
 
-      if (ef && BKE_vfont_select_get(ob, &selstart, &selend)) {
+      if (ef && BKE_vfont_select_get(cu, &selstart, &selend)) {
         for (i = selstart; i <= selend; i++) {
           changed = true;
           ef->textbufinfo[i].mat_nr = mat_nr_active;
@@ -855,7 +856,6 @@ static wmOperatorStatus new_material_exec(bContext *C, wmOperator * /*op*/)
       ma = BKE_gpencil_material_add(bmain, name);
     }
     ED_node_shader_default(C, &ma->id);
-    ma->use_nodes = true;
   }
 
   if (prop) {
@@ -2906,7 +2906,6 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
   SWAP_MEMBER(spec);
   SWAP_MEMBER(roughness);
   SWAP_MEMBER(metallic);
-  SWAP_MEMBER(use_nodes);
   SWAP_MEMBER(index);
   SWAP_MEMBER(nodetree);
   SWAP_MEMBER(line_col);

@@ -27,7 +27,7 @@ class POWER_SEQUENCER_OT_markers_create_from_selected_strips(bpy.types.Operator)
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         cursor_frame_start = context.scene.frame_current
@@ -35,7 +35,7 @@ class POWER_SEQUENCER_OT_markers_create_from_selected_strips(bpy.types.Operator)
         for m in context.scene.timeline_markers:
             m.select = False
 
-        for s in context.selected_sequences:
+        for s in context.selected_strips:
             bpy.ops.marker.add()
             new_marker = context.scene.timeline_markers[-1]
 

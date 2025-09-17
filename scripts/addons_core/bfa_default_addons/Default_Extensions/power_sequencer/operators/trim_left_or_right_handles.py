@@ -14,7 +14,7 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
     Trims or extends the handle closest to the time cursor for all selected strips.
 
     If you keep the Shift key down, the edit will ripple through the timeline.
-    Auto selects sequences under the time cursor when you don't have a selection
+    Auto selects strips under the time cursor when you don't have a selection
     """
 
     doc = {
@@ -60,20 +60,20 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences
+        return context.strips
 
     def execute(self, context):
         frame_current = context.scene.frame_current
 
-        # Only select sequences under the time cursor
-        sequences = context.selected_sequences if context.selected_sequences else context.sequences
-        for s in sequences:
+        # Only select strips under the time cursor
+        strips = context.selected_strips if context.selected_strips else context.strips
+        for s in strips:
             s.select = s.frame_final_start <= frame_current and s.frame_final_end >= frame_current
-        sequences = [s for s in sequences if s.select]
-        if not sequences:
+        strips = [s for s in strips if s.select]
+        if not strips:
             return {"FINISHED"}
 
-        for s in sequences:
+        for s in strips:
             if self.side == "LEFT":
                 s.select_left_handle = True
             if self.side == "RIGHT":
@@ -83,18 +83,18 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
         ripple_start_frame = 0
         if self.ripple and self.side == "LEFT":
             ripple_start_frame = min(
-                sequences, key=attrgetter("frame_final_start")
+                strips, key=attrgetter("frame_final_start")
             ).frame_final_start
 
         bpy.ops.sequencer.snap(frame=frame_current)
-        for s in sequences:
+        for s in strips:
             s.select_right_handle = False
             s.select_left_handle = False
 
-        if self.ripple and sequences:
+        if self.ripple and strips:
             if self.side == "RIGHT":
                 ripple_start_frame = max(
-                    sequences, key=attrgetter("frame_final_end")
+                    strips, key=attrgetter("frame_final_end")
                 ).frame_final_end
                 bpy.ops.power_sequencer.gap_remove(frame=ripple_start_frame)
             else:

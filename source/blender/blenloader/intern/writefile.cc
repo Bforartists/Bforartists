@@ -97,6 +97,7 @@
 #include "BLI_fileops.hh"
 #include "BLI_implicit_sharing.hh"
 #include "BLI_math_base.h"
+#include "BLI_math_matrix.h"
 #include "BLI_multi_value_map.hh"
 #include "BLI_path_utils.hh"
 #include "BLI_set.hh"
@@ -743,7 +744,7 @@ static void write_bhead(WriteData *wd, const BHead &bhead)
     return;
   }
   /* Write new #LargeBHead8 headers if enabled. Older Blender versions can't read those. */
-  if (!USER_EXPERIMENTAL_TEST(&U, write_legacy_blend_file_format)) {
+  if (!USER_DEVELOPER_TOOL_TEST(&U, write_legacy_blend_file_format)) {
     if (SYSTEM_SUPPORTS_WRITING_FILE_VERSION_1) {
       static_assert(sizeof(BHead) == sizeof(LargeBHead8));
       mywrite(wd, &bhead, sizeof(bhead));
@@ -785,7 +786,7 @@ static void writestruct_at_address_nr(WriteData *wd,
 
   const int64_t len_in_bytes = nr * DNA_struct_size(wd->sdna, struct_nr);
   if (!SYSTEM_SUPPORTS_WRITING_FILE_VERSION_1 ||
-      USER_EXPERIMENTAL_TEST(&U, write_legacy_blend_file_format))
+      USER_DEVELOPER_TOOL_TEST(&U, write_legacy_blend_file_format))
   {
     if (len_in_bytes > INT32_MAX) {
       CLOG_ERROR(&LOG, "Cannot write chunks bigger than INT_MAX.");
@@ -858,7 +859,7 @@ static void writedata(WriteData *wd, const int filecode, const size_t len, const
   }
 
   if ((!SYSTEM_SUPPORTS_WRITING_FILE_VERSION_1 ||
-       USER_EXPERIMENTAL_TEST(&U, write_legacy_blend_file_format)) &&
+       USER_DEVELOPER_TOOL_TEST(&U, write_legacy_blend_file_format)) &&
       len > INT_MAX)
   {
     BLI_assert_msg(0, "Cannot write chunks bigger than INT_MAX.");
@@ -1241,6 +1242,9 @@ static void write_global(WriteData *wd, const int fileflags, Main *mainvar)
   fg.curscene = scene;
   fg.cur_view_layer = view_layer;
 
+  STRNCPY(fg.colorspace_scene_linear_name, mainvar->colorspace.scene_linear_name);
+  copy_m3_m3(fg.colorspace_scene_linear_to_xyz, mainvar->colorspace.scene_linear_to_xyz.ptr());
+
   /* Prevent to save this, is not good convention, and feature with concerns. */
   fg.fileflags = (fileflags & ~G_FILE_FLAG_ALL_RUNTIME);
 
@@ -1305,7 +1309,7 @@ BLO_Write_IDBuffer::BLO_Write_IDBuffer(ID &id, const bool is_undo, const bool is
   /* Copy ID data itself into buffer, to be able to freely modify it. */
 
   if (is_placeholder) {
-    /* For placeholders (references to linked data), zero-initialize, and only explicitely copy the
+    /* For placeholders (references to linked data), zero-initialize, and only explicitly copy the
      * very small subset of required data. */
     *temp_id = ID{};
     temp_id->lib = id.lib;
@@ -1393,7 +1397,7 @@ static int write_id_direct_linked_data_process_cb(LibraryIDLinkCallbackData *cb_
 static std::string get_blend_file_header()
 {
   if (SYSTEM_SUPPORTS_WRITING_FILE_VERSION_1 &&
-      !USER_EXPERIMENTAL_TEST(&U, write_legacy_blend_file_format))
+      !USER_DEVELOPER_TOOL_TEST(&U, write_legacy_blend_file_format))
   {
     const int header_size_in_bytes = SIZEOFBLENDERHEADER_VERSION_1;
 
@@ -1469,8 +1473,8 @@ static blender::Vector<ID *> gather_local_ids_to_write(Main *bmain, const bool i
         continue;
       }
 
-      /* XXX Special handling for ShapeKeys, as having unused shapekeys is not a good thing
-       * (and reported as error by e.g. `BLO_main_validate_shapekeys`), skip writing shapekeys
+      /* XXX Special handling for ShapeKeys, as having unused shape-keys is not a good thing
+       * (and reported as error by e.g. `BLO_main_validate_shapekeys`), skip writing shape-keys
        * when their 'owner' is not written.
        *
        * NOTE: Since ShapeKeys are conceptually embedded IDs (like root node trees e.g.), this
@@ -1526,7 +1530,7 @@ static bool write_file_handle(Main *mainvar,
     ID *id_iter;
     FOREACH_MAIN_ID_BEGIN (mainvar, id_iter) {
       if (ID_IS_LINKED(id_iter) && BKE_idtype_idcode_is_linkable(GS(id_iter->name))) {
-        if (USER_EXPERIMENTAL_TEST(&U, use_all_linked_data_direct)) {
+        if (USER_DEVELOPER_TOOL_TEST(&U, use_all_linked_data_direct)) {
           /* Forces all linked data to be considered as directly linked.
            * FIXME: Workaround some BAT tool limitations for Heist production, should be removed
            * asap afterward. */
@@ -1560,7 +1564,7 @@ static bool write_file_handle(Main *mainvar,
   /* Recompute all ID user-counts if requested. Allows to avoid skipping writing of IDs wrongly
    * detected as unused due to invalid user-count. */
   if (!wd->use_memfile) {
-    if (USER_EXPERIMENTAL_TEST(&U, use_recompute_usercount_on_save_debug)) {
+    if (USER_DEVELOPER_TOOL_TEST(&U, use_recompute_usercount_on_save_debug)) {
       BKE_main_id_refcount_recompute(mainvar, false);
     }
   }

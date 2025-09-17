@@ -13,7 +13,7 @@ class POWER_SEQUENCER_OT_copy_selected_sequences(bpy.types.Operator):
     *brief* Copy/cut strips without offset from current time indicator
 
 
-    Copies the selected sequences without frame offset and optionally
+    Copies the selected strips without frame offset and optionally
     deletes the selection to give a cut to clipboard effect. This
     operator overrides the default Blender copy method which includes
     cursor offset when pasting, which is atypical of copy/paste methods.
@@ -50,7 +50,7 @@ class POWER_SEQUENCER_OT_copy_selected_sequences(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
         cursor_start_frame = context.scene.frame_current
@@ -63,7 +63,7 @@ class POWER_SEQUENCER_OT_copy_selected_sequences(bpy.types.Operator):
         scene.use_audio_scrub = False
         context.space_data.proxy_render_size = "NONE"
 
-        first_sequence = min(context.selected_sequences, key=attrgetter("frame_final_start"))
+        first_sequence = min(context.selected_strips, key=attrgetter("frame_final_start"))
         context.scene.frame_current = first_sequence.frame_final_start
         sequencer.copy()
         context.scene.frame_current = cursor_start_frame
@@ -74,10 +74,10 @@ class POWER_SEQUENCER_OT_copy_selected_sequences(bpy.types.Operator):
         if self.delete_selection:
             sequencer.delete()
 
-        plural_string = "s" if len(context.selected_sequences) != 1 else ""
+        plural_string = "s" if len(context.selected_strips) != 1 else ""
         action_verb = "Cut" if self.delete_selection else "Copied"
         report_message = "{!s} {!s} sequence{!s} to the clipboard.".format(
-            action_verb, str(len(context.selected_sequences)), plural_string
+            action_verb, str(len(context.selected_strips)), plural_string
         )
         self.report({"INFO"}, report_message)
         return {"FINISHED"}

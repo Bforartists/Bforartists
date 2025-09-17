@@ -20,9 +20,13 @@ struct ARegion;
 struct ScreenAnimData {
   /** Do not read from this, only for comparing if region exists. */
   ARegion *region;
-  Scene *scene; /* the scene that is playing (might different from the active scene and overridden
-                   by the sequencer). */  /*BFA - 3D Sequencer*/
-  ViewLayer *view_layer; /* The view_layer to use in the scene that is playing */  /*BFA - 3D Sequencer*/
+
+  /* The Scene and the View Layer that the animation timer is playing. */
+  Scene *scene;
+  ViewLayer *view_layer;
+  /* For sequencer scenes, account for scene syncing during playback. */
+  bool do_scene_syncing;
+
   short redraws;
   /** Flags for playback */
   short flag;

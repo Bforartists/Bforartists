@@ -42,6 +42,7 @@ void VKExtensions::log() const
              " - [%c] dynamic rendering local read\n"
              " - [%c] dynamic rendering unused attachments\n"
              " - [%c] external memory\n"
+             " - [%c] maintenance4\n"
              " - [%c] memory priority\n"
              " - [%c] pageable device local memory\n"
              " - [%c] shader stencil export",
@@ -52,6 +53,7 @@ void VKExtensions::log() const
              dynamic_rendering_local_read ? 'X' : ' ',
              dynamic_rendering_unused_attachments ? 'X' : ' ',
              external_memory ? 'X' : ' ',
+             maintenance4 ? 'X' : ' ',
              memory_priority ? 'X' : ' ',
              pageable_device_local_memory ? 'X' : ' ',
              GPU_stencil_export_support() ? 'X' : ' ');
@@ -73,7 +75,10 @@ void VKDevice::deinit()
 
   dummy_buffer.free();
   samplers_.free();
+  GPU_SHADER_FREE_SAFE(vk_backbuffer_blit_sh_);
 
+  orphaned_data_render.deinit(*this);
+  orphaned_data.deinit(*this);
   {
     while (!thread_data_.is_empty()) {
       VKThreadData *thread_data = thread_data_.pop_last();
@@ -84,9 +89,7 @@ void VKDevice::deinit()
   pipelines.write_to_disk();
   pipelines.free_data();
   descriptor_set_layouts_.deinit();
-  orphaned_data_render.deinit(*this);
-  orphaned_data.deinit(*this);
-  vmaDestroyPool(mem_allocator_, vma_pools.external_memory);
+  vma_pools.deinit(*this);
   vmaDestroyAllocator(mem_allocator_);
   mem_allocator_ = VK_NULL_HANDLE;
 
@@ -209,6 +212,11 @@ void VKDevice::init_physical_device_properties()
         &vk_physical_device_descriptor_buffer_properties_;
   }
 
+  if (supports_extension(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)) {
+    vk_physical_device_maintenance4_properties_.pNext = vk_physical_device_properties.pNext;
+    vk_physical_device_properties.pNext = &vk_physical_device_maintenance4_properties_;
+  }
+
   vkGetPhysicalDeviceProperties2(vk_physical_device_, &vk_physical_device_properties);
   vk_physical_device_properties_ = vk_physical_device_properties.properties;
 }
@@ -269,54 +277,16 @@ void VKDevice::init_memory_allocator()
   if (extensions_.memory_priority) {
     info.flags |= VMA_ALLOCATOR_CREATE_EXT_MEMORY_PRIORITY_BIT;
   }
+  if (extensions_.maintenance4) {
+    info.flags |= VMA_ALLOCATOR_CREATE_KHR_MAINTENANCE4_BIT;
+  }
   vmaCreateAllocator(&info, &mem_allocator_);
 
   if (!extensions_.external_memory) {
     return;
   }
-  /* External memory pool */
-  /* Initialize a dummy image create info to find the memory type index that will be used for
-   * allocating. */
-  VkExternalMemoryHandleTypeFlags vk_external_memory_handle_type = 0;
-#ifdef _WIN32
-  vk_external_memory_handle_type = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
-#else
-  vk_external_memory_handle_type = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
-#endif
-  VkExternalMemoryImageCreateInfo external_image_create_info = {
-      VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
-      nullptr,
-      vk_external_memory_handle_type};
-  VkImageCreateInfo image_create_info = {VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-                                         &external_image_create_info,
-                                         0,
-                                         VK_IMAGE_TYPE_2D,
-                                         VK_FORMAT_R8G8B8A8_UNORM,
-                                         {1024, 1024, 1},
-                                         1,
-                                         1,
-                                         VK_SAMPLE_COUNT_1_BIT,
-                                         VK_IMAGE_TILING_OPTIMAL,
-                                         VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
-                                             VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                             VK_IMAGE_USAGE_SAMPLED_BIT,
-                                         VK_SHARING_MODE_EXCLUSIVE,
-                                         0,
-                                         nullptr,
-                                         VK_IMAGE_LAYOUT_UNDEFINED};
-  VmaAllocationCreateInfo allocation_create_info = {};
-  allocation_create_info.flags = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT;
-  allocation_create_info.usage = VMA_MEMORY_USAGE_AUTO;
-  uint32_t memory_type_index;
-  vmaFindMemoryTypeIndexForImageInfo(
-      mem_allocator_, &image_create_info, &allocation_create_info, &memory_type_index);
 
-  vma_pools.external_memory_info.handleTypes = vk_external_memory_handle_type;
-  VmaPoolCreateInfo pool_create_info = {};
-  pool_create_info.memoryTypeIndex = memory_type_index;
-  pool_create_info.pMemoryAllocateNext = &vma_pools.external_memory_info;
-  pool_create_info.priority = 1.0f;
-  vmaCreatePool(mem_allocator_, &pool_create_info, &vma_pools.external_memory);
+  vma_pools.init(*this);
 }
 
 void VKDevice::init_dummy_buffer()
@@ -503,9 +473,7 @@ std::string VKDevice::driver_version() const
 
 VKThreadData::VKThreadData(VKDevice &device, pthread_t thread_id) : thread_id(thread_id)
 {
-  for (VKResourcePool &resource_pool : resource_pools) {
-    resource_pool.init(device);
-  }
+  descriptor_pools.init(device);
 }
 
 /** \} */
@@ -641,11 +609,6 @@ void VKDevice::debug_print()
     const bool is_main = pthread_equal(thread_data->thread_id, pthread_self());
     os << "ThreadData" << (is_main ? " (main-thread)" : "") << ")\n";
     os << " Rendering_depth: " << thread_data->rendering_depth << "\n";
-    for (int resource_pool_index : IndexRange(thread_data->resource_pools.size())) {
-      const bool is_active = thread_data->resource_pool_index == resource_pool_index;
-      os << " Resource Pool (index=" << resource_pool_index << (is_active ? " active" : "")
-         << ")\n";
-    }
   }
   os << "Discard pool\n";
   debug_print(os, orphaned_data);

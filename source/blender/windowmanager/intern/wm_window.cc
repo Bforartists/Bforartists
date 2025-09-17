@@ -83,6 +83,7 @@
 #include "UI_interface_layout.hh"
 
 #include "BLF_api.hh"
+#include "GPU_capabilities.hh"
 #include "GPU_context.hh"
 #include "GPU_framebuffer.hh"
 #include "GPU_init_exit.hh"
@@ -224,8 +225,8 @@ static void wm_ghostwindow_destroy(wmWindowManager *wm, wmWindow *win)
    * drawing context to discard the GW context. */
   wm_window_clear_drawable(wm);
 
-  if (win == wm->winactive) {
-    wm->winactive = nullptr;
+  if (win == wm->runtime->winactive) {
+    wm->runtime->winactive = nullptr;
   }
 
   /* We need this window's GPU context active to discard it. */
@@ -255,7 +256,7 @@ void wm_window_free(bContext *C, wmWindowManager *wm, wmWindow *win)
   BKE_screen_area_map_free(&win->global_areas);
 
   /* End running jobs, a job end also removes its timer. */
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->timers) {
+  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
     if (wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
       continue;
     }
@@ -265,7 +266,7 @@ void wm_window_free(bContext *C, wmWindowManager *wm, wmWindow *win)
   }
 
   /* Timer removing, need to call this API function. */
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->timers) {
+  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
     if (wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
       continue;
     }
@@ -434,8 +435,51 @@ void wm_quit_with_optional_confirmation_prompt(bContext *C, wmWindow *win)
 /** \name Window Close
  * \{ */
 
+static rctf *stored_window_bounds(eSpace_Type space_type)
+{
+  if (space_type == SPACE_IMAGE) {
+    return &U.stored_bounds.image;
+  }
+  if (space_type == SPACE_USERPREF) {
+    return &U.stored_bounds.userpref;
+  }
+  if (space_type == SPACE_GRAPH) {
+    return &U.stored_bounds.graph;
+  }
+  if (space_type == SPACE_INFO) {
+    return &U.stored_bounds.info;
+  }
+  if (space_type == SPACE_OUTLINER) {
+    return &U.stored_bounds.outliner;
+  }
+  if (space_type == SPACE_FILE) {
+    return &U.stored_bounds.file;
+  }
+
+  return nullptr;
+}
+
 void wm_window_close(bContext *C, wmWindowManager *wm, wmWindow *win)
 {
+  bScreen *screen = WM_window_get_active_screen(win);
+
+  if (screen->temp && BLI_listbase_is_single(&screen->areabase) && !WM_window_is_maximized(win)) {
+    ScrArea *area = static_cast<ScrArea *>(screen->areabase.first);
+    rctf *stored_bounds = stored_window_bounds(eSpace_Type(area->spacetype));
+
+    if (stored_bounds) {
+      /* Get DPI and scale from parent window, if there is one. */
+      WM_window_dpi_set_userdef(win->parent ? win->parent : win);
+      const float f = GHOST_GetNativePixelSize(static_cast<GHOST_WindowHandle>(win->ghostwin));
+      stored_bounds->xmin = float(win->posx) * f / UI_SCALE_FAC;
+      stored_bounds->xmax = stored_bounds->xmin + float(win->sizex) * f / UI_SCALE_FAC;
+      stored_bounds->ymin = float(win->posy) * f / UI_SCALE_FAC;
+      stored_bounds->ymax = stored_bounds->ymin + float(win->sizey) * f / UI_SCALE_FAC;
+      /* Tag user preferences as dirty. */
+      U.runtime.is_dirty = true;
+    }
+  }
+
   wmWindow *win_other;
 
   /* First check if there is another main window remaining. */
@@ -459,7 +503,6 @@ void wm_window_close(bContext *C, wmWindowManager *wm, wmWindow *win)
     }
   }
 
-  bScreen *screen = WM_window_get_active_screen(win);
   WorkSpace *workspace = WM_window_get_active_workspace(win);
   WorkSpaceLayout *layout = BKE_workspace_active_layout_get(win->workspace_hook);
 
@@ -897,7 +940,7 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
   }
 
   /* Clear drawable so we can set the new window. */
-  wmWindow *prev_windrawable = wm->windrawable;
+  wmWindow *prev_windrawable = wm->runtime->windrawable;
   wm_window_clear_drawable(wm);
 
   GHOST_WindowHandle ghostwin = GHOST_CreateWindow(
@@ -950,12 +993,13 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
     UI_GetThemeColor3fv(TH_BACK, window_bg_color);
 
     /* Until screens get drawn, draw a default background using the window theme color. */
+    wm_window_swap_buffer_acquire(win);
     GPU_clear_color(window_bg_color[0], window_bg_color[1], window_bg_color[2], 1.0f);
 
     /* Needed here, because it's used before it reads #UserDef. */
     WM_window_dpi_set_userdef(win);
 
-    wm_window_swap_buffers(win);
+    wm_window_swap_buffer_release(win);
 
     /* Clear double buffer to avoids flickering of new windows on certain drivers, see #97600. */
     GPU_clear_color(window_bg_color[0], window_bg_color[1], window_bg_color[2], 1.0f);
@@ -1015,13 +1059,15 @@ static void wm_window_ghostwindow_ensure(wmWindowManager *wm, wmWindow *win, boo
   }
 
   /* Add key-map handlers (1 handler for all keys in map!). */
-  wmKeyMap *keymap = WM_keymap_ensure(wm->defaultconf, "Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
+  wmKeyMap *keymap = WM_keymap_ensure(
+      wm->runtime->defaultconf, "Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&win->handlers, keymap);
 
-  keymap = WM_keymap_ensure(wm->defaultconf, "Screen", SPACE_EMPTY, RGN_TYPE_WINDOW);
+  keymap = WM_keymap_ensure(wm->runtime->defaultconf, "Screen", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&win->handlers, keymap);
 
-  keymap = WM_keymap_ensure(wm->defaultconf, "Screen Editing", SPACE_EMPTY, RGN_TYPE_WINDOW);
+  keymap = WM_keymap_ensure(
+      wm->runtime->defaultconf, "Screen Editing", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler(&win->modalhandlers, keymap);
 
   /* Add drop boxes. */
@@ -1133,23 +1179,23 @@ wmWindow *WM_window_open(bContext *C,
   const float native_pixel_size = GHOST_GetNativePixelSize(
       static_cast<GHOST_WindowHandle>(win_prev->ghostwin));
   /* Convert to native OS window coordinates. */
-  rect.xmin = win_prev->posx + (x / native_pixel_size);
-  rect.ymin = win_prev->posy + (y / native_pixel_size);
+  rect.xmin = x / native_pixel_size;
+  rect.ymin = y / native_pixel_size;
   sizex /= native_pixel_size;
   sizey /= native_pixel_size;
 
   if (alignment == WIN_ALIGN_LOCATION_CENTER) {
     /* Window centered around x,y location. */
-    rect.xmin -= sizex / 2;
-    rect.ymin -= sizey / 2;
+    rect.xmin += win_prev->posx - (sizex / 2);
+    rect.ymin += win_prev->posy - (sizey / 2);
   }
   else if (alignment == WIN_ALIGN_PARENT_CENTER) {
     /* Centered within parent. X,Y as offsets from there. */
-    rect.xmin += (win_prev->sizex - sizex) / 2;
-    rect.ymin += (win_prev->sizey - sizey) / 2;
+    rect.xmin += win_prev->posx + ((win_prev->sizex - sizex) / 2);
+    rect.ymin += win_prev->posy + ((win_prev->sizey - sizey) / 2);
   }
-  else {
-    /* Positioned absolutely within parent bounds. */
+  else if (alignment == WIN_ALIGN_ABSOLUTE) {
+    /* Positioned absolutely in desktop coordinates. */
   }
 
   rect.xmax = rect.xmin + sizex;
@@ -1265,6 +1311,43 @@ wmWindow *WM_window_open(bContext *C,
   CTX_wm_window_set(C, win_prev);
 
   return nullptr;
+}
+
+wmWindow *WM_window_open_temp(bContext *C, const char *title, int space_type, bool dialog)
+{
+  rcti rect;
+  WM_window_dpi_set_userdef(CTX_wm_window(C));
+  eWindowAlignment align;
+  rctf *stored_bounds = stored_window_bounds(eSpace_Type(space_type));
+  const bool bounds_valid = (stored_bounds && (BLI_rctf_size_x(stored_bounds) > 150.0f) &&
+                             (BLI_rctf_size_y(stored_bounds) > 100.0f));
+  const bool mm_placement = WM_capabilities_flag() & WM_CAPABILITY_MULTIMONITOR_PLACEMENT;
+
+  if (bounds_valid && mm_placement) {
+    rect.xmin = (int)(stored_bounds->xmin * UI_SCALE_FAC);
+    rect.ymin = (int)(stored_bounds->ymin * UI_SCALE_FAC);
+    rect.xmax = (int)(stored_bounds->xmax * UI_SCALE_FAC);
+    rect.ymax = (int)(stored_bounds->ymax * UI_SCALE_FAC);
+    align = WIN_ALIGN_ABSOLUTE;
+  }
+  else {
+    wmWindow *win_cur = CTX_wm_window(C);
+    const int width = int((bounds_valid ? BLI_rctf_size_x(stored_bounds) : 800.0f) * UI_SCALE_FAC);
+    const int height = int((bounds_valid ? BLI_rctf_size_y(stored_bounds) : 600.0f) *
+                           UI_SCALE_FAC);
+    /* Use eventstate, not event from _invoke, so this can be called through exec(). */
+    const wmEvent *event = win_cur->eventstate;
+    rect.xmin = event->xy[0];
+    rect.ymin = event->xy[1];
+    rect.xmax = event->xy[0] + width;
+    rect.ymax = event->xy[1] + height;
+    align = WIN_ALIGN_LOCATION_CENTER;
+  }
+
+  wmWindow *win = WM_window_open(
+      C, title, &rect, space_type, false, dialog, true, align, nullptr, nullptr);
+
+  return win;
 }
 
 /** \} */
@@ -1414,9 +1497,9 @@ static uint8_t wm_ghost_modifier_query(const enum ModSide side)
 
 static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool activate)
 {
-  BLI_assert(ELEM(wm->windrawable, nullptr, win));
+  BLI_assert(ELEM(wm->runtime->windrawable, nullptr, win));
 
-  wm->windrawable = win;
+  wm->runtime->windrawable = win;
   if (activate) {
     GHOST_ActivateWindowDrawingContext(static_cast<GHOST_WindowHandle>(win->ghostwin));
   }
@@ -1425,8 +1508,8 @@ static void wm_window_set_drawable(wmWindowManager *wm, wmWindow *win, bool acti
 
 void wm_window_clear_drawable(wmWindowManager *wm)
 {
-  if (wm->windrawable) {
-    wm->windrawable = nullptr;
+  if (wm->runtime->windrawable) {
+    wm->runtime->windrawable = nullptr;
   }
 }
 
@@ -1434,7 +1517,7 @@ void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
 {
   BLI_assert(GPU_framebuffer_active_get() == GPU_framebuffer_back_get());
 
-  if (win != wm->windrawable && win->ghostwin) {
+  if (win != wm->runtime->windrawable && win->ghostwin) {
     // win->lmbut = 0; /* Keeps hanging when mouse-pressed while other window opened. */
     wm_window_clear_drawable(wm);
 
@@ -1460,7 +1543,7 @@ void wm_window_reset_drawable()
   if (wm == nullptr) {
     return;
   }
-  wmWindow *win = wm->windrawable;
+  wmWindow *win = wm->runtime->windrawable;
 
   if (win && win->ghostwin) {
     wm_window_clear_drawable(wm);
@@ -1570,7 +1653,7 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
       win = static_cast<wmWindow *>(GHOST_GetWindowUserData(ghostwin));
     }
     else {
-      win = wm->winactive;
+      win = wm->runtime->winactive;
     }
 
     /* Display quit dialog or quit immediately. */
@@ -1620,8 +1703,8 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
       /* Entering window, update mouse position (without sending an event). */
       wm_window_update_eventstate(win);
 
-      /* No context change! `C->wm->windrawable` is drawable, or for area queues. */
-      wm->winactive = win;
+      /* No context change! `C->wm->runtime->windrawable` is drawable, or for area queues. */
+      wm->runtime->winactive = win;
       win->active = 1;
 
       /* Zero the `keymodifier`, it hangs on hotkeys that open windows otherwise. */
@@ -1674,7 +1757,7 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
 #if 0
         /* NOTE(@ideasman42): Ideally we could swap-buffers to avoid a full redraw.
          * however this causes window flickering on resize with LIBDECOR under WAYLAND. */
-        wm_window_swap_buffers(win);
+        wm_window_swap_buffer_release(win);
 #else
       WM_event_add_notifier_ex(wm, win, NC_WINDOW, nullptr);
 #endif
@@ -1806,8 +1889,8 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
 
       event.flag = eWM_EventFlag(0);
 
-      /* No context change! `C->wm->windrawable` is drawable, or for area queues. */
-      wm->winactive = win;
+      /* No context change! `C->wm->runtime->windrawable` is drawable, or for area queues. */
+      wm->runtime->winactive = win;
       win->active = 1;
 
       WM_event_add(win, &event);
@@ -1816,7 +1899,7 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
       event.type = EVT_DROP;
       event.val = KM_RELEASE;
       event.custom = EVT_DATA_DRAGDROP;
-      event.customdata = &wm->drags;
+      event.customdata = &wm->runtime->drags;
       event.customdata_free = true;
 
       WM_event_add(win, &event);
@@ -1913,7 +1996,7 @@ static bool wm_window_timers_process(const bContext *C, int *sleep_us_p)
   double ntime_min = DBL_MAX;
 
   /* Mutable in case the timer gets removed. */
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->timers) {
+  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
     if (wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
       continue;
     }
@@ -2137,31 +2220,6 @@ GHOST_TDrawingContextType wm_ghost_drawing_context_type(const eGPUBackendType gp
   return GHOST_kDrawingContextTypeNone;
 }
 
-static uiBlock *block_create_gpu_backend_fallback(bContext *C, ARegion *region, void * /*arg1*/)
-{
-  uiBlock *block = UI_block_begin(
-      C, region, "autorun_warning_popup", blender::ui::EmbossType::Emboss);
-  UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
-  UI_block_emboss_set(block, blender::ui::EmbossType::Emboss);
-
-  uiLayout *layout = uiItemsAlertBox(block, 44, ALERT_ICON_ERROR);
-
-  /* Title and explanation text. */
-  uiLayout *col = &layout->column(false);
-  col->scale_y_set(0.8f);
-  uiItemL_ex(
-      col, RPT_("Failed to load using Vulkan, using OpenGL instead."), ICON_NONE, true, false);
-  col->separator(1.3f, LayoutSeparatorType::Space);
-
-  col->label(RPT_("Updating GPU drivers may solve this issue."), ICON_NONE);
-  col->label(RPT_("The graphics backend can be changed in the System section of the Preferences."),
-             ICON_NONE);
-
-  UI_block_bounds_set_centered(block, 14 * UI_SCALE_FAC);
-
-  return block;
-}
-
 void wm_test_gpu_backend_fallback(bContext *C)
 {
   if (!bool(G.f & G_FLAG_GPU_BACKEND_FALLBACK)) {
@@ -2175,7 +2233,8 @@ void wm_test_gpu_backend_fallback(bContext *C)
   G.f |= G_FLAG_GPU_BACKEND_FALLBACK_QUIET;
 
   wmWindowManager *wm = CTX_wm_manager(C);
-  wmWindow *win = static_cast<wmWindow *>((wm->winactive) ? wm->winactive : wm->windows.first);
+  wmWindow *win = static_cast<wmWindow *>((wm->runtime->winactive) ? wm->runtime->winactive :
+                                                                     wm->windows.first);
 
   if (win) {
     /* We want this warning on the Main window, not a child window even if active. See #118765. */
@@ -2185,7 +2244,14 @@ void wm_test_gpu_backend_fallback(bContext *C)
 
     wmWindow *prevwin = CTX_wm_window(C);
     CTX_wm_window_set(C, win);
-    UI_popup_block_invoke(C, block_create_gpu_backend_fallback, nullptr, nullptr);
+    std::string message = RPT_("Updating GPU drivers may solve this issue.");
+    message += RPT_(
+        "The graphics backend can be changed in the System section of the Preferences.");
+    UI_alert(C,
+             RPT_("Failed to load using Vulkan, using OpenGL instead."),
+             message,
+             ALERT_ICON_ERROR,
+             false);
     CTX_wm_window_set(C, prevwin);
   }
 }
@@ -2244,6 +2310,9 @@ eWM_CapabilitiesFlag WM_capabilities_flag()
   if (ghost_flag & GHOST_kCapabilityCursorGenerator) {
     flag |= WM_CAPABILITY_CURSOR_GENERATOR;
   }
+  if (ghost_flag & GHOST_kCapabilityMultiMonitorPlacement) {
+    flag |= WM_CAPABILITY_MULTIMONITOR_PLACEMENT;
+  }
 
   return flag;
 }
@@ -2257,7 +2326,7 @@ eWM_CapabilitiesFlag WM_capabilities_flag()
 void WM_event_timer_sleep(wmWindowManager *wm, wmWindow * /*win*/, wmTimer *timer, bool do_sleep)
 {
   /* Extra security check. */
-  if (BLI_findindex(&wm->timers, timer) == -1) {
+  if (BLI_findindex(&wm->runtime->timers, timer) == -1) {
     return;
   }
   /* It's disputable if this is needed, when tagged for removal,
@@ -2285,7 +2354,7 @@ wmTimer *WM_event_timer_add(wmWindowManager *wm,
   wt->time_step = time_step;
   wt->win = win;
 
-  BLI_addtail(&wm->timers, wt);
+  BLI_addtail(&wm->runtime->timers, wt);
 
   return wt;
 }
@@ -2307,20 +2376,20 @@ wmTimer *WM_event_timer_add_notifier(wmWindowManager *wm,
   wt->customdata = POINTER_FROM_UINT(type);
   wt->flags |= WM_TIMER_NO_FREE_CUSTOM_DATA;
 
-  BLI_addtail(&wm->timers, wt);
+  BLI_addtail(&wm->runtime->timers, wt);
 
   return wt;
 }
 
 void wm_window_timers_delete_removed(wmWindowManager *wm)
 {
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->timers) {
+  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
     if ((wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) == 0) {
       continue;
     }
 
     /* Actual removal and freeing of the timer. */
-    BLI_remlink(&wm->timers, wt);
+    BLI_remlink(&wm->runtime->timers, wt);
     MEM_freeN(wt);
   }
 }
@@ -2333,20 +2402,10 @@ void WM_event_timer_free_data(wmTimer *timer)
   }
 }
 
-void WM_event_timers_free_all(wmWindowManager *wm)
-{
-  BLI_assert_msg(BLI_listbase_is_empty(&wm->windows),
-                 "This should only be called when freeing the window-manager");
-  while (wmTimer *timer = static_cast<wmTimer *>(BLI_pophead(&wm->timers))) {
-    WM_event_timer_free_data(timer);
-    MEM_freeN(timer);
-  }
-}
-
 void WM_event_timer_remove(wmWindowManager *wm, wmWindow * /*win*/, wmTimer *timer)
 {
   /* Extra security check. */
-  if (BLI_findindex(&wm->timers, timer) == -1) {
+  if (BLI_findindex(&wm->runtime->timers, timer) == -1) {
     return;
   }
 
@@ -2655,9 +2714,14 @@ void wm_window_raise(wmWindow *win)
 /** \name Window Buffers
  * \{ */
 
-void wm_window_swap_buffers(wmWindow *win)
+void wm_window_swap_buffer_acquire(wmWindow *win)
 {
-  GHOST_SwapWindowBuffers(static_cast<GHOST_WindowHandle>(win->ghostwin));
+  GHOST_SwapWindowBufferAcquire(static_cast<GHOST_WindowHandle>(win->ghostwin));
+}
+
+void wm_window_swap_buffer_release(wmWindow *win)
+{
+  GHOST_SwapWindowBufferRelease(static_cast<GHOST_WindowHandle>(win->ghostwin));
 }
 
 void wm_window_set_swap_interval(wmWindow *win, int interval)
@@ -2906,6 +2970,12 @@ bool WM_window_is_main_top_level(const wmWindow *win)
     return false;
   }
   return true;
+}
+
+bool WM_window_support_hdr_color(const wmWindow *win)
+{
+  return GPU_hdr_support() && win->ghostwin &&
+         GHOST_WindowGetHDRInfo(static_cast<GHOST_WindowHandle>(win->ghostwin)).hdr_enabled;
 }
 
 /** \} */

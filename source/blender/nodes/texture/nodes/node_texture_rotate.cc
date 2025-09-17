@@ -77,6 +77,7 @@ void register_node_type_tex_rotate()
 
   tex_node_type_base(&ntype, "TextureNodeRotate", TEX_NODE_ROTATE);
   ntype.ui_name = "Rotate";
+  ntype.ui_description = "Rotate the texture coordinates of an image or texture";
   ntype.enum_name_legacy = "ROTATE";
   ntype.nclass = NODE_CLASS_DISTORT;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

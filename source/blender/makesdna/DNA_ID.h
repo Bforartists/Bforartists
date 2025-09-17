@@ -23,14 +23,19 @@
 namespace blender::bke {
 struct PreviewImageRuntime;
 }
+namespace blender::bke::idprop {
+struct IDPropertyGroupChildrenSet;
+}
 namespace blender::bke::library {
 struct LibraryRuntime;
 }
 using PreviewImageRuntimeHandle = blender::bke::PreviewImageRuntime;
 using LibraryRuntimeHandle = blender::bke::library::LibraryRuntime;
+using IDPropertyGroupChildrenSet = blender::bke::idprop::IDPropertyGroupChildrenSet;
 #else
 typedef struct PreviewImageRuntimeHandle PreviewImageRuntimeHandle;
 typedef struct LibraryRuntimeHandle LibraryRuntimeHandle;
+typedef struct IDPropertyGroupChildrenSet IDPropertyGroupChildrenSet;
 #endif
 
 #ifdef __cplusplus
@@ -136,6 +141,11 @@ typedef struct IDPropertyUIDataID {
 typedef struct IDPropertyData {
   void *pointer;
   ListBase group;
+  /**
+   * Allows constant time lookup by name of the children in this group. This may be null if the
+   * group is empty. The order may not be exactly the same as in #group.
+   */
+  IDPropertyGroupChildrenSet *children_map;
   /** NOTE: a `double` is written into two 32bit integers. */
   int val, val2;
 } IDPropertyData;
@@ -666,13 +676,15 @@ typedef struct PreviewImage {
 
 /* Check whether datablock type is covered by copy-on-evaluation. */
 #define ID_TYPE_USE_COPY_ON_EVAL(_id_type) \
-  (!ELEM(_id_type, ID_LI, ID_IP, ID_SCR, ID_VF, ID_BR, ID_WM, ID_PAL, ID_PC, ID_WS, ID_IM))
+  (!ELEM(_id_type, ID_LI, ID_SCR, ID_VF, ID_BR, ID_WM, ID_PAL, ID_PC, ID_WS, ID_IM))
 
 /* Check whether data-block type requires copy-on-evaluation from #ID_RECALC_PARAMETERS.
  * Keep in sync with #BKE_id_eval_properties_copy. */
 #define ID_TYPE_SUPPORTS_PARAMS_WITHOUT_COW(id_type) ELEM(id_type, ID_ME)
 
-#define ID_TYPE_IS_DEPRECATED(id_type) ELEM(id_type, ID_IP)
+/* This used to be ELEM(id_type, ID_IP), currently there is no deprecated ID
+ * type. ID_IP was removed in Blender 5.0. */
+#define ID_TYPE_IS_DEPRECATED(id_type) false
 
 #ifdef GS
 #  undef GS
@@ -1202,7 +1214,6 @@ typedef enum eID_Index {
   INDEX_ID_LI = 0,
 
   /* Animation types, might be used by almost all other types. */
-  INDEX_ID_IP, /* Deprecated. */
   INDEX_ID_AC,
 
   /* Grease Pencil, special case, should be with the other obdata, but it can also be used by many

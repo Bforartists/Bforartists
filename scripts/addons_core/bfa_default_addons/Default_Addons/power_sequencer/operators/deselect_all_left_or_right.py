@@ -53,13 +53,13 @@ class POWER_SEQUENCER_OT_deselect_all_strips_left_or_right(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def invoke(self, context, event):
         frame_current = context.scene.frame_current
         frame_mouse = context.region.view2d.region_to_view(event.mouse_region_x, 1)[0]
 
-        for s in context.sequences:
+        for s in context.strips:
             if self.side == "left" or frame_mouse < frame_current and self.side == "mouse":
                 if s.frame_final_end < frame_current:
                     self.deselect(s)

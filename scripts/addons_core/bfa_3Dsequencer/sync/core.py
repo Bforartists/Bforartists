@@ -15,26 +15,59 @@ SequenceType = Type[bpy.types.Strip]
 class TimelineSyncSettings(bpy.types.PropertyGroup):
     """3D View Sync Settings."""
 
+    def is_sync(self):
+        return bpy.context.workspace.use_scene_time_sync if self.sync_mode == 'BUILTIN' else self.enabled
+
+    def set_sync(self, toggle):
+        if self.sync_mode == 'BUILTIN':
+            bpy.context.workspace.use_scene_time_sync = toggle
+        else:
+            self.enabled = toggle
+
+    def update_sync(self, context):
+        """Update the sync toggle on changing mode"""
+        if self.sync_mode == 'BUILTIN':
+            bpy.context.workspace.use_scene_time_sync = self.enabled
+            self.enabled = False
+        else:
+            self.enabled = bpy.context.workspace.use_scene_time_sync
+            bpy.context.workspace.use_scene_time_sync = False
+
+    def is_legacy(self):
+        return self.sync_mode == 'LEGACY'
+
+    sync_mode: bpy.props.EnumProperty(
+        name="Sync mode",
+        description="Use Builtin B Scene Selector Sync or Legacy 3D Sequencer Sync",
+        items=(
+            ('BUILTIN', "Built-in", "Built-in Scene Selector Sync"),
+            ('LEGACY', "Legacy", "Legacy 3D Sequencer Sync")
+        ),
+        default='BUILTIN',
+        update=update_sync,
+    )
+
     enabled: bpy.props.BoolProperty(
         name="Enabled",
-        description="Status of 3D View Sync system",
+        description="Status of Legacy 3D Sequencer Sync system\n(use is_sync() and set_sync() instead)",
         default=False,
     )
 
     master_scene: bpy.props.PointerProperty(
         type=bpy.types.Scene,
-        name="Master Scene",
+        name="Timeline Scene",
         description=(
-            "The master scene contains all children Scene Strips in the Sequencer editor timeline\n"
+            "The timeline scene contains all children Scene Strips in the Sequencer editor timeline\n"
             "Each Scene Strip in the sequencer timeline will change the active 3D View Camera and Scene\n"
-            "To syncronize, set the Master Scene also to the Sequencer timeline"),
+            "To syncronize, set the Timeilne Scene also to the Sequencer timeline"),
     )
 
     bidirectional: bpy.props.BoolProperty(
         name="Bidirectional",
         description=(
             "Whether changing the active scene's time should update "
-            "the Master Scene's current frame in the Sequencer"
+            "the Timeline Scene's current frame in the Sequencer\n"
+            "(in Built-in sync mode should only use for scrubbing only)"
         ),
         default=True,
     )
@@ -72,7 +105,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     # See sync_system_update function for details
 
     last_master_frame: bpy.props.IntProperty(
-        description="Last frame value that triggered an update in master Scene",
+        description="Last frame value that triggered an update in Timeline Scene",
         default=-1,
         options={"HIDDEN"},
     )
@@ -90,13 +123,13 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     )
 
     last_strip_scene_frame: bpy.props.IntProperty(
-        description="Last frame value that triggered an update in master scene's Scene Strip",
+        description="Last frame value that triggered an update in Timeline scene's Scene Strip",
         default=-1,
         options={"HIDDEN"},
     )
 
     last_strip_scene_frame_out_of_range: bpy.props.BoolProperty(
-        description="Whether frame value in master scene's Scene Strip is out of strip range",
+        description="Whether frame value in Timeline scene's Scene Strip is out of strip range",
         default=True,
         options={"HIDDEN"},
     )
@@ -212,7 +245,7 @@ def get_scene_strip_at_frame(
     :returns: The scene strip (or None) and the frame in underlying scene's reference
     """
 
-    strips = sequence_editor.sequences
+    strips = sequence_editor.strips
     channels = sequence_editor.channels
 
     if skip_muted:
@@ -352,12 +385,12 @@ def get_sync_master_strip(
     """
     settings = get_sync_settings()
     master_scene = settings.master_scene
-    if not settings.enabled or not master_scene or not master_scene.sequence_editor:
+    if not settings.is_sync() or not master_scene or not master_scene.sequence_editor:
         return None, -1
 
     if use_cache:
         return (
-            master_scene.sequence_editor.sequences.get(settings.last_master_strip),
+            master_scene.sequence_editor.strips.get(settings.last_master_strip),
             settings.last_strip_scene_frame,
         )
 
@@ -408,13 +441,13 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Discard update if disabled or not properly configured
     if (
-        not sync_settings.enabled
+        not sync_settings.is_sync()
         or not master_scene
         or not master_scene.sequence_editor
     ):
         return
 
-    # In order to evaluate if the master scene's current frame has changed,
+    # In order to evaluate if the Timeline scene's current frame has changed,
     # we current have to rely on a system that stores the last frame values
     # that triggered a change.
     # This is a temporary solution that will be replaced when the
@@ -425,29 +458,33 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     # Take `force` update into account.
     master_time_changed |= force
 
-    # Discard update if master scene's current frame is similar to cached frame value
+    # Discard update if Timeline scene's current frame is similar to cached frame value
     if not sync_settings.bidirectional and not master_time_changed:
         return
 
-    if sync_settings.bidirectional and not master_time_changed:
+    # This makes sure Legacy bidirection not conflict with Builtin sync animation playback
+    is_scrubbing = context.screen.is_scrubbing
+    is_playing = context.screen.is_animation_playing
+    builtin_bidirection = (not (is_playing and sync_settings.sync_mode == 'BUILTIN') and is_scrubbing)
+    if sync_settings.bidirectional and not master_time_changed and builtin_bidirection:
         # Return if time has not changed in active scene
         if not scene_time_changed:
             return
 
-        # Get sync master strip.
+        # Get sync Timeline strip.
         # NOTE: use cached value as a convenient shortcut to avoid computing it again.
-        strip = master_scene.sequence_editor.sequences.get(
+        strip = master_scene.sequence_editor.strips.get(
             sync_settings.last_master_strip
         )
 
-        # Return if the master strip does not match currently active scene.
+        # Return if the Timeline strip does not match currently active scene.
         if not strip or strip.scene != win_scene:
             return
 
         # Compute offset between scene's previous and current frame values
         offset = win_scene.frame_current - sync_settings.last_strip_scene_frame
 
-        # Evaluate strip in master scene when applying this offset
+        # Evaluate strip in Timeline scene when applying this offset
         new_strip, _ = get_scene_strip_at_frame(
             master_scene.frame_current + offset,
             master_scene.sequence_editor,
@@ -493,8 +530,8 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
             if context.screen.is_scrubbing or context.screen.is_animation_playing:
                 return
 
-        # Apply the offset to master scene, and return.
-        # The master scene and cache update will happen in the next frame_change_post
+        # Apply the offset to Timeline scene, and return.
+        # The Timeline scene and cache update will happen in the next frame_change_post
         # handler call.
         scene_frame_set(context, master_scene, master_scene.frame_current + offset)
         return
@@ -516,7 +553,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Update cached values
     sync_settings.last_master_strip = strip.name
-    sync_settings.last_master_strip_idx = master_scene.sequence_editor.sequences.find(
+    sync_settings.last_master_strip_idx = master_scene.sequence_editor.strips.find(
         strip.name
     )
     sync_settings.last_strip_scene_frame = inner_frame
@@ -524,7 +561,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
 
     # Update strip's underlying scene frame before making it active in context's window
     # to avoid unwanted updates in case bidirectional sync is enabled.
-    if strip.scene.frame_current != inner_frame:
+    if strip.scene.frame_current != inner_frame and sync_settings.is_legacy():
         scene_frame_set(context, strip.scene, inner_frame)
 
     if sync_settings.use_preview_range:
@@ -537,17 +574,19 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
         if sync_settings.sync_all_windows
         else [context.window]
     ):
-        # If window's scene is explicitly set to master scene, don't update it.
+        # If window's scene is explicitly set to timeline scene, don't update it.
         if not bpy.app.background and window.scene == master_scene:
             continue
         # Open strip's scene in window at the remapped frame
         if window.scene != strip.scene:
             # Use scene_change_manager to optionnaly keep tool settings between scenes
             with scene_change_manager(context):
-                window.scene = strip.scene
+                if sync_settings.is_legacy():
+                    window.scene = strip.scene
         # Use strip camera if specified
         if strip.scene_camera and window.scene.camera != strip.scene_camera:
-            window.scene.camera = strip.scene_camera
+            if sync_settings.is_legacy():
+                window.scene.camera = strip.scene_camera
 
     if sync_settings.active_follows_playhead:
         if master_scene.sequence_editor.active_strip != strip:
@@ -573,7 +612,7 @@ def update_sync_cache_from_current_state():
     strip, frame = get_sync_master_strip()
     sync_settings.last_master_strip = strip.name if strip else ""
     sync_settings.last_master_strip_idx = (
-        sync_settings.master_scene.sequence_editor.sequences.find(strip.name)
+        sync_settings.master_scene.sequence_editor.strips.find(strip.name)
         if strip
         else -1
     )
@@ -585,7 +624,7 @@ def update_sync_cache_from_current_state():
 def on_load_pre(*args):
     sync_settings = get_sync_settings()
     # Reset 3D View Sync settings
-    sync_settings.enabled = False
+    sync_settings.set_sync(False)
     sync_settings.master_scene = None
     sync_settings.last_master_frame = -1
     sync_settings.last_master_strip = ""
@@ -600,32 +639,31 @@ def on_load_post(*args):
     sync_settings = get_sync_settings()
     # Auto-setup the system for the new file if the active screen contains
     # a Sequence Editor area defining a scene override with at least 1 scene strip.
-    for area in bpy.context.screen.areas:
-        space = area.spaces.active
-        if isinstance(space, bpy.types.SpaceSequenceEditor) and getattr(
-            space, "scene_override", False
-        ):
-            seq_editor = area.spaces.active.scene_override.sequence_editor
-            if seq_editor and any(
-                isinstance(s, bpy.types.SceneStrip) for s in seq_editor.sequences
-            ):
-                sync_settings.master_scene = area.spaces.active.scene_override
-                sync_settings.enabled = True
-                update_sync_cache_from_current_state()
-                break
+    if bpy.context.workspace.sequencer_scene is not None:
+        for area in bpy.context.screen.areas:
+            space = area.spaces.active
+            if isinstance(space, bpy.types.SpaceSequenceEditor):
+                seq_editor = bpy.context.workspace.sequencer_scene.sequence_editor
+                if seq_editor and any(
+                    isinstance(s, bpy.types.SceneStrip) for s in seq_editor.strips
+                ):
+                    sync_settings.master_scene = bpy.context.workspace.sequencer_scene
+                    sync_settings.set_sync(True)
+                    update_sync_cache_from_current_state()
+                    break
 
 
 @bpy.app.handlers.persistent
 def on_undo_redo(scene, _):
     """Undo/Redo post handler callback."""
     sync_settings = get_sync_settings()
-    if not sync_settings.enabled:
+    if not sync_settings.is_sync():
         return
 
     # Explicitly update cached values on undo/redo events since
     # they don't re-trigger frame change events.
     # Two update cases:
-    # 1. Event comes from master scene and master time has changed
+    # 1. Event comes from timeline scene and master time has changed
     # 2. (Bidirectional ON) Event comes from window's scene and scene time has changed
     if (
         scene == sync_settings.master_scene
@@ -648,7 +686,7 @@ def register():
     # NOTE: this is not saved in the Blender file
     bpy.types.WindowManager.timeline_sync_settings = bpy.props.PointerProperty(
         type=TimelineSyncSettings,
-        name="Secne Synchronization Settings",
+        name="Scene Synchronization Settings",
     )
 
     # React to scenes current frame changes

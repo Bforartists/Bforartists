@@ -333,6 +333,7 @@ void register_node_type_tex_math()
 
   tex_node_type_base(&ntype, "TextureNodeMath", TEX_NODE_MATH);
   ntype.ui_name = "Math";
+  ntype.ui_description = "Perform math operations";
   ntype.enum_name_legacy = "MATH";
   ntype.nclass = NODE_CLASS_CONVERTER;
   blender::bke::node_type_socket_templates(&ntype, inputs, outputs);

@@ -25,6 +25,7 @@
 
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
+#include "BLI_math_base.h"
 #include "BLI_string.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
@@ -42,6 +43,7 @@
 #include "BKE_context.hh"
 #include "BKE_image.hh"
 #include "BKE_paint.hh"
+#include "BKE_paint_types.hh"
 #include "BKE_undo_system.hh"
 
 #include "DEG_depsgraph.hh"

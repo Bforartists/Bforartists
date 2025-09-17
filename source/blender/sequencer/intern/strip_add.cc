@@ -101,7 +101,7 @@ static void strip_add_set_name(Scene *scene, Strip *strip, LoadData *load_data)
     else if (strip->type == STRIP_TYPE_MASK) {
       edit_strip_name_set(scene, strip, load_data->mask->id.name + 2);
     }
-    else if ((strip->type & STRIP_TYPE_EFFECT) != 0) {
+    else if (strip->is_effect()) {
       edit_strip_name_set(scene, strip, strip_give_name(strip));
     }
     else { /* Image, sound and movie. */
@@ -172,7 +172,7 @@ Strip *add_effect_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
   EffectHandle sh = strip_effect_handle_get(strip);
   sh.init(strip);
 
-  if (seq::effect_get_num_inputs(strip->type) != 0) {
+  if (effect_get_num_inputs(strip->type) != 0) {
     strip->input1 = load_data->effect.input1;
     strip->input2 = load_data->effect.input2;
   }
@@ -185,7 +185,7 @@ Strip *add_effect_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
   if (strip->input1 == nullptr) {
     strip->len = 1; /* Effect is generator, set non zero length. */
     strip->flag |= SEQ_SINGLE_FRAME_CONTENT;
-    time_right_handle_frame_set(scene, strip, load_data->effect.end_frame);
+    time_right_handle_frame_set(scene, strip, load_data->start_frame + load_data->effect.length);
   }
 
   strip_add_set_name(scene, strip, load_data);
@@ -240,9 +240,9 @@ Strip *add_image_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *l
 {
   Strip *strip = strip_alloc(
       seqbase, load_data->start_frame, load_data->channel, STRIP_TYPE_IMAGE);
-  strip->len = load_data->image.len;
+  strip->len = load_data->image.count;
   StripData *data = strip->data;
-  data->stripdata = MEM_calloc_arrayN<StripElem>(load_data->image.len, "stripelem");
+  data->stripdata = MEM_calloc_arrayN<StripElem>(load_data->image.count, "stripelem");
 
   if (strip->len == 1) {
     strip->flag |= SEQ_SINGLE_FRAME_CONTENT;
@@ -268,7 +268,7 @@ Strip *add_image_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *l
     /* Set image resolution. Assume that all images in sequence are same size. This fields are only
      * informative. */
     StripElem *strip_elem = data->stripdata;
-    for (int i = 0; i < load_data->image.len; i++) {
+    for (int i = 0; i < load_data->image.count; i++) {
       strip_elem->orig_width = ibuf->x;
       strip_elem->orig_height = ibuf->y;
       strip_elem++;

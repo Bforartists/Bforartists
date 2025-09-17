@@ -141,6 +141,7 @@ void SEQUENCER_OT_rebuild_proxy(wmOperatorType *ot)
   /* API callbacks. */
   ot->invoke = sequencer_rebuild_proxy_invoke;
   ot->exec = sequencer_rebuild_proxy_exec;
+  ot->poll = sequencer_edit_poll;
 
   /* Flags. */
   ot->flag = OPTYPE_REGISTER;
@@ -221,7 +222,7 @@ static wmOperatorStatus sequencer_enable_proxies_exec(bContext *C, wmOperator *o
     }
   }
 
-  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, seq::get_ref_scene_for_notifiers(C)); /*BFA - 3D Sequencer*/
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -236,6 +237,7 @@ void SEQUENCER_OT_enable_proxies(wmOperatorType *ot)
   /* API callbacks. */
   ot->invoke = sequencer_enable_proxies_invoke;
   ot->exec = sequencer_enable_proxies_exec;
+  ot->poll = sequencer_edit_poll;
 
   /* Flags. */
   ot->flag = OPTYPE_REGISTER;

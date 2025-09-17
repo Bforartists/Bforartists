@@ -141,6 +141,9 @@ class StateManager {
   GPUState state;
   GPUStateMutable mutable_state;
 
+  /* Formats of all image units. */
+  std::array<TextureWriteFormat, GPU_MAX_IMAGE> image_formats;
+
   StateManager();
   virtual ~StateManager() = default;
 
@@ -176,17 +179,17 @@ class Fence {
 };
 
 /* Syntactic sugar. */
-static inline GPUFence *wrap(Fence *pixbuf)
+static inline GPUFence *wrap(Fence *fence)
 {
-  return reinterpret_cast<GPUFence *>(pixbuf);
+  return reinterpret_cast<GPUFence *>(fence);
 }
-static inline Fence *unwrap(GPUFence *pixbuf)
+static inline Fence *unwrap(GPUFence *fence)
 {
-  return reinterpret_cast<Fence *>(pixbuf);
+  return reinterpret_cast<Fence *>(fence);
 }
-static inline const Fence *unwrap(const GPUFence *pixbuf)
+static inline const Fence *unwrap(const GPUFence *fence)
 {
-  return reinterpret_cast<const Fence *>(pixbuf);
+  return reinterpret_cast<const Fence *>(fence);
 }
 
 }  // namespace blender::gpu

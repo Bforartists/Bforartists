@@ -239,7 +239,7 @@ std::optional<int64_t> CTX_store_int_lookup(const bContextStore *store,
 
 /* is python initialized? */
 
-bool CTX_py_init_get(bContext *C)
+bool CTX_py_init_get(const bContext *C)
 {
   return C->data.py_init;
 }
@@ -822,7 +822,7 @@ wmGizmoGroup *CTX_wm_gizmo_group(const bContext *C)
 
 wmMsgBus *CTX_wm_message_bus(const bContext *C)
 {
-  return C->wm.manager ? C->wm.manager->message_bus : nullptr;
+  return C->wm.manager ? C->wm.manager->runtime->message_bus : nullptr;
 }
 
 ReportList *CTX_wm_reports(const bContext *C)
@@ -1174,14 +1174,11 @@ Scene *CTX_data_sequencer_scene(const bContext *C)
   if (ctx_data_pointer_verify(C, "sequencer_scene", (void **)&scene)) {
     return scene;
   }
-  // start BFA - 3D Sequencer
-  SpaceSeq *sseq = CTX_wm_space_seq(C);
-  if (sseq != nullptr && sseq->scene_override != nullptr) {
-    return sseq->scene_override;
+  WorkSpace *workspace = CTX_wm_workspace(C);
+  if (workspace) {
+   return workspace->sequencer_scene;
   }
-  // end bfa
-  /* TODO: Use sequencer scene. */
-  return C->data.scene;
+  return nullptr;
 }
 
 ViewLayer *CTX_data_view_layer(const bContext *C)
@@ -1387,8 +1384,12 @@ void CTX_data_scene_set(bContext *C, Scene *scene)
 
 ToolSettings *CTX_data_tool_settings(const bContext *C)
 {
-  Scene *scene = CTX_data_scene(C);
+  ToolSettings *toolsettings;
+  if (ctx_data_pointer_verify(C, "tool_settings", (void **)&toolsettings)) {
+    return toolsettings;
+  }
 
+  Scene *scene = CTX_data_scene(C);
   if (scene) {
     return scene->toolsettings;
   }

@@ -11,7 +11,9 @@
 #include "BLI_math_geom.h"
 #include "BLI_math_matrix.h"
 
-#include "eevee_shader_shared.hh"
+#include "BKE_camera.h"
+
+#include "eevee_camera_shared.hh"
 
 namespace blender::eevee {
 
@@ -103,7 +105,7 @@ class Camera {
     float radius;
   } bound_sphere;
 
-  float overscan_;
+  float overscan_ = -1.0f;
   bool overscan_changed_;
   /** Whether or not the camera was synced from a camera object. */
   bool is_camera_object_ = false;
@@ -173,6 +175,8 @@ class Camera {
 
  private:
   void update_bounds();
+
+  CameraParams v3d_camera_params_get() const;
 };
 
 /** \} */

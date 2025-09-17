@@ -1692,7 +1692,17 @@ class TOPBAR_MT_edit(Menu):
                     mode = obj.mode
 
                     if mode == 'EDIT':
-
+                        if context.mode == "EDIT_GREASE_PENCIL":
+                            row = layout.row(align=True)
+                            props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
+                            props.mode = 'FIXED'
+                            props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
+                            props.mode = 'ADAPTIVE'            
+                            props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
+                            props.mode = 'SAMPLE'            
+                            props = row.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
+                            props.mode = 'MERGE'
+                        
                         row = layout.row(align=True)
                         row.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS', text="")
                         row.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES', text="")

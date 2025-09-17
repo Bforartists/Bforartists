@@ -182,6 +182,8 @@
            #name, \
            Frequency::freq)
 
+#  define GROUP_SHARED(type, name) .shared_variable(Type::type##_t, #name)
+
 #  define BUILTINS(builtin) .builtins(builtin)
 
 #  define VERTEX_SOURCE(filename) .vertex_source(filename)
@@ -278,6 +280,8 @@
 
 #  define IMAGE(slot, format, qualifiers, type, name) _##qualifiers type name;
 #  define IMAGE_FREQ(slot, format, qualifiers, type, name, freq) _##qualifiers type name;
+
+#  define GROUP_SHARED(type, name) type name;
 
 #  define BUILTINS(builtin)
 
@@ -683,6 +687,8 @@ struct ShaderCreateInfo {
   StringRefNull name_;
   /** True if the shader is static and can be pre-compiled at compile time. */
   bool do_static_compilation_ = false;
+  /** True if the shader is not part of gpu_shader_create_info_list. */
+  bool is_generated_ = true;
   /** If true, all additionally linked create info will be merged into this one. */
   bool finalized_ = false;
   /** If true, all resources will have an automatic location assigned. */
@@ -707,7 +713,7 @@ struct ShaderCreateInfo {
   std::string compute_source_generated;
   std::string geometry_source_generated;
   std::string typedef_source_generated;
-  /** Manually set generated dependencies. */
+  /** Manually set generated dependencies file names. */
   Vector<StringRefNull, 0> dependencies_generated;
 
   GeneratedSourceList generated_sources;
@@ -813,6 +819,13 @@ struct ShaderCreateInfo {
 
   Vector<CompilationConstant, 0> compilation_constants_;
   Vector<SpecializationConstant> specialization_constants_;
+
+  struct SharedVariable {
+    Type type;
+    StringRefNull name;
+  };
+
+  Vector<SharedVariable, 0> shared_variables_;
 
   struct Sampler {
     ImageType type;
@@ -1147,6 +1160,18 @@ struct ShaderCreateInfo {
   /* TODO: Add API to specify unique specialization config permutations in CreateInfo, allowing
    * specialized compilation to be primed and handled in the background at start-up, rather than
    * waiting for a given permutation to occur dynamically. */
+
+  /** \} */
+
+  /* -------------------------------------------------------------------- */
+  /** \name Compute shader Shared variables
+   * \{ */
+
+  Self &shared_variable(Type type, StringRefNull name)
+  {
+    shared_variables_.append({type, name});
+    return *(Self *)this;
+  }
 
   /** \} */
 

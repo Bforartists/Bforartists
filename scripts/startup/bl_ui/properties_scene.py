@@ -58,6 +58,18 @@ class SceneButtonsPanel:
     bl_context = "scene"
 
 
+class SCENE_PT_context_scene(SceneButtonsPanel, Panel):
+    bl_label = ""
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        window = context.window
+
+        layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
+
+
 class SCENE_PT_scene(SceneButtonsPanel, Panel):
     bl_label = "Scene"
 
@@ -317,7 +329,7 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
 
         col.separator()
 
-        layout.operator("sound.bake_animation")
+        layout.operator("sound.bake_animation", icon="FILE_REFRESH") #BFA - added icon
 
 
 class SCENE_PT_physics(SceneButtonsPanel, Panel):
@@ -349,7 +361,7 @@ class SCENE_PT_simulation(SceneButtonsPanel, Panel):
         scene = context.scene
 
         col = layout.column()
-        split = col.split(factor=.4) # BFA
+        split = col.split(factor=.425) # BFA
         split.use_property_split=False
         split.prop(scene, "use_custom_simulation_range", text="Simulation Range")
 
@@ -386,9 +398,9 @@ class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):
         rbw = scene.rigidbody_world
 
         if rbw is None:
-            layout.operator("rigidbody.world_add")
+            layout.operator("rigidbody.world_add", icon="ADD") #BFA - added icon
         else:
-            layout.operator("rigidbody.world_remove")
+            layout.operator("rigidbody.world_remove", icon="REMOVE") #BFA - added icon
 
 
 class RigidBodySubPanel(SceneButtonsPanel):
@@ -482,7 +494,7 @@ class SCENE_PT_eevee_light_probes(SceneButtonsPanel, Panel):
         col.prop(props, "gi_cubemap_resolution", text="Spheres Resolution")
 
         row = col.row(align=True)
-        row.operator("object.lightprobe_cache_bake", text="Bake All Light Probe Volumes").subset = 'ALL'
+        row.operator("object.lightprobe_cache_bake", text="Bake All Light Probe Volumes", icon="BAKE").subset = 'ALL' #BFA - added icon
         row.operator("object.lightprobe_cache_free", text="", icon='TRASH').subset = 'ALL'
 
 
@@ -509,6 +521,7 @@ class SCENE_PT_custom_props(SceneButtonsPanel, PropertyPanel, Panel):
 classes = (
     SCENE_PT_context, # bfa -  added the render engine prop
     SCENE_UL_keying_set_paths,
+    SCENE_PT_context_scene,
     SCENE_PT_scene,
     SCENE_PT_unit,
     SCENE_PT_physics,

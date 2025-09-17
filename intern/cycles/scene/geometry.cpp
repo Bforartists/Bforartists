@@ -775,24 +775,33 @@ void GeometryManager::device_update(Device *device,
   }
 
   size_t i = 0;
-  for (Geometry *geom : scene->geometry) {
+  thread_mutex status_mutex;
+  parallel_for_each(scene->geometry.begin(), scene->geometry.end(), [&](Geometry *geom) {
+    if (progress.get_cancel()) {
+      return;
+    }
+
     if (!(geom->is_modified() && geom->is_mesh())) {
-      continue;
+      return;
     }
 
     Mesh *mesh = static_cast<Mesh *>(geom);
 
     if (num_tessellation && mesh->need_tesselation()) {
-      string msg = "Tessellating ";
-      if (mesh->name.empty()) {
-        msg += string_printf("%u/%u", (uint)(i + 1), (uint)num_tessellation);
-      }
-      else {
-        msg += string_printf(
-            "%s %u/%u", mesh->name.c_str(), (uint)(i + 1), (uint)num_tessellation);
-      }
+      {
+        const thread_scoped_lock status_lock(status_mutex);
+        string msg = "Tessellating ";
+        if (mesh->name.empty()) {
+          msg += string_printf("%u/%u", (uint)(i + 1), (uint)num_tessellation);
+        }
+        else {
+          msg += string_printf(
+              "%s %u/%u", mesh->name.c_str(), (uint)(i + 1), (uint)num_tessellation);
+        }
 
-      progress.set_status("Updating Mesh", msg);
+        progress.set_status("Updating Mesh", msg);
+        i++;
+      }
 
       SubdParams subd_params(mesh);
       subd_params.dicing_rate = mesh->get_subd_dicing_rate();
@@ -801,8 +810,6 @@ void GeometryManager::device_update(Device *device,
       subd_params.camera = dicing_camera;
 
       mesh->tessellate(subd_params);
-
-      i++;
     }
 
     /* Apply generated attribute if needed or remove if not needed */
@@ -812,11 +819,7 @@ void GeometryManager::device_update(Device *device,
     if (!mesh->has_true_displacement()) {
       mesh->update_tangents(scene, false);
     }
-
-    if (progress.get_cancel()) {
-      return;
-    }
-  }
+  });
 
   if (progress.get_cancel()) {
     return;
@@ -952,9 +955,9 @@ void GeometryManager::device_update(Device *device,
         scene->update_stats->geometry.times.add_entry({"device_update (build object BVHs)", time});
       }
     });
-    TaskPool pool;
 
     /* Work around Embree/oneAPI bug #129596 with BVH updates. */
+    /* Also note the use of #bvh_task_pool_, see its definition for details. */
     const bool use_multithreaded_build = first_bvh_build ||
                                          !device->info.contains_device_type(DEVICE_ONEAPI);
     first_bvh_build = false;
@@ -962,33 +965,28 @@ void GeometryManager::device_update(Device *device,
     size_t i = 0;
     size_t num_bvh = 0;
     for (Geometry *geom : scene->geometry) {
-      if (geom->is_light()) {
-        continue;
-      }
-      if (!(geom->is_modified() || geom->need_update_bvh_for_offset)) {
-        continue;
-      }
+      if (geom->is_modified() || geom->need_update_bvh_for_offset) {
+        need_update_scene_bvh = true;
 
-      need_update_scene_bvh = true;
+        if (geom->need_build_bvh(bvh_layout)) {
+          i++;
+          num_bvh++;
+        }
 
-      if (geom->need_build_bvh(bvh_layout)) {
-        i++;
-        num_bvh++;
-      }
-
-      if (use_multithreaded_build) {
-        pool.push([geom, device, dscene, scene, &progress, i, &num_bvh] {
+        if (use_multithreaded_build) {
+          bvh_task_pool_.push([geom, device, dscene, scene, &progress, i, &num_bvh] {
+            geom->compute_bvh(device, dscene, &scene->params, &progress, i, num_bvh);
+          });
+        }
+        else {
           geom->compute_bvh(device, dscene, &scene->params, &progress, i, num_bvh);
-        });
-      }
-      else {
-        geom->compute_bvh(device, dscene, &scene->params, &progress, i, num_bvh);
+        }
       }
     }
 
     TaskPool::Summary summary;
-    pool.wait_work(&summary);
-    LOG_WORK << "Objects BVH build pool statistics:\n" << summary.full_report();
+    bvh_task_pool_.wait_work(&summary);
+    LOG_DEBUG << "Objects BVH build pool statistics:\n" << summary.full_report();
   }
 
   for (Shader *shader : scene->shaders) {

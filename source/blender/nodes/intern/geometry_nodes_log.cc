@@ -688,6 +688,7 @@ ValueLog *GeoTreeLog::find_socket_value_log(const bNodeSocket &query_socket)
   Stack<const bNodeSocket *> sockets_to_check;
   sockets_to_check.push(&query_socket);
   added_sockets.add(&query_socket);
+  const bNodeTree &tree = query_socket.owner_tree();
 
   while (!sockets_to_check.is_empty()) {
     const bNodeSocket &socket = *sockets_to_check.pop();
@@ -735,6 +736,16 @@ ValueLog *GeoTreeLog::find_socket_value_log(const bNodeSocket &query_socket)
             if (added_sockets.add(&from_socket)) {
               sockets_to_check.push(&from_socket);
             }
+          }
+        }
+      }
+      else if (node.is_group_input()) {
+        const int index = socket.index();
+        /* Check if the value is stored for any other group input node. */
+        for (const bNode *other_group_input : tree.group_input_nodes()) {
+          const bNodeSocket &other_socket = other_group_input->output_socket(index);
+          if (added_sockets.add(&other_socket)) {
+            sockets_to_check.push(&other_socket);
           }
         }
       }
@@ -907,7 +918,7 @@ Map<const bNodeTreeZone *, ComputeContextHash> GeoNodesLog::
 
 static GeoNodesLog *get_root_log(const SpaceNode &snode)
 {
-  switch (SpaceNodeGeometryNodesType(snode.geometry_nodes_type)) {
+  switch (SpaceNodeGeometryNodesType(snode.node_tree_sub_type)) {
     case SNODE_GEOMETRY_MODIFIER: {
       std::optional<ed::space_node::ObjectAndModifier> object_and_modifier =
           ed::space_node::get_modifier_for_node_editor(snode);
@@ -919,7 +930,7 @@ static GeoNodesLog *get_root_log(const SpaceNode &snode)
     case SNODE_GEOMETRY_TOOL: {
       const ed::geometry::GeoOperatorLog &log =
           ed::geometry::node_group_operator_static_eval_log();
-      if (snode.geometry_nodes_tool_tree->id.name + 2 != log.node_group_name) {
+      if (snode.selected_node_group->id.name + 2 != log.node_group_name) {
         return {};
       }
       return log.log.get();

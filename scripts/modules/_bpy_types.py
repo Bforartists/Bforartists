@@ -1558,7 +1558,7 @@ class HydraRenderEngine(RenderEngine):
 
     def get_render_settings(self, engine_type: str):
         """
-        Provide render settings for `HdRenderDelegate`.
+        Provide render settings for ``HdRenderDelegate``.
         """
         return {}
 
@@ -1620,10 +1620,55 @@ class GreasePencilDrawing(_StructRNA):
 
         .. note::
 
-            When point/curves count of a drawing is changed, the slice returned by this
-            call prior to the change is no longer valid. You need to get the new stroke
-            slice via `drawing.strokes[n]`.
+           When point/curves count of a drawing is changed, the slice returned by this
+           call prior to the change is no longer valid. You need to get the new stroke
+           slice via ``drawing.strokes[n]``.
         """
         from _bpy_internal.grease_pencil.stroke import GreasePencilStrokeSlice
         num_strokes = self.attributes.domain_size('CURVE')
         return GreasePencilStrokeSlice(self, 0, num_strokes)
+
+
+class Material(_types.ID):
+    __slots__ = ()
+
+    def inline_shader_nodes(self):
+        """
+        Get the inlined shader nodes of this material. This preprocesses the node tree
+        to remove nested groups, repeat zones and more.
+
+        :return: The inlined shader nodes.
+        :rtype: :class:`bpy.types.InlineShaderNodes`
+        """
+        from bpy.types import InlineShaderNodes
+        return InlineShaderNodes.from_material(self)
+
+
+class Light(_types.ID):
+    __slots__ = ()
+
+    def inline_shader_nodes(self):
+        """
+        Get the inlined shader nodes of this light. This preprocesses the node tree
+        to remove nested groups, repeat zones and more.
+
+        :return: The inlined shader nodes.
+        :rtype: :class:`bpy.types.InlineShaderNodes`
+        """
+        from bpy.types import InlineShaderNodes
+        return InlineShaderNodes.from_light(self)
+
+
+class World(_types.ID):
+    __slots__ = ()
+
+    def inline_shader_nodes(self):
+        """
+        Get the inlined shader nodes of this world. This preprocesses the node tree
+        to remove nested groups, repeat zones and more.
+
+        :return: The inlined shader nodes.
+        :rtype: :class:`bpy.types.InlineShaderNodes`
+        """
+        from bpy.types import InlineShaderNodes
+        return InlineShaderNodes.from_world(self)

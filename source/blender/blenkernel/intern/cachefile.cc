@@ -140,6 +140,7 @@ IDTypeInfo IDType_ID_CF = {
     /*foreach_id*/ nullptr,
     /*foreach_cache*/ nullptr,
     /*foreach_path*/ cache_file_foreach_path,
+    /*foreach_working_space_color*/ nullptr,
     /*owner_pointer_get*/ nullptr,
 
     /*blend_write*/ cache_file_blend_write,
@@ -410,19 +411,6 @@ double BKE_cachefile_frame_offset(const CacheFile *cache_file, const double time
   const double time_offset = double(cache_file->frame_offset);
   const double frame = cache_file->override_frame ? double(cache_file->frame) : time;
   return cache_file->is_sequence ? frame : frame - time_offset;
-}
-
-bool BKE_cache_file_uses_render_procedural(const CacheFile *cache_file, Scene *scene)
-{
-  RenderEngineType *render_engine_type = RE_engines_find(scene->r.engine);
-
-  if (cache_file->type != CACHEFILE_TYPE_ALEMBIC ||
-      !RE_engine_supports_alembic_procedural(render_engine_type, scene))
-  {
-    return false;
-  }
-
-  return cache_file->use_render_procedural;
 }
 
 CacheFileLayer *BKE_cachefile_add_layer(CacheFile *cache_file, const char filepath[1024])

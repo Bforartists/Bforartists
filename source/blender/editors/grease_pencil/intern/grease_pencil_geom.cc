@@ -103,8 +103,8 @@ Array<float2> polyline_fit_curve(Span<float2> points,
   corner_mask.to_indices(indices.as_mutable_span());
   uint *indicies_ptr = corner_mask.is_empty() ? nullptr : reinterpret_cast<uint *>(indices.data());
 
-  float *r_cubic_array;
-  uint r_cubic_array_len;
+  float *cubic_array;
+  uint cubic_array_len;
   int error = curve_fit_cubic_to_points_fl(*points.data(),
                                            points.size(),
                                            2,
@@ -112,8 +112,8 @@ Array<float2> polyline_fit_curve(Span<float2> points,
                                            CURVE_FIT_CALC_HIGH_QUALIY,
                                            indicies_ptr,
                                            indices.size(),
-                                           &r_cubic_array,
-                                           &r_cubic_array_len,
+                                           &cubic_array,
+                                           &cubic_array_len,
                                            nullptr,
                                            nullptr,
                                            nullptr);
@@ -123,15 +123,14 @@ Array<float2> polyline_fit_curve(Span<float2> points,
     return {};
   }
 
-  if (r_cubic_array == nullptr) {
+  if (cubic_array == nullptr) {
     return {};
   }
 
-  Span<float2> r_cubic_array_span(reinterpret_cast<float2 *>(r_cubic_array),
-                                  r_cubic_array_len * 3);
-  Array<float2> curve_positions(r_cubic_array_span);
+  Span<float2> cubic_array_span(reinterpret_cast<float2 *>(cubic_array), cubic_array_len * 3);
+  Array<float2> curve_positions(cubic_array_span);
   /* Free the c-style array. */
-  free(r_cubic_array);
+  free(cubic_array);
   return curve_positions;
 }
 
@@ -148,8 +147,8 @@ IndexMask polyline_detect_corners(Span<float2> points,
   if (points.size() == 1) {
     return IndexMask::from_indices<int>({0}, memory);
   }
-  uint *r_corners;
-  uint r_corner_len;
+  uint *corners;
+  uint corners_len;
   const int error = curve_fit_corners_detect_fl(*points.data(),
                                                 points.size(),
                                                 float2::type_length,
@@ -157,22 +156,22 @@ IndexMask polyline_detect_corners(Span<float2> points,
                                                 radius_max,
                                                 samples_max,
                                                 angle_threshold,
-                                                &r_corners,
-                                                &r_corner_len);
+                                                &corners,
+                                                &corners_len);
   if (error != 0) {
     /* Error occurred, return. */
     return IndexMask();
   }
 
-  if (r_corners == nullptr) {
+  if (corners == nullptr) {
     return IndexMask();
   }
 
   BLI_assert(samples_max < std::numeric_limits<int>::max());
-  Span<int> indices(reinterpret_cast<int *>(r_corners), r_corner_len);
+  Span<int> indices(reinterpret_cast<int *>(corners), corners_len);
   const IndexMask corner_mask = IndexMask::from_indices<int>(indices, memory);
   /* Free the c-style array. */
-  free(r_corners);
+  free(corners);
   return corner_mask;
 }
 
@@ -751,14 +750,11 @@ bke::CurvesGeometry create_curves_outline(const bke::greasepencil::Drawing &draw
       "material_index", bke::AttrDomain::Curve, 0);
 
   /* Transform positions and radii. */
-  const float scale = math::average(math::to_scale(transform));
   Array<float3> transformed_positions(src_positions.size());
+  math::transform_points(src_positions, transform, transformed_positions);
+
   Array<float> transformed_radii(src_radii.size());
-  threading::parallel_for(transformed_positions.index_range(), 4096, [&](const IndexRange range) {
-    for (const int i : range) {
-      transformed_positions[i] = math::transform_point(transform, src_positions[i]);
-    }
-  });
+  const float scale = math::average(math::to_scale(transform));
   threading::parallel_for(transformed_radii.index_range(), 4096, [&](const IndexRange range) {
     for (const int i : range) {
       transformed_radii[i] = src_radii[i] * scale;
@@ -794,9 +790,8 @@ bke::CurvesGeometry create_curves_outline(const bke::greasepencil::Drawing &draw
                               data.point_indices);
 
     /* Transform perimeter positions back into object space. */
-    for (float3 &pos : data.positions.as_mutable_span().drop_front(prev_point_num)) {
-      pos = math::transform_point(transform_inv, pos);
-    }
+    math::transform_points(transform_inv,
+                           data.positions.as_mutable_span().drop_front(prev_point_num));
 
     data.curve_indices.append_n_times(curve_i, data.point_counts.size() - prev_curve_num);
   });

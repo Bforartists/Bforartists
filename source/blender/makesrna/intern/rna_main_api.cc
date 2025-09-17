@@ -179,36 +179,34 @@ static void rna_Main_scenes_remove(
   if (BKE_scene_can_be_removed(bmain, scene)) {
     Scene *scene_new = static_cast<Scene *>(scene->id.prev ? scene->id.prev : scene->id.next);
     if (do_unlink) {
-      wmWindow *win = CTX_wm_window(C);
+      /* Don't rely on `CTX_wm_window(C)` as it may have been cleared,
+       * yet windows may still be open that reference this scene. */
+      wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+        if (WM_window_get_active_scene(win) == scene) {
+#  ifdef WITH_PYTHON
+          BPy_BEGIN_ALLOW_THREADS;
+#  endif
 
-      if (WM_window_get_active_scene(win) == scene) {
+          WM_window_set_active_scene(bmain, C, win, scene_new);
 
+#  ifdef WITH_PYTHON
+          BPy_END_ALLOW_THREADS;
+#  endif
+        }
+      }
+      if (CTX_data_scene(C) == scene) {
 #  ifdef WITH_PYTHON
         BPy_BEGIN_ALLOW_THREADS;
 #  endif
 
-        WM_window_set_active_scene(bmain, C, win, scene_new);
+        CTX_data_scene_set(C, scene_new);
 
 #  ifdef WITH_PYTHON
         BPy_END_ALLOW_THREADS;
 #  endif
       }
     }
-    /*############## BFA - 3D Sequencer ##############*/
-    /* Clear sequencer scene overrides using this scene. */
-    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
-      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
-        LISTBASE_FOREACH (SpaceLink *, space, &area->spacedata) {
-          if (space->spacetype == SPACE_SEQ) {
-            SpaceSeq *seq = (SpaceSeq *)space;
-            if (seq->scene_override == scene) {
-              seq->scene_override = NULL;
-            }
-          }
-        }
-      }
-    }
-    /*############## BFA - 3D Sequencer END ##############*/
     rna_Main_ID_remove(bmain, reports, scene_ptr, do_unlink, true, true);
   }
   else {
@@ -264,12 +262,15 @@ static Material *rna_Main_materials_new(Main *bmain, const char *name)
   char safe_name[MAX_ID_NAME - 2];
   rna_idname_validate(name, safe_name);
 
-  ID *id = (ID *)BKE_material_add(bmain, safe_name);
-  id_us_min(id);
+  Material *material = BKE_material_add(bmain, safe_name);
+  id_us_min(&material->id);
+
+  material->nodetree = blender::bke::node_tree_add_tree_embedded(
+      bmain, &material->id, "Material Node Tree", "ShaderNodeTree");
 
   WM_main_add_notifier(NC_ID | NA_ADDED, nullptr);
 
-  return (Material *)id;
+  return material;
 }
 
 static void rna_Main_materials_gpencil_data(Main * /*bmain*/, PointerRNA *id_ptr)

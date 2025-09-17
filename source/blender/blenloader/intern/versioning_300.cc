@@ -145,7 +145,9 @@ static void version_idproperty_move_data_int(IDPropertyUIDataInt *ui_data,
     if (default_value->type == IDP_ARRAY) {
       if (default_value->subtype == IDP_INT) {
         ui_data->default_array = MEM_malloc_arrayN<int>(size_t(default_value->len), __func__);
-        memcpy(ui_data->default_array, IDP_Array(default_value), sizeof(int) * default_value->len);
+        memcpy(ui_data->default_array,
+               IDP_array_int_get(default_value),
+               sizeof(int) * default_value->len);
         ui_data->default_array_len = default_value->len;
       }
     }
@@ -191,14 +193,16 @@ static void version_idproperty_move_data_float(IDPropertyUIDataFloat *ui_data,
       ui_data->default_array_len = array_len;
       if (default_value->subtype == IDP_FLOAT) {
         ui_data->default_array = MEM_malloc_arrayN<double>(size_t(array_len), __func__);
-        const float *old_default_array = static_cast<const float *>(IDP_Array(default_value));
+        const float *old_default_array = IDP_array_float_get(default_value);
         for (int i = 0; i < ui_data->default_array_len; i++) {
           ui_data->default_array[i] = double(old_default_array[i]);
         }
       }
       else if (default_value->subtype == IDP_DOUBLE) {
         ui_data->default_array = MEM_malloc_arrayN<double>(size_t(array_len), __func__);
-        memcpy(ui_data->default_array, IDP_Array(default_value), sizeof(double) * array_len);
+        memcpy(ui_data->default_array,
+               IDP_array_double_get(default_value),
+               sizeof(double) * array_len);
       }
     }
     else if (ELEM(default_value->type, IDP_DOUBLE, IDP_FLOAT)) {
@@ -212,7 +216,7 @@ static void version_idproperty_move_data_string(IDPropertyUIDataString *ui_data,
 {
   IDProperty *default_value = IDP_GetPropertyFromGroup(prop_ui_data, "default");
   if (default_value != nullptr && default_value->type == IDP_STRING) {
-    ui_data->default_value = BLI_strdup(IDP_String(default_value));
+    ui_data->default_value = BLI_strdup(IDP_string_get(default_value));
   }
 }
 
@@ -242,7 +246,7 @@ static void version_idproperty_ui_data(IDProperty *idprop_group)
 
     IDProperty *subtype = IDP_GetPropertyFromGroup(prop_ui_data, "subtype");
     if (subtype != nullptr && subtype->type == IDP_STRING) {
-      const char *subtype_string = IDP_String(subtype);
+      const char *subtype_string = IDP_string_get(subtype);
       int result = PROP_NONE;
       RNA_enum_value_from_id(rna_enum_property_subtype_items, subtype_string, &result);
       ui_data->rna_subtype = result;
@@ -250,7 +254,7 @@ static void version_idproperty_ui_data(IDProperty *idprop_group)
 
     IDProperty *description = IDP_GetPropertyFromGroup(prop_ui_data, "description");
     if (description != nullptr && description->type == IDP_STRING) {
-      ui_data->description = BLI_strdup(IDP_String(description));
+      ui_data->description = BLI_strdup(IDP_string_get(description));
     }
 
     /* Type specific data. */
@@ -499,7 +503,7 @@ static bool do_versions_sequencer_color_tags(Strip *strip, void * /*user_data*/)
 static bool do_versions_sequencer_color_balance_sop(Strip *strip, void * /*user_data*/)
 {
   LISTBASE_FOREACH (StripModifierData *, smd, &strip->modifiers) {
-    if (smd->type == seqModifierType_ColorBalance) {
+    if (smd->type == eSeqModifierType_ColorBalance) {
       StripColorBalance *cb = &((ColorBalanceModifierData *)smd)->color_balance;
       cb->method = SEQ_COLOR_BALANCE_METHOD_LIFTGAMMAGAIN;
       for (int i = 0; i < 3; i++) {
@@ -1754,8 +1758,8 @@ static bool version_merge_still_offsets(Strip *strip, void * /*user_data*/)
 static bool version_set_seq_single_frame_content(Strip *strip, void * /*user_data*/)
 {
   if ((strip->len == 1) &&
-      (strip->type == STRIP_TYPE_IMAGE || ((strip->type & STRIP_TYPE_EFFECT) &&
-                                           blender::seq::effect_get_num_inputs(strip->type) == 0)))
+      (strip->type == STRIP_TYPE_IMAGE ||
+       (strip->is_effect() && blender::seq::effect_get_num_inputs(strip->type) == 0)))
   {
     strip->flag |= SEQ_SINGLE_FRAME_CONTENT;
   }
@@ -3424,16 +3428,6 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
       }
       blender::seq::channels_ensure(&ed->channels);
       blender::seq::for_each_callback(&scene->ed->seqbase, strip_meta_channels_ensure, nullptr);
-
-      ed->displayed_channels = &ed->channels;
-
-      ListBase *previous_channels = &ed->channels;
-      LISTBASE_FOREACH (MetaStack *, ms, &ed->metastack) {
-        ms->old_channels = previous_channels;
-        previous_channels = &ms->parent_strip->channels;
-        /* If `MetaStack` exists, active channels must point to last link. */
-        ed->displayed_channels = &ms->parent_strip->channels;
-      }
     }
   }
 

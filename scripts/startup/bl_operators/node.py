@@ -303,7 +303,7 @@ class NodeAddZoneOperator(NodeAddOperator):
         input_node.location -= Vector(self.offset)
         output_node.location += Vector(self.offset)
 
-        if self.add_default_geometry_link:
+        if tree.type == "GEOMETRY" and self.add_default_geometry_link:
             # Connect geometry sockets by default if available.
             # Get the sockets by their types, because the name is not guaranteed due to i18n.
             from_socket = next(s for s in input_node.outputs if s.type == 'GEOMETRY')
@@ -392,6 +392,12 @@ class NODE_OT_tree_path_parent(Operator):
     bl_label = "Parent Node Tree"
     bl_options = {'REGISTER', 'UNDO'}
 
+    parent_tree_index: IntProperty(
+        name="Parent Index",
+        description="Parent index in context path",
+        default=0,
+    )
+
     @classmethod
     def poll(cls, context):
         space = context.space_data
@@ -401,7 +407,9 @@ class NODE_OT_tree_path_parent(Operator):
     def execute(self, context):
         space = context.space_data
 
-        space.path.pop()
+        parent_number_to_pop = len(space.path) - 1 - self.parent_tree_index
+        for _ in range(parent_number_to_pop):
+            space.path.pop()
 
         return {'FINISHED'}
 
@@ -424,15 +432,18 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def get_items(_self, context):
-        snode = context.space_data
-        tree = snode.edit_tree
-        interface = tree.interface
-
         items = [
             ('INPUT', "Input", ""),
             ('OUTPUT', "Output", ""),
             ('PANEL', "Panel", ""),
         ]
+
+        if context is None:
+            return items
+
+        snode = context.space_data
+        tree = snode.edit_tree
+        interface = tree.interface
 
         active_item = interface.active
         # Panels have the extra option to add a toggle.
@@ -922,7 +933,7 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
 
 
 class NODE_OT_viewer_shortcut_set(Operator):
-    """Create a compositor viewer shortcut for the selected node by pressing ctrl+1,2,..9"""
+    """Create a viewer shortcut for the selected node by pressing ctrl+1,2,..9"""
     bl_idname = "node.viewer_shortcut_set"
     bl_label = "Fast Preview"
     bl_options = {'REGISTER', 'UNDO'}
@@ -990,7 +1001,7 @@ class NODE_OT_viewer_shortcut_set(Operator):
 
 
 class NODE_OT_viewer_shortcut_get(Operator):
-    """Activate a specific compositor viewer node using 1,2,..,9 keys"""
+    """Toggle a specific viewer node using 1,2,..,9 keys"""
     bl_idname = "node.viewer_shortcut_get"
     bl_label = "Fast Preview"
     bl_options = {'REGISTER', 'UNDO'}
@@ -1024,7 +1035,7 @@ class NODE_OT_viewer_shortcut_get(Operator):
             return {'CANCELLED'}
 
         with bpy.context.temp_override(node=viewer_node):
-            bpy.ops.node.activate_viewer()
+            bpy.ops.node.toggle_viewer()
 
         return {'FINISHED'}
 

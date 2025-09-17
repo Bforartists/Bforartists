@@ -8,15 +8,15 @@
 
 #include <algorithm>
 
-#include "BKE_idprop.hh"
-#include "BLI_listbase.h"
-#include "BLI_utildefines.h"
-
 /* allow readfile to use deprecated functionality */
 #define DNA_DEPRECATED_ALLOW
 
 /* Define macros in `DNA_genfile.h`. */
 #define DNA_GENFILE_VERSIONING_MACROS
+
+#include "BKE_idprop.hh"
+#include "BLI_listbase.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_brush_types.h"
@@ -842,7 +842,7 @@ static const char *node_get_static_idname(int type, int treetype)
         return "CompositorNodeLumaMatte";
       case CMP_NODE_BRIGHTCONTRAST:
         return "CompositorNodeBrightContrast";
-      case CMP_NODE_GAMMA:
+      case CMP_NODE_GAMMA_DEPRECATED:
         return "CompositorNodeGamma";
       case CMP_NODE_INVERT:
         return "CompositorNodeInvert";
@@ -1143,7 +1143,7 @@ static bool strip_colorbalance_update_cb(Strip *strip, void * /*user_data*/)
 
   if (data && data->color_balance_legacy) {
     StripModifierData *smd = blender::seq::modifier_new(
-        strip, nullptr, seqModifierType_ColorBalance);
+        strip, nullptr, eSeqModifierType_ColorBalance);
     ColorBalanceModifierData *cbmd = (ColorBalanceModifierData *)smd;
 
     cbmd->color_balance = *data->color_balance_legacy;
@@ -1564,7 +1564,7 @@ void blo_do_versions_260(FileData *fd, Library * /*lib*/, Main *bmain)
         ToolSettings *ts = scene->toolsettings;
         UnifiedPaintSettings *ups = &ts->unified_paint_settings;
         ups->size = ts->sculpt_paint_unified_size;
-        ups->unprojected_radius = ts->sculpt_paint_unified_unprojected_radius;
+        ups->unprojected_size = ts->sculpt_paint_unified_unprojected_radius;
         ups->alpha = ts->sculpt_paint_unified_alpha;
         ups->flag = ts->sculpt_paint_settings;
       }
@@ -2229,10 +2229,6 @@ void blo_do_versions_260(FileData *fd, Library * /*lib*/, Main *bmain)
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed) {
         blender::seq::for_each_callback(&scene->ed->seqbase, strip_set_alpha_mode_cb, nullptr);
-      }
-
-      if (scene->r.bake_samples == 0) {
-        scene->r.bake_samples = 256;
       }
     }
 

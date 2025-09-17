@@ -9,6 +9,7 @@
 #include <cstring>
 
 #include "BLI_listbase.h"
+#include "BLI_math_constants.h"
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 
@@ -125,6 +126,8 @@ static wmOperatorStatus volume_import_exec(bContext *C, wmOperator *op)
     BKE_volume_unload(volume);
 
     imported = true;
+
+    BLI_freelistN(&range->frames);
   }
   BLI_freelistN(&ranges);
 

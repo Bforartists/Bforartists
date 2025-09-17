@@ -24,7 +24,7 @@ class DOPESHEET_PT_Sequence(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        return get_sync_settings().enabled
+        return get_sync_settings().is_sync()
 
     def draw(self, context: bpy.types.Context):
         self.layout.prop(
@@ -119,30 +119,41 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
+    @classmethod
+    def poll(cls, context):
+        return get_sync_settings().sync_mode == "LEGACY"
+
     def draw(self, context):
         self.layout.use_property_split = True
         self.layout.use_property_decorate = False
 
         master_scene = get_sync_settings().master_scene
 
-        self.layout.prop(
-            context.window_manager.timeline_sync_settings,
-            "master_scene",
-            text="Master Scene:",
-            icon="SEQ_STRIP_DUPLICATE",
-        )
+        if not master_scene:
+            return
+
+        # Master Scene prop
+        row = self.layout.row(align=True)
+        row.label(text="Synchronization Timeline:")
+        self.layout.prop(context.window_manager.timeline_sync_settings, "master_scene", text="", icon="SEQ_STRIP_DUPLICATE",)
 
         if (
             not master_scene
             or not master_scene.sequence_editor
-            or not master_scene.sequence_editor.sequences
+            or not master_scene.sequence_editor.strips
         ):
-            self.layout.label(text="Set the Master Scene to sync from Sequencer", icon="QUESTION")
+            # Button to set pinned scene as master
+            row = self.layout.row(align=True)
+            row.operator("sequencer.set_master_scene", text="Use Pinned Scene", icon="PINNED")
+
+            self.layout.label(text="Set the Timeline", icon="QUESTION")
+            self.layout.label(text="to sync from Sequencer", icon="NONE")
             return
 
         self.layout.label(text="Sequencer Scene Strips:")
         # Draw scene lists in the master sequence.
-        self.draw_shots_list(context, master_scene.sequence_editor)
+        if master_scene.sequence_editor:
+            self.draw_shots_list(context, master_scene.sequence_editor)
         # Draw active scene details if any.
         if strip := get_sync_master_strip(use_cache=True)[0]:
             self.draw_shot_strip(context, strip)
@@ -153,7 +164,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
             SEQUENCE_UL_shot.bl_idname,
             "",
             sed,
-            "sequences",
+            "strips",
             context.window_manager.sequence_settings,
             "shot_active_index",
             type="DEFAULT",
@@ -221,6 +232,7 @@ class VIEW3D_PT_sequence(bpy.types.Panel):
         if strip_cam:
             row.operator("object.select_camera", icon="RESTRICT_SELECT_OFF", text="")
             row.operator("sequence.active_shot_camera_none", icon="X", text="")
+
 
 
 class PROPERTIES_PT_obj_users_scene_check(bpy.types.Panel):

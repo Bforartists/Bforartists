@@ -1260,6 +1260,7 @@ context_type_map = {
     "selected_visible_actions": [("Action", True)],
     "selected_visible_fcurves": [("FCurve", True)],
     "sequences": [("Strip", True)],
+    "sequencer_scene": [("Scene", False)],
     "strips": [("Strip", True)],
     "soft_body": [("SoftBodyModifier", False)],
     "speaker": [("Speaker", False)],
@@ -1268,6 +1269,7 @@ context_type_map = {
     "texture_slot": [("TextureSlot", False)],
     "texture_user": [("ID", False)],
     "texture_user_property": [("Property", False)],
+    "tool_settings": [("ToolSettings", False)],
     "ui_list": [("UIList", False)],
     "vertex_paint_object": [("Object", False)],
     "view_layer": [("ViewLayer", False)],
@@ -1741,7 +1743,7 @@ def pyrna2sphinx(basepath):
                     if not descr:
                         descr = prop.name
                     # In rare cases `descr` may be empty.
-                    fw("         `{:s}`, {:s}\n\n".format(
+                    fw("         ``{:s}``, {:s}\n\n".format(
                         prop.identifier,
                         ", ".join((val for val in (descr, type_descr) if val))
                     ))
@@ -2187,6 +2189,24 @@ def write_rst_geometry_set(basepath):
     EXAMPLE_SET_USED.add("bpy.types.GeometrySet")
 
 
+def write_rst_inline_shader_nodes(basepath):
+    """
+    Write the RST files for ``bpy.types.InlineShaderNodes``.
+    """
+    if 'bpy.types.InlineShaderNodes' in EXCLUDE_MODULES:
+        return
+
+    # Write the index.
+    filepath = os.path.join(basepath, "bpy.types.InlineShaderNodes.rst")
+    with open(filepath, "w", encoding="utf-8") as fh:
+        fw = fh.write
+        fw(title_string("InlineShaderNodes", "="))
+        write_example_ref("", fw, "bpy.types.InlineShaderNodes")
+        pyclass2sphinx(fw, "bpy.types", "InlineShaderNodes", bpy.types.InlineShaderNodes, False)
+
+    EXAMPLE_SET_USED.add("bpy.types.InlineShaderNodes")
+
+
 def write_rst_msgbus(basepath):
     """
     Write the RST files of ``bpy.msgbus`` module
@@ -2539,6 +2559,7 @@ def rna2sphinx(basepath):
     write_rst_ops_index(basepath)           # `bpy.ops`.
     write_rst_msgbus(basepath)              # `bpy.msgbus`.
     write_rst_geometry_set(basepath)        # `bpy.types.GeometrySet`.
+    write_rst_inline_shader_nodes(basepath)  # `bpy.types.InlineShaderNodes`.
     pyrna2sphinx(basepath)                  # `bpy.types.*` & `bpy.ops.*`.
     write_rst_data(basepath)                # `bpy.data`.
     write_rst_importable_modules(basepath)

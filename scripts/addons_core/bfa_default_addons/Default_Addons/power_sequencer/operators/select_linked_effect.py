@@ -27,9 +27,9 @@ class POWER_SEQUENCER_OT_select_linked_effect(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def execute(self, context):
-        for s in find_linked(context, context.sequences, context.selected_sequences):
+        for s in find_linked(context, context.strips, context.selected_strips):
             s.select = True
         return {"FINISHED"}

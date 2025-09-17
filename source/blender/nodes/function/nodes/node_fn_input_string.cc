@@ -24,8 +24,14 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::String>("String").custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     PropertyRNA *prop = RNA_struct_find_property(&params.node_ptr, "string");
-    params.layout.prop(
-        &params.node_ptr, prop, -1, 0, UI_ITEM_NONE, "", ICON_NONE, IFACE_("String"));
+    params.layout.prop(&params.node_ptr,
+                       prop,
+                       -1,
+                       0,
+                       UI_ITEM_R_SPLIT_EMPTY_NAME,
+                       "",
+                       ICON_NONE,
+                       IFACE_("String"));
   });
 }
 
@@ -107,6 +113,7 @@ static void node_register()
 
   fn_node_type_base(&ntype, "FunctionNodeInputString", FN_NODE_INPUT_STRING);
   ntype.ui_name = "String";
+  ntype.ui_description = "Provide a string value that can be connected to other nodes in the tree";
   ntype.enum_name_legacy = "INPUT_STRING";
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = node_declare;

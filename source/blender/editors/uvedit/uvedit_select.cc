@@ -5479,14 +5479,18 @@ static wmOperatorStatus uv_select_similar_exec(bContext *C, wmOperator *op)
 
 static EnumPropertyItem uv_select_similar_type_items[] = {
     {UV_SSIM_PIN, "PIN", 0, "Pinned", ""},
-    {UV_SSIM_LENGTH_UV, "LENGTH", 0, "Length", ""},
-    {UV_SSIM_LENGTH_3D, "LENGTH_3D", 0, "Length 3D", ""},
-    {UV_SSIM_AREA_UV, "AREA", 0, "Area", ""},
-    {UV_SSIM_AREA_3D, "AREA_3D", 0, "Area 3D", ""},
+    {UV_SSIM_LENGTH_UV, "LENGTH", 0, "Length", "Edge length in UV space"},
+    {UV_SSIM_LENGTH_3D, "LENGTH_3D", 0, "Length 3D", "Length of edge in 3D space"},
+    {UV_SSIM_AREA_UV, "AREA", 0, "Area", "Face area in UV space"},
+    {UV_SSIM_AREA_3D, "AREA_3D", 0, "Area 3D", "Area of face in 3D space"},
     {UV_SSIM_MATERIAL, "MATERIAL", 0, "Material", ""},
     {UV_SSIM_OBJECT, "OBJECT", 0, "Object", ""},
     {UV_SSIM_SIDES, "SIDES", 0, "Polygon Sides", ""},
-    {UV_SSIM_WINDING, "WINDING", 0, "Winding", ""},
+    {UV_SSIM_WINDING,
+     "WINDING",
+     0,
+     "Winding",
+     "Face direction defined by (clockwise or anti-clockwise winding (facing up or facing down)"},
     {UV_SSIM_FACE, "FACE", 0, "Amount of Faces in Island", ""},
     {0}};
 
@@ -5916,6 +5920,40 @@ void UV_OT_select_mode(wmOperatorType *ot)
   ot->prop = prop = RNA_def_enum(
       ot->srna, "type", rna_enum_mesh_select_mode_uv_items, 0, "Type", "");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+}
+
+static wmOperatorStatus uv_custom_region_set_exec(bContext *C, wmOperator *op)
+{
+  const Scene *scene = CTX_data_scene(C);
+  const ARegion *region = CTX_wm_region(C);
+  ToolSettings *ts = scene->toolsettings;
+
+  WM_operator_properties_border_to_rctf(op, &ts->uv_custom_region);
+  UI_view2d_region_to_view_rctf(&region->v2d, &ts->uv_custom_region, &ts->uv_custom_region);
+  ts->uv_flag |= UV_FLAG_CUSTOM_REGION;
+
+  return OPERATOR_FINISHED;
+}
+
+void UV_OT_custom_region_set(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Set User Region";
+  ot->description = "Set the boundaries of the user region";
+  ot->idname = "UV_OT_custom_region_set";
+
+  /* API callbacks. */
+  ot->invoke = WM_gesture_box_invoke;
+  ot->exec = uv_custom_region_set_exec;
+  ot->modal = WM_gesture_box_modal;
+  ot->poll = ED_operator_uvedit_space_image;
+  ot->cancel = WM_gesture_box_cancel;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* properties */
+  WM_operator_properties_gesture_box(ot);
 }
 
 /** \} */

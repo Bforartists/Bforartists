@@ -316,7 +316,6 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_ambient_occlusion_lib.glsl
   engines/eevee/shaders/eevee_ambient_occlusion_pass_comp.glsl
   engines/eevee/shaders/eevee_attributes_curves_lib.glsl
-  engines/eevee/shaders/eevee_attributes_gpencil_lib.glsl
   engines/eevee/shaders/eevee_attributes_mesh_lib.glsl
   engines/eevee/shaders/eevee_attributes_pointcloud_lib.glsl
   engines/eevee/shaders/eevee_attributes_volume_lib.glsl
@@ -369,11 +368,12 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_film_pass_convert_comp.glsl
   engines/eevee/shaders/eevee_filter_lib.glsl
   engines/eevee/shaders/eevee_forward_lib.glsl
-  engines/eevee/shaders/eevee_gbuffer_lib.glsl
   engines/eevee/shaders/eevee_gbuffer_closure_test.glsl
+  engines/eevee/shaders/eevee_gbuffer_lib.glsl
   engines/eevee/shaders/eevee_gbuffer_normal_test.glsl
+  engines/eevee/shaders/eevee_gbuffer_read_lib.glsl
+  engines/eevee/shaders/eevee_gbuffer_write_lib.glsl
   engines/eevee/shaders/eevee_geom_curves_vert.glsl
-  engines/eevee/shaders/eevee_geom_gpencil_vert.glsl
   engines/eevee/shaders/eevee_geom_mesh_vert.glsl
   engines/eevee/shaders/eevee_geom_pointcloud_vert.glsl
   engines/eevee/shaders/eevee_geom_volume_vert.glsl
@@ -492,6 +492,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_surfel_ray_comp.glsl
   engines/eevee/shaders/eevee_thickness_lib.glsl
   engines/eevee/shaders/eevee_transparency_lib.glsl
+  engines/eevee/shaders/eevee_utility_tx_lib.glsl
   engines/eevee/shaders/eevee_velocity_lib.glsl
   engines/eevee/shaders/eevee_vertex_copy_comp.glsl
   engines/eevee/shaders/eevee_volume_integration_comp.glsl
@@ -499,8 +500,25 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_volume_resolve_frag.glsl
   engines/eevee/shaders/eevee_volume_scatter_comp.glsl
 
+  engines/eevee/eevee_camera_shared.hh
   engines/eevee/eevee_defines.hh
-  engines/eevee/eevee_shader_shared.hh
+  engines/eevee/eevee_debug_shared.hh
+  engines/eevee/eevee_depth_of_field_shared.hh
+  engines/eevee/eevee_film_shared.hh
+  engines/eevee/eevee_hizbuffer_shared.hh
+  engines/eevee/eevee_light_shared.hh
+  engines/eevee/eevee_lightprobe_shared.hh
+  engines/eevee/eevee_motion_blur_shared.hh
+  engines/eevee/eevee_precompute_shared.hh
+  engines/eevee/eevee_raytrace_shared.hh
+  engines/eevee/eevee_renderbuffers_shared.hh
+  engines/eevee/eevee_sampling_shared.hh
+  engines/eevee/eevee_shadow_shared.hh
+  engines/eevee/eevee_subsurface_shared.hh
+  engines/eevee/eevee_transform.hh
+  engines/eevee/eevee_uniform_shared.hh
+  engines/eevee/eevee_velocity_shared.hh
+  engines/eevee/eevee_volume_shared.hh
 
   engines/workbench/shaders/workbench_cavity_lib.glsl
   engines/workbench/shaders/workbench_common_lib.glsl
@@ -555,8 +573,11 @@ set(GLSL_SRC
   intern/shaders/draw_debug_draw_lib.glsl
   intern/shaders/draw_debug_shape_lib.glsl
   intern/shaders/draw_fxaa_lib.glsl
+  intern/shaders/draw_curves_interpolation_comp.glsl
+  intern/shaders/draw_curves_length_intercept_comp.glsl
   intern/shaders/draw_curves_lib.glsl
-  intern/shaders/draw_hair_refine_comp.glsl
+  intern/shaders/draw_curves_test.glsl
+  intern/shaders/draw_curves_topology_comp.glsl
   intern/shaders/draw_shape_lib.glsl
   intern/shaders/draw_command_generate_comp.glsl
   intern/shaders/draw_debug_draw_display_frag.glsl
@@ -574,7 +595,9 @@ set(GLSL_SRC
   intern/shaders/draw_view_reconstruction_lib.glsl
   intern/shaders/draw_visibility_comp.glsl
 
+  intern/draw_attribute_shader_shared.hh
   intern/draw_command_shared.hh
+  intern/draw_curves_defines.hh
   intern/draw_defines.hh
   intern/draw_pointcloud_private.hh
   intern/draw_shader_shared.hh
@@ -828,6 +851,7 @@ add_library(bf::draw ALIAS bf_draw)
 if(WITH_GTESTS)
   if(WITH_GPU_DRAW_TESTS)
     set(TEST_SRC
+      tests/draw_curves_test.cc
       tests/draw_pass_test.cc
       tests/draw_testing.cc
       tests/eevee_test.cc

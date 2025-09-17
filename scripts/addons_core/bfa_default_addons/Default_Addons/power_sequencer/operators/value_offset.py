@@ -65,7 +65,7 @@ class POWER_SEQUENCER_OT_value_offset(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.selected_sequences
+        return context.selected_strips
 
     def invoke(self, context, event):
         self.offset = abs(self.offset)

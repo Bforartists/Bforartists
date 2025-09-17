@@ -46,6 +46,7 @@
 #include "SEQ_effects.hh"
 #include "SEQ_iterator.hh"
 #include "SEQ_modifier.hh"
+#include "SEQ_preview_cache.hh"
 #include "SEQ_proxy.hh"
 #include "SEQ_relations.hh"
 #include "SEQ_retiming.hh"
@@ -62,7 +63,7 @@
 #include "cache/final_image_cache.hh"
 #include "cache/intra_frame_cache.hh"
 #include "cache/source_image_cache.hh"
-#include "modifier.hh"
+#include "modifiers/modifier.hh"
 #include "prefetch.hh"
 #include "sequencer.hh"
 #include "utils.hh"
@@ -155,10 +156,10 @@ Strip *strip_alloc(ListBase *lb, int timeline_frame, int channel, int type)
   strip->speed_factor = 1.0f;
 
   if (strip->type == STRIP_TYPE_ADJUSTMENT) {
-    strip->blend_mode = STRIP_TYPE_CROSS;
+    strip->blend_mode = STRIP_BLEND_CROSS;
   }
   else {
-    strip->blend_mode = STRIP_TYPE_ALPHAOVER;
+    strip->blend_mode = STRIP_BLEND_ALPHAOVER;
   }
 
   strip->data = seq_strip_alloc(type);
@@ -187,7 +188,7 @@ static void seq_strip_free_ex(Scene *scene,
 
   relations_strip_free_anim(strip);
 
-  if (strip->type & STRIP_TYPE_EFFECT) {
+  if (strip->is_effect()) {
     EffectHandle sh = strip_effect_handle_get(strip);
     sh.free(strip, do_id_user);
   }
@@ -276,7 +277,7 @@ void seq_free_strip_recurse(Scene *scene, Strip *strip, const bool do_id_user)
 
 Editing *editing_get(const Scene *scene)
 {
-  return scene->ed;
+  return scene ? scene->ed : nullptr;
 }
 
 Editing *editing_ensure(Scene *scene)
@@ -285,11 +286,9 @@ Editing *editing_ensure(Scene *scene)
     Editing *ed;
 
     ed = scene->ed = MEM_callocN<Editing>("addseq");
-    ed->seqbasep = &ed->seqbase;
     ed->cache_flag = (SEQ_CACHE_PREFETCH_ENABLE | SEQ_CACHE_STORE_FINAL_OUT | SEQ_CACHE_STORE_RAW);
     ed->show_missing_media_flag = SEQ_EDIT_SHOW_MISSING_MEDIA;
-    ed->displayed_channels = &ed->channels;
-    channels_ensure(ed->displayed_channels);
+    channels_ensure(&ed->channels);
   }
 
   return scene->ed;
@@ -312,11 +311,12 @@ void editing_free(Scene *scene, const bool do_id_user)
 
   BLI_freelistN(&ed->metastack);
   strip_lookup_free(ed);
-  blender::seq::media_presence_free(scene);
-  blender::seq::thumbnail_cache_destroy(scene);
-  blender::seq::intra_frame_cache_destroy(scene);
-  blender::seq::source_image_cache_destroy(scene);
-  blender::seq::final_image_cache_destroy(scene);
+  seq::media_presence_free(scene);
+  seq::thumbnail_cache_destroy(scene);
+  seq::intra_frame_cache_destroy(scene);
+  seq::source_image_cache_destroy(scene);
+  seq::final_image_cache_destroy(scene);
+  seq::preview_cache_destroy(scene);
   channels_free(&ed->channels);
 
   MEM_freeN(ed);
@@ -326,7 +326,7 @@ void editing_free(Scene *scene, const bool do_id_user)
 
 static void seq_new_fix_links_recursive(Strip *strip, blender::Map<Strip *, Strip *> strip_map)
 {
-  if (strip->type & STRIP_TYPE_EFFECT) {
+  if (strip->is_effect()) {
     strip->input1 = strip_map.lookup_default(strip->input1, strip->input1);
     strip->input2 = strip_map.lookup_default(strip->input2, strip->input2);
   }
@@ -356,7 +356,7 @@ SequencerToolSettings *tool_settings_init()
   tool_settings->snap_mode = SEQ_SNAP_TO_STRIPS | SEQ_SNAP_TO_CURRENT_FRAME |
                              SEQ_SNAP_TO_STRIP_HOLD | SEQ_SNAP_TO_MARKERS | SEQ_SNAP_TO_RETIMING |
                              SEQ_SNAP_TO_PREVIEW_BORDERS | SEQ_SNAP_TO_PREVIEW_CENTER |
-                             SEQ_SNAP_TO_STRIPS_PREVIEW;
+                             SEQ_SNAP_TO_STRIPS_PREVIEW | SEQ_SNAP_TO_FRAME_RANGE;
   tool_settings->snap_distance = 15;
   tool_settings->overlap_mode = SEQ_OVERLAP_SHUFFLE;
   tool_settings->pivot_point = V3D_AROUND_LOCAL_ORIGINS;
@@ -424,16 +424,7 @@ int tool_settings_pivot_point_get(Scene *scene)
 
 ListBase *active_seqbase_get(const Editing *ed)
 {
-  if (ed == nullptr) {
-    return nullptr;
-  }
-
-  return ed->seqbasep;
-}
-
-void active_seqbase_set(Editing *ed, ListBase *seqbase)
-{
-  ed->seqbasep = seqbase;
+  return ed ? ed->current_strips() : nullptr;
 }
 
 static MetaStack *seq_meta_stack_alloc(const Scene *scene, Strip *strip_meta)
@@ -445,9 +436,7 @@ static MetaStack *seq_meta_stack_alloc(const Scene *scene, Strip *strip_meta)
   ms->parent_strip = strip_meta;
 
   /* Reference to previously displayed timeline data. */
-  Strip *higher_level_meta = lookup_meta_by_strip(ed, strip_meta);
-  ms->oldbasep = higher_level_meta ? &higher_level_meta->seqbase : &ed->seqbase;
-  ms->old_channels = higher_level_meta ? &higher_level_meta->channels : &ed->channels;
+  ms->old_strip = lookup_meta_by_strip(ed, strip_meta);
 
   ms->disp_range[0] = time_left_handle_frame_get(scene, ms->parent_strip);
   ms->disp_range[1] = time_right_handle_frame_get(scene, ms->parent_strip);
@@ -477,13 +466,10 @@ void meta_stack_set(const Scene *scene, Strip *dst)
       seq_meta_stack_alloc(scene, meta_parent);
     }
 
-    active_seqbase_set(ed, &dst->seqbase);
-    channels_displayed_set(ed, &dst->channels);
+    ed->current_meta_strip = dst;
   }
   else {
-    /* Go to top level, exiting meta strip. */
-    active_seqbase_set(ed, &ed->seqbase);
-    channels_displayed_set(ed, &ed->channels);
+    ed->current_meta_strip = nullptr;
   }
 }
 
@@ -491,8 +477,7 @@ Strip *meta_stack_pop(Editing *ed)
 {
   MetaStack *ms = meta_stack_active_get(ed);
   Strip *meta_parent = ms->parent_strip;
-  active_seqbase_set(ed, ms->oldbasep);
-  channels_displayed_set(ed, ms->old_channels);
+  ed->current_meta_strip = ms->old_strip;
   BLI_remlink(&ed->metastack, ms);
   MEM_freeN(ms);
   return meta_parent;
@@ -611,7 +596,7 @@ static Strip *strip_duplicate(Main *bmain,
   else if (strip->type == STRIP_TYPE_IMAGE) {
     strip_new->data->stripdata = static_cast<StripElem *>(MEM_dupallocN(strip->data->stripdata));
   }
-  else if (strip->type & STRIP_TYPE_EFFECT) {
+  else if (strip->is_effect()) {
     EffectHandle sh;
     sh = strip_effect_handle_get(strip);
     if (sh.copy) {
@@ -920,7 +905,7 @@ static bool strip_read_data_cb(Strip *strip, void *user_data)
 
   BLO_read_struct(reader, Stereo3dFormat, &strip->stereo3d_format);
 
-  if (strip->type & STRIP_TYPE_EFFECT) {
+  if (strip->is_effect()) {
     strip->runtime.flag |= STRIP_EFFECT_NOT_LOADED;
   }
 
@@ -1158,28 +1143,46 @@ void eval_strips(Depsgraph *depsgraph, Scene *scene, ListBase *seqbase)
   edit_update_muting(scene->ed);
   sound_update_bounds_all(scene);
 }
-/*############## BFA - 3D Sequencer ##############*/
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Scene override functions
- * \{ */
-
-Scene *get_ref_scene_for_notifiers(const bContext *C)
-{
-  SpaceSeq *seq = CTX_wm_space_seq(C);
-  if (seq != nullptr && seq->scene_override != nullptr) {
-    /* Passing nullptr in the reference of `WM_event_add_notifier` will not restrict the update to one
-     * particular scene/screen. This needs to be done because when the notifiers are evaluated, the
-     * current scene is always expected to be the active scene in the window. In the case of an
-     * override, passing the overriden scene as a reference to the notifier will no longer cause
-     * updates. So we need to update everything for this to work. */
-    return nullptr;
-  }
-  return CTX_data_scene(C);
-}
-
-/** \} */
-/*############## BFA - 3D Sequencer END ##############*/
 
 }  // namespace blender::seq
+
+ListBase *Editing::current_strips()
+{
+  if (this->current_meta_strip) {
+    return &this->current_meta_strip->seqbase;
+  }
+  return &this->seqbase;
+}
+
+ListBase *Editing::current_strips() const
+{
+  if (this->current_meta_strip) {
+    return &this->current_meta_strip->seqbase;
+  }
+  /* NOTE: Const correctness is non-existent with ListBase anyway. */
+  return &const_cast<ListBase &>(this->seqbase);
+}
+
+ListBase *Editing::current_channels()
+{
+  if (this->current_meta_strip) {
+    return &this->current_meta_strip->channels;
+  }
+  return &this->channels;
+}
+
+ListBase *Editing::current_channels() const
+{
+  if (this->current_meta_strip) {
+    return &this->current_meta_strip->channels;
+  }
+  /* NOTE: Const correctness is non-existent with ListBase anyway. */
+  return &const_cast<ListBase &>(this->channels);
+}
+
+bool Strip::is_effect() const
+{
+  return (this->type >= STRIP_TYPE_CROSS && this->type <= STRIP_TYPE_OVERDROP_REMOVED) ||
+         (this->type >= STRIP_TYPE_WIPE && this->type <= STRIP_TYPE_ADJUSTMENT) ||
+         (this->type >= STRIP_TYPE_GAUSSIAN_BLUR && this->type <= STRIP_TYPE_COLORMIX);
+}

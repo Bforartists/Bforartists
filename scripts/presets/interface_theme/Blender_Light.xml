@@ -383,18 +383,67 @@
         </wcol_tab>
       </ThemeUserInterface>
     </user_interface>
+    <regions>
+      <ThemeRegions>
+        <asset_shelf>
+          <ThemeRegionsAssetShelf
+            back="#999999ff"
+            header_back="#adadadff"
+            >
+          </ThemeRegionsAssetShelf>
+        </asset_shelf>
+        <channels>
+          <ThemeRegionsChannels
+            back="#adadad"
+            text="#050505"
+            text_selected="#ffffff"
+            >
+          </ThemeRegionsChannels>
+        </channels>
+        <scrubbing>
+          <ThemeRegionsScrubbing
+            back="#808080E6"
+            text="#272727"
+            time_marker="#00000060"
+            time_marker_selected="#ffffff60"
+            >
+          </ThemeRegionsScrubbing>
+        </scrubbing>
+        <sidebars>
+          <ThemeRegionsSidebars
+            back="#b3b3b300"
+            tab_back="#b3b3b300"
+            >
+          </ThemeRegionsSidebars>
+        </sidebars>
+      </ThemeRegions>
+    </regions>
     <common>
       <ThemeCommon>
         <anim>
           <ThemeCommonAnim
             playhead="#5680c2"
             preview_range="#a14d0066"
-            time_marker="#00000060"
-            time_marker_selected="#ffffff60"
-            channel="#2e639924"
-            channel_sub="#7aa4cc24"
+            channels="#2e639924"
+            channels_sub="#7aa4cc24"
             channel_group="#278c0e37"
             channel_group_active="#4eb33555"
+            channel="#999999ff"
+            channels_selected="#60c04044"
+            keyframe="#e8e8e8"
+            keyframe_selected="#ffbe33"
+            keyframe_extreme="#e8b3cc"
+            keyframe_extreme_selected="#f28080"
+            keyframe_breakdown="#b3dbe8"
+            keyframe_breakdown_selected="#54bfed"
+            keyframe_jitter="#94e575"
+            keyframe_jitter_selected="#61c042"
+            keyframe_moving_hold="#5c5656"
+            keyframe_moving_hold_selected="#ffaf23"
+            keyframe_generated="#a7a7a7"
+            keyframe_generated_selected="#c4a05f"
+            long_key="#1a151580"
+            long_key_selected="#ff8c00cc"
             >
           </ThemeCommonAnim>
         </anim>
@@ -431,7 +480,6 @@
         text_grease_pencil="#b5e61d"
         object_selected="#f15800"
         object_active="#ffaa40"
-        text_keyframe="#ddd700"
         camera="#000000"
         empty="#000000"
         light="#00000028"
@@ -447,7 +495,6 @@
         edge_sharp="#00ffff"
         edge_crease="#cc0099"
         edge_bevel="#00a5ff"
-        edge_facesel="#4b4b4b"
         freestyle_edge_mark="#7fff7f"
         face="#00000012"
         face_select="#ffa30033"
@@ -463,7 +510,6 @@
         nurb_sel_uline="#f0ff40"
         nurb_sel_vline="#f090a0"
         act_spline="#db2512"
-        lastsel_point="#ffffff"
         extra_edge_len="#ff6149"
         extra_edge_angle="#cccc00"
         extra_face_angle="#b3b3ff"
@@ -489,13 +535,6 @@
         outline_width="1"
         object_origin_size="6"
         >
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
         <space>
           <ThemeSpaceGradient
             title="#000000"
@@ -520,16 +559,10 @@
     <graph_editor>
       <ThemeGraphEditor
         grid="#5e5e5e"
-        time_scrub_background="#808080e6"
-        window_sliders="#969696"
-        channels_region="#999999"
         vertex="#000000"
         vertex_select="#ff8500"
         vertex_active="#ffffff"
         vertex_size="6"
-        vertex_bevel="#000000"
-        vertex_unreferenced="#000000"
-        lastsel_point="#ffffff"
         >
         <space>
           <ThemeSpaceGeneric
@@ -543,22 +576,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_list>
-          <ThemeSpaceListGeneric
-            list="#adadad"
-            list_title="#000000"
-            list_text="#050505"
-            list_text_hi="#ffffff"
-            >
-          </ThemeSpaceListGeneric>
-        </space_list>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeGraphEditor>
     </graph_editor>
     <file_browser>
@@ -578,20 +595,11 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeFileBrowser>
     </file_browser>
     <nla_editor>
       <ThemeNLAEditor
         grid="#5e5e5e"
-        view_sliders="#969696"
-        nla_track="#424242"
         active_action="#cc701a66"
         active_action_unset="#9987614d"
         strips="#0c0a0a"
@@ -606,7 +614,6 @@
         tweak_duplicate="#d90000"
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
-        time_scrub_background="#808080e6"
         >
         <space>
           <ThemeSpaceGeneric
@@ -620,46 +627,11 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_list>
-          <ThemeSpaceListGeneric
-            list="#adadad"
-            list_title="#000000"
-            list_text="#000000"
-            list_text_hi="#ffffff"
-            >
-          </ThemeSpaceListGeneric>
-        </space_list>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeNLAEditor>
     </nla_editor>
     <dopesheet_editor>
       <ThemeDopeSheet
         grid="#4d4d4d"
-        time_scrub_background="#808080e6"
-        value_sliders="#000000"
-        view_sliders="#969696"
-        channels="#707070ff"
-        channels_selected="#60c04044"
-        long_key="#1a151580"
-        long_key_selected="#ff8c00cc"
-        keyframe="#e8e8e8"
-        keyframe_selected="#ffbe33"
-        keyframe_extreme="#e8b3cc"
-        keyframe_extreme_selected="#f28080"
-        keyframe_breakdown="#b3dbe8"
-        keyframe_breakdown_selected="#54bfed"
-        keyframe_jitter="#94e575"
-        keyframe_jitter_selected="#61c042"
-        keyframe_movehold="#5c5656"
-        keyframe_movehold_selected="#ffaf23"
-        keyframe_generated="#a7a7a7"
-        keyframe_generated_selected="#c4a05f"
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
         keyframe_scale_factor="1"
@@ -679,22 +651,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_list>
-          <ThemeSpaceListGeneric
-            list="#adadad"
-            list_title="#000000"
-            list_text="#000000"
-            list_text_hi="#ffffff"
-            >
-          </ThemeSpaceListGeneric>
-        </space_list>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeDopeSheet>
     </dopesheet_editor>
     <image_editor>
@@ -703,17 +659,11 @@
         vertex="#000000"
         vertex_select="#ff8500"
         vertex_size="3"
-        vertex_bevel="#000000"
-        vertex_unreferenced="#000000"
         face="#ffffff0a"
         face_select="#ff85003c"
         face_mode_select="#00000000"
         face_dot="#ff8500"
         facedot_size="3"
-        freestyle_face_mark="#7fff7f33"
-        face_retopology="#50c8ff1e"
-        face_back="#ff0000b3"
-        face_front="#0000ffb3"
         editmesh_active="#ffffff40"
         wire_edit="#c0c0c0"
         edge_width="1"
@@ -743,19 +693,11 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeImageEditor>
     </image_editor>
     <sequence_editor>
       <ThemeSequenceEditor
         grid="#404040"
-        window_sliders="#a0a0a0"
         movie_strip="#4d6890"
         movieclip_strip="#8f4c4c"
         image_strip="#8f744b"
@@ -769,18 +711,6 @@
         text_strip="#824c8f"
         active_strip="#ffffff"
         selected_strip="#ff6a00"
-        time_scrub_background="#292929e6"
-        keyframe="#ff8500"
-        keyframe_selected="#ffbe33"
-        keyframe_breakdown="#b3dbe8"
-        keyframe_breakdown_selected="#54bfed"
-        keyframe_movehold="#808080"
-        keyframe_movehold_selected="#ffaf23"
-        keyframe_generated="#585858"
-        keyframe_generated_selected="#a28962"
-        keyframe_border="#000000ff"
-        keyframe_border_selected="#000000ff"
-        draw_action="#50c8ff"
         preview_back="#000000"
         metadatabg="#000000"
         metadatatext="#ffffff"
@@ -800,22 +730,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_list>
-          <ThemeSpaceListGeneric
-            list="#b3b3b3"
-            list_title="#747474"
-            list_text="#333333"
-            list_text_hi="#747474"
-            >
-          </ThemeSpaceListGeneric>
-        </space_list>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeSequenceEditor>
     </sequence_editor>
     <properties>
@@ -835,13 +749,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#303030ff"
-            tab_back="#a6a6a6ff"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeProperties>
     </properties>
     <text_editor>
@@ -871,13 +778,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeTextEditor>
     </text_editor>
     <node_editor>
@@ -888,7 +788,6 @@
         wire="#1a1a1aff"
         wire_inner="#8d8d8d"
         wire_select="#ffffffb3"
-        selected_text="#7f7f7f"
         node_backdrop="#666666ff"
         converter_node="#4482a3"
         color_node="#8e8e3f"
@@ -907,8 +806,6 @@
         texture_node="#99673d"
         shader_node="#4c864c"
         script_node="#405c5c"
-        pattern_node="#6c696f"
-        layout_node="#6c696f"
         geometry_node="#3d937e"
         attribute_node="#001566"
         simulation_zone="#66416233"
@@ -928,13 +825,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeNodeEditor>
     </node_editor>
     <outliner>
@@ -1003,13 +893,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemePreferences>
     </preferences>
     <console>
@@ -1048,12 +931,8 @@
         path_after="#0000ff"
         path_keyframe_before="#ffc4c4"
         path_keyframe_after="#c4c4ff"
-        time_scrub_background="#292929e6"
-        strips="#0c0a0a"
-        strips_selected="#ff8c00"
         metadatabg="#000000"
         metadatatext="#ffffff"
-        preview_range="#a14d0066"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1067,22 +946,6 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_list>
-          <ThemeSpaceListGeneric
-            list="#666666"
-            list_title="#000000"
-            list_text="#000000"
-            list_text_hi="#ffffff"
-            >
-          </ThemeSpaceListGeneric>
-        </space_list>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeClipEditor>
     </clip_editor>
     <topbar>
@@ -1133,22 +996,8 @@
             >
           </ThemeSpaceGeneric>
         </space>
-        <space_region>
-          <ThemeSpaceRegionGeneric
-            button="#b3b3b300"
-            tab_back="#b3b3b300"
-            >
-          </ThemeSpaceRegionGeneric>
-        </space_region>
       </ThemeSpreadsheet>
     </spreadsheet>
-    <asset_shelf>
-      <ThemeAssetShelf
-        header_back="#adadadff"
-        back="#999999ff"
-        >
-      </ThemeAssetShelf>
-    </asset_shelf>
     <bone_color_sets>
       <ThemeBoneColorSet
         normal="#9a0000"

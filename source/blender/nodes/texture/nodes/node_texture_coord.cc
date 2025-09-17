@@ -36,6 +36,7 @@ void register_node_type_tex_coord()
 
   tex_node_type_base(&ntype, "TextureNodeCoordinates", TEX_NODE_COORD);
   ntype.ui_name = "Coordinates";
+  ntype.ui_description = "Output the local geometry coordinates, relative to the bounding box";
   ntype.enum_name_legacy = "COORD";
   ntype.nclass = NODE_CLASS_INPUT;
   blender::bke::node_type_socket_templates(&ntype, nullptr, outputs);

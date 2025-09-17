@@ -480,7 +480,7 @@ static void create_trans_seq_clamp_data(TransInfo *t, const Scene *scene)
 
   VectorSet<Strip *> strips = seq::query_selected_strips(seq::active_seqbase_get(ed));
   for (Strip *strip : strips) {
-    if (!(strip->type & STRIP_TYPE_EFFECT) || seq::effect_get_num_inputs(strip->type) == 0) {
+    if (!strip->is_effect() || seq::effect_get_num_inputs(strip->type) == 0) {
       continue;
     }
     /* If there is an effect strip with no inputs selected, prevent any x-direction movement,
@@ -560,9 +560,12 @@ static void create_trans_seq_clamp_data(TransInfo *t, const Scene *scene)
   }
 }
 
-static void createTransSeqData(bContext * /*C*/, TransInfo *t)
+static void createTransSeqData(bContext *C, TransInfo *t)
 {
-  Scene *scene = CTX_data_sequencer_scene(t->context);
+  Scene *scene = CTX_data_sequencer_scene(C);
+  if (!scene) {
+    return;
+  }
   Editing *ed = seq::editing_get(scene);
   TransData *td = nullptr;
   TransData2D *td2d = nullptr;
@@ -586,7 +589,7 @@ static void createTransSeqData(bContext * /*C*/, TransInfo *t)
   tc->custom.type.free_cb = freeSeqData;
   t->frame_side = transform_convert_frame_side_dir_get(t, float(scene->r.cfra));
 
-  count = SeqTransCount(t, ed->seqbasep);
+  count = SeqTransCount(t, ed->current_strips());
 
   /* Allocate memory for data. */
   tc->data_len = count;
@@ -615,7 +618,7 @@ static void createTransSeqData(bContext * /*C*/, TransInfo *t)
   ts->initial_v2d_cur = t->region->v2d.cur;
 
   /* Loop 2: build transdata array. */
-  SeqToTransData_build(t, ed->seqbasep, td, td2d, tdsq);
+  SeqToTransData_build(t, ed->current_strips(), td, td2d, tdsq);
 
   create_trans_seq_clamp_data(t, scene);
 
@@ -705,7 +708,7 @@ static void flushTransSeq(TransInfo *t)
     if (tdsq->sel_flag & SEQ_RIGHTSEL) {
       strip->runtime.flag &= ~STRIP_CLAMPED_RH;
     }
-    if (!seq::transform_single_image_check(strip) && !(strip->type & STRIP_TYPE_EFFECT)) {
+    if (!seq::transform_single_image_check(strip) && !strip->is_effect()) {
       if (offset_clamped[0] > offset[0] && new_frame == seq::time_start_frame_get(strip)) {
         strip->runtime.flag |= STRIP_CLAMPED_LH;
       }

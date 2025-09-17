@@ -142,7 +142,6 @@ static void get_element_operation_type(
       case ID_SPK:
       case ID_MA:
       case ID_TE:
-      case ID_IP:
       case ID_IM:
       case ID_SO:
       case ID_KE:
@@ -440,6 +439,10 @@ static void unlink_object_fn(bContext *C,
                              TreeStoreElem *tselem)
 {
   if (tsep && tsep->id) {
+
+    if (!TSE_IS_REAL_ID(tsep)) {
+      return;
+    }
     Main *bmain = CTX_data_main(C);
     Object *ob = (Object *)tselem->id;
     const eSpaceOutliner_Mode outliner_mode = eSpaceOutliner_Mode(
@@ -2219,7 +2222,7 @@ static void sequence_fn(int event, TreeElement *te, TreeStoreElem * /*tselem*/, 
   Strip *strip = &te_strip->get_strip();
   Scene *scene = (Scene *)scene_ptr;
   Editing *ed = seq::editing_get(scene);
-  if (BLI_findindex(ed->seqbasep, strip) != -1) {
+  if (BLI_findindex(ed->current_strips(), strip) != -1) {
     if (event == OL_DOP_SELECT) {
       vse::select_strip_single(scene, strip, true);
     }
@@ -3593,9 +3596,9 @@ static wmOperatorStatus outliner_data_operation_exec(bContext *C, wmOperator *op
       break;
     }
     case TSE_STRIP: {
-      Scene *scene = CTX_data_scene(C);
-      outliner_do_data_operation(space_outliner, datalevel, event, sequence_fn, scene);
-      WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
+      Scene *sequencer_scene = CTX_data_sequencer_scene(C);
+      outliner_do_data_operation(space_outliner, datalevel, event, sequence_fn, sequencer_scene);
+      WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, sequencer_scene);
       ED_undo_push(C, "Sequencer operation");
 
       break;
