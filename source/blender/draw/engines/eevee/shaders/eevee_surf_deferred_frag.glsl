@@ -63,9 +63,6 @@ void write_header_data(int2 texel, int layer, uint data)
 
 void main()
 {
-  /* Clear AOVs first. In case the material renders to them. */
-  clear_aovs();
-
   init_globals();
 
   float noise = utility_tx_fetch(utility_tx, gl_FragCoord.xy, UTIL_BLUE_NOISE_LAYER).r;
@@ -172,10 +169,8 @@ void main()
 #if defined(GBUFFER_HAS_REFRACTION) || defined(GBUFFER_HAS_SUBSURFACE) || \
     defined(GBUFFER_HAS_TRANSLUCENT)
   if (flag_test(gbuf.used_layers, ADDITIONAL_DATA)) {
-    /* NOTE: The image view covers layers starting from layer 1 (and not layer 0). */
-    write_normal_data(out_texel,
-                      GBUF_NORMAL_FB_LAYER_COUNT + imageSize(out_gbuf_normal_img).z - 1,
-                      gbuf.additional_info);
+    write_normal_data(
+        out_texel, uniform_buf.pipeline.gbuffer_additional_data_layer_id, gbuf.additional_info);
   }
 #endif
 
