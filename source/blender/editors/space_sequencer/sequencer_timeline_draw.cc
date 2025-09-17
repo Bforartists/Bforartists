@@ -1826,11 +1826,13 @@ static void draw_timeline_grid(TimelineDrawContext *ctx)
   {
     return;
   }
-
-  U.v2d_min_gridsize *= 3;
-  UI_view2d_draw_lines_x__discrete_frames_or_seconds(
-      ctx->v2d, ctx->scene, (ctx->sseq->flag & SEQ_DRAWFRAMES) == 0, false);
-  U.v2d_min_gridsize /= 3;
+  /* BFA - added scene context to make the timeline grid draw more robust when switching to the Sequencer editor*/
+  if (ctx->scene) {
+    U.v2d_min_gridsize *= 3;
+    UI_view2d_draw_lines_x__discrete_frames_or_seconds(
+        ctx->v2d, ctx->scene, (ctx->sseq->flag & SEQ_DRAWFRAMES) == 0, false);
+    U.v2d_min_gridsize /= 3;
+  }
 }
 
 static void draw_timeline_markers(TimelineDrawContext *ctx)
