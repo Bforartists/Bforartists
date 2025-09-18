@@ -379,6 +379,7 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(view, "show_statusbar_memory", text="System Memory")
         flow.prop(view, "show_statusbar_vram", text="Video Memory")
         flow.prop(view, "show_extensions_updates", text="Extensions Updates")
+        flow.prop(view, "show_statusbar_blender_version", text="Base Blender Version")  # BFA
         flow.prop(view, "show_statusbar_version", text="Bforartists Version")  # BFA - not Blender
 
 
