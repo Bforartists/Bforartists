@@ -468,6 +468,7 @@ if(WITH_BLENDER)
       cone
       connected
       console
+      convolve
       constraint
       constraint_bone
       constraint_data

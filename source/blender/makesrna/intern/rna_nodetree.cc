@@ -9787,7 +9787,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeColorCorrection", nullptr, ICON_NODE_COLORCORRECTION);
   define(brna, "CompositorNode", "CompositorNodeColorMatte", nullptr, ICON_COLOR);
   define(brna, "CompositorNode", "CompositorNodeColorSpill", nullptr, ICON_NODE_SPILL);
-  define(brna, "CompositorNode", "CompositorNodeConvolve", nullptr, ICON_NONE);
+  define(brna, "CompositorNode", "CompositorNodeConvolve", nullptr, ICON_CONVOLVE);
   define(brna, "CompositorNode", "CompositorNodeCombHSVA", nullptr, ICON_NODE_COMBINEHSV);
   define(brna, "CompositorNode", "CompositorNodeCombineColor", def_cmp_combsep_color, ICON_COMBINE_COLOR);
   define(brna, "CompositorNode", "CompositorNodeCombRGBA", nullptr, ICON_NODE_COMBINERGB);
