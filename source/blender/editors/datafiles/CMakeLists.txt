@@ -469,6 +469,7 @@ if(WITH_BLENDER)
       connected
       console
       convolve
+      convert_to_display
       constraint
       constraint_bone
       constraint_data

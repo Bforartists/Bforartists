@@ -774,14 +774,15 @@ class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodePremulKey", pad=11),
-            OperatorEntry("ShaderNodeBlackbody", pad=18),
-            OperatorEntry("ShaderNodeValToRGB", pad=16),
-            OperatorEntry("CompositorNodeConvertColorSpace", pad=2),
-            OperatorEntry("CompositorNodeSetAlpha", pad=20),
+            OperatorEntry("CompositorNodePremulKey", pad=13),
+            OperatorEntry("ShaderNodeBlackbody", pad=20),
+            OperatorEntry("ShaderNodeValToRGB", pad=18),
+            OperatorEntry("CompositorNodeConvertColorSpace", pad=3),
+            OperatorEntry("CompositorNodeConvertToDisplay", pad=5),
+            OperatorEntry("CompositorNodeSetAlpha", pad=21),
             Separator,
-            OperatorEntry("CompositorNodeInvert", pad=15),
-            OperatorEntry("CompositorNodeRGBToBW", pad=17),
+            OperatorEntry("CompositorNodeInvert", pad=16),
+            OperatorEntry("CompositorNodeRGBToBW", pad=18),
         )
 
         self.draw_entries(context, layout, entries)
