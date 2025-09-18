@@ -867,7 +867,7 @@ class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeAntiAliasing", pad=1),
-            OperatorEntry("CompositorNodeConvolve", pad=10),
+            OperatorEntry("CompositorNodeConvolve", pad=7),
             OperatorEntry("CompositorNodeDenoise", pad=9),
             OperatorEntry("CompositorNodeDespeckle", pad=5),
             Separator,
