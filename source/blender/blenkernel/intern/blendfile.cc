@@ -1311,10 +1311,16 @@ static void handle_subversion_warning(Main *main, BlendFileReadReport *reports)
   if (main->versionfile > BLENDER_FILE_VERSION || (main->versionfile == BLENDER_FILE_VERSION &&
                                                    main->subversionfile > BLENDER_FILE_SUBVERSION))
   {
+    // bfa add version
+    char writer_ver_str[12];
+    BKE_bforartists_version_blendfile_string_from_blender(
+        writer_ver_str, sizeof(writer_ver_str), main->versionfile, true);
     BKE_reportf(reports->reports,
                 RPT_WARNING,
-                "File written by newer Blender binary (%d.%d), expect loss of data!",
-                main->versionfile,
+                "File written by newer Bforartists %s (Blender %d.%d sub %d), expect loss of data!",
+                writer_ver_str,
+                main->versionfile / 100,
+                main->versionfile % 100,
                 main->subversionfile);
   }
 }

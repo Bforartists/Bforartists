@@ -6059,6 +6059,12 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
   }
   layout->prop(
       &ptr, "show_extensions_updates", UI_ITEM_NONE, IFACE_("Extensions Updates"), ICON_NONE);
+  // bfa show base blender version
+  layout->prop(&ptr,
+               "show_statusbar_blender_version",
+               UI_ITEM_NONE,
+               IFACE_("Base Blender Version"),
+               ICON_NONE);
   layout->prop(&ptr,
                "show_statusbar_version",
                UI_ITEM_NONE,
