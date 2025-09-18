@@ -1339,7 +1339,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
             if brush.use_pressure_size:
                 layout.template_curve_mapping(brush, "curve_size", brush=True)
         if size_mode:
-            layout.row().prop(size_owner, "use_locked_size", expand=False)  # BFA
+            layout.row().prop(size_owner, "use_locked_size", expand=True)
             layout.separator()
 
     if strength:
