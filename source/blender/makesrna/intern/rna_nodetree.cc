@@ -9787,14 +9787,14 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeColorCorrection", nullptr, ICON_NODE_COLORCORRECTION);
   define(brna, "CompositorNode", "CompositorNodeColorMatte", nullptr, ICON_COLOR);
   define(brna, "CompositorNode", "CompositorNodeColorSpill", nullptr, ICON_NODE_SPILL);
-  define(brna, "CompositorNode", "CompositorNodeConvolve", nullptr, ICON_NONE);
+  define(brna, "CompositorNode", "CompositorNodeConvolve", nullptr, ICON_CONVOLVE);
   define(brna, "CompositorNode", "CompositorNodeCombHSVA", nullptr, ICON_NODE_COMBINEHSV);
   define(brna, "CompositorNode", "CompositorNodeCombineColor", def_cmp_combsep_color, ICON_COMBINE_COLOR);
   define(brna, "CompositorNode", "CompositorNodeCombRGBA", nullptr, ICON_NODE_COMBINERGB);
   define(brna, "CompositorNode", "CompositorNodeCombYCCA", def_cmp_ycc, ICON_NODE_COMBINEYCBCRA);
   define(brna, "CompositorNode", "CompositorNodeCombYUVA", nullptr, ICON_NODE_COMBINEYUVA);
   define(brna, "CompositorNode", "CompositorNodeConvertColorSpace", def_cmp_convert_color_space, ICON_COLOR_SPACE);
-  define(brna, "CompositorNode", "CompositorNodeConvertToDisplay", def_cmp_convert_to_display, ICON_NONE);
+  define(brna, "CompositorNode", "CompositorNodeConvertToDisplay", def_cmp_convert_to_display, ICON_CONVERT_TO_DISPLAY);
   define(brna, "CompositorNode", "CompositorNodeCornerPin", nullptr, ICON_NODE_CORNERPIN);
   define(brna, "CompositorNode", "CompositorNodeCrop", nullptr, ICON_NODE_CROP);
   define(brna, "CompositorNode", "CompositorNodeCryptomatte", def_cmp_cryptomatte_legacy, ICON_CRYPTOMATTE);
