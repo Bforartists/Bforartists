@@ -530,8 +530,8 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
       }
       char status_info_d_txt[256];
       SNPRINTF(status_info_d_txt,
-             RPT_("Blender version: %s sub %s"), 
-             BKE_blender_version_string_compact(), 
+             RPT_("Blender Version: %s sub %s"),
+             BKE_blender_version_string(),
              BKE_bforartists_sub_version_string()
       );
       row->label(status_info_d_txt, ICON_NONE);
