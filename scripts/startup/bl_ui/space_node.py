@@ -157,10 +157,11 @@ class NODE_HT_header(Header):
                     'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD',
                 }
 
-                if snode_id:
-                    row = layout.row()
-                    if ob_type not in types_that_support_material:
-                        row.prop(snode_id, "use_nodes")
+                ## BFA - moved below to a different solution
+                #if snode_id:
+                #    row = layout.row()
+                #    if ob_type not in types_that_support_material:
+                #        row.prop(snode_id, "use_nodes")
 
                 layout.separator_spacer()
 
@@ -299,25 +300,27 @@ class NODE_HT_header(Header):
         # -------------------- BFA - use nodes ---------------------------
 
         if snode.tree_type == 'ShaderNodeTree':
+            ob = context.object
+            ob_type = ob.type if ob else None
+            
+            types_that_support_material = {
+                'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD',
+            }
 
-            if snode.shader_type == 'OBJECT' and ob:
+            if snode.shader_type == 'OBJECT':
+                if snode_id and ob:
+                    # No shader nodes for Eevee lights
+                    if not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
+                        row = layout.row()
+                        if ob_type not in types_that_support_material:
+                            row.prop(snode_id, "use_nodes")
 
-                # No shader nodes for Eevee lights
-                if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
+            elif snode.shader_type == 'LINESTYLE':
+                if lineset is not None and snode_id:
                     row = layout.row()
                     row.prop(snode_id, "use_nodes")
 
-            if snode.shader_type == 'LINESTYLE':
-
-                if lineset is not None:
-
-                    if snode_id:
-                        row = layout.row()
-                        row.prop(snode_id, "use_nodes")
-
-
         elif snode.tree_type == 'TextureNodeTree':
-
             if snode_id:
                 layout.prop(snode_id, "use_nodes")
 
