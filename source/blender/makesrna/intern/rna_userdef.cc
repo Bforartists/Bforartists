@@ -4241,11 +4241,11 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
 {
   StructRNA *srna;
   PropertyRNA *prop;
-
+  /*BFA - icons were added here*/
   static const EnumPropertyItem active_theme_area[] = {
       {0, "USER_INTERFACE", ICON_WORKSPACE, "User Interface", ""},
       {19, "STYLE", ICON_FONTPREVIEW, "Text Style", ""},
-      {26, "REGIONS", ICON_NONE, "Regions", ""},
+      {26, "REGIONS", ICON_TOPBAR, "Regions", ""},
       {25, "COMMON", ICON_COLLAPSEMENU, "Common", ""},
       {1, "VIEW_3D", ICON_VIEW3D, "3D Viewport", ""},
       {4, "DOPESHEET_EDITOR", ICON_ACTION, "Dope Sheet/Timeline", ""},
