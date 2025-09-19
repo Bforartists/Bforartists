@@ -4241,11 +4241,11 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
 {
   StructRNA *srna;
   PropertyRNA *prop;
-
+  /*BFA - icons were added here*/
   static const EnumPropertyItem active_theme_area[] = {
       {0, "USER_INTERFACE", ICON_WORKSPACE, "User Interface", ""},
       {19, "STYLE", ICON_FONTPREVIEW, "Text Style", ""},
-      {26, "REGIONS", ICON_NONE, "Regions", ""},
+      {26, "REGIONS", ICON_TOPBAR, "Regions", ""},
       {25, "COMMON", ICON_COLLAPSEMENU, "Common", ""},
       {1, "VIEW_3D", ICON_VIEW3D, "3D Viewport", ""},
       {4, "DOPESHEET_EDITOR", ICON_ACTION, "Dope Sheet/Timeline", ""},
@@ -5368,7 +5368,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_statusbar_version", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "statusbar_flag", STATUSBAR_SHOW_VERSION);
-  RNA_def_property_ui_text(prop, "Show Version", "Show Bforartists version string");
+  RNA_def_property_ui_text(prop, "Show Version", "Show Bforartists version");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_INFO, "rna_userdef_update");
 
   prop = RNA_def_property(srna, "show_statusbar_stats", PROP_BOOLEAN, PROP_NONE);
@@ -5397,6 +5397,12 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Reduce Motion", "Avoid animations and other motion effects in the interface");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
+  /* bfa start blender version*/
+  prop = RNA_def_property(srna, "show_statusbar_blender_version", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "statusbar_flag", STATUSBAR_SHOW_BLENDER_VERSION);
+  RNA_def_property_ui_text(prop, "Show Blender version", "Show Blender version");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_INFO, "rna_userdef_update");
+  /* bfa end */
 }
 
 static void rna_def_userdef_edit(BlenderRNA *brna)

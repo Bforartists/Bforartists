@@ -878,6 +878,7 @@ typedef enum eUserpref_StatusBar_Flag {
   STATUSBAR_SHOW_VERSION = (1 << 3),
   STATUSBAR_SHOW_SCENE_DURATION = (1 << 4),
   STATUSBAR_SHOW_EXTENSIONS_UPDATES = (1 << 5),
+  STATUSBAR_SHOW_BLENDER_VERSION = (1 << 6), // bfa blender version
 } eUserpref_StatusBar_Flag;
 
 /**
