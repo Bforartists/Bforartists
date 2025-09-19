@@ -6659,17 +6659,6 @@ static void def_cmp_huecorrect(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
-static void def_cmp_ycc(BlenderRNA * /*brna*/, StructRNA *srna)
-{
-  PropertyRNA *prop;
-
-  prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "custom1");
-  RNA_def_property_enum_items(prop, node_ycc_items);
-  RNA_def_property_ui_text(prop, "Mode", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
-}
-
 static void def_cmp_combsep_color(BlenderRNA * /*brna*/, StructRNA *srna)
 {
   static const EnumPropertyItem mode_items[] = {
@@ -9755,11 +9744,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeColorMatte", nullptr, ICON_COLOR);
   define(brna, "CompositorNode", "CompositorNodeColorSpill", nullptr, ICON_NODE_SPILL);
   define(brna, "CompositorNode", "CompositorNodeConvolve", nullptr, ICON_CONVOLVE);
-  define(brna, "CompositorNode", "CompositorNodeCombHSVA", nullptr, ICON_NODE_COMBINEHSV);
   define(brna, "CompositorNode", "CompositorNodeCombineColor", def_cmp_combsep_color, ICON_COMBINE_COLOR);
-  define(brna, "CompositorNode", "CompositorNodeCombRGBA", nullptr, ICON_NODE_COMBINERGB);
-  define(brna, "CompositorNode", "CompositorNodeCombYCCA", def_cmp_ycc, ICON_NODE_COMBINEYCBCRA);
-  define(brna, "CompositorNode", "CompositorNodeCombYUVA", nullptr, ICON_NODE_COMBINEYUVA);
   define(brna, "CompositorNode", "CompositorNodeConvertColorSpace", def_cmp_convert_color_space, ICON_COLOR_SPACE);
   define(brna, "CompositorNode", "CompositorNodeConvertToDisplay", def_cmp_convert_to_display, ICON_CONVERT_TO_DISPLAY);
   define(brna, "CompositorNode", "CompositorNodeCornerPin", nullptr, ICON_NODE_CORNERPIN);
@@ -9815,10 +9800,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeScale", nullptr, ICON_TRANSFORM_SCALE);
   define(brna, "CompositorNode", "CompositorNodeSceneTime", nullptr, ICON_TIME);
   define(brna, "CompositorNode", "CompositorNodeSeparateColor", def_cmp_combsep_color, ICON_SEPARATE_COLOR);
-  define(brna, "CompositorNode", "CompositorNodeSepHSVA", nullptr, ICON_NODE_SEPARATEHSV);
-  define(brna, "CompositorNode", "CompositorNodeSepRGBA", nullptr, ICON_NODE_SEPARATERGB);
-  define(brna, "CompositorNode", "CompositorNodeSepYCCA", def_cmp_ycc, ICON_NODE_SEPARATE_YCBCRA);
-  define(brna, "CompositorNode", "CompositorNodeSepYUVA", nullptr, ICON_NODE_SEPARATE_YUVA);
   define(brna, "CompositorNode", "CompositorNodeSetAlpha", nullptr, ICON_IMAGE_ALPHA);
   define(brna, "CompositorNode", "CompositorNodeSplit", nullptr, ICON_NODE_VIWERSPLIT);
   define(brna, "CompositorNode", "CompositorNodeStabilize", def_cmp_stabilize2d, ICON_NODE_STABILIZE2D);
