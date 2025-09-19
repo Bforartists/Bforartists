@@ -203,7 +203,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("mesh.faces_mirror_uv", icon="COPYMIRRORED")
+            col.operator("uv.copy_mirrored_faces", icon="COPYMIRRORED")
 
             col.operator_context = 'EXEC_REGION_WIN'
             col.operator("transform.mirror", text="X Axis", icon="MIRROR_X").constraint_axis[0] = True
@@ -219,7 +219,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("mesh.faces_mirror_uv", text="", icon="COPYMIRRORED")
+                row.operator("uv.copy_mirrored_faces", text="", icon="COPYMIRRORED")
                 row.operator_context = 'EXEC_REGION_WIN'
                 row.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
                 row.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
@@ -227,7 +227,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("mesh.faces_mirror_uv", text="", icon="COPYMIRRORED")
+                row.operator("uv.copy_mirrored_faces", text="", icon="COPYMIRRORED")
 
                 row = col.row(align=True)
                 row.operator_context = 'EXEC_REGION_WIN'
@@ -236,7 +236,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
 
             elif column_count == 1:
 
-                col.operator("mesh.faces_mirror_uv", text="", icon="COPYMIRRORED")
+                col.operator("uv.copy_mirrored_faces", text="", icon="COPYMIRRORED")
 
                 col.operator_context = 'EXEC_REGION_WIN'
                 col.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
