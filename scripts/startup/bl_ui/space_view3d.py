@@ -1731,6 +1731,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("screen.region_quadview", icon="QUADVIEW")
 
+        layout.menu("VIEW3D_MT_view_render")
         layout.separator()
 
         layout.menu("INFO_MT_area")
@@ -2054,6 +2055,31 @@ class VIEW3D_MT_view_regions(Menu):
         layout.separator()
 
         layout.operator("view3d.clear_render_border")
+
+
+class VIEW3D_MT_view_render(Menu):
+    bl_label = "Render Preview"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator(
+            "render.opengl",
+            text="Render Viewport Image",
+            icon='RENDER_STILL',
+        )
+        layout.operator(
+            "render.opengl",
+            text="Render Viewport Animation",
+            icon='RENDER_ANIMATION',
+        ).animation = True
+
+        layout.separator()
+        props = layout.operator(
+            "render.opengl",
+            text="Render Viewport Keyframes",
+        )
+        props.animation = True
+        props.render_keyed_only = True
 
 
 # ********** Select menus, suffix from context.mode **********
@@ -3387,6 +3413,20 @@ class VIEW3D_MT_grease_pencil_add(Menu):
         layout.operator(
             "object.grease_pencil_add", text="Object Line Art", icon="LINEART_OBJECT"
         ).type = "LINEART_OBJECT"
+
+
+class VIEW3D_MT_lattice_add(Menu):
+    bl_idname = "VIEW3D_MT_lattice_add"
+    bl_label = "Lattice"
+    bl_translation_context = i18n_contexts.operator_default
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.operator("object.lattice_add_to_selected", text="Lattice Deform Selected", icon='OUTLINER_OB_LATTICE')
 
 
 class VIEW3D_MT_empty_add(Menu):
@@ -11884,6 +11924,7 @@ classes = (
     VIEW3D_MT_view_align_selected,
     VIEW3D_MT_view_viewpoint,
     VIEW3D_MT_view_regions,
+    VIEW3D_MT_view_render,
     VIEW3D_MT_select_object,
     VIEW3D_MT_select_object_legacy,  # bfa menu
     VIEW3D_MT_select_by_type,  # bfa menu
@@ -11940,6 +11981,7 @@ classes = (
     VIEW3D_MT_camera_add,
     VIEW3D_MT_volume_add,
     VIEW3D_MT_grease_pencil_add,
+    VIEW3D_MT_lattice_add,
     VIEW3D_MT_empty_add,
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,
