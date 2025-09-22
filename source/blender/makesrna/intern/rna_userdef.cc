@@ -94,7 +94,7 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
      "File Paths",
      ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_DEVELOPER_TOOLS, "DEVELOPER_TOOLS", 0, "Developer Tools", ""},
+    {USER_SECTION_DEVELOPER_TOOLS, "DEVELOPER_TOOLS", ICON_SCRIPT, "Developer Tools", ""},
     {USER_SECTION_EXPERIMENTAL,
      "EXPERIMENTAL",
      ICON_EXPERIMENTAL,
