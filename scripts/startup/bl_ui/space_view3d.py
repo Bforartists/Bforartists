@@ -4568,7 +4568,7 @@ class VIEW3D_MT_object_cleanup(Menu):
             text="Remove Unused Material Slots",
             icon="DELETE",
         )
-        layout.operator("object.material_slot_remove_all", text="Remove All Materials")
+        layout.operator("object.material_slot_remove_all", text="Remove All Materials", icon="DELETE")
 
 
 class VIEW3D_MT_object_asset(Menu):
