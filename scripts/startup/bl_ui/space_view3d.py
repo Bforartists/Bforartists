@@ -4407,6 +4407,17 @@ class VIEW3D_MT_object_parent(Menu):
                 )
                 props.keep_transform = True
 
+                if parent.type == "MESH":
+                    layout.operator("object.parent_set", text="Vertex", icon="VERTEX_PARENT").type = "VERTEX"
+                    layout.operator("object.parent_set", text="Vertex (Triangle)", icon="VERTEX_PARENT").type = "VERTEX_TRI"
+                else:
+                    layout.separator()
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("object.parent_set", text="Vertex", icon="VERTEX_PARENT").type = "VERTEX"
+                    row.enabled = False
+                    row.operator("object.parent_set", text="Vertex (Triangle)", icon="VERTEX_PARENT").type = "VERTEX_TRI"
+
                 if parent.type == "ARMATURE":
                     layout.separator()
                     if can_support.armature_deform:
@@ -4425,26 +4436,77 @@ class VIEW3D_MT_object_parent(Menu):
                     op_ptr.type = "BONE"
                     op_ptr = layout.operator("object.parent_set", text="Bone Relative", icon="PARENT_BONE")
                     op_ptr.type = "BONE_RELATIVE"
+                else:
+                    layout.separator()
+                    row = layout.row(align=True)
+                    row.enabled = False
+                    op_ptr = row.operator("object.parent_set", text="Armature Deform", icon="PARENT_BONE")
+                    op_ptr.type = "ARMATURE"
 
-                elif parent.type == "CURVE":
+                    row = layout.row(align=True)
+                    row.enabled = False
+                    op_ptr = row.operator("object.parent_set", text="With Empty Groups", icon="PARENT_BONE")
+                    op_ptr.type = "ARMATURE_NAME"
+
+                    row = layout.row(align=True)
+                    row.enabled = False
+                    op_ptr = row.operator("object.parent_set", text="With Envelope Weights", icon="PARENT_BONE")
+                    op_ptr.type = "ARMATURE_ENVELOPE"
+
+                    row = layout.row(align=True)
+                    row.enabled = False
+                    op_ptr = row.operator("object.parent_set", text="With Automatic Weights", icon="PARENT_BONE")
+                    op_ptr.type = "ARMATURE_AUTO"
+
+                    row = layout.row(align=True)
+                    row.enabled = False
+                    op_ptr = row.operator("object.parent_set", text="Bone", icon="PARENT_BONE")
+                    op_ptr.type = "BONE"
+
+                    row = layout.row(align=True)
+                    row.enabled = False
+                    op_ptr = row.operator("object.parent_set", text="Bone Relative", icon="PARENT_BONE")
+                    op_ptr.type = "BONE_RELATIVE"
+
+
+                if parent.type == "LATTICE":
+                    layout.separator()
+                    layout.operator("object.parent_set", text="Lattice Deform", icon="PARENT_LATTICE").type = "LATTICE"
+                else:
+                    layout.separator()
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("object.parent_set", text="Lattice Deform", icon="PARENT_LATTICE").type = "LATTICE"
+
+                #elif parent.type == "MESH" and can_support.attach_surface:
+                if parent.type == "MESH":
+                    if can_support.attach_surface:
+                        layout.separator()
+                        layout.operator("CURVES_OT_surface_set", text="Object (Attach Curves to Surface)", icon="PARENT_CURVE")
+                else:
+                    layout.separator()
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("CURVES_OT_surface_set", text="Object (Attach Curves to Surface)", icon="PARENT_CURVE")                
+
+                if parent.type == "CURVE":
                     layout.separator()
                     layout.operator("object.parent_set", text="Curve Deform", icon="PARENT_CURVE").type = "CURVE"
                     layout.operator("object.parent_set", text="Follow Path", icon="PARENT_CURVE").type = "FOLLOW"
                     layout.operator("object.parent_set", text="Path Constraint", icon="PARENT_CURVE").type = "PATH_CONST"
-
-                elif parent.type == "LATTICE":
+                else:
                     layout.separator()
-                    layout.operator("object.parent_set", text="Lattice Deform", icon="PARENT_LATTICE").type = "LATTICE"
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("object.parent_set", text="Curve Deform", icon="PARENT_CURVE").type = "CURVE"
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("object.parent_set", text="Follow Path", icon="PARENT_CURVE").type = "FOLLOW"
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("object.parent_set", text="Path Constraint", icon="PARENT_CURVE").type = "PATH_CONST"
+                    
 
-                #elif parent.type == "MESH" and can_support.attach_surface:
-                elif parent.type == "MESH":
-                    if can_support.attach_surface:
-                        layout.separator()
-                        layout.operator("CURVES_OT_surface_set", text="Object (Attach Curves to Surface)", icon="PARENT_CURVE")
-
-                if parent.type == "MESH":
-                    layout.operator("object.parent_set", text="Vertex", icon="VERTEX_PARENT").type = "VERTEX"
-                    layout.operator("object.parent_set", text="Vertex (Triangle)", icon="VERTEX_PARENT").type = "VERTEX_TRI"
         # BFA - End of consistent parent menu 
 
 
