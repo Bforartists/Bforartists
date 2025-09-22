@@ -940,7 +940,7 @@
           <ThemeSpaceGeneric
             back="#454545"
             title="#ffffff"
-            text="#000000"
+            text="#cccccc"
             text_hi="#ffffff"
             header="#333333ff"
             header_text="#cccccc"
