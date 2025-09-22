@@ -4360,6 +4360,7 @@ class VIEW3D_MT_object_parent(Menu):
         layout = self.layout
 
         # BFA - Start of a consistent parent menu with conditional visibility
+        #layout.operator_enum("object.parent_set", "type")
         parent = _context.active_object
 
         selected_editable_objects = _context.selected_editable_objects
@@ -4388,7 +4389,7 @@ class VIEW3D_MT_object_parent(Menu):
         can_support = can_support(parent, selected_editable_objects)
 
         if parent and parent.select_get():
-            #layout.operator_enum("object.parent_set", "type")
+
             with operator_context(layout, "EXEC_REGION_WIN"):
                 layout.operator("object.parent_set", text="Object", icon="PARENT_OBJECT").keep_transform = False
                 props = layout.operator(

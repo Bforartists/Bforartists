@@ -945,7 +945,7 @@ static wmOperatorStatus parent_set_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
-/* WIP */
+/* BFA - in the space_view3d.py, this menu has been built in python for the header parent menu. If there are changes here, change there too.*/
 static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 {
   Object *parent = context_active_object(C);
