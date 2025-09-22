@@ -1616,13 +1616,15 @@ UserDef *BKE_blendfile_userdef_from_defaults()
   {
     /* 3D Viewport*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Primitives");
+        userdef, "VIEW3D_AST_object", "Geometry Nodegroups/Primitives");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Collections/Lights");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Materials");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Grease Pencil");
+        userdef, "VIEW3D_AST_object", "Geometry Nodegroups/Grease Pencil");
+
+
     /* Node editors*/
 
     /*Shader*/
@@ -1633,25 +1635,28 @@ UserDef *BKE_blendfile_userdef_from_defaults()
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Masks");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Patterns");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Texture/Patterns");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shader");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shapes");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Texture/Shapes");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Utility");
 
 
     /*Geometry Nodes*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Grease Pencil");
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Grease Pencil");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_geometry_node_groups", "Hair");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Normals");
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Normals");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh");
 
     /*Compositor*/
-    /*To Be created*/
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+      userdef, "NODE_AST_compositor", "Compositor Nodegroups/Texture/Shapes");
   }
   /* end bfa asset shelf default catalogs */
 

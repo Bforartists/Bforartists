@@ -7,5 +7,5 @@
 VERSION 1
 
 22bd02a7-be5e-4be1-b225-2db10ee6f9bf:Compositor Nodegroups:Compositor Nodegroups
-5857c487-d783-478b-b72f-b0b2edeaa6fa:Compositor Nodegroups/Texture:Compositor Nodegroups-Texture
+272707d5-7d13-4976-bfab-0355d7634be6:Compositor Nodegroups/Texture:Compositor Nodegroups-Texture
 94147fd2-f202-4ca8-9487-25f46d6950d2:Compositor Nodegroups/Texture/Shapes:Compositor Nodegroups-Texture-Shapes
