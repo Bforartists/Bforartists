@@ -68,6 +68,8 @@ bl_info = {
 # Configure the display name and sub-folder of your Library here:
 LIB_NAME = "Default Library"
 GEO_NAME = "Geometry Nodes Library"
+SHADER_NAME = "Shader Nodes Library"
+COMP_NAME = "Compositor Nodes Library"
 
 # Running code, don't change if not necessary!
 # -----------------------------------------------------------------------------
@@ -135,12 +137,16 @@ def register_all_libraries():
     """Register both the default and geometry nodes libraries."""
     register_library(LIB_NAME)
     register_library(GEO_NAME)
+    register_library(SHADER_NAME)
+    register_library(COMP_NAME)
 
 
 def unregister_all_libraries():
     """Unregister both the default and geometry nodes libraries."""
     unregister_library(LIB_NAME)
     unregister_library(GEO_NAME)
+    unregister_library(SHADER_NAME)
+    unregister_library(COMP_NAME)
 
 classes = (
     LIBADDON_APT_preferences,
