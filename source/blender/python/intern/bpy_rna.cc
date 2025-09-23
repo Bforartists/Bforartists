@@ -4589,7 +4589,7 @@ static PyObject *pyrna_struct_getattro(BPy_StructRNA *self, PyObject *pyname)
       int newindex;
       blender::StringRef newstr;
       std::optional<int64_t> newint;
-      short newtype;
+      ContextDataType newtype;
 
       /* An empty string is used to implement #CTX_data_dir_get,
        * without this check `getattr(context, "")` succeeds. */
@@ -4605,7 +4605,7 @@ static PyObject *pyrna_struct_getattro(BPy_StructRNA *self, PyObject *pyname)
 
       if (done == CTX_RESULT_OK) {
         switch (newtype) {
-          case CTX_DATA_TYPE_POINTER:
+          case ContextDataType::Pointer:
             if (newptr.data == nullptr) {
               ret = Py_None;
               Py_INCREF(ret);
@@ -4614,7 +4614,7 @@ static PyObject *pyrna_struct_getattro(BPy_StructRNA *self, PyObject *pyname)
               ret = pyrna_struct_CreatePyObject(&newptr);
             }
             break;
-          case CTX_DATA_TYPE_STRING: {
+          case ContextDataType::String: {
             if (newstr.is_empty()) {
               ret = Py_None;
               Py_INCREF(ret);
@@ -4624,7 +4624,7 @@ static PyObject *pyrna_struct_getattro(BPy_StructRNA *self, PyObject *pyname)
             }
             break;
           }
-          case CTX_DATA_TYPE_INT64: {
+          case ContextDataType::Int64: {
             if (!newint.has_value()) {
               ret = Py_None;
               Py_INCREF(ret);
@@ -4634,14 +4634,14 @@ static PyObject *pyrna_struct_getattro(BPy_StructRNA *self, PyObject *pyname)
             }
             break;
           }
-          case CTX_DATA_TYPE_COLLECTION: {
+          case ContextDataType::Collection: {
             ret = PyList_New(0);
             for (PointerRNA &ptr : newlb) {
               PyList_APPEND(ret, pyrna_struct_CreatePyObject(&ptr));
             }
             break;
           }
-          case CTX_DATA_TYPE_PROPERTY: {
+          case ContextDataType::Property: {
             if (newprop != nullptr) {
               /* Create pointer to parent ID, and path from ID to property. */
               PointerRNA idptr;
@@ -4875,7 +4875,7 @@ static int pyrna_struct_setattro(BPy_StructRNA *self, PyObject *pyname, PyObject
     int newindex;
     blender::StringRef newstr;
     std::optional<int64_t> newint;
-    short newtype;
+    ContextDataType newtype;
 
     const eContextResult done = eContextResult(
         CTX_data_get(C, name, &newptr, &newlb, &newprop, &newindex, &newstr, &newint, &newtype));
@@ -9835,6 +9835,13 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
 
     /* Also print in the console for Python. */
     PyErr_Print();
+    /* Print a small line at ERROR level so that tests that rely on --debug-exit-on-error can
+     * fail. This assumes that the majority of the information is already seen in the console via
+     * PyErr_Print and should not be duplicated */
+    CLOG_ERROR(BPY_LOG_RNA,
+               "Python script error in %.200s.%.200s",
+               RNA_struct_identifier(ptr->type),
+               RNA_function_identifier(func));
   }
 
   bpy_context_clear(C, &gilstate);

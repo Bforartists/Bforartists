@@ -357,7 +357,7 @@ class CLIP_MT_tracking_editor_menus(Menu):
 
 
 class CLIP_GRAPH_MT_select(Menu):
-    bl_label = "SELECT"
+    bl_label = "Select"
 
     def draw(self, context):
         layout = self.layout
@@ -1910,7 +1910,7 @@ class CLIP_MT_track_transform(Menu):
 
 
 class CLIP_MT_select(Menu):
-    bl_label = "SELECT"
+    bl_label = "Select"
 
     def draw(self, _context):
         layout = self.layout
@@ -1937,7 +1937,7 @@ class CLIP_MT_select(Menu):
 
 # BFA - not used
 class CLIP_MT_select_graph(Menu):
-    bl_label = "SELECT"
+    bl_label = "Select"
 
     def draw(self, _context):
         layout = self.layout

@@ -4,7 +4,7 @@
 
 #ifdef GPU_SHADER
 #  pragma once
-#  include "gpu_glsl_cpp_stubs.hh"
+#  include "gpu_shader_compat.hh"
 
 #  include "draw_object_infos_info.hh"
 #  include "draw_view_info.hh"
@@ -164,6 +164,10 @@ GPU_SHADER_CREATE_END()
 
 GPU_SHADER_CREATE_INFO(eevee_tests_data)
 TYPEDEF_SOURCE("eevee_defines.hh")
+DEFINE("MAT_REFLECTION")
+DEFINE("MAT_REFRACTION")
+DEFINE("MAT_SUBSURFACE")
+DEFINE("MAT_TRANSLUCENT")
 GPU_SHADER_CREATE_END()
 
 /** \} */

@@ -187,10 +187,10 @@ class SEQUENCER_HT_header(Header):
         layout.separator_spacer()
         row = layout.row()  # BFA - 3D Sequencer
         # Sync pinned scene button
-        row.label(icon='PINNED' if context.workspace.sequencer_scene else 'UNPINNED')  # BFA - 3D Sequencer
+        row.label(icon="PINNED" if context.workspace.sequencer_scene else "UNPINNED")  # BFA - 3D Sequencer
 
         # BFA - wip merge of new sequencer
-        if st.view_type == 'SEQUENCER':
+        if st.view_type == "SEQUENCER":
             row = layout.row(align=True)
             row.template_ID(context.workspace, "sequencer_scene", new="scene.new_sequencer_scene")
 
@@ -202,7 +202,7 @@ class SEQUENCER_HT_header(Header):
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "overlap_mode", text="", icon_only=True)  # BFA - icon only
 
-        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'} and tool_settings:
+        if st.view_type in {"SEQUENCER", "SEQUENCER_PREVIEW"} and tool_settings:
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
@@ -527,6 +527,17 @@ class SEQUENCER_MT_view_pie_menus(Menu):
 
 
 # BFA - this menu has most of the property toggles now show exclusively in the property shelf.
+class SEQUENCER_MT_view_render(Menu):
+    bl_label = "Render Preview"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("render.opengl", text="Render Sequencer Image", icon="RENDER_STILL").sequencer = True
+        props = layout.operator("render.opengl", text="Render Sequencer Animation", icon="RENDER_ANIMATION")
+        props.animation = True
+        props.sequencer = True
+
+
 class SEQUENCER_MT_view(Menu):
     bl_label = "View"
 
@@ -4135,6 +4146,7 @@ classes = (
     SEQUENCER_MT_editor_menus,
     SEQUENCER_MT_range,
     SEQUENCER_MT_view_pie_menus,  # BFA
+    SEQUENCER_MT_view_render,
     SEQUENCER_MT_view,
     SEQUENCER_MT_view_annotations,  # BFA
     SEQUENCER_MT_export,  # BFA
