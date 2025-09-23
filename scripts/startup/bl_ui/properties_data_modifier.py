@@ -113,8 +113,54 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         layout.template_modifiers()
 
 
-# BFA - Heavily modified to be a column menu
 class OBJECT_MT_modifier_add(ModifierAddMenu, Menu):
+    bl_label = "Add Modifier"
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, context):
+        layout = self.layout
+        ob = context.object
+        if not ob:
+            return
+        ob_type = ob.type
+        geometry_nodes_supported = ob_type in {
+            'MESH', 'CURVE', 'CURVES',
+            'FONT', 'VOLUME', 'POINTCLOUD', 'GREASEPENCIL',
+        }
+
+        if layout.operator_context == 'EXEC_REGION_WIN':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator(
+                "WM_OT_search_single_menu",
+                text="Search...",
+                icon='VIEWZOOM',
+            ).menu_idname = "OBJECT_MT_modifier_add"
+            layout.separator()
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        if geometry_nodes_supported:
+            self.operator_modifier_add(layout, 'NODES')
+            layout.separator()
+        if ob_type in {'MESH', 'CURVE', 'CURVES', 'FONT', 'SURFACE', 'LATTICE', 'GREASEPENCIL', 'POINTCLOUD'}:
+            layout.menu("OBJECT_MT_modifier_add_edit")
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'VOLUME', 'GREASEPENCIL'}:
+            layout.menu("OBJECT_MT_modifier_add_generate")
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE', 'VOLUME', 'GREASEPENCIL'}:
+            layout.menu("OBJECT_MT_modifier_add_deform")
+        if ob_type in {'MESH'}:
+            layout.menu("OBJECT_MT_modifier_add_normals")
+        if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE', 'LATTICE'}:
+            layout.menu("OBJECT_MT_modifier_add_physics")
+        if ob_type in {'GREASEPENCIL'}:
+            layout.menu("OBJECT_MT_modifier_add_color")
+
+        if geometry_nodes_supported:
+            layout.menu_contents("OBJECT_MT_modifier_add_root_catalogs")
+
+
+# BFA - Custom menu for only showing built-in modifiers as a column menu
+class OBJECT_MT_modifier_add_builtin(ModifierAddMenu, Menu):
     bl_label = ""
     bl_options = {'SEARCH_ON_KEY_PRESS'}
     search_header = "Modifier"
@@ -534,7 +580,7 @@ class AddModifierMenu(Operator):
         return space and space.type == 'PROPERTIES' and space.context == 'MODIFIER'
 
     def invoke(self, _context, _event):
-        return bpy.ops.wm.call_menu(name="OBJECT_MT_modifier_add")
+        return bpy.ops.wm.call_menu(name="OBJECT_MT_modifier_add_builtin")
 
 
 classes = (
@@ -549,6 +595,7 @@ classes = (
     OBJECT_MT_modifier_add_color,
     OBJECT_MT_modifier_add_assets,  # BFA
     OBJECT_MT_modifier_add_color_assets,  # BFA
+    OBJECT_MT_modifier_add_builtin, # BFA
     OBJECT_OT_add_asset_modifier_menu,  # BFA
     DATA_PT_gpencil_modifiers,
     OBJECT_MT_gpencil_modifier_add,  # BFA
