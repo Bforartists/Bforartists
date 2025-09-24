@@ -135,7 +135,7 @@ def playback_controls(layout, context):
         if (
             getattr(context.space_data, "mode", "") == "TIMELINE"
         ):  # BFA - Make this only show in the timeline editor to not show this in the footer.
-            row.popover(panel="TIME_PT_view_view_options", text="")
+            layout.popover(panel="TIME_PT_view_view_options", text="")
 
 
 class TIME_MT_editor_menus(Menu):

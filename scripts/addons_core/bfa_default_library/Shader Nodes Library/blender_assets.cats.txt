@@ -1,0 +1,17 @@
+# This is an Asset Catalog Definition file for Blender.
+#
+# Empty lines and lines starting with `#` will be ignored.
+# The first non-ignored line should be the version indicator.
+# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"
+
+VERSION 1
+
+f5318d0a-60f8-445b-8437-e8ef7a83efd5:Shader Nodegroups:Shader Nodegroups
+3def5fe5-e74e-4d41-bdd9-9b0610f08934:Shader Nodegroups/Color:Shader Nodegroups-Color
+809501d2-9f4a-43f5-a26e-f3c85c7b43aa:Shader Nodegroups/Mapping:Shader Nodegroups-Mapping
+4d896561-7caa-4006-a752-bfa8195b8d5e:Shader Nodegroups/Masks:Shader Nodegroups-Masks
+4338cc57-564c-4090-9fb3-8dc82551a4c8:Shader Nodegroups/Shader:Shader Nodegroups-Shader
+88d85651-caec-46fd-b9bd-cce5353c7c6b:Shader Nodegroups/Texture:Shader Nodegroups-Texture
+9198ac32-1f2c-4c69-9118-c15708a9e1aa:Shader Nodegroups/Texture/Patterns:Shader Nodegroups-Texture-Patterns
+ad19c330-0bbb-4814-a160-38e5730f56ce:Shader Nodegroups/Texture/Shapes:Shader Nodegroups-Texture-Shapes
+5857c487-d783-478b-b72f-b0b2edeaa6fa:Shader Nodegroups/Utility:Shader Nodegroups-Utility

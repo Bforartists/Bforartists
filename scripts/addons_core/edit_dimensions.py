@@ -120,7 +120,14 @@ class ED_OT_SetDimensions(Operator):
         box.prop(self, "new_z")
 
 
-def add_button(self, context):
+# BFA - Use different draw functions for menu & panel
+def add_button_to_menu(self, context):
+    if context.mode in {'EDIT_MESH'}:
+        self.layout.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")
+
+
+# BFA - Use different draw functions for menu & panel
+def add_button_to_panel(self, context):
     layout = self.layout
     row = layout.row(align=True)
     row.scale_x = 2
@@ -143,16 +150,16 @@ def register():
     from bpy.utils import register_class
     for cls in classes:
        register_class(cls)
-    bpy.types.VIEW3D_MT_transform.append(add_button)
-    bpy.types.VIEW3D_PT_objecttab_transform.append(add_button)
+    bpy.types.VIEW3D_MT_transform.append(add_button_to_menu)
+    bpy.types.VIEW3D_PT_objecttab_transform.append(add_button_to_panel)
 
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in classes:
        unregister_class(cls)
-    bpy.types.VIEW3D_MT_transform.remove(add_button)
-    bpy.types.VIEW3D_PT_objecttab_transform.remove(add_button)
+    bpy.types.VIEW3D_MT_transform.remove(add_button_to_menu)
+    bpy.types.VIEW3D_PT_objecttab_transform.remove(add_button_to_panel)
 
 
 if __name__ == "__main__":

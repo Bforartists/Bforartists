@@ -4399,26 +4399,139 @@ class VIEW3D_MT_object_parent(Menu):
 
         layout = self.layout
 
-        layout.operator_enum("object.parent_set", "type")
+        # BFA - Start of a consistent parent menu with conditional visibility
+        #layout.operator_enum("object.parent_set", "type")
+        parent = _context.active_object
+
+        selected_editable_objects = _context.selected_editable_objects
+        
+        # Defines the variables for contextual visibility, similar to the object_relations.cc parent_set_invoke_menu
+        class can_support:
+            armature_deform = False
+            empty_groups = False
+            envelope_weights = False
+            automatic_weights = False
+            attach_surface = False
+
+            def __init__(self, parent, selected_editable_objects):
+                for child in selected_editable_objects:
+                    if child == parent:
+                        continue
+                    if child.type in {"MESH", "CURVES_LEGACY", "SURF", "FONT", "GREASEPENCIL", "LATTICE"}:
+                        self.armature_deform = True
+                        self.envelope_weights = True
+                    if child.type in {"MESH", "GREASEPENCIL", "LATTICE"}:
+                        self.empty_groups = True
+                    if child.type in {"MESH", "GREASEPENCIL"}:
+                        self.automatic_weights = True
+                    if child.type == "CURVES":
+                        self.attach_surface = True
+
+        can_support = can_support(parent, selected_editable_objects)
+
+        if parent and parent.select_get():
+
+            with operator_context(layout, "EXEC_REGION_WIN"):
+                layout.operator("object.parent_set", text="Object", icon="PARENT_OBJECT").keep_transform = False
+                props = layout.operator(
+                    "object.parent_set",
+                    text="Object (Keep Transform)",
+                    icon="PARENT_OBJECT",
+                )
+                props.keep_transform = True
+
+                layout.operator("OBJECT_OT_parent_no_inverse_set", text="Object (Without Inverse)", icon="PARENT").keep_transform = False
+                props = layout.operator(
+                    "OBJECT_OT_parent_no_inverse_set",
+                    text="Object (Keep Transform Without Inverse)",
+                    icon="PARENT",
+                )
+                props.keep_transform = True
+
+                # Define helper function to add enabled/disabled operators based on context
+                # WARNING: Make sure the disabled is identicle to the enabled.
+                def add_operator(layout, text, icon, type, enabled=True):
+                    row = layout.row()
+                    row.enabled = enabled
+                    op = row.operator("object.parent_set", text=text, icon=icon)
+                    op.type = type
+                    return op
+
+                # MESH parents
+                if parent.type == "MESH":
+                    add_operator(layout, "Vertex", "VERTEX_PARENT", "VERTEX")
+                    add_operator(layout, "Vertex (Triangle)", "VERTEX_PARENT", "VERTEX_TRI")
+                else:
+                    layout.separator()
+                    add_operator(layout, "Vertex", "VERTEX_PARENT", "VERTEX", False)
+                    add_operator(layout, "Vertex (Triangle)", "VERTEX_PARENT", "VERTEX_TRI", False)
+
+                # ARMATURE parents
+                if parent.type == "ARMATURE":
+                    layout.separator()
+                    if can_support.armature_deform:
+                        add_operator(layout, "Armature Deform", "PARENT_BONE", "ARMATURE")
+                    if can_support.empty_groups:
+                        add_operator(layout, "   With Empty Groups", "PARENT_BONE", "ARMATURE_NAME")
+                    if can_support.envelope_weights:
+                        add_operator(layout, "   With Envelope Weights", "PARENT_BONE", "ARMATURE_ENVELOPE")
+                    if can_support.automatic_weights:
+                        add_operator(layout, "   With Automatic Weights", "PARENT_BONE", "ARMATURE_AUTO")
+                    add_operator(layout, "Bone", "PARENT_BONE", "BONE")
+                    add_operator(layout, "Bone Relative", "PARENT_BONE", "BONE_RELATIVE")
+                else:
+                    layout.separator()
+                    for op_text, op_type in [
+                        ("Armature Deform", "ARMATURE"),
+                        ("   With Empty Groups", "ARMATURE_NAME"),
+                        ("   With Envelope Weights", "ARMATURE_ENVELOPE"),
+                        ("   With Automatic Weights", "ARMATURE_AUTO"),
+                        ("Bone", "BONE"),
+                        ("Bone Relative", "BONE_RELATIVE")
+                    ]:
+                        add_operator(layout, op_text, "PARENT_BONE", op_type, False)
+
+                # LATTICE parents
+                if parent.type == "LATTICE":
+                    layout.separator()
+                    add_operator(layout, "Lattice Deform", "PARENT_LATTICE", "LATTICE")
+                else:
+                    layout.separator()
+                    add_operator(layout, "Lattice Deform", "PARENT_LATTICE", "LATTICE", False)
+
+                # MESH attach surface
+                if parent.type == "MESH" and can_support.attach_surface:
+                    layout.separator()
+                    row = layout.row()
+                    row.operator("CURVES_OT_surface_set", text="Object (Attach Curves to Surface)", icon="PARENT_CURVE")
+                else:
+                    layout.separator()
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("CURVES_OT_surface_set", text="Object (Attach Curves to Surface)", icon="PARENT_CURVE")
+
+                # CURVE parents
+                if parent.type == "CURVE":
+                    layout.separator()
+                    add_operator(layout, "Curve Deform", "PARENT_CURVE", "CURVE")
+                    add_operator(layout, "Follow Path", "PARENT_CURVE", "FOLLOW")
+                    add_operator(layout, "Path Constraint", "PARENT_CURVE", "PATH_CONST")
+                else:
+                    layout.separator()
+                    for op_text, op_type in [
+                        ("Curve Deform", "CURVE"),
+                        ("Follow Path", "FOLLOW"),
+                        ("Path Constraint", "PATH_CONST")
+                    ]:
+                        add_operator(layout, op_text, "PARENT_CURVE", op_type, False)
+
+
+        # BFA - End of consistent parent menu 
+
 
         layout.separator()
 
-        with operator_context(layout, "EXEC_REGION_WIN"):
-            layout.operator("object.parent_no_inverse_set", icon="PARENT").keep_transform = False
-            props = layout.operator(
-                "object.parent_no_inverse_set",
-                text="Make Parent without Inverse (Keep Transform)",
-                icon="PARENT",
-            )
-            props.keep_transform = True
-
-            layout.operator(
-                "curves.surface_set",
-                text="Object (Attach Curves to Surface)",
-                icon="PARENT_CURVE",
-            )
-
-        layout.separator()
+        # BFA - removed to use the above parent menu, contexually consistent
 
         layout.operator_enum("object.parent_clear", "type")
 
@@ -4568,7 +4681,7 @@ class VIEW3D_MT_object_cleanup(Menu):
             text="Remove Unused Material Slots",
             icon="DELETE",
         )
-        layout.operator("object.material_slot_remove_all", text="Remove All Materials")
+        layout.operator("object.material_slot_remove_all", text="Remove All Materials", icon="DELETE")
 
 
 class VIEW3D_MT_object_asset(Menu):
