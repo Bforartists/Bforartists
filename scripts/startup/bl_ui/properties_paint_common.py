@@ -2025,29 +2025,64 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, size, slider=True, text="Size")
         row.prop(brush, "use_pressure_size", text="")
 
-        # BFA - WIP - These need to become toggleble arrows like the other methods, and draw the curves below
-        if brush.use_pressure_size and not compact:
-            row = layout.row()
-            row.separator()
+
+        ## BFA - collapsed pressure curves start
+        settings = UnifiedPaintPanel.paint_settings(context)
+        header = context.region.type == 'TOOL_HEADER'
+        
+        if settings and not header:
+            row.prop(settings, "show_size_curve", text="", 
+                     icon="DOWNARROW_HLT" if settings.show_size_curve else "RIGHTARROW", 
+                     emboss=False)
+        
+            if settings and settings.show_size_curve:
+                row = layout.row(align=True)
+
+                tool_settings = context.scene.tool_settings
+                gpencil_paint = tool_settings.gpencil_paint
+                brush = gpencil_paint.brush
+                gp_settings = brush.gpencil_settings
+
+                layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True)
+
+
+        if brush.use_pressure_size and header:
             row.popover(
                 panel="VIEW3D_PT_gpencil_brush_settings_radius",
-                text="Radius Pressure Curve",
-            )  # BFA - collapsed
+                text="",
+            )
+        ## BFA - collapsed pressure curves end
 
         row = layout.row(align=True)
         row.prop(brush, "strength", slider=True, text="Strength")
         row.prop(brush, "use_pressure_strength", text="")
 
-        # BFA - WIP - These need to become toggleble arrows like the other methods, and draw the curves below
-        if brush.use_pressure_strength and not compact:
-            # col = layout.column()
-            # col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
-            row = layout.row()
-            row.separator()
+        ## BFA - collapsed pressure curves start
+        settings = UnifiedPaintPanel.paint_settings(context)
+        header = context.region.type == 'TOOL_HEADER'
+
+        if settings and not header:
+            row.prop(settings, "show_strength_curve", text="",
+                     icon="DOWNARROW_HLT" if settings.show_strength_curve else "RIGHTARROW",
+                     emboss=False)
+
+            if settings and settings.show_strength_curve:
+                row = layout.row(align=True)
+
+                tool_settings = context.scene.tool_settings
+                gpencil_paint = tool_settings.gpencil_paint
+                brush = gpencil_paint.brush
+                gp_settings = brush.gpencil_settings
+
+                layout.template_curve_mapping(gp_settings, "curve_strength", brush=True)
+
+
+        if brush.use_pressure_strength and header:
             row.popover(
-                panel="VIEW3D_PT_gpencil_brush_settings_strength",
-                text="Strength Pressure Curve",
+                panel="VIEW3D_PT_gpencil_brush_settings_radius",
+                text="",
             )
+        ## BFA - collapsed pressure curves end
 
     if props:
         layout.prop(props, "subdivision")
