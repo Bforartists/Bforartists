@@ -2045,7 +2045,6 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
 
                 layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True)
 
-
         if brush.use_pressure_size and header:
             row.popover(
                 panel="VIEW3D_PT_gpencil_brush_settings_radius",
@@ -2057,7 +2056,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, "strength", slider=True, text="Strength")
         row.prop(brush, "use_pressure_strength", text="")
 
-        ## BFA - collapsed pressure curves start
+        ## BFA - collapsed strength curves start
         settings = UnifiedPaintPanel.paint_settings(context)
         header = context.region.type == 'TOOL_HEADER'
 
@@ -2076,13 +2075,12 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
 
                 layout.template_curve_mapping(gp_settings, "curve_strength", brush=True)
 
-
         if brush.use_pressure_strength and header:
             row.popover(
                 panel="VIEW3D_PT_gpencil_brush_settings_radius",
                 text="",
             )
-        ## BFA - collapsed pressure curves end
+        ## BFA - collapsed strength curves end
 
     if props:
         layout.prop(props, "subdivision")
