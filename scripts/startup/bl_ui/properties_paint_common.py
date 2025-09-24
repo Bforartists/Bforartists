@@ -292,7 +292,7 @@ class UnifiedPaintPanel:
 
         row.prop(prop_owner, prop_name, icon=icon, text=text, slider=slider)
 
-        if unified_name and not header:
+        if unified_name: # BFA - don't minimize for discoverability WIP
             # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
             row.prop(ups, unified_name, text="", icon="BRUSHES_ALL")
 
@@ -1351,7 +1351,8 @@ def brush_shared_settings(layout, context, brush, popover=False):
                 text="Size",
                 slider=True,
             )
-        if mode in {"PAINT_TEXTURE", "PAINT_2D", "SCULPT", "PAINT_VERTEX", "PAINT_WEIGHT", "SCULPT_CURVES"}:
+        # BFA - WIP - Add grease pencil paint modes
+        if mode in {"PAINT_TEXTURE", "PAINT_2D", "SCULPT", "PAINT_VERTEX", "PAINT_WEIGHT", "SCULPT_CURVES", "PAINT_GREASE_PENCIL", "SCULPT_GREASE_PENCIL"}:
             if paint.show_size_curve and not popover:
                 subcol = layout.column()
                 subcol.active = brush.use_pressure_size
@@ -1373,7 +1374,8 @@ def brush_shared_settings(layout, context, brush, popover=False):
             curve_visibility_name=curve_visibility_name,
             slider=True,
         )
-        if mode in {"PAINT_TEXTURE", "PAINT_2D", "SCULPT", "PAINT_VERTEX", "PAINT_WEIGHT", "SCULPT_CURVES"}:
+        # BFA - WIP - Add grease pencil paint modes
+        if mode in {"PAINT_TEXTURE", "PAINT_2D", "SCULPT", "PAINT_VERTEX", "PAINT_WEIGHT", "SCULPT_CURVES", "PAINT_GREASE_PENCIL", "SCULPT_GREASE_PENCIL"}:
             if paint.show_strength_curve and not popover:
                 subcol = layout.column()
                 subcol.active = brush.use_pressure_strength
@@ -2023,6 +2025,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, size, slider=True, text="Size")
         row.prop(brush, "use_pressure_size", text="")
 
+        # BFA - WIP - These need to become toggleble arrows like the other methods, and draw the curves below
         if brush.use_pressure_size and not compact:
             row = layout.row()
             row.separator()
@@ -2035,6 +2038,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         row.prop(brush, "strength", slider=True, text="Strength")
         row.prop(brush, "use_pressure_strength", text="")
 
+        # BFA - WIP - These need to become toggleble arrows like the other methods, and draw the curves below
         if brush.use_pressure_strength and not compact:
             # col = layout.column()
             # col.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
@@ -2179,7 +2183,7 @@ def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact
         layout.prop(brush, "direction", expand=True, text="" if compact else "Direction")
 
 
-# BFA menu
+# BFA menu WIP
 class VIEW3D_PT_gpencil_brush_settings_radius(Panel):
     bl_space_type = "VIEW_3D"
     bl_label = "Radius"
@@ -2199,7 +2203,7 @@ class VIEW3D_PT_gpencil_brush_settings_radius(Panel):
         layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True)
 
 
-# BFA menu
+# BFA menu WIP
 class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
     bl_space_type = "VIEW_3D"
     bl_label = "Strength"
