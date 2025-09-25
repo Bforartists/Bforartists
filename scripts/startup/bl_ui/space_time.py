@@ -50,7 +50,7 @@ def playback_controls(layout, context):
 
     row = layout.row(align=True)
 
-    # BFA - exposed to top sequener header, where contextually relevant, make sure 3D Sequencer is enabled
+    # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
        layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
 
