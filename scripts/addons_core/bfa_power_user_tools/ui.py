@@ -34,17 +34,16 @@ class BFA_MT_timeline_key(bpy.types.Menu):
         layout = self.layout
         layout.separator()
 
-
     def menu_func(self, context):
         wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes or wm.BFA_UI_addon_props.BFA_PROP_toggle_animationpanel:
             self.layout.menu(BFA_MT_timeline_key.bl_idname)
 
+
 # Timeline Editor Header Operators
 def BFA_HT_timeline_skipframes(self, context):
     if context.space_data.mode == 'TIMELINE':
         layout = self.layout
-
         wm = context.window_manager
 
         row = layout.row(align=True)
