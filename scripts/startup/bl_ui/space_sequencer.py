@@ -571,7 +571,7 @@ class SEQUENCER_MT_view(Menu):
 
         layout.prop(st, "show_toolshelf_tabs")
 
-        layout.prop(st, "show_region_footer")
+        layout.prop(st, "show_region_footer", text="Playback Controls")
         layout.separator()
 
         layout.menu("SEQUENCER_MT_view_annotations")  # BFA
@@ -1016,8 +1016,6 @@ class SEQUENCER_MT_add(Menu):
 
         layout.separator()
 
-        layout.menu("SEQUENCER_MT_add_scene", text="Scene", icon="SCENE_DATA")
-
         bpy_data_movieclips_len = len(bpy.data.movieclips)
         if bpy_data_movieclips_len > 10:
             layout.operator_context = "INVOKE_DEFAULT"
@@ -1075,37 +1073,6 @@ class SEQUENCER_MT_add(Menu):
         col.menu("SEQUENCER_MT_fades_add", icon="IPO_EASE_IN_OUT")
         col.enabled = total >= 1
         col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")  # BFA - added icon
-
-
-class SEQUENCER_MT_add_scene(Menu):
-    bl_label = "Scene"
-    bl_translation_context = i18n_contexts.operator_default
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = "INVOKE_REGION_WIN"
-        layout.operator("sequencer.scene_strip_add_new", text="New Scene", icon="ADD").type = "EMPTY"
-
-        layout.menu_contents("SEQUENCER_MT_scene_add_root_catalogs")
-
-        bpy_data_scenes_len = len(bpy.data.scenes)
-        if bpy_data_scenes_len > 14:  # BFA - increased to 14 from 10
-            layout.separator()
-            layout.operator_context = "INVOKE_DEFAULT"
-            layout.operator("sequencer.scene_strip_add", text="Scene", icon="SEQUENCE")  # BFA - added icon
-        elif bpy_data_scenes_len > 1:
-            layout.label(text="Scenes", icon="NONE")
-            scene = context.sequencer_scene
-            for sc_item in bpy.data.scenes:
-                if sc_item == scene:
-                    continue
-
-                layout.operator_context = "INVOKE_REGION_WIN"
-                layout.operator(
-                    "sequencer.scene_strip_add", text=sc_item.name, icon="SEQUENCE"
-                ).scene = sc_item.name  # BFA - added icon
-
-        del bpy_data_scenes_len
 
 
 class SEQUENCER_MT_add_empty(Menu):
@@ -1478,8 +1445,9 @@ class SEQUENCER_MT_strip_retiming(Menu):
         layout = self.layout
         try:  # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
             is_retiming = (
-                context.sequencer_scene.sequence_editor is not None
-                and context.sequencer_scene.sequence_editor.selected_retiming_keys is not None
+                context.sequencer_scene is not None and
+                context.sequencer_scene.sequence_editor is not None and
+                context.sequencer_scene.sequence_editor.selected_retiming_keys is not None
             )
             strip = context.active_strip
 
@@ -2145,6 +2113,7 @@ class SEQUENCER_MT_modifier_add(Menu):
         else:
             self.operator_modifier_add(layout, "BRIGHT_CONTRAST")
             self.operator_modifier_add(layout, "COLOR_BALANCE")
+            self.operator_modifier_add(layout, 'COMPOSITOR')
             self.operator_modifier_add(layout, "CURVES")
             self.operator_modifier_add(layout, "HUE_CORRECT")
             self.operator_modifier_add(layout, "MASK")
@@ -4146,7 +4115,6 @@ classes = (
     SEQUENCER_MT_editor_menus,
     SEQUENCER_MT_range,
     SEQUENCER_MT_view_pie_menus,  # BFA
-    SEQUENCER_MT_view_render,
     SEQUENCER_MT_view,
     SEQUENCER_MT_view_annotations,  # BFA
     SEQUENCER_MT_export,  # BFA
@@ -4160,7 +4128,6 @@ classes = (
     SEQUENCER_MT_marker,
     SEQUENCER_MT_navigation,
     SEQUENCER_MT_add,
-    SEQUENCER_MT_add_scene,
     SEQUENCER_MT_add_effect,
     SEQUENCER_MT_add_transitions,
     SEQUENCER_MT_add_empty,

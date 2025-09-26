@@ -5053,6 +5053,7 @@ static void region_quadview_init_rv3d(
     ScrArea *area, ARegion *region, const char viewlock, const char view, const char persp)
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
+  rv3d->rflag &= ~RV3D_WAS_CAMOB;
 
   if (persp == RV3D_CAMOB) {
     ED_view3d_lastview_store(rv3d);
@@ -7619,6 +7620,8 @@ static std::string screen_drop_scene_tooltip(bContext * /*C*/,
       case ASSET_IMPORT_LINK_OVERRIDE:
         return fmt::format(fmt::runtime(TIP_("Link (Override) {}")),
                            dragged_scene_name); /* BFA - Link override*/
+      case ASSET_IMPORT_PACK:
+        return fmt::format(fmt::runtime(TIP_("Pack {}")), dragged_scene_name);
       case ASSET_IMPORT_APPEND:
         return fmt::format(fmt::runtime(TIP_("Append {}")), dragged_scene_name);
       case ASSET_IMPORT_APPEND_REUSE:

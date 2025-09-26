@@ -385,9 +385,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_VERTEX_ACTIVE:
           cp = ts->vertex_active;
           break;
-        case TH_VERTEX_BEVEL:
-          cp = ts->vertex_bevel;
-          break;
         case TH_VERTEX_UNREFERENCED:
           cp = ts->vertex_unreferenced;
           break;
@@ -412,18 +409,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_EDGE_MODE_SELECT:
           cp = ts->edge_mode_select;
           break;
-        case TH_EDGE_BEVEL:
-          cp = btheme->space_view3d.edge_bevel;
-          break;
-        case TH_EDGE_CREASE:
-          cp = btheme->space_view3d.edge_crease;
-          break;
-        case TH_EDGE_SEAM:
-          cp = btheme->space_view3d.edge_seam;
-          break;
-        case TH_EDGE_SHARP:
-          cp = btheme->space_view3d.edge_sharp;
-          break;
         case TH_EDITMESH_ACTIVE:
           cp = ts->editmesh_active;
           break;
@@ -445,12 +430,26 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_FACE_FRONT:
           cp = ts->face_front;
           break;
-        case TH_FACE_DOT:
-          cp = ts->face_dot;
-          break;
         case TH_FACEDOT_SIZE:
           cp = &ts->facedot_size;
           break;
+
+        case TH_BEVEL:
+          cp = btheme->space_view3d.bevel;
+          break;
+        case TH_CREASE:
+          cp = btheme->space_view3d.crease;
+          break;
+        case TH_SEAM:
+          cp = btheme->space_view3d.seam;
+          break;
+        case TH_SHARP:
+          cp = btheme->space_view3d.sharp;
+          break;
+        case TH_FREESTYLE:
+          cp = btheme->space_view3d.freestyle;
+          break;
+
         case TH_DRAWEXTRA_EDGELEN:
           cp = ts->extra_edge_len;
           break;
@@ -602,13 +601,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_HANDLE_SEL_AUTOCLAMP:
           cp = btheme->common.curves.handle_sel_auto_clamped;
-          break;
-
-        case TH_FREESTYLE_EDGE_MARK:
-          cp = ts->freestyle_edge_mark;
-          break;
-        case TH_FREESTYLE_FACE_MARK:
-          cp = ts->freestyle_face_mark;
           break;
 
         case TH_SYNTAX_B:
@@ -835,13 +827,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_STITCH_PREVIEW_ACTIVE:
           cp = ts->preview_stitch_active;
-          break;
-
-        case TH_PAINT_CURVE_HANDLE:
-          cp = ts->paint_curve_handle;
-          break;
-        case TH_PAINT_CURVE_PIVOT:
-          cp = ts->paint_curve_pivot;
           break;
 
         case TH_METADATA_BG:

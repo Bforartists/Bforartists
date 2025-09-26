@@ -14,7 +14,7 @@ from bpy.app.translations import (
     pgettext_iface as iface_,
     contexts as i18n_contexts,
 )
-from bl_ui import anim
+from bl_ui import anim, node_add_menu
 from bl_ui.utils import PresetPanel
 from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
@@ -238,12 +238,29 @@ class NODE_HT_header(Header):
             row.operator("wm.switch_editor_to_geometry", text="", icon='GEOMETRY_NODES')
             row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
 
+            layout.prop(snode, "node_tree_sub_type", text="")
             NODE_MT_editor_menus.draw_collapsible(context, layout)
-
             layout.separator_spacer()
-            row = layout.row()
-            row.enabled = not snode.pin
-            row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+
+            if snode.node_tree_sub_type == 'SCENE':
+                row = layout.row()
+                row.enabled = not snode.pin
+                row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+            elif snode.node_tree_sub_type == 'SEQUENCER':
+                row = layout.row()
+                sequencer_scene = context.workspace.sequencer_scene
+                sequencer_editor = sequencer_scene.sequence_editor if sequencer_scene else None
+                active_strip = sequencer_editor.active_strip if sequencer_editor else None
+                active_modifier = active_strip.modifiers.active if active_strip else None
+                is_compositor_modifier_active = active_modifier and active_modifier.type == 'COMPOSITOR'
+                if is_compositor_modifier_active and not snode.pin:
+                    row.template_ID(
+                        active_modifier,
+                        "node_group",
+                        new="node.new_compositor_sequencer_node_group")
+                else:
+                    row.enabled = False
+                    row.template_ID(snode, "node_tree", new="node.new_compositor_sequencer_node_group")
 
         elif snode.tree_type == 'GeometryNodeTree':
             #BFA - Editor Switchers
@@ -338,7 +355,7 @@ class NODE_HT_header(Header):
             pass
 
         # Backdrop
-        if is_compositor:
+        if is_compositor and snode.node_tree_sub_type == 'SCENE':
             row = layout.row(align=True)
             row.prop(snode, "show_backdrop", toggle=True)
             row.active = snode.node_tree is not None
@@ -376,7 +393,7 @@ class NODE_HT_header(Header):
 class NODE_PT_gizmo_display(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_label = 'Gizmos'
+    bl_label = "Gizmos"
     bl_ui_units_x = 8
 
     def draw(self, context):
@@ -408,10 +425,11 @@ class NODE_MT_editor_menus(Menu):
         layout.menu("NODE_MT_view")
         layout.menu("NODE_MT_select")
         layout.menu("NODE_MT_add")
+        layout.menu("NODE_MT_swap")
         layout.menu("NODE_MT_node")
 
 
-class NODE_MT_add(Menu):
+class NODE_MT_add(node_add_menu.AddNodeMenu):
     bl_space_type = 'NODE_EDITOR'
     bl_label = "Add"
     bl_translation_context = i18n_contexts.operator_default
@@ -457,6 +475,33 @@ class NODE_MT_pie_menus(Menu):
         space = context.space_data
 
         layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NODE_MT_view_pie'
+
+
+class NODE_MT_swap(node_add_menu.SwapNodeMenu):
+    bl_space_type = 'NODE_EDITOR'
+    bl_label = "Swap"
+    bl_translation_context = i18n_contexts.operator_default
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        if layout.operator_context == 'EXEC_REGION_WIN':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_swap"
+            layout.separator()
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        snode = context.space_data
+        if snode.tree_type == 'GeometryNodeTree':
+            layout.menu_contents("NODE_MT_geometry_node_swap_all")
+        elif snode.tree_type == 'CompositorNodeTree':
+            layout.menu_contents("NODE_MT_compositor_node_swap_all")
+        elif snode.tree_type == 'ShaderNodeTree':
+            layout.menu_contents("NODE_MT_shader_node_swap_all")
+        elif snode.tree_type == 'TextureNodeTree':
+            layout.menu_contents("NODE_MT_texture_node_swap_all")
 
 
 class NODE_MT_view(Menu):
@@ -1448,6 +1493,10 @@ class NODE_PT_node_tree_properties(Panel):
         row.operator("node.default_group_width_set", text="", icon='NODE')
 
         if group.bl_idname == "GeometryNodeTree":
+            row = layout.row()
+            row.active = group.is_modifier
+            row.prop(group, "show_modifier_manage_panel")
+
             header, body = layout.panel("group_usage")
             header.label(text="Usage")
             if body:
@@ -1583,6 +1632,7 @@ classes = (
     NODE_MT_pie_menus,  # BFA - Menu
     NODE_MT_view,
     NODE_MT_viewer, # BFA - Menu
+    NODE_MT_swap,
     NODE_MT_select,
     NODE_MT_select_legacy,  # BFA - Menu
     NODE_MT_node_group_separate,  # BFA - Menu
@@ -1593,6 +1643,7 @@ classes = (
     NODE_MT_context_menu_show_hide_menu,
     NODE_MT_context_menu_select_menu,
     NODE_MT_context_menu,
+    NODE_MT_view,
     NODE_MT_view_pie,
     NODE_MT_view_annotations,  # BFA - Menu
     NODE_PT_material_slots,
