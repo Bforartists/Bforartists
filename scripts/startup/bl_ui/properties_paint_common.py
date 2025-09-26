@@ -292,12 +292,26 @@ class UnifiedPaintPanel:
 
         row.prop(prop_owner, prop_name, icon=icon, text=text, slider=slider)
 
-        if unified_name: # BFA - don't minimize for discoverability WIP
+        if unified_name: # BFA - don't minimize for discoverability
             # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
             row.prop(ups, unified_name, text="", icon="BRUSHES_ALL")
 
         if pressure_name:
             row.prop(brush, pressure_name, text="")
+
+            # BFA - add conditional dropdown for strength and pressure curves for consistency and discoverability
+            if pressure_name and header and getattr(brush, pressure_name):
+                mode = UnifiedPaintPanel.get_brush_mode(context)
+                if pressure_name == 'use_pressure_size' and mode not in {'VERTEX_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL'}:  # BFA - these size curves modes are not exposed yet
+                    row.popover(
+                        panel="VIEW3D_PT_brush_settings_pressure_size",
+                        text="",
+                    )
+                elif pressure_name == 'use_pressure_strength' and mode not in {'SCULPT_GREASE_PENCIL', 'VERTEX_GREASE_PENCIL', 'WEIGHT_GREASE_PENCIL'}: # BFA - these strength curves modes are not exposed yet
+                    row.popover(
+                        panel="VIEW3D_PT_brush_settings_pressure_strength",
+                        text="",
+                    )
 
         if curve_visibility_name and not header:
             is_active = getattr(paint, curve_visibility_name)
@@ -323,6 +337,60 @@ class UnifiedPaintPanel:
         ups = settings.unified_paint_settings
         prop_owner = ups if ups.use_unified_color else brush
         parent.template_color_picker(prop_owner, prop_name, value_slider=value_slider)
+
+
+# BFA menu WIP
+class VIEW3D_PT_brush_settings_pressure_size(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_label = "Pressure Size Curve"
+    bl_region_type = "HEADER"
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        settings = UnifiedPaintPanel.paint_settings(context)
+        if settings is None:
+            return
+            
+        brush = settings.brush
+        if brush is None:
+            return
+
+        mode = UnifiedPaintPanel.get_brush_mode(context)
+        
+        layout.label(text="Pressure Size Curve")
+
+        layout.template_curve_mapping(brush, "curve_size", brush=True)
+
+
+# BFA menu WIP
+class VIEW3D_PT_brush_settings_pressure_strength(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_label = "Pressure Size Curve"
+    bl_region_type = "HEADER"
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        settings = UnifiedPaintPanel.paint_settings(context)
+        if settings is None:
+            return
+            
+        brush = settings.brush
+        if brush is None:
+            return
+
+        mode = UnifiedPaintPanel.get_brush_mode(context)
+        
+        layout.label(text="Pressure Strength Curve")
+
+        layout.template_curve_mapping(brush, "curve_strength", brush=True)
 
 
 ### Classes to let various paint modes' panels share code, by sub-classing these classes. ###
@@ -2077,7 +2145,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
 
         if brush.use_pressure_strength and header:
             row.popover(
-                panel="VIEW3D_PT_gpencil_brush_settings_radius",
+                panel="VIEW3D_PT_gpencil_brush_settings_strength",
                 text="",
             )
         ## BFA - collapsed strength curves end
@@ -2168,8 +2236,8 @@ def brush_basic_gpencil_vertex_settings(layout, context, brush, *, compact=False
     if brush.gpencil_vertex_brush_type in {"DRAW", "BLUR", "SMEAR"}:
         row = layout.row(align=True)
         row.prop(brush_prop_owner, "strength", slider=True)
+        row.prop(ups, "use_unified_strength", text="", icon="BRUSHES_ALL") # BFA - order made consistent
         row.prop(brush, "use_pressure_strength", text="", icon="STYLUS_PRESSURE")
-        row.prop(ups, "use_unified_strength", text="", icon="BRUSHES_ALL")
 
     if brush.gpencil_vertex_brush_type in {"DRAW", "REPLACE"}:
         row = layout.row(align=True)
@@ -2216,10 +2284,10 @@ def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact
         layout.prop(brush, "direction", expand=True, text="" if compact else "Direction")
 
 
-# BFA menu WIP
+# BFA menu
 class VIEW3D_PT_gpencil_brush_settings_radius(Panel):
     bl_space_type = "VIEW_3D"
-    bl_label = "Radius"
+    bl_label = "Size Radius Curve"
     bl_region_type = "HEADER"
     bl_ui_units_x = 10
 
@@ -2232,14 +2300,16 @@ class VIEW3D_PT_gpencil_brush_settings_radius(Panel):
         gpencil_paint = tool_settings.gpencil_paint
         brush = gpencil_paint.brush
         gp_settings = brush.gpencil_settings
+
+        layout.label(text="Pressure Curve")
 
         layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True)
 
 
-# BFA menu WIP
+# BFA menu
 class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
     bl_space_type = "VIEW_3D"
-    bl_label = "Strength"
+    bl_label = "Strength Curve"
     bl_region_type = "HEADER"
     bl_ui_units_x = 10
 
@@ -2252,6 +2322,8 @@ class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
         gpencil_paint = tool_settings.gpencil_paint
         brush = gpencil_paint.brush
         gp_settings = brush.gpencil_settings
+
+        layout.label(text="Strength Curve")
 
         layout.template_curve_mapping(gp_settings, "curve_strength", brush=True)
 
@@ -2290,8 +2362,10 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
 classes = (
     VIEW3D_PT_brush_asset_shelf_filter,
     VIEW3D_MT_tools_projectpaint_clone,
-    VIEW3D_PT_gpencil_brush_settings_radius,  # BFA menu
-    VIEW3D_PT_gpencil_brush_settings_strength,  # BFA menu
+    VIEW3D_PT_brush_settings_pressure_strength, # BFA menu
+    VIEW3D_PT_brush_settings_pressure_size, # BFA menu
+    VIEW3D_PT_gpencil_brush_settings_radius, # BFA menu
+    VIEW3D_PT_gpencil_brush_settings_strength, # BFA menu
 )
 
 if __name__ == "__main__":  # only for live edit.
