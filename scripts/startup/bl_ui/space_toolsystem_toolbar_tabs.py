@@ -50,7 +50,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE', 'EDIT_CURVES'}
 
     def draw(self, context):
         layout = self.layout
@@ -154,7 +154,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                                    'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
 
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
@@ -228,7 +228,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                                    'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
                     row = col.row(align=True)
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
@@ -300,7 +300,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 col.operator("transform.bend", text="", icon = "BEND")
                 col.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
-                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}:
+                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
                     col.separator( factor = 0.5)
                     col.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     col.operator_context = 'EXEC_REGION_WIN'
@@ -470,7 +470,7 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -591,7 +591,7 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -815,7 +815,6 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 col.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
 
-
 class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
     bl_label = "Apply Deltas"
     bl_space_type = 'VIEW_3D'
@@ -935,7 +934,7 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1029,7 +1028,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1088,7 +1087,7 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1129,7 +1128,6 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
                 col.operator("object.parent_clear", text = "", icon ='PARENT_CLEAR')
 
 
-
 class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
     bl_label = "Object Data"
     bl_space_type = 'VIEW_3D'
@@ -1141,7 +1139,7 @@ class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1216,7 +1214,7 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1268,7 +1266,7 @@ class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1326,7 +1324,7 @@ class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1371,13 +1369,13 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Utility"
-    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -4602,20 +4600,17 @@ class VIEW3D_PT_curvestab_edit_curves(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("curves.separate", icon = "SEPARATE")
+            col.operator("curves.duplicate_move", icon="DUPLICATE")
 
-            col.separator(factor = 0.5)
+            col.separator(factor=0.5)
 
-            col.operator("curves.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-            col.operator("curves.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
+            col.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
+            col.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
 
-            col.separator(factor = 0.5)
+            col.separator(factor=0.5)
 
-            col.operator("curves.normals_make_consistent", icon = 'RECALC_NORMALS')
-
-            col.separator(factor = 0.5)
-
-            col.operator("curves.dissolve_verts", icon='DISSOLVE_VERTS')
+            col.operator("curves.separate", icon="SEPARATE")
+            col.operator("curves.delete", icon="DELETE")
 
         # icon buttons
         else:
@@ -4627,44 +4622,40 @@ class VIEW3D_PT_curvestab_edit_curves(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("curves.separate", text = "", icon = "SEPARATE")
-                row.operator("curves.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-                row.operator("curves.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+                row.operator("curves.duplicate_move", text="", icon="DUPLICATE")
+                row.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
+                row.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
 
                 row = col.row(align=True)
-                row.operator("curve.decimate", text = "", icon = "DECIMATE")
-                row.operator("transform.tilt", text = "", icon = "TILT")
-                row.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
+                row.operator("curves.separate", text="", icon="SEPARATE")
+                row.operator("curves.delete", text="", icon="DELETE")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("curves.separate", text = "", icon = "SEPARATE")
-                row.operator("curves.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+                row.operator("curves.duplicate_move", text="", icon="DUPLICATE")
+                row.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
 
                 row = col.row(align=True)
-                row.operator("curves.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
-                row.operator("curves.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+                row.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
+                row.operator("curves.separate", text="", icon="SEPARATE")
 
                 row = col.row(align=True)
-                row.operator("curves.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+                row.operator("curves.delete", text="", icon="DELETE")
 
             elif column_count == 1:
 
-                col.operator("curves.separate", text = "", icon = "SEPARATE")
+                col.operator("curves.duplicate_move", text="", icon="DUPLICATE")
 
-                col.separator(factor = 0.5)
+                col.separator(factor=0.5)
 
-                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-                col.operator("curve.decimate", text = "", icon = "DECIMATE")
+                col.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
+                col.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
 
-                col.separator(factor = 0.5)
+                col.separator(factor=0.5)
 
-                col.operator("curves.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
-
-                col.separator(factor = 0.5)
-
-                col.operator("curves.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+                col.operator("curves.separate", text="", icon="SEPARATE")
+                col.operator("curves.delete", text="", icon="DELETE")
 
 
 class VIEW3D_PT_curvestab_edit_controlpoints(toolshelf_calculate, Panel):
