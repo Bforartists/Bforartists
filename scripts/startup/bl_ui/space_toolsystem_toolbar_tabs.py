@@ -4710,8 +4710,6 @@ class VIEW3D_PT_curvestab_edit_controlpoints(toolshelf_calculate, Panel):
                 col.operator("curvs.extrude_move", text = "", icon = 'EXTRUDE_REGION')
 
 
-
-
 class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
@@ -4771,7 +4769,6 @@ class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
                 row.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
 
 
-
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
 
 class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
@@ -4799,19 +4796,11 @@ class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
+            col.operator("curves.snap_curves_to_surface", text="Snap to Deformed Surface", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+            col.operator("curves.snap_curves_to_surface",text="Snap to Nearest Surface", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
 
             col.separator(factor = 0.5)
-
-            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+            layout.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
 
         # icon buttons
         else:
@@ -4823,38 +4812,33 @@ class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
-                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
-                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
 
                 row = col.row(align=True)
-                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+                row.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
-                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
 
                 row = col.row(align=True)
-                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
-                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+                row.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
 
             elif column_count == 1:
 
-                col.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
 
                 col.separator(factor = 0.5)
 
-                col.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
 
                 col.separator(factor = 0.5)
 
-                col.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+                row.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
 
-                col.separator(factor = 0.5)
-
-                col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
 # ------------------------ Surface
 class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
