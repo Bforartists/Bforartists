@@ -8117,7 +8117,6 @@ class VIEW3D_MT_edit_curves(Menu):
 
         layout.separator()
         layout.operator("curves.duplicate_move", icon="DUPLICATE")
-        layout.operator("curves.extrude_move")
 
         layout.separator()
         layout.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
@@ -8127,7 +8126,7 @@ class VIEW3D_MT_edit_curves(Menu):
 
         layout.separator()
 
-        layout.operator("curves.separate")
+        layout.operator("curves.separate", icon="SEPARATE")
         layout.operator("curves.delete", icon="DELETE")
 
 
