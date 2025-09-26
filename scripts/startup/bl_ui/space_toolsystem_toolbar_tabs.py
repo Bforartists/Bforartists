@@ -3636,7 +3636,6 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props.boundary_mode = "FACE_SETS"
 
 
-
 class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
     bl_label = "Random Mask"
     bl_space_type = 'VIEW_3D'
@@ -4253,6 +4252,7 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
                 col.operator("paint.weight_set", text="", icon = "MOD_VERTEX_WEIGHT")
 
 
+# ------------------------ Curve Edit Mode
 class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     bl_label = "Curve"
     bl_space_type = 'VIEW_3D'
@@ -4493,83 +4493,6 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
 
-class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
-    bl_label = "Surface"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = "Surface"
-    bl_context = "surface_edit"
-    bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
-
-    def draw(self, _context):
-        layout = self.layout
-
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curve.spin", icon = 'SPIN')
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.split", icon = "SPLIT")
-            col.operator("curve.separate", icon = "SEPARATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curve.spin", text = "", icon = 'SPIN')
-                row.operator("curve.split", text = "", icon = "SPLIT")
-                row.operator("curve.separate", text = "", icon = "SEPARATE")
-
-                row = col.row(align=True)
-                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curve.spin", text = "", icon = 'SPIN')
-                row.operator("curve.split", text = "", icon = "SPLIT")
-
-                row = col.row(align=True)
-                row.operator("curve.separate", text = "", icon = "SEPARATE")
-                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-
-            elif column_count == 1:
-
-                col.operator("curve.spin", text = "", icon = 'SPIN')
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.split", text = "", icon = "SPLIT")
-                col.operator("curve.separate", text = "", icon = "SEPARATE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-
-
 class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
@@ -4653,6 +4576,449 @@ class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
 
+# ------------------------ Curves (Hair/Fur) Edit Mode
+class VIEW3D_PT_curvestab_edit_curves(toolshelf_calculate, Panel):
+    bl_label = "Curves"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Curves"
+    bl_context = "curves_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curves.separate", icon = "SEPARATE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curves.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+            col.operator("curves.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curves.normals_make_consistent", icon = 'RECALC_NORMALS')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curves.dissolve_verts", icon='DISSOLVE_VERTS')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curves.separate", text = "", icon = "SEPARATE")
+                row.operator("curves.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+                row.operator("curves.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+
+                row = col.row(align=True)
+                row.operator("curve.decimate", text = "", icon = "DECIMATE")
+                row.operator("transform.tilt", text = "", icon = "TILT")
+                row.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curves.separate", text = "", icon = "SEPARATE")
+                row.operator("curves.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+                row = col.row(align=True)
+                row.operator("curves.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+                row.operator("curves.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+
+                row = col.row(align=True)
+                row.operator("curves.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+
+            elif column_count == 1:
+
+                col.operator("curves.separate", text = "", icon = "SEPARATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+                col.operator("curve.decimate", text = "", icon = "DECIMATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curves.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curves.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+
+
+class VIEW3D_PT_curvestab_edit_controlpoints(toolshelf_calculate, Panel):
+    bl_label = "Control Points"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Control Points"
+    bl_context = "curves_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("transform.tilt", icon = 'TILT')
+            col.operator("curve.tilt_clear",icon = "CLEAR_TILT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
+            col.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
+            col.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
+            col.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+                row.operator("transform.tilt", text = "", icon = 'TILT')
+
+                row = col.row(align=True)
+                row.operator("curve.tilt_clear", text = "",icon = "CLEAR_TILT")
+                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+
+                row = col.row(align=True)
+                row.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
+                row.operator("curve.smooth_radius", text = "", icon = "SMOOTH_RADIUS")
+                row.operator("curve.smooth_tilt", text = "", icon = "SMOOTH_TILT")
+
+                row = col.row(align=True)
+                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+
+                row = col.row(align=True)
+                row.operator("transform.tilt", text = "", icon = 'TILT')
+                row.operator("curve.tilt_clear", text = "",icon = "CLEAR_TILT")
+
+                row = col.row(align=True)
+                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+
+                row = col.row(align=True)
+                row.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
+                row.operator("curve.smooth_radius", text = "", icon = "SMOOTH_RADIUS")
+
+                row = col.row(align=True)
+                row.operator("curve.smooth_tilt", text = "", icon = "SMOOTH_TILT")
+                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+            elif column_count == 1:
+
+                col.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("transform.tilt", text = "", icon = 'TILT')
+                col.operator("curve.tilt_clear", text = "",icon = "CLEAR_TILT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+                col.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
+                col.operator("curve.smooth_radius", text = "", icon = "SMOOTH_RADIUS")
+                col.operator("curve.smooth_tilt", text = "", icon = "SMOOTH_TILT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+
+class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
+    bl_label = "Segments"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Segments"
+    bl_context = "curves_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curves.subdivide", text = "Subdivide", icon = 'SUBDIVIDE_EDGES')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curves.switch0_direction", text = "Switch Direction", icon = "SWITCH_DIRECTION")
+
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                row.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                row.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
+
+            elif column_count == 1:
+
+                row.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                row.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
+
+
+
+# ------------------------ Curves (Hair/Fur) Sculpt Mode
+
+class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
+    bl_label = "Curves"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Curves"
+    bl_context = "curves_sculpt"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'SCULPT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+
+                row = col.row(align=True)
+                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+            elif column_count == 1:
+
+                col.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+# ------------------------ Surface
+class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
+    bl_label = "Surface"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Surface"
+    bl_context = "surface_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.spin", icon = 'SPIN')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.split", icon = "SPLIT")
+            col.operator("curve.separate", icon = "SEPARATE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.spin", text = "", icon = 'SPIN')
+                row.operator("curve.split", text = "", icon = "SPLIT")
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                row = col.row(align=True)
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.spin", text = "", icon = 'SPIN')
+                row.operator("curve.split", text = "", icon = "SPLIT")
+
+                row = col.row(align=True)
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+            elif column_count == 1:
+
+                col.operator("curve.spin", text = "", icon = 'SPIN')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.split", text = "", icon = "SPLIT")
+                col.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+
+# ------------------------ Grease Pencil
 class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
@@ -5489,6 +5855,7 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
                 col.operator("grease_pencil.interpolate_sequence", text="", icon = "SEQUENCE").use_selection = True
 
+
 class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
@@ -6191,7 +6558,6 @@ class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
                 col.operator("armature.flip_names", text="", icon = "FLIP")
 
 
-
 class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
     bl_label = "Pose"
     bl_space_type = 'VIEW_3D'
@@ -6573,6 +6939,7 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
 
                 col.operator("pose.propagate", text="", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
+
 class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
     bl_label = "Motion Paths"
     bl_space_type = 'VIEW_3D'
@@ -6887,6 +7254,14 @@ classes = (
     VIEW3D_PT_surfacetab_surface,
     VIEW3D_PT_curvetab_controlpoints_surface,
     VIEW3D_PT_segmentstab_segments,
+
+    # Curves (Hair/Fur) Edit Mode
+    VIEW3D_PT_curvestab_edit_curves,
+    VIEW3D_PT_curvestab_edit_controlpoints,
+    VIEW3D_PT_curvestab_edit_segments,
+
+    # Curves (Hair/Fur) Sculpt Mode
+    VIEW3D_PT_curvestab_sculpt_curves,
 
     # grease pencil edit mode
     VIEW3D_PT_gp_gpenciltab_dissolve,
