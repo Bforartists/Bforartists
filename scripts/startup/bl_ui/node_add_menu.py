@@ -22,6 +22,74 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
 )
 
+# BFA - Dictionary for sorting order of the different node group icon types
+icon_sorting_order = {
+    'NODETREE' : 0,
+    'FAKE_USER_ON' : 1,
+    'ASSET_MANAGER' : 2,
+    'LIBRARY_DATA_DIRECT' : 3,
+    'LIBRARY_DATA_OVERRIDE' : 4,
+}
+
+
+# BFA - Function for determining appropriate icon for node group
+def node_group_icon(group):
+    if group.library is not None:
+        return 'LIBRARY_DATA_DIRECT'
+    elif group.override_library is not None: 
+        return 'LIBRARY_DATA_OVERRIDE'
+    elif group.asset_data is not None:
+        return 'ASSET_MANAGER'
+    elif group.use_fake_user:
+        return 'FAKE_USER_ON'
+    else:
+        return 'NODETREE'
+
+
+# BFA - Callback function to be used for sorting nodegroups by icon
+def icon_sorting_function(group):
+    return icon_sorting_order[node_group_icon(group)]
+
+
+# BFA - Separated function from `draw_node_group_add_menu` so that both the add menu and toolshelf can use this
+def draw_node_groups(context, layout):
+    space_node = context.space_data
+    node_tree = space_node.edit_tree
+
+    # BFA - Check if there's an active node tree
+    if node_tree is None:
+        return
+
+    from nodeitems_builtins import node_tree_group_type
+
+    prefs = context.preferences
+    show_hidden = prefs.filepaths.show_hidden_files_datablocks
+
+    groups = [
+        group for group in context.blend_data.node_groups
+        if (group.bl_idname == node_tree.bl_idname and
+            not group.contains_tree(node_tree) and
+            (show_hidden or not group.name.startswith('.')))
+    ]
+
+    # BFA - Group each node group by their type and apply the appropriate icon
+    import itertools
+    for icon, groups in itertools.groupby(sorted(groups, key=icon_sorting_function), key=node_group_icon):
+        if groups:
+            layout.separator()
+            for group in groups:
+                props = layout.operator("node.add_node", text=group.name, icon=node_group_icon(group)) # BFA
+                props.use_transform = True # BFA
+                props.type = node_tree_group_type[group.bl_idname] # BFA
+                ops = props.settings.add() # BFA
+                ops.name = "node_tree" # BFA
+                ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
+                ops = props.settings.add()
+                ops.name = "width"
+                ops.value = repr(group.default_group_node_width)
+                ops = props.settings.add()
+                ops.name = "name"
+                ops.value = repr(group.name)
 
 # NOTE: This is kept for compatibility's sake, as some scripts import node_add_menu.add_node_type.
 def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True):

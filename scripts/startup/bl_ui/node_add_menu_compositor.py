@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2022-2023 Blender Authors
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
-
+import bpy
 from bl_ui import node_add_menu
 from bpy.app.translations import (
     contexts as i18n_contexts,
@@ -309,7 +309,7 @@ class NODE_MT_compositor_node_vector_base(node_add_menu.NodeMenu):
         self.draw_assets_for_catalog(layout, self.bl_label)
 
 # BFA menu
-class NODE_MT_category_compositor_LAYOUT(Menu):
+class NODE_MT_category_compositor_LAYOUT(bpy.types.Menu):
     bl_idname = "NODE_MT_category_compositor_LAYOUT"
     bl_label = "Layout"
 
