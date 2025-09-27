@@ -381,18 +381,11 @@ void EDBM_selectmode_flush(BMEditMesh *em)
   EDBM_selectmode_flush_ex(em, em->selectmode);
 }
 
-void EDBM_deselect_flush(BMEditMesh *em)
+void EDBM_select_flush_from_verts(BMEditMesh *em, const bool select)
 {
-  /* function below doesn't use. just do this to keep the values in sync */
+  /* Function below doesn't use. just do this to keep the values in sync. */
   em->bm->selectmode = em->selectmode;
-  BM_mesh_deselect_flush(em->bm);
-}
-
-void EDBM_select_flush(BMEditMesh *em)
-{
-  /* function below doesn't use. just do this to keep the values in sync */
-  em->bm->selectmode = em->selectmode;
-  BM_mesh_select_flush(em->bm);
+  BM_mesh_select_flush_from_verts(em->bm, select);
 }
 
 void EDBM_select_more(BMEditMesh *em, const bool use_face_step)
@@ -1520,7 +1513,7 @@ bool EDBM_mesh_hide(BMEditMesh *em, bool swap)
   BMElem *ele;
   int itermode;
   char hflag_swap = swap ? BM_ELEM_SELECT : 0;
-  bool changed = true;
+  bool changed = false;
 
   if (em->selectmode & SCE_SELECT_VERTEX) {
     itermode = BM_VERTS_OF_MESH;

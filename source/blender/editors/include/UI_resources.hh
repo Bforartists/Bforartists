@@ -102,7 +102,6 @@ enum ThemeColorID {
   TH_EDGE,
   TH_EDGE_SELECT, /* Stands for edge selection, not edge select mode. */
   TH_EDGE_MODE_SELECT,
-  TH_EDGE_SEAM,
   TH_FACE,
   TH_FACE_SELECT, /* Stands for face selection, not face select mode. */
   TH_FACE_MODE_SELECT,
@@ -112,7 +111,6 @@ enum ThemeColorID {
   TH_NORMAL,
   TH_VNORMAL,
   TH_LNORMAL,
-  TH_FACE_DOT,
   TH_FACEDOT_SIZE,
   TH_CFRAME,
   TH_FRAME_BEFORE,
@@ -234,7 +232,6 @@ enum ThemeColorID {
   TH_SEQ_TEXT_CURSOR,
   TH_SEQ_SELECTED_TEXT,
 
-  TH_EDGE_SHARP,
   TH_EDITMESH_ACTIVE,
 
   TH_HANDLE_VERTEX,
@@ -250,8 +247,6 @@ enum ThemeColorID {
   TH_DOPESHEET_IPOLINE,
 
   TH_PREVIEW_BACK,
-
-  TH_EDGE_CREASE,
 
   TH_DRAWEXTRA_EDGELEN,
   TH_DRAWEXTRA_EDGEANG,
@@ -282,13 +277,7 @@ enum ThemeColorID {
   TH_STITCH_PREVIEW_UNSTITCHABLE,
   TH_STITCH_PREVIEW_ACTIVE,
 
-  TH_PAINT_CURVE_HANDLE,
-  TH_PAINT_CURVE_PIVOT,
-
   TH_UV_SHADOW,
-
-  TH_FREESTYLE_EDGE_MARK,
-  TH_FREESTYLE_FACE_MARK,
 
   TH_MATCH,            /* highlight color for search matches */
   TH_SELECT_HIGHLIGHT, /* highlight color for selected outliner item */
@@ -372,8 +361,11 @@ enum ThemeColorID {
   TH_METADATA_BG,
   TH_METADATA_TEXT,
 
-  TH_EDGE_BEVEL,
-  TH_VERTEX_BEVEL,
+  TH_BEVEL,
+  TH_CREASE,
+  TH_SEAM,
+  TH_SHARP,
+  TH_FREESTYLE,
 };
 
 /* Specific defines per space should have higher define values. */

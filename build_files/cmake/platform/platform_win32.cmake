@@ -1352,6 +1352,8 @@ set(PLATFORM_ENV_BUILD_DIRS "${_msvc_path}\;${LIBDIR}/epoxy/bin\;${LIBDIR}/tbb/b
 set(PLATFORM_ENV_BUILD "PATH=${PLATFORM_ENV_BUILD_DIRS}")
 # Install needs the additional folders from PLATFORM_ENV_BUILD_DIRS as well, as tools like:
 # `idiff` and `abcls` use the release mode dlls.
+# Escape semicolons, since in cmake they denote elements in a list if surrounded by square brackets
+string(REPLACE ";" "\\;" ESCAPED_PATH "$ENV{PATH}")
 set(PLATFORM_ENV_INSTALL "PATH=${CMAKE_INSTALL_PREFIX_WITH_CONFIG}/bforartists.shared/\;${PLATFORM_ENV_BUILD_DIRS}\;$ENV{PATH}")
 unset(_library_paths)
 unset(_msvc_path)

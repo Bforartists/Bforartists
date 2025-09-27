@@ -211,7 +211,6 @@ if(WITH_BLENDER)
       preview_loading
       restrict_instanced_off
       restrict_instanced_on
-      rna_add
       strands
       trash
       group_bright

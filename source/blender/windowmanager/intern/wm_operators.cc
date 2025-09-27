@@ -613,6 +613,11 @@ static const char *wm_context_member_from_ptr(const bContext *C,
               TEST_PTR_DATA_TYPE("space_data.overlay", RNA_SpaceNodeOverlay, ptr, snode);
               break;
             }
+            case SPACE_CLIP: {
+              const SpaceClip *sclip = (SpaceClip *)space_data;
+              TEST_PTR_DATA_TYPE("space_data.overlay", RNA_SpaceClipOverlay, ptr, sclip);
+              break;
+            }
             case SPACE_SEQ: {
               const SpaceSeq *sseq = (SpaceSeq *)space_data;
               TEST_PTR_DATA_TYPE(
@@ -977,19 +982,27 @@ wmOperatorStatus WM_generic_select_modal(bContext *C, wmOperator *op, const wmEv
 {
   PropertyRNA *wait_to_deselect_prop = RNA_struct_find_property(op->ptr,
                                                                 "wait_to_deselect_others");
+  const bool use_select_on_click = RNA_struct_property_is_set(op->ptr, "use_select_on_click");
   const short init_event_type = short(POINTER_AS_INT(op->customdata));
 
   /* Get settings from RNA properties for operator. */
   const int mval[2] = {RNA_int_get(op->ptr, "mouse_x"), RNA_int_get(op->ptr, "mouse_y")};
 
   if (init_event_type == 0) {
+    op->customdata = POINTER_FROM_INT(int(event->type));
+
+    if (use_select_on_click) {
+      /* Don't do any selection yet. Wait to see if there's a drag or click (release) event. */
+      WM_event_add_modal_handler(C, op);
+      return OPERATOR_RUNNING_MODAL | OPERATOR_PASS_THROUGH;
+    }
+
     if (event->val == KM_PRESS) {
       RNA_property_boolean_set(op->ptr, wait_to_deselect_prop, true);
 
       wmOperatorStatus retval = op->type->exec(C, op);
       OPERATOR_RETVAL_CHECK(retval);
 
-      op->customdata = POINTER_FROM_INT(int(event->type));
       if (retval & OPERATOR_RUNNING_MODAL) {
         WM_event_add_modal_handler(C, op);
       }
@@ -2783,7 +2796,7 @@ static void radial_control_paint_curve(uint pos, Brush *br, float radius, int li
   GPU_line_width(2.0f);
   immUniformColor4f(0.8f, 0.8f, 0.8f, 0.85f);
   float step = (radius * 2.0f) / float(line_segments);
-  BKE_curvemapping_init(br->curve);
+  BKE_curvemapping_init(br->curve_distance_falloff);
   immBegin(GPU_PRIM_LINES, line_segments * 2);
   for (int i = 0; i < line_segments; i++) {
     float h1 = BKE_brush_curve_strength_clamped(br, fabsf((i * step) - radius), radius);
@@ -4503,6 +4516,17 @@ static bool rna_id_enum_filter_single(const ID *id, void *user_data)
   return (id != user_data);
 }
 
+static bool rna_id_enum_filter_single_and_assets(const ID *id, void *user_data)
+{
+  if (!rna_id_enum_filter_single(id, user_data)) {
+    return false;
+  }
+  if (id->asset_data != nullptr) {
+    return false;
+  }
+  return true;
+}
+
 /* Generic itemf's for operators that take library args. */
 static const EnumPropertyItem *rna_id_itemf(bool *r_free,
                                             ID *id,
@@ -4621,7 +4645,7 @@ const EnumPropertyItem *RNA_scene_without_sequencer_scene_itemf(bContext *C,
   return rna_id_itemf(r_free,
                       C ? (ID *)CTX_data_main(C)->scenes.first : nullptr,
                       false,
-                      rna_id_enum_filter_single,
+                      rna_id_enum_filter_single_and_assets,
                       sequencer_scene);
 }
 

@@ -3442,7 +3442,10 @@ class WM_MT_splash(Menu):
             col2.operator("wm.url_open", text="Credits",
                           icon='URL').url = "https://www.bforartists.de/credits-page-bforartists/"
 
-        layout.separator()
+        col_sep = layout.column()
+        col_sep.separator()
+        col_sep.separator(type='LINE')
+        col_sep.separator()
 
         split = layout.split()
 

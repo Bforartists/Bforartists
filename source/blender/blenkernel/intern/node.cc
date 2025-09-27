@@ -516,7 +516,7 @@ static void node_foreach_working_space_color(ID *id, const IDTypeForeachColorFun
       NodeInputColor *input_color_storage = static_cast<NodeInputColor *>(node->storage);
       fn.single(input_color_storage->color);
     }
-    else if (node->type_legacy == TEX_NODE_VALTORGB || node->type_legacy == SH_NODE_VALTORGB) {
+    else if (ELEM(node->type_legacy, TEX_NODE_VALTORGB, SH_NODE_VALTORGB)) {
       ColorBand *coba = static_cast<ColorBand *>(node->storage);
       BKE_colorband_foreach_working_space_color(coba, fn);
     }
@@ -1069,6 +1069,26 @@ static void node_blend_write_storage(BlendWriter *writer, bNodeTree *ntree, bNod
         /* The sockets of this item have the same identifiers that have been used by older
          * Blender versions before the node supported capturing multiple attributes. */
         storage.data_type_legacy = item.data_type;
+        break;
+      }
+    }
+  }
+  else if (node->type_legacy == GEO_NODE_VIEWER) {
+    /* Forward compatibility for older Blender versionins where the viewer node only had a geometry
+     * and field input. */
+    auto &storage = *static_cast<NodeGeometryViewer *>(node->storage);
+    for (const NodeGeometryViewerItem &item : Span{storage.items, storage.items_num}) {
+      if (ELEM(item.socket_type,
+               SOCK_FLOAT,
+               SOCK_INT,
+               SOCK_VECTOR,
+               SOCK_RGBA,
+               SOCK_BOOLEAN,
+               SOCK_ROTATION,
+               SOCK_MATRIX))
+      {
+        storage.data_type_legacy = *socket_type_to_custom_data_type(
+            eNodeSocketDatatype(item.socket_type));
         break;
       }
     }

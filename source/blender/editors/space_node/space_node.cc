@@ -1961,9 +1961,10 @@ void ED_spacetype_node()
   BLI_addhead(&st->regiontypes, art);
   asset::shelf::types_register(art, SPACE_NODE);
 
-  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_catalog_assets_menu_type()));
-  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_unassigned_assets_menu_type()));
+  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, catalog_assets_menu_type()));
+  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, unassigned_assets_menu_type()));
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_root_catalogs_menu_type()));
+  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, swap_root_catalogs_menu_type()));
 
   BKE_spacetype_register(std::move(st));
 }

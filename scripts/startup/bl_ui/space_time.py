@@ -50,6 +50,20 @@ def playback_controls(layout, context):
 
     row = layout.row(align=True)
 
+    if scene:
+        layout.popover(
+            panel="TIME_PT_playback",
+            text="Playback",
+        )
+
+    if tool_settings:
+        icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
+        layout.popover(
+            panel="TIME_PT_keyframing_settings",
+            text_ctxt=i18n_contexts.id_windowmanager,
+            icon=icon_keytype,
+        )
+
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
        layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
@@ -79,6 +93,12 @@ def playback_controls(layout, context):
     row.operator("screen.keyframe_jump", text="", icon="NEXT_KEYFRAME").next = True
     row.operator("screen.frame_jump", text="", icon="FF").end = True
     row.operator("screen.animation_cancel", text="", icon="LOOP_BACK").restore_frame = True
+
+    if tool_settings:
+        row = layout.row(align=True)
+        row.prop(tool_settings, "use_snap_playhead", text="")
+        sub = row.row(align=True)
+        sub.popover(panel="TIME_PT_playhead_snapping", text="")
 
     # layout.separator_spacer() #BFA
 

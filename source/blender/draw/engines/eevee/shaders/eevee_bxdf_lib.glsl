@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "infos/eevee_common_info.hh"
+#include "infos/eevee_common_infos.hh"
 
 /**
  * BxDF evaluation functions.
@@ -60,13 +60,6 @@ struct LightProbeRay {
    * Modulate blur level of spherical probe and blend between sphere probe and spherical harmonic
    * evaluation at higher roughness. */
   float perceptual_roughness;
-};
-
-/* General purpose 3D ray. */
-struct Ray {
-  packed_float3 direction;
-  float max_time;
-  packed_float3 origin;
 };
 
 /* -------------------------------------------------------------------- */
