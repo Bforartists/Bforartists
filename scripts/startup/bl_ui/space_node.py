@@ -1630,7 +1630,6 @@ classes = (
     NODE_MT_editor_menus,
     NODE_MT_add,
     NODE_MT_pie_menus,  # BFA - Menu
-    NODE_MT_view,
     NODE_MT_viewer, # BFA - Menu
     NODE_MT_swap,
     NODE_MT_select,

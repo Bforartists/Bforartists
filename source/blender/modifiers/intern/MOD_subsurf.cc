@@ -441,13 +441,9 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->separator(); /*bfa - indent*/
     row->prop(ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_limit_surface", 0); /*bfa - decorator*/
-    uiLayout *col = &advanced_layout->column(true);
-    col->active_set((smd->flags & eSubsurfModifierFlag_UseAdaptiveSubdivision) ||
-                    RNA_boolean_get(ptr, "use_limit_surface"));
-    col->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* bfa - our layout */
-    if (ob_use_adaptive_subdivision || RNA_boolean_get(ptr, "use_limit_surface")) {
+    if ((smd->flags & eSubsurfModifierFlag_UseAdaptiveSubdivision) || RNA_boolean_get(ptr, "use_limit_surface")) {
       row = &col->row(false);
       row->separator(); /*bfa - indent*/
       row->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
