@@ -373,7 +373,7 @@ const EnumPropertyItem rna_enum_fileselect_params_sort_items[] = {
 static const EnumPropertyItem rna_enum_asset_import_method_items[] = {
     {FILE_ASSET_IMPORT_FOLLOW_PREFS,
      "FOLLOW_PREFS",
-     0,
+     ICON_PREFERENCES,
      "Follow Preferences",
      "Use the import method set in the Preferences for this asset library, don't override it "
      "for this Asset Browser"},
