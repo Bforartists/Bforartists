@@ -1616,7 +1616,7 @@ elseif(APPLE)
   )
 
   # Xcode Archiving support for distributing the application (Testflight, App Store Connect, etc...)
-  set_target_properties(blender PROPERTIES
+  set_target_properties(bforartists PROPERTIES
     XCODE_ATTRIBUTE_SKIP_INSTALL "NO"
     XCODE_ATTRIBUTE_INSTALL_PATH "$(LOCAL_APPS_DIR)"
   )
