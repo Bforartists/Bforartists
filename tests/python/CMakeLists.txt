@@ -318,7 +318,7 @@ add_blender_test(
 # Generate BLENDFILE_VERSIONING_SPLIT_RANGE instances of the test,
 # each processing their own subset of the whole set of blendfiles.
 if(TEST_SRC_DIR_EXISTS)
-  set(BLENDFILE_VERSIONING_SPLIT_RANGE 32)
+  set(BLENDFILE_VERSIONING_SPLIT_RANGE 128)
   math(EXPR BLENDFILE_VERSIONING_SPLIT_RANGE_CMAKE "${BLENDFILE_VERSIONING_SPLIT_RANGE} - 1")
   foreach(idx RANGE ${BLENDFILE_VERSIONING_SPLIT_RANGE_CMAKE})
     add_blender_test(
@@ -349,7 +349,7 @@ if(TEST_SRC_DIR_EXISTS)
   )
 
 # This test is intermittently failing. Disable it for now to avoid other work
-# being incorrectly flagged as broken. Once issue #146221 is resolved this 
+# being incorrectly flagged as broken. Once issue #146221 is resolved this
 # test must be re-enabled.
 #
 #  add_blender_test(
@@ -407,6 +407,11 @@ if(TEST_SRC_DIR_EXISTS)
     --python ${TEST_PYTHON_DIR}/curves_extrude.py
     --
     --run-all-tests
+  )
+
+  add_blender_test(
+    mesh_join
+    --python ${TEST_PYTHON_DIR}/mesh_join.py
   )
 
   add_blender_test(
@@ -1404,6 +1409,7 @@ if(WITH_UI_TESTS)
     test_workspace.sanity_check_general
     test_workspace.sanity_check_2d_animation
     test_workspace.sanity_check_sculpting
+    test_workspace.sanity_check_storyboarding
     test_workspace.sanity_check_vfx
     test_workspace.sanity_check_video_editing
   )

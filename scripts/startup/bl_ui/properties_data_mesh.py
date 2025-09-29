@@ -71,7 +71,9 @@ class MESH_MT_shape_key_context_menu(Menu):
         ).use_topology = True
         layout.separator()
         layout.operator("object.join_shapes", icon="JOIN", text="New from Objects")
+        layout.operator("object.join_shapes", icon="JOIN", text="New from Objects Flipped").use_mirror = True
         layout.operator("object.update_shapes", icon="FILE_REFRESH")
+        layout.operator("object.update_shapes", icon="FILE_REFRESH", text="Update from Objects Flipped").use_mirror = True
         layout.operator("object.shape_key_transfer", icon="OBJECT_CONTENTS")
         layout.separator()
         props = layout.operator("object.shape_key_remove", icon="CHECKMARK", text="Apply All Shape Keys")

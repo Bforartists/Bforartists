@@ -969,10 +969,10 @@ class VIEW3D_PT_tools_weight_gradient(Panel, View3DPaintPanel):
         brush = settings.brush
 
         col = layout.column(align=True)
-        col.prop(brush, "curve_preset", expand=True)
+        col.prop(brush, "curve_distance_falloff_preset", expand=True)
 
-        if brush.curve_preset == "CUSTOM":
-            layout.template_curve_mapping(brush, "curve", brush=True)
+        if brush.curve_distance_falloff_preset == 'CUSTOM':
+            layout.template_curve_mapping(brush, "curve_distance_falloff", brush=True, use_negative_slope=True)
 
             col = layout.column(align=True)
             row = col.row(align=True)
@@ -1850,7 +1850,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_weight_falloff(GreasePencilBrushFallof
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_weight_paint
         brush = settings.brush
-        return brush and brush.curve
+        return (brush and brush.curve_distance_falloff)
 
 
 class VIEW3D_PT_tools_grease_pencil_weight_options(Panel, View3DPanel, GreasePencilWeightPanel):
@@ -1954,7 +1954,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_vertex_falloff(GreasePencilBrushFallof
     def poll(cls, context):
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_vertex_paint
-        return settings and settings.brush and settings.brush.curve
+        return (settings and settings.brush and settings.brush.curve_distance_falloff)
 
 
 class VIEW3D_PT_tools_grease_pencil_brush_vertex_palette(View3DPanel, Panel):
