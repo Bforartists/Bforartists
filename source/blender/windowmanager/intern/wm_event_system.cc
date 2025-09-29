@@ -516,12 +516,13 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
     /* Update dependency graph of sequencer scene. */
     Scene *sequencer_scene = CTX_data_sequencer_scene(C);
     if (sequencer_scene && sequencer_scene != scene) {
-     Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
-        bmain, sequencer_scene, BKE_view_layer_default_render(sequencer_scene));
-    if (is_after_open_file) {
-      DEG_graph_relations_update(depsgraph);
-      DEG_tag_on_visible_update(bmain, depsgraph);
-    }
+      Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(
+          bmain, sequencer_scene, BKE_view_layer_default_render(sequencer_scene));
+      if (is_after_open_file) {
+        DEG_graph_relations_update(depsgraph);
+        DEG_tag_on_visible_update(bmain, depsgraph);
+      }
+      DEG_make_active(depsgraph);
       BKE_scene_graph_update_tagged(depsgraph, bmain);
     }
 
@@ -747,7 +748,7 @@ void wm_event_do_notifiers(bContext *C)
         /* Pass. */
       }
       else if (note->category == NC_SCENE && note->reference &&
-               (note->reference != scene && note->reference != workspace->sequencer_scene))
+               (!ELEM(note->reference, scene, workspace->sequencer_scene)))
       {
         /* Pass. */
       }

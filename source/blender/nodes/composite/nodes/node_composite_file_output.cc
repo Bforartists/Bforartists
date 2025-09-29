@@ -49,6 +49,7 @@
 #include "COM_utilities.hh"
 
 #include "NOD_compositor_file_output.hh"
+#include "NOD_node_extra_info.hh"
 #include "NOD_socket_items_blend.hh"
 #include "NOD_socket_items_ops.hh"
 #include "NOD_socket_items_ui.hh"
@@ -112,7 +113,7 @@ static void node_init(const bContext *C, PointerRNA *node_pointer)
   data->save_as_render = true;
   data->file_name = BLI_strdup("file_name");
 
-  BKE_image_format_init(&data->format, false);
+  BKE_image_format_init(&data->format);
   BKE_image_format_media_type_set(
       &data->format, node_pointer->owner_id, MEDIA_TYPE_MULTI_LAYER_IMAGE);
   BKE_image_format_update_color_space_for_type(&data->format);
@@ -120,7 +121,7 @@ static void node_init(const bContext *C, PointerRNA *node_pointer)
   Scene *scene = CTX_data_scene(C);
   if (scene) {
     const RenderData *render_data = &scene->r;
-    BLI_strncpy(data->directory, render_data->pic, FILE_MAX);
+    STRNCPY(data->directory, render_data->pic);
   }
 }
 
@@ -173,7 +174,7 @@ static Vector<path_templates::Error> compute_image_path(const StringRefNull dire
                                                         char *r_image_path)
 {
   char base_path[FILE_MAX] = "";
-  BLI_strncpy(base_path, directory.c_str(), FILE_MAX);
+  STRNCPY(base_path, directory.c_str());
   const std::string full_file_name = file_name + file_name_suffix;
   BLI_path_append(base_path, FILE_MAX, full_file_name.c_str());
 
@@ -374,6 +375,18 @@ static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &
   BLO_read_string(&reader, &data.file_name);
   BKE_image_format_blend_read_data(&reader, &data.format);
   socket_items::blend_read_data<FileOutputItemsAccessor>(&reader, node);
+}
+
+static void node_extra_info(NodeExtraInfoParams &parameters)
+{
+  SpaceNode *space_node = CTX_wm_space_node(&parameters.C);
+  if (space_node->node_tree_sub_type != SNODE_COMPOSITOR_SCENE) {
+    NodeExtraInfoRow row;
+    row.text = RPT_("Node Unsupported");
+    row.tooltip = TIP_("The File Output node is only supported for scene compositing");
+    row.icon = ICON_ERROR;
+    parameters.rows.append(std::move(row));
+  }
 }
 
 using namespace blender::compositor;
@@ -826,6 +839,7 @@ static void node_register()
       ntype, "NodeCompositorFileOutput", node_free_storage, node_copy_storage);
   ntype.blend_write_storage_content = node_blend_write;
   ntype.blend_data_read_storage_content = node_blend_read;
+  ntype.get_extra_info = node_extra_info;
   ntype.get_compositor_operation = get_compositor_operation;
 
   blender::bke::node_register_type(ntype);
@@ -853,7 +867,7 @@ void FileOutputItemsAccessor::blend_read_data_item(BlendDataReader *reader, Item
 std::string FileOutputItemsAccessor::validate_name(const StringRef name)
 {
   char file_name[FILE_MAX] = "";
-  BLI_strncpy(file_name, name.data(), FILE_MAX);
+  STRNCPY(file_name, name.data());
   BLI_path_make_safe_filename(file_name);
   return file_name;
 }

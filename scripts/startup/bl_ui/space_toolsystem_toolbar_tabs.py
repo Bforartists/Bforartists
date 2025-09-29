@@ -4768,7 +4768,6 @@ class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
                 col.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
                 col.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
 
-
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
 
 class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):

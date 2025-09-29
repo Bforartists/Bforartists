@@ -156,14 +156,14 @@ typedef struct bNodeSocket {
   void *default_value;
 
   /** Local stack index for "node_exec". */
-  short stack_index;
+  int stack_index;
   char display_shape;
 
   /* #AttrDomain used when the geometry nodes modifier creates an attribute for a group
    * output. */
   char attribute_domain;
 
-  char _pad[4];
+  char _pad[2];
 
   /** Custom dynamic defined label. */
   char label[/*MAX_NAME*/ 64];
@@ -1068,8 +1068,9 @@ typedef enum GeometryNodeAssetTraitFlag {
   GEO_NODE_ASSET_GREASE_PENCIL = (1 << 9),
   /* Only used by Grease Pencil for now. */
   GEO_NODE_ASSET_PAINT = (1 << 10),
+  GEO_NODE_ASSET_HIDE_MODIFIER_MANAGE_PANEL = (1 << 11),
 } GeometryNodeAssetTraitFlag;
-ENUM_OPERATORS(GeometryNodeAssetTraitFlag, GEO_NODE_ASSET_PAINT);
+ENUM_OPERATORS(GeometryNodeAssetTraitFlag, GEO_NODE_ASSET_HIDE_MODIFIER_MANAGE_PANEL);
 
 /* Data structs, for `node->storage`. */
 
@@ -1460,6 +1461,9 @@ typedef struct NodeTexBase {
 typedef struct NodeTexSky {
   NodeTexBase base;
   int sky_model;
+  float sun_direction[3];
+  float turbidity;
+  float ground_albedo;
   float sun_size;
   float sun_intensity;
   float sun_elevation;
@@ -1469,7 +1473,7 @@ typedef struct NodeTexSky {
   float aerosol_density;
   float ozone_density;
   char sun_disc;
-  char _pad[11];
+  char _pad[7];
 } NodeTexSky;
 
 typedef struct NodeTexImage {
@@ -1679,6 +1683,11 @@ typedef struct NodeShaderNormalMap {
   int space;
   char uv_map[/*MAX_CUSTOMDATA_LAYER_NAME_NO_PREFIX*/ 64];
 } NodeShaderNormalMap;
+
+typedef struct NodeRadialTiling {
+  uint8_t normalize;
+  char _pad[7];
+} NodeRadialTiling;
 
 typedef struct NodeShaderUVMap {
   char uv_map[/*MAX_CUSTOMDATA_LAYER_NAME_NO_PREFIX*/ 64];
@@ -2096,11 +2105,43 @@ typedef struct NodeGeometryImageTexture {
   int8_t extension;
 } NodeGeometryImageTexture;
 
+typedef enum NodeGeometryViewerItemFlag {
+  /**
+   * Automatically remove the viewer item when there is no link connected to it. This simplifies
+   * working with viewers when one adds and removes values to view all the time.
+   *
+   * This is a flag instead of always being used, because sometimes the user or some script sets up
+   * multiple inputs which shouldn't be deleted immediately. This flag is automatically set when
+   * viewer items are added interactively in the node editor.
+   */
+  NODE_GEO_VIEWER_ITEM_FLAG_AUTO_REMOVE = (1 << 0),
+} NodeGeometryViewerItemFlag;
+
+typedef struct NodeGeometryViewerItem {
+  char *name;
+  /** #eNodeSocketDatatype. */
+  short socket_type;
+  uint8_t flag;
+  char _pad[1];
+  /**
+   * Generated unique identifier for sockets which stays the same even when the item order or
+   * names change.
+   */
+  int identifier;
+} NodeGeometryViewerItem;
+
 typedef struct NodeGeometryViewer {
+  NodeGeometryViewerItem *items;
+  int items_num;
+  int active_index;
+  int next_identifier;
+
   /** #eCustomDataType. */
-  int8_t data_type;
+  int8_t data_type_legacy;
   /** #AttrDomain. */
   int8_t domain;
+
+  char _pad[2];
 } NodeGeometryViewer;
 
 typedef struct NodeGeometryUVUnwrap {
@@ -2677,7 +2718,12 @@ enum {
 };
 
 /* sky texture */
-enum { SHD_SKY_SINGLE_SCATTERING = 0, SHD_SKY_MULTIPLE_SCATTERING = 1 };
+enum {
+  SHD_SKY_PREETHAM = 0,
+  SHD_SKY_HOSEK = 1,
+  SHD_SKY_SINGLE_SCATTERING = 2,
+  SHD_SKY_MULTIPLE_SCATTERING = 3,
+};
 
 /* environment texture */
 enum {

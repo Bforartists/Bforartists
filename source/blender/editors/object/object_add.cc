@@ -5347,7 +5347,7 @@ static wmOperatorStatus object_join_exec(bContext *C, wmOperator *op)
 
   wmOperatorStatus ret = OPERATOR_CANCELLED;
   if (ob->type == OB_MESH) {
-    ret = ED_mesh_join_objects_exec(C, op);
+    ret = mesh::join_objects_exec(C, op);
   }
   else if (ELEM(ob->type, OB_CURVES_LEGACY, OB_SURF)) {
     ret = ED_curve_join_objects_exec(C, op);
@@ -5443,7 +5443,8 @@ static bool active_shape_key_editable_poll(bContext *C)
 
 static wmOperatorStatus join_shapes_exec(bContext *C, wmOperator *op)
 {
-  return ED_mesh_shapes_join_objects_exec(C, true, op->reports);
+  return ED_mesh_shapes_join_objects_exec(
+      C, true, RNA_boolean_get(op->ptr, "use_mirror"), op->reports);
 }
 
 void OBJECT_OT_join_shapes(wmOperatorType *ot)
@@ -5458,11 +5459,16 @@ void OBJECT_OT_join_shapes(wmOperatorType *ot)
   ot->poll = active_shape_key_editable_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  PropertyRNA *prop = RNA_def_boolean(
+      ot->srna, "use_mirror", false, "Mirror", "Mirror the new shape key values");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 static wmOperatorStatus update_all_shape_keys_exec(bContext *C, wmOperator *op)
 {
-  return ED_mesh_shapes_join_objects_exec(C, false, op->reports);
+  return ED_mesh_shapes_join_objects_exec(
+      C, false, RNA_boolean_get(op->ptr, "use_mirror"), op->reports);
 }
 
 static bool object_update_shapes_poll(bContext *C)
@@ -5491,6 +5497,10 @@ void OBJECT_OT_update_shapes(wmOperatorType *ot)
   ot->poll = object_update_shapes_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  PropertyRNA *prop = RNA_def_boolean(
+      ot->srna, "use_mirror", false, "Mirror", "Mirror the new shape key values");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 /** \} */

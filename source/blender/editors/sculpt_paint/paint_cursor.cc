@@ -429,7 +429,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
   int size;
   const bool refresh = !cursor_snap.overlay_texture ||
                        (overlay_flags & PAINT_OVERLAY_INVALID_CURVE) || cursor_snap.zoom != zoom ||
-                       cursor_snap.curve_preset != br->curve_preset;
+                       cursor_snap.curve_preset != br->curve_distance_falloff_preset;
 
   init = (cursor_snap.overlay_texture != nullptr);
 
@@ -463,7 +463,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
     }
     buffer = MEM_malloc_arrayN<uchar>(size * size, "load_tex");
 
-    BKE_curvemapping_init(br->curve);
+    BKE_curvemapping_init(br->curve_distance_falloff);
 
     LoadTexData data{};
     data.br = br;
@@ -500,7 +500,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
     size = cursor_snap.size;
   }
 
-  cursor_snap.curve_preset = br->curve_preset;
+  cursor_snap.curve_preset = br->curve_distance_falloff_preset;
   BKE_paint_reset_overlay_invalid(PAINT_OVERLAY_INVALID_CURVE);
 
   return 1;
@@ -986,8 +986,8 @@ static void paint_draw_curve_cursor(Brush *brush, ViewContext *vc)
 
     float selec_col[4], handle_col[4], pivot_col[4];
     UI_GetThemeColorType4fv(TH_VERTEX_SELECT, SPACE_VIEW3D, selec_col);
-    UI_GetThemeColorType4fv(TH_PAINT_CURVE_HANDLE, SPACE_VIEW3D, handle_col);
-    UI_GetThemeColorType4fv(TH_PAINT_CURVE_PIVOT, SPACE_VIEW3D, pivot_col);
+    UI_GetThemeColorType4fv(TH_GIZMO_PRIMARY, SPACE_VIEW3D, handle_col);
+    UI_GetThemeColorType4fv(TH_GIZMO_SECONDARY, SPACE_VIEW3D, pivot_col);
 
     for (int i = 0; i < pc->tot_points - 1; i++, cp++) {
       int j;

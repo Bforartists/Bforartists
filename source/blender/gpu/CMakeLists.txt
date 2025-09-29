@@ -155,7 +155,6 @@ set(SRC
   intern/gpu_query.hh
   intern/gpu_select_private.hh
   intern/gpu_shader_create_info.hh
-  intern/gpu_shader_create_info_list.hh
   intern/gpu_shader_create_info_private.hh
   intern/gpu_shader_dependency_private.hh
   intern/gpu_shader_interface.hh
@@ -249,7 +248,6 @@ set(VULKAN_SRC
   vulkan/render_graph/vk_resource_state_tracker.cc
   vulkan/render_graph/vk_scheduler.cc
   vulkan/vk_resource_pool.cc
-  vulkan/vk_resource_tracker.cc
   vulkan/vk_sampler.cc
   vulkan/vk_samplers.cc
   vulkan/vk_shader.cc
@@ -324,7 +322,6 @@ set(VULKAN_SRC
   vulkan/render_graph/vk_resource_state_tracker.hh
   vulkan/render_graph/vk_scheduler.hh
   vulkan/vk_resource_pool.hh
-  vulkan/vk_resource_tracker.hh
   vulkan/vk_sampler.hh
   vulkan/vk_samplers.hh
   vulkan/vk_shader.hh
@@ -452,6 +449,43 @@ endif()
 set(GLSL_SRC
   GPU_shader_shared.hh
 
+  shaders/infos/gpu_clip_planes_infos.hh
+  shaders/infos/gpu_index_load_infos.hh
+  shaders/infos/gpu_interface_infos.hh
+  shaders/infos/gpu_shader_2D_area_borders_infos.hh
+  shaders/infos/gpu_shader_2D_checker_infos.hh
+  shaders/infos/gpu_shader_2D_diag_stripes_infos.hh
+  shaders/infos/gpu_shader_2D_image_desaturate_color_infos.hh
+  shaders/infos/gpu_shader_2D_image_infos.hh
+  shaders/infos/gpu_shader_2D_image_overlays_merge_infos.hh
+  shaders/infos/gpu_shader_2D_image_overlays_stereo_merge_infos.hh
+  shaders/infos/gpu_shader_2D_image_rect_color_infos.hh
+  shaders/infos/gpu_shader_2D_image_shuffle_color_infos.hh
+  shaders/infos/gpu_shader_2D_node_socket_infos.hh
+  shaders/infos/gpu_shader_2D_nodelink_infos.hh
+  shaders/infos/gpu_shader_2D_point_uniform_size_uniform_color_aa_infos.hh
+  shaders/infos/gpu_shader_2D_point_uniform_size_uniform_color_outline_aa_infos.hh
+  shaders/infos/gpu_shader_2D_point_varying_size_varying_color_infos.hh
+  shaders/infos/gpu_shader_2D_widget_infos.hh
+  shaders/infos/gpu_shader_3D_depth_only_infos.hh
+  shaders/infos/gpu_shader_3D_flat_color_infos.hh
+  shaders/infos/gpu_shader_3D_image_infos.hh
+  shaders/infos/gpu_shader_3D_point_infos.hh
+  shaders/infos/gpu_shader_3D_polyline_infos.hh
+  shaders/infos/gpu_shader_3D_smooth_color_infos.hh
+  shaders/infos/gpu_shader_3D_uniform_color_infos.hh
+  shaders/infos/gpu_shader_fullscreen_infos.hh
+  shaders/infos/gpu_shader_gpencil_stroke_infos.hh
+  shaders/infos/gpu_shader_icon_infos.hh
+  shaders/infos/gpu_shader_index_infos.hh
+  shaders/infos/gpu_shader_keyframe_shape_infos.hh
+  shaders/infos/gpu_shader_line_dashed_uniform_color_infos.hh
+  shaders/infos/gpu_shader_print_infos.hh
+  shaders/infos/gpu_shader_sequencer_infos.hh
+  shaders/infos/gpu_shader_simple_lighting_infos.hh
+  shaders/infos/gpu_shader_text_infos.hh
+  shaders/infos/gpu_srgb_to_framebuffer_space_infos.hh
+
   shaders/gpu_shader_depth_only_frag.glsl
   shaders/gpu_shader_uniform_color_frag.glsl
   shaders/gpu_shader_checker_frag.glsl
@@ -556,6 +590,7 @@ set(GLSL_SRC
   shaders/common/gpu_shader_offset_indices_lib.glsl
   shaders/common/gpu_shader_print_lib.glsl
   shaders/common/gpu_shader_ray_utils_lib.glsl
+  shaders/common/gpu_shader_ray_lib.glsl
   shaders/common/gpu_shader_sequencer_lib.glsl
   shaders/common/gpu_shader_shared_exponent_lib.glsl
   shaders/common/gpu_shader_smaa_lib.glsl
@@ -612,6 +647,8 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_ray_portal.glsl
   shaders/material/gpu_shader_material_refraction.glsl
   shaders/material/gpu_shader_material_rgb_to_bw.glsl
+  shaders/material/gpu_shader_material_radial_tiling.glsl
+  shaders/material/gpu_shader_material_radial_tiling_shared.glsl
   shaders/material/gpu_shader_material_separate_color.glsl
   shaders/material/gpu_shader_material_separate_xyz.glsl
   shaders/material/gpu_shader_material_set.glsl
@@ -671,6 +708,8 @@ set(GLSL_SRC
 )
 
 set(GLSL_SRC_TEST
+  shaders/infos/gpu_shader_test_infos.hh
+
   tests/shaders/gpu_math_test.glsl
   tests/shaders/gpu_buffer_texture_test.glsl
   tests/shaders/gpu_compute_1d_test.glsl
@@ -686,6 +725,9 @@ set(GLSL_SRC_TEST
 )
 
 set(MTL_BACKEND_GLSL_SRC
+  metal/kernels/depth_2d_update_infos.hh
+  metal/kernels/gpu_shader_fullscreen_blit_infos.hh
+
   metal/kernels/depth_2d_update_float_frag.glsl
   metal/kernels/depth_2d_update_int24_frag.glsl
   metal/kernels/depth_2d_update_int32_frag.glsl
@@ -713,6 +755,8 @@ set(MSL_SRC
 )
 
 set(VULKAN_BACKEND_GLSL_SRC
+  vulkan/shaders/vk_backbuffer_blit_infos.hh
+
   vulkan/shaders/vk_backbuffer_blit_comp.glsl
 )
 
@@ -755,11 +799,13 @@ list(APPEND LIB
 
 set(GLSL_SOURCE_CONTENT "")
 set(GLSL_METADATA_CONTENT "")
+set(GLSL_INFOS_CONTENT "")
 foreach(GLSL_FILE ${GLSL_SRC})
   get_filename_component(GLSL_FILE_NAME ${GLSL_FILE} NAME)
   string(REPLACE "." "_" GLSL_FILE_NAME_UNDERSCORES ${GLSL_FILE_NAME})
   string(APPEND GLSL_SOURCE_CONTENT "SHADER_SOURCE\(${GLSL_FILE_NAME_UNDERSCORES}, \"${GLSL_FILE_NAME}\", \"${GLSL_FILE}\"\)\n")
   string(APPEND GLSL_METADATA_CONTENT "#include \"${GLSL_FILE}.hh\"\n")
+  string(APPEND GLSL_INFOS_CONTENT "#include \"${GLSL_FILE}.info\"\n")
 endforeach()
 
 set(glsl_source_list_file "${CMAKE_CURRENT_BINARY_DIR}/glsl_gpu_source_list.h")
@@ -768,6 +814,9 @@ list(APPEND SRC ${glsl_source_list_file})
 set(glsl_metadata_list_file "${CMAKE_CURRENT_BINARY_DIR}/glsl_gpu_metadata_list.hh")
 file(GENERATE OUTPUT ${glsl_metadata_list_file} CONTENT "${GLSL_METADATA_CONTENT}")
 list(APPEND SRC ${glsl_metadata_list_file})
+set(glsl_infos_list_file "${CMAKE_CURRENT_BINARY_DIR}/glsl_gpu_infos_list.hh")
+file(GENERATE OUTPUT ${glsl_infos_list_file} CONTENT "${GLSL_INFOS_CONTENT}")
+list(APPEND SRC ${glsl_infos_list_file})
 list(APPEND INC ${CMAKE_CURRENT_BINARY_DIR})
 
 if(WITH_MOD_FLUID)
