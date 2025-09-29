@@ -54,7 +54,7 @@ const EnumPropertyItem rna_enum_uilist_layout_type_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-// bfa start asset shelf
+// bfa asset shelf import method
 static const EnumPropertyItem asset_shelf_import_method_items[] = {
     {SHELF_ASSET_IMPORT_LINK,
       "LINK",
@@ -2550,7 +2550,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Display Filter", "Filter assets by name");
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
-
+  // bfa start asset shelf
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, asset_shelf_import_method_items);
   RNA_def_property_enum_funcs(
@@ -2559,6 +2559,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Import Method", "Determines how the asset will be imported");
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
   RNA_def_property_enum_default(prop, SHELF_ASSET_IMPORT_APPEND);
+  // bfa end
 
   prop = RNA_def_property(srna, "instance_collections_on_link", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
