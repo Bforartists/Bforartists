@@ -74,7 +74,7 @@ static const EnumPropertyItem asset_shelf_import_method_items[] = {
       "typically heavy data. For example the textures of a material asset, or the mesh of an "
       "object asset, don't have to be copied every time this asset is imported. The instances of "
       "the asset share the data instead"},
-      {FILE_ASSET_IMPORT_PACK,
+    {SHELF_ASSET_IMPORT_PACK,
       "PACK",
       ICON_PACKAGE,
       "Pack",
