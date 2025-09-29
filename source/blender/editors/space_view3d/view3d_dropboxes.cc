@@ -404,9 +404,6 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
   if (use_override) {  
     ID *owner_id = id; 
     ID *id_or = id;
-    /* BFA - WIP - removed for warning?*/
-    //PointerRNA owner_ptr;
-    //PropertyRNA *prop;
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
       C, CTX_data_main(C), owner_id, id_or, nullptr);

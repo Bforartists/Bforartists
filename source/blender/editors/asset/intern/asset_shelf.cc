@@ -874,8 +874,9 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
             row->prop(&shelf_ptr, "drop_instances_to_origin", UI_ITEM_NONE, "", ICON_CENTER);
           }
           break;
-        case FILE_ASSET_IMPORT_APPEND:
-        case FILE_ASSET_IMPORT_APPEND_REUSE:
+        case SHELF_ASSET_IMPORT_APPEND:
+        case SHELF_ASSET_IMPORT_APPEND_REUSE:
+        case SHELF_ASSET_IMPORT_PACK:
           {
             uiLayout *row = &layout->row(true);
             row->prop(&shelf_ptr, "instance_collections_on_append", UI_ITEM_NONE, "", ICON_OUTLINER_OB_GROUP_INSTANCE);

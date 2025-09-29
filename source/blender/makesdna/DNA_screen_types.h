@@ -900,8 +900,13 @@ typedef enum AssetShelfImportMethod {
    * heavy data dependencies (e.g. the image data-blocks of a material, the mesh of an object) may
    * be reused from an earlier append. */
   SHELF_ASSET_IMPORT_APPEND_REUSE = 2,
-  /** Default: Follow the preference setting for this asset library. */
-  SHELF_ASSET_IMPORT_LINK_OVERRIDE = 3,
+  /**
+   * Link the data-block, but also pack it in the current file to keep it working even if the
+   * source file is not available anymore.
+   */
+  SHELF_ASSET_IMPORT_PACK = 3,
+  /** BFA only data-block linking with make override. */
+  SHELF_ASSET_IMPORT_LINK_OVERRIDE = 4,
 } AssetShelfImportMethod;
 
 // See eFileAssetImportFlags

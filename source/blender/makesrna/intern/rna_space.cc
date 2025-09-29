@@ -401,6 +401,12 @@ static const EnumPropertyItem rna_enum_asset_import_method_items[] = {
      "Pack",
      "Import the asset as linked data-block, and pack it in the current file (ensures that it "
      "remains unchanged in case the library data is modified, is not available anymore, etc.)"},
+    // BFA only file asset browser link override
+    {FILE_ASSET_IMPORT_LINK_OVERRIDE,
+     "LINK_OVERRIDE",
+      ICON_LIBRARY_DATA_OVERRIDE,
+      "Link (Override)",
+      "Import the assets as linked library overrided data.\nThis will only override the active hierarchy.\nTo override all selected contents, use the Outliner Editor"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
