@@ -4765,9 +4765,8 @@ class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
 
             elif column_count == 1:
 
-                row.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
-                row.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
-
+                col.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                col.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
 
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
 
@@ -4816,7 +4815,7 @@ class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
                 row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
 
                 row = col.row(align=True)
-                row.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
+                row.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
 
             elif column_count == 2:
 
@@ -4825,19 +4824,19 @@ class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
                 row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
 
                 row = col.row(align=True)
-                row.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
+                row.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
 
             elif column_count == 1:
 
-                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+                col.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
 
                 col.separator(factor = 0.5)
 
-                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
+                col.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
 
                 col.separator(factor = 0.5)
 
-                row.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
+                col.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
 
 
 # ------------------------ Surface
