@@ -1705,6 +1705,7 @@ static void node_draw_shadow(const SpaceNode &snode,
 
 /* BFA - Draw an outline with padding around node groups */
 static void node_draw_node_group_indicator(const SpaceNode &snode,
+                                    TreeDrawContext &tree_draw_ctx,
                                     const bNode &node,
                                     const rctf &rect,
                                     const float radius,
@@ -1715,8 +1716,8 @@ static void node_draw_node_group_indicator(const SpaceNode &snode,
   }
 
   const float padding = 8.0f * UI_SCALE_FAC;
-  const float outline_width = 1.5f;
-  const float alpha_selected = is_selected ? 0.8f : 0.6f;
+  const float outline_group_width = 14.0f * UI_SCALE_FAC + UI_SCALE_FAC;
+  const float alpha_selected = is_selected ? 1.0f : 0.5f;
 
   /* Create the outline rectangle with padding. */
   const rctf outline_rect = {
@@ -1726,29 +1727,22 @@ static void node_draw_node_group_indicator(const SpaceNode &snode,
       rect.ymax + padding,
   };
 
-  /* Use the node color but make it slightly transparent and brighter for the outline. */
   float outline_color[4];
-  UI_GetThemeColor4fv(TH_NODE, outline_color);
-  if (node.flag & NODE_CUSTOM_COLOR) {
-    rgba_float_args_set(outline_color, node.color[0], node.color[1], node.color[2], 1.0f);
-  }
-  outline_color[0] = min_ff(outline_color[0] * 1.2f, 1.0f);
-  outline_color[1] = min_ff(outline_color[1] * 1.2f, 1.0f);
-  outline_color[2] = min_ff(outline_color[2] * 1.2f, 1.0f);
-  outline_color[3] *= alpha_selected;
+  int color_id = node_get_colorid(tree_draw_ctx, node);
+
+  /* Both selected and unselected should use the header color */
+  UI_GetThemeColor4fv(color_id, outline_color);
+  outline_color[3] = alpha_selected;
 
   /* Draw the outline. */
   UI_draw_roundbox_corner_set(UI_CNR_ALL);
   
-  /* Save the current line width and set the new one. */
-  const float prev_line_width = GPU_line_width_get();
-  GPU_line_width(outline_width);
-  
-  /* Draw the outline using a slightly larger radius. */
+  /* Draw the outline with increased width */
+  GPU_line_width(outline_group_width);
   UI_draw_roundbox_4fv(&outline_rect, false, radius + padding, outline_color);
   
-  /* Restore the previous line width. */
-  GPU_line_width(prev_line_width);
+  /* Reset line width to default */
+  GPU_line_width(1.0f);
 }
 
 static void node_draw_socket(const bContext &C,
@@ -3216,9 +3210,9 @@ static void node_draw_basis(const bContext &C,
     UI_draw_roundbox_corner_set(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT);
     UI_draw_roundbox_4fv(&rect_header, false, BASIS_RAD, color_header);
 
-    /* Node Group outline. */
+    /* BFA - Node Group outline. */
     if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      node_draw_node_group_indicator(snode, node, rct, BASIS_RAD, node.flag & SELECT);
+      node_draw_node_group_indicator(snode, tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
     }
 
     /* Outline around the entire node to highlight selection, alert, or for simulation zones. */
@@ -3331,7 +3325,7 @@ static void node_draw_collapsed(const bContext &C,
 
     /* Node Group outline. */
     if (node.type_legacy == NODE_GROUP) {
-      node_draw_node_group_indicator(snode, node, rct, BASIS_RAD + padding, node.flag & SELECT);
+      node_draw_node_group_indicator(snode, tree_draw_ctx, node, rct, BASIS_RAD + padding, node.flag & SELECT);
     }
 
     UI_draw_roundbox_corner_set(UI_CNR_ALL);
