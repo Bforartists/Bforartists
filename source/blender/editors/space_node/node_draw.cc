@@ -2919,6 +2919,33 @@ static void node_draw_basis(const bContext &C,
   /* Show/hide icons. */
   float iconofs = rct.xmax - 0.35f * U.widget_unit;
 
+   /* BFA - Kept this Group icon.*/
+   if (node.type_legacy == NODE_GROUP) {
+    iconofs -= iconbutw;
+    UI_block_emboss_set(&block, ui::EmbossType::None);
+    uiBut *but = uiDefIconBut(&block,
+                              ButType::ButToggle,
+                              0,
+                              ICON_NODETREE,
+                              iconofs,
+                              rct.ymax - NODE_DY,
+                              iconbutw,
+                              UI_UNIT_Y,
+                              nullptr,
+                              0,
+                              0,
+                              "");
+    UI_but_func_set(but,
+                    node_toggle_button_cb,
+                    POINTER_FROM_INT(node.identifier),
+                    (void *)"NODE_OT_group_edit");
+    if (node.id) {
+      UI_but_icon_indicator_number_set(but, ID_REAL_USERS(node.id));
+    }
+    UI_block_emboss_set(&block, ui::EmbossType::Emboss);
+  }
+
+
   if (nodes::node_can_sync_sockets(C, ntree, node)) {
     iconofs -= iconbutw;
     UI_block_emboss_set(&block, ui::EmbossType::None);
@@ -3419,11 +3446,20 @@ static void node_draw_collapsed(const bContext &C,
   const float icon_right_margin = 0.85f * iconbutw;
   float icon_x = rct.xmax - iconbutw - icon_right_margin;
 
+  /* BFA - Kept this Group icon. Also included this to the collapsed state*/
+  int icon_header;
+  if (node.type_legacy == NODE_GROUP) {
+    icon_header = ICON_NODETREE;
+  }
+  else {
+    icon_header = RNA_struct_ui_icon(node.typeinfo->rna_ext.srna);
+  }
+
   UI_block_emboss_set(&block, blender::ui::EmbossType::None);
   uiDefIconBut(&block,
                ButType::But,
                0,
-               RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
+               icon_header,
                icon_x,
                centy - iconbutw / 2,
                iconbutw,
