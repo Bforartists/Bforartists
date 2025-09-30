@@ -50,20 +50,6 @@ def playback_controls(layout, context):
 
     row = layout.row(align=True)
 
-    if scene:
-        layout.popover(
-            panel="TIME_PT_playback",
-            text="Playback",
-        )
-
-    if tool_settings:
-        icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
-        layout.popover(
-            panel="TIME_PT_keyframing_settings",
-            text_ctxt=i18n_contexts.id_windowmanager,
-            icon=icon_keytype,
-        )
-
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
        layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
@@ -94,16 +80,10 @@ def playback_controls(layout, context):
     row.operator("screen.frame_jump", text="", icon="FF").end = True
     row.operator("screen.animation_cancel", text="", icon="LOOP_BACK").restore_frame = True
 
-    if tool_settings:
-        row = layout.row(align=True)
-        row.prop(tool_settings, "use_snap_playhead", text="")
-        sub = row.row(align=True)
-        sub.popover(panel="TIME_PT_playhead_snapping", text="")
-
-    # layout.separator_spacer() #BFA
-
+    # BFA - cleaned up duplicate controls and organized layout
     if scene:
-        row = layout.row()
+        # BFA- Current frame display
+        row = layout.row(align=True)
         if scene.show_subframe:
             row.scale_x = 1.15
             row.prop(scene, "frame_float", text="")
@@ -111,6 +91,7 @@ def playback_controls(layout, context):
             row.scale_x = 0.95
             row.prop(scene, "frame_current", text="")
 
+        # BFA - Frame range controls
         row = layout.row(align=True)
         row.prop(scene, "use_preview_range", text="", toggle=True)
         row.operator("anim.start_frame_set", text="", icon="SET_POSITION")
@@ -119,42 +100,52 @@ def playback_controls(layout, context):
         if not scene.use_preview_range:
             sub.prop(scene, "frame_start", text="Start")
             sub.prop(scene, "frame_end", text="End")
-
         else:
             sub.prop(scene, "frame_preview_start", text="Start")
             sub.prop(scene, "frame_preview_end", text="End")
-
         row.operator("anim.end_frame_set", text="", icon="SET_POSITION")
 
-        row.separator()
+        layout.separator_spacer()
 
+        # BFA - Keyframing controls
+        row = layout.row(align=True)
         row.operator("anim.keyframe_insert", text="", icon="KEYFRAMES_INSERT")  # BFA - updated icon
         row.operator(
             "anim.keyframe_delete_v3d", text="", icon="KEYFRAMES_REMOVE"
         )  # BFA - updated to work like it would in the 3D View (as expected)
 
-        layout.separator_spacer()
+        # BFA - Snap playhead controls (single instance, moved to end)
+        if tool_settings:
+            row = layout.row(align=True)
+            sub = row.row(align=True)
+            sub.prop(tool_settings, "use_snap_playhead", text="")
+            sub.popover(panel="TIME_PT_playhead_snapping", text="")
 
-        # BFA - moved to end with options consistently
+        # BFA - Auto keyframing toggle
         row = layout.row(align=True)
-        row.prop(tool_settings, "use_snap_playhead", text="")
-        sub = row.row(align=True)
-        sub.popover(panel="TIME_PT_playhead_snapping", text="")
-
-        row = layout.row(align=True)
-        sub = row.row(align=True)
         if tool_settings.use_keyframe_insert_auto:
+            sub = row.row(align=True)
             sub.popover(panel="TIME_PT_auto_keyframing", text="")
         row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+
+        # BFA - Keying set selector
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
-        layout.popover(panel="TIME_PT_playback", text="Playback")
-        icon_keytype = "KEYTYPE_{:s}_VEC".format(context.tool_settings.keyframe_type)
-        layout.popover(panel="TIME_PT_keyframing_settings", icon=icon_keytype)
+        if scene:
+            layout.popover(
+                panel="TIME_PT_playback",
+                text="Playback",
+            )
 
-        if (
-            getattr(context.space_data, "mode", "") == "TIMELINE"
-        ):  # BFA - Make this only show in the timeline editor to not show this in the footer.
+        if tool_settings:
+            icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
+            layout.popover(
+                panel="TIME_PT_keyframing_settings",
+                text_ctxt=i18n_contexts.id_windowmanager,
+                icon=icon_keytype,
+            )
+
+        if (getattr(context.space_data, "mode", "") == "TIMELINE"):  # BFA - Make this only show in the timeline editor to not show this in the footer.
             layout.popover(panel="TIME_PT_view_view_options", text="")
 
 
