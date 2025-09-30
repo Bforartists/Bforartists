@@ -3191,9 +3191,10 @@ static void node_draw_basis(const bContext &C,
     }
     /* Muted nodes get a mix of the background with the node color. */
     else if (node.is_muted()) {
+      // bfa node color blend for mute
       float color_background[4];
       float color_blend[4]; 
-      UI_GetThemeColor4fv(TH_BACK, color_background);
+      UI_GetThemeColor4fv(TH_BACK, color_background); 
       UI_GetThemeColorBlend4f(TH_NODE, color_id, color_blend_fac, color_blend);
       interp_v4_v4v4(color, color_background, color_blend, 0.2f);
     }
@@ -3201,7 +3202,7 @@ static void node_draw_basis(const bContext &C,
       rgba_float_args_set(color, node.color[0], node.color[1], node.color[2], 1.0f);
     }
     else {
-      UI_GetThemeColorBlend4f(TH_NODE, color_id, color_blend_fac, color); // bfa UI_GetThemeColor4fv(TH_NODE, color);
+      UI_GetThemeColorBlend4f(TH_NODE, color_id, color_blend_fac, color); // bfa node color blend // UI_GetThemeColor4fv(TH_NODE, color);
     }
 
     /* Draw selected nodes fully opaque. */
