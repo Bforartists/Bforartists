@@ -717,6 +717,7 @@ const bTheme U_theme_default = {
     .node_zone_repeat = RGBA(0x708c7233),
     .node_zone_foreach_geometry_element = RGBA(0x33527f33),
     .node_zone_closure = RGBA(0x734f4233),
+    .bfa_node_color_blend = 0.0f,
     .movie = RGBA(0x0f0f0f80),
     .gp_vertex_size = 3,
     .gp_vertex = RGBA(0x97979700),

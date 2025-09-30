@@ -3633,6 +3633,14 @@ static void rna_def_userdef_theme_space_node(BlenderRNA *brna)
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "Closure Zone", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+  // bfa start node color blend
+  prop = RNA_def_property(srna, "color_blend", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, nullptr, "bfa_node_color_blend");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_float_default(prop, 0.0f);
+  RNA_def_property_ui_text(prop, "Node Color Blend", "Bforartists Node Color Blend");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+  // bfa end 
 }
 
 static void rna_def_userdef_theme_space_buts(BlenderRNA *brna)
