@@ -199,6 +199,7 @@ class NodeMenu(Menu):
                 cls.main_operator_id,
                 text=label,
                 text_ctxt=translation_context,
+                icon=bl_rna.icon,
                 translate=translate,
                 search_weight=search_weight)
             props.type = node_type
@@ -339,7 +340,7 @@ class NodeMenu(Menu):
     @classmethod
     def new_empty_group(cls, layout):
         """Group Node with a newly created empty group as its assigned nodetree."""
-        props = layout.operator(cls.new_empty_group_operator_id, text="New Group", text_ctxt=i18n_contexts.default)
+        props = layout.operator(cls.new_empty_group_operator_id, text="New Group", text_ctxt=i18n_contexts.default, icon='ADD')
 
         if hasattr(props, "use_transform"):
             props.use_transform = cls.use_transform
@@ -407,7 +408,7 @@ class NodeMenu(Menu):
 
     @classmethod
     def simulation_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=label)
+        props = layout.operator(cls.zone_operator_id, text=label, icon='TIME')
         props.input_node_type = "GeometryNodeSimulationInput"
         props.output_node_type = "GeometryNodeSimulationOutput"
         props.add_default_geometry_link = True
@@ -419,7 +420,7 @@ class NodeMenu(Menu):
 
     @classmethod
     def repeat_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=label)
+        props = layout.operator(cls.zone_operator_id, text=label, icon='REPEAT')
         props.input_node_type = "GeometryNodeRepeatInput"
         props.output_node_type = "GeometryNodeRepeatOutput"
         props.add_default_geometry_link = True
@@ -431,7 +432,7 @@ class NodeMenu(Menu):
 
     @classmethod
     def for_each_element_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=label)
+        props = layout.operator(cls.zone_operator_id, text=label, icon='FOR_EACH')
         props.input_node_type = "GeometryNodeForeachGeometryElementInput"
         props.output_node_type = "GeometryNodeForeachGeometryElementOutput"
         props.add_default_geometry_link = False
@@ -443,7 +444,7 @@ class NodeMenu(Menu):
 
     @classmethod
     def closure_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=label)
+        props = layout.operator(cls.zone_operator_id, text=label, icon='NODE_CLOSURE')
         props.input_node_type = "NodeClosureInput"
         props.output_node_type = "NodeClosureOutput"
         props.add_default_geometry_link = False
