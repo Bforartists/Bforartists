@@ -1704,8 +1704,7 @@ static void node_draw_shadow(const SpaceNode &snode,
 }
 
 /* BFA - Draw an outline with padding around node groups */
-static void node_draw_node_group_indicator(const SpaceNode &snode,
-  TreeDrawContext &tree_draw_ctx,
+static void node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
   const bNode &node,
   const rctf &rect,
   const float radius,
@@ -3263,7 +3262,7 @@ static void node_draw_basis(const bContext &C,
     if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
       const float outline_group_width = 2.0f * UI_SCALE_FAC; // Thicker outline
       GPU_line_width(outline_group_width);
-      node_draw_node_group_indicator(snode, tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
+      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
       GPU_line_width(1.0f); // Reset line width
     }
 
@@ -3400,7 +3399,7 @@ static void node_draw_collapsed(const bContext &C,
     if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
       const float outline_group_width = 2.0f * UI_SCALE_FAC; // Thicker outline
       GPU_line_width(outline_group_width);
-      node_draw_node_group_indicator(snode, tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
+      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
       GPU_line_width(1.0f); // Reset line width
     }
 
