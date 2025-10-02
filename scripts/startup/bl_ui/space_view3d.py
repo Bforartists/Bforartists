@@ -8043,7 +8043,7 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("grease_pencil.convert_curve_type", text="Convert Type", property="type")
+        layout.operator_menu_enum("grease_pencil.convert_curve_type", text="Set Spline Type", property="type") # BFA - made title consistent
         layout.operator("grease_pencil.set_curve_resolution", icon="SPLINE_RESOLUTION")
 
         layout.separator()
@@ -8102,8 +8102,9 @@ class VIEW3D_MT_edit_curves(Menu):
         layout.operator("curves.duplicate_move", icon="DUPLICATE")
 
         layout.separator()
+        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type", property="type") # BFA - made title consistent
+        layout.operator_menu_enum("curves.handle_type_set", "type")
         layout.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
-        layout.operator_menu_enum("curves.curve_type_set", "type")
         layout.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -8157,7 +8158,7 @@ class VIEW3D_MT_edit_curves_context_menu(Menu):
         layout.separator()
 
         # Modify Flags
-        layout.operator_menu_enum("curves.curve_type_set", "type")
+        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type", property="type") # BFA - made title consistent
         layout.operator_menu_enum("curves.handle_type_set", "type")
         layout.operator("curves.cyclic_toggle")
         layout.operator("curves.switch_direction")
@@ -11164,7 +11165,9 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = "SELECTED"
 
             col.separator()
-            col.operator_menu_enum("grease_pencil.convert_curve_type", text="Convert Type", property="type")
+
+            col.operator_menu_enum("grease_pencil.convert_curve_type", text="Set Spline Type", property="type") # BFA - made title consistent
+            col.operator_menu_enum("grease_pencil.set_handle_type", "type")
 
 
 class GREASE_PENCIL_MT_Layers(Menu):
