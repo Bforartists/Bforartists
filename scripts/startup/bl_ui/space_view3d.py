@@ -711,6 +711,7 @@ class VIEW3D_HT_header(Header):
     @staticmethod
     def draw_xform_template(layout, context):
         obj = context.active_object
+        mode_string = context.mode # BFA
         object_mode = "OBJECT" if obj is None else obj.mode
         has_pose_mode = (object_mode == "POSE") or (object_mode == "WEIGHT_PAINT" and context.pose_object is not None)
 
@@ -830,9 +831,20 @@ class VIEW3D_HT_header(Header):
                     panel="VIEW3D_PT_proportional_edit",
                 )
 
+        # BFA - handle types for curve, formerly in the control points menu
+        if mode_string in {"EDIT_CURVE"}:
+            row = layout.row(align=True)
+            row.operator_menu_enum("curve.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+
         # BFA - handle types for curves, formerly in the control points menu
-        if object_mode in {"EDIT_CURVE"}:
-            layout.operator_menu_enum("curve.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+        if mode_string in {"EDIT_CURVES"}:
+            row = layout.row(align=True)
+            row.operator_menu_enum("curves.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+
+        # BFA - handle types for greasepencil, formerly in the point menu
+        if mode_string in {"EDIT_GPENCIL", "EDIT_GREASE_PENCIL"}:
+            row = layout.row(align=True)
+            row.operator_menu_enum("grease_pencil.set_handle_type", "type", text="", icon="HANDLE_AUTO")
 
         if object_mode == "EDIT" and obj.type == "GREASEPENCIL":
             draw_topbar_grease_pencil_layer_panel(context, layout)
@@ -8060,9 +8072,7 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.menu("VIEW3D_MT_greasepencil_vertex_group")
 
-        layout.separator()
-
-        layout.operator_menu_enum("grease_pencil.set_handle_type", property="type")
+        #layout.operator_menu_enum("grease_pencil.set_handle_type", property="type") # BFA - exposed to header
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -8110,7 +8120,7 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
         layout = self.layout
 
         layout.operator("curves.extrude_move", icon="EXTRUDE_REGION")
-        layout.operator_menu_enum("curves.handle_type_set", "type")
+        #layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - exposed to header
 
 
 class VIEW3D_MT_edit_curves_segments(Menu):
