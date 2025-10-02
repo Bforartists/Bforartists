@@ -8020,10 +8020,10 @@ keyconfig_data = \
        ],
       },
      ),
-    ("wm.context_set_enum",
+    ("wm.context_toggle",
      {"type": 'FOUR', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'tool_settings.uv_select_mode'),
+      [("data_path", 'tool_settings.use_uv_select_island'),
        ("value", 'ISLAND'),
        ],
       },
