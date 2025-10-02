@@ -5846,12 +5846,21 @@ static void edbm_decimate_ui(bContext * /*C*/, wmOperator *op)
 
   layout->prop(op->ptr, "ratio", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  layout->prop(op->ptr, "use_vertex_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* bfa - use_property_split = False */
+  col = &layout->column(false);
+  col->use_property_split_set(false);
+  col->use_property_decorate_set(false);
+  col->prop(op->ptr, "use_vertex_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* bfa - use_property_split = False */
   col = &layout->column(false);
   col->active_set(RNA_boolean_get(op->ptr, "use_vertex_group"));
   col->prop(op->ptr, "vertex_group_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  col->prop(op->ptr, "invert_vertex_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
+  /* bfa - use_property_split = False */
+  sub = &col->column(false);
+  sub->use_property_split_set(false);
+  sub->use_property_decorate_set(false);
+  sub->prop(op->ptr, "invert_vertex_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* bfa - use_property_split = True */
   row = &layout->row(true, IFACE_("Symmetry"));
   row->prop(op->ptr, "use_symmetry", UI_ITEM_NONE, "", ICON_NONE);
   sub = &row->row(true);
