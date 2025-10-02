@@ -3183,26 +3183,27 @@ static void node_draw_basis(const bContext &C,
 
   /* Body. */
   {
-    bTheme *btheme = UI_GetTheme(); // bfa node color blend 
-    float color_blend_fac = btheme->space_node.bfa_node_color_blend;
     /* Use warning color to indicate undefined types. */
     if (node_undefined_or_unsupported(ntree, node)) {
       UI_GetThemeColorShade4fv(TH_REDALERT, -40, color);
     }
     /* Muted nodes get a mix of the background with the node color. */
     else if (node.is_muted()) {
-      // bfa node color blend for mute
+      // bfa node color blend
       float color_background[4];
       float color_blend[4]; 
       UI_GetThemeColor4fv(TH_BACK, color_background); 
-      UI_GetThemeColorBlend4f(TH_NODE, color_id, color_blend_fac, color_blend);
+      UI_GetThemeColorBlend4f(TH_NODE, color_id, U.node_color_blend, color_blend);
       interp_v4_v4v4(color, color_background, color_blend, 0.2f);
+      // UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.2f, color);
     }
     else if (node.flag & NODE_CUSTOM_COLOR) {
       rgba_float_args_set(color, node.color[0], node.color[1], node.color[2], 1.0f);
     }
     else {
-      UI_GetThemeColorBlend4f(TH_NODE, color_id, color_blend_fac, color); // bfa node color blend // UI_GetThemeColor4fv(TH_NODE, color);
+      // bfa node color blend
+      UI_GetThemeColorBlend4f(TH_NODE, color_id, U.node_color_blend, color); // bfa node color blend 
+      // UI_GetThemeColor4fv(TH_NODE, color);
     }
 
     /* Draw selected nodes fully opaque. */

@@ -639,8 +639,8 @@ typedef struct UserDef {
   /* == BFA - GOO ENGINE - CUSTOM FIELDS ALWAYS BELOW! == */
   float viewport_line_width;    /* BFA - GooEngine */
   int outliner_editor_flag;     /* BFA - eUserpref_OutlinerEditorFlags */
-
-  char _pad_custom[8];          /* BFA - for future alignment/padding if needed */
+  float node_color_blend;       /* BFA - Node Color Blend */
+  char _pad_custom[4];          /* BFA - for future alignment/padding if needed */
 
   /** Runtime data (keep last). */
   UserDef_Runtime runtime;
