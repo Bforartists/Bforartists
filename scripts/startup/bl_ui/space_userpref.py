@@ -610,6 +610,7 @@ class USERPREF_PT_edit_node_editor(EditingPanel, CenterAlignMixIn, Panel):
 
         col.use_property_split = False
         col.prop(edit, "node_use_autoposition_viewer")  # BFA - Toggle Viewer Auto-positioning
+        col.prop(edit, "node_color_blend", text="Node Color Blend")  # BFA - Node Color Blend
 
 
 class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):

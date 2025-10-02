@@ -5868,6 +5868,16 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "Automatically reposition the viewer node near the selected socket "
                            "when viewing data");
 
+  /* BFA - Node color blend*/
+  prop = RNA_def_property(srna, "node_color_blend", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, nullptr, "node_color_blend");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_float_default(prop, 0.0f);
+  RNA_def_property_ui_text(prop,
+                           "Node Color Blend",
+                           "Bforartists blends node type color to its body, disable if the node color is enabled");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
   /* cursor */
   prop = RNA_def_property(srna, "use_cursor_lock_adjust", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "uiflag", USER_LOCK_CURSOR_ADJUST);
