@@ -525,7 +525,7 @@ static wmOperatorStatus edbm_delete_exec(bContext *C, wmOperator *op)
 void MESH_OT_delete(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_mesh_delete_types[] = {
-      /* BFA - added icons*/ 
+      /* BFA - added icons*/
       {MESH_DELETE_VERT, "VERT", ICON_DELETE, "Vertices", ""},
       {MESH_DELETE_EDGE, "EDGE", ICON_DELETE, "Edges", ""},
       {MESH_DELETE_FACE, "FACE", ICON_DELETE, "Faces", ""},
@@ -8797,7 +8797,7 @@ static void edbm_point_normals_ui(bContext *C, wmOperator *op)
                    point_normals_draw_check_prop,
                    nullptr,
                    nullptr,
-                   UI_BUT_LABEL_ALIGN_NONE,
+                   UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, /* bfa - use_property_split = False */
                    false);
 }
 

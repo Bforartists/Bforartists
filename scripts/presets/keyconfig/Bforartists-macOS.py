@@ -6222,6 +6222,7 @@ keyconfig_data = \
     ("node.links_mute", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True, "oskey": True}, None),
     ("node.links_cut", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "oskey": True}, None),
     ("node.group_make", {"type": 'G', "value": 'PRESS', "oskey": True, "repeat": True}, None),
+    ("node.group_enter_exit", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("node.connect_to_output",
      {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True},
      {"properties":

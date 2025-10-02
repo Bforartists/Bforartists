@@ -5165,6 +5165,7 @@ keyconfig_data = \
     ("node.links_mute", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True}, None),
     ("node.links_cut", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "ctrl": True}, None),
     ("node.group_make", {"type": 'G', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("node.group_enter_exit", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("node.connect_to_output",
      {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True},
      {"properties":

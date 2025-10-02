@@ -1676,8 +1676,8 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image", icon="RENDER_STILL")
-        layout.operator("render.opengl", text="OpenGL Render Animation", icon="RENDER_ANIMATION").animation = True
+        layout.operator("render.opengl", text="Render Image", icon="RENDER_STILL")
+        layout.operator("render.opengl", text="Render Animation", icon="RENDER_ANIMATION").animation = True
         props = layout.operator("render.opengl", text="Viewport Render Keyframes", icon="RENDER_ANIMATION")
         props.animation = True
         props.render_keyed_only = True
@@ -1730,19 +1730,6 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.operator("screen.region_quadview", icon="QUADVIEW")
-
-        layout.separator()
-
-        layout.operator(
-            "render.opengl",
-            text="Render Viewport Preview",
-            icon='RENDER_STILL',
-        )
-        layout.operator(
-            "render.opengl",
-            text="Render Playblast",
-            icon='RENDER_ANIMATION',
-        ).animation = True
 
         layout.separator()
 
@@ -4391,7 +4378,7 @@ class VIEW3D_MT_object_parent(Menu):
         parent = _context.active_object
 
         selected_editable_objects = _context.selected_editable_objects
-        
+
         # Defines the variables for contextual visibility, similar to the object_relations.cc parent_set_invoke_menu
         class can_support:
             armature_deform = False
@@ -4513,7 +4500,7 @@ class VIEW3D_MT_object_parent(Menu):
                         add_operator(layout, op_text, "PARENT_CURVE", op_type, False)
 
 
-        # BFA - End of consistent parent menu 
+        # BFA - End of consistent parent menu
 
 
         layout.separator()
