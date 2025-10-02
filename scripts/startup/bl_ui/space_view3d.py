@@ -7050,7 +7050,6 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
 
         layout.operator("mesh.decimate", icon="DECIMATE")
         layout.operator("mesh.dissolve_degenerate", icon="DEGENERATE_DISSOLVE")
-        layout.operator("mesh.dissolve_limited", icon="DISSOLVE_LIMITED")
         layout.operator("mesh.face_make_planar", icon="MAKE_PLANAR")
 
         layout.separator()
