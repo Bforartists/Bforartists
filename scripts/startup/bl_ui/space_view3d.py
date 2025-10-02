@@ -5049,7 +5049,7 @@ class VIEW3D_MT_paint_weight(Menu):
 
     @staticmethod
     def draw_generic(layout, is_editmode=False):
-        layout.menu("VIEW3D_MT_paint_weight_legacy", text="Legacy")  # bfa menu
+        # bfa - removed VIEW3D_MT_paint_weight_legacy
 
         if not is_editmode:
             layout.operator(
