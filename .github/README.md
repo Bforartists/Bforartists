@@ -58,16 +58,17 @@ Here's a Youtube playlist with some quickstart videos:
 
 https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB
 
-For those who are willing and interested to help with the manual, we have a Github repository for it too. You can find it here: 
+For those who are willing and interested to help with the manual, we have a Github repository for it too. You can find it here:
 
 https://github.com/Bforartists/Manual
 
-In case that you want to compile Bforartists by yourself, the advice is the same as for Blender. Here’s a short tutorial that shows the whole process under Linux Ubuntu 17 https://www.bforartists.de/data/tuts/Building_with_Ubuntu17.pdf
-And here a youtube video that shows how to compile Bforartists 2 on Ubuntu 20: https://www.youtube.com/watch?v=sUhM2YSw1gQ
+For those who want to make changes to Bforartists and compile your own, or simply to compile it yourself, the setup is exactly the same has Blender, just change the git clone url etc, see below for the building on Blender links.
 
-Here’s the Blender advice for Linux, which goes a bit more into detail: https://wiki.blender.org/wiki/Building_Blender/Linux
-Here’s the advice for Mac: https://wiki.blender.org/index.php/Dev:Doc/Building_Blender/Mac
-For Windows have a look here: https://www.bforartists.de/data/tuts/Building_Bforartists_with_Cmake_and_VS_2017_on_Windows.pdf
+Building on Linux: [https://wiki.blender.org/wiki/Building_Blender/Linux](https://developer.blender.org/docs/handbook/building_blender/linux/)
+
+Building on Mac: [https://wiki.blender.org/index.php/Dev:Doc/Building_Blender/Mac](https://developer.blender.org/docs/handbook/building_blender/mac/)
+
+Building on Windows: [https://wiki.blender.org/index.php/Dev:Doc/Building_Blender/Windows](https://developer.blender.org/docs/handbook/building_blender/windows/)
 
 You might want to compile an older Bforartists version where the newest precompiled libs do not work. Here you can find the precompiled libs for all previous Blender versions:
 
