@@ -129,7 +129,7 @@ class PROPERTIES_PT_options(Panel):
             ("show_properties_material", "Material", 'MATERIAL'),
             ("show_properties_texture", "Texture", 'TEXTURE'),
             ("show_properties_strip", "Strip", 'SEQ_SEQUENCER'),
-            ("show_properties_strip_modifier", "Strip Modifiers", 'SEQ_STRIP_MODIFIER')
+            ("show_properties_strip_modifier", "Strip Modifiers", 'NONE')
         ]
 
         col = layout.column(align=True)

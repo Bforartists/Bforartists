@@ -4137,8 +4137,6 @@ classes = (
     SEQUENCER_MT_change_scene_with_icons,  # BFA
     SEQUENCER_PT_strip,
 
-    SEQUENCER_PT_active_tool,
-
     SEQUENCER_PT_gizmo_display,
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,
