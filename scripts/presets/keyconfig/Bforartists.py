@@ -1709,6 +1709,13 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.call_menu",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("name", 'VIEW3D_MT_edit_curves_context_menu'),
+       ],
+      },
+     ),
     ],
    },
   ),
