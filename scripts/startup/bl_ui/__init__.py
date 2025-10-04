@@ -60,6 +60,8 @@ _modules = [
     "properties_texture",
     "properties_world",
     "properties_collection",
+    "properties_strip",
+    "properties_strip_modifier",
     "generic_ui_list",
     "generic_column_menu",
 
@@ -94,6 +96,7 @@ _modules = [
     "space_topbar",
     "space_userpref",
     "space_view3d",
+    "space_view3d_sidebar",
     "space_view3d_toolbar",
 
     # bfa - toolbar

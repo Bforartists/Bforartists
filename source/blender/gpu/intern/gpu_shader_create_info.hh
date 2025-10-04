@@ -446,6 +446,7 @@ enum class BuiltinBits {
    * \note Emulated on OpenGL.
    */
   BARYCENTRIC_COORD = (1 << 0),
+  STENCIL_REF = (1 << 1),
   FRAG_COORD = (1 << 2),
   FRONT_FACING = (1 << 4),
   GLOBAL_INVOCATION_ID = (1 << 5),
@@ -640,7 +641,7 @@ struct StageInterfaceInfo {
   Vector<InOut> inouts;
 
   StageInterfaceInfo(const char *name_, const char *instance_name_ = "")
-      : name(name_), instance_name(instance_name_){};
+      : name(name_), instance_name(instance_name_) {};
   ~StageInterfaceInfo() = default;
 
   using Self = StageInterfaceInfo;
@@ -717,6 +718,36 @@ struct ShaderCreateInfo {
   Vector<StringRefNull, 0> dependencies_generated;
 
   GeneratedSourceList generated_sources;
+
+  /* Same as StringRefNull but with a few extra member functions. */
+  struct ResourceString : public StringRefNull {
+    constexpr ResourceString() : StringRefNull() {}
+    constexpr ResourceString(const char *str, int64_t size) : StringRefNull(str, size) {}
+    ResourceString(std::nullptr_t) = delete;
+    constexpr ResourceString(const char *str) : StringRefNull(str) {}
+    ResourceString(const std::string &str) : StringRefNull(str) {}
+    ResourceString(const StringRefNull &str) : StringRefNull(str) {}
+
+    int64_t array_offset() const
+    {
+      return this->find_first_of("[");
+    }
+
+    bool is_array() const
+    {
+      return array_offset() != -1;
+    }
+
+    StringRef str_no_array() const
+    {
+      return StringRef(this->c_str(), this->array_offset());
+    }
+
+    StringRef str_only_array() const
+    {
+      return this->substr(this->array_offset());
+    }
+  };
 
 #  define TEST_EQUAL(a, b, _member) \
     if (!((a)._member == (b)._member)) { \
@@ -822,7 +853,7 @@ struct ShaderCreateInfo {
 
   struct SharedVariable {
     Type type;
-    StringRefNull name;
+    ResourceString name;
   };
 
   Vector<SharedVariable, 0> shared_variables_;
@@ -842,13 +873,13 @@ struct ShaderCreateInfo {
 
   struct UniformBuf {
     StringRefNull type_name;
-    StringRefNull name;
+    ResourceString name;
   };
 
   struct StorageBuf {
     Qualifier qualifiers;
     StringRefNull type_name;
-    StringRefNull name;
+    ResourceString name;
   };
 
   struct Resource {
@@ -868,7 +899,7 @@ struct ShaderCreateInfo {
       StorageBuf storagebuf;
     };
 
-    Resource(BindType type, int _slot) : bind_type(type), slot(_slot){};
+    Resource(BindType type, int _slot) : bind_type(type), slot(_slot) {};
 
     bool operator==(const Resource &b) const
     {
@@ -937,7 +968,7 @@ struct ShaderCreateInfo {
 
   struct PushConst {
     Type type;
-    StringRefNull name;
+    ResourceString name;
     int array_size;
 
     bool operator==(const PushConst &b) const
@@ -971,7 +1002,7 @@ struct ShaderCreateInfo {
 #  endif
 
  public:
-  ShaderCreateInfo(const char *name) : name_(name){};
+  ShaderCreateInfo(const char *name) : name_(name) {};
   ~ShaderCreateInfo() = default;
 
   using Self = ShaderCreateInfo;

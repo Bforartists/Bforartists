@@ -442,7 +442,6 @@ const bTheme U_theme_default = {
     .crease = RGBA(0xcc0099ff),
     .nurb_uline = RGBA(0x909000ff),
     .nurb_vline = RGBA(0x803060ff),
-    .act_spline = RGBA(0xdb2512ff),
     .nurb_sel_uline = RGBA(0xf0ff40ff),
     .nurb_sel_vline = RGBA(0xf090a0ff),
     .vertex_size = 4,

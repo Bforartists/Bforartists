@@ -288,8 +288,7 @@ static Material *rna_Main_materials_new(Main *bmain, const char *name)
   Material *material = BKE_material_add(bmain, safe_name);
   id_us_min(&material->id);
 
-  material->nodetree = blender::bke::node_tree_add_tree_embedded(
-      bmain, &material->id, "Material Node Tree", "ShaderNodeTree");
+  ED_node_shader_default(nullptr, bmain, &material->id);
 
   WM_main_add_notifier(NC_ID | NA_ADDED, nullptr);
 
@@ -561,8 +560,7 @@ static World *rna_Main_worlds_new(Main *bmain, const char *name)
   World *world = BKE_world_add(bmain, safe_name);
   id_us_min(&world->id);
 
-  world->nodetree = blender::bke::node_tree_add_tree_embedded(
-      bmain, &world->id, "World Node Tree", "ShaderNodeTree");
+  ED_node_shader_default(nullptr, bmain, &world->id);
 
   WM_main_add_notifier(NC_ID | NA_ADDED, nullptr);
 
@@ -2122,14 +2120,14 @@ void RNA_def_main_grease_pencil(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   /* return type */
   parm = RNA_def_pointer(
-      func, "grease_pencil", "GreasePencilv3", "", "New Grease Pencil data-block");
+      func, "grease_pencil", "GreasePencil", "", "New Grease Pencil data-block");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Main_ID_remove");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
   RNA_def_function_ui_description(func,
                                   "Remove a Grease Pencil instance from the current blendfile");
-  parm = RNA_def_pointer(func, "grease_pencil", "GreasePencilv3", "", "Grease Pencil to remove");
+  parm = RNA_def_pointer(func, "grease_pencil", "GreasePencil", "", "Grease Pencil to remove");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, ParameterFlag(0));
   RNA_def_boolean(

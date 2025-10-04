@@ -49,6 +49,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Menu>("Interpolation")
       .static_items(interpolation_mode_items)
       .default_value(InterpolationMode::TriLinear)
+      .optional_label()
       .description("How to interpolate the values between neighboring voxels");
 
   b.add_output(data_type, "Value").dependent_field({1});
@@ -73,9 +74,6 @@ static std::optional<eNodeSocketDatatype> node_type_for_socket_type(const bNodeS
 
 static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
 {
-  if (!USER_EXPERIMENTAL_TEST(&U, use_new_volume_nodes)) {
-    return;
-  }
   const std::optional<eNodeSocketDatatype> node_type = node_type_for_socket_type(
       params.other_socket());
   if (!node_type) {
@@ -120,14 +118,18 @@ void sample_grid(const bke::OpenvdbGridType<T> &grid,
 {
   using GridType = bke::OpenvdbGridType<T>;
   using GridValueT = typename GridType::ValueType;
-  using AccessorT = typename GridType::ConstAccessor;
+  using AccessorT = typename GridType::ConstUnsafeAccessor;
   using TraitsT = typename bke::VolumeGridTraits<T>;
-  AccessorT accessor = grid.getConstAccessor();
+  AccessorT accessor = grid.getConstUnsafeAccessor();
 
-  auto sample_data = [&](auto sampler) {
+  auto sample_data = [&](auto sampler_type_tag) {
+    using Sampler = typename decltype(sampler_type_tag)::type;
     mask.foreach_index([&](const int64_t i) {
       const float3 &pos = positions[i];
-      GridValueT value = sampler.wsSample(openvdb::Vec3R(pos.x, pos.y, pos.z));
+      const openvdb::Vec3R world_pos(pos.x, pos.y, pos.z);
+      const openvdb::Vec3R index_pos = grid.transform().worldToIndex(world_pos);
+      GridValueT value;
+      Sampler::sample(accessor, index_pos, value);
       dst[i] = TraitsT::to_blender(value);
     });
   };
@@ -139,21 +141,15 @@ void sample_grid(const bke::OpenvdbGridType<T> &grid,
   }
   switch (real_interpolation) {
     case InterpolationMode::TriLinear: {
-      openvdb::tools::GridSampler<AccessorT, openvdb::tools::BoxSampler> sampler(accessor,
-                                                                                 grid.transform());
-      sample_data(sampler);
+      sample_data(TypeTag<openvdb::tools::BoxSampler>{});
       break;
     }
     case InterpolationMode::TriQuadratic: {
-      openvdb::tools::GridSampler<AccessorT, openvdb::tools::QuadraticSampler> sampler(
-          accessor, grid.transform());
-      sample_data(sampler);
+      sample_data(TypeTag<openvdb::tools::QuadraticSampler>{});
       break;
     }
     case InterpolationMode::Nearest: {
-      openvdb::tools::GridSampler<AccessorT, openvdb::tools::PointSampler> sampler(
-          accessor, grid.transform());
-      sample_data(sampler);
+      sample_data(TypeTag<openvdb::tools::PointSampler>{});
       break;
     }
   }
@@ -186,6 +182,10 @@ class SampleGridFunction : public mf::MultiFunction {
   bke::GVolumeGrid grid_;
   InterpolationMode interpolation_;
   mf::Signature signature_;
+  VolumeGridType grid_type_;
+  /** Avoid accessing grid in #call function to avoid overhead for each multi-function call. */
+  bke::VolumeTreeAccessToken tree_token_;
+  const openvdb::GridBase *grid_base_ = nullptr;
 
  public:
   SampleGridFunction(bke::GVolumeGrid grid, InterpolationMode interpolation)
@@ -200,6 +200,9 @@ class SampleGridFunction : public mf::MultiFunction {
     builder.single_input<float3>("Position");
     builder.single_output("Value", *cpp_type);
     this->set_signature(&signature_);
+
+    grid_base_ = &grid_->grid(tree_token_);
+    grid_type_ = grid_->grid_type();
   }
 
   void call(const IndexMask &mask, mf::Params params, mf::Context /*context*/) const override
@@ -208,10 +211,13 @@ class SampleGridFunction : public mf::MultiFunction {
     GMutableSpan dst = params.uninitialized_single_output(1, "Value");
 
     bke::VolumeTreeAccessToken tree_token;
-    convert_to_static_type(grid_->grid_type(), [&](auto dummy) {
+    convert_to_static_type(grid_type_, [&](auto dummy) {
       using T = decltype(dummy);
-      sample_grid<T>(
-          grid_.typed<T>().grid(tree_token), interpolation_, positions, mask, dst.typed<T>());
+      sample_grid<T>(static_cast<const bke::OpenvdbGridType<T> &>(*grid_base_),
+                     interpolation_,
+                     positions,
+                     mask,
+                     dst.typed<T>());
     });
   }
 };
@@ -269,7 +275,7 @@ static void node_register()
   ntype.ui_name = "Sample Grid";
   ntype.ui_description = "Retrieve values from the specified volume grid";
   ntype.enum_name_legacy = "SAMPLE_GRID";
-  ntype.nclass = NODE_CLASS_CONVERTER;
+  ntype.nclass = NODE_CLASS_GEOMETRY;
   ntype.initfunc = node_init;
   ntype.declare = node_declare;
   ntype.gather_link_search_ops = node_gather_link_search_ops;

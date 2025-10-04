@@ -158,7 +158,7 @@ void modifier_grease_pencil_curve_panel_draw(const bContext * /*C*/, Panel *pane
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiTemplateCurveMapping(layout, ptr, "curve", 0, false, false, false, false);
+  uiTemplateCurveMapping(layout, ptr, "curve", 0, false, false, false, false, false);
 }
 
 /**
@@ -412,7 +412,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   if (!ELEM(md->type, eModifierType_Collision, eModifierType_Surface)) {
     if (mti->flags & eModifierTypeFlag_SupportsEditmode) {
       sub = &row->row(true);
-      sub->active_set((md->mode & eModifierMode_Realtime));
+      sub->active_set(md->mode & eModifierMode_Realtime);
       sub->prop(ptr, "show_in_editmode", UI_ITEM_NONE, "", ICON_NONE);
       buttons_number++;
     }

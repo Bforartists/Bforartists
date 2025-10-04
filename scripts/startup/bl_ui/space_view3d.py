@@ -8072,7 +8072,10 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.menu("VIEW3D_MT_greasepencil_vertex_group")
 
-        #layout.operator_menu_enum("grease_pencil.set_handle_type", property="type") # BFA - exposed to header
+        layout.separator()
+
+        # layout.operator_menu_enum("grease_pencil.set_handle_type", property="type")
+        layout.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -9544,6 +9547,7 @@ class VIEW3D_PT_overlay_object(Panel):
         overlay = view.overlay
         display_all = overlay.show_overlays
         shading = view.shading
+        mode = context.mode
 
         col = layout.column(align=True)
         col.active = display_all
@@ -9571,17 +9575,24 @@ class VIEW3D_PT_overlay_object(Panel):
         sub.prop(overlay, "show_bones", text="Bones")
         sub.prop(overlay, "show_motion_paths")
 
-        split = col.split()
-        col = split.column()
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(overlay, "show_object_origins", text="Origins")
-        col = split.column()
-        if overlay.show_object_origins:
-            col.prop(overlay, "show_object_origins_all", text="Origins (All)")
-        else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
+        can_show_object_origins = mode not in {
+            'PAINT_TEXTURE',
+            'PAINT_2D',
+            'SCULPT',
+            'PAINT_VERTEX',
+            'PAINT_WEIGHT',
+            'SCULPT_CURVES',
+            'PAINT_GREASE_PENCIL',
+            'VERTEX_GREASE_PENCIL',
+            'WEIGHT_GREASE_PENCIL',
+            'SCULPT_GREASE_PENCIL',
+        }
+        subsub = sub.column()
+        subsub.active = can_show_object_origins
+        subsub.prop(overlay, "show_object_origins", text="Origins")
+        subsub = sub.column()
+        subsub.active = can_show_object_origins and overlay.show_object_origins
+        subsub.prop(overlay, "show_object_origins_all", text="Origins (All)")
 
         if shading.type == "WIREFRAME" or shading.show_xray:
             layout.separator()
@@ -11134,6 +11145,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
                 icon="SMOOTH_VERTEX",
             )
             col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
+            col.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
             col.separator()
 
@@ -11870,15 +11882,8 @@ class VIEW3D_PT_curves_sculpt_parameter_falloff(Panel):
         layout.template_curve_mapping(
             brush.curves_sculpt_settings,
             "curve_parameter_falloff",
-            brush=True
-        )
-        row = layout.row(align=True)
-        row.operator("brush.sculpt_curves_falloff_preset", icon="SMOOTHCURVE", text="").shape = "SMOOTH"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="SPHERECURVE", text="").shape = "ROUND"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="ROOTCURVE", text="").shape = "ROOT"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="SHARPCURVE", text="").shape = "SHARP"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="LINCURVE", text="").shape = "LINE"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="NOCURVE", text="").shape = "MAX"
+            brush=True,
+            show_presets=True)
 
 
 class VIEW3D_PT_curves_sculpt_grow_shrink_scaling(Panel):

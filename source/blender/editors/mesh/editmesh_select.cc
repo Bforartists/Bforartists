@@ -1457,7 +1457,7 @@ static wmOperatorStatus edbm_select_similar_region_exec(bContext *C, wmOperator 
   bool changed = false;
 
   /* Group variables. */
-  int(*group_index)[2];
+  int (*group_index)[2];
   int group_tot;
   int i;
 
@@ -1556,7 +1556,7 @@ static wmOperatorStatus edbm_select_mode_invoke(bContext *C, wmOperator *op, con
   /* Bypass when in UV non sync-select mode, fall through to keymap that edits. */
   if (CTX_wm_space_image(C)) {
     ToolSettings *ts = CTX_data_tool_settings(C);
-    if ((ts->uv_flag & UV_FLAG_SYNC_SELECT) == 0) {
+    if ((ts->uv_flag & UV_FLAG_SELECT_SYNC) == 0) {
       return OPERATOR_PASS_THROUGH;
     }
     /* Bypass when no action is needed. */
@@ -3130,7 +3130,7 @@ bool EDBM_select_interior_faces(BMEditMesh *em)
   }
 
   /* Group variables. */
-  int(*fgroup_index)[2];
+  int (*fgroup_index)[2];
   int fgroup_len;
 
   int *fgroup_array = MEM_malloc_arrayN<int>(bm->totface, __func__);

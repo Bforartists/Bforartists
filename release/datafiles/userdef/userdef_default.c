@@ -150,7 +150,7 @@ const UserDef U_default = {
     .pad_rot_angle = 15,
     .rvisize = 25,
     .rvibright = 8,
-    .recent_files = 20,
+    .recent_files = 200,
     .smooth_viewtx = 200,
     .glreslimit = 0,
     .color_picker_type = USER_CP_CIRCLE_HSV,
@@ -216,6 +216,14 @@ const UserDef U_default = {
             .jump_height = 0.4,
             .teleport_time = 0.2,
             .flag = 0,
+        },
+
+    .xr_navigation =
+        {
+            .vignette_intensity = 60.0f,
+            .turn_amount = DEG2RAD(30),
+            .turn_speed = DEG2RAD(60),
+            .flag = USER_XR_NAV_SNAP_TURN,
         },
 
     .space_data =

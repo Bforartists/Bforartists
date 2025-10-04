@@ -554,6 +554,9 @@ class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
         row.prop(cam, "show_composition_harmony_tri_b", text="Triangle B")
         row.prop_decorator(cam, "show_composition_harmony_tri_b")
 
+        col = layout.column()
+        col.prop(cam, "composition_guide_color", text="Color")
+
 
 class DATA_PT_camera_safe_areas(CameraButtonsPanel, Panel):
     bl_label = "Safe Areas"

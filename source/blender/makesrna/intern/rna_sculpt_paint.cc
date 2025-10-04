@@ -445,12 +445,12 @@ static void rna_UvSculpt_curve_preset_set(PointerRNA *ptr, int value)
 {
   Scene *scene = reinterpret_cast<Scene *>(ptr->owner_id);
   if (value == BRUSH_CURVE_CUSTOM) {
-    if (!scene->toolsettings->uvsculpt.strength_curve) {
-      scene->toolsettings->uvsculpt.strength_curve = BKE_curvemapping_add(
+    if (!scene->toolsettings->uvsculpt.curve_distance_falloff) {
+      scene->toolsettings->uvsculpt.curve_distance_falloff = BKE_curvemapping_add(
           1, 0.0f, 0.0f, 1.0f, 1.0f);
     }
   }
-  scene->toolsettings->uvsculpt.curve_preset = int8_t(value);
+  scene->toolsettings->uvsculpt.curve_distance_falloff_preset = int8_t(value);
 }
 
 /** \name Paint mode settings
@@ -629,6 +629,19 @@ static void rna_def_paint_curve(BlenderRNA *brna)
   RNA_def_struct_ui_icon(srna, ICON_CURVE_BEZCURVE);
 }
 
+static void rna_def_paint_curve_visibility_flag(StructRNA *srna,
+                                                const char *prop_name,
+                                                const char *ui_name,
+                                                const int64_t flag)
+{
+  PropertyRNA *prop;
+
+  prop = RNA_def_property(srna, prop_name, PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "curve_visibility_flags", flag);
+  RNA_def_property_ui_text(prop, ui_name, nullptr);
+  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
+}
+
 static void rna_def_paint(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -758,21 +771,12 @@ static void rna_def_paint(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Tile Z", "Tile along Z axis");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
-  prop = RNA_def_property(srna, "show_strength_curve", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(
-      prop, nullptr, "curve_visibility_flags", PAINT_CURVE_SHOW_STRENGTH);
-  RNA_def_property_ui_text(prop, "Show Strength Curve", "Show strength curve");
-  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
-
-  prop = RNA_def_property(srna, "show_size_curve", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "curve_visibility_flags", PAINT_CURVE_SHOW_SIZE);
-  RNA_def_property_ui_text(prop, "Show Size Curve", "Show size curve");
-  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
-
-  prop = RNA_def_property(srna, "show_jitter_curve", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "curve_visibility_flags", PAINT_CURVE_SHOW_JITTER);
-  RNA_def_property_ui_text(prop, "Show Jitter Curve", "Show jitter curve");
-  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
+  rna_def_paint_curve_visibility_flag(
+      srna, "show_strength_curve", "Show Strength Curve", PAINT_CURVE_SHOW_STRENGTH);
+  rna_def_paint_curve_visibility_flag(
+      srna, "show_size_curve", "Show Size Curve", PAINT_CURVE_SHOW_SIZE);
+  rna_def_paint_curve_visibility_flag(
+      srna, "show_jitter_curve", "Show Jitter Curve", PAINT_CURVE_SHOW_JITTER);
 
   /* Unified Paint Settings */
   prop = RNA_def_property(srna, "unified_paint_settings", PROP_POINTER, PROP_NONE);
@@ -1272,15 +1276,15 @@ static void rna_def_uv_sculpt(BlenderRNA *brna)
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_AMOUNT);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
-  prop = RNA_def_property(srna, "strength_curve", PROP_POINTER, PROP_NONE);
+  prop = RNA_def_property(srna, "curve_distance_falloff", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "CurveMapping");
   RNA_def_property_pointer_funcs(prop, nullptr, nullptr, nullptr, nullptr);
-  RNA_def_property_ui_text(prop, "Strength Curve", "");
+  RNA_def_property_ui_text(prop, "Falloff Curve", "");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
-  prop = RNA_def_property(srna, "curve_preset", PROP_ENUM, PROP_NONE);
+  prop = RNA_def_property(srna, "curve_distance_falloff_preset", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_enum_brush_curve_preset_items);
-  RNA_def_property_ui_text(prop, "Strength Curve Preset", "");
+  RNA_def_property_ui_text(prop, "Falloff Curve Preset", "");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_CURVE_LEGACY);
   RNA_def_property_enum_funcs(prop, nullptr, "rna_UvSculpt_curve_preset_set", nullptr);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);

@@ -110,7 +110,7 @@ class SocketTooltipBuilder {
     if (socket_.type == SOCK_MENU) {
       return true;
     }
-    if (socket_.flag & SOCK_HIDE_LABEL) {
+    if (socket_.runtime->declaration && socket_.runtime->declaration->optional_label) {
       return true;
     }
     return false;
@@ -638,7 +638,7 @@ class SocketTooltipBuilder {
         case bke::GeometryComponent::Type::Volume: {
           const geo_log::GeometryInfoLog::VolumeInfo &info = *geometry_log.volume_info;
           component_str = fmt::format(fmt::runtime(TIP_("Volume: {} grids")),
-                                      this->count_to_string(info.grids_num));
+                                      this->count_to_string(info.grids.size()));
           break;
         }
         case bke::GeometryComponent::Type::Curve: {

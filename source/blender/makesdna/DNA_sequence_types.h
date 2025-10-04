@@ -412,7 +412,8 @@ typedef struct GlowVars {
   int bNoComp;
 } GlowVars;
 
-typedef struct TransformVars {
+/* Removed in 5.0. Only used in versioning and blend reading. */
+typedef struct TransformVarsLegacy {
   float ScalexIni;
   float ScaleyIni;
   float xIni;
@@ -422,7 +423,7 @@ typedef struct TransformVars {
   int interpolation;
   /** Preserve aspect/ratio when scaling. */
   int uniform_scale;
-} TransformVars;
+} TransformVarsLegacy;
 
 typedef struct SolidColorVars {
   float col[3];
@@ -747,7 +748,7 @@ typedef enum eStripFlag {
   /* Access scene strips directly (like a meta-strip). */
   SEQ_SCENE_STRIPS = (1 << 30),
 
-  SEQ_UNUSED_31 = (1u << 31),
+  SEQ_AUDIO_PITCH_CORRECTION = (1u << 31)
 } eStripFlag;
 
 /** #StripProxy.storage */
@@ -822,10 +823,11 @@ typedef enum StripType {
   STRIP_TYPE_MUL = 14,
   /* Removed (behavior was the same as alpha-over), only used when reading old files. */
   STRIP_TYPE_OVERDROP_REMOVED = 15,
-  /* STRIP_TYPE_PLUGIN = 24, */ /* Removed */
+  /* STRIP_TYPE_PLUGIN = 24, */ /* Removed. */
   STRIP_TYPE_WIPE = 25,
   STRIP_TYPE_GLOW = 26,
-  STRIP_TYPE_TRANSFORM = 27,
+  /* Removed in 5.0, used only for versioning. */
+  STRIP_TYPE_TRANSFORM_LEGACY = 27,
   STRIP_TYPE_COLOR = 28,
   STRIP_TYPE_SPEED = 29,
   STRIP_TYPE_MULTICAM = 30,

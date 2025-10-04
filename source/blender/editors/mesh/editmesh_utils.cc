@@ -373,7 +373,7 @@ void EDBM_selectmode_to_scene(bContext *C)
 
 void EDBM_selectmode_flush_ex(BMEditMesh *em, const short selectmode)
 {
-  BM_mesh_select_mode_flush_ex(em->bm, selectmode, BM_SELECT_LEN_FLUSH_RECALC_ALL);
+  BM_mesh_select_mode_flush_ex(em->bm, selectmode, BMSelectFlushFlag_All);
 }
 
 void EDBM_selectmode_flush(BMEditMesh *em)
@@ -761,7 +761,7 @@ static void bm_uv_build_islands(UvElementMap *element_map,
 
   const BMUVOffsets uv_offsets = BM_uv_map_offsets_get(bm);
 
-  const bool use_uv_edge_connectivity = scene->toolsettings->uv_flag & UV_FLAG_SYNC_SELECT ?
+  const bool use_uv_edge_connectivity = scene->toolsettings->uv_flag & UV_FLAG_SELECT_SYNC ?
                                             scene->toolsettings->selectmode & SCE_SELECT_EDGE :
                                             scene->toolsettings->uv_selectmode & UV_SELECT_EDGE;
   if (use_uv_edge_connectivity) {
@@ -983,7 +983,7 @@ UvElementMap *BM_uv_element_map_create(BMesh *bm,
                                        const bool do_islands)
 {
   /* In uv sync selection, all UVs (from unhidden geometry) are visible. */
-  const bool face_selected = !(scene->toolsettings->uv_flag & UV_FLAG_SYNC_SELECT);
+  const bool face_selected = !(scene->toolsettings->uv_flag & UV_FLAG_SELECT_SYNC);
 
   BMVert *ev;
   BMFace *efa;
@@ -1530,6 +1530,36 @@ bool EDBM_mesh_hide(BMEditMesh *em, bool swap)
       if (BM_elem_flag_test(ele, BM_ELEM_SELECT) ^ hflag_swap) {
         BM_elem_hide_set(em->bm, ele, true);
         changed = true;
+      }
+    }
+  }
+
+  /* Hiding unselected. */
+  if (swap) {
+    /* In face select mode, also hide loose edges that aren't part of any visible face. */
+    if (itermode == BM_FACES_OF_MESH) {
+      BMEdge *e;
+      BM_ITER_MESH (e, &iter, em->bm, BM_EDGES_OF_MESH) {
+        if (!BM_edge_is_wire(e)) {
+          continue;
+        }
+        if (!BM_elem_flag_test(e, BM_ELEM_HIDDEN) && !BM_elem_flag_test(e, BM_ELEM_SELECT)) {
+          BM_elem_hide_set(em->bm, (BMElem *)e, true);
+          changed = true;
+        }
+      }
+    }
+    /* In edge or face select mode, also hide isolated verts that aren't connected to an edge. */
+    if (ELEM(itermode, BM_EDGES_OF_MESH, BM_FACES_OF_MESH)) {
+      BMVert *v;
+      BM_ITER_MESH (v, &iter, em->bm, BM_VERTS_OF_MESH) {
+        if (v->e) {
+          continue;
+        }
+        if (!BM_elem_flag_test(v, BM_ELEM_HIDDEN) && !BM_elem_flag_test(v, BM_ELEM_SELECT)) {
+          BM_elem_hide_set(em->bm, (BMElem *)v, true);
+          changed = true;
+        }
       }
     }
   }

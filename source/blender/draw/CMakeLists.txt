@@ -472,6 +472,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_motion_blur_flatten_comp.glsl
   engines/eevee/shaders/eevee_motion_blur_gather_comp.glsl
   engines/eevee/shaders/eevee_motion_blur_lib.glsl
+  engines/eevee/shaders/eevee_nodetree_closures_lib.glsl
   engines/eevee/shaders/eevee_nodetree_frag_lib.glsl
   engines/eevee/shaders/eevee_nodetree_lib.glsl
   engines/eevee/shaders/eevee_nodetree_vert_lib.glsl
@@ -561,8 +562,8 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_volume_scatter_comp.glsl
 
   engines/eevee/eevee_camera_shared.hh
-  engines/eevee/eevee_defines.hh
   engines/eevee/eevee_debug_shared.hh
+  engines/eevee/eevee_defines.hh
   engines/eevee/eevee_depth_of_field_shared.hh
   engines/eevee/eevee_film_shared.hh
   engines/eevee/eevee_hizbuffer_shared.hh

@@ -24,7 +24,7 @@ bl_info = {
 from typing import List, Tuple
 
 _need_reload = "operators" in locals()
-from . import gui, keymaps, operators, conversion
+from . import gui, keymaps, operators
 
 if _need_reload:
     import importlib
@@ -32,7 +32,6 @@ if _need_reload:
     gui = importlib.reload(gui)
     keymaps = importlib.reload(keymaps)
     operators = importlib.reload(operators)
-    conversion = importlib.reload(conversion)
 
 import bpy
 

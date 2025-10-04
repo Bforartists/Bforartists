@@ -414,6 +414,7 @@ const ComputeContext *compute_context_for_zone(const bke::bNodeTreeZone &zone,
       source_location.compute_context_hash = parent_compute_context ?
                                                  parent_compute_context->hash() :
                                                  ComputeContextHash{};
+      source_location.compute_context = parent_compute_context;
       return compute_context_for_closure_evaluation(parent_compute_context,
                                                     output_node.output_socket(0),
                                                     compute_context_cache,
@@ -760,10 +761,14 @@ static void node_area_listener(const wmSpaceTypeListenerParams *params)
         }
       }
       else if (ED_node_is_geometry(snode)) {
-        /* Rather strict check: only redraw when the reference matches the current editor's ID. */
         if (wmn->data == ND_MODIFIER) {
+          /* Rather strict check: only redraw when the reference matches current editor's ID, */
           if (wmn->reference == snode->id || snode->id == nullptr) {
             node_area_tag_tree_recalc(snode, area);
+          }
+          /* Redraw context path if modifier was added or removed. */
+          if (ELEM(wmn->action, NA_ADDED, NA_REMOVED)) {
+            ED_area_tag_redraw(area);
           }
         }
       }
@@ -1917,6 +1922,8 @@ void ED_spacetype_node()
   art->snap_size = ED_region_generic_panel_region_snap_size;
   art->draw = node_buttons_region_draw;
   BLI_addhead(&st->regiontypes, art);
+
+  node_tree_interface_panel_register(art);
 
   /* regions: toolbar */
   art = MEM_callocN<ARegionType>("spacetype view3d tools region");

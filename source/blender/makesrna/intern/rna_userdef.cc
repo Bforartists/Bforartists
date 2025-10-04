@@ -1572,6 +1572,11 @@ static const EnumPropertyItem *rna_preference_asset_libray_import_method_itemf(
   return items;
 }
 
+int rna_preference_asset_libray_import_method_default(PointerRNA * /*ptr*/, PropertyRNA * /*prop*/)
+{
+  return U.experimental.no_data_block_packing ? ASSET_IMPORT_APPEND_REUSE : ASSET_IMPORT_PACK;
+}
+
 static void rna_experimental_no_data_block_packing_update(bContext *C, PointerRNA *ptr)
 {
   Main *bmain = CTX_data_main(C);
@@ -3021,12 +3026,6 @@ static void rna_def_userdef_theme_space_view3d(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "nurb_sel_vline");
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_text(prop, "NURBS Active V Lines", "");
-  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
-
-  prop = RNA_def_property(srna, "act_spline", PROP_FLOAT, PROP_COLOR_GAMMA);
-  RNA_def_property_float_sdna(prop, nullptr, "act_spline");
-  RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Active Spline", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   /* Armature Object specific. */
@@ -4801,6 +4800,43 @@ static void rna_def_userdef_walk_navigation(BlenderRNA *brna)
       "Enable a horizontal lock mode for walk navigation to walk on an airblock");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
   /*BFA - Airblock mode end*/
+}
+
+static void rna_def_userdef_xr_navigation(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  srna = RNA_def_struct(brna, "XrNavigation", nullptr);
+  RNA_def_struct_sdna(srna, "XrNavigation");
+  RNA_def_struct_ui_text(srna, "VR Navigation", "VR navigation settings");
+
+  prop = RNA_def_property(srna, "vignette_intensity", PROP_FLOAT, PROP_PERCENTAGE);
+  RNA_def_property_range(prop, 0, 100.0);
+  RNA_def_property_ui_range(prop, 0, 100.0, 1000, 0);
+  RNA_def_property_ui_text(
+      prop, "Vignette Intensity", "Intensity of vignette that appears when moving");
+
+  prop = RNA_def_property(srna, "turn_speed", PROP_FLOAT, PROP_ANGLE);
+  RNA_def_property_range(prop, 0, FLT_MAX);
+  RNA_def_property_ui_range(prop, 0, FLT_MAX, 1000, 0);
+  RNA_def_property_ui_text(prop, "Turn Speed", "Turn speed in degrees per second");
+
+  prop = RNA_def_property(srna, "turn_amount", PROP_FLOAT, PROP_ANGLE);
+  RNA_def_property_range(prop, 0, DEG2RAD(360));
+  RNA_def_property_ui_range(prop, 0, DEG2RAD(360), 1000, 0);
+  RNA_def_property_ui_text(prop, "Turn Amount", "Amount in degrees per turn when using snap turn");
+
+  prop = RNA_def_property(srna, "snap_turn", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_XR_NAV_SNAP_TURN);
+  RNA_def_property_ui_text(
+      prop,
+      "Snap Turn",
+      "Instantly rotates the camera by a fixed angle instead of smoothly turning");
+
+  prop = RNA_def_property(srna, "invert_rotation", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", USER_XR_NAV_INVERT_ROTATION);
+  RNA_def_property_ui_text(prop, "Invert Rotation", "Reverses the direction of rotation input");
 }
 
 static void rna_def_userdef_view(BlenderRNA *brna)
@@ -6593,6 +6629,12 @@ static void rna_def_userdef_input(BlenderRNA *brna)
                            "restarting Blender for changes to take effect)");
   RNA_def_property_update(prop, 0, "rna_userdef_input_devices");
 
+  prop = RNA_def_property(srna, "xr_navigation", PROP_POINTER, PROP_NONE);
+  RNA_def_property_pointer_sdna(prop, nullptr, "xr_navigation");
+  RNA_def_property_flag(prop, PROP_NEVER_NULL);
+  RNA_def_property_struct_type(prop, "XrNavigation");
+  RNA_def_property_ui_text(prop, "XR Navigation", "Settings for navigation in XR");
+
 #  ifdef WITH_INPUT_NDOF
   /* 3D mouse settings */
   /* global options */
@@ -6807,6 +6849,7 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_preferences_asset_import_method_items);
   RNA_def_property_enum_funcs(
       prop, nullptr, nullptr, "rna_preference_asset_libray_import_method_itemf");
+  RNA_def_property_enum_default_func(prop, "rna_preference_asset_libray_import_method_default");
   RNA_def_property_ui_text(
       prop,
       "Default Import Method",
@@ -7270,7 +7313,7 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_userdef_autosave_update");
 
   prop = RNA_def_property(srna, "recent_files", PROP_INT, PROP_NONE);
-  RNA_def_property_range(prop, 0, 30);
+  RNA_def_property_range(prop, 0, 1000);
   RNA_def_property_ui_text(
       prop, "Recent Files", "Maximum number of recently opened files to remember");
 
@@ -7451,10 +7494,6 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
       "Forces all linked data to be considered as directly linked. Workaround for current "
       "issues/limitations in BAT (Blender studio pipeline tool)");
 
-  prop = RNA_def_property(srna, "use_new_volume_nodes", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_ui_text(
-      prop, "New Volume Nodes", "Enables visibility of the new Volume nodes in the UI");
-
   prop = RNA_def_property(srna, "use_shader_node_previews", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
       prop, "Shader Node Previews", "Enables previews in the shader node editor");
@@ -7538,6 +7577,7 @@ void RNA_def_userdef(BlenderRNA *brna)
   rna_def_userdef_dothemes(brna);
   rna_def_userdef_solidlight(brna);
   rna_def_userdef_walk_navigation(brna);
+  rna_def_userdef_xr_navigation(brna);
 
   srna = RNA_def_struct(brna, "Preferences", nullptr);
   RNA_def_struct_sdna(srna, "UserDef");
