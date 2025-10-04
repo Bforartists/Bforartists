@@ -1821,6 +1821,7 @@ class WM_OT_properties_edit(Operator):
         item.property_overridable_library_set('["{:s}"]'.format(escaped_name), self.is_overridable_library)
 
     def _update_blender_for_prop_change(self, context, item, name, prop_type_old, prop_type_new):
+        from bpy_extras import anim_utils
         from rna_prop_ui import (
             rna_idprop_ui_prop_update,
         )
@@ -1841,15 +1842,19 @@ class WM_OT_properties_edit(Operator):
 
             def _update_strips(strips):
                 for st in strips:
-                    if st.type == 'CLIP' and st.action:
-                        _update(st.action.fcurves)
+                    if st.type == 'CLIP':
+                        channelbag = anim_utils.action_get_channelbag_for_slot(st.action, st.action_slot)
+                        if not channelbag:
+                            continue
+                        _update(channelbag.fcurves)
                     elif st.type == 'META':
                         _update_strips(st.strips)
 
             adt = getattr(item, "animation_data", None)
             if adt is not None:
-                if adt.action:
-                    _update(adt.action.fcurves)
+                channelbag = anim_utils.action_get_channelbag_for_slot(adt.action, adt.action_slot)
+                if channelbag:
+                    _update(channelbag.fcurves)
                 if adt.drivers:
                     _update(adt.drivers)
                 if adt.nla_tracks:
@@ -2915,7 +2920,7 @@ class WM_OT_batch_rename(Operator):
             'CURVE': ("curves", iface_("Curve(s)"), bpy.types.Curve),
             'META': ("metaballs", iface_("Metaball(s)"), bpy.types.MetaBall),
             'VOLUME': ("volumes", iface_("Volume(s)"), bpy.types.Volume),
-            'GREASEPENCIL': ("grease_pencils_v3", iface_("Grease Pencil(s)"), bpy.types.GreasePencilv3),
+            'GREASEPENCIL': ("grease_pencils", iface_("Grease Pencil(s)"), bpy.types.GreasePencil),
             'ARMATURE': ("armatures", iface_("Armature(s)"), bpy.types.Armature),
             'LATTICE': ("lattices", iface_("Lattice(s)"), bpy.types.Lattice),
             'LIGHT': ("lights", iface_("Light(s)"), bpy.types.Light),
@@ -3427,10 +3432,15 @@ class WM_MT_splash(Menu):
         col2 = split.column()
         col2_title = col2.row()
 
-        found_recent = col2.template_recent_files()
+        found_recent = col2.template_recent_files(rows=5)
 
         if found_recent:
             col2_title.label(text="Recent Files")
+
+            col_more = col2.column()
+            col_more.operator_context = 'INVOKE_DEFAULT'
+            more_props = col_more.operator("wm.search_single_menu", text="More...", icon='VIEWZOOM')
+            more_props.menu_idname = "TOPBAR_MT_file_open_recent"
         else:
             # Links if no recent files.
             col2_title.label(text="Getting Started")

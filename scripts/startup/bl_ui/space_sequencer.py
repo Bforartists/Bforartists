@@ -181,7 +181,8 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
 
-        tool_settings = context.tool_settings
+        scene = context.sequencer_scene
+        tool_settings = scene.tool_settings if scene else None
         sequencer_tool_settings = tool_settings.sequencer_tool_settings if tool_settings else None
 
         layout.separator_spacer()
@@ -907,14 +908,15 @@ class SEQUENCER_MT_change(Menu):
             if strip and strip.type == "SCENE":
                 bpy_data_scenes_len = len(bpy.data.scenes)
 
-                if bpy_data_scenes_len > 14:
-                    layout.operator_context = "INVOKE_DEFAULT"
-                    layout.operator("sequencer.change_scene", text="Change Scene", icon="SCENE_DATA")
-                elif bpy_data_scenes_len > 1:
-                    layout.menu("SEQUENCER_MT_change_scene_with_icons", text="Change Scene")
-                del bpy_data_scenes_len
-            else:
-                layout.operator_context = "INVOKE_DEFAULT"
+                layout.operator_context = 'INVOKE_DEFAULT'
+                if strip and strip.type in {
+                    'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
+                    'GAMMA_CROSS', 'MULTIPLY', 'WIPE', 'GLOW',
+                    'SPEED', 'MULTICAM', 'ADJUSTMENT', 'GAUSSIAN_BLUR',
+                }:
+                    layout.menu("SEQUENCER_MT_strip_effect_change")
+                    layout.operator("sequencer.swap_inputs")
+                props = layout.operator("sequencer.change_path", text="Path/Files")
 
                 strip_type = strip.type
                 data_strips = ["IMAGE", "MOVIE", "SOUND"]
@@ -1123,7 +1125,6 @@ class SEQUENCER_MT_add_effect(Menu):
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.effect_strip_add", text="Transform", icon="TRANSFORM_MOVE").type = "TRANSFORM"
         col.operator("sequencer.effect_strip_add", text="Speed Control", icon="NODE_CURVE_TIME").type = "SPEED"
 
         col.separator()
@@ -1407,7 +1408,6 @@ class SEQUENCER_MT_strip_effect_change(Menu):
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.change_effect_type", text="Transform").type = "TRANSFORM"
         col.operator("sequencer.change_effect_type", text="Speed Control").type = "SPEED"
         col.operator("sequencer.change_effect_type", text="Glow").type = "GLOW"
         col.operator("sequencer.change_effect_type", text="Gaussian Blur").type = "GAUSSIAN_BLUR"
@@ -1644,21 +1644,9 @@ class SEQUENCER_MT_strip(Menu):
                 layout.menu("SEQUENCER_MT_strip_modifiers", icon="MODIFIER")
 
                 if strip_type in {
-                    "CROSS",
-                    "ADD",
-                    "SUBTRACT",
-                    "ALPHA_OVER",
-                    "ALPHA_UNDER",
-                    "GAMMA_CROSS",
-                    "MULTIPLY",
-                    "WIPE",
-                    "GLOW",
-                    "TRANSFORM",
-                    "COLOR",
-                    "SPEED",
-                    "MULTICAM",
-                    "ADJUSTMENT",
-                    "GAUSSIAN_BLUR",
+                        'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
+                        'GAMMA_CROSS', 'MULTIPLY', 'WIPE', 'GLOW',
+                        'SPEED', 'MULTICAM', 'ADJUSTMENT', 'GAUSSIAN_BLUR',
                 }:
                     layout.separator()
                     layout.menu("SEQUENCER_MT_strip_effect")
@@ -1930,21 +1918,9 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
             if strip_type in {
-                "CROSS",
-                "ADD",
-                "SUBTRACT",
-                "ALPHA_OVER",
-                "ALPHA_UNDER",
-                "GAMMA_CROSS",
-                "MULTIPLY",
-                "WIPE",
-                "GLOW",
-                "TRANSFORM",
-                "COLOR",
-                "SPEED",
-                "MULTICAM",
-                "ADJUSTMENT",
-                "GAUSSIAN_BLUR",
+                    'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
+                    'GAMMA_CROSS', 'MULTIPLY', 'WIPE', 'GLOW',
+                    'SPEED', 'MULTICAM', 'ADJUSTMENT', 'GAUSSIAN_BLUR',
             }:
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_effect")
@@ -2027,8 +2003,8 @@ class SEQUENCER_MT_pivot_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        if context.tool_settings:
-            sequencer_tool_settings = context.tool_settings.sequencer_tool_settings
+        if context.sequencer_scene:
+            sequencer_tool_settings = context.sequencer_scene.tool_settings.sequencer_tool_settings
 
         pie.prop_enum(sequencer_tool_settings, "pivot_point", value="CENTER")
         pie.prop_enum(sequencer_tool_settings, "pivot_point", value="CURSOR")
@@ -3933,7 +3909,7 @@ class SEQUENCER_PT_preview_snapping(Panel):
     @classmethod
     def poll(cls, context):
         st = context.space_data
-        return st.view_type in {"PREVIEW", "SEQUENCER_PREVIEW"} and context.tool_settings
+        return st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'} and context.sequencer_scene
 
     def draw(self, context):
         tool_settings = context.tool_settings
@@ -3965,7 +3941,7 @@ class SEQUENCER_PT_sequencer_snapping(Panel):
     @classmethod
     def poll(cls, context):
         st = context.space_data
-        return st.view_type in {"SEQUENCER", "SEQUENCER_PREVIEW"} and context.tool_settings
+        return st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'} and context.sequencer_scene
 
     def draw(self, context):
         tool_settings = context.tool_settings
@@ -4160,6 +4136,9 @@ classes = (
     SEQUENCER_PT_active_tool,
     SEQUENCER_MT_change_scene_with_icons,  # BFA
     SEQUENCER_PT_strip,
+
+    SEQUENCER_PT_active_tool,
+
     SEQUENCER_PT_gizmo_display,
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,

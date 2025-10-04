@@ -245,7 +245,10 @@ class NODE_HT_header(Header):
             if snode.node_tree_sub_type == 'SCENE':
                 row = layout.row()
                 row.enabled = not snode.pin
-                row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+                if scene.compositing_node_group:
+                    row.template_ID(scene, "compositing_node_group", new="node.duplicate_compositing_node_group")
+                else:
+                    row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
             elif snode.node_tree_sub_type == 'SEQUENCER':
                 row = layout.row()
                 sequencer_scene = context.workspace.sequencer_scene
@@ -425,7 +428,6 @@ class NODE_MT_editor_menus(Menu):
         layout.menu("NODE_MT_view")
         layout.menu("NODE_MT_select")
         layout.menu("NODE_MT_add")
-        layout.menu("NODE_MT_swap")
         layout.menu("NODE_MT_node")
 
 
@@ -707,6 +709,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 		## BFA - set majority to sub-menu
+        layout.menu("NODE_MT_swap")
         layout.menu("NODE_MT_context_menu_show_hide_menu")
 
         if is_compositor:
@@ -1457,6 +1460,7 @@ class NODE_PT_node_tree_properties(Panel):
     bl_region_type = 'UI'
     bl_category = "Group"
     bl_label = "Group Properties" # BFA
+    bl_order = 0
 
     @classmethod
     def poll(cls, context):
@@ -1511,6 +1515,7 @@ class NODE_PT_node_tree_animation(Panel):
     bl_category = "Group"
     bl_label = "Animation"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 20
 
     @classmethod
     def poll(cls, context):

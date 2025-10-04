@@ -903,6 +903,9 @@ static void update_gpu_scopes(const ImBuf *input_ibuf,
   const gpu::TextureFormat format = gpu::TextureFormat::SFLOAT_16_16_16_16;
   display_texture = GPU_texture_create_2d(
       "seq_scope_display_buf", width, height, 1, format, usage, nullptr);
+  if (display_texture == nullptr) {
+    return;
+  }
   GPU_texture_filter_mode(display_texture, false);
 
   GPU_matrix_push();
@@ -1515,7 +1518,9 @@ static blender::gpu::Texture *create_texture(const ImBuf &ibuf)
 
     texture = GPU_texture_create_2d(
         "seq_display_buf", ibuf.x, ibuf.y, 1, texture_format, texture_usage, nullptr);
-    GPU_texture_update(texture, GPU_DATA_FLOAT, ibuf.float_buffer.data);
+    if (texture) {
+      GPU_texture_update(texture, GPU_DATA_FLOAT, ibuf.float_buffer.data);
+    }
   }
   else if (ibuf.byte_buffer.data) {
     texture = GPU_texture_create_2d("seq_display_buf",
@@ -1525,7 +1530,9 @@ static blender::gpu::Texture *create_texture(const ImBuf &ibuf)
                                     blender::gpu::TextureFormat::UNORM_8_8_8_8,
                                     texture_usage,
                                     nullptr);
-    GPU_texture_update(texture, GPU_DATA_UBYTE, ibuf.byte_buffer.data);
+    if (texture) {
+      GPU_texture_update(texture, GPU_DATA_UBYTE, ibuf.byte_buffer.data);
+    }
   }
 
   if (texture) {
@@ -1666,7 +1673,7 @@ static void sequencer_preview_draw_overlays(const bContext *C,
   else if (space_sequencer.flag & SEQ_USE_ALPHA) {
     /* Draw checked-board. */
     const View2D &v2d = region.v2d;
-    imm_draw_box_checker_2d(v2d.tot.xmin, v2d.tot.ymin, v2d.tot.xmax, v2d.tot.ymax);
+    imm_draw_box_checker_2d(v2d.tot.xmin, v2d.tot.ymin, v2d.tot.xmax, v2d.tot.ymax, true);
 
     /* Draw current and preview textures in a special way to pierce a hole in the overlay to make
      * the actual image visible. */
