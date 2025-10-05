@@ -43,23 +43,29 @@ static const EnumPropertyItem type_items[] = {
 
 static void cmp_node_blur_declare(NodeDeclarationBuilder &b)
 {
+  b.use_custom_socket_order();
+  b.allow_any_socket_order();
   b.add_input<decl::Color>("Image")
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
+      .hide_value()
       .structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+
   b.add_input<decl::Vector>("Size")
       .dimensions(2)
       .default_value({0.0f, 0.0f})
       .min(0.0f)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Menu>("Type").default_value(R_FILTER_GAUSS).static_items(type_items);
+  b.add_input<decl::Menu>("Type")
+      .default_value(R_FILTER_GAUSS)
+      .static_items(type_items)
+      .optional_label();
   b.add_input<decl::Bool>("Extend Bounds").default_value(false);
   b.add_input<decl::Bool>("Separable")
       .default_value(true)
       .description(
           "Use faster approximation by blurring along the horizontal and vertical directions "
           "independently");
-
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
 }
 
 static void node_composit_init_blur(bNodeTree * /*ntree*/, bNode *node)

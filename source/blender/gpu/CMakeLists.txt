@@ -258,6 +258,7 @@ set(VULKAN_SRC
   vulkan/vk_staging_buffer.cc
   vulkan/vk_state_manager.cc
   vulkan/vk_storage_buffer.cc
+  vulkan/vk_streaming_buffer.cc
   vulkan/vk_texture.cc
   vulkan/vk_to_string.cc
   vulkan/vk_uniform_buffer.cc
@@ -332,6 +333,7 @@ set(VULKAN_SRC
   vulkan/vk_staging_buffer.hh
   vulkan/vk_state_manager.hh
   vulkan/vk_storage_buffer.hh
+  vulkan/vk_streaming_buffer.hh
   vulkan/vk_texture.hh
   vulkan/vk_to_string.hh
   vulkan/vk_uniform_buffer.hh
@@ -484,6 +486,7 @@ set(GLSL_SRC
   shaders/infos/gpu_shader_sequencer_infos.hh
   shaders/infos/gpu_shader_simple_lighting_infos.hh
   shaders/infos/gpu_shader_text_infos.hh
+  shaders/infos/gpu_shader_xr_raycast_infos.hh
   shaders/infos/gpu_srgb_to_framebuffer_space_infos.hh
 
   shaders/gpu_shader_depth_only_frag.glsl
@@ -538,6 +541,7 @@ set(GLSL_SRC
 
   shaders/gpu_shader_text_vert.glsl
   shaders/gpu_shader_text_frag.glsl
+  shaders/gpu_shader_xr_raycast_vert.glsl
   shaders/gpu_shader_keyframe_shape_vert.glsl
   shaders/gpu_shader_keyframe_shape_frag.glsl
 

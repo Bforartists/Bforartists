@@ -1743,6 +1743,26 @@ void blo_do_versions_userdef(UserDef *userdef)
     userdef->flag |= USER_FILECOMPRESS;
   }
 
+  if (!USER_VERSION_ATLEAST(500, 96)) {
+    /* Increase the number of recently-used files if using the old default value. */
+    if (userdef->recent_files == 20) {
+      userdef->recent_files = 200;
+    }
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 99)) {
+    userdef->xr_navigation.vignette_intensity = 50.0f;
+    userdef->xr_navigation.turn_amount = DEG2RAD(30);
+    userdef->xr_navigation.turn_speed = DEG2RAD(60);
+    userdef->xr_navigation.flag = USER_XR_NAV_SNAP_TURN;
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 101)) {
+    /* The Copy Global Transform add-on was moved into Blender itself, and thus
+     * is no longer an add-on. */
+    BKE_addon_remove_safe(&userdef->addons, "copy_global_transform");
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a USER_VERSION_ATLEAST check.

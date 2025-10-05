@@ -29,12 +29,14 @@ namespace blender::nodes::node_composite_displace_cc {
 static void cmp_node_displace_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
-
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
+  b.allow_any_socket_order();
 
   b.add_input<decl::Color>("Image")
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
+      .hide_value()
       .structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+
   b.add_input<decl::Vector>("Displacement")
       .dimensions(2)
       .default_value({0.0f, 0.0f})
@@ -44,15 +46,18 @@ static void cmp_node_displace_declare(NodeDeclarationBuilder &b)
   sampling_panel.add_input<decl::Menu>("Interpolation")
       .default_value(CMP_NODE_INTERPOLATION_BILINEAR)
       .static_items(rna_enum_node_compositor_interpolation_items)
-      .description("Interpolation method");
+      .description("Interpolation method")
+      .optional_label();
   sampling_panel.add_input<decl::Menu>("Extension X")
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
-      .description("The extension mode applied to the X axis");
+      .description("The extension mode applied to the X axis")
+      .optional_label();
   sampling_panel.add_input<decl::Menu>("Extension Y")
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
-      .description("The extension mode applied to the Y axis");
+      .description("The extension mode applied to the Y axis")
+      .optional_label();
 }
 
 static void cmp_node_init_displace(bNodeTree * /*ntree*/, bNode *node)

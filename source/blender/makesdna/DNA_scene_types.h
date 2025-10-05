@@ -1359,10 +1359,10 @@ typedef struct CurvesSculpt {
 } CurvesSculpt;
 
 typedef struct UvSculpt {
-  struct CurveMapping *strength_curve;
+  struct CurveMapping *curve_distance_falloff;
   int size;
   float strength;
-  int8_t curve_preset; /* #eBrushCurvePreset. */
+  int8_t curve_distance_falloff_preset; /* #eBrushCurvePreset. */
   char _pad[7];
 } UvSculpt;
 
@@ -1888,6 +1888,15 @@ typedef struct ToolSettings {
   int16_t snap_step_frames;
   /* Pixel threshold that needs to be crossed before the playhead is snapped to a point. */
   int playhead_snap_distance;
+
+  /* Animation settings, used by "Paste Global Transform" operator. */
+  struct Object *anim_mirror_object;
+  struct Object *anim_relative_object;
+  char anim_mirror_bone[64];
+
+  /* Flags for "Fix to Camera" operator. */
+  uint8_t fix_to_cam_flag; /* eFixToCam_Flags */
+  char _pad8[7];
 
 } ToolSettings;
 
@@ -2802,28 +2811,61 @@ enum {
 
 /** #ToolSettings::uv_flag */
 enum {
-  UV_FLAG_SYNC_SELECT = 1 << 0,
+  UV_FLAG_SELECT_SYNC = 1 << 0,
   UV_FLAG_SHOW_SAME_IMAGE = 1 << 1,
   /**
    * \note In most cases #ED_uvedit_select_island_check should be used to check if island
    * selection should be used - since not all combinations of options support it.
    */
-  UV_FLAG_ISLAND_SELECT = 1 << 2,
+  UV_FLAG_SELECT_ISLAND = 1 << 2,
   UV_FLAG_CUSTOM_REGION = 1 << 3,
 };
 
 /** #ToolSettings::uv_selectmode */
 enum {
-  UV_SELECT_VERTEX = 1 << 0,
+  UV_SELECT_VERT = 1 << 0,
   UV_SELECT_EDGE = 1 << 1,
   UV_SELECT_FACE = 1 << 2,
 };
 
-/** #ToolSettings::uv_sticky */
+/**
+ * #ToolSettings::uv_sticky
+ *
+ * Control the behavior of selecting UV's in the UV editor.
+ *
+ * Internally UV's store selection for every face-corner,
+ * however for the purpose of conveniently selecting & editing UV's it's often
+ * preferable to use sticky selection (#UV_STICKY_LOCATION),
+ * where selecting a UV also selects other UV's at the same location.
+ *
+ * \note This setting only affects subsequent selection operations.
+ * It does not alter the current selection state.
+ */
 enum {
-  SI_STICKY_LOC = 0,
-  SI_STICKY_DISABLE = 1,
-  SI_STICKY_VERTEX = 2,
+  /**
+   * Treat all other UV's sharing the vertex at that location as a single UV.
+   * This is the default behavior.
+   *
+   * \note Ripping UV's apart is still possible with "Split" & "Rip" operators.
+   */
+  UV_STICKY_LOCATION = 0,
+  /**
+   * Treat all UV's as individual face-corners, no matter where they are located.
+   * This can be useful if the intention with UV editing is to manipulate each faces
+   * UV's independently of one another.
+   *
+   * \note This is impractical for typical usage as it's impractical
+   * to select and move a single UV connected to other UV chordates.
+   */
+  UV_STICKY_DISABLE = 1,
+  /**
+   * Selecting applies to all UV's sharing a vertex.
+   * This can be useful to weld UV's that share a vertex but have become separated.
+   *
+   * \note This is impractical for typical usage since selecting UV's at island-boundaries
+   * selects UV's of any other UV island-boundaries which share that vertex.
+   */
+  UV_STICKY_VERT = 2,
 };
 
 /** #ToolSettings::gpencil_flags */
