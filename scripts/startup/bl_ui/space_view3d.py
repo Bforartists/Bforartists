@@ -7012,8 +7012,8 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength", icon="HAND")
-        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength", icon="MESH_PLANE")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength") # bfa - no icons for sub menus
+        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength") # bfa - no icons for sub menus
         layout.template_node_operator_asset_menu_items(catalog_path="Mesh/Normals")
 
 
