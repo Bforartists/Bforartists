@@ -99,7 +99,7 @@ class PIE_MT_AreaTypePieAnim(Menu):
     bl_description = "Menu for changing editor type (animation related)"
 
     def draw(self, context):
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="DopeSheet", icon="ACTION").types = "DOPESHEET"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="DopeSheet", icon="ACTION").types = "DOPESHEET_EDITOR"
         self.layout.operator(PIE_OT_Timeline.bl_idname, text="Timeline", icon="TIME")
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Graph Editor", icon="GRAPH").types = "FCURVES"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Drivers", icon="DRIVER").types = "DRIVERS"

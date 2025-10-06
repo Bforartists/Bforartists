@@ -220,7 +220,7 @@ const EnumPropertyItem rna_enum_space_file_browse_mode_items[] = {
 };
 
 #define SACT_ITEM_DOPESHEET \
-  {SACTCONT_DOPESHEET, "DOPESHEET", ICON_ACTION, "Dope Sheet", "Edit all keyframes in scene"}
+  {SACTCONT_DOPESHEET, "DOPESHEET_EDITOR", ICON_ACTION, "Dope Sheet", "Edit all keyframes in scene"}
 #define SACT_ITEM_ACTION \
   {SACTCONT_ACTION, \
    "ACTION", \
@@ -8532,7 +8532,7 @@ static void rna_def_space_clip(BlenderRNA *brna)
       {SC_VIEW_CLIP, "CLIP", ICON_SEQUENCE, "Clip", "Show editing clip preview"},
       {SC_VIEW_GRAPH, "GRAPH", ICON_GRAPH, "Graph", "Show graph view for active element"},
       {SC_VIEW_DOPESHEET,
-       "DOPESHEET",
+       "DOPESHEET_EDITOR",
        ICON_ACTION,
        "Dope Sheet",
        "Dope Sheet view for tracking data"},
