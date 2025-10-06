@@ -285,7 +285,7 @@ class ExportUVLayout(bpy.types.Operator):
 
 
 def menu_func(self, context):
-    self.layout.operator(ExportUVLayout.bl_idname)
+    self.layout.operator(ExportUVLayout.bl_idname, icon='SAVE_UV') # BFA - Icon Added
 
 
 def register():
