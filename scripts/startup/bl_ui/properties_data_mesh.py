@@ -298,7 +298,10 @@ def draw_shape_key_properties(context, layout):
         row.prop(key, "eval_time")
 
     if ob.type == "MESH":
-        layout.prop(ob, "add_rest_position_attribute")
+        row = layout.row()
+        row.use_property_split = False  # BFA - Align property left
+        row.prop(ob, "add_rest_position_attribute")
+        row.prop_decorator(ob, "add_rest_position_attribute")
 
 
 class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
