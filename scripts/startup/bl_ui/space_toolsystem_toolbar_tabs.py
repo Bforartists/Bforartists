@@ -1227,7 +1227,7 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("asset.mark", icon='ASSIGN')
+            col.operator("asset.mark", icon='ASSET_MANAGER')
             col.operator("asset.clear", icon='CLEAR').set_fake_user = False
 
         # icon buttons
@@ -1240,18 +1240,18 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("asset.mark", text = "", icon='ASSIGN')
+                row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("asset.mark", text = "", icon='ASSIGN')
+                row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
 
             elif column_count == 1:
 
-                col.operator("asset.mark", text = "", icon='ASSIGN')
+                col.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 col.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
 
 
@@ -5077,7 +5077,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
                 row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
-                
+
                 row = col.row(align=True)
                 row.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
                 row.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
@@ -5212,12 +5212,12 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Fixed)", icon="MOD_SIMPLIFY")
             props.mode = 'FIXED'
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Adaptive)", icon="SIMPLIFY_ADAPTIVE")
-            props.mode = 'ADAPTIVE'            
+            props.mode = 'ADAPTIVE'
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Sample)", icon="SIMPLIFY_SAMPLE")
-            props.mode = 'SAMPLE'            
+            props.mode = 'SAMPLE'
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Merge)", icon="MERGE")
             props.mode = 'MERGE'
-        
+
             col.separator(factor = 0.5)
 
             col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
@@ -5258,7 +5258,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
                 props.mode = 'FIXED'
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'            
+                props.mode = 'ADAPTIVE'
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
                 props.mode = 'SAMPLE'
                 row = col.row(align=True)
@@ -5293,7 +5293,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
                 props.mode = 'FIXED'
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'            
+                props.mode = 'ADAPTIVE'
                 row = col.row(align=True)
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
                 props.mode = 'SAMPLE'
@@ -5331,7 +5331,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
                 props.mode = 'FIXED'
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'            
+                props.mode = 'ADAPTIVE'
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
                 props.mode = 'SAMPLE'
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
