@@ -73,18 +73,19 @@ void VKDescriptorSetUpdator::bind_image_resource(const VKStateManager &state_man
       VK_IMAGE_LAYOUT_GENERAL,
       resource_binding.location);
   /* Update access info. */
-  uint32_t layer_base = 0;
-  uint32_t layer_count = VK_REMAINING_ARRAY_LAYERS;
-  if (resource_binding.arrayed == VKImageViewArrayed::ARRAYED && texture.is_texture_view()) {
+  VKSubImageRange subimage = {};
+  if (texture.is_texture_view()) {
     IndexRange layer_range = texture.layer_range();
-    layer_base = layer_range.start();
-    layer_count = layer_range.size();
+    IndexRange mipmap_range = texture.mip_map_range();
+    subimage = {uint32_t(mipmap_range.start()),
+                uint32_t(mipmap_range.size()),
+                uint32_t(layer_range.start()),
+                uint32_t(layer_range.size())};
   }
   access_info.images.append({texture.vk_image_handle(),
                              resource_binding.access_mask,
                              to_vk_image_aspect_flag_bits(texture.device_format_get()),
-                             layer_base,
-                             layer_count});
+                             subimage});
 }
 
 void VKDescriptorSetUpdator::bind_texture_resource(const VKDevice &device,
@@ -129,8 +130,7 @@ void VKDescriptorSetUpdator::bind_texture_resource(const VKDevice &device,
         access_info.images.append({texture->vk_image_handle(),
                                    resource_binding.access_mask,
                                    to_vk_image_aspect_flag_bits(texture->device_format_get()),
-                                   0,
-                                   VK_REMAINING_ARRAY_LAYERS});
+                                   {}});
       }
       break;
     }
@@ -162,8 +162,7 @@ void VKDescriptorSetUpdator::bind_input_attachment_resource(
       access_info.images.append({texture->vk_image_handle(),
                                  resource_binding.access_mask,
                                  to_vk_image_aspect_flag_bits(texture->device_format_get()),
-                                 0,
-                                 VK_REMAINING_ARRAY_LAYERS});
+                                 {}});
     }
   }
   else {
@@ -190,8 +189,7 @@ void VKDescriptorSetUpdator::bind_input_attachment_resource(
       access_info.images.append({vk_image,
                                  resource_binding.access_mask,
                                  to_vk_image_aspect_flag_bits(texture->device_format_get()),
-                                 0,
-                                 VK_REMAINING_ARRAY_LAYERS});
+                                 {}});
     }
   }
 }
@@ -211,7 +209,7 @@ void VKDescriptorSetUpdator::bind_storage_buffer_resource(
       VKIndexBuffer *index_buffer = static_cast<VKIndexBuffer *>(elem.resource);
       index_buffer->ensure_updated();
       vk_buffer = index_buffer->vk_handle();
-      vk_device_size = index_buffer->size_get();
+      vk_device_size = index_buffer->size_get() - elem.offset;
       vk_device_address = index_buffer->device_address_get();
       break;
     }
@@ -219,7 +217,7 @@ void VKDescriptorSetUpdator::bind_storage_buffer_resource(
       VKVertexBuffer *vertex_buffer = static_cast<VKVertexBuffer *>(elem.resource);
       vertex_buffer->ensure_updated();
       vk_buffer = vertex_buffer->vk_handle();
-      vk_device_size = vertex_buffer->size_used_get();
+      vk_device_size = vertex_buffer->size_used_get() - elem.offset;
       vk_device_address = vertex_buffer->device_address_get();
       break;
     }
@@ -227,7 +225,7 @@ void VKDescriptorSetUpdator::bind_storage_buffer_resource(
       VKUniformBuffer *uniform_buffer = static_cast<VKUniformBuffer *>(elem.resource);
       uniform_buffer->ensure_updated();
       vk_buffer = uniform_buffer->vk_handle();
-      vk_device_size = uniform_buffer->size_in_bytes();
+      vk_device_size = uniform_buffer->size_in_bytes() - elem.offset;
       vk_device_address = uniform_buffer->device_address_get();
       break;
     }
@@ -235,14 +233,14 @@ void VKDescriptorSetUpdator::bind_storage_buffer_resource(
       VKStorageBuffer *storage_buffer = static_cast<VKStorageBuffer *>(elem.resource);
       storage_buffer->ensure_allocated();
       vk_buffer = storage_buffer->vk_handle();
-      vk_device_size = storage_buffer->size_in_bytes();
+      vk_device_size = storage_buffer->usage_size_get();
       vk_device_address = storage_buffer->device_address_get();
       break;
     }
     case BindSpaceStorageBuffers::Type::Buffer: {
       VKBuffer *buffer = static_cast<VKBuffer *>(elem.resource);
       vk_buffer = buffer->vk_handle();
-      vk_device_size = buffer->size_in_bytes();
+      vk_device_size = buffer->size_in_bytes() - elem.offset;
       vk_device_address = buffer->device_address_get();
       break;
     }
@@ -255,7 +253,7 @@ void VKDescriptorSetUpdator::bind_storage_buffer_resource(
               vk_buffer,
               vk_device_address,
               elem.offset,
-              vk_device_size - elem.offset,
+              vk_device_size,
               resource_binding.location);
   if (vk_buffer != VK_NULL_HANDLE) {
     access_info.buffers.append({vk_buffer, resource_binding.access_mask});

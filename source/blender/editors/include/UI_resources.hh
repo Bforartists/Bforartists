@@ -137,8 +137,6 @@ enum ThemeColorID {
   TH_HANDLE_SEL_ALIGN,
   TH_HANDLE_SEL_AUTOCLAMP,
 
-  TH_ACTIVE_SPLINE,
-
   TH_SYNTAX_B,
   TH_SYNTAX_V,
   TH_SYNTAX_R,
@@ -465,6 +463,13 @@ void UI_GetThemeColorType4ubv(int colorid, int spacetype, unsigned char col[4]);
  * Get theme color for coloring monochrome icons.
  */
 bool UI_GetIconThemeColor4ubv(int colorid, unsigned char col[4]);
+
+/**
+ * Get four color values, range 0.0-1.0, blended between two other float color pointers,
+ * complete with offset for the alpha component.
+ */
+void UI_GetColorPtrBlendAlpha4fv(
+    const float cp1[4], const float cp2[4], float fac, float alphaoffset, float r_col[4]);
 
 /**
  * Shade a 3 byte color (same as UI_GetColorPtrBlendShade3ubv with 0.0 factor).

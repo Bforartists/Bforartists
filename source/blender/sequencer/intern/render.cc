@@ -621,6 +621,7 @@ static void multiply_ibuf(ImBuf *ibuf, const float fmul, const bool multiply_alp
 }
 
 static ImBuf *input_preprocess(const RenderData *context,
+                               SeqRenderState *state,
                                Strip *strip,
                                float timeline_frame,
                                ImBuf *ibuf,
@@ -691,13 +692,14 @@ static ImBuf *input_preprocess(const RenderData *context,
   }
 
   if (strip->modifiers.first) {
-    modifier_apply_stack(context, strip, preprocessed_ibuf, timeline_frame);
+    modifier_apply_stack(context, state, strip, preprocessed_ibuf, timeline_frame);
   }
 
   return preprocessed_ibuf;
 }
 
 static ImBuf *seq_render_preprocess_ibuf(const RenderData *context,
+                                         SeqRenderState *state,
                                          Strip *strip,
                                          ImBuf *ibuf,
                                          float timeline_frame,
@@ -722,7 +724,7 @@ static ImBuf *seq_render_preprocess_ibuf(const RenderData *context,
   }
 
   if (use_preprocess) {
-    ibuf = input_preprocess(context, strip, timeline_frame, ibuf, is_proxy_image);
+    ibuf = input_preprocess(context, state, strip, timeline_frame, ibuf, is_proxy_image);
   }
 
   return ibuf;
@@ -933,6 +935,7 @@ static ImBuf *create_missing_media_image(const RenderData *context, int width, i
 }
 
 static ImBuf *seq_render_image_strip(const RenderData *context,
+                                     SeqRenderState *state,
                                      Strip *strip,
                                      int timeline_frame,
                                      bool *r_is_proxy_image)
@@ -985,7 +988,7 @@ static ImBuf *seq_render_image_strip(const RenderData *context,
 
       if (view_id != context->view_id) {
         ibufs_arr[view_id] = seq_render_preprocess_ibuf(
-            &localcontext, strip, ibufs_arr[view_id], timeline_frame, true, false);
+            &localcontext, state, strip, ibufs_arr[view_id], timeline_frame, true, false);
       }
     }
 
@@ -1105,6 +1108,7 @@ static ImBuf *seq_render_movie_strip_view(const RenderData *context,
 }
 
 static ImBuf *seq_render_movie_strip(const RenderData *context,
+                                     SeqRenderState *state,
                                      Strip *strip,
                                      float timeline_frame,
                                      bool *r_is_proxy_image)
@@ -1150,7 +1154,7 @@ static ImBuf *seq_render_movie_strip(const RenderData *context,
 
       if (view_id != context->view_id && ibuf_arr[view_id]) {
         ibuf_arr[view_id] = seq_render_preprocess_ibuf(
-            &localcontext, strip, ibuf_arr[view_id], timeline_frame, true, false);
+            &localcontext, state, strip, ibuf_arr[view_id], timeline_frame, true, false);
       }
     }
 
@@ -1347,21 +1351,13 @@ static ImBuf *seq_render_mask_strip(const RenderData *context, Strip *strip, flo
   return seq_render_mask(context, strip->mask, frame_index, make_float);
 }
 
-static ImBuf *seq_render_scene_strip(const RenderData *context,
-                                     Strip *strip,
-                                     float frame_index,
-                                     float timeline_frame)
+static ImBuf *seq_render_scene_strip_ex(const RenderData *context,
+                                        Strip *strip,
+                                        float frame_index,
+                                        float timeline_frame)
 {
   ImBuf *ibuf = nullptr;
-  double frame;
   Object *camera;
-
-  struct {
-    int scemode;
-    int timeline_frame;
-    float subframe;
-    int mode;
-  } orig_data;
 
   /* Old info:
    * Hack! This function can be called from do_render_seq(), in that case
@@ -1394,42 +1390,28 @@ static ImBuf *seq_render_scene_strip(const RenderData *context,
    * -jahka
    */
 
-  const bool is_rendering = G.is_rendering;
-  bool is_preview = !context->for_render && (context->scene->r.seq_prev_type) != OB_RENDER;
-
-  bool have_comp = false;
-  bool use_gpencil = true;
-  /* do we need to re-evaluate the frame after rendering? */
-  bool is_frame_update = false;
-  Scene *scene;
-
-  /* don't refer to strip->scene above this point!, it can be nullptr */
-  if (strip->scene == nullptr) {
-    return create_missing_media_image(context, context->rectx, context->recty);
-  }
+  Scene *scene = strip->scene;
+  BLI_assert(scene != nullptr);
 
   /* Prevent rendering scene recursively. */
-  if (strip->scene == context->scene) {
+  if (scene == context->scene) {
     return nullptr;
   }
 
-  scene = strip->scene;
-  frame = double(scene->r.sfra) + double(frame_index) + double(strip->anim_startofs);
+  const bool is_rendering = G.is_rendering;
+  const bool is_preview = !context->for_render && (context->scene->r.seq_prev_type) != OB_RENDER;
+  const bool use_gpencil = (strip->flag & SEQ_SCENE_NO_ANNOTATION) == 0;
+  double frame = double(scene->r.sfra) + double(frame_index) + double(strip->anim_startofs);
 
 #if 0 /* UNUSED */
-  have_seq = (scene->r.scemode & R_DOSEQ) && scene->ed && scene->ed->seqbase.first;
+  bool have_seq = (scene->r.scemode & R_DOSEQ) && scene->ed && scene->ed->seqbase.first;
 #endif
-  have_comp = (scene->r.scemode & R_DOCOMP) && scene->compositing_node_group;
+  const bool have_comp = (scene->r.scemode & R_DOCOMP) && scene->compositing_node_group;
 
   /* Get view layer for the strip. */
   ViewLayer *view_layer = BKE_view_layer_default_render(scene);
   /* Depsgraph will be nullptr when doing rendering. */
   Depsgraph *depsgraph = nullptr;
-
-  orig_data.scemode = scene->r.scemode;
-  orig_data.timeline_frame = scene->r.cfra;
-  orig_data.subframe = scene->r.subframe;
-  orig_data.mode = scene->r.mode;
 
   BKE_scene_frame_set(scene, frame);
 
@@ -1442,11 +1424,7 @@ static ImBuf *seq_render_scene_strip(const RenderData *context,
   }
 
   if (have_comp == false && camera == nullptr) {
-    goto finally;
-  }
-
-  if (strip->flag & SEQ_SCENE_NO_ANNOTATION) {
-    use_gpencil = false;
+    return nullptr;
   }
 
   /* Prevent eternal loop. */
@@ -1454,9 +1432,6 @@ static ImBuf *seq_render_scene_strip(const RenderData *context,
 
   /* Temporarily disable camera switching to enforce using `camera`. */
   scene->r.mode |= R_NO_CAMERA_SWITCH;
-
-  is_frame_update = (orig_data.timeline_frame != scene->r.cfra) ||
-                    (orig_data.subframe != scene->r.subframe);
 
   if (view3d_fn && is_preview && camera) {
     char err_out[256] = "unknown";
@@ -1517,7 +1492,7 @@ static ImBuf *seq_render_scene_strip(const RenderData *context,
      */
 
     if (is_preview && (is_rendering && !G.background)) {
-      goto finally;
+      return ibuf;
     }
 
     ibufs_arr = MEM_calloc_arrayN<ImBuf *>(totviews, "Sequence Image Views Imbufs");
@@ -1591,17 +1566,48 @@ static ImBuf *seq_render_scene_strip(const RenderData *context,
     MEM_freeN(ibufs_arr);
   }
 
-finally:
-  /* restore */
+  return ibuf;
+}
+
+static ImBuf *seq_render_scene_strip(const RenderData *context,
+                                     Strip *strip,
+                                     float frame_index,
+                                     float timeline_frame)
+{
+  if (strip->scene == nullptr) {
+    return create_missing_media_image(context, context->rectx, context->recty);
+  }
+
+  Scene *scene = strip->scene;
+
+  struct {
+    int scemode;
+    int timeline_frame;
+    float subframe;
+    int mode;
+  } orig_data;
+
+  /* Store state. */
+  orig_data.scemode = scene->r.scemode;
+  orig_data.timeline_frame = scene->r.cfra;
+  orig_data.subframe = scene->r.subframe;
+  orig_data.mode = scene->r.mode;
+
+  const bool is_frame_update = (orig_data.timeline_frame != scene->r.cfra) ||
+                               (orig_data.subframe != scene->r.subframe);
+
+  ImBuf *ibuf = seq_render_scene_strip_ex(context, strip, frame_index, timeline_frame);
+
+  /* Restore state. */
   scene->r.scemode = orig_data.scemode;
   scene->r.cfra = orig_data.timeline_frame;
   scene->r.subframe = orig_data.subframe;
+  scene->r.mode &= orig_data.mode | ~R_NO_CAMERA_SWITCH;
 
+  Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, BKE_view_layer_default_render(scene));
   if (is_frame_update && (depsgraph != nullptr)) {
     BKE_scene_graph_update_for_newframe(depsgraph);
   }
-
-  scene->r.mode &= orig_data.mode | ~R_NO_CAMERA_SWITCH;
 
   return ibuf;
 }
@@ -1693,10 +1699,10 @@ static ImBuf *do_render_strip_uncached(const RenderData *context,
     ibuf = seq_render_effect_strip_impl(context, state, strip, timeline_frame);
   }
   else if (strip->type == STRIP_TYPE_IMAGE) {
-    ibuf = seq_render_image_strip(context, strip, timeline_frame, r_is_proxy_image);
+    ibuf = seq_render_image_strip(context, state, strip, timeline_frame, r_is_proxy_image);
   }
   else if (strip->type == STRIP_TYPE_MOVIE) {
-    ibuf = seq_render_movie_strip(context, strip, timeline_frame, r_is_proxy_image);
+    ibuf = seq_render_movie_strip(context, state, strip, timeline_frame, r_is_proxy_image);
   }
   else if (strip->type == STRIP_TYPE_MOVIECLIP) {
     ibuf = seq_render_movieclip_strip(
@@ -1750,7 +1756,7 @@ ImBuf *seq_render_strip(const RenderData *context,
   if (ibuf) {
     use_preprocess = seq_input_have_to_preprocess(context, strip, timeline_frame);
     ibuf = seq_render_preprocess_ibuf(
-        context, strip, ibuf, timeline_frame, use_preprocess, is_proxy_image);
+        context, state, strip, ibuf, timeline_frame, use_preprocess, is_proxy_image);
     intra_frame_cache_put_preprocessed(context->scene, strip, ibuf);
   }
 

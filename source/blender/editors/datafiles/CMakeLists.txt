@@ -1059,6 +1059,7 @@ if(WITH_BLENDER)
       mod_cloth
       mod_color_balance
       mod_curve
+      mod_curve_to_tube
       mod_curves
       mod_dash
       mod_data_transfer
@@ -1091,6 +1092,7 @@ if(WITH_BLENDER)
       mod_particles
       mod_physics
       mod_remesh
+      mod_scatter_on_surface
       mod_screw
       mod_shrinkwrap
       mod_simpledeform
@@ -1753,7 +1755,7 @@ if(WITH_BLENDER)
       seq_strip_duplicate
       seq_strip_expand
       seq_strip_overwrite
-      seq_strip_meta
+      seq_strip_modifier
       seq_strip_shuffle
       seq_swap_left
       seq_swap_right

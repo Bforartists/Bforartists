@@ -639,6 +639,8 @@ class TOPBAR_MT_edit(Menu):
     def draw(self, context):
         layout = self.layout
 
+        show_developer = context.preferences.view.show_developer_ui
+
         layout.operator("ed.undo", icon="UNDO")
         layout.operator("ed.redo", icon="REDO")
 

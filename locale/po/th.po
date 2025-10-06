@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'fb3904ce45c6')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'ceca413bcbf8')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-22 08:45+0000\n"
+"POT-Creation-Date: 2025-10-06 08:44+0000\n"
 "PO-Revision-Date: 2025-07-23 15:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Thai <https://translate.blender.org/projects/blender-ui/ui/th/>\n"
@@ -25,10 +25,6 @@ msgstr "ชนิด"
 
 msgid "Color"
 msgstr "สี"
-
-
-msgid "Action F-Curves"
-msgstr "กระทำเส้นโค้ง F"
 
 
 msgid "Action Group"
@@ -165,10 +161,6 @@ msgstr "กลุ่มการกระทำถูกเลือก"
 
 msgid "Expanded"
 msgstr "ขยาย"
-
-
-msgid "Action Groups"
-msgstr "กลุ่มการกระทำ"
 
 
 msgctxt "ID"
@@ -440,10 +432,6 @@ msgstr "ตัวแก้ไขรูปภาพ/UV"
 
 msgid "Node Editor"
 msgstr "ตัวแก้ไขโนด"
-
-
-msgid "Video editing tools"
-msgstr "เครื่องมือแก้ไขวิดีโอ"
 
 
 msgid "Graph Editor"
@@ -1865,6 +1853,42 @@ msgid "Mask"
 msgstr "หน้ากาก"
 
 
+msgid "Add Image"
+msgstr "เพิ่มภาพ"
+
+
+msgid "Import"
+msgstr "นำเข้า"
+
+
+msgid "Apply"
+msgstr "นำไปใช้"
+
+
+msgid "Text"
+msgstr "ช้อความ"
+
+
+msgid "Track"
+msgstr "แทร็ค"
+
+
+msgid "Math"
+msgstr "คณิตศาสตร์"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Hooks"
+msgstr "ตะขอ"
+
+
+msgid "Names"
+msgstr "ชื่อ"
+
+
 msgid "Face Data"
 msgstr "ข้อมูลด้าน"
 
@@ -1873,16 +1897,12 @@ msgid "Merge"
 msgstr "ผสาน"
 
 
-msgid "Text"
-msgstr "ช้อความ"
-
-
 msgid "Metaball"
 msgstr "เมตาบอล"
 
 
-msgid "Names"
-msgstr "ชื่อ"
+msgid "Layout"
+msgstr "เค้าโครง"
 
 
 msgid "Pivot Point"
@@ -1899,6 +1919,10 @@ msgstr "แก้ไข"
 
 msgid "Mask Edit"
 msgstr "การแก้ไขหน้ากาก"
+
+
+msgid "Keying"
+msgstr "คีย์"
 
 
 msgid "Mirror"
@@ -1933,22 +1957,6 @@ msgid "Light"
 msgstr "แสง"
 
 
-msgid "Add Image"
-msgstr "เพิ่มภาพ"
-
-
-msgid "Apply"
-msgstr "นำไปใช้"
-
-
-msgid "Track"
-msgstr "แทร็ค"
-
-
-msgid "Hooks"
-msgstr "ตะขอ"
-
-
 msgid "Zoom"
 msgstr "ซูม"
 
@@ -1961,29 +1969,9 @@ msgid "Files"
 msgstr "ไฟล์"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgctxt "Operator"
 msgid "Mirror"
 msgstr "กระจกสะท้อน"
-
-
-msgid "Math"
-msgstr "คณิตศาสตร์"
-
-
-msgid "Keying"
-msgstr "คีย์"
-
-
-msgid "Import"
-msgstr "นำเข้า"
-
-
-msgid "Layout"
-msgstr "เค้าโครง"
 
 
 msgid "Node"
@@ -1992,11 +1980,6 @@ msgstr "โนด"
 
 msgid "Add Modifier"
 msgstr "เพิ่มการปรับแต่ง"
-
-
-msgctxt "Operator"
-msgid "Scene"
-msgstr "ฉาก"
 
 
 msgid "Blender"
@@ -2201,6 +2184,10 @@ msgid "World"
 msgstr "โลก"
 
 
+msgid "Edge Length"
+msgstr "ความยาวของเส้นขอบ"
+
+
 msgid "UV Center"
 msgstr "ศูนย์กลาง UV"
 
@@ -2399,26 +2386,6 @@ msgstr "+X ไปยัง -X"
 
 msgid "Path to file"
 msgstr "ตำแหน่งไปยังไฟล์"
-
-
-msgctxt "Curve"
-msgid "Mode"
-msgstr "โหมด"
-
-
-msgctxt "Curve"
-msgid "Max"
-msgstr "สูงสุด"
-
-
-msgctxt "Curve"
-msgid "Line"
-msgstr "เส้น"
-
-
-msgctxt "Curve"
-msgid "Round"
-msgstr "มน"
 
 
 msgctxt "Operator"
@@ -2882,10 +2849,6 @@ msgid "Vertex (Triangle)"
 msgstr "จุดยอด (สามเหลี่ยม)"
 
 
-msgid "Edge Length"
-msgstr "ความยาวของเส้นขอบ"
-
-
 msgid "Low"
 msgstr "ต่ำ"
 
@@ -2989,6 +2952,26 @@ msgid "Render"
 msgstr "เรนเดอร์"
 
 
+msgctxt "Curve"
+msgid "Mode"
+msgstr "โหมด"
+
+
+msgctxt "Curve"
+msgid "Max"
+msgstr "สูงสุด"
+
+
+msgctxt "Curve"
+msgid "Line"
+msgstr "เส้น"
+
+
+msgctxt "Curve"
+msgid "Round"
+msgstr "มน"
+
+
 msgctxt "Scene"
 msgid "New"
 msgstr "ใหม่"
@@ -3049,11 +3032,6 @@ msgstr "แทนที่ที่เลือกไว้"
 msgctxt "Sequence"
 msgid "Add"
 msgstr "เพิ่ม"
-
-
-msgctxt "Sequence"
-msgid "Transform"
-msgstr "การปรับเปลี่ยน"
 
 
 msgctxt "Operator"
@@ -3569,10 +3547,6 @@ msgid "UV Editor"
 msgstr "ตัวแก้ไข UV"
 
 
-msgid "Mask editing"
-msgstr "การแก้ไขหน้ากาก"
-
-
 msgid "Pivot around the 3D cursor"
 msgstr "หมุนรอบ ๆ เคอร์เซอร์สามมิติ"
 
@@ -3909,11 +3883,6 @@ msgstr "คู่มือ"
 
 
 msgctxt "Operator"
-msgid "Tutorials"
-msgstr "สอนวิธีใช้งาน"
-
-
-msgctxt "Operator"
 msgid "Support"
 msgstr "สนับสนุน"
 
@@ -4233,11 +4202,6 @@ msgstr "ข้อความ"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "ฉาก..."
-
-
-msgctxt "Operator"
 msgid "Glow"
 msgstr "เรืองแสง"
 
@@ -4376,6 +4340,10 @@ msgid "General"
 msgstr "ทั่วไป"
 
 
+msgid "More..."
+msgstr "เพิ่มเติม..."
+
+
 msgctxt "Operator"
 msgid "Alembic (.abc)"
 msgstr "Alembic (.abc)"
@@ -4389,6 +4357,11 @@ msgstr "เรนเดอร์ภาพ"
 msgctxt "Operator"
 msgid "Operator Search..."
 msgstr "ค้นหาตัวดำเนินการ..."
+
+
+msgctxt "Operator"
+msgid "Tutorials"
+msgstr "สอนวิธีใช้งาน"
 
 
 msgctxt "Operator"
@@ -4948,10 +4921,6 @@ msgstr "ใหม่"
 msgctxt "World"
 msgid "New"
 msgstr "ใหม่"
-
-
-msgid "More..."
-msgstr "เพิ่มเติม..."
 
 
 msgid "Yesterday"

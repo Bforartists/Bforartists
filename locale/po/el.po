@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'fb3904ce45c6')\n"
+"Project-Id-Version: Blender 5.0.0 Alpha (b'ceca413bcbf8')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-22 08:45+0000\n"
+"POT-Creation-Date: 2025-10-06 08:44+0000\n"
 "PO-Revision-Date: 2025-07-23 15:19+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Greek <https://translate.blender.org/projects/blender-ui/ui/el/>\n"
@@ -515,12 +515,32 @@ msgid "Keyboard"
 msgstr "Πληκτρολόγιο"
 
 
-msgid "Merge"
-msgstr "Συγχώνευση"
+msgid "Rigid Body"
+msgstr "Rigid Body"
+
+
+msgid "Import"
+msgstr "Εισαγωγή"
+
+
+msgid "Apply"
+msgstr "Εφαρμογή"
 
 
 msgid "Text"
 msgstr "Κείμενο"
+
+
+msgid "Track"
+msgstr "Ανίχνευση"
+
+
+msgid "Make Single User"
+msgstr "Ορισμός Ενός Χρήστη"
+
+
+msgid "Merge"
+msgstr "Συγχώνευση"
 
 
 msgid "Metaball"
@@ -543,22 +563,6 @@ msgid "Light"
 msgstr "Φως"
 
 
-msgid "Rigid Body"
-msgstr "Rigid Body"
-
-
-msgid "Apply"
-msgstr "Εφαρμογή"
-
-
-msgid "Track"
-msgstr "Ανίχνευση"
-
-
-msgid "Make Single User"
-msgstr "Ορισμός Ενός Χρήστη"
-
-
 msgid "Cache"
 msgstr "Προσωρινή μνήμη"
 
@@ -570,10 +574,6 @@ msgstr "Κλειδί"
 msgctxt "Operator"
 msgid "Mirror"
 msgstr "Καθρέφτισμα"
-
-
-msgid "Import"
-msgstr "Εισαγωγή"
 
 
 msgid "System"
@@ -634,10 +634,6 @@ msgstr "Γραμμές"
 
 msgid "Sensor"
 msgstr "Ανιχνευτής"
-
-
-msgid "Meta"
-msgstr "Μετα"
 
 
 msgid "Alpha Over"
@@ -975,6 +971,10 @@ msgstr "Ουρανός"
 
 msgid "Lens"
 msgstr "Φακός"
+
+
+msgid "Meta"
+msgstr "Μετα"
 
 
 msgid "Alpha Under"

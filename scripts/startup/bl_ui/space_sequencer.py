@@ -181,7 +181,8 @@ class SEQUENCER_HT_header(Header):
 
         layout.separator_spacer()
 
-        tool_settings = context.tool_settings
+        scene = context.sequencer_scene
+        tool_settings = scene.tool_settings if scene else None
         sequencer_tool_settings = tool_settings.sequencer_tool_settings if tool_settings else None
 
         layout.separator_spacer()
@@ -1123,21 +1124,12 @@ class SEQUENCER_MT_add_effect(Menu):
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.effect_strip_add", text="Transform", icon="TRANSFORM_MOVE").type = "TRANSFORM"
         col.operator("sequencer.effect_strip_add", text="Speed Control", icon="NODE_CURVE_TIME").type = "SPEED"
 
         col.separator()
 
-        col.operator(
-            "sequencer.effect_strip_add",
-            text="Glow",
-            icon="LIGHT_SUN",
-        ).type = "GLOW"
-        col.operator(
-            "sequencer.effect_strip_add",
-            text="Gaussian Blur",
-            icon="NODE_BLUR",
-        ).type = "GAUSSIAN_BLUR"
+        col.operator("sequencer.effect_strip_add", text="Glow", icon="LIGHT_SUN",).type = "GLOW"
+        col.operator("sequencer.effect_strip_add", text="Gaussian Blur", icon="NODE_BLUR",).type = "GAUSSIAN_BLUR"
         col.enabled = nonsound == 1
 
         layout.separator()
@@ -1407,7 +1399,6 @@ class SEQUENCER_MT_strip_effect_change(Menu):
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.change_effect_type", text="Transform").type = "TRANSFORM"
         col.operator("sequencer.change_effect_type", text="Speed Control").type = "SPEED"
         col.operator("sequencer.change_effect_type", text="Glow").type = "GLOW"
         col.operator("sequencer.change_effect_type", text="Gaussian Blur").type = "GAUSSIAN_BLUR"
@@ -1653,7 +1644,6 @@ class SEQUENCER_MT_strip(Menu):
                     "MULTIPLY",
                     "WIPE",
                     "GLOW",
-                    "TRANSFORM",
                     "COLOR",
                     "SPEED",
                     "MULTICAM",
@@ -1939,7 +1929,6 @@ class SEQUENCER_MT_context_menu(Menu):
                 "MULTIPLY",
                 "WIPE",
                 "GLOW",
-                "TRANSFORM",
                 "COLOR",
                 "SPEED",
                 "MULTICAM",
@@ -2027,8 +2016,8 @@ class SEQUENCER_MT_pivot_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        if context.tool_settings:
-            sequencer_tool_settings = context.tool_settings.sequencer_tool_settings
+        if context.sequencer_scene:
+            sequencer_tool_settings = context.sequencer_scene.tool_settings.sequencer_tool_settings
 
         pie.prop_enum(sequencer_tool_settings, "pivot_point", value="CENTER")
         pie.prop_enum(sequencer_tool_settings, "pivot_point", value="CURSOR")
@@ -2164,7 +2153,7 @@ class SequencerColorTagPicker:
 class SEQUENCER_PT_color_tag_picker(SequencerColorTagPicker, Panel):
     bl_label = "Color Tag"
     bl_category = "Strip"
-    bl_options = {"HIDE_HEADER", "INSTANCED"}
+    bl_options = {'HIDE_HEADER', 'INSTANCED'}
 
     def draw(self, _context):
         layout = self.layout
@@ -2185,7 +2174,7 @@ class SEQUENCER_MT_color_tag_picker(SequencerColorTagPicker, Menu):
         row = layout.row(align=True)
         row.operator_enum("sequencer.strip_color_tag_set", "color", icon_only=True)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
     bl_label = ""
     bl_options = {"HIDE_HEADER"}
@@ -2203,7 +2192,6 @@ class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
             "ALPHA_UNDER",
             "MULTIPLY",
             "GLOW",
-            "TRANSFORM",
             "SPEED",
             "MULTICAM",
             "GAUSSIAN_BLUR",
@@ -2255,7 +2243,7 @@ class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
         row.separator()
         row.prop(strip, "mute", toggle=True, icon_only=True, emboss=False)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_adjust_crop(SequencerButtonsPanel, Panel):
     bl_label = "Crop"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2379,31 +2367,6 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                 row.use_property_split = False
                 row.prop(strip, "use_frame_interpolate", text="Interpolation")
 
-        elif strip_type == "TRANSFORM":
-            col = layout.column()
-
-            col.prop(strip, "interpolation")
-            col.prop(strip, "translation_unit")
-            col = layout.column(align=True)
-            col.prop(strip, "translate_start_x", text="Position X")
-            col.prop(strip, "translate_start_y", text="Y")
-
-            col.separator()
-
-            colsub = col.column(align=True)
-            colsub.use_property_split = False
-            colsub.prop(strip, "use_uniform_scale")
-
-            if strip.use_uniform_scale:
-                colsub = col.column(align=True)
-                colsub.prop(strip, "scale_start_x", text="Scale")
-            else:
-                col.prop(strip, "scale_start_x", text="Scale X")
-                col.prop(strip, "scale_start_y", text="Y")
-
-            col = layout.column(align=True)
-            col.prop(strip, "rotation_start", text="Rotation")
-
         elif strip_type == "MULTICAM":
             col = layout.column(align=True)
             strip_channel = strip.channel
@@ -2480,7 +2443,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             row = layout.row(align=True)
             row.prop(strip, "factor", slider=True)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_effect_text_layout(SequencerButtonsPanel, Panel):
     bl_label = "Layout"
     bl_parent_id = "SEQUENCER_PT_effect"
@@ -2509,7 +2472,7 @@ class SEQUENCER_PT_effect_text_layout(SequencerButtonsPanel, Panel):
         row.separator()
         row.prop(strip, "anchor_y", text="Y")
 
-
+# BFA - Legacy
 class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
     bl_label = "Style"
     bl_parent_id = "SEQUENCER_PT_effect"
@@ -2591,7 +2554,7 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         else:
             sub.label(icon="DISCLOSURE_TRI_RIGHT")
 
-
+# BFA - Legacy
 class SEQUENCER_PT_effect_text_outline(SequencerButtonsPanel, Panel):
     bl_label = "Outline"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2618,7 +2581,7 @@ class SEQUENCER_PT_effect_text_outline(SequencerButtonsPanel, Panel):
         col.prop(strip, "outline_width", text="Width")
         col.active = strip.use_outline and (not strip.mute)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_effect_text_shadow(SequencerButtonsPanel, Panel):
     bl_label = "Shadow"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2647,7 +2610,7 @@ class SEQUENCER_PT_effect_text_shadow(SequencerButtonsPanel, Panel):
         col.prop(strip, "shadow_blur", text="Blur")
         col.active = strip.use_shadow and (not strip.mute)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_effect_text_box(SequencerButtonsPanel, Panel):
     bl_label = "Box"
     bl_translation_context = i18n_contexts.id_sequence
@@ -2676,7 +2639,7 @@ class SEQUENCER_PT_effect_text_box(SequencerButtonsPanel, Panel):
         col.prop(strip, "box_roundness", text="Roundness")
         col.active = strip.use_box and (not strip.mute)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
     bl_label = "Source"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2805,7 +2768,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 split.alignment = "LEFT"
                 split.label(text="{:.2f}".format(elem.orig_fps), translate=False)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
     bl_label = "Movie Clip"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2846,7 +2809,7 @@ class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
                 translate=False,
             )
 
-
+# BFA - Legacy
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
     bl_label = "Scene"
     bl_category = "Strip"
@@ -2893,7 +2856,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
                 # Expose here because setting the alpha from the "Render" menu is very inconvenient.
                 col.prop(scene.render, "film_transparent")
 
-
+# BFA - Legacy
 class SEQUENCER_PT_scene_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
     bl_category = "Strip"
@@ -2962,7 +2925,7 @@ class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
                 translate=False,
             )
 
-
+# BFA - Legacy
 class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
     bl_label = "Time"
     bl_options = {"DEFAULT_CLOSED"}
@@ -3157,7 +3120,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
                     translate=False,
                 )
 
-
+# BFA - Legacy
 class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
     bl_category = "Strip"
@@ -3236,7 +3199,7 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             if overlay_settings.waveform_display_type == "DEFAULT_WAVEFORMS":
                 col.prop(strip, "show_waveform")
 
-
+# BFA - Legacy
 class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
     bl_label = "Compositing"
     bl_category = "Strip"
@@ -3264,7 +3227,7 @@ class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
         col.prop(strip, "blend_type", text="Blend")
         col.prop(strip, "blend_alpha", text="Opacity", slider=True)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_adjust_transform(SequencerButtonsPanel, Panel):
     bl_label = "Transform"
     bl_category = "Strip"
@@ -3309,7 +3272,7 @@ class SEQUENCER_PT_adjust_transform(SequencerButtonsPanel, Panel):
         sub.prop(strip, "use_flip_x", text="X", toggle=True)
         sub.prop(strip, "use_flip_y", text="Y", toggle=True)
 
-
+# BFA - Legacy
 class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
     bl_label = "Video"
     bl_options = {"DEFAULT_CLOSED"}
@@ -3340,7 +3303,6 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
             "MULTIPLY",
             "WIPE",
             "GLOW",
-            "TRANSFORM",
             "COLOR",
             "MULTICAM",
             "SPEED",
@@ -3365,7 +3327,7 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
         col.use_property_split = False
         col.prop(strip, "use_reverse_frames")
 
-
+# BFA - Legacy
 class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
     bl_label = "Color"
     bl_options = {"DEFAULT_CLOSED"}
@@ -3933,7 +3895,7 @@ class SEQUENCER_PT_preview_snapping(Panel):
     @classmethod
     def poll(cls, context):
         st = context.space_data
-        return st.view_type in {"PREVIEW", "SEQUENCER_PREVIEW"} and context.tool_settings
+        return st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'} and context.sequencer_scene
 
     def draw(self, context):
         tool_settings = context.tool_settings
@@ -3965,7 +3927,7 @@ class SEQUENCER_PT_sequencer_snapping(Panel):
     @classmethod
     def poll(cls, context):
         st = context.space_data
-        return st.view_type in {"SEQUENCER", "SEQUENCER_PREVIEW"} and context.tool_settings
+        return st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'} and context.sequencer_scene
 
     def draw(self, context):
         tool_settings = context.tool_settings
@@ -4156,35 +4118,35 @@ classes = (
     SEQUENCER_MT_view_pie,
     SEQUENCER_MT_preview_view_pie,
     SEQUENCER_MT_modifier_add,
-    SEQUENCER_PT_color_tag_picker,
+    SEQUENCER_PT_color_tag_picker, # BFA - Legacy
     SEQUENCER_PT_active_tool,
     SEQUENCER_MT_change_scene_with_icons,  # BFA
-    SEQUENCER_PT_strip,
+    SEQUENCER_PT_strip, # BFA - Legacy
     SEQUENCER_PT_gizmo_display,
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,
     SEQUENCER_PT_sequencer_overlay,
     SEQUENCER_PT_sequencer_overlay_strips,
     SEQUENCER_PT_sequencer_overlay_waveforms,
-    SEQUENCER_PT_effect,
-    SEQUENCER_PT_scene,
-    SEQUENCER_PT_scene_sound,
-    SEQUENCER_PT_mask,
-    SEQUENCER_PT_effect_text_style,
-    SEQUENCER_PT_effect_text_outline,
-    SEQUENCER_PT_effect_text_shadow,
-    SEQUENCER_PT_effect_text_box,
-    SEQUENCER_PT_effect_text_layout,
-    SEQUENCER_PT_movie_clip,
-    SEQUENCER_PT_adjust_comp,
-    SEQUENCER_PT_adjust_transform,
-    SEQUENCER_PT_adjust_crop,
-    SEQUENCER_PT_adjust_video,
-    SEQUENCER_PT_adjust_color,
-    SEQUENCER_PT_adjust_sound,
-    SEQUENCER_PT_time,
-    SEQUENCER_PT_source,
-    SEQUENCER_PT_modifiers,
+    SEQUENCER_PT_effect, # BFA - Legacy
+    SEQUENCER_PT_scene, # BFA - Legacy
+    SEQUENCER_PT_scene_sound, # BFA - Legacy
+    SEQUENCER_PT_mask, # BFA - Legacy
+    SEQUENCER_PT_effect_text_style, # BFA - Legacy
+    SEQUENCER_PT_effect_text_outline, # BFA - Legacy
+    SEQUENCER_PT_effect_text_shadow, # BFA - Legacy
+    SEQUENCER_PT_effect_text_box, # BFA - Legacy
+    SEQUENCER_PT_effect_text_layout, # BFA - Legacy
+    SEQUENCER_PT_movie_clip, # BFA - Legacy
+    SEQUENCER_PT_adjust_comp, # BFA - Legacy
+    SEQUENCER_PT_adjust_transform, # BFA - Legacy
+    SEQUENCER_PT_adjust_crop, # BFA - Legacy
+    SEQUENCER_PT_adjust_video, # BFA - Legacy
+    SEQUENCER_PT_adjust_color, # BFA - Legacy
+    SEQUENCER_PT_adjust_sound, # BFA - Legacy
+    SEQUENCER_PT_time, # BFA - Legacy
+    SEQUENCER_PT_source, # BFA - Legacy
+    SEQUENCER_PT_modifiers, # BFA - Legacy
     SEQUENCER_PT_cache_settings,
     SEQUENCER_PT_cache_view_settings,
     SEQUENCER_PT_proxy_settings,

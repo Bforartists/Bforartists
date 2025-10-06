@@ -45,7 +45,7 @@ def playback_controls(layout, context):
     is_sequencer = st.type == "SEQUENCE_EDITOR" and st.view_type == "SEQUENCER"
 
     scene = context.scene if not is_sequencer else context.sequencer_scene
-    tool_settings = context.tool_settings
+    tool_settings = scene.tool_settings if scene else None
     screen = context.screen
 
     row = layout.row(align=True)
@@ -148,7 +148,7 @@ def playback_controls(layout, context):
         if (getattr(context.space_data, "mode", "") == "TIMELINE"):  # BFA - Make this only show in the timeline editor to not show this in the footer.
             layout.popover(panel="TIME_PT_view_view_options", text="")
 
-
+# BFA - Legacy
 class TIME_MT_editor_menus(Menu):
     bl_idname = "TIME_MT_editor_menus"
     bl_label = ""
@@ -171,7 +171,7 @@ class TIME_MT_editor_menus(Menu):
             sub.menu("TIME_MT_marker")
             sub.menu("DOPESHEET_MT_select")  # BFA
 
-
+# BFA - Legacy
 class TIME_MT_marker(Menu):
     bl_label = "Marker"
 
@@ -180,7 +180,7 @@ class TIME_MT_marker(Menu):
 
         marker_menu_generic(layout, context)
 
-
+# BFA - Legacy
 class TIME_MT_view(Menu):
     bl_label = "View"
 
@@ -356,7 +356,7 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
             self.bl_label = scene.keying_sets_all.active.bl_label
             if scene.keying_sets_all.active.bl_label in scene.keying_sets:
                 # Do not translate, this keying set is user-defined.
-                self.bl_translation_context = "Do not translate"
+                self.bl_translation_context = i18n_contexts.no_translation
             else:
                 # Use the keying set's translation context (default).
                 self.bl_translation_context = scene.keying_sets_all.active.bl_rna.translation_context
@@ -474,9 +474,9 @@ class TIME_PT_auto_keyframing(TimelinePanelButtons, Panel):
 ###################################
 
 classes = (
-    TIME_MT_editor_menus,
-    TIME_MT_marker,
-    TIME_MT_view,
+    TIME_MT_editor_menus, # BFA - Legacy
+    TIME_MT_marker, # BFA - Legacy
+    TIME_MT_view, # BFA - Legacy
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
     TIME_PT_view_view_options,  # BFA - menu

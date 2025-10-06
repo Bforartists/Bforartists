@@ -11,6 +11,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_scene_types.h"
+#include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
 #include "DNA_view2d_types.h"
 
@@ -42,6 +43,8 @@
 
 #include "RNA_access.hh"
 #include "RNA_prototypes.hh"
+
+#include "SEQ_modifier.hh"
 
 #include "UI_interface.hh"
 #include "UI_interface_c.hh"
@@ -199,6 +202,8 @@ void ED_buttons_visible_tabs_menu(bContext *C, uiLayout *layout, void * /*arg*/)
       "show_properties_bone_constraints",
       "show_properties_material",
       "show_properties_texture",
+      "show_properties_strip",       
+      "show_properties_strip_modifier",
   };
 
   for (blender::StringRefNull item : filter_items) {
@@ -262,6 +267,11 @@ blender::Vector<eSpaceButtons_Context> ED_buttons_tabs_list(const SpacePropertie
 
   add_tab(BCONTEXT_TEXTURE);
 
+  add_spacer();
+
+  add_tab(BCONTEXT_STRIP);
+  add_tab(BCONTEXT_STRIP_MODIFIER);
+
   return tabs;
 }
 
@@ -305,6 +315,10 @@ static const char *buttons_main_region_context_string(const short mainb)
     /*BFA - Tools tab not shown*/
     //case BCONTEXT_TOOL:
     //  return "tool";
+    case BCONTEXT_STRIP:
+      return "strip";
+    case BCONTEXT_STRIP_MODIFIER:
+      return "strip_modifier";
   }
 
   /* All the cases should be handled. */
@@ -771,6 +785,9 @@ static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
           break;
         case ND_RENDER_RESULT:
           break;
+        case ND_SEQUENCER:
+          ED_area_tag_redraw(area);
+          break;
         case ND_MODE:
         case ND_LAYER:
         default:
@@ -1132,6 +1149,14 @@ void ED_spacetype_buttons()
     const ShaderFxTypeInfo *fxti = BKE_shaderfx_get_info(ShaderFxType(i));
     if (fxti != nullptr && fxti->panel_register != nullptr) {
       fxti->panel_register(art);
+    }
+  }
+  /* Register the panel types from strip modifiers. The actual panels are built per strip modifier
+   * rather than per modifier type. */
+  for (int i = 0; i < NUM_STRIP_MODIFIER_TYPES; i++) {
+    const blender::seq::StripModifierTypeInfo *mti = blender::seq::modifier_type_info_get(i);
+    if (mti != nullptr && mti->panel_register != nullptr) {
+      mti->panel_register(art);
     }
   }
 

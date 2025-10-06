@@ -66,6 +66,8 @@ void Instance::init()
     state.xray_opacity = state.xray_enabled ? XRAY_ALPHA(state.v3d) : 1.0f;
     state.xray_flag_enabled = SHADING_XRAY_FLAG_ENABLED(state.v3d->shading) &&
                               !state.is_depth_only_drawing;
+    state.vignette_enabled = ctx->mode == DRWContext::VIEWPORT_XR &&
+                             state.v3d->vignette_aperture < M_SQRT1_2;
 
     const bool viewport_uses_workbench = state.v3d->shading.type <= OB_SOLID ||
                                          BKE_scene_uses_blender_workbench(state.scene);
@@ -342,7 +344,6 @@ void Resources::update_theme_settings(const DRWContext *ctx, const State &state)
   UI_GetThemeColor4fv(TH_NURB_VLINE, gb.colors.nurb_vline);
   UI_GetThemeColor4fv(TH_NURB_SEL_ULINE, gb.colors.nurb_sel_uline);
   UI_GetThemeColor4fv(TH_NURB_SEL_VLINE, gb.colors.nurb_sel_vline);
-  UI_GetThemeColor4fv(TH_ACTIVE_SPLINE, gb.colors.active_spline);
 
   UI_GetThemeColor4fv(TH_CFRAME, gb.colors.current_frame);
   UI_GetThemeColor4fv(TH_FRAME_BEFORE, gb.colors.before_frame);
@@ -964,6 +965,10 @@ void Instance::draw_v3d(Manager &manager, View &view)
     cursor.draw_output(resources.overlay_output_color_only_fb, manager, view);
 
     draw_text(resources.overlay_output_color_only_fb);
+
+    if (state.vignette_enabled) {
+      background.draw_vignette(resources.overlay_output_color_only_fb, manager, view);
+    }
   }
 }
 

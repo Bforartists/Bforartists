@@ -933,8 +933,8 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
             col = layout.column(align=True)
             col.active = system.gpu_backend != 'VULKAN'
             col.row().prop(system, "shader_compilation_method", expand=True)
-            label = "Threads" if system.shader_compilation_method == 'THREAD' else "Subprocesses"
-            col.prop(system, "gpu_shader_workers", text=label)
+            label = iface_("Threads") if system.shader_compilation_method == 'THREAD' else iface_("Subprocesses")
+            col.prop(system, "gpu_shader_workers", text=label, translate=False)
 
 
 class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
@@ -3104,7 +3104,6 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
             (
                 ({"property": "use_extended_asset_browser"},
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
-                ({"property": "use_new_volume_nodes"}, ("blender/blender/issues/103248", "#103248")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
                 ({"property": "use_geometry_nodes_lists"}, ("blender/blender/issues/140918", "#140918")),
             ),

@@ -74,7 +74,7 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   } else {
     row->label("", ICON_DISCLOSURE_TRI_DOWN);  // bfa - icon
     uiTemplateCurveMapping(
-        col, &view_transform_ptr, "curve_mapping", 'c', true, false, false, false);
+        col, &view_transform_ptr, "curve_mapping", 'c', true, false, false, false, false);
   }
 
   row = &col->row(true); // bfa - our layout

@@ -245,7 +245,10 @@ class NODE_HT_header(Header):
             if snode.node_tree_sub_type == 'SCENE':
                 row = layout.row()
                 row.enabled = not snode.pin
-                row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+                if scene.compositing_node_group:
+                    row.template_ID(scene, "compositing_node_group", new="node.duplicate_compositing_node_group")
+                else:
+                    row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
             elif snode.node_tree_sub_type == 'SEQUENCER':
                 row = layout.row()
                 sequencer_scene = context.workspace.sequencer_scene
@@ -425,7 +428,6 @@ class NODE_MT_editor_menus(Menu):
         layout.menu("NODE_MT_view")
         layout.menu("NODE_MT_select")
         layout.menu("NODE_MT_add")
-        layout.menu("NODE_MT_swap")
         layout.menu("NODE_MT_node")
 
 
@@ -702,6 +704,7 @@ class NODE_MT_node(Menu):
         layout.menu("NODE_MT_node_links")
 
         layout.separator()
+        layout.menu("NODE_MT_swap")
 		## BFA - set to sub-menu
         layout.menu("NODE_MT_node_group_separate")
 
@@ -1311,7 +1314,7 @@ class NODE_MT_node_tree_interface_context_menu(Menu):
         elif active_item.item_type == 'PANEL':
             layout.operator("node.interface_item_unlink_panel_toggle", icon="PANEL_TOGGLE_UNLINK")
 
-
+# BFA - menu
 class NODE_PT_node_tree_interface_new_input(Panel):
     '''Add a new item to the interface list'''
     bl_space_type = 'NODE_EDITOR'
@@ -1328,7 +1331,7 @@ class NODE_PT_node_tree_interface_new_input(Panel):
         layout.operator('node.interface_item_new_panel', text='Panel', icon='MENU_PANEL').item_type='PANEL'
         layout.operator('node.interface_item_new_panel_toggle', text='Panel Toggle', icon='CHECKBOX_HLT')
 
-
+# BFA - menu
 class NODE_PT_node_tree_interface(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1406,7 +1409,7 @@ class NODE_PT_node_tree_interface(Panel):
                 layout.use_property_split = False
                 layout.prop(active_item, "default_closed", text="Closed by Default")
 
-
+# BFA - menu
 class NODE_PT_node_tree_interface_panel_toggle(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1457,6 +1460,7 @@ class NODE_PT_node_tree_properties(Panel):
     bl_region_type = 'UI'
     bl_category = "Group"
     bl_label = "Group Properties" # BFA
+    bl_order = 0
 
     @classmethod
     def poll(cls, context):
@@ -1511,6 +1515,7 @@ class NODE_PT_node_tree_animation(Panel):
     bl_category = "Group"
     bl_label = "Animation"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 20
 
     @classmethod
     def poll(cls, context):
@@ -1591,6 +1596,8 @@ class NodeAssetShelf:
 
 
 class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
+    bl_region_type = 'UI'
+    bl_options = {'DEFAULT_VISIBLE'}
 
     @classmethod
     def poll(cls, context):
@@ -1603,6 +1610,8 @@ class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
 
 class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
+    bl_region_type = 'UI'
+    bl_options = {'DEFAULT_VISIBLE'}
 
     @classmethod
     def poll(cls, context):
@@ -1615,6 +1624,8 @@ class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
 # bfa add NodeAssetShelf, use asset_type_poll
 class NODE_AST_compositor(NodeAssetShelf, bpy.types.AssetShelf):
+    bl_region_type = 'UI'
+    bl_options = {'DEFAULT_VISIBLE'}
 
     @classmethod
     def poll(cls, context):

@@ -2488,7 +2488,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
         block->data = MEM_calloc_arrayN<float[3]>(new_count, __func__);
 
         float *oldptr = static_cast<float *>(old_data);
-        float(*newptr)[3] = static_cast<float(*)[3]>(block->data);
+        float (*newptr)[3] = static_cast<float (*)[3]>(block->data);
 
         LISTBASE_FOREACH (Nurb *, nu, &cu->nurb) {
           if (nu->bezt) {
@@ -4639,7 +4639,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       }
 
       if (scene->ed) {
-        blender::seq::for_each_callback(&scene->ed->seqbase, strip_update_flags_cb, nullptr);
+        blender::seq::foreach_strip(&scene->ed->seqbase, strip_update_flags_cb, nullptr);
       }
     }
 
