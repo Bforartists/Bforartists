@@ -22,22 +22,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Git LFS (skip smudge)
-      run: git lfs install --skip-smudge
-
     - name: Set reusable strings
       id: strings
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         echo "build-type=Release" >> "$GITHUB_OUTPUT"
-        if [[ "${{ inputs.os }}" == "ubuntu-latest" ]]; then
-          echo "lib-dir=${{ github.workspace }}/lib/linux_x64" >> "$GITHUB_OUTPUT"
-        elif [[ "${{ inputs.os }}" == "macos-latest" ]]; then
-          echo "lib-dir=${{ github.workspace }}/lib/macos_arm64" >> "$GITHUB_OUTPUT"
-        else
-          echo "lib-dir=${{ github.workspace }}/lib/win64" >> "$GITHUB_OUTPUT"
-        fi
+
+    - name: Install Git LFS (skip smudge)
+      run: git lfs install --skip-smudge
 
     - name: Install deps and download libraries (Ubuntu)
       working-directory: ${{ github.workspace }}
@@ -46,46 +39,12 @@ jobs:
       run: |
         chmod +x ./build_files/build_environment/install_linux_packages.py
         chmod +x ./build_files/utils/make_update.py
-        ./build_files/build_environment/install_linux_packages.py --all
-        ./build_files/utils/make_update.py
+        ./build_files/build_environment/install_linux_packages.py
+        ./build_files/utils/make_update.py --use-linux-libraries
     
-    - name: Make Update
-      shell: bash
-      run: |
-        chmod +x ./build_files/utils/make_update.py
-        python ./build_files/utils/make_update.py
-
-    - name: Download all LFS files
-      run: git lfs pull
-
-    - name: Build dependencies from source (Linux)
+    - name: Run make update
       working-directory: ${{ github.workspace }}
-      if: ${{ inputs.os == 'ubuntu-latest' }}
-      run: |
-        # Build FFmpeg and other dependencies for Linux
-        mkdir -p build_deps
-        cd build_deps
-        cmake ../build_files/build_environment \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_INSTALL_PREFIX=../lib/linux_x64
-        cmake --build . --target external_fftw3_float
-        cmake --build . --target external_ffmpeg
-        # Add other dependency targets as needed
-
-    - name: Build dependencies from source (macOS)
-      working-directory: ${{ github.workspace }}
-      if: ${{ inputs.os == 'macos-latest' }}
-      run: |
-        # Build Rubberband, FFmpeg and other dependencies for macOS
-        mkdir -p build_deps
-        cd build_deps
-        cmake ../build_files/build_environment \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_INSTALL_PREFIX=../lib/macos_arm64
-        cmake --build . --target external_fftw3_float
-        cmake --build . --target external_rubberband
-        cmake --build . --target external_ffmpeg
-        # Add other dependency targets as needed
+      run: python ./build_files/utils/make_update.py
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -95,8 +54,6 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ inputs.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ inputs.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ steps.strings.outputs.build-type }}
-        -DLIBDIR=${{ github.workspace }}/lib/${{ inputs.os == 'ubuntu-latest' && 'linux_x64' || 'macos_arm64' }}
-        -DWITH_SYSTEM_LIBRARIES=OFF
         -S ${{ github.workspace }}
 
     - name: Build
