@@ -29,6 +29,14 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         echo "build-type=Release" >> "$GITHUB_OUTPUT"
 
+    - name: Clean and reset submodules
+      run: |
+        git submodule foreach --recursive git reset --hard
+        git submodule foreach --recursive git clean -fdx
+
+    - name: Install Git LFS (skip smudge) to ease the libs checkout
+      run: git lfs install --skip-smudge
+
     - name: Install deps and download libraries (Ubuntu)
       working-directory: ${{ github.workspace }}
       if: ${{ inputs.os == 'ubuntu-latest' }}
@@ -39,17 +47,15 @@ jobs:
         ./build_files/build_environment/install_linux_packages.py
         ./build_files/utils/make_update.py --use-linux-libraries
 
-    - name: Install Git LFS (skip smudge)
-      run: git lfs install --skip-smudge
-
-    - name: Clean and reset submodules  # [ADDED] Prevent stale or partial dependency files
-      run: |
-        git submodule foreach --recursive git reset --hard
-        git submodule foreach --recursive git clean -fd
-
     - name: Run make update
       working-directory: ${{ github.workspace }}
       run: python ./build_files/utils/make_update.py
+
+    - name: Pull LFS files manually
+      run: git lfs pull
+
+    - name: Install Git LFS normally again
+      run: git lfs install --force
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
