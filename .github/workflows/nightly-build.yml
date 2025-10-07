@@ -37,7 +37,7 @@ jobs:
         chmod +x ./build_files/build_environment/install_linux_packages.py
         chmod +x ./build_files/utils/make_update.py
         ./build_files/build_environment/install_linux_packages.py
-        ./build_files/utils/make_update.py --use-linux-libraries
+        ./build_files/utils/make_update.py
     
     - name: Run make update
       working-directory: ${{ github.workspace }}
