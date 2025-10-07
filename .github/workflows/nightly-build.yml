@@ -39,6 +39,14 @@ jobs:
         ./build_files/build_environment/install_linux_packages.py
         ./build_files/utils/make_update.py --use-linux-libraries
 
+    - name: Install Git LFS (skip smudge)
+      run: git lfs install --skip-smudge
+
+    - name: Clean and reset submodules  # [ADDED] Prevent stale or partial dependency files
+      run: |
+        git submodule foreach --recursive git reset --hard
+        git submodule foreach --recursive git clean -fd
+
     - name: Run make update
       working-directory: ${{ github.workspace }}
       run: python ./build_files/utils/make_update.py
