@@ -29,11 +29,6 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         echo "build-type=Release" >> "$GITHUB_OUTPUT"
 
-    - name: Clean and reset submodules
-      run: |
-        git submodule foreach --recursive git reset --hard
-        git submodule foreach --recursive git clean -fdx
-
     - name: Install Git LFS (skip smudge) to ease the libs checkout
       run: git lfs install --skip-smudge
 
@@ -48,6 +43,16 @@ jobs:
         ./build_files/utils/make_update.py --use-linux-libraries
 
     - name: Run make update
+      working-directory: ${{ github.workspace }}
+      run: python ./build_files/utils/make_update.py
+
+    - name: Clean and reset submodules
+      run: |
+        git submodule foreach --recursive git reset --hard
+        git submodule foreach --recursive git clean -fd
+        git submodule update --recursive --checkout
+
+    - name: Run make update again to repull libs from headless
       working-directory: ${{ github.workspace }}
       run: python ./build_files/utils/make_update.py
 
