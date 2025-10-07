@@ -21,8 +21,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive  # [ADDED] Ensure submodules are checked out recursively
 
     - name: Set reusable strings
       id: strings
@@ -30,81 +28,40 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         echo "build-type=Release" >> "$GITHUB_OUTPUT"
-        # [ADDED] Set lib-dir based on OS for consistent dependency install paths
-
-    - name: Install Git LFS (skip smudge)
-      run: git lfs install --skip-smudge
-
-    - name: Make Update (initial)  # [ADDED] Run make_update before pulling LFS files
-      working-directory: ${{ github.workspace }}
-      run: python ./build_files/utils/make_update.py
-
-    - name: Download all LFS files  # [ADDED] Explicitly pull large binaries after update
-      run: git lfs pull
 
     - name: Install deps and download libraries (Ubuntu)
       working-directory: ${{ github.workspace }}
       if: ${{ inputs.os == 'ubuntu-latest' }}
+      # Run BFA permissions for github
       run: |
         chmod +x ./build_files/build_environment/install_linux_packages.py
         chmod +x ./build_files/utils/make_update.py
         ./build_files/build_environment/install_linux_packages.py
         ./build_files/utils/make_update.py --use-linux-libraries
 
-    # [ADDED] Build dependencies from source and install to lib-dir
-    - name: Build dependencies (Linux)
-      if: ${{ inputs.os == 'ubuntu-latest' }}
-      run: |
-        mkdir -p build_deps
-        cd build_deps
-        cmake ../build_files/build_environment \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.lib-dir }}
-        cmake --build . --target external_fftw3_float
-        cmake --build . --target external_ffmpeg
-        cmake --build . --target install
-
-    - name: Build dependencies (macOS)
-      if: ${{ inputs.os == 'macos-latest' }}
-      run: |
-        mkdir -p build_deps
-        cd build_deps
-        cmake ../build_files/build_environment \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.lib-dir }}
-        cmake --build . --target external_fftw3_float
-        cmake --build . --target external_rubberband
-        cmake --build . --target external_ffmpeg
-        cmake --build . --target install
-
-    - name: Build dependencies (Windows)
-      if: ${{ inputs.os == 'windows-latest' }}
-      shell: pwsh
-      run: |
-        mkdir build_deps
-        cd build_deps
-        cmake ../build_files/build_environment `
-          -DCMAKE_BUILD_TYPE=Release `
-          -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.lib-dir }}
-        cmake --build . --target external_fftw3_float
-        cmake --build . --target external_ffmpeg
-        cmake --build . --target install
-
-    - name: Diagnostic: List LIBDIR contents  # [ADDED] Verify FFmpeg libs exist before configure
-      run: ls -R ${{ steps.strings.outputs.lib-dir }}
+    - name: Run make update
+      working-directory: ${{ github.workspace }}
+      run: python ./build_files/utils/make_update.py
 
     - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ inputs.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ inputs.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ steps.strings.outputs.build-type }}
-        -DLIBDIR=${{ steps.strings.outputs.lib-dir }}  # [MODIFIED] Pass correct lib-dir
-        -DWITH_SYSTEM_LIBRARIES=OFF
         -S ${{ github.workspace }}
 
     - name: Build
+      # Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ steps.strings.outputs.build-type }}
+
+    # - name: Test
+    #   working-directory: ${{ steps.strings.outputs.build-output-dir }}
+    #   # Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+    #   # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+    #   run: ctest --build-config ${{ steps.strings.outputs.build-type }}
 
     - name: Upload Build
       uses: actions/upload-artifact@v4
