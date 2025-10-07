@@ -22,26 +22,41 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install Git LFS (skip smudge)
+      run: git lfs install --skip-smudge
+
     - name: Set reusable strings
       id: strings
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         echo "build-type=Release" >> "$GITHUB_OUTPUT"
+        if [[ "${{ inputs.os }}" == "ubuntu-latest" ]]; then
+          echo "lib-dir=${{ github.workspace }}/lib/linux_x64" >> "$GITHUB_OUTPUT"
+        elif [[ "${{ inputs.os }}" == "macos-latest" ]]; then
+          echo "lib-dir=${{ github.workspace }}/lib/macos_arm64" >> "$GITHUB_OUTPUT"
+        else
+          echo "lib-dir=${{ github.workspace }}/lib/win64" >> "$GITHUB_OUTPUT"
+        fi
 
     - name: Install deps and download libraries (Ubuntu)
       working-directory: ${{ github.workspace }}
       if: ${{ inputs.os == 'ubuntu-latest' }}
       # Run BFA permissions for github
       run: |
-        chmod +x ./build_files/build_environment/install_linux_packages.py --all
+        chmod +x ./build_files/build_environment/install_linux_packages.py
         chmod +x ./build_files/utils/make_update.py
         ./build_files/build_environment/install_linux_packages.py --all
         ./build_files/utils/make_update.py
     
-    - name: Run make update
-      working-directory: ${{ github.workspace }}
-      run: python ./build_files/utils/make_update.py
+    - name: Make Update
+      shell: bash
+      run: |
+        chmod +x ./build_files/utils/make_update.py
+        python ./build_files/utils/make_update.py
+
+    - name: Download all LFS files
+      run: git lfs pull
 
     - name: Build dependencies from source (Linux)
       working-directory: ${{ github.workspace }}
