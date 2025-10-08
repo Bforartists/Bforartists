@@ -734,6 +734,7 @@ class IMAGE_MT_uvs(Menu):
         layout.operator_context = "EXEC_REGION_WIN"
         layout.operator("uv.average_islands_scale", icon="AVERAGEISLANDSCALE")
         layout.operator("uv.minimize_stretch", icon="MINIMIZESTRETCH")
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("uv.stitch", icon="STITCH")
         layout.operator("uv.arrange_islands")
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -750,6 +751,7 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.menu("IMAGE_MT_uvs_align")
+        layout.operator_menu_enum("uv.move_on_axis", "type", text="Move on Axis")
         layout.menu("IMAGE_MT_uvs_select_mode")
 
         layout.separator()
@@ -1697,7 +1699,8 @@ class IMAGE_PT_paint_stroke(BrushButtonsPanel, Panel, StrokePanel):
     bl_context = ".paint_common_2d"
     bl_parent_id = "IMAGE_PT_paint_settings"
     bl_category = "Tool"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 14
 
 
 class IMAGE_PT_paint_stroke_smooth_stroke(Panel, BrushButtonsPanel, SmoothStrokePanel):
@@ -1751,7 +1754,7 @@ class IMAGE_PT_uv_sculpt_curve(Panel):
 
         if props.curve_distance_falloff_preset == 'CUSTOM':
             col = layout.column()
-            col.template_curve_mapping(props, "strength_curve")
+            col.template_curve_mapping(props, "curve_distance_falloff")
 
 
 # Only a popover.

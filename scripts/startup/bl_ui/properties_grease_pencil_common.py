@@ -198,12 +198,13 @@ class GreasePencilBrushFalloff:
             if context.region.type == 'TOOL_HEADER':
                 col.prop(brush, "curve_distance_falloff_preset", expand=True)
             else:
-                row = col.row(align=True)
                 col.prop(brush, "curve_distance_falloff_preset", text="")
 
             if brush.curve_distance_falloff_preset == 'CUSTOM':
-                layout.template_curve_mapping(brush, "curve_distance_falloff", brush=True, use_negative_slope=True)
+                layout.template_curve_mapping(brush, "curve_distance_falloff", brush=True,
+                                              use_negative_slope=True, show_presets=True)
 
+                # BFA - WIP - icons added, move to enums
                 col = layout.column(align=True)
                 row = col.row(align=True)
                 row.operator("brush.curve_preset", icon="SMOOTHCURVE", text="").shape = "SMOOTH"

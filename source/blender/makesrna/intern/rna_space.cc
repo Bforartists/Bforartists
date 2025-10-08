@@ -96,7 +96,11 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      ICON_NODETREE,
      "Node Editor",
      "Editor for node-based shading and compositing tools"},
-    {SPACE_SEQ, "SEQUENCE_EDITOR", ICON_SEQUENCE, "Video Sequencer", "Video editing tools"},
+    {SPACE_SEQ,
+     "SEQUENCE_EDITOR",
+     ICON_SEQUENCE,
+     "Video Sequencer",
+     "Non-linear editor for arranging and mixing scenes, video, audio, and effects"},
     {SPACE_CLIP, "CLIP_EDITOR", ICON_TRACKER, "Movie Clip Editor", "Motion tracking tools"},
 
     /* Animation. */
@@ -182,7 +186,11 @@ const EnumPropertyItem rna_enum_space_graph_mode_items[] = {
      ICON_GRAPH,
      "Graph Editor",
      "Edit animation/keyframes displayed as 2D curves"},
-    {SIPO_MODE_DRIVERS, "DRIVERS", ICON_DRIVER, "Drivers", "Edit drivers"},
+    {SIPO_MODE_DRIVERS,
+     "DRIVERS",
+     ICON_DRIVER,
+     "Drivers",
+     "Define and edit drivers that link properties to custom functions or other data"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -198,15 +206,21 @@ const EnumPropertyItem rna_enum_space_sequencer_view_type_items[] = {
 };
 
 const EnumPropertyItem rna_enum_space_file_browse_mode_items[] = {
-    {FILE_BROWSE_MODE_FILES, "FILES", ICON_FILEBROWSER, "File Browser", ""},
-    {FILE_BROWSE_MODE_ASSETS, "ASSETS", ICON_ASSET_MANAGER, "Asset Browser", ""},
+    {FILE_BROWSE_MODE_FILES,
+     "FILES",
+     ICON_FILEBROWSER,
+     "File Browser",
+     "Built-in file manager for opening, saving, and linking data"},
+    {FILE_BROWSE_MODE_ASSETS,
+     "ASSETS",
+     ICON_ASSET_MANAGER,
+     "Asset Browser",
+     "Manage assets in the current file and access linked asset libraries"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 #define SACT_ITEM_DOPESHEET \
-  {SACTCONT_DOPESHEET, "DOPESHEET", ICON_ACTION, "Dope Sheet", "Edit all keyframes in scene"}
-#define SACT_ITEM_TIMELINE \
-  {SACTCONT_TIMELINE, "TIMELINE", ICON_TIME, "Timeline", "Timeline and playback controls"}
+  {SACTCONT_DOPESHEET, "DOPESHEET_EDITOR", ICON_ACTION, "Dope Sheet", "Edit all keyframes in scene"}
 #define SACT_ITEM_ACTION \
   {SACTCONT_ACTION, \
    "ACTION", \
@@ -228,14 +242,17 @@ const EnumPropertyItem rna_enum_space_file_browse_mode_items[] = {
 #define SACT_ITEM_MASK \
   {SACTCONT_MASK, "MASK", ICON_MOD_MASK, "Mask", "Edit timings for Mask Editor splines"}
 #define SACT_ITEM_CACHEFILE \
-  {SACTCONT_CACHEFILE, "CACHEFILE", ICON_FILE, "Cache File", "Edit timings for Cache File data"}
+  {SACTCONT_CACHEFILE, \
+   "CACHEFILE", \
+   ICON_FILE, \
+   "Cache File", \
+   "Edit timings for Cache File data-blocks"}
 
 #ifndef RNA_RUNTIME
 /* XXX: action-editor is currently for object-level only actions,
  * so show that using object-icon hint */
 static EnumPropertyItem rna_enum_space_action_mode_all_items[] = {
     SACT_ITEM_DOPESHEET,
-    SACT_ITEM_TIMELINE,
     SACT_ITEM_ACTION,
     SACT_ITEM_SHAPEKEY,
     SACT_ITEM_GPENCIL,
@@ -245,7 +262,6 @@ static EnumPropertyItem rna_enum_space_action_mode_all_items[] = {
 };
 static EnumPropertyItem rna_enum_space_action_ui_mode_items[] = {
     SACT_ITEM_DOPESHEET,
-    /* SACT_ITEM_TIMELINE, */
     SACT_ITEM_ACTION,
     SACT_ITEM_SHAPEKEY,
     SACT_ITEM_GPENCIL,
@@ -255,16 +271,7 @@ static EnumPropertyItem rna_enum_space_action_ui_mode_items[] = {
 };
 #endif
 
-/* Expose as `ui_mode`. */
-
-const EnumPropertyItem rna_enum_space_action_mode_items[] = {
-    SACT_ITEM_DOPESHEET,
-    SACT_ITEM_TIMELINE,
-    {0, nullptr, 0, nullptr, nullptr},
-};
-
 #undef SACT_ITEM_DOPESHEET
-#undef SACT_ITEM_TIMELINE
 #undef SACT_ITEM_ACTION
 #undef SACT_ITEM_SHAPEKEY
 #undef SACT_ITEM_GPENCIL
@@ -272,21 +279,10 @@ const EnumPropertyItem rna_enum_space_action_mode_items[] = {
 #undef SACT_ITEM_CACHEFILE
 
 #define SI_ITEM_VIEW(identifier, name, icon) \
-  { \
-    SI_MODE_VIEW, identifier, icon, name, "View the image" \
-  }
-#define SI_ITEM_UV \
-  { \
-    SI_MODE_UV, "UV", ICON_UV, "UV Editor", "UV edit in mesh editmode" \
-  }
-#define SI_ITEM_PAINT \
-  { \
-    SI_MODE_PAINT, "PAINT", ICON_TPAINT_HLT, "Paint", "2D image painting mode" \
-  }
-#define SI_ITEM_MASK \
-  { \
-    SI_MODE_MASK, "MASK", ICON_MOD_MASK, "Mask", "Mask editing" \
-  }
+  {SI_MODE_VIEW, identifier, icon, name, "Inspect images or render results"}
+#define SI_ITEM_UV {SI_MODE_UV, "UV", ICON_UV, "UV Editor", "View and edit UVs"}
+#define SI_ITEM_PAINT {SI_MODE_PAINT, "PAINT", ICON_TPAINT_HLT, "Paint", "Paint images in 2D"}
+#define SI_ITEM_MASK {SI_MODE_MASK, "MASK", ICON_MOD_MASK, "Mask", "View and edit masks"}
 
 const EnumPropertyItem rna_enum_space_image_mode_all_items[] = {
     SI_ITEM_VIEW("VIEW", "View", ICON_FILE_IMAGE),
@@ -563,6 +559,12 @@ const EnumPropertyItem buttons_context_items[] = {
     {BCONTEXT_PARTICLE, "PARTICLES", ICON_PARTICLES, "Particles", "Particle Properties"},
     {BCONTEXT_PHYSICS, "PHYSICS", ICON_PHYSICS, "Physics", "Physics Properties"},
     {BCONTEXT_SHADERFX, "SHADERFX", ICON_SHADERFX, "Effects", "Visual Effects Properties"},
+    {BCONTEXT_STRIP, "STRIP", ICON_SEQ_SEQUENCER, "Strip", "Strip Properties"},
+    {BCONTEXT_STRIP_MODIFIER,
+     "STRIP_MODIFIER",
+     ICON_SEQ_STRIP_MODIFIER,
+     "Strip Modifiers",
+     "Strip Modifier Properties"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1292,7 +1294,7 @@ static void rna_RegionView3D_view_matrix_set(PointerRNA *ptr, const float *value
 {
   RegionView3D *rv3d = (RegionView3D *)(ptr->data);
   float mat[4][4];
-  invert_m4_m4(mat, (float(*)[4])values);
+  invert_m4_m4(mat, (float (*)[4])values);
   ED_view3d_from_m4(mat, rv3d->ofs, rv3d->viewquat, &rv3d->dist);
   rna_RegionView3D_view_rotation_set_validate_view_axis(rv3d);
 }
@@ -2514,21 +2516,10 @@ static void rna_SpaceDopeSheetEditor_mode_update(bContext *C, PointerRNA *ptr)
   SpaceAction *saction = (SpaceAction *)(ptr->data);
   ScrArea *area = CTX_wm_area(C);
 
-  /* Collapse (and show) summary channel and hide channel list for timeline */
-  if (saction->mode == SACTCONT_TIMELINE) {
-    saction->ads.flag |= ADS_FLAG_SUMMARY_COLLAPSED;
-    saction->ads.filterflag |= ADS_FILTER_SUMMARY;
-  }
-
   if (area && area->spacedata.first == saction) {
     ARegion *channels_region = BKE_area_find_region_type(area, RGN_TYPE_CHANNELS);
     if (channels_region) {
-      if (saction->mode == SACTCONT_TIMELINE) {
-        channels_region->flag |= RGN_FLAG_HIDDEN;
-      }
-      else {
-        channels_region->flag &= ~RGN_FLAG_HIDDEN;
-      }
+      channels_region->flag &= ~RGN_FLAG_HIDDEN;
       ED_region_visibility_change_update(C, area, channels_region);
     }
   }
@@ -2538,9 +2529,7 @@ static void rna_SpaceDopeSheetEditor_mode_update(bContext *C, PointerRNA *ptr)
 
   /* store current mode as "old mode",
    * so that returning from other editors doesn't always reset to "Action Editor" */
-  if (saction->mode != SACTCONT_TIMELINE) {
-    saction->mode_prev = saction->mode;
-  }
+  saction->mode_prev = saction->mode;
 }
 
 /* Space Graph Editor */
@@ -2855,8 +2844,16 @@ static const EnumPropertyItem *rna_SpaceNodeEditor_node_tree_sub_type_itemf(
   };
 
   static const EnumPropertyItem compositor_sub_type_items[] = {
-      {SNODE_COMPOSITOR_SCENE, "SCENE", 0, "Scene", "Edit node group for the current scene"},
-      {SNODE_COMPOSITOR_SEQUENCER, "SEQUENCER", 0, "Sequencer", "Edit node group for sequencer"},
+      {SNODE_COMPOSITOR_SCENE,
+       "SCENE",
+       ICON_SCENE_DATA,
+       "Scene",
+       "Edit compositing node group for the current scene"},
+      {SNODE_COMPOSITOR_SEQUENCER,
+       "SEQUENCER",
+       ICON_SEQUENCE,
+       "Sequencer",
+       "Edit compositing node group for Sequencer strip modifiers"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -6088,6 +6085,8 @@ static void rna_def_space_properties_filter(StructRNA *srna)
       "show_properties_particles",
       "show_properties_physics",
       "show_properties_effects",
+      "show_properties_strip",
+      "show_properties_strip_modifier",
   };
 
   for (const int i : blender::IndexRange(BCONTEXT_TOT)) {
@@ -8533,7 +8532,7 @@ static void rna_def_space_clip(BlenderRNA *brna)
       {SC_VIEW_CLIP, "CLIP", ICON_SEQUENCE, "Clip", "Show editing clip preview"},
       {SC_VIEW_GRAPH, "GRAPH", ICON_GRAPH, "Graph", "Show graph view for active element"},
       {SC_VIEW_DOPESHEET,
-       "DOPESHEET",
+       "DOPESHEET_EDITOR",
        ICON_ACTION,
        "Dope Sheet",
        "Dope Sheet view for tracking data"},
@@ -9076,6 +9075,11 @@ static void rna_def_spreadsheet_row_filter(BlenderRNA *brna)
   prop = RNA_def_property(srna, "value_int2", PROP_INT, PROP_NONE);
   RNA_def_property_array(prop, 2);
   RNA_def_property_ui_text(prop, "2D Vector Value", "");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, nullptr);
+
+  prop = RNA_def_property(srna, "value_int3", PROP_INT, PROP_NONE);
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "3D Vector Value", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, nullptr);
 
   prop = RNA_def_property(srna, "value_boolean", PROP_BOOLEAN, PROP_NONE);

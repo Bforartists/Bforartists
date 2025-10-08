@@ -1282,7 +1282,7 @@ void POSE_OT_select_grouped(wmOperatorType *ot)
        "Parents",
        "Select the parents of currently selected bones"},
       {int(SelectRelatedMode::SIBLINGS),
-       "SIBILINGS",
+       "SIBLINGS",
        ICON_SIBLINGS,
        "Siblings",
        "Select all bones that have the same parent as currently selected bones"},

@@ -185,7 +185,7 @@ class CLIP_HT_header(Header):
                 row.prop(sc, "show_graph_tracks_motion", icon="GRAPH", text="")
                 row.prop(sc, "show_graph_tracks_error", icon="ANIM", text="")
 
-            elif sc.view == "DOPESHEET":
+            elif sc.view == "DOPESHEET_EDITOR":
                 dopesheet = tracking.dopesheet
 
                 row = layout.row(align=True)
@@ -1586,7 +1586,7 @@ class CLIP_MT_view(Menu):
                 layout.operator("view2d.zoom_out", text="Zoom Out", icon="ZOOM_OUT")
                 layout.operator_context = "INVOKE_DEFAULT"
 
-            if sc.view == "DOPESHEET":
+            if sc.view == "DOPESHEET_EDITOR":
                 layout.operator_context = "INVOKE_REGION_PREVIEW"
                 layout.operator("clip.dopesheet_view_all", icon="VIEWALL")
 
@@ -2236,7 +2236,7 @@ class CLIP_MT_view_pie(Menu):
         space = context.space_data
 
         # View operators are not yet implemented in Dope-sheet mode.
-        return space.view != "DOPESHEET"
+        return space.view != "DOPESHEET_EDITOR"
 
     def draw(self, context):
         layout = self.layout

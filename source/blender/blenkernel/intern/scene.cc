@@ -319,7 +319,7 @@ static void scene_copy_data(Main *bmain,
   BKE_curvemapping_copy_data(&scene_dst->r.mblur_shutter_curve, &scene_src->r.mblur_shutter_curve);
 
   /* tool settings */
-  scene_dst->toolsettings = BKE_toolsettings_copy(scene_dst->toolsettings, flag_subdata);
+  scene_dst->toolsettings = BKE_toolsettings_copy(scene_src->toolsettings, flag_subdata);
 
   if (scene_src->display.shading.prop) {
     scene_dst->display.shading.prop = IDP_CopyProperty(scene_src->display.shading.prop);
@@ -807,6 +807,8 @@ static bool strip_foreach_member_id_cb(Strip *strip, void *user_data)
   IDP_foreach_property(strip->system_properties, IDP_TYPE_FILTER_ID, [&](IDProperty *prop) {
     BKE_lib_query_idpropertiesForeachIDLink_callback(prop, data);
   });
+  /* TODO: This could use `seq::foreach_strip_modifier_id`, but because `FOREACHID_PROCESS_IDSUPER`
+   * doesn't take IDs but "ID supers", it makes it a bit more cumbersome. */
   LISTBASE_FOREACH (StripModifierData *, smd, &strip->modifiers) {
     FOREACHID_PROCESS_IDSUPER(data, smd->mask_id, IDWALK_CB_USER);
     if (smd->type == eSeqModifierType_Compositor) {
@@ -846,8 +848,7 @@ static void scene_foreach_id(ID *id, LibraryForeachIDData *data)
   }
   if (scene->ed) {
     BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(
-        data,
-        blender::seq::for_each_callback(&scene->ed->seqbase, strip_foreach_member_id_cb, data));
+        data, blender::seq::foreach_strip(&scene->ed->seqbase, strip_foreach_member_id_cb, data));
   }
 
   BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(data,
@@ -978,7 +979,7 @@ static void scene_foreach_path(ID *id, BPathForeachPathData *bpath_data)
 {
   Scene *scene = (Scene *)id;
   if (scene->ed != nullptr) {
-    blender::seq::for_each_callback(&scene->ed->seqbase, strip_foreach_path_callback, bpath_data);
+    blender::seq::foreach_strip(&scene->ed->seqbase, strip_foreach_path_callback, bpath_data);
   }
 }
 
@@ -1076,8 +1077,8 @@ static void scene_blend_write(BlendWriter *writer, ID *id, const void *id_addres
 
     BKE_paint_blend_write(writer, &ts->sculpt->paint);
   }
-  if (ts->uvsculpt.strength_curve) {
-    BKE_curvemapping_blend_write(writer, ts->uvsculpt.strength_curve);
+  if (ts->uvsculpt.curve_distance_falloff) {
+    BKE_curvemapping_blend_write(writer, ts->uvsculpt.curve_distance_falloff);
   }
   if (ts->gp_paint) {
     BLO_write_struct(writer, GpPaint, ts->gp_paint);
@@ -1288,10 +1289,10 @@ static void scene_blend_read_data(BlendDataReader *reader, ID *id)
     sce->toolsettings->particle.scene = nullptr;
     sce->toolsettings->particle.object = nullptr;
     sce->toolsettings->gp_sculpt.paintcursor = nullptr;
-    if (sce->toolsettings->uvsculpt.strength_curve) {
-      BLO_read_struct(reader, CurveMapping, &sce->toolsettings->uvsculpt.strength_curve);
-      BKE_curvemapping_blend_read(reader, sce->toolsettings->uvsculpt.strength_curve);
-      BKE_curvemapping_init(sce->toolsettings->uvsculpt.strength_curve);
+    if (sce->toolsettings->uvsculpt.curve_distance_falloff) {
+      BLO_read_struct(reader, CurveMapping, &sce->toolsettings->uvsculpt.curve_distance_falloff);
+      BKE_curvemapping_blend_read(reader, sce->toolsettings->uvsculpt.curve_distance_falloff);
+      BKE_curvemapping_init(sce->toolsettings->uvsculpt.curve_distance_falloff);
     }
 
     if (sce->toolsettings->sculpt) {
@@ -1628,9 +1629,10 @@ ToolSettings *BKE_toolsettings_copy(ToolSettings *toolsettings, const int flag)
       BKE_curvemapping_init(ts->sculpt->automasking_cavity_curve_op);
     }
   }
-  if (toolsettings->uvsculpt.strength_curve) {
-    ts->uvsculpt.strength_curve = BKE_curvemapping_copy(toolsettings->uvsculpt.strength_curve);
-    BKE_curvemapping_init(ts->uvsculpt.strength_curve);
+  if (toolsettings->uvsculpt.curve_distance_falloff) {
+    ts->uvsculpt.curve_distance_falloff = BKE_curvemapping_copy(
+        toolsettings->uvsculpt.curve_distance_falloff);
+    BKE_curvemapping_init(ts->uvsculpt.curve_distance_falloff);
   }
   if (toolsettings->gp_paint) {
     ts->gp_paint = static_cast<GpPaint *>(MEM_dupallocN(toolsettings->gp_paint));
@@ -1704,8 +1706,8 @@ void BKE_toolsettings_free(ToolSettings *toolsettings)
     BKE_paint_free(&toolsettings->sculpt->paint);
     MEM_freeN(toolsettings->sculpt);
   }
-  if (toolsettings->uvsculpt.strength_curve) {
-    BKE_curvemapping_free(toolsettings->uvsculpt.strength_curve);
+  if (toolsettings->uvsculpt.curve_distance_falloff) {
+    BKE_curvemapping_free(toolsettings->uvsculpt.curve_distance_falloff);
   }
   if (toolsettings->gp_paint) {
     BKE_paint_free(&toolsettings->gp_paint->paint);

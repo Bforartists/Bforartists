@@ -90,10 +90,17 @@ static const EnumPropertyItem kernel_data_type_items[] = {
 static void cmp_node_glare_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
+  b.allow_any_socket_order();
 
+  b.add_input<decl::Color>("Image")
+      .default_value({1.0f, 1.0f, 1.0f, 1.0f})
+      .hide_value()
+      .structure_type(StructureType::Dynamic);
   b.add_output<decl::Color>("Image")
       .structure_type(StructureType::Dynamic)
-      .description("The image with the generated glare added");
+      .description("The image with the generated glare added")
+      .align_with_previous();
+
   b.add_output<decl::Color>("Glare")
       .structure_type(StructureType::Dynamic)
       .description("The generated glare");
@@ -101,13 +108,14 @@ static void cmp_node_glare_declare(NodeDeclarationBuilder &b)
       .structure_type(StructureType::Dynamic)
       .description("The extracted highlights from which the glare was generated");
 
-  b.add_input<decl::Color>("Image")
-      .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Menu>("Type").default_value(CMP_NODE_GLARE_STREAKS).static_items(type_items);
+  b.add_input<decl::Menu>("Type")
+      .default_value(CMP_NODE_GLARE_STREAKS)
+      .static_items(type_items)
+      .optional_label();
   b.add_input<decl::Menu>("Quality")
       .default_value(CMP_NODE_GLARE_QUALITY_MEDIUM)
-      .static_items(quality_items);
+      .static_items(quality_items)
+      .optional_label();
 
   PanelDeclarationBuilder &highlights_panel = b.add_panel("Highlights").default_closed(true);
   highlights_panel.add_input<decl::Float>("Threshold", "Highlights Threshold")
@@ -223,7 +231,8 @@ static void cmp_node_glare_declare(NodeDeclarationBuilder &b)
   glare_panel.add_input<decl::Menu>("Kernel Data Type")
       .default_value(KernelDataType::Float)
       .static_items(kernel_data_type_items)
-      .usage_by_menu("Type", CMP_NODE_GLARE_KERNEL);
+      .usage_by_menu("Type", CMP_NODE_GLARE_KERNEL)
+      .optional_label();
   glare_panel.add_input<decl::Float>("Kernel", "Float Kernel")
       .hide_value()
       .structure_type(StructureType::Dynamic)
@@ -1403,7 +1412,7 @@ class GlareOperation : public NodeOperation {
     GPU_shader_uniform_4fv_array(shader,
                                  "color_modulators",
                                  color_modulators.size(),
-                                 (const float(*)[4])color_modulators.data());
+                                 (const float (*)[4])color_modulators.data());
 
     /* Zero initialize output image where ghosts will be accumulated. */
     const float4 zero_color = float4(0.0f);

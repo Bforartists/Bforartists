@@ -96,6 +96,7 @@
 #include "NOD_node_declaration.hh"
 #include "NOD_node_extra_info.hh"
 #include "NOD_sync_sockets.hh"
+#include "NOD_trace_values.hh"
 
 #include "GEO_fillet_curves.hh"
 
@@ -148,6 +149,13 @@ struct TreeDrawContext {
    * Label for reroute nodes that is derived from upstream reroute nodes.
    */
   Map<const bNode *, StringRef> reroute_auto_labels;
+
+  /**
+   * Index Switch nodes can draw labels retrieved from a connected menu switch node. The
+   * corresponding node pairs are preprocessed to avoid the overhead of having to detect them while
+   * drawing individual sockets.
+   */
+  Map<const bNode *, const bNode *> menu_switch_source_by_index_switch;
 
   /**
    * Precomputed extra info rows for each node. This avoids having to compute them multiple times
@@ -238,24 +246,6 @@ void tag_update_id(ID *id)
     /* Node groups. */
     DEG_id_tag_update(id, 0);
   }
-}
-
-static const char *node_socket_get_translation_context(const bNodeSocket &socket)
-{
-  /* The node is not explicitly defined. */
-  if (socket.runtime->declaration == nullptr) {
-    return nullptr;
-  }
-
-  const std::optional<std::string> &translation_context =
-      socket.runtime->declaration->translation_context;
-
-  /* Default context. */
-  if (!translation_context.has_value()) {
-    return nullptr;
-  }
-
-  return translation_context->c_str();
 }
 
 static void node_socket_add_tooltip_in_node_editor(const bNodeSocket &sock, uiLayout &layout);
@@ -465,7 +455,7 @@ const char *node_socket_get_label(const bNodeSocket *socket, const char *panel_l
   /* Get the short label if possible. This is used when grouping sockets under panels,
    * to avoid redundancy in the label. */
   const std::optional<StringRefNull> socket_short_label = bke::node_socket_short_label(*socket);
-  const char *socket_translation_context = node_socket_get_translation_context(*socket);
+  const char *socket_translation_context = bke::node_socket_translation_context(*socket);
 
   if (socket_short_label.has_value()) {
     return CTX_IFACE_(socket_translation_context, socket_short_label->c_str());
@@ -489,7 +479,38 @@ const char *node_socket_get_label(const bNodeSocket *socket, const char *panel_l
   return translated_socket_label;
 }
 
-static bool node_update_basis_socket(const bContext &C,
+static void draw_socket_layout(TreeDrawContext &tree_draw_ctx,
+                               const bContext &C,
+                               uiLayout &layout,
+                               bNodeSocket &socket,
+                               bNodeTree &ntree,
+                               bNode &node,
+                               PointerRNA &node_ptr,
+                               PointerRNA &socket_ptr,
+                               const char *panel_label)
+{
+  const nodes::SocketDeclaration *socket_decl = socket.runtime->declaration;
+  const StringRefNull label = node_socket_get_label(&socket, panel_label);
+  nodes::CustomSocketDrawParams params{C,
+                                       layout,
+                                       ntree,
+                                       node,
+                                       socket,
+                                       node_ptr,
+                                       socket_ptr,
+                                       label,
+                                       &tree_draw_ctx.menu_switch_source_by_index_switch};
+  if (socket_decl) {
+    if (socket_decl->custom_draw_fn) {
+      (*socket_decl->custom_draw_fn)(params);
+      return;
+    }
+  }
+  params.draw_standard(layout);
+}
+
+static bool node_update_basis_socket(TreeDrawContext &tree_draw_ctx,
+                                     const bContext &C,
                                      bNodeTree &ntree,
                                      bNode &node,
                                      const char *panel_label,
@@ -545,8 +566,8 @@ static bool node_update_basis_socket(const bContext &C,
 
     row->alignment_set(ui::LayoutAlign::Expand);
 
-    input_socket->typeinfo->draw(
-        (bContext *)&C, row, &sockptr, &nodeptr, node_socket_get_label(input_socket, panel_label));
+    draw_socket_layout(
+        tree_draw_ctx, C, *row, *input_socket, ntree, node, nodeptr, sockptr, panel_label);
   }
   else {
     /* Context pointers for current node and socket. */
@@ -556,23 +577,27 @@ static bool node_update_basis_socket(const bContext &C,
     /* Align output buttons to the right. */
     row->alignment_set(ui::LayoutAlign::Right);
 
-    output_socket->typeinfo->draw((bContext *)&C,
-                                  row,
-                                  &sockptr,
-                                  &nodeptr,
-                                  node_socket_get_label(output_socket, panel_label));
+    draw_socket_layout(
+        tree_draw_ctx, C, *row, *output_socket, ntree, node, nodeptr, sockptr, panel_label);
   }
 
   if (input_socket) {
-    node_socket_add_tooltip_in_node_editor(*input_socket, *row);
     /* Round the socket location to stop it from jiggling. */
     input_socket->runtime->location = float2(round(locx), round(locy - NODE_DYS));
   }
   if (output_socket) {
-    node_socket_add_tooltip_in_node_editor(*output_socket, *row);
     /* Round the socket location to stop it from jiggling. */
     output_socket->runtime->location = float2(round(locx + NODE_WIDTH(node)),
                                               round(locy - NODE_DYS));
+  }
+
+  /* Prioritize tooltip for inputs if available. The tooltip for the output is still accessible
+   * when hovering exactly over the output socket. */
+  if (input_socket) {
+    node_socket_add_tooltip_in_node_editor(*input_socket, *row);
+  }
+  else if (output_socket) {
+    node_socket_add_tooltip_in_node_editor(*output_socket, *row);
   }
 
   UI_block_align_end(&block);
@@ -1098,8 +1123,13 @@ static void tag_final_panel(bNode &node, const Span<FlatNodeItem> items)
 }
 
 /* Advanced drawing with panels and arbitrary input/output ordering. */
-static void node_update_basis_from_declaration(
-    const bContext &C, bNodeTree &ntree, bNode &node, uiBlock &block, const int locx, int &locy)
+static void node_update_basis_from_declaration(TreeDrawContext &tree_draw_ctx,
+                                               const bContext &C,
+                                               bNodeTree &ntree,
+                                               bNode &node,
+                                               uiBlock &block,
+                                               const int locx,
+                                               int &locy)
 {
   BLI_assert(is_node_panels_supported(node));
   BLI_assert(node.runtime->panels.size() == node.num_panel_states);
@@ -1146,8 +1176,16 @@ static void node_update_basis_from_declaration(
             bNodeSocket *output_socket = item.output;
             const nodes::PanelDeclaration *panel_decl = item.panel_decl;
             const char *parent_label = panel_decl ? panel_decl->name.c_str() : "";
-            node_update_basis_socket(
-                C, ntree, node, parent_label, input_socket, output_socket, block, locx, locy);
+            node_update_basis_socket(tree_draw_ctx,
+                                     C,
+                                     ntree,
+                                     node,
+                                     parent_label,
+                                     input_socket,
+                                     output_socket,
+                                     block,
+                                     locx,
+                                     locy);
           }
           else if constexpr (std::is_same_v<ItemT, flat_item::Layout>) {
             const nodes::LayoutDeclaration &decl = *item.decl;
@@ -1223,8 +1261,13 @@ static void node_update_basis_from_declaration(
 }
 
 /* Conventional drawing in outputs/buttons/inputs order. */
-static void node_update_basis_from_socket_lists(
-    const bContext &C, bNodeTree &ntree, bNode &node, uiBlock &block, const int locx, int &locy)
+static void node_update_basis_from_socket_lists(TreeDrawContext &tree_draw_ctx,
+                                                const bContext &C,
+                                                bNodeTree &ntree,
+                                                bNode &node,
+                                                uiBlock &block,
+                                                const int locx,
+                                                int &locy)
 {
   /* Space at the top. */
   locy -= NODE_DYS / 2;
@@ -1236,7 +1279,9 @@ static void node_update_basis_from_socket_lists(
     /* Clear flag, conventional drawing does not support panels. */
     socket->flag &= ~SOCK_PANEL_COLLAPSED;
 
-    if (node_update_basis_socket(C, ntree, node, nullptr, nullptr, socket, block, locx, locy)) {
+    if (node_update_basis_socket(
+            tree_draw_ctx, C, ntree, node, nullptr, nullptr, socket, block, locx, locy))
+    {
       if (socket->next) {
         locy -= NODE_ITEM_SPACING_Y;
       }
@@ -1258,7 +1303,9 @@ static void node_update_basis_from_socket_lists(
     /* Clear flag, conventional drawing does not support panels. */
     socket->flag &= ~SOCK_PANEL_COLLAPSED;
 
-    if (node_update_basis_socket(C, ntree, node, nullptr, socket, nullptr, block, locx, locy)) {
+    if (node_update_basis_socket(
+            tree_draw_ctx, C, ntree, node, nullptr, socket, nullptr, block, locx, locy))
+    {
       if (socket->next) {
         locy -= NODE_ITEM_SPACING_Y;
       }
@@ -1276,7 +1323,7 @@ static void node_update_basis_from_socket_lists(
  * Based on settings and sockets in node, set drawing rect info.
  */
 static void node_update_basis(const bContext &C,
-                              const TreeDrawContext & /*tree_draw_ctx*/,
+                              TreeDrawContext &tree_draw_ctx,
                               bNodeTree &ntree,
                               bNode &node,
                               uiBlock &block)
@@ -1290,10 +1337,10 @@ static void node_update_basis(const bContext &C,
   dy -= NODE_DY;
 
   if (is_node_panels_supported(node)) {
-    node_update_basis_from_declaration(C, ntree, node, block, loc.x, dy);
+    node_update_basis_from_declaration(tree_draw_ctx, C, ntree, node, block, loc.x, dy);
   }
   else {
-    node_update_basis_from_socket_lists(C, ntree, node, block, loc.x, dy);
+    node_update_basis_from_socket_lists(tree_draw_ctx, C, ntree, node, block, loc.x, dy);
   }
 
   node.runtime->draw_bounds.xmin = loc.x;
@@ -2763,6 +2810,41 @@ static bool node_undefined_or_unsupported(const bNodeTree &node_tree, const bNod
   return false;
 }
 
+static ColorTheme4f node_header_color_get(const bNodeTree &ntree,
+                                          const bNode &node,
+                                          const int color_id)
+{
+  ColorTheme4f color_header;
+
+  /* The base color of the node header. */
+  if (node_undefined_or_unsupported(ntree, node)) {
+    /* Use warning color to indicate undefined types. */
+    UI_GetThemeColorBlendShade4fv(TH_REDALERT, color_id, 0.1f, -40, color_header);
+  }
+  else if ((node.flag & NODE_COLLAPSED) && (node.flag & NODE_CUSTOM_COLOR)) {
+    rgba_float_args_set(color_header, node.color[0], node.color[1], node.color[2], 1.0f);
+  }
+  else {
+    UI_GetThemeColor4fv(color_id, color_header);
+  }
+
+  /* Draw selected nodes fully opaque. */
+  if (node.flag & SELECT) {
+    color_header.a = 1.0f;
+  }
+
+  /* Muted nodes get a mix of the background with the node color and are drawn slightly
+   * transparent so the wires inside are visible. */
+  if (node.is_muted()) {
+    ColorTheme4f color_background;
+    UI_GetThemeColor4fv(TH_BACK, color_background);
+
+    UI_GetColorPtrBlendAlpha4fv(color_header, color_background, 0.6f, -0.2f, color_header);
+  }
+
+  return color_header;
+}
+
 static void node_header_custom_tooltip(const bNode &node, uiBut &but)
 {
   UI_but_func_tooltip_custom_set(
@@ -2898,18 +2980,7 @@ static void node_draw_basis(const bContext &C,
         rct.ymax + padding,
     };
 
-    float color_header[4];
-
-    /* Muted nodes get a mix of the background with the node color. */
-    if (node_undefined_or_unsupported(ntree, node)) {
-      UI_GetThemeColorShade4fv(TH_REDALERT, -20, color_header);
-    }
-    else if (node.is_muted()) {
-      UI_GetThemeColorBlendShade4fv(TH_BACK, color_id, 0.4f, 0, color_header);
-    }
-    else {
-      UI_GetThemeColor4fv(color_id, color_header);
-    }
+    const ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
 
     UI_draw_roundbox_corner_set(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT);
     UI_draw_roundbox_4fv(&rect, true, corner_radius, color_header);
@@ -3198,9 +3269,13 @@ static void node_draw_basis(const bContext &C,
       color[3] = 1.0f;
     }
 
-    /* Draw muted nodes slightly transparent so the wires inside are visible. */
+    /* Muted nodes get a mix of the background with the node color and are drawn slightly
+     * transparent so the wires inside are visible. */
     if (node.is_muted()) {
-      color[3] -= 0.2f;
+      float color_background[4];
+      UI_GetThemeColor4fv(TH_BACK, color_background);
+
+      UI_GetColorPtrBlendAlpha4fv(color, color_background, 0.8f, -0.2f, color);
     }
 
     /* Add some padding to prevent transparent gaps with the outline. */
@@ -3346,7 +3421,7 @@ static void node_draw_collapsed(const bContext &C,
   }
 
   /* Body. */
-  float color[4];
+  ColorTheme4f color = node_header_color_get(ntree, node, color_id);
   {
     if (node_undefined_or_unsupported(ntree, node)) {
       /* Use warning color to indicate undefined types. */
@@ -4009,8 +4084,8 @@ static void frame_node_draw_overlay(const bContext &C,
   UI_block_draw(&C, &block);
 }
 
-static Set<const bNodeSocket *> find_sockets_on_active_gizmo_paths(const bContext &C,
-                                                                   const SpaceNode &snode)
+static Set<const bNodeSocket *> find_sockets_on_active_gizmo_paths(
+    const bContext &C, const SpaceNode &snode, bke::ComputeContextCache &compute_context_cache)
 {
   const std::optional<ed::space_node::ObjectAndModifier> object_and_modifier =
       ed::space_node::get_modifier_for_node_editor(snode);
@@ -4019,7 +4094,6 @@ static Set<const bNodeSocket *> find_sockets_on_active_gizmo_paths(const bContex
   }
   snode.edittree->ensure_topology_cache();
 
-  bke::ComputeContextCache compute_context_cache;
   const ComputeContext *current_compute_context = ed::space_node::compute_context_for_edittree(
       snode, compute_context_cache);
   if (!current_compute_context) {
@@ -4790,6 +4864,29 @@ static void snode_setup_v2d(SpaceNode &snode, ARegion &region, const float2 &cen
   snode.runtime->aspect = BLI_rctf_size_x(&v2d.cur) / float(region.winx);
 }
 
+static Map<const bNode *, const bNode *> find_menu_switch_sources_for_index_switch_nodes(
+    const SpaceNode &snode,
+    const bNodeTree &ntree,
+    bke::ComputeContextCache &compute_context_cache)
+{
+  Map<const bNode *, const bNode *> result;
+  for (const bNode *index_switch_node : ntree.nodes_by_type("GeometryNodeIndexSwitch")) {
+    const bNodeSocket &index_socket = index_switch_node->input_socket(0);
+    const ComputeContext *compute_context = ed::space_node::compute_context_for_edittree_socket(
+        snode, compute_context_cache, index_socket);
+    if (!compute_context) {
+      continue;
+    }
+    const std::optional<nodes::NodeInContext> menu_switch = nodes::find_origin_index_menu_switch(
+        {compute_context, &index_socket}, compute_context_cache);
+    if (!menu_switch) {
+      continue;
+    }
+    result.add(index_switch_node, menu_switch->node);
+  }
+  return result;
+}
+
 static void draw_nodetree(const bContext &C,
                           ARegion &region,
                           bNodeTree &ntree,
@@ -4802,6 +4899,8 @@ static void draw_nodetree(const bContext &C,
 
   Array<uiBlock *> blocks = node_uiblocks_init(C, nodes);
 
+  bke::ComputeContextCache compute_context_cache;
+
   TreeDrawContext tree_draw_ctx;
   tree_draw_ctx.bmain = CTX_data_main(&C);
   tree_draw_ctx.window = CTX_wm_window(&C);
@@ -4809,6 +4908,8 @@ static void draw_nodetree(const bContext &C,
   tree_draw_ctx.region = CTX_wm_region(&C);
   tree_draw_ctx.depsgraph = CTX_data_depsgraph_pointer(&C);
   tree_draw_ctx.extra_info_rows_per_node.reinitialize(nodes.size());
+  tree_draw_ctx.menu_switch_source_by_index_switch =
+      find_menu_switch_sources_for_index_switch_nodes(*snode, ntree, compute_context_cache);
 
   BLI_SCOPED_DEFER([&]() { ntree.runtime->sockets_on_active_gizmo_paths.clear(); });
   if (ntree.type == NTREE_GEOMETRY) {
@@ -4823,7 +4924,8 @@ static void draw_nodetree(const bContext &C,
 
     /* This set of socket is used when drawing links to determine which links should use the
      * special gizmo drawing. */
-    ntree.runtime->sockets_on_active_gizmo_paths = find_sockets_on_active_gizmo_paths(C, *snode);
+    ntree.runtime->sockets_on_active_gizmo_paths = find_sockets_on_active_gizmo_paths(
+        C, *snode, compute_context_cache);
   }
   else if (ntree.type == NTREE_COMPOSIT) {
     const Scene *scene = CTX_data_scene(&C);
@@ -4998,7 +5100,7 @@ void node_draw_space(const bContext &C, ARegion &region)
     }
 
     /* Draw context path. */
-    if (snode.overlay.flag & SN_OVERLAY_SHOW_PATH && snode.edittree) {
+    if (snode.overlay.flag & SN_OVERLAY_SHOW_PATH) {
       draw_tree_path(C, region);
     }
   }

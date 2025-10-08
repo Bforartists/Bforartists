@@ -114,7 +114,7 @@ class DopesheetFilterPopoverBase:
             flow.prop(dopesheet, "show_armatures", text="Armatures")
         if bpy.data.cameras:
             flow.prop(dopesheet, "show_cameras", text="Cameras")
-        if bpy.data.grease_pencils_v3:
+        if bpy.data.grease_pencils:
             flow.prop(dopesheet, "show_gpencil", text="Grease Pencil Objects")
         if bpy.data.lights:
             flow.prop(dopesheet, "show_lights", text="Lights")
@@ -193,12 +193,12 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
         # layout.prop(dopesheet, "show_summary", text="Summary")
         # DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
 
-        if ds_mode in {"DOPESHEET", "ACTION", "GPENCIL"}:
+        if ds_mode in {"DOPESHEET_EDITOR", "ACTION", "GPENCIL"}:
             layout.separator()
-            generic_filters_only = ds_mode != "DOPESHEET"
+            generic_filters_only = ds_mode != "DOPESHEET_EDITOR"
             DopesheetFilterPopoverBase.draw_search_filters(context, layout, generic_filters_only=generic_filters_only)
 
-        if ds_mode == "DOPESHEET":
+        if ds_mode == "DOPESHEET_EDITOR":
             layout.separator()
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
@@ -219,7 +219,7 @@ class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
-        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="DOPESHEET")
+        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="DOPESHEET_EDITOR")
         return {"FINISHED"}
 
 
@@ -291,28 +291,24 @@ class DOPESHEET_HT_header(Header):
         layout = self.layout
 
         st = context.space_data
-        if st.mode == "TIMELINE":
-            from bl_ui.space_time import TIME_MT_editor_menus
 
-            TIME_MT_editor_menus.draw_collapsible(context, layout)
-            playback_controls(layout, context)
-        else:
-            # Switch between the editors
+        # Switch between the editors
 
-            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
-            row = layout.row(align=True)
+        # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
+        row = layout.row(align=True)
 
-            row.operator("wm.switch_editor_in_dopesheet", text="", icon="DOPESHEET_ACTIVE")
-            row.operator("wm.switch_editor_to_graph", text="", icon="GRAPH")
-            row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
-            row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
+        row.operator("wm.switch_editor_in_dopesheet", text="", icon="DOPESHEET_ACTIVE")
+        row.operator("wm.switch_editor_to_graph", text="", icon="GRAPH")
+        row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
+        row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
 
-            ###########################
+        ###########################
 
-            layout.prop(st, "ui_mode", text="")
+        layout.template_header()
+        layout.prop(st, "ui_mode", text="")
 
-            DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
-            DOPESHEET_HT_editor_buttons.draw_header(context, layout)
+        DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
+        DOPESHEET_HT_editor_buttons.draw_header(context, layout)
 
 
 # Header for "normal" dopesheet editor modes (e.g. Dope Sheet, Action, Shape Keys, etc.)
@@ -365,7 +361,7 @@ class DOPESHEET_HT_editor_buttons:
         # bfa - single props and the filter panel. Panel is just needed in dopesheet mode.
         dopesheet_filter(layout, context)
 
-        if ds_mode in {"DOPESHEET"}:
+        if ds_mode in {"DOPESHEET_EDITOR"}:
             layout.popover(
                 panel="DOPESHEET_PT_filters",
                 text="",
@@ -500,7 +496,7 @@ class DOPESHEET_MT_editor_menus(Menu):
         if st.show_markers:
             layout.menu("DOPESHEET_MT_marker")
 
-        if st.mode == "DOPESHEET" or (st.mode == "ACTION" and active_action is not None):
+        if st.mode == "DOPESHEET_EDITOR" or (st.mode == "ACTION" and active_action is not None):
             layout.menu("DOPESHEET_MT_channel")
         elif st.mode == "GPENCIL":
             layout.menu("DOPESHEET_MT_gpencil_channel")

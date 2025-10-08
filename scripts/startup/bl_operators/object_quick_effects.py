@@ -27,6 +27,7 @@ def object_ensure_material(obj, mat_name):
             break
     if mat is None:
         mat = bpy.data.materials.new(mat_name)
+        mat.node_tree.nodes.clear()
         if mat_slot:
             mat_slot.material = mat
         else:
@@ -107,7 +108,7 @@ class QuickFur(ObjectModeOperator, Operator):
         asset_library_filepath = os.path.join(
             bpy.utils.system_resource('DATAFILES'),
             "assets",
-            "geometry_nodes",
+            "nodes",
             "procedural_hair_node_assets.blend",
         )
 
