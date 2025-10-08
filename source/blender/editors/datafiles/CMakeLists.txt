@@ -30,6 +30,15 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.generic
   brush.gpencil_draw.erase
   brush.gpencil_draw.fill
+  brush.paint_texture.blur
+  brush.paint_texture.clone
+  brush.paint_texture.fill
+  brush.paint_texture.mask
+  brush.paint_texture.smear
+  brush.paint_texture.soften
+  brush.paint_vertex.average
+  brush.paint_vertex.blur
+  brush.paint_vertex.smear
   brush.particle.add
   brush.particle.comb
   brush.particle.cut
@@ -37,6 +46,8 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.particle.puff
   brush.particle.smooth
   brush.particle.weight
+  brush.sculpt.draw_face_sets
+  brush.sculpt.mask
   brush.sculpt.paint
   brush.uv_sculpt.grab
   brush.uv_sculpt.pinch
@@ -73,7 +84,11 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.gpencil.primitive_line
   ops.gpencil.primitive_polyline
   ops.gpencil.radius
+  ops.gpencil.sculpt_average
+  ops.gpencil.sculpt_blur
+  ops.gpencil.sculpt_smear
   ops.gpencil.stroke_cutter
+  ops.gpencil.stroke_trim
   ops.gpencil.transform_fill
   ops.mesh.bevel
   ops.mesh.bisect
@@ -98,7 +113,9 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.mesh.spin
   ops.mesh.spin.duplicate
   ops.mesh.vertices_smooth
+  ops.node.add_reroute
   ops.node.links_cut
+  ops.node.links_mute
   ops.paint.eyedropper_add
   ops.paint.vertex_color_fill
   ops.paint.weight_fill

@@ -672,7 +672,7 @@ class OUTLINER_PT_filter(Panel):
                 if bpy.data.cameras:
                     self.draw_prop_row(col, space, "use_filter_object_camera", text="Cameras", icon='CAMERA_DATA')
                 
-                if bpy.data.grease_pencils_v3:
+                if bpy.data.grease_pencils:
                     self.draw_prop_row(col, space, "use_filter_object_grease_pencil", text="Grease Pencil", icon='STROKE')
                 
                 self.draw_prop_row(col, space, "use_filter_object_empty", text="Empties", icon='EMPTY_DATA')

@@ -5,7 +5,7 @@
         menu_shadow_fac="0.01"
         menu_shadow_width="0"
         icon_alpha="1"
-        icon_saturation="0.5"
+        icon_saturation="1.0"
         widget_emboss="#ffffff05"
         editor_border="#161616"
         editor_outline="#1f1f1fff"

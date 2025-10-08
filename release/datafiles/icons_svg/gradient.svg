@@ -8,7 +8,7 @@
    height="1600"
    viewBox="0 0 1600 1600"
    sodipodi:docname="gradient.svg"
-   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,10 +25,10 @@
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
-     inkscape:zoom="0.25"
-     inkscape:cx="1340"
-     inkscape:cy="1024"
-     inkscape:window-width="2560"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="1013.9911"
+     inkscape:cy="944.69466"
+     inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -74,14 +74,10 @@
          d="M 1,14 2,13 3,12 4,11 5,10 6,9 7,8 8,7 9,6 10,5 V 4 H 9.5 9 V 3 2.5 L 9.5,2 10,1.5 10.5,1 l 0.806763,-0.37674443 0.899284,0.0772661 1.125173,0.91168961 0.950503,0.9505026 1.048578,1.4502424 v 1 L 15,5.5 14.5,6 14,6.5 13.5,7 H 13 12 V 6.5 6 H 11 L 10,7 9,8 8,9 7,10 6,11 5,12 4,13 3,14 2,15 C 1.4778833,15.26404 1.2357023,15.235702 1,15 0.76429774,14.764298 0.63848788,14.404044 1,14 Z"
          id="path303"
          sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccac" />
-      <rect
-         style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round"
+      <path
+         style="stroke-linecap:round;stroke-linejoin:round"
+         d="m -6.5429687,7.8925781 c -1.0663462,0 -1.9316407,0.8672476 -1.9316407,1.9335938 v 2.9140621 c 0,1.066347 0.8652945,1.931641 1.9316407,1.931641 H 6.6035156 c 1.0663462,0 1.9335938,-0.865294 1.9335938,-1.931641 V 9.8261719 c 0,-1.0663462 -0.8672476,-1.9335938 -1.9335938,-1.9335938 z m 0,0.5 H 6.6035156 c 0.7979948,0 1.4335938,0.635599 1.4335938,1.4335938 v 2.9140621 c 0,0.797995 -0.635599,1.431641 -1.4335938,1.431641 H -6.5429687 c -0.7979948,0 -1.4316407,-0.633646 -1.4316407,-1.431641 V 9.8261719 c 0,-0.7979948 0.6336459,-1.4335938 1.4316407,-1.4335938 z"
          id="rect4356"
-         width="16.511448"
-         height="6.2786636"
-         x="-8.2248573"
-         y="8.1435099"
-         ry="1.6826181"
          transform="rotate(-45)" />
       <path
          style="fill:#fefefe;stroke-width:0.0003125"
