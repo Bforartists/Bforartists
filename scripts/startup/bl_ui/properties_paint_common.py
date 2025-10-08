@@ -663,6 +663,7 @@ class StrokePanel(BrushPanel):
 
         if mode in {"PAINT_TEXTURE", "PAINT_2D", "SCULPT"}:
             if brush.image_paint_capabilities.has_space_attenuation or brush.sculpt_capabilities.has_space_attenuation:
+                col.use_property_split = False # BFA - Float bool property left
                 col.prop(brush, "use_space_attenuation")
                 col.use_property_split = True
 
