@@ -776,7 +776,7 @@ void draw_common_bake_settings(bContext *C, BakeDrawContext &ctx, uiLayout *layo
     col->prop(&ctx.bake_rna, "bake_target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayout *subcol = &col->column(true);
     subcol->active_set(ctx.bake_target == NODES_MODIFIER_BAKE_TARGET_DISK);
-    col->use_property_split_set(false); /* bfa - use_property_split = False */
+    subcol->use_property_split_set(false); /* bfa - use_property_split = False */
     subcol->prop(&ctx.bake_rna, "use_custom_path", UI_ITEM_NONE, IFACE_("Custom Path"), ICON_NONE);
     uiLayout *subsubcol = &subcol->column(true);
     const bool use_custom_path = ctx.bake->flag & NODES_MODIFIER_BAKE_CUSTOM_PATH;
@@ -806,6 +806,7 @@ void draw_common_bake_settings(bContext *C, BakeDrawContext &ctx, uiLayout *layo
   }
   {
     uiLayout *col = &settings_col->column(true);
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(&ctx.bake_rna,
               "use_custom_simulation_frame_range",
               UI_ITEM_NONE,
