@@ -86,6 +86,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.gpencil.radius
   ops.gpencil.sculpt_average
   ops.gpencil.sculpt_blur
+  ops.gpencil.sculpt_clone
   ops.gpencil.sculpt_smear
   ops.gpencil.stroke_cutter
   ops.gpencil.stroke_trim
