@@ -1686,6 +1686,7 @@ if(WITH_BLENDER)
       save_stl
       save_svg
       save_usd
+      save_uv
       save_x3d
       scale_average
       scale_instance
