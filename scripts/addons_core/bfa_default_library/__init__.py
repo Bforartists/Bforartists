@@ -136,7 +136,7 @@ classes = (
 # Define all submodules including the new operators and wizards modules
 submodule_names = [
     "ui",              # User interface and menus
-    "panels",             # Main operations and panels
+    "ops",             # Main operations and panels
     "operators",       # All operator classes (geometry, compositor, shader)
     "wizards",         # Wizard operations and handlers
 ]

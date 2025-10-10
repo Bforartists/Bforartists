@@ -28,8 +28,8 @@ from bpy.types import Operator
 # Smart Primitives
 # -----------------------------------------------------------------------------
 
-# Constants for smart primitive names
-SMART_PRIMITIVE_NAMES = [
+# Constants for assets with operators names
+ASSET_NAMES = [
     "Smart Capsule",
     "Smart Capsule Revolved", 
     "Smart Circle",
@@ -50,6 +50,7 @@ SMART_PRIMITIVE_NAMES = [
     "Smart Torus",
     "Smart Tube Revolved",
     "Smart Tube Rounded Revolved"
+    "Blend Normals by Proximity"
 ]
 
 def get_geometry_nodes_inputs(modifier):
@@ -112,7 +113,7 @@ def is_smart_primitive_object(obj):
     for mod in obj.modifiers:
         if (mod.type == 'NODES' and 
             mod.node_group and 
-            any(mod.node_group.name.startswith(name) for name in SMART_PRIMITIVE_NAMES)):
+            any(mod.node_group.name.startswith(name) for name in ASSET_NAMES)):
             return True
     return False
 
@@ -253,16 +254,97 @@ class OBJECT_OT_ApplySmartPrimitives(Operator):
 # Mesh Blend by Proximity
 # -----------------------------------------------------------------------------
 
+# Import the utility function from operators
+from ..wizard_operators import inject_nodegroup_to_collection
+
+def has_nodegroup_in_material(material, nodegroup_name):
+    """Check if material already has the specified node group"""
+    for node in material.node_tree.nodes:
+        if (node.type == 'GROUP' and 
+            node.node_group and 
+            node.node_group.name == nodegroup_name):
+            return True
+    return False
+
+
+class OBJECT_OT_InjectNodegroupToCollection(Operator):
+    """Inject node group to all materials in target collection, skipping duplicates"""
+    bl_idname = "object.inject_nodegroup_to_collection"
+    bl_label = "Inject Node Group to Materials"
+    bl_description = "Inject S_Intersections node group to materials of objects in target collection"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    nodegroup_name: bpy.props.StringProperty(
+        name="Node Group",
+        description="Name of the node group to inject",
+        default="S_Intersections"
+    )
+
+    @classmethod
+    def poll(cls, context):
+        """Available when there's an active object with Blend Normals by Proximity modifier"""
+        obj = context.object
+        if not obj or not obj.modifiers:
+            return False
+        
+        for mod in obj.modifiers:
+            if (mod.type == 'NODES' and 
+                mod.node_group and 
+                "Blend Normals by Proximity" in mod.node_group.name):
+                return True
+        return False
+
+    def execute(self, context):
+        obj = context.object
+        
+        # Find the Blend Normals by Proximity modifier
+        target_collection = None
+        for mod in obj.modifiers:
+            if (mod.type == 'NODES' and 
+                mod.node_group and 
+                "Blend Normals by Proximity" in mod.node_group.name):
+                
+                # Try to get the collection from the modifier
+                for socket_name in mod.keys():
+                    if socket_name.startswith("Socket_") and isinstance(mod[socket_name], bpy.types.Collection):
+                        target_collection = mod[socket_name]
+                        break
+                
+                if target_collection:
+                    break
+        
+        if not target_collection:
+            self.report({'ERROR'}, "No target collection found in Blend Normals by Proximity modifier")
+            return {'CANCELLED'}
+        
+        # Inject node group to collection
+        success = inject_nodegroup_to_collection(target_collection.name, self.nodegroup_name)
+        
+        if success:
+            self.report({'INFO'}, f"Injected {self.nodegroup_name} node group to materials in '{target_collection.name}'")
+        else:
+            self.report({'ERROR'}, f"Failed to inject {self.nodegroup_name} node group")
+        
+        return {'FINISHED'}
+
+
 
 
 classes = (
     OBJECT_OT_ApplySmartPrimitives,
+    OBJECT_OT_InjectNodegroupToCollection,
 )
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+    
+    # Add to modifier panel
+    bpy.types.DATA_PT_modifiers.append(draw_inject_nodegroup_button)
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
+    
+    # Remove from modifier panel
+    bpy.types.DATA_PT_modifiers.remove(draw_inject_nodegroup_button)

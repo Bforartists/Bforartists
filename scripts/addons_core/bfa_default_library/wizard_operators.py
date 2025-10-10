@@ -206,7 +206,6 @@ def inject_nodegroup_before_output(material, node_group, input_socket):
         nodes.remove(group_node)
         return False
 
-
 class WIZARD_OT_BlendNormalsByProximity(Operator):
     """Wizard to configure Blend Normals by Proximity geometry nodes setup"""
     bl_idname = "wizard.blend_normals_by_proximity"
@@ -273,10 +272,8 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
 
                 # Set relative position if enabled
                 if context.scene.use_relative_position:
-                    # Look for relative position socket
-                    for socket_name in geom_nodes.keys():
-                        if "relative" in socket_name.lower() or "position" in socket_name.lower():
-                            geom_nodes[socket_name] = True
+                    # Set socket_12 to True for relative position
+                    geom_nodes["Socket_12"] = True
 
                 # Inject intersection nodegroup if enabled
                 if (context.scene.inject_intersection_nodegroup and 
