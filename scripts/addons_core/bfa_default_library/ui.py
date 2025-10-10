@@ -90,6 +90,44 @@ class OT_InsertMeshAsset(Operator):
         self.report({'ERROR'}, f"Could not import asset: {self.asset_name}")
         return {'CANCELLED'}
 
+class WIZARD_OT_TriggerAssetWizard(Operator):
+    """Trigger the appropriate wizard for the selected asset or object"""
+    bl_idname = "wizard.trigger_asset_wizard"
+    bl_label = "Trigger Asset Wizard"
+    bl_description = "Run the appropriate wizard for the selected object"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        """Available when there's an active object"""
+        return context.object is not None
+
+    def execute(self, context):
+        obj = context.object
+        
+        # Check for Blend Normals by Proximity modifier
+        if obj.modifiers:
+            for mod in obj.modifiers:
+                if mod.type == 'NODES' and mod.node_group:
+                    if "Blend Normals by Proximity" in mod.node_group.name:
+                        # Trigger the blend normals wizard
+                        bpy.ops.wizard.blend_normals_by_proximity('INVOKE_DEFAULT')
+                        self.report({'INFO'}, "Blend Normals wizard triggered")
+                        return {'FINISHED'}
+        
+        # Add more wizard detection here as you implement them
+        # Example: if "Another Wizard Asset" in some_property: trigger another wizard
+        
+        self.report({'INFO'}, "No wizard detected for this object")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+# -----------------------------------------------------------------------------#
+# Interface Entries
+# -----------------------------------------------------------------------------#
+
 class ASSET_MT_mesh_add(Menu):
     bl_label = "Smart Primitives"
     bl_idname = "ASSET_MT_mesh_add"
@@ -107,20 +145,49 @@ def menu_func(self, context):
     layout.separator()
     layout.menu("ASSET_MT_mesh_add", icon='ORIGIN_TO_GEOMETRY')
 
+def asset_menu_func(self, context):
+    """Add wizard trigger to asset menu"""
+    layout = self.layout
+    if context.object:
+        # Check if object has any wizard-compatible features
+        has_wizard = False
+        if context.object.modifiers:
+            for mod in context.object.modifiers:
+                if mod.type == 'NODES' and mod.node_group:
+                    if "Blend Normals by Proximity" in mod.node_group.name:
+                        has_wizard = True
+                        break
+        
+        if has_wizard:
+            layout.separator()
+            layout.operator("wizard.trigger_asset_wizard", icon='WIZARD')
+
+# -----------------------------------------------------------------------------#
+# Classes
+# -----------------------------------------------------------------------------#
 
 classes = (
     OT_InsertMeshAsset,
+    WIZARD_OT_TriggerAssetWizard,
     ASSET_MT_mesh_add,
 )
+
+# -----------------------------------------------------------------------------#
+# Register
+# -----------------------------------------------------------------------------#
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     # Add the sub-menu to the main Add menu
     bpy.types.VIEW3D_MT_add.append(menu_func)
+    # Add wizard trigger to asset menu
+    bpy.types.VIEW3D_MT_object_asset.append(asset_menu_func)
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     # Remove the sub-menu from the Add menu
     bpy.types.VIEW3D_MT_add.remove(menu_func)
+    # Remove wizard trigger from asset menu
+    bpy.types.VIEW3D_MT_object_asset.remove(asset_menu_func)
