@@ -44,6 +44,12 @@ bpy.types.Scene.use_relative_position = bpy.props.BoolProperty(
     default=False
 )
 
+bpy.types.Scene.inject_intersection_nodegroup = bpy.props.BoolProperty(
+    name="Inject Intersection Nodegroup",
+    description="Inject S_Intersections node group into materials of target collection",
+    default=True
+)
+
 # Object that will store the handle to the msgbus subscription
 subscription_owner = object()
 

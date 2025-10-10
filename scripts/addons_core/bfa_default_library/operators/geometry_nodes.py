@@ -24,6 +24,10 @@
 import bpy
 from bpy.types import Operator
 
+# -----------------------------------------------------------------------------
+# Smart Primitives
+# -----------------------------------------------------------------------------
+
 # Constants for smart primitive names
 SMART_PRIMITIVE_NAMES = [
     "Smart Capsule",
@@ -135,6 +139,12 @@ class OBJECT_OT_ApplySmartPrimitives(Operator):
         default=False
     )
 
+    boolean_on_apply: bpy.props.BoolProperty(
+        name="Remesh on Apply",
+        description="Apply boolean union operation to combine the primitives",
+        default=False
+    )
+
     @classmethod
     def poll(cls, context):
         """Available if there are smart primitive objects selected"""
@@ -239,36 +249,14 @@ class OBJECT_OT_ApplySmartPrimitives(Operator):
                 context.view_layer.objects.active = original_active
             return {'CANCELLED'}
 
-class OBJECT_OT_EnableSmartPrimitivePanel(Operator):
-    """Enable the smart primitive properties panel"""
-    bl_idname = "object.enable_smart_primitive_panel"
-    bl_label = "Enable Smart Primitive Panel"
-    bl_description = "Show the smart primitive properties panel in the sidebar"
-    bl_options = {'REGISTER', 'UNDO'}
+# -----------------------------------------------------------------------------
+# Mesh Blend by Proximity
+# -----------------------------------------------------------------------------
 
-    def execute(self, context):
-        from ..ops import OBJECT_PT_GeometryNodesPanel
-        OBJECT_PT_GeometryNodesPanel.show_panel = True
-        self.report({'INFO'}, "Smart Primitive panel enabled")
-        return {'FINISHED'}
 
-class OBJECT_OT_DisableSmartPrimitivePanel(Operator):
-    """Disable the smart primitive properties panel"""
-    bl_idname = "object.disable_smart_primitive_panel"
-    bl_label = "Disable Smart Primitive Panel"
-    bl_description = "Hide the smart primitive properties panel from the sidebar"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        from ..ops import OBJECT_PT_GeometryNodesPanel
-        OBJECT_PT_GeometryNodesPanel.show_panel = False
-        self.report({'INFO'}, "Smart Primitive panel disabled")
-        return {'FINISHED'}
 
 classes = (
     OBJECT_OT_ApplySmartPrimitives,
-    OBJECT_OT_EnableSmartPrimitivePanel,
-    OBJECT_OT_DisableSmartPrimitivePanel,
 )
 
 def register():

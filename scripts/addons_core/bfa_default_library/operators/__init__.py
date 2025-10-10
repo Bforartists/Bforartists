@@ -23,8 +23,6 @@
 
 from .geometry_nodes import (
     OBJECT_OT_ApplySmartPrimitives,
-    OBJECT_OT_EnableSmartPrimitivePanel,
-    OBJECT_OT_DisableSmartPrimitivePanel
 )
 
 from .compositor import (
@@ -40,8 +38,6 @@ from .shader import (
 # Combine all operator classes
 operator_classes = (
     OBJECT_OT_ApplySmartPrimitives,
-    OBJECT_OT_EnableSmartPrimitivePanel,
-    OBJECT_OT_DisableSmartPrimitivePanel,
     COMPOSITOR_OT_ApplyCompositorSetup,
     COMPOSITOR_OT_ResetCompositor,
     SHADER_OT_ApplyShaderSetup,
