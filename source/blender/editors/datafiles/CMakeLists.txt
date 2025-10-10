@@ -2042,6 +2042,7 @@ if(WITH_BLENDER)
       uv_data
       uv_edgesel
       uv_facesel
+      uv_islandalign
       uv_islandsel
       uv_sync_select
       uv_vertexsel
