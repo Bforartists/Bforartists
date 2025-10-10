@@ -292,8 +292,10 @@ const EnumPropertyItem rna_enum_space_image_mode_all_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+/* BFA - removes a warning*/
 static const EnumPropertyItem rna_enum_space_image_mode_ui_items[] = {
     SI_ITEM_VIEW("VIEW", "View", ICON_FILE_IMAGE),
+    SI_ITEM_UV,
     SI_ITEM_PAINT,
     SI_ITEM_MASK,
     {0, nullptr, 0, nullptr, nullptr},
