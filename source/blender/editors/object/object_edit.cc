@@ -12,6 +12,7 @@
 #include <cstring>
 #include <ctime>
 
+#include "BLI_path_utils.hh"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_listbase.h"
@@ -565,6 +566,35 @@ void OBJECT_OT_hide_collection(wmOperatorType *ot)
 /** \name Toggle Edit-Mode Operator
  * \{ */
 
+/* When switching mode, certain data needs to be copied from the `bPoseChannel` to the `Bone`. This
+ * is not done in `BKE_pose_rebuild` because that is called in other cases other than mode
+ * switching. */
+static void flush_bone_selection_to_pose(Object &ob)
+{
+  BLI_assert(ob.pose);
+  LISTBASE_FOREACH (bPoseChannel *, pose_bone, &ob.pose->chanbase) {
+    if (pose_bone->bone->flag & BONE_SELECTED) {
+      pose_bone->flag |= POSE_SELECTED;
+    }
+    else {
+      pose_bone->flag &= ~POSE_SELECTED;
+    }
+  }
+}
+static void flush_pose_selection_to_bone(Object &ob)
+{
+  BLI_assert(ob.pose);
+  constexpr int selection_flags = (BONE_SELECTED | BONE_ROOTSEL | BONE_TIPSEL);
+  LISTBASE_FOREACH (bPoseChannel *, pose_bone, &ob.pose->chanbase) {
+    if (pose_bone->flag & POSE_SELECTED) {
+      pose_bone->bone->flag |= selection_flags;
+    }
+    else {
+      pose_bone->bone->flag &= ~selection_flags;
+    }
+  }
+}
+
 static bool mesh_needs_keyindex(Main *bmain, const Mesh *mesh)
 {
   if (mesh->key) {
@@ -653,6 +683,9 @@ static bool editmode_load_free_ex(Main *bmain,
         }
       }
     }
+
+    /* After regenerating the bones, sync the selection onto the pose bones. */
+    flush_bone_selection_to_pose(*obedit);
     /* TODO(sergey): Pose channels might have been changed, so need
      * to inform dependency graph about this. But is it really the
      * best place to do this?
@@ -867,6 +900,13 @@ bool editmode_enter_ex(Main *bmain, Scene *scene, Object *ob, int flag)
     WM_main_add_notifier(NC_SCENE | ND_MODE | NS_EDITMODE_MESH, nullptr);
   }
   else if (ob->type == OB_ARMATURE) {
+    /* Syncing the selection to the `Bone` before converting to edit bones. This is not possible if
+     * the Armature was just created, because then there is no pose data yet. Which is fine, the
+     * just-created edit bones already have the expected selection state. */
+    if (ob->pose) {
+      flush_pose_selection_to_bone(*ob);
+    }
+
     bArmature *arm = static_cast<bArmature *>(ob->data);
     ok = true;
     ED_armature_to_edit(arm);
@@ -1634,10 +1674,9 @@ static bool is_smooth_by_angle_modifier(const ModifierData &md)
   if (!library) {
     return false;
   }
-  if (!StringRef(library->filepath)
-           .endswith("datafiles/assets/nodes/geometry_nodes_essentials.blend"))
+  if (!BLI_path_contains(library->filepath,
+                         "datafiles/assets/nodes/geometry_nodes_essentials.blend"))
   {
-
     return false;
   }
   if (!STREQ(BKE_id_name(nmd.node_group->id), "Smooth by Angle")) {
@@ -2417,7 +2456,9 @@ static void move_to_collection_menu_draw(const bContext *C, Menu *menu)
   Scene *scene = CTX_data_scene(C);
   if (layout.operator_context() == wm::OpCallContext::ExecRegionWin) {
     layout.operator_context_set(wm::OpCallContext::InvokeRegionWin);
-    PointerRNA op_ptr = layout.op("WM_OT_search_single_menu", "Search...", ICON_VIEWZOOM);
+    PointerRNA op_ptr = layout.op("WM_OT_search_single_menu",
+                                  CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Search..."),
+                                  ICON_VIEWZOOM);
     RNA_string_set(&op_ptr, "menu_idname", menu->type->idname);
     layout.separator();
   }

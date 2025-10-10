@@ -18,8 +18,8 @@
 namespace blender::nodes::node_composite_distance_matte_cc {
 
 static const EnumPropertyItem color_space_items[] = {
-    {CMP_NODE_DISTANCE_MATTE_COLOR_SPACE_RGBA, "RGB", 0, "RGB", "RGB color space"},
-    {CMP_NODE_DISTANCE_MATTE_COLOR_SPACE_YCCA, "YCC", 0, "YCC", "YCbCr color space"},
+    {CMP_NODE_DISTANCE_MATTE_COLOR_SPACE_RGBA, "RGB", 0, N_("RGB"), N_("RGB color space")},
+    {CMP_NODE_DISTANCE_MATTE_COLOR_SPACE_YCCA, "YCC", 0, N_("YCC"), N_("YCbCr color space")},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -105,7 +105,8 @@ static void distance_key(const float4 color,
 
   float difference = math::distance(color_vector.xyz(), key_vector.xyz());
   bool is_opaque = difference > tolerance + falloff;
-  float alpha = is_opaque ? color.w : math::max(0.0f, difference - tolerance) / falloff;
+  float alpha = is_opaque ? color.w :
+                            math::safe_divide(math::max(0.0f, difference - tolerance), falloff);
   matte = math::min(alpha, color.w);
   result = color * matte;
 }

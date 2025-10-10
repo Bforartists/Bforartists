@@ -829,6 +829,10 @@ def km_screen(params):
          {"properties": [("use_viewport", True)]}),
         ("render.render", {"type": 'F12', "value": 'PRESS', "ctrl": True},
          {"properties": [("animation", True), ("use_viewport", True)]}),
+        ("render.render", {"type": 'F12', "value": 'PRESS', "alt": True},
+         {"properties": [("use_sequencer_scene", True), ("use_viewport", True)]}),
+        ("render.render", {"type": 'F12', "value": 'PRESS', "ctrl": True, "alt": True},
+         {"properties": [("animation", True), ("use_sequencer_scene", True), ("use_viewport", True)]}),
         ("render.view_cancel", {"type": 'ESC', "value": 'PRESS'}, None),
         ("render.view_show", {"type": 'F11', "value": 'PRESS'}, None),
         ("render.play_rendered_anim", {"type": 'F11', "value": 'PRESS', "ctrl": True}, None),
@@ -3705,6 +3709,10 @@ def km_frames(params):
          {"properties": [("end", True)]}),
         ("screen.frame_jump", {"type": 'LEFT_ARROW', "value": 'PRESS', "shift": True, "repeat": True},
          {"properties": [("end", False)]}),
+        ("screen.time_jump", {"type": 'RIGHT_ARROW', "value": 'PRESS', "ctrl": True, "repeat": True},
+         {"properties": [("backward", False)]}),
+        ("screen.time_jump", {"type": 'LEFT_ARROW', "value": 'PRESS', "ctrl": True, "repeat": True},
+         {"properties": [("backward", True)]}),
         ("screen.keyframe_jump", {"type": 'UP_ARROW', "value": 'PRESS', "repeat": True},
          {"properties": [("next", False)]}),
         ("screen.keyframe_jump", {"type": 'DOWN_ARROW', "value": 'PRESS', "repeat": True},
@@ -4204,6 +4212,8 @@ def km_grease_pencil_sculpt_mode(params):
         # Auto-masking menu.
         op_menu_pie("VIEW3D_MT_grease_pencil_sculpt_automasking_pie", {
                     "type": 'A', "value": 'PRESS', "shift": True, "alt": True}),
+        ("wm.context_menu_enum", {"type": 'E', "value": 'PRESS', "alt": True},
+         {"properties": [("data_path", "tool_settings.gpencil_sculpt_paint.brush.stroke_method")]}),
 
         *_template_paint_radial_control("gpencil_sculpt_paint"),
         *_template_asset_shelf_popup("VIEW3D_AST_brush_gpencil_sculpt", params.spacebar_action),

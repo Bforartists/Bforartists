@@ -1623,9 +1623,8 @@ static void rna_NodeTree_debug_lazy_function_graph(bNodeTree *tree,
     /* The graph is only stored on the evaluated data. */
     Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
     tree = DEG_get_evaluated(depsgraph, tree);
-  }
-  std::lock_guard lock{tree->runtime->geometry_nodes_lazy_function_graph_info_mutex};
-  if (!tree->runtime->geometry_nodes_lazy_function_graph_info) {
+  };
+  if (tree->runtime->geometry_nodes_lazy_function_graph_info_mutex.is_dirty()) {
     return;
   }
   std::string dot_str = tree->runtime->geometry_nodes_lazy_function_graph_info->graph.to_dot();
@@ -1644,8 +1643,7 @@ static void rna_NodeTree_debug_zone_body_lazy_function_graph(
     Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
     tree = DEG_get_evaluated(depsgraph, tree);
   }
-  std::lock_guard lock{tree->runtime->geometry_nodes_lazy_function_graph_info_mutex};
-  if (!tree->runtime->geometry_nodes_lazy_function_graph_info) {
+  if (tree->runtime->geometry_nodes_lazy_function_graph_info_mutex.is_dirty()) {
     return;
   }
   const auto *graph = tree->runtime->geometry_nodes_lazy_function_graph_info
@@ -10288,6 +10286,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
+  define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NONE);
