@@ -29,7 +29,7 @@ from bpy.types import Operator
 # -----------------------------------------------------------------------------
 
 # Constants for assets with operators names
-ASSET_NAMES = [
+GN_ASSET_NAMES = [
     "Smart Capsule",
     "Smart Capsule Revolved", 
     "Smart Circle",
@@ -49,8 +49,8 @@ ASSET_NAMES = [
     "Smart Spiral",
     "Smart Torus",
     "Smart Tube Revolved",
-    "Smart Tube Rounded Revolved"
-    "Blend Normals by Proximity"
+    "Smart Tube Rounded Revolved",
+    "Blend Normals by Proximity",
 ]
 
 def get_geometry_nodes_inputs(modifier):
@@ -88,6 +88,10 @@ def get_geometry_nodes_inputs(modifier):
                 'panel': None
             }
             
+            # First check if this socket identifier exists in the modifier
+            if item.identifier not in modifier:
+                continue  # Skip this socket if it doesn't exist in the modifier
+                
             # If socket is in a panel, add to panel's children
             if item.parent and item.parent.name in panel_map:
                 panel_map[item.parent.name]['children'].append(socket_data)
@@ -105,7 +109,7 @@ def get_geometry_nodes_inputs(modifier):
     
     return inputs
 
-def is_smart_primitive_object(obj):
+def is_gn_asset_object(obj):
     """Check if object has any smart primitive geometry nodes modifiers"""
     if not obj or not obj.modifiers:
         return False
@@ -113,13 +117,14 @@ def is_smart_primitive_object(obj):
     for mod in obj.modifiers:
         if (mod.type == 'NODES' and 
             mod.node_group and 
-            any(mod.node_group.name.startswith(name) for name in ASSET_NAMES)):
+            any(mod.node_group.name.startswith(name) for name in GN_ASSET_NAMES)):
             return True
     return False
 
-def get_all_smart_primitive_objects(context):
+def get_all_gn_asset_objects(context):
     """Get all objects that are smart primitives in the current context"""
-    return [obj for obj in context.selected_objects if is_smart_primitive_object(obj)]
+    return [obj for obj in context.selected_objects if is_gn_asset_object(obj)]
+
 
 class OBJECT_OT_ApplySmartPrimitives(Operator):
     """Apply selected smart primitives, converts to mesh, joins them, and optionally remeshes"""
@@ -149,10 +154,10 @@ class OBJECT_OT_ApplySmartPrimitives(Operator):
     @classmethod
     def poll(cls, context):
         """Available if there are smart primitive objects selected"""
-        return any(is_smart_primitive_object(obj) for obj in context.selected_objects)
+        return any(is_gn_asset_object(obj) for obj in context.selected_objects)
     
     def execute(self, context):
-        smart_objects = get_all_smart_primitive_objects(context)
+        smart_objects = get_all_gn_asset_objects(context)
         
         if not smart_objects:
             self.report({'WARNING'}, "No smart primitive objects found to process")
@@ -250,11 +255,12 @@ class OBJECT_OT_ApplySmartPrimitives(Operator):
                 context.view_layer.objects.active = original_active
             return {'CANCELLED'}
 
+
 # -----------------------------------------------------------------------------
 # Mesh Blend by Proximity
 # -----------------------------------------------------------------------------
 
-# Import the utility function from operators
+# Import the utility function from wizard_operators
 from ..wizard_operators import inject_nodegroup_to_collection
 
 def has_nodegroup_in_material(material, nodegroup_name):
@@ -338,13 +344,7 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    
-    # Add to modifier panel
-    bpy.types.DATA_PT_modifiers.append(draw_inject_nodegroup_button)
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    
-    # Remove from modifier panel
-    bpy.types.DATA_PT_modifiers.remove(draw_inject_nodegroup_button)

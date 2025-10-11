@@ -27,8 +27,9 @@ from bpy.types import Panel
 # Import operations from submodules
 from .operators.geometry_nodes import (
     get_geometry_nodes_inputs,
-    ASSET_NAMES,
-    OBJECT_OT_ApplySmartPrimitives
+    GN_ASSET_NAMES,
+    OBJECT_OT_ApplySmartPrimitives,
+    OBJECT_OT_InjectNodegroupToCollection,
 )
 
 # -----------------------------------------------------------------------------
@@ -36,9 +37,9 @@ from .operators.geometry_nodes import (
 # -----------------------------------------------------------------------------
 
 class OBJECT_PT_GeometryNodesPanel(Panel):
-    """Panel in the sidebar for editing Geometry Nodes properties."""
+    """Panel in the sidebar for editing Geometry Nodes Assets properties."""
     bl_idname = "OBJECT_PT_geometry_nodes_panel"
-    bl_label = "Primitive Properties"
+    bl_label = "Asset Properties"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Item"
@@ -47,7 +48,7 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
     
     @classmethod
     def poll(cls, context):
-        """Only show panel for objects with Geometry Nodes modifiers from our smart primitives list."""
+        """Only show panel for objects with Geometry Nodes modifiers from the asset list."""
         if not cls.show_panel or not context.object or not context.object.modifiers:
             return False
             
@@ -55,7 +56,7 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
         for mod in context.object.modifiers:
             if (mod.type == 'NODES' and
                 mod.node_group and
-                any(mod.node_group.name.startswith(name) for name in ASSET_NAMES)):
+                any(mod.node_group.name.startswith(name) for name in GN_ASSET_NAMES)):
                 return True
         return False
 
@@ -67,7 +68,7 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
         mod = next((m for m in obj.modifiers
                    if m.type == 'NODES' and
                    m.node_group and
-                   any(m.node_group.name.startswith(name) for name in ASSET_NAMES)), None)
+                   any(m.node_group.name.startswith(name) for name in GN_ASSET_NAMES)), None)
 
         if mod and mod.node_group:
             # Main panel header
@@ -110,7 +111,7 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
             layout.separator()
             row = layout.row()
             row.scale_y =  1.5 # Make the button larger
-            op = row.operator("object.apply_smart_primitives", text="Apply Selected Primitives", icon='CHECKMARK')
+            op = row.operator("object.apply_smart_primitives", text="Apply Selected Objects", icon='CHECKMARK')
             op.join_on_apply = context.scene.join_apply
             op.boolean_on_apply = context.scene.boolean_apply
 
@@ -122,8 +123,8 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
             row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
 
 
-class OBJECT_PT_SmartPrimitiveModifierPanel(Panel):
-    """Creates a custom panel in the Modifier properties for Smart Primitives"""
+class OBJECT_PT_AssetsModifierPanel(Panel):
+    """Creates a custom panel in the Modifier properties for Assets"""
     bl_label = "Asset Operators"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -138,7 +139,49 @@ class OBJECT_PT_SmartPrimitiveModifierPanel(Panel):
             for mod in context.object.modifiers:
                 if (mod.type == 'NODES' and
                     mod.node_group and
-                    any(mod.node_group.name.startswith(name) for name in ASSET_NAMES)):
+                    any(mod.node_group.name.startswith(name) for name in GN_ASSET_NAMES)):
+                    return True
+        return False
+
+    def draw(self, context):
+        layout = self.layout
+
+        # Add the apply button with proper spacing
+        layout.separator()
+        row = layout.row()
+        row.scale_y = 1.5 # Make the button larger
+        op = row.operator("object.apply_smart_primitives", text="Apply Selected Objects", icon='CHECKMARK')
+        op.join_on_apply = context.scene.join_apply
+        op.boolean_on_apply = context.scene.boolean_apply
+
+        # Add toggle buttons for apply properties
+        row = layout.row()
+        row.prop(context.scene, "join_apply", text="Join on Apply")
+
+        row = layout.row()
+        row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
+
+        row = layout.row()
+        row.operator("object.inject_nodegroup_to_collection", icon='MATERIAL')
+
+
+class OBJECT_PT_AssetsModifierPanel(Panel):
+    """Creates a custom panel in the Modifier properties for Assets"""
+    bl_label = "Asset Operators"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "modifier"
+    bl_parent_id = 'DATA_PT_modifiers'
+
+    @classmethod
+    def poll(cls, context):
+        # Show panel if any Asset modifiers exists in the stack
+        if context.object and context.object.modifiers:
+            # Check all modifiers in the stack
+            for mod in context.object.modifiers:
+                if (mod.type == 'NODES' and
+                    mod.node_group and
+                    any(mod.node_group.name.startswith(name) for name in GN_ASSET_NAMES)):
                     return True
         return False
 
@@ -160,45 +203,8 @@ class OBJECT_PT_SmartPrimitiveModifierPanel(Panel):
         row = layout.row()
         row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
 
-
-
-class OBJECT_PT_SmartPrimitiveModifierPanel(Panel):
-    """Creates a custom panel in the Modifier properties for Smart Primitives"""
-    bl_label = "Asset Operators"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "modifier"
-    bl_parent_id = 'DATA_PT_modifiers'
-
-    @classmethod
-    def poll(cls, context):
-        # Show panel if any Smart Primitive modifier exists in the stack
-        if context.object and context.object.modifiers:
-            # Check all modifiers in the stack
-            for mod in context.object.modifiers:
-                if (mod.type == 'NODES' and
-                    mod.node_group and
-                    any(mod.node_group.name.startswith(name) for name in ASSET_NAMES)):
-                    return True
-        return False
-
-    def draw(self, context):
-        layout = self.layout
-        
-        # Add the apply button with proper spacing
-        layout.separator()
         row = layout.row()
-        row.scale_y = 1.5 # Make the button larger
-        op = row.operator("object.apply_smart_primitives", text="Apply Selected Objects", icon='CHECKMARK')
-        op.join_on_apply = context.scene.join_apply
-        op.boolean_on_apply = context.scene.boolean_apply
-
-        # Add toggle buttons for apply properties
-        row = layout.row()
-        row.prop(context.scene, "join_apply", text="Join on Apply")
-
-        row = layout.row()
-        row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
+        row.operator("object.inject_nodegroup_to_collection", icon='MATERIAL')
 
 
 # -----------------------------------------------------------------------------
@@ -213,7 +219,7 @@ def object_added_handler(scene):
             mod = next((m for m in obj.modifiers
                        if m.type == 'NODES' and
                        m.node_group and
-                       any(m.node_group.name.startswith(name) for name in ASSET_NAMES)), None)
+                       any(m.node_group.name.startswith(name) for name in GN_ASSET_NAMES)), None)
             if mod:
                 OBJECT_PT_GeometryNodesPanel.show_panel = True
             object_added_handler.known_objects.add(obj)
@@ -226,7 +232,7 @@ object_added_handler.known_objects = set()
 
 classes = (
     OBJECT_PT_GeometryNodesPanel,
-    OBJECT_PT_SmartPrimitiveModifierPanel,
+    OBJECT_PT_AssetsModifierPanel,
 )
 
 def register():
