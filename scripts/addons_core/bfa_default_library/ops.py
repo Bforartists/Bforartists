@@ -122,6 +122,11 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
             row = layout.row()
             row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
 
+            row = layout.row()
+            row.scale_y =  1.5 # Make the button larger
+            row.operator("object.inject_nodegroup_to_collection", text="Apply Blend Materials", icon='MATERIAL')
+
+
 
 class OBJECT_PT_AssetsModifierPanel(Panel):
     """Creates a custom panel in the Modifier properties for Assets"""
@@ -160,51 +165,6 @@ class OBJECT_PT_AssetsModifierPanel(Panel):
 
         row = layout.row()
         row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
-
-        row = layout.row()
-        row.operator("object.inject_nodegroup_to_collection", icon='MATERIAL')
-
-
-class OBJECT_PT_AssetsModifierPanel(Panel):
-    """Creates a custom panel in the Modifier properties for Assets"""
-    bl_label = "Asset Operators"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "modifier"
-    bl_parent_id = 'DATA_PT_modifiers'
-
-    @classmethod
-    def poll(cls, context):
-        # Show panel if any Asset modifiers exists in the stack
-        if context.object and context.object.modifiers:
-            # Check all modifiers in the stack
-            for mod in context.object.modifiers:
-                if (mod.type == 'NODES' and
-                    mod.node_group and
-                    any(mod.node_group.name.startswith(name) for name in GN_ASSET_NAMES)):
-                    return True
-        return False
-
-    def draw(self, context):
-        layout = self.layout
-        
-        # Add the apply button with proper spacing
-        layout.separator()
-        row = layout.row()
-        row.scale_y = 1.5 # Make the button larger
-        op = row.operator("object.apply_smart_primitives", text="Apply Selected Objects", icon='CHECKMARK')
-        op.join_on_apply = context.scene.join_apply
-        op.boolean_on_apply = context.scene.boolean_apply
-
-        # Add toggle buttons for apply properties
-        row = layout.row()
-        row.prop(context.scene, "join_apply", text="Join on Apply")
-
-        row = layout.row()
-        row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
-
-        row = layout.row()
-        row.operator("object.inject_nodegroup_to_collection", icon='MATERIAL')
 
 
 # -----------------------------------------------------------------------------

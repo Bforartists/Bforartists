@@ -38,7 +38,7 @@ COMP_NAME = "Compositor Nodes Library"
 bl_info = {
     "name": "Default Asset Library",
     "author": "Draise",
-    "version": (1, 2, 1),
+    "version": (1, 2, 2),
     "blender": (4, 4, 3),
     "location": "Asset Browser>Default Library",
     "description": "Adds a default library with complementary assets that you can use from the Asset Browser Editor",

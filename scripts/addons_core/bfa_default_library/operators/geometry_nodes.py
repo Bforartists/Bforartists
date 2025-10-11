@@ -24,9 +24,9 @@
 import bpy
 from bpy.types import Operator
 
-# -----------------------------------------------------------------------------
-# Smart Primitives
-# -----------------------------------------------------------------------------
+import logging
+logger = logging.getLogger(__name__)
+
 
 # Constants for assets with operators names
 GN_ASSET_NAMES = [
@@ -52,6 +52,10 @@ GN_ASSET_NAMES = [
     "Smart Tube Rounded Revolved",
     "Blend Normals by Proximity",
 ]
+
+# -----------------------------------------------------------------------------
+# Sidebar Panel Function
+# -----------------------------------------------------------------------------
 
 def get_geometry_nodes_inputs(modifier):
     """Returns socket names and types for Geometry Nodes modifier inputs, excluding 'Geometry'.
@@ -125,6 +129,10 @@ def get_all_gn_asset_objects(context):
     """Get all objects that are smart primitives in the current context"""
     return [obj for obj in context.selected_objects if is_gn_asset_object(obj)]
 
+
+# -----------------------------------------------------------------------------
+# Smart Primitives Operators
+# -----------------------------------------------------------------------------
 
 class OBJECT_OT_ApplySmartPrimitives(Operator):
     """Apply selected smart primitives, converts to mesh, joins them, and optionally remeshes"""
@@ -257,11 +265,170 @@ class OBJECT_OT_ApplySmartPrimitives(Operator):
 
 
 # -----------------------------------------------------------------------------
-# Mesh Blend by Proximity
+# Mesh Blend by Proximity Operators
 # -----------------------------------------------------------------------------
 
-# Import the utility function from wizard_operators
-from ..wizard_operators import inject_nodegroup_to_collection
+# Intersection Nodegroup injection functions
+def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersections"):
+    """Inject a node group into all materials of objects in the target collection"""
+    target_collection = bpy.data.collections.get(collection_name)
+    if not target_collection:
+        logger.error(f"Collection '{collection_name}' not found!")
+        return False
+
+    logger.info(f"Processing collection: {collection_name}")
+
+    # Check if node group exists
+    node_group = bpy.data.node_groups.get(nodegroup_name)
+    if not node_group:
+        logger.error(f"Node group '{nodegroup_name}' not found!")
+        return False
+
+    processed_objects = 0
+    objects_with_materials = 0
+
+    # Process each object in the collection
+    for obj in target_collection.objects:
+        if obj.type not in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
+            continue
+
+        processed_objects += 1
+
+        # Check if object has materials or material slots
+        if not obj.material_slots:
+            logger.info(f"  No materials found for {obj.name}, adding default material")
+
+            # Create a new material
+            default_mat = bpy.data.materials.new(name=f"{obj.name}_DefaultMaterial")
+            default_mat.use_nodes = True
+
+            # Add material slot to object
+            obj.data.materials.append(default_mat)
+
+            # Process the new material
+            inject_nodegroup_to_material(default_mat, node_group)
+            objects_with_materials += 1
+
+        else:
+            objects_with_materials += 1
+            # Process all materials of the object
+            for material_slot in obj.material_slots:
+                if material_slot.material:
+                    inject_nodegroup_to_material(material_slot.material, node_group)
+                else:
+                    # Empty material slot found, create and assign default material
+                    logger.info(f"  Empty material slot found for {obj.name}, adding default material")
+                    default_mat = bpy.data.materials.new(name=f"{obj.name}_DefaultMaterial")
+                    default_mat.use_nodes = True
+                    material_slot.material = default_mat
+                    # Process the new material
+                    inject_nodegroup_to_material(default_mat, node_group)
+
+    logger.info(f"Processed {processed_objects} objects, {objects_with_materials} had materials")
+    return True
+
+def inject_nodegroup_to_material(material, node_group):
+    """Inject node group into a material's node tree"""
+
+    nodes = material.node_tree.nodes
+    links = material.node_tree.links
+
+    # Find the output node
+    output_node = None
+    for node in nodes:
+        if node.type == 'OUTPUT_MATERIAL' and node.is_active_output:
+            output_node = node
+            break
+
+    if not output_node:
+        logger.warning(f"  No active material output node found in {material.name}")
+        return False
+
+    # Find the surface input socket
+    surface_input = output_node.inputs.get("Surface")
+    if not surface_input:
+        logger.warning(f"  No Surface input found in output node of {material.name}")
+        return False
+
+    # Check if surface input is connected
+    if not surface_input.is_linked:
+        # Add a basic principled BSDF shader
+        bsdf_node = nodes.new(type='ShaderNodeBsdfPrincipled')
+        bsdf_node.location = (output_node.location.x - 300, output_node.location.y)
+
+        # Connect to output
+        links.new(bsdf_node.outputs["BSDF"], surface_input)
+
+        # Now inject the node group
+        return inject_nodegroup_before_output(material, node_group, bsdf_node.outputs["BSDF"])
+
+    # Get the connected shader
+    connected_shader = surface_input.links[0].from_socket
+
+    # Inject node group between shader and output
+    return inject_nodegroup_before_output(material, node_group, connected_shader)
+
+def inject_nodegroup_before_output(material, node_group, input_socket):
+    """Inject node group between the input socket and the output node"""
+    nodes = material.node_tree.nodes
+    links = material.node_tree.links
+
+    # Create the node group instance
+    group_node = nodes.new(type='ShaderNodeGroup')
+    group_node.node_tree = node_group
+    group_node.name = f"{node_group.name}_Instance"
+    group_node.label = node_group.name
+
+    # Position the node group
+    output_node = None
+    for node in nodes:
+        if node.type == 'OUTPUT_MATERIAL' and node.is_active_output:
+            output_node = node
+            break
+
+    if output_node:
+        group_node.location = (output_node.location.x - 200, output_node.location.y)
+
+    # Find appropriate input/output sockets in the node group
+    group_input = None
+    group_output = None
+
+    for socket in group_node.outputs:
+        if socket.type == 'SHADER':
+            group_output = socket
+            break
+
+    for socket in group_node.inputs:
+        if socket.type == 'SHADER':
+            group_input = socket
+            break
+
+    if not group_input or not group_output:
+        logger.warning(f"  Node group {node_group.name} doesn't have appropriate shader inputs/outputs")
+        nodes.remove(group_node)
+        return False
+
+    # Disconnect the original link
+    for link in links:
+        if link.to_socket == output_node.inputs["Surface"]:
+            links.remove(link)
+            break
+
+    # Create new connections
+    try:
+        # Connect input to node group
+        links.new(input_socket, group_input)
+
+        # Connect node group to output
+        links.new(group_output, output_node.inputs["Surface"])
+
+        logger.info(f"  Successfully injected {node_group.name} into {material.name}")
+        return True
+
+    except Exception as e:
+        logger.error(f"  Failed to connect node group: {e}")
+        nodes.remove(group_node)
+        return False
 
 def has_nodegroup_in_material(material, nodegroup_name):
     """Check if material already has the specified node group"""
@@ -334,11 +501,98 @@ class OBJECT_OT_InjectNodegroupToCollection(Operator):
         return {'FINISHED'}
 
 
+class OBJECT_OT_MeshBlendbyProximity(Operator):
+    """Apply Mesh Blend by Proximity configuration with target collection settings"""
+    bl_idname = "object.meshblendbyproximity"
+    bl_label = "Mesh Blend by Proximity"
+    bl_description = "Configure the Mesh Blend by Proximity geometry nodes setup with target collection"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        """Available when there's an active object with Blend Normals by Proximity modifier"""
+        obj = context.object
+        if not obj or not obj.modifiers:
+            return False
+
+        for mod in obj.modifiers:
+            if (mod.type == 'NODES' and
+                mod.node_group and
+                "Blend Normals by Proximity" in mod.node_group.name):
+                return True
+        return False
+
+    def execute(self, context):
+        obj = context.object
+        
+        # Set viewport settings to bounds for all children objects if enabled
+        if context.scene.target_collection and context.scene.use_wireframe_on_collection:
+            for collection_obj in context.scene.target_collection.objects:
+                if collection_obj.type == 'MESH':
+                    collection_obj.display_type = 'BOUNDS'
+
+        # Apply geometry nodes configuration
+        obj = context.active_object
+        
+        # Find the Blend Normals by Proximity modifier
+        geom_nodes = None
+        for mod in obj.modifiers:
+            if (mod.type == 'NODES' and 
+                mod.node_group and 
+                "Blend Normals by Proximity" in mod.node_group.name):
+                geom_nodes = mod
+                break
+
+        if geom_nodes and geom_nodes.node_group:
+            # Find collection socket in the node group
+            collection_socket_found = False
+
+            for node in geom_nodes.node_group.nodes:
+                if node.type == 'GROUP_INPUT':
+                    for output in node.outputs:
+                        if output.type == 'COLLECTION':
+                            # Set the collection in the modifier
+                            geom_nodes[output.identifier] = context.scene.target_collection
+                            output.default_value = context.scene.target_collection
+                            collection_socket_found = True
+                            break
+                    if collection_socket_found:
+                        break
+
+            # Set relative position if enabled
+            if context.scene.use_relative_position:
+                # Try to find and set the relative position socket
+                for socket_key in geom_nodes.keys():
+                    if socket_key.lower().startswith(('socket_12', 'relative', 'position')):
+                        geom_nodes[socket_key] = True
+                        break
+
+            # Inject intersection nodegroup if enabled
+            if (context.scene.inject_intersection_nodegroup and
+                context.scene.target_collection):
+                success = inject_nodegroup_to_collection(context.scene.target_collection.name)
+                if success:
+                    self.report({'INFO'}, "Intersection node group injected into materials to blend them")
+
+            # Force update
+            obj.update_tag()
+            context.view_layer.update()
+
+            if collection_socket_found:
+                self.report({'INFO'}, "Target Collection successfully assigned to the Geometry Nodes setup")
+            else:
+                self.report({'WARNING'}, "Collection input not found in Geometry Nodes setup")
+
+        else:
+            self.report({'ERROR'}, "Blend Normals by Proximity geometry nodes setup not found")
+
+        return {'FINISHED'}
 
 
 classes = (
     OBJECT_OT_ApplySmartPrimitives,
     OBJECT_OT_InjectNodegroupToCollection,
+    OBJECT_OT_MeshBlendbyProximity,
 )
 
 def register():

@@ -23,6 +23,8 @@
 
 from .geometry_nodes import (
     OBJECT_OT_ApplySmartPrimitives,
+    OBJECT_OT_InjectNodegroupToCollection,
+    OBJECT_OT_MeshBlendbyProximity,
 )
 
 from .compositor import (
@@ -38,6 +40,8 @@ from .shader import (
 # Combine all operator classes
 operator_classes = (
     OBJECT_OT_ApplySmartPrimitives,
+    OBJECT_OT_InjectNodegroupToCollection,
+    OBJECT_OT_MeshBlendbyProximity,
     COMPOSITOR_OT_ApplyCompositorSetup,
     COMPOSITOR_OT_ResetCompositor,
     SHADER_OT_ApplyShaderSetup,

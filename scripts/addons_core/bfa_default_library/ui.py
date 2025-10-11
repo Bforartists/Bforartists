@@ -90,6 +90,8 @@ class OT_InsertMeshAsset(Operator):
         self.report({'ERROR'}, f"Could not import asset: {self.asset_name}")
         return {'CANCELLED'}
 
+# -----------------------------------------------------------------------------
+
 class WIZARD_OT_TriggerAssetWizard(Operator):
     """Trigger the appropriate wizard for the selected asset or object"""
     bl_idname = "wizard.trigger_asset_wizard"
