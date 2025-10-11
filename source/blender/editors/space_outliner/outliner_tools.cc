@@ -36,6 +36,8 @@
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
 
+#include "BLT_translation.hh"
+
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.h"
 #include "BKE_armature.hh"
@@ -2584,7 +2586,7 @@ static wmOperatorStatus outliner_object_operation_exec(bContext *C, wmOperator *
         WM_window_set_active_scene(bmain, C, win, sce);
       }
 
-      str = "Select Objects";
+      str = CTX_N_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Select Objects");
       selection_changed = true;
       break;
     }
@@ -2602,14 +2604,14 @@ static wmOperatorStatus outliner_object_operation_exec(bContext *C, wmOperator *
       if (scene != sce) {
         WM_window_set_active_scene(bmain, C, win, sce);
       }
-      str = "Select Object Hierarchy";
+      str = CTX_N_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Select Object Hierarchy");
       selection_changed = true;
       break;
     }
     case OL_OP_DESELECT:
       outliner_do_object_operation(
           C, op->reports, scene, space_outliner, &space_outliner->tree, object_deselect_fn);
-      str = "Deselect Objects";
+      str = CTX_N_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Deselect Objects");
       selection_changed = true;
       break;
     case OL_OP_REMAP:
@@ -2620,7 +2622,7 @@ static wmOperatorStatus outliner_object_operation_exec(bContext *C, wmOperator *
     case OL_OP_RENAME:
       outliner_do_object_operation(
           C, op->reports, scene, space_outliner, &space_outliner->tree, item_rename_fn);
-      str = "Rename Object";
+      str = CTX_N_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Rename Object");
       break;
     default:
       BLI_assert_unreachable();
