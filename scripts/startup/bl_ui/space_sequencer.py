@@ -144,13 +144,15 @@ class SEQUENCER_HT_header(Header):
                 text="",
             )
 
+        row = layout.row()
+        row.popover(panel="SEQUENCER_PT_view_options", text="Options")
+
         row = layout.row(align=True)
         row.prop(st, "show_overlays", text="", icon="OVERLAY")
         sub = row.row(align=True)
         sub.popover(panel="SEQUENCER_PT_overlay", text="")
         sub.active = st.show_overlays
 
-        row.popover(panel="SEQUENCER_PT_view_options", text="Options")
         # BFA - moved "class SEQUENCER_MT_editor_menus" below
 
 
@@ -934,6 +936,8 @@ class SEQUENCER_MT_add(Menu):
         ).menu_idname = "SEQUENCER_MT_add"  # BFA
 
         layout.separator()
+
+        layout.menu("SEQUENCER_MT_add_scene", text="Scene", icon='SCENE_DATA')
 
         bpy_data_movieclips_len = len(bpy.data.movieclips)
         if bpy_data_movieclips_len > 10:

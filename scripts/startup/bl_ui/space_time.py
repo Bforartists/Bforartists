@@ -157,7 +157,7 @@ def playback_controls(layout, context):
             layout.popover(panel="TIME_PT_view_view_options", text="")
 
 # BFA - Legacy
-class TIME_MT_editor_menus(Menu):
+class TIME_MT_editor_menus(bpy.types.Menu):
     bl_idname = "TIME_MT_editor_menus"
     bl_label = ""
 
@@ -180,7 +180,7 @@ class TIME_MT_editor_menus(Menu):
             sub.menu("DOPESHEET_MT_select")  # BFA
 
 # BFA - Legacy
-class TIME_MT_marker(Menu):
+class TIME_MT_marker(bpy.types.Menu):
     bl_label = "Marker"
 
     def draw(self, context):
@@ -189,7 +189,7 @@ class TIME_MT_marker(Menu):
         marker_menu_generic(layout, context)
 
 # BFA - Legacy
-class TIME_MT_view(Menu):
+class TIME_MT_view(bpy.types.Menu):
     bl_label = "View"
 
     def draw(self, context):
