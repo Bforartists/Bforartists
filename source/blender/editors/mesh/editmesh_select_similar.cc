@@ -458,6 +458,8 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
 
     if (changed) {
       EDBM_selectmode_flush(em);
+      EDBM_uvselect_clear(em);
+
       EDBMUpdate_Params params{};
       params.calc_looptris = false;
       params.calc_normals = false;
@@ -483,6 +485,8 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
         }
       }
       EDBM_selectmode_flush(em);
+      EDBM_uvselect_clear(em);
+
       EDBMUpdate_Params params{};
       params.calc_looptris = false;
       params.calc_normals = false;
@@ -898,6 +902,8 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
 
     if (changed) {
       EDBM_selectmode_flush(em);
+      EDBM_uvselect_clear(em);
+
       EDBMUpdate_Params params{};
       params.calc_looptris = false;
       params.calc_normals = false;
@@ -923,6 +929,8 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
         }
       }
       EDBM_selectmode_flush(em);
+      EDBM_uvselect_clear(em);
+
       EDBMUpdate_Params params{};
       params.calc_looptris = false;
       params.calc_normals = false;

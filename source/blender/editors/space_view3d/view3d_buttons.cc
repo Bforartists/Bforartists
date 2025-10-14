@@ -2186,25 +2186,30 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
 
   layout->separator(.25f); /* bfa - separator*/
   col = &layout->column(true);
+  if (!ELEM(RNA_enum_get(&ptr, "type"), MB_BALL)) {
+    col->label(IFACE_("Size:"), ICON_NONE);
+    col = &col->row(false);
+    col->separator(); /*bfa - indent*/
+  }
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:
       break;
     case MB_CUBE:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
-      col->prop(&ptr, "size_y", UI_ITEM_NONE, "Y", ICON_NONE);
-      col->prop(&ptr, "size_z", UI_ITEM_NONE, "Z", ICON_NONE);
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, IFACE_("X"), ICON_NONE); /* bfa */
+      col->prop(&ptr, "size_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
+      col->prop(&ptr, "size_z", UI_ITEM_NONE, IFACE_("Z"), ICON_NONE);
       break;
     case MB_TUBE:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, IFACE_("X"), ICON_NONE); /* bfa */
       break;
     case MB_PLANE:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
-      col->prop(&ptr, "size_y", UI_ITEM_NONE, "Y", ICON_NONE);
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, IFACE_("X"), ICON_NONE); /* bfa */
+      col->prop(&ptr, "size_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
       break;
     case MB_ELIPSOID:
-      col->prop(&ptr, "size_x", UI_ITEM_NONE, "Size X", ICON_NONE); /* bfa */
-      col->prop(&ptr, "size_y", UI_ITEM_NONE, "Y", ICON_NONE);
-      col->prop(&ptr, "size_z", UI_ITEM_NONE, "Z", ICON_NONE);
+      col->prop(&ptr, "size_x", UI_ITEM_NONE, IFACE_("X"), ICON_NONE); /* bfa */
+      col->prop(&ptr, "size_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
+      col->prop(&ptr, "size_z", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
       break;
   }
 }

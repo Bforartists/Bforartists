@@ -513,6 +513,7 @@ class NODE_MT_view(Menu):
         layout = self.layout
 
         snode = context.space_data
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -536,6 +537,9 @@ class NODE_MT_view(Menu):
         else: # Geometry Nodes
             layout.operator("node.connect_to_output", text="Link to Output", icon='GROUPOUTPUT').run_in_geometry_nodes = True
             layout.operator("node.select_link_viewer", text="Link to Viewer", icon='RESTRICT_RENDER_OFF')
+
+        if is_compositor:
+            layout.prop(snode, "show_region_asset_shelf")
 
         layout.separator()
 
@@ -684,9 +688,10 @@ class NODE_MT_node(Menu):
         layout.operator("node.delete_reconnect", icon = "DELETE")
 
         layout.separator()
-
         layout.operator("node.join", text="Join in New Frame", icon = "JOIN")
         layout.operator("node.detach", text="Remove from Frame", icon = "DELETE")
+        layout.operator("node.join_nodes", text="Join Group Inputs")
+        layout.operator("node.join_named")
         layout.operator("node.parent_set", text = "Frame Make Parent", icon = "PARENT_SET")
 
         layout.separator() #BFA - exposed context menu operator to header

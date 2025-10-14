@@ -324,9 +324,9 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &split->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   if (RNA_boolean_get(ptr, "use_normal")) {
-    row->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
-    row->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
-    row->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+    row->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, IFACE_("X"), ICON_NONE);
+    row->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, IFACE_("Y"), ICON_NONE);
+    row->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, IFACE_("Z"), ICON_NONE);
     row->decorator(ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
   else {
@@ -359,7 +359,7 @@ static void position_panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(true);
   col->prop(ptr, "start_position_x", UI_ITEM_NONE, IFACE_("Start Position X"), ICON_NONE);
-  col->prop(ptr, "start_position_y", UI_ITEM_NONE, "Y", ICON_NONE);
+  col->prop(ptr, "start_position_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
 }
 
 static void time_panel_draw(const bContext * /*C*/, Panel *panel)

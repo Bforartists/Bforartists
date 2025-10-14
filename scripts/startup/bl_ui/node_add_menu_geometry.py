@@ -517,6 +517,7 @@ class NODE_MT_gn_mesh_operations_base(node_add_menu.NodeMenu):
     menu_path = "Mesh/Operations"
 
     def draw(self, context):
+        del context
         layout = self.layout
         self.node_operator(layout, "GeometryNodeDualMesh")
         self.node_operator(layout, "GeometryNodeEdgePathsToCurves")
@@ -607,6 +608,7 @@ class NODE_MT_gn_point_base(node_add_menu.NodeMenu):
     bl_label = "Point"
 
     def draw(self, context):
+        del context
         layout = self.layout
         self.node_operator(layout, "GeometryNodeDistributePointsInVolume")
         self.node_operator(layout, "GeometryNodeDistributePointsInGrid")
@@ -871,8 +873,8 @@ class NODE_MT_gn_utilities_vector_base(node_add_menu.NodeMenu):
         ops = props.settings.add()
         ops.name = "data_type"
         ops.value = "'VECTOR'"
-        layout.separator()
         self.node_operator(layout, "ShaderNodeSeparateXYZ")
+        layout.separator()
         self.node_operator(layout, "ShaderNodeRadialTiling")
         self.node_operator(layout, "ShaderNodeVectorCurve")
         self.node_operator_with_searchable_enum(context, layout, "ShaderNodeVectorMath", "operation")
@@ -933,6 +935,7 @@ class NODE_MT_gn_volume_sample_base(node_add_menu.NodeMenu):
         layout = self.layout
         self.node_operator(layout, "GeometryNodeSampleGrid")
         self.node_operator(layout, "GeometryNodeSampleGridIndex")
+        self.node_operator(layout, "GeometryNodeGridAdvect")
         self.node_operator(layout, "GeometryNodeGridCurl")
         self.node_operator(layout, "GeometryNodeGridDivergence")
         self.node_operator(layout, "GeometryNodeGridGradient")
@@ -946,6 +949,7 @@ class NODE_MT_gn_volume_operations_base(node_add_menu.NodeMenu):
     menu_path = "Volume/Operations"
 
     def draw(self, context):
+        del context
         layout = self.layout
         self.node_operator(layout, "GeometryNodeVolumeToMesh")
         self.node_operator(layout, "GeometryNodeGridToMesh")
