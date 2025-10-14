@@ -328,7 +328,7 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
     return True
 
 def inject_nodegroup_to_material(material, node_group):
-    """Inject node group into a material's node tree"""
+    """Inject node group into a material's node tree to blend"""
 
     nodes = material.node_tree.nodes
     links = material.node_tree.links
@@ -528,8 +528,14 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
         # Set viewport settings to bounds for all children objects if enabled
         if context.scene.target_collection and context.scene.use_wireframe_on_collection:
             for collection_obj in context.scene.target_collection.objects:
-                if collection_obj.type == 'MESH':
+                #if collection_obj.type == 'MESH':
+                if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
                     collection_obj.display_type = 'BOUNDS'
+        else:
+            for collection_obj in context.scene.target_collection.objects:
+                #if collection_obj.type == 'MESH':
+                if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
+                    collection_obj.display_type = 'TEXTURED'
 
         # Apply geometry nodes configuration
         obj = context.active_object
@@ -566,6 +572,8 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
                     if socket_key.lower().startswith(('socket_12', 'relative', 'position')):
                         geom_nodes[socket_key] = True
                         break
+                    else:
+                        geom_nodes[socket_key] = False
 
             # Inject intersection nodegroup if enabled
             if (context.scene.inject_intersection_nodegroup and

@@ -32,6 +32,9 @@ from .operators.geometry_nodes import (
     OBJECT_OT_InjectNodegroupToCollection,
 )
 
+# Import wizard utilities
+from .wizard_handlers import draw_wizard_button
+
 # -----------------------------------------------------------------------------
 # Panel Definitions
 # -----------------------------------------------------------------------------
@@ -71,7 +74,12 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
                    any(m.node_group.name.startswith(name) for name in GN_ASSET_NAMES)), None)
 
         if mod and mod.node_group:
+            # Add the asset wizard button using centralized utility
+            draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
+            layout.separator()
+
             # Main panel header
+
             layout.label(text=f"{mod.node_group.name}", icon='NODETREE')
 
             # Get and display all inputs
@@ -122,9 +130,6 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
             row = layout.row()
             row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
 
-            row = layout.row()
-            row.scale_y =  1.5 # Make the button larger
-            row.operator("object.inject_nodegroup_to_collection", text="Apply Blend Materials", icon='MATERIAL')
 
 
 
@@ -150,9 +155,13 @@ class OBJECT_PT_AssetsModifierPanel(Panel):
 
     def draw(self, context):
         layout = self.layout
+        obj = context.object
 
         # Add the apply button with proper spacing
+        # Add the asset wizard button using centralized utility
         layout.separator()
+        draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
+
         row = layout.row()
         row.scale_y = 1.5 # Make the button larger
         op = row.operator("object.apply_smart_primitives", text="Apply Selected Objects", icon='CHECKMARK')
@@ -165,6 +174,7 @@ class OBJECT_PT_AssetsModifierPanel(Panel):
 
         row = layout.row()
         row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
+
 
 
 # -----------------------------------------------------------------------------

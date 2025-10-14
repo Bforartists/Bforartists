@@ -66,7 +66,8 @@ WIZARD_HANDLERS = {
 }
 
 # -----------------------------------------------------------------------------#
-# Collection Handler Functions                                                 #
+# Collection Handler Functions
+# Detects if a collection asset was added to scene to trigger wizards
 # -----------------------------------------------------------------------------#
 
 def subscribe_collection_handlers(owner):
@@ -135,9 +136,50 @@ def collection_asset_added_handler(arg):
 
 
 # -----------------------------------------------------------------------------#
-# Easy-to-use function to add new wizard handlers                                           #
+# Easy-to-use function to add new wizard handlers
+# This also includes a button we can reference to call the wizard again
 # -----------------------------------------------------------------------------#
 
+def detect_wizard_for_object(obj):
+    """
+    Detect if an object has any wizard-compatible modifiers and return wizard info.
+
+    Args:
+        obj: The object to check
+
+    Returns:
+        tuple: (has_wizard, wizard_bl_idname, wizard_name) or (False, None, None)
+    """
+    if not obj or not obj.modifiers:
+        return False, None, None
+
+    for mod in obj.modifiers:
+        if mod.type == 'NODES' and mod.node_group:
+            for pattern, operator_id in WIZARD_HANDLERS.items():
+                if pattern in mod.node_group.name:
+                    return True, operator_id, pattern
+
+    return False, None, None
+
+def draw_wizard_button(layout, obj, button_text="Open Asset Wizard", icon='WIZARD', scale_y=1.5):
+    """
+    Draw a wizard button if the object has a compatible wizard.
+
+    Args:
+        layout: The UI layout to draw the button in
+        obj: The Blender object to check for wizards
+        button_text: Text for the button
+        icon: Icon for the button
+        scale_y: Vertical scale of the button
+    """
+    has_wizard, wizard_bl_idname, _ = detect_wizard_for_object(obj)
+
+    if has_wizard and wizard_bl_idname:
+        row = layout.row()
+        row.scale_y = scale_y
+        row.operator(wizard_bl_idname, text=button_text, icon=icon)
+        return True
+    return False
 
 def register_wizard_handler(asset_pattern, wizard_operator):
     """Register a new wizard handler mapping"""

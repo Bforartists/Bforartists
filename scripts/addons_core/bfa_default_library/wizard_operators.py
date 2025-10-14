@@ -17,10 +17,15 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # -----------------------------------------------------------------------------
-# Wizard Operators
+# Wizard Popups
+#
 # Contains all wizard operator classes for different asset types
 # These are used to popup user input wizards and run scripts after
-# an asset has been added
+# an asset has been added.
+#
+# These are drawn by using functions "def" that get called into an operator
+# The operator then opens a panel that a user can confirm and customize
+# This helps the user quickly get started, and dependencies scripts can run
 # -----------------------------------------------------------------------------
 
 import bpy
@@ -31,22 +36,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# Asset names for wizard recognition
+# Asset name for wizard recognition
 BLEND_NORMALS_BY_PROXIMITY = "Blend Normals by Proximity"
-
-
-# -----------------------------------------------------------------------------#
-# Wizards                                                                      #
-# - These are drawn by using functions "def" that get called into an operator
-# The operator then opens a panel that a user can confirm and customize
-# This helps the user quickly get started, and dependencies scripts can run
-# -----------------------------------------------------------------------------#
 
 
 # -----------------------------------------------------------------------------#
 # Mesh Blend by Proximity                                                      #
 # -----------------------------------------------------------------------------#
-
 
 class WIZARD_OT_BlendNormalsByProximity(Operator):
     """Wizard to configure Blend Normals by Proximity geometry nodes setup"""
@@ -63,7 +59,7 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
                 any(mod.type == 'NODES' for mod in context.object.modifiers))
 
     def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self, width=400)
+        return context.window_manager.invoke_props_dialog(self, width=330)
 
     def draw(self, context):
         layout = self.layout
@@ -76,18 +72,19 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
 
         row = layout.row()
-        row.prop(context.scene, "inject_intersection_nodegroup", text="Blend Materials")
+        row.prop(context.scene, "inject_intersection_nodegroup", text="Apply Blend to Materials", icon="MATERIAL")
 
         row = layout.row()
-        row.prop(context.scene, "use_relative_position", text="Use Relative Position")
+        row.prop(context.scene, "use_relative_position", text="Use Relative Position", icon="MOUSE_POSITION")
 
         row = layout.row()
-        row.prop(context.scene, "use_wireframe_on_collection", text="Enable Bounds Display")
+        row.prop(context.scene, "use_wireframe_on_collection", text="Enable Bounds Display", icon="SHADING_BBOX")
 
     def execute(self, context):
         try:
-            # Import the geometry nodes operator and call it
+            # RUN SCRIPTS: Import the geometry nodes operator and call it
             success = bpy.ops.object.meshblendbyproximity('EXEC_DEFAULT')
+
             if 'FINISHED' not in success:
                 self.report({'ERROR'}, "Failed to execute mesh blend by proximity operation")
                 return {'CANCELLED'}
@@ -98,11 +95,9 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
             self.report({'ERROR'}, f"An error occurred: {str(e)}")
             return {'CANCELLED'}
 
-# -----------------------------------------------------------------------------#
-
-
 
 # Add new wizard operators here following the same pattern
+
 # Example:
 # class WIZARD_OT_YourNewWizard(Operator):
 #     bl_idname = "wizard.your_new_wizard"
