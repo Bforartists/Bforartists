@@ -31,18 +31,18 @@
 namespace blender::nodes::node_composite_scale_cc {
 
 static const EnumPropertyItem type_items[] = {
-    {CMP_NODE_SCALE_RELATIVE, "RELATIVE", 0, "Relative", ""},
-    {CMP_NODE_SCALE_ABSOLUTE, "ABSOLUTE", 0, "Absolute", ""},
-    {CMP_NODE_SCALE_RENDER_PERCENT, "SCENE_SIZE", 0, "Scene Size", ""},
-    {CMP_NODE_SCALE_RENDER_SIZE, "RENDER_SIZE", 0, "Render Size", ""},
+    {CMP_NODE_SCALE_RELATIVE, "RELATIVE", 0, N_("Relative"), ""},
+    {CMP_NODE_SCALE_ABSOLUTE, "ABSOLUTE", 0, N_("Absolute"), ""},
+    {CMP_NODE_SCALE_RENDER_PERCENT, "SCENE_SIZE", 0, N_("Scene Size"), ""},
+    {CMP_NODE_SCALE_RENDER_SIZE, "RENDER_SIZE", 0, N_("Render Size"), ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 /* Matches bgpic_camera_frame_items[]. */
 static const EnumPropertyItem frame_type_items[] = {
-    {CMP_NODE_SCALE_RENDER_SIZE_STRETCH, "STRETCH", 0, "Stretch", ""},
-    {CMP_NODE_SCALE_RENDER_SIZE_FIT, "FIT", 0, "Fit", ""},
-    {CMP_NODE_SCALE_RENDER_SIZE_CROP, "CROP", 0, "Crop", ""},
+    {CMP_NODE_SCALE_RENDER_SIZE_STRETCH, "STRETCH", 0, N_("Stretch"), ""},
+    {CMP_NODE_SCALE_RENDER_SIZE_FIT, "FIT", 0, N_("Fit"), ""},
+    {CMP_NODE_SCALE_RENDER_SIZE_CROP, "CROP", 0, N_("Crop"), ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -64,7 +64,6 @@ static void cmp_node_scale_declare(NodeDeclarationBuilder &b)
       .min(0.0001f)
       .max(CMP_SCALE_MAX)
       .structure_type(StructureType::Dynamic)
-      .optional_label()
       .usage_by_menu("Type", {CMP_NODE_SCALE_RELATIVE, CMP_NODE_SCALE_ABSOLUTE});
   b.add_input<decl::Float>("Y")
       .default_value(1.0f)

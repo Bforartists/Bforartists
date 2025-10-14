@@ -340,6 +340,7 @@ const bTheme U_theme_default = {
     .anim = {
       .playhead = RGBA(0x54b933ff),
       .preview_range = RGBA(0xa14d0066),
+      .scene_strip_range = RGBA(0x00000080),
       .channels = RGBA(0x6677894b),
       .channels_sub = RGBA(0x5563723b),
       .channel_group = RGBA(0x59725237),

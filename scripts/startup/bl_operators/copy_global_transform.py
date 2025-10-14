@@ -10,17 +10,15 @@ Simple operators for copying world-space transforms.
 It's called "global" to avoid confusion with the Blender World data-block.
 """
 
-import ast
 import abc
 from typing import Iterable, Optional, Any, TypeAlias
 
 import bpy
 from bpy.types import (
     Context, Object, Operator, PoseBone,
-    Camera, ID, ActionChannelbag, PropertyGroup,
+    Camera, ID, ActionChannelbag,
 )
 from mathutils import Matrix
-from bpy_extras.anim_utils import AutoKeying
 
 
 _axis_enum_items = [
@@ -47,6 +45,7 @@ def get_matrix(context: Context) -> Matrix:
 
 
 def set_matrix(context: Context, mat: Matrix) -> None:
+    from bpy_extras.anim_utils import AutoKeying
     bone = context.active_pose_bone
     if bone:
         # Convert matrix to local space
@@ -130,9 +129,9 @@ def _selected_keyframes_for_action_slot(object: Object, rna_path_prefix: str) ->
 
 
 def _copy_matrix_to_clipboard(window_manager: bpy.types.WindowManager, matrix: Matrix) -> None:
-    rows = [f"    {tuple(row)!r}," for row in matrix]
+    rows = ["    {!r},".format(tuple(row)) for row in matrix]
     as_string = "\n".join(rows)
-    window_manager.clipboard = f"Matrix((\n{as_string}\n))"
+    window_manager.clipboard = "Matrix((\n{:s}\n))".format(as_string)
 
 
 class OBJECT_OT_copy_global_transform(Operator):
@@ -268,12 +267,27 @@ class OBJECT_OT_paste_transform(Operator):
         if not context.active_pose_bone and not context.active_object:
             cls.poll_message_set("Select an object or pose bone")
             return False
-
-        clipboard = context.window_manager.clipboard.strip()
-        if not (clipboard.startswith("Matrix(") or clipboard.startswith("<Matrix 4x4")):
-            cls.poll_message_set("Clipboard does not contain a valid matrix")
-            return False
         return True
+
+    @classmethod
+    def string_to_matrix(cls, value: str) -> Matrix | None:
+        if value.startswith("Matrix"):
+            return cls.parse_matrix(value)
+        if value.startswith("<Matrix 4x4"):
+            return cls.parse_repr_m4(value[12:-1])
+        if value:
+            return cls.parse_print_m4(value)
+        return None
+
+    @staticmethod
+    def parse_matrix(value: str) -> Matrix | None:
+        import ast
+        try:
+            return Matrix(ast.literal_eval(value[6:]))
+        except Exception:
+            # ast.literal_eval() can raise a slew of exceptions, all of
+            # which means that it's not a matrix on the clipboard.
+            return None
 
     @staticmethod
     def parse_print_m4(value: str) -> Optional[Matrix]:
@@ -286,7 +300,11 @@ class OBJECT_OT_paste_transform(Operator):
         if len(lines) != 4:
             return None
 
-        floats = tuple(tuple(float(item) for item in line.split()) for line in lines)
+        try:
+            floats = tuple(tuple(float(item) for item in line.split()) for line in lines)
+        except ValueError:
+            # Apprently not the expected format.
+            return None
         return Matrix(floats)
 
     @staticmethod
@@ -297,20 +315,19 @@ class OBJECT_OT_paste_transform(Operator):
         if len(lines) != 4:
             return None
 
-        floats = tuple(tuple(float(item.strip()) for item in line.strip()[1:-1].split(',')) for line in lines)
+        try:
+            floats = tuple(tuple(float(item.strip()) for item in line.strip()[1:-1].split(',')) for line in lines)
+        except ValueError:
+            # Apprently not the expected format.
+            return None
         return Matrix(floats)
 
     def execute(self, context: Context) -> set[str]:
         clipboard = context.window_manager.clipboard.strip()
-        if clipboard.startswith("Matrix"):
-            mat = Matrix(ast.literal_eval(clipboard[6:]))
-        elif clipboard.startswith("<Matrix 4x4"):
-            mat = self.parse_repr_m4(clipboard[12:-1])
-        else:
-            mat = self.parse_print_m4(clipboard)
 
+        mat = self.string_to_matrix(clipboard)
         if mat is None:
-            self.report({'ERROR'}, "Clipboard does not contain a valid matrix")
+            self.report({'ERROR'}, "Clipboard does not contain a matrix")
             return {'CANCELLED'}
 
         try:
@@ -528,7 +545,7 @@ class TransformableObject(Transformable):
         self.object = object
 
     def __str__(self) -> str:
-        return f"TransformableObject({self.object.name})"
+        return "TransformableObject({:s})".format(self.object.name)
 
     def matrix_world(self) -> Matrix:
         return self.object.matrix_world
@@ -537,6 +554,7 @@ class TransformableObject(Transformable):
         self.object.matrix_world = matrix
 
     def _autokey_matrix_world(self, context: Context) -> None:
+        from bpy_extras.anim_utils import AutoKeying
         AutoKeying.autokey_transformation(context, self.object)
 
     def __hash__(self) -> int:
@@ -559,7 +577,7 @@ class TransformableBone(Transformable):
         self.pose_bone = pose_bone
 
     def __str__(self) -> str:
-        return f"TransformableBone({self.arm_object.name}, bone={self.pose_bone.name})"
+        return "TransformableBone({:s}, bone={:s})".format(self.arm_object.name, self.pose_bone.name)
 
     def matrix_world(self) -> Matrix:
         mat = self.arm_object.matrix_world @ self.pose_bone.matrix
@@ -571,6 +589,7 @@ class TransformableBone(Transformable):
         self.pose_bone.matrix = arm_eval.matrix_world.inverted() @ matrix
 
     def _autokey_matrix_world(self, context: Context) -> None:
+        from bpy_extras.anim_utils import AutoKeying
         AutoKeying.autokey_transformation(context, self.pose_bone)
 
     def __hash__(self) -> int:
@@ -677,6 +696,7 @@ class OBJECT_OT_fix_to_camera(FixToCameraCommon, Operator):
         return {t: camera_mat_inv @ t.matrix_world() for t in transformables}
 
     def _execute(self, context: Context, transformables: list[Transformable]) -> None:
+        from bpy_extras.anim_utils import AutoKeying
         depsgraph = context.view_layer.depsgraph
         scene = context.scene
 
@@ -780,7 +800,7 @@ def _unregister_message_bus() -> None:
 
 
 @bpy.app.handlers.persistent  # type: ignore
-def _on_blendfile_load_post(none: Any, other_none: Any) -> None:
+def _on_blendfile_load_post(_none: Any, _other_none: Any) -> None:
     # The parameters are required, but both are None.
     _register_message_bus()
 

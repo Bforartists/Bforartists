@@ -399,6 +399,14 @@ class DOPESHEET_HT_editor_buttons:
         row = layout.row()
         row.popover(panel="DOPESHEET_PT_view_view_options", text="Options")
 
+        overlays = st.overlays
+
+        row = layout.row(align=True)
+        row.prop(overlays, "show_overlays", text="", icon='OVERLAY')
+        sub = row.row(align=True)
+        sub.popover(panel="DOPESHEET_PT_overlay", text="")
+        sub.active = overlays.show_overlays
+
     @classmethod
     def _draw_action_selector(cls, context, layout):
         animated_id = cls._get_animated_id(context)
@@ -1328,6 +1336,33 @@ class DOPESHEET_PT_grease_pencil_layer_display(
     bl_options = {"DEFAULT_CLOSED"}
 
 
+class DOPESHEET_PT_overlay(Panel):
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Overlays"
+    bl_ui_units_x = 13
+
+    def draw(self, _context):
+        pass
+
+
+class DOPESHEET_PT_dopesheet_overlay(Panel):
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "DOPESHEET_PT_overlay"
+    bl_label = "Dope Sheet Overlays"
+
+    def draw(self, context):
+        st = context.space_data
+        overlay_settings = st.overlays
+        layout = self.layout
+
+        layout.active = overlay_settings.show_overlays
+        row = layout.row()
+        row.active = context.workspace.use_scene_time_sync
+        row.prop(overlay_settings, "show_scene_strip_range")
+
+
 classes = (
     ANIM_OT_switch_editors_to_dopesheet,  # BFA menu
     ANIM_OT_switch_editors_to_graph,  # BFA menu
@@ -1370,6 +1405,9 @@ classes = (
     DOPESHEET_PT_grease_pencil_layer_relations,
     DOPESHEET_PT_grease_pencil_layer_display,
     DOPESHEET_PT_ShapeKey,
+
+    DOPESHEET_PT_overlay,
+    DOPESHEET_PT_dopesheet_overlay,
 )
 
 if __name__ == "__main__":  # only for live edit.

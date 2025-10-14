@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-from bpy.types import Menu, Panel
+from bpy.types import Panel
 from bpy.app.translations import (
     pgettext_n as n_,
     contexts as i18n_contexts,
@@ -80,6 +80,14 @@ def playback_controls(layout, context):
     row.operator("screen.frame_jump", text="", icon="FF").end = True
     row.operator("screen.animation_cancel", text="", icon="LOOP_BACK").restore_frame = True
 
+    # Time jump
+    row = layout.row(align=True)
+    row.operator("screen.time_jump", text="", icon='FRAME_PREV').backward = True
+    row.operator("screen.time_jump", text="", icon='FRAME_NEXT').backward = False
+    row.popover(panel="TIME_PT_jump", text="")
+
+    layout.separator_spacer()
+
     # BFA - cleaned up duplicate controls and organized layout
     if scene:
         # BFA- Current frame display
@@ -149,7 +157,7 @@ def playback_controls(layout, context):
             layout.popover(panel="TIME_PT_view_view_options", text="")
 
 # BFA - Legacy
-class TIME_MT_editor_menus(Menu):
+class TIME_MT_editor_menus(bpy.types.Menu):
     bl_idname = "TIME_MT_editor_menus"
     bl_label = ""
 
@@ -172,7 +180,7 @@ class TIME_MT_editor_menus(Menu):
             sub.menu("DOPESHEET_MT_select")  # BFA
 
 # BFA - Legacy
-class TIME_MT_marker(Menu):
+class TIME_MT_marker(bpy.types.Menu):
     bl_label = "Marker"
 
     def draw(self, context):
@@ -181,7 +189,7 @@ class TIME_MT_marker(Menu):
         marker_menu_generic(layout, context)
 
 # BFA - Legacy
-class TIME_MT_view(Menu):
+class TIME_MT_view(bpy.types.Menu):
     bl_label = "View"
 
     def draw(self, context):
@@ -471,6 +479,23 @@ class TIME_PT_auto_keyframing(TimelinePanelButtons, Panel):
         col.prop(tool_settings, "use_keyframe_cycle_aware")
 
 
+class TIME_PT_jump(TimelinePanelButtons, Panel):
+    bl_label = "Time Jump"
+    bl_options = {'HIDE_HEADER'}
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+
+        layout.prop(scene, "time_jump_unit", expand=True, text="Jump Unit")
+        layout.prop(scene, "time_jump_delta", text="Delta")
+
+
 ###################################
 
 classes = (
@@ -481,6 +506,7 @@ classes = (
     TIME_PT_keyframing_settings,
     TIME_PT_view_view_options,  # BFA - menu
     TIME_PT_auto_keyframing,
+    TIME_PT_jump,
     TIME_PT_playhead_snapping,
 )
 

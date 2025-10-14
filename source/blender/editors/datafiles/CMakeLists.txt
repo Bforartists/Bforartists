@@ -413,6 +413,14 @@ if(WITH_BLENDER)
       collection_bone_add
       collection_bone_new
       collection_bone_remove
+      collection_color_01
+      collection_color_02
+      collection_color_03
+      collection_color_04
+      collection_color_05
+      collection_color_06
+      collection_color_07
+      collection_color_08
       collection_info
       collection_new
       color # see color_red/green/blue */
@@ -437,6 +445,7 @@ if(WITH_BLENDER)
       con_floor
       con_followpath
       con_followtrack
+      con_geometryattribute
       con_kinematic
       con_locktrack
       con_loclike
