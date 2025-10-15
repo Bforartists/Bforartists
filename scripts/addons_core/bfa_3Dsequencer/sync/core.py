@@ -310,7 +310,7 @@ def scene_change_manager(context: bpy.types.Context):
         gp_material = None
 
         if context.active_object and isinstance(
-            context.active_object.data, bpy.types.GreasePencilv3
+            context.active_object.data, bpy.types.GreasePencil
         ):
             gp_material = context.active_object.active_material
             sync_settings.last_gp_mode = context.active_object.mode
@@ -329,7 +329,7 @@ def scene_change_manager(context: bpy.types.Context):
         # If the new active object is a GP, restore the previously stored material
         # as active if also assigned.
         if (gpencil := context.active_object) and isinstance(
-            gpencil.data, bpy.types.GreasePencilv3
+            gpencil.data, bpy.types.GreasePencil
         ):
             if gp_material:
                 material_idx = gpencil.data.materials.find(gp_material.name)

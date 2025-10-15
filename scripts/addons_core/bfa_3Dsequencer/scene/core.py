@@ -210,7 +210,7 @@ def remap_relations(manifest: DuplicationManifest):
     def _remap_modifiers(new_object: bpy.types.Object):
         """Remap `new_object`'s modifiers properties."""
         _remap_pointer_properties(new_object.modifiers)
-        if isinstance(new_object.data, bpy.types.GreasePencilv3):
+        if isinstance(new_object.data, bpy.types.GreasePencil):
             _remap_pointer_properties(new_object.grease_pencil_modifiers)
             _remap_pointer_properties(new_object.shader_effects)
 
