@@ -167,7 +167,6 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
 
             # Create a new material
             default_mat = bpy.data.materials.new(name=f"{obj.name}_DefaultMaterial")
-            default_mat.use_nodes = True
 
             # Add material slot to object
             obj.data.materials.append(default_mat)
@@ -186,7 +185,6 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
                     # Empty material slot found, create and assign default material
                     logger.info(f"  Empty material slot found for {obj.name}, adding default material")
                     default_mat = bpy.data.materials.new(name=f"{obj.name}_DefaultMaterial")
-                    default_mat.use_nodes = True
                     material_slot.material = default_mat
                     # Process the new material
                     inject_nodegroup_to_material(default_mat, node_group)
@@ -368,6 +366,185 @@ class OBJECT_OT_InjectNodegroupToCollection(Operator):
         return {'FINISHED'}
 
 
+
+class OBJECT_OT_RemoveNodegroupFromCollection(Operator):
+    """Remove node group from all materials in target collection"""
+    bl_idname = "object.remove_nodegroup_from_collection"
+    bl_label = "Remove Node Group from Materials"
+    bl_description = "Remove S_Intersections node group from materials of objects in target collection"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    nodegroup_name: bpy.props.StringProperty(
+        name="Node Group",
+        description="Name of the node group to remove",
+        default="S_Intersections"
+    )
+
+    @classmethod
+    def poll(cls, context):
+        """Available when there's an active object with Blend Normals by Proximity modifier"""
+        obj = context.object
+        if not obj or not obj.modifiers:
+            return False
+
+        for mod in obj.modifiers:
+            if (mod.type == 'NODES' and
+                mod.node_group and
+                "Blend Normals by Proximity" in mod.node_group.name):
+                return True
+        return False
+
+    def execute(self, context):
+        obj = context.object
+
+        # Find the Blend Normals by Proximity modifier
+        target_collection = None
+        for mod in obj.modifiers:
+            if (mod.type == 'NODES' and
+                mod.node_group and
+                "Blend Normals by Proximity" in mod.node_group.name):
+
+                # Try to get the collection from the modifier
+                for socket_name in mod.keys():
+                    if socket_name.startswith("Socket_") and isinstance(mod[socket_name], bpy.types.Collection):
+                        target_collection = mod[socket_name]
+                        break
+
+                if target_collection:
+                    break
+
+        if not target_collection:
+            self.report({'ERROR'}, "No target collection found in Blend Normals by Proximity modifier")
+            return {'CANCELLED'}
+
+        # Remove node group from collection
+        success = remove_nodegroup_from_collection(target_collection.name, self.nodegroup_name)
+
+        if success:
+            self.report({'INFO'}, f"Removed {self.nodegroup_name} node group from materials in '{target_collection.name}'")
+        else:
+            self.report({'ERROR'}, f"Failed to remove {self.nodegroup_name} node group")
+
+        return {'FINISHED'}
+
+
+def remove_nodegroup_from_collection(collection_name, nodegroup_name="S_Intersections"):
+    """Remove a node group from all materials of objects in the target collection"""
+    target_collection = bpy.data.collections.get(collection_name)
+    if not target_collection:
+        logger.error(f"Collection '{collection_name}' not found!")
+        return False
+
+    logger.info(f"Processing collection: {collection_name}")
+
+    processed_objects = 0
+    materials_processed = 0
+
+    # Process each object in the collection
+    for obj in target_collection.objects:
+        if obj.type not in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
+            continue
+
+        processed_objects += 1
+
+        # Process all materials of the object
+        for material_slot in obj.material_slots:
+            if material_slot.material:
+                if remove_nodegroup_from_material(material_slot.material, nodegroup_name):
+                    materials_processed += 1
+
+    logger.info(f"Processed {processed_objects} objects, removed node group from {materials_processed} materials")
+    return materials_processed > 0
+
+
+def remove_nodegroup_from_material(material, nodegroup_name):
+    """Remove node group from a material's node tree and restore original connections"""
+    if not material:
+        logger.warning(f"Material {material.name} doesn't use nodes or has no node tree")
+        return False
+
+    nodes = material.node_tree.nodes
+    links = material.node_tree.links
+
+    # Find all node group instances to remove
+    nodes_to_remove = []
+    for node in nodes:
+        if (node.type == 'GROUP' and  # Use single string comparison
+            getattr(node, 'node_tree', None) and
+            node.node_tree.name == nodegroup_name):
+            nodes_to_remove.append(node)
+
+    if not nodes_to_remove:
+        logger.info(f"No {nodegroup_name} nodes found in {material.name}")
+        return False
+
+    removed_count = 0
+
+    for node in nodes_to_remove:
+        # Find the input and output connections
+        input_socket = None
+        output_socket = None
+        input_connection = None
+        output_connection = None
+        
+        # Find shader input socket (usually the first shader input)
+        for socket in node.inputs:
+            if socket.type == 'SHADER' and socket.is_linked:
+                input_connection = socket.links[0].from_socket
+                input_socket = socket
+                break
+        
+        # Find shader output socket and its connection
+        for socket in node.outputs:
+            if socket.type == 'SHADER' and socket.is_linked:
+                for link in socket.links:
+                    output_connection = link.to_socket
+                    output_socket = socket
+                    break
+                if output_connection:
+                    break
+        
+        # Remove all links to and from this node
+        for socket in node.inputs:
+            for link in socket.links:
+                links.remove(link)
+
+        for socket in node.outputs:
+            for link in socket.links:
+                links.remove(link)
+
+        # Remove the node
+        nodes.remove(node)
+        removed_count += 1
+        
+        # Reconnect original input to output if both connections exist
+        if input_connection and output_connection:
+            try:
+                links.new(input_connection, output_connection)
+                logger.info(f"  Restored shader connection in {material.name}")
+            except Exception as e:
+                logger.warning(f"  Could not restore connection in {material.name}: {e}")
+
+        # If we removed the node but have no output connection, check if we need to add a default shader
+        elif input_connection and not output_connection:
+            # Find the material output node
+            output_node = None
+            for n in nodes:
+                if n.type == 'OUTPUT_MATERIAL' and n.is_active_output:
+                    output_node = n
+                    break
+
+            if output_node and output_node.inputs.get("Surface"):
+                try:
+                    links.new(input_connection, output_node.inputs["Surface"])
+                    logger.info(f"  Reconnected shader to output in {material.name}")
+                except Exception as e:
+                    logger.warning(f"  Could not reconnect to output in {material.name}: {e}")
+
+    logger.info(f"  Removed {removed_count} {nodegroup_name} node(s) from {material.name}")
+    return removed_count > 0
+
+
 class OBJECT_OT_MeshBlendbyProximity(Operator):
     """Apply Mesh Blend by Proximity configuration with target collection settings"""
     bl_idname = "object.meshblendbyproximity"
@@ -455,8 +632,9 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
             if (context.scene.inject_intersection_nodegroup and
                 context.scene.target_collection):
                 success = inject_nodegroup_to_collection(context.scene.target_collection.name)
-
-                # DBEUG
+            else:
+                success = remove_nodegroup_from_collection(context.scene.target_collection.name)
+                # DEBUG
                 #if success:
                 #    self.report({'INFO'}, "Intersection node group injected into materials to blend them")
 
@@ -478,6 +656,7 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
 
 classes = (
     OBJECT_OT_InjectNodegroupToCollection,
+    OBJECT_OT_RemoveNodegroupFromCollection,
     OBJECT_OT_MeshBlendbyProximity,
 )
 
