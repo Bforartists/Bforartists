@@ -8031,7 +8031,6 @@ keyconfig_data = \
      {"type": 'FOUR', "value": 'PRESS'},
      {"properties":
       [("data_path", 'tool_settings.use_uv_select_island'),
-       ("value", 'ISLAND'),
        ],
       },
      ),
