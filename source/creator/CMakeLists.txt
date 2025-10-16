@@ -1850,7 +1850,7 @@ install(
 # -----------------------------------------------------------------------------
 # Bundle assets
 
-set(ASSET_BUNDLE_DIR ${CMAKE_SOURCE_DIR}/assets_bfa/)
+set(ASSET_BUNDLE_DIR ${CMAKE_SOURCE_DIR}/assets/) # BFA - WIP - soon our assets
 
 if(EXISTS "${ASSET_BUNDLE_DIR}")
   install(
