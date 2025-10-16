@@ -190,8 +190,6 @@ def wizard_menu_func(self, context):
         has_wizard, _, _ = detect_wizard_for_object(obj)
         
         if has_wizard:
-            layout.separator()
-
             draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
 
 # 3D View - Object - Apply
@@ -222,7 +220,6 @@ def apply_boolean_menu_func(self, context):
         op.join_on_apply = False
         op.boolean_on_apply = True
         op.remesh_on_apply = False
-
 
 # 3D View - Object - Apply
 def apply_remesh_menu_func(self, context):

@@ -5,8 +5,45 @@
 import bpy
 from bpy.types import Panel
 import bmesh
+import sys
 
 from bpy.app.translations import contexts as i18n_contexts
+
+# BFA - Import the default library wizard functions
+def draw_wizard_button(layout, obj, text, icon, scale):
+    """Debug version to check what's in wizard_handlers"""
+    if not bpy.context.preferences.addons.get("bfa_default_library"):
+        return False
+
+    try:
+        wizard_handlers = sys.modules["bfa_default_library.wizard_handlers"]
+
+        # Debug: print all attributes of the module
+        #print(f"DEBUG: wizard_handlers module attributes: {dir(wizard_handlers)}")
+
+        # Check if the functions exist
+        has_detect = hasattr(wizard_handlers, "detect_wizard_for_object")
+        has_draw = hasattr(wizard_handlers, "draw_wizard_button")
+
+        #print(f"DEBUG: detect_wizard_for_object exists: {has_detect}")
+        #print(f"DEBUG: draw_wizard_button exists: {has_draw}")
+
+        if has_detect:
+            has_wizard, wizard_bl_idname, _ = wizard_handlers.detect_wizard_for_object(obj)
+            #print(f"DEBUG: Wizard detection result: {has_wizard}, {wizard_bl_idname}")
+
+            if has_wizard and wizard_bl_idname:
+                row = layout.row()
+                row.scale_y = scale
+                row.operator(wizard_bl_idname, text=text, icon=icon)
+                return True
+
+    except Exception as e:
+        #print(f"DEBUG: Wizard button error: {e}")
+        import traceback
+        traceback.print_exc()
+
+    return False
 
 
 class toolshelf_calculate( Panel):
@@ -1218,7 +1255,10 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
 
     def draw(self, _context):
         layout = self.layout
-
+        
+        context = bpy.context
+        obj = context.object
+        
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
         #text buttons
@@ -1229,6 +1269,9 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
 
             col.operator("asset.mark", icon='ASSET_MANAGER')
             col.operator("asset.clear", icon='CLEAR').set_fake_user = False
+
+            if context.preferences.addons.get("bfa_default_library"):
+                draw_wizard_button(col, obj, "Open Asset Wizard", 'WIZARD', 1)
 
         # icon buttons
         else:
@@ -1243,16 +1286,27 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
                 row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
+
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
 
+
+                if context.preferences.addons.get("bfa_default_library"):
+                    row = col.row(align=True)
+                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
+
             elif column_count == 1:
 
                 col.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 col.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+                if context.preferences.addons.get("bfa_default_library"):
+                    draw_wizard_button(col, obj, "", 'WIZARD', 1)
 
 
 class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
