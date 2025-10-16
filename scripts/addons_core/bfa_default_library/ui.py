@@ -203,7 +203,7 @@ def apply_join_menu_func(self, context):
     if context.object:
         layout.separator()
         op = layout.operator("object.apply_selected_objects",
-                             text="Apply and Join",
+                             text="Visual Geometry and Join",
                              icon='JOIN')
         op.join_on_apply = True
         op.boolean_on_apply = False
@@ -217,7 +217,7 @@ def apply_boolean_menu_func(self, context):
 
     if context.object:
         op = layout.operator("object.apply_selected_objects",
-                             text="Apply and Boolean",
+                             text="Visual Geometry and Boolean",
                              icon='MOD_BOOLEAN')
         op.join_on_apply = False
         op.boolean_on_apply = True
@@ -232,7 +232,7 @@ def apply_remesh_menu_func(self, context):
 
     if context.object:
         op = layout.operator("object.apply_selected_objects",
-                             text="Apply and Remesh",
+                             text="Visual Geometry and Remesh",
                              icon='MOD_REMESH')
         op.join_on_apply = False
         op.boolean_on_apply = False
