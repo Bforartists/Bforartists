@@ -38,7 +38,7 @@ COMP_NAME = "Compositor Nodes Library"
 bl_info = {
     "name": "Default Asset Library",
     "author": "Draise",
-    "version": (1, 2, 2),
+    "version": (1, 2, 3),
     "blender": (4, 4, 3),
     "location": "Asset Browser>Default Library",
     "description": "Adds a default library with complementary assets that you can use from the Asset Browser Editor",
@@ -136,9 +136,10 @@ classes = (
 # Define all submodules including the new operators and wizards modules
 submodule_names = [
     "ui",              # User interface and menus
-    "ops",             # Main operations and panels
+    "panels",          # Main panels
+    "ops",             # Main operations
     "operators",       # All operator classes (geometry, compositor, shader)
-    "wizards",         # Wizard operations and handlers
+    "wizards",              # Wizards
 ]
 
 # Get the register/unregister functions from the factory

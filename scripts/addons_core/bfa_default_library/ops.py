@@ -22,200 +22,195 @@
 # -----------------------------------------------------------------------------
 
 import bpy
-from bpy.types import Panel
+from bpy.types import Operator
 
 # Import operations from submodules
 from .operators.geometry_nodes import (
-    get_geometry_nodes_inputs,
     GN_ASSET_NAMES,
-    OBJECT_OT_ApplySmartPrimitives,
-    OBJECT_OT_InjectNodegroupToCollection,
+    is_gn_asset_object,
+    get_all_gn_asset_objects
 )
 
-# Import wizard utilities
-from .wizard_handlers import draw_wizard_button
+class OBJECT_OT_ApplySelected(Operator):
+    """Apply selected objects, converts to mesh, joins them, and optionally remeshes"""
+    bl_idname = "object.apply_selected_objects"
+    bl_label = "Apply Selected Objects"
+    bl_description = "Converts objects to regular mesh objects with optional joining, remeshing and boolean operations"
+    bl_options = {'REGISTER', 'UNDO'}
 
-# -----------------------------------------------------------------------------
-# Panel Definitions
-# -----------------------------------------------------------------------------
+    join_on_apply: bpy.props.BoolProperty(
+        name="Join on Apply",
+        description="Join all converted primitives into a single mesh object",
+        default=True
+    )
 
-class OBJECT_PT_GeometryNodesPanel(Panel):
-    """Panel in the sidebar for editing Geometry Nodes Assets properties."""
-    bl_idname = "OBJECT_PT_geometry_nodes_panel"
-    bl_label = "Asset Properties"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Item"
+    boolean_on_apply: bpy.props.BoolProperty(
+        name="Boolean on Apply",
+        description="Apply boolean union operation to combine the primitives",
+        default=False
+    )
 
-    show_panel = True  # Controls whether the panel should be shown
-    
+    remesh_on_apply: bpy.props.BoolProperty(
+        name="Remesh on Apply",
+        description="Apply remeshing operation to the final mesh",
+        default=False
+    )
+
     @classmethod
     def poll(cls, context):
-        """Only show panel for objects with Geometry Nodes modifiers from the asset list."""
-        if not cls.show_panel or not context.object or not context.object.modifiers:
+        """Available if there are objects selected and only compatible types"""
+        selected_objects = context.selected_objects
+        if not selected_objects:
             return False
-            
-        # Check if any modifier is a Geometry Nodes modifier with a node group whose name starts with our smart primitive names
-        for mod in context.object.modifiers:
-            if (mod.type == 'NODES' and
-                mod.node_group and
-                any(mod.node_group.name.startswith(name) for name in GN_ASSET_NAMES)):
-                return True
-        return False
-
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
         
-        # Find the first Geometry Nodes modifier that matches our primitive names
-        mod = next((m for m in obj.modifiers
-                   if m.type == 'NODES' and
-                   m.node_group and
-                   any(m.node_group.name.startswith(name) for name in GN_ASSET_NAMES)), None)
+        # Check if all selected objects are compatible types
+        compatible_types = {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}
+        for obj in selected_objects:
+            if obj.type not in compatible_types:
+                return False
+        
+        return True
+    
+    def execute(self, context):
+        selected_objects = context.selected_objects
+        
+        if not selected_objects:
+            self.report({'WARNING'}, "No objects found to process")
+            return {'CANCELLED'}
 
-        if mod and mod.node_group:
-            # Add the asset wizard button using centralized utility
-            draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
-            layout.separator()
+        # Store original state
+        original_active = context.view_layer.objects.active
+        original_selected = set(context.selected_objects)
+        objects_to_delete = []
+        new_objects = []
+        
+        try:
+            # Convert all selected objects to mesh
+            bpy.ops.object.select_all(action='DESELECT')
+            for obj in selected_objects:
+                obj.select_set(True)
+                objects_to_delete.append(obj)
+            
+            context.view_layer.objects.active = selected_objects[0]
+            bpy.ops.object.visual_geometry_to_objects()
+            
+            # Get newly created mesh objects
+            current_selected = set(context.selected_objects)
+            new_objects = [obj for obj in current_selected if obj not in original_selected]
+            
+            final_object = None
+            
+            if new_objects:
+                if self.boolean_on_apply:
+                    # Boolean union operation
+                    base_object = new_objects[0]
+                    base_object.select_set(True)
+                    context.view_layer.objects.active = base_object
 
-            # Main panel header
+                    objects_to_bool = new_objects[1:]
+                    objects_to_delete.extend(objects_to_bool)
 
-            layout.label(text=f"{mod.node_group.name}", icon='NODETREE')
+                    for obj in objects_to_bool:
+                        if obj and obj.name in context.scene.objects:
+                            bool_mod = base_object.modifiers.new(name="Boolean", type='BOOLEAN')
+                            bool_mod.operation = 'UNION'
+                            bool_mod.solver = 'FLOAT'
+                            bool_mod.object = obj
+                            
+                            try:
+                                bpy.ops.object.modifier_apply(modifier=bool_mod.name)
+                            except RuntimeError as e:
+                                print(f"Boolean operation failed: {str(e)}")
+                                continue
+                            
+                            context.view_layer.update()
+                            
+                            bpy.ops.object.select_all(action='DESELECT')
+                            base_object.select_set(True)
+                            context.view_layer.objects.active = base_object
+                    
+                    final_object = base_object
+                
+                elif self.join_on_apply and len(new_objects) > 1:
+                    # Simple join operation
+                    context.view_layer.objects.active = new_objects[0]
+                    for obj in new_objects:
+                        obj.select_set(True)
+                    bpy.ops.object.join()
+                    final_object = context.view_layer.objects.active
 
-            # Get and display all inputs
-            inputs = get_geometry_nodes_inputs(mod)
+                # Add remeshing if enabled
+                elif self.remesh_on_apply and len(new_objects) > 1:
+                        context.view_layer.objects.active = new_objects[0]
+                        for obj in new_objects:
+                            obj.select_set(True)
+                        bpy.ops.object.join()
 
-            # Track current panel to group sockets together
-            current_panel = None
-            panel_box = None
+                        final_object = context.view_layer.objects.active
 
-            for socket_name, socket_id, socket_type, parent_panel in inputs:
-                # If we've moved to a new panel, create a new box
-                if parent_panel != current_panel:
-                    if panel_box:  # Close previous panel if it exists
-                        panel_box.separator()
-                    current_panel = parent_panel
-                    if current_panel:
-                        panel_box = layout.box()
-                        panel_box.label(text=current_panel, icon='NODE')
+                        bpy.ops.object.voxel_remesh()
 
-                # If we're in a panel, use the panel_box layout
-                target_layout = panel_box if current_panel else layout
+                        self.report({'INFO'}, f"Applied remesh")
 
-                # Create a row for each input to ensure proper layout
-                row = target_layout.row()
-
-                # Handle different socket types
-                if socket_type == 'BOOLEAN':
-                    row.prop(mod, f'["{socket_id}"]', text=socket_name, toggle=True)
-                elif socket_type == 'VALUE':
-                    # Split row into label and slider
-                    row.label(text=socket_name)
-                    row.prop(mod, f'["{socket_id}"]', text="", slider=False)
                 else:
-                    row.prop(mod, f'["{socket_id}"]', text=socket_name)
+                    final_object = new_objects[0]
 
-            # Add the apply button with proper spacing
-            layout.separator()
-            row = layout.row()
-            row.scale_y =  1.5 # Make the button larger
-            op = row.operator("object.apply_smart_primitives", text="Apply Selected Objects", icon='CHECKMARK')
-            op.join_on_apply = context.scene.join_apply
-            op.boolean_on_apply = context.scene.boolean_apply
+            # Clean up original objects
+            bpy.ops.object.select_all(action='DESELECT')
+            for obj in objects_to_delete:
+                if obj and obj.name in context.scene.objects:
+                    obj.select_set(True)
+            bpy.ops.object.delete()
+            
+            # Select final object
+            if final_object and final_object.name in context.scene.objects:
+                bpy.ops.object.select_all(action='DESELECT')
+                final_object.select_set(True)
+                context.view_layer.objects.active = final_object
 
-            # Add toggle buttons for apply properties
-            row = layout.row()
-            row.prop(context.scene, "join_apply", text="Join on Apply")
-
-            row = layout.row()
-            row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
-
-
-
-
-class OBJECT_PT_AssetsModifierPanel(Panel):
-    """Creates a custom panel in the Modifier properties for Assets"""
-    bl_label = "Asset Operators"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "modifier"
-    bl_parent_id = 'DATA_PT_modifiers'
-
-    @classmethod
-    def poll(cls, context):
-        # Show panel if any Smart Primitive modifier exists in the stack
-        if context.object and context.object.modifiers:
-            # Check all modifiers in the stack
-            for mod in context.object.modifiers:
-                if (mod.type == 'NODES' and
-                    mod.node_group and
-                    any(mod.node_group.name.startswith(name) for name in GN_ASSET_NAMES)):
-                    return True
-        return False
-
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
-
-        # Add the apply button with proper spacing
-        # Add the asset wizard button using centralized utility
-        layout.separator()
-        draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
-
-        row = layout.row()
-        row.scale_y = 1.5 # Make the button larger
-        op = row.operator("object.apply_smart_primitives", text="Apply Selected Objects", icon='CHECKMARK')
-        op.join_on_apply = context.scene.join_apply
-        op.boolean_on_apply = context.scene.boolean_apply
-
-        # Add toggle buttons for apply properties
-        row = layout.row()
-        row.prop(context.scene, "join_apply", text="Join on Apply")
-
-        row = layout.row()
-        row.prop(context.scene, "boolean_apply", text="Boolean on Apply")
+                # Clear sharp edges
+                bpy.ops.object.mode_set(mode='EDIT')
+                bpy.ops.mesh.select_all(action='SELECT')
+                bpy.ops.mesh.mark_sharp(clear=True)
+                bpy.ops.object.mode_set(mode='OBJECT')
+            
+            self.report({'INFO'}, f"Applied {len(selected_objects)} objects")
+            return {'FINISHED'}
+            
+        except Exception as e:
+            self.report({'ERROR'}, f"Error during operation: {str(e)}")
+            # Restore original state
+            if original_active and original_active.name in context.scene.objects:
+                context.view_layer.objects.active = original_active
+            return {'CANCELLED'}
 
 
-
-# -----------------------------------------------------------------------------
-# Handler Functions
-# -----------------------------------------------------------------------------
-
-def object_added_handler(scene):
-    """Activates the panel when an object with Geometry Nodes is added to the scene."""
-    for obj in scene.objects:
-        if obj not in object_added_handler.known_objects:
-            # Only activate panel for our specific primitives
-            mod = next((m for m in obj.modifiers
-                       if m.type == 'NODES' and
-                       m.node_group and
-                       any(m.node_group.name.startswith(name) for name in GN_ASSET_NAMES)), None)
-            if mod:
-                OBJECT_PT_GeometryNodesPanel.show_panel = True
-            object_added_handler.known_objects.add(obj)
-
-object_added_handler.known_objects = set()
 
 # -----------------------------------------------------------------------------
 # Registration
 # -----------------------------------------------------------------------------
 
 classes = (
-    OBJECT_PT_GeometryNodesPanel,
-    OBJECT_PT_AssetsModifierPanel,
+    OBJECT_OT_ApplySelected,
 )
 
+# Register scene properties
 def register():
-    # Register scene properties
     bpy.types.Scene.join_apply = bpy.props.BoolProperty(
         name="Join on Apply",
-        description="Join converted primitives into a single mesh",
+        description="Join converted objects into a single mesh",
         default=True
     )
 
     bpy.types.Scene.boolean_apply = bpy.props.BoolProperty(
         name="Boolean on Apply",
-        description="Apply boolean union operation to combine primitives",
+        description="Apply a boolean union operation to combine objects into a single mesh",
+        default=False
+    )
+
+    bpy.types.Scene.remesh_apply = bpy.props.BoolProperty(
+        name="Remesh on Apply",
+        description="Apply a remesh union operation to combine objects into a single mesh",
         default=False
     )
 
@@ -223,22 +218,17 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    # Add handler only if it's not already there
-    if object_added_handler not in bpy.app.handlers.depsgraph_update_post:
-        bpy.app.handlers.depsgraph_update_post.append(object_added_handler)
 
 def unregister():
     # Unregister panel classes
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    
-    # Remove handler if it exists
-    if object_added_handler in bpy.app.handlers.depsgraph_update_post:
-        bpy.app.handlers.depsgraph_update_post.remove(object_added_handler)
 
     # Remove scene properties
     del bpy.types.Scene.join_apply
     del bpy.types.Scene.boolean_apply
+    del bpy.types.Scene.remesh_apply
 
 if __name__ == "__main__":
     register()
+

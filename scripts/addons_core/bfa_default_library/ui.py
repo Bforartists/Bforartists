@@ -29,6 +29,9 @@ from bpy.types import Menu, Operator, Panel
 # Import wizard utilities
 from .wizard_handlers import detect_wizard_for_object, draw_wizard_button
 
+# Import operations from submodules
+from .ops import OBJECT_OT_ApplySelected
+
 # -----------------------------------------------------------------------------
 # Interface Operator Entries Helpers
 # -----------------------------------------------------------------------------
@@ -39,6 +42,7 @@ from .wizard_handlers import detect_wizard_for_object, draw_wizard_button
 
 # Define the path to the asset library and asset names with icons
 ASSET_LIB_PATH = os.path.join(os.path.dirname(__file__), "Geometry Nodes Library", "G_Primitives.blend")
+
 SMART_PRIMITIVE_ASSETS = [
     ("Capsule", "MESH_CAPSULE"),
     ("Capsule Revolved", "MESH_CAPSULE"),
@@ -67,6 +71,7 @@ SMART_PRIMITIVE_ASSETS = [
     ("Tube Rounded Revolved", "MESH_CYLINDER"),
 ]
 
+
 def append_asset_as_object(filepath, object_name):
     """Append an object from the library as a local copy"""
     if not os.path.exists(filepath):  # Check if file exists
@@ -87,6 +92,29 @@ def append_asset_as_object(filepath, object_name):
         return new_obj
     return None
 
+# Add this new operator class after the append_asset_as_object function
+class WM_OT_AppendAsset(Operator):
+    """Appends an asset from the library to the 3D Cursor"""
+    bl_idname = "wm.insert_mesh_asset"
+    bl_label = "Insert Mesh Asset"
+    bl_description = "Appends an asset from the library"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    asset_name: bpy.props.StringProperty(
+        name="Asset Name",
+        description="Name of the asset to insert"
+    )
+
+    def execute(self, context):
+        # Use the existing append_asset_as_object function
+        obj = append_asset_as_object(ASSET_LIB_PATH, self.asset_name)
+        if obj:
+            self.report({'INFO'}, f"Appended {self.asset_name}")
+            return {'FINISHED'}
+        else:
+            self.report({'ERROR'}, f"Failed to append {self.asset_name}")
+            return {'CANCELLED'}
+
 
 class ASSET_MT_primitive_add(Menu):
     bl_label = "Smart Primitives"
@@ -99,9 +127,11 @@ class ASSET_MT_primitive_add(Menu):
             op = layout.operator("wm.insert_mesh_asset", text=asset_name, icon=icon)
             op.asset_name = asset_name
 
+
 # -------------------------
 # Wizard Interface Operator
 # -------------------------
+
 class WIZARD_OT_TriggerAssetWizard(Operator):
     """Trigger the appropriate wizard for the selected asset or object"""
     bl_idname = "wizard.trigger_asset_wizard"
@@ -164,14 +194,58 @@ def wizard_menu_func(self, context):
 
             draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
 
+# 3D View - Object - Apply
+def apply_join_menu_func(self, context):
+    """Add wizard trigger to asset menu"""
+    layout = self.layout
+    obj = context.object
+
+    if context.object:
+        layout.separator()
+        op = layout.operator("object.apply_selected_objects",
+                             text="Apply and Join",
+                             icon='JOIN')
+        op.join_on_apply = True
+        op.boolean_on_apply = False
+        op.remesh_on_apply = False
+
+# 3D View - Object - Apply
+def apply_boolean_menu_func(self, context):
+    """Add wizard trigger to asset menu"""
+    layout = self.layout
+    obj = context.object
+
+    if context.object:
+        op = layout.operator("object.apply_selected_objects",
+                             text="Apply and Boolean",
+                             icon='MOD_BOOLEAN')
+        op.join_on_apply = False
+        op.boolean_on_apply = True
+        op.remesh_on_apply = False
+
+
+# 3D View - Object - Apply
+def apply_remesh_menu_func(self, context):
+    """Add wizard trigger to asset menu"""
+    layout = self.layout
+    obj = context.object
+
+    if context.object:
+        op = layout.operator("object.apply_selected_objects",
+                             text="Apply and Remesh",
+                             icon='MOD_REMESH')
+        op.join_on_apply = False
+        op.boolean_on_apply = False
+        op.remesh_on_apply = True
 
 # -----------------------------------------------------------------------------#
 # Classes
 # -----------------------------------------------------------------------------#
 
 classes = (
-    WIZARD_OT_TriggerAssetWizard,
+    WM_OT_AppendAsset,
     ASSET_MT_primitive_add,
+    WIZARD_OT_TriggerAssetWizard,
 )
 
 # -----------------------------------------------------------------------------#
@@ -181,17 +255,28 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+
     # Add the sub-menu to the main Add menu
     bpy.types.VIEW3D_MT_add.append(primitive_menu_func)
     # Add wizard trigger to asset menu
     bpy.types.VIEW3D_MT_object_asset.append(wizard_menu_func)
 
 
+    bpy.types.VIEW3D_MT_object_apply.append(apply_join_menu_func)
+    bpy.types.VIEW3D_MT_object_apply.append(apply_boolean_menu_func)
+    bpy.types.VIEW3D_MT_object_apply.append(apply_remesh_menu_func)
+
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
+
     # Remove the sub-menu from the Add menu
     bpy.types.VIEW3D_MT_add.remove(primitive_menu_func)
     # Remove wizard trigger from asset menu
     bpy.types.VIEW3D_MT_object_asset.remove(wizard_menu_func)
+
+    bpy.types.VIEW3D_MT_object_apply.remove(apply_join_menu_func)
+    bpy.types.VIEW3D_MT_object_apply.remove(apply_boolean_menu_func)
+    bpy.types.VIEW3D_MT_object_apply.remove(apply_remesh_menu_func)
+
 
