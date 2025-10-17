@@ -110,7 +110,7 @@ class OBJECT_OT_ApplySelected(Operator):
                     objects_to_bool = new_objects[1:]
                     objects_to_delete.extend(objects_to_bool)
 
-                    for obj in objects_to_bool:
+                    for obj in objects_to_bool and len(new_objects) > 1:
                         if obj and obj.name in context.scene.objects:
                             bool_mod = base_object.modifiers.new(name="Boolean", type='BOOLEAN')
                             bool_mod.operation = 'UNION'
@@ -140,7 +140,7 @@ class OBJECT_OT_ApplySelected(Operator):
                     final_object = context.view_layer.objects.active
 
                 # Add remeshing if enabled
-                elif self.remesh_on_apply and len(new_objects) > 1:
+                elif self.remesh_on_apply:
                         context.view_layer.objects.active = new_objects[0]
                         for obj in new_objects:
                             obj.select_set(True)
