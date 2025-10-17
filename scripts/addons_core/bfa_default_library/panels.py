@@ -77,7 +77,14 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
 
         if mod and mod.node_group:
             # Add the asset wizard button using centralized utility
-            draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
+
+            # Check if this is Bforartists
+            if "OUTLINER_MT_view" in dir(bpy.types):
+                icon = "WIZARD"
+            else:
+                icon = "INFO"
+
+            draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
             layout.separator()
 
             # Main panel header
@@ -145,7 +152,15 @@ class OBJECT_PT_AssetsModifierPanel(Panel):
         # Add the apply button with proper spacing
         # Add the asset wizard button using centralized utility
         layout.separator()
-        draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
+
+        # Check if this is Bforartists
+        if "OUTLINER_MT_view" in dir(bpy.types):
+            icon = "WIZARD"
+        else:
+            icon = "INFO"
+
+        draw_wizard_button(layout, obj, "Open Asset Wizard", icon=icon, 1.5)
+
 
 
 # -----------------------------------------------------------------------------

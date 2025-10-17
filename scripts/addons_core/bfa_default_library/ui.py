@@ -258,10 +258,10 @@ def register():
     # Add wizard trigger to asset menu
     bpy.types.VIEW3D_MT_object_asset.append(wizard_menu_func)
 
-
     bpy.types.VIEW3D_MT_object_apply.append(apply_join_menu_func)
     bpy.types.VIEW3D_MT_object_apply.append(apply_boolean_menu_func)
     bpy.types.VIEW3D_MT_object_apply.append(apply_remesh_menu_func)
+
 
 def unregister():
     for cls in reversed(classes):

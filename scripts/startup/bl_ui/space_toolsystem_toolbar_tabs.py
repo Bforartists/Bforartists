@@ -1628,7 +1628,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 else:
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
-                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
                     #row.operator_enum("object.convert", "target")
