@@ -121,7 +121,8 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   if (!workspace) {
     return;
   }
-  if ((workspace->flags & WORKSPACE_SYNC_SCENE_TIME) == 0) {
+  // bfa 3d sequencer overlay use WORKSPACE_SYNC_SCENE_BFA instead WORKSPACE_SYNC_SCENE_TIME
+  if ((workspace->flags & WORKSPACE_SYNC_SCENE_BFA) == 0) {
     return;
   }
   const Scene *sequencer_scene = workspace->sequencer_scene;
