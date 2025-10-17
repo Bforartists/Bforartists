@@ -5,8 +5,45 @@
 import bpy
 from bpy.types import Panel
 import bmesh
+import sys
 
 from bpy.app.translations import contexts as i18n_contexts
+
+# BFA - Import the default library wizard functions
+def draw_wizard_button(layout, obj, text, icon, scale):
+    """Debug version to check what's in wizard_handlers"""
+    if not bpy.context.preferences.addons.get("bfa_default_library"):
+        return False
+
+    try:
+        wizard_handlers = sys.modules["bfa_default_library.wizard_handlers"]
+
+        # Debug: print all attributes of the module
+        #print(f"DEBUG: wizard_handlers module attributes: {dir(wizard_handlers)}")
+
+        # Check if the functions exist
+        has_detect = hasattr(wizard_handlers, "detect_wizard_for_object")
+        has_draw = hasattr(wizard_handlers, "draw_wizard_button")
+
+        #print(f"DEBUG: detect_wizard_for_object exists: {has_detect}")
+        #print(f"DEBUG: draw_wizard_button exists: {has_draw}")
+
+        if has_detect:
+            has_wizard, wizard_bl_idname, _ = wizard_handlers.detect_wizard_for_object(obj)
+            #print(f"DEBUG: Wizard detection result: {has_wizard}, {wizard_bl_idname}")
+
+            if has_wizard and wizard_bl_idname:
+                row = layout.row()
+                row.scale_y = scale
+                row.operator(wizard_bl_idname, text=text, icon=icon)
+                return True
+
+    except Exception as e:
+        #print(f"DEBUG: Wizard button error: {e}")
+        import traceback
+        traceback.print_exc()
+
+    return False
 
 
 class toolshelf_calculate( Panel):
@@ -728,6 +765,7 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
 
     def draw(self, _context):
         layout = self.layout
+        context = bpy.context
 
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
@@ -751,6 +789,32 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
             col.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
             col.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default, icon = "APPLY_PARENT_INVERSE")
             col.operator("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS")
+
+            if context.preferences.addons.get("bfa_default_library"):
+
+                col.separator(factor = 0.5)
+                op = col.operator("object.apply_selected_objects",
+                                    text="Visual Geometry and Join",
+                                    icon='JOIN')
+                op.join_on_apply = True
+                op.boolean_on_apply = False
+                op.remesh_on_apply = False
+
+                op = col.operator("object.apply_selected_objects",
+                                text="Visual Geometry and Boolean",
+                                icon='MOD_BOOLEAN')
+                op.join_on_apply = False
+                op.boolean_on_apply = True
+                op.remesh_on_apply = False
+
+                op = col.operator("object.apply_selected_objects",
+                                text="Visual Geometry and Remesh",
+                                icon='MOD_REMESH')
+                op.join_on_apply = False
+                op.boolean_on_apply = False
+                op.remesh_on_apply = True
+
+
 
         # icon buttons
         else:
@@ -778,6 +842,30 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    row = col.row(align=True)
+                    op = row.operator("object.apply_selected_objects",
+                                        text="",
+                                        icon='JOIN')
+                    op.join_on_apply = True
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = False
+
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_BOOLEAN')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = True
+                    op.remesh_on_apply = False
+
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_REMESH')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = True
+
+
             elif column_count == 2:
 
                 row = col.row(align=True)
@@ -799,6 +887,30 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 row.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
                 row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    row = col.row(align=True)
+                    op = row.operator("object.apply_selected_objects",
+                                        text="",
+                                        icon='JOIN')
+                    op.join_on_apply = True
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = False
+
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_BOOLEAN')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = True
+                    op.remesh_on_apply = False
+
+                    row = col.row(align=True)
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_REMESH')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = True
+
             elif column_count == 1:
 
                 col.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE")
@@ -814,6 +926,28 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 col.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
                 col.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    col.separator(factor = 0.5)
+                    op = col.operator("object.apply_selected_objects",
+                                        text="",
+                                        icon='JOIN')
+                    op.join_on_apply = True
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = False
+
+                    op = col.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_BOOLEAN')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = True
+                    op.remesh_on_apply = False
+
+                    op = col.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_REMESH')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = True
 
 class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
     bl_label = "Apply Deltas"
@@ -1218,7 +1352,10 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
 
     def draw(self, _context):
         layout = self.layout
-
+        
+        context = bpy.context
+        obj = context.object
+        
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
         #text buttons
@@ -1229,6 +1366,9 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
 
             col.operator("asset.mark", icon='ASSET_MANAGER')
             col.operator("asset.clear", icon='CLEAR').set_fake_user = False
+
+            if context.preferences.addons.get("bfa_default_library"):
+                draw_wizard_button(col, obj, "Open Asset Wizard", 'WIZARD', 1)
 
         # icon buttons
         else:
@@ -1243,16 +1383,27 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
                 row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
+
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
 
+
+                if context.preferences.addons.get("bfa_default_library"):
+                    row = col.row(align=True)
+                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
+
             elif column_count == 1:
 
                 col.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 col.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+                if context.preferences.addons.get("bfa_default_library"):
+                    draw_wizard_button(col, obj, "", 'WIZARD', 1)
 
 
 class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
@@ -1477,7 +1628,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 else:
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
-                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
                     #row.operator_enum("object.convert", "target")
