@@ -166,6 +166,8 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
 
     processed_objects = 0
     objects_with_materials = 0
+    materials_processed = 0
+    materials_skipped = 0
 
     # Get all objects from the collection, including nested collections
     all_objects = get_all_objects_from_collection(target_collection, include_children=True)
@@ -187,8 +189,9 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
             # Add material slot to object
             obj.data.materials.append(default_mat)
 
-            # Process the new material
-            inject_nodegroup_to_material(default_mat, node_group)
+            # Process the new material (new materials won't have the node group yet)
+            if inject_nodegroup_to_material(default_mat, node_group):
+                materials_processed += 1
             objects_with_materials += 1
 
         else:
@@ -196,20 +199,35 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
             # Process all materials of the object
             for material_slot in obj.material_slots:
                 if material_slot.material:
-                    inject_nodegroup_to_material(material_slot.material, node_group)
+                    # Check if material already has the node group
+                    if has_nodegroup_in_material(material_slot.material, nodegroup_name):
+                        logger.info(f"  Material {material_slot.material.name} already has {nodegroup_name}, skipping")
+                        materials_skipped += 1
+                        continue
+                    
+                    # Inject node group if it doesn't exist
+                    if inject_nodegroup_to_material(material_slot.material, node_group):
+                        materials_processed += 1
                 else:
                     # Empty material slot found, create and assign default material
                     logger.info(f"  Empty material slot found for {obj.name}, adding default material")
                     default_mat = bpy.data.materials.new(name=f"{obj.name}_DefaultMaterial")
                     material_slot.material = default_mat
                     # Process the new material
-                    inject_nodegroup_to_material(default_mat, node_group)
+                    if inject_nodegroup_to_material(default_mat, node_group):
+                        materials_processed += 1
 
     logger.info(f"Processed {processed_objects} objects, {objects_with_materials} had materials")
-    return True
+    logger.info(f"Injected node group into {materials_processed} materials, skipped {materials_skipped} duplicates")
+    return materials_processed > 0 or materials_skipped > 0
 
 def inject_nodegroup_to_material(material, node_group):
     """Inject node group into a material's node tree to blend"""
+    
+    # First check if this material already has the node group
+    if has_nodegroup_in_material(material, node_group.name):
+        logger.info(f"  Material {material.name} already has {node_group.name}, skipping injection")
+        return False
 
     nodes = material.node_tree.nodes
     links = material.node_tree.links
@@ -315,8 +333,8 @@ def has_nodegroup_in_material(material, nodegroup_name):
     """Check if material already has the specified node group"""
     for node in material.node_tree.nodes:
         if (node.type == 'GROUP' and
-            node.node_group and
-            node.node_group.name == nodegroup_name):
+            node.node_tree and
+            node.node_tree.name == nodegroup_name):
             return True
     return False
 
@@ -371,7 +389,7 @@ class OBJECT_OT_InjectNodegroupToCollection(Operator):
             self.report({'ERROR'}, "No target collection found in Blend Normals by Proximity modifier")
             return {'CANCELLED'}
 
-        # Inject node group to collection
+        # Inject node group to collection (with duplicate checking built into the function)
         success = inject_nodegroup_to_collection(target_collection.name, self.nodegroup_name)
 
         if success:
