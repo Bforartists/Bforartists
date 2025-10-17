@@ -130,14 +130,27 @@ def get_all_gn_asset_objects(context):
     return [obj for obj in context.selected_objects if is_gn_asset_object(obj)]
 
 
-
 # -----------------------------------------------------------------------------
 # Mesh Blend by Proximity Operators
 # -----------------------------------------------------------------------------
 
+def get_all_objects_from_collection(collection, include_children=True):
+    """Get all objects from a collection, including nested collections if include_children is True"""
+    objects = []
+    
+    # Add objects from current collection
+    objects.extend(collection.objects)
+    
+    # If including nested collections, recursively add objects from child collections
+    if include_children:
+        for child_collection in collection.children:
+            objects.extend(get_all_objects_from_collection(child_collection, include_children=True))
+    
+    return objects
+
 # Intersection Nodegroup injection functions
 def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersections"):
-    """Inject a node group into all materials of objects in the target collection"""
+    """Inject a node group into all materials of objects in the target collection, including nested collections"""
     target_collection = bpy.data.collections.get(collection_name)
     if not target_collection:
         logger.error(f"Collection '{collection_name}' not found!")
@@ -154,8 +167,11 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
     processed_objects = 0
     objects_with_materials = 0
 
-    # Process each object in the collection
-    for obj in target_collection.objects:
+    # Get all objects from the collection, including nested collections
+    all_objects = get_all_objects_from_collection(target_collection, include_children=True)
+
+    # Process each object in the collection and its nested collections
+    for obj in all_objects:
         if obj.type not in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
             continue
 
@@ -368,7 +384,7 @@ class OBJECT_OT_InjectNodegroupToCollection(Operator):
 
 
 class OBJECT_OT_RemoveNodegroupFromCollection(Operator):
-    """Remove node group from all materials in target collection"""
+    """Remove node group from all materials in target collection, including nested collections"""
     bl_idname = "object.remove_nodegroup_from_collection"
     bl_label = "Remove Node Group from Materials"
     bl_description = "Remove S_Intersections node group from materials of objects in target collection"
@@ -429,7 +445,7 @@ class OBJECT_OT_RemoveNodegroupFromCollection(Operator):
 
 
 def remove_nodegroup_from_collection(collection_name, nodegroup_name="S_Intersections"):
-    """Remove a node group from all materials of objects in the target collection"""
+    """Remove a node group from all materials of objects in the target collection, including nested collections"""
     target_collection = bpy.data.collections.get(collection_name)
     if not target_collection:
         logger.error(f"Collection '{collection_name}' not found!")
@@ -440,8 +456,11 @@ def remove_nodegroup_from_collection(collection_name, nodegroup_name="S_Intersec
     processed_objects = 0
     materials_processed = 0
 
-    # Process each object in the collection
-    for obj in target_collection.objects:
+    # Get all objects from the collection, including nested collections
+    all_objects = get_all_objects_from_collection(target_collection, include_children=True)
+
+    # Process each object in the collection and its nested collections
+    for obj in all_objects:
         if obj.type not in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
             continue
 
@@ -543,6 +562,7 @@ def remove_nodegroup_from_material(material, nodegroup_name):
 
     logger.info(f"  Removed {removed_count} {nodegroup_name} node(s) from {material.name}")
     return removed_count > 0
+
 
 
 class OBJECT_OT_MeshBlendbyProximity(Operator):
