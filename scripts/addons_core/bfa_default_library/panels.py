@@ -124,6 +124,30 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
                 else:
                     row.prop(mod, f'["{socket_id}"]', text=socket_name)
 
+        # This is to make sure the operators are SOMEWHERE even if not in Bforartists.
+        if not "OUTLINER_MT_view" in dir(bpy.types):
+                layout.separator(factor = 0.5)
+                op = layout.operator("object.apply_selected_objects",
+                                    text="Visual Geometry and Join",
+                                    icon='JOIN')
+                op.join_on_apply = True
+                op.boolean_on_apply = False
+                op.remesh_on_apply = False
+
+                op = layout.operator("object.apply_selected_objects",
+                                text="Visual Geometry and Boolean",
+                                icon='MOD_BOOLEAN')
+                op.join_on_apply = False
+                op.boolean_on_apply = True
+                op.remesh_on_apply = False
+
+                op = layout.operator("object.apply_selected_objects",
+                                text="Visual Geometry and Remesh",
+                                icon='MOD_REMESH')
+                op.join_on_apply = False
+                op.boolean_on_apply = False
+                op.remesh_on_apply = True
+
 
 class OBJECT_PT_AssetsModifierPanel(Panel):
     """Creates a custom panel in the Modifier properties for Assets"""
@@ -151,7 +175,6 @@ class OBJECT_PT_AssetsModifierPanel(Panel):
 
         # Add the apply button with proper spacing
         # Add the asset wizard button using centralized utility
-        layout.separator()
 
         # Check if this is Bforartists
         if "OUTLINER_MT_view" in dir(bpy.types):
@@ -159,8 +182,7 @@ class OBJECT_PT_AssetsModifierPanel(Panel):
         else:
             icon = "INFO"
 
-        draw_wizard_button(layout, obj, "Open Asset Wizard", icon=icon, 1.5)
-
+        draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
 
 
 # -----------------------------------------------------------------------------

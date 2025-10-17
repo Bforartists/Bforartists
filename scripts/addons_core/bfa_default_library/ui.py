@@ -189,8 +189,13 @@ def wizard_menu_func(self, context):
         # Check if object has any wizard-compatible features
         has_wizard, _, _ = detect_wizard_for_object(obj)
         
+        if "OUTLINER_MT_view" in dir(bpy.types):
+            icon = "WIZARD"
+        else:
+            icon = "INFO"
+
         if has_wizard:
-            draw_wizard_button(layout, obj, "Open Asset Wizard", 'WIZARD', 1.5)
+            draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
 
 # 3D View - Object - Apply
 def apply_join_menu_func(self, context):
