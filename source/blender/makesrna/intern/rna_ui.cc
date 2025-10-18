@@ -83,7 +83,10 @@ static const EnumPropertyItem asset_shelf_import_method_items[] = {
       "LINK_OVERRIDE",
       ICON_LIBRARY_DATA_OVERRIDE,
       "Link (Override)",
-      "Import the assets as linked library overrided data.\nThis will only override the active hierarchy.\nTo override all selected contents, use the Outliner Editor"},
+      "Import the assets as linked library overrided data."
+      "This will only override the active hierarchy."
+      "To override all selected contents, use the Outliner Editor"
+      "(For material, world data will be fallback to append reuse instead)"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 

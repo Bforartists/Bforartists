@@ -571,10 +571,42 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
 
 static void view3d_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
-  ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
+  // bfa 3d viewport asset drop for materials, world
+  ID *id;
+  bool show_datablock = true;
+  if (ELEM(drag->type, WM_DRAG_ASSET)) {
+    wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
+    if (!asset_drag) {
+      return;
+    }
+    if (!asset_drag->import_settings.is_from_browser) {
+      AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
+      if (active_shelf) {
+        eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
+        if (ELEM(asset_drag->asset->get_id_type(), ID_MA, ID_WO)){
+          // For material show_datablock should be false since it doesn't have show_datablock_in_modifier
+          // material doesn't have library override so fallback to append reuse
+          show_datablock = false;
+          asset_drag->import_settings.method = ELEM(import_method_prop, 
+                                                    ASSET_IMPORT_LINK, 
+                                                    ASSET_IMPORT_APPEND, 
+                                                    ASSET_IMPORT_APPEND_REUSE, 
+                                                    ASSET_IMPORT_PACK) ? import_method_prop : ASSET_IMPORT_APPEND_REUSE;
+        } else {
+           asset_drag->import_settings.method = import_method_prop;
+        }
+      }
+    }
+    id = WM_drag_asset_id_import(C, asset_drag, 0);
+  } else {
+    id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0); // original drag
+    show_datablock = !ELEM(GS(id->name), ID_MA, ID_WO);
+  }
 
   WM_operator_properties_id_lookup_set_from_id(drop->ptr, id);
-  RNA_boolean_set(drop->ptr, "show_datablock_in_modifier", (drag->type != WM_DRAG_ASSET));
+  if (show_datablock) {
+    RNA_boolean_set(drop->ptr, "show_datablock_in_modifier", (drag->type != WM_DRAG_ASSET));
+  }
 }
 
 static void view3d_geometry_nodes_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
