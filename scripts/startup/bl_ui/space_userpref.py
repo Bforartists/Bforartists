@@ -395,6 +395,7 @@ class USERPREF_PT_interface_menus(InterfacePanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         view = prefs.view
         col = layout.column()
+        col.use_property_split = False # BFA - Align bool property left
         col.prop(view, "menu_close_leave")
 
 
