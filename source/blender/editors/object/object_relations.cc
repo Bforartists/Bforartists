@@ -3053,6 +3053,13 @@ void OBJECT_OT_drop_named_material(wmOperatorType *ot)
 
   /* properties */
   WM_operator_properties_id_lookup(ot, true);
+  
+  /* Add the missing property */
+  RNA_def_boolean(ot->srna,
+                 "show_datablock_in_modifier",
+                 false,
+                 "Show in Modifier",
+                 "Show the datablock in the modifier properties");
 }
 
 /** \} */
