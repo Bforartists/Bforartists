@@ -1166,6 +1166,12 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(cycles_view_layer, "pass_debug_sample_count", text="Sample Count")
+
+        # Render Time pass - disabled for GPU devices
+        scene = context.scene
+        cscene = scene.cycles
+        row = col.row()
+        row.enabled = (cscene.device == 'CPU')
         row.prop(cycles_view_layer, "pass_render_time", text="Render Time")
 
         layout.separator()
@@ -1438,7 +1444,7 @@ class CYCLES_CAMERA_PT_lens_custom_parameters(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         for key in ccam.keys():
-            col.prop(ccam, f'["{key}"]')
+            col.prop(ccam, f'["{key}"]', text=bpy.path.display_name(key))
 
 
 class CYCLES_PT_context_material(CyclesButtonsPanel, Panel):

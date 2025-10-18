@@ -2313,6 +2313,9 @@ static std::optional<std::chrono::nanoseconds> compositor_node_get_execution_tim
   if (const timeit::Nanoseconds *execution_time =
           tree_draw_ctx.compositor_per_node_execution_time->lookup_ptr(key))
   {
+    if (execution_time->count() == 0) {
+      return std::nullopt;
+    }
     return *execution_time;
   }
 
@@ -2400,13 +2403,13 @@ static std::string named_attribute_tooltip(bContext * /*C*/, void *argN, const S
     const geo_log::NamedAttributeUsage usage = attribute.usage;
     fmt::format_to(fmt::appender(buf), fmt::runtime(TIP_("  \u2022 \"{}\": ")), name);
     Vector<std::string> usages;
-    if ((usage & geo_log::NamedAttributeUsage::Read) != geo_log::NamedAttributeUsage::None) {
+    if (flag_is_set(usage, geo_log::NamedAttributeUsage::Read)) {
       usages.append(TIP_("read"));
     }
-    if ((usage & geo_log::NamedAttributeUsage::Write) != geo_log::NamedAttributeUsage::None) {
+    if (flag_is_set(usage, geo_log::NamedAttributeUsage::Write)) {
       usages.append(TIP_("write"));
     }
-    if ((usage & geo_log::NamedAttributeUsage::Remove) != geo_log::NamedAttributeUsage::None) {
+    if (flag_is_set(usage, geo_log::NamedAttributeUsage::Remove)) {
       usages.append(TIP_("remove"));
     }
     for (const int i : usages.index_range()) {
@@ -3498,10 +3501,10 @@ static void node_draw_collapsed(const bContext &C,
     UI_GetThemeColorBlendShade4fv(TH_SELECT, color_id, 0.4f, 10, color);
   }
 
-  float iconfs = rct.xmin + (NODE_MARGIN_X / 3);  // BFA: collapsed node icon
+  float iconfs = rct.xmin + (NODE_MARGIN_X / 3);  // BFA: collapsed node icon // rct.xmin + (NODE_MARGIN_X / 3) + 0.1f * U.widget_unit
   /* Collapse/expand icon. */
   {
-    const int but_size = U.widget_unit * 1.0f;
+    const int but_size = 0.8f * U.widget_unit;
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
@@ -3603,39 +3606,6 @@ static void node_draw_collapsed(const bContext &C,
   if (node.is_muted()) {
     UI_but_flag_enable(but, UI_BUT_INACTIVE);
   }
-
-  /* Scale widget thing. */
-  uint pos = GPU_vertformat_attr_add(
-      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
-  GPU_blend(GPU_BLEND_ALPHA);
-  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
-
-  immUniformThemeColorShadeAlpha(TH_TEXT, -40, -180);
-  float dx = 0.5f * U.widget_unit;
-  const float dx2 = 0.15f * U.widget_unit * snode.runtime->aspect;
-  const float dy = 0.2f * U.widget_unit;
-
-  immBegin(GPU_PRIM_LINES, 4);
-  immVertex2f(pos, rct.xmax - dx, centy - dy);
-  immVertex2f(pos, rct.xmax - dx, centy + dy);
-
-  immVertex2f(pos, rct.xmax - dx - dx2, centy - dy);
-  immVertex2f(pos, rct.xmax - dx - dx2, centy + dy);
-  immEnd();
-
-  immUniformThemeColorShadeAlpha(TH_TEXT, 0, -180);
-  dx -= snode.runtime->aspect;
-
-  immBegin(GPU_PRIM_LINES, 4);
-  immVertex2f(pos, rct.xmax - dx, centy - dy);
-  immVertex2f(pos, rct.xmax - dx, centy + dy);
-
-  immVertex2f(pos, rct.xmax - dx - dx2, centy - dy);
-  immVertex2f(pos, rct.xmax - dx - dx2, centy + dy);
-  immEnd();
-
-  immUnbindProgram();
-  GPU_blend(GPU_BLEND_NONE);
 
   node_draw_sockets(C, block, snode, ntree, node);
 
@@ -4250,7 +4220,7 @@ static void reroute_node_draw_label(TreeDrawContext &tree_draw_ctx,
 
   const short width = 512;
   const int x = BLI_rctf_cent_x(&node.runtime->draw_bounds) - (width / 2);
-  const int y = node.runtime->draw_bounds.ymax;
+  const int y = node.runtime->draw_bounds.ymax - 4 * UI_SCALE_FAC;
 
   uiBut *label_but = uiDefBut(
       &block, ButType::Label, 0, text, x, y, width, NODE_DY, nullptr, 0, 0, std::nullopt);

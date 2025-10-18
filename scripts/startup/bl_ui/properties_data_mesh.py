@@ -344,6 +344,12 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
 
         col.menu("MESH_MT_shape_key_context_menu", icon="DOWNARROW_HLT", text="")
 
+        if ob.type == 'MESH':
+            row = layout.row(align=True)
+            row.use_property_split = False
+            row.alignment = 'LEFT'
+            row.prop(ob, "add_rest_position_attribute")
+
         if kb:
             col.separator()
 

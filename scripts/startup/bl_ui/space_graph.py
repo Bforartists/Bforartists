@@ -63,7 +63,11 @@ def drivers_editor_footer(layout, context):
 
     layout.separator_spacer()
     layout.label(
-        text=iface_("Driver: {:s} ({:s})").format(act_fcurve.id_data.name, act_fcurve.data_path), translate=False
+        text=iface_("Driver: {:s} ({:s})").format(
+            act_fcurve.id_data.name,
+            act_fcurve.data_path,
+        ),
+        translate=False,
     )
 
     if act_driver.variables:
@@ -606,8 +610,7 @@ class GRAPH_MT_key_density(Menu):
     bl_label = "Density"
 
     def draw(self, _context):
-        from bl_ui_utils.layout import operator_context
-
+        from _bl_ui_utils.layout import operator_context
         layout = self.layout
         layout.operator("graph.decimate", text="Decimate (Ratio)", icon="DECIMATE").mode = "RATIO"
         # Using the modal operation doesn't make sense for this variant

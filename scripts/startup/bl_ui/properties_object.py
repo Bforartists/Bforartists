@@ -491,10 +491,11 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         layout = self.layout
         ob = context.object
 
-# bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
-#        layout.use_property_split = False
-#        layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
-#        layout.use_property_split = True
+        col = layout.column()
+        # bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
+        # col.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
+        col.prop(ob, "hide_surface_pick", text="Surface Picking", toggle=False, invert_checkbox=True)
+        layout.separator()
 
         col = layout.column(align = True)
         col.label(text = "Show in")

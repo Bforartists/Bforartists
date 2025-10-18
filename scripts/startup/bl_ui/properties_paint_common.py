@@ -117,6 +117,7 @@ class BrushAssetShelf:
 
     @classmethod
     def draw_context_menu(self, context, asset, layout):
+        del context, asset
         # Currently this menu adds operators that deal with the affected brush and don't take the
         # asset into account. Luckily that is okay for now, since right clicking in the grid view
         # also activates the item.
@@ -331,8 +332,8 @@ class UnifiedPaintPanel:
             curve_visibility_name,
             text="",
             icon='DOWNARROW_HLT' if is_active else 'RIGHTARROW',
-            emboss=False)
-
+            emboss=False,
+        )
         if is_active:
             subcol = layout.column()
             subcol.active = getattr(brush, pressure_name)
@@ -825,9 +826,12 @@ class FalloffPanel(BrushPanel):
             col.prop(brush, "curve_distance_falloff_preset", text="")
 
         if brush.curve_distance_falloff_preset == 'CUSTOM':
-            layout.template_curve_mapping(brush, "curve_distance_falloff", brush=True,
-                                          use_negative_slope=True, show_presets=True)
-
+            layout.template_curve_mapping(
+                brush, "curve_distance_falloff",
+                brush=True,
+                use_negative_slope=True,
+                show_presets=True,
+            )
             col = layout.column(align=True)
             row = col.row(align=True)
 
@@ -1332,7 +1336,7 @@ def brush_settings(layout, context, brush, popover=False):
 def brush_shared_settings(layout, context, brush, popover=False):
     """Draw simple brush settings that are shared between different paint modes."""
 
-    paint = UnifiedPaintPanel.paint_settings(context)
+    # paint    paint = UnifiedPaintPanel.paint_settings(context)  # UNUSED.
     mode = UnifiedPaintPanel.get_brush_mode(context)
     mode_string = context.mode
 

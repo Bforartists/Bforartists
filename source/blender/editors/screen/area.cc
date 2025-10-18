@@ -1061,20 +1061,20 @@ static void area_azone_init(const wmWindow *win, const bScreen *screen, ScrArea 
       /* Bottom-left. */
       {area->totrct.xmin - U.pixelsize,
        area->totrct.ymin - U.pixelsize,
-       area->totrct.xmin + UI_HEADER_OFFSET,
+       area->totrct.xmin + UI_AZONESPOTW_LEFT,
        float(area->totrct.ymin + ED_area_headersize())},
       /* Bottom-right. */
-      {area->totrct.xmax - UI_AZONESPOTW,
+      {area->totrct.xmax - UI_AZONESPOTW_RIGHT,
        area->totrct.ymin - U.pixelsize,
        area->totrct.xmax + U.pixelsize,
        area->totrct.ymin + UI_AZONESPOTH},
       /* Top-left. */
       {area->totrct.xmin - U.pixelsize,
        float(area->totrct.ymax - ED_area_headersize()),
-       area->totrct.xmin + UI_HEADER_OFFSET,
+       area->totrct.xmin + UI_AZONESPOTW_LEFT,
        area->totrct.ymax + U.pixelsize},
       /* Top-right. */
-      {area->totrct.xmax - UI_AZONESPOTW,
+      {area->totrct.xmax - UI_AZONESPOTW_RIGHT,
        area->totrct.ymax - UI_AZONESPOTH,
        area->totrct.xmax + U.pixelsize,
        area->totrct.ymax + U.pixelsize},
@@ -1921,7 +1921,7 @@ static void area_calc_totrct(const bScreen *screen, ScrArea *area, const rcti *w
 /**
  * Update the `ARegion::visible` flag.
  */
-static void region_evaulate_visibility(ARegion *region)
+static void region_evaluate_visibility(ARegion *region)
 {
   bool hidden = (region->flag & (RGN_FLAG_POLL_FAILED | RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL)) !=
                 0;
@@ -2067,7 +2067,7 @@ void ED_area_update_region_sizes(wmWindowManager *wm, wmWindow *win, ScrArea *ar
     if (region->flag & RGN_FLAG_POLL_FAILED) {
       continue;
     }
-    region_evaulate_visibility(region);
+    region_evaluate_visibility(region);
 
     /* region size may have changed, init does necessary adjustments */
     if (region->runtime->type->init) {
@@ -2178,7 +2178,7 @@ void ED_area_init(bContext *C, const wmWindow *win, ScrArea *area)
 
   /* region windows, default and own handlers */
   LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-    region_evaulate_visibility(region);
+    region_evaluate_visibility(region);
 
     if (region->runtime->visible) {
       /* default region handlers */
@@ -2303,7 +2303,7 @@ void ED_region_floating_init(ARegion *region)
   BLI_assert(region->alignment == RGN_ALIGN_FLOAT);
 
   /* refresh can be called before window opened */
-  region_evaulate_visibility(region);
+  region_evaluate_visibility(region);
 
   region_update_rect(region);
 }

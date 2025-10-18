@@ -5888,7 +5888,6 @@ static bool ui_numedit_but_SLI(uiBut *but,
                                const bool snap,
                                const bool shift)
 {
-  uiButNumberSlider *slider_but = reinterpret_cast<uiButNumberSlider *>(but);
   float cursor_x_range, f, tempf, softmin, softmax, softrange;
   int temp, lvalue;
   bool changed = false;
@@ -5917,10 +5916,11 @@ static bool ui_numedit_but_SLI(uiBut *but,
     cursor_x_range = BLI_rctf_size_x(&but->rect);
   }
   else if (but->type == ButType::Scroll) {
+    uiButScrollBar *scroll_but = reinterpret_cast<uiButScrollBar *>(but);
     const float size = (is_horizontal) ? BLI_rctf_size_x(&but->rect) :
                                          -BLI_rctf_size_y(&but->rect);
     cursor_x_range = size * (but->softmax - but->softmin) /
-                     (but->softmax - but->softmin + slider_but->step_size);
+                     (but->softmax - but->softmin + scroll_but->visual_height);
   }
   else {
     const float ofs = (BLI_rctf_size_y(&but->rect) / 2.0f);
@@ -9708,7 +9708,7 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
       }
 #endif
       case MOUSEMOVE: {
-        uiBut *but_other = ui_but_find_mouse_over(region, event);
+        uiBut *but_other = UI_but_find_mouse_over(region, event);
         bool exit = false;
 
         /* always deactivate button for pie menus,
@@ -9870,7 +9870,7 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
           }
         }
 
-        bt = ui_but_find_mouse_over(region, event);
+        bt = UI_but_find_mouse_over(region, event);
 
         if (bt && bt->active != data) {
           if (but->type != ButType::Color) { /* exception */
@@ -9882,7 +9882,7 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
       }
       case RIGHTMOUSE: {
         if (event->val == KM_PRESS) {
-          uiBut *bt = ui_but_find_mouse_over(region, event);
+          uiBut *bt = UI_but_find_mouse_over(region, event);
           if (bt && bt->active == data) {
             button_activate_state(C, bt, BUTTON_STATE_HIGHLIGHT);
           }
@@ -9951,7 +9951,7 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
        * it stays active while the mouse is over it.
        * This avoids adding mouse-moves, see: #33466. */
       if (ELEM(state_orig, BUTTON_STATE_INIT, BUTTON_STATE_HIGHLIGHT, BUTTON_STATE_WAIT_DRAG)) {
-        if (ui_but_find_mouse_over(region, event) == but) {
+        if (UI_but_find_mouse_over(region, event) == but) {
           button_activate_init(C, region, but, BUTTON_ACTIVATE_OVER);
         }
       }
@@ -11170,7 +11170,7 @@ static int ui_handle_menu_event(bContext *C,
             /* Menu search if space-bar or #MenuTypeFlag::SearchOnKeyPress. */
             MenuType *mt = WM_menutype_find(menu->menu_idname, true);
             // bfa - gooengine disable_search_on_keypress
-            if ((mt && bool(mt->flag & MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) ||
+            if ((mt && flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !flag_is_set(U.flag, USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) ||
                 event->type == EVT_SPACEKEY) 
             {
               if ((level != 0) && (but == nullptr || !menu->menu_idname[0])) {
@@ -11224,6 +11224,10 @@ static int ui_handle_menu_event(bContext *C,
        */
       if ((inside == false) && (menu->menuretval == 0)) {
         uiSafetyRct *saferct = static_cast<uiSafetyRct *>(block->saferct.first);
+
+        if (event->type == MOUSEMOVE) {
+          WM_tooltip_clear(C, win);
+        }
 
         if (ELEM(event->type, LEFTMOUSE, MIDDLEMOUSE, RIGHTMOUSE)) {
           if (ELEM(event->val, KM_PRESS, KM_DBL_CLICK)) {
@@ -12125,7 +12129,7 @@ static int ui_handler_region_menu(bContext *C, const wmEvent *event, void * /*us
         (ui_region_find_active_but(data->menu->region) == nullptr) &&
         /* make sure mouse isn't inside another menu (see #43247) */
         (ui_screen_region_find_mouse_over(screen, event) == nullptr) &&
-        (but_other = ui_but_find_mouse_over(region, event)) &&
+        (but_other = UI_but_find_mouse_over(region, event)) &&
         ui_can_activate_other_menu(but, but_other, event) &&
         /* Hover-opening menu's doesn't work well for buttons over one another
          * along the same axis the menu is opening on (see #71719). */

@@ -31,7 +31,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_icons.h"
+#include "BKE_icons.hh"
 #include "BKE_paint.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_studiolight.h"
@@ -1520,6 +1520,9 @@ static void svg_replace_color_attributes(std::string &svg,
       {"blender_crease", nullptr, TH_CREASE},
       {"blender_seam", nullptr, TH_SEAM},
       {"blender_sharp", nullptr, TH_SHARP},
+      {"blender_ipo_linear", btheme->space_action.anim_interpolation_linear},
+      {"blender_ipo_constant", btheme->space_action.anim_interpolation_constant},
+      {"blender_ipo_other", btheme->space_action.anim_interpolation_other},
   };
 
   for (const ColorItem &item : items) {
@@ -2050,7 +2053,7 @@ int UI_icon_from_idcode(const int idcode)
     case ID_GD_LEGACY:
       return ICON_OUTLINER_DATA_GREASEPENCIL;
     case ID_GR:
-      return ICON_OUTLINER_COLLECTION;
+      return ICON_GROUP;
     case ID_IM:
       return ICON_IMAGE_DATA;
     case ID_LA:

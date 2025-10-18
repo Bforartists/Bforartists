@@ -1384,6 +1384,8 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             "EDIT_POINTCLOUD",
         }:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = "CURVE_SHRINKFATTEN"
+        if context.mode == 'EDIT_GREASE_PENCIL':
+            layout.operator("transform.transform", text="Opacity").mode = 'GPENCIL_OPACITY'
 
         if context.mode != "EDIT_CURVES" and context.mode != "EDIT_GREASE_PENCIL":
             layout.separator()
@@ -2958,6 +2960,8 @@ class VIEW3D_MT_paint_vertex_grease_pencil(Menu):
             text="Brightness/Contrast",
             icon="BRIGHTNESS_CONTRAST",
         )
+        layout.separator()
+        layout.operator("paint.sample_color").merged = False
 
 
 class VIEW3D_MT_select_paint_mask(Menu):
@@ -4378,7 +4382,7 @@ class VIEW3D_MT_object_parent(Menu):
     bl_translation_context = i18n_contexts.operator_default
 
     def draw(self, _context):
-        from bl_ui_utils.layout import operator_context
+        from _bl_ui_utils.layout import operator_context
 
         layout = self.layout
 
@@ -11871,7 +11875,8 @@ class VIEW3D_PT_curves_sculpt_parameter_falloff(Panel):
             brush.curves_sculpt_settings,
             "curve_parameter_falloff",
             brush=True,
-            show_presets=True)
+            show_presets=True,
+        )
 
 
 class VIEW3D_PT_curves_sculpt_grow_shrink_scaling(Panel):

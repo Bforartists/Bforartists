@@ -109,7 +109,7 @@ class SEQUENCER_HT_header(Header):
         row.label(icon="PINNED" if context.workspace.sequencer_scene else "UNPINNED")  # BFA - 3D Sequencer
 
         # BFA - wip merge of new sequencer
-        if st.view_type == "SEQUENCER":
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
             row.template_ID(context.workspace, "sequencer_scene", new="scene.new_sequencer_scene")
 
@@ -674,6 +674,11 @@ class SEQUENCER_MT_select(Menu):
         st = context.space_data
         has_sequencer, has_preview = _space_view_types(st)
         # BFA - is_redtiming not used
+        is_retiming = (
+            context.sequencer_scene is not None and
+            context.sequencer_scene.sequence_editor is not None and
+            context.sequencer_scene.sequence_editor.selected_retiming_keys
+        )
         if has_preview:
             layout.operator_context = "INVOKE_REGION_PREVIEW"
         else:
@@ -1365,9 +1370,13 @@ class SEQUENCER_MT_strip_retiming(Menu):
             strip = context.active_strip
 
             layout.operator_context = "INVOKE_REGION_WIN"  # BFA
-            # BFA - is_redtiming not used
-
-            strip = context.active_strip  # BFA
+            # BFA - is_redtiming not used ??
+            is_retiming = (
+                context.sequencer_scene is not None and
+                context.sequencer_scene.sequence_editor is not None and
+                context.sequencer_scene.sequence_editor.selected_retiming_keys
+            )
+            strip = context.active_strip
             strip_type = strip.type  # BFA
 
             if strip and strip_type == "MOVIE" or strip_type == "IMAGE" or strip_type == "SOUND":
@@ -1425,7 +1434,7 @@ class SEQUENCER_MT_strip(Menu):
     bl_label = "Strip"
 
     def draw(self, context):
-        from bl_ui_utils.layout import operator_context
+        from _bl_ui_utils.layout import operator_context
 
         layout = self.layout
         st = context.space_data
