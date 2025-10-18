@@ -5898,7 +5898,7 @@ void UI_menutype_draw(bContext *C, MenuType *mt, uiLayout *layout)
 
   uiBlock *block = layout->block();
   // bfa - disable_search_on_keypress
-  if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !flag_is_set(U.flag, USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
+  if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
     UI_block_flag_enable(block, UI_BLOCK_NO_ACCELERATOR_KEYS);
   }
   if (mt->listener) {

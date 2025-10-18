@@ -628,7 +628,7 @@ static void ui_popup_menu_create_from_menutype(bContext *C,
 
   WorkspaceStatus status(C);
   // bfa - gooengine disable_search_on_keypress
-  if (lag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !flag_is_set(U.flag, USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
+  if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
     status.range(IFACE_("Search"), ICON_EVENT_A, ICON_EVENT_Z);
   }
   else if (mt->idname[0]) {
