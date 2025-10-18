@@ -1523,8 +1523,23 @@ static void svg_replace_color_attributes(std::string &svg,
   };
 
   for (const ColorItem &item : items) {
-    if (name != item.name) {
-      continue;
+    /* bfa - Since Inkscape cant have 2 group ID's of the same name,
+      this allows group ID's in a svg to have a number suffix to (blender_folder_01, _02 etc),
+      be still be treated has if it was blender_folder, allows for more complex icon themeing */
+    if (name == item.name) {
+    }
+    else {
+      const char *item_name = item.name;
+      const size_t item_name_len = strlen(item_name);
+      
+      if (name.size() > item_name_len && 
+          name.compare(0, item_name_len, item_name) == 0 &&
+          name[item_name_len] == '_' &&
+          std::all_of(name.begin() + item_name_len + 1, name.end(), ::isdigit)) {
+      }
+      else {
+        continue;
+      }
     }
 
     uchar color[4];
@@ -1608,22 +1623,7 @@ static void icon_source_edit_cb(std::string &svg)
     const size_t id_end = svg.find("\"", id_start + key.size());
     if (id_end != std::string::npos) {
       std::string id_name = svg.substr(id_start + key.size(), id_end - id_start - key.size());
-      /* bfa - Since Inkscape cant have 2 group ID's of the same name,
-      this allows group ID's in a svg to have a number suffix to (blender_folder_01, _02 etc),
-      be still be treated has if it was blender_folder, allows for more complex icon themeing */
-      size_t last_underscore = id_name.rfind('_');
-      if (last_underscore != std::string::npos) {
-        bool is_number = true;
-        for (size_t i = last_underscore + 1; i < id_name.length(); i++) {
-          if (!std::isdigit(id_name[i])) {
-            is_number = false;
-            break;
-          }
-        }
-        if (is_number) {
-          id_name = id_name.substr(0, last_underscore);
-        }
-      }
+      /* Replace this group's colors. */
       svg_replace_color_attributes(svg, id_name, g_start, g_end);
     }
 

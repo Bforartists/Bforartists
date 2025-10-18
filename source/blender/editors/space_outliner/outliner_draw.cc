@@ -2562,7 +2562,7 @@ static BIFIconID tree_element_get_icon_from_id(const ID *id)
       return ED_file_extension_icon(text->filepath);
     }
     case ID_GR:
-      return ICON_GROUP_BRIGHT; /*bfa - the color coded collection icon*/
+      return ICON_OUTLINER_COLLECTION; /* bfa - same has blender */
     case ID_CV:
       return ICON_OUTLINER_OB_CURVE;
     case ID_PT:
@@ -2907,7 +2907,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.drag_parent = (data.drag_id && te->parent) ? TREESTORE(te->parent)->id : nullptr;
         }
 
-        data.icon = ICON_GROUP_BRIGHT; /* BFA */
+        data.icon = ICON_OUTLINER_COLLECTION; /* bfa - same has blender */
         break;
       }
       case TSE_GP_LAYER: {
