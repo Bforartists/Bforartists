@@ -336,44 +336,6 @@ def draw_material_settings(self, context):
 
     mat = context.material
 
-    layout.use_property_split = False # BFA
-    layout.prop(mat, "use_backface_culling")
-    layout.use_property_split = True
-
-    layout.prop(mat, "blend_method")
-    layout.prop(mat, "shadow_method")
-
-    row = layout.row()
-    if ((mat.blend_method == 'CLIP') or (mat.shadow_method == 'CLIP')):
-        row.prop(mat, "alpha_threshold")
-
-    if mat.blend_method not in {'OPAQUE', 'CLIP', 'HASHED'}:
-        layout.use_property_split = False
-        layout.prop(mat, "show_transparent_back")
-        layout.use_property_split = True
-
-    col = layout.column()
-
-    subcol = col.column()
-    subcol.use_property_split = False
-    row = subcol.row()
-    split = row.split(factor=0.55)
-    split.prop(mat, "use_raytrace_refraction")
-    if mat.use_screen_refraction:
-        split.prop(mat, "refraction_depth", text="")
-    else:
-        split.label(icon='DISCLOSURE_TRI_RIGHT')
-
-    subcol = col.column()
-    subcol.use_property_split = False
-    row = subcol.row()
-    split = row.split(factor=0.55)
-    split.prop(mat, "use_sss_translucency")
-    if mat.use_sss_translucency:
-        split.prop(mat, "pass_index", text="")
-    else:
-        split.label(icon='DISCLOSURE_TRI_RIGHT')
-
     draw_material_surface_settings(layout, mat, False)
     draw_material_volume_settings(layout, mat, False)
 
