@@ -307,26 +307,6 @@ class BFA_OT_removeframe_right(op):
             self.layout.operator(BFA_OT_removeframe_right.bl_idname, icon=BFA_OT_removeframe_right.bl_icon)
 
 
-class BFA_OT_jump_forward(op):
-    bl_idname = "anim.jump_forward"
-    bl_label = "Frame Jump Forward"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        context.scene.frame_current += context.scene.frameskip
-        return {'FINISHED'}
-
-
-class BFA_OT_jump_back(op):
-    bl_idname = "anim.jump_back"
-    bl_label = "Frame Jump Back"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        context.scene.frame_current -= context.scene.frameskip
-        return {'FINISHED'}
-
-
 ################## Viewport Operators ##################
 
 # Store the previous settings in a dictionary
@@ -450,8 +430,6 @@ operator_list = [
     BFA_OT_insertframe_right,
     BFA_OT_removeframe_left,
     BFA_OT_removeframe_right,
-    BFA_OT_jump_forward,
-    BFA_OT_jump_back,
     # Viewport Operators
     BFA_OT_viewport_silhuette_toggle,
     # File Operators
@@ -463,12 +441,6 @@ def register():
     for ops in operator_list:
         bpy.utils.register_class(ops)
 
-    # Remove Properties
-    bpy.types.Scene.frameskip = bpy.props.IntProperty(name="Jump Frames", default=10)
-
 def unregister():
     for ops in operator_list:
         bpy.utils.unregister_class(ops)
-
-    # Add Properties
-    del bpy.types.Scene.frameskip

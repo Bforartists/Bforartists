@@ -56,16 +56,9 @@ def BFA_HT_timeline_skipframes(self, context):
             row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
             row.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
 
-        if wm.BFA_UI_addon_props.BFA_PROP_toggle_jumpframes:
-            op = row.operator("anim.jump_back", text="", emboss=True, depress=False, icon='FRAME_PREV')
-            row.prop(bpy.context.scene, 'frameskip', text="", emboss=True, slider=False)
-            op = row.operator("anim.jump_forward", text="", emboss=True, depress=False, icon='FRAME_NEXT')
-
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             row.operator("anim.insertframe_right", text="", icon="TRIA_RIGHT")
             row.operator("anim.removeframe_right", text="", icon="PANEL_CLOSE")
-
-
 
 
 menu_classes = [
