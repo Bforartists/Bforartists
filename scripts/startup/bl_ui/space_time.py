@@ -83,8 +83,8 @@ def playback_controls(layout, context):
     # Time jump
     row = layout.row(align=True)
     row.operator("screen.time_jump", text="", icon='FRAME_PREV').backward = True
+    row.prop(scene, "time_jump_delta", text="")
     row.operator("screen.time_jump", text="", icon='FRAME_NEXT').backward = False
-    row.prop(scene, "time_jump_delta", text="Delta")
     row.popover(panel="TIME_PT_jump", text="")
     
     # BFA - removed separator_spacer to center controls better
