@@ -107,7 +107,7 @@ class ActionSlot(PropertyGroup, ActionSlotBase):
         return str(action_slot.handle)
 
     action_slot_ui: StringProperty(
-        name="Acion Slot",
+        name="Action Slot",
         description="Slot of the Action to use for the Action Constraints",
         # These callbacks let us store the action slot's `handle` property
         # under the hood (which is unique and never changes), while acting
@@ -347,7 +347,7 @@ class RIGIFY_OT_jump_to_action_slot(Operator):
             self.report({'ERROR'}, "Failed to find Action Slot.")
             return {'CANCELLED'}
 
-        self.report({'INFO'}, f'Set active action set-up index to {i}.')
+        self.report({'INFO'}, rpt_("Set active action set-up index to {}.").format(i))
         return {'FINISHED'}
 
 

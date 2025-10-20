@@ -260,7 +260,8 @@ class NODE_HT_header(Header):
                     row.template_ID(
                         active_modifier,
                         "node_group",
-                        new="node.new_compositor_sequencer_node_group")
+                        new="node.new_compositor_sequencer_node_group",
+                    )
                 else:
                     row.enabled = False
                     row.template_ID(snode, "node_tree", new="node.new_compositor_sequencer_node_group")
@@ -1460,6 +1461,19 @@ class NODE_PT_node_tree_interface_panel_toggle(Panel):
         layout.use_property_split = False
 
 
+class NODE_MT_node_tree_interface_new_item(Menu):
+    bl_label = "New Item"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_enum("node.interface_item_new", "item_type")
+
+        active_item = context.space_data.edit_tree.interface.active
+
+        if active_item.item_type == 'PANEL':
+            layout.operator("node.interface_item_new_panel_toggle", text="Panel Toggle")
+
+
 class NODE_PT_node_tree_properties(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1667,6 +1681,7 @@ classes = (
     NODE_PT_geometry_node_tool_options,
     NODE_PT_node_color_presets,
     NODE_PT_node_tree_properties,
+    NODE_MT_node_tree_interface_new_item,
     NODE_MT_node_tree_interface_context_menu,
     NODE_PT_node_tree_interface_new_input,  # BFA - Menu
     NODE_PT_node_tree_interface,

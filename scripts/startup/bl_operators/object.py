@@ -49,13 +49,15 @@ class SelectPattern(Operator):
         if self.case_sensitive:
             pattern_match = fnmatch.fnmatchcase
         else:
-            pattern_match = (lambda a, b:
-                             fnmatch.fnmatchcase(a.upper(), b.upper()))
+            pattern_match = (
+                lambda a, b:
+                fnmatch.fnmatchcase(a.upper(), b.upper())
+            )
         is_ebone = False
         is_pbone = False
         obj = context.object
         if obj and obj.mode == 'POSE':
-            items = obj.data.bones
+            items = obj.pose.bones
             if not self.extend:
                 bpy.ops.pose.select_all(action='DESELECT')
             is_pbone = True
@@ -438,8 +440,10 @@ class ShapeTransfer(Operator):
             # Method 1, edge
             if mode == 'OFFSET':
                 for i, vert_cos in enumerate(median_coords):
-                    vert_cos.append(target_coords[i] +
-                                    (orig_shape_coords[i] - orig_coords[i]))
+                    vert_cos.append(
+                        target_coords[i] +
+                        (orig_shape_coords[i] - orig_coords[i])
+                    )
 
             elif mode == 'RELATIVE_FACE':
                 for poly in me.polygons:
@@ -639,11 +643,12 @@ class MakeDupliFace(Operator):
 
         SCALE_FAC = 0.01
         offset = 0.5 * SCALE_FAC
-        base_tri = (Vector((-offset, -offset, 0.0)),
-                    Vector((+offset, -offset, 0.0)),
-                    Vector((+offset, +offset, 0.0)),
-                    Vector((-offset, +offset, 0.0)),
-                    )
+        base_tri = (
+            Vector((-offset, -offset, 0.0)),
+            Vector((+offset, -offset, 0.0)),
+            Vector((+offset, +offset, 0.0)),
+            Vector((-offset, +offset, 0.0)),
+        )
 
         def matrix_to_quad(matrix):
             # scale = matrix.median_scale
@@ -896,24 +901,23 @@ class TransformsToDeltasAnim(Operator):
                     # no conflict yet
                     existingFCurves[dpath] = [fcu.array_index]
 
-            # if F-Curve uses standard transform path
-            # just append "delta_" to this path
+            # Move the 'standard' to the 'delta' data paths.
             for fcu in channelbag.fcurves:
-                if fcu.data_path == "location":
-                    fcu.data_path = "delta_location"
-                    obj.location.zero()
-                elif fcu.data_path == "rotation_euler":
-                    fcu.data_path = "delta_rotation_euler"
-                    obj.rotation_euler.zero()
-                elif fcu.data_path == "rotation_quaternion":
-                    fcu.data_path = "delta_rotation_quaternion"
-                    obj.rotation_quaternion.identity()
-                # XXX: currently not implemented
-                # ~ elif fcu.data_path == "rotation_axis_angle":
-                # ~    fcu.data_path = "delta_rotation_axis_angle"
-                elif fcu.data_path == "scale":
-                    fcu.data_path = "delta_scale"
-                    obj.scale = 1.0, 1.0, 1.0
+                standard_path = fcu.data_path
+                array_index = fcu.array_index
+                try:
+                    delta_path = STANDARD_TO_DELTA_PATHS[standard_path]
+                except KeyError:
+                    # Not a standard transform path.
+                    continue
+
+                # Just change the F-Curve's data path. The array index should remain the same.
+                fcu.data_path = delta_path
+
+                # Reset the now-no-longer-animated property to its default value.
+                default_array = obj.bl_rna.properties[standard_path].default_array
+                property_array = getattr(obj, standard_path)
+                property_array[array_index] = default_array[array_index]
 
         # hack: force animsys flush by changing frame, so that deltas get run
         context.scene.frame_set(context.scene.frame_current)

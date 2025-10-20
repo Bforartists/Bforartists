@@ -29,6 +29,7 @@
 
 #include "GHOST_C-api.h"
 
+#include "BLI_enum_flags.hh"
 #include "BLI_fileops.h"
 #include "BLI_listbase.h"
 #include "BLI_math_vector.h"
@@ -38,14 +39,13 @@
 #include "BLI_string_utf8.h"
 #include "BLI_system.h"
 #include "BLI_time.h"
-#include "BLI_utildefines.h"
 
 #include "BLT_translation.hh"
 
 #include "BKE_blender_version.h"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_icons.h"
+#include "BKE_icons.hh"
 #include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
@@ -107,7 +107,7 @@ enum eWinOverrideFlag {
   WIN_OVERRIDE_GEOM = (1 << 0),
   WIN_OVERRIDE_WINSTATE = (1 << 1),
 };
-ENUM_OPERATORS(eWinOverrideFlag, WIN_OVERRIDE_WINSTATE)
+ENUM_OPERATORS(eWinOverrideFlag)
 
 #define GHOST_WINDOW_STATE_DEFAULT GHOST_kWindowStateMaximized
 
@@ -132,6 +132,7 @@ static struct WMInitStruct {
   GHOST_TWindowState windowstate = GHOST_WINDOW_STATE_DEFAULT;
   eWinOverrideFlag override_flag;
 
+  bool window_frame = true;
   bool window_focus = true;
   bool native_pixels = true;
 } wm_init_state;
@@ -2116,6 +2117,7 @@ void wm_ghost_init(bContext *C)
   consumer = GHOST_CreateEventConsumer(ghost_event_proc, C);
 
   GHOST_SetBacktraceHandler((GHOST_TBacktraceFn)BLI_system_backtrace);
+  GHOST_UseWindowFrame(wm_init_state.window_frame);
 
   g_system = GHOST_CreateSystem();
   GPU_backend_ghost_system_set(g_system);
@@ -2812,6 +2814,16 @@ void WM_init_state_maximized_set()
 {
   wm_init_state.windowstate = GHOST_kWindowStateMaximized;
   wm_init_state.override_flag |= WIN_OVERRIDE_WINSTATE;
+}
+
+bool WM_init_window_frame_get()
+{
+  return wm_init_state.window_frame;
+}
+
+void WM_init_window_frame_set(bool do_it)
+{
+  wm_init_state.window_frame = do_it;
 }
 
 void WM_init_window_focus_set(bool do_it)

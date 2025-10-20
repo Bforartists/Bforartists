@@ -409,9 +409,7 @@ static bool snap_object_is_snappable(const SnapObjectContext *sctx,
     return false;
   }
 
-  if ((snap_target_select == SCE_SNAP_TARGET_ALL) ||
-      (base->flag_legacy & BA_TRANSFORM_LOCKED_IN_PLACE))
-  {
+  if (snap_target_select == SCE_SNAP_TARGET_ALL) {
     return true;
   }
 
@@ -581,6 +579,11 @@ static eSnapMode raycast_obj_fn(SnapObjectContext *sctx,
                                 bool use_hide)
 {
   bool retval = false;
+
+  if (ob_eval->visibility_flag & OB_HIDE_SURFACE_PICK) {
+    /* Do not snap it surface picking is disabled. */
+    return SCE_SNAP_TO_NONE;
+  }
 
   if (ob_data == nullptr) {
     if ((sctx->runtime.occlusion_test_edit == SNAP_OCCLUSION_AS_SEEM) &&

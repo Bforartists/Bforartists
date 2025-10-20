@@ -420,7 +420,7 @@ set(SRC
   BKE_grease_pencil.hh
   BKE_grease_pencil_legacy_convert.hh
   BKE_grease_pencil_vertex_groups.hh
-  BKE_icons.h
+  BKE_icons.hh
   BKE_id_hash.hh
   BKE_idprop.hh
   BKE_idtype.hh
@@ -815,6 +815,7 @@ if(WITH_GTESTS)
     intern/main_test.cc
     intern/nla_test.cc
     intern/path_templates_test.cc
+    intern/scene_test.cc
     intern/subdiv_ccg_test.cc
     intern/tracking_test.cc
     intern/volume_test.cc

@@ -802,8 +802,6 @@ static void blend_write(BlendWriter *writer, const ID *id_owner, const ModifierD
     }
   }
 
-  BLO_write_struct_at_address(writer, CorrectiveSmoothModifierData, md, &csmd);
-
   if (csmd.bind_coords != nullptr) {
     BLO_write_shared(writer,
                      csmd.bind_coords,
@@ -814,6 +812,8 @@ static void blend_write(BlendWriter *writer, const ID *id_owner, const ModifierD
                            writer, csmd.bind_coords_num, (const float *)csmd.bind_coords);
                      });
   }
+
+  BLO_write_struct_at_address(writer, CorrectiveSmoothModifierData, md, &csmd);
 }
 
 static void blend_read(BlendDataReader *reader, ModifierData *md)

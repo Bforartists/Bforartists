@@ -315,6 +315,7 @@ class TEXT_MT_templates_py(Menu):
             "text.open",
             props_default={"internal": True},
             filter_ext=lambda ext: (ext.lower() == ".py"),
+            translate=False,
         )
 
 
