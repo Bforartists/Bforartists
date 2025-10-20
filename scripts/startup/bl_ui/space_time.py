@@ -83,10 +83,11 @@ def playback_controls(layout, context):
     # Time jump
     row = layout.row(align=True)
     row.operator("screen.time_jump", text="", icon='FRAME_PREV').backward = True
+    row.prop(scene, "time_jump_delta", text="")
     row.operator("screen.time_jump", text="", icon='FRAME_NEXT').backward = False
     row.popover(panel="TIME_PT_jump", text="")
-
-    layout.separator_spacer()
+    
+    # BFA - removed separator_spacer to center controls better
 
     # BFA - cleaned up duplicate controls and organized layout
     if scene:
@@ -493,7 +494,7 @@ class TIME_PT_jump(TimelinePanelButtons, Panel):
         scene = context.scene
 
         layout.prop(scene, "time_jump_unit", expand=True, text="Jump Unit")
-        layout.prop(scene, "time_jump_delta", text="Delta")
+        # BFA - moved time_jump_delta to top level
 
 
 ###################################
