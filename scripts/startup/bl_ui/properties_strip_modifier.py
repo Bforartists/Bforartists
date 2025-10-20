@@ -32,9 +32,14 @@ class STRIP_PT_modifiers(StripModButtonsPanel, Panel):
             sound = None
 
         if sound is None:
-            layout.prop(strip, "use_linear_modifiers", text="Linear Modifiers")
+            row = layout.row()  # BFA - float left
+            row.use_property_split = False
+            row.prop(strip, "use_linear_modifiers")
+            row.prop_decorator(strip, "use_linear_modifiers")
 
-        layout.operator("wm.call_menu", text="Add Modifier", icon='ADD').name = "SEQUENCER_MT_modifier_add"
+        row = layout.row()
+        row.operator("wm.call_menu", text="Add Modifier", icon='ADD').name = "SEQUENCER_MT_modifier_add"
+        row.operator("sequencer.strip_modifier_copy", text="", icon="COPYDOWN") # BFA - expose consistently
 
         layout.template_strip_modifiers()
 
