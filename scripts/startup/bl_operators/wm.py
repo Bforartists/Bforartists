@@ -3348,7 +3348,7 @@ class WM_MT_splash_quick_setup(Menu):
             col = split.column()
             col.operator(
                 "preferences.copy_prev",
-                text=iface_("Load Bforartists {:d}.{:d} Preferences", "Operator").format(old_version[0], old_version[1] - 1), #BFA - made it subtract a version, since we are ahead one of Blender in the config settings
+                text=iface_("Load Bforartists {}.{} Preferences", "Operator").format(*old_version), # bfa - show the correct previous version to load
                 icon='DUPLICATE', #BFA
                 translate=False,
             )
