@@ -1792,7 +1792,7 @@ class VIEW3D_MT_view_pie_menus(Menu):
         ).name = "ANIM_MT_keyframe_insert_pie"
         layout.separator()
 
-        layout.operator("wm.call_menu_pie", text="Greasepencil Snap", icon="MENU_PANEL").name = "GPENCIL_MT_snap_pie"
+        layout.operator("wm.call_menu_pie", text="Greasepencil Snap", icon="MENU_PANEL").name = "GREASE_PENCIL_MT_snap_pie"
 
         layout.separator()
 
