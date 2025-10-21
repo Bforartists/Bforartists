@@ -28,6 +28,7 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}" # the pull request title
           PR_TITLE="${PR_TITLE//\"/}" # Remove double quotes from the title
           PR_DESCRIPTION="${{ github.event.pull_request.body }}" # the pull request description
+          PR_DESCRIPTION="${PR_DESCRIPTION//\"/}" # Remove double quotes from the description
           PR_URL="${{ github.event.pull_request.html_url }}" # the pull request url
           TARGET_REPO="bforartists/manual"
 
