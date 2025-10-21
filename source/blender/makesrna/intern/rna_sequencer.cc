@@ -46,7 +46,7 @@ struct EffectInfo {
   {eSeqModifierType_BrightContrast, "BRIGHT_CONTRAST", ICON_BRIGHTNESS_CONTRAST, "Brightness/Contrast", ""}, \
   {eSeqModifierType_ColorBalance, "COLOR_BALANCE", ICON_NODE_COLORBALANCE, "Color Balance", ""}, \
   {eSeqModifierType_Compositor, "COMPOSITOR", ICON_NODE_COMPOSITING, "Compositor", ""}, \
-  {eSeqModifierType_Curves, "CURVES", ICON_OUTLINER_DATA_CURVE, "Curves", ""}, \
+  {eSeqModifierType_Curves, "CURVES", ICON_MOD_CURVES, "Curves", ""}, \
   {eSeqModifierType_HueCorrect, "HUE_CORRECT", ICON_HUECORRECT, "Hue Correct", ""}, \
   {eSeqModifierType_Mask, "MASK", ICON_MOD_MASK, "Mask", ""}, \
   {eSeqModifierType_Tonemap, "TONEMAP", ICON_NODE_TONEMAP, "Tone Map", ""}, \
