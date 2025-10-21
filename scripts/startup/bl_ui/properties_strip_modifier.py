@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+import bpy # BFA
+
 from bpy.types import (
     Panel,
 )
@@ -39,7 +41,11 @@ class STRIP_PT_modifiers(StripModButtonsPanel, Panel):
 
         row = layout.row()
         row.operator("wm.call_menu", text="Add Modifier", icon='ADD').name = "SEQUENCER_MT_modifier_add"
-        row.operator("sequencer.strip_modifier_copy", text="", icon="COPYDOWN") # BFA - expose consistently
+        
+        # BFA - adde and expose the copy to selected to the stack consistently, and make it intuitive when selected strips are more than 1.
+        copy_row = row.row()
+        copy_row.enabled = len(bpy.context.selected_strips) > 1
+        copy_row.operator("sequencer.strip_modifier_copy", text="", icon="COPYDOWN")
 
         layout.template_strip_modifiers()
 
