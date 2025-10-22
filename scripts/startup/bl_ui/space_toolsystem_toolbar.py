@@ -1578,10 +1578,10 @@ class _defs_sculpt:
 
             layout.use_property_split = True
             layout.use_property_decorate = False
-            col = layout.column()
-            col.active = props.use_smooth_stroke
-            col.prop(props, "smooth_stroke_radius", text="Radius", slider=True)
-            col.prop(props, "smooth_stroke_factor", text="Factor", slider=True)
+            if props.use_smooth_stroke: # BFA - Hide inactive properties if smooth stroke is disabled
+                col = layout.column()
+                col.prop(props, "smooth_stroke_radius", text="Radius", slider=True)
+                col.prop(props, "smooth_stroke_factor", text="Factor", slider=True)
 
         if draw_popover:
             layout.popover("TOPBAR_PT_tool_settings_extra", text="Stroke")
