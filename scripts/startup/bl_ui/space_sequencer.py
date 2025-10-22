@@ -103,7 +103,6 @@ class SEQUENCER_HT_header(Header):
         tool_settings = scene.tool_settings if scene else None
         sequencer_tool_settings = tool_settings.sequencer_tool_settings if tool_settings else None
 
-        layout.separator_spacer()
         row = layout.row()  # BFA - 3D Sequencer
         # Sync pinned scene button
         row.label(icon="PINNED" if context.workspace.sequencer_scene else "UNPINNED")  # BFA - 3D Sequencer
@@ -112,6 +111,7 @@ class SEQUENCER_HT_header(Header):
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
             row.template_ID(context.workspace, "sequencer_scene", new="scene.new_sequencer_scene")
+            layout.separator_spacer()  #BFA - Align scene to center
 
         if sequencer_tool_settings and st.view_type == "PREVIEW":
             row = layout.row(align=True)  # BFA
@@ -126,9 +126,6 @@ class SEQUENCER_HT_header(Header):
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
             sub.popover(panel="SEQUENCER_PT_snapping", text="")  # BFA - removed title
-
-        # layout.separator_spacer()  #BFA
-
         if st.view_type in {"PREVIEW", "SEQUENCER_PREVIEW"}:
             layout.prop(st, "display_mode", text="", icon_only=True)
             layout.prop(st, "preview_channels", text="", icon_only=True)
@@ -1295,7 +1292,7 @@ class SEQUENCER_MT_strip_modifiers(Menu):
 
         layout.menu("SEQUENCER_MT_modifier_add", text="Add Modifier")
 
-        layout.operator("sequencer.strip_modifier_copy", text="Copy to Selected Strips...")
+        layout.operator("sequencer.strip_modifier_copy", text="Copy to Selected Strips", icon="COPYDOWN")
 
 
 class SEQUENCER_MT_strip_effect(Menu):
@@ -1563,7 +1560,7 @@ class SEQUENCER_MT_strip(Menu):
             if strip:
                 strip_type = strip.type
                 layout.separator()
-                layout.menu("SEQUENCER_MT_strip_modifiers", icon="MODIFIER")
+                layout.menu("SEQUENCER_MT_strip_modifiers") # BFA - no icon
 
                 if strip_type in {
                     "CROSS",
@@ -1829,7 +1826,7 @@ class SEQUENCER_MT_context_menu(Menu):
             total, nonsound = selected_strips_count(context)
 
             layout.separator()
-            layout.menu("SEQUENCER_MT_strip_modifiers", icon="MODIFIER")
+            layout.menu("SEQUENCER_MT_strip_modifiers") # BFA - no icon
 
             if total == 2:
                 if nonsound == 2:
@@ -2021,7 +2018,7 @@ class SEQUENCER_MT_modifier_add(Menu):
             layout.operator_context = "INVOKE_REGION_WIN"
             layout.operator(
                 "WM_OT_search_single_menu",
-                text="Search...",
+                text="Search",
                 icon="VIEWZOOM",
             ).menu_idname = "SEQUENCER_MT_modifier_add"
             layout.separator()
@@ -3725,31 +3722,6 @@ class SEQUENCER_PT_view_safe_areas_center_cut(SequencerButtonsPanel_Output, Pane
         col.prop(safe_data, "action_center", slider=True)
 
 
-class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
-    bl_label = ""
-    bl_options = {"HIDE_HEADER"}
-    bl_category = "Modifiers"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        strip = context.active_strip
-        if strip.type == "SOUND":
-            sound = strip.sound
-        else:
-            sound = None
-
-        if sound is None:
-            row = layout.row()  # BFA - float left
-            row.use_property_split = False
-            row.prop(strip, "use_linear_modifiers")
-            row.prop_decorator(strip, "use_linear_modifiers")
-
-        layout.operator("wm.call_menu", text="Add Modifier", icon="ADD").name = "SEQUENCER_MT_modifier_add"
-        layout.template_strip_modifiers()
-
-
 class SEQUENCER_PT_annotation(AnnotationDataPanel, SequencerButtonsPanel_Output, Panel):
     bl_space_type = "SEQUENCE_EDITOR"
     bl_region_type = "UI"
@@ -4077,7 +4049,6 @@ classes = (
     SEQUENCER_PT_adjust_sound, # BFA - Legacy
     SEQUENCER_PT_time, # BFA - Legacy
     SEQUENCER_PT_source, # BFA - Legacy
-    SEQUENCER_PT_modifiers, # BFA - Legacy
     SEQUENCER_PT_cache_settings,
     SEQUENCER_PT_cache_view_settings,
     SEQUENCER_PT_proxy_settings,

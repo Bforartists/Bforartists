@@ -143,9 +143,9 @@ void BKE_preferences_asset_library_default_add(UserDef *userdef)
   bUserAssetLibrary *library = BKE_preferences_asset_library_add(
       userdef, DATA_(BKE_PREFS_ASSET_LIBRARY_DEFAULT_NAME), nullptr);
 
-  /* Add new "Default" library under '[doc_path]/Blender/Assets'. */
+  /* Add new "Default" library under '[doc_path]/Bforartists/Assets'. */
   BLI_path_join(
-      library->dirpath, sizeof(library->dirpath), documents_path, N_("Blender"), N_("Assets"));
+      library->dirpath, sizeof(library->dirpath), documents_path, N_("Bforartists"), N_("Assets")); /* bfa - our name */
 }
 
 /** \} */

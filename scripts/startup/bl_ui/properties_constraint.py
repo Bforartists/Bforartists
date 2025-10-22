@@ -52,7 +52,7 @@ class OBJECT_MT_constraint_add(GenericColumnMenu, Menu):
         self.draw_operator_column(layout, header="Tracking",
             types=('CLAMP_TO', 'DAMPED_TRACK', 'LOCKED_TRACK', 'STRETCH_TO', 'TRACK_TO'))
         self.draw_operator_column(layout, header="Relationship",
-            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
+            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'GEOMETRY_ATTRIBUTE', 'PIVOT', 'SHRINKWRAP'))
 
 # BFA menu
 class OBJECT_OT_add_constraints_menu(InvokeMenuOperator, Operator):
@@ -95,7 +95,7 @@ class BONE_MT_constraint_add(GenericColumnMenu, Menu):
         self.draw_operator_column(layout, header="Tracking",
             types=('CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO'))
         self.draw_operator_column(layout, header="Relationship",
-            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'SHRINKWRAP'))
+            types=('ACTION', 'ARMATURE', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'GEOMETRY_ATTRIBUTE', 'PIVOT', 'SHRINKWRAP'))
 
 # BFA - menu
 class BONE_OT_add_constraints_menu(InvokeMenuOperator, Operator):
