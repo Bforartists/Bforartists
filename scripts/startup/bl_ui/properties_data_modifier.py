@@ -275,7 +275,7 @@ class OBJECT_MT_modifier_add_generate(ModifierAddMenu, Menu):
         ob_type = context.object.type
         if ob_type in {'MESH', 'CURVE', 'FONT', 'SURFACE'}:
             self.operator_modifier_add_asset(layout, 'Array', icon='MOD_ARRAY')
-            self.operator_modifier_add(layout, 'ARRAY', text=n_("Array (Legacy)"), icon='MOD_ARRAY') # BFA - added icon back
+            self.operator_modifier_add(layout, 'ARRAY', text=n_("Array (Legacy)")) # BFA - added icon back
             self.operator_modifier_add(layout, 'BEVEL')
         if ob_type == 'MESH':
             self.operator_modifier_add(layout, 'BOOLEAN')
