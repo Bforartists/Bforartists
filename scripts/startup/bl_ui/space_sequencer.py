@@ -103,7 +103,6 @@ class SEQUENCER_HT_header(Header):
         tool_settings = scene.tool_settings if scene else None
         sequencer_tool_settings = tool_settings.sequencer_tool_settings if tool_settings else None
 
-        layout.separator_spacer()
         row = layout.row()  # BFA - 3D Sequencer
         # Sync pinned scene button
         row.label(icon="PINNED" if context.workspace.sequencer_scene else "UNPINNED")  # BFA - 3D Sequencer
@@ -112,6 +111,7 @@ class SEQUENCER_HT_header(Header):
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
             row.template_ID(context.workspace, "sequencer_scene", new="scene.new_sequencer_scene")
+            layout.separator_spacer()  #BFA - Align scene to center
 
         if sequencer_tool_settings and st.view_type == "PREVIEW":
             row = layout.row(align=True)  # BFA
@@ -126,9 +126,6 @@ class SEQUENCER_HT_header(Header):
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
             sub.popover(panel="SEQUENCER_PT_snapping", text="")  # BFA - removed title
-
-        # layout.separator_spacer()  #BFA
-
         if st.view_type in {"PREVIEW", "SEQUENCER_PREVIEW"}:
             layout.prop(st, "display_mode", text="", icon_only=True)
             layout.prop(st, "preview_channels", text="", icon_only=True)
