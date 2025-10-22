@@ -1574,7 +1574,12 @@ class _defs_sculpt:
     def draw_lasso_stroke_settings(layout, props, draw_inline, draw_popover):
         if draw_inline:
             layout.use_property_split = False
-            layout.prop(props, "use_smooth_stroke", text="Stabilize Stroke", expand=False)
+
+            # BFA - Add dropdown arrow icons
+            row = layout.row(align=True)
+            row.alignment = 'LEFT'
+            row.prop(props, "use_smooth_stroke", text="Stabilize Stroke", expand=False)
+            row.label(icon='DISCLOSURE_TRI_DOWN' if props.use_smooth_stroke else 'DISCLOSURE_TRI_RIGHT')
 
             layout.use_property_split = True
             layout.use_property_decorate = False
