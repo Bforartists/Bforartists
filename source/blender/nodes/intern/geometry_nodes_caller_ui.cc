@@ -416,8 +416,8 @@ static void add_attribute_search_or_value_buttons(
   layout->use_property_decorate_set(false);
 
   uiLayout *split = &layout->split(0.4f, false);
-  uiLayout *name_row = &split->row(false);
-  name_row->alignment_set(ui::LayoutAlign::Right);
+  uiLayout *name_row = &split->row(true); /* BFA - align left */
+  name_row->alignment_set(ui::LayoutAlign::Left); /* BFA - align left */
 
   uiLayout *prop_row = nullptr;
 
@@ -426,13 +426,7 @@ static void add_attribute_search_or_value_buttons(
   const StringRefNull socket_name = use_name.has_value() ?
                                         (*use_name) :
                                         (socket.name ? IFACE_(socket.name) : "");
-  if (type == SOCK_BOOLEAN && !attribute_name) {
-    name_row->label("", ICON_NONE);
-    prop_row = &split->row(true);
-  }
-  else {
-    prop_row = &layout->row(true);
-  }
+  prop_row = &layout->row(true); /* BFA - removed the if else, we always want this to be true */
 
   if (type == SOCK_BOOLEAN) {
     prop_row->use_property_split_set(false);
@@ -582,13 +576,25 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
         add_attribute_search_or_value_buttons(ctx, row, rna_path, socket, name);
       }
       else {
-        row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+        /* BFA - add check for float and int, align left and add decorator to the right for booleans. */
+        switch (type) {
+          case SOCK_FLOAT:
+          case SOCK_INT: {
+            row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+            row->label("", ICON_BLANK1); /* BFA - added blank label so int sliders are aligned correctly */
+            break;
+          }
+          default: {
+            row->use_property_split_set(false);
+            row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+            row->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
+            break;
+          }
+        }
       }
     }
   }
-  if (!nodes::input_has_attribute_toggle(*ctx.tree, input_index)) {
-    row->label("", ICON_BLANK1);
-  }
+  /* BFA - removed label to prevent spacing issues with decorator/attribute toggle */
 }
 
 static bool interface_panel_has_socket(DrawGroupInputsContext &ctx,
