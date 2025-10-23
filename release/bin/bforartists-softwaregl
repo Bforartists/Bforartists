@@ -1,22 +1,8 @@
-#!/bin/sh
-BF_DIST_BIN=$(dirname "$0")
-BF_PROGRAM="bforartists" # BF_PROGRAM=$(basename "$0")-bin
+#!/bin/bash
+# Software OpenGL
+export LIBGL_ALWAYS_SOFTWARE=1
+export MESA_LOADER_DRIVER_OVERRIDE=llvmpipe
+export MESA_GL_VERSION_OVERRIDE=4.5COMPAT
 
-LD_LIBRARY_PATH=${BF_DIST_BIN}/lib/mesa:${LD_LIBRARY_PATH}
-
-if [ -n "$LD_LIBRARYN32_PATH" ]; then
-    LD_LIBRARYN32_PATH=${BF_DIST_BIN}/lib/mesa:${LD_LIBRARYN32_PATH}
-fi
-if [ -n "$LD_LIBRARYN64_PATH" ]; then
-    LD_LIBRARYN64_PATH=${BF_DIST_BIN}/lib/mesa:${LD_LIBRARYN64_PATH}
-fi
-if [ -n "$LD_LIBRARY_PATH_64" ]; then
-    LD_LIBRARY_PATH_64=${BF_DIST_BIN}/lib/mesa:${LD_LIBRARY_PATH_64}
-fi
-
-# Workaround for half-transparent windows when compiz is enabled
-XLIB_SKIP_ARGB_VISUALS=1
-
-export LD_LIBRARY_PATH LD_LIBRARYN32_PATH LD_LIBRARYN64_PATH LD_LIBRARY_PATH_64 LD_PRELOAD XLIB_SKIP_ARGB_VISUALS
-
-exec "$BF_DIST_BIN/$BF_PROGRAM" "$@"
+# Run Bforartists
+./bforartists "$@"
