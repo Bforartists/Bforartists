@@ -778,16 +778,17 @@ class SmoothStrokePanel(BrushPanel):
         if brush is None:
             return
 
-        col = layout.column()
-        col.active = brush.use_smooth_stroke
-        row = col.row()
-        if self.is_popover:
-            row.separator()
-        row.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
-        row = col.row()
-        if self.is_popover:
-            row.separator()
-        row.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
+        if brush.use_smooth_stroke: # BFA - Hide inactive properties if smooth stroke is disabled
+            col = layout.column()
+            row = col.row()
+
+            if self.is_popover:
+                row.separator()
+            row.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
+            row = col.row()
+            if self.is_popover:
+                row.separator()
+            row.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
 
 
 class FalloffPanel(BrushPanel):

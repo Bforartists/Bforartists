@@ -1574,14 +1574,19 @@ class _defs_sculpt:
     def draw_lasso_stroke_settings(layout, props, draw_inline, draw_popover):
         if draw_inline:
             layout.use_property_split = False
-            layout.prop(props, "use_smooth_stroke", text="Stabilize Stroke", expand=False)
+
+            # BFA - Add dropdown arrow icons
+            row = layout.row(align=True)
+            row.alignment = 'LEFT'
+            row.prop(props, "use_smooth_stroke", text="Stabilize Stroke", expand=False)
+            row.label(icon='DISCLOSURE_TRI_DOWN' if props.use_smooth_stroke else 'DISCLOSURE_TRI_RIGHT')
 
             layout.use_property_split = True
             layout.use_property_decorate = False
-            col = layout.column()
-            col.active = props.use_smooth_stroke
-            col.prop(props, "smooth_stroke_radius", text="Radius", slider=True)
-            col.prop(props, "smooth_stroke_factor", text="Factor", slider=True)
+            if props.use_smooth_stroke: # BFA - Hide inactive properties if smooth stroke is disabled
+                col = layout.column()
+                col.prop(props, "smooth_stroke_radius", text="Radius", slider=True)
+                col.prop(props, "smooth_stroke_factor", text="Factor", slider=True)
 
         if draw_popover:
             layout.popover("TOPBAR_PT_tool_settings_extra", text="Stroke")
