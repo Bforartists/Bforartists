@@ -334,7 +334,7 @@ class SubdivisionSet(Operator):
                         if use_render_levels:  # BFA - Set render_levels if toggle is enabled
                             mod.render_levels = level
                 except Exception:
-                    self.report({'WARNING'}, "Modifiers cannot be added to object: " + obj.name)
+                    self.report({'WARNING'}, rpt_("Modifiers cannot be added to object: {:s}").format(obj.name))
 
         for obj in context.selected_editable_objects:
             set_object_subd(obj)

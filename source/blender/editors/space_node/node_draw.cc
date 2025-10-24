@@ -1752,42 +1752,41 @@ static void node_draw_shadow(const SpaceNode &snode,
 
 /* BFA - Draw an outline with padding around node groups */
 static void node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
-  const bNode &node,
-  const rctf &rect,
-  const float radius,
-  const bool is_selected)
+                                           const bNode &node,
+                                           const rctf &rect,
+                                           const float radius,
+                                           const bool is_selected)
 {
-if (node.type_legacy != NODE_GROUP) {
-return;
-}
+  if (node.type_legacy != NODE_GROUP) {
+    return;
+  }
 
-const float padding = 5.0f * UI_SCALE_FAC;
-float alpha_selected = is_selected ? 1.0f : 0.5f; // Keep outline more visible
+  const float padding = 5.0f * UI_SCALE_FAC;
+  float alpha_selected = is_selected ? 1.0f : 0.5f;  // Keep outline more visible
 
-/* If the node is muted, reduce its alpha. */
-if (node.is_muted()) {
-  alpha_selected = alpha_selected - 0.4f;
-}
+  /* If the node is muted, reduce its alpha. */
+  if (node.is_muted()) {
+    alpha_selected = alpha_selected - 0.4f;
+  }
 
+  /* Create the outline rectangle with padding. */
+  const rctf outline_rect = {
+      rect.xmin - padding,
+      rect.xmax + padding,
+      rect.ymin - padding,
+      rect.ymax + padding,
+  };
 
-/* Create the outline rectangle with padding. */
-const rctf outline_rect = {
-rect.xmin - padding,
-rect.xmax + padding,
-rect.ymin - padding,
-rect.ymax + padding,
-};
+  float outline_color[4];
+  int color_id = node_get_colorid(tree_draw_ctx, node);
 
-float outline_color[4];
-int color_id = node_get_colorid(tree_draw_ctx, node);
+  /* Both selected and unselected should use the header color */
+  UI_GetThemeColor4fv(color_id, outline_color);
+  outline_color[3] = alpha_selected;
 
-/* Both selected and unselected should use the header color */
-UI_GetThemeColor4fv(color_id, outline_color);
-outline_color[3] = alpha_selected;
-
-/* Draw only the outline (background is drawn separately at the beginning) */
-UI_draw_roundbox_corner_set(UI_CNR_ALL);
-UI_draw_roundbox_4fv(&outline_rect, false, radius + padding, outline_color);
+  /* Draw only the outline (background is drawn separately at the beginning) */
+  UI_draw_roundbox_corner_set(UI_CNR_ALL);
+  UI_draw_roundbox_4fv(&outline_rect, false, radius + padding, outline_color);
 }
 
 static void node_draw_socket(const bContext &C,
@@ -2955,7 +2954,7 @@ static void node_draw_basis(const bContext &C,
   if (node.type_legacy == NODE_GROUP) {
     const float group_padding = 5.0f * UI_SCALE_FAC;
     const float group_radius = BASIS_RAD + group_padding;
-    const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f; // Slightly transparent
+    const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f;  // Slightly transparent
 
     const rctf group_bg_rect = {
         rct.xmin - group_padding,
@@ -2992,8 +2991,8 @@ static void node_draw_basis(const bContext &C,
   /* Show/hide icons. */
   float iconofs = rct.xmax - 0.35f * U.widget_unit;
 
-   /* BFA - Kept this Group icon.*/
-   if (node.type_legacy == NODE_GROUP) {
+  /* BFA - Kept this Group icon.*/
+  if (node.type_legacy == NODE_GROUP) {
     iconofs -= iconbutw;
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
@@ -3017,7 +3016,6 @@ static void node_draw_basis(const bContext &C,
     }
     UI_block_emboss_set(&block, ui::EmbossType::Emboss);
   }
-
 
   if (nodes::node_can_sync_sockets(C, ntree, node)) {
     iconofs -= iconbutw;
@@ -3252,8 +3250,8 @@ static void node_draw_basis(const bContext &C,
     else if (node.is_muted()) {
       // bfa node color blend
       float color_background[4];
-      float color_blend[4]; 
-      UI_GetThemeColor4fv(TH_BACK, color_background); 
+      float color_blend[4];
+      UI_GetThemeColor4fv(TH_BACK, color_background);
       UI_GetThemeColorBlend4f(TH_NODE, color_id, U.node_color_blend, color_blend);
       interp_v4_v4v4(color, color_background, color_blend, 0.2f);
       // UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.2f, color);
@@ -3263,7 +3261,8 @@ static void node_draw_basis(const bContext &C,
     }
     else {
       // bfa node color blend
-      UI_GetThemeColorBlend4f(TH_NODE, color_id, U.node_color_blend, color); // bfa node color blend 
+      UI_GetThemeColorBlend4f(
+          TH_NODE, color_id, U.node_color_blend, color);  // bfa node color blend
       // UI_GetThemeColor4fv(TH_NODE, color);
     }
 
@@ -3286,13 +3285,14 @@ static void node_draw_basis(const bContext &C,
         rct.xmin - padding,
         rct.xmax + padding,
         rct.ymin - padding,
-        rct.ymax - (NODE_DY + outline_width) + padding,
+        rct.ymax - NODE_DY + padding,
     };
 
     /* BFA - Removed the old Node Group indicator. */
-    //if (draw_node_details(snode)) {
-    //  node_draw_node_group_indicator(snode, node, rect, corner_radius, color, node.flag & SELECT);
-    //}
+    // if (draw_node_details(snode)) {
+    //   node_draw_node_group_indicator(snode, node, rect, corner_radius, color, node.flag &
+    //   SELECT);
+    // }
 
     UI_draw_roundbox_corner_set(UI_CNR_BOTTOM_LEFT | UI_CNR_BOTTOM_RIGHT);
     UI_draw_roundbox_4fv(&rect, true, corner_radius, color);
@@ -3302,57 +3302,8 @@ static void node_draw_basis(const bContext &C,
     }
   }
 
-  /* Outlines. */
+  /* Outline around the entire node to highlight selection, alert, or for simulation zones. */
   {
-    /* Body outline. */
-    const rctf rect_body = {
-        rct.xmin - 0,
-        rct.xmax + 0,
-        rct.ymin,
-        rct.ymax - (NODE_DY),
-    };
-    float color_body[4];
-    if (node_undefined_or_unsupported(ntree, node)) {
-      UI_GetThemeColorShade4fv(TH_REDALERT, -40, color_body);
-    }
-    else if (node.is_muted()) {
-      UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.6f, color_body);
-    }
-    else {
-      UI_GetThemeColorShade4fv(TH_NODE, 20, color_body);
-    }
-    UI_draw_roundbox_corner_set(UI_CNR_BOTTOM_LEFT | UI_CNR_BOTTOM_RIGHT);
-    UI_draw_roundbox_4fv(&rect_body, false, BASIS_RAD, color_body);
-
-    /* Header outline. */
-    const rctf rect_header = {
-        rct.xmin,
-        rct.xmax,
-        rct.ymax - (NODE_DY + outline_width),
-        rct.ymax,
-    };
-    float color_header[4];
-    if (node_undefined_or_unsupported(ntree, node)) {
-      UI_GetThemeColorShade4fv(TH_REDALERT, -40, color_header);
-    }
-    else if (node.is_muted()) {
-      UI_GetThemeColorBlend4f(TH_BACK, color_id, 0.6f, color_header);
-    }
-    else {
-      UI_GetThemeColorShade4fv(color_id, 20, color_header);
-    }
-    UI_draw_roundbox_corner_set(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT);
-    UI_draw_roundbox_4fv(&rect_header, false, BASIS_RAD, color_header);
-
-    /* BFA - Node Group outline. */
-    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      const float outline_group_width = 2.0f * UI_SCALE_FAC; // Thicker outline
-      GPU_line_width(outline_group_width);
-      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
-      GPU_line_width(1.0f); // Reset line width
-    }
-
-    /* Outline around the entire node to highlight selection, alert, or for simulation zones. */
     const rctf rect_node = {
         rct.xmin - outline_width,
         rct.xmax + outline_width,
@@ -3371,11 +3322,18 @@ static void node_draw_basis(const bContext &C,
       color_outline[3] = 1.0f;
     }
     else {
-      UI_GetThemeColorShade4fv(TH_NODE, 20, color_outline);
-      color_outline[3] = 0.0f;
+      UI_GetThemeColor4fv(TH_NODE_OUTLINE, color_outline);
     }
     UI_draw_roundbox_corner_set(UI_CNR_ALL);
     UI_draw_roundbox_4fv(&rect_node, false, BASIS_RAD + outline_width, color_outline);
+
+    /* BFA - Node Group outline. */
+    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
+      const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
+      GPU_line_width(outline_group_width);
+      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
+      GPU_line_width(1.0f);  // Reset line width
+    }
   }
 
   /* Skip slow socket drawing if zoom is small. */
@@ -3455,7 +3413,7 @@ static void node_draw_collapsed(const bContext &C,
     if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
       const float group_padding = 5.0f * UI_SCALE_FAC;
       const float group_radius = BASIS_RAD + group_padding;
-      const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f; // Slightly transparent
+      const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f;  // Slightly transparent
 
       const rctf group_bg_rect = {
           rct.xmin - group_padding,
@@ -3483,10 +3441,10 @@ static void node_draw_collapsed(const bContext &C,
 
     /* BFA - Node Group outline. */
     if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      const float outline_group_width = 2.0f * UI_SCALE_FAC; // Thicker outline
+      const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
       GPU_line_width(outline_group_width);
       node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
-      GPU_line_width(1.0f); // Reset line width
+      GPU_line_width(1.0f);  // Reset line width
     }
 
     UI_draw_roundbox_corner_set(UI_CNR_ALL);
@@ -3501,7 +3459,10 @@ static void node_draw_collapsed(const bContext &C,
     UI_GetThemeColorBlendShade4fv(TH_SELECT, color_id, 0.4f, 10, color);
   }
 
-  float iconfs = rct.xmin + (NODE_MARGIN_X / 3);  // BFA: collapsed node icon // rct.xmin + (NODE_MARGIN_X / 3) + 0.1f * U.widget_unit
+  float iconfs =
+      rct.xmin +
+      (NODE_MARGIN_X /
+       3);  // BFA: collapsed node icon // rct.xmin + (NODE_MARGIN_X / 3) + 0.1f * U.widget_unit
   /* Collapse/expand icon. */
   {
     const int but_size = 0.8f * U.widget_unit;
@@ -3563,7 +3524,9 @@ static void node_draw_collapsed(const bContext &C,
                         showname,
                         round_fl_to_int(rct.xmin + NODE_MARGIN_X),
                         round_fl_to_int(centy - NODE_DY * 0.5f),
-                        short(BLI_rctf_size_x(&rct) - (3 * U.widget_unit)),  /* BFA - increased margin for new icon and moved name left by 1 more icon space */
+                        short(BLI_rctf_size_x(&rct) -
+                              (3 * U.widget_unit)), /* BFA - increased margin for new icon and
+                                                       moved name left by 1 more icon space */
                         NODE_DY,
                         nullptr,
                         0,
@@ -3595,8 +3558,7 @@ static void node_draw_collapsed(const bContext &C,
       UI_GetThemeColorBlendShade4fv(TH_BACK, color_id, .4f, 10, color_outline);
     }
     else {
-      /* Use a mix of the backdrop and node type color, slightly lighter. */
-      UI_GetThemeColorBlendShade4fv(TH_BACK, color_id, .8f, 20, color_outline);
+      UI_GetThemeColor4fv(TH_NODE_OUTLINE, color_outline);
     }
 
     UI_draw_roundbox_corner_set(UI_CNR_ALL);

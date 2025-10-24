@@ -184,7 +184,8 @@ void VKPipelinePool::specialization_info_reset()
 
 VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute_info,
                                                           const bool is_static_shader,
-                                                          VkPipeline vk_pipeline_base)
+                                                          VkPipeline vk_pipeline_base,
+                                                          StringRefNull name)
 {
   std::scoped_lock lock(mutex_);
   const VkPipeline *found_pipeline = compute_pipelines_.lookup_ptr(compute_info);
@@ -215,6 +216,7 @@ VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute
                            &vk_compute_pipeline_create_info_,
                            nullptr,
                            &pipeline);
+  debug::object_label(pipeline, name);
   compute_pipelines_.add(compute_info, pipeline);
 
   /* Reset values to initial value. */
@@ -230,7 +232,8 @@ VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute
 
 VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graphics_info,
                                                            const bool is_static_shader,
-                                                           VkPipeline vk_pipeline_base)
+                                                           VkPipeline vk_pipeline_base,
+                                                           StringRefNull name)
 {
   std::scoped_lock lock(mutex_);
   graphics_info.fragment_shader.update_hash();
@@ -358,6 +361,9 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
         att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         break;
 
+        /* Factors are not use in min or max mode, but avoid uninitialized values. */;
+      case GPU_BLEND_MIN:
+      case GPU_BLEND_MAX:
       case GPU_BLEND_SUBTRACT:
       case GPU_BLEND_ADDITIVE_PREMULT:
         att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
@@ -416,7 +422,15 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
         break;
     }
 
-    if (graphics_info.state.blend == GPU_BLEND_SUBTRACT) {
+    if (graphics_info.state.blend == GPU_BLEND_MIN) {
+      att_state.alphaBlendOp = VK_BLEND_OP_MIN;
+      att_state.colorBlendOp = VK_BLEND_OP_MIN;
+    }
+    else if (graphics_info.state.blend == GPU_BLEND_MAX) {
+      att_state.alphaBlendOp = VK_BLEND_OP_MAX;
+      att_state.colorBlendOp = VK_BLEND_OP_MAX;
+    }
+    else if (graphics_info.state.blend == GPU_BLEND_SUBTRACT) {
       att_state.alphaBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
       att_state.colorBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
     }
@@ -598,6 +612,7 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
                             &vk_graphics_pipeline_create_info_,
                             nullptr,
                             &pipeline);
+  debug::object_label(pipeline, name);
   graphic_pipelines_.add(graphics_info, pipeline);
 
   /* Reset values to initial value. */

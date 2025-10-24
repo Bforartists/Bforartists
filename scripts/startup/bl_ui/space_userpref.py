@@ -35,11 +35,9 @@ class USERPREF_HT_header(Header):
             # Show '*' to let users know the preferences have been modified.
             layout.operator(
                 "wm.save_userpref",
-                text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""), icon="SAVE_PREFS",
-                # BFA - WIP - Make the save indicator more explicity with the icon (button gets cut off)
-                # text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""),
-                # icon = "FILE_TICK" if prefs.is_dirty else "SAVE_PREFS",
+                text=("* " if prefs.is_dirty else "") + iface_("Save Preferences"),
                 translate=False,
+                icon="SAVE_PREFS"
             )
 
     def draw(self, context):
@@ -318,7 +316,7 @@ class USERPREF_PT_interface_accessibility(InterfacePanel, CenterAlignMixIn, Pane
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.use_property_split = False # BFA - Align bool property left
+        flow.use_property_split = False  # BFA - Align bool property left
         flow.prop(view, "use_reduce_motion")
 
 
@@ -395,7 +393,7 @@ class USERPREF_PT_interface_menus(InterfacePanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         view = prefs.view
         col = layout.column()
-        col.use_property_split = False # BFA - Align bool property left
+        col.use_property_split = False  # BFA - Align bool property left
         col.prop(view, "menu_close_leave")
 
 
