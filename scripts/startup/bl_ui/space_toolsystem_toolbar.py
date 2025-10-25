@@ -1281,7 +1281,11 @@ def curve_draw_settings(context, layout, tool, *, extra=False):
         row.prop(cps, "depth_mode", expand=True)
     if cps.depth_mode == 'SURFACE':
         col = layout.column()
+        # BFA - align left for sidebar and properties editor tools only
+        if region_type == 'UI' or 'PROPERTIES':
+            col.use_property_split = False
         col.prop(cps, "use_project_only_selected")
+        col.use_property_split = True
         col.prop(cps, "surface_offset")
         col.use_property_split = False
         col.prop(cps, "use_offset_absolute")
