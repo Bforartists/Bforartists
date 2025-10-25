@@ -1346,8 +1346,14 @@ class _defs_edit_curve:
     @ToolDef.from_fn
     def pen():
         def draw_settings(_context, layout, tool):
+            region_type = _context.region.type # BFA - get region type for alignment
             props = tool.operator_properties("curve.pen")
-            layout.prop(props, "close_spline")
+            # BFA - align left for sidebar and properties editor tools only
+            if region_type == 'UI' or 'PROPERTIES':
+                row = layout.row()
+                row.use_property_split = False
+                row.prop(props, "close_spline")
+            
             layout.prop(props, "extrude_handle")
         return dict(
             idname="builtin.pen",
