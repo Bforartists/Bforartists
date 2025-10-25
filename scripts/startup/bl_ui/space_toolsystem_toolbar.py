@@ -2527,9 +2527,18 @@ class _defs_grease_pencil_edit:
     @ToolDef.from_fn
     def interpolate():
         def draw_settings(_context, layout, tool):
+            region_type = _context.region.type # BFA - get region type for alignment
+
             props = tool.operator_properties("grease_pencil.interpolate")
             layout.prop(props, "layers")
-            layout.prop(props, "exclude_breakdowns")
+            # BFA - align left for sidebar and properties editor tools only
+            if region_type == 'UI' or 'PROPERTIES':
+                row = layout.row()
+                row.use_property_split = False
+                row.prop(props, "exclude_breakdowns")
+            else:
+                layout.prop(props, "exclude_breakdowns")
+            
             layout.prop(props, "flip")
             layout.prop(props, "smooth_factor")
             layout.prop(props, "smooth_steps")
