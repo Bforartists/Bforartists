@@ -1750,43 +1750,112 @@ static void node_draw_shadow(const SpaceNode &snode,
   UI_draw_roundbox_4fv(&rect, false, radius + 0.5f, color);
 }
 
-/* BFA - Draw an outline with padding around node groups */
-static void node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
+/* Node groups draw two "copies" of the node body underneath, just narrower and dimmer. */
+static void node_draw_node_group_indicator(const SpaceNode &snode,
                                            const bNode &node,
                                            const rctf &rect,
                                            const float radius,
-                                           const bool is_selected)
+                                           const float color[4])
 {
   if (node.type_legacy != NODE_GROUP) {
     return;
   }
 
-  const float padding = 5.0f * UI_SCALE_FAC;
-  float alpha_selected = is_selected ? 1.0f : 0.5f;  // Keep outline more visible
+  /* How far it extends down and narrows. */
+  const bool is_selected = node.flag & NODE_SELECT;
+  const bool is_collapsed = node.flag & NODE_COLLAPSED;
+  const float offset_x = 3.6f * UI_SCALE_FAC;
+  const float offset_y = 2.4f * UI_SCALE_FAC;
+  const float shadow_width = 0.2f * U.widget_unit;
+  const float shadow_alpha = is_selected ? 0.4f : 0.2f;
+  const float dim_collapsed = is_collapsed ? 0.2f : 0.0f;
 
-  /* If the node is muted, reduce its alpha. */
-  if (node.is_muted()) {
-    alpha_selected = alpha_selected - 0.4f;
+  const float outline_width = is_selected ? 1.0f : 0.5f;
+  float outline_color[4];
+  UI_GetThemeColor4fv(TH_NODE_OUTLINE, outline_color);
+
+  if (is_selected) {
+    UI_GetThemeColor4fv((node.flag & NODE_ACTIVE) ? TH_ACTIVE : TH_SELECT, outline_color);
   }
 
-  /* Create the outline rectangle with padding. */
-  const rctf outline_rect = {
-      rect.xmin - padding,
-      rect.xmax + padding,
-      rect.ymin - padding,
-      rect.ymax + padding,
-  };
+  UI_draw_roundbox_corner_set(UI_CNR_BOTTOM_LEFT | UI_CNR_BOTTOM_RIGHT);
 
-  float outline_color[4];
-  int color_id = node_get_colorid(tree_draw_ctx, node);
+  /* Start with the last copy. */
+  {
+    const rctf rect_group_front = {
+        rect.xmin + offset_x * 4,
+        rect.xmax - offset_x * 4,
+        rect.ymin - (offset_y * 2) - U.pixelsize,
+        rect.ymin - offset_y + (U.pixelsize * 2),
+    };
 
-  /* Both selected and unselected should use the header color */
-  UI_GetThemeColor4fv(color_id, outline_color);
-  outline_color[3] = alpha_selected;
+    const rctf rect_group_front_shadow = {
+        rect_group_front.xmin + outline_width,
+        rect_group_front.xmax - outline_width,
+        rect_group_front.ymin + outline_width,
+        rect_group_front.ymax - outline_width,
+    };
 
-  /* Draw only the outline (background is drawn separately at the beginning) */
-  UI_draw_roundbox_corner_set(UI_CNR_ALL);
-  UI_draw_roundbox_4fv(&outline_rect, false, radius + padding, outline_color);
+    ui_draw_dropshadow(&rect_group_front_shadow,
+                       radius + outline_width,
+                       shadow_width,
+                       snode.runtime->aspect,
+                       shadow_alpha);
+
+    /* Use the node color (or header color when collapsed) but slightly darker. */
+    float fill_color_front[4], outline_color_front[4];
+    copy_v4_v4(fill_color_front, color);
+    mul_v3_fl(fill_color_front, 0.8f - dim_collapsed);
+
+    copy_v4_v4(outline_color_front, outline_color);
+    mul_v3_fl(outline_color_front, (is_selected ? 0.5f : 1.0f) - dim_collapsed);
+
+    UI_draw_roundbox_4fv_ex(&rect_group_front,
+                            fill_color_front,
+                            nullptr,
+                            0.0f,
+                            outline_color_front,
+                            outline_width,
+                            radius);
+  }
+
+  /* Draw the first copy in the front. */
+  {
+    const rctf rect_group_back = {
+        rect.xmin + offset_x * 2,
+        rect.xmax - offset_x * 2,
+        rect.ymin - offset_y - U.pixelsize,
+        rect.ymin + (U.pixelsize * 2),
+    };
+
+    const rctf rect_group_back_shadow = {
+        rect_group_back.xmin + outline_width,
+        rect_group_back.xmax - outline_width,
+        rect_group_back.ymin + outline_width,
+        rect_group_back.ymax - outline_width,
+    };
+
+    ui_draw_dropshadow(&rect_group_back_shadow,
+                       radius + outline_width,
+                       shadow_width,
+                       snode.runtime->aspect,
+                       shadow_alpha);
+
+    float fill_color_back[4], outline_color_back[4];
+    copy_v4_v4(fill_color_back, color);
+    mul_v3_fl(fill_color_back, 0.9f - dim_collapsed);
+
+    copy_v4_v4(outline_color_back, outline_color);
+    mul_v3_fl(outline_color_back, (is_selected ? 0.7f : 1.1f) - dim_collapsed);
+
+    UI_draw_roundbox_4fv_ex(&rect_group_back,
+                            fill_color_back,
+                            nullptr,
+                            0.0f,
+                            outline_color_back,
+                            outline_width,
+                            radius);
+  }
 }
 
 static void node_draw_socket(const bContext &C,
@@ -2949,29 +3018,6 @@ static void node_draw_basis(const bContext &C,
   const float padding = 0.5f;
   const float corner_radius = BASIS_RAD + padding;
   const float outline_width = U.pixelsize;
-
-  /* BFA - Node Group background outline (drawn first to appear behind content) */
-  if (node.type_legacy == NODE_GROUP) {
-    const float group_padding = 5.0f * UI_SCALE_FAC;
-    const float group_radius = BASIS_RAD + group_padding;
-    const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f;  // Slightly transparent
-
-    const rctf group_bg_rect = {
-        rct.xmin - group_padding,
-        rct.xmax + group_padding,
-        rct.ymin - group_padding,
-        rct.ymax + group_padding,
-    };
-
-    float bg_color[4];
-    int color_id = node_get_colorid(tree_draw_ctx, node);
-    UI_GetThemeColor4fv(color_id, bg_color);
-    bg_color[3] = alpha;
-
-    UI_draw_roundbox_corner_set(UI_CNR_ALL);
-    UI_draw_roundbox_4fv(&group_bg_rect, true, group_radius, bg_color);
-  }
-
   /* Header. */
   {
     /* Add some padding to prevent transparent gaps with the outline. */
@@ -2990,32 +3036,6 @@ static void node_draw_basis(const bContext &C,
 
   /* Show/hide icons. */
   float iconofs = rct.xmax - 0.35f * U.widget_unit;
-
-  /* BFA - Kept this Group icon.*/
-  if (node.type_legacy == NODE_GROUP) {
-    iconofs -= iconbutw;
-    UI_block_emboss_set(&block, ui::EmbossType::None);
-    uiBut *but = uiDefIconBut(&block,
-                              ButType::ButToggle,
-                              0,
-                              ICON_NODETREE,
-                              iconofs,
-                              rct.ymax - NODE_DY,
-                              iconbutw,
-                              UI_UNIT_Y,
-                              nullptr,
-                              0,
-                              0,
-                              "");
-    UI_but_func_set(but,
-                    node_toggle_button_cb,
-                    POINTER_FROM_INT(node.identifier),
-                    (void *)"NODE_OT_group_edit");
-    if (node.id) {
-      UI_but_icon_indicator_number_set(but, ID_REAL_USERS(node.id));
-    }
-    UI_block_emboss_set(&block, ui::EmbossType::Emboss);
-  }
 
   if (nodes::node_can_sync_sockets(C, ntree, node)) {
     iconofs -= iconbutw;
@@ -3050,8 +3070,6 @@ static void node_draw_basis(const bContext &C,
                               ButType::ButToggle,
                               0,
                               is_active ? ICON_HIDE_OFF : ICON_HIDE_ON,
-                              // ICON_TOGGLE_NODE_PREVIEW, /* BFA - wip, could be a better icon for
-                              // node preview toggle button */*/
                               iconofs,
                               rct.ymax - NODE_DY,
                               iconbutw,
@@ -3085,25 +3103,6 @@ static void node_draw_basis(const bContext &C,
                  "");
     UI_block_emboss_set(&block, ui::EmbossType::Emboss);
   }
-  /* bfa - Add nodes icons to node headers */
-  else if (RNA_struct_ui_icon(node.typeinfo->rna_ext.srna) != ICON_NONE) {
-    iconofs -= iconbutw;
-    UI_block_emboss_set(&block, blender::ui::EmbossType::None);
-    uiDefIconBut(&block,
-                 ButType::But,
-                 0,
-                 RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
-                 iconofs,
-                 rct.ymax - NODE_DY,
-                 iconbutw,
-                 UI_UNIT_Y,
-                 nullptr,
-                 0,
-                 0,
-                 "");
-    UI_block_emboss_set(&block, blender::ui::EmbossType::Emboss);
-  }
-  /* -------- bfa end ------------------ */
   if (node.type_legacy == GEO_NODE_VIEWER) {
     const bool is_active = &node == tree_draw_ctx.active_geometry_nodes_viewer;
     iconofs -= iconbutw;
@@ -3246,24 +3245,11 @@ static void node_draw_basis(const bContext &C,
     if (node_undefined_or_unsupported(ntree, node)) {
       UI_GetThemeColorShade4fv(TH_REDALERT, -40, color);
     }
-    /* Muted nodes get a mix of the background with the node color. */
-    else if (node.is_muted()) {
-      // bfa node color blend
-      float color_background[4];
-      float color_blend[4];
-      UI_GetThemeColor4fv(TH_BACK, color_background);
-      UI_GetThemeColorBlend4f(TH_NODE, color_id, U.node_color_blend, color_blend);
-      interp_v4_v4v4(color, color_background, color_blend, 0.2f);
-      // UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.2f, color);
-    }
     else if (node.flag & NODE_CUSTOM_COLOR) {
       rgba_float_args_set(color, node.color[0], node.color[1], node.color[2], 1.0f);
     }
     else {
-      // bfa node color blend
-      UI_GetThemeColorBlend4f(
-          TH_NODE, color_id, U.node_color_blend, color);  // bfa node color blend
-      // UI_GetThemeColor4fv(TH_NODE, color);
+      UI_GetThemeColor4fv(TH_NODE, color);
     }
 
     /* Draw selected nodes fully opaque. */
@@ -3288,11 +3274,10 @@ static void node_draw_basis(const bContext &C,
         rct.ymax - NODE_DY + padding,
     };
 
-    /* BFA - Removed the old Node Group indicator. */
-    // if (draw_node_details(snode)) {
-    //   node_draw_node_group_indicator(snode, node, rect, corner_radius, color, node.flag &
-    //   SELECT);
-    // }
+    /* Node Group indicator. */
+    if (draw_node_details(snode)) {
+      node_draw_node_group_indicator(snode, node, rect, corner_radius, color);
+    }
 
     UI_draw_roundbox_corner_set(UI_CNR_BOTTOM_LEFT | UI_CNR_BOTTOM_RIGHT);
     UI_draw_roundbox_4fv(&rect, true, corner_radius, color);
@@ -3326,14 +3311,6 @@ static void node_draw_basis(const bContext &C,
     }
     UI_draw_roundbox_corner_set(UI_CNR_ALL);
     UI_draw_roundbox_4fv(&rect_node, false, BASIS_RAD + outline_width, color_outline);
-
-    /* BFA - Node Group outline. */
-    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
-      GPU_line_width(outline_group_width);
-      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
-      GPU_line_width(1.0f);  // Reset line width
-    }
   }
 
   /* Skip slow socket drawing if zoom is small. */
@@ -3384,52 +3361,6 @@ static void node_draw_collapsed(const bContext &C,
   /* Body. */
   ColorTheme4f color = node_header_color_get(ntree, node, color_id);
   {
-    if (node_undefined_or_unsupported(ntree, node)) {
-      /* Use warning color to indicate undefined types. */
-      UI_GetThemeColorBlendShade4fv(TH_REDALERT, color_id, 0.1f, -40, color);
-    }
-    else if (node.is_muted()) {
-      /* Muted nodes get a mix of the background with the node color. */
-      UI_GetThemeColorBlendShade4fv(TH_BACK, color_id, 0.4f, 0, color);
-    }
-    else if (node.flag & NODE_CUSTOM_COLOR) {
-      rgba_float_args_set(color, node.color[0], node.color[1], node.color[2], 1.0f);
-    }
-    else {
-      UI_GetThemeColor4fv(color_id, color);
-    }
-
-    /* Draw selected nodes fully opaque. */
-    if (node.flag & SELECT) {
-      color[3] = 1.0f;
-    }
-
-    /* Draw muted nodes slightly transparent so the wires inside are visible. */
-    if (node.is_muted()) {
-      color[3] -= 0.2f;
-    }
-
-    /* BFA - Group background for collapsed nodes (drawn behind everything). */
-    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      const float group_padding = 5.0f * UI_SCALE_FAC;
-      const float group_radius = BASIS_RAD + group_padding;
-      const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f;  // Slightly transparent
-
-      const rctf group_bg_rect = {
-          rct.xmin - group_padding,
-          rct.xmax + group_padding,
-          rct.ymin - group_padding,
-          rct.ymax + group_padding,
-      };
-
-      float bg_color[4];
-      UI_GetThemeColor4fv(color_id, bg_color);
-      bg_color[3] = alpha;
-
-      UI_draw_roundbox_corner_set(UI_CNR_ALL);
-      UI_draw_roundbox_4fv(&group_bg_rect, true, group_radius, bg_color);
-    }
-
     /* Add some padding to prevent transparent gaps with the outline. */
     const float padding = 0.5f;
     const rctf rect = {
@@ -3439,12 +3370,9 @@ static void node_draw_collapsed(const bContext &C,
         rct.ymax + padding,
     };
 
-    /* BFA - Node Group outline. */
-    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
-      GPU_line_width(outline_group_width);
-      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
-      GPU_line_width(1.0f);  // Reset line width
+    /* Node Group indicator. */
+    if (draw_node_details(snode)) {
+      node_draw_node_group_indicator(snode, node, rect, BASIS_RAD + padding, color);
     }
 
     UI_draw_roundbox_corner_set(UI_CNR_ALL);
@@ -3459,19 +3387,16 @@ static void node_draw_collapsed(const bContext &C,
     UI_GetThemeColorBlendShade4fv(TH_SELECT, color_id, 0.4f, 10, color);
   }
 
-  float iconfs =
-      rct.xmin +
-      (NODE_MARGIN_X /
-       3);  // BFA: collapsed node icon // rct.xmin + (NODE_MARGIN_X / 3) + 0.1f * U.widget_unit
   /* Collapse/expand icon. */
   {
     const int but_size = 0.8f * U.widget_unit;
     UI_block_emboss_set(&block, ui::EmbossType::None);
+
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
                               0,
                               ICON_RIGHTARROW,
-                              iconfs,
+                              rct.xmin + (NODE_MARGIN_X / 3) + 0.1f * U.widget_unit,
                               centy - but_size / 2,
                               but_size,
                               but_size,
@@ -3487,35 +3412,6 @@ static void node_draw_collapsed(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::Emboss);
   }
 
-  /* BFA - collapsed node icon */
-  const int iconbutw = U.widget_unit * 1.0f;
-  const float icon_right_margin = 0.85f * iconbutw;
-  float icon_x = rct.xmax - iconbutw - icon_right_margin;
-
-  /* BFA - Kept this Group icon. Also included this to the collapsed state*/
-  int icon_header;
-  if (node.type_legacy == NODE_GROUP) {
-    icon_header = ICON_NODETREE;
-  }
-  else {
-    icon_header = RNA_struct_ui_icon(node.typeinfo->rna_ext.srna);
-  }
-
-  UI_block_emboss_set(&block, blender::ui::EmbossType::None);
-  uiDefIconBut(&block,
-               ButType::But,
-               0,
-               icon_header,
-               icon_x,
-               centy - iconbutw / 2,
-               iconbutw,
-               iconbutw,
-               nullptr,
-               0,
-               0,
-               "");
-  UI_block_emboss_set(&block, blender::ui::EmbossType::Emboss);
-
   const std::string showname = bke::node_label(ntree, node);
 
   uiBut *but = uiDefBut(&block,
@@ -3524,9 +3420,7 @@ static void node_draw_collapsed(const bContext &C,
                         showname,
                         round_fl_to_int(rct.xmin + NODE_MARGIN_X),
                         round_fl_to_int(centy - NODE_DY * 0.5f),
-                        short(BLI_rctf_size_x(&rct) -
-                              (3 * U.widget_unit)), /* BFA - increased margin for new icon and
-                                                       moved name left by 1 more icon space */
+                        short(BLI_rctf_size_x(&rct) - (2 * U.widget_unit)),
                         NODE_DY,
                         nullptr,
                         0,
