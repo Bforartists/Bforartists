@@ -2536,9 +2536,7 @@ class _defs_grease_pencil_edit:
                 row = layout.row()
                 row.use_property_split = False
                 row.prop(props, "exclude_breakdowns")
-            else:
-                layout.prop(props, "exclude_breakdowns")
-            
+                
             layout.prop(props, "flip")
             layout.prop(props, "smooth_factor")
             layout.prop(props, "smooth_steps")
