@@ -1827,7 +1827,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def trim_box():
         def draw_settings(_context, layout, tool):
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             props = tool.operator_properties("sculpt.trim_box_gesture")
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
@@ -1851,7 +1851,7 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.trim_lasso_gesture")
 
             if not extra:
-                layout.use_property_split = False
+                layout.use_property_split = True # BFA
                 layout.prop(props, "trim_solver", expand=False)
                 layout.prop(props, "trim_mode", expand=False)
                 layout.prop(props, "trim_orientation", expand=False)
@@ -1879,10 +1879,11 @@ class _defs_sculpt:
     def trim_line():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_line_gesture")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
             layout.prop(props, "trim_extrude_mode", expand=False)
+            layout.use_property_split = False # BFA - Float bool property left
             layout.prop(props, "use_cursor_depth", expand=False)
             layout.prop(props, "use_limit_to_segment", expand=False)
         return dict(
@@ -1898,11 +1899,12 @@ class _defs_sculpt:
     def trim_polyline():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_polyline_gesture")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
             layout.prop(props, "trim_extrude_mode", expand=False)
+            layout.use_property_split = False # BFA - Float bool property left
             layout.prop(props, "use_cursor_depth", expand=False)
 
         return dict(
