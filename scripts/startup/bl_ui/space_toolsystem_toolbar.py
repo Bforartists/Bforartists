@@ -1147,6 +1147,7 @@ class _defs_edit_mesh:
             props = tool.operator_properties("transform.shrink_fatten")
             layout.use_property_split = False
             layout.prop(props, "use_even_offset")
+            layout.use_property_split = True # BFA
 
         return dict(
             idname="builtin.shrink_fatten",
