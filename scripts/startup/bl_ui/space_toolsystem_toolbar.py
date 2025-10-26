@@ -1962,7 +1962,7 @@ class _defs_sculpt:
     def cloth_filter():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.cloth_filter")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
             row = layout.row(align=True)
