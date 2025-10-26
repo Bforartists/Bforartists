@@ -1349,7 +1349,7 @@ class _defs_edit_curve:
             props = tool.operator_properties("curve.pen")
             layout.use_property_split = False # BFA - float property left
             layout.prop(props, "close_spline")
-            layout.use_property_split = True
+            layout.use_property_split = True # BFA
             layout.prop(props, "extrude_handle")
         return dict(
             idname="builtin.pen",
