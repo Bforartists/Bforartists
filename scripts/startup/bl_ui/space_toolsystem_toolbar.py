@@ -778,7 +778,9 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.rip_move")
             props_macro = props.MESH_OT_rip
+            layout.use_property_split = False # BFA - float property left
             layout.prop(props_macro, "use_fill")
+            layout.use_property_split = True # BFA
 
         return dict(
             idname="builtin.rip_region",
