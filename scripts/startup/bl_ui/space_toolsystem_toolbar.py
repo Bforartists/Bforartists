@@ -1987,7 +1987,7 @@ class _defs_sculpt:
     def color_filter():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.color_filter")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "type", expand=False)
             if props.type == 'FILL':
                 layout.prop(props, "fill_color", expand=False)
