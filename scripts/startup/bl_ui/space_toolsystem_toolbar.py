@@ -806,6 +806,7 @@ class _defs_edit_mesh:
             props_macro = props.MESH_OT_polybuild_face_at_cursor
             layout.use_property_split = False # BFA - align left
             layout.prop(props_macro, "create_quads")
+            layout.use_property_split = True # BFA
 
         def description(_context, _item, km):
             if km is not None:
