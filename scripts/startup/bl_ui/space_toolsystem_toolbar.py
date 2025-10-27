@@ -2033,7 +2033,7 @@ class _defs_sculpt:
     def face_set_edit():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.face_set_edit")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "mode", expand=False)
             layout.use_property_split = False
             layout.prop(props, "modify_hidden")
