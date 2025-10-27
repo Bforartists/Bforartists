@@ -30,7 +30,7 @@ const UserDef U_default = {
                USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES | USER_DUP_NTREE | USER_DUP_POINTCLOUD,
     /* BFA - WIP - enable outliner collection rows*/
     //.outliner_editor_flag = USER_OUTLINER_COL_COLLECTION_ROWS
-    /* BFA - WIP - enable animaotion props*/
+    /* BFA - WIP - enable animation props*/
     //.animation_flag = USER_ANIM_SHOW_CHANNEL_GROUP_COLORS
     .pref_flag = USER_PREF_FLAG_SAVE,
     .savetime = 2,
