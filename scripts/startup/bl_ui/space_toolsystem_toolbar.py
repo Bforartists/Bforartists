@@ -2012,7 +2012,7 @@ class _defs_sculpt:
     def mask_by_color():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.mask_by_color")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "threshold")
             layout.use_property_split = False
             layout.prop(props, "contiguous")
