@@ -2586,7 +2586,7 @@ class _defs_grease_pencil_edit:
             sub.prop_with_popover(
                 tool_settings,
                 "gpencil_stroke_placement_view3d",
-                text="",
+                text="Stroke Placement", # BFA - added text for clarity
                 panel="VIEW3D_PT_grease_pencil_origin",
             )
 
@@ -2595,7 +2595,7 @@ class _defs_grease_pencil_edit:
             sub.prop_with_popover(
                 tool_settings.gpencil_sculpt,
                 "lock_axis",
-                text="",
+                text="Drawing Plane", # BFA - added text for clarity
                 panel="VIEW3D_PT_grease_pencil_lock",
             )
         return dict(
