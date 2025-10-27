@@ -21,7 +21,6 @@ class BrushAssetShelf:
         "ACTIVATE_FOR_CONTEXT_MENU",
     }
     bl_activate_operator = "BRUSH_OT_asset_activate"
-    bl_default_preview_size = 48
     brush_type_prop = None
     mode_prop = None
 
@@ -153,7 +152,8 @@ class BrushAssetShelf:
 
         display_name = brush.name if (brush and show_name) else None
         if display_name and brush.has_unsaved_changes:
-            display_name = display_name + "*"
+            # Show "*" to the left for consistency with unsaved files in the title bar.
+            display_name = "* " + display_name
 
         layout.template_asset_shelf_popover(
             shelf_name,

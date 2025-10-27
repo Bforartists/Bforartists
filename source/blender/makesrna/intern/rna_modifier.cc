@@ -1564,8 +1564,6 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
     Object *ob_src = dtmd->ob_source;
 
     if (ob_src) {
-      int num_data, i;
-
       Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
       const Object *ob_eval = DEG_get_evaluated(depsgraph, ob_src);
       if (!ob_eval) {
@@ -1580,14 +1578,14 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
         return item;
       }
 
-      num_data = CustomData_number_of_layers(&mesh_eval->corner_data, CD_PROP_FLOAT2);
+      const VectorSet<StringRefNull> uv_map_names = mesh_eval->uv_map_names();
+      const int num_data = uv_map_names.size();
 
       RNA_enum_item_add_separator(&item, &totitem);
 
-      for (i = 0; i < num_data; i++) {
+      for (int i = 0; i < num_data; i++) {
         tmp_item.value = i;
-        tmp_item.identifier = tmp_item.name = CustomData_get_layer_name(
-            &mesh_eval->corner_data, CD_PROP_FLOAT2, i);
+        tmp_item.identifier = tmp_item.name = uv_map_names[i].c_str();
         RNA_enum_item_add(&item, &totitem, &tmp_item);
       }
     }
@@ -1653,6 +1651,7 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
                                                                                 PropertyRNA *prop,
                                                                                 bool *r_free)
 {
+  using namespace blender;
   DataTransferModifierData *dtmd = (DataTransferModifierData *)ptr->data;
   EnumPropertyItem *item = nullptr, tmp_item = {0};
   int totitem = 0;
@@ -1697,20 +1696,15 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
       Object *ob_dst = CTX_data_active_object(C); /* XXX Is this OK? */
 
       if (ob_dst && ob_dst->data) {
-        Mesh *me_dst;
-        CustomData *corner_data;
-        int num_data, i;
-
-        me_dst = static_cast<Mesh *>(ob_dst->data);
-        corner_data = &me_dst->corner_data;
-        num_data = CustomData_number_of_layers(corner_data, CD_PROP_FLOAT2);
+        Mesh *me_dst = static_cast<Mesh *>(ob_dst->data);
+        const VectorSet<StringRefNull> uv_map_names = me_dst->uv_map_names();
+        const int num_data = uv_map_names.size();
 
         RNA_enum_item_add_separator(&item, &totitem);
 
-        for (i = 0; i < num_data; i++) {
+        for (int i = 0; i < num_data; i++) {
           tmp_item.value = i;
-          tmp_item.identifier = tmp_item.name = CustomData_get_layer_name(
-              corner_data, CD_PROP_FLOAT2, i);
+          tmp_item.identifier = tmp_item.name = uv_map_names[i].c_str();
           RNA_enum_item_add(&item, &totitem, &tmp_item);
         }
       }
@@ -7935,6 +7929,7 @@ static void rna_def_modifier_nodes_bake(BlenderRNA *brna)
   prop = RNA_def_property(srna, "bake_target", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, bake_target_in_node_items);
   RNA_def_property_ui_text(prop, "Bake Target", "Where to store the baked data");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_CACHEFILE);
   RNA_def_property_update(prop, 0, "rna_NodesModifier_bake_update");
 
   prop = RNA_def_property(srna, "bake_mode", PROP_ENUM, PROP_NONE);
@@ -8069,6 +8064,7 @@ static void rna_def_modifier_nodes(BlenderRNA *brna)
   prop = RNA_def_property(srna, "bake_target", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, bake_target_in_modifier_items);
   RNA_def_property_ui_text(prop, "Bake Target", "Where to store the baked data");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_CACHEFILE);
   RNA_def_property_update(prop, 0, "rna_NodesModifier_bake_update");
 
   prop = RNA_def_property(srna, "bakes", PROP_COLLECTION, PROP_NONE);

@@ -497,28 +497,40 @@ class NWReloadImages(Operator):
         """Disabled for custom nodes."""
         return (nw_check(cls, context)
                 and nw_check_space_type(cls, context, {'ShaderNodeTree', 'CompositorNodeTree',
-                                        'TextureNodeTree', 'GeometryNodeTree'}))
+                                                       'TextureNodeTree', 'GeometryNodeTree'}))
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
-        image_types = ["IMAGE", "TEX_IMAGE", "TEX_ENVIRONMENT", "TEXTURE"]
         num_reloaded = 0
         for node in nodes:
-            if node.type in image_types:
-                if node.type == "TEXTURE":
-                    if node.texture:  # node has texture assigned
-                        if node.texture.type in ['IMAGE', 'ENVIRONMENT_MAP']:
-                            if node.texture.image:  # texture has image assigned
-                                node.texture.image.reload()
-                                num_reloaded += 1
-                else:
-                    if node.image:
-                        node.image.reload()
+            if (node.bl_idname == 'TextureNodeTexture'
+                    and node.texture is not None
+                    and node.texture.type == 'IMAGE'
+                    and node.texture.image is not None):
+                # Legacy texture nodes.
+                node.texture.image.reload()
+                num_reloaded += 1
+            elif (node.bl_idname in {'CompositorNodeImage',
+                                     'GeometryNodeInputImage',
+                                     'ShaderNodeTexEnvironment',
+                                     'ShaderNodeTexImage',
+                                     'TextureNodeImage'}
+                    and node.image is not None):
+                # Image and environment textures.
+                node.image.reload()
+                num_reloaded += 1
+            elif node.bl_idname in {'GeometryNodeGroup',
+                                    'GeometryNodeImageInfo',
+                                    'GeometryNodeImageTexture'}:
+                # For these Geometry Nodes, check each input since images can be defined in sockets.
+                for sock in node.inputs:
+                    if (sock.bl_idname == 'NodeSocketImage'
+                            and sock.default_value is not None):
+                        sock.default_value.reload()
                         num_reloaded += 1
 
         if num_reloaded:
-            self.report({'INFO'}, "Reloaded images")
-            print("Reloaded " + str(num_reloaded) + " images")
+            self.report({'INFO'}, rpt_("Reloaded {:d} image(s)").format(num_reloaded))
             force_update(context)
             return {'FINISHED'}
         else:
@@ -1082,11 +1094,11 @@ class NWCopySettings(Operator, NWBase):
             # Report nodes that are not valid
             valid_node_names = [n.name for n in valid_nodes]
             invalid_names = set(selected_node_names) - set(valid_node_names)
-            self.report(
-                {'INFO'},
-                rpt_("Ignored {} (not of the same type as {})").format(", ".join(sorted(invalid_names)),
-                                                                       node_active.name),
+            message = rpt_("Ignored {} (not of the same type as {})").format(
+                ", ".join(sorted(invalid_names)),
+                node_active.name,
             )
+            self.report({'INFO'}, message)
 
         # Reference original
         orig = node_active

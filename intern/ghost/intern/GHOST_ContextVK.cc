@@ -298,6 +298,7 @@ class GHOST_DeviceVK {
   void wait_idle()
   {
     if (vk_device) {
+      std::scoped_lock lock(queue_mutex);
       vkDeviceWaitIdle(vk_device);
     }
   }
@@ -596,18 +597,6 @@ struct GHOST_InstanceVK {
     if (device.extensions.is_enabled(VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME)) {
       feature_struct_ptr.push_back(&swapchain_maintenance_1);
       device.use_vk_ext_swapchain_maintenance_1 = true;
-    }
-
-    /* Descriptor buffers */
-    VkPhysicalDeviceDescriptorBufferFeaturesEXT descriptor_buffer = {
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT,
-        nullptr,
-        VK_TRUE,
-        VK_FALSE,
-        VK_FALSE,
-        VK_FALSE};
-    if (device.extensions.is_enabled(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME)) {
-      feature_struct_ptr.push_back(&descriptor_buffer);
     }
 
     /* Query and enable Fragment Shader Barycentrics. */
@@ -1569,7 +1558,6 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
     optional_device_extensions.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);
     optional_device_extensions.push_back(VK_EXT_ROBUSTNESS_2_EXTENSION_NAME);
     optional_device_extensions.push_back(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME);
-    optional_device_extensions.push_back(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
     optional_device_extensions.push_back(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME);
     optional_device_extensions.push_back(VK_EXT_PAGEABLE_DEVICE_LOCAL_MEMORY_EXTENSION_NAME);
 
