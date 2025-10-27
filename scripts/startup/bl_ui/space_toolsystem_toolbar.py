@@ -1940,7 +1940,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mesh_filter():
         def draw_settings(_context, layout, tool):
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             props = tool.operator_properties("sculpt.mesh_filter")
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
