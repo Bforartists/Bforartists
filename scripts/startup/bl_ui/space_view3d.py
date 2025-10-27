@@ -711,7 +711,7 @@ class VIEW3D_HT_header(Header):
     @staticmethod
     def draw_xform_template(layout, context):
         obj = context.active_object
-        mode_string = context.mode # BFA
+        mode_string = context.mode  # BFA
         object_mode = "OBJECT" if obj is None else obj.mode
         has_pose_mode = (object_mode == "POSE") or (object_mode == "WEIGHT_PAINT" and context.pose_object is not None)
 
@@ -1692,6 +1692,13 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("render.opengl", text="Render Image", icon="RENDER_STILL")
         layout.operator("render.opengl", text="Render Animation", icon="RENDER_ANIMATION").animation = True
+        props = layout.operator(
+            "render.opengl",
+            text="Render Playblast on Keyframes",
+            icon='RENDER_ANIMATION',
+        )
+        props.animation = True
+        props.render_keyed_only = True
 
         layout.separator()
 
@@ -1792,7 +1799,8 @@ class VIEW3D_MT_view_pie_menus(Menu):
         ).name = "ANIM_MT_keyframe_insert_pie"
         layout.separator()
 
-        layout.operator("wm.call_menu_pie", text="Greasepencil Snap", icon="MENU_PANEL").name = "GREASE_PENCIL_MT_snap_pie"
+        layout.operator("wm.call_menu_pie", text="Greasepencil Snap",
+                        icon="MENU_PANEL").name = "GREASE_PENCIL_MT_snap_pie"
 
         layout.separator()
 
@@ -3879,7 +3887,10 @@ class VIEW3D_MT_object_animation(Menu):
         layout.separator()
 
         layout.operator("nla.bake", text="Bake Action", icon="BAKE_ACTION")
-        layout.operator("grease_pencil.bake_grease_pencil_animation", text="Bake Object Transform to Grease Pencil", icon="BAKE_ACTION")
+        layout.operator(
+            "grease_pencil.bake_grease_pencil_animation",
+            text="Bake Object Transform to Grease Pencil",
+            icon="BAKE_ACTION")
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -4387,7 +4398,7 @@ class VIEW3D_MT_object_parent(Menu):
         layout = self.layout
 
         # BFA - Start of a consistent parent menu with conditional visibility
-        #layout.operator_enum("object.parent_set", "type")
+        # layout.operator_enum("object.parent_set", "type")
         parent = _context.active_object
 
         selected_editable_objects = _context.selected_editable_objects
@@ -4427,7 +4438,10 @@ class VIEW3D_MT_object_parent(Menu):
                 )
                 props.keep_transform = True
 
-                layout.operator("OBJECT_OT_parent_no_inverse_set", text="Object (Without Inverse)", icon="PARENT").keep_transform = False
+                layout.operator(
+                    "OBJECT_OT_parent_no_inverse_set",
+                    text="Object (Without Inverse)",
+                    icon="PARENT").keep_transform = False
                 props = layout.operator(
                     "OBJECT_OT_parent_no_inverse_set",
                     text="Object (Keep Transform Without Inverse)",
@@ -4512,9 +4526,7 @@ class VIEW3D_MT_object_parent(Menu):
                     ]:
                         add_operator(layout, op_text, "PARENT_CURVE", op_type, False)
 
-
         # BFA - End of consistent parent menu
-
 
         layout.separator()
 
@@ -7013,8 +7025,8 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength") # bfa - no icons for sub menus
-        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength") # bfa - no icons for sub menus
+        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength")  # bfa - no icons for sub menus
+        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength")  # bfa - no icons for sub menus
         layout.template_node_operator_asset_menu_items(catalog_path="Mesh/Normals")
 
 
@@ -8044,7 +8056,10 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("grease_pencil.convert_curve_type", text="Set Spline Type", property="type") # BFA - made title consistent
+        layout.operator_menu_enum(
+            "grease_pencil.convert_curve_type",
+            text="Set Spline Type",
+            property="type")  # BFA - made title consistent
         layout.operator("grease_pencil.set_curve_resolution", icon="SPLINE_RESOLUTION")
 
         layout.separator()
@@ -8073,7 +8088,7 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.menu("VIEW3D_MT_greasepencil_vertex_group")
 
-        #layout.operator_menu_enum("grease_pencil.set_handle_type", property="type") # BFA - exposed to header
+        # layout.operator_menu_enum("grease_pencil.set_handle_type", property="type") # BFA - exposed to header
         layout.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
@@ -8104,7 +8119,8 @@ class VIEW3D_MT_edit_curves(Menu):
         layout.operator("curves.duplicate_move", icon="DUPLICATE")
 
         layout.separator()
-        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type", property="type") # BFA - made title consistent
+        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
+                                  property="type")  # BFA - made title consistent
         layout.operator_menu_enum("curves.handle_type_set", "type")
         layout.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
         layout.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
@@ -8123,7 +8139,7 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
         layout = self.layout
 
         layout.operator("curves.extrude_move", icon="EXTRUDE_REGION")
-        #layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - exposed to header
+        # layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - exposed to header
 
 
 class VIEW3D_MT_edit_curves_segments(Menu):
@@ -8160,7 +8176,8 @@ class VIEW3D_MT_edit_curves_context_menu(Menu):
         layout.separator()
 
         # Modify Flags
-        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type", property="type") # BFA - made title consistent
+        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
+                                  property="type")  # BFA - made title consistent
         layout.operator_menu_enum("curves.handle_type_set", "type")
         layout.operator("curves.cyclic_toggle")
         layout.operator("curves.switch_direction")
@@ -9590,7 +9607,7 @@ class VIEW3D_PT_overlay_object(Panel):
         col.use_property_split = False
         row = col.row()
         row.separator()
-        if can_show_object_origins:        
+        if can_show_object_origins:
             row.prop(overlay, "show_object_origins", text="Origins")
         col = split.column()
         if can_show_object_origins and overlay.show_object_origins:
@@ -11170,7 +11187,10 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator_menu_enum("grease_pencil.convert_curve_type", text="Set Spline Type", property="type") # BFA - made title consistent
+            col.operator_menu_enum(
+                "grease_pencil.convert_curve_type",
+                text="Set Spline Type",
+                property="type")  # BFA - made title consistent
             col.operator_menu_enum("grease_pencil.set_handle_type", "type")
 
 

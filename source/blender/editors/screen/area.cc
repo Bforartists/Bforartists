@@ -1475,56 +1475,54 @@ static void region_overlap_fix(ScrArea *area, ARegion *region)
   }
 }
 
-bool ED_region_is_overlap(int spacetype, int regiontype)
+bool ED_region_is_overlap(const int spacetype, const int regiontype)
 {
   if (regiontype == RGN_TYPE_HUD) {
     return true;
   }
-  if (U.uiflag2 & USER_REGION_OVERLAP) {
-    if (spacetype == SPACE_NODE) {
-      if (ELEM(regiontype,
-               //RGN_TYPE_TOOLS, // BFA - not necessary
-               //RGN_TYPE_UI, // BFA - not necessary
-               RGN_TYPE_ASSET_SHELF,
-               RGN_TYPE_ASSET_SHELF_HEADER))
-      {
-        return true;
-      }
-    }
-    else if (spacetype == SPACE_VIEW3D) {
+  if ((U.uiflag2 & USER_REGION_OVERLAP) == 0) {
+    return false;
+  }
+
+  switch (spacetype) {
+    case SPACE_NODE:
+      return ELEM(regiontype,
+                  //RGN_TYPE_TOOLS, // BFA - not necessary
+                  //RGN_TYPE_UI, // BFA - not necessary
+                  RGN_TYPE_ASSET_SHELF,
+                  RGN_TYPE_ASSET_SHELF_HEADER);
+
+    case SPACE_VIEW3D:
       if (regiontype == RGN_TYPE_HEADER) {
-        /* Do not treat as overlapped if no transparency. */
+        /* Only treat as overlapped if there is transparency. */
         bTheme *theme = UI_GetTheme();
         return theme->space_view3d.header[3] != 255;
       }
-      if (ELEM(regiontype,
-               RGN_TYPE_TOOLS,
-               RGN_TYPE_UI,
-               RGN_TYPE_TOOL_PROPS,
-               RGN_TYPE_FOOTER,
-               RGN_TYPE_TOOL_HEADER,
-               RGN_TYPE_ASSET_SHELF,
-               RGN_TYPE_ASSET_SHELF_HEADER))
-      {
-        return true;
-      }
-    }
-    else if (spacetype == SPACE_IMAGE) {
-      if (ELEM(regiontype,
-               RGN_TYPE_TOOLS,
-               RGN_TYPE_UI,
-               RGN_TYPE_TOOL_PROPS,
-               RGN_TYPE_FOOTER,
-               RGN_TYPE_TOOL_HEADER,
-               RGN_TYPE_ASSET_SHELF,
-               RGN_TYPE_ASSET_SHELF_HEADER))
-      {
-        return true;
-      }
-    }
-  }
+      return ELEM(regiontype,
+                  RGN_TYPE_TOOLS,
+                  RGN_TYPE_UI,
+                  RGN_TYPE_TOOL_PROPS,
+                  RGN_TYPE_FOOTER,
+                  RGN_TYPE_TOOL_HEADER,
+                  RGN_TYPE_ASSET_SHELF,
+                  RGN_TYPE_ASSET_SHELF_HEADER);
 
-  return false;
+    case SPACE_IMAGE:
+      return ELEM(regiontype,
+                  RGN_TYPE_TOOLS,
+                  RGN_TYPE_UI,
+                  RGN_TYPE_TOOL_PROPS,
+                  RGN_TYPE_FOOTER,
+                  RGN_TYPE_TOOL_HEADER,
+                  RGN_TYPE_ASSET_SHELF,
+                  RGN_TYPE_ASSET_SHELF_HEADER);
+
+    default:
+      /* Most editors do not support any region overlap. It is fine if newly-added space types also
+       * default to not having region overlap; this 'switch' doesn't have to be religiously updated
+       * for every newly added type. */
+      return false;
+  }
 }
 
 static void region_rect_recursive(
@@ -2826,7 +2824,7 @@ void ED_area_newspace(bContext *C, ScrArea *area, int type, const bool skip_regi
 
   if (BLI_listbase_is_single(&CTX_wm_screen(C)->areabase)) {
     /* If there is only one area update the window title. */
-    WM_window_title(CTX_wm_manager(C), CTX_wm_window(C));
+    WM_window_title_refresh(CTX_wm_manager(C), CTX_wm_window(C));
   }
 
   /* See #WM_capabilities_flag code-comments for details on the background check. */
@@ -3412,7 +3410,9 @@ void ED_region_panels_layout_ex(const bContext *C,
   }
 }
 
-void ED_region_draw_overflow_indication(const ScrArea *area, ARegion *region, rcti *mask)
+void ED_region_draw_overflow_indication(const ScrArea *area,
+                                        const ARegion *region,
+                                        const rcti *mask)
 {
   if (!(region->flag & RGN_FLAG_INDICATE_OVERFLOW)) {
     return;
@@ -3902,7 +3902,7 @@ void ED_region_header_draw(const bContext *C, ARegion *region)
   /* clear */
   ED_region_clear(C, region, region_background_color_id(C, region));
 
-  if (GPU_type_matches_ex(GPU_DEVICE_ANY, GPU_OS_UNIX, GPU_DRIVER_OPENSOURCE, GPU_BACKEND_OPENGL))
+  if (GPU_type_matches_ex(GPU_DEVICE_ATI, GPU_OS_UNIX, GPU_DRIVER_OPENSOURCE, GPU_BACKEND_OPENGL))
   {
     /* WORKAROUND: Driver bug. Fixes invalid glyph being rendered (see #147168). */
     BLF_batch_discard();

@@ -139,7 +139,7 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
 
         box = layout.box()
         col = box.column(align=True)
-        hotkey_button_name = iface_("Show Hotkey List") if self.show_hotkey_list else iface_("Hide Hotkey List")
+        hotkey_button_name = iface_("Hide Hotkey List") if self.show_hotkey_list else iface_("Show Hotkey List")
         col.prop(self, "show_hotkey_list", text=hotkey_button_name, translate=False, toggle=True)
         if self.show_hotkey_list:
             col.prop(self, "hotkey_list_filter", icon="VIEWZOOM")
@@ -148,7 +148,8 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
                 if hotkey[7]:
                     hotkey_name = hotkey[7]
 
-                    if self.hotkey_list_filter.lower() in hotkey_name.lower():
+                    if (self.hotkey_list_filter.lower() in hotkey_name.lower()
+                            or self.hotkey_list_filter.lower() in iface_(hotkey_name).lower()):
                         row = col.row(align=True)
                         row.label(text=hotkey_name)
                         keystr = iface_(nice_hotkey_name(hotkey[1]), i18n_contexts.ui_events_keymaps)
