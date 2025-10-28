@@ -1285,6 +1285,7 @@ if(WITH_BLENDER)
       node_planetrackdeform
       node_pointcloud
       node_principled
+      node_radial_array
       node_range
       node_ray_portal
       node_refractionshader
