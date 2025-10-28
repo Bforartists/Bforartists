@@ -612,11 +612,13 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
             for collection_obj in context.scene.target_collection.objects:
                 #if collection_obj.type == 'MESH':
                 if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
+                    collection_obj.show_bounds = True
                     collection_obj.display_type = 'BOUNDS'
         else:
             for collection_obj in context.scene.target_collection.objects:
                 #if collection_obj.type == 'MESH':
                 if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
+                    collection_obj.show_bounds = False
                     collection_obj.display_type = 'TEXTURED'
 
         # Apply geometry nodes configuration

@@ -305,7 +305,12 @@ class DOPESHEET_HT_header(Header):
         ###########################
 
         layout.template_header()
-        layout.prop(st, "ui_mode", text="")
+
+        if st.mode != 'TIMELINE':
+            # Timeline mode is special, as it's presented as a sub-type of the
+            # dope sheet editor, rather than a mode. So this shouldn't show the
+            # mode selector.
+            layout.prop(st, "ui_mode", text="")
 
         DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
         DOPESHEET_HT_editor_buttons.draw_header(context, layout)
@@ -318,6 +323,12 @@ class DOPESHEET_HT_editor_buttons:
         st = context.space_data
         tool_settings = context.tool_settings
         ds_mode = context.space_data.mode  # BFAu
+
+        if st.mode == 'TIMELINE':
+            playback_controls(layout, context)
+            layout.separator()
+            cls._draw_overlay_selector(context, layout)
+            return
 
         dopesheet = context.space_data.dopesheet
         st = context.space_data
@@ -368,6 +379,8 @@ class DOPESHEET_HT_editor_buttons:
                 icon="FILTER",
             )
 
+        tool_settings = context.tool_settings
+
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
         if st.mode != "GPENCIL":
             row = layout.row(align=True)
@@ -401,6 +414,13 @@ class DOPESHEET_HT_editor_buttons:
 
         overlays = st.overlays
 
+        cls._draw_overlay_selector(context, layout)
+
+    @classmethod
+    def _draw_overlay_selector(cls, context, layout):
+        st = context.space_data
+
+        overlays = st.overlays
         row = layout.row(align=True)
         row.prop(overlays, "show_overlays", text="", icon='OVERLAY')
         sub = row.row(align=True)
@@ -499,6 +519,22 @@ class DOPESHEET_MT_editor_menus(Menu):
         active_action = context.active_action
         # BFA - Quick favourites menu
         layout.menu("SCREEN_MT_user_menu", text="Quick")
+
+        if st.mode == 'TIMELINE':
+            # Draw the 'timeline' menus, which are simpler. Most importantly, the
+            # 'selected only' toggle is in the menu, and actually stored as a scene
+            # flag instead of the space data.
+            horizontal = (layout.direction == 'VERTICAL')
+            if horizontal:
+                row = layout.row()
+                sub = row.row(align=True)
+            else:
+                sub = layout
+            sub.menu("TIME_MT_view")
+            if st.show_markers:
+                sub.menu("DOPESHEET_MT_marker")
+            return
+
         layout.menu("DOPESHEET_MT_view")
         layout.menu("DOPESHEET_MT_select")
         if st.show_markers:

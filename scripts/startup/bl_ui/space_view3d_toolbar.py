@@ -1080,7 +1080,8 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub = col.column()
         sub.active = (brush and brush.sculpt_capabilities.has_dyntopo) or sculpt.detail_type_method == "MANUAL"
 
-        # BFA - moved to top, this defines the "modes" then options of the detail_type_method, then you tune the details (top down hirarchal UX)
+        # BFA - moved to top, this defines the "modes" then options of the
+        # detail_type_method, then you tune the details (top down hirarchal UX)
         sub.prop(sculpt, "detail_type_method", text="Detailing")
         sub.prop(sculpt, "detail_refine_method", text="Refine Method")
 

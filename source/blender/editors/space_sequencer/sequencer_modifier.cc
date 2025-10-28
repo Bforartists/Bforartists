@@ -29,6 +29,7 @@
 #include "SEQ_sound.hh"
 
 #include "UI_interface_c.hh"
+#include "UI_resources.hh" /* BFA - for icons */
 
 /* Own include. */
 #include "sequencer_intern.hh"
@@ -301,10 +302,10 @@ static wmOperatorStatus strip_modifier_copy_exec(bContext *C, wmOperator *op)
 void SEQUENCER_OT_strip_modifier_copy(wmOperatorType *ot)
 {
   static const EnumPropertyItem type_items[] = {
-      {SEQ_MODIFIER_COPY_REPLACE, "REPLACE", 0, "Replace", "Replace modifiers in destination"},
+      {SEQ_MODIFIER_COPY_REPLACE, "REPLACE", ICON_FILE_REFRESH /*BFA*/, "Replace", "Replace modifiers in destination"},
       {SEQ_MODIFIER_COPY_APPEND,
        "APPEND",
-       0,
+       ICON_ADD /*BFA*/,
        "Append",
        "Append active modifiers to selected strips"},
       {0, nullptr, 0, nullptr, nullptr},

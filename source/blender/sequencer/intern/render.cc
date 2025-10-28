@@ -1720,16 +1720,16 @@ static ImBuf *do_render_strip_uncached(const RenderData *context,
     ibuf = do_render_strip_seqbase(context, state, strip, frame_index);
   }
   else if (strip->type == STRIP_TYPE_SCENE) {
-    if (strip->flag & SEQ_SCENE_STRIPS) {
-      if (strip->scene && (context->scene != strip->scene)) {
-        /* recursive check */
-        if (BLI_linklist_index(state->scene_parents, strip->scene) == -1) {
-          LinkNode scene_parent{};
-          scene_parent.next = state->scene_parents;
-          scene_parent.link = strip->scene;
-          state->scene_parents = &scene_parent;
-          /* end check */
+    /* Recursive check. */
+    if (BLI_linklist_index(state->scene_parents, strip->scene) == -1) {
+      LinkNode scene_parent{};
+      scene_parent.next = state->scene_parents;
+      scene_parent.link = context->scene;
+      state->scene_parents = &scene_parent;
+      /* End check. */
 
+      if (strip->flag & SEQ_SCENE_STRIPS) {
+        if (strip->scene && (context->scene != strip->scene)) {
           /* Use the Scene sequence-strip's scene for the context when rendering the
            * scene's sequences (necessary for multi-cam selector among others). */
           RenderData local_context = *context;
@@ -1737,15 +1737,15 @@ static ImBuf *do_render_strip_uncached(const RenderData *context,
           local_context.skip_cache = true;
 
           ibuf = do_render_strip_seqbase(&local_context, state, strip, frame_index);
-
-          /* step back in the list */
-          state->scene_parents = state->scene_parents->next;
         }
       }
-    }
-    else {
-      /* scene can be nullptr after deletions */
-      ibuf = seq_render_scene_strip(context, strip, frame_index, timeline_frame);
+      else {
+        /* scene can be nullptr after deletions */
+        ibuf = seq_render_scene_strip(context, strip, frame_index, timeline_frame);
+      }
+
+      /* Step back in the recursive check list. */
+      state->scene_parents = state->scene_parents->next;
     }
   }
   else if (strip->is_effect()) {

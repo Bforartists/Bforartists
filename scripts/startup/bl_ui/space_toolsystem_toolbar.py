@@ -778,7 +778,9 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.rip_move")
             props_macro = props.MESH_OT_rip
+            layout.use_property_split = False # BFA - float property left
             layout.prop(props_macro, "use_fill")
+            layout.use_property_split = True # BFA
 
         return dict(
             idname="builtin.rip_region",
@@ -806,6 +808,7 @@ class _defs_edit_mesh:
             props_macro = props.MESH_OT_polybuild_face_at_cursor
             layout.use_property_split = False # BFA - align left
             layout.prop(props_macro, "create_quads")
+            layout.use_property_split = True # BFA
 
         def description(_context, _item, km):
             if km is not None:
@@ -1147,6 +1150,7 @@ class _defs_edit_mesh:
             props = tool.operator_properties("transform.shrink_fatten")
             layout.use_property_split = False
             layout.prop(props, "use_even_offset")
+            layout.use_property_split = True # BFA
 
         return dict(
             idname="builtin.shrink_fatten",
@@ -1281,7 +1285,11 @@ def curve_draw_settings(context, layout, tool, *, extra=False):
         row.prop(cps, "depth_mode", expand=True)
     if cps.depth_mode == 'SURFACE':
         col = layout.column()
+        # BFA - align left for sidebar and properties editor tools only
+        if region_type == 'UI' or 'PROPERTIES':
+            col.use_property_split = False
         col.prop(cps, "use_project_only_selected")
+        col.use_property_split = True
         col.prop(cps, "surface_offset")
         col.use_property_split = False
         col.prop(cps, "use_offset_absolute")
@@ -1833,7 +1841,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def trim_box():
         def draw_settings(_context, layout, tool):
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             props = tool.operator_properties("sculpt.trim_box_gesture")
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
@@ -1857,7 +1865,7 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.trim_lasso_gesture")
 
             if not extra:
-                layout.use_property_split = False
+                layout.use_property_split = True # BFA
                 layout.prop(props, "trim_solver", expand=False)
                 layout.prop(props, "trim_mode", expand=False)
                 layout.prop(props, "trim_orientation", expand=False)
@@ -1885,10 +1893,11 @@ class _defs_sculpt:
     def trim_line():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_line_gesture")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
             layout.prop(props, "trim_extrude_mode", expand=False)
+            layout.use_property_split = False # BFA - Float bool property left
             layout.prop(props, "use_cursor_depth", expand=False)
             layout.prop(props, "use_limit_to_segment", expand=False)
         return dict(
@@ -1904,11 +1913,12 @@ class _defs_sculpt:
     def trim_polyline():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_polyline_gesture")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
             layout.prop(props, "trim_extrude_mode", expand=False)
+            layout.use_property_split = False # BFA - Float bool property left
             layout.prop(props, "use_cursor_depth", expand=False)
 
         return dict(
@@ -1940,7 +1950,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mesh_filter():
         def draw_settings(_context, layout, tool):
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             props = tool.operator_properties("sculpt.mesh_filter")
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
@@ -1968,7 +1978,7 @@ class _defs_sculpt:
     def cloth_filter():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.cloth_filter")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
             row = layout.row(align=True)
@@ -1993,7 +2003,7 @@ class _defs_sculpt:
     def color_filter():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.color_filter")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "type", expand=False)
             if props.type == 'FILL':
                 layout.prop(props, "fill_color", expand=False)
@@ -2012,7 +2022,7 @@ class _defs_sculpt:
     def mask_by_color():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.mask_by_color")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "threshold")
             layout.use_property_split = False
             layout.prop(props, "contiguous")
@@ -2033,7 +2043,7 @@ class _defs_sculpt:
     def face_set_edit():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.face_set_edit")
-            layout.use_property_split = False
+            layout.use_property_split = True # BFA
             layout.prop(props, "mode", expand=False)
             layout.use_property_split = False
             layout.prop(props, "modify_hidden")
@@ -2533,9 +2543,16 @@ class _defs_grease_pencil_edit:
     @ToolDef.from_fn
     def interpolate():
         def draw_settings(_context, layout, tool):
+            region_type = _context.region.type # BFA - get region type for alignment
+
             props = tool.operator_properties("grease_pencil.interpolate")
             layout.prop(props, "layers")
-            layout.prop(props, "exclude_breakdowns")
+            # BFA - align left for sidebar and properties editor tools only
+            if region_type == 'UI' or 'PROPERTIES':
+                row = layout.row()
+                row.use_property_split = False
+                row.prop(props, "exclude_breakdowns")
+                
             layout.prop(props, "flip")
             layout.prop(props, "smooth_factor")
             layout.prop(props, "smooth_steps")
@@ -2573,7 +2590,7 @@ class _defs_grease_pencil_edit:
             sub.prop_with_popover(
                 tool_settings,
                 "gpencil_stroke_placement_view3d",
-                text="",
+                text="Stroke Placement", # BFA - added text for clarity
                 panel="VIEW3D_PT_grease_pencil_origin",
             )
 
@@ -2582,7 +2599,7 @@ class _defs_grease_pencil_edit:
             sub.prop_with_popover(
                 tool_settings.gpencil_sculpt,
                 "lock_axis",
-                text="",
+                text="Drawing Plane", # BFA - added text for clarity
                 panel="VIEW3D_PT_grease_pencil_lock",
             )
         return dict(

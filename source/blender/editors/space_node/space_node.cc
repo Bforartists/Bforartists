@@ -558,6 +558,7 @@ const ComputeContext *compute_context_for_edittree_node(
 static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 {
   SpaceNode *snode = MEM_callocN<SpaceNode>(__func__);
+  snode->runtime = MEM_new<SpaceNode_Runtime>(__func__);
   snode->spacetype = SPACE_NODE;
 
   snode->flag = SNODE_SHOW_GPENCIL | SNODE_USE_ALPHA;
@@ -648,22 +649,12 @@ static void node_free(SpaceLink *sl)
 }
 
 /* spacetype; init callback */
-static void node_init(wmWindowManager * /*wm*/, ScrArea *area)
-{
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
-  if (snode->runtime == nullptr) {
-    snode->runtime = MEM_new<SpaceNode_Runtime>(__func__);
-  }
-}
+static void node_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
 
 static void node_exit(wmWindowManager *wm, ScrArea *area)
 {
   SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
-  if (snode->runtime) {
-    free_previews(*wm, *snode);
-  }
+  free_previews(*wm, *snode);
 }
 
 static bool any_node_uses_id(const bNodeTree *ntree, const ID *id)
@@ -851,13 +842,11 @@ static void node_area_refresh(const bContext *C, ScrArea *area)
 
   snode_set_context(*C);
 
-  if (snode->nodetree) {
-    if (snode->nodetree->type == NTREE_COMPOSIT) {
-      Scene *scene = (Scene *)snode->id;
-      if (snode->runtime->recalc_regular_compositing) {
-        snode->runtime->recalc_regular_compositing = false;
-        ED_node_composite_job(C, snode->nodetree, scene);
-      }
+  Scene *scene = CTX_data_scene(C);
+  if (snode->nodetree && snode->nodetree == scene->compositing_node_group) {
+    if (snode->runtime->recalc_regular_compositing) {
+      snode->runtime->recalc_regular_compositing = false;
+      ED_node_composite_job(C, scene->compositing_node_group, scene);
     }
   }
 }
@@ -1788,7 +1777,7 @@ static void node_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 
   BLO_read_struct_list(reader, bNodeTreePath, &snode->treepath);
   snode->edittree = nullptr;
-  snode->runtime = nullptr;
+  snode->runtime = MEM_new<SpaceNode_Runtime>(__func__);
 }
 
 static void node_space_blend_write(BlendWriter *writer, SpaceLink *sl)
