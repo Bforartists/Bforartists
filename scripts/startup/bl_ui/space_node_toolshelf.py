@@ -616,6 +616,7 @@ class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeNormal", pad=25),
                 OperatorEntry("ShaderNodeNormalMap", pad=16),
                 Separator,
+                OperatorEntry("ShaderNodeRadialTiling", pad=10),
                 OperatorEntry("ShaderNodeVectorCurve", pad=12),
                 OperatorEntry("ShaderNodeVectorDisplacement", pad=0),
                 OperatorEntry("ShaderNodeVectorRotate", pad=13),
@@ -1134,6 +1135,7 @@ class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
             OperatorEntry("ShaderNodeSeparateXYZ", pad=2),
             Separator,
             OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=8, settings={"data_type": "'VECTOR'"}),
+            OperatorEntry("ShaderNodeRadialTiling", pad=10),
             OperatorEntry("ShaderNodeVectorCurve", pad=2),
             OperatorEntry("ShaderNodeVectorMath", pad=6),
             OperatorEntry("ShaderNodeVectorRotate", pad=2),
@@ -2541,12 +2543,15 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("ShaderNodeCombineXYZ", pad=4),
+            OperatorEntry("ShaderNodeMapRange", text="Map Range Vector", pad=9, settings={"data_type": "'FLOAT_VECTOR'"}),
+            OperatorEntry("ShaderNodeMix", text="Mix Vector", pad=9, settings={"data_type": "'VECTOR'"}),
+            OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
+            Separator,
+            OperatorEntry("ShaderNodeRadialTiling", pad=10),
             OperatorEntry("ShaderNodeVectorCurve", pad=3),
             OperatorEntry("ShaderNodeVectorMath", pad=7),
             OperatorEntry("ShaderNodeVectorRotate", pad=4),
-            OperatorEntry("ShaderNodeCombineXYZ", pad=4),
-            OperatorEntry("ShaderNodeMix", text="Mix Vector", pad=9, settings={"data_type": "'VECTOR'"}),
-            OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
         )
 
         self.draw_entries(context, layout, entries)
