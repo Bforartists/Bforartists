@@ -1367,12 +1367,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
             strip = context.active_strip
 
             layout.operator_context = "INVOKE_REGION_WIN"  # BFA
-            # BFA - is_redtiming not used ??
-            is_retiming = (
-                context.sequencer_scene is not None and
-                context.sequencer_scene.sequence_editor is not None and
-                context.sequencer_scene.sequence_editor.selected_retiming_keys
-            )
+
             strip = context.active_strip
             strip_type = strip.type  # BFA
 
