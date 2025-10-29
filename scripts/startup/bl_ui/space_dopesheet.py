@@ -209,13 +209,25 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
 
 ################################ BFA -Switch between the editors ##########################################
 
+class ANIM_OT_switch_editors_to_timeline(bpy.types.Operator):
+    """Switch to Dope Sheet Editor"""  # blender will use this as a tooltip for menu items and buttons.
+
+    bl_idname = "wm.switch_editor_to_timeline"  # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to the Timeline Editor"
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="TIMELINE")
+        return {"FINISHED"}
+
 
 class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
     """Switch to Dope Sheet Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
     bl_idname = "wm.switch_editor_to_dopesheet"  # unique identifier for buttons and menu items to reference.
     # display name in the interface.
-    bl_label = "Switch to Dope Sheet Editor"
+    bl_label = "Switch to the Dope Sheet Editor"
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -228,7 +240,7 @@ class ANIM_OT_switch_editors_to_graph(bpy.types.Operator):
 
     bl_idname = "wm.switch_editor_to_graph"  # unique identifier for buttons and menu items to reference.
     # display name in the interface.
-    bl_label = "Switch to Graph Editor"
+    bl_label = "Switch to the Graph Editor"
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -242,7 +254,7 @@ class ANIM_OT_switch_editors_to_driver(bpy.types.Operator):
 
     bl_idname = "wm.switch_editor_to_driver"  # unique identifier for buttons and menu items to reference.
     # display name in the interface.
-    bl_label = "Switch to Driver Editor"
+    bl_label = "Switch to the Driver Editor"
 
     # execute() is called by blender when running the operator.
     def execute(self, context):
@@ -267,7 +279,7 @@ class ANIM_OT_switch_editors_to_nla(bpy.types.Operator):
 
 
 class ANIM_OT_switch_editors_in_dopesheet(bpy.types.Operator):
-    """You are in Dope Sheet Editor"""  # blender will use this as a tooltip for menu items and buttons.
+    """You are in the Dope Sheet Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
     bl_idname = "wm.switch_editor_in_dopesheet"  # unique identifier for buttons and menu items to reference.
     bl_label = "Dope Sheet Editor"  # display name in the interface.
@@ -277,6 +289,17 @@ class ANIM_OT_switch_editors_in_dopesheet(bpy.types.Operator):
     def execute(self, context):
         return {"FINISHED"}
 
+
+class ANIM_OT_switch_editors_in_timeline(bpy.types.Operator):
+    """You are in the Timeline Editor"""  # blender will use this as a tooltip for menu items and buttons.
+
+    bl_idname = "wm.switch_editor_in_timeline"  # unique identifier for buttons and menu items to reference.
+    bl_label = "Timeline Editor"  # display name in the interface.
+    bl_options = {"INTERNAL"}  # use internal so it can not be searchable
+
+    # Blank button, we don't execute anything here.
+    def execute(self, context):
+        return {"FINISHED"}
 
 #######################################
 # DopeSheet Editor - General/Standard UI
@@ -297,14 +320,34 @@ class DOPESHEET_HT_header(Header):
         # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
         row = layout.row(align=True)
 
-        row.operator("wm.switch_editor_in_dopesheet", text="", icon="DOPESHEET_ACTIVE")
-        row.operator("wm.switch_editor_to_graph", text="", icon="GRAPH")
-        row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
-        row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
+
+        if context.space_data.mode == "TIMELINE":
+            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
+            row = layout.row(align=True)
+            row.operator("wm.switch_editor_to_dopesheet", text="", icon="DOPESHEET_ACTIVE")
+            row.operator("wm.switch_editor_to_graph", text="", icon="GRAPH")
+            row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
+            row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
+
+            row = layout.row(align=True)
+
+            row.operator("wm.switch_editor_to_dopesheet", text="", icon="TIME", depress=True)  # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
+
+        elif context.space_data.mode == "DOPESHEET_EDITOR":
+            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
+            row = layout.row(align=True)
+            row.operator("wm.switch_editor_in_dopesheet", text="", icon="DOPESHEET_ACTIVE")
+            row.operator("wm.switch_editor_to_graph", text="", icon="GRAPH")
+            row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
+            row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
+
+            row = layout.row(align=True)
+
+            row.operator("wm.switch_editor_to_timeline", text="", icon="TIME") # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
 
         ###########################
 
-        layout.template_header()
+        #layout.template_header()
 
         if st.mode != 'TIMELINE':
             # Timeline mode is special, as it's presented as a sub-type of the
@@ -322,11 +365,10 @@ class DOPESHEET_HT_editor_buttons:
     def draw_header(cls, context, layout):
         st = context.space_data
         tool_settings = context.tool_settings
-        ds_mode = context.space_data.mode  # BFAu
+        ds_mode = context.space_data.mode  # BFA
 
         if st.mode == 'TIMELINE':
             playback_controls(layout, context)
-            layout.separator()
             cls._draw_overlay_selector(context, layout)
             return
 
@@ -1400,11 +1442,13 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
 
 
 classes = (
+    ANIM_OT_switch_editors_to_timeline, # BFA menu
     ANIM_OT_switch_editors_to_dopesheet,  # BFA menu
     ANIM_OT_switch_editors_to_graph,  # BFA menu
     ANIM_OT_switch_editors_to_driver,  # BFA menu
     ANIM_OT_switch_editors_to_nla,  # BFA menu
     ANIM_OT_switch_editors_in_dopesheet,  # BFA menu
+    ANIM_OT_switch_editors_in_timeline, # BFA menu
     DOPESHEET_HT_header,
     DOPESHEET_HT_playback_controls,
     DOPESHEET_PT_proportional_edit,
