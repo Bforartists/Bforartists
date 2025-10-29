@@ -1359,10 +1359,10 @@ class SEQUENCER_MT_strip_retiming(Menu):
     def draw(self, context):
         layout = self.layout
         try:  # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
-            # Get the sequence editor
+            # BFA - Get the sequence editor
             ed = context.scene.sequence_editor
             
-            # Check if we have selected retiming keys OR if retiming is active with a strip
+            # BFA - Check if we have selected retiming keys OR if retiming is active with a strip
             is_retiming = (
                 ed.selected_retiming_keys or
                 (context.active_strip and context.active_strip.show_retiming_keys)
