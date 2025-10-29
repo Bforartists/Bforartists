@@ -18,7 +18,7 @@ from bl_ui.space_time import playback_controls
 
 
 class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
-    """You are in Nonlinear Animation Editor"""  # blender will use this as a tooltip for menu items and buttons.
+    """You are in the Nonlinear Animation Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
     bl_idname = "wm.switch_editor_in_nla"  # unique identifier for buttons and menu items to reference.
     bl_label = "Nonlinear Animation Editor"  # display name in the interface.

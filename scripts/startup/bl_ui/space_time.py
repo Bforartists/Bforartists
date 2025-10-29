@@ -54,17 +54,18 @@ def playback_controls(layout, context):
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
         layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
-    if tool_settings and not is_timeline:
-        # The Keyframe settings are not exposed in the Timeline view.
-        icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
-        layout.popover(
-            panel="TIME_PT_keyframing_settings",
-            text_ctxt=i18n_contexts.id_windowmanager,
-            icon=icon_keytype,
-        )
 
     layout.separator_spacer()
     # BFA - moved dropdowns to consistently float right
+
+    # Time jump
+    row = layout.row(align=True)
+    row.operator("screen.time_jump", text="", icon='FRAME_PREV').backward = True
+    row.prop(scene, "time_jump_delta", text="")
+    row.operator("screen.time_jump", text="", icon='FRAME_NEXT').backward = False
+    row.popover(panel="TIME_PT_jump", text="")
+
+    row = layout.row(align=True)
 
     row.operator("screen.frame_jump", text="", icon="REW").end = False
     row.operator("screen.keyframe_jump", text="", icon="PREV_KEYFRAME").next = False
@@ -88,13 +89,6 @@ def playback_controls(layout, context):
     row.operator("screen.keyframe_jump", text="", icon="NEXT_KEYFRAME").next = True
     row.operator("screen.frame_jump", text="", icon="FF").end = True
     row.operator("screen.animation_cancel", text="", icon="LOOP_BACK").restore_frame = True
-
-    # Time jump
-    row = layout.row(align=True)
-    row.operator("screen.time_jump", text="", icon='FRAME_PREV').backward = True
-    row.prop(scene, "time_jump_delta", text="")
-    row.operator("screen.time_jump", text="", icon='FRAME_NEXT').backward = False
-    row.popover(panel="TIME_PT_jump", text="")
 
     # BFA - removed separator_spacer to center controls better
 
@@ -156,6 +150,7 @@ def playback_controls(layout, context):
             )
 
         if tool_settings:
+            # BFA - The Keyframe settings are exposed in the Timeline view.
             icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
             layout.popover(
                 panel="TIME_PT_keyframing_settings",
@@ -164,11 +159,10 @@ def playback_controls(layout, context):
             )
 
         # BFA - Make this only show in the timeline editor to not show this in the footer.
-        if (getattr(context.space_data, "mode", "") == "TIMELINE"):
-            layout.popover(panel="TIME_PT_view_view_options", text="")
+        if is_timeline:
+            layout.popover(panel="TIME_PT_view_view_options", text="Options")
 
 # BFA - Legacy
-
 
 class TIME_MT_editor_menus(bpy.types.Menu):
     bl_idname = "TIME_MT_editor_menus"
@@ -193,8 +187,6 @@ class TIME_MT_editor_menus(bpy.types.Menu):
             sub.menu("DOPESHEET_MT_select")  # BFA
 
 # BFA - Legacy
-
-
 class TIME_MT_marker(bpy.types.Menu):
     bl_label = "Marker"
 
@@ -203,9 +195,8 @@ class TIME_MT_marker(bpy.types.Menu):
 
         marker_menu_generic(layout, context)
 
+
 # BFA - Legacy
-
-
 class TIME_MT_view(bpy.types.Menu):
     bl_label = "View"
 
@@ -239,41 +230,7 @@ class TIME_MT_view(bpy.types.Menu):
 
         layout.separator()
 
-        layout.menu("DOPESHEET_MT_cache")  # BFA - WIP - move to options
-
-        layout.separator()
-
         layout.menu("INFO_MT_area")
-
-
-class TIME_MT_view(Menu):
-    bl_label = "View"
-
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene
-        st = context.space_data
-        layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_channels")
-        layout.separator()
-        layout.operator("action.view_all")
-        if context.scene.use_preview_range:
-            layout.operator("anim.scene_range_frame", text="Frame Preview Range")
-        else:
-            layout.operator("anim.scene_range_frame", text="Frame Scene Range")
-        layout.operator("action.view_frame")
-        layout.separator()
-        layout.prop(st, "show_markers")
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-        layout.separator()
-        layout.prop(scene, "show_keys_from_selected_only")
-        layout.prop(st.dopesheet, "show_only_errors")
-        layout.separator()
-        layout.menu("DOPESHEET_MT_cache")
-        layout.separator()
-        layout.menu("INFO_MT_area")
-
 
 def marker_menu_generic(layout, context):
     # layout.operator_context = 'EXEC_REGION_WIN'

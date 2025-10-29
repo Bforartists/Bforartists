@@ -24,7 +24,7 @@ from bl_ui.space_time import playback_controls
 
 
 class ANIM_OT_switch_editor_in_graph(Operator):
-    """You are in Graph Editor"""  # blender will use this as a tooltip for menu items and buttons.
+    """You are in the Graph Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
     bl_idname = "wm.switch_editor_in_graph"  # unique identifier for buttons and menu items to reference.
     bl_label = "Graph Editor"  # display name in the interface.
@@ -35,7 +35,7 @@ class ANIM_OT_switch_editor_in_graph(Operator):
 
 
 class ANIM_OT_switch_editor_in_driver(Operator):
-    """You are in Driver Editor"""  # blender will use this as a tooltip for menu items and buttons.
+    """You are in the Driver Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
     bl_idname = "wm.switch_editor_in_driver"  # unique identifier for buttons and menu items to reference.
     bl_label = "Driver Editor"  # display name in the interface.
