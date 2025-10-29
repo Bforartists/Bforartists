@@ -213,9 +213,9 @@ class STRIP_PT_effect(StripButtonsPanel, Panel):
                 col.prop(strip, "speed_frame_number", text=" ")
 
             row = layout.row(align=True)
-            row.enabled = strip.speed_control != 'STRETCH'
-            row = layout.row(align=True, heading="Interpolation")
-            row.prop(strip, "use_frame_interpolate", text="")
+            if strip.speed_control != 'STRETCH': # BFA - dont' grey out, hide!
+                row.use_property_split = False # BFA - align left
+                row.prop(strip, "use_frame_interpolate",)
 
         elif strip_type == 'MULTICAM':
             col = layout.column(align=True)
@@ -446,7 +446,8 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
                 else:
                     split.label(text="Pack")
                     split.operator("sound.pack", icon='UGLYPACKAGE', text="")
-
+                
+                layout.use_property_split = False # BFA - align left
                 layout.prop(sound, "use_memory_cache")
 
                 col = layout.box()
@@ -491,6 +492,7 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
                 col.prop(strip, "filepath", text="")
                 col.prop(strip.colorspace_settings, "name", text="Color Space")
                 col.prop(strip, "stream_index")
+                col.use_property_split = False # BFA - align left
                 col.prop(strip, "use_deinterlace")
 
             if scene.render.use_multiview:
@@ -590,6 +592,7 @@ class STRIP_PT_scene(StripButtonsPanel, Panel):
 
         if strip.scene_input == 'CAMERA':
             layout = layout.column(heading="Show")
+            layout.use_property_split = False # BFA - align left
             layout.prop(strip, "use_annotations", text="Annotations")
             if scene:
                 # Warning, this is not a good convention to follow.
@@ -719,10 +722,7 @@ class STRIP_PT_time(StripButtonsPanel, Panel):
         layout.active = not strip.mute
 
         sub = layout.row(align=True)
-        split = sub.split(factor=factor + max_factor)
-        split.alignment = 'RIGHT'
-        split.label(text="")
-        split.prop(strip, "show_retiming_keys")
+        sub.prop(strip, "show_retiming_keys") # BFA - align left
 
         sub = layout.row(align=True)
         split = sub.split(factor=factor + max_factor)
@@ -844,11 +844,17 @@ class STRIP_PT_adjust_sound(StripButtonsPanel, Panel):
             split.prop(strip, "volume", text="")
 
             layout.use_property_split = False
-            col = layout.column()
+            col = layout.column(align=True)  # BFA - Put all panning settings in its own column layout
+            row = col.row()
+            row.alignment = "LEFT"
+            row.use_property_split = False
+            row.prop(sound, "use_mono")  # BFA - align left
+            audio_channels = context.sequencer_scene.render.ffmpeg.audio_channels
+            is_mono = audio_channels == "MONO"
 
-            split = col.split(factor=0.4)
-            split.label(text="")
-            split.prop(sound, "use_mono")
+            # BFA - Add dropdown icon
+            if not is_mono:
+                row.label(text="", icon="DISCLOSURE_TRI_DOWN" if sound.use_mono else "DISCLOSURE_TRI_RIGHT")
 
             layout.use_property_split = True
             col = layout.column()
@@ -856,12 +862,14 @@ class STRIP_PT_adjust_sound(StripButtonsPanel, Panel):
             audio_channels = context.sequencer_scene.render.ffmpeg.audio_channels
             pan_enabled = sound.use_mono and audio_channels != 'MONO'
             pan_text = "{:.2f}°".format(strip.pan * 90.0)
-
-            split = col.split(factor=0.4)
-            split.alignment = 'RIGHT'
-            split.label(text="Pan", text_ctxt=i18n_contexts.id_sound)
-            split.prop(strip, "pan", text="")
-            split.enabled = pan_enabled
+            
+            # BFA - Only draw if enabled
+            if pan_enabled:
+                split = col.split(factor=0.4)
+                split.alignment = 'RIGHT'
+                split.label(text="Pan", text_ctxt=i18n_contexts.id_sound)
+                split.prop(strip, "pan", text="")
+                split.enabled = pan_enabled
 
             if audio_channels not in {'MONO', 'STEREO'}:
                 split = col.split(factor=0.4)
@@ -877,13 +885,9 @@ class STRIP_PT_adjust_sound(StripButtonsPanel, Panel):
             layout.use_property_split = False
             col = layout.column()
 
-            split = col.split(factor=0.4)
-            split.label(text="")
-            split.prop(strip, "pitch_correction")
+            col.prop(strip, "pitch_correction")# BFA - align left
 
-            split = col.split(factor=0.4)
-            split.label(text="")
-            split.prop(strip, "show_waveform")
+            col.prop(strip, "show_waveform") # BFA - align left
 
 
 class STRIP_PT_adjust_comp(StripButtonsPanel, Panel):
@@ -978,6 +982,7 @@ class STRIP_PT_adjust_video(StripButtonsPanel, Panel):
         layout.active = not strip.mute
 
         col.prop(strip, "strobe")
+        col.use_property_split = False # BFA - align left
         col.prop(strip, "use_reverse_frames")
 
 
@@ -1009,6 +1014,7 @@ class STRIP_PT_adjust_color(StripButtonsPanel, Panel):
         col = layout.column()
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
+        col.use_property_split = False # BFA - align left
         col.prop(strip, "multiply_alpha")
         col.prop(strip, "use_float", text="Convert to Float")
 
