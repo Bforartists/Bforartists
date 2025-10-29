@@ -35,8 +35,8 @@ jobs:
           BODY=$(printf '%s' "Pull request: #${PR_NUM} from the Bforartists repository.\nTitle: ${PR_TITLE}\nLink: ${PR_URL}\n\n## Description:\n${PR_DESCRIPTION}\n\nPlease review the changes and update the manual.")
 
           echo "Creating issue: ${TITLE}"
-
-          curl -s \
+          # -v switch stands for verbose, and writes all errors. curl -s stands for silent, no error messages.
+          curl -v \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GH_PAT_AUTO_ISSUE}" \
             -X POST \
