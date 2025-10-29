@@ -386,7 +386,9 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 strip = context.active_strip
                 strip_type = strip.type
 
-                if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
+                strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+                if strip_valid:
 
                     strip = context.active_strip
 
@@ -419,7 +421,9 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
+                    strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+                    if strip_valid:
                         row = col.row(align=True)
                         row.operator(
                             "sequencer.retiming_show",
@@ -445,7 +449,9 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
+                    strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+                    if strip_valid:
                         row = col.row(align=True)
                         col.operator(
                             "sequencer.retiming_show",
@@ -474,10 +480,12 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                     strip = context.active_strip
                     strip_type = strip.type
 
-                    if strip and strip_type == 'MOVIE' or strip_type == 'IMAGE' or strip_type == 'SOUND':
+                    strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+                    
+                    if strip_valid:
                         col.operator(
                             "sequencer.retiming_show",
-                            icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
+                            icon='MOD_TIME' if strip.show_retiming_keys else 'TIME', text=""
                         )
 
                         col.separator(factor = 0.5)
@@ -486,7 +494,6 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
 
                         col.separator(factor = 0.5)
 
-                        row = col.row(align=True)
                         col.operator("sequencer.retiming_key_add", text="", icon="KEYFRAMES_INSERT")
                         col.operator("sequencer.retiming_freeze_frame_add", text="", icon="KEYTYPE_MOVING_HOLD_VEC")
 
@@ -528,9 +535,15 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
             col.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
             col.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
 
-            col.separator()
-            col.operator("sequencer.retiming_key_delete", text="Delete Retiming Key", icon="DELETE")
-            col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
+            strip = context.active_strip
+            strip_type = strip.type
+
+            strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+            if strip_valid:
+                col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
+            else:
+                col.operator("sequencer.retiming_key_delete", text="Delete Retiming Key", icon="DELETE")
 
         # icon buttons
         else:
@@ -555,8 +568,16 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 row.operator("sequencer.retiming_transition_add", text="", icon="NODE_CURVE_TIME")
 
                 row = col.row(align=True)
-                row.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
-                row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+
+                strip = context.active_strip
+                strip_type = strip.type
+
+                strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+                if strip_valid:
+                    row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+                else:
+                    row.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
 
             elif column_count == 2:
                 row = col.row(align=True)
@@ -577,8 +598,16 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 row.operator("sequencer.retiming_transition_add", text="", icon="NODE_CURVE_TIME")
 
                 row = col.row(align=True)
-                row.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
-                row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+
+                strip = context.active_strip
+                strip_type = strip.type
+
+                strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+                if strip_valid:
+                    row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+                else:
+                    row.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
 
             elif column_count == 1:
                 col.operator("sequencer.retiming_show", text="", icon='MOD_TIME')
@@ -594,8 +623,17 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 col.operator("sequencer.retiming_transition_add", text="", icon="NODE_CURVE_TIME")
 
                 col.separator(factor = 0.5)
-                col.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
-                col.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+
+                strip = context.active_strip
+                strip_type = strip.type
+
+                strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+                if strip_valid:
+                    col.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
+                else:
+                    col.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
+
 
     def draw(self, context):
         ed = context.scene.sequence_editor
