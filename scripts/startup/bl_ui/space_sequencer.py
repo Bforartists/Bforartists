@@ -1359,11 +1359,15 @@ class SEQUENCER_MT_strip_retiming(Menu):
     def draw(self, context):
         layout = self.layout
         try:  # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
+            # Get the sequence editor
+            ed = context.scene.sequence_editor
+            
+            # Check if we have selected retiming keys OR if retiming is active with a strip
             is_retiming = (
-                context.sequencer_scene is not None and
-                context.sequencer_scene.sequence_editor is not None and
-                context.sequencer_scene.sequence_editor.selected_retiming_keys is not None
+                ed.selected_retiming_keys or
+                (context.active_strip and context.active_strip.show_retiming_keys)
             )
+
             strip = context.active_strip
 
             layout.operator_context = "INVOKE_REGION_WIN"  # BFA
@@ -1384,22 +1388,16 @@ class SEQUENCER_MT_strip_retiming(Menu):
 
                 layout.separator()  # BFA - added seperator
 
-                layout.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
-                layout.operator("sequencer.retiming_key_delete", icon="DELETE")
-                layout.operator(
-                    "sequencer.retiming_add_freeze_frame_slide",
-                    icon="KEYTYPE_MOVING_HOLD_VEC",
-                )
                 col = layout.column()
-                col.operator("sequencer.retiming_add_transition_slide", icon="NODE_CURVE_TIME")
                 col.enabled = is_retiming
+                col.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
+                col.operator("sequencer.retiming_key_delete", icon="DELETE")
+                col.operator("sequencer.retiming_add_freeze_frame_slide", icon="KEYTYPE_MOVING_HOLD_VEC",)
+                col.operator("sequencer.retiming_add_transition_slide", icon="NODE_CURVE_TIME")
 
                 layout.separator()
 
-                col = layout.column()
-
-                col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
-                col.enabled = not is_retiming
+                layout.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
             else:
                 layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
         except:
