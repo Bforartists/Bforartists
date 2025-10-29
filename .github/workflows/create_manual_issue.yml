@@ -32,7 +32,14 @@ jobs:
 
           TITLE="Merged PR #${PR_NUM} ${PR_TITLE}"
           # Clean up the body text to remove problematic characters
-          BODY=$(printf '%s' "Pull request: #${PR_NUM} from the Bforartists repository.\nTitle: ${PR_TITLE}\nLink: ${PR_URL}\n\n## Description:\n${PR_DESCRIPTION}\n\nPlease review the changes and update the manual." | tr -d '\r' | sed 's/"/\\"/g')
+          BODY=$(printf '%s' "Pull request: #${PR_NUM} from the Bforartists repository.
+                  Title: ${PR_TITLE}
+                  Link: ${PR_URL}
+
+                  ## Description:
+                  ${PR_DESCRIPTION}
+
+          Please review the changes and update the manual." | tr -d '\r')
 
           echo "Creating issue: ${TITLE}"
 
