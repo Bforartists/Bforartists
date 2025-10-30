@@ -992,7 +992,7 @@ class TOPBAR_MT_primitives(Menu):
                         row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
                         row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
                         row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-                        derow.operator("object.lattice_add_to_selected", text="", icon='OBJECT_LATTICE')
+                        row.operator("object.lattice_add_to_selected", text="", icon='OBJECT_LATTICE')
                         row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA').rotation = (1.5708, 0.0, 0.0)
                         row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
