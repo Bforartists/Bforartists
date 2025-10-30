@@ -18,7 +18,10 @@ jobs:
       - name: Checkout source repo (bforartists/bforartists)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # optional, for the Git‑History
+          fetch-depth: 0   # optional, for the Git-History
+
+      - name: Setup jq (if needed)
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Create issue in manual repo
         env:
@@ -31,25 +34,29 @@ jobs:
           TARGET_REPO="bforartists/manual"
 
           TITLE="Merged PR #${PR_NUM} ${PR_TITLE}"
-          # Clean up the body text to remove problematic characters
-          BODY=$(printf '%s' "Pull request: #${PR_NUM} from the Bforartists repository.
-                  Title: ${PR_TITLE}
-                  Link: ${PR_URL}
+          
+          # Create body content with proper formatting
+          BODY="Pull request: #${PR_NUM} from the Bforartists repository.
+Title: ${PR_TITLE}
+Link: ${PR_URL}
 
-                  ## Description:
-                  ${PR_DESCRIPTION}
+## Description:
+${PR_DESCRIPTION}
 
-          Please review the changes and update the manual." | tr -d '\r')
+Please review the changes and update the manual."
 
+          # Clean up any carriage returns
+          BODY_CLEANED=$(echo "$BODY" | tr -d '\r')
+          
           echo "Creating issue: ${TITLE}"
 
           # Use jq to create properly formatted JSON
           BODY_JSON=$(jq -n \
             --arg title "$TITLE" \
-            --arg body "$BODY" \
+            --arg body "$BODY_CLEANED" \
             '{title: $title, body: $body}')
           
-          # -v switch stands for verbose, and writes all errors. curl -s stands for silent, no error messages.
+          # -v switch stands for verbose, and writes all errors
           curl -v \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GH_PAT_AUTO_ISSUE}" \
