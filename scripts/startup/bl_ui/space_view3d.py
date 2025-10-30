@@ -3421,7 +3421,7 @@ class VIEW3D_MT_lattice_add(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-        layout.operator("object.lattice_add_to_selected", text="Lattice Deform Selected", icon='OUTLINER_OB_LATTICE')
+        layout.operator("object.lattice_add_to_selected", text="Lattice Deform Selected", icon='OBJECT_LATTICE')
 
 
 class VIEW3D_MT_empty_add(Menu):
@@ -3487,7 +3487,8 @@ class VIEW3D_MT_add(Menu):
         else:
             layout.operator("object.armature_add", text="Armature", icon="OUTLINER_OB_ARMATURE")
 
-        layout.operator("object.add", text="Lattice", icon="OUTLINER_OB_LATTICE").type = "LATTICE"
+        layout.menu("VIEW3D_MT_lattice_add")
+
         layout.separator()
 
         layout.menu("VIEW3D_MT_empty_add", icon="OUTLINER_OB_EMPTY")

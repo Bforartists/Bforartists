@@ -1360,6 +1360,7 @@ if(WITH_BLENDER)
       object_datamode
       object_hidden
       object_origin
+      object_lattice
       offset_corner_in_face
       offset_edge_slide
       offset_point_in_curve
