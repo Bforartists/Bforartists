@@ -357,64 +357,6 @@ class NODES_PT_toolshelf_shader_add_output(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-
-
-class NODES_PT_toolshelf_shader_add_converter(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Converter"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'ShaderNodeTree'
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        use_common = addon_prefs.Node_shader_add_common
-
-        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
-        # There is currently no way to determine the correct padding length other than trial-and-error.
-        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
-        if use_common:
-            entries = (
-                OperatorEntry("ShaderNodeClamp", pad=17),
-                OperatorEntry("ShaderNodeValToRGB", pad=8),
-                Separator,
-                OperatorEntry("ShaderNodeFloatCurve", pad=8),
-                OperatorEntry("ShaderNodeMapRange", pad=9),
-                OperatorEntry("ShaderNodeMath", pad=19),
-                OperatorEntry("ShaderNodeRGBToBW", pad=9),
-            )
-        else:
-            entries = (
-                OperatorEntry("ShaderNodeBlackbody", pad=10),
-                OperatorEntry("ShaderNodeClamp", pad=17),
-                OperatorEntry("ShaderNodeValToRGB", pad=8),
-                OperatorEntry("ShaderNodeCombineColor", pad=3),
-                OperatorEntry("ShaderNodeCombineXYZ", pad=5),
-                Separator,
-                OperatorEntry("ShaderNodeFloatCurve", pad=8),
-                OperatorEntry("ShaderNodeMapRange", pad=9),
-                OperatorEntry("ShaderNodeMath", pad=19),
-                OperatorEntry("ShaderNodeMix", pad=22),
-                OperatorEntry("ShaderNodeRGBToBW", pad=9),
-                Separator,
-                OperatorEntry("ShaderNodeSeparateColor", pad=2),
-                OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
-                OperatorEntry("ShaderNodeShaderToRGB", pad=3, poll=is_engine(context, 'BLENDER_EEVEE')),
-                OperatorEntry("ShaderNodeVectorMath", pad=6),
-                OperatorEntry("ShaderNodeWavelength", pad=7),
-            )
-
-        self.draw_entries(context, layout, entries)
-
-
 class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader"
@@ -442,19 +384,23 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeAddShader", pad=18),
+                OperatorEntry("ShaderNodeMixShader", pad=20),
+                Seperator,
                 OperatorEntry("ShaderNodeBackground", pad=18, poll=is_shader_type(context, 'WORLD')),
                 OperatorEntry("ShaderNodeEmission", pad=23),
-                OperatorEntry("ShaderNodeMixShader", pad=20),
                 OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, poll=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
                 OperatorEntry("ShaderNodeBsdfToon", pad=20, poll=is_object and not is_eevee),
+                Seperator,
+                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
                 OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
                 OperatorEntry("ShaderNodeVolumeScatter", pad=13),
             )
         else:
             entries = (
                 OperatorEntry("ShaderNodeAddShader", pad=18),
+                OperatorEntry("ShaderNodeMixShader", pad=20),
+                Seperator,
                 OperatorEntry("ShaderNodeBackground", pad=18, poll=is_shader_type(context, 'WORLD')),
                 OperatorEntry("ShaderNodeBsdfDiffuse", pad=16, poll=is_object),
                 OperatorEntry("ShaderNodeEmission", pad=23),
@@ -463,10 +409,8 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeBsdfHair", pad=22, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeHoldout", pad=26, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfMetallic", pad=16, poll=is_object),
-                OperatorEntry("ShaderNodeMixShader", pad=20),
                 OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, poll=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
                 OperatorEntry("ShaderNodeBsdfRayPortal", pad=6, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeBsdfRefraction", pad=11, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfSheen", pad=18, poll=is_object and not is_eevee),
@@ -475,12 +419,15 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeBsdfToon", pad=20, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeBsdfTranslucent", pad=9, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfTransparent", pad=9, poll=is_object),
+                Seperator,
+                OperatorEntry("ShaderNodeVolumePrincipled", pad=8),
                 OperatorEntry("ShaderNodeVolumeAbsorption", pad=7),
                 OperatorEntry("ShaderNodeVolumeScatter", pad=13),
                 OperatorEntry("ShaderNodeVolumeCoefficients", pad=5),
             )
 
         self.draw_entries(context, layout, entries)
+
 
 class NODES_PT_toolshelf_shader_add_displacement(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
@@ -521,6 +468,7 @@ class NODES_PT_toolshelf_shader_add_displacement(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
+
 class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
@@ -545,24 +493,38 @@ class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
+                OperatorEntry("ShaderNodeValToRGB", pad=8),
                 OperatorEntry("ShaderNodeBrightContrast", pad=3),
                 OperatorEntry("ShaderNodeGamma", pad=24),
                 OperatorEntry("ShaderNodeHueSaturation", pad=0),
                 OperatorEntry("ShaderNodeInvert", pad=16),
-                Separator,
                 OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
                 OperatorEntry("ShaderNodeRGBCurve", pad=16),
+                Separator,
+                OperatorEntry("ShaderNodeCombineColor", pad=3),
+                OperatorEntry("ShaderNodeSeparateColor", pad=2),
+                Separator,
+                OperatorEntry("ShaderNodeShaderToRGB", pad=3, poll=is_engine(context, 'BLENDER_EEVEE')),
+                OperatorEntry("ShaderNodeRGBToBW", pad=9),
             )
         else:
             entries = (
+                OperatorEntry("ShaderNodeBlackbody", pad=10),
+                OperatorEntry("ShaderNodeValToRGB", pad=8),
                 OperatorEntry("ShaderNodeBrightContrast", pad=3),
                 OperatorEntry("ShaderNodeGamma", pad=24),
                 OperatorEntry("ShaderNodeHueSaturation", pad=0),
                 OperatorEntry("ShaderNodeInvert", pad=16),
-                Separator,
-                OperatorEntry("ShaderNodeLightFalloff", pad=16),
                 OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
+                OperatorEntry("ShaderNodeLightFalloff", pad=16),
                 OperatorEntry("ShaderNodeRGBCurve", pad=16),
+                OperatorEntry("ShaderNodeWavelength", pad=7),
+                Separator,
+                OperatorEntry("ShaderNodeCombineColor", pad=3),
+                OperatorEntry("ShaderNodeSeparateColor", pad=2),
+                Separator,
+                OperatorEntry("ShaderNodeShaderToRGB", pad=3, poll=is_engine(context, 'BLENDER_EEVEE')),
+                OperatorEntry("ShaderNodeRGBToBW", pad=9),
             )
 
         self.draw_entries(context, layout, entries)
@@ -619,6 +581,7 @@ class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
+
 class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Utilities"
@@ -665,6 +628,7 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
             )
 
         self.draw_entries(context, layout, entries)
+
 
 class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
@@ -718,6 +682,7 @@ class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
+
 class NODES_PT_toolshelf_shader_add_math(bpy.types.Panel, NodePanel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Math"
@@ -758,7 +723,6 @@ class NODES_PT_toolshelf_shader_add_math(bpy.types.Panel, NodePanel):
             )
 
         self.draw_entries(context, layout, entries)
-
 
 
 class NODES_PT_toolshelf_shader_add_script(bpy.types.Panel, NodePanel):
@@ -2935,7 +2899,6 @@ classes = (
     # Shader Nodes - Add
     NODES_PT_toolshelf_shader_add_input,
     NODES_PT_toolshelf_shader_add_output,
-    NODES_PT_toolshelf_shader_add_converter,
     NODES_PT_toolshelf_shader_add_shader,
     NODES_PT_toolshelf_shader_add_displacement,
     NODES_PT_toolshelf_shader_add_color,
