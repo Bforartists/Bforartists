@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0   # optional, for the Git-History
 
-      - name: Setup jq (if needed)
+      - name: Setup jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Create issue in manual repo
@@ -37,17 +37,17 @@ jobs:
           
           # Create body content with proper formatting
           BODY="Pull request: #${PR_NUM} from the Bforartists repository.
-Title: ${PR_TITLE}
-Link: ${PR_URL}
+          Title: ${PR_TITLE}
+          Link: ${PR_URL}
 
-## Description:
-${PR_DESCRIPTION}
+          ## Description:
+          ${PR_DESCRIPTION}
 
-Please review the changes and update the manual."
+          Please review the changes and update the manual."
 
-          # Clean up any carriage returns
-          BODY_CLEANED=$(echo "$BODY" | tr -d '\r')
-          
+          # Clean up any carriage returns and escape special JSON characters
+          BODY_CLEANED=$(echo "$BODY" | tr -d '\r' | sed 's/"/\\"/g')
+
           echo "Creating issue: ${TITLE}"
 
           # Use jq to create properly formatted JSON
@@ -55,11 +55,14 @@ Please review the changes and update the manual."
             --arg title "$TITLE" \
             --arg body "$BODY_CLEANED" \
             '{title: $title, body: $body}')
-          
+
+          echo "JSON payload: $BODY_JSON"
+
           # -v switch stands for verbose, and writes all errors
           curl -v \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GH_PAT_AUTO_ISSUE}" \
+            -H "Content-Type: application/json" \
             -X POST \
             -d "$BODY_JSON" \
             "https://api.github.com/repos/${TARGET_REPO}/issues"
