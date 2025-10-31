@@ -9617,10 +9617,6 @@ class VIEW3D_PT_overlay_object(Panel):
         else:
             col.label(icon="DISCLOSURE_TRI_RIGHT")
 
-        if shading.type == "WIREFRAME" or shading.show_xray:
-            layout.separator()
-            layout.prop(overlay, "bone_wire_alpha")
-
 
 class VIEW3D_PT_overlay_geometry(Panel):
     bl_space_type = "VIEW_3D"
@@ -10183,7 +10179,7 @@ class VIEW3D_PT_overlay_bones(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
     bl_label = "Bones"
-    bl_ui_units_x = 14
+    bl_ui_units_x = 18 # BFA - made wider for the label
 
     @staticmethod
     def is_using_wireframe(context):
@@ -10240,7 +10236,8 @@ class VIEW3D_PT_overlay_bones(Panel):
             row.separator()
             row.prop(overlay, "show_xray_bone")
             row = col.row()
-            row.active = shading.type == "WIREFRAME"
+            #row.active = shading.type == "WIREFRAME" # BFA - WIP - you can tune this always?
+            row.use_property_split = True # BFA
             row.prop(overlay, "bone_wire_alpha")
 
 
