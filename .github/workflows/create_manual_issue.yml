@@ -28,8 +28,8 @@ jobs:
           GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}
         run: |
           PR_NUM="${{ github.event.pull_request.number }}" # the pull request number
-          PR_TITLE="${{ github.event.pull_request.title }}" # the pull request title
-          PR_DESCRIPTION="${{ github.event.pull_request.body }}" # the pull request description
+          PR_TITLE=$(echo "${{ github.event.pull_request.title }}" | jq -R -s -r '.') # sanitized title
+          PR_DESCRIPTION=$(echo "${{ github.event.pull_request.body }}" | jq -R -s -r '.') # sanitized description
           PR_URL="${{ github.event.pull_request.html_url }}" # the pull request url
           TARGET_REPO="bforartists/manual"
 
@@ -45,18 +45,13 @@ jobs:
 
           Please review the changes and update the manual."
 
-          # Clean up any carriage returns and escape special JSON characters
-          BODY_CLEANED=$(echo "$BODY" | tr -d '\r' | sed 's/"/\\"/g')
-
-          echo "Creating issue: ${TITLE}"
-
-          # Use jq to create properly formatted JSON
+          # Use jq to create properly formatted JSON (handles all escaping automatically)
           BODY_JSON=$(jq -n \
             --arg title "$TITLE" \
-            --arg body "$BODY_CLEANED" \
+            --arg body "$BODY" \
             '{title: $title, body: $body}')
 
-          echo "JSON payload: $BODY_JSON"
+          echo "Creating issue: ${TITLE}"
 
           # -v switch stands for verbose, and writes all errors
           curl -v \
