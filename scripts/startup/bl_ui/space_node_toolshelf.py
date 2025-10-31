@@ -1173,8 +1173,7 @@ class NODES_PT_toolshelf_compositor_add_transform(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
+class NODES_PT_toolshelf_compositor_add_utilities(bpy.types.Panel, NodePanel):
     bl_label = "Utilities"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1192,17 +1191,13 @@ class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("ShaderNodeMapRange", pad=13),
-            OperatorEntry("ShaderNodeMath", pad=24),
-            OperatorEntry("ShaderNodeMix", pad=27),
-            OperatorEntry("ShaderNodeClamp", pad=22),
-            OperatorEntry("ShaderNodeFloatCurve", pad=13),
-            Separator,
             OperatorEntry("CompositorNodeLevels", pad=22),
             OperatorEntry("CompositorNodeNormalize", pad=16),
             Separator,
             OperatorEntry("CompositorNodeSplit", pad=26),
             OperatorEntry("CompositorNodeSwitch", pad=22),
+            OperatorEntry("GeometryNodeIndexSwitch", pad=11),
+            OperatorEntry("GeometryNodeMenuSwitch", pad=11),
             OperatorEntry("CompositorNodeSwitchView", pad=0, text="Switch Stereo View"),
             Separator,
             OperatorEntry("CompositorNodeRelativeToPixel", pad=5),
@@ -1211,13 +1206,13 @@ class NODES_PT_toolshelf_compositor_add_utility(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Vector"
+class NODES_PT_toolshelf_compositor_add_utilities_math(bpy.types.Panel, NodePanel):
+    bl_label = "Math"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
 
     @classmethod
     def poll(cls, context):
@@ -1230,14 +1225,45 @@ class NODES_PT_toolshelf_compositor_add_vector(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("ShaderNodeCombineXYZ", pad=2),
-            OperatorEntry("ShaderNodeSeparateXYZ", pad=2),
+            OperatorEntry("ShaderNodeClamp", pad=22),
+            OperatorEntry("ShaderNodeFloatCurve", pad=13),
+            OperatorEntry("ShaderNodeMapRange", pad=13),
+            OperatorEntry("ShaderNodeMath", pad=24),
+            OperatorEntry("ShaderNodeMix", pad=27),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_compositor_add_utilities_vector(bpy.types.Panel, NodePanel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Vector"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("ShaderNodeCombineXYZ", pad=4),
+            OperatorEntry("ShaderNodeMapRange", pad=9, settings={"data_type": "'FLOAT_VECTOR'"}),
+            OperatorEntry("ShaderNodeMix", text="Mix Vector", pad=9, settings={"data_type": "'VECTOR'"}),
+            OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
             Separator,
-            OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=8, settings={"data_type": "'VECTOR'"}),
             OperatorEntry("ShaderNodeRadialTiling", pad=10),
-            OperatorEntry("ShaderNodeVectorCurve", pad=2),
-            OperatorEntry("ShaderNodeVectorMath", pad=6),
-            OperatorEntry("ShaderNodeVectorRotate", pad=2),
+            OperatorEntry("ShaderNodeVectorCurve", pad=3),
+            OperatorEntry("ShaderNodeVectorMath", pad=7),
+            OperatorEntry("ShaderNodeVectorRotate", pad=4),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2925,8 +2951,9 @@ classes = (
     NODES_PT_toolshelf_compositor_add_tracking,
     NODES_PT_toolshelf_compositor_add_texture,
     NODES_PT_toolshelf_compositor_add_transform,
-    NODES_PT_toolshelf_compositor_add_utility,
-    NODES_PT_toolshelf_compositor_add_vector,
+    NODES_PT_toolshelf_compositor_add_utilities,
+    NODES_PT_toolshelf_compositor_add_utilities_math,
+    NODES_PT_toolshelf_compositor_add_utilities_vector,
     #-----------------------
 
     #-----------------------
