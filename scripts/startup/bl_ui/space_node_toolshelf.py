@@ -2643,7 +2643,7 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeCombineXYZ", pad=4),
-            OperatorEntry("ShaderNodeMapRange", text="Map Range Vector", pad=9, settings={"data_type": "'FLOAT_VECTOR'"}),
+            OperatorEntry("ShaderNodeMapRange", pad=9, settings={"data_type": "'FLOAT_VECTOR'"}),
             OperatorEntry("ShaderNodeMix", text="Mix Vector", pad=9, settings={"data_type": "'VECTOR'"}),
             OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
             Separator,
