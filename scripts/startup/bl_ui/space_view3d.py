@@ -5900,7 +5900,7 @@ class VIEW3D_MT_pose(Menu):
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
         layout.separator()
-        layout.operator("POSELIB.create_pose_asset")
+        layout.operator("POSELIB.create_pose_asset", icon="ASSET_MANAGER")
 
 
 class VIEW3D_MT_pose_transform(Menu):
@@ -6163,32 +6163,33 @@ class VIEW3D_MT_pose_context_menu(Menu):
 class BoneOptions:
     def draw(self, context):
         layout = self.layout
-
+        # BFA - added icons
         options = [
-            "show_wire",
-            "use_deform",
-            "use_envelope_multiply",
-            "use_inherit_rotation",
+            ("show_wire", "NODE_WIREFRAME"),
+            ("use_deform", "MOD_SIMPLEDEFORM"),
+            ("use_envelope_multiply", "MOD_ENVELOPE"),
+            ("use_inherit_rotation", "CLEARROTATE"),
         ]
 
         if context.mode == "EDIT_ARMATURE":
             bone_props = bpy.types.EditBone.bl_rna.properties
             data_path_iter = "selected_bones"
             opt_suffix = ""
-            options.append("lock")
+            options.append(("lock", "LOCKED"))
         else:  # pose-mode
             bone_props = bpy.types.Bone.bl_rna.properties
             data_path_iter = "selected_pose_bones"
             opt_suffix = "bone."
 
-        for opt in options:
+        for opt_name, icon in options:
             props = layout.operator(
                 "wm.context_collection_boolean_set",
-                text=bone_props[opt].name,
+                text=bone_props[opt_name].name,
                 text_ctxt=i18n_contexts.default,
+                icon=icon,
             )
             props.data_path_iter = data_path_iter
-            props.data_path_item = opt_suffix + opt
+            props.data_path_item = opt_suffix + opt_name
             props.type = self.type
 
 
