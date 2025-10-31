@@ -76327,8 +76327,8 @@ msgstr "Create a new pose asset on the clipboard, to be pasted into an Asset Bro
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
-msgstr "Create Pose Asset..."
+msgid "Create Pose Asset"
+msgstr "Create Pose Asset"
 
 
 msgid "Create a new asset from the selected bones in the scene"

@@ -78953,7 +78953,7 @@ msgstr "在剪贴板上创建新的姿态资产，以供粘贴到资产浏览器
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "创建姿态资产..."
 
 

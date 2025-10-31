@@ -77477,7 +77477,7 @@ msgstr "Kiến Tạo tài sản tư thế mới trên bảng nhớ tạm của h
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Tạo Tài Sản Tư Thế..."
 
 

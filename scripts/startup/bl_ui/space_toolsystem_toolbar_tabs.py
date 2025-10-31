@@ -6638,8 +6638,10 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
             col.separator( factor = 0.5)
 
             col.operator_context = 'INVOKE_AREA'
-            col.operator("armature.armature_layers", text="Change Armature Layers", icon = "LAYER")
-            col.operator("pose.bone_layers", text="Change Bone Layers", icon = "BONE_LAYER")
+            col.operator("armature.move_to_collection", text="Change Bone Layers", icon = "GROUP_BONE")
+
+            col.separator( factor = 0.5)
+            col.operator("poselib.create_pose_asset", text="Create Pose Asset", icon = "ASSET_MANAGER")
 
         # icon buttons
         else:
@@ -6652,19 +6654,17 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.quaternions_flip", text="", icon = "FLIP")
-                row.operator_context = 'INVOKE_AREA'
-                row.operator("armature.armature_layers", text="", icon = "LAYER")
-                row.operator("pose.bone_layers", text="", icon = "BONE_LAYER")
+                row.operator("armature.move_to_collection", text="", icon = "GROUP_BONE")
+                row.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("pose.quaternions_flip", text="", icon = "FLIP")
-                row.operator_context = 'INVOKE_AREA'
-                row.operator("armature.armature_layers", text="", icon = "BONE_LAYER")
+                row.operator("armature.move_to_collection", text="", icon = "GROUP_BONE")
 
                 row = col.row(align=True)
-                row.operator("pose.bone_layers", text="", icon = "LAYER")
+                row.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
             elif column_count == 1:
 
@@ -6673,8 +6673,10 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
                 col.separator( factor = 0.5)
 
                 col.operator_context = 'INVOKE_AREA'
-                col.operator("armature.armature_layers", text="", icon = "LAYER")
-                col.operator("pose.bone_layers", text="", icon = "BONE_LAYER")
+                col.operator("armature.move_to_collection", text="", icon = "GROUP_BONE")
+
+                col.separator( factor = 0.5)
+                row.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
 
 class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):

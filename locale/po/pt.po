@@ -78862,7 +78862,7 @@ msgstr "Criar novo recurso de pose na área de transferência, para ser colado n
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Criar Recurso de Pose..."
 
 

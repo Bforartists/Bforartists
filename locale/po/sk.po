@@ -78951,7 +78951,7 @@ msgstr "Vytvorí nové aktívum pózy v schránke, ktoré sa vloží do prehľad
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Vytvoriť aktívum pózy..."
 
 

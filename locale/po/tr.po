@@ -65970,7 +65970,7 @@ msgstr "Verilen Poz Eylemini teçhizata harmanlayın"
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Poz Varlığı Oluştur..."
 
 

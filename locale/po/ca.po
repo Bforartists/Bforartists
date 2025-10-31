@@ -78951,7 +78951,7 @@ msgstr "[Copy Pose as Asset]: Crea un nou recurs de posa al porta-retalls, per e
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Crear recurs de posa..."
 
 
