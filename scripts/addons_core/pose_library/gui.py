@@ -24,7 +24,7 @@ class VIEW3D_MT_pose_modify(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("poselib.asset_modify", text="Replace", icon="FILE_REFRESH").mode = "REPLACE"
+        layout.operator("poselib.asset_modify", text="Replace", icon="FLIP").mode = "REPLACE"
         layout.operator("poselib.asset_modify", text="Add Selected Bones", icon="ADD").mode = "ADD"
         layout.operator("poselib.asset_modify", text="Remove Selected Bones", icon="REMOVE").mode = "REMOVE"
 

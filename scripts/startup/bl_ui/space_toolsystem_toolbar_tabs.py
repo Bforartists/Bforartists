@@ -6676,7 +6676,7 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
                 col.operator("armature.move_to_collection", text="", icon = "GROUP_BONE")
 
                 col.separator( factor = 0.5)
-                row.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
+                col.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
 
 class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
@@ -6864,8 +6864,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("pose.push_rest", icon = 'PUSH_POSE')
-            col.operator("pose.relax_rest", icon = 'RELAX_POSE')
+            col.operator("pose.blend_with_rest", icon = 'PUSH_POSE')
             col.operator("pose.push", icon = 'POSE_FROM_BREAKDOWN')
             col.operator("pose.relax", icon = 'POSE_RELAX_TO_BREAKDOWN')
             col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
@@ -6882,8 +6881,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
-                row.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
+                row.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')
                 row.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
 
                 row = col.row(align=True)
@@ -6894,21 +6892,19 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
-                row.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
-
-                row = col.row(align=True)
+                row.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')              
                 row.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
-                row.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
-
+                
                 row = col.row(align=True)
+                row.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
                 row.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+                
+                row = col.row(align=True)
                 row.operator("pose.blend_to_neighbor", text = "", icon = 'BLEND_TO_NEIGHBOUR')
 
             elif column_count == 1:
 
-                col.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
-                col.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
+                col.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')
                 col.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
                 col.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
                 col.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
