@@ -418,8 +418,10 @@ static void edbm_intersect_boolean_ui(bContext * /*C*/, wmOperator *op)
   row->prop(op->ptr, "solver", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
   layout->separator();
 
+  layout->use_property_split_set(false); /*BFA - Float bool property left*/
   layout->prop(op->ptr, "use_swap", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout->use_property_split_set(true); /*BFA - Float bool property left*/
   if (!use_exact) {
     layout->prop(op->ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
