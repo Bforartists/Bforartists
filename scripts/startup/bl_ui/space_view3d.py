@@ -8123,7 +8123,7 @@ class VIEW3D_MT_edit_curves(Menu):
         layout.separator()
         layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
                                   property="type")  # BFA - made title consistent
-        layout.operator_menu_enum("curves.handle_type_set", "type")
+        # layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - hide, as already exposed in header
         layout.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
         layout.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
