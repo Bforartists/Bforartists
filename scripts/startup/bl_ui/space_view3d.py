@@ -8181,18 +8181,18 @@ class VIEW3D_MT_edit_curves_context_menu(Menu):
         layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
                                   property="type")  # BFA - made title consistent
         layout.operator_menu_enum("curves.handle_type_set", "type")
-        layout.operator("curves.cyclic_toggle")
-        layout.operator("curves.switch_direction")
+        layout.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
+        layout.operator("curves.switch_direction", icon="SWITCH_DIRECTION")
 
         layout.separator()
 
         # Removal Operators
-        layout.operator("curves.separate")
-        layout.operator("curves.delete")
+        layout.operator("curves.separate", icon="SEPARATE")
+        layout.operator("curves.delete", icon="DELETE")
 
         layout.separator()
 
-        layout.operator("curves.split")
+        layout.operator("curves.split", icon='SPLIT')
 
 
 class VIEW3D_MT_edit_pointcloud(Menu):
