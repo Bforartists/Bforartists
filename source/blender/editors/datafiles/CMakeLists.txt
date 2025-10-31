@@ -753,6 +753,7 @@ if(WITH_BLENDER)
       goto
       gp_caps_flat
       gp_caps_round
+      gp_caps_sharp
       gp_multiframe_editing
       gp_only_selected
       gp_select_between_strokes
