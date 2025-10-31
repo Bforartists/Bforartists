@@ -24,9 +24,9 @@ class VIEW3D_MT_pose_modify(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("poselib.asset_modify", text="Replace").mode = "REPLACE"
-        layout.operator("poselib.asset_modify", text="Add Selected Bones").mode = "ADD"
-        layout.operator("poselib.asset_modify", text="Remove Selected Bones").mode = "REMOVE"
+        layout.operator("poselib.asset_modify", text="Replace", icon="FLIP").mode = "REPLACE"
+        layout.operator("poselib.asset_modify", text="Add Selected Bones", icon="ADD").mode = "ADD"
+        layout.operator("poselib.asset_modify", text="Remove Selected Bones", icon="REMOVE").mode = "REMOVE"
 
 
 class PoseLibraryPanel:
@@ -69,9 +69,9 @@ class VIEW3D_AST_pose_library(bpy.types.AssetShelf):
         props.select = False
 
         layout.separator()
-        layout.operator("poselib.asset_modify", text="Adjust Pose Asset").mode = 'ADJUST'
+        layout.operator("poselib.asset_modify", text="Adjust Pose Asset", icon="OUTLINER_DATA_POSE").mode = 'ADJUST'
         layout.menu("VIEW3D_MT_pose_modify")
-        layout.operator("poselib.asset_delete")
+        layout.operator("poselib.asset_delete", icon="DELETE")
 
         layout.separator()
         layout.operator("asset.assign_action", icon="ACTION_TWEAK")  #BFA - icon added
@@ -111,10 +111,10 @@ def pose_library_asset_browser_context_menu(self: UIList, context: Context) -> N
     props.select = False
 
     layout.separator()
-    layout.operator("poselib.asset_modify", text="Adjust Pose Asset").mode = 'ADJUST'
+    layout.operator("poselib.asset_modify", text="Adjust Pose Asset", icon="OUTLINER_DATA_POSE").mode = 'ADJUST'
     layout.menu("VIEW3D_MT_pose_modify")
     with operator_context(layout, 'INVOKE_DEFAULT'):
-        layout.operator("poselib.asset_delete")
+        layout.operator("poselib.asset_delete", icon="DELETE")
 
     layout.separator()
     layout.operator("asset.assign_action", icon="ACTION_TWEAK")  #BFA - icon added
@@ -134,7 +134,7 @@ class DOPESHEET_PT_asset_panel(PoseLibraryPanel, Panel):
         layout = self.layout
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.operator("poselib.create_pose_asset")
+        row.operator("poselib.create_pose_asset", icon="ASSET_MANAGER")
         if bpy.types.POSELIB_OT_restore_previous_action.poll(context):
             row.operator("poselib.restore_previous_action", text="", icon='LOOP_BACK')
         col.operator("poselib.copy_as_asset", icon="COPYDOWN")

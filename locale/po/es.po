@@ -78951,7 +78951,7 @@ msgstr "Crea un nuevo recurso de pose en el portapapeles, para ser pegado en el 
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Crear recurso de pose..."
 
 

@@ -43955,7 +43955,7 @@ msgstr "Odstrani izbrane kosti"
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Ustvari pozirno sredstvo ..."
 
 

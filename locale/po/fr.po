@@ -78954,7 +78954,7 @@ msgstr "Créer un nouvel asset de pose dans le presse-papier, à coller dans l�
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "Créer un asset de pose…"
 
 

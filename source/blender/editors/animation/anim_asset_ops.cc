@@ -424,7 +424,7 @@ static void visit_library_prop_catalogs_catalog_for_search_fn(
 
 void POSELIB_OT_create_pose_asset(wmOperatorType *ot)
 {
-  ot->name = "Create Pose Asset...";
+  ot->name = "Create Pose Asset";
   ot->description = "Create a new asset from the selected bones in the scene";
   ot->idname = "POSELIB_OT_create_pose_asset";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;

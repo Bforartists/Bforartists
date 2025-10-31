@@ -79667,7 +79667,7 @@ msgstr "新しいポーズアセットをクリップボードに作成し，ア
 
 
 msgctxt "Operator"
-msgid "Create Pose Asset..."
+msgid "Create Pose Asset"
 msgstr "ポーズアセットを作成..."
 
 
