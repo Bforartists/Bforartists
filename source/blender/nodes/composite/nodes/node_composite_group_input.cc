@@ -189,7 +189,7 @@ void get_compositor_group_input_extra_info(blender::nodes::NodeExtraInfoParams &
       }
       blender::nodes::NodeExtraInfoRow row;
       row.text = IFACE_("Unsupported Inputs");
-      row.icon = ICON_WARNING_LARGE;
+      row.icon = ICON_ERROR;
       row.tooltip = TIP_(
           "Only a main Image and Mask inputs are supported, the rest are unsupported and will "
           "return zero");
