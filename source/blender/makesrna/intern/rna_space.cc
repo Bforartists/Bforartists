@@ -2612,7 +2612,7 @@ static void rna_SpaceConsole_rect_update(Main * /*bmain*/, Scene * /*scene*/, Po
 
 static void rna_SequenceEditor_update_cache(Main * /*bmain*/, Scene *scene, PointerRNA * /*ptr*/)
 {
-  blender::seq::cache_cleanup(scene);
+  blender::seq::cache_cleanup(scene, blender::seq::CacheCleanup::FinalAndIntra);
 }
 
 static void seq_build_proxy(bContext *C, PointerRNA *ptr)
@@ -8606,13 +8606,11 @@ static void rna_def_space_clip_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_overlays", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlay.flag", SC_SHOW_OVERLAYS);
-  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop, "Show Overlays", "Display overlays like cursor and annotations");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, nullptr);
 
   prop = RNA_def_property(srna, "show_cursor", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlay.flag", SC_SHOW_CURSOR);
-  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop, "Show Overlays", "Display 2D cursor");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, nullptr);
 }
