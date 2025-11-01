@@ -66,7 +66,7 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
 
         # Collection selection panel
         row = layout.row()
-        row.label(text="Select an existing collection of mesh objects to apply", icon='INFO')
+        row.label(text="Select an existing collection of mesh objects to apply", icon='WIZARD')
         
         row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")

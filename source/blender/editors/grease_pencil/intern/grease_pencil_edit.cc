@@ -4753,9 +4753,9 @@ enum class CornerType : uint8_t {
 };
 
 static const EnumPropertyItem prop_corner_types[] = {
-    {int(CornerType::Round), "ROUND", 0, "Round", ""},
-    {int(CornerType::Bevel), "FLAT", 0, "Flat", ""},
-    {int(CornerType::Miter), "SHARP", 0, "Sharp", ""},
+    {int(CornerType::Round), "ROUND", ICON_GP_CAPS_ROUND, "Round", ""},
+    {int(CornerType::Bevel), "FLAT", ICON_GP_CAPS_FLAT, "Flat", ""},
+    {int(CornerType::Miter), "SHARP", ICON_GP_CAPS_SHARP, "Sharp", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
