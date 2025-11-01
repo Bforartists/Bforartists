@@ -39,6 +39,9 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.paint_vertex.average
   brush.paint_vertex.blur
   brush.paint_vertex.smear
+  brush.paint_weight.average
+  brush.paint_weight.blur
+  brush.paint_weight.smear
   brush.particle.add
   brush.particle.comb
   brush.particle.cut
