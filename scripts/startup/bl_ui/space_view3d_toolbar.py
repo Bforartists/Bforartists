@@ -1679,7 +1679,7 @@ class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
         col = layout.column(align=True)
         col.active = pe.is_editable
         col.use_property_split = False
-        col.prop(ob.data, "use_mirror_x")
+        col.prop(ob.data, "use_mirror_x", text="X Mirror") # BFA - Change label to be more descriptive
         if pe.tool == "ADD":
             col.prop(ob.data, "use_mirror_topology")
 
