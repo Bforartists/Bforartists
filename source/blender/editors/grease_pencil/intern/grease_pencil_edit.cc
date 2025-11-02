@@ -3384,6 +3384,7 @@ static void grease_pencil_reproject_ui(bContext * /*C*/, wmOperator *op)
     row->prop(op->ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   row = &layout->row(true);
+  row->use_property_split_set(false); /* BFA - float bool property left*/
   row->prop(op->ptr, "keep_original", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
