@@ -153,18 +153,20 @@ class WORKSPACE_UL_addons_items(UIList):
         return flags, indices
 
     def draw_item(self, context, layout, _data, addon, _icon, _active_data, _active_propname, _index):
-        row = layout.row()
+        # BFA - Put checkbox on left side
+        row = layout.row(align=True) 
         row.active = context.workspace.use_filter_by_owner
         row.emboss = 'NONE'
-        row.label(text=WORKSPACE_UL_addons_items._ui_label_from_addon(addon))
-        row = row.row()
-        row.alignment = 'RIGHT'
+        
         is_enabled = addon.module in WORKSPACE_PT_addons.owner_ids
         row.operator(
             "wm.owner_disable" if is_enabled else "wm.owner_enable",
             icon='CHECKBOX_HLT' if is_enabled else 'CHECKBOX_DEHLT',
             text="",
         ).owner_id = addon.module
+        
+        row.label(text=WORKSPACE_UL_addons_items._ui_label_from_addon(addon))
+        # BFA - Put checkbox on left side (end)
 
 
 class WORKSPACE_PT_custom_props(WorkSpaceButtonsPanel, PropertyPanel, Panel):
