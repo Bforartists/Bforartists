@@ -11,6 +11,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_scene_types.h"
+#include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
 #include "DNA_view2d_types.h"
 
@@ -43,6 +44,8 @@
 #include "RNA_access.hh"
 #include "RNA_prototypes.hh"
 
+#include "SEQ_modifier.hh"
+
 #include "UI_interface.hh"
 #include "UI_interface_c.hh"
 #include "UI_interface_layout.hh"
@@ -62,6 +65,11 @@ static SpaceLink *buttons_create(const ScrArea * /*area*/, const Scene * /*scene
   SpaceProperties *sbuts;
 
   sbuts = MEM_callocN<SpaceProperties>("initbuts");
+
+  sbuts->runtime = MEM_new<SpaceProperties_Runtime>(__func__);
+  sbuts->runtime->search_string[0] = '\0';
+  sbuts->runtime->tab_search_results = BLI_BITMAP_NEW(BCONTEXT_TOT, __func__);
+
   sbuts->spacetype = SPACE_PROPERTIES;
   sbuts->mainb = sbuts->mainbuser = BCONTEXT_OBJECT;
   sbuts->visible_tabs = uint(-1); /* 0xFFFFFFFF - All tabs visible by default. */
@@ -115,23 +123,12 @@ static void buttons_free(SpaceLink *sl)
     MEM_freeN(ct);
   }
 
-  if (sbuts->runtime != nullptr) {
-    MEM_SAFE_FREE(sbuts->runtime->tab_search_results);
-    MEM_freeN(sbuts->runtime);
-  }
+  MEM_SAFE_FREE(sbuts->runtime->tab_search_results);
+  MEM_delete(sbuts->runtime);
 }
 
 /* spacetype; init callback */
-static void buttons_init(wmWindowManager * /*wm*/, ScrArea *area)
-{
-  SpaceProperties *sbuts = (SpaceProperties *)area->spacedata.first;
-
-  if (sbuts->runtime == nullptr) {
-    sbuts->runtime = MEM_mallocN<SpaceProperties_Runtime>(__func__);
-    sbuts->runtime->search_string[0] = '\0';
-    sbuts->runtime->tab_search_results = BLI_BITMAP_NEW(BCONTEXT_TOT * 2, __func__);
-  }
-}
+static void buttons_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
 
 static SpaceLink *buttons_duplicate(SpaceLink *sl)
 {
@@ -141,11 +138,9 @@ static SpaceLink *buttons_duplicate(SpaceLink *sl)
   /* clear or remove stuff from old */
   sbutsn->path = nullptr;
   sbutsn->texuser = nullptr;
-  if (sfile_old->runtime != nullptr) {
-    sbutsn->runtime = static_cast<SpaceProperties_Runtime *>(MEM_dupallocN(sfile_old->runtime));
-    sbutsn->runtime->search_string[0] = '\0';
-    sbutsn->runtime->tab_search_results = BLI_BITMAP_NEW(BCONTEXT_TOT, __func__);
-  }
+  sbutsn->runtime = MEM_new<SpaceProperties_Runtime>(__func__, *sfile_old->runtime);
+  sbutsn->runtime->search_string[0] = '\0';
+  sbutsn->runtime->tab_search_results = BLI_BITMAP_NEW(BCONTEXT_TOT, __func__);
 
   return (SpaceLink *)sbutsn;
 }
@@ -199,6 +194,8 @@ void ED_buttons_visible_tabs_menu(bContext *C, uiLayout *layout, void * /*arg*/)
       "show_properties_bone_constraints",
       "show_properties_material",
       "show_properties_texture",
+      "show_properties_strip",       
+      "show_properties_strip_modifier",
   };
 
   for (blender::StringRefNull item : filter_items) {
@@ -262,6 +259,11 @@ blender::Vector<eSpaceButtons_Context> ED_buttons_tabs_list(const SpacePropertie
 
   add_tab(BCONTEXT_TEXTURE);
 
+  add_spacer();
+
+  add_tab(BCONTEXT_STRIP);
+  add_tab(BCONTEXT_STRIP_MODIFIER);
+
   return tabs;
 }
 
@@ -305,6 +307,10 @@ static const char *buttons_main_region_context_string(const short mainb)
     /*BFA - Tools tab not shown*/
     //case BCONTEXT_TOOL:
     //  return "tool";
+    case BCONTEXT_STRIP:
+      return "strip";
+    case BCONTEXT_STRIP_MODIFIER:
+      return "strip_modifier";
   }
 
   /* All the cases should be handled. */
@@ -346,16 +352,11 @@ int ED_buttons_search_string_length(SpaceProperties *sbuts)
 
 void ED_buttons_search_string_set(SpaceProperties *sbuts, const char *value)
 {
-  if (sbuts->runtime) {
-    STRNCPY_UTF8(sbuts->runtime->search_string, value);
-  }
+  STRNCPY_UTF8(sbuts->runtime->search_string, value);
 }
 
 bool ED_buttons_tab_has_search_result(SpaceProperties *sbuts, const int index)
 {
-  if (!sbuts->runtime) {
-    return false;
-  }
   return BLI_BITMAP_TEST(sbuts->runtime->tab_search_results, index);
 }
 
@@ -430,7 +431,7 @@ static void property_search_all_tabs(const bContext *C,
   SpaceProperties sbuts_copy = blender::dna::shallow_copy(*sbuts);
   sbuts_copy.path = nullptr;
   sbuts_copy.texuser = nullptr;
-  sbuts_copy.runtime = static_cast<SpaceProperties_Runtime *>(MEM_dupallocN(sbuts->runtime));
+  sbuts_copy.runtime = MEM_new<SpaceProperties_Runtime>(__func__, *sbuts->runtime);
   sbuts_copy.runtime->tab_search_results = nullptr;
   BLI_listbase_clear(&area_copy.spacedata);
   BLI_addtail(&area_copy.spacedata, &sbuts_copy);
@@ -771,6 +772,9 @@ static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
           break;
         case ND_RENDER_RESULT:
           break;
+        case ND_SEQUENCER:
+          ED_area_tag_redraw(area);
+          break;
         case ND_MODE:
         case ND_LAYER:
         default:
@@ -1053,12 +1057,14 @@ static void buttons_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data
 static void buttons_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink *sl)
 {
   SpaceProperties *sbuts = (SpaceProperties *)sl;
+  sbuts->runtime = MEM_new<SpaceProperties_Runtime>(__func__);
+  sbuts->runtime->search_string[0] = '\0';
+  sbuts->runtime->tab_search_results = BLI_BITMAP_NEW(BCONTEXT_TOT * 2, __func__);
 
   sbuts->path = nullptr;
   sbuts->texuser = nullptr;
   sbuts->mainbo = sbuts->mainb;
   sbuts->mainbuser = sbuts->mainb;
-  sbuts->runtime = nullptr;
 }
 
 static void buttons_space_blend_read_after_liblink(BlendLibReader * /*reader*/,
@@ -1132,6 +1138,14 @@ void ED_spacetype_buttons()
     const ShaderFxTypeInfo *fxti = BKE_shaderfx_get_info(ShaderFxType(i));
     if (fxti != nullptr && fxti->panel_register != nullptr) {
       fxti->panel_register(art);
+    }
+  }
+  /* Register the panel types from strip modifiers. The actual panels are built per strip modifier
+   * rather than per modifier type. */
+  for (int i = 0; i < NUM_STRIP_MODIFIER_TYPES; i++) {
+    const blender::seq::StripModifierTypeInfo *mti = blender::seq::modifier_type_info_get(i);
+    if (mti != nullptr && mti->panel_register != nullptr) {
+      mti->panel_register(art);
     }
   }
 

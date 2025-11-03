@@ -31,7 +31,7 @@ from bpy.app.translations import (
 
 def _rna_path_prop_search_for_context_impl(context, edit_text, unique_attrs):
     # Use the same logic as auto-completing in the Python console to expand the data-path.
-    from bl_console_utils.autocomplete import intellisense
+    from _bl_console_utils.autocomplete import intellisense
     context_prefix = "context."
     line = context_prefix + edit_text
     cursor = len(line)
@@ -148,7 +148,7 @@ def context_path_validate(context, data_path):
 
 
 def context_path_to_rna_property(context, data_path):
-    from bl_rna_utils.data_path import property_definition_from_data_path
+    from _bl_rna_utils.data_path import property_definition_from_data_path
     rna_prop = property_definition_from_data_path(context, "." + data_path)
     if rna_prop is not None:
         return rna_prop
@@ -167,7 +167,7 @@ def context_path_decompose(data_path):
     # Note that the `.` is removed from the start of the first and second values,
     # this is done because `.attr` isn't convenient to use as an argument,
     # also the convention is not to include this within the data paths or the operator logic for `bpy.ops.wm.*`.
-    from bl_rna_utils.data_path import decompose_data_path
+    from _bl_rna_utils.data_path import decompose_data_path
     path_split = decompose_data_path("." + data_path)
 
     # Find the last property that isn't a function call.
@@ -1342,7 +1342,7 @@ class WM_OT_doc_view_manual(Operator):
             self.report(
                 {'WARNING'},
                 rpt_("No reference available {!r}, "
-                     "Update info in 'rna_manual_reference.py' "
+                     "update info in '_rna_manual_reference.py' "
                      "or callback to bpy.utils.manual_map()").format(self.doc_id)
             )
             return {'CANCELLED'}
@@ -1821,6 +1821,7 @@ class WM_OT_properties_edit(Operator):
         item.property_overridable_library_set('["{:s}"]'.format(escaped_name), self.is_overridable_library)
 
     def _update_blender_for_prop_change(self, context, item, name, prop_type_old, prop_type_new):
+        from bpy_extras import anim_utils
         from rna_prop_ui import (
             rna_idprop_ui_prop_update,
         )
@@ -1841,15 +1842,19 @@ class WM_OT_properties_edit(Operator):
 
             def _update_strips(strips):
                 for st in strips:
-                    if st.type == 'CLIP' and st.action:
-                        _update(st.action.fcurves)
+                    if st.type == 'CLIP':
+                        channelbag = anim_utils.action_get_channelbag_for_slot(st.action, st.action_slot)
+                        if not channelbag:
+                            continue
+                        _update(channelbag.fcurves)
                     elif st.type == 'META':
                         _update_strips(st.strips)
 
             adt = getattr(item, "animation_data", None)
             if adt is not None:
-                if adt.action:
-                    _update(adt.action.fcurves)
+                channelbag = anim_utils.action_get_channelbag_for_slot(adt.action, adt.action_slot)
+                if channelbag:
+                    _update(channelbag.fcurves)
                 if adt.drivers:
                     _update(adt.drivers)
                 if adt.nla_tracks:
@@ -1886,12 +1891,12 @@ class WM_OT_properties_edit(Operator):
             try:
                 new_value = eval(self.eval_string)
             except Exception as ex:
-                self.report({'WARNING'}, "Python evaluation failed: " + str(ex))
+                self.report({'WARNING'}, rpt_("Python evaluation failed: {:s}").format(str(ex)))
                 return {'CANCELLED'}
             try:
                 item[name] = new_value
             except Exception as ex:
-                self.report({'ERROR'}, "Failed to assign value: " + str(ex))
+                self.report({'ERROR'}, rpt_("Failed to assign value: {:s}").format(str(ex)))
                 return {'CANCELLED'}
             if name_old != name:
                 del item[name_old]
@@ -2915,7 +2920,7 @@ class WM_OT_batch_rename(Operator):
             'CURVE': ("curves", iface_("Curve(s)"), bpy.types.Curve),
             'META': ("metaballs", iface_("Metaball(s)"), bpy.types.MetaBall),
             'VOLUME': ("volumes", iface_("Volume(s)"), bpy.types.Volume),
-            'GREASEPENCIL': ("grease_pencils_v3", iface_("Grease Pencil(s)"), bpy.types.GreasePencilv3),
+            'GREASEPENCIL': ("grease_pencils", iface_("Grease Pencil(s)"), bpy.types.GreasePencil),
             'ARMATURE': ("armatures", iface_("Armature(s)"), bpy.types.Armature),
             'LATTICE': ("lattices", iface_("Lattice(s)"), bpy.types.Lattice),
             'LIGHT': ("lights", iface_("Light(s)"), bpy.types.Light),
@@ -3286,14 +3291,14 @@ class WM_OT_batch_rename(Operator):
                 try:
                     re.compile(action.replace_src)
                 except Exception as ex:
-                    self.report({'ERROR'}, "Invalid regular expression (find): " + str(ex))
+                    self.report({'ERROR'}, rpt_("Invalid regular expression (find): {:s}").format(str(ex)))
                     return {'CANCELLED'}
 
                 if action.use_replace_regex_dst:
                     try:
                         re.sub(action.replace_src, action.replace_dst, "")
                     except Exception as ex:
-                        self.report({'ERROR'}, "Invalid regular expression (replace): " + str(ex))
+                        self.report({'ERROR'}, rpt_("Invalid regular expression (replace): {:s}").format(str(ex)))
                         return {'CANCELLED'}
 
         total_len = 0
@@ -3343,7 +3348,7 @@ class WM_MT_splash_quick_setup(Menu):
             col = split.column()
             col.operator(
                 "preferences.copy_prev",
-                text=iface_("Load Bforartists {:d}.{:d} Preferences", "Operator").format(old_version[0], old_version[1] - 1), #BFA - made it subtract a version, since we are ahead one of Blender in the config settings
+                text=iface_("Load Bforartists {}.{} Preferences", "Operator").format(*old_version), # bfa - show the correct previous version to load
                 icon='DUPLICATE', #BFA
                 translate=False,
             )
@@ -3403,7 +3408,7 @@ class WM_MT_splash_quick_setup(Menu):
 
         layout.separator(factor=2.0)
 
-        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}") #BFA - added to first use
+        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}")  # BFA - Show blender version
 
         layout.separator()  #BFA - added to first use
 
@@ -3427,10 +3432,15 @@ class WM_MT_splash(Menu):
         col2 = split.column()
         col2_title = col2.row()
 
-        found_recent = col2.template_recent_files()
+        found_recent = col2.template_recent_files(rows=5)
 
         if found_recent:
             col2_title.label(text="Recent Files")
+
+            col_more = col2.column()
+            col_more.operator_context = 'INVOKE_DEFAULT'
+            more_props = col_more.operator("wm.search_single_menu", text="More...", icon='VIEWZOOM')
+            more_props.menu_idname = "TOPBAR_MT_file_open_recent"
         else:
             # Links if no recent files.
             col2_title.label(text="Getting Started")
@@ -3442,7 +3452,10 @@ class WM_MT_splash(Menu):
             col2.operator("wm.url_open", text="Credits",
                           icon='URL').url = "https://www.bforartists.de/credits-page-bforartists/"
 
-        layout.separator()
+        col_sep = layout.column()
+        col_sep.separator()
+        col_sep.separator(type='LINE')
+        col_sep.separator()
 
         split = layout.split()
 
@@ -3465,7 +3478,8 @@ class WM_MT_splash(Menu):
 
         layout.separator()
 
-        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string}")
+        subversion = bpy.app.version_file[2]
+        layout.label(text=f"Bforartists {bpy.app.bfa_version_string} is based on Blender {bpy.app.version_string} sub {subversion}")  # BFA - Show blender version
 
         layout.separator()
 
@@ -3482,6 +3496,10 @@ class WM_MT_splash_about(Menu):
         col = split.column(align=True)
         col.scale_y = 0.8
         col.label(text=iface_("Version: {:s}").format(bpy.app.bfa_version_string), translate=False) # bfa - show our version
+
+        subversion = bpy.app.version_file[2]
+        col.label(text=f"Based on Blender {bpy.app.version_string} sub {subversion}") # BFA - Show blender version
+
         col.separator(factor=2.5)
         col.label(text=iface_("Date: {:s} {:s}").format(
             bpy.app.build_commit_date.decode("utf-8", "replace"),
@@ -3490,6 +3508,8 @@ class WM_MT_splash_about(Menu):
         )
         col.label(text=iface_("Hash: {:s}").format(bpy.app.build_hash.decode("ascii")), translate=False)
         col.label(text=iface_("Branch: {:s}").format(bpy.app.build_branch.decode("utf-8", "replace")), translate=False)
+
+
 
         # This isn't useful information on MS-Windows or Apple systems as dynamically switching
         # between windowing systems is only supported between X11/WAYLAND.

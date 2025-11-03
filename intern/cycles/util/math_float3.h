@@ -202,6 +202,12 @@ ccl_device_inline packed_float3 operator/=(packed_float3 &a, const float f)
   a = float3(a) / f;
   return a;
 }
+
+ccl_device_inline packed_float3 operator+=(packed_float3 &a, const float3 b)
+{
+  a = float3(a) + b;
+  return a;
+}
 #  endif
 
 ccl_device_inline bool operator==(const float3 a, const float3 b)
@@ -508,6 +514,11 @@ ccl_device_inline float3 faceforward(const float3 vector,
   return (dot(reference, incident) < 0.0f) ? vector : -vector;
 }
 #endif
+
+ccl_device_inline float3 safe_sqrt(const float3 a)
+{
+  return sqrt(max(a, zero_float3()));
+}
 
 ccl_device_inline float3 project(const float3 v, const float3 v_proj)
 {

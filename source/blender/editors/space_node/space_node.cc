@@ -414,6 +414,7 @@ const ComputeContext *compute_context_for_zone(const bke::bNodeTreeZone &zone,
       source_location.compute_context_hash = parent_compute_context ?
                                                  parent_compute_context->hash() :
                                                  ComputeContextHash{};
+      source_location.compute_context = parent_compute_context;
       return compute_context_for_closure_evaluation(parent_compute_context,
                                                     output_node.output_socket(0),
                                                     compute_context_cache,
@@ -557,6 +558,7 @@ const ComputeContext *compute_context_for_edittree_node(
 static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 {
   SpaceNode *snode = MEM_callocN<SpaceNode>(__func__);
+  snode->runtime = MEM_new<SpaceNode_Runtime>(__func__);
   snode->spacetype = SPACE_NODE;
 
   snode->flag = SNODE_SHOW_GPENCIL | SNODE_USE_ALPHA;
@@ -647,22 +649,12 @@ static void node_free(SpaceLink *sl)
 }
 
 /* spacetype; init callback */
-static void node_init(wmWindowManager * /*wm*/, ScrArea *area)
-{
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
-  if (snode->runtime == nullptr) {
-    snode->runtime = MEM_new<SpaceNode_Runtime>(__func__);
-  }
-}
+static void node_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
 
 static void node_exit(wmWindowManager *wm, ScrArea *area)
 {
   SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
-  if (snode->runtime) {
-    free_previews(*wm, *snode);
-  }
+  free_previews(*wm, *snode);
 }
 
 static bool any_node_uses_id(const bNodeTree *ntree, const ID *id)
@@ -760,11 +752,13 @@ static void node_area_listener(const wmSpaceTypeListenerParams *params)
         }
       }
       else if (ED_node_is_geometry(snode)) {
-        /* Rather strict check: only redraw when the reference matches the current editor's ID. */
         if (wmn->data == ND_MODIFIER) {
+          /* Rather strict check: only redraw when the reference matches current editor's ID, */
           if (wmn->reference == snode->id || snode->id == nullptr) {
             node_area_tag_tree_recalc(snode, area);
           }
+          /* Redraw context path or modifier dependent information. */
+          ED_area_tag_redraw(area);
         }
       }
       break;
@@ -848,13 +842,11 @@ static void node_area_refresh(const bContext *C, ScrArea *area)
 
   snode_set_context(*C);
 
-  if (snode->nodetree) {
-    if (snode->nodetree->type == NTREE_COMPOSIT) {
-      Scene *scene = (Scene *)snode->id;
-      if (snode->runtime->recalc_regular_compositing) {
-        snode->runtime->recalc_regular_compositing = false;
-        ED_node_composite_job(C, snode->nodetree, scene);
-      }
+  Scene *scene = CTX_data_scene(C);
+  if (snode->nodetree && snode->nodetree == scene->compositing_node_group) {
+    if (snode->runtime->recalc_regular_compositing) {
+      snode->runtime->recalc_regular_compositing = false;
+      ED_node_composite_job(C, scene->compositing_node_group, scene);
     }
   }
 }
@@ -1472,7 +1464,7 @@ static int /*eContextResult*/ node_context(const bContext *C,
         }
       }
     }
-    CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+    CTX_data_type_set(result, ContextDataType::Collection);
     return CTX_RESULT_OK;
   }
   if (CTX_data_equals(member, "active_node")) {
@@ -1481,7 +1473,7 @@ static int /*eContextResult*/ node_context(const bContext *C,
       CTX_data_pointer_set(result, &snode->edittree->id, &RNA_Node, node);
     }
 
-    CTX_data_type_set(result, CTX_DATA_TYPE_POINTER);
+    CTX_data_type_set(result, ContextDataType::Pointer);
     return CTX_RESULT_OK;
   }
   if (CTX_data_equals(member, "node_previews")) {
@@ -1492,7 +1484,7 @@ static int /*eContextResult*/ node_context(const bContext *C,
                            &snode->nodetree->runtime->previews);
     }
 
-    CTX_data_type_set(result, CTX_DATA_TYPE_POINTER);
+    CTX_data_type_set(result, ContextDataType::Pointer);
     return CTX_RESULT_OK;
   }
   if (CTX_data_equals(member, "material")) {
@@ -1597,6 +1589,7 @@ static void node_id_remap(ID *old_id, ID *new_id, SpaceNode *snode)
     if (snode->treepath.last) {
       path = (bNodeTreePath *)snode->treepath.last;
       snode->edittree = path->nodetree;
+      ED_node_set_active_viewer_key(snode);
     }
     else {
       snode->edittree = nullptr;
@@ -1784,7 +1777,7 @@ static void node_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 
   BLO_read_struct_list(reader, bNodeTreePath, &snode->treepath);
   snode->edittree = nullptr;
-  snode->runtime = nullptr;
+  snode->runtime = MEM_new<SpaceNode_Runtime>(__func__);
 }
 
 static void node_space_blend_write(BlendWriter *writer, SpaceLink *sl)
@@ -1918,6 +1911,8 @@ void ED_spacetype_node()
   art->draw = node_buttons_region_draw;
   BLI_addhead(&st->regiontypes, art);
 
+  node_tree_interface_panel_register(art);
+
   /* regions: toolbar */
   art = MEM_callocN<ARegionType>("spacetype view3d tools region");
   art->regionid = RGN_TYPE_TOOLS;
@@ -1961,9 +1956,10 @@ void ED_spacetype_node()
   BLI_addhead(&st->regiontypes, art);
   asset::shelf::types_register(art, SPACE_NODE);
 
-  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_catalog_assets_menu_type()));
-  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_unassigned_assets_menu_type()));
+  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, catalog_assets_menu_type()));
+  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, unassigned_assets_menu_type()));
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_root_catalogs_menu_type()));
+  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, swap_root_catalogs_menu_type()));
 
   BKE_spacetype_register(std::move(st));
 }

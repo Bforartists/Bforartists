@@ -10,6 +10,7 @@
 
 #include "CLG_log.h"
 
+#include "BLI_enum_flags.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
@@ -21,7 +22,6 @@
 #include "BLI_sys_types.h"
 #include "BLI_task.h"
 #include "BLI_threads.h"
-#include "BLI_utildefines.h"
 
 #include "BLF_api.hh"
 
@@ -192,7 +192,7 @@ DRWContext::~DRWContext()
   g_context = nullptr;
 }
 
-GPUFrameBuffer *DRWContext::default_framebuffer()
+blender::gpu::FrameBuffer *DRWContext::default_framebuffer()
 {
   return view_data_active->dfbl.default_fb;
 }
@@ -679,9 +679,20 @@ ObjectRef::ObjectRef(Object &ob, Object *dupli_parent, const VectorList<DupliObj
 
 namespace blender::draw {
 
-static bool supports_handle_ranges(Object *ob)
+static bool supports_handle_ranges(DupliObject *dupli, Object *parent)
 {
-  if (ob->type == OB_MESH) {
+  int ob_type = dupli->ob_data ? BKE_object_obdata_to_type(dupli->ob_data) : OB_EMPTY;
+  if (!ELEM(ob_type, OB_MESH, OB_CURVES_LEGACY, OB_SURF, OB_FONT, OB_POINTCLOUD, OB_GREASE_PENCIL))
+  {
+    return false;
+  }
+
+  Object *ob = dupli->ob;
+  if (min(ob->dt, parent->dt) == OB_BOUNDBOX) {
+    return false;
+  }
+
+  if (ob_type == OB_MESH) {
     /* Hair drawing doesn't support handle ranges. */
     LISTBASE_FOREACH (ParticleSystem *, psys, &ob->particlesystem) {
       const int draw_as = (psys->part->draw_as == PART_DRAW_REND) ? psys->part->ren_as :
@@ -693,13 +704,14 @@ static bool supports_handle_ranges(Object *ob)
     /* Smoke drawing doesn't support handle ranges. */
     return !BKE_modifiers_findby_type(ob, eModifierType_Fluid);
   }
-  return ELEM(ob->type, OB_CURVES_LEGACY, OB_SURF, OB_FONT, OB_POINTCLOUD, OB_GREASE_PENCIL);
+
+  return true;
 }
 
 enum class InstancesFlags : uint8_t {
   IsNegativeScale = 1 << 0,
 };
-ENUM_OPERATORS(InstancesFlags, InstancesFlags::IsNegativeScale);
+ENUM_OPERATORS(InstancesFlags);
 
 struct InstancesKey {
   uint64_t hash_value;
@@ -771,13 +783,9 @@ static void foreach_obref_in_scene(DRWContext &draw_ctx,
   eEvaluationMode eval_mode = DEG_get_mode(depsgraph);
   View3D *v3d = draw_ctx.v3d;
 
-#if 0 /* Temporary disabled until we can fix all the issues that it causes. */
   /* EEVEE is not supported for now. */
   const bool engines_support_handle_ranges = (v3d && v3d->shading.type <= OB_SOLID) ||
                                              BKE_scene_uses_blender_workbench(draw_ctx.scene);
-#else
-  const bool engines_support_handle_ranges = false;
-#endif
 
   DEGObjectIterSettings deg_iter_settings = {nullptr};
   deg_iter_settings.depsgraph = depsgraph;
@@ -801,6 +809,13 @@ static void foreach_obref_in_scene(DRWContext &draw_ctx,
        * dupli_parent and dupli_object_current won't be null for these. */
       ObjectRef ob_ref(ob, data_.dupli_parent, data_.dupli_object_current);
       draw_object_cb(ob_ref);
+    }
+
+    bool is_preview_dupli = data_.dupli_parent && data_.dupli_object_current;
+    if (is_preview_dupli) {
+      /* Don't create duplis from temporary preview objects, object_duplilist_preview already takes
+       * care of everything. (See #146194, #146211) */
+      continue;
     }
 
     bool instances_visible = (visibility & OB_VISIBLE_INSTANCES) &&
@@ -835,7 +850,7 @@ static void foreach_obref_in_scene(DRWContext &draw_ctx,
       }
 #endif
 
-      if (!engines_support_handle_ranges || !supports_handle_ranges(dupli.ob)) {
+      if (!engines_support_handle_ranges || !supports_handle_ranges(&dupli, ob)) {
         /* Sync the dupli as a single object. */
         if (!evil::DEG_iterator_temp_object_from_dupli(
                 ob, &dupli, eval_mode, false, &tmp_object, &tmp_runtime) ||
@@ -881,8 +896,9 @@ static void foreach_obref_in_scene(DRWContext &draw_ctx,
       }
 
       tmp_object.light_linking = ob->light_linking;
-      SET_FLAG_FROM_TEST(
-          tmp_object.transflag, bool(key.flags & InstancesFlags::IsNegativeScale), OB_NEG_SCALE);
+      SET_FLAG_FROM_TEST(tmp_object.transflag,
+                         flag_is_set(key.flags, InstancesFlags::IsNegativeScale),
+                         OB_NEG_SCALE);
       /* Should use DrawInstances data instead. */
       tmp_object.runtime->object_to_world = float4x4();
       tmp_object.runtime->world_to_object = float4x4();
@@ -1770,7 +1786,7 @@ void DRW_custom_pipeline_end(DRWContext &draw_ctx)
    * resources as the main thread (viewport) may lead to data
    * races and undefined behavior on certain drivers. Using
    * GPU_finish to sync seems to fix the issue. (see #62997) */
-  eGPUBackendType type = GPU_backend_get_type();
+  GPUBackendType type = GPU_backend_get_type();
   if (type == GPU_BACKEND_OPENGL) {
     GPU_finish();
   }
@@ -1797,7 +1813,7 @@ void DRW_render_set_time(RenderEngine *engine, Depsgraph *depsgraph, int frame, 
 }
 
 static struct DRWSelectBuffer {
-  GPUFrameBuffer *framebuffer_depth_only;
+  blender::gpu::FrameBuffer *framebuffer_depth_only;
   blender::gpu::Texture *texture_depth;
 } g_select_buffer = {nullptr};
 
@@ -1855,6 +1871,8 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
   Object *obedit = use_obedit_skip ? nullptr : OBEDIT_FROM_OBACT(obact);
 
   bool use_obedit = false;
+  const ToolSettings *ts = scene->toolsettings;
+
   /* obedit_ctx_mode is used for selecting the right draw engines */
   // eContextObjectMode obedit_ctx_mode;
   /* object_mode is used for filtering objects in the depsgraph */
@@ -1872,7 +1890,13 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
       // obedit_ctx_mode = CTX_MODE_EDIT_ARMATURE;
     }
   }
-  if (v3d->overlay.flag & V3D_OVERLAY_BONE_SELECT) {
+
+  if ((v3d->overlay.flag & V3D_OVERLAY_BONE_SELECT) &&
+      /* Only restrict selection to bones when the user turns on "Lock Object Modes".
+       * If the lock is off, skip this so other objects can still be selected.
+       * See #66950 & #125822. */
+      (ts->object_flag & SCE_OBJECT_MODE_LOCK))
+  {
     if (!(v3d->flag2 & V3D_HIDE_OVERLAYS)) {
       /* NOTE: don't use "BKE_object_pose_armature_get" here, it breaks selection. */
       Object *obpose = OBPOSE_FROM_OBACT(obact);
@@ -2020,9 +2044,6 @@ void DRW_draw_depth_loop(Depsgraph *depsgraph,
       if (use_only_selected && !(ob.base_flag & BASE_SELECTED)) {
         return false;
       }
-      if ((ob.base_flag & BASE_SELECTABLE) == 0) {
-        return false;
-      }
       return true;
     };
 
@@ -2039,7 +2060,7 @@ void DRW_draw_depth_loop(Depsgraph *depsgraph,
 
   /* Setup frame-buffer. */
   blender::gpu::Texture *depth_tx = GPU_viewport_depth_texture(viewport);
-  GPUFrameBuffer *depth_fb = nullptr;
+  blender::gpu::FrameBuffer *depth_fb = nullptr;
   GPU_framebuffer_ensure_config(&depth_fb,
                                 {
                                     GPU_ATTACHMENT_TEXTURE(depth_tx),

@@ -19,6 +19,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
+#include "BKE_attribute.h"
 #include "BKE_attribute.hh"
 #include "BKE_customdata.hh"
 #include "BKE_data_transfer.h"
@@ -248,47 +249,28 @@ int BKE_object_data_transfer_dttype_to_srcdst_index(const int dtdata_type)
  * If a match can't be found, use the first color layer that can be found (to ensure a valid string
  * is set).
  */
-static void data_transfer_mesh_attributes_transfer_active_color_string(
-    Mesh *mesh_dst, const Mesh *mesh_src, const AttrDomainMask mask_domain, const int data_type)
+static void transfer_active_color_string(Mesh *mesh_dst,
+                                         const Mesh *mesh_src,
+                                         const AttrDomainMask mask_domain)
 {
+  using namespace blender;
   if (mesh_dst->active_color_attribute) {
     return;
   }
 
-  const AttributeOwner owner_src = AttributeOwner::from_id(const_cast<ID *>(&mesh_src->id));
-  AttributeOwner owner_dst = AttributeOwner::from_id(&mesh_dst->id);
+  const StringRef name = mesh_src->active_color_attribute;
+  const bke::AttributeAccessor attributes_src = mesh_src->attributes();
+  const bke::AttributeAccessor attributes_dst = mesh_dst->attributes();
 
-  const StringRef active_color_src =
-      BKE_id_attributes_active_color_name(&mesh_src->id).value_or("");
-
-  if ((data_type == CD_PROP_COLOR) &&
-      !BKE_attribute_search(
-          owner_src, active_color_src, CD_MASK_PROP_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
-    return;
-  }
-  if ((data_type == CD_PROP_BYTE_COLOR) &&
-      !BKE_attribute_search(
-          owner_src, active_color_src, CD_MASK_PROP_BYTE_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
+  if (!bke::mesh::is_color_attribute(attributes_src.lookup_meta_data(name))) {
     return;
   }
 
-  if ((data_type == CD_PROP_COLOR) &&
-      BKE_attribute_search(
-          owner_dst, active_color_src, CD_MASK_PROP_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
-    mesh_dst->active_color_attribute = BLI_strdupn(active_color_src.data(),
-                                                   active_color_src.size());
-  }
-  else if ((data_type == CD_PROP_BYTE_COLOR) &&
-           BKE_attribute_search(
-               owner_dst, active_color_src, CD_MASK_PROP_BYTE_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
-    mesh_dst->active_color_attribute = BLI_strdupn(active_color_src.data(),
-                                                   active_color_src.size());
+  if (bke::mesh::is_color_attribute(attributes_dst.lookup_meta_data(name))) {
+    mesh_dst->active_color_attribute = BLI_strdupn(name.data(), name.size());
   }
   else {
+    AttributeOwner owner_dst = AttributeOwner::from_id(&mesh_dst->id);
     CustomDataLayer *first_color_layer = BKE_attribute_from_index(
         owner_dst, 0, mask_domain, CD_MASK_COLOR_ALL);
     if (first_color_layer != nullptr) {
@@ -302,47 +284,28 @@ static void data_transfer_mesh_attributes_transfer_active_color_string(
  * If a match cant be found, use the first color layer that can be found (to ensure a valid string
  * is set).
  */
-static void data_transfer_mesh_attributes_transfer_default_color_string(
-    Mesh *mesh_dst, const Mesh *mesh_src, const AttrDomainMask mask_domain, const int data_type)
+static void transfer_default_color_string(Mesh *mesh_dst,
+                                          const Mesh *mesh_src,
+                                          const AttrDomainMask mask_domain)
 {
+  using namespace blender;
   if (mesh_dst->default_color_attribute) {
     return;
   }
 
-  const AttributeOwner owner_src = AttributeOwner::from_id(const_cast<ID *>(&mesh_src->id));
-  AttributeOwner owner_dst = AttributeOwner::from_id(&mesh_dst->id);
+  const StringRef name = mesh_src->default_color_attribute;
+  const bke::AttributeAccessor attributes_src = mesh_src->attributes();
+  const bke::AttributeAccessor attributes_dst = mesh_dst->attributes();
 
-  const StringRef default_color_src =
-      BKE_id_attributes_default_color_name(&mesh_src->id).value_or("");
-
-  if ((data_type == CD_PROP_COLOR) &&
-      !BKE_attribute_search(
-          owner_src, default_color_src, CD_MASK_PROP_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
-    return;
-  }
-  if ((data_type == CD_PROP_BYTE_COLOR) &&
-      !BKE_attribute_search(
-          owner_src, default_color_src, CD_MASK_PROP_BYTE_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
+  if (!bke::mesh::is_color_attribute(attributes_src.lookup_meta_data(name))) {
     return;
   }
 
-  if ((data_type == CD_PROP_COLOR) &&
-      BKE_attribute_search(
-          owner_dst, default_color_src, CD_MASK_PROP_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
-    mesh_dst->default_color_attribute = BLI_strdupn(default_color_src.data(),
-                                                    default_color_src.size());
-  }
-  else if ((data_type == CD_PROP_BYTE_COLOR) &&
-           BKE_attribute_search(
-               owner_dst, default_color_src, CD_MASK_PROP_BYTE_COLOR, ATTR_DOMAIN_MASK_COLOR))
-  {
-    mesh_dst->default_color_attribute = BLI_strdupn(default_color_src.data(),
-                                                    default_color_src.size());
+  if (bke::mesh::is_color_attribute(attributes_dst.lookup_meta_data(name))) {
+    mesh_dst->default_color_attribute = BLI_strdupn(name.data(), name.size());
   }
   else {
+    AttributeOwner owner_dst = AttributeOwner::from_id(&mesh_dst->id);
     CustomDataLayer *first_color_layer = BKE_attribute_from_index(
         owner_dst, 0, mask_domain, CD_MASK_COLOR_ALL);
     if (first_color_layer != nullptr) {
@@ -535,9 +498,7 @@ static bool data_transfer_layersmapping_cdlayers_multisrc_to_dst(ListBase *r_map
                                                                  CustomData &cd_dst,
                                                                  const int tolayers,
                                                                  const bool *use_layers_src,
-                                                                 const int num_layers_src,
-                                                                 cd_datatransfer_interp interp,
-                                                                 void *interp_data)
+                                                                 const int num_layers_src)
 {
   const void *data_src;
   void *data_dst = nullptr;
@@ -598,8 +559,8 @@ static bool data_transfer_layersmapping_cdlayers_multisrc_to_dst(ListBase *r_map
                                                   mix_weights,
                                                   data_src,
                                                   data_dst,
-                                                  interp,
-                                                  interp_data);
+                                                  nullptr,
+                                                  nullptr);
         }
       }
       break;
@@ -645,8 +606,8 @@ static bool data_transfer_layersmapping_cdlayers_multisrc_to_dst(ListBase *r_map
                                                   mix_weights,
                                                   data_src,
                                                   data_dst,
-                                                  interp,
-                                                  interp_data);
+                                                  nullptr,
+                                                  nullptr);
         }
       }
 
@@ -682,9 +643,7 @@ static bool data_transfer_layersmapping_cdlayers(ListBase *r_map,
                                                  const CustomData &cd_src,
                                                  CustomData &cd_dst,
                                                  const int fromlayers,
-                                                 const int tolayers,
-                                                 cd_datatransfer_interp interp,
-                                                 void *interp_data)
+                                                 const int tolayers)
 {
   void *data_dst = nullptr;
 
@@ -714,8 +673,8 @@ static bool data_transfer_layersmapping_cdlayers(ListBase *r_map,
                                               mix_weights,
                                               data_src,
                                               data_dst,
-                                              interp,
-                                              interp_data);
+                                              nullptr,
+                                              nullptr);
     }
   }
   else if (fromlayers == DT_LAYERS_ACTIVE_SRC || fromlayers >= 0) {
@@ -798,8 +757,8 @@ static bool data_transfer_layersmapping_cdlayers(ListBase *r_map,
                                               mix_weights,
                                               data_src,
                                               data_dst,
-                                              interp,
-                                              interp_data);
+                                              nullptr,
+                                              nullptr);
     }
   }
   else if (fromlayers == DT_LAYERS_ALL_SRC) {
@@ -823,9 +782,7 @@ static bool data_transfer_layersmapping_cdlayers(ListBase *r_map,
                                                                cd_dst,
                                                                tolayers,
                                                                use_layers_src,
-                                                               num_src,
-                                                               interp,
-                                                               interp_data);
+                                                               num_src);
 
     if (use_layers_src) {
       MEM_freeN(use_layers_src);
@@ -858,9 +815,6 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
 {
   using namespace blender;
 
-  cd_datatransfer_interp interp = nullptr;
-  void *interp_data = nullptr;
-
   if (elem_type == ME_VERT) {
     if (!(cddata_type & CD_FAKE)) {
       if (!data_transfer_layersmapping_cdlayers(r_map,
@@ -874,9 +828,7 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
                                                 me_src->vert_data,
                                                 me_dst->vert_data,
                                                 fromlayers,
-                                                tolayers,
-                                                interp,
-                                                interp_data))
+                                                tolayers))
       {
         /* We handle specific source selection cases here. */
         return false;
@@ -915,8 +867,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->vert_data, CD_PROP_FLOAT, "bevel_weight_vert"),
           CustomData_get_layer_named_for_write(
               &me_dst->vert_data, CD_PROP_FLOAT, "bevel_weight_vert", me_dst->verts_num),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
   }
@@ -935,8 +887,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->edge_data, CD_PROP_BOOL, "uv_seam"),
           CustomData_get_layer_named_for_write(
               &me_dst->edge_data, CD_PROP_BOOL, "uv_seam", me_dst->edges_num),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
     if (r_map && cddata_type == CD_FAKE_SHARP) {
@@ -953,8 +905,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->edge_data, CD_PROP_BOOL, "sharp_edge"),
           CustomData_get_layer_named_for_write(
               &me_dst->edge_data, CD_PROP_BOOL, "sharp_edge", me_dst->edges_num),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
     if (r_map && cddata_type == CD_FAKE_BWEIGHT) {
@@ -974,8 +926,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->edge_data, CD_PROP_FLOAT, "bevel_weight_edge"),
           CustomData_get_layer_named_for_write(
               &me_dst->edge_data, CD_PROP_FLOAT, "bevel_weight_edge", me_dst->edges_num),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
     if (r_map && cddata_type == CD_FAKE_CREASE) {
@@ -992,8 +944,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->edge_data, CD_PROP_FLOAT, "crease_edge"),
           CustomData_get_layer_named_for_write(
               &me_dst->edge_data, CD_PROP_FLOAT, "crease_edge", me_dst->edges_num),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
     if (r_map && cddata_type == CD_FAKE_FREESTYLE_EDGE) {
@@ -1010,8 +962,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->edge_data, CD_PROP_BOOL, "freestyle_edge"),
           CustomData_get_layer_named_for_write(
               &me_dst->edge_data, CD_PROP_BOOL, "freestyle_edge", me_dst->edges_num),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
 
@@ -1060,9 +1012,7 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
                                                 me_src->corner_data,
                                                 me_dst->corner_data,
                                                 fromlayers,
-                                                tolayers,
-                                                interp,
-                                                interp_data))
+                                                tolayers))
       {
         /* We handle specific source selection cases here. */
         return false;
@@ -1087,8 +1037,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->face_data, CD_PROP_BOOL, "sharp_face"),
           CustomData_get_layer_named_for_write(
               &me_dst->face_data, CD_PROP_BOOL, "sharp_face", num_elem_dst),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
     if (r_map && cddata_type == CD_FAKE_FREESTYLE_FACE) {
@@ -1105,8 +1055,8 @@ static bool data_transfer_layersmapping_generate(ListBase *r_map,
           CustomData_get_layer_named(&me_src->face_data, CD_PROP_BOOL, "freestyle_face"),
           CustomData_get_layer_named_for_write(
               &me_dst->face_data, CD_PROP_BOOL, "freestyle_face", me_dst->faces_num),
-          interp,
-          interp_data);
+          nullptr,
+          nullptr);
       return true;
     }
 
@@ -1183,10 +1133,8 @@ void BKE_object_data_transfer_layout(Depsgraph *depsgraph,
       /* Make sure we have active/default color layers if none existed before.
        * Use the active/default from src (if it was transferred), otherwise the first. */
       if (ELEM(cddata_type, CD_PROP_COLOR, CD_PROP_BYTE_COLOR)) {
-        data_transfer_mesh_attributes_transfer_active_color_string(
-            me_dst, me_src, ATTR_DOMAIN_MASK_POINT, cddata_type);
-        data_transfer_mesh_attributes_transfer_default_color_string(
-            me_dst, me_src, ATTR_DOMAIN_MASK_POINT, cddata_type);
+        transfer_active_color_string(me_dst, me_src, ATTR_DOMAIN_MASK_POINT);
+        transfer_default_color_string(me_dst, me_src, ATTR_DOMAIN_MASK_POINT);
       }
     }
     if (DT_DATATYPE_IS_EDGE(dtdata_type)) {
@@ -1231,10 +1179,8 @@ void BKE_object_data_transfer_layout(Depsgraph *depsgraph,
       /* Make sure we have active/default color layers if none existed before.
        * Use the active/default from src (if it was transferred), otherwise the first. */
       if (ELEM(cddata_type, CD_PROP_COLOR, CD_PROP_BYTE_COLOR)) {
-        data_transfer_mesh_attributes_transfer_active_color_string(
-            me_dst, me_src, ATTR_DOMAIN_MASK_CORNER, cddata_type);
-        data_transfer_mesh_attributes_transfer_default_color_string(
-            me_dst, me_src, ATTR_DOMAIN_MASK_CORNER, cddata_type);
+        transfer_active_color_string(me_dst, me_src, ATTR_DOMAIN_MASK_CORNER);
+        transfer_default_color_string(me_dst, me_src, ATTR_DOMAIN_MASK_CORNER);
       }
     }
     if (DT_DATATYPE_IS_FACE(dtdata_type)) {

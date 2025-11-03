@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
+"Project-Id-Version: Blender 5.0.0 Beta (b'2b3706e29f27')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-15 07:14+0000\n"
+"POT-Creation-Date: 2025-10-20 08:46+0000\n"
 "PO-Revision-Date: 2025-07-23 15:33+0000\n"
 "Last-Translator: Eitan Traurig <eitant13@gmail.com>\n"
 "Language-Team: Hebrew <https://translate.blender.org/projects/blender-ui/ui/he/>\n"
@@ -172,6 +172,10 @@ msgid "Indirect"
 msgstr "ףיקע"
 
 
+msgid "Emission"
+msgstr "הטילפ"
+
+
 msgid "Collections"
 msgstr "םיפסוא"
 
@@ -236,14 +240,6 @@ msgid "Head"
 msgstr "שאר"
 
 
-msgid "Select Head"
-msgstr "שאר רחוב"
-
-
-msgid "Select Tail"
-msgstr "בנז רחוב"
-
-
 msgid "Tail"
 msgstr "בנז"
 
@@ -286,6 +282,10 @@ msgid "Gamma"
 msgstr "אמג"
 
 
+msgid "View"
+msgstr "הגוצת"
+
+
 msgid "Constant"
 msgstr "עובק"
 
@@ -316,10 +316,6 @@ msgstr "ןבל תמר"
 
 msgid "Surface"
 msgstr "חטשמ"
-
-
-msgid "View"
-msgstr "הגוצת"
 
 
 msgid "Scene"
@@ -587,20 +583,20 @@ msgid "Mask"
 msgstr "הכסמ"
 
 
-msgid "Face Data"
-msgstr "האפ ינותנ"
-
-
-msgid "Mirror"
-msgstr "הארמ"
-
-
 msgid "Apply"
 msgstr "לחה"
 
 
 msgid "Convert"
 msgstr "רמה"
+
+
+msgid "Face Data"
+msgstr "האפ ינותנ"
+
+
+msgid "Mirror"
+msgstr "הארמ"
 
 
 msgid "Languages..."
@@ -653,10 +649,6 @@ msgstr "עקר"
 
 msgid "Reflection"
 msgstr "תופקתשה"
-
-
-msgid "Emission"
-msgstr "הטילפ"
 
 
 msgid "Y Axis"
@@ -1047,10 +1039,6 @@ msgstr "הנש"
 
 msgid "Missing header"
 msgstr "תרתוכ הרסח"
-
-
-msgid "Color Space:"
-msgstr ":עבצ בחרמ"
 
 
 msgid "Key Color"

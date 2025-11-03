@@ -97,9 +97,9 @@ class RayTraceResultTexture {
 
  public:
   RayTraceResultTexture() = default;
-  RayTraceResultTexture(TextureFromPool &result) : result_(result.ptr()), tx_(result){};
+  RayTraceResultTexture(TextureFromPool &result) : result_(result.ptr()), tx_(result) {};
   RayTraceResultTexture(TextureFromPool &result, Texture &history)
-      : result_(result.ptr()), tx_(result), history_(history.ptr()){};
+      : result_(result.ptr()), tx_(result), history_(history.ptr()) {};
 
   operator gpu::Texture *() const
   {
@@ -238,7 +238,7 @@ class RayTraceModule {
   RayTraceData &data_;
 
  public:
-  RayTraceModule(Instance &inst, RayTraceData &data) : inst_(inst), data_(data){};
+  RayTraceModule(Instance &inst, RayTraceData &data) : inst_(inst), data_(data) {};
 
   void init();
 
@@ -278,7 +278,7 @@ class RayTraceModule {
   RayTraceResult alloc_dummy(RayTraceBuffer &rt_buffer);
 
   void debug_pass_sync();
-  void debug_draw(View &view, GPUFrameBuffer *view_fb);
+  void debug_draw(View &view, gpu::FrameBuffer *view_fb);
 
   bool use_raytracing() const
   {

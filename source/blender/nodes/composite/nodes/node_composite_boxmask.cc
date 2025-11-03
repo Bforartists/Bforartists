@@ -24,10 +24,10 @@
 namespace blender::nodes::node_composite_boxmask_cc {
 
 static const EnumPropertyItem operation_items[] = {
-    {CMP_NODE_MASKTYPE_ADD, "ADD", 0, "Add", ""},
-    {CMP_NODE_MASKTYPE_SUBTRACT, "SUBTRACT", 0, "Subtract", ""},
-    {CMP_NODE_MASKTYPE_MULTIPLY, "MULTIPLY", 0, "Multiply", ""},
-    {CMP_NODE_MASKTYPE_NOT, "NOT", 0, "Not", ""},
+    {CMP_NODE_MASKTYPE_ADD, "ADD", 0, N_("Add"), ""},
+    {CMP_NODE_MASKTYPE_SUBTRACT, "SUBTRACT", 0, N_("Subtract"), ""},
+    {CMP_NODE_MASKTYPE_MULTIPLY, "MULTIPLY", 0, N_("Multiply"), ""},
+    {CMP_NODE_MASKTYPE_NOT, "NOT", 0, N_("Not"), ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -35,7 +35,8 @@ static void cmp_node_boxmask_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Menu>("Operation")
       .default_value(CMP_NODE_MASKTYPE_ADD)
-      .static_items(operation_items);
+      .static_items(operation_items)
+      .optional_label();
   b.add_input<decl::Float>("Mask")
       .subtype(PROP_FACTOR)
       .default_value(0.0f)

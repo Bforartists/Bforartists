@@ -367,6 +367,57 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(regions.scrubbing.time_marker_selected);
   }
 
+  if (!USER_VERSION_ATLEAST(500, 91)) {
+    FROM_DEFAULT_V4_UCHAR(space_view3d.bevel);
+    FROM_DEFAULT_V4_UCHAR(space_view3d.seam);
+    FROM_DEFAULT_V4_UCHAR(space_view3d.sharp);
+    FROM_DEFAULT_V4_UCHAR(space_view3d.crease);
+    FROM_DEFAULT_V4_UCHAR(space_view3d.freestyle);
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 93)) {
+    FROM_DEFAULT_V4_UCHAR(tui.wcol_curve.text);
+    FROM_DEFAULT_V4_UCHAR(tui.wcol_curve.text_sel);
+    FROM_DEFAULT_V4_UCHAR(tui.wcol_curve.item);
+    FROM_DEFAULT_V4_UCHAR(tui.wcol_curve.inner);
+    FROM_DEFAULT_V4_UCHAR(tui.wcol_curve.inner_sel);
+    FROM_DEFAULT_V4_UCHAR(tui.wcol_curve.outline);
+    FROM_DEFAULT_V4_UCHAR(tui.wcol_curve.outline_sel);
+    btheme->tui.wcol_curve.roundness = U_theme_default.tui.wcol_curve.roundness;
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 104)) {
+    FROM_DEFAULT_V4_UCHAR(common.anim.scene_strip_range);
+  }
+
+  /* Reset the theme due to compatibility breaking changes in 5.0. */
+  if (!USER_VERSION_ATLEAST(500, 111)) {
+    MEMCPY_STRUCT_AFTER(btheme, &U_theme_default, name);
+    /* Update text styles to match. */
+    LISTBASE_FOREACH (uiStyle *, style, &userdef->uistyles) {
+      style->paneltitle.points = 11.0f;
+      style->paneltitle.shadow = 3;
+      style->paneltitle.shadowalpha = 0.5f;
+      style->paneltitle.shadowcolor = 0.0f;
+      style->widget.points = 11.0f;
+      style->widget.shadow = 1;
+      style->widget.shadowalpha = 0.5f;
+      style->widget.shadowcolor = 0.0f;
+      style->tooltip.shadow = 1;
+      style->tooltip.points = 11.0f;
+      style->tooltip.shadowalpha = 0.5f;
+      style->tooltip.shadowcolor = 0.0f;
+    }
+
+    FROM_DEFAULT_V4_UCHAR(space_node.node_outline);
+  }
+
+  if (!USER_VERSION_ATLEAST(501, 3)) {
+    FROM_DEFAULT_V4_UCHAR(space_action.anim_interpolation_other);
+    FROM_DEFAULT_V4_UCHAR(space_action.anim_interpolation_constant);
+    FROM_DEFAULT_V4_UCHAR(space_action.anim_interpolation_linear);
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a USER_VERSION_ATLEAST check.
@@ -1007,7 +1058,7 @@ void blo_do_versions_userdef(UserDef *userdef)
 
   if (!USER_VERSION_ATLEAST(278, 6)) {
     /* Clear preference flags for re-use. */
-    userdef->flag &= ~(USER_FLAG_NUMINPUT_ADVANCED | (1 << 2) | USER_FLAG_UNUSED_3 |
+    userdef->flag &= ~(USER_FLAG_NUMINPUT_ADVANCED | (1 << 2) | USER_MENU_CLOSE_LEAVE |
                        USER_FLAG_UNUSED_6 | USER_FLAG_UNUSED_7 | USER_INTERNET_ALLOW |
                        USER_DEVELOPER_UI);
     userdef->uiflag &= ~USER_HEADER_BOTTOM;
@@ -1326,9 +1377,7 @@ void blo_do_versions_userdef(UserDef *userdef)
   }
 
   if (!USER_VERSION_ATLEAST(302, 5)) {
-    wmKeyConfigFilterItemParams params{};
-    params.check_item = true;
-    params.check_diff_item_add = true;
+    const wmKeyConfigFilterItemParams params = WM_KEY_CONFIG_FILTER_ITEM_ALL;
     BKE_keyconfig_pref_filter_items(userdef, &params, keymap_item_update_tweak_event, nullptr);
   }
 
@@ -1636,9 +1685,7 @@ void blo_do_versions_userdef(UserDef *userdef)
   }
 
   if (!USER_VERSION_ATLEAST(405, 11)) {
-    wmKeyConfigFilterItemParams params{};
-    params.check_item = true;
-    params.check_diff_item_add = true;
+    const wmKeyConfigFilterItemParams params = WM_KEY_CONFIG_FILTER_ITEM_ALL;
     BKE_keyconfig_pref_filter_items(
         userdef,
         &params,
@@ -1697,6 +1744,51 @@ void blo_do_versions_userdef(UserDef *userdef)
     if (userdef->stored_bounds.file.xmin == userdef->stored_bounds.file.xmax) {
       memcpy(&userdef->stored_bounds, &U_default.stored_bounds, sizeof(userdef->stored_bounds));
     }
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 90)) {
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "IMAGE_AST_brush_paint", "Brushes/Mesh Texture Paint/Basic");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "IMAGE_AST_brush_paint", "Brushes/Mesh Texture Paint/Erase");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "IMAGE_AST_brush_paint", "Brushes/Mesh Texture Paint/Pixel Art");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "IMAGE_AST_brush_paint", "Brushes/Mesh Texture Paint/Utilities");
+
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_texture_paint", "Brushes/Mesh Texture Paint/Basic");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_texture_paint", "Brushes/Mesh Texture Paint/Erase");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_texture_paint", "Brushes/Mesh Texture Paint/Pixel Art");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_brush_texture_paint", "Brushes/Mesh Texture Paint/Utilities");
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 94)) {
+    /* Force-reset file compression to ON, see #135735. */
+    userdef->flag |= USER_FILECOMPRESS;
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 96)) {
+    /* Increase the number of recently-used files if using the old default value. */
+    if (userdef->recent_files == 20) {
+      userdef->recent_files = 200;
+    }
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 99)) {
+    userdef->xr_navigation.vignette_intensity = 50.0f;
+    userdef->xr_navigation.turn_amount = DEG2RAD(30);
+    userdef->xr_navigation.turn_speed = DEG2RAD(60);
+    userdef->xr_navigation.flag = USER_XR_NAV_SNAP_TURN;
+  }
+
+  if (!USER_VERSION_ATLEAST(500, 101)) {
+    /* The Copy Global Transform add-on was moved into Blender itself, and thus
+     * is no longer an add-on. */
+    BKE_addon_remove_safe(&userdef->addons, "copy_global_transform");
   }
 
   /**

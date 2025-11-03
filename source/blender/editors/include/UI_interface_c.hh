@@ -13,10 +13,10 @@
 #include <string>
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_enum_flags.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_string_utf8_symbols.h"
 #include "BLI_sys_types.h" /* size_t */
-#include "BLI_utildefines.h"
 
 #include "DNA_userdef_types.h"
 
@@ -31,6 +31,7 @@
 
 struct ARegion;
 struct AutoComplete;
+struct Depsgraph;
 struct EnumPropertyItem;
 struct FileSelectParams;
 struct ID;
@@ -401,7 +402,7 @@ enum class ButPointerType : uint8_t {
   // ButPointerType::Function = 192, /* UNUSED */
   Bit = 1 << 7, /* OR'd with a bit index. */
 };
-ENUM_OPERATORS(ButPointerType, ButPointerType::Bit);
+ENUM_OPERATORS(ButPointerType);
 /** \note requires `uiBut::poin != nullptr`. */
 #define UI_BUT_POIN_TYPES (ButPointerType::Float | ButPointerType::Short | ButPointerType::Char)
 
@@ -647,7 +648,9 @@ using uiButArgNCopy = void *(*)(const void *argN);
 using uiButIdentityCompareFunc = bool (*)(const uiBut *a, const uiBut *b);
 
 /* Search types. */
-using uiButSearchCreateFn = ARegion *(*)(bContext *C, ARegion *butregion, uiButSearch *search_but);
+using uiButSearchCreateFn = ARegion *(*)(bContext * C,
+                                         ARegion *butregion,
+                                         uiButSearch *search_but);
 /**
  * `is_first` is typically used to ignore search filtering when the menu is first opened in order
  * to display the full list of options. The value will be false after the button's text is edited
@@ -660,7 +663,7 @@ using uiButSearchContextMenuFn = bool (*)(bContext *C,
                                           void *active,
                                           const wmEvent *event);
 using uiButSearchTooltipFn =
-    ARegion *(*)(bContext *C, ARegion *region, const rcti *item_rect, void *arg, void *active);
+    ARegion *(*)(bContext * C, ARegion *region, const rcti *item_rect, void *arg, void *active);
 using uiButSearchListenFn = void (*)(const wmRegionListenerParams *params, void *arg);
 
 using uiBlockHandleFunc = void (*)(bContext *C, void *arg, int event);
@@ -690,7 +693,7 @@ struct uiBlockInteraction_Params {
 };
 
 /** Returns 'user_data', freed by #uiBlockInteractionEndFn. */
-using uiBlockInteractionBeginFn = void *(*)(bContext *C,
+using uiBlockInteractionBeginFn = void *(*)(bContext * C,
                                             const uiBlockInteraction_Params *params,
                                             void *arg1);
 using uiBlockInteractionEndFn = void (*)(bContext *C,
@@ -729,6 +732,13 @@ bool UI_block_can_add_separator(const uiBlock *block);
  * Use this for popups to detect when pressing "Return" will run an action.
  */
 bool UI_block_has_active_default_button(const uiBlock *block);
+
+/**
+ * Find a button under the mouse cursor, ignoring non-interactive ones (like labels). Holding Ctrl
+ * over a label button that can be Ctrl-Clicked to turn into an edit button will return that.
+ * Labels that are only interactive for the sake of displaying a tooltip are ignored too.
+ */
+uiBut *UI_but_find_mouse_over(const ARegion *region, const wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 
 uiList *UI_list_find_mouse_over(const ARegion *region, const wmEvent *event);
 
@@ -835,7 +845,7 @@ uiLayout *UI_pie_menu_layout(uiPieMenu *pie);
  *
  * Functions used to create popup blocks. These are like popup menus
  * but allow using all button types and creating their own layout. */
-using uiBlockCreateFunc = uiBlock *(*)(bContext *C, ARegion *region, void *arg1);
+using uiBlockCreateFunc = uiBlock *(*)(bContext * C, ARegion *region, void *arg1);
 using uiBlockCancelFunc = void (*)(bContext *C, void *arg1);
 
 void UI_popup_block_invoke(bContext *C, uiBlockCreateFunc func, void *arg, uiFreeArgFunc arg_free);
@@ -1703,7 +1713,7 @@ enum eAutoPropButsReturn {
   UI_PROP_BUTS_ANY_FAILED_CHECK = 1 << 1,
 };
 
-ENUM_OPERATORS(eAutoPropButsReturn, UI_PROP_BUTS_ANY_FAILED_CHECK);
+ENUM_OPERATORS(eAutoPropButsReturn);
 
 uiBut *uiDefAutoButR(uiBlock *block,
                      PointerRNA *ptr,
@@ -2217,8 +2227,9 @@ void UI_update_text_styles();
 #define UI_HEADER_OFFSET \
   ((void)0, ((U.uiflag & USER_AREA_CORNER_HANDLE) ? 16.0f : 8.0f) * UI_SCALE_FAC)
 
-#define UI_AZONESPOTW UI_HEADER_OFFSET       /* Width of corner action zone #AZone. */
-#define UI_AZONESPOTH (0.6f * U.widget_unit) /* Height of corner action zone #AZone. */
+#define UI_AZONESPOTW_LEFT UI_HEADER_OFFSET       /* Width of left-side corner #AZone. */
+#define UI_AZONESPOTW_RIGHT (8.0f * UI_SCALE_FAC) /* Width of right-side corner #AZone. */
+#define UI_AZONESPOTH (0.6f * U.widget_unit)      /* Height of corner action zone #AZone. */
 
 /* uiLayoutOperatorButs flags */
 enum {
@@ -2311,6 +2322,7 @@ void uiTemplateIDPreview(uiLayout *layout,
                          int cols,
                          int filter = UI_TEMPLATE_ID_FILTER_ALL,
                          bool hide_buttons = false);
+void uiTemplateMatrix(uiLayout *layout, PointerRNA *ptr, blender::StringRefNull propname);
 /**
  * Version of #uiTemplateID using tabs.
  */
@@ -2445,7 +2457,8 @@ void uiTemplateCurveMapping(uiLayout *layout,
                             bool levels,
                             bool brush,
                             bool neg_slope,
-                            bool tone);
+                            bool tone,
+                            bool presets);
 /**
  * Template for a path creation widget intended for custom bevel profiles.
  * This section is quite similar to #uiTemplateCurveMapping, but with reduced complexity.
@@ -2580,10 +2593,8 @@ enum uiTemplateListFlags {
   UI_TEMPLATE_LIST_NO_FILTER_OPTIONS = (1 << 3),
   /** For #UILST_LAYOUT_BIG_PREVIEW_GRID, don't reserve space for the name label. */
   UI_TEMPLATE_LIST_NO_NAMES = (1 << 4),
-
-  UI_TEMPLATE_LIST_FLAGS_LAST
 };
-ENUM_OPERATORS(uiTemplateListFlags, UI_TEMPLATE_LIST_FLAGS_LAST);
+ENUM_OPERATORS(uiTemplateListFlags);
 
 void uiTemplateList(uiLayout *layout,
                     const bContext *C,
@@ -2669,7 +2680,7 @@ void uiTemplateLightLinkingCollection(uiLayout *layout,
 void uiTemplateBoneCollectionTree(uiLayout *layout, bContext *C);
 void uiTemplateGreasePencilLayerTree(uiLayout *layout, bContext *C);
 
-void uiTemplateNodeTreeInterface(uiLayout *layout, bContext *C, PointerRNA *ptr);
+void uiTemplateNodeTreeInterface(uiLayout *layout, const bContext *C, PointerRNA *ptr);
 /**
  * Draw all node buttons and socket default values with the same panel structure used by the node.
  */

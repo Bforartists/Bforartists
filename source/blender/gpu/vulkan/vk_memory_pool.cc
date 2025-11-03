@@ -14,8 +14,10 @@ namespace blender::gpu {
 
 void VKMemoryPools::init(VKDevice &device)
 {
-  init_external_memory_image(device);
-  init_external_memory_pixel_buffer(device);
+  if (device.extensions_get().external_memory) {
+    init_external_memory_image(device);
+    init_external_memory_pixel_buffer(device);
+  }
 }
 
 void VKMemoryPools::init_external_memory_image(VKDevice &device)
@@ -43,7 +45,7 @@ void VKMemoryPools::init_external_memory_image(VKDevice &device)
                                          VK_IMAGE_LAYOUT_UNDEFINED};
   VmaAllocationCreateInfo allocation_create_info = {};
   allocation_create_info.flags = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT;
-  allocation_create_info.usage = VMA_MEMORY_USAGE_AUTO;
+  allocation_create_info.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
   uint32_t memory_type_index;
   vmaFindMemoryTypeIndexForImageInfo(
       device.mem_allocator_get(), &image_create_info, &allocation_create_info, &memory_type_index);
@@ -73,7 +75,7 @@ void VKMemoryPools::init_external_memory_pixel_buffer(VKDevice &device)
                                            nullptr};
   VmaAllocationCreateInfo allocation_create_info = {};
   allocation_create_info.flags = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT;
-  allocation_create_info.usage = VMA_MEMORY_USAGE_AUTO;
+  allocation_create_info.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
   uint32_t memory_type_index;
   vmaFindMemoryTypeIndexForBufferInfo(device.mem_allocator_get(),
                                       &buffer_create_info,

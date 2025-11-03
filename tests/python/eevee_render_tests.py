@@ -44,23 +44,13 @@ BLOCKLIST = [
 
 BLOCKLIST_METAL = [
     # Blocked due to difference in volume lightprobe bakes (to be fixed).
-    "clamp_.*.blend",
-    "shadow_all_max_bounces.blend",
-    "light_link_exclude.blend",
-    "light_link_instanced_receiver.blend",
     "light_path_is_volume_scatter_ray.blend",
     # Blocked due to difference in volume lightprobe bakes(maybe?) (to be fixed).
     "volume_zero_extinction_channel.blend",
-    # Blocked due to difference in screen space tracing (to be fixed).
-    "sss_reflection_clamp.blend",
-    # Blocked due to difference in volume rendering (to be fixed).
-    "principled_bsdf_interior.blend",
     # Blocked due to difference in mipmap interpolation (to be fixed).
     "environment_mirror_ball.blend",
     # Blocked due to difference in mipmap interpolation / anisotropic filtering (to be fixed).
     "image.blend",
-    # Blocked due to differences in transparency.
-    "aov_transparency.blend",
     # Blocked due to subtle differences in DOF
     "osl_camera_advanced.blend",
 ]
@@ -180,26 +170,6 @@ if inside_blender:
         sys.exit(1)
 
 
-def get_gpu_device_type(blender):
-    # TODO: This always fails.
-    command = [
-        blender,
-        "--background",
-        "--factory-startup",
-        "--python",
-        str(pathlib.Path(__file__).parent / "gpu_info.py")
-    ]
-    try:
-        completed_process = subprocess.run(command, stdout=subprocess.PIPE)
-        for line in completed_process.stdout.read_text():
-            if line.startswith("GPU_DEVICE_TYPE:"):
-                vendor = line.split(':')[1]
-                return vendor
-    except Exception:
-        return None
-    return None
-
-
 def get_arguments(filepath, output_filepath, gpu_backend):
     arguments = [
         "--background",
@@ -240,11 +210,6 @@ def main():
     parser = create_argparse()
     args = parser.parse_args()
 
-    gpu_device_type = get_gpu_device_type(args.blender)
-    reference_override_dir = None
-    if gpu_device_type == "AMD":
-        reference_override_dir = "eevee_renders/amd"
-
     blocklist = BLOCKLIST
     if args.gpu_backend == "metal":
         blocklist += BLOCKLIST_METAL
@@ -259,7 +224,6 @@ def main():
 
     report.set_pixelated(True)
     report.set_reference_dir("eevee_renders")
-    report.set_reference_override_dir(reference_override_dir)
 
     test_dir_name = Path(args.testdir).name
     if test_dir_name.startswith('image_mapping'):
@@ -270,12 +234,18 @@ def main():
     elif test_dir_name.startswith('displacement'):
         # metal shadow and wireframe difference. To be fixed.
         report.set_fail_threshold(0.07)
+    elif test_dir_name.startswith('bsdf'):
+        # metallic thinfilm tests
+        report.set_fail_threshold(0.03)
+    elif test_dir_name.startswith('principled_bsdf'):
+        # principled bsdf transmission test
+        report.set_fail_threshold(0.02)
 
     # Noise pattern changes depending on platform. Mostly caused by transparency.
     # TODO(fclem): See if we can just increase number of samples per file.
     if test_dir_name.startswith('render_layer'):
         # shadow pass, rlayer flag
-        report.set_fail_threshold(0.075)
+        report.set_fail_threshold(0.08)
     elif test_dir_name.startswith('hair'):
         # hair close up
         report.set_fail_threshold(0.0275)
@@ -288,6 +258,9 @@ def main():
     elif test_dir_name.startswith('light_linking'):
         # Noise difference in transparent material
         report.set_fail_threshold(0.05)
+    elif test_dir_name.startswith('light'):
+        # Noise difference in background
+        report.set_fail_threshold(0.03)
 
     ok = report.run(args.testdir, args.blender, get_arguments, batch=args.batch)
     sys.exit(not ok)

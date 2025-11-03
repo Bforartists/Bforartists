@@ -87,6 +87,7 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
   SpaceSeq *sseq;
 
   sseq = MEM_callocN<SpaceSeq>("initsequencer");
+  sseq->runtime = MEM_new<SpaceSeq_Runtime>(__func__);
   sseq->spacetype = SPACE_SEQ;
   sseq->chanshown = 0;
   sseq->view = SEQ_VIEW_SEQUENCE;
@@ -122,7 +123,6 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
   BLI_addtail(&sseq->regionbase, region);
   region->regiontype = RGN_TYPE_FOOTER;
   region->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_TOP : RGN_ALIGN_BOTTOM;
-  region->flag = RGN_FLAG_HIDDEN;
 
   /* Buttons/list view. */
   region = BKE_area_region_new();
@@ -217,13 +217,7 @@ static void sequencer_free(SpaceLink *sl)
 }
 
 /* Space-type init callback. */
-static void sequencer_init(wmWindowManager * /*wm*/, ScrArea *area)
-{
-  SpaceSeq *sseq = (SpaceSeq *)area->spacedata.first;
-  if (sseq->runtime == nullptr) {
-    sseq->runtime = MEM_new<SpaceSeq_Runtime>(__func__);
-  }
-}
+static void sequencer_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
 
 static void sequencer_refresh(const bContext *C, ScrArea *area)
 {
@@ -1035,7 +1029,6 @@ static void sequencer_buttons_region_init(wmWindowManager *wm, ARegion *region)
       wm->runtime->defaultconf, "Video Sequence Editor", SPACE_SEQ, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler_v2d_mask(&region->runtime->handlers, keymap);
 
-  UI_panel_category_active_set_default(region, "Strip");
   ED_region_panels_init(wm, region);
 }
 
@@ -1121,8 +1114,7 @@ static void sequencer_channel_region_draw(const bContext *C, ARegion *region)
 static void sequencer_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink *sl)
 {
   SpaceSeq *sseq = (SpaceSeq *)sl;
-
-  sseq->runtime = nullptr;
+  sseq->runtime = MEM_new<SpaceSeq_Runtime>(__func__);
 
   /* grease pencil data is not a direct data and can't be linked from direct_link*
    * functions, it should be linked from lib_link* functions instead
@@ -1212,15 +1204,6 @@ void ED_spacetype_sequencer()
   art->draw = sequencer_buttons_region_draw;
   BLI_addhead(&st->regiontypes, art);
 
-  /* Register the panel types from strip modifiers. The actual panels are built per strip modifier
-   * rather than per modifier type. */
-  for (int i = 0; i < NUM_STRIP_MODIFIER_TYPES; i++) {
-    const seq::StripModifierTypeInfo *mti = seq::modifier_type_info_get(i);
-    if (mti != nullptr && mti->panel_register != nullptr) {
-      mti->panel_register(art);
-    }
-  }
-
   sequencer_buttons_register(art);
   /* Toolbar. */
   art = MEM_callocN<ARegionType>("spacetype sequencer tools region");
@@ -1285,7 +1268,7 @@ void ED_spacetype_sequencer()
 
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_catalog_assets_menu_type()));
   WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_unassigned_assets_menu_type()));
-  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_root_catalogs_menu_type()));
+  WM_menutype_add(MEM_dupallocN<MenuType>(__func__, add_scene_menu_type()));
 
   BKE_spacetype_register(std::move(st));
 

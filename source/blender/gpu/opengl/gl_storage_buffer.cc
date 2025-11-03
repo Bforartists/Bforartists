@@ -27,7 +27,7 @@ GLStorageBuf::GLStorageBuf(size_t size, GPUUsageType usage, const char *name)
     : StorageBuf(size, name)
 {
   usage_ = usage;
-  /* Do not create UBO GL buffer here to allow allocation from any thread. */
+  /* Do not create SSBO GL buffer here to allow allocation from any thread. */
   BLI_assert(size <= GPU_max_storage_buffer_size());
 }
 
@@ -49,10 +49,10 @@ GLStorageBuf::~GLStorageBuf()
   }
 
   if (read_ssbo_id_) {
-    GLContext::buf_free(read_ssbo_id_);
+    GLContext::buffer_free(read_ssbo_id_);
   }
 
-  GLContext::buf_free(ssbo_id_);
+  GLContext::buffer_free(ssbo_id_);
 }
 
 /** \} */
@@ -123,7 +123,7 @@ void GLStorageBuf::bind(int slot)
 void GLStorageBuf::bind_as(GLenum target)
 {
   BLI_assert_msg(ssbo_id_ != 0,
-                 "Trying to use storage buf as indirect buffer but buffer was never filled.");
+                 "Trying to use storage buffer as indirect buffer but buffer was never filled.");
   glBindBuffer(target, ssbo_id_);
 }
 

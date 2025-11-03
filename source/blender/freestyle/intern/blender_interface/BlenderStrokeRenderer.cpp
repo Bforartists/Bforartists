@@ -28,6 +28,7 @@
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 
+#include "BKE_attribute.h"
 #include "BKE_attribute.hh"
 #include "BKE_collection.hh"
 #include "BKE_customdata.hh"
@@ -819,8 +820,8 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
           transp += 3;
         }
       }  // loop over strip vertices
-    }    // loop over strips
-  }      // loop over strokes
+    }  // loop over strips
+  }  // loop over strokes
 
   BKE_object_materials_sync_length(freestyle_bmain, object_mesh, (ID *)mesh);
 

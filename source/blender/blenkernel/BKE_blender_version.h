@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #pragma once
 
+#include <stdbool.h>
 #include <stddef.h>
 
 /** \file
@@ -17,7 +18,7 @@
  */
 
 /** Blender major and minor version. */
-#define BLENDER_VERSION 500
+#define BLENDER_VERSION 501
 /** Blender patch version for bug-fix releases. */
 #define BLENDER_VERSION_PATCH 0
 /** Blender release cycle stage: alpha/beta/rc/release. */
@@ -34,7 +35,7 @@
 
 /* Blender file format version. */
 #define BLENDER_FILE_VERSION BLENDER_VERSION
-#define BLENDER_FILE_SUBVERSION 82
+#define BLENDER_FILE_SUBVERSION 4
 
 /* Minimum Blender version that supports reading file written with the current
  * version. Older Blender versions will test this and cancel loading the file, showing a warning to
@@ -55,6 +56,8 @@ const char *BKE_bforartists_version_string(void);
 const char *BKE_blender_version_string_compact(void);
 /** bfa as above but does not show patch version. */
 const char *BKE_bforartists_version_string_compact(void);
+/** bfa Blender blend file sub version */
+const char *BKE_bforartists_sub_version_string(void);
 
 /** Returns true when version cycle is alpha, otherwise (beta, rc) returns false. */
 bool BKE_blender_version_is_alpha(void);
@@ -76,3 +79,14 @@ void BKE_blender_version_blendfile_string_from_values(char *str_buff,
                                                       const size_t str_buff_maxncpy,
                                                       const short file_version,
                                                       const short file_subversion);
+
+/**
+ * Get Bforartists version from Blender version, avoiding storing Bforartists version
+ * directly in the file
+ * \param is_version_blender: when true uses the `file_version` param input from the blendfile
+ * false uses the hardcoded Bforartists version
+*/
+void BKE_bforartists_version_blendfile_string_from_blender(char *str_buff,
+                                                      const size_t str_buff_maxncpy,
+                                                      const short file_version,
+                                                      const bool is_version_blender);

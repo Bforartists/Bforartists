@@ -867,8 +867,8 @@ void uiTemplateImage(uiLayout *layout,
     col->use_property_split_set(true);
 
     uiLayout *sub = &col->column(true);
-    sub->prop(&imaptr, "generated_width", UI_ITEM_NONE, "X", ICON_NONE);
-    sub->prop(&imaptr, "generated_height", UI_ITEM_NONE, "Y", ICON_NONE);
+    sub->prop(&imaptr, "generated_width", UI_ITEM_NONE, IFACE_("X"), ICON_NONE);
+    sub->prop(&imaptr, "generated_height", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
 
     col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(&imaptr, "use_generated_float", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -1039,6 +1039,9 @@ void uiTemplateImageSettings(uiLayout *layout,
     if (ELEM(imf->exr_codec & OPENEXR_CODEC_MASK, R_IMF_EXR_CODEC_DWAA, R_IMF_EXR_CODEC_DWAB)) {
       col->prop(imfptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
+  }
+  if (imf->imtype == R_IMF_IMTYPE_MULTILAYER) {
+    col->prop(imfptr, "use_exr_interleave", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   if (is_render_out && ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
@@ -1262,8 +1265,14 @@ void uiTemplateImageInfo(uiLayout *layout, bContext *C, Image *ima, ImageUser *i
       }
     }
 
-    blender::gpu::TextureFormat texture_format = IMB_gpu_get_texture_format(
-        ibuf, ima->flag & IMA_HIGH_BITDEPTH, ibuf->planes >= 8);
+    blender::gpu::TextureFormat texture_format = blender::gpu::TextureFormat::Invalid;
+
+    /* Try to see if this texture is a compressed format, if not, get the generic format. */
+    if (!IMB_gpu_get_compressed_format(ibuf, &texture_format)) {
+      texture_format = IMB_gpu_get_texture_format(
+          ibuf, ima->flag & IMA_HIGH_BITDEPTH, ibuf->planes >= 8);
+    }
+
     const char *texture_format_description = GPU_texture_format_name(texture_format);
     ofs += BLI_snprintf_utf8_rlen(str + ofs, len - ofs, RPT_(", %s"), texture_format_description);
 

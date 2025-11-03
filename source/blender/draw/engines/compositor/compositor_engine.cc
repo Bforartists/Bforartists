@@ -110,7 +110,7 @@ class Context : public compositor::Context {
         .value_or(Bounds<int2>(int2(0)));
   }
 
-  compositor::Result get_output() override
+  compositor::Result get_output(compositor::Domain /*domain*/) override
   {
     compositor::Result result = this->create_result(compositor::ResultType::Color,
                                                     compositor::ResultPrecision::Half);
@@ -128,7 +128,7 @@ class Context : public compositor::Context {
     return result;
   }
 
-  compositor::Result get_input(const Scene *scene, int view_layer_index, const char *name) override
+  compositor::Result get_pass(const Scene *scene, int view_layer_index, const char *name) override
   {
     /* Blender aliases the Image pass name to be the Combined pass, so we return the combined pass
      * in that case. */
@@ -163,6 +163,15 @@ class Context : public compositor::Context {
     }
 
     return compositor::Result(*this);
+  }
+
+  compositor::Result get_input(StringRef name) override
+  {
+    if (name == "Image") {
+      return this->get_pass(&this->get_scene(), 0, name.data());
+    }
+
+    return this->create_result(compositor::ResultType::Color);
   }
 
   StringRef get_view_name() const override
@@ -203,11 +212,11 @@ class Instance : public DrawEngine {
     return "Compositor";
   }
 
-  void init() final{};
-  void begin_sync() final{};
+  void init() final {};
+  void begin_sync() final {};
   void object_sync(blender::draw::ObjectRef & /*ob_ref*/,
-                   blender::draw::Manager & /*manager*/) final{};
-  void end_sync() final{};
+                   blender::draw::Manager & /*manager*/) final {};
+  void end_sync() final {};
 
   void draw(Manager & /*manager*/) final
   {

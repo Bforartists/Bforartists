@@ -64,7 +64,7 @@ struct Instance : public DrawEngine {
 
  public:
   struct StaticData {
-    GPUFrameBuffer *framebuffer_select_id;
+    gpu::FrameBuffer *framebuffer_select_id;
     blender::gpu::Texture *texture_u32;
 
     struct Shaders {
@@ -91,9 +91,9 @@ struct Instance : public DrawEngine {
   {
     this->draw_ctx = DRW_context_get();
     StaticData &e_data = StaticData::get();
-    eGPUShaderConfig sh_cfg = (RV3D_CLIPPING_ENABLED(draw_ctx->v3d, draw_ctx->rv3d)) ?
-                                  GPU_SHADER_CFG_CLIPPED :
-                                  GPU_SHADER_CFG_DEFAULT;
+    GPUShaderConfig sh_cfg = RV3D_CLIPPING_ENABLED(draw_ctx->v3d, draw_ctx->rv3d) ?
+                                 GPU_SHADER_CFG_CLIPPED :
+                                 GPU_SHADER_CFG_DEFAULT;
 
     StaticData::Shaders *sh_data = &e_data.sh_data[sh_cfg];
 
@@ -111,9 +111,9 @@ struct Instance : public DrawEngine {
   void begin_sync() final
   {
     StaticData &e_data = StaticData::get();
-    eGPUShaderConfig sh_cfg = (RV3D_CLIPPING_ENABLED(draw_ctx->v3d, draw_ctx->rv3d)) ?
-                                  GPU_SHADER_CFG_CLIPPED :
-                                  GPU_SHADER_CFG_DEFAULT;
+    GPUShaderConfig sh_cfg = RV3D_CLIPPING_ENABLED(draw_ctx->v3d, draw_ctx->rv3d) ?
+                                 GPU_SHADER_CFG_CLIPPED :
+                                 GPU_SHADER_CFG_DEFAULT;
 
     StaticData::Shaders *sh = &e_data.sh_data[sh_cfg];
 
@@ -358,13 +358,15 @@ struct Instance : public DrawEngine {
     StaticData &e_data = StaticData::get();
     SELECTID_Context &sel_ctx = e_data.context;
 
-    if (!sel_ctx.objects.contains(ob) && ob->dt >= OB_SOLID) {
-      /* This object is not selectable. It is here to participate in occlusion.
-       * This is the case in retopology mode. */
-      blender::gpu::Batch *geom_faces = DRW_mesh_batch_cache_get_surface(
-          DRW_object_get_data_for_drawing<Mesh>(*ob));
+    if (!sel_ctx.objects.contains(ob)) {
+      if (ob->dt >= OB_SOLID) {
+        /* This object is not selectable. It is here to participate in occlusion.
+         * This is the case in retopology mode. */
+        blender::gpu::Batch *geom_faces = DRW_mesh_batch_cache_get_surface(
+            DRW_object_get_data_for_drawing<Mesh>(*ob));
 
-      depth_occlude->draw(geom_faces, manager.unique_handle(ob_ref));
+        depth_occlude->draw(geom_faces, manager.unique_handle(ob_ref));
+      }
       return;
     }
 
@@ -533,7 +535,7 @@ SELECTID_Context *DRW_select_engine_context_get()
   return &e_data.context;
 }
 
-GPUFrameBuffer *DRW_engine_select_framebuffer_get()
+blender::gpu::FrameBuffer *DRW_engine_select_framebuffer_get()
 {
   Instance::StaticData &e_data = Instance::StaticData::get();
   return e_data.framebuffer_select_id;

@@ -511,7 +511,7 @@ static void draw_circle_in_quad(const float v1[3],
       {-1, +1},
   };
 
-  float(*coords)[3] = static_cast<float(*)[3]>(
+  float (*coords)[3] = static_cast<float (*)[3]>(
       MEM_mallocN(sizeof(float[3]) * (resolution + 1), __func__));
   for (int i = 0; i <= resolution; i++) {
     float theta = ((2.0f * M_PI) * (float(i) / float(resolution))) + 0.01f;
@@ -647,7 +647,7 @@ static void draw_primitive_view(const bContext *C, ARegion * /*region*/, void *a
   UI_GetThemeColor3fv(TH_GIZMO_PRIMARY, color);
 
   const bool use_depth = !XRAY_ENABLED(ipd->v3d);
-  const eGPUDepthTest depth_test_enabled = GPU_depth_test_get();
+  const GPUDepthTest depth_test_enabled = GPU_depth_test_get();
 
   if (use_depth) {
     GPU_depth_test(GPU_DEPTH_NONE);

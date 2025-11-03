@@ -146,7 +146,7 @@ ImBuf *sequencer_ibuf_get(const bContext *C, const int timeline_frame, const cha
   G.is_break = false;
 
   GPUViewport *viewport = WM_draw_region_get_bound_viewport(region);
-  GPUFrameBuffer *fb = GPU_framebuffer_active_get();
+  blender::gpu::FrameBuffer *fb = GPU_framebuffer_active_get();
   if (viewport) {
     /* Unbind viewport to release the DRW context. */
     GPU_viewport_unbind(viewport);
@@ -270,6 +270,7 @@ void sequencer_draw_maskedit(const bContext *C, Scene *scene, ARegion *region, S
 
       ED_mask_draw_region(mask,
                           region,
+                          true,
                           0,
                           0,
                           0, /* TODO */
@@ -708,9 +709,11 @@ static void sequencer_draw_scopes(Scene *scene,
 {
   GPU_debug_group_begin(get_scope_debug_name(eSpaceSeq_RegionType(space_sequencer.mainb)));
 
-  gpu::Texture *input_texture = seq::preview_cache_get_gpu_display_texture(scene, timeline_frame);
+  gpu::Texture *input_texture = seq::preview_cache_get_gpu_display_texture(
+      scene, timeline_frame, 0);
   if (input_texture == nullptr) {
-    input_texture = seq::preview_cache_get_gpu_texture(scene, timeline_frame);
+    input_texture = seq::preview_cache_get_gpu_texture(
+        scene, timeline_frame, space_sequencer.chanshown);
   }
 
   SeqQuadsBatch quads;
@@ -877,6 +880,7 @@ static void update_gpu_scopes(const ImBuf *input_ibuf,
                               gpu::Texture *input_texture,
                               const ColorManagedViewSettings &view_settings,
                               const ColorManagedDisplaySettings &display_settings,
+                              const SpaceSeq &space_sequencer,
                               Scene *scene,
                               int timeline_frame)
 {
@@ -889,8 +893,8 @@ static void update_gpu_scopes(const ImBuf *input_ibuf,
   }
 
   /* Display space GPU texture is already calculated. */
-  gpu::Texture *display_texture = seq::preview_cache_get_gpu_display_texture(scene,
-                                                                             timeline_frame);
+  gpu::Texture *display_texture = seq::preview_cache_get_gpu_display_texture(
+      scene, timeline_frame, space_sequencer.chanshown);
   if (display_texture != nullptr) {
     return;
   }
@@ -902,6 +906,9 @@ static void update_gpu_scopes(const ImBuf *input_ibuf,
   const gpu::TextureFormat format = gpu::TextureFormat::SFLOAT_16_16_16_16;
   display_texture = GPU_texture_create_2d(
       "seq_scope_display_buf", width, height, 1, format, usage, nullptr);
+  if (display_texture == nullptr) {
+    return;
+  }
   GPU_texture_filter_mode(display_texture, false);
 
   GPU_matrix_push();
@@ -909,7 +916,7 @@ static void update_gpu_scopes(const ImBuf *input_ibuf,
   GPU_matrix_ortho_set(0.0f, 1.0f, 0.0f, 1.0f, -1.0, 1.0f);
   GPU_matrix_identity_set();
 
-  GPUFrameBuffer *fb = nullptr;
+  blender::gpu::FrameBuffer *fb = nullptr;
   GPU_framebuffer_ensure_config(&fb,
                                 {GPU_ATTACHMENT_NONE, GPU_ATTACHMENT_TEXTURE(display_texture)});
   GPU_framebuffer_bind(fb);
@@ -940,7 +947,8 @@ static void update_gpu_scopes(const ImBuf *input_ibuf,
   GPU_matrix_pop();
   GPU_matrix_pop_projection();
 
-  seq::preview_cache_set_gpu_display_texture(scene, timeline_frame, display_texture);
+  seq::preview_cache_set_gpu_display_texture(
+      scene, timeline_frame, space_sequencer.chanshown, display_texture);
 }
 
 static void update_cpu_scopes(const SpaceSeq &space_sequencer,
@@ -1217,7 +1225,7 @@ static void sequencer_preview_draw_empty(ARegion &region)
   GPUViewport *viewport = WM_draw_region_get_bound_viewport(&region);
   BLI_assert(viewport);
 
-  GPUFrameBuffer *overlay_fb = GPU_viewport_framebuffer_overlay_get(viewport);
+  blender::gpu::FrameBuffer *overlay_fb = GPU_viewport_framebuffer_overlay_get(viewport);
   GPU_framebuffer_bind_no_srgb(overlay_fb);
 
   sequencer_preview_clear();
@@ -1274,7 +1282,7 @@ static void preview_draw_color_render_begin(ARegion &region)
   GPUViewport *viewport = WM_draw_region_get_bound_viewport(&region);
   BLI_assert(viewport);
 
-  GPUFrameBuffer *render_fb = GPU_viewport_framebuffer_render_get(viewport);
+  blender::gpu::FrameBuffer *render_fb = GPU_viewport_framebuffer_render_get(viewport);
   GPU_framebuffer_bind(render_fb);
 
   float col[4] = {0, 0, 0, 0};
@@ -1287,7 +1295,7 @@ static void preview_draw_overlay_begin(ARegion &region)
   GPUViewport *viewport = WM_draw_region_get_bound_viewport(&region);
   BLI_assert(viewport);
 
-  GPUFrameBuffer *overlay_fb = GPU_viewport_framebuffer_overlay_get(viewport);
+  blender::gpu::FrameBuffer *overlay_fb = GPU_viewport_framebuffer_overlay_get(viewport);
   GPU_framebuffer_bind_no_srgb(overlay_fb);
 
   sequencer_preview_clear();
@@ -1514,7 +1522,9 @@ static blender::gpu::Texture *create_texture(const ImBuf &ibuf)
 
     texture = GPU_texture_create_2d(
         "seq_display_buf", ibuf.x, ibuf.y, 1, texture_format, texture_usage, nullptr);
-    GPU_texture_update(texture, GPU_DATA_FLOAT, ibuf.float_buffer.data);
+    if (texture) {
+      GPU_texture_update(texture, GPU_DATA_FLOAT, ibuf.float_buffer.data);
+    }
   }
   else if (ibuf.byte_buffer.data) {
     texture = GPU_texture_create_2d("seq_display_buf",
@@ -1524,7 +1534,9 @@ static blender::gpu::Texture *create_texture(const ImBuf &ibuf)
                                     blender::gpu::TextureFormat::UNORM_8_8_8_8,
                                     texture_usage,
                                     nullptr);
-    GPU_texture_update(texture, GPU_DATA_UBYTE, ibuf.byte_buffer.data);
+    if (texture) {
+      GPU_texture_update(texture, GPU_DATA_UBYTE, ibuf.byte_buffer.data);
+    }
   }
 
   if (texture) {
@@ -1599,7 +1611,7 @@ static void draw_registered_callbacks(const bContext *C, ARegion &region)
   GPUViewport *viewport = WM_draw_region_get_bound_viewport(&region);
   BLI_assert(viewport);
 
-  GPUFrameBuffer *overlay_fb = GPU_viewport_framebuffer_overlay_get(viewport);
+  blender::gpu::FrameBuffer *overlay_fb = GPU_viewport_framebuffer_overlay_get(viewport);
 
   GPU_framebuffer_bind(overlay_fb);
   ED_region_draw_cb_draw(C, &region, REGION_DRAW_POST_VIEW);
@@ -1646,8 +1658,13 @@ static void sequencer_preview_draw_overlays(const bContext *C,
         space_sequencer, view_settings, display_settings, *input_ibuf, timeline_frame);
   }
   if (has_gpu_scope) {
-    update_gpu_scopes(
-        input_ibuf, current_texture, view_settings, display_settings, scene, timeline_frame);
+    update_gpu_scopes(input_ibuf,
+                      current_texture,
+                      view_settings,
+                      display_settings,
+                      space_sequencer,
+                      scene,
+                      timeline_frame);
   }
 
   preview_draw_overlay_begin(region);
@@ -1665,7 +1682,7 @@ static void sequencer_preview_draw_overlays(const bContext *C,
   else if (space_sequencer.flag & SEQ_USE_ALPHA) {
     /* Draw checked-board. */
     const View2D &v2d = region.v2d;
-    imm_draw_box_checker_2d(v2d.tot.xmin, v2d.tot.ymin, v2d.tot.xmax, v2d.tot.ymax);
+    imm_draw_box_checker_2d(v2d.tot.xmin, v2d.tot.ymin, v2d.tot.xmax, v2d.tot.ymax, true);
 
     /* Draw current and preview textures in a special way to pierce a hole in the overlay to make
      * the actual image visible. */
@@ -1830,10 +1847,12 @@ void sequencer_preview_region_draw(const bContext *C, ARegion *region)
     current_ibuf = sequencer_ibuf_get(
         C, timeline_frame, view_names[space_sequencer.multiview_eye]);
     if (use_gpu_texture && current_ibuf) {
-      current_texture = seq::preview_cache_get_gpu_texture(scene, timeline_frame);
+      current_texture = seq::preview_cache_get_gpu_texture(
+          scene, timeline_frame, space_sequencer.chanshown);
       if (current_texture == nullptr) {
         current_texture = create_texture(*current_ibuf);
-        seq::preview_cache_set_gpu_texture(scene, timeline_frame, current_texture);
+        seq::preview_cache_set_gpu_texture(
+            scene, timeline_frame, space_sequencer.chanshown, current_texture);
       }
     }
   }

@@ -279,7 +279,7 @@ class Result {
   void steal_data(Result &source);
 
   /* Similar to the Result variant of steal_data, but steals from a raw data buffer. The buffer is
-   * assumed to be allocated using Blender's guarded allocator.  */
+   * assumed to be allocated using Blender's guarded allocator. */
   void steal_data(void *data, int2 size);
 
   /* Set up the result to wrap an external GPU texture that is not allocated nor managed by the
@@ -688,11 +688,8 @@ BLI_INLINE_METHOD float4 Result::sample(const float2 &coordinates,
                                              extension_mode_x,
                                              extension_mode_y);
       break;
-    /* The anisotropic sampling requires separate handling with EWA. */
-    case Interpolation::Anisotropic:
-      BLI_assert_unreachable();
-      break;
     case Interpolation::Bicubic:
+    case Interpolation::Anisotropic:
       math::interpolate_cubic_bspline_wrapmode_fl(buffer,
                                                   pixel_value,
                                                   size.x,

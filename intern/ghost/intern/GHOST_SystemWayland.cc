@@ -1548,6 +1548,11 @@ struct GWL_Display {
    */
   bool background = false;
 
+  /**
+   * Show window decorations, otherwise all windows are frame-less.
+   */
+  bool use_window_frame = false;
+
   /* Threaded event handling. */
 #ifdef USE_EVENT_BACKGROUND_THREAD
   /**
@@ -1719,7 +1724,7 @@ struct GWL_RegisteryAdd_Params {
  * \note Any operations that depend on other interfaces being registered must be performed in the
  * #GWL_RegistryHandler_UpdateFn callback as the order interfaces are added is out of our control.
  *
- * \param display: The display which holes a reference to the global object.
+ * \param display: The display which holds a reference to the global object.
  * \param params: Various arguments needed for registration.
  */
 using GWL_RegistryHandler_AddFn = void (*)(GWL_Display *display,
@@ -1738,7 +1743,7 @@ struct GWL_RegisteryUpdate_Params {
 /**
  * Optional update callback to refresh internal data when another interface has been added/removed.
  *
- * \param display: The display which holes a reference to the global object.
+ * \param display: The display which holds a reference to the global object.
  * \param params: Various arguments needed for updating.
  */
 using GWL_RegistryHandler_UpdateFn = void (*)(GWL_Display *display,
@@ -1746,7 +1751,7 @@ using GWL_RegistryHandler_UpdateFn = void (*)(GWL_Display *display,
 
 /**
  * Remove callback for object registry.
- * \param display: The display which holes a reference to the global object.
+ * \param display: The display which holds a reference to the global object.
  * \param user_data: Optional reference to a sub element of `display`,
  * use for outputs or seats, for example when the display may hold multiple references.
  * \param on_exit: Enabled when freeing on exit.
@@ -4706,8 +4711,7 @@ static void touch_seat_handle_frame(void *data, wl_touch * /*touch*/)
       seat->touch.wl.surface_window = nullptr;
     }
 
-    GHOST_ASSERT(touch_events_num <= sizeof(touch_events) / sizeof(touch_events[0]),
-                 "Buffer overflow");
+    GHOST_ASSERT(touch_events_num <= ARRAY_SIZE(touch_events), "Buffer overflow");
 
     /* Ensure events are ordered in time. */
     if (UNLIKELY(touch_events_num > 1)) {
@@ -5536,7 +5540,7 @@ static bool xkb_compose_state_feed_and_get_utf8(
  */
 static void keyboard_handle_key_repeat_cancel(GWL_Seat *seat)
 {
-  GHOST_ASSERT(seat->key_repeat.timer != nullptr, "Caller much check for timer");
+  GHOST_ASSERT(seat->key_repeat.timer != nullptr, "Caller must check for timer");
   delete static_cast<GWL_KeyRepeatPlayload *>(seat->key_repeat.timer->getUserData());
 
   gwl_seat_key_repeat_timer_remove(seat);
@@ -5551,7 +5555,7 @@ static void keyboard_handle_key_repeat_cancel(GWL_Seat *seat)
  */
 static void keyboard_handle_key_repeat_reset(GWL_Seat *seat, const bool use_delay)
 {
-  GHOST_ASSERT(seat->key_repeat.timer != nullptr, "Caller much check for timer");
+  GHOST_ASSERT(seat->key_repeat.timer != nullptr, "Caller must check for timer");
   GHOST_TimerProcPtr key_repeat_fn = seat->key_repeat.timer->getTimerProc();
   GHOST_TUserDataPtr payload = seat->key_repeat.timer->getUserData();
 
@@ -6761,7 +6765,10 @@ static void gwl_registry_xdg_decoration_manager_remove(GWL_Display *display,
 static void gwl_registry_xdg_output_manager_add(GWL_Display *display,
                                                 const GWL_RegisteryAdd_Params &params)
 {
-  const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 2u, 3u);
+  /* NOTE(@ideasman42): only version 3 and over is well supported.
+   * Support version 1 so GNOME-32 (on the build-bots Rocky8) can be used.
+   * Use `zxdg_output_v1_get_version` to ensure feature support at runtime. */
+  const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 3u);
 
   display->xdg.output_manager = static_cast<zxdg_output_manager_v1 *>(wl_registry_bind(
       display->wl.registry, params.name, &zxdg_output_manager_v1_interface, version));
@@ -6986,10 +6993,6 @@ static void gwl_registry_wl_seat_remove(GWL_Display *display, void *user_data, c
     zwp_tablet_seat_v2_destroy(seat->wp.tablet_seat);
   }
 
-  if (seat->cursor.custom_data) {
-    munmap(seat->cursor.custom_data, seat->cursor.custom_data_size);
-  }
-
   /* Disable all capabilities as a way to free:
    * - `seat.wl_pointer` (and related cursor variables).
    * - `seat.wl_touch`.
@@ -6998,6 +7001,20 @@ static void gwl_registry_wl_seat_remove(GWL_Display *display, void *user_data, c
   gwl_seat_capability_pointer_disable(seat);
   gwl_seat_capability_keyboard_disable(seat);
   gwl_seat_capability_touch_disable(seat);
+
+  /* Run after tablet & input devices have been disabled
+   * to ensure the buffer from a *visible* cursor never destroyed.
+   *
+   * Note that most compositors will have already released the buffer,
+   * in that case this will have been set to null.
+   * However this isn't guaranteed, see: #145557. */
+  if (seat->cursor.wl.buffer) {
+    wl_buffer_destroy(seat->cursor.wl.buffer);
+  }
+
+  if (seat->cursor.custom_data) {
+    munmap(seat->cursor.custom_data, seat->cursor.custom_data_size);
+  }
 
   /* Un-referencing checks for nullptr case. */
   xkb_state_unref(seat->xkb.state);
@@ -7597,8 +7614,12 @@ GHOST_SystemWayland::GHOST_SystemWayland(const bool background)
   wl_log_set_handler_client(background ? ghost_wayland_log_handler_background :
                                          ghost_wayland_log_handler);
 
+  const bool use_window_frame = GHOST_ISystem::getUseWindowFrame();
+
   display_->system = this;
   display_->background = background;
+  display_->use_window_frame = use_window_frame;
+
   /* Connect to the Wayland server. */
 
   display_->wl.display = wl_display_connect(nullptr);
@@ -7629,7 +7650,7 @@ GHOST_SystemWayland::GHOST_SystemWayland(const bool background)
 
 #ifdef WITH_GHOST_WAYLAND_LIBDECOR
   bool libdecor_required = false;
-  {
+  if (use_window_frame) {
     const char *xdg_current_desktop = [] {
       /* Account for VSCode overriding this value (TSK!), see: #133921. */
       const char *key = "ORIGINAL_XDG_CURRENT_DESKTOP";
@@ -8427,9 +8448,31 @@ static GHOST_TSuccess setCursorPositionClientRelative_impl(GWL_Seat *seat,
                                                            const int32_t x,
                                                            const int32_t y)
 {
-  /* NOTE: WAYLAND doesn't support warping the cursor.
-   * However when grab is enabled, we already simulate a cursor location
-   * so that can be set to a new location. */
+  /* NOTE(@ideasman42): Regarding Cursor Warp Support:
+   *
+   * Before Wayland Protocols 1.45, (`wp_pointer_warp_v1`) cursor warping wasn't supported,
+   * although at time of writing (2025) no mainstream compositors support it.
+   * As an alternative, a software cursor is used which can be warped while "grabbed"
+   * (see `relative_pointer` & `pointer_constraints`).
+   * Other backends use warping to implement grabbing,
+   * however this is error-prone with issues such as:
+   *
+   * - Fast motion can exit the window.
+   * - Absolute input devices don't work with warping, causing erratic cursor motion glitches.
+   * - Motion events may be in the queue which need to be handled before the warp is handled.
+   *
+   * These issues can be mitigated but avoiding problems gets involved and isn't foolproof:
+   * Input may be clamped, tablets can be assumed absolute & motion event timestamps
+   * can be used to detect events that were in the queue before the artificial warp motion.
+   *
+   * Given the trouble cursor warping has caused on other platforms over the years
+   * I believe we're better off avoiding cursor warping (`wp_pointer_warp_v1`)
+   * and accept limited support for warping.
+   *
+   * See: #134818, #113511, #102346, #89399, #82870, #49498. */
+
+  /* When grab is enabled, we already simulate a cursor location,
+   * so cursor warping can be supported in this case. */
   if (!seat->wp.relative_pointer) {
     return GHOST_kFailure;
   }
@@ -8505,6 +8548,9 @@ GHOST_TSuccess GHOST_SystemWayland::getCursorPosition(int32_t &x, int32_t &y) co
 
 GHOST_TSuccess GHOST_SystemWayland::setCursorPosition(const int32_t x, const int32_t y)
 {
+  /* See comments in the body of #setCursorPositionClientRelative_impl
+   * for an explanation of the state of this functionality. */
+
 #ifdef USE_EVENT_BACKGROUND_THREAD
   std::lock_guard lock_server_guard{*server_mutex};
 #endif
@@ -9077,7 +9123,8 @@ GHOST_TCapabilityFlag GHOST_SystemWayland::getCapabilities() const
           /* WAYLAND cannot precisely place windows among multiple monitors. */
           GHOST_kCapabilityMultiMonitorPlacement |
           /* WAYLAND doesn't support setting the cursor position directly,
-           * this is an intentional choice, forcing us to use a software cursor in this case. */
+           * this is an intentional choice, forcing us to use a software cursor in this case.
+           * For details see comments in: #setCursorPositionClientRelative_impl. */
           GHOST_kCapabilityCursorWarp |
           /* Some drivers don't support front-buffer reading, see: #98462 & #106264.
            *
@@ -9346,6 +9393,11 @@ GHOST_TimerManager *GHOST_SystemWayland::ghost_timer_manager()
   return display_->ghost_timer_manager;
 }
 #endif
+
+bool GHOST_SystemWayland::use_window_frame_get()
+{
+  return display_->use_window_frame;
+}
 
 /** \} */
 
@@ -9858,7 +9910,7 @@ bool GHOST_SystemWayland::use_libdecor_runtime()
 #endif
 
 #ifdef WITH_GHOST_WAYLAND_DYNLOAD
-bool ghost_wl_dynload_libraries_init()
+bool ghost_wl_dynload_libraries_init(const bool use_window_frame)
 {
 #  ifdef WITH_GHOST_X11
   /* When running in WAYLAND, let the user know when a missing library is the only reason
@@ -9879,7 +9931,11 @@ bool ghost_wl_dynload_libraries_init()
   )
   {
 #  ifdef WITH_GHOST_WAYLAND_LIBDECOR
-    has_libdecor = wayland_dynload_libdecor_init(verbose); /* `libdecor-0`. */
+    if (use_window_frame) {
+      has_libdecor = wayland_dynload_libdecor_init(verbose); /* `libdecor-0`. */
+    }
+#  else
+    (void)use_window_frame;
 #  endif
     return true;
   }

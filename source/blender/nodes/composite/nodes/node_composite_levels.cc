@@ -23,11 +23,11 @@
 namespace blender::nodes::node_composite_levels_cc {
 
 static const EnumPropertyItem channel_items[] = {
-    {CMP_NODE_LEVLES_LUMINANCE, "COMBINED_RGB", 0, "Combined", "Combined RGB"},
-    {CMP_NODE_LEVLES_RED, "RED", 0, "Red", "Red Channel"},
-    {CMP_NODE_LEVLES_GREEN, "GREEN", 0, "Green", "Green Channel"},
-    {CMP_NODE_LEVLES_BLUE, "BLUE", 0, "Blue", "Blue Channel"},
-    {CMP_NODE_LEVLES_LUMINANCE_BT709, "LUMINANCE", 0, "Luminance", "Luminance Channel"},
+    {CMP_NODE_LEVLES_LUMINANCE, "COMBINED_RGB", 0, N_("Combined"), N_("Combined RGB")},
+    {CMP_NODE_LEVLES_RED, "RED", 0, N_("Red"), N_("Red Channel")},
+    {CMP_NODE_LEVLES_GREEN, "GREEN", 0, N_("Green"), N_("Green Channel")},
+    {CMP_NODE_LEVLES_BLUE, "BLUE", 0, N_("Blue"), N_("Blue Channel")},
+    {CMP_NODE_LEVLES_LUMINANCE_BT709, "LUMINANCE", 0, N_("Luminance"), N_("Luminance Channel")},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -38,7 +38,8 @@ static void cmp_node_levels_declare(NodeDeclarationBuilder &b)
       .structure_type(StructureType::Dynamic);
   b.add_input<decl::Menu>("Channel")
       .default_value(CMP_NODE_LEVLES_LUMINANCE)
-      .static_items(channel_items);
+      .static_items(channel_items)
+      .optional_label();
 
   b.add_output<decl::Float>("Mean");
   b.add_output<decl::Float>("Standard Deviation");

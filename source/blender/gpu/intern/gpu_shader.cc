@@ -6,9 +6,10 @@
  * \ingroup gpu
  */
 
+#include "BLI_colorspace.hh"
 #include "BLI_math_matrix.h"
+#include "BLI_math_matrix_types.hh"
 #include "BLI_string.h"
-#include "BLI_time.h"
 
 #include "GPU_capabilities.hh"
 #include "GPU_debug.hh"
@@ -98,7 +99,7 @@ static void standard_defines(Vector<StringRefNull> &sources)
     sources.append("#define OS_UNIX\n");
   }
   /* API Definition */
-  eGPUBackendType backend = GPU_backend_get_type();
+  GPUBackendType backend = GPU_backend_get_type();
   switch (backend) {
     case GPU_BACKEND_OPENGL:
       sources.append("#define GPU_OPENGL\n");
@@ -112,10 +113,6 @@ static void standard_defines(Vector<StringRefNull> &sources)
     default:
       BLI_assert_msg(false, "Invalid GPU Backend Type");
       break;
-  }
-
-  if (GPU_crappy_amd_driver()) {
-    sources.append("#define GPU_DEPRECATED_AMD_DRIVER\n");
   }
 }
 
@@ -269,6 +266,9 @@ void GPU_shader_bind(blender::gpu::Shader *gpu_shader,
     shader->bind(constants_state);
     GPU_matrix_bind(gpu_shader);
     Shader::set_srgb_uniform(ctx, gpu_shader);
+    /* Blender working color space do not change during the drawing of the frame.
+     * So we can just set the uniform once. */
+    Shader::set_scene_linear_to_xyz_uniform(gpu_shader);
   }
   else {
     if (constants_state) {
@@ -638,6 +638,15 @@ void Shader::set_srgb_uniform(Context *ctx, blender::gpu::Shader *shader)
   ctx->shader_builtin_srgb_is_dirty = false;
 }
 
+void Shader::set_scene_linear_to_xyz_uniform(blender::gpu::Shader *shader)
+{
+  int32_t loc = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_SCENE_LINEAR_XFORM);
+  if (loc != -1) {
+    GPU_shader_uniform_float_ex(
+        shader, loc, 9, 1, blender::colorspace::scene_linear_to_rec709.ptr()[0]);
+  }
+}
+
 void Shader::set_framebuffer_srgb_target(int use_srgb_to_linear)
 {
   Context *ctx = Context::get();
@@ -706,12 +715,12 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &info, bool is_ba
   }
   for (auto filename : info.typedef_sources_) {
     typedefs.extend_non_duplicates(
-        gpu_shader_dependency_get_resolved_source(filename, info.generated_sources));
+        gpu_shader_dependency_get_resolved_source(filename, info.generated_sources, info.name_));
   }
 
   if (!info.vertex_source_.is_empty()) {
-    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(info.vertex_source_,
-                                                                           info.generated_sources);
+    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(
+        info.vertex_source_, info.generated_sources, info.name_);
     std::string interface = shader->vertex_interface_declare(info);
 
     Vector<StringRefNull> sources;
@@ -737,8 +746,8 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &info, bool is_ba
   }
 
   if (!info.fragment_source_.is_empty()) {
-    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(info.fragment_source_,
-                                                                           info.generated_sources);
+    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(
+        info.fragment_source_, info.generated_sources, info.name_);
     std::string interface = shader->fragment_interface_declare(info);
 
     Vector<StringRefNull> sources;
@@ -764,8 +773,8 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &info, bool is_ba
   }
 
   if (!info.geometry_source_.is_empty()) {
-    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(info.geometry_source_,
-                                                                           info.generated_sources);
+    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(
+        info.geometry_source_, info.generated_sources, info.name_);
     std::string layout = shader->geometry_layout_declare(info);
     std::string interface = shader->geometry_interface_declare(info);
 
@@ -790,17 +799,17 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &info, bool is_ba
   }
 
   if (!info.compute_source_.is_empty()) {
-    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(info.compute_source_,
-                                                                           info.generated_sources);
+    Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(
+        info.compute_source_, info.generated_sources, info.name_);
     std::string layout = shader->compute_layout_declare(info);
 
     Vector<StringRefNull> sources;
     standard_defines(sources);
     sources.append("#define GPU_COMPUTE_SHADER\n");
     sources.append(defines);
+    sources.append(layout);
     sources.extend(typedefs);
     sources.append(resources);
-    sources.append(layout);
     sources.extend(code);
     sources.append(info.compute_source_generated);
 

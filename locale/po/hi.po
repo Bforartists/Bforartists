@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
+"Project-Id-Version: Blender 5.0.0 Beta (b'2b3706e29f27')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-15 07:14+0000\n"
+"POT-Creation-Date: 2025-10-20 08:46+0000\n"
 "PO-Revision-Date: 2025-07-23 15:34+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Hindi <https://translate.blender.org/projects/blender-ui/ui/hi/>\n"
@@ -623,14 +623,6 @@ msgid "Parent"
 msgstr "कारण"
 
 
-msgid "Select Head"
-msgstr "सिर का चयन करें"
-
-
-msgid "Select Tail"
-msgstr "पूंछ का चयन करें"
-
-
 msgid "Tail"
 msgstr "पूंछ"
 
@@ -821,12 +813,20 @@ msgid "Quality"
 msgstr "गुणवत्ता"
 
 
+msgid "Display"
+msgstr "प्रदर्शित करें"
+
+
 msgid "Curve"
 msgstr "वक्र"
 
 
 msgid "Gamma"
 msgstr "गामा"
+
+
+msgid "View"
+msgstr "दृश्य"
 
 
 msgid "Blend Type"
@@ -1024,10 +1024,6 @@ msgstr "विभक्त करें"
 
 msgid "Plane"
 msgstr "समतल"
-
-
-msgid "View"
-msgstr "दृश्य"
 
 
 msgid "Radius"
@@ -1543,6 +1539,10 @@ msgid "Grid"
 msgstr "जालक"
 
 
+msgid "Items"
+msgstr "वस्तु"
+
+
 msgid "Window"
 msgstr "खिडकी"
 
@@ -1665,10 +1665,6 @@ msgstr "मूल"
 msgctxt "Curve"
 msgid "Sharp"
 msgstr "पैना"
-
-
-msgid "Direction"
-msgstr "दिशा"
 
 
 msgid "Draw"
@@ -2147,10 +2143,6 @@ msgid "Damp"
 msgstr "आद्र"
 
 
-msgid "Display"
-msgstr "प्रदर्शित करें"
-
-
 msgid "Steps"
 msgstr "कदम"
 
@@ -2436,10 +2428,6 @@ msgid "Owner"
 msgstr "स्वामी"
 
 
-msgid "Items"
-msgstr "वस्तु"
-
-
 msgid "Alt"
 msgstr "ऑल्ट"
 
@@ -2450,6 +2438,10 @@ msgstr "को"
 
 msgid "Ctrl"
 msgstr "नियंत्रण"
+
+
+msgid "Direction"
+msgstr "दिशा"
 
 
 msgid "North"
@@ -2580,34 +2572,6 @@ msgid "Mask"
 msgstr "आवरण"
 
 
-msgid "Merge"
-msgstr "विलय करें"
-
-
-msgid "Show/Hide"
-msgstr "छुपाएँ / दिखाएँ"
-
-
-msgid "Text"
-msgstr "पाठ"
-
-
-msgid "Names"
-msgstr "नाम"
-
-
-msgid "Bone Roll"
-msgstr "हड्डी पंजी"
-
-
-msgid "Snap"
-msgstr "स्नैप"
-
-
-msgid "Mirror"
-msgstr "दर्पण"
-
-
 msgid "Light"
 msgstr "प्रकाश"
 
@@ -2628,6 +2592,10 @@ msgid "Quick Effects"
 msgstr "त्वरित प्रभाव"
 
 
+msgid "Show/Hide"
+msgstr "छुपाएँ / दिखाएँ"
+
+
 msgid "Make Single User"
 msgstr "एकल प्रयोक्ता बनाएँ"
 
@@ -2636,12 +2604,52 @@ msgid "Hooks"
 msgstr "खूँटी"
 
 
+msgid "Keying"
+msgstr "कुंजीयन"
+
+
+msgid "Names"
+msgstr "नाम"
+
+
 msgid "Toggle Bone Options"
 msgstr "हड्डी विकल्प बंद/बुझ"
 
 
+msgid "Math"
+msgstr "गणित"
+
+
 msgid "Enable Bone Options"
 msgstr "हड्डी विकल्प को सक्षम करें"
+
+
+msgid "Merge"
+msgstr "विलय करें"
+
+
+msgid "Text"
+msgstr "पाठ"
+
+
+msgid "Bone Roll"
+msgstr "हड्डी पंजी"
+
+
+msgid "Snap"
+msgstr "स्नैप"
+
+
+msgid "Import"
+msgstr "आयात करें"
+
+
+msgid "Mirror"
+msgstr "दर्पण"
+
+
+msgid "UV"
+msgstr "यूवी"
 
 
 msgid "Basic"
@@ -2690,28 +2698,12 @@ msgid "Smooth"
 msgstr "चिकना"
 
 
-msgid "UV"
-msgstr "यूवी"
-
-
 msgid "Align"
 msgstr "संरेखित करें"
 
 
 msgid "Strip"
 msgstr "पट्टी"
-
-
-msgid "Math"
-msgstr "गणित"
-
-
-msgid "Keying"
-msgstr "कुंजीयन"
-
-
-msgid "Import"
-msgstr "आयात करें"
 
 
 msgid "Node"
@@ -3027,10 +3019,6 @@ msgstr "रुचिनुकूल रंग"
 
 msgid "Starting"
 msgstr "प्रारम्भ"
-
-
-msgid "Meta"
-msgstr "मेटा"
 
 
 msgid "NLA Track is locked"
@@ -3374,31 +3362,6 @@ msgstr "लंबी सूची"
 
 msgid "File Browser Mode"
 msgstr "संचिका विचरक रूप"
-
-
-msgctxt "Operator"
-msgid "Preset"
-msgstr "पूर्ववत"
-
-
-msgctxt "Curve"
-msgid "Mode"
-msgstr "रूप"
-
-
-msgctxt "Curve"
-msgid "Max"
-msgstr "अधिकतम"
-
-
-msgctxt "Curve"
-msgid "Line"
-msgstr "रेखा"
-
-
-msgctxt "Curve"
-msgid "Round"
-msgstr "दौर"
 
 
 msgctxt "Operator"
@@ -4014,6 +3977,26 @@ msgid "Render"
 msgstr " प्रतिपादन"
 
 
+msgctxt "Curve"
+msgid "Mode"
+msgstr "रूप"
+
+
+msgctxt "Curve"
+msgid "Max"
+msgstr "अधिकतम"
+
+
+msgctxt "Curve"
+msgid "Line"
+msgstr "रेखा"
+
+
+msgctxt "Curve"
+msgid "Round"
+msgstr "दौर"
+
+
 msgid "Hinge"
 msgstr "काज"
 
@@ -4128,11 +4111,6 @@ msgstr "मार्जन"
 msgctxt "Sequence"
 msgid "Glow"
 msgstr "चमक"
-
-
-msgctxt "Sequence"
-msgid "Transform"
-msgstr "संरचनांतरण"
 
 
 msgctxt "Sequence"
@@ -4867,16 +4845,16 @@ msgid "Lock to Object"
 msgstr "वस्तु के लिए तालाबंदी"
 
 
+msgid "Meta"
+msgstr "मेटा"
+
+
 msgid "3D"
 msgstr "त्रि-आयाम"
 
 
 msgid "Blend Opacity"
 msgstr "मिश्रण अपारदर्शिता"
-
-
-msgid "Cross"
-msgstr "पार"
 
 
 msgctxt "Sequence"
@@ -5338,6 +5316,10 @@ msgid "Paths:"
 msgstr "पथ:"
 
 
+msgid "Unpack"
+msgstr "खोल देना"
+
+
 msgid "Calculate"
 msgstr "गणना"
 
@@ -5488,11 +5470,6 @@ msgstr "पाठ"
 
 
 msgctxt "Operator"
-msgid "Scene..."
-msgstr "दृश्य..."
-
-
-msgctxt "Operator"
 msgid "Wipe"
 msgstr "मार्जन"
 
@@ -5505,10 +5482,6 @@ msgstr "गति नियंत्रण"
 msgctxt "Operator"
 msgid "Glow"
 msgstr "चमक"
-
-
-msgid "Unpack"
-msgstr "खोल देना"
 
 
 msgctxt "Text"
@@ -6528,12 +6501,12 @@ msgid "Key"
 msgstr "कुंजी"
 
 
-msgid "Fac"
-msgstr "एफ़एसी"
-
-
 msgid "Soften"
 msgstr "मॄदु"
+
+
+msgid "Fac"
+msgstr "एफ़एसी"
 
 
 msgid "Old"

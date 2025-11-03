@@ -29,6 +29,8 @@
 
 #include "BKE_context.hh"
 #include "BKE_global.hh"
+#include "BKE_idtype.hh"
+#include "BKE_layer.hh"
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
@@ -63,6 +65,7 @@
 /* For menu, popup, icons, etc. */
 #include "ED_fileselect.hh"
 #include "ED_numinput.hh"
+#include "ED_object.hh"
 #include "ED_scene.hh"
 #include "ED_screen.hh"
 #include "ED_screen_types.hh"
@@ -78,6 +81,7 @@
 /* Own include. */
 #include "sequencer_intern.hh"
 #include <cstddef>
+#include <fmt/format.h>
 
 namespace blender::ed::vse {
 
@@ -359,25 +363,17 @@ static Scene *get_sequencer_scene_for_time_sync(const bContext &C)
   return nullptr;
 }
 
-void sync_active_scene_and_time_with_scene_strip(bContext &C)
+const Strip *get_scene_strip_for_time_sync(const Scene *sequencer_scene)
 {
   using namespace blender;
-  Scene *sequence_scene = get_sequencer_scene_for_time_sync(C);
-  if (!sequence_scene) {
-    return;
-  }
-
-  wmWindow *win = CTX_wm_window(&C);
-  Scene *active_scene = WM_window_get_active_scene(win);
-
-  Editing *ed = seq::editing_get(sequence_scene);
+  const Editing *ed = seq::editing_get(sequencer_scene);
   if (!ed) {
-    return;
+    return nullptr;
   }
   ListBase *seqbase = seq::active_seqbase_get(ed);
   const ListBase *channels = seq::channels_displayed_get(ed);
   VectorSet<Strip *> query_strips = seq::query_strips_recursive_at_frame(
-      sequence_scene, seqbase, sequence_scene->r.cfra);
+      sequencer_scene, seqbase, sequencer_scene->r.cfra);
   /* Ignore effect strips, sound strips and muted strips. */
   query_strips.remove_if([&](const Strip *strip) {
     return strip->is_effect() || strip->type == STRIP_TYPE_SOUND_RAM ||
@@ -389,20 +385,35 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
     return a->channel > b->channel;
   });
   /* Get the top-most scene strip. */
-  const Strip *scene_strip = [&]() -> const Strip * {
-    for (const Strip *strip : strips) {
-      if (strip->type == STRIP_TYPE_SCENE) {
-        return strip;
-      }
+  for (const Strip *strip : strips) {
+    if (strip->type == STRIP_TYPE_SCENE) {
+      return strip;
     }
-    return nullptr;
-  }();
+  }
+  return nullptr;
+}
+
+void sync_active_scene_and_time_with_scene_strip(bContext &C)
+{
+  using namespace blender;
+  Scene *sequencer_scene = get_sequencer_scene_for_time_sync(C);
+  if (!sequencer_scene) {
+    return;
+  }
+
+  wmWindow *win = CTX_wm_window(&C);
+  const Strip *scene_strip = get_scene_strip_for_time_sync(sequencer_scene);
   if (!scene_strip || !scene_strip->scene) {
     /* No scene strip with scene found. Switch to pinned scene. */
     Main *bmain = CTX_data_main(&C);
-    WM_window_set_active_scene(bmain, &C, win, sequence_scene);
+    WM_window_set_active_scene(bmain, &C, win, sequencer_scene);
     return;
   }
+
+  ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+  Object *prev_obact = BKE_view_layer_active_object_get(view_layer);
+
+  Scene *active_scene = WM_window_get_active_scene(win);
   if (active_scene != scene_strip->scene) {
     /* Sync active scene in window. */
     Main *bmain = CTX_data_main(&C);
@@ -436,7 +447,8 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
 
   /* Compute the scene time based on the scene strip. */
   const float frame_index = seq::give_frame_index(
-      sequence_scene, scene_strip, sequence_scene->r.cfra);
+                                sequencer_scene, scene_strip, sequencer_scene->r.cfra) +
+                            active_scene->r.sfra;
   if (active_scene->r.flag & SCER_SHOW_SUBFRAME) {
     active_scene->r.cfra = int(frame_index);
     active_scene->r.subframe = frame_index - int(frame_index);
@@ -446,6 +458,14 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
     active_scene->r.subframe = 0.0f;
   }
   FRAMENUMBER_MIN_CLAMP(active_scene->r.cfra);
+
+  /* Try to sync the object mode of the active object. */
+  if (prev_obact) {
+    Object *obact = CTX_data_active_object(&C);
+    if (obact && prev_obact->type == obact->type) {
+      ed::object::mode_set(&C, eObjectMode(prev_obact->mode));
+    }
+  }
 
   DEG_id_tag_update(&active_scene->id, ID_RECALC_FRAME_CHANGE);
   WM_event_add_notifier(&C, NC_WINDOW, nullptr);
@@ -1756,6 +1776,7 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
   const seq::eSplitMethod method = seq::eSplitMethod(RNA_enum_get(op->ptr, "type"));
   const int split_side = sequence_split_side_for_exec_get(op);
   const bool ignore_selection = RNA_boolean_get(op->ptr, "ignore_selection");
+  const bool ignore_connections = RNA_boolean_get(op->ptr, "ignore_connections");
 
   seq::prefetch_stop(scene);
 
@@ -1766,9 +1787,14 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
 
     if (ignore_selection || strip->flag & SELECT) {
       const char *error_msg = nullptr;
-      if (seq::edit_strip_split(
-              bmain, scene, ed->current_strips(), strip, split_frame, method, &error_msg) !=
-          nullptr)
+      if (seq::edit_strip_split(bmain,
+                                scene,
+                                ed->current_strips(),
+                                strip,
+                                split_frame,
+                                method,
+                                ignore_connections,
+                                &error_msg) != nullptr)
       {
         changed = true;
       }
@@ -1880,6 +1906,10 @@ static void sequencer_split_ui(bContext * /*C*/, wmOperator *op)
   if (RNA_boolean_get(op->ptr, "use_cursor_position")) {
     layout->prop(op->ptr, "channel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
+
+  layout->separator();
+
+  layout->prop(op->ptr, "ignore_connections", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 /*bfa - tool name*/
@@ -1972,6 +2002,12 @@ void SEQUENCER_OT_split(wmOperatorType *ot)
       "Make cut even if strip is not selected preserving selection state after cut");
 
   RNA_def_property_flag(prop, PROP_HIDDEN);
+
+  RNA_def_boolean(ot->srna,
+                  "ignore_connections",
+                  false,
+                  "Ignore Connections",
+                  "Don't propagate split to connected strips");
 }
 
 /** \} */
@@ -1979,6 +2015,59 @@ void SEQUENCER_OT_split(wmOperatorType *ot)
 /* -------------------------------------------------------------------- */
 /** \name Duplicate Strips Operator
  * \{ */
+
+static void sequencer_report_duplicates(wmOperator *op, ListBase *duplicated_strips)
+{
+  int num_scenes = 0, num_movieclips = 0, num_masks = 0;
+  LISTBASE_FOREACH (Strip *, strip, duplicated_strips) {
+    switch (strip->type) {
+      case STRIP_TYPE_SCENE:
+        num_scenes++;
+        break;
+      case STRIP_TYPE_MOVIECLIP:
+        num_movieclips++;
+        break;
+      case STRIP_TYPE_MASK:
+        num_masks++;
+        break;
+      default:
+        break;
+    }
+  }
+
+  if (num_scenes == 0 && num_movieclips == 0 && num_masks == 0) {
+    return;
+  }
+
+  std::string report;
+  std::string sep;
+  if (num_scenes) {
+    report += fmt::format("{}{} {}",
+                          sep,
+                          num_scenes,
+                          (num_scenes > 1) ? RPT_(BKE_idtype_idcode_to_name_plural(ID_SCE)) :
+                                             RPT_(BKE_idtype_idcode_to_name(ID_SCE)));
+    sep = ", ";
+  }
+  if (num_movieclips) {
+    report += fmt::format("{}{} {}",
+                          sep,
+                          num_movieclips,
+                          (num_movieclips > 1) ? RPT_(BKE_idtype_idcode_to_name_plural(ID_MC)) :
+                                                 RPT_(BKE_idtype_idcode_to_name(ID_MC)));
+    sep = ", ";
+  }
+  if (num_masks) {
+    report += fmt::format("{}{} {}",
+                          sep,
+                          num_masks,
+                          (num_masks > 1) ? RPT_(BKE_idtype_idcode_to_name_plural(ID_MSK)) :
+                                            RPT_(BKE_idtype_idcode_to_name(ID_MSK)));
+    sep = ", ";
+  }
+
+  BKE_reportf(op->reports, RPT_INFO, RPT_("Duplicated %s"), report.c_str());
+}
 
 static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator *op)
 {
@@ -2001,7 +2090,7 @@ static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator *op
   if (region->regiontype == RGN_TYPE_PREVIEW && sequencer_view_preview_only_poll(C)) {
     LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
       if (strip->type == STRIP_TYPE_SOUND_RAM || strip->flag & SEQ_MUTE ||
-          !(seq::time_strip_intersects_frame(scene, strip, scene->r.cfra)))
+          !seq::time_strip_intersects_frame(scene, strip, scene->r.cfra))
       {
         strip->flag &= ~STRIP_ALLSEL;
       }
@@ -2017,6 +2106,11 @@ static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator *op
 
   if (duplicated_strips.first == nullptr) {
     return OPERATOR_CANCELLED;
+  }
+
+  /* Report all the newly created datablocks in the status bar. */
+  if (!linked) {
+    sequencer_report_duplicates(op, &duplicated_strips);
   }
 
   /* Duplicate animation.
@@ -3045,7 +3139,6 @@ const EnumPropertyItem sequencer_prop_effect_types[] = {
     {STRIP_TYPE_MUL, "MULTIPLY", ICON_SEQ_MULTIPLY, "Multiply", "Multiply effect strip type"},
     {STRIP_TYPE_WIPE, "WIPE", ICON_NODE_VECTOR_TRANSFORM, "Wipe", "Wipe effect strip type"},
     {STRIP_TYPE_GLOW, "GLOW", ICON_LIGHT_SUN, "Glow", "Glow effect strip type"},
-    {STRIP_TYPE_TRANSFORM, "TRANSFORM", ICON_TRANSFORM_MOVE, "Transform", "Transform effect strip type"},
     {STRIP_TYPE_COLOR, "COLOR", ICON_COLOR, "Color", "Color effect strip type"},
     {STRIP_TYPE_SPEED, "SPEED", ICON_NODE_CURVE_TIME, "Speed", "Color effect strip type"},
     {STRIP_TYPE_MULTICAM, "MULTICAM", ICON_SEQ_MULTICAM, "Multicam Selector", ""},
@@ -3446,7 +3539,7 @@ static wmOperatorStatus sequencer_export_subtitles_exec(bContext *C, wmOperator 
 
   if (ed != nullptr) {
     Seq_get_text_cb_data cb_data = {&text_seq, scene};
-    seq::for_each_callback(&ed->seqbase, strip_get_text_strip_cb, &cb_data);
+    seq::foreach_strip(&ed->seqbase, strip_get_text_strip_cb, &cb_data);
   }
 
   if (BLI_listbase_is_empty(&text_seq)) {

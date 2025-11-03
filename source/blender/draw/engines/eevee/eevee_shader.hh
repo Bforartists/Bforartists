@@ -13,6 +13,7 @@
 
 #include <array>
 
+#include "BLI_enum_flags.hh"
 #include "BLI_map.hh"
 #include "BLI_mutex.hh"
 
@@ -40,6 +41,7 @@ enum eShaderType {
   FILM_PASS_CONVERT_COLOR,
   FILM_PASS_CONVERT_CRYPTOMATTE,
 
+  DEFERRED_AOV_CLEAR,
   DEFERRED_CAPTURE_EVAL,
   DEFERRED_COMBINE,
   DEFERRED_LIGHT_SINGLE,
@@ -149,6 +151,9 @@ enum eShaderType {
   SURFEL_CLUSTER_BUILD,
   SURFEL_LIGHT,
   SURFEL_LIST_BUILD,
+  SURFEL_LIST_FLATTEN,
+  SURFEL_LIST_PREFIX,
+  SURFEL_LIST_PREPARE,
   SURFEL_LIST_SORT,
   SURFEL_RAY,
 
@@ -193,7 +198,7 @@ enum ShaderGroups : uint32_t {
   MATERIAL_SHADERS = 1 << 20,
   VOLUME_PROBE_SHADERS = 1 << 21,
 };
-ENUM_OPERATORS(ShaderGroups, VOLUME_PROBE_SHADERS)
+ENUM_OPERATORS(ShaderGroups)
 
 /**
  * Shader module. shared between instances.

@@ -853,6 +853,7 @@ class TOPBAR_MT_primitives(Menu):
                     row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
                     row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
                     row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+                    row.operator("object.lattice_add_to_selected", text="", icon='OBJECT_LATTICE')
                     row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA').rotation = (1.5708, 0.0, 0.0)
                     row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
@@ -991,6 +992,7 @@ class TOPBAR_MT_primitives(Menu):
                         row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
                         row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
                         row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+                        row.operator("object.lattice_add_to_selected", text="", icon='OBJECT_LATTICE')
                         row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA').rotation = (1.5708, 0.0, 0.0)
                         row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
@@ -1238,7 +1240,7 @@ class TOPBAR_MT_image(Menu):
                     row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
                     sub = row.row()
                     sub.active = (mode == 'EDIT')
-                    sub.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
+                    sub.operator("uv.copy_mirrored_faces", text="", icon ="COPYMIRRORED")
                     #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
 
 

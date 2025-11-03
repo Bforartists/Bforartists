@@ -9,6 +9,7 @@
 #include <type_traits>
 
 #include "BLI_array.hh"
+#include "BLI_map.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
@@ -189,11 +190,15 @@ struct CustomSocketDrawParams {
   bNodeSocket &socket;
   PointerRNA node_ptr;
   PointerRNA socket_ptr;
+  StringRefNull label;
+  const Map<const bNode *, const bNode *> *menu_switch_source_by_index_switch = nullptr;
+
+  void draw_standard(uiLayout &layout, std::optional<StringRefNull> label_override = std::nullopt);
 };
 
 using CustomSocketDrawFn = std::function<void(CustomSocketDrawParams &params)>;
-using InputSocketUsageInferenceFn = std::function<std::optional<bool>(
-    const socket_usage_inference::InputSocketUsageParams &params)>;
+using SocketUsageInferenceFn =
+    std::function<std::optional<bool>(const socket_usage_inference::SocketUsageParams &params)>;
 
 /**
  * Describes a single input or output socket. This is subclassed for different socket types.
@@ -210,7 +215,11 @@ class SocketDeclaration : public ItemDeclaration {
   eNodeSocketInOut in_out;
   /** Socket type that corresponds to this socket declaration. */
   eNodeSocketDatatype socket_type;
-  bool hide_label = false;
+  /**
+   * Indicates that the meaning of the socket values is clear even if the label is not shown. This
+   * can result in cleaner UIs in some cases. The drawing code will still draw the label sometimes.
+   */
+  bool optional_label = false;
   bool hide_value = false;
   bool compact = false;
   bool is_multi_input = false;
@@ -223,6 +232,7 @@ class SocketDeclaration : public ItemDeclaration {
   /** This socket is used as a toggle for the parent panel. */
   bool is_panel_toggle = false;
   bool is_layer_name = false;
+  bool is_volume_grid_name = false;
 
   /** Index in the list of inputs or outputs of the node. */
   int index = -1;
@@ -246,7 +256,7 @@ class SocketDeclaration : public ItemDeclaration {
 
  public:
   /** Some input sockets can have non-trivial values in the case when they are unlinked. */
-  NodeDefaultInputType default_input_type;
+  NodeDefaultInputType default_input_type = NodeDefaultInputType::NODE_DEFAULT_INPUT_VALUE;
   /**
    * Property that stores the name of the socket so that it can be modified directly from the
    * node without going to the side-bar.
@@ -257,10 +267,10 @@ class SocketDeclaration : public ItemDeclaration {
    */
   std::unique_ptr<CustomSocketDrawFn> custom_draw_fn;
   /**
-   * Determines whether this input socket is used based on other input values and based on which
-   * outputs are used.
+   * Determines whether this socket is used based on other input values and based on which outputs
+   * are used.
    */
-  std::unique_ptr<InputSocketUsageInferenceFn> usage_inference_fn;
+  std::unique_ptr<SocketUsageInferenceFn> usage_inference_fn;
 
   friend NodeDeclarationBuilder;
   friend class BaseSocketDeclarationBuilder;
@@ -311,7 +321,7 @@ class BaseSocketDeclarationBuilder {
  public:
   virtual ~BaseSocketDeclarationBuilder() = default;
 
-  BaseSocketDeclarationBuilder &hide_label(bool value = true);
+  BaseSocketDeclarationBuilder &optional_label(bool value = true);
 
   BaseSocketDeclarationBuilder &hide_value(bool value = true);
 
@@ -417,10 +427,10 @@ class BaseSocketDeclarationBuilder {
   BaseSocketDeclarationBuilder &custom_draw(CustomSocketDrawFn fn);
 
   /**
-   * Provide a function that determines whether this input socket is used based on other input
-   * values and based on which outputs are used.
+   * Provide a function that determines whether this socket is used based on other input values and
+   * based on which outputs are used.
    */
-  BaseSocketDeclarationBuilder &usage_inference(InputSocketUsageInferenceFn fn);
+  BaseSocketDeclarationBuilder &usage_inference(SocketUsageInferenceFn fn);
 
   /**
    * Utility method for the case when the node has a single menu input and this socket is only used
@@ -465,6 +475,7 @@ class BaseSocketDeclarationBuilder {
   BaseSocketDeclarationBuilder &structure_type(StructureType structure_type);
 
   BaseSocketDeclarationBuilder &is_layer_name(bool value = true);
+  BaseSocketDeclarationBuilder &is_volume_grid_name(bool value = true);
 
   /** Index in the list of inputs or outputs. */
   int index() const;

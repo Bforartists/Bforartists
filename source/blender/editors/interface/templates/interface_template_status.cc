@@ -400,10 +400,14 @@ static std::string ui_template_status_tooltip(bContext *C,
 
   if (bmain->has_forward_compatibility_issues) {
     char writer_ver_str[12];
+    char bfa_writer_ver_str[12];
+    BKE_bforartists_version_blendfile_string_from_blender(
+        bfa_writer_ver_str, sizeof(bfa_writer_ver_str), bmain->versionfile, true);
     BKE_blender_version_blendfile_string_from_values(
-        writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, -1);
+      writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, -1);
     tooltip_message += fmt::format(
-        fmt::runtime(RPT_("File saved by newer Blender\n({}), expect loss of data")),
+        fmt::runtime(RPT_("File saved by newer Bforartists {}\n(Blender {}), expect loss of data")),
+        bfa_writer_ver_str,
         writer_ver_str);
   }
   if (bmain->is_asset_edit_file) {
@@ -411,7 +415,7 @@ static std::string ui_template_status_tooltip(bContext *C,
       tooltip_message += "\n\n";
     }
     tooltip_message += RPT_(
-        "This file is managed by the Blender asset system and cannot be overridden");
+        "This file is managed by the Bforartists asset system and cannot be overridden");
   }
   if (bmain->colorspace.is_missing_opencolorio_config) {
     if (!tooltip_message.empty()) {
@@ -432,7 +436,7 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
   uiLayout *row = &layout->row(true);
 
   const char *status_info_txt = ED_info_statusbar_string_ex(
-      bmain, scene, view_layer, (U.statusbar_flag & ~STATUSBAR_SHOW_VERSION));
+      bmain, scene, view_layer, (U.statusbar_flag & ~STATUSBAR_SHOW_VERSION & ~STATUSBAR_SHOW_BLENDER_VERSION));
   /* True when the status is populated (delimiters required for following items). */
   bool has_status_info = false;
 
@@ -516,6 +520,22 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
       row->separator(1.0f);
       has_status_info = true;
     }
+  }
+  /* Do Blender version */
+  if (U.statusbar_flag & STATUSBAR_SHOW_BLENDER_VERSION) {
+      if (has_status_info) {
+        row->separator(-0.5f);
+        row->label("|", ICON_NONE);
+        row->separator(-0.5f);
+      }
+      char status_info_d_txt[256];
+      SNPRINTF(status_info_d_txt,
+             RPT_("Blender Version: %s sub %s"),
+             BKE_blender_version_string(),
+             BKE_bforartists_sub_version_string()
+      );
+      row->label(status_info_d_txt, ICON_NONE);
+      has_status_info = true;
   }
 
   if (!BKE_main_has_issues(bmain)) {

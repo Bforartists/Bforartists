@@ -167,6 +167,14 @@ typedef struct WalkNavigation {
   char _pad0[6];
 } WalkNavigation;
 
+typedef struct XrNavigation {
+  float vignette_intensity;
+  float turn_speed;
+  float turn_amount;
+  short flag;
+  char _pad0[2];
+} XrNavigation;
+
 typedef struct UserDef_Runtime {
   /** Mark as changed so the preferences are saved on exit. */
   char is_dirty;
@@ -224,13 +232,13 @@ typedef struct UserDef_Experimental {
   char use_extensions_debug;
   char use_recompute_usercount_on_save_debug;
   char write_legacy_blend_file_format;
+  char no_data_block_packing;
   char SANITIZE_AFTER_HERE;
   /* The following options are automatically sanitized (set to 0)
    * when the release cycle is not alpha. */
   char use_new_curves_tools;
   char use_extended_asset_browser;
   char use_sculpt_texture_paint;
-  char use_new_volume_nodes;
   char use_shader_node_previews;
   char use_geometry_nodes_lists;
   char _pad[6];
@@ -506,7 +514,7 @@ typedef struct UserDef {
 
   char _pad16[2];
 
-  /** #eGPUBackendType */
+  /** #GPUBackendType */
   short gpu_backend;
 
   /** Number of samples for FPS display calculations. */
@@ -625,6 +633,7 @@ typedef struct UserDef {
   char statusbar_flag;    /* eUserpref_StatusBar_Flag */
 
   struct WalkNavigation walk_navigation;
+  struct XrNavigation xr_navigation;
 
   /** The UI for the user preferences. */
   UserDef_SpaceData space_data;
@@ -638,8 +647,8 @@ typedef struct UserDef {
   /* == BFA - GOO ENGINE - CUSTOM FIELDS ALWAYS BELOW! == */
   float viewport_line_width;    /* BFA - GooEngine */
   int outliner_editor_flag;     /* BFA - eUserpref_OutlinerEditorFlags */
-
-  char _pad_custom[8];          /* BFA - for future alignment/padding if needed */
+  float node_color_blend;       /* BFA - Node Color Blend */
+  char _pad_custom[4];          /* BFA - for future alignment/padding if needed */
 
   /** Runtime data (keep last). */
   UserDef_Runtime runtime;
@@ -690,7 +699,7 @@ typedef enum eUserPref_Flag {
   USER_AUTOSAVE = (1 << 0),
   USER_FLAG_NUMINPUT_ADVANCED = (1 << 1),
   USER_FLAG_RECENT_SEARCHES_DISABLE = (1 << 2),
-  USER_FLAG_UNUSED_3 = (1 << 3), /* cleared */
+  USER_MENU_CLOSE_LEAVE = (1 << 3),
   USER_FLAG_UNUSED_4 = (1 << 4), /* cleared */
   USER_TRACKBALL = (1 << 5),
   USER_FLAG_UNUSED_6 = (1 << 6), /* cleared */
@@ -844,7 +853,7 @@ typedef enum eUserpref_GPU_Flag {
 } eUserpref_GPU_Flag;
 
 /** #UserDef.gpu_backend
- * NOTE: Keep in sync with eGPUBackendType. */
+ * NOTE: Keep in sync with GPUBackendType. */
 enum eUserPref_GPUBackendType {
   USER_GPU_BACKEND_OPENGL = 1 << 0,
   USER_GPU_BACKEND_METAL = 1 << 1,
@@ -878,6 +887,7 @@ typedef enum eUserpref_StatusBar_Flag {
   STATUSBAR_SHOW_VERSION = (1 << 3),
   STATUSBAR_SHOW_SCENE_DURATION = (1 << 4),
   STATUSBAR_SHOW_EXTENSIONS_UPDATES = (1 << 5),
+  STATUSBAR_SHOW_BLENDER_VERSION = (1 << 6), // bfa blender version
 } eUserpref_StatusBar_Flag;
 
 /**
@@ -947,6 +957,12 @@ typedef enum eUserpref_Anim_Flags {
   USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS = (1 << 1),
   USER_ANIM_HIGH_QUALITY_DRAWING = (1 << 2),
 } eUserpref_Anim_Flags;
+
+typedef enum eFixToCam_Flags {
+  FIX_TO_CAM_FLAG_USE_LOC = (1 << 0),
+  FIX_TO_CAM_FLAG_USE_ROT = (1 << 1),
+  FIX_TO_CAM_FLAG_USE_SCALE = (1 << 2),
+} eFixToCam_Flags;
 
 /** #UserDef.transopts */
 typedef enum eUserpref_Translation_Flags {
@@ -1123,6 +1139,12 @@ typedef enum eUserpref_FactorDisplay {
   USER_FACTOR_AS_FACTOR = 0,
   USER_FACTOR_AS_PERCENTAGE = 1,
 } eUserpref_FactorDisplay;
+
+/** #UserDef.xr_navigation_flag */
+typedef enum eUserpref_XrNavigationFlags {
+  USER_XR_NAV_SNAP_TURN = (1 << 0),
+  USER_XR_NAV_INVERT_ROTATION = (1 << 1),
+} eUserpref_XrNavigationFlags;
 
 typedef enum eUserpref_RenderDisplayType {
   USER_RENDER_DISPLAY_NONE = 0,

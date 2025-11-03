@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "BLI_utildefines.h"
+#include "BLI_enum_flags.hh"
 
 #include "DNA_asset_types.h"
 #include "DNA_defs.h"
@@ -685,7 +685,6 @@ enum {
 enum {
   UILST_LAYOUT_DEFAULT = 0,
   UILST_LAYOUT_COMPACT = 1,
-  UILST_LAYOUT_GRID = 2,
   UILST_LAYOUT_BIG_PREVIEW_GRID = 3,
 };
 
@@ -900,8 +899,13 @@ typedef enum AssetShelfImportMethod {
    * heavy data dependencies (e.g. the image data-blocks of a material, the mesh of an object) may
    * be reused from an earlier append. */
   SHELF_ASSET_IMPORT_APPEND_REUSE = 2,
-  /** Default: Follow the preference setting for this asset library. */
-  SHELF_ASSET_IMPORT_LINK_OVERRIDE = 3,
+  /**
+   * Link the data-block, but also pack it in the current file to keep it working even if the
+   * source file is not available anymore.
+   */
+  SHELF_ASSET_IMPORT_PACK = 3,
+  /** BFA only data-block linking with make override. */
+  SHELF_ASSET_IMPORT_LINK_OVERRIDE = 4,
 } AssetShelfImportMethod;
 
 // See eFileAssetImportFlags
@@ -958,7 +962,7 @@ typedef struct RegionAssetShelf {
 typedef enum AssetShelfSettings_DisplayFlag {
   ASSETSHELF_SHOW_NAMES = (1 << 0),
 } AssetShelfSettings_DisplayFlag;
-ENUM_OPERATORS(AssetShelfSettings_DisplayFlag, ASSETSHELF_SHOW_NAMES);
+ENUM_OPERATORS(AssetShelfSettings_DisplayFlag);
 
 /* #AssetShelfSettings.instance_flag */
 typedef enum AssetShelf_InstanceFlag {
@@ -969,7 +973,7 @@ typedef enum AssetShelf_InstanceFlag {
    */
   ASSETSHELF_REGION_IS_HIDDEN = (1 << 0),
 } AssetShelf_InstanceFlag;
-ENUM_OPERATORS(AssetShelf_InstanceFlag, ASSETSHELF_REGION_IS_HIDDEN);
+ENUM_OPERATORS(AssetShelf_InstanceFlag);
 
 typedef struct FileHandler {
   DNA_DEFINE_CXX_METHODS(FileHandler)

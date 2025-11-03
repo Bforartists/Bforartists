@@ -76,7 +76,7 @@
 #include "BKE_bpath.hh"
 #include "BKE_colortools.hh"
 #include "BKE_global.hh"
-#include "BKE_icons.h"
+#include "BKE_icons.hh"
 #include "BKE_idtype.hh"
 #include "BKE_image.hh"
 #include "BKE_image_format.hh"
@@ -2569,7 +2569,7 @@ bool BKE_imbuf_write(ImBuf *ibuf, const char *filepath, const ImageFormatData *i
   BKE_image_format_to_imbuf(ibuf, imf);
 
   const bool ok = IMB_save_image(ibuf, filepath, IB_byte_data);
-  if (ok == 0) {
+  if (!ok && errno != 0) {
     perror(filepath);
   }
 
@@ -3945,12 +3945,12 @@ static void image_create_multilayer(Image *ima, ImBuf *ibuf, int framenr)
 
   /* only load rr once for multiview */
   if (!ima->rr) {
-    ima->rr = RE_MultilayerConvert(ibuf->userdata, colorspace, predivide, ibuf->x, ibuf->y);
+    ima->rr = RE_MultilayerConvert(ibuf->exrhandle, colorspace, predivide, ibuf->x, ibuf->y);
   }
 
-  IMB_exr_close(ibuf->userdata);
+  IMB_exr_close(ibuf->exrhandle);
 
-  ibuf->userdata = nullptr;
+  ibuf->exrhandle = nullptr;
   if (ima->rr != nullptr) {
     ima->rr->framenr = framenr;
     BKE_stamp_info_from_imbuf(ima->rr, ibuf);
@@ -4217,10 +4217,10 @@ static ImBuf *load_image_single(Image *ima,
 
   if (ibuf) {
 #ifdef WITH_IMAGE_OPENEXR
-    if (ibuf->ftype == IMB_FTYPE_OPENEXR && ibuf->userdata) {
+    if (ibuf->ftype == IMB_FTYPE_OPENEXR && ibuf->exrhandle) {
       /* Handle multilayer and multiview cases, don't assign ibuf here.
        * will be set layer in BKE_image_acquire_ibuf from ima->rr. */
-      if (IMB_exr_has_multilayer(ibuf->userdata)) {
+      if (IMB_exr_has_multilayer(ibuf->exrhandle)) {
         image_create_multilayer(ima, ibuf, cfra);
         ima->type = IMA_TYPE_MULTILAYER;
         IMB_freeImBuf(ibuf);

@@ -44,7 +44,7 @@ enum OVERLAY_GridBits : uint32_t {
   CUSTOM_GRID = (1u << 12u),
 };
 #ifndef GPU_SHADER
-ENUM_OPERATORS(OVERLAY_GridBits, CUSTOM_GRID)
+ENUM_OPERATORS(OVERLAY_GridBits)
 #endif
 
 enum VertexClass : uint32_t {
@@ -70,7 +70,7 @@ enum VertexClass : uint32_t {
   VCLASS_EMPTY_SIZE = 1 << 14,
 };
 #ifndef GPU_SHADER
-ENUM_OPERATORS(VertexClass, VCLASS_EMPTY_SIZE)
+ENUM_OPERATORS(VertexClass)
 #endif
 
 enum StickBoneFlag : uint32_t {
@@ -83,7 +83,7 @@ enum StickBoneFlag : uint32_t {
   POS_BONE = (1u << 6u),
 };
 #ifndef GPU_SHADER
-ENUM_OPERATORS(StickBoneFlag, POS_BONE)
+ENUM_OPERATORS(StickBoneFlag)
 #endif
 
 /* TODO(fclem): Convert into enum. */
@@ -234,7 +234,6 @@ struct ThemeColors {
   float4 nurb_vline;
   float4 nurb_sel_uline;
   float4 nurb_sel_vline;
-  float4 active_spline;
 
   float4 bone_pose;
   float4 bone_pose_active;
@@ -407,7 +406,7 @@ struct BoneEnvelopeData {
         tail_sphere(tail_sphere),
         bone_color_and_wire_width(bone_color, 0.0f),
         state_color(state_color, 0.0f),
-        x_axis(x_axis, 0.0f){};
+        x_axis(x_axis, 0.0f) {};
 
   /* For bone outlines. */
   BoneEnvelopeData(float4 &head_sphere,
@@ -417,11 +416,11 @@ struct BoneEnvelopeData {
       : head_sphere(head_sphere),
         tail_sphere(tail_sphere),
         bone_color_and_wire_width(color_and_wire_width),
-        x_axis(x_axis, 0.0f){};
+        x_axis(x_axis, 0.0f) {};
 
   /* For bone distance volumes. */
   BoneEnvelopeData(float4 &head_sphere, float4 &tail_sphere, float3 &x_axis)
-      : head_sphere(head_sphere), tail_sphere(tail_sphere), x_axis(x_axis, 0.0f){};
+      : head_sphere(head_sphere), tail_sphere(tail_sphere), x_axis(x_axis, 0.0f) {};
 #endif
 };
 BLI_STATIC_ASSERT_ALIGN(BoneEnvelopeData, 16)
@@ -449,7 +448,7 @@ struct BoneStickData {
         wire_color(wire_color),
         bone_color(bone_color),
         head_color(head_color),
-        tail_color(tail_color){};
+        tail_color(tail_color) {};
 #endif
 };
 BLI_STATIC_ASSERT_ALIGN(BoneStickData, 16)

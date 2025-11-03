@@ -229,7 +229,7 @@ static void sequencer_generic_invoke_path__internal(bContext *C,
       Main *bmain = CTX_data_main(C);
       char dirpath[FILE_MAX];
       STRNCPY(dirpath, last_strip->data->dirpath);
-      BLI_path_abs(dirpath, BKE_main_blendfile_path(bmain));
+      BLI_path_abs(dirpath, ID_BLEND_PATH(bmain, &scene->id));
       RNA_string_set(op->ptr, identifier, dirpath);
     }
   }
@@ -797,13 +797,23 @@ void SEQUENCER_OT_scene_strip_add_new(wmOperatorType *ot)
 /** \name Add Scene Strip From Scene Asset
  * \{ */
 
+/**
+ * Make sure the scene is always unique and ready to edit.
+ * If it was local it should be duplicated. If external it should be appended.
+ */
 static Scene *sequencer_add_scene_asset(const bContext &C,
                                         const asset_system::AssetRepresentation &asset,
                                         ReportList & /*reports*/)
 {
   Main &bmain = *CTX_data_main(&C);
   Scene *scene_asset = reinterpret_cast<Scene *>(
-      asset::asset_local_id_ensure_imported(bmain, asset));
+      asset::asset_local_id_ensure_imported(bmain, asset, ASSET_IMPORT_APPEND));
+
+  if (asset.is_local_id()) {
+    /* Local scene that needs to be duplicated. */
+    Scene *scene_copy = BKE_scene_duplicate(&bmain, scene_asset, SCE_COPY_FULL);
+    return scene_copy;
+  }
   return scene_asset;
 }
 
@@ -2041,8 +2051,6 @@ static std::string sequencer_add_effect_strip_get_description(bContext * /*C*/,
       return TIP_("Add a wipe transition strip for two selected strips with video content");
     case STRIP_TYPE_GLOW:
       return TIP_("Add a glow effect strip for a single selected strip with video content");
-    case STRIP_TYPE_TRANSFORM:
-      return TIP_("Add a transform effect strip for a single selected strip with video content");
     case STRIP_TYPE_COLOR:
       return TIP_("Add a color strip to the sequencer");
     case STRIP_TYPE_SPEED:

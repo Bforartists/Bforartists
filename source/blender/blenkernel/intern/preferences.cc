@@ -63,7 +63,9 @@ bUserAssetLibrary *BKE_preferences_asset_library_add(UserDef *userdef,
   bUserAssetLibrary *library = DNA_struct_default_alloc(bUserAssetLibrary);
 
   BLI_addtail(&userdef->asset_libraries, library);
-
+  if (userdef->experimental.no_data_block_packing) {
+    library->import_method = ASSET_IMPORT_APPEND_REUSE;
+  }
   if (name) {
     BKE_preferences_asset_library_name_set(userdef, library, name);
   }
@@ -141,9 +143,9 @@ void BKE_preferences_asset_library_default_add(UserDef *userdef)
   bUserAssetLibrary *library = BKE_preferences_asset_library_add(
       userdef, DATA_(BKE_PREFS_ASSET_LIBRARY_DEFAULT_NAME), nullptr);
 
-  /* Add new "Default" library under '[doc_path]/Blender/Assets'. */
+  /* Add new "Default" library under '[doc_path]/Bforartists/Assets'. */
   BLI_path_join(
-      library->dirpath, sizeof(library->dirpath), documents_path, N_("Blender"), N_("Assets"));
+      library->dirpath, sizeof(library->dirpath), documents_path, N_("Bforartists"), N_("Assets")); /* bfa - our name */
 }
 
 /** \} */

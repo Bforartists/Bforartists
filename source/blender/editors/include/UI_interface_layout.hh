@@ -7,6 +7,7 @@
 #include <functional>
 #include <optional>
 
+#include "BLI_enum_flags.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_utility_mixins.hh"
@@ -74,6 +75,9 @@ struct uiItem {
 
   [[nodiscard]] blender::ui::ItemType type() const;
 
+  [[nodiscard]] blender::int2 size() const;
+  [[nodiscard]] blender::int2 offset() const;
+
  protected:
   blender::ui::ItemInternalFlag flag_ = {};
   blender::ui::ItemType type_ = {};
@@ -89,6 +93,11 @@ enum class LayoutSeparatorType : int8_t {
   Line,
 };
 
+enum class NodeAssetMenuOperatorType : int8_t {
+  Add,
+  Swap,
+};
+
 /**
  * NOTE: `uiLayout` properties should be considered private outside `interface_layout.cc`,
  * incoming refactors would remove public access and add public read/write function methods.
@@ -97,7 +106,6 @@ enum class LayoutSeparatorType : int8_t {
 struct uiLayout : public uiItem, blender::NonCopyable, blender::NonMovable {
   // protected:
 
-  int x_ = 0, y_ = 0, w_ = 0, h_ = 0;
   short space_ = 0;
 
  protected:
@@ -110,6 +118,8 @@ struct uiLayout : public uiItem, blender::NonCopyable, blender::NonMovable {
 
   /** Sub layout to add child items, if not the layout itself. */
   uiLayout *child_items_layout_ = nullptr;
+
+  int x_ = 0, y_ = 0, w_ = 0, h_ = 0;
 
   float scale_[2] = {0.0f, 0.0f};
   bool align_ = false;
@@ -623,11 +633,14 @@ struct uiLayout : public uiItem, blender::NonCopyable, blender::NonMovable {
    * would suggest values from the search property collection.
    * \param searchprop: Collection property in \a searchptr from where to take input values.
    * \param results_are_suggestions: Allow inputs that not match any suggested value.
+   * \param item_searchpropname: The name of the string property in the collection items to use for
+   *        searching (if unset, code will use RNA_struc.
    */
   void prop_search(PointerRNA *ptr,
                    PropertyRNA *prop,
                    PointerRNA *searchptr,
                    PropertyRNA *searchprop,
+                   PropertyRNA *item_searchpropname,
                    std::optional<blender::StringRefNull> name,
                    int icon,
                    bool results_are_suggestions);
@@ -690,10 +703,14 @@ struct uiLayout : public uiItem, blender::NonCopyable, blender::NonMovable {
   [[nodiscard]] bool align() const;
   [[nodiscard]] bool variable_size() const;
   [[nodiscard]] blender::ui::EmbossType emboss_or_undefined() const;
+  [[nodiscard]] blender::int2 size() const;
+  [[nodiscard]] blender::int2 offset() const;
 
  protected:
   void estimate();
   virtual void estimate_impl();
+  void resolve();
+  virtual void resolve_impl();
 };
 
 inline bool uiLayout::active() const
@@ -890,7 +907,7 @@ enum eUI_Item_Flag : uint16_t {
    */
   UI_ITEM_R_TEXT_BUT_FORCE_SEMI_MODAL_ACTIVE = 1 << 15,
 };
-ENUM_OPERATORS(eUI_Item_Flag, UI_ITEM_R_TEXT_BUT_FORCE_SEMI_MODAL_ACTIVE)
+ENUM_OPERATORS(eUI_Item_Flag)
 #define UI_ITEM_NONE eUI_Item_Flag(0)
 
 /**

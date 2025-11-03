@@ -11,6 +11,7 @@
 #include <functional>
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_enum_flags.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
@@ -504,16 +505,16 @@ struct ColorPicker {
   bool is_init;
 
   /**
-   * HSV or HSL in color picker space used for number sliders. This is the same
-   * colorspace as the rgb slider for a clear correspondence.
+   * HSV or HSL in color picker space used for number sliders.
    */
-  float hsv_slider[3];
+  float hsv_perceptual_slider[3];
+  float hsv_linear_slider[3];
 
   /*
    * RGB in color picker used for number sliders, when the space is not scene linear.
    * When it is linear, the RNA property is used directly so that keyframing works.
    */
-  float rgb_slider[3];
+  float rgb_perceptual_slider[3];
 
   /* Hex Color string */
   char hexcol[128];
@@ -564,7 +565,7 @@ enum uiButtonGroupFlag {
   /** The buttons in this group are inside a panel header. */
   UI_BUTTON_GROUP_PANEL_HEADER = (1 << 1),
 };
-ENUM_OPERATORS(uiButtonGroupFlag, UI_BUTTON_GROUP_PANEL_HEADER);
+ENUM_OPERATORS(uiButtonGroupFlag);
 
 /**
  * A group of button references, used by property search to keep track of sets of buttons that
@@ -756,6 +757,8 @@ void ui_window_to_region(const ARegion *region, int *x, int *y);
 void ui_window_to_region_rcti(const ARegion *region, rcti *rect_dst, const rcti *rct_src);
 void ui_window_to_region_rctf(const ARegion *region, rctf *rect_dst, const rctf *rct_src);
 void ui_region_to_window(const ARegion *region, int *x, int *y);
+void ui_region_to_window(
+    const ARegion *region, int region_x, int region_y, int *r_window_x, int *r_window_y);
 /**
  * Popups will add a margin to #ARegion.winrct for shadow,
  * for interactivity (point-inside tests for eg), we want the winrct without the margin added.
@@ -909,7 +912,7 @@ struct uiKeyNavLock {
   blender::int2 event_xy = blender::int2(0);
 };
 
-using uiBlockHandleCreateFunc = uiBlock *(*)(bContext *C, uiPopupBlockHandle *handle, void *arg1);
+using uiBlockHandleCreateFunc = uiBlock *(*)(bContext * C, uiPopupBlockHandle *handle, void *arg1);
 
 struct uiPopupBlockCreate {
   uiBlockCreateFunc create_func = nullptr;
@@ -1438,6 +1441,7 @@ uiBut *ui_but_add_search(uiBut *but,
                          PropertyRNA *prop,
                          PointerRNA *searchptr,
                          PropertyRNA *searchprop,
+                         PropertyRNA *item_searchprop,
                          bool results_are_suggestions);
 /**
  * Check all buttons defined in this layout,
@@ -1547,7 +1551,6 @@ uiBut *ui_but_find_mouse_over_ex(const ARegion *region,
                                  const uiButFindPollFn find_poll,
                                  const void *find_custom_data)
     ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
-uiBut *ui_but_find_mouse_over(const ARegion *region, const wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 uiBut *ui_but_find_rect_over(const ARegion *region, const rcti *rect_px) ATTR_WARN_UNUSED_RESULT;
 
 uiBut *ui_list_find_mouse_over_ex(const ARegion *region, const int xy[2])
@@ -1641,6 +1644,7 @@ struct uiRNACollectionSearch {
 
   PointerRNA search_ptr;
   PropertyRNA *search_prop;
+  PropertyRNA *item_search_prop;
 
   uiBut *search_but;
   /** Let `UI_butstore_*` API update search_but pointer above over redraws. */

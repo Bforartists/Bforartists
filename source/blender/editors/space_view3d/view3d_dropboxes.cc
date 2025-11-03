@@ -404,9 +404,6 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
   if (use_override) {  
     ID *owner_id = id; 
     ID *id_or = id;
-    /* BFA - WIP - removed for warning?*/
-    //PointerRNA owner_ptr;
-    //PropertyRNA *prop;
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
       C, CTX_data_main(C), owner_id, id_or, nullptr);
@@ -577,7 +574,6 @@ static void view3d_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
 
   WM_operator_properties_id_lookup_set_from_id(drop->ptr, id);
-  RNA_boolean_set(drop->ptr, "show_datablock_in_modifier", (drag->type != WM_DRAG_ASSET));
 }
 
 static void view3d_geometry_nodes_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)

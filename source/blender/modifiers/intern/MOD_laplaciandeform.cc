@@ -638,7 +638,7 @@ static int isSystemDifferent(LaplacianDeformModifierData *lmd,
 static void LaplacianDeformModifier_do(
     LaplacianDeformModifierData *lmd, Object *ob, Mesh *mesh, float (*vertexCos)[3], int verts_num)
 {
-  float(*filevertexCos)[3];
+  float (*filevertexCos)[3];
   int sysdif;
   LaplacianSystem *sys = nullptr;
   filevertexCos = nullptr;
@@ -768,7 +768,7 @@ static void deform_verts(ModifierData *md,
   LaplacianDeformModifier_do((LaplacianDeformModifierData *)md,
                              ctx->object,
                              mesh,
-                             reinterpret_cast<float(*)[3]>(positions.data()),
+                             reinterpret_cast<float (*)[3]>(positions.data()),
                              positions.size());
 }
 
@@ -832,14 +832,14 @@ static void blend_write(BlendWriter *writer, const ID *id_owner, const ModifierD
     }
   }
 
-  BLO_write_struct_at_address(writer, LaplacianDeformModifierData, md, &lmd);
-
   if (lmd.vertexco != nullptr) {
     BLO_write_shared(
         writer, lmd.vertexco, sizeof(float[3]) * lmd.verts_num, lmd.vertexco_sharing_info, [&]() {
           BLO_write_float3_array(writer, lmd.verts_num, lmd.vertexco);
         });
   }
+
+  BLO_write_struct_at_address(writer, LaplacianDeformModifierData, md, &lmd);
 }
 
 static void blend_read(BlendDataReader *reader, ModifierData *md)

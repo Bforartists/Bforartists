@@ -8,6 +8,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_array_utils.hh"
 #include "DNA_node_types.h"
 
 #include "BLI_easing.h"
@@ -40,8 +41,10 @@
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
 
+#include "NOD_geo_viewer.hh"
 #include "NOD_node_declaration.hh"
 #include "NOD_socket.hh"
+#include "NOD_socket_items.hh"
 
 #include "node_intern.hh" /* own include */
 
@@ -455,21 +458,93 @@ static bool socket_can_be_viewed(const bNodeSocket &socket)
   if (STREQ(socket.idname, "NodeSocketVirtual")) {
     return false;
   }
-  if (socket.owner_tree().type != NTREE_GEOMETRY) {
-    return true;
-  }
-  return ELEM(socket.typeinfo->type,
-              SOCK_GEOMETRY,
-              SOCK_FLOAT,
-              SOCK_VECTOR,
-              SOCK_INT,
-              SOCK_BOOLEAN,
-              SOCK_ROTATION,
-              SOCK_MATRIX,
-              SOCK_RGBA,
-              SOCK_MENU);
+  return true;
 }
 
+static void ensure_geometry_nodes_viewer_starts_with_geometry_socket(bNodeTree &tree,
+                                                                     bNode &viewer_node)
+{
+  const auto &storage = *static_cast<const NodeGeometryViewer *>(viewer_node.storage);
+  if (storage.items_num >= 1) {
+    const NodeGeometryViewerItem &first_item = storage.items[0];
+    if (first_item.socket_type == SOCK_GEOMETRY) {
+      return;
+    }
+  }
+  std::optional<int> existing_geometry_index;
+  for (const int i : IndexRange(storage.items_num)) {
+    const NodeGeometryViewerItem &item = storage.items[i];
+    if (item.socket_type == SOCK_GEOMETRY) {
+      existing_geometry_index = i;
+      break;
+    }
+  }
+  if (existing_geometry_index) {
+    BLI_assert(*existing_geometry_index >= 1);
+    dna::array::move_index(storage.items, storage.items_num, *existing_geometry_index, 0);
+    return;
+  }
+  nodes::socket_items::add_item_with_socket_type_and_name<nodes::GeoViewerItemsAccessor>(
+      tree, viewer_node, SOCK_GEOMETRY, "Geometry");
+  dna::array::move_index(storage.items, storage.items_num, storage.items_num - 1, 0);
+}
+
+static int ensure_geometry_nodes_viewer_has_non_geometry_socket(
+    bNodeTree &ntree, bNode &viewer_node, const eNodeSocketDatatype socket_type)
+{
+  const auto &storage = *static_cast<const NodeGeometryViewer *>(viewer_node.storage);
+  if (storage.items_num == 0) {
+    nodes::socket_items::add_item_with_socket_type_and_name<nodes::GeoViewerItemsAccessor>(
+        ntree, viewer_node, socket_type, IFACE_("Value"));
+    return 0;
+  }
+  if (storage.items_num == 1 && storage.items[0].socket_type != SOCK_GEOMETRY) {
+    storage.items[0].socket_type = socket_type;
+    return 0;
+  }
+  if (storage.items_num == 1 && storage.items[0].socket_type == SOCK_GEOMETRY) {
+    nodes::socket_items::add_item_with_socket_type_and_name<nodes::GeoViewerItemsAccessor>(
+        ntree, viewer_node, socket_type, IFACE_("Value"));
+    return 1;
+  }
+  if (storage.items_num == 2 && storage.items[0].socket_type == SOCK_GEOMETRY &&
+      storage.items[1].socket_type != SOCK_GEOMETRY)
+  {
+    storage.items[1].socket_type = socket_type;
+    return 1;
+  }
+  std::optional<int> existing_geometry_index;
+  for (const int i : IndexRange(storage.items_num)) {
+    if (storage.items[i].socket_type == SOCK_GEOMETRY) {
+      existing_geometry_index = i;
+      break;
+    }
+  }
+  if (existing_geometry_index) {
+    dna::array::move_index(storage.items, storage.items_num, *existing_geometry_index, 0);
+    storage.items[1].socket_type = socket_type;
+    MEM_SAFE_FREE(storage.items[1].name);
+    storage.items[1].name = BLI_strdup(IFACE_("Value"));
+    return 1;
+  }
+  storage.items[0].socket_type = socket_type;
+  MEM_SAFE_FREE(storage.items[0].name);
+  storage.items[0].name = BLI_strdup(IFACE_("Value"));
+  return 0;
+}
+
+static std::string get_viewer_source_name(const bNodeSocket &socket)
+{
+  const bNode &node = socket.owner_node();
+  if (node.is_reroute()) {
+    const bNodeSocket &reroute_input = node.input_socket(0);
+    if (!reroute_input.is_logically_linked()) {
+      return IFACE_(socket.typeinfo->label);
+    }
+    return reroute_input.logically_linked_sockets()[0]->name;
+  }
+  return socket.name;
+}
 /**
  * Find the socket to link to in a viewer node.
  */
@@ -481,25 +556,31 @@ static bNodeSocket *node_link_viewer_get_socket(bNodeTree &ntree,
     /* In viewer nodes in the compositor, only the first input should be linked to. */
     return (bNodeSocket *)viewer_node.inputs.first;
   }
-  /* For the geometry nodes viewer, find the socket with the correct type. */
-
-  if (src_socket.type == SOCK_GEOMETRY) {
-    return static_cast<bNodeSocket *>(viewer_node.inputs.first);
-  }
-
-  ntree.ensure_topology_cache();
-  if (!socket_can_be_viewed(src_socket)) {
+  if (!nodes::GeoViewerItemsAccessor::supports_socket_type(src_socket.typeinfo->type, ntree.type))
+  {
     return nullptr;
   }
 
-  NodeGeometryViewer &storage = *static_cast<NodeGeometryViewer *>(viewer_node.storage);
-  const eCustomDataType data_type = *bke::socket_type_to_custom_data_type(
-      eNodeSocketDatatype(src_socket.type));
-  BLI_assert(data_type != CD_AUTO_FROM_NAME);
-  storage.data_type = data_type;
-  nodes::update_node_declaration_and_sockets(ntree, viewer_node);
+  /* For the geometry nodes viewer, find the socket with the correct type. */
+  const std::string name = get_viewer_source_name(src_socket);
 
-  return static_cast<bNodeSocket *>(viewer_node.inputs.last);
+  int item_index;
+  if (src_socket.type == SOCK_GEOMETRY) {
+    ensure_geometry_nodes_viewer_starts_with_geometry_socket(ntree, viewer_node);
+    item_index = 0;
+  }
+  else {
+    item_index = ensure_geometry_nodes_viewer_has_non_geometry_socket(
+        ntree, viewer_node, src_socket.typeinfo->type);
+  }
+
+  auto &storage = *static_cast<NodeGeometryViewer *>(viewer_node.storage);
+  NodeGeometryViewerItem &item = storage.items[item_index];
+  nodes::socket_items::set_item_name_and_make_unique<nodes::GeoViewerItemsAccessor>(
+      viewer_node, item, name.c_str());
+  item.flag |= NODE_GEO_VIEWER_ITEM_FLAG_AUTO_REMOVE;
+  nodes::update_node_declaration_and_sockets(ntree, viewer_node);
+  return static_cast<bNodeSocket *>(BLI_findlink(&viewer_node.inputs, item_index));
 }
 
 static bool is_viewer_node(const bNode &node)
@@ -631,7 +712,17 @@ static void finalize_viewer_link(const bContext &C,
   viewer_node.flag |= NODE_DO_OUTPUT;
 
   if (snode.edittree->type == NTREE_GEOMETRY) {
-    viewer_path::activate_geometry_node(*bmain, snode, viewer_node);
+
+    std::optional<int> item_identifier;
+    const NodeGeometryViewerItem *item =
+        nodes::socket_items::find_item_by_identifier<nodes::GeoViewerItemsAccessor>(
+            viewer_node, viewer_link.tosock->identifier);
+    BLI_assert(item);
+    if (item) {
+      item_identifier = item->identifier;
+    }
+
+    viewer_path::activate_geometry_node(*bmain, snode, viewer_node, item_identifier);
   }
   else if (snode.edittree->type == NTREE_COMPOSIT) {
     for (bNode *node : snode.nodetree->all_nodes()) {
@@ -2031,7 +2122,7 @@ void NODE_OT_parent_set(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Join Nodes Operator
+/** \name Join Nodes in Frame Operator
  * \{ */
 
 struct NodeJoinState {
@@ -2112,7 +2203,7 @@ static const bNode *find_common_parent_node(const Span<const bNode *> nodes)
   return candidates.last();
 }
 
-static wmOperatorStatus node_join_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus node_join_in_frame_exec(bContext *C, wmOperator * /*op*/)
 {
   Main &bmain = *CTX_data_main(C);
   SpaceNode &snode = *CTX_wm_space_node(C);
@@ -2141,7 +2232,9 @@ static wmOperatorStatus node_join_exec(bContext *C, wmOperator * /*op*/)
   return OPERATOR_FINISHED;
 }
 
-static wmOperatorStatus node_join_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static wmOperatorStatus node_join_in_frame_invoke(bContext *C,
+                                                  wmOperator *op,
+                                                  const wmEvent *event)
 {
   ARegion *region = CTX_wm_region(C);
   SpaceNode *snode = CTX_wm_space_node(C);
@@ -2156,22 +2249,130 @@ static wmOperatorStatus node_join_invoke(bContext *C, wmOperator *op, const wmEv
   snode->runtime->cursor[0] /= UI_SCALE_FAC;
   snode->runtime->cursor[1] /= UI_SCALE_FAC;
 
-  return node_join_exec(C, op);
+  return node_join_in_frame_exec(C, op);
 }
 
 void NODE_OT_join(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Join Nodes";
+  ot->name = "Join Nodes in Frame";
   ot->description = "Attach selected nodes to a new common frame";
   ot->idname = "NODE_OT_join";
 
   /* API callbacks. */
-  ot->exec = node_join_exec;
-  ot->invoke = node_join_invoke;
+  ot->exec = node_join_in_frame_exec;
+  ot->invoke = node_join_in_frame_invoke;
   ot->poll = ED_operator_node_editable;
 
   /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Join Nodes Operator
+ * \{ */
+
+static void join_group_inputs(bNodeTree &tree, VectorSet<bNode *> group_inputs, bNode *active_node)
+{
+  bNode *main_node = nullptr;
+  if (group_inputs.contains(active_node)) {
+    main_node = active_node;
+  }
+  else {
+    main_node = group_inputs[0];
+    /* Move main node to average of all group inputs. */
+    float2 location{};
+    for (const bNode *node : group_inputs) {
+      location += node->location;
+    }
+    location /= float(group_inputs.size());
+    copy_v2_v2(main_node->location, location);
+  }
+  tree.ensure_topology_cache();
+  MultiValueMap<bNodeSocket *, bNodeLink *> old_link_map;
+  for (bNode *node : group_inputs) {
+    for (bNodeSocket *socket : node->output_sockets().drop_back(1)) {
+      old_link_map.add_multiple(socket, socket->directly_linked_links());
+    }
+  }
+  MultiValueMap<bNodeSocket *, bNodeSocket *> used_link_targets;
+  for (bNodeSocket *socket : main_node->output_sockets()) {
+    used_link_targets.add_multiple(socket, socket->directly_linked_sockets());
+  }
+  for (bNode *node : group_inputs) {
+    if (node == main_node) {
+      continue;
+    }
+    bool keep_node = false;
+
+    /* Using runtime data directly because we know the parts that are used are still valid. */
+    for (const int group_input_i : node->runtime->outputs.index_range().drop_back(1)) {
+      bool keep_socket = false;
+      bNodeSocket &new_socket = *main_node->runtime->outputs[group_input_i];
+      bNodeSocket &old_socket = *node->runtime->outputs[group_input_i];
+      for (bNodeLink *link : old_link_map.lookup(&old_socket)) {
+        bNodeSocket &to_socket = *link->tosock;
+        if (used_link_targets.lookup(&new_socket).contains(&to_socket)) {
+          keep_node = true;
+          keep_socket = true;
+          continue;
+        }
+        used_link_targets.add(&new_socket, &to_socket);
+        link->fromsock = &new_socket;
+        link->fromnode = main_node;
+        new_socket.flag &= ~SOCK_HIDDEN;
+        BKE_ntree_update_tag_link_changed(&tree);
+      }
+      if (!keep_socket) {
+        old_socket.flag |= SOCK_HIDDEN;
+      }
+    }
+    if (!keep_node) {
+      bke::node_free_node(&tree, *node);
+    }
+  }
+}
+
+static wmOperatorStatus node_join_nodes_exec(bContext *C, wmOperator *op)
+{
+  Main &bmain = *CTX_data_main(C);
+  SpaceNode &snode = *CTX_wm_space_node(C);
+  bNodeTree &ntree = *snode.edittree;
+
+  bNode *active_node = bke::node_get_active(ntree);
+  VectorSet<bNode *> selected_nodes = get_selected_nodes(ntree);
+  if (selected_nodes.size() <= 1) {
+    return OPERATOR_CANCELLED;
+  }
+
+  if (std::all_of(selected_nodes.begin(), selected_nodes.end(), [](const bNode *node) {
+        return node->is_group_input();
+      }))
+  {
+    join_group_inputs(ntree, std::move(selected_nodes), active_node);
+  }
+  else {
+    BKE_report(op->reports, RPT_ERROR, "Selected nodes can't be joined");
+    return OPERATOR_CANCELLED;
+  }
+
+  BKE_main_ensure_invariants(bmain, snode.edittree->id);
+  WM_event_add_notifier(C, NC_NODE | ND_DISPLAY, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+void NODE_OT_join_nodes(wmOperatorType *ot)
+{
+  ot->name = "Join Nodes";
+  ot->description = "Merge selected group input nodes into one if possible";
+  ot->idname = "NODE_OT_join_nodes";
+
+  ot->exec = node_join_nodes_exec;
+  ot->poll = ED_operator_node_editable;
+
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
@@ -2670,13 +2871,12 @@ bNodeSocket *get_main_socket(bNodeTree &ntree, bNode &node, eNodeSocketInOut in_
   if (node_decl != nullptr) {
     Span<nodes::SocketDeclaration *> socket_decls = (in_out == SOCK_IN) ? node_decl->inputs :
                                                                           node_decl->outputs;
-    int index;
-    LISTBASE_FOREACH_INDEX (bNodeSocket *, socket, sockets, index) {
-      const nodes::SocketDeclaration &socket_decl = *socket_decls[index];
-      if (!socket->is_visible()) {
+    for (const nodes::SocketDeclaration *socket_decl : socket_decls) {
+      if (!socket_decl->is_default_link_socket) {
         continue;
       }
-      if (socket_decl.is_default_link_socket) {
+      bNodeSocket *socket = static_cast<bNodeSocket *>(BLI_findlink(sockets, socket_decl->index));
+      if (socket && socket->is_visible()) {
         return socket;
       }
     }

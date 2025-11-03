@@ -25,20 +25,19 @@ namespace blender::nodes::node_composite_invert_cc {
 
 static void cmp_node_invert_declare(NodeDeclarationBuilder &b)
 {
+  b.use_custom_socket_order();
+  b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Float>("Fac")
+  b.add_input<decl::Color>("Color").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Color").align_with_previous();
+
+  b.add_input<decl::Float>("Factor", "Fac")
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
-      .subtype(PROP_FACTOR)
-      .compositor_domain_priority(1);
-  b.add_input<decl::Color>("Color")
-      .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .compositor_domain_priority(0);
-  b.add_input<decl::Bool>("Invert Color").default_value(true).compositor_domain_priority(2);
-  b.add_input<decl::Bool>("Invert Alpha").default_value(false).compositor_domain_priority(3);
-
-  b.add_output<decl::Color>("Color");
+      .subtype(PROP_FACTOR);
+  b.add_input<decl::Bool>("Invert Color").default_value(true);
+  b.add_input<decl::Bool>("Invert Alpha").default_value(false);
 }
 
 using namespace blender::compositor;
@@ -54,9 +53,9 @@ static int node_gpu_material(GPUMaterial *material,
 
 static void node_build_multi_function(blender::nodes::NodeMultiFunctionBuilder &builder)
 {
-  static auto function = mf::build::SI4_SO<float, float4, bool, bool, float4>(
+  static auto function = mf::build::SI4_SO<float4, float, bool, bool, float4>(
       "Invert Color",
-      [](const float factor, const float4 &color, const bool invert_color, const bool invert_alpha)
+      [](const float4 &color, const float factor, const bool invert_color, const bool invert_alpha)
           -> float4 {
         float4 result = color;
         if (invert_color) {
@@ -67,7 +66,7 @@ static void node_build_multi_function(blender::nodes::NodeMultiFunctionBuilder &
         }
         return math::interpolate(color, result, factor);
       },
-      mf::build::exec_presets::SomeSpanOrSingle<1>());
+      mf::build::exec_presets::SomeSpanOrSingle<0>());
   builder.set_matching_fn(function);
 }
 

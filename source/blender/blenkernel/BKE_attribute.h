@@ -12,6 +12,7 @@
 #include <optional>
 #include <string>
 
+#include "BLI_enum_flags.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_sys_types.h"
 
@@ -42,7 +43,7 @@ typedef enum AttrDomainMask {
   ATTR_DOMAIN_MASK_GREASE_PENCIL_LAYER = (1 << 6),
   ATTR_DOMAIN_MASK_ALL = (1 << 7) - 1
 } AttrDomainMask;
-ENUM_OPERATORS(AttrDomainMask, ATTR_DOMAIN_MASK_ALL);
+ENUM_OPERATORS(AttrDomainMask);
 
 enum class AttributeOwnerType {
   Mesh,
@@ -57,8 +58,8 @@ class AttributeOwner {
   void *ptr_ = nullptr;
 
  public:
-  AttributeOwner(){};
-  AttributeOwner(AttributeOwnerType type, void *ptr) : type_(type), ptr_(ptr){};
+  AttributeOwner() {};
+  AttributeOwner(AttributeOwnerType type, void *ptr) : type_(type), ptr_(ptr) {};
 
   static AttributeOwner from_id(ID *id);
 
@@ -101,11 +102,6 @@ bool BKE_attribute_remove(AttributeOwner &owner,
 struct CustomDataLayer *BKE_attribute_duplicate(AttributeOwner &owner,
                                                 blender::StringRef name,
                                                 struct ReportList *reports);
-
-struct CustomDataLayer *BKE_attribute_find(const AttributeOwner &owner,
-                                           blender::StringRef name,
-                                           eCustomDataType type,
-                                           blender::bke::AttrDomain domain);
 
 const struct CustomDataLayer *BKE_attribute_search(const AttributeOwner &owner,
                                                    blender::StringRef name,
@@ -161,9 +157,5 @@ bool BKE_color_attribute_supported(const struct Mesh &mesh, blender::StringRef n
 
 std::string BKE_attribute_calc_unique_name(const AttributeOwner &owner, blender::StringRef name);
 
-[[nodiscard]] blender::StringRef BKE_uv_map_vert_select_name_get(blender::StringRef uv_map_name,
-                                                                 char *buffer);
-[[nodiscard]] blender::StringRef BKE_uv_map_edge_select_name_get(blender::StringRef uv_map_name,
-                                                                 char *buffer);
 [[nodiscard]] blender::StringRef BKE_uv_map_pin_name_get(blender::StringRef uv_map_name,
                                                          char *buffer);

@@ -18,6 +18,7 @@
 #include "BLI_array_utils.hh"
 #include "BLI_atomic_disjoint_set.hh"
 #include "BLI_dial_2d.h"
+#include "BLI_enum_flags.hh"
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_listbase.h"
 #include "BLI_math_axis_angle.hh"
@@ -30,7 +31,6 @@
 #include "BLI_span.hh"
 #include "BLI_task.h"
 #include "BLI_task.hh"
-#include "BLI_utildefines.h"
 #include "BLI_vector.hh"
 
 #include "DNA_brush_types.h"
@@ -1360,7 +1360,7 @@ enum class AverageDataFlags : uint8_t {
 
   All = Position | Normal
 };
-ENUM_OPERATORS(AverageDataFlags, AverageDataFlags::Normal);
+ENUM_OPERATORS(AverageDataFlags);
 
 static void calc_area_normal_and_center_node_mesh(const Object &object,
                                                   const Span<float3> vert_positions,
@@ -1401,9 +1401,9 @@ static void calc_area_normal_and_center_node_mesh(const Object &object,
         if (!hide_vert.is_empty() && hide_vert[vert]) {
           continue;
         }
-        const bool needs_normal = bool(flag & AverageDataFlags::Normal) &&
+        const bool needs_normal = flag_is_set(flag, AverageDataFlags::Normal) &&
                                   distances_sq[i] <= normal_radius_sq;
-        const bool needs_center = bool(flag & AverageDataFlags::Position) &&
+        const bool needs_center = flag_is_set(flag, AverageDataFlags::Position) &&
                                   distances_sq[i] <= position_radius_sq;
         if (!needs_normal && !needs_center) {
           continue;
@@ -1433,9 +1433,9 @@ static void calc_area_normal_and_center_node_mesh(const Object &object,
     if (!hide_vert.is_empty() && hide_vert[vert]) {
       continue;
     }
-    const bool needs_normal = bool(flag & AverageDataFlags::Normal) &&
+    const bool needs_normal = flag_is_set(flag, AverageDataFlags::Normal) &&
                               distances_sq[i] <= normal_radius_sq;
-    const bool needs_center = bool(flag & AverageDataFlags::Position) &&
+    const bool needs_center = flag_is_set(flag, AverageDataFlags::Position) &&
                               distances_sq[i] <= position_radius_sq;
     if (!needs_normal && !needs_center) {
       continue;
@@ -1497,9 +1497,9 @@ static void calc_area_normal_and_center_node_grids(const Object &object,
           }
           const int node_vert = grid_range_node[offset];
 
-          const bool needs_normal = bool(flag & AverageDataFlags::Normal) &&
+          const bool needs_normal = flag_is_set(flag, AverageDataFlags::Normal) &&
                                     distances_sq[node_vert] <= normal_radius_sq;
-          const bool needs_center = bool(flag & AverageDataFlags::Position) &&
+          const bool needs_center = flag_is_set(flag, AverageDataFlags::Position) &&
                                     distances_sq[node_vert] <= position_radius_sq;
           if (!needs_normal && !needs_center) {
             continue;
@@ -1541,9 +1541,9 @@ static void calc_area_normal_and_center_node_grids(const Object &object,
       const int node_vert = grid_range_node[offset];
       const int vert = grid_range[offset];
 
-      const bool needs_normal = uint8_t(flag & AverageDataFlags::Normal) != 0 &&
+      const bool needs_normal = flag_is_set(flag, AverageDataFlags::Normal) &&
                                 distances_sq[node_vert] <= normal_radius_sq;
-      const bool needs_center = uint8_t(flag & AverageDataFlags::Position) != 0 &&
+      const bool needs_center = flag_is_set(flag, AverageDataFlags::Position) &&
                                 distances_sq[node_vert] <= position_radius_sq;
       if (!needs_normal && !needs_center) {
         continue;
@@ -1609,9 +1609,9 @@ static void calc_area_normal_and_center_node_bmesh(const Object &object,
         ss, positions, eBrushFalloffShape(brush.falloff_shape), distances_sq);
 
     for (const int i : orig_tris.index_range()) {
-      const bool needs_normal = bool(flag & AverageDataFlags::Normal) &&
+      const bool needs_normal = flag_is_set(flag, AverageDataFlags::Normal) &&
                                 distances_sq[i] <= normal_radius_sq;
-      const bool needs_center = bool(flag & AverageDataFlags::Position) &&
+      const bool needs_center = flag_is_set(flag, AverageDataFlags::Position) &&
                                 distances_sq[i] <= position_radius_sq;
       if (!needs_normal && !needs_center) {
         continue;
@@ -1652,9 +1652,9 @@ static void calc_area_normal_and_center_node_bmesh(const Object &object,
         i++;
         continue;
       }
-      const bool needs_normal = bool(flag & AverageDataFlags::Normal) &&
+      const bool needs_normal = flag_is_set(flag, AverageDataFlags::Normal) &&
                                 distances_sq[i] <= normal_radius_sq;
-      const bool needs_center = bool(flag & AverageDataFlags::Position) &&
+      const bool needs_center = flag_is_set(flag, AverageDataFlags::Position) &&
                                 distances_sq[i] <= position_radius_sq;
       if (!needs_normal && !needs_center) {
         i++;
@@ -1688,9 +1688,9 @@ static void calc_area_normal_and_center_node_bmesh(const Object &object,
       i++;
       continue;
     }
-    const bool needs_normal = bool(flag & AverageDataFlags::Normal) &&
+    const bool needs_normal = flag_is_set(flag, AverageDataFlags::Normal) &&
                               distances_sq[i] <= normal_radius_sq;
-    const bool needs_center = bool(flag & AverageDataFlags::Position) &&
+    const bool needs_center = flag_is_set(flag, AverageDataFlags::Position) &&
                               distances_sq[i] <= position_radius_sq;
     if (!needs_normal && !needs_center) {
       i++;
@@ -3422,7 +3422,9 @@ static void do_brush_action(const Depsgraph &depsgraph,
   if (!ELEM(brush.sculpt_brush_type, SCULPT_BRUSH_TYPE_SMOOTH, SCULPT_BRUSH_TYPE_MASK) &&
       brush.autosmooth_factor > 0)
   {
-    if (brush.flag & BRUSH_INVERSE_SMOOTH_PRESSURE) {
+    if (bke::brush::supports_auto_smooth_pressure(brush) &&
+        brush.flag & BRUSH_INVERSE_SMOOTH_PRESSURE)
+    {
       brushes::do_smooth_brush(
           depsgraph, sd, ob, node_mask, brush.autosmooth_factor * (1.0f - ss.cache->pressure));
     }
@@ -3902,7 +3904,7 @@ static void smooth_brush_toggle_on(const bContext *C, Paint *paint, StrokeCache 
 
   cache->saved_smooth_size = BKE_brush_size_get(paint, smooth_brush);
   BKE_brush_size_set(paint, smooth_brush, cur_brush_size);
-  BKE_curvemapping_init(smooth_brush->curve);
+  BKE_curvemapping_init(smooth_brush->curve_distance_falloff);
 }
 
 static void smooth_brush_toggle_off(Paint *paint, StrokeCache *cache)
@@ -4290,7 +4292,9 @@ static void brush_delta_update(const Depsgraph &depsgraph,
 static void cache_paint_invariants_update(StrokeCache &cache, const Brush &brush)
 {
   cache.hardness = brush.hardness;
-  if (brush.paint_flags & BRUSH_PAINT_HARDNESS_PRESSURE) {
+  if (bke::brush::supports_hardness_pressure(brush) &&
+      brush.paint_flags & BRUSH_PAINT_HARDNESS_PRESSURE)
+  {
     cache.hardness *= brush.paint_flags & BRUSH_PAINT_HARDNESS_PRESSURE_INVERT ?
                           1.0f - cache.pressure :
                           cache.pressure;
@@ -5030,11 +5034,7 @@ static void restore_from_undo_step_if_necessary(const Depsgraph &depsgraph,
   }
 
   /* Restore the mesh before continuing with anchored stroke. */
-  if ((brush->flag & BRUSH_ANCHORED) ||
-      (ELEM(brush->sculpt_brush_type, SCULPT_BRUSH_TYPE_GRAB, SCULPT_BRUSH_TYPE_ELASTIC_DEFORM) &&
-       BKE_brush_use_size_pressure(brush)) ||
-      (brush->flag & BRUSH_DRAG_DOT))
-  {
+  if (brush->flag & BRUSH_ANCHORED || brush->flag & BRUSH_DRAG_DOT) {
 
     undo::restore_from_undo_step(depsgraph, sd, ob);
 
@@ -7185,8 +7185,11 @@ void calc_brush_strength_factors(const StrokeCache &cache,
                                  const Span<float> distances,
                                  const MutableSpan<float> factors)
 {
-  BKE_brush_calc_curve_factors(
-      eBrushCurvePreset(brush.curve_preset), brush.curve, distances, cache.radius, factors);
+  BKE_brush_calc_curve_factors(eBrushCurvePreset(brush.curve_distance_falloff_preset),
+                               brush.curve_distance_falloff,
+                               distances,
+                               cache.radius,
+                               factors);
 }
 
 void calc_brush_texture_factors(const SculptSession &ss,

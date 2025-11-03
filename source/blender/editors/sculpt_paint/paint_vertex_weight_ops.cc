@@ -9,6 +9,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_bitmap.h"
+#include "BLI_enum_flags.hh"
 #include "BLI_listbase.h"
 #include "BLI_math_geom.h"
 #include "BLI_math_vector.h"
@@ -543,7 +544,7 @@ struct WPGradient_vertStore {
   float weight_orig;
   Flag flag;
 };
-ENUM_OPERATORS(WPGradient_vertStore::Flag, WPGradient_vertStore::VGRAD_STORE_IS_MODIFIED);
+ENUM_OPERATORS(WPGradient_vertStore::Flag);
 
 struct WPGradient_vertStoreBase {
   WPaintPrev wpp;
@@ -595,10 +596,9 @@ static void gradientVert_update(WPGradient_userData *grad_data, int index)
     BLI_assert(grad_data->type == WPAINT_GRADIENT_TYPE_RADIAL);
     alpha = len_v2v2(grad_data->sco_start, vs->sco) * grad_data->sco_line_div;
   }
-  /* no need to clamp 'alpha' yet */
 
   /* adjust weight */
-  alpha = BKE_brush_curve_strength_clamped(grad_data->brush, alpha, 1.0f);
+  alpha = BKE_brush_curve_strength_clamped(grad_data->brush, std::max(0.0f, alpha), 1.0f);
 
   if (alpha != 0.0f) {
     MDeformVert *dv = &grad_data->dvert[index];
@@ -819,7 +819,7 @@ static wmOperatorStatus paint_weight_gradient_exec(bContext *C, wmOperator *op)
     VPaint *wp = ts->wpaint;
     Brush *brush = BKE_paint_brush(&wp->paint);
 
-    BKE_curvemapping_init(brush->curve);
+    BKE_curvemapping_init(brush->curve_distance_falloff);
 
     data.brush = brush;
     data.weightpaint = BKE_brush_weight_get(&wp->paint, brush);

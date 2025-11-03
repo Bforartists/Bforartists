@@ -297,7 +297,9 @@ class MaterialProperties_MixIn:
             ('BLENDED',
              "Blended",
              "Allows for colored transparency, but incompatible with render passes and ray-tracing. "
-             "Also known as forward rendering.")))
+             "Also known as forward rendering."),
+        ),
+    )
 
     use_backface_culling: BoolProperty(
         name="Backface Culling",
@@ -424,6 +426,7 @@ def create_cycles_material(self, context, img_spec, name):
         material = bpy.data.materials.get((name, None))
     if material is None:
         material = bpy.data.materials.new(name=name)
+        material.node_tree.nodes.clear()
 
     material.surface_render_method = self.render_method
     material.use_backface_culling = self.use_backface_culling

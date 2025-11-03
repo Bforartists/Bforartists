@@ -81,8 +81,8 @@ class BFA_OT_insertframe_left(op):
         bpy.context.scene.frame_set(current_frame)
         return {'FINISHED'}
 
-    def menu_func(self):
-        wm = bpy.context.window_manager
+    def menu_func(self, context):
+        wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_insertframe_left.bl_idname, icon=BFA_OT_insertframe_left.bl_icon)
 
@@ -146,8 +146,8 @@ class BFA_OT_insertframe_right(op):
         return {'FINISHED'}
 
 
-    def menu_func(self):
-        wm = bpy.context.window_manager
+    def menu_func(self, context):
+        wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_insertframe_right.bl_idname, icon=BFA_OT_insertframe_right.bl_icon)
 
@@ -215,8 +215,8 @@ class BFA_OT_removeframe_left(op):
         return {'FINISHED'}
 
 
-    def menu_func(self):
-        wm = bpy.context.window_manager
+    def menu_func(self, context):
+        wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_removeframe_left.bl_idname, icon=BFA_OT_removeframe_left.bl_icon)
 
@@ -301,30 +301,10 @@ class BFA_OT_removeframe_right(op):
         return {'FINISHED'}
 
 
-    def menu_func(self):
-        wm = bpy.context.window_manager
+    def menu_func(self, context):
+        wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
             self.layout.operator(BFA_OT_removeframe_right.bl_idname, icon=BFA_OT_removeframe_right.bl_icon)
-
-
-class BFA_OT_jump_forward(op):
-    bl_idname = "anim.jump_forward"
-    bl_label = "Frame Jump Forward"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        context.scene.frame_current += context.scene.frameskip
-        return {'FINISHED'}
-
-
-class BFA_OT_jump_back(op):
-    bl_idname = "anim.jump_back"
-    bl_label = "Frame Jump Back"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        context.scene.frame_current -= context.scene.frameskip
-        return {'FINISHED'}
 
 
 ################## Viewport Operators ##################
@@ -398,8 +378,8 @@ class BFA_OT_viewport_silhuette_toggle(op):
         return {'FINISHED'}
 
 
-    def menu_func(self):
-        wm = bpy.context.window_manager
+    def menu_func(self, context):
+        wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_viewport:
             self.layout.operator(BFA_PROP_toggle_viewport.bl_idname, icon=BFA_PROP_toggle_viewport.bl_icon)
 
@@ -438,8 +418,8 @@ class BFA_OT_open_blend_file_window(bpy.types.Operator):
 
         return {'FINISHED'}
 
-    def menu_func(self):
-        wm = bpy.context.window_manager
+    def menu_func(self, context):
+        wm = context.window_manager
         if wm.BFA_UI_addon_props.BFA_PROP_toggle_file:
             self.layout.operator(BFA_PROP_toggle_file.bl_idname, icon=BFA_PROP_toggle_file.bl_icon)
 
@@ -450,8 +430,6 @@ operator_list = [
     BFA_OT_insertframe_right,
     BFA_OT_removeframe_left,
     BFA_OT_removeframe_right,
-    BFA_OT_jump_forward,
-    BFA_OT_jump_back,
     # Viewport Operators
     BFA_OT_viewport_silhuette_toggle,
     # File Operators
@@ -463,12 +441,6 @@ def register():
     for ops in operator_list:
         bpy.utils.register_class(ops)
 
-    # Remove Properties
-    bpy.types.Scene.frameskip = bpy.props.IntProperty(name="Jump Frames", default=10)
-
 def unregister():
     for ops in operator_list:
         bpy.utils.unregister_class(ops)
-
-    # Add Properties
-    del bpy.types.Scene.frameskip

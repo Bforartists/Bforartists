@@ -110,6 +110,8 @@ bool shape_key_report_if_any_locked(Object *ob, ReportList *reports);
  */
 bool shape_key_is_selected(const Object &object, const KeyBlock &kb, int keyblock_index);
 
+void shape_key_mirror(Object *ob, KeyBlock *kb, bool use_topology, int &totmirr, int &totfail);
+
 /* `object_utils.cc` */
 
 bool calc_active_center_for_editmode(Object *obedit, bool select_only, float r_center[3]);
@@ -607,6 +609,8 @@ void data_xform_by_mat4(XFormObjectData &xod, const float4x4 &transform);
 void data_xform_restore(XFormObjectData &xod);
 void data_xform_tag_update(XFormObjectData &xod);
 
-void ui_template_modifier_asset_menu_items(uiLayout &layout, StringRef catalog_path);
+void ui_template_modifier_asset_menu_items(uiLayout &layout,
+                                           StringRef catalog_path,
+                                           bool skip_essentials);
 
 }  // namespace blender::ed::object

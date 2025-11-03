@@ -30,18 +30,15 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.generic
   brush.gpencil_draw.erase
   brush.gpencil_draw.fill
+  brush.paint_texture.blur
   brush.paint_texture.clone
-  brush.paint_texture.soften
-  brush.paint_texture.smear
   brush.paint_texture.fill
   brush.paint_texture.mask
+  brush.paint_texture.smear
+  brush.paint_texture.soften
   brush.paint_vertex.average
   brush.paint_vertex.blur
-  brush.paint_vertex.replace
   brush.paint_vertex.smear
-  brush.paint_weight.average
-  brush.paint_weight.blur
-  brush.paint_weight.smear
   brush.particle.add
   brush.particle.comb
   brush.particle.cut
@@ -49,12 +46,9 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.particle.puff
   brush.particle.smooth
   brush.particle.weight
-  brush.sculpt.displacement_eraser
-  brush.sculpt.displacement_smear
   brush.sculpt.draw_face_sets
   brush.sculpt.mask
   brush.sculpt.paint
-  brush.sculpt.simplify
   brush.uv_sculpt.grab
   brush.uv_sculpt.pinch
   brush.uv_sculpt.relax
@@ -68,9 +62,6 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.curve.pen
   ops.curve.radius
   ops.curve.vertex_random
-  ops.curves.sculpt_add
-  ops.curves.sculpt_delete
-  ops.curves.sculpt_density
   ops.generic.cursor
   ops.generic.select
   ops.generic.select_box
@@ -97,6 +88,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.gpencil.sculpt_blur
   ops.gpencil.sculpt_clone
   ops.gpencil.sculpt_smear
+  ops.gpencil.stroke_cutter
   ops.gpencil.stroke_trim
   ops.gpencil.transform_fill
   ops.mesh.bevel
@@ -175,7 +167,6 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.transform.vert_slide
   ops.transform.vertex_random
   ops.view3d.ruler
-
   # END ICON_GEOM_NAMES
 )
 
@@ -211,7 +202,6 @@ if(WITH_BLENDER)
       preview_loading
       restrict_instanced_off
       restrict_instanced_on
-      rna_add
       strands
       trash
       group_bright
@@ -423,6 +413,14 @@ if(WITH_BLENDER)
       collection_bone_add
       collection_bone_new
       collection_bone_remove
+      collection_color_01
+      collection_color_02
+      collection_color_03
+      collection_color_04
+      collection_color_05
+      collection_color_06
+      collection_color_07
+      collection_color_08
       collection_info
       collection_new
       color # see color_red/green/blue */
@@ -447,6 +445,7 @@ if(WITH_BLENDER)
       con_floor
       con_followpath
       con_followtrack
+      con_geometryattribute
       con_kinematic
       con_locktrack
       con_loclike
@@ -468,6 +467,8 @@ if(WITH_BLENDER)
       cone
       connected
       console
+      convolve
+      convert_to_display
       constraint
       constraint_bone
       constraint_data
@@ -752,6 +753,7 @@ if(WITH_BLENDER)
       goto
       gp_caps_flat
       gp_caps_round
+      gp_caps_sharp
       gp_multiframe_editing
       gp_only_selected
       gp_select_between_strokes
@@ -1085,6 +1087,7 @@ if(WITH_BLENDER)
       mod_cloth
       mod_color_balance
       mod_curve
+      mod_curve_to_tube
       mod_curves
       mod_dash
       mod_data_transfer
@@ -1117,6 +1120,7 @@ if(WITH_BLENDER)
       mod_particles
       mod_physics
       mod_remesh
+      mod_scatter_on_surface
       mod_screw
       mod_shrinkwrap
       mod_simpledeform
@@ -1282,6 +1286,7 @@ if(WITH_BLENDER)
       node_planetrackdeform
       node_pointcloud
       node_principled
+      node_radial_array
       node_range
       node_ray_portal
       node_refractionshader
@@ -1356,6 +1361,7 @@ if(WITH_BLENDER)
       object_datamode
       object_hidden
       object_origin
+      object_lattice
       offset_corner_in_face
       offset_edge_slide
       offset_point_in_curve
@@ -1693,6 +1699,7 @@ if(WITH_BLENDER)
       save_stl
       save_svg
       save_usd
+      save_uv
       save_x3d
       scale_average
       scale_instance
@@ -1779,7 +1786,7 @@ if(WITH_BLENDER)
       seq_strip_duplicate
       seq_strip_expand
       seq_strip_overwrite
-      seq_strip_meta
+      seq_strip_modifier
       seq_strip_shuffle
       seq_swap_left
       seq_swap_right
@@ -2047,6 +2054,7 @@ if(WITH_BLENDER)
       uv_data
       uv_edgesel
       uv_facesel
+      uv_islandalign
       uv_islandsel
       uv_sync_select
       uv_vertexsel

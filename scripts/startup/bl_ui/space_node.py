@@ -14,7 +14,7 @@ from bpy.app.translations import (
     pgettext_iface as iface_,
     contexts as i18n_contexts,
 )
-from bl_ui import anim
+from bl_ui import anim, node_add_menu
 from bl_ui.utils import PresetPanel
 from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
@@ -157,10 +157,11 @@ class NODE_HT_header(Header):
                     'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD',
                 }
 
-                if snode_id:
-                    row = layout.row()
-                    if ob_type not in types_that_support_material:
-                        row.prop(snode_id, "use_nodes")
+                ## BFA - moved below to a different solution
+                #if snode_id:
+                #    row = layout.row()
+                #    if ob_type not in types_that_support_material:
+                #        row.prop(snode_id, "use_nodes")
 
                 layout.separator_spacer()
 
@@ -237,12 +238,33 @@ class NODE_HT_header(Header):
             row.operator("wm.switch_editor_to_geometry", text="", icon='GEOMETRY_NODES')
             row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
 
+            layout.prop(snode, "node_tree_sub_type", text="")
             NODE_MT_editor_menus.draw_collapsible(context, layout)
-
             layout.separator_spacer()
-            row = layout.row()
-            row.enabled = not snode.pin
-            row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+
+            if snode.node_tree_sub_type == 'SCENE':
+                row = layout.row()
+                row.enabled = not snode.pin
+                if scene.compositing_node_group:
+                    row.template_ID(scene, "compositing_node_group", new="node.duplicate_compositing_node_group")
+                else:
+                    row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+            elif snode.node_tree_sub_type == 'SEQUENCER':
+                row = layout.row()
+                sequencer_scene = context.workspace.sequencer_scene
+                sequencer_editor = sequencer_scene.sequence_editor if sequencer_scene else None
+                active_strip = sequencer_editor.active_strip if sequencer_editor else None
+                active_modifier = active_strip.modifiers.active if active_strip else None
+                is_compositor_modifier_active = active_modifier and active_modifier.type == 'COMPOSITOR'
+                if is_compositor_modifier_active and not snode.pin:
+                    row.template_ID(
+                        active_modifier,
+                        "node_group",
+                        new="node.new_compositor_sequencer_node_group",
+                    )
+                else:
+                    row.enabled = False
+                    row.template_ID(snode, "node_tree", new="node.new_compositor_sequencer_node_group")
 
         elif snode.tree_type == 'GeometryNodeTree':
             #BFA - Editor Switchers
@@ -299,25 +321,27 @@ class NODE_HT_header(Header):
         # -------------------- BFA - use nodes ---------------------------
 
         if snode.tree_type == 'ShaderNodeTree':
+            ob = context.object
+            ob_type = ob.type if ob else None
+            
+            types_that_support_material = {
+                'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL', 'VOLUME', 'CURVES', 'POINTCLOUD',
+            }
 
-            if snode.shader_type == 'OBJECT' and ob:
+            if snode.shader_type == 'OBJECT':
+                if snode_id and ob:
+                    # No shader nodes for Eevee lights
+                    if not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
+                        row = layout.row()
+                        if ob_type not in types_that_support_material:
+                            row.prop(snode_id, "use_nodes")
 
-                # No shader nodes for Eevee lights
-                if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
+            elif snode.shader_type == 'LINESTYLE':
+                if lineset is not None and snode_id:
                     row = layout.row()
                     row.prop(snode_id, "use_nodes")
 
-            if snode.shader_type == 'LINESTYLE':
-
-                if lineset is not None:
-
-                    if snode_id:
-                        row = layout.row()
-                        row.prop(snode_id, "use_nodes")
-
-
         elif snode.tree_type == 'TextureNodeTree':
-
             if snode_id:
                 layout.prop(snode_id, "use_nodes")
 
@@ -335,7 +359,7 @@ class NODE_HT_header(Header):
             pass
 
         # Backdrop
-        if is_compositor:
+        if is_compositor and snode.node_tree_sub_type == 'SCENE':
             row = layout.row(align=True)
             row.prop(snode, "show_backdrop", toggle=True)
             row.active = snode.node_tree is not None
@@ -373,7 +397,7 @@ class NODE_HT_header(Header):
 class NODE_PT_gizmo_display(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_label = 'Gizmos'
+    bl_label = "Gizmos"
     bl_ui_units_x = 8
 
     def draw(self, context):
@@ -408,7 +432,7 @@ class NODE_MT_editor_menus(Menu):
         layout.menu("NODE_MT_node")
 
 
-class NODE_MT_add(Menu):
+class NODE_MT_add(node_add_menu.AddNodeMenu):
     bl_space_type = 'NODE_EDITOR'
     bl_label = "Add"
     bl_translation_context = i18n_contexts.operator_default
@@ -456,6 +480,33 @@ class NODE_MT_pie_menus(Menu):
         layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NODE_MT_view_pie'
 
 
+class NODE_MT_swap(node_add_menu.SwapNodeMenu):
+    bl_space_type = 'NODE_EDITOR'
+    bl_label = "Swap"
+    bl_translation_context = i18n_contexts.operator_default
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        if layout.operator_context == 'EXEC_REGION_WIN':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("WM_OT_search_single_menu", text="Search...", icon='VIEWZOOM').menu_idname = "NODE_MT_swap"
+            layout.separator()
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        snode = context.space_data
+        if snode.tree_type == 'GeometryNodeTree':
+            layout.menu_contents("NODE_MT_geometry_node_swap_all")
+        elif snode.tree_type == 'CompositorNodeTree':
+            layout.menu_contents("NODE_MT_compositor_node_swap_all")
+        elif snode.tree_type == 'ShaderNodeTree':
+            layout.menu_contents("NODE_MT_shader_node_swap_all")
+        elif snode.tree_type == 'TextureNodeTree':
+            layout.menu_contents("NODE_MT_texture_node_swap_all")
+
+
 class NODE_MT_view(Menu):
     bl_label = "View"
 
@@ -463,6 +514,7 @@ class NODE_MT_view(Menu):
         layout = self.layout
 
         snode = context.space_data
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -486,6 +538,9 @@ class NODE_MT_view(Menu):
         else: # Geometry Nodes
             layout.operator("node.connect_to_output", text="Link to Output", icon='GROUPOUTPUT').run_in_geometry_nodes = True
             layout.operator("node.select_link_viewer", text="Link to Viewer", icon='RESTRICT_RENDER_OFF')
+
+        if is_compositor:
+            layout.prop(snode, "show_region_asset_shelf")
 
         layout.separator()
 
@@ -634,9 +689,10 @@ class NODE_MT_node(Menu):
         layout.operator("node.delete_reconnect", icon = "DELETE")
 
         layout.separator()
-
         layout.operator("node.join", text="Join in New Frame", icon = "JOIN")
         layout.operator("node.detach", text="Remove from Frame", icon = "DELETE")
+        layout.operator("node.join_nodes", text="Join Group Inputs")
+        layout.operator("node.join_named")
         layout.operator("node.parent_set", text = "Frame Make Parent", icon = "PARENT_SET")
 
         layout.separator() #BFA - exposed context menu operator to header
@@ -654,6 +710,7 @@ class NODE_MT_node(Menu):
         layout.menu("NODE_MT_node_links")
 
         layout.separator()
+        layout.menu("NODE_MT_swap")
 		## BFA - set to sub-menu
         layout.menu("NODE_MT_node_group_separate")
 
@@ -1263,7 +1320,7 @@ class NODE_MT_node_tree_interface_context_menu(Menu):
         elif active_item.item_type == 'PANEL':
             layout.operator("node.interface_item_unlink_panel_toggle", icon="PANEL_TOGGLE_UNLINK")
 
-
+# BFA - menu
 class NODE_PT_node_tree_interface_new_input(Panel):
     '''Add a new item to the interface list'''
     bl_space_type = 'NODE_EDITOR'
@@ -1280,7 +1337,7 @@ class NODE_PT_node_tree_interface_new_input(Panel):
         layout.operator('node.interface_item_new_panel', text='Panel', icon='MENU_PANEL').item_type='PANEL'
         layout.operator('node.interface_item_new_panel_toggle', text='Panel Toggle', icon='CHECKBOX_HLT')
 
-
+# BFA - menu
 class NODE_PT_node_tree_interface(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1358,7 +1415,7 @@ class NODE_PT_node_tree_interface(Panel):
                 layout.use_property_split = False
                 layout.prop(active_item, "default_closed", text="Closed by Default")
 
-
+# BFA - menu
 class NODE_PT_node_tree_interface_panel_toggle(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -1404,11 +1461,25 @@ class NODE_PT_node_tree_interface_panel_toggle(Panel):
         layout.use_property_split = False
 
 
+class NODE_MT_node_tree_interface_new_item(Menu):
+    bl_label = "New Item"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_enum("node.interface_item_new", "item_type")
+
+        active_item = context.space_data.edit_tree.interface.active
+
+        if active_item.item_type == 'PANEL':
+            layout.operator("node.interface_item_new_panel_toggle", text="Panel Toggle")
+
+
 class NODE_PT_node_tree_properties(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Group"
     bl_label = "Group Properties" # BFA
+    bl_order = 0
 
     @classmethod
     def poll(cls, context):
@@ -1445,6 +1516,10 @@ class NODE_PT_node_tree_properties(Panel):
         row.operator("node.default_group_width_set", text="", icon='NODE')
 
         if group.bl_idname == "GeometryNodeTree":
+            row = layout.row()
+            row.active = group.is_modifier
+            row.prop(group, "show_modifier_manage_panel")
+
             header, body = layout.panel("group_usage")
             header.label(text="Usage")
             if body:
@@ -1459,6 +1534,7 @@ class NODE_PT_node_tree_animation(Panel):
     bl_category = "Group"
     bl_label = "Animation"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 20
 
     @classmethod
     def poll(cls, context):
@@ -1539,6 +1615,8 @@ class NodeAssetShelf:
 
 
 class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
+    bl_region_type = 'UI'
+    bl_options = {'DEFAULT_VISIBLE'}
 
     @classmethod
     def poll(cls, context):
@@ -1551,6 +1629,8 @@ class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
 
 class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
+    bl_region_type = 'UI'
+    bl_options = {'DEFAULT_VISIBLE'}
 
     @classmethod
     def poll(cls, context):
@@ -1563,6 +1643,8 @@ class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
 # bfa add NodeAssetShelf, use asset_type_poll
 class NODE_AST_compositor(NodeAssetShelf, bpy.types.AssetShelf):
+    bl_region_type = 'UI'
+    bl_options = {'DEFAULT_VISIBLE'}
 
     @classmethod
     def poll(cls, context):
@@ -1578,8 +1660,8 @@ classes = (
     NODE_MT_editor_menus,
     NODE_MT_add,
     NODE_MT_pie_menus,  # BFA - Menu
-    NODE_MT_view,
     NODE_MT_viewer, # BFA - Menu
+    NODE_MT_swap,
     NODE_MT_select,
     NODE_MT_select_legacy,  # BFA - Menu
     NODE_MT_node_group_separate,  # BFA - Menu
@@ -1590,6 +1672,7 @@ classes = (
     NODE_MT_context_menu_show_hide_menu,
     NODE_MT_context_menu_select_menu,
     NODE_MT_context_menu,
+    NODE_MT_view,
     NODE_MT_view_pie,
     NODE_MT_view_annotations,  # BFA - Menu
     NODE_PT_material_slots,
@@ -1598,6 +1681,7 @@ classes = (
     NODE_PT_geometry_node_tool_options,
     NODE_PT_node_color_presets,
     NODE_PT_node_tree_properties,
+    NODE_MT_node_tree_interface_new_item,
     NODE_MT_node_tree_interface_context_menu,
     NODE_PT_node_tree_interface_new_input,  # BFA - Menu
     NODE_PT_node_tree_interface,

@@ -48,6 +48,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                 col.separator()
 
                 col.operator("nla.bake", text="Bake Action", icon='BAKE_ACTION')
+                col.operator("grease_pencil.bake_grease_pencil_animation", text="Bake Object Transform to Grease Pencil", icon="BAKE_ACTION")
 
 
             #col = layout.column(align=True)
@@ -78,6 +79,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
                     row.operator("anim.keyframe_clear_v3d", text="", icon='KEYFRAMES_CLEAR')
                     row.operator("anim.keying_set_active_set", text="", icon='KEYINGSET')
                     row.operator("nla.bake", text="", icon='BAKE_ACTION')
+                    row.operator("grease_pencil.bake_grease_pencil_animation", text="", icon="BAKE_ACTION")
 
 
 

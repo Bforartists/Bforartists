@@ -18,6 +18,11 @@
 
 namespace blender::compositor {
 
+Result Context::get_pass(const Scene * /*scene*/, int /*view_layer*/, const char * /*name*/)
+{
+  return this->create_result(compositor::ResultType::Color);
+}
+
 const RenderData &Context::get_render_data() const
 {
   return this->get_scene().r;
@@ -134,6 +139,11 @@ Result Context::create_result(ResultType type)
 StaticCacheManager &Context::cache_manager()
 {
   return cache_manager_;
+}
+
+const Strip *Context::get_strip() const
+{
+  return nullptr;
 }
 
 }  // namespace blender::compositor

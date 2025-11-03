@@ -22,18 +22,18 @@ static const EnumPropertyItem shape_method_items[] = {
     {int(ShapeMethod::Aabb),
      "AABB",
      0,
-     "Bounding Box",
-     "Use axis-aligned bounding boxes for packing (fastest, least space efficient)"},
+     N_("Bounding Box"),
+     N_("Use axis-aligned bounding boxes for packing (fastest, least space efficient)")},
     {int(ShapeMethod::Convex),
      "CONVEX",
      0,
-     "Convex Hull",
-     "Use convex hull approximation of islands (good balance of speed and space efficiency)"},
+     N_("Convex Hull"),
+     N_("Use convex hull approximation of islands (good balance of speed and space efficiency)")},
     {int(ShapeMethod::Concave),
      "CONCAVE",
      0,
-     "Exact Shape",
-     "Use exact geometry for most efficient packing (slowest)"},
+     N_("Exact Shape"),
+     N_("Use exact geometry for most efficient packing (slowest)")},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -68,6 +68,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_input<decl::Menu>("Method")
       .static_items(shape_method_items)
       .default_value(ShapeMethod::Aabb)
+      .optional_label()
       .description("Method used for packing UV islands");
 }
 

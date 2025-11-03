@@ -874,37 +874,38 @@ class USDImportTest(AbstractUSDTest):
                 8 + i), 1.0, 2, "Unexpected weight for Elbow deform vert")
 
         action = bpy.data.actions['Anim1']
+        channelbag = action.layers[0].strips[0].channelbags[0]
 
         # Verify the Elbow joint rotation animation.
         curve_path = 'pose.bones["Elbow"].rotation_quaternion'
 
         # Quat W
-        f = action.fcurves.find(curve_path, index=0)
+        f = channelbag.fcurves.find(curve_path, index=0)
         self.assertIsNotNone(f, "Couldn't find Elbow rotation quaternion W curve")
         self.assertAlmostEqual(f.evaluate(0), 1.0, 2, "Unexpected value for rotation quaternion W curve at frame 0")
         self.assertAlmostEqual(f.evaluate(10), 0.707, 2, "Unexpected value for rotation quaternion W curve at frame 10")
 
         # Quat X
-        f = action.fcurves.find(curve_path, index=1)
+        f = channelbag.fcurves.find(curve_path, index=1)
         self.assertIsNotNone(f, "Couldn't find Elbow rotation quaternion X curve")
         self.assertAlmostEqual(f.evaluate(0), 0.0, 2, "Unexpected value for rotation quaternion X curve at frame 0")
         self.assertAlmostEqual(f.evaluate(10), 0.707, 2, "Unexpected value for rotation quaternion X curve at frame 10")
 
         # Quat Y
-        f = action.fcurves.find(curve_path, index=2)
+        f = channelbag.fcurves.find(curve_path, index=2)
         self.assertIsNotNone(f, "Couldn't find Elbow rotation quaternion Y curve")
         self.assertAlmostEqual(f.evaluate(0), 0.0, 2, "Unexpected value for rotation quaternion Y curve at frame 0")
         self.assertAlmostEqual(f.evaluate(10), 0.0, 2, "Unexpected value for rotation quaternion Y curve at frame 10")
 
         # Quat Z
-        f = action.fcurves.find(curve_path, index=3)
+        f = channelbag.fcurves.find(curve_path, index=3)
         self.assertIsNotNone(f, "Couldn't find Elbow rotation quaternion Z curve")
         self.assertAlmostEqual(f.evaluate(0), 0.0, 2, "Unexpected value for rotation quaternion Z curve at frame 0")
         self.assertAlmostEqual(f.evaluate(10), 0.0, 2, "Unexpected value for rotation quaternion Z curve at frame 10")
 
     def check_curve(self, blender_curve, usd_curve):
-        curve_type_map = {"linear": 1, "cubic-bezier": 2, "cubic-bspline": 3}
-        cyclic_map = {"nonperiodic": False, "periodic": True}
+        curve_type_map = {"linear-bezier": 1, "linear-catmullRom": 1, "cubic-bezier": 2, "cubic-bspline": 3}
+        cyclic_map = {"pinned": False, "nonperiodic": False, "periodic": True}
 
         # Check correct spline count.
         blender_spline_count = len(blender_curve.attributes["curve_type"].data)
@@ -912,10 +913,7 @@ class USDImportTest(AbstractUSDTest):
         self.assertEqual(blender_spline_count, usd_spline_count)
 
         # Check correct type of curve. All splines should have the same type and periodicity.
-        usd_curve_type = usd_curve.GetTypeAttr().Get()
-        usd_curve_type_basis = usd_curve_type
-        if usd_curve_type != "linear":
-            usd_curve_type_basis = usd_curve_type + "-" + usd_curve.GetBasisAttr().Get()
+        usd_curve_type_basis = usd_curve.GetTypeAttr().Get() + "-" + usd_curve.GetBasisAttr().Get()
         usd_cyclic = usd_curve.GetWrapAttr().Get()
         expected_curve_type = curve_type_map[usd_curve_type_basis]
         expected_cyclic = cyclic_map[usd_cyclic]
@@ -934,7 +932,7 @@ class USDImportTest(AbstractUSDTest):
         blender_positions = blender_curve.attributes["position"].data
 
         point_count = 0
-        if usd_curve_type_basis == "linear":
+        if usd_curve_type_basis in ("linear-bezier", "linear-catmullRom"):
             point_count = len(usd_positions)
             self.assertEqual(len(blender_positions), point_count)
         elif usd_curve_type_basis == "cubic-bezier":
@@ -956,10 +954,13 @@ class USDImportTest(AbstractUSDTest):
         if usd_curve_type_basis == "cubic-bspline":
             return
 
+        if not usd_curve.GetWidthsAttr().IsAuthored():
+            return
+
         usd_width_interpolation = usd_curve.GetWidthsInterpolation()
         usd_radius = [w / 2 for w in usd_curve.GetWidthsAttr().Get()]
         blender_radius = [r.value for r in blender_curve.attributes["radius"].data]
-        if usd_curve_type_basis == "linear":
+        if usd_curve_type_basis == "linear-bezier":
             if usd_width_interpolation == "constant":
                 usd_radius = usd_radius * point_count
 

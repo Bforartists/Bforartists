@@ -158,13 +158,22 @@ find_package(OpenEXR REQUIRED)
 add_bundled_libraries(openexr/lib)
 add_bundled_libraries(imath/lib)
 
+string(APPEND PLATFORM_CFLAGS " -pipe -funsigned-char -fno-strict-aliasing -ffp-contract=off")
+set(PLATFORM_LINKFLAGS
+  "-fexceptions -framework CoreServices -framework Foundation -framework IOKit -framework AppKit -framework Cocoa \
+   -framework Carbon -framework AudioUnit -framework AudioToolbox -framework CoreAudio -framework Metal \
+   -framework QuartzCore"
+)
+
 if(WITH_CODEC_FFMPEG)
   set(FFMPEG_ROOT_DIR ${LIBDIR}/ffmpeg)
   set(FFMPEG_FIND_COMPONENTS
-    avcodec avdevice avformat avutil
+    avcodec avdevice avfilter avformat avutil
     mp3lame ogg opus swresample swscale
     theora theoradec theoraenc vorbis vorbisenc
     vorbisfile vpx x264)
+  # Frameworks required by libavfilter, using legacy macOS CGL
+  string(APPEND PLATFORM_LINKFLAGS " -framework CoreImage -framework OpenGL")
   if(EXISTS ${LIBDIR}/ffmpeg/lib/libaom.a)
     list(APPEND FFMPEG_FIND_COMPONENTS aom)
   endif()
@@ -191,11 +200,6 @@ mark_as_advanced(SYSTEMSTUBS_LIBRARY)
 if(SYSTEMSTUBS_LIBRARY)
   list(APPEND PLATFORM_LINKLIBS SystemStubs)
 endif()
-
-string(APPEND PLATFORM_CFLAGS " -pipe -funsigned-char -fno-strict-aliasing -ffp-contract=off")
-set(PLATFORM_LINKFLAGS
-  "-fexceptions -framework CoreServices -framework Foundation -framework IOKit -framework AppKit -framework Cocoa -framework Carbon -framework AudioUnit -framework AudioToolbox -framework CoreAudio -framework Metal -framework QuartzCore"
-)
 
 if(WITH_OPENIMAGEDENOISE)
   if("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "arm64")
@@ -367,6 +371,10 @@ if(WITH_MANIFOLD)
   find_package(manifold REQUIRED)
 endif()
 
+if(WITH_RUBBERBAND)
+  find_package(Rubberband REQUIRED)
+endif()
+
 if(WITH_CYCLES AND WITH_CYCLES_PATH_GUIDING)
   find_package(openpgl QUIET)
   if(openpgl_FOUND)
@@ -428,11 +436,11 @@ if(${XCODE_VERSION} VERSION_GREATER_EQUAL 15.0)
     # Silence "ld: warning: ignoring duplicate libraries".
     #
     # The warning is introduced with Xcode 15 and is triggered when the same library
-    # is passed to the linker ultiple times. This situation could happen with either
+    # is passed to the linker multiple times. This situation could happen with either
     # cyclic libraries, or some transitive dependencies where CMake might decide to
     # pass library to the linker multiple times to force it re-scan symbols. It is
-    # not neeed for Xcode linker to ensure all symbols from library are used and it
-    # is corrected in CMake 3.29:
+    # not necessary for Xcode linker to ensure all symbols from library are used and
+    # it is corrected in CMake 3.29:
     #    https://gitlab.kitware.com/cmake/cmake/-/issues/25297
     string(APPEND PLATFORM_LINKFLAGS " -Xlinker -no_warn_duplicate_libraries")
   endif()

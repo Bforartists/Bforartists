@@ -164,7 +164,7 @@ class AddPresetBase:
                 print("Writing Preset: {!r}".format(filepath))
 
                 if is_xml:
-                    import rna_xml
+                    import _rna_xml as rna_xml
                     rna_xml.xml_file_write(context, filepath, preset_menu_class.preset_xml_map)
                 else:
 
@@ -301,10 +301,10 @@ class ExecutePreset(Operator):
             try:
                 bpy.utils.execfile(filepath)
             except Exception as ex:
-                self.report({'ERROR'}, "Failed to execute the preset: " + repr(ex))
+                self.report({'ERROR'}, rpt_("Failed to execute the preset: {:s}").format(repr(ex)))
 
         elif ext == ".xml":
-            import rna_xml
+            import _rna_xml as rna_xml
             preset_xml_map = preset_class.preset_xml_map
             preset_xml_secure_types = getattr(preset_class, "preset_xml_secure_types", None)
 
@@ -708,7 +708,7 @@ class SavePresetInterfaceTheme(AddPresetBase, Operator):
     # while redrawing as it may involve remote file-system access.
 
     def execute(self, context):
-        import rna_xml
+        import _rna_xml as rna_xml
         filepath = context.preferences.themes[0].filepath
         if (not filepath) or _is_path_readonly(filepath):
             self.report({'ERROR'}, "Built-in themes cannot be overwritten")

@@ -378,7 +378,7 @@ class ShadowModule {
   void set_view(View &view, int2 extent);
 
   void debug_end_sync();
-  void debug_draw(View &view, GPUFrameBuffer *view_fb);
+  void debug_draw(View &view, gpu::FrameBuffer *view_fb);
 
   template<typename PassType> void bind_resources(PassType &pass)
   {
@@ -433,9 +433,9 @@ class ShadowPunctual : public NonCopyable, NonMovable {
   Vector<ShadowTileMap *> tilemaps_;
 
  public:
-  ShadowPunctual(ShadowModule &module) : shadows_(module){};
+  ShadowPunctual(ShadowModule &module) : shadows_(module) {};
   ShadowPunctual(ShadowPunctual &&other)
-      : shadows_(other.shadows_), tilemaps_(std::move(other.tilemaps_)){};
+      : shadows_(other.shadows_), tilemaps_(std::move(other.tilemaps_)) {};
 
   ~ShadowPunctual()
   {
@@ -462,9 +462,9 @@ class ShadowDirectional : public NonCopyable, NonMovable {
   IndexRange levels_range = IndexRange(0);
 
  public:
-  ShadowDirectional(ShadowModule &module) : shadows_(module){};
+  ShadowDirectional(ShadowModule &module) : shadows_(module) {};
   ShadowDirectional(ShadowDirectional &&other)
-      : shadows_(other.shadows_), tilemaps_(std::move(other.tilemaps_)){};
+      : shadows_(other.shadows_), tilemaps_(std::move(other.tilemaps_)) {};
 
   ~ShadowDirectional()
   {

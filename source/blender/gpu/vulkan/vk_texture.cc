@@ -145,7 +145,7 @@ void VKTexture::clear(eGPUDataFormat format, const void *data)
   context.render_graph().add_node(clear_color_image);
 }
 
-void VKTexture::clear_depth_stencil(const eGPUFrameBufferBits buffers,
+void VKTexture::clear_depth_stencil(const GPUFrameBufferBits buffers,
                                     float clear_depth,
                                     uint clear_stencil,
                                     std::optional<int> layer)
@@ -472,13 +472,6 @@ void VKTexture::update_sub(int offset[3],
   update_sub(0, offset, extent, format, nullptr, &pixel_buffer);
 }
 
-uint VKTexture::gl_bindcode_get() const
-{
-  /* TODO(fclem): Legacy. Should be removed at some point. */
-
-  return 0;
-}
-
 VKMemoryExport VKTexture::export_memory(VkExternalMemoryHandleTypeFlagBits handle_type)
 {
   const VKDevice &device = VKBackend::get().device;
@@ -577,7 +570,7 @@ bool VKTexture::is_texture_view() const
 }
 
 static VkImageUsageFlags to_vk_image_usage(const eGPUTextureUsage usage,
-                                           const eGPUTextureFormatFlag format_flag)
+                                           const GPUTextureFormatFlag format_flag)
 {
   const VKDevice &device = VKBackend::get().device;
   const bool supports_local_read = device.extensions_get().dynamic_rendering_local_read;
@@ -624,8 +617,8 @@ static VkImageUsageFlags to_vk_image_usage(const eGPUTextureUsage usage,
   return result;
 }
 
-static VkImageCreateFlags to_vk_image_create(const eGPUTextureType texture_type,
-                                             const eGPUTextureFormatFlag format_flag,
+static VkImageCreateFlags to_vk_image_create(const GPUTextureType texture_type,
+                                             const GPUTextureFormatFlag format_flag,
                                              const eGPUTextureUsage usage)
 {
   VkImageCreateFlags result = 0;
@@ -706,7 +699,7 @@ bool VKTexture::allocate()
       VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO, nullptr, 0};
 
   VmaAllocationCreateInfo allocCreateInfo = {};
-  allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO;
+  allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
   allocCreateInfo.priority = memory_priority(texture_usage);
 
   if (bool(texture_usage & GPU_TEXTURE_USAGE_MEMORY_EXPORT)) {
@@ -725,7 +718,8 @@ bool VKTexture::allocate()
   }
   debug::object_label(vk_image_, name_);
 
-  device.resources.add_image(vk_image_, image_info.arrayLayers, name_);
+  const bool use_subresource_tracking = image_info.arrayLayers > 1 || image_info.mipLevels > 1;
+  device.resources.add_image(vk_image_, use_subresource_tracking, name_);
 
   return result == VK_SUCCESS;
 }
@@ -806,7 +800,7 @@ const VKImageView &VKTexture::image_view_get(VKImageViewArrayed arrayed, VKImage
         0, ELEM(type_, GPU_TEXTURE_CUBE, GPU_TEXTURE_CUBE_ARRAY) ? 6 : 1);
   }
 
-  if (bool(flags & VKImageViewFlags::NO_SWIZZLING)) {
+  if (flag_is_set(flags, VKImageViewFlags::NO_SWIZZLING)) {
     image_view_info_.swizzle[0] = 'r';
     image_view_info_.swizzle[1] = 'g';
     image_view_info_.swizzle[2] = 'b';

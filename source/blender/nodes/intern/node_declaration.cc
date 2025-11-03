@@ -43,16 +43,16 @@ void NodeDeclarationBuilder::build_remaining_anonymous_attribute_relations()
     return ELEM(socket_decl->socket_type, SOCK_GEOMETRY, SOCK_BUNDLE, SOCK_CLOSURE);
   };
 
-  Vector<int> geometry_inputs;
+  Vector<int> data_inputs;
   for (const int i : declaration_.inputs.index_range()) {
     if (is_data_socket_decl(declaration_.inputs[i])) {
-      geometry_inputs.append(i);
+      data_inputs.append(i);
     }
   }
-  Vector<int> geometry_outputs;
+  Vector<int> data_outputs;
   for (const int i : declaration_.outputs.index_range()) {
     if (is_data_socket_decl(declaration_.outputs[i])) {
-      geometry_outputs.append(i);
+      data_outputs.append(i);
     }
   }
 
@@ -60,8 +60,8 @@ void NodeDeclarationBuilder::build_remaining_anonymous_attribute_relations()
     if (socket_builder->field_on_all_) {
       aal::RelationsInNode &relations = this->get_anonymous_attribute_relations();
       const int field_input = socket_builder->decl_base_->index;
-      for (const int geometry_input : geometry_inputs) {
-        relations.eval_relations.append({field_input, geometry_input});
+      for (const int data_input : data_inputs) {
+        relations.eval_relations.append({field_input, data_input});
       }
     }
   }
@@ -69,8 +69,8 @@ void NodeDeclarationBuilder::build_remaining_anonymous_attribute_relations()
     if (socket_builder->field_on_all_) {
       aal::RelationsInNode &relations = this->get_anonymous_attribute_relations();
       const int field_output = socket_builder->decl_base_->index;
-      for (const int geometry_output : geometry_outputs) {
-        relations.available_relations.append({field_output, geometry_output});
+      for (const int data_output : data_outputs) {
+        relations.available_relations.append({field_output, data_output});
       }
     }
     if (socket_builder->reference_pass_all_) {
@@ -78,16 +78,18 @@ void NodeDeclarationBuilder::build_remaining_anonymous_attribute_relations()
       const int field_output = socket_builder->decl_base_->index;
       for (const int input_i : declaration_.inputs.index_range()) {
         SocketDeclaration &input_socket_decl = *declaration_.inputs[input_i];
-        if (input_socket_decl.input_field_type != InputSocketFieldType::None) {
+        if (input_socket_decl.input_field_type != InputSocketFieldType::None ||
+            ELEM(input_socket_decl.socket_type, SOCK_BUNDLE, SOCK_CLOSURE))
+        {
           relations.reference_relations.append({input_i, field_output});
         }
       }
     }
     if (socket_builder->propagate_from_all_) {
       aal::RelationsInNode &relations = this->get_anonymous_attribute_relations();
-      const int geometry_output = socket_builder->decl_base_->index;
-      for (const int geometry_input : geometry_inputs) {
-        relations.propagate_relations.append({geometry_input, geometry_output});
+      const int data_output = socket_builder->decl_base_->index;
+      for (const int data_input : data_inputs) {
+        relations.propagate_relations.append({data_input, data_output});
       }
     }
   }
@@ -281,11 +283,8 @@ bNodeSocket &SocketDeclaration::update_or_build(bNodeTree &ntree,
 
 void SocketDeclaration::set_common_flags(bNodeSocket &socket) const
 {
-  SET_FLAG_FROM_TEST(socket.flag, compact, SOCK_COMPACT);
   SET_FLAG_FROM_TEST(socket.flag, hide_value, SOCK_HIDE_VALUE);
-  SET_FLAG_FROM_TEST(socket.flag, hide_label, SOCK_HIDE_LABEL);
   SET_FLAG_FROM_TEST(socket.flag, is_multi_input, SOCK_MULTI_INPUT);
-  SET_FLAG_FROM_TEST(socket.flag, no_mute_links, SOCK_NO_INTERNAL_LINK);
   SET_FLAG_FROM_TEST(socket.flag, !is_available, SOCK_UNAVAIL);
 }
 
@@ -297,19 +296,10 @@ bool SocketDeclaration::matches_common_data(const bNodeSocket &socket) const
   if (socket.identifier != this->identifier) {
     return false;
   }
-  if (((socket.flag & SOCK_COMPACT) != 0) != this->compact) {
-    return false;
-  }
   if (((socket.flag & SOCK_HIDE_VALUE) != 0) != this->hide_value) {
     return false;
   }
-  if (((socket.flag & SOCK_HIDE_LABEL) != 0) != this->hide_label) {
-    return false;
-  }
   if (((socket.flag & SOCK_MULTI_INPUT) != 0) != this->is_multi_input) {
-    return false;
-  }
-  if (((socket.flag & SOCK_NO_INTERNAL_LINK) != 0) != this->no_mute_links) {
     return false;
   }
   if (((socket.flag & SOCK_UNAVAIL) != 0) != !this->is_available) {
@@ -550,9 +540,9 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::dependent_field(
   return *this;
 }
 
-BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::hide_label(bool value)
+BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::optional_label(bool value)
 {
-  decl_base_->hide_label = value;
+  decl_base_->optional_label = value;
   return *this;
 }
 
@@ -779,9 +769,9 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::custom_draw(CustomSo
 }
 
 BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::usage_inference(
-    InputSocketUsageInferenceFn fn)
+    SocketUsageInferenceFn fn)
 {
-  decl_base_->usage_inference_fn = std::make_unique<InputSocketUsageInferenceFn>(std::move(fn));
+  decl_base_->usage_inference_fn = std::make_unique<SocketUsageInferenceFn>(std::move(fn));
   return *this;
 }
 
@@ -820,19 +810,21 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::usage_by_single_menu
     bNodeSocketValueMenu *value = socket.default_value_typed<bNodeSocketValueMenu>();
     value->value = menu_value;
   });
-  this->usage_inference([menu_value](const socket_usage_inference::InputSocketUsageParams &params)
+  this->usage_inference([menu_value](const socket_usage_inference::SocketUsageParams &params)
                             -> std::optional<bool> {
     const bNodeSocket &socket = find_single_menu_input(params.node);
-    if (const std::optional<bool> any_output_used = params.any_output_is_used()) {
-      if (!*any_output_used) {
-        /* If no output is used, none of the inputs is used either. */
-        return false;
+    if (params.socket.is_input()) {
+      if (const std::optional<bool> any_output_used = params.any_output_is_used()) {
+        if (!*any_output_used) {
+          /* If no output is used, none of the inputs is used either. */
+          return false;
+        }
       }
-    }
-    else {
-      /* It's not known if any output is used yet. This function will be called again once new
-       * information about output usages is available. */
-      return std::nullopt;
+      else {
+        /* It's not known if any output is used yet. This function will be called again once new
+         * information about output usages is available. */
+        return std::nullopt;
+      }
     }
     return params.menu_input_may_be(socket.identifier, menu_value);
   });
@@ -860,17 +852,19 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::usage_by_menu(
   });
   this->usage_inference(
       [menu_input_identifier, menu_values](
-          const socket_usage_inference::InputSocketUsageParams &params) -> std::optional<bool> {
-        if (const std::optional<bool> any_output_used = params.any_output_is_used()) {
-          if (!*any_output_used) {
-            /* If no output is used, none of the inputs is used either. */
-            return false;
+          const socket_usage_inference::SocketUsageParams &params) -> std::optional<bool> {
+        if (params.socket.is_input()) {
+          if (const std::optional<bool> any_output_used = params.any_output_is_used()) {
+            if (!*any_output_used) {
+              /* If no output is used, none of the inputs is used either. */
+              return false;
+            }
           }
-        }
-        else {
-          /* It's not known if any output is used yet. This function will be called again once new
-           * information about output usages is available. */
-          return std::nullopt;
+          else {
+            /* It's not known if any output is used yet. This function will be called again once
+             * new information about output usages is available. */
+            return std::nullopt;
+          }
         }
 
         /* Check if the menu might be any of the given values. */
@@ -947,6 +941,12 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::panel_toggle(const b
 BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::is_layer_name(const bool value)
 {
   decl_base_->is_layer_name = value;
+  return *this;
+}
+
+BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::is_volume_grid_name(const bool value)
+{
+  decl_base_->is_volume_grid_name = value;
   return *this;
 }
 
@@ -1118,6 +1118,16 @@ bool socket_type_supports_default_input_type(const bke::bNodeSocketType &socket_
       return stype == SOCK_MATRIX;
   }
   return false;
+}
+
+void CustomSocketDrawParams::draw_standard(uiLayout &layout,
+                                           const std::optional<StringRefNull> label_override)
+{
+  this->socket.typeinfo->draw(const_cast<bContext *>(&this->C),
+                              &layout,
+                              &this->socket_ptr,
+                              &this->node_ptr,
+                              label_override.has_value() ? *label_override : this->label);
 }
 
 }  // namespace blender::nodes

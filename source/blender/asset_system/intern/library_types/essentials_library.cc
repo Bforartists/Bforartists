@@ -10,6 +10,8 @@
 
 #include "utils.hh"
 
+#include "DNA_userdef_types.h"
+
 #include "AS_essentials_library.hh"
 #include "essentials_library.hh"
 
@@ -20,7 +22,10 @@ EssentialsAssetLibrary::EssentialsAssetLibrary()
                          {},
                          utils::normalize_directory_path(essentials_directory_path()))
 {
-  import_method_ = ASSET_IMPORT_APPEND_REUSE;
+  import_method_ = ASSET_IMPORT_PACK;
+  if (U.experimental.no_data_block_packing) {
+    import_method_ = ASSET_IMPORT_APPEND_REUSE;
+  }
 }
 
 std::optional<AssetLibraryReference> EssentialsAssetLibrary::library_reference() const
@@ -31,14 +36,21 @@ std::optional<AssetLibraryReference> EssentialsAssetLibrary::library_reference()
   return library_ref;
 }
 
+void EssentialsAssetLibrary::update_default_import_method()
+{
+  import_method_ = ASSET_IMPORT_PACK;
+  if (U.experimental.no_data_block_packing) {
+    import_method_ = ASSET_IMPORT_APPEND_REUSE;
+  }
+}
+
 StringRefNull essentials_directory_path()
 {
   static std::string path = []() {
     const std::optional<std::string> datafiles_path = BKE_appdir_folder_id(
-        BLENDER_SYSTEM_DATAFILES, "assets");
+        BLENDER_SYSTEM_DATAFILES, "assets"); /* BFA - WIP - Our assets soon*/
     return datafiles_path.value_or("");
   }();
   return path;
 }
-
 }  // namespace blender::asset_system

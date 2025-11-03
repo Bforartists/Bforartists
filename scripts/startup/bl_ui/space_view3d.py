@@ -711,6 +711,7 @@ class VIEW3D_HT_header(Header):
     @staticmethod
     def draw_xform_template(layout, context):
         obj = context.active_object
+        mode_string = context.mode  # BFA
         object_mode = "OBJECT" if obj is None else obj.mode
         has_pose_mode = (object_mode == "POSE") or (object_mode == "WEIGHT_PAINT" and context.pose_object is not None)
 
@@ -830,9 +831,20 @@ class VIEW3D_HT_header(Header):
                     panel="VIEW3D_PT_proportional_edit",
                 )
 
+        # BFA - handle types for curve, formerly in the control points menu
+        if mode_string in {"EDIT_CURVE"}:
+            row = layout.row(align=True)
+            row.operator_menu_enum("curve.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+
         # BFA - handle types for curves, formerly in the control points menu
-        if object_mode in {"EDIT_CURVE"}:
-            layout.operator_menu_enum("curve.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+        if mode_string in {"EDIT_CURVES"}:
+            row = layout.row(align=True)
+            row.operator_menu_enum("curves.handle_type_set", "type", text="", icon="HANDLE_AUTO")
+
+        # BFA - handle types for greasepencil, formerly in the point menu
+        if mode_string in {"EDIT_GPENCIL", "EDIT_GREASE_PENCIL"}:
+            row = layout.row(align=True)
+            row.operator_menu_enum("grease_pencil.set_handle_type", "type", text="", icon="HANDLE_AUTO")
 
         if object_mode == "EDIT" and obj.type == "GREASEPENCIL":
             draw_topbar_grease_pencil_layer_panel(context, layout)
@@ -1372,6 +1384,8 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             "EDIT_POINTCLOUD",
         }:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = "CURVE_SHRINKFATTEN"
+        if context.mode == 'EDIT_GREASE_PENCIL':
+            layout.operator("transform.transform", text="Opacity").mode = 'GPENCIL_OPACITY'
 
         if context.mode != "EDIT_CURVES" and context.mode != "EDIT_GREASE_PENCIL":
             layout.separator()
@@ -1676,9 +1690,13 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image", icon="RENDER_STILL")
-        layout.operator("render.opengl", text="OpenGL Render Animation", icon="RENDER_ANIMATION").animation = True
-        props = layout.operator("render.opengl", text="Viewport Render Keyframes", icon="RENDER_ANIMATION")
+        layout.operator("render.opengl", text="Render Image", icon="RENDER_STILL")
+        layout.operator("render.opengl", text="Render Animation", icon="RENDER_ANIMATION").animation = True
+        props = layout.operator(
+            "render.opengl",
+            text="Render Playblast on Keyframes",
+            icon='RENDER_ANIMATION',
+        )
         props.animation = True
         props.render_keyed_only = True
 
@@ -1781,7 +1799,8 @@ class VIEW3D_MT_view_pie_menus(Menu):
         ).name = "ANIM_MT_keyframe_insert_pie"
         layout.separator()
 
-        layout.operator("wm.call_menu_pie", text="Greasepencil Snap", icon="MENU_PANEL").name = "GPENCIL_MT_snap_pie"
+        layout.operator("wm.call_menu_pie", text="Greasepencil Snap",
+                        icon="MENU_PANEL").name = "GREASE_PENCIL_MT_snap_pie"
 
         layout.separator()
 
@@ -2949,6 +2968,8 @@ class VIEW3D_MT_paint_vertex_grease_pencil(Menu):
             text="Brightness/Contrast",
             icon="BRIGHTNESS_CONTRAST",
         )
+        layout.separator()
+        layout.operator("paint.sample_color").merged = False
 
 
 class VIEW3D_MT_select_paint_mask(Menu):
@@ -3389,6 +3410,20 @@ class VIEW3D_MT_grease_pencil_add(Menu):
         ).type = "LINEART_OBJECT"
 
 
+class VIEW3D_MT_lattice_add(Menu):
+    bl_idname = "VIEW3D_MT_lattice_add"
+    bl_label = "Lattice"
+    bl_translation_context = i18n_contexts.operator_default
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.operator("object.lattice_add_to_selected", text="Lattice Deform Selected", icon='OBJECT_LATTICE')
+
+
 class VIEW3D_MT_empty_add(Menu):
     bl_idname = "VIEW3D_MT_empty_add"
     bl_label = "Empty"
@@ -3452,7 +3487,8 @@ class VIEW3D_MT_add(Menu):
         else:
             layout.operator("object.armature_add", text="Armature", icon="OUTLINER_OB_ARMATURE")
 
-        layout.operator("object.add", text="Lattice", icon="OUTLINER_OB_LATTICE").type = "LATTICE"
+        layout.menu("VIEW3D_MT_lattice_add")
+
         layout.separator()
 
         layout.menu("VIEW3D_MT_empty_add", icon="OUTLINER_OB_EMPTY")
@@ -3852,7 +3888,10 @@ class VIEW3D_MT_object_animation(Menu):
         layout.separator()
 
         layout.operator("nla.bake", text="Bake Action", icon="BAKE_ACTION")
-        # layout.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon="BAKE_ACTION",) # BFA - legacy
+        layout.operator(
+            "grease_pencil.bake_grease_pencil_animation",
+            text="Bake Object Transform to Grease Pencil",
+            icon="BAKE_ACTION")
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -4355,30 +4394,144 @@ class VIEW3D_MT_object_parent(Menu):
     bl_translation_context = i18n_contexts.operator_default
 
     def draw(self, _context):
-        from bl_ui_utils.layout import operator_context
+        from _bl_ui_utils.layout import operator_context
 
         layout = self.layout
 
-        layout.operator_enum("object.parent_set", "type")
+        # BFA - Start of a consistent parent menu with conditional visibility
+        # layout.operator_enum("object.parent_set", "type")
+        parent = _context.active_object
+
+        selected_editable_objects = _context.selected_editable_objects
+
+        # Defines the variables for contextual visibility, similar to the object_relations.cc parent_set_invoke_menu
+        class can_support:
+            armature_deform = False
+            empty_groups = False
+            envelope_weights = False
+            automatic_weights = False
+            attach_surface = False
+
+            def __init__(self, parent, selected_editable_objects):
+                for child in selected_editable_objects:
+                    if child == parent:
+                        continue
+                    if child.type in {"MESH", "CURVES_LEGACY", "SURF", "FONT", "GREASEPENCIL", "LATTICE"}:
+                        self.armature_deform = True
+                        self.envelope_weights = True
+                    if child.type in {"MESH", "GREASEPENCIL", "LATTICE"}:
+                        self.empty_groups = True
+                    if child.type in {"MESH", "GREASEPENCIL"}:
+                        self.automatic_weights = True
+                    if child.type == "CURVES":
+                        self.attach_surface = True
+
+        can_support = can_support(parent, selected_editable_objects)
+
+        if parent and parent.select_get():
+
+            with operator_context(layout, "EXEC_REGION_WIN"):
+                layout.operator("object.parent_set", text="Object", icon="PARENT_OBJECT").keep_transform = False
+                props = layout.operator(
+                    "object.parent_set",
+                    text="Object (Keep Transform)",
+                    icon="PARENT_OBJECT",
+                )
+                props.keep_transform = True
+
+                layout.operator(
+                    "OBJECT_OT_parent_no_inverse_set",
+                    text="Object (Without Inverse)",
+                    icon="PARENT").keep_transform = False
+                props = layout.operator(
+                    "OBJECT_OT_parent_no_inverse_set",
+                    text="Object (Keep Transform Without Inverse)",
+                    icon="PARENT",
+                )
+                props.keep_transform = True
+
+                # Define helper function to add enabled/disabled operators based on context
+                # WARNING: Make sure the disabled is identicle to the enabled.
+                def add_operator(layout, text, icon, type, enabled=True):
+                    row = layout.row()
+                    row.enabled = enabled
+                    op = row.operator("object.parent_set", text=text, icon=icon)
+                    op.type = type
+                    return op
+
+                # MESH parents
+                if parent.type == "MESH":
+                    add_operator(layout, "Vertex", "VERTEX_PARENT", "VERTEX")
+                    add_operator(layout, "Vertex (Triangle)", "VERTEX_PARENT", "VERTEX_TRI")
+                else:
+                    layout.separator()
+                    add_operator(layout, "Vertex", "VERTEX_PARENT", "VERTEX", False)
+                    add_operator(layout, "Vertex (Triangle)", "VERTEX_PARENT", "VERTEX_TRI", False)
+
+                # ARMATURE parents
+                if parent.type == "ARMATURE":
+                    layout.separator()
+                    if can_support.armature_deform:
+                        add_operator(layout, "Armature Deform", "PARENT_BONE", "ARMATURE")
+                    if can_support.empty_groups:
+                        add_operator(layout, "   With Empty Groups", "PARENT_BONE", "ARMATURE_NAME")
+                    if can_support.envelope_weights:
+                        add_operator(layout, "   With Envelope Weights", "PARENT_BONE", "ARMATURE_ENVELOPE")
+                    if can_support.automatic_weights:
+                        add_operator(layout, "   With Automatic Weights", "PARENT_BONE", "ARMATURE_AUTO")
+                    add_operator(layout, "Bone", "PARENT_BONE", "BONE")
+                    add_operator(layout, "Bone Relative", "PARENT_BONE", "BONE_RELATIVE")
+                else:
+                    layout.separator()
+                    for op_text, op_type in [
+                        ("Armature Deform", "ARMATURE"),
+                        ("   With Empty Groups", "ARMATURE_NAME"),
+                        ("   With Envelope Weights", "ARMATURE_ENVELOPE"),
+                        ("   With Automatic Weights", "ARMATURE_AUTO"),
+                        ("Bone", "BONE"),
+                        ("Bone Relative", "BONE_RELATIVE")
+                    ]:
+                        add_operator(layout, op_text, "PARENT_BONE", op_type, False)
+
+                # LATTICE parents
+                if parent.type == "LATTICE":
+                    layout.separator()
+                    add_operator(layout, "Lattice Deform", "PARENT_LATTICE", "LATTICE")
+                else:
+                    layout.separator()
+                    add_operator(layout, "Lattice Deform", "PARENT_LATTICE", "LATTICE", False)
+
+                # MESH attach surface
+                if parent.type == "MESH" and can_support.attach_surface:
+                    layout.separator()
+                    row = layout.row()
+                    row.operator("CURVES_OT_surface_set", text="Object (Attach Curves to Surface)", icon="PARENT_CURVE")
+                else:
+                    layout.separator()
+                    row = layout.row()
+                    row.enabled = False
+                    row.operator("CURVES_OT_surface_set", text="Object (Attach Curves to Surface)", icon="PARENT_CURVE")
+
+                # CURVE parents
+                if parent.type == "CURVE":
+                    layout.separator()
+                    add_operator(layout, "Curve Deform", "PARENT_CURVE", "CURVE")
+                    add_operator(layout, "Follow Path", "PARENT_CURVE", "FOLLOW")
+                    add_operator(layout, "Path Constraint", "PARENT_CURVE", "PATH_CONST")
+                else:
+                    layout.separator()
+                    for op_text, op_type in [
+                        ("Curve Deform", "CURVE"),
+                        ("Follow Path", "FOLLOW"),
+                        ("Path Constraint", "PATH_CONST")
+                    ]:
+                        add_operator(layout, op_text, "PARENT_CURVE", op_type, False)
+
+        # BFA - End of consistent parent menu
 
         layout.separator()
 
-        with operator_context(layout, "EXEC_REGION_WIN"):
-            layout.operator("object.parent_no_inverse_set", icon="PARENT").keep_transform = False
-            props = layout.operator(
-                "object.parent_no_inverse_set",
-                text="Make Parent without Inverse (Keep Transform)",
-                icon="PARENT",
-            )
-            props.keep_transform = True
-
-            layout.operator(
-                "curves.surface_set",
-                text="Object (Attach Curves to Surface)",
-                icon="PARENT_CURVE",
-            )
-
-        layout.separator()
+        # BFA - removed to use the above parent menu, contexually consistent
 
         layout.operator_enum("object.parent_clear", "type")
 
@@ -4528,7 +4681,7 @@ class VIEW3D_MT_object_cleanup(Menu):
             text="Remove Unused Material Slots",
             icon="DELETE",
         )
-        layout.operator("object.material_slot_remove_all", text="Remove All Materials")
+        layout.operator("object.material_slot_remove_all", text="Remove All Materials", icon="DELETE")
 
 
 class VIEW3D_MT_object_asset(Menu):
@@ -4537,7 +4690,7 @@ class VIEW3D_MT_object_asset(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("asset.mark", icon="ASSIGN")
+        layout.operator("asset.mark", icon='ASSET_MANAGER')
         layout.operator("asset.clear", text="Clear Asset", icon="CLEAR").set_fake_user = False
         layout.operator("asset.clear", text="Clear Asset (Set Fake User)", icon="CLEAR").set_fake_user = True
 
@@ -4922,7 +5075,7 @@ class VIEW3D_MT_paint_weight(Menu):
 
     @staticmethod
     def draw_generic(layout, is_editmode=False):
-        layout.menu("VIEW3D_MT_paint_weight_legacy", text="Legacy")  # bfa menu
+        # bfa - removed VIEW3D_MT_paint_weight_legacy
 
         if not is_editmode:
             layout.operator(
@@ -5747,7 +5900,7 @@ class VIEW3D_MT_pose(Menu):
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
         layout.separator()
-        layout.operator("POSELIB.create_pose_asset")
+        layout.operator("POSELIB.create_pose_asset", icon="ASSET_MANAGER")
 
 
 class VIEW3D_MT_pose_transform(Menu):
@@ -6010,32 +6163,33 @@ class VIEW3D_MT_pose_context_menu(Menu):
 class BoneOptions:
     def draw(self, context):
         layout = self.layout
-
+        # BFA - added icons
         options = [
-            "show_wire",
-            "use_deform",
-            "use_envelope_multiply",
-            "use_inherit_rotation",
+            ("show_wire", "NODE_WIREFRAME"),
+            ("use_deform", "MOD_SIMPLEDEFORM"),
+            ("use_envelope_multiply", "MOD_ENVELOPE"),
+            ("use_inherit_rotation", "CLEARROTATE"),
         ]
 
         if context.mode == "EDIT_ARMATURE":
             bone_props = bpy.types.EditBone.bl_rna.properties
             data_path_iter = "selected_bones"
             opt_suffix = ""
-            options.append("lock")
+            options.append(("lock", "LOCKED"))
         else:  # pose-mode
             bone_props = bpy.types.Bone.bl_rna.properties
             data_path_iter = "selected_pose_bones"
             opt_suffix = "bone."
 
-        for opt in options:
+        for opt_name, icon in options:
             props = layout.operator(
                 "wm.context_collection_boolean_set",
-                text=bone_props[opt].name,
+                text=bone_props[opt_name].name,
                 text_ctxt=i18n_contexts.default,
+                icon=icon,
             )
             props.data_path_iter = data_path_iter
-            props.data_path_item = opt_suffix + opt
+            props.data_path_item = opt_suffix + opt_name
             props.type = self.type
 
 
@@ -6873,8 +7027,8 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength", icon="HAND")
-        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength", icon="MESH_PLANE")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength")  # bfa - no icons for sub menus
+        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength")  # bfa - no icons for sub menus
         layout.template_node_operator_asset_menu_items(catalog_path="Mesh/Normals")
 
 
@@ -6923,7 +7077,6 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
 
         layout.operator("mesh.decimate", icon="DECIMATE")
         layout.operator("mesh.dissolve_degenerate", icon="DEGENERATE_DISSOLVE")
-        layout.operator("mesh.dissolve_limited", icon="DISSOLVE_LIMITED")
         layout.operator("mesh.face_make_planar", icon="MAKE_PLANAR")
 
         layout.separator()
@@ -7905,7 +8058,10 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("grease_pencil.convert_curve_type", text="Convert Type", property="type")
+        layout.operator_menu_enum(
+            "grease_pencil.convert_curve_type",
+            text="Set Spline Type",
+            property="type")  # BFA - made title consistent
         layout.operator("grease_pencil.set_curve_resolution", icon="SPLINE_RESOLUTION")
 
         layout.separator()
@@ -7934,9 +8090,8 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.menu("VIEW3D_MT_greasepencil_vertex_group")
 
-        layout.separator()
-
-        layout.operator_menu_enum("grease_pencil.set_handle_type", property="type")
+        # layout.operator_menu_enum("grease_pencil.set_handle_type", property="type") # BFA - exposed to header
+        layout.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -7964,17 +8119,18 @@ class VIEW3D_MT_edit_curves(Menu):
 
         layout.separator()
         layout.operator("curves.duplicate_move", icon="DUPLICATE")
-        layout.operator("curves.extrude_move")
 
         layout.separator()
+        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
+                                  property="type")  # BFA - made title consistent
+        # layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - hide, as already exposed in header
         layout.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
-        layout.operator_menu_enum("curves.curve_type_set", "type")
         layout.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
         layout.separator()
 
-        layout.operator("curves.separate")
+        layout.operator("curves.separate", icon="SEPARATE")
         layout.operator("curves.delete", icon="DELETE")
 
 
@@ -7985,7 +8141,7 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
         layout = self.layout
 
         layout.operator("curves.extrude_move", icon="EXTRUDE_REGION")
-        layout.operator_menu_enum("curves.handle_type_set", "type")
+        # layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - exposed to header
 
 
 class VIEW3D_MT_edit_curves_segments(Menu):
@@ -8022,20 +8178,21 @@ class VIEW3D_MT_edit_curves_context_menu(Menu):
         layout.separator()
 
         # Modify Flags
-        layout.operator_menu_enum("curves.curve_type_set", "type")
+        layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
+                                  property="type")  # BFA - made title consistent
         layout.operator_menu_enum("curves.handle_type_set", "type")
-        layout.operator("curves.cyclic_toggle")
-        layout.operator("curves.switch_direction")
+        layout.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
+        layout.operator("curves.switch_direction", icon="SWITCH_DIRECTION")
 
         layout.separator()
 
         # Removal Operators
-        layout.operator("curves.separate")
-        layout.operator("curves.delete")
+        layout.operator("curves.separate", icon="SEPARATE")
+        layout.operator("curves.delete", icon="DELETE")
 
         layout.separator()
 
-        layout.operator("curves.split")
+        layout.operator("curves.split", icon='SPLIT')
 
 
 class VIEW3D_MT_edit_pointcloud(Menu):
@@ -9407,7 +9564,7 @@ class VIEW3D_PT_overlay_object(Panel):
         view = context.space_data
         overlay = view.overlay
         display_all = overlay.show_overlays
-        shading = view.shading
+        mode = context.mode
 
         col = layout.column(align=True)
         col.active = display_all
@@ -9435,21 +9592,30 @@ class VIEW3D_PT_overlay_object(Panel):
         sub.prop(overlay, "show_bones", text="Bones")
         sub.prop(overlay, "show_motion_paths")
 
+        can_show_object_origins = mode not in {
+            'PAINT_TEXTURE',
+            'PAINT_2D',
+            'SCULPT',
+            'PAINT_VERTEX',
+            'PAINT_WEIGHT',
+            'SCULPT_CURVES',
+            'PAINT_GREASE_PENCIL',
+            'VERTEX_GREASE_PENCIL',
+            'WEIGHT_GREASE_PENCIL',
+            'SCULPT_GREASE_PENCIL',
+        }
         split = col.split()
         col = split.column()
         col.use_property_split = False
         row = col.row()
         row.separator()
-        row.prop(overlay, "show_object_origins", text="Origins")
+        if can_show_object_origins:
+            row.prop(overlay, "show_object_origins", text="Origins")
         col = split.column()
-        if overlay.show_object_origins:
+        if can_show_object_origins and overlay.show_object_origins:
             col.prop(overlay, "show_object_origins_all", text="Origins (All)")
         else:
             col.label(icon="DISCLOSURE_TRI_RIGHT")
-
-        if shading.type == "WIREFRAME" or shading.show_xray:
-            layout.separator()
-            layout.prop(overlay, "bone_wire_alpha")
 
 
 class VIEW3D_PT_overlay_geometry(Panel):
@@ -10013,7 +10179,7 @@ class VIEW3D_PT_overlay_bones(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
     bl_label = "Bones"
-    bl_ui_units_x = 14
+    bl_ui_units_x = 18 # BFA - made wider for the label
 
     @staticmethod
     def is_using_wireframe(context):
@@ -10070,7 +10236,8 @@ class VIEW3D_PT_overlay_bones(Panel):
             row.separator()
             row.prop(overlay, "show_xray_bone")
             row = col.row()
-            row.active = shading.type == "WIREFRAME"
+            #row.active = shading.type == "WIREFRAME" # BFA - WIP - you can tune this always?
+            row.use_property_split = True # BFA
             row.prop(overlay, "bone_wire_alpha")
 
 
@@ -10979,25 +11146,14 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator(
-                "grease_pencil.stroke_subdivide",
-                text="Subdivide",
-                icon="SUBDIVIDE_EDGES",
-            )
-            col.operator(
-                "grease_pencil.stroke_subdivide_smooth",
-                text="Subdivide and Smooth",
-                icon="SUBDIVIDE_EDGES",
-            )
+            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES",)
+            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES",)
 
             col.separator()
 
-            col.operator(
-                "grease_pencil.stroke_smooth",
-                text="Smooth Points",
-                icon="SMOOTH_VERTEX",
-            )
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX",)
             col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
+            col.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
             col.separator()
 
@@ -11029,7 +11185,12 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.operator("grease_pencil.separate", text="Separate", icon="SEPARATE").mode = "SELECTED"
 
             col.separator()
-            col.operator_menu_enum("grease_pencil.convert_curve_type", text="Convert Type", property="type")
+
+            col.operator_menu_enum(
+                "grease_pencil.convert_curve_type",
+                text="Set Spline Type",
+                property="type")  # BFA - made title consistent
+            col.operator_menu_enum("grease_pencil.set_handle_type", "type")
 
 
 class GREASE_PENCIL_MT_Layers(Menu):
@@ -11730,15 +11891,11 @@ class VIEW3D_PT_curves_sculpt_parameter_falloff(Panel):
         brush = settings.brush
 
         layout.template_curve_mapping(
-            brush.curves_sculpt_settings, "curve_parameter_falloff", brush=True, use_negative_slope=True
+            brush.curves_sculpt_settings,
+            "curve_parameter_falloff",
+            brush=True,
+            show_presets=True,
         )
-        row = layout.row(align=True)
-        row.operator("brush.sculpt_curves_falloff_preset", icon="SMOOTHCURVE", text="").shape = "SMOOTH"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="SPHERECURVE", text="").shape = "ROUND"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="ROOTCURVE", text="").shape = "ROOT"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="SHARPCURVE", text="").shape = "SHARP"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="LINCURVE", text="").shape = "LINE"
-        row.operator("brush.sculpt_curves_falloff_preset", icon="NOCURVE", text="").shape = "MAX"
 
 
 class VIEW3D_PT_curves_sculpt_grow_shrink_scaling(Panel):
@@ -11817,6 +11974,16 @@ class VIEW3D_AST_brush_texture_paint(View3DAssetShelf, bpy.types.AssetShelf):
     mode = "TEXTURE_PAINT"
     mode_prop = "use_paint_image"
     brush_type_prop = "image_brush_type"
+
+    @classmethod
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+        # bl_space_type from #View3DAssetShelf is ignored for popup asset shelves.
+        # Avoid this to be called from the Image Editor (both
+        # #IMAGE_AST_brush_paint and #VIEW3D_AST_brush_texture_paint are included
+        # in the #km_image_paint keymap). See #145987.
+        return context.space_data.type != 'IMAGE_EDITOR'
 
 
 class VIEW3D_AST_brush_gpencil_paint(View3DAssetShelf, bpy.types.AssetShelf):
@@ -11940,6 +12107,7 @@ classes = (
     VIEW3D_MT_camera_add,
     VIEW3D_MT_volume_add,
     VIEW3D_MT_grease_pencil_add,
+    VIEW3D_MT_lattice_add,
     VIEW3D_MT_empty_add,
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,

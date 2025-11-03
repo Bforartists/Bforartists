@@ -159,6 +159,8 @@ static char bforartists_version_string[48] = "";
 
 /* Only includes patch if non-zero. */
 static char bforartists_version_string_compact[48] = "";
+/* BFA Blender sub version */
+static char bforartists_sub_version_string[48] = "";
 
 static void bforartists_version_init()
 {
@@ -191,6 +193,10 @@ static void bforartists_version_init()
            BFORARTISTS_VERSION / 10,
            BFORARTISTS_VERSION % 10,
            version_cycle);
+
+  SNPRINTF(bforartists_sub_version_string,
+           "%d",
+           BLENDER_FILE_SUBVERSION);
 }
 
 /*bfa - bforartists version string*/
@@ -202,6 +208,56 @@ const char *BKE_bforartists_version_string()
 const char *BKE_bforartists_version_string_compact()
 {
  return bforartists_version_string_compact;
+}
+
+const char *BKE_bforartists_sub_version_string()
+{
+ return bforartists_sub_version_string;
+}
+
+void BKE_bforartists_version_blendfile_string_from_blender(char *str_buff,
+                                                      const size_t str_buff_maxncpy,
+                                                      const short file_version,
+                                                      const bool is_version_blender)
+{
+  const short file_version_major = file_version / 100;
+  const short file_version_minor = file_version % 100;
+  const short bfa_version_major = BFORARTISTS_VERSION / 10;
+  short bfa_version_major_from_blender = file_version_major;
+  short bfa_version_minor_from_blender = file_version_minor;
+
+
+  /* Get Bforartists version from Blender
+     Usually Bforartist is below 1 from Blender version 
+     For example Blender is in 5.0 Bforartist is 4.5 (5 > 4 and minor is 0)
+     5.1 -> 5.0 
+     and minor is just subtract by 1 
+     it can be weird during Blender reaching Beta, new Alpha where they up the version number
+  */
+  if (is_version_blender) {
+    if (file_version_major > bfa_version_major && file_version_minor == 0) {
+      bfa_version_major_from_blender = file_version_major - 1;
+      bfa_version_minor_from_blender = 5;
+    } else {
+        bfa_version_major_from_blender = file_version_major;
+        bfa_version_minor_from_blender = bfa_version_minor_from_blender - 1;
+    }
+     BLI_snprintf_utf8(
+      str_buff, str_buff_maxncpy, "%d.%d", 
+      bfa_version_major_from_blender, 
+      bfa_version_minor_from_blender
+    );
+  } else {
+    // use bfa version with patch number directly
+    bfa_version_major_from_blender = bfa_version_major;
+    bfa_version_minor_from_blender = BFORARTISTS_VERSION % 10;
+    BLI_snprintf_utf8(
+      str_buff, str_buff_maxncpy, "%d.%d.%d", 
+      bfa_version_major_from_blender, 
+      bfa_version_minor_from_blender, 
+      BFORARTISTS_VERSION_PATCH
+   );
+  }
 }
 
 /* -------------- bfa - end -----------------*/
@@ -216,7 +272,7 @@ void BKE_blender_version_blendfile_string_from_values(char *str_buff,
   if (file_subversion >= 0) {
     BLI_snprintf_utf8(str_buff,
                       str_buff_maxncpy,
-                      "%d.%d (sub %d)",
+                      "%d.%d sub %d", // bfa remove sub brackets
                       file_version_major,
                       file_version_minor,
                       file_subversion);

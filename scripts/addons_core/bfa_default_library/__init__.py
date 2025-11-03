@@ -17,44 +17,28 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # -----------------------------------------------------------------------------
-# ! IMPORTANT! READ THIS WHEN SETTING UP THE LIBRARY
-# This is a work in progress, and many assets, categories, thumbnails and more are subject to change.
-# Use at own risk. 
+# Default Asset Library Addon
+# A comprehensive asset library system with smart primitives and wizard operations
 # -----------------------------------------------------------------------------
-
 
 import bpy
 import os
 
-from . import ops
-
 from bpy.utils import register_submodule_factory
-
-from bpy.types import (
-    AddonPreferences,
-    Context,
-    Preferences,
-    UILayout,
-)
-
+from bpy.types import AddonPreferences, Context, Preferences, UILayout
 from pathlib import Path
 from os import path as p
 
-####### SCRIPT TO PACK (run from Powershell) #######
-# cd "[PATH TO ADDON CONTENTS]"
-# blender --command extension build
-#
-# This will pack the addon contents into a zip file like this for extensions
-#
-# my_extension-0.0.1.zip
-# ├─ __init__.py
-# ├─ blender_manifest.toml
-# └─ (..
+# Configure the display names and sub-folders of your Libraries here:
+LIB_NAME = "Default Library"
+GEO_NAME = "Geometry Nodes Library"
+SHADER_NAME = "Shader Nodes Library"
+COMP_NAME = "Compositor Nodes Library"
 
 bl_info = {
     "name": "Default Asset Library",
     "author": "Draise",
-    "version": (1, 2, 1),
+    "version": (1, 2, 3),
     "blender": (4, 4, 3),
     "location": "Asset Browser>Default Library",
     "description": "Adds a default library with complementary assets that you can use from the Asset Browser Editor",
@@ -65,15 +49,10 @@ bl_info = {
     "endpoint_url": "",
     "category": "Import-Export"
 }
-# Configure the display name and sub-folder of your Library here:
-LIB_NAME = "Default Library"
-GEO_NAME = "Geometry Nodes Library"
 
-# Running code, don't change if not necessary!
 # -----------------------------------------------------------------------------
-
-# # safe_bl_idname = re.sub("\s", "_", re.sub("[^\w\s]", "", LIB_NAME)).lower()
-
+# Preferences and Library Management
+# -----------------------------------------------------------------------------
 
 class LIBADDON_APT_preferences(AddonPreferences):
     bl_idname = __package__
@@ -128,54 +107,70 @@ def unregister_library(library_name: str):
         return
 
     bpy.ops.preferences.asset_library_remove(index=index)
-    #print(f"Unregistered library: {library_name}")
 
 
 def register_all_libraries():
-    """Register both the default and geometry nodes libraries."""
+    """Register all asset libraries."""
     register_library(LIB_NAME)
     register_library(GEO_NAME)
+    register_library(SHADER_NAME)
+    register_library(COMP_NAME)
 
 
 def unregister_all_libraries():
-    """Unregister both the default and geometry nodes libraries."""
+    """Unregister all asset libraries."""
     unregister_library(LIB_NAME)
     unregister_library(GEO_NAME)
+    unregister_library(SHADER_NAME)
+    unregister_library(COMP_NAME)
+
+
+# -----------------------------------------------------------------------------
+# Main Registration
+# -----------------------------------------------------------------------------
 
 classes = (
     LIBADDON_APT_preferences,
 )
 
+# Define all submodules including the new operators and wizards modules
 submodule_names = [
-    "ui",
-    "ops",
-    "handlers_collections",
+    "ui",              # User interface and menus
+    "panels",          # Main panels
+    "ops",             # Main operations
+    "operators",       # All operator classes (geometry, compositor, shader)
+    "wizards",              # Wizards
 ]
 
 # Get the register/unregister functions from the factory
 register_submodules, unregister_submodules = register_submodule_factory(__name__, submodule_names)
 
-# Registers the library when you load the addon.
 def register():
+    """Register the complete addon"""
+    # Register preferences class
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    # Register all submodules
     register_submodules()
 
-    # Register both libraries using the timer
+    # Register asset libraries using timer
     bpy.app.timers.register(register_all_libraries, first_interval=0.1)
 
-# Unregisters the library when you unload the addon.
 def unregister():
-    # Unregister both libraries
+    """Unregister the complete addon"""
+    # Unregister all libraries
     unregister_all_libraries()
 
+    # Unregister preferences class
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
+    # Unregister timer if exists
     try:
         bpy.app.timers.unregister(register_all_libraries)
     except Exception:
         pass
 
+    # Unregister all submodules
     unregister_submodules()

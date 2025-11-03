@@ -42,20 +42,30 @@ class TIME_PT_playhead_snapping(Panel):
 
 def playback_controls(layout, context):
     st = context.space_data
-    is_sequencer = st.type == "SEQUENCE_EDITOR" and st.view_type == "SEQUENCER"
+    is_sequencer = st.type == 'SEQUENCE_EDITOR' and st.view_type == 'SEQUENCER'
+    is_timeline = st.type == 'DOPESHEET_EDITOR' and st.mode == 'TIMELINE'
 
     scene = context.scene if not is_sequencer else context.sequencer_scene
-    tool_settings = context.tool_settings
+    tool_settings = scene.tool_settings if scene else None
     screen = context.screen
 
     row = layout.row(align=True)
 
-    # BFA - exposed to top sequener header, where contextually relevant, make sure 3D Sequencer is enabled
+    # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
-       layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
+        layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
 
     layout.separator_spacer()
     # BFA - moved dropdowns to consistently float right
+
+    # Time jump
+    row = layout.row(align=True)
+    row.operator("screen.time_jump", text="", icon='FRAME_PREV').backward = True
+    row.prop(scene, "time_jump_delta", text="")
+    row.operator("screen.time_jump", text="", icon='FRAME_NEXT').backward = False
+    row.popover(panel="TIME_PT_jump", text="")
+
+    row = layout.row(align=True)
 
     row.operator("screen.frame_jump", text="", icon="REW").end = False
     row.operator("screen.keyframe_jump", text="", icon="PREV_KEYFRAME").next = False
@@ -80,10 +90,12 @@ def playback_controls(layout, context):
     row.operator("screen.frame_jump", text="", icon="FF").end = True
     row.operator("screen.animation_cancel", text="", icon="LOOP_BACK").restore_frame = True
 
-    # layout.separator_spacer() #BFA
+    # BFA - removed separator_spacer to center controls better
 
+    # BFA - cleaned up duplicate controls and organized layout
     if scene:
-        row = layout.row()
+        # BFA- Current frame display
+        row = layout.row(align=True)
         if scene.show_subframe:
             row.scale_x = 1.15
             row.prop(scene, "frame_float", text="")
@@ -91,6 +103,7 @@ def playback_controls(layout, context):
             row.scale_x = 0.95
             row.prop(scene, "frame_current", text="")
 
+        # BFA - Frame range controls
         row = layout.row(align=True)
         row.prop(scene, "use_preview_range", text="", toggle=True)
         row.operator("anim.start_frame_set", text="", icon="SET_POSITION")
@@ -99,46 +112,59 @@ def playback_controls(layout, context):
         if not scene.use_preview_range:
             sub.prop(scene, "frame_start", text="Start")
             sub.prop(scene, "frame_end", text="End")
-
         else:
             sub.prop(scene, "frame_preview_start", text="Start")
             sub.prop(scene, "frame_preview_end", text="End")
-
         row.operator("anim.end_frame_set", text="", icon="SET_POSITION")
 
-        row.separator()
+        layout.separator_spacer()
 
+        # BFA - Keyframing controls
+        row = layout.row(align=True)
         row.operator("anim.keyframe_insert", text="", icon="KEYFRAMES_INSERT")  # BFA - updated icon
         row.operator(
             "anim.keyframe_delete_v3d", text="", icon="KEYFRAMES_REMOVE"
         )  # BFA - updated to work like it would in the 3D View (as expected)
 
-        layout.separator_spacer()
+        # BFA - Snap playhead controls (single instance, moved to end)
+        if tool_settings:
+            row = layout.row(align=True)
+            sub = row.row(align=True)
+            sub.prop(tool_settings, "use_snap_playhead", text="")
+            sub.popover(panel="TIME_PT_playhead_snapping", text="")
 
-        # BFA - moved to end with options consistently
+        # BFA - Auto keyframing toggle
         row = layout.row(align=True)
-        row.prop(tool_settings, "use_snap_playhead", text="")
-        sub = row.row(align=True)
-        sub.popover(panel="TIME_PT_playhead_snapping", text="")
-
-        row = layout.row(align=True)
-        sub = row.row(align=True)
         if tool_settings.use_keyframe_insert_auto:
+            sub = row.row(align=True)
             sub.popover(panel="TIME_PT_auto_keyframing", text="")
         row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+
+        # BFA - Keying set selector
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
-        layout.popover(panel="TIME_PT_playback", text="Playback")
-        icon_keytype = "KEYTYPE_{:s}_VEC".format(context.tool_settings.keyframe_type)
-        layout.popover(panel="TIME_PT_keyframing_settings", icon=icon_keytype)
+        if scene:
+            layout.popover(
+                panel="TIME_PT_playback",
+                text="Playback",
+            )
 
-        if (
-            getattr(context.space_data, "mode", "") == "TIMELINE"
-        ):  # BFA - Make this only show in the timeline editor to not show this in the footer.
-            row.popover(panel="TIME_PT_view_view_options", text="")
+        if tool_settings:
+            # BFA - The Keyframe settings are exposed in the Timeline view.
+            icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
+            layout.popover(
+                panel="TIME_PT_keyframing_settings",
+                text_ctxt=i18n_contexts.id_windowmanager,
+                icon=icon_keytype,
+            )
 
+        # BFA - Make this only show in the timeline editor to not show this in the footer.
+        if is_timeline:
+            layout.popover(panel="TIME_PT_view_view_options", text="Options")
 
-class TIME_MT_editor_menus(Menu):
+# BFA - Legacy
+
+class TIME_MT_editor_menus(bpy.types.Menu):
     bl_idname = "TIME_MT_editor_menus"
     bl_label = ""
 
@@ -160,8 +186,8 @@ class TIME_MT_editor_menus(Menu):
             sub.menu("TIME_MT_marker")
             sub.menu("DOPESHEET_MT_select")  # BFA
 
-
-class TIME_MT_marker(Menu):
+# BFA - Legacy
+class TIME_MT_marker(bpy.types.Menu):
     bl_label = "Marker"
 
     def draw(self, context):
@@ -170,7 +196,8 @@ class TIME_MT_marker(Menu):
         marker_menu_generic(layout, context)
 
 
-class TIME_MT_view(Menu):
+# BFA - Legacy
+class TIME_MT_view(bpy.types.Menu):
     bl_label = "View"
 
     def draw(self, context):
@@ -203,12 +230,7 @@ class TIME_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("DOPESHEET_MT_cache")  # BFA - WIP - move to options
-
-        layout.separator()
-
         layout.menu("INFO_MT_area")
-
 
 def marker_menu_generic(layout, context):
     # layout.operator_context = 'EXEC_REGION_WIN'
@@ -345,7 +367,7 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
             self.bl_label = scene.keying_sets_all.active.bl_label
             if scene.keying_sets_all.active.bl_label in scene.keying_sets:
                 # Do not translate, this keying set is user-defined.
-                self.bl_translation_context = "Do not translate"
+                self.bl_translation_context = i18n_contexts.no_translation
             else:
                 # Use the keying set's translation context (default).
                 self.bl_translation_context = scene.keying_sets_all.active.bl_rna.translation_context
@@ -460,16 +482,34 @@ class TIME_PT_auto_keyframing(TimelinePanelButtons, Panel):
         col.prop(tool_settings, "use_keyframe_cycle_aware")
 
 
+class TIME_PT_jump(TimelinePanelButtons, Panel):
+    bl_label = "Time Jump"
+    bl_options = {'HIDE_HEADER'}
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+
+        layout.prop(scene, "time_jump_unit", expand=True, text="Jump Unit")
+        # BFA - moved time_jump_delta to top level
+
+
 ###################################
 
 classes = (
-    TIME_MT_editor_menus,
-    TIME_MT_marker,
-    TIME_MT_view,
+    TIME_MT_editor_menus,  # BFA - Legacy
+    TIME_MT_marker,  # BFA - Legacy
+    TIME_MT_view,  # BFA - Legacy
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
     TIME_PT_view_view_options,  # BFA - menu
     TIME_PT_auto_keyframing,
+    TIME_PT_jump,
     TIME_PT_playhead_snapping,
 )
 

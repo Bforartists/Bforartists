@@ -178,6 +178,7 @@ TimelineValue VKContext::flush_render_graph(RenderGraphFlushFlags flags,
       signal_semaphore,
       signal_fence);
   render_graph_.reset();
+  streaming_buffers_.clear();
   if (bool(flags & RenderGraphFlushFlags::RENEW_RENDER_GRAPH)) {
     render_graph_ = std::reference_wrapper<render_graph::VKRenderGraph>(
         *device.render_graph_new());
@@ -285,7 +286,7 @@ void VKContext::rendering_end()
 
 void VKContext::update_pipeline_data(GPUPrimType primitive,
                                      VKVertexAttributeObject &vao,
-                                     render_graph::VKPipelineData &r_pipeline_data)
+                                     render_graph::VKPipelineDataGraphics &r_pipeline_data)
 {
   VKShader &vk_shader = unwrap(*shader);
   VKFrameBuffer &framebuffer = *active_framebuffer_get();
@@ -296,10 +297,28 @@ void VKContext::update_pipeline_data(GPUPrimType primitive,
     GPU_shader_uniform_1f(shader, "size", -point_size);
   }
 
+  /* Dynamic state line width */
+  const bool is_line_primitive = ELEM(primitive,
+                                      GPU_PRIM_LINES,
+                                      GPU_PRIM_LINE_LOOP,
+                                      GPU_PRIM_LINE_STRIP,
+                                      GPU_PRIM_LINES_ADJ,
+                                      GPU_PRIM_LINE_STRIP_ADJ);
+
+  if (is_line_primitive) {
+    const bool supports_wide_lines = VKBackend::get().device.extensions_get().wide_lines;
+    r_pipeline_data.line_width = supports_wide_lines ?
+                                     state_manager_get().mutable_state.line_width :
+                                     1.0f;
+  }
+  else {
+    r_pipeline_data.line_width.reset();
+  }
+
   update_pipeline_data(vk_shader,
                        vk_shader.ensure_and_get_graphics_pipeline(
                            primitive, vao, state_manager_get(), framebuffer, constants_state_),
-                       r_pipeline_data);
+                       r_pipeline_data.pipeline_data);
 }
 
 void VKContext::update_pipeline_data(render_graph::VKPipelineData &r_pipeline_data)
@@ -328,8 +347,6 @@ void VKContext::update_pipeline_data(VKShader &vk_shader,
 
   /* Update descriptor set. */
   r_pipeline_data.vk_descriptor_set = VK_NULL_HANDLE;
-  r_pipeline_data.descriptor_buffer_device_address = 0;
-  r_pipeline_data.descriptor_buffer_offset = 0;
   if (vk_shader.has_descriptor_set()) {
     VKDescriptorSetTracker &descriptor_set = descriptor_set_get();
     descriptor_set.update_descriptor_set(*this, access_info_, r_pipeline_data);
@@ -384,7 +401,7 @@ void VKContext::swap_buffer_draw_handler(const GHOST_VulkanSwapChainData &swap_c
   VKFrameBuffer &framebuffer = *unwrap(active_fb);
   framebuffer.rendering_end(*this);
   VKTexture *color_attachment = unwrap(unwrap(framebuffer.color_tex(0)));
-  device.resources.add_image(swap_chain_data.image, 1, "SwapchainImage");
+  device.resources.add_swapchain_image(swap_chain_data.image, "SwapchainImage");
 
   GPU_debug_group_begin("BackBuffer.Blit");
   if (use_shader) {
@@ -449,6 +466,19 @@ void VKContext::specialization_constants_set(
 {
   constants_state_ = (constants_state != nullptr) ? *constants_state :
                                                     shader::SpecializationConstants{};
+}
+
+std::unique_ptr<VKStreamingBuffer> &VKContext::get_or_create_streaming_buffer(
+    VKBuffer &buffer, VkDeviceSize min_offset_alignment)
+{
+  for (std::unique_ptr<VKStreamingBuffer> &streaming_buffer : streaming_buffers_) {
+    if (streaming_buffer->vk_buffer_dst() == buffer.vk_handle()) {
+      return streaming_buffer;
+    }
+  }
+
+  streaming_buffers_.append(std::make_unique<VKStreamingBuffer>(buffer, min_offset_alignment));
+  return streaming_buffers_.last();
 }
 
 /** \} */

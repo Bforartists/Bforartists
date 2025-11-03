@@ -337,7 +337,7 @@ class TEXTURE_UL_texpaintslots(UIList):
 
         # Hint that painting on linked images is prohibited
         ima = _data.texture_paint_images.get(item.name)
-        if ima is not None and ima.is_editable:
+        if ima is not None and not ima.is_editable:
             layout.enabled = False
 
         layout.label(text=item.name, icon_value=item.icon_value)
@@ -415,13 +415,11 @@ class VIEW3D_PT_tools_particlemode(Panel, View3DPaintPanel):
                     col.prop(settings, "emitter_distance", text="Distance")
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_select(Panel, View3DPaintBrushPanel, BrushSelectPanel):
     bl_context = ".paint_common"
     bl_label = "Brush Asset"
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_settings(Panel, View3DPaintBrushPanel):
     bl_context = ".paint_common"
     bl_label = "Brush Settings"
@@ -811,7 +809,6 @@ class VIEW3D_PT_mask(Panel):
         pass
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_stencil_projectpaint(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
@@ -863,21 +860,20 @@ class VIEW3D_PT_stencil_projectpaint(Panel):
         row.prop(ipaint, "invert_stencil", text="", icon="IMAGE_ALPHA")
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_display(Panel, View3DPaintBrushPanel, DisplayPanel):
     bl_context = ".paint_common"
     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
     bl_label = "Cursor"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_ui_units_x = 12
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 15
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_texture(Panel, View3DPaintPanel):
     bl_context = ".paint_common"
     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
     bl_label = "Texture"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 13
 
     @classmethod
     def poll(cls, context):
@@ -901,13 +897,13 @@ class VIEW3D_PT_tools_brush_texture(Panel, View3DPaintPanel):
         brush_texture_settings(col, brush, context.sculpt_object)
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel, TextureMaskPanel):
     bl_category = "Tool"
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
     bl_label = "Texture Mask"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 13
 
     @classmethod
     def poll(cls, context):
@@ -927,12 +923,12 @@ class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel, TextureMaskPanel):
         brush_mask_texture_settings(col, brush)
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel, StrokePanel):
     bl_context = ".paint_common"  # dot on purpose (access from topbar)
     bl_label = "Stroke"
     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 14
 
 
 class VIEW3D_PT_tools_brush_stroke_smooth_stroke(Panel, View3DPaintPanel, SmoothStrokePanel):
@@ -969,22 +965,17 @@ class VIEW3D_PT_tools_weight_gradient(Panel, View3DPaintPanel):
         brush = settings.brush
 
         col = layout.column(align=True)
-        col.prop(brush, "curve_preset", expand=True)
+        col.prop(brush, "curve_distance_falloff_preset", expand=True)
 
-        if brush.curve_preset == "CUSTOM":
-            layout.template_curve_mapping(brush, "curve", brush=True)
-
-            col = layout.column(align=True)
-            row = col.row(align=True)
-            row.operator("brush.curve_preset", icon="SMOOTHCURVE", text="").shape = "SMOOTH"
-            row.operator("brush.curve_preset", icon="SPHERECURVE", text="").shape = "ROUND"
-            row.operator("brush.curve_preset", icon="ROOTCURVE", text="").shape = "ROOT"
-            row.operator("brush.curve_preset", icon="SHARPCURVE", text="").shape = "SHARP"
-            row.operator("brush.curve_preset", icon="LINCURVE", text="").shape = "LINE"
-            row.operator("brush.curve_preset", icon="NOCURVE", text="").shape = "MAX"
+        if brush.curve_distance_falloff_preset == 'CUSTOM':
+            layout.template_curve_mapping(
+                brush, "curve_distance_falloff",
+                brush=True,
+                use_negative_slope=True,
+                show_presets=True,
+            )
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_falloff(Panel, View3DPaintPanel, FalloffPanel):
     bl_context = ".paint_common"  # dot on purpose (access from topbar)
     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
@@ -1052,7 +1043,6 @@ class VIEW3D_PT_tools_brush_falloff_normal(View3DPaintPanel, Panel):
         row.prop(ipaint, "normal_angle", text="Angle")
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
     bl_label = "Dyntopo"
@@ -1090,7 +1080,8 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub = col.column()
         sub.active = (brush and brush.sculpt_capabilities.has_dyntopo) or sculpt.detail_type_method == "MANUAL"
 
-        # BFA - moved to top, this defines the "modes" then options of the detail_type_method, then you tune the details (top down hirarchal UX)
+        # BFA - moved to top, this defines the "modes" then options of the
+        # detail_type_method, then you tune the details (top down hirarchal UX)
         sub.prop(sculpt, "detail_type_method", text="Detailing")
         sub.prop(sculpt, "detail_refine_method", text="Refine Method")
 
@@ -1154,12 +1145,11 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
             col.operator("object.quadriflow_remesh", text="QuadriFlow Remesh")
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
     bl_label = "Options"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_ui_units_x = 12
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 13
 
     @classmethod
     def poll(cls, context):
@@ -1273,7 +1263,6 @@ class VIEW3D_PT_sculpt_options_gravity(Panel, View3DPaintPanel):
         col.prop(sculpt, "gravity_object")
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
     bl_label = "Symmetry"
@@ -1377,7 +1366,6 @@ class VIEW3D_PT_curves_sculpt_symmetry_for_topbar(Panel):
 # ********** default tools for weight-paint ****************
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
     bl_context = ".weightpaint"
     bl_options = {"DEFAULT_CLOSED"}
@@ -1419,7 +1407,6 @@ class VIEW3D_PT_tools_weightpaint_symmetry_for_topbar(Panel):
     draw = VIEW3D_PT_tools_weightpaint_symmetry.draw
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
     bl_context = ".weightpaint"
     bl_label = "Options"
@@ -1446,7 +1433,6 @@ class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
 # ********** default tools for vertex-paint ****************
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_vertexpaint_options(Panel, View3DPaintPanel):
     bl_context = ".vertexpaint"  # dot on purpose (access from topbar)
     bl_label = "Options"
@@ -1463,7 +1449,6 @@ class VIEW3D_PT_tools_vertexpaint_options(Panel, View3DPaintPanel):
         layout.use_property_decorate = False
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_vertexpaint_symmetry(Panel, View3DPaintPanel):
     bl_context = ".vertexpaint"  # dot on purpose (access from topbar)
     bl_options = {"DEFAULT_CLOSED"}
@@ -1495,7 +1480,6 @@ class VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar(Panel):
 # ********** default tools for texture-paint ****************
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_imagepaint_options_external(Panel, View3DPaintPanel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "External"
@@ -1523,7 +1507,6 @@ class VIEW3D_PT_tools_imagepaint_options_external(Panel, View3DPaintPanel):
         col.operator("paint.project_image", text="Apply Camera Image")
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_imagepaint_symmetry(Panel, View3DPaintPanel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Symmetry"
@@ -1553,7 +1536,6 @@ class VIEW3D_PT_tools_imagepaint_symmetry(Panel, View3DPaintPanel):
         row.prop(mesh, "use_mirror_z", text="Z", toggle=True)
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Options"
@@ -1611,7 +1593,6 @@ class VIEW3D_PT_tools_imagepaint_options_cavity(Panel):
             layout.template_curve_mapping(ipaint, "cavity_curve", brush=True)
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_imagepaint_options(View3DPaintPanel):
     bl_label = "Options"
 
@@ -1638,7 +1619,6 @@ class VIEW3D_MT_tools_projectpaint_stencil(Menu):
             props.value = i
 
 
-# TODO, move to space_view3d.py
 class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
     """Default tools for particle mode"""
 
@@ -1850,7 +1830,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_weight_falloff(GreasePencilBrushFallof
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_weight_paint
         brush = settings.brush
-        return brush and brush.curve
+        return (brush and brush.curve_distance_falloff)
 
 
 class VIEW3D_PT_tools_grease_pencil_weight_options(Panel, View3DPanel, GreasePencilWeightPanel):
@@ -1891,10 +1871,9 @@ class VIEW3D_PT_tools_grease_pencil_vertex_paint_settings(Panel, View3DPanel, Gr
 
         if not self.is_popover:
             from bl_ui.properties_paint_common import (
-                brush_basic_gpencil_vertex_settings,
+                brush_basic_grease_pencil_vertex_settings,
             )
-
-            brush_basic_gpencil_vertex_settings(layout, context, brush)
+            brush_basic_grease_pencil_vertex_settings(layout, context, brush)
 
 
 class VIEW3D_PT_tools_grease_pencil_brush_vertex_color(View3DPanel, Panel):
@@ -1954,7 +1933,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_vertex_falloff(GreasePencilBrushFallof
     def poll(cls, context):
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_vertex_paint
-        return settings and settings.brush and settings.brush.curve
+        return (settings and settings.brush and settings.brush.curve_distance_falloff)
 
 
 class VIEW3D_PT_tools_grease_pencil_brush_vertex_palette(View3DPanel, Panel):
@@ -1998,7 +1977,7 @@ class VIEW3D_PT_tools_grease_pencil_paint_appearance(GreasePencilDisplayPanel, P
     bl_parent_id = "VIEW3D_PT_tools_grease_pencil_v3_brush_settings"
     bl_label = "Cursor"
     bl_category = "Tool"
-    bl_ui_units_x = 15
+    bl_ui_units_x = 16
 
 
 class VIEW3D_PT_tools_grease_pencil_sculpt_appearance(GreasePencilDisplayPanel, Panel, View3DPanel):
@@ -2357,6 +2336,7 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_random(View3DPanel, Panel):
         layout.use_property_decorate = False
 
         tool_settings = context.tool_settings
+        paint = tool_settings.gpencil_paint
         brush = tool_settings.gpencil_paint.brush
         mode = tool_settings.gpencil_paint.color_mode
         gp_settings = brush.gpencil_settings
@@ -2414,9 +2394,18 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_random(View3DPanel, Panel):
 
         row = col.row(align=True)
         row.prop(gp_settings, "pen_jitter", slider=True)
-        row.prop(gp_settings, "use_jitter_pressure", text="", icon="STYLUS_PRESSURE")
-        if gp_settings.use_jitter_pressure and self.is_popover is False:
-            col.template_curve_mapping(gp_settings, "curve_jitter", brush=True)
+        row.prop(gp_settings, "use_jitter_pressure", text="", icon='STYLUS_PRESSURE')
+        if self.is_popover is False:
+            row.prop(
+                paint,
+                "show_jitter_curve",
+                text="",
+                icon='DOWNARROW_HLT' if paint.show_jitter_curve else 'RIGHTARROW',
+                emboss=False,
+            )
+            if paint.show_jitter_curve:
+                col.active = gp_settings.use_jitter_pressure
+                col.template_curve_mapping(gp_settings, "curve_jitter", brush=True, show_presets=True)
 
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_stabilizer(Panel, View3DPanel):

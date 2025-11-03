@@ -628,7 +628,7 @@ bool modifier_copy_to_object(Main *bmain,
     return false;
   }
 
-  WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, ob_dst);
+  WM_main_add_notifier(NC_OBJECT | ND_MODIFIER | NA_ADDED, ob_dst);
   DEG_id_tag_update(&ob_dst->id, ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
   DEG_relations_tag_update(bmain);
   return true;
@@ -1428,7 +1428,7 @@ static wmOperatorStatus modifier_add_exec(bContext *C, wmOperator *op)
       continue;
     }
     changed = true;
-    WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, ob);
+    WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER | NA_ADDED, ob);
   }
   if (!changed) {
     return OPERATOR_CANCELLED;
@@ -1709,7 +1709,7 @@ static wmOperatorStatus modifier_remove_exec(bContext *C, wmOperator *op)
 
     changed = true;
 
-    WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, ob);
+    WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER | NA_REMOVED, ob);
 
     /* if cloth/softbody was removed, particle mode could be cleared */
     if (mode_orig & OB_MODE_PARTICLE_EDIT) {
@@ -2280,7 +2280,7 @@ static wmOperatorStatus modifier_copy_exec(bContext *C, wmOperator *op)
     changed = true;
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     DEG_relations_tag_update(bmain);
-    WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, ob);
+    WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER | NA_ADDED, ob);
   }
 
   if (!changed) {
@@ -2345,6 +2345,18 @@ static wmOperatorStatus modifier_set_active_invoke(bContext *C,
   return retval;
 }
 
+static bool modifier_set_active_poll(bContext *C)
+{
+  /* Only make this operator work in the Modifiers tab of the Properties editor.
+   * Otherwise it may eat up too many mouse click events. */
+  SpaceProperties *space_properties = CTX_wm_space_properties(C);
+  if (!(space_properties && space_properties->mainb == BCONTEXT_MODIFIER)) {
+    return false;
+  }
+
+  return ED_operator_object_active_only(C);
+}
+
 void OBJECT_OT_modifier_set_active(wmOperatorType *ot)
 {
   ot->name = "Set Active Modifier";
@@ -2353,7 +2365,7 @@ void OBJECT_OT_modifier_set_active(wmOperatorType *ot)
 
   ot->invoke = modifier_set_active_invoke;
   ot->exec = modifier_set_active_exec;
-  ot->poll = ED_operator_object_active_only;
+  ot->poll = modifier_set_active_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
   edit_modifier_properties(ot);

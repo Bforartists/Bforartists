@@ -50,7 +50,40 @@ const EnumPropertyItem rna_enum_operator_context_items[] = {
 const EnumPropertyItem rna_enum_uilist_layout_type_items[] = {
     {UILST_LAYOUT_DEFAULT, "DEFAULT", 0, "Default Layout", "Use the default, multi-rows layout"},
     {UILST_LAYOUT_COMPACT, "COMPACT", 0, "Compact Layout", "Use the compact, single-row layout"},
-    {UILST_LAYOUT_GRID, "GRID", 0, "Grid Layout", "Use the grid-based layout"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+// bfa asset shelf import method
+static const EnumPropertyItem asset_shelf_import_method_items[] = {
+    {SHELF_ASSET_IMPORT_LINK,
+      "LINK",
+      ICON_LINK_BLEND,
+      "Link",
+      "Import the assets as linked data"},
+    {SHELF_ASSET_IMPORT_APPEND,
+      "APPEND",
+      ICON_APPEND_BLEND,
+      "Append",
+      "Import the assets as copied data, with no link to the original asset data"},
+    {SHELF_ASSET_IMPORT_APPEND_REUSE,
+      "APPEND_REUSE",
+      ICON_FILE_BLEND,
+      "Append (Reuse Data)",
+      "Import the assets as copied data while avoiding multiple copies of nested, "
+      "typically heavy data. For example the textures of a material asset, or the mesh of an "
+      "object asset, don't have to be copied every time this asset is imported. The instances of "
+      "the asset share the data instead"},
+    {SHELF_ASSET_IMPORT_PACK,
+      "PACK",
+      ICON_PACKAGE,
+      "Pack",
+      "Import the asset as linked data-block, and pack it in the current file (ensures that it "
+      "remains unchanged in case the library data is modified, is not available anymore, etc.)"},
+    {SHELF_ASSET_IMPORT_LINK_OVERRIDE,
+      "LINK_OVERRIDE",
+      ICON_LIBRARY_DATA_OVERRIDE,
+      "Link (Override)",
+      "Import the assets as linked library overrided data.\nThis will only override the active hierarchy.\nTo override all selected contents, use the Outliner Editor"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1663,6 +1696,38 @@ static StructRNA *rna_FileHandler_refine(PointerRNA *file_handler_ptr)
              &RNA_FileHandler;
 }
 
+// bfa start asset shelf import method, append pack
+static const EnumPropertyItem *rna_ShelfAssetSelectParams_import_method_itemf(
+    bContext * /*C*/, PointerRNA * /*ptr*/, PropertyRNA * /*prop*/, bool *r_free)
+{
+  EnumPropertyItem *items = nullptr;
+  int items_num = 0;
+  for (const EnumPropertyItem *item = asset_shelf_import_method_items; item->identifier; item++)
+  {
+    switch (eFileAssetImportMethod(item->value)) {
+      case SHELF_ASSET_IMPORT_APPEND_REUSE: {
+        if (U.experimental.no_data_block_packing) {
+          RNA_enum_item_add(&items, &items_num, item);
+        }
+        break;
+      }
+      case SHELF_ASSET_IMPORT_PACK: {
+        if (!U.experimental.no_data_block_packing) {
+          RNA_enum_item_add(&items, &items_num, item);
+        }
+        break;
+      }
+      default: {
+        RNA_enum_item_add(&items, &items_num, item);
+        break;
+      }
+    }
+  }
+  RNA_enum_item_end(&items, &items_num);
+  *r_free = true;
+  return items;
+}
+// bfa end
 #else /* RNA_RUNTIME */
 
 static void rna_def_ui_layout(BlenderRNA *brna)
@@ -1696,11 +1761,7 @@ static void rna_def_ui_layout(BlenderRNA *brna)
        0,
        "Pull-down Menu",
        "Draw pull-down menu style"},
-      {int(blender::ui::EmbossType::PieMenu),
-       "RADIAL_MENU",
-       0,
-       "Pie Menu",
-       "Draw radial menu style"},
+      {int(blender::ui::EmbossType::PieMenu), "PIE_MENU", 0, "Pie Menu", "Draw radial menu style"},
       {int(blender::ui::EmbossType::NoneOrStatus),
        "NONE_OR_STATUS",
        0,
@@ -2377,8 +2438,10 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, nullptr, "type->space_type");
   RNA_def_property_enum_items(prop, rna_enum_space_type_items);
   RNA_def_property_flag(prop, PROP_REGISTER);
-  RNA_def_property_ui_text(
-      prop, "Space Type", "The space where the asset shelf is going to be used in");
+  RNA_def_property_ui_text(prop,
+                           "Space Type",
+                           "The space where the asset shelf will show up in. Ignored for popup "
+                           "asset shelves which can be displayed in any space.");
 
   prop = RNA_def_property(srna, "bl_options", PROP_ENUM, PROP_NONE);
   RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL | PROP_ENUM_FLAG);
@@ -2486,41 +2549,16 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Display Filter", "Filter assets by name");
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
-
-  prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   // bfa start asset shelf
-  // BFA - WIP - jưst gonna put the enum here
-  static const EnumPropertyItem asset_shelf_import_method_items[] = {
-      {SHELF_ASSET_IMPORT_LINK,
-       "LINK",
-       ICON_LINK_BLEND,
-       "Link",
-       "Import the assets as linked data"},
-      {SHELF_ASSET_IMPORT_APPEND,
-       "APPEND",
-       ICON_APPEND_BLEND,
-       "Append",
-       "Import the assets as copied data, with no link to the original asset data"},
-      {SHELF_ASSET_IMPORT_APPEND_REUSE,
-       "APPEND_REUSE",
-       ICON_FILE_BLEND,
-       "Append (Reuse Data)",
-       "Import the assets as copied data while avoiding multiple copies of nested, "
-       "typically heavy data. For example the textures of a material asset, or the mesh of an "
-       "object asset, don't have to be copied every time this asset is imported. The instances of "
-       "the asset share the data instead"},
-      {SHELF_ASSET_IMPORT_LINK_OVERRIDE,
-       "LINK_OVERRIDE",
-       ICON_LIBRARY_DATA_OVERRIDE,
-       "Link (Override)",
-       "Import the assets as linked library overrided data.\nThis will only override the active hierarchy.\nTo override all selected contents, use the Outliner Editor"},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
+  prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, asset_shelf_import_method_items);
+  RNA_def_property_enum_funcs(
+    prop, nullptr, nullptr, "rna_ShelfAssetSelectParams_import_method_itemf");
   RNA_def_property_enum_sdna(prop, nullptr, "settings.import_method");
   RNA_def_property_ui_text(prop, "Import Method", "Determines how the asset will be imported");
   RNA_def_property_update(prop, NC_SPACE | ND_REGIONS_ASSET_SHELF, nullptr);
   RNA_def_property_enum_default(prop, SHELF_ASSET_IMPORT_APPEND);
+  // bfa end
 
   prop = RNA_def_property(srna, "instance_collections_on_link", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(

@@ -385,9 +385,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_VERTEX_ACTIVE:
           cp = ts->vertex_active;
           break;
-        case TH_VERTEX_BEVEL:
-          cp = ts->vertex_bevel;
-          break;
         case TH_VERTEX_UNREFERENCED:
           cp = ts->vertex_unreferenced;
           break;
@@ -412,18 +409,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_EDGE_MODE_SELECT:
           cp = ts->edge_mode_select;
           break;
-        case TH_EDGE_BEVEL:
-          cp = btheme->space_view3d.edge_bevel;
-          break;
-        case TH_EDGE_CREASE:
-          cp = btheme->space_view3d.edge_crease;
-          break;
-        case TH_EDGE_SEAM:
-          cp = btheme->space_view3d.edge_seam;
-          break;
-        case TH_EDGE_SHARP:
-          cp = btheme->space_view3d.edge_sharp;
-          break;
         case TH_EDITMESH_ACTIVE:
           cp = ts->editmesh_active;
           break;
@@ -445,12 +430,26 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_FACE_FRONT:
           cp = ts->face_front;
           break;
-        case TH_FACE_DOT:
-          cp = ts->face_dot;
-          break;
         case TH_FACEDOT_SIZE:
           cp = &ts->facedot_size;
           break;
+
+        case TH_BEVEL:
+          cp = btheme->space_view3d.bevel;
+          break;
+        case TH_CREASE:
+          cp = btheme->space_view3d.crease;
+          break;
+        case TH_SEAM:
+          cp = btheme->space_view3d.seam;
+          break;
+        case TH_SHARP:
+          cp = btheme->space_view3d.sharp;
+          break;
+        case TH_FREESTYLE:
+          cp = btheme->space_view3d.freestyle;
+          break;
+
         case TH_DRAWEXTRA_EDGELEN:
           cp = ts->extra_edge_len;
           break;
@@ -569,9 +568,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
         case TH_NURB_SEL_VLINE:
           cp = ts->nurb_sel_vline;
           break;
-        case TH_ACTIVE_SPLINE:
-          cp = ts->act_spline;
-          break;
 
         case TH_HANDLE_FREE:
           cp = btheme->common.curves.handle_free;
@@ -604,13 +600,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           cp = btheme->common.curves.handle_sel_auto_clamped;
           break;
 
-        case TH_FREESTYLE_EDGE_MARK:
-          cp = ts->freestyle_edge_mark;
-          break;
-        case TH_FREESTYLE_FACE_MARK:
-          cp = ts->freestyle_face_mark;
-          break;
-
         case TH_SYNTAX_B:
           cp = ts->syntaxb;
           break;
@@ -641,6 +630,9 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
 
         case TH_NODE:
           cp = ts->syntaxl;
+          break;
+        case TH_NODE_OUTLINE:
+          cp = ts->node_outline;
           break;
         case TH_NODE_INPUT:
           cp = ts->syntaxn;
@@ -807,7 +799,13 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           cp = btheme->common.anim.channels_sub;
           break;
         case TH_DOPESHEET_IPOLINE:
-          cp = ts->ds_ipoline;
+          cp = ts->anim_interpolation_linear;
+          break;
+        case TH_DOPESHEET_IPOCONST:
+          cp = ts->anim_interpolation_constant;
+          break;
+        case TH_DOPESHEET_IPOOTHER:
+          cp = ts->anim_interpolation_other;
           break;
 
         case TH_PREVIEW_BACK:
@@ -835,13 +833,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_STITCH_PREVIEW_ACTIVE:
           cp = ts->preview_stitch_active;
-          break;
-
-        case TH_PAINT_CURVE_HANDLE:
-          cp = ts->paint_curve_handle;
-          break;
-        case TH_PAINT_CURVE_PIVOT:
-          cp = ts->paint_curve_pivot;
           break;
 
         case TH_METADATA_BG:
@@ -935,6 +926,9 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           break;
         case TH_ANIM_PREVIEW_RANGE:
           cp = btheme->common.anim.preview_range;
+          break;
+        case TH_ANIM_SCENE_STRIP_RANGE:
+          cp = btheme->common.anim.scene_strip_range;
           break;
 
         case TH_NLA_TWEAK:
@@ -1505,6 +1499,28 @@ bool UI_GetIconThemeColor4ubv(int colorid, uchar col[4])
   col[3] = cp[3];
 
   return true;
+}
+
+void UI_GetColorPtrBlendAlpha4fv(
+    const float cp1[4], const float cp2[4], float fac, const float alphaoffset, float r_col[4])
+{
+  float r, g, b, a;
+
+  CLAMP(fac, 0.0f, 1.0f);
+  r = (1.0f - fac) * cp1[0] + fac * cp2[0];
+  g = (1.0f - fac) * cp1[1] + fac * cp2[1];
+  b = (1.0f - fac) * cp1[2] + fac * cp2[2];
+  a = (1.0f - fac) * cp1[3] + fac * cp2[3] + alphaoffset;
+
+  CLAMP(r, 0.0f, 1.0f);
+  CLAMP(g, 0.0f, 1.0f);
+  CLAMP(b, 0.0f, 1.0f);
+  CLAMP(a, 0.0f, 1.0f);
+
+  r_col[0] = r;
+  r_col[1] = g;
+  r_col[2] = b;
+  r_col[3] = a;
 }
 
 void UI_GetColorPtrShade3ubv(const uchar cp[3], int offset, uchar r_col[3])

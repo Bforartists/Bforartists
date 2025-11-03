@@ -503,7 +503,7 @@ static void wm_gpu_backend_override_from_userdef()
     return;
   }
 
-  GPU_backend_type_selection_set_override(eGPUBackendType(U.gpu_backend));
+  GPU_backend_type_selection_set_override(GPUBackendType(U.gpu_backend));
 }
 
 /**
@@ -962,7 +962,7 @@ static void file_read_reports_finalize(BlendFileReadReport *bf_reports)
                                   nullptr);
 
   CLOG_INFO(
-      &LOG, "Blender file read in %.0fm%.2fs", duration_whole_minutes, duration_whole_seconds);
+      &LOG, "Bforartists file read in %.0fm%.2fs", duration_whole_minutes, duration_whole_seconds);
   CLOG_INFO(&LOG,
             " * Loading libraries: %.0fm%.2fs",
             duration_libraries_minutes,
@@ -1024,7 +1024,7 @@ static void file_read_reports_finalize(BlendFileReadReport *bf_reports)
   {
     BKE_reportf(bf_reports->reports,
                 RPT_WARNING,
-                "Proxies have been removed from Blender (%d proxies were automatically converted "
+                "Proxies have been removed from Bforartists (%d proxies were automatically converted "
                 "to library overrides, %d proxies could not be converted and were cleared). "
                 "Consider re-saving any library .blend file with the newest Blender version",
                 bf_reports->count.proxies_to_lib_overrides_success,
@@ -2779,7 +2779,7 @@ static wmOperatorStatus wm_userpref_read_invoke(bContext *C,
                         IFACE_(display_name));
   }
   else {
-    title = IFACE_("Load Factory Blender Preferences");
+    title = IFACE_("Load Factory Bforartists Preferences");
   }
 
   return WM_operator_confirm_ex(
@@ -3947,7 +3947,7 @@ static std::string wm_save_mainfile_get_description(bContext * /*C*/,
 {
   if (RNA_boolean_get(ptr, "incremental")) {
     return TIP_(
-        "Save the current Blender file with a numerically incremented name that does not "
+        "Save the current Bforartists file with a numerically incremented name that does not "
         "overwrite any existing files");
   }
   return "";
@@ -3980,14 +3980,14 @@ void WM_OT_save_mainfile(wmOperatorType *ot)
                   "Remap Relative",
                   "Remap relative paths when saving to a different directory");
 
-  prop = RNA_def_boolean(ot->srna, "exit", false, "Exit", "Exit Blender after saving");
+  prop = RNA_def_boolean(ot->srna, "exit", false, "Exit", "Exit Bforartists after saving");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 
   prop = RNA_def_boolean(ot->srna,
                          "incremental",
                          false,
                          "Incremental",
-                         "Save the current Blender file with a numerically incremented name that "
+                         "Save the current Bforartists file with a numerically incremented name that "
                          "does not overwrite any existing files");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
@@ -4358,6 +4358,7 @@ static const char *save_file_overwrite_dialog_name = "save_file_overwrite_popup"
 static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bmain)
 {
   uiLayout *layout = &parent_layout->column(true);
+  uiLayout *col;
   /* Trick to make both lines of text below close enough to look like they are part of a same
    * block. */
   layout->scale_y_set(0.70f);
@@ -4377,17 +4378,42 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
       BKE_blender_version_blendfile_string_from_values(
           current_ver_str, sizeof(current_ver_str), BLENDER_VERSION, -1);
     }
+    // start bfa version save
+    char bfa_writer_ver_str[16];
+    char bfa_current_ver_str[16];
+    BKE_bforartists_version_blendfile_string_from_blender(
+        bfa_writer_ver_str, sizeof(bfa_writer_ver_str), bmain->versionfile, true);
+    BKE_bforartists_version_blendfile_string_from_blender(
+        bfa_current_ver_str, sizeof(bfa_current_ver_str), bmain->versionfile, false);
 
     char message_line1[256];
     char message_line2[256];
+    char message_line1_2[256];
+    /*
+    Original prompt:
+    "This file was saved by a newer version of Blender (%s)."
+    "Saving it with this Blender (%s) may cause loss of data."
+    */
     SNPRINTF(message_line1,
-             RPT_("This file was saved by a newer version of Blender (%s)."),
+             RPT_("This file was saved by a newer version of Bforartists %s"), 
+             bfa_writer_ver_str);
+    SNPRINTF(message_line1_2,
+             RPT_("(based on Blender %s)"),
              writer_ver_str);
+    const char *message_line2_1 = RPT_("Saving it with this version of Bforartists may cause data loss.");
     SNPRINTF(message_line2,
-             RPT_("Saving it with this Blender (%s) may cause loss of data."),
+             RPT_("Saving with Bforartists %s (based on Blender %s)"),
+             bfa_current_ver_str,
              current_ver_str);
-    layout->label(message_line1, ICON_NONE);
-    layout->label(message_line2, ICON_NONE);
+             
+    col = &layout->column(false);
+    col->label(message_line1, ICON_NONE);
+    col->label(message_line1_2, ICON_NONE);
+    col->separator();
+    col = &layout->column(false);
+    col->label(message_line2_1, ICON_NONE);
+    col->label(message_line2, ICON_NONE);
+    // end bfa
   }
 
   if (bmain->is_asset_edit_file) {
@@ -4395,12 +4421,15 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
       layout->separator(1.4f);
     }
 
-    layout->label(RPT_("This file is managed by the Blender asset system. It can only be"),
+    layout->label(RPT_("This file is managed by the Bforartists asset system. It can only be"),
                   ICON_NONE);
     layout->label(RPT_("saved as a new, regular file."), ICON_NONE);
   }
 
   if (bmain->colorspace.is_missing_opencolorio_config) {
+    if (bmain->is_asset_edit_file || bmain->has_forward_compatibility_issues) {
+      layout->separator(1.4f);
+    }
     layout->label(
         RPT_("Displays, views or color spaces in this file were missing and have been changed."),
         ICON_NONE);
@@ -4498,11 +4527,11 @@ static uiBlock *block_create_save_file_overwrite_dialog(bContext *C, ARegion *re
                  ICON_NONE,
                  true,
                  false);
-      uiItemL_ex(layout, RPT_("with an older Blender version?"), ICON_NONE, true, false);
+      uiItemL_ex(layout, RPT_("with an older Bforartists version?"), ICON_NONE, true, false);
     }
     else {
       uiItemL_ex(
-          layout, RPT_("Overwrite file with an older Blender version?"), ICON_NONE, true, false);
+          layout, RPT_("Overwrite file with an older Bforartists version?"), ICON_NONE, true, false);
     }
   }
   else if (bmain->is_asset_edit_file) {
@@ -4749,7 +4778,8 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
       block, UI_BLOCK_KEEP_OPEN | UI_BLOCK_LOOP | UI_BLOCK_NO_WIN_CLIP | UI_BLOCK_NUMSELECT);
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
-  uiLayout *layout = uiItemsAlertBox(block, 34, ALERT_ICON_QUESTION);
+  uiLayout *layout = uiItemsAlertBox(
+      block, (bmain->colorspace.is_missing_opencolorio_config) ? 44 : 34, ALERT_ICON_QUESTION);
 
   const bool needs_overwrite_confirm = BKE_main_needs_overwrite_confirm(bmain);
 
@@ -4807,7 +4837,7 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
   /* Modified Images Checkbox. */
   if (modified_images_count > 0) {
     char message[64];
-    SNPRINTF(message, "Save %u modified image(s)", modified_images_count);
+    SNPRINTF(message, RPT_("Save %u modified image(s)"), modified_images_count);
     /* Only the first checkbox should get extra separation. */
     if (!has_extra_checkboxes) {
       layout->separator();

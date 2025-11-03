@@ -708,6 +708,10 @@ class IMAGE_MT_uvs(Menu):
         sima = context.space_data
         uv = sima.uv_editor
 
+        layout.menu("IMAGE_MT_uvs_legacy") # BFA - Menu
+
+        layout.separator()
+
         layout.menu("IMAGE_MT_uvs_transform")
         layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
@@ -720,7 +724,6 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.prop(uv, "use_live_unwrap")
         layout.menu("IMAGE_MT_uvs_unwrap")
         layout.menu("IMAGE_MT_uvs_merge")
         layout.operator("uv.select_split", text="Split Selection", icon="SPLIT")
@@ -734,12 +737,16 @@ class IMAGE_MT_uvs(Menu):
         layout.operator_context = "EXEC_REGION_WIN"
         layout.operator("uv.average_islands_scale", icon="AVERAGEISLANDSCALE")
         layout.operator("uv.minimize_stretch", icon="MINIMIZESTRETCH")
-        layout.operator("uv.stitch", icon="STITCH")
-        layout.operator("uv.arrange_islands")
+
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("uv.custom_region_set")
-        layout.operator_context = 'EXEC_REGION_WIN'
-        layout.prop(context.tool_settings, "use_uv_custom_region", text="Custom Region", toggle=True)
+        layout.operator("uv.stitch", icon="STITCH")
+
+        layout.operator("uv.arrange_islands", icon="UV_ISLANDALIGN")
+
+        layout.separator()
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("uv.custom_region_set", icon="RENDER_REGION")
 
         layout.separator()
 
@@ -750,7 +757,8 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.menu("IMAGE_MT_uvs_align")
-        layout.menu("IMAGE_MT_uvs_select_mode")
+        layout.operator_menu_enum("uv.move_on_axis", "type", text="Move on Axis")
+        #layout.menu("IMAGE_MT_uvs_select_mode") # BFA - double as they are in the header
 
         layout.separator()
 
@@ -763,6 +771,20 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.reset", icon="RESET")
 
 
+# BFA - Menu
+class IMAGE_MT_uvs_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, context):
+        layout = self.layout
+
+        sima = context.space_data
+        uv = sima.uv_editor
+
+        layout.operator("uv.rip_move", icon="RIP")
+
+
+# BFA - not used
 class IMAGE_MT_uvs_select_mode(Menu):
     bl_label = "UV Select Mode"
 
@@ -802,7 +824,7 @@ class IMAGE_MT_uvs_select_mode(Menu):
 
         layout.separator()
 
-        layout.prop(tool_settings, "use_uv_select_island", text="Island")
+        layout.prop(tool_settings, "use_uv_select_island", text="Island", icon="UV_ISLANDSEL")
 
 
 class IMAGE_MT_uvs_context_menu(Menu):
@@ -1160,30 +1182,24 @@ class IMAGE_HT_header(Header):
 
             if tool_settings.use_uv_select_sync:
                 layout.template_edit_mode_selection()
-
-                layout.prop(tool_settings, "use_uv_select_island", icon_only=True)
-
-                # Currently this only works for edge-select & face-select modes.
-                row = layout.row()
-                mesh_select_mode = tool_settings.mesh_select_mode
-                if mesh_select_mode[0]:
-                    row.active = False
-                row.prop(tool_settings, "uv_sticky_select_mode", icon_only=True)
             else:
                 row = layout.row(align=True)
                 uv_select_mode = tool_settings.uv_select_mode[:]
                 row.operator(
-                    "uv.select_mode", text="", icon="UV_VERTEXSEL", depress=(uv_select_mode == "VERTEX")
-                ).type = "VERTEX"
+                    "uv.select_mode", text="", icon='UV_VERTEXSEL',
+                    depress=(uv_select_mode == 'VERTEX'),
+                ).type = 'VERTEX'
                 row.operator(
-                    "uv.select_mode", text="", icon="UV_EDGESEL", depress=(uv_select_mode == "EDGE")
-                ).type = "EDGE"
+                    "uv.select_mode", text="", icon='UV_EDGESEL',
+                    depress=(uv_select_mode == 'EDGE'),
+                ).type = 'EDGE'
                 row.operator(
-                    "uv.select_mode", text="", icon="UV_FACESEL", depress=(uv_select_mode == "FACE")
-                ).type = "FACE"
+                    "uv.select_mode", text="", icon='UV_FACESEL',
+                    depress=(uv_select_mode == 'FACE'),
+                ).type = 'FACE'
 
-                layout.prop(tool_settings, "use_uv_select_island", icon_only=True)
-                layout.prop(tool_settings, "uv_sticky_select_mode", icon_only=True)
+            layout.prop(tool_settings, "use_uv_select_island", icon_only=True)
+            layout.prop(tool_settings, "uv_sticky_select_mode", icon_only=True)
 
         IMAGE_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -1230,12 +1246,16 @@ class IMAGE_HT_header(Header):
 
         # BFA - moved search above to be consistent
         if ima:
+            seq_scene = context.sequencer_scene
+            scene = context.scene
+
+            if show_render and seq_scene and (seq_scene != scene):
+                row = layout.row()
+                row.prop(sima, "show_sequencer_scene", text="")
+
             if ima.is_stereo_3d:
                 row = layout.row()
                 row.prop(sima, "show_stereo_3d", text="")
-            if show_maskedit:
-                row = layout.row()
-                row.popover(panel="IMAGE_PT_mask_display")
 
             # layers.
             layout.template_image_layers(ima, iuser)
@@ -1268,7 +1288,8 @@ class IMAGE_MT_editor_menus(Menu):
             layout.menu("MASK_MT_select")
 
         if ima and ima.is_dirty:
-            layout.menu("IMAGE_MT_image", text="Image*")
+            # Show "*" to the left for consistency with unsaved files in the title bar.
+            layout.menu("IMAGE_MT_image", text="* Image")
         else:
             layout.menu("IMAGE_MT_image", text="Image")
 
@@ -1338,11 +1359,6 @@ class IMAGE_PT_mask_animation(MASK_PT_animation, Panel):
     bl_category = "Mask"
 
 
-class IMAGE_PT_mask_display(MASK_PT_display, Panel):
-    bl_space_type = "IMAGE_EDITOR"
-    bl_region_type = "HEADER"
-
-
 # --- end mask ---
 
 
@@ -1403,7 +1419,11 @@ class IMAGE_PT_image_options(Panel):
         if sima.mode == "UV":
             col = layout.column(align=True)
             col.prop(uv, "lock_bounds")
+
             col.prop(uv, "use_live_unwrap")
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.prop(tool_settings, "use_uv_custom_region")
 
         col = layout.column(align=True)
         col.prop(sima, "use_realtime_update")
@@ -1705,7 +1725,8 @@ class IMAGE_PT_paint_stroke(BrushButtonsPanel, Panel, StrokePanel):
     bl_context = ".paint_common_2d"
     bl_parent_id = "IMAGE_PT_paint_settings"
     bl_category = "Tool"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 14
 
 
 class IMAGE_PT_paint_stroke_smooth_stroke(Panel, BrushButtonsPanel, SmoothStrokePanel):
@@ -1755,11 +1776,11 @@ class IMAGE_PT_uv_sculpt_curve(Panel):
         props = context.scene.tool_settings.uv_sculpt
 
         col = layout.column()
-        col.prop(props, "curve_preset", expand=True)
+        col.prop(props, "curve_distance_falloff_preset", expand=True)
 
-        if props.curve_preset == "CUSTOM":
+        if props.curve_distance_falloff_preset == 'CUSTOM':
             col = layout.column()
-            col.template_curve_mapping(props, "strength_curve")
+            col.template_curve_mapping(props, "curve_distance_falloff")
 
 
 # Only a popover.
@@ -2243,6 +2264,18 @@ class IMAGE_PT_overlay_render_guides(Panel):
         subrow.prop(overlay, "passepartout_alpha", text="Passepartout")
 
 
+class IMAGE_PT_overlay_mask(MASK_PT_display, Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "IMAGE_PT_overlay"
+
+    @classmethod
+    def poll(cls, context):
+        si = context.space_data
+
+        return si.mode == 'MASK'
+
+
 # Grease Pencil properties
 class IMAGE_PT_annotation(AnnotationDataPanel, Panel):
     bl_space_type = "IMAGE_EDITOR"
@@ -2319,7 +2352,8 @@ classes = (
     IMAGE_MT_uvs_merge,
     IMAGE_MT_uvs_split,
     IMAGE_MT_uvs_unwrap,
-    IMAGE_MT_uvs_select_mode,
+    IMAGE_MT_uvs_legacy, # BFA menu
+    IMAGE_MT_uvs_select_mode, # BFA - not used
     IMAGE_MT_uvs_context_menu,
     IMAGE_MT_mask_context_menu,
     IMAGE_MT_pivot_pie,
@@ -2333,7 +2367,6 @@ classes = (
     IMAGE_PT_active_tool,
     IMAGE_PT_mask,
     IMAGE_PT_mask_layers,
-    IMAGE_PT_mask_display,
     IMAGE_PT_active_mask_spline,
     IMAGE_PT_active_mask_point,
     IMAGE_PT_mask_animation,
@@ -2376,6 +2409,7 @@ classes = (
     IMAGE_PT_overlay_uv_display,
     IMAGE_PT_overlay_image,
     IMAGE_PT_overlay_render_guides,
+    IMAGE_PT_overlay_mask,
     IMAGE_AST_brush_paint,
     IMAGE_OT_switch_editors_to_uv,  # BFA menu
     IMAGE_OT_switch_editors_to_image,  # BFA menu

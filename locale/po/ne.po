@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
+"Project-Id-Version: Blender 5.0.0 Beta (b'2b3706e29f27')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-15 07:14+0000\n"
+"POT-Creation-Date: 2025-10-20 08:46+0000\n"
 "PO-Revision-Date: 2025-07-23 15:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Nepali <https://translate.blender.org/projects/blender-ui/ui/ne/>\n"
@@ -115,6 +115,10 @@ msgid "Scale"
 msgstr "डाल "
 
 
+msgid "Display"
+msgstr "देखाउन"
+
+
 msgid "Inverse Kinematics"
 msgstr "बिपरित 'गति-बिज्ञान'"
 
@@ -159,10 +163,6 @@ msgid "Reverse"
 msgstr "उल्टो"
 
 
-msgid "Direction"
-msgstr "दिशा "
-
-
 msgid "Path"
 msgstr "ठेगाना (पथ)"
 
@@ -191,12 +191,12 @@ msgid "Damp"
 msgstr "असर कम "
 
 
-msgid "Display"
-msgstr "देखाउन"
-
-
 msgid "Stiffness"
 msgstr "कडापन"
+
+
+msgid "Direction"
+msgstr "दिशा "
 
 
 msgid "Names"

@@ -875,7 +875,7 @@ bke::GeometrySet execute_geometry_nodes_on_geometry(const bNodeTree &btree,
     const eNodeSocketDatatype socket_type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
     if (socket_type == SOCK_GEOMETRY && i == 0) {
       bke::SocketValueVariant &value = scope.construct<bke::SocketValueVariant>();
-      value.set(input_geometry);
+      value.set(std::move(input_geometry));
       param_inputs[function.inputs.main[0]] = &value;
       continue;
     }
@@ -988,7 +988,7 @@ void update_input_properties_from_node_tree(const bNodeTree &tree,
       if (old_properties == nullptr) {
         if (socket.default_attribute_name && socket.default_attribute_name[0] != '\0') {
           IDP_AssignStringMaxSize(attribute_prop, socket.default_attribute_name, MAX_NAME);
-          IDP_int_set(use_attribute_prop, 1);
+          IDP_bool_set(use_attribute_prop, true);
         }
       }
       else {

@@ -102,3 +102,4 @@
 *.icc filter=lfs diff=lfs merge=lfs -text
 scripts/modules/_bpy_internal/assets/remote_library_listing/*_openapi.py linguist-generated=true
 release/datafiles/splash_template.svg filter=lfs diff=lfs merge=lfs -text
+scripts/startup/bl_app_templates_system/VFX/startup.blend filter=lfs diff=lfs merge=lfs -text

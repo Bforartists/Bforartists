@@ -126,7 +126,7 @@ static void waveModifier_do(WaveModifierData *wmd,
   float ctime = DEG_get_ctime(ctx->depsgraph);
   float minfac = float(1.0 / exp(wmd->width * wmd->narrow * wmd->width * wmd->narrow));
   float lifefac = wmd->height;
-  float(*tex_co)[3] = nullptr;
+  float (*tex_co)[3] = nullptr;
   const int wmd_axis = wmd->flag & (MOD_WAVE_X | MOD_WAVE_Y);
   const float falloff = wmd->falloff;
   float falloff_fac = 1.0f; /* when falloff == 0.0f this stays at 1.0f */
@@ -286,7 +286,7 @@ static void deform_verts(ModifierData *md,
                   ctx,
                   ctx->object,
                   mesh,
-                  reinterpret_cast<float(*)[3]>(positions.data()),
+                  reinterpret_cast<float (*)[3]>(positions.data()),
                   positions.size());
 }
 
@@ -324,9 +324,9 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &split->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   if (RNA_boolean_get(ptr, "use_normal")) {
-    row->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, "X", ICON_NONE);
-    row->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, "Y", ICON_NONE);
-    row->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, "Z", ICON_NONE);
+    row->prop(ptr, "use_normal_x", UI_ITEM_R_TOGGLE, IFACE_("X"), ICON_NONE);
+    row->prop(ptr, "use_normal_y", UI_ITEM_R_TOGGLE, IFACE_("Y"), ICON_NONE);
+    row->prop(ptr, "use_normal_z", UI_ITEM_R_TOGGLE, IFACE_("Z"), ICON_NONE);
     row->decorator(ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
   else {
@@ -359,7 +359,7 @@ static void position_panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout->column(true);
   col->prop(ptr, "start_position_x", UI_ITEM_NONE, IFACE_("Start Position X"), ICON_NONE);
-  col->prop(ptr, "start_position_y", UI_ITEM_NONE, "Y", ICON_NONE);
+  col->prop(ptr, "start_position_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
 }
 
 static void time_panel_draw(const bContext * /*C*/, Panel *panel)

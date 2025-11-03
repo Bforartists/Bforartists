@@ -33,13 +33,13 @@ class USERPREF_HT_header(Header):
             pass
         else:
             # Show '*' to let users know the preferences have been modified.
+            # It is shown to the left so that it is visible when the sidebar is narrow,
+            # and for consistency with unsaved files in the title bar.
             layout.operator(
                 "wm.save_userpref",
-                text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""), icon="SAVE_PREFS",
-                # BFA - WIP - Make the save indicator more explicity with the icon (button gets cut off)
-                # text=iface_("Save Preferences") + (" *" if prefs.is_dirty else ""),
-                # icon = "FILE_TICK" if prefs.is_dirty else "SAVE_PREFS",
+                text=("* " if prefs.is_dirty else "") + iface_("Save Preferences"),
                 translate=False,
+                icon="SAVE_PREFS"
             )
 
     def draw(self, context):
@@ -62,7 +62,7 @@ class USERPREF_PT_navigation_bar(Panel):
     bl_label = "Preferences Navigation"
     bl_space_type = 'PREFERENCES'
     bl_region_type = 'UI'
-    bl_category = 'Navigation'
+    bl_category = "Navigation"
     bl_options = {'HIDE_HEADER'}
 
     def draw(self, context):
@@ -90,8 +90,12 @@ class USERPREF_MT_editor_menus(Menu):
 class USERPREF_MT_view(Menu):
     bl_label = "View"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+        view = context.space_data
+
+        layout.prop(view, "show_region_ui")
+        layout.separator()
 
         layout.menu("INFO_MT_area")
 
@@ -314,7 +318,7 @@ class USERPREF_PT_interface_accessibility(InterfacePanel, CenterAlignMixIn, Pane
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.use_property_split = False # BFA - Align bool property left
+        flow.use_property_split = False  # BFA - Align bool property left
         flow.prop(view, "use_reduce_motion")
 
 
@@ -379,15 +383,20 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(view, "show_statusbar_memory", text="System Memory")
         flow.prop(view, "show_statusbar_vram", text="Video Memory")
         flow.prop(view, "show_extensions_updates", text="Extensions Updates")
+        flow.prop(view, "show_statusbar_blender_version", text="Base Blender Version")  # BFA
         flow.prop(view, "show_statusbar_version", text="Bforartists Version")  # BFA - not Blender
 
 
-class USERPREF_PT_interface_menus(InterfacePanel, Panel):
+class USERPREF_PT_interface_menus(InterfacePanel, CenterAlignMixIn, Panel):
     bl_label = "Menus"
     bl_options = {'DEFAULT_CLOSED'}
 
-    def draw(self, context):
-        pass
+    def draw_centered(self, context, layout):
+        prefs = context.preferences
+        view = prefs.view
+        col = layout.column()
+        col.use_property_split = False  # BFA - Align bool property left
+        col.prop(view, "menu_close_leave")
 
 
 class USERPREF_PT_interface_menus_mouse_over(InterfacePanel, CenterAlignMixIn, Panel):
@@ -605,6 +614,7 @@ class USERPREF_PT_edit_node_editor(EditingPanel, CenterAlignMixIn, Panel):
 
         col.use_property_split = False
         col.prop(edit, "node_use_autoposition_viewer")  # BFA - Toggle Viewer Auto-positioning
+        col.prop(edit, "node_color_blend", text="Node Color Blend")  # BFA - Node Color Blend
 
 
 class USERPREF_PT_edit_sequence_editor(EditingPanel, CenterAlignMixIn, Panel):
@@ -787,7 +797,7 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
     @classmethod
     def poll(cls, _context):
         import platform
-        return platform.system() != 'Darwin'
+        return platform.system() != "Darwin"
 
     def draw_centered(self, context, layout):
         prefs = context.preferences
@@ -927,8 +937,8 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
             col = layout.column(align=True)
             col.active = system.gpu_backend != 'VULKAN'
             col.row().prop(system, "shader_compilation_method", expand=True)
-            label = "Threads" if system.shader_compilation_method == 'THREAD' else "Subprocesses"
-            col.prop(system, "gpu_shader_workers", text=label)
+            label = iface_("Threads") if system.shader_compilation_method == 'THREAD' else iface_("Subprocesses")
+            col.prop(system, "gpu_shader_workers", text=label, translate=False)
 
 
 class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
@@ -1563,6 +1573,7 @@ class ThemeGenericClassGenerator:
     def generate_panel_classes_for_wcols():
         wcols = [
             ("Box", "wcol_box"),
+            ("Curve", "wcol_curve"),
             ("List Item", "wcol_list_item"),
             ("Menu", "wcol_menu"),
             ("Menu Background", "wcol_menu_back"),
@@ -2749,8 +2760,10 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                     (search in bl_info["name"].casefold() or
                      search in iface_(bl_info["name"]).casefold()) or
                     (bl_info["author"] and (search in bl_info["author"].casefold())) or
-                    ((filter == "All") and (search in bl_info["category"].casefold() or
-                                            search in iface_(bl_info["category"]).casefold()))
+                    ((filter == "All") and (
+                        search in bl_info["category"].casefold() or
+                        search in iface_(bl_info["category"]).casefold()
+                    ))
             ):
                 continue
 
@@ -3005,7 +3018,7 @@ class USERPREF_PT_studiolight_light_editor(StudioLightPanel, Panel):
 # Experimental Panels
 
 # Also used for "Developer Tools" which are stored in `preferences.experimental` too.
-def _draw_experimental_items(layout, preferences, items, url_prefix="https://projects.blender.org"):
+def _draw_experimental_items(layout, preferences, items, url_prefix="https://projects.blender.org/"):
     experimental = preferences.experimental
 
     layout.use_property_split = False
@@ -3053,6 +3066,7 @@ class USERPREF_PT_developer_tools(Panel):
                 ({"property": "use_viewport_debug"}, None),
                 ({"property": "use_eevee_debug"}, None),
                 ({"property": "use_extensions_debug"}, ("/blender/blender/issues/119521", "#119521")),
+                ({"property": "no_data_block_packing"}, ("/blender/blender/issues/132167", "#132167")),
             ),
         )
 
@@ -3096,7 +3110,6 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
             (
                 ({"property": "use_extended_asset_browser"},
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
-                ({"property": "use_new_volume_nodes"}, ("blender/blender/issues/103248", "#103248")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
                 ({"property": "use_geometry_nodes_lists"}, ("blender/blender/issues/140918", "#140918")),
             ),

@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "BLI_enum_flags.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_vector.hh"
@@ -71,8 +72,6 @@ class TreeViewItemContainer {
     None = 0,
     SkipCollapsed = 1 << 0,
     SkipFiltered = 1 << 1,
-
-    /* Keep ENUM_OPERATORS() below updated! */
   };
   using ItemIterFn = FunctionRef<void(AbstractTreeViewItem &)>;
 
@@ -101,8 +100,7 @@ class TreeViewItemContainer {
   void foreach_parent(ItemIterFn iter_fn) const;
 };
 
-ENUM_OPERATORS(TreeViewItemContainer::IterOptions,
-               TreeViewItemContainer::IterOptions::SkipCollapsed);
+ENUM_OPERATORS(TreeViewItemContainer::IterOptions);
 
 /**
  * The container class is the base for both the tree-view and the items. This alias gives it a
@@ -131,6 +129,8 @@ class AbstractTreeView : public AbstractView, public TreeViewItemContainer {
    */
   int last_tot_items_ = 0;
 
+  bool scroll_active_into_view_on_draw_ = false;
+
   friend class AbstractTreeViewItem;
   friend class TreeViewBuilder;
   friend class TreeViewLayoutBuilder;
@@ -146,6 +146,7 @@ class AbstractTreeView : public AbstractView, public TreeViewItemContainer {
 
   bool is_fully_visible() const override;
   void scroll(ViewScrollDirection direction) override;
+  /* Scroll to the active element when state is changed. */
 
   /**
    * \param xy: The mouse coordinates in window space.
@@ -186,6 +187,7 @@ class AbstractTreeView : public AbstractView, public TreeViewItemContainer {
                            int &visible_item_index) const;
 
   int count_visible_descendants(const AbstractTreeViewItem &parent) const;
+  void scroll_active_into_view();
 };
 
 /** \} */

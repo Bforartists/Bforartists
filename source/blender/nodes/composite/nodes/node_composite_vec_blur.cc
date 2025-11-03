@@ -33,29 +33,27 @@ namespace blender::nodes::node_composite_vec_blur_cc {
 
 static void cmp_node_vec_blur_declare(NodeDeclarationBuilder &b)
 {
+  b.use_custom_socket_order();
+  b.allow_any_socket_order();
   b.add_input<decl::Color>("Image")
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .compositor_domain_priority(0)
+      .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Float>("Z")
-      .default_value(0.0f)
-      .min(0.0f)
-      .compositor_domain_priority(2)
-      .structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+
   b.add_input<decl::Vector>("Speed")
       .dimensions(4)
       .default_value({0.0f, 0.0f, 0.0f})
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_VELOCITY)
-      .compositor_domain_priority(1)
       .structure_type(StructureType::Dynamic);
+  b.add_input<decl::Float>("Z").default_value(0.0f).min(0.0f).structure_type(
+      StructureType::Dynamic);
   b.add_input<decl::Int>("Samples").default_value(32).min(1).max(256).description(
       "The number of samples used to approximate the motion blur");
   b.add_input<decl::Float>("Shutter").default_value(0.5f).min(0.0f).description(
       "Time between shutter opening and closing in frames");
-
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
 }
 
 using namespace blender::compositor;

@@ -18,25 +18,46 @@ jobs:
       - name: Checkout source repo (bforartists/bforartists)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # optional, for the Git‑History
+          fetch-depth: 0   # optional, for the Git-History
+
+      - name: Setup jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Create issue in manual repo
         env:
           GH_PAT_AUTO_ISSUE: ${{ secrets.GH_PAT_AUTO_ISSUE }}
         run: |
           PR_NUM="${{ github.event.pull_request.number }}" # the pull request number
-          PR_TITLE="${{ github.event.pull_request.title }}" # the pull request title
+          PR_TITLE=$(echo "${{ github.event.pull_request.title }}" | jq -R -s -r '.') # sanitized title
+          PR_DESCRIPTION=$(echo "${{ github.event.pull_request.body }}" | jq -R -s -r '.') # sanitized description
           PR_URL="${{ github.event.pull_request.html_url }}" # the pull request url
           TARGET_REPO="bforartists/manual"
 
           TITLE="Merged PR #${PR_NUM} ${PR_TITLE}"
-          BODY=$(printf '%s' "Pull request #${PR_NUM} was merged into the master branch in **bforartists/bforartists**.\nThe title of the pull request was ${PR_TITLE}\nThe URL to the pull request is ${PR_URL}\nPlease review the changes and update the manual.")
+          
+          # Create body content with proper formatting
+          BODY="Pull request: #${PR_NUM} from the Bforartists repository.
+          Title: ${PR_TITLE}
+          Link: ${PR_URL}
+
+          ## Description:
+          ${PR_DESCRIPTION}
+
+          Please review the changes and update the manual."
+
+          # Use jq to create properly formatted JSON (handles all escaping automatically)
+          BODY_JSON=$(jq -n \
+            --arg title "$TITLE" \
+            --arg body "$BODY" \
+            '{title: $title, body: $body}')
 
           echo "Creating issue: ${TITLE}"
 
-          curl -s \
+          # -v switch stands for verbose, and writes all errors
+          curl -v \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GH_PAT_AUTO_ISSUE}" \
+            -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"title\":\"${TITLE}\",\"body\":\"${BODY}\"}" \
+            -d "$BODY_JSON" \
             "https://api.github.com/repos/${TARGET_REPO}/issues"

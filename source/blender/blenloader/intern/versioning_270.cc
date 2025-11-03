@@ -859,7 +859,7 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
       STRNCPY_UTF8(srv->suffix, STEREO_RIGHT_SUFFIX);
 
       if (scene->ed) {
-        blender::seq::for_each_callback(&scene->ed->seqbase, strip_update_proxy_cb, nullptr);
+        blender::seq::foreach_strip(&scene->ed->seqbase, strip_update_proxy_cb, nullptr);
       }
     }
 
@@ -1007,8 +1007,10 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
         CurveMapping *curve_mapping = &scene->r.mblur_shutter_curve;
         BKE_curvemapping_set_defaults(curve_mapping, 1, 0.0f, 0.0f, 1.0f, 1.0f, HD_AUTO);
         BKE_curvemapping_init(curve_mapping);
-        BKE_curvemap_reset(
-            curve_mapping->cm, &curve_mapping->clipr, CURVE_PRESET_MAX, CURVEMAP_SLOPE_POS_NEG);
+        BKE_curvemap_reset(curve_mapping->cm,
+                           &curve_mapping->clipr,
+                           CURVE_PRESET_MAX,
+                           CurveMapSlopeType::PositiveNegative);
       }
     }
   }
@@ -1126,7 +1128,7 @@ void blo_do_versions_270(FileData *fd, Library * /*lib*/, Main *bmain)
 
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       if (scene->ed) {
-        blender::seq::for_each_callback(&scene->ed->seqbase, strip_update_effectdata_cb, nullptr);
+        blender::seq::foreach_strip(&scene->ed->seqbase, strip_update_effectdata_cb, nullptr);
       }
     }
 

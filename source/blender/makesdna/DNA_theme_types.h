@@ -151,6 +151,9 @@ typedef struct ThemeCommonAnim {
       keyframe_jitter_selected[4], keyframe_moving_hold_selected[4],
       keyframe_generated_selected[4];
   unsigned char long_key[4], long_key_selected[4];
+
+  unsigned char scene_strip_range[4];
+  char _pad0[4];
 } ThemeCommonAnim;
 
 typedef struct ThemeCommonCurves {
@@ -211,7 +214,7 @@ typedef struct ThemeUI {
   /* Interface Elements (buttons, menus, icons) */
   uiWidgetColors wcol_regular, wcol_tool, wcol_toolbar_item, wcol_text;
   uiWidgetColors wcol_radio, wcol_option, wcol_toggle;
-  uiWidgetColors wcol_num, wcol_numslider, wcol_tab;
+  uiWidgetColors wcol_num, wcol_numslider, wcol_tab, wcol_curve;
   uiWidgetColors wcol_menu, wcol_pulldown, wcol_menu_back, wcol_menu_item, wcol_tooltip;
   uiWidgetColors wcol_box, wcol_scroll, wcol_progress, wcol_list_item, wcol_pie_menu;
 
@@ -303,7 +306,6 @@ typedef struct ThemeSpace {
   unsigned char header_title[4];
   unsigned char header_text[4];
   unsigned char header_text_hi[4];
-  char _pad2[4];
 
   /* button/tool regions */
   unsigned char shade1[4];
@@ -317,15 +319,12 @@ typedef struct ThemeSpace {
   unsigned char wire[4], wire_edit[4], select[4];
   unsigned char lamp[4], speaker[4], empty[4], camera[4];
   unsigned char active[4], transform[4];
-  unsigned char vertex[4], vertex_select[4], vertex_active[4], vertex_bevel[4],
-      vertex_unreferenced[4];
+  unsigned char vertex[4], vertex_select[4], vertex_active[4], vertex_unreferenced[4];
   unsigned char edge[4], edge_select[4], edge_mode_select[4];
-  unsigned char edge_seam[4], edge_sharp[4], edge_crease[4], edge_bevel[4];
   /** Solid faces. */
   unsigned char face[4], face_select[4], face_mode_select[4], face_retopology[4];
   unsigned char face_back[4], face_front[4];
   /** Selected color. */
-  unsigned char face_dot[4];
   unsigned char extra_edge_len[4], extra_edge_angle[4], extra_face_angle[4], extra_face_area[4];
   unsigned char normal[4];
   unsigned char vertex_normal[4];
@@ -334,13 +333,16 @@ typedef struct ThemeSpace {
   unsigned char strip[4], strip_select[4];
   unsigned char before_current_frame[4], after_current_frame[4];
   unsigned char time_gp_keyframe[4];
-  unsigned char freestyle_edge_mark[4], freestyle_face_mark[4];
+
+  /** Geometry attributes. */
+  unsigned char bevel[4], seam[4], sharp[4], crease[4], freestyle[4];
 
   unsigned char nurb_uline[4], nurb_vline[4];
-  unsigned char act_spline[4], nurb_sel_uline[4], nurb_sel_vline[4];
+  unsigned char nurb_sel_uline[4], nurb_sel_vline[4];
 
   /** Dope-sheet. */
-  unsigned char ds_ipoline[4];
+  unsigned char anim_interpolation_linear[4], anim_interpolation_constant[4],
+      anim_interpolation_other[4];
   /** Keyframe border. */
   unsigned char keyborder[4], keyborder_select[4];
   char _pad4[3];
@@ -351,7 +353,7 @@ typedef struct ThemeSpace {
   unsigned char vertex_size, edge_width, outline_width, obcenter_dia, facedot_size;
   unsigned char noodle_curving;
   unsigned char grid_levels;
-  char _pad5[2];
+  char _pad2[2];
   float dash_alpha;
 
   /* Syntax for text-window and nodes. */
@@ -361,6 +363,8 @@ typedef struct ThemeSpace {
   unsigned char syntaxd[4], syntaxr[4]; /* In node-space used for distort. */
 
   unsigned char line_numbers[4];
+
+  unsigned char node_outline[4];
 
   unsigned char nodeclass_output[4], nodeclass_filter[4];
   unsigned char nodeclass_vector[4], nodeclass_texture[4];
@@ -372,6 +376,8 @@ typedef struct ThemeSpace {
   unsigned char node_zone_foreach_geometry_element[4];
   unsigned char node_zone_closure[4];
   unsigned char simulated_frames[4];
+  float bfa_node_color_blend; // bfa node color blend
+  char _padng[4]; // bfa padding
 
   /** For sequence editor. */
   unsigned char movie[4], movieclip[4], mask[4], image[4], scene[4], audio[4];
@@ -451,9 +457,6 @@ typedef struct ThemeSpace {
   unsigned char info_debug[4], info_debug_text[4];
   unsigned char info_property[4], info_property_text[4];
   unsigned char info_operator[4], info_operator_text[4];
-
-  unsigned char paint_curve_pivot[4];
-  unsigned char paint_curve_handle[4];
 
   unsigned char metadatabg[4];
   unsigned char metadatatext[4];

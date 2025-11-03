@@ -315,6 +315,7 @@ class TEXT_MT_templates_py(Menu):
             "text.open",
             props_default={"internal": True},
             filter_ext=lambda ext: (ext.lower() == ".py"),
+            translate=False,
         )
 
 
@@ -419,6 +420,8 @@ class TEXT_MT_edit(Menu):
         layout.operator("text.paste", icon="PASTEDOWN")
         layout.operator("text.duplicate_line", icon="DUPLICATE")
 
+        layout.operator("ed.undo", icon='LOOP_BACK')
+        layout.operator("ed.redo", icon='LOOP_FORWARDS')
         layout.separator()
 
         layout.operator("text.move_lines", text="Move Line(s) Up", icon="MOVE_UP").direction = 'UP'

@@ -144,7 +144,7 @@ static struct {
    * bound for compositing and rendering at the same time, so those renders are essentially used to
    * get a persistent dedicated GPU context to interactive compositor execution.
    */
-  blender::Map<std::string, Render *> interactive_compositor_renders;
+  blender::Map<const void *, Render *> interactive_compositor_renders;
 } RenderGlobal;
 
 /** \} */
@@ -262,7 +262,7 @@ bool RE_HasSingleLayer(Render *re)
 }
 
 RenderResult *RE_MultilayerConvert(
-    void *exrhandle, const char *colorspace, bool predivide, int rectx, int recty)
+    ExrHandle *exrhandle, const char *colorspace, bool predivide, int rectx, int recty)
 {
   return render_result_new_from_exr(exrhandle, colorspace, predivide, rectx, recty);
 }
@@ -300,11 +300,11 @@ static bool render_scene_has_layers_to_render(Scene *scene, ViewLayer *single_la
 /** \name Public Render API
  * \{ */
 
-Render *RE_GetRender(const char *name)
+Render *RE_GetRender(const void *owner)
 {
   /* search for existing renders */
   for (Render *re : RenderGlobal.render_list) {
-    if (STREQLEN(re->name, name, RE_MAXNAME)) {
+    if (re->owner == owner) {
       return re;
     }
   }
@@ -503,18 +503,18 @@ RenderStats *RE_GetStats(Render *re)
   return &re->i;
 }
 
-Render *RE_NewRender(const char *name)
+Render *RE_NewRender(const void *owner)
 {
   Render *re;
 
   /* only one render per name exists */
-  re = RE_GetRender(name);
+  re = RE_GetRender(owner);
   if (re == nullptr) {
 
     /* new render data struct */
     re = MEM_new<Render>("new render");
     RenderGlobal.render_list.push_front(re);
-    STRNCPY_UTF8(re->name, name);
+    re->owner = owner;
   }
 
   RE_InitRenderCB(re);
@@ -529,44 +529,23 @@ ViewRender *RE_NewViewRender(RenderEngineType *engine_type)
   return view_render;
 }
 
-/* MAX_ID_NAME + sizeof(Library->name) + space + null-terminator. */
-#define MAX_SCENE_RENDER_NAME (MAX_ID_NAME + 1024 + 2)
-
-static void scene_render_name_get(const Scene *scene,
-                                  char *render_name,
-                                  const size_t render_name_maxncpy)
-{
-  if (ID_IS_LINKED(scene)) {
-    BLI_snprintf_utf8(
-        render_name, render_name_maxncpy, "%s %s", scene->id.lib->id.name, scene->id.name);
-  }
-  else {
-    BLI_strncpy_utf8(render_name, scene->id.name, render_name_maxncpy);
-  }
-}
-
 Render *RE_GetSceneRender(const Scene *scene)
 {
-  char render_name[MAX_SCENE_RENDER_NAME];
-  scene_render_name_get(scene, render_name, sizeof(render_name));
-  return RE_GetRender(render_name);
+  return RE_GetRender(DEG_get_original_id(&scene->id));
 }
 
 Render *RE_NewSceneRender(const Scene *scene)
 {
-  char render_name[MAX_SCENE_RENDER_NAME];
-  scene_render_name_get(scene, render_name, sizeof(render_name));
-  return RE_NewRender(render_name);
+  return RE_NewRender(DEG_get_original_id(&scene->id));
 }
 
 Render *RE_NewInteractiveCompositorRender(const Scene *scene)
 {
-  char render_name[MAX_SCENE_RENDER_NAME];
-  scene_render_name_get(scene, render_name, sizeof(render_name));
+  const void *owner = DEG_get_original_id(&scene->id);
 
-  return RenderGlobal.interactive_compositor_renders.lookup_or_add_cb(render_name, [&]() {
+  return RenderGlobal.interactive_compositor_renders.lookup_or_add_cb(owner, [&]() {
     Render *render = MEM_new<Render>("New Interactive Compositor Render");
-    STRNCPY_UTF8(render->name, render_name);
+    render->owner = owner;
     RE_InitRenderCB(render);
     return render;
   });
@@ -684,20 +663,24 @@ void RE_FreeUnusedGPUResources()
   for (Render *re : RenderGlobal.render_list) {
     bool do_free = true;
 
+    /* Don't free scenes being rendered or composited. Note there is no
+     * race condition here because we are on the main thread and new jobs can only
+     * be started from the main thread. */
+    if (WM_jobs_test(wm, re->owner, WM_JOB_TYPE_RENDER) ||
+        WM_jobs_test(wm, re->owner, WM_JOB_TYPE_COMPOSITE))
+    {
+      do_free = false;
+    }
+
     LISTBASE_FOREACH (const wmWindow *, win, &wm->windows) {
-      const Scene *scene = WM_window_get_active_scene(win);
-      if (re != RE_GetSceneRender(scene)) {
-        continue;
+      if (!do_free) {
+        /* No need to do further checks. */
+        break;
       }
 
-      /* Don't free if this scene is being rendered or composited. Note there is no
-       * race condition here because we are on the main thread and new jobs can only
-       * be started from the main thread. */
-      if (WM_jobs_test(wm, scene, WM_JOB_TYPE_RENDER) ||
-          WM_jobs_test(wm, scene, WM_JOB_TYPE_COMPOSITE))
-      {
-        do_free = false;
-        break;
+      const Scene *scene = WM_window_get_active_scene(win);
+      if (scene != re->owner) {
+        continue;
       }
 
       /* Detect if scene is using GPU compositing, and if either a node editor is
@@ -735,7 +718,7 @@ void RE_FreeUnusedGPUResources()
       /* We also free the resources from the interactive compositor render of the scene if one
        * exists. */
       Render *interactive_compositor_render =
-          RenderGlobal.interactive_compositor_renders.lookup_default(re->name, nullptr);
+          RenderGlobal.interactive_compositor_renders.lookup_default(re->owner, nullptr);
       if (interactive_compositor_render) {
         re_gpu_texture_caches_free(interactive_compositor_render);
         RE_blender_gpu_context_free(interactive_compositor_render);
@@ -1809,12 +1792,7 @@ static bool is_compositing_possible_on_gpu(Scene *scene, ReportList *reports)
 
   int width, height;
   BKE_render_resolution(&scene->r, false, &width, &height);
-  const int max_texture_size = GPU_max_texture_size();
-
-  /* There is no way to know if the render size is too large except if we actually allocate a test
-   * texture, which we want to avoid due its cost. So we employ a heuristic that so far has worked
-   * with all known GPU drivers. */
-  if (size_t(width) * height > (size_t(max_texture_size) * max_texture_size) / 4) {
+  if (!GPU_is_safe_texture_size(width, height)) {
     BKE_report(reports, RPT_ERROR, "Render size too large for GPU, use CPU compositor instead");
     return false;
   }
@@ -2913,44 +2891,6 @@ RenderPass *RE_pass_find_by_name(RenderLayer *rl, const char *name, const char *
       }
     }
   }
-  return nullptr;
-}
-
-RenderPass *RE_pass_find_by_type(RenderLayer *rl, int passtype, const char *viewname)
-{
-#define CHECK_PASS(NAME) \
-  if (passtype == SCE_PASS_##NAME) { \
-    return RE_pass_find_by_name(rl, RE_PASSNAME_##NAME, viewname); \
-  } \
-  ((void)0)
-
-  CHECK_PASS(COMBINED);
-  CHECK_PASS(DEPTH);
-  CHECK_PASS(VECTOR);
-  CHECK_PASS(NORMAL);
-  CHECK_PASS(UV);
-  CHECK_PASS(EMIT);
-  CHECK_PASS(SHADOW);
-  CHECK_PASS(AO);
-  CHECK_PASS(ENVIRONMENT);
-  CHECK_PASS(INDEXOB);
-  CHECK_PASS(INDEXMA);
-  CHECK_PASS(MIST);
-  CHECK_PASS(DIFFUSE_DIRECT);
-  CHECK_PASS(DIFFUSE_INDIRECT);
-  CHECK_PASS(DIFFUSE_COLOR);
-  CHECK_PASS(GLOSSY_DIRECT);
-  CHECK_PASS(GLOSSY_INDIRECT);
-  CHECK_PASS(GLOSSY_COLOR);
-  CHECK_PASS(TRANSM_DIRECT);
-  CHECK_PASS(TRANSM_INDIRECT);
-  CHECK_PASS(TRANSM_COLOR);
-  CHECK_PASS(SUBSURFACE_DIRECT);
-  CHECK_PASS(SUBSURFACE_INDIRECT);
-  CHECK_PASS(SUBSURFACE_COLOR);
-
-#undef CHECK_PASS
-
   return nullptr;
 }
 

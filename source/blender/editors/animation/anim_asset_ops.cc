@@ -9,7 +9,7 @@
 #include "BKE_context.hh"
 #include "BKE_fcurve.hh"
 #include "BKE_global.hh"
-#include "BKE_icons.h"
+#include "BKE_icons.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_preferences.h"
 #include "BKE_report.hh"
@@ -424,9 +424,10 @@ static void visit_library_prop_catalogs_catalog_for_search_fn(
 
 void POSELIB_OT_create_pose_asset(wmOperatorType *ot)
 {
-  ot->name = "Create Pose Asset...";
+  ot->name = "Create Pose Asset";
   ot->description = "Create a new asset from the selected bones in the scene";
   ot->idname = "POSELIB_OT_create_pose_asset";
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   ot->exec = pose_asset_create_exec;
   ot->invoke = pose_asset_create_invoke;
@@ -707,7 +708,7 @@ static std::string pose_asset_modify_description(bContext * /* C */,
                                                  PointerRNA *ptr)
 {
   const int mode = RNA_enum_get(ptr, "mode");
-  return std::string(prop_asset_overwrite_modes[mode].description);
+  return TIP_(std::string(prop_asset_overwrite_modes[mode].description));
 }
 
 /* Calling it overwrite instead of save because we aren't actually saving an opened asset. */

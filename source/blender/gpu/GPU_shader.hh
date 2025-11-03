@@ -334,7 +334,7 @@ void GPU_shader_batch_specializations_cancel(SpecializationBatchHandle &handle);
  * prime compilations.
  *
  * Shaders do not necessarily have to be similar in functionality to be used as a parent, so long
- * as the #GPUVertFormt and #GPUFrameBuffer which they are used with remain the same.
+ * as the #GPUVertFormat and #gpu::FrameBuffer which they are used with remain the same.
  * Other bindings such as textures, uniforms and UBOs are all assigned independently as dynamic
  * state.
  *
@@ -371,13 +371,14 @@ enum GPUUniformBuiltin {
   GPU_UNIFORM_NORMAL,     /* mat3 NormalMatrix */
   GPU_UNIFORM_CLIPPLANES, /* vec4 WorldClipPlanes[] */
 
-  GPU_UNIFORM_COLOR,          /* vec4 color */
-  GPU_UNIFORM_BASE_INSTANCE,  /* int baseInstance */
-  GPU_UNIFORM_RESOURCE_CHUNK, /* int resourceChunk */
-  GPU_UNIFORM_RESOURCE_ID,    /* int resourceId */
-  GPU_UNIFORM_SRGB_TRANSFORM, /* bool srgbTarget */
+  GPU_UNIFORM_COLOR,              /* vec4 color */
+  GPU_UNIFORM_BASE_INSTANCE,      /* int baseInstance */
+  GPU_UNIFORM_RESOURCE_CHUNK,     /* int resourceChunk */
+  GPU_UNIFORM_RESOURCE_ID,        /* int resourceId */
+  GPU_UNIFORM_SRGB_TRANSFORM,     /* bool srgbTarget */
+  GPU_UNIFORM_SCENE_LINEAR_XFORM, /* float3x3 gpu_scene_linear_to_xyz */
 };
-#define GPU_NUM_UNIFORMS (GPU_UNIFORM_SRGB_TRANSFORM + 1)
+#define GPU_NUM_UNIFORMS (GPU_UNIFORM_SCENE_LINEAR_XFORM + 1)
 
 /**
  * TODO: To be moved as private API. Not really used outside of gpu_matrix.cc and doesn't really

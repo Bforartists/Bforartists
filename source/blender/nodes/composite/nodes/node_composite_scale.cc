@@ -31,31 +31,33 @@
 namespace blender::nodes::node_composite_scale_cc {
 
 static const EnumPropertyItem type_items[] = {
-    {CMP_NODE_SCALE_RELATIVE, "RELATIVE", 0, "Relative", ""},
-    {CMP_NODE_SCALE_ABSOLUTE, "ABSOLUTE", 0, "Absolute", ""},
-    {CMP_NODE_SCALE_RENDER_PERCENT, "SCENE_SIZE", 0, "Scene Size", ""},
-    {CMP_NODE_SCALE_RENDER_SIZE, "RENDER_SIZE", 0, "Render Size", ""},
+    {CMP_NODE_SCALE_RELATIVE, "RELATIVE", 0, N_("Relative"), ""},
+    {CMP_NODE_SCALE_ABSOLUTE, "ABSOLUTE", 0, N_("Absolute"), ""},
+    {CMP_NODE_SCALE_RENDER_PERCENT, "SCENE_SIZE", 0, N_("Scene Size"), ""},
+    {CMP_NODE_SCALE_RENDER_SIZE, "RENDER_SIZE", 0, N_("Render Size"), ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 /* Matches bgpic_camera_frame_items[]. */
 static const EnumPropertyItem frame_type_items[] = {
-    {CMP_NODE_SCALE_RENDER_SIZE_STRETCH, "STRETCH", 0, "Stretch", ""},
-    {CMP_NODE_SCALE_RENDER_SIZE_FIT, "FIT", 0, "Fit", ""},
-    {CMP_NODE_SCALE_RENDER_SIZE_CROP, "CROP", 0, "Crop", ""},
+    {CMP_NODE_SCALE_RENDER_SIZE_STRETCH, "STRETCH", 0, N_("Stretch"), ""},
+    {CMP_NODE_SCALE_RENDER_SIZE_FIT, "FIT", 0, N_("Fit"), ""},
+    {CMP_NODE_SCALE_RENDER_SIZE_CROP, "CROP", 0, N_("Crop"), ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 static void cmp_node_scale_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
-
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
+  b.allow_any_socket_order();
 
   b.add_input<decl::Color>("Image")
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
+      .hide_value()
       .compositor_realization_mode(CompositorInputRealizationMode::None)
       .structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+
   b.add_input<decl::Menu>("Type").default_value(CMP_NODE_SCALE_RELATIVE).static_items(type_items);
   b.add_input<decl::Float>("X")
       .default_value(1.0f)
@@ -73,20 +75,24 @@ static void cmp_node_scale_declare(NodeDeclarationBuilder &b)
       .default_value(CMP_NODE_SCALE_RENDER_SIZE_STRETCH)
       .static_items(frame_type_items)
       .usage_by_menu("Type", CMP_NODE_SCALE_RENDER_SIZE)
+      .optional_label()
       .description("How the image fits in the camera frame");
 
   PanelDeclarationBuilder &sampling_panel = b.add_panel("Sampling").default_closed(true);
   sampling_panel.add_input<decl::Menu>("Interpolation")
       .default_value(CMP_NODE_INTERPOLATION_BILINEAR)
       .static_items(rna_enum_node_compositor_interpolation_items)
+      .optional_label()
       .description("Interpolation method");
   sampling_panel.add_input<decl::Menu>("Extension X")
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
+      .optional_label()
       .description("The extension mode applied to the X axis");
   sampling_panel.add_input<decl::Menu>("Extension Y")
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
+      .optional_label()
       .description("The extension mode applied to the Y axis");
 }
 

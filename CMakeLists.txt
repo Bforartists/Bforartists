@@ -415,10 +415,17 @@ Build with external audaspace library installed on the system \
 (only enable if you know what you're doing!)"
   OFF
 )
+option(WITH_RUBBERBAND "\
+Build with Rubber Band for audio time-stretching and pitch-scaling (used by Audaspace)"
+  ON
+)
 mark_as_advanced(WITH_AUDASPACE)
 mark_as_advanced(WITH_SYSTEM_AUDASPACE)
+mark_as_advanced(WITH_RUBBERBAND)
 
 set_and_warn_dependency(WITH_AUDASPACE WITH_SYSTEM_AUDASPACE OFF)
+set_and_warn_dependency(WITH_AUDASPACE WITH_RUBBERBAND OFF)
+set_and_warn_incompatible(WITH_SYSTEM_AUDASPACE WITH_RUBBERBAND OFF)
 
 if(WITH_GHOST_X11)
   option(WITH_X11_XINPUT "Enable X11 Xinput (tablet support and unicode input)" ON)
@@ -522,11 +529,6 @@ else()
 endif()
 
 # Compression
-option(WITH_LZO "Enable fast LZO compression (used for pointcache)" ON)
-option(WITH_LZMA "Enable best LZMA compression, (used for pointcache)" ON)
-if(UNIX AND NOT APPLE)
-  option(WITH_SYSTEM_LZO "Use the system LZO library" OFF)
-endif()
 option(WITH_DRACO "Enable Draco mesh compression Python module (used for glTF)" ON)
 
 # Camera/motion tracking
@@ -743,7 +745,7 @@ This option is only for debugging purposes."
   # `ocloc compile --help`.
   # If you have completed optimization work and now want to enable AoT for new Intel devices,
   # update the optimization status in OneapiDevice::architecture_information.
-  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH dg2 mtl lnl bmg CACHE STRING "\
+  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH dg2 mtl lnl bmg ptl CACHE STRING "\
 oneAPI Intel GPU architectures to build binaries for"
   )
   set(CYCLES_ONEAPI_SYCL_TARGETS spir64 spir64_gen CACHE STRING "\
@@ -1180,8 +1182,8 @@ if(WIN32)
 
   option(WITH_WINDOWS_BUNDLE_CRT "Bundle the C runtime for install free distribution." ON)
   mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
-  if(WITH_WINDOWS_BUNDLE_CRT AND 
-     CMAKE_VERSION VERSION_LESS "4.2.0" AND 
+  if(WITH_WINDOWS_BUNDLE_CRT AND
+     CMAKE_VERSION VERSION_LESS "4.2.0" AND
      MSVC_VERSION GREATER_EQUAL 1950)
     message(WARNING "VS2026 not supported on this CMAKE version: WITH_WINDOWS_BUNDLE_CRT will be disabled")
     set(WITH_WINDOWS_BUNDLE_CRT OFF)
@@ -1362,8 +1364,9 @@ set_and_warn_dependency(WITH_IMAGE_OPENEXR WITH_CYCLES_OSL OFF)
 # Hydra requires USD.
 set_and_warn_dependency(WITH_USD WITH_HYDRA OFF)
 
-# The Ocean modifier requires FFTW3.
+# Ocean modifier and Rubberband require FFTW3.
 set_and_warn_dependency(WITH_FFTW3 WITH_MOD_OCEANSIM OFF)
+set_and_warn_dependency(WITH_FFTW3 WITH_RUBBERBAND OFF)
 
 if(NOT WITH_CYCLES)
   set(WITH_CYCLES_OSL OFF)
@@ -2876,6 +2879,7 @@ if(FIRST_RUN)
 
   info_cfg_text("Audio:")
   info_cfg_option(WITH_AUDASPACE)
+  info_cfg_option(WITH_RUBBERBAND)
   info_cfg_option(WITH_CODEC_FFMPEG)
   info_cfg_option(WITH_CODEC_SNDFILE)
   info_cfg_option(WITH_COREAUDIO)
@@ -2886,10 +2890,6 @@ if(FIRST_RUN)
   info_cfg_option(WITH_PULSEAUDIO_DYNLOAD)
   info_cfg_option(WITH_SDL)
   info_cfg_option(WITH_WASAPI)
-
-  info_cfg_text("Compression:")
-  info_cfg_option(WITH_LZMA)
-  info_cfg_option(WITH_LZO)
 
   if(WITH_PYTHON)
     info_cfg_text("Python:")

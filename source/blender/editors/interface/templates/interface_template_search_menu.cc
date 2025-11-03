@@ -624,10 +624,7 @@ static MenuSearch_Data *menu_items_from_ui_create(bContext *C,
           SPACE_MENU_MAP(SPACE_INFO, "INFO_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_SEQ, "SEQUENCER_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_TEXT, "TEXT_MT_editor_menus");
-          SPACE_MENU_MAP(SPACE_ACTION,
-                         (((const SpaceAction *)sl)->mode == SACTCONT_TIMELINE) ?
-                             "TIME_MT_editor_menus" :
-                             "DOPESHEET_MT_editor_menus");
+          SPACE_MENU_MAP(SPACE_ACTION, "DOPESHEET_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_NLA, "NLA_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_NODE, "NODE_MT_editor_menus");
           SPACE_MENU_MAP(SPACE_CONSOLE, "CONSOLE_MT_editor_menus");
@@ -711,7 +708,7 @@ static MenuSearch_Data *menu_items_from_ui_create(bContext *C,
         }
         else if ((mt_from_but = UI_but_menutype_get(but.get()))) {
           const bool uses_context = but->context &&
-                                    bool(mt_from_but->flag & MenuTypeFlag::ContextDependent);
+                                    flag_is_set(mt_from_but->flag, MenuTypeFlag::ContextDependent);
           const bool tagged_first_time = menu_tagged.add(mt_from_but);
           const bool scan_submenu = tagged_first_time || uses_context;
 

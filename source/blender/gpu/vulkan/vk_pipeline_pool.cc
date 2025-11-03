@@ -101,7 +101,8 @@ VKPipelinePool::VKPipelinePool()
   vk_pipeline_rasterization_provoking_vertex_state_info_.provokingVertexMode =
       VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT;
 
-  vk_dynamic_states_ = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
+  vk_dynamic_states_ = {
+      VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_LINE_WIDTH};
   vk_pipeline_dynamic_state_create_info_ = {};
   vk_pipeline_dynamic_state_create_info_.sType =
       VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
@@ -183,7 +184,8 @@ void VKPipelinePool::specialization_info_reset()
 
 VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute_info,
                                                           const bool is_static_shader,
-                                                          VkPipeline vk_pipeline_base)
+                                                          VkPipeline vk_pipeline_base,
+                                                          StringRefNull name)
 {
   std::scoped_lock lock(mutex_);
   const VkPipeline *found_pipeline = compute_pipelines_.lookup_ptr(compute_info);
@@ -202,10 +204,6 @@ VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute
   /* Build pipeline. */
   VKBackend &backend = VKBackend::get();
   VKDevice &device = backend.device;
-  if (device.extensions_get().descriptor_buffer) {
-    vk_compute_pipeline_create_info_.flags |= VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT;
-  }
-
   VkPipeline pipeline = VK_NULL_HANDLE;
   vkCreateComputePipelines(device.vk_handle(),
                            is_static_shader ? vk_pipeline_cache_static_ :
@@ -214,6 +212,7 @@ VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute
                            &vk_compute_pipeline_create_info_,
                            nullptr,
                            &pipeline);
+  debug::object_label(pipeline, name);
   compute_pipelines_.add(compute_info, pipeline);
 
   /* Reset values to initial value. */
@@ -229,7 +228,8 @@ VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute
 
 VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graphics_info,
                                                            const bool is_static_shader,
-                                                           VkPipeline vk_pipeline_base)
+                                                           VkPipeline vk_pipeline_base,
+                                                           StringRefNull name)
 {
   std::scoped_lock lock(mutex_);
   graphics_info.fragment_shader.update_hash();
@@ -277,11 +277,8 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
       graphics_info.vertex_in.bindings.size();
 
   /* Rasterization state */
-  vk_pipeline_rasterization_state_create_info_.frontFace = graphics_info.state.invert_facing ?
-                                                               VK_FRONT_FACE_COUNTER_CLOCKWISE :
-                                                               VK_FRONT_FACE_CLOCKWISE;
   vk_pipeline_rasterization_state_create_info_.cullMode = to_vk_cull_mode_flags(
-      static_cast<eGPUFaceCullTest>(graphics_info.state.culling_test));
+      static_cast<GPUFaceCullTest>(graphics_info.state.culling_test));
   if (graphics_info.state.shadow_bias) {
     vk_pipeline_rasterization_state_create_info_.depthBiasEnable = VK_TRUE;
     vk_pipeline_rasterization_state_create_info_.depthBiasSlopeFactor = 2.0f;
@@ -300,7 +297,13 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
           VK_PROVOKING_VERTEX_MODE_FIRST_VERTEX_EXT;
 
   /* Dynamic state */
-  vk_pipeline_dynamic_state_create_info_.dynamicStateCount = vk_dynamic_states_.size();
+  const bool is_line_topology = ELEM(graphics_info.vertex_in.vk_topology,
+                                     VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+                                     VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
+                                     VK_PRIMITIVE_TOPOLOGY_LINE_STRIP);
+  vk_pipeline_dynamic_state_create_info_.dynamicStateCount = is_line_topology ?
+                                                                 vk_dynamic_states_.size() :
+                                                                 vk_dynamic_states_.size() - 1;
   vk_pipeline_dynamic_state_create_info_.pDynamicStates = vk_dynamic_states_.data();
 
   /* Viewport state */
@@ -354,6 +357,9 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
         att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         break;
 
+        /* Factors are not use in min or max mode, but avoid uninitialized values. */;
+      case GPU_BLEND_MIN:
+      case GPU_BLEND_MAX:
       case GPU_BLEND_SUBTRACT:
       case GPU_BLEND_ADDITIVE_PREMULT:
         att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
@@ -412,7 +418,15 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
         break;
     }
 
-    if (graphics_info.state.blend == GPU_BLEND_SUBTRACT) {
+    if (graphics_info.state.blend == GPU_BLEND_MIN) {
+      att_state.alphaBlendOp = VK_BLEND_OP_MIN;
+      att_state.colorBlendOp = VK_BLEND_OP_MIN;
+    }
+    else if (graphics_info.state.blend == GPU_BLEND_MAX) {
+      att_state.alphaBlendOp = VK_BLEND_OP_MAX;
+      att_state.colorBlendOp = VK_BLEND_OP_MAX;
+    }
+    else if (graphics_info.state.blend == GPU_BLEND_SUBTRACT) {
       att_state.alphaBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
       att_state.colorBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
     }
@@ -582,10 +596,6 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
   /* Build pipeline. */
   VKBackend &backend = VKBackend::get();
   VKDevice &device = backend.device;
-  if (device.extensions_get().descriptor_buffer) {
-    vk_graphics_pipeline_create_info_.flags = VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT;
-  }
-
   VkPipeline pipeline = VK_NULL_HANDLE;
   vkCreateGraphicsPipelines(device.vk_handle(),
                             is_static_shader ? vk_pipeline_cache_static_ :
@@ -594,6 +604,7 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
                             &vk_graphics_pipeline_create_info_,
                             nullptr,
                             &pipeline);
+  debug::object_label(pipeline, name);
   graphic_pipelines_.add(graphics_info, pipeline);
 
   /* Reset values to initial value. */

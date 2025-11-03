@@ -12,6 +12,12 @@ struct bNode;
 namespace blender::nodes {
 
 struct InlineShaderNodeTreeParams {
+  /**
+   * Disable loop unrolling and keep Repeat Zone nodes in the tree.
+   * (For engines with native support for Repeat Zones)
+   *
+   * Some Repeat Zones may still be unrolled (eg. if they have Closure or Bundle Zone Items).
+   */
   bool allow_preserving_repeat_zones = false;
 
   struct ErrorMessage {

@@ -408,15 +408,6 @@ class NWAttributeMenu(bpy.types.Menu):
             l.label(text="No attributes on objects with this material")
 
 
-class NWSwitchNodeTypeMenu(Menu, NWBaseMenu):
-    bl_idname = "NODE_MT_nw_switch_node_type_menu"
-    bl_label = "Switch Type to..."
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text="This operator is removed due to the changes of node menus.", icon='ERROR')
-        layout.label(text="A native implementation of the function is expected in the future.")
-
 #
 #  APPENDAGES TO EXISTING UI
 #
@@ -449,11 +440,12 @@ def bgreset_menu_func(self, context):
 def save_viewer_menu_func(self, context):
     space = context.space_data
     if (space.type == 'NODE_EDITOR'
+            and space.tree_type == 'CompositorNodeTree'
+            and space.node_tree_sub_type == 'SCENE'
             and space.node_tree is not None
             and space.node_tree.library is None
-            and space.tree_type == 'CompositorNodeTree'
-            and context.scene.compositing_node_group.nodes.active
-            and context.scene.compositing_node_group.nodes.active.type == "VIEWER"):
+            and space.edit_tree.nodes.active
+            and space.edit_tree.nodes.active.type == "VIEWER"):
         self.layout.operator(operators.NWSaveViewer.bl_idname, icon='FILE_IMAGE')
 
 
@@ -499,7 +491,6 @@ classes = (
     NWLinkUseNodeNameMenu,
     NWLinkUseOutputsNamesMenu,
     NWAttributeMenu,
-    NWSwitchNodeTypeMenu,
 )
 
 

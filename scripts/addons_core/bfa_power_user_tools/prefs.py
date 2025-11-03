@@ -39,7 +39,6 @@ class BFA_UI_preferences(bpy.types.AddonPreferences):
         col.label(text="Animation:", icon="TIME")
         layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_animationpanel")
         layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_insertframes")
-        layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_jumpframes")
 
         row = layout.row()
         col = row.column(align=True)

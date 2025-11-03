@@ -124,6 +124,12 @@ void AssetView::build_items()
     if (shelf_.type->flag & ASSET_SHELF_TYPE_FLAG_NO_ASSET_DRAG) {
       item.disable_asset_drag();
     }
+    if (!shelf_.type->drag_operator.empty()) {
+      /* For now always select/activate items on click instead of press when there's a drag
+       * operator set. Important for pose library blending. Maybe we want to make this an explicit
+       * option of the asset shelf instead. */
+      item.select_on_click_set();
+    }
     /* Make sure every click calls the #bl_activate_operator. We might want to add a flag to
      * enable/disable this. Or we only call #bl_activate_operator when an item becomes active, and
      * add a #bl_click_operator for repeated execution on every click. So far it seems like every
@@ -406,8 +412,32 @@ void *AssetDragController::create_drag_data() const
     return static_cast<void *>(local_id);
   }
 
-  const eAssetImportMethod import_method = asset_.get_import_method().value_or(
-      ASSET_IMPORT_APPEND_REUSE);
+  // bfa - Start with the asset's preferred import method, defaulting to PACK
+  eAssetImportMethod import_method = asset_.get_import_method().value_or(ASSET_IMPORT_PACK);
+
+  // bfa - Allow shelf settings to override the import method if available
+  if (const AssetView *asset_view = dynamic_cast<const AssetView*>(&view_)) {
+    const int shelf_import_method = asset_view->shelf_.settings.import_method;
+    
+    // bfa - Only override if the shelf's import method is valid
+    if (shelf_import_method >= SHELF_ASSET_IMPORT_LINK && 
+        shelf_import_method <= SHELF_ASSET_IMPORT_LINK_OVERRIDE) {
+      static const std::array<eAssetImportMethod, 5> method_map = {
+          ASSET_IMPORT_LINK,            // SHELF_ASSET_IMPORT_LINK
+          ASSET_IMPORT_APPEND,          // SHELF_ASSET_IMPORT_APPEND
+          ASSET_IMPORT_APPEND_REUSE,    // SHELF_ASSET_IMPORT_APPEND_REUSE
+          ASSET_IMPORT_PACK,            // SHELF_ASSET_IMPORT_PACK
+          ASSET_IMPORT_LINK_OVERRIDE    // SHELF_ASSET_IMPORT_LINK_OVERRIDE
+      };
+      import_method = method_map[shelf_import_method - SHELF_ASSET_IMPORT_LINK];
+    }
+  }
+
+  // bfa - Apply experimental no-packing override
+  if (U.experimental.no_data_block_packing && import_method == ASSET_IMPORT_PACK) {
+    import_method = ASSET_IMPORT_APPEND_REUSE;
+  }
+
   AssetImportSettings import_settings{};
   import_settings.method = import_method;
   import_settings.use_instance_collections = true;  // BFA

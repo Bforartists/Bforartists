@@ -23,14 +23,14 @@ const UserDef U_default = {
     .versionfile = BLENDER_FILE_VERSION,
     .subversionfile = BLENDER_FILE_SUBVERSION,
     .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM | USER_TOOLTIPS_PYTHON | USER_DEVELOPER_UI | USER_FILENOUI |
-    		 USER_SCRIPT_AUTOEXEC_DISABLE),
+             USER_SCRIPT_AUTOEXEC_DISABLE | USER_FILECOMPRESS),
     /*BFA - added USER_DUP_NTREE*/
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE | USER_DUP_FONT |
                USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_CAMERA | USER_DUP_SPEAKER |
                USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES | USER_DUP_NTREE | USER_DUP_POINTCLOUD,
     /* BFA - WIP - enable outliner collection rows*/
     //.outliner_editor_flag = USER_OUTLINER_COL_COLLECTION_ROWS
-    /* BFA - WIP - enable animaotion props*/
+    /* BFA - WIP - enable animation props*/
     //.animation_flag = USER_ANIM_SHOW_CHANNEL_GROUP_COLORS
     .pref_flag = USER_PREF_FLAG_SAVE,
     .savetime = 2,
@@ -58,9 +58,10 @@ const UserDef U_default = {
     .uiflag = (USER_FILTERFILEEXTS | USER_DRAWVIEWINFO | USER_PLAINMENUS |
                USER_LOCK_CURSOR_ADJUST | USER_DEPTH_CURSOR | USER_AUTOPERSP |
                USER_NODE_AUTO_OFFSET | USER_GLOBALUNDO | USER_SHOW_GIZMO_NAVIGATE |
-               USER_SHOW_VIEWPORTNAME | USER_SHOW_FPS | USER_CONTINUOUS_MOUSE | USER_SAVE_PROMPT | USER_ORBIT_SELECTION),
+               USER_SHOW_VIEWPORTNAME | USER_SHOW_FPS | USER_CONTINUOUS_MOUSE | USER_SAVE_PROMPT | USER_ORBIT_SELECTION |
+               USER_AREA_CORNER_HANDLE),
     /*bfa - move here USER_NODE_AUTOPOSITION_VIEWER*/
-    .uiflag2 = USER_REGION_OVERLAP | USER_NODE_AUTOPOSITION_VIEWER,
+    .uiflag2 = USER_REGION_OVERLAP | USER_NODE_AUTOPOSITION_VIEWER | USER_ALWAYS_SHOW_NUMBER_ARROWS,
     .gpu_flag = USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE | USER_GPU_FLAG_SUBDIVISION_EVALUATION,
     .app_flag = 0,
     /** Default language of English (1), not Automatic (0). */
@@ -150,7 +151,7 @@ const UserDef U_default = {
     .pad_rot_angle = 15,
     .rvisize = 25,
     .rvibright = 8,
-    .recent_files = 20,
+    .recent_files = 200,
     .smooth_viewtx = 200,
     .glreslimit = 0,
     .color_picker_type = USER_CP_CIRCLE_HSV,
@@ -216,6 +217,14 @@ const UserDef U_default = {
             .jump_height = 0.4,
             .teleport_time = 0.2,
             .flag = 0,
+        },
+
+    .xr_navigation =
+        {
+            .vignette_intensity = 60.0f,
+            .turn_amount = DEG2RAD(30),
+            .turn_speed = DEG2RAD(60),
+            .flag = USER_XR_NAV_SNAP_TURN,
         },
 
     .space_data =

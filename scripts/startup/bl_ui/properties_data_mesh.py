@@ -71,7 +71,9 @@ class MESH_MT_shape_key_context_menu(Menu):
         ).use_topology = True
         layout.separator()
         layout.operator("object.join_shapes", icon="JOIN", text="New from Objects")
+        layout.operator("object.join_shapes", icon="JOIN", text="New from Objects Flipped").use_mirror = True
         layout.operator("object.update_shapes", icon="FILE_REFRESH")
+        layout.operator("object.update_shapes", icon="FILE_REFRESH", text="Update from Objects Flipped").use_mirror = True
         layout.operator("object.shape_key_transfer", icon="OBJECT_CONTENTS")
         layout.separator()
         props = layout.operator("object.shape_key_remove", icon="CHECKMARK", text="Apply All Shape Keys")
@@ -296,7 +298,10 @@ def draw_shape_key_properties(context, layout):
         row.prop(key, "eval_time")
 
     if ob.type == "MESH":
-        layout.prop(ob, "add_rest_position_attribute")
+        row = layout.row()
+        row.use_property_split = False  # BFA - Align property left
+        row.prop(ob, "add_rest_position_attribute")
+        row.prop_decorator(ob, "add_rest_position_attribute")
 
 
 class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
@@ -338,6 +343,12 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
         col.separator()
 
         col.menu("MESH_MT_shape_key_context_menu", icon="DOWNARROW_HLT", text="")
+
+        if ob.type == 'MESH':
+            row = layout.row(align=True)
+            row.use_property_split = False
+            row.alignment = 'LEFT'
+            row.prop(ob, "add_rest_position_attribute")
 
         if kb:
             col.separator()

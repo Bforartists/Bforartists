@@ -79,6 +79,8 @@ static void node_declare(NodeDeclarationBuilder &b)
         output_decl.dependent_field({input_decl.index()});
       }
     }
+    input_decl.structure_type(StructureType::Dynamic);
+    output_decl.structure_type(StructureType::Dynamic);
     if (socket_type == SOCK_BUNDLE) {
       dynamic_cast<decl::BundleBuilder &>(output_decl)
           .pass_through_input_index(input_decl.index());
@@ -93,16 +95,6 @@ static void node_declare(NodeDeclarationBuilder &b)
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
   NodeGeometryBake *data = MEM_callocN<NodeGeometryBake>(__func__);
-
-  data->items = MEM_calloc_arrayN<NodeGeometryBakeItem>(1, __func__);
-  data->items_num = 1;
-
-  NodeGeometryBakeItem &item = data->items[0];
-  item.name = BLI_strdup(DATA_("Geometry"));
-  item.identifier = data->next_identifier++;
-  item.attribute_domain = int16_t(AttrDomain::Point);
-  item.socket_type = SOCK_GEOMETRY;
-
   node->storage = data;
 }
 
@@ -520,17 +512,9 @@ static void node_layout_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
 static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 {
   const eNodeSocketDatatype type = eNodeSocketDatatype(params.other_socket().type);
-  if (type == SOCK_GEOMETRY) {
-    params.add_item(IFACE_("Geometry"), [](LinkSearchOpParams &params) {
-      bNode &node = params.add_node("GeometryNodeBake");
-      params.connect_available_socket(node, "Geometry");
-    });
-    return;
-  }
   if (!BakeItemsAccessor::supports_socket_type(type, params.node_tree().type)) {
     return;
   }
-
   params.add_item(
       IFACE_("Value"),
       [type](LinkSearchOpParams &params) {
@@ -774,7 +758,7 @@ void draw_common_bake_settings(bContext *C, BakeDrawContext &ctx, uiLayout *layo
     col->prop(&ctx.bake_rna, "bake_target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     uiLayout *subcol = &col->column(true);
     subcol->active_set(ctx.bake_target == NODES_MODIFIER_BAKE_TARGET_DISK);
-    col->use_property_split_set(false); /* bfa - use_property_split = False */
+    subcol->use_property_split_set(false); /* bfa - use_property_split = False */
     subcol->prop(&ctx.bake_rna, "use_custom_path", UI_ITEM_NONE, IFACE_("Custom Path"), ICON_NONE);
     uiLayout *subsubcol = &subcol->column(true);
     const bool use_custom_path = ctx.bake->flag & NODES_MODIFIER_BAKE_CUSTOM_PATH;
@@ -804,6 +788,7 @@ void draw_common_bake_settings(bContext *C, BakeDrawContext &ctx, uiLayout *layo
   }
   {
     uiLayout *col = &settings_col->column(true);
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(&ctx.bake_rna,
               "use_custom_simulation_frame_range",
               UI_ITEM_NONE,

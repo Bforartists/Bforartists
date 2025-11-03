@@ -12,6 +12,8 @@
 #include <cstring>
 #include <ctime>
 
+#include "AS_asset_library.hh"
+#include "BLI_path_utils.hh"
 #include "MEM_guardedalloc.h"
 
 #include "BLI_listbase.h"
@@ -565,6 +567,35 @@ void OBJECT_OT_hide_collection(wmOperatorType *ot)
 /** \name Toggle Edit-Mode Operator
  * \{ */
 
+/* When switching mode, certain data needs to be copied from the `bPoseChannel` to the `Bone`. This
+ * is not done in `BKE_pose_rebuild` because that is called in other cases other than mode
+ * switching. */
+static void flush_bone_selection_to_pose(Object &ob)
+{
+  BLI_assert(ob.pose);
+  LISTBASE_FOREACH (bPoseChannel *, pose_bone, &ob.pose->chanbase) {
+    if (pose_bone->bone->flag & BONE_SELECTED) {
+      pose_bone->flag |= POSE_SELECTED;
+    }
+    else {
+      pose_bone->flag &= ~POSE_SELECTED;
+    }
+  }
+}
+static void flush_pose_selection_to_bone(Object &ob)
+{
+  BLI_assert(ob.pose);
+  constexpr int selection_flags = (BONE_SELECTED | BONE_ROOTSEL | BONE_TIPSEL);
+  LISTBASE_FOREACH (bPoseChannel *, pose_bone, &ob.pose->chanbase) {
+    if (pose_bone->flag & POSE_SELECTED) {
+      pose_bone->bone->flag |= selection_flags;
+    }
+    else {
+      pose_bone->bone->flag &= ~selection_flags;
+    }
+  }
+}
+
 static bool mesh_needs_keyindex(Main *bmain, const Mesh *mesh)
 {
   if (mesh->key) {
@@ -653,6 +684,9 @@ static bool editmode_load_free_ex(Main *bmain,
         }
       }
     }
+
+    /* After regenerating the bones, sync the selection onto the pose bones. */
+    flush_bone_selection_to_pose(*obedit);
     /* TODO(sergey): Pose channels might have been changed, so need
      * to inform dependency graph about this. But is it really the
      * best place to do this?
@@ -867,6 +901,13 @@ bool editmode_enter_ex(Main *bmain, Scene *scene, Object *ob, int flag)
     WM_main_add_notifier(NC_SCENE | ND_MODE | NS_EDITMODE_MESH, nullptr);
   }
   else if (ob->type == OB_ARMATURE) {
+    /* Syncing the selection to the `Bone` before converting to edit bones. This is not possible if
+     * the Armature was just created, because then there is no pose data yet. Which is fine, the
+     * just-created edit bones already have the expected selection state. */
+    if (ob->pose) {
+      flush_pose_selection_to_bone(*ob);
+    }
+
     bArmature *arm = static_cast<bArmature *>(ob->data);
     ok = true;
     ED_armature_to_edit(arm);
@@ -1620,11 +1661,26 @@ static bool is_smooth_by_angle_modifier(const ModifierData &md)
   if (!nmd.node_group) {
     return false;
   }
-  const LibraryWeakReference *library_ref = nmd.node_group->id.library_weak_reference;
-  if (!library_ref) {
+  if (const LibraryWeakReference *library_ref = nmd.node_group->id.library_weak_reference) {
+    /* Support appended assets added before asset packing in Blender 5.0. */
+    if (!library_ref) {
+      return false;
+    }
+    if (!STREQ(library_ref->library_id_name + 2, "Smooth by Angle")) {
+      return false;
+    }
+    return true;
+  }
+  const Library *library = nmd.node_group->id.lib;
+  if (!library) {
     return false;
   }
-  if (!STREQ(library_ref->library_id_name + 2, "Smooth by Angle")) {
+  char auto_smooth_asset_path[FILE_MAX] = "datafiles/assets/nodes/geometry_nodes_essentials.blend";
+  BLI_path_slash_native(auto_smooth_asset_path);
+  if (!StringRef(library->filepath).endswith(auto_smooth_asset_path)) {
+    return false;
+  }
+  if (!STREQ(BKE_id_name(nmd.node_group->id), "Smooth by Angle")) {
     return false;
   }
   return true;
@@ -1655,8 +1711,6 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
     CTX_data_selected_editable_objects(C, &ctx_objects);
   }
 
-  bool modifier_removed = false;
-
   Set<ID *> object_data;
   for (const PointerRNA &ptr : ctx_objects) {
     Object *ob = static_cast<Object *>(ptr.data);
@@ -1669,7 +1723,7 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
             if (is_smooth_by_angle_modifier(*md)) {
               modifier_remove(op->reports, bmain, scene, ob, md);
               DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
-              modifier_removed = true;
+              WM_main_add_notifier(NC_OBJECT | ND_MODIFIER | NA_REMOVED, ob);
               break;
             }
           }
@@ -1708,11 +1762,6 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
       DEG_id_tag_update(data, ID_RECALC_GEOMETRY);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, data);
     }
-  }
-
-  if (modifier_removed) {
-    /* Outliner needs to know. #124302. */
-    WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, nullptr);
   }
 
   if (has_linked_data) {
@@ -1846,7 +1895,13 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
     AssetWeakReference asset_weak_ref{};
     asset_weak_ref.asset_library_type = ASSET_LIBRARY_ESSENTIALS;
     asset_weak_ref.relative_asset_identifier = BLI_strdup(
-        "geometry_nodes/smooth_by_angle.blend/NodeTree/Smooth by Angle");
+        "nodes/geometry_nodes_essentials.blend/NodeTree/Smooth by Angle");
+
+    if (G.background) {
+      /* For testing purposes, make sure assets are loaded (this make take too long to do
+       * automatically during user interaction). */
+      asset::list::storage_fetch_blocking(asset_system::all_library_reference(), *C);
+    }
 
     const asset_system::AssetRepresentation *asset_representation =
         asset::find_asset_from_weak_ref(*C, asset_weak_ref, op->reports);
@@ -1901,7 +1956,8 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
         smooth_by_angle_nmd->node_group = node_group;
         id_us_plus(&node_group->id);
         MOD_nodes_update_interface(object, smooth_by_angle_nmd);
-        smooth_by_angle_nmd->flag |= NODES_MODIFIER_HIDE_DATABLOCK_SELECTOR;
+        smooth_by_angle_nmd->flag |= NODES_MODIFIER_HIDE_DATABLOCK_SELECTOR |
+                                     NODES_MODIFIER_HIDE_MANAGE_PANEL;
         STRNCPY_UTF8(smooth_by_angle_nmd->modifier.name, DATA_(node_group->id.name + 2));
         BKE_modifier_unique_name(&object->modifiers, &smooth_by_angle_nmd->modifier);
       }
@@ -1925,6 +1981,7 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
       LISTBASE_FOREACH (ModifierData *, md, &object->modifiers) {
         if (is_smooth_by_angle_modifier(*md)) {
           modifier_remove(op->reports, &bmain, &scene, object, md);
+          WM_main_add_notifier(NC_OBJECT | ND_MODIFIER | NA_REMOVED, object);
           break;
         }
       }
@@ -2406,7 +2463,9 @@ static void move_to_collection_menu_draw(const bContext *C, Menu *menu)
   Scene *scene = CTX_data_scene(C);
   if (layout.operator_context() == wm::OpCallContext::ExecRegionWin) {
     layout.operator_context_set(wm::OpCallContext::InvokeRegionWin);
-    PointerRNA op_ptr = layout.op("WM_OT_search_single_menu", "Search...", ICON_VIEWZOOM);
+    PointerRNA op_ptr = layout.op("WM_OT_search_single_menu",
+                                  CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Search..."),
+                                  ICON_VIEWZOOM);
     RNA_string_set(&op_ptr, "menu_idname", menu->type->idname);
     layout.separator();
   }

@@ -33,17 +33,6 @@ enum_devices = (
         "Use GPU compute device for rendering, configured in the system tab in the user preferences"),
 )
 
-enum_feature_set = (
-    ('SUPPORTED',
-     "Supported",
-     "Only use finished and supported features"),
-    ('EXPERIMENTAL',
-     "Experimental",
-     "Use experimental and incomplete features that might be broken or change in the future",
-     'ERROR',
-     1),
-)
-
 enum_bvh_layouts = (
     ('BVH2', "BVH2", "", 1),
     ('EMBREE', "Embree", "", 4),
@@ -394,13 +383,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         description="Device to use for rendering",
         items=enum_devices,
         default='CPU',
-    )
-    feature_set: EnumProperty(
-        name="Feature Set",
-        description="Feature set to use for rendering",
-        items=enum_feature_set,
-        default='SUPPORTED',
-        update=update_render_engine,
+        update=update_render_passes,
     )
     shading_system: BoolProperty(
         name="Open Shading Language",
@@ -797,31 +780,51 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         default=8,
     )
 
-    volume_unbiased: BoolProperty(
-        name="Unbiased",
-        description="If enabled, volume rendering converges to the correct result with sufficiently large numbers "
-        "of samples, but might appear noisier in the process",
+    volume_step_rate: FloatProperty(
+        name="Step Rate",
+        description="Globally adjust detail for volume rendering, on top of automatically estimated step size. "
+                    "Higher values reduce render time, lower values render with more detail",
+        default=1.0,
+        min=0.01, max=100.0, soft_min=0.1, soft_max=10.0, precision=2
+    )
+    volume_preview_step_rate: FloatProperty(
+        name="Step Rate",
+        description="Globally adjust detail for volume rendering, on top of automatically estimated step size. "
+                    "Higher values reduce render time, lower values render with more detail",
+        default=1.0,
+        min=0.01, max=100.0, soft_min=0.1, soft_max=10.0, precision=2
+    )
+    volume_max_steps: IntProperty(
+        name="Max Steps",
+        description="Maximum number of steps through the volume before giving up, "
+        "to avoid extremely long render times with big objects or small step sizes",
+        default=1024,
+        min=2, max=65536
+    )
+
+    volume_biased: BoolProperty(
+        name="Biased",
+        description="Default volume rendering uses null scattering, which is unbiased and has less artifacts, "
+        "but could be noisier. Biased option uses ray marching, with controls for steps size and max steps",
         default=False,
     )
 
     dicing_rate: FloatProperty(
         name="Dicing Rate",
-        description="Size of a micropolygon in pixels",
+        description="Multiplier for per object adaptive subdivision size",
         min=0.1, max=1000.0, soft_min=0.5,
         default=1.0,
-        subtype='PIXEL'
     )
     preview_dicing_rate: FloatProperty(
         name="Viewport Dicing Rate",
-        description="Size of a micropolygon in pixels during preview render",
+        description="Multiplier for per object adaptive subdivision size in the viewport",
         min=0.1, max=1000.0, soft_min=0.5,
         default=8.0,
-        subtype='PIXEL'
     )
 
     max_subdivisions: IntProperty(
         name="Max Subdivisions",
-        description="Stop subdividing when this level is reached even if the dice rate would produce finer tessellation",
+        description="Stop subdividing when this level is reached even if the dicing rate would produce finer tessellation",
         min=0,
         max=16,
         default=12,
@@ -948,7 +951,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
             ('NORMAL', "Normal", "", 3),
             ('UV', "UV", "", 4),
             ('ROUGHNESS', "Roughness", "", 5),
-            ('EMIT', "Emit", "", 6),
+            ('EMIT', "Emission", "", 6),
             ('ENVIRONMENT', "Environment", "", 7),
             ('DIFFUSE', "Diffuse", "", 8),
             ('GLOSSY', "Glossy", "", 9),
@@ -1154,6 +1157,14 @@ class CyclesMaterialSettings(bpy.types.PropertyGroup):
         default='LINEAR',
     )
 
+    volume_step_rate: FloatProperty(
+        name="Step Rate",
+        description="Scale the distance between volume shader samples when rendering the volume "
+                    "(lower values give more accurate and detailed results, but also increased render time)",
+        default=1.0,
+        min=0.001, max=1000.0, soft_min=0.1, soft_max=10.0, precision=4
+    )
+
     @classmethod
     def register(cls):
         bpy.types.Material.cycles = PointerProperty(
@@ -1247,6 +1258,13 @@ class CyclesWorldSettings(bpy.types.PropertyGroup):
         description="Interpolation method to use for volumes",
         items=enum_volume_interpolation,
         default='LINEAR',
+    )
+    volume_step_size: FloatProperty(
+        name="Step Size",
+        description="Distance between volume shader samples when rendering the volume "
+                    "(lower values give more accurate and detailed results, but also increased render time)",
+        default=1.0,
+        min=0.0000001, max=100000.0, soft_min=0.1, soft_max=100.0, precision=4
     )
 
     @classmethod
@@ -1378,19 +1396,6 @@ class CyclesObjectSettings(bpy.types.PropertyGroup):
         default=False,
     )
 
-    use_adaptive_subdivision: BoolProperty(
-        name="Use Adaptive Subdivision",
-        description="Use adaptive render time subdivision",
-        default=False,
-    )
-
-    dicing_rate: FloatProperty(
-        name="Dicing Scale",
-        description="Multiplier for scene dicing rate (located in the Subdivision panel)",
-        min=0.1, max=1000.0, soft_min=0.5,
-        default=1.0,
-    )
-
     shadow_terminator_offset: FloatProperty(
         name="Shadow Terminator Shading Offset",
         description="Push the shadow terminator towards the light to hide artifacts on low poly geometry",
@@ -1477,6 +1482,12 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
     pass_debug_sample_count: BoolProperty(
         name="Debug Sample Count",
         description="Number of samples per pixel taken, divided by the maximum number of samples. To analyze adaptive sampling",
+        default=False,
+        update=update_render_passes,
+    )
+    pass_render_time: BoolProperty(
+        name="Render Time",
+        description="Reports time per pixel in milliseconds. Supported only on CPU render devices",
         default=False,
         update=update_render_passes,
     )
@@ -1613,9 +1624,8 @@ class CyclesPreferences(bpy.types.AddonPreferences):
     )
 
     use_hiprt: BoolProperty(
-        name="HIP RT (Unstable)",
-        description="HIP RT enables AMD hardware ray tracing on RDNA2 and above. This currently has known stability "
-        "issues, that are expected to be solved before the next release.",
+        name="HIP RT",
+        description="HIP RT enables AMD hardware ray tracing on RDNA2 and above",
         default=False,
     )
 
@@ -1813,8 +1823,8 @@ class CyclesPreferences(bpy.types.AddonPreferences):
             elif device_type == 'HIP':
                 import sys
                 if sys.platform[:3] == "win":
-                    adrenalin_driver_version = "24.6.1"
-                    pro_driver_version = "24.Q2"
+                    adrenalin_driver_version = "24.9.1"
+                    pro_driver_version = "24.Q4"
                     col.label(
                         text=rpt_("Requires AMD GPU with RDNA architecture"),
                         icon='BLANK1',
@@ -1834,12 +1844,12 @@ class CyclesPreferences(bpy.types.AddonPreferences):
             elif device_type == 'ONEAPI':
                 import sys
                 if sys.platform.startswith("win"):
-                    driver_version = "XX.X.101.6557"
+                    driver_version = "XX.X.101.8132"
                     col.label(text=rpt_("Requires Intel GPU with Xe-HPG architecture"), icon='BLANK1', translate=False)
                     col.label(text=rpt_("and Windows driver version %s or newer") % driver_version,
                               icon='BLANK1', translate=False)
                 elif sys.platform.startswith("linux"):
-                    driver_version = "XX.XX.31740.15"
+                    driver_version = "XX.XX.34666.3"
                     col.label(
                         text=rpt_("Requires Intel GPU with Xe-HPG architecture and"),
                         icon='BLANK1',

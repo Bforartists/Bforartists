@@ -115,6 +115,7 @@ class Shader {
     return parent_shader_;
   }
 
+  static void set_scene_linear_to_xyz_uniform(gpu::Shader *shader);
   static void set_srgb_uniform(Context *ctx, gpu::Shader *shader);
   static void set_framebuffer_srgb_target(int use_srgb_to_linear);
 
@@ -273,7 +274,7 @@ class ShaderCompiler {
   Shader *compile(const shader::ShaderCreateInfo &info, bool is_batch_compilation);
 
   virtual Shader *compile_shader(const shader::ShaderCreateInfo &info);
-  virtual void specialize_shader(ShaderSpecialization & /*specialization*/){};
+  virtual void specialize_shader(ShaderSpecialization & /*specialization*/) {};
 
   BatchHandle batch_compile(Span<const shader::ShaderCreateInfo *> &infos,
                             CompilationPriority priority);

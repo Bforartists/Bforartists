@@ -9,8 +9,10 @@
  */
 
 #include "BLI_math_vector_types.hh"
+#include "BLI_set.hh"
 #include "BLI_vector.hh"
 
+struct Depsgraph;
 struct ImBuf;
 struct LinkNode;
 struct ListBase;
@@ -24,6 +26,7 @@ namespace blender::seq {
 /* Mutable state while rendering one sequencer frame. */
 struct SeqRenderState {
   LinkNode *scene_parents = nullptr;
+  Set<Strip *> strips_rendering_seqbase;
 };
 
 /* Strip corner coordinates in screen pixel space. Note that they might not be
@@ -38,6 +41,7 @@ struct StripScreenQuad {
 };
 
 ImBuf *seq_render_give_ibuf_seqbase(const RenderData *context,
+                                    SeqRenderState *state,
                                     float timeline_frame,
                                     int chan_shown,
                                     ListBase *channels,
@@ -52,7 +56,12 @@ ImBuf *seq_render_strip(const RenderData *context,
 
 /* Renders Mask into an image suitable for sequencer:
  * RGB channels contain mask intensity; alpha channel is opaque. */
-ImBuf *seq_render_mask(const RenderData *context, Mask *mask, float frame_index, bool make_float);
+ImBuf *seq_render_mask(Depsgraph *depsgraph,
+                       int width,
+                       int height,
+                       const Mask *mask,
+                       float frame_index,
+                       bool make_float);
 void seq_imbuf_assign_spaces(const Scene *scene, ImBuf *ibuf);
 
 StripScreenQuad get_strip_screen_quad(const RenderData *context, const Strip *strip);

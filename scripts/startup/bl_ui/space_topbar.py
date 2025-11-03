@@ -326,7 +326,7 @@ class TOPBAR_MT_file_new(Menu):
 
         # Limit number of templates in splash screen, spill over into more menu.
         paths = TOPBAR_MT_file_new.app_template_paths()
-        splash_limit = 5
+        splash_limit = 6
 
         if use_splash:
             icon = "FILE_NEW"
@@ -335,7 +335,7 @@ class TOPBAR_MT_file_new(Menu):
                 paths = paths[: splash_limit - 2]
         elif use_more:
             icon = "FILE_NEW"
-            paths = paths[splash_limit - 2 :]
+            paths = paths[splash_limit - 2:]
             show_more = False
         else:
             icon = "NONE"
@@ -343,17 +343,29 @@ class TOPBAR_MT_file_new(Menu):
 
         # Draw application templates.
         if not use_more:
-            props = layout.operator("wm.read_homefile", text="General", icon=icon)
+            props = layout.operator("wm.read_homefile", text="General", icon='FILE_NEW')
             props.app_template = ""
 
         for d in paths:
+            icon = 'FILE_NEW'
+            # Set icon per template.
+            if d == "2D_Animation":
+                icon = 'GREASEPENCIL_LAYER_GROUP'
+            elif d == "Sculpting":
+                icon = 'SCULPTMODE_HLT'
+            elif d == "Storyboarding":
+                icon = 'GREASEPENCIL'
+            elif d == "VFX":
+                icon = 'TRACKER'
+            elif d == "Video_Editing":
+                icon = 'SEQUENCE'
             props = layout.operator("wm.read_homefile", text=bpy.path.display_name(iface_(d)), icon=icon)
             props.app_template = d
 
         layout.operator_context = "EXEC_DEFAULT"
 
         if show_more:
-            layout.menu("TOPBAR_MT_templates_more", text="...")
+            layout.menu("TOPBAR_MT_templates_more", text="More...")
 
     def draw(self, context):
         TOPBAR_MT_file_new.draw_ex(self.layout, context)
@@ -596,6 +608,11 @@ class TOPBAR_MT_render(Menu):
         layout = self.layout
 
         rd = context.scene.render
+        scene = context.scene
+        seq_scene = context.sequencer_scene
+        strips = getattr(context, "strips", ())
+
+        can_render_seq = seq_scene and seq_scene.render.use_sequencer and strips
 
         layout.operator("render.render", text="Render Image", icon="RENDER_STILL").use_viewport = True
         props = layout.operator("render.render", text="Render Animation", icon="RENDER_ANIMATION")
@@ -603,6 +620,18 @@ class TOPBAR_MT_render(Menu):
         props.use_viewport = True
 
         layout.separator()
+
+        if can_render_seq and (seq_scene != scene):
+            props = layout.operator("render.render", text="Render Sequencer Image", icon='RENDER_STILL')
+            props.use_viewport = True
+            props.use_sequencer_scene = True
+
+            props = layout.operator("render.render", text="Render Sequencer Animation", icon='RENDER_ANIMATION')
+            props.animation = True
+            props.use_viewport = True
+            props.use_sequencer_scene = True
+
+            layout.separator()
 
         layout.operator("sound.mixdown", text="Mixdown Audio", icon="PLAY_AUDIO")
 
@@ -626,6 +655,8 @@ class TOPBAR_MT_edit(Menu):
 
     def draw(self, context):
         layout = self.layout
+
+        show_developer = context.preferences.view.show_developer_ui
 
         layout.operator("ed.undo", icon="UNDO")
         layout.operator("ed.redo", icon="REDO")
@@ -747,7 +778,7 @@ class TOPBAR_MT_window(Menu):
 
     def draw(self, context):
         import sys
-        from bl_ui_utils.layout import operator_context
+        from _bl_ui_utils.layout import operator_context
 
         layout = self.layout
 
@@ -980,16 +1011,20 @@ class TOPBAR_PT_name_marker(Panel):
     def is_using_pose_markers(context):
         sd = context.space_data
         return (
-            sd.type == "DOPESHEET_EDITOR"
-            and sd.mode in {"ACTION", "SHAPEKEY"}
-            and sd.show_pose_markers
-            and context.active_action
+            sd.type == 'DOPESHEET_EDITOR' and sd.mode in {'ACTION', 'SHAPEKEY'} and
+            sd.show_pose_markers and context.active_action
         )
+
+    def is_using_sequencer(context):
+        sd = context.space_data
+        return sd.type == 'SEQUENCE_EDITOR'
 
     @staticmethod
     def get_selected_marker(context):
         if TOPBAR_PT_name_marker.is_using_pose_markers(context):
             markers = context.active_action.pose_markers
+        elif TOPBAR_PT_name_marker.is_using_sequencer(context):
+            markers = context.sequencer_scene.timeline_markers
         else:
             markers = context.scene.timeline_markers
 

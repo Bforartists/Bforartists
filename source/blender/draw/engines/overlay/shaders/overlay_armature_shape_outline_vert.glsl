@@ -2,7 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "infos/overlay_armature_info.hh"
+#include "infos/overlay_armature_infos.hh"
 
 VERTEX_SHADER_CREATE_INFO(overlay_armature_shape_outline)
 
@@ -107,7 +107,7 @@ void geometry_main(VertOut geom_in[4],
   float fac3 = dot(view_vec, n3);
 
   /* If one of the face is perpendicular to the view,
-   * consider it and outline edge. */
+   * consider it an outline edge. */
   if (abs(fac0) > 1e-5f && abs(fac3) > 1e-5f) {
     /* If both adjacent verts are facing the camera the same way,
      * then it isn't an outline edge. */

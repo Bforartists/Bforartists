@@ -5,8 +5,45 @@
 import bpy
 from bpy.types import Panel
 import bmesh
+import sys
 
 from bpy.app.translations import contexts as i18n_contexts
+
+# BFA - Import the default library wizard functions
+def draw_wizard_button(layout, obj, text, icon, scale):
+    """Debug version to check what's in wizard_handlers"""
+    if not bpy.context.preferences.addons.get("bfa_default_library"):
+        return False
+
+    try:
+        wizard_handlers = sys.modules["bfa_default_library.wizard_handlers"]
+
+        # Debug: print all attributes of the module
+        #print(f"DEBUG: wizard_handlers module attributes: {dir(wizard_handlers)}")
+
+        # Check if the functions exist
+        has_detect = hasattr(wizard_handlers, "detect_wizard_for_object")
+        has_draw = hasattr(wizard_handlers, "draw_wizard_button")
+
+        #print(f"DEBUG: detect_wizard_for_object exists: {has_detect}")
+        #print(f"DEBUG: draw_wizard_button exists: {has_draw}")
+
+        if has_detect:
+            has_wizard, wizard_bl_idname, _ = wizard_handlers.detect_wizard_for_object(obj)
+            #print(f"DEBUG: Wizard detection result: {has_wizard}, {wizard_bl_idname}")
+
+            if has_wizard and wizard_bl_idname:
+                row = layout.row()
+                row.scale_y = scale
+                row.operator(wizard_bl_idname, text=text, icon=icon)
+                return True
+
+    except Exception as e:
+        #print(f"DEBUG: Wizard button error: {e}")
+        import traceback
+        traceback.print_exc()
+
+    return False
 
 
 class toolshelf_calculate( Panel):
@@ -50,7 +87,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE', 'EDIT_CURVES'}
 
     def draw(self, context):
         layout = self.layout
@@ -154,7 +191,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                                    'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
 
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
@@ -228,7 +265,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                                    'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
                     row = col.row(align=True)
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
@@ -300,7 +337,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 col.operator("transform.bend", text="", icon = "BEND")
                 col.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
-                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}:
+                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
                     col.separator( factor = 0.5)
                     col.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     col.operator_context = 'EXEC_REGION_WIN'
@@ -470,7 +507,7 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -591,7 +628,7 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -728,6 +765,7 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
 
     def draw(self, _context):
         layout = self.layout
+        context = bpy.context
 
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
@@ -751,6 +789,32 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
             col.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
             col.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default, icon = "APPLY_PARENT_INVERSE")
             col.operator("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS")
+
+            if context.preferences.addons.get("bfa_default_library"):
+
+                col.separator(factor = 0.5)
+                op = col.operator("object.apply_selected_objects",
+                                    text="Visual Geometry and Join",
+                                    icon='JOIN')
+                op.join_on_apply = True
+                op.boolean_on_apply = False
+                op.remesh_on_apply = False
+
+                op = col.operator("object.apply_selected_objects",
+                                text="Visual Geometry and Boolean",
+                                icon='MOD_BOOLEAN')
+                op.join_on_apply = False
+                op.boolean_on_apply = True
+                op.remesh_on_apply = False
+
+                op = col.operator("object.apply_selected_objects",
+                                text="Visual Geometry and Remesh",
+                                icon='MOD_REMESH')
+                op.join_on_apply = False
+                op.boolean_on_apply = False
+                op.remesh_on_apply = True
+
+
 
         # icon buttons
         else:
@@ -778,6 +842,30 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    row = col.row(align=True)
+                    op = row.operator("object.apply_selected_objects",
+                                        text="",
+                                        icon='JOIN')
+                    op.join_on_apply = True
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = False
+
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_BOOLEAN')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = True
+                    op.remesh_on_apply = False
+
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_REMESH')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = True
+
+
             elif column_count == 2:
 
                 row = col.row(align=True)
@@ -799,6 +887,30 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 row.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
                 row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    row = col.row(align=True)
+                    op = row.operator("object.apply_selected_objects",
+                                        text="",
+                                        icon='JOIN')
+                    op.join_on_apply = True
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = False
+
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_BOOLEAN')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = True
+                    op.remesh_on_apply = False
+
+                    row = col.row(align=True)
+                    op = row.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_REMESH')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = True
+
             elif column_count == 1:
 
                 col.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE")
@@ -814,7 +926,28 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                 col.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
                 col.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
+                if context.preferences.addons.get("bfa_default_library"):
+                    col.separator(factor = 0.5)
+                    op = col.operator("object.apply_selected_objects",
+                                        text="",
+                                        icon='JOIN')
+                    op.join_on_apply = True
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = False
 
+                    op = col.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_BOOLEAN')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = True
+                    op.remesh_on_apply = False
+
+                    op = col.operator("object.apply_selected_objects",
+                                    text="",
+                                    icon='MOD_REMESH')
+                    op.join_on_apply = False
+                    op.boolean_on_apply = False
+                    op.remesh_on_apply = True
 
 class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
     bl_label = "Apply Deltas"
@@ -935,7 +1068,7 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1029,7 +1162,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1088,7 +1221,7 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1129,7 +1262,6 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
                 col.operator("object.parent_clear", text = "", icon ='PARENT_CLEAR')
 
 
-
 class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
     bl_label = "Object Data"
     bl_space_type = 'VIEW_3D'
@@ -1141,7 +1273,7 @@ class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1216,11 +1348,14 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
-
+        
+        context = bpy.context
+        obj = context.object
+        
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
         #text buttons
@@ -1229,8 +1364,11 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("asset.mark", icon='ASSIGN')
+            col.operator("asset.mark", icon='ASSET_MANAGER')
             col.operator("asset.clear", icon='CLEAR').set_fake_user = False
+
+            if context.preferences.addons.get("bfa_default_library"):
+                draw_wizard_button(col, obj, "Open Asset Wizard", 'WIZARD', 1)
 
         # icon buttons
         else:
@@ -1242,19 +1380,30 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("asset.mark", text = "", icon='ASSIGN')
+                row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+                if context.preferences.addons.get("bfa_default_library"):
+                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("asset.mark", text = "", icon='ASSIGN')
+                row.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 row.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+
+                if context.preferences.addons.get("bfa_default_library"):
+                    row = col.row(align=True)
+                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
 
             elif column_count == 1:
 
-                col.operator("asset.mark", text = "", icon='ASSIGN')
+                col.operator("asset.mark", text = "", icon='ASSET_MANAGER')
                 col.operator("asset.clear", text = "", icon='CLEAR').set_fake_user = False
+
+                if context.preferences.addons.get("bfa_default_library"):
+                    draw_wizard_button(col, obj, "", 'WIZARD', 1)
 
 
 class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
@@ -1268,7 +1417,7 @@ class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1326,7 +1475,7 @@ class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1371,13 +1520,13 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Utility"
-    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         view = context.space_data
-        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}
+        return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1479,7 +1628,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
                 else:
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVE').target = 'CURVE'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_MESH').target = 'MESH'
-                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GPENCIL'
+                    col.operator("object.convert", text = "", icon='OUTLINER_OB_GREASEPENCIL').target = 'GREASEPENCIL'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_POINTCLOUD').target = 'POINTCLOUD'
                     col.operator("object.convert", text = "", icon='OUTLINER_OB_CURVES').target = 'CURVES'
                     #row.operator_enum("object.convert", "target")
@@ -3636,7 +3785,6 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props.boundary_mode = "FACE_SETS"
 
 
-
 class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
     bl_label = "Random Mask"
     bl_space_type = 'VIEW_3D'
@@ -4253,6 +4401,7 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
                 col.operator("paint.weight_set", text="", icon = "MOD_VERTEX_WEIGHT")
 
 
+# ------------------------ Curve Edit Mode
 class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     bl_label = "Curve"
     bl_space_type = 'VIEW_3D'
@@ -4493,83 +4642,6 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
 
-class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
-    bl_label = "Surface"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = "Surface"
-    bl_context = "surface_edit"
-    bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
-
-    def draw(self, _context):
-        layout = self.layout
-
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curve.spin", icon = 'SPIN')
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.split", icon = "SPLIT")
-            col.operator("curve.separate", icon = "SEPARATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curve.spin", text = "", icon = 'SPIN')
-                row.operator("curve.split", text = "", icon = "SPLIT")
-                row.operator("curve.separate", text = "", icon = "SEPARATE")
-
-                row = col.row(align=True)
-                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curve.spin", text = "", icon = 'SPIN')
-                row.operator("curve.split", text = "", icon = "SPLIT")
-
-                row = col.row(align=True)
-                row.operator("curve.separate", text = "", icon = "SEPARATE")
-                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-
-            elif column_count == 1:
-
-                col.operator("curve.spin", text = "", icon = 'SPIN')
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.split", text = "", icon = "SPLIT")
-                col.operator("curve.separate", text = "", icon = "SEPARATE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
-
-
 class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
@@ -4653,6 +4725,350 @@ class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
 
+# ------------------------ Curves (Hair/Fur) Edit Mode
+class VIEW3D_PT_curvestab_edit_curves(toolshelf_calculate, Panel):
+    bl_label = "Curves"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Curves"
+    bl_context = "curves_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curves.duplicate_move", icon="DUPLICATE")
+
+            col.separator(factor=0.5)
+
+            col.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
+            col.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
+
+            col.separator(factor=0.5)
+
+            col.operator("curves.separate", icon="SEPARATE")
+            col.operator("curves.delete", icon="DELETE")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curves.duplicate_move", text="", icon="DUPLICATE")
+                row.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
+                row.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
+
+                row = col.row(align=True)
+                row.operator("curves.separate", text="", icon="SEPARATE")
+                row.operator("curves.delete", text="", icon="DELETE")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curves.duplicate_move", text="", icon="DUPLICATE")
+                row.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
+
+                row = col.row(align=True)
+                row.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
+                row.operator("curves.separate", text="", icon="SEPARATE")
+
+                row = col.row(align=True)
+                row.operator("curves.delete", text="", icon="DELETE")
+
+            elif column_count == 1:
+
+                col.operator("curves.duplicate_move", text="", icon="DUPLICATE")
+
+                col.separator(factor=0.5)
+
+                col.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
+                col.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
+
+                col.separator(factor=0.5)
+
+                col.operator("curves.separate", text="", icon="SEPARATE")
+                col.operator("curves.delete", text="", icon="DELETE")
+
+
+class VIEW3D_PT_curvestab_edit_controlpoints(toolshelf_calculate, Panel):
+    bl_label = "Control Points"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Control Points"
+    bl_context = "curves_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curves.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curves.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curves.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+
+
+            elif column_count == 1:
+
+                col.operator("curvs.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+
+
+class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
+    bl_label = "Segments"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Segments"
+    bl_context = "curves_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curves.subdivide", text = "Subdivide", icon = 'SUBDIVIDE_EDGES')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curves.switch0_direction", text = "Switch Direction", icon = "SWITCH_DIRECTION")
+
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                row.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                row.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
+
+            elif column_count == 1:
+
+                col.operator("curves.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                col.operator("curves.switch_direction", text = "", icon = "SWITCH_DIRECTION")
+
+# ------------------------ Curves (Hair/Fur) Sculpt Mode
+
+class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
+    bl_label = "Curves"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Curves"
+    bl_context = "curves_sculpt"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True and context.mode == 'SCULPT_CURVES'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curves.snap_curves_to_surface", text="Snap to Deformed Surface", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+            col.operator("curves.snap_curves_to_surface",text="Snap to Nearest Surface", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
+
+            col.separator(factor = 0.5)
+            layout.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
+
+                row = col.row(align=True)
+                row.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
+
+                row = col.row(align=True)
+                row.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
+
+            elif column_count == 1:
+
+                col.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
+
+                col.separator(factor = 0.5)
+
+                col.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
+
+                col.separator(factor = 0.5)
+
+                col.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
+
+
+# ------------------------ Surface
+class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
+    bl_label = "Surface"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Surface"
+    bl_context = "surface_edit"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.spin", icon = 'SPIN')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.split", icon = "SPLIT")
+            col.operator("curve.separate", icon = "SEPARATE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.spin", text = "", icon = 'SPIN')
+                row.operator("curve.split", text = "", icon = "SPLIT")
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                row = col.row(align=True)
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.spin", text = "", icon = 'SPIN')
+                row.operator("curve.split", text = "", icon = "SPLIT")
+
+                row = col.row(align=True)
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+            elif column_count == 1:
+
+                col.operator("curve.spin", text = "", icon = 'SPIN')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.split", text = "", icon = "SPLIT")
+                col.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+
+# ------------------------ Grease Pencil
 class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
@@ -4812,7 +5228,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
                 row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
                 row.operator("grease_pencil.stroke_merge_by_distance", text="", icon = "REMOVE_DOUBLES")
-                
+
                 row = col.row(align=True)
                 row.operator("grease_pencil.reproject", text="", icon = "REPROJECT")
                 row.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
@@ -4947,12 +5363,12 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Fixed)", icon="MOD_SIMPLIFY")
             props.mode = 'FIXED'
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Adaptive)", icon="SIMPLIFY_ADAPTIVE")
-            props.mode = 'ADAPTIVE'            
+            props.mode = 'ADAPTIVE'
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Sample)", icon="SIMPLIFY_SAMPLE")
-            props.mode = 'SAMPLE'            
+            props.mode = 'SAMPLE'
             props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Merge)", icon="MERGE")
             props.mode = 'MERGE'
-        
+
             col.separator(factor = 0.5)
 
             col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
@@ -4993,7 +5409,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
                 props.mode = 'FIXED'
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'            
+                props.mode = 'ADAPTIVE'
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
                 props.mode = 'SAMPLE'
                 row = col.row(align=True)
@@ -5028,7 +5444,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
                 props.mode = 'FIXED'
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'            
+                props.mode = 'ADAPTIVE'
                 row = col.row(align=True)
                 props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
                 props.mode = 'SAMPLE'
@@ -5066,7 +5482,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
                 props.mode = 'FIXED'
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'            
+                props.mode = 'ADAPTIVE'
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
                 props.mode = 'SAMPLE'
                 props = col.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
@@ -5488,6 +5904,7 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
                 col.operator("grease_pencil.interpolate_sequence", text="", icon = "SEQUENCE").use_selection = True
+
 
 class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
     bl_label = "Clean Up"
@@ -6191,7 +6608,6 @@ class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
                 col.operator("armature.flip_names", text="", icon = "FLIP")
 
 
-
 class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
     bl_label = "Pose"
     bl_space_type = 'VIEW_3D'
@@ -6222,8 +6638,10 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
             col.separator( factor = 0.5)
 
             col.operator_context = 'INVOKE_AREA'
-            col.operator("armature.armature_layers", text="Change Armature Layers", icon = "LAYER")
-            col.operator("pose.bone_layers", text="Change Bone Layers", icon = "BONE_LAYER")
+            col.operator("armature.move_to_collection", text="Change Bone Layers", icon = "GROUP_BONE")
+
+            col.separator( factor = 0.5)
+            col.operator("poselib.create_pose_asset", text="Create Pose Asset", icon = "ASSET_MANAGER")
 
         # icon buttons
         else:
@@ -6236,19 +6654,17 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.quaternions_flip", text="", icon = "FLIP")
-                row.operator_context = 'INVOKE_AREA'
-                row.operator("armature.armature_layers", text="", icon = "LAYER")
-                row.operator("pose.bone_layers", text="", icon = "BONE_LAYER")
+                row.operator("armature.move_to_collection", text="", icon = "GROUP_BONE")
+                row.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("pose.quaternions_flip", text="", icon = "FLIP")
-                row.operator_context = 'INVOKE_AREA'
-                row.operator("armature.armature_layers", text="", icon = "BONE_LAYER")
+                row.operator("armature.move_to_collection", text="", icon = "GROUP_BONE")
 
                 row = col.row(align=True)
-                row.operator("pose.bone_layers", text="", icon = "LAYER")
+                row.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
             elif column_count == 1:
 
@@ -6257,8 +6673,10 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
                 col.separator( factor = 0.5)
 
                 col.operator_context = 'INVOKE_AREA'
-                col.operator("armature.armature_layers", text="", icon = "LAYER")
-                col.operator("pose.bone_layers", text="", icon = "BONE_LAYER")
+                col.operator("armature.move_to_collection", text="", icon = "GROUP_BONE")
+
+                col.separator( factor = 0.5)
+                col.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
 
 class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
@@ -6446,8 +6864,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("pose.push_rest", icon = 'PUSH_POSE')
-            col.operator("pose.relax_rest", icon = 'RELAX_POSE')
+            col.operator("pose.blend_with_rest", icon = 'PUSH_POSE')
             col.operator("pose.push", icon = 'POSE_FROM_BREAKDOWN')
             col.operator("pose.relax", icon = 'POSE_RELAX_TO_BREAKDOWN')
             col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
@@ -6464,8 +6881,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
-                row.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
+                row.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')
                 row.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
 
                 row = col.row(align=True)
@@ -6476,21 +6892,19 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
-                row.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
-
-                row = col.row(align=True)
+                row.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')              
                 row.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
-                row.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
-
+                
                 row = col.row(align=True)
+                row.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
                 row.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+                
+                row = col.row(align=True)
                 row.operator("pose.blend_to_neighbor", text = "", icon = 'BLEND_TO_NEIGHBOUR')
 
             elif column_count == 1:
 
-                col.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
-                col.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
+                col.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')
                 col.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
                 col.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
                 col.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
@@ -6572,6 +6986,7 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 col.operator("pose.propagate", text="", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
+
 
 class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
     bl_label = "Motion Paths"
@@ -6887,6 +7302,14 @@ classes = (
     VIEW3D_PT_surfacetab_surface,
     VIEW3D_PT_curvetab_controlpoints_surface,
     VIEW3D_PT_segmentstab_segments,
+
+    # Curves (Hair/Fur) Edit Mode
+    VIEW3D_PT_curvestab_edit_curves,
+    VIEW3D_PT_curvestab_edit_controlpoints,
+    VIEW3D_PT_curvestab_edit_segments,
+
+    # Curves (Hair/Fur) Sculpt Mode
+    VIEW3D_PT_curvestab_sculpt_curves,
 
     # grease pencil edit mode
     VIEW3D_PT_gp_gpenciltab_dissolve,

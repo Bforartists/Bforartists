@@ -480,7 +480,7 @@ void parent_set(Object *ob, Object *par, const int type, const char *substr)
   ob->partype |= type;
   STRNCPY_UTF8(ob->parsubstr, substr);
 }
-
+/* BFA - these enums are now not exposed to the GUI, but used as a conditional menu. Bare in mind to update the python space_view3d.py to reflect these */
 const EnumPropertyItem prop_make_parent_types[] = {
     {PAR_OBJECT, "OBJECT", ICON_PARENT_OBJECT, "Object", ""},
     {PAR_ARMATURE, "ARMATURE", ICON_PARENT_BONE, "Armature Deform", ""},
@@ -945,7 +945,7 @@ static wmOperatorStatus parent_set_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
-
+/* BFA - in the space_view3d.py, this menu has been built in python for the header parent menu. If there are changes here, change there too.*/
 static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 {
   Object *parent = context_active_object(C);
@@ -3053,6 +3053,13 @@ void OBJECT_OT_drop_named_material(wmOperatorType *ot)
 
   /* properties */
   WM_operator_properties_id_lookup(ot, true);
+  
+  /* Add the missing property */
+  RNA_def_boolean(ot->srna,
+                 "show_datablock_in_modifier",
+                 false,
+                 "Show in Modifier",
+                 "Show the datablock in the modifier properties");
 }
 
 /** \} */
@@ -3134,6 +3141,11 @@ static wmOperatorStatus drop_geometry_nodes_invoke(bContext *C,
   if (!RNA_boolean_get(op->ptr, "show_datablock_in_modifier")) {
     nmd->flag |= NODES_MODIFIER_HIDE_DATABLOCK_SELECTOR;
   }
+  SET_FLAG_FROM_TEST(nmd->flag,
+                     node_tree->geometry_node_asset_traits &&
+                         (node_tree->geometry_node_asset_traits->flag &
+                          GEO_NODE_ASSET_HIDE_MODIFIER_MANAGE_PANEL),
+                     NODES_MODIFIER_HIDE_MANAGE_PANEL);
 
   nmd->node_group = node_tree;
   id_us_plus(&node_tree->id);

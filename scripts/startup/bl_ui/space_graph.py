@@ -24,7 +24,7 @@ from bl_ui.space_time import playback_controls
 
 
 class ANIM_OT_switch_editor_in_graph(Operator):
-    """You are in Graph Editor"""  # blender will use this as a tooltip for menu items and buttons.
+    """You are in the Graph Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
     bl_idname = "wm.switch_editor_in_graph"  # unique identifier for buttons and menu items to reference.
     bl_label = "Graph Editor"  # display name in the interface.
@@ -35,7 +35,7 @@ class ANIM_OT_switch_editor_in_graph(Operator):
 
 
 class ANIM_OT_switch_editor_in_driver(Operator):
-    """You are in Driver Editor"""  # blender will use this as a tooltip for menu items and buttons.
+    """You are in the Driver Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
     bl_idname = "wm.switch_editor_in_driver"  # unique identifier for buttons and menu items to reference.
     bl_label = "Driver Editor"  # display name in the interface.
@@ -63,7 +63,11 @@ def drivers_editor_footer(layout, context):
 
     layout.separator_spacer()
     layout.label(
-        text=iface_("Driver: {:s} ({:s})").format(act_fcurve.id_data.name, act_fcurve.data_path), translate=False
+        text=iface_("Driver: {:s} ({:s})").format(
+            act_fcurve.id_data.name,
+            act_fcurve.data_path,
+        ),
+        translate=False,
     )
 
     if act_driver.variables:
@@ -312,7 +316,7 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_region_channels")  # BFA - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
-        layout.prop(st, "show_region_footer")
+        layout.prop(st, "show_region_footer", text="Playback Controls")
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon="BORDER_RECT")
@@ -606,8 +610,7 @@ class GRAPH_MT_key_density(Menu):
     bl_label = "Density"
 
     def draw(self, _context):
-        from bl_ui_utils.layout import operator_context
-
+        from _bl_ui_utils.layout import operator_context
         layout = self.layout
         layout.operator("graph.decimate", text="Decimate (Ratio)", icon="DECIMATE").mode = "RATIO"
         # Using the modal operation doesn't make sense for this variant

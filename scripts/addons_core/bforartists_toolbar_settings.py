@@ -88,13 +88,13 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # Mesh Edit Topbar
     topbar_mesh_cbox: BoolProperty(name='Mesh Edit', default=True, description = "Display the Topbar Mesh Edit Operators\nAll Modes",)
-    topbar_mesh_vertices_splitconnect : BoolProperty(name="Vertices Split Connect", default=True, description = "Display the the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
-    topbar_mesh_vertices_misc : BoolProperty(name="Vertices Misc", default=False, description = "Display the the Mesh Edit Vertices Misc Topbar with misc tools\nMesh Object, Edit Mode", )
-    topbar_mesh_edges_subdiv : BoolProperty(name="Edges Subdiv", default=False, description = "Display the the Mesh Edit Edges Subdiv Topbar\nMesh Object, Edit Mode", )
-    topbar_mesh_edges_sharp : BoolProperty(name="Edges Sharp", default=True, description = "Display the the Mesh Edit Edges Sharp Topbar\nMesh Object, Edit Mode", )
-    topbar_mesh_edges_freestyle : BoolProperty(name="Edges Freestyle", default=False, description = "Display the the Mesh Edit Edges Freestyle Topbar\nMesh Object, Edit Mode", )
-    topbar_mesh_edges_rotate : BoolProperty(name="Edges Rotate", default=True, description = "Display the the Mesh Edit Edges Rotate Topbar\nMesh Object, Edit Mode", )
-    topbar_mesh_edges_misc : BoolProperty(name="Edges Misc", default=True, description = "Display the the Mesh Edit Edges MiscTopbar\nMesh Object, Edit Mode", )
+    topbar_mesh_vertices_splitconnect : BoolProperty(name="Vertices Split Connect", default=True, description = "Display the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
+    topbar_mesh_vertices_misc : BoolProperty(name="Vertices Misc", default=False, description = "Display the Mesh Edit Vertices Misc Topbar with misc tools\nMesh Object, Edit Mode", )
+    topbar_mesh_edges_subdiv : BoolProperty(name="Edges Subdiv", default=False, description = "Display the Mesh Edit Edges Subdiv Topbar\nMesh Object, Edit Mode", )
+    topbar_mesh_edges_sharp : BoolProperty(name="Edges Sharp", default=True, description = "Display the Mesh Edit Edges Sharp Topbar\nMesh Object, Edit Mode", )
+    topbar_mesh_edges_freestyle : BoolProperty(name="Edges Freestyle", default=False, description = "Display the Mesh Edit Edges Freestyle Topbar\nMesh Object, Edit Mode", )
+    topbar_mesh_edges_rotate : BoolProperty(name="Edges Rotate", default=True, description = "Display the Mesh Edit Edges Rotate Topbar\nMesh Object, Edit Mode", )
+    topbar_mesh_edges_misc : BoolProperty(name="Edges Misc", default=True, description = "Display the Mesh Edit Edges MiscTopbar\nMesh Object, Edit Mode", )
     topbar_mesh_faces_general : BoolProperty(name="Faces General", default=False, description = "Display the Mesh Edit Faces General Topbar\nMesh Object, Edit Mode", )
     topbar_mesh_faces_freestyle : BoolProperty(name="Faces Freestyle", default=False, description = "Display the Mesh Edit Faces Freestyle Topbar\nMesh Object, Edit Mode", )
     topbar_mesh_faces_tris : BoolProperty(name="Faces Tris", default=True, description = "Display the Mesh Edit Faces Tris Topbar\nMesh Object, Edit Mode", )
@@ -104,20 +104,20 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # Primitives Topbar
     topbar_primitives_cbox: BoolProperty(name='Primitives', default=True, description = "Display the Topbar Primitives Operators\nAll Modes",)
-    topbar_primitives_mesh : BoolProperty(name="Mesh", default=True, description = "Display the Mesh primitive Topbarr\nDisplay is mode dependant", )
+    topbar_primitives_mesh : BoolProperty(name="Mesh", default=True, description = "Display the Mesh primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_curve : BoolProperty(name="Curve", default=False, description = "Display the Curve primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_surface : BoolProperty(name="Surface", default=False, description = "Display the Surface primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_metaball : BoolProperty(name="Metaball", default=False, description = "Display the Metaball primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_point_cloud : BoolProperty(name="Point Cloud", default=False, description = "Display the Point Cloud primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_volume : BoolProperty(name="Volume", default=False, description = "Display the Volume primitive Topbar\nDisplay is mode dependant", )
-    topbar_primitives_gpencil : BoolProperty(name="Grease Pencil", default=True, description = "Display the Greasepencil primitive Topbar\nDisplay is mode dependant", )
-    topbar_primitives_gpencil_lineart : BoolProperty(name="Grease Pencil Line art", default=False, description = "Display the Greasepencil Line art primitive Topbar\nDisplay is mode dependant", )
+    topbar_primitives_gpencil : BoolProperty(name="Grease Pencil", default=True, description = "Display the Grease Pencil primitive Topbar\nDisplay is mode dependant", )
+    topbar_primitives_gpencil_lineart : BoolProperty(name="Grease Pencil Line Art", default=False, description = "Display the Grease Pencil Line Art primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_light : BoolProperty(name="Light", default=False, description = "Display the Light primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_other : BoolProperty(name="Other", default=True, description = "Display the Other primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_empties : BoolProperty(name="Empties", default=False, description = "Display the Empties primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_image : BoolProperty(name="Image", default=False, description = "Display the Image primitive Topbar\nDisplay is mode dependant", )
-    topbar_primitives_lightprobe : BoolProperty(name="Light Probe", default=False, description = "Display the light probe primitive Topbar\nDisplay is mode dependant", )
-    topbar_primitives_forcefield : BoolProperty(name="Force Field", default=False, description = "Display the Forcefield primitive Topbar\nDisplay is mode dependant", )
+    topbar_primitives_lightprobe : BoolProperty(name="Light Probe", default=False, description = "Display the Light Probe primitive Topbar\nDisplay is mode dependant", )
+    topbar_primitives_forcefield : BoolProperty(name="Force Field", default=False, description = "Display the Force Field primitive Topbar\nDisplay is mode dependant", )
     topbar_primitives_collection : BoolProperty(name="Collection", default=False, description = "Display the Collection primitive Topbar\nDisplay is mode dependant", )
 
 
@@ -135,7 +135,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     topbar_tools_parent : BoolProperty(name="Parent", default=False, description = "Display the Parent Topbar\nDisplay is mode and content dependant", )
     topbar_tools_objectdata : BoolProperty(name="Object Data", default=False, description = "Display the Object Data Topbar\nDisplay is mode and content dependant", )
     topbar_tools_link_to_scn : BoolProperty(name="Link to SCN", default=False, description = "Display the Link to SCN dropdown box\nDisplay is mode and content dependant", )
-    topbar_tools_linked_objects : BoolProperty(name="Linked Objects", default=False, description = "Display the Linked objects Topbar\nDisplay is mode and content dependant", )
+    topbar_tools_linked_objects : BoolProperty(name="Linked Objects", default=False, description = "Display the Linked Objects Topbar\nDisplay is mode and content dependant", )
     topbar_tools_join : BoolProperty(name="Join", default=False, description = "Display the Join Topbar\nDisplay is mode and content dependant", )
     topbar_tools_origin : BoolProperty(name="Origin", default=False, description = "Display the Origin Topbar\nDisplay is mode and content dependant", )
     topbar_tools_shading : BoolProperty(name="Shading", default=True, description = "Display the Edit Topbar\nDisplay is mode and content dependant", )
@@ -149,8 +149,8 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     topbar_animation_range : BoolProperty(name="Range", default=False, description = "Display the Range Topbar\nAll Modes", )
     topbar_animation_play : BoolProperty(name="Play", default=False, description = "Display the Play Topbar\nAll Modes", )
     topbar_animation_sync : BoolProperty(name="Sync", default=False, description = "Display the Sync Topbar\nAll Modes", )
-    topbar_animation_keyframetype : BoolProperty(name="Keyframetype", default=False, description = "Display the Keyframe Type Topbar\nAll Modes", )
-    topbar_animation_keyingset : BoolProperty(name="Keyingset", default=False, description = "Display the Keyingset Topbar\nAll Modes", )
+    topbar_animation_keyframetype : BoolProperty(name="Keyframe Type", default=False, description = "Display the Keyframe Type Topbar\nAll Modes", )
+    topbar_animation_keyingset : BoolProperty(name="Keying Set", default=False, description = "Display the Keying Set Topbar\nAll Modes", )
 
     # Edit Topbar
     topbar_edit_cbox: BoolProperty(name='Edit', default=True, description = "Display the Topbar Edit Operators\nAll Modes",)
@@ -170,7 +170,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     topbar_misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )
     topbar_misc_viewlayer : BoolProperty(name="View Layer", default=False, description = "Display the View Layer dropdown box", )
     topbar_misc_last : BoolProperty(name="Last", default=True, description = "Display the Adjust Last Operator panel\nAll Modes", )
-    topbar_misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
+    topbar_misc_operatorsearch : BoolProperty(name="Operator Search", default=True, description = "Display the Operator Search\nAll Modes", )
     topbar_misc_info : BoolProperty(name="Info", default=False, description = "Displays the Info and Messages string", )
 
     #### Same for Toolbar ####
@@ -193,13 +193,13 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
 
     # Mesh Edit Toolbar
-    mesh_vertices_splitconnect : BoolProperty(name="Vertices Split Connect", default=True, description = "Display the the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
-    mesh_vertices_misc : BoolProperty(name="Vertices Misc", default=False, description = "Display the the Mesh Edit Vertices Misc Toolbar with misc tools\nMesh Object, Edit Mode", )
-    mesh_edges_subdiv : BoolProperty(name="Edges Subdiv", default=False, description = "Display the the Mesh Edit Edges Subdiv Toolbar\nMesh Object, Edit Mode", )
-    mesh_edges_sharp : BoolProperty(name="Edges Sharp", default=True, description = "Display the the Mesh Edit Edges Sharp Toolbar\nMesh Object, Edit Mode", )
-    mesh_edges_freestyle : BoolProperty(name="Edges Freestyle", default=False, description = "Display the the Mesh Edit Edges Freestyle Toolbar\nMesh Object, Edit Mode", )
-    mesh_edges_rotate : BoolProperty(name="Edges Rotate", default=True, description = "Display the the Mesh Edit Edges Rotate Toolbar\nMesh Object, Edit Mode", )
-    mesh_edges_misc : BoolProperty(name="Edges Misc", default=True, description = "Display the the Mesh Edit Edges MiscToolbar\nMesh Object, Edit Mode", )
+    mesh_vertices_splitconnect : BoolProperty(name="Vertices Split Connect", default=True, description = "Display the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
+    mesh_vertices_misc : BoolProperty(name="Vertices Misc", default=False, description = "Display the Mesh Edit Vertices Misc Toolbar with misc tools\nMesh Object, Edit Mode", )
+    mesh_edges_subdiv : BoolProperty(name="Edges Subdiv", default=False, description = "Display the Mesh Edit Edges Subdiv Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_sharp : BoolProperty(name="Edges Sharp", default=True, description = "Display the Mesh Edit Edges Sharp Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_freestyle : BoolProperty(name="Edges Freestyle", default=False, description = "Display the Mesh Edit Edges Freestyle Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_rotate : BoolProperty(name="Edges Rotate", default=True, description = "Display the Mesh Edit Edges Rotate Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_misc : BoolProperty(name="Edges Misc", default=True, description = "Display the Mesh Edit Edges MiscToolbar\nMesh Object, Edit Mode", )
     mesh_faces_general : BoolProperty(name="Faces General", default=False, description = "Display the Mesh Edit Faces General Toolbar\nMesh Object, Edit Mode", )
     mesh_faces_freestyle : BoolProperty(name="Faces Freestyle", default=False, description = "Display the Mesh Edit Faces Freestyle Toolbar\nMesh Object, Edit Mode", )
     mesh_faces_tris : BoolProperty(name="Faces Tris", default=True, description = "Display the Mesh Edit Faces Tris Toolbar\nMesh Object, Edit Mode", )
@@ -214,14 +214,14 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     primitives_metaball : BoolProperty(name="Metaball", default=False, description = "Display the Metaball primitive Toolbar\nDisplay is mode dependant", )
     primitives_point_cloud : BoolProperty(name="Point Cloud", default=False, description = "Display the Point Cloud primitive Toolbar\nDisplay is mode dependant", )
     primitives_volume : BoolProperty(name="Volume", default=False, description = "Display the Volume primitive Toolbar\nDisplay is mode dependant", )
-    primitives_gpencil : BoolProperty(name="Grease Pencil", default=True, description = "Display the Greasepencil primitive Toolbar\nDisplay is mode dependant", )
-    primitives_gpencil_lineart : BoolProperty(name="Grease Pencil Line art", default=False, description = "Display the Greasepencil Line art primitive Toolbar\nDisplay is mode dependant", )
+    primitives_gpencil : BoolProperty(name="Grease Pencil", default=True, description = "Display the Grease Pencil primitive Toolbar\nDisplay is mode dependant", )
+    primitives_gpencil_lineart : BoolProperty(name="Grease Pencil Line Art", default=False, description = "Display the Grease Pencil Line Art primitive Toolbar\nDisplay is mode dependant", )
     primitives_light : BoolProperty(name="Light", default=False, description = "Display the Light primitive Toolbar\nDisplay is mode dependant", )
     primitives_other : BoolProperty(name="Other", default=True, description = "Display the Other primitive Toolbar\nDisplay is mode dependant", )
     primitives_empties : BoolProperty(name="Empties", default=False, description = "Display the Empties primitive Toolbar\nDisplay is mode dependant", )
     primitives_image : BoolProperty(name="Image", default=False, description = "Display the Image primitive Toolbar\nDisplay is mode dependant", )
-    primitives_lightprobe : BoolProperty(name="Light Probe", default=False, description = "Display the light probe primitive Toolbar\nDisplay is mode dependant", )
-    primitives_forcefield : BoolProperty(name="Force Field", default=False, description = "Display the Forcefield primitive Toolbar\nDisplay is mode dependant", )
+    primitives_lightprobe : BoolProperty(name="Light Probe", default=False, description = "Display the Light Probe primitive Toolbar\nDisplay is mode dependant", )
+    primitives_forcefield : BoolProperty(name="Force Field", default=False, description = "Display the Force Field primitive Toolbar\nDisplay is mode dependant", )
     primitives_collection : BoolProperty(name="Collection", default=False, description = "Display the Collection primitive Toolbar\nDisplay is mode dependant", )
 
 
@@ -237,7 +237,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     tools_parent : BoolProperty(name="Parent", default=False, description = "Display the Parent Toolbar\nDisplay is mode and content dependant", )
     tools_objectdata : BoolProperty(name="Object Data", default=False, description = "Display the Object Data Toolbar\nDisplay is mode and content dependant", )
     tools_link_to_scn : BoolProperty(name="Link to SCN", default=False, description = "Display the Link to SCN dropdown box\nDisplay is mode and content dependant", )
-    tools_linked_objects : BoolProperty(name="Linked Objects", default=False, description = "Display the Linked objects Toolbar\nDisplay is mode and content dependant", )
+    tools_linked_objects : BoolProperty(name="Linked Objects", default=False, description = "Display the Linked Objects Toolbar\nDisplay is mode and content dependant", )
     tools_join : BoolProperty(name="Join", default=False, description = "Display the Join Toolbar\nDisplay is mode and content dependant", )
     tools_origin : BoolProperty(name="Origin", default=False, description = "Display the Origin Toolbar\nDisplay is mode and content dependant", )
     tools_shading : BoolProperty(name="Shading", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
@@ -250,8 +250,8 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     animation_range : BoolProperty(name="Range", default=False, description = "Display the Range Toolbar\nAll Modes", )
     animation_play : BoolProperty(name="Play", default=False, description = "Display the Play Toolbar\nAll Modes", )
     animation_sync : BoolProperty(name="Sync", default=False, description = "Display the Sync Toolbar\nAll Modes", )
-    animation_keyframetype : BoolProperty(name="Keyframetype", default=False, description = "Display the Keyframe Type Toolbar\nAll Modes", )
-    animation_keyingset : BoolProperty(name="Keyingset", default=False, description = "Display the Keyingset Toolbar\nAll Modes", )
+    animation_keyframetype : BoolProperty(name="Keyframe Type", default=False, description = "Display the Keyframe Type Toolbar\nAll Modes", )
+    animation_keyingset : BoolProperty(name="Keying Set", default=False, description = "Display the Keying Set Toolbar\nAll Modes", )
 
 
     # Edit Toolbar
@@ -271,7 +271,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )
     misc_viewlayer : BoolProperty(name="View Layer", default=False, description = "Display the View Layer dropdown box", )
     misc_last : BoolProperty(name="Last", default=True, description = "Display the Adjust Last Operator panel\nAll Modes", )
-    misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
+    misc_operatorsearch : BoolProperty(name="Operator Search", default=True, description = "Display the Operator Search\nAll Modes", )
     misc_info : BoolProperty(name="Info", default=False, description = "Displays the Info and Messages string", )
 
     # Node Editor

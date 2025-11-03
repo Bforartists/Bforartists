@@ -1034,6 +1034,9 @@ static ShaderNode *add_node(Scene *scene,
     BL::ShaderNodeTexSky b_sky_node(b_node);
     SkyTextureNode *sky = graph->create_node<SkyTextureNode>();
     sky->set_sky_type((NodeSkyType)b_sky_node.sky_type());
+    sky->set_sun_direction(normalize(get_float3(b_sky_node.sun_direction())));
+    sky->set_turbidity(b_sky_node.turbidity());
+    sky->set_ground_albedo(b_sky_node.ground_albedo());
     sky->set_sun_disc(b_sky_node.sun_disc());
     sky->set_sun_size(b_sky_node.sun_size());
     sky->set_sun_intensity(b_sky_node.sun_intensity());
@@ -1041,7 +1044,7 @@ static ShaderNode *add_node(Scene *scene,
     sky->set_sun_rotation(b_sky_node.sun_rotation());
     sky->set_altitude(b_sky_node.altitude());
     sky->set_air_density(b_sky_node.air_density());
-    sky->set_dust_density(b_sky_node.dust_density());
+    sky->set_aerosol_density(b_sky_node.aerosol_density());
     sky->set_ozone_density(b_sky_node.ozone_density());
     BL::TexMapping b_texture_mapping(b_sky_node.texture_mapping());
     get_tex_mapping(sky, b_texture_mapping);
@@ -1076,6 +1079,12 @@ static ShaderNode *add_node(Scene *scene,
     nmap->set_space((NodeNormalMapSpace)b_normal_map_node.space());
     nmap->set_attribute(ustring(b_normal_map_node.uv_map()));
     node = nmap;
+  }
+  else if (b_node.is_a(&RNA_ShaderNodeRadialTiling)) {
+    BL::ShaderNodeRadialTiling b_radial_tiling_node(b_node);
+    RadialTilingNode *radial_tiling = graph->create_node<RadialTilingNode>();
+    radial_tiling->set_use_normalize(b_radial_tiling_node.normalize());
+    node = radial_tiling;
   }
   else if (b_node.is_a(&RNA_ShaderNodeTangent)) {
     BL::ShaderNodeTangent b_tangent_node(b_node);
@@ -1616,6 +1625,7 @@ void BlenderSync::sync_materials(BL::Depsgraph &b_depsgraph, bool update_all)
       shader->set_use_bump_map_correction(get_boolean(cmat, "use_bump_map_correction"));
       shader->set_volume_sampling_method(get_volume_sampling(cmat));
       shader->set_volume_interpolation_method(get_volume_interpolation(cmat));
+      shader->set_volume_step_rate(get_float(cmat, "volume_step_rate"));
       shader->set_displacement_method(get_displacement_method(b_mat));
 
       shader->set_graph(std::move(graph));
@@ -1682,6 +1692,7 @@ void BlenderSync::sync_world(BL::Depsgraph &b_depsgraph, BL::SpaceView3D &b_v3d,
       PointerRNA cworld = RNA_pointer_get(&b_world.ptr, "cycles");
       shader->set_volume_sampling_method(get_volume_sampling(cworld));
       shader->set_volume_interpolation_method(get_volume_interpolation(cworld));
+      shader->set_volume_step_rate(get_float(cworld, "volume_step_size"));
     }
     else if (new_viewport_parameters.use_scene_world && b_world) {
       BackgroundNode *background = graph->create_node<BackgroundNode>();

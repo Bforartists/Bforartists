@@ -121,6 +121,10 @@ if(WITH_UI_TESTS)
       # while this could be investigated, use windowed mode instead.
       # Use a window size that balances software GPU rendering with enough room to use the UI.
       --factory-startup
+      # Used so GHOST/Wayland doesn't attempt to load LIBDECOR
+      # which can fail on some systems, causing tests to fail.
+      # On other systems this is harmless.
+      --no-window-frame
       -p 0 0 800 600
       "${EXE_PARAMS}"
       "${ARGN}"
@@ -318,7 +322,7 @@ add_blender_test(
 # Generate BLENDFILE_VERSIONING_SPLIT_RANGE instances of the test,
 # each processing their own subset of the whole set of blendfiles.
 if(TEST_SRC_DIR_EXISTS)
-  set(BLENDFILE_VERSIONING_SPLIT_RANGE 32)
+  set(BLENDFILE_VERSIONING_SPLIT_RANGE 128)
   math(EXPR BLENDFILE_VERSIONING_SPLIT_RANGE_CMAKE "${BLENDFILE_VERSIONING_SPLIT_RANGE} - 1")
   foreach(idx RANGE ${BLENDFILE_VERSIONING_SPLIT_RANGE_CMAKE})
     add_blender_test(
@@ -403,6 +407,21 @@ if(TEST_SRC_DIR_EXISTS)
     --python ${TEST_PYTHON_DIR}/curves_extrude.py
     --
     --run-all-tests
+  )
+
+  add_blender_test(
+    mesh_join
+    --python ${TEST_PYTHON_DIR}/mesh_join.py
+  )
+
+  add_blender_test_allow_error(
+    mesh_validate
+    --python ${TEST_PYTHON_DIR}/mesh_validate.py
+  )
+
+  add_blender_test(
+    object_edit
+    --python ${TEST_PYTHON_DIR}/object_edit.py
   )
 
   add_blender_test(
@@ -596,6 +615,13 @@ if(TEST_SRC_DIR_EXISTS)
   add_blender_test(
     bl_rigging_symmetrize
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_rigging_symmetrize.py
+    --
+    --testdir "${TEST_SRC_DIR}/animation"
+  )
+
+  add_blender_test(
+    vertex_group_painting
+    --python ${CMAKE_CURRENT_LIST_DIR}/vertex_group_painting.py
     --
     --testdir "${TEST_SRC_DIR}/animation"
   )
@@ -1172,6 +1198,7 @@ if(WITH_ALEMBIC AND TEST_SRC_DIR_EXISTS)
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_alembic_io_test.py
     --
     --testdir "${TEST_SRC_DIR}/alembic"
+    --outdir "${TEST_OUT_DIR}/io_alembic"
   )
 endif()
 
@@ -1379,6 +1406,7 @@ if(WITH_UI_TESTS)
   # list explicitly so changes bisecting/updated are sure to re-run CMake.
   set(_ui_tests
     test_sculpt.asset_shelf_brush_selection
+    test_tools.sculpt_mode_toolbar
     test_undo.compositor_make_group
     test_undo.text_editor_edit_mode_mix
     test_undo.text_editor_simple
@@ -1399,6 +1427,7 @@ if(WITH_UI_TESTS)
     test_workspace.sanity_check_general
     test_workspace.sanity_check_2d_animation
     test_workspace.sanity_check_sculpting
+    test_workspace.sanity_check_storyboarding
     test_workspace.sanity_check_vfx
     test_workspace.sanity_check_video_editing
   )

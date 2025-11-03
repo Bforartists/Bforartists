@@ -201,6 +201,7 @@ static bool wm_link_append_item_poll(ReportList *reports,
 static wmOperatorStatus wm_link_append_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
+  const char *blendfile_path = BKE_main_blendfile_path(bmain);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   PropertyRNA *prop;
@@ -212,6 +213,9 @@ static wmOperatorStatus wm_link_append_exec(bContext *C, wmOperator *op)
 
   RNA_string_get(op->ptr, "filename", relname);
   RNA_string_get(op->ptr, "directory", root);
+  if (BLI_path_is_rel(root)) {
+    BLI_path_abs(root, blendfile_path);
+  }
 
   BLI_path_join(filepath, sizeof(filepath), root, relname);
 
@@ -220,7 +224,6 @@ static wmOperatorStatus wm_link_append_exec(bContext *C, wmOperator *op)
       filepath, libname, &group, &name);
 
   {
-    const char *blendfile_path = BKE_main_blendfile_path(bmain);
     if (blendfile_path[0] != '\0') {
       /* NOTE: Need to also check `filepath`, as typically `libname` is an empty string here
        * (when trying to append from current file from the file-browser e.g.). */
@@ -528,6 +531,7 @@ void WM_OT_append(wmOperatorType *ot)
 static wmOperatorStatus wm_id_linked_relocate_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
+  const char *blendfile_path = BKE_main_blendfile_path(bmain);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   BlendfileLinkAppendContext *lapp_context;
@@ -537,6 +541,9 @@ static wmOperatorStatus wm_id_linked_relocate_exec(bContext *C, wmOperator *op)
 
   RNA_string_get(op->ptr, "filename", relname);
   RNA_string_get(op->ptr, "directory", root);
+  if (BLI_path_is_rel(root)) {
+    BLI_path_abs(root, blendfile_path);
+  }
 
   BLI_path_join(filepath, sizeof(filepath), root, relname);
 
@@ -545,7 +552,6 @@ static wmOperatorStatus wm_id_linked_relocate_exec(bContext *C, wmOperator *op)
       filepath, libname, &group, &name);
 
   {
-    const char *blendfile_path = BKE_main_blendfile_path(bmain);
     if (blendfile_path[0] != '\0') {
       /* NOTE: Need to also check `filepath`, as typically `libname` is an empty string here
        * (when trying to append from current file from the file-browser e.g.). */
@@ -726,6 +732,7 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
       BLI_path_cmp(BKE_main_blendfile_path(bmain), filepath) != 0,
       "Calling code should ensure it does not attempt to link/append from current blendfile");
 
+  const bool do_pack = (flag & BLO_LIBLINK_PACK) != 0;
   const bool do_append = (flag & FILE_LINK) == 0;
   /* Tag everything so we can make local only the new datablock. */
   BKE_main_id_tag_all(bmain, ID_TAG_PRE_EXISTING, true);
@@ -748,7 +755,10 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
   /* Link datablock. */
   BKE_blendfile_link(lapp_context, nullptr);
 
-  if (do_append) {
+  if (do_pack) {
+    BKE_blendfile_link_pack(lapp_context, nullptr);
+  }
+  else if (do_append) {
     BKE_blendfile_append(lapp_context, nullptr);
   } else if (do_override) { // bfa asset shelf - do single override
     BKE_blendfile_override(lapp_context, BKE_LIBLINK_OVERRIDE_INIT, nullptr);
@@ -897,6 +907,7 @@ void WM_lib_reload(Library *lib, bContext *C, ReportList *reports)
 static wmOperatorStatus wm_lib_relocate_exec_do(bContext *C, wmOperator *op, bool do_reload)
 {
   Main *bmain = CTX_data_main(C);
+  const char *blendfile_path = BKE_main_blendfile_path(bmain);
   char lib_name[MAX_NAME];
 
   RNA_string_get(op->ptr, "library", lib_name);
@@ -923,8 +934,11 @@ static wmOperatorStatus wm_lib_relocate_exec_do(bContext *C, wmOperator *op, boo
     return OPERATOR_CANCELLED;
   }
 
-  RNA_string_get(op->ptr, "directory", root);
   RNA_string_get(op->ptr, "filename", libname);
+  RNA_string_get(op->ptr, "directory", root);
+  if (BLI_path_is_rel(root)) {
+    BLI_path_abs(root, blendfile_path);
+  }
 
   if (!BKE_blendfile_extension_check(libname)) {
     BKE_report(op->reports, RPT_ERROR, "Not a library");
@@ -943,7 +957,6 @@ static wmOperatorStatus wm_lib_relocate_exec_do(bContext *C, wmOperator *op, boo
   }
 
   {
-    const char *blendfile_path = BKE_main_blendfile_path(bmain);
     if ((blendfile_path[0] != '\0') && (BLI_path_cmp(blendfile_path, filepath) == 0)) {
       BKE_reportf(op->reports,
                   RPT_ERROR_INVALID_INPUT,

@@ -61,11 +61,3 @@ dc4c5697-21c1-46d2-876b-eb764d5cfb77:Materials/Plaster:Materials-Plaster
 95b23c4e-c24b-4d78-96da-3b61c4ead98b:Materials/Utility:Materials-Utility
 10c53a17-fa9c-4ab0-b24d-d77957976f58:Materials/Wood:Materials-Wood
 d599c93e-01af-4eb6-b0e7-8be1126e73f4:Materials/Wood:Materials-Wood
-058c0130-cb9f-4251-8afa-2a0291534297:Shader Nodegroups:Shader Nodegroups
-3def5fe5-e74e-4d41-bdd9-9b0610f08934:Shader Nodegroups/Color:Shader Nodegroups-Color
-809501d2-9f4a-43f5-a26e-f3c85c7b43aa:Shader Nodegroups/Mapping:Shader Nodegroups-Mapping
-4d896561-7caa-4006-a752-bfa8195b8d5e:Shader Nodegroups/Masks:Shader Nodegroups-Masks
-9198ac32-1f2c-4c69-9118-c15708a9e1aa:Shader Nodegroups/Patterns:Shader Nodegroups-Patterns
-4338cc57-564c-4090-9fb3-8dc82551a4c8:Shader Nodegroups/Shader:Shader Nodegroups-Shader
-ad19c330-0bbb-4814-a160-38e5730f56ce:Shader Nodegroups/Shapes:Shader Nodegroups-Shapes
-5857c487-d783-478b-b72f-b0b2edeaa6fa:Shader Nodegroups/Utility:Shader Nodegroups-Utility

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "BLI_utildefines.h"
+#include "BLI_enum_flags.hh"
 
 #include "gpu_context_private.hh"
 
@@ -19,6 +19,7 @@
 #include "vk_debug.hh"
 #include "vk_descriptor_pools.hh"
 #include "vk_resource_pool.hh"
+#include "vk_streaming_buffer.hh"
 
 namespace blender::gpu {
 class VKFrameBuffer;
@@ -35,7 +36,7 @@ enum RenderGraphFlushFlags {
   SUBMIT = 1 << 1,
   WAIT_FOR_COMPLETION = 1 << 2,
 };
-ENUM_OPERATORS(RenderGraphFlushFlags, RenderGraphFlushFlags::WAIT_FOR_COMPLETION);
+ENUM_OPERATORS(RenderGraphFlushFlags);
 
 class VKContext : public Context, NonCopyable {
   friend class VKDevice;
@@ -45,6 +46,8 @@ class VKContext : public Context, NonCopyable {
   VkSurfaceFormatKHR swap_chain_format_ = {};
   gpu::Texture *surface_texture_ = nullptr;
   void *ghost_context_;
+
+  Vector<std::unique_ptr<VKStreamingBuffer>> streaming_buffers_;
 
   /* Reusable data. Stored inside context to limit reallocations. */
   render_graph::VKResourceAccessInfo access_info_ = {};
@@ -135,7 +138,7 @@ class VKContext : public Context, NonCopyable {
   void update_pipeline_data(render_graph::VKPipelineData &r_pipeline_data);
   void update_pipeline_data(GPUPrimType primitive,
                             VKVertexAttributeObject &vao,
-                            render_graph::VKPipelineData &r_pipeline_data);
+                            render_graph::VKPipelineDataGraphics &r_pipeline_data);
 
   void sync_backbuffer();
 
@@ -154,6 +157,9 @@ class VKContext : public Context, NonCopyable {
   static void openxr_release_framebuffer_image_callback(GHOST_VulkanOpenXRData *data);
 
   void specialization_constants_set(const shader::SpecializationConstants *constants_state);
+
+  std::unique_ptr<VKStreamingBuffer> &get_or_create_streaming_buffer(
+      VKBuffer &buffer, VkDeviceSize min_offset_alignment);
 
  private:
   void swap_buffer_draw_handler(const GHOST_VulkanSwapChainData &data);

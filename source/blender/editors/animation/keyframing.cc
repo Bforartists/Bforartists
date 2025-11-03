@@ -174,7 +174,11 @@ static bool modify_key_op_poll(bContext *C)
 
 static wmOperatorStatus insert_key_with_keyingset(bContext *C, wmOperator *op, KeyingSet *ks)
 {
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
   Object *obedit = CTX_data_edit_object(C);
   bool ob_edit_mode = false;
 
@@ -412,7 +416,11 @@ static wmOperatorStatus insert_key_exec(bContext *C, wmOperator *op)
 {
   ANIM_deselect_keys_in_animation_editors(C);
 
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
   /* Use the active keying set if there is one. */
   const int type = RNA_enum_get(op->ptr, "type");
   KeyingSet *ks = ANIM_keyingset_get_from_enum_type(scene, type);
@@ -461,7 +469,11 @@ static wmOperatorStatus keyframe_insert_with_keyingset_exec(bContext *C, wmOpera
 {
   ANIM_deselect_keys_in_animation_editors(C);
 
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
   KeyingSet *ks = keyingset_get_from_op_with_error(op, op->type->prop, scene);
   if (ks == nullptr) {
     return OPERATOR_CANCELLED;
@@ -503,7 +515,11 @@ static wmOperatorStatus insert_key_menu_invoke(bContext *C,
                                                wmOperator *op,
                                                const wmEvent * /*event*/)
 {
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
 
   /* When there is an active keying set and no request to prompt, keyframe immediately. */
   if ((scene->active_keyingset != 0) && !RNA_boolean_get(op->ptr, "always_prompt")) {
@@ -592,7 +608,11 @@ void ANIM_OT_keyframe_insert_menu(wmOperatorType *ot)
 
 static wmOperatorStatus delete_key_exec(bContext *C, wmOperator *op)
 {
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
   KeyingSet *ks = keyingset_get_from_op_with_error(op, op->type->prop, scene);
   if (ks == nullptr) {
     return OPERATOR_CANCELLED;
@@ -603,7 +623,11 @@ static wmOperatorStatus delete_key_exec(bContext *C, wmOperator *op)
 
 static wmOperatorStatus delete_key_using_keying_set(bContext *C, wmOperator *op, KeyingSet *ks)
 {
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
   float cfra = BKE_scene_frame_get(scene);
   int num_channels;
   const bool confirm = op->flag & OP_IS_INVOKE;
@@ -714,7 +738,7 @@ static bool can_delete_fcurve(FCurve *fcu, Object *ob)
         pchan = BKE_pose_channel_find_name(ob->pose, bone_name);
         /* Delete if bone is selected. */
         if ((pchan) && (pchan->bone)) {
-          if (pchan->bone->flag & BONE_SELECTED) {
+          if (pchan->flag & POSE_SELECTED) {
             can_delete = true;
           }
         }
@@ -756,6 +780,7 @@ static wmOperatorStatus clear_anim_v3d_exec(bContext *C, wmOperator * /*op*/)
           DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
           changed = true;
         }
+        DEG_id_tag_update(&ob->adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
       }
       else {
         for (fcu = static_cast<FCurve *>(dna_action->curves.first); fcu; fcu = fcn) {
@@ -855,7 +880,7 @@ static wmOperatorStatus clear_anim_vse_exec(bContext *C, wmOperator *op)
   using namespace blender::animrig;
   bool changed = false;
 
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
 
   blender::Vector<PointerRNA> selection;
   blender::Vector<std::string> selected_strips_rna_paths;
@@ -996,7 +1021,7 @@ static bool can_delete_scene_key(FCurve *fcu, Scene *scene, wmOperator *op)
 static wmOperatorStatus delete_key_vse_without_keying_set(bContext *C, wmOperator *op)
 {
   using namespace blender::animrig;
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
   const float cfra = BKE_scene_frame_get(scene);
 
   blender::Vector<PointerRNA> selection;
@@ -1083,7 +1108,7 @@ static wmOperatorStatus delete_key_vse_without_keying_set(bContext *C, wmOperato
 
 static wmOperatorStatus delete_key_vse_exec(bContext *C, wmOperator *op)
 {
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_data_sequencer_scene(C);
   KeyingSet *ks = blender::animrig::scene_get_active_keyingset(scene);
 
   if (ks == nullptr) {
@@ -1324,7 +1349,11 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
   bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0);
 
   Main *bmain = CTX_data_main(C);
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
   ToolSettings *ts = scene->toolsettings;
   PointerRNA ptr = {};
   PropertyRNA *prop = nullptr;
@@ -1546,7 +1575,11 @@ static wmOperatorStatus delete_key_button_exec(bContext *C, wmOperator *op)
   /* bfa - Apply animation to all selected through UI animate property */
   bool is_alt_held = ((CTX_wm_window(C)->eventstate->modifier & KM_ALT) != 0);
 
-  Scene *scene = CTX_data_scene(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  if (!scene) {
+    return OPERATOR_CANCELLED;
+  }
   PointerRNA ptr = {};
   PropertyRNA *prop = nullptr;
   Main *bmain = CTX_data_main(C);

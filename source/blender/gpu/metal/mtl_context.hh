@@ -105,7 +105,7 @@ class MTLRenderPassState {
 
  public:
   MTLRenderPassState(MTLContext &context, MTLCommandBufferManager &command_buffer_manager)
-      : ctx(context), cmd(command_buffer_manager){};
+      : ctx(context), cmd(command_buffer_manager) {};
 
   /* Given a RenderPassState is associated with a live RenderCommandEncoder,
    * this state sits within the MTLCommandBufferManager. */
@@ -153,7 +153,7 @@ class MTLComputeState {
 
  public:
   MTLComputeState(MTLContext &context, MTLCommandBufferManager &command_buffer_manager)
-      : ctx(context), cmd(command_buffer_manager){};
+      : ctx(context), cmd(command_buffer_manager) {};
 
   /* Given a ComputePassState is associated with a live ComputeCommandEncoder,
    * this state sits within the MTLCommandBufferManager. */
@@ -438,8 +438,7 @@ enum MTLPipelineStateDirtyFlag {
        MTL_PIPELINE_STATE_FRONT_FACING_FLAG | MTL_PIPELINE_STATE_CULLMODE_FLAG)
 };
 
-/* Ignore full flag bit-mask `MTL_PIPELINE_STATE_ALL_FLAG`. */
-ENUM_OPERATORS(MTLPipelineStateDirtyFlag, MTL_PIPELINE_STATE_CULLMODE_FLAG);
+ENUM_OPERATORS(MTLPipelineStateDirtyFlag);
 
 struct MTLUniformBufferBinding {
   bool bound;
@@ -500,8 +499,8 @@ struct MTLContextGlobalShaderPipelineState {
 
   /* Culling State. */
   bool culling_enabled;
-  eGPUFaceCullTest cull_mode;
-  eGPUFrontFace front_face;
+  GPUFaceCullTest cull_mode;
+  GPUFrontFace front_face;
 
   /* Depth State. */
   MTLContextDepthStencilState depth_stencil_state;
@@ -595,7 +594,7 @@ class MTLCommandBufferManager {
 
  public:
   MTLCommandBufferManager(MTLContext &context)
-      : context_(context), render_pass_state_(context, *this), compute_state_(context, *this){};
+      : context_(context), render_pass_state_(context, *this), compute_state_(context, *this) {};
   void prepare(bool supports_render = true);
 
   /* If wait is true, CPU will stall until GPU work has completed. */
@@ -641,9 +640,9 @@ class MTLCommandBufferManager {
   id<MTLComputeCommandEncoder> ensure_begin_compute_encoder();
 
   /* Workload Synchronization. */
-  bool insert_memory_barrier(eGPUBarrier barrier_bits,
-                             eGPUStageBarrierBits before_stages,
-                             eGPUStageBarrierBits after_stages);
+  bool insert_memory_barrier(GPUBarrier barrier_bits,
+                             GPUStageBarrierBits before_stages,
+                             GPUStageBarrierBits after_stages);
   void encode_signal_event(id<MTLEvent> event, uint64_t value);
   void encode_wait_for_event(id<MTLEvent> event, uint64_t value);
   /* TODO(Metal): Support fences in command buffer class. */
@@ -824,8 +823,8 @@ class MTLContext : public Context {
   bool debug_capture_scope_begin(void *scope) override;
   void debug_capture_scope_end(void *scope) override;
 
-  void debug_unbind_all_ubo() override{};
-  void debug_unbind_all_ssbo() override{};
+  void debug_unbind_all_ubo() override {};
+  void debug_unbind_all_ssbo() override {};
 
   /*** MTLContext Utility functions. */
   /*
@@ -896,7 +895,7 @@ class MTLContext : public Context {
 
   id<MTLBuffer> get_null_buffer();
   id<MTLBuffer> get_null_attribute_buffer();
-  gpu::MTLTexture *get_dummy_texture(eGPUTextureType type, eGPUSamplerFormat sampler_format);
+  gpu::MTLTexture *get_dummy_texture(GPUTextureType type, GPUSamplerFormat sampler_format);
   void free_dummy_resources();
 
   /* Compute. */

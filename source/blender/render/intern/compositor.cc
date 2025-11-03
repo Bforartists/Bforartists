@@ -170,7 +170,7 @@ class Context : public compositor::Context {
     return Bounds<int2>(int2(0), this->get_render_size());
   }
 
-  compositor::Result get_output() override
+  compositor::Result get_output(compositor::Domain /*domain*/) override
   {
     const int2 render_size = get_render_size();
     if (output_result_.is_allocated()) {
@@ -216,7 +216,7 @@ class Context : public compositor::Context {
     return viewer_output_result_;
   }
 
-  compositor::Result get_input(const Scene *scene, int view_layer_id, const char *name) override
+  compositor::Result get_pass(const Scene *scene, int view_layer_id, const char *name) override
   {
     /* Blender aliases the Image pass name to be the Combined pass, so we return the combined pass
      * in that case. */
@@ -281,6 +281,15 @@ class Context : public compositor::Context {
 
     RE_ReleaseResult(render);
     return pass;
+  }
+
+  compositor::Result get_input(StringRef name) override
+  {
+    if (name == "Image") {
+      return this->get_pass(&this->get_scene(), 0, name.data());
+    }
+
+    return this->create_result(compositor::ResultType::Color);
   }
 
   compositor::ResultType result_type_from_pass(const RenderPass *pass)

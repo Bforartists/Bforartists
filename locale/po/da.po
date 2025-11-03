@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.0.0 Alpha (b'68bccbaeeefe')\n"
+"Project-Id-Version: Blender 5.0.0 Beta (b'2b3706e29f27')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-15 07:14+0000\n"
+"POT-Creation-Date: 2025-10-20 08:46+0000\n"
 "PO-Revision-Date: 2025-07-31 16:24+0000\n"
 "Last-Translator: leif larsen <linuxdk1978@gmail.com>\n"
 "Language-Team: Danish <https://translate.blender.org/projects/blender-ui/ui/da/>\n"
@@ -101,14 +101,6 @@ msgstr "Animation kanaler for slots"
 
 msgid "For each action slot, a list of animation channels that are meant for that slot"
 msgstr "For hver handlings slot, en liste af animation kanaler der er beregnet  for det slot"
-
-
-msgid "Action F-Curves"
-msgstr "Handlings F-kurver"
-
-
-msgid "Collection of action F-Curves. Note that this is a legacy API that is unaware of action slots, and will only consider the F-Curves for this action's first slot"
-msgstr "Samling af action F-kurver. Bemærk, at dette er en ældre API, der ikke er opmærksom på handlingspladser, og som kun vil overveje F-kurverne for denne handlings første plads"
 
 
 msgid "Action Group"
@@ -277,14 +269,6 @@ msgstr "Handlingsgruppen udvides i grafeditor"
 
 msgid "Pin in Graph Editor"
 msgstr "Fastgør i Graph Editor"
-
-
-msgid "Action Groups"
-msgstr "Handlingsgrupper"
-
-
-msgid "Collection of action groups"
-msgstr "Samling af handlingsgrupper"
 
 
 msgid "Action Layer"
@@ -1299,10 +1283,6 @@ msgid "Video Sequencer"
 msgstr "Video Sequencer"
 
 
-msgid "Video editing tools"
-msgstr "Videoredigeringsværktøjer"
-
-
 msgid "Movie Clip Editor"
 msgstr "Editor til filmklip"
 
@@ -1485,10 +1465,6 @@ msgstr "Aktiv Edit Bone"
 
 msgid "Armatures active edit bone"
 msgstr "Armaturer aktive redigere knogle"
-
-
-msgid "Catalog Path"
-msgstr "Katalogsti"
 
 
 msgid "User Asset Libraries"
@@ -1728,10 +1704,6 @@ msgid "Space Type"
 msgstr "område type"
 
 
-msgid "The space where the asset shelf is going to be used in"
-msgstr "Det rum, hvor aktivhylden skal bruges i"
-
-
 msgid "Preview Size"
 msgstr "Forhåndsvisningsstørrelse"
 
@@ -1808,6 +1780,14 @@ msgid "32-bit integer"
 msgstr "32-bit heltal"
 
 
+msgid "Boolean"
+msgstr "Boolean"
+
+
+msgid "True or false"
+msgstr "Sandt eller falsk"
+
+
 msgid "Vector"
 msgstr "Vektor"
 
@@ -1820,12 +1800,20 @@ msgid "RGBA color with 32-bit floating-point values"
 msgstr "RGBA farver med 32-bit floating-point værdier"
 
 
-msgid "Byte Color"
-msgstr "Byte farve"
+msgid "Quaternion"
+msgstr "Kvaternion"
 
 
-msgid "RGBA color with 8-bit positive integer values"
-msgstr "RRGB farver med 8-bit positive intenger værdier"
+msgid "Floating point quaternion rotation"
+msgstr "Flydende komma quaternion rotation"
+
+
+msgid "4x4 Matrix"
+msgstr "4x4 Matrix"
+
+
+msgid "Floating point matrix"
+msgstr "Floating point matrix"
 
 
 msgid "String"
@@ -1834,22 +1822,6 @@ msgstr "Streng"
 
 msgid "Text string"
 msgstr "tekst string"
-
-
-msgid "Boolean"
-msgstr "Boolean"
-
-
-msgid "True or false"
-msgstr "Sandt eller falsk"
-
-
-msgid "2D Vector"
-msgstr "2D Vektor"
-
-
-msgid "2D vector with floating-point values"
-msgstr "2D vector med floating-point værdier"
 
 
 msgid "8-Bit Integer"
@@ -1876,20 +1848,20 @@ msgid "32-bit signed integer vector"
 msgstr "32-Bit signed integer vector"
 
 
-msgid "Quaternion"
-msgstr "Kvaternion"
+msgid "2D Vector"
+msgstr "2D Vektor"
 
 
-msgid "Floating point quaternion rotation"
-msgstr "Flydende komma quaternion rotation"
+msgid "2D vector with floating-point values"
+msgstr "2D vector med floating-point værdier"
 
 
-msgid "4x4 Matrix"
-msgstr "4x4 Matrix"
+msgid "Byte Color"
+msgstr "Byte farve"
 
 
-msgid "Floating point matrix"
-msgstr "Floating point matrix"
+msgid "RGBA color with 8-bit positive integer values"
+msgstr "RRGB farver med 8-bit positive intenger værdier"
 
 
 msgid "Domain"
@@ -3537,10 +3509,6 @@ msgid "Local"
 msgstr "Lokal"
 
 
-msgid "Direction"
-msgstr "Retning"
-
-
 msgid "Blur"
 msgstr "Sløring"
 
@@ -3640,6 +3608,10 @@ msgstr "B44A (ej tabsfri)"
 
 msgid "File format to save the rendered images as"
 msgstr "Filformat det fremkaldte billede skal gemmes i"
+
+
+msgid "Direction"
+msgstr "Retning"
 
 
 msgid "Keyboard"
@@ -3890,10 +3862,6 @@ msgid "Gray Scale"
 msgstr "Gråskala"
 
 
-msgid "Timeline and playback controls"
-msgstr "Tidslinje og afspilnings kontroller"
-
-
 msgid "3D"
 msgstr "3d"
 
@@ -3916,10 +3884,6 @@ msgstr "Nøglebillede kant"
 
 msgid "Keyframe Border Selected"
 msgstr "Nøglebillede kant valgt"
-
-
-msgid "Face Dot Selected"
-msgstr "Overflade punkt valgt"
 
 
 msgid "Face Dot Size"
@@ -3974,12 +3938,12 @@ msgid "Motion"
 msgstr "Bevægelse"
 
 
-msgid "Fac"
-msgstr "Fak"
-
-
 msgid "Key Color"
 msgstr "Nøglefarve"
+
+
+msgid "Fac"
+msgstr "Fak"
 
 
 msgid "ID value"

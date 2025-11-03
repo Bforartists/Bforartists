@@ -7,7 +7,6 @@
  */
 
 #include "BLI_math_base.hh"
-#include "BLI_math_color.h"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector.hh"
 #include "BLI_math_vector_types.hh"
@@ -34,17 +33,17 @@
 namespace blender::nodes::node_composite_colorbalance_cc {
 
 static const EnumPropertyItem type_items[] = {
-    {CMP_NODE_COLOR_BALANCE_LGG, "LIFT_GAMMA_GAIN", 0, "Lift/Gamma/Gain", ""},
+    {CMP_NODE_COLOR_BALANCE_LGG, "LIFT_GAMMA_GAIN", 0, N_("Lift/Gamma/Gain"), ""},
     {CMP_NODE_COLOR_BALANCE_ASC_CDL,
      "OFFSET_POWER_SLOPE",
      0,
-     "Offset/Power/Slope (ASC-CDL)",
-     "ASC-CDL standard color correction"},
+     N_("Offset/Power/Slope (ASC-CDL)"),
+     N_("ASC-CDL standard color correction")},
     {CMP_NODE_COLOR_BALANCE_WHITEPOINT,
      "WHITEPOINT",
      0,
-     "White Point",
-     "Chromatic adaption from a different white point"},
+     N_("White Point"),
+     N_("Chromatic adaption from a different white point")},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -52,22 +51,21 @@ static void cmp_node_colorbalance_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
   b.use_custom_socket_order();
+  b.allow_any_socket_order();
 
-  b.add_output<decl::Color>("Image");
+  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image").align_with_previous();
 
-  b.add_input<decl::Float>("Fac")
+  b.add_input<decl::Float>("Factor", "Fac")
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
-      .subtype(PROP_FACTOR)
-      .compositor_domain_priority(1);
-  b.add_input<decl::Color>("Image")
-      .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .compositor_domain_priority(0);
+      .subtype(PROP_FACTOR);
 
   b.add_input<decl::Menu>("Type")
       .default_value(CMP_NODE_COLOR_BALANCE_LGG)
-      .static_items(type_items);
+      .static_items(type_items)
+      .optional_label();
 
   b.add_input<decl::Float>("Lift", "Base Lift")
       .default_value(0.0f)
@@ -246,21 +244,14 @@ static float4 lift_gamma_gain(const float4 color,
                               const float base_gain,
                               const float4 color_gain)
 {
-  float3 srgb_color;
-  linearrgb_to_srgb_v3_v3(srgb_color, color);
-
   const float3 lift = base_lift + color_lift.xyz();
-  const float3 lift_balanced = ((srgb_color - 1.0f) * (2.0f - lift)) + 1.0f;
+  const float3 lift_balanced = ((color.xyz() - 1.0f) * (2.0f - lift)) + 1.0f;
 
   const float3 gain = base_gain * color_gain.xyz();
-  float3 gain_balanced = lift_balanced * gain;
-  gain_balanced = math::max(gain_balanced, float3(0.0f));
-
-  float3 linear_color;
-  srgb_to_linearrgb_v3_v3(linear_color, gain_balanced);
+  const float3 gain_balanced = math::max(float3(0.0f), lift_balanced * gain);
 
   const float3 gamma = base_gamma * color_gamma.xyz();
-  float3 gamma_balanced = math::pow(linear_color, 1.0f / math::max(gamma, float3(1e-6f)));
+  const float3 gamma_balanced = math::pow(gain_balanced, 1.0f / math::max(gamma, float3(1e-6f)));
 
   return float4(gamma_balanced, color.w);
 }
@@ -310,8 +301,8 @@ static float4 white_point_variable(const float4 color,
   return float4(balanced, color.w);
 }
 
-static float4 color_balance(const float factor,
-                            const float4 color,
+static float4 color_balance(const float4 color,
+                            const float factor,
                             const CMPNodeColorBalanceMethod type,
                             const float base_lift,
                             const float4 color_lift,
@@ -363,8 +354,8 @@ class ColorBalanceFunction : public mf::MultiFunction {
     static const mf::Signature signature = []() {
       mf::Signature signature;
       mf::SignatureBuilder builder{"Color Balance", signature};
-      builder.single_input<float>("Factor");
       builder.single_input<float4>("Color");
+      builder.single_input<float>("Factor");
       builder.single_input<MenuValue>("Type");
 
       builder.single_input<float>("Base Lift");
@@ -394,8 +385,8 @@ class ColorBalanceFunction : public mf::MultiFunction {
 
   void call(const IndexMask &mask, mf::Params params, mf::Context /*context*/) const override
   {
-    const VArray<float> factor_array = params.readonly_single_input<float>(0, "Factor");
-    const VArray<float4> color_array = params.readonly_single_input<float4>(1, "Color");
+    const VArray<float4> color_array = params.readonly_single_input<float4>(0, "Color");
+    const VArray<float> factor_array = params.readonly_single_input<float>(1, "Factor");
     const VArray<MenuValue> type_array = params.readonly_single_input<MenuValue>(2, "Type");
 
     const VArray<float> base_lift_array = params.readonly_single_input<float>(3, "Base Lift");
@@ -484,8 +475,8 @@ class ColorBalanceFunction : public mf::MultiFunction {
         const float output_tint = output_tint_array.get_internal_single();
 
         mask.foreach_index([&](const int64_t i) {
-          result[i] = color_balance(factor,
-                                    color_array[i],
+          result[i] = color_balance(color_array[i],
+                                    factor,
                                     CMPNodeColorBalanceMethod(type),
                                     base_lift,
                                     color_lift,
@@ -509,8 +500,8 @@ class ColorBalanceFunction : public mf::MultiFunction {
       }
       else {
         mask.foreach_index([&](const int64_t i) {
-          result[i] = color_balance(factor_array[i],
-                                    color_array[i],
+          result[i] = color_balance(color_array[i],
+                                    factor_array[i],
                                     CMPNodeColorBalanceMethod(type_array[i].value),
                                     base_lift_array[i],
                                     color_lift_array[i],

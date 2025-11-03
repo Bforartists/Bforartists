@@ -855,7 +855,7 @@ static wmOperatorStatus new_material_exec(bContext *C, wmOperator * /*op*/)
     else {
       ma = BKE_gpencil_material_add(bmain, name);
     }
-    ED_node_shader_default(C, &ma->id);
+    ED_node_shader_default(C, bmain, &ma->id);
   }
 
   if (prop) {
@@ -984,7 +984,7 @@ static wmOperatorStatus new_world_exec(bContext *C, wmOperator * /*op*/)
   }
   else {
     wo = BKE_world_add(bmain, CTX_DATA_(BLT_I18NCONTEXT_ID_WORLD, "World"));
-    ED_node_shader_default(C, &wo->id);
+    ED_node_shader_default(C, bmain, &wo->id);
   }
 
   /* hook into UI */
@@ -2723,9 +2723,14 @@ static wmOperatorStatus copy_material_exec(bContext *C, wmOperator *op)
   if (ma == nullptr) {
     return OPERATOR_CANCELLED;
   }
+  if (ID_IS_PACKED(&ma->id)) {
+    /* Direct link/append of packed IDs is not supported currently, so neither is their
+     * copy/pasting. */
+    return OPERATOR_CANCELLED;
+  }
 
   Main *bmain = CTX_data_main(C);
-  PartialWriteContext copybuffer{BKE_main_blendfile_path(bmain)};
+  PartialWriteContext copybuffer{*bmain};
 
   /* Add the material to the copybuffer (and all of its dependencies). */
   copybuffer.id_add(

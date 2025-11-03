@@ -17,6 +17,7 @@
 #include "RNA_types.hh"
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_enum_flags.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_string_ref.hh"
 
@@ -276,8 +277,8 @@ int RNA_property_array_item_index(PropertyRNA *prop, char name);
  */
 int RNA_property_string_maxlength(PropertyRNA *prop);
 
-const char *RNA_property_ui_name(const PropertyRNA *prop);
-const char *RNA_property_ui_name_raw(const PropertyRNA *prop);
+const char *RNA_property_ui_name(const PropertyRNA *prop, const PointerRNA *ptr = nullptr);
+const char *RNA_property_ui_name_raw(const PropertyRNA *prop, const PointerRNA *ptr = nullptr);
 const char *RNA_property_ui_description(const PropertyRNA *prop);
 const char *RNA_property_ui_description_raw(const PropertyRNA *prop);
 const char *RNA_property_translation_context(const PropertyRNA *prop);
@@ -569,7 +570,20 @@ int RNA_property_enum_get_default(PointerRNA *ptr, PropertyRNA *prop);
 int RNA_property_enum_step(
     const bContext *C, PointerRNA *ptr, PropertyRNA *prop, int from_value, int step);
 
+/**
+ * WARNING: _may_ create data in IDPGroup backend storage case.
+ * While creation of data itself is mutex-protected, potential concurrent _accesses_ to the same
+ * property are not, so threaded calls to #RNA_property_pointer_get() remain highly unsafe.
+ */
 PointerRNA RNA_property_pointer_get(PointerRNA *ptr, PropertyRNA *prop) ATTR_NONNULL(1, 2);
+/**
+ * Same as above, but never creates an empty IDPGroup property for Pointer runtime properties that
+ * are not set yet.
+ *
+ * Ideally this should never be done ever, as it is intrisically not threadsafe, but for the time
+ * being at least provide a way to avoid this bad behavior. */
+PointerRNA RNA_property_pointer_get_never_create(PointerRNA *ptr, PropertyRNA *prop)
+    ATTR_NONNULL(1, 2);
 void RNA_property_pointer_set(PointerRNA *ptr,
                               PropertyRNA *prop,
                               PointerRNA ptr_value,
@@ -937,7 +951,7 @@ enum eRNAOverrideMatch {
   /** Tag for restoration of property's value(s) to reference ones, if needed and possible. */
   RNA_OVERRIDE_COMPARE_TAG_FOR_RESTORE = 1 << 18,
 };
-ENUM_OPERATORS(eRNAOverrideMatch, RNA_OVERRIDE_COMPARE_TAG_FOR_RESTORE)
+ENUM_OPERATORS(eRNAOverrideMatch)
 
 enum eRNAOverrideMatchResult {
   RNA_OVERRIDE_MATCH_RESULT_INIT = 0,
@@ -955,7 +969,7 @@ enum eRNAOverrideMatchResult {
   /** Some properties were reset to reference values. */
   RNA_OVERRIDE_MATCH_RESULT_RESTORED = 1 << 2,
 };
-ENUM_OPERATORS(eRNAOverrideMatchResult, RNA_OVERRIDE_MATCH_RESULT_RESTORED)
+ENUM_OPERATORS(eRNAOverrideMatchResult)
 
 enum eRNAOverrideStatus {
   /** The property is overridable. */
@@ -967,7 +981,7 @@ enum eRNAOverrideStatus {
   /** The override status of this property is locked. */
   RNA_OVERRIDE_STATUS_LOCKED = 1 << 3,
 };
-ENUM_OPERATORS(eRNAOverrideStatus, RNA_OVERRIDE_STATUS_LOCKED)
+ENUM_OPERATORS(eRNAOverrideStatus)
 
 /**
  * Check whether reference and local overridden data match (are the same),

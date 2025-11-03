@@ -8,6 +8,7 @@
 
 #include <cstring>
 
+#include "BLI_enum_flags.hh"
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_math_vector.h"
@@ -74,7 +75,7 @@ enum eWM_GizmoFlagGroupTypeGlobalFlag {
   WM_GIZMOTYPE_GLOBAL_REINIT_ALL = (1 << 3),
 
 };
-ENUM_OPERATORS(eWM_GizmoFlagGroupTypeGlobalFlag, WM_GIZMOTYPE_GLOBAL_REINIT_ALL)
+ENUM_OPERATORS(eWM_GizmoFlagGroupTypeGlobalFlag)
 
 static eWM_GizmoFlagGroupTypeGlobalFlag wm_gzmap_type_update_flag =
     eWM_GizmoFlagGroupTypeGlobalFlag(0);
@@ -712,7 +713,7 @@ static wmGizmo *gizmo_find_intersected_3d(bContext *C,
       return nullptr;
     }
     blender::gpu::Texture *depth_tx = GPU_viewport_depth_texture(viewport);
-    GPUFrameBuffer *depth_read_fb = nullptr;
+    blender::gpu::FrameBuffer *depth_read_fb = nullptr;
     GPU_framebuffer_ensure_config(&depth_read_fb,
                                   {
                                       GPU_ATTACHMENT_TEXTURE(depth_tx),
