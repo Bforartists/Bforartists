@@ -971,6 +971,12 @@ static const float std_node_socket_colors[][4] = {
     {0.49, 0.49, 0.23, 1.0}, /* SOCK_CLOSURE */
 };
 
+/* BFA - Expose virtual socket color outside this file, used in interface_icons.cc*/
+void node_socket_virtual_color_get(float r_color[4])
+{
+  copy_v4_v4(r_color, virtual_node_socket_color);
+}
+
 void std_node_socket_colors_get(int socket_type, float *r_color)
 {
   BLI_assert(socket_type >= 0);

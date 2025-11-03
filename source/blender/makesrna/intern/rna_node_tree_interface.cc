@@ -30,7 +30,7 @@ static const EnumPropertyItem node_tree_interface_socket_in_out_items[] = {
 const EnumPropertyItem rna_enum_node_socket_structure_type_items[] = {
     {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO,
      "AUTO",
-     0,
+     ICON_NODE_STRUCTURE_AUTO,
      "Auto",
      "Automatically detect a good structure type based on how the socket is used"},
     {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC,

@@ -403,8 +403,16 @@ static void icon_node_socket_draw(
   };
 
   float color_inner[4];
-  blender::ed::space_node::std_node_socket_colors_get(socket_type, color_inner);
 
+  /* BFA - Custom handling for drawing virtual sockets */
+  if (socket_type == eNodeSocketDatatype::SOCK_CUSTOM) {
+    blender::ed::space_node::node_socket_virtual_color_get(color_inner);
+    color_inner[3] = 0.75f;
+  }
+  else {
+    blender::ed::space_node::std_node_socket_colors_get(socket_type, color_inner);
+  }
+    
   float color_outer[4] = {0};
   UI_GetThemeColorType4fv(TH_WIRE, SPACE_NODE, color_outer);
   color_outer[3] = 1.0f;
@@ -677,6 +685,7 @@ DEF_ICON_NODE_SOCKET_DRAW(menu, eNodeSocketDatatype::SOCK_MENU)
 DEF_ICON_NODE_SOCKET_DRAW(matrix, eNodeSocketDatatype::SOCK_MATRIX)
 DEF_ICON_NODE_SOCKET_DRAW(bundle, eNodeSocketDatatype::SOCK_BUNDLE)
 DEF_ICON_NODE_SOCKET_DRAW(closure, eNodeSocketDatatype::SOCK_CLOSURE)
+DEF_ICON_NODE_SOCKET_DRAW(virtual, eNodeSocketDatatype::SOCK_CUSTOM)
 
 /* BFA - Add icons for node structure type */
 #  define DEF_ICON_NODE_STRUCTURE_DRAW(name, structure_type) \
@@ -1091,6 +1100,7 @@ static void init_internal_icons()
   def_internal_vicon(ICON_NODE_SOCKET_CLOSURE, icon_node_socket_draw_closure);
 
   /* BFA - Add icons for node structure type */
+  def_internal_vicon(ICON_NODE_STRUCTURE_AUTO, icon_node_socket_draw_virtual);
   def_internal_vicon(ICON_NODE_STRUCTURE_DYNAMIC, icon_node_structure_draw_dynamic);
   def_internal_vicon(ICON_NODE_STRUCTURE_FIELD, icon_node_structure_draw_field);
   def_internal_vicon(ICON_NODE_STRUCTURE_GRID, icon_node_structure_draw_grid);
