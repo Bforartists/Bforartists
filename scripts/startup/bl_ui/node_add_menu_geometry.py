@@ -306,7 +306,7 @@ class NODE_MT_gn_input_base(node_add_menu.NodeMenu):
         self.draw_menu(layout, path="Input/Constant")
         if context.space_data.node_tree_sub_type != 'TOOL':
             self.draw_menu(layout, path="Input/Gizmo")
-        self.draw_menu(layout, path="Input/Group")
+        # self.draw_menu(layout, path="Input/Group") # BFA - Remove double entry
         self.draw_menu(layout, path="Input/Import")
         self.draw_menu(layout, path="Input/Scene")
 
@@ -597,7 +597,7 @@ class NODE_MT_gn_output_base(node_add_menu.NodeMenu):
     def draw(self, context):
         layout = self.layout
         self.node_operator(layout, "NodeEnableOutput")
-        self.node_operator(layout, "NodeGroupOutput")
+        # self.node_operator(layout, "NodeGroupOutput") # BFA - Remove double entry
         self.node_operator(layout, "GeometryNodeViewer")
         self.node_operator_with_searchable_enum(context, layout, "GeometryNodeWarning", "warning_type")
 
@@ -1020,7 +1020,7 @@ add_menus = {
     "NODE_MT_geometry_node_GEO_INPUT": NODE_MT_gn_input_base,
     "NODE_MT_geometry_node_GEO_INPUT_CONSTANT": NODE_MT_gn_input_constant_base,
     "NODE_MT_geometry_node_GEO_INPUT_GIZMO": NODE_MT_gn_input_gizmo_base,
-    "NODE_MT_geometry_node_GEO_INPUT_GROUP": NODE_MT_gn_input_group_base,
+    # "NODE_MT_geometry_node_GEO_INPUT_GROUP": NODE_MT_gn_input_group_base, # BFA - Remove double entry
     "NODE_MT_category_import": NODE_MT_gn_input_import_base,
     "NODE_MT_geometry_node_GEO_INPUT_SCENE": NODE_MT_gn_input_scene_base,
     "NODE_MT_category_GEO_OUTPUT": NODE_MT_gn_output_base,
@@ -1086,7 +1086,7 @@ swap_menus = {
     "NODE_MT_gn_input_swap": NODE_MT_gn_input_base,
     "NODE_MT_gn_input_constant_swap": NODE_MT_gn_input_constant_base,
     "NODE_MT_gn_input_gizmo_swap": NODE_MT_gn_input_gizmo_base,
-    "NODE_MT_gn_input_group_swap": NODE_MT_gn_input_group_base,
+    # "NODE_MT_gn_input_group_swap": NODE_MT_gn_input_group_base, # BFA - Remove double entry
     "NODE_MT_gn_input_import_swap": NODE_MT_gn_input_import_base,
     "NODE_MT_gn_input_scene_swap": NODE_MT_gn_input_scene_base,
     "NODE_MT_gn_output_swap": NODE_MT_gn_output_base,
