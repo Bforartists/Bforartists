@@ -82,6 +82,7 @@ void node_draw_nodesocket(const rctf *rect,
                           int shape,
                           float aspect);
 
+void node_socket_virtual_color_get(float r_color[4]); /* BFA - Expose virtual socket color outside this file, used in interface_icons.cc*/
 void std_node_socket_colors_get(int socket_type, float *r_color);
 
 /**

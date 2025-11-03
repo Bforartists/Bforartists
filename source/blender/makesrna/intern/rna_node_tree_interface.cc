@@ -26,23 +26,24 @@ static const EnumPropertyItem node_tree_interface_socket_in_out_items[] = {
     {NODE_INTERFACE_SOCKET_OUTPUT, "OUTPUT", 0, "Output", "Generate a output node socket"},
     {0, nullptr, 0, nullptr, nullptr}};
 
+/* BFA - Add icons for node structure type */
 const EnumPropertyItem rna_enum_node_socket_structure_type_items[] = {
     {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO,
      "AUTO",
-     0,
+     ICON_NODE_STRUCTURE_AUTO,
      "Auto",
      "Automatically detect a good structure type based on how the socket is used"},
     {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC,
      "DYNAMIC",
-     0,
+     ICON_NODE_STRUCTURE_DYNAMIC,
      "Dynamic",
      "Socket can work with different kinds of structures"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD, "FIELD", 0, "Field", "Socket expects a field"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID, "GRID", 0, "Grid", "Socket expects a grid"},
-    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST, "LIST", 0, "List", "Socket expects a list"},
+    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD, "FIELD", ICON_NODE_STRUCTURE_FIELD, "Field", "Socket expects a field"},
+    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID, "GRID", ICON_NODE_STRUCTURE_GRID, "Grid", "Socket expects a grid"},
+    {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST, "LIST", ICON_NODE_STRUCTURE_LIST, "List", "Socket expects a list"},
     {NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE,
      "SINGLE",
-     0,
+     ICON_NODE_STRUCTURE_SINGLE,
      "Single",
      "Socket expects a single value"},
     {0, nullptr, 0, nullptr, nullptr}};
