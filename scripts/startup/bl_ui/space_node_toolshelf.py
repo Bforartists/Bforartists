@@ -2704,6 +2704,7 @@ class NODES_PT_toolshelf_gn_add_utilities_bundle(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("NodeCombineBundle", pad=10),
             OperatorEntry("NodeSeparateBundle", pad=10),
+            OperatorEntry("NodeJoinBundle", pad=19),
         )
 
         self.draw_entries(context, layout, entries)
