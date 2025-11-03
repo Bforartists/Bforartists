@@ -7,5 +7,21 @@
 VERSION 1
 
 22bd02a7-be5e-4be1-b225-2db10ee6f9bf:Compositor Nodegroups:Compositor Nodegroups
+8b7c1825-4730-4b2c-9470-fc89c1ace80a:Compositor Nodegroups/Color:Compositor Nodegroups-Color
+ffdb4adb-8aea-4ca3-966b-dadaee1afcc4:Compositor Nodegroups/Creative:Compositor Nodegroups-Creative
+54577834-5d3f-491a-ae51-d1c1113da3e7:Compositor Nodegroups/Creative/Design:Compositor Nodegroups-Creative-Design
+ee3d94c8-07ff-4b66-ba0e-a78e35be5c5a:Compositor Nodegroups/Filters:Compositor Nodegroups-Filters
+92b77f83-10f9-4fcd-9143-7f932bd632a1:Compositor Nodegroups/Filters/Dithering:Compositor Nodegroups-Filters-Dithering
+00dce0bd-3082-443b-99fb-dea3cfbb9182:Compositor Nodegroups/Lenses:Compositor Nodegroups-Lenses
+d76fbecb-401d-42a9-944b-775c4d17dbac:Compositor Nodegroups/Lenses/Blooms:Compositor Nodegroups-Lenses-Blooms
+fb53ef76-7ca6-4c7d-95ef-20867fe4bd82:Compositor Nodegroups/Lenses/Depth of Field:Compositor Nodegroups-Lenses-Depth of Field
+1507ed99-5e49-4b7d-9904-f5fc3a1e5500:Compositor Nodegroups/Lenses/Dirt:Compositor Nodegroups-Lenses-Dirt
+d319ef17-db19-4d19-a5ac-921559d8b5ce:Compositor Nodegroups/Lenses/Flares:Compositor Nodegroups-Lenses-Flares
+41b85fe8-3c33-450e-a802-fa7f40b6d442:Compositor Nodegroups/Lenses/Glares:Compositor Nodegroups-Lenses-Glares
+234ca712-e056-4892-8c8e-5a81e3708b5c:Compositor Nodegroups/Lenses/Grain:Compositor Nodegroups-Lenses-Grain
+a460062a-8ff4-404e-a89d-9105aeba4cba:Compositor Nodegroups/Lenses/Quality:Compositor Nodegroups-Lenses-Quality
+84715fd6-a1b7-4ce0-a872-a427e9bc7e37:Compositor Nodegroups/Lenses/Shake:Compositor Nodegroups-Lenses-Shake
+ae7717ab-bda5-45ec-81ae-a43fcf9ee210:Compositor Nodegroups/Lenses/Vignettes:Compositor Nodegroups-Lenses-Vignettes
+8181af84-956a-4a7f-8408-20b0973f0465:Compositor Nodegroups/Output:Compositor Nodegroups-Output
 272707d5-7d13-4976-bfab-0355d7634be6:Compositor Nodegroups/Texture:Compositor Nodegroups-Texture
 94147fd2-f202-4ca8-9487-25f46d6950d2:Compositor Nodegroups/Texture/Shapes:Compositor Nodegroups-Texture-Shapes
