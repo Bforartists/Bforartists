@@ -1211,6 +1211,7 @@ if(WITH_BLENDER)
       node_brick
       node_bump
       node_bundle_combine
+      node_bundle_join
       node_bundle_separate
       node_channel
       node_checker
