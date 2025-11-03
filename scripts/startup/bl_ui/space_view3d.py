@@ -8140,7 +8140,7 @@ class VIEW3D_MT_edit_curves_control_points(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("curves.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION") # BFA - Make label consistent with Curves menu
+        layout.operator("curves.extrude_move", icon="EXTRUDE_REGION")
         # layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - exposed to header
 
 
@@ -8167,7 +8167,7 @@ class VIEW3D_MT_edit_curves_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("curves.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION") # BFA - Make label consistent with Curves menu
+        layout.operator("curves.extrude_move", icon="EXTRUDE_REGION")
 
         layout.separator()
 
