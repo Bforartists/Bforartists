@@ -43,14 +43,12 @@
 #include "SEQ_channels.hh"
 #include "SEQ_connect.hh"
 #include "SEQ_edit.hh"
-#include "SEQ_effects.hh"
 #include "SEQ_iterator.hh"
 #include "SEQ_modifier.hh"
 #include "SEQ_preview_cache.hh"
 #include "SEQ_proxy.hh"
 #include "SEQ_relations.hh"
 #include "SEQ_retiming.hh"
-#include "SEQ_select.hh"
 #include "SEQ_sequencer.hh"
 #include "SEQ_sound.hh"
 #include "SEQ_thumbnail_cache.hh"
@@ -63,10 +61,10 @@
 #include "cache/final_image_cache.hh"
 #include "cache/intra_frame_cache.hh"
 #include "cache/source_image_cache.hh"
+#include "effects/effects.hh"
 #include "modifiers/modifier.hh"
 #include "prefetch.hh"
 #include "sequencer.hh"
-#include "utils.hh"
 
 namespace blender::seq {
 
@@ -311,12 +309,12 @@ void editing_free(Scene *scene, const bool do_id_user)
 
   BLI_freelistN(&ed->metastack);
   strip_lookup_free(ed);
-  seq::media_presence_free(scene);
-  seq::thumbnail_cache_destroy(scene);
-  seq::intra_frame_cache_destroy(scene);
-  seq::source_image_cache_destroy(scene);
-  seq::final_image_cache_destroy(scene);
-  seq::preview_cache_destroy(scene);
+  media_presence_free(scene);
+  thumbnail_cache_destroy(scene);
+  intra_frame_cache_destroy(scene);
+  source_image_cache_destroy(scene);
+  final_image_cache_destroy(scene);
+  preview_cache_destroy(scene);
   channels_free(&ed->channels);
 
   MEM_freeN(ed);
@@ -324,7 +322,7 @@ void editing_free(Scene *scene, const bool do_id_user)
   scene->ed = nullptr;
 }
 
-static void seq_new_fix_links_recursive(Strip *strip, blender::Map<Strip *, Strip *> strip_map)
+static void seq_new_fix_links_recursive(Strip *strip, Map<Strip *, Strip *> strip_map)
 {
   if (strip->is_effect()) {
     strip->input1 = strip_map.lookup_default(strip->input1, strip->input1);
@@ -496,7 +494,7 @@ static Strip *strip_duplicate(Main *bmain,
                               Strip *strip,
                               const StripDuplicate dupe_flag,
                               const int flag,
-                              blender::Map<Strip *, Strip *> &strip_map)
+                              Map<Strip *, Strip *> &strip_map)
 {
   Strip *strip_new = static_cast<Strip *>(MEM_dupallocN(strip));
   strip_map.add(strip, strip_new);
@@ -597,8 +595,7 @@ static Strip *strip_duplicate(Main *bmain,
     strip_new->data->stripdata = static_cast<StripElem *>(MEM_dupallocN(strip->data->stripdata));
   }
   else if (strip->is_effect()) {
-    EffectHandle sh;
-    sh = strip_effect_handle_get(strip);
+    EffectHandle sh = strip_effect_handle_get(strip);
     if (sh.copy) {
       sh.copy(strip_new, strip, flag);
     }
@@ -640,7 +637,7 @@ static Strip *strip_duplicate_recursive_impl(Main *bmain,
                                              ListBase *new_seq_list,
                                              Strip *strip,
                                              const StripDuplicate dupe_flag,
-                                             blender::Map<Strip *, Strip *> &strip_map)
+                                             Map<Strip *, Strip *> &strip_map)
 {
   Strip *strip_new = strip_duplicate(
       bmain, scene_src, scene_dst, new_seq_list, strip, dupe_flag, 0, strip_map);
@@ -660,7 +657,7 @@ Strip *strip_duplicate_recursive(Main *bmain,
                                  Strip *strip,
                                  const StripDuplicate dupe_flag)
 {
-  blender::Map<Strip *, Strip *> strip_map;
+  Map<Strip *, Strip *> strip_map;
 
   Strip *strip_new = strip_duplicate_recursive_impl(
       bmain, scene_src, scene_dst, new_seq_list, strip, dupe_flag, strip_map);
@@ -680,7 +677,7 @@ static void seqbase_dupli_recursive(Main *bmain,
                                     const ListBase *seqbase,
                                     const StripDuplicate dupe_flag,
                                     const int flag,
-                                    blender::Map<Strip *, Strip *> &strip_map)
+                                    Map<Strip *, Strip *> &strip_map)
 {
   LISTBASE_FOREACH (Strip *, strip, seqbase) {
     if ((strip->flag & SELECT) == 0 && !flag_is_set(dupe_flag, StripDuplicate::All)) {
@@ -714,7 +711,7 @@ void seqbase_duplicate_recursive(Main *bmain,
                                  const StripDuplicate dupe_flag,
                                  const int flag)
 {
-  blender::Map<Strip *, Strip *> strip_map;
+  Map<Strip *, Strip *> strip_map;
 
   seqbase_dupli_recursive(
       bmain, scene_src, scene_dst, nseqbase, seqbase, dupe_flag, flag, strip_map);

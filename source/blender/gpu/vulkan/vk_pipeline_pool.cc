@@ -10,6 +10,7 @@
 
 #include "BLI_fileops.hh"
 #include "BLI_path_utils.hh"
+#include "BLI_time.h"
 
 #include "CLG_log.h"
 
@@ -18,129 +19,11 @@
 
 #ifdef WITH_BUILDINFO
 extern "C" char build_hash[];
-static CLG_LogRef LOG = {"gpu.vulkan"};
 #endif
+static CLG_LogRef LOG = {"gpu.vulkan"};
 
 namespace blender::gpu {
 
-VKPipelinePool::VKPipelinePool()
-{
-  /* Initialize VkComputePipelineCreateInfo */
-  vk_compute_pipeline_create_info_.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-  vk_compute_pipeline_create_info_.pNext = nullptr;
-  vk_compute_pipeline_create_info_.flags = 0;
-  vk_compute_pipeline_create_info_.layout = VK_NULL_HANDLE;
-  vk_compute_pipeline_create_info_.basePipelineHandle = VK_NULL_HANDLE;
-  vk_compute_pipeline_create_info_.basePipelineIndex = 0;
-  VkPipelineShaderStageCreateInfo &vk_pipeline_shader_stage_create_info =
-      vk_compute_pipeline_create_info_.stage;
-  vk_pipeline_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-  vk_pipeline_shader_stage_create_info.pNext = nullptr;
-  vk_pipeline_shader_stage_create_info.flags = 0;
-  vk_pipeline_shader_stage_create_info.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-  vk_pipeline_shader_stage_create_info.module = VK_NULL_HANDLE;
-  vk_pipeline_shader_stage_create_info.pName = "main";
-
-  /* Initialize VkGraphicsPipelineCreateInfo */
-  vk_graphics_pipeline_create_info_ = {};
-  vk_graphics_pipeline_create_info_.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-  vk_graphics_pipeline_create_info_.pNext = &vk_pipeline_rendering_create_info_;
-  vk_graphics_pipeline_create_info_.stageCount = 0;
-  vk_graphics_pipeline_create_info_.pStages = vk_pipeline_shader_stage_create_info_;
-  vk_graphics_pipeline_create_info_.pInputAssemblyState =
-      &vk_pipeline_input_assembly_state_create_info_;
-  vk_graphics_pipeline_create_info_.pVertexInputState =
-      &vk_pipeline_vertex_input_state_create_info_;
-  vk_graphics_pipeline_create_info_.pRasterizationState =
-      &vk_pipeline_rasterization_state_create_info_;
-  vk_graphics_pipeline_create_info_.pDynamicState = &vk_pipeline_dynamic_state_create_info_;
-  vk_graphics_pipeline_create_info_.pViewportState = &vk_pipeline_viewport_state_create_info_;
-  vk_graphics_pipeline_create_info_.pMultisampleState =
-      &vk_pipeline_multisample_state_create_info_;
-  vk_graphics_pipeline_create_info_.pColorBlendState = &vk_pipeline_color_blend_state_create_info_;
-
-  /* Initialize VkPipelineRenderingCreateInfo */
-  vk_pipeline_rendering_create_info_ = {};
-  vk_pipeline_rendering_create_info_.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
-
-  /* Initialize VkPipelineShaderStageCreateInfo */
-  for (int i : IndexRange(3)) {
-    vk_pipeline_shader_stage_create_info_[i].sType =
-        VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    vk_pipeline_shader_stage_create_info_[i].pNext = nullptr;
-    vk_pipeline_shader_stage_create_info_[i].flags = 0;
-    vk_pipeline_shader_stage_create_info_[i].module = VK_NULL_HANDLE;
-    vk_pipeline_shader_stage_create_info_[i].pName = "main";
-  }
-  vk_pipeline_shader_stage_create_info_[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-  vk_pipeline_shader_stage_create_info_[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-  vk_pipeline_shader_stage_create_info_[2].stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-
-  /* Initialize VkPipelineInputAssemblyStateCreateInfo */
-  vk_pipeline_input_assembly_state_create_info_ = {};
-  vk_pipeline_input_assembly_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-
-  /* Initialize VkPipelineVertexInputStateCreateInfo */
-  vk_pipeline_vertex_input_state_create_info_ = {};
-  vk_pipeline_vertex_input_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-
-  /* Initialize VkPipelineRasterizationStateCreateInfo */
-  vk_pipeline_rasterization_state_create_info_ = {};
-  vk_pipeline_rasterization_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-  vk_pipeline_rasterization_state_create_info_.lineWidth = 1.0f;
-  vk_pipeline_rasterization_state_create_info_.frontFace = VK_FRONT_FACE_CLOCKWISE;
-  vk_pipeline_rasterization_state_create_info_.pNext =
-      &vk_pipeline_rasterization_provoking_vertex_state_info_;
-
-  vk_pipeline_rasterization_provoking_vertex_state_info_ = {};
-  vk_pipeline_rasterization_provoking_vertex_state_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_PROVOKING_VERTEX_STATE_CREATE_INFO_EXT;
-  vk_pipeline_rasterization_provoking_vertex_state_info_.provokingVertexMode =
-      VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT;
-
-  vk_dynamic_states_ = {
-      VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_LINE_WIDTH};
-  vk_pipeline_dynamic_state_create_info_ = {};
-  vk_pipeline_dynamic_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-
-  vk_pipeline_viewport_state_create_info_ = {};
-  vk_pipeline_viewport_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-
-  /* Initialize VkPipelineMultisampleStateCreateInfo */
-  vk_pipeline_multisample_state_create_info_ = {};
-  vk_pipeline_multisample_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-  vk_pipeline_multisample_state_create_info_.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-  vk_pipeline_multisample_state_create_info_.minSampleShading = 1.0f;
-
-  /* Initialize VkPipelineColorBlendStateCreateInfo */
-  vk_pipeline_color_blend_state_create_info_ = {};
-  vk_pipeline_color_blend_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-  vk_pipeline_color_blend_attachment_state_template_.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-                                                                      VK_COLOR_COMPONENT_G_BIT |
-                                                                      VK_COLOR_COMPONENT_B_BIT |
-                                                                      VK_COLOR_COMPONENT_A_BIT;
-  /* Initialize VkPipelineDepthStencilStateCreateInfo */
-  vk_pipeline_depth_stencil_state_create_info_ = {};
-  vk_pipeline_depth_stencil_state_create_info_.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-
-  /* Initialize VkSpecializationInfo. */
-  vk_specialization_info_.mapEntryCount = 0;
-  vk_specialization_info_.pMapEntries = nullptr;
-  vk_specialization_info_.dataSize = 0;
-  vk_specialization_info_.pData = nullptr;
-
-  vk_push_constant_range_.stageFlags = 0;
-  vk_push_constant_range_.offset = 0;
-  vk_push_constant_range_.size = 0;
-}
 void VKPipelinePool::init()
 {
   VKDevice &device = VKBackend::get().device;
@@ -152,114 +35,123 @@ void VKPipelinePool::init()
   debug::object_label(vk_pipeline_cache_non_static_, "VkPipelineCache.Dynamic");
 }
 
-VkSpecializationInfo *VKPipelinePool::specialization_info_update(
-    Span<shader::SpecializationConstant::Value> specialization_constants)
-{
-  if (specialization_constants.is_empty()) {
-    return nullptr;
-  }
+/* -------------------------------------------------------------------- */
+/** \name Compute pipelines
+ * \{ */
 
-  while (vk_specialization_map_entries_.size() < specialization_constants.size()) {
-    uint32_t constant_id = vk_specialization_map_entries_.size();
-    VkSpecializationMapEntry vk_specialization_map_entry = {};
-    vk_specialization_map_entry.constantID = constant_id;
-    vk_specialization_map_entry.offset = constant_id * sizeof(uint32_t);
-    vk_specialization_map_entry.size = sizeof(uint32_t);
-    vk_specialization_map_entries_.append(vk_specialization_map_entry);
-  }
-  vk_specialization_info_.dataSize = specialization_constants.size() * sizeof(uint32_t);
-  vk_specialization_info_.pData = specialization_constants.data();
-  vk_specialization_info_.mapEntryCount = specialization_constants.size();
-  vk_specialization_info_.pMapEntries = vk_specialization_map_entries_.data();
-  return &vk_specialization_info_;
-}
-
-void VKPipelinePool::specialization_info_reset()
-{
-  vk_specialization_info_.dataSize = 0;
-  vk_specialization_info_.pData = nullptr;
-  vk_specialization_info_.mapEntryCount = 0;
-  vk_specialization_info_.pMapEntries = nullptr;
-}
-
-VkPipeline VKPipelinePool::get_or_create_compute_pipeline(VKComputeInfo &compute_info,
+VkPipeline VKPipelinePool::get_or_create_compute_pipeline(const VKComputeInfo &compute_info,
                                                           const bool is_static_shader,
                                                           VkPipeline vk_pipeline_base,
                                                           StringRefNull name)
 {
-  std::scoped_lock lock(mutex_);
-  const VkPipeline *found_pipeline = compute_pipelines_.lookup_ptr(compute_info);
-  if (found_pipeline) {
-    VkPipeline result = *found_pipeline;
-    BLI_assert(result != VK_NULL_HANDLE);
-    return result;
+  VkPipelineCache vk_pipeline_cache = is_static_shader ? vk_pipeline_cache_static_ :
+                                                         vk_pipeline_cache_non_static_;
+  return compute_.get_or_create(compute_info, vk_pipeline_cache, vk_pipeline_base, name);
+}
+
+template<>
+VkPipeline VKPipelineMap<VKComputeInfo>::create(const VKComputeInfo &compute_info,
+                                                VkPipelineCache vk_pipeline_cache,
+                                                VkPipeline vk_pipeline_base,
+                                                StringRefNull name)
+{
+  /* Building compute pipeline create info */
+  const bool do_specialization_constants = !compute_info.specialization_constants.is_empty();
+  VkComputePipelineCreateInfo vk_compute_pipeline_create_info = {
+      VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+      nullptr,
+      0,
+      {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+       nullptr,
+       0,
+       VK_SHADER_STAGE_COMPUTE_BIT,
+       compute_info.vk_shader_module,
+       "main",
+       nullptr},
+      compute_info.vk_pipeline_layout,
+      vk_pipeline_base,
+      0};
+
+  /* Specialization constants */
+  VkSpecializationInfo vk_specialization_info;
+  Array<VkSpecializationMapEntry> vk_specialization_map_entries(
+      compute_info.specialization_constants.size());
+  if (do_specialization_constants) {
+    vk_compute_pipeline_create_info.stage.pSpecializationInfo = &vk_specialization_info;
+    for (uint32_t index : IndexRange(compute_info.specialization_constants.size())) {
+      vk_specialization_map_entries[index] = {
+          index, uint32_t(index * sizeof(uint32_t)), sizeof(uint32_t)};
+    }
+    vk_specialization_info = {uint32_t(vk_specialization_map_entries.size()),
+                              vk_specialization_map_entries.data(),
+                              compute_info.specialization_constants.size() * sizeof(uint32_t),
+                              compute_info.specialization_constants.data()};
   }
 
-  vk_compute_pipeline_create_info_.layout = compute_info.vk_pipeline_layout;
-  vk_compute_pipeline_create_info_.stage.module = compute_info.vk_shader_module;
-  vk_compute_pipeline_create_info_.basePipelineHandle = vk_pipeline_base;
-  vk_compute_pipeline_create_info_.stage.pSpecializationInfo = specialization_info_update(
-      compute_info.specialization_constants);
-
-  /* Build pipeline. */
+  /* Create pipeline. */
   VKBackend &backend = VKBackend::get();
   VKDevice &device = backend.device;
+
+  double start_time = BLI_time_now_seconds();
   VkPipeline pipeline = VK_NULL_HANDLE;
   vkCreateComputePipelines(device.vk_handle(),
-                           is_static_shader ? vk_pipeline_cache_static_ :
-                                              vk_pipeline_cache_non_static_,
+                           vk_pipeline_cache,
                            1,
-                           &vk_compute_pipeline_create_info_,
+                           &vk_compute_pipeline_create_info,
                            nullptr,
                            &pipeline);
+  double end_time = BLI_time_now_seconds();
   debug::object_label(pipeline, name);
-  compute_pipelines_.add(compute_info, pipeline);
-
-  /* Reset values to initial value. */
-  vk_compute_pipeline_create_info_.flags = 0;
-  vk_compute_pipeline_create_info_.layout = VK_NULL_HANDLE;
-  vk_compute_pipeline_create_info_.stage.module = VK_NULL_HANDLE;
-  vk_compute_pipeline_create_info_.stage.pSpecializationInfo = nullptr;
-  vk_compute_pipeline_create_info_.basePipelineHandle = VK_NULL_HANDLE;
-  specialization_info_reset();
+  CLOG_DEBUG(&LOG,
+             "Compiled compute pipeline %s in %fms ",
+             name.c_str(),
+             (end_time - start_time) * 1000.0);
 
   return pipeline;
 }
 
-VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graphics_info,
-                                                           const bool is_static_shader,
-                                                           VkPipeline vk_pipeline_base,
-                                                           StringRefNull name)
+/* \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Graphics pipelines
+ * \{ */
+
+static void build_multisample_state(
+    VkPipelineMultisampleStateCreateInfo &vk_pipeline_multisample_state_create_info)
 {
-  std::scoped_lock lock(mutex_);
-  graphics_info.fragment_shader.update_hash();
-  const VkPipeline *found_pipeline = graphic_pipelines_.lookup_ptr(graphics_info);
-  if (found_pipeline) {
-    VkPipeline result = *found_pipeline;
-    BLI_assert(result != VK_NULL_HANDLE);
-    return result;
-  }
+  vk_pipeline_multisample_state_create_info = {
+      VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+      nullptr,
+      0,
+      VK_SAMPLE_COUNT_1_BIT,
+      VK_FALSE,
+      1.0f,
+      nullptr,
+      VK_FALSE,
+      VK_FALSE};
+}
 
-  /* Specialization constants */
-  VkSpecializationInfo *specialization_info = specialization_info_update(
-      graphics_info.specialization_constants);
+static void build_viewport_state(
+    const VKGraphicsInfo &graphics_info,
+    VkPipelineViewportStateCreateInfo &vk_pipeline_viewport_state_create_info)
+{
+  vk_pipeline_viewport_state_create_info = {VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+                                            nullptr,
+                                            0,
+                                            graphics_info.fragment_shader.viewport_count,
+                                            nullptr,
+                                            graphics_info.fragment_shader.viewport_count,
+                                            nullptr};
+}
 
-  /* Shader stages */
-  vk_graphics_pipeline_create_info_.stageCount =
-      graphics_info.pre_rasterization.vk_geometry_module == VK_NULL_HANDLE ? 2 : 3;
-  vk_pipeline_shader_stage_create_info_[0].module =
-      graphics_info.pre_rasterization.vk_vertex_module;
-  vk_pipeline_shader_stage_create_info_[0].pSpecializationInfo = specialization_info;
-  vk_pipeline_shader_stage_create_info_[1].module =
-      graphics_info.fragment_shader.vk_fragment_module;
-  vk_pipeline_shader_stage_create_info_[1].pSpecializationInfo = specialization_info;
-  vk_pipeline_shader_stage_create_info_[2].module =
-      graphics_info.pre_rasterization.vk_geometry_module;
-  vk_pipeline_shader_stage_create_info_[2].pSpecializationInfo = specialization_info;
-
-  /* Input assembly */
-  vk_pipeline_input_assembly_state_create_info_.topology = graphics_info.vertex_in.vk_topology;
-  vk_pipeline_input_assembly_state_create_info_.primitiveRestartEnable =
+static void build_input_assembly_state(
+    const VKGraphicsInfo &graphics_info,
+    VkPipelineInputAssemblyStateCreateInfo &vk_pipeline_input_assembly_state_create_info)
+{
+  vk_pipeline_input_assembly_state_create_info = {
+      VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO};
+  vk_pipeline_input_assembly_state_create_info.topology = graphics_info.vertex_in.vk_topology;
+  vk_pipeline_input_assembly_state_create_info.primitiveRestartEnable =
       ELEM(graphics_info.vertex_in.vk_topology,
            VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
            VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
@@ -267,426 +159,527 @@ VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(VKGraphicsInfo &graph
            VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY) ?
           VK_FALSE :
           VK_TRUE;
-  vk_pipeline_vertex_input_state_create_info_.pVertexAttributeDescriptions =
-      graphics_info.vertex_in.attributes.data();
-  vk_pipeline_vertex_input_state_create_info_.vertexAttributeDescriptionCount =
-      graphics_info.vertex_in.attributes.size();
-  vk_pipeline_vertex_input_state_create_info_.pVertexBindingDescriptions =
-      graphics_info.vertex_in.bindings.data();
-  vk_pipeline_vertex_input_state_create_info_.vertexBindingDescriptionCount =
-      graphics_info.vertex_in.bindings.size();
+}
 
-  /* Rasterization state */
-  vk_pipeline_rasterization_state_create_info_.cullMode = to_vk_cull_mode_flags(
-      static_cast<GPUFaceCullTest>(graphics_info.state.culling_test));
-  if (graphics_info.state.shadow_bias) {
-    vk_pipeline_rasterization_state_create_info_.depthBiasEnable = VK_TRUE;
-    vk_pipeline_rasterization_state_create_info_.depthBiasSlopeFactor = 2.0f;
-    vk_pipeline_rasterization_state_create_info_.depthBiasConstantFactor = 1.0f;
-    vk_pipeline_rasterization_state_create_info_.depthBiasClamp = 0.0f;
-  }
-  else {
-    vk_pipeline_rasterization_state_create_info_.depthBiasEnable = VK_FALSE;
-  }
-  vk_pipeline_rasterization_state_create_info_.frontFace = graphics_info.state.invert_facing ?
-                                                               VK_FRONT_FACE_COUNTER_CLOCKWISE :
-                                                               VK_FRONT_FACE_CLOCKWISE;
-  vk_pipeline_rasterization_provoking_vertex_state_info_.provokingVertexMode =
+static void build_vertex_input_state(
+    const VKGraphicsInfo &graphics_info,
+    VkPipelineVertexInputStateCreateInfo &vk_pipeline_vertex_input_state_create_info)
+{
+  vk_pipeline_vertex_input_state_create_info = {
+      VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
+  vk_pipeline_vertex_input_state_create_info.pVertexAttributeDescriptions =
+      graphics_info.vertex_in.attributes.data();
+  vk_pipeline_vertex_input_state_create_info.vertexAttributeDescriptionCount =
+      graphics_info.vertex_in.attributes.size();
+  vk_pipeline_vertex_input_state_create_info.pVertexBindingDescriptions =
+      graphics_info.vertex_in.bindings.data();
+  vk_pipeline_vertex_input_state_create_info.vertexBindingDescriptionCount =
+      graphics_info.vertex_in.bindings.size();
+}
+
+static void build_rasterization_state(
+    const VKGraphicsInfo &graphics_info,
+    VkPipelineRasterizationStateCreateInfo &vk_pipeline_rasterization_state_create_info,
+    VkPipelineRasterizationProvokingVertexStateCreateInfoEXT
+        &vk_pipeline_rasterization_provoking_vertex_state_info)
+{
+  vk_pipeline_rasterization_provoking_vertex_state_info = {};
+  vk_pipeline_rasterization_provoking_vertex_state_info.sType =
+      VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_PROVOKING_VERTEX_STATE_CREATE_INFO_EXT;
+  vk_pipeline_rasterization_provoking_vertex_state_info.provokingVertexMode =
+      VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT;
+  vk_pipeline_rasterization_provoking_vertex_state_info.provokingVertexMode =
       graphics_info.state.provoking_vert == GPU_VERTEX_LAST ?
           VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT :
           VK_PROVOKING_VERTEX_MODE_FIRST_VERTEX_EXT;
 
-  /* Dynamic state */
+  vk_pipeline_rasterization_state_create_info = {};
+  vk_pipeline_rasterization_state_create_info.sType =
+      VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+  vk_pipeline_rasterization_state_create_info.lineWidth = 1.0f;
+  vk_pipeline_rasterization_state_create_info.frontFace = VK_FRONT_FACE_CLOCKWISE;
+  vk_pipeline_rasterization_state_create_info.pNext =
+      &vk_pipeline_rasterization_provoking_vertex_state_info;
+
+  vk_pipeline_rasterization_state_create_info.cullMode = to_vk_cull_mode_flags(
+      static_cast<GPUFaceCullTest>(graphics_info.state.culling_test));
+  if (graphics_info.state.shadow_bias) {
+    vk_pipeline_rasterization_state_create_info.depthBiasEnable = VK_TRUE;
+    vk_pipeline_rasterization_state_create_info.depthBiasSlopeFactor = 2.0f;
+    vk_pipeline_rasterization_state_create_info.depthBiasConstantFactor = 1.0f;
+    vk_pipeline_rasterization_state_create_info.depthBiasClamp = 0.0f;
+  }
+  else {
+    vk_pipeline_rasterization_state_create_info.depthBiasEnable = VK_FALSE;
+  }
+  vk_pipeline_rasterization_state_create_info.frontFace = graphics_info.state.invert_facing ?
+                                                              VK_FRONT_FACE_COUNTER_CLOCKWISE :
+                                                              VK_FRONT_FACE_CLOCKWISE;
+}
+
+static void build_dynamic_state(
+    const VKGraphicsInfo &graphics_info,
+    VkPipelineDynamicStateCreateInfo &vk_pipeline_dynamic_state_create_info,
+    Vector<VkDynamicState, 3> &vk_dynamic_states)
+{
+  vk_dynamic_states = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
   const bool is_line_topology = ELEM(graphics_info.vertex_in.vk_topology,
                                      VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                      VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
                                      VK_PRIMITIVE_TOPOLOGY_LINE_STRIP);
-  vk_pipeline_dynamic_state_create_info_.dynamicStateCount = is_line_topology ?
-                                                                 vk_dynamic_states_.size() :
-                                                                 vk_dynamic_states_.size() - 1;
-  vk_pipeline_dynamic_state_create_info_.pDynamicStates = vk_dynamic_states_.data();
-
-  /* Viewport state */
-  vk_pipeline_viewport_state_create_info_.pViewports = nullptr;
-  vk_pipeline_viewport_state_create_info_.viewportCount =
-      graphics_info.fragment_shader.viewports.size();
-  vk_pipeline_viewport_state_create_info_.pScissors = nullptr;
-  vk_pipeline_viewport_state_create_info_.scissorCount =
-      graphics_info.fragment_shader.scissors.size();
-
-  /* Color blending */
-  const VKExtensions &extensions = VKBackend::get().device.extensions_get();
-  {
-    VkPipelineColorBlendStateCreateInfo &cb = vk_pipeline_color_blend_state_create_info_;
-    VkPipelineColorBlendAttachmentState &att_state =
-        vk_pipeline_color_blend_attachment_state_template_;
-
-    att_state.blendEnable = VK_TRUE;
-    att_state.alphaBlendOp = VK_BLEND_OP_ADD;
-    att_state.colorBlendOp = VK_BLEND_OP_ADD;
-    att_state.srcColorBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
-    att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-    att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-    att_state.colorWriteMask = 0;
-    cb.blendConstants[0] = 1.0f;
-    cb.blendConstants[1] = 1.0f;
-    cb.blendConstants[2] = 1.0f;
-    cb.blendConstants[3] = 1.0f;
-
-    switch (graphics_info.state.blend) {
-      default:
-      case GPU_BLEND_ALPHA:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        break;
-
-      case GPU_BLEND_ALPHA_PREMULT:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        break;
-
-      case GPU_BLEND_ADDITIVE:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        break;
-
-        /* Factors are not use in min or max mode, but avoid uninitialized values. */;
-      case GPU_BLEND_MIN:
-      case GPU_BLEND_MAX:
-      case GPU_BLEND_SUBTRACT:
-      case GPU_BLEND_ADDITIVE_PREMULT:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        break;
-
-      case GPU_BLEND_MULTIPLY:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_DST_COLOR;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        break;
-
-      case GPU_BLEND_INVERT:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        break;
-
-      case GPU_BLEND_OIT:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        break;
-
-      case GPU_BLEND_BACKGROUND:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        break;
-
-      case GPU_BLEND_ALPHA_UNDER_PREMUL:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        break;
-
-      case GPU_BLEND_CUSTOM:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_SRC1_COLOR;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_SRC1_ALPHA;
-        break;
-
-      case GPU_BLEND_OVERLAY_MASK_FROM_ALPHA:
-        att_state.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        break;
-    }
-
-    if (graphics_info.state.blend == GPU_BLEND_MIN) {
-      att_state.alphaBlendOp = VK_BLEND_OP_MIN;
-      att_state.colorBlendOp = VK_BLEND_OP_MIN;
-    }
-    else if (graphics_info.state.blend == GPU_BLEND_MAX) {
-      att_state.alphaBlendOp = VK_BLEND_OP_MAX;
-      att_state.colorBlendOp = VK_BLEND_OP_MAX;
-    }
-    else if (graphics_info.state.blend == GPU_BLEND_SUBTRACT) {
-      att_state.alphaBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
-      att_state.colorBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
-    }
-    else {
-      att_state.alphaBlendOp = VK_BLEND_OP_ADD;
-      att_state.colorBlendOp = VK_BLEND_OP_ADD;
-    }
-
-    if (graphics_info.state.blend != GPU_BLEND_NONE) {
-      att_state.blendEnable = VK_TRUE;
-    }
-    else {
-      att_state.blendEnable = VK_FALSE;
-    }
-
-    /* Adjust the template with the color components in the write mask. */
-    if ((graphics_info.state.write_mask & GPU_WRITE_RED) != 0) {
-      att_state.colorWriteMask |= VK_COLOR_COMPONENT_R_BIT;
-    }
-    if ((graphics_info.state.write_mask & GPU_WRITE_GREEN) != 0) {
-      att_state.colorWriteMask |= VK_COLOR_COMPONENT_G_BIT;
-    }
-    if ((graphics_info.state.write_mask & GPU_WRITE_BLUE) != 0) {
-      att_state.colorWriteMask |= VK_COLOR_COMPONENT_B_BIT;
-    }
-    if ((graphics_info.state.write_mask & GPU_WRITE_ALPHA) != 0) {
-      att_state.colorWriteMask |= VK_COLOR_COMPONENT_A_BIT;
-    }
-
-    /* Logic ops. */
-    if (graphics_info.state.logic_op_xor && extensions.logic_ops) {
-      cb.logicOpEnable = VK_TRUE;
-      cb.logicOp = VK_LOGIC_OP_XOR;
-    }
-
-    vk_pipeline_color_blend_attachment_states_.clear();
-    vk_pipeline_color_blend_attachment_states_.append_n_times(
-        vk_pipeline_color_blend_attachment_state_template_,
-        graphics_info.fragment_out.color_attachment_size);
-    vk_pipeline_color_blend_state_create_info_.attachmentCount =
-        vk_pipeline_color_blend_attachment_states_.size();
-    vk_pipeline_color_blend_state_create_info_.pAttachments =
-        vk_pipeline_color_blend_attachment_states_.data();
+  if (is_line_topology) {
+    vk_dynamic_states.append(VK_DYNAMIC_STATE_LINE_WIDTH);
   }
+  vk_pipeline_dynamic_state_create_info = {VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+                                           nullptr,
+                                           0,
+                                           uint32_t(vk_dynamic_states.size()),
+                                           vk_dynamic_states.data()};
+}
 
+static void build_depth_stencil_state(
+    const VKGraphicsInfo &graphics_info,
+    VkGraphicsPipelineCreateInfo &vk_graphics_pipeline_create_info,
+    VkPipelineDepthStencilStateCreateInfo &vk_pipeline_depth_stencil_state_create_info)
+{
+  vk_pipeline_depth_stencil_state_create_info = {
+      VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO};
   if (graphics_info.fragment_out.depth_attachment_format != VK_FORMAT_UNDEFINED) {
-    vk_graphics_pipeline_create_info_.pDepthStencilState =
-        &vk_pipeline_depth_stencil_state_create_info_;
-    vk_pipeline_depth_stencil_state_create_info_.depthWriteEnable =
+    vk_graphics_pipeline_create_info.pDepthStencilState =
+        &vk_pipeline_depth_stencil_state_create_info;
+    vk_pipeline_depth_stencil_state_create_info.depthWriteEnable =
         (graphics_info.state.write_mask & GPU_WRITE_DEPTH) ? VK_TRUE : VK_FALSE;
 
-    vk_pipeline_depth_stencil_state_create_info_.depthTestEnable = VK_TRUE;
+    vk_pipeline_depth_stencil_state_create_info.depthTestEnable = VK_TRUE;
     switch (graphics_info.state.depth_test) {
       case GPU_DEPTH_LESS:
-        vk_pipeline_depth_stencil_state_create_info_.depthCompareOp = VK_COMPARE_OP_LESS;
+        vk_pipeline_depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_LESS;
         break;
       case GPU_DEPTH_LESS_EQUAL:
-        vk_pipeline_depth_stencil_state_create_info_.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+        vk_pipeline_depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
         break;
       case GPU_DEPTH_EQUAL:
-        vk_pipeline_depth_stencil_state_create_info_.depthCompareOp = VK_COMPARE_OP_EQUAL;
+        vk_pipeline_depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_EQUAL;
         break;
       case GPU_DEPTH_GREATER:
-        vk_pipeline_depth_stencil_state_create_info_.depthCompareOp = VK_COMPARE_OP_GREATER;
+        vk_pipeline_depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_GREATER;
         break;
       case GPU_DEPTH_GREATER_EQUAL:
-        vk_pipeline_depth_stencil_state_create_info_.depthCompareOp =
+        vk_pipeline_depth_stencil_state_create_info.depthCompareOp =
             VK_COMPARE_OP_GREATER_OR_EQUAL;
         break;
       case GPU_DEPTH_ALWAYS:
-        vk_pipeline_depth_stencil_state_create_info_.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+        vk_pipeline_depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_ALWAYS;
         break;
       case GPU_DEPTH_NONE:
-        vk_pipeline_depth_stencil_state_create_info_.depthTestEnable = VK_FALSE;
-        vk_pipeline_depth_stencil_state_create_info_.depthCompareOp = VK_COMPARE_OP_NEVER;
+        vk_pipeline_depth_stencil_state_create_info.depthTestEnable = VK_FALSE;
+        vk_pipeline_depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_NEVER;
         break;
     }
   }
 
   if (graphics_info.fragment_out.stencil_attachment_format != VK_FORMAT_UNDEFINED) {
-    vk_graphics_pipeline_create_info_.pDepthStencilState =
-        &vk_pipeline_depth_stencil_state_create_info_;
+    vk_graphics_pipeline_create_info.pDepthStencilState =
+        &vk_pipeline_depth_stencil_state_create_info;
 
     switch (graphics_info.state.stencil_test) {
       case GPU_STENCIL_NEQUAL:
-        vk_pipeline_depth_stencil_state_create_info_.stencilTestEnable = VK_TRUE;
-        vk_pipeline_depth_stencil_state_create_info_.front.compareOp = VK_COMPARE_OP_NOT_EQUAL;
+        vk_pipeline_depth_stencil_state_create_info.stencilTestEnable = VK_TRUE;
+        vk_pipeline_depth_stencil_state_create_info.front.compareOp = VK_COMPARE_OP_NOT_EQUAL;
         break;
       case GPU_STENCIL_EQUAL:
-        vk_pipeline_depth_stencil_state_create_info_.stencilTestEnable = VK_TRUE;
-        vk_pipeline_depth_stencil_state_create_info_.front.compareOp = VK_COMPARE_OP_EQUAL;
+        vk_pipeline_depth_stencil_state_create_info.stencilTestEnable = VK_TRUE;
+        vk_pipeline_depth_stencil_state_create_info.front.compareOp = VK_COMPARE_OP_EQUAL;
         break;
       case GPU_STENCIL_ALWAYS:
-        vk_pipeline_depth_stencil_state_create_info_.stencilTestEnable = VK_TRUE;
-        vk_pipeline_depth_stencil_state_create_info_.front.compareOp = VK_COMPARE_OP_ALWAYS;
+        vk_pipeline_depth_stencil_state_create_info.stencilTestEnable = VK_TRUE;
+        vk_pipeline_depth_stencil_state_create_info.front.compareOp = VK_COMPARE_OP_ALWAYS;
         break;
       case GPU_STENCIL_NONE:
-        vk_pipeline_depth_stencil_state_create_info_.stencilTestEnable = VK_FALSE;
-        vk_pipeline_depth_stencil_state_create_info_.front.compareOp = VK_COMPARE_OP_ALWAYS;
+        vk_pipeline_depth_stencil_state_create_info.stencilTestEnable = VK_FALSE;
+        vk_pipeline_depth_stencil_state_create_info.front.compareOp = VK_COMPARE_OP_ALWAYS;
         break;
     }
 
-    vk_pipeline_depth_stencil_state_create_info_.front.compareMask =
+    vk_pipeline_depth_stencil_state_create_info.front.compareMask =
         graphics_info.mutable_state.stencil_compare_mask;
-    vk_pipeline_depth_stencil_state_create_info_.front.reference =
+    vk_pipeline_depth_stencil_state_create_info.front.reference =
         graphics_info.mutable_state.stencil_reference;
-    vk_pipeline_depth_stencil_state_create_info_.front.writeMask =
+    vk_pipeline_depth_stencil_state_create_info.front.writeMask =
         graphics_info.mutable_state.stencil_write_mask;
 
     switch (graphics_info.state.stencil_op) {
       case GPU_STENCIL_OP_REPLACE:
-        vk_pipeline_depth_stencil_state_create_info_.front.failOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.front.passOp = VK_STENCIL_OP_REPLACE;
-        vk_pipeline_depth_stencil_state_create_info_.front.depthFailOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.back =
-            vk_pipeline_depth_stencil_state_create_info_.front;
+        vk_pipeline_depth_stencil_state_create_info.front.failOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.front.passOp = VK_STENCIL_OP_REPLACE;
+        vk_pipeline_depth_stencil_state_create_info.front.depthFailOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.back =
+            vk_pipeline_depth_stencil_state_create_info.front;
         break;
 
       case GPU_STENCIL_OP_COUNT_DEPTH_PASS:
-        vk_pipeline_depth_stencil_state_create_info_.front.failOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.front.passOp =
+        vk_pipeline_depth_stencil_state_create_info.front.failOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.front.passOp =
             VK_STENCIL_OP_DECREMENT_AND_WRAP;
-        vk_pipeline_depth_stencil_state_create_info_.front.depthFailOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.back =
-            vk_pipeline_depth_stencil_state_create_info_.front;
-        vk_pipeline_depth_stencil_state_create_info_.back.passOp =
-            VK_STENCIL_OP_INCREMENT_AND_WRAP;
+        vk_pipeline_depth_stencil_state_create_info.front.depthFailOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.back =
+            vk_pipeline_depth_stencil_state_create_info.front;
+        vk_pipeline_depth_stencil_state_create_info.back.passOp = VK_STENCIL_OP_INCREMENT_AND_WRAP;
         break;
 
       case GPU_STENCIL_OP_COUNT_DEPTH_FAIL:
-        vk_pipeline_depth_stencil_state_create_info_.front.failOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.front.passOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.front.depthFailOp =
+        vk_pipeline_depth_stencil_state_create_info.front.failOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.front.passOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.front.depthFailOp =
             VK_STENCIL_OP_INCREMENT_AND_WRAP;
-        vk_pipeline_depth_stencil_state_create_info_.back =
-            vk_pipeline_depth_stencil_state_create_info_.front;
-        vk_pipeline_depth_stencil_state_create_info_.back.depthFailOp =
+        vk_pipeline_depth_stencil_state_create_info.back =
+            vk_pipeline_depth_stencil_state_create_info.front;
+        vk_pipeline_depth_stencil_state_create_info.back.depthFailOp =
             VK_STENCIL_OP_DECREMENT_AND_WRAP;
         break;
 
       case GPU_STENCIL_OP_NONE:
       default:
-        vk_pipeline_depth_stencil_state_create_info_.front.failOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.front.passOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.front.depthFailOp = VK_STENCIL_OP_KEEP;
-        vk_pipeline_depth_stencil_state_create_info_.back =
-            vk_pipeline_depth_stencil_state_create_info_.front;
+        vk_pipeline_depth_stencil_state_create_info.front.failOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.front.passOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.front.depthFailOp = VK_STENCIL_OP_KEEP;
+        vk_pipeline_depth_stencil_state_create_info.back =
+            vk_pipeline_depth_stencil_state_create_info.front;
         break;
     }
   }
+}
 
-  /* VK_KHR_dynamic_rendering */
-  vk_pipeline_rendering_create_info_.depthAttachmentFormat =
-      graphics_info.fragment_out.depth_attachment_format;
-  vk_pipeline_rendering_create_info_.stencilAttachmentFormat =
-      graphics_info.fragment_out.stencil_attachment_format;
-  vk_pipeline_rendering_create_info_.colorAttachmentCount =
-      graphics_info.fragment_out.color_attachment_size;
-  vk_pipeline_rendering_create_info_.pColorAttachmentFormats =
-      graphics_info.fragment_out.color_attachment_formats.data();
+static void build_dynamic_rendering(
+    const VKGraphicsInfo &graphics_info,
+    VkPipelineRenderingCreateInfo &vk_pipeline_rendering_create_info)
+{
+  vk_pipeline_rendering_create_info = {VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
+                                       nullptr,
+                                       0,
+                                       graphics_info.fragment_out.color_attachment_size,
+                                       graphics_info.fragment_out.color_attachment_formats.data(),
+                                       graphics_info.fragment_out.depth_attachment_format,
+                                       graphics_info.fragment_out.stencil_attachment_format
 
-  /* Common values */
-  vk_graphics_pipeline_create_info_.layout = graphics_info.vk_pipeline_layout;
-  /* TODO: based on `vk_pipeline_base` we should update the flags. */
-  vk_graphics_pipeline_create_info_.basePipelineHandle = vk_pipeline_base;
+  };
+}
 
-  /* Build pipeline. */
+static void build_color_blend_attachment_states(
+    const VKGraphicsInfo &graphics_info,
+    Vector<VkPipelineColorBlendAttachmentState> &vk_pipeline_color_blend_attachment_states)
+{
+  VkPipelineColorBlendAttachmentState attachment_state = {VK_TRUE,
+                                                          VK_BLEND_FACTOR_DST_ALPHA,
+                                                          VK_BLEND_FACTOR_ONE,
+                                                          VK_BLEND_OP_ADD,
+                                                          VK_BLEND_FACTOR_ZERO,
+                                                          VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+                                                          VK_BLEND_OP_ADD,
+                                                          0};
+
+  switch (graphics_info.state.blend) {
+    default:
+    case GPU_BLEND_ALPHA:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      break;
+
+    case GPU_BLEND_ALPHA_PREMULT:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      break;
+
+    case GPU_BLEND_ADDITIVE:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      break;
+
+      /* Factors are not use in min or max mode, but avoid uninitialized values. */;
+    case GPU_BLEND_MIN:
+    case GPU_BLEND_MAX:
+    case GPU_BLEND_SUBTRACT:
+    case GPU_BLEND_ADDITIVE_PREMULT:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      break;
+
+    case GPU_BLEND_MULTIPLY:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_DST_COLOR;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+      break;
+
+    case GPU_BLEND_INVERT:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      break;
+
+    case GPU_BLEND_OIT:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      break;
+
+    case GPU_BLEND_BACKGROUND:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      break;
+
+    case GPU_BLEND_ALPHA_UNDER_PREMUL:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      break;
+
+    case GPU_BLEND_CUSTOM:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_SRC1_COLOR;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_SRC1_ALPHA;
+      break;
+
+    case GPU_BLEND_OVERLAY_MASK_FROM_ALPHA:
+      attachment_state.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      attachment_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+      attachment_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      break;
+  }
+
+  if (graphics_info.state.blend == GPU_BLEND_MIN) {
+    attachment_state.alphaBlendOp = VK_BLEND_OP_MIN;
+    attachment_state.colorBlendOp = VK_BLEND_OP_MIN;
+  }
+  else if (graphics_info.state.blend == GPU_BLEND_MAX) {
+    attachment_state.alphaBlendOp = VK_BLEND_OP_MAX;
+    attachment_state.colorBlendOp = VK_BLEND_OP_MAX;
+  }
+  else if (graphics_info.state.blend == GPU_BLEND_SUBTRACT) {
+    attachment_state.alphaBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
+    attachment_state.colorBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
+  }
+  else {
+    attachment_state.alphaBlendOp = VK_BLEND_OP_ADD;
+    attachment_state.colorBlendOp = VK_BLEND_OP_ADD;
+  }
+
+  if (graphics_info.state.blend != GPU_BLEND_NONE) {
+    attachment_state.blendEnable = VK_TRUE;
+  }
+  else {
+    attachment_state.blendEnable = VK_FALSE;
+  }
+
+  /* Adjust the template with the color components in the write mask. */
+  if ((graphics_info.state.write_mask & GPU_WRITE_RED) != 0) {
+    attachment_state.colorWriteMask |= VK_COLOR_COMPONENT_R_BIT;
+  }
+  if ((graphics_info.state.write_mask & GPU_WRITE_GREEN) != 0) {
+    attachment_state.colorWriteMask |= VK_COLOR_COMPONENT_G_BIT;
+  }
+  if ((graphics_info.state.write_mask & GPU_WRITE_BLUE) != 0) {
+    attachment_state.colorWriteMask |= VK_COLOR_COMPONENT_B_BIT;
+  }
+  if ((graphics_info.state.write_mask & GPU_WRITE_ALPHA) != 0) {
+    attachment_state.colorWriteMask |= VK_COLOR_COMPONENT_A_BIT;
+  }
+
+  vk_pipeline_color_blend_attachment_states.append_n_times(
+      attachment_state, graphics_info.fragment_out.color_attachment_size);
+}
+
+static void build_color_blend_state(
+    const VKGraphicsInfo &graphics_info,
+    const VKExtensions &extensions,
+    Span<VkPipelineColorBlendAttachmentState> vk_pipeline_color_blend_attachment_states,
+    VkPipelineColorBlendStateCreateInfo &vk_pipeline_color_blend_state_create_info)
+{
+  vk_pipeline_color_blend_state_create_info = {
+      VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+      nullptr,
+      0,
+      VK_FALSE,
+      VK_LOGIC_OP_CLEAR,
+      uint32_t(vk_pipeline_color_blend_attachment_states.size()),
+      vk_pipeline_color_blend_attachment_states.data(),
+      {1.0f, 1.0f, 1.0f, 1.0f}};
+  /* Logic ops. */
+  if (graphics_info.state.logic_op_xor && extensions.logic_ops) {
+    vk_pipeline_color_blend_state_create_info.logicOpEnable = VK_TRUE;
+    vk_pipeline_color_blend_state_create_info.logicOp = VK_LOGIC_OP_XOR;
+  }
+}
+
+VkPipeline VKPipelinePool::get_or_create_graphics_pipeline(const VKGraphicsInfo &graphics_info,
+                                                           const bool is_static_shader,
+                                                           VkPipeline vk_pipeline_base,
+                                                           StringRefNull name)
+{
+  VkPipelineCache vk_pipeline_cache = is_static_shader ? vk_pipeline_cache_static_ :
+                                                         vk_pipeline_cache_non_static_;
+  return graphics_.get_or_create(graphics_info, vk_pipeline_cache, vk_pipeline_base, name);
+}
+
+template<>
+VkPipeline VKPipelineMap<VKGraphicsInfo>::create(const VKGraphicsInfo &graphics_info,
+                                                 VkPipelineCache vk_pipeline_cache,
+                                                 VkPipeline vk_pipeline_base,
+                                                 StringRefNull name)
+{
+  VkPipelineRenderingCreateInfo vk_pipeline_rendering_create_info;
+  VkPipelineShaderStageCreateInfo vk_pipeline_shader_stage_create_info[] = {
+      {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+       nullptr,
+       0,
+       VK_SHADER_STAGE_VERTEX_BIT,
+       VK_NULL_HANDLE,
+       "main",
+       nullptr},
+      {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+       nullptr,
+       0,
+       VK_SHADER_STAGE_FRAGMENT_BIT,
+       VK_NULL_HANDLE,
+       "main",
+       nullptr},
+      {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+       nullptr,
+       0,
+       VK_SHADER_STAGE_GEOMETRY_BIT,
+       VK_NULL_HANDLE,
+       "main",
+       nullptr}};
+  VkPipelineInputAssemblyStateCreateInfo vk_pipeline_input_assembly_state_create_info;
+  VkPipelineVertexInputStateCreateInfo vk_pipeline_vertex_input_state_create_info;
+  VkPipelineRasterizationStateCreateInfo vk_pipeline_rasterization_state_create_info;
+  VkPipelineRasterizationProvokingVertexStateCreateInfoEXT
+      vk_pipeline_rasterization_provoking_vertex_state_info;
+  VkPipelineDynamicStateCreateInfo vk_pipeline_dynamic_state_create_info;
+  VkPipelineViewportStateCreateInfo vk_pipeline_viewport_state_create_info;
+  VkPipelineDepthStencilStateCreateInfo vk_pipeline_depth_stencil_state_create_info;
+  VkPipelineMultisampleStateCreateInfo vk_pipeline_multisample_state_create_info;
+  Vector<VkPipelineColorBlendAttachmentState> vk_pipeline_color_blend_attachment_states;
+  VkPipelineColorBlendStateCreateInfo vk_pipeline_color_blend_state_create_info;
+
+  /* Initialize VkGraphicsPipelineCreateInfo */
+  VkGraphicsPipelineCreateInfo vk_graphics_pipeline_create_info;
+  vk_graphics_pipeline_create_info = {};
+  vk_graphics_pipeline_create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+  vk_graphics_pipeline_create_info.pNext = &vk_pipeline_rendering_create_info;
+  vk_graphics_pipeline_create_info.stageCount = 0;
+  vk_graphics_pipeline_create_info.pStages = vk_pipeline_shader_stage_create_info;
+  vk_graphics_pipeline_create_info.pInputAssemblyState =
+      &vk_pipeline_input_assembly_state_create_info;
+  vk_graphics_pipeline_create_info.pVertexInputState = &vk_pipeline_vertex_input_state_create_info;
+  vk_graphics_pipeline_create_info.pRasterizationState =
+      &vk_pipeline_rasterization_state_create_info;
+  vk_graphics_pipeline_create_info.pDynamicState = &vk_pipeline_dynamic_state_create_info;
+  vk_graphics_pipeline_create_info.pViewportState = &vk_pipeline_viewport_state_create_info;
+  vk_graphics_pipeline_create_info.pMultisampleState = &vk_pipeline_multisample_state_create_info;
+  vk_graphics_pipeline_create_info.pColorBlendState = &vk_pipeline_color_blend_state_create_info;
+  vk_graphics_pipeline_create_info.layout = graphics_info.vk_pipeline_layout;
+  vk_graphics_pipeline_create_info.basePipelineHandle = vk_pipeline_base;
+
+  /* Specialization constants */
+  const bool do_specialization_constants = !graphics_info.specialization_constants.is_empty();
+  VkSpecializationInfo vk_specialization_info;
+  Array<VkSpecializationMapEntry> vk_specialization_map_entries(
+      graphics_info.specialization_constants.size());
+  if (do_specialization_constants) {
+    for (int index : IndexRange(3)) {
+      vk_pipeline_shader_stage_create_info[index].pSpecializationInfo = &vk_specialization_info;
+    }
+    for (uint32_t index : IndexRange(graphics_info.specialization_constants.size())) {
+      vk_specialization_map_entries[index] = {
+          index, uint32_t(index * sizeof(uint32_t)), sizeof(uint32_t)};
+    }
+    vk_specialization_info = {uint32_t(vk_specialization_map_entries.size()),
+                              vk_specialization_map_entries.data(),
+                              graphics_info.specialization_constants.size() * sizeof(uint32_t),
+                              graphics_info.specialization_constants.data()};
+  }
+
+  /* Shader stages */
+  vk_graphics_pipeline_create_info.stageCount =
+      graphics_info.pre_rasterization.vk_geometry_module == VK_NULL_HANDLE ? 2 : 3;
+  vk_pipeline_shader_stage_create_info[0].module =
+      graphics_info.pre_rasterization.vk_vertex_module;
+  vk_pipeline_shader_stage_create_info[1].module =
+      graphics_info.fragment_shader.vk_fragment_module;
+  vk_pipeline_shader_stage_create_info[2].module =
+      graphics_info.pre_rasterization.vk_geometry_module;
+
   VKBackend &backend = VKBackend::get();
   VKDevice &device = backend.device;
+  const VKExtensions &extensions = device.extensions_get();
+
+  Vector<VkDynamicState, 3> vk_dynamic_states;
+  build_dynamic_state(graphics_info, vk_pipeline_dynamic_state_create_info, vk_dynamic_states);
+  build_input_assembly_state(graphics_info, vk_pipeline_input_assembly_state_create_info);
+  build_vertex_input_state(graphics_info, vk_pipeline_vertex_input_state_create_info);
+  build_multisample_state(vk_pipeline_multisample_state_create_info);
+  build_viewport_state(graphics_info, vk_pipeline_viewport_state_create_info);
+  build_rasterization_state(graphics_info,
+                            vk_pipeline_rasterization_state_create_info,
+                            vk_pipeline_rasterization_provoking_vertex_state_info);
+  build_color_blend_attachment_states(graphics_info, vk_pipeline_color_blend_attachment_states);
+  build_color_blend_state(graphics_info,
+                          extensions,
+                          vk_pipeline_color_blend_attachment_states.as_span(),
+                          vk_pipeline_color_blend_state_create_info);
+  build_depth_stencil_state(graphics_info,
+                            vk_graphics_pipeline_create_info,
+                            vk_pipeline_depth_stencil_state_create_info);
+  build_dynamic_rendering(graphics_info, vk_pipeline_rendering_create_info);
+
+  /* Build pipeline. */
   VkPipeline pipeline = VK_NULL_HANDLE;
+  double start_time = BLI_time_now_seconds();
   vkCreateGraphicsPipelines(device.vk_handle(),
-                            is_static_shader ? vk_pipeline_cache_static_ :
-                                               vk_pipeline_cache_non_static_,
+                            vk_pipeline_cache,
                             1,
-                            &vk_graphics_pipeline_create_info_,
+                            &vk_graphics_pipeline_create_info,
                             nullptr,
                             &pipeline);
+  double end_time = BLI_time_now_seconds();
   debug::object_label(pipeline, name);
-  graphic_pipelines_.add(graphics_info, pipeline);
-
-  /* Reset values to initial value. */
-  specialization_info_reset();
-  vk_graphics_pipeline_create_info_.flags = 0;
-  vk_graphics_pipeline_create_info_.stageCount = 0;
-  vk_graphics_pipeline_create_info_.layout = VK_NULL_HANDLE;
-  vk_graphics_pipeline_create_info_.basePipelineHandle = VK_NULL_HANDLE;
-  for (VkPipelineShaderStageCreateInfo &info :
-       MutableSpan<VkPipelineShaderStageCreateInfo>(vk_pipeline_shader_stage_create_info_, 3))
-  {
-    info.module = VK_NULL_HANDLE;
-    info.pSpecializationInfo = nullptr;
-  }
-  vk_pipeline_input_assembly_state_create_info_.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-  vk_pipeline_input_assembly_state_create_info_.primitiveRestartEnable = VK_TRUE;
-  vk_pipeline_vertex_input_state_create_info_.pVertexAttributeDescriptions = nullptr;
-  vk_pipeline_vertex_input_state_create_info_.vertexAttributeDescriptionCount = 0;
-  vk_pipeline_vertex_input_state_create_info_.pVertexBindingDescriptions = nullptr;
-  vk_pipeline_vertex_input_state_create_info_.vertexBindingDescriptionCount = 0;
-  vk_pipeline_rasterization_state_create_info_.frontFace = VK_FRONT_FACE_CLOCKWISE;
-  vk_pipeline_rasterization_state_create_info_.cullMode = VK_CULL_MODE_NONE;
-  vk_pipeline_rasterization_state_create_info_.depthBiasEnable = VK_FALSE;
-  vk_pipeline_rasterization_state_create_info_.depthBiasSlopeFactor = 0.0f;
-  vk_pipeline_rasterization_state_create_info_.depthBiasConstantFactor = 0.0f;
-  vk_pipeline_rasterization_state_create_info_.depthBiasClamp = 0.0f;
-  vk_pipeline_rasterization_state_create_info_.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-  vk_pipeline_rasterization_provoking_vertex_state_info_.provokingVertexMode =
-      VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT;
-  vk_pipeline_viewport_state_create_info_.pScissors = nullptr;
-  vk_pipeline_viewport_state_create_info_.scissorCount = 0;
-  vk_pipeline_viewport_state_create_info_.pViewports = nullptr;
-  vk_pipeline_viewport_state_create_info_.viewportCount = 0;
-  vk_pipeline_color_blend_state_create_info_.attachmentCount = 0;
-  vk_pipeline_color_blend_state_create_info_.logicOpEnable = VK_FALSE;
-  vk_pipeline_color_blend_state_create_info_.pAttachments = nullptr;
-  vk_pipeline_rendering_create_info_.colorAttachmentCount = 0;
-  vk_pipeline_rendering_create_info_.depthAttachmentFormat = VK_FORMAT_UNDEFINED;
-  vk_pipeline_rendering_create_info_.pColorAttachmentFormats = nullptr;
-  vk_pipeline_rendering_create_info_.stencilAttachmentFormat = VK_FORMAT_UNDEFINED;
-  vk_pipeline_depth_stencil_state_create_info_.depthTestEnable = VK_FALSE;
-  vk_pipeline_depth_stencil_state_create_info_.depthWriteEnable = VK_FALSE;
-  vk_pipeline_depth_stencil_state_create_info_.depthCompareOp = VK_COMPARE_OP_NEVER;
-  vk_pipeline_depth_stencil_state_create_info_.stencilTestEnable = VK_FALSE;
-  vk_pipeline_depth_stencil_state_create_info_.front = {};
-  vk_pipeline_depth_stencil_state_create_info_.back = {};
-  vk_graphics_pipeline_create_info_.pDepthStencilState = nullptr;
-
+  CLOG_DEBUG(&LOG,
+             "Compiled graphics pipeline %s in %fms ",
+             name.c_str(),
+             (end_time - start_time) * 1000.0);
   return pipeline;
 }
 
+/* \} */
+
 void VKPipelinePool::discard(VKDiscardPool &discard_pool, VkPipelineLayout vk_pipeline_layout)
 {
-  std::scoped_lock lock(mutex_);
-  compute_pipelines_.remove_if([&](auto item) {
-    if (item.key.vk_pipeline_layout == vk_pipeline_layout) {
-      discard_pool.discard_pipeline(item.value);
-      return true;
-    }
-    return false;
-  });
-  graphic_pipelines_.remove_if([&](auto item) {
-    if (item.key.vk_pipeline_layout == vk_pipeline_layout) {
-      discard_pool.discard_pipeline(item.value);
-      return true;
-    }
-    return false;
-  });
+  graphics_.discard(discard_pool, vk_pipeline_layout);
+  compute_.discard(discard_pool, vk_pipeline_layout);
 }
 
 void VKPipelinePool::free_data()
 {
-  std::scoped_lock lock(mutex_);
   VKDevice &device = VKBackend::get().device;
-  for (VkPipeline &vk_pipeline : graphic_pipelines_.values()) {
-    vkDestroyPipeline(device.vk_handle(), vk_pipeline, nullptr);
-  }
-  graphic_pipelines_.clear();
-  for (VkPipeline &vk_pipeline : compute_pipelines_.values()) {
-    vkDestroyPipeline(device.vk_handle(), vk_pipeline, nullptr);
-  }
-  compute_pipelines_.clear();
+
+  graphics_.free_data(device.vk_handle());
+  compute_.free_data(device.vk_handle());
 
   vkDestroyPipelineCache(device.vk_handle(), vk_pipeline_cache_static_, nullptr);
   vkDestroyPipelineCache(device.vk_handle(), vk_pipeline_cache_non_static_, nullptr);

@@ -213,7 +213,7 @@ static void initialize_input_stack_value(const DInputSocket input, GPUNodeStack 
       break;
     }
     case SOCK_RGBA: {
-      const float4 value = float4(input->default_value_typed<bNodeSocketValueRGBA>()->value);
+      const Color value = Color(input->default_value_typed<bNodeSocketValueRGBA>()->value);
       copy_v4_v4(stack.vec, value);
       break;
     }
@@ -661,6 +661,8 @@ std::string ShaderOperation::generate_code_for_outputs(ShaderCreateInfo &shader_
   store_int2_function << store_int2_function_header << store_function_start;
   store_bool_function << store_bool_function_header << store_function_start;
   store_menu_function << store_menu_function_header << store_function_start;
+
+  shader_create_info.builtins(BuiltinBits::GLOBAL_INVOCATION_ID);
 
   int output_index = 0;
   for (StringRefNull output_identifier : output_sockets_to_output_identifiers_map_.values()) {
