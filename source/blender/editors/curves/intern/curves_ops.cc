@@ -1907,7 +1907,7 @@ void operatormacros_curves()
   RNA_boolean_set(otmacro->ptr, "mirror", false);
 
   ot = WM_operatortype_append_macro("CURVES_OT_extrude_move",
-                                    "Extrude Curve and Move",
+                                    "Extrude Curve",
                                     "Extrude curve and move result",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "CURVES_OT_extrude");
