@@ -1243,6 +1243,7 @@ if(WITH_BLENDER)
       node_editgroup
       node_ellipsemask
       node_emission
+      node_enable_output
       node_environment
       node_erode
       node_fileoutput
