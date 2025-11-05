@@ -437,15 +437,17 @@ static void add_attribute_search_or_value_buttons(
     name_row->label(IFACE_(socket_name), ICON_NONE);
     prop_row = &split->row(true);
     add_attribute_search_button(ctx, prop_row, rna_path_attribute_name, socket);
+    ctx.draw_attribute_toggle_fn(*prop_row, ICON_SPREADSHEET, socket); /*BFA - move toggle button besides property */
     layout->label("", ICON_BLANK1);
   }
   else {
     const char *name = IFACE_(socket_name.c_str());
     prop_row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
-    layout->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
+    ctx.draw_attribute_toggle_fn(*prop_row, ICON_SPREADSHEET, socket); /*BFA - move toggle button besides property */
+    prop_row->decorator(ctx.properties_ptr, rna_path.c_str(), -1); /* BFA - draw inside prop_row */
   }
-
-  ctx.draw_attribute_toggle_fn(*prop_row, ICON_SPREADSHEET, socket);
+  /*BFA - disable this & move button besides property */
+  /*ctx.draw_attribute_toggle_fn(*prop_row, ICON_SPREADSHEET, socket);*/ 
 }
 
 static NodesModifierPanel *find_panel_by_id(NodesModifierData &nmd, const int id)
