@@ -590,8 +590,42 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
         switch (type) {
           case SOCK_FLOAT:
           case SOCK_INT: {
+            row->use_property_decorate_set(false);
             row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
             row->label("", ICON_BLANK1); /* BFA - added blank label so int sliders are aligned correctly */
+            row->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
+            break;
+          }
+          case SOCK_VECTOR: {
+            /* Special handling for transform sockets */
+            if (identifier == "translation" || identifier == "scale" || identifier == "rotation") {
+              /* Two-row layout for transform properties - use property split for proper XYZ layout */
+              row->use_property_decorate_set(false);
+              
+              /* First row: Just the label */
+              uiLayout *name_row = &row->row(true);
+              name_row->alignment_set(ui::LayoutAlign::Left); /* BFA - align left */
+              name_row->label(name, ICON_NONE);
+              
+              /* Second row: Use property split for proper vector component layout with decorator */
+              uiLayout *channels_row = &row->row(true);
+              channels_row->use_property_split_set(true); /* Enable property split for XYZ labels */
+              channels_row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, "", ICON_NONE);
+              /* Ensure decorators are shown for animation */
+              channels_row->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
+              break;
+            }
+            /* Fall through for regular vector properties */
+            ATTR_FALLTHROUGH;
+          }
+          case SOCK_RGBA:
+          case SOCK_ROTATION: {
+            /* Use property split for proper component layout and alignment */
+            row->use_property_decorate_set(false);
+            row->use_property_split_set(true); /* Enable property split for component labels */
+            row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+            /* Add decorator manually even with property split to ensure animation indicators */
+            row->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
             break;
           }
           default: {
