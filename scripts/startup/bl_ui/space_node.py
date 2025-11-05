@@ -429,6 +429,7 @@ class NODE_MT_editor_menus(Menu):
         layout.menu("NODE_MT_view")
         layout.menu("NODE_MT_select")
         layout.menu("NODE_MT_add")
+        layout.menu("NODE_MT_swap") # BFA - Move "Swap" menu to header
         layout.menu("NODE_MT_node")
 
 
@@ -710,7 +711,7 @@ class NODE_MT_node(Menu):
         layout.menu("NODE_MT_node_links")
 
         layout.separator()
-        layout.menu("NODE_MT_swap")
+        # layout.menu("NODE_MT_swap") # BFA - Move to header
 		## BFA - set to sub-menu
         layout.menu("NODE_MT_node_group_separate")
 
