@@ -513,27 +513,35 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
 
   switch (type) {
     case SOCK_OBJECT: {
+      row->use_property_split_set(false); /*BFA - made this wide*/
       row->prop_search(
           ctx.properties_ptr, rna_path, ctx.bmain_ptr, "objects", name, ICON_OBJECT_DATA);
+      row->label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_COLLECTION: {
+      row->use_property_split_set(false); /*BFA - made this wide*/
       row->prop_search(ctx.properties_ptr,
                        rna_path,
                        ctx.bmain_ptr,
                        "collections",
                        name,
                        ICON_OUTLINER_COLLECTION);
+      row->label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_MATERIAL: {
+      row->use_property_split_set(false); /*BFA - made this wide*/
       row->prop_search(
           ctx.properties_ptr, rna_path, ctx.bmain_ptr, "materials", name, ICON_MATERIAL);
+      row->label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_TEXTURE: {
+      row->use_property_split_set(false); /*BFA - made this wide*/
       row->prop_search(
           ctx.properties_ptr, rna_path, ctx.bmain_ptr, "textures", name, ICON_TEXTURE);
+      row->label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_IMAGE: {
@@ -555,9 +563,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
          * pointers in strings currently. */
         row->prop_search(ctx.properties_ptr, rna_path, ctx.bmain_ptr, "images", name, ICON_IMAGE);
       }
+      row->label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_MENU: {
+      row->use_property_split_set(false); /*BFA - made this wide*/
       if (socket.flag & NODE_INTERFACE_SOCKET_MENU_EXPANDED) {
         /* Use a single space when the name is empty to work around a bug with expanded enums. Also
          * see #ui_item_enum_expand_exec. */
@@ -570,6 +580,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       else {
         row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
       }
+      row->label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_BOOLEAN: {
@@ -597,34 +608,40 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
             break;
           }
           case SOCK_VECTOR: {
-            /* Special handling for transform sockets */
+            /* BFA - Special handling for transform sockets */
             if (identifier == "translation" || identifier == "scale" || identifier == "rotation") {
-              /* Two-row layout for transform properties - use property split for proper XYZ layout */
+              /* BFA - Two-row layout for transform properties - use property split for proper XYZ layout */
               row->use_property_decorate_set(false);
-              
-              /* First row: Just the label */
+
+              /* BFA - First row: Just the label */
               uiLayout *name_row = &row->row(true);
               name_row->alignment_set(ui::LayoutAlign::Left); /* BFA - align left */
               name_row->label(name, ICON_NONE);
-              
-              /* Second row: Use property split for proper vector component layout with decorator */
+
+              /* BFA - Second row: Use property split for proper vector component layout with decorator */
               uiLayout *channels_row = &row->row(true);
               channels_row->use_property_split_set(true); /* Enable property split for XYZ labels */
               channels_row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, "", ICON_NONE);
-              /* Ensure decorators are shown for animation */
+              /* BFA - Ensure decorators are shown for animation */
               channels_row->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
-              break;
             }
-            /* Fall through for regular vector properties */
-            ATTR_FALLTHROUGH;
+            else {
+              /* BFA - For normal vectors, use property split to show XYZ labels */
+              row->use_property_decorate_set(false);
+              row->use_property_split_set(true); /* Enable property split for XYZ labels */
+              row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+              /* BFA - Ensure decorators are shown for animation */
+              row->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
+            }
+            break;
           }
           case SOCK_RGBA:
           case SOCK_ROTATION: {
-            /* Use property split for proper component layout and alignment */
+            /* BFA - Use property split for proper component layout and alignment */
             row->use_property_decorate_set(false);
             row->use_property_split_set(true); /* Enable property split for component labels */
             row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
-            /* Add decorator manually even with property split to ensure animation indicators */
+            /* BFA - Add decorator manually even with property split to ensure animation indicators */
             row->decorator(ctx.properties_ptr, rna_path.c_str(), -1);
             break;
           }
