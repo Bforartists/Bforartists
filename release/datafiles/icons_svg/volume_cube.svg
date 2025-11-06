@@ -8,7 +8,7 @@
    height="1600"
    viewBox="0 0 1600 1600"
    sodipodi:docname="volume_cube.svg"
-   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    inkscape:export-filename="VOLUME_CUBE.png"
    inkscape:export-xdpi="3072"
    inkscape:export-ydpi="3072"
@@ -41,13 +41,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1993"
+     inkscape:window-width="1920"
      inkscape:window-height="1009"
      id="namedview4"
      showgrid="true"
-     inkscape:zoom="0.65186406"
-     inkscape:cx="319.85196"
-     inkscape:cy="76.703108"
+     inkscape:zoom="0.32593203"
+     inkscape:cx="1058.5029"
+     inkscape:cy="871.34732"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -59,7 +59,10 @@
        type="xygrid"
        id="grid10683"
        originx="0"
-       originy="0" />
+       originy="0"
+       spacingy="100"
+       spacingx="100"
+       units="px" />
   </sodipodi:namedview>
   <g
      id="MESH_CUBE"

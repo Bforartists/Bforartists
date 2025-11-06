@@ -1251,11 +1251,13 @@ if(WITH_BLENDER)
       node_fresnel
       node_gamma
       node_geometry
+      node_get_named_grid
       node_glare
       node_glasshader
       node_glossyshader
       node_gradient
       node_groupinsert
+      node_grid_info
       node_hairinfo
       node_holdoutshader
       node_huesaturation
@@ -1338,6 +1340,7 @@ if(WITH_BLENDER)
       node_volumeabsorption
       node_volumeprincipled
       node_volumescatter
+      node_voxel_index
       node_wavelength
       node_waves
       node_white_noise
