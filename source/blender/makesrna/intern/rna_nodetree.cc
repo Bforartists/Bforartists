@@ -10253,7 +10253,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementInput", def_geo_foreach_geometry_element_input, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementOutput", def_geo_foreach_geometry_element_output, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeGeometryToInstance", nullptr, ICON_GEOMETRY_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NODE_GET_NAMED_GRID);
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
@@ -10262,7 +10262,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeGridInfo", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeGridInfo", nullptr, ICON_NODE_GRID_INFO);
   define(brna, "GeometryNode", "GeometryNodeGridLaplacian", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridPrune", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NONE);
@@ -10311,7 +10311,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeInputSplineCyclic", nullptr, ICON_IS_SPLINE_CYCLIC);
   define(brna, "GeometryNode", "GeometryNodeInputSplineResolution", nullptr, ICON_SPLINE_RESOLUTION);
   define(brna, "GeometryNode", "GeometryNodeInputTangent", nullptr, ICON_CURVE_TANGENT);
-  define(brna, "GeometryNode", "GeometryNodeInputVoxelIndex", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeInputVoxelIndex", nullptr, ICON_NODE_VOXEL_INDEX);
   define(brna, "GeometryNode", "GeometryNodeInstanceOnPoints", nullptr, ICON_POINT_INSTANCE);
   define(brna, "GeometryNode", "GeometryNodeInstancesToPoints", nullptr, ICON_INSTANCES_TO_POINTS);
   define(brna, "GeometryNode", "GeometryNodeInstanceTransform", nullptr, ICON_INSTANCE_TRANSFORM_GET);

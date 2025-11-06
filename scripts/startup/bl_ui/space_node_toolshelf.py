@@ -2390,12 +2390,134 @@ class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeVolumeCube", pad=5),
-            OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
+            #OperatorEntry("GeometryNodeVolumeCube", pad=5),
+            #OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
         )
 
         self.draw_entries(context, layout, entries)
 
+
+class NODES_PT_toolshelf_gn_add_volume_read(bpy.types.Panel, NodePanel):
+    bl_label = "Read"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeGetNamedGrid", pad=10),
+            OperatorEntry("GeometryNodeGridInfo", pad=21),
+            OperatorEntry("GeometryNodeInputVoxelIndex", pad=15),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_gn_add_volume_sample(bpy.types.Panel, NodePanel):
+    bl_label = "Sample"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            #OperatorEntry("GeometryNodeVolumeCube", pad=5),
+            #OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
+        )
+
+        self.draw_entries(context, layout, entries)
+class NODES_PT_toolshelf_gn_add_volume_write(bpy.types.Panel, NodePanel):
+    bl_label = "Write"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            #OperatorEntry("GeometryNodeVolumeCube", pad=5),
+            #OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
+        )
+
+        self.draw_entries(context, layout, entries)
+class NODES_PT_toolshelf_gn_add_volume_operations(bpy.types.Panel, NodePanel):
+    bl_label = "Operations"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
+        )
+
+        self.draw_entries(context, layout, entries)
+class NODES_PT_toolshelf_gn_add_volume_primitives(bpy.types.Panel, NodePanel):
+    bl_label = "Primitives"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeVolumeCube", pad=5),
+        )
+
+        self.draw_entries(context, layout, entries)
 
 class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
     bl_label = "Simulation"
@@ -2636,7 +2758,6 @@ class NODES_PT_toolshelf_gn_add_utilities_bundle(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-
 class NODES_PT_toolshelf_gn_add_utilities_closure(bpy.types.Panel, NodePanel):
     bl_label = "Closure"
     bl_space_type = 'NODE_EDITOR'
@@ -2663,7 +2784,6 @@ class NODES_PT_toolshelf_gn_add_utilities_closure(bpy.types.Panel, NodePanel):
         )
 
         self.draw_entries(context, layout, entries)
-
 
 
 class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
@@ -2932,7 +3052,14 @@ classes = (
     NODES_PT_toolshelf_gn_add_mesh_uv,
 
     NODES_PT_toolshelf_gn_add_point,
+
     NODES_PT_toolshelf_gn_add_volume,
+    NODES_PT_toolshelf_gn_add_volume_read,
+    NODES_PT_toolshelf_gn_add_volume_sample,
+    NODES_PT_toolshelf_gn_add_volume_write,
+    NODES_PT_toolshelf_gn_add_volume_operations,
+    NODES_PT_toolshelf_gn_add_volume_primitives,
+
     NODES_PT_toolshelf_gn_add_simulation,
     NODES_PT_toolshelf_gn_add_material,
     NODES_PT_toolshelf_gn_add_texture,
