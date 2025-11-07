@@ -8494,14 +8494,14 @@ keyconfig_data = \
     ("paint.weight_sample", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("paint.weight_sample_group", {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True}, None),
     ("paint.weight_gradient",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True},
+     {"type": 'A', "value": 'PRESS', "shift": True},
      {"properties":
       [("type", 'LINEAR'),
        ],
       },
      ),
     ("paint.weight_gradient",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"type": 'A', "value": 'PRESS', "shift": True, "alt": True},
      {"properties":
       [("type", 'RADIAL'),
        ],
