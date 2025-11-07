@@ -610,6 +610,7 @@ static const char *wm_area_name(const ScrArea *area)
     SPACE_NAME(SPACE_CLIP);
     SPACE_NAME(SPACE_TOPBAR);
     SPACE_NAME(SPACE_STATUSBAR);
+    SPACE_NAME(SPACE_TOOLBAR); /*BFA - Toolbar Editor*/
     SPACE_NAME(SPACE_SPREADSHEET);
   }
 #undef SPACE_NAME
