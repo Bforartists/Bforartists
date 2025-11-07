@@ -2360,10 +2360,12 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeDistributePointsInVolume", pad=1),
+            OperatorEntry("GeometryNodeDistributePointsInGrid", pad=5),
             OperatorEntry("GeometryNodeDistributePointsOnFaces", pad=3),
             Separator,
             OperatorEntry("GeometryNodePoints", pad=37),
             OperatorEntry("GeometryNodePointsToCurves", pad=19),
+            OperatorEntry("GeometryNodePointsToSDFGrid", pad=18),
             OperatorEntry("GeometryNodePointsToVertices", pad=17),
             OperatorEntry("GeometryNodePointsToVolume", pad=18),
             OperatorEntry("GeometryNodeSetPointRadius", pad=19),

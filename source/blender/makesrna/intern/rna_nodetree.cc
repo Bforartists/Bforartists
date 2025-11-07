@@ -10229,7 +10229,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeCurveToPoints", nullptr, ICON_POINTCLOUD_DATA);
   define(brna, "GeometryNode", "GeometryNodeDeformCurvesOnSurface", nullptr, ICON_DEFORM_CURVES);
   define(brna, "GeometryNode", "GeometryNodeDeleteGeometry", nullptr, ICON_DELETE);
-  define(brna, "GeometryNode", "GeometryNodeDistributePointsInGrid", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeDistributePointsInGrid", nullptr, ICON_NODE_DISTRIBUTEPOINTSINGRID);
   define(brna, "GeometryNode", "GeometryNodeDistributePointsInVolume", nullptr, ICON_VOLUME_DISTRIBUTE);
   define(brna, "GeometryNode", "GeometryNodeDistributePointsOnFaces", def_geo_distribute_points_on_faces, ICON_POINT_DISTRIBUTE);
   define(brna, "GeometryNode", "GeometryNodeDualMesh", nullptr, ICON_DUAL_MESH);
@@ -10346,7 +10346,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodePoints", nullptr, ICON_DECORATE);
   define(brna, "GeometryNode", "GeometryNodePointsOfCurve", nullptr, ICON_POINT_OF_CURVE);
   define(brna, "GeometryNode", "GeometryNodePointsToCurves", nullptr, ICON_POINTS_TO_CURVES);
-  define(brna, "GeometryNode", "GeometryNodePointsToSDFGrid", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodePointsToSDFGrid", nullptr, ICON_NODE_POINTSTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodePointsToVertices", nullptr, ICON_POINTS_TO_VERTICES);
   define(brna, "GeometryNode", "GeometryNodePointsToVolume", nullptr, ICON_POINT_TO_VOLUME);
   define(brna, "GeometryNode", "GeometryNodeProximity", nullptr, ICON_GEOMETRY_PROXIMITY);
