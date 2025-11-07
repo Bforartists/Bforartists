@@ -1239,6 +1239,7 @@ if(WITH_BLENDER)
       node_despeckle
       node_diffuseshader
       node_direcitonalblur
+      node_distributepointsingrid
       node_doubleedgemask
       node_editgroup
       node_ellipsemask
@@ -1292,6 +1293,7 @@ if(WITH_BLENDER)
       node_pixelated
       node_planetrackdeform
       node_pointcloud
+      node_pointstosdfgrid
       node_principled
       node_radial_array
       node_range
