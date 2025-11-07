@@ -1281,6 +1281,8 @@ if(WITH_BLENDER)
       node_mapping
       node_material
       node_math
+      node_meshtodensitygrid
+      node_meshtosdfgrid
       node_mix
       node_mixrgb
       node_mixshader
