@@ -10335,9 +10335,9 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMeshIcoSphere", nullptr, ICON_MESH_ICOSPHERE);
   define(brna, "GeometryNode", "GeometryNodeMeshLine", nullptr, ICON_MESH_LINE);
   define(brna, "GeometryNode", "GeometryNodeMeshToCurve", nullptr, ICON_OUTLINER_OB_CURVE);
-  define(brna, "GeometryNode", "GeometryNodeMeshToDensityGrid", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeMeshToDensityGrid", nullptr, ICON_NODE_MESHTODENSITYGRID);
   define(brna, "GeometryNode", "GeometryNodeMeshToPoints", nullptr, ICON_MESH_TO_POINTS);
-  define(brna, "GeometryNode", "GeometryNodeMeshToSDFGrid", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeMeshToSDFGrid", nullptr, ICON_NODE_MESHTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodeMeshToVolume", nullptr, ICON_MESH_TO_VOLUME);
   define(brna, "GeometryNode", "GeometryNodeMeshUVSphere", nullptr, ICON_MESH_UVSPHERE);
   define(brna, "GeometryNode", "GeometryNodeObjectInfo", nullptr, ICON_NODE_OBJECTINFO);
