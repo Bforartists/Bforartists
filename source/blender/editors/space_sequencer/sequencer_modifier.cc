@@ -31,7 +31,6 @@
 #include "UI_interface_c.hh"
 #include "UI_resources.hh" /* BFA - for icons */
 
-/* Own include. */
 #include "sequencer_intern.hh"
 
 namespace blender::ed::vse {
