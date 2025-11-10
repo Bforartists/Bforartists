@@ -2395,17 +2395,20 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_random(View3DPanel, Panel):
         row = col.row(align=True)
         row.prop(gp_settings, "pen_jitter", slider=True)
         row.prop(gp_settings, "use_jitter_pressure", text="", icon='STYLUS_PRESSURE')
-        if self.is_popover is False:
-            row.prop(
-                paint,
-                "show_jitter_curve",
-                text="",
-                icon='DOWNARROW_HLT' if paint.show_jitter_curve else 'RIGHTARROW',
-                emboss=False,
-            )
-            if paint.show_jitter_curve:
-                col.active = gp_settings.use_jitter_pressure
-                col.template_curve_mapping(gp_settings, "curve_jitter", brush=True, show_presets=True)
+
+        # BFA - Don't exclude drawing from popover
+        row.prop(
+            paint,
+            "show_jitter_curve",
+            text="",
+            icon='DOWNARROW_HLT' if paint.show_jitter_curve else 'RIGHTARROW',
+            emboss=False,
+        )
+
+        # BFA - Don't exclude drawing from popover
+        if paint.show_jitter_curve:
+            col.active = gp_settings.use_jitter_pressure
+            col.template_curve_mapping(gp_settings, "curve_jitter", brush=True, show_presets=True)
 
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_stabilizer(Panel, View3DPanel):
