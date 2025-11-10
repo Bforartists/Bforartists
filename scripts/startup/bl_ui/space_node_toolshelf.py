@@ -13,6 +13,7 @@ from .node_add_menu import draw_node_groups, add_empty_group
 
 
 # BFA - Custom panels for the sidebar toolshelf
+# BFA - to define padding, it helps to count 2 points per character.
 
 # Null object used to abstractly represent a separator
 Separator = object()
@@ -2477,8 +2478,9 @@ class NODES_PT_toolshelf_gn_add_volume_write(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            #OperatorEntry("GeometryNodeVolumeCube", pad=5),
-            #OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
+            OperatorEntry("GeometryNodeStoreNamedGrid", pad=7),
+            OperatorEntry("GeometryNodeSetGridBackground", pad=0),
+            OperatorEntry("GeometryNodeSetGridTransform", pad=5),
         )
 
         self.draw_entries(context, layout, entries)
