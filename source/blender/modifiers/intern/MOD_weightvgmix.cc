@@ -450,14 +450,25 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout->use_property_split_set(true);
 
-  modifier_vgroup_ui(
-      layout, ptr, &ob_ptr, "vertex_group_a", "invert_vertex_group_a", std::nullopt);
-  modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group_b", "invert_vertex_group_b", IFACE_("B"));
+  /* BFA - Draw properties in an indented sublayout */
+  col = &layout->column(true);
+  col->label(IFACE_("Vertex Group"), ICON_NONE);
+  row = &col->row(false);
+  row->separator();
+  col = &row->column(true);
+  modifier_vgroup_ui(col, ptr, &ob_ptr, "vertex_group_a", "invert_vertex_group_a", IFACE_("A"));
+  modifier_vgroup_ui(col, ptr, &ob_ptr, "vertex_group_b", "invert_vertex_group_b", IFACE_("B"));
 
-  layout->separator();
+  /* layout->separator(); */ /* BFA - Disable separator*/
 
-  layout->prop(ptr, "default_weight_a", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "default_weight_b", UI_ITEM_NONE, IFACE_("B"), ICON_NONE);
+  /* BFA - Draw properties in an indented sublayout */
+  col = &layout->column(true);
+  col->label(IFACE_("Default Weight"), ICON_NONE);
+  row = &col->row(false);
+  row->separator();
+  col = &row->column(true);
+  col->prop(ptr, "default_weight_a", UI_ITEM_NONE, IFACE_("A"), ICON_NONE);
+  col->prop(ptr, "default_weight_b", UI_ITEM_NONE, IFACE_("B"), ICON_NONE);
 
   layout->separator();
 
