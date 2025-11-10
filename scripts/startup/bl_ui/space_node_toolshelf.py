@@ -2337,6 +2337,7 @@ class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeUVPackIslands", pad=8),
+            OperatorEntry("GeometryNodeUVTangent", pad=14),
             OperatorEntry("GeometryNodeUVUnwrap", pad=16),
         )
 

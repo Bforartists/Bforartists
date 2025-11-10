@@ -10426,7 +10426,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeTriangulate", nullptr, ICON_MOD_TRIANGULATE);
   define(brna, "GeometryNode", "GeometryNodeTrimCurve", nullptr, ICON_CURVE_TRIM);
   define(brna, "GeometryNode", "GeometryNodeUVPackIslands", nullptr, ICON_PACKISLAND);
-  define(brna, "GeometryNode", "GeometryNodeUVTangent", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeUVTangent", nullptr, ICON_NODE_UVTANGENT);
   define(brna, "GeometryNode", "GeometryNodeUVUnwrap", nullptr, ICON_UNWRAP_ABF);
   define(brna, "GeometryNode", "GeometryNodeVertexOfCorner", nullptr, ICON_VERTEX_OF_CORNER);
   define(brna, "GeometryNode", "GeometryNodeViewer", rna_def_geo_viewer, ICON_NODE_VIEWER);
