@@ -10397,8 +10397,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_COLOR);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_DEPTH);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_FALLOFFSTROKE);
-  define(brna, "GeometryNode", "GeometryNodeSetGridBackground", nullptr, ICON_NONE);
-  define(brna,"GeometryNode", "GeometryNodeSetGridTransform", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeSetGridBackground", nullptr, ICON_NODE_SETGRIDBACKGROUND);
+  define(brna,"GeometryNode", "GeometryNodeSetGridTransform", nullptr, ICON_NODE_SETGRIDTRANSFORM);
   define(brna, "GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSortElements", nullptr, ICON_SORTSIZE);
@@ -10407,7 +10407,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSplitEdges", nullptr, ICON_SPLITEDGE);
   define(brna, "GeometryNode", "GeometryNodeSplitToInstances", nullptr, ICON_SPLIT_TO_INSTANCES);
   define(brna, "GeometryNode", "GeometryNodeStoreNamedAttribute", nullptr, ICON_ATTRIBUTE_STORE);
-  define(brna, "GeometryNode", "GeometryNodeStoreNamedGrid", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeStoreNamedGrid", nullptr, ICON_NODE_STORENAMEDGRID);
   define(brna, "GeometryNode", "GeometryNodeStringJoin", nullptr, ICON_STRING_JOIN);
   define(brna, "GeometryNode", "GeometryNodeStringToCurves", def_geo_string_to_curves, ICON_STRING_TO_CURVE);
   define(brna, "GeometryNode", "GeometryNodeSubdivideCurve", nullptr, ICON_SUBDIVIDE_EDGES);

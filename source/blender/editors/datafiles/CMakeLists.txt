@@ -1319,11 +1319,14 @@ if(WITH_BLENDER)
       node_separatehsv
       node_separatergb
       node_separatexyz
+      node_setgridbackground
+      node_setgridtransform
       node_side
       node_sky
       node_spill
       node_sss
       node_stabilize2d
+      node_storenamedgrid
       node_tangent
       node_texcoordinate
       node_tonemap
