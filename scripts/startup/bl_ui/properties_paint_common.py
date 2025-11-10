@@ -703,16 +703,19 @@ class StrokePanel(BrushPanel):
             else:
                 row.prop(brush, "jitter_absolute")
             row.prop(brush, "use_pressure_jitter", toggle=True, text="")
-            if self.is_popover is False:
-                row.prop(
-                    settings,
-                    "show_jitter_curve",
-                    icon="DOWNARROW_HLT" if settings.show_jitter_curve else "RIGHTARROW",
-                    text="",
-                    emboss=False,
-                )
+
+            # BFA - Don't exclude drawing from popover
+            row.prop(
+                settings,
+                "show_jitter_curve",
+                icon="DOWNARROW_HLT" if settings.show_jitter_curve else "RIGHTARROW",
+                text="",
+                emboss=False,
+            )
+
+            # BFA - Don't exclude drawing from popover
             # Pen pressure mapping curve for Jitter.
-            if settings.show_jitter_curve and self.is_popover is False:
+            if settings.show_jitter_curve:
                 subcol = col.column()
                 subcol.active = brush.use_pressure_jitter
                 subcol.template_curve_mapping(brush, "curve_jitter", brush=True, show_presets=True)
