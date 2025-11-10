@@ -1196,6 +1196,7 @@ if(WITH_BLENDER)
       nocurve
       node
       node_add_shader
+      node_advectgrid
       node_alphaconvert
       node_ambient_occlusion
       node_anisotopic
@@ -1258,6 +1259,10 @@ if(WITH_BLENDER)
       node_glossyshader
       node_gradient
       node_groupinsert
+      node_gridcurl
+      node_griddivergence
+      node_gridgradient
+      node_gridlaplacian
       node_grid_info
       node_hairinfo
       node_holdoutshader
@@ -1306,6 +1311,8 @@ if(WITH_BLENDER)
       node_rgb
       node_rgbcurve
       node_rgbtobw
+      node_samplegrid
+      node_samplegridindex
       node_sel
       node_separate_ycbcra
       node_separate_yuva
