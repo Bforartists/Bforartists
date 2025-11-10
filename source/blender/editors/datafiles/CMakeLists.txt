@@ -1336,6 +1336,7 @@ if(WITH_BLENDER)
       node_transparent
       node_ungroup
       node_uvalongstroke
+      node_uvtangent
       node_value
       node_vector
       node_vector_blur
