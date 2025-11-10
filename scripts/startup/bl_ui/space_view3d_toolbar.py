@@ -1694,10 +1694,10 @@ class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
         col.label(text="Preserve")
         row = col.row()
         row.separator()
-        row.prop(pe, "use_preserve_length", text="Preserve Strand Lengths")
-        row = col.row()
-        row.separator()
-        row.prop(pe, "use_preserve_root", text="Preserve Root Positions")
+        # BFA - Use cleaner indentation method
+        subcol = row.column(align=True)
+        subcol.prop(pe, "use_preserve_length", text="Strand Lengths") # BFA - Remove "Preserve" in prop label
+        subcol.prop(pe, "use_preserve_root", text="Root Positions") # BFA - Remove "Preserve" in prop label
 
 
 class VIEW3D_PT_tools_particlemode_options_shapecut(View3DPanel, Panel):
