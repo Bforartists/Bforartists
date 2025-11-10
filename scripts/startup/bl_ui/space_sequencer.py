@@ -111,7 +111,7 @@ class SEQUENCER_HT_header(Header):
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
             row.template_ID(context.workspace, "sequencer_scene", new="scene.new_sequencer_scene")
-            layout.separator_spacer()  #BFA - Align scene to center
+            layout.separator_spacer()  # BFA - Align scene to center
 
         if sequencer_tool_settings and st.view_type == "PREVIEW":
             row = layout.row(align=True)  # BFA
@@ -1362,7 +1362,7 @@ class SEQUENCER_MT_strip_retiming(Menu):
         try:  # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
             # BFA - Get the sequence editor
             ed = context.scene.sequence_editor
-            
+
             # BFA - Check if we have selected retiming keys OR if retiming is active with a strip
             is_retiming = (
                 ed.selected_retiming_keys or
@@ -1554,7 +1554,7 @@ class SEQUENCER_MT_strip(Menu):
             if strip:
                 strip_type = strip.type
                 layout.separator()
-                layout.menu("SEQUENCER_MT_strip_modifiers") # BFA - no icon
+                layout.menu("SEQUENCER_MT_strip_modifiers")  # BFA - no icon
 
                 if strip_type in {
                     "CROSS",
@@ -1820,7 +1820,7 @@ class SEQUENCER_MT_context_menu(Menu):
             total, nonsound = selected_strips_count(context)
 
             layout.separator()
-            layout.menu("SEQUENCER_MT_strip_modifiers") # BFA - no icon
+            layout.menu("SEQUENCER_MT_strip_modifiers")  # BFA - no icon
 
             if total == 2:
                 if nonsound == 2:
@@ -2019,8 +2019,10 @@ class SEQUENCER_MT_modifier_add(Menu):
 
         layout.operator_context = "INVOKE_REGION_WIN"
 
-        if strip.type == "SOUND":
-            self.operator_modifier_add(layout, "SOUND_EQUALIZER")
+        if strip.type == 'SOUND':
+            self.operator_modifier_add(layout, 'SOUND_EQUALIZER')
+            self.operator_modifier_add(layout, 'PITCH')
+
         else:
             self.operator_modifier_add(layout, "BRIGHT_CONTRAST")
             self.operator_modifier_add(layout, "COLOR_BALANCE")
@@ -2097,6 +2099,8 @@ class SEQUENCER_MT_color_tag_picker(SequencerColorTagPicker, Menu):
         row.operator_enum("sequencer.strip_color_tag_set", "color", icon_only=True)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
     bl_label = ""
     bl_options = {"HIDE_HEADER"}
@@ -2166,6 +2170,8 @@ class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
         row.prop(strip, "mute", toggle=True, icon_only=True, emboss=False)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_adjust_crop(SequencerButtonsPanel, Panel):
     bl_label = "Crop"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2366,6 +2372,8 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             row.prop(strip, "factor", slider=True)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_effect_text_layout(SequencerButtonsPanel, Panel):
     bl_label = "Layout"
     bl_parent_id = "SEQUENCER_PT_effect"
@@ -2395,6 +2403,8 @@ class SEQUENCER_PT_effect_text_layout(SequencerButtonsPanel, Panel):
         row.prop(strip, "anchor_y", text="Y")
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
     bl_label = "Style"
     bl_parent_id = "SEQUENCER_PT_effect"
@@ -2477,6 +2487,8 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
             sub.label(icon="DISCLOSURE_TRI_RIGHT")
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_effect_text_outline(SequencerButtonsPanel, Panel):
     bl_label = "Outline"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2504,6 +2516,8 @@ class SEQUENCER_PT_effect_text_outline(SequencerButtonsPanel, Panel):
         col.active = strip.use_outline and (not strip.mute)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_effect_text_shadow(SequencerButtonsPanel, Panel):
     bl_label = "Shadow"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2533,6 +2547,8 @@ class SEQUENCER_PT_effect_text_shadow(SequencerButtonsPanel, Panel):
         col.active = strip.use_shadow and (not strip.mute)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_effect_text_box(SequencerButtonsPanel, Panel):
     bl_label = "Box"
     bl_translation_context = i18n_contexts.id_sequence
@@ -2562,6 +2578,8 @@ class SEQUENCER_PT_effect_text_box(SequencerButtonsPanel, Panel):
         col.active = strip.use_box and (not strip.mute)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
     bl_label = "Source"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2691,6 +2709,8 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 split.label(text="{:.2f}".format(elem.orig_fps), translate=False)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
     bl_label = "Movie Clip"
     bl_options = {"DEFAULT_CLOSED"}
@@ -2732,6 +2752,8 @@ class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
             )
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
     bl_label = "Scene"
     bl_category = "Strip"
@@ -2779,6 +2801,8 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
                 col.prop(scene.render, "film_transparent")
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_scene_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
     bl_category = "Strip"
@@ -2848,6 +2872,8 @@ class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
             )
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
     bl_label = "Time"
     bl_options = {"DEFAULT_CLOSED"}
@@ -3043,6 +3069,8 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
                 )
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
     bl_category = "Strip"
@@ -3122,6 +3150,8 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
                 col.prop(strip, "show_waveform")
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
     bl_label = "Compositing"
     bl_category = "Strip"
@@ -3150,6 +3180,8 @@ class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
         col.prop(strip, "blend_alpha", text="Opacity", slider=True)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_adjust_transform(SequencerButtonsPanel, Panel):
     bl_label = "Transform"
     bl_category = "Strip"
@@ -3195,6 +3227,8 @@ class SEQUENCER_PT_adjust_transform(SequencerButtonsPanel, Panel):
         sub.prop(strip, "use_flip_y", text="Y", toggle=True)
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
     bl_label = "Video"
     bl_options = {"DEFAULT_CLOSED"}
@@ -3250,6 +3284,8 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
         col.prop(strip, "use_reverse_frames")
 
 # BFA - Legacy
+
+
 class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
     bl_label = "Color"
     bl_options = {"DEFAULT_CLOSED"}
@@ -4015,34 +4051,34 @@ classes = (
     SEQUENCER_MT_view_pie,
     SEQUENCER_MT_preview_view_pie,
     SEQUENCER_MT_modifier_add,
-    SEQUENCER_PT_color_tag_picker, # BFA - Legacy
+    SEQUENCER_PT_color_tag_picker,  # BFA - Legacy
     SEQUENCER_PT_active_tool,
     SEQUENCER_MT_change_scene_with_icons,  # BFA
-    SEQUENCER_PT_strip, # BFA - Legacy
+    SEQUENCER_PT_strip,  # BFA - Legacy
     SEQUENCER_PT_gizmo_display,
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,
     SEQUENCER_PT_sequencer_overlay,
     SEQUENCER_PT_sequencer_overlay_strips,
     SEQUENCER_PT_sequencer_overlay_waveforms,
-    SEQUENCER_PT_effect, # BFA - Legacy
-    SEQUENCER_PT_scene, # BFA - Legacy
-    SEQUENCER_PT_scene_sound, # BFA - Legacy
-    SEQUENCER_PT_mask, # BFA - Legacy
-    SEQUENCER_PT_effect_text_style, # BFA - Legacy
-    SEQUENCER_PT_effect_text_outline, # BFA - Legacy
-    SEQUENCER_PT_effect_text_shadow, # BFA - Legacy
-    SEQUENCER_PT_effect_text_box, # BFA - Legacy
-    SEQUENCER_PT_effect_text_layout, # BFA - Legacy
-    SEQUENCER_PT_movie_clip, # BFA - Legacy
-    SEQUENCER_PT_adjust_comp, # BFA - Legacy
-    SEQUENCER_PT_adjust_transform, # BFA - Legacy
-    SEQUENCER_PT_adjust_crop, # BFA - Legacy
-    SEQUENCER_PT_adjust_video, # BFA - Legacy
-    SEQUENCER_PT_adjust_color, # BFA - Legacy
-    SEQUENCER_PT_adjust_sound, # BFA - Legacy
-    SEQUENCER_PT_time, # BFA - Legacy
-    SEQUENCER_PT_source, # BFA - Legacy
+    SEQUENCER_PT_effect,  # BFA - Legacy
+    SEQUENCER_PT_scene,  # BFA - Legacy
+    SEQUENCER_PT_scene_sound,  # BFA - Legacy
+    SEQUENCER_PT_mask,  # BFA - Legacy
+    SEQUENCER_PT_effect_text_style,  # BFA - Legacy
+    SEQUENCER_PT_effect_text_outline,  # BFA - Legacy
+    SEQUENCER_PT_effect_text_shadow,  # BFA - Legacy
+    SEQUENCER_PT_effect_text_box,  # BFA - Legacy
+    SEQUENCER_PT_effect_text_layout,  # BFA - Legacy
+    SEQUENCER_PT_movie_clip,  # BFA - Legacy
+    SEQUENCER_PT_adjust_comp,  # BFA - Legacy
+    SEQUENCER_PT_adjust_transform,  # BFA - Legacy
+    SEQUENCER_PT_adjust_crop,  # BFA - Legacy
+    SEQUENCER_PT_adjust_video,  # BFA - Legacy
+    SEQUENCER_PT_adjust_color,  # BFA - Legacy
+    SEQUENCER_PT_adjust_sound,  # BFA - Legacy
+    SEQUENCER_PT_time,  # BFA - Legacy
+    SEQUENCER_PT_source,  # BFA - Legacy
     SEQUENCER_PT_cache_settings,
     SEQUENCER_PT_cache_view_settings,
     SEQUENCER_PT_proxy_settings,

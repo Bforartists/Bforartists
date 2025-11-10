@@ -283,6 +283,7 @@ set(VULKAN_SRC
   vulkan/vk_fence.hh
   vulkan/vk_framebuffer.hh
   vulkan/vk_ghost_api.hh
+  vulkan/vk_graphics_pipeline.hh
   vulkan/vk_image_view.hh
   vulkan/vk_immediate.hh
   vulkan/vk_index_buffer.hh
@@ -371,8 +372,8 @@ set(METAL_SRC
   metal/mtl_backend.hh
   metal/mtl_batch.hh
   metal/mtl_capabilities.hh
-  metal/mtl_common.hh
   metal/mtl_command_buffer.hh
+  metal/mtl_common.hh
   metal/mtl_context.hh
   metal/mtl_debug.hh
   metal/mtl_framebuffer.hh

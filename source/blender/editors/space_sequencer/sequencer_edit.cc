@@ -34,7 +34,7 @@
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
-#include "BKE_sound.h"
+#include "BKE_sound.hh"
 
 #include "SEQ_add.hh"
 #include "SEQ_animation.hh"
@@ -62,7 +62,6 @@
 #include "RNA_enum_types.hh"
 #include "RNA_prototypes.hh"
 
-/* For menu, popup, icons, etc. */
 #include "ED_fileselect.hh"
 #include "ED_numinput.hh"
 #include "ED_object.hh"
@@ -78,7 +77,6 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
 
-/* Own include. */
 #include "sequencer_intern.hh"
 #include <cstddef>
 #include <fmt/format.h>
@@ -2018,22 +2016,35 @@ void SEQUENCER_OT_split(wmOperatorType *ot)
 
 static void sequencer_report_duplicates(wmOperator *op, ListBase *duplicated_strips)
 {
-  int num_scenes = 0, num_movieclips = 0, num_masks = 0;
+  blender::Set<Scene *> scenes;
+  blender::Set<MovieClip *> movieclips;
+  blender::Set<Mask *> masks;
+
   LISTBASE_FOREACH (Strip *, strip, duplicated_strips) {
     switch (strip->type) {
       case STRIP_TYPE_SCENE:
-        num_scenes++;
+        if (strip->scene) {
+          scenes.add(strip->scene);
+        }
         break;
       case STRIP_TYPE_MOVIECLIP:
-        num_movieclips++;
+        if (strip->clip) {
+          movieclips.add(strip->clip);
+        }
         break;
       case STRIP_TYPE_MASK:
-        num_masks++;
+        if (strip->mask) {
+          masks.add(strip->mask);
+        }
         break;
       default:
         break;
     }
   }
+
+  const int num_scenes = scenes.size();
+  const int num_movieclips = movieclips.size();
+  const int num_masks = masks.size();
 
   if (num_scenes == 0 && num_movieclips == 0 && num_masks == 0) {
     return;

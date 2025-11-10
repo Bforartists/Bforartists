@@ -153,11 +153,6 @@ void GLStateManager::set_mutable_state(const GPUStateMutable &state)
     glLineWidth(clamp_f(state.line_width, line_width_range_[0], line_width_range_[1]));
   }
 
-  if (float_as_uint(changed.depth_range[0]) != 0 || float_as_uint(changed.depth_range[1]) != 0) {
-    /* TODO: remove, should modify the projection matrix instead. */
-    glDepthRange(UNPACK2(state.depth_range));
-  }
-
   if (changed.stencil_compare_mask != 0 || changed.stencil_reference != 0 ||
       changed.stencil_write_mask != 0)
   {
@@ -561,7 +556,12 @@ void GLStateManager::texture_bind_apply()
 
 void GLStateManager::texture_unpack_row_length_set(uint len)
 {
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, len);
+  texture_unpack_row_length_ = len;
+}
+
+uint GLStateManager::texture_unpack_row_length_get() const
+{
+  return texture_unpack_row_length_;
 }
 
 uint64_t GLStateManager::bound_texture_slots()

@@ -698,13 +698,8 @@ class CLIP_PT_tools_solve(CLIP_PT_tracking_panel, Panel):
         row.prop(settings, "refine_intrinsics_radial_distortion", text="Radial Distortion")
 
         row = col.row()
-        row.active = camera.distortion_model == "BROWN"
-        row.separator()
-        row.prop(
-            settings,
-            "refine_intrinsics_tangential_distortion",
-            text="Tangential Distortion",
-        )
+        row.active = (camera.distortion_model in ('BROWN', 'NUKE'))
+        row.prop(settings, "refine_intrinsics_tangential_distortion", text="Tangential Distortion")
 
         col = layout.column(align=True)
         col.scale_y = 2.0
@@ -1119,7 +1114,10 @@ class CLIP_PT_tracking_lens(Panel):
             col = layout.column(align=True)
             col.prop(camera, "nuke_k1")
             col.prop(camera, "nuke_k2")
-        elif camera.distortion_model == "BROWN":
+            col.separator()
+            col.prop(camera, "nuke_p1")
+            col.prop(camera, "nuke_p2")
+        elif camera.distortion_model == 'BROWN':
             col = layout.column(align=True)
             col.prop(camera, "brown_k1")
             col.prop(camera, "brown_k2")
@@ -1546,7 +1544,8 @@ class CLIP_MT_view(Menu):
             layout.prop(sc, "show_region_ui")
             layout.prop(sc, "show_region_hud")
             layout.separator()
-            # BFA - this menu has been heavily changed, options now in options panel and order same to view menus elsehwere
+            # BFA - this menu has been heavily changed, options now in options panel
+            # and order same to view menus elsehwere
             layout.menu("CLIP_MT_view_annotations")
             layout.separator()
             if sc.mode == "MASK":

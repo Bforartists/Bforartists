@@ -32,13 +32,10 @@
 
 #include "ED_screen.hh"
 
-#include "WM_api.hh" /*BFA - for icons*/
-#include "WM_types.hh" /*BFA - for icons*/
-
 #include "UI_interface.hh" /*BFA - for icons*/
 #include "UI_resources.hh" /*BFA - for icons*/
+#include "WM_types.hh"     /*BFA - for icons*/
 
-/* Own include. */
 #include "sequencer_intern.hh"
 
 namespace blender::ed::vse {
@@ -198,17 +195,17 @@ enum {
 };
 
 static const EnumPropertyItem move_type_items[] = {
-  {LINE_BEGIN, "LINE_BEGIN", ICON_CARET_NEXT_CHAR, "Line Begin", ""},
-  {LINE_END, "LINE_END", ICON_CARET_NEXT_CHAR, "Line End", ""},
-  {TEXT_BEGIN, "TEXT_BEGIN", ICON_CARET_NEXT_CHAR, "Text Begin", ""},
-  {TEXT_END, "TEXT_END", ICON_CARET_NEXT_CHAR, "Text End", ""},
-  {PREV_CHAR, "PREVIOUS_CHARACTER", ICON_CARET_NEXT_CHAR, "Previous Character", ""},
-  {NEXT_CHAR, "NEXT_CHARACTER", ICON_CARET_NEXT_CHAR, "Next Character", ""},
-  {PREV_WORD, "PREVIOUS_WORD", ICON_CARET_NEXT_CHAR, "Previous Word", ""},
-  {NEXT_WORD, "NEXT_WORD", ICON_CARET_NEXT_CHAR, "Next Word", ""},
-  {PREV_LINE, "PREVIOUS_LINE", ICON_CARET_NEXT_CHAR, "Previous Line", ""},
-  {NEXT_LINE, "NEXT_LINE", ICON_CARET_NEXT_CHAR, "Next Line", ""},
-  {0, nullptr, 0, nullptr, nullptr},
+    {LINE_BEGIN, "LINE_BEGIN", ICON_CARET_NEXT_CHAR, "Line Begin", ""},
+    {LINE_END, "LINE_END", ICON_CARET_NEXT_CHAR, "Line End", ""},
+    {TEXT_BEGIN, "TEXT_BEGIN", ICON_CARET_NEXT_CHAR, "Text Begin", ""},
+    {TEXT_END, "TEXT_END", ICON_CARET_NEXT_CHAR, "Text End", ""},
+    {PREV_CHAR, "PREVIOUS_CHARACTER", ICON_CARET_NEXT_CHAR, "Previous Character", ""},
+    {NEXT_CHAR, "NEXT_CHARACTER", ICON_CARET_NEXT_CHAR, "Next Character", ""},
+    {PREV_WORD, "PREVIOUS_WORD", ICON_CARET_NEXT_CHAR, "Previous Word", ""},
+    {NEXT_WORD, "NEXT_WORD", ICON_CARET_NEXT_CHAR, "Next Word", ""},
+    {PREV_LINE, "PREVIOUS_LINE", ICON_CARET_NEXT_CHAR, "Previous Line", ""},
+    {NEXT_LINE, "NEXT_LINE", ICON_CARET_NEXT_CHAR, "Next Line", ""},
+    {0, nullptr, 0, nullptr, nullptr},
 };
 
 static int2 cursor_move_by_character(int2 cursor_position, const TextVarsRuntime *text, int offset)

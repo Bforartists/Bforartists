@@ -49,7 +49,13 @@ def playback_controls(layout, context):
     tool_settings = scene.tool_settings if scene else None
     screen = context.screen
 
-    row = layout.row(align=True)
+    if not scene:
+        return
+
+    layout.popover(
+        panel="TIME_PT_playback",
+        text="Playback",
+    )
 
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
@@ -92,10 +98,10 @@ def playback_controls(layout, context):
 
     # BFA - removed separator_spacer to center controls better
 
-    # BFA - cleaned up duplicate controls and organized layout
+    layout.separator_spacer()
+
     if scene:
-        # BFA- Current frame display
-        row = layout.row(align=True)
+        row = layout.row()
         if scene.show_subframe:
             row.scale_x = 1.15
             row.prop(scene, "frame_float", text="")
@@ -164,6 +170,7 @@ def playback_controls(layout, context):
 
 # BFA - Legacy
 
+
 class TIME_MT_editor_menus(bpy.types.Menu):
     bl_idname = "TIME_MT_editor_menus"
     bl_label = ""
@@ -187,6 +194,8 @@ class TIME_MT_editor_menus(bpy.types.Menu):
             sub.menu("DOPESHEET_MT_select")  # BFA
 
 # BFA - Legacy
+
+
 class TIME_MT_marker(bpy.types.Menu):
     bl_label = "Marker"
 
@@ -231,6 +240,7 @@ class TIME_MT_view(bpy.types.Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+
 
 def marker_menu_generic(layout, context):
     # layout.operator_context = 'EXEC_REGION_WIN'
@@ -493,7 +503,9 @@ class TIME_PT_jump(TimelinePanelButtons, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        scene = context.scene
+        st = context.space_data
+        is_sequencer = st.type == 'SEQUENCE_EDITOR' and st.view_type == 'SEQUENCER'
+        scene = context.scene if not is_sequencer else context.sequencer_scene
 
         layout.prop(scene, "time_jump_unit", expand=True, text="Jump Unit")
         # BFA - moved time_jump_delta to top level

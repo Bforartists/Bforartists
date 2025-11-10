@@ -50,8 +50,6 @@
 #include "BKE_undo_system.hh"
 #include "BKE_workspace.hh"
 
-#include "BKE_sound.h"
-
 #include "BLT_translation.hh"
 
 #include "ED_asset.hh"
@@ -1113,6 +1111,26 @@ bool WM_operator_poll(bContext *C, wmOperatorType *ot)
   }
 
   return true;
+}
+
+bool WM_operator_poll_or_report_error(bContext *C, wmOperatorType *ot, ReportList *reports)
+{
+  CTX_wm_operator_poll_msg_clear(C);
+  if (WM_operator_poll(C, ot)) {
+    return true;
+  }
+  bool msg_free = false;
+  const char *msg = CTX_wm_operator_poll_msg_get(C, &msg_free);
+  CTX_wm_operator_poll_msg_clear(C);
+  BKE_reportf(reports,
+              RPT_ERROR,
+              "Invalid context: \"%s\", %s",
+              CTX_IFACE_(ot->translation_context, ot->name),
+              msg ? msg : IFACE_("poll failed"));
+  if (msg_free) {
+    MEM_freeN(msg);
+  }
+  return false;
 }
 
 bool WM_operator_poll_context(bContext *C, wmOperatorType *ot, blender::wm::OpCallContext context)
@@ -5570,8 +5588,7 @@ constexpr wmTabletData wm_event_tablet_data_default()
   wmTabletData tablet_data{};
   tablet_data.active = EVT_TABLET_NONE;
   tablet_data.pressure = 1.0f;
-  tablet_data.tilt.x = 0.0f;
-  tablet_data.tilt.y = 0.0f;
+  tablet_data.tilt = blender::float2(0.0f, 0.0f);
   tablet_data.is_motion_absolute = false;
   return tablet_data;
 }
