@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
- * \ingroup bke
+ * \ingroup sequencer
  */
 
 #include <algorithm>
@@ -17,7 +17,7 @@
 #include "BLI_math_base.h"
 
 #include "BKE_movieclip.h"
-#include "BKE_sound.h"
+#include "BKE_sound.hh"
 
 #include "DNA_sound_types.h"
 

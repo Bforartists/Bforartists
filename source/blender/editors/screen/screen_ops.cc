@@ -47,7 +47,7 @@
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
-#include "BKE_sound.h"
+#include "BKE_sound.hh"
 #include "BKE_workspace.hh"
 
 #include "WM_api.hh"
@@ -701,8 +701,11 @@ bool ED_operator_editfont(bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_FONT) {
-    return nullptr != ((Curve *)obedit->data)->editfont;
+    if (((Curve *)obedit->data)->editfont) {
+      return true;
+    }
   }
+  CTX_wm_operator_poll_msg_set(C, "expected an active edit-font object");
   return false;
 }
 
@@ -3386,8 +3389,12 @@ static void SCREEN_OT_frame_jump(wmOperatorType *ot)
 /* function to be called outside UI context, or for redo */
 static wmOperatorStatus frame_jump_delta_exec(bContext *C, wmOperator *op)
 {
-  Scene *scene = CTX_data_scene(C);
+  Scene *scene = CTX_wm_space_seq(C) != nullptr ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
   const bool backward = RNA_boolean_get(op->ptr, "backward");
+
+  if (scene == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
 
   float delta = scene->r.time_jump_delta;
 
@@ -3395,7 +3402,7 @@ static wmOperatorStatus frame_jump_delta_exec(bContext *C, wmOperator *op)
     delta *= scene->r.frs_sec / scene->r.frs_sec_base;
   }
 
-  int step = (int)delta;
+  int step = int(delta);
   float fraction = delta - step;
   if (backward) {
     scene->r.cfra -= step;
@@ -3409,12 +3416,13 @@ static wmOperatorStatus frame_jump_delta_exec(bContext *C, wmOperator *op)
   /* Check if subframe has a non-fractional component, and roll that into cfra. */
   if (scene->r.subframe < 0.0f || scene->r.subframe >= 1.0f) {
     const float subframe_offset = floorf(scene->r.subframe);
-    const int frame_offset = (int)subframe_offset;
+    const int frame_offset = int(subframe_offset);
     scene->r.cfra += frame_offset;
     scene->r.subframe -= subframe_offset;
   }
 
   ED_areas_do_frame_follow(C, true);
+  blender::ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 

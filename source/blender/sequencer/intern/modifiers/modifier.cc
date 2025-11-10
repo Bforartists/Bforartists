@@ -100,7 +100,7 @@ static void modifier_panel_header(const bContext * /*C*/, Panel *panel)
 
   /* Don't use #modifier_panel_get_property_pointers, we don't want to lock the header. */
   PointerRNA *ptr = UI_panel_custom_data_get(panel);
-  StripModifierData *smd = reinterpret_cast<StripModifierData *>(ptr->data);
+  StripModifierData *smd = static_cast<StripModifierData *>(ptr->data);
 
   UI_panel_context_pointer_set(panel, "modifier", ptr);
 
@@ -184,7 +184,7 @@ bool modifier_ui_poll(const bContext *C, PanelType * /*pt*/)
 static void modifier_reorder(bContext *C, Panel *panel, const int new_index)
 {
   PointerRNA *smd_ptr = UI_panel_custom_data_get(panel);
-  StripModifierData *smd = reinterpret_cast<StripModifierData *>(smd_ptr->data);
+  StripModifierData *smd = static_cast<StripModifierData *>(smd_ptr->data);
 
   PointerRNA props_ptr;
   wmOperatorType *ot = WM_operatortype_find("SEQUENCER_OT_strip_modifier_move_to_index", false);
@@ -198,15 +198,15 @@ static void modifier_reorder(bContext *C, Panel *panel, const int new_index)
 static short get_strip_modifier_expand_flag(const bContext * /*C*/, Panel *panel)
 {
   PointerRNA *smd_ptr = UI_panel_custom_data_get(panel);
-  StripModifierData *smd = reinterpret_cast<StripModifierData *>(smd_ptr->data);
-  return smd->layout_panel_open_flag;
+  StripModifierData *smd = static_cast<StripModifierData *>(smd_ptr->data);
+  return smd->ui_expand_flag;
 }
 
 static void set_strip_modifier_expand_flag(const bContext * /*C*/, Panel *panel, short expand_flag)
 {
   PointerRNA *smd_ptr = UI_panel_custom_data_get(panel);
-  StripModifierData *smd = reinterpret_cast<StripModifierData *>(smd_ptr->data);
-  smd->layout_panel_open_flag = expand_flag;
+  StripModifierData *smd = static_cast<StripModifierData *>(smd_ptr->data);
+  smd->ui_expand_flag = expand_flag;
 }
 
 PanelType *modifier_panel_register(ARegionType *region_type,
@@ -334,6 +334,7 @@ static void modifier_types_init(StripModifierTypeInfo *types[])
   INIT_TYPE(HueCorrect);
   INIT_TYPE(Mask);
   INIT_TYPE(SoundEqualizer);
+  INIT_TYPE(Pitch);
   INIT_TYPE(Tonemap);
   INIT_TYPE(WhiteBalance);
 #undef INIT_TYPE
@@ -361,7 +362,7 @@ StripModifierData *modifier_new(Strip *strip, const char *name, int type)
 
   smd->type = type;
   smd->flag |= STRIP_MODIFIER_FLAG_EXPANDED;
-  smd->layout_panel_open_flag |= UI_PANEL_DATA_EXPAND_ROOT;
+  smd->ui_expand_flag |= UI_PANEL_DATA_EXPAND_ROOT;
 
   if (!name || !name[0]) {
     STRNCPY_UTF8(smd->name, CTX_DATA_(BLT_I18NCONTEXT_ID_SEQUENCE, smti->name));

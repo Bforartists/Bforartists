@@ -744,7 +744,11 @@ static Scene *scene_add_ex(Scene *scene_old, Main *bmain, bContext *C, eSceneCop
       ED_editors_flush_edits(bmain);
     }
 
-    scene_new = BKE_scene_duplicate(bmain, scene_old, method);
+    scene_new = BKE_scene_duplicate(bmain,
+                                    scene_old,
+                                    method,
+                                    eDupli_ID_Flags(U.dupflag | USER_DUP_OBJECT),
+                                    LIB_ID_DUPLICATE_IS_ROOT_ID);
   }
 
   WM_event_add_notifier(C, NC_SCENE | ND_SCENEBROWSE, scene_new);

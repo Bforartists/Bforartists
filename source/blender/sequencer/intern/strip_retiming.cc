@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /** \file
- * \ingroup bke
+ * \ingroup sequencer
  */
 
 #include <algorithm>
@@ -12,7 +12,6 @@
 
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
-#include "DNA_sound_types.h"
 
 #include "BLI_bounds.hh"
 #include "BLI_listbase.h"
@@ -23,7 +22,7 @@
 #include "BLI_span.hh"
 #include "BLI_vector.hh"
 
-#include "BKE_sound.h"
+#include "BKE_sound.hh"
 
 #include "SEQ_iterator.hh"
 #include "SEQ_retiming.hh"
@@ -1099,10 +1098,11 @@ void retiming_sound_animation_data_set(const Scene *scene, const Strip *strip)
   correct_pitch = false;
 #endif
 
-  void *sound_handle = strip->sound ? strip->sound->playback_handle : nullptr;
+  void *sound_handle = BKE_sound_playback_handle_get(strip->sound);
   const float scene_fps = float(scene->r.frs_sec) / float(scene->r.frs_sec_base);
   if (correct_pitch) {
-    sound_handle = BKE_sound_add_time_stretch_effect(sound_handle, scene_fps);
+    sound_handle = BKE_sound_ensure_time_stretch_effect(
+        sound_handle, strip->scene_sound, scene_fps);
     BKE_sound_set_scene_sound_pitch_constant_range(
         strip->scene_sound, 0, strip->start + strip->len, 1.0f);
   }

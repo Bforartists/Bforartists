@@ -405,8 +405,16 @@ void GeometryManager::device_update_preprocess(Device *device, Scene *scene, Pro
         }
       }
 
-      if (geom->is_hair() && shader->shadow_transparency_needs_realloc) {
-        device_update_flags |= ATTR_FLOAT_NEEDS_REALLOC;
+      if (geom->is_hair()) {
+        if (shader->shadow_transparency_needs_realloc) {
+          device_update_flags |= ATTR_FLOAT_NEEDS_REALLOC;
+        }
+        if (shader->need_update_shadow_transparency) {
+          Attribute *attr = geom->attributes.find(ATTR_STD_SHADOW_TRANSPARENCY);
+          if (attr) {
+            attr->modified = true;
+          }
+        }
       }
     }
 
@@ -707,7 +715,7 @@ void GeometryManager::device_update(Device *device,
   LOG_INFO << "Total " << scene->geometry.size() << " meshes.";
 
   bool true_displacement_used = false;
-  bool curve_shadow_transparency_used = false;
+  bool curve_need_update_shadow_transparency = false;
   size_t num_tessellation = 0;
 
   {
@@ -743,16 +751,26 @@ void GeometryManager::device_update(Device *device,
             true_displacement_used = true;
           }
         }
-        else if (geom->is_hair()) {
-          Hair *hair = static_cast<Hair *>(geom);
-          if (hair->need_shadow_transparency()) {
-            curve_shadow_transparency_used = true;
-          }
-        }
+      }
 
-        if (progress.get_cancel()) {
-          return;
+      if (progress.get_cancel()) {
+        return;
+      }
+    }
+
+    for (Geometry *geom : scene->geometry) {
+      if (geom->is_hair()) {
+        Hair *hair = static_cast<Hair *>(geom);
+        if ((geom->is_modified() && hair->need_shadow_transparency()) ||
+            hair->need_update_shadow_transparency())
+        {
+          curve_need_update_shadow_transparency = true;
+          break;
         }
+      }
+
+      if (progress.get_cancel()) {
+        return;
       }
     }
   }
@@ -832,7 +850,7 @@ void GeometryManager::device_update(Device *device,
   }
 
   /* Update images needed for true displacement. */
-  if (true_displacement_used || curve_shadow_transparency_used) {
+  if (true_displacement_used || curve_need_update_shadow_transparency) {
     const scoped_callback_timer timer([scene](double time) {
       if (scene->update_stats) {
         scene->update_stats->geometry.times.add_entry(
@@ -849,7 +867,7 @@ void GeometryManager::device_update(Device *device,
   const BVHLayout bvh_layout = BVHParams::best_bvh_layout(
       scene->params.bvh_layout, device->get_bvh_layout_mask(dscene->data.kernel_features));
   geom_calc_offset(scene, bvh_layout);
-  if (true_displacement_used || curve_shadow_transparency_used) {
+  if (true_displacement_used || curve_need_update_shadow_transparency) {
     const scoped_callback_timer timer([scene](double time) {
       if (scene->update_stats) {
         scene->update_stats->geometry.times.add_entry(
@@ -892,10 +910,8 @@ void GeometryManager::device_update(Device *device,
     }
   }
 
-  /* Update displacement and hair shadow transparency. */
+  /* Update displacement. */
   bool displacement_done = false;
-  bool curve_shadow_transparency_done = false;
-
   {
     /* Copy constant data needed by shader evaluation. */
     device->const_copy_to("data", &dscene->data, sizeof(dscene->data));
@@ -914,11 +930,33 @@ void GeometryManager::device_update(Device *device,
             displacement_done = true;
           }
         }
-        else if (geom->is_hair()) {
-          Hair *hair = static_cast<Hair *>(geom);
-          if (hair->update_shadow_transparency(device, scene, progress)) {
-            curve_shadow_transparency_done = true;
-          }
+      }
+
+      if (progress.get_cancel()) {
+        return;
+      }
+    }
+  }
+
+  if (progress.get_cancel()) {
+    return;
+  }
+
+  /* Update hair shadow transparency. */
+  bool curve_shadow_transparency_done = false;
+  {
+    const scoped_callback_timer timer([scene](double time) {
+      if (scene->update_stats) {
+        scene->update_stats->geometry.times.add_entry(
+            {"device_update (curve shadow transparency)", time});
+      }
+    });
+
+    for (Geometry *geom : scene->geometry) {
+      if (geom->is_hair()) {
+        Hair *hair = static_cast<Hair *>(geom);
+        if (hair->update_shadow_transparency(device, scene, progress)) {
+          curve_shadow_transparency_done = true;
         }
       }
 
@@ -989,6 +1027,7 @@ void GeometryManager::device_update(Device *device,
     shader->need_update_uvs = false;
     shader->need_update_attribute = false;
     shader->need_update_displacement = false;
+    shader->need_update_shadow_transparency = false;
     shader->shadow_transparency_needs_realloc = false;
   }
 
