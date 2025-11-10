@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="1700"
+   height="1700"
+   viewBox="0 0 1700 1700"
+   sodipodi:docname="ui_sidebar.svg"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2560"
+     inkscape:window-height="1374"
+     id="namedview4"
+     showgrid="true"
+     inkscape:zoom="0.47197833"
+     inkscape:cx="796.64674"
+     inkscape:cy="705.54087"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1"
+     inkscape:showpageshadow="0"
+     inkscape:pagecheckerboard="false"
+     inkscape:deskcolor="#000000"
+     showborder="true">
+    <inkscape:grid
+       id="grid6"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="100"
+       spacingy="100"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <g
+     id="g1"
+     inkscape:label="UI_SIDEBAR"
+     transform="matrix(0.9375,0,0,0.9375,100,100)">
+    <path
+       d="M 1706.6667,1706.6667 H -106.66667 V -106.66667 H 1706.6667 Z M 1600,1600 V 0 H 0 v 1600 z"
+       style="fill:#000000;fill-opacity:1;stroke-width:2.41778;stroke-dasharray:none;paint-order:normal"
+       id="path3"
+       sodipodi:nodetypes="cccccccccc" />
+    <rect
+       style="fill:none;stroke-width:0.213333;stroke-linecap:round;paint-order:fill markers stroke"
+       id="rect1"
+       width="1813.3334"
+       height="1813.3334"
+       x="-106.66667"
+       y="-106.66667" />
+    <path
+       d="M 1066.6667,0 V 1600 H 0 V 0 Z"
+       style="display:inline;fill:#cccccc;fill-opacity:1;stroke:#000000;stroke-width:68.26666667;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="path5"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       d="M 1600,1600 H 1066.6667 V 0 H 1600 Z"
+       style="fill:#98cbfe;stroke:#000000;stroke-width:68.26666667;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="path4"
+       sodipodi:nodetypes="ccccc" />
+  </g>
+</svg>

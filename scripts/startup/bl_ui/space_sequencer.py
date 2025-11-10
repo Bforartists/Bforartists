@@ -438,6 +438,7 @@ class SEQUENCER_MT_view_pie_menus(Menu):
 
         st = context.space_data
 
+        layout.operator("wm.call_menu_pie", text="Region Toggle", icon="MENU_PANEL").name = "WM_MT_region_toggle_pie"
         layout.operator_context = "INVOKE_REGION_PREVIEW"
         if st.view_type == "PREVIEW":
             layout.operator("wm.call_menu_pie", text="Pivot Point", icon="MENU_PANEL").name = "SEQUENCER_MT_pivot_pie"

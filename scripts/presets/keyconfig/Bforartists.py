@@ -1,4 +1,4 @@
-keyconfig_version = (5, 0, 60)
+keyconfig_version = (5, 1, 4)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -589,17 +589,10 @@ keyconfig_data = \
  ("3D View Generic",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
   {"items":
-   [("wm.context_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("data_path", 'space_data.show_region_ui'),
-       ],
-      },
-     ),
-    ("wm.context_toggle",
+   [("wm.call_menu_pie",
      {"type": 'T', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_region_toolbar'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
@@ -949,17 +942,10 @@ keyconfig_data = \
       },
      ),
     ("clip.open", {"type": 'O', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("wm.context_toggle",
+    ("wm.call_menu_pie",
      {"type": 'T', "value": 'PRESS', "repeat": True},
      {"properties":
-      [("data_path", 'space_data.show_region_toolbar'),
-       ],
-      },
-     ),
-    ("wm.context_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("data_path", 'space_data.show_region_ui'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
@@ -1904,10 +1890,10 @@ keyconfig_data = \
  ("Dopesheet Generic",
   {"space_type": 'DOPESHEET_EDITOR', "region_type": 'WINDOW'},
   {"items":
-   [("wm.context_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
+   [("wm.call_menu_pie",
+     {"type": 'T', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_region_ui'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
@@ -2817,10 +2803,10 @@ keyconfig_data = \
  ("Graph Editor Generic",
   {"space_type": 'GRAPH_EDITOR', "region_type": 'WINDOW'},
   {"items":
-   [("wm.context_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
+   [("wm.call_menu_pie",
+     {"type": 'T', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_region_ui'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
@@ -3698,17 +3684,10 @@ keyconfig_data = \
     ("image.reload", {"type": 'R', "value": 'PRESS', "alt": True}, None),
     ("image.save", {"type": 'S', "value": 'PRESS', "alt": True}, None),
     ("image.save_as", {"type": 'S', "value": 'PRESS', "shift": True}, None),
-    ("wm.context_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("data_path", 'space_data.show_region_ui'),
-       ],
-      },
-     ),
-    ("wm.context_toggle",
+    ("wm.call_menu_pie",
      {"type": 'T', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_region_toolbar'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
@@ -4809,10 +4788,10 @@ keyconfig_data = \
  ("NLA Generic",
   {"space_type": 'NLA_EDITOR', "region_type": 'WINDOW'},
   {"items":
-   [("wm.context_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
+   [("wm.call_menu_pie",
+     {"type": 'T', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_region_ui'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
@@ -5200,17 +5179,10 @@ keyconfig_data = \
  ("Node Generic",
   {"space_type": 'NODE_EDITOR', "region_type": 'WINDOW'},
   {"items":
-   [("wm.context_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("data_path", 'space_data.show_region_ui'),
-       ],
-      },
-     ),
-    ("wm.context_toggle",
+   [("wm.call_menu_pie",
      {"type": 'T', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_region_toolbar'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
@@ -8481,6 +8453,13 @@ keyconfig_data = \
       [("data_path", 'space_data.view_type'),
        ("value_1", 'SEQUENCER'),
        ("value_2", 'PREVIEW'),
+       ],
+      },
+     ),
+    ("wm.call_menu_pie",
+     {"type": 'T', "value": 'PRESS'},
+     {"properties":
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),

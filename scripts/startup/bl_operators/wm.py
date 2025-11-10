@@ -3558,6 +3558,15 @@ class WM_MT_region_toggle_pie(Menu):
         'BOTTOM': 2,
         'TOP': 3,
     }
+    # Map the `region.type` to icons
+    _region_icons = {
+        'TOOLS': 'UI_TOOLBAR',
+        'UI': 'UI_SIDEBAR',
+        'HEADER': 'UI_HEADER_BAR',
+        'FOOTER': 'UI_FOOTER_BAR',
+        'ASSET_SHELF': 'ASSET_MANAGER',
+        'CHANNELS': 'UI_CHANNELS',
+    }
     # Map the axis-aligned pie to alternative directions, see `ui_radial_dir_order` in C++ source.
     # The value is the preferred direction in order of priority, two diagonals, then the flipped direction.
     _region_dir_pie_alternatives = {
@@ -3645,11 +3654,12 @@ class WM_MT_region_toggle_pie(Menu):
             text = enum_items[region_type].name
             attr = cls._region_info[region_type]
             value = getattr(space_data, attr)
+            icon = cls._region_icons[region_type]  # Get icon from mapping
             props = pie.operator(
                 "wm.context_toggle",
                 text=text,
                 text_ctxt=i18n_contexts.default,
-                icon='CHECKBOX_HLT' if value else 'CHECKBOX_DEHLT',
+                icon=icon,
             )
             props.data_path = "space_data." + attr
 

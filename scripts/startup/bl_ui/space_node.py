@@ -478,6 +478,7 @@ class NODE_MT_pie_menus(Menu):
 
         space = context.space_data
 
+        layout.operator("wm.call_menu_pie", text="Region Toggle", icon="MENU_PANEL").name = "WM_MT_region_toggle_pie"
         layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NODE_MT_view_pie'
 
 
