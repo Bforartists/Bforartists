@@ -315,7 +315,8 @@ void weightvg_ui_common(const bContext *C, PointerRNA *ob_ptr, PointerRNA *ptr, 
 
   layout->use_property_split_set(true);
 
-  layout->prop(ptr, "mask_constant", UI_ITEM_R_SLIDER, IFACE_("Global Influence:"), ICON_NONE);
+  /* BFA - Remove colon in label */
+  layout->prop(ptr, "mask_constant", UI_ITEM_R_SLIDER, IFACE_("Global Influence"), ICON_NONE);
 
   if (!has_mask_texture) {
     modifier_vgroup_ui(
@@ -323,7 +324,8 @@ void weightvg_ui_common(const bContext *C, PointerRNA *ob_ptr, PointerRNA *ptr, 
   }
 
   if (!has_mask_vertex_group) {
-    uiTemplateID(layout,
+    uiLayout *row = &layout->row(true); /* BFA - Add blank icon for alignment */
+    uiTemplateID(row,
                  C,
                  ptr,
                  "mask_texture",
@@ -333,6 +335,7 @@ void weightvg_ui_common(const bContext *C, PointerRNA *ob_ptr, PointerRNA *ptr, 
                  UI_TEMPLATE_ID_FILTER_ALL,
                  false,
                  IFACE_("Mask Texture"));
+    row->label("", ICON_BLANK1); /* BFA - Add blank icon for alignment */
 
     if (has_mask_texture) {
       layout->prop(ptr, "mask_tex_use_channel", UI_ITEM_NONE, IFACE_("Channel"), ICON_NONE);
