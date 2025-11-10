@@ -10100,7 +10100,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeSetAlpha", nullptr, ICON_IMAGE_ALPHA);
   define(brna, "CompositorNode", "CompositorNodeSplit", nullptr, ICON_NODE_VIWERSPLIT);
   define(brna, "CompositorNode", "CompositorNodeStabilize", def_cmp_stabilize2d, ICON_NODE_STABILIZE2D);
-  define(brna, "CompositorNode", "CompositorNodeSequencerStripInfo", nullptr, ICON_INFO);
+  define(brna, "CompositorNode", "CompositorNodeSequencerStripInfo", nullptr, ICON_SEQUENCE);
   define(brna, "CompositorNode", "CompositorNodeSwitch", nullptr, ICON_SWITCH_DIRECTION);
   define(brna, "CompositorNode", "CompositorNodeSwitchView", nullptr, ICON_VIEW_SWITCHACTIVECAM);
   define(brna, "CompositorNode", "CompositorNodeTime", def_time, ICON_NODE_CURVE_TIME);
