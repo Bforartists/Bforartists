@@ -2039,6 +2039,11 @@ if(WITH_BLENDER)
       # letter u
       uglypackage
       ui
+      ui_channels
+      ui_footer_bar
+      ui_header_bar
+      ui_sidebar
+      ui_toolbar
       uncomment
       underline
       underlined

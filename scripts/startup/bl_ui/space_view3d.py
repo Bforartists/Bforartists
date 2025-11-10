@@ -1773,6 +1773,7 @@ class VIEW3D_MT_view_pie_menus(Menu):
         layout = self.layout
 
         layout.operator("wm.call_menu_pie", text="Object Mode", icon="MENU_PANEL").name = "VIEW3D_MT_object_mode_pie"
+        layout.operator("wm.call_menu_pie", text="Region Toggle", icon="MENU_PANEL").name = "WM_MT_region_toggle_pie"
         layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = "VIEW3D_MT_view_pie"
         layout.operator("wm.call_menu_pie", text="Transform", icon="MENU_PANEL").name = "VIEW3D_MT_transform_gizmo_pie"
         layout.operator("wm.call_menu_pie", text="Shading", icon="MENU_PANEL").name = "VIEW3D_MT_shading_pie"

@@ -370,6 +370,7 @@ class GRAPH_MT_view_pie_menus(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator("wm.call_menu_pie", text="Region Toggle", icon="MENU_PANEL").name = "WM_MT_region_toggle_pie"
         layout.operator("wm.call_menu_pie", text="Pivot", icon="MENU_PANEL").name = "GRAPH_MT_pivot_pie"
         layout.operator("wm.call_menu_pie", text="Snap", icon="MENU_PANEL").name = "GRAPH_MT_snap_pie"
         layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = "GRAPH_MT_view_pie"

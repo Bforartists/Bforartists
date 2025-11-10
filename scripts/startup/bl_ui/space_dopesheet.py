@@ -648,6 +648,7 @@ class DOPESHEET_MT_view_pie_menus(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator("wm.call_menu_pie", text="Region Toggle", icon="MENU_PANEL").name = "WM_MT_region_toggle_pie"
         layout.operator("wm.call_menu_pie", text="Snap", icon="MENU_PANEL").name = "DOPESHEET_MT_snap_pie"
         layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = "DOPESHEET_MT_view_pie"
 
