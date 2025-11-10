@@ -10258,12 +10258,12 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
-  define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NODE_ADVECTGRID);
+  define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NODE_GRIDCURL);
+  define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NODE_GRIDDIVERGENCE);
+  define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NODE_GRIDGRADIENT);
   define(brna, "GeometryNode", "GeometryNodeGridInfo", nullptr, ICON_NODE_GRID_INFO);
-  define(brna, "GeometryNode", "GeometryNodeGridLaplacian", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeGridLaplacian", nullptr, ICON_NODE_GRIDLAPLACIAN);
   define(brna, "GeometryNode", "GeometryNodeGridPrune", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridVoxelize", nullptr, ICON_NONE);
@@ -10360,9 +10360,9 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeReverseCurve", nullptr, ICON_SWITCH_DIRECTION);
   define(brna, "GeometryNode", "GeometryNodeRotateInstances", nullptr, ICON_ROTATE_INSTANCE);
   define(brna, "GeometryNode", "GeometryNodeSampleCurve", def_geo_curve_sample, ICON_CURVE_SAMPLE);
-  define(brna, "GeometryNode", "GeometryNodeSampleGrid", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeSampleGrid", nullptr, ICON_NODE_SAMPLEGRID);
 
-  define(brna, "GeometryNode", "GeometryNodeSampleGridIndex", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeSampleGridIndex", nullptr, ICON_NODE_SAMPLEGRIDINDEX);
   define(brna, "GeometryNode", "GeometryNodeSampleIndex", def_geo_sample_index, ICON_SAMPLE_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSampleNearest", nullptr, ICON_SAMPLE_NEAREST);
   define(brna, "GeometryNode", "GeometryNodeSampleNearestSurface", nullptr, ICON_SAMPLE_NEAREST_SURFACE);

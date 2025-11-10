@@ -2447,8 +2447,13 @@ class NODES_PT_toolshelf_gn_add_volume_sample(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            #OperatorEntry("GeometryNodeVolumeCube", pad=5),
-            #OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
+            OperatorEntry("GeometryNodeGridAdvect", pad=15),
+            OperatorEntry("GeometryNodeSampleGrid", pad=15),
+            OperatorEntry("GeometryNodeSampleGridIndex", pad=5),
+            OperatorEntry("GeometryNodeGridCurl", pad=20),
+            OperatorEntry("GeometryNodeGridDivergence", pad=10),
+            OperatorEntry("GeometryNodeGridGradient", pad=12),
+            OperatorEntry("GeometryNodeGridLaplacian", pad=11),
         )
 
         self.draw_entries(context, layout, entries)
