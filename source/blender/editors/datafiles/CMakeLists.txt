@@ -1249,6 +1249,7 @@ if(WITH_BLENDER)
       node_environment
       node_erode
       node_fileoutput
+      node_fieldtogrid
       node_frame
       node_fresnel
       node_gamma
@@ -1263,6 +1264,7 @@ if(WITH_BLENDER)
       node_griddivergence
       node_gridgradient
       node_gridlaplacian
+      node_gridtomesh
       node_grid_info
       node_hairinfo
       node_holdoutshader
@@ -1302,6 +1304,7 @@ if(WITH_BLENDER)
       node_pointcloud
       node_pointstosdfgrid
       node_principled
+      node_prunegrid
       node_radial_array
       node_range
       node_ray_portal
@@ -1313,6 +1316,13 @@ if(WITH_BLENDER)
       node_rgbtobw
       node_samplegrid
       node_samplegridindex
+      node_sdfgridboolean
+      node_sdfgridfillet
+      node_sdfgridlaplacian
+      node_sdfgridmean
+      node_sdfgridmean_curvature
+      node_sdfgridmedian
+      node_sdfgridoffset
       node_sel
       node_separate_ycbcra
       node_separate_yuva
@@ -1355,6 +1365,7 @@ if(WITH_BLENDER)
       node_volumeabsorption
       node_volumeprincipled
       node_volumescatter
+      node_voxelizegrid
       node_voxel_index
       node_wavelength
       node_waves
