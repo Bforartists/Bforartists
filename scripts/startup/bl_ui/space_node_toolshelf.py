@@ -2364,12 +2364,12 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeDistributePointsInVolume", pad=1),
-            OperatorEntry("GeometryNodeDistributePointsInGrid", pad=5),
+            OperatorEntry("GeometryNodeDistributePointsInGrid", pad=7),
             OperatorEntry("GeometryNodeDistributePointsOnFaces", pad=3),
             Separator,
             OperatorEntry("GeometryNodePoints", pad=37),
             OperatorEntry("GeometryNodePointsToCurves", pad=19),
-            OperatorEntry("GeometryNodePointsToSDFGrid", pad=18),
+            OperatorEntry("GeometryNodePointsToSDFGrid", pad=16),
             OperatorEntry("GeometryNodePointsToVertices", pad=17),
             OperatorEntry("GeometryNodePointsToVolume", pad=18),
             OperatorEntry("GeometryNodeSetPointRadius", pad=19),
@@ -2452,13 +2452,15 @@ class NODES_PT_toolshelf_gn_add_volume_sample(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeGridAdvect", pad=15),
             OperatorEntry("GeometryNodeSampleGrid", pad=15),
             OperatorEntry("GeometryNodeSampleGridIndex", pad=5),
-            OperatorEntry("GeometryNodeGridCurl", pad=20),
+            OperatorEntry("GeometryNodeGridCurl", pad=22),
             OperatorEntry("GeometryNodeGridDivergence", pad=10),
-            OperatorEntry("GeometryNodeGridGradient", pad=12),
-            OperatorEntry("GeometryNodeGridLaplacian", pad=11),
+            OperatorEntry("GeometryNodeGridGradient", pad=15),
+            OperatorEntry("GeometryNodeGridLaplacian", pad=13),
         )
 
         self.draw_entries(context, layout, entries)
+
+
 class NODES_PT_toolshelf_gn_add_volume_write(bpy.types.Panel, NodePanel):
     bl_label = "Write"
     bl_space_type = 'NODE_EDITOR'
@@ -2478,9 +2480,9 @@ class NODES_PT_toolshelf_gn_add_volume_write(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeStoreNamedGrid", pad=7),
-            OperatorEntry("GeometryNodeSetGridBackground", pad=0),
-            OperatorEntry("GeometryNodeSetGridTransform", pad=5),
+            OperatorEntry("GeometryNodeStoreNamedGrid", pad=17),
+            OperatorEntry("GeometryNodeSetGridBackground", pad=12),
+            OperatorEntry("GeometryNodeSetGridTransform", pad=15),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2503,7 +2505,18 @@ class NODES_PT_toolshelf_gn_add_volume_operations(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
+            OperatorEntry("GeometryNodeGridToMesh", pad=20),
+            OperatorEntry("GeometryNodeSDFGridBoolean", pad=14),
+            OperatorEntry("GeometryNodeSDFGridFillet", pad=16),
+            OperatorEntry("GeometryNodeSDFGridLaplacian", pad=8),
+            OperatorEntry("GeometryNodeSDFGridMean", pad=14),
+            OperatorEntry("GeometryNodeSDFGridMeanCurvature", pad=0),
+            OperatorEntry("GeometryNodeSDFGridMedian", pad=12),
+            OperatorEntry("GeometryNodeSDFGridOffset", pad=12),
+            OperatorEntry("GeometryNodeFieldToGrid", pad=18),
+            OperatorEntry("GeometryNodeGridPrune", pad=17),
+            OperatorEntry("GeometryNodeGridVoxelize", pad=18),
+            OperatorEntry("GeometryNodeVolumeToMesh", pad=16),
         )
 
         self.draw_entries(context, layout, entries)
