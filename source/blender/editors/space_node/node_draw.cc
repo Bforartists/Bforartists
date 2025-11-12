@@ -4970,9 +4970,9 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   bool x_axis_visible = (v2d.cur.xmin <= 0.0f && v2d.cur.xmax >= 0.0f);
   bool y_axis_visible = (v2d.cur.ymin <= 0.0f && v2d.cur.ymax >= 0.0f);
   
-  if (!x_axis_visible && !y_axis_visible) {
-    return; /* Neither axis is visible */
-  }
+  //if (!x_axis_visible && !y_axis_visible) {
+  //  return; /* Neither axis is visible */
+  //}
 
   GPUVertFormat *format = immVertexFormat();
   const uint pos = GPU_vertformat_attr_add(
@@ -4987,11 +4987,11 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   /* BFA - Use the alpha value from the overlay settings */
   const float alpha = snode.overlay.world_center_alpha;
 
-  /* BFA - Draw X axis line (vertical line at X=0) in theme X color (red) with transparency */
+  /* BFA - Draw Y axis line (top-bottom line at Y=0) in theme Y color (red) with transparency */
   if (x_axis_visible) {
     float color[4];
-    UI_GetThemeColor4fv(TH_SUCCESS, color);
-    color[3] *= alpha; /* 50% opacity for transparency */
+    UI_GetThemeColor4fv(TH_REDALERT, color);
+    color[3] *= alpha;
     immUniformColor4fv(color);
     
     immBegin(GPU_PRIM_LINES, 2);
@@ -4999,12 +4999,34 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     immVertex2f(pos, 0.0f, v2d.cur.ymax);  /* Top of view */
     immEnd();
   }
-
-  /* BFA - Draw Y axis line (horizontal line at Y=0) in theme Y color (green) with transparency */
-  if (y_axis_visible) {
+  else {
+    /* Y axis is out of view - draw top-bottom line on the closest edge with padding */
     float color[4];
     UI_GetThemeColor4fv(TH_REDALERT, color);
-    color[3] *= alpha; /* 50% opacity for transparency */
+    color[3] *= alpha;
+    immUniformColor4fv(color);
+    
+    const float edge_padding = 3.9f * U.pixelsize; /* Padding from edges */
+    float edge_x;
+    if (v2d.cur.xmin > 0.0f) {
+      /* Center is to the left - stick to left edge with padding */
+      edge_x = v2d.cur.xmin + edge_padding;
+    }
+    else {
+      /* Center is to the right - stick to right edge with padding */
+      edge_x = v2d.cur.xmax - edge_padding;
+    }
+    immBegin(GPU_PRIM_LINES, 2);
+    immVertex2f(pos, edge_x, v2d.cur.ymin);  /* Bottom of view */
+    immVertex2f(pos, edge_x, v2d.cur.ymax);  /* Top of view */
+    immEnd();
+  }
+
+  /* BFA - Draw Y axis line (left-right line) - sticky to edges when center is out of view */
+  if (y_axis_visible) {
+    float color[4];
+    UI_GetThemeColor4fv(TH_SUCCESS, color);
+    color[3] *= alpha;
     immUniformColor4fv(color);
     
     immBegin(GPU_PRIM_LINES, 2);
@@ -5012,12 +5034,34 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     immVertex2f(pos, v2d.cur.xmax, 0.0f);  /* Right of view */
     immEnd();
   }
+  else {
+    /* Y axis is out of view - draw horizontal line on the closest edge with padding */
+    float color[4];
+    UI_GetThemeColor4fv(TH_SUCCESS, color);
+    color[3] *= alpha;
+    immUniformColor4fv(color);
+    
+    const float edge_padding = 3.9f * U.pixelsize; /* Padding from edges */
+    float edge_y;
+    if (v2d.cur.ymin > 0.0f) {
+      /* Center is below - stick to bottom edge with padding */
+      edge_y = v2d.cur.ymin + edge_padding;
+    }
+    else {
+      /* Center is above - stick to top edge with padding */
+      edge_y = v2d.cur.ymax - edge_padding;
+    }
+    immBegin(GPU_PRIM_LINES, 2);
+    immVertex2f(pos, v2d.cur.xmin, edge_y);  /* Left of view */
+    immVertex2f(pos, v2d.cur.xmax, edge_y);  /* Right of view */
+    immEnd();
+  }
 
   /* BFA - Draw a small square at the center intersection if both axes are visible */
   if (x_axis_visible && y_axis_visible) {
     float color[4];
     UI_GetThemeColor4fv(TH_TEXT, color);
-    color[3] *= alpha; /* 60% opacity for transparency */
+    color[3] *= alpha;
     immUniformColor4fv(color);
     
     /* BFA - Square with size matching line thickness */

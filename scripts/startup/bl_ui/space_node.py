@@ -1328,7 +1328,7 @@ class NODE_PT_overlay(Panel):
         
         split = col.split()
         row = split.row()
-        row.prop(overlay, "show_world_center", text="World Center")
+        row.prop(overlay, "show_world_center", text="Canvas Center")
         
         if not overlay.show_world_center:
             row.label(icon="DISCLOSURE_TRI_RIGHT")
