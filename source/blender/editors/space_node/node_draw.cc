@@ -19,6 +19,7 @@
 #include "DNA_node_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
+#include "DNA_space_enums.h"
 #include "DNA_text_types.h"
 #include "DNA_world_types.h"
 
@@ -29,6 +30,7 @@
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
 #include "BLI_math_color.h"
+#include "BLI_math_base.h"
 #include "BLI_set.hh"
 #include "BLI_span.hh"
 #include "BLI_string.h"
@@ -43,6 +45,7 @@
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
 #include "BKE_global.hh"
+#include "DNA_userdef_types.h"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_library.hh"
@@ -4955,6 +4958,84 @@ static void draw_background_color(const SpaceNode &snode)
   GPU_clear_color(color[0], color[1], color[2], 1.0);
 }
 
+/*BFA - World Center overlay*/
+static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
+{
+  /* BFA - Check if world center drawing is enabled */
+  if ((snode.overlay.flag & SN_OVERLAY_SHOW_WORLD_CENTER) == 0) {
+    return;
+  }
+
+  /* BFA - Check if the world center lines are visible in the current view */
+  bool x_axis_visible = (v2d.cur.xmin <= 0.0f && v2d.cur.xmax >= 0.0f);
+  bool y_axis_visible = (v2d.cur.ymin <= 0.0f && v2d.cur.ymax >= 0.0f);
+  
+  if (!x_axis_visible && !y_axis_visible) {
+    return; /* Neither axis is visible */
+  }
+
+  GPUVertFormat *format = immVertexFormat();
+  const uint pos = GPU_vertformat_attr_add(
+      format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
+  
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+
+  /* BFA - Set line thickness to match large grid dots (approximately 1.5 * 2.6 * U.pixelsize) */
+  const float line_width = 3.9f * U.pixelsize;
+  GPU_line_width(line_width);
+
+  /* BFA - Use the alpha value from the overlay settings */
+  const float alpha = snode.overlay.world_center_alpha;
+
+  /* BFA - Draw X axis line (vertical line at X=0) in theme X color (red) with transparency */
+  if (x_axis_visible) {
+    float color[4];
+    UI_GetThemeColor4fv(TH_SUCCESS, color);
+    color[3] *= alpha; /* 50% opacity for transparency */
+    immUniformColor4fv(color);
+    
+    immBegin(GPU_PRIM_LINES, 2);
+    immVertex2f(pos, 0.0f, v2d.cur.ymin);  /* Bottom of view */
+    immVertex2f(pos, 0.0f, v2d.cur.ymax);  /* Top of view */
+    immEnd();
+  }
+
+  /* BFA - Draw Y axis line (horizontal line at Y=0) in theme Y color (green) with transparency */
+  if (y_axis_visible) {
+    float color[4];
+    UI_GetThemeColor4fv(TH_REDALERT, color);
+    color[3] *= alpha; /* 50% opacity for transparency */
+    immUniformColor4fv(color);
+    
+    immBegin(GPU_PRIM_LINES, 2);
+    immVertex2f(pos, v2d.cur.xmin, 0.0f);  /* Left of view */
+    immVertex2f(pos, v2d.cur.xmax, 0.0f);  /* Right of view */
+    immEnd();
+  }
+
+  /* BFA - Draw a small square at the center intersection if both axes are visible */
+  if (x_axis_visible && y_axis_visible) {
+    float color[4];
+    UI_GetThemeColor4fv(TH_TEXT, color);
+    color[3] *= alpha; /* 60% opacity for transparency */
+    immUniformColor4fv(color);
+    
+    /* BFA - Square with size matching line thickness */
+    const float square_size = line_width;
+    immBegin(GPU_PRIM_LINE_LOOP, 4);
+    immVertex2f(pos, -square_size, -square_size);  /* Bottom-left corner */
+    immVertex2f(pos, square_size, -square_size);   /* Bottom-right corner */
+    immVertex2f(pos, square_size, square_size);    /* Top-right corner */
+    immVertex2f(pos, -square_size, square_size);   /* Top-left corner */
+    immEnd();
+  }
+
+  /* BFA - Reset line width to default */
+  GPU_line_width(1.0f);
+
+  immUnbindProgram();
+}
+
 void node_draw_space(const bContext &C, ARegion &region)
 {
   wmWindow *win = CTX_wm_window(&C);
@@ -4992,6 +5073,9 @@ void node_draw_space(const bContext &C, ARegion &region)
 
   const int grid_levels = UI_GetThemeValueType(TH_NODE_GRID_LEVELS, SPACE_NODE);
   UI_view2d_dot_grid_draw(&v2d, TH_GRID, NODE_GRID_STEP_SIZE, grid_levels);
+
+  /* BFA - World Center overlay - Draw world center icon (X and Y axes) */
+  draw_world_center_icon(snode, v2d);
 
   /* Draw parent node trees. */
   if (snode.treepath.last) {

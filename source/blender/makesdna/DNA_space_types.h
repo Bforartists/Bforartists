@@ -822,6 +822,8 @@ typedef struct SpaceNodeOverlay {
   int flag;
   /* eSpaceNodeOverlay_preview_shape */
   int preview_shape;
+  float world_center_alpha; /*BFA - World Center overlay*/
+  char _pad[4]; /*BFA - World Center overlay*/
 } SpaceNodeOverlay;
 
 typedef struct SpaceNode {

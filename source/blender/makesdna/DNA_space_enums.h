@@ -839,6 +839,7 @@ typedef enum eSpaceNodeOverlay_Flag {
    * of connected reroute nodes.
    */
   SN_OVERLAY_SHOW_REROUTE_AUTO_LABELS = (1 << 7),
+  SN_OVERLAY_SHOW_WORLD_CENTER = (1 << 8), /*BFA - World Center overlay*/
 } eSpaceNodeOverlay_Flag;
 
 typedef enum eSpaceNodeOverlay_preview_shape {
