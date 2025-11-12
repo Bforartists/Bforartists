@@ -52,11 +52,6 @@ def playback_controls(layout, context):
     if not scene:
         return
 
-    layout.popover(
-        panel="TIME_PT_playback",
-        text="Playback",
-    )
-
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
         layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
@@ -131,6 +126,16 @@ def playback_controls(layout, context):
         row.operator(
             "anim.keyframe_delete_v3d", text="", icon="KEYFRAMES_REMOVE"
         )  # BFA - updated to work like it would in the 3D View (as expected)
+
+        # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
+        if st.mode != "GPENCIL":
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_snap_anim", text="")
+            sub = row.row(align=True)
+            sub.popover(
+                panel="DOPESHEET_PT_snapping",
+                text="",
+            )
 
         # BFA - Snap playhead controls (single instance, moved to end)
         if tool_settings:

@@ -320,20 +320,18 @@ class DOPESHEET_HT_header(Header):
         # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
         row = layout.row(align=True)
 
-
         if context.space_data.mode == "TIMELINE":
-            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
-            row = layout.row(align=True)
-            row.operator("wm.switch_editor_to_dopesheet", text="", icon="DOPESHEET_ACTIVE")
-            row.operator("wm.switch_editor_to_graph", text="", icon="GRAPH")
-            row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
-            row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
-
-            row = layout.row(align=True)
-
-            row.operator("wm.switch_editor_to_dopesheet", text="", icon="TIME", depress=True)  # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
+            if bpy.context.preferences.addons.get("bfa_power_user_tools"):
+                if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_timelinetoggle:
+                    row = layout.row(align=True)
+                    row.operator("wm.switch_editor_to_dopesheet", text="", icon="TIME", depress=True)  # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
 
         elif context.space_data.mode == "DOPESHEET_EDITOR":
+            if bpy.context.preferences.addons.get("bfa_power_user_tools"):
+                if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_timelinetoggle:
+                    row = layout.row(align=True)
+                    row.operator("wm.switch_editor_to_timeline", text="", icon="TIME") # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
+
             # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
             row = layout.row(align=True)
             row.operator("wm.switch_editor_in_dopesheet", text="", icon="DOPESHEET_ACTIVE")
@@ -341,19 +339,17 @@ class DOPESHEET_HT_header(Header):
             row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
             row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
 
-            row = layout.row(align=True)
-
-            row.operator("wm.switch_editor_to_timeline", text="", icon="TIME") # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
 
         ###########################
 
+        # BFA - props are redundant
         #layout.template_header()
 
-        if st.mode != 'TIMELINE':
+        #if st.mode != 'TIMELINE':
             # Timeline mode is special, as it's presented as a sub-type of the
             # dope sheet editor, rather than a mode. So this shouldn't show the
             # mode selector.
-            layout.prop(st, "ui_mode", text="")
+        #    layout.prop(st, "ui_mode", text="")
 
         DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
         DOPESHEET_HT_editor_buttons.draw_header(context, layout)
@@ -457,6 +453,18 @@ class DOPESHEET_HT_editor_buttons:
         overlays = st.overlays
 
         cls._draw_overlay_selector(context, layout)
+
+        # BFA - Power User Tools insert/remove operators
+        wm = context.window_manager
+        if bpy.context.preferences.addons.get("bfa_power_user_tools"):
+            row = layout.row(align=True)
+            if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
+                row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
+                row.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
+
+            if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
+                row.operator("anim.insertframe_right", text="", icon="TRIA_RIGHT")
+                row.operator("anim.removeframe_right", text="", icon="PANEL_CLOSE")
 
     @classmethod
     def _draw_overlay_selector(cls, context, layout):
