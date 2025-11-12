@@ -64,7 +64,7 @@ class VIEW3D_PT_copy_global_transform_fix_to_camera(GlobalTransformPanelMixin, P
         scene = context.scene
 
         # Fix to Scene Camera:
-        layout.use_property_split = True
+        layout.use_property_split = False # BFA - align left
         props_box = layout.column(heading="Fix", heading_ctxt=i18n_contexts.id_camera, align=True)
         props_box.prop(scene.tool_settings, "anim_fix_to_cam_use_loc", text="Location")
         props_box.prop(scene.tool_settings, "anim_fix_to_cam_use_rot", text="Rotation")
