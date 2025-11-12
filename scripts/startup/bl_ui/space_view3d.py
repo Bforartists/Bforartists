@@ -10757,9 +10757,11 @@ class VIEW3D_PT_quad_view(Panel):
         col.prop(region, "lock_rotation")
         row = col.row()
         row.enabled = region.lock_rotation
+        row.separator() # bfa - indent
         row.prop(region, "show_sync_view")
         row = col.row()
         row.enabled = region.lock_rotation and region.show_sync_view
+        row.separator(factor=3.4) # bfa - indent from show_sync_view
         row.prop(region, "use_box_clip")
 
 
