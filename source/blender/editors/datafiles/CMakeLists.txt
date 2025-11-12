@@ -1251,6 +1251,9 @@ if(WITH_BLENDER)
       node_fileoutput
       node_fieldtogrid
       node_frame
+      node_framejoin
+      node_frameparent
+      node_frameremove
       node_fresnel
       node_gamma
       node_geometry
@@ -1275,6 +1278,8 @@ if(WITH_BLENDER)
       node_insert_off # bfa - don't change the order of the icons
 
       node_invert
+      node_joingroup
+      node_joinframenamed
       node_keying
       node_keyingscreen
       node_layerweight

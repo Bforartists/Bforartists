@@ -702,11 +702,11 @@ class NODE_MT_node(Menu):
         layout.operator("node.delete_reconnect", icon="DELETE")
 
         layout.separator()
-        layout.operator("node.join", text="Join in New Frame", icon="JOIN")
-        layout.operator("node.detach", text="Remove from Frame", icon="DELETE")
-        layout.operator("node.join_nodes", text="Join Group Inputs")
-        layout.operator("node.join_named")
-        layout.operator("node.parent_set", text="Frame Make Parent", icon="PARENT_SET")
+        layout.operator("node.join", text="Join in New Frame", icon="NODE_FRAMEJOIN")
+        layout.operator("node.detach", text="Remove from Frame", icon="NODE_FRAMEREMOVE")
+        layout.operator("node.join_nodes", text="Join Group Inputs", icon="NODE_JOINGROUP")
+        layout.operator("node.join_named", icon="NODE_JOINFRAMENAMED")
+        layout.operator("node.parent_set", text="Frame Make Parent", icon="NODE_FRAMEPARENT")
 
         layout.separator()  # BFA - exposed context menu operator to header
 
