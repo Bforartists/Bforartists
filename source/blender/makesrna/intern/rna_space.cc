@@ -8404,7 +8404,7 @@ static void rna_def_space_node_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_world_center", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlay.flag", SN_OVERLAY_SHOW_WORLD_CENTER);
   RNA_def_property_boolean_default(prop, true);
-  RNA_def_property_ui_text(prop, "World Center", "Show world center X and Y axes in the node editor background");
+  RNA_def_property_ui_text(prop, "World Center", "Show canvas center X and Y axes in the node editor background");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE, nullptr);
 
   /*BFA - World Center overlay*/
@@ -8412,7 +8412,7 @@ static void rna_def_space_node_overlay(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "overlay.world_center_alpha");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_float_default(prop, 0.3f);
-  RNA_def_property_ui_text(prop, "World Center Alpha", "Transparency level for world center lines");
+  RNA_def_property_ui_text(prop, "World Center Alpha", "Transparency level for canvas center lines");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE, nullptr);
 }
 
