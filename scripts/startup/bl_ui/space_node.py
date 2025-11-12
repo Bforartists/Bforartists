@@ -1323,6 +1323,22 @@ class NODE_PT_overlay(Panel):
         if snode.tree_type == 'CompositorNodeTree':
             col.prop(overlay, "show_timing", text="Timings")
 
+        # BFA - World Center overlay
+        col.separator()
+        
+        split = col.split()
+        row = split.row()
+        row.prop(overlay, "show_world_center", text="Canvas Center")
+        
+        if not overlay.show_world_center:
+            row.label(icon="DISCLOSURE_TRI_RIGHT")
+        else:
+            row.label(icon="DISCLOSURE_TRI_DOWN")
+            split = col.split()
+            row = split.row()
+            row.separator()
+            row.use_property_split = True
+            row.prop(overlay, "world_center_alpha", text="Alpha")
 
 class NODE_MT_node_tree_interface_context_menu(Menu):
     bl_label = "Node Tree Interface Specials"

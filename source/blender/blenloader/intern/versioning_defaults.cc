@@ -269,6 +269,14 @@ static void blo_update_defaults_screen(bScreen *screen,
       sclip->mask_info.blend_factor = 0.7f;
       sclip->mask_info.draw_flag = MASK_DRAWFLAG_SPLINE;
     }
+
+    /*BFA - World Center overlay*/
+    else if (area->spacetype == SPACE_NODE) {
+      SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+      /* BFA - Set world center alpha default value and enable by default */
+      snode->overlay.world_center_alpha = 0.3f;
+      snode->overlay.flag |= SN_OVERLAY_SHOW_WORLD_CENTER;
+    }
   }
 
   /* Show tool-header by default (for most cases at least, hide for others). */
