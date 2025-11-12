@@ -265,9 +265,11 @@ class NODE_PT_node_tools(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("node.join", text="Join in New Frame", icon = "JOIN")
-            col.operator("node.detach", text="Remove from Frame", icon = "DELETE")
-            col.operator("node.parent_set", text = "Frame Make Parent", icon = "PARENT_SET")
+            col.operator("node.join", text="Join in New Frame", icon = "NODE_FRAMEJOIN")
+            col.operator("node.detach", text="Remove from Frame", icon = "NODE_FRAMEREMOVE")
+            col.operator("node.join_nodes", text="Join Group Inputs", icon="NODE_JOINGROUP")
+            col.operator("node.join_named", icon="NODE_JOINFRAMENAMED")
+            col.operator("node.parent_set", text="Frame Make Parent", icon="NODE_FRAMEPARENT")
 
         # icon buttons
         else:
@@ -279,25 +281,34 @@ class NODE_PT_node_tools(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("node.join", text="", icon = "JOIN")
-                row.operator("node.detach", text="", icon = "DELETE")
-                row.operator("node.parent_set", text = "", icon = "PARENT_SET")
+                row.operator("node.join", text="", icon = "NODE_FRAMEJOIN")
+                row.operator("node.detach", text="", icon = "NODE_FRAMEREMOVE")
+                row.operator("node.join_nodes", text="", icon="NODE_JOINGROUP")
+
+                row = col.row(align=True)
+                row.operator("node.join_named", text="", icon="NODE_JOINFRAMENAMED")
+                row.operator("node.parent_set", text="", icon="NODE_FRAMEPARENT")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("node.join", text="", icon = "JOIN")
-                row.operator("node.detach", text="", icon = "DELETE")
+                row.operator("node.join", text="", icon = "NODE_FRAMEJOIN")
+                row.operator("node.detach", text="", icon = "NODE_FRAMEREMOVE")
 
                 row = col.row(align=True)
-                row.operator("node.parent_set", text = "", icon = "PARENT_SET")
+                row.operator("node.join_nodes", text="", icon="NODE_JOINGROUP")
+                row.operator("node.join_named", text="", icon="NODE_JOINFRAMENAMED")
+
+                row = col.row(align=True)
+                row.operator("node.parent_set", text="", icon="NODE_FRAMEPARENT")
 
             elif column_count == 1:
 
-                col.operator("node.join", text="", icon = "JOIN")
-                col.operator("node.detach", text="", icon = "DELETE")
-                col.operator("node.parent_set", text = "", icon = "PARENT_SET")
-
+                col.operator("node.join", text="", icon = "NODE_FRAMEJOIN")
+                col.operator("node.detach", text="", icon = "NODE_FRAMEREMOVE")
+                col.operator("node.join_nodes", text="", icon="NODE_JOINGROUP")
+                col.operator("node.join_named", text="", icon="NODE_JOINFRAMENAMED")
+                col.operator("node.parent_set", text="", icon="NODE_FRAMEPARENT")
 
 class NODE_PT_group(toolshelf_calculate, Panel):
     bl_label = "Group"
