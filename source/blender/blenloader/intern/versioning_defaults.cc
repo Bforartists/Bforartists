@@ -274,7 +274,7 @@ static void blo_update_defaults_screen(bScreen *screen,
     else if (area->spacetype == SPACE_NODE) {
       SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
       /* BFA - Set world center alpha default value and enable by default */
-      snode->overlay.world_center_alpha = 0.3f;
+      snode->overlay.world_center_alpha = 0.25f;
       snode->overlay.flag |= SN_OVERLAY_SHOW_WORLD_CENTER;
     }
   }
