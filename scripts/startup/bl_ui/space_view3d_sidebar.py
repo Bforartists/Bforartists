@@ -64,11 +64,17 @@ class VIEW3D_PT_copy_global_transform_fix_to_camera(GlobalTransformPanelMixin, P
         scene = context.scene
 
         # Fix to Scene Camera:
-        layout.use_property_split = True
-        props_box = layout.column(heading="Fix", heading_ctxt=i18n_contexts.id_camera, align=True)
-        props_box.prop(scene.tool_settings, "anim_fix_to_cam_use_loc", text="Location")
-        props_box.prop(scene.tool_settings, "anim_fix_to_cam_use_rot", text="Rotation")
-        props_box.prop(scene.tool_settings, "anim_fix_to_cam_use_scale", text="Scale")
+        col = layout.column(align=True) # bfa - align left
+        col.label(text='Fix', text_ctxt=i18n_contexts.id_camera)
+        row = col.row()
+        row.separator() # bfa - indent
+        row.prop(scene.tool_settings, "anim_fix_to_cam_use_loc", text="Location")
+        row = col.row()
+        row.separator() # bfa - indent
+        row.prop(scene.tool_settings, "anim_fix_to_cam_use_rot", text="Rotation")
+        row = col.row()
+        row.separator() # bfa - indent
+        row.prop(scene.tool_settings, "anim_fix_to_cam_use_scale", text="Scale")
 
         keyingset = AutoKeying.active_keyingset(context)
         if keyingset:
