@@ -93,8 +93,6 @@ def playback_controls(layout, context):
 
     # BFA - removed separator_spacer to center controls better
 
-    layout.separator_spacer()
-
     if scene:
         row = layout.row()
         if scene.show_subframe:
@@ -127,15 +125,16 @@ def playback_controls(layout, context):
             "anim.keyframe_delete_v3d", text="", icon="KEYFRAMES_REMOVE"
         )  # BFA - updated to work like it would in the 3D View (as expected)
 
-        # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
-        if st.mode != "GPENCIL":
-            row = layout.row(align=True)
-            row.prop(tool_settings, "use_snap_anim", text="")
-            sub = row.row(align=True)
-            sub.popover(
-                panel="DOPESHEET_PT_snapping",
-                text="",
-            )
+        # BFA - Grease Pencil mode doesn't need snapping, as it's frame-aligned only
+        if is_timeline:
+            if st.mode != "GPENCIL":
+                row = layout.row(align=True)
+                row.prop(tool_settings, "use_snap_anim", text="")
+                sub = row.row(align=True)
+                sub.popover(
+                    panel="DOPESHEET_PT_snapping",
+                    text="",
+                )
 
         # BFA - Snap playhead controls (single instance, moved to end)
         if tool_settings:
@@ -172,6 +171,19 @@ def playback_controls(layout, context):
         # BFA - Make this only show in the timeline editor to not show this in the footer.
         if is_timeline:
             layout.popover(panel="TIME_PT_view_view_options", text="Options")
+
+        # BFA - Power User Tools insert/remove operators
+        if not is_timeline:
+            wm = context.window_manager
+            if bpy.context.preferences.addons.get("bfa_power_user_tools"):
+                row = layout.row(align=True)
+                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
+                    row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
+                    row.operator("anim.insertframe_left", text="", icon="TRIA_LEFT")
+
+                if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
+                    row.operator("anim.insertframe_right", text="", icon="TRIA_RIGHT")
+                    row.operator("anim.removeframe_right", text="", icon="PANEL_CLOSE")
 
 # BFA - Legacy
 

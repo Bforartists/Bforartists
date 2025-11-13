@@ -258,18 +258,22 @@ class BFA_OT_removeframe_right(op):
             # Check if the object has animation data
             if obj.animation_data and obj.animation_data.action:
                 action = obj.animation_data.action
-                # Use compatibility function to get fcurves
-                for fcurve in get_fcurves_from_action(action):
-                    # Iterate over each keyframe point in the fcurve
-                    for keyframe in fcurve.keyframe_points:
-                        # If the keyframe is on the current frame
-                        if keyframe.co.x == current_frame:
-                            # Delete the keyframe
-                            fcurve.keyframe_points.remove(keyframe)
-                        # If the keyframe is to the right of the current frame
-                        elif keyframe.co.x > current_frame:
-                            # Nudge the key frame one frame backward
-                            keyframe.co.x -= 1
+                for layer in action.layers:
+                    for strip in layer.strips:
+                        if strip.type == 'KEYFRAME':
+                            for channelbag in strip.channelbags:
+                                # Iterate over each fcurve in the channelbag
+                                for fcurve in channelbag.fcurves:
+                                    # Iterate over each keyframe point in the fcurve
+                                    for keyframe in fcurve.keyframe_points:
+                                        # If the keyframe is on the current frame
+                                        if keyframe.co.x == current_frame:
+                                            # Delete the keyframe
+                                            fcurve.keyframe_points.remove(keyframe)
+                                        # If the keyframe is to the right of the current frame
+                                        elif keyframe.co.x > current_frame:
+                                            # Nudge the key frame one frame backward
+                                            keyframe.co.x -= 1
 
             # Check if the object is a grease pencil object
             if obj.type == 'GREASEPENCIL':
