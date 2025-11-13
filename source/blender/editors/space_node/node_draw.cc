@@ -4990,7 +4990,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   /* BFA - Draw Y axis line (top-bottom line at Y=0) in theme Y color (red) with transparency */
   if (x_axis_visible) {
     float color[4];
-    UI_GetThemeColor4fv(TH_REDALERT, color);
+    UI_GetThemeColor4fv(TH_SUCCESS, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
     
@@ -5002,7 +5002,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   else {
     /* Y axis is out of view - draw top-bottom line on the closest edge with padding */
     float color[4];
-    UI_GetThemeColor4fv(TH_REDALERT, color);
+    UI_GetThemeColor4fv(TH_SUCCESS, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
     
@@ -5025,7 +5025,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   /* BFA - Draw Y axis line (left-right line) - sticky to edges when center is out of view */
   if (y_axis_visible) {
     float color[4];
-    UI_GetThemeColor4fv(TH_SUCCESS, color);
+    UI_GetThemeColor4fv(TH_REDALERT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
     
@@ -5037,7 +5037,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   else {
     /* Y axis is out of view - draw horizontal line on the closest edge with padding */
     float color[4];
-    UI_GetThemeColor4fv(TH_SUCCESS, color);
+    UI_GetThemeColor4fv(TH_REDALERT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
     
