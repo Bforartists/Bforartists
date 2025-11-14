@@ -18,7 +18,7 @@ fb53ef76-7ca6-4c7d-95ef-20867fe4bd82:Compositor Nodegroups/Lenses/Depth of Field
 1507ed99-5e49-4b7d-9904-f5fc3a1e5500:Compositor Nodegroups/Lenses/Dirt:Compositor Nodegroups-Lenses-Dirt
 d319ef17-db19-4d19-a5ac-921559d8b5ce:Compositor Nodegroups/Lenses/Flares:Compositor Nodegroups-Lenses-Flares
 41b85fe8-3c33-450e-a802-fa7f40b6d442:Compositor Nodegroups/Lenses/Glares:Compositor Nodegroups-Lenses-Glares
-234ca712-e056-4892-8c8e-5a81e3708b5c:Compositor Nodegroups/Lenses/Grain:Compositor Nodegroups-Lenses-Grain
+234ca712-e056-4892-8c8e-5a81e3708b5c:Compositor Nodegroups/Lenses/Grains:Compositor Nodegroups-Lenses-Grains
 a460062a-8ff4-404e-a89d-9105aeba4cba:Compositor Nodegroups/Lenses/Quality:Compositor Nodegroups-Lenses-Quality
 84715fd6-a1b7-4ce0-a872-a427e9bc7e37:Compositor Nodegroups/Lenses/Shake:Compositor Nodegroups-Lenses-Shake
 ae7717ab-bda5-45ec-81ae-a43fcf9ee210:Compositor Nodegroups/Lenses/Vignettes:Compositor Nodegroups-Lenses-Vignettes
