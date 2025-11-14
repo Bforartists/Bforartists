@@ -1337,7 +1337,6 @@ static void v3d_editvertex_buts(
       if (totlattdata == 1) {
         uiDefButR(block,
                   ButType::Num,
-                  0,
                   IFACE_(""), /* -bfa remove text from slider */
                   0,
                   yi -= buth + but_margin,

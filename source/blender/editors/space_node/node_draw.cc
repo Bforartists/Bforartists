@@ -18,8 +18,8 @@
 #include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 #include "DNA_screen_types.h"
-#include "DNA_space_types.h"
 #include "DNA_space_enums.h"
+#include "DNA_space_types.h"
 #include "DNA_text_types.h"
 #include "DNA_world_types.h"
 
@@ -29,8 +29,8 @@
 #include "BLI_function_ref.hh"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
-#include "BLI_math_color.h"
 #include "BLI_math_base.h"
+#include "BLI_math_color.h"
 #include "BLI_set.hh"
 #include "BLI_span.hh"
 #include "BLI_string.h"
@@ -45,7 +45,6 @@
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
 #include "BKE_global.hh"
-#include "DNA_userdef_types.h"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_library.hh"
@@ -60,6 +59,7 @@
 #include "BKE_scene.hh"
 #include "BKE_scene_runtime.hh"
 #include "BKE_screen.hh"
+#include "DNA_userdef_types.h"
 
 #include "IMB_imbuf.hh"
 
@@ -2995,7 +2995,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
-                              0,
                               ICON_NODETREE,
                               iconofs,
                               rct.ymax - NODE_DY,
@@ -3086,7 +3085,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, blender::ui::EmbossType::None);
     uiDefIconBut(&block,
                  ButType::But,
-                 0,
                  RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
                  iconofs,
                  rct.ymax - NODE_DY,
@@ -3533,7 +3531,6 @@ static void node_draw_collapsed(const bContext &C,
   UI_block_emboss_set(&block, blender::ui::EmbossType::None);
   uiDefIconBut(&block,
                ButType::But,
-               0,
                icon_header,
                icon_x,
                centy - iconbutw / 2,
@@ -4950,15 +4947,15 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   /* BFA - Check if the world center lines are visible in the current view */
   bool x_axis_visible = (v2d.cur.xmin <= 0.0f && v2d.cur.xmax >= 0.0f);
   bool y_axis_visible = (v2d.cur.ymin <= 0.0f && v2d.cur.ymax >= 0.0f);
-  
-  //if (!x_axis_visible && !y_axis_visible) {
-  //  return; /* Neither axis is visible */
-  //}
+
+  // if (!x_axis_visible && !y_axis_visible) {
+  //   return; /* Neither axis is visible */
+  // }
 
   GPUVertFormat *format = immVertexFormat();
   const uint pos = GPU_vertformat_attr_add(
       format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
-  
+
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
   /* BFA - Set line thickness to match large grid dots (approximately 1.5 * 2.6 * U.pixelsize) */
@@ -4974,10 +4971,10 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_SUCCESS, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, 0.0f, v2d.cur.ymin);  /* Bottom of view */
-    immVertex2f(pos, 0.0f, v2d.cur.ymax);  /* Top of view */
+    immVertex2f(pos, 0.0f, v2d.cur.ymin); /* Bottom of view */
+    immVertex2f(pos, 0.0f, v2d.cur.ymax); /* Top of view */
     immEnd();
   }
   else {
@@ -4986,7 +4983,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_SUCCESS, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     const float edge_padding = 3.9f * U.pixelsize; /* Padding from edges */
     float edge_x;
     if (v2d.cur.xmin > 0.0f) {
@@ -4998,8 +4995,8 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
       edge_x = v2d.cur.xmax - edge_padding;
     }
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, edge_x, v2d.cur.ymin);  /* Bottom of view */
-    immVertex2f(pos, edge_x, v2d.cur.ymax);  /* Top of view */
+    immVertex2f(pos, edge_x, v2d.cur.ymin); /* Bottom of view */
+    immVertex2f(pos, edge_x, v2d.cur.ymax); /* Top of view */
     immEnd();
   }
 
@@ -5009,10 +5006,10 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_REDALERT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, v2d.cur.xmin, 0.0f);  /* Left of view */
-    immVertex2f(pos, v2d.cur.xmax, 0.0f);  /* Right of view */
+    immVertex2f(pos, v2d.cur.xmin, 0.0f); /* Left of view */
+    immVertex2f(pos, v2d.cur.xmax, 0.0f); /* Right of view */
     immEnd();
   }
   else {
@@ -5021,7 +5018,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_REDALERT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     const float edge_padding = 3.9f * U.pixelsize; /* Padding from edges */
     float edge_y;
     if (v2d.cur.ymin > 0.0f) {
@@ -5033,8 +5030,8 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
       edge_y = v2d.cur.ymax - edge_padding;
     }
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, v2d.cur.xmin, edge_y);  /* Left of view */
-    immVertex2f(pos, v2d.cur.xmax, edge_y);  /* Right of view */
+    immVertex2f(pos, v2d.cur.xmin, edge_y); /* Left of view */
+    immVertex2f(pos, v2d.cur.xmax, edge_y); /* Right of view */
     immEnd();
   }
 
@@ -5044,14 +5041,14 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_TEXT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     /* BFA - Square with size matching line thickness */
     const float square_size = line_width;
     immBegin(GPU_PRIM_LINE_LOOP, 4);
-    immVertex2f(pos, -square_size, -square_size);  /* Bottom-left corner */
-    immVertex2f(pos, square_size, -square_size);   /* Bottom-right corner */
-    immVertex2f(pos, square_size, square_size);    /* Top-right corner */
-    immVertex2f(pos, -square_size, square_size);   /* Top-left corner */
+    immVertex2f(pos, -square_size, -square_size); /* Bottom-left corner */
+    immVertex2f(pos, square_size, -square_size);  /* Bottom-right corner */
+    immVertex2f(pos, square_size, square_size);   /* Top-right corner */
+    immVertex2f(pos, -square_size, square_size);  /* Top-left corner */
     immEnd();
   }
 
