@@ -180,7 +180,8 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
   KDTree_1d *tree_1d = nullptr;
   KDTree_3d *tree_3d = nullptr;
   KDTree_4d *tree_4d = nullptr;
-  GSet *gset = nullptr;
+  blender::Set<int> sides_set;
+  blender::Set<const Material *> materials_set;
   int face_data_value = SIMFACE_DATA_NONE;
 
   switch (type) {
@@ -196,7 +197,6 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
       break;
     case SIMFACE_SIDES:
     case SIMFACE_MATERIAL:
-      gset = BLI_gset_ptr_new("Select similar face");
       break;
   }
 
@@ -241,12 +241,12 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
       if (BM_elem_flag_test(face, BM_ELEM_SELECT)) {
         switch (type) {
           case SIMFACE_SIDES:
-            BLI_gset_add(gset, POINTER_FROM_INT(face->len));
+            sides_set.add(face->len);
             break;
           case SIMFACE_MATERIAL: {
             Material *material = (*material_array)[face->mat_nr];
             if (material != nullptr) {
-              BLI_gset_add(gset, material);
+              materials_set.add(material);
             }
             break;
           }
@@ -349,9 +349,7 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
         switch (type) {
           case SIMFACE_SIDES: {
             const int num_sides = face->len;
-            GSetIterator gs_iter;
-            GSET_ITER (gs_iter, gset) {
-              const int num_sides_iter = POINTER_AS_INT(BLI_gsetIterator_getKey(&gs_iter));
+            for (const int num_sides_iter : sides_set) {
               const int delta_i = num_sides - num_sides_iter;
               if (mesh_select_similar_compare_int(delta_i, compare)) {
                 select = true;
@@ -365,15 +363,8 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
             if (material == nullptr) {
               continue;
             }
-
-            GSetIterator gs_iter;
-            GSET_ITER (gs_iter, gset) {
-              const Material *material_iter = static_cast<const Material *>(
-                  BLI_gsetIterator_getKey(&gs_iter));
-              if (material == material_iter) {
-                select = true;
-                break;
-              }
+            if (materials_set.contains(material)) {
+              select = true;
             }
             break;
           }
@@ -498,9 +489,6 @@ static wmOperatorStatus similar_face_select_exec(bContext *C, wmOperator *op)
   BLI_kdtree_1d_free(tree_1d);
   BLI_kdtree_3d_free(tree_3d);
   BLI_kdtree_4d_free(tree_4d);
-  if (gset != nullptr) {
-    BLI_gset_free(gset, nullptr);
-  }
 
   return OPERATOR_FINISHED;
 }
@@ -587,7 +575,7 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
 
   KDTree_1d *tree_1d = nullptr;
   KDTree_3d *tree_3d = nullptr;
-  GSet *gset = nullptr;
+  blender::Set<int> face_count_set;
   int edge_data_value = SIMEDGE_DATA_NONE;
 
   switch (type) {
@@ -601,7 +589,6 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
       tree_3d = BLI_kdtree_3d_new(tot_edges_selected_all * 2);
       break;
     case SIMEDGE_FACE:
-      gset = BLI_gset_ptr_new("Select similar edge: face");
       break;
   }
 
@@ -667,7 +654,7 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
       if (BM_elem_flag_test(edge, BM_ELEM_SELECT)) {
         switch (type) {
           case SIMEDGE_FACE:
-            BLI_gset_add(gset, POINTER_FROM_INT(BM_edge_face_count(edge)));
+            face_count_set.add(BM_edge_face_count(edge));
             break;
           case SIMEDGE_DIR: {
             float dir[3], dir_flip[3];
@@ -806,9 +793,7 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
         switch (type) {
           case SIMEDGE_FACE: {
             const int num_faces = BM_edge_face_count(edge);
-            GSetIterator gs_iter;
-            GSET_ITER (gs_iter, gset) {
-              const int num_faces_iter = POINTER_AS_INT(BLI_gsetIterator_getKey(&gs_iter));
+            for (const int num_faces_iter : face_count_set) {
               const int delta_i = num_faces - num_faces_iter;
               if (mesh_select_similar_compare_int(delta_i, compare)) {
                 select = true;
@@ -941,9 +926,6 @@ static wmOperatorStatus similar_edge_select_exec(bContext *C, wmOperator *op)
 
   BLI_kdtree_1d_free(tree_1d);
   BLI_kdtree_3d_free(tree_3d);
-  if (gset != nullptr) {
-    BLI_gset_free(gset, nullptr);
-  }
 
   return OPERATOR_FINISHED;
 }
