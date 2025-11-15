@@ -63,7 +63,7 @@ class ErrorMessages {
     if (!verbose_) {
       return;
     }
-    this->add(fmt::format(fmt, args...));
+    this->add(fmt::format(fmt::runtime(fmt), args...));
   }
 };
 
@@ -128,7 +128,8 @@ static IndexMask find_edges_duplicates(const Mesh &mesh,
   mask.foreach_index([&](const int edge_i) {
     const int2 edge = edges[edge_i];
     if (!unique_edges.add(edge)) {
-      errors.add("Edge {} is a duplicate of {}", edge_i, unique_edges.index_of(edge));
+      errors.add(
+          fmt::runtime("Edge {} is a duplicate of {}"), edge_i, unique_edges.index_of(edge));
       duplicate_edges[edge_i].set();
     }
   });
@@ -903,6 +904,12 @@ bool mesh_is_valid(const Mesh &mesh, const bool verbose)
 bool mesh_validate_material_indices(Mesh &mesh)
 {
   return validate_material_indices(mesh, false, false, &mesh);
+}
+
+IndexMask mesh_find_faces_duplicate_verts(const Mesh &mesh, IndexMaskMemory &memory)
+{
+  const IndexMask valid_faces(mesh.faces().size());
+  return find_faces_duplicate_verts(mesh, valid_faces, memory, false);
 }
 
 }  // namespace blender::bke

@@ -1693,6 +1693,7 @@ class CYCLES_OBJECT_PT_visibility(CyclesButtonsPanel, Panel):
         ob = context.object
         # bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
         # layout.prop(ob, "hide_select", text="Selectable", invert_checkbox=True, toggle=False)
+        layout.prop(ob, "hide_surface_pick", text="Surface Picking", toggle=False, invert_checkbox=True)
 
         col = layout.column(align=True)
         col.label(text="Show In")

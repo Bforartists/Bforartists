@@ -368,30 +368,30 @@ static wmOperatorStatus grease_pencil_stroke_simplify_exec(bContext *C, wmOperat
 
 static void grease_pencil_simplify_ui(bContext *C, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
+  ui::Layout &layout = *op->layout;
   wmWindowManager *wm = CTX_wm_manager(C);
 
   PointerRNA ptr = RNA_pointer_create_discrete(&wm->id, op->type->srna, op->properties);
 
-  layout->use_property_split_set(true);
-  layout->use_property_decorate_set(false);
+  layout.use_property_split_set(true);
+  layout.use_property_decorate_set(false);
 
-  layout->prop(&ptr, "mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(&ptr, "mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   const SimplifyMode mode = SimplifyMode(RNA_enum_get(op->ptr, "mode"));
 
   switch (mode) {
     case SimplifyMode::FIXED:
-      layout->prop(&ptr, "steps", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout.prop(&ptr, "steps", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     case SimplifyMode::ADAPTIVE:
-      layout->prop(&ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout.prop(&ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     case SimplifyMode::SAMPLE:
-      layout->prop(&ptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout.prop(&ptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     case SimplifyMode::MERGE:
-      layout->prop(&ptr, "distance", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout.prop(&ptr, "distance", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       break;
     default:
       break;
@@ -399,7 +399,8 @@ static void grease_pencil_simplify_ui(bContext *C, wmOperator *op)
 }
 
 /* BFA - Make "Simplify Stroke" description dynamic*/
-/* It uses the mode's description if that was set, otherwise use the operator description is fallback */
+/* It uses the mode's description if that was set, otherwise use the operator description is
+ * fallback */
 static std::string simplify_strokes_description(bContext * /* C */,
                                                 wmOperatorType *ot,
                                                 PointerRNA *ptr)
@@ -526,7 +527,11 @@ enum class DissolveMode : int8_t {
 };
 
 static const EnumPropertyItem prop_dissolve_types[] = {
-    {int(DissolveMode::POINTS), "POINTS", ICON_DISSOLVE_VERTS, "Dissolve", "Dissolve selected points"}, /*BFA icon*/
+    {int(DissolveMode::POINTS),
+     "POINTS",
+     ICON_DISSOLVE_VERTS,
+     "Dissolve",
+     "Dissolve selected points"}, /*BFA icon*/
     {int(DissolveMode::BETWEEN),
      "BETWEEN",
      ICON_DISSOLVE_BETWEEN, /*BFA icon*/
@@ -1405,10 +1410,22 @@ static wmOperatorStatus grease_pencil_caps_set_exec(bContext *C, wmOperator *op)
 static void GREASE_PENCIL_OT_caps_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_caps_types[] = {
-      {int(CapsMode::ROUND), "ROUND", ICON_TOGGLECAPS_DEFAULT, "Rounded", "Set as default rounded caps"}, /*BFA - added icon*/
-      {int(CapsMode::FLAT), "FLAT", ICON_TOGGLECAPS_BOTH, "Flat", "Set as flat caps"}, /*BFA - added icon and explicit tooltip*/
+      {int(CapsMode::ROUND),
+       "ROUND",
+       ICON_TOGGLECAPS_DEFAULT,
+       "Rounded",
+       "Set as default rounded caps"}, /*BFA - added icon*/
+      {int(CapsMode::FLAT),
+       "FLAT",
+       ICON_TOGGLECAPS_BOTH,
+       "Flat",
+       "Set as flat caps"}, /*BFA - added icon and explicit tooltip*/
       RNA_ENUM_ITEM_SEPR,
-      {int(CapsMode::START), "START", ICON_TOGGLECAPS_START, "Toggle Start", ""}, /*BFA - added icon*/
+      {int(CapsMode::START),
+       "START",
+       ICON_TOGGLECAPS_START,
+       "Toggle Start",
+       ""},                                                               /*BFA - added icon*/
       {int(CapsMode::END), "END", ICON_TOGGLECAPS_END, "Toggle End", ""}, /*BFA - added icon*/
       {0, nullptr, 0, nullptr, nullptr},
   };
@@ -2060,9 +2077,21 @@ enum class SeparateMode : int8_t {
 };
 
 static const EnumPropertyItem prop_separate_modes[] = {
-    {int(SeparateMode::SELECTED), "SELECTED", ICON_SEPARATE, "Selection", "Separate selected geometry"}, /*BFA - icon added*/
-    {int(SeparateMode::MATERIAL), "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", "Separate by material"}, /*BFA - icon added*/
-    {int(SeparateMode::LAYER), "LAYER", ICON_SEPARATE_GP_LAYER, "By Layer", "Separate by layer"}, /*BFA - icon added*/
+    {int(SeparateMode::SELECTED),
+     "SELECTED",
+     ICON_SEPARATE,
+     "Selection",
+     "Separate selected geometry"}, /*BFA - icon added*/
+    {int(SeparateMode::MATERIAL),
+     "MATERIAL",
+     ICON_SEPARATE_BYMATERIAL,
+     "By Material",
+     "Separate by material"}, /*BFA - icon added*/
+    {int(SeparateMode::LAYER),
+     "LAYER",
+     ICON_SEPARATE_GP_LAYER,
+     "By Layer",
+     "Separate by layer"}, /*BFA - icon added*/
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2703,15 +2732,17 @@ static IndexRange clipboard_paste_strokes_ex(Main &bmain,
 
   drawing.strokes_for_write() = std::move(joined_curves.get_curves_for_write()->geometry.wrap());
 
-  /* Remap the material indices of the pasted curves to the target object material indices. */
-  bke::MutableAttributeAccessor attributes = drawing.strokes_for_write().attributes_for_write();
-  bke::SpanAttributeWriter<int> material_indices = attributes.lookup_or_add_for_write_span<int>(
-      "material_index", bke::AttrDomain::Curve);
-  if (material_indices) {
-    for (const int i : pasted_curves_range) {
-      material_indices.span[i] = clipboard_material_remap[material_indices.span[i]];
+  if (!clipboard_material_remap.is_empty()) {
+    /* Remap the material indices of the pasted curves to the target object material indices. */
+    bke::MutableAttributeAccessor attributes = drawing.strokes_for_write().attributes_for_write();
+    bke::SpanAttributeWriter<int> material_indices = attributes.lookup_or_add_for_write_span<int>(
+        "material_index", bke::AttrDomain::Curve);
+    if (material_indices) {
+      for (const int i : pasted_curves_range) {
+        material_indices.span[i] = clipboard_material_remap[material_indices.span[i]];
+      }
+      material_indices.finish();
     }
-    material_indices.finish();
   }
 
   drawing.tag_topology_changed();
@@ -3409,21 +3440,19 @@ static wmOperatorStatus grease_pencil_reproject_exec(bContext *C, wmOperator *op
 
 static void grease_pencil_reproject_ui(bContext * /*C*/, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
-  uiLayout *row;
+  ui::Layout &layout = *op->layout;
 
   const ReprojectMode type = ReprojectMode(RNA_enum_get(op->ptr, "type"));
 
-  layout->use_property_split_set(true);
-  layout->use_property_decorate_set(false);
-  row = &layout->row(true);
-  row->prop(op->ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.use_property_split_set(true);
+  layout.use_property_decorate_set(false);
+
+  layout.row(true).prop(op->ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   if (type == ReprojectMode::Surface) {
-    row = &layout->row(true);
-    row->prop(op->ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.row(true).prop(op->ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
-  row = &layout->row(true);
+  ui::Layout *row = &layout.row(true);
   row->use_property_split_set(false); /* BFA - float bool property left*/
   row->prop(op->ptr, "keep_original", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
@@ -4732,15 +4761,15 @@ static wmOperatorStatus grease_pencil_convert_curve_type_exec(bContext *C, wmOpe
 
 static void grease_pencil_convert_curve_type_ui(bContext *C, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
+  ui::Layout &layout = *op->layout;
   wmWindowManager *wm = CTX_wm_manager(C);
 
   PointerRNA ptr = RNA_pointer_create_discrete(&wm->id, op->type->srna, op->properties);
 
-  layout->use_property_split_set(true);
-  layout->use_property_decorate_set(false);
+  layout.use_property_split_set(true);
+  layout.use_property_decorate_set(false);
 
-  layout->prop(&ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(&ptr, "type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   const CurveType dst_type = CurveType(RNA_enum_get(op->ptr, "type"));
 
@@ -4748,7 +4777,7 @@ static void grease_pencil_convert_curve_type_ui(bContext *C, wmOperator *op)
     return;
   }
 
-  layout->prop(&ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(&ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void GREASE_PENCIL_OT_convert_curve_type(wmOperatorType *ot)
@@ -4873,15 +4902,15 @@ static wmOperatorStatus grease_pencil_set_corner_type_exec(bContext *C, wmOperat
 
 static void grease_pencil_set_corner_type_ui(bContext *C, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
+  ui::Layout &layout = *op->layout;
   wmWindowManager *wm = CTX_wm_manager(C);
 
   PointerRNA ptr = RNA_pointer_create_discrete(&wm->id, op->type->srna, op->properties);
 
-  layout->use_property_split_set(true);
-  layout->use_property_decorate_set(false);
+  layout.use_property_split_set(true);
+  layout.use_property_decorate_set(false);
 
-  layout->prop(&ptr, "corner_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(&ptr, "corner_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   const CornerType corner_type = CornerType(RNA_enum_get(op->ptr, "corner_type"));
 
@@ -4889,7 +4918,7 @@ static void grease_pencil_set_corner_type_ui(bContext *C, wmOperator *op)
     return;
   }
 
-  layout->prop(&ptr, "miter_angle", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(&ptr, "miter_angle", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void GREASE_PENCIL_OT_set_corner_type(wmOperatorType *ot)

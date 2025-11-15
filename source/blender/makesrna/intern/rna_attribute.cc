@@ -17,6 +17,7 @@
 
 #include "BKE_attribute.h"
 #include "BKE_attribute.hh"
+#include "BKE_grease_pencil.hh"
 
 #include "BLT_translation.hh"
 
@@ -564,12 +565,53 @@ static int rna_Attribute_data_length(PointerRNA *ptr)
   return accessor.domain_size(attr->domain());
 }
 
+/**
+ * We don't know which attribute is changed exactly at this point, so we tag the geometry assuming
+ * any attribute may have changed.
+ */
+static void tag_any_attribute_changed(ID *id)
+{
+  switch (GS(id->name)) {
+    case ID_CV: {
+      Curves *curves = blender::id_cast<Curves *>(id);
+      curves->geometry.wrap().tag_topology_changed();
+      break;
+    }
+    case ID_ME: {
+      Mesh *mesh = blender::id_cast<Mesh *>(id);
+      mesh->tag_topology_changed();
+      break;
+    }
+    case ID_PT: {
+      PointCloud *pointcloud = blender::id_cast<PointCloud *>(id);
+      pointcloud->tag_positions_changed();
+      pointcloud->tag_radii_changed();
+      break;
+    }
+    case ID_GP: {
+      GreasePencil *grease_pencil = blender::id_cast<GreasePencil *>(id);
+      for (GreasePencilDrawingBase *drawing_base : grease_pencil->drawings()) {
+        if (drawing_base->type == GP_DRAWING) {
+          blender::bke::greasepencil::Drawing &drawing =
+              reinterpret_cast<GreasePencilDrawing *>(drawing_base)->wrap();
+          drawing.tag_topology_changed();
+        }
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+}
+
 static void rna_Attribute_update_data(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
   ID *id = ptr->owner_id;
 
   /* cheating way for importers to avoid slow updates */
   if (id->us > 0) {
+    tag_any_attribute_changed(id);
     DEG_id_tag_update(id, 0);
     WM_main_add_notifier(NC_GEOM | ND_DATA, id);
   }
@@ -895,38 +937,14 @@ int rna_AttributeGroup_color_length(PointerRNA *ptr)
 {
   using namespace blender;
   AttributeOwner owner = owner_from_pointer_rna(ptr);
-  if (owner.type() == AttributeOwnerType::Mesh) {
-    return BKE_attributes_length(owner, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL);
-  }
-
-  bke::AttributeStorage &storage = *owner.get_storage();
-  int count = 0;
-  storage.foreach([&](bke::Attribute &attr) {
-    if (!(ATTR_DOMAIN_AS_MASK(attr.domain()) & ATTR_DOMAIN_MASK_COLOR)) {
-      return;
-    }
-    if (!(CD_TYPE_AS_MASK(*bke::attr_type_to_custom_data_type(attr.data_type())) &
-          CD_MASK_COLOR_ALL))
-    {
-      return;
-    }
-    count++;
-  });
-  return count;
+  return BKE_attributes_length(owner, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL);
 }
 
 int rna_AttributeGroup_length(PointerRNA *ptr)
 {
   using namespace blender;
   AttributeOwner owner = owner_from_pointer_rna(ptr);
-  if (owner.type() == AttributeOwnerType::Mesh) {
-    return BKE_attributes_length(owner, ATTR_DOMAIN_MASK_ALL, CD_MASK_PROP_ALL);
-  }
-
-  bke::AttributeStorage &storage = *owner.get_storage();
-  int count = 0;
-  storage.foreach([&](bke::Attribute & /*attr*/) { count++; });
-  return count;
+  return BKE_attributes_length(owner, ATTR_DOMAIN_MASK_ALL, CD_MASK_PROP_ALL);
 }
 
 bool rna_AttributeGroup_lookup_string(PointerRNA *ptr, const char *key, PointerRNA *r_ptr)
@@ -1077,27 +1095,23 @@ static void rna_AttributeGroupMesh_active_color_set(PointerRNA *ptr,
 static int rna_AttributeGroupMesh_active_color_index_get(PointerRNA *ptr)
 {
   AttributeOwner owner = AttributeOwner::from_id(ptr->owner_id);
-  const CustomDataLayer *layer = BKE_attribute_search(
-      owner,
-      BKE_id_attributes_active_color_name(ptr->owner_id).value_or(""),
-      CD_MASK_COLOR_ALL,
-      ATTR_DOMAIN_MASK_COLOR);
-
-  return BKE_attribute_to_index(owner, layer, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL);
+  return BKE_attribute_to_index(owner,
+                                BKE_id_attributes_active_color_name(ptr->owner_id).value_or(""),
+                                ATTR_DOMAIN_MASK_COLOR,
+                                CD_MASK_COLOR_ALL);
 }
 
 static void rna_AttributeGroupMesh_active_color_index_set(PointerRNA *ptr, int value)
 {
+  using namespace blender;
   AttributeOwner owner = AttributeOwner::from_id(ptr->owner_id);
-  CustomDataLayer *layer = BKE_attribute_from_index(
+  const std::optional<StringRef> name = BKE_attribute_from_index(
       owner, value, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL);
-
-  if (!layer) {
+  if (!name) {
     fprintf(stderr, "%s: error setting active color index to %d\n", __func__, value);
     return;
   }
-
-  BKE_id_attributes_active_color_set(ptr->owner_id, layer->name);
+  BKE_id_attributes_active_color_set(ptr->owner_id, name);
 }
 
 static void rna_AttributeGroupMesh_active_color_index_range(
@@ -1114,24 +1128,23 @@ static void rna_AttributeGroupMesh_active_color_index_range(
 static int rna_AttributeGroupMesh_render_color_index_get(PointerRNA *ptr)
 {
   AttributeOwner owner = AttributeOwner::from_id(ptr->owner_id);
-  const CustomDataLayer *layer = BKE_id_attributes_color_find(
-      ptr->owner_id, BKE_id_attributes_default_color_name(ptr->owner_id).value_or(""));
-
-  return BKE_attribute_to_index(owner, layer, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL);
+  return BKE_attribute_to_index(owner,
+                                BKE_id_attributes_default_color_name(ptr->owner_id).value_or(""),
+                                ATTR_DOMAIN_MASK_COLOR,
+                                CD_MASK_COLOR_ALL);
 }
 
 static void rna_AttributeGroupMesh_render_color_index_set(PointerRNA *ptr, int value)
 {
+  using namespace blender;
   AttributeOwner owner = AttributeOwner::from_id(ptr->owner_id);
-  CustomDataLayer *layer = BKE_attribute_from_index(
+  const std::optional<StringRef> name = BKE_attribute_from_index(
       owner, value, ATTR_DOMAIN_MASK_COLOR, CD_MASK_COLOR_ALL);
-
-  if (!layer) {
+  if (!name) {
     fprintf(stderr, "%s: error setting render color index to %d\n", __func__, value);
     return;
   }
-
-  BKE_id_attributes_default_color_set(ptr->owner_id, layer->name);
+  BKE_id_attributes_default_color_set(ptr->owner_id, name);
 }
 
 static void rna_AttributeGroupMesh_render_color_index_range(
@@ -1588,6 +1601,7 @@ static void rna_def_attribute_bool(BlenderRNA *brna)
   RNA_def_struct_ui_text(srna, "Bool Attribute Value", "Bool value in geometry attribute");
   prop = RNA_def_property(srna, "value", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "b", 0);
+  RNA_def_property_update(prop, 0, "rna_Attribute_update_data");
 }
 
 static void rna_def_attribute_int8(BlenderRNA *brna)
@@ -1620,6 +1634,7 @@ static void rna_def_attribute_int8(BlenderRNA *brna)
       srna, "8-bit Integer Attribute Value", "8-bit value in geometry attribute");
   prop = RNA_def_property(srna, "value", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "i");
+  RNA_def_property_update(prop, 0, "rna_Attribute_update_data");
 }
 
 static void rna_def_attribute_short2(BlenderRNA *brna)

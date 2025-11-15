@@ -18,8 +18,8 @@
 #include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 #include "DNA_screen_types.h"
-#include "DNA_space_types.h"
 #include "DNA_space_enums.h"
+#include "DNA_space_types.h"
 #include "DNA_text_types.h"
 #include "DNA_world_types.h"
 
@@ -29,8 +29,8 @@
 #include "BLI_function_ref.hh"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
-#include "BLI_math_color.h"
 #include "BLI_math_base.h"
+#include "BLI_math_color.h"
 #include "BLI_set.hh"
 #include "BLI_span.hh"
 #include "BLI_string.h"
@@ -45,7 +45,6 @@
 #include "BKE_context.hh"
 #include "BKE_curves.hh"
 #include "BKE_global.hh"
-#include "DNA_userdef_types.h"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_library.hh"
@@ -60,6 +59,7 @@
 #include "BKE_scene.hh"
 #include "BKE_scene_runtime.hh"
 #include "BKE_screen.hh"
+#include "DNA_userdef_types.h"
 
 #include "IMB_imbuf.hh"
 
@@ -1498,7 +1498,6 @@ static void node_socket_tooltip_set(uiBlock &block,
    * button on top of them for the tooltip. */
   uiBut *but = uiDefIconBut(&block,
                             ButType::Label,
-                            0,
                             ICON_NONE,
                             location.x - size.x / 2.0f,
                             location.y - size.y / 2.0f,
@@ -1984,7 +1983,6 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
     uiBut *toggle_action_but = uiDefIconBut(
         &block,
         ButType::ButToggle,
-        0,
         ICON_NONE,
         header_rect.xmin + header_but_margin,
         header_rect.ymin,
@@ -2007,7 +2005,6 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
     int offsetx = draw_bounds.xmin + (NODE_MARGIN_X / 3);
     uiDefIconBut(&block,
                  ButType::Label,
-                 0,
                  panel_state.is_collapsed() ? ICON_RIGHTARROW : ICON_DOWNARROW_HLT,
                  offsetx,
                  *panel_runtime.header_center_y - but_size / 2,
@@ -2027,7 +2024,6 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
           &ntree.id, &RNA_NodeSocket, input_socket);
       uiBut *panel_toggle_but = uiDefButR(&block,
                                           ButType::Checkbox,
-                                          -1,
                                           "",
                                           offsetx,
                                           int(*panel_runtime.header_center_y - NODE_DYS),
@@ -2039,6 +2035,7 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
                                           0,
                                           0,
                                           "");
+      UI_but_retval_set(panel_toggle_but, -1);
       UI_but_func_tooltip_custom_set(
           panel_toggle_but,
           [](bContext &C, uiTooltipData &tip, uiBut *but, void *argN) {
@@ -2064,7 +2061,6 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, uiBlock &block
     uiBut *label_but = uiDefBut(
         &block,
         ButType::Label,
-        0,
         CTX_IFACE_(panel_translation_context, panel_decl.name),
         offsetx,
         int(*panel_runtime.header_center_y - NODE_DYS),
@@ -2125,7 +2121,6 @@ static uiBut *add_error_message_button(uiBlock &block,
   UI_block_emboss_set(&block, ui::EmbossType::None);
   uiBut *but = uiDefIconBut(&block,
                             ButType::But,
-                            0,
                             icon,
                             icon_offset,
                             rect.ymax - NODE_DY,
@@ -2604,7 +2599,6 @@ static void node_draw_extra_info_row(const bNode &node,
   UI_block_emboss_set(&block, ui::EmbossType::None);
   uiBut *but_icon = uiDefIconBut(&block,
                                  ButType::But,
-                                 0,
                                  extra_info_row.icon,
                                  int(but_icon_left),
                                  int(rect.ymin + row * EXTRA_INFO_ROW_HEIGHT),
@@ -2628,7 +2622,6 @@ static void node_draw_extra_info_row(const bNode &node,
 
   uiBut *but_text = uiDefBut(&block,
                              extra_info_row.set_execute_fn ? ButType::But : ButType::Label,
-                             0,
                              extra_info_row.text.c_str(),
                              int(but_text_left),
                              int(rect.ymin + row * EXTRA_INFO_ROW_HEIGHT),
@@ -3002,7 +2995,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
-                              0,
                               ICON_NODETREE,
                               iconofs,
                               rct.ymax - NODE_DY,
@@ -3027,7 +3019,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
-                              0,
                               ICON_FILE_REFRESH,
                               iconofs,
                               rct.ymax - NODE_DY,
@@ -3053,7 +3044,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
-                              0,
                               is_active ? ICON_HIDE_OFF : ICON_HIDE_ON,
                               // ICON_TOGGLE_NODE_PREVIEW, /* BFA - wip, could be a better icon for
                               // node preview toggle button */*/
@@ -3078,7 +3068,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiDefIconBut(&block,
                  ButType::But,
-                 0,
                  node.typeinfo->ui_icon,
                  iconofs,
                  rct.ymax - NODE_DY,
@@ -3096,7 +3085,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, blender::ui::EmbossType::None);
     uiDefIconBut(&block,
                  ButType::But,
-                 0,
                  RNA_struct_ui_icon(node.typeinfo->rna_ext.srna),
                  iconofs,
                  rct.ymax - NODE_DY,
@@ -3115,7 +3103,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::But,
-                              0,
                               is_active ? ICON_RESTRICT_VIEW_OFF : ICON_RESTRICT_VIEW_ON,
                               iconofs,
                               rct.ymax - NODE_DY,
@@ -3134,7 +3121,6 @@ static void node_draw_basis(const bContext &C,
     short shortcut_icon = get_viewer_shortcut_icon(node);
     uiDefIconBut(&block,
                  ButType::But,
-                 0,
                  shortcut_icon,
                  iconofs - 1.2 * iconbutw,
                  rct.ymax - NODE_DY,
@@ -3154,7 +3140,6 @@ static void node_draw_basis(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::But,
-                              0,
                               is_active ? ICON_RESTRICT_VIEW_OFF : ICON_RESTRICT_VIEW_ON,
                               iconofs,
                               rct.ymax - NODE_DY,
@@ -3172,7 +3157,6 @@ static void node_draw_basis(const bContext &C,
 
     uiDefIconBut(&block,
                  ButType::But,
-                 0,
                  shortcut_icon,
                  iconofs - 1.2 * iconbutw,
                  rct.ymax - NODE_DY,
@@ -3202,7 +3186,6 @@ static void node_draw_basis(const bContext &C,
 
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
-                              0,
                               ICON_DOWNARROW_HLT,
                               rct.xmin + (NODE_MARGIN_X / 3),
                               rct.ymax - NODE_DY / 2.2f - but_size / 2,
@@ -3224,7 +3207,6 @@ static void node_draw_basis(const bContext &C,
 
   uiBut *but = uiDefBut(&block,
                         ButType::Label,
-                        0,
                         showname,
                         round_fl_to_int(rct.xmin + NODE_MARGIN_X),
                         int(rct.ymax - NODE_DY),
@@ -3515,7 +3497,6 @@ static void node_draw_collapsed(const bContext &C,
     UI_block_emboss_set(&block, ui::EmbossType::None);
     uiBut *but = uiDefIconBut(&block,
                               ButType::ButToggle,
-                              0,
                               ICON_RIGHTARROW,
                               iconfs,
                               centy - but_size / 2,
@@ -3550,7 +3531,6 @@ static void node_draw_collapsed(const bContext &C,
   UI_block_emboss_set(&block, blender::ui::EmbossType::None);
   uiDefIconBut(&block,
                ButType::But,
-               0,
                icon_header,
                icon_x,
                centy - iconbutw / 2,
@@ -3566,7 +3546,6 @@ static void node_draw_collapsed(const bContext &C,
 
   uiBut *but = uiDefBut(&block,
                         ButType::Label,
-                        0,
                         showname,
                         round_fl_to_int(rct.xmin + NODE_MARGIN_X),
                         round_fl_to_int(centy - NODE_DY * 0.5f),
@@ -4231,7 +4210,7 @@ static void reroute_node_draw_label(TreeDrawContext &tree_draw_ctx,
   const int y = node.runtime->draw_bounds.ymax - 4 * UI_SCALE_FAC;
 
   uiBut *label_but = uiDefBut(
-      &block, ButType::Label, 0, text, x, y, width, NODE_DY, nullptr, 0, 0, std::nullopt);
+      &block, ButType::Label, text, x, y, width, NODE_DY, nullptr, 0, 0, std::nullopt);
 
   UI_but_drawflag_disable(label_but, UI_BUT_TEXT_LEFT);
 
@@ -4711,7 +4690,6 @@ static void draw_link_errors(const bContext &C,
   UI_block_emboss_set(&invalid_links_block, ui::EmbossType::None);
   uiBut *but = uiDefIconBut(&invalid_links_block,
                             ButType::But,
-                            0,
                             ICON_ERROR,
                             draw_position.x - icon_size / 2,
                             draw_position.y - icon_size / 2,
@@ -4969,15 +4947,15 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   /* BFA - Check if the world center lines are visible in the current view */
   bool x_axis_visible = (v2d.cur.xmin <= 0.0f && v2d.cur.xmax >= 0.0f);
   bool y_axis_visible = (v2d.cur.ymin <= 0.0f && v2d.cur.ymax >= 0.0f);
-  
-  //if (!x_axis_visible && !y_axis_visible) {
-  //  return; /* Neither axis is visible */
-  //}
+
+  // if (!x_axis_visible && !y_axis_visible) {
+  //   return; /* Neither axis is visible */
+  // }
 
   GPUVertFormat *format = immVertexFormat();
   const uint pos = GPU_vertformat_attr_add(
       format, "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
-  
+
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
   /* BFA - Set line thickness to match large grid dots (approximately 1.5 * 2.6 * U.pixelsize) */
@@ -4993,10 +4971,10 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_SUCCESS, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, 0.0f, v2d.cur.ymin);  /* Bottom of view */
-    immVertex2f(pos, 0.0f, v2d.cur.ymax);  /* Top of view */
+    immVertex2f(pos, 0.0f, v2d.cur.ymin); /* Bottom of view */
+    immVertex2f(pos, 0.0f, v2d.cur.ymax); /* Top of view */
     immEnd();
   }
   else {
@@ -5005,7 +4983,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_SUCCESS, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     const float edge_padding = 3.9f * U.pixelsize; /* Padding from edges */
     float edge_x;
     if (v2d.cur.xmin > 0.0f) {
@@ -5017,8 +4995,8 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
       edge_x = v2d.cur.xmax - edge_padding;
     }
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, edge_x, v2d.cur.ymin);  /* Bottom of view */
-    immVertex2f(pos, edge_x, v2d.cur.ymax);  /* Top of view */
+    immVertex2f(pos, edge_x, v2d.cur.ymin); /* Bottom of view */
+    immVertex2f(pos, edge_x, v2d.cur.ymax); /* Top of view */
     immEnd();
   }
 
@@ -5028,10 +5006,10 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_REDALERT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, v2d.cur.xmin, 0.0f);  /* Left of view */
-    immVertex2f(pos, v2d.cur.xmax, 0.0f);  /* Right of view */
+    immVertex2f(pos, v2d.cur.xmin, 0.0f); /* Left of view */
+    immVertex2f(pos, v2d.cur.xmax, 0.0f); /* Right of view */
     immEnd();
   }
   else {
@@ -5040,7 +5018,7 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_REDALERT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     const float edge_padding = 3.9f * U.pixelsize; /* Padding from edges */
     float edge_y;
     if (v2d.cur.ymin > 0.0f) {
@@ -5052,8 +5030,8 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
       edge_y = v2d.cur.ymax - edge_padding;
     }
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, v2d.cur.xmin, edge_y);  /* Left of view */
-    immVertex2f(pos, v2d.cur.xmax, edge_y);  /* Right of view */
+    immVertex2f(pos, v2d.cur.xmin, edge_y); /* Left of view */
+    immVertex2f(pos, v2d.cur.xmax, edge_y); /* Right of view */
     immEnd();
   }
 
@@ -5063,14 +5041,14 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
     UI_GetThemeColor4fv(TH_TEXT, color);
     color[3] *= alpha;
     immUniformColor4fv(color);
-    
+
     /* BFA - Square with size matching line thickness */
     const float square_size = line_width;
     immBegin(GPU_PRIM_LINE_LOOP, 4);
-    immVertex2f(pos, -square_size, -square_size);  /* Bottom-left corner */
-    immVertex2f(pos, square_size, -square_size);   /* Bottom-right corner */
-    immVertex2f(pos, square_size, square_size);    /* Top-right corner */
-    immVertex2f(pos, -square_size, square_size);   /* Top-left corner */
+    immVertex2f(pos, -square_size, -square_size); /* Bottom-left corner */
+    immVertex2f(pos, square_size, -square_size);  /* Bottom-right corner */
+    immVertex2f(pos, square_size, square_size);   /* Top-right corner */
+    immVertex2f(pos, -square_size, square_size);  /* Top-left corner */
     immEnd();
   }
 
