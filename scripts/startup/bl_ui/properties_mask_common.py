@@ -398,6 +398,7 @@ class MASK_MT_add(Menu):
         layout.separator()
 
         layout.operator("mask.add_vertex_slide", text="Add Vertex and Slide", icon='SLIDE_VERTEX')
+        layout.operator("mask.add_feather_vertex_slide", text="Feather Vertex Slide", icon='SLIDE_VERTEX') # bfa - added back to show it exists
 
 
 class MASK_MT_visibility(Menu):
