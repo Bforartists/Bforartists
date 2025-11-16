@@ -759,10 +759,7 @@ class SmoothStrokePanel(BrushPanel):
             return
 
         self.layout.use_property_split = False
-        # self.layout.prop(brush, "use_smooth_stroke",
-        #                 text=self.bl_label if self.is_popover else "")
-
-        self.layout.prop(brush, "use_smooth_stroke", text="Stabilize Stroke")  # bfa - we need the label
+        self.layout.prop(brush, "use_smooth_stroke", text=self.bl_label if self.is_popover else "")
 
     def draw(self, context):
         layout = self.layout
