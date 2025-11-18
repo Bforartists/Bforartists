@@ -27,7 +27,7 @@
 #include "DNA_scene_types.h"
 #include "DNA_vfont_types.h"
 
-#include "BLI_kdtree.h"
+#include "BLI_kdtree.hh"
 #include "BLI_linklist.h"
 #include "BLI_listbase.h"
 #include "BLI_math_matrix.h"
@@ -2483,10 +2483,8 @@ static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
   /** Currently there is no 'all editable' option from the 3DView. */
   const bool do_fully_editable = false;
 
-  GSet *user_overrides_objects_uids = do_fully_editable ? nullptr :
-                                                          BLI_gset_new(BLI_ghashutil_inthash_p,
-                                                                       BLI_ghashutil_intcmp,
-                                                                       __func__);
+  std::unique_ptr<blender::Set<uint32_t>> user_overrides_objects_uids =
+      do_fully_editable ? nullptr : std::make_unique<blender::Set<uint32_t>>();
 
   if (do_fully_editable) {
     /* Pass. */
@@ -2494,7 +2492,7 @@ static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
   else if (user_overrides_from_selected_objects) {
     /* Only selected objects can be 'user overrides'. */
     FOREACH_SELECTED_OBJECT_BEGIN (view_layer, CTX_wm_view3d(C), ob_iter) {
-      BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uid));
+      user_overrides_objects_uids->add(ob_iter->id.session_uid);
     }
     FOREACH_SELECTED_OBJECT_END;
   }
@@ -2502,7 +2500,7 @@ static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
     /* Only armatures inside the root collection (and their children) can be 'user overrides'. */
     FOREACH_COLLECTION_OBJECT_RECURSIVE_BEGIN ((Collection *)id_root, ob_iter) {
       if (ob_iter->type == OB_ARMATURE) {
-        BLI_gset_add(user_overrides_objects_uids, POINTER_FROM_UINT(ob_iter->id.session_uid));
+        user_overrides_objects_uids->add(ob_iter->id.session_uid);
       }
     }
     FOREACH_COLLECTION_OBJECT_RECURSIVE_END;
@@ -2519,9 +2517,7 @@ static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
         continue;
       }
       LISTBASE_FOREACH (CollectionObject *, coll_ob_iter, &coll_iter->gobject) {
-        if (BLI_gset_haskey(user_overrides_objects_uids,
-                            POINTER_FROM_UINT(coll_ob_iter->ob->id.session_uid)))
-        {
+        if (user_overrides_objects_uids->contains(coll_ob_iter->ob->id.session_uid)) {
           /* Tag for remapping when creating overrides. */
           coll_iter->id.tag |= ID_TAG_DOIT;
           break;
@@ -2554,15 +2550,12 @@ static wmOperatorStatus make_override_library_exec(bContext *C, wmOperator *op)
       {
         continue;
       }
-      if (BLI_gset_haskey(user_overrides_objects_uids,
-                          POINTER_FROM_UINT(id_iter->override_library->reference->session_uid)))
+      if (user_overrides_objects_uids->contains(id_iter->override_library->reference->session_uid))
       {
         id_iter->override_library->flag &= ~LIBOVERRIDE_FLAG_SYSTEM_DEFINED;
       }
     }
     FOREACH_MAIN_ID_END;
-
-    BLI_gset_free(user_overrides_objects_uids, nullptr);
   }
 
   if (success) {

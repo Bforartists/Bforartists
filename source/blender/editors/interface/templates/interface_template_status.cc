@@ -92,7 +92,6 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
   /* Background for icon. */
   but = uiDefBut(block,
                  ButType::Roundbox,
-                 0,
                  "",
                  0,
                  0,
@@ -108,7 +107,6 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
   /* Background for the rest of the message. */
   but = uiDefBut(block,
                  ButType::Roundbox,
-                 0,
                  "",
                  UI_UNIT_X + (6 * UI_SCALE_FAC),
                  0,
@@ -591,7 +589,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
   /* Background for icon. */
   uiBut *but = uiDefBut(block,
                         ButType::Roundbox,
-                        0,
                         "",
                         0,
                         0,
@@ -608,7 +605,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
     /* Background for the rest of the message. */
     but = uiDefBut(block,
                    ButType::Roundbox,
-                   0,
                    "",
                    UI_UNIT_X + (6 * UI_SCALE_FAC),
                    0,
@@ -630,7 +626,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
   /* The warning icon itself. */
   but = uiDefIconBut(block,
                      ButType::But,
-                     0,
                      ICON_ERROR,
                      int(3 * UI_SCALE_FAC),
                      0,
@@ -648,7 +643,6 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
   if (!warning_message.empty()) {
     but = uiDefBut(block,
                    ButType::But,
-                   0,
                    warning_message.c_str(),
                    UI_UNIT_X,
                    0,
