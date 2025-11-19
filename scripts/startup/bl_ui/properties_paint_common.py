@@ -1955,6 +1955,7 @@ def brush_texture_settings(layout, brush, sculpt):
                             col.prop(tex_slot, "random_angle", text="Random Angle")
                 else:
                     col.prop(tex_slot, "use_random", text="Random")
+                    col.use_property_split = True  # BFA
                     if tex_slot.use_random:
                         col.prop(tex_slot, "random_angle", text="Random Angle")
 
