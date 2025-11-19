@@ -24,4 +24,7 @@ a460062a-8ff4-404e-a89d-9105aeba4cba:Compositor Nodegroups/Lenses/Quality:Compos
 ae7717ab-bda5-45ec-81ae-a43fcf9ee210:Compositor Nodegroups/Lenses/Vignettes:Compositor Nodegroups-Lenses-Vignettes
 8181af84-956a-4a7f-8408-20b0973f0465:Compositor Nodegroups/Output:Compositor Nodegroups-Output
 272707d5-7d13-4976-bfab-0355d7634be6:Compositor Nodegroups/Texture:Compositor Nodegroups-Texture
+292bdd29-f46d-43d2-aabf-730153d92171:Compositor Nodegroups/Texture/Patterns:Compositor Nodegroups-Texture-Patterns
 94147fd2-f202-4ca8-9487-25f46d6950d2:Compositor Nodegroups/Texture/Shapes:Compositor Nodegroups-Texture-Shapes
+026f0dde-f339-4a12-891f-997123616c52:Compositor Nodegroups/Utilities:Compositor Nodegroups-Utilities
+421c36e6-c9c2-43e3-934c-c1d0aa08265d:Compositor Nodegroups/Utilities/Vector:Compositor Nodegroups-Utilities-Vector
