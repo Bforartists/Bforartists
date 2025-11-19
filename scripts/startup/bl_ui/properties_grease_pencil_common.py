@@ -393,11 +393,13 @@ class AnnotationDataPanel:
 
         tool_settings = context.tool_settings
         layout.use_property_split = True # BFA - split non-boolean properties
+
+        col = layout.column() # BFA - lessen vertical spacing between properties
         if gpd and gpl:
-            layout.prop(gpl, "annotation_opacity", text="Opacity", slider=True)
-            layout.prop(gpl, "thickness")
+            col.prop(gpl, "annotation_opacity", text="Opacity", slider=True)
+            col.prop(gpl, "thickness")
         else:
-            layout.prop(tool_settings, "annotation_thickness", text="Thickness")
+            col.prop(tool_settings, "annotation_thickness", text="Thickness")
 
         if gpl:
             # Full-Row - Frame Locking (and Delete Frame)
