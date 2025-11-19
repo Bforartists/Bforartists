@@ -76,6 +76,8 @@ def draw_node_groups(context, layout, operator_id="node.add_node"):
             (show_hidden or not group.name.startswith('.')))
     ]
 
+    operators = []
+
     # BFA - Group each node group by their type and apply the appropriate icon
     import itertools
     for icon, groups in itertools.groupby(sorted(groups, key=icon_sorting_function), key=node_group_icon):
@@ -102,7 +104,9 @@ def draw_node_groups(context, layout, operator_id="node.add_node"):
                 ops.name = "name"
                 ops.value = repr(group.name)
 
-                yield props
+                operators.append(props)
+
+    return operators
 
 # NOTE: This is kept for compatibility's sake, as some scripts import node_add_menu.add_node_type.
 def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True):
