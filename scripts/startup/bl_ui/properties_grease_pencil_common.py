@@ -392,6 +392,7 @@ class AnnotationDataPanel:
                 sub.operator("gpencil.layer_annotation_move", icon="TRIA_DOWN", text="").type = "DOWN"
 
         tool_settings = context.tool_settings
+        layout.use_property_split = True # BFA - split non-boolean properties
         if gpd and gpl:
             layout.prop(gpl, "annotation_opacity", text="Opacity", slider=True)
             layout.prop(gpl, "thickness")
@@ -408,6 +409,8 @@ class AnnotationDataPanel:
                 lock_label = iface_("Frame: {:d} ({:s})").format(gpl.active_frame.frame_number, lock_status)
             else:
                 lock_label = iface_("Lock Frame")
+
+            row.use_property_split = False # BFA - Keep property expanded to full width
             row.prop(gpl, "lock_frame", text=lock_label, icon="UNLOCKED", translate=False)
             row.operator("gpencil.annotation_active_frame_delete", text="", icon="X")
 
