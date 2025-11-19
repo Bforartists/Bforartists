@@ -27,15 +27,19 @@ icon_sorting_order = {
     'NODETREE' : 0,
     'FAKE_USER_ON' : 1,
     'ASSET_MANAGER' : 2,
-    'LIBRARY_DATA_DIRECT' : 3,
-    'LIBRARY_DATA_OVERRIDE' : 4,
+    'PACKAGE' : 3,
+    'LIBRARY_DATA_DIRECT' : 4,
+    'LIBRARY_DATA_OVERRIDE' : 5,
 }
 
 
 # BFA - Function for determining appropriate icon for node group
 def node_group_icon(group):
     if group.library is not None:
-        return 'LIBRARY_DATA_DIRECT'
+        if group.is_linked_packed:
+            return 'PACKAGE'
+        else:
+            return 'LIBRARY_DATA_DIRECT'
     elif group.override_library is not None: 
         return 'LIBRARY_DATA_OVERRIDE'
     elif group.asset_data is not None:
@@ -52,7 +56,7 @@ def icon_sorting_function(group):
 
 
 # BFA - Separated function from `draw_node_group_add_menu` so that both the add menu and toolshelf can use this
-def draw_node_groups(context, layout):
+def draw_node_groups(context, layout, operator_id="node.add_node", use_transform=True):
     space_node = context.space_data
     node_tree = space_node.edit_tree
 
@@ -72,17 +76,29 @@ def draw_node_groups(context, layout):
             (show_hidden or not group.name.startswith('.')))
     ]
 
+    operators = []
+
     # BFA - Group each node group by their type and apply the appropriate icon
     import itertools
     for icon, groups in itertools.groupby(sorted(groups, key=icon_sorting_function), key=node_group_icon):
         if groups:
             layout.separator()
             for group in groups:
-                props = layout.operator("node.add_node", text=group.name, icon=node_group_icon(group)) # BFA
-                props.use_transform = True # BFA
-                props.type = node_tree_group_type[group.bl_idname] # BFA
-                ops = props.settings.add() # BFA
-                ops.name = "node_tree" # BFA
+                search_weight = -1.0 if group.is_linked_packed else 0.0
+
+                props = layout.operator(
+                    operator_id, 
+                    text=group.name, 
+                    icon=node_group_icon(group), 
+                    search_weight=search_weight
+                )
+
+                if hasattr(props, "use_transform"):
+                    props.use_transform = use_transform
+    
+                props.type = node_tree_group_type[group.bl_idname]
+                ops = props.settings.add()
+                ops.name = "node_tree"
                 ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
                 ops = props.settings.add()
                 ops.name = "width"
@@ -90,6 +106,10 @@ def draw_node_groups(context, layout):
                 ops = props.settings.add()
                 ops.name = "name"
                 ops.value = repr(group.name)
+
+                operators.append(props)
+
+    return operators
 
 # NOTE: This is kept for compatibility's sake, as some scripts import node_add_menu.add_node_type.
 def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True):
@@ -379,42 +399,10 @@ class NodeMenu(Menu):
             cls.node_operator(layout, "NodeGroupInput")
             cls.node_operator(layout, "NodeGroupOutput")
 
-        if node_tree:
-            from nodeitems_builtins import node_tree_group_type
-
-            prefs = bpy.context.preferences
-            show_hidden = prefs.filepaths.show_hidden_files_datablocks
-
-            groups = [
-                group for group in context.blend_data.node_groups
-                if (group.bl_idname == node_tree.bl_idname and
-                    not group.contains_tree(node_tree) and
-                    (show_hidden or not group.name.startswith('.')))
-            ]
-            if groups:
-                layout.separator()
-                for group in groups:
-                    search_weight = -1.0 if group.is_linked_packed else 0.0
-                    props = cls.node_operator(
-                        layout,
-                        node_tree_group_type[group.bl_idname],
-                        label=group.name,
-                        search_weight=search_weight,
-                    )
-                    ops = props.settings.add()
-                    ops.name = "node_tree"
-                    ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
-                    ops = props.settings.add()
-                    ops.name = "width"
-                    ops.value = repr(group.default_group_node_width)
-                    ops = props.settings.add()
-                    ops.name = "name"
-                    ops.value = repr(group.name)
-                    operators.append(props)
-
-        for props in operators:
-            if hasattr(props, "use_transform"):
-                props.use_transform = cls.use_transform
+        # BFA - Draw node groups with corresponding icons
+        use_transform = getattr(cls, "use_transform", False)
+        groups = draw_node_groups(context, layout, cls.main_operator_id, use_transform)
+        operators.extend(groups)
 
         return operators
 

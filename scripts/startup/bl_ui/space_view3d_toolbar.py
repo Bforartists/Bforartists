@@ -932,7 +932,7 @@ class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel, StrokePanel):
 
 class VIEW3D_PT_tools_brush_stroke_smooth_stroke(Panel, View3DPaintPanel, SmoothStrokePanel):
     bl_context = ".paint_common"  # dot on purpose (access from topbar)
-    bl_label = ""  # BFA - align props left
+    bl_label = "Stabilize Stroke" # bfa - this is the checkbox label in the 3d view sidebar!
     bl_parent_id = "VIEW3D_PT_tools_brush_stroke"
     bl_options = {"DEFAULT_CLOSED"}
 

@@ -622,10 +622,12 @@ class TextureMaskPanel(BrushPanel):
             col = layout.column()
             col.prop(mask_tex_slot, "angle", text="Angle")
             if mask_tex_slot.has_texture_angle_source:
+                col.use_property_split = False # BFA - Align bool property left
                 col.prop(mask_tex_slot, "use_rake", text="Rake")
 
                 if brush.brush_capabilities.has_random_texture_angle and mask_tex_slot.has_random_texture_angle:
                     col.prop(mask_tex_slot, "use_random", text="Random")
+                    col.use_property_split = True # BFA - Align bool property left (end)
                     if mask_tex_slot.use_random:
                         col.prop(mask_tex_slot, "random_angle", text="Random Angle")
 
@@ -759,10 +761,7 @@ class SmoothStrokePanel(BrushPanel):
             return
 
         self.layout.use_property_split = False
-        # self.layout.prop(brush, "use_smooth_stroke",
-        #                 text=self.bl_label if self.is_popover else "")
-
-        self.layout.prop(brush, "use_smooth_stroke", text="Stabilize Stroke")  # bfa - we need the label
+        self.layout.prop(brush, "use_smooth_stroke", text=self.bl_label if self.is_popover else "")
 
     def draw(self, context):
         layout = self.layout
@@ -1786,6 +1785,8 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         else:
             layout.prop(brush, "use_alpha")
 
+        layout.use_property_split = True  # BFA
+
         # Tool specific settings
         if brush.image_brush_type == "SOFTEN":
             layout.separator()
@@ -1958,6 +1959,7 @@ def brush_texture_settings(layout, brush, sculpt):
                             col.prop(tex_slot, "random_angle", text="Random Angle")
                 else:
                     col.prop(tex_slot, "use_random", text="Random")
+                    col.use_property_split = True  # BFA
                     if tex_slot.use_random:
                         col.prop(tex_slot, "random_angle", text="Random Angle")
 
