@@ -1783,6 +1783,8 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         else:
             layout.prop(brush, "use_alpha")
 
+        layout.use_property_split = True  # BFA
+
         # Tool specific settings
         if brush.image_brush_type == "SOFTEN":
             layout.separator()
