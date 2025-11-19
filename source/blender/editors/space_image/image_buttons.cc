@@ -962,8 +962,8 @@ void uiTemplateImage(uiLayout *layout,
       }
       col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&imaptr, "use_view_as_render", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      col->prop(&imaptr, "seam_margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->use_property_split_set(true); /* bfa - use_property_split = True */
+      col->prop(&imaptr, "seam_margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
   }
 
