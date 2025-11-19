@@ -56,7 +56,7 @@ def icon_sorting_function(group):
 
 
 # BFA - Separated function from `draw_node_group_add_menu` so that both the add menu and toolshelf can use this
-def draw_node_groups(context, layout, operator_id="node.add_node"):
+def draw_node_groups(context, layout, operator_id="node.add_node", use_transform=True):
     space_node = context.space_data
     node_tree = space_node.edit_tree
 
@@ -92,6 +92,9 @@ def draw_node_groups(context, layout, operator_id="node.add_node"):
                     icon=node_group_icon(group), 
                     search_weight=search_weight
                 )
+
+                if hasattr(props, "use_transform"):
+                    props.use_transform = use_transform
     
                 props.type = node_tree_group_type[group.bl_idname]
                 ops = props.settings.add()
@@ -396,13 +399,10 @@ class NodeMenu(Menu):
             cls.node_operator(layout, "NodeGroupInput")
             cls.node_operator(layout, "NodeGroupOutput")
 
-        groups = draw_node_groups(context, layout, cls.main_operator_id)
+        # BFA - Draw node groups with corresponding icons
+        use_transform = getattr(cls, "use_transform", False)
+        groups = draw_node_groups(context, layout, cls.main_operator_id, use_transform)
         operators.extend(groups)
-
-
-        for props in operators:
-            if hasattr(props, "use_transform"):
-                props.use_transform = cls.use_transform
 
         return operators
 
