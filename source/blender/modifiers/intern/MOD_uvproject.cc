@@ -296,7 +296,8 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *sub;
+  uiLayout *sub, *row, *col; /* bfa - added *row, *col */
+
   uiLayout *layout = panel->layout;
 
   PointerRNA ob_ptr;
@@ -321,13 +322,21 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   sub = &layout->column(true);
   sub->active_set(has_camera);
-  sub->prop(ptr, "aspect_x", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  sub->prop(ptr, "aspect_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
+  /* BFA - Draw properties in an indented sublayout */
+  sub->label(IFACE_("Aspect Ratio"), ICON_NONE);
+  row = &sub->row(false);
+  row->separator();
+  col = &row->column(true);
+  col->prop(ptr, "aspect_x", UI_ITEM_NONE, IFACE_("X"), ICON_NONE);
+  col->prop(ptr, "aspect_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
 
-  sub = &layout->column(true);
-  sub->active_set(has_camera);
-  sub->prop(ptr, "scale_x", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  sub->prop(ptr, "scale_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
+  /* BFA - Draw properties in an indented sublayout */
+  sub->label(IFACE_("Scale"), ICON_NONE);
+  row = &sub->row(false);
+  row->separator();
+  col = &row->column(true);
+  col->prop(ptr, "scale_x", UI_ITEM_NONE, IFACE_("X"), ICON_NONE);
+  col->prop(ptr, "scale_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
 
   layout->prop(ptr, "projector_count", UI_ITEM_NONE, IFACE_("Projectors"), ICON_NONE);
   RNA_BEGIN (ptr, projector_ptr, "projectors") {
