@@ -1946,7 +1946,7 @@ class IMAGE_PT_uv_cursor(Panel):
 
         sima = context.space_data
 
-        layout.use_property_split = False
+        layout.use_property_split = True # BFA - use split for non-bool properties
         layout.use_property_decorate = False
 
         col = layout.column()
