@@ -27,15 +27,19 @@ icon_sorting_order = {
     'NODETREE' : 0,
     'FAKE_USER_ON' : 1,
     'ASSET_MANAGER' : 2,
-    'LIBRARY_DATA_DIRECT' : 3,
-    'LIBRARY_DATA_OVERRIDE' : 4,
+    'PACKAGE' : 3,
+    'LIBRARY_DATA_DIRECT' : 4,
+    'LIBRARY_DATA_OVERRIDE' : 5,
 }
 
 
 # BFA - Function for determining appropriate icon for node group
 def node_group_icon(group):
     if group.library is not None:
-        return 'LIBRARY_DATA_DIRECT'
+        if group.is_linked_packed:
+            return 'PACKAGE'
+        else:
+            return 'LIBRARY_DATA_DIRECT'
     elif group.override_library is not None: 
         return 'LIBRARY_DATA_OVERRIDE'
     elif group.asset_data is not None:
