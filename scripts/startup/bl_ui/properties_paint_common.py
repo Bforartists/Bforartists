@@ -622,10 +622,12 @@ class TextureMaskPanel(BrushPanel):
             col = layout.column()
             col.prop(mask_tex_slot, "angle", text="Angle")
             if mask_tex_slot.has_texture_angle_source:
+                col.use_property_split = False # BFA - Align bool property left
                 col.prop(mask_tex_slot, "use_rake", text="Rake")
 
                 if brush.brush_capabilities.has_random_texture_angle and mask_tex_slot.has_random_texture_angle:
                     col.prop(mask_tex_slot, "use_random", text="Random")
+                    col.use_property_split = True # BFA - Align bool property left (end)
                     if mask_tex_slot.use_random:
                         col.prop(mask_tex_slot, "random_angle", text="Random Angle")
 
