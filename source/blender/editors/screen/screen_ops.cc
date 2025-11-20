@@ -3309,8 +3309,7 @@ static wmOperatorStatus frame_offset_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);
 
-  WM_event_add_notifier(
-      C, NC_SCENE | ND_FRAME, scene);
+  WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
 
   return OPERATOR_FINISHED;
 }
@@ -4590,29 +4589,30 @@ static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
   RNA_float_set(&ptr, "factor", 0.49999f);
   RNA_int_set_array(&ptr, "cursor", pos);
 
-  layout->separator();
-  layout->op("SCREEN_OT_area_join", IFACE_("Move/Join/Dock Area"), ICON_AREA_DOCK);
+  layout.separator();
+  layout.op("SCREEN_OT_area_join", IFACE_("Move/Join/Dock Area"), ICON_AREA_DOCK);
 
   /* BFA - show/hide the editor type menu*/
-  layout->op("SCREEN_OT_header_toggle_editortypemenu",
-               IFACE_("Hide Editor Type Menu"),
-               (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
-               blender::wm::OpCallContext::InvokeDefault,
-               UI_ITEM_NONE);
+  layout.op("SCREEN_OT_header_toggle_editortypemenu",
+             IFACE_("Hide Editor Type Menu"),
+             (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+             blender::wm::OpCallContext::InvokeDefault,
+             UI_ITEM_NONE);
 
-  layout->separator();
+  layout.separator();
 
-  layout->op("SCREEN_OT_screen_full_area",
+  layout.op("SCREEN_OT_screen_full_area",
              area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
              ICON_MAXIMIZE_AREA);
 
-  ptr = layout->op("SCREEN_OT_screen_full_area", IFACE_("Toggle Fullscreen Area"), ICON_FULLSCREEN_ENTER);
+  ptr = layout.op(
+      "SCREEN_OT_screen_full_area", IFACE_("Toggle Fullscreen Area"), ICON_FULLSCREEN_ENTER);
   RNA_boolean_set(&ptr, "use_hide_panels", true);
 
-  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW_MAIN);
+  layout.op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW_MAIN);
 
-  layout->separator();
-  layout->op("SCREEN_OT_area_close", IFACE_("Close Area"), ICON_X);
+  layout.separator();
+  layout.op("SCREEN_OT_area_close", IFACE_("Close Area"), ICON_X);
   UI_popup_menu_end(C, pup);
 }
 
@@ -5488,17 +5488,17 @@ static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
 
   layout.separator();
 
-  layout->separator();
+  layout.separator();
 
-  layout->op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
-  layout->separator();
+  layout.op("SCREEN_OT_area_dupli", std::nullopt, ICON_NEW_WINDOW); /*BFA icon*/
+  layout.separator();
 
-  layout->op("SCREEN_OT_screen_full_area",
+  layout.op("SCREEN_OT_screen_full_area",
              area->full ? IFACE_("Restore Areas") : IFACE_("Toggle Maximize Area"),
              ICON_MAXIMIZE_AREA);
 
   if (area->spacetype != SPACE_FILE && !area->full) {
-    ptr = layout->op("SCREEN_OT_screen_full_area",
+    ptr = layout.op("SCREEN_OT_screen_full_area",
                      IFACE_("Toggle Fullscreen Area"),
                      ICON_FULLSCREEN_ENTER, /*BFA icon*/
                      blender::wm::OpCallContext::InvokeDefault,
@@ -5506,8 +5506,8 @@ static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
-  layout->separator();
-  layout->op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE); /*BFA icon*/
+  layout.separator();
+  layout.op("SCREEN_OT_area_close", std::nullopt, ICON_PANEL_CLOSE); /*BFA icon*/
 }
 
 // bfa - show hide the mesh edit toolbar menus
@@ -5964,11 +5964,11 @@ void ED_screens_header_tools_menu_create(bContext *C, blender::ui::Layout *layou
     layout->separator();
     ED_screens_region_flip_menu_create(C, layout, nullptr);
     /* bfa - show hide the editortypemenu*/
-    layout.op("SCREEN_OT_header_toggle_editortypemenu",
-               IFACE_("Hide Editor Type Menu"),
-               (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
-               blender::wm::OpCallContext::InvokeDefault,
-               UI_ITEM_NONE);
+    layout->op("SCREEN_OT_header_toggle_editortypemenu",
+              IFACE_("Hide Editor Type Menu"),
+              (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+              blender::wm::OpCallContext::InvokeDefault,
+              UI_ITEM_NONE);
     /*bfa - we don't show the area items in the rmb menu*/
     /*layout->separator();
     screen_area_menu_items(area, layout);*/
@@ -6171,12 +6171,12 @@ static void ed_screens_statusbar_menu_create(blender::ui::Layout &layout, void *
   layout.prop(
       &ptr, "show_extensions_updates", UI_ITEM_NONE, IFACE_("Extensions Updates"), ICON_NONE);
   // bfa show base blender version
-  layout->prop(&ptr,
+  layout.prop(&ptr,
                "show_statusbar_blender_version",
                UI_ITEM_NONE,
                IFACE_("Base Blender Version"),
                ICON_NONE);
-  layout->prop(&ptr,
+  layout.prop(&ptr,
                "show_statusbar_version",
                UI_ITEM_NONE,
                IFACE_("Bforartists Version"),
@@ -7080,7 +7080,10 @@ static wmOperatorStatus drivers_editor_show_exec(bContext *C, wmOperator *op)
   uiBut *but = UI_context_active_but_prop_get(C, &ptr, &prop, &index);
 
   /* changes context! */
-  if (WM_window_open_temp(C, IFACE_("Bforartists Drivers Editor"), SPACE_GRAPH, false)) { /*BFA rename Drivers Editor*/
+  if (WM_window_open_temp(C,
+                          IFACE_("Bforartists Drivers Editor"),
+                          SPACE_GRAPH,
+                          false)) { /*BFA rename Drivers Editor*/
     ED_drivers_editor_init(C, CTX_wm_area(C));
 
     /* activate driver F-Curve for the property under the cursor */
@@ -7137,7 +7140,8 @@ static void SCREEN_OT_drivers_editor_show(wmOperatorType *ot)
 static wmOperatorStatus info_log_show_exec(bContext *C, wmOperator *op)
 {
   /* changes context! */
-  if (WM_window_open_temp(C, IFACE_("Bforartists Info Log"), SPACE_INFO, false)) {  /*BFA rename Info Log */
+  if (WM_window_open_temp(
+          C, IFACE_("Bforartists Info Log"), SPACE_INFO, false)) { /*BFA rename Info Log */
     return OPERATOR_FINISHED;
   }
   BKE_report(op->reports, RPT_ERROR, "Failed to open window!");

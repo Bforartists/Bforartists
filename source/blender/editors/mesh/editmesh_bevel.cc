@@ -961,7 +961,7 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   col->active_set(affect_type == BEVEL_AFFECT_EDGES);
   col->prop(op->ptr, "mark_seam", UI_ITEM_NONE, IFACE_("Seams"), ICON_NONE);
   col->prop(op->ptr, "mark_sharp", UI_ITEM_NONE, IFACE_("Sharp"), ICON_NONE);
-  layout->use_property_decorate_set(true); /*bfa - checkboxes end. split again*/
+  layout.use_property_decorate_set(true); /*bfa - checkboxes end. split again*/
 
   layout.separator();
 

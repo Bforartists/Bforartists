@@ -203,7 +203,7 @@ static void ui_alembic_export_settings(const bContext *C,
   }
 
   /* Object Data */
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "ABC_export_geometry", false, IFACE_("Geometry")))
   {
     blender::ui::Layout *col = &panel->column(true);

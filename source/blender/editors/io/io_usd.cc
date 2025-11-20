@@ -421,7 +421,7 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
     col->prop(ptr, "evaluation_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "USD_export_types", false, IFACE_("Object Types")))
   {
     blender::ui::Layout &col = panel->column(false);
@@ -441,7 +441,7 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
     col.prop(ptr, "export_hair", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "USD_export_geometry", false, IFACE_("Geometry")))
   {
     blender::ui::Layout &col = panel->column(false);
@@ -460,7 +460,7 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
     col.prop(ptr, "export_subdivision", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout, panel(C, "USD_export_rigging", true, IFACE_("Rigging")))
+  if (blender::ui::Layout *panel = layout.panel(C, "USD_export_rigging", true, IFACE_("Rigging")))
   {
     blender::ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
@@ -987,7 +987,7 @@ static void wm_usd_import_draw(bContext *C, wmOperator *op)
     col->prop(ptr, "property_import_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "USD_import_types", false, IFACE_("Object Types")))
   {
     blender::ui::Layout &obj_col = panel->column(false);
@@ -1020,7 +1020,7 @@ static void wm_usd_import_draw(bContext *C, wmOperator *op)
     mtl_col.prop(ptr, "mtl_purpose", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "USD_import_geometry", true, IFACE_("Geometry")))
   {
     blender::ui::Layout *col = &panel->column(false);
@@ -1036,7 +1036,7 @@ static void wm_usd_import_draw(bContext *C, wmOperator *op)
     col->prop(ptr, "merge_parent_xform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(C, "USD_import_rigging", true, IFACE_("Rigging")))
+  if (blender::ui::Layout *panel = layout.panel(C, "USD_import_rigging", true, IFACE_("Rigging")))
   {
     blender::ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
@@ -1044,7 +1044,7 @@ static void wm_usd_import_draw(bContext *C, wmOperator *op)
     col.prop(ptr, "import_skeletons", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "USD_import_material", true, IFACE_("Materials")))
   {
     blender::ui::Layout &col = panel->column(false);

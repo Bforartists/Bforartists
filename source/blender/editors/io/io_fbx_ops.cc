@@ -109,8 +109,7 @@ static void ui_fbx_import_settings(const bContext *C, blender::ui::Layout &layou
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout->panel(
-          C, "FBX_import_general", false, IFACE_("General")))
+  if (blender::ui::Layout *panel = layout.panel(C, "FBX_import_general", false, IFACE_("General")))
   {
     blender::ui::Layout &col = panel->column(false);
 
@@ -123,7 +122,7 @@ static void ui_fbx_import_settings(const bContext *C, blender::ui::Layout &layou
     subcol.prop(ptr, "use_custom_props_enum_as_string", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "FBX_import_geometry", false, IFACE_("Geometry")))
   {
     blender::ui::Layout &col = panel->column(false);
@@ -152,7 +151,7 @@ static void ui_fbx_import_settings(const bContext *C, blender::ui::Layout &layou
     }
   }
 
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "FBX_import_armature", false, IFACE_("Armature")))
   {
     blender::ui::Layout &col = panel->column(false);

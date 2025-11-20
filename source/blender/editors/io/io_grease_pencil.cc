@@ -396,7 +396,7 @@ static void ui_gpencil_export_settings(blender::ui::Layout &layout,
 
   box->use_property_split_set(true);
 
-  sub = &col->column(true);
+  sub = &col.column(true);
   sub->use_property_split_set(false);  // bfa
   sub->prop(ptr, "stroke_sample", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   sub->prop(ptr, "use_fill", UI_ITEM_NONE, std::nullopt, ICON_NONE);

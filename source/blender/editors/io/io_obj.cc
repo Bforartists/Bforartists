@@ -161,7 +161,7 @@ static void ui_obj_export_settings(const bContext *C, blender::ui::Layout &layou
   }
 
   /* Geometry options. */
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "OBJ_export_geometry", false, IFACE_("Geometry")))
   {
     blender::ui::Layout &col = panel->column(false);
@@ -180,7 +180,7 @@ static void ui_obj_export_settings(const bContext *C, blender::ui::Layout &layou
   }
 
   /* Grouping options. */
-  if (blender::ui::Layout *panel = layout->panel(
+  if (blender::ui::Layout *panel = layout.panel(
           C, "OBJ_export_grouping", false, IFACE_("Grouping")))
   {
     blender::ui::Layout &col = panel->column(false);
@@ -481,8 +481,7 @@ static void ui_obj_import_settings(const bContext *C, blender::ui::Layout &layou
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout->panel(
-          C, "OBJ_import_general", false, IFACE_("General")))
+  if (blender::ui::Layout *panel = layout.panel(C, "OBJ_import_general", false, IFACE_("General")))
   {
     blender::ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
@@ -492,7 +491,7 @@ static void ui_obj_import_settings(const bContext *C, blender::ui::Layout &layou
     col.prop(ptr, "up_axis", UI_ITEM_NONE, IFACE_("Up Axis"), ICON_NONE);
   }
 
-  if (uiLayout *panel = layout->panel(C, "OBJ_import_options", false, IFACE_("Options"))) {
+  if (uiLayout *panel = layout.panel(C, "OBJ_import_options", false, IFACE_("Options"))) {
     blender::ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "use_split_objects", UI_ITEM_NONE, std::nullopt, ICON_NONE);

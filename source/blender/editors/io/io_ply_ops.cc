@@ -109,8 +109,7 @@ static void wm_ply_export_draw(bContext *C, wmOperator *op)
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout.panel(
-          C, "PLY_export_general", false, IFACE_("General")))
+  if (blender::ui::Layout *panel = layout.panel(C, "PLY_export_general", false, IFACE_("General")))
   {
     blender::ui::Layout &col = panel->column(false);
 
@@ -297,8 +296,7 @@ static void ui_ply_import_settings(const bContext *C, blender::ui::Layout &layou
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout.panel(
-          C, "PLY_import_general", false, IFACE_("General")))
+  if (blender::ui::Layout *panel = layout.panel(C, "PLY_import_general", false, IFACE_("General")))
   {
     blender::ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
@@ -308,8 +306,7 @@ static void ui_ply_import_settings(const bContext *C, blender::ui::Layout &layou
     col.prop(ptr, "up_axis", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout.panel(
-          C, "PLY_import_options", false, IFACE_("Options")))
+  if (blender::ui::Layout *panel = layout.panel(C, "PLY_import_options", false, IFACE_("Options")))
   {
     blender::ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
