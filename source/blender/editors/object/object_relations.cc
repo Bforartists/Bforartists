@@ -485,7 +485,8 @@ void parent_set(Object *ob, Object *par, const int type, const char *substr)
   ob->partype |= type;
   STRNCPY_UTF8(ob->parsubstr, substr);
 }
-/* BFA - these enums are now not exposed to the GUI, but used as a conditional menu. Bare in mind to update the python space_view3d.py to reflect these */
+/* BFA - these enums are now not exposed to the GUI, but used as a conditional menu. Bare in mind
+ * to update the python space_view3d.py to reflect these */
 const EnumPropertyItem prop_make_parent_types[] = {
     {PAR_OBJECT, "OBJECT", ICON_PARENT_OBJECT, "Object", ""},
     {PAR_ARMATURE, "ARMATURE", ICON_PARENT_BONE, "Armature Deform", ""},
@@ -959,34 +960,35 @@ static wmOperatorStatus parent_set_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
-/* BFA - in the space_view3d.py, this menu has been built in python for the header parent menu. If there are changes here, change there too.*/
+/* BFA - in the space_view3d.py, this menu has been built in python for the header parent menu. If
+ * there are changes here, change there too.*/
 static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 {
   Object *parent = context_active_object(C);
   uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Set Parent To"), ICON_NONE);
-  uiLayout *layout = UI_popup_menu_layout(pup);
+  ui::Layout &layout = *UI_popup_menu_layout(pup);
 
   /* BFA - icons added*/
-  PointerRNA opptr = layout->op(
+  PointerRNA opptr = layout.op(
       ot, IFACE_("Object"), ICON_PARENT_OBJECT, wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
-  opptr = layout->op(ot,
-                     IFACE_("Object (Keep Transform)"),
-                     ICON_PARENT_OBJECT,
-                     wm::OpCallContext::ExecDefault,
-                     UI_ITEM_NONE);
+  opptr = layout.op(ot,
+                    IFACE_("Object (Keep Transform)"),
+                    ICON_PARENT_OBJECT,
+                    wm::OpCallContext::ExecDefault,
+                    UI_ITEM_NONE);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", true);
 
-  PointerRNA op_ptr = layout->op(
+  PointerRNA op_ptr = layout.op(
       "OBJECT_OT_parent_no_inverse_set", IFACE_("Object (Without Inverse)"), ICON_PARENT);
   RNA_boolean_set(&op_ptr, "keep_transform", false);
 
-  op_ptr = layout->op("OBJECT_OT_parent_no_inverse_set",
-                      IFACE_("Object (Keep Transform Without Inverse)"),
-                      ICON_PARENT);
+  op_ptr = layout.op("OBJECT_OT_parent_no_inverse_set",
+                     IFACE_("Object (Keep Transform Without Inverse)"),
+                     ICON_PARENT);
   RNA_boolean_set(&op_ptr, "keep_transform", true);
 
   struct {
@@ -1022,49 +1024,51 @@ static wmOperatorStatus parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 
   if (parent->type == OB_ARMATURE) {
     if (can_support.armature_deform) {
-      op_ptr = layout->op(ot, IFACE_("Armature Deform"), ICON_PARENT_BONE); /*BFA icon*/
+      op_ptr = layout.op(ot, IFACE_("Armature Deform"), ICON_PARENT_BONE); /*BFA icon*/
       RNA_enum_set(&op_ptr, "type", PAR_ARMATURE);
     }
     if (can_support.empty_groups) {
-      op_ptr = layout->op(ot, IFACE_("   With Empty Groups"), ICON_PARENT_BONE); /*BFA icon*/
+      op_ptr = layout.op(ot, IFACE_("   With Empty Groups"), ICON_PARENT_BONE); /*BFA icon*/
       RNA_enum_set(&op_ptr, "type", PAR_ARMATURE_NAME);
     }
     if (can_support.envelope_weights) {
-      op_ptr = layout->op(ot, IFACE_("   With Envelope Weights"), ICON_PARENT_BONE); /*BFA icon*/
+      op_ptr = layout.op(ot, IFACE_("   With Envelope Weights"), ICON_PARENT_BONE); /*BFA icon*/
       RNA_enum_set(&op_ptr, "type", PAR_ARMATURE_ENVELOPE);
     }
     if (can_support.automatic_weights) {
-      op_ptr = layout->op(ot, IFACE_("   With Automatic Weights"), ICON_PARENT_BONE); /*BFA icon*/
+      op_ptr = layout.op(ot, IFACE_("   With Automatic Weights"), ICON_PARENT_BONE); /*BFA icon*/
       RNA_enum_set(&op_ptr, "type", PAR_ARMATURE_AUTO);
     }
-    op_ptr = layout->op(ot, IFACE_("Bone"), ICON_PARENT_BONE); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Bone"), ICON_PARENT_BONE); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_BONE);
-    op_ptr = layout->op(ot, IFACE_("Bone Relative"), ICON_PARENT_BONE); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Bone Relative"), ICON_PARENT_BONE); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_BONE_RELATIVE);
   }
   else if (parent->type == OB_CURVES_LEGACY) {
-    op_ptr = layout->op(ot, IFACE_("Curve Deform"), ICON_PARENT_CURVE); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Curve Deform"), ICON_PARENT_CURVE); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_CURVE);
-    op_ptr = layout->op(ot, IFACE_("Follow Path"), ICON_PARENT_CURVE); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Follow Path"), ICON_PARENT_CURVE); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_FOLLOW);
-    op_ptr = layout->op(ot, IFACE_("Path Constraint"), ICON_PARENT_CURVE); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Path Constraint"), ICON_PARENT_CURVE); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_PATH_CONST);
   }
   else if (parent->type == OB_LATTICE) {
-    op_ptr = layout->op(ot, IFACE_("Lattice Deform"), ICON_PARENT_LATTICE); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Lattice Deform"), ICON_PARENT_LATTICE); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_LATTICE);
   }
   else if (parent->type == OB_MESH) {
     if (can_support.attach_surface) {
-      layout->op("CURVES_OT_surface_set", IFACE_("Object (Attach Curves to Surface)"), ICON_PARENT_CURVE);  /*BFA icon*/
+      layout.op("CURVES_OT_surface_set",
+                IFACE_("Object (Attach Curves to Surface)"),
+                ICON_PARENT_CURVE); /*BFA icon*/
     }
   }
 
   /* vertex parenting */
   if (OB_TYPE_SUPPORT_PARVERT(parent->type)) {
-    op_ptr = layout->op(ot, IFACE_("Vertex"), ICON_VERTEX_PARENT); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Vertex"), ICON_VERTEX_PARENT); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_VERTEX);
-    op_ptr = layout->op(ot, IFACE_("Vertex (Triangle)"), ICON_VERTEX_PARENT); /*BFA icon*/
+    op_ptr = layout.op(ot, IFACE_("Vertex (Triangle)"), ICON_VERTEX_PARENT); /*BFA icon*/
     RNA_enum_set(&op_ptr, "type", PAR_VERTEX_TRI);
   }
 
@@ -2977,7 +2981,8 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
 
   RNA_def_boolean(ot->srna, "object", false, "Object", "Make single user objects");
   RNA_def_boolean(ot->srna, "obdata", false, "Object Data", "Make single user object data");
-  RNA_def_boolean(ot->srna, "material", false, "Materials", "Make materials local to each data"); /* BFA */
+  RNA_def_boolean(
+      ot->srna, "material", false, "Materials", "Make materials local to each data"); /* BFA */
   RNA_def_boolean(ot->srna,
                   "animation",
                   false,
@@ -3068,13 +3073,13 @@ void OBJECT_OT_drop_named_material(wmOperatorType *ot)
 
   /* properties */
   WM_operator_properties_id_lookup(ot, true);
-  
+
   /* Add the missing property */
   RNA_def_boolean(ot->srna,
-                 "show_datablock_in_modifier",
-                 false,
-                 "Show in Modifier",
-                 "Show the datablock in the modifier properties");
+                  "show_datablock_in_modifier",
+                  false,
+                  "Show in Modifier",
+                  "Show the datablock in the modifier properties");
 }
 
 /** \} */

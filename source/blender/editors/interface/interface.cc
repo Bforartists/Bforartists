@@ -5097,12 +5097,13 @@ uiBut *uiDefButImage(
   return but;
 }
 
-uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short /*height*/)
+uiBut *uiDefButAlert(
+    uiBlock *block, blender::ui::AlertIcon icon, int x, int y, short width, short /*height*/)
 {
   bool show_color = true; /* BFA - dont theme our alert icons */
-  ImBuf *ibuf = UI_icon_alert_imbuf_get((eAlertIcon)icon, float(width));
+  ImBuf *ibuf = UI_icon_alert_imbuf_get(icon, float(width));
   if (ibuf) {
-    if (icon == ALERT_ICON_ERROR) {
+    if (icon == blender::ui::AlertIcon::Error) {
       uchar color[4];
       UI_GetThemeColor4ubv(TH_ERROR, color);
       return uiDefButImage(block, ibuf, x, y, ibuf->x, ibuf->y, color);

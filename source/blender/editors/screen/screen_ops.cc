@@ -139,6 +139,21 @@ bool ED_operator_screenactive(bContext *C)
   return true;
 }
 
+bool ED_operator_active_screen_and_scene(bContext *C)
+{
+  if (CTX_wm_window(C) == nullptr) {
+    return false;
+  }
+  if (CTX_wm_screen(C) == nullptr) {
+    return false;
+  }
+  /* In case of sequencer, scene may not be set. */
+  if (CTX_wm_space_seq(C) != nullptr) {
+    return CTX_data_sequencer_scene(C) != nullptr;
+  }
+  return true;
+}
+
 bool ED_operator_screenactive_nobackground(bContext *C)
 {
   if (G.background) {
@@ -4553,24 +4568,24 @@ static void area_join_cancel(bContext *C, wmOperator *op)
 static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
 {
   uiPopupMenu *pup = UI_popup_menu_begin(C, "Area Options", ICON_NONE);
-  uiLayout *layout = UI_popup_menu_layout(pup);
-  layout->operator_context_set(blender::wm::OpCallContext::InvokeDefault);
+  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+  layout.operator_context_set(blender::wm::OpCallContext::InvokeDefault);
 
-  PointerRNA ptr = layout->op("SCREEN_OT_area_split",
-                              IFACE_("Horizontal Split"),
-                              ICON_SPLIT_HORIZONTAL,
-                              blender::wm::OpCallContext::ExecDefault,
-                              UI_ITEM_NONE);
+  PointerRNA ptr = layout.op("SCREEN_OT_area_split",
+                             IFACE_("Horizontal Split"),
+                             ICON_SPLIT_HORIZONTAL,
+                             blender::wm::OpCallContext::ExecDefault,
+                             UI_ITEM_NONE);
   RNA_enum_set(&ptr, "direction", SCREEN_AXIS_H);
   RNA_float_set(&ptr, "factor", 0.49999f);
   blender::int2 pos = {area->totrct.xmin + area->winx / 2, area->totrct.ymin + area->winy / 2};
   RNA_int_set_array(&ptr, "cursor", pos);
 
-  ptr = layout->op("SCREEN_OT_area_split",
-                   IFACE_("Vertical Split"),
-                   ICON_SPLIT_VERTICAL,
-                   blender::wm::OpCallContext::ExecDefault,
-                   UI_ITEM_NONE);
+  ptr = layout.op("SCREEN_OT_area_split",
+                  IFACE_("Vertical Split"),
+                  ICON_SPLIT_VERTICAL,
+                  blender::wm::OpCallContext::ExecDefault,
+                  UI_ITEM_NONE);
   RNA_enum_set(&ptr, "direction", SCREEN_AXIS_V);
   RNA_float_set(&ptr, "factor", 0.49999f);
   RNA_int_set_array(&ptr, "cursor", pos);
@@ -4854,38 +4869,37 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
 
   uiPopupMenu *pup = UI_popup_menu_begin(
       C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
-  uiLayout *layout = UI_popup_menu_layout(pup);
+  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
 
   /* Vertical Split */
-  PointerRNA ptr;
-  ptr = layout->op("SCREEN_OT_area_split",
-                   IFACE_("Vertical Split"),
-                   ICON_SPLIT_VERTICAL,
-                   blender::wm::OpCallContext::InvokeDefault,
-                   UI_ITEM_NONE);
+  PointerRNA ptr = layout.op("SCREEN_OT_area_split",
+                             IFACE_("Vertical Split"),
+                             ICON_SPLIT_VERTICAL,
+                             blender::wm::OpCallContext::InvokeDefault,
+                             UI_ITEM_NONE);
   /* store initial mouse cursor position. */
   RNA_int_set_array(&ptr, "cursor", event->xy);
   RNA_enum_set(&ptr, "direction", SCREEN_AXIS_V);
 
   /* Horizontal Split */
-  ptr = layout->op("SCREEN_OT_area_split",
-                   IFACE_("Horizontal Split"),
-                   ICON_SPLIT_HORIZONTAL,
-                   blender::wm::OpCallContext::InvokeDefault,
-                   UI_ITEM_NONE);
+  ptr = layout.op("SCREEN_OT_area_split",
+                  IFACE_("Horizontal Split"),
+                  ICON_SPLIT_HORIZONTAL,
+                  blender::wm::OpCallContext::InvokeDefault,
+                  UI_ITEM_NONE);
   /* store initial mouse cursor position. */
   RNA_int_set_array(&ptr, "cursor", event->xy);
   RNA_enum_set(&ptr, "direction", SCREEN_AXIS_H);
 
   if (sa1 && sa2) {
-    layout->separator();
+    layout.separator();
   }
 
   /* Join needs two very similar areas. */
   if (sa1 && sa2) {
     eScreenDir dir = area_getorientation(sa1, sa2);
     if (dir != SCREEN_DIR_NONE) {
-      ptr = layout->op(
+      ptr = layout.op(
           "SCREEN_OT_area_join",
           ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Up") : IFACE_("Join Right"),
           /*BFA - use custom right icon instead reusing of ICON_JOIN_AREAS */
@@ -4895,7 +4909,7 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
       RNA_int_set_array(&ptr, "source_xy", blender::int2{sa2->totrct.xmin, sa2->totrct.ymin});
       RNA_int_set_array(&ptr, "target_xy", blender::int2{sa1->totrct.xmin, sa1->totrct.ymin});
 
-      ptr = layout->op(
+      ptr = layout.op(
           "SCREEN_OT_area_join",
           ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? IFACE_("Join Down") : IFACE_("Join Left"),
           ELEM(dir, SCREEN_DIR_N, SCREEN_DIR_S) ? ICON_AREA_JOIN_DOWN : ICON_AREA_JOIN_LEFT,
@@ -4904,17 +4918,17 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
       RNA_int_set_array(&ptr, "source_xy", blender::int2{sa1->totrct.xmin, sa1->totrct.ymin});
       RNA_int_set_array(&ptr, "target_xy", blender::int2{sa2->totrct.xmin, sa2->totrct.ymin});
 
-      layout->separator();
+      layout.separator();
     }
   }
 
   /* Swap just needs two areas. */
   if (sa1 && sa2) {
-    ptr = layout->op("SCREEN_OT_area_swap",
-                     IFACE_("Swap Areas"),
-                     ICON_AREA_SWAP,
-                     blender::wm::OpCallContext::ExecDefault,
-                     UI_ITEM_NONE);
+    ptr = layout.op("SCREEN_OT_area_swap",
+                    IFACE_("Swap Areas"),
+                    ICON_AREA_SWAP,
+                    blender::wm::OpCallContext::ExecDefault,
+                    UI_ITEM_NONE);
     RNA_int_set_array(&ptr, "cursor", event->xy);
   }
 
@@ -5047,7 +5061,7 @@ static wmOperatorStatus repeat_history_invoke(bContext *C,
 
   uiPopupMenu *pup = UI_popup_menu_begin(
       C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
-  uiLayout *layout = UI_popup_menu_layout(pup);
+  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
 
   wmOperator *lastop;
   int i;
@@ -5055,7 +5069,7 @@ static wmOperatorStatus repeat_history_invoke(bContext *C,
        lastop = lastop->prev, i--)
   {
     if ((lastop->type->flag & OPTYPE_REGISTER) && WM_operator_repeat_check(C, lastop)) {
-      PointerRNA op_ptr = layout->op(
+      PointerRNA op_ptr = layout.op(
           op->type, WM_operatortype_name(lastop->type, lastop->ptr), ICON_NONE);
       RNA_int_set(&op_ptr, "index", i);
     }
@@ -5460,19 +5474,19 @@ static void SCREEN_OT_header_toggle_menus(wmOperatorType *ot)
 /** \name Region Context Menu Operator (Header/Footer/Navigation-Bar)
  * \{ */
 
-static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
+static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
 {
   if (ED_area_is_global(area)) {
     return;
   }
 
-  PointerRNA ptr;
+  PointerRNA ptr = layout.op("SCREEN_OT_area_join",
+                             IFACE_("Move/Split Area"),
+                             ICON_AREA_DOCK,
+                             blender::wm::OpCallContext::InvokeDefault,
+                             UI_ITEM_NONE);
 
-  ptr = layout->op("SCREEN_OT_area_join",
-                   IFACE_("Move/Split Area"),
-                   ICON_AREA_DOCK,
-                   blender::wm::OpCallContext::InvokeDefault,
-                   UI_ITEM_NONE);
+  layout.separator();
 
   layout->separator();
 
@@ -5922,7 +5936,7 @@ static void SCREEN_OT_header_topbar_misc(wmOperatorType *ot)
 }
 /*--------------- bfa end -------------------------------------*/
 
-void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
+void ED_screens_header_tools_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
 {
   ScrArea *area = CTX_wm_area(C);
   {
@@ -5933,24 +5947,24 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
     }
 
     ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
-    uiLayout *col = &layout->column(false);
-    col->active_set((region_header->flag & RGN_FLAG_HIDDEN) == 0);
+    blender::ui::Layout &col = layout->column(false);
+    col.active_set((region_header->flag & RGN_FLAG_HIDDEN) == 0);
 
     if (BKE_area_find_region_type(area, RGN_TYPE_TOOL_HEADER)) {
-      col->prop(
+      col.prop(
           &ptr, "show_region_tool_header", UI_ITEM_NONE, IFACE_("Show Tool Settings"), ICON_NONE);
     }
 
-    col->op("SCREEN_OT_header_toggle_menus",
-            IFACE_("Show Menus"),
-            (area->flag & HEADER_NO_PULLDOWN) ? ICON_CHECKBOX_DEHLT : ICON_CHECKBOX_HLT);
+    col.op("SCREEN_OT_header_toggle_menus",
+           IFACE_("Show Menus"),
+           (area->flag & HEADER_NO_PULLDOWN) ? ICON_CHECKBOX_DEHLT : ICON_CHECKBOX_HLT);
   }
 
   if (!ELEM(area->spacetype, SPACE_TOPBAR)) {
     layout->separator();
     ED_screens_region_flip_menu_create(C, layout, nullptr);
     /* bfa - show hide the editortypemenu*/
-    layout->op("SCREEN_OT_header_toggle_editortypemenu",
+    layout.op("SCREEN_OT_header_toggle_editortypemenu",
                IFACE_("Hide Editor Type Menu"),
                (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
                blender::wm::OpCallContext::InvokeDefault,
@@ -5964,7 +5978,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void * /
 /* ************** bfa - toolbar tools operator ***************************** */
 /* ************** This menu is called in the toolbar editor to choose the toolbar type
  * ***************************** */
-void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
+void ED_screens_toolbar_tools_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
 {
   ScrArea *area = CTX_wm_area(C);
   /*ARegion *region = CTX_wm_region(C);*/ /*bfa - commented out, obviously not needed*/
@@ -6013,7 +6027,7 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void * 
 static wmOperatorStatus toolbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
   uiPopupMenu *pup;
-  uiLayout *layout;
+  blender::ui::Layout *layout;
 
   pup = UI_popup_menu_begin(C, IFACE_("Toolbar"), ICON_NONE);
   layout = UI_popup_menu_layout(pup);
@@ -6040,7 +6054,7 @@ static void SCREEN_OT_toolbar_toolbox(wmOperatorType *ot)
 /* ************** bfa - topbar tools operator ***************************** */
 /* ************** This menu is called in the topbar editor to choose the topbar type
  * ***************************** */
-void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
+void ED_screens_topbar_tools_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
 {
   ScrArea *area = CTX_wm_area(C);
   /*ARegion *region = CTX_wm_region(C);*/ /*bfa - commented out, obviously not needed*/
@@ -6089,7 +6103,7 @@ void ED_screens_topbar_tools_menu_create(bContext *C, uiLayout *layout, void * /
 static wmOperatorStatus topbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
   uiPopupMenu *pup;
-  uiLayout *layout;
+  blender::ui::Layout *layout;
 
   pup = UI_popup_menu_begin(C, IFACE_("Topbar"), ICON_NONE);
   layout = UI_popup_menu_layout(pup);
@@ -6113,7 +6127,7 @@ static void SCREEN_OT_topbar_toolbox(wmOperatorType *ot)
 }
 /*----------------------------------------------------*/
 
-void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
+void ED_screens_footer_tools_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
 {
   ScrArea *area = CTX_wm_area(C);
 
@@ -6126,10 +6140,10 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void * /
 
   ED_screens_region_flip_menu_create(C, layout, nullptr);
   layout->separator();
-  screen_area_menu_items(area, layout);
+  screen_area_menu_items(area, *layout);
 }
 
-void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*arg*/)
+void ED_screens_region_flip_menu_create(bContext *C, blender::ui::Layout *layout, void * /*arg*/)
 {
   const ARegion *region = CTX_wm_region(C);
   const short region_alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
@@ -6144,17 +6158,17 @@ void ED_screens_region_flip_menu_create(bContext *C, uiLayout *layout, void * /*
   layout->op("SCREEN_OT_region_flip", but_flip_str, ICON_FLIP); /*BFA - icon added*/
 }
 
-static void ed_screens_statusbar_menu_create(uiLayout *layout, void * /*arg*/)
+static void ed_screens_statusbar_menu_create(blender::ui::Layout &layout, void * /*arg*/)
 {
   PointerRNA ptr = RNA_pointer_create_discrete(nullptr, &RNA_PreferencesView, &U);
-  layout->prop(&ptr, "show_statusbar_stats", UI_ITEM_NONE, IFACE_("Scene Statistics"), ICON_NONE);
-  layout->prop(
+  layout.prop(&ptr, "show_statusbar_stats", UI_ITEM_NONE, IFACE_("Scene Statistics"), ICON_NONE);
+  layout.prop(
       &ptr, "show_statusbar_scene_duration", UI_ITEM_NONE, IFACE_("Scene Duration"), ICON_NONE);
-  layout->prop(&ptr, "show_statusbar_memory", UI_ITEM_NONE, IFACE_("System Memory"), ICON_NONE);
+  layout.prop(&ptr, "show_statusbar_memory", UI_ITEM_NONE, IFACE_("System Memory"), ICON_NONE);
   if (GPU_mem_stats_supported()) {
-    layout->prop(&ptr, "show_statusbar_vram", UI_ITEM_NONE, IFACE_("Video Memory"), ICON_NONE);
+    layout.prop(&ptr, "show_statusbar_vram", UI_ITEM_NONE, IFACE_("Video Memory"), ICON_NONE);
   }
-  layout->prop(
+  layout.prop(
       &ptr, "show_extensions_updates", UI_ITEM_NONE, IFACE_("Extensions Updates"), ICON_NONE);
   // bfa show base blender version
   layout->prop(&ptr,
@@ -6178,36 +6192,36 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
 
   if (area && area->spacetype == SPACE_STATUSBAR) {
     uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Status Bar"), ICON_NONE);
-    uiLayout *layout = UI_popup_menu_layout(pup);
+    blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
     ed_screens_statusbar_menu_create(layout, nullptr);
     UI_popup_menu_end(C, pup);
   }
   else if (region) {
     if (ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER)) {
       uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Header"), ICON_NONE);
-      uiLayout *layout = UI_popup_menu_layout(pup);
+      blender::ui::Layout *layout = UI_popup_menu_layout(pup);
       ED_screens_header_tools_menu_create(C, layout, nullptr);
       UI_popup_menu_end(C, pup);
     }
     else if (region->regiontype == RGN_TYPE_FOOTER) {
       uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Footer"), ICON_NONE);
-      uiLayout *layout = UI_popup_menu_layout(pup);
+      blender::ui::Layout *layout = UI_popup_menu_layout(pup);
       ED_screens_footer_tools_menu_create(C, layout, nullptr);
       UI_popup_menu_end(C, pup);
     }
     else if (region->regiontype == RGN_TYPE_NAV_BAR) {
       uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Navigation Bar"), ICON_NONE);
-      uiLayout *layout = UI_popup_menu_layout(pup);
+      blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
 
       /* We need blender::wm::OpCallContext::InvokeDefault in case menu item is over another area.
        */
-      layout->operator_context_set(blender::wm::OpCallContext::InvokeDefault);
-      layout->op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_HIDE_ON);
+      layout.operator_context_set(blender::wm::OpCallContext::InvokeDefault);
+      layout.op("SCREEN_OT_region_toggle", IFACE_("Hide"), ICON_HIDE_ON);
 
-      ED_screens_region_flip_menu_create(C, layout, nullptr);
+      ED_screens_region_flip_menu_create(C, &layout, nullptr);
       const ScrArea *area = CTX_wm_area(C);
       if (area && area->spacetype == SPACE_PROPERTIES) {
-        layout->menu_fn(IFACE_("Visible Tabs"), ICON_NONE, ED_buttons_visible_tabs_menu, nullptr);
+        layout.menu_fn(IFACE_("Visible Tabs"), ICON_NONE, ED_buttons_visible_tabs_menu, nullptr);
       }
       UI_popup_menu_end(C, pup);
     }

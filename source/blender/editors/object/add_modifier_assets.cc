@@ -96,12 +96,12 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
     return;
   }
 
-  uiLayout *layout = menu->layout;
+  ui::Layout &layout = *menu->layout;
 
   bool first = true;
   const auto ensure_separator = [&]() {
     if (first) {
-      layout->separator();
+      layout.separator();
       first = false;
     }
   };
@@ -114,14 +114,17 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
       }
     }
     ensure_separator();
-    PointerRNA props_ptr = layout->op(
-        ot, IFACE_(asset->get_name()), ICON_NODETREE, wm::OpCallContext::InvokeDefault, UI_ITEM_NONE); /*BFA*/
+    PointerRNA props_ptr = layout.op(ot,
+                                     IFACE_(asset->get_name()),
+                                     ICON_NODETREE,
+                                     wm::OpCallContext::InvokeDefault,
+                                     UI_ITEM_NONE); /*BFA*/
     asset::operator_asset_reference_props_set(*asset, props_ptr);
   }
 
   catalog_item->foreach_child([&](const asset_system::AssetCatalogTreeItem &item) {
     ensure_separator();
-    asset::draw_menu_for_catalog(item, "OBJECT_MT_add_modifier_catalog_assets", *layout);
+    asset::draw_menu_for_catalog(item, "OBJECT_MT_add_modifier_catalog_assets", layout);
   });
 }
 
@@ -146,11 +149,14 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
 {
   Main &bmain = *CTX_data_main(C);
   asset::AssetItemTree &tree = *get_static_item_tree();
-  uiLayout *layout = menu->layout;
+  ui::Layout &layout = *menu->layout;
   wmOperatorType *ot = WM_operatortype_find("OBJECT_OT_modifier_add_node_group", true);
   for (const asset_system::AssetRepresentation *asset : tree.unassigned_assets) {
-    PointerRNA props_ptr = layout->op(
-        ot, IFACE_(asset->get_name()), ICON_NODETREE, wm::OpCallContext::InvokeDefault, UI_ITEM_NONE); /*BFA*/
+    PointerRNA props_ptr = layout.op(ot,
+                                     IFACE_(asset->get_name()),
+                                     ICON_NODETREE,
+                                     wm::OpCallContext::InvokeDefault,
+                                     UI_ITEM_NONE); /*BFA*/
     asset::operator_asset_reference_props_set(*asset, props_ptr);
   }
 
@@ -168,16 +174,19 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
     }
 
     if (add_separator) {
-      layout->separator();
+      layout.separator();
       add_separator = false;
     }
     if (first) {
-      layout->label(IFACE_("Unmarked Assets"), ICON_NONE); /*BFA - changed label*/
+      layout.label(IFACE_("Unmarked Assets"), ICON_NONE); /*BFA - changed label*/
       first = false;
     }
 
-    PointerRNA props_ptr = layout->op(
-        ot, group->id.name + 2, ICON_NODETREE, wm::OpCallContext::InvokeDefault, UI_ITEM_NONE); /*BFA*/
+    PointerRNA props_ptr = layout.op(ot,
+                                     group->id.name + 2,
+                                     ICON_NODETREE,
+                                     wm::OpCallContext::InvokeDefault,
+                                     UI_ITEM_NONE); /*BFA*/
     WM_operator_properties_id_lookup_set_from_id(&props_ptr, &group->id);
   }
 }
@@ -188,7 +197,7 @@ static void root_catalogs_draw(const bContext *C, Menu *menu)
   if (!object) {
     return;
   }
-  uiLayout *layout = menu->layout;
+  ui::Layout &layout = *menu->layout;
 
   const bool loading_finished = all_loading_finished();
 
@@ -198,10 +207,10 @@ static void root_catalogs_draw(const bContext *C, Menu *menu)
     return;
   }
 
-  layout->separator();
+  layout.separator();
 
   if (!loading_finished) {
-    layout->label(IFACE_("Loading Asset Libraries"), ICON_INFO);
+    layout.label(IFACE_("Loading Asset Libraries"), ICON_INFO);
   }
 
   Set<std::string> all_builtin_menus = [&]() {
@@ -226,13 +235,13 @@ static void root_catalogs_draw(const bContext *C, Menu *menu)
 
   tree.catalogs.foreach_root_item([&](const asset_system::AssetCatalogTreeItem &item) {
     if (!all_builtin_menus.contains(item.get_name())) {
-      asset::draw_menu_for_catalog(item, "OBJECT_MT_add_modifier_catalog_assets", *layout);
+      asset::draw_menu_for_catalog(item, "OBJECT_MT_add_modifier_catalog_assets", layout);
     }
   });
 
   if (!tree.unassigned_assets.is_empty() || unassigned_local_poll(*CTX_data_main(C))) {
-    layout->separator();
-    layout->menu(
+    layout.separator();
+    layout.menu(
         "OBJECT_MT_add_modifier_unassigned_assets", IFACE_("Unassigned"), ICON_FILE_HIDDEN);
   }
 }
@@ -325,7 +334,9 @@ static wmOperatorStatus modifier_add_asset_invoke(bContext *C,
                                                   const wmEvent *event)
 {
   if (event->modifier & KM_ALT || CTX_wm_view3d(C)) {
-    RNA_boolean_set(op->ptr, "use_selected_objects", false); /*BFA - inversed to act on selected, ALT to act on only Active*/
+    RNA_boolean_set(op->ptr,
+                    "use_selected_objects",
+                    false); /*BFA - inversed to act on selected, ALT to act on only Active*/
   }
   return modifier_add_asset_exec(C, op);
 }
@@ -348,7 +359,9 @@ static std::string modifier_add_asset_get_description(bContext *C,
 static void OBJECT_OT_modifier_add_node_group(wmOperatorType *ot)
 {
   ot->name = "Add Modifier";
-  ot->description = "Add a procedural operation/effect to all selected objectsn/Hold ALT to add to only selected."; /*BFA - defaults to all*/
+  ot->description =
+      "Add a procedural operation/effect to all selected objectsn/Hold ALT to add to only "
+      "selected."; /*BFA - defaults to all*/
   ot->idname = "OBJECT_OT_modifier_add_node_group";
 
   ot->invoke = modifier_add_asset_invoke;
@@ -403,7 +416,7 @@ void object_modifier_add_asset_register()
   WM_operatortype_append(OBJECT_OT_modifier_add_node_group);
 }
 
-void ui_template_modifier_asset_menu_items(uiLayout &layout,
+void ui_template_modifier_asset_menu_items(ui::Layout &layout,
                                            const StringRef catalog_path,
                                            const bool skip_essentials)
 {
@@ -417,10 +430,10 @@ void ui_template_modifier_asset_menu_items(uiLayout &layout,
   if (!all_library) {
     return;
   }
-  uiLayout *col = &layout.column(false);
-  col->context_string_set("asset_catalog_path", item->catalog_path().str());
-  col->context_int_set("skip_essentials", skip_essentials);
-  col->menu_contents("OBJECT_MT_add_modifier_catalog_assets");
+  ui::Layout &col = layout.column(false);
+  col.context_string_set("asset_catalog_path", item->catalog_path().str());
+  col.context_int_set("skip_essentials", skip_essentials);
+  col.menu_contents("OBJECT_MT_add_modifier_catalog_assets");
 }
 
 }  // namespace blender::ed::object
