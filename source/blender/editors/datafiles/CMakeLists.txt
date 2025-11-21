@@ -557,8 +557,8 @@ if(WITH_BLENDER)
       dirty_vertex
       disable
       disc
-      disclosure_tri_right # BFA - exception to the order for the icon +1 toggle
       disclosure_tri_down
+      disclosure_tri_right
       discontinue_euler
       disk_drive
       dissolve_between
