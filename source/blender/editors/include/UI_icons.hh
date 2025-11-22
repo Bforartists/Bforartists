@@ -419,12 +419,8 @@ DEF_ICON_COLOR(DIAL_GIZMO)
 DEF_ICON_COLOR(DIRTY_VERTEX)
 DEF_ICON_COLOR(DISABLE)
 DEF_ICON_COLOR(DISC)
-
-DEF_ICON_COLOR(DISCLOSURE_TRI_RIGHT) /*BFA - don't change the order, exception to the order for the
-                                        icon +1 toggle*/
-DEF_ICON_COLOR(DISCLOSURE_TRI_DOWN)  /*BFA - don't change the order, exception to the order for the
-                                        icon +1 toggle*/
-
+DEF_ICON_COLOR(DISCLOSURE_TRI_DOWN)
+DEF_ICON_COLOR(DISCLOSURE_TRI_RIGHT)
 DEF_ICON_COLOR(DISCONTINUE_EULER)
 DEF_ICON_COLOR(DISK_DRIVE)
 DEF_ICON_COLOR(DISSOLVE_BETWEEN)
