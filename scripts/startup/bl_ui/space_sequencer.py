@@ -1303,7 +1303,6 @@ class SEQUENCER_MT_strip_effect(Menu):
         layout = self.layout
 
         # BFA - WIP - couple of these operators were moved to a conditional
-        layout.menu("SEQUENCER_MT_strip_effect_change")
         layout.operator("sequencer.reassign_inputs", icon="RANDOMIZE_TRANSFORM")
         layout.operator("sequencer.swap_inputs", icon="RANDOMIZE")
 
@@ -1317,30 +1316,30 @@ class SEQUENCER_MT_strip_effect_change(Menu):
         strip = context.active_strip
 
         col = layout.column()
-        col.operator("sequencer.change_effect_type", text="Adjustment Layer").type = "ADJUSTMENT"
-        col.operator("sequencer.change_effect_type", text="Multicam Selector").type = "MULTICAM"
+        col.operator("sequencer.change_effect_type", text="Adjustment Layer", icon='COLOR').type = "ADJUSTMENT"
+        col.operator("sequencer.change_effect_type", text="Multicam Selector", icon='SEQ_MULTICAM').type = "MULTICAM"
         col.enabled = strip.input_count == 0
 
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.change_effect_type", text="Speed Control").type = "SPEED"
-        col.operator("sequencer.change_effect_type", text="Glow").type = "GLOW"
-        col.operator("sequencer.change_effect_type", text="Gaussian Blur").type = "GAUSSIAN_BLUR"
+        col.operator("sequencer.change_effect_type", text="Speed Control", icon='NODE_CURVE_TIME').type = "SPEED"
+        col.operator("sequencer.change_effect_type", text="Glow", icon='LIGHT_SUN').type = "GLOW"
+        col.operator("sequencer.change_effect_type", text="Gaussian Blur", icon='NODE_BLUR').type = "GAUSSIAN_BLUR"
         col.enabled = strip.input_count == 1
 
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.change_effect_type", text="Add").type = "ADD"
-        col.operator("sequencer.change_effect_type", text="Subtract").type = "SUBTRACT"
-        col.operator("sequencer.change_effect_type", text="Multiply").type = "MULTIPLY"
-        col.operator("sequencer.change_effect_type", text="Alpha Over").type = "ALPHA_OVER"
-        col.operator("sequencer.change_effect_type", text="Alpha Under").type = "ALPHA_UNDER"
-        col.operator("sequencer.change_effect_type", text="Color Mix").type = "COLORMIX"
-        col.operator("sequencer.change_effect_type", text="Crossfade").type = "CROSS"
-        col.operator("sequencer.change_effect_type", text="Gamma Crossfade").type = "GAMMA_CROSS"
-        col.operator("sequencer.change_effect_type", text="Wipe").type = "WIPE"
+        col.operator("sequencer.change_effect_type", text="Add", icon='SEQ_ADD').type = "ADD"
+        col.operator("sequencer.change_effect_type", text="Subtract", icon='NODE_INVERT').type = "SUBTRACT"
+        col.operator("sequencer.change_effect_type", text="Multiply", icon='SEQ_MULTIPLY').type = "MULTIPLY"
+        col.operator("sequencer.change_effect_type", text="Alpha Over", icon='IMAGE_ALPHA').type = "ALPHA_OVER"
+        col.operator("sequencer.change_effect_type", text="Alpha Under", icon='NODE_HOLDOUTSHADER').type = "ALPHA_UNDER"
+        col.operator("sequencer.change_effect_type", text="Color Mix", icon='NODE_MIXRGB').type = "COLORMIX"
+        col.operator("sequencer.change_effect_type", text="Crossfade", icon='NODE_VECTOR').type = "CROSS"
+        col.operator("sequencer.change_effect_type", text="Gamma Crossfade", icon='NODE_GAMMA').type = "GAMMA_CROSS"
+        col.operator("sequencer.change_effect_type", text="Wipe", icon='NODE_VECTOR_TRANSFORM').type = "WIPE"
         col.enabled = strip.input_count == 2
 
 
@@ -1483,73 +1482,6 @@ class SEQUENCER_MT_strip(Menu):
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon="DELETE_DUPLICATE").delete_data = True
             layout.operator("sequencer.scene_frame_range_update", icon="NODE_MAP_RANGE")
 
-        # layout.menu("SEQUENCER_MT_change") # BFA - replaced to be a top-level series of conditional operators
-
-        # BFA - Changed the Change contextual operator visibility to be based on strip type selection
-        # BFA - This is done by listing the strip types then checking if it exists for the relevant operators
-        # BFA - If there is no correct strip selected, a label will advise what to do
-        try:
-            layout.operator_context = "INVOKE_REGION_WIN"
-            if strip and strip.type == "SCENE":
-                bpy_data_scenes_len = len(bpy.data.scenes)
-
-                if bpy_data_scenes_len > 14:
-                    layout.separator()
-                    layout.operator_context = "INVOKE_DEFAULT"
-                    layout.operator("sequencer.change_scene", text="Change Scene", icon="SCENE_DATA")
-                elif bpy_data_scenes_len > 1:
-                    layout.separator()
-                    layout.menu("SEQUENCER_MT_change_scene_with_icons", text="Change Scene")
-                del bpy_data_scenes_len
-            else:
-                layout.operator_context = "INVOKE_DEFAULT"
-
-                strip_type = strip.type
-                data_strips = ["IMAGE", "MOVIE", "SOUND"]
-                effect_strips = [
-                    "GAUSSIAN_BLUR",
-                    "SPEED",
-                    'GLOW"',
-                    "TRANSFORM",
-                    "MULTICAM",
-                    "ADD",
-                    "SUBRACT",
-                    "ALPHA_OVER",
-                    "ALPHA_UNDER",
-                    "COLORMIX",
-                ]
-
-                if strip_type in data_strips:
-                    layout.operator_context = "INVOKE_DEFAULT"
-                    layout.separator()
-                    props = layout.operator(
-                        "sequencer.change_path",
-                        text="Change Path/Files",
-                        icon="FILE_MOVIE",
-                    )
-
-                    if strip:
-                        strip_type = strip.type
-
-                        if strip_type == "IMAGE":
-                            props.filter_image = True
-                        elif strip_type == "MOVIE":
-                            props.filter_movie = True
-                        elif strip_type == "SOUND":
-                            props.filter_sound = True
-                elif strip_type in effect_strips:
-                    layout.operator_context = "INVOKE_DEFAULT"
-                    layout.separator()
-                    layout.operator("sequencer.change_effect_input")
-                    layout.operator_menu_enum("sequencer.change_effect_type", "type")
-                else:
-                    # layout.label(text="Please select a changeable strip", icon="QUESTION")
-                    pass
-        except:
-            # layout.label(text="Please select a strip to change", icon="QUESTION")
-            pass
-        # BFA - End of changes
-
         if has_sequencer:
             if strip:
                 strip_type = strip.type
@@ -1574,6 +1506,7 @@ class SEQUENCER_MT_strip(Menu):
                 }:
                     layout.separator()
                     layout.menu("SEQUENCER_MT_strip_effect")
+                    layout.menu("SEQUENCER_MT_strip_effect_change")
                 elif strip_type == "MOVIE":
                     layout.separator()
                     layout.menu("SEQUENCER_MT_strip_movie")
@@ -1584,6 +1517,7 @@ class SEQUENCER_MT_strip(Menu):
                 elif strip_type == "TEXT":
                     layout.separator()
                     layout.menu("SEQUENCER_MT_strip_effect")
+                    layout.menu("SEQUENCER_MT_strip_effect_change")
                 elif strip_type == "META":
                     layout.separator()
                     layout.operator("sequencer.meta_make", icon="ADD_METASTRIP")
@@ -1730,71 +1664,6 @@ class SEQUENCER_MT_context_menu(Menu):
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon="DELETE_DUPLICATE").delete_data = True
             layout.operator("sequencer.scene_frame_range_update")
 
-        # layout.separator()
-        # layout.menu("SEQUENCER_MT_change") # BFA - replaced to be a top-level series of conditional operators
-
-        # BFA - Changed the Change contextual operator visibility to be based on strip type selection
-        # BFA - This is done by listing the strip types then checking if it exists for the relevant operators
-        # BFA - If there is no correct strip selected, a label will advise what to do
-        try:
-            layout.operator_context = "INVOKE_REGION_WIN"
-            if strip and strip.type == "SCENE":
-                bpy_data_scenes_len = len(bpy.data.scenes)
-
-                if bpy_data_scenes_len > 14:
-                    layout.operator_context = "INVOKE_DEFAULT"
-                    layout.operator("sequencer.change_scene", text="Change Scene", icon="SCENE_DATA")
-                elif bpy_data_scenes_len > 1:
-                    layout.menu("SEQUENCER_MT_change_scene_with_icons", text="Change Scene")
-                del bpy_data_scenes_len
-            else:
-                layout.operator_context = "INVOKE_DEFAULT"
-
-                strip_type = strip.type
-                data_strips = ["IMAGE", "MOVIE", "SOUND"]
-                effect_strips = [
-                    "GAUSSIAN_BLUR",
-                    "SPEED",
-                    "GLOW",
-                    "TRANSFORM",
-                    "MULTICAM",
-                    "ADD",
-                    "SUBRACT",
-                    "ALPHA_OVER",
-                    "ALPHA_UNDER",
-                    "COLORMIX",
-                ]
-
-                if strip_type in data_strips:
-                    layout.operator_context = "INVOKE_DEFAULT"
-                    props = layout.operator(
-                        "sequencer.change_path",
-                        text="Change Path/Files",
-                        icon="FILE_MOVIE",
-                    )
-
-                    if strip:
-                        strip_type = strip.type
-
-                        if strip_type == "IMAGE":
-                            props.filter_image = True
-                        elif strip_type == "MOVIE":
-                            props.filter_movie = True
-                        elif strip_type == "SOUND":
-                            props.filter_sound = True
-                elif strip_type in effect_strips:
-                    layout.operator_context = "INVOKE_DEFAULT"
-                    # BFA - Minimized a bit
-                    layout.operator("sequencer.change_effect_input")
-                    layout.operator_menu_enum("sequencer.change_effect_type", "type")
-                else:
-                    # layout.label(text="Please select a changeable strip", icon="QUESTION")
-                    pass
-        except:
-            # layout.label(text="Please select a strip to change", icon="QUESTION")
-            pass
-        # BFA - End of changes
-
         layout.separator()
 
         layout.operator("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS")
@@ -1859,6 +1728,7 @@ class SEQUENCER_MT_context_menu(Menu):
             }:
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_effect")
+                layout.menu("SEQUENCER_MT_strip_effect_change")
             elif strip_type == "MOVIE":
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_movie")
@@ -1869,6 +1739,7 @@ class SEQUENCER_MT_context_menu(Menu):
             elif strip_type == "TEXT":
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_effect")
+                layout.menu("SEQUENCER_MT_strip_effect_change")
             elif strip_type == "META":
                 layout.separator()
                 layout.operator("sequencer.meta_make", icon="ADD_METASTRIP")

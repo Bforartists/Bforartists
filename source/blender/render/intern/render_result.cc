@@ -356,11 +356,6 @@ RenderResult *render_result_new(Render *re,
     re->single_view_layer[0] = '\0';
   }
 
-  /* Border render; calculate offset for use in compositor. compo is centralized coords. */
-  /* XXX(ton): obsolete? I now use it for drawing border render offset. */
-  rr->xof = re->disprect.xmin + BLI_rcti_cent_x(&re->disprect) - (re->winx / 2);
-  rr->yof = re->disprect.ymin + BLI_rcti_cent_y(&re->disprect) - (re->winy / 2);
-
   return rr;
 }
 
@@ -708,6 +703,11 @@ RenderResult *render_result_new_from_exr(
 
   IMB_exr_get_ppm(exrhandle, rr->ppm);
 
+  int display_size[2];
+  int display_offset[2];
+  int data_offset[2];
+  IMB_exr_get_display_window(exrhandle, display_size, display_offset, data_offset);
+
   IMB_exr_multilayer_convert(exrhandle, rr, ml_addview_cb, ml_addlayer_cb, ml_addpass_cb);
 
   LISTBASE_FOREACH (RenderLayer *, rl, &rr->layers) {
@@ -721,6 +721,10 @@ RenderResult *render_result_new_from_exr(
       rpass->recty = recty;
 
       copy_v2_v2_db(rpass->ibuf->ppm, rr->ppm);
+      rpass->ibuf->flags |= IB_has_display_window;
+      copy_v2_v2_int(rpass->ibuf->display_size, display_size);
+      copy_v2_v2_int(rpass->ibuf->display_offset, display_offset);
+      copy_v2_v2_int(rpass->ibuf->data_offset, data_offset);
 
       if (RE_RenderPassIsColor(rpass)) {
         IMB_colormanagement_transform_float(rpass->ibuf->float_buffer.data,

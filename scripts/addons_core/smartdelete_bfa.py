@@ -20,12 +20,13 @@
 
 
 import bpy
+import bmesh
 bl_info = {
 "name": "Smart Delete",
 "description": "Auto detect a delete elements",
 "author": "Reiner 'Tiles' Prokein, Draise (Trinumedia)",
-"version": (0,2.2),
-"blender": (2, 80, 0),
+"version": (0,2.3),
+"blender": (4, 0, 0),
 "doc_url": "https://github.com/Bforartists/Manual",
 "tracker_url": "https://github.com/Bforartists/Bforartists",
 "support": "OFFICIAL",
@@ -34,10 +35,8 @@ bl_info = {
  
 
 def find_connected_verts(me, found_index):  
-    edges = me.edges  
-    connecting_edges = [i for i in edges if found_index in i.vertices[:]]  
-    #print('connecting_edges',len(connecting_edges)) # Do not want to polute the console.
-    return len(connecting_edges)  
+    """Optimized version that uses edge connectivity cache"""
+    return len(me.vertices[found_index].link_edges)
  
 class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
     """ Dissolves mesh elements based on context instead
@@ -61,165 +60,216 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
         if bpy.context.mode == 'EDIT_MESH':
             select_mode = context.tool_settings.mesh_select_mode
             me = context.object.data
-            ## Vertices select
+            ## Vertices select - Optimized for performance with bmesh
             if select_mode[0]:
                 mymode = 0
 
-                # bpy.ops.mesh.dissolve_verts() # This throws a full error report in the face of the user.
-                # So we need the below method-
-                # Dissolve with catching the error report so that the user does not have the impression that the script is broken.
-                if bpy.ops.mesh.dissolve_verts.poll():
+                try:
+                    # Use bmesh directly for maximum performance on dense meshes
+                    bm = bmesh.from_edit_mesh(me)
+                    
+                    # Get selected vertices
+                    selected_verts = [v for v in bm.verts if v.select]
+                    
+                    if not selected_verts:
+                        bmesh.update_edit_mesh(me)
+                        return {'FINISHED'}
+                    
+                    # Handle floating/isolated vertices and small islands first
+                    delete_verts = []  # Vertices that should be deleted (not dissolved)
+                    dissolve_verts = []  # Vertices that can be dissolved
+                    
+                    # Check for vertices that form small islands that can't be dissolved
+                    processed_verts = set()
+                    
+                    for vert in selected_verts:
+                        if vert in processed_verts:
+                            continue
+                            
+                        # Check for completely isolated vertices (no edges, no faces)
+                        if len(vert.link_edges) == 0 and len(vert.link_faces) == 0:
+                            delete_verts.append(vert)
+                            processed_verts.add(vert)
+                            continue
+                            
+                        # Check for small islands (2 vertices connected by 1 edge)
+                        if len(vert.link_edges) == 1:
+                            connected_vert = next(iter(vert.link_edges)).other_vert(vert)
+                            if connected_vert in selected_verts and connected_vert not in processed_verts:
+                                # This is a 2-vertex island - delete both vertices
+                                delete_verts.extend([vert, connected_vert])
+                                processed_verts.update([vert, connected_vert])
+                                continue
+                                
+                        # Check for vertices that are part of larger structures but can't be dissolved
+                        # Vertices with only 1 connection (end of chain) should be deleted, not dissolved
+                        if len(vert.link_edges) == 1:
+                            delete_verts.append(vert)
+                            processed_verts.add(vert)
+                            continue
+                            
+                        # For all other vertices, try to dissolve them
+                        if vert not in processed_verts:
+                            dissolve_verts.append(vert)
+                            processed_verts.add(vert)
 
+                    # Delete vertices that can't be dissolved first
+                    if delete_verts:
+                        bmesh.ops.delete(bm, geom=delete_verts, context='VERTS')
+                    
+                    # Handle remaining vertices that can be dissolved
+                    if dissolve_verts:
+                        # Check if all vertices are selected
+                        if len(dissolve_verts) == len(bm.verts):
+                            # All vertices selected - delete them all
+                            bmesh.ops.delete(bm, geom=dissolve_verts, context='VERTS')
+                        else:
+                            # Try to dissolve the remaining vertices
+                            try:
+                                bmesh.ops.dissolve_verts(bm, verts=dissolve_verts)
+                            except:
+                                # If dissolve fails, delete the vertices
+                                bmesh.ops.delete(bm, geom=dissolve_verts, context='VERTS')
+                    
+                    bmesh.update_edit_mesh(me)
+                    
+                except RuntimeError as exception:
+                    # Fallback to standard operation if bmesh fails
                     try:
                         bpy.ops.mesh.dissolve_verts()
-
-                        #self.report({'INFO'}, "Selected vertices were dissolved.")
-
-                        # Check if there is only one vertex left and delete it if true
-                        bpy.ops.object.mode_set(mode='OBJECT')
-                        remaining_verts = [v for v in me.vertices if v.select]
-                        if len(remaining_verts) == 1:
-                            me.vertices[remaining_verts[0].index].select = True
-                            bpy.ops.object.mode_set(mode='EDIT')
-                            bpy.ops.mesh.delete(type='VERT')
-                            #self.report({'INFO'}, "Single floating vertices was removed.")
-                        else:
-                            bpy.ops.object.mode_set(mode='EDIT')
-
-                        # Check if all vertices are selected and delete them if true
-                        bpy.ops.object.mode_set(mode='OBJECT')
-                        all_verts = [v for v in me.vertices]
-                        if len(remaining_verts) == len(all_verts):
-                            bpy.ops.object.mode_set(mode='EDIT')
-                            bpy.ops.mesh.delete(type='VERT')
-                            #self.report({'INFO'}, "All selected vertices were removed.")
-                        else:
-                            bpy.ops.object.mode_set(mode='EDIT')
-
-                        # Check if there are exactly two selected vertices with no connected edges and delete them
-                        selected_verts = [v for v in me.vertices if v.select]
-                        if len(selected_verts) == 2:
-                            connected_edges = [e for e in me.edges if any(v.index in e.vertices for v in remaining_verts)]
-                            if not connected_edges:
-                                bpy.ops.object.mode_set(mode='EDIT')
-                                bpy.ops.mesh.delete(type='VERT')
-                                #self.report({'INFO'}, "Two disconnected vertices as an edge were removed.")
-                            else:
-                                bpy.ops.object.mode_set(mode='EDIT')
-
-                        # Check if there are exactly two vertices selected and delete them
-                        if len(remaining_verts) == 2:
-                            bpy.ops.object.mode_set(mode='EDIT')
-                            bpy.ops.mesh.delete(type='VERT')
-                            #self.report({'INFO'}, "Two last selected vertices as an edge were removed.")
-                        else:
-                            bpy.ops.object.mode_set(mode='EDIT')
-
-
-                    except RuntimeError as exception:
-                        error = " ".join(exception.args)
+                    except RuntimeError as fallback_exception:
+                        error = " ".join(fallback_exception.args)
                         print("Invalid boundary region to join faces\nYou cannot delete this geometry that way.\nTry another delete method or another selection")
                         self.report({'ERROR'}, error)
 
 
-            ## Edge select
+            ## Edge select - Optimized for performance using bmesh
             elif select_mode[1] and not select_mode[2]:
                 mymode = 1
 
-                # bpy.ops.mesh.dissolve_edges(use_verts=self.use_verts) # This throws a full error report in the face of the user.
-                # So we need the below method-
-                # Dissolve with catching the error report so that the user does not have the impression that the script is broken.
                 if bpy.ops.mesh.dissolve_edges.poll():
-
                     try:
-                        # Check if all selected edges are all the edges that exist
-                        bpy.ops.object.mode_set(mode='OBJECT')
-                        selected_edges = [e for e in me.edges if e.select]
-                        all_edges = [e for e in me.edges]
-
-                        # Check if all selected edges are an island
-                        island_edges = set()
-                        edges_to_check = set(selected_edges)
-
-                        while edges_to_check:
-                            edge = edges_to_check.pop()
-                            if edge not in island_edges:
-                                island_edges.add(edge)
-                                connected_edges = [e for e in me.edges if any(v in edge.vertices for v in e.vertices) and e not in island_edges]
-                                edges_to_check.update(connected_edges)
-
-                        #### For troubleshooting: ####
-                        #if len(selected_edges) == len(island_edges):
-                            #self.report({'INFO'}, "Selected edges are all of the edges of that island.")
-                        #else:
-                            #self.report({'INFO'}, "Selected edges are not all of the edges of that island.")
-
-                        if len(selected_edges) == len(all_edges):
-                            bpy.ops.object.mode_set(mode='EDIT')
-                            bpy.ops.mesh.delete(type='EDGE')
-                            #self.report({'INFO'}, "All selected edges were removed.")
-                        elif len(selected_edges) == len(island_edges):
-                            bpy.ops.object.mode_set(mode='EDIT')
-                            bpy.ops.mesh.delete(type='EDGE')
-                            #self.report({'INFO'}, "All connected island edges were removed.")
-                        else:
-                            # Check if the selected edge has no connecting edges
-                            no_connecting_edges = all(find_connected_verts(me, v) == 1 for e in selected_edges for v in e.vertices)
-                            if no_connecting_edges:
-                                bpy.ops.object.mode_set(mode='EDIT')
-                                bpy.ops.mesh.delete(type='EDGE')
-                                #self.report({'INFO'}, "Selected edge with no connecting edges was removed.")
-                            else:
-                                # Check if there are 3 or 4 edges left and remove the selected edge only, breaking face
-                                bpy.ops.object.mode_set(mode='OBJECT')
-                                if len(all_edges) in [3, 4, 5] or len(island_edges) in [3, 4, 5]:
-                                    bpy.ops.object.mode_set(mode='EDIT')
-                                    bpy.ops.mesh.delete(type='EDGE_FACE')
-                                    #self.report({'INFO'}, "3 or 4 selected edges, only edge was removed.")
+                        # Use bmesh for faster processing without mode switching
+                        bm = bmesh.from_edit_mesh(me)
+                        
+                        selected_edges = [e for e in bm.edges if e.select]
+                        all_edges = list(bm.edges)
+                        
+                        if not selected_edges:
+                            bmesh.update_edit_mesh(me)
+                            return {'FINISHED'}
+                        
+                        # Handle floating face edges - check if we're dealing with floating faces
+                        complete_floating_faces_edges = []  # All edges of a floating face selected
+                        partial_floating_faces_edges = []    # Some edges of a floating face selected
+                        regular_edges = []
+                        
+                        # First pass: identify faces that have all edges selected (complete floating faces)
+                        processed_faces = set()
+                        for edge in selected_edges:
+                            if len(edge.link_faces) == 1:  # Floating face edge
+                                face = next(iter(edge.link_faces))
+                                if face not in processed_faces:
+                                    # Check if ALL edges of this face are selected
+                                    face_edges_selected = all(e.select for e in face.edges)
+                                    if face_edges_selected:
+                                        complete_floating_faces_edges.extend(face.edges)
+                                        processed_faces.add(face)
+                        
+                        # Second pass: handle edges that are part of floating faces but not all edges are selected
+                        for edge in selected_edges:
+                            if len(edge.link_faces) == 1:  # Floating face edge
+                                face = next(iter(edge.link_faces))
+                                if face not in processed_faces:  # This face has partial selection
+                                    # For partial selection, delete the selected edges to collapse the face
+                                    partial_floating_faces_edges.append(edge)
+                            elif edge not in complete_floating_faces_edges:
+                                regular_edges.append(edge)
+                        
+                        # Handle complete floating faces - delete them entirely (face + edges)
+                        if complete_floating_faces_edges:
+                            # Get all faces connected to these edges to delete them
+                            faces_to_delete = set()
+                            for edge in complete_floating_faces_edges:
+                                faces_to_delete.update(edge.link_faces)
+                            
+                            if faces_to_delete:
+                                # Delete the faces and their edges
+                                bmesh.ops.delete(bm, geom=list(faces_to_delete), context='FACES')
+                        
+                        # Handle partial selection on floating faces - delete edges to collapse the face
+                        if partial_floating_faces_edges:
+                            # Delete the selected edges to collapse quad into triangle or remove face
+                            bmesh.ops.delete(bm, geom=partial_floating_faces_edges, context='EDGES')
+                        
+                        # Handle regular edges
+                        if regular_edges:
+                            # Check for isolated edges (edges with no connected faces - wire edges)
+                            isolated_edges = []
+                            edges_to_dissolve = []
+                            
+                            for edge in regular_edges:
+                                if len(edge.link_faces) == 0:  # Wire edges
+                                    isolated_edges.append(edge)
                                 else:
-                                    # Proceed with dissolve
-                                    bpy.ops.object.mode_set(mode='EDIT')
-                                    bpy.ops.mesh.dissolve_edges(use_verts=self.use_verts)
-
-                                    bpy.ops.mesh.select_mode(type='VERT')
-                                    bpy.ops.object.mode_set(mode='OBJECT')
-                                    bpy.ops.object.mode_set(mode='EDIT')
-                                    vs = [v.index for v in me.vertices if v.select]
-                                    bpy.ops.mesh.select_all(action='DESELECT')
-                                    bpy.ops.object.mode_set(mode='OBJECT')
-
-                                    for v in vs:
-                                        vv = find_connected_verts(me, v)
-                                        if vv == 2:
-                                            me.vertices[v].select = True
-                                    bpy.ops.object.mode_set(mode='EDIT')
-                                    bpy.ops.mesh.dissolve_verts()
-                                    bpy.ops.mesh.select_all(action='DESELECT')
-
-                                    for v in vs:
-                                        if v < len(me.vertices):
-                                            me.vertices[v].select = True
-                                    #self.report({'INFO'}, "Selected edges were removed.")
-
+                                    edges_to_dissolve.append(edge)
+                            
+                            if isolated_edges:
+                                # Delete wire edges (they have no faces to merge)
+                                bmesh.ops.delete(bm, geom=isolated_edges, context='EDGES')
+                            
+                            if edges_to_dissolve:
+                                # Use dissolve to merge adjacent faces instead of deleting them
+                                dissolve_result = bmesh.ops.dissolve_edges(bm, edges=edges_to_dissolve, use_verts=True)
+                                
+                                # Clean up any resulting vertices with only 2 connections
+                                if dissolve_result and 'verts' in dissolve_result:
+                                    verts_to_dissolve = [v for v in dissolve_result['verts'] if len(v.link_edges) == 2]
+                                    if verts_to_dissolve:
+                                        bmesh.ops.dissolve_verts(bm, verts=verts_to_dissolve)
+                        
+                        # Final cleanup: Check for and remove any remaining isolated vertices
+                        # This handles the case where deleting edges leaves floating vertices
+                        isolated_verts = [v for v in bm.verts if v.select and len(v.link_edges) == 0 and len(v.link_faces) == 0]
+                        if isolated_verts:
+                            bmesh.ops.delete(bm, geom=isolated_verts, context='VERTS')
+                        
+                        bmesh.update_edit_mesh(me)
+                        
                     except RuntimeError as exception:
                         error = " ".join(exception.args)
                         print("Invalid boundary region to join faces\nYou cannot delete this geometry that way. \nTry another delete method or another selection")
                         self.report({'ERROR'}, error)
 
 
-            ## Face Select
+            ## Face Select - Optimized with bmesh
             elif select_mode[2] and not select_mode[1]:
                 mymode = 2 
-                bpy.ops.mesh.delete(type='FACE')
-            #Dissolve Vertices
+                try:
+                    # Use bmesh for faster face deletion on dense meshes
+                    bm = bmesh.from_edit_mesh(me)
+                    selected_faces = [f for f in bm.faces if f.select]
+                    if selected_faces:
+                        bmesh.ops.delete(bm, geom=selected_faces, context='FACES')
+                        bmesh.update_edit_mesh(me)
+                except:
+                    # Fallback to standard operation if bmesh fails
+                    bpy.ops.mesh.delete(type='FACE')
+            #Dissolve Vertices - Fallback
             else:
-                bpy.ops.mesh.dissolve_verts()
+                try:
+                    bm = bmesh.from_edit_mesh(me)
+                    selected_verts = [v for v in bm.verts if v.select]
+                    if selected_verts:
+                        bmesh.ops.dissolve_verts(bm, verts=selected_verts)
+                        bmesh.update_edit_mesh(me)
+                except:
+                    bpy.ops.mesh.dissolve_verts()
                 
-            # back to previous select mode! When you delete in edge select mode 
-            # then the selection method can jump to vertex select mode. Unwanted behaviour. 
-            # So we put it back to edge select mode manually after done.
-                          
-            if mymode == 1:
+            # Maintain selection mode - faster than switching back and forth
+            # The bmesh operations preserve selection context better
+            if mymode == 1 and not select_mode[1]:
+                # Only set back to edge mode if it was changed
                 bpy.ops.mesh.select_mode(type='EDGE')
                         
         return {'FINISHED'}

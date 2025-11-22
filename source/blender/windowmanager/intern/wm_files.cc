@@ -1022,13 +1022,14 @@ static void file_read_reports_finalize(BlendFileReadReport *bf_reports)
   if (bf_reports->count.proxies_to_lib_overrides_success != 0 ||
       bf_reports->count.proxies_to_lib_overrides_failures != 0)
   {
-    BKE_reportf(bf_reports->reports,
-                RPT_WARNING,
-                "Proxies have been removed from Bforartists (%d proxies were automatically converted "
-                "to library overrides, %d proxies could not be converted and were cleared). "
-                "Consider re-saving any library .blend file with the newest Blender version",
-                bf_reports->count.proxies_to_lib_overrides_success,
-                bf_reports->count.proxies_to_lib_overrides_failures);
+    BKE_reportf(
+        bf_reports->reports,
+        RPT_WARNING,
+        "Proxies have been removed from Bforartists (%d proxies were automatically converted "
+        "to library overrides, %d proxies could not be converted and were cleared). "
+        "Consider re-saving any library .blend file with the newest Blender version",
+        bf_reports->count.proxies_to_lib_overrides_success,
+        bf_reports->count.proxies_to_lib_overrides_failures);
   }
 
   if (bf_reports->count.sequence_strips_skipped != 0) {
@@ -3868,7 +3869,7 @@ void WM_OT_save_as_mainfile(wmOperatorType *ot)
   ot->description =
       "Save As saves the current file in the desired location"
       "\nIncremental Save saves an already saved file with incremental file name. 001, 002, 003 "
-      "etc"; /* BFA */ 
+      "etc"; /* BFA */
 
   ot->invoke = wm_save_as_mainfile_invoke;
   ot->exec = wm_save_as_mainfile_exec;
@@ -3983,12 +3984,13 @@ void WM_OT_save_mainfile(wmOperatorType *ot)
   prop = RNA_def_boolean(ot->srna, "exit", false, "Exit", "Exit Bforartists after saving");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 
-  prop = RNA_def_boolean(ot->srna,
-                         "incremental",
-                         false,
-                         "Incremental",
-                         "Save the current Bforartists file with a numerically incremented name that "
-                         "does not overwrite any existing files");
+  prop = RNA_def_boolean(
+      ot->srna,
+      "incremental",
+      false,
+      "Incremental",
+      "Save the current Bforartists file with a numerically incremented name that "
+      "does not overwrite any existing files");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
@@ -4179,7 +4181,6 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
   if ((blendfile_path[0] != '\0') && wm->file_saved) {
     but = uiDefIconTextBut(block,
                            ButType::But,
-                           0,
                            ICON_NONE,
                            IFACE_("Allow Execution"),
                            0,
@@ -4194,7 +4195,6 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
   else {
     but = uiDefIconTextBut(block,
                            ButType::But,
-                           0,
                            ICON_NONE,
                            IFACE_("Allow Execution"),
                            0,
@@ -4211,7 +4211,6 @@ static uiBlock *block_create_autorun_warning(bContext *C, ARegion *region, void 
   col = &split->column(false);
   but = uiDefIconTextBut(block,
                          ButType::But,
-                         0,
                          ICON_NONE,
                          IFACE_("Ignore"),
                          0,
@@ -4395,17 +4394,16 @@ static void file_overwrite_detailed_info_show(uiLayout *parent_layout, Main *bma
     "Saving it with this Blender (%s) may cause loss of data."
     */
     SNPRINTF(message_line1,
-             RPT_("This file was saved by a newer version of Bforartists %s"), 
+             RPT_("This file was saved by a newer version of Bforartists %s"),
              bfa_writer_ver_str);
-    SNPRINTF(message_line1_2,
-             RPT_("(based on Blender %s)"),
-             writer_ver_str);
-    const char *message_line2_1 = RPT_("Saving it with this version of Bforartists may cause data loss.");
+    SNPRINTF(message_line1_2, RPT_("(based on Blender %s)"), writer_ver_str);
+    const char *message_line2_1 = RPT_(
+        "Saving it with this version of Bforartists may cause data loss.");
     SNPRINTF(message_line2,
              RPT_("Saving with Bforartists %s (based on Blender %s)"),
              bfa_current_ver_str,
              current_ver_str);
-             
+
     col = &layout->column(false);
     col->label(message_line1, ICON_NONE);
     col->label(message_line1_2, ICON_NONE);
@@ -4447,7 +4445,7 @@ static void save_file_overwrite_cancel(bContext *C, void *arg_block, void * /*ar
 static void save_file_overwrite_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 {
   uiBut *but = uiDefIconTextBut(
-      block, ButType::But, 0, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, "");
+      block, ButType::But, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, nullptr, "");
   UI_but_func_set(but, save_file_overwrite_cancel, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
@@ -4482,7 +4480,7 @@ static void save_file_overwrite_confirm(bContext *C, void *arg_block, void *arg_
 static void save_file_overwrite_confirm_button(uiBlock *block, wmGenericCallback *post_action)
 {
   uiBut *but = uiDefIconTextBut(
-      block, ButType::But, 0, ICON_NONE, IFACE_("Overwrite"), 0, 0, 0, UI_UNIT_Y, nullptr, "");
+      block, ButType::But, ICON_NONE, IFACE_("Overwrite"), 0, 0, 0, UI_UNIT_Y, nullptr, "");
   UI_but_func_set(but, save_file_overwrite_confirm, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
   UI_but_flag_enable(but, UI_BUT_REDALERT);
@@ -4500,7 +4498,7 @@ static void save_file_overwrite_saveas(bContext *C, void *arg_block, void * /*ar
 static void save_file_overwrite_saveas_button(uiBlock *block, wmGenericCallback *post_action)
 {
   uiBut *but = uiDefIconTextBut(
-      block, ButType::But, 0, ICON_NONE, IFACE_("Save As..."), 0, 0, 0, UI_UNIT_Y, nullptr, "");
+      block, ButType::But, ICON_NONE, IFACE_("Save As..."), 0, 0, 0, UI_UNIT_Y, nullptr, "");
   UI_but_func_set(but, save_file_overwrite_saveas, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
   UI_but_flag_enable(but, UI_BUT_ACTIVE_DEFAULT);
@@ -4530,8 +4528,11 @@ static uiBlock *block_create_save_file_overwrite_dialog(bContext *C, ARegion *re
       uiItemL_ex(layout, RPT_("with an older Bforartists version?"), ICON_NONE, true, false);
     }
     else {
-      uiItemL_ex(
-          layout, RPT_("Overwrite file with an older Bforartists version?"), ICON_NONE, true, false);
+      uiItemL_ex(layout,
+                 RPT_("Overwrite file with an older Bforartists version?"),
+                 ICON_NONE,
+                 true,
+                 false);
     }
   }
   else if (bmain->is_asset_edit_file) {
@@ -4704,10 +4705,19 @@ static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_dat
 static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 {
   /* BFA - made the buttons higher. UI_UNIT_Y * 1.5, changed to UI_UNIT_Y + UI_UNIT_Y / 2,
-   * because 1.5 gets converted to 1 implicitly because UI_UNIT_Y is of type "short", an integer type
+   * because 1.5 gets converted to 1 implicitly because UI_UNIT_Y is of type "short", an integer
+   * type
    */
-  uiBut *but = uiDefIconTextBut(
-      block, ButType::But, 0, ICON_NONE, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y + UI_UNIT_Y / 2, nullptr, "");
+  uiBut *but = uiDefIconTextBut(block,
+                                ButType::But,
+                                ICON_NONE,
+                                IFACE_("Cancel"),
+                                0,
+                                0,
+                                0,
+                                UI_UNIT_Y + UI_UNIT_Y / 2,
+                                nullptr,
+                                "");
   UI_but_func_set(but, wm_block_file_close_cancel, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
@@ -4715,11 +4725,11 @@ static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback 
 static void wm_block_file_close_discard_button(uiBlock *block, wmGenericCallback *post_action)
 {
   /* BFA - made the buttons higher. UI_UNIT_Y * 1.5, changed to UI_UNIT_Y + UI_UNIT_Y / 2,
-   * because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of type "short", an integer type
+   * because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of type "short", an integer
+   * type
    */
   uiBut *but = uiDefIconTextBut(block,
                                 ButType::But,
-                                0,
                                 ICON_NONE,
                                 IFACE_("Don't Save"),
                                 0,
@@ -4736,13 +4746,13 @@ static void wm_block_file_close_save_button(uiBlock *block,
                                             wmGenericCallback *post_action,
                                             const bool needs_overwrite_confirm)
 {
-  /* BFA - made the buttons higher. changed UI_UNIT_Y to UI_UNIT_Y * 1.5, and later changed to UI_UNIT_Y + UI_UNIT_Y / 2,
-   * because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of type "short", an integer type
+  /* BFA - made the buttons higher. changed UI_UNIT_Y to UI_UNIT_Y * 1.5, and later changed to
+   * UI_UNIT_Y + UI_UNIT_Y / 2, because 1.5 gets converted to 1 implictly because UI_UNIT_Y is of
+   * type "short", an integer type
    */
   uiBut *but = uiDefIconTextBut(
       block,
       ButType::But,
-      0,
       ICON_NONE,
       /* Forward compatibility issues force using 'save as' operator instead of 'save' one. */
       needs_overwrite_confirm ? IFACE_("Save As...") : IFACE_("Save"),
@@ -4845,7 +4855,6 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
     uiDefButBitC(block,
                  ButType::Checkbox,
                  1,
-                 0,
                  message,
                  0,
                  0,
@@ -4870,7 +4879,6 @@ static uiBlock *block_create__close_file_dialog(bContext *C, ARegion *region, vo
     uiBut *but = uiDefButBitC(block,
                               ButType::Checkbox,
                               1,
-                              0,
                               "Save modified asset catalogs",
                               0,
                               0,

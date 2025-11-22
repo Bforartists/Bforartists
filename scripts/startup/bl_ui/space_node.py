@@ -529,7 +529,7 @@ class NODE_MT_view(Menu):
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
         layout.prop(snode, "show_toolshelf_tabs")
-        layout.prop(snode, "show_region_asset_shelf")
+        layout.prop(snode, "show_region_asset_shelf") # BFA - we dont need is_compositor since we show here!
 
         layout.separator()
 
@@ -547,9 +547,6 @@ class NODE_MT_view(Menu):
             layout.operator("node.connect_to_output", text="Link to Output",
                             icon='GROUPOUTPUT').run_in_geometry_nodes = True
             layout.operator("node.select_link_viewer", text="Link to Viewer", icon='RESTRICT_RENDER_OFF')
-
-        if is_compositor:
-            layout.prop(snode, "show_region_asset_shelf")
 
         layout.separator()
 
@@ -1078,10 +1075,7 @@ class NODE_MT_context_menu(Menu):
         layout.menu("NODE_MT_context_menu_select_menu")
         layout.menu("NODE_MT_context_menu_show_hide_menu")
 
-        if active_node:
-            layout.separator()
-            props = layout.operator("wm.doc_view_manual", text="Online Manual", icon='URL')
-            props.doc_id = active_node.bl_idname
+        # BFA - removed blender online manual
 
 
 class NODE_PT_active_node_generic(Panel):
@@ -1325,11 +1319,11 @@ class NODE_PT_overlay(Panel):
 
         # BFA - World Center overlay
         col.separator()
-        
+
         split = col.split()
         row = split.row()
         row.prop(overlay, "show_world_center", text="Canvas Center")
-        
+
         if not overlay.show_world_center:
             row.label(icon="DISCLOSURE_TRI_RIGHT")
         else:

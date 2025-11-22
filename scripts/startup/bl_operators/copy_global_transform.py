@@ -201,21 +201,26 @@ class OBJECT_OT_paste_transform(Operator):
     )
     bl_options = {'REGISTER', 'UNDO'}
 
+    # BFA - Add tooltip description for when operator is mirrored
+    _mirror_description = "(Transform is mirrored relative to the specified object or bone)"
     _method_items = [
         (
             'CURRENT',
             "Current Transform",
-            "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled",
+            # BFA - Reword description for clarity
+            "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled",
         ),
         (
             'EXISTING_KEYS',
             "Selected Keys",
-            "Paste onto frames that have a selected key, potentially creating new keys on those frames",
+            # BFA - Reword description for clarity
+            "Paste transform onto frames that have a selected key, potentially creating new keys on those frames",
         ),
         (
             'BAKE',
             "Bake on Key Range",
-            "Paste onto all frames between the first and last selected key, creating new keyframes if necessary",
+            # BFA - Reword description for clarity
+            "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary",
         ),
     ]
     method: bpy.props.EnumProperty(  # type: ignore
@@ -261,6 +266,20 @@ class OBJECT_OT_paste_transform(Operator):
         default=False,
         options={'SKIP_SAVE'},
     )
+
+    # BFA - Make tooltip descriptions based on operator properties
+    @classmethod
+    def description(cls, context, properties):
+        for item in cls._method_items:
+            value, description = item[0], item[2]
+            if value == properties.method:
+
+                if properties.use_mirror:
+                    return description + ".\n" + cls._mirror_description
+                else:
+                    return description
+        
+        return cls.bl_description
 
     @classmethod
     def poll(cls, context: Context) -> bool:
