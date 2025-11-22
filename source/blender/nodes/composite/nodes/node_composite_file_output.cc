@@ -212,7 +212,7 @@ static void format_layout(uiLayout *layout,
                           PointerRNA *node_or_item_pointer)
 {
   uiLayout *column = &layout->column(true);
-  column->use_property_split_set(true);
+  column->use_property_split_set(false);  /* bfa - align left */
   column->use_property_decorate_set(false);
   column->prop(
       node_or_item_pointer, "save_as_render", UI_ITEM_R_SPLIT_EMPTY_NAME, std::nullopt, ICON_NONE);
