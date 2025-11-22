@@ -39,6 +39,7 @@ f57862b2-0845-4ce7-a860-ce343dee67b9:Brushes/Mesh Texture Paint/Utilities:Brushe
 77635e98-1a5a-482e-9cb1-ba9ec4bc5b74:Brushes/Mesh Weight Paint:Brushes-Mesh Weight Paint
 36584c79-a99e-4b1c-bd5c-8e4865ae3abe:Compositor Nodegroups:Compositor Nodegroups
 679c9c61-2227-41c9-b483-0112dcd65b71:Compositor Nodegroups/Color:Compositor Nodegroups-Color
+f6d4a6a3-884c-42eb-a109-4cea52ba0d34:Compositor Nodegroups/Filters:Compositor Nodegroups-Filters
 d1c404ad-8d6d-4f1f-9e4a-a213a4c95346:Compositor Nodegroups/Lenses:Compositor Nodegroups-Lenses
 6b797445-b178-47a3-8733-33494410e95b:Compositor Nodegroups/Lenses/Grains:Compositor Nodegroups-Lenses-Grains
 9891369b-7907-4d84-9a83-3bf0f0eb7917:Compositor Nodegroups/Lenses/Quality:Compositor Nodegroups-Lenses-Quality

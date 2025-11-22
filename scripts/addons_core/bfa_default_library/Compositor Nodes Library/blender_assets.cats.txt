@@ -10,6 +10,7 @@ VERSION 1
 8b7c1825-4730-4b2c-9470-fc89c1ace80a:Compositor Nodegroups/Color:Compositor Nodegroups-Color
 ffdb4adb-8aea-4ca3-966b-dadaee1afcc4:Compositor Nodegroups/Creative:Compositor Nodegroups-Creative
 54577834-5d3f-491a-ae51-d1c1113da3e7:Compositor Nodegroups/Creative/Design:Compositor Nodegroups-Creative-Design
+0b3f4cf3-f7c0-49d3-acfd-e3813f4e2105:Compositor Nodegroups/Distortion:Compositor Nodegroups-Distortion
 ee3d94c8-07ff-4b66-ba0e-a78e35be5c5a:Compositor Nodegroups/Filters:Compositor Nodegroups-Filters
 92b77f83-10f9-4fcd-9143-7f932bd632a1:Compositor Nodegroups/Filters/Dithering:Compositor Nodegroups-Filters-Dithering
 00dce0bd-3082-443b-99fb-dea3cfbb9182:Compositor Nodegroups/Lenses:Compositor Nodegroups-Lenses
