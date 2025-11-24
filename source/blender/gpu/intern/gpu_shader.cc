@@ -28,6 +28,7 @@
 #include "gpu_shader_dependency_private.hh"
 #include "gpu_shader_private.hh"
 
+#include <filesystem>
 #include <string>
 
 extern "C" char datatoc_gpu_shader_colorspace_lib_glsl[];
@@ -35,6 +36,54 @@ extern "C" char datatoc_gpu_shader_colorspace_lib_glsl[];
 static CLG_LogRef LOG = {"gpu.shader"};
 
 namespace blender::gpu {
+
+void Shader::dump_source_to_disk(StringRef shader_name,
+                                 StringRef shader_name_with_stage_name,
+                                 StringRef extension,
+                                 StringRef source)
+{
+  StringRefNull pattern = G.gpu_debug_shader_source_name;
+  /* Support starting and/or ending with a wildcard. */
+  if (pattern == "*") {
+    /* If using a single wildcard, match everything. */
+  }
+  else if (pattern.startswith("*") && pattern.endswith("*")) {
+    std::string sub_str = pattern.substr(1, pattern.size() - 2);
+    if (shader_name.find(sub_str) == std::string::npos) {
+      return;
+    }
+  }
+  else if (pattern.startswith("*")) {
+    std::string sub_str = pattern.substr(1);
+    if (!shader_name.endswith(sub_str)) {
+      return;
+    }
+  }
+  else if (pattern.endswith("*")) {
+    std::string sub_str = pattern.substr(0, pattern.size() - 1);
+    if (!shader_name.startswith(sub_str)) {
+      return;
+    }
+  }
+  else if (shader_name != pattern) {
+    return;
+  }
+
+  namespace fs = std::filesystem;
+  fs::path shader_dir = fs::current_path() / "Shaders";
+  fs::create_directories(shader_dir);
+  fs::path file_path = shader_dir / (shader_name_with_stage_name + extension);
+
+  std::ofstream output_source_file(file_path);
+  if (output_source_file) {
+    output_source_file << source;
+    output_source_file.close();
+    std::cout << "Shader Source Debug: Writing file: " << file_path << "\n";
+  }
+  else {
+    std::cerr << "Shader Source Debug: Failed to open file: " << file_path << "\n";
+  }
+}
 
 std::string Shader::defines_declare(const shader::ShaderCreateInfo &info)
 {
@@ -61,6 +110,16 @@ using namespace blender::gpu;
 Shader::Shader(const char *sh_name)
 {
   STRNCPY(this->name, sh_name);
+
+  /* Escape the shader name to be able to use it inside an identifier. */
+  for (char &c : name) {
+    if (c == '\0') {
+      break;
+    }
+    if (!std::isalnum(c)) {
+      c = '_';
+    }
+  }
 }
 
 Shader::~Shader()
@@ -724,18 +783,6 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
 
   defines += "#define USE_GPU_SHADER_CREATE_INFO\n";
 
-  Vector<StringRefNull> typedefs;
-  if (!info.typedef_sources_.is_empty() || !info.typedef_source_generated.empty()) {
-    typedefs.append(gpu_shader_dependency_get_source("GPU_shader_shared_utils.hh").c_str());
-  }
-  if (!info.typedef_source_generated.empty()) {
-    typedefs.append(info.typedef_source_generated);
-  }
-  for (auto filename : info.typedef_sources_) {
-    typedefs.extend_non_duplicates(
-        gpu_shader_dependency_get_resolved_source(filename, info.generated_sources, info.name_));
-  }
-
   if (!info.vertex_source_.is_empty()) {
     Vector<StringRefNull> code = gpu_shader_dependency_get_resolved_source(
         info.vertex_source_, info.generated_sources, info.name_);
@@ -748,7 +795,6 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
       sources.append("#define USE_GEOMETRY_SHADER\n");
     }
     sources.append(defines);
-    sources.extend(typedefs);
     sources.append(resources);
     sources.append(interface);
     sources.extend(code);
@@ -775,7 +821,6 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
       sources.append("#define USE_GEOMETRY_SHADER\n");
     }
     sources.append(defines);
-    sources.extend(typedefs);
     sources.append(resources);
     sources.append(interface);
     sources.extend(code);
@@ -800,7 +845,6 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
     standard_defines(sources);
     sources.append("#define GPU_GEOMETRY_SHADER\n");
     sources.append(defines);
-    sources.extend(typedefs);
     sources.append(resources);
     sources.append(layout);
     sources.append(interface);
@@ -826,7 +870,6 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
     sources.append("#define GPU_COMPUTE_SHADER\n");
     sources.append(defines);
     sources.append(layout);
-    sources.extend(typedefs);
     sources.append(resources);
     sources.extend(code);
     sources.append(info.compute_source_generated);

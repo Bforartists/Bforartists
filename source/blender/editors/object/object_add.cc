@@ -68,9 +68,9 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_geometry_set_instances.hh"
 #include "BKE_grease_pencil.hh"
+#include "BKE_idtype.hh"  // bfa override asset
 #include "BKE_key.hh"
 #include "BKE_lattice.hh"
-#include "BKE_idtype.hh" // bfa override asset
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
@@ -107,6 +107,7 @@
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 
+#include "UI_interface_icons.hh"
 #include "UI_interface_layout.hh"
 
 #include "WM_api.hh"
@@ -128,8 +129,8 @@
 #include "ED_screen.hh"
 #include "ED_select_utils.hh"
 #include "ED_transform.hh"
+#include "ED_undo.hh"  // bfa override asset
 #include "ED_view3d.hh"
-#include "ED_undo.hh" // bfa override asset
 
 #include "ANIM_bone_collections.hh"
 
@@ -2047,7 +2048,15 @@ static bool make_override_library_object_overridable_check(Main *bmain, Object *
   return false;
 }
 
-static bool create_override(Main *bmain, Scene *scene, ViewLayer *view_layer, ID *id_root, ID *id_root_override, Object *obact, GSet *user_overrides_objects_uids, bool is_override_instancing_object , const bool do_fully_editable)
+static bool create_override(Main *bmain,
+                            Scene *scene,
+                            ViewLayer *view_layer,
+                            ID *id_root,
+                            ID *id_root_override,
+                            Object *obact,
+                            GSet *user_overrides_objects_uids,
+                            bool is_override_instancing_object,
+                            const bool do_fully_editable)
 {
   const bool success = BKE_lib_override_library_create(bmain,
                                                        scene,
@@ -2242,7 +2251,15 @@ static wmOperatorStatus collection_drop_override(bContext *C, wmOperator *op)
   }
   ID *id_root_override = nullptr;
   bool success = false;
-  success = create_override(bmain, scene, view_layer, id_root, id_root_override, obact, user_overrides_objects_uids, is_override_instancing_object, do_fully_editable);
+  success = create_override(bmain,
+                            scene,
+                            view_layer,
+                            id_root,
+                            id_root_override,
+                            obact,
+                            user_overrides_objects_uids,
+                            is_override_instancing_object,
+                            do_fully_editable);
 
   DEG_id_tag_update(&CTX_data_scene(C)->id, ID_RECALC_BASE_FLAGS | ID_RECALC_SYNC_TO_EVAL);
   WM_event_add_notifier(C, NC_WINDOW, nullptr);
@@ -2282,7 +2299,8 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
   if (!add_info) {
     return OPERATOR_CANCELLED;
   }
-  const bool use_override = RNA_boolean_get(op->ptr, "use_override"); // bfa use override for linked data-block
+  const bool use_override = RNA_boolean_get(
+      op->ptr, "use_override");  // bfa use override for linked data-block
   if (use_override || RNA_boolean_get(op->ptr, "use_instance")) {
     BKE_collection_child_remove(bmain, active_collection->collection, add_info->collection);
     DEG_id_tag_update(&active_collection->collection->id, ID_RECALC_SYNC_TO_EVAL);
@@ -2322,10 +2340,10 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
 
   // bfa asset override, default fall back for adding override
   wmOperatorStatus r = OPERATOR_FINISHED;
-  if (use_override){
-      r = collection_drop_override(C, op);
+  if (use_override) {
+    r = collection_drop_override(C, op);
   }
-  return r; // bfa end return OPERATOR_FINISHED;
+  return r;  // bfa end return OPERATOR_FINISHED;
 }
 
 void OBJECT_OT_collection_external_asset_drop(wmOperatorType *ot)
@@ -2795,7 +2813,7 @@ static wmOperatorStatus object_delete_invoke(bContext *C,
                                   IFACE_("Delete selected objects?"),
                                   nullptr,
                                   IFACE_("Delete"),
-                                  ALERT_ICON_NONE,
+                                  ui::AlertIcon::None,
                                   false);
   }
   return object_delete_exec(C, op);
@@ -4744,23 +4762,23 @@ static wmOperatorStatus object_convert_exec(bContext *C, wmOperator *op)
 
 static void object_convert_ui(bContext * /*C*/, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
+  ui::Layout &layout = *op->layout;
 
-  layout->use_property_decorate_set(false); /*bfa - checkboxes, don't split*/
+  layout.use_property_decorate_set(false); /*bfa - checkboxes, don't split*/
 
-  layout->prop(op->ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(op->ptr, "keep_original", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(op->ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(op->ptr, "keep_original", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   const int target = RNA_enum_get(op->ptr, "target");
   if (target == OB_MESH) {
-    layout->prop(op->ptr, "merge_customdata", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(op->ptr, "merge_customdata", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (target == OB_GREASE_PENCIL) {
-    layout->use_property_split_set(true); /*bfa - split*/
-    layout->prop(op->ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    layout->prop(op->ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    layout->use_property_split_set(false); /*bfa - boolean, don't split*/
-    layout->prop(op->ptr, "faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.use_property_split_set(true); /*bfa - split*/
+    layout.prop(op->ptr, "thickness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(op->ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.use_property_split_set(false); /*bfa - boolean, don't split*/
+    layout.prop(op->ptr, "faces", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }
 

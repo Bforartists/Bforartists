@@ -552,7 +552,7 @@ static wmOperatorStatus collection_exporter_remove_invoke(bContext *C,
                                                           const wmEvent * /*event*/)
 {
   return WM_operator_confirm_ex(
-      C, op, IFACE_("Remove exporter?"), nullptr, IFACE_("Delete"), ALERT_ICON_NONE, false);
+      C, op, IFACE_("Remove exporter?"), nullptr, IFACE_("Delete"), ui::AlertIcon::None, false);
 }
 
 static void COLLECTION_OT_exporter_remove(wmOperatorType *ot)
@@ -865,28 +865,29 @@ std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
 
 static void collection_exporter_menu_draw(const bContext * /*C*/, Menu *menu)
 {
-  using namespace blender;
-  uiLayout *layout = menu->layout;
+  ui::Layout &layout = *menu->layout;
 
   /* Add all file handlers capable of being exported to the menu. */
   bool at_least_one = false;
   for (const auto &fh : bke::file_handlers()) {
     if (WM_operatortype_find(fh->export_operator, true)) {
       /* BFA start */
-      int icon ;
+      int icon;
       if (auto it = ks_icons_map.find(fh->idname); it != ks_icons_map.end()) {
-        icon = it->second;}
-      else {icon = ICON_NONE;}
+        icon = it->second;
+      }
+      else {
+        icon = ICON_NONE;
+      }
       /* BFA end */
-      PointerRNA op_ptr = layout->op(
-          "COLLECTION_OT_exporter_add", fh->label, icon);
+      PointerRNA op_ptr = layout.op("COLLECTION_OT_exporter_add", fh->label, icon);
       RNA_string_set(&op_ptr, "name", fh->idname);
       at_least_one = true;
     }
   }
 
   if (!at_least_one) {
-    layout->label(IFACE_("No file handlers available"), ICON_NONE);
+    layout.label(IFACE_("No file handlers available"), ICON_NONE);
   }
 }
 
@@ -934,7 +935,7 @@ void OBJECT_OT_collection_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add to New Collection"; /* BFA - more explicit*/
   ot->idname = "OBJECT_OT_collection_add";
-  ot->description = "Adds the selected object to a new collection";  /* BFA - more explicit*/
+  ot->description = "Adds the selected object to a new collection"; /* BFA - more explicit*/
 
   /* API callbacks. */
   ot->exec = collection_add_exec;
