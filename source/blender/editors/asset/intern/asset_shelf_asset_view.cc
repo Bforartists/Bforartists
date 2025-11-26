@@ -441,8 +441,32 @@ void *AssetDragController::create_drag_data() const
 
   AssetImportSettings import_settings{};
   import_settings.method = import_method;
-  import_settings.use_instance_collections = true;  // BFA
-  import_settings.drop_instances_to_origin = true;
+  
+  // bfa - Use shelf settings for instance collection behavior
+  bool use_instance_collections = true;
+  bool drop_to_origin = true;
+  
+  if (const AssetView *asset_view = dynamic_cast<const AssetView*>(&view_)) {
+    const AssetShelf &shelf = asset_view->shelf_;
+    
+    // bfa - Determine whether to instance collections based on import method and shelf settings
+    if (import_method == ASSET_IMPORT_LINK || import_method == ASSET_IMPORT_LINK_OVERRIDE) {
+      use_instance_collections = (shelf.settings.import_flags & 
+                                 SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK) != 0;
+    }
+    else if (import_method == ASSET_IMPORT_APPEND || 
+             import_method == ASSET_IMPORT_APPEND_REUSE || 
+             import_method == ASSET_IMPORT_PACK) {
+      use_instance_collections = (shelf.settings.import_flags & 
+                                 SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND) != 0;
+    }
+    
+    drop_to_origin = (shelf.settings.import_flags & 
+                     SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN) != 0;
+  }
+  
+  import_settings.use_instance_collections = use_instance_collections;
+  import_settings.drop_instances_to_origin = drop_to_origin;
   import_settings.is_from_browser = false; // bfa asset shelf
 
   return WM_drag_create_asset_data(&asset_, import_settings);
