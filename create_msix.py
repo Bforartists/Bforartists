@@ -30,13 +30,13 @@ config = {"local": Config.Local, "store": Config.Store}[sys.argv[3]]
 
 if config == Config.Store:
     # Windows Store ID
-    publisher = "CN=1A48DC4A-D493-4696-B683-9EF3353D30D6"
+    publisher = "CN=4052CBE2-0610-49C7-81AB-D673FA51DA33"
 elif config == Config.Local:
     # https://community.qlik.com/t5/Official-Support-Articles/How-to-find-certificates-by-thumbprint-or-name-with-powershell/ta-p/1711332
     # https://techcommunity.microsoft.com/t5/msix/msix-packageing-tool-signtool-certificate-issues/m-p/2133583/highlight/true#M78
     # https://stackoverflow.com/a/3961530/8094047
     certificate_subject_line = (
-        'CN="Open Source Developer, Eyad Ahmed", O=Open Source Developer, L=Alexandria, S=Alexandria, C=EG'
+        'CN="Open Source Developer, Trinumedia", O=Open Source Developer, L=Bogota, S=Bogota, C=CO'
     )
     publisher = certificate_subject_line.replace('"', "&quot;")
 else:
