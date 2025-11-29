@@ -517,26 +517,27 @@ void uiTemplateMarker(blender::ui::Layout *layout,
     UI_but_retval_set(but, B_MARKER_FLAG);
 
     /* bfa - new expanded prop UI style */
-    blender::ui::Layout &col = layout->column(true);
-    col.active_set((cb->marker_flag & MARKER_DISABLED) == 0);
+    blender::ui::Layout *row, *col, *lcol, *vcol;
+    col = &layout->column(true);
+    col->active_set((cb->marker_flag & MARKER_DISABLED) == 0);
 
-    col.label(IFACE_("Position"), ICON_NONE); /*bfa */
+    col->label(IFACE_("Position"), ICON_NONE); /*bfa */
 
     /*bfa */
-    blender::ui::Layout &row = col.row(true);
+    row = &col->row(true);
 
     /* indent */
     layout->separator();
     layout->separator();
 
-    blender::ui::Layout &lcol = row.column(true);  // labels column
-    lcol.ui_units_x_set(.75f);
-    lcol.fixed_size_set(true);
-    row.label(IFACE_("X"), ICON_NONE);
-    row.label(IFACE_("Y"), ICON_NONE);
+    lcol = &row->column(true);  // labels column
+    lcol->ui_units_x_set(.75f);
+    lcol->fixed_size_set(true);
+    row->label(IFACE_("X"), ICON_NONE);
+    row->label(IFACE_("Y"), ICON_NONE);
 
-    blender::ui::Layout &vcol = row.column(true);  // values column
-    block = vcol.block();
+    vcol = &row->column(true);  // values column
+    block = vcol->block();
     /*end bfa */
     UI_block_align_begin(block);
 
