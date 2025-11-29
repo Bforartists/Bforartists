@@ -201,10 +201,12 @@ class VIEWLAYER_PT_workbench_layer_passes_data(ViewLayerButtonsPanel, Panel):
 
         view_layer = context.view_layer
 
-        col = layout.column()
+        col = layout.column(align=True) # BFA - space properties closer together
+        col.use_property_split = False # BFA - Float bool properties left
         col.prop(view_layer, "use_pass_combined")
         col.prop(view_layer, "use_pass_z")
         col.prop(view_layer, "use_pass_grease_pencil", text="Grease Pencil")
+        col.use_property_split = True # BFA - Float bool properties left
 
 
 class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
