@@ -1805,14 +1805,26 @@ bool file_draw_check_exists(SpaceFile *sfile)
 static const EnumPropertyItem file_external_operation[] = {
     /* BFA - Added icons*/
     {FILE_EXTERNAL_OPERATION_OPEN, "OPEN", ICON_FILE, "Open", "Open the file"},
-    {FILE_EXTERNAL_OPERATION_FOLDER_OPEN, "FOLDER_OPEN", ICON_FILE_FOLDER, "Open Folder", "Open the folder"},
+    {FILE_EXTERNAL_OPERATION_FOLDER_OPEN,
+     "FOLDER_OPEN",
+     ICON_FILE_FOLDER,
+     "Open Folder",
+     "Open the folder"},
     {FILE_EXTERNAL_OPERATION_EDIT, "EDIT", ICON_FILE, "Edit", "Edit the file"},
     {FILE_EXTERNAL_OPERATION_NEW, "NEW", ICON_FILE_NEW, "New", "Create a new file of this type"},
-    {FILE_EXTERNAL_OPERATION_FIND, "FIND", ICON_VIEW_ZOOM, "Find File", "Search for files of this type"},
+    {FILE_EXTERNAL_OPERATION_FIND,
+     "FIND",
+     ICON_VIEW_ZOOM,
+     "Find File",
+     "Search for files of this type"},
     {FILE_EXTERNAL_OPERATION_SHOW, "SHOW", ICON_RESTRICT_VIEW_ON, "Show", "Show this file"},
     {FILE_EXTERNAL_OPERATION_PLAY, "PLAY", ICON_PLAY, "Play", "Play this file"},
     {FILE_EXTERNAL_OPERATION_BROWSE, "BROWSE", ICON_FILE_FOLDER, "Browse", "Browse this file"},
-    {FILE_EXTERNAL_OPERATION_PREVIEW, "PREVIEW", ICON_RESTRICT_VIEW_ON, "Preview", "Preview this file"},
+    {FILE_EXTERNAL_OPERATION_PREVIEW,
+     "PREVIEW",
+     ICON_RESTRICT_VIEW_ON,
+     "Preview",
+     "Preview this file"},
     {FILE_EXTERNAL_OPERATION_PRINT, "PRINT", ICON_OUTPUT, "Print", "Print this file"},
     {FILE_EXTERNAL_OPERATION_INSTALL, "INSTALL", ICON_IMPORT, "Install", "Install this file"},
     {FILE_EXTERNAL_OPERATION_RUNAS, "RUNAS", ICON_PLAY, "Run As User", "Run as specific user"},
@@ -1938,7 +1950,7 @@ void FILE_OT_external_operation(wmOperatorType *ot)
                "Operation to perform on the selected file or path");
 }
 
-static void file_os_operations_menu_item(uiLayout *layout,
+static void file_os_operations_menu_item(blender::ui::Layout &layout,
                                          wmOperatorType *ot,
                                          const char *path,
                                          FileExternalOperation operation)
@@ -1963,12 +1975,11 @@ static void file_os_operations_menu_item(uiLayout *layout,
     RNA_enum_icon_from_value(file_external_operation, operation, &icon);
   }
   /*end bfa*/
-  PointerRNA props_ptr = layout->op(    
-                        ot, 
-                        IFACE_(title), 
-                        icon, /*bfa*/
-                        blender::wm::OpCallContext::InvokeDefault, 
-                        UI_ITEM_NONE);
+  PointerRNA props_ptr = layout.op(ot,
+                                   IFACE_(title),
+                                   icon, /*bfa*/
+                                   blender::wm::OpCallContext::InvokeDefault,
+                                   UI_ITEM_NONE);
   RNA_string_set(&props_ptr, "filepath", path);
   RNA_enum_set(&props_ptr, "operation", operation);
 }
@@ -2012,8 +2023,8 @@ static void file_os_operations_menu_draw(const bContext *C_const, Menu *menu)
   filelist_file_get_full_path(sfile->files, fileentry, path);
   const char *root = filelist_dir(sfile->files);
 
-  uiLayout *layout = menu->layout;
-  layout->operator_context_set(blender::wm::OpCallContext::InvokeDefault);
+  blender::ui::Layout &layout = *menu->layout;
+  layout.operator_context_set(blender::wm::OpCallContext::InvokeDefault);
   wmOperatorType *ot = WM_operatortype_find("FILE_OT_external_operation", true);
 
   if (fileentry->typeflag & FILE_TYPE_DIR) {

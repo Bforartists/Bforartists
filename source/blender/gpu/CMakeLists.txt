@@ -163,6 +163,7 @@ set(SRC
   intern/gpu_shader_create_info_private.hh
   intern/gpu_shader_dependency_private.hh
   intern/gpu_shader_interface.hh
+  intern/gpu_shader_metadata_private.hh
   intern/gpu_shader_private.hh
   intern/gpu_state_private.hh
   intern/gpu_storage_buffer_private.hh
@@ -564,6 +565,11 @@ set(GLSL_SRC
   shaders/gpu_shader_sequencer_zebra_frag.glsl
 
   shaders/gpu_shader_codegen_lib.glsl
+
+  shaders/gpu_shader_python_comp.glsl
+  shaders/gpu_shader_python_frag.glsl
+  shaders/gpu_shader_python_typedef_lib.glsl
+  shaders/gpu_shader_python_vert.glsl
 
   shaders/common/gpu_shader_attribute_load_lib.glsl
   shaders/common/gpu_shader_bicubic_sampler_lib.glsl

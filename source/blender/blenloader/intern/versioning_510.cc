@@ -10,17 +10,24 @@
 
 #include "DNA_ID.h"
 #include "DNA_material_types.h"
+#include "DNA_mesh_types.h"
 #include "DNA_node_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_sequence_types.h"
 
 #include "BLI_listbase.h"
 #include "BLI_math_vector.h"
+#include "BLI_string.h"
 #include "BLI_sys_types.h"
 
+#include "BKE_customdata.hh"
 #include "BKE_main.hh"
 #include "BKE_node.hh"
 #include "BKE_node_legacy_types.hh"
 #include "BKE_node_runtime.hh"
+
+#include "SEQ_iterator.hh"
+#include "SEQ_sequencer.hh"
 
 #include "readfile.hh"
 
@@ -235,6 +242,43 @@ static void version_realize_instances_to_curve_domain(Main &bmain)
   }
 }
 
+static void version_mesh_uv_map_strings(Main &bmain)
+{
+  LISTBASE_FOREACH (Mesh *, mesh, &bmain.meshes) {
+    const CustomData *data = &mesh->corner_data;
+    if (!mesh->active_uv_map_attribute) {
+      if (const char *name = CustomData_get_active_layer_name(data, CD_PROP_FLOAT2)) {
+        mesh->active_uv_map_attribute = BLI_strdup(name);
+      }
+    }
+    if (!mesh->default_uv_map_attribute) {
+      if (const char *name = CustomData_get_render_layer_name(data, CD_PROP_FLOAT2)) {
+        mesh->default_uv_map_attribute = BLI_strdup(name);
+      }
+    }
+  }
+}
+
+static void version_clear_unused_strip_flags(Main &bmain)
+{
+  LISTBASE_FOREACH (Scene *, scene, &bmain.scenes) {
+    Editing *ed = blender::seq::editing_get(scene);
+    if (ed != nullptr) {
+      blender::seq::foreach_strip(&ed->seqbase, [&](Strip *strip) {
+        constexpr int flag_overlap = 1 << 3;
+        constexpr int flag_ipo_frame_locked = 1 << 8;
+        constexpr int flag_effect_not_loaded = 1 << 9;
+        constexpr int flag_delete = 1 << 10;
+        constexpr int flag_ignore_channel_lock = 1 << 16;
+        constexpr int flag_show_offsets = 1 << 20;
+        strip->flag &= ~(flag_overlap | flag_ipo_frame_locked | flag_effect_not_loaded |
+                         flag_delete | flag_ignore_channel_lock | flag_show_offsets);
+        return true;
+      });
+    }
+  }
+}
+
 void do_versions_after_linking_510(FileData * /*fd*/, Main *bmain)
 {
   /* Some blend files were saved with an invalid active viewer key, possibly due to a bug that was
@@ -256,6 +300,10 @@ void do_versions_after_linking_510(FileData * /*fd*/, Main *bmain)
         }
       }
     }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 501, 0)) {
+    version_clear_unused_strip_flags(*bmain);
   }
 
   /**
@@ -290,6 +338,10 @@ void blo_do_versions_510(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 501, 5)) {
     version_realize_instances_to_curve_domain(*bmain);
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 501, 7)) {
+    version_mesh_uv_map_strings(*bmain);
   }
 
   /**

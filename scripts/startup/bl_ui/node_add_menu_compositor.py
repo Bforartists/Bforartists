@@ -17,6 +17,7 @@ class NODE_MT_compositor_node_input_base(node_add_menu.NodeMenu):
         layout.separator()
         # self.node_operator(layout, "NodeGroupInput") # BFA - Remove double entry
         self.node_operator(layout, "CompositorNodeBokehImage")
+        self.node_operator(layout, "NodeGroupInput")
         self.node_operator(layout, "CompositorNodeImage")
         self.node_operator(layout, "CompositorNodeImageInfo")
         self.node_operator(layout, "CompositorNodeImageCoordinates")
@@ -38,8 +39,8 @@ class NODE_MT_compositor_node_input_constant_base(node_add_menu.NodeMenu):
     def draw(self, _context):
         layout = self.layout
         self.node_operator(layout, "CompositorNodeRGB")
-        self.node_operator(layout, "ShaderNodeValue")
         self.node_operator(layout, "CompositorNodeNormal")
+        self.node_operator(layout, "ShaderNodeValue")
 
         self.draw_assets_for_catalog(layout, self.menu_path)
 

@@ -709,7 +709,7 @@ static void draw_handle_transform_text(const TimelineDrawContext &ctx,
                                        eStripHandle handle)
 {
   /* Draw numbers for start and end of the strip next to its handles. */
-  if (strip_ctx.strip_is_too_small || (strip_ctx.strip->flag & SELECT) == 0) {
+  if (strip_ctx.strip_is_too_small || (strip_ctx.strip->flag & SEQ_SELECT) == 0) {
     return;
   }
 
@@ -866,7 +866,7 @@ static size_t draw_seq_text_get_overlay_string(const TimelineDrawContext &ctx,
 static void get_strip_text_color(const StripDrawContext &strip_ctx, uchar r_col[4])
 {
   const Strip *strip = strip_ctx.strip;
-  const bool active_or_selected = (strip->flag & SELECT) || strip_ctx.is_active_strip;
+  const bool active_or_selected = (strip->flag & SEQ_SELECT) || strip_ctx.is_active_strip;
 
   /* Text: white when selected/active, black otherwise. */
   r_col[0] = r_col[1] = r_col[2] = r_col[3] = 255;
@@ -1044,7 +1044,7 @@ static void draw_strip_offsets(const TimelineDrawContext &ctx, const StripDrawCo
   }
   if ((ctx.sseq->timeline_overlay.flag & SEQ_TIMELINE_SHOW_STRIP_OFFSETS) == 0 &&
       (strip_ctx.strip != special_preview_get()) &&
-      (strip_ctx.strip->runtime.flag & STRIP_SHOW_OFFSETS) == 0)
+      !flag_is_set(strip_ctx.strip->runtime->flag, seq::StripRuntimeFlag::ShowOffsets))
   {
     return;
   }
@@ -1053,7 +1053,7 @@ static void draw_strip_offsets(const TimelineDrawContext &ctx, const StripDrawCo
 
   uchar col[4], blend_col[4];
   color3ubv_from_seq(scene, strip, strip_ctx.show_strip_color_tag, strip_ctx.is_muted, col);
-  if (strip->flag & SELECT) {
+  if (strip->flag & SEQ_SELECT) {
     UI_GetColorPtrShade3ubv(col, 50, col);
   }
   col[3] = strip_ctx.is_muted ? MUTE_ALPHA : 200;
@@ -1169,7 +1169,7 @@ static void draw_multicam_highlight(const TimelineDrawContext &ctx,
   if (strip_ctx.strip != act_strip || act_strip == nullptr) {
     return;
   }
-  if ((act_strip->flag & SELECT) == 0 || act_strip->type != STRIP_TYPE_MULTICAM) {
+  if ((act_strip->flag & SEQ_SELECT) == 0 || act_strip->type != STRIP_TYPE_MULTICAM) {
     return;
   }
 
@@ -1230,7 +1230,7 @@ static void visible_strips_ordered_get(const TimelineDrawContext &ctx,
 
   for (Strip *strip : strips) {
     StripDrawContext strip_ctx = strip_draw_context_get(ctx, strip);
-    if ((strip->runtime.flag & STRIP_OVERLAP) == 0) {
+    if (!flag_is_set(strip->runtime->flag, seq::StripRuntimeFlag::Overlap)) {
       r_bottom_layer.append(strip_ctx);
     }
     else {
@@ -1360,7 +1360,7 @@ static void strip_data_outline_params_set(const StripDrawContext &strip,
                                           SeqStripDrawData &data)
 {
   const bool active = strip.is_active_strip;
-  const bool selected = strip.strip->flag & SELECT;
+  const bool selected = strip.strip->flag & SEQ_SELECT;
   uchar4 col{0, 0, 0, 255};
 
   if (selected) {
@@ -1385,10 +1385,11 @@ static void strip_data_outline_params_set(const StripDrawContext &strip,
 
   const eSeqOverlapMode overlap_mode = seq::tool_settings_overlap_mode_get(ctx.scene);
   const bool use_overwrite = overlap_mode == SEQ_OVERLAP_OVERWRITE;
-  const bool overlaps = (strip.strip->runtime.flag & STRIP_OVERLAP) && translating;
+  const bool overlaps = flag_is_set(strip.strip->runtime->flag, seq::StripRuntimeFlag::Overlap) &&
+                        translating;
 
-  const bool clamped_l = (strip.strip->runtime.flag & STRIP_CLAMPED_LH);
-  const bool clamped_r = (strip.strip->runtime.flag & STRIP_CLAMPED_RH);
+  const bool clamped_l = flag_is_set(strip.strip->runtime->flag, seq::StripRuntimeFlag::ClampedLH);
+  const bool clamped_r = flag_is_set(strip.strip->runtime->flag, seq::StripRuntimeFlag::ClampedRH);
 
   /* Strip outline is:
    *  - Red when overlapping with other strips or handles are clamped.
@@ -1412,7 +1413,7 @@ static void strip_data_highlight_flags_set(const StripDrawContext &strip,
   const Strip *act_strip = seq::select_active_get(ctx.scene);
   const Strip *special_preview = special_preview_get();
   /* Highlight if strip is an input of an active strip, or if the strip is solo preview. */
-  if (act_strip != nullptr && (act_strip->flag & SELECT) != 0) {
+  if (act_strip != nullptr && (act_strip->flag & SEQ_SELECT) != 0) {
     if (act_strip->input1 == strip.strip || act_strip->input2 == strip.strip) {
       data.flags |= GPU_SEQ_FLAG_HIGHLIGHT;
     }
@@ -1427,7 +1428,7 @@ static void strip_data_handle_flags_set(const StripDrawContext &strip,
                                         SeqStripDrawData &data)
 {
   const Scene *scene = ctx.scene;
-  const bool selected = strip.strip->flag & SELECT;
+  const bool selected = strip.strip->flag & SEQ_SELECT;
   /* Handles on left/right side. */
   if (!seq::transform_is_locked(ctx.channels, strip.strip) &&
       can_select_handle(scene, strip.strip, ctx.v2d))

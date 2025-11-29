@@ -1525,14 +1525,14 @@ static void do_version_sun_beams(bNodeTree &node_tree, bNode &node)
  * interface, so we ensure a default interface with a single input and output. This is only for
  * root trees used as scene compositing node groups, for other node trees, we remove all composite
  * nodes since they are no longer supported inside groups. */
-static void do_version_composite_node_in_scene_tree(bNodeTree &node_tree, bNode &node)
+static bNode *do_version_composite_node_in_scene_tree(bNodeTree &node_tree, bNode &node)
 {
   blender::bke::node_tree_set_type(node_tree);
 
   /* Remove inactive nodes. */
   if (!(node.flag & NODE_DO_OUTPUT)) {
     version_node_remove(node_tree, node);
-    return;
+    return nullptr;
   }
 
   bNodeSocket *old_image_input = blender::bke::node_find_socket(node, SOCK_IN, "Image");
@@ -1562,6 +1562,8 @@ static void do_version_composite_node_in_scene_tree(bNodeTree &node_tree, bNode 
   }
 
   version_node_remove(node_tree, node);
+
+  return group_output_node;
 }
 
 /* The file output node started using item accessors, so we need to free socket storage and copy
@@ -2489,6 +2491,9 @@ static void do_version_bokeh_blur_pixel_size(bNodeTree &node_tree, bNode &node)
 static bool window_has_sequence_editor_open(const wmWindow *win)
 {
   bScreen *screen = WM_window_get_active_screen(win);
+  if (!screen) {
+    return false;
+  }
   LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
     LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
       if (sl->spacetype == SPACE_SEQ) {
@@ -2685,10 +2690,20 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
         node_tree->tree_interface.add_socket(
             DATA_("Image"), "", "NodeSocketColor", NODE_INTERFACE_SOCKET_OUTPUT, nullptr);
 
+        bNode *active_group_output = nullptr;
         LISTBASE_FOREACH_BACKWARD_MUTABLE (bNode *, node, &node_tree->nodes) {
           if (node->type_legacy == CMP_NODE_COMPOSITE_DEPRECATED) {
-            do_version_composite_node_in_scene_tree(*node_tree, *node);
+            active_group_output = do_version_composite_node_in_scene_tree(*node_tree, *node);
           }
+        }
+        if (active_group_output) {
+          LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
+            if (node->type_legacy == NODE_GROUP_OUTPUT) {
+              node->flag &= ~NODE_DO_OUTPUT;
+            }
+          }
+
+          active_group_output->flag |= NODE_DO_OUTPUT;
         }
       }
     }
@@ -3160,7 +3175,7 @@ static void do_version_texture_gradient_clamp(bNodeTree *node_tree)
       node_remove_link(node_tree, *vector_input_link);
     }
     else {
-      /* Gradient texture's input in geometry nodes defaults to using Input Positon if it's not
+      /* Gradient texture's input in geometry nodes defaults to using Input Position if it's not
        * connected. */
       bNode &position = version_node_add_empty(*node_tree, "GeometryNodeInputPosition");
       bNodeSocket &position_output = version_node_add_socket(

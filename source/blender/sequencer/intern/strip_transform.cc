@@ -234,7 +234,7 @@ bool transform_seqbase_shuffle_time(Span<Strip *> strips_to_shuffle,
   if (offset) {
     for (Strip *strip : strips_to_shuffle) {
       transform_translate_strip(evil_scene, strip, offset);
-      strip->runtime.flag &= ~STRIP_OVERLAP;
+      strip->runtime->flag &= ~StripRuntimeFlag::Overlap;
     }
 
     if (!time_dependent_strips.is_empty()) {
@@ -290,7 +290,7 @@ static VectorSet<Strip *> query_right_side_strips(const Scene *scene,
       continue;
     }
 
-    if ((strip->flag & SELECT) == 0 && time_left_handle_frame_get(scene, strip) >= minframe) {
+    if ((strip->flag & SEQ_SELECT) == 0 && time_left_handle_frame_get(scene, strip) >= minframe) {
       right_side_strips.add(strip);
     }
   }
@@ -557,7 +557,7 @@ void transform_handle_overlap(Scene *scene,
     if (transform_test_overlap(scene, seqbasep, strip)) {
       transform_seqbase_shuffle(seqbasep, strip, scene);
     }
-    strip->runtime.flag &= ~STRIP_OVERLAP;
+    strip->runtime->flag &= ~StripRuntimeFlag::Overlap;
   }
 }
 
@@ -591,7 +591,8 @@ bool transform_is_locked(ListBase *channels, const Strip *strip)
 {
   const SeqTimelineChannel *channel = channel_get_by_index(channels, strip->channel);
   return strip->flag & SEQ_LOCK ||
-         (channel_is_locked(channel) && ((strip->runtime.flag & STRIP_IGNORE_CHANNEL_LOCK) == 0));
+         (channel_is_locked(channel) &&
+          !flag_is_set(strip->runtime->flag, StripRuntimeFlag::IgnoreChannelLock));
 }
 
 float2 image_transform_mirror_factor_get(const Strip *strip)
@@ -627,6 +628,8 @@ float2 transform_image_raw_size_get(const Scene *scene, const Strip *strip)
     const TextVars *data = static_cast<TextVars *>(strip->effectdata);
     const FontFlags font_flags = ((data->flag & SEQ_TEXT_BOLD) ? BLF_BOLD : BLF_NONE) |
                                  ((data->flag & SEQ_TEXT_ITALIC) ? BLF_ITALIC : BLF_NONE);
+
+    std::unique_lock<Mutex> lock = text_runtime_scoped_lock_get();
     const int font = text_effect_font_init(nullptr, strip, font_flags);
     const TextVarsRuntime *runtime = text_effect_calc_runtime(
         strip, font, int2(scene_render_size));
