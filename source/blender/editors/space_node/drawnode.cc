@@ -1413,6 +1413,7 @@ static void std_node_socket_interface_draw(ID *id,
       col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&ptr, "default_value", UI_ITEM_R_EXPAND, IFACE_("Default"), ICON_NONE);
       col->separator(); /* bfa - Add slight spacing between these items */
+      col->use_property_split_set(true); /* bfa - split non-boolean props */
       uiLayout *sub = &col->column(true);
       sub->prop(&ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), ICON_NONE);
       sub->prop(&ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), ICON_NONE);
@@ -1461,20 +1462,22 @@ static void std_node_socket_interface_draw(ID *id,
 
   const bNodeTree *node_tree = reinterpret_cast<const bNodeTree *>(id);
   if (interface_socket->flag & NODE_INTERFACE_SOCKET_INPUT && node_tree->type == NTREE_GEOMETRY) {
-    col->use_property_split_set(false); /* bfa - use_property_split = False */
     if (ELEM(type, SOCK_INT, SOCK_VECTOR, SOCK_MATRIX)) {
       col->prop(&ptr, "default_input", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
     }
   }
 
   if (interface_socket->flag & NODE_INTERFACE_SOCKET_INPUT) {
+    col->use_property_split_set(false); /* bfa - use_property_split = False */
     col->prop(&ptr, "optional_label", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
+    col->use_property_split_set(true); /* bfa - split non-boolean props */
   }
   {
     uiLayout *sub = &col->column(false);
     sub->active_set(interface_socket->default_input == NODE_DEFAULT_INPUT_VALUE);
     sub->use_property_split_set(false); /* bfa - use_property_split = False */
     sub->prop(&ptr, "hide_value", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
+    sub->use_property_split_set(true); /* bfa - split non-boolean props */
   }
 
   if (interface_socket->flag & NODE_INTERFACE_SOCKET_INPUT && node_tree->type == NTREE_GEOMETRY) {
@@ -1483,7 +1486,9 @@ static void std_node_socket_interface_draw(ID *id,
     }
     uiLayout *sub = &col->column(false);
     sub->active_set(!is_layer_selection_field(*interface_socket));
+    sub->use_property_split_set(false); /* bfa - use_property_split = False */
     sub->prop(&ptr, "hide_in_modifier", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
+    sub->use_property_split_set(true); /* bfa - split non-boolean props */
     if (nodes::socket_type_supports_fields(type) || nodes::socket_type_supports_grids(type)) {
       sub->prop(&ptr, "structure_type", DEFAULT_FLAGS, IFACE_("Shape"), ICON_NONE);
     }
