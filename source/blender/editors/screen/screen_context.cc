@@ -436,6 +436,10 @@ static eContextResult screen_ctx_selected_pose_bones(const bContext *C, bContext
   Object *obact = BKE_view_layer_active_object_get(view_layer);
   Object *obpose = BKE_object_pose_armature_get(obact);
   if (obpose && obpose->pose && obpose->data) {
+    if (obpose->pose->flag & POSE_RECALC) {
+      /* Can happen with undo-redo, see #150451. */
+      BKE_pose_rebuild(CTX_data_main(C), obpose, (bArmature *)obpose->data, false);
+    }
     if (obpose != obact) {
       FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (obpose, pchan) {
         CTX_data_list_add(result, &obpose->id, &RNA_PoseBone, pchan);
@@ -1113,7 +1117,7 @@ static eContextResult screen_ctx_selected_strips(const bContext *C, bContextData
   Editing *ed = blender::seq::editing_get(scene);
   if (ed) {
     LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
-      if (strip->flag & SELECT) {
+      if (strip->flag & SEQ_SELECT) {
         CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
       }
     }
@@ -1136,7 +1140,7 @@ static eContextResult screen_ctx_selected_editable_strips(const bContext *C,
 
   ListBase *channels = blender::seq::channels_displayed_get(ed);
   LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
-    if (strip->flag & SELECT && !blender::seq::transform_is_locked(channels, strip)) {
+    if (strip->flag & SEQ_SELECT && !blender::seq::transform_is_locked(channels, strip)) {
       CTX_data_list_add(result, &scene->id, &RNA_Strip, strip);
     }
   }

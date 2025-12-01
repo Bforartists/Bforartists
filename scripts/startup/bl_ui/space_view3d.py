@@ -9545,6 +9545,27 @@ class VIEW3D_PT_overlay_guides(Panel):
             row.prop(overlay, "show_look_dev")
 
 
+class VIEW3D_PT_overlay_text(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "VIEW3D_PT_overlay"
+    bl_label = "Text"
+
+    def draw(self, context):
+        layout = self.layout
+
+        view = context.space_data
+        overlay = view.overlay
+
+        split = layout.split()
+        sub = split.column(align=True)
+        sub.prop(overlay, "show_text", text="General Info")
+        sub.prop(overlay, "show_stats", text="Statistics")
+
+        sub = split.column(align=True)
+        sub.prop(overlay, "show_performance", text="Performance")
+
+
 class VIEW3D_PT_overlay_object(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
@@ -10757,11 +10778,11 @@ class VIEW3D_PT_quad_view(Panel):
         col.prop(region, "lock_rotation")
         row = col.row()
         row.enabled = region.lock_rotation
-        row.separator() # bfa - indent
+        row.separator()  # bfa - indent
         row.prop(region, "show_sync_view")
         row = col.row()
         row.enabled = region.lock_rotation and region.show_sync_view
-        row.separator(factor=3.4) # bfa - indent from show_sync_view
+        row.separator(factor=3.4)  # bfa - indent from show_sync_view
         row.prop(region, "use_box_clip")
 
 
@@ -12285,6 +12306,7 @@ classes = (
     VIEW3D_PT_gizmo_display,
     VIEW3D_PT_overlay,
     VIEW3D_PT_overlay_guides,
+    VIEW3D_PT_overlay_text,
     VIEW3D_PT_overlay_object,
     VIEW3D_PT_overlay_geometry,
     VIEW3D_PT_overlay_viewer_node,

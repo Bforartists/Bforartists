@@ -552,6 +552,8 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "eevee_surfel_list_sort";
     case SURFEL_RAY:
       return "eevee_surfel_ray";
+    case TRANSPARENCY_RESOLVE:
+      return "eevee_transparency_resolve";
     case VERTEX_COPY:
       return "eevee_vertex_copy";
     case VOLUME_INTEGRATION:
@@ -659,9 +661,11 @@ static SlotAllocator add_pipeline_create_info(blender::gpu::shader::ShaderCreate
       switch (pipeline_type) {
         case MAT_PIPE_VOLUME_MATERIAL:
           pipeline_info_name = "eevee_surf_volume";
+          info.name_ += "_world_volume";
           break;
         default:
           pipeline_info_name = "eevee_surf_world";
+          info.name_ += "_world";
           break;
       }
       break;
@@ -671,15 +675,18 @@ static SlotAllocator add_pipeline_create_info(blender::gpu::shader::ShaderCreate
         case MAT_PIPE_PREPASS_DEFERRED_VELOCITY:
           pipeline_info_name = "eevee_surf_depth";
           additional_info_name = "eevee_velocity_geom";
+          info.name_ += "_depth_velocity";
           break;
         case MAT_PIPE_PREPASS_OVERLAP:
         case MAT_PIPE_PREPASS_FORWARD:
         case MAT_PIPE_PREPASS_DEFERRED:
           pipeline_info_name = "eevee_surf_depth";
+          info.name_ += "_depth";
           break;
         case MAT_PIPE_PREPASS_PLANAR:
           pipeline_info_name = "eevee_surf_depth";
           additional_info_name = "eevee_clip_plane";
+          info.name_ += "_depth_clip";
           break;
         case MAT_PIPE_SHADOW:
           /* Determine surface shadow shader depending on used update technique. */
@@ -697,23 +704,29 @@ static SlotAllocator add_pipeline_create_info(blender::gpu::shader::ShaderCreate
           break;
         case MAT_PIPE_VOLUME_OCCUPANCY:
           pipeline_info_name = "eevee_surf_occupancy";
+          info.name_ += "_occupancy";
           break;
         case MAT_PIPE_VOLUME_MATERIAL:
           pipeline_info_name = "eevee_surf_volume";
+          info.name_ += "_volume";
           break;
         case MAT_PIPE_CAPTURE:
           pipeline_info_name = "eevee_surf_capture";
+          info.name_ += "_capture";
           break;
         case MAT_PIPE_DEFERRED:
           if (use_shader_to_rgba) {
             pipeline_info_name = "eevee_surf_deferred_hybrid";
+            info.name_ += "_deferred_hybrid";
           }
           else {
             pipeline_info_name = "eevee_surf_deferred";
+            info.name_ += "_deferred";
           }
           break;
         case MAT_PIPE_FORWARD:
           pipeline_info_name = "eevee_surf_forward";
+          info.name_ += "_forward";
           break;
         default:
           BLI_assert_unreachable();
@@ -727,18 +740,23 @@ static SlotAllocator add_pipeline_create_info(blender::gpu::shader::ShaderCreate
   switch (geometry_type) {
     case MAT_GEOM_WORLD:
       geometry_info_name = "eevee_geom_world";
+      info.name_ += "_world";
       break;
     case MAT_GEOM_CURVES:
       geometry_info_name = "eevee_geom_curves";
+      info.name_ += "_curves";
       break;
     case MAT_GEOM_MESH:
       geometry_info_name = "eevee_geom_mesh";
+      info.name_ += "_mesh";
       break;
     case MAT_GEOM_POINTCLOUD:
       geometry_info_name = "eevee_geom_pointcloud";
+      info.name_ += "_pointcloud";
       break;
     case MAT_GEOM_VOLUME:
       geometry_info_name = "eevee_geom_volume";
+      info.name_ += "_volume";
       break;
   }
 

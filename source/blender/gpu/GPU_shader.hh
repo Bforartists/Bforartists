@@ -23,6 +23,9 @@
 namespace blender::gpu {
 class VertBuf;
 class Shader;
+namespace shader {
+struct ShaderCreateInfo;
+}  // namespace shader
 }  // namespace blender::gpu
 
 /** Opaque type hiding #blender::gpu::shader::ShaderCreateInfo */
@@ -42,8 +45,10 @@ constexpr static int GPU_MAX_UNIFORM_ATTR = 8;
 /**
  * Preprocess a raw GLSL source to adhere to our backend compatible shader language.
  * Needed if the string was not part of our build system and is used in a #GPUShaderCreateInfo.
+ * `info` is the create info to add builtin flags parsed from the original string.
  */
-std::string GPU_shader_preprocess_source(blender::StringRefNull original);
+std::string GPU_shader_preprocess_source(blender::StringRefNull original,
+                                         blender::gpu::shader::ShaderCreateInfo &info);
 
 /**
  * Create a shader using the given #GPUShaderCreateInfo.
@@ -108,7 +113,7 @@ void GPU_shader_async_compilation_cancel(AsyncCompilationHandle &handle);
 
 /**
  * Returns true if there's any shader still being compiled.
- * NOTE: This returs true as long as there are batches in the compilation queue.
+ * NOTE: This returns true as long as there are batches in the compilation queue.
  * It doesn't take into account if compilation is paused.
  */
 bool GPU_shader_compiler_has_pending_work();
