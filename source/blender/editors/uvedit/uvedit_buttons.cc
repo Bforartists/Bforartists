@@ -114,7 +114,7 @@ static void uvedit_translate(Scene *scene, const Span<Object *> objects, const f
 
 static float uvedit_old_center[2];
 
-static void uvedit_vertex_buttons(const bContext *C, uiBlock *block)
+static void uvedit_vertex_buttons(const bContext *C, uiBlock *block, blender::ui::Layout *layout)
 {
   SpaceImage *sima = CTX_wm_space_image(C);
   Scene *scene = CTX_data_scene(C);
@@ -159,13 +159,25 @@ static void uvedit_vertex_buttons(const bContext *C, uiBlock *block)
     uiBut *but;
 
     int y = 0;
-    UI_block_align_begin(block);
-    but = uiDefButF(block,
-                    ButType::Num,
-                    IFACE_("X:"),
+
+    /* BFA - Split prop slider from label */
+    but = uiDefBut(block, ButType::Label, IFACE_("X"),
                     0,
                     y -= UI_UNIT_Y,
-                    200,
+                    UI_UNIT_X * 75 / 100,
+                    UI_UNIT_Y,
+                    nullptr,
+                    0.0f,
+                    0.0f,
+                    "");
+
+    /* BFA - Split prop slider from label */
+    but = uiDefButF(block,
+                    ButType::Num,
+                    nullptr, /* BFA */
+                    UI_UNIT_X * 75 / 100, /* BFA */
+                    y, /* BFA */
+                    150, /* BFA */
                     UI_UNIT_Y,
                     &uvedit_old_center[0],
                     UNPACK2(range_xy[0]),
@@ -173,12 +185,24 @@ static void uvedit_vertex_buttons(const bContext *C, uiBlock *block)
     UI_but_retval_set(but, B_UVEDIT_VERTEX);
     UI_but_number_step_size_set(but, step);
     UI_but_number_precision_set(but, digits);
-    but = uiDefButF(block,
-                    ButType::Num,
-                    IFACE_("Y:"),
+
+    /* BFA - Split prop slider from label */
+    but = uiDefBut(block, ButType::Label, IFACE_("Y"),
                     0,
                     y -= UI_UNIT_Y,
-                    200,
+                    UI_UNIT_X * 75 / 100,
+                    UI_UNIT_Y,
+                    nullptr,
+                    0.0f,
+                    0.0f,
+                    "");
+    /* BFA - Split prop slider from label */
+    but = uiDefButF(block,
+                    ButType::Num,
+                    nullptr, /* BFA */
+                    UI_UNIT_X * 75 / 100, /* BFA */
+                    y, /* BFA */
+                    150, /* BFA */
                     UI_UNIT_Y,
                     &uvedit_old_center[1],
                     UNPACK2(range_xy[1]),
@@ -187,6 +211,9 @@ static void uvedit_vertex_buttons(const bContext *C, uiBlock *block)
     UI_but_number_step_size_set(but, step);
     UI_but_number_precision_set(but, digits);
     UI_block_align_end(block);
+  } else {
+    /* BFA - Add tooltip for when no UV vertices are selected*/
+    layout->label(IFACE_("No vertices selected."), ICON_INFO);
   }
 }
 
@@ -239,11 +266,30 @@ static bool image_panel_uv_poll(const bContext *C, PanelType * /*pt*/)
 static void image_panel_uv(const bContext *C, Panel *panel)
 {
   uiBlock *block;
+  
+  /* BFA - Use split layout, manually recreated */
+  blender::ui::Layout *layout = panel->layout;
+  blender::ui::Layout *layout_split, *layout_sub;
 
-  block = panel->layout->absolute_block();
+  uiLayout *col;
+  col = &layout->column(true);
+
+  /* BFA - property label */
+  col->label(IFACE_("Location"), ICON_NONE);
+  layout_split = &col->row(true);
+
+  /* BFA - indent */
+  layout_split->separator();
+  layout_split->separator();
+
+  /* BFA - XYZW column */
+  layout_sub = &layout_split->column(true);
+  layout_sub->fixed_size_set(true);
+
+  block = layout_split->absolute_block();
   UI_block_func_handle_set(block, do_uvedit_vertex, nullptr);
 
-  uvedit_vertex_buttons(C, block);
+  uvedit_vertex_buttons(C, block, layout_split);
 }
 
 void ED_uvedit_buttons_register(ARegionType *art)
