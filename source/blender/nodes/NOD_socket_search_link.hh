@@ -70,6 +70,7 @@ struct SocketLinkOperation {
   std::string name;
   LinkSocketFn fn;
   int weight = 0;
+  int icon = 0; /* BFA - add icon parameter */
 };
 
 class GatherLinkSearchOpParams {

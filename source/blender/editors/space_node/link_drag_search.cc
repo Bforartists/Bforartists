@@ -226,7 +226,8 @@ static void search_link_ops_for_asset_metadata(const bNodeTree &node_tree,
                  params.node_tree, params.node, params.socket, node, *new_node_socket);
            }
          },
-         weight});
+         weight,
+         ICON_NODETREE, /* BFA - add icon */});
 
     weight--;
   }
@@ -280,12 +281,12 @@ static void gather_socket_link_operations(const bContext &C,
     }
   }
 
-  search_link_ops.append({IFACE_("Reroute"), add_reroute_node_fn});
+  search_link_ops.append({IFACE_("Reroute"), add_reroute_node_fn, 0, ICON_NODE_REROUTE}); /* BFA - add icon */
 
   const bool is_node_group = !(node_tree.id.flag & ID_FLAG_EMBEDDED_DATA);
 
   if (is_node_group && socket.in_out == SOCK_IN) {
-    search_link_ops.append({IFACE_("Group Input"), add_group_input_node_fn});
+    search_link_ops.append({IFACE_("Group Input"), add_group_input_node_fn, 0, ICON_GROUPINPUT}); /* BFA - add icon */
 
     int weight = -1;
     node_tree.tree_interface.foreach_item([&](const bNodeTreeInterfaceItem &item) {
@@ -311,7 +312,8 @@ static void gather_socket_link_operations(const bContext &C,
                               [interface_socket](nodes::LinkSearchOpParams &params) {
                                 add_existing_group_input_fn(params, interface_socket);
                               },
-                              weight});
+                              weight,
+                              ICON_GROUPINPUT, /* BFA - add icon */});
       weight--;
       return true;
     });
@@ -344,7 +346,8 @@ static void link_drag_search_update_fn(
   const Vector<SocketLinkOperation *> filtered_items = search.query(string);
 
   for (SocketLinkOperation *item : filtered_items) {
-    if (!UI_search_item_add(items, item->name, item, ICON_NONE, 0, 0)) {
+    /* BFA - add icon */
+    if (!UI_search_item_add(items, item->name, item, item->icon, 0, 0)) {
       break;
     }
   }
