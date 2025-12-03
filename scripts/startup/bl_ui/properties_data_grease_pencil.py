@@ -324,7 +324,7 @@ class DATA_PT_grease_pencil_layers(DataButtonsPanel, Panel):
 
         row = layout.row(align=True)
         row.use_property_split = False
-        row.prop(layer, "use_lights", text="Lights")
+        row.prop(layer, "use_lights", text="Use Scene Lighting") # BFA - Make label more descriptive
         row.prop_decorator(layer, "use_lights")
 
     def draw(self, context):
