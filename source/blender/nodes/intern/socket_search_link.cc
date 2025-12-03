@@ -17,6 +17,8 @@
 #include "NOD_node_declaration.hh"
 #include "NOD_socket.hh"
 #include "NOD_socket_search_link.hh"
+#include "RNA_access.hh"
+#include "RNA_types.hh"
 
 namespace blender::nodes {
 
@@ -35,7 +37,25 @@ void GatherLinkSearchOpParams::add_item_full_name(std::string name,
                                                   SocketLinkOperation::LinkSocketFn fn,
                                                   int weight)
 {
-  items_.append({std::move(name), std::move(fn), weight});
+    SocketLinkOperation op;
+
+    /* BFA - Get Node RNA Icon*/
+    int icon = 0;
+    if (!node_type_.idname.empty()) {
+        StructRNA *srna = RNA_struct_find(node_type_.idname.c_str());
+        if (srna) {
+            icon = RNA_struct_ui_icon(srna);
+        }
+    }
+    
+    /* BFA - construct link operation object */
+    op.name = std::move(name);
+    op.fn = std::move(fn);
+    op.weight = weight;
+    op.icon = icon;
+
+    /* BFA - append to search entries */
+    items_.append(std::move(op));
 }
 
 const bNodeSocket &GatherLinkSearchOpParams::other_socket() const
