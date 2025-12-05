@@ -741,7 +741,7 @@ static void ui_item_array(Layout *layout,
     for (int a = 0; a < len; a++) {
       /* We are going over flat array indices (the way matrices are stored internally [also check
        * logic in #pyrna_py_from_array_index()]) -- and they are not ordered "row first" -- , so
-       * map these to rows/colums. */
+       * map these to rows/columns. */
       col = a % dim_size[1];
       row = a / dim_size[1];
 
@@ -2121,7 +2121,7 @@ void Layout::prop(PointerRNA *ptr,
       else if (ui_item_rna_is_expand(prop, index, flag)) {
         // fmt::memory_buffer name_with_suffix;
         /* bfa - create a column so label could be added before */
-        uiLayout *col;
+        Layout *col;
         if (layout_row != nullptr) {
           col = &layout_row->column(true);
         }
@@ -5036,14 +5036,6 @@ Layout &Layout::absolute(bool align)
   blender::ui::block_layout_set_current(this->block(), litem);
 
   return *litem;
-}
-
-uiBlock *Layout::absolute_block()
-{
-  uiBlock *block = this->block();
-  absolute(false);
-
-  return block;
 }
 
 Layout &Layout::overlap()

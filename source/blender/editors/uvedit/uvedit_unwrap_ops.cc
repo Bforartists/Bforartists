@@ -1936,21 +1936,21 @@ static const EnumPropertyItem pinned_islands_method_items[] = {
 
 static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
-  uiLayout *col, *row; /*bfa, added *col and *row*/
+  blender::ui::Layout *layout = op->layout;
+  blender::ui::Layout *col, *row; /*bfa, added *col and *row*/
 
   layout->use_property_decorate_set(true);
- layout->use_property_decorate_set(false);
+  layout->use_property_decorate_set(false);
   layout->prop(op->ptr, "shape_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(false); /*bfa -  added col*/
-  col->use_property_split_set(false);      /* bfa - use_property_split = False */
+  col = &layout->column(false);       /*bfa -  added col*/
+  col->use_property_split_set(false); /* bfa - use_property_split = False */
   col->prop(op->ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   {
     // ------------------ bfa new left aligned prop with triangle button
 
     /* NOTE: split amount here needs to be synced with normal labels */
-    uiLayout *split = &layout->split(0.385f, true);
+    blender::ui::Layout *split = &layout->split(0.385f, true);
 
     /* FIRST PART ................................................ */
     row = &split->row(false);
@@ -1969,7 +1969,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 
     // ------------------------------- end bfa
 
-    uiLayout *sub = &layout->row(true);
+    blender::ui::Layout *sub = &layout->row(true);
     if (RNA_boolean_get(op->ptr, "rotate")) {
       layout->separator(); /*bfa - separator*/
       layout->separator(); /*bfa - separator*/
@@ -1980,7 +1980,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
   }
   layout->prop(op->ptr, "margin_method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout->prop(op->ptr, "margin", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  uiLayout *sub = &layout->row(true);
+  blender::ui::Layout *sub = &layout->row(true);
   layout->separator(); /*bfa - separator*/
   layout->separator(); /*bfa - separator*/
   layout->separator(); /*bfa - separator*/
@@ -1990,7 +1990,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
     // ------------------ bfa new left aligned prop with triangle button
 
     /* NOTE: split amount here needs to be synced with normal labels */
-    uiLayout *split = &layout->split(0.385f, true);
+    blender::ui::Layout *split = &layout->split(0.385f, true);
 
     /* FIRST PART ................................................ */
     row = &split->row(false);
@@ -2009,7 +2009,7 @@ static void uv_pack_islands_ui(bContext * /*C*/, wmOperator *op)
 
     // ------------------------------- end bfa
 
-    uiLayout *sub = &layout->row(true);
+    blender::ui::Layout *sub = &layout->row(true);
     if (RNA_boolean_get(op->ptr, "pin")) {
       layout->separator(); /*bfa - separator*/
       layout->separator(); /*bfa - separator*/
@@ -3002,33 +3002,31 @@ static wmOperatorStatus unwrap_exec(bContext *C, wmOperator *op)
 
 static void unwrap_draw(bContext * /*C*/, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
+  blender::ui::Layout &layout = *op->layout;
 
-  layout->use_property_split_set(true);
-  layout->use_property_decorate_set(false);
+  layout.use_property_split_set(true);
+  layout.use_property_decorate_set(false);
 
   /* Main draw call */
   PointerRNA ptr = RNA_pointer_create_discrete(nullptr, op->type->srna, op->properties);
 
-  uiLayout *col;
-
-  col = &layout->column(true);
+  blender::ui::Layout *col = &layout.column(true);
   col->prop(&ptr, "method", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   bool is_slim = RNA_enum_get(op->ptr, "method") == UVCALC_UNWRAP_METHOD_MINIMUM_STRETCH;
 
   if (is_slim) {
     col->prop(&ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    
+
     col->use_property_split_set(false); /* BFA - Align boolean props left */
     col->prop(&ptr, "no_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    
+
     col->separator();
     col->prop(&ptr, "use_weights", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    
+
     col->use_property_split_set(true); /* BFA - Align boolean props left */
 
     if (RNA_boolean_get(op->ptr, "use_weights")) {
-      col = &layout->column(true);
+      col = &layout.column(true);
       col->prop(&ptr, "weight_group", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       col->prop(&ptr, "weight_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
@@ -3080,13 +3078,12 @@ void UV_OT_unwrap(wmOperatorType *ot)
   ot->ui = unwrap_draw;
 
   /* properties */
-  ot->prop = RNA_def_enum(
-      ot->srna,
-      "method",
-      method_items,
-      tool_settings_default->unwrapper,
-      "Method",
-      "The method to unwrap the mesh"); /* BFA */
+  ot->prop = RNA_def_enum(ot->srna,
+                          "method",
+                          method_items,
+                          tool_settings_default->unwrapper,
+                          "Method",
+                          "The method to unwrap the mesh"); /* BFA */
   RNA_def_boolean(ot->srna,
                   "fill_holes",
                   tool_settings_default->uvcalc_flag & UVCALC_FILLHOLES,

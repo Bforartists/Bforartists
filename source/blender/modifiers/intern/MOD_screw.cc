@@ -1044,17 +1044,17 @@ static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /* bfa - removed *sub */
-  uiLayout *layout = panel->layout;
+  ui::Layout *row, *col; /* bfa - removed *sub */
+  ui::Layout &layout = *panel->layout;
   const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   PointerRNA screw_obj_ptr = RNA_pointer_get(ptr, "object");
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   col->prop(ptr, "angle", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row = &col->row(false);
   row->active_set(RNA_pointer_is_null(&screw_obj_ptr) ||
@@ -1073,7 +1073,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row = &col->row(true);
   row->active_set(!RNA_pointer_is_null(&screw_obj_ptr));
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_object_screw_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_object_screw_offset", 0); /*bfa - decorator*/
 
@@ -1086,12 +1086,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = &layout->split(0.385f, true);
+  ui::Layout *split = &layout.split(0.385f, true);
 
   /* bfa - our layout */
   row = &split->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_merge_vertices", UI_ITEM_NONE, "Merge", ICON_NONE);
   row->decorator(ptr, "use_merge_vertices", 0); /*bfa - decorator*/
 
@@ -1106,7 +1106,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   col->separator();
 
-  row = &layout->row(true, IFACE_("Stretch UVs"));
+  row = &layout.row(true, IFACE_("Stretch UVs"));
   row->prop(ptr, "use_stretch_u", toggles_flag, IFACE_("U"), ICON_NONE);
   row->prop(ptr, "use_stretch_v", toggles_flag, IFACE_("V"), ICON_NONE);
 
@@ -1115,8 +1115,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa - added *row*/
-  uiLayout *layout = panel->layout;
+  ui::Layout *col, *row; /*bfa - added *row*/
+  ui::Layout *layout = panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
@@ -1124,21 +1124,21 @@ static void normals_panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout->column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_normal_calculate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_normal_calculate", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_normal_flip", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_normal_flip", 0); /*bfa - decorator*/
 }

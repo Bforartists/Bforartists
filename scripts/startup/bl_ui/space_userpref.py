@@ -614,7 +614,7 @@ class USERPREF_PT_edit_node_editor(EditingPanel, CenterAlignMixIn, Panel):
 
         col.use_property_split = False
         col.prop(edit, "node_use_autoposition_viewer")  # BFA - Toggle Viewer Auto-positioning
-        col.use_property_split = True # BFA - split non-boolean property
+        col.use_property_split = True  # BFA - split non-boolean property
         col.prop(edit, "node_color_blend", text="Node Color Blend")  # BFA - Node Color Blend
 
 
@@ -2116,6 +2116,9 @@ class USERPREF_PT_input_tablet(InputPanel, CenterAlignMixIn, Panel):
 
         flow.prop(inputs, "pressure_threshold_max")
         flow.prop(inputs, "pressure_softness")
+        use_debug = prefs.experimental.use_paint_debug and prefs.view.show_developer_ui
+        if use_debug:
+            layout.prop(inputs, "show_tablet_debug_values")
 
 
 class USERPREF_PT_input_ndof(InputPanel, CenterAlignMixIn, Panel):
@@ -3071,6 +3074,7 @@ class USERPREF_PT_developer_tools(Panel):
                 ({"property": "use_asset_indexing"}, None),
                 ({"property": "use_viewport_debug"}, None),
                 ({"property": "use_eevee_debug"}, None),
+                ({"property": "use_paint_debug"}, None),
                 ({"property": "use_extensions_debug"}, ("/blender/blender/issues/119521", "#119521")),
                 ({"property": "write_legacy_blend_file_format"}, ("/blender/blender/issues/129309", "#129309")),
                 ({"property": "no_data_block_packing"}, ("/blender/blender/issues/132167", "#132167")),

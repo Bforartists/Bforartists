@@ -726,7 +726,9 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
                                             const short id_code,
                                             const char *id_name,
                                             const int flag,
-                                            const bool do_override = false /* bfa do override*/)
+                                            ReportList *reports = nullptr,
+                                            const bool do_override = false /* bfa do override*/
+)
 {
   BLI_assert_msg(
       BLI_path_cmp(BKE_main_blendfile_path(bmain), filepath) != 0,
@@ -753,18 +755,19 @@ static ID *wm_file_link_append_datablock_ex(Main *bmain,
   BKE_blendfile_link_append_context_init_done(lapp_context);
 
   /* Link datablock. */
-  BKE_blendfile_link(lapp_context, nullptr);
+  BKE_blendfile_link(lapp_context, reports);
 
   if (do_pack) {
-    BKE_blendfile_link_pack(lapp_context, nullptr);
+    BKE_blendfile_link_pack(lapp_context, reports);
   }
   else if (do_append) {
     BKE_blendfile_append(lapp_context, nullptr);
-  } else if (do_override) { // bfa asset shelf - do single override
+  }
+  else if (do_override) {  // bfa asset shelf - do single override
     BKE_blendfile_override(lapp_context, BKE_LIBLINK_OVERRIDE_INIT, nullptr);
   }
 
-  BKE_blendfile_link_append_instantiate_loose(lapp_context, nullptr);
+  BKE_blendfile_link_append_instantiate_loose(lapp_context, reports);
 
   BKE_blendfile_link_append_context_finalize(lapp_context);
 
@@ -785,26 +788,28 @@ ID *WM_file_link_datablock(Main *bmain,
                            const char *filepath,
                            const short id_code,
                            const char *id_name,
-                           int flag)
+                           int flag,
+                           ReportList *reports)
 {
   flag |= FILE_LINK;
   return wm_file_link_append_datablock_ex(
-      bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag);
+      bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag, reports);
 }
 
 /* BFA - Link Override*/
 ID *WM_file_link_override_datablock(Main *bmain,
-  Scene *scene,
-  ViewLayer *view_layer,
-  View3D *v3d,
-  const char *filepath,
-  const short id_code,
-  const char *id_name,
-  int flag)
+                                    Scene *scene,
+                                    ViewLayer *view_layer,
+                                    View3D *v3d,
+                                    const char *filepath,
+                                    const short id_code,
+                                    const char *id_name,
+                                    int flag,
+                                    ReportList *reports)
 {
-flag |= FILE_LINK;
-return wm_file_link_append_datablock_ex(
-bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag, true);
+  flag |= FILE_LINK;
+  return wm_file_link_append_datablock_ex(
+      bmain, scene, view_layer, v3d, filepath, id_code, id_name, flag, reports, true);
 }
 
 ID *WM_file_append_datablock(Main *bmain,
@@ -812,7 +817,7 @@ ID *WM_file_append_datablock(Main *bmain,
                              ViewLayer *view_layer,
                              View3D *v3d,
                              const char *filepath,
-                             const short id_code,
+                             short id_code,
                              const char *id_name,
                              int flag)
 {

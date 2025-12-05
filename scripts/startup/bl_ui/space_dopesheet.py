@@ -324,13 +324,15 @@ class DOPESHEET_HT_header(Header):
             if bpy.context.preferences.addons.get("bfa_power_user_tools"):
                 if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_timelinetoggle:
                     row = layout.row(align=True)
-                    row.operator("wm.switch_editor_to_dopesheet", text="", icon="TIME", depress=True)  # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
+                    # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
+                    row.operator("wm.switch_editor_to_dopesheet", text="", icon="TIME", depress=True)
 
         elif context.space_data.mode == "DOPESHEET_EDITOR":
             if bpy.context.preferences.addons.get("bfa_power_user_tools"):
                 if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_timelinetoggle:
                     row = layout.row(align=True)
-                    row.operator("wm.switch_editor_to_timeline", text="", icon="TIME") # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
+                    # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
+                    row.operator("wm.switch_editor_to_timeline", text="", icon="TIME")
 
             # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
             row = layout.row(align=True)
@@ -339,11 +341,10 @@ class DOPESHEET_HT_header(Header):
             row.operator("wm.switch_editor_to_driver", text="", icon="DRIVER")
             row.operator("wm.switch_editor_to_nla", text="", icon="NLA")
 
-
         ###########################
 
         # BFA - props are redundant
-        #layout.template_header()
+        # layout.template_header()
 
         if st.mode != 'TIMELINE':
             # Timeline mode is special, as it's presented as a sub-type of the
@@ -788,7 +789,7 @@ class DOPESHEET_MT_channel(Menu):
         # layout.operator("action.clean", text="Clean Channels").channels = True	# BFA - located in the keys channel
 
         layout.separator()
-        layout.operator("anim.channels_group", icon="NEW_GROUP")
+        layout.operator("anim.channels_group", text="Group Channels", icon="NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
@@ -1165,7 +1166,7 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         # layout.operator("anim.channels_collapse")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move")
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Move Channels")
 
         layout.separator()
 
@@ -1251,7 +1252,7 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon="UNLOCKED").type = "PROTECT"
 
         layout.separator()
-        layout.operator("anim.channels_group", icon="NEW_GROUP")
+        layout.operator("anim.channels_group", text="Group Channels", icon="NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon="REMOVE_ALL_GROUPS")
 
         layout.separator()
@@ -1273,7 +1274,7 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         layout.operator("anim.channels_collapse", icon="COLLAPSEMENU")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Move Channels")
 
         layout.separator()
 
@@ -1439,13 +1440,13 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
 
 
 classes = (
-    ANIM_OT_switch_editors_to_timeline, # BFA menu
+    ANIM_OT_switch_editors_to_timeline,  # BFA menu
     ANIM_OT_switch_editors_to_dopesheet,  # BFA menu
     ANIM_OT_switch_editors_to_graph,  # BFA menu
     ANIM_OT_switch_editors_to_driver,  # BFA menu
     ANIM_OT_switch_editors_to_nla,  # BFA menu
     ANIM_OT_switch_editors_in_dopesheet,  # BFA menu
-    ANIM_OT_switch_editors_in_timeline, # BFA menu
+    ANIM_OT_switch_editors_in_timeline,  # BFA menu
     DOPESHEET_HT_header,
     DOPESHEET_HT_playback_controls,
     DOPESHEET_PT_proportional_edit,

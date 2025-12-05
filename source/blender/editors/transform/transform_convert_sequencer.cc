@@ -19,6 +19,7 @@
 #include "BKE_context.hh"
 
 #include "ED_markers.hh"
+#include "ED_sequencer.hh"
 
 #include "SEQ_animation.hh"
 #include "SEQ_channels.hh"
@@ -92,7 +93,7 @@ static void SeqTransInfo(TransInfo *t, Strip *strip, int *r_count, int *r_flag)
 {
   Scene *scene = CTX_data_sequencer_scene(t->context);
   Editing *ed = seq::editing_get(scene);
-  ListBase *channels = seq::channels_displayed_get(ed);
+  const ListBase *channels = seq::channels_displayed_get(ed);
 
   /* For extend we need to do some tricks. */
   if (t->mode == TFM_TIME_EXTEND) {
@@ -287,8 +288,11 @@ static void seq_transform_cancel(TransInfo *t, Span<Strip *> transformed_strips)
       seq::edit_flag_for_removal(scene, seqbase, strip);
     }
     seq::edit_remove_flagged_strips(scene, seqbase);
+    vse::sync_active_scene_and_time_with_scene_strip(*t->context);
     return;
   }
+
+  vse::sync_active_scene_and_time_with_scene_strip(*t->context);
 
   for (Strip *strip : transformed_strips) {
     /* Handle pre-existing overlapping strips even when operator is canceled.
@@ -806,6 +810,7 @@ static void recalcData_sequencer(TransInfo *t)
     strip_prev = strip;
   }
 
+  vse::sync_active_scene_and_time_with_scene_strip(*t->context);
   DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
 
   flushTransSeq(t);
@@ -860,6 +865,12 @@ static void special_aftertrans_update__sequencer(bContext *C, TransInfo *t)
 
 bool transform_convert_sequencer_clamp(const TransInfo *t, float r_val[2])
 {
+  if (t->data_container_len == 0) {
+    /* During drag and drop, there is no custom data. We don't need to clamp here anyways,
+     * since we're not adjusting handles, and channels are already clamped in drag/drop code. */
+    return false;
+  }
+
   const TransSeq *ts = (TransSeq *)TRANS_DATA_CONTAINER_FIRST_SINGLE(t)->custom.type.data;
   int val[2] = {round_fl_to_int(r_val[0]), round_fl_to_int(r_val[1])};
   bool clamped = false;

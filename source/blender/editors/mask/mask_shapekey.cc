@@ -11,7 +11,7 @@
 #include "BLI_listbase.h"
 
 #include "BKE_context.hh"
-#include "BKE_mask.h"
+#include "BKE_mask.hh"
 
 #include "DNA_mask_types.h"
 #include "DNA_scene_types.h"
@@ -161,9 +161,8 @@ static wmOperatorStatus mask_shape_key_feather_reset_exec(bContext *C, wmOperato
             for (int i = 0; i < spline->tot_point; i++) {
               MaskSplinePoint *point = &spline->points[i];
 
-              if (MASKPOINT_ISSEL_ANY(point)) {
-                /* TODO: nicer access here. */
-                shape_ele_dst->value[6] = shape_ele_src->value[6];
+              if (BKE_mask_point_selected(point)) {
+                shape_ele_dst->weight = shape_ele_src->weight;
               }
 
               shape_ele_src++;
@@ -323,12 +322,13 @@ static wmOperatorStatus mask_shape_key_rekey_exec(bContext *C, wmOperator *op)
                 /* not especially efficient but makes this easier to follow */
                 std::swap(*shape_ele_src, *shape_ele_dst);
 
-                if (MASKPOINT_ISSEL_ANY(point)) {
+                if (BKE_mask_point_selected(point)) {
                   if (do_location) {
-                    memcpy(shape_ele_dst->value, shape_ele_src->value, sizeof(float[6]));
+                    memcpy(
+                        shape_ele_dst->point, shape_ele_src->point, sizeof(shape_ele_src->point));
                   }
                   if (do_feather) {
-                    shape_ele_dst->value[6] = shape_ele_src->value[6];
+                    shape_ele_dst->weight = shape_ele_src->weight;
                   }
                 }
 

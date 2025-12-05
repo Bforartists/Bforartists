@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-import bpy # BFA
+import bpy  # BFA
 from bpy.types import Header, Menu, Panel
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui.space_dopesheet import (
@@ -105,6 +105,7 @@ class NLA_HT_header(Header):
 
         row = layout.row(align=True)
         row.popover(panel="NLA_PT_view_view_options", text="Options")  # BFA - moved to end
+
 
 class NLA_HT_playback_controls(Header):
     bl_space_type = 'NLA_EDITOR'
@@ -218,12 +219,14 @@ class NLA_MT_view(Menu):
         layout.menu("INFO_MT_area")
 
 # BFA - menu
+
+
 class NLA_MT_view_pie_menus(Menu):
     bl_label = "Pie Menus"
 
     def draw(self, _context):
         layout = self.layout
-        
+
         layout.operator("wm.call_menu_pie", text="Region Toggle", icon="MENU_PANEL").name = "WM_MT_region_toggle_pie"
         layout.operator(
             "wm.call_menu_pie", text="Snap", icon="MENU_PANEL"
@@ -233,6 +236,8 @@ class NLA_MT_view_pie_menus(Menu):
         ).name = "NLA_MT_view_pie"
 
 # BFA - menu
+
+
 class NLA_PT_view_view_options(Panel):
     bl_label = "View Options"
     bl_space_type = 'NLA_EDITOR'
@@ -432,6 +437,8 @@ class NLA_MT_strips(Menu):
             ).use_upper_stack_evaluation = False
 
 # BFA - menu
+
+
 class NLA_MT_add(Menu):
     bl_label = "Add"
     bl_translation_context = i18n_contexts.operator_default
@@ -459,6 +466,8 @@ class NLA_MT_add(Menu):
         )
 
 # BFA - menu
+
+
 class NLA_MT_strips_transform(Menu):
     bl_label = "Transform"
 
@@ -588,20 +597,25 @@ class NLA_MT_channel_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_menu_enum(
-            "anim.channels_move", "direction", text="Track Ordering"
-        )
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
+
+        layout.separator()
+
+        layout.operator("nla.tracks_add", text="Add Track").above_selected = False
+        layout.operator("nla.tracks_add", text="Add Track Above Selected").above_selected = True
+        layout.separator()
+        layout.operator("nla.tracks_delete")
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
 
 classes = (
-    ANIM_OT_switch_editors_in_nla, # BFA - menu
+    ANIM_OT_switch_editors_in_nla,  # BFA - menu
     NLA_HT_header,
     NLA_HT_playback_controls,
     NLA_MT_editor_menus,
     NLA_MT_view,
-    NLA_MT_view_pie_menus, # BFA - menu
-    NLA_PT_view_view_options, # BFA - menu
+    NLA_MT_view_pie_menus,  # BFA - menu
+    NLA_PT_view_view_options,  # BFA - menu
     NLA_MT_select,
     NLA_MT_marker,
     NLA_MT_marker_select,

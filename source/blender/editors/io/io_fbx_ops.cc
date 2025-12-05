@@ -116,7 +116,7 @@ static void ui_fbx_import_settings(const bContext *C, blender::ui::Layout &layou
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "global_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col.prop(ptr, "use_custom_props", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayout &subcol = col.column(false);
+    blender::ui::Layout &subcol = col.column(false);
     subcol.use_property_split_set(false);  // bfa
     subcol.active_set(RNA_boolean_get(ptr, "use_custom_props"));
     subcol.prop(ptr, "use_custom_props_enum_as_string", UI_ITEM_NONE, std::nullopt, ICON_NONE);
