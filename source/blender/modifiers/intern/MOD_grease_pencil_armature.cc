@@ -267,31 +267,32 @@ static void modify_geometry_set(ModifierData *md,
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
-  uiLayout *col, *row, *split; /* bfa - added row, col, split */
+  ui::Layout &layout = *panel->layout;
+  ui::Layout *col, *row, *split; /* bfa - added row, col, split */
+
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  split = &layout->split(0.95f, true); /* bfa - keep at (0.95f) */
+  layout.prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  split = &layout.split(0.95f, true); /* bfa - keep at (0.95f) */
   row = &split->row(true);
-  modifier::greasepencil::draw_vertex_group_settings(C, row, ptr);
+  modifier::greasepencil::draw_vertex_group_settings(C, *row, ptr);
 
-  layout->label(IFACE_("Bind To"), ICON_NONE); /* bfa - our layout */
+  layout.label(IFACE_("Bind To"), ICON_NONE); /* bfa - our layout */
 
-  col = &layout->column(true);/* bfa - our layout */
+  col = &layout.column(true); /* bfa - our layout */
 
-  row = &col->row(true); /* bfa - our layout */
+  row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);
   row->decorator(ptr, "use_vertex_groups", 0); /*bfa - decorator*/
 
-  row = &col->row(true); /* bfa - our layout */
+  row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_bone_envelopes", UI_ITEM_NONE, IFACE_("Bone Envelopes"), ICON_NONE);
   row->decorator(ptr, "use_bone_envelopes", 0); /*bfa - decorator*/
 

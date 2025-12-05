@@ -265,7 +265,7 @@ static void ui_stl_import_settings(const bContext *C, blender::ui::Layout *layou
     col.prop(ptr, "up_axis", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (uiLayout *panel = layout->panel(C, "STL_import_options", false, IFACE_("Options"))) {
+  if (blender::ui::Layout *panel = layout->panel(C, "STL_import_options", false, IFACE_("Options"))) {
     blender::ui::Layout &col = panel->column(false);
 
     col.use_property_split_set(false);  // bfa

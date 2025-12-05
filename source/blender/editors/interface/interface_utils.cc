@@ -281,7 +281,7 @@ void uiDefAutoButsArrayR(uiBlock *block,
   UI_block_align_end(block);
 }
 
-eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
+eAutoPropButsReturn uiDefAutoButsRNA(blender::ui::Layout *layout,
                                      PointerRNA *ptr,
                                      bool (*check_prop)(PointerRNA *ptr,
                                                         PropertyRNA *prop,
@@ -292,7 +292,7 @@ eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
                                      const bool compact)
 {
   eAutoPropButsReturn return_info = UI_PROP_BUTS_NONE_ADDED;
-  uiLayout *col;
+  blender::ui::Layout *col;
   std::optional<StringRefNull> name;
 
   RNA_STRUCT_BEGIN (ptr, prop) {
@@ -311,7 +311,9 @@ eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
       case UI_BUT_LABEL_ALIGN_COLUMN:
       case UI_BUT_LABEL_ALIGN_SPLIT_COLUMN: {
         const bool is_boolean = (type == PROP_BOOLEAN && !RNA_property_array_check(prop));
-        const bool is_boolean_vector = (type == PROP_BOOLEAN && RNA_property_array_check(prop)); /* BFA - align left if boolean vector prop */
+        const bool is_boolean_vector = (type == PROP_BOOLEAN &&
+                                        RNA_property_array_check(
+                                            prop)); /* BFA - align left if boolean vector prop */
 
         name = RNA_property_ui_name(prop);
 
@@ -326,8 +328,10 @@ eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
           BLI_assert(label_align == UI_BUT_LABEL_ALIGN_SPLIT_COLUMN);
           col = &layout->column(true);
           /* Let uiLayout::prop() create the split layout. */
-          col->use_property_split_set(!is_boolean && !is_boolean_vector); /* BFA - align left if boolean props */
-          col->use_property_decorate_set(!is_boolean && !is_boolean_vector); /* bfa - align left if boolean props */
+          col->use_property_split_set(!is_boolean &&
+                                      !is_boolean_vector); /* BFA - align left if boolean props */
+          col->use_property_decorate_set(
+              !is_boolean && !is_boolean_vector); /* bfa - align left if boolean props */
         }
 
         break;

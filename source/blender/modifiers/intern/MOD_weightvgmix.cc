@@ -442,27 +442,27 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
-  uiLayout *row, *col; /* bfa - added *row, *col */
+  blender::ui::Layout &layout = *panel->layout;
+  blender::ui::Layout *row, *col; /* bfa - added *row, *col */
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
   /* BFA - Draw properties in an indented sublayout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   col->label(IFACE_("Vertex Group"), ICON_NONE);
   row = &col->row(false);
   row->separator();
   col = &row->column(true);
-  modifier_vgroup_ui(col, ptr, &ob_ptr, "vertex_group_a", "invert_vertex_group_a", IFACE_("A"));
-  modifier_vgroup_ui(col, ptr, &ob_ptr, "vertex_group_b", "invert_vertex_group_b", IFACE_("B"));
+  modifier_vgroup_ui(*col, ptr, &ob_ptr, "vertex_group_a", "invert_vertex_group_a", IFACE_("A"));
+  modifier_vgroup_ui(*col, ptr, &ob_ptr, "vertex_group_b", "invert_vertex_group_b", IFACE_("B"));
 
   /* layout->separator(); */ /* BFA - Disable separator*/
 
   /* BFA - Draw properties in an indented sublayout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   col->label(IFACE_("Default Weight"), ICON_NONE);
   row = &col->row(false);
   row->separator();
@@ -470,13 +470,13 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col->prop(ptr, "default_weight_a", UI_ITEM_NONE, IFACE_("A"), ICON_NONE);
   col->prop(ptr, "default_weight_b", UI_ITEM_NONE, IFACE_("B"), ICON_NONE);
 
-  layout->separator();
+  layout.separator();
 
-  layout->prop(ptr, "mix_set", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "mix_set", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -487,7 +487,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void influence_panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);

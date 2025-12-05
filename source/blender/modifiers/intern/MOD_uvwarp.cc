@@ -246,8 +246,8 @@ static void update_depsgraph(ModifierData *md, const ModifierUpdateDepsgraphCont
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /* bfa added row*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *col, *row; /* bfa added row*/
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -255,27 +255,28 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA warp_obj_ptr;
   PointerRNA obj_data_ptr = RNA_pointer_get(&ob_ptr, "data");
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop_search(ptr, "uv_layer", &obj_data_ptr, "uv_layers", std::nullopt, ICON_GROUP_UVS);
+  layout.prop_search(ptr, "uv_layer", &obj_data_ptr, "uv_layers", std::nullopt, ICON_GROUP_UVS);
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   col->prop(ptr, "center", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(false);
-  col->label(IFACE_("Axis"), ICON_NONE); // bfa added label
+  col = &layout.column(false);
+  col->label(IFACE_("Axis"), ICON_NONE);  // bfa added label
   row = &col->row(false);
-  row->separator(); /*bfa - indent*/
-  row->prop(ptr, "axis_u", UI_ITEM_NONE, IFACE_("U"), ICON_NONE); // bfa renamed Axis U
+  row->separator();                                                /*bfa - indent*/
+  row->prop(ptr, "axis_u", UI_ITEM_NONE, IFACE_("U"), ICON_NONE);  // bfa renamed Axis U
   row = &col->row(false);
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "axis_v", UI_ITEM_NONE, IFACE_("V"), ICON_NONE);
 
-  col = &layout->column(false);
-  col->label(IFACE_("Object"), ICON_NONE); // bfa added label
+  col = &layout.column(false);
+  col->label(IFACE_("Object"), ICON_NONE);  // bfa added label
   row = &col->row(false);
   row->separator(); /*bfa - indent*/
-  row->prop(ptr, "object_from", UI_ITEM_NONE, IFACE_("From"), ICON_NONE); // bfa added "From" label
+  row->prop(
+      ptr, "object_from", UI_ITEM_NONE, IFACE_("From"), ICON_NONE);  // bfa added "From" label
   warp_obj_ptr = RNA_pointer_get(ptr, "object_from");
   if (!RNA_pointer_is_null(&warp_obj_ptr) && RNA_enum_get(&warp_obj_ptr, "type") == OB_ARMATURE) {
     PointerRNA warp_obj_data_ptr = RNA_pointer_get(&warp_obj_ptr, "data");
@@ -298,15 +299,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void transform_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "rotation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "rotation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

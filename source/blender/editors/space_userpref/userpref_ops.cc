@@ -424,54 +424,54 @@ static wmOperatorStatus preferences_extension_repo_add_invoke(bContext *C,
 static void preferences_extension_repo_add_ui(bContext * /*C*/, wmOperator *op)
 {
 
-  uiLayout *layout = op->layout;
-  layout->use_property_split_set(true);
-  layout->use_property_decorate_set(false);
+  blender::ui::Layout &layout = *op->layout;
+  layout.use_property_split_set(true);
+  layout.use_property_decorate_set(false);
 
   PointerRNA *ptr = op->ptr;
   const bUserExtensionRepoAddType repo_type = bUserExtensionRepoAddType(RNA_enum_get(ptr, "type"));
 
   switch (repo_type) {
     case bUserExtensionRepoAddType::Remote: {
-      layout->prop(op->ptr, "remote_url", UI_ITEM_R_IMMEDIATE, std::nullopt, ICON_NONE);
-      layout->use_property_split_set(false);
+      layout.prop(op->ptr, "remote_url", UI_ITEM_R_IMMEDIATE, std::nullopt, ICON_NONE);
+      layout.use_property_split_set(false);
       /* bfa - use_property_split = False */ /* bfa - use_property_split = False */
-      layout->prop(op->ptr, "use_sync_on_startup", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      layout.prop(op->ptr, "use_sync_on_startup", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-      layout->separator(0.2f, LayoutSeparatorType::Line);
+      layout.separator(0.2f, LayoutSeparatorType::Line);
 
       const bool use_access_token = RNA_boolean_get(ptr, "use_access_token");
       const int token_icon = (use_access_token && RNA_string_length(op->ptr, "access_token")) ?
                                  ICON_LOCKED :
                                  ICON_UNLOCKED;
 
-      //uiLayout *row = &layout->row(true, IFACE_("Authentication")); -/*bfa, old code*/
-      uiLayout *row = &layout->row(true);/*bfa*/
-      layout->label(IFACE_("Authentication"), ICON_NONE); /*BFA - separate label*/
-      row = &layout->row(false);                            /*bfa*/
-      layout->separator();                                         /*bfa -indent*/
+      // uiLayout *row = &layout.row(true, IFACE_("Authentication")); -/*bfa, old code*/
+      blender::ui::Layout *row = &layout.row(true);      /*bfa*/
+      layout.label(IFACE_("Authentication"), ICON_NONE); /*BFA - separate label*/
+      row = &layout.row(false);                          /*bfa*/
+      layout.separator();                                /*bfa -indent*/
       row->prop(op->ptr, "use_access_token", UI_ITEM_NONE, std::nullopt, ICON_NONE); /*bfa*/
-      uiLayout *col = &layout->row(false);
+      blender::ui::Layout *col = &layout.row(false);
       col->active_set(use_access_token);
       /* Use "immediate" flag to refresh the icon. */
-      row = &layout->row(false); /*bfa*/
-      layout->separator();/*bfa -indent*/
+      row = &layout.row(false); /*bfa*/
+      layout.separator();       /*bfa -indent*/
       row->prop(op->ptr, "access_token", UI_ITEM_R_IMMEDIATE, std::nullopt, token_icon);
 
-      layout->separator(0.2f, LayoutSeparatorType::Line);
+      layout.separator(0.2f, LayoutSeparatorType::Line);
 
       break;
     }
     case bUserExtensionRepoAddType::Local: {
-      layout->prop(op->ptr, "name", UI_ITEM_R_IMMEDIATE, std::nullopt, ICON_NONE);
+      layout.prop(op->ptr, "name", UI_ITEM_R_IMMEDIATE, std::nullopt, ICON_NONE);
       break;
     }
   }
 
-  layout->use_property_split_set(false); /* bfa - use_property_split = False */
-  layout->prop(op->ptr, "use_custom_directory", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->use_property_split_set(true); /* bfa - use_property_split = False */
-  uiLayout *col = &layout->row(false);
+  layout.use_property_split_set(false); /* bfa - use_property_split = False */
+  layout.prop(op->ptr, "use_custom_directory", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.use_property_split_set(true); /* bfa - use_property_split = False */
+  blender::ui::Layout *col = &layout.row(false);
   col->active_set(RNA_boolean_get(ptr, "use_custom_directory"));
   col->prop(op->ptr, "custom_directory", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }

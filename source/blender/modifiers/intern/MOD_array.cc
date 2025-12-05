@@ -901,24 +901,24 @@ static bool is_disabled(const Scene * /*scene*/, ModifierData *md, bool /*use_re
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "fit_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "fit_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   int fit_type = RNA_enum_get(ptr, "fit_type");
   if (fit_type == MOD_ARR_FIXEDCOUNT) {
-    layout->prop(ptr, "count", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "count", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (fit_type == MOD_ARR_FITLENGTH) {
-    layout->prop(ptr, "fit_length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "fit_length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (fit_type == MOD_ARR_FITCURVE) {
-    layout->prop(ptr, "curve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "curve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   modifier_error_message_draw(layout, ptr);
@@ -926,48 +926,48 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void relative_offset_header_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->prop(ptr, "use_relative_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "use_relative_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void relative_offset_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  uiLayout *col = &layout->column(false);
+  ui::Layout &col = layout.column(false);
 
-  col->active_set(RNA_boolean_get(ptr, "use_relative_offset"));
-  col->prop(ptr, "relative_offset_displace", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
+  col.active_set(RNA_boolean_get(ptr, "use_relative_offset"));
+  col.prop(ptr, "relative_offset_displace", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
 }
 
 static void constant_offset_header_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->prop(ptr, "use_constant_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "use_constant_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void constant_offset_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  uiLayout *col = &layout->column(false);
+  ui::Layout &col = layout.column(false);
 
-  col->active_set(RNA_boolean_get(ptr, "use_constant_offset"));
-  col->prop(ptr, "constant_offset_displace", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
+  col.active_set(RNA_boolean_get(ptr, "use_constant_offset"));
+  col.prop(ptr, "constant_offset_displace", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
 }
 
 /**
@@ -975,74 +975,72 @@ static void constant_offset_draw(const bContext * /*C*/, Panel *panel)
  */
 static void object_offset_header_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->prop(ptr, "use_object_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "use_object_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void object_offset_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  uiLayout *col = &layout->column(false);
+  ui::Layout &col = layout.column(false);
 
-  col->active_set(RNA_boolean_get(ptr, "use_object_offset"));
-  col->prop(ptr, "offset_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
+  col.active_set(RNA_boolean_get(ptr, "use_object_offset"));
+  col.prop(ptr, "offset_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
 }
 
 static void symmetry_panel_header_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->prop(ptr, "use_merge_vertices", UI_ITEM_NONE, IFACE_("Merge"), ICON_NONE);
+  layout.prop(ptr, "use_merge_vertices", UI_ITEM_NONE, IFACE_("Merge"), ICON_NONE);
 }
 
 static void symmetry_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
-  uiLayout *col, *row; /* bfa - added col, row */
+  ui::Layout &layout = *panel->layout;
+  ui::Layout *col, *row; /* bfa - added col, row */
+
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(false); /* bfa - our layout */
+  col = &layout.column(false); /* bfa - our layout */
   col->active_set(RNA_boolean_get(ptr, "use_merge_vertices"));
   col->prop(ptr, "merge_threshold", UI_ITEM_NONE, IFACE_("Distance"), ICON_NONE);
 
-  row = &col->row(true); /* bfa - our layout */
+  row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /* bfa - Indent */
-  row->prop(ptr,
-          "use_merge_vertices_cap",
-          UI_ITEM_NONE,
-          IFACE_("First and Last Copies"),
-          ICON_NONE);
+  row->separator();                   /* bfa - Indent */
+  row->prop(
+      ptr, "use_merge_vertices_cap", UI_ITEM_NONE, IFACE_("First and Last Copies"), ICON_NONE);
   row->decorator(ptr, "use_merge_vertices_cap", 0); /* bfa - Add the decorator */
 }
 
 static void uv_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /* bfa added row*/
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
+  ui::Layout *col, *row; /* bfa added row*/
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(true);
-  // bfa added Offset row indent 
+  col = &layout.column(true);
+  // bfa added Offset row indent
   col->label(IFACE_("Offset"), ICON_NONE);
   row = &col->row(false);
-  row->separator(); /*bfa - indent*/
-  row->prop(ptr, "offset_u", UI_ITEM_R_EXPAND, IFACE_("U"), ICON_NONE); // bfa renamed Offset U
+  row->separator();                                                      /*bfa - indent*/
+  row->prop(ptr, "offset_u", UI_ITEM_R_EXPAND, IFACE_("U"), ICON_NONE);  // bfa renamed Offset U
   row = &col->row(false);
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "offset_v", UI_ITEM_R_EXPAND, IFACE_("V"), ICON_NONE);
@@ -1050,19 +1048,19 @@ static void uv_panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void caps_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /* bfa added row*/
-  uiLayout *layout = panel->layout;
+  ui::Layout &layout = *panel->layout;
+  ui::Layout *col, *row; /* bfa added row*/
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   // bfa added Offset row indent
   col->label(IFACE_("Cap"), ICON_NONE);
   row = &col->row(false);
-  row->separator(); /*bfa - indent*/
-  row->prop(ptr, "start_cap", UI_ITEM_NONE, IFACE_("Start"), ICON_NONE); // bfa renamed Cap Start
+  row->separator();                                                       /*bfa - indent*/
+  row->prop(ptr, "start_cap", UI_ITEM_NONE, IFACE_("Start"), ICON_NONE);  // bfa renamed Cap Start
   row = &col->row(false);
   row->separator(); /*bfa - indent*/
   row->prop(ptr, "end_cap", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);

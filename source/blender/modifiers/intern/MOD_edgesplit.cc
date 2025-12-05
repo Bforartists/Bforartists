@@ -132,16 +132,15 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa, added *col, removed *sub*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
+  blender::ui::Layout *row, *col; /*bfa, added *col, removed *sub*/
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
-
+  layout.use_property_split_set(true);
 
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = &layout->split(0.385f, true);
+  blender::ui::Layout *split = &layout.split(0.385f, true);
 
   row = &split->row(false); /* bfa - our layout */
   row->use_property_decorate_set(false);
@@ -154,11 +153,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->prop(ptr, "split_angle", UI_ITEM_NONE, "", ICON_NONE);
   }
   else {
-   row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
-  col = &layout->column(true); /* bfa - our layout */
-  row = &col->row(true); /* bfa - our layout */
+  col = &layout.column(true);         /* bfa - our layout */
+  row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_sharp", UI_ITEM_NONE, IFACE_("Sharp Edges"), ICON_NONE);
   row->decorator(ptr, "use_edge_sharp", 0); /*bfa - decorator*/

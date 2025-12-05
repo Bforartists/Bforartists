@@ -31,23 +31,23 @@
 #include "DNA_collection_types.h"
 #include "DNA_screen_types.h"
 
+#include "../asset/ED_asset_shelf.hh"  // bfa asset shelf include
 #include "ED_object.hh"
 #include "ED_outliner.hh"
 #include "ED_screen.hh"
 #include "ED_undo.hh"
 #include "ED_view3d.hh"
-#include "../asset/ED_asset_shelf.hh" // bfa asset shelf include
 
 #include "UI_resources.hh"
 
 #include "RNA_access.hh"
-#include "RNA_prototypes.hh" // bfa override
+#include "RNA_prototypes.hh"  // bfa override
 
 #include "WM_api.hh"
 #include "WM_types.hh"
 
 #include "../interface/interface_intern.hh" /* bfa asset nodegroup override*/
-#include "view3d_intern.hh" /* own include */
+#include "view3d_intern.hh"                 /* own include */
 
 static bool view3d_drop_in_main_region_poll(bContext *C, const wmEvent *event)
 {
@@ -478,18 +478,22 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
   if (!asset_drag->import_settings.is_from_browser) {
     AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
     if (active_shelf) {
-      eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
+      eAssetImportMethod import_method_prop = eAssetImportMethod(
+          active_shelf->settings.import_method);
       asset_drag->import_settings.method = import_method_prop;
       use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
     }
   }
   ID *id = WM_drag_asset_id_import(C, asset_drag, FILE_AUTOSELECT);
-  if (use_override) {  
-    ID *owner_id = id; 
+  if (!id) {
+    return;
+  }
+  if (use_override) {
+    ID *owner_id = id;
     ID *id_or = id;
     if (!ELEM(nullptr, owner_id, id_or)) {
       id = ui_template_id_liboverride_hierarchy_make(
-      C, CTX_data_main(C), owner_id, id_or, nullptr);
+          C, CTX_data_main(C), owner_id, id_or, nullptr);
     }
   }
   /* end bfa asset shelf props*/
@@ -601,19 +605,22 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   if (!asset_drag->import_settings.is_from_browser) {
     AssetShelf *active_shelf = blender::ed::asset::shelf::active_shelf_from_area(CTX_wm_area(C));
     if (active_shelf) {
-      eAssetImportMethod import_method_prop = eAssetImportMethod(active_shelf->settings.import_method);
+      eAssetImportMethod import_method_prop = eAssetImportMethod(
+          active_shelf->settings.import_method);
       asset_drag->import_settings.method = import_method_prop;
 
       use_instance = (active_shelf->settings.import_flags &
-            (import_method_prop == ASSET_IMPORT_LINK ?
-                  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK :
-                  SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
+                      (import_method_prop == ASSET_IMPORT_LINK ?
+                           SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_LINK :
+                           SHELF_ASSET_IMPORT_INSTANCE_COLLECTIONS_ON_APPEND)) != 0;
 
-      drop_instances_to_origin = (active_shelf->settings.import_flags & SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
+      drop_instances_to_origin = (active_shelf->settings.import_flags &
+                                  SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN);
 
       use_override = import_method_prop == ASSET_IMPORT_LINK_OVERRIDE;
     }
-  } else {
+  }
+  else {
     use_instance = use_instance_collections;
     drop_instances_to_origin = asset_drag->import_settings.drop_instances_to_origin;
     use_override = asset_drag->import_settings.method == ASSET_IMPORT_LINK_OVERRIDE;
@@ -621,6 +628,9 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
 
   /* end bfa */
   ID *id = WM_drag_asset_id_import(C, asset_drag, FILE_AUTOSELECT);
+  if (!id) {
+    return;
+  }
   Collection *collection = (Collection *)id;
 
   /* Reset temporary override. */
@@ -682,8 +692,9 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
 static void view3d_id_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
   ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
-
-  WM_operator_properties_id_lookup_set_from_id(drop->ptr, id);
+  if (id) {
+    WM_operator_properties_id_lookup_set_from_id(drop->ptr, id);
+  }
 }
 
 static void view3d_geometry_nodes_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
@@ -695,9 +706,22 @@ static void view3d_geometry_nodes_drop_copy(bContext *C, wmDrag *drag, wmDropBox
 static void view3d_id_drop_copy_with_type(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
   ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
+  wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
 
-  RNA_enum_set(drop->ptr, "type", GS(id->name));
-  WM_operator_properties_id_lookup_set_from_id(drop->ptr, id);
+  std::optional<ID_Type> idtype = std::nullopt;
+  if (asset_drag) {
+    idtype = asset_drag->asset->get_id_type();
+  }
+  else if (id) {
+    idtype = GS(id->name);
+  }
+
+  if (idtype) {
+    RNA_enum_set(drop->ptr, "type", *idtype);
+  }
+  if (id) {
+    WM_operator_properties_id_lookup_set_from_id(drop->ptr, id);
+  }
 }
 
 static void view3d_id_path_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)

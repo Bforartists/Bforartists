@@ -618,55 +618,55 @@ static void required_data_mask(ModifierData * /*md*/, CustomData_MeshMasks *r_cd
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->prop(ptr, "operation", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "operation", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "operand_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "operand_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (RNA_enum_get(ptr, "operand_type") == eBooleanModifierFlag_Object) {
-    layout->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
-    layout->prop(ptr, "collection", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "collection", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  layout->prop(ptr, "solver", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "solver", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);
 }
 
 static void solver_options_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
-  uiLayout *col, *row; /* bfa - added col,row */
+  blender::ui::Layout &layout = *panel->layout;
+  blender::ui::Layout *col, *row; /* bfa - added col,row */
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   const bool use_exact = RNA_enum_get(ptr, "solver") == eBooleanModifierSolver_Mesh_Arr;
   const bool use_manifold = RNA_enum_get(ptr, "solver") == eBooleanModifierSolver_Manifold;
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(true); /* bfa - our layout */
+  col = &layout.column(true); /* bfa - our layout */
   if (use_exact) {
     col->prop(ptr, "material_mode", UI_ITEM_NONE, IFACE_("Materials"), ICON_NONE);
     /* When operand is collection, we always use_self. */
     if (RNA_enum_get(ptr, "operand_type") == eBooleanModifierFlag_Object) {
 
-      col = &layout->column(true); /* bfa - our layout */
-      row = &col->row(true); /* bfa - our layout */
+      col = &layout.column(true);         /* bfa - our layout */
+      row = &col->row(true);              /* bfa - our layout */
       row->use_property_split_set(false); /* bfa - use_property_split = False */
-      row->separator(); /*bfa - indent*/
+      row->separator();                   /*bfa - indent*/
       row->prop(ptr, "use_self", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       row->decorator(ptr, "use_self", 0); /*bfa - decorator*/
     }
 
-    col = &layout->column(true); /* bfa - our layout */
-    row = &col->row(true); /* bfa - our layout */
+    col = &layout.column(true);         /* bfa - our layout */
+    row = &col->row(true);              /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(); /*bfa - indent*/
+    row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_hole_tolerant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_hole_tolerant", 0); /*bfa - decorator*/
   }

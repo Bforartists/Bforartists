@@ -492,7 +492,7 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
 
-        layout.operator("anim.channels_group", icon="NEW_GROUP")
+        layout.operator("anim.channels_group", text="Group Channels", icon="NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()

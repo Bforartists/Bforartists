@@ -461,8 +461,7 @@ static void deform_verts(ModifierData *md,
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
   const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
   PointerRNA ob_ptr;
@@ -470,30 +469,30 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA cast_object_ptr = RNA_pointer_get(ptr, "object");
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "cast_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "cast_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  row = &layout->row(true, IFACE_("Axis"));
+  blender::ui::Layout *row = &layout.row(true, IFACE_("Axis"));
   row->prop(ptr, "use_x", toggles_flag, std::nullopt, ICON_NONE);
   row->prop(ptr, "use_y", toggles_flag, std::nullopt, ICON_NONE);
   row->prop(ptr, "use_z", toggles_flag, std::nullopt, ICON_NONE);
 
-  layout->prop(ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  row = &layout->row(true); /* bfa - our layout */
+  row = &layout.row(true);            /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_radius_as_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_radius_as_size", 0); /*bfa - decorator*/
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  layout->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   if (!RNA_pointer_is_null(&cast_object_ptr)) {
-    layout->prop(ptr, "use_transform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "use_transform", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   modifier_error_message_draw(layout, ptr);

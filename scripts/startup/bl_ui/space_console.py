@@ -139,7 +139,7 @@ class CONSOLE_MT_edit(Menu):
 
 
 class CONSOLE_MT_language(Menu):
-    bl_label = "Languages..."
+    bl_label = "Languages"
 
     def draw(self, _context):
         import sys

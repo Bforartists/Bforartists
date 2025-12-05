@@ -133,8 +133,8 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa - no *sub*/
-  uiLayout *layout = panel->layout;
+  ui::Layout *row, *col; /*bfa - no *sub*/
+  ui::Layout &layout = *panel->layout;
   const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
 
   PropertyRNA *prop;
@@ -144,7 +144,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   bool has_bisect = (mmd->flag &
                      (MOD_MIR_BISECT_AXIS_X | MOD_MIR_BISECT_AXIS_Y | MOD_MIR_BISECT_AXIS_Z));
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   col->use_property_split_set(true);
 
   prop = RNA_struct_find_property(ptr, "use_axis");
@@ -171,7 +171,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col->prop(ptr, "mirror_object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
@@ -180,7 +180,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = &layout->split(0.385f, true);
+  ui::Layout *split = &layout.split(0.385f, true);
 
   /* bfa - our layout */
   row = &split->row(true);
@@ -202,7 +202,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   RNA_boolean_get_array(ptr, "use_bisect_axis", is_bisect_set);
 
   /* bfa - our layout */
-  col = &layout->row(true); /*bfa - col, not sub*/
+  col = &layout.row(true); /*bfa - col, not sub*/
   col->use_property_split_set(true);   /* bfa - use_property_split = true */
   col->active_set(is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
   col->prop(ptr, "bisect_threshold", UI_ITEM_NONE, IFACE_("Bisect Distance"), ICON_NONE);
@@ -212,17 +212,17 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void data_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa - no *sub*/
-  uiLayout *layout = panel->layout;
+  ui::Layout *col, *row; /*bfa - no *sub*/
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(true);
+  col = &layout.column(true);
   /* bfa - our layout */
   col->label(IFACE_("Mirror"), ICON_NONE); // bfa added label
-  uiLayout *split = &col->split(0.385f, true);
+  ui::Layout *split = &col->split(0.385f, true);
 
   /* bfa - our layout */
   row = &split->row(false);
@@ -259,7 +259,7 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
-  col = &layout->column(true);
+  col = &layout.column(true);
   col->label(IFACE_("Offset"), ICON_NONE); // bfa added label
   // bfa added Offset row indent
   row = &col->row(false);
@@ -270,7 +270,7 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   row->prop(ptr, "offset_v", UI_ITEM_R_SLIDER, IFACE_("V"), ICON_NONE);
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_mirror_vertex_groups", UI_ITEM_NONE, IFACE_("Vertex Groups"), ICON_NONE);

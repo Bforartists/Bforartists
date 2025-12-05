@@ -228,47 +228,47 @@ static void modify_geometry_set(ModifierData *md,
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *row, *col;
-  uiLayout *layout = panel->layout;
+  ui::Layout *col = nullptr;
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  row = &layout->row(true);
+  ui::Layout *row = &layout.row(true);
   row->prop(ptr, "use_edit_position", UI_ITEM_R_TOGGLE, IFACE_("Position"), ICON_NONE);
   row->prop(ptr,
-            "use_edit_strength",
-            UI_ITEM_R_TOGGLE,
-            CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, "Strength"),
-            ICON_NONE);
+           "use_edit_strength",
+           UI_ITEM_R_TOGGLE,
+           CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, "Strength"),
+           ICON_NONE);
   row->prop(ptr, "use_edit_thickness", UI_ITEM_R_TOGGLE, IFACE_("Thickness"), ICON_NONE);
 
   row->prop(ptr, "use_edit_uv", UI_ITEM_R_TOGGLE, IFACE_("UV"), ICON_NONE);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "step", UI_ITEM_NONE, IFACE_("Repeat"), ICON_NONE);
+  layout.prop(ptr, "factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "step", UI_ITEM_NONE, IFACE_("Repeat"), ICON_NONE);
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   col->active_set(RNA_boolean_get(ptr, "use_edit_position"));
-  row = &col->row(true); /* bfa - our layout */
+  row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_keep_shape", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_keep_shape", 0); /*bfa - decorator*/
 
-  row = &col->row(true); /* bfa - our layout */
+  row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_smooth_ends", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_smooth_ends", 0); /*bfa - decorator*/
 
-  if (uiLayout *influence_panel = layout->panel_prop(
+  if (ui::Layout *influence_panel = layout.panel_prop(
           C, ptr, "open_influence_panel", IFACE_("Influence")))
   {
-    modifier::greasepencil::draw_layer_filter_settings(C, influence_panel, ptr);
-    modifier::greasepencil::draw_material_filter_settings(C, influence_panel, ptr);
-    modifier::greasepencil::draw_vertex_group_settings(C, influence_panel, ptr);
+    modifier::greasepencil::draw_layer_filter_settings(C, *influence_panel, ptr);
+    modifier::greasepencil::draw_material_filter_settings(C, *influence_panel, ptr);
+    modifier::greasepencil::draw_vertex_group_settings(C, *influence_panel, ptr);
   }
 
   modifier_error_message_draw(layout, ptr);

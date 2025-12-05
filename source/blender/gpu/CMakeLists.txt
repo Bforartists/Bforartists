@@ -106,6 +106,8 @@ set(SRC
   intern/gpu_viewport.cc
   intern/gpu_worker.cc
 
+  shader_tool/parser.cc
+
   GPU_attribute_convert.hh
   GPU_batch.hh
   GPU_batch_presets.hh
@@ -346,6 +348,7 @@ set(VULKAN_SRC
   vulkan/vk_uniform_buffer.hh
   vulkan/vk_vertex_attribute_object.hh
   vulkan/vk_vertex_buffer.hh
+  vulkan/vk_vertex_input_description.hh
 )
 
 set(METAL_SRC

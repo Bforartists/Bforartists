@@ -292,36 +292,36 @@ static void deform_matrices(ModifierData *md,
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa - added *row*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *col, *row; /*bfa - added *row*/
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(true);
+  col = &layout.column(true);
   col->prop(ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
   col->prop(ptr, "sculpt_levels", UI_ITEM_NONE, IFACE_("Sculpt"), ICON_NONE);
   col->prop(ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
   const bool is_sculpt_mode = CTX_data_active_object(C)->mode & OB_MODE_SCULPT;
-  uiBlock *block = panel->layout->block();
+  uiBlock *block = layout.block();
   UI_block_lock_set(block, !is_sculpt_mode, N_("Sculpt Base Mesh"));
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
   row->decorator(ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
   UI_block_lock_clear(block);
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "show_only_control_edges", 0); /*bfa - decorator*/
 
@@ -330,13 +330,12 @@ static void panel_draw(const bContext *C, Panel *panel)
 
 static void subdivisions_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->enabled_set(RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
+  layout.enabled_set(RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
 
   MultiresModifierData *mmd = static_cast<MultiresModifierData *>(ptr->data);
 
@@ -352,51 +351,50 @@ static void subdivisions_panel_draw(const bContext * /*C*/, Panel *panel)
    */
 
   PointerRNA op_ptr;
-  op_ptr = layout->op("OBJECT_OT_multires_subdivide",
-                      IFACE_("Subdivide"),
-                      ICON_NONE,
-                      blender::wm::OpCallContext::ExecDefault,
-                      UI_ITEM_NONE);
+  op_ptr = layout.op("OBJECT_OT_multires_subdivide",
+                     IFACE_("Subdivide"),
+                     ICON_NONE,
+                     blender::wm::OpCallContext::ExecDefault,
+                     UI_ITEM_NONE);
   RNA_enum_set(&op_ptr, "mode", int8_t(MultiresSubdivideModeType::CatmullClark));
   RNA_string_set(&op_ptr, "modifier", reinterpret_cast<ModifierData *>(mmd)->name);
 
-  row = &layout->row(false);
-  op_ptr = row->op("OBJECT_OT_multires_subdivide",
-                   IFACE_("Simple"),
-                   ICON_NONE,
-                   blender::wm::OpCallContext::ExecDefault,
-                   UI_ITEM_NONE);
+  blender::ui::Layout &row = layout.row(false);
+  op_ptr = row.op("OBJECT_OT_multires_subdivide",
+                  IFACE_("Simple"),
+                  ICON_NONE,
+                  blender::wm::OpCallContext::ExecDefault,
+                  UI_ITEM_NONE);
   RNA_enum_set(&op_ptr, "mode", int8_t(MultiresSubdivideModeType::Simple));
   RNA_string_set(&op_ptr, "modifier", reinterpret_cast<ModifierData *>(mmd)->name);
-  op_ptr = row->op("OBJECT_OT_multires_subdivide",
-                   IFACE_("Linear"),
-                   ICON_NONE,
-                   blender::wm::OpCallContext::ExecDefault,
-                   UI_ITEM_NONE);
+  op_ptr = row.op("OBJECT_OT_multires_subdivide",
+                  IFACE_("Linear"),
+                  ICON_NONE,
+                  blender::wm::OpCallContext::ExecDefault,
+                  UI_ITEM_NONE);
   RNA_enum_set(&op_ptr, "mode", int8_t(MultiresSubdivideModeType::Linear));
   RNA_string_set(&op_ptr, "modifier", reinterpret_cast<ModifierData *>(mmd)->name);
 
-  layout->separator();
+  layout.separator();
 
-  layout->op("OBJECT_OT_multires_unsubdivide", IFACE_("Unsubdivide"), ICON_NONE);
-  layout->op("OBJECT_OT_multires_higher_levels_delete", IFACE_("Delete Higher"), ICON_NONE);
+  layout.op("OBJECT_OT_multires_unsubdivide", IFACE_("Unsubdivide"), ICON_NONE);
+  layout.op("OBJECT_OT_multires_higher_levels_delete", IFACE_("Delete Higher"), ICON_NONE);
 }
 
 static void shape_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->enabled_set(RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
+  layout.enabled_set(RNA_enum_get(&ob_ptr, "mode") != OB_MODE_EDIT);
 
   PointerRNA op_ptr;
-  row = &layout->row(false);
+  blender::ui::Layout *row = &layout.row(false);
   row->op("OBJECT_OT_multires_reshape", IFACE_("Reshape"), ICON_NONE);
 
-  row = &layout->row(false);
+  row = &layout.row(false);
   op_ptr = row->op("OBJECT_OT_multires_base_apply", IFACE_("Apply Base"), ICON_NONE);
   RNA_boolean_set(&op_ptr, "apply_heuristic", true);
   op_ptr = row->op("OBJECT_OT_multires_base_apply", IFACE_("Conform Base"), ICON_NONE);
@@ -405,8 +403,7 @@ static void shape_panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void generate_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
   MultiresModifierData *mmd = static_cast<MultiresModifierData *>(ptr->data);
@@ -414,54 +411,54 @@ static void generate_panel_draw(const bContext * /*C*/, Panel *panel)
   bool is_external = RNA_boolean_get(ptr, "is_external");
 
   if (mmd->totlvl == 0) {
-    layout->op("OBJECT_OT_multires_rebuild_subdiv", IFACE_("Rebuild Subdivisions"), ICON_NONE);
+    layout.op("OBJECT_OT_multires_rebuild_subdiv", IFACE_("Rebuild Subdivisions"), ICON_NONE);
   }
 
-  col = &layout->column(false);
-  row = &col->row(false);
+  blender::ui::Layout &col = layout.column(false);
+  blender::ui::Layout *row = &col.row(false);
   if (is_external) {
     row->op("OBJECT_OT_multires_external_pack", IFACE_("Pack External"), ICON_NONE);
-    col->use_property_split_set(true);
-    row = &col->row(false);
+    col.use_property_split_set(true);
+    row = &col.row(false);
     row->prop(ptr, "filepath", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
-    col->op("OBJECT_OT_multires_external_save", IFACE_("Save External..."), ICON_NONE);
+    col.op("OBJECT_OT_multires_external_save", IFACE_("Save External..."), ICON_NONE);
   }
 }
 
 static void advanced_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa - added *row*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *col, *row; /*bfa - added *row*/
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   bool has_displacement = RNA_int_get(ptr, "total_levels") != 0;
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->active_set(!has_displacement);
+  layout.active_set(!has_displacement);
 
-  layout->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   col->active_set(true);
   col->prop(ptr, "uv_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col->prop(ptr, "boundary_smooth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_creases", 0); /*bfa - decorator*/
 
   /* bfa - our layout */
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_custom_normals", 0); /*bfa - decorator*/
 }

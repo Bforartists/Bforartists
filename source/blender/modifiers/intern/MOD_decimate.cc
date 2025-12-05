@@ -218,8 +218,8 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *sub, *row, *col; /*bfa, added *col*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
+  blender::ui::Layout *sub, *row, *col; /*bfa, added *col*/
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -228,20 +228,20 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   char count_info[64];
   SNPRINTF(count_info, RPT_("Face Count: %d"), RNA_int_get(ptr, "face_count"));
 
-  layout->prop(ptr, "decimate_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "decimate_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
   if (decimate_type == MOD_DECIM_MODE_COLLAPSE) {
-    layout->prop(ptr, "ratio", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "ratio", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
     /* NOTE: split amount here needs to be synced with normal labels */
-    uiLayout *split = &layout->split(0.385f, true); /* bfa - our layout */
+    blender::ui::Layout *split = &layout.split(0.385f, true); /* bfa - our layout */
 
     row = &split->row(true); /* bfa - our layout */
     row->use_property_decorate_set(false);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(); /*bfa - indent*/
+    row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_symmetry", UI_ITEM_NONE, "Symmetry", ICON_NONE);
     row->decorator(ptr, "use_symmetry", 0);
 
@@ -255,33 +255,33 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
       row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
     }
 
-    col = &layout->column(true); /* bfa - our layout */
-    row = &col->row(true); /* bfa - our layout */
+    col = &layout.column(true);         /* bfa - our layout */
+    row = &col->row(true);              /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(); /*bfa - indent*/
+    row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_collapse_triangulate", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_collapse_triangulate", 0); /*bfa - decorator*/
 
     modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
-    sub = &layout->row(true);
+    sub = &layout.row(true);
     bool has_vertex_group = RNA_string_length(ptr, "vertex_group") != 0;
     sub->active_set(has_vertex_group);
     sub->prop(ptr, "vertex_group_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else if (decimate_type == MOD_DECIM_MODE_UNSUBDIV) {
-    layout->prop(ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "iterations", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else { /* decimate_type == MOD_DECIM_MODE_DISSOLVE. */
-    layout->prop(ptr, "angle_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    uiLayout *col = &layout->column(false);
+    layout.prop(ptr, "angle_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    blender::ui::Layout *col = &layout.column(false);
     col->prop(ptr, "delimit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    row = &layout->row(true); /* bfa - our layout */
+    row = &layout.row(true);           /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/
   }
-  layout->label(count_info, ICON_NONE);
+  layout.label(count_info, ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);
 }

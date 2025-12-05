@@ -889,7 +889,7 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
     if ((CTX_data_mode_enum(C) == CTX_MODE_OBJECT && CTX_wm_view3d(C) != nullptr)) {
       switch (AssetShelfImportMethod(import_method_prop)) {
         case SHELF_ASSET_IMPORT_LINK: {
-          uiLayout *row = &layout.row(true);
+          ui::Layout *row = &layout.row(true);
           row->prop(&shelf_ptr,
                     "instance_collections_on_link",
                     UI_ITEM_NONE,
@@ -900,7 +900,7 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
         case SHELF_ASSET_IMPORT_APPEND:
         case SHELF_ASSET_IMPORT_APPEND_REUSE:
         case SHELF_ASSET_IMPORT_PACK: {
-          uiLayout *row = &layout.row(true);
+          ui::Layout *row = &layout.row(true);
           row->prop(&shelf_ptr,
                     "instance_collections_on_append",
                     UI_ITEM_NONE,
@@ -916,7 +916,7 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
   }
   // end bfa
   layout.popover(C, "ASSETSHELF_PT_display", "", ICON_IMGDISPLAY);
-  uiLayout *sub = &layout.row(false);
+  ui::Layout *sub = &layout.row(false);
   /* Same as file/asset browser header. */
   sub->ui_units_x_set(8);
   sub->prop(&shelf_ptr, "search_filter", UI_ITEM_NONE, "", ICON_VIEWZOOM);

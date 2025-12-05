@@ -75,22 +75,22 @@ static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
-  uiLayout *row, *col; /* bfa - added row, col */
+  blender::ui::Layout *row, *col; /* bfa - added row, col */
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
   VolumeToMeshModifierData *vmmd = static_cast<VolumeToMeshModifierData *>(ptr->data);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
   {
-    col = &layout->column(false); /* bfa - our layout */
+    col = &layout.column(false); /* bfa - our layout */
     col->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "grid_name", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   {
-    col = &layout->column(false); /* bfa - our layout */
+    col = &layout.column(false); /* bfa - our layout */
     col->prop(ptr, "resolution_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT) {
       col->prop(ptr, "voxel_amount", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -101,15 +101,15 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
 
   {
-    col = &layout->column(false); /* bfa - our layout */
+    col = &layout.column(false); /* bfa - our layout */
     col->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     /* bfa - our layout */
-    col = &layout->column(false);;
+    col = &layout.column(false);
     row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(); /*bfa - indent*/
+    row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
   }

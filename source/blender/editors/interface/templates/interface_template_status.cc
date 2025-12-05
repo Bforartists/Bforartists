@@ -13,7 +13,7 @@
 #include "BKE_global.hh"
 #include "BKE_layer.hh"
 #include "BKE_main.hh"
-#include "BKE_paint.hh" // bfa grease pencil fill
+#include "BKE_paint.hh"  // bfa grease pencil fill
 #include "BKE_report.hh"
 #include "BKE_screen.hh"
 #include "BKE_workspace.hh"
@@ -27,8 +27,8 @@
 #include "BLF_api.hh"
 #include "BLT_translation.hh"
 
-#include "DNA_brush_enums.h" // bfa grease pencil fill
-#include "DNA_brush_types.h" // bfa grease pencil fill
+#include "DNA_brush_enums.h"  // bfa grease pencil fill
+#include "DNA_brush_types.h"  // bfa grease pencil fill
 #include "DNA_space_types.h"
 #include "DNA_workspace_types.h"
 
@@ -43,7 +43,7 @@
 /* Maximum width for a Status Bar report */
 #define REPORT_BANNER_MAX_WIDTH (800.0f * UI_SCALE_FAC)
 
-void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
+void uiTemplateReportsBanner(blender::ui::Layout *layout, bContext *C)
 {
   ReportList *reports = CTX_wm_reports(C);
   Report *report = BKE_reports_last_displayable(reports);
@@ -62,8 +62,8 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
     return;
   }
 
-  uiLayout *ui_abs = &layout->absolute(false);
-  uiBlock *block = ui_abs->block();
+  blender::ui::Layout &ui_abs = layout->absolute(false);
+  uiBlock *block = ui_abs.block();
   blender::ui::EmbossType previous_emboss = UI_block_emboss_get(block);
 
   uchar report_icon_color[4];
@@ -151,7 +151,9 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
   UI_block_emboss_set(block, previous_emboss);
 }
 
-static bool uiTemplateInputStatusAzone(uiLayout *layout, const AZone *az, const ARegion *region)
+static bool uiTemplateInputStatusAzone(blender::ui::Layout *layout,
+                                       const AZone *az,
+                                       const ARegion *region)
 {
   if (az->type == AZONE_AREA) {
     layout->label(nullptr, ICON_MOUSE_LMB_DRAG);
@@ -172,6 +174,13 @@ static bool uiTemplateInputStatusAzone(uiLayout *layout, const AZone *az, const 
     return true;
   }
 
+  if (az->type == AZONE_REGION_QUAD) {
+    layout->label(nullptr, ICON_MOUSE_LMB_DRAG);
+    layout->separator(-0.2f);
+    layout->label(IFACE_("Resize Quadrants"), ICON_NONE);
+    return true;
+  }
+
   if (az->type == AZONE_REGION) {
     layout->label(nullptr, ICON_MOUSE_LMB_DRAG);
     layout->separator(-0.2f);
@@ -184,7 +193,7 @@ static bool uiTemplateInputStatusAzone(uiLayout *layout, const AZone *az, const 
   return false;
 }
 
-static bool uiTemplateInputStatusBorder(wmWindow *win, uiLayout *row)
+static bool uiTemplateInputStatusBorder(wmWindow *win, blender::ui::Layout *row)
 {
   /* On a gap between editors. */
   rcti win_rect;
@@ -209,7 +218,7 @@ static bool uiTemplateInputStatusBorder(wmWindow *win, uiLayout *row)
   return false;
 }
 
-static bool uiTemplateInputStatusHeader(ARegion *region, uiLayout *row)
+static bool uiTemplateInputStatusHeader(ARegion *region, blender::ui::Layout *row)
 {
   if (region->regiontype != RGN_TYPE_HEADER) {
     return false;
@@ -225,7 +234,7 @@ static bool uiTemplateInputStatusHeader(ARegion *region, uiLayout *row)
   return true;
 }
 
-static bool uiTemplateInputStatus3DView(bContext *C, uiLayout *row)
+static bool uiTemplateInputStatus3DView(bContext *C, blender::ui::Layout *row)
 {
   const Object *ob = CTX_data_active_object(C);
   if (!ob) {
@@ -258,12 +267,14 @@ static bool uiTemplateInputStatus3DView(bContext *C, uiLayout *row)
   return false;
 }
 /* bfa grease pencil fill */
-static void uiTemplateInputStatusBFAGreasePencil(bContext *C, uiLayout *row)
+static void uiTemplateInputStatusBFAGreasePencil(bContext *C, blender::ui::Layout *row)
 {
   const Object *ob = CTX_data_active_object(C);
   const ToolSettings *ts = CTX_data_tool_settings(C);
   const Brush *brush = BKE_paint_brush(&ts->gp_paint->paint);
-  if (ob != nullptr && CTX_data_mode_enum(C) == CTX_MODE_PAINT_GREASE_PENCIL && brush && brush->gpencil_settings && brush->gpencil_brush_type == GPAINT_BRUSH_TYPE_FILL) {
+  if (ob != nullptr && CTX_data_mode_enum(C) == CTX_MODE_PAINT_GREASE_PENCIL && brush &&
+      brush->gpencil_settings && brush->gpencil_brush_type == GPAINT_BRUSH_TYPE_FILL)
+  {
     row->label(nullptr, ICON_EVENT_ALT);
     row->separator(1.2f);
     row->label(nullptr, ICON_MOUSE_LMB_DRAG);
@@ -273,39 +284,39 @@ static void uiTemplateInputStatusBFAGreasePencil(bContext *C, uiLayout *row)
 }
 /* bfa end */
 
-void uiTemplateInputStatus(uiLayout *layout, bContext *C)
+void uiTemplateInputStatus(blender::ui::Layout *layout, bContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
   WorkSpace *workspace = CTX_wm_workspace(C);
 
   /* Workspace status text has priority. */
   if (!workspace->runtime->status.is_empty()) {
-    uiLayout *row = &layout->row(true);
+    blender::ui::Layout &row = layout->row(true);
     for (const blender::bke::WorkSpaceStatusItem &item : workspace->runtime->status) {
       if (item.space_factor != 0.0f) {
-        row->separator(item.space_factor);
+        row.separator(item.space_factor);
       }
       else {
-        uiBut *but = uiItemL_ex(row, item.text, item.icon, false, false);
+        uiBut *but = uiItemL_ex(&row, item.text, item.icon, false, false);
         if (item.inverted) {
           but->drawflag |= UI_BUT_ICON_INVERT;
         }
         const float offset = ui_event_icon_offset(item.icon);
         if (offset != 0.0f) {
-          row->separator(offset);
+          row.separator(offset);
         }
       }
     }
     return;
   }
 
-  if (WM_window_modal_keymap_status_draw(C, win, layout)) {
+  if (WM_window_modal_keymap_status_draw(C, win, *layout)) {
     return;
   }
 
   bScreen *screen = CTX_wm_screen(C);
   ARegion *region = screen->active_region;
-  uiLayout *row = &layout->row(true);
+  blender::ui::Layout &row = layout->row(true);
 
   if (region == nullptr) {
     /* Check if over an action zone. */
@@ -313,7 +324,7 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
       LISTBASE_FOREACH (AZone *, az, &area_iter->actionzones) {
         if (BLI_rcti_isect_pt_v(&az->rect, win->eventstate->xy)) {
           region = az->region;
-          if (uiTemplateInputStatusAzone(row, az, region)) {
+          if (uiTemplateInputStatusAzone(&row, az, region)) {
             return;
           }
           break;
@@ -338,17 +349,17 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
     return;
   }
 
-  if (!region && win && uiTemplateInputStatusBorder(win, row)) {
+  if (!region && win && uiTemplateInputStatusBorder(win, &row)) {
     /* On a gap between editors. */
     return;
   }
 
-  if (region && uiTemplateInputStatusHeader(region, row)) {
+  if (region && uiTemplateInputStatusHeader(region, &row)) {
     /* Over a header region. */
     return;
   }
 
-  if (area && area->spacetype == SPACE_VIEW3D && uiTemplateInputStatus3DView(C, row)) {
+  if (area && area->spacetype == SPACE_VIEW3D && uiTemplateInputStatus3DView(C, &row)) {
     /* Specific to 3DView. */
     return;
   }
@@ -360,7 +371,7 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
 
   /* Otherwise should cursor keymap status. */
   for (int i = 0; i < 3; i++) {
-    row->alignment_set(blender::ui::LayoutAlign::Left);
+    row.alignment_set(blender::ui::LayoutAlign::Left);
 
     const char *msg = CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT,
                                  WM_window_cursor_keymap_status_get(win, i, 0));
@@ -368,23 +379,23 @@ void uiTemplateInputStatus(uiLayout *layout, bContext *C)
                                       WM_window_cursor_keymap_status_get(win, i, 1));
 
     if (msg) {
-      row->label("", (ICON_MOUSE_LMB + i));
-      row->separator(-0.9f);
-      row->label(msg, ICON_NONE);
-      row->separator(0.6f);
+      row.label("", (ICON_MOUSE_LMB + i));
+      row.separator(-0.9f);
+      row.label(msg, ICON_NONE);
+      row.separator(0.6f);
     }
 
     if (msg_drag) {
-      row->label("", (ICON_MOUSE_LMB_DRAG + i));
-      row->separator(-0.4f);
-      row->label(msg_drag, ICON_NONE);
-      row->separator(0.6f);
+      row.label("", (ICON_MOUSE_LMB_DRAG + i));
+      row.separator(-0.4f);
+      row.label(msg_drag, ICON_NONE);
+      row.separator(0.6f);
     }
   }
 
   /* bfa start grease pencil fill */
   if (area && area->spacetype == SPACE_VIEW3D && region->regiontype == RGN_TYPE_WINDOW) {
-    uiTemplateInputStatusBFAGreasePencil(C, row);
+    uiTemplateInputStatusBFAGreasePencil(C, &row);
   }
   /* bfa end */
 }
@@ -402,9 +413,10 @@ static std::string ui_template_status_tooltip(bContext *C,
     BKE_bforartists_version_blendfile_string_from_blender(
         bfa_writer_ver_str, sizeof(bfa_writer_ver_str), bmain->versionfile, true);
     BKE_blender_version_blendfile_string_from_values(
-      writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, -1);
+        writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, -1);
     tooltip_message += fmt::format(
-        fmt::runtime(RPT_("File saved by newer Bforartists {}\n(Blender {}), expect loss of data")),
+        fmt::runtime(
+            RPT_("File saved by newer Bforartists {}\n(Blender {}), expect loss of data")),
         bfa_writer_ver_str,
         writer_ver_str);
   }
@@ -426,20 +438,23 @@ static std::string ui_template_status_tooltip(bContext *C,
   return tooltip_message;
 }
 
-void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
+void uiTemplateStatusInfo(blender::ui::Layout *layout, bContext *C)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  uiLayout *row = &layout->row(true);
+  blender::ui::Layout &row = layout->row(true);
 
   const char *status_info_txt = ED_info_statusbar_string_ex(
-      bmain, scene, view_layer, (U.statusbar_flag & ~STATUSBAR_SHOW_VERSION & ~STATUSBAR_SHOW_BLENDER_VERSION));
+      bmain,
+      scene,
+      view_layer,
+      (U.statusbar_flag & ~STATUSBAR_SHOW_VERSION & ~STATUSBAR_SHOW_BLENDER_VERSION));
   /* True when the status is populated (delimiters required for following items). */
   bool has_status_info = false;
 
   if (status_info_txt[0]) {
-    row->label(status_info_txt, ICON_NONE);
+    row.label(status_info_txt, ICON_NONE);
     has_status_info = true;
   }
 
@@ -449,13 +464,13 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
     /* Special case, always show an alert for any blocked extensions. */
     if (wm->extensions_blocked > 0) {
       if (has_status_info) {
-        row->separator(-0.5f);
-        row->label("|", ICON_NONE);
-        row->separator(-0.5f);
+        row.separator(-0.5f);
+        row.label("|", ICON_NONE);
+        row.separator(-0.5f);
       }
-      row->emboss_set(blender::ui::EmbossType::None);
+      row.emboss_set(blender::ui::EmbossType::None);
       /* This operator also works fine for blocked extensions. */
-      row->op("EXTENSIONS_OT_userpref_show_for_update", "", ICON_ERROR);
+      row.op("EXTENSIONS_OT_userpref_show_for_update", "", ICON_ERROR);
       uiBut *but = layout->block()->buttons.last().get();
       uchar color[4];
       UI_GetThemeColor4ubv(TH_TEXT, color);
@@ -464,30 +479,30 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
       BLI_str_format_integer_unit(but->icon_overlay_text.text, wm->extensions_blocked);
       UI_but_icon_indicator_color_set(but, color);
 
-      row->separator(1.0f);
+      row.separator(1.0f);
       has_status_info = true;
     }
 
     if ((G.f & G_FLAG_INTERNET_ALLOW) == 0) {
       if (has_status_info) {
-        row->separator(-0.5f);
-        row->label("|", ICON_NONE);
-        row->separator(-0.5f);
+        row.separator(-0.5f);
+        row.label("|", ICON_NONE);
+        row.separator(-0.5f);
       }
 
       if ((G.f & G_FLAG_INTERNET_OVERRIDE_PREF_OFFLINE) != 0) {
-        row->label("", ICON_INTERNET_OFFLINE);
+        row.label("", ICON_INTERNET_OFFLINE);
       }
       else {
-        row->emboss_set(blender::ui::EmbossType::None);
-        row->op("EXTENSIONS_OT_userpref_show_online", "", ICON_INTERNET_OFFLINE);
+        row.emboss_set(blender::ui::EmbossType::None);
+        row.op("EXTENSIONS_OT_userpref_show_online", "", ICON_INTERNET_OFFLINE);
         uiBut *but = layout->block()->buttons.last().get();
         uchar color[4];
         UI_GetThemeColor4ubv(TH_TEXT, color);
         copy_v4_v4_uchar(but->col, color);
       }
 
-      row->separator(1.0f);
+      row.separator(1.0f);
       has_status_info = true;
     }
     else if ((wm->extensions_updates > 0) ||
@@ -499,12 +514,12 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
       }
 
       if (has_status_info) {
-        row->separator(-0.5f);
-        row->label("|", ICON_NONE);
-        row->separator(-0.5f);
+        row.separator(-0.5f);
+        row.label("|", ICON_NONE);
+        row.separator(-0.5f);
       }
-      row->emboss_set(blender::ui::EmbossType::None);
-      row->op("EXTENSIONS_OT_userpref_show_for_update", "", icon);
+      row.emboss_set(blender::ui::EmbossType::None);
+      row.op("EXTENSIONS_OT_userpref_show_for_update", "", icon);
       uiBut *but = layout->block()->buttons.last().get();
       uchar color[4];
       UI_GetThemeColor4ubv(TH_TEXT, color);
@@ -515,37 +530,36 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
         UI_but_icon_indicator_color_set(but, color);
       }
 
-      row->separator(1.0f);
+      row.separator(1.0f);
       has_status_info = true;
     }
   }
   /* Do Blender version */
   if (U.statusbar_flag & STATUSBAR_SHOW_BLENDER_VERSION) {
-      if (has_status_info) {
-        row->separator(-0.5f);
-        row->label("|", ICON_NONE);
-        row->separator(-0.5f);
-      }
-      char status_info_d_txt[256];
-      SNPRINTF(status_info_d_txt,
+    if (has_status_info) {
+      row.separator(-0.5f);
+      row.label("|", ICON_NONE);
+      row.separator(-0.5f);
+    }
+    char status_info_d_txt[256];
+    SNPRINTF(status_info_d_txt,
              RPT_("Blender Version: %s sub %s"),
              BKE_blender_version_string(),
-             BKE_bforartists_sub_version_string()
-      );
-      row->label(status_info_d_txt, ICON_NONE);
-      has_status_info = true;
+             BKE_bforartists_sub_version_string());
+    row.label(status_info_d_txt, ICON_NONE);
+    has_status_info = true;
   }
 
   if (!BKE_main_has_issues(bmain)) {
     if (U.statusbar_flag & STATUSBAR_SHOW_VERSION) {
       if (has_status_info) {
-        row->separator(-0.5f);
-        row->label("|", ICON_NONE);
-        row->separator(-0.5f);
+        row.separator(-0.5f);
+        row.label("|", ICON_NONE);
+        row.separator(-0.5f);
       }
       const char *status_info_d_txt = ED_info_statusbar_string_ex(
           bmain, scene, view_layer, STATUSBAR_SHOW_VERSION);
-      row->label(status_info_d_txt, ICON_NONE);
+      row.label(status_info_d_txt, ICON_NONE);
     }
     return;
   }
@@ -575,8 +589,8 @@ void uiTemplateStatusInfo(uiLayout *layout, bContext *C)
   }
 
   const uiStyle *style = UI_style_get();
-  uiLayout *ui_abs = &layout->absolute(false);
-  uiBlock *block = ui_abs->block();
+  blender::ui::Layout &ui_abs = layout->absolute(false);
+  uiBlock *block = ui_abs.block();
   blender::ui::EmbossType previous_emboss = UI_block_emboss_get(block);
 
   UI_fontstyle_set(&style->widget);

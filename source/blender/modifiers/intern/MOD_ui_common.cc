@@ -89,13 +89,12 @@ static void set_modifier_expand_flag(const bContext * /*C*/, Panel *panel, short
 /* -------------------------------------------------------------------- */
 /** \name Modifier Panel Layouts
  * \{ */
-
-void modifier_error_message_draw(uiLayout *layout, PointerRNA *ptr)
+void modifier_error_message_draw(blender::ui::Layout &layout, PointerRNA *ptr)
 {
   ModifierData *md = static_cast<ModifierData *>(ptr->data);
   if (md->error) {
-    uiLayout *row = &layout->row(false);
-    row->label(RPT_(md->error), ICON_ERROR);
+    blender::ui::Layout &row = layout.row(false);
+    row.label(RPT_(md->error), ICON_ERROR);
   }
 }
 
@@ -124,7 +123,7 @@ PointerRNA *modifier_panel_get_property_pointers(Panel *panel, PointerRNA *r_ob_
   return ptr;
 }
 
-void modifier_vgroup_ui(uiLayout *layout,
+void modifier_vgroup_ui(blender::ui::Layout &layout,
                         PointerRNA *ptr,
                         PointerRNA *ob_ptr,
                         const StringRefNull vgroup_prop,
@@ -133,32 +132,32 @@ void modifier_vgroup_ui(uiLayout *layout,
 {
   bool has_vertex_group = RNA_string_length(ptr, vgroup_prop.c_str()) != 0;
 
-  uiLayout *row = &layout->row(true);
-  row->prop_search(ptr, vgroup_prop, ob_ptr, "vertex_groups", text, ICON_GROUP_VERTEX);
+  blender::ui::Layout &row = layout.row(true);
+  row.prop_search(ptr, vgroup_prop, ob_ptr, "vertex_groups", text, ICON_GROUP_VERTEX);
   if (invert_vgroup_prop) {
-    uiLayout *sub = &row->row(true);
-    sub->active_set(has_vertex_group);
-    sub->use_property_decorate_set(false);
-    sub->prop(ptr, *invert_vgroup_prop, UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
+    blender::ui::Layout &sub = row.row(true);
+    sub.active_set(has_vertex_group);
+    sub.use_property_decorate_set(false);
+    sub.prop(ptr, *invert_vgroup_prop, UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   }
 }
 
 void modifier_grease_pencil_curve_header_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->prop(ptr, "use_custom_curve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "use_custom_curve", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 void modifier_grease_pencil_curve_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  uiTemplateCurveMapping(layout, ptr, "curve", 0, false, false, false, false, false);
+  uiTemplateCurveMapping(&layout, ptr, "curve", 0, false, false, false, false, false);
 }
 
 /**
@@ -210,7 +209,7 @@ static bool modifier_can_delete(ModifierData *md)
   return true;
 }
 
-static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
+static void modifier_ops_extra_draw(bContext *C, blender::ui::Layout *layout, void *md_v)
 {
   PointerRNA op_ptr;
   ModifierData *md = (ModifierData *)md_v;
@@ -311,8 +310,8 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 static void modifier_panel_header(const bContext *C, Panel *panel)
 {
   /* bfa - modifers apply button */
-  uiLayout *row, *sub, *name_row;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *row, *sub;
+  blender::ui::Layout &layout = *panel->layout;
 
   /* Don't use #modifier_panel_get_property_pointers, we don't want to lock the header. */
   PointerRNA *ptr = UI_panel_custom_data_get(panel);
@@ -326,7 +325,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   int index = BLI_findindex(&ob->modifiers, md);
 
   /* Modifier Icon. */
-  sub = &layout->row(true);
+  sub = &layout.row(true);
   sub->emboss_set(blender::ui::EmbossType::None);
   if (mti->is_disabled && mti->is_disabled(scene, md, false)) {
     sub->red_alert_set(true);
@@ -334,12 +333,12 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   PointerRNA op_ptr = sub->op("OBJECT_OT_modifier_set_active", "", RNA_struct_ui_icon(ptr->type));
   RNA_string_set(&op_ptr, "modifier", md->name);
 
-  row = &layout->row(true);
+  row = &layout.row(true);
 
   /* Modifier Name.
    * Count how many buttons are added to the header to check if there is enough space. */
   int buttons_number = 0;
-  name_row = &row->row(true);
+  blender::ui::Layout &name_row = row->row(true);
 
   /* Display mode switching buttons. */
   if (ob->type == OB_MESH) {
@@ -429,10 +428,10 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   /* bfa - modifier pin to last toggle button */
   bool is_pinned = RNA_boolean_get(ptr, "use_pin_to_last");
   row->prop(ptr,
-          "use_pin_to_last",
-          UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-          "",
-          is_pinned ? ICON_PINNED : ICON_UNPINNED);
+            "use_pin_to_last",
+            UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+            "",
+            is_pinned ? ICON_PINNED : ICON_UNPINNED);
   buttons_number++;
 
   /* Delete button. */
@@ -444,32 +443,29 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
-    PointerRNA op_ptr = row->op(
-        "WM_OT_properties_context_change", "", ICON_PROPERTIES);
+    PointerRNA op_ptr = row->op("WM_OT_properties_context_change", "", ICON_PROPERTIES);
     RNA_string_set(&op_ptr, "context", "PHYSICS"); /*BFA - row*/
     buttons_number++;
   }
   else if (modifier_is_simulation(md) == 2) {
-    PointerRNA op_ptr = row->op(
-        "WM_OT_properties_context_change", "", ICON_PROPERTIES);
+    PointerRNA op_ptr = row->op("WM_OT_properties_context_change", "", ICON_PROPERTIES);
     RNA_string_set(&op_ptr, "context", "PARTICLES"); /*BFA - row*/
     buttons_number++;
   }
-
 
   /* Extra operators menu. */
   row->menu_fn("", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md); /* bfa - our layout */
 
   bool display_name = (panel->sizex / UI_UNIT_X - buttons_number > 5) || (panel->sizex == 0);
   if (display_name) {
-    name_row->prop(ptr, "name", UI_ITEM_NONE, "", ICON_NONE);
+    name_row.prop(ptr, "name", UI_ITEM_NONE, "", ICON_NONE);
   }
   else {
     row->alignment_set(blender::ui::LayoutAlign::Right);
   }
 
   /* Extra padding for delete button. */
-  layout->separator();
+  layout.separator();
 }
 
 /** \} */

@@ -219,20 +219,20 @@ static Mesh *modify_mesh(ModifierData * /*md*/, const ModifierEvalContext * /*ct
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *row, *col;
+  blender::ui::Layout &layout = *panel->layout;
 #ifdef WITH_MOD_REMESH
-  uiLayout *row, *col;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   int mode = RNA_enum_get(ptr, "mode");
 
-  layout->prop(ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   if (mode == MOD_REMESH_VOXEL) {
     col->prop(ptr, "voxel_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -246,27 +246,27 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     }
 
     /* bfa - our layout */
-    col = row = &layout->column(true);
+    col = row = &layout.column(true);
     row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
-    row = &layout->row(false);
+    row = &layout.row(false);
     row->active_set(RNA_boolean_get(ptr, "use_remove_disconnected"));
-    layout->prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 
 #else  /* WITH_MOD_REMESH */
-  layout->label(RPT_("Built without Remesh modifier"), ICON_NONE);
+  layout.label(RPT_("Built without Remesh modifier"), ICON_NONE);
 #endif /* WITH_MOD_REMESH */
 }
 

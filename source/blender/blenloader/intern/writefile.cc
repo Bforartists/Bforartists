@@ -105,6 +105,7 @@
 #include "BLI_set.hh"
 #include "BLI_string.h"
 #include "BLI_threads.h"
+#include "BLI_time.h"
 
 #include "MEM_guardedalloc.h" /* MEM_freeN */
 
@@ -136,6 +137,7 @@
 #include "BLO_writefile.hh"
 
 #include "readfile.hh"
+#include "writefile.hh"
 
 #include <zstd.h>
 
@@ -161,6 +163,7 @@
 #define ZSTD_COMPRESSION_LEVEL 3
 
 static CLG_LogRef LOG = {"blend.writefile"};
+static CLG_LogRef LOG_UNDO = {"undo"};
 
 /** Use if we want to store how many bytes have been written to the file. */
 // #define USE_WRITE_DATA_LEN
@@ -411,103 +414,6 @@ bool ZstdWriteWrap::write(const void *buf, const size_t buf_len)
 /** \name Write Data Type & Functions
  * \{ */
 
-struct WriteData {
-  const SDNA *sdna;
-  std::ostream *debug_dst = nullptr;
-
-  struct {
-    /** Use for file and memory writing (size stored in max_size). */
-    uchar *buf;
-    /** Number of bytes used in #WriteData.buf (flushed when exceeded). */
-    size_t used_len;
-
-    /** Maximum size of the buffer. */
-    size_t max_size;
-    /** Threshold above which writes get their own chunk. */
-    size_t chunk_size;
-  } buffer;
-
-#ifdef USE_WRITE_DATA_LEN
-  /** Total number of bytes written. */
-  size_t write_len;
-#endif
-
-  /** Whether writefile code is currently writing an ID. */
-  bool is_writing_id;
-
-  /** Some validation and error handling data. */
-  struct {
-    /**
-     * Set on unlikely case of an error (ignores further file writing). Only used for very
-     * low-level errors (like if the actual write on file fails).
-     */
-    bool critical_error;
-    /**
-     * A set of all 'old' addresses used as UID of written blocks for the current ID. Allows
-     * detecting invalid re-uses of the same address multiple times.
-     */
-    blender::Set<const void *> per_id_addresses_set;
-  } validation_data;
-
-  struct {
-    /**
-     * Knows which DNA members are pointers. Those members are overridden when serializing the
-     * .blend file to get more stable pointer identifiers.
-     */
-    std::unique_ptr<blender::dna::pointers::PointersInDNA> sdna_pointers;
-    /**
-     * Maps each runtime-pointer to a unique identifier that's written in the .blend file.
-     *
-     * Currently, no pointers are ever removed from this map during writing of a single file.
-     * Correctness wise, this is fine. However, when some data-blocks write temporary addresses,
-     * those may be reused across IDs while actually pointing to different data. This can break
-     * address id stability in some situations. In the future this could be improved by clearing
-     * such temporary pointers before writing the next data-block.
-     */
-    blender::Map<const void *, uint64_t> pointer_map;
-    /**
-     * Contains all the #pointer_map.values(). This is used to make sure that the same id is never
-     * reused for a different pointer. While this is technically allowed in .blend files (when the
-     * pointers are local data of different objects), we currently don't always know what type a
-     * pointer points to when writing it. So we can't determine if a pointer is local or not.
-     */
-    blender::Set<uint64_t> used_ids;
-    /**
-     * The next stable address id is derived from this. This is modified in
-     * two cases:
-     * - A new stable address is needed, in which case this is just incremented.
-     * - A new "section" of the .blend file starts. In this case, this should be reinitialized with
-     *   some hash of an identifier of the next section. This makes sure that if the number of
-     *   pointers in the previous section is modified, the pointers in the new section are not
-     *   affected. A "section" can be anything, but currently a section simply starts when a new
-     *   data-block starts. In the future, an API could be added that allows sections to start
-     *   within a data-block which could isolate stable pointer ids even more.
-     *
-     * When creating the new address id, keep in mind that this may be 0 and it may collide with
-     * previous hints.
-     */
-    uint64_t next_id_hint = 0;
-  } stable_address_ids;
-
-  /**
-   * Keeps track of which shared data has been written for the current ID. This is necessary to
-   * avoid writing the same data more than once.
-   */
-  blender::Set<const void *> per_id_written_shared_addresses;
-
-  /** #MemFile writing (used for undo). */
-  MemFileWriteData mem;
-  /** When true, write to #WriteData.current, could also call 'is_undo'. */
-  bool use_memfile;
-
-  /**
-   * Wrap writing, so we can use zstd or
-   * other compression types later, see: G_FILE_COMPRESS
-   * Will be nullptr for UNDO.
-   */
-  WriteWrap *ww;
-};
-
 struct BlendWriter {
   WriteData *wd;
 };
@@ -515,6 +421,8 @@ struct BlendWriter {
 static WriteData *writedata_new(WriteWrap *ww)
 {
   WriteData *wd = MEM_new<WriteData>(__func__);
+
+  wd->timestamp_init = BLI_time_now_seconds();
 
   wd->sdna = DNA_sdna_current_get();
   wd->stable_address_ids.sdna_pointers = std::make_unique<blender::dna::pointers::PointersInDNA>(
@@ -655,8 +563,7 @@ static WriteData *mywrite_begin(WriteWrap *ww, MemFile *compare, MemFile *curren
   WriteData *wd = writedata_new(ww);
 
   if (current != nullptr) {
-    BLO_memfile_write_init(&wd->mem, current, compare);
-    wd->use_memfile = true;
+    BLO_memfile_write_init(wd, &wd->mem, current, compare);
   }
 
   return wd;
@@ -676,7 +583,14 @@ static bool mywrite_end(WriteData *wd)
   }
 
   if (wd->use_memfile) {
-    BLO_memfile_write_finalize(&wd->mem);
+    BLO_memfile_write_finalize(wd, &wd->mem);
+    CLOG_INFO(&LOG_UNDO,
+              "Memfile undo step written in %.3f seconds",
+              BLI_time_now_seconds() - wd->timestamp_init);
+  }
+  else {
+    CLOG_INFO(
+        &LOG, "Blendfile written in %.3f seconds", BLI_time_now_seconds() - wd->timestamp_init);
   }
 
   const bool err = wd->validation_data.critical_error;
@@ -692,8 +606,8 @@ static uint64_t get_stable_pointer_hint_for_id(const ID &id, const bool is_undo)
    * memory (memfile).
    *
    * For the blendfile on disk, the ID name is used, together with its library if linked, as this
-   * is effectively the 'unique identifer' of IDs in blendfiles and across linking, so if these
-   * change, it's also fine to get a different 'stable pointer'.
+   * is effectively the 'unique identifier' of IDs in blend-files and across linking,
+   * so if these change, it's also fine to get a different 'stable pointer'.
    *
    * For the undo memfile however, things are different: It is possible that a same ID name is
    * reused for two different IDs in two different consecutive undo steps (see #149899). Getting
@@ -918,6 +832,17 @@ static uint64_t get_address_id_int(WriteData &wd, const void *address)
     return 0;
   }
   /* Either reuse an existing identifier or create a new one. */
+  /* NOTE: In undo case, the stable address data is re-used from the previously written undo step.
+   * This means that the address may already be in the map.
+   * However, in very rare cases, it could be from another, implicitly-shared data (i.e. have the
+   * `implicit_sharing_address_id_flag` flag set).
+   *
+   * This is handled properly by both #BLO_write_shared_tag and #prepare_stable_data_block_ids,
+   * but doing so here would add a significant overhead to a very often used function. Further
+   * more, there is no expected actual issue currently if such 'wrongly categorized' stable address
+   * values are used. The only really critical thing is that all written stable addresses remain
+   * unique, which should remain true even if this ever happens.
+   */
   return wd.stable_address_ids.pointer_map.lookup_or_add_cb(address, [&]() {
     return get_next_stable_address_id(wd, wd.stable_address_ids.next_id_hint);
   });
@@ -978,8 +903,8 @@ static void writestruct_at_address_nr(WriteData *wd,
       for (const blender::dna::pointers::PointerInfo &pointer_info : struct_info.pointers) {
         const int offset = i * struct_info.size_in_bytes + pointer_info.offset;
         const void **p_ptr = reinterpret_cast<const void **>(POINTER_OFFSET(buffer, offset));
-        const void *address_id = get_address_id(*wd, *p_ptr);
-        *p_ptr = address_id;
+        const void *p_ptr_address_id = get_address_id(*wd, *p_ptr);
+        *p_ptr = p_ptr_address_id;
       }
     }
   }
@@ -1771,7 +1696,22 @@ static void prepare_stable_data_block_ids(WriteData &wd, Main &bmain)
   ID *id;
   FOREACH_MAIN_ID_BEGIN (&bmain, id) {
     /* Ensure no other stable pointer has been created before. */
-    BLI_assert(!wd.stable_address_ids.pointer_map.contains(id));
+    if (wd.use_memfile) {
+      /* In undo case, the stable address data is re-used from the previously written undo step.
+       * This means that the ID address may already be in the map.
+       *
+       * However, in very rare cases, it could be from another, implicitly-shared data, in which
+       * case the ID address 'stable value' needs to be re-generated and re-inserted. */
+      uint64_t address_id = wd.stable_address_ids.pointer_map.lookup_default(id, 0);
+      if (address_id != 0) {
+        if (LIKELY((address_id & implicit_sharing_address_id_flag) == 0)) {
+          continue;
+        }
+      }
+    }
+    else {
+      BLI_assert(!wd.stable_address_ids.pointer_map.contains(id));
+    }
 
     /* Derive the stable pointer from the id/library name which is independent of the write-order
      * of data-blocks. */
@@ -1780,7 +1720,7 @@ static void prepare_stable_data_block_ids(WriteData &wd, Main &bmain)
 
     /* Store the computed stable pointer so that it is used whenever the data-block is written or
      * referenced. */
-    wd.stable_address_ids.pointer_map.add(id, address_id);
+    wd.stable_address_ids.pointer_map.add_overwrite(id, address_id);
   }
   FOREACH_MAIN_ID_END;
 }
@@ -2369,11 +2309,24 @@ void BLO_write_shared_tag(BlendWriter *writer, const void *data)
   if (!BLO_write_is_undo(writer)) {
     return;
   }
+
   const uint64_t address_id = get_address_id_for_implicit_sharing_data(data);
   /* Check that the pointer has not been written before it was tagged as being shared. */
-  BLI_assert(writer->wd->stable_address_ids.pointer_map.lookup_default(data, address_id) ==
-             address_id);
-  writer->wd->stable_address_ids.pointer_map.add(data, address_id);
+  /* In undo case, the stable address data is re-used from the previously written undo step.
+   * This means that the shared data address may already be in the map.
+   *
+   * However, in very rare cases, it could be from another, regular (non-shared) data previously
+   * using the same memory address, in which case the data address 'stable value' needs to be
+   * re-inserted. */
+#ifndef NDEBUG
+  {
+    const uint64_t existing_address_id = writer->wd->stable_address_ids.pointer_map.lookup_default(
+        data, address_id);
+    BLI_assert(existing_address_id == address_id ||
+               (existing_address_id & implicit_sharing_address_id_flag) == 0);
+  }
+#endif
+  writer->wd->stable_address_ids.pointer_map.add_overwrite(data, address_id);
 }
 
 void BLO_write_shared(BlendWriter *writer,

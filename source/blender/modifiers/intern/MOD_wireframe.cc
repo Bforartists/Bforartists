@@ -100,18 +100,18 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col, *row; /*bfa - removed *sub*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *col, *row; /*bfa - removed *sub*/
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "thickness", UI_ITEM_NONE, IFACE_("Thickness"), ICON_NONE);
-  layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "thickness", UI_ITEM_NONE, IFACE_("Thickness"), ICON_NONE);
+  layout.prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(true);
+  col = &layout.column(true);
 
   /* bfa - our layout */
   row = &col->row(true);
@@ -147,7 +147,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = &layout->split(0.385f, true);
+  blender::ui::Layout *split = &layout.split(0.385f, true);
 
   /* bfa - our layout */
   row = &split->row(true);
@@ -171,21 +171,20 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void vertex_group_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   bool has_vertex_group = RNA_string_length(ptr, "vertex_group") != 0;
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  row = &layout->row(true);
-  row->active_set(has_vertex_group);
-  row->prop(ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
+  blender::ui::Layout &row = layout.row(true);
+  row.active_set(has_vertex_group);
+  row.prop(ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

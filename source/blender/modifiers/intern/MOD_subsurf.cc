@@ -336,25 +336,25 @@ static bool get_show_adaptive_options(const bContext *C, Panel *panel)
 
 static void panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->prop(ptr, "subdivision_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "subdivision_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  uiLayout *col = &layout->column(true);
-  uiLayout *row = &col->row(true); /* bfa - added row */
+  blender::ui::Layout *col = &layout.column(true);
+  blender::ui::Layout *row = &col->row(true); /* bfa - added row */
   col->prop(ptr, "levels", UI_ITEM_NONE, IFACE_("Levels Viewport"), ICON_NONE);
   col->prop(ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
   /* bfa - our layout */
-  col = &layout->column(false);
+  col = &layout.column(false);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "show_only_control_edges", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "show_only_control_edges", 0); /*bfa - decorator*/
 
@@ -364,8 +364,8 @@ static void panel_draw(const bContext *C, Panel *panel)
   if (ob->type == OB_MESH && BKE_subsurf_modifier_force_disable_gpu_evaluation_for_mesh(
                                  smd, static_cast<const Mesh *>(ob->data)))
   {
-    layout->label(RPT_("Sharp edges or custom normals detected, disabling GPU subdivision"),
-                  ICON_INFO);
+    layout.label(RPT_("Sharp edges or custom normals detected, disabling GPU subdivision"),
+                 ICON_INFO);
   }
   else if (Object *ob_eval = DEG_get_evaluated(depsgraph, ob)) {
     if (ModifierData *md_eval = BKE_modifiers_findby_name(ob_eval, smd->modifier.name)) {
@@ -374,7 +374,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
         if (runtime_data && runtime_data->used_gpu) {
           if (runtime_data->used_cpu) {
-            layout->label(RPT_("Using both CPU and GPU subdivision"), ICON_INFO);
+            layout.label(RPT_("Using both CPU and GPU subdivision"), ICON_INFO);
           }
         }
       }
@@ -382,7 +382,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   }
 
   if (get_show_adaptive_options(C, panel)) {
-    PanelLayout adaptive_panel = layout->panel_prop_with_bool_header(
+    PanelLayout adaptive_panel = layout.panel_prop_with_bool_header(
         C,
         ptr,
         "open_adaptive_subdivision_panel",
@@ -414,36 +414,38 @@ static void panel_draw(const bContext *C, Panel *panel)
                                  std::max(render_rate * smd->adaptive_pixel_size, 0.1f));
       }
 
-      uiLayout *split = &adaptive_panel.body->split(0.4f, false);
-      uiLayout *col = &split->column(true);
+      blender::ui::Layout &split = adaptive_panel.body->split(0.4f, false);
+      blender::ui::Layout *col = &split.column(true);
       col->alignment_set(blender::ui::LayoutAlign::Right);
       col->label(IFACE_("Viewport"), ICON_NONE);
       col->label(IFACE_("Render"), ICON_NONE);
-      col = &split->column(true);
+      col = &split.column(true);
       col->label(preview_str, ICON_NONE);
       col->label(render_str, ICON_NONE);
     }
   }
 
-  if (uiLayout *advanced_layout = layout->panel_prop(
+  if (blender::ui::Layout *advanced_layout = layout.panel_prop(
           C, ptr, "open_advanced_panel", IFACE_("Advanced")))
   {
     /* bfa - our layout */
-    layout->use_property_decorate_set(true);
+    layout.use_property_decorate_set(true);
 
     /* bfa - our layout */
-    uiLayout *col = &advanced_layout->column(false);
+    blender::ui::Layout *col = &advanced_layout->column(false);
     col = &advanced_layout->column(false);
 
     /* bfa - our layout */
     row = &col->row(true);
-    row->use_property_split_set(false); /* bfa - use_property_split = False */  
-    row->separator(); /*bfa - indent*/
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
+    row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_limit_surface", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_limit_surface", 0); /*bfa - decorator*/
 
     /* bfa - our layout */
-    if ((smd->flags & eSubsurfModifierFlag_UseAdaptiveSubdivision) || RNA_boolean_get(ptr, "use_limit_surface")) {
+    if ((smd->flags & eSubsurfModifierFlag_UseAdaptiveSubdivision) ||
+        RNA_boolean_get(ptr, "use_limit_surface"))
+    {
       row = &col->row(false);
       row->separator(); /*bfa - indent*/
       row->prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -460,14 +462,14 @@ static void panel_draw(const bContext *C, Panel *panel)
 
     /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(); /*bfa - indent*/
+    row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_creases", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_creases", 0); /*bfa - decorator*/
 
     /* bfa - our layout */
     row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(); /*bfa - indent*/
+    row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_custom_normals", 0); /*bfa - decorator*/
   }

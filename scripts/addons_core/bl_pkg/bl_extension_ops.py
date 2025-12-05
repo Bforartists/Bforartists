@@ -2489,7 +2489,7 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
-    # Use for for scripts.
+    # Use for scripts.
     filepath: StringProperty(
         subtype='FILE_PATH',
     )

@@ -609,25 +609,25 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa - added *row*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *row, *col; /*bfa - added *row*/
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   int mode = RNA_enum_get(ptr, "mode");
 
-  layout->prop(ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "mode", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "target", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   col->active_set(mode == MOD_NORMALEDIT_MODE_DIRECTIONAL);
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /*bfa - indent*/
@@ -640,31 +640,30 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 /* This panel could be open by default, but it isn't currently. */
 static void mix_mode_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout->prop(ptr, "mix_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "mix_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "mix_factor", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  row = &layout->row(true);
-  row->prop(ptr, "mix_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  row->prop(ptr,
-            "no_polynors_fix",
-            UI_ITEM_NONE,
-            "",
-            (RNA_boolean_get(ptr, "no_polynors_fix") ? ICON_LOCKED : ICON_UNLOCKED));
+  blender::ui::Layout &row = layout.row(true);
+  row.prop(ptr, "mix_limit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row.prop(ptr,
+           "no_polynors_fix",
+           UI_ITEM_NONE,
+           "",
+           (RNA_boolean_get(ptr, "no_polynors_fix") ? ICON_LOCKED : ICON_UNLOCKED));
 }
 
 static void offset_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
@@ -675,10 +674,10 @@ static void offset_panel_draw(const bContext * /*C*/, Panel *panel)
                              (mode == MOD_NORMALEDIT_MODE_DIRECTIONAL &&
                               RNA_boolean_get(ptr, "use_direction_parallel"));
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->active_set(needs_object_offset);
-  layout->prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.active_set(needs_object_offset);
+  layout.prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

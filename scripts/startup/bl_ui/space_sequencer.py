@@ -1208,7 +1208,7 @@ class SEQUENCER_MT_strip_animation(Menu):
         ).always_prompt = True
         layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon="KEYINGSET")
         layout.operator("anim.keyframe_delete_vse", text="Delete Keyframes", icon="KEYFRAMES_REMOVE")
-        layout.operator("anim.keyframe_clear_vse", text="Clear Keyframes...", icon="KEYFRAMES_CLEAR")
+        layout.operator("anim.keyframe_clear_vse", text="Clear Keyframes", icon="KEYFRAMES_CLEAR")
 
 
 class SEQUENCER_MT_strip_mirror(Menu):
@@ -1893,6 +1893,7 @@ class SEQUENCER_MT_modifier_add(Menu):
         if strip.type == 'SOUND':
             self.operator_modifier_add(layout, 'SOUND_EQUALIZER')
             self.operator_modifier_add(layout, 'PITCH')
+            self.operator_modifier_add(layout, 'ECHO')
 
         else:
             self.operator_modifier_add(layout, "BRIGHT_CONTRAST")

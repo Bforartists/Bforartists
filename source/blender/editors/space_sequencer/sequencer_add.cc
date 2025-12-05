@@ -163,24 +163,24 @@ static bool sequencer_add_draw_check_fn(PointerRNA *ptr, PropertyRNA *prop, void
 
 static void sequencer_add_draw(bContext * /*C*/, wmOperator *op)
 {
-  uiLayout *layout = op->layout;
+  ui::Layout &layout = *op->layout;
   SequencerAddData *sad = static_cast<SequencerAddData *>(op->customdata);
   ImageFormatData *imf = &sad->im_format;
 
   bool is_redo_panel = sad == nullptr;
 
   if (!is_redo_panel) {
-    layout->prop(op->ptr, "move_strips", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(op->ptr, "move_strips", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   if (!RNA_boolean_get(op->ptr, "move_strips") || is_redo_panel) {
-    uiLayout &col = layout->column(true);
+    ui::Layout &col = layout.column(true);
     col.prop(op->ptr, "frame_start", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    layout->prop(op->ptr, "channel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    layout->prop(op->ptr, "replace_sel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(op->ptr, "channel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(op->ptr, "replace_sel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
   /* Main draw call. */
-  uiDefAutoButsRNA(layout,
+  uiDefAutoButsRNA(&layout,
                    op->ptr,
                    sequencer_add_draw_check_fn,
                    nullptr,
@@ -192,17 +192,17 @@ static void sequencer_add_draw(bContext * /*C*/, wmOperator *op)
   if (RNA_struct_find_property(op->ptr, "length") &&
       ImageImport(RNA_enum_get(op->ptr, "image_import_type")) != ImageImport::Sequence)
   {
-    layout->prop(op->ptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(op->ptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  layout->separator();
+  layout.separator();
 
   /* Image template. */
   PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, &RNA_ImageFormatSettings, imf);
 
   /* Multiview template. */
   if (RNA_boolean_get(op->ptr, "show_multiview")) {
-    uiTemplateImageFormatViews(layout, &imf_ptr, op->ptr);
+    uiTemplateImageFormatViews(&layout, &imf_ptr, op->ptr);
   }
 }
 
@@ -898,7 +898,7 @@ static Scene *sequencer_add_scene_asset(const bContext &C,
   Scene *scene_asset = reinterpret_cast<Scene *>(
       asset::asset_local_id_ensure_imported(bmain, asset, ASSET_IMPORT_APPEND));
 
-  if (asset.is_local_id()) {
+  if (scene_asset && asset.is_local_id()) {
     /* Local scene that needs to be duplicated. */
     Scene *scene_copy = BKE_scene_duplicate(
         &bmain,
@@ -1619,7 +1619,7 @@ static wmOperatorStatus sequencer_add_sound_strip_invoke(bContext *C,
        !RNA_collection_is_empty(op->ptr, "files")) ||
       RNA_struct_property_is_set(op->ptr, "filepath"))
   {
-    sequencer_generic_invoke_xy__internal(C, op, SEQPROP_NOPATHS, STRIP_TYPE_SOUND_RAM, event);
+    sequencer_generic_invoke_xy__internal(C, op, SEQPROP_NOPATHS, STRIP_TYPE_SOUND, event);
 
     const char *error_msg;
     if (!have_free_channels(C, op, 1, &error_msg)) {
@@ -1630,7 +1630,7 @@ static wmOperatorStatus sequencer_add_sound_strip_invoke(bContext *C,
     return sequencer_add_sound_strip_exec(C, op);
   }
 
-  sequencer_generic_invoke_xy__internal(C, op, 0, STRIP_TYPE_SOUND_RAM, event);
+  sequencer_generic_invoke_xy__internal(C, op, 0, STRIP_TYPE_SOUND, event);
 
   WM_event_add_fileselect(C, op);
   return OPERATOR_RUNNING_MODAL;
@@ -1648,6 +1648,7 @@ void SEQUENCER_OT_sound_strip_add(wmOperatorType *ot)
   ot->invoke = sequencer_add_sound_strip_invoke;
   ot->exec = sequencer_add_sound_strip_exec;
   ot->poll = ED_operator_sequencer_active_editable;
+  ot->cancel = sequencer_add_free;
 
   /* Flags. */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1748,7 +1749,10 @@ static void sequencer_add_image_strip_load_files(wmOperator *op,
                                                  const ImageFrameRange *range)
 {
   int framenr, numdigits;
-  BLI_path_frame_get(load_data->path, &framenr, &numdigits);
+  if (!BLI_path_frame_get(load_data->path, &framenr, &numdigits)) {
+    numdigits = 0;
+  }
+
   char ext[FILE_MAX];
   char filename_stripped[FILE_MAX];
   BLI_path_split_file_part(load_data->path, filename_stripped, sizeof(filename_stripped));
