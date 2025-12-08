@@ -41,12 +41,12 @@ static bool ui_view_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
     return false;
   }
 
-  if (drag->drop_state.free_disabled_info) {
-    MEM_SAFE_FREE(drag->drop_state.disabled_info);
-  }
-  drag->drop_state.free_disabled_info = false;
+  const char *disabled_info = "";
+  const bool can_drop = drop_target->can_drop(*drag, &disabled_info);
 
-  return drop_target->can_drop(*drag, &drag->drop_state.disabled_info);
+  drag->drop_state.disabled_info = disabled_info;
+
+  return can_drop;
 }
 
 static std::string ui_view_drop_tooltip(bContext *C,
@@ -79,7 +79,9 @@ static bool ui_drop_name_poll(bContext *C, wmDrag *drag, const wmEvent * /*event
 static void ui_drop_name_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
   const ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, 0);
-  RNA_string_set(drop->ptr, "string", id->name + 2);
+  if (id) {
+    RNA_string_set(drop->ptr, "string", id->name + 2);
+  }
 }
 
 /** \} */
@@ -108,7 +110,9 @@ static bool ui_drop_material_poll(bContext *C, wmDrag *drag, const wmEvent * /*e
 static void ui_drop_material_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
   const ID *id = WM_drag_get_local_ID_or_import_from_asset(C, drag, ID_MA);
-  RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
+  if (id) {
+    RNA_int_set(drop->ptr, "session_uid", int(id->session_uid));
+  }
 }
 
 static std::string ui_drop_material_tooltip(bContext *C,

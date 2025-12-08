@@ -491,7 +491,7 @@ static void ui_obj_import_settings(const bContext *C, blender::ui::Layout &layou
     col.prop(ptr, "up_axis", UI_ITEM_NONE, IFACE_("Up Axis"), ICON_NONE);
   }
 
-  if (uiLayout *panel = layout.panel(C, "OBJ_import_options", false, IFACE_("Options"))) {
+  if (blender::ui::Layout *panel = layout.panel(C, "OBJ_import_options", false, IFACE_("Options"))) {
     blender::ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "use_split_objects", UI_ITEM_NONE, std::nullopt, ICON_NONE);

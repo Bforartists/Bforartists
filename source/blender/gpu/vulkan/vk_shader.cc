@@ -1300,32 +1300,22 @@ VkPipeline VKShader::ensure_and_get_compute_pipeline(
 bool VKShader::ensure_graphics_pipelines(Span<shader::PipelineState> pipeline_states)
 {
   BLI_assert(!is_compute_shader_);
-  has_precompiled_pipelines_ = !pipeline_states.is_empty();
+
+  VKDevice &device = VKBackend::get().device;
+  const VKExtensions &extensions = device.extensions_get();
+  if (!extensions.vertex_input_dynamic_state) {
+    return true;
+  }
+
   for (const shader::PipelineState &pipeline_state : pipeline_states) {
     const VkPrimitiveTopology vk_topology = to_vk_primitive_topology(pipeline_state.primitive_);
 
-    VKDevice &device = VKBackend::get().device;
-    const VKExtensions &extensions = device.extensions_get();
-
     VKGraphicsInfo graphics_info = {};
     graphics_info.vertex_in.vk_topology = vk_topology;
-    graphics_info.vertex_in.attributes.reserve(pipeline_state.vertex_inputs_.size());
-    graphics_info.vertex_in.bindings.reserve(pipeline_state.vertex_inputs_.size());
-    uint32_t binding = 0;
-    for (const shader::PipelineState::AttributeBinding &attribute_binding :
-         pipeline_state.vertex_inputs_)
-    {
-      const GPUVertAttr::Type attribute_type = {attribute_binding.type};
-      graphics_info.vertex_in.attributes.append({attribute_binding.location,
-                                                 binding,
-                                                 to_vk_format(attribute_type.comp_type(),
-                                                              attribute_type.size(),
-                                                              attribute_type.fetch_mode()),
-                                                 attribute_binding.offset});
-      graphics_info.vertex_in.bindings.append(
-          {attribute_binding.binding, attribute_binding.stride, VK_VERTEX_INPUT_RATE_VERTEX});
-      binding++;
-    }
+    /* When vertex input dynamic state is enabled the actual vertex input doesn't matter. We use an
+     * invalid key to ensure that same hash-keys are constructed for compatible graphics infos and
+     * incorrect usages would still assert.*/
+    graphics_info.vertex_in.vertex_input_key = VKVertexInputDescriptionPool::invalid_key;
 
     graphics_info.shaders.vk_vertex_module = vertex_module.vk_shader_module;
     graphics_info.shaders.vk_geometry_module = geometry_module.vk_shader_module;
@@ -1357,6 +1347,7 @@ bool VKShader::ensure_graphics_pipelines(Span<shader::PipelineState> pipeline_st
     bool pipeline_created = false;
     VkPipeline vk_pipeline = device.pipelines.get_or_create_graphics_pipeline(
         graphics_info, is_static_shader_, vk_pipeline_base_, name_get(), pipeline_created);
+    has_precompiled_pipelines_ = true;
     UNUSED_VARS_NDEBUG(pipeline_created);
     if (vk_pipeline == VK_NULL_HANDLE) {
       return false;
@@ -1369,11 +1360,12 @@ bool VKShader::ensure_graphics_pipelines(Span<shader::PipelineState> pipeline_st
   return true;
 }
 
-VkPipeline VKShader::ensure_and_get_graphics_pipeline(GPUPrimType primitive,
-                                                      VKVertexAttributeObject &vao,
-                                                      VKStateManager &state_manager,
-                                                      const VKFrameBuffer &framebuffer,
-                                                      SpecializationConstants &constants_state)
+VkPipeline VKShader::ensure_and_get_graphics_pipeline(
+    GPUPrimType primitive,
+    VKVertexInputDescriptionPool::Key vertex_input_description_key,
+    VKStateManager &state_manager,
+    const VKFrameBuffer &framebuffer,
+    SpecializationConstants &constants_state)
 {
   VKDevice &device = VKBackend::get().device;
   const VKExtensions &extensions = device.extensions_get();
@@ -1391,8 +1383,12 @@ VkPipeline VKShader::ensure_and_get_graphics_pipeline(GPUPrimType primitive,
 
   VKGraphicsInfo graphics_info = {};
   graphics_info.vertex_in.vk_topology = vk_topology;
-  graphics_info.vertex_in.attributes = vao.attributes;
-  graphics_info.vertex_in.bindings = vao.bindings;
+  /* When vertex input dynamic state is enabled the actual vertex input doesn't matter. We use an
+   * invalid key to ensure that same hash-keys are constructed for compatible graphics infos and
+   * incorrect usages would still assert.*/
+  graphics_info.vertex_in.vertex_input_key = extensions.vertex_input_dynamic_state ?
+                                                 VKVertexInputDescriptionPool::invalid_key :
+                                                 vertex_input_description_key;
 
   graphics_info.shaders.vk_vertex_module = vertex_module.vk_shader_module;
   graphics_info.shaders.vk_geometry_module = geometry_module.vk_shader_module;
@@ -1435,6 +1431,10 @@ VkPipeline VKShader::ensure_and_get_graphics_pipeline(GPUPrimType primitive,
               "Pipeline states were compiled for `%s`, however a pipeline state triggered a new "
               "pipeline compilation.",
               name_get().c_str());
+    if (G.debug & G_DEBUG_GPU) {
+      CLOG_DEBUG(
+          &LOG, "Missing pipeline state:\n%s", graphics_info.pipeline_info_source().c_str());
+    }
     const VKContext &context = *VKContext::get();
     BLI_assert(!context.debug_pipeline_creation);
   }

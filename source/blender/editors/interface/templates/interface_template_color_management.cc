@@ -17,7 +17,9 @@
 
 using blender::StringRefNull;
 
-void uiTemplateColorspaceSettings(uiLayout *layout, PointerRNA *ptr, const StringRefNull propname)
+void uiTemplateColorspaceSettings(blender::ui::Layout *layout,
+                                  PointerRNA *ptr,
+                                  const StringRefNull propname)
 {
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname.c_str());
 
@@ -34,7 +36,7 @@ void uiTemplateColorspaceSettings(uiLayout *layout, PointerRNA *ptr, const Strin
   layout->prop(&colorspace_settings_ptr, "name", UI_ITEM_NONE, IFACE_("Color Space"), ICON_NONE);
 }
 
-void uiTemplateColormanagedViewSettings(uiLayout *layout,
+void uiTemplateColormanagedViewSettings(blender::ui::Layout *layout,
                                         bContext * /*C*/,
                                         PointerRNA *ptr,
                                         const StringRefNull propname)
@@ -53,7 +55,7 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   ColorManagedViewSettings *view_settings = static_cast<ColorManagedViewSettings *>(
       view_transform_ptr.data);
 
-  uiLayout *col = &layout->column(false);
+  blender::ui::Layout *col = &layout->column(false);
   col->prop(&view_transform_ptr, "view_transform", UI_ITEM_NONE, IFACE_("View"), ICON_NONE);
   col->prop(&view_transform_ptr, "look", UI_ITEM_NONE, IFACE_("Look"), ICON_NONE);
 
@@ -62,34 +64,45 @@ void uiTemplateColormanagedViewSettings(uiLayout *layout,
   col->prop(&view_transform_ptr, "gamma", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   // BFA - Align bool properties left
-  col->use_property_split_set(false); 
+  col->use_property_split_set(false);
 
-  uiLayout *row = &col->row(false);
-  row = &col->row(true); // bfa - our layout
-  row->separator(); // bfa - Indent
-  row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
-  row->prop(&view_transform_ptr, "use_curve_mapping", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
-  if (!(view_settings->flag & COLORMANAGE_VIEW_USE_CURVES)) { // bfa - if unchecked, show icon
-    row->label("", ICON_DISCLOSURE_TRI_RIGHT);  // bfa - icon
-  } else {
+  blender::ui::Layout *row = &col->row(false);
+  row = &col->row(true);                               // bfa - our layout
+  row->separator();                                    // bfa - Indent
+  row->alignment_set(blender::ui::LayoutAlign::Left);  // bfa - left align
+  row->prop(&view_transform_ptr,
+            "use_curve_mapping",
+            UI_ITEM_NONE,
+            std::nullopt,
+            ICON_NONE);                                        // bfa - row prop
+  if (!(view_settings->flag & COLORMANAGE_VIEW_USE_CURVES)) {  // bfa - if unchecked, show icon
+    row->label("", ICON_DISCLOSURE_TRI_RIGHT);                 // bfa - icon
+  }
+  else {
     row->label("", ICON_DISCLOSURE_TRI_DOWN);  // bfa - icon
     uiTemplateCurveMapping(
         col, &view_transform_ptr, "curve_mapping", 'c', true, false, false, false, false);
   }
 
-  row = &col->row(true); // bfa - our layout
-  row->separator(); // bfa - Indent
-  row->alignment_set(blender::ui::LayoutAlign::Left); // bfa - left align
-  row->prop(&view_transform_ptr, "use_white_balance", UI_ITEM_NONE, std::nullopt, ICON_NONE); // bfa - row prop
-  if (!(view_settings->flag & COLORMANAGE_VIEW_USE_WHITE_BALANCE)) { // bfa - if unchecked, show icon
+  row = &col->row(true);                               // bfa - our layout
+  row->separator();                                    // bfa - Indent
+  row->alignment_set(blender::ui::LayoutAlign::Left);  // bfa - left align
+  row->prop(&view_transform_ptr,
+            "use_white_balance",
+            UI_ITEM_NONE,
+            std::nullopt,
+            ICON_NONE);  // bfa - row prop
+  if (!(view_settings->flag &
+        COLORMANAGE_VIEW_USE_WHITE_BALANCE)) {  // bfa - if unchecked, show icon
     row->label("", ICON_DISCLOSURE_TRI_RIGHT);  // bfa - icon
-  } else {
+  }
+  else {
     row->label("", ICON_DISCLOSURE_TRI_DOWN);  // bfa - icon
-    
+
     row = &col->row(true);
-    row->separator(); // bfa - Indent
+    row->separator();  // bfa - Indent
     col = &row->column(false);
-    col->use_property_split_set(true); // bfa - split properties
+    col->use_property_split_set(true);  // bfa - split properties
     col->prop(
         &view_transform_ptr, "white_balance_temperature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(&view_transform_ptr, "white_balance_tint", UI_ITEM_NONE, std::nullopt, ICON_NONE);

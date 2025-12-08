@@ -271,7 +271,7 @@ static void image_panel_uv(const bContext *C, Panel *panel)
   blender::ui::Layout *layout = panel->layout;
   blender::ui::Layout *layout_split, *layout_sub;
 
-  uiLayout *col;
+  blender::ui::Layout *col;
   col = &layout->column(true);
 
   /* BFA - property label */
@@ -286,7 +286,7 @@ static void image_panel_uv(const bContext *C, Panel *panel)
   layout_sub = &layout_split->column(true);
   layout_sub->fixed_size_set(true);
 
-  block = layout_split->absolute_block();
+  block = layout_split->absolute().block();
   UI_block_func_handle_set(block, do_uvedit_vertex, nullptr);
 
   uvedit_vertex_buttons(C, block, layout_split);

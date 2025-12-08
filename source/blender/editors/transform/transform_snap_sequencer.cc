@@ -225,7 +225,7 @@ static VectorSet<Strip *> query_snap_targets_timeline(Scene *scene,
     if (seq::render_is_muted(channels, strip) && (snap_flag & SEQ_SNAP_IGNORE_MUTED)) {
       continue;
     }
-    if (strip->type == STRIP_TYPE_SOUND_RAM && (snap_flag & SEQ_SNAP_IGNORE_SOUND)) {
+    if (strip->type == STRIP_TYPE_SOUND && (snap_flag & SEQ_SNAP_IGNORE_SOUND)) {
       continue;
     }
     if (effects_of_snap_sources.contains(strip)) {
@@ -672,8 +672,8 @@ static int snap_sequencer_to_closest_strip_ex(TransInfo *t, const int frame_1, c
 
   BLI_assert(frame_1 <= frame_2);
 
-  snap_data->source_snap_points[0][0] = frame_1;
-  snap_data->source_snap_points[1][0] = frame_2;
+  snap_data->source_snap_points.append(float2(frame_1));
+  snap_data->source_snap_points.append(float2(frame_2));
 
   short snap_mode = t->tsnap.mode;
 

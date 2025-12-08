@@ -292,22 +292,22 @@ static void deform_verts(ModifierData *md,
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *row, *col; /*bfa - removed *sub*/
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout *row, *col; /*bfa - removed *sub*/
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  row = &layout->row(true, IFACE_("Motion"));
+  row = &layout.row(true, IFACE_("Motion"));
   row->prop(
       ptr, "use_x", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, std::nullopt, ICON_NONE);
   row->prop(
       ptr, "use_y", UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE, std::nullopt, ICON_NONE);
 
   /* bfa - our layout */
-  col = &layout->column(true);
+  col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -315,7 +315,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
-  uiLayout *split = &layout->split(0.385f, true);
+  blender::ui::Layout *split = &layout.split(0.385f, true);
   row = &split->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_normal", UI_ITEM_NONE, "Along Normals", ICON_NONE);
@@ -331,11 +331,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
-    row->label(TIP_(""), ICON_NONE);           /* bfa - aligns the decorator right...*/
+    row->label(TIP_(""), ICON_NONE);      /* bfa - aligns the decorator right...*/
     row->decorator(ptr, "use_normal", 0); /*bfa - decorator for use_normal*/
   }
 
-  col = &layout->column(false);
+  col = &layout.column(false);
   col->prop(ptr, "falloff_radius", UI_ITEM_NONE, IFACE_("Falloff"), ICON_NONE);
   col->prop(ptr, "height", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
   col->prop(ptr, "width", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
@@ -348,70 +348,67 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
 static void position_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  layout->prop(ptr, "start_position_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
+  layout.prop(ptr, "start_position_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
 
-  col = &layout->column(true);
-  col->prop(ptr, "start_position_x", UI_ITEM_NONE, IFACE_("Start Position X"), ICON_NONE);
-  col->prop(ptr, "start_position_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
+  blender::ui::Layout &col = layout.column(true);
+  col.prop(ptr, "start_position_x", UI_ITEM_NONE, IFACE_("Start Position X"), ICON_NONE);
+  col.prop(ptr, "start_position_y", UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
 }
 
 static void time_panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  uiLayout *col;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(false);
-  col->prop(ptr, "time_offset", UI_ITEM_NONE, IFACE_("Offset"), ICON_NONE);
-  col->prop(ptr, "lifetime", UI_ITEM_NONE, IFACE_("Life"), ICON_NONE);
-  col->prop(ptr, "damping_time", UI_ITEM_NONE, IFACE_("Damping"), ICON_NONE);
-  col->prop(ptr, "speed", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+  blender::ui::Layout &col = layout.column(false);
+  col.prop(ptr, "time_offset", UI_ITEM_NONE, IFACE_("Offset"), ICON_NONE);
+  col.prop(ptr, "lifetime", UI_ITEM_NONE, IFACE_("Life"), ICON_NONE);
+  col.prop(ptr, "damping_time", UI_ITEM_NONE, IFACE_("Damping"), ICON_NONE);
+  col.prop(ptr, "speed", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 }
 
 static void texture_panel_draw(const bContext *C, Panel *panel)
 {
-  uiLayout *col;
-  uiLayout *layout = panel->layout;
+  blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   int texture_coords = RNA_enum_get(ptr, "texture_coords");
 
-  uiTemplateID(layout, C, ptr, "texture", "texture.new", nullptr, nullptr);
+  uiTemplateID(&layout, C, ptr, "texture", "texture.new", nullptr, nullptr);
 
-  layout->use_property_split_set(true);
+  layout.use_property_split_set(true);
 
-  col = &layout->column(false);
-  col->prop(ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
+  blender::ui::Layout &col = layout.column(false);
+  col.prop(ptr, "texture_coords", UI_ITEM_NONE, IFACE_("Coordinates"), ICON_NONE);
   if (texture_coords == MOD_DISP_MAP_OBJECT) {
-    col->prop(ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
+    col.prop(ptr, "texture_coords_object", UI_ITEM_NONE, IFACE_("Object"), ICON_NONE);
     PointerRNA texture_coords_obj_ptr = RNA_pointer_get(ptr, "texture_coords_object");
     if (!RNA_pointer_is_null(&texture_coords_obj_ptr) &&
         (RNA_enum_get(&texture_coords_obj_ptr, "type") == OB_ARMATURE))
     {
       PointerRNA texture_coords_obj_data_ptr = RNA_pointer_get(&texture_coords_obj_ptr, "data");
-      col->prop_search(ptr,
-                       "texture_coords_bone",
-                       &texture_coords_obj_data_ptr,
-                       "bones",
-                       IFACE_("Bone"),
-                       ICON_NONE);
+      col.prop_search(ptr,
+                      "texture_coords_bone",
+                      &texture_coords_obj_data_ptr,
+                      "bones",
+                      IFACE_("Bone"),
+                      ICON_NONE);
     }
   }
   else if (texture_coords == MOD_DISP_MAP_UV && RNA_enum_get(&ob_ptr, "type") == OB_MESH) {
     PointerRNA obj_data_ptr = RNA_pointer_get(&ob_ptr, "data");
-    col->prop_search(ptr, "uv_layer", &obj_data_ptr, "uv_layers", std::nullopt, ICON_GROUP_UVS);
+    col.prop_search(ptr, "uv_layer", &obj_data_ptr, "uv_layers", std::nullopt, ICON_GROUP_UVS);
   }
 }
 

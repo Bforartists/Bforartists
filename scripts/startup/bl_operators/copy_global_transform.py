@@ -322,7 +322,7 @@ class OBJECT_OT_paste_transform(Operator):
         try:
             floats = tuple(tuple(float(item) for item in line.split()) for line in lines)
         except ValueError:
-            # Apprently not the expected format.
+            # Apparently not the expected format.
             return None
         return Matrix(floats)
 
@@ -337,7 +337,7 @@ class OBJECT_OT_paste_transform(Operator):
         try:
             floats = tuple(tuple(float(item.strip()) for item in line.strip()[1:-1].split(',')) for line in lines)
         except ValueError:
-            # Apprently not the expected format.
+            # Apparently not the expected format.
             return None
         return Matrix(floats)
 
@@ -503,11 +503,11 @@ class Transformable(metaclass=abc.ABCMeta):
         pass
 
     def set_matrix_world(self, context: Context, matrix: Matrix) -> None:
-        """Set the world matrix, without autokeying."""
+        """Set the world matrix, without auto-keying."""
         self._set_matrix_world(context, matrix)
 
     def set_matrix_world_autokey(self, context: Context, matrix: Matrix) -> None:
-        """Set the world matrix, and autokey the resulting transform."""
+        """Set the world matrix, and auto-key the resulting transform."""
         self._set_matrix_world(context, matrix)
         self._autokey_matrix_world(context)
 
@@ -791,7 +791,7 @@ class OBJECT_OT_delete_fix_to_camera_keys(Operator, FixToCameraCommon):
             t.remove_keys_of_type(self.keytype, frame_start=frame_start, frame_end=frame_end)
 
 
-# Messagebus subscription to monitor changes & refresh panels.
+# MessageBus subscription to monitor changes & refresh panels.
 _msgbus_owner = object()
 
 

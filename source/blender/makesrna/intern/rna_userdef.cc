@@ -6669,6 +6669,11 @@ static void rna_def_userdef_input(BlenderRNA *brna)
                            "restarting Blender for changes to take effect)");
   RNA_def_property_update(prop, 0, "rna_userdef_input_devices");
 
+  prop = RNA_def_property(srna, "show_tablet_debug_values", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "tablet_flag", USER_TABLET_SHOW_DEBUG_VALUES);
+  RNA_def_property_ui_text(
+      prop, "Show Tablet Debug Values", "Show pressure values when using a paint operator");
+
   prop = RNA_def_property(srna, "xr_navigation", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "xr_navigation");
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
@@ -7559,11 +7564,18 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   prop = RNA_def_property(srna, "use_recompute_usercount_on_save_debug", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_ui_text(prop,
-                           "Recompute ID Usercount On Save",
-                           "Recompute all ID usercounts before saving to a blendfile. Allows to "
-                           "work around invalid usercount handling in code that may lead to loss "
-                           "of data due to wrongly detected unused data-blocks");
+  RNA_def_property_ui_text(
+      prop,
+      "Recompute ID User Count On Save",
+      "Recompute all ID user-counts before saving to a blend-file. "
+      "Allows to work around invalid user-count handling in code "
+      "that may lead to loss of data due to wrongly detected unused data-blocks");
+
+  prop = RNA_def_property(srna, "use_paint_debug", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "use_paint_debug", 1);
+  RNA_def_property_ui_text(
+      prop, "Paint Debug", "Enable paint & sculpt debugging options for developers");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
 }
 
 static void rna_def_userdef_addon_collection(BlenderRNA *brna, PropertyRNA *cprop)
