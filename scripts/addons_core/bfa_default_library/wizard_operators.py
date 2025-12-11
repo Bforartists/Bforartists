@@ -64,9 +64,17 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
     def draw(self, context):
         layout = self.layout
 
+        # Check if this is Bforartists for the right icon
+        if "OUTLINER_MT_view" in dir(bpy.types):
+            icon1 = "WIZARD"
+            icon2 = "MOUSE_POSITION"
+        else:
+            icon1 = "INFO"
+            icon2 = "TRANSFORM_ORIGINS"
+
         # Collection selection panel
         row = layout.row()
-        row.label(text="Select an existing collection of mesh objects to apply", icon='WIZARD')
+        row.label(text="Select an existing collection of mesh objects to apply", icon=icon1)
         
         row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
@@ -75,7 +83,7 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
         row.prop(context.scene, "inject_intersection_nodegroup", text="Apply Blend to Materials", icon="MATERIAL")
 
         row = layout.row()
-        row.prop(context.scene, "use_relative_position", text="Use Relative Position", icon="MOUSE_POSITION")
+        row.prop(context.scene, "use_relative_position", text="Use Relative Position", icon=icon2)
 
         row = layout.row()
         row.prop(context.scene, "use_wireframe_on_collection", text="Enable Bounds Display", icon="SHADING_BBOX")

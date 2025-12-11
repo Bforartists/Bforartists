@@ -134,7 +134,6 @@ def collection_asset_added_handler(arg):
 
 # TO DO: Add Node Asset Handlers for GN, Shaders and Compositor. Also add for other asset types, like mesh, material, brush, scene and world.
 
-
 # -----------------------------------------------------------------------------#
 # Easy-to-use function to add new wizard handlers
 # This also includes a button we can reference to call the wizard again
@@ -161,7 +160,13 @@ def detect_wizard_for_object(obj):
 
     return False, None, None
 
-def draw_wizard_button(layout, obj, button_text="Open Asset Wizard", icon='WIZARD', scale_y=1.5):
+# Check if this is Bforartists for the right icon
+if "OUTLINER_MT_view" in dir(bpy.types):
+    icon = "WIZARD"
+else:
+    icon = "INFO"
+
+def draw_wizard_button(layout, obj, button_text="Open Asset Wizard", icon=icon, scale_y=1.5):
     """
     Draw a wizard button if the object has a compatible wizard.
 
