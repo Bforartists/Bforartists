@@ -102,7 +102,7 @@ class LIBADDON_APT_preferences(AddonPreferences):
         layout.label(
             text="'Default Library', 'Geometry Nodes Library', 'Shader Nodes Library', or 'Compositor Nodes Library'.")
         layout.label(
-            text="You will now see assets from the selected BFA library. Enjoy!")
+            text="You will now see assets from the selected Bforartists library. Enjoy!")
         
         # Show central library info
         box = layout.box()
@@ -173,19 +173,24 @@ def register_library():
             try:
                 bpy.ops.preferences.asset_library_add(directory=library_path)
                 
-                # Find the newly created library and set its name
+                # Find the newly created library and set its name and import method
                 for i, lib in enumerate(prefs.filepaths.asset_libraries):
                     if lib.path == library_path:
                         lib.name = lib_name
-                        print(f"   ✅ Registered library: {lib_name} -> {library_path}")
+                        # Set import method to APPEND (1) instead of default PACKED (0)
+                        lib.import_method = 'APPEND'
+                        print(f"   ✅ Registered library: {lib_name} -> {library_path} (Import Method: Append)")
                         registered_count += 1
                         break
             except Exception as e:
                 print(f"   ❌ Could not register library {lib_name}: {e}")
         else:
-            # Library already exists, just update the name
-            prefs.filepaths.asset_libraries[lib_index].name = lib_name
-            print(f"   ⏩ Library already registered: {lib_name} -> {library_path}")
+            # Library already exists, update the name and ensure append mode
+            lib_ref = prefs.filepaths.asset_libraries[lib_index]
+            lib_ref.name = lib_name
+            # Ensure import method is set to APPEND
+            lib_ref.import_method = 'APPEND'
+            print(f"   ⏩ Library already registered: {lib_name} -> {library_path} (Import Method: Append)")
             registered_count += 1
 
     print(f"   ✅ Successfully registered {registered_count} libraries")
