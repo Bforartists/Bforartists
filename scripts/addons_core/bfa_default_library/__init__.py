@@ -45,7 +45,6 @@ ADDON_DISPLAY_NAME = "Default Asset Library"     # Change to match your addon's 
 ADDON_VERSION = (1, 2, 5)                   # Change to match your addon's version
 
 # Library configuration - Only include libraries that exist in your packaged addon
-CENTRAL_LIBRARY_NAME = "Default Library"
 CENTRAL_LIB_SUBFOLDERS = ["Default Library", "Geometry Nodes Library", "Shader Nodes Library", "Compositor Nodes Library"]  # Only include libraries that exist
 
 # Library display names (for reference - do not change these)
@@ -99,9 +98,11 @@ class LIBADDON_APT_preferences(AddonPreferences):
         layout.label(
             text="To access these default assets, switch to the Asset Browser editor,")
         layout.label(
-            text="Go to the left library selector drop down and select 'Default Library'.")
+            text="Go to the left library selector drop down and select:")
         layout.label(
-            text="You will now see assets from all installed BFA library addons. Enjoy!")
+            text="'Default Library', 'Geometry Nodes Library', 'Shader Nodes Library', or 'Compositor Nodes Library'.")
+        layout.label(
+            text="You will now see assets from the selected BFA library. Enjoy!")
         
         # Show central library info
         box = layout.box()
@@ -112,37 +113,36 @@ class LIBADDON_APT_preferences(AddonPreferences):
         box.label(text=f"Location: {path}")
         box.label(text=f"Active Addons: {utility.get_active_addons_count(path)}")
 
-def get_lib_path_index(prefs: Preferences, library_name: str):
+def get_lib_path_index(prefs: Preferences, library_name: str, library_path: str):
     """Get the index of the library name or path for configuring them in the operator."""
-    central_base = get_central_library_base()
     for index, lib in enumerate(prefs.filepaths.asset_libraries):
-        if lib.path == central_base or lib.name == CENTRAL_LIBRARY_NAME:
+        if lib.path == library_path or lib.name == library_name:
             return index
     return -1
 
 
 def register_library():
-    """Register the central library, as long as the addon is enabled."""
+    """Register each library subfolder as a separate library in Blender preferences."""
     prefs = bpy.context.preferences
     
     # Get central library path at runtime
     central_base = get_central_library_base()
     
     # Debug output
-    print(f"🔧 Registering Default Library...")
+    print(f"🔧 Registering Multiple Asset Libraries...")
     print(f"   Source path: {p.dirname(__file__)}")
-    print(f"   Central path: {central_base}")
-    print(f"   Libraries: {CENTRAL_LIB_SUBFOLDERS}")
+    print(f"   Central base: {central_base}")
+    print(f"   Libraries to register: {CENTRAL_LIB_SUBFOLDERS}")
     
     # Check if source directories exist and filter to only existing ones
     existing_libraries = []
     for lib_name in CENTRAL_LIB_SUBFOLDERS:
         source_dir = p.join(p.dirname(__file__), lib_name)
         if p.exists(source_dir):
-            print(f"   ✓ Source directory exists: {source_dir}")
+            print(f"   ✅ Source directory exists: {source_dir}")
             existing_libraries.append(lib_name)
         else:
-            print(f"     ⚠ Source directory missing (skipping): {source_dir}")
+            print(f"   ⚠ Source directory missing (skipping): {source_dir}")
     
     print(f"   Libraries to process: {existing_libraries}")
 
@@ -156,25 +156,43 @@ def register_library():
     # Add this addon to central library and copy assets (only existing libraries)
     utility.add_addon_to_central_library(addon_info, existing_libraries, p.dirname(__file__), central_base)
     
-    index = utility.get_central_library_index(prefs, central_base)
+    # Register each subfolder as a separate library in Blender preferences
+    registered_count = 0
+    for lib_name in existing_libraries:
+        library_path = p.join(central_base, lib_name)
     
-    # In case the central library doesn't exist in the preferences, create it.
-    if index == -1:
-        print(f"   Creating new asset library in preferences...")
-        bpy.ops.preferences.asset_library_add(directory=central_base)
-        index = utility.get_central_library_index(prefs, central_base)
-        print(f"   Created library at index: {index}")
-    else:
-        print(f"   Library already exists at index: {index}")
+        # Check if this specific library already exists in preferences
+        lib_index = -1
+        for i, lib in enumerate(prefs.filepaths.asset_libraries):
+            if lib.path == library_path:
+                lib_index = i
+                break
+        
+        if lib_index == -1:
+            # Library doesn't exist, create it
+            try:
+                bpy.ops.preferences.asset_library_add(directory=library_path)
+                
+                # Find the newly created library and set its name
+                for i, lib in enumerate(prefs.filepaths.asset_libraries):
+                    if lib.path == library_path:
+                        lib.name = lib_name
+                        print(f"   ✅ Registered library: {lib_name} -> {library_path}")
+                        registered_count += 1
+                        break
+            except Exception as e:
+                print(f"   ❌ Could not register library {lib_name}: {e}")
+        else:
+            # Library already exists, just update the name
+            prefs.filepaths.asset_libraries[lib_index].name = lib_name
+            print(f"   ⏩ Library already registered: {lib_name} -> {library_path}")
+            registered_count += 1
 
-    # Set the correct name and path of the central library
-    prefs.filepaths.asset_libraries[index].name = CENTRAL_LIBRARY_NAME
-    prefs.filepaths.asset_libraries[index].path = central_base
-    print(f"   ✓ Library configured: {CENTRAL_LIBRARY_NAME} -> {central_base}")
+    print(f"   ✅ Successfully registered {registered_count} libraries")
 
 
 def unregister_library():
-    """Remove the central library if no other addons are using it."""
+    """Remove individual libraries if no other addons are using them."""
     try:
         # Get central library path at runtime
         central_base = get_central_library_base()
@@ -194,16 +212,19 @@ def unregister_library():
         print(f"Active addons remaining: {active_addons}")
         
         if active_addons == 0:
-            # No other addons using the library, so clean up completely
+            # No other addons using any libraries, so clean up completely
             try:
                 prefs = bpy.context.preferences
-                index = utility.get_central_library_index(prefs, central_base)
-                if index != -1:
-                    try:
-                        bpy.ops.preferences.asset_library_remove(index=index)
-                        print("✓ Central library removed from preferences")
-                    except Exception as e:
-                        print(f"⚠ Could not remove library from preferences: {e}")
+                # Remove all libraries that match our subfolders
+                for lib_name in CENTRAL_LIB_SUBFOLDERS:
+                    lib_path = p.join(central_base, lib_name)
+                    lib_index = get_lib_path_index(prefs, lib_name, lib_path)
+                    if lib_index != -1:
+                        try:
+                            bpy.ops.preferences.asset_library_remove(index=lib_index)
+                            print(f"✓ Removed library from preferences: {lib_name}")
+                        except Exception as e:
+                            print(f"⚠ Could not remove library {lib_name} from preferences: {e}")
             except Exception as e:
                 print(f"⚠ Could not access preferences during unregistration: {e}")
             
@@ -214,7 +235,8 @@ def unregister_library():
             except Exception as e:
                 print(f"⚠ Could not cleanup central library files: {e}")
         else:
-            print(f"✓ {active_addons} addon(s) still using central library, keeping it registered")
+            # Other addons are still using libraries, keep individual libraries registered
+            print(f"✓ {active_addons} addon(s) still using central library, keeping individual libraries registered")
             
     except Exception as e:
         print(f"⚠ Error during library unregistration: {e}")
