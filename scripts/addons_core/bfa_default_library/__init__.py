@@ -59,8 +59,8 @@ COMP_NAME = "Compositor Nodes Library"
 def get_central_library_base():
     """Get the central library path at runtime with debug output."""
     path = utility.get_central_library_path()
-    print(f"🛠️ Central library base path resolved to: {path}")
-    print(f"🛠️ Current file location: {__file__}")
+    #print(f"🛠️ Central library base path resolved to: {path}")
+    #print(f"🛠️ Current file location: {__file__}")
     return path
 
 CENTRAL_LIBRARY_BASE = None  # Will be set during registration
@@ -129,22 +129,22 @@ def register_library():
     central_base = get_central_library_base()
     
     # Debug output
-    print(f"🔧 Registering Multiple Asset Libraries...")
-    print(f"   Source path: {p.dirname(__file__)}")
-    print(f"   Central base: {central_base}")
-    print(f"   Libraries to register: {CENTRAL_LIB_SUBFOLDERS}")
+    #print(f"🔧 Registering Multiple Asset Libraries...")
+    #print(f"   Source path: {p.dirname(__file__)}")
+    #print(f"   Central base: {central_base}")
+    #print(f"   Libraries to register: {CENTRAL_LIB_SUBFOLDERS}")
     
     # Check if source directories exist and filter to only existing ones
     existing_libraries = []
     for lib_name in CENTRAL_LIB_SUBFOLDERS:
         source_dir = p.join(p.dirname(__file__), lib_name)
         if p.exists(source_dir):
-            print(f"   ✅ Source directory exists: {source_dir}")
+            #print(f"   ✅ Source directory exists: {source_dir}")
             existing_libraries.append(lib_name)
         else:
-            print(f"   ⚠ Source directory missing (skipping): {source_dir}")
+            #print(f"   ⚠ Source directory missing (skipping): {source_dir}")
     
-    print(f"   Libraries to process: {existing_libraries}")
+    #print(f"   Libraries to process: {existing_libraries}")
 
     # Use unique addon info for proper tracking
     addon_info = {
@@ -179,21 +179,21 @@ def register_library():
                         lib.name = lib_name
                         # Set import method to APPEND (1) instead of default PACKED (0)
                         lib.import_method = 'APPEND'
-                        print(f"   ✅ Registered library: {lib_name} -> {library_path} (Import Method: Append)")
+                        #print(f"   ✅ Registered library: {lib_name} -> {library_path} (Import Method: Append)")
                         registered_count += 1
                         break
             except Exception as e:
-                print(f"   ❌ Could not register library {lib_name}: {e}")
+                #print(f"   ❌ Could not register library {lib_name}: {e}")
         else:
             # Library already exists, update the name and ensure append mode
             lib_ref = prefs.filepaths.asset_libraries[lib_index]
             lib_ref.name = lib_name
             # Ensure import method is set to APPEND
             lib_ref.import_method = 'APPEND'
-            print(f"   ⏩ Library already registered: {lib_name} -> {library_path} (Import Method: Append)")
+            #print(f"   ⏩ Library already registered: {lib_name} -> {library_path} (Import Method: Append)")
             registered_count += 1
 
-    print(f"   ✅ Successfully registered {registered_count} libraries")
+    #print(f"   ✅ Successfully registered {registered_count} libraries")
 
 
 def unregister_library():
@@ -214,7 +214,7 @@ def unregister_library():
         
         # Check if no other addons are using the central library
         active_addons = utility.get_active_addons_count(central_base)
-        print(f"Active addons remaining: {active_addons}")
+        #print(f"Active addons remaining: {active_addons}")
         
         if active_addons == 0:
             # No other addons using any libraries, so clean up completely
@@ -227,30 +227,30 @@ def unregister_library():
                     if lib_index != -1:
                         try:
                             bpy.ops.preferences.asset_library_remove(index=lib_index)
-                            print(f"✓ Removed library from preferences: {lib_name}")
+                            #print(f"✓ Removed library from preferences: {lib_name}")
                         except Exception as e:
-                            print(f"⚠ Could not remove library {lib_name} from preferences: {e}")
+                            #print(f"⚠ Could not remove library {lib_name} from preferences: {e}")
             except Exception as e:
-                print(f"⚠ Could not access preferences during unregistration: {e}")
+                #print(f"⚠ Could not access preferences during unregistration: {e}")
             
             # Force cleanup of central library files (remove everything)
             try:
                 utility.cleanup_central_library(central_base)
-                print("✓ Central library files cleaned up")
+                #print("✓ Central library files cleaned up")
             except Exception as e:
-                print(f"⚠ Could not cleanup central library files: {e}")
+                #print(f"⚠ Could not cleanup central library files: {e}")
         else:
             # Other addons are still using libraries, keep individual libraries registered
-            print(f"✓ {active_addons} addon(s) still using central library, keeping individual libraries registered")
+            #print(f"✓ {active_addons} addon(s) still using central library, keeping individual libraries registered")
             
     except Exception as e:
-        print(f"⚠ Error during library unregistration: {e}")
-        print("⚠ Library cleanup may be incomplete")
+        #print(f"⚠ Error during library unregistration: {e}")
+        #print("⚠ Library cleanup may be incomplete")
 
 
 def register_all_libraries():
     """Register the central asset library."""
-    print("🔄 register_all_libraries() called")
+    #print("🔄 register_all_libraries() called")
     register_library()
 
 
@@ -282,7 +282,7 @@ register_submodules, unregister_submodules = register_submodule_factory(__name__
 
 def register():
     """Register the complete addon"""
-    print("=== BFA Default Library Addon Registration Started ===")
+    #print("=== BFA Default Library Addon Registration Started ===")
     
     # Register preferences class
     for cls in classes:
@@ -295,50 +295,50 @@ def register():
     # Use load_post handler for reliable library registration
     # This ensures registration happens after Blender is fully loaded
     bpy.app.handlers.load_post.append(delayed_library_registration)
-    print("✓ Load post handler registered for delayed library setup")
+    #print("✓ Load post handler registered for delayed library setup")
     
     # Also try immediate registration in case we're already loaded
     try:
         register_all_libraries()
-        print(f"✓ Immediate Default Library registration successful")
+        #print(f"✓ Immediate Default Library registration successful")
     except Exception as e:
-        print(f"⚠ Immediate registration failed (normal during startup): {e}")
+        #print(f"⚠ Immediate registration failed (normal during startup): {e}")
 
-    print("=== BFA Default Library Addon Registration Completed ===")
+    #print("=== BFA Default Library Addon Registration Completed ===")
 
 
 def delayed_library_registration(scene):
     """Callback for load_post handler to register libraries after Blender loads."""
-    print("🔄 Delayed library registration triggered by load_post handler")
+    #print("🔄 Delayed library registration triggered by load_post handler")
     try:
         register_all_libraries()
-        print(f"✓ Delayed Default Library registration successful")
+        #print(f"✓ Delayed Default Library registration successful")
         
         # Remove ourselves from the handler to avoid multiple registrations
         if delayed_library_registration in bpy.app.handlers.load_post:
             bpy.app.handlers.load_post.remove(delayed_library_registration)
-            print("✓ Removed load_post handler after successful registration")
+            #print("✓ Removed load_post handler after successful registration")
             
     except Exception as e:
-        print(f"⚠ Delayed registration failed: {e}")
+        #print(f"⚠ Delayed registration failed: {e}")
 
 def unregister():
     """Unregister the complete addon"""
-    print("=== BFA Default Library Addon Unregistration Started ===")
+    #print("=== BFA Default Library Addon Unregistration Started ===")
     
     # Try to remove load_post handler first to prevent any delayed calls
     try:
         if delayed_library_registration in bpy.app.handlers.load_post:
             bpy.app.handlers.load_post.remove(delayed_library_registration)
-            print("✓ Removed load_post handler")
+            #print("✓ Removed load_post handler")
     except Exception as e:
-        print(f"⚠ Could not remove load_post handler: {e}")
+        #print(f"⚠ Could not remove load_post handler: {e}")
     
     # Unregister all libraries (with error handling)
     try:
         unregister_all_libraries()
     except Exception as e:
-        print(f"⚠ Error during library unregistration: {e}")
+        #print(f"⚠ Error during library unregistration: {e}")
 
     try:
         # Force refresh of asset catalogs to remove our entries to avoid a hard crash
@@ -351,7 +351,7 @@ def unregister():
         try:
             bpy.utils.unregister_class(cls)
         except Exception as e:
-            print(f"⚠ Could not unregister class {cls}: {e}")
+            #print(f"⚠ Could not unregister class {cls}: {e}")
 
     # Unregister timer if exists
     try:
@@ -362,8 +362,8 @@ def unregister():
     # Unregister all submodules with error handling
     try:
         unregister_submodules()
-        print("✓ Submodules unregistered")
+        #print("✓ Submodules unregistered")
     except Exception as e:
-        print(f"⚠ Error during submodule unregistration: {e}")
+        #print(f"⚠ Error during submodule unregistration: {e}")
     
-    print("=== BFA Default Library Addon Unregistration Completed ===")
+    #print("=== BFA Default Library Addon Unregistration Completed ===")
