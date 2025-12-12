@@ -5790,7 +5790,6 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   prop = RNA_def_property(srna, "outliner_colored_collection_rows", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
       prop, nullptr, "outliner_editor_flag", USER_OUTLINER_COL_COLLECTION_ROWS);
-  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(
       prop, "Colored Collection Rows", "Display colored collection rows in the outliner");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
