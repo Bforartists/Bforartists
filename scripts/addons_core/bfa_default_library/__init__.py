@@ -179,7 +179,7 @@ def register_library():
                         lib.name = lib_name
                         # Set import method to APPEND (1) instead of default PACKED (0)
                         lib.import_method = 'APPEND'
-                        print(f"   ✅ Registered library: {lib_name} -> {library_path} (Import Method: Append)")
+                        #print(f"   ✅ Registered library: {lib_name} -> {library_path} (Import Method: Append)")
                         registered_count += 1
                         break
             except Exception as e:
@@ -193,7 +193,7 @@ def register_library():
             #print(f"   ⏩ Library already registered: {lib_name} -> {library_path} (Import Method: Append)")
             registered_count += 1
 
-    print(f"   ✅ Successfully registered {registered_count} libraries")
+    #print(f"   ✅ Successfully registered {registered_count} libraries")
 
 
 def unregister_library():
@@ -227,7 +227,7 @@ def unregister_library():
                     if lib_index != -1:
                         try:
                             bpy.ops.preferences.asset_library_remove(index=lib_index)
-                            print(f"✓ Removed library from preferences: {lib_name}")
+                            #print(f"✓ Removed library from preferences: {lib_name}")
                         except Exception as e:
                             print(f"⚠ Could not remove library {lib_name} from preferences: {e}")
             except Exception as e:
@@ -236,7 +236,7 @@ def unregister_library():
             # Force cleanup of central library files (remove everything)
             try:
                 utility.cleanup_central_library(central_base)
-                print("✓ Central library files cleaned up")
+                #print("✓ Central library files cleaned up")
             except Exception as e:
                 print(f"⚠ Could not cleanup central library files: {e}")
         else:
@@ -300,7 +300,7 @@ def register():
     # Also try immediate registration in case we're already loaded
     try:
         register_all_libraries()
-        print(f"✓ Immediate Default Library registration successful")
+        #print(f"✓ Immediate Default Library registration successful")
     except Exception as e:
         print(f"⚠ Immediate registration failed (normal during startup): {e}")
 
