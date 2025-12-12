@@ -85,6 +85,7 @@ const UserDef U_default = {
     .virtual_pixel = 0,
 
     .viewport_line_width = 1.0, /* BFA - GooEngine */
+    .node_color_blend = 0.2f,   /* BFA - Node Color Blend */
 
     .scrollback = 256,
     .node_margin = 40,
