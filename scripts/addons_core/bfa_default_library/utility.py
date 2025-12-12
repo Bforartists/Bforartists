@@ -74,7 +74,7 @@ def write_addon_tracking(central_lib_base, tracking_data):
         with open(tracking_file, 'w') as f:
             json.dump(tracking_data, f, indent=2)
     except IOError:
-        #print(f"Warning: Could not write addon tracking file: {tracking_file}")
+        print(f"Warning: Could not write addon tracking file: {tracking_file}")
 
 
 def add_addon_to_central_library(addon_info, library_folders, addon_path, central_lib_base=None):
@@ -192,7 +192,7 @@ def cleanup_central_library(central_lib_base, tracking_data=None):
                 shutil.rmtree(central_lib_base)
                 #print(f"🗑️ Force removed central library: {central_lib_base}")
         except OSError as e:
-            #print(f"⚠ Warning: Could not cleanup central library: {e}")
+            print(f"⚠ Warning: Could not cleanup central library: {e}")
 
 
 def get_active_addons_count(central_lib_base=None):
@@ -274,7 +274,7 @@ def remove_orphaned_files(central_lib_base, tracking_data, files_to_check):
                         break
 
             except OSError as e:
-                #print(f"      ⚠ Could not remove file {file_path}: {e}")
+                print(f"      ⚠ Could not remove file {file_path}: {e}")
 
     return removed_count
 

@@ -67,9 +67,9 @@ CENTRAL_LIBRARY_BASE = None  # Will be set during registration
 
 # This is for built in core addons, but won't show as an extension
 bl_info = {
-    "name": ADDON_DISPLAY_NAME,
+    "name": "Default Asset Library",
     "author": "Draise",
-    "version": ADDON_VERSION,
+    "version": (1, 2, 5),
     "blender": (4, 4, 3),
     "location": "Asset Browser>Default Library",
     "description": "Adds a default library with complementary assets that you can use from the Asset Browser Editor",
@@ -141,7 +141,7 @@ def register_library():
         if p.exists(source_dir):
             #print(f"   ✅ Source directory exists: {source_dir}")
             existing_libraries.append(lib_name)
-        else:
+        #else:
             #print(f"   ⚠ Source directory missing (skipping): {source_dir}")
     
     #print(f"   Libraries to process: {existing_libraries}")
@@ -179,11 +179,11 @@ def register_library():
                         lib.name = lib_name
                         # Set import method to APPEND (1) instead of default PACKED (0)
                         lib.import_method = 'APPEND'
-                        #print(f"   ✅ Registered library: {lib_name} -> {library_path} (Import Method: Append)")
+                        print(f"   ✅ Registered library: {lib_name} -> {library_path} (Import Method: Append)")
                         registered_count += 1
                         break
             except Exception as e:
-                #print(f"   ❌ Could not register library {lib_name}: {e}")
+                print(f"   ❌ Could not register library {lib_name}: {e}")
         else:
             # Library already exists, update the name and ensure append mode
             lib_ref = prefs.filepaths.asset_libraries[lib_index]
@@ -193,7 +193,7 @@ def register_library():
             #print(f"   ⏩ Library already registered: {lib_name} -> {library_path} (Import Method: Append)")
             registered_count += 1
 
-    #print(f"   ✅ Successfully registered {registered_count} libraries")
+    print(f"   ✅ Successfully registered {registered_count} libraries")
 
 
 def unregister_library():
@@ -227,25 +227,25 @@ def unregister_library():
                     if lib_index != -1:
                         try:
                             bpy.ops.preferences.asset_library_remove(index=lib_index)
-                            #print(f"✓ Removed library from preferences: {lib_name}")
+                            print(f"✓ Removed library from preferences: {lib_name}")
                         except Exception as e:
-                            #print(f"⚠ Could not remove library {lib_name} from preferences: {e}")
+                            print(f"⚠ Could not remove library {lib_name} from preferences: {e}")
             except Exception as e:
-                #print(f"⚠ Could not access preferences during unregistration: {e}")
+                print(f"⚠ Could not access preferences during unregistration: {e}")
             
             # Force cleanup of central library files (remove everything)
             try:
                 utility.cleanup_central_library(central_base)
-                #print("✓ Central library files cleaned up")
+                print("✓ Central library files cleaned up")
             except Exception as e:
-                #print(f"⚠ Could not cleanup central library files: {e}")
+                print(f"⚠ Could not cleanup central library files: {e}")
         else:
             # Other addons are still using libraries, keep individual libraries registered
-            #print(f"✓ {active_addons} addon(s) still using central library, keeping individual libraries registered")
+            print(f"✓ {active_addons} addon(s) still using central library, keeping individual libraries registered")
             
     except Exception as e:
-        #print(f"⚠ Error during library unregistration: {e}")
-        #print("⚠ Library cleanup may be incomplete")
+        print(f"⚠ Error during library unregistration: {e}")
+        print("⚠ Library cleanup may be incomplete")
 
 
 def register_all_libraries():
@@ -300,9 +300,9 @@ def register():
     # Also try immediate registration in case we're already loaded
     try:
         register_all_libraries()
-        #print(f"✓ Immediate Default Library registration successful")
+        print(f"✓ Immediate Default Library registration successful")
     except Exception as e:
-        #print(f"⚠ Immediate registration failed (normal during startup): {e}")
+        print(f"⚠ Immediate registration failed (normal during startup): {e}")
 
     #print("=== BFA Default Library Addon Registration Completed ===")
 
@@ -320,7 +320,7 @@ def delayed_library_registration(scene):
             #print("✓ Removed load_post handler after successful registration")
             
     except Exception as e:
-        #print(f"⚠ Delayed registration failed: {e}")
+        print(f"⚠ Delayed Library registration failed: {e}")
 
 def unregister():
     """Unregister the complete addon"""
@@ -332,13 +332,13 @@ def unregister():
             bpy.app.handlers.load_post.remove(delayed_library_registration)
             #print("✓ Removed load_post handler")
     except Exception as e:
-        #print(f"⚠ Could not remove load_post handler: {e}")
+        print(f"⚠ Could not remove load_post handler: {e}")
     
     # Unregister all libraries (with error handling)
     try:
         unregister_all_libraries()
     except Exception as e:
-        #print(f"⚠ Error during library unregistration: {e}")
+        print(f"⚠ Error during library unregistration: {e}")
 
     try:
         # Force refresh of asset catalogs to remove our entries to avoid a hard crash
@@ -351,7 +351,7 @@ def unregister():
         try:
             bpy.utils.unregister_class(cls)
         except Exception as e:
-            #print(f"⚠ Could not unregister class {cls}: {e}")
+            print(f"⚠ Could not unregister class {cls}: {e}")
 
     # Unregister timer if exists
     try:
@@ -364,6 +364,6 @@ def unregister():
         unregister_submodules()
         #print("✓ Submodules unregistered")
     except Exception as e:
-        #print(f"⚠ Error during submodule unregistration: {e}")
+        print(f"⚠ Error during submodule unregistration: {e}")
     
     #print("=== BFA Default Library Addon Unregistration Completed ===")
