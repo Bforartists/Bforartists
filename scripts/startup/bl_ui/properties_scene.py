@@ -67,7 +67,8 @@ class SCENE_PT_context_scene(SceneButtonsPanel, Panel):
 
         window = context.window
 
-        layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
+        # BFA - Hide duplicated scene selector
+        #layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
 
 
 class SCENE_PT_scene(SceneButtonsPanel, Panel):

@@ -71,12 +71,13 @@ class VIEWLAYER_PT_context_layer(ViewLayerButtonsPanel, Panel):
         window = context.window
         scene = context.scene
 
-        layout.template_search(
-            window, "view_layer",
-            scene, "view_layers",
-            new="scene.view_layer_add",
-            unlink="scene.view_layer_remove",
-        )
+        # BFA - Hide duplicated view-layer selector
+        #layout.template_search(
+        #    window, "view_layer",
+        #    scene, "view_layers",
+        #    new="scene.view_layer_add",
+        #    unlink="scene.view_layer_remove",
+        #)
 
 
 class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
