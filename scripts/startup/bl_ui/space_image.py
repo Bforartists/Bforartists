@@ -242,6 +242,7 @@ class IMAGE_MT_select(Menu):
         myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon="LINKED")
         myop.extend = True
         myop.deselect = False
+        layout.operator("uv.select_tile")
 
         layout.separator()
 
@@ -266,7 +267,7 @@ class IMAGE_MT_select_more_less(Menu):
         layout.operator("uv.select_less", text="Less", icon="SELECTLESS")
 
 
-### BFA - Start select similiar
+# BFA - Start select similiar
 class IMAGE_MT_select_similar(Menu):
     bl_label = "Select Similar"
 
@@ -302,7 +303,7 @@ class IMAGE_MT_select_similar(Menu):
             layout.operator("uv.select_similar_bfa", text="Pinned", icon="PINNED").type = "PIN"
 
 
-### BFA - End of changes
+# BFA - End of changes
 
 
 class IMAGE_MT_select_legacy(Menu):
@@ -709,7 +710,7 @@ class IMAGE_MT_uvs(Menu):
         sima = context.space_data
         uv = sima.uv_editor
 
-        layout.menu("IMAGE_MT_uvs_legacy") # BFA - Menu
+        layout.menu("IMAGE_MT_uvs_legacy")  # BFA - Menu
 
         layout.separator()
 
@@ -759,7 +760,7 @@ class IMAGE_MT_uvs(Menu):
 
         layout.menu("IMAGE_MT_uvs_align")
         layout.operator_menu_enum("uv.move_on_axis", "type", text="Move on Axis")
-        #layout.menu("IMAGE_MT_uvs_select_mode") # BFA - double as they are in the header
+        # layout.menu("IMAGE_MT_uvs_select_mode") # BFA - double as they are in the header
 
         layout.separator()
 
@@ -1946,7 +1947,7 @@ class IMAGE_PT_uv_cursor(Panel):
 
         sima = context.space_data
 
-        layout.use_property_split = True # BFA - use split for non-bool properties
+        layout.use_property_split = True  # BFA - use split for non-bool properties
         layout.use_property_decorate = False
 
         col = layout.column()
@@ -2175,7 +2176,8 @@ class IMAGE_PT_overlay_uv_display(Panel):
             col.use_property_split = True
             row = col.row()
             row.separator(factor=3.0)
-            row.prop(uvedit, "uv_face_opacity")
+            row.prop(uvedit, "uv_face_opacity", text="Faces")
+            row.prop(uvedit, "uv_edge_opacity", text="Edges")
 
 
 class IMAGE_PT_overlay_image(Panel):
@@ -2353,8 +2355,8 @@ classes = (
     IMAGE_MT_uvs_merge,
     IMAGE_MT_uvs_split,
     IMAGE_MT_uvs_unwrap,
-    IMAGE_MT_uvs_legacy, # BFA menu
-    IMAGE_MT_uvs_select_mode, # BFA - not used
+    IMAGE_MT_uvs_legacy,  # BFA menu
+    IMAGE_MT_uvs_select_mode,  # BFA - not used
     IMAGE_MT_uvs_context_menu,
     IMAGE_MT_mask_context_menu,
     IMAGE_MT_pivot_pie,

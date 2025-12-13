@@ -14,6 +14,7 @@
 
 #include "BLT_translation.hh"
 
+#include "DNA_color_types.h"
 #include "DNA_defaults.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
@@ -466,7 +467,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   }
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
 
-  layout.prop(ptr, "strength", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "strength", blender::ui::ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
   if (RNA_enum_get(&ob_ptr, "mode") == OB_MODE_EDIT) {
     blender::ui::Layout *row = &layout.row(true);
@@ -505,7 +506,7 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
   row->decorator(ptr, "use_falloff_uniform", 0); /*bfa - decorator*/
 
   if (RNA_enum_get(ptr, "falloff_type") == eWarp_Falloff_Curve) {
-    uiTemplateCurveMapping(&layout, ptr, "falloff_curve", 0, false, false, false, false, false);
+    template_curve_mapping(&layout, ptr, "falloff_curve", 0, false, false, false, false, false);
   }
 }
 

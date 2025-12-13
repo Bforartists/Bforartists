@@ -232,12 +232,12 @@ static wmOperatorStatus node_group_enter_exit_invoke(bContext *C,
   ARegion &region = *CTX_wm_region(C);
 
   /* Don't interfere when the mouse is interacting with some button. See #147282. */
-  if (ISMOUSE_BUTTON(event->type) && UI_but_find_mouse_over(&region, event)) {
+  if (ISMOUSE_BUTTON(event->type) && ui::but_find_mouse_over(&region, event)) {
     return OPERATOR_PASS_THROUGH | OPERATOR_CANCELLED;
   }
 
   float2 cursor;
-  UI_view2d_region_to_view(&region.v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);
+  ui::view2d_region_to_view(&region.v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);
   bNode *node = node_under_mouse_get(snode, cursor);
 
   if (!node || node->is_frame()) {
@@ -783,7 +783,7 @@ void NODE_OT_group_separate(wmOperatorType *ot)
   ot->idname = "NODE_OT_group_separate";
 
   /* API callbacks. */
-  //ot->invoke = node_group_separate_invoke; /*BFA turned off the separate popup menu*/
+  // ot->invoke = node_group_separate_invoke; /*BFA turned off the separate popup menu*/
   ot->exec = node_group_separate_exec;
   ot->get_name = NODE_OT_group_separate_get_name;               /*bfa - tool name*/
   ot->get_description = NODE_OT_group_separate_get_description; /*bfa - descriptions*/

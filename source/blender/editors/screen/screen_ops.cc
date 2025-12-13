@@ -222,7 +222,13 @@ bool ED_operator_scene_editable(bContext *C)
 bool ED_operator_sequencer_scene_editable(bContext *C)
 {
   Scene *scene = CTX_data_sequencer_scene(C);
-  if (scene == nullptr || !BKE_id_is_editable(CTX_data_main(C), &scene->id)) {
+  if (scene == nullptr) {
+    CTX_wm_operator_poll_msg_set(C, "Context missing sequencer scene");
+    return false;
+  }
+
+  if (!BKE_id_is_editable(CTX_data_main(C), &scene->id)) {
+    CTX_wm_operator_poll_msg_set(C, "Sequencer scene not editable");
     return false;
   }
   return true;
@@ -825,10 +831,10 @@ struct sActionzoneData {
 static bool actionzone_area_poll(bContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
-  if (win && win->eventstate) {
+  if (win && win->runtime->eventstate) {
     bScreen *screen = WM_window_get_active_screen(win);
     if (screen) {
-      const int *xy = &win->eventstate->xy[0];
+      const int *xy = &win->runtime->eventstate->xy[0];
 
       LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
         LISTBASE_FOREACH (AZone *, az, &area->actionzones) {
@@ -865,12 +871,12 @@ static bool azone_clipped_rect_calc(const AZone *az, rcti *r_rect_clip)
           r_rect_clip->xmin = max_ii(
               r_rect_clip->xmin,
               (region->winrct.xmin +
-               UI_view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmin)) -
+               blender::ui::view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmin)) -
                   UI_REGION_OVERLAP_MARGIN);
           r_rect_clip->xmax = min_ii(
               r_rect_clip->xmax,
               (region->winrct.xmin +
-               UI_view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmax)) +
+               blender::ui::view2d_view_to_region_x(&region->v2d, region->v2d.tot.xmax)) +
                   UI_REGION_OVERLAP_MARGIN);
           return true;
         }
@@ -879,12 +885,12 @@ static bool azone_clipped_rect_calc(const AZone *az, rcti *r_rect_clip)
           r_rect_clip->ymin = max_ii(
               r_rect_clip->ymin,
               (region->winrct.ymin +
-               UI_view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymin)) -
+               blender::ui::view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymin)) -
                   UI_REGION_OVERLAP_MARGIN);
           r_rect_clip->ymax = min_ii(
               r_rect_clip->ymax,
               (region->winrct.ymin +
-               UI_view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymax)) +
+               blender::ui::view2d_view_to_region_y(&region->v2d, region->v2d.tot.ymax)) +
                   UI_REGION_OVERLAP_MARGIN);
           return true;
         }
@@ -944,7 +950,7 @@ static AZone *area_actionzone_refresh_xy(ScrArea *area, const int xy[2], const b
          * Overlap" is enabled). Only allow dragging visible edges, so at the button sections. */
         if (region->runtime->visible && region->overlap &&
             (region->flag & RGN_FLAG_RESIZE_RESPECT_BUTTON_SECTIONS) &&
-            !UI_region_button_sections_is_inside_x(az->region, local_xy[0]))
+            !blender::ui::region_button_sections_is_inside_x(az->region, local_xy[0]))
         {
           az = nullptr;
           break;
@@ -999,7 +1005,8 @@ static AZone *area_actionzone_refresh_xy(ScrArea *area, const int xy[2], const b
         ARegion *region = az->region;
         View2D *v2d = &region->v2d;
         int scroll_flag = 0;
-        const int isect_value = UI_view2d_mouse_in_scrollers_ex(region, v2d, xy, &scroll_flag);
+        const int isect_value = blender::ui::view2d_mouse_in_scrollers_ex(
+            region, v2d, xy, &scroll_flag);
 
         /* Check if we even have scroll bars. */
         if (((az->direction == AZ_SCROLL_HOR) && !(scroll_flag & V2D_SCROLL_HORIZONTAL)) ||
@@ -3117,7 +3124,7 @@ static void region_scale_toggle_hidden(bContext *C, RegionMoveData *rmd)
   /* hidden areas may have bad 'View2D.cur' value,
    * correct before displaying. see #45156 */
   if (rmd->region->flag & RGN_FLAG_HIDDEN) {
-    UI_view2d_curRect_validate(&rmd->region->v2d);
+    blender::ui::view2d_curRect_validate(&rmd->region->v2d);
   }
 
   region_toggle_hidden(C, rmd->region, false);
@@ -4803,8 +4810,8 @@ static void area_join_cancel(bContext *C, wmOperator *op)
 
 static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
 {
-  uiPopupMenu *pup = UI_popup_menu_begin(C, "Area Options", ICON_NONE);
-  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(C, "Area Options", ICON_NONE);
+  blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
   layout.operator_context_set(blender::wm::OpCallContext::InvokeDefault);
 
   PointerRNA ptr = layout.op("SCREEN_OT_area_split",
@@ -4831,16 +4838,16 @@ static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
 
   /* BFA - show/hide the editor type menu*/
   layout.op("SCREEN_OT_header_toggle_editortypemenu",
-             IFACE_("Hide Editor Type Menu"),
-             (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
-             blender::wm::OpCallContext::InvokeDefault,
-             UI_ITEM_NONE);
+            IFACE_("Hide Editor Type Menu"),
+            (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+            blender::wm::OpCallContext::InvokeDefault,
+            UI_ITEM_NONE);
 
   layout.separator();
 
   layout.op("SCREEN_OT_screen_full_area",
-             area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
-             ICON_MAXIMIZE_AREA);
+            area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
+            ICON_MAXIMIZE_AREA);
 
   ptr = layout.op(
       "SCREEN_OT_screen_full_area", IFACE_("Toggle Fullscreen Area"), ICON_FULLSCREEN_ENTER);
@@ -4850,7 +4857,8 @@ static void screen_area_touch_menu_create(bContext *C, ScrArea *area)
 
   layout.separator();
   layout.op("SCREEN_OT_area_close", IFACE_("Close Area"), ICON_X);
-  UI_popup_menu_end(C, pup);
+
+  popup_menu_end(C, pup);
 }
 
 static bool is_header_azone_location(ScrArea *area, const wmEvent *event)
@@ -5104,9 +5112,9 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
     return OPERATOR_CANCELLED;
   }
 
-  uiPopupMenu *pup = UI_popup_menu_begin(
+  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
       C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
-  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+  blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
 
   /* Vertical Split */
   PointerRNA ptr = layout.op("SCREEN_OT_area_split",
@@ -5169,7 +5177,7 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
     RNA_int_set_array(&ptr, "cursor", event->xy);
   }
 
-  UI_popup_menu_end(C, pup);
+  popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
 }
@@ -5296,9 +5304,9 @@ static wmOperatorStatus repeat_history_invoke(bContext *C,
     return OPERATOR_CANCELLED;
   }
 
-  uiPopupMenu *pup = UI_popup_menu_begin(
+  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
       C, WM_operatortype_name(op->type, op->ptr).c_str(), ICON_NONE);
-  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+  blender::ui::Layout &layout = *popup_menu_layout(pup);
 
   wmOperator *lastop;
   int i;
@@ -5312,7 +5320,7 @@ static wmOperatorStatus repeat_history_invoke(bContext *C,
     }
   }
 
-  UI_popup_menu_end(C, pup);
+  popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
 }
@@ -5731,15 +5739,15 @@ static void screen_area_menu_items(ScrArea *area, blender::ui::Layout &layout)
   layout.separator();
 
   layout.op("SCREEN_OT_screen_full_area",
-             area->full ? IFACE_("Restore Areas") : IFACE_("Toggle Maximize Area"),
-             ICON_MAXIMIZE_AREA);
+            area->full ? IFACE_("Restore Areas") : IFACE_("Toggle Maximize Area"),
+            ICON_MAXIMIZE_AREA);
 
   if (area->spacetype != SPACE_FILE && !area->full) {
     ptr = layout.op("SCREEN_OT_screen_full_area",
-                     IFACE_("Toggle Fullscreen Area"),
-                     ICON_FULLSCREEN_ENTER, /*BFA icon*/
-                     blender::wm::OpCallContext::InvokeDefault,
-                     UI_ITEM_NONE);
+                    IFACE_("Toggle Fullscreen Area"),
+                    ICON_FULLSCREEN_ENTER, /*BFA icon*/
+                    blender::wm::OpCallContext::InvokeDefault,
+                    UI_ITEM_NONE);
     RNA_boolean_set(&ptr, "use_hide_panels", true);
   }
 
@@ -6202,10 +6210,10 @@ void ED_screens_header_tools_menu_create(bContext *C, blender::ui::Layout *layou
     ED_screens_region_flip_menu_create(C, layout, nullptr);
     /* bfa - show hide the editortypemenu*/
     layout->op("SCREEN_OT_header_toggle_editortypemenu",
-              IFACE_("Hide Editor Type Menu"),
-              (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
-              blender::wm::OpCallContext::InvokeDefault,
-              UI_ITEM_NONE);
+               IFACE_("Hide Editor Type Menu"),
+               (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+               blender::wm::OpCallContext::InvokeDefault,
+               UI_ITEM_NONE);
     /*bfa - we don't show the area items in the rmb menu*/
     /*layout->separator();
     screen_area_menu_items(area, layout);*/
@@ -6263,15 +6271,15 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, blender::ui::Layout *layo
 /*bfa toolbar*/
 static wmOperatorStatus toolbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
-  uiPopupMenu *pup;
+  blender::ui::PopupMenu *pup;
   blender::ui::Layout *layout;
 
-  pup = UI_popup_menu_begin(C, IFACE_("Toolbar"), ICON_NONE);
-  layout = UI_popup_menu_layout(pup);
+  pup = blender::ui::popup_menu_begin(C, IFACE_("Toolbar"), ICON_NONE);
+  layout = blender::ui::popup_menu_layout(pup);
 
   ED_screens_toolbar_tools_menu_create(C, layout, nullptr);
 
-  UI_popup_menu_end(C, pup);
+  blender::ui::popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
 }
@@ -6339,15 +6347,15 @@ void ED_screens_topbar_tools_menu_create(bContext *C, blender::ui::Layout *layou
 /*bfa topbar*/
 static wmOperatorStatus topbar_toolbox_invoke(bContext *C, wmOperator *, const wmEvent *)
 {
-  uiPopupMenu *pup;
+  blender::ui::PopupMenu *pup;
   blender::ui::Layout *layout;
 
-  pup = UI_popup_menu_begin(C, IFACE_("Topbar"), ICON_NONE);
-  layout = UI_popup_menu_layout(pup);
+  pup = blender::ui::popup_menu_begin(C, IFACE_("Topbar"), ICON_NONE);
+  layout = blender::ui::popup_menu_layout(pup);
 
   ED_screens_topbar_tools_menu_create(C, layout, nullptr);
 
-  UI_popup_menu_end(C, pup);
+  blender::ui::popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
 }
@@ -6409,15 +6417,15 @@ static void ed_screens_statusbar_menu_create(blender::ui::Layout &layout, void *
       &ptr, "show_extensions_updates", UI_ITEM_NONE, IFACE_("Extensions Updates"), ICON_NONE);
   // bfa show base blender version
   layout.prop(&ptr,
-               "show_statusbar_blender_version",
-               UI_ITEM_NONE,
-               IFACE_("Base Blender Version"),
-               ICON_NONE);
+              "show_statusbar_blender_version",
+              UI_ITEM_NONE,
+              IFACE_("Base Blender Version"),
+              ICON_NONE);
   layout.prop(&ptr,
-               "show_statusbar_version",
-               UI_ITEM_NONE,
-               IFACE_("Bforartists Version"),
-               ICON_NONE); /*bfa - bforartists version, not blender version*/
+              "show_statusbar_version",
+              UI_ITEM_NONE,
+              IFACE_("Bforartists Version"),
+              ICON_NONE); /*bfa - bforartists version, not blender version*/
 }
 
 static wmOperatorStatus screen_context_menu_invoke(bContext *C,
@@ -6428,27 +6436,29 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
   const ARegion *region = CTX_wm_region(C);
 
   if (area && area->spacetype == SPACE_STATUSBAR) {
-    uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Status Bar"), ICON_NONE);
-    blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+    blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
+        C, IFACE_("Status Bar"), ICON_NONE);
+    blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
     ed_screens_statusbar_menu_create(layout, nullptr);
-    UI_popup_menu_end(C, pup);
+    popup_menu_end(C, pup);
   }
   else if (region) {
     if (ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER)) {
-      uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Header"), ICON_NONE);
-      blender::ui::Layout *layout = UI_popup_menu_layout(pup);
+      blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(C, IFACE_("Header"), ICON_NONE);
+      blender::ui::Layout *layout = blender::ui::popup_menu_layout(pup);
       ED_screens_header_tools_menu_create(C, layout, nullptr);
-      UI_popup_menu_end(C, pup);
+      popup_menu_end(C, pup);
     }
     else if (region->regiontype == RGN_TYPE_FOOTER) {
-      uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Footer"), ICON_NONE);
-      blender::ui::Layout *layout = UI_popup_menu_layout(pup);
+      blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(C, IFACE_("Footer"), ICON_NONE);
+      blender::ui::Layout *layout = blender::ui::popup_menu_layout(pup);
       ED_screens_footer_tools_menu_create(C, layout, nullptr);
-      UI_popup_menu_end(C, pup);
+      popup_menu_end(C, pup);
     }
     else if (region->regiontype == RGN_TYPE_NAV_BAR) {
-      uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Navigation Bar"), ICON_NONE);
-      blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+      blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
+          C, IFACE_("Navigation Bar"), ICON_NONE);
+      blender::ui::Layout &layout = *blender::ui::popup_menu_layout(pup);
 
       /* We need blender::wm::OpCallContext::InvokeDefault in case menu item is over another area.
        */
@@ -6460,7 +6470,7 @@ static wmOperatorStatus screen_context_menu_invoke(bContext *C,
       if (area && area->spacetype == SPACE_PROPERTIES) {
         layout.menu_fn(IFACE_("Visible Tabs"), ICON_NONE, ED_buttons_visible_tabs_menu, nullptr);
       }
-      UI_popup_menu_end(C, pup);
+      popup_menu_end(C, pup);
     }
   }
 
@@ -7314,7 +7324,7 @@ static wmOperatorStatus drivers_editor_show_exec(bContext *C, wmOperator *op)
   int index;
   PointerRNA ptr;
   PropertyRNA *prop;
-  uiBut *but = UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+  blender::ui::Button *but = blender::ui::context_active_but_prop_get(C, &ptr, &prop, &index);
 
   /* changes context! */
   if (WM_window_open_temp(C,
@@ -8015,7 +8025,12 @@ void ED_keymap_screen(wmKeyConfig *keyconf)
   ListBase *lb = WM_dropboxmap_find("Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_dropbox_add(
       lb, "WM_OT_drop_blend_file", blend_file_drop_poll, blend_file_drop_copy, nullptr, nullptr);
-  WM_dropbox_add(lb, "UI_OT_drop_color", UI_drop_color_poll, UI_drop_color_copy, nullptr, nullptr);
+  WM_dropbox_add(lb,
+                 "UI_OT_drop_color",
+                 blender::ui::drop_color_poll,
+                 blender::ui::drop_color_copy,
+                 nullptr,
+                 nullptr);
   WM_dropbox_add(lb,
                  "SCENE_OT_drop_scene_asset",
                  screen_drop_scene_poll,

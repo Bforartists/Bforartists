@@ -408,20 +408,19 @@ static void panel_draw(const bContext *C, Panel *panel)
   ui::Layout *row = &layout.row(false);
   row->use_property_split_set(false);
 
-  uiTemplateList(row,
-                 (bContext *)C,
-                 "MOD_UL_grease_pencil_dash_modifier_segments",
-                 "",
-                 ptr,
-                 "segments",
-                 ptr,
-                 "segment_active_index",
-                 nullptr,
-                 3,
-                 10,
-                 0,
-                 1,
-                 UI_TEMPLATE_LIST_FLAG_NONE);
+  ui::template_list(row,
+                    (bContext *)C,
+                    "MOD_UL_grease_pencil_dash_modifier_segments",
+                    "",
+                    ptr,
+                    "segments",
+                    ptr,
+                    "segment_active_index",
+                    nullptr,
+                    3,
+                    10,
+                    0,
+                    ui::TEMPLATE_LIST_FLAG_NONE);
 
   ui::Layout &col = row->column(false);
   ui::Layout *sub = &col.column(true);
@@ -448,9 +447,9 @@ static void panel_draw(const bContext *C, Panel *panel)
     sub->prop(&ds_ptr, "radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     sub->prop(&ds_ptr, "opacity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     sub->prop(&ds_ptr, "material_index", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    row = &sub->row(true); /* bfa - our layout */
+    row = &sub->row(true);              /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(); /*bfa - indent*/
+    row->separator();                   /*bfa - indent*/
     row->prop(&ds_ptr, "use_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(&ds_ptr, "use_cyclic", 0); /*bfa - decorator*/
   }
@@ -477,7 +476,7 @@ static void segment_list_item_draw(uiList * /*ui_list*/,
                                    int /*flt_flag*/)
 {
   ui::Layout &row = layout.row(true);
-  row.prop(itemptr, "name", UI_ITEM_R_NO_BG, "", ICON_NONE);
+  row.prop(itemptr, "name", blender::ui::ITEM_R_NO_BG, "", ICON_NONE);
 }
 
 static void panel_register(ARegionType *region_type)

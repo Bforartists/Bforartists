@@ -319,7 +319,8 @@ void weightvg_ui_common(const bContext *C,
   layout.use_property_split_set(true);
 
   /* BFA - Remove colon in label */
-  layout.prop(ptr, "mask_constant", UI_ITEM_R_SLIDER, IFACE_("Global Influence"), ICON_NONE);
+  layout.prop(
+      ptr, "mask_constant", blender::ui::ITEM_R_SLIDER, IFACE_("Global Influence"), ICON_NONE);
 
   if (!has_mask_texture) {
     modifier_vgroup_ui(
@@ -328,16 +329,16 @@ void weightvg_ui_common(const bContext *C,
 
   if (!has_mask_vertex_group) {
     blender::ui::Layout *row = &layout.row(true); /* BFA - Add blank icon for alignment */
-    uiTemplateID(row,
-                 C,
-                 ptr,
-                 "mask_texture",
-                 "texture.new",
-                 nullptr,
-                 nullptr,
-                 UI_TEMPLATE_ID_FILTER_ALL,
-                 false,
-                 IFACE_("Mask Texture"));
+    template_id(row,
+                C,
+                ptr,
+                "mask_texture",
+                "texture.new",
+                nullptr,
+                nullptr,
+                blender::ui::TEMPLATE_ID_FILTER_ALL,
+                false,
+                IFACE_("Mask Texture"));
     row->label("", ICON_BLANK1); /* BFA - Add blank icon for alignment */
 
     if (has_mask_texture) {

@@ -124,7 +124,8 @@ static void update_depsgraph(ModifierData *md, const ModifierUpdateDepsgraphCont
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   blender::ui::Layout &layout = *panel->layout;
-  const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
+  const blender::ui::eUI_Item_Flag toggles_flag = blender::ui::ITEM_R_TOGGLE |
+                                                  blender::ui::ITEM_R_FORCE_BLANK_DECORATE;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -167,7 +168,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row->prop(ptr, "use_positive_direction", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_positive_direction", 0); /*bfa - decorator*/
 
-    layout.prop(ptr, "cull_face", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "cull_face", blender::ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
     col = &layout.column(false);
     col->active_set(RNA_boolean_get(ptr, "use_negative_direction") &&
                     RNA_enum_get(ptr, "cull_face") != 0);

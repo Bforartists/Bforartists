@@ -144,7 +144,8 @@ const EnumPropertyItem rna_enum_mesh_select_mode_uv_items[] = {
   {SCE_SNAP_TO_FACE, "FACE", ICON_SNAP_FACE, "Face", "Snap by projecting onto faces"}, \
   {SCE_SNAP_TO_VOLUME, "VOLUME", ICON_SNAP_VOLUME, "Volume", "Snap to volume"}, \
   {SCE_SNAP_TO_EDGE_MIDPOINT, "EDGE_MIDPOINT", ICON_SNAP_MIDPOINT, "Edge Center", "Snap to the middle of edges"}, \
-  {SCE_SNAP_TO_EDGE_PERPENDICULAR, "EDGE_PERPENDICULAR", ICON_SNAP_PERPENDICULAR, "Edge Perpendicular", "Snap to the nearest point on an edge"}
+  {SCE_SNAP_TO_EDGE_PERPENDICULAR, "EDGE_PERPENDICULAR", ICON_SNAP_PERPENDICULAR, "Edge Perpendicular", "Snap to the nearest point on an edge"}, \
+  {SCE_SNAP_TO_FACE_MIDPOINT, "FACE_MIDPOINT", ICON_SNAP_FACE_CENTER,"Face Center","Snap to the middle of faces"}
 /* clang-format on */
 
 const EnumPropertyItem rna_enum_snap_element_items[] = {
@@ -1903,15 +1904,14 @@ void rna_Scene_freestyle_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
 }
 
-void rna_Scene_use_freestyle_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+void rna_Scene_use_freestyle_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->owner_id;
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
 
-  if (scene->compositing_node_group) {
-    ntreeCompositUpdateRLayers(scene->compositing_node_group);
-  }
+  BKE_ntree_update_tag_id_changed(bmain, &scene->id);
+  BKE_ntree_update(*bmain);
 }
 
 void rna_Scene_compositor_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
@@ -1990,9 +1990,8 @@ void rna_ViewLayer_pass_update(Main *bmain, Scene *activescene, PointerRNA *ptr)
     }
   }
 
-  if (scene->compositing_node_group) {
-    ntreeCompositUpdateRLayers(scene->compositing_node_group);
-  }
+  BKE_ntree_update_tag_id_changed(bmain, &scene->id);
+  BKE_ntree_update(*bmain);
 
   rna_Scene_render_update(bmain, activescene, ptr);
 }
@@ -6631,6 +6630,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
       {FFM_CRF_LOW, "LOW", 0, "Low Quality", ""},
       {FFM_CRF_VERYLOW, "VERYLOW", 0, "Very Low Quality", ""},
       {FFM_CRF_LOWEST, "LOWEST", 0, "Lowest Quality", ""},
+      {FFM_CRF_CUSTOM, "CUSTOM", 0, "Custom Quality", "Set a custom Constant Rate Factor (CRF)."},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -6767,6 +6767,17 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
       "Constant Rate Factor (CRF); tradeoff between video quality and file size");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
+  prop = RNA_def_property(srna, "custom_constant_rate_factor", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "custom_constant_rate_factor");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_range(prop, 0, 63);
+  RNA_def_property_ui_text(
+      prop,
+      "CRF",
+      "A smaller Constant Rate Factor (CRF) results in better video quality but larger file size. "
+      "The range of allowed CRF values is dependent on the codec.");
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+
   prop = RNA_def_property(srna, "ffmpeg_preset", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "ffmpeg_preset");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -6808,7 +6819,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   prop = RNA_def_property(srna, "audio_bitrate", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "audio_bitrate");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_range(prop, 32, 384);
+  RNA_def_property_range(prop, 32, 2048);
   RNA_def_property_ui_text(prop, "Bitrate", "Audio bitrate (kb/s)");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 

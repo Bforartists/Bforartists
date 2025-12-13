@@ -135,7 +135,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
   ui::Layout *row, *col; /*bfa - no *sub*/
   ui::Layout &layout = *panel->layout;
-  const eUI_Item_Flag toggles_flag = UI_ITEM_R_TOGGLE | UI_ITEM_R_FORCE_BLANK_DECORATE;
+  const ui::eUI_Item_Flag toggles_flag = ui::ITEM_R_TOGGLE | ui::ITEM_R_FORCE_BLANK_DECORATE;
 
   PropertyRNA *prop;
   PointerRNA ob_ptr;
@@ -174,7 +174,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_clip", UI_ITEM_NONE, IFACE_("Clipping"), ICON_NONE);
   row->decorator(ptr, "use_clip", 0); /*bfa - decorator*/
 
@@ -185,7 +185,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   row = &split->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_mirror_merge", UI_ITEM_NONE, "Merge", ICON_NONE);
   row->decorator(ptr, "use_mirror_merge", 0); /*bfa - decorator*/
 
@@ -202,8 +202,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   RNA_boolean_get_array(ptr, "use_bisect_axis", is_bisect_set);
 
   /* bfa - our layout */
-  col = &layout.row(true); /*bfa - col, not sub*/
-  col->use_property_split_set(true);   /* bfa - use_property_split = true */
+  col = &layout.row(true);           /*bfa - col, not sub*/
+  col->use_property_split_set(true); /* bfa - use_property_split = true */
   col->active_set(is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
   col->prop(ptr, "bisect_threshold", UI_ITEM_NONE, IFACE_("Bisect Distance"), ICON_NONE);
 
@@ -221,7 +221,7 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
 
   col = &layout.column(true);
   /* bfa - our layout */
-  col->label(IFACE_("Mirror"), ICON_NONE); // bfa added label
+  col->label(IFACE_("Mirror"), ICON_NONE);  // bfa added label
   ui::Layout *split = &col->split(0.385f, true);
 
   /* bfa - our layout */
@@ -229,12 +229,12 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   row->separator(); /*bfa - indent*/
   row->use_property_decorate_set(false);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->prop(ptr, "use_mirror_u", UI_ITEM_NONE, "U", ICON_NONE); // bfa renamed Mirror U
+  row->prop(ptr, "use_mirror_u", UI_ITEM_NONE, "U", ICON_NONE);  // bfa renamed Mirror U
 
   /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_mirror_u")) {
-    row->prop(ptr, "mirror_offset_u", UI_ITEM_R_SLIDER, "", ICON_NONE);
+    row->prop(ptr, "mirror_offset_u", ui::ITEM_R_SLIDER, "", ICON_NONE);
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
@@ -253,21 +253,21 @@ static void data_panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_mirror_v")) {
-    row->prop(ptr, "mirror_offset_v", UI_ITEM_R_SLIDER, "", ICON_NONE);
+    row->prop(ptr, "mirror_offset_v", ui::ITEM_R_SLIDER, "", ICON_NONE);
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
   }
 
   col = &layout.column(true);
-  col->label(IFACE_("Offset"), ICON_NONE); // bfa added label
+  col->label(IFACE_("Offset"), ICON_NONE);  // bfa added label
   // bfa added Offset row indent
   row = &col->row(false);
-  row->separator(); /*bfa - indent*/
-  row->prop(ptr, "offset_u", UI_ITEM_R_SLIDER, IFACE_("U"), ICON_NONE); // bfa renamed Offset U
+  row->separator();                                                       /*bfa - indent*/
+  row->prop(ptr, "offset_u", ui::ITEM_R_SLIDER, IFACE_("U"), ICON_NONE);  // bfa renamed Offset U
   row = &col->row(false);
   row->separator(); /*bfa - indent*/
-  row->prop(ptr, "offset_v", UI_ITEM_R_SLIDER, IFACE_("V"), ICON_NONE);
+  row->prop(ptr, "offset_v", ui::ITEM_R_SLIDER, IFACE_("V"), ICON_NONE);
 
   /* bfa - our layout */
   col = &layout.column(true);

@@ -297,8 +297,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout.column(true);
   col->prop_search(ptr, "vertex_group", &ob_ptr, "vertex_groups", std::nullopt, ICON_GROUP_VERTEX);
 
-  layout.prop(ptr, "default_weight", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
-
+  layout.prop(ptr, "default_weight", blender::ui::ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
   /* bfa - our layout */
   /* NOTE: split amount here needs to be synced with normal labels */
@@ -307,12 +306,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   row = &split->row(false);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->prop( ptr, "use_add", UI_ITEM_NONE, IFACE_("Group Add"), ICON_NONE);
+  row->prop(ptr, "use_add", UI_ITEM_NONE, IFACE_("Group Add"), ICON_NONE);
 
   /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_add")) {
-    row->prop( ptr, "add_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
+    row->prop(ptr, "add_threshold", blender::ui::ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
@@ -323,12 +322,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   row = &split->row(false);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->prop( ptr, "use_remove", UI_ITEM_NONE, IFACE_("Group Remove"), ICON_NONE);
+  row->prop(ptr, "use_remove", UI_ITEM_NONE, IFACE_("Group Remove"), ICON_NONE);
 
   /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_remove")) {
-    row->prop( ptr, "remove_threshold", UI_ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
+    row->prop(ptr, "remove_threshold", blender::ui::ITEM_R_SLIDER, IFACE_("Threshold"), ICON_NONE);
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
@@ -338,7 +337,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->prop( ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->prop(ptr, "normalize", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   row->decorator(ptr, "normalize", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
@@ -359,7 +358,7 @@ static void falloff_panel_draw(const bContext * /*C*/, Panel *panel)
   sub.use_property_split_set(false);
   row.prop(ptr, "invert_falloff", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   if (RNA_enum_get(ptr, "falloff_type") == MOD_WVG_MAPPING_CURVE) {
-    uiTemplateCurveMapping(&layout, ptr, "map_curve", 0, false, false, false, false, false);
+    template_curve_mapping(&layout, ptr, "map_curve", 0, false, false, false, false, false);
   }
 }
 

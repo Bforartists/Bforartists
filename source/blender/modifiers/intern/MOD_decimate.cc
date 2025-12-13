@@ -228,12 +228,12 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   char count_info[64];
   SNPRINTF(count_info, RPT_("Face Count: %d"), RNA_int_get(ptr, "face_count"));
 
-  layout.prop(ptr, "decimate_type", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  layout.prop(ptr, "decimate_type", blender::ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
   layout.use_property_split_set(true);
 
   if (decimate_type == MOD_DECIM_MODE_COLLAPSE) {
-    layout.prop(ptr, "ratio", UI_ITEM_R_SLIDER, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "ratio", blender::ui::ITEM_R_SLIDER, std::nullopt, ICON_NONE);
 
     /* NOTE: split amount here needs to be synced with normal labels */
     blender::ui::Layout *split = &layout.split(0.385f, true); /* bfa - our layout */
@@ -248,7 +248,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     row = &split->row(false); /* bfa - our layout */
     if (RNA_boolean_get(ptr, "use_symmetry")) {
       row->use_property_split_set(false); /* bfa - use_property_split = False */
-      row->prop(ptr, "symmetry_axis", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+      row->prop(ptr, "symmetry_axis", blender::ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
       row->decorator(ptr, "symmetry_axis", 0);
     }
     else {
@@ -276,7 +276,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     blender::ui::Layout *col = &layout.column(false);
     col->prop(ptr, "delimit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    row = &layout.row(true);           /* bfa - our layout */
+    row = &layout.row(true);            /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_dissolve_boundaries", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_dissolve_boundaries", 0); /*bfa - decorator*/

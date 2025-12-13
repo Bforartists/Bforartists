@@ -736,7 +736,7 @@ template<typename CommandEncoderT>
 static void bind_sampler_argument_buffer(
     CommandEncoderT enc,
     MTLSamplerArray &sampler_array,
-    blender::Map<MTLSamplerArray, gpu::MTLBuffer *> &sampler_buffers_cache,
+    Map<MTLSamplerArray, gpu::MTLBuffer *> &sampler_buffers_cache,
     MTLShaderInterface &shader_interface,
     id<MTLFunction> mtl_function,
     MTLBindingCache<CommandEncoderT> &bindings)
@@ -1164,6 +1164,12 @@ bool MTLContext::ensure_render_pipeline_state(MTLPrimitiveType mtl_prim_type)
   if (rec == nil) {
     MTL_LOG_ERROR("ensure_render_pipeline_state called while render pass is not active.");
     return false;
+  }
+
+  /* Support legacy point size state. */
+  MTLStateManager &state_manager = *static_cast<MTLStateManager *>(this->state_manager);
+  if (mtl_prim_type == MTLPrimitiveTypePoint && state_manager.mutable_state.point_size < 0) {
+    GPU_shader_uniform_1f(shader, "size", -state_manager.mutable_state.point_size);
   }
 
   /* Bind Render Pipeline State. */

@@ -2889,8 +2889,7 @@ void DepsgraphRelationBuilder::build_armature_bones(ListBase *bones)
   }
 }
 
-void DepsgraphRelationBuilder::build_armature_bone_collections(
-    blender::Span<BoneCollection *> collections)
+void DepsgraphRelationBuilder::build_armature_bone_collections(Span<BoneCollection *> collections)
 {
   for (BoneCollection *bcoll : collections) {
     build_idproperties(bcoll->prop);
@@ -2987,6 +2986,33 @@ void DepsgraphRelationBuilder::build_nodetree_socket(bNodeSocket *socket)
     Material *material = ((bNodeSocketValueMaterial *)socket->default_value)->value;
     if (material != nullptr) {
       build_material(material);
+    }
+  }
+  else if (socket->type == SOCK_FONT) {
+    VFont *font = ((bNodeSocketValueFont *)socket->default_value)->value;
+    if (font != nullptr) {
+      build_vfont(font);
+    }
+  }
+  else if (socket->type == SOCK_SCENE) {
+    Scene *scene = ((bNodeSocketValueScene *)socket->default_value)->value;
+    if (scene != nullptr) {
+      build_scene_parameters(scene);
+    }
+  }
+  else if (socket->type == SOCK_TEXT_ID) {
+    /* Text data-blocks don't use the depsgraph. */
+  }
+  else if (socket->type == SOCK_MASK) {
+    Mask *mask = ((bNodeSocketValueMask *)socket->default_value)->value;
+    if (mask != nullptr) {
+      build_mask(mask);
+    }
+  }
+  else if (socket->type == SOCK_SOUND) {
+    bSound *sound = ((bNodeSocketValueSound *)socket->default_value)->value;
+    if (sound != nullptr) {
+      build_sound(sound);
     }
   }
 }

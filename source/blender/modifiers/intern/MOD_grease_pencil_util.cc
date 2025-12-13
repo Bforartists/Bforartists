@@ -11,10 +11,10 @@
 #include "BLI_set.hh"
 #include "BLI_vector_set.hh"
 
+#include "DNA_color_types.h"
 #include "DNA_grease_pencil_types.h"
 #include "DNA_material_types.h"
 #include "DNA_modifier_types.h"
-#include "DNA_screen_types.h"
 
 #include "BKE_colortools.hh"
 #include "BKE_curves.hh"
@@ -187,7 +187,7 @@ void draw_custom_curve_settings(const bContext * /*C*/, ui::Layout &layout, Poin
   row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_custom_curve", UI_ITEM_NONE, IFACE_("Custom Curve"), ICON_NONE);
   if (use_custom_curve) {
-    uiTemplateCurveMapping(&layout, ptr, "custom_curve", 0, false, false, false, false, false);
+    template_curve_mapping(&layout, ptr, "custom_curve", 0, false, false, false, false, false);
   }
 }
 

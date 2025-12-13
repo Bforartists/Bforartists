@@ -305,8 +305,8 @@ static void panel_draw(const bContext *C, Panel *panel)
   col->prop(ptr, "render_levels", UI_ITEM_NONE, IFACE_("Render"), ICON_NONE);
 
   const bool is_sculpt_mode = CTX_data_active_object(C)->mode & OB_MODE_SCULPT;
-  uiBlock *block = layout.block();
-  UI_block_lock_set(block, !is_sculpt_mode, N_("Sculpt Base Mesh"));
+  blender::ui::Block *block = layout.block();
+  block_lock_set(block, !is_sculpt_mode, N_("Sculpt Base Mesh"));
 
   /* bfa - our layout */
   col = &layout.column(true);
@@ -315,7 +315,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   row->separator();                   /*bfa - indent*/
   row->prop(ptr, "use_sculpt_base_mesh", UI_ITEM_NONE, IFACE_("Sculpt Base Mesh"), ICON_NONE);
   row->decorator(ptr, "use_sculpt_base_mesh", 0); /*bfa - decorator*/
-  UI_block_lock_clear(block);
+  block_lock_clear(block);
 
   /* bfa - our layout */
   col = &layout.column(true);

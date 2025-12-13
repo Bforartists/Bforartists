@@ -151,6 +151,10 @@ static Vector<StringRefNull> missing_capabilities_get(VkPhysicalDevice vk_physic
   if (features.features.geometryShader == VK_FALSE) {
     missing_capabilities.append("geometry shaders");
   }
+  if (features.features.vertexPipelineStoresAndAtomics == VK_FALSE) {
+    missing_capabilities.append("vertex pipeline stores and atomics");
+  }
+#endif
   if (features.features.multiViewport == VK_FALSE) {
     missing_capabilities.append("multi viewport");
   }
@@ -160,10 +164,6 @@ static Vector<StringRefNull> missing_capabilities_get(VkPhysicalDevice vk_physic
   if (features.features.fragmentStoresAndAtomics == VK_FALSE) {
     missing_capabilities.append("fragment stores and atomics");
   }
-  if (features.features.vertexPipelineStoresAndAtomics == VK_FALSE) {
-    missing_capabilities.append("vertex pipeline stores and atomics");
-  }
-#endif
   if (features.features.logicOp == VK_FALSE) {
     missing_capabilities.append("logical operations");
   }
@@ -487,7 +487,9 @@ void VKBackend::detect_workarounds(VKDevice &device)
   /* During testing graphics pipeline library feature it was detected that it would crash on
    * official AMD drivers.
    */
-  if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL)) {
+  if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL) &&
+      bool(G.debug & G_DEBUG_GPU))
+  {
     extensions.graphics_pipeline_library = false;
     extensions.vertex_input_dynamic_state = false;
   }

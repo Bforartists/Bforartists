@@ -62,7 +62,7 @@ static SpaceLink *toolbar_duplicate(SpaceLink *sl)
 /* add handlers, stuff you only do once or on area/region changes */
 static void toolbar_main_region_init(wmWindowManager * /*wm*/, ARegion *region)
 {
-  UI_view2d_region_reinit(&region->v2d, V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
+  view2d_region_reinit(&region->v2d, blender::ui::V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
 }
 
 static void toolbar_main_region_draw(const bContext *C, ARegion *region)
@@ -71,16 +71,16 @@ static void toolbar_main_region_draw(const bContext *C, ARegion *region)
   View2D *v2d = &region->v2d;
 
   /* clear and setup matrix */
-  UI_ThemeClearColor(TH_BACK);
+  blender::ui::theme::frame_buffer_clear(TH_BACK);
 
   /* Works best with no view2d matrix set */
-  UI_view2d_view_ortho(v2d);
+  blender::ui::view2d_view_ortho(v2d);
 
   /* reset view matrix */
-  UI_view2d_view_restore(C);
+  blender::ui::view2d_view_restore(C);
 
   /* scrollers */
-  UI_view2d_scrollers_draw(v2d, nullptr);
+  blender::ui::view2d_scrollers_draw(v2d, nullptr);
 }
 
 static void toolbar_header_region_init(wmWindowManager * /*wm*/, ARegion *region)
