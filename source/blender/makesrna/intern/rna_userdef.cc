@@ -5799,7 +5799,6 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   prop = RNA_def_property(srna, "outliner_colored_collection_rows", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
       prop, nullptr, "outliner_editor_flag", USER_OUTLINER_COL_COLLECTION_ROWS);
-  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(
       prop, "Colored Collection Rows", "Display colored collection rows in the outliner");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
@@ -5951,7 +5950,6 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   prop = RNA_def_property(srna, "node_color_blend", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, nullptr, "node_color_blend");
   RNA_def_property_range(prop, 0.0f, 1.0f);
-  RNA_def_property_float_default(prop, 0.0f);
   RNA_def_property_ui_text(prop,
                            "Node Color Blend",
                            "Bforartists blends node type color to its body, disable if the node color is enabled");

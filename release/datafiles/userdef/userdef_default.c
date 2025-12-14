@@ -30,7 +30,7 @@ const UserDef U_default = {
                USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_CAMERA | USER_DUP_SPEAKER |
                USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES | USER_DUP_NTREE | USER_DUP_POINTCLOUD,
     /* BFA - WIP - enable outliner collection rows*/
-    //.outliner_editor_flag = USER_OUTLINER_COL_COLLECTION_ROWS
+    .outliner_editor_flag = USER_OUTLINER_COL_COLLECTION_ROWS,
     /* BFA - WIP - enable animation props*/
     //.animation_flag = USER_ANIM_SHOW_CHANNEL_GROUP_COLORS
     .pref_flag = USER_PREF_FLAG_SAVE,
@@ -86,6 +86,7 @@ const UserDef U_default = {
     .virtual_pixel = 0,
 
     .viewport_line_width = 1.0, /* BFA - GooEngine */
+    .node_color_blend = 0.2f,   /* BFA - Node Color Blend */
 
     .scrollback = 256,
     .node_margin = 40,

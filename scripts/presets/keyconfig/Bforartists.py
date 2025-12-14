@@ -1,4 +1,4 @@
-keyconfig_version = (5, 1, 4)
+keyconfig_version = (5, 1, 8)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -2060,15 +2060,7 @@ keyconfig_data = \
  ("File Browser Main",
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
-   [("poselib.apply_pose_asset",
-     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "ctrl": True},
-     {"properties":
-      [("flipped", True),
-       ],
-      },
-     ),
-    ("poselib.apply_pose_asset", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
-    ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+   [("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
      {"properties":
