@@ -1412,7 +1412,7 @@ GHOST_TSuccess GHOST_ContextVK::recreateSwapchain(bool use_hdr_swapchain)
   CLOG_DEBUG(&LOG,
              "Vulkan: recreating swapchain: width=%u, height=%u, format=%d, colorSpace=%d, "
              "present_mode=%d, image_count_requested=%u, image_count_acquired=%u, "
-             "swapchain=%u, old_swapchain=%u",
+             "swapchain=%lu, old_swapchain=%lu",
              render_extent_.width,
              render_extent_.height,
              surface_format_.format,
