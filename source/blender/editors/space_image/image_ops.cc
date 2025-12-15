@@ -4440,7 +4440,11 @@ static void tile_add_draw(bContext * /*C*/, wmOperator *op)
   col.prop(op->ptr, "number", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col.prop(op->ptr, "count", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col.prop(op->ptr, "label", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  
+  /* BFA - Align boolean property left */
+  layout.use_property_split_set(false);
   layout.prop(op->ptr, "fill", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  layout.use_property_split_set(true);
 
   if (RNA_boolean_get(op->ptr, "fill")) {
     draw_fill_tile(op->ptr, layout);
