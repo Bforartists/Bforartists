@@ -309,7 +309,7 @@ bool BKE_regiontype_uses_categories(const ARegionType *region_type)
 bool BKE_regiontype_uses_category_tabs(const ARegionType *region_type)
 {
   /* Some region types always support category tabs. */
-  if (ELEM(region_type->regionid, RGN_TYPE_UI)) {
+  if (ELEM(region_type->regionid, RGN_TYPE_UI, RGN_TYPE_TOOLS)) {
     return true;
   }
 
