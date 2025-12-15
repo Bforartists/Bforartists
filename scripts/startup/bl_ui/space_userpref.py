@@ -2218,16 +2218,25 @@ class USERPREF_PT_navigation_fly_walk_navigation(NavigationPanel, CenterAlignMix
         inputs = prefs.inputs
         walk = inputs.walk_navigation
 
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+        # BFA - Make layout more predictable
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=False)
 
-        flow.use_property_split = False
-        flow.prop(walk, "use_mouse_reverse")
-        flow.prop(walk, "use_airblock", text="Horizontal Lock")  # BFA - Airblock mode
-        flow.use_property_split = True
-        flow.prop(walk, "mouse_speed")
-        flow.prop(walk, "teleport_time")
+        # BFA - Fix Horizontal Lock getting abnormally large scale
+        col = flow.column(align=True)
+        col.use_property_split = False
+        col.prop(walk, "use_mouse_reverse")
+        col.prop(walk, "use_airblock", text="Horizontal Lock")  # BFA - Airblock mode
+        col.use_property_split = True
+        
+        # BFA - Put float props in a single column
+        layout.separator()
+        main_col = flow.column()
+        
+        col = flow.column(align=True)
+        col.prop(walk, "mouse_speed")
+        col.prop(walk, "teleport_time")
 
-        sub = flow.column(align=True)
+        sub = main_col.column(align=True)
         sub.prop(walk, "walk_speed")
         sub.prop(walk, "walk_speed_factor")
 
