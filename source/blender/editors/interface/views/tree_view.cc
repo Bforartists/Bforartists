@@ -564,7 +564,7 @@ void AbstractTreeViewItem::add_collapse_chevron(Block &block) const
   if (!this->is_collapsible()) {
     return;
   }
-  /* BFA - changed the arrows*/
+  /* BFA - Use correct icons for collapse/expand */
   const BIFIconID icon = this->is_collapsed() ? ICON_DISCLOSURE_TRI_RIGHT :
                                                 ICON_DISCLOSURE_TRI_DOWN;
   Button *but = uiDefIconBut(
@@ -923,18 +923,24 @@ void TreeViewLayoutBuilder::build_from_tree(AbstractTreeView &tree_view)
     /* Bottom */
     Layout &bottom = col.row(false);
     block_emboss_set(block, EmbossType::None);
-    Button *but = uiDefIconButBitC(block,
-                                   ButtonType::IconToggleN,
-                                   1,
-                                   ICON_DISCLOSURE_TRI_DOWN,
-                                   0,
-                                   0,
-                                   UI_UNIT_X,
-                                   UI_UNIT_Y * 0.5,
-                                   tree_view.show_display_options_.get(),
-                                   0,
-                                   0,
-                                   TIP_(""));
+    Button *but = uiDefButBitC(block,  // BFA - Make icon explicit
+                                      ButtonType::ButToggle,
+                                      1,
+                                      "",  // BFA - No initial icon, so we can define it below
+                                      0,
+                                      0,
+                                      UI_UNIT_X,
+                                      UI_UNIT_Y * 0.5,
+                                      tree_view.show_display_options_.get(),
+                                      0,
+                                      0,
+                                      TIP_(""));
+    /*BFA - Manually set the icon based on button state*/
+    if (*tree_view.show_display_options_) {
+        def_but_icon(but, ICON_DISCLOSURE_TRI_DOWN, UI_HAS_ICON);
+    } else {
+        def_but_icon(but, ICON_DISCLOSURE_TRI_RIGHT, UI_HAS_ICON);
+    }
     button_flag_disable(but, BUT_UNDO);
     block_emboss_set(block, EmbossType::Emboss);
     bottom.column(false);
