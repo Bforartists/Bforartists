@@ -339,6 +339,33 @@ enum class UVMoveDirection {
   Y = 1,
 };
 
+/* BFA - Make shift_items accessible in outside scope, for `move_on_axis_description`*/
+static const EnumPropertyItem shift_items[] = {
+    {int(UVMoveType::Dynamic), "DYNAMIC", 0, "Dynamic", "Snap movement to the dynamic grid"}, /* BFA - make description clearer */
+    {int(UVMoveType::Pixel), "PIXEL", 0, "Pixel", "Movement is measured in pixels"}, /* BFA - make description clearer */
+    {int(UVMoveType::Udim), "UDIM", 0, "UDIM", "Movement is measured in UDIM tiles"}, /* BFA - make description clearer */
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+/* BFA - Make "Move on Axis" description dynamic*/
+/* Append .type enum description, else use operator's description as-is as fallback */
+static std::string move_on_axis_description(bContext * /* C */,
+                                            wmOperatorType *ot,
+                                            PointerRNA *ptr)
+{
+  std::string description = std::string(ot->description);
+
+  PropertyRNA *prop = RNA_struct_find_property(ptr, "type");
+
+  if (RNA_property_is_set(ptr, prop)) {
+    const int prop_value = RNA_property_enum_get(ptr, prop);
+    description += ".\n";
+    description += shift_items[prop_value].description;
+  }
+
+  return description;
+}
+
 static wmOperatorStatus uv_move_on_axis_exec(bContext *C, wmOperator *op)
 
 {
@@ -387,12 +414,14 @@ static wmOperatorStatus uv_move_on_axis_exec(bContext *C, wmOperator *op)
 
 static void UV_OT_move_on_axis(wmOperatorType *ot)
 {
+  /* BFA - Move this enum outside of scope
   static const EnumPropertyItem shift_items[] = {
       {int(UVMoveType::Dynamic), "DYNAMIC", 0, "Dynamic", "Move by dynamic grid"},
       {int(UVMoveType::Pixel), "PIXEL", 0, "Pixel", "Move by pixel"},
       {int(UVMoveType::Udim), "UDIM", 0, "UDIM", "Move by UDIM"},
       {0, nullptr, 0, nullptr, nullptr},
   };
+  */
 
   static const EnumPropertyItem axis_items[] = {
       {int(UVMoveDirection::X), "X", 0, "X axis", "Move vertices on the X axis"},
@@ -405,6 +434,8 @@ static void UV_OT_move_on_axis(wmOperatorType *ot)
   ot->description = "Move UVs on an axis";
   ot->idname = "UV_OT_move_on_axis";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->get_description =
+      move_on_axis_description; /* BFA - Generate description from 'type' property*/
 
   /* API callbacks. */
   ot->exec = uv_move_on_axis_exec;
