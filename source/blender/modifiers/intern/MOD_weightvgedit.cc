@@ -286,7 +286,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  blender::ui::Layout *sub, *col, *row;
+  blender::ui::Layout *col, *row;
   blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;

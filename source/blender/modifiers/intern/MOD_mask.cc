@@ -755,7 +755,7 @@ static bool is_disabled(const Scene * /*scene*/, ModifierData *md, bool /*use_re
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  blender::ui::Layout *sub, *row, *col; /*bfa - added *col*/
+  blender::ui::Layout *row, *col; /*bfa - added *col*/
   blender::ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;

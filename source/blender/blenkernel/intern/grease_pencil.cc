@@ -3737,7 +3737,7 @@ blender::bke::greasepencil::Layer &GreasePencil::add_layer(const blender::String
   this->attribute_storage.wrap().resize(bke::AttrDomain::Layer, numLayers + 1);
   bke::greasepencil::Layer *new_layer = MEM_new<bke::greasepencil::Layer>(__func__, unique_name);
   /* BFA - Disable scene lighting by default. */
-  new_layer->base.flag |= !GP_LAYER_TREE_NODE_USE_LIGHTS;
+  new_layer->base.flag &= ~GP_LAYER_TREE_NODE_USE_LIGHTS;
   /* Hide masks by default. */
   new_layer->base.flag |= GP_LAYER_TREE_NODE_HIDE_MASKS;
   bke::greasepencil::Layer &layer = root_group().add_node(new_layer->as_node()).as_layer();
