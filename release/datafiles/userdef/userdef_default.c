@@ -7,6 +7,7 @@
 /* For constants. */
 #include "BLI_math_constants.h"
 
+#include "DNA_ID.h"
 #include "DNA_anim_enums.h"
 #include "DNA_curve_enums.h"
 #include "DNA_space_enums.h"
@@ -22,9 +23,9 @@
 const UserDef U_default = {
     .versionfile = BLENDER_FILE_VERSION,
     .subversionfile = BLENDER_FILE_SUBVERSION,
-    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM | USER_TOOLTIPS_PYTHON | USER_DEVELOPER_UI | USER_FILENOUI |
-             USER_SCRIPT_AUTOEXEC_DISABLE | USER_FILECOMPRESS),
-    /*BFA - added USER_DUP_NTREE*/
+    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM |
+             USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES | USER_FILECOMPRESS),
+    /*BFA - added USER_DUP_NTREE*/    
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE | USER_DUP_FONT |
                USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_CAMERA | USER_DUP_SPEAKER |
                USER_DUP_ACT | USER_DUP_LIGHTPROBE | USER_DUP_GPENCIL | USER_DUP_CURVES | USER_DUP_NTREE | USER_DUP_POINTCLOUD,
@@ -95,10 +96,10 @@ const UserDef U_default = {
     .menuthreshold2 = 2,
     .app_template = "",
 
-    /** Initialized by #UI_theme_init_default. */
+    /** Initialized by #ui::theme::init_default. */
     .themes = {NULL},
 
-    /** Initialized by #uiStyleInit. */
+    /** Initialized by #style_init. */
     .uifonts = {NULL},
     .uistyles = {NULL},
 

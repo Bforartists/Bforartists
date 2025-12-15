@@ -43,7 +43,7 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
   /* bfa - re-add tabs to tool area, take tabs' width into account when snapping */
   float offset = 0.0;
   // check if panel has tabs visible
-  if (UI_panel_category_is_visible(region)) {
+  if (blender::ui::panel_category_is_visible(region)) {
     offset = UI_TOOLBAR_TAB_OFFSET;
   }
 
@@ -81,7 +81,7 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
 int ED_region_generic_panel_region_snap_size(const ARegion *region, int size, int axis)
 {
   if (axis == 0) {
-    if (!UI_panel_category_is_visible(region)) {
+    if (!blender::ui::panel_category_tabs_is_visible(region)) {
       return size;
     }
 

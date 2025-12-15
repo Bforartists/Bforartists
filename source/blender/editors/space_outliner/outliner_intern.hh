@@ -396,12 +396,12 @@ int calculate_hierarchy_depth(const TreeElement *te);
 int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_outliner);
 
 /* `outliner_edit.cc` */
-using outliner_operation_fn = blender::FunctionRef<void(bContext *C,
-                                                        ReportList *reports,
-                                                        Scene *scene,
-                                                        TreeElement *te,
-                                                        TreeStoreElem *tsep,
-                                                        TreeStoreElem *tselem)>;
+using outliner_operation_fn = FunctionRef<void(bContext *C,
+                                               ReportList *reports,
+                                               Scene *scene,
+                                               TreeElement *te,
+                                               TreeStoreElem *tsep,
+                                               TreeStoreElem *tselem)>;
 
 /**
  * \param recurse_selected: Set to false for operations which are already

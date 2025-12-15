@@ -12,6 +12,7 @@
 
 #include "BLI_listbase.h"
 #include "BLI_math_matrix.h"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
 #include "BLI_rand.h"
@@ -994,8 +995,8 @@ void calculateCenterCursor2D(TransInfo *t, float r_center[2])
     }
     else if (t->options & CTX_PAINT_CURVE) {
       if (t->spacetype == SPACE_IMAGE) {
-        r_center[0] = UI_view2d_view_to_region_x(&t->region->v2d, cursor[0]);
-        r_center[1] = UI_view2d_view_to_region_y(&t->region->v2d, cursor[1]);
+        r_center[0] = ui::view2d_view_to_region_x(&t->region->v2d, cursor[0]);
+        r_center[1] = ui::view2d_view_to_region_y(&t->region->v2d, cursor[1]);
       }
     }
     else {
@@ -1097,6 +1098,12 @@ bool calculateCenterActive(TransInfo *t, bool select_only, float r_center[3])
   if (t->spacetype != SPACE_VIEW3D) {
     return false;
   }
+  /* The cursor has no active object concept. Return false so the "active" center isn't used
+   * in contexts where it doesn't make sense ("Active Snap Base" for e.g.), See: #151283. */
+  if (t->options & CTX_CURSOR) {
+    return false;
+  }
+
   if (tc->obedit) {
     if (object::calc_active_center_for_editmode(tc->obedit, select_only, r_center)) {
       mul_m4_v3(tc->obedit->object_to_world().ptr(), r_center);
@@ -1516,6 +1523,35 @@ Object *transform_object_deform_pose_armature_get(const TransInfo *t, Object *ob
     }
   }
   return nullptr;
+}
+
+std::optional<float3> mouse_delta_to_world_dir(const TransInfo *t, const float2 &delta)
+{
+  if (math::is_zero(delta)) {
+    return std::nullopt;
+  }
+  float3 dir;
+
+  if (t->spacetype == SPACE_VIEW3D) {
+    if (!(t->region && t->region->regiondata)) {
+      return std::nullopt;
+    }
+
+    const RegionView3D *rv3d = static_cast<const RegionView3D *>(t->region->regiondata);
+    dir = (float4x4(rv3d->viewinv) * float4(delta, 0.0f, 0.0f)).xyz();
+  }
+  else {
+    /* In 2D views (UV Editor), use the mouse movement directly on the XY plane. */
+    dir = float3(delta.x, delta.y, 0.0f);
+  }
+
+  dir = math::normalize(dir);
+  /* Skip zero length results after transform. */
+  if (math::is_zero(dir)) {
+    return std::nullopt;
+  }
+
+  return dir;
 }
 
 }  // namespace blender::ed::transform

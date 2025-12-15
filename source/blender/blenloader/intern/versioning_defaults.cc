@@ -139,10 +139,12 @@ static void blo_update_defaults_screen(bScreen *screen,
           sima->mode = SI_MODE_UV;
         }
         sima->uv_face_opacity = 1.0f;
+        sima->uv_edge_opacity = 1.0f;
       }
       else if (STR_ELEM(workspace_name, "Texture Paint", "Shading")) {
         SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
         sima->uv_face_opacity = 0.0f;
+        sima->uv_edge_opacity = 0.0f;
       }
     }
     else if (area->spacetype == SPACE_ACTION) {
@@ -421,6 +423,7 @@ static void blo_update_defaults_paint(Paint *paint)
 static void blo_update_defaults_windowmanager(wmWindowManager *wm)
 {
   wm->xr.session_settings.fly_speed = 3.0f;
+  wm->xr.session_settings.view_scale = 1.0f;
 }
 
 static void blo_update_defaults_scene(Main *bmain, Scene *scene)

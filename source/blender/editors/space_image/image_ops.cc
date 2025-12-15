@@ -555,7 +555,7 @@ static void image_view_zoom_init(bContext *C, wmOperator *op, const wmEvent *eve
   vpd->zoom = sima->zoom;
   vpd->launch_event = WM_userdef_event_type_from_keymap_type(event->type);
 
-  UI_view2d_region_to_view(
+  blender::ui::view2d_region_to_view(
       &region->v2d, event->mval[0], event->mval[1], &vpd->location[0], &vpd->location[1]);
 
   if (U.viewzoom == USER_ZOOM_CONTINUE) {
@@ -619,7 +619,7 @@ static wmOperatorStatus image_view_zoom_invoke(bContext *C, wmOperator *op, cons
     ARegion *region = CTX_wm_region(C);
     float delta, factor, location[2];
 
-    UI_view2d_region_to_view(
+    blender::ui::view2d_region_to_view(
         &region->v2d, event->mval[0], event->mval[1], &location[0], &location[1]);
 
     delta = event->prev_xy[0] - event->xy[0] + event->prev_xy[1] - event->xy[1];
@@ -693,7 +693,7 @@ static void image_zoom_apply(ViewZoomData *vpd,
     zoom = round(zoom * 10.0f) / 10.0f;
   }
   char str[5];
-  BLI_snprintf(str, sizeof(str), "%i%%", int(round(vpd->sima->zoom * 100.0f)));
+  SNPRINTF(str, "%i%%", int(round(vpd->sima->zoom * 100.0f)));
   ED_area_status_text(vpd->area, str);
 
   RNA_float_set(op->ptr, "factor", factor);
@@ -1081,7 +1081,7 @@ static wmOperatorStatus image_view_zoom_in_invoke(bContext *C,
   ARegion *region = CTX_wm_region(C);
   float location[2];
 
-  UI_view2d_region_to_view(
+  blender::ui::view2d_region_to_view(
       &region->v2d, event->mval[0], event->mval[1], &location[0], &location[1]);
   RNA_float_set_array(op->ptr, "location", location);
 
@@ -1142,7 +1142,7 @@ static wmOperatorStatus image_view_zoom_out_invoke(bContext *C,
   ARegion *region = CTX_wm_region(C);
   float location[2];
 
-  UI_view2d_region_to_view(
+  blender::ui::view2d_region_to_view(
       &region->v2d, event->mval[0], event->mval[1], &location[0], &location[1]);
   RNA_float_set_array(op->ptr, "location", location);
 
@@ -1243,7 +1243,7 @@ static wmOperatorStatus image_view_zoom_border_exec(bContext *C, wmOperator *op)
 
   WM_operator_properties_border_to_rctf(op, &bounds);
 
-  UI_view2d_region_to_view_rctf(&region->v2d, &bounds, &bounds);
+  blender::ui::view2d_region_to_view_rctf(&region->v2d, &bounds, &bounds);
 
   struct {
     float xof;
@@ -1313,7 +1313,7 @@ static void image_open_init(bContext *C, wmOperator *op)
   op->customdata = iod = MEM_new<ImageOpenData>(__func__);
   iod->iuser = static_cast<ImageUser *>(
       CTX_data_pointer_get_type(C, "image_user", &RNA_ImageUser).data);
-  UI_context_active_but_prop_get_templateID(C, &iod->pprop.ptr, &iod->pprop.prop);
+  blender::ui::context_active_but_prop_get_templateID(C, &iod->pprop.ptr, &iod->pprop.prop);
 }
 
 static void image_open_cancel(bContext * /*C*/, wmOperator *op)
@@ -1523,7 +1523,7 @@ static wmOperatorStatus image_open_invoke(bContext *C, wmOperator *op, const wmE
     PropertyRNA *prop;
 
     /* hook into UI */
-    UI_context_active_but_prop_get_templateID(C, &ptr, &prop);
+    blender::ui::context_active_but_prop_get_templateID(C, &ptr, &prop);
 
     if (prop) {
       PointerRNA oldptr;
@@ -1579,7 +1579,7 @@ static void image_open_draw(bContext * /*C*/, wmOperator *op)
                    image_open_draw_check_prop,
                    nullptr,
                    nullptr,
-                   UI_BUT_LABEL_ALIGN_NONE,
+                   blender::ui::BUT_LABEL_ALIGN_NONE,
                    false);
 
   /* image template */
@@ -1694,7 +1694,6 @@ static wmOperatorStatus image_file_browse_invoke(bContext *C, wmOperator *op, co
   /* Shift+Click to open the file, Alt+Click to browse a folder in the OS's browser. */
   if (event->modifier & (KM_SHIFT | KM_ALT)) {
     wmOperatorType *ot = WM_operatortype_find("WM_OT_path_open", true);
-    PointerRNA props_ptr;
 
     if (event->modifier & KM_ALT) {
       char *lslash = (char *)BLI_path_slash_rfind(filepath);
@@ -1707,7 +1706,7 @@ static wmOperatorStatus image_file_browse_invoke(bContext *C, wmOperator *op, co
       BKE_image_user_file_path(&iuser, ima, filepath);
     }
 
-    WM_operator_properties_create_ptr(&props_ptr, ot);
+    PointerRNA props_ptr = WM_operator_properties_create_ptr(ot);
     RNA_string_set(&props_ptr, "filepath", filepath);
     WM_operator_name_call_ptr(C, ot, blender::wm::OpCallContext::ExecDefault, &props_ptr, nullptr);
     WM_operator_properties_free(&props_ptr);
@@ -2091,7 +2090,7 @@ static void image_save_as_draw(bContext *C, wmOperator *op)
                    image_save_as_draw_check_prop,
                    isd,
                    nullptr,
-                   UI_BUT_LABEL_ALIGN_NONE,
+                   blender::ui::BUT_LABEL_ALIGN_NONE,
                    false);
 
   layout.separator();
@@ -2624,7 +2623,7 @@ static ImageNewData *image_new_init(bContext *C, wmOperator *op)
   }
 
   ImageNewData *data = MEM_new<ImageNewData>(__func__);
-  UI_context_active_but_prop_get_templateID(C, &data->pprop.ptr, &data->pprop.prop);
+  blender::ui::context_active_but_prop_get_templateID(C, &data->pprop.ptr, &data->pprop.prop);
   op->customdata = data;
   return data;
 }
@@ -2730,7 +2729,7 @@ static wmOperatorStatus image_new_invoke(bContext *C, wmOperator *op, const wmEv
   /* Get property in advance, it doesn't work after WM_operator_props_dialog_popup. */
   ImageNewData *data;
   op->customdata = data = MEM_new<ImageNewData>(__func__);
-  UI_context_active_but_prop_get_templateID(C, &data->pprop.ptr, &data->pprop.prop);
+  blender::ui::context_active_but_prop_get_templateID(C, &data->pprop.ptr, &data->pprop.prop);
 
   /* Better for user feedback. */
   RNA_string_set(op->ptr, "name", DATA_(IMA_DEF_NAME));
@@ -3624,7 +3623,7 @@ bool ED_space_image_get_position(SpaceImage *sima,
     return false;
   }
 
-  UI_view2d_region_to_view(&region->v2d, mval[0], mval[1], &r_fpos[0], &r_fpos[1]);
+  blender::ui::view2d_region_to_view(&region->v2d, mval[0], mval[1], &r_fpos[0], &r_fpos[1]);
 
   ED_space_image_release_buffer(sima, ibuf, lock);
   return true;
@@ -3640,7 +3639,7 @@ bool ED_space_image_color_sample(
     return false;
   }
   float uv[2];
-  UI_view2d_region_to_view(&region->v2d, mval[0], mval[1], &uv[0], &uv[1]);
+  blender::ui::view2d_region_to_view(&region->v2d, mval[0], mval[1], &uv[0], &uv[1]);
   int tile = BKE_image_get_tile_from_pos(sima->image, uv, uv, nullptr);
 
   void *lock;
@@ -3722,8 +3721,8 @@ static wmOperatorStatus image_sample_line_exec(bContext *C, wmOperator *op)
   int y_end = RNA_int_get(op->ptr, "yend");
 
   float uv1[2], uv2[2], ofs[2];
-  UI_view2d_region_to_view(&region->v2d, x_start, y_start, &uv1[0], &uv1[1]);
-  UI_view2d_region_to_view(&region->v2d, x_end, y_end, &uv2[0], &uv2[1]);
+  blender::ui::view2d_region_to_view(&region->v2d, x_start, y_start, &uv1[0], &uv1[1]);
+  blender::ui::view2d_region_to_view(&region->v2d, x_end, y_end, &uv2[0], &uv2[1]);
 
   /* If the image has tiles, shift the positions accordingly. */
   int tile = BKE_image_get_tile_from_pos(ima, uv1, uv1, ofs);
@@ -4037,7 +4036,8 @@ static int frame_from_event(bContext *C, const wmEvent *event)
   else {
     float viewx, viewy;
 
-    UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &viewx, &viewy);
+    blender::ui::view2d_region_to_view(
+        &region->v2d, event->mval[0], event->mval[1], &viewx, &viewy);
 
     framenr = round_fl_to_int(viewx);
   }
@@ -4171,7 +4171,7 @@ static wmOperatorStatus render_border_exec(bContext *C, wmOperator *op)
   /* Get rectangle from the operator. */
   rctf border;
   WM_operator_properties_border_to_rctf(op, &border);
-  UI_view2d_region_to_view_rctf(&region->v2d, &border, &border);
+  blender::ui::view2d_region_to_view_rctf(&region->v2d, &border, &border);
 
   /* Adjust for cropping. */
   if ((rd->mode & (R_BORDER | R_CROP)) == (R_BORDER | R_CROP)) {

@@ -795,7 +795,7 @@ static void position_viewer_node(const bContext &C,
   }
 
   rctf region_bounds;
-  UI_view2d_region_to_view_rctf(&v2d, &region_rect, &region_bounds);
+  ui::view2d_region_to_view_rctf(&v2d, &region_rect, &region_bounds);
 
   viewer_node.ui_order = tree.all_nodes().size();
   tree_draw_order_update(tree);
@@ -1086,7 +1086,7 @@ static void draw_draglink_tooltip(const bContext * /*C*/, ARegion * /*region*/, 
   bNodeLinkDrag *nldrag = static_cast<bNodeLinkDrag *>(arg);
 
   uchar text_col[4];
-  UI_GetThemeColor4ubv(TH_TEXT, text_col);
+  ui::theme::get_color_4ubv(TH_TEXT, text_col);
 
   const int padding = 4 * UI_SCALE_FAC;
   const float x = nldrag->in_out == SOCK_IN ? nldrag->cursor[0] - 3.3f * padding :
@@ -1098,7 +1098,7 @@ static void draw_draglink_tooltip(const bContext * /*C*/, ARegion * /*region*/, 
 
   const int icon = !swap_links ? ICON_ADD : (new_link ? ICON_ANIM : ICON_UV_SYNC_SELECT);
 
-  UI_icon_draw_ex(
+  ui::icon_draw_ex(
       x, y, icon, UI_INV_SCALE_FAC, 1.0f, 0.0f, text_col, false, UI_NO_ICON_OVERLAY_TEXT);
 }
 
@@ -1379,7 +1379,7 @@ static void node_link_cancel(bContext *C, wmOperator *op)
   SpaceNode *snode = CTX_wm_space_node(C);
   bNodeLinkDrag *nldrag = (bNodeLinkDrag *)op->customdata;
   draw_draglink_tooltip_deactivate(*CTX_wm_region(C), *nldrag);
-  UI_view2d_edge_pan_cancel(C, &nldrag->pan_data);
+  view2d_edge_pan_cancel(C, &nldrag->pan_data);
   snode->runtime->linkdrag.reset();
   clear_picking_highlight(&snode->edittree->links);
   BKE_ntree_update_tag_link_removed(snode->edittree);
@@ -1502,10 +1502,10 @@ static wmOperatorStatus node_link_modal(bContext *C, wmOperator *op, const wmEve
   SpaceNode &snode = *CTX_wm_space_node(C);
   ARegion *region = CTX_wm_region(C);
 
-  UI_view2d_edge_pan_apply_event(C, &nldrag.pan_data, event);
+  view2d_edge_pan_apply_event(C, &nldrag.pan_data, event);
 
   float2 cursor;
-  UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);
+  ui::view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &cursor.x, &cursor.y);
   nldrag.cursor[0] = event->mval[0];
   nldrag.cursor[1] = event->mval[1];
 
@@ -1667,7 +1667,7 @@ static wmOperatorStatus node_link_invoke(bContext *C, wmOperator *op, const wmEv
   WM_event_drag_start_mval(event, &region, mval);
 
   float2 cursor;
-  UI_view2d_region_to_view(&region.v2d, mval[0], mval[1], &cursor[0], &cursor[1]);
+  ui::view2d_region_to_view(&region.v2d, mval[0], mval[1], &cursor[0], &cursor[1]);
   RNA_float_set_array(op->ptr, "drag_start", cursor);
 
   ED_preview_kill_jobs(CTX_wm_manager(C), &bmain);
@@ -1677,7 +1677,7 @@ static wmOperatorStatus node_link_invoke(bContext *C, wmOperator *op, const wmEv
     return OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH;
   }
 
-  UI_view2d_edge_pan_operator_init(C, &nldrag->pan_data, op);
+  view2d_edge_pan_operator_init(C, &nldrag->pan_data, op);
 
   /* Add icons at the cursor when the link is dragged in empty space. */
   if (need_drag_link_tooltip(*snode.edittree, *nldrag)) {
@@ -1719,13 +1719,13 @@ void NODE_OT_link(wmOperatorType *ot)
                       -UI_PRECISION_FLOAT_MAX,
                       UI_PRECISION_FLOAT_MAX);
 
-  UI_view2d_edge_pan_operator_properties_ex(ot,
-                                            NODE_EDGE_PAN_INSIDE_PAD,
-                                            NODE_EDGE_PAN_OUTSIDE_PAD,
-                                            NODE_EDGE_PAN_SPEED_RAMP,
-                                            NODE_EDGE_PAN_MAX_SPEED,
-                                            NODE_EDGE_PAN_DELAY,
-                                            NODE_EDGE_PAN_ZOOM_INFLUENCE);
+  ui::view2d_edge_pan_operator_properties_ex(ot,
+                                             NODE_EDGE_PAN_INSIDE_PAD,
+                                             NODE_EDGE_PAN_OUTSIDE_PAD,
+                                             NODE_EDGE_PAN_SPEED_RAMP,
+                                             NODE_EDGE_PAN_MAX_SPEED,
+                                             NODE_EDGE_PAN_DELAY,
+                                             NODE_EDGE_PAN_ZOOM_INFLUENCE);
 }
 
 /** \} */
@@ -1813,7 +1813,7 @@ static wmOperatorStatus cut_links_exec(bContext *C, wmOperator *op)
     float2 loc_region;
     RNA_float_get_array(&itemptr, "loc", loc_region);
     float2 loc_view;
-    UI_view2d_region_to_view(&region.v2d, loc_region.x, loc_region.y, &loc_view.x, &loc_view.y);
+    ui::view2d_region_to_view(&region.v2d, loc_region.x, loc_region.y, &loc_view.x, &loc_view.y);
     path.append(loc_view);
     if (path.size() >= 256) {
       break;
@@ -1922,7 +1922,7 @@ static wmOperatorStatus mute_links_exec(bContext *C, wmOperator *op)
     float2 loc_region;
     RNA_float_get_array(&itemptr, "loc", loc_region);
     float2 loc_view;
-    UI_view2d_region_to_view(&region.v2d, loc_region.x, loc_region.y, &loc_view.x, &loc_view.y);
+    ui::view2d_region_to_view(&region.v2d, loc_region.x, loc_region.y, &loc_view.x, &loc_view.y);
     path.append(loc_view);
     if (path.size() >= 256) {
       break;
@@ -2224,11 +2224,11 @@ static wmOperatorStatus node_join_in_frame_invoke(bContext *C,
   SpaceNode *snode = CTX_wm_space_node(C);
 
   /* Convert mouse coordinates to v2d space. */
-  UI_view2d_region_to_view(&region->v2d,
-                           event->mval[0],
-                           event->mval[1],
-                           &snode->runtime->cursor[0],
-                           &snode->runtime->cursor[1]);
+  ui::view2d_region_to_view(&region->v2d,
+                            event->mval[0],
+                            event->mval[1],
+                            &snode->runtime->cursor[0],
+                            &snode->runtime->cursor[1]);
 
   snode->runtime->cursor[0] /= UI_SCALE_FAC;
   snode->runtime->cursor[1] /= UI_SCALE_FAC;
@@ -2370,7 +2370,7 @@ static bNode *node_find_frame_to_attach(ARegion &region, bNodeTree &ntree, const
 {
   /* convert mouse coordinates to v2d space */
   float2 cursor;
-  UI_view2d_region_to_view(&region.v2d, mouse_xy.x, mouse_xy.y, &cursor.x, &cursor.y);
+  ui::view2d_region_to_view(&region.v2d, mouse_xy.x, mouse_xy.y, &cursor.x, &cursor.y);
 
   for (bNode *frame : tree_draw_order_calc_nodes_reversed(ntree)) {
     /* skip selected, those are the nodes we want to attach */
@@ -2838,6 +2838,11 @@ static int get_main_socket_priority(const bNodeSocket *socket)
     case SOCK_COLLECTION:
     case SOCK_TEXTURE:
     case SOCK_MATERIAL:
+    case SOCK_FONT:
+    case SOCK_SCENE:
+    case SOCK_TEXT_ID:
+    case SOCK_MASK:
+    case SOCK_SOUND:
     case SOCK_BUNDLE:
     case SOCK_CLOSURE:
       return 7;

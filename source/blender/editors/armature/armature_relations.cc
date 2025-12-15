@@ -1015,9 +1015,9 @@ static wmOperatorStatus armature_parent_set_invoke(bContext *C,
     }
   }
 
-  uiPopupMenu *pup = UI_popup_menu_begin(
+  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
       C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Make Parent"), ICON_NONE);
-  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+  blender::ui::Layout &layout = *popup_menu_layout(pup);
 
   blender::ui::Layout &row_offset = layout.row(false);
   row_offset.enabled_set(enable_offset);
@@ -1030,7 +1030,7 @@ static wmOperatorStatus armature_parent_set_invoke(bContext *C,
   op_ptr = row_connect.op("ARMATURE_OT_parent_set", IFACE_("Connected"), ICON_PARENT_BONE);
   RNA_enum_set(&op_ptr, "type", ARM_PAR_CONNECT);
 
-  UI_popup_menu_end(C, pup);
+  popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
 }
@@ -1136,9 +1136,9 @@ static wmOperatorStatus armature_parent_clear_invoke(bContext *C,
     }
   }
 
-  uiPopupMenu *pup = UI_popup_menu_begin(
+  blender::ui::PopupMenu *pup = blender::ui::popup_menu_begin(
       C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Clear Parent"), ICON_NONE);
-  blender::ui::Layout &layout = *UI_popup_menu_layout(pup);
+  blender::ui::Layout &layout = *popup_menu_layout(pup);
 
   blender::ui::Layout &row_clear = layout.row(false);
   row_clear.enabled_set(enable_clear);
@@ -1151,7 +1151,7 @@ static wmOperatorStatus armature_parent_clear_invoke(bContext *C,
       "ARMATURE_OT_parent_clear", IFACE_("Disconnect Bone"), ICON_PARENT_CLEAR);
   RNA_enum_set(&op_ptr, "type", ARM_PAR_CLEAR_DISCONNECT);
 
-  UI_popup_menu_end(C, pup);
+  popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
 }

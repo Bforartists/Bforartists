@@ -33,6 +33,7 @@ class AssetRepresentation;
 
 namespace blender::ui {
 struct Layout;
+struct Block;
 }  // namespace blender::ui
 
 struct ARegion;
@@ -58,7 +59,6 @@ struct View3DShading;
 struct WorkSpace;
 struct bContext;
 struct bScreen;
-struct uiBlock;
 struct uiList;
 struct wmDrawBuffer;
 struct wmGizmoMap;
@@ -202,6 +202,21 @@ struct RegionPollParams {
   const bContext *context;
 };
 
+enum class ARegionTypeFlag {
+  /**
+   * Use panel categories, where #PanelType.category and #ARegion.panels_category_active define
+   * which panels are visible. Available categories are collected during layout and cached in
+   * #ARegion.panels_category_active.
+   */
+  UsePanelCategories = (1 << 0),
+  /**
+   * Same as #UsePanelCategories, plus panel drawing will draw tabs for the categories in this
+   * region.
+   */
+  UsePanelCategoryTabs = (1 << 1),
+};
+ENUM_OPERATORS(ARegionTypeFlag)
+
 /* #ARegionType::lock */
 enum ARegionDrawLockFlags {
   REGION_DRAW_LOCK_NONE = 0,
@@ -283,6 +298,8 @@ struct ARegionType {
    */
   void (*on_view2d_changed)(const bContext *C, ARegion *region);
 
+  ARegionTypeFlag flag;
+
   /** Custom drawing callbacks. */
   ListBase drawcalls;
 
@@ -304,7 +321,7 @@ struct ARegionType {
    * Set as bitflag value in #ARegionDrawLockFlags.
    */
   short do_lock, lock;
-  /** Don't handle gizmos events behind #uiBlock's with #UI_BLOCK_CLIP_EVENTS flag set. */
+  /** Don't handle gizmos events behind #ui::Block's with #BLOCK_CLIP_EVENTS flag set. */
   bool clip_gizmo_events_by_ui;
   /** Call cursor function on each move event. */
   short event_cursor;
@@ -447,10 +464,10 @@ struct Panel_Runtime {
   PointerRNA *custom_data_ptr = nullptr;
 
   /**
-   * Pointer to the panel's block. Useful when changes to panel #uiBlocks
+   * Pointer to the panel's block. Useful when changes to panel #ui::Blocks
    * need some context from traversal of the panel "tree".
    */
-  uiBlock *block = nullptr;
+  blender::ui::Block *block = nullptr;
 
   /** Non-owning pointer. The context is stored in the block. */
   bContextStore *context = nullptr;
@@ -486,9 +503,9 @@ struct ARegionRuntime {
   /** Panel category to use between 'layout' and 'draw'. */
   const char *category = nullptr;
 
-  /** Maps #uiBlock::name to uiBlock for faster lookups. */
-  Map<std::string, uiBlock *> block_name_map;
-  /** #uiBlock. */
+  /** Maps #ui::Block::name to ui::Block for faster lookups. */
+  Map<std::string, blender::ui::Block *> block_name_map;
+  /** #ui::Block. */
   ListBase uiblocks = {};
 
   /** #wmEventHandler. */
@@ -719,6 +736,9 @@ bool BKE_spacetype_exists(int spaceid);
 /** Only for quitting blender. */
 void BKE_spacetypes_free();
 
+bool BKE_regiontype_uses_categories(const ARegionType *region_type);
+bool BKE_regiontype_uses_category_tabs(const ARegionType *region_type);
+
 /* Space-data. */
 
 void BKE_spacedata_freelist(ListBase *lb);
@@ -823,6 +843,10 @@ ARegion *BKE_screen_find_main_region_at_xy(const bScreen *screen, int space_type
  */
 ScrArea *BKE_screen_find_area_from_space(const bScreen *screen,
                                          const SpaceLink *sl) ATTR_WARN_UNUSED_RESULT
+    ATTR_NONNULL(1, 2);
+ARegion *BKE_screen_find_region_in_space(const bScreen *screen,
+                                         const SpaceLink *sl,
+                                         int region_type) ATTR_WARN_UNUSED_RESULT
     ATTR_NONNULL(1, 2);
 /**
  * \note used to get proper RNA paths for spaces (editors).

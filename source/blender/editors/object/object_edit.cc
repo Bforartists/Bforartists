@@ -519,12 +519,12 @@ static wmOperatorStatus object_hide_collection_invoke(bContext *C,
 
   /* Open popup menu. */
   const char *title = CTX_IFACE_(op->type->translation_context, op->type->name);
-  uiPopupMenu *pup = UI_popup_menu_begin(C, title, ICON_OUTLINER_COLLECTION);
-  ui::Layout &layout = *UI_popup_menu_layout(pup);
+  ui::PopupMenu *pup = ui::popup_menu_begin(C, title, ICON_OUTLINER_COLLECTION);
+  ui::Layout &layout = *popup_menu_layout(pup);
 
   collection_hide_menu_draw(C, layout);
 
-  UI_popup_menu_end(C, pup);
+  popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
 }
@@ -1334,7 +1334,7 @@ void motion_paths_recalc(bContext *C,
   Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
-  blender::Vector<MPathTarget *> targets;
+  Vector<MPathTarget *> targets;
   LISTBASE_FOREACH (LinkData *, link, ld_objects) {
     Object *ob = static_cast<Object *>(link->data);
 
@@ -2443,7 +2443,7 @@ static void move_to_collection_menu_draw(Menu *menu, Collection *collection, int
     collection = child->collection;
     if (BLI_listbase_is_empty(&collection->children)) {
       op_ptr = layout.op(
-          ot, BKE_collection_ui_name_get(collection), UI_icon_color_from_collection(collection));
+          ot, BKE_collection_ui_name_get(collection), ui::icon_color_from_collection(collection));
       RNA_int_set(&op_ptr, "collection_uid", collection->id.session_uid);
       continue;
     }
@@ -2452,7 +2452,7 @@ static void move_to_collection_menu_draw(Menu *menu, Collection *collection, int
     layout.menu(is_move ? "OBJECT_MT_move_to_collection_recursive" :
                           "OBJECT_MT_link_to_collection_recursive",
                 BKE_collection_ui_name_get(collection),
-                UI_icon_color_from_collection(collection));
+                ui::icon_color_from_collection(collection));
   }
 }
 
@@ -2464,7 +2464,7 @@ static void move_to_collection_recursive_menu_draw(const bContext * /*C*/, Menu 
   if (!collection) {
     return;
   }
-  move_to_collection_menu_draw(menu, collection, UI_icon_color_from_collection(collection));
+  move_to_collection_menu_draw(menu, collection, ui::icon_color_from_collection(collection));
 }
 
 static void move_to_collection_menu_draw(const bContext *C, Menu *menu)

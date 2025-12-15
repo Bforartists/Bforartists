@@ -25,7 +25,6 @@ struct PointerRNA;
 struct Scene;
 struct SpaceLink;
 struct SpaceType;
-struct uiBlock;
 struct uiList;
 struct uiListType;
 struct wmDrawBuffer;
@@ -165,7 +164,6 @@ enum LayoutPanelStateFlag {
   LAYOUT_PANEL_STATE_FLAG_OPEN = (1 << 0),
 };
 
-/** The part from uiBlock that needs saved in file. */
 typedef struct Panel {
   struct Panel *next, *prev;
 
@@ -284,9 +282,6 @@ typedef struct uiListDyn {
   int visual_height;
   /** Minimal visual height of the list (in rows). */
   int visual_height_min;
-
-  /** Number of columns drawn for grid layouts. */
-  int columns;
 
   /** Number of items in collection. */
   int items_len;
@@ -475,14 +470,15 @@ typedef struct ScrArea {
   char headertype DNA_DEPRECATED;
   /** Private, for spacetype refresh callback. */
   char do_refresh;
-  char _pad0[2]; // BFA - padding for int flag alignment
-  int flag; // BFA - MUST be int (not short) to accommodate toolbar flags beyond bit 15 (Animation/Edit/Misc toolbars use bits 16-18)
+  char _pad0[2];  // BFA - padding for int flag alignment
+  int flag;       // BFA - MUST be int (not short) to accommodate toolbar flags beyond bit 15
+                  // (Animation/Edit/Misc toolbars use bits 16-18)
   /**
    * Index of last used region of 'RGN_TYPE_WINDOW'
    * runtime variable, updated by executing operators.
    */
   short region_active_win;
-  char _pad[6]; // BFA - increased padding to fix alignment issues (was 2 bytes)
+  char _pad[6];  // BFA - increased padding to fix alignment issues (was 2 bytes)
 
   /** Callbacks for this space type. */
   struct SpaceType *type;
@@ -700,7 +696,6 @@ enum {
 enum {
   UILST_LAYOUT_DEFAULT = 0,
   UILST_LAYOUT_COMPACT = 1,
-  UILST_LAYOUT_BIG_PREVIEW_GRID = 3,
 };
 
 /** #uiList.flag */
@@ -888,9 +883,9 @@ typedef struct AssetShelfSettings {
   char search_string[64];
 
   short preview_size;
-  short display_flag; /* #AssetShelfSettings_DisplayFlag */
-  short import_method; /* #AssetShelfImportMethod */ // bfa
-  short import_flags;  /* AssetShelfImportFlags */ // bfa
+  short display_flag;                                 /* #AssetShelfSettings_DisplayFlag */
+  short import_method; /* #AssetShelfImportMethod */  // bfa
+  short import_flags; /* AssetShelfImportFlags */     // bfa
   // char _pad1[4]; // uses all 4
 
 #ifdef __cplusplus

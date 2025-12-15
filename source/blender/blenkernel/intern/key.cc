@@ -387,7 +387,7 @@ void key_curve_tangent_weights(float t, float data[4], KeyInterpolationType type
   }
 }
 
-void key_curve_normal_weights(float t, float data[4], KeyInterpolationType type)
+void key_curve_normal_weights(const float t, float data[4], const KeyInterpolationType type)
 {
   float fc;
 
@@ -423,139 +423,106 @@ void key_curve_normal_weights(float t, float data[4], KeyInterpolationType type)
   }
 }
 
-/* Return 1 means k[2] is the position, return 0 means interpolate. */
-static int setkeys(
-    float fac, ListBase * /* KeyBlock */ keyblocks, KeyBlock *k[], float t[4], const int cycl)
+/**
+ * Determine the keys to use for absolute shapekey evaluation.
+ * The values in `r_weights` indicate how much of a given shapekey should be used.
+ * This is done to support different interpolation modes.
+ *
+ * The key in `r_target_keys[2]` is the key just after the factor threshold.
+ *
+ * \return true means the key in `r_target_keys[2]` should be copied as is,
+ * false means interpolate.
+ */
+static bool get_keys_for_absolute_eval(float eval_time,
+                                       const ListBase * /* KeyBlock */ keyblocks,
+                                       KeyBlock *r_target_keys[4],
+                                       float r_weights[4])
 {
   KeyBlock *firstkey = static_cast<KeyBlock *>(keyblocks->first);
-  KeyBlock *k1 = static_cast<KeyBlock *>(keyblocks->last);
-  const float lastpos = k1->pos;
-  const float delta_pos = lastpos - firstkey->pos;
+  KeyBlock *lastkey = static_cast<KeyBlock *>(keyblocks->last);
+  eval_time = clamp_f(eval_time, firstkey->pos, lastkey->pos);
 
-  if (fac < firstkey->pos) {
-    fac = firstkey->pos;
-  }
-  else if (fac > k1->pos) {
-    fac = k1->pos;
-  }
+  r_target_keys[0] = r_target_keys[1] = r_target_keys[2] = r_target_keys[3] = firstkey;
+  r_weights[0] = r_weights[1] = r_weights[2] = r_weights[3] = firstkey->pos;
 
-  k1 = k[0] = k[1] = k[2] = k[3] = firstkey;
-  t[0] = t[1] = t[2] = t[3] = k1->pos;
-
-  if (k1->next == nullptr) {
-    return 1;
+  if (firstkey->next == nullptr) {
+    /* There is only a single shapekey, we cannot do interpolation in this case. */
+    return true;
   }
 
-  float offset = 0;
-  if (cycl) { /* Pre-sort. */
-    k[2] = k1->next;
-    k[3] = k[2]->next;
-    if (k[3] == nullptr) {
-      k[3] = k1;
-    }
-    while (k1) {
-      if (k1->next == nullptr) {
-        k[0] = k1;
-      }
-      k1 = k1->next;
-    }
-    t[0] = k[0]->pos;
-    t[1] += delta_pos;
-    t[2] = k[2]->pos + delta_pos;
-    t[3] = k[3]->pos + delta_pos;
-    fac += delta_pos;
-    offset = delta_pos;
-    if (k[3] == k[1]) {
-      t[3] += delta_pos;
-      offset = 2.0f * delta_pos;
-    }
-    if (fac < t[1]) {
-      fac += delta_pos;
-    }
-    k1 = k[3];
+  r_target_keys[2] = firstkey->next;
+  r_weights[2] = r_target_keys[2]->pos;
+  r_target_keys[3] = r_target_keys[2]->next;
+  if (r_target_keys[3] == nullptr) {
+    r_target_keys[3] = r_target_keys[2];
   }
-  else { /* Pre-sort. */
-    k[2] = k1->next;
-    t[2] = k[2]->pos;
-    k[3] = k[2]->next;
-    if (k[3] == nullptr) {
-      k[3] = k[2];
-    }
-    t[3] = k[3]->pos;
-    k1 = k[3];
-  }
+  r_weights[3] = r_target_keys[3]->pos;
+  KeyBlock *key_iter = r_target_keys[3];
 
-  while (t[2] < fac) { /* Find correct location. */
-    if (k1->next == nullptr) {
-      if (cycl) {
-        k1 = firstkey;
-        offset += delta_pos;
-      }
-      else if (t[2] == t[3]) {
+  /* Find the correct shapekeys. */
+  while (r_weights[2] < eval_time) {
+    if (key_iter->next == nullptr) {
+      /* This triggers when `key_iter->next` has been a nullptr for one loop. */
+      if (r_weights[2] == r_weights[3]) {
         break;
       }
     }
     else {
-      k1 = k1->next;
+      key_iter = key_iter->next;
     }
 
-    t[0] = t[1];
-    k[0] = k[1];
-    t[1] = t[2];
-    k[1] = k[2];
-    t[2] = t[3];
-    k[2] = k[3];
-    t[3] = k1->pos + offset;
-    k[3] = k1;
-
-    if (offset > 2.1f + lastpos) {
-      break;
-    }
+    r_weights[0] = r_weights[1];
+    r_target_keys[0] = r_target_keys[1];
+    r_weights[1] = r_weights[2];
+    r_target_keys[1] = r_target_keys[2];
+    r_weights[2] = r_weights[3];
+    r_target_keys[2] = r_target_keys[3];
+    r_weights[3] = key_iter->pos;
+    r_target_keys[3] = key_iter;
   }
 
-  short bsplinetype = 0;
-  if (k[1]->type == KEY_BSPLINE || k[2]->type == KEY_BSPLINE) {
-    bsplinetype = 1;
+  bool bsplinetype = false;
+  if (r_target_keys[1]->type == KEY_BSPLINE || r_target_keys[2]->type == KEY_BSPLINE) {
+    bsplinetype = true;
   }
 
-  if (cycl == 0) {
-    if (bsplinetype == 0) { /* B spline doesn't go through the control points. */
-      if (fac <= t[1]) {    /* fac for 1st key. */
-        t[2] = t[1];
-        k[2] = k[1];
-        return 1;
-      }
-      if (fac >= t[2]) { /* fac after 2nd key. */
-        return 1;
-      }
+  if (bsplinetype == false) { /* B spline doesn't go through the control points. */
+    if (eval_time <= r_weights[1]) {
+      /* This can happen if there are only 2 shapekeys. */
+      r_weights[2] = r_weights[1];
+      r_target_keys[2] = r_target_keys[1];
+      return true;
     }
-    else if (fac > t[2]) { /* Last key. */
-      fac = t[2];
-      k[3] = k[2];
-      t[3] = t[2];
+    if (eval_time >= r_weights[2]) { /* `eval_time` after 2nd key. */
+      return true;
     }
   }
+  else if (eval_time > r_weights[2]) { /* Last key. */
+    eval_time = r_weights[2];
+    r_target_keys[3] = r_target_keys[2];
+    r_weights[3] = r_weights[2];
+  }
 
-  float delta = t[2] - t[1];
+  float delta = r_weights[2] - r_weights[1];
   if (delta == 0.0f) {
-    if (bsplinetype == 0) {
-      return 1; /* Both keys equal. */
+    if (bsplinetype == false) {
+      return true; /* Both keys equal. */
     }
   }
   else {
-    delta = (fac - t[1]) / delta;
+    delta = (eval_time - r_weights[1]) / delta;
   }
 
   /* Interpolation. */
-  key_curve_position_weights(delta, t, KeyInterpolationType(k[1]->type));
+  key_curve_position_weights(delta, r_weights, KeyInterpolationType(r_target_keys[1]->type));
 
-  if (k[1]->type != k[2]->type) {
+  if (r_target_keys[1]->type != r_target_keys[2]->type) {
     float t_other[4];
-    key_curve_position_weights(delta, t_other, KeyInterpolationType(k[2]->type));
-    interp_v4_v4v4(t, t, t_other, delta);
+    key_curve_position_weights(delta, t_other, KeyInterpolationType(r_target_keys[2]->type));
+    interp_v4_v4v4(r_weights, r_weights, t_other, delta);
   }
 
-  return 0;
+  return false;
 }
 
 static void flerp(const int tot,
@@ -564,18 +531,10 @@ static void flerp(const int tot,
                   const float *f1,
                   const float *f2,
                   const float *f3,
-                  const float *t)
+                  const float t[4])
 {
   for (int a = 0; a < tot; a++) {
     in[a] = t[0] * f0[a] + t[1] * f1[a] + t[2] * f2[a] + t[3] * f3[a];
-  }
-}
-
-static void rel_flerp(
-    const int tot, float *in, const float *ref, const float *out, const float fac)
-{
-  for (int a = 0; a < tot; a++) {
-    in[a] -= fac * (ref[a] - out[a]);
   }
 }
 
@@ -649,306 +608,135 @@ static bool key_pointer_size(
   return true;
 }
 
-static void cp_key(const int start,
-                   int end,
-                   const int tot,
-                   char *poin,
-                   Key *key,
-                   KeyBlock *actkb,
-                   KeyBlock *kb,
-                   float *weights,
-                   const int mode)
+/**
+ * Move the point in `r_targets` along the vector of ab by a factor of `weight`.
+ *
+ * \param start_index points to the x value in the flat float array. Indices of +1 and +2 from this
+ * are accessed.
+ */
+static void add_weighted_vector(
+    const int start_index, const float weight, const float *a, const float *b, float *r_target)
 {
-  int ofs[32];
-  /* Currently always 0, in future key_pointer_size may assign. */
-  ofs[1] = 0;
+  r_target[start_index + 0] += weight * (b[start_index + 0] - a[start_index + 0]);
+  r_target[start_index + 1] += weight * (b[start_index + 1] - a[start_index + 1]);
+  r_target[start_index + 2] += weight * (b[start_index + 2] - a[start_index + 2]);
+}
 
-  int pointer_size = 0;
-  int step;
-  if (!key_pointer_size(key, mode, &pointer_size, &ofs[0], &step)) {
-    return;
-  }
+/**
+ * Copy the shapekey data of `source` into the output array of `r_target`.
+ */
+static void copy_key_float3(
+    const int vertex_count, Key *key, KeyBlock *active_keyblock, KeyBlock *source, float *r_target)
+{
+  char *free_keyblock_data;
+  float *keyblock_data = reinterpret_cast<float *>(
+      key_block_get_data(key, active_keyblock, source, &free_keyblock_data));
 
-  end = std::min(end, tot);
+  memcpy(r_target, keyblock_data, vertex_count * 3 * sizeof(float));
 
-  bool flagflo = false;
-  /* I (christoph) don't know what those variables do but they are only used if
-   * `flagflo` is set to true. */
-  float ktot = 0.0, kd = 0.0;
-  if (tot != kb->totelem) {
-    ktot = 0.0;
-    flagflo = true;
-    if (kb->totelem) {
-      kd = kb->totelem / float(tot);
-    }
-    else {
-      return;
-    }
-  }
-
-  char *free_k1, *free_kref;
-  char *k1 = key_block_get_data(key, actkb, kb, &free_k1);
-  char *kref = key_block_get_data(key, actkb, key->refkey, &free_kref);
-
-  /* This exception is needed curves with multiple splines. */
-  if (start != 0) {
-
-    poin += pointer_size * start;
-
-    if (flagflo) {
-      ktot += start * kd;
-      const int ktot_floor = int(floor(ktot));
-      if (ktot_floor) {
-        ktot -= ktot_floor;
-        k1 += ktot_floor * key->elemsize;
-      }
-    }
-    else {
-      k1 += start * key->elemsize;
-    }
-  }
-
-  char elemstr[8];
-  if (mode == KEY_MODE_BEZTRIPLE) {
-    elemstr[0] = 1;
-    elemstr[1] = IPO_BEZTRIPLE;
-    elemstr[2] = 0;
-  }
-
-  /* Just do it here, not above! */
-  const int elemsize = key->elemsize * step;
-
-  for (int a = start; a < end; a += step) {
-    char *cp = key->elemstr;
-    if (mode == KEY_MODE_BEZTRIPLE) {
-      cp = elemstr;
-    }
-
-    int *ofsp = ofs;
-
-    while (cp[0]) {
-
-      switch (cp[1]) {
-        case IPO_FLOAT:
-          if (weights) {
-            memcpy(poin, kref, sizeof(float[KEYELEM_FLOAT_LEN_COORD]));
-            if (*weights != 0.0f) {
-              rel_flerp(
-                  KEYELEM_FLOAT_LEN_COORD, (float *)poin, (float *)kref, (float *)k1, *weights);
-            }
-            weights++;
-          }
-          else {
-            memcpy(poin, k1, sizeof(float[KEYELEM_FLOAT_LEN_COORD]));
-          }
-          break;
-        case IPO_BPOINT:
-          memcpy(poin, k1, sizeof(float[KEYELEM_FLOAT_LEN_BPOINT]));
-          break;
-        case IPO_BEZTRIPLE:
-          memcpy(poin, k1, sizeof(float[KEYELEM_FLOAT_LEN_BEZTRIPLE]));
-          break;
-        default:
-          BLI_assert_unreachable();
-          if (free_k1) {
-            MEM_freeN(free_k1);
-          }
-          if (free_kref) {
-            MEM_freeN(free_kref);
-          }
-          BLI_assert_msg(0, "invalid 'cp[1]'");
-          return;
-      }
-
-      poin += *ofsp;
-      cp += 2;
-      ofsp++;
-    }
-
-    /* Are we going to be nasty? */
-    if (flagflo) {
-      ktot += kd;
-      while (ktot >= 1.0f) {
-        ktot -= 1.0f;
-        k1 += elemsize;
-        kref += elemsize;
-      }
-    }
-    else {
-      k1 += elemsize;
-      kref += elemsize;
-    }
-  }
-
-  if (free_k1) {
-    MEM_freeN(free_k1);
-  }
-  if (free_kref) {
-    MEM_freeN(free_kref);
+  if (free_keyblock_data) {
+    MEM_freeN(free_keyblock_data);
   }
 }
 
-static void cp_cu_key(Curve *cu,
-                      Key *key,
-                      KeyBlock *actkb,
-                      KeyBlock *kb,
-                      const int start,
-                      int end,
-                      char *out,
-                      const int tot)
+/**
+ * Copy the shapekey data of `source` into the output array of `r_target`.
+ *
+ * \param weights is a float array of size `vertex_count`. It determines how much of `source` is
+ * blended into the result. The base for it is the reference key. If this is passed as a nullptr,
+ * `source` is copied at full weight.
+ */
+static void copy_key_float3_weighted(const int vertex_count,
+                                     Key *key,
+                                     KeyBlock *active_keyblock,
+                                     KeyBlock *source,
+                                     const float *weights,
+                                     float *r_target)
 {
-  Nurb *nu;
-  int a, step, a1, a2;
-
-  for (a = 0, nu = static_cast<Nurb *>(cu->nurb.first); nu; nu = nu->next, a += step) {
-    if (nu->bp) {
-      step = KEYELEM_ELEM_LEN_BPOINT * nu->pntsu * nu->pntsv;
-
-      a1 = max_ii(a, start);
-      a2 = min_ii(a + step, end);
-
-      if (a1 < a2) {
-        cp_key(a1, a2, tot, out, key, actkb, kb, nullptr, KEY_MODE_BPOINT);
-      }
-    }
-    else if (nu->bezt) {
-      step = KEYELEM_ELEM_LEN_BEZTRIPLE * nu->pntsu;
-
-      /* Exception because keys prefer to work with complete blocks. */
-      a1 = max_ii(a, start);
-      a2 = min_ii(a + step, end);
-
-      if (a1 < a2) {
-        cp_key(a1, a2, tot, out, key, actkb, kb, nullptr, KEY_MODE_BEZTRIPLE);
-      }
-    }
-    else {
-      step = 0;
-    }
-  }
-}
-
-static void key_evaluate_relative(const int start,
-                                  int end,
-                                  const int tot,
-                                  char *basispoin,
-                                  Key *key,
-                                  KeyBlock *actkb,
-                                  float **per_keyblock_weights,
-                                  const int mode)
-{
-  int ofs[3];
-  /* Currently always 0, in future key_pointer_size may assign. */
-  ofs[1] = 0;
-
-  int pointer_size;
-  int step;
-  if (!key_pointer_size(key, mode, &pointer_size, &ofs[0], &step)) {
+  if (!weights) {
+    copy_key_float3(vertex_count, key, active_keyblock, source, r_target);
     return;
   }
 
-  end = std::min(end, tot);
+  if (vertex_count != source->totelem) {
+    /* There was a system in place before that worked with keys that only have partial data. I
+     * (christoph) removed that since there is no known case for that. */
+    BLI_assert_unreachable();
+    return;
+  }
 
-  /* In case of Bezier-triple. */
-  char elemstr[8];
-  elemstr[0] = 1; /* Number of IPO-floats. */
-  elemstr[1] = IPO_BEZTRIPLE;
-  elemstr[2] = 0;
+  char *free_source_data, *free_refkey_data;
+  const float *source_data = reinterpret_cast<float *>(
+      key_block_get_data(key, active_keyblock, source, &free_source_data));
+  const float *refkey_data = reinterpret_cast<float *>(
+      key_block_get_data(key, active_keyblock, key->refkey, &free_refkey_data));
 
-  /* Just here, not above! */
-  const int elemsize = key->elemsize * step;
+  for (int i = 0; i < vertex_count; i++) {
+    const int vector_index = i * 3;
+    memcpy(&r_target[vector_index], &refkey_data[vector_index], 3 * sizeof(float));
+    if (weights[i] != 0.0f) {
+      add_weighted_vector(vector_index, weights[i], refkey_data, source_data, r_target);
+    }
+  }
 
-  /* Step 1: init. */
-  cp_key(start, end, tot, basispoin, key, actkb, key->refkey, nullptr, mode);
+  if (free_source_data) {
+    MEM_freeN(free_source_data);
+  }
+  if (free_refkey_data) {
+    MEM_freeN(free_refkey_data);
+  }
+}
 
-  /* Step 2: do it. */
+/**
+ * Shapekey evaluation for data of 3 floats (Vector3).
+ *
+ * \param target_data is the float array into which the result of the evaluation is written.
+ * \param per_keyblock_weights is a 2d array which gives a per KeyBlock per Vertex weight. Can be a
+ * nullptr.
+ */
+static void key_evaluate_relative_float3(Key *key,
+                                         KeyBlock *active_keyblock,
+                                         const int vertex_count,
+                                         float **per_keyblock_weights,
+                                         float *target_data)
+{
+  /* Creates the basis values of the reference key in target_data. */
+  copy_key_float3(vertex_count, key, active_keyblock, key->refkey, target_data);
+
   int keyblock_index = 0;
   LISTBASE_FOREACH_INDEX (KeyBlock *, kb, &key->block, keyblock_index) {
     if (kb == key->refkey) {
       continue;
     }
-    /* Only with value, and no difference allowed. */
-    if (kb->flag & KEYBLOCK_MUTE || kb->totelem != tot) {
+    /* No difference in vertex count allowed. */
+    if (kb->flag & KEYBLOCK_MUTE || kb->totelem != vertex_count) {
       continue;
     }
-    const float icuval = kb->curval;
-    if (icuval == 0.0f) {
+    const float kb_influence = kb->curval;
+    if (kb_influence == 0.0f) {
       continue;
     }
-
-    float weight, *weights = per_keyblock_weights ? per_keyblock_weights[keyblock_index] : nullptr;
-    char *freefrom = nullptr;
-
     /* Reference can be any block. */
-    KeyBlock *refb = static_cast<KeyBlock *>(BLI_findlink(&key->block, kb->relative));
-    if (refb == nullptr) {
+    KeyBlock *reference_kb = static_cast<KeyBlock *>(BLI_findlink(&key->block, kb->relative));
+    if (reference_kb == nullptr) {
       continue;
     }
 
-    char *poin = basispoin;
-    char *from = key_block_get_data(key, actkb, kb, &freefrom);
+    const float *weights = per_keyblock_weights ? per_keyblock_weights[keyblock_index] : nullptr;
+
+    char *freefrom = nullptr;
+    const float *from = reinterpret_cast<float *>(
+        key_block_get_data(key, active_keyblock, kb, &freefrom));
 
     /* For meshes, use the original values instead of the bmesh values to
      * maintain a constant offset. */
-    char *reffrom = static_cast<char *>(refb->data);
+    const float *reffrom = static_cast<float *>(reference_kb->data);
 
-    poin += start * pointer_size;
-    reffrom += key->elemsize * start; /* Key elemsize yes! */
-    from += key->elemsize * start;
-
-    char *cp;
-    int *ofsp;
-
-    for (int b = start; b < end; b += step) {
-
-      weight = weights ? (*weights * icuval) : icuval;
-
-      cp = key->elemstr;
-      if (mode == KEY_MODE_BEZTRIPLE) {
-        cp = elemstr;
-      }
-
-      ofsp = ofs;
-
-      while (cp[0]) { /* (cp[0] == amount) */
-
-        switch (cp[1]) {
-          case IPO_FLOAT:
-            rel_flerp(
-                KEYELEM_FLOAT_LEN_COORD, (float *)poin, (float *)reffrom, (float *)from, weight);
-            break;
-          case IPO_BPOINT:
-            rel_flerp(
-                KEYELEM_FLOAT_LEN_BPOINT, (float *)poin, (float *)reffrom, (float *)from, weight);
-            break;
-          case IPO_BEZTRIPLE:
-            rel_flerp(KEYELEM_FLOAT_LEN_BEZTRIPLE,
-                      (float *)poin,
-                      (float *)reffrom,
-                      (float *)from,
-                      weight);
-            break;
-          default:
-            BLI_assert_unreachable();
-            if (freefrom) {
-              MEM_freeN(freefrom);
-            }
-            BLI_assert_msg(0, "invalid 'cp[1]'");
-            return;
-        }
-
-        poin += *ofsp;
-
-        cp += 2;
-        ofsp++;
-      }
-
-      reffrom += elemsize;
-      from += elemsize;
-
-      if (weights) {
-        weights++;
-      }
+    for (int i = 0; i < vertex_count; i++) {
+      const float weight = weights ? (weights[i] * kb->curval) : kb->curval;
+      /* Each vertex has 3 floats. */
+      const int vector_index = i * 3;
+      add_weighted_vector(vector_index, weight, reffrom, from, target_data);
     }
 
     if (freefrom) {
@@ -957,15 +745,18 @@ static void key_evaluate_relative(const int start,
   }
 }
 
-static void do_key(const int start,
-                   int end,
-                   const int tot,
-                   char *poin,
-                   Key *key,
-                   KeyBlock *actkb,
-                   KeyBlock **k,
-                   float *t,
-                   const int mode)
+/**
+ * Absolute interpolation between up to 4 shapekeys. The resulting data is stored in `r_target`.
+ */
+static void key_evaluate_absolute(const int start,
+                                  int end,
+                                  const int vertex_count,
+                                  char *r_target,
+                                  Key *key,
+                                  KeyBlock *active_keyblock,
+                                  KeyBlock *shapekeys[4],
+                                  const float weights[4],
+                                  const int mode)
 {
   int a, ofs[32];
 
@@ -988,52 +779,52 @@ static void do_key(const int start,
     return;
   }
 
-  end = std::min(end, tot);
+  end = std::min(end, vertex_count);
 
   char *freek1, *freek2, *freek3, *freek4;
-  char *k1 = key_block_get_data(key, actkb, k[0], &freek1);
-  char *k2 = key_block_get_data(key, actkb, k[1], &freek2);
-  char *k3 = key_block_get_data(key, actkb, k[2], &freek3);
-  char *k4 = key_block_get_data(key, actkb, k[3], &freek4);
+  char *k1 = key_block_get_data(key, active_keyblock, shapekeys[0], &freek1);
+  char *k2 = key_block_get_data(key, active_keyblock, shapekeys[1], &freek2);
+  char *k3 = key_block_get_data(key, active_keyblock, shapekeys[2], &freek3);
+  char *k4 = key_block_get_data(key, active_keyblock, shapekeys[3], &freek4);
 
   float k1tot = 0.0, k2tot = 0.0, k3tot = 0.0, k4tot = 0.0;
   float k1d = 0.0, k2d = 0.0, k3d = 0.0, k4d = 0.0;
   /* Test for more or less points (per key!) */
-  if (tot != k[0]->totelem) {
+  if (vertex_count != shapekeys[0]->totelem) {
     k1tot = 0.0;
     flagflo |= K1_FLAG;
-    if (k[0]->totelem) {
-      k1d = k[0]->totelem / float(tot);
+    if (shapekeys[0]->totelem) {
+      k1d = shapekeys[0]->totelem / float(vertex_count);
     }
     else {
       flagdo &= ~K1_FLAG;
     }
   }
-  if (tot != k[1]->totelem) {
+  if (vertex_count != shapekeys[1]->totelem) {
     k2tot = 0.0;
     flagflo |= K2_FLAG;
-    if (k[0]->totelem) {
-      k2d = k[1]->totelem / float(tot);
+    if (shapekeys[0]->totelem) {
+      k2d = shapekeys[1]->totelem / float(vertex_count);
     }
     else {
       flagdo &= ~K2_FLAG;
     }
   }
-  if (tot != k[2]->totelem) {
+  if (vertex_count != shapekeys[2]->totelem) {
     k3tot = 0.0;
     flagflo |= K3_FLAG;
-    if (k[0]->totelem) {
-      k3d = k[2]->totelem / float(tot);
+    if (shapekeys[0]->totelem) {
+      k3d = shapekeys[2]->totelem / float(vertex_count);
     }
     else {
       flagdo &= ~K3_FLAG;
     }
   }
-  if (tot != k[3]->totelem) {
+  if (vertex_count != shapekeys[3]->totelem) {
     k4tot = 0.0;
     flagflo |= K4_FLAG;
-    if (k[0]->totelem) {
-      k4d = k[3]->totelem / float(tot);
+    if (shapekeys[0]->totelem) {
+      k4d = shapekeys[3]->totelem / float(vertex_count);
     }
     else {
       flagdo &= ~K4_FLAG;
@@ -1043,7 +834,7 @@ static void do_key(const int start,
   /* This exception is needed for curves with multiple splines. */
   if (start != 0) {
 
-    poin += pointer_size * start;
+    r_target += pointer_size * start;
 
     if (flagdo & K1_FLAG) {
       if (flagflo & K1_FLAG) {
@@ -1121,30 +912,30 @@ static void do_key(const int start,
       switch (cp[1]) {
         case IPO_FLOAT:
           flerp(KEYELEM_FLOAT_LEN_COORD,
-                (float *)poin,
+                (float *)r_target,
                 (float *)k1,
                 (float *)k2,
                 (float *)k3,
                 (float *)k4,
-                t);
+                weights);
           break;
         case IPO_BPOINT:
           flerp(KEYELEM_FLOAT_LEN_BPOINT,
-                (float *)poin,
+                (float *)r_target,
                 (float *)k1,
                 (float *)k2,
                 (float *)k3,
                 (float *)k4,
-                t);
+                weights);
           break;
         case IPO_BEZTRIPLE:
           flerp(KEYELEM_FLOAT_LEN_BEZTRIPLE,
-                (float *)poin,
+                (float *)r_target,
                 (float *)k1,
                 (float *)k2,
                 (float *)k3,
                 (float *)k4,
-                t);
+                weights);
           break;
         default:
           BLI_assert_unreachable();
@@ -1164,7 +955,7 @@ static void do_key(const int start,
           return;
       }
 
-      poin += *ofsp;
+      r_target += *ofsp;
       cp += 2;
       ofsp++;
     }
@@ -1356,27 +1147,33 @@ static void do_mesh_key(Object *ob, Key *key, char *out, const int tot)
     WeightsArrayCache cache = {0, nullptr};
     float **per_keyblock_weights;
     per_keyblock_weights = keyblock_get_per_block_weights(ob, key, &cache);
-    key_evaluate_relative(0, tot, tot, out, key, actkb, per_keyblock_weights, KEY_MODE_DUMMY);
+    key_evaluate_relative_float3(
+        key, actkb, tot, per_keyblock_weights, reinterpret_cast<float *>(out));
     keyblock_free_per_block_weights(key, per_keyblock_weights, &cache);
   }
   else {
-    KeyBlock *k[4];
     const float ctime_scaled = key->ctime / 100.0f;
+    KeyBlock *shapekeys[4];
+    float weights[4];
+    const bool simple_copy = get_keys_for_absolute_eval(
+        ctime_scaled, &key->block, shapekeys, weights);
 
-    float t[4];
-    const int flag = setkeys(ctime_scaled, &key->block, k, t, 0);
-
-    if (flag == 0) {
-      do_key(0, tot, tot, out, key, actkb, k, t, KEY_MODE_DUMMY);
+    if (simple_copy == false) {
+      key_evaluate_absolute(0, tot, tot, out, key, actkb, shapekeys, weights, KEY_MODE_DUMMY);
     }
     else {
-      cp_key(0, tot, tot, out, key, actkb, k[2], nullptr, KEY_MODE_DUMMY);
+      copy_key_float3(tot, key, actkb, shapekeys[2], reinterpret_cast<float *>(out));
     }
   }
 }
 
-static void do_cu_key(
-    Curve *cu, Key *key, KeyBlock *actkb, KeyBlock **k, float *t, char *out, const int tot)
+static void do_cu_key(Curve *cu,
+                      Key *key,
+                      KeyBlock *actkb,
+                      KeyBlock *shapekeys[4],
+                      float weights[4],
+                      char *out,
+                      const int tot)
 {
   Nurb *nu;
   int a, step;
@@ -1384,31 +1181,13 @@ static void do_cu_key(
   for (a = 0, nu = static_cast<Nurb *>(cu->nurb.first); nu; nu = nu->next, a += step) {
     if (nu->bp) {
       step = KEYELEM_ELEM_LEN_BPOINT * nu->pntsu * nu->pntsv;
-      do_key(a, a + step, tot, out, key, actkb, k, t, KEY_MODE_BPOINT);
+      key_evaluate_absolute(
+          a, a + step, tot, out, key, actkb, shapekeys, weights, KEY_MODE_BPOINT);
     }
     else if (nu->bezt) {
       step = KEYELEM_ELEM_LEN_BEZTRIPLE * nu->pntsu;
-      do_key(a, a + step, tot, out, key, actkb, k, t, KEY_MODE_BEZTRIPLE);
-    }
-    else {
-      step = 0;
-    }
-  }
-}
-
-static void do_rel_cu_key(Curve *cu, Key *key, KeyBlock *actkb, char *out, const int tot)
-{
-  Nurb *nu;
-  int a, step;
-
-  for (a = 0, nu = static_cast<Nurb *>(cu->nurb.first); nu; nu = nu->next, a += step) {
-    if (nu->bp) {
-      step = KEYELEM_ELEM_LEN_BPOINT * nu->pntsu * nu->pntsv;
-      key_evaluate_relative(a, a + step, tot, out, key, actkb, nullptr, KEY_MODE_BPOINT);
-    }
-    else if (nu->bezt) {
-      step = KEYELEM_ELEM_LEN_BEZTRIPLE * nu->pntsu;
-      key_evaluate_relative(a, a + step, tot, out, key, actkb, nullptr, KEY_MODE_BEZTRIPLE);
+      key_evaluate_absolute(
+          a, a + step, tot, out, key, actkb, shapekeys, weights, KEY_MODE_BEZTRIPLE);
     }
     else {
       step = 0;
@@ -1422,20 +1201,20 @@ static void do_curve_key(Object *ob, Key *key, char *out, const int tot)
   KeyBlock *actkb = BKE_keyblock_from_object(ob);
 
   if (key->type == KEY_RELATIVE) {
-    do_rel_cu_key(cu, cu->key, actkb, out, tot);
+    key_evaluate_relative_float3(key, actkb, tot, nullptr, (float *)out);
   }
   else {
-    KeyBlock *k[4];
     const float ctime_scaled = key->ctime / 100.0f;
+    KeyBlock *shapekeys[4];
+    float weights[4];
+    const bool simple_copy = get_keys_for_absolute_eval(
+        ctime_scaled, &key->block, shapekeys, weights);
 
-    float t[4];
-    const int flag = setkeys(ctime_scaled, &key->block, k, t, 0);
-
-    if (flag == 0) {
-      do_cu_key(cu, key, actkb, k, t, out, tot);
+    if (simple_copy == false) {
+      do_cu_key(cu, key, actkb, shapekeys, weights, out, tot);
     }
     else {
-      cp_cu_key(cu, key, actkb, k[2], 0, tot, out, tot);
+      copy_key_float3(tot, key, actkb, shapekeys[2], reinterpret_cast<float *>(out));
     }
   }
 }
@@ -1448,21 +1227,22 @@ static void do_latt_key(Object *ob, Key *key, char *out, const int tot)
   if (key->type == KEY_RELATIVE) {
     float **per_keyblock_weights;
     per_keyblock_weights = keyblock_get_per_block_weights(ob, key, nullptr);
-    key_evaluate_relative(0, tot, tot, out, key, actkb, per_keyblock_weights, KEY_MODE_DUMMY);
+    key_evaluate_relative_float3(
+        key, actkb, tot, per_keyblock_weights, reinterpret_cast<float *>(out));
     keyblock_free_per_block_weights(key, per_keyblock_weights, nullptr);
   }
   else {
-    KeyBlock *k[4];
     const float ctime_scaled = key->ctime / 100.0f;
+    KeyBlock *shapekeys[4];
+    float weights[4];
+    const bool simple_copy = get_keys_for_absolute_eval(
+        ctime_scaled, &key->block, shapekeys, weights);
 
-    float t[4];
-    const int flag = setkeys(ctime_scaled, &key->block, k, t, 0);
-
-    if (flag == 0) {
-      do_key(0, tot, tot, out, key, actkb, k, t, KEY_MODE_DUMMY);
+    if (simple_copy == false) {
+      key_evaluate_absolute(0, tot, tot, out, key, actkb, shapekeys, weights, KEY_MODE_DUMMY);
     }
     else {
-      cp_key(0, tot, tot, out, key, actkb, k[2], nullptr, KEY_MODE_DUMMY);
+      copy_key_float3(tot, key, actkb, shapekeys[2], reinterpret_cast<float *>(out));
     }
   }
 
@@ -1539,16 +1319,15 @@ float *BKE_key_evaluate_object_ex(
     }
 
     if (OB_TYPE_SUPPORT_VGROUP(ob->type)) {
-      float *weights = get_weights_array(ob, kb->vgroup, nullptr);
-
-      cp_key(0, tot, tot, out, key, actkb, kb, weights, 0);
+      const float *weights = get_weights_array(ob, kb->vgroup, nullptr);
+      copy_key_float3_weighted(tot, key, actkb, kb, weights, reinterpret_cast<float *>(out));
 
       if (weights) {
         MEM_freeN(weights);
       }
     }
     else if (ELEM(ob->type, OB_CURVES_LEGACY, OB_SURF)) {
-      cp_cu_key(static_cast<Curve *>(ob->data), key, actkb, kb, 0, tot, out, tot);
+      copy_key_float3(tot, key, actkb, kb, reinterpret_cast<float *>(out));
     }
   }
   else {
@@ -2179,9 +1958,9 @@ void BKE_keyblock_mesh_calc_normals(const KeyBlock *kb,
 
   blender::Array<blender::float3> positions(mesh->vert_positions());
   BKE_keyblock_convert_to_mesh(kb, positions);
-  const blender::OffsetIndices faces = mesh->faces();
-  const blender::Span<int> corner_verts = mesh->corner_verts();
-  const blender::Span<int> corner_edges = mesh->corner_edges();
+  const OffsetIndices faces = mesh->faces();
+  const Span<int> corner_verts = mesh->corner_verts();
+  const Span<int> corner_edges = mesh->corner_edges();
 
   const bool loop_normals_needed = r_loop_normals != nullptr;
   const bool vert_normals_needed = r_vert_normals != nullptr;

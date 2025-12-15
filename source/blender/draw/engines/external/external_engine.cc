@@ -199,7 +199,7 @@ class Instance : public DrawEngine {
    * This is only needed for GPencil integration. */
   bool do_prepass = false;
 
-  blender::StringRefNull name_get() final
+  StringRefNull name_get() final
   {
     return "External";
   }
@@ -207,7 +207,7 @@ class Instance : public DrawEngine {
   void init() final
   {
     draw_ctx = DRW_context_get();
-    do_prepass = DRW_gpencil_engine_needed_viewport(draw_ctx->depsgraph, draw_ctx->v3d);
+    do_prepass = DRW_render_check_grease_pencil(draw_ctx->depsgraph, draw_ctx->v3d);
   }
 
   void begin_sync() final

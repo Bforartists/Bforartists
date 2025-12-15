@@ -140,7 +140,7 @@ static void view3d_ob_drop_on_enter(wmDropBox *drop, wmDrag *drag)
 
   if (!is_zero_v3(dimensions)) {
     mul_v3_v3fl(state->box_dimensions, dimensions, 0.5f);
-    UI_GetThemeColor4ubv(TH_GIZMO_PRIMARY, state->color_box);
+    blender::ui::theme::get_color_4ubv(TH_GIZMO_PRIMARY, state->color_box);
     state->draw_box = true;
   }
 }
@@ -492,7 +492,7 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
     ID *owner_id = id;
     ID *id_or = id;
     if (!ELEM(nullptr, owner_id, id_or)) {
-      id = ui_template_id_liboverride_hierarchy_make(
+      id = blender::ui::template_id_liboverride_hierarchy_make(
           C, CTX_data_main(C), owner_id, id_or, nullptr);
     }
   }

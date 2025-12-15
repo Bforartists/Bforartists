@@ -160,7 +160,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   /* bfa - our layout */
   row = &split->row(false);
   if (RNA_boolean_get(ptr, "use_crease")) {
-    row->prop(ptr, "crease_weight", UI_ITEM_R_SLIDER, "", ICON_NONE);
+    row->prop(ptr, "crease_weight", blender::ui::ITEM_R_SLIDER, "", ICON_NONE);
   }
   else {
     row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);

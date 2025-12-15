@@ -263,10 +263,10 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
   if (object_mesh != nullptr) {
     const Span<float3> mesh_positions = mesh->vert_positions();
     const Span<blender::int2> mesh_edges = mesh->edges();
-    const blender::OffsetIndices mesh_faces = mesh->faces();
+    const OffsetIndices mesh_faces = mesh->faces();
     const Span<float3> me_positions = object_mesh->vert_positions();
     const Span<blender::int2> me_edges = object_mesh->edges();
-    const blender::OffsetIndices me_faces = object_mesh->faces();
+    const OffsetIndices me_faces = object_mesh->faces();
 
     /* TODO(sybren+bastien): possibly check relevant custom data layers (UV/color depending on
      * flags) and duplicate those too.
@@ -342,7 +342,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   layout.use_property_split_set(true);
 
-  uiTemplateCacheFile(&layout, C, ptr, "cache_file");
+  template_cache_file(&layout, C, ptr, "cache_file");
 
   if (has_cache_file) {
     layout.prop_search(
@@ -350,9 +350,9 @@ static void panel_draw(const bContext *C, Panel *panel)
   }
 
   if (RNA_enum_get(&ob_ptr, "type") == OB_MESH) {
-    layout.prop(ptr, "read_data", UI_ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+    layout.prop(ptr, "read_data", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
-    col = &layout.column(true);        /* bfa - our layout */
+    col = &layout.column(true);         /* bfa - our layout */
     row = &col->row(true);              /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();                   /*bfa - indent*/
@@ -374,12 +374,12 @@ static void velocity_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   PointerRNA fileptr;
-  if (!uiTemplateCacheFilePointer(ptr, "cache_file", &fileptr)) {
+  if (!blender::ui::template_cache_file_pointer(ptr, "cache_file", &fileptr)) {
     return;
   }
 
   layout.use_property_split_set(true);
-  uiTemplateCacheFileVelocity(&layout, &fileptr);
+  template_cache_file_velocity(&layout, &fileptr);
   layout.prop(ptr, "velocity_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
@@ -391,12 +391,12 @@ static void time_panel_draw(const bContext * /*C*/, Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   PointerRNA fileptr;
-  if (!uiTemplateCacheFilePointer(ptr, "cache_file", &fileptr)) {
+  if (!blender::ui::template_cache_file_pointer(ptr, "cache_file", &fileptr)) {
     return;
   }
 
   layout.use_property_split_set(true);
-  uiTemplateCacheFileTimeSettings(&layout, &fileptr);
+  template_cache_file_time_settings(&layout, &fileptr);
 }
 
 static void override_layers_panel_draw(const bContext *C, Panel *panel)
@@ -407,12 +407,12 @@ static void override_layers_panel_draw(const bContext *C, Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
 
   PointerRNA fileptr;
-  if (!uiTemplateCacheFilePointer(ptr, "cache_file", &fileptr)) {
+  if (!blender::ui::template_cache_file_pointer(ptr, "cache_file", &fileptr)) {
     return;
   }
 
   layout.use_property_split_set(true);
-  uiTemplateCacheFileLayers(&layout, C, &fileptr);
+  template_list_flags(&layout, C, &fileptr);
 }
 
 static void panel_register(ARegionType *region_type)

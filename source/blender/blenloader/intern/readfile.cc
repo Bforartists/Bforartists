@@ -2847,6 +2847,9 @@ static void read_undo_move_libmain_data(FileData *fd, Main *libmain, BHead *bhea
   Main *new_main = fd->bmain;
   Library *curlib = libmain->curlib;
 
+  /* Archived libraries should never be processed here. */
+  BLI_assert((curlib->flag & LIBRARY_FLAG_IS_ARCHIVE) == 0);
+
   /* NOTE: This may change the order of items in `old_main->split_mains`. So calling code cannot
    * directly iterate over it. */
   old_main->split_mains->remove_contained(libmain);
@@ -2868,10 +2871,9 @@ static void read_undo_move_libmain_data(FileData *fd, Main *libmain, BHead *bhea
 
   ID *id_iter;
   FOREACH_MAIN_ID_BEGIN (libmain, id_iter) {
-    /* Packed IDs are read from the memfile, so don't add them here already. */
-    if (!ID_IS_PACKED(id_iter)) {
-      BKE_main_idmap_insert_id(fd->new_idmap_uid, id_iter);
-    }
+    /* There should never be any packed ID in a regular library. */
+    BLI_assert(!ID_IS_PACKED(id_iter));
+    BKE_main_idmap_insert_id(fd->new_idmap_uid, id_iter);
   }
   FOREACH_MAIN_ID_END;
 }
@@ -3238,8 +3240,15 @@ static BHead *read_libblock(FileData *fd,
       if (r_id) {
         *r_id = id_old;
       }
-      if (main->id_map != nullptr && id_old != nullptr) {
-        BKE_main_idmap_insert_id(main->id_map, id_old);
+      if (id_old != nullptr) {
+        if (main->id_map != nullptr) {
+          BKE_main_idmap_insert_id(main->id_map, id_old);
+        }
+        if (ID_IS_PACKED(id_old)) {
+          BLI_assert(id_old->deep_hash != IDHash::get_null());
+          fd->id_by_deep_hash->add_new(id_old->deep_hash, id_old);
+          BLI_assert(main->curlib);
+        }
       }
 
       return blo_bhead_next(fd, bhead);
@@ -3344,9 +3353,9 @@ static BHead *read_libblock(FileData *fd,
     if (main->id_map != nullptr) {
       BKE_main_idmap_insert_id(main->id_map, id_target);
     }
-    if (ID_IS_PACKED(id)) {
-      BLI_assert(id->deep_hash != IDHash::get_null());
-      fd->id_by_deep_hash->add_new(id->deep_hash, id);
+    if (ID_IS_PACKED(id_target)) {
+      BLI_assert(id_target->deep_hash != IDHash::get_null());
+      fd->id_by_deep_hash->add_new(id_target->deep_hash, id_target);
       BLI_assert(main->curlib);
     }
     if (fd->file_stat) {

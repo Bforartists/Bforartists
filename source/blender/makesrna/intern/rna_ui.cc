@@ -237,7 +237,7 @@ static bool rna_Panel_unregister(Main *bmain, StructRNA *type)
   }
 
   RNA_struct_free_extension(type, &pt->rna_ext);
-  RNA_struct_free(&BLENDER_RNA, type);
+  RNA_struct_free(&RNA_blender_rna_get(), type);
 
   if (pt->parent) {
     LinkData *link = static_cast<LinkData *>(
@@ -262,7 +262,7 @@ static bool rna_Panel_unregister(Main *bmain, StructRNA *type)
           }
           /* The unregistered panel might have had a template that added instanced panels,
            * so remove them just in case. They can be re-added on redraw anyway. */
-          UI_panels_free_instanced(nullptr, region);
+          blender::ui::panels_free_instanced(nullptr, region);
         }
       }
     }
@@ -317,7 +317,11 @@ static StructRNA *rna_Panel_register(Main *bmain,
     return nullptr;
   }
 
-  if ((1 << dummy_pt.region_type) & RGN_TYPE_HAS_CATEGORY_MASK) {
+  if (!(art = region_type_find(reports, dummy_pt.space_type, dummy_pt.region_type))) {
+    return nullptr;
+  }
+
+  if (BKE_regiontype_uses_categories(art)) {
     if (dummy_pt.category[0] == '\0') {
       /* Use a fallback, otherwise an empty value will draw the panel in every category. */
       STRNCPY(dummy_pt.category, PNL_CATEGORY_FALLBACK);
@@ -343,10 +347,6 @@ static StructRNA *rna_Panel_register(Main *bmain,
   //    }
   //  }
   //}
-
-  if (!(art = region_type_find(reports, dummy_pt.space_type, dummy_pt.region_type))) {
-    return nullptr;
-  }
 
   /* check if we have registered this panel type before, and remove it */
   for (pt = static_cast<PanelType *>(art->paneltypes.first); pt; pt = pt->next) {
@@ -425,7 +425,7 @@ static StructRNA *rna_Panel_register(Main *bmain,
     pt->description = nullptr;
   }
 
-  pt->rna_ext.srna = RNA_def_struct_ptr(&BLENDER_RNA, pt->idname, &RNA_Panel);
+  pt->rna_ext.srna = RNA_def_struct_ptr(&RNA_blender_rna_get(), pt->idname, &RNA_Panel);
   RNA_def_struct_translation_context(pt->rna_ext.srna, pt->translation_context);
   pt->rna_ext.data = data;
   pt->rna_ext.call = call;
@@ -491,7 +491,7 @@ static StructRNA *rna_Panel_custom_data_typef(PointerRNA *ptr)
 {
   Panel *panel = (Panel *)ptr->data;
 
-  return UI_panel_custom_data_get(panel)->type;
+  return blender::ui::panel_custom_data_get(panel)->type;
 }
 
 static PointerRNA rna_Panel_custom_data_get(PointerRNA *ptr)
@@ -499,7 +499,7 @@ static PointerRNA rna_Panel_custom_data_get(PointerRNA *ptr)
   Panel *panel = (Panel *)ptr->data;
 
   /* Because the panel custom data is general we can't refine the pointer type here. */
-  return *UI_panel_custom_data_get(panel);
+  return *blender::ui::panel_custom_data_get(panel);
 }
 
 /* UIList */
@@ -671,7 +671,7 @@ static void uilist_filter_items(uiList *ui_list,
         int t_idx, t_ni, prev_ni;
         flt_data->items_shown = 0;
         for (i = 0, shown_idx = 0; i < len; i++) {
-          if (UI_list_item_index_is_filtered_visible(ui_list, i)) {
+          if (blender::ui::list_item_index_is_filtered_visible(ui_list, i)) {
             filter_neworder[shown_idx++] = filter_neworder[i];
           }
         }
@@ -698,7 +698,7 @@ static void uilist_filter_items(uiList *ui_list,
         /* we still have to set flt_data->items_shown... */
         flt_data->items_shown = 0;
         for (i = 0; i < len; i++) {
-          if (UI_list_item_index_is_filtered_visible(ui_list, i)) {
+          if (blender::ui::list_item_index_is_filtered_visible(ui_list, i)) {
             flt_data->items_shown++;
           }
         }
@@ -726,7 +726,7 @@ static bool rna_UIList_unregister(Main *bmain, StructRNA *type)
   }
 
   RNA_struct_free_extension(type, &ult->rna_ext);
-  RNA_struct_free(&BLENDER_RNA, type);
+  RNA_struct_free(&RNA_blender_rna_get(), type);
 
   WM_uilisttype_remove_ptr(bmain, ult);
 
@@ -800,7 +800,7 @@ static StructRNA *rna_UIList_register(Main *bmain,
   ult = MEM_callocN<uiListType>("python uilist");
   memcpy(ult, &dummy_ult, sizeof(dummy_ult));
 
-  ult->rna_ext.srna = RNA_def_struct_ptr(&BLENDER_RNA, ult->idname, &RNA_UIList);
+  ult->rna_ext.srna = RNA_def_struct_ptr(&RNA_blender_rna_get(), ult->idname, &RNA_UIList);
   ult->rna_ext.data = data;
   ult->rna_ext.call = call;
   ult->rna_ext.free = free;
@@ -858,7 +858,7 @@ static bool rna_Header_unregister(Main * /*bmain*/, StructRNA *type)
   }
 
   RNA_struct_free_extension(type, &ht->rna_ext);
-  RNA_struct_free(&BLENDER_RNA, type);
+  RNA_struct_free(&RNA_blender_rna_get(), type);
 
   BLI_freelinkN(&art->headertypes, ht);
 
@@ -940,7 +940,7 @@ static StructRNA *rna_Header_register(Main *bmain,
   ht = MEM_callocN<HeaderType>(__func__);
   memcpy(ht, &dummy_ht, sizeof(dummy_ht));
 
-  ht->rna_ext.srna = RNA_def_struct_ptr(&BLENDER_RNA, ht->idname, &RNA_Header);
+  ht->rna_ext.srna = RNA_def_struct_ptr(&RNA_blender_rna_get(), ht->idname, &RNA_Header);
   ht->rna_ext.data = data;
   ht->rna_ext.call = call;
   ht->rna_ext.free = free;
@@ -1015,7 +1015,7 @@ static bool rna_Menu_unregister(Main * /*bmain*/, StructRNA *type)
   }
 
   RNA_struct_free_extension(type, &mt->rna_ext);
-  RNA_struct_free(&BLENDER_RNA, type);
+  RNA_struct_free(&RNA_blender_rna_get(), type);
 
   WM_menutype_freelink(mt);
 
@@ -1111,7 +1111,7 @@ static StructRNA *rna_Menu_register(Main *bmain,
     mt->description = nullptr;
   }
 
-  mt->rna_ext.srna = RNA_def_struct_ptr(&BLENDER_RNA, mt->idname, &RNA_Menu);
+  mt->rna_ext.srna = RNA_def_struct_ptr(&RNA_blender_rna_get(), mt->idname, &RNA_Menu);
   RNA_def_struct_translation_context(mt->rna_ext.srna, mt->translation_context);
   mt->rna_ext.data = data;
   mt->rna_ext.call = call;
@@ -1250,7 +1250,7 @@ static bool rna_AssetShelf_unregister(Main *bmain, StructRNA *type)
   blender::ed::asset::shelf::type_unlink(*bmain, *shelf_type);
 
   RNA_struct_free_extension(type, &shelf_type->rna_ext);
-  RNA_struct_free(&BLENDER_RNA, type);
+  RNA_struct_free(&RNA_blender_rna_get(), type);
 
   blender::ed::asset::shelf::type_unregister(*shelf_type);
 
@@ -1314,7 +1314,8 @@ static StructRNA *rna_AssetShelf_register(Main *bmain,
   }
 
   /* Create the new shelf type. */
-  shelf_type->rna_ext.srna = RNA_def_struct_ptr(&BLENDER_RNA, shelf_type->idname, &RNA_AssetShelf);
+  shelf_type->rna_ext.srna = RNA_def_struct_ptr(
+      &RNA_blender_rna_get(), shelf_type->idname, &RNA_AssetShelf);
   shelf_type->rna_ext.data = data;
   shelf_type->rna_ext.call = call;
   shelf_type->rna_ext.free = free;
@@ -1620,7 +1621,7 @@ static bool rna_FileHandler_unregister(Main * /*bmain*/, StructRNA *type)
   }
 
   RNA_struct_free_extension(type, &file_handler_type->rna_ext);
-  RNA_struct_free(&BLENDER_RNA, type);
+  RNA_struct_free(&RNA_blender_rna_get(), type);
 
   bke::file_handler_remove(file_handler_type);
 
@@ -1679,7 +1680,7 @@ static StructRNA *rna_FileHandler_register(Main *bmain,
   *file_handler_type = dummy_file_handler_type;
 
   file_handler_type->rna_ext.srna = RNA_def_struct_ptr(
-      &BLENDER_RNA, file_handler_type->idname, &RNA_FileHandler);
+      &RNA_blender_rna_get(), file_handler_type->idname, &RNA_FileHandler);
   file_handler_type->rna_ext.data = data;
   file_handler_type->rna_ext.call = call;
   file_handler_type->rna_ext.free = free;
