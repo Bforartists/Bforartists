@@ -2289,11 +2289,9 @@ class USERPREF_PT_ndof_settings(Panel):
             colsub = col.column()
             colsub.active = props.ndof_navigation_mode in {'FLY', 'OBJECT'}
             colsub.prop(props, "ndof_lock_horizon", text="Lock Horizon")
-            del colsub
             colsub = col.column()
             colsub.active = props.ndof_navigation_mode in {'FLY', 'DRONE'}
             colsub.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
-            del colsub
             layout.separator()
 
         if show_3dview_settings:
@@ -2303,7 +2301,6 @@ class USERPREF_PT_ndof_settings(Panel):
             colsub = col.column()
             colsub.active = props.ndof_orbit_center_auto
             colsub.prop(props, "ndof_orbit_center_selected")
-            del colsub
             col.separator()
 
             col = layout.column(heading="Show")
@@ -2311,7 +2308,6 @@ class USERPREF_PT_ndof_settings(Panel):
             colsub = col.column()
             colsub.active = props.ndof_navigation_mode == 'OBJECT'
             colsub.prop(props, "ndof_show_guide_orbit_center", text="Orbit Center")
-            del colsub
 
         layout.separator()
 
