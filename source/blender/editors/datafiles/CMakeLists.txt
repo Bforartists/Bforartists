@@ -557,8 +557,11 @@ if(WITH_BLENDER)
       dirty_vertex
       disable
       disc
-      disclosure_tri_down
+
+      #BFA - Don't change the order of these two
       disclosure_tri_right
+      disclosure_tri_down
+
       discontinue_euler
       disk_drive
       dissolve_between
