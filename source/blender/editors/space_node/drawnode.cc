@@ -1523,7 +1523,9 @@ static void std_node_socket_interface_draw(ID *id,
 
   if (interface_socket->flag & NODE_INTERFACE_SOCKET_INPUT && node_tree->type == NTREE_GEOMETRY) {
     if (type == SOCK_BOOLEAN) {
+      col->use_property_split_set(false); /* bfa - use_property_split = False */
       col->prop(&ptr, "layer_selection_field", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
+      col->use_property_split_set(true); /* bfa - split non-boolean props */
     }
     ui::Layout *sub = &col->column(false);
     sub->active_set(!is_layer_selection_field(*interface_socket));
