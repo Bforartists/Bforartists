@@ -2289,24 +2289,34 @@ class USERPREF_PT_ndof_settings(Panel):
         
         col.use_property_split = False # BFA - Align bool properties left
         if show_3dview_settings:
-            row = col.row()
+            subcol = col.column(align=True)
+            row = subcol.row()
             row.active = props.ndof_navigation_mode in {'FLY', 'OBJECT'}
             row.prop(props, "ndof_lock_horizon", text="Lock Horizon")
-            row = col.row()
+            row = subcol.row()
             row.active = props.ndof_navigation_mode in {'FLY', 'DRONE'}
             row.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
             layout.separator()
 
         if show_3dview_settings:
-            col = layout.column(heading="Orbit Center")
+            col = layout.column()
+            col.label(text="Orbit Center")
+            row = col.row()
+            row.separator()
             col.active = props.ndof_navigation_mode == 'OBJECT'
+            
+            col = row.column(align=True)
             col.prop(props, "ndof_orbit_center_auto")
             row = col.row()
             row.active = props.ndof_orbit_center_auto
             row.prop(props, "ndof_orbit_center_selected")
-            col.separator()
 
-            col = layout.column(heading="Show")
+            col = layout.column()
+            col.label(text="Show Guides")
+            row = col.row()
+            row.separator()
+            
+            col = row.column(align=True)
             col.prop(props, "ndof_show_guide_orbit_axis", text="Orbit Axis")
             row = col.row()
             row.active = props.ndof_navigation_mode == 'OBJECT'
