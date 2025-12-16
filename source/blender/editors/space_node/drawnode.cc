@@ -1518,6 +1518,7 @@ static void std_node_socket_interface_draw(ID *id,
     sub->active_set(interface_socket->default_input == NODE_DEFAULT_INPUT_VALUE);
     sub->use_property_split_set(false); /* bfa - use_property_split = False */
     sub->prop(&ptr, "hide_value", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
+    sub->prop(&ptr, "hide_in_modifier", DEFAULT_FLAGS, std::nullopt, ICON_NONE); /* BFA - reorder sockets*/
     sub->use_property_split_set(true); /* bfa - split non-boolean props */
   }
 
@@ -1528,12 +1529,12 @@ static void std_node_socket_interface_draw(ID *id,
       col->use_property_split_set(true); /* bfa - split non-boolean props */
     }
     ui::Layout *sub = &col->column(false);
-    sub->active_set(!is_layer_selection_field(*interface_socket));
     sub->use_property_split_set(false); /* bfa - use_property_split = False */
-    sub->prop(&ptr, "hide_in_modifier", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
-    sub->use_property_split_set(true); /* bfa - split non-boolean props */
-    if (nodes::socket_type_supports_fields(type) || nodes::socket_type_supports_grids(type)) {
-      sub->prop(&ptr, "structure_type", DEFAULT_FLAGS, IFACE_("Shape"), ICON_NONE);
+    if (!is_layer_selection_field(*interface_socket)){
+      sub->use_property_split_set(true); /* bfa - split non-boolean props */
+      if (nodes::socket_type_supports_fields(type) || nodes::socket_type_supports_grids(type)) {
+        sub->prop(&ptr, "structure_type", DEFAULT_FLAGS, IFACE_("Shape"), ICON_NONE);
+      }
     }
   }
 }
