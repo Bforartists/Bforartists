@@ -1547,7 +1547,7 @@ class NODE_PT_node_tree_properties(Panel):
         layout = self.layout
         snode = context.space_data
         group = snode.edit_tree
-        layout.use_property_split = False
+        layout.use_property_split = True # BFA - Use split layout for non-boolean properties
         layout.use_property_decorate = False
 
         layout.prop(group, "name", text="Name")
@@ -1566,14 +1566,16 @@ class NODE_PT_node_tree_properties(Panel):
         row.operator("node.default_group_width_set", text="", icon='NODE')
 
         if group.bl_idname == "GeometryNodeTree":
-            row = layout.row()
-            row.active = group.is_modifier
-            row.prop(group, "show_modifier_manage_panel")
+            if group.is_modifier: # BFA - Hide property instead of greying it out
+                row = layout.row()
+                row.use_property_split = False # BFA - Align booleans left
+                row.prop(group, "show_modifier_manage_panel")
 
             header, body = layout.panel("group_usage")
             header.label(text="Usage")
             if body:
                 col = body.column(align=True)
+                col.use_property_split = False # BFA - Align booleans left
                 col.prop(group, "is_modifier")
                 col.prop(group, "is_tool")
 
