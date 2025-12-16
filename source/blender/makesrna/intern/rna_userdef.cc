@@ -6711,7 +6711,7 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "ndof_flag");
   RNA_def_property_enum_items(prop, ndof_zoom_direction_items);
   RNA_def_property_ui_text(
-      prop, "Zoom direction", "Which axis of the 3D Mouse cap zooms the view");
+      prop, "Zoom Direction", "Which axis of the 3D Mouse cap zooms the view"); /*BFA - fix capitalization */
 
   /* 3D view */
   prop = RNA_def_property(srna, "ndof_show_guide_orbit_axis", PROP_BOOLEAN, PROP_NONE);

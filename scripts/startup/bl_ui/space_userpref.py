@@ -2280,57 +2280,49 @@ class USERPREF_PT_ndof_settings(Panel):
 
     @staticmethod
     def draw_settings(layout, props, show_3dview_settings=True):
-
-        # layout.use_property_split = False
-
-        col = layout.column()
-        col.prop(props, "ndof_sensitivity", text="Pan Sensitivity")
-        col.prop(props, "ndof_orbit_sensitivity")
-        col.prop(props, "ndof_deadzone")
+        layout.use_property_split = False
 
         # Include this setting as it impacts 2D views as well (inverting translation).
         col = layout.column()
-        col.row().prop(props, "ndof_navigation_mode", text="Navigation Mode")
-
+        col.use_property_split = True # BFA - Split non-bool props
+        col.prop(props, "ndof_navigation_mode", text="Navigation Mode")
+        
+        col.use_property_split = False # BFA - Align bool properties left
         if show_3dview_settings:
-            colsub = col.column()
-            colsub.active = props.ndof_navigation_mode in {'FLY', 'OBJECT'}
-            colsub.prop(props, "ndof_lock_horizon", text="Lock Horizon")
-            del colsub
-            colsub = col.column()
-            colsub.active = props.ndof_navigation_mode in {'FLY', 'DRONE'}
-            colsub.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
-            del colsub
+            subcol = col.column(align=True)
+            
+            # BFA - Hide instead of greying out
+            if props.ndof_navigation_mode in {'FLY', 'OBJECT'}:
+                subcol.prop(props, "ndof_lock_horizon", text="Lock Horizon")
+            if props.ndof_navigation_mode in {'FLY', 'DRONE'}:
+                subcol.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
+            
             layout.separator()
 
         if show_3dview_settings:
-            col = layout.column(heading="Show Guides", align=True)
-            col.use_property_split = False
+            # BFA - Hide instead of greying out
+            if props.ndof_navigation_mode == 'OBJECT':
+                col = layout.column()
+                col.label(text="Orbit Center")
+                row = col.row()
+                row.separator()
+                
+                col = row.column(align=True)
+                col.prop(props, "ndof_orbit_center_auto")
+                # BFA - Hide instead of greying out
+                if props.ndof_orbit_center_auto:
+                    col.prop(props, "ndof_orbit_center_selected")
+
+            col = layout.column()
+            col.label(text="Show Guides")
+            row = col.row()
+            row.separator()
+            
+            col = row.column(align=True)
             col.prop(props, "ndof_show_guide_orbit_axis", text="Orbit Axis")
-            colsub = col.column()
-            colsub.active = props.ndof_navigation_mode == 'OBJECT'
-            colsub.prop(props, "ndof_show_guide_orbit_center", text="Orbit Center")
-
-            col = layout.column(heading="Orbit Center")
-            col.active = props.ndof_navigation_mode == 'OBJECT'
-            col.prop(props, "ndof_orbit_center_auto")
-            colsub = col.column()
-            colsub.active = props.ndof_orbit_center_auto
-            colsub.prop(props, "ndof_orbit_center_selected")
-            del colsub
-            col.separator()
-
-        col = layout.column(heading="Zoom", align=True)
-        col.use_property_split = False
-        col.prop(props, "ndof_zoom_invert")
-
-        col.label(text="Pan")
-        row = col.row()
-        row.separator()
-        row.prop(props, "ndof_lock_camera_pan_zoom")
-        row = col.row()
-        row.separator()
-        row.prop(props, "ndof_pan_yz_swap_axis", text="Swap Y and Z Axes")
+            # BFA - Hide instead of greying out
+            if props.ndof_navigation_mode == 'OBJECT':
+                col.prop(props, "ndof_show_guide_orbit_center", text="Orbit Center")
 
         layout.separator()
 
@@ -2338,6 +2330,7 @@ class USERPREF_PT_ndof_settings(Panel):
         layout_header.label(text="Advanced")
         if layout_advanced:
             col = layout_advanced.column()
+            col.use_property_split = True # BFA - Split non-bool props
             col.prop(props, "ndof_translation_sensitivity")
             col.prop(props, "ndof_rotation_sensitivity")
             col.prop(props, "ndof_deadzone")
@@ -2354,17 +2347,18 @@ class USERPREF_PT_ndof_settings(Panel):
             ):
                 row.prop(props, attr, text=text, toggle=True)
 
-            layout.separator()
+            if show_3dview_settings:
+                row = col.row(heading="Invert Rotate")
+                for text, attr in (
+                        ("X", "ndof_rotx_invert_axis"),
+                        ("Y", "ndof_roty_invert_axis"),
+                        ("Z", "ndof_rotz_invert_axis"),
+                ):
+                    row.prop(props, attr, text=text, toggle=True)
 
-            col = layout.column(align=True)
-            col.use_property_split = False
-            col.label(text="Fly/Walk")
-            row = col.row()
-            row.separator()
-            row.prop(props, "ndof_lock_horizon")  # BFA
-            row = col.row()
-            row.separator()
-            row.prop(props, "ndof_fly_helicopter")
+            if show_3dview_settings:
+                col.use_property_split = False # BFA - Align bool properties left
+                col.prop(props, "ndof_lock_camera_pan_zoom")
 
     def draw(self, context):
         layout = self.layout
