@@ -2280,11 +2280,14 @@ class USERPREF_PT_ndof_settings(Panel):
 
     @staticmethod
     def draw_settings(layout, props, show_3dview_settings=True):
+        layout.use_property_split = False
 
         # Include this setting as it impacts 2D views as well (inverting translation).
         col = layout.column()
-        col.row().prop(props, "ndof_navigation_mode", text="Navigation Mode")
-
+        col.use_property_split = True # BFA - Split non-bool props
+        col.prop(props, "ndof_navigation_mode", text="Navigation Mode")
+        
+        col.use_property_split = False # BFA - Align bool properties left
         if show_3dview_settings:
             row = col.row()
             row.active = props.ndof_navigation_mode in {'FLY', 'OBJECT'}
@@ -2315,6 +2318,7 @@ class USERPREF_PT_ndof_settings(Panel):
         layout_header.label(text="Advanced")
         if layout_advanced:
             col = layout_advanced.column()
+            col.use_property_split = True # BFA - Split non-bool props
             col.prop(props, "ndof_translation_sensitivity")
             col.prop(props, "ndof_rotation_sensitivity")
             col.prop(props, "ndof_deadzone")
@@ -2341,6 +2345,7 @@ class USERPREF_PT_ndof_settings(Panel):
                     row.prop(props, attr, text=text, toggle=True)
 
             if show_3dview_settings:
+                col.use_property_split = False # BFA - Align bool properties left
                 col.prop(props, "ndof_lock_camera_pan_zoom")
 
     def draw(self, context):
