@@ -2286,28 +2286,28 @@ class USERPREF_PT_ndof_settings(Panel):
         col.row().prop(props, "ndof_navigation_mode", text="Navigation Mode")
 
         if show_3dview_settings:
-            colsub = col.column()
-            colsub.active = props.ndof_navigation_mode in {'FLY', 'OBJECT'}
-            colsub.prop(props, "ndof_lock_horizon", text="Lock Horizon")
-            colsub = col.column()
-            colsub.active = props.ndof_navigation_mode in {'FLY', 'DRONE'}
-            colsub.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
+            row = col.row()
+            row.active = props.ndof_navigation_mode in {'FLY', 'OBJECT'}
+            row.prop(props, "ndof_lock_horizon", text="Lock Horizon")
+            row = col.row()
+            row.active = props.ndof_navigation_mode in {'FLY', 'DRONE'}
+            row.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
             layout.separator()
 
         if show_3dview_settings:
             col = layout.column(heading="Orbit Center")
             col.active = props.ndof_navigation_mode == 'OBJECT'
             col.prop(props, "ndof_orbit_center_auto")
-            colsub = col.column()
-            colsub.active = props.ndof_orbit_center_auto
-            colsub.prop(props, "ndof_orbit_center_selected")
+            row = col.row()
+            row.active = props.ndof_orbit_center_auto
+            row.prop(props, "ndof_orbit_center_selected")
             col.separator()
 
             col = layout.column(heading="Show")
             col.prop(props, "ndof_show_guide_orbit_axis", text="Orbit Axis")
-            colsub = col.column()
-            colsub.active = props.ndof_navigation_mode == 'OBJECT'
-            colsub.prop(props, "ndof_show_guide_orbit_center", text="Orbit Center")
+            row = col.row()
+            row.active = props.ndof_navigation_mode == 'OBJECT'
+            row.prop(props, "ndof_show_guide_orbit_center", text="Orbit Center")
 
         layout.separator()
 
