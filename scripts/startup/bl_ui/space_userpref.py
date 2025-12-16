@@ -2290,26 +2290,28 @@ class USERPREF_PT_ndof_settings(Panel):
         col.use_property_split = False # BFA - Align bool properties left
         if show_3dview_settings:
             subcol = col.column(align=True)
-            row = subcol.row()
-            row.active = props.ndof_navigation_mode in {'FLY', 'OBJECT'}
-            row.prop(props, "ndof_lock_horizon", text="Lock Horizon")
-            row = subcol.row()
-            row.active = props.ndof_navigation_mode in {'FLY', 'DRONE'}
-            row.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
+            
+            # BFA - Hide instead of greying out
+            if props.ndof_navigation_mode in {'FLY', 'OBJECT'}:
+                subcol.prop(props, "ndof_lock_horizon", text="Lock Horizon")
+            if props.ndof_navigation_mode in {'FLY', 'DRONE'}:
+                subcol.prop(props, "ndof_fly_speed_auto", text="Auto Fly Speed")
+            
             layout.separator()
 
         if show_3dview_settings:
-            col = layout.column()
-            col.label(text="Orbit Center")
-            row = col.row()
-            row.separator()
-            col.active = props.ndof_navigation_mode == 'OBJECT'
-            
-            col = row.column(align=True)
-            col.prop(props, "ndof_orbit_center_auto")
-            row = col.row()
-            row.active = props.ndof_orbit_center_auto
-            row.prop(props, "ndof_orbit_center_selected")
+            # BFA - Hide instead of greying out
+            if props.ndof_navigation_mode == 'OBJECT':
+                col = layout.column()
+                col.label(text="Orbit Center")
+                row = col.row()
+                row.separator()
+                
+                col = row.column(align=True)
+                col.prop(props, "ndof_orbit_center_auto")
+                # BFA - Hide instead of greying out
+                if props.ndof_orbit_center_auto:
+                    col.prop(props, "ndof_orbit_center_selected")
 
             col = layout.column()
             col.label(text="Show Guides")
@@ -2318,9 +2320,9 @@ class USERPREF_PT_ndof_settings(Panel):
             
             col = row.column(align=True)
             col.prop(props, "ndof_show_guide_orbit_axis", text="Orbit Axis")
-            row = col.row()
-            row.active = props.ndof_navigation_mode == 'OBJECT'
-            row.prop(props, "ndof_show_guide_orbit_center", text="Orbit Center")
+            # BFA - Hide instead of greying out
+            if props.ndof_navigation_mode == 'OBJECT':
+                col.prop(props, "ndof_show_guide_orbit_center", text="Orbit Center")
 
         layout.separator()
 
