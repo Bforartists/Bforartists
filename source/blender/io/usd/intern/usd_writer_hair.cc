@@ -12,6 +12,7 @@
 #include "BLI_math_matrix.hh"
 #include "BLI_math_vector_types.hh"
 
+#include "DNA_object_types.h"
 #include "DNA_particle_types.h"
 
 namespace blender::io::usd {
@@ -36,7 +37,7 @@ void USDHairWriter::do_write(HierarchyContext &context)
   }
   else {
     curves.CreateBasisAttr(pxr::VtValue(pxr::UsdGeomTokens->catmullRom));
-    curves.CreateTypeAttr(pxr::VtValue(pxr::UsdGeomTokens->linear));
+    curves.CreateTypeAttr(pxr::VtValue(pxr::UsdGeomTokens->cubic));
     curves.CreateWrapAttr(pxr::VtValue(pxr::UsdGeomTokens->pinned));
   }
 
