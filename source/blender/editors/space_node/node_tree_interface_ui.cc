@@ -57,7 +57,7 @@ void node_tree_interface_draw(bContext &C, ui::Layout &layout, bNodeTree &tree)
 
     ui::Layout &col = row.column(true);
     col.enabled_set(ID_IS_EDITABLE(&tree.id));
-    col.menu("NODE_MT_node_tree_interface_new_item", "", ICON_ADD);
+    col.popover(&C, "NODE_PT_node_tree_interface_new_input", "", ICON_ADD);
     col.op("node.interface_item_remove", "", ICON_REMOVE);
     col.separator();
     col.menu("NODE_MT_node_tree_interface_context_menu", "", ICON_DOWNARROW_HLT);
