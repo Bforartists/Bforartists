@@ -105,8 +105,10 @@ void node_tree_interface_draw(bContext &C, ui::Layout &layout, bNodeTree &tree)
   if (active_item->item_type == NODE_INTERFACE_PANEL) {
     bNodeTreeInterfacePanel *panel_item = reinterpret_cast<bNodeTreeInterfacePanel *>(active_item);
     layout.prop(&active_item_ptr, "description", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.use_property_split_set(false); /* BFA - Align boolean properties left */
     layout.prop(
         &active_item_ptr, "default_closed", UI_ITEM_NONE, IFACE_("Closed by Default"), ICON_NONE);
+    layout.use_property_split_set(false); /* BFA - use split layout for non-boolean properties */
 
     if (bNodeTreeInterfaceSocket *panel_toggle_socket = panel_item->header_toggle_socket()) {
       if (ui::Layout *panel = layout.panel(&C, "panel_toggle", false, IFACE_("Panel Toggle"))) {
