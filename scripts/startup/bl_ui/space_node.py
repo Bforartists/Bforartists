@@ -1465,52 +1465,6 @@ class NODE_PT_node_tree_interface(Panel):
 
 # BFA - menu
 
-
-class NODE_PT_node_tree_interface_panel_toggle(Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Group"
-    bl_parent_id = "NODE_PT_node_tree_interface"
-    bl_label = "Panel Toggle"
-
-    @classmethod
-    def poll(cls, context):
-        snode = context.space_data
-        if snode is None:
-            return False
-        tree = snode.edit_tree
-        if tree is None:
-            return False
-        active_item = tree.interface.active
-        if not active_item or active_item.item_type != 'PANEL':
-            return False
-        if not active_item.interface_items:
-            return False
-        first_item = active_item.interface_items[0]
-        return getattr(first_item, "is_panel_toggle", False)
-
-    def draw(self, context):
-        layout = self.layout
-        snode = context.space_data
-        tree = snode.edit_tree
-
-        active_item = tree.interface.active
-        panel_toggle_item = active_item.interface_items[0]
-
-        layout.use_property_split = False  # BFA - float left
-        layout.use_property_decorate = False
-
-        # BFA - float left
-        row = layout.row(align=False)
-        row.prop(panel_toggle_item, "default_value", text="Default")
-        row = layout.row(align=False)
-        row.prop(panel_toggle_item, "hide_in_modifier")
-        row = layout.row(align=False)
-        row.prop(panel_toggle_item, "force_non_field")
-
-        layout.use_property_split = False
-
-
 class NODE_MT_node_tree_interface_new_item(Menu):
     bl_label = "New Item"
 
@@ -1765,7 +1719,6 @@ classes = (
     NODE_MT_node_tree_interface_context_menu,
     NODE_PT_node_tree_interface_new_input,  # BFA - Menu
     NODE_PT_node_tree_interface,
-    NODE_PT_node_tree_interface_panel_toggle,
     NODE_PT_node_tree_animation,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color,
