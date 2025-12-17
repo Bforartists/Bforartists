@@ -1371,13 +1371,17 @@ class NODE_PT_node_tree_interface_new_input(Panel):
     bl_ui_units_x = 7
 
     def draw(self, context):
-        layout = self.layout
-        layout.label(text="Add New Item")
-
+        layout = self.layout.column(align=True)
         layout.operator('node.interface_item_new_input', text='Input ', icon='GROUPINPUT').item_type = 'INPUT'
         layout.operator('node.interface_item_new_output', text='Output', icon='GROUPOUTPUT').item_type = 'OUTPUT'
+        
+        layout.separator(factor=0.5)
         layout.operator('node.interface_item_new_panel', text='Panel', icon='MENU_PANEL').item_type = 'PANEL'
-        layout.operator('node.interface_item_new_panel_toggle', text='Panel Toggle', icon='CHECKBOX_HLT')
+        layout.separator(factor=0.5)
+
+        active_item = context.space_data.edit_tree.interface.active
+        if active_item and active_item.item_type == 'PANEL':
+            layout.operator('node.interface_item_new_panel_toggle', text='Panel Toggle', icon='CHECKBOX_HLT')
 
 # BFA - menu
 
