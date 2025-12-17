@@ -57,10 +57,22 @@ void node_tree_interface_draw(bContext &C, ui::Layout &layout, bNodeTree &tree)
 
     ui::Layout &col = row.column(true);
     col.enabled_set(ID_IS_EDITABLE(&tree.id));
-    col.popover(&C, "NODE_PT_node_tree_interface_new_input", "", ICON_ADD);
-    col.op("node.interface_item_remove", "", ICON_REMOVE);
+    /* BFA - Use popover instead of menu, as popover doesn't automatically disappear when you add an item */
+    col.popover(&C, "NODE_PT_node_tree_interface_new_input", "", ICON_ADD); 
     col.separator();
-    col.menu("NODE_MT_node_tree_interface_context_menu", "", ICON_DOWNARROW_HLT);
+    col.op("node.interface_item_duplicate", "", ICON_DUPLICATE); /* BFA - Expose on top-level */
+    col.op("node.interface_item_remove", "", ICON_REMOVE);
+
+    col.separator();
+    col.menu("NODE_MT_node_tree_interface_context_menu", "", ICON_MOVE_DOWN); /* BFA - Use different icon*/
+    col.separator();
+
+    /* BFA - Add operators for moving items up and down */
+    PointerRNA op_ptr;
+    op_ptr = col.op("node.interface_item_move", "", ICON_TRIA_UP);
+    RNA_enum_set_identifier(&C, &op_ptr, "direction", "UP");
+    op_ptr = col.op("node.interface_item_move", "", ICON_TRIA_DOWN);
+    RNA_enum_set_identifier(&C, &op_ptr, "direction", "DOWN");
   }
 
   bNodeTreeInterfaceItem *active_item = tree.tree_interface.active_item();
