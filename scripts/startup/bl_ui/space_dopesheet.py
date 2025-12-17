@@ -862,10 +862,6 @@ class DOPESHEET_MT_action(Menu):
         layout.separator()
         layout.operator("anim.slot_channels_move_to_new_action", icon="ACTION_SLOT")
 
-        layout.separator()
-        layout.operator("action.push_down", text="Push Down Action", icon="NLA_PUSHDOWN")
-        layout.operator("action.stash", text="Stash Action", icon="FREEZE")
-
 
 class DOPESHEET_MT_key(Menu):
     bl_label = "Key"
