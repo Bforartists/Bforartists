@@ -48,8 +48,8 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
 
-#include "UI_view2d.hh"
 #include "UI_resources.hh" /* BFA - needed for icons */
+#include "UI_view2d.hh"
 
 #include "ANIM_action.hh"
 #include "ANIM_action_legacy.hh"
@@ -213,7 +213,7 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = nlaedit_enable_tweakmode_exec;
-  ot->get_description = nla_ot_tweakmode_enter_get_description;/*bfa - description*/
+  ot->get_description = nla_ot_tweakmode_enter_get_description; /*bfa - description*/
   ot->poll = nlaop_poll_tweakmode_off;
 
   /* flags */
