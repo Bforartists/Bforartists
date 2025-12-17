@@ -846,7 +846,7 @@ def addons_panel_draw(panel, context):
     layout = panel.layout
 
     ###### BFA - Double row - START ######
-    row = layout.split(factor=0.57)
+    row = layout.split(factor=0.6)
     row_a = row.row()
     row_a.prop(wm, "addon_search", text="", icon='VIEWZOOM', placeholder="Search Add-ons")
 
@@ -859,7 +859,6 @@ def addons_panel_draw(panel, context):
     row_b.separator()
 
     row_b.operator("extensions.repo_refresh_all", text="", icon='FILE_REFRESH')
-
 
     layout = panel.layout
     row = layout.split(factor=0.27)
@@ -2177,33 +2176,32 @@ def extensions_panel_draw(panel, context):
     layout = panel.layout
 
     ## BFA - change layout of header - START ##
-    row = layout.split(factor=0.57)
+    row = layout.split(factor=0.6)
 
     row_a = row.row()
     row_a.prop(wm, "extension_search", text="", icon='VIEWZOOM', placeholder="Search Extensions")
-    row_b = row.row(align=True)
-    row_b.prop(wm, "extension_type", text="")
 
-    row_b.separator()
-    row_b.prop(wm, "extension_use_filter", text="", icon='FILTER')
+    # BFA - Selector dropdown shown as a second row now
+    #row_b.prop(wm, "extension_type", text="")
+
+    row_b = row.row(align=True)
+
+    row_b.prop(wm, "extension_use_filter", text="", icon='TAG')
     row_b.popover("USERPREF_PT_extensions_filter", text="", icon='DOWNARROW_HLT')
 
-    row_b = row.row()
+    row_b.separator()
     row_b.popover("USERPREF_PT_extensions_repos", text="Repositories")
-
-    row_b.popover("USERPREF_PT_extensions_tags", text="", icon='TAG')
-
     row_b.menu("USERPREF_MT_extensions_settings", text="", icon='DOWNARROW_HLT')
 
     layout = panel.layout
-    row = layout.split(factor=0.56)
+    row = layout.split(factor=0.7)
 
     row_a = row.row()
     row_a.prop(wm, "extension_type", text="text", expand=True)
 
     row_b = row.row()
-    # BFA - quick category tabs here?
     ## BFA - change layout of header - END ##
+
     del row, row_a, row_b
 
     if show_development_reports:
