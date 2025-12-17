@@ -57,10 +57,22 @@ void node_tree_interface_draw(bContext &C, ui::Layout &layout, bNodeTree &tree)
 
     ui::Layout &col = row.column(true);
     col.enabled_set(ID_IS_EDITABLE(&tree.id));
-    col.menu("NODE_MT_node_tree_interface_new_item", "", ICON_ADD);
-    col.op("node.interface_item_remove", "", ICON_REMOVE);
+    /* BFA - Use popover instead of menu, as popover doesn't automatically disappear when you add an item */
+    col.popover(&C, "NODE_PT_node_tree_interface_new_input", "", ICON_ADD); 
     col.separator();
-    col.menu("NODE_MT_node_tree_interface_context_menu", "", ICON_DOWNARROW_HLT);
+    col.op("node.interface_item_duplicate", "", ICON_DUPLICATE); /* BFA - Expose on top-level */
+    col.op("node.interface_item_remove", "", ICON_REMOVE);
+
+    col.separator();
+    col.menu("NODE_MT_node_tree_interface_context_menu", "", ICON_MOVE_DOWN); /* BFA - Use different icon*/
+    col.separator();
+
+    /* BFA - Add operators for moving items up and down */
+    PointerRNA op_ptr;
+    op_ptr = col.op("node.interface_item_move", "", ICON_TRIA_UP);
+    RNA_enum_set_identifier(&C, &op_ptr, "direction", "UP");
+    op_ptr = col.op("node.interface_item_move", "", ICON_TRIA_DOWN);
+    RNA_enum_set_identifier(&C, &op_ptr, "direction", "DOWN");
   }
 
   bNodeTreeInterfaceItem *active_item = tree.tree_interface.active_item();
@@ -93,11 +105,14 @@ void node_tree_interface_draw(bContext &C, ui::Layout &layout, bNodeTree &tree)
   if (active_item->item_type == NODE_INTERFACE_PANEL) {
     bNodeTreeInterfacePanel *panel_item = reinterpret_cast<bNodeTreeInterfacePanel *>(active_item);
     layout.prop(&active_item_ptr, "description", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.use_property_split_set(false); /* BFA - Align boolean properties left */
     layout.prop(
         &active_item_ptr, "default_closed", UI_ITEM_NONE, IFACE_("Closed by Default"), ICON_NONE);
+    layout.use_property_split_set(false); /* BFA - use split layout for non-boolean properties */
 
     if (bNodeTreeInterfaceSocket *panel_toggle_socket = panel_item->header_toggle_socket()) {
       if (ui::Layout *panel = layout.panel(&C, "panel_toggle", false, IFACE_("Panel Toggle"))) {
+        panel->use_property_split_set(false); /* BFA - Align boolean properties left */
         PointerRNA panel_toggle_socket_ptr = RNA_pointer_create_discrete(
             &tree.id, &RNA_NodeTreeInterfaceSocket, panel_toggle_socket);
         panel->prop(
@@ -105,6 +120,7 @@ void node_tree_interface_draw(bContext &C, ui::Layout &layout, bNodeTree &tree)
         ui::Layout &col = panel->column(false);
         col.prop(
             &panel_toggle_socket_ptr, "hide_in_modifier", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+        col.use_property_split_set(true); /* BFA - use split layout for non-boolean properties */
         col.prop(
             &panel_toggle_socket_ptr, "structure_type", UI_ITEM_NONE, IFACE_("Shape"), ICON_NONE);
       }
