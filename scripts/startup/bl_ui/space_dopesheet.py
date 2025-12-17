@@ -376,8 +376,6 @@ class DOPESHEET_HT_editor_buttons:
             layout.separator_spacer()
             cls._draw_action_selector(context, layout)
             row = layout.row(align=True)
-            row.operator("action.layer_prev", text="", icon="TRIA_DOWN")
-            row.operator("action.layer_next", text="", icon="TRIA_UP")
 
             row = layout.row(align=True)
             row.operator("action.push_down", text="Push Down", icon="NLA_PUSHDOWN")
