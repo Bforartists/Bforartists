@@ -48,8 +48,8 @@
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
 
-#include "UI_view2d.hh"
 #include "UI_resources.hh" /* BFA - needed for icons */
+#include "UI_view2d.hh"
 
 #include "ANIM_action.hh"
 #include "ANIM_action_legacy.hh"
@@ -213,7 +213,7 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = nlaedit_enable_tweakmode_exec;
-  ot->get_description = nla_ot_tweakmode_enter_get_description;/*bfa - description*/
+  ot->get_description = nla_ot_tweakmode_enter_get_description; /*bfa - description*/
   ot->poll = nlaop_poll_tweakmode_off;
 
   /* flags */
@@ -696,16 +696,6 @@ static wmOperatorStatus nlaedit_add_actionclip_exec(bContext *C, wmOperator *op)
     BKE_report(op->reports, RPT_ERROR, "No valid action to add");
     // printf("Add strip - actname = '%s'\n", actname);
     return OPERATOR_CANCELLED;
-  }
-  if (act->idroot == 0 && blender::animrig::legacy::action_treat_as_legacy(*act)) {
-    /* hopefully in this case (i.e. library of userless actions),
-     * the user knows what they're doing... */
-    BKE_reportf(op->reports,
-                RPT_WARNING,
-                "Action '%s' does not specify what data it can be used on "
-                "(try setting the 'ID Root Type' setting from the data editor "
-                "for this action to avoid future problems)", /* BFA */
-                act->id.name + 2);
   }
 
   /* add tracks to empty but selected animdata blocks so that strips can be added to those directly
