@@ -840,7 +840,7 @@ struct SpaceNodeOverlay {
   int flag = 0;
   /* eSpaceNodeOverlay_preview_shape */
   int preview_shape = 0;
-  float world_center_alpha = 0.25f; /*BFA - World Center overlay*/
+  float world_center_alpha = 0; /*BFA - World Center overlay*/
   char _pad[4] = {}; /*BFA - World Center overlay*/
 };
 
@@ -1111,14 +1111,14 @@ struct SpaceStatusBar {
  * \{ */
 
 /* BFA - Toolbar Editor */
-typedef struct SpaceToolbar {
+struct SpaceToolbar {
   SpaceLink *next, *prev;
   ListBase regionbase;
   char spacetype;
   char link_flag;
   char _pad0[6];
   /* End 'SpaceLink' header. */
-} SpaceToolbar;
+};
 
 /** \} */
 

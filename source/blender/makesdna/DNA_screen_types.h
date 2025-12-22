@@ -176,9 +176,6 @@ struct bScreen {
   short fullscreen_flag = 0;
   char _pad2[6] = {};
 
-  int flag = 0;   // BFA - MUST be int (not short) to accommodate toolbar flags beyond bit 15
-                  // (Animation/Edit/Misc toolbars use bits 16-18)
-
   /** Runtime. */
   struct wmTooltipState *tool_tip = nullptr;
 
@@ -883,36 +880,6 @@ enum AssetShelf_InstanceFlag {
 };
 ENUM_OPERATORS(AssetShelf_InstanceFlag);
 
-struct AssetShelfSettings {
-  AssetLibraryReference asset_library_reference;
-
-  ListBaseT<AssetCatalogPathLink> enabled_catalog_paths = {nullptr, nullptr};
-  /** If not set (null or empty string), all assets will be displayed ("All" catalog behavior). */
-  const char *active_catalog_path = nullptr;
-
-  /** For filtering assets displayed in the asset view. */
-  char search_string[64] = "";
-
-  short preview_size;
-  short display_flag;                                 /* #AssetShelfSettings_DisplayFlag */
-
-  // char _pad1[4]; // uses all 4
-  short preview_size = 0;
-  short display_flag = 0; /* #AssetShelfSettings_DisplayFlag */
-  short import_method = SHELF_ASSET_IMPORT_APPEND;    /* #AssetShelfImportMethod */  // bfa
-  short import_flags = 0;                             /* AssetShelfImportFlags */    // bfa
-  // char _pad1[4] = {}; // uses all 4
-
-#if defined(__cplusplus) && !defined(DNA_NO_EXTERNAL_CONSTRUCTORS)
-  /* Zero initializes. */
-  AssetShelfSettings();
-  /* Proper deep copy. */
-  AssetShelfSettings(const AssetShelfSettings &other);
-  AssetShelfSettings &operator=(const AssetShelfSettings &other);
-  ~AssetShelfSettings();
-#endif
-};
-
 // bfa start asset shelf
 // See eAssetImportMethod
 enum AssetShelfImportMethod {
@@ -940,6 +907,32 @@ enum AssetShelfImportFlags {
   SHELF_ASSET_IMPORT_DROP_COLLECTIONS_TO_ORIGIN = (1 << 2),
 };
 // bfa end
+
+struct AssetShelfSettings {
+  AssetLibraryReference asset_library_reference;
+
+  ListBaseT<AssetCatalogPathLink> enabled_catalog_paths = {nullptr, nullptr};
+  /** If not set (null or empty string), all assets will be displayed ("All" catalog behavior). */
+  const char *active_catalog_path = nullptr;
+
+  /** For filtering assets displayed in the asset view. */
+  char search_string[64] = "";
+
+  short preview_size = 0;
+  short display_flag = 0; /* #AssetShelfSettings_DisplayFlag */
+  short import_method = SHELF_ASSET_IMPORT_APPEND;    /* #AssetShelfImportMethod */  // bfa
+  short import_flags = 0;                             /* AssetShelfImportFlags */    // bfa
+  // char _pad1[4] = {}; // uses all 4
+
+#if defined(__cplusplus) && !defined(DNA_NO_EXTERNAL_CONSTRUCTORS)
+  /* Zero initializes. */
+  AssetShelfSettings();
+  /* Proper deep copy. */
+  AssetShelfSettings(const AssetShelfSettings &other);
+  AssetShelfSettings &operator=(const AssetShelfSettings &other);
+  ~AssetShelfSettings();
+#endif
+};
 
 struct AssetShelf {
   DNA_DEFINE_CXX_METHODS(AssetShelf)

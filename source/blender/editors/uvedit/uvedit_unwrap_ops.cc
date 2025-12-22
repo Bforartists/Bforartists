@@ -3081,7 +3081,7 @@ void UV_OT_unwrap(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna,
                           "method",
                           method_items,
-                          tool_settings_default->unwrapper,
+                          tool_settings_default.unwrapper,
                           "Method",
                           "The method to unwrap the mesh"); /* BFA */
   RNA_def_boolean(ot->srna,

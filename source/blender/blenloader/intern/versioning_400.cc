@@ -1194,7 +1194,7 @@ static void add_node_editor_asset_shelf(Main &bmain)
         if (ARegion *new_shelf_region = do_versions_add_region_if_not_found(
                 regionbase, RGN_TYPE_ASSET_SHELF, __func__, RGN_TYPE_TOOL_HEADER))
         {
-          new_shelf_region->regiondata = MEM_callocN<RegionAssetShelf>(__func__);
+          new_shelf_region->regiondata = MEM_new_for_free<RegionAssetShelf>(__func__);
           new_shelf_region->alignment = RGN_ALIGN_BOTTOM;
           new_shelf_region->flag |= RGN_FLAG_HIDDEN;
         }
