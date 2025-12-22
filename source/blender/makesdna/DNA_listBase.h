@@ -12,16 +12,18 @@
 
 #pragma once
 
+#include "BLI_listbase_iterator.hh"
+
 /** Generic - all structs which are put into linked lists begin with this. */
-typedef struct Link {
+struct Link {
   struct Link *next, *prev;
-} Link;
+};
 
 /** Simple subclass of Link. Use this when it is not worth defining a custom one. */
-typedef struct LinkData {
+struct LinkData {
   struct LinkData *next, *prev;
   void *data;
-} LinkData;
+};
 
 /**
  * The basic double linked-list structure.
@@ -29,8 +31,40 @@ typedef struct LinkData {
  * \warning Never change the size/definition of this struct! The #init_structDNA
  * function (from dna_genfile.cc) uses it to compute the #pointer_size.
  */
-typedef struct ListBase {
+struct ListBase {
   void *first, *last;
-} ListBase;
+};
+
+#ifdef __cplusplus
+
+/**
+ * This is a thin wrapper around #ListBase to make it type-safe. It's designed to be used in DNA
+ * structs. It is written as untyped #ListBase in .blend files for compatibility.
+ */
+template<typename T> struct ListBaseT : public ListBase {
+  ListBaseTIterator<const T> begin() const
+  {
+    return ListBaseTIterator<const T>{static_cast<const T *>(this->first)};
+  }
+
+  ListBaseTIterator<const T> end() const
+  {
+    /* Don't use `this->last` because this iterator has to point to one-past-the-end. */
+    return ListBaseTIterator<const T>{nullptr};
+  }
+
+  ListBaseTIterator<T> begin()
+  {
+    return ListBaseTIterator<T>{static_cast<T *>(this->first)};
+  }
+
+  ListBaseTIterator<T> end()
+  {
+    /* Don't use `this->last` because this iterator has to point to one-past-the-end. */
+    return ListBaseTIterator<T>{nullptr};
+  }
+};
+
+#endif
 
 /* 8 byte alignment! */

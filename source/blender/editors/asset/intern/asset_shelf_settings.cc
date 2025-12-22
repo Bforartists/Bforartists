@@ -10,6 +10,7 @@
 
 #include "AS_asset_catalog_path.hh"
 
+#include "DNA_defs.h"
 #include "DNA_screen_types.h"
 #include "DNA_userdef_types.h"
 
@@ -74,7 +75,7 @@ namespace blender::ed::asset::shelf {
 
 void settings_blend_write(BlendWriter *writer, const AssetShelfSettings &settings)
 {
-  BLO_write_struct(writer, AssetShelfSettings, &settings);
+  writer->write_struct(&settings);
 
   BKE_asset_catalog_path_list_blend_write(writer, settings.enabled_catalog_paths);
   BLO_write_string(writer, settings.active_catalog_path);

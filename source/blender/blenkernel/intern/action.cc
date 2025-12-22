@@ -20,7 +20,6 @@
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_constraint_types.h"
-#include "DNA_defaults.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
@@ -102,8 +101,7 @@ static void action_init_data(ID *action_id)
   BLI_assert(GS(action_id->name) == ID_AC);
   bAction *action = reinterpret_cast<bAction *>(action_id);
 
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(action, id));
-  MEMCPY_STRUCT_AFTER(action, DNA_struct_default_get(bAction), id);
+  INIT_DEFAULT_STRUCT_AFTER(action, id);
 }
 
 /**
@@ -310,18 +308,18 @@ static void action_foreach_id(ID *id, LibraryForeachIDData *data)
 
 static void write_channelbag(BlendWriter *writer, animrig::Channelbag &channelbag)
 {
-  BLO_write_struct(writer, ActionChannelbag, &channelbag);
+  writer->write_struct_cast<ActionChannelbag>(&channelbag);
 
   Span<bActionGroup *> groups = channelbag.channel_groups();
   BLO_write_pointer_array(writer, groups.size(), groups.data());
   for (const bActionGroup *group : groups) {
-    BLO_write_struct(writer, bActionGroup, group);
+    writer->write_struct(group);
   }
 
   Span<FCurve *> fcurves = channelbag.fcurves();
   BLO_write_pointer_array(writer, fcurves.size(), fcurves.data());
   for (FCurve *fcurve : fcurves) {
-    BLO_write_struct(writer, FCurve, fcurve);
+    writer->write_struct(fcurve);
     BKE_fcurve_blend_write_data(writer, fcurve);
   }
 }
@@ -329,7 +327,7 @@ static void write_channelbag(BlendWriter *writer, animrig::Channelbag &channelba
 static void write_strip_keyframe_data(BlendWriter *writer,
                                       animrig::StripKeyframeData &strip_keyframe_data)
 {
-  BLO_write_struct(writer, ActionStripKeyframeData, &strip_keyframe_data);
+  writer->write_struct_cast<ActionStripKeyframeData>(&strip_keyframe_data);
 
   auto channelbags = strip_keyframe_data.channelbags();
   BLO_write_pointer_array(writer, channelbags.size(), channelbags.data());
@@ -355,7 +353,7 @@ static void write_strips(BlendWriter *writer, Span<animrig::Strip *> strips)
   BLO_write_pointer_array(writer, strips.size(), strips.data());
 
   for (animrig::Strip *strip : strips) {
-    BLO_write_struct(writer, ActionStrip, strip);
+    writer->write_struct_cast<ActionStrip>(strip);
   }
 }
 
@@ -364,7 +362,7 @@ static void write_layers(BlendWriter *writer, Span<animrig::Layer *> layers)
   BLO_write_pointer_array(writer, layers.size(), layers.data());
 
   for (animrig::Layer *layer : layers) {
-    BLO_write_struct(writer, ActionLayer, layer);
+    writer->write_struct_cast<ActionLayer>(layer);
     write_strips(writer, layer->strips());
   }
 }
@@ -559,7 +557,7 @@ static void action_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   /* Write legacy F-Curves & Groups. */
   BKE_fcurve_blend_write_listbase(writer, &action.curves);
   LISTBASE_FOREACH (bActionGroup *, grp, &action.groups) {
-    BLO_write_struct(writer, bActionGroup, grp);
+    writer->write_struct(grp);
   }
 
   BKE_time_markers_blend_write(writer, action.markers);
@@ -885,7 +883,7 @@ bActionGroup *action_groups_add_new(bAction *act, const char name[])
   BLI_assert(act->wrap().is_action_legacy());
 
   /* allocate a new one */
-  agrp = MEM_callocN<bActionGroup>("bActionGroup");
+  agrp = MEM_new_for_free<bActionGroup>("bActionGroup");
 
   /* make it selected, with default name */
   agrp->flag = AGRP_SELECTED;
@@ -1118,7 +1116,7 @@ bPoseChannel *BKE_pose_channel_ensure(bPose *pose, const char *name)
   }
 
   /* If not, create it and add it */
-  chan = MEM_callocN<bPoseChannel>("verifyPoseChannel");
+  chan = MEM_new_for_free<bPoseChannel>("verifyPoseChannel");
 
   BKE_pose_channel_session_uid_generate(chan);
 
@@ -1254,14 +1252,14 @@ void BKE_pose_copy_data_ex(bPose **dst,
                            const bool copy_constraints)
 {
   bPose *outPose;
-  ListBase listb;
+  ListBaseT<bConstraint> listb;
 
   if (!src) {
     *dst = nullptr;
     return;
   }
 
-  outPose = MEM_callocN<bPose>("pose");
+  outPose = MEM_new_for_free<bPose>("pose");
 
   BLI_duplicatelist(&outPose->chanbase, &src->chanbase);
 
@@ -1358,7 +1356,7 @@ void BKE_pose_ikparam_init(bPose *pose)
   bItasc *itasc;
   switch (pose->iksolver) {
     case IKSOLVER_ITASC:
-      itasc = MEM_callocN<bItasc>("itasc");
+      itasc = MEM_new_for_free<bItasc>("itasc");
       BKE_pose_itasc_init(itasc);
       pose->ikparam = itasc;
       break;
@@ -1809,7 +1807,7 @@ bActionGroup *BKE_pose_add_group(bPose *pose, const char *name)
     name = DATA_("Group");
   }
 
-  grp = MEM_callocN<bActionGroup>("PoseGroup");
+  grp = MEM_new_for_free<bActionGroup>("PoseGroup");
   STRNCPY_UTF8(grp->name, name);
   BLI_addtail(&pose->agroups, grp);
   BLI_uniquename(&pose->agroups, grp, name, '.', offsetof(bActionGroup, name), sizeof(grp->name));
@@ -2104,24 +2102,24 @@ void BKE_pose_blend_write(BlendWriter *writer, bPose *pose)
 
     animviz_motionpath_blend_write(writer, chan->mpath);
 
-    BLO_write_struct(writer, bPoseChannel, chan);
+    writer->write_struct(chan);
   }
 
   /* Write groups */
   LISTBASE_FOREACH (bActionGroup *, grp, &pose->agroups) {
-    BLO_write_struct(writer, bActionGroup, grp);
+    writer->write_struct(grp);
   }
 
   /* write IK param */
   if (pose->ikparam) {
     const char *structname = BKE_pose_ikparam_get_name(pose);
     if (structname) {
-      BLO_write_struct_by_name(writer, structname, pose->ikparam);
+      writer->write_struct_by_name(structname, pose->ikparam);
     }
   }
 
   /* Write this pose */
-  BLO_write_struct(writer, bPose, pose);
+  writer->write_struct(pose);
 }
 
 void BKE_pose_blend_read_data(BlendDataReader *reader, ID *id_owner, bPose *pose)

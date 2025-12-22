@@ -23,7 +23,6 @@
 #include "DNA_array_utils.hh"
 #include "DNA_collection_types.h"
 #include "DNA_curves_types.h"
-#include "DNA_defaults.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
@@ -103,10 +102,8 @@ static void init_data(ModifierData *md)
 {
   NodesModifierData *nmd = (NodesModifierData *)md;
 
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(nmd, modifier));
+  INIT_DEFAULT_STRUCT_AFTER(nmd, modifier);
   nmd->modifier.layout_panel_open_flag |= 1 << NODES_MODIFIER_PANEL_WARNINGS;
-
-  MEMCPY_STRUCT_AFTER(nmd, DNA_struct_default_get(NodesModifierData), modifier);
   nmd->runtime = MEM_new<NodesModifierRuntime>(__func__);
   nmd->runtime->cache = std::make_shared<bake::ModifierCache>();
 }
@@ -377,8 +374,8 @@ static void update_bakes_from_node_group(NodesModifierData &nmd)
     }
   }
 
-  NodesModifierBake *new_bake_data = MEM_calloc_arrayN<NodesModifierBake>(new_bake_ids.size(),
-                                                                          __func__);
+  NodesModifierBake *new_bake_data = MEM_new_array_for_free<NodesModifierBake>(new_bake_ids.size(),
+                                                                               __func__);
   for (const int i : new_bake_ids.index_range()) {
     const int id = new_bake_ids[i];
     NodesModifierBake *old_bake = old_bake_by_id.lookup_default(id, nullptr);
@@ -429,8 +426,8 @@ static void update_panels_from_node_group(NodesModifierData &nmd)
     });
   }
 
-  NodesModifierPanel *new_panels = MEM_calloc_arrayN<NodesModifierPanel>(interface_panels.size(),
-                                                                         __func__);
+  NodesModifierPanel *new_panels = MEM_new_array_for_free<NodesModifierPanel>(
+      interface_panels.size(), __func__);
 
   for (const int i : interface_panels.index_range()) {
     const bNodeTreeInterfacePanel &interface_panel = *interface_panels[i];
@@ -2041,7 +2038,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
 {
   const NodesModifierData *nmd = reinterpret_cast<const NodesModifierData *>(md);
 
-  BLO_write_struct(writer, NodesModifierData, nmd);
+  writer->write_struct(nmd);
 
   BLO_write_string(writer, nmd->bake_directory);
 
@@ -2076,7 +2073,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
       BLO_write_string(writer, item.lib_name);
     }
     if (bake.packed) {
-      BLO_write_struct(writer, NodesModifierPackedBake, bake.packed);
+      writer->write_struct(bake.packed);
       BLO_write_struct_array(
           writer, NodesModifierBakeFile, bake.packed->meta_files_num, bake.packed->meta_files);
       BLO_write_struct_array(

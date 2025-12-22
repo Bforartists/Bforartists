@@ -214,7 +214,7 @@ PackedFile *BKE_packedfile_new_from_memory(const void *mem,
     sharing_info = blender::implicit_sharing::info_for_mem_free(const_cast<void *>(mem));
   }
 
-  PackedFile *pf = MEM_callocN<PackedFile>("PackedFile");
+  PackedFile *pf = MEM_new_for_free<PackedFile>("PackedFile");
   pf->data = mem;
   pf->size = memlen;
   pf->sharing_info = sharing_info;
@@ -977,7 +977,7 @@ void BKE_packedfile_blend_write(BlendWriter *writer, const PackedFile *pf)
   BLO_write_shared(writer, pf->data, pf->size, pf->sharing_info, [&]() {
     BLO_write_raw(writer, pf->size, pf->data);
   });
-  BLO_write_struct(writer, PackedFile, pf);
+  writer->write_struct(pf);
 }
 
 void BKE_packedfile_blend_read(BlendDataReader *reader, PackedFile **pf_p, StringRefNull filepath)

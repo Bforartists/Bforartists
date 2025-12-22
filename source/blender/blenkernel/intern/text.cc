@@ -63,7 +63,7 @@ static void text_init_data(ID *id)
 {
   Text *text = (Text *)id;
 
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(text, id));
+  INIT_DEFAULT_STRUCT_AFTER(text, id);
 
   text->filepath = nullptr;
 
@@ -183,7 +183,7 @@ static void text_blend_write(BlendWriter *writer, ID *id, const void *id_address
   if (!(text->flags & TXT_ISEXT)) {
     /* Now write the text data, in two steps for optimization in the read-function. */
     LISTBASE_FOREACH (TextLine *, tmp, &text->lines) {
-      BLO_write_struct(writer, TextLine, tmp);
+      writer->write_struct(tmp);
     }
 
     LISTBASE_FOREACH (TextLine *, tmp, &text->lines) {
@@ -590,7 +590,7 @@ void BKE_text_file_modified_ignore(Text *text)
 
 static TextLine *txt_line_malloc()
 {
-  TextLine *l = MEM_mallocN<TextLine>("textline");
+  TextLine *l = MEM_new_for_free<TextLine>("textline");
   /* Quiet VALGRIND warning, may avoid unintended differences with MEMFILE undo as well. */
   memset(l->_pad0, 0, sizeof(l->_pad0));
   return l;

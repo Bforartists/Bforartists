@@ -53,7 +53,7 @@ namespace blender::ed::spreadsheet {
 
 static SpaceLink *spreadsheet_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 {
-  SpaceSpreadsheet *spreadsheet_space = MEM_callocN<SpaceSpreadsheet>("spreadsheet space");
+  SpaceSpreadsheet *spreadsheet_space = MEM_new_for_free<SpaceSpreadsheet>("spreadsheet space");
   spreadsheet_space->runtime = MEM_new<SpaceSpreadsheet_Runtime>(__func__);
   spreadsheet_space->spacetype = SPACE_SPREADSHEET;
 
@@ -736,11 +736,11 @@ static void spreadsheet_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 
 static void spreadsheet_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceSpreadsheet, sl);
+  writer->write_struct_cast<SpaceSpreadsheet>(sl);
   SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)sl;
 
   LISTBASE_FOREACH (SpreadsheetRowFilter *, row_filter, &sspreadsheet->row_filters) {
-    BLO_write_struct(writer, SpreadsheetRowFilter, row_filter);
+    writer->write_struct(row_filter);
     BLO_write_string(writer, row_filter->value_string);
   }
 
