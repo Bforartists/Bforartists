@@ -1231,7 +1231,7 @@ struct UserDef {
   float viewport_line_width = 1.0f;                                 /* BFA - GooEngine */
   int outliner_editor_flag = USER_OUTLINER_COL_COLLECTION_ROWS;     /* BFA - eUserpref_OutlinerEditorFlags */
   float node_color_blend = 0.2f;                                    /* BFA - Node Color Blend */
-  char _pad_custom[4];                                              /* BFA - for future alignment/padding if needed */
+  char _pad_custom[4] = {};                                         /* BFA - for future alignment/padding if needed */
 
   /** Runtime data (keep last). */
   UserDef_Runtime runtime;

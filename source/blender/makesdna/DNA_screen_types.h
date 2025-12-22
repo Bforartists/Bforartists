@@ -138,7 +138,9 @@ struct bScreen {
   DNA_DEPRECATED struct Scene *scene = nullptr;
 
   /** General flags. */
-  short flag = 0;
+  int flag = 0;   // BFA - MUST be int (not short) to accommodate toolbar flags beyond bit 15
+                  // (Animation/Edit/Misc toolbars use bits 16-18)
+  char flag_pad[6] = {};
   /** Window-ID from WM, starts with 1. */
   short winid = 0;
   /** User-setting for which editors get redrawn during animation playback. */
