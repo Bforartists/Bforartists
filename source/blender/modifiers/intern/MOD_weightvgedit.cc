@@ -17,7 +17,6 @@
 #include "BLT_translation.hh"
 
 #include "DNA_color_types.h" /* CurveMapping. */
-#include "DNA_defaults.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
@@ -57,10 +56,7 @@
 static void init_data(ModifierData *md)
 {
   WeightVGEditModifierData *wmd = (WeightVGEditModifierData *)md;
-
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(wmd, modifier));
-
-  MEMCPY_STRUCT_AFTER(wmd, DNA_struct_default_get(WeightVGEditModifierData), modifier);
+  INIT_DEFAULT_STRUCT_AFTER(wmd, modifier);
 
   wmd->cmap_curve = BKE_curvemapping_add(1, 0.0, 0.0, 1.0, 1.0);
   BKE_curvemapping_init(wmd->cmap_curve);
@@ -386,7 +382,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
 {
   const WeightVGEditModifierData *wmd = (const WeightVGEditModifierData *)md;
 
-  BLO_write_struct(writer, WeightVGEditModifierData, wmd);
+  writer->write_struct(wmd);
 
   if (wmd->cmap_curve) {
     BKE_curvemapping_blend_write(writer, wmd->cmap_curve);

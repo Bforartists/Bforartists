@@ -78,7 +78,7 @@ namespace blender::seq {
 
 StripProxy *seq_strip_proxy_alloc()
 {
-  StripProxy *strip_proxy = MEM_callocN<StripProxy>("StripProxy");
+  StripProxy *strip_proxy = MEM_new_for_free<StripProxy>("StripProxy");
   strip_proxy->quality = 50;
   strip_proxy->build_tc_flags = SEQ_PROXY_TC_RECORD_RUN | SEQ_PROXY_TC_RECORD_RUN_NO_GAPS;
   strip_proxy->tc = SEQ_PROXY_TC_RECORD_RUN;
@@ -87,16 +87,16 @@ StripProxy *seq_strip_proxy_alloc()
 
 static StripData *strip_data_alloc(StripType type)
 {
-  StripData *data = MEM_callocN<StripData>("strip");
+  StripData *data = MEM_new_for_free<StripData>("strip");
 
   if (type != STRIP_TYPE_SOUND) {
-    data->transform = MEM_callocN<StripTransform>("StripTransform");
+    data->transform = MEM_new_for_free<StripTransform>("StripTransform");
     data->transform->scale_x = 1;
     data->transform->scale_y = 1;
     data->transform->origin[0] = 0.5f;
     data->transform->origin[1] = 0.5f;
     data->transform->filter = SEQ_TRANSFORM_FILTER_AUTO;
-    data->crop = MEM_callocN<StripCrop>("StripCrop");
+    data->crop = MEM_new_for_free<StripCrop>("StripCrop");
   }
   return data;
 }
@@ -126,7 +126,7 @@ static void strip_data_free(StripData *data)
 
 Strip *strip_alloc(ListBase *lb, int timeline_frame, int channel, StripType type)
 {
-  Strip *strip = MEM_callocN<Strip>("addseq");
+  Strip *strip = MEM_new_for_free<Strip>("addseq");
   strip->runtime = MEM_new<StripRuntime>(__func__);
   relations_session_uid_generate(strip);
   BLI_addtail(lb, strip);
@@ -153,7 +153,7 @@ Strip *strip_alloc(ListBase *lb, int timeline_frame, int channel, StripType type
   }
 
   strip->data = strip_data_alloc(type);
-  strip->stereo3d_format = MEM_callocN<Stereo3dFormat>("Sequence Stereo Format");
+  strip->stereo3d_format = MEM_new_for_free<Stereo3dFormat>("Sequence Stereo Format");
 
   strip->color_tag = STRIP_COLOR_NONE;
 
@@ -281,7 +281,7 @@ Editing *editing_get(const Scene *scene)
 Editing *editing_ensure(Scene *scene)
 {
   if (scene->ed == nullptr) {
-    Editing *ed = scene->ed = MEM_callocN<Editing>("addseq");
+    Editing *ed = scene->ed = MEM_new_for_free<Editing>("addseq");
     ed->cache_flag = (SEQ_CACHE_PREFETCH_ENABLE | SEQ_CACHE_STORE_FINAL_OUT | SEQ_CACHE_STORE_RAW);
     ed->show_missing_media_flag = SEQ_EDIT_SHOW_MISSING_MEDIA;
     channels_ensure(&ed->channels);
@@ -346,7 +346,7 @@ static void seq_new_fix_links_recursive(Strip *strip, Map<Strip *, Strip *> stri
 
 SequencerToolSettings *tool_settings_init()
 {
-  SequencerToolSettings *tool_settings = MEM_callocN<SequencerToolSettings>(
+  SequencerToolSettings *tool_settings = MEM_new_for_free<SequencerToolSettings>(
       "Sequencer tool settings");
   tool_settings->fit_method = SEQ_SCALE_TO_FIT;
   tool_settings->snap_mode = SEQ_SNAP_TO_STRIPS | SEQ_SNAP_TO_CURRENT_FRAME |
@@ -427,7 +427,7 @@ static MetaStack *seq_meta_stack_alloc(const Scene *scene, Strip *strip_meta)
 {
   Editing *ed = editing_get(scene);
 
-  MetaStack *ms = MEM_mallocN<MetaStack>("metastack");
+  MetaStack *ms = MEM_new_for_free<MetaStack>("metastack");
   BLI_addhead(&ed->metastack, ms);
   ms->parent_strip = strip_meta;
 
@@ -830,25 +830,25 @@ SequencerToolSettings *tool_settings_copy(SequencerToolSettings *tool_settings)
 static bool strip_write_data_cb(Strip *strip, void *userdata)
 {
   BlendWriter *writer = (BlendWriter *)userdata;
-  BLO_write_struct(writer, Strip, strip);
+  writer->write_struct(strip);
   if (strip->data) {
     /* TODO this doesn't depend on the `Strip` data to be present? */
     if (strip->effectdata) {
       switch (strip->type) {
         case STRIP_TYPE_COLOR:
-          BLO_write_struct(writer, SolidColorVars, strip->effectdata);
+          writer->write_struct_cast<SolidColorVars>(strip->effectdata);
           break;
         case STRIP_TYPE_SPEED:
-          BLO_write_struct(writer, SpeedControlVars, strip->effectdata);
+          writer->write_struct_cast<SpeedControlVars>(strip->effectdata);
           break;
         case STRIP_TYPE_WIPE:
-          BLO_write_struct(writer, WipeVars, strip->effectdata);
+          writer->write_struct_cast<WipeVars>(strip->effectdata);
           break;
         case STRIP_TYPE_GLOW:
-          BLO_write_struct(writer, GlowVars, strip->effectdata);
+          writer->write_struct_cast<GlowVars>(strip->effectdata);
           break;
         case STRIP_TYPE_GAUSSIAN_BLUR:
-          BLO_write_struct(writer, GaussianBlurVars, strip->effectdata);
+          writer->write_struct_cast<GaussianBlurVars>(strip->effectdata);
           break;
         case STRIP_TYPE_TEXT: {
           TextVars *text = static_cast<TextVars *>(strip->effectdata);
@@ -856,34 +856,34 @@ static bool strip_write_data_cb(Strip *strip, void *userdata)
             /* Copy current text into legacy buffer. */
             STRNCPY_UTF8(text->text_legacy, text->text_ptr);
           }
-          BLO_write_struct(writer, TextVars, text);
+          writer->write_struct(text);
           BLO_write_string(writer, text->text_ptr);
         } break;
         case STRIP_TYPE_COLORMIX:
-          BLO_write_struct(writer, ColorMixVars, strip->effectdata);
+          writer->write_struct_cast<ColorMixVars>(strip->effectdata);
           break;
       }
     }
 
-    BLO_write_struct(writer, Stereo3dFormat, strip->stereo3d_format);
+    writer->write_struct(strip->stereo3d_format);
 
     StripData *data = strip->data;
-    BLO_write_struct(writer, StripData, data);
+    writer->write_struct(data);
     if (data->crop) {
-      BLO_write_struct(writer, StripCrop, data->crop);
+      writer->write_struct(data->crop);
     }
     if (data->transform) {
-      BLO_write_struct(writer, StripTransform, data->transform);
+      writer->write_struct(data->transform);
     }
     if (data->proxy) {
-      BLO_write_struct(writer, StripProxy, data->proxy);
+      writer->write_struct(data->proxy);
     }
     if (strip->type == STRIP_TYPE_IMAGE) {
       BLO_write_struct_array(
           writer, StripElem, MEM_allocN_len(data->stripdata) / sizeof(StripElem), data->stripdata);
     }
     else if (ELEM(strip->type, STRIP_TYPE_MOVIE, STRIP_TYPE_SOUND)) {
-      BLO_write_struct(writer, StripElem, data->stripdata);
+      writer->write_struct(data->stripdata);
     }
   }
 
@@ -897,11 +897,11 @@ static bool strip_write_data_cb(Strip *strip, void *userdata)
   modifier_blend_write(writer, &strip->modifiers);
 
   LISTBASE_FOREACH (SeqTimelineChannel *, channel, &strip->channels) {
-    BLO_write_struct(writer, SeqTimelineChannel, channel);
+    writer->write_struct(channel);
   }
 
   LISTBASE_FOREACH (StripConnection *, con, &strip->connections) {
-    BLO_write_struct(writer, StripConnection, con);
+    writer->write_struct(con);
   }
 
   if (strip->retiming_keys != nullptr) {
@@ -1208,7 +1208,7 @@ void eval_strips(Depsgraph *depsgraph, Scene *scene, ListBase *seqbase)
 
 }  // namespace blender::seq
 
-ListBase *Editing::current_strips()
+ListBaseT<Strip> *Editing::current_strips()
 {
   if (this->current_meta_strip) {
     return &this->current_meta_strip->seqbase;
@@ -1216,16 +1216,16 @@ ListBase *Editing::current_strips()
   return &this->seqbase;
 }
 
-ListBase *Editing::current_strips() const
+ListBaseT<Strip> *Editing::current_strips() const
 {
   if (this->current_meta_strip) {
     return &this->current_meta_strip->seqbase;
   }
   /* NOTE: Const correctness is non-existent with ListBase anyway. */
-  return &const_cast<ListBase &>(this->seqbase);
+  return &const_cast<ListBaseT<Strip> &>(this->seqbase);
 }
 
-ListBase *Editing::current_channels()
+ListBaseT<SeqTimelineChannel> *Editing::current_channels()
 {
   if (this->current_meta_strip) {
     return &this->current_meta_strip->channels;
@@ -1233,13 +1233,13 @@ ListBase *Editing::current_channels()
   return &this->channels;
 }
 
-ListBase *Editing::current_channels() const
+ListBaseT<SeqTimelineChannel> *Editing::current_channels() const
 {
   if (this->current_meta_strip) {
     return &this->current_meta_strip->channels;
   }
   /* NOTE: Const correctness is non-existent with ListBase anyway. */
-  return &const_cast<ListBase &>(this->channels);
+  return &const_cast<ListBaseT<SeqTimelineChannel> &>(this->channels);
 }
 
 bool Strip::is_effect() const

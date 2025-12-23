@@ -10,7 +10,6 @@
 
 #include "BLI_math_matrix.hh"
 
-#include "DNA_defaults.h"
 #include "DNA_material_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_scene_types.h"
@@ -53,10 +52,7 @@ using bke::greasepencil::Drawing;
 static void init_data(ModifierData *md)
 {
   auto *tmd = reinterpret_cast<GreasePencilTintModifierData *>(md);
-
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(tmd, modifier));
-
-  MEMCPY_STRUCT_AFTER(tmd, DNA_struct_default_get(GreasePencilTintModifierData), modifier);
+  INIT_DEFAULT_STRUCT_AFTER(tmd, modifier);
   modifier::greasepencil::init_influence_data(&tmd->influence, true);
 
   /* Add default color ramp. */
@@ -476,10 +472,10 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
 {
   const auto *tmd = reinterpret_cast<const GreasePencilTintModifierData *>(md);
 
-  BLO_write_struct(writer, GreasePencilTintModifierData, tmd);
+  writer->write_struct(tmd);
   modifier::greasepencil::write_influence_data(writer, &tmd->influence);
   if (tmd->color_ramp) {
-    BLO_write_struct(writer, ColorBand, tmd->color_ramp);
+    writer->write_struct(tmd->color_ramp);
   }
 }
 

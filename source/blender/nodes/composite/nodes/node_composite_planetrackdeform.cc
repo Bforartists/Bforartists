@@ -11,7 +11,6 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_utf8.h"
 
-#include "DNA_defaults.h"
 #include "DNA_movieclip_types.h"
 #include "DNA_tracking_types.h"
 
@@ -104,7 +103,7 @@ static void init(const bContext *C, PointerRNA *ptr)
 {
   bNode *node = (bNode *)ptr->data;
 
-  NodePlaneTrackDeformData *data = MEM_callocN<NodePlaneTrackDeformData>(__func__);
+  NodePlaneTrackDeformData *data = MEM_new_for_free<NodePlaneTrackDeformData>(__func__);
   node->storage = data;
 
   const Scene *scene = CTX_data_scene(C);
@@ -410,7 +409,7 @@ class PlaneTrackDeformOperation : public NodeOperation {
 
   int2 get_movie_clip_size()
   {
-    MovieClipUser user = *DNA_struct_default_get(MovieClipUser);
+    MovieClipUser user = {};
     BKE_movieclip_user_set_frame(&user, context().get_frame_number());
 
     int2 size;
@@ -421,19 +420,19 @@ class PlaneTrackDeformOperation : public NodeOperation {
   int get_motion_blur_samples()
   {
     const int samples = math::clamp(
-        this->get_input("Motion Blur Samples").get_single_value_default(16), 1, 64);
+        this->get_input("Motion Blur Samples").get_single_value_default<int>(), 1, 64);
     return this->use_motion_blur() ? samples : 1;
   }
 
   float get_motion_blur_shutter()
   {
     return math::clamp(
-        this->get_input("Motion Blur Shutter").get_single_value_default(0.5f), 0.0f, 1.0f);
+        this->get_input("Motion Blur Shutter").get_single_value_default<float>(), 0.0f, 1.0f);
   }
 
   bool use_motion_blur()
   {
-    return this->get_input("Motion Blur").get_single_value_default(false);
+    return this->get_input("Motion Blur").get_single_value_default<bool>();
   }
 
   MovieClip *get_movie_clip()

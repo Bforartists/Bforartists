@@ -12,7 +12,6 @@
 
 #include "BLO_read_write.hh"
 
-#include "DNA_defaults.h"
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
@@ -41,10 +40,7 @@ static void init_data(ModifierData *md)
 {
   GreasePencilWeightAngleModifierData *gpmd =
       reinterpret_cast<GreasePencilWeightAngleModifierData *>(md);
-
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(gpmd, modifier));
-
-  MEMCPY_STRUCT_AFTER(gpmd, DNA_struct_default_get(GreasePencilWeightAngleModifierData), modifier);
+  INIT_DEFAULT_STRUCT_AFTER(gpmd, modifier);
   modifier::greasepencil::init_influence_data(&gpmd->influence, false);
 }
 
@@ -87,7 +83,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
   const GreasePencilWeightAngleModifierData *mmd =
       reinterpret_cast<const GreasePencilWeightAngleModifierData *>(md);
 
-  BLO_write_struct(writer, GreasePencilWeightAngleModifierData, mmd);
+  writer->write_struct(mmd);
   modifier::greasepencil::write_influence_data(writer, &mmd->influence);
 }
 

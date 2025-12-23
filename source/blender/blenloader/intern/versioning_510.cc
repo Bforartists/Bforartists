@@ -71,7 +71,7 @@ static void do_version_mix_node_mix_mode_compositor(bNodeTree &node_tree, bNode 
   separate_node.parent = node.parent;
   separate_node.location[0] = node.location[0] - 10.0f;
   separate_node.location[1] = node.location[1];
-  NodeCMPCombSepColor *storage = MEM_callocN<NodeCMPCombSepColor>(__func__);
+  NodeCMPCombSepColor *storage = MEM_new_for_free<NodeCMPCombSepColor>(__func__);
   storage->mode = CMP_NODE_COMBSEP_COLOR_RGB;
   separate_node.storage = storage;
 
@@ -91,7 +91,7 @@ static void do_version_mix_node_mix_mode_compositor(bNodeTree &node_tree, bNode 
   set_alpha_node.parent = node.parent;
   set_alpha_node.location[0] = node.location[0] - 10.0f;
   set_alpha_node.location[1] = node.location[1];
-  set_alpha_node.storage = MEM_callocN<NodeCMPCombSepColor>(__func__);
+  set_alpha_node.storage = MEM_new_for_free<NodeCMPCombSepColor>(__func__);
 
   bNodeSocket &set_alpha_image_input = version_node_add_socket(
       node_tree, set_alpha_node, SOCK_IN, "NodeSocketColor", "Image");
@@ -146,7 +146,7 @@ static void do_version_mix_node_mix_mode_geometry(bNodeTree &node_tree, bNode &n
   separate_alpha_node.parent = node.parent;
   separate_alpha_node.location[0] = node.location[0] - 10.0f;
   separate_alpha_node.location[1] = node.location[1];
-  NodeCombSepColor *separate_alpha_storage = MEM_callocN<NodeCombSepColor>(__func__);
+  NodeCombSepColor *separate_alpha_storage = MEM_new_for_free<NodeCombSepColor>(__func__);
   separate_alpha_storage->mode = NODE_COMBSEP_COLOR_RGB;
   separate_alpha_node.storage = separate_alpha_storage;
 
@@ -169,7 +169,7 @@ static void do_version_mix_node_mix_mode_geometry(bNodeTree &node_tree, bNode &n
   separate_color_node.parent = node.parent;
   separate_color_node.location[0] = node.location[0] - 10.0f;
   separate_color_node.location[1] = node.location[1];
-  NodeCombSepColor *separate_color_storage = MEM_callocN<NodeCombSepColor>(__func__);
+  NodeCombSepColor *separate_color_storage = MEM_new_for_free<NodeCombSepColor>(__func__);
   separate_color_storage->mode = NODE_COMBSEP_COLOR_RGB;
   separate_color_node.storage = separate_color_storage;
 
@@ -188,7 +188,7 @@ static void do_version_mix_node_mix_mode_geometry(bNodeTree &node_tree, bNode &n
   combine_color_node.parent = node.parent;
   combine_color_node.location[0] = node.location[0] - 10.0f;
   combine_color_node.location[1] = node.location[1];
-  NodeCombSepColor *combine_color_storage = MEM_callocN<NodeCombSepColor>(__func__);
+  NodeCombSepColor *combine_color_storage = MEM_new_for_free<NodeCombSepColor>(__func__);
   combine_color_storage->mode = NODE_COMBSEP_COLOR_RGB;
   combine_color_node.storage = combine_color_storage;
 
@@ -579,13 +579,23 @@ void blo_do_versions_510(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 501, 16)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      if (scene->toolsettings) {
+        scene->toolsettings->anim_mirror_object = nullptr;
+        scene->toolsettings->anim_relative_object = nullptr;
+        scene->toolsettings->anim_mirror_bone[0] = '\0';
+      }
+    }
+  }
+
   /* This has no version check and always runs for all versions because there is forward
    * compatibility code at write time that reallocates the storage, so we need to free it
    * regardless of the version. */
   FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
     if (node_tree->type == NTREE_COMPOSIT) {
       LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
-        if (node->type_legacy == CMP_NODE_R_LAYERS) {
+        if (ELEM(node->type_legacy, CMP_NODE_IMAGE, CMP_NODE_R_LAYERS)) {
           LISTBASE_FOREACH (bNodeSocket *, socket, &node->outputs) {
             if (socket->storage) {
               MEM_freeN(socket->storage);

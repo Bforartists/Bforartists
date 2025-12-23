@@ -10,7 +10,6 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_utf8.h"
 
-#include "DNA_defaults.h"
 #include "DNA_movieclip_types.h"
 #include "DNA_tracking_types.h"
 
@@ -55,7 +54,7 @@ static void node_composit_init_keyingscreen(const bContext *C, PointerRNA *ptr)
 {
   bNode *node = (bNode *)ptr->data;
 
-  NodeKeyingScreenData *data = MEM_callocN<NodeKeyingScreenData>(__func__);
+  NodeKeyingScreenData *data = MEM_new_for_free<NodeKeyingScreenData>(__func__);
   node->storage = data;
 
   const Scene *scene = CTX_data_scene(C);
@@ -142,7 +141,7 @@ class KeyingScreenOperation : public NodeOperation {
       return int2(1);
     }
 
-    MovieClipUser movie_clip_user = *DNA_struct_default_get(MovieClipUser);
+    MovieClipUser movie_clip_user = {};
     const int scene_frame = context().get_frame_number();
     const int clip_frame = BKE_movieclip_remap_scene_to_clip_frame(movie_clip, scene_frame);
     BKE_movieclip_user_set_frame(&movie_clip_user, clip_frame);
@@ -160,7 +159,7 @@ class KeyingScreenOperation : public NodeOperation {
     return math::interpolate(
         0.15f,
         1.0f,
-        math::clamp(this->get_input("Smoothness").get_single_value_default(0.0f), 0.0f, 1.0f));
+        math::clamp(this->get_input("Smoothness").get_single_value_default<float>(), 0.0f, 1.0f));
   }
 
   MovieClip *get_movie_clip()

@@ -71,7 +71,7 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
   ARegion *region;
   SpaceSeq *sseq;
 
-  sseq = MEM_callocN<SpaceSeq>("initsequencer");
+  sseq = MEM_new_for_free<SpaceSeq>("initsequencer");
   sseq->runtime = MEM_new<SpaceSeq_Runtime>(__func__);
   sseq->spacetype = SPACE_SEQ;
   sseq->chanshown = 0;
@@ -1119,7 +1119,7 @@ static void sequencer_space_blend_read_data(BlendDataReader * /*reader*/, SpaceL
 
 static void sequencer_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceSeq, sl);
+  writer->write_struct_cast<SpaceSeq>(sl);
 }
 
 void ED_spacetype_sequencer()

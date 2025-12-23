@@ -16,7 +16,6 @@
 #include "BLI_span.hh"
 #include "BLI_virtual_array.hh"
 
-#include "DNA_defaults.h"
 #include "DNA_modifier_types.h"
 #include "DNA_scene_types.h"
 
@@ -55,10 +54,7 @@ namespace blender {
 static void init_data(ModifierData *md)
 {
   auto *omd = reinterpret_cast<GreasePencilOutlineModifierData *>(md);
-
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(omd, modifier));
-
-  MEMCPY_STRUCT_AFTER(omd, DNA_struct_default_get(GreasePencilOutlineModifierData), modifier);
+  INIT_DEFAULT_STRUCT_AFTER(omd, modifier);
   modifier::greasepencil::init_influence_data(&omd->influence, false);
 }
 
@@ -309,7 +305,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
 {
   const auto *omd = reinterpret_cast<const GreasePencilOutlineModifierData *>(md);
 
-  BLO_write_struct(writer, GreasePencilOutlineModifierData, omd);
+  writer->write_struct(omd);
   modifier::greasepencil::write_influence_data(writer, &omd->influence);
 }
 

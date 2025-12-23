@@ -110,7 +110,7 @@ AnimData *BKE_animdata_ensure_id(ID *id)
       AnimData *adt;
 
       /* add animdata */
-      adt = iat->adt = MEM_callocN<AnimData>("AnimData");
+      adt = iat->adt = MEM_new_for_free<AnimData>("AnimData");
 
       /* set default settings */
       adt->act_influence = 1.0f;
@@ -1415,7 +1415,7 @@ void BKE_animdata_blend_write(BlendWriter *writer, ID *id)
   }
 
   /* firstly, just write the AnimData block */
-  BLO_write_struct(writer, AnimData, adt);
+  writer->write_struct(adt);
 
   /* write drivers */
   BKE_fcurve_blend_write_listbase(writer, &adt->drivers);
@@ -1424,7 +1424,7 @@ void BKE_animdata_blend_write(BlendWriter *writer, ID *id)
   /* FIXME: are these needed? */
   LISTBASE_FOREACH (AnimOverride *, aor, &adt->overrides) {
     /* overrides consist of base data + rna_path */
-    BLO_write_struct(writer, AnimOverride, aor);
+    writer->write_struct(aor);
     BLO_write_string(writer, aor->rna_path);
   }
 

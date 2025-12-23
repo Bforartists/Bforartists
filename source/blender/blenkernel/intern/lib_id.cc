@@ -18,6 +18,7 @@
 
 #include "CLG_log.h"
 
+#include "DNA_defs.h"
 #include "MEM_guardedalloc.h"
 
 /* all types are needed here, in order to do memory operations */
@@ -1570,7 +1571,7 @@ void BKE_libblock_copy_in_lib(Main *bmain,
     /* `new_id_p` already contains pointer to allocated memory.
      * Clear and initialize it similar to BKE_libblock_alloc_in_lib. */
     const size_t size = BKE_libblock_get_alloc_info(GS(id->name), nullptr);
-    memset(new_id, 0, size);
+    memset((void *)new_id, 0, size);
     BKE_libblock_runtime_ensure(*new_id);
     STRNCPY(new_id->name, id->name);
     new_id->us = 0;
@@ -2631,7 +2632,7 @@ void BKE_id_blend_write(BlendWriter *writer, ID *id)
   }
 
   if (id->library_weak_reference != nullptr) {
-    BLO_write_struct(writer, LibraryWeakReference, id->library_weak_reference);
+    writer->write_struct(id->library_weak_reference);
   }
 
   /* ID_WM's id->properties are considered runtime only, and never written in .blend file. */
@@ -2647,7 +2648,7 @@ void BKE_id_blend_write(BlendWriter *writer, ID *id)
   BKE_animdata_blend_write(writer, id);
 
   if (id->override_library) {
-    BLO_write_struct(writer, IDOverrideLibrary, id->override_library);
+    writer->write_struct(id->override_library);
 
     BLO_write_struct_list(writer, IDOverrideLibraryProperty, &id->override_library->properties);
     LISTBASE_FOREACH (IDOverrideLibraryProperty *, op, &id->override_library->properties) {

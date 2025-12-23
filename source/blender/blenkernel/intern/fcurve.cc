@@ -18,6 +18,7 @@
 
 #include "DNA_action_types.h"
 #include "DNA_anim_types.h"
+#include "DNA_curve_types.h"
 
 #include "BLI_easing.h"
 #include "BLI_ghash.h"
@@ -62,7 +63,7 @@ static CLG_LogRef LOG = {"anim.fcurve"};
 
 FCurve *BKE_fcurve_create()
 {
-  FCurve *fcu = MEM_callocN<FCurve>(__func__);
+  FCurve *fcu = MEM_new_for_free<FCurve>(__func__);
   return fcu;
 }
 
@@ -981,8 +982,7 @@ void fcurve_store_samples(FCurve *fcu, void *data, int start, int end, FcuSample
 
   /* Set up sample data. */
   FPoint *new_fpt;
-  FPoint *fpt = new_fpt = MEM_calloc_arrayN<FPoint>(size_t(end) - size_t(start) + 1,
-                                                    "FPoint Samples");
+  FPoint *fpt = new_fpt = MEM_calloc_arrayN<FPoint>((end - start + 1), "FPoint Samples");
 
   /* Use the sampling callback at 1-frame intervals from start to end frames. */
   for (int cfra = start; cfra <= end; cfra++, fpt++) {
@@ -1231,6 +1231,42 @@ void BKE_fcurve_handles_recalc_ex(FCurve *fcu, eBezTriple_Flag handle_sel_flag)
   /* Do a second pass for auto handle: compute the handle to have 0 acceleration step. */
   if (fcu->auto_smoothing != FCURVE_SMOOTH_NONE) {
     BKE_nurb_handle_smooth_fcurve(fcu->bezt, fcu->totvert, cycle);
+  }
+}
+
+void BKE_fcurve_update_handle_flag_from_opposite(BezTriple &key, const HandleSide source_side)
+{
+  eBezTriple_Handle source;
+  uint8_t *target;
+  switch (source_side) {
+    case HandleSide::LEFT: {
+      source = eBezTriple_Handle(key.h1);
+      target = &key.h2;
+      break;
+    }
+    case HandleSide::RIGHT: {
+      source = eBezTriple_Handle(key.h2);
+      target = &key.h1;
+      break;
+    }
+  }
+
+  switch (source) {
+    /* Need to ensure that both sides are the same. */
+    case HD_AUTO:
+    case HD_ALIGN:
+    case HD_AUTO_ANIM:
+    case HD_ALIGN_DOUBLESIDE:
+      *target = source;
+      break;
+
+    case HD_FREE:
+    case HD_VECT:
+      /* If the source was set to either of those, the handle has to be either free or vector. */
+      if (!ELEM(*target, HD_FREE, HD_VECT)) {
+        *target = HD_FREE;
+      }
+      break;
   }
 }
 
@@ -1613,7 +1649,7 @@ void BKE_fcurve_bezt_resize(FCurve *fcu, const int new_totvert)
    * of the fields will actually be updated by the caller. */
   const int old_totvert = fcu->totvert;
   if (new_totvert > old_totvert) {
-    memset(&fcu->bezt[old_totvert], 0, sizeof(fcu->bezt[0]) * (new_totvert - old_totvert));
+    std::fill_n(fcu->bezt + old_totvert, new_totvert - old_totvert, BezTriple{});
   }
 
   fcu->totvert = new_totvert;
@@ -2459,7 +2495,7 @@ void BKE_fmodifiers_blend_write(BlendWriter *writer, ListBase *fmodifiers)
     /* Write the specific data */
     if (fmi && fcm->data) {
       /* firstly, just write the plain fmi->data struct */
-      BLO_write_struct_by_name(writer, fmi->struct_name, fcm->data);
+      writer->write_struct_by_name(fmi->struct_name, fcm->data);
 
       /* do any modifier specific stuff */
       switch (fcm->type) {
@@ -2545,7 +2581,7 @@ void BKE_fcurve_blend_write_data(BlendWriter *writer, FCurve *fcu)
   if (fcu->driver) {
     ChannelDriver *driver = fcu->driver;
 
-    BLO_write_struct(writer, ChannelDriver, driver);
+    writer->write_struct(driver);
 
     /* variables */
     BLO_write_struct_list(writer, DriverVar, &driver->variables);

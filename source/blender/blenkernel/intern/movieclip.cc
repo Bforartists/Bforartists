@@ -24,7 +24,6 @@
 /* Allow using deprecated functionality for .blend file I/O. */
 #define DNA_DEPRECATED_ALLOW
 
-#include "DNA_defaults.h"
 #include "DNA_gpencil_legacy_types.h"
 
 #include "DNA_movieclip_types.h"
@@ -87,9 +86,7 @@ static void movie_clip_runtime_reset(MovieClip *clip)
 static void movie_clip_init_data(ID *id)
 {
   MovieClip *movie_clip = (MovieClip *)id;
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(movie_clip, id));
-
-  MEMCPY_STRUCT_AFTER(movie_clip, DNA_struct_default_get(MovieClip), id);
+  INIT_DEFAULT_STRUCT_AFTER(movie_clip, id);
 
   BKE_tracking_settings_init(&movie_clip->tracking);
   BKE_color_managed_colorspace_settings_init(&movie_clip->colorspace_settings);
@@ -171,7 +168,7 @@ static void write_movieTracks(BlendWriter *writer, ListBase *tracks)
 
   track = static_cast<MovieTrackingTrack *>(tracks->first);
   while (track) {
-    BLO_write_struct(writer, MovieTrackingTrack, track);
+    writer->write_struct(track);
 
     if (track->markers) {
       BLO_write_struct_array(writer, MovieTrackingMarker, track->markersnr, track->markers);
@@ -184,7 +181,7 @@ static void write_movieTracks(BlendWriter *writer, ListBase *tracks)
 static void write_moviePlaneTracks(BlendWriter *writer, ListBase *plane_tracks_base)
 {
   LISTBASE_FOREACH (MovieTrackingPlaneTrack *, plane_track, plane_tracks_base) {
-    BLO_write_struct(writer, MovieTrackingPlaneTrack, plane_track);
+    writer->write_struct(plane_track);
 
     BLO_write_pointer_array(writer, plane_track->point_tracksnr, plane_track->point_tracks);
     BLO_write_struct_array(
@@ -216,7 +213,7 @@ static void movieclip_blend_write(BlendWriter *writer, ID *id, const void *id_ad
   BKE_id_blend_write(writer, &clip->id);
 
   LISTBASE_FOREACH (MovieTrackingObject *, object, &tracking->objects) {
-    BLO_write_struct(writer, MovieTrackingObject, object);
+    writer->write_struct(object);
     write_movieTracks(writer, &object->tracks);
     write_moviePlaneTracks(writer, &object->plane_tracks);
     write_movieReconstruction(writer, &object->reconstruction);
@@ -922,7 +919,7 @@ static MovieClip *movieclip_alloc(Main *bmain, const char *name)
 static void movieclip_load_get_size(MovieClip *clip)
 {
   int width, height;
-  MovieClipUser user = *DNA_struct_default_get(MovieClipUser);
+  MovieClipUser user = {};
 
   user.framenr = BKE_movieclip_remap_clip_to_scene_frame(clip, 1);
   BKE_movieclip_get_size(clip, &user, &width, &height);
@@ -2013,7 +2010,7 @@ static blender::gpu::Texture **movieclip_get_gputexture_ptr(MovieClip *clip,
 
   /* If not, allocate a new one. */
   if (tex == nullptr) {
-    tex = MEM_mallocN<MovieClip_RuntimeGPUTexture>(__func__);
+    tex = MEM_new_for_free<MovieClip_RuntimeGPUTexture>(__func__);
 
     for (int i = 0; i < TEXTARGET_COUNT; i++) {
       tex->gputexture[i] = nullptr;

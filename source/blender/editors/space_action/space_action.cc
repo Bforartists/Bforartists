@@ -59,7 +59,7 @@ static SpaceLink *action_create(const ScrArea *area, const Scene *scene)
   SpaceAction *saction;
   ARegion *region;
 
-  saction = MEM_callocN<SpaceAction>("initaction");
+  saction = MEM_new_for_free<SpaceAction>("initaction");
   saction->spacetype = SPACE_ACTION;
 
   const eAnimEdit_Context desired_mode = area ? eAnimEdit_Context(area->butspacetype_subtype) :
@@ -951,7 +951,7 @@ static void action_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink
 
 static void action_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceAction, sl);
+  writer->write_struct_cast<SpaceAction>(sl);
 }
 
 void ED_spacetype_action()

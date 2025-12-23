@@ -166,7 +166,7 @@ bMotionPath *animviz_verify_motionpaths(ReportList *reports,
     animviz_free_motionpath_cache(mpath);
   }
   else {
-    mpath = MEM_callocN<bMotionPath>("bMotionPath");
+    mpath = MEM_new_for_free<bMotionPath>("bMotionPath");
     *dst = mpath;
   }
 
@@ -202,7 +202,7 @@ bMotionPath *animviz_verify_motionpaths(ReportList *reports,
   mpath->flag |= MOTIONPATH_FLAG_LINES;
 
   /* Allocate a cache. */
-  mpath->points = MEM_calloc_arrayN<bMotionPathVert>(mpath->length, "bMotionPathVerts");
+  mpath->points = MEM_new_array_for_free<bMotionPathVert>(mpath->length, "bMotionPathVerts");
 
   /* Tag viz settings as currently having some path(s) which use it. */
   avs->path_bakeflag |= MOTIONPATH_BAKE_HAS_PATHS;
@@ -218,7 +218,7 @@ void animviz_motionpath_blend_write(BlendWriter *writer, bMotionPath *mpath)
   }
 
   /* firstly, just write the motionpath struct */
-  BLO_write_struct(writer, bMotionPath, mpath);
+  writer->write_struct(mpath);
 
   /* now write the array of data */
   BLO_write_struct_array(writer, bMotionPathVert, mpath->length, mpath->points);

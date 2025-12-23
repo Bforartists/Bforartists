@@ -176,12 +176,12 @@ static void ntree_copy_data(Main * /*bmain*/,
 
   /* copy links */
   BLI_listbase_clear(&ntree_dst->links);
-  LISTBASE_FOREACH (const bNodeLink *, src_link, &ntree_src->links) {
-    bNodeLink *dst_link = static_cast<bNodeLink *>(MEM_dupallocN(src_link));
-    dst_link->fromnode = dst_runtime.nodes_by_id.lookup_key_as(src_link->fromnode->identifier);
-    dst_link->fromsock = socket_map.lookup(src_link->fromsock);
-    dst_link->tonode = dst_runtime.nodes_by_id.lookup_key_as(src_link->tonode->identifier);
-    dst_link->tosock = socket_map.lookup(src_link->tosock);
+  for (const bNodeLink &src_link : ntree_src->links) {
+    bNodeLink *dst_link = static_cast<bNodeLink *>(MEM_dupallocN(&src_link));
+    dst_link->fromnode = dst_runtime.nodes_by_id.lookup_key_as(src_link.fromnode->identifier);
+    dst_link->fromsock = socket_map.lookup(src_link.fromsock);
+    dst_link->tonode = dst_runtime.nodes_by_id.lookup_key_as(src_link.tonode->identifier);
+    dst_link->tosock = socket_map.lookup(src_link.tosock);
     BLI_assert(dst_link->tosock);
     dst_link->tosock->link = dst_link;
     BLI_addtail(&ntree_dst->links, dst_link);
@@ -233,14 +233,14 @@ static void ntree_copy_data(Main * /*bmain*/,
   }
 
   if (ntree_src->geometry_node_asset_traits) {
-    ntree_dst->geometry_node_asset_traits = MEM_dupallocN<GeometryNodeAssetTraits>(
+    ntree_dst->geometry_node_asset_traits = MEM_new_for_free<GeometryNodeAssetTraits>(
         __func__, *ntree_src->geometry_node_asset_traits);
     ntree_dst->geometry_node_asset_traits->node_tool_idname = BLI_strdup_null(
         ntree_src->geometry_node_asset_traits->node_tool_idname);
   }
 
   if (ntree_src->nested_node_refs) {
-    ntree_dst->nested_node_refs = MEM_malloc_arrayN<bNestedNodeRef>(
+    ntree_dst->nested_node_refs = MEM_new_array_for_free<bNestedNodeRef>(
         size_t(ntree_src->nested_node_refs_num), __func__);
     uninitialized_copy_n(
         ntree_src->nested_node_refs, ntree_src->nested_node_refs_num, ntree_dst->nested_node_refs);
@@ -399,11 +399,11 @@ void node_node_foreach_id(bNode *node, LibraryForeachIDData *data)
       IDP_foreach_property(node->system_properties, IDP_TYPE_FILTER_ID, [&](IDProperty *prop) {
         BKE_lib_query_idpropertiesForeachIDLink_callback(prop, data);
       }));
-  LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
-    BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(data, library_foreach_node_socket(sock, data));
+  for (bNodeSocket &sock : node->inputs) {
+    BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(data, library_foreach_node_socket(&sock, data));
   }
-  LISTBASE_FOREACH (bNodeSocket *, sock, &node->outputs) {
-    BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(data, library_foreach_node_socket(sock, data));
+  for (bNodeSocket &sock : node->outputs) {
+    BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(data, library_foreach_node_socket(&sock, data));
   }
 
   /* Note that this ID pointer is only a cache, it may be outdated. */
@@ -997,9 +997,9 @@ static void write_legacy_properties(bNodeTree &ntree)
  * calling free_legacy_socket_storage. */
 static void initialize_legacy_socket_storage(bNode &node)
 {
-  if (node.type_legacy == CMP_NODE_R_LAYERS) {
+  if (ELEM(node.type_legacy, CMP_NODE_R_LAYERS, CMP_NODE_IMAGE)) {
     LISTBASE_FOREACH (bNodeSocket *, output, &node.outputs) {
-      NodeImageLayer *storage = MEM_callocN<NodeImageLayer>(__func__);
+      NodeImageLayer *storage = MEM_new_for_free<NodeImageLayer>(__func__);
       output->storage = storage;
       /* Alpha is derived from the combined pass. */
       if (STREQ(output->identifier, "Alpha")) {
@@ -1011,10 +1011,11 @@ static void initialize_legacy_socket_storage(bNode &node)
     }
   }
 }
+
 /* See initialize_legacy_socket_storage. */
 static void free_legacy_socket_storage(bNode &node)
 {
-  if (node.type_legacy == CMP_NODE_R_LAYERS) {
+  if (ELEM(node.type_legacy, CMP_NODE_R_LAYERS, CMP_NODE_IMAGE)) {
     LISTBASE_FOREACH (bNodeSocket *, output, &node.outputs) {
       MEM_freeN(output->storage);
       output->storage = nullptr;
@@ -1032,58 +1033,58 @@ static void write_node_socket_default_value(BlendWriter *writer, const bNodeSock
 
   switch (eNodeSocketDatatype(sock->type)) {
     case SOCK_FLOAT:
-      BLO_write_struct(writer, bNodeSocketValueFloat, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueFloat>(sock->default_value);
       break;
     case SOCK_VECTOR:
-      BLO_write_struct(writer, bNodeSocketValueVector, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueVector>(sock->default_value);
       break;
     case SOCK_RGBA:
-      BLO_write_struct(writer, bNodeSocketValueRGBA, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueRGBA>(sock->default_value);
       break;
     case SOCK_BOOLEAN:
-      BLO_write_struct(writer, bNodeSocketValueBoolean, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueBoolean>(sock->default_value);
       break;
     case SOCK_INT:
-      BLO_write_struct(writer, bNodeSocketValueInt, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueInt>(sock->default_value);
       break;
     case SOCK_STRING:
-      BLO_write_struct(writer, bNodeSocketValueString, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueString>(sock->default_value);
       break;
     case SOCK_OBJECT:
-      BLO_write_struct(writer, bNodeSocketValueObject, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueObject>(sock->default_value);
       break;
     case SOCK_IMAGE:
-      BLO_write_struct(writer, bNodeSocketValueImage, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueImage>(sock->default_value);
       break;
     case SOCK_COLLECTION:
-      BLO_write_struct(writer, bNodeSocketValueCollection, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueCollection>(sock->default_value);
       break;
     case SOCK_TEXTURE:
-      BLO_write_struct(writer, bNodeSocketValueTexture, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueTexture>(sock->default_value);
       break;
     case SOCK_MATERIAL:
-      BLO_write_struct(writer, bNodeSocketValueMaterial, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueMaterial>(sock->default_value);
       break;
     case SOCK_FONT:
-      BLO_write_struct(writer, bNodeSocketValueFont, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueFont>(sock->default_value);
       break;
     case SOCK_SCENE:
-      BLO_write_struct(writer, bNodeSocketValueScene, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueScene>(sock->default_value);
       break;
     case SOCK_TEXT_ID:
-      BLO_write_struct(writer, bNodeSocketValueText, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueText>(sock->default_value);
       break;
     case SOCK_MASK:
-      BLO_write_struct(writer, bNodeSocketValueMask, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueMask>(sock->default_value);
       break;
     case SOCK_SOUND:
-      BLO_write_struct(writer, bNodeSocketValueSound, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueSound>(sock->default_value);
       break;
     case SOCK_ROTATION:
-      BLO_write_struct(writer, bNodeSocketValueRotation, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueRotation>(sock->default_value);
       break;
     case SOCK_MENU:
-      BLO_write_struct(writer, bNodeSocketValueMenu, sock->default_value);
+      writer->write_struct_cast<bNodeSocketValueMenu>(sock->default_value);
       break;
     case SOCK_MATRIX:
       /* Matrix sockets currently have no default value. */
@@ -1102,7 +1103,7 @@ static void write_node_socket_default_value(BlendWriter *writer, const bNodeSock
 
 static void write_node_socket(BlendWriter *writer, const bNodeSocket *sock)
 {
-  BLO_write_struct(writer, bNodeSocket, sock);
+  writer->write_struct(sock);
 
   if (sock->prop) {
     IDP_BlendWrite(writer, sock->prop);
@@ -1176,7 +1177,7 @@ static void node_blend_write_storage(BlendWriter *writer, bNodeTree *ntree, bNod
 
   const bNodeType *ntype = node->typeinfo;
   if (!ntype->storagename.empty()) {
-    BLO_write_struct_by_name(writer, ntype->storagename.c_str(), node->storage);
+    writer->write_struct_by_name(ntype->storagename.c_str(), node->storage);
   }
   if (ntype->blend_write_storage_content) {
     ntype->blend_write_storage_content(*ntree, *node, *writer);
@@ -1211,7 +1212,7 @@ static void node_blend_write_storage(BlendWriter *writer, bNodeTree *ntree, bNod
     NodeCryptomatte *nc = static_cast<NodeCryptomatte *>(node->storage);
     BLO_write_string(writer, nc->matte_id);
     LISTBASE_FOREACH (CryptomatteEntry *, entry, &nc->entries) {
-      BLO_write_struct(writer, CryptomatteEntry, entry);
+      writer->write_struct(entry);
     }
   }
 }
@@ -1235,7 +1236,7 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
       node->custom1 = data->parametrization;
     }
 
-    BLO_write_struct(writer, bNode, node);
+    writer->write_struct(node);
 
     if (node->prop) {
       IDP_BlendWrite(writer, node->prop);
@@ -1248,11 +1249,11 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
       forward_compat::initialize_legacy_socket_storage(*node);
     }
 
-    LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
-      write_node_socket(writer, sock);
+    for (bNodeSocket &sock : node->inputs) {
+      write_node_socket(writer, &sock);
     }
-    LISTBASE_FOREACH (bNodeSocket *, sock, &node->outputs) {
-      write_node_socket(writer, sock);
+    for (bNodeSocket &sock : node->outputs) {
+      write_node_socket(writer, &sock);
     }
     BLO_write_struct_array(
         writer, bNodePanelState, node->num_panel_states, node->panel_states_array);
@@ -1264,18 +1265,18 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
     if (ELEM(node->type_legacy, CMP_NODE_IMAGE, CMP_NODE_R_LAYERS)) {
       /* Write extra socket info. */
       LISTBASE_FOREACH (bNodeSocket *, sock, &node->outputs) {
-        BLO_write_struct(writer, NodeImageLayer, sock->storage);
+        writer->write_struct_cast<NodeImageLayer>(sock->storage);
       }
     }
   }
 
-  LISTBASE_FOREACH (bNodeLink *, link, &ntree->links) {
-    BLO_write_struct(writer, bNodeLink, link);
+  for (const bNodeLink &link : ntree->links) {
+    writer->write_struct(&link);
   }
 
   ntree->tree_interface.write(writer);
 
-  BLO_write_struct(writer, GeometryNodeAssetTraits, ntree->geometry_node_asset_traits);
+  writer->write_struct(ntree->geometry_node_asset_traits);
   if (ntree->geometry_node_asset_traits) {
     BLO_write_string(writer, ntree->geometry_node_asset_traits->node_tool_idname);
   }
@@ -1462,7 +1463,7 @@ static void direct_link_node_socket_legacy_data_version_do(
   BLI_assert(MEM_allocN_len(*raw_data) >= sizeof(T_404));
   T_404 *orig_data = static_cast<T_404 *>(*raw_data);
   *raw_data = nullptr;
-  T *final_data = MEM_callocN<T>(__func__);
+  T *final_data = MEM_new_for_free<T>(__func__);
   /* Could use `memcpy` here, since we also require historic members of these DNA structs to
    * never be moved or re-ordered. But better be verbose and explicit here. */
   copy_fn(*final_data, *orig_data);
@@ -2748,7 +2749,7 @@ static bNodeSocket *make_socket(bNodeTree *ntree,
       auto_identifier,
       sizeof(auto_identifier));
 
-  bNodeSocket *sock = MEM_callocN<bNodeSocket>(__func__);
+  bNodeSocket *sock = MEM_new_for_free<bNodeSocket>(__func__);
   sock->runtime = MEM_new<bNodeSocketRuntime>(__func__);
   sock->in_out = in_out;
 
@@ -3706,7 +3707,7 @@ bNode *node_add_node(const bContext *C,
                      const StringRef idname,
                      std::optional<int> unique_identifier)
 {
-  bNode *node = MEM_callocN<bNode>(__func__);
+  bNode *node = MEM_new_for_free<bNode>(__func__);
   node->runtime = MEM_new<bNodeRuntime>(__func__);
   BLI_addtail(&ntree.nodes, node);
   if (unique_identifier) {
@@ -3785,8 +3786,7 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
                               Map<const bNodeSocket *, bNodeSocket *> &socket_map,
                               const bool allow_duplicate_names)
 {
-  bNode *node_dst = MEM_mallocN<bNode>(__func__);
-  *node_dst = node_src;
+  bNode *node_dst = MEM_new_for_free<bNode>(__func__, node_src);
   node_dst->runtime = MEM_new<bNodeRuntime>(__func__);
   if (dst_unique_name) {
     BLI_assert(dst_unique_name->size() < sizeof(node_dst->name));
@@ -4058,7 +4058,7 @@ bNodeLink &node_add_link(
   bNodeLink *link = nullptr;
   if (eNodeSocketInOut(fromsock.in_out) == SOCK_OUT && eNodeSocketInOut(tosock.in_out) == SOCK_IN)
   {
-    link = MEM_callocN<bNodeLink>(__func__);
+    link = MEM_new_for_free<bNodeLink>(__func__);
     BLI_addtail(&ntree.links, link);
     link->fromnode = &fromnode;
     link->fromsock = &fromsock;
@@ -4069,7 +4069,7 @@ bNodeLink &node_add_link(
            eNodeSocketInOut(tosock.in_out) == SOCK_OUT)
   {
     /* OK but flip */
-    link = MEM_callocN<bNodeLink>(__func__);
+    link = MEM_new_for_free<bNodeLink>(__func__);
     BLI_addtail(&ntree.links, link);
     link->fromnode = &tonode;
     link->fromsock = &tosock;

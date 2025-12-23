@@ -6,7 +6,6 @@
  * \ingroup modifiers
  */
 
-#include "DNA_defaults.h"
 #include "DNA_material_types.h"
 #include "DNA_modifier_types.h"
 
@@ -46,10 +45,7 @@ using bke::greasepencil::Drawing;
 static void init_data(ModifierData *md)
 {
   auto *cmd = reinterpret_cast<GreasePencilColorModifierData *>(md);
-
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(cmd, modifier));
-
-  MEMCPY_STRUCT_AFTER(cmd, DNA_struct_default_get(GreasePencilColorModifierData), modifier);
+  INIT_DEFAULT_STRUCT_AFTER(cmd, modifier);
   modifier::greasepencil::init_influence_data(&cmd->influence, true);
 }
 
@@ -237,7 +233,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
 {
   const auto *cmd = reinterpret_cast<const GreasePencilColorModifierData *>(md);
 
-  BLO_write_struct(writer, GreasePencilColorModifierData, cmd);
+  writer->write_struct<GreasePencilColorModifierData>(cmd);
   modifier::greasepencil::write_influence_data(writer, &cmd->influence);
 }
 

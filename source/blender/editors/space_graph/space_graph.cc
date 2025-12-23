@@ -61,11 +61,11 @@ static SpaceLink *graph_create(const ScrArea * /*area*/, const Scene *scene)
   SpaceGraph *sipo;
 
   /* Graph Editor - general stuff */
-  sipo = MEM_callocN<SpaceGraph>("init graphedit");
+  sipo = MEM_new_for_free<SpaceGraph>("init graphedit");
   sipo->spacetype = SPACE_GRAPH;
 
   /* allocate DopeSheet data for Graph Editor */
-  sipo->ads = MEM_callocN<bDopeSheet>("GraphEdit DopeSheet");
+  sipo->ads = MEM_new_for_free<bDopeSheet>("GraphEdit DopeSheet");
   sipo->ads->source = (ID *)scene;
 
   /* settings for making it easier by default to just see what you're interested in tweaking */
@@ -153,7 +153,7 @@ static void graph_init(wmWindowManager *wm, ScrArea *area)
   /* Init dope-sheet if non-existent (i.e. for old files). */
   if (sipo->ads == nullptr) {
     wmWindow *win = WM_window_find_by_area(wm, area);
-    sipo->ads = MEM_callocN<bDopeSheet>("GraphEdit DopeSheet");
+    sipo->ads = MEM_new_for_free<bDopeSheet>("GraphEdit DopeSheet");
     sipo->ads->source = win ? (ID *)WM_window_get_active_scene(win) : nullptr;
   }
 
@@ -923,14 +923,14 @@ static void graph_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 static void graph_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   SpaceGraph *sipo = (SpaceGraph *)sl;
-  ListBase tmpGhosts = sipo->runtime.ghost_curves;
+  ListBaseT<FCurve> tmpGhosts = sipo->runtime.ghost_curves;
 
   /* temporarily disable ghost curves when saving */
   BLI_listbase_clear(&sipo->runtime.ghost_curves);
 
-  BLO_write_struct(writer, SpaceGraph, sl);
+  writer->write_struct_cast<SpaceGraph>(sl);
   if (sipo->ads) {
-    BLO_write_struct(writer, bDopeSheet, sipo->ads);
+    writer->write_struct(sipo->ads);
   }
 
   /* Re-enable ghost curves. */

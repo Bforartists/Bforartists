@@ -64,7 +64,7 @@ static SpaceLink *buttons_create(const ScrArea * /*area*/, const Scene * /*scene
   ARegion *region;
   SpaceProperties *sbuts;
 
-  sbuts = MEM_callocN<SpaceProperties>("initbuts");
+  sbuts = MEM_new_for_free<SpaceProperties>("initbuts");
 
   sbuts->runtime = MEM_new<SpaceProperties_Runtime>(__func__);
   sbuts->runtime->search_string[0] = '\0';
@@ -1080,7 +1080,7 @@ static void buttons_space_blend_read_after_liblink(BlendLibReader * /*reader*/,
 
 static void buttons_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceProperties, sl);
+  writer->write_struct_cast<SpaceProperties>(sl);
 }
 
 /** \} */

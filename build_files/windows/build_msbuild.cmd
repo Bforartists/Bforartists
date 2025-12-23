@@ -1,7 +1,7 @@
 if "%NOBUILD%"=="1" goto EOF
 echo %TIME% > %BUILD_DIR%\buildtime.txt
 msbuild ^
-	%BUILD_DIR%\Bforartists.sln ^
+	%BUILD_DIR%\Bforartists.%VS_SLN_EXT% ^
 	/target:build ^
 	/property:Configuration=%BUILD_TYPE% ^
 	/maxcpucount:2 ^

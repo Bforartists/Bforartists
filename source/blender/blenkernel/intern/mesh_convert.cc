@@ -477,7 +477,7 @@ void BKE_mesh_to_curve_nurblist(const Mesh *mesh, ListBase *nurblist, const int 
         VertLink *vl;
 
         /* create new 'nurb' within the curve */
-        nu = MEM_callocN<Nurb>(__func__);
+        nu = MEM_new_for_free<Nurb>(__func__);
 
         nu->pntsu = faces_num;
         nu->pntsv = 1;
@@ -516,7 +516,7 @@ void BKE_mesh_to_curve(Main *bmain, Depsgraph *depsgraph, Scene * /*scene*/, Obj
     return;
   }
 
-  ListBase nurblist = {nullptr, nullptr};
+  ListBaseT<Nurb> nurblist = {nullptr, nullptr};
 
   BKE_mesh_to_curve_nurblist(mesh_eval, &nurblist, 0);
   BKE_mesh_to_curve_nurblist(mesh_eval, &nurblist, 1);

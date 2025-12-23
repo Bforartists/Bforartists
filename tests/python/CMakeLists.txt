@@ -215,6 +215,11 @@ add_blender_test(
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_http_downloader.py
 )
 
+add_blender_test(
+  script_disk_file_hash_service_test
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_disk_file_hash_service_test.py
+)
+
 # test running operators doesn't segfault under various conditions
 if(WITH_TESTS_EXPERIMENTAL)
   add_blender_test(
@@ -893,7 +898,7 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
       endforeach()
     endif()
 
-    if(WITH_VULKAN_BACKEND AND WITH_GPU_RENDER_TESTS_VULKAN)
+    if(WITH_VULKAN_BACKEND)
       foreach(render_test ${gpu_render_tests})
         add_render_test(
           workbench_vulkan_${render_test}
@@ -930,7 +935,7 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
         )
       endif()
 
-      if(WITH_VULKAN_BACKEND AND WITH_GPU_RENDER_TESTS_VULKAN)
+      if(WITH_VULKAN_BACKEND)
         add_render_test(
           overlay_vulkan
           ${CMAKE_CURRENT_LIST_DIR}/overlay_render_tests.py
@@ -1071,7 +1076,7 @@ if(WITH_GPU_COMPOSITOR_TESTS AND TEST_SRC_DIR_EXISTS)
       --device "GPU"
     )
   endif()
-  if(WITH_VULKAN_BACKEND)
+  if(WITH_VULKAN_BACKEND AND WITH_GPU_RENDER_TESTS_VULKAN)
     foreach(comp_test ${compositor_tests})
       add_render_test(
         compositor_vulkan_${comp_test}

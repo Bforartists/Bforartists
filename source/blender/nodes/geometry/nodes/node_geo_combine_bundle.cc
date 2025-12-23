@@ -53,14 +53,15 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
-  auto *storage = MEM_callocN<NodeCombineBundle>(__func__);
+  auto *storage = MEM_new_for_free<NodeCombineBundle>(__func__);
   node->storage = storage;
 }
 
 static void node_copy_storage(bNodeTree * /*dst_tree*/, bNode *dst_node, const bNode *src_node)
 {
   const NodeCombineBundle &src_storage = node_storage(*src_node);
-  auto *dst_storage = MEM_dupallocN<NodeCombineBundle>(__func__, src_storage);
+  auto *dst_storage = MEM_new_for_free<NodeCombineBundle>(__func__,
+                                                          blender::dna::shallow_copy(src_storage));
   dst_node->storage = dst_storage;
 
   socket_items::copy_array<CombineBundleItemsAccessor>(*src_node, *dst_node);
@@ -126,8 +127,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const NodeCombineBundle &storage = node_storage(node);
 
   BundlePtr bundle_ptr = Bundle::create();
-  BLI_assert(bundle_ptr->is_mutable());
-  Bundle &bundle = const_cast<Bundle &>(*bundle_ptr);
+  Bundle &bundle = bundle_ptr.ensure_mutable_inplace();
 
   for (const int i : IndexRange(storage.items_num)) {
     const NodeCombineBundleItem &item = storage.items[i];
@@ -136,7 +136,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       continue;
     }
     const StringRef name = item.name;
-    if (name.is_empty()) {
+    if (!Bundle::is_valid_key(name)) {
       continue;
     }
     bke::SocketValueVariant value = params.extract_input<bke::SocketValueVariant>(
@@ -232,11 +232,7 @@ std::string CombineBundleItemsAccessor::validate_name(const StringRef name)
   if (name.is_empty()) {
     return result;
   }
-  /* Disallow certain characters so that we can use them to e.g. build a bundle path or
-   * expressions referencing multiple bundle items. We might not need all of them in the future,
-   * but better reserve them now while we still can. */
-  constexpr StringRefNull forbidden_chars_str = "/*&|\"^~!,{}()+$#@[];:?<>.-%\\=";
-  const Span<char> forbidden_chars = forbidden_chars_str;
+  const Span<char> forbidden_chars = Bundle::forbidden_key_chars;
   for (const char c : name) {
     if (forbidden_chars.contains(c)) {
       result += '_';
