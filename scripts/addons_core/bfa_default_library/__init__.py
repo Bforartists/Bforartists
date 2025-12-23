@@ -261,9 +261,20 @@ def unregister_library():
 
 
 def register_all_libraries():
-    """Register the central asset library."""
+    """Register the central asset library and force refresh."""
     # print("🔄 register_all_libraries() called")
     register_library()
+    
+    # Force refresh the asset browser UI
+    try:
+        bpy.ops.asset.library_refresh()
+        
+        # Force redraw of all UI areas
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                area.tag_redraw()
+    except Exception as e:
+        print(f"⚠ Could not refresh asset libraries: {e}")
 
 
 def unregister_all_libraries():
@@ -293,6 +304,33 @@ submodule_names = [
 register_submodules, unregister_submodules = register_submodule_factory(__name__, submodule_names)
 
 
+def register_all_libraries_and_refresh():
+    """Register libraries and force a refresh of the asset browser."""
+    try:
+        register_all_libraries()
+        
+        # Additional forceful refresh after timer
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                if area.type == 'FILE_BROWSER':  # Asset browser is a specialized file browser
+                    override = bpy.context.copy()
+                    override['window'] = window
+                    override['screen'] = window.screen
+                    override['area'] = area
+                    try:
+                        bpy.ops.asset.library_refresh(override)
+                    except:
+                        pass
+                    
+                # Force redraw all UI elements
+                area.tag_redraw()
+                
+        print("✓ Timer-based library registration and refresh complete")
+        return None  # Don't repeat the timer
+    except Exception as e:
+        print(f"⚠ Timer-based library registration failed: {e}")
+        return None  # Don't repeat the timer
+
 def register():
     """Register the complete addon"""
     # print("=== BFA Default Library Addon Registration Started ===")
@@ -304,20 +342,24 @@ def register():
     # Register all submodules
     register_submodules()
 
-    # Register asset libraries - try immediate registration first
-    # Use load_post handler for reliable library registration
+    # Register asset libraries - try with multiple approaches for reliability
+    
+    # 1. Use load_post handler for reliable library registration
     # This ensures registration happens after Blender is fully loaded
     bpy.app.handlers.load_post.append(delayed_library_registration)
     # print("✓ Load post handler registered for delayed library setup")
 
-    # Also try immediate registration in case we're already loaded
+    # 2. Try immediate registration in case we're already loaded
     try:
         register_all_libraries()
         # print(f"✓ Immediate Default Library registration successful")
     except Exception as e:
         print(f"⚠ Immediate registration failed (normal during startup): {e}")
+        
+    # 3. Add a timer-based delayed registration as fallback (runs after 2 seconds)
+    bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=2.0)
 
-        # print("=== BFA Default Library Addon Registration Completed ===")
+    # print("=== BFA Default Library Addon Registration Completed ===")
 
 
 def delayed_library_registration(scene):
@@ -347,6 +389,13 @@ def unregister():
     except Exception as e:
         print(f"⚠ Could not remove load_post handler: {e}")
     
+    # Remove timer if it exists
+    try:
+        if bpy.app.timers.is_registered(register_all_libraries_and_refresh):
+            bpy.app.timers.unregister(register_all_libraries_and_refresh)
+    except Exception as e:
+        print(f"⚠ Could not unregister timer: {e}")
+    
     # Unregister all libraries (with error handling)
     try:
         unregister_all_libraries()
@@ -366,9 +415,10 @@ def unregister():
         except Exception as e:
             print(f"⚠ Could not unregister class {cls}: {e}")
 
-            # Unregister timer if exists
+    # Unregister any timer if exists
     try:
-        bpy.app.timers.unregister(register_all_libraries)
+        if bpy.app.timers.is_registered(register_all_libraries):
+            bpy.app.timers.unregister(register_all_libraries)
     except Exception:
         pass
 
