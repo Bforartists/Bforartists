@@ -589,12 +589,16 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
     case SOCK_MENU: {
       row.use_property_split_set(false); /*BFA - made this wide*/
       if (socket.flag & NODE_INTERFACE_SOCKET_MENU_EXPANDED) {
+        /* BFA - Add colon to property label */
+        if (!StringRef(name).is_empty()){
+          row.label(name + ":", ICON_NONE);
+        }
         /* Use a single space when the name is empty to work around a bug with expanded enums. Also
          * see #ui_item_enum_expand_exec. */
         row.prop(ctx.properties_ptr,
                  rna_path,
                  ui::ITEM_R_EXPAND,
-                 StringRef(name).is_empty() ? " " : name,
+                 " ", /* BFA - Don't use property label */
                  ICON_NONE);
       }
       else {
