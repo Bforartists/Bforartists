@@ -1581,8 +1581,8 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("GeometryNodeTool3DCursor", pad=21, poll=is_tool),
             OperatorEntry("GeometryNodeInputActiveCamera", pad=14),
-            OperatorEntry("GeometryNodeCameraInfo", pad=18),
             OperatorEntry("GeometryNodeBoneInfo", pad=22),
+            OperatorEntry("GeometryNodeCameraInfo", pad=18),
             OperatorEntry("GeometryNodeCollectionInfo", pad=14),
             OperatorEntry("GeometryNodeImageInfo", pad=21),
             OperatorEntry("GeometryNodeIsViewport", pad=20),
