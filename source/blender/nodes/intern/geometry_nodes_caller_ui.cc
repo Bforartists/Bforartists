@@ -604,7 +604,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       else {
         row.prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
       }
-      row.label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
+      row.decorator(ctx.properties_ptr, rna_path.c_str(), -1); /* BFA - Manually add keyframe decorator since layout is non-split*/
       break;
     }
     case SOCK_BOOLEAN: {
