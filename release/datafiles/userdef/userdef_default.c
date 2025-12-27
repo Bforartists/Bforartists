@@ -19,12 +19,12 @@
 #include "BLO_userdef_default.h" /* own include */
 
 /* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
-/*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI, and USER_FILENOUI to the .flag*/
 const UserDef U_default = {
     .versionfile = BLENDER_FILE_VERSION,
     .subversionfile = BLENDER_FILE_SUBVERSION,
     .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM |
-             USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES | USER_FILECOMPRESS),
+             USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES | USER_FILECOMPRESS |
+             USER_FILENOUI | USER_TOOLTIPS_PYTHON), /* BFA - add USER_FILENOUI and USER_TOOLTIPS_PYTHON*/
     /*BFA - added USER_DUP_NTREE*/    
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE | USER_DUP_FONT |
                USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_CAMERA | USER_DUP_SPEAKER |
