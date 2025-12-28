@@ -928,11 +928,11 @@ class NODES_PT_toolshelf_compositor_add_creative(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeKuwahara", pad=1),
-            OperatorEntry("CompositorNodePixelate", pad=7),
-            OperatorEntry("CompositorNodePosterize", pad=9),
+            OperatorEntry("CompositorNodeKuwahara", pad=12),
+            OperatorEntry("CompositorNodePixelate", pad=16),
+            OperatorEntry("CompositorNodePosterize", pad=13),
         )
-
+        
         self.draw_entries(context, layout, entries)
 
 
