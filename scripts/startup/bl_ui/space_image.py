@@ -2086,7 +2086,7 @@ class IMAGE_PT_overlay_uv_stretch(Panel):
             col = row.column()
         
             col.use_property_split = True
-            col.prop(uvedit, "display_stretch_type", text="")
+            col.prop(uvedit, "display_stretch_type", text="Type")
             col.prop(uvedit, "stretch_opacity", text="Opacity")
 
 
