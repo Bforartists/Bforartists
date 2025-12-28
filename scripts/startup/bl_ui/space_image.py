@@ -2124,7 +2124,7 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
 
         # Faces
         if not uvedit.show_stretch:
-            col.prop(uvedit, "show_faces", text="Faces")
+            col.prop(uvedit, "show_faces")
 
 
 class IMAGE_PT_overlay_uv_display(Panel):
@@ -2186,40 +2186,6 @@ class IMAGE_PT_overlay_image(Panel):
         row = layout.row()
         row.separator()
         row.prop(uvedit, "show_metadata")
-
-
-class IMAGE_PT_overlay_render_guides(Panel):
-    bl_space_type = "IMAGE_EDITOR"
-    bl_region_type = "HEADER"
-    bl_label = "Guides"
-    bl_parent_id = "IMAGE_PT_overlay"
-
-    @classmethod
-    def poll(cls, context):
-        sima = context.space_data
-        return (
-            (sima.mode in {"MASK", "VIEW"})
-            and (image := sima.image) is not None
-            and (image.source == "VIEWER")
-            and (image.type == "COMPOSITING")
-        )
-
-    def draw(self, context):
-        layout = self.layout
-
-        sima = context.space_data
-        overlay = sima.overlay
-
-        layout.active = overlay.show_overlays
-
-        row = layout.row(align=True)
-        layout.prop(overlay, "show_text_info")
-
-        row = layout.row(align=True)
-        row.prop(overlay, "show_render_size")
-        subrow = row.row()
-        subrow.active = overlay.show_render_size
-        subrow.prop(overlay, "passepartout_alpha", text="Passepartout")
 
 
 class IMAGE_PT_overlay_render_guides(Panel):
