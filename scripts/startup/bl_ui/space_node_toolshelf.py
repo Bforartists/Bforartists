@@ -910,6 +910,32 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
         self.draw_entries(context, layout, entries)
 
 
+class NODES_PT_toolshelf_compositor_add_creative(bpy.types.Panel, NodePanel):
+    bl_label = "Creative"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("CompositorNodeKuwahara", pad=12),
+            OperatorEntry("CompositorNodePixelate", pad=16),
+            OperatorEntry("CompositorNodePosterize", pad=13),
+        )
+        
+        self.draw_entries(context, layout, entries)
+
+
 class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
     bl_label = "Filter"
     bl_space_type = 'NODE_EDITOR'
@@ -2991,6 +3017,7 @@ classes = (
     NODES_PT_toolshelf_compositor_add_output,
     NODES_PT_toolshelf_compositor_add_color,
     NODES_PT_toolshelf_compositor_add_color_adjust,
+    NODES_PT_toolshelf_compositor_add_creative,
     NODES_PT_toolshelf_compositor_add_filter,
     NODES_PT_toolshelf_compositor_add_filter_blur,
     NODES_PT_toolshelf_compositor_add_keying,
