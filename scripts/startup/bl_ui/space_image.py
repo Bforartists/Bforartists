@@ -2030,20 +2030,17 @@ class IMAGE_PT_overlay_guides(Panel):
             row = col.row()
             row.prop(uvedit, "grid_shape_source", expand=True)
 
-            if uvedit.grid_shape_source == "FIXED":
-                col.use_property_split = True
-                col.use_property_decorate = False 
-                col.prop(
-                    uvedit, "custom_grid_subdivisions", text="Fixed grid size"
-                )  # by purpose.No text means x y is missing.
-
-            if sima.image is not None:
-                col.use_property_split = False
-                col.prop(uvedit, "show_grid_over_image")
-
             col.use_property_split = True
             col.use_property_decorate = False 
             col.prop(uvedit, "tile_grid_shape", text="Tiles")
+
+            if uvedit.grid_shape_source == "FIXED":
+                col.prop(uvedit, "custom_grid_subdivisions", text="Subdivisions")
+
+            if sima.image is not None:
+                col.separator(factor=0.5)
+                col.use_property_split = False
+                col.prop(uvedit, "show_grid_over_image")
 
 
 class IMAGE_PT_overlay_uv_stretch(Panel):
