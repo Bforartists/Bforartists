@@ -2118,7 +2118,7 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
         
         col.use_property_split = True
         col.prop(uvedit, "uv_opacity")
-        col.prop(uvedit, "edge_display_type", text="")
+        col.prop(uvedit, "edge_display_type")
         col.use_property_split = False
         col.prop(uvedit, "show_modified_edges", text="Modified Edges")
 
