@@ -1341,8 +1341,8 @@ void popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
               UI_ITEM_NONE);
     const short region_alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
     const char *but_flip_str = region_alignment == RGN_ALIGN_LEFT ?
-                                   IFACE_("Flip region to Right") :
-                                   IFACE_("Flip region to Left");
+                                   IFACE_("Flip Region to Right") :
+                                   IFACE_("Flip Region to Left");
     layout.op("SCREEN_OT_region_flip",
               but_flip_str,
               ICON_FLIP,
