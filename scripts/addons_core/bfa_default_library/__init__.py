@@ -383,11 +383,20 @@ def refresh_asset_libraries():
 def register_all_libraries_and_refresh():
     """Register libraries and force a refresh of the asset browser."""
     try:
-        # Register all libraries
+        # First, register all libraries
         register_all_libraries()
         
         # Then try to refresh with our robust method
-        refresh_asset_libraries()
+        refresh_success = refresh_asset_libraries()
+        
+        if refresh_success:
+            # print("✓ Timer-based library registration and refresh complete")
+            pass
+        else:
+            # Schedule one more refresh attempt after a short delay if needed
+            # This is the only additional attempt we'll make
+            if not _library_refresh_done:
+                bpy.app.timers.register(lambda: refresh_asset_libraries(), first_interval=1.0)
         
         return None  # Don't repeat the timer
     except Exception as e:
@@ -420,6 +429,13 @@ def register():
         
     # 3. Add a timer-based delayed registration as fallback (runs after 2 seconds)
     bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=2.0)
+    
+    # 4. Just one more fallback attempt if needed (after 4 seconds)
+    # This will only run if _library_refresh_done is still False
+    bpy.app.timers.register(
+        lambda: None if _library_refresh_done else refresh_asset_libraries(), 
+        first_interval=1.0
+    )
 
 
 def delayed_library_registration(scene):
