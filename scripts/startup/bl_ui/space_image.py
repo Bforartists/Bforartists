@@ -2157,27 +2157,30 @@ class IMAGE_PT_overlay_uv_display(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
-        # BFA - changed greatly to be improved
-        # UV Display
-        split = layout.split()
-        col = split.column()
-        col.use_property_split = False
+        # BFA - drastically change layout
+        col = layout.column()
         row = col.row()
-        row.separator()
+        row.separator() # BFA - Indent properties
+        col = row.column()
+        
+        row = col.row()
+        row.alignment = 'LEFT'
         row.prop(uvedit, "show_uv")
-        col = split.column()
+        
         if uvedit.show_uv:
-            col.label(icon="DISCLOSURE_TRI_DOWN")
+            row.label(icon="DISCLOSURE_TRI_DOWN")
         else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
+            row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         if uvedit.show_uv:
-            col = layout.column()
-            col.use_property_split = True
+            col = col.column()
             row = col.row()
-            row.separator(factor=3.0)
-            row.prop(uvedit, "uv_face_opacity", text="Faces")
-            row.prop(uvedit, "uv_edge_opacity", text="Edges")
+            row.separator() # BFA - Indent properties
+            col = row.column(align=True)
+            
+            col.use_property_split = True
+            col.prop(uvedit, "uv_face_opacity", text="Faces")
+            col.prop(uvedit, "uv_edge_opacity", text="Edges")
 
 
 class IMAGE_PT_overlay_image(Panel):
