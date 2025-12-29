@@ -262,7 +262,6 @@ class MASK_PT_display:
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Mask Display")
 
         space_data = context.space_data
 
