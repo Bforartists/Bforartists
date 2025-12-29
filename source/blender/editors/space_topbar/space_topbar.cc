@@ -43,7 +43,7 @@ static SpaceLink *topbar_create(const ScrArea * /*area*/, const Scene * /*scene*
   ARegion *region;
   SpaceTopBar *stopbar;
 
-  stopbar = MEM_callocN<SpaceTopBar>("init topbar");
+  stopbar = MEM_new_for_free<SpaceTopBar>("init topbar");
   stopbar->spacetype = SPACE_TOPBAR;
 
   /* header */
@@ -283,7 +283,7 @@ static void undo_history_menu_register()
 
 static void topbar_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceTopBar, sl);
+  writer->write_struct_cast<SpaceTopBar>(sl);
 }
 
 void ED_spacetype_topbar()

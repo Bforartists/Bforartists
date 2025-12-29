@@ -9,8 +9,6 @@
 #include <cfloat>
 #include <cstring>
 
-#include "DNA_defaults.h"
-
 #include "DNA_mask_types.h"
 #include "DNA_movieclip_types.h"
 #include "DNA_scene_types.h"
@@ -160,9 +158,7 @@ static void clip_area_sync_frame_from_scene(ScrArea *area, const Scene *scene)
 static SpaceLink *clip_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 {
   ARegion *region;
-  SpaceClip *sc;
-
-  sc = DNA_struct_default_alloc(SpaceClip);
+  SpaceClip *sc = MEM_new_for_free<SpaceClip>(__func__);
 
   /* header */
   region = BKE_area_region_new();
@@ -1222,7 +1218,7 @@ static void clip_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink *
 
 static void clip_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceClip, sl);
+  writer->write_struct_cast<SpaceClip>(sl);
 }
 
 /** \} */

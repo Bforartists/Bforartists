@@ -2194,6 +2194,19 @@ static wmOperatorStatus sequencer_box_blade_modal(bContext *C,
   if (OPERATOR_CANCELLED == gesture_return) {
     scene->ed->runtime.flag &= ~SEQ_SHOW_TRANSFORM_PREVIEW;
   }
+
+  wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
+
+  /* Set preview frame to the opposite side when moving the box. */
+  if (gesture && gesture->move) {
+    rctf box_rect;
+    WM_operator_properties_border_to_rctf(op, &box_rect);
+    ui::view2d_region_to_view_rctf(v2d, &box_rect, &box_rect);
+    scene->ed->runtime.transform_preview_frame = (mouse_frame == int(box_rect.xmin)) ?
+                                                     int(box_rect.xmax) :
+                                                     int(box_rect.xmin);
+  }
+
   return gesture_return;
 }
 
@@ -3495,7 +3508,7 @@ static wmOperatorStatus sequencer_change_path_exec(bContext *C, wmOperator *op)
     if (strip->data->stripdata) {
       MEM_freeN(strip->data->stripdata);
     }
-    strip->data->stripdata = se = MEM_calloc_arrayN<StripElem>(len, "stripelem");
+    strip->data->stripdata = se = MEM_new_array_for_free<StripElem>(len, "stripelem");
 
     if (use_placeholders) {
       sequencer_image_strip_reserve_frames(op, se, len, minext_frameme, numdigits);

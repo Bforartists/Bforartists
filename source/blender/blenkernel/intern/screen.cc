@@ -21,7 +21,6 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "DNA_defaults.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
@@ -479,7 +478,7 @@ ARegion *BKE_area_region_copy(const SpaceType *st, const ARegion *region)
 
 ARegion *BKE_area_region_new()
 {
-  ARegion *region = MEM_callocN<ARegion>(__func__);
+  ARegion *region = MEM_new_for_free<ARegion>(__func__);
   region->runtime = MEM_new<blender::bke::ARegionRuntime>(__func__);
   return region;
 }
@@ -628,7 +627,7 @@ LayoutPanelState *BKE_panel_layout_panel_state_ensure(Panel *panel,
       return state;
     }
   }
-  LayoutPanelState *state = MEM_callocN<LayoutPanelState>(__func__);
+  LayoutPanelState *state = MEM_new_for_free<LayoutPanelState>(__func__);
   state->idname = BLI_strdupn(idname.data(), idname.size());
   SET_FLAG_FROM_TEST(state->flag, !default_closed, LAYOUT_PANEL_STATE_FLAG_OPEN);
   state->last_used = logical_time;
@@ -638,7 +637,7 @@ LayoutPanelState *BKE_panel_layout_panel_state_ensure(Panel *panel,
 
 Panel *BKE_panel_new(PanelType *panel_type)
 {
-  Panel *panel = MEM_callocN<Panel>(__func__);
+  Panel *panel = MEM_new_for_free<Panel>(__func__);
   panel->runtime = MEM_new<Panel_Runtime>(__func__);
   panel->type = panel_type;
   if (panel_type) {
@@ -1159,8 +1158,7 @@ void BKE_screen_view3d_scene_sync(bScreen *screen, Scene *scene)
 
 void BKE_screen_view3d_shading_init(View3DShading *shading)
 {
-  const View3DShading *shading_default = DNA_struct_default_get(View3DShading);
-  memcpy(shading, shading_default, sizeof(*shading));
+  *shading = View3DShading();
 }
 
 ARegion *BKE_screen_find_main_region_at_xy(const bScreen *screen,
@@ -1264,13 +1262,13 @@ static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
       case SPACE_VIEW3D:
         if (region->regiontype == RGN_TYPE_WINDOW) {
           RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-          BLO_write_struct(writer, RegionView3D, rv3d);
+          writer->write_struct(rv3d);
 
           if (rv3d->localvd) {
-            BLO_write_struct(writer, RegionView3D, rv3d->localvd);
+            writer->write_struct(rv3d->localvd);
           }
           if (rv3d->clipbb) {
-            BLO_write_struct(writer, BoundBox, rv3d->clipbb);
+            writer->write_struct(rv3d->clipbb);
           }
         }
         else {
@@ -1293,7 +1291,7 @@ static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
 
 static void write_uilist(BlendWriter *writer, uiList *ui_list)
 {
-  BLO_write_struct(writer, uiList, ui_list);
+  writer->write_struct(ui_list);
 
   if (ui_list->properties) {
     IDP_BlendWrite(writer, ui_list->properties);
@@ -1322,7 +1320,7 @@ static void write_area(BlendWriter *writer, ScrArea *area)
     write_panel_list(writer, &region->panels);
 
     LISTBASE_FOREACH (PanelCategoryStack *, pc_act, &region->panels_category_active) {
-      BLO_write_struct(writer, PanelCategoryStack, pc_act);
+      writer->write_struct(pc_act);
     }
 
     LISTBASE_FOREACH (uiList *, ui_list, &region->ui_lists) {
@@ -1330,11 +1328,11 @@ static void write_area(BlendWriter *writer, ScrArea *area)
     }
 
     LISTBASE_FOREACH (uiPreview *, ui_preview, &region->ui_previews) {
-      BLO_write_struct(writer, uiPreview, ui_preview);
+      writer->write_struct(ui_preview);
     }
 
     LISTBASE_FOREACH (uiViewStateLink *, view_state, &region->view_states) {
-      BLO_write_struct(writer, uiViewStateLink, view_state);
+      writer->write_struct(view_state);
     }
   }
 
@@ -1357,9 +1355,9 @@ void BKE_screen_area_map_blend_write(BlendWriter *writer, ScrAreaMap *area_map)
   LISTBASE_FOREACH (ScrArea *, area, &area_map->areabase) {
     area->butspacetype = area->spacetype; /* Just for compatibility, will be reset below. */
 
-    BLO_write_struct(writer, ScrArea, area);
+    writer->write_struct(area);
 
-    BLO_write_struct(writer, ScrGlobalAreaData, area->global);
+    writer->write_struct(area->global);
 
     write_area(writer, area);
 
@@ -1451,7 +1449,7 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
 
         if (region->regiondata == nullptr) {
           /* To avoid crashing on some old files. */
-          region->regiondata = MEM_callocN<RegionView3D>("region view3d");
+          region->regiondata = MEM_new_for_free<RegionView3D>("region view3d");
         }
 
         RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
@@ -1483,7 +1481,7 @@ void BKE_screen_view3d_do_versions_250(View3D *v3d, ListBase *regions)
     if (region->regiontype == RGN_TYPE_WINDOW && region->regiondata == nullptr) {
       RegionView3D *rv3d;
 
-      rv3d = MEM_callocN<RegionView3D>("region v3d patch");
+      rv3d = MEM_new_for_free<RegionView3D>("region v3d patch");
       rv3d->persp = char(v3d->persp);
       rv3d->view = char(v3d->view);
       rv3d->dist = v3d->dist;
@@ -1534,7 +1532,7 @@ static void direct_link_area(BlendDataReader *reader, ScrArea *area)
   /* accident can happen when read/save new file with older version */
   /* 2.50: we now always add spacedata for info */
   if (area->spacedata.first == nullptr) {
-    SpaceInfo *sinfo = MEM_callocN<SpaceInfo>("spaceinfo");
+    SpaceInfo *sinfo = MEM_new_for_free<SpaceInfo>("spaceinfo");
     area->spacetype = sinfo->spacetype = SPACE_INFO;
     BLI_addtail(&area->spacedata, sinfo);
   }

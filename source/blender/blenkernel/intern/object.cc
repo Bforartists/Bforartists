@@ -24,7 +24,6 @@
 #include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
 #include "DNA_curve_types.h"
-#include "DNA_defaults.h"
 #include "DNA_dynamicpaint_types.h"
 #include "DNA_effect_types.h"
 #include "DNA_fluid_types.h"
@@ -173,9 +172,7 @@ static void copy_object_pose(Object *obn, const Object *ob, const int flag);
 static void object_init_data(ID *id)
 {
   Object *ob = (Object *)id;
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(ob, id));
-
-  MEMCPY_STRUCT_AFTER(ob, DNA_struct_default_get(Object), id);
+  INIT_DEFAULT_STRUCT_AFTER(ob, id);
 
   ob->type = OB_EMPTY;
 
@@ -644,27 +641,27 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   BKE_constraint_blend_write(writer, &ob->constraints);
   animviz_motionpath_blend_write(writer, ob->mpath);
 
-  BLO_write_struct(writer, PartDeflect, ob->pd);
+  writer->write_struct(ob->pd);
   if (ob->soft) {
     /* Set deprecated pointers to prevent crashes of older Blenders */
     ob->soft->pointcache = ob->soft->shared->pointcache;
     ob->soft->ptcaches = ob->soft->shared->ptcaches;
-    BLO_write_struct(writer, SoftBody, ob->soft);
-    BLO_write_struct(writer, SoftBody_Shared, ob->soft->shared);
+    writer->write_struct(ob->soft);
+    writer->write_struct(ob->soft->shared);
     BKE_ptcache_blend_write(writer, &(ob->soft->shared->ptcaches));
-    BLO_write_struct(writer, EffectorWeights, ob->soft->effector_weights);
+    writer->write_struct(ob->soft->effector_weights);
   }
 
   if (ob->rigidbody_object) {
     /* TODO: if any extra data is added to handle duplis, will need separate function then */
-    BLO_write_struct(writer, RigidBodyOb, ob->rigidbody_object);
+    writer->write_struct(ob->rigidbody_object);
   }
   if (ob->rigidbody_constraint) {
-    BLO_write_struct(writer, RigidBodyCon, ob->rigidbody_constraint);
+    writer->write_struct(ob->rigidbody_constraint);
   }
 
   if (ob->type == OB_EMPTY && ob->empty_drawtype == OB_EMPTY_IMAGE) {
-    BLO_write_struct(writer, ImageUser, ob->iuser);
+    writer->write_struct(ob->iuser);
   }
 
   BKE_particle_system_blend_write(writer, &ob->particlesystem);
@@ -676,14 +673,14 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   BKE_previewimg_blend_write(writer, ob->preview);
 
   if (ob->lightgroup) {
-    BLO_write_struct(writer, LightgroupMembership, ob->lightgroup);
+    writer->write_struct(ob->lightgroup);
   }
   if (ob->light_linking) {
-    BLO_write_struct(writer, LightLinking, ob->light_linking);
+    writer->write_struct(ob->light_linking);
   }
 
   if (ob->lightprobe_cache) {
-    BLO_write_struct(writer, LightProbeObjectCache, ob->lightprobe_cache);
+    writer->write_struct(ob->lightprobe_cache);
     BKE_lightprobe_cache_blend_write(writer, ob->lightprobe_cache);
   }
 }
@@ -828,7 +825,7 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
   if (ob->rigidbody_object) {
     RigidBodyOb *rbo = ob->rigidbody_object;
     /* Allocate runtime-only struct */
-    rbo->shared = MEM_callocN<RigidBodyOb_Shared>("RigidBodyObShared");
+    rbo->shared = MEM_new_for_free<RigidBodyOb_Shared>("RigidBodyObShared");
   }
   BLO_read_struct(reader, RigidBodyCon, &ob->rigidbody_constraint);
   if (ob->rigidbody_constraint) {
@@ -3630,7 +3627,7 @@ void BKE_object_empty_draw_type_set(Object *ob, const int value)
 
   if (ob->type == OB_EMPTY && ob->empty_drawtype == OB_EMPTY_IMAGE) {
     if (!ob->iuser) {
-      ob->iuser = MEM_callocN<ImageUser>("image user");
+      ob->iuser = MEM_new_for_free<ImageUser>("image user");
       ob->iuser->flag |= IMA_ANIM_ALWAYS;
       ob->iuser->frames = 100;
       ob->iuser->sfra = 1;

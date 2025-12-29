@@ -71,7 +71,7 @@ static void cmp_node_blur_declare(NodeDeclarationBuilder &b)
 static void node_composit_init_blur(bNodeTree * /*ntree*/, bNode *node)
 {
   /* Unused, but allocated for forward compatibility. */
-  NodeBlurData *data = MEM_callocN<NodeBlurData>(__func__);
+  NodeBlurData *data = MEM_new_for_free<NodeBlurData>(__func__);
   node->storage = data;
 }
 
@@ -404,20 +404,17 @@ class BlurOperation : public NodeOperation {
 
   bool get_separable()
   {
-    return this->get_input("Separable").get_single_value_default(true);
+    return this->get_input("Separable").get_single_value_default<bool>();
   }
 
   bool get_extend_bounds()
   {
-    return this->get_input("Extend Bounds").get_single_value_default(false);
+    return this->get_input("Extend Bounds").get_single_value_default<bool>();
   }
 
   int get_type()
   {
-    const Result &input = this->get_input("Type");
-    const MenuValue default_menu_value = MenuValue(R_FILTER_GAUSS);
-    const MenuValue menu_value = input.get_single_value_default(default_menu_value);
-    return menu_value.value;
+    return this->get_input("Type").get_single_value_default<MenuValue>().value;
   }
 };
 

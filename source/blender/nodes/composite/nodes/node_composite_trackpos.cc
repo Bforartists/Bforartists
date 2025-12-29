@@ -10,7 +10,6 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_string_utf8.h"
 
-#include "DNA_defaults.h"
 #include "DNA_movieclip_types.h"
 #include "DNA_tracking_types.h"
 
@@ -79,7 +78,7 @@ static void init(const bContext *C, PointerRNA *ptr)
 {
   bNode *node = (bNode *)ptr->data;
 
-  NodeTrackPosData *data = MEM_callocN<NodeTrackPosData>(__func__);
+  NodeTrackPosData *data = MEM_new_for_free<NodeTrackPosData>(__func__);
   node->storage = data;
 
   const Scene *scene = CTX_data_scene(C);
@@ -312,7 +311,7 @@ class TrackPositionOperation : public NodeOperation {
    * most cases. */
   int2 get_size()
   {
-    MovieClipUser user = *DNA_struct_default_get(MovieClipUser);
+    MovieClipUser user = {};
     BKE_movieclip_user_set_frame(&user, get_frame());
 
     int2 size;
@@ -325,7 +324,7 @@ class TrackPositionOperation : public NodeOperation {
    * added to the current scene frame. See the get_mode() method for more information. */
   int get_relative_frame()
   {
-    return this->get_input("Frame").get_single_value_default(0);
+    return this->get_input("Frame").get_single_value_default<int>();
   }
 
   /* Get the frame where the marker will be retrieved. This is the absolute frame for the absolute
@@ -343,15 +342,13 @@ class TrackPositionOperation : public NodeOperation {
    * will be retrieved. See the get_mode() method for more information. */
   int get_absolute_frame()
   {
-    return this->get_input("Frame").get_single_value_default(0);
+    return this->get_input("Frame").get_single_value_default<int>();
   }
 
   CMPNodeTrackPositionMode get_mode()
   {
-    const Result &input = this->get_input("Mode");
-    const MenuValue default_menu_value = MenuValue(CMP_NODE_TRACK_POSITION_ABSOLUTE);
-    const MenuValue menu_value = input.get_single_value_default(default_menu_value);
-    return static_cast<CMPNodeTrackPositionMode>(menu_value.value);
+    return CMPNodeTrackPositionMode(
+        this->get_input("Mode").get_single_value_default<MenuValue>().value);
   }
 
   MovieClip *get_movie_clip()

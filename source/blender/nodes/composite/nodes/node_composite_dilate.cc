@@ -68,7 +68,7 @@ static void cmp_node_dilate_declare(NodeDeclarationBuilder &b)
 static void node_composit_init_dilateerode(bNodeTree * /*ntree*/, bNode *node)
 {
   /* Unused but kept for forward compatibility. */
-  NodeDilateErode *data = MEM_callocN<NodeDilateErode>(__func__);
+  NodeDilateErode *data = MEM_new_for_free<NodeDilateErode>(__func__);
   node->storage = data;
 }
 
@@ -540,28 +540,23 @@ class DilateErodeOperation : public NodeOperation {
    * sign indicates either dilation or erosion, where negative values means erosion. */
   int get_size()
   {
-    return this->get_input("Size").get_single_value_default(0);
+    return this->get_input("Size").get_single_value_default<int>();
   }
 
   float get_falloff_size()
   {
-    return math::max(0.0f, this->get_input("Falloff Size").get_single_value_default(0.0f));
+    return math::max(0.0f, this->get_input("Falloff Size").get_single_value_default<float>());
   }
 
   CMPNodeDilateErodeMethod get_type()
   {
-    const Result &input = this->get_input("Type");
-    const MenuValue default_menu_value = MenuValue(CMP_NODE_DILATE_ERODE_STEP);
-    const MenuValue menu_value = input.get_single_value_default(default_menu_value);
-    return static_cast<CMPNodeDilateErodeMethod>(menu_value.value);
+    return CMPNodeDilateErodeMethod(
+        this->get_input("Type").get_single_value_default<MenuValue>().value);
   }
 
   int get_falloff()
   {
-    const Result &input = this->get_input("Falloff");
-    const MenuValue default_menu_value = MenuValue(PROP_SMOOTH);
-    const MenuValue menu_value = input.get_single_value_default(default_menu_value);
-    return menu_value.value;
+    return this->get_input("Falloff").get_single_value_default<MenuValue>().value;
   }
 };
 

@@ -33,7 +33,7 @@ static SpaceLink *statusbar_create(const ScrArea * /*area*/, const Scene * /*sce
   ARegion *region;
   SpaceStatusBar *sstatusbar;
 
-  sstatusbar = MEM_callocN<SpaceStatusBar>("init statusbar");
+  sstatusbar = MEM_new_for_free<SpaceStatusBar>("init statusbar");
   sstatusbar->spacetype = SPACE_STATUSBAR;
 
   /* header region */
@@ -124,7 +124,7 @@ static void statusbar_header_region_message_subscribe(const wmRegionMessageSubsc
 
 static void statusbar_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceStatusBar, sl);
+  writer->write_struct_cast<SpaceStatusBar>(sl);
 }
 
 void ED_spacetype_statusbar()
