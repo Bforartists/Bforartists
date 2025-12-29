@@ -858,12 +858,20 @@ class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodePremulKey", pad=13),
+            OperatorEntry("CompositorNodePremulKey", pad=15),
+            OperatorEntry("CompositorNodeAlphaOver", pad=21),
+            OperatorEntry("CompositorNodeSetAlpha", pad=23),
+            Separator,
+            OperatorEntry("CompositorNodeCombineColor", pad=13),
+            OperatorEntry("CompositorNodeSeparateColor", pad=13),
+            Separator,
+            OperatorEntry("CompositorNodeZcombine", pad=11),
+            OperatorEntry("ShaderNodeMix", text=iface_("Mix Color"), pad=22, settings={"data_type": "'RGBA'"}),
+            Separator,
             OperatorEntry("ShaderNodeBlackbody", pad=20),
             OperatorEntry("ShaderNodeValToRGB", pad=18),
             OperatorEntry("CompositorNodeConvertColorSpace", pad=3),
             OperatorEntry("CompositorNodeConvertToDisplay", pad=5),
-            OperatorEntry("CompositorNodeSetAlpha", pad=21),
             Separator,
             OperatorEntry("CompositorNodeInvert", pad=16),
             OperatorEntry("CompositorNodeRGBToBW", pad=18),
@@ -892,7 +900,7 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
             OperatorEntry("CompositorNodeColorCorrection", pad=10),
 
             OperatorEntry("CompositorNodeExposure", pad=22),
-            OperatorEntry("CompositorNodeGamma", pad=25),
+            OperatorEntry("ShaderNodeGamma", pad=25),
             OperatorEntry("CompositorNodeHueCorrect", pad=17),
             OperatorEntry("CompositorNodeHueSat", pad=1),
             OperatorEntry("CompositorNodeCurveRGB", pad=17),
@@ -902,13 +910,16 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
-    bl_label = "Mix"
+class NODES_PT_toolshelf_compositor_add_creative(bpy.types.Panel, NodePanel):
+    bl_label = "Creative"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_color"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
 
     def draw(self, context):
         layout = self.layout
@@ -917,15 +928,11 @@ class NODES_PT_toolshelf_compositor_add_color_mix(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeAlphaOver", pad=8),
-            Separator,
-            OperatorEntry("CompositorNodeCombineColor", pad=2),
-            OperatorEntry("CompositorNodeSeparateColor", pad=2),
-            Separator,
-            OperatorEntry("ShaderNodeMix", text=iface_("Mix Color"), pad=12, settings={"data_type": "'RGBA'"}),
-            OperatorEntry("CompositorNodeZcombine", pad=2),
+            OperatorEntry("CompositorNodeKuwahara", pad=12),
+            OperatorEntry("CompositorNodePixelate", pad=16),
+            OperatorEntry("CompositorNodePosterize", pad=13),
         )
-
+        
         self.draw_entries(context, layout, entries)
 
 
@@ -1581,6 +1588,7 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("GeometryNodeTool3DCursor", pad=21, poll=is_tool),
             OperatorEntry("GeometryNodeInputActiveCamera", pad=14),
+            OperatorEntry("GeometryNodeBoneInfo", pad=22),
             OperatorEntry("GeometryNodeCameraInfo", pad=18),
             OperatorEntry("GeometryNodeCollectionInfo", pad=14),
             OperatorEntry("GeometryNodeImageInfo", pad=21),
@@ -3009,7 +3017,7 @@ classes = (
     NODES_PT_toolshelf_compositor_add_output,
     NODES_PT_toolshelf_compositor_add_color,
     NODES_PT_toolshelf_compositor_add_color_adjust,
-    NODES_PT_toolshelf_compositor_add_color_mix,
+    NODES_PT_toolshelf_compositor_add_creative,
     NODES_PT_toolshelf_compositor_add_filter,
     NODES_PT_toolshelf_compositor_add_filter_blur,
     NODES_PT_toolshelf_compositor_add_keying,

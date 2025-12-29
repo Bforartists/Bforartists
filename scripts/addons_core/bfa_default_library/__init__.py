@@ -261,9 +261,21 @@ def unregister_library():
 
 
 def register_all_libraries():
-    """Register the central asset library."""
+    """Register the central asset library and force refresh."""
     # print("🔄 register_all_libraries() called")
     register_library()
+    
+    # Force refresh the asset browser UI
+    try:
+        bpy.ops.asset.library_refresh()
+        
+        # Force redraw of all UI areas
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                area.tag_redraw()
+    except Exception as e:
+        #print(f"⚠ Could not refresh asset libraries: {e}")
+        pass
 
 
 def unregister_all_libraries():
@@ -293,10 +305,109 @@ submodule_names = [
 register_submodules, unregister_submodules = register_submodule_factory(__name__, submodule_names)
 
 
+# Flag to track if we've already done a refresh to avoid multiple refreshes
+_library_refresh_done = False
+
+def refresh_asset_libraries():
+    """
+    Refresh asset libraries with multiple fallback approaches for maximum reliability.
+    Returns True if any refresh method succeeded or if refresh has already been done.
+    """
+    global _library_refresh_done
+    
+    # If we've already successfully refreshed, don't do it again
+    if _library_refresh_done:
+        return True
+    
+    refresh_success = False
+    
+    # Method 1: Try to find an asset browser area and use it for context override
+    try:
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                if area.type == 'FILE_BROWSER':
+                    # Check if this is actually an asset browser
+                    for space in area.spaces:
+                        if space.type == 'FILE_BROWSER' and hasattr(space, 'browse_mode') and space.browse_mode == 'ASSETS':
+                            # Create proper context override with all required elements
+                            override = bpy.context.copy()
+                            override['window'] = window
+                            override['screen'] = window.screen
+                            override['area'] = area
+                            override['space_data'] = space
+                            override['region'] = area.regions[-1]  # Use the main region
+                            
+                            # Try with the full context override
+                            bpy.ops.asset.library_refresh(override)
+                            refresh_success = True
+                            break
+    except Exception:
+        pass
+    
+    # Method 2: Try global operator with no context override
+    if not refresh_success:
+        try:
+            bpy.ops.asset.library_refresh()
+            refresh_success = True
+        except Exception:
+            pass
+    
+    # Method 3: Alternative approach - force a re-registration of libraries
+    if not refresh_success:
+        try:
+            # Re-register all libraries manually (recreate entries)
+            prefs = bpy.context.preferences
+            
+            # First get existing library paths
+            existing_libs = {}
+            for lib in prefs.filepaths.asset_libraries:
+                existing_libs[lib.path] = lib.name
+                
+            # Register our libraries again to ensure they exist
+            register_library()
+            refresh_success = True
+        except Exception:
+            pass
+    
+    # Always force UI redraw regardless of refresh success
+    for window in bpy.context.window_manager.windows:
+        for area in window.screen.areas:
+            area.tag_redraw()
+    
+    # Mark that we've done a refresh if successful
+    if refresh_success:
+        _library_refresh_done = True
+    
+    return refresh_success
+
+def register_all_libraries_and_refresh():
+    """Register libraries and force a refresh of the asset browser."""
+    try:
+        # First, register all libraries
+        register_all_libraries()
+        
+        # Then try to refresh with our robust method
+        refresh_success = refresh_asset_libraries()
+        
+        if refresh_success:
+            # print("✓ Timer-based library registration and refresh complete")
+            pass
+        else:
+            # Schedule one more refresh attempt after a short delay if needed
+            # This is the only additional attempt we'll make
+            if not _library_refresh_done:
+                bpy.app.timers.register(lambda: refresh_asset_libraries(), first_interval=1.0)
+        
+        return None  # Don't repeat the timer
+    except Exception as e:
+        print(f"⚠ Timer-based library registration failed: {e}")
+        return None  # Don't repeat the timer
+
 def register():
     """Register the complete addon"""
-    # print("=== BFA Default Library Addon Registration Started ===")
-
+    global _library_refresh_done
+    _library_refresh_done = False
+    
     # Register preferences class
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -304,20 +415,27 @@ def register():
     # Register all submodules
     register_submodules()
 
-    # Register asset libraries - try immediate registration first
-    # Use load_post handler for reliable library registration
+    # Register asset libraries - try with multiple approaches for reliability
+    
+    # 1. Use load_post handler for reliable library registration
     # This ensures registration happens after Blender is fully loaded
     bpy.app.handlers.load_post.append(delayed_library_registration)
-    # print("✓ Load post handler registered for delayed library setup")
-
-    # Also try immediate registration in case we're already loaded
+    
+    # 2. Try immediate registration in case we're already loaded
     try:
         register_all_libraries()
-        # print(f"✓ Immediate Default Library registration successful")
     except Exception as e:
         print(f"⚠ Immediate registration failed (normal during startup): {e}")
-
-        # print("=== BFA Default Library Addon Registration Completed ===")
+        
+    # 3. Add a timer-based delayed registration as fallback (runs after 2 seconds)
+    bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=2.0)
+    
+    # 4. Just one more fallback attempt if needed (after 4 seconds)
+    # This will only run if _library_refresh_done is still False
+    bpy.app.timers.register(
+        lambda: None if _library_refresh_done else refresh_asset_libraries(), 
+        first_interval=1.0
+    )
 
 
 def delayed_library_registration(scene):
@@ -337,15 +455,22 @@ def delayed_library_registration(scene):
 
 def unregister():
     """Unregister the complete addon"""
-    # print("=== BFA Default Library Addon Unregistration Started ===")
-
+    global _library_refresh_done
+    _library_refresh_done = True  # Set to True to prevent any further refreshes during unregister
+    
     # Try to remove load_post handler first to prevent any delayed calls
     try:
         if delayed_library_registration in bpy.app.handlers.load_post:
             bpy.app.handlers.load_post.remove(delayed_library_registration)
-            # print("✓ Removed load_post handler")
     except Exception as e:
         print(f"⚠ Could not remove load_post handler: {e}")
+    
+    # Remove all timers to prevent any future executions
+    try:
+        if bpy.app.timers.is_registered(register_all_libraries_and_refresh):
+            bpy.app.timers.unregister(register_all_libraries_and_refresh)
+    except Exception:
+        pass
     
     # Unregister all libraries (with error handling)
     try:
@@ -366,17 +491,15 @@ def unregister():
         except Exception as e:
             print(f"⚠ Could not unregister class {cls}: {e}")
 
-            # Unregister timer if exists
+    # Unregister any timer if exists
     try:
-        bpy.app.timers.unregister(register_all_libraries)
+        if bpy.app.timers.is_registered(register_all_libraries):
+            bpy.app.timers.unregister(register_all_libraries)
     except Exception:
         pass
 
     # Unregister all submodules with error handling
     try:
         unregister_submodules()
-        # print("✓ Submodules unregistered")
     except Exception as e:
         print(f"⚠ Error during submodule unregistration: {e}")
-    
-    #print("=== BFA Default Library Addon Unregistration Completed ===")

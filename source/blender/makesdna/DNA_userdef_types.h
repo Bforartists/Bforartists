@@ -861,8 +861,10 @@ struct UserDef {
   int versionfile = 0, subversionfile = 0;
 
   /** #eUserPref_Flag. */
+  /* BFA - add USER_FILENOUI and USER_TOOLTIPS_PYTHON*/
   int flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM |
-              USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES | USER_FILECOMPRESS);
+              USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES | USER_FILECOMPRESS |
+              USER_FILENOUI | USER_TOOLTIPS_PYTHON);
   /** #eDupli_ID_Flags. */
   /*BFA - added USER_DUP_NTREE*/  
   unsigned int dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE |
