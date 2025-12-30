@@ -37,19 +37,64 @@ def get_addon_identifier(addon_info):
         return addon_info['unique_id']
     return f"{addon_info['name']}_{addon_info['version'][0]}.{addon_info['version'][1]}.{addon_info['version'][2]}"
 
+def get_bforartists_user_preferences_folder():
+    """Get the Bforartists user preferences folder for the current version."""
+    try:
+        import bpy
+        from pathlib import Path
+        
+        # Get the user resource path (already includes the version, e.g., .../Bforartists/5.1/)
+        user_path = Path(bpy.utils.resource_path("USER"))
+        # Place libraries directly in the version-specific user folder under "asset_libraries"
+        bfa_asset_libraries_path = user_path / "asset_libraries"
+        
+        return str(bfa_asset_libraries_path)
+    except Exception as e:
+        print(f"⚠ Could not get user resource path: {e}")
+        
+        # If bpy.utils.resource_path fails, construct the path manually
+        try:
+            import bpy
+            import sys
+            from pathlib import Path
+            
+            # Get Bforartists version
+            version_str = f"{bpy.app.version[0]}.{bpy.app.version[1]}"
+            
+            # Platform-specific user preferences paths
+            if sys.platform == "win32":
+                # Windows: %APPDATA%\Bforartists\Bforartists\{version}\asset_libraries
+                appdata = os.getenv('APPDATA')
+                if appdata:
+                    user_path = Path(appdata) / "Bforartists" / "Bforartists" / version_str
+                    bfa_asset_libraries_path = user_path / "asset_libraries"
+                    return str(bfa_asset_libraries_path)
+            elif sys.platform == "darwin":
+                # macOS: ~/Library/Application Support/Bforartists/Bforartists/{version}/asset_libraries
+                home = Path.home()
+                user_path = home / "Library" / "Application Support" / "Bforartists" / "Bforartists" / version_str
+                bfa_asset_libraries_path = user_path / "asset_libraries"
+                return str(bfa_asset_libraries_path)
+            else:
+                # Linux and others: ~/.config/bforartists/{version}/asset_libraries
+                home = Path.home()
+                user_path = home / ".config" / "bforartists" / version_str
+                bfa_asset_libraries_path = user_path / "asset_libraries"
+                return str(bfa_asset_libraries_path)
+        except Exception as e2:
+            print(f"⚠ Could not construct user preferences path: {e2}")
+            # If everything fails, raise the original error
+            raise e
+
 
 def get_central_library_path():
-    """Get the central library base path - same level as addon folder."""
-    try:
-        # Get the addon directory (where this utility.py file is located)
-        addon_dir = p.dirname(__file__)
-        # Get the parent directory of the addon (where addon folder resides)
-        parent_dir = p.dirname(addon_dir)
-        # Create central library in the same parent directory
-        return p.join(parent_dir, "bfa_central_asset_library")
-    except:
-        # Fallback to user's documents folder if above fails
-        return p.join(p.expanduser("~"), "BFA_Central_Asset_Library")
+    """Get the central library base path - use Bforartists user preferences folder."""
+    user_prefs_dir = get_bforartists_user_preferences_folder()
+    
+    # Create the directory if it doesn't exist
+    os.makedirs(user_prefs_dir, exist_ok=True)
+    
+    return user_prefs_dir
 
 
 def read_addon_tracking(central_lib_base):
@@ -155,8 +200,15 @@ def add_addon_to_central_library(addon_info, library_folders, addon_path, centra
     return central_lib_base
 
 
-def remove_addon_from_central_library(addon_info, central_lib_base=None):
-    """Remove an addon's tracking entry and clean up its files if not used by others."""
+def remove_addon_from_central_library(addon_info, central_lib_base=None, cleanup_mode='normal'):
+    """
+    Remove an addon's tracking entry and clean up its files if not used by others.
+    
+    Args:
+        addon_info: Dictionary with addon identification info
+        central_lib_base: Path to central library (optional)
+        cleanup_mode: 'normal' = standard cleanup, 'force' = force cleanup even if other addons exist
+    """
     if central_lib_base is None:
         central_lib_base = get_central_library_path()
     tracking_data = read_addon_tracking(central_lib_base)
@@ -176,15 +228,20 @@ def remove_addon_from_central_library(addon_info, central_lib_base=None):
             removed_files = remove_orphaned_files(central_lib_base, tracking_data, addon_files)
             # print(f"   🗑️ Removed {removed_files} orphaned files")
 
-        # Clean up if library is empty
-        cleanup_central_library(central_lib_base, tracking_data)
+        # Clean up if library is empty or we're in force mode
+        if cleanup_mode == 'force' or len(tracking_data) == 0:
+            cleanup_central_library(central_lib_base, tracking_data)
 
 
 def cleanup_central_library(central_lib_base, tracking_data=None):
-    """Clean up the central library if no addons are using it."""
+    """
+    Clean up the central library if no addons are using it.
+    Also cleans up individual library folders that are empty.
+    """
     if tracking_data is None:
         tracking_data = read_addon_tracking(central_lib_base)
 
+    # If no addons are using the central library at all, remove everything
     if len(tracking_data) == 0:
         try:
             if p.exists(central_lib_base):
@@ -193,6 +250,48 @@ def cleanup_central_library(central_lib_base, tracking_data=None):
                 # print(f"🗑️ Force removed central library: {central_lib_base}")
         except OSError as e:
             print(f"⚠ Warning: Could not cleanup central library: {e}")
+    else:
+        # Some addons are still using the library, but we should clean up
+        # individual library folders that might be empty
+        try:
+            if p.exists(central_lib_base):
+                # Check each library folder
+                for item in os.listdir(central_lib_base):
+                    item_path = p.join(central_lib_base, item)
+                    if p.isdir(item_path):
+                        # Check if directory is empty (or only contains catalog files)
+                        dir_contents = os.listdir(item_path)
+                        has_content = False
+                        
+                        for content in dir_contents:
+                            content_path = p.join(item_path, content)
+                            # Check if it's a file (not a catalog file) or a non-empty directory
+                            if p.isfile(content_path):
+                                if not content.endswith('blender_assets.cats.txt'):
+                                    has_content = True
+                                    break
+                            elif p.isdir(content_path):
+                                # Check if subdirectory has content
+                                sub_contents = os.listdir(content_path)
+                                if any(not sc.endswith('blender_assets.cats.txt') for sc in sub_contents):
+                                    has_content = True
+                                    break
+                        
+                        # If directory has no content, remove it
+                        if not has_content:
+                            try:
+                                # Remove any catalog files first
+                                for catalog_file in [f for f in dir_contents if f.endswith('blender_assets.cats.txt')]:
+                                    catalog_path = p.join(item_path, catalog_file)
+                                    os.remove(catalog_path)
+                                
+                                # Remove the directory
+                                shutil.rmtree(item_path)
+                                # print(f"🗑️ Removed empty library folder: {item}")
+                            except OSError as e:
+                                print(f"⚠ Could not remove empty library folder {item}: {e}")
+        except OSError as e:
+            print(f"⚠ Warning: Could not cleanup individual library folders: {e}")
 
 
 def get_active_addons_count(central_lib_base=None):
@@ -226,13 +325,19 @@ def get_central_library_index(prefs, central_lib_base=None):
 
 
 def remove_orphaned_files(central_lib_base, tracking_data, files_to_check):
-    """Remove files that are not used by any other addons, but keep catalog files."""
+    """
+    Remove files that are not used by any other addons, but keep catalog files.
+    This function is careful to only remove files that are truly orphaned.
+    """
     removed_count = 0
 
-    # Get all files that are still used by other addons
-    all_used_files = set()
+    # Build a map of which files are used by which addons
+    file_usage_map = {}
     for addon_id, addon_data in tracking_data.items():
-        all_used_files.update(addon_data.get('files', []))
+        for file_path in addon_data.get('files', []):
+            if file_path not in file_usage_map:
+                file_usage_map[file_path] = []
+            file_usage_map[file_path].append(addon_id)
 
     # Remove files that are no longer used by any addon (except catalog files)
     for file_path in files_to_check:
@@ -243,7 +348,10 @@ def remove_orphaned_files(central_lib_base, tracking_data, files_to_check):
             # print(f"      💾 Keeping catalog file: {file_path}")
             continue
 
-        if file_path not in all_used_files and p.exists(full_file_path):
+        # Check if this file is used by any remaining addons
+        is_used_by_other_addons = file_path in file_usage_map and len(file_usage_map[file_path]) > 0
+        
+        if not is_used_by_other_addons and p.exists(full_file_path):
             try:
                 os.remove(full_file_path)
                 removed_count += 1

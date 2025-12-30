@@ -119,14 +119,22 @@ classes = (
 )
 
 def register():
-    """Register all wizard operators"""
+    """Register all wizard operator classes."""
     for cls in classes:
-        bpy.utils.register_class(cls)
+        try:
+            bpy.utils.register_class(cls)
+        except ValueError as e:
+            if "already registered" not in str(e):
+                logger.error(f"Error registering {cls.__name__}: {e}")
 
 def unregister():
-    """Unregister all wizard operators"""
+    """Unregister all wizard operator classes."""
     for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
+        try:
+            bpy.utils.unregister_class(cls)
+        except RuntimeError as e:
+            if "not registered" not in str(e):
+                logger.error(f"Error unregistering {cls.__name__}: {e}")
 
 if __name__ == "__main__":
     register()

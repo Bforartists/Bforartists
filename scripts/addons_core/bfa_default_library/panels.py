@@ -214,20 +214,32 @@ classes = (
 )
 
 def register():
-    """Register all panel classes"""
+    """Register all panel classes."""
     for cls in classes:
-        bpy.utils.register_class(cls)
-
+        try:
+            bpy.utils.register_class(cls)
+        except ValueError as e:
+            if "already registered" not in str(e):
+                print(f"⚠ Error registering {cls.__name__}: {e}")
+    
     # Add handler only if it's not already there
     if object_added_handler not in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.append(object_added_handler)
 
 def unregister():
-    """Unregister all panel classes"""
+    """Unregister all panel classes."""
     # Remove handler if it exists
     if object_added_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(object_added_handler)
-
+        
     # Unregister panel classes
     for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
+        try:
+            bpy.utils.unregister_class(cls)
+        except RuntimeError as e:
+            if "not registered" not in str(e):
+                print(f"⚠ Error unregistering {cls.__name__}: {e}")
+        
+        # Handle handler cleanup (note: new registry doesn't track handlers)
+        if object_added_handler in bpy.app.handlers.depsgraph_update_post:
+            bpy.app.handlers.depsgraph_update_post.remove(object_added_handler)
