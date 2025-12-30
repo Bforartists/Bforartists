@@ -566,6 +566,23 @@ void BKE_fcurve_handles_recalc(FCurve *fcu);
  * (if caller does not operate on selection).
  */
 void BKE_fcurve_handles_recalc_ex(FCurve *fcu, eBezTriple_Flag handle_sel_flag);
+
+enum class HandleSide {
+  LEFT,
+  RIGHT,
+};
+
+/**
+ * For the given keyframe, update the handle mode of one side to be in a valid state based on the
+ * opposite side. For example if one side is set to "Aligned" the other has to copy that, otherwise
+ * it wouldn't be actually aligned. This is useful in cases where the user explcitly sets on handle
+ * type.
+ *
+ * \param side: The source side from which to update the handle flags. This side will not be
+ * affected.
+ */
+void BKE_fcurve_update_handle_flag_from_opposite(BezTriple &key, HandleSide source_side);
+
 /**
  * Update handles, making sure the handle-types are valid (e.g. correctly deduced from an "Auto"
  * type), and recalculating their position vectors.
@@ -658,7 +675,7 @@ void BKE_fmodifiers_blend_read_data(BlendDataReader *reader, ListBase *fmodifier
 
 /**
  * Write the FCurve's data to the writer.
- * If this is used to write an FCurve, be sure to call `BLO_write_struct(writer, FCurve, fcurve);`
+ * If this is used to write an FCurve, be sure to call `writer->write_struct(fcurve);`
  * before calling this function.
  */
 void BKE_fcurve_blend_write_data(BlendWriter *writer, FCurve *fcu);

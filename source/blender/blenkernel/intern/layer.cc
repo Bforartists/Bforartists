@@ -37,7 +37,6 @@
 
 #include "DNA_ID.h"
 #include "DNA_collection_types.h"
-#include "DNA_defaults.h"
 #include "DNA_layer_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
@@ -77,7 +76,7 @@ static void object_bases_iterator_next(BLI_Iterator *iter, const int flag);
 
 static LayerCollection *layer_collection_add(ListBase *lb_parent, Collection *collection)
 {
-  LayerCollection *lc = MEM_callocN<LayerCollection>("Collection Base");
+  LayerCollection *lc = MEM_new_for_free<LayerCollection>("Collection Base");
   lc->collection = collection;
   lc->local_collections_bits = ~0;
   BLI_addtail(lb_parent, lc);
@@ -100,7 +99,7 @@ static void layer_collection_free(ViewLayer *view_layer, LayerCollection *lc)
 
 static Base *object_base_new(Object *ob)
 {
-  Base *base = MEM_callocN<Base>("Object Base");
+  Base *base = MEM_new_for_free<Base>("Object Base");
   base->object = ob;
   base->local_view_bits = ~0;
   if (ob->base_flag & BASE_SELECTED) {
@@ -164,8 +163,7 @@ static ViewLayer *view_layer_add(const char *name)
     name = DATA_("ViewLayer");
   }
 
-  ViewLayer *view_layer = MEM_callocN<ViewLayer>("View Layer");
-  *view_layer = *DNA_struct_default_get(ViewLayer);
+  ViewLayer *view_layer = MEM_new_for_free<ViewLayer>("View Layer");
   STRNCPY_UTF8(view_layer->name, name);
 
   BKE_freestyle_config_init(&view_layer->freestyle_config);
@@ -204,7 +202,7 @@ ViewLayer *BKE_view_layer_add(Scene *scene,
     }
     case VIEWLAYER_ADD_COPY: {
       /* Allocate and copy view layer data */
-      view_layer_new = MEM_callocN<ViewLayer>("View Layer");
+      view_layer_new = MEM_new_for_free<ViewLayer>("View Layer");
       *view_layer_new = *view_layer_source;
       BKE_view_layer_copy_data(scene, scene, view_layer_new, view_layer_source, 0);
       BLI_addtail(&scene->view_layers, view_layer_new);
@@ -1124,7 +1122,7 @@ static void layer_collection_sync(ViewLayer *view_layer,
    */
 
   /* Temporary storage for all valid (new or reused) children layers. */
-  ListBase new_lb_layer = {nullptr, nullptr};
+  ListBaseT<LayerCollection> new_lb_layer = {nullptr, nullptr};
 
   BLI_assert(layer_resync->is_used);
 
@@ -1315,7 +1313,7 @@ void BKE_layer_collection_doversion_2_80(const Scene *scene, ViewLayer *view_lay
      * instead all the children of the master collection have their layer collections in the
      * viewlayer's list. This is not a valid situation, add a layer for the master collection and
      * add all existing first-level layers as children of that new master layer. */
-    ListBase layer_collections = view_layer->layer_collections;
+    ListBaseT<LayerCollection> layer_collections = view_layer->layer_collections;
     BLI_listbase_clear(&view_layer->layer_collections);
     LayerCollection *master_layer_collection = layer_collection_add(&view_layer->layer_collections,
                                                                     scene->master_collection);
@@ -1382,7 +1380,7 @@ bool BKE_layer_collection_sync(const Scene *scene, ViewLayer *view_layer)
   view_layer->flag &= ~VIEW_LAYER_HAS_EXPORT_COLLECTIONS;
 
   /* Generate new layer connections and object bases when collections changed. */
-  ListBase new_object_bases{};
+  ListBaseT<Base> new_object_bases{};
   const short parent_exclude = 0, parent_restrict = 0, parent_layer_restrict = 0;
   layer_collection_sync(view_layer,
                         master_layer_resync,
@@ -2408,7 +2406,7 @@ void BKE_layer_eval_view_layer_indexed(Depsgraph *depsgraph, Scene *scene, int v
 static void write_layer_collections(BlendWriter *writer, ListBase *lb)
 {
   LISTBASE_FOREACH (LayerCollection *, lc, lb) {
-    BLO_write_struct(writer, LayerCollection, lc);
+    writer->write_struct(lc);
 
     write_layer_collections(writer, &lc->layer_collections);
   }
@@ -2417,7 +2415,7 @@ static void write_layer_collections(BlendWriter *writer, ListBase *lb)
 void BKE_view_layer_blend_write(BlendWriter *writer, const Scene *scene, ViewLayer *view_layer)
 {
   BKE_view_layer_synced_ensure(scene, view_layer);
-  BLO_write_struct(writer, ViewLayer, view_layer);
+  writer->write_struct(view_layer);
   BLO_write_struct_list(writer, Base, BKE_view_layer_object_bases_get(view_layer));
 
   if (view_layer->id_properties) {
@@ -2428,17 +2426,17 @@ void BKE_view_layer_blend_write(BlendWriter *writer, const Scene *scene, ViewLay
   }
 
   LISTBASE_FOREACH (FreestyleModuleConfig *, fmc, &view_layer->freestyle_config.modules) {
-    BLO_write_struct(writer, FreestyleModuleConfig, fmc);
+    writer->write_struct(fmc);
   }
 
   LISTBASE_FOREACH (FreestyleLineSet *, fls, &view_layer->freestyle_config.linesets) {
-    BLO_write_struct(writer, FreestyleLineSet, fls);
+    writer->write_struct(fls);
   }
   LISTBASE_FOREACH (ViewLayerAOV *, aov, &view_layer->aovs) {
-    BLO_write_struct(writer, ViewLayerAOV, aov);
+    writer->write_struct(aov);
   }
   LISTBASE_FOREACH (ViewLayerLightgroup *, lightgroup, &view_layer->lightgroups) {
-    BLO_write_struct(writer, ViewLayerLightgroup, lightgroup);
+    writer->write_struct(lightgroup);
   }
   write_layer_collections(writer, &view_layer->layer_collections);
 }
@@ -2550,7 +2548,7 @@ static void viewlayer_aov_active_set(ViewLayer *view_layer, ViewLayerAOV *aov)
 ViewLayerAOV *BKE_view_layer_add_aov(ViewLayer *view_layer)
 {
   ViewLayerAOV *aov;
-  aov = MEM_callocN<ViewLayerAOV>(__func__);
+  aov = MEM_new_for_free<ViewLayerAOV>(__func__);
   aov->type = AOV_TYPE_COLOR;
   STRNCPY_UTF8(aov->name, DATA_("AOV"));
   BLI_addtail(&view_layer->aovs, aov);
@@ -2664,7 +2662,7 @@ static void viewlayer_lightgroup_active_set(ViewLayer *view_layer, ViewLayerLigh
 ViewLayerLightgroup *BKE_view_layer_add_lightgroup(ViewLayer *view_layer, const char *name)
 {
   ViewLayerLightgroup *lightgroup;
-  lightgroup = MEM_callocN<ViewLayerLightgroup>(__func__);
+  lightgroup = MEM_new_for_free<ViewLayerLightgroup>(__func__);
   STRNCPY_UTF8(lightgroup->name, (name && name[0]) ? name : DATA_("Lightgroup"));
   BLI_addtail(&view_layer->lightgroups, lightgroup);
   viewlayer_lightgroup_active_set(view_layer, lightgroup);
@@ -2757,7 +2755,7 @@ void BKE_lightgroup_membership_set(LightgroupMembership **lgm, const char *name)
 {
   if (name[0] != '\0') {
     if (*lgm == nullptr) {
-      *lgm = MEM_callocN<LightgroupMembership>(__func__);
+      *lgm = MEM_new_for_free<LightgroupMembership>(__func__);
     }
     BLI_strncpy_utf8((*lgm)->name, name, sizeof((*lgm)->name));
   }

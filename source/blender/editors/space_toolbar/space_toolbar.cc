@@ -141,7 +141,7 @@ static void toolbar_header_listener(const wmRegionListenerParams *params)
 
 static void toolbar_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  BLO_write_struct(writer, SpaceToolbar, sl);
+    writer->write_struct_cast<SpaceToolbar>(sl);
 }
 
 /********************* registration ********************/

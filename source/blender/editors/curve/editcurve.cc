@@ -1298,7 +1298,7 @@ void ED_curve_editnurb_load(Main *bmain, Object *obedit)
 
   if (ELEM(obedit->type, OB_CURVES_LEGACY, OB_SURF)) {
     Curve *cu = static_cast<Curve *>(obedit->data);
-    ListBase newnurb = {nullptr, nullptr}, oldnurb = cu->nurb;
+    ListBaseT<Nurb> newnurb = {nullptr, nullptr}, oldnurb = cu->nurb;
 
     remap_hooks_and_vertex_parents(bmain, obedit);
 
@@ -1346,7 +1346,7 @@ void ED_curve_editnurb_make(Object *obedit)
       BKE_curve_editNurb_keyIndex_free(&editnurb->keyindex);
     }
     else {
-      editnurb = MEM_callocN<EditNurb>("editnurb");
+      editnurb = MEM_new_for_free<EditNurb>("editnurb");
       cu->editnurb = editnurb;
     }
 
@@ -5578,7 +5578,7 @@ int ed_editcurve_addvert(Curve *cu, EditNurb *editnurb, View3D *v3d, const float
     Nurb *nurb_new;
     if (!nu) {
       /* Bezier as default. */
-      nurb_new = MEM_callocN<Nurb>("BLI_editcurve_addvert new_bezt_nurb 2");
+      nurb_new = MEM_new_for_free<Nurb>("BLI_editcurve_addvert new_bezt_nurb 2");
       nurb_new->type = CU_BEZIER;
       nurb_new->resolu = cu->resolu;
       nurb_new->orderu = 4;

@@ -199,6 +199,11 @@ class NODES_PT_relations_group_operations(bpy.types.Panel, NodePanel):
     bl_region_type = 'UI'
     bl_category = "Relations"
 
+    @classmethod
+    def poll(self, context):
+        tree = context.space_data.edit_tree 
+        return tree in context.blend_data.node_groups.values()
+
     def draw(self, context):
         layout = self.layout
         in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()

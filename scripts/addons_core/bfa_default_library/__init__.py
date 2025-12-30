@@ -638,53 +638,15 @@ def register():
         register_operators()
         #print(f"✓ Registered operators")
         
-        from .ops import register as register_ops
-        register_ops()
-        #print(f"✓ Registered ops")
-    except Exception as e:
-        print(f"⚠ Error registering operators: {e}")
+    # 3. Add a timer-based delayed registration as fallback (runs after 2 seconds)
+    bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=2.0)
     
-    # Register remaining submodules with central registry
-    for module_name in submodule_names:
-        try:
-            # Import the module dynamically
-            module = __import__(f"{__name__}.{module_name}", fromlist=["register"])
-            
-            # Call its register function with the registry ID
-            if hasattr(module, "register"):
-                module.register()  # Don't pass registry ID, let modules handle registration
-                #print(f"✓ Registered module {module_name}")
-        except Exception as e:
-            print(f"⚠ Error registering module {module_name}: {e}")
-
-    # Simplified library registration to avoid multiple refreshes
-    # Use a single timer-based approach with coordinated timing
-    
-    # Safely check if we're in startup or mid-session
-    is_startup = False
-    try:
-        # Try multiple methods to detect startup vs active session
-        if hasattr(bpy.data, 'filepath'):
-            is_startup = not bool(bpy.data.filepath)
-        else:
-            # For Bforartists or if filepath attribute doesn't exist
-            # Check if there are any scenes loaded or if we're in initial state
-            is_startup = len(bpy.data.scenes) <= 1 and not bpy.context.screen
-    except:
-        # If any check fails, assume startup for safety
-        is_startup = True
-    
-    if not is_startup:
-        # File is loaded, we're in an active session
-        try:
-            register_all_libraries()
-            # print("✓ Immediate library registration (mid-session)")
-        except Exception as e:
-            print(f"⚠ Immediate registration failed: {e}")
-    else:
-        # During startup, use a single timer to avoid multiple registrations
-        if not bpy.app.timers.is_registered(register_all_libraries_and_refresh):
-            bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=0.5)
+    # 4. Just one more fallback attempt if needed (after 4 seconds)
+    # This will only run if _library_refresh_done is still False
+    bpy.app.timers.register(
+        lambda: None if _library_refresh_done else refresh_asset_libraries(), 
+        first_interval=1.0
+    )
 
 
 def delayed_library_registration(scene):

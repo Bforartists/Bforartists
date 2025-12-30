@@ -414,10 +414,6 @@ bool ZstdWriteWrap::write(const void *buf, const size_t buf_len)
 /** \name Write Data Type & Functions
  * \{ */
 
-struct BlendWriter {
-  WriteData *wd;
-};
-
 static WriteData *writedata_new(WriteWrap *ww)
 {
   WriteData *wd = MEM_new<WriteData>(__func__);
@@ -1139,7 +1135,7 @@ static void write_renderinfo(WriteData *wd, Main *mainvar)
 
 static void write_keymapitem(BlendWriter *writer, const wmKeyMapItem *kmi)
 {
-  BLO_write_struct(writer, wmKeyMapItem, kmi);
+  writer->write_struct(kmi);
   if (kmi->properties) {
     IDP_BlendWrite(writer, kmi->properties);
   }
@@ -1150,14 +1146,14 @@ static void write_userdef(BlendWriter *writer, const UserDef *userdef)
   writestruct(writer->wd, BLO_CODE_USER, UserDef, 1, userdef);
 
   LISTBASE_FOREACH (const bTheme *, btheme, &userdef->themes) {
-    BLO_write_struct(writer, bTheme, btheme);
+    writer->write_struct(btheme);
   }
 
   LISTBASE_FOREACH (const wmKeyMap *, keymap, &userdef->user_keymaps) {
-    BLO_write_struct(writer, wmKeyMap, keymap);
+    writer->write_struct(keymap);
 
     LISTBASE_FOREACH (const wmKeyMapDiffItem *, kmdi, &keymap->diff_items) {
-      BLO_write_struct(writer, wmKeyMapDiffItem, kmdi);
+      writer->write_struct(kmdi);
       if (kmdi->remove_item) {
         write_keymapitem(writer, kmdi->remove_item);
       }
@@ -1172,68 +1168,68 @@ static void write_userdef(BlendWriter *writer, const UserDef *userdef)
   }
 
   LISTBASE_FOREACH (const wmKeyConfigPref *, kpt, &userdef->user_keyconfig_prefs) {
-    BLO_write_struct(writer, wmKeyConfigPref, kpt);
+    writer->write_struct(kpt);
     if (kpt->prop) {
       IDP_BlendWrite(writer, kpt->prop);
     }
   }
 
   LISTBASE_FOREACH (const bUserMenu *, um, &userdef->user_menus) {
-    BLO_write_struct(writer, bUserMenu, um);
+    writer->write_struct(um);
     LISTBASE_FOREACH (const bUserMenuItem *, umi, &um->items) {
       if (umi->type == USER_MENU_TYPE_OPERATOR) {
         const bUserMenuItem_Op *umi_op = (const bUserMenuItem_Op *)umi;
-        BLO_write_struct(writer, bUserMenuItem_Op, umi_op);
+        writer->write_struct(umi_op);
         if (umi_op->prop) {
           IDP_BlendWrite(writer, umi_op->prop);
         }
       }
       else if (umi->type == USER_MENU_TYPE_MENU) {
         const bUserMenuItem_Menu *umi_mt = (const bUserMenuItem_Menu *)umi;
-        BLO_write_struct(writer, bUserMenuItem_Menu, umi_mt);
+        writer->write_struct(umi_mt);
       }
       else if (umi->type == USER_MENU_TYPE_PROP) {
         const bUserMenuItem_Prop *umi_pr = (const bUserMenuItem_Prop *)umi;
-        BLO_write_struct(writer, bUserMenuItem_Prop, umi_pr);
+        writer->write_struct(umi_pr);
       }
       else {
-        BLO_write_struct(writer, bUserMenuItem, umi);
+        writer->write_struct(umi);
       }
     }
   }
 
   LISTBASE_FOREACH (const bAddon *, bext, &userdef->addons) {
-    BLO_write_struct(writer, bAddon, bext);
+    writer->write_struct(bext);
     if (bext->prop) {
       IDP_BlendWrite(writer, bext->prop);
     }
   }
 
   LISTBASE_FOREACH (const bPathCompare *, path_cmp, &userdef->autoexec_paths) {
-    BLO_write_struct(writer, bPathCompare, path_cmp);
+    writer->write_struct(path_cmp);
   }
 
   LISTBASE_FOREACH (const bUserScriptDirectory *, script_dir, &userdef->script_directories) {
-    BLO_write_struct(writer, bUserScriptDirectory, script_dir);
+    writer->write_struct(script_dir);
   }
 
   LISTBASE_FOREACH (const bUserAssetLibrary *, asset_library_ref, &userdef->asset_libraries) {
-    BLO_write_struct(writer, bUserAssetLibrary, asset_library_ref);
+    writer->write_struct(asset_library_ref);
   }
 
   LISTBASE_FOREACH (const bUserExtensionRepo *, repo_ref, &userdef->extension_repos) {
-    BLO_write_struct(writer, bUserExtensionRepo, repo_ref);
+    writer->write_struct(repo_ref);
     BKE_preferences_extension_repo_write_data(writer, repo_ref);
   }
   LISTBASE_FOREACH (
       const bUserAssetShelfSettings *, shelf_settings, &userdef->asset_shelves_settings)
   {
-    BLO_write_struct(writer, bUserAssetShelfSettings, shelf_settings);
+    writer->write_struct(shelf_settings);
     BKE_asset_catalog_path_list_blend_write(writer, shelf_settings->enabled_catalog_paths);
   }
 
   LISTBASE_FOREACH (const uiStyle *, style, &userdef->uistyles) {
-    BLO_write_struct(writer, uiStyle, style);
+    writer->write_struct(style);
   }
 }
 
@@ -2159,77 +2155,71 @@ void BLO_write_raw(BlendWriter *writer, const size_t size_in_bytes, const void *
   writedata(writer->wd, BLO_CODE_DATA, size_in_bytes, data_ptr);
 }
 
-void BLO_write_struct_by_name(BlendWriter *writer, const char *struct_name, const void *data_ptr)
+void BlendWriter::write_struct_by_name(const char *struct_name, const void *data)
 {
-  BLO_write_struct_array_by_name(writer, struct_name, 1, data_ptr);
+  this->write_struct_array_by_name(struct_name, 1, data);
 }
 
-void BLO_write_struct_array_by_name(BlendWriter *writer,
-                                    const char *struct_name,
-                                    const int64_t array_size,
-                                    const void *data_ptr)
-{
-  int struct_id = BLO_get_struct_id_by_name(writer, struct_name);
-  if (UNLIKELY(struct_id == -1)) {
-    CLOG_ERROR(&LOG, "Can't find SDNA code <%s>", struct_name);
-    return;
-  }
-  BLO_write_struct_array_by_id(writer, struct_id, array_size, data_ptr);
-}
-
-void BLO_write_struct_by_id(BlendWriter *writer, const int struct_id, const void *data_ptr)
-{
-  writestruct_nr(writer->wd, BLO_CODE_DATA, struct_id, 1, data_ptr);
-}
-
-void BLO_write_struct_at_address_by_id(BlendWriter *writer,
-                                       const int struct_id,
-                                       const void *address,
-                                       const void *data_ptr)
-{
-  BLO_write_struct_at_address_by_id_with_filecode(
-      writer, BLO_CODE_DATA, struct_id, address, data_ptr);
-}
-
-void BLO_write_struct_at_address_by_id_with_filecode(BlendWriter *writer,
-                                                     const int filecode,
-                                                     const int struct_id,
-                                                     const void *address,
-                                                     const void *data_ptr)
-{
-  writestruct_at_address_nr(writer->wd, filecode, struct_id, 1, address, data_ptr);
-}
-
-void BLO_write_struct_array_by_id(BlendWriter *writer,
-                                  const int struct_id,
-                                  const int64_t array_size,
-                                  const void *data_ptr)
-{
-  writestruct_nr(writer->wd, BLO_CODE_DATA, struct_id, array_size, data_ptr);
-}
-
-void BLO_write_struct_array_at_address_by_id(BlendWriter *writer,
-                                             const int struct_id,
+void BlendWriter::write_struct_array_by_name(const char *struct_name,
                                              const int64_t array_size,
-                                             const void *address,
-                                             const void *data_ptr)
+                                             const void *data)
 {
-  writestruct_at_address_nr(writer->wd, BLO_CODE_DATA, struct_id, array_size, address, data_ptr);
-}
-
-void BLO_write_struct_list_by_id(BlendWriter *writer, const int struct_id, const ListBase *list)
-{
-  writelist_nr(writer->wd, BLO_CODE_DATA, struct_id, list);
-}
-
-void BLO_write_struct_list_by_name(BlendWriter *writer, const char *struct_name, ListBase *list)
-{
-  int struct_id = BLO_get_struct_id_by_name(writer, struct_name);
+  int struct_id = BLO_get_struct_id_by_name(this, struct_name);
   if (UNLIKELY(struct_id == -1)) {
     CLOG_ERROR(&LOG, "Can't find SDNA code <%s>", struct_name);
     return;
   }
-  BLO_write_struct_list_by_id(writer, struct_id, list);
+  this->write_struct_array_by_id(struct_id, array_size, data);
+}
+
+void BlendWriter::write_struct_by_id(const int struct_id, const void *data)
+{
+  writestruct_nr(this->wd, BLO_CODE_DATA, struct_id, 1, data);
+}
+
+void BlendWriter::write_struct_at_address_by_id(const int struct_id,
+                                                const void *address,
+                                                const void *data)
+{
+  this->write_struct_at_address_by_id_with_filecode(BLO_CODE_DATA, struct_id, address, data);
+}
+
+void BlendWriter::write_struct_at_address_by_id_with_filecode(const int filecode,
+                                                              const int struct_id,
+                                                              const void *address,
+                                                              const void *data)
+{
+  writestruct_at_address_nr(this->wd, filecode, struct_id, 1, address, data);
+}
+
+void BlendWriter::write_struct_array_by_id(const int struct_id,
+                                           const int64_t array_size,
+                                           const void *data)
+{
+  writestruct_nr(this->wd, BLO_CODE_DATA, struct_id, array_size, data);
+}
+
+void BlendWriter::write_struct_array_at_address_by_id(const int struct_id,
+                                                      const int64_t array_size,
+                                                      const void *address,
+                                                      const void *data)
+{
+  writestruct_at_address_nr(this->wd, BLO_CODE_DATA, struct_id, array_size, address, data);
+}
+
+void BlendWriter::write_struct_list_by_id(const int struct_id, const ListBase *list)
+{
+  writelist_nr(this->wd, BLO_CODE_DATA, struct_id, list);
+}
+
+void BlendWriter::write_struct_list_by_name(const char *struct_name, ListBase *list)
+{
+  int struct_id = BLO_get_struct_id_by_name(this, struct_name);
+  if (UNLIKELY(struct_id == -1)) {
+    CLOG_ERROR(&LOG, "Can't find SDNA code <%s>", struct_name);
+    return;
+  }
+  this->write_struct_list_by_id(struct_id, list);
 }
 
 void blo_write_id_struct(BlendWriter *writer,

@@ -171,7 +171,7 @@ static void greasepencil_blend_write(BlendWriter *writer, ID *id, const void *id
         BKE_defvert_blend_write(writer, gps->totpoints, gps->dvert);
         if (gps->editcurve != nullptr) {
           bGPDcurve *gpc = gps->editcurve;
-          BLO_write_struct(writer, bGPDcurve, gpc);
+          writer->write_struct(gpc);
           BLO_write_struct_array(
               writer, bGPDcurve_point, gpc->tot_curve_points, gpc->curve_points);
         }
@@ -465,7 +465,7 @@ bGPDframe *BKE_gpencil_frame_addnew(bGPDlayer *gpl, int cframe)
   }
 
   /* allocate memory for this frame */
-  gpf = MEM_callocN<bGPDframe>("bGPDframe");
+  gpf = MEM_new_for_free<bGPDframe>("bGPDframe");
   gpf->framenum = cframe;
 
   /* find appropriate place to add frame */
@@ -575,7 +575,7 @@ bGPDlayer *BKE_gpencil_layer_addnew(bGPdata *gpd,
   }
 
   /* allocate memory for frame and add to end of list */
-  gpl = MEM_callocN<bGPDlayer>("bGPDlayer");
+  gpl = MEM_new_for_free<bGPDlayer>("bGPDlayer");
 
   gpl_active = BKE_gpencil_layer_active_get(gpd);
 

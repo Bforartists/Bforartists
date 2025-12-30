@@ -417,17 +417,22 @@ void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &report
     }
   }
 
-  /* Libraries need to be remapped before moving IDs into `bmain_dst`, to ensure that the sorting
-   * of inserted IDs is correct. Note that no bmain is given here, so this is only a 'raw'
-   * remapping. */
-  BKE_libblock_relink_multiple(nullptr,
-                               ids_to_move,
-                               ID_REMAP_TYPE_REMAP,
-                               id_remapper_libraries,
-                               ID_REMAP_DO_LIBRARY_POINTERS);
-
   for (ID *id_iter_src : ids_to_move) {
     BKE_libblock_management_main_remove(bmain_src, id_iter_src);
+    /* Libraries need to be remapped:
+     *  - _After_ removing IDs from the old source Main, to ensure that they get properly removed
+     *    from the expected namemap.
+     *  - _Before_ moving them into `bmain_dst`, to ensure that the sorting of inserted IDs is
+     *    correct. */
+    if (ID_IS_LINKED(id_iter_src)) {
+      /* Note that no bmain is given here, so this is only a 'raw' remapping. */
+      BKE_libblock_relink_multiple(nullptr,
+                                   blender::Span(&id_iter_src, 1),
+                                   ID_REMAP_TYPE_REMAP,
+                                   id_remapper_libraries,
+                                   ID_REMAP_DO_LIBRARY_POINTERS);
+      BLI_assert(id_iter_src->lib);
+    }
     BKE_libblock_management_main_add(bmain_dst, id_iter_src);
   }
 
@@ -793,7 +798,7 @@ void BKE_main_library_weak_reference_add(ID *local_id,
                                          const char *library_id_name)
 {
   if (local_id->library_weak_reference == nullptr) {
-    local_id->library_weak_reference = MEM_callocN<LibraryWeakReference>(__func__);
+    local_id->library_weak_reference = MEM_new_for_free<LibraryWeakReference>(__func__);
   }
 
   STRNCPY(local_id->library_weak_reference->library_filepath, library_filepath);

@@ -6,7 +6,6 @@
  * \ingroup modifiers
  */
 
-#include "DNA_defaults.h"
 #include "DNA_modifier_types.h"
 
 #include "BLI_array_utils.hh"
@@ -41,10 +40,7 @@ namespace blender {
 static void init_data(ModifierData *md)
 {
   auto *emd = reinterpret_cast<GreasePencilEnvelopeModifierData *>(md);
-
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(emd, modifier));
-
-  MEMCPY_STRUCT_AFTER(emd, DNA_struct_default_get(GreasePencilEnvelopeModifierData), modifier);
+  INIT_DEFAULT_STRUCT_AFTER(emd, modifier);
   modifier::greasepencil::init_influence_data(&emd->influence, false);
 }
 
@@ -723,7 +719,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
 {
   const auto *emd = reinterpret_cast<const GreasePencilEnvelopeModifierData *>(md);
 
-  BLO_write_struct(writer, GreasePencilEnvelopeModifierData, emd);
+  writer->write_struct(emd);
   modifier::greasepencil::write_influence_data(writer, &emd->influence);
 }
 

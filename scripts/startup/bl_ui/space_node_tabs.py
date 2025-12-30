@@ -336,13 +336,13 @@ class NODE_PT_group(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
-            col.operator("node.group_insert", text = " Insert into Group ", icon = "NODE_GROUPINSERT")
-            col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
+            col.operator("node.group_make", icon="NODE_MAKEGROUP")
+            col.operator("node.group_insert", icon="NODE_GROUPINSERT")
+            col.operator("node.group_ungroup", icon="NODE_UNGROUP")
 
             col = layout.column(align=True)
             col.scale_y = 2
-            col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
+            col.operator("node.group_edit", icon="NODE_EDITGROUP").exit = False
 
         # icon buttons
         else:

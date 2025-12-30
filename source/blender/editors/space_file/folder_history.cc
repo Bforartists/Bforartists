@@ -119,9 +119,9 @@ void folderlist_free(ListBase *folderlist)
   }
 }
 
-static ListBase folderlist_duplicate(ListBase *folderlist)
+static ListBaseT<FolderList> folderlist_duplicate(ListBaseT<FolderList> *folderlist)
 {
-  ListBase folderlistn = {nullptr};
+  ListBaseT<FolderList> folderlistn = {nullptr};
 
   BLI_duplicatelist(&folderlistn, folderlist);
 
@@ -153,7 +153,7 @@ void folder_history_list_ensure_for_active_browse_mode(SpaceFile *sfile)
   FileFolderHistory *history = folder_history_find(sfile, (eFileBrowse_Mode)sfile->browse_mode);
 
   if (!history) {
-    history = MEM_callocN<FileFolderHistory>(__func__);
+    history = MEM_new_for_free<FileFolderHistory>(__func__);
     history->browse_mode = sfile->browse_mode;
     BLI_addtail(&sfile->folder_histories, history);
   }
@@ -182,9 +182,9 @@ void folder_history_list_free(SpaceFile *sfile)
   }
 }
 
-ListBase folder_history_list_duplicate(ListBase *listbase)
+ListBaseT<FileFolderHistory> folder_history_list_duplicate(ListBaseT<FileFolderHistory> *listbase)
 {
-  ListBase histories = {nullptr};
+  ListBaseT<FileFolderHistory> histories = {nullptr};
 
   LISTBASE_FOREACH (FileFolderHistory *, history, listbase) {
     FileFolderHistory *history_new = static_cast<FileFolderHistory *>(MEM_dupallocN(history));

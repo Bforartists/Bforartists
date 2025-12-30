@@ -2006,52 +2006,41 @@ class IMAGE_PT_overlay_guides(Panel):
         uvedit = sima.uv_editor
 
         layout.active = overlay.show_overlays
+
         # BFA - grid settings greaty improved and changed
-        split = layout.split()
-        col = split.column()
-        col.use_property_split = False
+        col = layout.column()
         row = col.row()
-        row.separator()
+        row.separator() # BFA - Indent properties
+        col = row.column()
+        
+        row = col.row()
+        row.alignment = 'LEFT'
         row.prop(overlay, "show_grid_background", text="Grid")
-        col = split.column()
-
+        
         if overlay.show_grid_background:
-            col.label(icon="DISCLOSURE_TRI_DOWN")
+            row.label(icon="DISCLOSURE_TRI_DOWN")
         else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
+            row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         if overlay.show_grid_background:
-            split = layout.split()
-            split.use_property_split = False
-            split.use_property_decorate = False
-
-            col = split.column()
             row = col.row()
             row.separator()
-            row.separator()
+            col = row.column()
+        
+            row = col.row()
             row.prop(uvedit, "grid_shape_source", expand=True)
 
+            col.use_property_split = True
+            col.use_property_decorate = False 
+            col.prop(uvedit, "tile_grid_shape", text="Tiles")
+
             if uvedit.grid_shape_source == "FIXED":
-                row = layout.row()
-                row.use_property_split = True
-                row.use_property_decorate = False
-                row.separator(factor=3.5)
-                row.prop(
-                    uvedit, "custom_grid_subdivisions", text="Fixed grid size"
-                )  # by purpose.No text means x y is missing.
+                col.prop(uvedit, "custom_grid_subdivisions", text="Subdivisions")
 
             if sima.image is not None:
-                col = layout.column()
-                row = col.row()
-                row.separator()
-                row.separator()
-                row.prop(uvedit, "show_grid_over_image")
-
-            row = layout.row()
-            row.use_property_split = True
-            row.use_property_decorate = False
-            row.separator()
-            row.prop(uvedit, "tile_grid_shape", text="Tiles")
+                col.separator(factor=0.5)
+                col.use_property_split = False
+                col.prop(uvedit, "show_grid_over_image")
 
 
 class IMAGE_PT_overlay_uv_stretch(Panel):
@@ -2073,29 +2062,32 @@ class IMAGE_PT_overlay_uv_stretch(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
+        
         # BFA - changed greatly to be improved
         # UV Stretching
-        split = layout.split()
-        col = split.column()
-        col.use_property_split = False
+        col = layout.column()
         row = col.row()
-        row.separator()
+        row.separator() # BFA - Indent properties
+        col = row.column()
+        
+        row = col.row()
+        row.alignment = 'LEFT'
         row.prop(uvedit, "show_stretch")
-        col = split.column()
+        
         if uvedit.show_stretch:
-            col.label(icon="DISCLOSURE_TRI_DOWN")
+            row.label(icon="DISCLOSURE_TRI_DOWN")
         else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
+            row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         if uvedit.show_stretch:
-            col = layout.column()
+            col = col.column()
+            row = col.row()
+            row.separator() # BFA - Indent properties
+            col = row.column()
+        
             col.use_property_split = True
-            row = col.row()
-            row.separator(factor=3.0)
-            row.prop(uvedit, "display_stretch_type", text="")
-            row = col.row()
-            row.separator(factor=3.0)
-            row.prop(uvedit, "stretch_opacity", text="Opacity")
+            col.prop(uvedit, "display_stretch_type", text="Type")
+            col.prop(uvedit, "stretch_opacity", text="Opacity")
 
 
 class IMAGE_PT_overlay_uv_edit_geometry(Panel):
@@ -2121,21 +2113,18 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
         # Edges
         col = layout.column()
         row = col.row()
-        row.separator()
-        row.use_property_split = True
-        row.prop(uvedit, "uv_opacity")
-        row = col.row()
-        row.separator()
-        row.prop(uvedit, "edge_display_type", text="")
-        row = col.row()
-        row.separator()
-        row.prop(uvedit, "show_modified_edges", text="Modified Edges")
+        row.separator() # BFA - Indent properties
+        col = row.column()
+        
+        col.use_property_split = True
+        col.prop(uvedit, "uv_opacity")
+        col.prop(uvedit, "edge_display_type")
+        col.use_property_split = False
+        col.prop(uvedit, "show_modified_edges", text="Modified Edges")
 
         # Faces
-        row = col.row()
         if not uvedit.show_stretch:
-            row.separator()
-            row.prop(uvedit, "show_faces", text="Faces")
+            col.prop(uvedit, "show_faces")
 
 
 class IMAGE_PT_overlay_uv_display(Panel):
@@ -2157,27 +2146,30 @@ class IMAGE_PT_overlay_uv_display(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
-        # BFA - changed greatly to be improved
-        # UV Display
-        split = layout.split()
-        col = split.column()
-        col.use_property_split = False
+        # BFA - drastically change layout
+        col = layout.column()
         row = col.row()
-        row.separator()
+        row.separator() # BFA - Indent properties
+        col = row.column()
+        
+        row = col.row()
+        row.alignment = 'LEFT'
         row.prop(uvedit, "show_uv")
-        col = split.column()
+        
         if uvedit.show_uv:
-            col.label(icon="DISCLOSURE_TRI_DOWN")
+            row.label(icon="DISCLOSURE_TRI_DOWN")
         else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
+            row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         if uvedit.show_uv:
-            col = layout.column()
-            col.use_property_split = True
+            col = col.column()
             row = col.row()
-            row.separator(factor=3.0)
-            row.prop(uvedit, "uv_face_opacity", text="Faces")
-            row.prop(uvedit, "uv_edge_opacity", text="Edges")
+            row.separator() # BFA - Indent properties
+            col = row.column(align=True)
+            
+            col.use_property_split = True
+            col.prop(uvedit, "uv_face_opacity", text="Faces")
+            col.prop(uvedit, "uv_edge_opacity", text="Edges")
 
 
 class IMAGE_PT_overlay_image(Panel):
@@ -2197,40 +2189,6 @@ class IMAGE_PT_overlay_image(Panel):
         row = layout.row()
         row.separator()
         row.prop(uvedit, "show_metadata")
-
-
-class IMAGE_PT_overlay_render_guides(Panel):
-    bl_space_type = "IMAGE_EDITOR"
-    bl_region_type = "HEADER"
-    bl_label = "Guides"
-    bl_parent_id = "IMAGE_PT_overlay"
-
-    @classmethod
-    def poll(cls, context):
-        sima = context.space_data
-        return (
-            (sima.mode in {"MASK", "VIEW"})
-            and (image := sima.image) is not None
-            and (image.source == "VIEWER")
-            and (image.type == "COMPOSITING")
-        )
-
-    def draw(self, context):
-        layout = self.layout
-
-        sima = context.space_data
-        overlay = sima.overlay
-
-        layout.active = overlay.show_overlays
-
-        row = layout.row(align=True)
-        layout.prop(overlay, "show_text_info")
-
-        row = layout.row(align=True)
-        row.prop(overlay, "show_render_size")
-        subrow = row.row()
-        subrow.active = overlay.show_render_size
-        subrow.prop(overlay, "passepartout_alpha", text="Passepartout")
 
 
 class IMAGE_PT_overlay_render_guides(Panel):
