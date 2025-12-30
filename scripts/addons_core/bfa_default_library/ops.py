@@ -158,19 +158,78 @@ class OBJECT_OT_ApplySelected(Operator):
                     
                     final_object = context.view_layer.objects.active
 
-                    # Ensure the final object is selected and active
+                    # Ensure the final object is properly processed before remeshing
                     bpy.ops.object.select_all(action='DESELECT')
                     final_object.select_set(True)
                     context.view_layer.objects.active = final_object
                     
-                    # Apply remesh operation with custom voxel size
-                    # Add a remesh modifier with the specified voxel size
-                    remesh_mod = final_object.modifiers.new(name="Remesh", type='REMESH')
-                    remesh_mod.mode = 'VOXEL'
-                    remesh_mod.voxel_size = self.voxel_size
+                    # Convert to mesh if it's not already a mesh (safety check)
+                    if final_object.type != 'MESH':
+                        try:
+                            bpy.ops.object.convert(target='MESH')
+                        except:
+                            #print(f"Warning: Could not convert {final_object.type} to mesh for remeshing")
+                            pass
                     
-                    # Apply the modifier
-                    bpy.ops.object.modifier_apply(modifier=remesh_mod.name)
+                    # Make sure the object has valid mesh data
+                    if not final_object.data or not hasattr(final_object.data, 'polygons'):
+                        try:
+                            bpy.ops.object.convert(target='MESH')
+                        except:
+                            #print(f"Error: Invalid mesh data for remeshing")
+                            final_object = None
+                            pass
+                    
+                    if final_object:
+                        # Add a remesh modifier with the specified voxel size
+                        remesh_mod = final_object.modifiers.new(name="TempRemesh", type='REMESH')
+                        remesh_mod.mode = 'VOXEL'
+                        remesh_mod.voxel_size = self.voxel_size
+                        
+                        # Set smooth shading for better results
+                        remesh_mod.use_smooth_shade = True
+                        
+                        # Ensure proper selection and context for modifier application
+                        bpy.ops.object.select_all(action='DESELECT')
+                        final_object.select_set(True)
+                        context.view_layer.objects.active = final_object
+                        context.view_layer.update()
+                        
+                        # Apply the modifier with robust error handling
+                        try:
+                            # Make sure modifier is valid and object is selected
+                            if remesh_mod.name in final_object.modifiers:
+                                # Apply the modifier via bpy.ops
+                                bpy.ops.object.modifier_apply(modifier=remesh_mod.name, report=True)
+                                #print(f"✓ Successfully applied remesh with voxel size: {self.voxel_size}")
+                            else:
+                                #print("⚠ Remesh modifier was not properly created")
+                                pass
+                        except RuntimeError as e:
+                            #print(f"⚠ Remesh operation failed: {str(e)}")
+                            
+                            # Clean up the modifier if it couldn't be applied
+                            if remesh_mod.name in final_object.modifiers:
+                                final_object.modifiers.remove(remesh_mod)
+                            
+                            # Fallback: Try creating the modifier again with different approach
+                            try:
+                                remesh_mod2 = final_object.modifiers.new(name="RemeshFallback", type='REMESH')
+                                remesh_mod2.mode = 'VOXEL'
+                                remesh_mod2.voxel_size = self.voxel_size
+                                remesh_mod2.use_smooth_shade = True
+                                
+                                bpy.ops.object.modifier_apply(modifier=remesh_mod2.name)
+                                #print(f"✓ Fallback remesh applied successfully")
+                            except:
+                                pass
+                                #print("⚠ Fallback remesh also failed")
+                        
+                        # Final cleanup and selection
+                        context.view_layer.update()
+                        bpy.ops.object.select_all(action='DESELECT')
+                        final_object.select_set(True)
+                        context.view_layer.objects.active = final_object
 
                     # DEBUG:
                     #self.report({'INFO'}, f"Applied remesh with voxel size: {self.voxel_size}")
@@ -209,8 +268,10 @@ classes = (
     OBJECT_OT_ApplySelected,
 )
 
-# Register scene properties
+# Register scene properties and operators
 def register():
+    """Register all operator classes."""
+    # Register scene properties
     bpy.types.Scene.join_apply = bpy.props.BoolProperty(
         name="Join on Apply",
         description="Join converted objects into a single mesh",
@@ -239,22 +300,36 @@ def register():
         precision=3
     )
 
-    # Register panel classes
+    from bpy.utils import register_class
     for cls in classes:
-        bpy.utils.register_class(cls)
+        try:
+            register_class(cls)
+        except ValueError as e:
+            if "already registered" not in str(e):
+                print(f"⚠ Error registering {cls.__name__}: {e}")
 
 
 def unregister():
-    # Unregister panel classes
+    """Unregister all operator classes."""
+    # Remove scene properties first
+    try:
+        del bpy.types.Scene.join_apply
+        del bpy.types.Scene.boolean_apply
+        del bpy.types.Scene.remesh_apply
+        del bpy.types.Scene.voxel_size_apply
+    except:
+        pass
+    
+    from bpy.utils import unregister_class
     for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
+        try:
+            unregister_class(cls)
+        except RuntimeError as e:
+            if "not registered" not in str(e):
+                print(f"⚠ Error unregistering {cls.__name__}: {e}")
+        except Exception as e:
+            print(f"⚠ Error unregistering {cls.__name__}: {e}")
 
-    # Remove scene properties
-    del bpy.types.Scene.join_apply
-    del bpy.types.Scene.boolean_apply
-    del bpy.types.Scene.remesh_apply
-    del bpy.types.Scene.voxel_size_apply
 
 if __name__ == "__main__":
     register()
-

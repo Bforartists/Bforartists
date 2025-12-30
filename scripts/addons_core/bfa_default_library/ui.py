@@ -166,6 +166,61 @@ class WIZARD_OT_TriggerAssetWizard(Operator):
     def invoke(self, context, event):
         return self.execute(context)
 
+
+# -----------------------------------------------------------------------------
+# Preferences
+# -----------------------------------------------------------------------------
+
+
+class LIBADDON_APT_preferences(bpy.types.AddonPreferences):
+    bl_idname = __package__
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.label(
+            text="Instructions",
+            icon="INFO")
+
+        layout.label(
+            text="To access these default assets, switch to the Asset Browser editor or use the Asset Shelves")
+        layout.label(
+            text="Go to the left library selector drop down and select one of the following libraries:")
+        layout.label(
+            text="'Default Library', 'Geometry Nodes Library', 'Shader Nodes Library', or 'Compositor Nodes Library'.")
+        layout.label(
+            text="You will now see assets from the selected library to drag and drop. Enjoy!")
+
+        # Show central library info
+        box = layout.box()
+        box.label(text="Library Management", icon='LIBRARY_DATA_DIRECT')
+
+        row = box.row()
+        row.label(text="To manually add/remove libraries from preferences, use the buttons below:")
+
+        # Add library management buttons
+        row = box.row()
+        row.operator("preferences.libaddon_cleanup_libraries", icon='TRASH')
+        row.operator("preferences.libaddon_readd_libraries", icon='ADD')
+
+        # Separator
+        box.separator()
+
+        # Library information
+        from . import utility
+        path = utility.get_central_library_path()
+        box.label(text=f"Location: {path}")
+
+        active_addons = utility.get_active_addons_count(path)
+        box.label(text=f"Active Libraries: {active_addons}")
+
+        if active_addons > 0:
+            box.label(text="Status: Libraries are registered and available", icon='CHECKMARK')
+        else:
+            box.label(text="Status: No libraries used", icon='QUESTION')
+
+
+
 # -----------------------------------------------------------------------------#
 # Interface Entries
 # -----------------------------------------------------------------------------#
@@ -248,37 +303,87 @@ classes = (
     WM_OT_AppendAsset,
     ASSET_MT_primitive_add,
     WIZARD_OT_TriggerAssetWizard,
+    LIBADDON_APT_preferences,
 )
 
 # -----------------------------------------------------------------------------#
 # Register
 # -----------------------------------------------------------------------------#
 
+# Class names list for central registry
+ui_class_names = [cls.__name__ for cls in classes]
+
+# Menu append/remove functions list for tracking
+menu_functions = {
+    "primitive_menu_func": {
+        "menu": "VIEW3D_MT_add",
+        "append_fn": primitive_menu_func,
+        "registered": False
+    },
+    "wizard_menu_func": {
+        "menu": "VIEW3D_MT_object_asset",
+        "append_fn": wizard_menu_func,
+        "registered": False
+    },
+    "apply_join_menu_func": {
+        "menu": "VIEW3D_MT_object_apply",
+        "append_fn": apply_join_menu_func,
+        "registered": False
+    },
+    "apply_boolean_menu_func": {
+        "menu": "VIEW3D_MT_object_apply",
+        "append_fn": apply_boolean_menu_func,
+        "registered": False
+    },
+    "apply_remesh_menu_func": {
+        "menu": "VIEW3D_MT_object_apply",
+        "append_fn": apply_remesh_menu_func,
+        "registered": False
+    }
+}
+
 def register():
+    """Register UI classes and append menu functions."""
     for cls in classes:
-        bpy.utils.register_class(cls)
-
-    # Add the sub-menu to the main Add menu
+        try:
+            bpy.utils.register_class(cls)
+        except ValueError as e:
+            if "already registered" not in str(e):
+                print(f"⚠ Error registering {cls.__name__}: {e}")
+    
+    # Add menu functions
     bpy.types.VIEW3D_MT_add.append(primitive_menu_func)
-    # Add wizard trigger to asset menu
     bpy.types.VIEW3D_MT_object_asset.append(wizard_menu_func)
-
     bpy.types.VIEW3D_MT_object_apply.append(apply_join_menu_func)
     bpy.types.VIEW3D_MT_object_apply.append(apply_boolean_menu_func)
     bpy.types.VIEW3D_MT_object_apply.append(apply_remesh_menu_func)
+        
 
 
 def unregister():
-    for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
-
-    # Remove the sub-menu from the Add menu
+    """Unregister UI classes and remove menu functions."""
+    # Remove menu functions
     bpy.types.VIEW3D_MT_add.remove(primitive_menu_func)
-    # Remove wizard trigger from asset menu
     bpy.types.VIEW3D_MT_object_asset.remove(wizard_menu_func)
-
     bpy.types.VIEW3D_MT_object_apply.remove(apply_join_menu_func)
     bpy.types.VIEW3D_MT_object_apply.remove(apply_boolean_menu_func)
     bpy.types.VIEW3D_MT_object_apply.remove(apply_remesh_menu_func)
-
+    
+    # Unregister classes
+    for cls in reversed(classes):
+        try:
+            bpy.utils.unregister_class(cls)
+        except RuntimeError as e:
+            if "not registered" not in str(e):
+                print(f"⚠ Error unregistering {cls.__name__}: {e}")
+    
+# Remove any remaining menu functions if they are registered
+    for func_id, func_info in menu_functions.items():
+        if func_info["registered"]:
+            menu_type = getattr(bpy.types, func_info["menu"])
+            try:
+                menu_type.remove(func_info["append_fn"])
+                func_info["registered"] = False
+            except Exception as e:
+                print(f"⚠ Could not remove menu function {func_id}: {e}")
 

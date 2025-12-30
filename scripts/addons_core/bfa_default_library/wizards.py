@@ -28,12 +28,12 @@ from . import wizard_operators
 from . import wizard_handlers
 
 def register():
-    """Register all wizard components"""
+    """Register all wizard components."""
     wizard_operators.register()
     wizard_handlers.register()
 
 def unregister():
-    """Unregister all wizard components"""
+    """Unregister all wizard components."""
     wizard_handlers.unregister()
     wizard_operators.unregister()
 

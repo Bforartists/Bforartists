@@ -198,19 +198,58 @@ def unregister_wizard_handler(asset_pattern):
 # Initialize the known collections
 pre_collection_asset_added_handler.known_collections = set()
 
+# Dictionary to track handler registration status
+handler_registry = {
+    'pre_collection_asset_added': False,
+    'collection_asset_added': False,
+    'subscription_owner': None
+}
+
 def register():
-    """Register all handlers"""
-    # Register handlers
-    bpy.app.handlers.blend_import_pre.append(pre_collection_asset_added_handler)
-    bpy.app.handlers.blend_import_post.append(collection_asset_added_handler)
-    subscribe_collection_handlers(subscription_owner)
+    """Register all handlers."""
+    global handler_registry, subscription_owner
+    
+    # Register handlers only if not already registered
+    if not handler_registry['pre_collection_asset_added']:
+        bpy.app.handlers.blend_import_pre.append(pre_collection_asset_added_handler)
+        handler_registry['pre_collection_asset_added'] = True
+        
+    if not handler_registry['collection_asset_added']:
+        bpy.app.handlers.blend_import_post.append(collection_asset_added_handler)
+        handler_registry['collection_asset_added'] = True
+    
+    # Only subscribe once
+    if not handler_registry['subscription_owner']:
+        handler_registry['subscription_owner'] = subscription_owner
+        subscribe_collection_handlers(subscription_owner)
+
+    # Note: Handlers are now managed directly
+    # The new operator registry focuses on operators, panels, and menus
+    # Handlers are global and handled separately
+    # If specific handler tracking is needed, consider using other_class registration
 
 def unregister():
-    """Unregister all handlers"""
+    """Unregister all handlers."""
+    global handler_registry
+    
+    # Handlers are handled directly by the addon system
+    # Since handlers are global, we unregister them regardless of addon status
+    # This means if multiple addons use these handlers, the first to unregister will remove them
+    # In practice, handlers should be designed to work across addons or be addon specific
+    
     # Unregister handlers
-    bpy.app.handlers.blend_import_pre.remove(pre_collection_asset_added_handler)
-    bpy.app.handlers.blend_import_post.remove(collection_asset_added_handler)
-    unsubscribe_collection_handlers(subscription_owner)
+    if pre_collection_asset_added_handler in bpy.app.handlers.blend_import_pre:
+        bpy.app.handlers.blend_import_pre.remove(pre_collection_asset_added_handler)
+        handler_registry['pre_collection_asset_added'] = False
+        
+    if collection_asset_added_handler in bpy.app.handlers.blend_import_post:
+        bpy.app.handlers.blend_import_post.remove(collection_asset_added_handler)
+        handler_registry['collection_asset_added'] = False
+    
+    # Unsubscribe handlers
+    if handler_registry['subscription_owner']:
+        unsubscribe_collection_handlers(handler_registry['subscription_owner'])
+        handler_registry['subscription_owner'] = None
 
 if __name__ == "__main__":
     register()

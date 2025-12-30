@@ -46,14 +46,24 @@ operator_classes = (
     SHADER_OT_CreateNewMaterial,
 )
 
+
+
 def register():
-    """Register all operator classes"""
+    """Register all operator classes."""
     from bpy.utils import register_class
     for cls in operator_classes:
-        register_class(cls)
+        try:
+            register_class(cls)
+        except ValueError as e:
+            if "already registered" not in str(e):
+                print(f"⚠ Error registering {cls.__name__}: {e}")
 
 def unregister():
-    """Unregister all operator classes"""
+    """Unregister all operator classes."""
     from bpy.utils import unregister_class
     for cls in reversed(operator_classes):
-        unregister_class(cls)
+        try:
+            unregister_class(cls)
+        except RuntimeError as e:
+            if "not registered" not in str(e):
+                print(f"⚠ Error unregistering {cls.__name__}: {e}")
