@@ -637,6 +637,8 @@ def register():
         from .operators import register as register_operators
         register_operators()
         #print(f"✓ Registered operators")
+    except Exception as e:
+        print(f"⚠ Error registering operators: {e}")
         
     # 3. Add a timer-based delayed registration as fallback (runs after 2 seconds)
     bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=2.0)
