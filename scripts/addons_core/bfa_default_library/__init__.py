@@ -504,16 +504,87 @@ classes = (
     LIBADDON_OT_readd_libraries,
 )
 
-# Define all submodules including the new operators and wizards modules
-submodule_names = [
-    "ui",              # User interface and menus
-    "panels",          # Main panels
-    "ops",             # Main operations
-    "wizards",         # Wizards
+# Define all submodules as Python files (not directories)
+submodule_files = [
+    "ui",              # User interface and menus (ui.py)
+    "panels",          # Main panels (panels.py)
+    "ops",             # Main addon operations (ops.py)
+    "wizards",         # Wizards (wizards.py)
+    "operators",       # Asset operations (operators module - directory)
 ]
 
-# Get the register/unregister functions from the factory
-register_submodules, unregister_submodules = register_submodule_factory(__name__, submodule_names)
+# Create a simple register/unregister system that handles both files and modules
+def register_all_submodules():
+    """Register all submodules manually since register_submodule_factory expects directories"""
+    registered_modules = []
+    
+    for module_name in submodule_files:
+        try:
+            # Import the module dynamically
+            if module_name == "operators":  # This is a directory
+                try:
+                    from .operators import register
+                    register()
+                    registered_modules.append(module_name)
+                    #print(f"✓ Registered module: operators")
+                except ImportError as e:
+                    print(f"⚠ Could not import operators module: {e}")
+            else:  # This is a Python file
+                try:
+                    module = __import__(f"{__name__}.{module_name}", fromlist=["register"])
+                    if hasattr(module, "register"):
+                        module.register()
+                        registered_modules.append(module_name)
+                        #print(f"✓ Registered module: {module_name}")
+                except ImportError as e:
+                    print(f"⚠ Could not import {module_name}: {e}")
+                    # Try alternative naming
+                    try:
+                        module = __import__(f"{__name__}.{module_name}_register", fromlist=["register"])
+                        if hasattr(module, "register"):
+                            module.register()
+                            registered_modules.append(module_name)
+                            #print(f"✓ Registered module: {module_name} (alternative)")
+                    except ImportError:
+                        pass
+        except Exception as e:
+            print(f"⚠ Error registering {module_name}: {e}")
+    
+    return registered_modules
+
+def unregister_all_submodules():
+    """Unregister all submodules in reverse order"""
+    for module_name in reversed(submodule_files):
+        try:
+            if module_name == "operators":  # This is a directory
+                try:
+                    from .operators import unregister
+                    unregister()
+                    #print(f"✓ Unregistered module: operators")
+                except ImportError as e:
+                    print(f"⚠ Could not unregister operators module: {e}")
+            else:  # This is a Python file
+                try:
+                    module = __import__(f"{__name__}.{module_name}", fromlist=["unregister"])
+                    if hasattr(module, "unregister"):
+                        module.unregister()
+                        #print(f"✓ Unregistered module: {module_name}")
+                except ImportError as e:
+                    print(f"⚠ Could not unregister {module_name}: {e}")
+                    # Try alternative naming
+                    try:
+                        module = __import__(f"{__name__}.{module_name}_register", fromlist=["unregister"])
+                        if hasattr(module, "unregister"):
+                            module.unregister()
+                            #print(f"✓ Unregistered module: {module_name} (alternative)")
+                    except ImportError:
+                        pass
+        except Exception as e:
+            print(f"⚠ Error unregistering {module_name}: {e}")
+
+# Replace the submodule factory with our manual functions
+register_submodules = register_all_submodules
+unregister_submodules = unregister_all_submodules
 
 
 # Flag to track if we've already done a refresh to avoid multiple refreshes
@@ -593,6 +664,12 @@ def refresh_asset_libraries():
 
 def register_all_libraries_and_refresh():
     """Register libraries and force a refresh of the asset browser."""
+    global _library_refresh_done
+    
+    # If already done, skip
+    if _library_refresh_done:
+        return None
+    
     try:
         # First, register all libraries
         register_all_libraries()
@@ -601,13 +678,12 @@ def register_all_libraries_and_refresh():
         refresh_success = refresh_asset_libraries()
         
         if refresh_success:
+            _library_refresh_done = True
             # print("✓ Timer-based library registration and refresh complete")
-            pass
         else:
-            # Schedule one more refresh attempt after a short delay if needed
-            # This is the only additional attempt we'll make
-            if not _library_refresh_done:
-                bpy.app.timers.register(lambda: refresh_asset_libraries(), first_interval=1.0)
+            # If refresh failed, we'll let the main timer handle another attempt
+            # Don't register additional timers here to avoid double registration
+            pass
         
         return None  # Don't repeat the timer
     except Exception as e:
@@ -620,7 +696,7 @@ def register():
     global _library_refresh_done
     _library_refresh_done = False
     
-    # Register main classes with duplicate handling
+    # Register main classes first
     for cls in classes:
         try:
             bpy.utils.register_class(cls)
@@ -632,23 +708,16 @@ def register():
             else:
                 print(f"⚠ Error registering {cls.__name__}: {e}")
     
-    # Register operators modules
+    # Register all submodules manually 
     try:
-        from .operators import register as register_operators
-        register_operators()
-        #print(f"✓ Registered operators")
+        register_submodules()
+        #print("✓ Submodules registered")
     except Exception as e:
-        print(f"⚠ Error registering operators: {e}")
-        
-    # 3. Add a timer-based delayed registration as fallback (runs after 2 seconds)
-    bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=2.0)
-    
-    # 4. Just one more fallback attempt if needed (after 4 seconds)
-    # This will only run if _library_refresh_done is still False
-    bpy.app.timers.register(
-        lambda: None if _library_refresh_done else refresh_asset_libraries(), 
-        first_interval=1.0
-    )
+        print(f"⚠ Error registering submodules: {e}")
+
+    # Add a SINGLE timer-based delayed registration as fallback
+    # This is the only timer we need - it will handle both registration and refresh
+    bpy.app.timers.register(register_all_libraries_and_refresh, first_interval=0.5)
 
 
 def delayed_library_registration(scene):
@@ -668,7 +737,7 @@ def delayed_library_registration(scene):
 
 
 def unregister():
-    """Unregister the complete addon - but KEEP libraries AND tracking data!"""
+    """Unregister the complete addon - KEEP libraries registered, only cleanup tracking data"""
     global _library_refresh_done
     _library_refresh_done = True  # Set to True to prevent any further refreshes during unregister
     
@@ -692,55 +761,22 @@ def unregister():
     except Exception:
         pass
 
-    # IMPORTANT: First unregister main classes to prevent double-unregistration
-    # Many main classes are also registered by submodules and don't need double handling
-    unregistered_count = 0
+    # Unregister all submodules first (in reverse order)
+    try:
+        unregister_submodules()
+        #print("✓ Submodules unregistered")
+    except Exception as e:
+        print(f"⚠ Error unregistering submodules: {e}")
+    
+    # Unregister main classes last (in reverse order)
     for cls in reversed(classes):
         try:
-            # Check if the class has bl_rna and if the associated Struct is registered
-            if hasattr(cls, 'bl_rna'):
-                # Get the actual Struct from the bl_rna
-                struct_ptr = getattr(bpy.types, cls.__name__, None)
-                if struct_ptr and hasattr(struct_ptr, 'is_registered') and struct_ptr.is_registered:
-                    bpy.utils.unregister_class(cls)
-                    #print(f"✓ Unregistered class {cls.__name__}")
-                    
-                    increment_counter()
-                else:
-                    # Class was never registered or already unregistered
-                    # Don't print warning for classes that are expected to be unregistered by submodules
-                    if cls.__name__ not in ["LIBADDON_OT_cleanup_libraries", "LIBADDON_OT_readd_libraries", "LIBADDON_APT_preferences"]:
-                        print(f"⚠ Class {cls.__name__} was not registered, skipping unregister")
-            else:
-                # Class doesn't have bl_rna, try to unregister anyway with protection
-                try:
-                    bpy.utils.unregister_class(cls)
-                    #print(f"✓ Unregistered class {cls.__name__}")
-                    
-                    increment_counter()
-                except RuntimeError as e:
-                    if "not registered" in str(e):
-                        # Don't print warning for classes that are expected to be unregistered by submodules
-                        if cls.__name__ not in ["LIBADDON_OT_cleanup_libraries", "LIBADDON_OT_readd_libraries", "LIBADDON_APT_preferences"]:
-                            print(f"⚠ Class {cls.__name__} was not registered, skipping unregister")
-                    else:
-                        raise
-        except RuntimeError as e:
-            if "not registered" in str(e):
-                # Don't print warning for classes that are expected to be unregistered by submodules
-                if cls.__name__ not in ["LIBADDON_OT_cleanup_libraries", "LIBADDON_OT_readd_libraries", "LIBADDON_APT_preferences"]:
-                    print(f"⚠ Class {cls.__name__} was not registered, skipping unregister")
-            else:
-                print(f"⚠ RuntimeError unregistering {cls.__name__}: {e}")
-        except ValueError as e:
-            if "missing bl_rna" in str(e):
-                # Don't print warning for classes that are expected to be unregistered by submodules
-                if cls.__name__ not in ["LIBADDON_OT_cleanup_libraries", "LIBADDON_OT_readd_libraries", "LIBADDON_APT_preferences"]:
-                    print(f"⚠ Class {cls.__name__} has missing bl_rna, skipping unregister")
-            else:
-                print(f"⚠ ValueError unregistering {cls.__name__}: {e}")
+            bpy.utils.unregister_class(cls)
+            #print(f"✓ Unregistered class: {cls.__name__}")
         except Exception as e:
-            print(f"⚠ Unexpected error unregistering {cls.__name__}: {e}")
+            # Don't print warnings for expected cases
+            if "not registered" not in str(e) and "missing bl_rna" not in str(e):
+                print(f"⚠ Error unregistering class {cls.__name__}: {e}")
 
     # IMPORTANT: We DO NOT remove tracking data when Bforartists closes!
     # This allows the addon to remember it was active when Bforartists restarts.
@@ -762,16 +798,3 @@ def unregister():
     except Exception as e:
         print(f"⚠ Error checking library status: {e}")
         print("📚 Libraries and tracking preserved for next session")
-    
-    # Unregister remaining submodules with central registry
-    for module_name in reversed(submodule_names):
-        try:
-            # Import the module dynamically
-            module = __import__(f"{__name__}.{module_name}", fromlist=["unregister"])
-            
-            # Call its unregister function with the registry ID
-            if hasattr(module, "unregister"):
-                module.unregister()  # Don't pass registry ID
-                #print(f"✓ Unregistered module {module_name}")
-        except Exception as e:
-            print(f"⚠ Error unregistering module {module_name}: {e}")
