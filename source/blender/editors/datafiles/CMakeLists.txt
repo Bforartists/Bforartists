@@ -1136,6 +1136,8 @@ if(WITH_BLENDER)
       mod_smooth
       mod_soft
       mod_solidify
+      mod_sound_pitch
+      mod_sound_echo
       mod_subsurf
       mod_thickness
       mod_time

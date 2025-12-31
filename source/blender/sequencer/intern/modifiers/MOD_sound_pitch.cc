@@ -52,8 +52,9 @@ static void pitchmodifier_draw(const bContext * /*C*/, Panel *panel)
   else if (mode == ePitchMode::PITCH_MODE_RATIO) {
     col.prop(ptr, "ratio", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
-
+  col.use_property_split_set(false); /*BFA - float boolean left*/
   col.prop(ptr, "preserve_formant", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col.use_property_split_set(true); /*BFA*/
   col.prop(ptr, "quality", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
