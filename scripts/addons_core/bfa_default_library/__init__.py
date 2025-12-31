@@ -183,35 +183,49 @@ def find_and_cleanup_libraries(prefs, central_base):
             print(f"   ⚠ Could not remove library at index {index}: {e}")
     
     # Now update any remaining libraries that don't have the correct path
+    # Create a list of updates to apply after iteration to avoid index corruption
+    libraries_to_update = []
+    
     for i, lib in enumerate(prefs.filepaths.asset_libraries):
         for lib_name in CENTRAL_LIB_SUBFOLDERS:
             if lib.name == lib_name or lib.name.startswith(f"{lib_name}."):
                 correct_path = p.join(central_base, lib_name)
                 if lib.path != correct_path:
-                    # This library needs to be updated
-                    try:
-                        # Remove and re-add with correct path
-                        bpy.ops.preferences.asset_library_remove(index=i)
-                        bpy.ops.preferences.asset_library_add(directory=correct_path)
-                        
-                        # Find the new library and set its name
-                        for j, new_lib in enumerate(prefs.filepaths.asset_libraries):
-                            if new_lib.path == correct_path:
-                                new_lib.name = lib_name
-                                new_lib.import_method = 'APPEND'
-                                # print(f"   🔄 Updated library {lib_name} from {lib.path} to {correct_path}")
-                                break
-                        
-                        # This library doesn't need to be created
-                        if lib_name in libraries_to_create:
-                            libraries_to_create.remove(lib_name)
-                    except Exception as e:
-                        print(f"   ⚠ Could not update library {lib_name}: {e}")
+                    libraries_to_update.append({
+                        'index': i,
+                        'lib_name': lib_name,
+                        'correct_path': correct_path
+                    })
                 else:
                     # Library already has correct path
                     if lib_name in libraries_to_create:
                         libraries_to_create.remove(lib_name)
                 break
+    
+    # Apply updates in reverse order to maintain correct indices
+    for update in sorted(libraries_to_update, key=lambda x: x['index'], reverse=True):
+        i = update['index']
+        lib_name = update['lib_name']
+        correct_path = update['correct_path']
+        
+        try:
+            # Remove and re-add with correct path
+            bpy.ops.preferences.asset_library_remove(index=i)
+            bpy.ops.preferences.asset_library_add(directory=correct_path)
+            
+            # Find the new library and set its name
+            for j, new_lib in enumerate(prefs.filepaths.asset_libraries):
+                if new_lib.path == correct_path:
+                    new_lib.name = lib_name
+                    new_lib.import_method = 'APPEND'
+                    # print(f"   🔄 Updated library {lib_name} from {lib.path} to {correct_path}")
+                    break
+            
+            # This library doesn't need to be created
+            if lib_name in libraries_to_create:
+                libraries_to_create.remove(lib_name)
+        except Exception as e:
+            print(f"   ⚠ Could not update library {lib_name}: {e}")
     
     return list(libraries_to_create)
 
