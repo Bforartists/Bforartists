@@ -232,13 +232,21 @@ def unregister():
     if object_added_handler in bpy.app.handlers.depsgraph_update_post:
         bpy.app.handlers.depsgraph_update_post.remove(object_added_handler)
         
-    # Unregister panel classes
+    # Unregister panel classes with robust error handling
     for cls in reversed(classes):
         try:
-            bpy.utils.unregister_class(cls)
+            # Check if the class has the bl_rna attribute (indicating it's registered)
+            if hasattr(cls, 'bl_rna'):
+                bpy.utils.unregister_class(cls)
+            else:
+                # The class doesn't have bl_rna, so it's not registered or already unregistered
+                print(f"⚠ Skipping unregistration of {cls.__name__}: not registered (missing bl_rna)")
         except RuntimeError as e:
             if "not registered" not in str(e):
                 print(f"⚠ Error unregistering {cls.__name__}: {e}")
+        except Exception as e:
+            # Handle other potential errors gracefully
+            print(f"⚠ Error unregistering {cls.__name__}: {e}")
         
         # Handle handler cleanup (note: new registry doesn't track handlers)
         if object_added_handler in bpy.app.handlers.depsgraph_update_post:
