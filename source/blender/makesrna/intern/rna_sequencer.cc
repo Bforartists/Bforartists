@@ -54,8 +54,8 @@ struct EffectInfo {
 
 #define RNA_ENUM_SEQUENCER_AUDIO_MODIFIER_TYPE_ITEMS \
   {eSeqModifierType_SoundEqualizer, "SOUND_EQUALIZER", ICON_MOD_EQUALIZER, "Sound Equalizer", ""}, \
-  {eSeqModifierType_Pitch, "PITCH", ICON_NONE, "Pitch", ""}, \
-  {eSeqModifierType_Echo, "ECHO", ICON_NONE, "Echo", ""}
+  {eSeqModifierType_Pitch, "PITCH", ICON_MOD_SOUND_PITCH, "Pitch", ""}, \
+  {eSeqModifierType_Echo, "ECHO", ICON_MOD_SOUND_ECHO, "Echo", ""}
 /* clang-format on */
 
 const EnumPropertyItem rna_enum_strip_modifier_type_items[] = {
@@ -4161,6 +4161,7 @@ static void rna_def_sound_equalizer_modifier(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "SoundEqualizerModifier", "StripModifier");
   RNA_def_struct_sdna(srna, "SoundEqualizerModifierData");
   RNA_def_struct_ui_text(srna, "SoundEqualizerModifier", "Equalize audio");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_EQUALIZER); /*BFA - icon added*/
   /* Sound Equalizers. */
   prop = RNA_def_property(srna, "graphics", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_struct_type(prop, "EQCurveMappingData");
@@ -4217,6 +4218,7 @@ static void rna_def_pitch_modifier(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "PitchModifier", "StripModifier");
   RNA_def_struct_sdna(srna, "PitchModifierData");
   RNA_def_struct_ui_text(srna, "PitchModifier", "Shift Audio Pitch");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_SOUND_PITCH); /*BFA - icon added*/
 
   prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "mode");
@@ -4273,6 +4275,7 @@ static void rna_def_echo_modifier(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "EchoModifier", "StripModifier");
   RNA_def_struct_sdna(srna, "EchoModifierData");
   RNA_def_struct_ui_text(srna, "EchoModifier", "Tooltip");
+  RNA_def_struct_ui_icon(srna, ICON_MOD_SOUND_ECHO); /*BFA - icon added*/
 
   prop = RNA_def_property(srna, "delay", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "delay");
