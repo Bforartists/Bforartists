@@ -900,7 +900,7 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.clean", icon="CLEAN_KEYS").channels = False
 
         # BFA - https://projects.blender.org/blender/blender/pulls/113335
-        from bl_ui_utils.layout import operator_context
+        from _bl_ui_utils.layout import operator_context
 
         with operator_context(layout, "INVOKE_REGION_CHANNELS"):
             layout.operator("action.clean", text="Clean Channels", icon="CLEAN_CHANNELS").channels = True
