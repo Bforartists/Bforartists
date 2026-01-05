@@ -706,6 +706,7 @@ const bTheme U_theme_default = {
     .syntaxc = RGBA(0x426628ff),
     .syntaxd = RGBA(0x749797ff),
     .syntaxr = RGBA(0x737373ff),
+    .node_outline = RGBA(0xffffff26),
     .nodeclass_output = RGBA(0x8d3038ff),
     .nodeclass_filter = RGBA(0x584d80ff),
     .nodeclass_vector = RGBA(0x6b6092ff),

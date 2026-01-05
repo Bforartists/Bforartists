@@ -1719,8 +1719,7 @@ static void node_draw_shadow(const SpaceNode &snode,
 static void bfa_node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
                                                const bNode &node,
                                                const rctf &rect,
-                                               const float radius,
-                                               const float color[4])
+                                               const float radius)
 {
   if (node.type_legacy != NODE_GROUP) {
     return;
@@ -1783,13 +1782,14 @@ static void bfa_node_group_outline(const SpaceNode &snode, const bNode &node, co
   }
 }
 
-/* BFA unused but keep for merging sake*/
+/* BFA keep for merging sake*/
 /* Node groups draw two "copies" of the node body underneath, just narrower and dimmer. */
 static void node_draw_node_group_indicator(const SpaceNode &snode,
                                            const bNode &node,
                                            const rctf &rect,
                                            const float radius,
-                                           const float color[4])
+                                           const float color[4],
+                                           const bool disable_copy = true) /* bfa disabled the bottom part, keep highlight*/
 {
   if (node.type_legacy != NODE_GROUP) {
     return;
@@ -1813,6 +1813,10 @@ static void node_draw_node_group_indicator(const SpaceNode &snode,
   }
 
   ui::draw_roundbox_corner_set(ui::CNR_BOTTOM_LEFT | ui::CNR_BOTTOM_RIGHT);
+
+  if (disable_copy) {
+    return;
+  }
 
   /* Start with the last copy. */
   {
@@ -3317,7 +3321,6 @@ static void node_draw_basis(const bContext &C,
   /* Body. */
   {
     // bfa node color blend 
-    float color_blend[4];
     blender::ui::theme::get_color_blend_4f(TH_NODE, color_id, U.node_color_blend, color);
     const float alpha = 0.55f + color[3] * (1.0f - 0.55f);
     /* Use warning color to indicate undefined types. */
@@ -3354,10 +3357,9 @@ static void node_draw_basis(const bContext &C,
         rct.ymax - NODE_DY + padding,
     };
 
-    /* BFA - Removed the old Node Group indicator. */
-    // if (draw_node_details(snode)) {
-    //   node_draw_node_group_indicator(snode, node, rect, corner_radius, color);
-    // }
+    if (draw_node_details(snode)) {
+      node_draw_node_group_indicator(snode, node, rect, corner_radius, color);
+    }
 
     ui::draw_roundbox_corner_set(ui::CNR_BOTTOM_LEFT | ui::CNR_BOTTOM_RIGHT);
     ui::draw_roundbox_4fv(&rect, true, corner_radius, color);
@@ -3366,14 +3368,33 @@ static void node_draw_basis(const bContext &C,
       node_draw_panels_background(node);
     }
   }
+  /* BFA Header outline. */
+  ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
+  {
+    const float outline_width = U.pixelsize;
+    const rctf rect_header = {
+        rct.xmin - padding,
+        rct.xmax + padding,
+        rct.ymax - (NODE_DY + outline_width) + padding,
+        rct.ymax + padding,
+    };
+    ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
+    ColorTheme4f color_outline;
+    ui::theme::get_color_4fv(TH_NODE_OUTLINE, color_outline);
+    ui::theme::get_color_blend_alpha_4fv(
+        color_header, color_outline, 0.6f, 0.0f, color_header);
 
-    /* BFA - Node Group outline. */
-    if (draw_node_details(snode)) {
-      const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
-      GPU_line_width(outline_group_width);
-      bfa_node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, color);
-      GPU_line_width(1.0f);  // Reset line width
-    }
+    ui::draw_roundbox_corner_set(ui::CNR_TOP_LEFT | ui::CNR_TOP_RIGHT);
+    ui::draw_roundbox_4fv(&rect_header, false, BASIS_RAD, color_header);
+  }
+
+  /* BFA - Node Group outline. */
+  if (draw_node_details(snode)) {
+    const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
+    GPU_line_width(outline_group_width);
+    bfa_node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD);
+    GPU_line_width(1.0f);  // Reset line width
+  }
   /* Outline around the entire node to highlight selection, alert, or for simulation zones. */
   {
     const rctf rect_node = {
@@ -3459,16 +3480,15 @@ static void node_draw_collapsed(const bContext &C,
         rct.ymax + padding,
     };
 
-    // BFA - Disabled Blender Node Group indicator
     // /* Node Group indicator. */
-    // if (draw_node_details(snode)) {
-    //   node_draw_node_group_indicator(snode, node, rect, BASIS_RAD + padding, color);
-    // }
+    if (draw_node_details(snode)) {
+      node_draw_node_group_indicator(snode, node, rect, BASIS_RAD + padding, color);
+    }
     /* BFA - Node Group outline. */
     if (draw_node_details(snode)) {
       const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
       GPU_line_width(outline_group_width);
-      bfa_node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, color);
+      bfa_node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD);
       GPU_line_width(1.0f);  // Reset line width
     }
 
@@ -3586,6 +3606,7 @@ static void node_draw_collapsed(const bContext &C,
     draw_roundbox_corner_set(ui::CNR_ALL);
     ui::draw_roundbox_4fv(&rect, false, BASIS_RAD + outline_width, color_outline);
   }
+
 
   if (node.is_muted()) {
     button_flag_enable(but, ui::BUT_INACTIVE);
