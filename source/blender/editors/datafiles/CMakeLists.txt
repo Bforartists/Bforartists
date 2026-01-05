@@ -520,6 +520,7 @@ if(WITH_BLENDER)
       curve_tilt
       curve_trim
       curves
+      curves_data
       cut
       cut_links
       cycles_modifier
@@ -784,7 +785,6 @@ if(WITH_BLENDER)
       groupoutput
 
       # letter h
-      hair_data
       hand
       handle_align_single
       handle_aligned
@@ -1440,6 +1440,7 @@ if(WITH_BLENDER)
       outliner_data_armature
       outliner_data_camera
       outliner_data_curve
+      outliner_data_curves
       outliner_data_empty
       outliner_data_font
       outliner_data_gp_layer
@@ -2241,7 +2242,6 @@ if(WITH_BLENDER)
 
       # letter unsorted
       mod_instance
-      outliner_data_hair
       outliner_data_pointcloud
       texture_data
       world_data
