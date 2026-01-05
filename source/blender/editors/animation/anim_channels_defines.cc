@@ -3121,7 +3121,7 @@ static bAnimChannelType ACF_DSSPK = {
 /* TODO: just get this from RNA? */
 static int acf_dscurves_icon(bAnimListElem * /*ale*/)
 {
-  return ICON_HAIR_DATA; /* BFA */
+  return ICON_CURVES_DATA;
 }
 
 /* Get the appropriate flag(s) for the setting when it is valid. */
