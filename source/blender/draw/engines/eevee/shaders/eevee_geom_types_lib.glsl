@@ -11,7 +11,7 @@ struct MeshVertex {
 };
 
 struct PointCloudPoint {
-  int point_id;
+  int _pad; /* TODO(fclem): Add explicit attribute loading for mesh. */
 };
 
 struct CurvesPoint {

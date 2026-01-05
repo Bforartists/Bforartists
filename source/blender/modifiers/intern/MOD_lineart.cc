@@ -92,11 +92,7 @@ static void copy_data(const ModifierData *md, ModifierData *target, const int fl
   GreasePencilLineartModifierData *target_lmd =
       reinterpret_cast<GreasePencilLineartModifierData *>(target);
 
-  if (source_runtime) {
-    /* `source_runtime` can be nullptr when line art is imported from asset. `target_lmd->runtime`
-     * Will also re-init before calculation/depsgraph evaluation if it's nullptr anyway.  */
-    target_lmd->runtime = MEM_new<LineartModifierRuntime>(__func__, *source_runtime);
-  }
+  target_lmd->runtime = MEM_new<LineartModifierRuntime>(__func__, *source_runtime);
 }
 
 static void free_data(ModifierData *md)

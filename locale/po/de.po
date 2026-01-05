@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Alpha (b'edd300f2e755')\n"
+"Project-Id-Version: Blender 5.1.0 Alpha (b'7d4876cf0c11')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-29 09:32+0000\n"
+"POT-Creation-Date: 2025-12-16 11:27+0000\n"
 "PO-Revision-Date: 2025-12-02 20:06+0000\n"
 "Last-Translator: Bastitron <bastitronhd@gmail.com>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -18714,16 +18714,68 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
-msgid "Assign Material"
-msgstr "Material zuweisen"
+msgid "Mirror"
+msgstr "Spiegeln"
+
+
+msgid "Snap"
+msgstr "Einrasten"
+
+
+msgid "Local View"
+msgstr "Lokale Ansicht"
+
+
+msgid "Viewpoint"
+msgstr "Ansicht"
+
+
+msgid "Navigation"
+msgstr "Navigation"
+
+
+msgid "Align View"
+msgstr "Ansicht ausrichten"
+
+
+msgid "Align View to Active"
+msgstr "Ansicht auf Aktiv ausrichten"
+
+
+msgid "View Regions"
+msgstr "Vierfenster Ansicht"
 
 
 msgid "Select More/Less"
 msgstr "Mehr/weniger anzeigen"
 
 
+msgid "Select Similar"
+msgstr "Ähnliche auswählen"
+
+
+msgid "Select All by Trait"
+msgstr "Alles nach Merkmal auswählen"
+
+
+msgid "Select Linked"
+msgstr "Verknüpfte auswählen"
+
+
+msgid "Select Loops"
+msgstr "Schleifen auswählen"
+
+
+msgid "Assign Material"
+msgstr "Material zuweisen"
+
+
 msgid "Metaball"
 msgstr "Metaball"
+
+
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Light"
@@ -18746,12 +18798,24 @@ msgid "Rigid Body"
 msgstr "Rigid Body"
 
 
+msgid "Keying"
+msgstr "Schlüsselbilder"
+
+
 msgid "Apply"
 msgstr "Anwenden"
 
 
+msgid "Tracking"
+msgstr "Verfolgen"
+
+
 msgid "Track"
 msgstr "Spur"
+
+
+msgid "Math"
+msgstr "Mathematisch"
 
 
 msgid "Quick Effects"
@@ -18782,10 +18846,6 @@ msgid "Hooks"
 msgstr "Haken"
 
 
-msgid "Layout"
-msgstr "Layout"
-
-
 msgid "Vertex Group Locks"
 msgstr "Punktgruppen sperren"
 
@@ -18802,20 +18862,8 @@ msgid "In-Betweens"
 msgstr "Dazwischen"
 
 
-msgid "Keying"
-msgstr "Schlüsselbilder"
-
-
-msgid "Tracking"
-msgstr "Verfolgen"
-
-
 msgid "Names"
 msgstr "Namen"
-
-
-msgid "Math"
-msgstr "Mathematisch"
 
 
 msgid "Toggle Bone Options"
@@ -18842,14 +18890,6 @@ msgid "Merge"
 msgstr "Zusammenführen"
 
 
-msgid "Special Characters"
-msgstr "Sonderzeichen"
-
-
-msgid "Kerning"
-msgstr "Kerning"
-
-
 msgid "Read"
 msgstr "Lesen"
 
@@ -18866,20 +18906,12 @@ msgid "Primitives"
 msgstr "Grundkörper"
 
 
-msgid "Pivot Point"
-msgstr "Drehpunkt"
+msgid "Special Characters"
+msgstr "Sonderzeichen"
 
 
-msgid "Snap"
-msgstr "Einrasten"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportionaler Bearbeitungsabfall"
-
-
-msgid "Mask Edit"
-msgstr "Maskenbearbeitung"
+msgid "Kerning"
+msgstr "Kerning"
 
 
 msgid "Instances"
@@ -18890,52 +18922,20 @@ msgid "Import"
 msgstr "Importieren"
 
 
-msgid "Mirror"
-msgstr "Spiegeln"
-
-
-msgid "Local View"
-msgstr "Lokale Ansicht"
+msgid "Pivot Point"
+msgstr "Drehpunkt"
 
 
 msgid "UV"
 msgstr "UV"
 
 
-msgid "Viewpoint"
-msgstr "Ansicht"
+msgid "Proportional Editing Falloff"
+msgstr "Proportionaler Bearbeitungsabfall"
 
 
-msgid "Navigation"
-msgstr "Navigation"
-
-
-msgid "Align View"
-msgstr "Ansicht ausrichten"
-
-
-msgid "Align View to Active"
-msgstr "Ansicht auf Aktiv ausrichten"
-
-
-msgid "View Regions"
-msgstr "Vierfenster Ansicht"
-
-
-msgid "Select Similar"
-msgstr "Ähnliche auswählen"
-
-
-msgid "Select All by Trait"
-msgstr "Alles nach Merkmal auswählen"
-
-
-msgid "Select Linked"
-msgstr "Verknüpfte auswählen"
-
-
-msgid "Select Loops"
-msgstr "Schleifen auswählen"
+msgid "Mask Edit"
+msgstr "Maskenbearbeitung"
 
 
 msgid "Assets"
@@ -38903,42 +38903,6 @@ msgid "Active Palette Color"
 msgstr "Aktive Farbpalette"
 
 
-msgid "Auto-Masking"
-msgstr "Automatisches Maskieren"
-
-
-msgid "VR"
-msgstr "VR"
-
-
-msgid "Active Tool"
-msgstr "Aktives Werkzeug"
-
-
-msgid "View Lock"
-msgstr "Ansicht sperren"
-
-
-msgid "Shadow Settings"
-msgstr "Schatteneinstellungen"
-
-
-msgid "SSAO Settings"
-msgstr "SSAO Einstellungen"
-
-
-msgid "Cavity"
-msgstr "Hohlraum"
-
-
-msgid "Render Pass"
-msgstr "Renderdurchgänge"
-
-
-msgid "Compositor"
-msgstr "Setzer"
-
-
 msgid "Overlays"
 msgstr "Überlagerungen"
 
@@ -38981,6 +38945,42 @@ msgstr "Zwiebelhaut"
 
 msgid "Stereoscopy"
 msgstr "Stereoskopie"
+
+
+msgid "Auto-Masking"
+msgstr "Automatisches Maskieren"
+
+
+msgid "VR"
+msgstr "VR"
+
+
+msgid "Active Tool"
+msgstr "Aktives Werkzeug"
+
+
+msgid "View Lock"
+msgstr "Ansicht sperren"
+
+
+msgid "Shadow Settings"
+msgstr "Schatteneinstellungen"
+
+
+msgid "SSAO Settings"
+msgstr "SSAO Einstellungen"
+
+
+msgid "Cavity"
+msgstr "Hohlraum"
+
+
+msgid "Render Pass"
+msgstr "Renderdurchgänge"
+
+
+msgid "Compositor"
+msgstr "Setzer"
 
 
 msgid "Chain Scaling"
@@ -53737,14 +53737,6 @@ msgid "ParticleSettings"
 msgstr "Partikeleinstellungen"
 
 
-msgid "Mesh has no UV data"
-msgstr "Masche hat keine UV Daten"
-
-
-msgid "Mesh has no VCol data"
-msgstr "Masche hat keine VCol Daten"
-
-
 msgid "%i points found!"
 msgstr "%i Punkte gefunden!"
 
@@ -55988,6 +55980,10 @@ msgid "Videos"
 msgstr "Videos"
 
 
+msgid "Movies"
+msgstr "Filme"
+
+
 msgid "Cursor X"
 msgstr "Cursor X"
 
@@ -57080,6 +57076,14 @@ msgstr "Falscher Knotentindex in der Liste"
 
 msgid "Object %s not in view layer %s"
 msgstr "Objekt %s nicht in Der Ansichtsebene %s"
+
+
+msgid "Mesh has no UV data"
+msgstr "Masche hat keine UV Daten"
+
+
+msgid "Mesh has no VCol data"
+msgstr "Masche hat keine VCol Daten"
 
 
 msgid "Keying set could not be added"

@@ -28,16 +28,13 @@ class HIPDeviceKernel {
 /* Cache of HIP kernels for each DeviceKernel. */
 class HIPDeviceKernels {
  public:
-  void load_all(HIPDevice *device, hipModule_t hip_module);
-  void load_raytrace(HIPDevice *device, hipModule_t hip_module);
-
+  void load(HIPDevice *device);
   const HIPDeviceKernel &get(DeviceKernel kernel) const;
   bool available(DeviceKernel kernel) const;
 
  protected:
-  bool load_kernel(HIPDevice *device, hipModule_t hip_module, DeviceKernel kernel);
-
   HIPDeviceKernel kernels_[DEVICE_KERNEL_NUM];
+  bool loaded = false;
 };
 
 CCL_NAMESPACE_END

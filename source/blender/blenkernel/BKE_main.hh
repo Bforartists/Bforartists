@@ -44,44 +44,6 @@ struct Library;
 struct MainLock;
 struct ReportList;
 struct UniqueName_Map;
-struct Scene;
-struct Object;
-struct Mesh;
-struct Curve;
-struct MetaBall;
-struct Material;
-struct Tex;
-struct Image;
-struct Lattice;
-struct Light;
-struct Camera;
-struct Key;
-struct World;
-struct bScreen;
-struct VFont;
-struct Text;
-struct Speaker;
-struct LightProbe;
-struct bSound;
-struct Collection;
-struct bArmature;
-struct bAction;
-struct bNodeTree;
-struct Brush;
-struct ParticleSettings;
-struct Palette;
-struct PaintCurve;
-struct wmWindowManager;
-struct bGPdata;
-struct GreasePencil;
-struct MovieClip;
-struct Mask;
-struct FreestyleLineStyle;
-struct CacheFile;
-struct WorkSpace;
-struct Curves;
-struct PointCloud;
-struct Volume;
 
 /**
  * Blender thumbnail, as written to the `.blend` file (width, height, and data as char RGBA).
@@ -319,51 +281,51 @@ struct Main : blender::NonCopyable, blender::NonMovable {
 
   /* List bases for all ID types, containing all IDs for the current #Main. */
 
-  ListBaseT<Scene> scenes = {};
-  ListBaseT<Library> libraries = {};
-  ListBaseT<Object> objects = {};
-  ListBaseT<Mesh> meshes = {};
-  ListBaseT<Curve> curves = {};
-  ListBaseT<MetaBall> metaballs = {};
-  ListBaseT<Material> materials = {};
-  ListBaseT<Tex> textures = {};
-  ListBaseT<Image> images = {};
-  ListBaseT<Lattice> lattices = {};
-  ListBaseT<Light> lights = {};
-  ListBaseT<Camera> cameras = {};
-  ListBaseT<Key> shapekeys = {};
-  ListBaseT<World> worlds = {};
-  ListBaseT<bScreen> screens = {};
-  ListBaseT<VFont> fonts = {};
-  ListBaseT<Text> texts = {};
-  ListBaseT<Speaker> speakers = {};
-  ListBaseT<LightProbe> lightprobes = {};
-  ListBaseT<bSound> sounds = {};
-  ListBaseT<Collection> collections = {};
-  ListBaseT<bArmature> armatures = {};
-  ListBaseT<bAction> actions = {};
-  ListBaseT<bNodeTree> nodetrees = {};
-  ListBaseT<Brush> brushes = {};
-  ListBaseT<ParticleSettings> particles = {};
-  ListBaseT<Palette> palettes = {};
-  ListBaseT<PaintCurve> paintcurves = {};
+  ListBase scenes = {};
+  ListBase libraries = {};
+  ListBase objects = {};
+  ListBase meshes = {};
+  ListBase curves = {};
+  ListBase metaballs = {};
+  ListBase materials = {};
+  ListBase textures = {};
+  ListBase images = {};
+  ListBase lattices = {};
+  ListBase lights = {};
+  ListBase cameras = {};
+  ListBase shapekeys = {};
+  ListBase worlds = {};
+  ListBase screens = {};
+  ListBase fonts = {};
+  ListBase texts = {};
+  ListBase speakers = {};
+  ListBase lightprobes = {};
+  ListBase sounds = {};
+  ListBase collections = {};
+  ListBase armatures = {};
+  ListBase actions = {};
+  ListBase nodetrees = {};
+  ListBase brushes = {};
+  ListBase particles = {};
+  ListBase palettes = {};
+  ListBase paintcurves = {};
   /** Singleton (exception). */
-  ListBaseT<wmWindowManager> wm = {};
+  ListBase wm = {};
   /** Legacy Grease Pencil. */
-  ListBaseT<bGPdata> gpencils = {};
-  ListBaseT<GreasePencil> grease_pencils = {};
-  ListBaseT<MovieClip> movieclips = {};
-  ListBaseT<Mask> masks = {};
-  ListBaseT<FreestyleLineStyle> linestyles = {};
-  ListBaseT<CacheFile> cachefiles = {};
-  ListBaseT<WorkSpace> workspaces = {};
+  ListBase gpencils = {};
+  ListBase grease_pencils = {};
+  ListBase movieclips = {};
+  ListBase masks = {};
+  ListBase linestyles = {};
+  ListBase cachefiles = {};
+  ListBase workspaces = {};
   /**
    * \note The name `hair_curves` is chosen to be different than `curves`,
    * but they are generic curve data-blocks, not just for hair.
    */
-  ListBaseT<Curves> hair_curves = {};
-  ListBaseT<PointCloud> pointclouds = {};
-  ListBaseT<Volume> volumes = {};
+  ListBase hair_curves = {};
+  ListBase pointclouds = {};
+  ListBase volumes = {};
 
   /**
    * Must be generated, used and freed by same code - never assume this is valid data unless you

@@ -151,7 +151,7 @@ class MovieDistortionOperation : public NodeOperation {
 
   MovieClip *get_movie_clip()
   {
-    return reinterpret_cast<MovieClip *>(node().id);
+    return reinterpret_cast<MovieClip *>(bnode().id);
   }
 };
 

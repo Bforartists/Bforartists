@@ -194,7 +194,7 @@ class NodePort {
   void to_dot_string(std::stringstream &ss) const;
 };
 
-class Edge : NonCopyable, NonMovable {
+class Edge : blender::NonCopyable, blender::NonMovable {
  protected:
   NodePort a_;
   NodePort b_;

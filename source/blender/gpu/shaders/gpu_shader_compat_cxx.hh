@@ -26,8 +26,6 @@
 
 #pragma once
 
-#include <stdio.h>  // printf
-
 #include "gpu_shader_cxx_builtin.hh"  // IWYU pragma: export
 #include "gpu_shader_cxx_global.hh"   // IWYU pragma: export
 #include "gpu_shader_cxx_image.hh"    // IWYU pragma: export
@@ -37,12 +35,20 @@
 #include "gpu_shader_cxx_vector.hh"   // IWYU pragma: export
 
 #define assert(assertion)
-
-#include "gpu_shader_cxx_attribute.hh"  // IWYU pragma: export
+#define printf(...)
 
 /* -------------------------------------------------------------------- */
 /** \name Keywords
  * \{ */
+
+/* Note: Cannot easily mutate them. Pass every by copy for now. */
+
+/* Pass argument by reference. */
+#define inout DO_NOT_USE
+/* Pass argument by reference but only write to it. Its initial value is undefined. */
+#define out DO_NOT_USE
+/* Pass argument by copy (default). */
+#define in DO_NOT_USE
 
 /* Decorate a variable in global scope that is common to all threads in a thread-group. */
 #define shared
@@ -146,7 +152,6 @@
 // #define namespace /* Needed for Stubs. */
 // #define using /* Needed for Stubs. */
 #define row_major reserved_keyword("row_major")
-#define inout reserved_keyword("inout")
 
 #ifdef GPU_SHADER_LIBRARY
 #  define GPU_VERTEX_SHADER
@@ -212,24 +217,27 @@ template<typename VertFn,
          typename ConstT2 = ConstT1,
          typename ConstT3 = ConstT2>
 struct PipelineGraphic {
-  VertFn vert;
-  FragFn frag;
+  VertFn vertex;
+  FragFn fragment;
   /* Constant values. */
   ConstT1 c1;
   ConstT2 c2;
   ConstT3 c3;
 
-  PipelineGraphic(VertFn vert, FragFn frag) : vert(vert), frag(frag), c1({}), c2({}), c3({}) {}
-  PipelineGraphic(VertFn vert, FragFn frag, ConstT1 c1)
-      : vert(vert), frag(frag), c1(c1), c2({}), c3({})
+  PipelineGraphic(VertFn vertex, FragFn fragment)
+      : vertex(vertex), fragment(fragment), c1({}), c2({}), c3({})
   {
   }
-  PipelineGraphic(VertFn vert, FragFn frag, ConstT1 c1, ConstT2 c2)
-      : vert(vert), frag(frag), c1(c1), c2(c2), c3({})
+  PipelineGraphic(VertFn vertex, FragFn fragment, ConstT1 c1)
+      : vertex(vertex), fragment(fragment), c1(c1), c2({}), c3({})
   {
   }
-  PipelineGraphic(VertFn vert, FragFn frag, ConstT1 c1, ConstT2 c2, ConstT3 c3)
-      : vert(vert), frag(frag), c1(c1), c2(c2), c3(c3)
+  PipelineGraphic(VertFn vertex, FragFn fragment, ConstT1 c1, ConstT2 c2)
+      : vertex(vertex), fragment(fragment), c1(c1), c2(c2), c3({})
+  {
+  }
+  PipelineGraphic(VertFn vertex, FragFn fragment, ConstT1 c1, ConstT2 c2, ConstT3 c3)
+      : vertex(vertex), fragment(fragment), c1(c1), c2(c2), c3(c3)
   {
   }
 };
@@ -239,19 +247,31 @@ template<typename CompFn,
          typename ConstT2 = ConstT1,
          typename ConstT3 = ConstT2>
 struct PipelineCompute {
-  CompFn comp;
+  CompFn compute;
   /* Constant values. */
   ConstT1 c1;
   ConstT2 c2;
   ConstT3 c3;
 
-  PipelineCompute(CompFn comp) : comp(comp), c1({}), c2({}), c3({}) {}
-  PipelineCompute(CompFn comp, ConstT1 c1) : comp(comp), c1(c1), c2({}), c3({}) {}
-  PipelineCompute(CompFn comp, ConstT1 c1, ConstT2 c2) : comp(comp), c1(c1), c2(c2), c3({}) {}
-  PipelineCompute(CompFn comp, ConstT1 c1, ConstT2 c2, ConstT3 c3)
-      : comp(comp), c1(c1), c2(c2), c3(c3)
+  PipelineCompute(CompFn compute) : compute(compute), c1({}), c2({}), c3({}) {}
+  PipelineCompute(CompFn compute, ConstT1 c1) : compute(compute), c1(c1), c2({}), c3({}) {}
+  PipelineCompute(CompFn compute, ConstT1 c1, ConstT2 c2)
+      : compute(compute), c1(c1), c2(c2), c3({})
+  {
+  }
+  PipelineCompute(CompFn compute, ConstT1 c1, ConstT2 c2, ConstT3 c3)
+      : compute(compute), c1(c1), c2(c2), c3(c3)
   {
   }
 };
 
 #include "GPU_shader_shared_utils.hh"
+
+#ifdef __GNUC__
+/* Avoid warnings caused by our own unroll attributes. */
+#  ifdef __clang__
+#    pragma GCC diagnostic ignored "-Wunknown-attributes"
+#  else
+#    pragma GCC diagnostic ignored "-Wattributes"
+#  endif
+#endif

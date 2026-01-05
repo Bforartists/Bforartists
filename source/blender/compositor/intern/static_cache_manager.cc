@@ -8,6 +8,11 @@ namespace blender::compositor {
 
 void StaticCacheManager::reset()
 {
+  if (should_skip_next_reset_) {
+    should_skip_next_reset_ = false;
+    return;
+  }
+
   symmetric_blur_weights.reset();
   symmetric_separable_blur_weights.reset();
   morphological_distance_feather_weights.reset();
@@ -26,12 +31,9 @@ void StaticCacheManager::reset()
   image_coordinates.reset();
 }
 
-void StaticCacheManager::free()
+void StaticCacheManager::skip_next_reset()
 {
-  /* Resetting two times frees everything, because the first reset will declare everything as not
-   * needed, and the second reset will delete all such resources. */
-  this->reset();
-  this->reset();
+  should_skip_next_reset_ = true;
 }
 
 }  // namespace blender::compositor

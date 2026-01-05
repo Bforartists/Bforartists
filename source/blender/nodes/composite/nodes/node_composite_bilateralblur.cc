@@ -69,7 +69,7 @@ class BilateralBlurOperation : public NodeOperation {
                                input_image,
                                output_image,
                                float2(this->get_blur_radius()),
-                               math::FilterKernel::Box);
+                               R_FILTER_BOX);
       return;
     }
 

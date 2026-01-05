@@ -116,13 +116,13 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_SHADER_JUMP)
       {
         if (type == SHADER_TYPE_SURFACE) {
-          offset = int(node.y);
+          offset = node.y;
         }
         else if (type == SHADER_TYPE_VOLUME) {
-          offset = int(node.z);
+          offset = node.z;
         }
         else if (type == SHADER_TYPE_DISPLACEMENT) {
-          offset = int(node.w);
+          offset = node.w;
         }
         else {
           return;

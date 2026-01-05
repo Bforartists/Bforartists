@@ -106,7 +106,7 @@ TEST(generic_array, Reinitialize)
 
 TEST(generic_array, InContainer)
 {
-  Array<GArray<>> arrays;
+  blender::Array<GArray<>> arrays;
   for (GArray<> &array : arrays) {
     array = GArray(CPPType::get<int32_t>(), int64_t(5));
     array.as_mutable_span().typed<int32_t>().fill(55);

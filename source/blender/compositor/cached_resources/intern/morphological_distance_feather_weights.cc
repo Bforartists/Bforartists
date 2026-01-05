@@ -8,7 +8,10 @@
 
 #include "BLI_hash.hh"
 #include "BLI_index_range.hh"
-#include "BLI_math_filter.hh"
+
+#include "RE_pipeline.h"
+
+#include "DNA_scene_types.h"
 
 #include "COM_context.hh"
 #include "COM_morphological_distance_feather_weights.hh"
@@ -77,7 +80,7 @@ void MorphologicalDistanceFeatherWeights::compute_weights(int radius)
   float sum = 0.0f;
 
   /* First, compute the center weight. */
-  const float center_weight = math::filter_kernel_value(math::FilterKernel::Gauss, 0.0f);
+  const float center_weight = RE_filter_value(R_FILTER_GAUSS, 0.0f);
   this->weights_result.store_pixel(int2(0, 0), center_weight);
   sum += center_weight;
 
@@ -86,7 +89,7 @@ void MorphologicalDistanceFeatherWeights::compute_weights(int radius)
    * it. Skip the center weight already computed by dropping the front index. */
   const float scale = radius > 0.0f ? 1.0f / radius : 0.0f;
   for (const int i : IndexRange(size).drop_front(1)) {
-    const float weight = math::filter_kernel_value(math::FilterKernel::Gauss, i * scale);
+    const float weight = RE_filter_value(R_FILTER_GAUSS, i * scale);
     this->weights_result.store_pixel(int2(i, 0), weight);
     sum += weight * 2.0f;
   }

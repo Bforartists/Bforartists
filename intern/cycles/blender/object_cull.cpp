@@ -6,14 +6,12 @@
 
 #include "scene/camera.h"
 
-#include "BLI_bounds.hh"
-
 #include "blender/object_cull.h"
 #include "blender/util.h"
 
 CCL_NAMESPACE_BEGIN
 
-BlenderObjectCulling::BlenderObjectCulling(Scene *scene, ::Scene &b_scene)
+BlenderObjectCulling::BlenderObjectCulling(Scene *scene, BL::Scene &b_scene)
     : use_scene_camera_cull_(false),
       use_camera_cull_(false),
       camera_cull_margin_(0.0f),
@@ -21,16 +19,15 @@ BlenderObjectCulling::BlenderObjectCulling(Scene *scene, ::Scene &b_scene)
       use_distance_cull_(false),
       distance_cull_margin_(0.0f)
 {
-  if ((b_scene.r.mode & R_SIMPLIFY) != 0) {
-    PointerRNA scene_rna_ptr = RNA_id_pointer_create(&b_scene.id);
-    PointerRNA cscene = RNA_pointer_get(&scene_rna_ptr, "cycles");
+  if (b_scene.render().use_simplify()) {
+    PointerRNA cscene = RNA_pointer_get(&b_scene.ptr, "cycles");
 
     const bool cam_supported = (scene->camera->get_camera_type() == CAMERA_PERSPECTIVE) ||
                                (scene->camera->get_camera_type() == CAMERA_ORTHOGRAPHIC);
 
-    use_scene_camera_cull_ = cam_supported && ((b_scene.r.scemode & R_MULTIVIEW) == 0) &&
+    use_scene_camera_cull_ = cam_supported && !b_scene.render().use_multiview() &&
                              get_boolean(cscene, "use_camera_cull");
-    use_scene_distance_cull_ = cam_supported && ((b_scene.r.scemode & R_MULTIVIEW) == 0) &&
+    use_scene_distance_cull_ = cam_supported && !b_scene.render().use_multiview() &&
                                get_boolean(cscene, "use_distance_cull");
 
     camera_cull_margin_ = get_float(cscene, "camera_cull_margin");
@@ -42,14 +39,13 @@ BlenderObjectCulling::BlenderObjectCulling(Scene *scene, ::Scene &b_scene)
   }
 }
 
-void BlenderObjectCulling::init_object(Scene *scene, ::Object &b_ob)
+void BlenderObjectCulling::init_object(Scene *scene, BL::Object &b_ob)
 {
   if (!use_scene_camera_cull_ && !use_scene_distance_cull_) {
     return;
   }
 
-  PointerRNA b_ob_rna_ptr = RNA_id_pointer_create(&b_ob.id);
-  PointerRNA cobject = RNA_pointer_get(&b_ob_rna_ptr, "cycles");
+  PointerRNA cobject = RNA_pointer_get(&b_ob.ptr, "cycles");
 
   use_camera_cull_ = use_scene_camera_cull_ && get_boolean(cobject, "use_camera_cull");
   use_distance_cull_ = use_scene_distance_cull_ && get_boolean(cobject, "use_distance_cull");
@@ -60,7 +56,7 @@ void BlenderObjectCulling::init_object(Scene *scene, ::Object &b_ob)
   }
 }
 
-bool BlenderObjectCulling::test(Scene *scene, ::Object &b_ob, Transform &tfm)
+bool BlenderObjectCulling::test(Scene *scene, BL::Object &b_ob, Transform &tfm)
 {
   if (!use_camera_cull_ && !use_distance_cull_) {
     return false;
@@ -68,17 +64,9 @@ bool BlenderObjectCulling::test(Scene *scene, ::Object &b_ob, Transform &tfm)
 
   /* Compute world space bounding box corners. */
   float3 bb[8];
-  std::array<blender::float3, 8> boundbox;
-  if (const std::optional<blender::Bounds<blender::float3>> bounds =
-          BKE_object_boundbox_eval_cached_get(&b_ob))
-  {
-    boundbox = blender::bounds::corners(*bounds);
-  }
-  else {
-    boundbox.fill(blender::float3(0));
-  }
+  BL::Array<float, 24> boundbox = b_ob.bound_box();
   for (int i = 0; i < 8; ++i) {
-    const float3 p = make_float3(boundbox[i].x, boundbox[i].y, boundbox[i].z);
+    const float3 p = make_float3(boundbox[3 * i + 0], boundbox[3 * i + 1], boundbox[3 * i + 2]);
     bb[i] = transform_point(&tfm, p);
   }
 

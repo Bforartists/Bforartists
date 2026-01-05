@@ -12,13 +12,13 @@
 /* This file must replaced at runtime. The following content is only a possible implementation. */
 #pragma runtime_generated
 
-struct [[host_shared]] OsdPatchParam {
+struct OsdPatchParam {
   int field0;
   int field1;
   float sharpness;
 };
 
-struct [[host_shared]] OsdPatchArray {
+struct OsdPatchArray {
   int regDesc;
   int desc;
   int numPatches;
@@ -27,7 +27,7 @@ struct [[host_shared]] OsdPatchArray {
   int primitiveIdBase;
 };
 
-struct [[host_shared]] OsdPatchCoord {
+struct OsdPatchCoord {
   int arrayIndex;
   int patchIndex;
   int vertIndex;

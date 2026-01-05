@@ -2444,9 +2444,4 @@ void DepsgraphNodeBuilder::constraint_walk(bConstraint * /*con*/,
   }
 }
 
-Set<const ID *> DepsgraphNodeBuilder::get_built_ids() const
-{
-  return built_map_.get_ids();
-}
-
 }  // namespace blender::deg

@@ -35,8 +35,10 @@ class HIPRTDevice : public HIPDevice {
 
   ~HIPRTDevice() override;
   unique_ptr<DeviceQueue> gpu_queue_create() override;
-  string compile_kernel_get_common_cflags(const uint kernel_features);
-  string compile_kernel(const uint kernel_features, const char *name, const char *base = "hiprt");
+  string compile_kernel_get_common_cflags(const uint kernel_features) override;
+  string compile_kernel(const uint kernel_features,
+                        const char *name,
+                        const char *base = "hiprt") override;
 
   bool load_kernels(const uint kernel_features) override;
 
@@ -66,10 +68,7 @@ class HIPRTDevice : public HIPDevice {
                         hiprtBuildOptions options,
                         bool refit);
   void free_bvh_memory_delayed();
-
   hiprtContext hiprt_context;
-  hipModule_t hiprt_module_;
-
   hiprtScene scene;
   hiprtFuncTable functions_table;
 

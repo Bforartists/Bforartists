@@ -404,7 +404,7 @@ static CurvesPointSelectionStatus init_curves_point_selection_status(
 
     status.total += selection.size();
 
-    selection.foreach_index_optimized<int>(
+    selection.foreach_index(
         [&](const int point) { add_v3_v3(status.median.location, (*positions)[point]); });
   };
 

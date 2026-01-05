@@ -140,17 +140,9 @@ struct IntermediateForm {
     (void)success;
   }
   /* Replace everything from `from` to `to` (inclusive). */
-  void replace(Token from,
-               Token to,
-               const std::string &replacement,
-               bool keep_trailing_whitespaces = false)
+  void replace(Token from, Token to, const std::string &replacement)
   {
-    if (keep_trailing_whitespaces) {
-      replace(from.str_index_start(), to.str_index_last_no_whitespace(), replacement);
-    }
-    else {
-      replace(from.str_index_start(), to.str_index_last(), replacement);
-    }
+    replace(from.str_index_start(), to.str_index_last(), replacement);
   }
   /* Replace token by string. */
   void replace(Token tok, const std::string &replacement, bool keep_trailing_whitespaces = false)
@@ -217,21 +209,14 @@ struct IntermediateForm {
     erase(scope.front(), scope.back());
   }
 
-  /* If prepend is true, will prepend the new content to the list of modifications.
-   * With this enabled, in case of overlapping mutation, the last one added will be first.  */
-  void insert_before(size_t at, const std::string &content, bool prepend = false)
+  void insert_before(size_t at, const std::string &content)
   {
     IndexRange range = IndexRange(at, 0);
-    if (prepend) {
-      mutations_.insert(mutations_.begin(), {range, content});
-    }
-    else {
-      mutations_.emplace_back(range, content);
-    }
+    mutations_.emplace_back(range, content);
   }
-  void insert_before(Token at, const std::string &content, bool prepend = false)
+  void insert_before(Token at, const std::string &content)
   {
-    insert_before(at.str_index_start(), content, prepend);
+    insert_before(at.str_index_start(), content);
   }
 
   void insert_after(size_t at, const std::string &content)

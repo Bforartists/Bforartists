@@ -114,6 +114,7 @@ class VKDescriptorSetUpdator {
                                  VKDescriptorSet::Location location) = 0;
   virtual void bind_buffer(VkDescriptorType vk_descriptor_type,
                            VkBuffer vk_buffer,
+                           VkDeviceAddress vk_device_address,
                            VkDeviceSize buffer_offset,
                            VkDeviceSize size_in_bytes,
                            VKDescriptorSet::Location location) = 0;
@@ -141,6 +142,7 @@ class VKDescriptorSetPoolUpdator : public VKDescriptorSetUpdator {
                          VKDescriptorSet::Location location) override;
   void bind_buffer(VkDescriptorType vk_descriptor_type,
                    VkBuffer vk_buffer,
+                   VkDeviceAddress vk_device_address,
                    VkDeviceSize buffer_offset,
                    VkDeviceSize size_in_bytes,
                    VKDescriptorSet::Location location) override;

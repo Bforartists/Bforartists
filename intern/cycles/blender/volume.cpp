@@ -19,8 +19,6 @@
 #include "DNA_cachefile_types.h"
 #include "DNA_volume_types.h"
 
-#include "RNA_prototypes.hh"
-
 CCL_NAMESPACE_BEGIN
 
 /* TODO: verify this is not loading unnecessary attributes. */
@@ -93,50 +91,51 @@ class BlenderSmokeLoader : public VDBImageLoader {
     }
 
 #ifdef WITH_FLUID
+    int length;
     voxels.resize(width * height * depth * channels);
 
     if (attribute == ATTR_STD_VOLUME_DENSITY) {
-      PropertyRNA *prop = RNA_struct_find_property(&domain_rna_ptr, "density_grid");
-      if (RNA_property_array_length(&domain_rna_ptr, prop) == voxels.size()) {
-        RNA_property_float_get_array(&domain_rna_ptr, prop, voxels.data());
+      FluidDomainSettings_density_grid_get_length(&domain_rna_ptr, &length);
+      if (length == voxels.size()) {
+        FluidDomainSettings_density_grid_get(&domain_rna_ptr, voxels.data());
         return true;
       }
     }
     else if (attribute == ATTR_STD_VOLUME_FLAME) {
-      PropertyRNA *prop = RNA_struct_find_property(&domain_rna_ptr, "flame_grid");
       /* this is in range 0..1, and interpreted by the OpenGL smoke viewer
        * as 1500..3000 K with the first part faded to zero density */
-      if (RNA_property_array_length(&domain_rna_ptr, prop) == voxels.size()) {
-        RNA_property_float_get_array(&domain_rna_ptr, prop, voxels.data());
+      FluidDomainSettings_flame_grid_get_length(&domain_rna_ptr, &length);
+      if (length == voxels.size()) {
+        FluidDomainSettings_flame_grid_get(&domain_rna_ptr, voxels.data());
         return true;
       }
     }
     else if (attribute == ATTR_STD_VOLUME_COLOR) {
-      PropertyRNA *prop = RNA_struct_find_property(&domain_rna_ptr, "color_grid");
       /* the RGB is "premultiplied" by density for better interpolation results */
-      if (RNA_property_array_length(&domain_rna_ptr, prop) == voxels.size()) {
-        RNA_property_float_get_array(&domain_rna_ptr, prop, voxels.data());
+      FluidDomainSettings_color_grid_get_length(&domain_rna_ptr, &length);
+      if (length == voxels.size()) {
+        FluidDomainSettings_color_grid_get(&domain_rna_ptr, voxels.data());
         return true;
       }
     }
     else if (attribute == ATTR_STD_VOLUME_VELOCITY) {
-      PropertyRNA *prop = RNA_struct_find_property(&domain_rna_ptr, "velocity_grid");
-      if (RNA_property_array_length(&domain_rna_ptr, prop) == voxels.size()) {
-        RNA_property_float_get_array(&domain_rna_ptr, prop, voxels.data());
+      FluidDomainSettings_velocity_grid_get_length(&domain_rna_ptr, &length);
+      if (length == voxels.size()) {
+        FluidDomainSettings_velocity_grid_get(&domain_rna_ptr, voxels.data());
         return true;
       }
     }
     else if (attribute == ATTR_STD_VOLUME_HEAT) {
-      PropertyRNA *prop = RNA_struct_find_property(&domain_rna_ptr, "heat_grid");
-      if (RNA_property_array_length(&domain_rna_ptr, prop) == voxels.size()) {
-        RNA_property_float_get_array(&domain_rna_ptr, prop, voxels.data());
+      FluidDomainSettings_heat_grid_get_length(&domain_rna_ptr, &length);
+      if (length == voxels.size()) {
+        FluidDomainSettings_heat_grid_get(&domain_rna_ptr, voxels.data());
         return true;
       }
     }
     else if (attribute == ATTR_STD_VOLUME_TEMPERATURE) {
-      PropertyRNA *prop = RNA_struct_find_property(&domain_rna_ptr, "temperature_grid");
-      if (RNA_property_array_length(&domain_rna_ptr, prop) == voxels.size()) {
-        RNA_property_float_get_array(&domain_rna_ptr, prop, voxels.data());
+      FluidDomainSettings_temperature_grid_get_length(&domain_rna_ptr, &length);
+      if (length == voxels.size()) {
+        FluidDomainSettings_temperature_grid_get(&domain_rna_ptr, voxels.data());
         return true;
       }
     }
@@ -180,7 +179,8 @@ static void sync_smoke_volume(
   if (!b_ob_info.is_real_object_data()) {
     return;
   }
-  ::FluidDomainSettings *b_domain = object_fluid_gas_domain_find(*b_ob_info.real_object);
+  ::FluidDomainSettings *b_domain = object_fluid_gas_domain_find(
+      *b_ob_info.real_object.ptr.data_as<::Object>());
   if (!b_domain) {
     return;
   }
@@ -222,7 +222,7 @@ static void sync_smoke_volume(
     }
 
     unique_ptr<ImageLoader> loader = make_unique<BlenderSmokeLoader>(
-        *b_ob_info.real_object, std, clipping);
+        *b_ob_info.real_object.ptr.data_as<::Object>(), std, clipping);
     ImageParams params;
     params.frame = frame;
 
@@ -283,7 +283,7 @@ class BlenderVolumeLoader : public VDBImageLoader {
 static void sync_volume_object(
     ::Main &b_data, ::Scene &b_scene, BObjectInfo &b_ob_info, Scene *scene, Volume *volume)
 {
-  ::Volume &b_volume = *blender::id_cast<::Volume *>(b_ob_info.object_data);
+  ::Volume &b_volume = *static_cast<::Volume *>(b_ob_info.object_data.ptr.data);
   BKE_volume_load(&b_volume, &b_data);
 
   ::VolumeRender &b_render = b_volume.render;
@@ -374,14 +374,19 @@ void BlenderSync::sync_volume(BObjectInfo &b_ob_info, Volume *volume)
   volume->clear(true);
 
   if (view_layer.use_volumes) {
-    if (GS(b_ob_info.object_data->name) == ID_VO) {
+    if (b_ob_info.object_data.is_a(&RNA_Volume)) {
       /* Volume object. Create only attributes, bounding mesh will then
        * be automatically generated later. */
-      sync_volume_object(*b_data, *b_scene, b_ob_info, scene, volume);
+      sync_volume_object(*b_data.ptr.data_as<::Main>(),
+                         *b_scene.ptr.data_as<::Scene>(),
+                         b_ob_info,
+                         scene,
+                         volume);
     }
     else {
       /* Smoke domain. */
-      sync_smoke_volume(*b_scene, scene, b_ob_info, volume, b_scene->r.cfra);
+      sync_smoke_volume(
+          *b_scene.ptr.data_as<::Scene>(), scene, b_ob_info, volume, b_scene.frame_current());
     }
   }
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Alpha (b'edd300f2e755')\n"
+"Project-Id-Version: Blender 5.1.0 Alpha (b'7d4876cf0c11')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-29 09:32+0000\n"
+"POT-Creation-Date: 2025-12-16 11:27+0000\n"
 "PO-Revision-Date: 2025-11-12 16:04+0000\n"
 "Last-Translator: blend-it <blend-it@users.noreply.translate.blender.org>\n"
 "Language-Team: Italian <https://translate.blender.org/projects/blender-ui/ui/it/>\n"
@@ -24582,16 +24582,72 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
-msgid "Assign Material"
-msgstr "Assegna Materiale"
+msgid "Mirror"
+msgstr "Specchia"
+
+
+msgid "Snap"
+msgstr "Aggancia"
+
+
+msgid "UV Mapping"
+msgstr "Mappatura UV"
+
+
+msgid "Local View"
+msgstr "Vista Locale"
+
+
+msgid "Viewpoint"
+msgstr "Punto di vista"
+
+
+msgid "Navigation"
+msgstr "Navigazione"
+
+
+msgid "Align View"
+msgstr "Allinea Vista"
+
+
+msgid "Align View to Active"
+msgstr "Allinea Vista a Attivo"
+
+
+msgid "View Regions"
+msgstr "Regione Vista"
 
 
 msgid "Select More/Less"
 msgstr "Seleziona Più/Meno"
 
 
+msgid "Select Similar"
+msgstr "Seleziona Simili"
+
+
+msgid "Select All by Trait"
+msgstr "Seleziona Tutto per Caratteristica"
+
+
+msgid "Select Linked"
+msgstr "Seleziona Collegati"
+
+
+msgid "Select Loops"
+msgstr "Seleziona Anelli"
+
+
+msgid "Assign Material"
+msgstr "Assegna Materiale"
+
+
 msgid "Metaball"
 msgstr "Metaball"
+
+
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Light"
@@ -24610,16 +24666,36 @@ msgid "Relations"
 msgstr "Relazioni"
 
 
+msgid "Adjust"
+msgstr "Regola"
+
+
 msgid "Rigid Body"
 msgstr "Corpo Rigido"
+
+
+msgid "Keying"
+msgstr "Keying"
 
 
 msgid "Apply"
 msgstr "Applica"
 
 
+msgid "Tracking"
+msgstr "Tracciamento"
+
+
 msgid "Track"
 msgstr "Traccia"
+
+
+msgid "Utilities"
+msgstr "Utilità"
+
+
+msgid "Math"
+msgstr "Matematica"
 
 
 msgid "Quick Effects"
@@ -24654,10 +24730,6 @@ msgid "Hooks"
 msgstr "Ganci"
 
 
-msgid "Layout"
-msgstr "Layout"
-
-
 msgid "Vertex Group Locks"
 msgstr "Blocchi del Gruppo di Vertici"
 
@@ -24668,10 +24740,6 @@ msgstr "Init Sets di Facce"
 
 msgid "Random Mask"
 msgstr "Maschera Casuale"
-
-
-msgid "Adjust"
-msgstr "Regola"
 
 
 msgid "Clear Transform"
@@ -24686,28 +24754,12 @@ msgid "Propagate"
 msgstr "Propaga"
 
 
-msgid "Keying"
-msgstr "Keying"
-
-
 msgid "Bone Collections"
 msgstr "Raccolte di Ossa"
 
 
-msgid "Tracking"
-msgstr "Tracciamento"
-
-
 msgid "Names"
 msgstr "Nomi"
-
-
-msgid "Utilities"
-msgstr "Utilità"
-
-
-msgid "Math"
-msgstr "Matematica"
 
 
 msgid "Toggle Bone Options"
@@ -24742,18 +24794,6 @@ msgid "Merge"
 msgstr "Unisci"
 
 
-msgid "Special Characters"
-msgstr "Caratteri Speciali"
-
-
-msgid "Kerning"
-msgstr "Crenatura"
-
-
-msgid "Bone Roll"
-msgstr "Rollio Osso"
-
-
 msgid "Read"
 msgstr "Lettura"
 
@@ -24770,12 +24810,32 @@ msgid "Primitives"
 msgstr "Primitive"
 
 
+msgid "Special Characters"
+msgstr "Caratteri Speciali"
+
+
+msgid "Kerning"
+msgstr "Crenatura"
+
+
+msgid "Instances"
+msgstr "Istanze"
+
+
+msgid "Bone Roll"
+msgstr "Rollio Osso"
+
+
+msgid "Import"
+msgstr "Importa"
+
+
 msgid "Pivot Point"
 msgstr "Punto di Perno"
 
 
-msgid "Snap"
-msgstr "Aggancia"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Proportional Editing Falloff"
@@ -24792,66 +24852,6 @@ msgstr "Automascheramento"
 
 msgid "Face Sets Edit"
 msgstr "Modifica Sets di Facce"
-
-
-msgid "Instances"
-msgstr "Istanze"
-
-
-msgid "Import"
-msgstr "Importa"
-
-
-msgid "Mirror"
-msgstr "Specchia"
-
-
-msgid "UV Mapping"
-msgstr "Mappatura UV"
-
-
-msgid "Local View"
-msgstr "Vista Locale"
-
-
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Viewpoint"
-msgstr "Punto di vista"
-
-
-msgid "Navigation"
-msgstr "Navigazione"
-
-
-msgid "Align View"
-msgstr "Allinea Vista"
-
-
-msgid "Align View to Active"
-msgstr "Allinea Vista a Attivo"
-
-
-msgid "View Regions"
-msgstr "Regione Vista"
-
-
-msgid "Select Similar"
-msgstr "Seleziona Simili"
-
-
-msgid "Select All by Trait"
-msgstr "Seleziona Tutto per Caratteristica"
-
-
-msgid "Select Linked"
-msgstr "Seleziona Collegati"
-
-
-msgid "Select Loops"
-msgstr "Seleziona Anelli"
 
 
 msgid "Keyframe Insert Pie"
@@ -50304,34 +50304,6 @@ msgid "Active Palette Color"
 msgstr "Colore Tavolozza Attivo"
 
 
-msgid "Auto-Masking"
-msgstr "Auto-Mascheramento"
-
-
-msgid "Selectability & Visibility"
-msgstr "Selezionabilità e Visibilità"
-
-
-msgid "Shadow Settings"
-msgstr "Impostazioni Ombra"
-
-
-msgid "SSAO Settings"
-msgstr "Impostazioni SSAO"
-
-
-msgid "Cavity"
-msgstr "Cavità"
-
-
-msgid "Render Pass"
-msgstr "Passaggi Render"
-
-
-msgid "Compositor"
-msgstr "Compositore"
-
-
 msgid "Overlays"
 msgstr "Sovrapposizioni"
 
@@ -50362,6 +50334,34 @@ msgstr "Giacitura Tratto"
 
 msgid "Stereoscopy"
 msgstr "Stereoscopia"
+
+
+msgid "Auto-Masking"
+msgstr "Auto-Mascheramento"
+
+
+msgid "Selectability & Visibility"
+msgstr "Selezionabilità e Visibilità"
+
+
+msgid "Shadow Settings"
+msgstr "Impostazioni Ombra"
+
+
+msgid "SSAO Settings"
+msgstr "Impostazioni SSAO"
+
+
+msgid "Cavity"
+msgstr "Cavità"
+
+
+msgid "Render Pass"
+msgstr "Passaggi Render"
+
+
+msgid "Compositor"
+msgstr "Compositore"
 
 
 msgid "Chain Scaling"
@@ -64794,14 +64794,6 @@ msgid "ParticleSettings"
 msgstr "Impostazioni Particelle"
 
 
-msgid "Mesh has no UV data"
-msgstr "La mesh non ha dati UV"
-
-
-msgid "Mesh has no VCol data"
-msgstr "La mesh non ha dati di colore vertice"
-
-
 msgid "%i frames found!"
 msgstr "%i fotogrammi trovati!"
 
@@ -67031,6 +67023,10 @@ msgid "Videos"
 msgstr "Video"
 
 
+msgid "Movies"
+msgstr "Filmati"
+
+
 msgid "Cursor X"
 msgstr "X Cursore"
 
@@ -68360,6 +68356,14 @@ msgstr "L'oggetto '%s' non è nella vista livello '%s'"
 
 msgid "Object '%s' does not support shapes"
 msgstr "L'Oggetto '%s' non supporta le forme"
+
+
+msgid "Mesh has no UV data"
+msgstr "La mesh non ha dati UV"
+
+
+msgid "Mesh has no VCol data"
+msgstr "La mesh non ha dati di colore vertice"
 
 
 msgid "Constraint '%s' not found in pose bone '%s'"

@@ -647,10 +647,7 @@ void Result::release()
 
 void Result::free()
 {
-  /* The data in the result are not owned by the result, so we only free the derived resources. */
   if (is_external_) {
-    delete derived_resources_;
-    derived_resources_ = nullptr;
     return;
   }
 

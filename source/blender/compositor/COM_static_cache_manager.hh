@@ -35,15 +35,17 @@ namespace blender::compositor {
  * be not needed when it was not used in the previous evaluation. This is done through the
  * following mechanism:
  *
- * - After every evaluation, do the following:
+ * - Before every evaluation, do the following:
  *     1. All resources whose CachedResource::needed flag is false are deleted.
  *     2. The CachedResource::needed flag of all remaining resources is set to false.
  * - During evaluation, when retrieving any cached resource, set its CachedResource::needed flag to
  *   true.
  *
- * In effect, any resource that was not used in the previous evaluation will be deleted. This
- * mechanism is implemented in the reset() method of the class, which should be called after every
- * evaluation. */
+ * In effect, any resource that was used in the previous evaluation but was not used in the current
+ * evaluation will be deleted before the next evaluation. This mechanism is implemented in the
+ * reset() method of the class, which should be called before every evaluation. The reset for the
+ * next evaluation can be skipped by calling the skip_next_reset() method, see its description for
+ * more information. */
 class StaticCacheManager {
  public:
   SymmetricBlurWeightsContainer symmetric_blur_weights;
@@ -63,6 +65,11 @@ class StaticCacheManager {
   FogGlowKernelContainer fog_glow_kernels;
   ImageCoordinatesContainer image_coordinates;
 
+ private:
+  /* The cache manager should skip the next reset. See the skip_next_reset() method for more
+   * information. */
+  bool should_skip_next_reset_ = false;
+
  public:
   /* Reset the cache manager by deleting the cached resources that are no longer needed because
    * they weren't used in the last evaluation and prepare the remaining cached resources to track
@@ -70,9 +77,12 @@ class StaticCacheManager {
    * This should be called before every evaluation. */
   void reset();
 
-  /* Force free all resources even if they are still needed. This is useful to manually destroy the
-   * static cache manager, for instance, with a GPU context bound. */
-  void free();
+  /* Specifies that the cache manager should skip the next reset. This is useful for instance when
+   * the evaluation gets canceled before it was fully done, in that case, we wouldn't want to
+   * invalidate the cache because not all operations that use cached resources got the chance to
+   * mark their used resources as still in use. So we wait until a full evaluation happen before we
+   * decide that some resources are no longer needed. */
+  void skip_next_reset();
 };
 
 }  // namespace blender::compositor

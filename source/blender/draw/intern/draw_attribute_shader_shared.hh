@@ -24,25 +24,25 @@ enum [[host_shared]] CurveType : uint32_t {
  * them inside the shaders.
  * \{ */
 
-struct [[host_shared]] StoredFloat4 {
+struct StoredFloat4 {
   float x;
   float y;
   float z;
   float w;
 };
 
-struct [[host_shared]] StoredFloat3 {
+struct StoredFloat3 {
   float x;
   float y;
   float z;
 };
 
-struct [[host_shared]] StoredFloat2 {
+struct StoredFloat2 {
   float x;
   float y;
 };
 
-struct [[host_shared]] StoredFloat {
+struct StoredFloat {
   float x;
 };
 

@@ -54,16 +54,14 @@ float3 horizon_scan_sample_normal(float2 uv)
 #endif
 }
 
-#ifdef HORIZON_OCCLUSION
 struct HorizonScanResult {
+#ifdef HORIZON_OCCLUSION
   float result;
-};
 #endif
 #ifdef HORIZON_CLOSURE
-struct HorizonScanResult {
   SphericalHarmonicL1 result;
-};
 #endif
+};
 
 /**
  * Scans the horizon in many directions and returns the indirect lighting radiance.

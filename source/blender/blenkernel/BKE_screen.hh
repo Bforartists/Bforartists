@@ -68,12 +68,6 @@ struct wmNotifier;
 struct wmTimer;
 struct wmWindow;
 struct wmWindowManager;
-struct RegionDrawCB;
-struct PanelType;
-struct HeaderType;
-struct ARegionType;
-struct wmEventHandler;
-struct PanelCategoryDyn;
 
 /* spacetype has everything stored to get an editor working, it gets initialized via
  * #ED_spacetypes_init() in `editors/space_api/spacetypes.cc` */
@@ -168,7 +162,7 @@ struct SpaceType {
   void (*blend_write)(BlendWriter *writer, SpaceLink *space_link);
 
   /** Region type definitions. */
-  ListBaseT<ARegionType> regiontypes;
+  ListBase regiontypes;
 
   /* read and write... */
 
@@ -307,13 +301,13 @@ struct ARegionType {
   ARegionTypeFlag flag;
 
   /** Custom drawing callbacks. */
-  ListBaseT<RegionDrawCB> drawcalls;
+  ListBase drawcalls;
 
   /** Panels type definitions. */
-  ListBaseT<PanelType> paneltypes;
+  ListBase paneltypes;
 
   /** Header type definitions. */
-  ListBaseT<HeaderType> headertypes;
+  ListBase headertypes;
 
   /** Hardcoded constraints, smaller than these values region is not visible. */
   int minsizex, minsizey;
@@ -404,7 +398,7 @@ struct PanelType {
 
   /** Sub panels. */
   PanelType *parent;
-  ListBaseT<LinkData> children;
+  ListBase children;
 
   /** RNA integration. */
   ExtensionRNA rna_ext;
@@ -484,15 +478,6 @@ struct Panel_Runtime {
 
 namespace blender::bke {
 
-/** #ARegionRuntime.quadview_index */
-enum class ARegionQuadviewIndex : uint8_t {
-  None = 0,
-  BottomLeft = 1,
-  TopLeft = 2,
-  BottomRight = 3,
-  TopRight = 4,
-};
-
 struct ARegionRuntime {
   /** Callbacks for this region type. */
   struct ARegionType *type;
@@ -520,9 +505,11 @@ struct ARegionRuntime {
 
   /** Maps #ui::Block::name to ui::Block for faster lookups. */
   Map<std::string, blender::ui::Block *> block_name_map;
-  ListBaseT<ui::Block> uiblocks = {};
+  /** #ui::Block. */
+  ListBase uiblocks = {};
 
-  ListBaseT<wmEventHandler> handlers = {};
+  /** #wmEventHandler. */
+  ListBase handlers = {};
 
   /** Use this string to draw info. */
   char *headerstr = nullptr;
@@ -536,7 +523,7 @@ struct ARegionRuntime {
   wmDrawBuffer *draw_buffer = nullptr;
 
   /** Panel categories runtime. */
-  ListBaseT<PanelCategoryDyn> panels_category = {};
+  ListBase panels_category = {};
 
   /** Region is currently visible on screen. */
   short visible = 0;
@@ -546,8 +533,6 @@ struct ARegionRuntime {
 
   /** Private, cached notifier events. */
   short do_draw_paintcursor;
-
-  ARegionQuadviewIndex quadview_index = ARegionQuadviewIndex::None;
 
   /** Dummy panel used in popups so they can support layout panels. */
   Panel *popup_block_panel = nullptr;

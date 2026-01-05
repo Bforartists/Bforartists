@@ -6,7 +6,6 @@
  * \ingroup edcurves
  */
 
-#include "BLI_array_utils.hh"
 #include "BLI_listbase.h"
 #include "BLI_math_geom.h"
 #include "BLI_math_matrix.hh"
@@ -1405,7 +1404,8 @@ static wmOperatorStatus exec(bContext *C, wmOperator * /*op*/)
 
     bke::SpanAttributeWriter<bool> cyclic = attributes.lookup_or_add_for_write_span<bool>(
         "cyclic", bke::AttrDomain::Curve);
-    array_utils::invert_booleans(cyclic.span, selection);
+    selection.foreach_index(GrainSize(4096),
+                            [&](const int i) { cyclic.span[i] = !cyclic.span[i]; });
     cyclic.finish();
 
     if (!cyclic.span.contains(true)) {

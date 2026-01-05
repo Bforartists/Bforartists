@@ -25,6 +25,8 @@
 
 #include "blf_internal_types.hh"
 
+#include "BLF_api.hh"
+
 #include "BLI_strict_flags.h" /* IWYU pragma: keep. Keep last. */
 
 /* Maximum length of text sample in char32_t, including null terminator. */

@@ -332,7 +332,7 @@ template<typename T> class SimpleMixer {
       : buffer_(buffer), default_value_(default_value), total_weights_(buffer.size(), 0.0f)
   {
     BLI_STATIC_ASSERT(std::is_trivial_v<T>, "");
-    index_mask::masked_fill(buffer_, default_value_, mask);
+    mask.foreach_index([&](const int64_t i) { buffer_[i] = default_value_; });
   }
 
   /**
@@ -401,7 +401,7 @@ class BooleanPropagationMixer {
    */
   BooleanPropagationMixer(MutableSpan<bool> buffer, const IndexMask &mask) : buffer_(buffer)
   {
-    index_mask::masked_fill(buffer_, false, mask);
+    mask.foreach_index([&](const int64_t i) { buffer_[i] = false; });
   }
 
   /**
@@ -462,7 +462,7 @@ class SimpleMixerWithAccumulationType {
                                   T default_value = {})
       : buffer_(buffer), default_value_(default_value), accumulation_buffer_(buffer.size())
   {
-    index_mask::masked_fill(buffer_, default_value_, mask);
+    mask.foreach_index([&](const int64_t index) { buffer_[index] = default_value_; });
   }
 
   void set(const int64_t index, const T &value, const float weight = 1.0f)

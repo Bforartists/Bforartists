@@ -729,7 +729,7 @@ static void generate_resource(GeneratedStreams &generated,
     case ShaderCreateInfo::Resource::BindType::UNIFORM_BUFFER:
       generate_buffer(generated,
                       false,
-                      info.buffer_typename(res.uniformbuf.type_name, true),
+                      info.buffer_typename(res.uniformbuf.type_name),
                       res.uniformbuf.name,
                       MTL_UBO_SLOT_OFFSET + res.slot,
                       stage);
@@ -751,7 +751,7 @@ static void generate_compilation_constant(GeneratedStreams &generated,
   /* Global scope definition before the wrapper class. */
   auto &out = generated.wrapper_class_prefix;
   out << "constant " << constant.type << " " << constant.name;
-  out << " [[maybe_unused]] = " << to_string(constant.type, constant.value) << ";\n";
+  out << " = " << to_string(constant.type, constant.value) << ";\n";
 }
 
 static void generate_specialization_constant(GeneratedStreams &generated,

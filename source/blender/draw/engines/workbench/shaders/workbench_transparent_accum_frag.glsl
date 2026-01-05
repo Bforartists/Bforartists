@@ -68,17 +68,16 @@ void main()
   color = workbench_image_color(uv_interp);
 #endif
 
-  float3 shaded_color;
 #ifdef WORKBENCH_LIGHTING_MATCAP
-  shaded_color = get_matcap_lighting(matcap_tx, color, N, I);
+  float3 shaded_color = get_matcap_lighting(matcap_tx, color, N, I);
 #endif
 
 #ifdef WORKBENCH_LIGHTING_STUDIO
-  shaded_color = get_world_lighting(color, _roughness, metallic, N, I);
+  float3 shaded_color = get_world_lighting(color, _roughness, metallic, N, I);
 #endif
 
 #ifdef WORKBENCH_LIGHTING_FLAT
-  shaded_color = color;
+  float3 shaded_color = color;
 #endif
 
   shaded_color *= get_shadow(N, force_shadowing);

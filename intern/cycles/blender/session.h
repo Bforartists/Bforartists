@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "RNA_blender_cpp.hh"
+
 #include "device/device.h"
 
 #include "scene/scene.h"
@@ -11,18 +13,6 @@
 
 #include "util/unique_ptr.h"
 #include "util/vector.h"
-
-struct bScreen;
-struct Depsgraph;
-struct Main;
-struct Object;
-struct RegionView3D;
-struct RenderData;
-struct RenderEngine;
-struct Scene;
-struct SpaceImage;
-struct UserDef;
-struct View3D;
 
 CCL_NAMESPACE_BEGIN
 
@@ -34,17 +24,17 @@ class Session;
 
 class BlenderSession {
  public:
-  BlenderSession(::RenderEngine &b_engine,
-                 ::UserDef &b_userpref,
-                 ::Main &b_data,
+  BlenderSession(BL::RenderEngine &b_engine,
+                 BL::Preferences &b_userpref,
+                 BL::BlendData &b_data,
                  bool preview_osl);
 
-  BlenderSession(::RenderEngine &b_engine,
-                 ::UserDef &b_userpref,
-                 ::Main &b_data,
-                 ::bScreen *b_screen,
-                 ::View3D *b_v3d,
-                 ::RegionView3D *b_rv3d,
+  BlenderSession(BL::RenderEngine &b_engine,
+                 BL::Preferences &b_userpref,
+                 BL::BlendData &b_data,
+                 ::bScreen &b_screen,
+                 BL::SpaceView3D &b_v3d,
+                 BL::RegionView3D &b_rv3d,
                  const int width,
                  int height);
 
@@ -54,15 +44,15 @@ class BlenderSession {
   void create_session();
   void free_session();
 
-  void reset_session(::Main &b_data, ::Depsgraph &b_depsgraph);
+  void reset_session(BL::BlendData &b_data, BL::Depsgraph &b_depsgraph);
 
   /* offline render */
-  void render(::Depsgraph &b_depsgraph);
+  void render(BL::Depsgraph &b_depsgraph);
 
   void render_frame_finish();
 
-  void bake(::Depsgraph &b_depsgraph_,
-            ::Object &b_object,
+  void bake(BL::Depsgraph &b_depsgraph_,
+            BL::Object &b_object,
             const string &bake_type,
             const int bake_filter,
             const int bake_width,
@@ -70,10 +60,10 @@ class BlenderSession {
 
   void full_buffer_written(string_view filename);
   /* interactive updates */
-  void synchronize(::Depsgraph &b_depsgraph);
+  void synchronize(BL::Depsgraph &b_depsgraph);
 
   /* drawing */
-  void draw(bScreen &b_screen, ::SpaceImage &space_image);
+  void draw(BL::SpaceImageEditor &space_image);
   void view_draw(const int w, const int h);
   void tag_redraw();
   void tag_update();
@@ -89,17 +79,17 @@ class BlenderSession {
   unique_ptr<BlenderSync> sync;
   double last_redraw_time;
 
-  ::RenderEngine &b_engine;
-  ::UserDef &b_userpref;
-  ::Main *b_data;
-  ::RenderData *b_render;
-  ::Depsgraph *b_depsgraph;
+  BL::RenderEngine b_engine;
+  BL::Preferences b_userpref;
+  BL::BlendData b_data;
+  BL::RenderSettings b_render;
+  BL::Depsgraph b_depsgraph;
   /* NOTE: Blender's scene might become invalid after call
    * #free_blender_memory_if_possible(). */
-  ::Scene *b_scene;
+  BL::Scene b_scene;
   ::bScreen *b_screen;
-  ::View3D *b_v3d;
-  ::RegionView3D *b_rv3d;
+  BL::SpaceView3D b_v3d;
+  BL::RegionView3D b_rv3d;
   string b_rlay_name;
   string b_rview_name;
 

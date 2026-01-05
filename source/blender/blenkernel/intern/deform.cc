@@ -1704,7 +1704,7 @@ class VArrayImpl_For_VertexWeights final : public VMutableArrayImpl<float> {
                    const bool /*dst_is_uninitialized*/) const override
   {
     if (dverts_ == nullptr) {
-      index_mask::masked_fill(MutableSpan(dst, mask.min_array_size()), 0.0f, mask);
+      mask.foreach_index([&](const int i) { dst[i] = 0.0f; });
     }
     threading::parallel_for(mask.index_range(), 4096, [&](const IndexRange range) {
       mask.slice(range).foreach_index_optimized<int64_t>([&](const int64_t index) {

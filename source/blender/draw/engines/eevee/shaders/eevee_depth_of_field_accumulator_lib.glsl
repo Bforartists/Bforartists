@@ -76,6 +76,11 @@ struct DofGatherData {
   float transparency;
 
   float layer_opacity;
+
+  static DofGatherData zero()
+  {
+    return {float4(0.0f), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+  }
 };
 
 #define GATHER_DATA_INIT
@@ -451,7 +456,7 @@ void dof_gather_accumulator(sampler2D color_tx,
 
   bool first_ring = true;
 
-  DofGatherData accum_data = {};
+  DofGatherData accum_data = DofGatherData::zero();
 
   int density_change = 0;
   for (int ring = gather_ring_count; ring > 0; ring--) {
@@ -468,7 +473,7 @@ void dof_gather_accumulator(sampler2D color_tx,
     /* Slide 38. */
     float bordering_radius = ring_radius +
                              (0.5f + coc_radius_error) * base_radius * unit_sample_radius;
-    DofGatherData ring_data = {};
+    DofGatherData ring_data = DofGatherData::zero();
     for (int sample_pair = 0; sample_pair < sample_pair_count; sample_pair++) {
       offset = step_rot_mat * offset;
 
@@ -601,8 +606,8 @@ void dof_slight_focus_gather(sampler2DDepth depth_tx,
                      float2(interleaved_gradient_noise(frag_coord, 3, noise_offset.x),
                             interleaved_gradient_noise(frag_coord, 5, noise_offset.y));
 
-  DofGatherData fg_accum = {};
-  DofGatherData bg_accum = {};
+  DofGatherData fg_accum = DofGatherData::zero();
+  DofGatherData bg_accum = DofGatherData::zero();
 
   int i_radius = clamp(int(radius), 0, int(dof_layer_threshold));
 
@@ -636,7 +641,7 @@ void dof_slight_focus_gather(sampler2DDepth depth_tx,
 
     float bordering_radius = ring_dist + 0.5f;
     constexpr float isect_mul = 1.0f;
-    DofGatherData bg_ring = {};
+    DofGatherData bg_ring = DofGatherData::zero();
     dof_gather_accumulate_sample_pair(
         pair_data, bordering_radius, isect_mul, first_ring, false, false, bg_ring, bg_accum);
     /* Treat each sample as a ring. */
@@ -648,7 +653,7 @@ void dof_slight_focus_gather(sampler2DDepth depth_tx,
       pair_data[0].dist = pair_data[1].dist;
       pair_data[1].dist = tmp;
     }
-    DofGatherData fg_ring = {};
+    DofGatherData fg_ring = DofGatherData::zero();
     dof_gather_accumulate_sample_pair(
         pair_data, bordering_radius, isect_mul, first_ring, false, true, fg_ring, fg_accum);
     /* Treat each sample as a ring. */

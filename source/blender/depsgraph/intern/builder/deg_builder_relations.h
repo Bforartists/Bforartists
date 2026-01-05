@@ -282,8 +282,6 @@ class DepsgraphRelationBuilder : public DepsgraphBuilder {
 
   Depsgraph *getGraph();
 
-  virtual Set<const ID *> get_built_ids() const;
-
  protected:
   TimeSourceNode *get_node(const TimeSourceKey &key) const;
   ComponentNode *get_node(const ComponentKey &key) const;
