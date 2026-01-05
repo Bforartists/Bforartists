@@ -18,7 +18,6 @@
 #include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 #include "DNA_screen_types.h"
-#include "DNA_space_enums.h"
 #include "DNA_space_types.h"
 #include "DNA_text_types.h"
 #include "DNA_world_types.h"
@@ -29,7 +28,7 @@
 #include "BLI_function_ref.hh"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
-#include "BLI_math_base.h"
+#include "BLI_math_base.h" // bfa node blend
 #include "BLI_math_color.h"
 #include "BLI_set.hh"
 #include "BLI_span.hh"
@@ -59,7 +58,7 @@
 #include "BKE_scene.hh"
 #include "BKE_scene_runtime.hh"
 #include "BKE_screen.hh"
-#include "DNA_userdef_types.h"
+#include "DNA_userdef_types.h" // bfa node blend
 
 #include "IMB_imbuf.hh"
 
@@ -1717,15 +1716,15 @@ static void node_draw_shadow(const SpaceNode &snode,
 }
 
 /* BFA - Draw an outline with padding around node groups */
-static void node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
-                                           const bNode &node,
-                                           const rctf &rect,
-                                           const float radius,
-                                           const bool is_selected)
+static void bfa_node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
+                                               const bNode &node,
+                                               const rctf &rect,
+                                               const float radius)
 {
   if (node.type_legacy != NODE_GROUP) {
     return;
   }
+  const bool is_selected = node.flag & NODE_SELECT;
 
   const float padding = 5.0f * UI_SCALE_FAC;
   float alpha_selected = is_selected ? 1.0f : 0.5f;  // Keep outline more visible
@@ -1753,6 +1752,148 @@ static void node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
   /* Draw only the outline (background is drawn separately at the beginning) */
   ui::draw_roundbox_corner_set(ui::CNR_ALL);
   ui::draw_roundbox_4fv(&outline_rect, false, radius + padding, outline_color);
+}
+
+/* BFA - Group background for collapsed nodes (drawn behind everything). */
+static void bfa_node_group_outline(const SpaceNode &snode, const bNode &node, const rctf &rct, const int color_id)
+{
+  if (node.type_legacy != NODE_GROUP) {
+    return;
+  }
+
+  if (draw_node_details(snode)) {
+    const float group_padding = 5.0f * UI_SCALE_FAC;
+    const float group_radius = BASIS_RAD + group_padding;
+    const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f;  // Slightly transparent
+
+    const rctf group_bg_rect = {
+        rct.xmin - group_padding,
+        rct.xmax + group_padding,
+        rct.ymin - group_padding,
+        rct.ymax + group_padding,
+    };
+
+    float bg_color[4];
+    blender::ui::theme::get_color_4fv(color_id, bg_color);
+    bg_color[3] = alpha;
+
+    ui::draw_roundbox_corner_set(ui::CNR_ALL);
+    ui::draw_roundbox_4fv(&group_bg_rect, true, group_radius, bg_color);
+  }
+}
+
+/* BFA keep for merging sake. */
+/* Node groups draw two "copies" of the node body underneath, just narrower and dimmer. */
+static void node_draw_node_group_indicator(const SpaceNode &snode,
+                                           const bNode &node,
+                                           const rctf &rect,
+                                           const float radius,
+                                           const float color[4],
+                                           const bool disable_copy = true) /* BFA disabled the bottom part, keep highlight. */
+{
+  if (node.type_legacy != NODE_GROUP) {
+    return;
+  }
+
+  /* How far it extends down and narrows. */
+  const bool is_selected = node.flag & NODE_SELECT;
+  const bool is_collapsed = node.flag & NODE_COLLAPSED;
+  const float offset_x = 3.6f * UI_SCALE_FAC;
+  const float offset_y = 2.4f * UI_SCALE_FAC;
+  const float shadow_width = 0.2f * U.widget_unit;
+  const float shadow_alpha = is_selected ? 0.4f : 0.2f;
+  const float dim_collapsed = is_collapsed ? 0.2f : 0.0f;
+
+  const float outline_width = is_selected ? 1.0f : 0.5f;
+  float outline_color[4];
+  ui::theme::get_color_4fv(TH_NODE_OUTLINE, outline_color);
+
+  if (is_selected) {
+    ui::theme::get_color_4fv((node.flag & NODE_ACTIVE) ? TH_ACTIVE : TH_SELECT, outline_color);
+  }
+
+  ui::draw_roundbox_corner_set(ui::CNR_BOTTOM_LEFT | ui::CNR_BOTTOM_RIGHT);
+
+  if (disable_copy) {
+    return;
+  }
+
+  /* Start with the last copy. */
+  {
+    const rctf rect_group_front = {
+        rect.xmin + offset_x * 4,
+        rect.xmax - offset_x * 4,
+        rect.ymin - (offset_y * 2) - U.pixelsize,
+        rect.ymin - offset_y + (U.pixelsize * 2),
+    };
+
+    const rctf rect_group_front_shadow = {
+        rect_group_front.xmin + outline_width,
+        rect_group_front.xmax - outline_width,
+        rect_group_front.ymin + outline_width,
+        rect_group_front.ymax - outline_width,
+    };
+
+    ui::draw_dropshadow(&rect_group_front_shadow,
+                        radius + outline_width,
+                        shadow_width,
+                        snode.runtime->aspect,
+                        shadow_alpha);
+
+    /* Use the node color (or header color when collapsed) but slightly darker. */
+    float fill_color_front[4], outline_color_front[4];
+    copy_v4_v4(fill_color_front, color);
+    mul_v3_fl(fill_color_front, 0.8f - dim_collapsed);
+
+    copy_v4_v4(outline_color_front, outline_color);
+    mul_v3_fl(outline_color_front, (is_selected ? 0.5f : 1.0f) - dim_collapsed);
+
+    ui::draw_roundbox_4fv_ex(&rect_group_front,
+                             fill_color_front,
+                             nullptr,
+                             0.0f,
+                             outline_color_front,
+                             outline_width,
+                             radius);
+  }
+
+  /* Draw the first copy in the front. */
+  {
+    const rctf rect_group_back = {
+        rect.xmin + offset_x * 2,
+        rect.xmax - offset_x * 2,
+        rect.ymin - offset_y - U.pixelsize,
+        rect.ymin + (U.pixelsize * 2),
+    };
+
+    const rctf rect_group_back_shadow = {
+        rect_group_back.xmin + outline_width,
+        rect_group_back.xmax - outline_width,
+        rect_group_back.ymin + outline_width,
+        rect_group_back.ymax - outline_width,
+    };
+
+    ui::draw_dropshadow(&rect_group_back_shadow,
+                        radius + outline_width,
+                        shadow_width,
+                        snode.runtime->aspect,
+                        shadow_alpha);
+
+    float fill_color_back[4], outline_color_back[4];
+    copy_v4_v4(fill_color_back, color);
+    mul_v3_fl(fill_color_back, 0.9f - dim_collapsed);
+
+    copy_v4_v4(outline_color_back, outline_color);
+    mul_v3_fl(outline_color_back, (is_selected ? 0.7f : 1.1f) - dim_collapsed);
+
+    ui::draw_roundbox_4fv_ex(&rect_group_back,
+                             fill_color_back,
+                             nullptr,
+                             0.0f,
+                             outline_color_back,
+                             outline_width,
+                             radius);
+  }
 }
 
 static void node_draw_socket(const bContext &C,
@@ -2918,29 +3059,7 @@ static void node_draw_basis(const bContext &C,
   const float padding = 0.5f;
   const float corner_radius = BASIS_RAD + padding;
   const float outline_width = U.pixelsize;
-
-  /* BFA - Node Group background outline (drawn first to appear behind content) */
-  if (node.type_legacy == NODE_GROUP) {
-    const float group_padding = 5.0f * UI_SCALE_FAC;
-    const float group_radius = BASIS_RAD + group_padding;
-    const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f;  // Slightly transparent
-
-    const rctf group_bg_rect = {
-        rct.xmin - group_padding,
-        rct.xmax + group_padding,
-        rct.ymin - group_padding,
-        rct.ymax + group_padding,
-    };
-
-    float bg_color[4];
-    int color_id = node_get_colorid(tree_draw_ctx, node);
-    blender::ui::theme::get_color_4fv(color_id, bg_color);
-    bg_color[3] = alpha;
-
-    ui::draw_roundbox_corner_set(ui::CNR_ALL);
-    ui::draw_roundbox_4fv(&group_bg_rect, true, group_radius, bg_color);
-  }
-
+  bfa_node_group_outline(snode, node, rct, color_id);
   /* Header. */
   {
     /* Add some padding to prevent transparent gaps with the outline. */
@@ -2984,6 +3103,7 @@ static void node_draw_basis(const bContext &C,
     }
     block_emboss_set(&block, ui::EmbossType::Emboss);
   }
+  /* BFA - end Group icon. */
 
   if (nodes::node_can_sync_sockets(C, ntree, node)) {
     iconofs -= iconbutw;
@@ -3016,7 +3136,7 @@ static void node_draw_basis(const bContext &C,
     ui::Button *but = uiDefIconBut(&block,
                                    ui::ButtonType::ButToggle,
                                    is_active ? ICON_HIDE_OFF : ICON_HIDE_ON,
-                                   // ICON_TOGGLE_NODE_PREVIEW, /* BFA - wip, could be a better
+                                   // ICON_TOGGLE_NODE_PREVIEW, /* TODO BFA - wip, could be a better
                                    // icon for node preview toggle button */*/
                                    iconofs,
                                    rct.ymax - NODE_DY,
@@ -3200,28 +3320,20 @@ static void node_draw_basis(const bContext &C,
 
   /* Body. */
   {
+    // bfa node color blend 
+    blender::ui::theme::get_color_blend_4f(TH_NODE, color_id, U.node_color_blend, color);
+    const float alpha = 0.55f + color[3] * (1.0f - 0.55f);
     /* Use warning color to indicate undefined types. */
     if (node_undefined_or_unsupported(ntree, node)) {
       ui::theme::get_color_shade_4fv(TH_REDALERT, -40, color);
     }
-    /* Muted nodes get a mix of the background with the node color. */
-    else if (node.is_muted()) {
-      // bfa node color blend
-      float color_background[4];
-      float color_blend[4];
-      blender::ui::theme::get_color_4fv(TH_BACK, color_background);
-      blender::ui::theme::get_color_blend_4f(TH_NODE, color_id, U.node_color_blend, color_blend);
-      interp_v4_v4v4(color, color_background, color_blend, 0.2f);
-      // UI_GetThemeColorBlend4f(TH_BACK, TH_NODE, 0.2f, color);
-    }
     else if (node.flag & NODE_CUSTOM_COLOR) {
-      rgba_float_args_set(color, node.color[0], node.color[1], node.color[2], 1.0f);
+      rgba_float_args_set(color, node.color[0], node.color[1], node.color[2], alpha);
     }
-    else {
-      // bfa node color blend
-      ui::theme::get_color_blend_4f(TH_NODE, color_id, U.node_color_blend, color);
-      // ui::theme::get_color_4fv(TH_NODE, color);
-    }
+    // bfa node color blend moved above
+    // else {
+    //   ui::theme::get_color_4fv(TH_NODE, color);
+    // }
 
     /* Draw selected nodes fully opaque. */
     if (node.flag & SELECT) {
@@ -3245,11 +3357,9 @@ static void node_draw_basis(const bContext &C,
         rct.ymax - NODE_DY + padding,
     };
 
-    /* BFA - Removed the old Node Group indicator. */
-    // if (draw_node_details(snode)) {
-    //   node_draw_node_group_indicator(snode, node, rect, corner_radius, color, node.flag &
-    //   SELECT);
-    // }
+    if (draw_node_details(snode)) {
+      node_draw_node_group_indicator(snode, node, rect, corner_radius, color);
+    }
 
     ui::draw_roundbox_corner_set(ui::CNR_BOTTOM_LEFT | ui::CNR_BOTTOM_RIGHT);
     ui::draw_roundbox_4fv(&rect, true, corner_radius, color);
@@ -3258,58 +3368,35 @@ static void node_draw_basis(const bContext &C,
       node_draw_panels_background(node);
     }
   }
-
-  /* Outlines. */
+  /* BFA Header outline. */
+  ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
   {
-    /* Body outline. */
-    const rctf rect_body = {
-        rct.xmin - 0,
-        rct.xmax + 0,
-        rct.ymin,
-        rct.ymax - (NODE_DY),
-    };
-    float color_body[4];
-    if (node_undefined_or_unsupported(ntree, node)) {
-      blender::ui::theme::get_color_4fv(TH_REDALERT, color_body);
-    }
-    else if (node.is_muted()) {
-      blender::ui::theme::get_color_blend_4f(TH_BACK, TH_NODE, 0.6f, color_body);
-    }
-    else {
-      blender::ui::theme::get_color_4fv(TH_NODE, color_body);
-    }
-    ui::draw_roundbox_corner_set(ui::CNR_BOTTOM_LEFT | ui::CNR_BOTTOM_RIGHT);
-    ui::draw_roundbox_4fv(&rect_body, false, BASIS_RAD, color_body);
-
-    /* Header outline. */
+    const float outline_width = U.pixelsize;
     const rctf rect_header = {
-        rct.xmin,
-        rct.xmax,
-        rct.ymax - (NODE_DY + outline_width),
-        rct.ymax,
+        rct.xmin - padding,
+        rct.xmax + padding,
+        rct.ymax - (NODE_DY + outline_width) + padding,
+        rct.ymax + padding,
     };
-    float color_header[4];
-    if (node_undefined_or_unsupported(ntree, node)) {
-      blender::ui::theme::get_color_4fv(TH_REDALERT, color_header);
-    }
-    else if (node.is_muted()) {
-      blender::ui::theme::get_color_blend_4f(TH_BACK, color_id, 0.6f, color_header);
-    }
-    else {
-      blender::ui::theme::get_color_4fv(color_id, color_header);
-    }
+    ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
+    ColorTheme4f color_outline;
+    ui::theme::get_color_4fv(TH_NODE_OUTLINE, color_outline);
+    ui::theme::get_color_blend_alpha_4fv(
+        color_header, color_outline, 0.6f, 0.0f, color_header);
+
     ui::draw_roundbox_corner_set(ui::CNR_TOP_LEFT | ui::CNR_TOP_RIGHT);
     ui::draw_roundbox_4fv(&rect_header, false, BASIS_RAD, color_header);
+  }
 
-    /* BFA - Node Group outline. */
-    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
-      GPU_line_width(outline_group_width);
-      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
-      GPU_line_width(1.0f);  // Reset line width
-    }
-
-    /* Outline around the entire node to highlight selection, alert, or for simulation zones. */
+  /* BFA - Node Group outline. */
+  if (draw_node_details(snode)) {
+    const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
+    GPU_line_width(outline_group_width);
+    bfa_node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD);
+    GPU_line_width(1.0f);  // Reset line width
+  }
+  /* Outline around the entire node to highlight selection, alert, or for simulation zones. */
+  {
     const rctf rect_node = {
         rct.xmin - outline_width,
         rct.xmax + outline_width,
@@ -3382,51 +3469,7 @@ static void node_draw_collapsed(const bContext &C,
   /* Body. */
   ColorTheme4f color = node_header_color_get(ntree, node, color_id);
   {
-    if (node_undefined_or_unsupported(ntree, node)) {
-      /* Use warning color to indicate undefined types. */
-      ui::theme::get_color_blend_shade_4fv(TH_REDALERT, color_id, 0.1f, -40, color);
-    }
-    else if (node.is_muted()) {
-      /* Muted nodes get a mix of the background with the node color. */
-      ui::theme::get_color_blend_shade_4fv(TH_BACK, color_id, 0.4f, 0, color);
-    }
-    else if (node.flag & NODE_CUSTOM_COLOR) {
-      rgba_float_args_set(color, node.color[0], node.color[1], node.color[2], 1.0f);
-    }
-    else {
-      blender::ui::theme::get_color_4fv(color_id, color);
-    }
-
-    /* Draw selected nodes fully opaque. */
-    if (node.flag & SELECT) {
-      color[3] = 1.0f;
-    }
-
-    /* Draw muted nodes slightly transparent so the wires inside are visible. */
-    if (node.is_muted()) {
-      color[3] -= 0.2f;
-    }
-
-    /* BFA - Group background for collapsed nodes (drawn behind everything). */
-    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
-      const float group_padding = 5.0f * UI_SCALE_FAC;
-      const float group_radius = BASIS_RAD + group_padding;
-      const float alpha = (node.flag & SELECT) ? 0.5f : 0.2f;  // Slightly transparent
-
-      const rctf group_bg_rect = {
-          rct.xmin - group_padding,
-          rct.xmax + group_padding,
-          rct.ymin - group_padding,
-          rct.ymax + group_padding,
-      };
-
-      float bg_color[4];
-      blender::ui::theme::get_color_4fv(color_id, bg_color);
-      bg_color[3] = alpha;
-
-      ui::draw_roundbox_corner_set(ui::CNR_ALL);
-      ui::draw_roundbox_4fv(&group_bg_rect, true, group_radius, bg_color);
-    }
+    bfa_node_group_outline(snode, node, rct, color_id);
 
     /* Add some padding to prevent transparent gaps with the outline. */
     const float padding = 0.5f;
@@ -3437,11 +3480,15 @@ static void node_draw_collapsed(const bContext &C,
         rct.ymax + padding,
     };
 
+    // /* Node Group indicator. */
+    if (draw_node_details(snode)) {
+      node_draw_node_group_indicator(snode, node, rect, BASIS_RAD + padding, color);
+    }
     /* BFA - Node Group outline. */
-    if (node.type_legacy == NODE_GROUP && draw_node_details(snode)) {
+    if (draw_node_details(snode)) {
       const float outline_group_width = 2.0f * UI_SCALE_FAC;  // Thicker outline
       GPU_line_width(outline_group_width);
-      node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD, node.flag & SELECT);
+      bfa_node_draw_node_group_indicator(tree_draw_ctx, node, rct, BASIS_RAD);
       GPU_line_width(1.0f);  // Reset line width
     }
 
@@ -3457,14 +3504,13 @@ static void node_draw_collapsed(const bContext &C,
     ui::theme::get_color_blend_shade_4fv(TH_SELECT, color_id, 0.4f, 10, color);
   }
 
-  float iconfs =
-      rct.xmin +
-      (NODE_MARGIN_X /
-       3);  // BFA: collapsed node icon // rct.xmin + (NODE_MARGIN_X / 3) + 0.1f * U.widget_unit
+  // BFA: collapsed node icon 
+  float iconfs = rct.xmin +(NODE_MARGIN_X / 3); // rct.xmin + (NODE_MARGIN_X / 3) + 0.1f * U.widget_unit
   /* Collapse/expand icon. */
   {
     const int but_size = 0.8f * U.widget_unit;
     block_emboss_set(&block, ui::EmbossType::None);
+
     ui::Button *but = uiDefIconBut(&block,
                                    ui::ButtonType::ButToggle,
                                    ICON_RIGHTARROW,
@@ -3511,6 +3557,7 @@ static void node_draw_collapsed(const bContext &C,
                0,
                "");
   block_emboss_set(&block, blender::ui::EmbossType::Emboss);
+  /* BFA end node icon. */
 
   const std::string showname = bke::node_label(ntree, node);
 
@@ -3559,6 +3606,7 @@ static void node_draw_collapsed(const bContext &C,
     draw_roundbox_corner_set(ui::CNR_ALL);
     ui::draw_roundbox_4fv(&rect, false, BASIS_RAD + outline_width, color_outline);
   }
+
 
   if (node.is_muted()) {
     button_flag_enable(but, ui::BUT_INACTIVE);
