@@ -232,7 +232,6 @@ class TIME_MT_view(bpy.types.Menu):
         scene = context.scene
         st = context.space_data
 
-        layout.prop(st, "show_region_ui")  # BFA
         layout.prop(st, "show_region_hud")
         layout.prop(st, "show_region_channels")
 
