@@ -1757,7 +1757,6 @@ static void bfa_node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
 /* BFA - Group background for collapsed nodes (drawn behind everything). */
 static void bfa_node_group_outline(const SpaceNode &snode, const bNode &node, const rctf &rct, const int color_id)
 {
-  /* BFA - Group background for collapsed nodes (drawn behind everything). */
   if (node.type_legacy != NODE_GROUP) {
     return;
   }
@@ -1783,14 +1782,14 @@ static void bfa_node_group_outline(const SpaceNode &snode, const bNode &node, co
   }
 }
 
-/* BFA keep for merging sake*/
+/* BFA keep for merging sake. */
 /* Node groups draw two "copies" of the node body underneath, just narrower and dimmer. */
 static void node_draw_node_group_indicator(const SpaceNode &snode,
                                            const bNode &node,
                                            const rctf &rect,
                                            const float radius,
                                            const float color[4],
-                                           const bool disable_copy = true) /* bfa disabled the bottom part, keep highlight*/
+                                           const bool disable_copy = true) /* BFA disabled the bottom part, keep highlight. */
 {
   if (node.type_legacy != NODE_GROUP) {
     return;
@@ -3104,7 +3103,7 @@ static void node_draw_basis(const bContext &C,
     }
     block_emboss_set(&block, ui::EmbossType::Emboss);
   }
-  /* BFA - end Group icon*/
+  /* BFA - end Group icon. */
 
   if (nodes::node_can_sync_sockets(C, ntree, node)) {
     iconofs -= iconbutw;
@@ -3558,7 +3557,7 @@ static void node_draw_collapsed(const bContext &C,
                0,
                "");
   block_emboss_set(&block, blender::ui::EmbossType::Emboss);
-  /* BFA end node icon*/
+  /* BFA end node icon. */
 
   const std::string showname = bke::node_label(ntree, node);
 
