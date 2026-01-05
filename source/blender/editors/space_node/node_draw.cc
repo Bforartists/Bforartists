@@ -1754,6 +1754,7 @@ static void bfa_node_draw_node_group_indicator(TreeDrawContext &tree_draw_ctx,
   ui::draw_roundbox_4fv(&outline_rect, false, radius + padding, outline_color);
 }
 
+/* BFA - Group background for collapsed nodes (drawn behind everything). */
 static void bfa_node_group_outline(const SpaceNode &snode, const bNode &node, const rctf &rct, const int color_id)
 {
   /* BFA - Group background for collapsed nodes (drawn behind everything). */
