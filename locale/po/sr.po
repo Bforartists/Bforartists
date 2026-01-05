@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Alpha (b'7d4876cf0c11')\n"
+"Project-Id-Version: Blender 5.1.0 Alpha (b'edd300f2e755')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-16 11:27+0000\n"
+"POT-Creation-Date: 2025-12-29 09:32+0000\n"
 "PO-Revision-Date: 2025-07-23 15:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -8497,34 +8497,6 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
-msgid "Mirror"
-msgstr "Огледало"
-
-
-msgid "Snap"
-msgstr "Лепљење"
-
-
-msgid "UV Mapping"
-msgstr "UV Мапирање"
-
-
-msgid "Local View"
-msgstr "Локални поглед"
-
-
-msgid "Navigation"
-msgstr "Навигација"
-
-
-msgid "Align View"
-msgstr "Поравнај поглед"
-
-
-msgid "Select Linked"
-msgstr "Изабери повезано"
-
-
 msgid "Metaball"
 msgstr "Мета лопта"
 
@@ -8541,24 +8513,12 @@ msgid "Rigid Body"
 msgstr "Круто тело"
 
 
-msgid "Keying"
-msgstr "Збирка тастера"
-
-
 msgid "Apply"
 msgstr "Примени"
 
 
-msgid "Tracking"
-msgstr "Праћење"
-
-
 msgid "Track"
 msgstr "Стаза"
-
-
-msgid "Math"
-msgstr "Математика"
 
 
 msgid "Quick Effects"
@@ -8585,8 +8545,20 @@ msgid "Propagate"
 msgstr "Пренеси"
 
 
+msgid "Keying"
+msgstr "Збирка тастера"
+
+
+msgid "Tracking"
+msgstr "Праћење"
+
+
 msgid "Names"
 msgstr "Имена"
+
+
+msgid "Math"
+msgstr "Математика"
 
 
 msgid "Toggle Bone Options"
@@ -8617,12 +8589,40 @@ msgid "Bone Roll"
 msgstr "Ролна костију"
 
 
+msgid "Snap"
+msgstr "Лепљење"
+
+
 msgid "Import"
 msgstr "Увоз"
 
 
+msgid "Mirror"
+msgstr "Огледало"
+
+
+msgid "UV Mapping"
+msgstr "UV Мапирање"
+
+
+msgid "Local View"
+msgstr "Локални поглед"
+
+
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Navigation"
+msgstr "Навигација"
+
+
+msgid "Align View"
+msgstr "Поравнај поглед"
+
+
+msgid "Select Linked"
+msgstr "Изабери повезано"
 
 
 msgid "Basic"
