@@ -675,7 +675,7 @@ class GRAPH_MT_key(Menu):
     bl_label = "Key"
 
     def draw(self, _context):
-        from bl_ui_utils.layout import operator_context
+        from _bl_ui_utils.layout import operator_context
 
         layout = self.layout
 
