@@ -349,8 +349,6 @@ class GRAPH_MT_view(Menu):
         layout.operator("graph.view_selected", icon="VIEW_SELECTED")
         layout.operator("graph.view_frame", icon="VIEW_FRAME")
 
-        layout.operator("anim.view_curve_in_graph_editor", icon="VIEW_GRAPH")
-
         layout.separator()
 
         layout.menu("INFO_MT_area")
