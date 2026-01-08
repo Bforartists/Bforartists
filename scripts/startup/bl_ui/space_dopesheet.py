@@ -327,7 +327,7 @@ class DOPESHEET_HT_header(Header):
                     # BFA - legacy, but toggles the dopesheet to timeline on a short-hand
                     row.operator("wm.switch_editor_to_dopesheet", text="", icon="TIME", depress=True)
 
-        elif context.space_data.mode == "DOPESHEET_EDITOR":
+        else:
             if bpy.context.preferences.addons.get("bfa_power_user_tools"):
                 if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_timelinetoggle:
                     row = layout.row(align=True)
