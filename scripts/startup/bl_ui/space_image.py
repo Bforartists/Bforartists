@@ -237,19 +237,18 @@ class IMAGE_MT_select(Menu):
         layout.operator_menu_enum("uv.select_lasso", "mode", text="Lasso Select")
 
         layout.separator()
-
-        layout.menu("IMAGE_MT_select_linked")
-        myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon="LINKED")
+        layout.operator("uv.select_linked", text="Linked", icon="LINKED")
+        myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon="LINKED_PICK")
         myop.extend = True
         myop.deselect = False
-        layout.operator("uv.select_tile")
+        layout.operator("uv.shortest_path_select", text="Shortest Path", icon="SELECT_SHORTESTPATH")
+        layout.operator("uv.shortest_path_pick", text="Shortest Path Pick", icon="SELECT_SHORTESTPATHPICK")
+        layout.operator("uv.select_tile", icon="SELECT_TILE")
 
         layout.separator()
-
         layout.operator("uv.select_pinned", text="Pinned", icon="PINNED")
         layout.operator("uv.select_split", text="Split", icon="SPLIT")
         layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
-        layout.operator("uv.shortest_path_pick", text="Shortest Path", icon="SELECT_SHORTESTPATH")
         layout.operator("uv.select_similar", text="Similar", icon="SIMILAR")
 
         layout.separator()
@@ -315,7 +314,7 @@ class IMAGE_MT_select_legacy(Menu):
         layout.operator("uv.select_box", text="Box Select", icon="BORDER_RECT").pinned = False
         layout.operator("uv.select_circle", icon="CIRCLE_SELECT")
 
-
+# BFA - not used
 class IMAGE_MT_select_linked(Menu):
     bl_label = "Select Linked"
 
@@ -2012,11 +2011,11 @@ class IMAGE_PT_overlay_guides(Panel):
         row = col.row()
         row.separator() # BFA - Indent properties
         col = row.column()
-        
+
         row = col.row()
         row.alignment = 'LEFT'
         row.prop(overlay, "show_grid_background", text="Grid")
-        
+
         if overlay.show_grid_background:
             row.label(icon="DISCLOSURE_TRI_DOWN")
         else:
@@ -2026,12 +2025,12 @@ class IMAGE_PT_overlay_guides(Panel):
             row = col.row()
             row.separator()
             col = row.column()
-        
+
             row = col.row()
             row.prop(uvedit, "grid_shape_source", expand=True)
 
             col.use_property_split = True
-            col.use_property_decorate = False 
+            col.use_property_decorate = False
             col.prop(uvedit, "tile_grid_shape", text="Tiles")
 
             if uvedit.grid_shape_source == "FIXED":
@@ -2062,18 +2061,18 @@ class IMAGE_PT_overlay_uv_stretch(Panel):
         overlay = sima.overlay
 
         layout.active = overlay.show_overlays
-        
+
         # BFA - changed greatly to be improved
         # UV Stretching
         col = layout.column()
         row = col.row()
         row.separator() # BFA - Indent properties
         col = row.column()
-        
+
         row = col.row()
         row.alignment = 'LEFT'
         row.prop(uvedit, "show_stretch")
-        
+
         if uvedit.show_stretch:
             row.label(icon="DISCLOSURE_TRI_DOWN")
         else:
@@ -2084,7 +2083,7 @@ class IMAGE_PT_overlay_uv_stretch(Panel):
             row = col.row()
             row.separator() # BFA - Indent properties
             col = row.column()
-        
+
             col.use_property_split = True
             col.prop(uvedit, "display_stretch_type", text="Type")
             col.prop(uvedit, "stretch_opacity", text="Opacity")
@@ -2115,7 +2114,7 @@ class IMAGE_PT_overlay_uv_edit_geometry(Panel):
         row = col.row()
         row.separator() # BFA - Indent properties
         col = row.column()
-        
+
         col.use_property_split = True
         col.prop(uvedit, "uv_opacity")
         col.prop(uvedit, "edge_display_type")
@@ -2151,11 +2150,11 @@ class IMAGE_PT_overlay_uv_display(Panel):
         row = col.row()
         row.separator() # BFA - Indent properties
         col = row.column()
-        
+
         row = col.row()
         row.alignment = 'LEFT'
         row.prop(uvedit, "show_uv")
-        
+
         if uvedit.show_uv:
             row.label(icon="DISCLOSURE_TRI_DOWN")
         else:
@@ -2166,7 +2165,7 @@ class IMAGE_PT_overlay_uv_display(Panel):
             row = col.row()
             row.separator() # BFA - Indent properties
             col = row.column(align=True)
-            
+
             col.use_property_split = True
             col.prop(uvedit, "uv_face_opacity", text="Faces")
             col.prop(uvedit, "uv_edge_opacity", text="Edges")
@@ -2298,7 +2297,7 @@ classes = (
     IMAGE_MT_view_zoom,
     IMAGE_MT_select,
     IMAGE_MT_select_legacy,  # BFA menu
-    IMAGE_MT_select_linked,
+    IMAGE_MT_select_linked, # BFA - not used
     IMAGE_MT_select_more_less,  # BFA menu
     IMAGE_MT_image,
     IMAGE_MT_image_transform,

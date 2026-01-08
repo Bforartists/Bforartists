@@ -2472,7 +2472,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.operator("mesh.select_linked", text="Linked", icon="LINKED")
         layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon="LINKED")
-        layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon="LINKED").deselect = False
+        layout.operator("mesh.select_linked_pick", text="Linked Pick", icon="LINKED_PICK").deselect = False
         layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon="LINKED").deselect = True
 
         layout.separator()
@@ -2552,7 +2552,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.separator()
 
         layout.operator("curve.select_linked", text="Linked", icon="LINKED")
-        layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon="LINKED").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick", icon="LINKED_PICK").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon="LINKED").deselect = True
 
         layout.separator()
@@ -2991,7 +2991,7 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.separator()
 
         layout.operator("paint.face_select_linked", text="Linked", icon="LINKED")
-        layout.operator("paint.face_select_linked_pick", text="Linked Pick Select", icon="LINKED").deselect = False
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick", icon="LINKED_PICK").deselect = False
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect", icon="LINKED").deselect = True
 
         layout.separator()

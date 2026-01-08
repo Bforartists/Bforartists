@@ -957,6 +957,7 @@ if(WITH_BLENDER)
       link_blend
       link_data
       link_replace
+      linked_pick
       load_3ds
       load_abc
       load_csv
@@ -1786,8 +1787,10 @@ if(WITH_BLENDER)
       select_set
       select_sharpedges
       select_shortestpath
+      select_shortestpathpick
       select_sideofactive
       select_subtract
+      select_tile
       select_tip
       select_tracks
       select_ungrouped_verts
