@@ -100,17 +100,17 @@ static SpaceLink *spreadsheet_create(const ScrArea * /*area*/, const Scene * /*s
     region->regiontype = RGN_TYPE_WINDOW;
   }
 
-  return (SpaceLink *)spreadsheet_space;
+  return reinterpret_cast<SpaceLink *>(spreadsheet_space);
 }
 
 static void spreadsheet_free(SpaceLink *sl)
 {
-  SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)sl;
+  SpaceSpreadsheet *sspreadsheet = reinterpret_cast<SpaceSpreadsheet *>(sl);
 
   MEM_delete(sspreadsheet->runtime);
 
-  LISTBASE_FOREACH_MUTABLE (SpreadsheetRowFilter *, row_filter, &sspreadsheet->row_filters) {
-    spreadsheet_row_filter_free(row_filter);
+  for (SpreadsheetRowFilter &row_filter : sspreadsheet->row_filters.items_mutable()) {
+    spreadsheet_row_filter_free(&row_filter);
   }
   for (const int i : IndexRange(sspreadsheet->num_tables)) {
     spreadsheet_table_free(sspreadsheet->tables[i]);
@@ -123,14 +123,15 @@ static void spreadsheet_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
 
 static SpaceLink *spreadsheet_duplicate(SpaceLink *sl)
 {
-  const SpaceSpreadsheet *sspreadsheet_old = (SpaceSpreadsheet *)sl;
-  SpaceSpreadsheet *sspreadsheet_new = (SpaceSpreadsheet *)MEM_dupallocN(sspreadsheet_old);
+  const SpaceSpreadsheet *sspreadsheet_old = reinterpret_cast<SpaceSpreadsheet *>(sl);
+  SpaceSpreadsheet *sspreadsheet_new = static_cast<SpaceSpreadsheet *>(
+      MEM_dupallocN(sspreadsheet_old));
   sspreadsheet_new->runtime = MEM_new<SpaceSpreadsheet_Runtime>(__func__,
                                                                 *sspreadsheet_old->runtime);
 
   BLI_listbase_clear(&sspreadsheet_new->row_filters);
-  LISTBASE_FOREACH (const SpreadsheetRowFilter *, src_filter, &sspreadsheet_old->row_filters) {
-    SpreadsheetRowFilter *new_filter = spreadsheet_row_filter_copy(src_filter);
+  for (const SpreadsheetRowFilter &src_filter : sspreadsheet_old->row_filters) {
+    SpreadsheetRowFilter *new_filter = spreadsheet_row_filter_copy(&src_filter);
     BLI_addtail(&sspreadsheet_new->row_filters, new_filter);
   }
   sspreadsheet_new->num_tables = sspreadsheet_old->num_tables;
@@ -142,7 +143,7 @@ static SpaceLink *spreadsheet_duplicate(SpaceLink *sl)
 
   spreadsheet_table_id_copy_content_geometry(sspreadsheet_new->geometry_id,
                                              sspreadsheet_old->geometry_id);
-  return (SpaceLink *)sspreadsheet_new;
+  return reinterpret_cast<SpaceLink *>(sspreadsheet_new);
 }
 
 static void spreadsheet_keymap(wmKeyConfig *keyconf)
@@ -153,9 +154,9 @@ static void spreadsheet_keymap(wmKeyConfig *keyconf)
 
 static void spreadsheet_id_remap(ScrArea * /*area*/,
                                  SpaceLink *slink,
-                                 const blender::bke::id::IDRemapper &mappings)
+                                 const bke::id::IDRemapper &mappings)
 {
-  SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)slink;
+  SpaceSpreadsheet *sspreadsheet = reinterpret_cast<SpaceSpreadsheet *>(slink);
   spreadsheet_table_id_remap_id(sspreadsheet->geometry_id.base, mappings);
   for (const int i : IndexRange(sspreadsheet->num_tables)) {
     spreadsheet_table_remap_id(*sspreadsheet->tables[i], mappings);
@@ -225,11 +226,11 @@ static void view_active_object(const bContext *C, SpaceSpreadsheet *sspreadsheet
 
 static void spreadsheet_update_context(const bContext *C)
 {
-  using blender::ed::viewer_path::ViewerPathForGeometryNodesViewer;
+  using ed::viewer_path::ViewerPathForGeometryNodesViewer;
 
   SpaceSpreadsheet *sspreadsheet = CTX_wm_space_spreadsheet(C);
   Object *active_object = CTX_data_active_object(C);
-  Object *context_object = blender::ed::viewer_path::parse_object_only(
+  Object *context_object = ed::viewer_path::parse_object_only(
       sspreadsheet->geometry_id.viewer_path);
   switch (eSpaceSpreadsheet_ObjectEvalState(sspreadsheet->geometry_id.object_eval_state)) {
     case SPREADSHEET_OBJECT_EVAL_STATE_ORIGINAL:
@@ -260,10 +261,9 @@ static void spreadsheet_update_context(const bContext *C)
       WorkSpace *workspace = CTX_wm_workspace(C);
       if (sspreadsheet->flag & SPREADSHEET_FLAG_PINNED) {
         const std::optional<ViewerPathForGeometryNodesViewer> parsed_path =
-            blender::ed::viewer_path::parse_geometry_nodes_viewer(
-                sspreadsheet->geometry_id.viewer_path);
+            ed::viewer_path::parse_geometry_nodes_viewer(sspreadsheet->geometry_id.viewer_path);
         if (parsed_path.has_value()) {
-          if (blender::ed::viewer_path::exists_geometry_nodes_viewer(*parsed_path)) {
+          if (ed::viewer_path::exists_geometry_nodes_viewer(*parsed_path)) {
             /* The pinned path is still valid, do nothing. */
             break;
           }
@@ -277,7 +277,7 @@ static void spreadsheet_update_context(const bContext *C)
       }
       /* Now try to update the viewer path from the workspace. */
       const std::optional<ViewerPathForGeometryNodesViewer> workspace_parsed_path =
-          blender::ed::viewer_path::parse_geometry_nodes_viewer(workspace->viewer_path);
+          ed::viewer_path::parse_geometry_nodes_viewer(workspace->viewer_path);
       if (workspace_parsed_path.has_value()) {
         if (BKE_viewer_path_equal(&sspreadsheet->geometry_id.viewer_path,
                                   &workspace->viewer_path,
@@ -312,7 +312,7 @@ Object *spreadsheet_get_object_eval(const SpaceSpreadsheet *sspreadsheet,
   if (id_type != ID_OB) {
     return nullptr;
   }
-  Object *object_orig = (Object *)used_id;
+  Object *object_orig = id_cast<Object *>(used_id);
   if (!ELEM(object_orig->type,
             OB_MESH,
             OB_POINTCLOUD,
@@ -716,12 +716,12 @@ static void spreadsheet_right_region_listener(const wmRegionListenerParams * /*p
 
 static void spreadsheet_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 {
-  SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)sl;
+  SpaceSpreadsheet *sspreadsheet = reinterpret_cast<SpaceSpreadsheet *>(sl);
 
   sspreadsheet->runtime = MEM_new<SpaceSpreadsheet_Runtime>(__func__);
   BLO_read_struct_list(reader, SpreadsheetRowFilter, &sspreadsheet->row_filters);
-  LISTBASE_FOREACH (SpreadsheetRowFilter *, row_filter, &sspreadsheet->row_filters) {
-    BLO_read_string(reader, &row_filter->value_string);
+  for (SpreadsheetRowFilter &row_filter : sspreadsheet->row_filters) {
+    BLO_read_string(reader, &row_filter.value_string);
   }
 
   BLO_read_pointer_array(
@@ -737,11 +737,11 @@ static void spreadsheet_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 static void spreadsheet_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   writer->write_struct_cast<SpaceSpreadsheet>(sl);
-  SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)sl;
+  SpaceSpreadsheet *sspreadsheet = reinterpret_cast<SpaceSpreadsheet *>(sl);
 
-  LISTBASE_FOREACH (SpreadsheetRowFilter *, row_filter, &sspreadsheet->row_filters) {
-    writer->write_struct(row_filter);
-    BLO_write_string(writer, row_filter->value_string);
+  for (SpreadsheetRowFilter &row_filter : sspreadsheet->row_filters) {
+    writer->write_struct(&row_filter);
+    BLO_write_string(writer, row_filter.value_string);
   }
 
   BLO_write_pointer_array(writer, sspreadsheet->num_tables, sspreadsheet->tables);

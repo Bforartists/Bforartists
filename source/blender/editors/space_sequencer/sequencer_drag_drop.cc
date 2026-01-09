@@ -279,8 +279,8 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
      * current displayed frame. */
     Scene *scene = CTX_data_sequencer_scene(C);
     Editing *ed = seq::editing_ensure(scene);
-    ListBase *seqbase = seq::active_seqbase_get(ed);
-    ListBase *channels = seq::channels_displayed_get(ed);
+    ListBaseT<Strip> *seqbase = seq::active_seqbase_get(ed);
+    ListBaseT<SeqTimelineChannel> *channels = seq::channels_displayed_get(ed);
     SpaceSeq *sseq = CTX_wm_space_seq(C);
 
     VectorSet strips = seq::query_rendered_strips(
@@ -302,7 +302,7 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
   if (id != nullptr) {
     const ID_Type id_type = GS(id->name);
     if (id_type == ID_IM) {
-      Image *ima = (Image *)id;
+      Image *ima = id_cast<Image *>(id);
       PointerRNA itemptr;
       char dir[FILE_MAX], file[FILE_MAX];
       BLI_path_split_dir_file(ima->filepath, dir, sizeof(dir), file, sizeof(file));
@@ -312,12 +312,12 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
       RNA_string_set(&itemptr, "name", file);
     }
     else if (id_type == ID_MC) {
-      MovieClip *clip = (MovieClip *)id;
+      MovieClip *clip = id_cast<MovieClip *>(id);
       RNA_string_set(drop->ptr, "filepath", clip->filepath);
       RNA_struct_property_unset(drop->ptr, "name");
     }
     else if (id_type == ID_SO) {
-      bSound *sound = (bSound *)id;
+      bSound *sound = id_cast<bSound *>(id);
       RNA_string_set(drop->ptr, "filepath", sound->filepath);
       RNA_struct_property_unset(drop->ptr, "name");
     }
@@ -353,15 +353,15 @@ static void get_drag_path(const bContext *C, wmDrag *drag, char r_path[FILE_MAX]
   if (id != nullptr) {
     const ID_Type id_type = GS(id->name);
     if (id_type == ID_IM) {
-      Image *ima = (Image *)id;
+      Image *ima = id_cast<Image *>(id);
       BLI_strncpy(r_path, ima->filepath, FILE_MAX);
     }
     else if (id_type == ID_MC) {
-      MovieClip *clip = (MovieClip *)id;
+      MovieClip *clip = id_cast<MovieClip *>(id);
       BLI_strncpy(r_path, clip->filepath, FILE_MAX);
     }
     else if (id_type == ID_SO) {
-      bSound *sound = (bSound *)id;
+      bSound *sound = id_cast<bSound *>(id);
       BLI_strncpy(r_path, sound->filepath, FILE_MAX);
     }
     BLI_path_abs(r_path, ID_BLEND_PATH_FROM_GLOBAL(id));
@@ -391,9 +391,9 @@ static void draw_strip_in_view(bContext *C, wmWindow * /*win*/, wmDrag *drag, co
 
   /* Sometimes the active theme is not the sequencer theme, e.g. when an operator invokes the
    * file browser. This makes sure we get the right color values for the theme. */
-  blender::ui::theme::bThemeState theme_state;
-  blender::ui::theme::theme_store(&theme_state);
-  blender::ui::theme::theme_set(SPACE_SEQ, RGN_TYPE_WINDOW);
+  ui::theme::bThemeState theme_state;
+  ui::theme::theme_store(&theme_state);
+  ui::theme::theme_set(SPACE_SEQ, RGN_TYPE_WINDOW);
 
   if (coords->use_snapping) {
     ui::view2d_view_ortho(&region->v2d);
@@ -512,7 +512,7 @@ static void draw_strip_in_view(bContext *C, wmWindow * /*win*/, wmDrag *drag, co
   batch.flush_batch();
 
   /* Clean after drawing up. */
-  blender::ui::theme::theme_restore(&theme_state);
+  ui::theme::theme_restore(&theme_state);
   GPU_matrix_pop();
   GPU_blend(GPU_BLEND_NONE);
 
@@ -544,7 +544,7 @@ struct DropJobData {
 
 static void prefetch_data_fn(void *custom_data, wmJobWorkerStatus * /*worker_status*/)
 {
-  DropJobData *job_data = (DropJobData *)custom_data;
+  DropJobData *job_data = static_cast<DropJobData *>(custom_data);
 
   if (job_data->only_audio) {
 #ifdef WITH_AUDASPACE
@@ -553,7 +553,7 @@ static void prefetch_data_fn(void *custom_data, wmJobWorkerStatus * /*worker_sta
     if (sound != nullptr) {
 
       AUD_SoundInfo info = AUD_getInfo(sound);
-      if ((eSoundChannels)info.specs.channels != SOUND_CHANNELS_INVALID) {
+      if (eSoundChannels(info.specs.channels) != SOUND_CHANNELS_INVALID) {
         g_drop_coords.audio_length = info.length;
       }
       /* The playback rate is defined by the scene. This will be computed later in
@@ -581,7 +581,7 @@ static void prefetch_data_fn(void *custom_data, wmJobWorkerStatus * /*worker_sta
     if (sound != nullptr) {
 
       AUD_SoundInfo info = AUD_getInfo(sound);
-      if ((eSoundChannels)info.specs.channels != SOUND_CHANNELS_INVALID) {
+      if (eSoundChannels(info.specs.channels) != SOUND_CHANNELS_INVALID) {
         g_drop_coords.channel_len = 2;
       }
       AUD_Sound_free(sound);
@@ -592,7 +592,7 @@ static void prefetch_data_fn(void *custom_data, wmJobWorkerStatus * /*worker_sta
 
 static void free_prefetch_data_fn(void *custom_data)
 {
-  DropJobData *job_data = (DropJobData *)custom_data;
+  DropJobData *job_data = static_cast<DropJobData *>(custom_data);
   MEM_freeN(job_data);
 }
 
@@ -683,7 +683,7 @@ static void nop_draw_droptip_fn(bContext * /*C*/,
 }
 
 /* This region dropbox definition. */
-static void sequencer_dropboxes_add_to_lb(ListBase *lb)
+static void sequencer_dropboxes_add_to_lb(ListBaseT<wmDropBox> *lb)
 {
   wmDropBox *drop;
   drop = WM_dropbox_add(
@@ -748,7 +748,7 @@ static bool sound_drop_preview_poll(bContext * /*C*/, wmDrag *drag, const wmEven
   return WM_drag_is_ID_type(drag, ID_SO);
 }
 
-static void sequencer_preview_dropboxes_add_to_lb(ListBase *lb)
+static void sequencer_preview_dropboxes_add_to_lb(ListBaseT<wmDropBox> *lb)
 {
   WM_dropbox_add(lb,
                  "SEQUENCER_OT_image_strip_add",
@@ -774,7 +774,7 @@ static void sequencer_preview_dropboxes_add_to_lb(ListBase *lb)
 
 void sequencer_dropboxes()
 {
-  ListBase *lb = WM_dropboxmap_find("Sequencer", SPACE_SEQ, RGN_TYPE_WINDOW);
+  ListBaseT<wmDropBox> *lb = WM_dropboxmap_find("Sequencer", SPACE_SEQ, RGN_TYPE_WINDOW);
   sequencer_dropboxes_add_to_lb(lb);
   lb = WM_dropboxmap_find("Sequencer", SPACE_SEQ, RGN_TYPE_PREVIEW);
   sequencer_preview_dropboxes_add_to_lb(lb);

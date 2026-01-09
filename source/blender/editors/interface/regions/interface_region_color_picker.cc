@@ -421,12 +421,13 @@ static void ui_colorpicker_hex_rna_cb(bContext * /*C*/, void *bt1, void *bt2)
     zero_v4(rgba);
     RNA_property_float_get_array_at_most(&ptr, prop, rgba, ARRAY_SIZE(rgba));
   }
-  /* Override current color with parsed the Hex string to preserve the original Alpha if the
+  /* Override the current color with the parsed Hex string, preserving the original Alpha if the
    * hex string doesn't contain it. */
-  hex_to_rgba(hexcol, rgba, rgba + 1, rgba + 2, rgba + 3);
+  const bool is_parsed = hex_to_rgba(hexcol, rgba, rgba + 1, rgba + 2, rgba + 3);
 
-  /* Hex code is assumed to be in sRGB space (coming from other applications, web, etc...). */
-  if (!button_is_color_gamma(but)) {
+  /* Hex code is assumed to be in sRGB space (coming from other applications, web, etc...).
+   * Only apply conversion if the hex string was successfully parsed. */
+  if (is_parsed && !button_is_color_gamma(but)) {
     IMB_colormanagement_srgb_to_scene_linear_v3(rgba, rgba);
     ui_color_picker_rgb_round(rgba);
   }
@@ -440,7 +441,7 @@ static void ui_colorpicker_hex_rna_cb(bContext * /*C*/, void *bt1, void *bt2)
 
 static void ui_popup_close_cb(bContext * /*C*/, void *bt1, void * /*arg*/)
 {
-  Button *but = (Button *)bt1;
+  Button *but = static_cast<Button *>(bt1);
   PopupBlockHandle *popup = but->block->handle;
 
   if (popup) {
@@ -513,6 +514,63 @@ static void ui_colorpicker_update_type_space_cb(bContext * /*C*/, void *picker_b
 #define PICKER_W (PICKER_TOTAL_W - PICKER_BAR - PICKER_SPACE)
 #define PICKER_H PICKER_W
 
+/** Get localized tooltips for the current color picker type.
+ *
+ * \param r_area_tooltip Tooltip describing the color area (e.g., "Hue/Saturation").
+ * \param r_slider_tooltip Tooltip describing the slider (e.g., "Lightness" or "Value").
+ */
+static void ui_colorpicker_tooltips(ColorPicker *cpicker,
+                                    const char **r_area_tooltip,
+                                    const char **r_slider_tooltip)
+{
+  const char *name_hue = CTX_TIP_(BLT_I18NCONTEXT_COLOR, "Hue");
+  const char *name_sat = CTX_TIP_(BLT_I18NCONTEXT_COLOR, "Saturation");
+  const char *name_val = CTX_TIP_(BLT_I18NCONTEXT_COLOR, "Value");
+  const char *name_light = CTX_TIP_(BLT_I18NCONTEXT_COLOR, "Lightness");
+  const char *name_color = CTX_TIP_(BLT_I18NCONTEXT_COLOR, "Color");
+
+  const char *axis_x = nullptr;
+  const char *axis_y = nullptr;
+  const char *slider = nullptr;
+
+  switch (U.color_picker_type) {
+    case USER_CP_CIRCLE_HSL:
+      axis_x = name_hue;
+      axis_y = name_sat;
+      slider = name_light;
+      break;
+    case USER_CP_CIRCLE_HSV:
+      axis_x = name_hue;
+      axis_y = name_sat;
+      slider = name_val;
+      break;
+    case USER_CP_SQUARE_SV:
+      axis_x = name_sat;
+      axis_y = name_val;
+      slider = name_hue;
+      break;
+    case USER_CP_SQUARE_HS:
+      axis_x = name_hue;
+      axis_y = name_sat;
+      slider = name_val;
+      break;
+    case USER_CP_SQUARE_HV:
+      axis_x = name_hue;
+      axis_y = name_val;
+      slider = name_sat;
+      break;
+    default:
+      *r_area_tooltip = name_color;
+      *r_slider_tooltip = name_val;
+      return;
+  }
+
+  SNPRINTF_UTF8(cpicker->tooltip_area, "%s/%s", axis_x, axis_y);
+
+  *r_area_tooltip = cpicker->tooltip_area;
+  *r_slider_tooltip = slider;
+}
+
 static void ui_colorpicker_circle(Block *block,
                                   PointerRNA *ptr,
                                   PropertyRNA *prop,
@@ -520,8 +578,12 @@ static void ui_colorpicker_circle(Block *block,
 {
   Button *bt;
   ButtonHSVCube *hsv_but;
+  const char *circle_tooltip;
+  const char *slider_tooltip;
 
-  /* HS circle */
+  ui_colorpicker_tooltips(cpicker, &circle_tooltip, &slider_tooltip);
+
+  /* Color circle (Hue/Saturation) */
   bt = uiDefButR_prop(block,
                       ButtonType::HsvCircle,
                       "",
@@ -534,45 +596,26 @@ static void ui_colorpicker_circle(Block *block,
                       -1,
                       0.0,
                       0.0,
-                      TIP_("Color"));
+                      circle_tooltip);
   button_func_set(bt, ui_colorpicker_rgba_update_cb, bt, bt);
   bt->custom_data = cpicker;
 
-  /* value */
-  if (U.color_picker_type == USER_CP_CIRCLE_HSL) {
-    hsv_but = (ButtonHSVCube *)uiDefButR_prop(block,
-                                              ButtonType::HsvCube,
-                                              "",
-                                              PICKER_W + PICKER_SPACE,
-                                              0,
-                                              PICKER_BAR,
-                                              PICKER_H,
-                                              ptr,
-                                              prop,
-                                              -1,
-                                              0.0,
-                                              0.0,
-                                              "Lightness");
-    hsv_but->gradient_type = GRAD_L_ALT;
-    button_func_set(hsv_but, ui_colorpicker_rgba_update_cb, hsv_but, hsv_but);
-  }
-  else {
-    hsv_but = (ButtonHSVCube *)uiDefButR_prop(block,
-                                              ButtonType::HsvCube,
-                                              "",
-                                              PICKER_W + PICKER_SPACE,
-                                              0,
-                                              PICKER_BAR,
-                                              PICKER_H,
-                                              ptr,
-                                              prop,
-                                              -1,
-                                              0.0,
-                                              0.0,
-                                              CTX_TIP_(BLT_I18NCONTEXT_COLOR, "Value"));
-    hsv_but->gradient_type = GRAD_V_ALT;
-    button_func_set(hsv_but, ui_colorpicker_rgba_update_cb, hsv_but, hsv_but);
-  }
+  /* Slider (Lightness or Value, depending on color picker type) */
+  hsv_but = static_cast<ButtonHSVCube *>(uiDefButR_prop(block,
+                                                        ButtonType::HsvCube,
+                                                        "",
+                                                        PICKER_W + PICKER_SPACE,
+                                                        0,
+                                                        PICKER_BAR,
+                                                        PICKER_H,
+                                                        ptr,
+                                                        prop,
+                                                        -1,
+                                                        0.0,
+                                                        0.0,
+                                                        slider_tooltip));
+  hsv_but->gradient_type = (U.color_picker_type == USER_CP_CIRCLE_HSL) ? GRAD_L_ALT : GRAD_V_ALT;
+  button_func_set(hsv_but, ui_colorpicker_rgba_update_cb, hsv_but, hsv_but);
   hsv_but->custom_data = cpicker;
 }
 
@@ -580,42 +623,46 @@ static void ui_colorpicker_square(
     Block *block, PointerRNA *ptr, PropertyRNA *prop, eButGradientType type, ColorPicker *cpicker)
 {
   ButtonHSVCube *hsv_but;
+  const char *square_tooltip;
+  const char *slider_tooltip;
+
+  ui_colorpicker_tooltips(cpicker, &square_tooltip, &slider_tooltip);
 
   BLI_assert(type <= GRAD_HS);
 
-  /* HS square */
-  hsv_but = (ButtonHSVCube *)uiDefButR_prop(block,
-                                            ButtonType::HsvCube,
-                                            "",
-                                            0,
-                                            PICKER_BAR + PICKER_SPACE,
-                                            PICKER_TOTAL_W,
-                                            PICKER_H,
-                                            ptr,
-                                            prop,
-                                            -1,
-                                            0.0,
-                                            0.0,
-                                            TIP_("Color"));
+  /* Color square (SV, HS or HV, depending on color picker type) */
+  hsv_but = static_cast<ButtonHSVCube *>(uiDefButR_prop(block,
+                                                        ButtonType::HsvCube,
+                                                        "",
+                                                        0,
+                                                        PICKER_BAR + PICKER_SPACE,
+                                                        PICKER_TOTAL_W,
+                                                        PICKER_H,
+                                                        ptr,
+                                                        prop,
+                                                        -1,
+                                                        0.0,
+                                                        0.0,
+                                                        square_tooltip));
   hsv_but->gradient_type = type;
   button_func_set(hsv_but, ui_colorpicker_rgba_update_cb, hsv_but, hsv_but);
   hsv_but->custom_data = cpicker;
 
-  /* value */
-  hsv_but = (ButtonHSVCube *)uiDefButR_prop(block,
-                                            ButtonType::HsvCube,
-                                            "",
-                                            0,
-                                            0,
-                                            PICKER_TOTAL_W,
-                                            PICKER_BAR,
-                                            ptr,
-                                            prop,
-                                            -1,
-                                            0.0,
-                                            0.0,
-                                            CTX_TIP_(BLT_I18NCONTEXT_COLOR, "Value"));
-  hsv_but->gradient_type = (eButGradientType)(type + 3);
+  /* Slider (Hue, Saturation or Value, depending on color picker type) */
+  hsv_but = static_cast<ButtonHSVCube *>(uiDefButR_prop(block,
+                                                        ButtonType::HsvCube,
+                                                        "",
+                                                        0,
+                                                        0,
+                                                        PICKER_TOTAL_W,
+                                                        PICKER_BAR,
+                                                        ptr,
+                                                        prop,
+                                                        -1,
+                                                        0.0,
+                                                        0.0,
+                                                        slider_tooltip));
+  hsv_but->gradient_type = eButGradientType(type + 3);
   button_func_set(hsv_but, ui_colorpicker_rgba_update_cb, hsv_but, hsv_but);
   hsv_but->custom_data = cpicker;
 }

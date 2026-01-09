@@ -38,7 +38,7 @@ static std::string cache_image_file(
     char file_name[FILE_MAX];
     SNPRINTF(file_name, "img_%p%s", image, file_ext[0]);
 
-    file_path = blender::io::usd::get_image_cache_file(file_name);
+    file_path = io::usd::get_image_cache_file(file_name);
     if (check_exist && BLI_exists(file_path.c_str())) {
       BKE_image_save_options_free(&opts);
       return file_path;
@@ -68,19 +68,19 @@ std::string cache_or_get_image_file(Main *bmain, Scene *scene, Image *image, Ima
   }
   else if (BKE_image_has_packedfile(image)) {
     do_check_extension = true;
-    std::string dir_path = blender::io::usd::image_cache_file_path();
+    std::string dir_path = io::usd::image_cache_file_path();
     char *cached_path;
     char subfolder[FILE_MAXDIR];
     SNPRINTF(subfolder, "unpack_%p", image);
-    LISTBASE_FOREACH (ImagePackedFile *, ipf, &image->packedfiles) {
+    for (ImagePackedFile &ipf : image->packedfiles) {
       char path[FILE_MAX];
       BLI_path_join(
-          path, sizeof(path), dir_path.c_str(), subfolder, BLI_path_basename(ipf->filepath));
+          path, sizeof(path), dir_path.c_str(), subfolder, BLI_path_basename(ipf.filepath));
       cached_path = BKE_packedfile_unpack_to_file(nullptr,
                                                   BKE_main_blendfile_path(bmain),
                                                   dir_path.c_str(),
                                                   path,
-                                                  ipf->packedfile,
+                                                  ipf.packedfile,
                                                   PF_WRITE_LOCAL);
 
       /* Take first successfully unpacked image. */

@@ -12,6 +12,8 @@
 #include "DNA_color_types.h"
 #include "DNA_tracking_types.h"
 
+namespace blender {
+
 struct AnimData;
 struct ImBuf;
 struct MovieReader;
@@ -19,14 +21,9 @@ struct MovieClipProxy;
 struct MovieTrackingMarker;
 struct MovieTrackingTrack;
 struct bGPdata;
-#ifdef __cplusplus
-namespace blender::gpu {
+namespace gpu {
 class Texture;
-}  // namespace blender::gpu
-using GPUTexture = blender::gpu::Texture;
-#else
-struct GPUTexture;
-#endif
+}  // namespace gpu
 
 /** #MovieClipProxy.build_size_flag
  * NOTE: Keep in sync with #IMB_Proxy_Size. */
@@ -103,7 +100,7 @@ struct MovieClip_RuntimeGPUTexture {
   void *next = nullptr, *prev = nullptr;
   MovieClipUser user;
   /** Not written in file. */
-  GPUTexture *gputexture[/*TEXTARGET_COUNT*/ 3];
+  gpu::Texture *gputexture[/*TEXTARGET_COUNT*/ 3];
 };
 
 struct MovieClip_Runtime {
@@ -202,3 +199,5 @@ struct MovieClipScopes {
   /** Scale used for sliding from preview area. */
   float slide_scale[2] = {0.0f, 0.0f};
 };
+
+}  // namespace blender

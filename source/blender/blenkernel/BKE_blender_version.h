@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+namespace blender {
+
 /** \file
  * \ingroup bke
  */
@@ -85,8 +87,9 @@ void BKE_blender_version_blendfile_string_from_values(char *str_buff,
  * directly in the file
  * \param is_version_blender: when true uses the `file_version` param input from the blendfile
  * false uses the hardcoded Bforartists version
-*/
+ */
 void BKE_bforartists_version_blendfile_string_from_blender(char *str_buff,
-                                                      const size_t str_buff_maxncpy,
-                                                      const short file_version,
-                                                      const bool is_version_blender);
+                                                           const size_t str_buff_maxncpy,
+                                                           const short file_version,
+                                                           const bool is_version_blender);
+}  // namespace blender

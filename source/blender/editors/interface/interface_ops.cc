@@ -75,9 +75,11 @@
 /* Only for #UI_OT_editsource. */
 #include "ED_screen.hh"
 
+namespace blender {
+
 extern void PyC_FileAndNum_Safe(const char **r_filename, int *r_lineno);
 
-namespace blender::ui {
+namespace ui {
 
 /* -------------------------------------------------------------------- */
 /** \name Immediate redraw helper
@@ -872,14 +874,14 @@ static wmOperatorStatus override_idtemplate_clear_exec(bContext *C, wmOperator *
     id_new = id->override_library->reference;
     bool do_remap_active = false;
     BKE_view_layer_synced_ensure(scene, view_layer);
-    if (BKE_view_layer_active_object_get(view_layer) == (Object *)id) {
+    if (BKE_view_layer_active_object_get(view_layer) == id_cast<Object *>(id)) {
       BLI_assert(GS(id->name) == ID_OB);
       BLI_assert(GS(id_new->name) == ID_OB);
       do_remap_active = true;
     }
     BKE_libblock_remap(bmain, id, id_new, ID_REMAP_SKIP_INDIRECT_USAGE);
     if (do_remap_active) {
-      Object *ref_object = (Object *)id_new;
+      Object *ref_object = id_cast<Object *>(id_new);
       Base *basact = BKE_view_layer_base_find(view_layer, ref_object);
       if (basact != nullptr) {
         view_layer->basact = basact;
@@ -926,7 +928,7 @@ static void UI_OT_override_idtemplate_clear(wmOperatorType *ot)
 
 static bool override_idtemplate_menu_poll(const bContext *C_const, MenuType * /*mt*/)
 {
-  bContext *C = (bContext *)C_const;
+  bContext *C = const_cast<bContext *>(C_const);
   ID *owner_id, *id;
   override_idtemplate_ids_get(C, &owner_id, &id, nullptr, nullptr);
 
@@ -982,7 +984,7 @@ static PointerRNA rnapointer_pchan_to_bone(const PointerRNA &pchan_ptr)
   Object *object = reinterpret_cast<Object *>(pchan_ptr.owner_id);
 
   BLI_assert(GS(static_cast<ID *>(object->data)->name) == ID_AR);
-  bArmature *armature = static_cast<bArmature *>(object->data);
+  bArmature *armature = id_cast<bArmature *>(object->data);
 
   return RNA_pointer_create_discrete(&armature->id, &RNA_Bone, pchan->bone);
 }
@@ -1010,9 +1012,9 @@ static void ui_context_fcurve_modifiers_via_fcurve(bContext *C,
   r_lb->clear();
   for (const PointerRNA &ptr : fcurve_links) {
     const FCurve *fcu = static_cast<const FCurve *>(ptr.data);
-    LISTBASE_FOREACH (FModifier *, mod, &fcu->modifiers) {
-      if (STREQ(mod->name, source->name) && mod->type == source->type) {
-        r_lb->append(RNA_pointer_create_discrete(ptr.owner_id, &RNA_FModifier, mod));
+    for (FModifier &mod : fcu->modifiers) {
+      if (STREQ(mod.name, source->name) && mod.type == source->type) {
+        r_lb->append(RNA_pointer_create_discrete(ptr.owner_id, &RNA_FModifier, &mod));
         /* Since names are unique it is safe to break here. */
         break;
       }
@@ -1027,11 +1029,11 @@ static void ui_context_selected_key_blocks(ID *owner_id_key, Vector<PointerRNA> 
    * (christoph) think that the first case is more useful which is why the function works as it
    * does. */
   Key *containing_key = reinterpret_cast<Key *>(owner_id_key);
-  LISTBASE_FOREACH (KeyBlock *, key_block, &containing_key->block) {
+  for (KeyBlock &key_block : containing_key->block) {
     /* This does not use the function `shape_key_is_selected` since that would include the active
      * shapekey which is not required for this function to work. */
-    if (key_block->flag & KEYBLOCK_SEL) {
-      r_lb->append(RNA_pointer_create_discrete(owner_id_key, &RNA_ShapeKey, key_block));
+    if (key_block.flag & KEYBLOCK_SEL) {
+      r_lb->append(RNA_pointer_create_discrete(owner_id_key, &RNA_ShapeKey, &key_block));
     }
   }
 }
@@ -1214,7 +1216,7 @@ bool context_copy_to_selected_list(bContext *C,
 
     /* Get the node we're editing */
     if (RNA_struct_is_a(ptr->type, &RNA_NodeSocket)) {
-      bNodeTree *ntree = (bNodeTree *)ptr->owner_id;
+      bNodeTree *ntree = id_cast<bNodeTree *>(ptr->owner_id);
       bNodeSocket *sock = static_cast<bNodeSocket *>(ptr->data);
       node = &bke::node_find_node(*ntree, *sock);
       path = RNA_path_resolve_from_type_to_property(ptr, prop, &RNA_Node);
@@ -1257,10 +1259,10 @@ bool context_copy_to_selected_list(bContext *C,
       return false;
     }
 
-    ListBase selected_objects = {nullptr};
+    ListBaseT<LinkData> selected_objects = {nullptr};
     ED_outliner_selected_objects_get(C, &selected_objects);
-    LISTBASE_FOREACH (LinkData *, link, &selected_objects) {
-      Object *ob = static_cast<Object *>(link->data);
+    for (LinkData &link : selected_objects) {
+      Object *ob = static_cast<Object *>(link.data);
       r_lb->append(RNA_id_pointer_create(&ob->id));
     }
   }
@@ -1281,7 +1283,7 @@ bool context_copy_to_selected_list(bContext *C,
       /* de-duplicate obdata */
       if (!lb.is_empty()) {
         for (const PointerRNA &ob_ptr : lb) {
-          Object *ob = (Object *)ob_ptr.owner_id;
+          Object *ob = id_cast<Object *>(ob_ptr.owner_id);
           if (ID *id_data = static_cast<ID *>(ob->data)) {
             id_data->tag |= ID_TAG_DOIT;
           }
@@ -1289,7 +1291,7 @@ bool context_copy_to_selected_list(bContext *C,
 
         Vector<PointerRNA> new_lb;
         for (const PointerRNA &link : lb) {
-          Object *ob = (Object *)link.owner_id;
+          Object *ob = id_cast<Object *>(link.owner_id);
           ID *id_data = static_cast<ID *>(ob->data);
           if ((id_data == nullptr) || (id_data->tag & ID_TAG_DOIT) == 0 ||
               !ID_IS_EDITABLE(id_data) || (GS(id_data->name) != id_code))
@@ -1459,8 +1461,8 @@ bool context_copy_to_selected_check(PointerRNA *ptr,
   {
     ignore_prop_eq = false;
 
-    NodesModifierData *nmd_link = (NodesModifierData *)lptr.data;
-    NodesModifierData *nmd_src = (NodesModifierData *)ptr->data;
+    NodesModifierData *nmd_link = static_cast<NodesModifierData *>(lptr.data);
+    NodesModifierData *nmd_src = static_cast<NodesModifierData *>(ptr->data);
     if (nmd_link->node_group == nmd_src->node_group) {
       ignore_prop_eq = true;
     }
@@ -1887,10 +1889,10 @@ static bool jump_to_target_ptr(bContext *C, PointerRNA ptr, const bool poll)
   const short id_type = GS(ptr.owner_id->name);
   if (id_type == ID_OB) {
     BKE_view_layer_synced_ensure(scene, view_layer);
-    base = BKE_view_layer_base_find(view_layer, (Object *)ptr.owner_id);
+    base = BKE_view_layer_base_find(view_layer, id_cast<Object *>(ptr.owner_id));
   }
   else if (OB_DATA_SUPPORT_ID(id_type)) {
-    base = blender::ed::object::find_first_by_data_id(scene, view_layer, ptr.owner_id);
+    base = ed::object::find_first_by_data_id(scene, view_layer, ptr.owner_id);
   }
 
   bool ok = false;
@@ -1905,10 +1907,10 @@ static bool jump_to_target_ptr(bContext *C, PointerRNA ptr, const bool poll)
     const bool reveal_hidden = true;
     /* Select and activate the target. */
     if (target_type == &RNA_Bone) {
-      ok = blender::ed::object::jump_to_bone(C, base->object, bone_name, reveal_hidden);
+      ok = ed::object::jump_to_bone(C, base->object, bone_name, reveal_hidden);
     }
     else if (target_type == &RNA_Object) {
-      ok = blender::ed::object::jump_to_object(C, base->object, reveal_hidden);
+      ok = ed::object::jump_to_object(C, base->object, reveal_hidden);
     }
     else {
       BLI_assert(0);
@@ -1945,7 +1947,7 @@ static bool jump_to_target_button(bContext *C, bool poll)
     /* For string properties with prop_search, look up the search collection item. */
     if (type == PROP_STRING) {
       const ButtonSearch *search_but = (but->type == ButtonType::SearchMenu) ?
-                                           (ButtonSearch *)but :
+                                           static_cast<ButtonSearch *>(const_cast<Button *>(but)) :
                                            nullptr;
 
       if (search_but && search_but->items_update_fn == rna_collection_search_update_fn) {
@@ -2131,8 +2133,8 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     /* It's possible the key button referenced in `ui_editsource_info` has been freed.
      * This typically happens with popovers but could happen in other situations, see: #140439. */
     Set<const Button *> valid_buttons_in_region;
-    LISTBASE_FOREACH (Block *, block_base, &region->runtime->uiblocks) {
-      Block *block_pair[2] = {block_base, block_base->oldblock};
+    for (Block &block_base : region->runtime->uiblocks) {
+      Block *block_pair[2] = {&block_base, block_base.oldblock};
       for (Block *block : Span(block_pair, block_pair[1] ? 2 : 1)) {
         for (int i = 0; i < block->buttons.size(); i++) {
           const Button *but = block->buttons[i].get();
@@ -2608,8 +2610,11 @@ static wmOperatorStatus ui_view_drop_invoke(bContext *C, wmOperator * /*op*/, co
   std::unique_ptr<DropTargetInterface> drop_target = region_views_find_drop_target_at(region,
                                                                                       event->xy);
 
-  if (!drop_target_apply_drop(
-          *C, *region, *event, *drop_target, *static_cast<const ListBase *>(event->customdata)))
+  if (!drop_target_apply_drop(*C,
+                              *region,
+                              *event,
+                              *drop_target,
+                              *static_cast<const ListBaseT<wmDrag> *>(event->customdata)))
   {
     return OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH;
   }
@@ -2930,8 +2935,8 @@ static wmOperatorStatus ui_drop_material_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
 
-  Material *ma = (Material *)WM_operator_properties_id_lookup_from_name_or_session_uid(
-      bmain, op->ptr, ID_MA);
+  Material *ma = id_cast<Material *>(
+      WM_operator_properties_id_lookup_from_name_or_session_uid(bmain, op->ptr, ID_MA));
   if (ma == nullptr) {
     return OPERATOR_CANCELLED;
   }
@@ -3036,4 +3041,5 @@ void keymap_ui(wmKeyConfig *keyconf)
 
 /** \} */
 
-}  // namespace blender::ui
+}  // namespace ui
+}  // namespace blender

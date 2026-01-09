@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "DNA_listBase.h"
+
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 #include "BLI_string_utils.hh"
@@ -28,6 +30,7 @@
 #include "BKE_viewer_path.hh"
 #include "BKE_workspace.hh"
 
+#include "DNA_listBase.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_windowmanager_types.h"
@@ -37,20 +40,22 @@
 
 #include "BLO_read_write.hh"
 
+namespace blender {
+
 /* -------------------------------------------------------------------- */
 
 static void workspace_init_data(ID *id)
 {
-  WorkSpace *workspace = (WorkSpace *)id;
+  WorkSpace *workspace = id_cast<WorkSpace *>(id);
 
-  workspace->runtime = MEM_new<blender::bke::WorkSpaceRuntime>(__func__);
+  workspace->runtime = MEM_new<bke::WorkSpaceRuntime>(__func__);
 
   BKE_asset_library_reference_init_default(&workspace->asset_library_ref);
 }
 
 static void workspace_free_data(ID *id)
 {
-  WorkSpace *workspace = (WorkSpace *)id;
+  WorkSpace *workspace = id_cast<WorkSpace *>(id);
 
   BKE_workspace_relations_free(&workspace->hook_layout_relations);
 
@@ -74,10 +79,10 @@ static void workspace_copy_data(
   BLI_assert(!owner_library || owner_library == nullptr);
   UNUSED_VARS_NDEBUG(owner_library);
 
-  WorkSpace *workspace_dst = blender::id_cast<WorkSpace *>(id_dst);
-  const WorkSpace *workspace_src = blender::id_cast<const WorkSpace *>(id_src);
+  WorkSpace *workspace_dst = id_cast<WorkSpace *>(id_dst);
+  const WorkSpace *workspace_src = id_cast<const WorkSpace *>(id_src);
 
-  workspace_dst->runtime = MEM_new<blender::bke::WorkSpaceRuntime>(__func__);
+  workspace_dst->runtime = MEM_new<bke::WorkSpaceRuntime>(__func__);
   BKE_asset_library_reference_init_default(&workspace_dst->asset_library_ref);
 
   workspace_dst->flags = workspace_src->flags;
@@ -98,27 +103,27 @@ static void workspace_copy_data(
    * This is similar to what is already done with ShapeKeys.
    */
   BLI_listbase_clear(&workspace_dst->layouts);
-  LISTBASE_FOREACH (WorkSpaceLayout *, layout_src, &workspace_src->layouts) {
+  for (WorkSpaceLayout &layout_src : workspace_src->layouts) {
     if (flag & LIB_ID_COPY_SCREEN) {
-      BKE_workspace_layout_add_from_layout(bmain, *workspace_dst, *layout_src, flag);
+      BKE_workspace_layout_add_from_layout(bmain, *workspace_dst, layout_src, flag);
     }
     else {
       /* Copying of screens should only be disabled in some `NO_MAIN` cases. */
       BLI_assert(flag & LIB_ID_CREATE_NO_MAIN);
-      BKE_workspace_layout_add(bmain, *workspace_dst, *layout_src->screen, layout_src->name);
+      BKE_workspace_layout_add(bmain, *workspace_dst, *layout_src.screen, layout_src.name);
     }
   }
 }
 
 static void workspace_foreach_id(ID *id, LibraryForeachIDData *data)
 {
-  WorkSpace *workspace = (WorkSpace *)id;
+  WorkSpace *workspace = id_cast<WorkSpace *>(id);
 
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, workspace->pin_scene, IDWALK_CB_DIRECT_WEAK_LINK);
   BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, workspace->sequencer_scene, IDWALK_CB_DIRECT_WEAK_LINK);
 
-  LISTBASE_FOREACH (WorkSpaceLayout *, layout, &workspace->layouts) {
-    BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, layout->screen, IDWALK_CB_USER);
+  for (WorkSpaceLayout &layout : workspace->layouts) {
+    BKE_LIB_FOREACHID_PROCESS_IDSUPER(data, layout.screen, IDWALK_CB_USER);
   }
 
   BKE_viewer_path_foreach_id(data, &workspace->viewer_path);
@@ -126,7 +131,7 @@ static void workspace_foreach_id(ID *id, LibraryForeachIDData *data)
 
 static void workspace_blend_write(BlendWriter *writer, ID *id, const void *id_address)
 {
-  WorkSpace *workspace = (WorkSpace *)id;
+  WorkSpace *workspace = id_cast<WorkSpace *>(id);
 
   BLO_write_id_struct(writer, WorkSpace, id_address, &workspace->id);
   BKE_id_blend_write(writer, &workspace->id);
@@ -134,9 +139,9 @@ static void workspace_blend_write(BlendWriter *writer, ID *id, const void *id_ad
   BLO_write_struct_list(writer, WorkSpaceDataRelation, &workspace->hook_layout_relations);
   BLO_write_struct_list(writer, wmOwnerID, &workspace->owner_ids);
   BLO_write_struct_list(writer, bToolRef, &workspace->tools);
-  LISTBASE_FOREACH (bToolRef *, tref, &workspace->tools) {
-    if (tref->properties) {
-      IDP_BlendWrite(writer, tref->properties);
+  for (bToolRef &tref : workspace->tools) {
+    if (tref.properties) {
+      IDP_BlendWrite(writer, tref.properties);
     }
   }
 
@@ -145,30 +150,30 @@ static void workspace_blend_write(BlendWriter *writer, ID *id, const void *id_ad
 
 static void workspace_blend_read_data(BlendDataReader *reader, ID *id)
 {
-  WorkSpace *workspace = (WorkSpace *)id;
+  WorkSpace *workspace = id_cast<WorkSpace *>(id);
 
   BLO_read_struct_list(reader, WorkSpaceLayout, &workspace->layouts);
   BLO_read_struct_list(reader, WorkSpaceDataRelation, &workspace->hook_layout_relations);
   BLO_read_struct_list(reader, wmOwnerID, &workspace->owner_ids);
   BLO_read_struct_list(reader, bToolRef, &workspace->tools);
 
-  LISTBASE_FOREACH (WorkSpaceDataRelation *, relation, &workspace->hook_layout_relations) {
+  for (WorkSpaceDataRelation &relation : workspace->hook_layout_relations) {
     /* Parent pointer does not belong to workspace data and is therefore restored in lib_link step
      * of window manager. */
     /* FIXME: Should not use that untyped #BLO_read_data_address call, especially since it's
      * reference-counting the matching data in readfile code. Problem currently is that there is no
      * type info available for this void pointer (_should_ be pointing to a #WorkSpaceLayout ?), so
      * #BLO_read_get_new_data_address_no_us cannot be used here. */
-    BLO_read_data_address(reader, &relation->value);
+    BLO_read_data_address(reader, &relation.value);
   }
 
-  LISTBASE_FOREACH (bToolRef *, tref, &workspace->tools) {
-    tref->runtime = nullptr;
-    BLO_read_struct(reader, IDProperty, &tref->properties);
-    IDP_BlendDataRead(reader, &tref->properties);
+  for (bToolRef &tref : workspace->tools) {
+    tref.runtime = nullptr;
+    BLO_read_struct(reader, IDProperty, &tref.properties);
+    IDP_BlendDataRead(reader, &tref.properties);
   }
 
-  workspace->runtime = MEM_new<blender::bke::WorkSpaceRuntime>(__func__);
+  workspace->runtime = MEM_new<bke::WorkSpaceRuntime>(__func__);
 
   /* Do not keep the scene reference when appending a workspace. Setting a scene for a workspace is
    * a convenience feature, but the workspace should never truly depend on scene data. */
@@ -187,34 +192,34 @@ static void workspace_blend_read_after_liblink(BlendLibReader *reader, ID *id)
   Main *bmain = BLO_read_lib_get_main(reader);
 
   /* Restore proper 'parent' pointers to relevant data, and clean up unused/invalid entries. */
-  LISTBASE_FOREACH_MUTABLE (WorkSpaceDataRelation *, relation, &workspace->hook_layout_relations) {
-    relation->parent = nullptr;
-    LISTBASE_FOREACH (wmWindowManager *, wm, &bmain->wm) {
-      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-        if (win->winid == relation->parentid) {
-          relation->parent = win->workspace_hook;
+  for (WorkSpaceDataRelation &relation : workspace->hook_layout_relations.items_mutable()) {
+    relation.parent = nullptr;
+    for (wmWindowManager &wm : bmain->wm) {
+      for (wmWindow &win : wm.windows) {
+        if (win.winid == relation.parentid) {
+          relation.parent = win.workspace_hook;
         }
       }
     }
-    if (relation->parent == nullptr) {
-      BLI_freelinkN(&workspace->hook_layout_relations, relation);
+    if (relation.parent == nullptr) {
+      BLI_freelinkN(&workspace->hook_layout_relations, &relation);
     }
   }
 
-  LISTBASE_FOREACH_MUTABLE (WorkSpaceLayout *, layout, &workspace->layouts) {
-    if (layout->screen) {
+  for (WorkSpaceLayout &layout : workspace->layouts.items_mutable()) {
+    if (layout.screen) {
       if (ID_IS_LINKED(id)) {
-        layout->screen->winid = 0;
-        if (layout->screen->temp) {
+        layout.screen->winid = 0;
+        if (layout.screen->temp) {
           /* delete temp layouts when appending */
-          BKE_workspace_layout_remove(bmain, workspace, layout);
+          BKE_workspace_layout_remove(bmain, workspace, &layout);
         }
       }
     }
     else {
       /* If we're reading a layout without screen stored, it's useless and we shouldn't keep it
        * around. */
-      BKE_workspace_layout_remove(bmain, workspace, layout);
+      BKE_workspace_layout_remove(bmain, workspace, &layout);
     }
   }
 }
@@ -280,7 +285,7 @@ static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
       BLI_findptr(&workspace->layouts, screen, offsetof(WorkSpaceLayout, screen)));
 }
 
-static void workspace_relation_add(ListBase *relation_list,
+static void workspace_relation_add(ListBaseT<WorkSpaceDataRelation> *relation_list,
                                    void *parent,
                                    const int parentid,
                                    void *data)
@@ -292,13 +297,14 @@ static void workspace_relation_add(ListBase *relation_list,
   /* add to head, if we switch back to it soon we find it faster. */
   BLI_addhead(relation_list, relation);
 }
-static void workspace_relation_remove(ListBase *relation_list, WorkSpaceDataRelation *relation)
+static void workspace_relation_remove(ListBaseT<WorkSpaceDataRelation> *relation_list,
+                                      WorkSpaceDataRelation *relation)
 {
   BLI_remlink(relation_list, relation);
   MEM_freeN(relation);
 }
 
-static void workspace_relation_ensure_updated(ListBase *relation_list,
+static void workspace_relation_ensure_updated(ListBaseT<WorkSpaceDataRelation> *relation_list,
                                               void *parent,
                                               const int parentid,
                                               void *data)
@@ -318,8 +324,8 @@ static void workspace_relation_ensure_updated(ListBase *relation_list,
   }
 }
 
-static void *workspace_relation_get_data_matching_parent(const ListBase *relation_list,
-                                                         const void *parent)
+static void *workspace_relation_get_data_matching_parent(
+    const ListBaseT<WorkSpaceDataRelation> *relation_list, const void *parent)
 {
   WorkSpaceDataRelation *relation = static_cast<WorkSpaceDataRelation *>(
       BLI_findptr(relation_list, parent, offsetof(WorkSpaceDataRelation, parent)));
@@ -451,17 +457,17 @@ WorkSpaceLayout *BKE_workspace_layout_add_from_layout(Main *bmain,
   /* In case the current layout's screen is a 'full screen' one, find the 'full' area, and its its
    * 'restore screen' as source, instead of the temporary full-screen one. */
   if (BKE_screen_is_fullscreen_area(screen_src)) {
-    LISTBASE_FOREACH (ScrArea *, area_old, &screen_src->areabase) {
+    for (ScrArea &area_old : screen_src->areabase) {
       /* The original layout/screen will also have one area->full set, but it will point to the
        * same source screen. This can be ignored. */
-      if (area_old->full && area_old->full != screen_src) {
-        screen_src = area_old->full;
+      if (area_old.full && area_old.full != screen_src) {
+        screen_src = area_old.full;
         break;
       }
     }
   }
 
-  bScreen *screen_dst = blender::id_cast<bScreen *>(
+  bScreen *screen_dst = id_cast<bScreen *>(
       BKE_id_copy_ex(bmain, &screen_src->id, nullptr, id_copy_flags));
 
   return BKE_workspace_layout_add(bmain, workspace_dst, *screen_dst, name);
@@ -478,7 +484,7 @@ void BKE_workspace_layout_remove(Main *bmain, WorkSpace *workspace, WorkSpaceLay
   BLI_freelinkN(&workspace->layouts, layout);
 }
 
-void BKE_workspace_relations_free(ListBase *relation_list)
+void BKE_workspace_relations_free(ListBaseT<WorkSpaceDataRelation> *relation_list)
 {
   for (WorkSpaceDataRelation *
            relation = static_cast<WorkSpaceDataRelation *>(relation_list->first),
@@ -589,11 +595,11 @@ void BKE_workspace_tool_id_replace_table(WorkSpace *workspace,
   const size_t idname_prefix_len = idname_prefix_skip ? strlen(idname_prefix_skip) : 0;
   const size_t idname_suffix_maxncpy = sizeof(bToolRef::idname) - idname_prefix_len;
 
-  LISTBASE_FOREACH (bToolRef *, tref, &workspace->tools) {
-    if (!(tref->space_type == space_type && tref->mode == mode)) {
+  for (bToolRef &tref : workspace->tools) {
+    if (!(tref.space_type == space_type && tref.mode == mode)) {
       continue;
     }
-    char *idname_suffix = tref->idname;
+    char *idname_suffix = tref.idname;
     if (idname_prefix_skip) {
       if (!STRPREFIX(idname_suffix, idname_prefix_skip)) {
         continue;
@@ -617,10 +623,10 @@ bool BKE_workspace_owner_id_check(const WorkSpace *workspace, const char *owner_
 
 void BKE_workspace_id_tag_all_visible(Main *bmain, int tag)
 {
-  BKE_main_id_tag_listbase(&bmain->workspaces, tag, false);
+  BKE_main_id_tag_listbase(&bmain->workspaces.cast<ID>(), tag, false);
   wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    WorkSpace *workspace = BKE_workspace_active_get(win->workspace_hook);
+  for (wmWindow &win : wm->windows) {
+    WorkSpace *workspace = BKE_workspace_active_get(win.workspace_hook);
     workspace->id.tag |= tag;
   }
 }
@@ -724,3 +730,5 @@ void BKE_workspace_status_clear(WorkSpace *workspace)
 }
 
 /** \} */
+
+}  // namespace blender

@@ -27,7 +27,9 @@
 
 #include "UI_resources.hh" /*bfa - needed for the icons*/
 
-namespace blender::ed::greasepencil {
+namespace blender {
+
+namespace ed::greasepencil {
 
 namespace {
 
@@ -502,7 +504,7 @@ wmOperatorStatus grease_pencil_join_selection_exec(bContext *C, wmOperator *op)
   Object *object = CTX_data_active_object(C);
   const bke::AttrDomain selection_domain = ED_grease_pencil_selection_domain_get(
       scene->toolsettings, object);
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
+  GreasePencil &grease_pencil = *id_cast<GreasePencil *>(object->data);
   if (!grease_pencil.has_active_layer()) {
     BKE_report(op->reports, RPT_ERROR, "No active layer");
     return OPERATOR_CANCELLED;
@@ -622,7 +624,7 @@ void GREASE_PENCIL_OT_join_selection(wmOperatorType *ot)
 
 /** \} */
 
-}  // namespace blender::ed::greasepencil
+}  // namespace ed::greasepencil
 
 void ED_operatortypes_grease_pencil_join()
 {
@@ -630,3 +632,5 @@ void ED_operatortypes_grease_pencil_join()
 
   WM_operatortype_append(GREASE_PENCIL_OT_join_selection);
 }
+
+}  // namespace blender

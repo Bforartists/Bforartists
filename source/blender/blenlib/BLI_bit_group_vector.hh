@@ -11,7 +11,9 @@
 #include "BLI_bit_span_ops.hh"
 #include "BLI_bit_vector.hh"
 
-namespace blender::bits {
+namespace blender {
+
+namespace bits {
 
 /**
  * A #BitGroupVector is a compact data structure that allows storing an arbitrary but fixed number
@@ -91,6 +93,7 @@ class BitGroupVector {
   /** Get all the bits at an index. */
   BoundedBitSpan operator[](const int64_t i) const
   {
+    BLI_assert(this->index_range().contains(i));
     const int64_t offset = aligned_group_size_ * i;
     return {data_.data() + (offset >> BitToIntIndexShift),
             IndexRange(offset & BitIndexMask, group_size_)};
@@ -99,6 +102,7 @@ class BitGroupVector {
   /** Get all the bits at an index. */
   MutableBoundedBitSpan operator[](const int64_t i)
   {
+    BLI_assert(this->index_range().contains(i));
     const int64_t offset = aligned_group_size_ * i;
     return {data_.data() + (offset >> BitToIntIndexShift),
             IndexRange(offset & BitIndexMask, group_size_)};
@@ -155,8 +159,8 @@ class BitGroupVector {
   }
 };
 
-}  // namespace blender::bits
+}  // namespace bits
 
-namespace blender {
 using bits::BitGroupVector;
-}
+
+}  // namespace blender

@@ -39,6 +39,8 @@
 #  include "io_ply_ops.hh"
 #  include "io_utils.hh"
 
+namespace blender {
+
 static const EnumPropertyItem ply_vertex_colors_mode[] = {
     {int(ePLYVertexColorMode::None), "NONE", 0, "None", "Do not import/export color attributes"},
     {int(ePLYVertexColorMode::sRGB),
@@ -103,27 +105,26 @@ static wmOperatorStatus wm_ply_export_exec(bContext *C, wmOperator *op)
 
 static void wm_ply_export_draw(bContext *C, wmOperator *op)
 {
-  blender::ui::Layout &layout = *op->layout;
+  ui::Layout &layout = *op->layout;
   PointerRNA *ptr = op->ptr;
 
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout.panel(C, "PLY_export_general", false, IFACE_("General")))
-  {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout.panel(C, "PLY_export_general", false, IFACE_("General"))) {
+    ui::Layout &col = panel->column(false);
 
     blender::ui::Layout &sub = col.column(false, IFACE_("Format"));
     sub.use_property_split_set(false);  // bfa
     sub.prop(ptr, "ascii_format", UI_ITEM_NONE, IFACE_("ASCII"), ICON_NONE);
 
     {
-      blender::ui::Layout &sub = col.column(false, IFACE_("Format"));
+      ui::Layout &sub = col.column(false, IFACE_("Format"));
       sub.prop(ptr, "ascii_format", UI_ITEM_NONE, IFACE_("ASCII"), ICON_NONE);
     }
     /* The Selection only options only make sense when using regular export. */
     if (CTX_wm_space_file(C)) {
-      blender::ui::Layout &sub = col.column(false, IFACE_("Include"));
+      ui::Layout &sub = col.column(false, IFACE_("Include"));
       sub.prop(ptr, "export_selected_objects", UI_ITEM_NONE, IFACE_("Selection Only"), ICON_NONE);
     }
 
@@ -132,10 +133,8 @@ static void wm_ply_export_draw(bContext *C, wmOperator *op)
     col.prop(ptr, "up_axis", UI_ITEM_NONE, IFACE_("Up Axis"), ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout.panel(
-          C, "PLY_export_geometry", false, IFACE_("Geometry")))
-  {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout.panel(C, "PLY_export_geometry", false, IFACE_("Geometry"))) {
+    ui::Layout &col = panel->column(false);
 
     col.use_property_split_set(false);  // bfa
 
@@ -271,7 +270,7 @@ static wmOperatorStatus wm_ply_import_exec(bContext *C, wmOperator *op)
 
   params.reports = op->reports;
 
-  const auto paths = blender::ed::io::paths_from_operator_properties(op->ptr);
+  const auto paths = ed::io::paths_from_operator_properties(op->ptr);
 
   if (paths.is_empty()) {
     BKE_report(op->reports, RPT_ERROR, "No filepath given");
@@ -291,14 +290,13 @@ static wmOperatorStatus wm_ply_import_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static void ui_ply_import_settings(const bContext *C, blender::ui::Layout &layout, PointerRNA *ptr)
+static void ui_ply_import_settings(const bContext *C, ui::Layout &layout, PointerRNA *ptr)
 {
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout.panel(C, "PLY_import_general", false, IFACE_("General")))
-  {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout.panel(C, "PLY_import_general", false, IFACE_("General"))) {
+    ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "global_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col.prop(ptr, "use_scene_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -306,9 +304,8 @@ static void ui_ply_import_settings(const bContext *C, blender::ui::Layout &layou
     col.prop(ptr, "up_axis", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout.panel(C, "PLY_import_options", false, IFACE_("Options")))
-  {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout.panel(C, "PLY_import_options", false, IFACE_("Options"))) {
+    ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "merge_verts", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col.prop(ptr, "import_colors", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -328,7 +325,7 @@ void WM_OT_ply_import(wmOperatorType *ot)
   ot->description = "Import an PLY file as an object";
   ot->idname = "WM_OT_ply_import";
 
-  ot->invoke = blender::ed::io::filesel_drop_import_invoke;
+  ot->invoke = ed::io::filesel_drop_import_invoke;
   ot->exec = wm_ply_import_exec;
   ot->ui = wm_ply_import_draw;
   ot->poll = WM_operator_winactive;
@@ -368,7 +365,7 @@ void WM_OT_ply_import(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_HIDDEN);
 }
 
-namespace blender::ed::io {
+namespace ed::io {
 void ply_file_handler_add()
 {
   auto fh = std::make_unique<bke::FileHandlerType>();
@@ -380,6 +377,6 @@ void ply_file_handler_add()
   fh->poll_drop = poll_file_object_drop;
   bke::file_handler_add(std::move(fh));
 }
-}  // namespace blender::ed::io
-
+}  // namespace ed::io
+}  // namespace blender
 #endif /* WITH_IO_PLY */

@@ -22,7 +22,7 @@
 #include "../filelist.hh"
 #include "filelist_intern.hh"
 
-using namespace blender;
+namespace blender {
 
 /* True if should be hidden, based on current filtering. */
 static bool is_filtered_hidden(const char *filename,
@@ -274,9 +274,9 @@ static void filelist_filter_and_sort_assets(FileList *filelist,
     const AssetMetaData *asset_data = filelist_file_internal_get_asset_data(file);
     if (asset_data) {
       std::string searchable_string = file->name;
-      LISTBASE_FOREACH (const AssetTag *, asset_tag, &asset_data->tags) {
+      for (const AssetTag &asset_tag : asset_data->tags) {
         searchable_string += " ";
-        searchable_string += asset_tag->name;
+        searchable_string += asset_tag.name;
       }
       search.add(searchable_string, file);
     }
@@ -329,13 +329,12 @@ void filelist_filter(FileList *filelist)
     filelist->prepare_filter_fn(filelist, &filelist->filter_data);
   }
 
-  filtered_tmp = static_cast<FileListInternEntry **>(
-      MEM_mallocN(sizeof(*filtered_tmp) * size_t(num_files), __func__));
+  filtered_tmp = MEM_malloc_arrayN<FileListInternEntry *>(num_files, __func__);
 
   /* Filter remap & count how many files are left after filter in a single loop. */
-  LISTBASE_FOREACH (FileListInternEntry *, file, &filelist->filelist_intern.entries) {
-    if (filelist->filter_fn(file, filelist->filelist.root, &filelist->filter_data)) {
-      filtered_tmp[num_filtered++] = file;
+  for (FileListInternEntry &file : filelist->filelist_intern.entries) {
+    if (filelist->filter_fn(&file, filelist->filelist.root, &filelist->filter_data)) {
+      filtered_tmp[num_filtered++] = &file;
     }
   }
 
@@ -346,8 +345,8 @@ void filelist_filter(FileList *filelist)
     if (filelist->filelist_intern.filtered) {
       MEM_freeN(filelist->filelist_intern.filtered);
     }
-    filelist->filelist_intern.filtered = static_cast<FileListInternEntry **>(
-        MEM_mallocN(sizeof(*filelist->filelist_intern.filtered) * size_t(num_filtered), __func__));
+    filelist->filelist_intern.filtered = MEM_malloc_arrayN<FileListInternEntry *>(num_filtered,
+                                                                                  __func__);
     memcpy(filelist->filelist_intern.filtered,
            filtered_tmp,
            sizeof(*filelist->filelist_intern.filtered) * size_t(num_filtered));
@@ -416,3 +415,5 @@ void filelist_setfilter_options(FileList *filelist,
     filelist_tag_needs_filtering(filelist);
   }
 }
+
+}  // namespace blender

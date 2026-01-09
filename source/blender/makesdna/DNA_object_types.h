@@ -11,6 +11,7 @@
 
 #include "BLI_enum_flags.hh"
 #include "BLI_math_constants.h"
+#include "BLI_math_matrix_types.hh"
 
 #include "DNA_object_enums.h"
 
@@ -20,34 +21,34 @@
 #include "DNA_listBase.h"
 #include "DNA_vec_defaults.h"
 
-#ifdef __cplusplus
-#  include "BLI_math_matrix_types.hh"
-#endif
+namespace blender {
 
-#ifdef __cplusplus
-namespace blender::bke {
+namespace bke {
 struct ObjectRuntime;
 }
-using ObjectRuntimeHandle = blender::bke::ObjectRuntime;
-#else
-struct ObjectRuntimeHandle;
-#endif
 
 struct AnimData;
 struct BoundBox;
 struct Collection;
 struct Curve;
+struct Effect;
 struct FluidsimSettings;
+struct GpencilModifierData;
 struct ImageUser;
 struct LightgroupMembership;
 struct Material;
+struct ModifierData;
+struct ObHook;
 struct Object;
 struct PartDeflect;
+struct ParticleSystem;
 struct Path;
 struct RigidBodyOb;
 struct SculptSession;
+struct ShaderFxData;
 struct SoftBody;
 struct bGPdata;
+struct bFaceMap;
 
 #define MAX_VGROUP_NAME 64
 
@@ -476,7 +477,7 @@ struct Object {
   /** Pose data, armature objects only. */
   struct bPose *pose = nullptr;
   /** Pointer to objects data - an 'ID' or NULL. */
-  void *data = nullptr;
+  ID *data = nullptr;
 
   /** Grease Pencil data. */
   struct bGPdata *gpd DNA_DEPRECATED =
@@ -487,16 +488,17 @@ struct Object {
   /** Motion path cache for this object. */
   bMotionPath *mpath = nullptr;
 
-  ListBaseT<struct Effect> effect = {nullptr, nullptr}; /* XXX deprecated... keep for readfile */
+  ListBaseT<Effect> effect = {nullptr, nullptr}; /* XXX deprecated... keep for readfile */
   ListBaseT<bDeformGroup> defbase = {nullptr,
                                      nullptr}; /* Only for versioning, moved to object data. */
-  ListBase fmaps = {nullptr, nullptr};         /* For versioning, moved to generic attributes. */
+  ListBaseT<bFaceMap> fmaps = {nullptr,
+                               nullptr}; /* For versioning, moved to generic attributes. */
   /** List of ModifierData structures. */
-  ListBaseT<struct ModifierData> modifiers = {nullptr, nullptr};
+  ListBaseT<ModifierData> modifiers = {nullptr, nullptr};
   /** List of GpencilModifierData structures. */
-  ListBaseT<struct GpencilModifierData> greasepencil_modifiers = {nullptr, nullptr};
+  ListBaseT<GpencilModifierData> greasepencil_modifiers = {nullptr, nullptr};
   /** List of viewport effects. Actually only used by grease pencil. */
-  ListBaseT<struct ShaderFxData> shader_fx = {nullptr, nullptr};
+  ListBaseT<ShaderFxData> shader_fx = {nullptr, nullptr};
 
   /** Local object mode. */
   int mode = 0;
@@ -652,11 +654,11 @@ struct Object {
   /** Irradiance caches baked for this object (light-probes only). */
   struct LightProbeObjectCache *lightprobe_cache = nullptr;
 
-  ObjectRuntimeHandle *runtime = nullptr;
+  bke::ObjectRuntime *runtime = nullptr;
 
 #ifdef __cplusplus
-  const blender::float4x4 &object_to_world() const;
-  const blender::float4x4 &world_to_object() const;
+  const float4x4 &object_to_world() const;
+  const float4x4 &world_to_object() const;
 #endif
 };
 
@@ -769,3 +771,5 @@ struct ObHook {
   case ID_PT: \
   case ID_VO: \
   case ID_GP
+
+}  // namespace blender

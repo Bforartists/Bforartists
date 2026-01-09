@@ -31,6 +31,8 @@
 
 #include "fsmenu.hh" /* include ourselves */
 
+namespace blender {
+
 /* FSMENU HANDLING */
 
 struct FSMenu {
@@ -545,14 +547,14 @@ void fsmenu_add_common_platform_directories(FSMenu *fsmenu)
   add_user_dir(U.fontdir, ICON_FILE_FONT);
   add_user_dir(U.textudir, ICON_FILE_IMAGE);
 
-  LISTBASE_FOREACH (bUserScriptDirectory *, script_dir, &U.script_directories) {
-    if (UNLIKELY(script_dir->dir_path[0] == '\0')) {
+  for (bUserScriptDirectory &script_dir : U.script_directories) {
+    if (UNLIKELY(script_dir.dir_path[0] == '\0')) {
       continue;
     }
     fsmenu_insert_entry(fsmenu,
                         FS_CATEGORY_OTHER,
-                        script_dir->dir_path,
-                        script_dir->name,
+                        script_dir.dir_path,
+                        script_dir.name,
                         ICON_FILE_SCRIPT,
                         FS_INSERT_LAST);
   }
@@ -560,3 +562,5 @@ void fsmenu_add_common_platform_directories(FSMenu *fsmenu)
   add_user_dir(U.sounddir, ICON_FILE_SOUND);
   add_user_dir(U.tempdir, ICON_TEMP);
 }
+
+}  // namespace blender

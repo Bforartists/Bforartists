@@ -147,9 +147,9 @@ static void spreadsheet_filter_panel_draw_header(const bContext *C, Panel *panel
   ui::Layout &layout = *panel->layout;
   SpaceSpreadsheet *sspreadsheet = CTX_wm_space_spreadsheet(C);
   PointerRNA *filter_ptr = ui::panel_custom_data_get(panel);
-  const SpreadsheetRowFilter *filter = (SpreadsheetRowFilter *)filter_ptr->data;
+  const SpreadsheetRowFilter *filter = static_cast<SpreadsheetRowFilter *>(filter_ptr->data);
   const StringRef column_name = filter->column_name;
-  const eSpreadsheetFilterOperation operation = (eSpreadsheetFilterOperation)filter->operation;
+  const eSpreadsheetFilterOperation operation = eSpreadsheetFilterOperation(filter->operation);
 
   const SpreadsheetColumn *column = lookup_visible_column_for_filter(*sspreadsheet, column_name);
   if (!(sspreadsheet->filter_flag & SPREADSHEET_FILTER_ENABLE) ||
@@ -169,7 +169,7 @@ static void spreadsheet_filter_panel_draw_header(const bContext *C, Panel *panel
     row->label(column_name.data(), ICON_NONE);
   }
   else {
-    const eSpreadsheetColumnValueType data_type = (eSpreadsheetColumnValueType)column->data_type;
+    const eSpreadsheetColumnValueType data_type = eSpreadsheetColumnValueType(column->data_type);
     std::stringstream ss;
     ss << column_name;
     ss << " ";
@@ -193,9 +193,9 @@ static void spreadsheet_filter_panel_draw(const bContext *C, Panel *panel)
   ui::Layout &layout = *panel->layout;
   SpaceSpreadsheet *sspreadsheet = CTX_wm_space_spreadsheet(C);
   PointerRNA *filter_ptr = ui::panel_custom_data_get(panel);
-  SpreadsheetRowFilter *filter = (SpreadsheetRowFilter *)filter_ptr->data;
+  SpreadsheetRowFilter *filter = static_cast<SpreadsheetRowFilter *>(filter_ptr->data);
   const StringRef column_name = filter->column_name;
-  const eSpreadsheetFilterOperation operation = (eSpreadsheetFilterOperation)filter->operation;
+  const eSpreadsheetFilterOperation operation = eSpreadsheetFilterOperation(filter->operation);
 
   const SpreadsheetColumn *column = lookup_visible_column_for_filter(*sspreadsheet, column_name);
   if (!(sspreadsheet->filter_flag & SPREADSHEET_FILTER_ENABLE) ||
@@ -286,7 +286,7 @@ static void spreadsheet_row_filters_layout(const bContext *C, Panel *panel)
   ARegion *region = CTX_wm_region(C);
   bScreen *screen = CTX_wm_screen(C);
   SpaceSpreadsheet *sspreadsheet = CTX_wm_space_spreadsheet(C);
-  ListBase *row_filters = &sspreadsheet->row_filters;
+  ListBaseT<SpreadsheetRowFilter> *row_filters = &sspreadsheet->row_filters;
 
   if (!(sspreadsheet->filter_flag & SPREADSHEET_FILTER_ENABLE)) {
     layout.active_set(false);
@@ -298,21 +298,21 @@ static void spreadsheet_row_filters_layout(const bContext *C, Panel *panel)
 
   if (!panels_match) {
     ui::panels_free_instanced(C, region);
-    LISTBASE_FOREACH (SpreadsheetRowFilter *, row_filter, row_filters) {
+    for (SpreadsheetRowFilter &row_filter : *row_filters) {
       char panel_idname[MAX_NAME];
-      filter_panel_id_fn(row_filter, panel_idname);
+      filter_panel_id_fn(&row_filter, panel_idname);
 
       PointerRNA *filter_ptr = MEM_new<PointerRNA>("panel customdata");
       *filter_ptr = RNA_pointer_create_discrete(
-          &screen->id, &RNA_SpreadsheetRowFilter, row_filter);
+          &screen->id, &RNA_SpreadsheetRowFilter, &row_filter);
 
       ui::panel_add_instanced(C, region, &region->panels, panel_idname, filter_ptr);
     }
   }
   else {
     /* Assuming there's only one group of instanced panels, update the custom data pointers. */
-    Panel *panel_iter = (Panel *)region->panels.first;
-    LISTBASE_FOREACH (SpreadsheetRowFilter *, row_filter, row_filters) {
+    Panel *panel_iter = static_cast<Panel *>(region->panels.first);
+    for (SpreadsheetRowFilter &row_filter : *row_filters) {
 
       /* Move to the next instanced panel corresponding to the next filter. */
       while ((panel_iter->type == nullptr) || !(panel_iter->type->flag & PANEL_TYPE_INSTANCED)) {
@@ -322,7 +322,7 @@ static void spreadsheet_row_filters_layout(const bContext *C, Panel *panel)
 
       PointerRNA *filter_ptr = MEM_new<PointerRNA>("panel customdata");
       *filter_ptr = RNA_pointer_create_discrete(
-          &screen->id, &RNA_SpreadsheetRowFilter, row_filter);
+          &screen->id, &RNA_SpreadsheetRowFilter, &row_filter);
       ui::panel_custom_data_set(panel_iter, filter_ptr);
 
       panel_iter = panel_iter->next;
@@ -333,9 +333,9 @@ static void spreadsheet_row_filters_layout(const bContext *C, Panel *panel)
 static void filter_reorder(bContext *C, Panel *panel, int new_index)
 {
   SpaceSpreadsheet *sspreadsheet = CTX_wm_space_spreadsheet(C);
-  ListBase *row_filters = &sspreadsheet->row_filters;
+  ListBaseT<SpreadsheetRowFilter> *row_filters = &sspreadsheet->row_filters;
   PointerRNA *filter_ptr = ui::panel_custom_data_get(panel);
-  SpreadsheetRowFilter *filter = (SpreadsheetRowFilter *)filter_ptr->data;
+  SpreadsheetRowFilter *filter = static_cast<SpreadsheetRowFilter *>(filter_ptr->data);
 
   int current_index = BLI_findindex(row_filters, filter);
   BLI_assert(current_index >= 0);
@@ -347,7 +347,7 @@ static void filter_reorder(bContext *C, Panel *panel, int new_index)
 static short get_filter_expand_flag(const bContext * /*C*/, Panel *panel)
 {
   PointerRNA *filter_ptr = ui::panel_custom_data_get(panel);
-  SpreadsheetRowFilter *filter = (SpreadsheetRowFilter *)filter_ptr->data;
+  SpreadsheetRowFilter *filter = static_cast<SpreadsheetRowFilter *>(filter_ptr->data);
 
   return short(filter->flag) & SPREADSHEET_ROW_FILTER_UI_EXPAND;
 }
@@ -355,7 +355,7 @@ static short get_filter_expand_flag(const bContext * /*C*/, Panel *panel)
 static void set_filter_expand_flag(const bContext * /*C*/, Panel *panel, short expand_flag)
 {
   PointerRNA *filter_ptr = ui::panel_custom_data_get(panel);
-  SpreadsheetRowFilter *filter = (SpreadsheetRowFilter *)filter_ptr->data;
+  SpreadsheetRowFilter *filter = static_cast<SpreadsheetRowFilter *>(filter_ptr->data);
 
   SET_FLAG_FROM_TEST(filter->flag,
                      expand_flag & SPREADSHEET_ROW_FILTER_UI_EXPAND,

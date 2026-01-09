@@ -25,6 +25,8 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+namespace blender {
+
 /* Enum defines exported for `rna_animation.cc`. */
 
 const EnumPropertyItem rna_enum_nla_mode_blend_items[] = {
@@ -70,11 +72,17 @@ const EnumPropertyItem rna_enum_nla_mode_extend_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+}  // namespace blender
+
 #ifdef RNA_RUNTIME
 
 #  include <fmt/format.h>
 #  include <math.h>
 #  include <stdio.h>
+
+#  include "BLI_listbase.h"
+#  include "BLI_string.h"
+#  include "BLI_string_utf8.h"
 
 /* needed for some of the validation stuff... */
 #  include "BKE_anim_data.hh"
@@ -88,9 +96,13 @@ const EnumPropertyItem rna_enum_nla_mode_extend_items[] = {
 #  include "DEG_depsgraph.hh"
 #  include "DEG_depsgraph_build.hh"
 
+#  include "rna_action_tools.hh"
+
+namespace blender {
+
 static void rna_NlaStrip_name_set(PointerRNA *ptr, const char *value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   /* copy the name first */
   STRNCPY_UTF8(data->name, value);
@@ -104,7 +116,7 @@ static void rna_NlaStrip_name_set(PointerRNA *ptr, const char *value)
 
 static std::optional<std::string> rna_NlaStrip_path(const PointerRNA *ptr)
 {
-  NlaStrip *strip = (NlaStrip *)ptr->data;
+  NlaStrip *strip = static_cast<NlaStrip *>(ptr->data);
   AnimData *adt = BKE_animdata_from_id(ptr->owner_id);
 
   /* if we're attached to AnimData, try to resolve path back to AnimData */
@@ -148,7 +160,7 @@ static void rna_NlaStrip_dependency_update(Main *bmain, Scene *scene, PointerRNA
 
 static void rna_NlaStrip_transform_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  NlaStrip *strip = (NlaStrip *)ptr->data;
+  NlaStrip *strip = static_cast<NlaStrip *>(ptr->data);
 
   BKE_nlameta_flush_transforms(strip);
 
@@ -176,7 +188,7 @@ static void rna_NlaStrip_start_frame_set(PointerRNA *ptr, float value)
    * strips can be 'glued' to one another. If they are however, ensure transitions have a bit of
    * time allotted in order to be performed.
    */
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   const float limit_prev = BKE_nlastrip_compute_frame_from_previous_strip(data);
   const float limit_next = BKE_nlastrip_compute_frame_to_next_strip(data);
@@ -207,7 +219,7 @@ static void rna_NlaStrip_start_frame_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_frame_start_ui_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   /* Changing the NLA strip's start frame is exactly the same as translating it in the NLA editor.
    * When 'translating' the clip, the length of it should stay identical. Se we also need to set
@@ -253,7 +265,7 @@ static void rna_NlaStrip_frame_start_ui_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_end_frame_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   const float limit_prev = BKE_nlastrip_compute_frame_from_previous_strip(data);
   const float limit_next = BKE_nlastrip_compute_frame_to_next_strip(data);
@@ -284,7 +296,7 @@ static void rna_NlaStrip_end_frame_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_frame_end_ui_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   /* Changing the strip's end frame will update its action 'range' (defined by actstart->actend) to
    * accommodate the extra length of the strip. No other parameters of the strip will change. But
@@ -347,7 +359,7 @@ static void rna_NlaStrip_frame_end_ui_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_scale_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   /* set scale value */
   /* NOTE: these need to be synced with the values in the
@@ -361,7 +373,7 @@ static void rna_NlaStrip_scale_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_repeat_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   /* set repeat value */
   /* NOTE: these need to be synced with the values in the
@@ -375,7 +387,7 @@ static void rna_NlaStrip_repeat_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_blend_in_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
   float len;
 
   /* blend-in is limited to the length of the strip, and also cannot overlap with blendout */
@@ -387,7 +399,7 @@ static void rna_NlaStrip_blend_in_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_blend_out_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
   float len;
 
   /* blend-out is limited to the length of the strip */
@@ -404,7 +416,7 @@ static void rna_NlaStrip_blend_out_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_use_auto_blend_set(PointerRNA *ptr, bool value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   if (value) {
     /* set the flag */
@@ -432,7 +444,7 @@ static void rna_NlaStrip_use_auto_blend_set(PointerRNA *ptr, bool value)
 
 static void rna_NlaStrip_action_set(PointerRNA *ptr, PointerRNA value, ReportList *reports)
 {
-  using namespace blender::animrig;
+  using namespace animrig;
   BLI_assert(ptr->owner_id);
   BLI_assert(ptr->data);
 
@@ -456,7 +468,7 @@ static void rna_NlaStrip_action_set(PointerRNA *ptr, PointerRNA value, ReportLis
 
 static int rna_NlaStrip_action_editable(const PointerRNA *ptr, const char ** /*r_info*/)
 {
-  NlaStrip *strip = (NlaStrip *)ptr->data;
+  NlaStrip *strip = static_cast<NlaStrip *>(ptr->data);
 
   /* Strip actions shouldn't be editable if NLA tweak-mode is on. */
   if (ptr->owner_id) {
@@ -479,10 +491,10 @@ static int rna_NlaStrip_action_editable(const PointerRNA *ptr, const char ** /*r
   return PROP_EDITABLE;
 }
 
-static void rna_NlaStrip_action_slot_handle_set(
-    PointerRNA *ptr, const blender::animrig::slot_handle_t new_slot_handle)
+static void rna_NlaStrip_action_slot_handle_set(PointerRNA *ptr,
+                                                const animrig::slot_handle_t new_slot_handle)
 {
-  NlaStrip *strip = (NlaStrip *)ptr->data;
+  NlaStrip *strip = static_cast<NlaStrip *>(ptr->data);
   rna_generic_action_slot_handle_set(new_slot_handle,
                                      *ptr->owner_id,
                                      strip->act,
@@ -506,13 +518,13 @@ static void rna_NlaStrip_action_slot_handle_override_diff(
 
 static PointerRNA rna_NlaStrip_action_slot_get(PointerRNA *ptr)
 {
-  NlaStrip *strip = (NlaStrip *)ptr->data;
+  NlaStrip *strip = static_cast<NlaStrip *>(ptr->data);
   return rna_generic_action_slot_get(strip->act, strip->action_slot_handle);
 }
 
 static void rna_NlaStrip_action_slot_set(PointerRNA *ptr, PointerRNA value, ReportList *reports)
 {
-  NlaStrip *strip = (NlaStrip *)ptr->data;
+  NlaStrip *strip = static_cast<NlaStrip *>(ptr->data);
   rna_generic_action_slot_set(value,
                               *ptr->owner_id,
                               strip->act,
@@ -524,13 +536,13 @@ static void rna_NlaStrip_action_slot_set(PointerRNA *ptr, PointerRNA value, Repo
 static void rna_iterator_nlastrip_action_suitable_slots_begin(CollectionPropertyIterator *iter,
                                                               PointerRNA *ptr)
 {
-  NlaStrip *strip = (NlaStrip *)ptr->data;
+  NlaStrip *strip = static_cast<NlaStrip *>(ptr->data);
   rna_iterator_generic_action_suitable_slots_begin(iter, ptr, strip->act);
 }
 
 static void rna_NlaStrip_action_start_frame_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   /* prevent start frame from occurring after end of action */
   CLAMP(value, MINAFRAME, data->actend);
@@ -543,7 +555,7 @@ static void rna_NlaStrip_action_start_frame_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_action_end_frame_set(PointerRNA *ptr, float value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   /* prevent end frame from starting before start of action */
   CLAMP(value, data->actstart, MAXFRAME);
@@ -555,7 +567,7 @@ static void rna_NlaStrip_action_end_frame_set(PointerRNA *ptr, float value)
 
 static void rna_NlaStrip_animated_influence_set(PointerRNA *ptr, bool value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   if (value) {
     /* set the flag, then make sure a curve for this exists */
@@ -569,7 +581,7 @@ static void rna_NlaStrip_animated_influence_set(PointerRNA *ptr, bool value)
 
 static void rna_NlaStrip_animated_time_set(PointerRNA *ptr, bool value)
 {
-  NlaStrip *data = (NlaStrip *)ptr->data;
+  NlaStrip *data = static_cast<NlaStrip *>(ptr->data);
 
   if (value) {
     /* set the flag, then make sure a curve for this exists */
@@ -685,7 +697,7 @@ static void rna_NlaStrip_remove(
  */
 static void rna_NlaTrack_solo_set(PointerRNA *ptr, bool value)
 {
-  NlaTrack *data = (NlaTrack *)ptr->data;
+  NlaTrack *data = static_cast<NlaTrack *>(ptr->data);
   AnimData *adt = BKE_animdata_from_id(ptr->owner_id);
   NlaTrack *nt;
 
@@ -717,7 +729,11 @@ static void rna_NlaTrack_solo_set(PointerRNA *ptr, bool value)
   }
 }
 
+}  // namespace blender
+
 #else
+
+namespace blender {
 
 static void rna_def_strip_fcurves(BlenderRNA *brna, PropertyRNA *cprop)
 {
@@ -1246,5 +1262,7 @@ void RNA_def_nla(BlenderRNA *brna)
   rna_def_nlatrack(brna);
   rna_def_nlastrip(brna);
 }
+
+}  // namespace blender
 
 #endif

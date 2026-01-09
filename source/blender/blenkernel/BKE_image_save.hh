@@ -5,6 +5,8 @@
 
 #include "DNA_scene_types.h"
 
+namespace blender {
+
 /** \file
  * \ingroup bke
  */
@@ -47,8 +49,8 @@ bool BKE_image_save_options_init(ImageSaveOptions *opts,
                                  Scene *scene,
                                  Image *ima,
                                  ImageUser *iuser,
-                                 const bool guess_path,
-                                 const bool save_as_render);
+                                 bool guess_path,
+                                 bool save_as_render);
 void BKE_image_save_options_update(ImageSaveOptions *opts, const Image *image);
 void BKE_image_save_options_free(ImageSaveOptions *opts);
 
@@ -65,7 +67,7 @@ bool BKE_image_render_write_exr(ReportList *reports,
                                 const RenderResult *rr,
                                 const char *filepath,
                                 const ImageFormatData *imf,
-                                const bool save_as_render,
+                                bool save_as_render,
                                 const char *view,
                                 int layer);
 
@@ -76,7 +78,9 @@ bool BKE_image_render_write_exr(ReportList *reports,
 bool BKE_image_render_write(ReportList *reports,
                             RenderResult *rr,
                             const Scene *scene,
-                            const bool stamp,
+                            bool stamp,
                             const char *filepath_basis,
                             const ImageFormatData *format = nullptr,
                             bool save_as_render = true);
+
+}  // namespace blender

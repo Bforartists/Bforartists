@@ -10,23 +10,27 @@
 
 #include "DEG_depsgraph.hh"
 
+#include "DNA_listBase.h"
 #include "DNA_modifier_types.h"
+
 #include "RNA_types.hh"
+
+namespace blender {
 
 struct bContext;
 struct CacheArchiveHandle;
+struct CacheObjectPath;
 struct CacheReader;
-struct ListBase;
 struct Mesh;
 struct Object;
 struct ReportList;
 struct wmJobWorkerStatus;
 
-namespace blender::bke {
+namespace bke {
 struct GeometrySet;
 }
 
-namespace blender::io::usd {
+namespace io::usd {
 
 /**
  * Behavior when the name of an imported material
@@ -290,7 +294,9 @@ int USD_get_version();
  * attempting to normalize the path. */
 void USD_path_abs(char *path, const char *basepath, bool for_import);
 
-CacheArchiveHandle *USD_create_handle(Main *bmain, const char *filepath, ListBase *object_paths);
+CacheArchiveHandle *USD_create_handle(Main *bmain,
+                                      const char *filepath,
+                                      ListBaseT<CacheObjectPath> *object_paths);
 
 void USD_free_handle(CacheArchiveHandle *handle);
 
@@ -299,7 +305,7 @@ void USD_get_transform(CacheReader *reader, float r_mat[4][4], float time, float
 /** Either modifies current_mesh in-place or constructs a new mesh. */
 void USD_read_geometry(CacheReader *reader,
                        const Object *ob,
-                       blender::bke::GeometrySet &geometry_set,
+                       bke::GeometrySet &geometry_set,
                        USDMeshReadParams params,
                        const char **r_err_str);
 
@@ -340,4 +346,6 @@ USDHook *USD_find_hook_name(const char idname[]);
 
 double get_meters_per_unit(const USDExportParams &params);
 
-};  // namespace blender::io::usd
+};  // namespace io::usd
+
+}  // namespace blender

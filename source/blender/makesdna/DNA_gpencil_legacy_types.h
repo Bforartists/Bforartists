@@ -12,6 +12,8 @@
 #include "DNA_curve_types.h"
 #include "DNA_listBase.h"
 
+namespace blender {
+
 struct AnimData;
 struct MDeformVert;
 
@@ -362,7 +364,7 @@ struct bGPDpalette {
   struct bGPDpalette *next = nullptr, *prev = nullptr;
 
   /** Pointer to individual colors. */
-  ListBaseT<struct PaletteColor> colors = {nullptr, nullptr};
+  ListBaseT<bGPDpalettecolor> colors = {nullptr, nullptr};
   /** Palette name. Must be unique. */
   char info[64] = "";
 
@@ -800,3 +802,5 @@ struct bGPdata {
 
   bGPdata_Runtime runtime;
 };
+
+}  // namespace blender

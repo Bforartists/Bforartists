@@ -12,7 +12,9 @@
 #include "DNA_listBase.h"
 #include "DNA_vec_types.h"
 
-namespace blender::gpu {
+namespace blender {
+
+namespace gpu {
 class Texture;
 }
 struct ExrHandle;
@@ -91,7 +93,7 @@ struct RenderLayer {
 
   int rectx, recty;
 
-  ListBase passes;
+  ListBaseT<RenderPass> passes;
 };
 
 struct RenderResult {
@@ -120,10 +122,10 @@ struct RenderResult {
   rcti tilerect;
 
   /* the main buffers */
-  ListBase layers = {};
+  ListBaseT<RenderLayer> layers = {};
 
   /* multiView maps to a StringVector in OpenEXR */
-  ListBase views = {}; /* RenderView */
+  ListBaseT<RenderView> views = {};
 
   /* Render layer to display. */
   RenderLayer *renlay = nullptr;
@@ -240,7 +242,7 @@ void RE_ReleaseResult(struct Render *re);
 /**
  * Same as #RE_AcquireResultImage but creating the necessary views to store the result
  * fill provided result struct with a copy of thew views of what is done so far the
- * #RenderResult.views #ListBase needs to be freed after with #RE_ReleaseResultImageViews
+ * #RenderResult.views #ListBaseT needs to be freed after with #RE_ReleaseResultImageViews
  */
 void RE_AcquireResultImageViews(struct Render *re, struct RenderResult *rr);
 /**
@@ -313,7 +315,7 @@ void RE_create_render_pass(struct RenderResult *rr,
 void RE_InitState(struct Render *re,
                   struct Render *source,
                   struct RenderData *rd,
-                  struct ListBase *render_layers,
+                  ListBaseT<ViewLayer> *render_layers,
                   struct ViewLayer *single_layer,
                   int winx,
                   int winy,
@@ -456,8 +458,7 @@ void RE_pass_set_buffer_data(struct RenderPass *pass, float *data);
 /**
  * Ensure a GPU texture corresponding to the render buffer data exists.
  */
-blender::gpu::Texture *RE_pass_ensure_gpu_texture_cache(struct Render *re,
-                                                        struct RenderPass *rpass);
+gpu::Texture *RE_pass_ensure_gpu_texture_cache(struct Render *re, struct RenderPass *rpass);
 
 void RE_GetCameraWindow(struct Render *re, const struct Object *camera, float r_winmat[4][4]);
 /**
@@ -500,3 +501,5 @@ struct ImBuf *RE_RenderViewEnsureImBuf(const RenderResult *render_result, Render
 
 /* Returns true if the pass is a color (as opposite of data) and needs to be color managed. */
 bool RE_RenderPassIsColor(const RenderPass *render_pass);
+
+}  // namespace blender

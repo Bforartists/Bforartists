@@ -45,6 +45,7 @@
 
 // #include "UI_interface.hh" /*bfa - for the icons*/
 #include "UI_resources.hh" /*bfa - for the icons*/
+namespace blender {
 
 /******************** create new mask *********************/
 
@@ -648,7 +649,7 @@ static void free_slide_point_data(SlidePointData *data)
 
 static wmOperatorStatus slide_point_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  SlidePointData *data = (SlidePointData *)op->customdata;
+  SlidePointData *data = static_cast<SlidePointData *>(op->customdata);
   BezTriple *bezt = &data->point->bezt;
   float co[2];
 
@@ -674,7 +675,7 @@ static wmOperatorStatus slide_point_modal(bContext *C, wmOperator *op, const wmE
     case MOUSEMOVE: {
       ScrArea *area = CTX_wm_area(C);
       ARegion *region = CTX_wm_region(C);
-      blender::float2 delta;
+      float2 delta;
 
       ED_mask_mouse_pos(area, region, event->mval, co);
       sub_v2_v2v2(delta, co, data->prev_mouse_coord);
@@ -873,7 +874,7 @@ static wmOperatorStatus slide_point_modal(bContext *C, wmOperator *op, const wmE
 
         /* Don't key sliding feather UW's. */
         if ((data->action == SLIDE_ACTION_FEATHER && data->uw) == false) {
-          if (blender::animrig::is_autokey_on(scene)) {
+          if (animrig::is_autokey_on(scene)) {
             ED_mask_layer_shape_auto_key(data->mask_layer, scene->r.cfra);
           }
         }
@@ -1167,7 +1168,7 @@ static wmOperatorStatus slide_spline_curvature_modal(bContext *C,
 {
   Scene *scene = CTX_data_scene(C);
   const float margin = 0.2f;
-  SlideSplineCurvatureData *slide_data = (SlideSplineCurvatureData *)op->customdata;
+  SlideSplineCurvatureData *slide_data = static_cast<SlideSplineCurvatureData *>(op->customdata);
   float u = slide_data->u;
 
   switch (event->type) {
@@ -1290,7 +1291,7 @@ static wmOperatorStatus slide_spline_curvature_modal(bContext *C,
     case RIGHTMOUSE:
       if (event->type == slide_data->event_invoke_type && event->val == KM_RELEASE) {
         /* Don't key sliding feather UW's. */
-        if (blender::animrig::is_autokey_on(scene)) {
+        if (animrig::is_autokey_on(scene)) {
           ED_mask_layer_shape_auto_key(slide_data->mask_layer, scene->r.cfra);
         }
 
@@ -1341,14 +1342,14 @@ static wmOperatorStatus cyclic_toggle_exec(bContext *C, wmOperator * /*op*/)
 {
   Mask *mask = CTX_data_edit_mask(C);
 
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
-    if (mask_layer->visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
+    if (mask_layer.visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
       continue;
     }
 
-    LISTBASE_FOREACH (MaskSpline *, spline, &mask_layer->splines) {
-      if (ED_mask_spline_select_check(spline)) {
-        spline->flag ^= MASK_SPLINE_CYCLIC;
+    for (MaskSpline &spline : mask_layer.splines) {
+      if (ED_mask_spline_select_check(&spline)) {
+        spline.flag ^= MASK_SPLINE_CYCLIC;
       }
     }
   }
@@ -1419,15 +1420,15 @@ static wmOperatorStatus delete_exec(bContext *C, wmOperator * /*op*/)
   Mask *mask = CTX_data_edit_mask(C);
   bool changed = false;
 
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
     MaskSpline *spline;
     int mask_layer_shape_ofs = 0;
 
-    if (mask_layer->visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
+    if (mask_layer.visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
       continue;
     }
 
-    spline = static_cast<MaskSpline *>(mask_layer->splines.first);
+    spline = static_cast<MaskSpline *>(mask_layer.splines.first);
 
     while (spline) {
       const int tot_point_orig = spline->tot_point;
@@ -1446,20 +1447,20 @@ static wmOperatorStatus delete_exec(bContext *C, wmOperator * /*op*/)
       if (count == 0) {
 
         /* Update active. */
-        if (mask_layer->act_point) {
-          if (ARRAY_HAS_ITEM(mask_layer->act_point, spline->points, spline->tot_point)) {
-            mask_layer->act_point = nullptr;
+        if (mask_layer.act_point) {
+          if (ARRAY_HAS_ITEM(mask_layer.act_point, spline->points, spline->tot_point)) {
+            mask_layer.act_point = nullptr;
           }
         }
-        if (spline == mask_layer->act_spline) {
-          mask_layer->act_spline = nullptr;
+        if (spline == mask_layer.act_spline) {
+          mask_layer.act_spline = nullptr;
         }
 
         /* delete the whole spline */
-        BLI_remlink(&mask_layer->splines, spline);
+        BLI_remlink(&mask_layer.splines, spline);
         BKE_mask_spline_free(spline);
 
-        BKE_mask_layer_shape_changed_remove(mask_layer, mask_layer_shape_ofs, tot_point_orig);
+        BKE_mask_layer_shape_changed_remove(&mask_layer, mask_layer_shape_ofs, tot_point_orig);
       }
       else {
         MaskSplinePoint *new_points;
@@ -1470,8 +1471,8 @@ static wmOperatorStatus delete_exec(bContext *C, wmOperator * /*op*/)
           MaskSplinePoint *point = &spline->points[i];
 
           if (!BKE_mask_point_selected(point)) {
-            if (point == mask_layer->act_point) {
-              mask_layer->act_point = &new_points[j];
+            if (point == mask_layer.act_point) {
+              mask_layer.act_point = &new_points[j];
             }
 
             delete_feather_points(point);
@@ -1480,14 +1481,14 @@ static wmOperatorStatus delete_exec(bContext *C, wmOperator * /*op*/)
             j++;
           }
           else {
-            if (point == mask_layer->act_point) {
-              mask_layer->act_point = nullptr;
+            if (point == mask_layer.act_point) {
+              mask_layer.act_point = nullptr;
             }
 
             BKE_mask_point_free(point);
             spline->tot_point--;
 
-            BKE_mask_layer_shape_changed_remove(mask_layer, mask_layer_shape_ofs + j, 1);
+            BKE_mask_layer_shape_changed_remove(&mask_layer, mask_layer_shape_ofs + j, 1);
           }
         }
 
@@ -1505,8 +1506,8 @@ static wmOperatorStatus delete_exec(bContext *C, wmOperator * /*op*/)
 
     /* Not essential but confuses users when there are keys with no data!
      * Assume if they delete all data from the layer they also don't care about keys. */
-    if (BLI_listbase_is_empty(&mask_layer->splines)) {
-      BKE_mask_layer_free_shapes(mask_layer);
+    if (BLI_listbase_is_empty(&mask_layer.splines)) {
+      BKE_mask_layer_free_shapes(&mask_layer);
     }
   }
 
@@ -1529,7 +1530,7 @@ static wmOperatorStatus delete_invoke(bContext *C, wmOperator *op, const wmEvent
                                   IFACE_("Delete selected control points and splines?"),
                                   nullptr,
                                   IFACE_("Delete"),
-                                  blender::ui::AlertIcon::None,
+                                  ui::AlertIcon::None,
                                   false);
   }
   return delete_exec(C, op);
@@ -1561,24 +1562,24 @@ static wmOperatorStatus mask_switch_direction_exec(bContext *C, wmOperator * /*o
   bool changed = false;
 
   /* do actual selection */
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
     bool changed_layer = false;
 
-    if (mask_layer->visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
+    if (mask_layer.visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
       continue;
     }
 
-    LISTBASE_FOREACH (MaskSpline *, spline, &mask_layer->splines) {
-      if (ED_mask_spline_select_check(spline)) {
-        BKE_mask_spline_direction_switch(mask_layer, spline);
+    for (MaskSpline &spline : mask_layer.splines) {
+      if (ED_mask_spline_select_check(&spline)) {
+        BKE_mask_spline_direction_switch(&mask_layer, &spline);
         changed = true;
         changed_layer = true;
       }
     }
 
     if (changed_layer) {
-      if (blender::animrig::is_autokey_on(scene)) {
-        ED_mask_layer_shape_auto_key(mask_layer, scene->r.cfra);
+      if (animrig::is_autokey_on(scene)) {
+        ED_mask_layer_shape_auto_key(&mask_layer, scene->r.cfra);
       }
     }
   }
@@ -1619,19 +1620,19 @@ static wmOperatorStatus mask_normals_make_consistent_exec(bContext *C, wmOperato
   bool changed = false;
 
   /* do actual selection */
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
     bool changed_layer = false;
 
-    if (mask_layer->visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
+    if (mask_layer.visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
       continue;
     }
 
-    LISTBASE_FOREACH (MaskSpline *, spline, &mask_layer->splines) {
-      for (int i = 0; i < spline->tot_point; i++) {
-        MaskSplinePoint *point = &spline->points[i];
+    for (MaskSpline &spline : mask_layer.splines) {
+      for (int i = 0; i < spline.tot_point; i++) {
+        MaskSplinePoint *point = &spline.points[i];
 
         if (BKE_mask_point_selected(point)) {
-          BKE_mask_calc_handle_point_auto(spline, point, false);
+          BKE_mask_calc_handle_point_auto(&spline, point, false);
           changed = true;
           changed_layer = true;
         }
@@ -1639,8 +1640,8 @@ static wmOperatorStatus mask_normals_make_consistent_exec(bContext *C, wmOperato
     }
 
     if (changed_layer) {
-      if (blender::animrig::is_autokey_on(scene)) {
-        ED_mask_layer_shape_auto_key(mask_layer, scene->r.cfra);
+      if (animrig::is_autokey_on(scene)) {
+        ED_mask_layer_shape_auto_key(&mask_layer, scene->r.cfra);
       }
     }
   }
@@ -1681,14 +1682,14 @@ static wmOperatorStatus set_handle_type_exec(bContext *C, wmOperator *op)
 
   bool changed = false;
 
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
-    if (mask_layer->visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
+    if (mask_layer.visibility_flag & (MASK_HIDE_VIEW | MASK_HIDE_SELECT)) {
       continue;
     }
 
-    LISTBASE_FOREACH (MaskSpline *, spline, &mask_layer->splines) {
-      for (int i = 0; i < spline->tot_point; i++) {
-        MaskSplinePoint *point = &spline->points[i];
+    for (MaskSpline &spline : mask_layer.splines) {
+      for (int i = 0; i < spline.tot_point; i++) {
+        MaskSplinePoint *point = &spline.points[i];
 
         if (BKE_mask_point_selected(point)) {
           BezTriple *bezt = &point->bezt;
@@ -1731,7 +1732,7 @@ void MASK_OT_handle_type_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem editcurve_handle_type_items[] = {
       /* BFA */
-      {HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Auto", ""}, 
+      {HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Auto", ""},
       {HD_VECT, "VECTOR", ICON_HANDLE_VECTOR, "Vector", ""},
       {HD_ALIGN, "ALIGNED", ICON_HANDLE_ALIGN_SINGLE, "Aligned Single", ""},
       {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", ICON_HANDLE_ALIGNED, "Aligned", ""},
@@ -1763,11 +1764,11 @@ static wmOperatorStatus mask_hide_view_clear_exec(bContext *C, wmOperator *op)
   bool changed = false;
   const bool select = RNA_boolean_get(op->ptr, "select");
 
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
 
-    if (mask_layer->visibility_flag & OB_HIDE_VIEWPORT) {
-      ED_mask_layer_select_set(mask_layer, select);
-      mask_layer->visibility_flag &= ~OB_HIDE_VIEWPORT;
+    if (mask_layer.visibility_flag & OB_HIDE_VIEWPORT) {
+      ED_mask_layer_select_set(&mask_layer, select);
+      mask_layer.visibility_flag &= ~OB_HIDE_VIEWPORT;
       changed = true;
     }
   }
@@ -1785,7 +1786,7 @@ void MASK_OT_hide_view_clear(wmOperatorType *ot)
 {
 
   /* identifiers */
-/*bfa human understandable tool name*/
+  /*bfa human understandable tool name*/
   ot->name = "Show Hidden Layer(s)";
   ot->description = "Reveals the hidden layer(s)";
   ot->idname = "MASK_OT_hide_view_clear";
@@ -1806,28 +1807,28 @@ static wmOperatorStatus mask_hide_view_set_exec(bContext *C, wmOperator *op)
   const bool unselected = RNA_boolean_get(op->ptr, "unselected");
   bool changed = false;
 
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
 
-    if (mask_layer->visibility_flag & MASK_HIDE_SELECT) {
+    if (mask_layer.visibility_flag & MASK_HIDE_SELECT) {
       continue;
     }
 
     if (!unselected) {
-      if (ED_mask_layer_select_check(mask_layer)) {
-        ED_mask_layer_select_set(mask_layer, false);
+      if (ED_mask_layer_select_check(&mask_layer)) {
+        ED_mask_layer_select_set(&mask_layer, false);
 
-        mask_layer->visibility_flag |= OB_HIDE_VIEWPORT;
+        mask_layer.visibility_flag |= OB_HIDE_VIEWPORT;
         changed = true;
-        if (mask_layer == BKE_mask_layer_active(mask)) {
+        if (&mask_layer == BKE_mask_layer_active(mask)) {
           BKE_mask_layer_active_set(mask, nullptr);
         }
       }
     }
     else {
-      if (!ED_mask_layer_select_check(mask_layer)) {
-        mask_layer->visibility_flag |= OB_HIDE_VIEWPORT;
+      if (!ED_mask_layer_select_check(&mask_layer)) {
+        mask_layer.visibility_flag |= OB_HIDE_VIEWPORT;
         changed = true;
-        if (mask_layer == BKE_mask_layer_active(mask)) {
+        if (&mask_layer == BKE_mask_layer_active(mask)) {
           BKE_mask_layer_active_set(mask, nullptr);
         }
       }
@@ -1846,7 +1847,7 @@ static wmOperatorStatus mask_hide_view_set_exec(bContext *C, wmOperator *op)
 void MASK_OT_hide_view_set(wmOperatorType *ot)
 {
   /* identifiers */
-/*bfa human understandable tool name*/
+  /*bfa human understandable tool name*/
   ot->name = "Hide Layer";
   ot->description = "Hide the mask layer";
   ot->idname = "MASK_OT_hide_view_set";
@@ -1867,14 +1868,14 @@ static wmOperatorStatus mask_feather_weight_clear_exec(bContext *C, wmOperator *
   Mask *mask = CTX_data_edit_mask(C);
   bool changed = false;
 
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
-    if (mask_layer->visibility_flag & (MASK_HIDE_SELECT | MASK_HIDE_VIEW)) {
+  for (MaskLayer &mask_layer : mask->masklayers) {
+    if (mask_layer.visibility_flag & (MASK_HIDE_SELECT | MASK_HIDE_VIEW)) {
       continue;
     }
 
-    LISTBASE_FOREACH (MaskSpline *, spline, &mask_layer->splines) {
-      for (int i = 0; i < spline->tot_point; i++) {
-        MaskSplinePoint *point = &spline->points[i];
+    for (MaskSpline &spline : mask_layer.splines) {
+      for (int i = 0; i < spline.tot_point; i++) {
+        MaskSplinePoint *point = &spline.points[i];
 
         if (BKE_mask_point_selected(point)) {
           BezTriple *bezt = &point->bezt;
@@ -2000,23 +2001,22 @@ static wmOperatorStatus mask_duplicate_exec(bContext *C, wmOperator * /*op*/)
 {
   Mask *mask = CTX_data_edit_mask(C);
 
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
-    LISTBASE_FOREACH_BACKWARD (MaskSpline *, spline, &mask_layer->splines) {
-      const bool act_point_in_spline = mask_layer->act_point &&
-                                       ARRAY_HAS_ITEM(mask_layer->act_point,
-                                                      spline->points,
-                                                      spline->tot_point);
-      const void *act_point_prev = mask_layer->act_point;
+  for (MaskLayer &mask_layer : mask->masklayers) {
+    for (MaskSpline &spline : mask_layer.splines.items_reversed()) {
+      const bool act_point_in_spline = mask_layer.act_point && ARRAY_HAS_ITEM(mask_layer.act_point,
+                                                                              spline.points,
+                                                                              spline.tot_point);
+      const void *act_point_prev = mask_layer.act_point;
 
-      MaskSplinePoint *point = spline->points;
+      MaskSplinePoint *point = spline.points;
       int i = 0;
-      while (i < spline->tot_point) {
+      while (i < spline.tot_point) {
         int start = i, end = -1;
         /* Find next selected segment. */
         while (BKE_mask_point_selected(point)) {
           BKE_mask_point_select_set(point, false);
           end = i;
-          if (i >= spline->tot_point - 1) {
+          if (i >= spline.tot_point - 1) {
             break;
           }
           i++;
@@ -2025,7 +2025,7 @@ static wmOperatorStatus mask_duplicate_exec(bContext *C, wmOperator * /*op*/)
         if (end >= start) {
           int tot_point;
           int tot_point_shape_start = 0;
-          MaskSpline *new_spline = BKE_mask_spline_add(mask_layer);
+          MaskSpline *new_spline = BKE_mask_spline_add(&mask_layer);
           MaskSplinePoint *new_point;
           int b;
 
@@ -2036,10 +2036,10 @@ static wmOperatorStatus mask_duplicate_exec(bContext *C, wmOperator * /*op*/)
           }
 
           /* Copy options from old spline. */
-          new_spline->flag = spline->flag;
-          new_spline->offset_mode = spline->offset_mode;
-          new_spline->weight_interp = spline->weight_interp;
-          new_spline->parent = spline->parent;
+          new_spline->flag = spline.flag;
+          new_spline->offset_mode = spline.offset_mode;
+          new_spline->weight_interp = spline.weight_interp;
+          new_spline->parent = spline.parent;
 
           /* Allocate new points and copy them from old spline. */
           new_spline->tot_point = end - start + 1;
@@ -2047,28 +2047,28 @@ static wmOperatorStatus mask_duplicate_exec(bContext *C, wmOperator * /*op*/)
                                                                        "duplicated mask points");
 
           memcpy(new_spline->points,
-                 spline->points + start,
+                 spline.points + start,
                  new_spline->tot_point * sizeof(MaskSplinePoint));
 
           tot_point = new_spline->tot_point;
 
           /* Update the active. */
-          if (mask_layer->act_point) {
-            ptrdiff_t act_index = mask_layer->act_point - &spline->points[start];
+          if (mask_layer.act_point) {
+            ptrdiff_t act_index = mask_layer.act_point - &spline.points[start];
             if (size_t(act_index) < new_spline->tot_point) {
-              mask_layer->act_point = &new_spline->points[act_index];
+              mask_layer.act_point = &new_spline->points[act_index];
             }
           }
-          if (mask_layer->act_spline) {
-            if (mask_layer->act_spline == spline) {
-              mask_layer->act_spline = new_spline;
+          if (mask_layer.act_spline) {
+            if (mask_layer.act_spline == &spline) {
+              mask_layer.act_spline = new_spline;
             }
           }
 
           /* animation requires points added one by one */
-          if (mask_layer->splines_shapes.first) {
+          if (mask_layer.splines_shapes.first) {
             new_spline->tot_point = 0;
-            tot_point_shape_start = BKE_mask_layer_shape_spline_to_index(mask_layer, new_spline);
+            tot_point_shape_start = BKE_mask_layer_shape_spline_to_index(&mask_layer, new_spline);
           }
 
           /* Select points and duplicate their UWs (if needed). */
@@ -2078,31 +2078,32 @@ static wmOperatorStatus mask_duplicate_exec(bContext *C, wmOperator * /*op*/)
             }
             BKE_mask_point_select_set(new_point, true);
 
-            if (mask_layer->splines_shapes.first) {
+            if (mask_layer.splines_shapes.first) {
               new_spline->tot_point++;
-              BKE_mask_layer_shape_changed_add(mask_layer, tot_point_shape_start + b, true, false);
+              BKE_mask_layer_shape_changed_add(
+                  &mask_layer, tot_point_shape_start + b, true, false);
             }
           }
 
           /* Clear cyclic flag if we didn't copy the whole spline. */
           if (new_spline->flag & MASK_SPLINE_CYCLIC) {
-            if (start != 0 || end != spline->tot_point - 1) {
+            if (start != 0 || end != spline.tot_point - 1) {
               new_spline->flag &= ~MASK_SPLINE_CYCLIC;
             }
           }
 
           /* Flush selection to splines. */
           new_spline->flag |= SELECT;
-          spline->flag &= ~SELECT;
+          spline.flag &= ~SELECT;
         }
         i++;
         point++;
       }
 
-      if (act_point_in_spline && (mask_layer->act_point == act_point_prev)) {
+      if (act_point_in_spline && (mask_layer.act_point == act_point_prev)) {
         /* The active point was part of this spline but not copied,
          * clear it to avoid confusion with the active spline & point getting out of sync. */
-        mask_layer->act_point = nullptr;
+        mask_layer.act_point = nullptr;
       }
     }
   }
@@ -2203,3 +2204,5 @@ void MASK_OT_paste_splines(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+}  // namespace blender

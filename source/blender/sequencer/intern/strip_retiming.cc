@@ -131,7 +131,7 @@ void retiming_data_clear(Strip *strip)
 
 static void retiming_key_overlap(Scene *scene, Strip *strip)
 {
-  ListBase *seqbase = active_seqbase_get(editing_get(scene));
+  ListBaseT<Strip> *seqbase = active_seqbase_get(editing_get(scene));
   VectorSet<Strip *> strips;
   VectorSet<Strip *> dependant;
   dependant.add(strip);
@@ -211,7 +211,7 @@ static void strip_retiming_line_segments_tangent_circle(const SeqRetimingKey *st
                                                         double r_center[2],
                                                         double *radius)
 {
-  blender::double2 s1_1, s1_2, s2_1, s2_2, p1_2;
+  double2 s1_1, s1_2, s2_1, s2_2, p1_2;
 
   /* Get 2 segments. */
   strip_retiming_segment_as_line_segment(start_key - 1, s1_1, s1_2);
@@ -219,7 +219,7 @@ static void strip_retiming_line_segments_tangent_circle(const SeqRetimingKey *st
   /* Backup first segment end point - needed to calculate arc radius. */
   copy_v2_v2_db(p1_2, s1_2);
   /* Convert segments to vectors. */
-  blender::double2 v1, v2;
+  double2 v1, v2;
   sub_v2_v2v2_db(v1, s1_1, s1_2);
   sub_v2_v2v2_db(v2, s2_1, s2_2);
   /* Rotate segments by 90 degrees around seg. 1 end and seg. 2 start point. */
@@ -1142,8 +1142,8 @@ bool retiming_selection_clear(const Editing *ed)
 {
   bool was_empty = true;
 
-  LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
-    for (SeqRetimingKey &key : retiming_keys_get(strip)) {
+  for (Strip &strip : *ed->current_strips()) {
+    for (SeqRetimingKey &key : retiming_keys_get(&strip)) {
       was_empty &= (key.flag & SEQ_KEY_SELECTED) == 0;
       key.flag &= ~SEQ_KEY_SELECTED;
     }
@@ -1175,10 +1175,10 @@ Map<SeqRetimingKey *, Strip *> retiming_selection_get(const Editing *ed)
   if (!ed) {
     return selection;
   }
-  LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
-    for (SeqRetimingKey &key : retiming_keys_get(strip)) {
+  for (Strip &strip : *ed->current_strips()) {
+    for (SeqRetimingKey &key : retiming_keys_get(&strip)) {
       if ((key.flag & SEQ_KEY_SELECTED) != 0) {
-        selection.add(&key, strip);
+        selection.add(&key, &strip);
       }
     }
   }
@@ -1187,8 +1187,8 @@ Map<SeqRetimingKey *, Strip *> retiming_selection_get(const Editing *ed)
 
 bool retiming_selection_contains(const Editing *ed, const SeqRetimingKey *key)
 {
-  LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
-    for (const SeqRetimingKey &key_iter : retiming_keys_get(strip)) {
+  for (Strip &strip : *ed->current_strips()) {
+    for (const SeqRetimingKey &key_iter : retiming_keys_get(&strip)) {
       if ((key_iter.flag & SEQ_KEY_SELECTED) != 0 && &key_iter == key) {
         return true;
       }

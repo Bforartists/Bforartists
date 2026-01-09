@@ -58,6 +58,8 @@
 #include <cstdlib>
 #include <cstring>
 
+namespace blender {
+
 /* -------------------------------------------------------------------- */
 /** \name File Selection Utilities
  * \{ */
@@ -78,7 +80,7 @@ static FileSelection find_file_mouse_rect(SpaceFile *sfile,
   /* Okay, manipulating v2d rects here is hacky... */
   v2d->mask.ymax -= sfile->layout->offset_top;
   v2d->cur.ymax -= sfile->layout->offset_top;
-  blender::ui::view2d_region_to_view_rctf(v2d, &rect_region_fl, &rect_view_fl);
+  ui::view2d_region_to_view_rctf(v2d, &rect_region_fl, &rect_view_fl);
   v2d->mask.ymax += sfile->layout->offset_top;
   v2d->cur.ymax += sfile->layout->offset_top;
 
@@ -308,7 +310,7 @@ static void file_ensure_inside_viewbounds(ARegion *region, SpaceFile *sfile, con
   }
 
   if (changed) {
-    blender::ui::view2d_curRect_validate(&region->v2d);
+    ui::view2d_curRect_validate(&region->v2d);
   }
 }
 
@@ -421,8 +423,7 @@ static int file_box_select_find_last_selected(SpaceFile *sfile,
   int dist_first, dist_last;
   float mouseco_view[2];
 
-  blender::ui::view2d_region_to_view(
-      &region->v2d, UNPACK2(mouse_xy), &mouseco_view[0], &mouseco_view[1]);
+  ui::view2d_region_to_view(&region->v2d, UNPACK2(mouse_xy), &mouseco_view[0], &mouseco_view[1]);
 
   file_tile_boundbox(region, layout, sel->first, &bounds_first);
   file_tile_boundbox(region, layout, sel->last, &bounds_last);
@@ -924,7 +925,7 @@ static wmOperatorStatus file_walk_select_invoke(bContext *C,
                                                 wmOperator *op,
                                                 const wmEvent * /*event*/)
 {
-  SpaceFile *sfile = (SpaceFile *)CTX_wm_space_data(C);
+  SpaceFile *sfile = reinterpret_cast<SpaceFile *>(CTX_wm_space_data(C));
   FileSelectParams *params = ED_fileselect_get_active_params(sfile);
   const int direction = RNA_enum_get(op->ptr, "direction");
   const bool extend = RNA_boolean_get(op->ptr, "extend");
@@ -1319,7 +1320,7 @@ static wmOperatorStatus bookmark_move_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  BLI_linklist_move_item((LinkNode **)&fsmentry, act_index, new_index);
+  BLI_linklist_move_item(reinterpret_cast<LinkNode **>(&fsmentry), act_index, new_index);
   if (fsmentry != fsmentry_org) {
     ED_fsmenu_set_category(fsmenu, FS_CATEGORY_BOOKMARKS, fsmentry);
   }
@@ -1441,7 +1442,7 @@ int file_highlight_set(SpaceFile *sfile, ARegion *region, int mx, int my)
     float fx, fy;
     int highlight_file;
 
-    blender::ui::view2d_region_to_view(v2d, mx, my, &fx, &fy);
+    ui::view2d_region_to_view(v2d, mx, my, &fx, &fy);
 
     highlight_file = ED_fileselect_layout_offset(
         sfile->layout, int(v2d->tot.xmin + fx), int(v2d->tot.ymax - fy));
@@ -1903,7 +1904,7 @@ static wmOperatorStatus file_external_operation_exec(bContext *C, wmOperator *op
   PointerRNA op_props = WM_operator_properties_create_ptr(ot);
   RNA_string_set(&op_props, "filepath", filepath);
   const wmOperatorStatus retval = WM_operator_name_call_ptr(
-      C, ot, blender::wm::OpCallContext::InvokeDefault, &op_props, nullptr);
+      C, ot, wm::OpCallContext::InvokeDefault, &op_props, nullptr);
   WM_operator_properties_free(&op_props);
 
   if (retval == OPERATOR_FINISHED) {
@@ -1950,7 +1951,7 @@ void FILE_OT_external_operation(wmOperatorType *ot)
                "Operation to perform on the selected file or path");
 }
 
-static void file_os_operations_menu_item(blender::ui::Layout &layout,
+static void file_os_operations_menu_item(ui::Layout &layout,
                                          wmOperatorType *ot,
                                          const char *path,
                                          FileExternalOperation operation)
@@ -1978,7 +1979,7 @@ static void file_os_operations_menu_item(blender::ui::Layout &layout,
   PointerRNA props_ptr = layout.op(ot,
                                    IFACE_(title),
                                    icon, /*bfa*/
-                                   blender::wm::OpCallContext::InvokeDefault,
+                                   wm::OpCallContext::InvokeDefault,
                                    UI_ITEM_NONE);
   RNA_string_set(&props_ptr, "filepath", path);
   RNA_enum_set(&props_ptr, "operation", operation);
@@ -1986,7 +1987,7 @@ static void file_os_operations_menu_item(blender::ui::Layout &layout,
 
 static void file_os_operations_menu_draw(const bContext *C_const, Menu *menu)
 {
-  bContext *C = (bContext *)C_const;
+  bContext *C = const_cast<bContext *>(C_const);
 
   /* File browsing only operator (not asset browsing). */
   if (!ED_operator_file_browsing_active(C)) {
@@ -2023,8 +2024,8 @@ static void file_os_operations_menu_draw(const bContext *C_const, Menu *menu)
   filelist_file_get_full_path(sfile->files, fileentry, path);
   const char *root = filelist_dir(sfile->files);
 
-  blender::ui::Layout &layout = *menu->layout;
-  layout.operator_context_set(blender::wm::OpCallContext::InvokeDefault);
+  ui::Layout &layout = *menu->layout;
+  layout.operator_context_set(wm::OpCallContext::InvokeDefault);
   wmOperatorType *ot = WM_operatortype_find("FILE_OT_external_operation", true);
 
   if (fileentry->typeflag & FILE_TYPE_DIR) {
@@ -2052,7 +2053,7 @@ static void file_os_operations_menu_draw(const bContext *C_const, Menu *menu)
 
 static bool file_os_operations_menu_poll(const bContext *C_const, MenuType * /*mt*/)
 {
-  bContext *C = (bContext *)C_const;
+  bContext *C = const_cast<bContext *>(C_const);
 
   /* File browsing only operator (not asset browsing). */
   if (!ED_operator_file_browsing_active(C)) {
@@ -2593,8 +2594,7 @@ static wmOperatorStatus file_smoothscroll_invoke(bContext *C,
   RNA_int_set(&op_ptr, "deltax", deltax);
   RNA_int_set(&op_ptr, "deltay", deltay);
 
-  WM_operator_name_call(
-      C, "VIEW2D_OT_pan", blender::wm::OpCallContext::ExecDefault, &op_ptr, event);
+  WM_operator_name_call(C, "VIEW2D_OT_pan", wm::OpCallContext::ExecDefault, &op_ptr, event);
   WM_operator_properties_free(&op_ptr);
 
   ED_region_tag_redraw(region);
@@ -2797,7 +2797,7 @@ static wmOperatorStatus file_directory_new_invoke(bContext *C,
                                   IFACE_("Create new directory?"),
                                   nullptr,
                                   IFACE_("Create"),
-                                  blender::ui::AlertIcon::None,
+                                  ui::AlertIcon::None,
                                   false);
   }
   return file_directory_new_exec(C, op);
@@ -3023,7 +3023,7 @@ void file_directory_enter_handle(bContext *C, void * /*arg_unused*/, void * /*ar
         STRNCPY(params->dir, lastdir);
       }
 
-      WM_operator_name_call_ptr(C, ot, blender::wm::OpCallContext::InvokeDefault, &ptr, nullptr);
+      WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &ptr, nullptr);
       WM_operator_properties_free(&ptr);
     }
   }
@@ -3040,7 +3040,7 @@ void file_filename_enter_handle(bContext *C, void * /*arg_unused*/, void *arg_bu
   }
 
   const Main *bmain = CTX_data_main(C);
-  blender::ui::Button *but = static_cast<blender::ui::Button *>(arg_but);
+  ui::Button *but = static_cast<ui::Button *>(arg_but);
 
   file_expand_directory(bmain, params);
 
@@ -3226,7 +3226,7 @@ static void file_rename_state_activate(SpaceFile *sfile, int file_idx, bool requ
 static wmOperatorStatus file_rename_exec(bContext *C, wmOperator * /*op*/)
 {
   ScrArea *area = CTX_wm_area(C);
-  SpaceFile *sfile = (SpaceFile *)CTX_wm_space_data(C);
+  SpaceFile *sfile = reinterpret_cast<SpaceFile *>(CTX_wm_space_data(C));
   FileSelectParams *params = ED_fileselect_get_active_params(sfile);
 
   if (params) {
@@ -3339,7 +3339,7 @@ static wmOperatorStatus file_delete_invoke(bContext *C, wmOperator *op, const wm
                                 IFACE_("Delete selected files?"),
                                 nullptr,
                                 IFACE_("Delete"),
-                                blender::ui::AlertIcon::None,
+                                ui::AlertIcon::None,
                                 false);
 }
 
@@ -3369,8 +3369,8 @@ static wmOperatorStatus file_start_filter_exec(bContext *C, wmOperator * /*op*/)
   const FileSelectParams *params = ED_fileselect_get_active_params(sfile);
 
   if (area) {
-    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-      if (blender::ui::textbutton_activate_rna(C, region, params, "filter_search")) {
+    for (ARegion &region : area->regionbase) {
+      if (ui::textbutton_activate_rna(C, &region, params, "filter_search")) {
         break;
       }
     }
@@ -3405,8 +3405,8 @@ static wmOperatorStatus file_edit_directory_path_exec(bContext *C, wmOperator * 
   const FileSelectParams *params = ED_fileselect_get_active_params(sfile);
 
   if (area) {
-    LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-      if (blender::ui::textbutton_activate_rna(C, region, params, "directory")) {
+    for (ARegion &region : area->regionbase) {
+      if (ui::textbutton_activate_rna(C, &region, params, "directory")) {
         break;
       }
     }
@@ -3442,3 +3442,5 @@ void ED_operatormacros_file()
 }
 
 /** \} */
+
+}  // namespace blender

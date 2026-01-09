@@ -12,17 +12,14 @@
 #include "DNA_listBase.h"
 #include "DNA_uuid_types.h"
 
-#ifdef __cplusplus
-#  include <memory>
+#include <memory>
 
 namespace blender {
-class StringRef;
-}
-namespace blender::asset_system {
-class AssetLibrary;
-}  // namespace blender::asset_system
 
-#endif
+class StringRef;
+namespace asset_system {
+class AssetLibrary;
+}  // namespace asset_system
 
 enum eAssetLibraryType {
   /** Display assets from the current session (current "Main"). */
@@ -198,8 +195,8 @@ struct AssetWeakReference {
   /**
    * See AssetRepresentation::make_weak_reference().
    */
-  static AssetWeakReference make_reference(const blender::asset_system::AssetLibrary &library,
-                                           blender::StringRef library_relative_identifier);
+  static AssetWeakReference make_reference(const asset_system::AssetLibrary &library,
+                                           StringRef library_relative_identifier);
 #endif
 };
 
@@ -207,3 +204,5 @@ struct AssetCatalogPathLink {
   struct AssetCatalogPathLink *next = nullptr, *prev = nullptr;
   char *path = nullptr;
 };
+
+}  // namespace blender

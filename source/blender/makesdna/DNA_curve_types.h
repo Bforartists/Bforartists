@@ -14,11 +14,11 @@
 #include "DNA_listBase.h"
 #include "DNA_object_types.h"
 
-#ifdef __cplusplus
-#  include "BLI_map.hh"
+#include "BLI_map.hh"
 
-#  include <optional>
-#endif
+#include <optional>
+
+namespace blender {
 
 struct AnimData;
 struct Curves;
@@ -179,11 +179,7 @@ struct TextBox {
   float x = 0, y = 0, w = 0, h = 0;
 };
 
-#ifdef __cplusplus
-using CVKeyIndexMap = blender::Map<const void *, struct CVKeyIndex *>;
-#else
-struct CVKeyIndexMap;
-#endif
+using CVKeyIndexMap = Map<const void *, struct CVKeyIndex *>;
 
 /* These two Lines with # tell `makesdna` this struct can be excluded. */
 #
@@ -417,3 +413,5 @@ struct Curve {
 
 #define BEZT_IS_AUTOH(bezt) \
   (ELEM((bezt)->h1, HD_AUTO, HD_AUTO_ANIM) && ELEM((bezt)->h2, HD_AUTO, HD_AUTO_ANIM))
+
+}  // namespace blender

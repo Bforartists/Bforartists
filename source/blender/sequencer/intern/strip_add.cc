@@ -125,42 +125,42 @@ static void strip_add_set_view_transform(Scene *scene, Strip *strip, LoadData *l
   }
 }
 
-Strip *add_scene_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_scene_strip(Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
   Strip *strip = strip_alloc(
       seqbase, load_data->start_frame, load_data->channel, STRIP_TYPE_SCENE);
   strip->scene = load_data->scene;
   strip->len = load_data->scene->r.efra - load_data->scene->r.sfra + 1;
-  id_us_ensure_real((ID *)load_data->scene);
+  id_us_ensure_real(id_cast<ID *>(load_data->scene));
   strip_add_set_name(scene, strip, load_data);
   strip_add_generic_update(scene, strip);
   return strip;
 }
 
-Strip *add_movieclip_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_movieclip_strip(Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
   Strip *strip = strip_alloc(
       seqbase, load_data->start_frame, load_data->channel, STRIP_TYPE_MOVIECLIP);
   strip->clip = load_data->clip;
   strip->len = BKE_movieclip_get_duration(load_data->clip);
-  id_us_ensure_real((ID *)load_data->clip);
+  id_us_ensure_real(id_cast<ID *>(load_data->clip));
   strip_add_set_name(scene, strip, load_data);
   strip_add_generic_update(scene, strip);
   return strip;
 }
 
-Strip *add_mask_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_mask_strip(Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
   Strip *strip = strip_alloc(seqbase, load_data->start_frame, load_data->channel, STRIP_TYPE_MASK);
   strip->mask = load_data->mask;
   strip->len = BKE_mask_get_duration(load_data->mask);
-  id_us_ensure_real((ID *)load_data->mask);
+  id_us_ensure_real(id_cast<ID *>(load_data->mask));
   strip_add_set_name(scene, strip, load_data);
   strip_add_generic_update(scene, strip);
   return strip;
 }
 
-Strip *add_effect_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_effect_strip(Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
   Strip *strip = strip_alloc(
       seqbase, load_data->start_frame, load_data->channel, load_data->effect.type);
@@ -232,7 +232,7 @@ void add_image_init_alpha_mode(Main *bmain, Scene *scene, Strip *strip)
   }
 }
 
-Strip *add_image_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_image_strip(Main *bmain, Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
   Strip *strip = strip_alloc(
       seqbase, load_data->start_frame, load_data->channel, STRIP_TYPE_IMAGE);
@@ -275,6 +275,12 @@ Strip *add_image_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *l
     IMB_freeImBuf(ibuf);
   }
 
+  /* Adjust starting length of strip from handle to handle.
+   * Note that this differs from the content `strip->len`, which is always 1 for single images. */
+  if (seq::transform_single_image_check(strip)) {
+    strip->right_handle_set(scene, load_data->start_frame + load_data->image.length);
+  }
+
   strip_add_set_view_transform(scene, strip, load_data);
   strip_add_set_name(scene, strip, load_data);
   strip_add_generic_update(scene, strip);
@@ -299,19 +305,19 @@ void add_sound_av_sync(Main *bmain, Scene *scene, Strip *strip, LoadData *load_d
   transform_translate_strip(scene, strip, frame_offset);
 }
 
-Strip *add_sound_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_sound_strip(Main *bmain, Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
-  bSound *sound = BKE_sound_new_file(bmain, load_data->path); /* Handles relative paths. */
+  bSound *sound = BKE_sound_new_file_exists(bmain, load_data->path); /* Handles relative paths. */
   SoundInfo info;
   bool sound_loaded = BKE_sound_info_get(bmain, sound, &info);
 
   if (!sound_loaded && !load_data->allow_invalid_file) {
-    BKE_id_free(bmain, sound);
+    BKE_id_free_us(bmain, sound);
     return nullptr;
   }
 
   if (info.specs.channels == SOUND_CHANNELS_INVALID && !load_data->allow_invalid_file) {
-    BKE_id_free(bmain, sound);
+    BKE_id_free_us(bmain, sound);
     return nullptr;
   }
 
@@ -368,14 +374,14 @@ void add_sound_av_sync(Main * /*bmain*/,
 
 Strip *add_sound_strip(Main * /*bmain*/,
                        Scene * /*scene*/,
-                       ListBase * /*seqbase*/,
+                       ListBaseT<Strip> * /*seqbase*/,
                        LoadData * /*load_data*/)
 {
   return nullptr;
 }
 #endif  // WITH_AUDASPACE
 
-Strip *add_meta_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_meta_strip(Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
   /* Allocate strip. */
   Strip *strip_meta = strip_alloc(
@@ -393,7 +399,7 @@ Strip *add_meta_strip(Scene *scene, ListBase *seqbase, LoadData *load_data)
   return strip_meta;
 }
 
-Strip *add_movie_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *load_data)
+Strip *add_movie_strip(Main *bmain, Scene *scene, ListBaseT<Strip> *seqbase, LoadData *load_data)
 {
   char filepath[sizeof(load_data->path)];
   STRNCPY(filepath, load_data->path);
@@ -403,6 +409,7 @@ Strip *add_movie_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *l
   bool is_multiview_loaded = false;
   const int totfiles = seq_num_files(scene, load_data->views_format, load_data->use_multiview);
   Array<MovieReader *> anim_arr(totfiles, nullptr);
+
   int orig_width = 0;
   int orig_height = 0;
 
@@ -475,14 +482,19 @@ Strip *add_movie_strip(Main *bmain, Scene *scene, ListBase *seqbase, LoadData *l
     *strip->stereo3d_format = *load_data->stereo3d_format;
   }
 
-  for (MovieReader *anim : anim_arr) {
-    if (anim) {
-      strip->runtime->movie_readers.append(anim);
+  BLI_SCOPED_DEFER([&]() {
+    for (MovieReader *mr : anim_arr) {
+      if (!mr) {
+        continue;
+      }
+      if (strip->intersects_frame(scene, scene->r.cfra)) {
+        strip->runtime->movie_readers.append(mr);
+      }
+      else {
+        MOV_close(mr);
+      }
     }
-    else {
-      break;
-    }
-  }
+  });
 
   if (anim_arr[0] != nullptr) {
     strip->len = MOV_get_duration_frames(anim_arr[0], IMB_TC_RECORD_RUN);

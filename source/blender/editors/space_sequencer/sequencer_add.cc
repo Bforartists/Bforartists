@@ -325,7 +325,7 @@ static void sequencer_generic_invoke_path__internal(bContext *C,
 
 static int find_unlocked_unmuted_channel(const Editing *ed, int channel_index)
 {
-  const ListBase *channels = seq::channels_displayed_get(ed);
+  const ListBaseT<SeqTimelineChannel> *channels = seq::channels_displayed_get(ed);
 
   while (channel_index < seq::MAX_CHANNELS) {
     SeqTimelineChannel *channel = seq::channel_get_by_index(channels, channel_index);
@@ -350,12 +350,12 @@ static int sequencer_generic_invoke_xy_guess_channel(bContext *C, int type)
     return 1;
   }
 
-  LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
-    const int strip_end = strip->right_handle(scene);
-    if (ELEM(type, -1, strip->type) && (strip_end <= timeline_frame) &&
+  for (Strip &strip : *ed->current_strips()) {
+    const int strip_end = strip.right_handle(scene);
+    if (ELEM(type, -1, strip.type) && (strip_end <= timeline_frame) &&
         (timeline_frame - strip_end < proximity))
     {
-      tgt = strip;
+      tgt = &strip;
       proximity = timeline_frame - strip_end;
     }
   }
@@ -661,8 +661,8 @@ static void seq_load_apply_generic_options(bContext *C, wmOperator *op, Strip *s
     strip_col.add(strip);
 
     ScrArea *area = CTX_wm_area(C);
-    const bool use_sync_markers = (((SpaceSeq *)area->spacedata.first)->flag & SEQ_MARKER_TRANS) !=
-                                  0;
+    const bool use_sync_markers = ((static_cast<SpaceSeq *>(area->spacedata.first))->flag &
+                                   SEQ_MARKER_TRANS) != 0;
     seq::transform_handle_overlap(scene, ed->current_strips(), strip_col, use_sync_markers);
   }
   else {
@@ -1166,11 +1166,11 @@ static IMB_Proxy_Size seq_get_proxy_size_flags(bContext *C)
 {
   bScreen *screen = CTX_wm_screen(C);
   IMB_Proxy_Size proxy_sizes = IMB_PROXY_NONE;
-  LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
-    LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
-      switch (sl->spacetype) {
+  for (ScrArea &area : screen->areabase) {
+    for (SpaceLink &sl : area.spacedata) {
+      switch (sl.spacetype) {
         case SPACE_SEQ: {
-          SpaceSeq *sseq = (SpaceSeq *)sl;
+          SpaceSeq *sseq = reinterpret_cast<SpaceSeq *>(&sl);
           if (!ELEM(sseq->view, SEQ_VIEW_PREVIEW, SEQ_VIEW_SEQUENCE_PREVIEW)) {
             continue;
           }
@@ -1293,7 +1293,7 @@ static void sequencer_add_movie_multiple_strips(bContext *C,
   if (overlap_shuffle_override) {
     if (has_seq_overlap) {
       ScrArea *area = CTX_wm_area(C);
-      const bool use_sync_markers = (((SpaceSeq *)area->spacedata.first)->flag &
+      const bool use_sync_markers = ((static_cast<SpaceSeq *>(area->spacedata.first))->flag &
                                      SEQ_MARKER_TRANS) != 0;
       seq::transform_handle_overlap(scene, ed->current_strips(), added_strips, use_sync_markers);
     }
@@ -1349,7 +1349,7 @@ static bool sequencer_add_movie_single_strip(bContext *C,
 
     if (has_seq_overlap) {
       ScrArea *area = CTX_wm_area(C);
-      const bool use_sync_markers = (((SpaceSeq *)area->spacedata.first)->flag &
+      const bool use_sync_markers = ((static_cast<SpaceSeq *>(area->spacedata.first))->flag &
                                      SEQ_MARKER_TRANS) != 0;
       seq::transform_handle_overlap(scene, ed->current_strips(), added_strips, use_sync_markers);
     }
@@ -1769,10 +1769,10 @@ static void sequencer_add_image_strip_load_files(wmOperator *op,
   }
   else {
     size_t strip_frame = 0;
-    LISTBASE_FOREACH (ImageFrame *, frame, &range->frames) {
+    for (ImageFrame &frame : range->frames) {
       char filename[FILE_MAX];
       frame_filename_set(
-          filename, sizeof(filename), filename_stripped, frame->framenr, numdigits, ext);
+          filename, sizeof(filename), filename_stripped, frame.framenr, numdigits, ext);
       seq::add_image_load_file(scene, strip, strip_frame, filename);
       strip_frame++;
     }
@@ -1819,9 +1819,6 @@ static bool sequencer_add_image_sequence_force(bContext *C,
   RNA_END;
 
   seq::add_image_init_alpha_mode(bmain, scene, strip);
-  if (load_data.image.count == 1) {
-    strip->right_handle_set(scene, load_data.start_frame + load_data.image.length);
-  }
   seq_load_apply_generic_options(C, op, strip);
   return true;
 }
@@ -1833,7 +1830,8 @@ static bool sequencer_add_images(bContext *C, wmOperator *op, seq::LoadData &loa
   Editing *ed = seq::editing_ensure(scene);
 
   const char *blendfile_path = BKE_main_blendfile_path(bmain);
-  ListBase ranges = ED_image_filesel_detect_sequences(blendfile_path, blendfile_path, op, false);
+  ListBaseT<ImageFrameRange> ranges = ED_image_filesel_detect_sequences(
+      blendfile_path, blendfile_path, op, false);
   if (BLI_listbase_is_empty(&ranges)) {
     sequencer_add_free(C, op);
     return false;
@@ -1844,15 +1842,14 @@ static bool sequencer_add_images(bContext *C, wmOperator *op, seq::LoadData &loa
   }
 
   const bool use_placeholders = RNA_boolean_get(op->ptr, "use_placeholders");
-  LISTBASE_FOREACH (ImageFrameRange *, range, &ranges) {
+  for (ImageFrameRange &range : ranges) {
     /* Populate `load_data` with data from `range`. */
-    load_data.image.count = use_placeholders ? range->max_framenr - range->offset + 1 :
-                                               BLI_listbase_count(&range->frames);
-    STRNCPY(load_data.path, range->filepath);
+    load_data.image.count = use_placeholders ? range.max_framenr - range.offset + 1 :
+                                               BLI_listbase_count(&range.frames);
+    STRNCPY(load_data.path, range.filepath);
     BLI_path_split_file_part(load_data.path, load_data.name, sizeof(load_data.name));
 
     Strip *strip = seq::add_image_strip(bmain, scene, ed->current_strips(), &load_data);
-    const bool is_sequence = !seq::transform_single_image_check(strip);
 
     char dirpath[sizeof(strip->data->dirpath)];
     BLI_path_split_dir_part(load_data.path, dirpath, sizeof(dirpath));
@@ -1860,19 +1857,14 @@ static bool sequencer_add_images(bContext *C, wmOperator *op, seq::LoadData &loa
 
     /* Set `StripElem` filenames, one for each `ImageFrame` in this range, or if `use_placeholders`
      * is set, every frame between `offset` and `max_framenr` . */
-    sequencer_add_image_strip_load_files(op, scene, strip, &load_data, range);
+    sequencer_add_image_strip_load_files(op, scene, strip, &load_data, &range);
 
     seq::add_image_init_alpha_mode(bmain, scene, strip);
 
-    /* Adjust starting length of strip.
-     * Note that this length differs from `strip->len`, which is always 1 for single images. */
-    if (!is_sequence) {
-      strip->right_handle_set(scene, load_data.start_frame + load_data.image.length);
-    }
-
     seq_load_apply_generic_options(C, op, strip);
-    load_data.start_frame += is_sequence ? load_data.image.count : load_data.image.length;
-    BLI_freelistN(&range->frames);
+    load_data.start_frame += seq::transform_single_image_check(strip) ? load_data.image.length :
+                                                                        load_data.image.count;
+    BLI_freelistN(&range.frames);
   }
   BLI_freelistN(&ranges);
   return true;
@@ -1904,7 +1896,8 @@ static wmOperatorStatus sequencer_add_image_strip_exec(bContext *C, wmOperator *
     }
   }
   else {
-    /* Note that `use_sequence_detection` is false for `ImageImport::Individual`.*/
+    /* Note that `use_sequence_detection` is false when import type is `ImageImport::Individual`.
+     * This is used by `ED_image_filesel_detect_sequences`, called from `sequencer_add_images`. */
     RNA_boolean_set(op->ptr, "use_sequence_detection", import_type == ImageImport::Detect);
     if (!sequencer_add_images(C, op, load_data)) {
       return OPERATOR_CANCELLED;
@@ -2071,7 +2064,7 @@ static wmOperatorStatus sequencer_add_effect_strip_exec(bContext *C, wmOperator 
   seq_load_apply_generic_options(C, op, strip);
 
   if (strip->type == STRIP_TYPE_COLOR) {
-    SolidColorVars *colvars = (SolidColorVars *)strip->effectdata;
+    SolidColorVars *colvars = static_cast<SolidColorVars *>(strip->effectdata);
     RNA_float_get_array(op->ptr, "color", colvars->col);
   }
 

@@ -22,7 +22,10 @@
 #include "DNA_userdef_enums.h"
 #include "DNA_vec_types.h"
 
+namespace blender {
+
 struct IDProperty;
+struct bUserMenuItem;
 
 /** #UserDef.flag */
 enum eUserPref_Flag {
@@ -583,7 +586,7 @@ struct bUserMenu {
   char space_type = 0;
   char _pad0[7] = {};
   char context[64] = "";
-  ListBaseT<struct bUserMenuItem> items = {nullptr, nullptr};
+  ListBaseT<bUserMenuItem> items = {nullptr, nullptr};
 };
 
 /** May be part of #bUserMenu or other list. */
@@ -599,7 +602,7 @@ struct bUserMenuItem_Op {
   char op_idname[64] = "";
   struct IDProperty *prop = nullptr;
   char op_prop_enum[64] = "";
-  char opcontext = 0; /* #blender::wm::OpCallContext */
+  char opcontext = 0; /* #wm::OpCallContext */
   char _pad0[7] = {};
 };
 
@@ -1241,3 +1244,5 @@ struct UserDef {
 
 /** From `source/blender/blenkernel/intern/blender.cc`. */
 extern UserDef U;
+
+}  // namespace blender

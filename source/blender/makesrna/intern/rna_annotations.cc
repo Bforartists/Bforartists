@@ -22,6 +22,7 @@
 
 #  include "BLT_translation.hh"
 
+#  include "BLI_listbase.h"
 #  include "BLI_math_base.h"
 #  include "BLI_string.h"
 #  include "BLI_string_utf8.h"
@@ -35,6 +36,8 @@
 #  include "DEG_depsgraph.hh"
 
 #  include "WM_api.hh"
+
+namespace blender {
 
 static bGPdata *rna_annotations(const PointerRNA *ptr)
 {
@@ -169,10 +172,10 @@ static void rna_annotation_layer_info_set(PointerRNA *ptr, const char *value)
   BKE_animdata_fix_paths_rename_all(&gpd->id, "layers", oldname, gpl->info);
 
   /* Fix mask layers. */
-  LISTBASE_FOREACH (bGPDlayer *, gpl_, &gpd->layers) {
-    LISTBASE_FOREACH (bGPDlayer_Mask *, mask, &gpl_->mask_layers) {
-      if (STREQ(mask->name, oldname)) {
-        STRNCPY(mask->name, gpl->info);
+  for (bGPDlayer &gpl_ : gpd->layers) {
+    for (bGPDlayer_Mask &mask : gpl_.mask_layers) {
+      if (STREQ(mask.name, oldname)) {
+        STRNCPY(mask.name, gpl->info);
       }
     }
   }
@@ -243,7 +246,11 @@ static const EnumPropertyItem *rna_annotation_active_layer_itemf(bContext *C,
   return item;
 }
 
+}  // namespace blender
+
 #else
+
+namespace blender {
 
 static void rna_def_annotation_stroke_point(BlenderRNA *brna)
 {
@@ -571,5 +578,7 @@ void RNA_def_annotations(BlenderRNA *brna)
   rna_def_annotation_stroke(brna);
   rna_def_annotation_stroke_point(brna);
 }
+
+}  // namespace blender
 
 #endif

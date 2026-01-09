@@ -16,26 +16,17 @@
 
 #include "DNA_ID.h"
 
+namespace blender {
+
 /** Workaround to forward-declare C++ type in C header. */
-#ifdef __cplusplus
-namespace blender::bke {
+namespace bke {
 struct WindowManagerRuntime;
 struct WindowRuntime;
-}  // namespace blender::bke
-using WindowManagerRuntimeHandle = blender::bke::WindowManagerRuntime;
-using WindowRuntimeHandle = blender::bke::WindowRuntime;
+}  // namespace bke
 
-namespace blender::ui {
+namespace ui {
 struct Layout;
-}  // namespace blender::ui
-using uiLayoutHandle = blender::ui::Layout;
-
-#else   // __cplusplus
-
-struct WindowManagerRuntimeHandle;
-struct WindowRuntimeHandle;
-struct uiLayoutHandle;
-#endif  // __cplusplus
+}  // namespace ui
 
 #ifdef hyper /* MSVC defines. */
 #  undef hyper
@@ -150,7 +141,7 @@ struct wmWindowManager {
   wmXrData xr;
   // #endif
 
-  WindowManagerRuntimeHandle *runtime = nullptr;
+  bke::WindowManagerRuntime *runtime = nullptr;
 };
 
 #define WM_KEYCONFIG_ARRAY_P(wm) \
@@ -269,7 +260,7 @@ struct wmWindow {
   /** Properties for stereoscopic displays. */
   struct Stereo3dFormat *stereo3d_format = nullptr;
 
-  WindowRuntimeHandle *runtime = nullptr;
+  bke::WindowRuntime *runtime = nullptr;
 };
 
 #ifdef ime_data
@@ -512,7 +503,9 @@ struct wmOperator {
   /** Current running macro, not saved. */
   struct wmOperator *opm = nullptr;
   /** Runtime for drawing. */
-  uiLayoutHandle *layout = nullptr;
+  ui::Layout *layout = nullptr;
   short flag = 0;
   char _pad[6] = {};
 };
+
+}  // namespace blender

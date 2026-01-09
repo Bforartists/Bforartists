@@ -199,7 +199,7 @@ class LayerViewItemDragController : public AbstractViewItemDragController {
     return drag_data;
   }
 
-  void on_drag_start(bContext & /*C*/) override
+  void on_drag_start(bContext & /*C*/, AbstractViewItem & /*item*/) override
   {
     grease_pencil_.set_active_node(&dragged_node_);
   }
@@ -535,8 +535,8 @@ void LayerTreeView::build_tree_node_recursive(TreeViewOrItem &parent, TreeNode &
   else if (node.is_group()) {
     LayerGroupViewItem &group_item = parent.add_tree_item<LayerGroupViewItem>(this->grease_pencil_,
                                                                               node.as_group());
-    LISTBASE_FOREACH_BACKWARD (GreasePencilLayerTreeNode *, node_, &node.as_group().children) {
-      build_tree_node_recursive(group_item, node_->wrap());
+    for (GreasePencilLayerTreeNode &node_ : node.as_group().children.items_reversed()) {
+      build_tree_node_recursive(group_item, node_.wrap());
     }
   }
 }
@@ -544,17 +544,17 @@ void LayerTreeView::build_tree_node_recursive(TreeViewOrItem &parent, TreeNode &
 void LayerTreeView::build_tree()
 {
   using namespace blender::bke::greasepencil;
-  LISTBASE_FOREACH_BACKWARD (
-      GreasePencilLayerTreeNode *, node, &this->grease_pencil_.root_group_ptr->children)
+  for (GreasePencilLayerTreeNode &node :
+       this->grease_pencil_.root_group_ptr->children.items_reversed())
   {
-    this->build_tree_node_recursive(*this, node->wrap());
+    this->build_tree_node_recursive(*this, node.wrap());
   }
 }
 }  // namespace greasepencil
 
 void template_grease_pencil_layer_tree(Layout *layout, bContext *C)
 {
-  GreasePencil *grease_pencil = blender::ed::greasepencil::from_context(*C);
+  GreasePencil *grease_pencil = ed::greasepencil::from_context(*C);
 
   if (grease_pencil == nullptr) {
     return;

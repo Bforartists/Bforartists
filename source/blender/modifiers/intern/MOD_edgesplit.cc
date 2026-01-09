@@ -35,6 +35,8 @@
 
 #include "GEO_randomize.hh"
 
+namespace blender {
+
 /* For edge split modifier node. */
 Mesh *doEdgeSplit(const Mesh *mesh, EdgeSplitModifierData *emd);
 
@@ -101,21 +103,21 @@ Mesh *doEdgeSplit(const Mesh *mesh, EdgeSplitModifierData *emd)
   result = BKE_mesh_from_bmesh_for_eval_nomain(bm, nullptr, mesh);
   BM_mesh_free(bm);
 
-  blender::geometry::debug_randomize_mesh_order(result);
+  geometry::debug_randomize_mesh_order(result);
 
   return result;
 }
 
 static void init_data(ModifierData *md)
 {
-  EdgeSplitModifierData *emd = (EdgeSplitModifierData *)md;
+  EdgeSplitModifierData *emd = reinterpret_cast<EdgeSplitModifierData *>(md);
   INIT_DEFAULT_STRUCT_AFTER(emd, modifier);
 }
 
 static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, Mesh *mesh)
 {
   Mesh *result;
-  EdgeSplitModifierData *emd = (EdgeSplitModifierData *)md;
+  EdgeSplitModifierData *emd = reinterpret_cast<EdgeSplitModifierData *>(md);
 
   if (!(emd->flags & (MOD_EDGESPLIT_FROMANGLE | MOD_EDGESPLIT_FROMFLAG))) {
     return mesh;
@@ -128,15 +130,15 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  blender::ui::Layout &layout = *panel->layout;
-  blender::ui::Layout *row, *col; /*bfa, added *col, removed *sub*/
+  ui::Layout &layout = *panel->layout;
+  ui::Layout *row, *col; /*bfa, added *col, removed *sub*/
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
 
   layout.use_property_split_set(true);
 
   /* NOTE: split amount here needs to be synced with normal labels */
-  blender::ui::Layout *split = &layout.split(0.385f, true);
+  ui::Layout *split = &layout.split(0.385f, true);
 
   row = &split->row(false); /* bfa - our layout */
   row->use_property_decorate_set(false);
@@ -203,3 +205,5 @@ ModifierTypeInfo modifierType_EdgeSplit = {
     /*foreach_cache*/ nullptr,
     /*foreach_working_space_color*/ nullptr,
 };
+
+}  // namespace blender

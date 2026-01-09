@@ -2335,23 +2335,23 @@ static void widget_draw_extra_icons(const uiWidgetColors *wcol,
   }
 
   /* Inverse order, from right to left. */
-  LISTBASE_FOREACH_BACKWARD (ButtonExtraOpIcon *, op_icon, &but->extra_op_icons) {
+  for (ButtonExtraOpIcon &op_icon : but->extra_op_icons.items_reversed()) {
     rcti temp = *rect;
     float alpha_this = alpha;
 
     temp.xmin = temp.xmax - icon_size;
 
-    if (op_icon->disabled) {
+    if (op_icon.disabled) {
       alpha_this *= 0.4f;
     }
-    else if (!op_icon->highlighted) {
+    else if (!op_icon.highlighted) {
       alpha_this *= 0.75f;
     }
 
     /* Draw the icon at the center, and restore the flags after. */
     const int old_drawflags = but->drawflag;
     button_drawflag_disable(but, BUT_ICON_LEFT);
-    widget_draw_icon(but, op_icon->icon, alpha_this, &temp, wcol->text);
+    widget_draw_icon(but, op_icon.icon, alpha_this, &temp, wcol->text);
     but->drawflag = old_drawflags;
 
     rect->xmax -= icon_size;
@@ -2375,7 +2375,7 @@ static void widget_draw_node_link_socket(const uiWidgetColors *wcol,
     widgetbase_draw_cache_flush();
     GPU_blend(GPU_BLEND_NONE);
 
-    blender::ed::space_node::node_socket_draw(
+    ed::space_node::node_socket_draw(
         static_cast<bNodeSocket *>(but->custom_data), rect, col, scale);
   }
   else {
@@ -3395,7 +3395,7 @@ void hsvcube_pos_from_vals(
 
 static void ui_draw_but_HSVCUBE(Button *but, const rcti *rect)
 {
-  const ButtonHSVCube *hsv_but = (ButtonHSVCube *)but;
+  const ButtonHSVCube *hsv_but = static_cast<ButtonHSVCube *>(but);
   float rgb[3], rgb_perceptual[3];
   float x = 0.0f, y = 0.0f;
   const ColorManagedDisplay *display = block_cm_display_get(but->block);
@@ -3473,7 +3473,7 @@ static void ui_draw_but_HSVCUBE(Button *but, const rcti *rect)
 /* vertical 'value' slider, using new widget code */
 static void ui_draw_but_HSV_v(Button *but, const rcti *rect)
 {
-  const ButtonHSVCube *hsv_but = (ButtonHSVCube *)but;
+  const ButtonHSVCube *hsv_but = static_cast<ButtonHSVCube *>(but);
   float rgb[3], hsv[3], v;
 
   button_v3_get(but, rgb);
@@ -4023,12 +4023,12 @@ static void widget_nodesocket(Button *but,
   widgetbase_draw_cache_flush();
   GPU_blend(GPU_BLEND_NONE);
 
-  blender::ed::space_node::node_draw_nodesocket(&socket_rect,
-                                                socket_color,
-                                                outline_color,
-                                                U.pixelsize,
-                                                SOCK_DISPLAY_SHAPE_CIRCLE,
-                                                1.0f / zoom);
+  ed::space_node::node_draw_nodesocket(&socket_rect,
+                                       socket_color,
+                                       outline_color,
+                                       U.pixelsize,
+                                       SOCK_DISPLAY_SHAPE_CIRCLE,
+                                       1.0f / zoom);
 }
 
 static void widget_numslider(Button *but,
@@ -4156,7 +4156,7 @@ static void widget_swatch(Button *but,
                           const float zoom)
 {
   BLI_assert(but->type == ButtonType::Color);
-  ButtonColor *color_but = (ButtonColor *)but;
+  ButtonColor *color_but = static_cast<ButtonColor *>(but);
   float col[4];
 
   col[3] = 1.0f;
@@ -4211,7 +4211,7 @@ static void widget_swatch(Button *but,
 
   widgetbase_draw_color(&wtb, wcol, col, show_alpha_checkers);
   if (color_but->is_pallete_color &&
-      ((Palette *)but->rnapoin.owner_id)->active_color == color_but->palette_color_index)
+      (id_cast<Palette *>(but->rnapoin.owner_id))->active_color == color_but->palette_color_index)
   {
     const float width = rect->xmax - rect->xmin;
     const float height = rect->ymax - rect->ymin;
@@ -5236,7 +5236,7 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
         break;
 
       case ButtonType::HsvCube: {
-        const ButtonHSVCube *hsv_but = (ButtonHSVCube *)but;
+        const ButtonHSVCube *hsv_but = static_cast<ButtonHSVCube *>(but);
 
         if (ELEM(hsv_but->gradient_type, GRAD_V_ALT, GRAD_L_ALT)) {
           /* vertical V slider, uses new widget draw now */

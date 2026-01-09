@@ -47,7 +47,13 @@
 #include "prefetch.hh"
 #include "render.hh"
 
-namespace blender::seq {
+namespace blender {
+
+struct RenderResult;
+struct Scene;
+struct ThreadSlot;
+
+namespace seq {
 
 struct PrefetchJob {
   PrefetchJob *next = nullptr;
@@ -62,7 +68,7 @@ struct PrefetchJob {
   ThreadMutex prefetch_suspend_mutex = {};
   ThreadCondition prefetch_suspend_cond = {};
 
-  ListBase threads = {};
+  ListBaseT<ThreadSlot> threads = {};
 
   /* context */
   RenderData context = {};
@@ -126,15 +132,15 @@ static bool seq_prefetch_job_is_waiting(Scene *scene)
   return pfjob->waiting;
 }
 
-static Strip *original_strip_get(const Strip *strip, ListBase *seqbase)
+static Strip *original_strip_get(const Strip *strip, ListBaseT<Strip> *seqbase)
 {
-  LISTBASE_FOREACH (Strip *, strip_orig, seqbase) {
-    if (STREQ(strip->name, strip_orig->name)) {
-      return strip_orig;
+  for (Strip &strip_orig : *seqbase) {
+    if (STREQ(strip->name, strip_orig.name)) {
+      return &strip_orig;
     }
 
-    if (strip_orig->type == STRIP_TYPE_META) {
-      Strip *match = original_strip_get(strip, &strip_orig->seqbase);
+    if (strip_orig.type == STRIP_TYPE_META) {
+      Strip *match = original_strip_get(strip, &strip_orig.seqbase);
       if (match != nullptr) {
         return match;
       }
@@ -412,7 +418,7 @@ static VectorSet<Strip *> query_scene_strips(Editing *ed)
   Map<const Scene *, VectorSet<Strip *>> &strips_by_scene = lookup_strips_by_scene_map_get(ed);
 
   VectorSet<Strip *> scene_strips;
-  for (VectorSet<Strip *> strips : strips_by_scene.values()) {
+  for (const VectorSet<Strip *> &strips : strips_by_scene.values()) {
     scene_strips.add_multiple(strips);
   }
   return scene_strips;
@@ -420,8 +426,8 @@ static VectorSet<Strip *> query_scene_strips(Editing *ed)
 
 /* Find whether any scene strips are indirectly rendered, e.g. as mask or effect inputs. */
 static bool seq_prefetch_scene_strip_is_rendered(const Scene *scene,
-                                                 ListBase *channels,
-                                                 ListBase *seqbase,
+                                                 ListBaseT<SeqTimelineChannel> *channels,
+                                                 ListBaseT<Strip> *seqbase,
                                                  Span<Strip *> scene_strips,
                                                  int timeline_frame,
                                                  SeqRenderState state)
@@ -487,7 +493,9 @@ static bool seq_prefetch_scene_strip_is_rendered(const Scene *scene,
 
 /* Prefetch must avoid rendering scene strips, because rendering in background locks UI and can
  * make it unresponsive for long time periods. */
-static bool seq_prefetch_must_skip_frame(PrefetchJob *pfjob, ListBase *channels, ListBase *seqbase)
+static bool seq_prefetch_must_skip_frame(PrefetchJob *pfjob,
+                                         ListBaseT<SeqTimelineChannel> *channels,
+                                         ListBaseT<Strip> *seqbase)
 {
   /* Pass in state to check for infinite recursion of "sequencer-type" scene strips. */
   SeqRenderState state = {};
@@ -519,7 +527,7 @@ static void seq_prefetch_do_suspend(PrefetchJob *pfjob)
 
 static void *seq_prefetch_frames(void *job)
 {
-  PrefetchJob *pfjob = (PrefetchJob *)job;
+  PrefetchJob *pfjob = static_cast<PrefetchJob *>(job);
 
   while (true) {
     if (pfjob->cfra < pfjob->timeline_start || pfjob->cfra > pfjob->timeline_end) {
@@ -542,8 +550,9 @@ static void *seq_prefetch_frames(void *job)
      */
     pfjob->scene_eval->ed->prefetch_job = pfjob;
 
-    ListBase *seqbase = active_seqbase_get(editing_get(pfjob->scene_eval));
-    ListBase *channels = channels_displayed_get(editing_get(pfjob->scene_eval));
+    ListBaseT<Strip> *seqbase = active_seqbase_get(editing_get(pfjob->scene_eval));
+    ListBaseT<SeqTimelineChannel> *channels = channels_displayed_get(
+        editing_get(pfjob->scene_eval));
     if (seq_prefetch_must_skip_frame(pfjob, channels, seqbase)) {
       pfjob->num_frames_prefetched++;
       /* Break instead of keep looping if the job should be terminated. */
@@ -668,4 +677,5 @@ bool prefetch_need_redraw(const bContext *C, Scene *scene)
   return false;
 }
 
-}  // namespace blender::seq
+}  // namespace seq
+}  // namespace blender

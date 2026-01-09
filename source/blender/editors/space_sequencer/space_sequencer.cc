@@ -57,7 +57,7 @@ namespace blender::ed::vse {
 
 static void sequencer_scopes_tag_refresh(ScrArea *area, const Scene *scene)
 {
-  SpaceSeq *sseq = (SpaceSeq *)area->spacedata.first;
+  SpaceSeq *sseq = static_cast<SpaceSeq *>(area->spacedata.first);
   sseq->runtime->scopes.cleanup();
   seq::preview_cache_invalidate(const_cast<Scene *>(scene));
 }
@@ -185,13 +185,13 @@ static SpaceLink *sequencer_create(const ScrArea * /*area*/, const Scene *scene)
   region->v2d.flag |= V2D_VIEWSYNC_AREA_VERTICAL | V2D_ZOOM_IGNORE_KEEPOFS;
   region->v2d.align = V2D_ALIGN_NO_NEG_Y;
 
-  return (SpaceLink *)sseq;
+  return reinterpret_cast<SpaceLink *>(sseq);
 }
 
 /* Not spacelink itself. */
 static void sequencer_free(SpaceLink *sl)
 {
-  SpaceSeq *sseq = (SpaceSeq *)sl;
+  SpaceSeq *sseq = reinterpret_cast<SpaceSeq *>(sl);
   MEM_delete(sseq->runtime);
 
 #if 0
@@ -207,7 +207,7 @@ static void sequencer_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
 static void sequencer_refresh(const bContext *C, ScrArea *area)
 {
   const wmWindow *window = CTX_wm_window(C);
-  SpaceSeq *sseq = (SpaceSeq *)area->spacedata.first;
+  SpaceSeq *sseq = static_cast<SpaceSeq *>(area->spacedata.first);
   ARegion *region_main = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
   ARegion *region_preview = BKE_area_find_region_type(area, RGN_TYPE_PREVIEW);
   bool view_changed = false;
@@ -270,7 +270,7 @@ static SpaceLink *sequencer_duplicate(SpaceLink *sl)
   /* Clear or remove stuff from old. */
   // sseq->gpd = gpencil_data_duplicate(sseq->gpd, false);
 
-  return (SpaceLink *)sseqn;
+  return reinterpret_cast<SpaceLink *>(sseqn);
 }
 
 static void sequencer_listener(const wmSpaceTypeListenerParams *params)
@@ -412,7 +412,7 @@ static void sequencer_gizmos()
 
 static bool sequencer_main_region_poll(const RegionPollParams *params)
 {
-  const SpaceSeq *sseq = (SpaceSeq *)params->area->spacedata.first;
+  const SpaceSeq *sseq = static_cast<SpaceSeq *>(params->area->spacedata.first);
   return ELEM(sseq->view, SEQ_VIEW_SEQUENCE, SEQ_VIEW_SEQUENCE_PREVIEW);
 }
 
@@ -420,7 +420,6 @@ static bool sequencer_main_region_poll(const RegionPollParams *params)
 static void sequencer_main_region_init(wmWindowManager *wm, ARegion *region)
 {
   wmKeyMap *keymap;
-  ListBase *lb;
 
   view2d_region_reinit(&region->v2d, ui::V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
 
@@ -439,7 +438,7 @@ static void sequencer_main_region_init(wmWindowManager *wm, ARegion *region)
       &region->runtime->handlers, keymap, WM_event_handler_region_v2d_mask_no_marker_poll);
 
   /* Add drop boxes. */
-  lb = WM_dropboxmap_find("Sequencer", SPACE_SEQ, RGN_TYPE_WINDOW);
+  ListBaseT<wmDropBox> *lb = WM_dropboxmap_find("Sequencer", SPACE_SEQ, RGN_TYPE_WINDOW);
 
   WM_event_add_dropbox_handler(&region->runtime->handlers, lb);
 }
@@ -686,7 +685,7 @@ static void sequencer_main_cursor(wmWindow *win, ScrArea *area, ARegion *region)
     int mval[2] = {int(mouse_co_region[0]), int(mouse_co_region[1])};
     Strip *strip = strip_under_mouse_get(scene, v2d, mval);
     if (strip != nullptr) {
-      const ListBase *channels = seq::channels_displayed_get(ed);
+      const ListBaseT<SeqTimelineChannel> *channels = seq::channels_displayed_get(ed);
       const bool locked = seq::transform_is_locked(channels, strip);
       if (STREQ(tref->idname, "builtin.blade")) {
         wmcursor = locked ? WM_CURSOR_STOP : WM_CURSOR_BLADE;
@@ -794,8 +793,8 @@ static void sequencer_tools_region_draw(const bContext *C, ARegion *region)
   ScrArea *area = CTX_wm_area(C);
   wm::OpCallContext op_context = wm::OpCallContext::InvokeRegionWin;
 
-  LISTBASE_FOREACH (ARegion *, ar, &area->regionbase) {
-    if (ar->regiontype == RGN_TYPE_PREVIEW && region->regiontype == RGN_TYPE_TOOLS) {
+  for (ARegion &ar : area->regionbase) {
+    if (ar.regiontype == RGN_TYPE_PREVIEW && region->regiontype == RGN_TYPE_TOOLS) {
       op_context = wm::OpCallContext::InvokeRegionPreview;
       break;
     }
@@ -811,7 +810,7 @@ static void sequencer_tools_region_draw(const bContext *C, ARegion *region)
 
 static bool sequencer_preview_region_poll(const RegionPollParams *params)
 {
-  const SpaceSeq *sseq = (SpaceSeq *)params->area->spacedata.first;
+  const SpaceSeq *sseq = static_cast<SpaceSeq *>(params->area->spacedata.first);
   return ELEM(sseq->view, SEQ_VIEW_PREVIEW, SEQ_VIEW_SEQUENCE_PREVIEW);
 }
 
@@ -843,7 +842,7 @@ static void sequencer_preview_region_init(wmWindowManager *wm, ARegion *region)
   keymap = WM_keymap_ensure(wm->runtime->defaultconf, "Frames", SPACE_EMPTY, RGN_TYPE_WINDOW);
   WM_event_add_keymap_handler_v2d_mask(&region->runtime->handlers, keymap);
 
-  ListBase *lb = WM_dropboxmap_find("Sequencer", SPACE_SEQ, RGN_TYPE_PREVIEW);
+  ListBaseT<wmDropBox> *lb = WM_dropboxmap_find("Sequencer", SPACE_SEQ, RGN_TYPE_PREVIEW);
   WM_event_add_dropbox_handler(&region->runtime->handlers, lb);
 }
 
@@ -1060,7 +1059,7 @@ static void sequencer_id_remap(ScrArea * /*area*/,
                                SpaceLink *slink,
                                const bke::id::IDRemapper &mappings)
 {
-  SpaceSeq *sseq = (SpaceSeq *)slink;
+  SpaceSeq *sseq = reinterpret_cast<SpaceSeq *>(slink);
   mappings.apply(reinterpret_cast<ID **>(&sseq->gpd), ID_REMAP_APPLY_DEFAULT);
 }
 
@@ -1074,7 +1073,7 @@ static void sequencer_foreach_id(SpaceLink *space_link, LibraryForeachIDData *da
 
 static bool sequencer_channel_region_poll(const RegionPollParams *params)
 {
-  const SpaceSeq *sseq = (SpaceSeq *)params->area->spacedata.first;
+  const SpaceSeq *sseq = static_cast<SpaceSeq *>(params->area->spacedata.first);
   return ELEM(sseq->view, SEQ_VIEW_SEQUENCE);
 }
 
@@ -1099,7 +1098,7 @@ static void sequencer_channel_region_draw(const bContext *C, ARegion *region)
 
 static void sequencer_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink *sl)
 {
-  SpaceSeq *sseq = (SpaceSeq *)sl;
+  SpaceSeq *sseq = reinterpret_cast<SpaceSeq *>(sl);
   sseq->runtime = MEM_new<SpaceSeq_Runtime>(__func__);
 
   /* grease pencil data is not a direct data and can't be linked from direct_link*

@@ -88,20 +88,20 @@ Vector<Strip *> sequencer_visible_strips_get(const Scene *scene, const View2D *v
   const Editing *ed = seq::editing_get(scene);
   Vector<Strip *> strips;
 
-  LISTBASE_FOREACH (Strip *, strip, ed->current_strips()) {
-    if (min_ii(strip->left_handle(), strip->content_start()) > v2d->cur.xmax) {
+  for (Strip &strip : *ed->current_strips()) {
+    if (min_ii(strip.left_handle(), strip.content_start()) > v2d->cur.xmax) {
       continue;
     }
-    if (max_ii(strip->right_handle(scene), strip->content_end(scene)) < v2d->cur.xmin) {
+    if (max_ii(strip.right_handle(scene), strip.content_end(scene)) < v2d->cur.xmin) {
       continue;
     }
-    if (strip->channel + 1.0f < v2d->cur.ymin) {
+    if (strip.channel + 1.0f < v2d->cur.ymin) {
       continue;
     }
-    if (strip->channel > v2d->cur.ymax) {
+    if (strip.channel > v2d->cur.ymax) {
       continue;
     }
-    strips.append(strip);
+    strips.append(&strip);
   }
   return strips;
 }
@@ -243,12 +243,12 @@ static StripDrawContext strip_draw_context_get(const TimelineDrawContext &ctx, S
   strip_ctx.missing_media = media_presence_is_missing(scene, strip);
   strip_ctx.is_connected = is_strip_connected(strip);
   if (strip->type == STRIP_TYPE_META) {
-    const ListBase *seqbase = &strip->seqbase;
-    LISTBASE_FOREACH (const Strip *, sub, seqbase) {
-      if (!strip_has_valid_data(sub)) {
+    const ListBaseT<Strip> *seqbase = &strip->seqbase;
+    for (const Strip &sub : *seqbase) {
+      if (!strip_has_valid_data(&sub)) {
         strip_ctx.missing_data_block = true;
       }
-      if (media_presence_is_missing(scene, sub)) {
+      if (media_presence_is_missing(scene, &sub)) {
         strip_ctx.missing_media = true;
       }
     }
@@ -427,7 +427,7 @@ static void color3ubv_from_seq(const Scene *curscene,
       break;
   }
 
-  blender::ui::theme::theme_restore(&theme_state);
+  ui::theme::theme_restore(&theme_state);
 }
 
 static void waveform_job_start_if_needed(const bContext *C, const Strip *strip)
@@ -627,10 +627,10 @@ static void drawmeta_contents(const TimelineDrawContext &ctx,
     return;
   }
 
-  ListBase *meta_channels;
+  ListBaseT<SeqTimelineChannel> *meta_channels;
   int offset;
 
-  ListBase *meta_seqbase = get_seqbase_from_strip(strip_meta, &meta_channels, &offset);
+  ListBaseT<Strip> *meta_seqbase = get_seqbase_from_strip(strip_meta, &meta_channels, &offset);
 
   if (!meta_seqbase || BLI_listbase_is_empty(meta_seqbase)) {
     return;
@@ -643,9 +643,9 @@ static void drawmeta_contents(const TimelineDrawContext &ctx,
     offset = 0;
   }
 
-  LISTBASE_FOREACH (Strip *, strip, meta_seqbase) {
-    chan_min = min_ii(chan_min, strip->channel);
-    chan_max = max_ii(chan_max, strip->channel);
+  for (Strip &strip : *meta_seqbase) {
+    chan_min = min_ii(chan_min, strip.channel);
+    chan_max = max_ii(chan_max, strip.channel);
   }
 
   chan_range = (chan_max - chan_min) + 1;
@@ -657,29 +657,29 @@ static void drawmeta_contents(const TimelineDrawContext &ctx,
   const float meta_x2 = strip_ctx.right_handle;
 
   /* Draw only immediate children (1 level depth). */
-  LISTBASE_FOREACH (Strip *, strip, meta_seqbase) {
-    float x1_chan = strip->left_handle() + offset;
-    float x2_chan = strip->right_handle(scene) + offset;
+  for (Strip &strip : *meta_seqbase) {
+    float x1_chan = strip.left_handle() + offset;
+    float x2_chan = strip.right_handle(scene) + offset;
     if (x1_chan <= meta_x2 && x2_chan >= meta_x1) {
-      float y_chan = (strip->channel - chan_min) / float(chan_range) * draw_range;
+      float y_chan = (strip.channel - chan_min) / float(chan_range) * draw_range;
 
-      if (strip->type == STRIP_TYPE_COLOR) {
-        SolidColorVars *colvars = (SolidColorVars *)strip->effectdata;
+      if (strip.type == STRIP_TYPE_COLOR) {
+        SolidColorVars *colvars = static_cast<SolidColorVars *>(strip.effectdata);
         rgb_float_to_uchar(col, colvars->col);
       }
       else {
-        color3ubv_from_seq(scene, strip, strip_ctx.show_strip_color_tag, strip_ctx.is_muted, col);
+        color3ubv_from_seq(scene, &strip, strip_ctx.show_strip_color_tag, strip_ctx.is_muted, col);
       }
 
-      if (strip_ctx.is_muted || render_is_muted(meta_channels, strip)) {
+      if (strip_ctx.is_muted || render_is_muted(meta_channels, &strip)) {
         col[3] = 64;
       }
       else {
         col[3] = 196;
       }
 
-      const bool missing_data = !strip_has_valid_data(strip);
-      const bool missing_media = media_presence_is_missing(scene, strip);
+      const bool missing_data = !strip_has_valid_data(&strip);
+      const bool missing_media = media_presence_is_missing(scene, &strip);
       if (missing_data || missing_media) {
         col[0] = 112;
         col[1] = 0;
@@ -1279,7 +1279,7 @@ static void draw_strips_background(const TimelineDrawContext &ctx,
     /* Color band state. */
     if (show_overlay && (strip.strip->type == STRIP_TYPE_COLOR)) {
       data.flags |= GPU_SEQ_FLAG_COLOR_BAND;
-      SolidColorVars *colvars = (SolidColorVars *)strip.strip->effectdata;
+      SolidColorVars *colvars = static_cast<SolidColorVars *>(strip.strip->effectdata);
       rgb_float_to_uchar(col, colvars->col);
       data.col_color_band = color_pack(col);
     }
@@ -1295,7 +1295,7 @@ static void draw_strips_background(const TimelineDrawContext &ctx,
 
       /* Left side. */
       if (input1->type == STRIP_TYPE_COLOR) {
-        rgb_float_to_uchar(col, ((const SolidColorVars *)input1->effectdata)->col);
+        rgb_float_to_uchar(col, (static_cast<const SolidColorVars *>(input1->effectdata))->col);
       }
       else {
         color3ubv_from_seq(scene, input1, strip.show_strip_color_tag, strip.is_muted, col);
@@ -1304,7 +1304,7 @@ static void draw_strips_background(const TimelineDrawContext &ctx,
 
       /* Right side. */
       if (input2->type == STRIP_TYPE_COLOR) {
-        rgb_float_to_uchar(col, ((const SolidColorVars *)input2->effectdata)->col);
+        rgb_float_to_uchar(col, (static_cast<const SolidColorVars *>(input2->effectdata))->col);
       }
       else {
         color3ubv_from_seq(scene, input2, strip.show_strip_color_tag, strip.is_muted, col);
@@ -1874,7 +1874,7 @@ void draw_timeline_seq_display(const bContext *C, ARegion *region)
 
   if (region->winy > UI_ANIM_MINY) {
     if (const Editing *ed = seq::editing_get(scene)) {
-      const ListBase *seqbase = seq::active_seqbase_get(ed);
+      const ListBaseT<Strip> *seqbase = seq::active_seqbase_get(ed);
       seq::timeline_boundbox(scene, seqbase, &v2d->tot);
       const rcti scroller_mask = ED_time_scrub_clamp_scroller_mask(v2d->mask);
       region->v2d.scroll |= V2D_SCROLL_BOTTOM;

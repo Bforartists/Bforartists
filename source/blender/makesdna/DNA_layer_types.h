@@ -13,17 +13,14 @@
 #include "DNA_scene_enums.h"
 
 #include "BLI_enum_flags.hh"
+#include "BLI_map.hh"
+
+namespace blender {
 
 struct Base;
 struct Object;
 
-#ifdef __cplusplus
-#  include "BLI_map.hh"
-
-using ObjectBasesMap = blender::Map<const Object *, Base *>;
-#else
-struct ObjectBasesMap;
-#endif
+using ObjectBasesMap = Map<const Object *, Base *>;
 
 /**
  * Render-passes for EEVEE.
@@ -247,7 +244,7 @@ struct ViewLayer {
   struct Base *basact = nullptr;
 
   /** A view layer has one top level layer collection, because a scene has only one top level
-   * collection. The layer_collections list always contains a single element. ListBase is
+   * collection. The layer_collections list always contains a single element. ListBaseT is
    * convenient when applying functions to all layer collections recursively. */
   ListBaseT<LayerCollection> layer_collections = {nullptr, nullptr};
   LayerCollection *active_collection = nullptr;
@@ -283,3 +280,5 @@ struct ViewLayer {
   struct Base **object_bases_array = nullptr;
   ObjectBasesMap *object_bases_hash = nullptr;
 };
+
+}  // namespace blender

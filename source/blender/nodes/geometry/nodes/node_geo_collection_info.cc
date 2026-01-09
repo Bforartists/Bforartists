@@ -93,12 +93,12 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (separate_children) {
     const bool reset_children = params.extract_input<bool>("Reset Children");
     Vector<Collection *> children_collections;
-    LISTBASE_FOREACH (CollectionChild *, collection_child, &collection->children) {
-      children_collections.append(collection_child->collection);
+    for (CollectionChild &collection_child : collection->children) {
+      children_collections.append(collection_child.collection);
     }
     Vector<Object *> children_objects;
-    LISTBASE_FOREACH (CollectionObject *, collection_object, &collection->gobject) {
-      children_objects.append(collection_object->ob);
+    for (CollectionObject &collection_object : collection->gobject) {
+      children_objects.append(collection_object.ob);
     }
 
     Vector<InstanceListEntry> entries;
@@ -188,7 +188,7 @@ static void node_rna(StructRNA *srna)
 
 static void node_register()
 {
-  static blender::bke::bNodeType ntype;
+  static bke::bNodeType ntype;
 
   geo_node_type_base(&ntype, "GeometryNodeCollectionInfo", GEO_NODE_COLLECTION_INFO);
   ntype.ui_name = "Collection Info";
@@ -197,11 +197,11 @@ static void node_register()
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = node_declare;
   ntype.initfunc = node_node_init;
-  blender::bke::node_type_storage(
+  bke::node_type_storage(
       ntype, "NodeGeometryCollectionInfo", node_free_standard_storage, node_copy_standard_storage);
   ntype.geometry_node_execute = node_geo_exec;
   ntype.draw_buttons = node_layout;
-  blender::bke::node_register_type(ntype);
+  bke::node_register_type(ntype);
 
   node_rna(ntype.rna_ext.srna);
 }

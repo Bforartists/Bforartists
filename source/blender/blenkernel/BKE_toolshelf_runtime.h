@@ -13,8 +13,6 @@
 extern "C" {
 #endif
 
-struct ARegion;
-
 /**
  * Initialize the toolshelf runtime data system.
  *
@@ -40,7 +38,7 @@ void BKE_toolshelf_runtime_exit(void);
  * \param region: The region to get the offset for
  * \return: The stored offset value, or 0.0f if none is stored
  */
-float BKE_toolshelf_category_tabs_offset_get(const struct ARegion *region);
+float BKE_toolshelf_category_tabs_offset_get(const ARegion *region);
 
 /**
  * Set the category tabs offset for a region.

@@ -95,6 +95,8 @@
 #  include "BLI_threads.h"
 #endif
 
+namespace blender {
+
 static void wm_window_csd_title_redraw_tag(wmWindowManager *wm, wmWindow *win);
 
 /* The global to talk to GHOST. */
@@ -132,8 +134,8 @@ static struct WMInitStruct {
    *   instead of the size stored in the factory startup.
    *   Otherwise the window geometry saved in the blend-file is used and these values are ignored.
    */
-  blender::int2 size;
-  blender::int2 start;
+  int2 size;
+  int2 start;
 
   GHOST_TWindowState windowstate = GHOST_WINDOW_STATE_DEFAULT;
   eWinOverrideFlag override_flag;
@@ -209,7 +211,7 @@ bool wm_get_desktopsize(int r_size[2])
 /** Keeps size within monitor bounds. */
 static void wm_window_check_size(rcti *rect)
 {
-  blender::int2 scr_size;
+  int2 scr_size;
   if (wm_get_screensize(scr_size)) {
     if (BLI_rcti_size_x(rect) > scr_size[0]) {
       BLI_rcti_resize_x(rect, scr_size[0]);
@@ -263,22 +265,22 @@ void wm_window_free(bContext *C, wmWindowManager *wm, wmWindow *win)
   BKE_screen_area_map_free(&win->global_areas);
 
   /* End running jobs, a job end also removes its timer. */
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
-    if (wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
+  for (wmTimer &wt : wm->runtime->timers.items_mutable()) {
+    if (wt.flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
       continue;
     }
-    if (wt->win == win && wt->event_type == TIMERJOBS) {
-      wm_jobs_timer_end(wm, wt);
+    if (wt.win == win && wt.event_type == TIMERJOBS) {
+      wm_jobs_timer_end(wm, &wt);
     }
   }
 
   /* Timer removing, need to call this API function. */
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
-    if (wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
+  for (wmTimer &wt : wm->runtime->timers.items_mutable()) {
+    if (wt.flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
       continue;
     }
-    if (wt->win == win) {
-      WM_event_timer_remove(wm, win, wt);
+    if (wt.win == win) {
+      WM_event_timer_remove(wm, win, &wt);
     }
   }
   wm_window_timers_delete_removed(wm);
@@ -314,9 +316,9 @@ static int find_free_winid(wmWindowManager *wm)
 {
   int id = 1;
 
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (id <= win->winid) {
-      id = win->winid + 1;
+  for (wmWindow &win : wm->windows) {
+    if (id <= win.winid) {
+      id = win.winid + 1;
     }
   }
   return id;
@@ -333,7 +335,7 @@ wmWindow *wm_window_new(const Main *bmain, wmWindowManager *wm, wmWindow *parent
   win->parent = (!dialog && parent && parent->parent) ? parent->parent : parent;
   win->stereo3d_format = MEM_new_for_free<Stereo3dFormat>("Stereo 3D Format (window)");
   win->workspace_hook = BKE_workspace_instance_hook_create(bmain, win->winid);
-  win->runtime = MEM_new<blender::bke::WindowRuntime>(__func__);
+  win->runtime = MEM_new<bke::WindowRuntime>(__func__);
 
   return win;
 }
@@ -506,9 +508,9 @@ void wm_window_close(bContext *C, wmWindowManager *wm, wmWindow *win)
   }
 
   /* Close child windows. */
-  LISTBASE_FOREACH_MUTABLE (wmWindow *, iter_win, &wm->windows) {
-    if (iter_win->parent == win) {
-      wm_window_close(C, wm, iter_win);
+  for (wmWindow &iter_win : wm->windows.items_mutable()) {
+    if (iter_win.parent == win) {
+      wm_window_close(C, wm, &iter_win);
     }
   }
 
@@ -557,7 +559,7 @@ void wm_window_close(bContext *C, wmWindowManager *wm, wmWindow *win)
 static std::string wm_window_title_text(
     wmWindowManager *wm,
     wmWindow *win,
-    std::optional<blender::FunctionRef<void(const char *)>> window_filepath_fn)
+    std::optional<FunctionRef<void(const char *)>> window_filepath_fn)
 {
   if (win->parent || WM_window_is_temp_screen(win)) {
     /* Not a main window. */
@@ -794,20 +796,20 @@ static void wm_window_decoration_style_set_from_theme(const wmWindow *win, const
   /* Colored TitleBar Decoration. */
   /* For main windows, use the top-bar color. */
   if (WM_window_is_main_top_level(win)) {
-    blender::ui::theme::theme_set(SPACE_TOPBAR, RGN_TYPE_HEADER);
+    ui::theme::theme_set(SPACE_TOPBAR, RGN_TYPE_HEADER);
   }
   /* For single editor floating windows, use the editor header color. */
   else if (screen && BLI_listbase_is_single(&screen->areabase)) {
     const ScrArea *main_area = static_cast<ScrArea *>(screen->areabase.first);
-    blender::ui::theme::theme_set(main_area->spacetype, RGN_TYPE_HEADER);
+    ui::theme::theme_set(main_area->spacetype, RGN_TYPE_HEADER);
   }
   /* For floating window with multiple editors/areas, use the default space color. */
   else {
-    blender::ui::theme::theme_set(0, RGN_TYPE_WINDOW);
+    ui::theme::theme_set(0, RGN_TYPE_WINDOW);
   }
 
   float titlebar_bg_color[3];
-  blender::ui::theme::get_color_3fv(TH_BACK, titlebar_bg_color);
+  ui::theme::get_color_3fv(TH_BACK, titlebar_bg_color);
   copy_v3_v3(decoration_settings.colored_titlebar_bg_color, titlebar_bg_color);
 
   GHOST_SetWindowDecorationStyleSettings(static_cast<GHOST_WindowHandle>(win->runtime->ghostwin),
@@ -974,7 +976,7 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
   int posy = 0;
 
   if (WM_capabilities_flag() & WM_CAPABILITY_WINDOW_POSITION) {
-    blender::int2 scr_size;
+    int2 scr_size;
     if (wm_get_desktopsize(scr_size)) {
       posx = win->posx;
       posy = (scr_size[1] - win->posy - win->sizey);
@@ -993,7 +995,7 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
       posy,
       win->sizex,
       win->sizey,
-      (GHOST_TWindowState)win->windowstate,
+      GHOST_TWindowState(win->windowstate),
       is_dialog,
       gpu_settings);
 
@@ -1024,15 +1026,15 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
 #ifndef __APPLE__
     /* Set the state here, so minimized state comes up correct on windows. */
     if (wm_init_state.window_focus) {
-      GHOST_SetWindowState(ghostwin, (GHOST_TWindowState)win->windowstate);
+      GHOST_SetWindowState(ghostwin, GHOST_TWindowState(win->windowstate));
     }
 #endif
 
     /* Get the window background color from the current theme. Using the top-bar header
      * background theme color to match with the colored title-bar decoration style. */
     float window_bg_color[3];
-    blender::ui::theme::theme_set(SPACE_TOPBAR, RGN_TYPE_HEADER);
-    blender::ui::theme::get_color_3fv(TH_BACK, window_bg_color);
+    ui::theme::theme_set(SPACE_TOPBAR, RGN_TYPE_HEADER);
+    ui::theme::get_color_3fv(TH_BACK, window_bg_color);
 
     /* Until screens get drawn, draw a default background using the window theme color. */
     wm_window_swap_buffer_acquire(win);
@@ -1128,7 +1130,7 @@ static void wm_window_ghostwindow_ensure(wmWindowManager *wm, wmWindow *win, boo
 
   /* Add drop boxes. */
   {
-    ListBase *lb = WM_dropboxmap_find("Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
+    ListBaseT<wmDropBox> *lb = WM_dropboxmap_find("Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
     WM_event_add_dropbox_handler(&win->runtime->handlers, lb);
   }
 
@@ -1160,17 +1162,17 @@ void wm_window_ghostwindows_ensure(wmWindowManager *wm)
   if (wm_init_state.size[0] == 0) {
     if (UNLIKELY(!wm_get_screensize(wm_init_state.size))) {
       /* Use fallback values. */
-      wm_init_state.size = blender::int2(0);
+      wm_init_state.size = int2(0);
     }
 
     /* NOTE: this isn't quite correct, active screen maybe offset 1000s if PX,
      * we'd need a #wm_get_screensize like function that gives offset,
      * in practice the window manager will likely move to the correct monitor. */
-    wm_init_state.start = blender::int2(0);
+    wm_init_state.start = int2(0);
   }
 
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    wm_window_ghostwindow_ensure(wm, win, false);
+  for (wmWindow &win : wm->windows) {
+    wm_window_ghostwindow_ensure(wm, &win, false);
   }
 }
 
@@ -1178,9 +1180,9 @@ void wm_window_ghostwindows_remove_invalid(bContext *C, wmWindowManager *wm)
 {
   BLI_assert(G.background == false);
 
-  LISTBASE_FOREACH_MUTABLE (wmWindow *, win, &wm->windows) {
-    if (win->runtime->ghostwin == nullptr) {
-      wm_window_close(C, wm, win);
+  for (wmWindow &win : wm->windows.items_mutable()) {
+    if (win.runtime->ghostwin == nullptr) {
+      wm_window_close(C, wm, &win);
     }
   }
 }
@@ -1202,7 +1204,7 @@ static bool wm_window_update_size_position(wmWindow *win)
   int posy = 0;
 
   if (WM_capabilities_flag() & WM_CAPABILITY_WINDOW_POSITION) {
-    blender::int2 scr_size;
+    int2 scr_size;
     if (wm_get_desktopsize(scr_size)) {
       posx = l;
       posy = scr_size[1] - t - win->sizey;
@@ -1275,12 +1277,12 @@ wmWindow *WM_window_open(bContext *C,
   /* Reuse temporary windows when they share the same single area. */
   wmWindow *win = nullptr;
   if (temp) {
-    LISTBASE_FOREACH (wmWindow *, win_iter, &wm->windows) {
-      const bScreen *screen = WM_window_get_active_screen(win_iter);
+    for (wmWindow &win_iter : wm->windows) {
+      const bScreen *screen = WM_window_get_active_screen(&win_iter);
       if (screen && screen->temp && BLI_listbase_is_single(&screen->areabase)) {
         ScrArea *area = static_cast<ScrArea *>(screen->areabase.first);
         if (space_type == (area->butspacetype ? area->butspacetype : area->spacetype)) {
-          win = win_iter;
+          win = &win_iter;
           break;
         }
       }
@@ -1934,8 +1936,7 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
         PointerRNA props_ptr = WM_operator_properties_create_ptr(ot);
         RNA_string_set(&props_ptr, "filepath", path);
         RNA_boolean_set(&props_ptr, "display_file_selector", false);
-        WM_operator_name_call_ptr(
-            C, ot, blender::wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
+        WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
         WM_operator_properties_free(&props_ptr);
 
         CTX_wm_window_set(C, nullptr);
@@ -1992,13 +1993,13 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
 
         if (stra->count) {
           CLOG_INFO(WM_LOG_EVENTS, "Drop %d files:", stra->count);
-          for (const char *path : blender::Span((char **)stra->strings, stra->count)) {
+          for (const char *path : Span(reinterpret_cast<char **>(stra->strings), stra->count)) {
             CLOG_INFO(WM_LOG_EVENTS, "%s", path);
           }
           /* Try to get icon type from extension of the first path. */
-          int icon = ED_file_extension_icon((char *)stra->strings[0]);
+          int icon = ED_file_extension_icon(reinterpret_cast<char *>(stra->strings[0]));
           wmDragPath *path_data = WM_drag_create_path_data(
-              blender::Span((char **)stra->strings, stra->count));
+              Span(reinterpret_cast<char **>(stra->strings), stra->count));
           WM_event_start_drag(C, icon, WM_DRAG_PATH, path_data, WM_DRAG_NOP);
           /* Void pointer should point to string, it makes a copy. */
         }
@@ -2022,7 +2023,7 @@ static bool ghost_event_proc(GHOST_EventHandle ghost_event, GHOST_TUserDataPtr C
         /* Close all popups since they are positioned with the pixel
          * size baked in and it's difficult to correct them. */
         CTX_wm_window_set(C, win);
-        blender::ui::popup_handlers_remove_all(C, &win->runtime->modalhandlers);
+        ui::popup_handlers_remove_all(C, &win->runtime->modalhandlers);
         CTX_wm_window_set(C, nullptr);
 
         wm_window_make_drawable(wm, win);
@@ -2075,51 +2076,51 @@ static bool wm_window_timers_process(const bContext *C, int *sleep_us_p)
   double ntime_min = DBL_MAX;
 
   /* Mutable in case the timer gets removed. */
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
-    if (wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
+  for (wmTimer &wt : wm->runtime->timers.items_mutable()) {
+    if (wt.flags & WM_TIMER_TAGGED_FOR_REMOVAL) {
       continue;
     }
-    if (wt->sleep == true) {
+    if (wt.sleep == true) {
       continue;
     }
 
     /* Future timer, update nearest time & skip. */
-    if (wt->time_next >= time) {
+    if (wt.time_next >= time) {
       if ((has_event == false) && (sleep_us != 0)) {
         /* The timer is not ready to run but may run shortly. */
-        ntime_min = std::min(wt->time_next, ntime_min);
+        ntime_min = std::min(wt.time_next, ntime_min);
       }
       continue;
     }
 
-    wt->time_delta = time - wt->time_last;
-    wt->time_duration += wt->time_delta;
-    wt->time_last = time;
+    wt.time_delta = time - wt.time_last;
+    wt.time_duration += wt.time_delta;
+    wt.time_last = time;
 
-    wt->time_next = wt->time_start;
-    if (wt->time_step != 0.0f) {
-      wt->time_next += wt->time_step * ceil(wt->time_duration / wt->time_step);
+    wt.time_next = wt.time_start;
+    if (wt.time_step != 0.0f) {
+      wt.time_next += wt.time_step * ceil(wt.time_duration / wt.time_step);
     }
 
-    if (wt->event_type == TIMERJOBS) {
-      wm_jobs_timer(wm, wt);
+    if (wt.event_type == TIMERJOBS) {
+      wm_jobs_timer(wm, &wt);
     }
-    else if (wt->event_type == TIMERAUTOSAVE) {
-      wm_autosave_timer(bmain, wm, wt);
+    else if (wt.event_type == TIMERAUTOSAVE) {
+      wm_autosave_timer(bmain, wm, &wt);
     }
-    else if (wt->event_type == TIMERNOTIFIER) {
-      WM_main_add_notifier(POINTER_AS_UINT(wt->customdata), nullptr);
+    else if (wt.event_type == TIMERNOTIFIER) {
+      WM_main_add_notifier(POINTER_AS_UINT(wt.customdata), nullptr);
     }
-    else if (wmWindow *win = wt->win) {
+    else if (wmWindow *win = wt.win) {
       wmEvent event;
       wm_event_init_from_window(win, &event);
 
-      event.type = wt->event_type;
+      event.type = wt.event_type;
       event.val = KM_NOTHING;
       event.keymodifier = EVENT_NONE;
       event.flag = eWM_EventFlag(0);
       event.custom = EVT_DATA_TIMER;
-      event.customdata = wt;
+      event.customdata = &wt;
       WM_event_add(win, &event);
 
       has_event = true;
@@ -2227,7 +2228,7 @@ void wm_ghost_init(bContext *C)
 
   consumer = GHOST_CreateEventConsumer(ghost_event_proc, C);
 
-  GHOST_SetBacktraceHandler((GHOST_TBacktraceFn)BLI_system_backtrace);
+  GHOST_SetBacktraceHandler(reinterpret_cast<GHOST_TBacktraceFn>(BLI_system_backtrace));
   GHOST_UseWindowFrame(wm_init_state.window_frame);
 
   g_system = GHOST_CreateSystem();
@@ -2278,7 +2279,7 @@ void wm_ghost_init_background()
     return;
   }
 
-  GHOST_SetBacktraceHandler((GHOST_TBacktraceFn)BLI_system_backtrace);
+  GHOST_SetBacktraceHandler(reinterpret_cast<GHOST_TBacktraceFn>(BLI_system_backtrace));
 
   g_system = GHOST_CreateSystemBackground();
   GPU_backend_ghost_system_set(g_system);
@@ -2372,7 +2373,7 @@ void wm_test_gpu_backend_fallback(bContext *C)
     alert(C,
           RPT_("Failed to load using Vulkan, using OpenGL instead."),
           message,
-          blender::ui::AlertIcon::Error,
+          ui::AlertIcon::Error,
           false);
     CTX_wm_window_set(C, prevwin);
   }
@@ -2510,14 +2511,14 @@ wmTimer *WM_event_timer_add_notifier(wmWindowManager *wm,
 
 void wm_window_timers_delete_removed(wmWindowManager *wm)
 {
-  LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->runtime->timers) {
-    if ((wt->flags & WM_TIMER_TAGGED_FOR_REMOVAL) == 0) {
+  for (wmTimer &wt : wm->runtime->timers.items_mutable()) {
+    if ((wt.flags & WM_TIMER_TAGGED_FOR_REMOVAL) == 0) {
       continue;
     }
 
     /* Actual removal and freeing of the timer. */
-    BLI_remlink(&wm->runtime->timers, wt);
-    MEM_freeN(wt);
+    BLI_remlink(&wm->runtime->timers, &wt);
+    MEM_freeN(&wt);
   }
 }
 
@@ -2543,11 +2544,11 @@ void WM_event_timer_remove(wmWindowManager *wm, wmWindow * /*win*/, wmTimer *tim
     wm->runtime->reports.reporttimer = nullptr;
   }
   /* There might be events in queue with this timer as customdata. */
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    LISTBASE_FOREACH (wmEvent *, event, &win->runtime->event_queue) {
-      if (event->customdata == timer) {
-        event->customdata = nullptr;
-        event->type = EVENT_NONE; /* Timer users customdata, don't want `nullptr == nullptr`. */
+  for (wmWindow &win : wm->windows) {
+    for (wmEvent &event : win.runtime->event_queue) {
+      if (event.customdata == timer) {
+        event.customdata = nullptr;
+        event.type = EVENT_NONE; /* Timer users customdata, don't want `nullptr == nullptr`. */
       }
     }
   }
@@ -2756,7 +2757,7 @@ ImBuf *WM_clipboard_image_get()
 
   int width, height;
 
-  uint8_t *rgba = (uint8_t *)GHOST_getClipboardImage(&width, &height);
+  uint8_t *rgba = reinterpret_cast<uint8_t *>(GHOST_getClipboardImage(&width, &height));
   if (!rgba) {
     return nullptr;
   }
@@ -2776,7 +2777,8 @@ bool WM_clipboard_image_set_byte_buffer(ImBuf *ibuf)
     return false;
   }
 
-  bool success = bool(GHOST_putClipboardImage((uint *)ibuf->byte_buffer.data, ibuf->x, ibuf->y));
+  bool success = bool(
+      GHOST_putClipboardImage(reinterpret_cast<uint *>(ibuf->byte_buffer.data), ibuf->x, ibuf->y));
 
   return success;
 }
@@ -2905,10 +2907,10 @@ wmWindow *WM_window_find_under_cursor(wmWindow *win,
 
 wmWindow *WM_window_find_by_area(wmWindowManager *wm, const ScrArea *area)
 {
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    bScreen *sc = WM_window_get_active_screen(win);
+  for (wmWindow &win : wm->windows) {
+    bScreen *sc = WM_window_get_active_screen(&win);
     if (BLI_findindex(&sc->areabase, area) != -1) {
-      return win;
+      return &win;
     }
   }
   return nullptr;
@@ -2922,8 +2924,8 @@ wmWindow *WM_window_find_by_area(wmWindowManager *wm, const ScrArea *area)
 
 void WM_init_state_size_set(int stax, int stay, int sizx, int sizy)
 {
-  wm_init_state.start = blender::int2(stax, stay); /* Left hand bottom position. */
-  wm_init_state.size = blender::int2(std::max(sizx, 640), std::max(sizy, 480));
+  wm_init_state.start = int2(stax, stay); /* Left hand bottom position. */
+  wm_init_state.size = int2(std::max(sizx, 640), std::max(sizy, 480));
   wm_init_state.override_flag |= WIN_OVERRIDE_GEOM;
 }
 
@@ -3039,12 +3041,12 @@ int WM_window_native_pixel_y(const wmWindow *win)
   return int(fac * float(win->sizey));
 }
 
-blender::int2 WM_window_native_pixel_size(const wmWindow *win)
+int2 WM_window_native_pixel_size(const wmWindow *win)
 {
   const float fac = GHOST_GetNativePixelSize(
       static_cast<GHOST_WindowHandle>(win->runtime->ghostwin));
 
-  return blender::int2(int(fac * float(win->sizex)), int(fac * float(win->sizey)));
+  return int2(int(fac * float(win->sizex)), int(fac * float(win->sizey)));
 }
 
 void WM_window_native_pixel_coords(const wmWindow *win, int *x, int *y)
@@ -3093,7 +3095,7 @@ void WM_window_rect_calc(const wmWindow *win, rcti *r_rect)
   }
 #endif /* WITH_GHOST_CSD */
 
-  const blender::int2 win_size = WM_window_native_pixel_size(win);
+  const int2 win_size = WM_window_native_pixel_size(win);
   BLI_rcti_init(r_rect, 0, win_size[0], 0, win_size[1]);
 }
 void WM_window_screen_rect_calc(const wmWindow *win, rcti *r_rect)
@@ -3104,14 +3106,14 @@ void WM_window_screen_rect_calc(const wmWindow *win, rcti *r_rect)
   screen_rect = window_rect;
 
   /* Subtract global areas from screen rectangle. */
-  LISTBASE_FOREACH (ScrArea *, global_area, &win->global_areas.areabase) {
-    int height = ED_area_global_size_y(global_area) - 1;
+  for (ScrArea &global_area : win->global_areas.areabase) {
+    int height = ED_area_global_size_y(&global_area) - 1;
 
-    if (global_area->global->flag & GLOBAL_AREA_IS_HIDDEN) {
+    if (global_area.global->flag & GLOBAL_AREA_IS_HIDDEN) {
       continue;
     }
 
-    switch (global_area->global->align) {
+    switch (global_area.global->align) {
       case GLOBAL_AREA_ALIGN_TOP:
         screen_rect.ymax -= height;
         break;
@@ -3165,20 +3167,20 @@ bool WM_window_support_hdr_color(const wmWindow *win)
 /** \name Window Screen/Scene/WorkSpaceViewLayer API
  * \{ */
 
-void WM_windows_scene_data_sync(const ListBase *win_lb, Scene *scene)
+void WM_windows_scene_data_sync(const ListBaseT<wmWindow> *win_lb, Scene *scene)
 {
-  LISTBASE_FOREACH (wmWindow *, win, win_lb) {
-    if (WM_window_get_active_scene(win) == scene) {
-      ED_workspace_scene_data_sync(win->workspace_hook, scene);
+  for (wmWindow &win : *win_lb) {
+    if (WM_window_get_active_scene(&win) == scene) {
+      ED_workspace_scene_data_sync(win.workspace_hook, scene);
     }
   }
 }
 
 Scene *WM_windows_scene_get_from_screen(const wmWindowManager *wm, const bScreen *screen)
 {
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (WM_window_get_active_screen(win) == screen) {
-      return WM_window_get_active_scene(win);
+  for (wmWindow &win : wm->windows) {
+    if (WM_window_get_active_screen(&win) == screen) {
+      return WM_window_get_active_scene(&win);
     }
   }
 
@@ -3187,9 +3189,9 @@ Scene *WM_windows_scene_get_from_screen(const wmWindowManager *wm, const bScreen
 
 ViewLayer *WM_windows_view_layer_get_from_screen(const wmWindowManager *wm, const bScreen *screen)
 {
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (WM_window_get_active_screen(win) == screen) {
-      return WM_window_get_active_view_layer(win);
+  for (wmWindow &win : wm->windows) {
+    if (WM_window_get_active_screen(&win) == screen) {
+      return WM_window_get_active_view_layer(&win);
     }
   }
 
@@ -3198,9 +3200,9 @@ ViewLayer *WM_windows_view_layer_get_from_screen(const wmWindowManager *wm, cons
 
 WorkSpace *WM_windows_workspace_get_from_screen(const wmWindowManager *wm, const bScreen *screen)
 {
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (WM_window_get_active_screen(win) == screen) {
-      return WM_window_get_active_workspace(win);
+  for (wmWindow &win : wm->windows) {
+    if (WM_window_get_active_screen(&win) == screen) {
+      return WM_window_get_active_workspace(&win);
     }
   }
   return nullptr;
@@ -3223,9 +3225,9 @@ void WM_window_set_active_scene(Main *bmain, bContext *C, wmWindow *win, Scene *
     changed = true;
   }
 
-  LISTBASE_FOREACH (wmWindow *, win_child, &wm->windows) {
-    if (win_child->parent == win_parent && win_child->scene != scene) {
-      ED_screen_scene_change(C, win_child, scene, true);
+  for (wmWindow &win_child : wm->windows) {
+    if (win_child.parent == win_parent && win_child.scene != scene) {
+      ED_screen_scene_change(C, &win_child, scene, true);
       changed = true;
     }
   }
@@ -3254,7 +3256,7 @@ ViewLayer *WM_window_get_active_view_layer(const wmWindow *win)
 
   view_layer = BKE_view_layer_default_view(scene);
   if (view_layer) {
-    WM_window_set_active_view_layer((wmWindow *)win, view_layer);
+    WM_window_set_active_view_layer(const_cast<wmWindow *>(win), view_layer);
   }
 
   return view_layer;
@@ -3269,10 +3271,10 @@ void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)
   wmWindow *win_parent = (win->parent) ? win->parent : win;
 
   /* Set view layer in parent and child windows. */
-  LISTBASE_FOREACH (wmWindow *, win_iter, &wm->windows) {
-    if ((win_iter == win_parent) || (win_iter->parent == win_parent)) {
-      STRNCPY_UTF8(win_iter->view_layer_name, view_layer->name);
-      bScreen *screen = BKE_workspace_active_screen_get(win_iter->workspace_hook);
+  for (wmWindow &win_iter : wm->windows) {
+    if ((&win_iter == win_parent) || (win_iter.parent == win_parent)) {
+      STRNCPY_UTF8(win_iter.view_layer_name, view_layer->name);
+      bScreen *screen = BKE_workspace_active_screen_get(win_iter.workspace_hook);
       ED_render_view_layer_changed(bmain, screen);
     }
   }
@@ -3301,14 +3303,14 @@ void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *works
 
   ED_workspace_change(workspace, C, wm, win);
 
-  LISTBASE_FOREACH (wmWindow *, win_child, &wm->windows) {
-    if (win_child->parent == win_parent) {
-      bScreen *screen = WM_window_get_active_screen(win_child);
+  for (wmWindow &win_child : wm->windows) {
+    if (win_child.parent == win_parent) {
+      bScreen *screen = WM_window_get_active_screen(&win_child);
       /* Don't change temporary screens, they only serve a single purpose. */
       if (screen->temp) {
         continue;
       }
-      ED_workspace_change(workspace, C, wm, win_child);
+      ED_workspace_change(workspace, C, wm, &win_child);
     }
   }
 }
@@ -3426,19 +3428,19 @@ void *WM_system_gpu_context_create()
 void WM_system_gpu_context_dispose(void *context)
 {
   BLI_assert(GPU_framebuffer_active_get() == GPU_framebuffer_back_get());
-  GHOST_DisposeGPUContext(g_system, (GHOST_ContextHandle)context);
+  GHOST_DisposeGPUContext(g_system, static_cast<GHOST_ContextHandle>(context));
 }
 
 void WM_system_gpu_context_activate(void *context)
 {
   BLI_assert(GPU_framebuffer_active_get() == GPU_framebuffer_back_get());
-  GHOST_ActivateGPUContext((GHOST_ContextHandle)context);
+  GHOST_ActivateGPUContext(static_cast<GHOST_ContextHandle>(context));
 }
 
 void WM_system_gpu_context_release(void *context)
 {
   BLI_assert(GPU_framebuffer_active_get() == GPU_framebuffer_back_get());
-  GHOST_ReleaseGPUContext((GHOST_ContextHandle)context);
+  GHOST_ReleaseGPUContext(static_cast<GHOST_ContextHandle>(context));
 }
 
 void WM_ghost_show_message_box(const char *title,
@@ -3453,3 +3455,5 @@ void WM_ghost_show_message_box(const char *title,
 }
 
 /** \} */
+
+}  // namespace blender
