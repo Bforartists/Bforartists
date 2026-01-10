@@ -52,11 +52,12 @@
 
 #include "armature_intern.hh"
 
-namespace blender {
-
 #include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 #include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 
+namespace blender {
+
+using namespace blender::animrig;
 
 /* ***************** Pose Select Utilities ********************* */
 
@@ -1257,7 +1258,11 @@ void POSE_OT_select_grouped(wmOperatorType *ot)
        ICON_GROUP,
        "Collection",
        "Same collections as the active bone"},
-      {int(SelectRelatedMode::SAME_COLOR), "COLOR", ICON_COLOR, "Color", "Same color as the active bone"},
+      {int(SelectRelatedMode::SAME_COLOR),
+       "COLOR",
+       ICON_COLOR,
+       "Color",
+       "Same color as the active bone"},
       {int(SelectRelatedMode::SAME_KEYINGSET),
        "KEYINGSET",
        ICON_KEYINGSET,

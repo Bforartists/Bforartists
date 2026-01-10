@@ -58,6 +58,9 @@
 
 #include "image_intern.hh"
 
+#define LISTBASE_FOREACH(type, var, list) \
+  for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
+
 namespace blender {
 
 /**************************** common state *****************************/

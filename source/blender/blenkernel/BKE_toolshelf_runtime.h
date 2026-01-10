@@ -9,9 +9,12 @@
  * \brief Runtime data management for toolshelf category tabs.
  */
 
+namespace blender {
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+struct ARegion;
 
 /**
  * Initialize the toolshelf runtime data system.
@@ -38,7 +41,7 @@ void BKE_toolshelf_runtime_exit(void);
  * \param region: The region to get the offset for
  * \return: The stored offset value, or 0.0f if none is stored
  */
-float BKE_toolshelf_category_tabs_offset_get(const ARegion *region);
+float BKE_toolshelf_category_tabs_offset_get(const struct ARegion *region);
 
 /**
  * Set the category tabs offset for a region.
@@ -64,3 +67,5 @@ void BKE_toolshelf_region_free(struct ARegion *region);
 #ifdef __cplusplus
 }
 #endif
+
+}  // namespace blender

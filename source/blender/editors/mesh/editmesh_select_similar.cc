@@ -42,10 +42,10 @@
 
 #include "mesh_intern.hh" /* own include */
 
-namespace blender {
-
 #include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 #include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
+namespace blender {
 
 /* -------------------------------------------------------------------- */
 /** \name Select Similar (Vert/Edge/Face) Operator - common

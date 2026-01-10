@@ -48,10 +48,10 @@
 
 #include "armature_intern.hh"
 
-namespace blender {
-
 #include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 #include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
+namespace blender {
 
 /* utility macros for storing a temp int in the bone (selection flag) */
 #define EBONE_PREV_FLAG_GET(ebone) ((void)0, (ebone)->temp.i)

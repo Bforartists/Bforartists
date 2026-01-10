@@ -57,6 +57,9 @@
 
 #include "versioning_common.hh"
 
+#define LISTBASE_FOREACH(type, var, list) \
+  for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
+
 namespace blender {
 
 // static CLG_LogRef LOG = {"blend.doversion"};

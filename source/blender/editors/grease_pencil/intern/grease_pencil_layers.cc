@@ -1233,7 +1233,7 @@ static wmOperatorStatus grease_pencil_layer_move_top_exec(bContext *C, wmOperato
 {
   using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
+  GreasePencil &grease_pencil = *id_cast<GreasePencil *>(object->data);
 
   if (!grease_pencil.has_active_layer()) {
     return OPERATOR_CANCELLED;
@@ -1269,7 +1269,7 @@ static wmOperatorStatus grease_pencil_layer_move_bottom_exec(bContext *C, wmOper
 {
   using namespace blender::bke::greasepencil;
   Object *object = CTX_data_active_object(C);
-  GreasePencil &grease_pencil = *static_cast<GreasePencil *>(object->data);
+  GreasePencil &grease_pencil = *id_cast<GreasePencil *>(object->data);
 
   if (!grease_pencil.has_active_layer()) {
     return OPERATOR_CANCELLED;

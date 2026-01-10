@@ -2052,13 +2052,13 @@ static bool make_override_library_object_overridable_check(Main *bmain, Object *
 {
   /* An object is actually overridable only if it is in at least one local collection.
    * Unfortunately 'direct link' flag is not enough here. */
-  LISTBASE_FOREACH (Collection *, collection, &bmain->collections) {
-    if (!ID_IS_LINKED(collection) && BKE_collection_has_object(collection, object)) {
+  for (Collection &collection : bmain->collections) {
+    if (!ID_IS_LINKED(&collection) && BKE_collection_has_object(&collection, object)) {
       return true;
     }
   }
-  LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
-    if (!ID_IS_LINKED(scene) && BKE_collection_has_object(scene->master_collection, object)) {
+  for (Scene &scene : bmain->scenes) {
+    if (!ID_IS_LINKED(&scene) && BKE_collection_has_object(scene.master_collection, object)) {
       return true;
     }
   }
@@ -2118,15 +2118,13 @@ static bool create_override(Main *bmain,
       switch (GS(id_root->name)) {
         case ID_GR: {
           Collection *collection_root = (Collection *)id_root;
-          LISTBASE_FOREACH_MUTABLE (
-              CollectionParent *, collection_parent, &collection_root->runtime->parents)
-          {
-            if (ID_IS_LINKED(collection_parent->collection) ||
-                !BKE_view_layer_has_collection(view_layer, collection_parent->collection))
+          for (CollectionParent &collection_parent : collection_root->runtime->parents) {
+            if (ID_IS_LINKED(collection_parent.collection) ||
+                !BKE_view_layer_has_collection(view_layer, collection_parent.collection))
             {
               continue;
             }
-            BKE_collection_child_remove(bmain, collection_parent->collection, collection_root);
+            BKE_collection_child_remove(bmain, collection_parent.collection, collection_root);
           }
           break;
         }
@@ -2248,16 +2246,16 @@ static wmOperatorStatus collection_drop_override(bContext *C, wmOperator *op)
    * While this may not be the absolute best behavior in all cases, in most common one this
    * should match the expected result. */
   if (user_overrides_objects_uids != nullptr) {
-    LISTBASE_FOREACH (Collection *, coll_iter, &bmain->collections) {
-      if (ID_IS_LINKED(coll_iter)) {
+    for (Collection & coll_iter : bmain->collections) {
+      if (ID_IS_LINKED(&coll_iter)) {
         continue;
       }
-      LISTBASE_FOREACH (CollectionObject *, coll_ob_iter, &coll_iter->gobject) {
+      for (CollectionObject & coll_ob_iter : coll_iter.gobject) {
         if (BLI_gset_haskey(user_overrides_objects_uids,
-                            POINTER_FROM_UINT(coll_ob_iter->ob->id.session_uid)))
+                            POINTER_FROM_UINT(coll_ob_iter.ob->id.session_uid)))
         {
           /* Tag for remapping when creating overrides. */
-          coll_iter->id.tag |= ID_TAG_DOIT;
+          coll_iter.id.tag |= ID_TAG_DOIT;
           break;
         }
       }
