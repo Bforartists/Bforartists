@@ -9,6 +9,8 @@
 
 #include "DNA_windowmanager_types.h"
 
+namespace blender {
+
 typedef struct ToolshelfRuntimeData {
   float category_tabs_offset;
 } ToolshelfRuntimeData;
@@ -51,13 +53,14 @@ void BKE_toolshelf_category_tabs_offset_set(ARegion *region, float offset)
     return;
   }
 
-  BKE_toolshelf_runtime_init();  /* Ensure the hash exists */
+  BKE_toolshelf_runtime_init(); /* Ensure the hash exists */
 
   ToolshelfRuntimeData *data = static_cast<ToolshelfRuntimeData *>(
       BLI_ghash_lookup(g_toolshelf_runtime_data, region));
 
   if (!data) {
-    data = static_cast<ToolshelfRuntimeData *>(MEM_callocN(sizeof(ToolshelfRuntimeData), __func__));
+    data = static_cast<ToolshelfRuntimeData *>(
+        MEM_callocN(sizeof(ToolshelfRuntimeData), __func__));
     BLI_ghash_insert(g_toolshelf_runtime_data, region, data);
   }
 
@@ -82,3 +85,4 @@ void BKE_toolshelf_region_free(ARegion *region)
     }
   }
 }
+}  // namespace blender

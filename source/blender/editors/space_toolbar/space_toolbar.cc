@@ -24,7 +24,7 @@
 
 #include "BLO_read_write.hh"
 
-using namespace blender;
+namespace blender {
 
 /* ******************** default callbacks for toolbar space ***************** */
 
@@ -184,4 +184,5 @@ void ED_spacetype_toolbar(void)
   BLI_addhead(&st->regiontypes, art);
 
   BKE_spacetype_register(std::move(st));
+}
 }

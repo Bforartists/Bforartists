@@ -67,7 +67,7 @@ template<
      * When T is large, the small buffer optimization is disabled by default to avoid large
      * unexpected allocations on the stack. It can still be enabled explicitly though.
      */
-    int64_t InlineBufferCapacity = default_inline_buffer_capacity(sizeof(T)),
+    int64_t InlineBufferCapacity = 1,//default_inline_buffer_capacity(sizeof(T)),
     /**
      * The allocator used by this vector. Should rarely be changed, except when you don't want that
      * MEM_* is used internally.
