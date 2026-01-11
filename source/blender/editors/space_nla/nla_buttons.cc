@@ -522,11 +522,16 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
       &strip_ptr, "action_frame_start", UI_ITEM_NONE, IFACE_("Frame Start"), ICON_NONE);
   extent_col.prop(&strip_ptr, "action_frame_end", UI_ITEM_NONE, IFACE_("End"), ICON_NONE);
 
-  blender::ui::Layout *row = &layout.row(false); /* bfa - align probs left nla action panel */
-  row->use_property_decorate_set(false);         /* bfa - use_property_split = False */
-  row->prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, "", ICON_NONE);
-  row->op("NLA_OT_action_sync_length", IFACE_("Now"), ICON_FILE_REFRESH); /*BFA*/
-  row->use_property_decorate_set(true); /* bfa - use_property_split = True */
+  /* BFA - Use column instead of row, so that there's enough room to add labels */
+  ui::Layout &sync_col = layout.column(false);
+  sync_col.use_property_split_set(false); /* BFA - Align bool property left */
+  sync_col.use_property_decorate_set(false); 
+  sync_col.prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  sync_col.use_property_split_set(true); /* BFA */
+
+  blender::ui::Layout *row = &sync_col.row(true); 
+  row->op("NLA_OT_action_sync_length", IFACE_("Apply Current Length"), ICON_FILE_REFRESH); /*BFA - Make label more descriptive*/
+  row->label("", ICON_BLANK1); /* BFA - add for alignment with props that have a keyframe decorator */
 
   /* action usage */
   ui::Layout &usage_col = layout.column(true);
