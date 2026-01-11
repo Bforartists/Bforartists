@@ -130,7 +130,7 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
   h_DC_ = ::GetDC(h_wnd_);
 
   if (!setDrawingContextType(type)) {
-    const char *title = "Blender - Unsupported Graphics Card Configuration";
+    const char *title = "Bforartists - Unsupported Graphics Card Configuration";
     const char *text = "";
 #if defined(WIN32)
     if (strncmp(BLI_getenv("PROCESSOR_IDENTIFIER"), "ARM", 3) == 0 &&
