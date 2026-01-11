@@ -431,23 +431,35 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     extrapolation_col.prop(&strip_ptr, "extrapolation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     extrapolation_col.prop(&strip_ptr, "blend_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    /* Blend in/out + auto-blending:
-     * - blend in/out can only be set when auto-blending is off.
-     */
+    blender::ui::Layout *row; /* BFA */
+    
+    /* BFA - Show/Hide blending options based on animated influence */
+    if (!RNA_boolean_get(&strip_ptr, "use_animated_influence")) {
+      ui::Layout &blend_col = layout.column(true);
+      blend_col.label(IFACE_("Blend"), ICON_NONE);
 
-    layout.separator();
+      /* BFA - Indent blending properties*/
+      row = &blend_col.row(false);
+      row->separator();
+      ui::Layout *col = &row->column(true);
 
-    ui::Layout &blend_col = layout.column(true);
-    blend_col.active_set(RNA_boolean_get(&strip_ptr, "use_auto_blend") == false);
-    blend_col.prop(&strip_ptr, "blend_in", UI_ITEM_NONE, IFACE_("Blend In"), ICON_NONE);
-    blend_col.prop(&strip_ptr, "blend_out", UI_ITEM_NONE, IFACE_("Out"), ICON_NONE);
+      /* Blend in/out + auto-blending:
+       * - blend in/out can only be set when auto-blending is off.
+       */
+      if (!RNA_boolean_get(&strip_ptr, "use_auto_blend")) {
+        col->prop(&strip_ptr, "blend_in", UI_ITEM_NONE, IFACE_("In"), ICON_NONE); /* BFA - Change from "Blend In" to in */
+        col->prop(&strip_ptr, "blend_out", UI_ITEM_NONE, IFACE_("Out"), ICON_NONE);
+        col->separator(0.5f);
+      }
 
-    blender::ui::Layout *row = &layout.column(true).row(true);
-    row->active_set(RNA_boolean_get(&strip_ptr, "use_animated_influence") == false);
-    row->use_property_decorate_set(false); /* bfa - use_property_split = false*/
-    row->prop(
-        &strip_ptr, "use_auto_blend", UI_ITEM_NONE, std::nullopt, ICON_NONE); /* XXX as toggle? */
-
+      row = &col->row(true);
+      row->use_property_split_set(false); /* BFA - Align bool property left */
+      row->prop(&strip_ptr,
+                "use_auto_blend",
+                UI_ITEM_NONE,
+                std::nullopt,
+                ICON_NONE); /* XXX as toggle? */
+    };
     /* settings */
     layout.use_property_split_set(false);
     layout.use_property_decorate_set(false);
