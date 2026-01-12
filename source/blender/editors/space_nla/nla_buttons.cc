@@ -525,11 +525,12 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
   /* BFA - Use column instead of row, so that there's enough room to add labels */
   ui::Layout &sync_col = layout.column(false);
   sync_col.use_property_split_set(false); /* BFA - Align bool property left */
-  sync_col.use_property_decorate_set(false); 
-  sync_col.prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  blender::ui::Layout *row = &sync_col.row(true); 
+  row->prop(&strip_ptr, "use_sync_length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row->decorator(&strip_ptr, "use_sync_length", 0);
   sync_col.use_property_split_set(true); /* BFA */
 
-  blender::ui::Layout *row = &sync_col.row(true); 
+  row = &sync_col.row(true); 
   row->op("NLA_OT_action_sync_length", IFACE_("Apply Current Length"), ICON_FILE_REFRESH); /*BFA - Make label more descriptive*/
   row->label("", ICON_BLANK1); /* BFA - add for alignment with props that have a keyframe decorator */
 
