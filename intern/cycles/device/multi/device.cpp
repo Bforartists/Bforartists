@@ -215,6 +215,20 @@ class MultiDevice : public Device {
 
     /* Temporarily move ownership of BVH on geometry to this vector, to swap
      * it for each sub device. Need to find a better way to handle this. */
+
+    /* BFA - handle mixed BVH types in multi-device rendering
+     * 
+     * Summary: In multi-device configurations (CPU+GPU), each device gets its own BVH type:
+     * - CPU devices use regular layouts (BVH2, EMBREE)
+     * - GPU/OptiX devices use MULTI_* layouts that contain sub-BVHs
+     * 
+     * Root Cause: Invalid assumption that all BVHs were BVHMulti objects that could be safely cast.
+     * When using OptiX, individual device BVHs are not BVHMulti objects, causing invalid casts.
+     *
+     * Key Fixes:
+     * - Add proper null checks to prevent dereferencing null pointers
+     * - Add bounds checking for sub-BVH access
+     */
     vector<unique_ptr<BVH>> geom_bvhs;
     geom_bvhs.reserve(bvh->geometry.size());
     for (Geometry *geom : bvh->geometry) {
@@ -227,8 +241,27 @@ class MultiDevice : public Device {
       /* Change geometry BVH pointers to the sub BVH */
       for (size_t k = 0; k < bvh->geometry.size(); ++k) {
         bvh->geometry[k]->bvh.release();  // NOLINT: was not actually the owner
-        bvh->geometry[k]->bvh.reset(
-            static_cast<BVHMulti *>(geom_bvhs[k].get())->sub_bvhs[i].get());
+        /* BFA - handle mixed BVH types in multi-device rendering*/
+        if (!geom_bvhs[k]) {
+          /* BFA - BVH is null, skip this geometry */
+          bvh->geometry[k]->bvh.reset(nullptr);
+        }
+        else if (bvh->params.bvh_layout == BVH_LAYOUT_MULTI_OPTIX ||
+                 bvh->params.bvh_layout == BVH_LAYOUT_MULTI_OPTIX_EMBREE)
+        {
+          /* BFA - For OptiX multi-device: safely try to extract sub-BVH */
+          BVHMulti *bvh_multi = dynamic_cast<BVHMulti *>(geom_bvhs[k].get());
+          if (bvh_multi && i < bvh_multi->sub_bvhs.size() && bvh_multi->sub_bvhs[i]) {
+            bvh->geometry[k]->bvh.reset(bvh_multi->sub_bvhs[i].get());
+          } else {
+            /* BFA - Fallback: use original BVH */
+            bvh->geometry[k]->bvh.reset(geom_bvhs[k].get());
+          }
+        }
+        else {
+          /* BFA - For non-OptiX devices: use BVH directly */
+          bvh->geometry[k]->bvh.reset(geom_bvhs[k].get());
+        }
       }
 
       if (!bvh_multi->sub_bvhs[i]) {
