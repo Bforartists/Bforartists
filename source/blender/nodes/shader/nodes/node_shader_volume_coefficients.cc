@@ -11,7 +11,9 @@
 
 #include "BKE_node_runtime.hh"
 
-namespace blender::nodes::node_shader_volume_coefficients_cc {
+namespace blender {
+
+namespace nodes::node_shader_volume_coefficients_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
@@ -92,20 +94,19 @@ static void node_shader_update_coefficients(bNodeTree *ntree, bNode *node)
 {
   const int phase_function = node->custom1;
 
-  LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
-    if (STR_ELEM(sock->name, "IOR", "Backscatter")) {
+  for (bNodeSocket &sock : node->inputs) {
+    if (STR_ELEM(sock.name, "IOR", "Backscatter")) {
+      bke::node_set_socket_availability(*ntree, sock, phase_function == SHD_PHASE_FOURNIER_FORAND);
+    }
+    else if (STR_ELEM(sock.name, "Anisotropy")) {
       bke::node_set_socket_availability(
-          *ntree, *sock, phase_function == SHD_PHASE_FOURNIER_FORAND);
+          *ntree, sock, ELEM(phase_function, SHD_PHASE_HENYEY_GREENSTEIN, SHD_PHASE_DRAINE));
     }
-    else if (STR_ELEM(sock->name, "Anisotropy")) {
-      bke::node_set_socket_availability(
-          *ntree, *sock, ELEM(phase_function, SHD_PHASE_HENYEY_GREENSTEIN, SHD_PHASE_DRAINE));
+    else if (STR_ELEM(sock.name, "Alpha")) {
+      bke::node_set_socket_availability(*ntree, sock, phase_function == SHD_PHASE_DRAINE);
     }
-    else if (STR_ELEM(sock->name, "Alpha")) {
-      bke::node_set_socket_availability(*ntree, *sock, phase_function == SHD_PHASE_DRAINE);
-    }
-    else if (STR_ELEM(sock->name, "Diameter")) {
-      bke::node_set_socket_availability(*ntree, *sock, phase_function == SHD_PHASE_MIE);
+    else if (STR_ELEM(sock.name, "Diameter")) {
+      bke::node_set_socket_availability(*ntree, sock, phase_function == SHD_PHASE_MIE);
     }
   }
 }
@@ -135,14 +136,14 @@ static int node_shader_gpu_volume_coefficients(GPUMaterial *mat,
 #undef SOCK_SCATTER_DIAMETER_ID
 #undef SOCK_EMISSION_COEFFICIENTS_ID
 
-}  // namespace blender::nodes::node_shader_volume_coefficients_cc
+}  // namespace nodes::node_shader_volume_coefficients_cc
 
 /* node type definition */
 void register_node_type_sh_volume_coefficients()
 {
-  namespace file_ns = blender::nodes::node_shader_volume_coefficients_cc;
+  namespace file_ns = nodes::node_shader_volume_coefficients_cc;
 
-  static blender::bke::bNodeType ntype;
+  static bke::bNodeType ntype;
 
   sh_node_type_base(&ntype, "ShaderNodeVolumeCoefficients", SH_NODE_VOLUME_COEFFICIENTS);
   ntype.ui_name = "Volume Coefficients";
@@ -152,10 +153,12 @@ void register_node_type_sh_volume_coefficients()
   ntype.nclass = NODE_CLASS_SHADER;
   ntype.declare = file_ns::node_declare;
   ntype.add_ui_poll = object_shader_nodes_poll;
-  blender::bke::node_type_size_preset(ntype, blender::bke::eNodeSizePreset::Large);
+  bke::node_type_size_preset(ntype, bke::eNodeSizePreset::Large);
   ntype.initfunc = file_ns::node_shader_init_coefficients;
   ntype.gpu_fn = file_ns::node_shader_gpu_volume_coefficients;
   ntype.updatefunc = file_ns::node_shader_update_coefficients;
 
-  blender::bke::node_register_type(ntype);
+  bke::node_register_type(ntype);
 }
+
+}  // namespace blender

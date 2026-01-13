@@ -122,7 +122,7 @@ static std::string ui_drop_material_tooltip(bContext *C,
                                             wmDropBox * /*drop*/)
 {
   PointerRNA rna_ptr = CTX_data_pointer_get_type(C, "object", &RNA_Object);
-  Object *ob = (Object *)rna_ptr.data;
+  Object *ob = static_cast<Object *>(rna_ptr.data);
   BLI_assert(ob);
 
   PointerRNA mat_slot = CTX_data_pointer_get_type(C, "material_slot", &RNA_MaterialSlot);
@@ -131,7 +131,7 @@ static std::string ui_drop_material_tooltip(bContext *C,
   const int target_slot = RNA_int_get(&mat_slot, "slot_index") + 1;
 
   PointerRNA rna_prev_material = RNA_pointer_get(&mat_slot, "material");
-  Material *prev_mat_in_slot = (Material *)rna_prev_material.data;
+  Material *prev_mat_in_slot = static_cast<Material *>(rna_prev_material.data);
   const char *dragged_material_name = WM_drag_get_item_name(drag);
 
   if (prev_mat_in_slot) {
@@ -161,7 +161,7 @@ static std::string ui_drop_material_tooltip(bContext *C,
 
 void dropboxes_ui()
 {
-  ListBase *lb = WM_dropboxmap_find("User Interface", SPACE_EMPTY, RGN_TYPE_WINDOW);
+  ListBaseT<wmDropBox> *lb = WM_dropboxmap_find("User Interface", SPACE_EMPTY, RGN_TYPE_WINDOW);
 
   WM_dropbox_add(lb, "UI_OT_view_drop", ui_view_drop_poll, nullptr, nullptr, ui_view_drop_tooltip);
   WM_dropbox_add(lb,

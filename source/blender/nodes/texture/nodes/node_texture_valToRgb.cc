@@ -11,12 +11,14 @@
 #include "node_texture_util.hh"
 #include "node_util.hh"
 
+namespace blender {
+
 /* **************** VALTORGB ******************** */
-static blender::bke::bNodeSocketTemplate valtorgb_in[] = {
+static bke::bNodeSocketTemplate valtorgb_in[] = {
     {SOCK_FLOAT, N_("Fac"), 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},
     {-1, ""},
 };
-static blender::bke::bNodeSocketTemplate valtorgb_out[] = {
+static bke::bNodeSocketTemplate valtorgb_out[] = {
     {SOCK_RGBA, N_("Color")},
     {-1, ""},
 };
@@ -47,29 +49,29 @@ static void valtorgb_init(bNodeTree * /*ntree*/, bNode *node)
 
 void register_node_type_tex_valtorgb()
 {
-  static blender::bke::bNodeType ntype;
+  static bke::bNodeType ntype;
 
   tex_node_type_base(&ntype, "TextureNodeValToRGB", TEX_NODE_VALTORGB);
   ntype.ui_name = "Color Ramp";
   ntype.ui_description = "Map values to colors with the use of a gradient";
   ntype.enum_name_legacy = "VALTORGB";
   ntype.nclass = NODE_CLASS_CONVERTER;
-  blender::bke::node_type_socket_templates(&ntype, valtorgb_in, valtorgb_out);
-  blender::bke::node_type_size_preset(ntype, blender::bke::eNodeSizePreset::Large);
+  bke::node_type_socket_templates(&ntype, valtorgb_in, valtorgb_out);
+  bke::node_type_size_preset(ntype, bke::eNodeSizePreset::Large);
   ntype.initfunc = valtorgb_init;
-  blender::bke::node_type_storage(
+  bke::node_type_storage(
       ntype, "ColorBand", node_free_standard_storage, node_copy_standard_storage);
   ntype.exec_fn = valtorgb_exec;
 
-  blender::bke::node_register_type(ntype);
+  bke::node_register_type(ntype);
 }
 
 /* **************** RGBTOBW ******************** */
-static blender::bke::bNodeSocketTemplate rgbtobw_in[] = {
+static bke::bNodeSocketTemplate rgbtobw_in[] = {
     {SOCK_RGBA, N_("Color"), 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f},
     {-1, ""},
 };
-static blender::bke::bNodeSocketTemplate rgbtobw_out[] = {
+static bke::bNodeSocketTemplate rgbtobw_out[] = {
     {SOCK_FLOAT, N_("Val"), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
     {-1, ""},
 };
@@ -94,15 +96,17 @@ static void rgbtobw_exec(void *data,
 
 void register_node_type_tex_rgbtobw()
 {
-  static blender::bke::bNodeType ntype;
+  static bke::bNodeType ntype;
 
   tex_node_type_base(&ntype, "TextureNodeRGBToBW", TEX_NODE_RGBTOBW);
   ntype.ui_name = "RGB to BW";
   ntype.ui_description = "Convert RGB input into grayscale using luminance";
   ntype.enum_name_legacy = "RGBTOBW";
   ntype.nclass = NODE_CLASS_CONVERTER;
-  blender::bke::node_type_socket_templates(&ntype, rgbtobw_in, rgbtobw_out);
+  bke::node_type_socket_templates(&ntype, rgbtobw_in, rgbtobw_out);
   ntype.exec_fn = rgbtobw_exec;
 
-  blender::bke::node_register_type(ntype);
+  bke::node_register_type(ntype);
 }
+
+}  // namespace blender

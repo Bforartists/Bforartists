@@ -38,9 +38,7 @@
 #  include <openvdb/tools/VolumeToMesh.h>
 #endif
 
-using blender::float3;
-using blender::float4x4;
-using blender::Span;
+namespace blender {
 
 static void init_data(ModifierData *md)
 {
@@ -70,13 +68,13 @@ static void update_depsgraph(ModifierData *md, const ModifierUpdateDepsgraphCont
 static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void *user_data)
 {
   VolumeToMeshModifierData *vmmd = reinterpret_cast<VolumeToMeshModifierData *>(md);
-  walk(user_data, ob, (ID **)&vmmd->object, IDWALK_CB_NOP);
+  walk(user_data, ob, reinterpret_cast<ID **>(&vmmd->object), IDWALK_CB_NOP);
 }
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  blender::ui::Layout *row, *col; /* bfa - added row, col */
-  blender::ui::Layout &layout = *panel->layout;
+  ui::Layout *row, *col; /* bfa - added row, col */
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
   VolumeToMeshModifierData *vmmd = static_cast<VolumeToMeshModifierData *>(ptr->data);
@@ -131,7 +129,6 @@ static Mesh *create_empty_mesh(const Mesh *input_mesh)
 
 static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *input_mesh)
 {
-  using namespace blender;
 #ifdef WITH_OPENVDB
   VolumeToMeshModifierData *vmmd = reinterpret_cast<VolumeToMeshModifierData *>(md);
   if (vmmd->object == nullptr) {
@@ -151,16 +148,16 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
     return create_empty_mesh(input_mesh);
   }
 
-  const Volume *volume = static_cast<Volume *>(vmmd->object->data);
+  const Volume *volume = id_cast<Volume *>(vmmd->object->data);
 
   BKE_volume_load(volume, DEG_get_bmain(ctx->depsgraph));
-  const blender::bke::VolumeGridData *volume_grid = BKE_volume_grid_find(volume, vmmd->grid_name);
+  const bke::VolumeGridData *volume_grid = BKE_volume_grid_find(volume, vmmd->grid_name);
   if (volume_grid == nullptr) {
     BKE_modifier_set_error(ctx->object, md, "Cannot find '%s' grid", vmmd->grid_name);
     return create_empty_mesh(input_mesh);
   }
 
-  blender::bke::VolumeTreeAccessToken tree_token;
+  bke::VolumeTreeAccessToken tree_token;
   const openvdb::GridBase &local_grid = volume_grid->grid(tree_token);
 
   openvdb::math::Transform::Ptr transform = local_grid.transform().copy();
@@ -234,3 +231,5 @@ ModifierTypeInfo modifierType_VolumeToMesh = {
     /*foreach_cache*/ nullptr,
     /*foreach_working_space_color*/ nullptr,
 };
+
+}  // namespace blender

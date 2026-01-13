@@ -9,7 +9,10 @@
 
 #pragma once
 
+namespace blender {
+
 struct Library;
+struct TestStruct;
 
 /* Structure that is to be skipped from SDNA. */
 #
@@ -19,9 +22,9 @@ struct RuntimeStruct {
 };
 
 /* NOTE: This type must exist in order for the SDNA to be considered valid. */
-typedef struct ListBase {
+struct ListBase {
   void *first, *last;
-} ListBase;
+};
 
 struct TestStruct {
 #ifdef __cplusplus
@@ -40,3 +43,5 @@ struct TestStruct {
 
   int _pad2;
 };
+
+}  // namespace blender

@@ -8,16 +8,22 @@
 
 #include "BLI_listbase.h"
 
+#include "DNA_node_types.h"
+
 #include "BKE_context.hh"
 #include "BKE_lib_id.hh"
+#include "BKE_node.hh"
+#include "BKE_node_runtime.hh"
 
 #include "COM_node_operation.hh"
 
 #include "node_composite_util.hh"
 
+namespace blender {
+
 /* **************** SWITCH VIEW ******************** */
 
-namespace blender::nodes::node_composite_switchview_cc {
+namespace nodes::node_composite_switchview_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
@@ -32,11 +38,11 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   if (scene != nullptr) {
     /* add the new views */
-    LISTBASE_FOREACH (SceneRenderView *, srv, &scene->r.views) {
-      if (srv->viewflag & SCE_VIEW_DISABLE) {
+    for (SceneRenderView &srv : scene->r.views) {
+      if (srv.viewflag & SCE_VIEW_DISABLE) {
         continue;
       }
-      b.add_input<decl::Color>(srv->name)
+      b.add_input<decl::Color>(srv.name)
           .default_value({0.0f, 0.0f, 0.0f, 1.0f})
           .structure_type(StructureType::Dynamic);
     }
@@ -49,7 +55,7 @@ static void init_switch_view(const bContext *C, PointerRNA *ptr)
   bNode *node = (bNode *)ptr->data;
 
   /* store scene for dynamic declaration */
-  node->id = (ID *)scene;
+  node->id = reinterpret_cast<ID *>(scene);
   id_us_plus(node->id);
 }
 
@@ -75,18 +81,18 @@ class SwitchViewOperation : public NodeOperation {
   }
 };
 
-static NodeOperation *get_compositor_operation(Context &context, DNode node)
+static NodeOperation *get_compositor_operation(Context &context, const bNode &node)
 {
   return new SwitchViewOperation(context, node);
 }
 
-}  // namespace blender::nodes::node_composite_switchview_cc
+}  // namespace nodes::node_composite_switchview_cc
 
 static void register_node_type_cmp_switch_view()
 {
-  namespace file_ns = blender::nodes::node_composite_switchview_cc;
+  namespace file_ns = nodes::node_composite_switchview_cc;
 
-  static blender::bke::bNodeType ntype;
+  static bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, "CompositorNodeSwitchView", CMP_NODE_SWITCH_VIEW);
   ntype.ui_name = "Switch View";
@@ -97,6 +103,8 @@ static void register_node_type_cmp_switch_view()
   ntype.initfunc_api = file_ns::init_switch_view;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
-  blender::bke::node_register_type(ntype);
+  bke::node_register_type(ntype);
 }
 NOD_REGISTER_NODE(register_node_type_cmp_switch_view)
+
+}  // namespace blender

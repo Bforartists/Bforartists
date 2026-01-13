@@ -26,6 +26,8 @@
 
 #include "screen_intern.hh"
 
+namespace blender {
+
 WorkSpaceLayout *ED_workspace_layout_add(Main *bmain,
                                          WorkSpace *workspace,
                                          wmWindow *win,
@@ -128,11 +130,11 @@ static bool workspace_change_find_new_layout_cb(const WorkSpaceLayout *layout, v
 
 static bScreen *screen_fullscreen_find_associated_normal_screen(const Main *bmain, bScreen *screen)
 {
-  LISTBASE_FOREACH (bScreen *, screen_iter, &bmain->screens) {
-    if ((screen_iter != screen) && ELEM(screen_iter->state, SCREENMAXIMIZED, SCREENFULL)) {
-      ScrArea *area = static_cast<ScrArea *>(screen_iter->areabase.first);
+  for (bScreen &screen_iter : bmain->screens) {
+    if ((&screen_iter != screen) && ELEM(screen_iter.state, SCREENMAXIMIZED, SCREENFULL)) {
+      ScrArea *area = static_cast<ScrArea *>(screen_iter.areabase.first);
       if (area && area->full == screen) {
-        return screen_iter;
+        return &screen_iter;
       }
     }
   }
@@ -213,3 +215,5 @@ bool ED_workspace_layout_cycle(WorkSpace *workspace, const short direction, bCon
 
   return false;
 }
+
+}  // namespace blender

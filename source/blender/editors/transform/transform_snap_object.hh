@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "DNA_listBase.h"
 #include "DNA_scene_types.h"
 
 #include "BLI_kdopbvh.hh"
@@ -17,6 +18,8 @@
 #include "BLI_math_vector_types.hh"
 
 #include "ED_transform_snap_object_context.hh"
+
+namespace blender {
 
 #define MAX_CLIPPLANE_LEN 6
 
@@ -29,13 +32,12 @@ struct BMFace;
 struct BMVert;
 struct Depsgraph;
 struct ID;
-struct ListBase;
 struct Object;
 struct RegionView3D;
 struct Scene;
 struct View3D;
 
-namespace blender::ed::transform {
+namespace ed::transform {
 
 struct SnapObjectContext {
   Scene *scene;
@@ -87,7 +89,7 @@ struct SnapObjectContext {
     /* Read/write. */
     uint object_index;
     /* List of #SnapObjectHitDepth (caller must free). */
-    ListBase *hit_list;
+    ListBaseT<SnapObjectHitDepth> *hit_list;
 
     eSnapOcclusionTest occlusion_test_edit;
 
@@ -133,7 +135,7 @@ struct RayCastAll_Data {
   uint ob_uuid;
 
   /* Output data. */
-  ListBase *hit_list;
+  ListBaseT<SnapObjectHitDepth> *hit_list;
 };
 
 class SnapData {
@@ -270,4 +272,5 @@ eSnapMode snap_edge_points_mesh(SnapObjectContext *sctx,
                                 float dist_px_sq_orig,
                                 int edge_index);
 
-}  // namespace blender::ed::transform
+}  // namespace ed::transform
+}  // namespace blender

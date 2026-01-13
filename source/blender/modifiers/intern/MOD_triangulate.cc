@@ -28,13 +28,14 @@
 
 #include "MOD_ui_common.hh"
 
+namespace blender {
+
 static Mesh *triangulate_mesh(Mesh *mesh,
                               const int quad_method,
                               const int ngon_method,
                               const int min_vertices,
                               const int flag)
 {
-  using namespace blender;
   Mesh *result;
   BMesh *bm;
   CustomData_MeshMasks cd_mask_extra{};
@@ -79,7 +80,7 @@ static Mesh *triangulate_mesh(Mesh *mesh,
 
 static void init_data(ModifierData *md)
 {
-  TriangulateModifierData *tmd = (TriangulateModifierData *)md;
+  TriangulateModifierData *tmd = reinterpret_cast<TriangulateModifierData *>(md);
   INIT_DEFAULT_STRUCT_AFTER(tmd, modifier);
 
   /* Enable in editmode by default */
@@ -88,7 +89,7 @@ static void init_data(ModifierData *md)
 
 static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, Mesh *mesh)
 {
-  TriangulateModifierData *tmd = (TriangulateModifierData *)md;
+  TriangulateModifierData *tmd = reinterpret_cast<TriangulateModifierData *>(md);
   Mesh *result = triangulate_mesh(
       mesh, tmd->quad_method, tmd->ngon_method, tmd->min_vertices, tmd->flag);
   return (result) ? result : mesh;
@@ -96,8 +97,8 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext * /*ctx*/, 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  blender::ui::Layout *col, *row; /*bfa - added *col, *row */
-  blender::ui::Layout &layout = *panel->layout;
+  ui::Layout *col, *row; /*bfa - added *col, *row */
+  ui::Layout &layout = *panel->layout;
 
   PointerRNA ob_ptr;
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, &ob_ptr);
@@ -112,7 +113,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col = &layout.column(true);
   row = &col->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator(); /*bfa - indent*/
+  row->separator();                   /*bfa - indent*/
   row->prop(ptr, "keep_custom_normals", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);
@@ -160,3 +161,5 @@ ModifierTypeInfo modifierType_Triangulate = {
     /*foreach_cache*/ nullptr,
     /*foreach_working_space_color*/ nullptr,
 };
+
+}  // namespace blender

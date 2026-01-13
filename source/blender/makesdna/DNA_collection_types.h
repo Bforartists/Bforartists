@@ -14,14 +14,11 @@
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
 
-#ifdef __cplusplus
-namespace blender::bke {
+namespace blender {
+
+namespace bke {
 struct CollectionRuntime;
-}  // namespace blender::bke
-using CollectionRuntimeHandle = blender::bke::CollectionRuntime;
-#else
-struct CollectionRuntimeHandle;
-#endif
+}  // namespace bke
 
 struct Collection;
 struct Object;
@@ -184,5 +181,7 @@ struct Collection {
   DNA_DEPRECATED struct ViewLayer *view_layer = nullptr;
 
   /* Keep last. */
-  CollectionRuntimeHandle *runtime = nullptr;
+  bke::CollectionRuntime *runtime = nullptr;
 };
+
+}  // namespace blender

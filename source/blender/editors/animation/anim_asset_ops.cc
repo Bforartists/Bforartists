@@ -57,8 +57,7 @@ static const EnumPropertyItem *rna_asset_library_reference_itemf(bContext * /*C*
                                                                  PropertyRNA * /*prop*/,
                                                                  bool *r_free)
 {
-  const EnumPropertyItem *items = blender::ed::asset::library_reference_to_rna_enum_itemf(false,
-                                                                                          true);
+  const EnumPropertyItem *items = ed::asset::library_reference_to_rna_enum_itemf(false, true);
   *r_free = true;
   BLI_assert(items != nullptr);
   return items;
@@ -121,7 +120,7 @@ static blender::animrig::Action &extract_pose(Main &bmain, const Span<Object *> 
   for (Object *pose_object : pose_objects) {
     BLI_assert(pose_object->pose);
     Slot &slot = action.slot_add_for_id(pose_object->id);
-    const bArmature *armature = static_cast<bArmature *>(pose_object->data);
+    const bArmature *armature = id_cast<bArmature *>(pose_object->data);
 
     Set<RNAPath> existing_paths;
     if (pose_object->adt && pose_object->adt->action &&
@@ -135,12 +134,12 @@ static blender::animrig::Action &extract_pose(Main &bmain, const Span<Object *> 
       });
     }
 
-    LISTBASE_FOREACH (bPoseChannel *, pose_bone, &pose_object->pose->chanbase) {
-      if (!blender::animrig::bone_is_selected(armature, pose_bone)) {
+    for (bPoseChannel &pose_bone : pose_object->pose->chanbase) {
+      if (!blender::animrig::bone_is_selected(armature, &pose_bone)) {
         continue;
       }
       PointerRNA bone_pointer = RNA_pointer_create_discrete(
-          &pose_object->id, &RNA_PoseBone, pose_bone);
+          &pose_object->id, &RNA_PoseBone, &pose_bone);
       Vector<RNAPath> rna_paths = construct_pose_rna_paths(bone_pointer);
       for (const RNAPath &rna_path : rna_paths) {
         PointerRNA resolved_pointer;
@@ -188,18 +187,18 @@ static void ensure_asset_ui_visible(bContext &C)
   }
 
   wmWindowManager *wm = CTX_wm_manager(&C);
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    const bScreen *screen = WM_window_get_active_screen(win);
-    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
-      if (area->type->spaceid == SPACE_FILE) {
-        SpaceFile *sfile = reinterpret_cast<SpaceFile *>(area->spacedata.first);
+  for (wmWindow &win : wm->windows) {
+    const bScreen *screen = WM_window_get_active_screen(&win);
+    for (ScrArea &area : screen->areabase) {
+      if (area.type->spaceid == SPACE_FILE) {
+        SpaceFile *sfile = reinterpret_cast<SpaceFile *>(area.spacedata.first);
         if (sfile->browse_mode == FILE_BROWSE_MODE_ASSETS) {
           /* Asset Browser is open. */
           return;
         }
         continue;
       }
-      const ARegion *shelf_region = BKE_area_find_region_type(area, RGN_TYPE_ASSET_SHELF);
+      const ARegion *shelf_region = BKE_area_find_region_type(&area, RGN_TYPE_ASSET_SHELF);
       if (!shelf_region) {
         continue;
       }
@@ -489,7 +488,7 @@ static const EnumPropertyItem prop_asset_overwrite_modes[] = {
  */
 static bAction *get_action_of_selected_asset(bContext *C)
 {
-  const blender::asset_system::AssetRepresentation *asset = CTX_wm_asset(C);
+  const asset_system::AssetRepresentation *asset = CTX_wm_asset(C);
   if (!asset) {
     return nullptr;
   }
@@ -530,7 +529,7 @@ static bool is_pose_asset_blend_editable(const bAction &action, ReportList *repo
  */
 static bool pose_asset_potentially_editable_poll(bContext *C)
 {
-  const AssetRepresentationHandle *asset_handle = CTX_wm_asset(C);
+  const asset_system::AssetRepresentation *asset_handle = CTX_wm_asset(C);
   if (!asset_handle || asset_handle->get_id_type() != ID_AC) {
     CTX_wm_operator_poll_msg_set(C, "No selected pose asset");
     return false;
@@ -553,13 +552,13 @@ struct PathValue {
 static Vector<PathValue> generate_path_values(Object &pose_object)
 {
   Vector<PathValue> path_values;
-  const bArmature *armature = static_cast<bArmature *>(pose_object.data);
-  LISTBASE_FOREACH (bPoseChannel *, pose_bone, &pose_object.pose->chanbase) {
-    if (!blender::animrig::bone_is_selected(armature, pose_bone)) {
+  const bArmature *armature = id_cast<bArmature *>(pose_object.data);
+  for (bPoseChannel &pose_bone : pose_object.pose->chanbase) {
+    if (!blender::animrig::bone_is_selected(armature, &pose_bone)) {
       continue;
     }
     PointerRNA bone_pointer = RNA_pointer_create_discrete(
-        &pose_object.id, &RNA_PoseBone, pose_bone);
+        &pose_object.id, &RNA_PoseBone, &pose_bone);
     Vector<RNAPath> rna_paths = construct_pose_rna_paths(bone_pointer);
 
     for (RNAPath &rna_path : rna_paths) {
@@ -774,7 +773,7 @@ static wmOperatorStatus pose_asset_delete_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  const blender::asset_system::AssetRepresentation *asset = CTX_wm_asset(C);
+  const asset_system::AssetRepresentation *asset = CTX_wm_asset(C);
   if (ID_IS_LINKED(action) && !is_pose_asset_blend_editable(*action, op->reports)) {
     return OPERATOR_CANCELLED;
   }

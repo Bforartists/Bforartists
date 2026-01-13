@@ -224,7 +224,14 @@ class GREASE_PENCIL_MT_move_to_layer(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator_context = "INVOKE_REGION_WIN"
+
+        if layout.operator_context == 'EXEC_REGION_WIN':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("WM_OT_search_single_menu", text="Search...",
+                            icon='VIEWZOOM').menu_idname = "GREASE_PENCIL_MT_move_to_layer"
+            layout.separator()
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
         grease_pencil = context.active_object.data
 
         layout.operator("grease_pencil.move_to_layer", text="New Layer", icon="ADD").add_new_layer = True

@@ -393,7 +393,7 @@ static wmOperatorStatus view_edge_pan_invoke(bContext *C,
                                              wmOperator *op,
                                              const wmEvent * /*event*/)
 {
-  op->customdata = MEM_callocN(sizeof(View2DEdgePanData), "View2DEdgePanData");
+  op->customdata = MEM_callocN<View2DEdgePanData>("View2DEdgePanData");
   View2DEdgePanData *vpd = static_cast<View2DEdgePanData *>(op->customdata);
   view2d_edge_pan_operator_init(C, vpd, op);
 
@@ -2156,7 +2156,7 @@ static wmOperatorStatus scroller_activate_invoke(bContext *C, wmOperator *op, co
   if (in_scroller) {
     /* initialize customdata */
     scroller_activate_init(C, op, event, in_scroller);
-    v2dScrollerMove *vsm = (v2dScrollerMove *)op->customdata;
+    v2dScrollerMove *vsm = static_cast<v2dScrollerMove *>(op->customdata);
 
     /* Support for quick jump to location - GTK and QT do this on Linux. */
     if (event->type == MIDDLEMOUSE) {

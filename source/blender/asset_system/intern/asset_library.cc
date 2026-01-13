@@ -32,7 +32,8 @@
 #include "runtime_library.hh"
 #include "utils.hh"
 
-using namespace blender;
+namespace blender {
+
 using namespace blender::asset_system;
 
 bool AssetLibrary::save_catalogs_when_file_is_saved = true;
@@ -165,15 +166,15 @@ void AS_asset_full_path_explode_from_weak_ref(const AssetWeakReference *asset_re
 
 static void update_import_method_for_user_libraries()
 {
-  LISTBASE_FOREACH (bUserAssetLibrary *, library, &U.asset_libraries) {
+  for (bUserAssetLibrary &library : U.asset_libraries) {
     if (U.experimental.no_data_block_packing) {
-      if (library->import_method == ASSET_IMPORT_PACK) {
-        library->import_method = ASSET_IMPORT_APPEND_REUSE;
+      if (library.import_method == ASSET_IMPORT_PACK) {
+        library.import_method = ASSET_IMPORT_APPEND_REUSE;
       }
     }
     else {
-      if (library->import_method == ASSET_IMPORT_APPEND_REUSE) {
-        library->import_method = ASSET_IMPORT_PACK;
+      if (library.import_method == ASSET_IMPORT_APPEND_REUSE) {
+        library.import_method = ASSET_IMPORT_PACK;
       }
     }
   }
@@ -181,13 +182,13 @@ static void update_import_method_for_user_libraries()
 
 static void update_import_method_for_asset_browsers(Main &bmain)
 {
-  LISTBASE_FOREACH (bScreen *, screen, &bmain.screens) {
-    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
-      LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
-        if (sl->spacetype != SPACE_FILE) {
+  for (bScreen &screen : bmain.screens) {
+    for (ScrArea &area : screen.areabase) {
+      for (SpaceLink &sl : area.spacedata) {
+        if (sl.spacetype != SPACE_FILE) {
           continue;
         }
-        SpaceFile *sfile = reinterpret_cast<SpaceFile *>(sl);
+        SpaceFile *sfile = reinterpret_cast<SpaceFile *>(&sl);
         if (!sfile->asset_params) {
           continue;
         }
@@ -224,13 +225,17 @@ void AS_asset_library_essential_import_method_update()
   }
 }
 
-namespace blender::asset_system {
+namespace asset_system {
 
-AssetLibrary::AssetLibrary(eAssetLibraryType library_type, StringRef name, StringRef root_path)
+AssetLibrary::AssetLibrary(
+    eAssetLibraryType library_type,
+    StringRef name,
+    StringRef root_path,
+    std::optional<AssetCatalogService::read_only_tag> catalogs_read_only_tag)
     : library_type_(library_type),
       name_(name),
       root_path_(std::make_shared<std::string>(utils::normalize_directory_path(root_path))),
-      catalog_service_(std::make_unique<AssetCatalogService>(*root_path_))
+      catalog_service_(std::make_unique<AssetCatalogService>(*root_path_, catalogs_read_only_tag))
 {
 }
 
@@ -384,7 +389,7 @@ void AssetLibrary::on_blend_save_post(Main *bmain,
                                       PointerRNA ** /*pointers*/,
                                       const int /*num_pointers*/)
 {
-  if (save_catalogs_when_file_is_saved) {
+  if (save_catalogs_when_file_is_saved && !this->catalog_service().is_read_only()) {
     this->catalog_service().write_to_disk(bmain->filepath);
   }
 }
@@ -435,9 +440,9 @@ Vector<AssetLibraryReference> all_valid_asset_library_refs()
     library_ref.type = ASSET_LIBRARY_ESSENTIALS;
     result.append(library_ref);
   }
-  int i;
-  LISTBASE_FOREACH_INDEX (const bUserAssetLibrary *, asset_library, &U.asset_libraries, i) {
-    if (!BLI_is_dir(asset_library->dirpath)) {
+
+  for (const auto [i, asset_library] : U.asset_libraries.enumerate()) {
+    if (!BLI_is_dir(asset_library.dirpath)) {
       continue;
     }
     AssetLibraryReference library_ref{};
@@ -475,4 +480,6 @@ void all_library_reload_catalogs_if_dirty()
   service->reload_all_library_catalogs_if_dirty();
 }
 
-}  // namespace blender::asset_system
+}  // namespace asset_system
+
+}  // namespace blender

@@ -39,8 +39,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-using blender::Span;
-using blender::Vector;
+namespace blender {
 
 #define B_UVEDIT_VERTEX 3
 
@@ -114,9 +113,7 @@ static void uvedit_translate(Scene *scene, const Span<Object *> objects, const f
 
 static float uvedit_old_center[2];
 
-static void uvedit_vertex_buttons(const bContext *C,
-                                  blender::ui::Block *block,
-                                  blender::ui::Layout *layout)
+static void uvedit_vertex_buttons(const bContext *C, ui::Block *block, ui::Layout *layout)
 {
   SpaceImage *sima = CTX_wm_space_image(C);
   Scene *scene = CTX_data_scene(C);
@@ -158,7 +155,7 @@ static void uvedit_vertex_buttons(const bContext *C,
       digits = 2;
     }
 
-    blender::ui::Button *but;
+    ui::Button *but;
 
     int y = 0;
 
@@ -177,7 +174,7 @@ static void uvedit_vertex_buttons(const bContext *C,
 
     /* BFA - Split prop slider from label */
     but = uiDefButF(block,
-                    blender::ui::ButtonType::Num,
+                    ui::ButtonType::Num,
                     nullptr,              /* BFA */
                     UI_UNIT_X * 75 / 100, /* BFA */
                     y,                    /* BFA */
@@ -204,7 +201,7 @@ static void uvedit_vertex_buttons(const bContext *C,
                    "");
     /* BFA - Split prop slider from label */
     but = uiDefButF(block,
-                    blender::ui::ButtonType::Num,
+                    ui::ButtonType::Num,
                     nullptr,              /* BFA */
                     UI_UNIT_X * 75 / 100, /* BFA */
                     y,                    /* BFA */
@@ -254,7 +251,7 @@ static void do_uvedit_vertex(bContext *C, void * /*arg*/, int event)
 
   WM_event_add_notifier(C, NC_IMAGE, sima->image);
   for (Object *obedit : objects) {
-    DEG_id_tag_update((ID *)obedit->data, ID_RECALC_GEOMETRY);
+    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_GEOMETRY);
   }
 }
 
@@ -272,13 +269,13 @@ static bool image_panel_uv_poll(const bContext *C, PanelType * /*pt*/)
 
 static void image_panel_uv(const bContext *C, Panel *panel)
 {
-  blender::ui::Block *block;
+  ui::Block *block;
 
   /* BFA - Use split layout, manually recreated */
-  blender::ui::Layout *layout = panel->layout;
-  blender::ui::Layout *layout_split, *layout_sub;
+  ui::Layout *layout = panel->layout;
+  ui::Layout *layout_split, *layout_sub;
 
-  blender::ui::Layout *col;
+  ui::Layout *col;
   col = &layout->column(true);
 
   /* BFA - property label */
@@ -311,3 +308,5 @@ void ED_uvedit_buttons_register(ARegionType *art)
   pt->poll = image_panel_uv_poll;
   BLI_addtail(&art->paneltypes, pt);
 }
+
+}  // namespace blender

@@ -40,7 +40,7 @@
 
 #include "nla_intern.hh" /* own include */
 
-using namespace blender;
+namespace blender {
 
 /* ******************* nla editor space & buttons ************** */
 
@@ -65,7 +65,7 @@ bool nla_panel_context(const bContext *C,
                        PointerRNA *strip_ptr)
 {
   bAnimContext ac;
-  ListBase anim_data = {nullptr, nullptr};
+  ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
   short found = 0; /* not bool, since we need to indicate "found but not ideal" status */
 
   /* For now, only draw if we could init the anim-context info
@@ -84,26 +84,26 @@ bool nla_panel_context(const bContext *C,
                               ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, eAnimCont_Types(ac.datatype));
 
-  LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
-    switch (ale->type) {
+  for (bAnimListElem &ale : anim_data) {
+    switch (ale.type) {
       case ANIMTYPE_NLATRACK: /* NLA Track - The primary data type which should get caught */
       {
-        NlaTrack *nlt = static_cast<NlaTrack *>(ale->data);
-        AnimData *adt = ale->adt;
+        NlaTrack *nlt = static_cast<NlaTrack *>(ale.data);
+        AnimData *adt = ale.adt;
 
         /* found it, now set the pointers */
         if (adt_ptr) {
           /* AnimData pointer */
-          *adt_ptr = RNA_pointer_create_discrete(ale->id, &RNA_AnimData, adt);
+          *adt_ptr = RNA_pointer_create_discrete(ale.id, &RNA_AnimData, adt);
         }
         if (nlt_ptr) {
           /* NLA-Track pointer */
-          *nlt_ptr = RNA_pointer_create_discrete(ale->id, &RNA_NlaTrack, nlt);
+          *nlt_ptr = RNA_pointer_create_discrete(ale.id, &RNA_NlaTrack, nlt);
         }
         if (strip_ptr) {
           /* NLA-Strip pointer */
           NlaStrip *strip = BKE_nlastrip_find_active(nlt);
-          *strip_ptr = RNA_pointer_create_discrete(ale->id, &RNA_NlaStrip, strip);
+          *strip_ptr = RNA_pointer_create_discrete(ale.id, &RNA_NlaStrip, strip);
         }
 
         found = 1;
@@ -134,22 +134,22 @@ bool nla_panel_context(const bContext *C,
       case ANIMTYPE_DSVOLUME:
       case ANIMTYPE_DSLIGHTPROBE: {
         /* for these channels, we only do AnimData */
-        if (ale->adt && adt_ptr) {
+        if (ale.adt && adt_ptr) {
           ID *id;
 
-          if ((ale->data == nullptr) || (ale->type == ANIMTYPE_OBJECT)) {
+          if ((ale.data == nullptr) || (ale.type == ANIMTYPE_OBJECT)) {
             /* ale->data is not an ID block! */
-            id = ale->id;
+            id = ale.id;
           }
           else {
             /* ale->data is always the proper ID block we need,
              * but ale->id may not be (i.e. for textures) */
-            id = static_cast<ID *>(ale->data);
+            id = static_cast<ID *>(ale.data);
           }
 
           /* AnimData pointer */
           if (adt_ptr) {
-            *adt_ptr = RNA_pointer_create_discrete(id, &RNA_AnimData, ale->adt);
+            *adt_ptr = RNA_pointer_create_discrete(id, &RNA_AnimData, ale.adt);
           }
 
           /* set found status to -1, since setting to 1 would break the loop
@@ -305,7 +305,7 @@ static void nla_panel_animdata(const bContext *C, Panel *panel)
 
   // adt = adt_ptr.data;
 
-  blender::ui::Block *block = layout.block();
+  ui::Block *block = layout.block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
@@ -403,7 +403,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     return;
   }
   ui::Layout &layout = *panel->layout;
-  blender::ui::Block *block = layout.block();
+  ui::Block *block = layout.block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   /* Strip Properties ------------------------------------- */
@@ -487,7 +487,7 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
   }
   ui::Layout &layout = *panel->layout;
 
-  blender::ui::Block *block = layout.block();
+  ui::Block *block = layout.block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(true);
@@ -546,7 +546,7 @@ static void nla_panel_animated_influence_header(const bContext *C, Panel *panel)
   }
   ui::Layout &layout = *panel->layout;
 
-  blender::ui::Block *block = layout.block();
+  ui::Block *block = layout.block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   ui::Layout &col = layout.column(true);
@@ -564,7 +564,7 @@ static void nla_panel_evaluation(const bContext *C, Panel *panel)
 
   ui::Layout &layout = *panel->layout;
 
-  blender::ui::Block *block = layout.block();
+  ui::Block *block = layout.block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
   layout.use_property_split_set(true);
 
@@ -581,7 +581,7 @@ static void nla_panel_animated_strip_time_header(const bContext *C, Panel *panel
   }
   ui::Layout &layout = *panel->layout;
 
-  blender::ui::Block *block = layout.block();
+  ui::Block *block = layout.block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   ui::Layout &col = layout.column(true);
@@ -597,7 +597,7 @@ static void nla_panel_animated_strip_time(const bContext *C, Panel *panel)
   }
   ui::Layout &layout = *panel->layout;
 
-  blender::ui::Block *block = layout.block();
+  ui::Block *block = layout.block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
   layout.use_property_split_set(true);
 
@@ -626,7 +626,7 @@ static void nla_panel_modifiers(const bContext *C, Panel *panel)
   }
   NlaStrip *strip = static_cast<NlaStrip *>(strip_ptr.data);
 
-  blender::ui::Block *block = panel->layout->block();
+  ui::Block *block = panel->layout->block();
   block_func_handle_set(block, do_nla_region_buttons, nullptr);
 
   /* 'add modifier' button at top of panel */
@@ -732,3 +732,5 @@ void nla_buttons_register(ARegionType *art)
   ANIM_modifier_panels_register_graph_and_NLA(
       art, NLA_FMODIFIER_PANEL_PREFIX, nla_strip_eval_panel_poll);
 }
+
+}  // namespace blender

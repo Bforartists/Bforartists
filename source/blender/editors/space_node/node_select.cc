@@ -84,14 +84,14 @@ static bool has_workbench_in_texture_color(const wmWindowManager *wm,
                                            const Scene *scene,
                                            const Object *ob)
 {
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (win->scene != scene) {
+  for (wmWindow &win : wm->windows) {
+    if (win.scene != scene) {
       continue;
     }
-    const bScreen *screen = BKE_workspace_active_screen_get(win->workspace_hook);
-    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
-      if (area->spacetype == SPACE_VIEW3D) {
-        const View3D *v3d = (const View3D *)area->spacedata.first;
+    const bScreen *screen = BKE_workspace_active_screen_get(win.workspace_hook);
+    for (ScrArea &area : screen->areabase) {
+      if (area.spacetype == SPACE_VIEW3D) {
+        const View3D *v3d = static_cast<const View3D *>(area.spacedata.first);
 
         if (ED_view3d_has_workbench_in_texture_color(scene, ob, v3d)) {
           return true;
@@ -205,14 +205,14 @@ void node_socket_deselect(bNode *node, bNodeSocket &sock, const bool deselect_no
     bool sel = false;
 
     /* if no selected sockets remain, also deselect the node */
-    LISTBASE_FOREACH (bNodeSocket *, input, &node->inputs) {
-      if (input->flag & SELECT) {
+    for (bNodeSocket &input : node->inputs) {
+      if (input.flag & SELECT) {
         sel = true;
         break;
       }
     }
-    LISTBASE_FOREACH (bNodeSocket *, output, &node->outputs) {
-      if (output->flag & SELECT) {
+    for (bNodeSocket &output : node->outputs) {
+      if (output.flag & SELECT) {
         sel = true;
         break;
       }
@@ -253,14 +253,14 @@ void node_deselect_all_input_sockets(bNodeTree &node_tree, const bool deselect_n
   for (bNode *node : node_tree.all_nodes()) {
     bool sel = false;
 
-    LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
-      socket->flag &= ~SELECT;
+    for (bNodeSocket &socket : node->inputs) {
+      socket.flag &= ~SELECT;
     }
 
     /* If no selected sockets remain, also deselect the node. */
     if (deselect_nodes) {
-      LISTBASE_FOREACH (bNodeSocket *, socket, &node->outputs) {
-        if (socket->flag & SELECT) {
+      for (bNodeSocket &socket : node->outputs) {
+        if (socket.flag & SELECT) {
           sel = true;
           break;
         }
@@ -283,14 +283,14 @@ void node_deselect_all_output_sockets(bNodeTree &node_tree, const bool deselect_
   for (bNode *node : node_tree.all_nodes()) {
     bool sel = false;
 
-    LISTBASE_FOREACH (bNodeSocket *, socket, &node->outputs) {
-      socket->flag &= ~SELECT;
+    for (bNodeSocket &socket : node->outputs) {
+      socket.flag &= ~SELECT;
     }
 
     /* if no selected sockets remain, also deselect the node */
     if (deselect_nodes) {
-      LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
-        if (socket->flag & SELECT) {
+      for (bNodeSocket &socket : node->inputs) {
+        if (socket.flag & SELECT) {
           sel = true;
           break;
         }
@@ -859,7 +859,7 @@ static wmOperatorStatus node_box_select_exec(bContext *C, wmOperator *op)
   WM_operator_properties_border_to_rctf(op, &rectf);
   ui::view2d_region_to_view_rctf(&region.v2d, &rectf, &rectf);
 
-  const eSelectOp sel_op = (eSelectOp)RNA_enum_get(op->ptr, "mode");
+  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
   const bool select = (sel_op != SEL_OP_SUB);
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
     node_deselect_all(node_tree);
@@ -958,8 +958,8 @@ static wmOperatorStatus node_circleselect_exec(bContext *C, wmOperator *op)
   float zoom = float(BLI_rcti_size_x(&region->winrct)) / BLI_rctf_size_x(&region->v2d.cur);
 
   const eSelectOp sel_op = ED_select_op_modal(
-      (eSelectOp)RNA_enum_get(op->ptr, "mode"),
-      WM_gesture_is_modal_first((const wmGesture *)op->customdata));
+      eSelectOp(RNA_enum_get(op->ptr, "mode")),
+      WM_gesture_is_modal_first(static_cast<const wmGesture *>(op->customdata)));
   const bool select = (sel_op != SEL_OP_SUB);
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
     node_deselect_all(node_tree);
@@ -1116,7 +1116,7 @@ static wmOperatorStatus node_lasso_select_exec(bContext *C, wmOperator *op)
     return OPERATOR_PASS_THROUGH;
   }
 
-  const eSelectOp sel_op = (eSelectOp)RNA_enum_get(op->ptr, "mode");
+  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
 
   do_lasso_select_node(C, mcoords, sel_op);
 
@@ -1482,7 +1482,7 @@ static void node_find_update_fn(const bContext *C,
   };
 
   ui::string_search::StringSearch<Item> search;
-  blender::ResourceScope scope;
+  ResourceScope scope;
 
   auto add_data_block_item = [&](bNode &node, const ID *id) {
     if (!id) {
@@ -1615,7 +1615,7 @@ static void node_find_update_fn(const bContext *C,
 static void node_find_exec_fn(bContext *C, void * /*arg1*/, void *arg2)
 {
   SpaceNode *snode = CTX_wm_space_node(C);
-  bNode *active = (bNode *)arg2;
+  bNode *active = static_cast<bNode *>(arg2);
 
   if (active) {
     ARegion *region = CTX_wm_region(C);
@@ -1632,7 +1632,7 @@ static ui::Block *node_find_menu(bContext *C, ARegion *region, void *arg_optype)
   static char search[256] = "";
   ui::Block *block;
   ui::Button *but;
-  wmOperatorType *optype = (wmOperatorType *)arg_optype;
+  wmOperatorType *optype = static_cast<wmOperatorType *>(arg_optype);
 
   block = block_begin(C, region, "_popup", ui::EmbossType::Emboss);
   block_flag_enable(block, ui::BLOCK_LOOP | ui::BLOCK_MOVEMOUSE_QUIT | ui::BLOCK_SEARCH_MENU);

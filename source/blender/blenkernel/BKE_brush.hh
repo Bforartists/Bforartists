@@ -19,6 +19,8 @@
 #include "DNA_object_enums.h"
 #include "DNA_userdef_enums.h"
 
+namespace blender {
+
 enum class PaintMode : int8_t;
 struct Brush;
 struct ImBuf;
@@ -103,14 +105,18 @@ void BKE_brush_randomize_texture_coords(Paint *paint, bool mask);
  */
 void BKE_brush_curve_preset(Brush *b, eCurveMappingPreset preset);
 
+namespace bke::brush {
+void common_pressure_curves_init(Brush &brush);
+}
+
 /**
  * Combine the brush strength based on the distances and brush settings with the existing factors.
  */
 void BKE_brush_calc_curve_factors(eBrushCurvePreset preset,
                                   const CurveMapping *cumap,
-                                  blender::Span<float> distances,
+                                  Span<float> distances,
                                   float brush_radius,
-                                  blender::MutableSpan<float> factors);
+                                  MutableSpan<float> factors);
 /**
  * Uses the brush curve control to find a strength value between 0 and 1.
  */
@@ -236,7 +242,7 @@ void BKE_brush_debug_print_state(Brush *br);
  * via BrushCapabilities inside rna_brush.cc.
  * \{ */
 
-namespace blender::bke::brush {
+namespace bke::brush {
 bool supports_dyntopo(const Brush &brush);
 bool supports_accumulate(const Brush &brush);
 bool supports_topology_rake(const Brush &brush);
@@ -263,6 +269,8 @@ bool supports_hardness_pressure(const Brush &brush);
 bool supports_inverted_direction(const Brush &brush);
 bool supports_gravity(const Brush &brush);
 bool supports_tilt(const Brush &brush);
-}  // namespace blender::bke::brush
+}  // namespace bke::brush
 
 /** \} */
+
+}  // namespace blender

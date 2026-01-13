@@ -25,6 +25,8 @@
 #include "UI_interface.hh"
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
+struct IconTextOverlay;
+namespace blender {
 
 struct AnimationEvalContext;
 struct ARegion;
@@ -32,20 +34,20 @@ struct bContext;
 struct bContextStore;
 struct CurveMapping;
 struct CurveProfile;
-namespace blender::gpu {
+namespace gpu {
 class Batch;
 }
-struct IconTextOverlay;
 struct ID;
 struct ImBuf;
 struct LayoutPanelHeader;
 struct Main;
 struct Scene;
-namespace blender::ui {
+namespace ui {
+struct SafetyRect;
 struct HandleButtonData;
 struct Layout;
 struct UndoStack_Text;
-}  // namespace blender::ui
+}  // namespace ui
 struct uiListType;
 struct uiStyle;
 struct uiWidgetColors;
@@ -55,7 +57,7 @@ struct wmKeyConfig;
 struct wmOperatorType;
 struct wmTimer;
 
-namespace blender::ui {
+namespace ui {
 
 /* ****************** general defines ************** */
 
@@ -313,7 +315,7 @@ struct Button {
   wmOperatorType *optype = nullptr;
   PointerRNA *opptr = nullptr;
 
-  ListBase extra_op_icons = {nullptr, nullptr}; /** #ButtonExtraOpIcon */
+  ListBaseT<ButtonExtraOpIcon> extra_op_icons = {nullptr, nullptr}; /** #ButtonExtraOpIcon */
 
   /**
    * Active button data, set when the user is hovering or interacting with a button (#UI_HOVER and
@@ -523,6 +525,12 @@ struct ColorPicker {
   /* Hex Color string */
   char hexcol[128];
 
+  /**
+   * Buffer for the main area (Circle/Square) tooltip.
+   * Used for dynamically formatted tooltips (e.g. "Hue/Saturation").
+   */
+  char tooltip_area[128];
+
   /** Cubic saturation for the color wheel. */
   bool use_color_cubic;
   bool use_color_lock;
@@ -534,7 +542,7 @@ struct ColorPicker {
 };
 
 struct ColorPickerData {
-  ListBase list;
+  ListBaseT<ColorPicker> list;
 };
 
 struct PieMenuData {
@@ -590,6 +598,9 @@ struct BlockDynamicListener {
 
 enum class BlockAlertLevel : int8_t { None, Info, Success, Warning, Error };
 
+struct ButStore;
+struct ViewLink;
+
 struct Block {
   Block *next, *prev;
 
@@ -598,11 +609,11 @@ struct Block {
   Block *oldblock;
 
   /** Used for `UI_butstore_*` runtime function. */
-  ListBase butstore;
+  ListBaseT<ButStore> butstore;
 
   Vector<ButtonGroup> button_groups;
 
-  ListBase layouts;
+  ListBaseT<LayoutRoot> layouts;
   Layout *curlayout;
 
   Vector<std::unique_ptr<bContextStore>> contexts;
@@ -610,9 +621,9 @@ struct Block {
   /** A block can store "views" on data-sets. Currently tree-views (#AbstractTreeView) only.
    * Others are imaginable, e.g. table-views, grid-views, etc. These are stored here to support
    * state that is persistent over redraws (e.g. collapsed tree-view items). */
-  ListBase views;
+  ListBaseT<ViewLink> views;
 
-  ListBase dynamic_listeners; /* #BlockDynamicListener */
+  ListBaseT<BlockDynamicListener> dynamic_listeners;
 
   std::string name;
 
@@ -682,8 +693,7 @@ struct Block {
 
   /** Pull-downs, to detect outside, can differ per case how it is created. */
   rctf safety;
-  /** #SafetyRect list */
-  ListBase saferct;
+  ListBaseT<SafetyRect> saferct;
 
   PopupBlockHandle *handle;
 
@@ -1733,4 +1743,5 @@ int paste_property_drivers(Span<FCurve *> src_drivers,
 
 }  // namespace internal
 
-}  // namespace blender::ui
+}  // namespace ui
+}  // namespace blender

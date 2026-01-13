@@ -5252,7 +5252,7 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_subdivision_set")  # BFA - add subdivion set menu
-        layout.operator("sculpt.sample_color", text="Sample Color", icon="EYEDROPPER")  # BFA - icon added
+        layout.operator("paint.sample_color", text="Sample Color", icon="EYEDROPPER")  # BFA - icon added
 
         layout.separator()
 

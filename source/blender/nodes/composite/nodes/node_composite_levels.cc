@@ -20,7 +20,9 @@
 
 #include "node_composite_util.hh"
 
-namespace blender::nodes::node_composite_levels_cc {
+namespace blender {
+
+namespace nodes::node_composite_levels_cc {
 
 static const EnumPropertyItem channel_items[] = {
     {CMP_NODE_LEVLES_LUMINANCE, "COMBINED_RGB", 0, N_("Combined"), N_("Combined RGB")},
@@ -181,18 +183,18 @@ class LevelsOperation : public NodeOperation {
   }
 };
 
-static NodeOperation *get_compositor_operation(Context &context, DNode node)
+static NodeOperation *get_compositor_operation(Context &context, const bNode &node)
 {
   return new LevelsOperation(context, node);
 }
 
-}  // namespace blender::nodes::node_composite_levels_cc
+}  // namespace nodes::node_composite_levels_cc
 
 static void register_node_type_cmp_view_levels()
 {
-  namespace file_ns = blender::nodes::node_composite_levels_cc;
+  namespace file_ns = nodes::node_composite_levels_cc;
 
-  static blender::bke::bNodeType ntype;
+  static bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, "CompositorNodeLevels", CMP_NODE_VIEW_LEVELS);
   ntype.ui_name = "Levels";
@@ -203,6 +205,8 @@ static void register_node_type_cmp_view_levels()
   ntype.flag |= NODE_PREVIEW;
   ntype.get_compositor_operation = file_ns::get_compositor_operation;
 
-  blender::bke::node_register_type(ntype);
+  bke::node_register_type(ntype);
 }
 NOD_REGISTER_NODE(register_node_type_cmp_view_levels)
+
+}  // namespace blender

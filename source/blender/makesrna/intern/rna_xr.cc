@@ -20,10 +20,17 @@
 
 #ifdef RNA_RUNTIME
 
+#  include "BLI_listbase.h"
 #  include "BLI_math_rotation.h"
 #  include "BLI_math_vector.h"
+#  include "BLI_string.h"
+
+#  include "BKE_context.hh"
+#  include "BKE_main.hh"
 
 #  include "WM_api.hh"
+
+namespace blender {
 
 /* -------------------------------------------------------------------- */
 
@@ -218,7 +225,7 @@ static void rna_XrActionMapBinding_name_update(Main *bmain, Scene * /*scene*/, P
 #  ifdef WITH_XR_OPENXR
   wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
   if (wm && wm->xr.runtime) {
-    ListBase *actionmaps = WM_xr_actionmaps_get(wm->xr.runtime);
+    ListBaseT<XrActionMap> *actionmaps = WM_xr_actionmaps_get(wm->xr.runtime);
     short idx = WM_xr_actionmap_selected_index_get(wm->xr.runtime);
     XrActionMap *actionmap = static_cast<XrActionMap *>(BLI_findlink(actionmaps, idx));
     if (actionmap) {
@@ -541,7 +548,7 @@ static void rna_XrActionMapItem_name_update(Main *bmain, Scene * /*scene*/, Poin
 #  ifdef WITH_XR_OPENXR
   wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
   if (wm && wm->xr.runtime) {
-    ListBase *actionmaps = WM_xr_actionmaps_get(wm->xr.runtime);
+    ListBaseT<XrActionMap> *actionmaps = WM_xr_actionmaps_get(wm->xr.runtime);
     short idx = WM_xr_actionmap_selected_index_get(wm->xr.runtime);
     XrActionMap *actionmap = static_cast<XrActionMap *>(BLI_findlink(actionmaps, idx));
     if (actionmap) {
@@ -1079,7 +1086,7 @@ static void rna_XrSessionState_actionmaps_begin(CollectionPropertyIterator *iter
 {
 #  ifdef WITH_XR_OPENXR
   wmXrData *xr = rna_XrSession_wm_xr_data_get(ptr);
-  ListBase *lb = WM_xr_actionmaps_get(xr->runtime);
+  ListBaseT<XrActionMap> *lb = WM_xr_actionmaps_get(xr->runtime);
   rna_iterator_listbase_begin(iter, ptr, lb, nullptr);
 #  else
   UNUSED_VARS(iter, ptr);
@@ -1090,7 +1097,7 @@ static int rna_XrSessionState_actionmaps_length(PointerRNA *ptr)
 {
 #  ifdef WITH_XR_OPENXR
   wmXrData *xr = rna_XrSession_wm_xr_data_get(ptr);
-  ListBase *lb = WM_xr_actionmaps_get(xr->runtime);
+  ListBaseT<XrActionMap> *lb = WM_xr_actionmaps_get(xr->runtime);
   return BLI_listbase_count(lb);
 #  else
   UNUSED_VARS(ptr);
@@ -1335,7 +1342,11 @@ static bool rna_XrEventData_bimanual_get(PointerRNA *ptr)
 
 /** \} */
 
+}  // namespace blender
+
 #else /* RNA_RUNTIME */
+
+namespace blender {
 
 /* -------------------------------------------------------------------- */
 
@@ -2560,5 +2571,7 @@ void RNA_def_xr(BlenderRNA *brna)
 
   RNA_define_animate_sdna(true);
 }
+
+}  // namespace blender
 
 #endif /* RNA_RUNTIME */

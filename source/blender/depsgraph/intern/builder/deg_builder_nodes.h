@@ -13,6 +13,8 @@
 #include "BLI_set.hh"
 
 #include "DNA_armature_types.h"
+#include "DNA_listBase.h"
+
 #include "intern/builder/deg_builder.h"
 #include "intern/builder/deg_builder_key.h"
 #include "intern/builder/deg_builder_map.h"
@@ -21,6 +23,8 @@
 #include "intern/node/deg_node_operation.hh"
 
 #include "DEG_depsgraph.hh"
+
+namespace blender {
 
 struct BoneCollection;
 struct CacheFile;
@@ -36,11 +40,11 @@ struct Key;
 struct LayerCollection;
 struct Light;
 struct LightProbe;
-struct ListBase;
 struct Main;
 struct Mask;
 struct Material;
 struct MovieClip;
+struct NlaStrip;
 struct Object;
 struct ParticleSettings;
 struct Scene;
@@ -57,7 +61,7 @@ struct bPoseChannel;
 struct bSound;
 struct PointerRNA;
 
-namespace blender::deg {
+namespace deg {
 
 struct ComponentNode;
 struct Depsgraph;
@@ -174,7 +178,7 @@ class DepsgraphNodeBuilder : public DepsgraphBuilder {
   virtual void build_scene_parameters(Scene *scene);
   virtual void build_scene_compositor(Scene *scene);
 
-  virtual void build_layer_collections(ListBase *lb);
+  virtual void build_layer_collections(ListBaseT<LayerCollection> *lb);
   virtual void build_view_layer(Scene *scene,
                                 ViewLayer *view_layer,
                                 eDepsNode_LinkedState_Type linked_state);
@@ -216,7 +220,7 @@ class DepsgraphNodeBuilder : public DepsgraphBuilder {
    * \param id: ID-Block which hosts the #AnimData
    */
   virtual void build_animdata(ID *id);
-  virtual void build_animdata_nlastrip_targets(ListBase *strips);
+  virtual void build_animdata_nlastrip_targets(ListBaseT<NlaStrip> *strips);
   /**
    * Build graph nodes to update the current frame in image users.
    */
@@ -257,7 +261,7 @@ class DepsgraphNodeBuilder : public DepsgraphBuilder {
   /** Pose/Armature Bones Graph. */
   virtual void build_rig(Object *object);
   virtual void build_armature(bArmature *armature);
-  virtual void build_armature_bones(ListBase *bones);
+  virtual void build_armature_bones(ListBaseT<Bone> *bones);
   virtual void build_armature_bone_collections(Span<BoneCollection *> collections);
   /** Shape-keys. */
   virtual void build_shapekeys(Key *key);
@@ -350,4 +354,5 @@ class DepsgraphNodeBuilder : public DepsgraphBuilder {
   BuilderMap built_map_;
 };
 
-}  // namespace blender::deg
+}  // namespace deg
+}  // namespace blender

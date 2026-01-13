@@ -10,6 +10,8 @@
 
 #include "DNA_listBase.h"
 
+namespace blender {
+
 struct Object;
 struct bAction;
 
@@ -89,5 +91,7 @@ struct bActionStrip {
   char offs_bone[32] = "";
 
   /** Modifier stack. */
-  ListBase modifiers = {nullptr, nullptr};
+  ListBaseT<bActionModifier> modifiers = {nullptr, nullptr};
 };
+
+}  // namespace blender

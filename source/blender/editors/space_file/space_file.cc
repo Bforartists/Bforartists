@@ -49,6 +49,8 @@
 #include "filelist.hh"
 #include "fsmenu.hh"
 
+namespace blender {
+
 /* ******************** default callbacks for file space ***************** */
 
 static SpaceLink *file_create(const ScrArea * /*area*/, const Scene * /*scene*/)
@@ -103,13 +105,13 @@ static SpaceLink *file_create(const ScrArea * /*area*/, const Scene * /*scene*/)
   region->v2d.keeptot = V2D_KEEPTOT_STRICT;
   region->v2d.minzoom = region->v2d.maxzoom = 1.0f;
 
-  return (SpaceLink *)sfile;
+  return reinterpret_cast<SpaceLink *>(sfile);
 }
 
 /* Doesn't free the space-link itself. */
 static void file_free(SpaceLink *sl)
 {
-  SpaceFile *sfile = (SpaceFile *)sl;
+  SpaceFile *sfile = reinterpret_cast<SpaceFile *>(sl);
 
   BLI_assert(sfile->previews_timer == nullptr);
 
@@ -135,15 +137,14 @@ static void file_free(SpaceLink *sl)
 /* spacetype; init callback, area size changes, screen set, etc */
 static void file_init(wmWindowManager * /*wm*/, ScrArea *area)
 {
-  SpaceFile *sfile = (SpaceFile *)area->spacedata.first;
+  SpaceFile *sfile = static_cast<SpaceFile *>(area->spacedata.first);
 
   if (sfile->layout) {
     sfile->layout->dirty = true;
   }
 
   if (sfile->runtime == nullptr) {
-    sfile->runtime = static_cast<SpaceFile_Runtime *>(
-        MEM_callocN(sizeof(*sfile->runtime), __func__));
+    sfile->runtime = MEM_callocN<SpaceFile_Runtime>(__func__);
     BKE_reports_init(&sfile->runtime->is_blendfile_readable_reports, RPT_STORE);
   }
   /* Validate the params right after file read. */
@@ -152,7 +153,7 @@ static void file_init(wmWindowManager * /*wm*/, ScrArea *area)
 
 static void file_exit(wmWindowManager *wm, ScrArea *area)
 {
-  SpaceFile *sfile = (SpaceFile *)area->spacedata.first;
+  SpaceFile *sfile = static_cast<SpaceFile *>(area->spacedata.first);
 
   if (sfile->previews_timer) {
     WM_event_timer_remove_notifier(wm, nullptr, sfile->previews_timer);
@@ -164,7 +165,7 @@ static void file_exit(wmWindowManager *wm, ScrArea *area)
 
 static SpaceLink *file_duplicate(SpaceLink *sl)
 {
-  SpaceFile *sfileo = (SpaceFile *)sl;
+  SpaceFile *sfileo = reinterpret_cast<SpaceFile *>(sl);
   SpaceFile *sfilen = static_cast<SpaceFile *>(MEM_dupallocN(sl));
 
   /* clear or remove stuff from old */
@@ -193,7 +194,7 @@ static SpaceLink *file_duplicate(SpaceLink *sl)
   if (sfileo->layout) {
     sfilen->layout = static_cast<FileLayout *>(MEM_dupallocN(sfileo->layout));
   }
-  return (SpaceLink *)sfilen;
+  return reinterpret_cast<SpaceLink *>(sfilen);
 }
 
 static void file_refresh(const bContext *C, ScrArea *area)
@@ -321,7 +322,7 @@ static void file_refresh(const bContext *C, ScrArea *area)
       }
     }
     if (region_flag_old != region_props->flag) {
-      ED_region_visibility_change_update((bContext *)C, area, region_props);
+      ED_region_visibility_change_update(const_cast<bContext *>(C), area, region_props);
     }
   }
 
@@ -360,7 +361,7 @@ static void file_listener(const wmSpaceTypeListenerParams *listener_params)
 {
   ScrArea *area = listener_params->area;
   const wmNotifier *wmn = listener_params->notifier;
-  SpaceFile *sfile = (SpaceFile *)area->spacedata.first;
+  SpaceFile *sfile = static_cast<SpaceFile *>(area->spacedata.first);
 
   /* context changes */
   switch (wmn->category) {
@@ -435,7 +436,7 @@ static void file_main_region_init(wmWindowManager *wm, ARegion *region)
 {
   wmKeyMap *keymap;
 
-  view2d_region_reinit(&region->v2d, blender::ui::V2D_COMMONVIEW_LIST, region->winx, region->winy);
+  view2d_region_reinit(&region->v2d, ui::V2D_COMMONVIEW_LIST, region->winx, region->winy);
 
   region->flag |= RGN_FLAG_INDICATE_OVERFLOW;
 
@@ -556,7 +557,7 @@ static void file_main_region_draw(const bContext *C, ARegion *region)
   }
 
   /* clear and setup matrix */
-  blender::ui::theme::frame_buffer_clear(TH_BACK);
+  ui::theme::frame_buffer_clear(TH_BACK);
 
   /* Allow dynamically sliders to be set, saves notifiers etc. */
 
@@ -583,13 +584,13 @@ static void file_main_region_draw(const bContext *C, ARegion *region)
     }
   }
   /* v2d has initialized flag, so this call will only set the mask correct */
-  view2d_region_reinit(v2d, blender::ui::V2D_COMMONVIEW_LIST, region->winx, region->winy);
+  view2d_region_reinit(v2d, ui::V2D_COMMONVIEW_LIST, region->winx, region->winy);
 
   /* sets tile/border settings in sfile */
   file_calc_previews(C, region);
 
   /* set view */
-  blender::ui::view2d_view_ortho(v2d);
+  ui::view2d_view_ortho(v2d);
 
   /* on first read, find active file */
   if (params->highlight_file == -1) {
@@ -602,12 +603,12 @@ static void file_main_region_draw(const bContext *C, ARegion *region)
   }
 
   /* reset view matrix */
-  blender::ui::view2d_view_restore(C);
+  ui::view2d_view_restore(C);
 
   /* scrollers */
   rcti view_rect;
   ED_fileselect_layout_maskrect(sfile->layout, v2d, &view_rect);
-  blender::ui::view2d_scrollers_draw(v2d, &view_rect);
+  ui::view2d_scrollers_draw(v2d, &view_rect);
 
   ED_region_draw_overflow_indication(CTX_wm_area(C), region, &view_rect);
 }
@@ -661,20 +662,20 @@ static void file_keymap(wmKeyConfig *keyconf)
 
 static bool file_region_poll(const RegionPollParams *params)
 {
-  const SpaceFile *sfile = (SpaceFile *)params->area->spacedata.first;
+  const SpaceFile *sfile = static_cast<SpaceFile *>(params->area->spacedata.first);
   /* Always visible except when browsing assets. */
   return sfile->browse_mode != FILE_BROWSE_MODE_ASSETS;
 }
 
 static bool file_tool_props_region_poll(const RegionPollParams *params)
 {
-  const SpaceFile *sfile = (SpaceFile *)params->area->spacedata.first;
+  const SpaceFile *sfile = static_cast<SpaceFile *>(params->area->spacedata.first);
   return (sfile->browse_mode == FILE_BROWSE_MODE_ASSETS) || (sfile->op != nullptr);
 }
 
 static bool file_execution_region_poll(const RegionPollParams *params)
 {
-  const SpaceFile *sfile = (SpaceFile *)params->area->spacedata.first;
+  const SpaceFile *sfile = static_cast<SpaceFile *>(params->area->spacedata.first);
   return sfile->op != nullptr;
 }
 
@@ -820,7 +821,7 @@ static void filepath_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox *drop)
 /* region dropbox definition */
 static void file_dropboxes()
 {
-  ListBase *lb = WM_dropboxmap_find("Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
+  ListBaseT<wmDropBox> *lb = WM_dropboxmap_find("Window", SPACE_EMPTY, RGN_TYPE_WINDOW);
 
   WM_dropbox_add(
       lb, "FILE_OT_filepath_drop", filepath_drop_poll, filepath_drop_copy, nullptr, nullptr);
@@ -836,8 +837,8 @@ static void file_space_subtype_set(ScrArea *area, int value)
 {
   SpaceFile *sfile = static_cast<SpaceFile *>(area->spacedata.first);
   /* Force re-init. */
-  LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-    region->v2d.flag &= ~V2D_IS_INIT;
+  for (ARegion &region : area->regionbase) {
+    region.v2d.flag &= ~V2D_IS_INIT;
   }
   sfile->browse_mode = value;
 }
@@ -847,7 +848,7 @@ static void file_space_subtype_item_extend(bContext * /*C*/, EnumPropertyItem **
   RNA_enum_items_add(item, totitem, rna_enum_space_file_browse_mode_items);
 }
 
-static blender::StringRefNull file_space_name_get(const ScrArea *area)
+static StringRefNull file_space_name_get(const ScrArea *area)
 {
   SpaceFile *sfile = static_cast<SpaceFile *>(area->spacedata.first);
   const int index = RNA_enum_from_value(rna_enum_space_file_browse_mode_items, sfile->browse_mode);
@@ -863,11 +864,9 @@ static int file_space_icon_get(const ScrArea *area)
   return item.icon;
 }
 
-static void file_id_remap(ScrArea *area,
-                          SpaceLink *sl,
-                          const blender::bke::id::IDRemapper & /*mappings*/)
+static void file_id_remap(ScrArea *area, SpaceLink *sl, const bke::id::IDRemapper & /*mappings*/)
 {
-  SpaceFile *sfile = (SpaceFile *)sl;
+  SpaceFile *sfile = reinterpret_cast<SpaceFile *>(sl);
 
   /* If the file shows main data (IDs), tag it for reset.
    * Full reset of the file list if main data was changed, don't even attempt remap pointers.
@@ -892,7 +891,7 @@ static void file_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data)
 
 static void file_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 {
-  SpaceFile *sfile = (SpaceFile *)sl;
+  SpaceFile *sfile = reinterpret_cast<SpaceFile *>(sl);
 
   /* this sort of info is probably irrelevant for reloading...
    * plus, it isn't saved to files yet!
@@ -938,7 +937,7 @@ static void file_space_blend_read_after_liblink(BlendLibReader * /*reader*/,
 
 static void file_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  SpaceFile *sfile = (SpaceFile *)sl;
+  SpaceFile *sfile = reinterpret_cast<SpaceFile *>(sl);
 
   writer->write_struct_cast<SpaceFile>(sl);
   if (sfile->params) {
@@ -1079,3 +1078,5 @@ void ED_file_read_bookmarks()
     fsmenu_read_bookmarks(ED_fsmenu_get(), filepath);
   }
 }
+
+}  // namespace blender

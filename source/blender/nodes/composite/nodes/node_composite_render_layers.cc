@@ -10,15 +10,18 @@
 #include "BLI_string.h"
 #include "BLI_string_ref.hh"
 
+#include "DNA_layer_types.h"
+#include "DNA_node_types.h"
+#include "DNA_scene_types.h"
+#include "DNA_space_types.h"
+
 #include "BKE_compositor.hh"
 #include "BKE_context.hh"
 #include "BKE_image.hh"
 #include "BKE_lib_id.hh"
+#include "BKE_node.hh"
+#include "BKE_node_runtime.hh"
 #include "BKE_scene.hh"
-
-#include "DNA_layer_types.h"
-#include "DNA_scene_types.h"
-#include "DNA_space_types.h"
 
 #include "RE_engine.h"
 
@@ -77,8 +80,8 @@ static BaseSocketDeclarationBuilder &declare_existing_output(NodeDeclarationBuil
 static void declare_existing(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
-  LISTBASE_FOREACH (const bNodeSocket *, output, &node->outputs) {
-    declare_existing_output(b, output);
+  for (const bNodeSocket &output : node->outputs) {
+    declare_existing_output(b, &output);
   }
 }
 
@@ -433,14 +436,14 @@ class RenderLayerOperation : public NodeOperation {
   }
 };
 
-static NodeOperation *get_compositor_operation(Context &context, DNode node)
+static NodeOperation *get_compositor_operation(Context &context, const bNode &node)
 {
   return new RenderLayerOperation(context, node);
 }
 
 static void register_node()
 {
-  static blender::bke::bNodeType ntype;
+  static bke::bNodeType ntype;
 
   cmp_node_type_base(&ntype, "CompositorNodeRLayers", CMP_NODE_R_LAYERS);
   ntype.ui_name = "Render Layers";
@@ -453,9 +456,9 @@ static void register_node()
   ntype.draw_buttons = node_draw;
   ntype.get_compositor_operation = get_compositor_operation;
   ntype.get_extra_info = node_extra_info;
-  blender::bke::node_type_size_preset(ntype, blender::bke::eNodeSizePreset::Large);
+  bke::node_type_size_preset(ntype, bke::eNodeSizePreset::Large);
 
-  blender::bke::node_register_type(ntype);
+  bke::node_register_type(ntype);
 }
 NOD_REGISTER_NODE(register_node)
 

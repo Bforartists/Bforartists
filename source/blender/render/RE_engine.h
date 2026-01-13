@@ -16,8 +16,12 @@
 
 #include "BLI_threads.h"
 
-struct BakeTargets;
+namespace blender {
+
 struct BakePixel;
+struct BakeTargets;
+struct bNode;
+struct bNodeTree;
 struct Depsgraph;
 struct GPUContext;
 struct Main;
@@ -33,8 +37,6 @@ struct ReportList;
 struct Scene;
 struct ViewLayer;
 struct ViewRender;
-struct bNode;
-struct bNodeTree;
 
 /* External Engine */
 
@@ -64,7 +66,7 @@ enum RenderEngineFlag {
   RE_ENGINE_CAN_DRAW = (1 << 6),
 };
 
-extern ListBase R_engines;
+extern ListBaseT<RenderEngineType> R_engines;
 
 struct RenderEngineType {
   struct RenderEngineType *next, *prev;
@@ -135,7 +137,7 @@ struct RenderEngine {
   unsigned int layer_override;
 
   struct Render *re;
-  ListBase fullresult;
+  ListBaseT<RenderResult> fullresult;
   char text[/*IMA_MAX_RENDER_TEXT_SIZE*/ 512];
 
   int resolution_x, resolution_y;
@@ -288,3 +290,5 @@ void RE_engine_free_blender_memory(struct RenderEngine *engine);
 void RE_engine_tile_highlight_set(
     struct RenderEngine *engine, int x, int y, int width, int height, bool highlight);
 void RE_engine_tile_highlight_clear_all(struct RenderEngine *engine);
+
+}  // namespace blender

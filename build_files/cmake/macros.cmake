@@ -526,9 +526,12 @@ endfunction()
 function(setup_platform_linker_libs
   target
   )
-  # jemalloc must be early in the list, to be before pthread (see #57998).
-  if(WITH_MEM_JEMALLOC)
-    target_link_libraries(${target} PRIVATE ${JEMALLOC_LIBRARIES})
+  # TBB malloc must be early in the list, to be before PTHREAD (see #57998).
+  if(WITH_TBB_MALLOC_PROXY)
+    target_link_libraries(${target}
+      PRIVATE ${TBB_MALLOC_LIBRARIES}
+      PRIVATE ${TBB_MALLOC_PROXY_LIBRARIES}
+    )
   endif()
 
   if(WIN32 AND NOT UNIX)
@@ -1074,6 +1077,7 @@ endfunction()
 function(glsl_to_c
   file_from
   list_to_add
+  include_list
   )
 
   # remove ../'s
@@ -1082,6 +1086,13 @@ function(glsl_to_c
   get_filename_component(_file_meta ${CMAKE_CURRENT_BINARY_DIR}/${file_from}.hh REALPATH)
   get_filename_component(_file_info ${CMAKE_CURRENT_BINARY_DIR}/${file_from}.info  REALPATH)
   get_filename_component(_file_to   ${CMAKE_CURRENT_BINARY_DIR}/${file_from}.c  REALPATH)
+
+  # Turn include directories into absolute paths
+  set(_inc_list)
+  foreach(path IN LISTS ${include_list})
+    get_filename_component(_inc_path ${CMAKE_CURRENT_SOURCE_DIR}/${path} REALPATH)
+    list(APPEND _inc_list ${_inc_path})
+  endforeach()
 
   list(APPEND ${list_to_add} ${_file_to})
   source_group(Generated FILES ${_file_to})
@@ -1092,7 +1103,7 @@ function(glsl_to_c
 
   add_custom_command(
     OUTPUT  ${_file_to} ${_file_meta} ${_file_info}
-    COMMAND "$<TARGET_FILE:shader_tool>" ${_file_from} ${_file_tmp} ${_file_meta} ${_file_info}
+    COMMAND "$<TARGET_FILE:shader_tool>" ${_file_from} ${_file_tmp} ${_file_meta} ${_file_info} ${_inc_list}
     COMMAND "$<TARGET_FILE:datatoc>" ${_file_tmp} ${_file_to}
     DEPENDS ${_file_from} datatoc shader_tool)
 

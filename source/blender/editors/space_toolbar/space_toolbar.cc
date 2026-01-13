@@ -24,6 +24,8 @@
 
 #include "BLO_read_write.hh"
 
+namespace blender {
+
 /* ******************** default callbacks for toolbar space ***************** */
 
 static SpaceLink *toolbar_create(const ScrArea * /*area*/, const Scene * /*scene*/)
@@ -62,7 +64,8 @@ static SpaceLink *toolbar_duplicate(SpaceLink *sl)
 /* add handlers, stuff you only do once or on area/region changes */
 static void toolbar_main_region_init(wmWindowManager * /*wm*/, ARegion *region)
 {
-  view2d_region_reinit(&region->v2d, blender::ui::V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
+  view2d_region_reinit(
+      &region->v2d, blender::ui::V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
 }
 
 static void toolbar_main_region_draw(const bContext *C, ARegion *region)
@@ -141,7 +144,7 @@ static void toolbar_header_listener(const wmRegionListenerParams *params)
 
 static void toolbar_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-    writer->write_struct_cast<SpaceToolbar>(sl);
+  writer->write_struct_cast<SpaceToolbar>(sl);
 }
 
 /********************* registration ********************/
@@ -181,4 +184,5 @@ void ED_spacetype_toolbar(void)
   BLI_addhead(&st->regiontypes, art);
 
   BKE_spacetype_register(std::move(st));
+}
 }

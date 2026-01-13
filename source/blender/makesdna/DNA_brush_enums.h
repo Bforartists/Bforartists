@@ -10,6 +10,8 @@
 
 #include "BLI_enum_flags.hh"
 
+namespace blender {
+
 /* BrushGpencilSettings->preset_type.
  * Use a range for each group and not continuous values. */
 enum eGPBrush_Presets {
@@ -475,6 +477,7 @@ enum eBrushSculptType {
   SCULPT_BRUSH_TYPE_DISPLACEMENT_ERASER = 31,
   SCULPT_BRUSH_TYPE_DISPLACEMENT_SMEAR = 32,
   SCULPT_BRUSH_TYPE_PLANE = 33,
+  SCULPT_BRUSH_TYPE_BLUR = 34,
 };
 
 /* Brush.curves_sculpt_brush_type. */
@@ -613,3 +616,5 @@ enum eBrushColorJitterSettings_Flag {
 
 #define MAX_BRUSH_PIXEL_RADIUS 500
 #define MAX_BRUSH_PIXEL_DIAMETER 1000
+
+}  // namespace blender

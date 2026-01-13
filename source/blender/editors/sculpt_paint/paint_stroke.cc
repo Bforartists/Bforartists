@@ -61,8 +61,8 @@ namespace blender::ed::sculpt_paint {
 
 /*** Cursors ***/
 static void paint_draw_smooth_cursor(bContext *C,
-                                     const blender::int2 &xy,
-                                     const blender::float2 & /*tilt*/,
+                                     const int2 &xy,
+                                     const float2 & /*tilt*/,
                                      void *customdata)
 {
   PaintStroke *data = static_cast<PaintStroke *>(customdata);
@@ -81,13 +81,13 @@ static void paint_draw_smooth_cursor(bContext *C,
     GPU_blend(GPU_BLEND_ALPHA);
 
     const uint pos = GPU_vertformat_attr_add(
-        immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
+        immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     const uchar4 color = uchar4(255, 100, 100, 128);
     immUniformColor4ubv(color);
 
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2fv(pos, blender::float2(xy));
+    immVertex2fv(pos, float2(xy));
     immVertex2f(pos,
                 data->last_mouse_position[0] + region->winrct.xmin,
                 data->last_mouse_position[1] + region->winrct.ymin);
@@ -102,8 +102,8 @@ static void paint_draw_smooth_cursor(bContext *C,
 }
 
 static void paint_draw_line_cursor(bContext * /*C*/,
-                                   const blender::int2 &xy,
-                                   const blender::float2 & /*tilt*/,
+                                   const int2 &xy,
+                                   const float2 & /*tilt*/,
                                    void *customdata)
 {
   PaintStroke *stroke = static_cast<PaintStroke *>(customdata);
@@ -111,7 +111,7 @@ static void paint_draw_line_cursor(bContext * /*C*/,
   GPU_line_smooth(true);
 
   const uint shdr_pos = GPU_vertformat_attr_add(
-      immVertexFormat(), "pos", blender::gpu::VertAttrType::SFLOAT_32_32);
+      immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_LINE_DASHED_UNIFORM_COLOR);
 
@@ -857,7 +857,7 @@ static bool print_pressure_status_enabled()
 
 PaintStroke::PaintStroke(bContext *C, wmOperator *op, int event_type) : event_type_(event_type)
 {
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  this->depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   this->paint = BKE_paint_get_active_from_context(C);
   this->ups = &paint->unified_paint_settings;
   bke::PaintRuntime *paint_runtime = this->paint->runtime;
@@ -865,8 +865,9 @@ PaintStroke::PaintStroke(bContext *C, wmOperator *op, int event_type) : event_ty
   RegionView3D *rv3d = CTX_wm_region_view3d(C);
 
   this->evil_C = C;
-  this->vc = ED_view3d_viewcontext_init(C, depsgraph);
+  this->vc = ED_view3d_viewcontext_init(C, this->depsgraph);
   this->object = CTX_data_active_object(C);
+  this->scene = CTX_data_scene(C);
 
   stroke_mode_ = RNA_enum_get(op->ptr, "mode");
 
@@ -918,7 +919,7 @@ PaintStroke::PaintStroke(bContext *C, wmOperator *op, int event_type) : event_ty
   }
 
   /* initialize here to avoid initialization conflict with threaded strokes */
-  BKE_curvemapping_init(this->brush->curve_distance_falloff);
+  bke::brush::common_pressure_curves_init(*this->brush);
   if (this->paint->flags & PAINT_USE_CAVITY_MASK) {
     BKE_curvemapping_init(this->paint->cavity_curve);
   }
@@ -1499,10 +1500,6 @@ wmOperatorStatus PaintStroke::modal(bContext *C, wmOperator *op, const wmEvent *
         stroke_cursor_ = WM_paint_cursor_activate(
             SPACE_TYPE_ANY, RGN_TYPE_ANY, paint_brush_cursor_poll, paint_draw_line_cursor, this);
       }
-
-      BKE_curvemapping_init(br->curve_size);
-      BKE_curvemapping_init(br->curve_strength);
-      BKE_curvemapping_init(br->curve_jitter);
 
       first_dab = true;
     }

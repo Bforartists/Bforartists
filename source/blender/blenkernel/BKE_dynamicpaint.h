@@ -8,6 +8,8 @@
  * \ingroup bke
  */
 
+namespace blender {
+
 struct Depsgraph;
 struct DynamicPaintCanvasSettings;
 struct DynamicPaintModifierData;
@@ -18,18 +20,17 @@ struct PaintAdjData;
 struct Scene;
 
 /* Actual surface point */
-typedef struct PaintSurfaceData {
+struct PaintSurfaceData {
   ImgSeqFormatData *format_data; /* extra data for image sequence format */
   void *type_data;               /* data used by specific surface type */
   PaintAdjData *adj_data;        /* adjacency data for current surface */
 
   struct PaintBakeData *bData; /* temporary per step data used for frame calculation */
   int total_points;
-
-} PaintSurfaceData;
+};
 
 /* Paint type surface point */
-typedef struct PaintPoint {
+struct PaintPoint {
 
   /* Wet paint is handled at effect layer only
    * and mixed to surface when drying */
@@ -37,16 +38,16 @@ typedef struct PaintPoint {
   float wetness;
   short state;
   float color[4];
-} PaintPoint;
+};
 
 /* height field waves */
-typedef struct PaintWavePoint {
+struct PaintWavePoint {
 
   float height;
   float velocity;
   float brush_isect;
   short state;
-} PaintWavePoint;
+};
 
 /**
  * Modifier call. Processes dynamic paint modifier step.
@@ -141,3 +142,5 @@ void dynamicPaint_outputSurfaceImage(struct DynamicPaintSurface *surface,
 #define DPAINT_WAVE_NONE 0
 #define DPAINT_WAVE_OBSTACLE 1
 #define DPAINT_WAVE_REFLECT_ONLY 2
+
+}  // namespace blender

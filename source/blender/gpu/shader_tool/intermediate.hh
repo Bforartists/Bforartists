@@ -12,30 +12,26 @@
  * The goal of this representation is to output code that doesn't modify the style of the input
  * string and keep the same line numbers (to match compilation error with input source).
  *
- * The `Parser` class contain a copy of the given string to apply string substitutions (called
+ * The `TokenStream` class contain a copy of the given string to apply string substitutions (called
  * `Mutation`). It is usually faster to record all of them and apply them all at once after
  * scanning through the whole semantic representation. In the rare case where mutation need to
  * overlap (recursive processing), it is better to do them in passes until there is no mutation to
  * do.
  *
- * `Token` and `Scope` are read only interfaces to the data stored inside the `ParserData`.
+ * `Token` and `Scope` are read only interfaces to the data stored inside the `TokenStream`.
  * The data is stored as SoA (Structure of Arrays) for fast traversal.
  * The types of token and scopes are defined as readable chars to easily create sequences of token
  * type.
  *
- * The `Parser` object needs to be fed a well formed source (without preprocessor directive, see
- * below), otherwise a crash can occur. The `Parser` doesn't apply any preprocessor. All
- * preprocessor directive are parsed as `Preprocessor` scope but they are not expanded.
- *
- * By default, whitespaces are merged with the previous token. Only a handful of processing
- * requires access to whitespaces as individual tokens.
+ * The parsing phase doesn't apply any preprocessor. All  preprocessor directive are parsed as
+ * `Preprocessor` scope but they are not expanded.
  */
 
 #pragma once
 
-#include "parser.hh"
 #include "scope.hh"
 #include "token.hh"
+#include "token_stream.hh"
 #include "utils.hh"
 
 #include <algorithm>
@@ -48,11 +44,7 @@ namespace blender::gpu::shader::parser {
  * It is made for fast traversal and mutation of source code. */
 struct IntermediateForm {
  private:
-  Parser data_;
-
-  /* If false, the whitespaces are fused with the tokens. Otherwise they are kept as separate space
-   * and newline tokens. */
-  bool keep_whitespace_;
+  TokenStream data_;
 
   struct Mutation {
     /* Range of the original string to replace. */
@@ -63,6 +55,8 @@ struct IntermediateForm {
     Mutation(IndexRange src_range, std::string replacement)
         : src_range(src_range), replacement(replacement)
     {
+      assert(src_range.size >= 0);
+      assert(src_range.start >= 0);
     }
 
     /* Define operator in order to sort the mutation by starting position.
@@ -76,14 +70,16 @@ struct IntermediateForm {
 
   report_callback &report_error;
 
+  ParserStage stop_parser_after_stage;
+
  public:
   IntermediateForm(const std::string &input,
                    report_callback &report_error,
-                   bool keep_whitespace = false)
-      : keep_whitespace_(keep_whitespace), report_error(report_error)
+                   ParserStage stop_parser_after_stage = ParserStage::BuildScopeTree)
+      : report_error(report_error), stop_parser_after_stage(stop_parser_after_stage)
   {
     data_.str = input;
-    parse(report_error);
+    parse(stop_parser_after_stage, report_error);
   }
 
   /* Main access operator. Returns the root scope (aka global scope). */
@@ -135,9 +131,15 @@ struct IntermediateForm {
   /* Replace everything from `from` to `to` (inclusive). */
   void replace(size_t from, size_t to, const std::string &replacement)
   {
+#ifdef NDEBUG
     bool success = replace_try(from, to, replacement);
     assert(success);
     (void)success;
+#else
+    /* No check in release. */
+    IndexRange range = IndexRange(from, to + 1 - from);
+    mutations_.emplace_back(range, replacement);
+#endif
   }
   /* Replace everything from `from` to `to` (inclusive). */
   void replace(Token from,
@@ -258,7 +260,7 @@ struct IntermediateForm {
   void insert_directive(Token at, const std::string directive)
   {
     insert_after(at, "\n" + directive + "\n");
-    std::string content = at.str_with_whitespace();
+    std::string_view content = at.str_view_with_whitespace();
     size_t lines = std::count(content.begin(), content.end(), '\n');
     insert_line_number(at, at.line_number() + lines);
     size_t line_break = data_.str.find_last_of("\n", at.str_index_last() + 1);
@@ -275,7 +277,7 @@ struct IntermediateForm {
   {
     bool applied = only_apply_mutations();
     if (applied) {
-      this->parse(report_error);
+      this->parse(stop_parser_after_stage, report_error);
     }
     return applied;
   }
@@ -294,7 +296,7 @@ struct IntermediateForm {
   }
 
   /* For testing. */
-  const Parser &data_get()
+  const TokenStream &data_get()
   {
     return data_;
   }
@@ -318,26 +320,16 @@ struct IntermediateForm {
   }
 
  private:
-  TimeIt::Duration tokenize_time;
-  TimeIt::Duration parse_scope_time;
+  uint64_t lexical_time;
+  uint64_t semantic_time;
 
-  void parse(report_callback &report_error)
-  {
-    {
-      TimeIt time_it(parse_scope_time);
-      data_.tokenize(keep_whitespace_);
-    }
-    {
-      TimeIt time_it(tokenize_time);
-      data_.parse_scopes(report_error);
-    }
-  }
+  void parse(ParserStage stop_after, report_callback &report_error);
 
  public:
   void print_stats()
   {
-    std::cout << "Tokenize time: " << tokenize_time.count() << " µs" << std::endl;
-    std::cout << "Parser time:   " << parse_scope_time.count() << " µs" << std::endl;
+    std::cout << "Lexical Analysis time: " << lexical_time << " µs" << std::endl;
+    std::cout << "Semantic Analysis time:   " << semantic_time << " µs" << std::endl;
     std::cout << "String len: " << std::to_string(data_.str.size()) << std::endl;
     std::cout << "Token len:  " << std::to_string(data_.token_types.size()) << std::endl;
     std::cout << "Scope len:  " << std::to_string(data_.scope_types.size()) << std::endl;

@@ -9,10 +9,11 @@
  * \brief Runtime data management for toolshelf category tabs.
  */
 
+namespace blender {
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 struct ARegion;
 
 /**
@@ -66,3 +67,5 @@ void BKE_toolshelf_region_free(struct ARegion *region);
 #ifdef __cplusplus
 }
 #endif
+
+}  // namespace blender

@@ -28,11 +28,14 @@
 #include "BLO_core_blend_header.hh"
 #include "BLO_readfile.hh"
 
+namespace blender {
+
 struct BlendFileData;
 struct BlendfileLinkAppendContext;
 struct BlendFileReadParams;
 struct BlendFileReadReport;
 struct BLOCacheStorage;
+struct BHeadN;
 struct BHeadSort;
 struct DNA_ReconstructInfo;
 struct IDNameLib_Map;
@@ -78,7 +81,7 @@ ENUM_OPERATORS(eFileDataFlag)
  */
 struct FileData {
   /** Linked list of BHeadN's. */
-  ListBase bhead_list = {};
+  ListBaseT<BHeadN> bhead_list = {};
   enum eFileDataFlag flags = eFileDataFlag(0);
   bool is_eof = false;
   BlenderHeader blender_header = {};
@@ -141,7 +144,7 @@ struct FileData {
   OldNewMap *datamap = nullptr;
   OldNewMap *globmap = nullptr;
   /** Used to keep track of already loaded packed IDs to avoid loading them multiple times. */
-  std::shared_ptr<blender::Map<IDHash, ID *>> id_by_deep_hash;
+  std::shared_ptr<Map<IDHash, ID *>> id_by_deep_hash;
 
   /**
    * Store mapping from old ID pointers (the values they have in the .blend file) to new ones,
@@ -155,7 +158,7 @@ struct FileData {
   BHeadSort *bheadmap = nullptr;
   int tot_bheadmap = 0;
 
-  std::optional<blender::Map<blender::StringRefNull, BHead *>> bhead_idname_map;
+  std::optional<Map<StringRefNull, BHead *>> bhead_idname_map;
 
   /**
    * The root (main, local) Main.
@@ -346,3 +349,5 @@ void *blo_read_get_new_globaldata_address(FileData *fd, const void *adr) ATTR_NO
  * data should be discarded). Also add an error report to `fd` including given `message`.
  */
 void blo_readfile_invalidate(FileData *fd, Main *bmain, const char *message) ATTR_NONNULL(1, 2, 3);
+
+}  // namespace blender

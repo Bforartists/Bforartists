@@ -36,6 +36,8 @@
 #  include "io_stl_ops.hh"
 #  include "io_utils.hh"
 
+namespace blender {
+
 static wmOperatorStatus wm_stl_export_invoke(bContext *C,
                                              wmOperator *op,
                                              const wmEvent * /*event*/)
@@ -79,18 +81,17 @@ static wmOperatorStatus wm_stl_export_exec(bContext *C, wmOperator *op)
 
 static void wm_stl_export_draw(bContext *C, wmOperator *op)
 {
-  blender::ui::Layout &layout = *op->layout;
+  ui::Layout &layout = *op->layout;
   PointerRNA *ptr = op->ptr;
 
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout.panel(C, "STL_export_general", false, IFACE_("General")))
-  {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout.panel(C, "STL_export_general", false, IFACE_("General"))) {
+    ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
 
-    blender::ui::Layout *sub = &col.column(false, IFACE_("Format"));
+    ui::Layout *sub = &col.column(false, IFACE_("Format"));
     sub->use_property_split_set(false);  // bfa
     sub->prop(ptr, "ascii_format", UI_ITEM_NONE, IFACE_("ASCII"), ICON_NONE);
 
@@ -109,10 +110,8 @@ static void wm_stl_export_draw(bContext *C, wmOperator *op)
     sub->prop(ptr, "up_axis", UI_ITEM_NONE, IFACE_("Up"), ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout.panel(
-          C, "STL_export_geometry", false, IFACE_("Geometry")))
-  {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout.panel(C, "STL_export_geometry", false, IFACE_("Geometry"))) {
+    ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "apply_modifiers", UI_ITEM_NONE, IFACE_("Apply Modifiers"), ICON_NONE);
   }
@@ -216,7 +215,7 @@ static wmOperatorStatus wm_stl_import_exec(bContext *C, wmOperator *op)
 
   params.reports = op->reports;
 
-  const auto paths = blender::ed::io::paths_from_operator_properties(op->ptr);
+  const auto paths = ed::io::paths_from_operator_properties(op->ptr);
 
   if (paths.is_empty()) {
     BKE_report(op->reports, RPT_ERROR, "No filepath given");
@@ -249,15 +248,13 @@ static bool wm_stl_import_check(bContext * /*C*/, wmOperator *op)
   return false;
 }
 
-static void ui_stl_import_settings(const bContext *C, blender::ui::Layout *layout, PointerRNA *ptr)
+static void ui_stl_import_settings(const bContext *C, ui::Layout *layout, PointerRNA *ptr)
 {
   layout->use_property_split_set(true);
   layout->use_property_decorate_set(false);
 
-  if (blender::ui::Layout *panel = layout->panel(
-          C, "STL_import_general", false, IFACE_("General")))
-  {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout->panel(C, "STL_import_general", false, IFACE_("General"))) {
+    ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "global_scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col.prop(ptr, "use_scene_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -265,8 +262,8 @@ static void ui_stl_import_settings(const bContext *C, blender::ui::Layout *layou
     col.prop(ptr, "up_axis", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (blender::ui::Layout *panel = layout->panel(C, "STL_import_options", false, IFACE_("Options"))) {
-    blender::ui::Layout &col = panel->column(false);
+  if (ui::Layout *panel = layout->panel(C, "STL_import_options", false, IFACE_("Options"))) {
+    ui::Layout &col = panel->column(false);
 
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "use_facet_normal", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -287,7 +284,7 @@ void WM_OT_stl_import(wmOperatorType *ot)
   ot->description = "Import an STL file as an object";
   ot->idname = "WM_OT_stl_import";
 
-  ot->invoke = blender::ed::io::filesel_drop_import_invoke;
+  ot->invoke = ed::io::filesel_drop_import_invoke;
   ot->exec = wm_stl_import_exec;
   ot->poll = WM_operator_winactive;
   ot->check = wm_stl_import_check;
@@ -330,7 +327,7 @@ void WM_OT_stl_import(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_HIDDEN);
 }
 
-namespace blender::ed::io {
+namespace ed::io {
 void stl_file_handler_add()
 {
   auto fh = std::make_unique<bke::FileHandlerType>();
@@ -342,6 +339,7 @@ void stl_file_handler_add()
   fh->poll_drop = poll_file_object_drop;
   bke::file_handler_add(std::move(fh));
 }
-}  // namespace blender::ed::io
+}  // namespace ed::io
+}  // namespace blender
 
 #endif /* WITH_IO_STL */

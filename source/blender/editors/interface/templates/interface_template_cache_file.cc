@@ -108,7 +108,7 @@ static void cache_file_layer_item(uiList * /*ui_list*/,
 
 uiListType *UI_UL_cache_file_layers()
 {
-  uiListType *list_type = (uiListType *)MEM_callocN(sizeof(*list_type), __func__);
+  uiListType *list_type = MEM_callocN<uiListType>(__func__);
 
   STRNCPY_UTF8(list_type->idname, "UI_UL_cache_file_layers");
   list_type->draw_item = cache_file_layer_item;
@@ -129,7 +129,7 @@ void template_list_flags(Layout *layout, const bContext *C, PointerRNA *fileptr)
   Layout *col = &row.column(true);
 
   template_list(col,
-                (bContext *)C,
+                const_cast<bContext *>(C),
                 "UI_UL_cache_file_layers",
                 "cache_file_layers",
                 fileptr,

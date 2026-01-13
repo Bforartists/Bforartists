@@ -58,7 +58,7 @@ void uiTemplateReportsBanner(Layout *layout, bContext *C)
     return;
   }
 
-  ReportTimerInfo *rti = (ReportTimerInfo *)reports->reporttimer->customdata;
+  ReportTimerInfo *rti = static_cast<ReportTimerInfo *>(reports->reporttimer->customdata);
 
   if (!rti || rti->widthfac == 0.0f || !report) {
     return;
@@ -129,7 +129,7 @@ void uiTemplateReportsBanner(Layout *layout, bContext *C)
   but = uiDefIconButO(block,
                       ButtonType::But,
                       "SCREEN_OT_info_log_show",
-                      blender::wm::OpCallContext::InvokeRegionWin,
+                      wm::OpCallContext::InvokeRegionWin,
                       icon_from_report_type(report->type),
                       (3 * UI_SCALE_FAC),
                       0,
@@ -142,7 +142,7 @@ void uiTemplateReportsBanner(Layout *layout, bContext *C)
   but = uiDefButO(block,
                   ButtonType::But,
                   "SCREEN_OT_info_log_show",
-                  blender::wm::OpCallContext::InvokeRegionWin,
+                  wm::OpCallContext::InvokeRegionWin,
                   report->message,
                   UI_UNIT_X,
                   0,
@@ -320,11 +320,11 @@ void uiTemplateInputStatus(Layout *layout, bContext *C)
 
   if (region == nullptr) {
     /* Check if over an action zone. */
-    LISTBASE_FOREACH (ScrArea *, area_iter, &screen->areabase) {
-      LISTBASE_FOREACH (AZone *, az, &area_iter->actionzones) {
-        if (BLI_rcti_isect_pt_v(&az->rect, win->runtime->eventstate->xy)) {
-          region = az->region;
-          if (uiTemplateInputStatusAzone(&row, az, region)) {
+    for (ScrArea &area_iter : screen->areabase) {
+      for (AZone &az : area_iter.actionzones) {
+        if (BLI_rcti_isect_pt_v(&az.rect, win->runtime->eventstate->xy)) {
+          region = az.region;
+          if (uiTemplateInputStatusAzone(&row, &az, region)) {
             return;
           }
           break;
@@ -336,9 +336,9 @@ void uiTemplateInputStatus(Layout *layout, bContext *C)
   ScrArea *area = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, win->runtime->eventstate->xy);
   if (!area) {
     /* Are we in a global area? */
-    LISTBASE_FOREACH (ScrArea *, global_area, &win->global_areas.areabase) {
-      if (BLI_rcti_isect_pt_v(&global_area->totrct, win->runtime->eventstate->xy)) {
-        area = global_area;
+    for (ScrArea &global_area : win->global_areas.areabase) {
+      if (BLI_rcti_isect_pt_v(&global_area.totrct, win->runtime->eventstate->xy)) {
+        area = &global_area;
         break;
       }
     }
