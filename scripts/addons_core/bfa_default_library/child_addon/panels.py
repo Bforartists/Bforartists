@@ -38,6 +38,19 @@ from .wizard_handlers import (
 from .wizard_handlers import draw_wizard_button
 
 # -----------------------------------------------------------------------------
+# Icon Compatibility
+# -----------------------------------------------------------------------------
+
+def is_bforartists():
+    """Check if running in Bforartists (has BFA-specific UI elements)."""
+    return "OUTLINER_MT_view" in dir(bpy.types)
+
+
+def get_icon(bfa_icon, blender_fallback):
+    """Get appropriate icon for Bforartists or Blender."""
+    return bfa_icon if is_bforartists() else blender_fallback
+
+# -----------------------------------------------------------------------------
 # Panel Definitions
 # -----------------------------------------------------------------------------
 
@@ -123,30 +136,6 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
                     row.prop(mod, f'["{socket_id}"]', text="", slider=False)
                 else:
                     row.prop(mod, f'["{socket_id}"]', text=socket_name)
-
-        # This is to make sure the operators are SOMEWHERE even if not in Bforartists.
-        if not "OUTLINER_MT_view" in dir(bpy.types):
-                layout.separator(factor = 0.5)
-                op = layout.operator("object.apply_selected_objects",
-                                    text="Visual Geometry and Join",
-                                    icon='JOIN')
-                op.join_on_apply = True
-                op.boolean_on_apply = False
-                op.remesh_on_apply = False
-
-                op = layout.operator("object.apply_selected_objects",
-                                text="Visual Geometry and Boolean",
-                                icon='MOD_BOOLEAN')
-                op.join_on_apply = False
-                op.boolean_on_apply = True
-                op.remesh_on_apply = False
-
-                op = layout.operator("object.apply_selected_objects",
-                                text="Visual Geometry and Remesh",
-                                icon='MOD_REMESH')
-                op.join_on_apply = False
-                op.boolean_on_apply = False
-                op.remesh_on_apply = True
 
 
 class OBJECT_PT_AssetsModifierPanel(Panel):
@@ -247,7 +236,3 @@ def unregister():
         except Exception as e:
             # Handle other potential errors gracefully
             print(f"⚠ Error unregistering {cls.__name__}: {e}")
-        
-        # Handle handler cleanup (note: new registry doesn't track handlers)
-        if object_added_handler in bpy.app.handlers.depsgraph_update_post:
-            bpy.app.handlers.depsgraph_update_post.remove(object_added_handler)

@@ -23,6 +23,7 @@ Provides tools for maintaining the central library system.
 
 import bpy
 import os
+import sys
 import json
 import shutil
 import glob
@@ -37,54 +38,68 @@ def get_addon_identifier(addon_info):
         return addon_info['unique_id']
     return f"{addon_info['name']}_{addon_info['version'][0]}.{addon_info['version'][1]}.{addon_info['version'][2]}"
 
-def get_bforartists_user_preferences_folder():
-    """Get the Bforartists user preferences folder for the current version."""
+def _get_user_resource_path():
+    """
+    Internal: Get the base user resource path for Bforartists.
+    This is the single source of truth for path resolution.
+
+    Returns the version-specific user folder (e.g., .../Bforartists/5.1/).
+    """
     try:
-        import bpy
-        from pathlib import Path
-        
-        # Get the user resource path (already includes the version, e.g., .../Bforartists/5.1/)
-        user_path = Path(bpy.utils.resource_path("USER"))
-        # Place libraries directly in the version-specific user folder under "asset_libraries"
-        bfa_asset_libraries_path = user_path / "asset_libraries"
-        
-        return str(bfa_asset_libraries_path)
+        # Get the user resource path (already includes the version)
+        return str(Path(bpy.utils.resource_path("USER")))
     except Exception as e:
         print(f"⚠ Could not get user resource path: {e}")
-        
-        # If bpy.utils.resource_path fails, construct the path manually
+
+        # Fallback: construct the path manually based on platform
         try:
-            import bpy
-            import sys
-            from pathlib import Path
-            
-            # Get Bforartists version
             version_str = f"{bpy.app.version[0]}.{bpy.app.version[1]}"
-            
-            # Platform-specific user preferences paths
+
             if sys.platform == "win32":
-                # Windows: %APPDATA%\Bforartists\Bforartists\{version}\asset_libraries
+                # Windows: %APPDATA%\Bforartists\Bforartists\{version}
                 appdata = os.getenv('APPDATA')
                 if appdata:
-                    user_path = Path(appdata) / "Bforartists" / "Bforartists" / version_str
-                    bfa_asset_libraries_path = user_path / "asset_libraries"
-                    return str(bfa_asset_libraries_path)
+                    return str(Path(appdata) / "Bforartists" / "Bforartists" / version_str)
             elif sys.platform == "darwin":
-                # macOS: ~/Library/Application Support/Bforartists/Bforartists/{version}/asset_libraries
-                home = Path.home()
-                user_path = home / "Library" / "Application Support" / "Bforartists" / "Bforartists" / version_str
-                bfa_asset_libraries_path = user_path / "asset_libraries"
-                return str(bfa_asset_libraries_path)
+                # macOS: ~/Library/Application Support/Bforartists/Bforartists/{version}
+                return str(Path.home() / "Library" / "Application Support" / "Bforartists" / "Bforartists" / version_str)
             else:
-                # Linux and others: ~/.config/bforartists/{version}/asset_libraries
-                home = Path.home()
-                user_path = home / ".config" / "bforartists" / version_str
-                bfa_asset_libraries_path = user_path / "asset_libraries"
-                return str(bfa_asset_libraries_path)
+                # Linux and others: ~/.config/bforartists/{version}
+                return str(Path.home() / ".config" / "bforartists" / version_str)
         except Exception as e2:
             print(f"⚠ Could not construct user preferences path: {e2}")
-            # If everything fails, raise the original error
             raise e
+
+
+def get_user_preferences_path():
+    """Get the main user preferences path for addon files."""
+    try:
+        return _get_user_resource_path()
+    except Exception:
+        # Default to current directory if everything fails
+        return os.getcwd()
+
+
+def get_bforartists_user_preferences_folder():
+    """Get the Bforartists user preferences folder for asset libraries."""
+    user_path = _get_user_resource_path()
+    return os.path.join(user_path, "asset_libraries")
+
+
+def get_bfa_extensions_path():
+    """Get the Bforartists extensions path where addons should be installed."""
+    user_prefs_path = get_user_preferences_path()
+    extensions_path = os.path.join(user_prefs_path, "extensions", "user_default")
+    # Ensure the directory exists
+    os.makedirs(extensions_path, exist_ok=True)
+    return extensions_path
+
+
+def get_child_addon_path(child_addon_name="modular_child_addons"):
+    """Get the path where child addons should be stored in Bforartists extensions."""
+    extensions_path = get_bfa_extensions_path()
+    child_addon_path = os.path.join(extensions_path, child_addon_name)
+    return child_addon_path
 
 
 def get_central_library_path():
@@ -302,28 +317,6 @@ def get_active_addons_count(central_lib_base=None):
     return len(tracking_data)
 
 
-def is_central_library_registered(prefs, central_lib_base=None):
-    """Check if the central library is already registered."""
-    if central_lib_base is None:
-        central_lib_base = get_central_library_path()
-
-    for lib in prefs.filepaths.asset_libraries:
-        if lib.path == central_lib_base:
-            return True
-    return False
-
-
-def get_central_library_index(prefs, central_lib_base=None):
-    """Get the index of the central library in preferences."""
-    if central_lib_base is None:
-        central_lib_base = get_central_library_path()
-
-    for index, lib in enumerate(prefs.filepaths.asset_libraries):
-        if lib.path == central_lib_base:
-            return index
-    return -1
-
-
 def remove_orphaned_files(central_lib_base, tracking_data, files_to_check):
     """
     Remove files that are not used by any other addons, but keep catalog files.
@@ -385,6 +378,36 @@ def remove_orphaned_files(central_lib_base, tracking_data, files_to_check):
                 print(f"      ⚠ Could not remove file {file_path}: {e}")
 
     return removed_count
+
+
+def get_child_addon_status(child_addon_name="modular_child_addons"):
+    """
+    Get the installation and activation status of a child addon.
+    
+    Returns:
+        tuple: (is_installed, is_active, addon_path)
+    """
+    import bpy
+    
+    # Get the Bforartists extensions path
+    child_addon_dir = get_child_addon_path(child_addon_name)
+    child_init_file = os.path.join(child_addon_dir, "__init__.py")
+    
+    # Check if installed
+    is_installed = os.path.exists(child_init_file)
+    
+    # Check if active - try multiple possible module names
+    is_active = False
+    # Try the exact name first
+    if child_addon_name in bpy.context.preferences.addons:
+        is_active = True
+    else:
+        # Also check for the module name without any path components
+        module_name = child_addon_name
+        if module_name in bpy.context.preferences.addons:
+            is_active = True
+    
+    return is_installed, is_active, child_addon_dir
 
 
 # Dummy register/unregister functions to prevent errors if accidentally called as submodule

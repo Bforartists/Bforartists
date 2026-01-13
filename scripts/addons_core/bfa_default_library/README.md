@@ -24,16 +24,35 @@ bfa_central_asset_library/                  # Central library location (auto-cre
 ├── Geometry Nodes Library/
 ├── Shader Nodes Library/
 ├── Compositor Nodes Library/
-└── .addon_tracking.json                   # JSON tracking of active addons & files
+├── .addon_tracking.json                   # JSON tracking of active addons & files
+└── child_addon_tracking.json              # Tracks parent addons using child functionality
 
-bfa_default_library/                       # Individual addon package
+bfa_default_library/                       # Parent addon package
+├── __init__.py                            # Main addon entry, library management
+├── ui.py                                  # Preferences panel & UI operators
+├── utility.py                             # Central library management core
+├── child_addon/                           # Child addon (functional components)
+│   ├── __init__.py
+│   ├── operators/                         # Node operators (geometry, shader, compositor)
+│   ├── panels.py                          # UI panels
+│   ├── wizards.py                         # Asset wizards
+│   ├── wizard_handlers.py
+│   └── wizard_operators.py
 ├── Default Library/                       # Original assets (copied to central)
 ├── Geometry Nodes Library/
 ├── Shader Nodes Library/
 ├── Compositor Nodes Library/
-├── utility.py                            # Central library management core
 └── tests/                                # Comprehensive test suite
 ```
+
+## Architecture
+
+The addon uses a **parent/child architecture**:
+
+- **Parent Addon** (`__init__.py`, `ui.py`, `utility.py`): Manages asset libraries, registration, and preferences
+- **Child Addon** (`child_addon/`): Contains functional components (operators, panels, wizards) that are loaded dynamically
+
+This separation allows multiple parent addons to share the same child functionality without conflicts.
 
 ## Benefits
 

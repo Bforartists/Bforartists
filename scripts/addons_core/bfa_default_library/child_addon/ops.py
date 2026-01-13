@@ -167,18 +167,17 @@ class OBJECT_OT_ApplySelected(Operator):
                     if final_object.type != 'MESH':
                         try:
                             bpy.ops.object.convert(target='MESH')
-                        except:
-                            #print(f"Warning: Could not convert {final_object.type} to mesh for remeshing")
+                        except RuntimeError:
+                            # Could not convert object type to mesh for remeshing
                             pass
-                    
+
                     # Make sure the object has valid mesh data
                     if not final_object.data or not hasattr(final_object.data, 'polygons'):
                         try:
                             bpy.ops.object.convert(target='MESH')
-                        except:
-                            #print(f"Error: Invalid mesh data for remeshing")
+                        except RuntimeError:
+                            # Invalid mesh data for remeshing
                             final_object = None
-                            pass
                     
                     if final_object:
                         # Add a remesh modifier with the specified voxel size
@@ -218,12 +217,11 @@ class OBJECT_OT_ApplySelected(Operator):
                                 remesh_mod2.mode = 'VOXEL'
                                 remesh_mod2.voxel_size = self.voxel_size
                                 remesh_mod2.use_smooth_shade = True
-                                
+
                                 bpy.ops.object.modifier_apply(modifier=remesh_mod2.name)
-                                #print(f"✓ Fallback remesh applied successfully")
-                            except:
+                            except RuntimeError:
+                                # Fallback remesh also failed - silently continue
                                 pass
-                                #print("⚠ Fallback remesh also failed")
                         
                         # Final cleanup and selection
                         context.view_layer.update()
@@ -268,37 +266,44 @@ classes = (
     OBJECT_OT_ApplySelected,
 )
 
-# Register scene properties and operators
+# Track if scene properties are registered (prevent duplicates from multiple parent addons)
+_scene_props_registered = False
+
+
 def register():
-    """Register all operator classes."""
-    # Register scene properties
-    bpy.types.Scene.join_apply = bpy.props.BoolProperty(
-        name="Join on Apply",
-        description="Join converted objects into a single mesh",
-        default=True
-    )
+    """Register all operator classes and scene properties."""
+    global _scene_props_registered
 
-    bpy.types.Scene.boolean_apply = bpy.props.BoolProperty(
-        name="Boolean on Apply",
-        description="Apply a boolean union operation to combine objects into a single mesh",
-        default=False
-    )
+    # Register scene properties only once (prevent duplicates from multiple parent addons)
+    if not _scene_props_registered:
+        bpy.types.Scene.join_apply = bpy.props.BoolProperty(
+            name="Join on Apply",
+            description="Join converted objects into a single mesh",
+            default=True
+        )
 
-    bpy.types.Scene.remesh_apply = bpy.props.BoolProperty(
-        name="Remesh on Apply",
-        description="Apply a remesh union operation to combine objects into a single mesh",
-        default=False
-    )
+        bpy.types.Scene.boolean_apply = bpy.props.BoolProperty(
+            name="Boolean on Apply",
+            description="Apply a boolean union operation to combine objects into a single mesh",
+            default=False
+        )
 
-    bpy.types.Scene.voxel_size_apply = bpy.props.FloatProperty(
-        name="Voxel Size",
-        description="Voxel size for remeshing operation",
-        default=0.1,
-        min=0.005,
-        max=1.0,
-        step=0.01,
-        precision=3
-    )
+        bpy.types.Scene.remesh_apply = bpy.props.BoolProperty(
+            name="Remesh on Apply",
+            description="Apply a remesh union operation to combine objects into a single mesh",
+            default=False
+        )
+
+        bpy.types.Scene.voxel_size_apply = bpy.props.FloatProperty(
+            name="Voxel Size",
+            description="Voxel size for remeshing operation",
+            default=0.1,
+            min=0.005,
+            max=1.0,
+            step=0.01,
+            precision=3
+        )
+        _scene_props_registered = True
 
     from bpy.utils import register_class
     for cls in classes:
@@ -310,16 +315,20 @@ def register():
 
 
 def unregister():
-    """Unregister all operator classes."""
-    # Remove scene properties first
-    try:
-        del bpy.types.Scene.join_apply
-        del bpy.types.Scene.boolean_apply
-        del bpy.types.Scene.remesh_apply
-        del bpy.types.Scene.voxel_size_apply
-    except:
-        pass
-    
+    """Unregister all operator classes and scene properties."""
+    global _scene_props_registered
+
+    # Remove scene properties if registered
+    if _scene_props_registered:
+        try:
+            del bpy.types.Scene.join_apply
+            del bpy.types.Scene.boolean_apply
+            del bpy.types.Scene.remesh_apply
+            del bpy.types.Scene.voxel_size_apply
+        except AttributeError:
+            pass
+        _scene_props_registered = False
+
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         try:
