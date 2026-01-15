@@ -2089,20 +2089,23 @@ static void v3d_transform_butsR(ui::Layout &layout, PointerRNA *ptr)
 
   row = &layout.row(true);
   row->label(IFACE_("Mode"), ICON_NONE);
-  row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
-  row->emboss_set(ui::EmbossType::None);
+  
+  col = &layout.column(false);
+  row = &col->row(true);
 
-  /* bfa - display 4L button */
   if (draw_4l) {
-    row->use_property_decorate_set(false);
-    row->prop(ptr,
-              "lock_rotations_4d",
-              ui::ITEM_R_TOGGLE | ui::ITEM_R_ICON_ONLY,
-              "",
-              RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
+    row->label("", ICON_BLANK1); /* icon has spacer for alignment */
+    row->use_property_decorate_set(true);
+    row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
+    row->use_property_decorate_set(false); /* 4L Icon Toggle */
+    row->prop(ptr, "lock_rotations_4d", ui::ITEM_R_TOGGLE | ui::ITEM_R_ICON_ONLY, "",
+               RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
   }
   else {
-    row->label("", ICON_BLANK1);
+    /* When not in quaternion/axis modes */
+    row->label("", ICON_BLANK1); /* icon has spacer for alignment */
+    row->use_property_decorate_set(true);
+    row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
   }
   row->emboss_set(ui::EmbossType::Undefined);
 

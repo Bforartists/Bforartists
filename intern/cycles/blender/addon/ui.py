@@ -1588,7 +1588,10 @@ class CYCLES_OBJECT_PT_motion_blur(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.prop(cob, "motion_steps", text="Steps")
         if ob.type != "CAMERA":
-            col.prop(cob, "use_deform_motion", text="Deformation")
+            col.use_property_split = False
+            row = col.row()
+            row.separator() # indent
+            row.prop(cob, "use_deform_motion", text="Deformation")
 
 
 class CYCLES_OBJECT_PT_shading_gi_approximation(CyclesButtonsPanel, Panel):

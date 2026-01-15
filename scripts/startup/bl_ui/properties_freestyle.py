@@ -538,6 +538,7 @@ def draw_modifier_curve_common(box, modifier, has_range, has_value):
     row = box.row()
     row.prop(modifier, "mapping", text="Mapping")
     if modifier.mapping == 'LINEAR':
+        box.use_property_split = False # align left
         box.prop(modifier, "invert")
     if has_range:
         col = box.column(align=True)

@@ -413,24 +413,26 @@ class OBJECT_PT_lineart(ObjectButtonsPanel, Panel):
         split = layout.split(factor = 0.37)
         col = split.column()
         col.use_property_split = False
+        
         col.prop(lineart, "use_crease_override", text="Override Crease")
         col = split.column()
         if lineart.use_crease_override:
             col.prop(lineart, "crease_threshold", slider=True, text="")
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        row = layout.row(heading="Intersection Priority")
-        row.prop(lineart, "use_intersection_priority_override", text="")
-        subrow = row.row()
-        subrow.active = lineart.use_intersection_priority_override
-        subrow.prop(lineart, "intersection_priority", text="")
-
-        row = layout.row(heading="Intersection Priority")
-        row.prop(lineart, "use_intersection_priority_override", text="")
-        subrow = row.row()
-        subrow.active = lineart.use_intersection_priority_override
-        subrow.prop(lineart, "intersection_priority", text="")
+        
+        row = layout.split(factor = 0.37)
+        row.use_property_split = False
+        row.prop(lineart, "use_intersection_priority_override", text="Intersection Priority")
+        
+        if lineart.use_intersection_priority_override:
+            row.use_property_split = True
+            row.active = lineart.use_intersection_priority_override
+            row.prop(lineart, "intersection_priority", text="")
+        else:
+            col = row.column()
+            row.use_property_split = False
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class OBJECT_PT_motion_paths(MotionPathButtonsPanel, Panel):
@@ -495,8 +497,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         # bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
         # col.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
         col.prop(ob, "hide_surface_pick", text="Surface Picking", toggle=False, invert_checkbox=True)
-        layout.separator()
-
+        
         col = layout.column(align = True)
         col.label(text = "Show in")
 
@@ -511,32 +512,53 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         row.separator()
         row.prop(ob, "hide_render", text = "Renders", toggle=False, invert_checkbox=True)
         row.prop_decorator(ob, "hide_render")
+        col.separator()
 
         if context.engine == 'BLENDER_EEVEE':
             if ob.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME'}:
                 layout.separator()
-                col = layout.column(heading="Ray Visibility")
-                col.prop(ob, "visible_camera", text="Camera", toggle=False)
-                col.prop(ob, "visible_shadow", text="Shadow", toggle=False)
+                col.label(text = "Ray Visibility")
+                row = col.row()
+                row.use_property_split = False
+                row.separator()
+                row.prop(ob, "visible_camera", text="Camera", toggle=False)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_shadow", text="Shadow", toggle=False)
+                col.separator()
 
             if ob.type in {'LIGHT'}:
-                layout.separator()
-                col = layout.column(heading="Ray Visibility")
-                col.prop(ob, "visible_diffuse", text="Diffuse", toggle=False)
-                col.prop(ob, "visible_glossy", text="Glossy", toggle=False)
-                col.prop(ob, "visible_transmission", text="Transmission", toggle=False)
-                col.prop(ob, "visible_volume_scatter", text="Volume Scatter", toggle=False)
+                col.label(text = "Ray Visibility")
+                row = col.row()
+                row.use_property_split = False
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_diffuse", text="Diffuse", toggle=False)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_glossy", text="Glossy", toggle=False)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_transmission", text="Transmission", toggle=False)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_volume_scatter", text="Volume Scatter", toggle=False)
 
             if ob.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME'}:
-                layout.separator()
-                col = layout.column(heading="Light Probes")
-                col.prop(ob, "hide_probe_volume", text="Volume", toggle=False, invert_checkbox=True)
-                col.prop(ob, "hide_probe_sphere", text="Sphere", toggle=False, invert_checkbox=True)
-                col.prop(ob, "hide_probe_plane", text="Plane", toggle=False, invert_checkbox=True)
+                col.label(text = "Light Probes")
+                row = col.row()
+                row.separator()
+                row.use_property_split = False
+                row.prop(ob, "hide_probe_volume", text="Volume", toggle=False, invert_checkbox=True)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "hide_probe_volume", text="Sphere", toggle=False, invert_checkbox=True)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "hide_probe_plane", text="Plane", toggle=False, invert_checkbox=True)
 
         if ob.type == 'GREASEPENCIL':
 
-            col = layout.column(align = True)
             col.label(text = "Grease Pencil")
 
             row = col.row()
@@ -544,8 +566,8 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
             row.use_property_split = False
             row.prop(ob, "use_grease_pencil_lights", toggle=False)
             row.prop_decorator(ob, "use_grease_pencil_lights")
-
-        col = layout.column()
+        
+        col.separator()
         col.label(text = "Mask")
         row = col.row()
         row.separator()
