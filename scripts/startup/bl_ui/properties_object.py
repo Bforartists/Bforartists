@@ -413,24 +413,26 @@ class OBJECT_PT_lineart(ObjectButtonsPanel, Panel):
         split = layout.split(factor = 0.37)
         col = split.column()
         col.use_property_split = False
+        
         col.prop(lineart, "use_crease_override", text="Override Crease")
         col = split.column()
         if lineart.use_crease_override:
             col.prop(lineart, "crease_threshold", slider=True, text="")
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
-
-        row = layout.row(heading="Intersection Priority")
-        row.prop(lineart, "use_intersection_priority_override", text="")
-        subrow = row.row()
-        subrow.active = lineart.use_intersection_priority_override
-        subrow.prop(lineart, "intersection_priority", text="")
-
-        row = layout.row(heading="Intersection Priority")
-        row.prop(lineart, "use_intersection_priority_override", text="")
-        subrow = row.row()
-        subrow.active = lineart.use_intersection_priority_override
-        subrow.prop(lineart, "intersection_priority", text="")
+        
+        row = layout.split(factor = 0.37)
+        row.use_property_split = False
+        row.prop(lineart, "use_intersection_priority_override", text="Intersection Priority")
+        
+        if lineart.use_intersection_priority_override:
+            row.use_property_split = True
+            row.active = lineart.use_intersection_priority_override
+            row.prop(lineart, "intersection_priority", text="")
+        else:
+            col = row.column()
+            row.use_property_split = False
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class OBJECT_PT_motion_paths(MotionPathButtonsPanel, Panel):
