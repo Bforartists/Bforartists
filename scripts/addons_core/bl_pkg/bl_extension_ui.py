@@ -1289,13 +1289,12 @@ def extensions_panel_draw_online_extensions_request_impl(
     for line in (
             rpt_("Internet access is required to install and update Extensions."),  # BFA - more explicit
             rpt_("You can adjust online access from \"System\" preferences."), # BFA - more explicit
-            rpt_("You can alternatively drag and drop an Extension file to install."), # BFA - more info
     ):
         box.label(text=line, translate=False)
 
     row = box.row(align=True)
     row.alignment = 'LEFT'
-    row.label(text="While offline, use \"Install from Disk\" to install third-party Extensions.") # BFA - made it explicit
+    row.label(text="While offline, you can \"Install from Disk\" or drag and drop to install Extensions.") # BFA - made it explicit
     ## BFA - this link is not useful and leads to Blender
     # row.operator(
     #    "wm.url_open",
@@ -1313,8 +1312,7 @@ def extensions_panel_draw_online_extensions_request_impl(
 
     row = box.row(align=True) # BFA - warning about legacy addons we ship
     row.alignment = 'LEFT' # BFA - warning about legacy addons we ship
-    row.label(text="Online Access will remove Built-in Legacy Addons and settings", icon="WARNING") # BFA - warning about legacy addons we ship and them being removed when opting in
-
+    row.label(text="Online Extensions may conflict with Built-in Legacy Addon equivalents", icon="WARNING") # BFA - warning about legacy addons a user coudl potentially enable
 
     row = box.row()
     props = row.operator("wm.context_set_boolean", text="Continue Offline", icon='X')
@@ -1333,6 +1331,7 @@ def extensions_panel_draw_online_extensions_request_impl(
         legacy_addons = bpy.context.preferences.addons["bfa_default_addons"].preferences.legacy_addons_installed
         if not legacy_addons:
             row.operator("bfa.install_legacy_addons", text="Install Built-in Legacy Add-ons", icon='IMPORT')
+            row.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions Equivalents", icon='PLUGIN')
         else:
             row.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Add-ons", icon='CANCEL')
     ## BFA - Indicative Icons for types - END
