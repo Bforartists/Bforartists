@@ -520,11 +520,9 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 row.use_property_split = False
                 row.separator()
                 row.prop(ob, "visible_camera", text="Camera", toggle=False)
-                row.prop_decorator(ob, "visible_camera")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_shadow", text="Shadow", toggle=False)
-                row.prop_decorator(ob, "visible_shadow")
                 col.separator()
 
             if ob.type in {'LIGHT'}:
@@ -534,19 +532,15 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_diffuse", text="Diffuse", toggle=False)
-                row.prop_decorator(ob, "visible_diffuse")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_glossy", text="Glossy", toggle=False)
-                row.prop_decorator(ob, "visible_glossy")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_transmission", text="Transmission", toggle=False)
-                row.prop_decorator(ob, "visible_transmission")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_volume_scatter", text="Volume Scatter", toggle=False)
-                row.prop_decorator(ob, "visible_volume_scatter")
 
             if ob.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME'}:
                 col.label(text = "Light Probes")
@@ -554,19 +548,15 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 row.separator()
                 row.use_property_split = False
                 row.prop(ob, "hide_probe_volume", text="Volume", toggle=False, invert_checkbox=True)
-                row.prop_decorator(ob, "hide_probe_volume")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "hide_probe_volume", text="Sphere", toggle=False, invert_checkbox=True)
-                row.prop_decorator(ob, "hide_probe_volume")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "hide_probe_plane", text="Plane", toggle=False, invert_checkbox=True)
-                row.prop_decorator(ob, "hide_probe_plane")
 
         if ob.type == 'GREASEPENCIL':
 
-            col = layout.column(align = True)
             col.label(text = "Grease Pencil")
 
             row = col.row()
