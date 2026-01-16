@@ -587,10 +587,12 @@ void DepsgraphRelationBuilder::build_id(ID *id)
     case ID_PA:
       build_particle_settings(id_cast<ParticleSettings *>(id));
       break;
+    case ID_VF:
+      build_vfont((VFont *)id);
+      break;
 
     case ID_LI:
     case ID_SCR:
-    case ID_VF:
     case ID_BR:
     case ID_WM:
     case ID_PAL:
@@ -1684,18 +1686,6 @@ void DepsgraphRelationBuilder::build_animdata_fcurve_target(
   }
 }
 
-void DepsgraphRelationBuilder::build_animdata_curves_targets(ID *id,
-                                                             ComponentKey &adt_key,
-                                                             OperationNode *operation_from,
-                                                             ListBaseT<FCurve> *curves)
-{
-  /* Iterate over all curves and build relations. */
-  PointerRNA id_ptr = RNA_id_pointer_create(id);
-  for (FCurve &fcu : *curves) {
-    build_animdata_fcurve_target(id, id_ptr, adt_key, operation_from, &fcu);
-  }
-}
-
 void DepsgraphRelationBuilder::build_animdata_action_targets(ID *id,
                                                              const int32_t slot_handle,
                                                              ComponentKey &adt_key,
@@ -1708,10 +1698,6 @@ void DepsgraphRelationBuilder::build_animdata_action_targets(ID *id,
   animrig::Action &action = dna_action->wrap();
 
   if (action.is_empty()) {
-    return;
-  }
-  if (action.is_action_legacy()) {
-    build_animdata_curves_targets(id, adt_key, operation_from, &action.curves);
     return;
   }
 

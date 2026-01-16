@@ -1458,7 +1458,7 @@ static const EnumPropertyItem *material_enum_itemf(bContext *C,
                                                    PropertyRNA * /*prop*/,
                                                    bool *r_free)
 {
-  Object *ob = CTX_data_active_object(C);
+  Object *ob = (C) ? CTX_data_active_object(C) : nullptr;
   EnumPropertyItem *item = nullptr, item_tmp = {0};
   int totitem = 0;
 
@@ -3285,7 +3285,7 @@ static wmOperatorStatus grease_pencil_reproject_exec(bContext *C, wmOperator *op
   threading::EnumerableThreadSpecific<transform::SnapObjectContext *> thread_snap_contexts(
       [&]() -> transform::SnapObjectContext * {
         if (mode == ReprojectMode::Surface) {
-          return transform::snap_object_context_create(&scene, 0);
+          return transform::snap_object_context_create();
         }
         return nullptr;
       });

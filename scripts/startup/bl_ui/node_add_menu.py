@@ -67,7 +67,7 @@ def draw_node_groups(context, layout, operator_id="node.add_node", use_transform
     from nodeitems_builtins import node_tree_group_type
 
     prefs = context.preferences
-    show_hidden = prefs.filepaths.show_hidden_files_datablocks
+    show_hidden = prefs.show_hidden_ids
 
     groups = [
         group for group in context.blend_data.node_groups

@@ -426,7 +426,8 @@ static wmOperatorStatus sequencer_de_select_all_exec(bContext *C, wmOperator *op
     return OPERATOR_CANCELLED;
   }
 
-  if (sequencer_retiming_mode_is_active(C) && retiming_keys_can_be_displayed(CTX_wm_space_seq(C)))
+  if (sequencer_retiming_mode_is_active(scene) &&
+      retiming_keys_can_be_displayed(CTX_wm_space_seq(C)))
   {
     return sequencer_retiming_select_all_exec(C, op);
   }
@@ -1206,7 +1207,7 @@ wmOperatorStatus sequencer_select_exec(bContext *C, wmOperator *op)
     }
   }
 
-  const bool was_retiming = sequencer_retiming_mode_is_active(C);
+  const bool was_retiming = sequencer_retiming_mode_is_active(scene);
 
   MouseCoords mouse_co(v2d, RNA_int_get(op->ptr, "mouse_x"), RNA_int_get(op->ptr, "mouse_y"));
 
@@ -1238,8 +1239,8 @@ wmOperatorStatus sequencer_select_exec(bContext *C, wmOperator *op)
         const int key_frame = seq::retiming_key_timeline_frame_get(scene, strip_key_owner, key);
         VectorSet<Strip *> connections = seq::connected_strips_get(strip_key_owner);
         for (Strip *connection : connections) {
-          if (key_frame == left_fake_key_frame_get(C, connection) ||
-              key_frame == right_fake_key_frame_get(C, connection))
+          if (key_frame == seq::left_fake_key_frame_get(scene, connection) ||
+              key_frame == seq::right_fake_key_frame_get(scene, connection))
           {
             realize_fake_keys(scene, connection);
           }
@@ -2152,7 +2153,8 @@ static wmOperatorStatus sequencer_box_select_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (sequencer_retiming_mode_is_active(C) && retiming_keys_can_be_displayed(CTX_wm_space_seq(C)))
+  if (sequencer_retiming_mode_is_active(scene) &&
+      retiming_keys_can_be_displayed(CTX_wm_space_seq(C)))
   {
     return sequencer_retiming_box_select_exec(C, op);
   }

@@ -246,6 +246,7 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(prefs, "disable_search_on_keypress", text="Disable Search on Key Press")
         # bfa - gooengine disable_material_icon
         flow.prop(prefs, "disable_material_icon", text="Disable Material Icon Rendering")
+        layout.prop(prefs, "show_hidden_ids", text="Show Hidden")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):

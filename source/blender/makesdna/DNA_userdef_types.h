@@ -57,8 +57,11 @@ enum eUserPref_Flag {
   USER_TXT_TABSTOSPACES_DISABLE = (1 << 25),
   USER_TOOLTIPS_PYTHON = (1 << 26),
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
-  USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS = (1 << 28), /* bfa - gooengine disable_search_on_keypress */
-  USER_DISABLE_MATERIAL_ICON = (1 << 29), /* bfa - gooengine disable material icon rendering */
+  USER_HIDE_DOT_DATABLOCK = (1 << 28),
+  /* bfa - gooengine disable_search_on_keypress */
+  USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS = (1 << 29),
+  /* bfa - gooengine disable material icon rendering */
+  USER_DISABLE_MATERIAL_ICON = (1 << 30),
 };
 
 /** #UserDef.extension_flag */
@@ -114,7 +117,7 @@ enum eUserpref_MiniAxisType {
 enum eWalkNavigation_Flag {
   USER_WALK_GRAVITY = (1 << 0),
   USER_WALK_MOUSE_REVERSE = (1 << 1),
-  USER_WALK_AIRBLOCK = (1 << 2), //BFA - Airblock mode
+  USER_WALK_AIRBLOCK = (1 << 2),  // BFA - Airblock mode
 };
 
 /** #UserDef.uiflag */
@@ -168,7 +171,7 @@ enum eUserpref_UI_Flag2 {
   USER_ALWAYS_SHOW_NUMBER_ARROWS = (1 << 0), /* cleared */
   USER_REGION_OVERLAP = (1 << 1),
   USER_NODE_AUTOPOSITION_VIEWER = (1 << 2), /*BFA - Toggle Viewer Auto-Positioning*/
-  USER_UIFLAG2_UNUSED_3 = (1 << 3), /* dirty */
+  USER_UIFLAG2_UNUSED_3 = (1 << 3),         /* dirty */
 };
 
 /** #UserDef.gpu_flag */
@@ -222,7 +225,7 @@ enum eUserpref_StatusBar_Flag {
   STATUSBAR_SHOW_VERSION = (1 << 3),
   STATUSBAR_SHOW_SCENE_DURATION = (1 << 4),
   STATUSBAR_SHOW_EXTENSIONS_UPDATES = (1 << 5),
-  STATUSBAR_SHOW_BLENDER_VERSION = (1 << 6), // bfa blender version
+  STATUSBAR_SHOW_BLENDER_VERSION = (1 << 6),  // bfa blender version
 };
 
 /**
@@ -866,10 +869,10 @@ struct UserDef {
   /** #eUserPref_Flag. */
   /* BFA - add USER_FILENOUI and USER_TOOLTIPS_PYTHON*/
   int flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM |
-              USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES | USER_FILECOMPRESS |
-              USER_FILENOUI | USER_TOOLTIPS_PYTHON);
+              USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES | USER_FILECOMPRESS | USER_FILENOUI |
+              USER_TOOLTIPS_PYTHON | USER_HIDE_DOT_DATABLOCK);
   /** #eDupli_ID_Flags. */
-  /*BFA - added USER_DUP_NTREE*/  
+  /*BFA - added USER_DUP_NTREE*/
   unsigned int dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE |
                          USER_DUP_FONT | USER_DUP_MBALL | USER_DUP_LAMP | USER_DUP_ARM |
                          USER_DUP_CAMERA | USER_DUP_SPEAKER | USER_DUP_ACT | USER_DUP_LIGHTPROBE |
@@ -924,7 +927,8 @@ struct UserDef {
                USER_ORBIT_SELECTION | USER_AREA_CORNER_HANDLE;
   /** #eUserpref_UI_Flag2. */
   /*bfa - added USER_NODE_AUTOPOSITION_VIEWER & USER_ALWAYS_SHOW_NUMBER_ARROWS */
-  char uiflag2 = USER_REGION_OVERLAP | USER_NODE_AUTOPOSITION_VIEWER | USER_ALWAYS_SHOW_NUMBER_ARROWS;
+  char uiflag2 = USER_REGION_OVERLAP | USER_NODE_AUTOPOSITION_VIEWER |
+                 USER_ALWAYS_SHOW_NUMBER_ARROWS;
   char gpu_flag = USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE | USER_GPU_FLAG_SUBDIVISION_EVALUATION;
   char _pad8[6] = {};
   /* Experimental flag for app-templates to make changes to behavior
@@ -1233,10 +1237,11 @@ struct UserDef {
 
   /* =================*/
   /* == BFA - GOO ENGINE - CUSTOM FIELDS ALWAYS BELOW! == */
-  float viewport_line_width = 1.0f;                                 /* BFA - GooEngine */
-  int outliner_editor_flag = USER_OUTLINER_COL_COLLECTION_ROWS;     /* BFA - eUserpref_OutlinerEditorFlags */
-  float node_color_blend = 0.2f;                                    /* BFA - Node Color Blend */
-  char _pad_custom[4] = {};                                         /* BFA - for future alignment/padding if needed */
+  float viewport_line_width = 1.0f; /* BFA - GooEngine */
+  int outliner_editor_flag =
+      USER_OUTLINER_COL_COLLECTION_ROWS; /* BFA - eUserpref_OutlinerEditorFlags */
+  float node_color_blend = 0.2f;         /* BFA - Node Color Blend */
+  char _pad_custom[4] = {};              /* BFA - for future alignment/padding if needed */
 
   /** Runtime data (keep last). */
   UserDef_Runtime runtime;

@@ -1519,9 +1519,6 @@ class CompositorNode(NodeInternal):
     def poll(cls, ntree):
         return ntree.bl_idname == 'CompositorNodeTree'
 
-    def update(self):
-        self.tag_need_exec()
-
 
 class ShaderNode(NodeInternal):
     __slots__ = ()
