@@ -2548,11 +2548,11 @@ class CYCLES_RENDER_PT_bake_output(CyclesButtonsPanel, Panel):
         scene = context.scene
         cbk = scene.render.bake
 
-        if cbk.use_bake_multires:
+        if cbk.use_multires:
             layout.use_property_split = False
             layout.prop(cbk, "use_bake_clear", text="Clear Image")
             if cbk.bake_type == "DISPLACEMENT":
-                layout.prop(rd, "use_bake_lores_mesh")
+                layout.prop(cbk, "use_bake_lores_mesh")
         else:
             layout.prop(cbk, "target")
             if cbk.target == "IMAGE_TEXTURES":
