@@ -116,7 +116,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   if (RNA_boolean_get(ptr, "use_rim")) {
     blender::ui::Layout *row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator();                   /*bfa - indent*/
+    row->separator(3.0); /*bfa - indent*/
     row->prop(ptr, "use_rim_only", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     row->decorator(ptr, "use_rim_only", 0); /*bfa - decorator*/
   }
@@ -124,9 +124,11 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   col->separator();
 
   modifier_vgroup_ui(layout, ptr, &ob_ptr, "vertex_group", "invert_vertex_group", std::nullopt);
-  row = &layout.row(false);
-  row->active_set(has_vertex_group);
-  row->prop(ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
+  /* bfa - only show thickness_vertex_group if a vertex group is selected */
+  if (has_vertex_group) {
+    row = &layout.row(false);
+    row->prop(ptr, "thickness_vertex_group", UI_ITEM_NONE, IFACE_("Factor"), ICON_NONE);
+  }
 
   if (solidify_mode == MOD_SOLIDIFY_MODE_NONMANIFOLD) {
     row = &layout.row(false);
