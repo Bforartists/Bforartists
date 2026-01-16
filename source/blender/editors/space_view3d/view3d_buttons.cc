@@ -2087,27 +2087,25 @@ static void v3d_transform_butsR(ui::Layout &layout, PointerRNA *ptr)
       break;
   }
 
-  row = &layout.row(true);
-  row->label(IFACE_("Mode"), ICON_NONE);
+  row = &layout.row(false); /* bfa - needed for the mode row here */
+  row->label(IFACE_("Mode"), ICON_NONE); /* bfa - Label on its own layout */
   
-  col = &layout.column(false);
-  row = &col->row(true);
+  row = &layout.row(true);
+  row->label("", ICON_BLANK1); /* bfa - icon has spacer - works better then separator at 4 factor */
+  row->separator(1.0); /* bfa - helps the icon has spacer! */
+  row->use_property_decorate_set(false); /* bfa - no decorator before 4L/blank icon */
+  row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE); /* bfa - no label */
 
   if (draw_4l) {
-    row->label("", ICON_BLANK1); /* icon has spacer for alignment */
-    row->use_property_decorate_set(true);
-    row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
-    row->use_property_decorate_set(false); /* 4L Icon Toggle */
     row->prop(ptr, "lock_rotations_4d", ui::ITEM_R_TOGGLE | ui::ITEM_R_ICON_ONLY, "",
                RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
   }
   else {
-    /* When not in quaternion/axis modes */
-    row->label("", ICON_BLANK1); /* icon has spacer for alignment */
-    row->use_property_decorate_set(true);
-    row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE);
+    /* bfa - When not in quaternion/axis modes, we show a blank icon instead of the 4l toggle */
+    row->label("", ICON_BLANK1);
   }
-  row->emboss_set(ui::EmbossType::Undefined);
+
+  row->decorator(ptr, "rotation_mode", -1); /* bfa - show decorator after 4L */
 
   layout.separator(.25f);
 

@@ -83,17 +83,22 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
             row.prop(ob, "rotation_euler", text="Rotation")
             row.use_property_decorate = False
             row.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
-
+        
+        layout.label(text="Mode") # bfa - Label on its own layout
+        
         row = layout.row(align=True)
-        row.prop(ob, "rotation_mode", text="Mode")
-        row = row.row(align=False)
-        row.ui_units_x = 1.0
+        row.label(text="", icon='BLANK1') # bfa - icon has spacer - works better then separator at 4 factor
+        row.separator(factor=1.0) # bfa - helps the icon has spacer!
+        row.use_property_decorate = False # bfa - no decorator before 4L/blank icon
+        row.prop(ob, "rotation_mode", text="") # bfa - no label 
 
         if draw4L:
-            row.use_property_decorate = False
-            row.prop(ob, "lock_rotations_4d", icon_only=True, emboss=False, icon='4L_ON' if ob.lock_rotations_4d else '4L_OFF')
+            row.prop(ob, "lock_rotations_4d", text="", emboss=True, icon='4L_ON' if ob.lock_rotations_4d else '4L_OFF')
         else:
+            # bfa - When not in quaternion/axis modes, we show a blank icon instead of the 4l toggle
             row.label(text="", icon='BLANK1')
+
+        row.prop_decorator(ob, "rotation_mode") # bfa - show decorator after 4L 
 
         col = layout.column()
         row = col.row(align=True)
