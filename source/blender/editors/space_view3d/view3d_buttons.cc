@@ -2097,7 +2097,6 @@ static void v3d_transform_butsR(ui::Layout &layout, PointerRNA *ptr)
   row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE); /* bfa - no label */
 
   if (draw_4l) {
-    // row->use_property_decorate_set(false);
     row->prop(ptr, "lock_rotations_4d", ui::ITEM_R_TOGGLE | ui::ITEM_R_ICON_ONLY, "",
                RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
   }
