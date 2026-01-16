@@ -163,7 +163,8 @@ class SceneKeyingSetsPanel:
                 propname = prop
 
         row = layout.row(align=True)
-
+        row.use_property_split = False # bfa - align left
+        
         subrow = row.row(align=True)
         subrow.active = getattr(item, toggle_prop)
 
@@ -171,8 +172,8 @@ class SceneKeyingSetsPanel:
             subrow.prop(item, prop, text=label)
         else:
             subrow.prop(owner, propname, text=label)
-
-        row.prop(item, toggle_prop, text="", icon='STYLUS_PRESSURE', toggle=True)  # XXX: needs dedicated icon
+        
+        row.prop(item, toggle_prop, text="", icon='STYLUS_PRESSURE', toggle=True)  # XXX: needs dedicated icon        
 
 
 class SCENE_PT_keying_sets(SceneButtonsPanel, SceneKeyingSetsPanel, Panel):
@@ -293,8 +294,10 @@ class SCENE_PT_keying_set_paths(SceneButtonsPanel, SceneKeyingSetsPanel, Panel):
             col.template_path_builder(ksp, "data_path", ksp.id, text="Data Path")
 
             col = flow.column()
-
+            
+            col.use_property_split = False # bfa - align left
             col.prop(ksp, "use_entire_array", text="Array All Items")
+            col.use_property_split = True # bfa - align right
 
             if not ksp.use_entire_array:
                 col.prop(ksp, "array_index", text="Index")
