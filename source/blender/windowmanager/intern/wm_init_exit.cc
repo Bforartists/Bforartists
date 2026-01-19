@@ -109,8 +109,6 @@
 #include "GPU_init_exit.hh"
 #include "GPU_shader.hh"
 
-#include "COM_compositor.hh"
-
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
 
@@ -586,8 +584,6 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
 
   /* BFA - Free toolshelf runtime data system */
   BKE_toolshelf_runtime_exit();
-
-  COM_deinitialize();
 
   bke::subdiv::exit();
 

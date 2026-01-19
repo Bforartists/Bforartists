@@ -437,25 +437,27 @@ static const EnumPropertyItem *rna_Particle_Material_itemf(bContext *C,
   /* The context object might not be what we want when doing this from python. */
   Object *ob_found = nullptr;
 
-  if (Object *ob_context = static_cast<Object *>(CTX_data_pointer_get(C, "object").data)) {
-    for (ParticleSystem &psys : ob_context->particlesystem) {
-      if (psys.part == part) {
-        ob_found = ob_context;
-        break;
+  if (C) {
+    if (Object *ob_context = static_cast<Object *>(CTX_data_pointer_get(C, "object").data)) {
+      for (ParticleSystem &psys : ob_context->particlesystem) {
+        if (psys.part == part) {
+          ob_found = ob_context;
+          break;
+        }
       }
     }
-  }
 
-  if (ob_found == nullptr) {
-    /* Iterating over all object is slow, but no better solution exists at the moment. */
-    for (Object *ob = static_cast<Object *>(CTX_data_main(C)->objects.first);
-         ob && (ob_found == nullptr);
-         ob = static_cast<Object *>(ob->id.next))
-    {
-      for (ParticleSystem &psys : ob->particlesystem) {
-        if (psys.part == part) {
-          ob_found = ob;
-          break;
+    if (ob_found == nullptr) {
+      /* Iterating over all object is slow, but no better solution exists at the moment. */
+      for (Object *ob = static_cast<Object *>(CTX_data_main(C)->objects.first);
+           ob && (ob_found == nullptr);
+           ob = static_cast<Object *>(ob->id.next))
+      {
+        for (ParticleSystem &psys : ob->particlesystem) {
+          if (psys.part == part) {
+            ob_found = ob;
+            break;
+          }
         }
       }
     }
@@ -2895,7 +2897,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_Particle_reset");
 
   /* physical properties */
-  prop = RNA_def_property(srna, "mass", PROP_FLOAT, PROP_UNIT_MASS);
+  prop = RNA_def_property(srna, "mass", PROP_FLOAT, PROP_MASS);
   RNA_def_property_range(prop, 0.00000001f, 100000.0f);
   RNA_def_property_ui_range(prop, 0.01, 100, 1, 4);
   RNA_def_property_ui_text(prop, "Mass", "Mass of the particles");

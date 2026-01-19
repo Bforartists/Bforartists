@@ -404,6 +404,12 @@ bool ED_wpaint_ensure_data(bContext *C,
                            ReportList *reports,
                            eWPaintFlag flag,
                            WPaintVGroupIndex *vgroup_index);
+bool ED_wpaint_ensure_data(bContext *C,
+                           Main *bmain,
+                           Object *object,
+                           ReportList *reports,
+                           eWPaintFlag flag,
+                           WPaintVGroupIndex *vgroup_index);
 /** Return -1 when invalid. */
 int ED_wpaint_mirror_vgroup_ensure(Object *ob, int vgroup_active);
 
@@ -422,20 +428,6 @@ void PAINT_OT_vertex_color_levels(wmOperatorType *ot);
 void PAINT_OT_weight_from_bones(wmOperatorType *ot);
 void PAINT_OT_weight_sample(wmOperatorType *ot);
 void PAINT_OT_weight_sample_group(wmOperatorType *ot);
-
-/* `paint_vertex_proj.cc` */
-
-VertProjHandle *ED_vpaint_proj_handle_create(Depsgraph &depsgraph,
-                                             Scene &scene,
-                                             Object &ob,
-                                             Span<float3> &r_vert_positions,
-                                             Span<float3> &r_vert_normals);
-void ED_vpaint_proj_handle_update(Depsgraph *depsgraph,
-                                  VertProjHandle *vp_handle,
-                                  /* runtime vars */
-                                  ARegion *region,
-                                  const float mval_fl[2]);
-void ED_vpaint_proj_handle_free(VertProjHandle *vp_handle);
 
 /* `paint_image.cc` */
 
@@ -716,14 +708,6 @@ void get_brush_alpha_data(const SculptSession &ss,
                           float *r_brush_alpha_pressure);
 
 void init_stroke(Depsgraph &depsgraph, Object &ob);
-void init_session_data(const ToolSettings &ts, Object &ob);
-/** Toggle operator for turning vertex paint mode on or off (copied from `sculpt.cc`) */
-void init_session(Main &bmain,
-                  Depsgraph &depsgraph,
-                  Scene &scene,
-                  Paint &paint,
-                  Object &ob,
-                  eObjectMode object_mode);
 
 IndexMask pbvh_gather_generic(const Depsgraph &depsgraph,
                               const Object &ob,
@@ -737,13 +721,13 @@ void mode_exit_generic(Object &ob, eObjectMode mode_flag);
 bool mode_toggle_poll_test(bContext *C);
 
 void smooth_brush_toggle_off(Paint *paint, StrokeCache *cache);
-void smooth_brush_toggle_on(const bContext *C, Paint *paint, StrokeCache *cache);
+void smooth_brush_toggle_on(Main *bmain, Paint *paint, StrokeCache *cache);
 
 /** Initialize the stroke cache variants from operator properties. */
-void update_cache_variants(bContext *C, VPaint &vp, Object &ob, PointerRNA *ptr);
+void update_cache_variants(const Depsgraph &depsgraph, VPaint &vp, Object &ob, PointerRNA *ptr);
 /** Initialize the stroke cache invariants from operator properties. */
 void update_cache_invariants(
-    bContext *C, VPaint &vp, SculptSession &ss, wmOperator *op, const float mval[2]);
+    Main *bmain, VPaint &vp, SculptSession &ss, wmOperator *op, const float mval[2]);
 void last_stroke_update(const float location[3], Paint &paint);
 }  // namespace ed::sculpt_paint::vwpaint
 

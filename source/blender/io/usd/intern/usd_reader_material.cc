@@ -343,34 +343,37 @@ static void set_viewport_material_props(Material *mtl, const pxr::UsdShadeShader
   }
 
   if (pxr::UsdShadeInput diffuse_color_input = usd_preview.GetInput(usdtokens::diffuseColor)) {
-    pxr::VtValue val;
-    if (diffuse_color_input.GetAttr().HasAuthoredValue() &&
-        diffuse_color_input.GetAttr().Get(&val) && val.IsHolding<pxr::GfVec3f>())
-    {
-      pxr::GfVec3f color = val.UncheckedGet<pxr::GfVec3f>();
-      /* Note: The material is expected to be rendered by the Workbench render engine (Viewport
-       * Display), so no need to define a material node tree. */
-      mtl->r = color[0];
-      mtl->g = color[1];
-      mtl->b = color[2];
+    const pxr::UsdShadeAttributeVector attrs = diffuse_color_input.GetValueProducingAttributes();
+    if (!attrs.empty()) {
+      pxr::VtValue val;
+      if (attrs[0].Get(&val) && val.IsHolding<pxr::GfVec3f>()) {
+        pxr::GfVec3f color = val.UncheckedGet<pxr::GfVec3f>();
+        /* Note: The material is expected to be rendered by the Workbench render engine (Viewport
+         * Display), so no need to define a material node tree. */
+        mtl->r = color[0];
+        mtl->g = color[1];
+        mtl->b = color[2];
+      }
     }
   }
 
   if (pxr::UsdShadeInput metallic_input = usd_preview.GetInput(usdtokens::metallic)) {
-    pxr::VtValue val;
-    if (metallic_input.GetAttr().HasAuthoredValue() && metallic_input.GetAttr().Get(&val) &&
-        val.IsHolding<float>())
-    {
-      mtl->metallic = val.UncheckedGet<float>();
+    const pxr::UsdShadeAttributeVector attrs = metallic_input.GetValueProducingAttributes();
+    if (!attrs.empty()) {
+      pxr::VtValue val;
+      if (attrs[0].Get(&val) && val.IsHolding<float>()) {
+        mtl->metallic = val.UncheckedGet<float>();
+      }
     }
   }
 
   if (pxr::UsdShadeInput roughness_input = usd_preview.GetInput(usdtokens::roughness)) {
-    pxr::VtValue val;
-    if (roughness_input.GetAttr().HasAuthoredValue() && roughness_input.GetAttr().Get(&val) &&
-        val.IsHolding<float>())
-    {
-      mtl->roughness = val.UncheckedGet<float>();
+    const pxr::UsdShadeAttributeVector attrs = roughness_input.GetValueProducingAttributes();
+    if (!attrs.empty()) {
+      pxr::VtValue val;
+      if (attrs[0].Get(&val) && val.IsHolding<float>()) {
+        mtl->roughness = val.UncheckedGet<float>();
+      }
     }
   }
 }
@@ -479,8 +482,7 @@ Material *USDMaterialReader::add_material(const pxr::UsdShadeMaterial &usd_mater
 
   /* Create the material. */
   Material *mtl = BKE_material_add(&bmain_, mtl_name.c_str());
-  mtl->nodetree = bke::node_tree_add_tree_embedded(
-      &bmain_, &mtl->id, "USD Material Node Tree", "ShaderNodeTree");
+  mtl->nodetree = mtl->nodetree;
   id_us_min(&mtl->id);
 
   if (read_usd_preview) {
@@ -520,13 +522,8 @@ void USDMaterialReader::import_usd_preview_nodes(Material *mtl,
 
   /* Create the Material's node tree containing the principled BSDF
    * and output shaders. */
-
-  /* Add the node tree. */
   bNodeTree *ntree = mtl->nodetree;
-  if (mtl->nodetree == nullptr) {
-    ntree = bke::node_tree_add_tree_embedded(
-        nullptr, &mtl->id, "Shader Nodetree", "ShaderNodeTree");
-  }
+  BLI_assert(ntree != nullptr);
 
   /* Create the Principled BSDF shader node. */
   bNode *principled = add_node(ntree, SH_NODE_BSDF_PRINCIPLED, {0.0f, 300.0f});
@@ -617,8 +614,29 @@ void USDMaterialReader::set_principled_node_inputs(bNode *principled,
 
   if (pxr::UsdShadeInput opacity_input = usd_shader.GetInput(usdtokens::opacity)) {
     ExtraLinkInfo extra;
-    extra.opacity_threshold = get_opacity_threshold(usd_shader, 0.0f);
-    set_node_input(opacity_input, principled, "Alpha", ntree, column, context, extra);
+
+    bool is_alpha_exception = false;
+    if (opacity_input.HasConnectedSource()) {
+      for (const pxr::UsdShadeConnectionSourceInfo &source_info :
+           opacity_input.GetConnectedSources())
+      {
+        if (source_info.sourceName == usdtokens::a) {
+          is_alpha_exception = true;
+          break;
+        }
+      }
+    }
+
+    const float opacity_threshold = get_opacity_threshold(usd_shader, 0.0f);
+    if (opacity_threshold == 0.0f && !is_alpha_exception) {
+      extra.is_inverted = true;
+      set_node_input(
+          opacity_input, principled, "Transmission Weight", ntree, column, context, extra);
+    }
+    else {
+      extra.opacity_threshold = opacity_threshold;
+      set_node_input(opacity_input, principled, "Alpha", ntree, column, context, extra);
+    }
   }
 
   if (pxr::UsdShadeInput ior_input = usd_shader.GetInput(usdtokens::ior)) {
@@ -684,14 +702,17 @@ bool USDMaterialReader::set_node_input(const pxr::UsdShadeInput &usd_input,
     return false;
   }
 
-  if (usd_input.HasConnectedSource()) {
+  const pxr::UsdShadeSourceInfoVector sources = usd_input.GetConnectedSources();
+  const bool needs_follow = !sources.empty() &&
+                            sources[0].sourceType == pxr::UsdShadeAttributeType::Output;
+
+  if (needs_follow) {
     /* The USD shader input has a connected source shader. Follow the connection
      * and attempt to convert the connected USD shader to a Blender node. */
     return follow_connection(usd_input, dest_node, dest_socket_name, ntree, column, ctx, extra);
   }
 
   /* Set the destination node socket value from the USD shader input value. */
-
   bNodeSocket *sock = bke::node_find_socket(*dest_node, SOCK_IN, dest_socket_name);
   if (!sock) {
     CLOG_ERROR(&LOG, "Couldn't get destination node socket %s", dest_socket_name.c_str());
@@ -699,7 +720,8 @@ bool USDMaterialReader::set_node_input(const pxr::UsdShadeInput &usd_input,
   }
 
   pxr::VtValue val;
-  if (!usd_input.Get(&val)) {
+  const pxr::UsdShadeAttributeVector attrs = usd_input.GetValueProducingAttributes();
+  if (attrs.empty() || !attrs[0].Get(&val)) {
     CLOG_ERROR(&LOG,
                "Couldn't get value for usd shader input %s",
                usd_input.GetPrim().GetPath().GetAsString().c_str());
@@ -709,7 +731,11 @@ bool USDMaterialReader::set_node_input(const pxr::UsdShadeInput &usd_input,
   switch (sock->type) {
     case SOCK_FLOAT:
       if (val.IsHolding<float>()) {
-        sock->default_value_typed<bNodeSocketValueFloat>()->value = val.UncheckedGet<float>();
+        bNodeSocketValueFloat *sock_val = sock->default_value_typed<bNodeSocketValueFloat>();
+        sock_val->value = val.UncheckedGet<float>();
+        if (extra.is_inverted) {
+          sock_val->value = 1.0f - sock_val->value;
+        }
         return true;
       }
       else if (val.IsHolding<pxr::GfVec3f>()) {
@@ -1053,6 +1079,15 @@ bool USDMaterialReader::follow_connection(const pxr::UsdShadeInput &usd_input,
      * final "target" destination for the Image link. */
     bNode *target_node = dest_node;
     StringRefNull target_sock_name = dest_socket_name;
+
+    /* Handle opacity inversion if necessary. */
+    if (extra.is_inverted) {
+      IntermediateNode invert = add_oneminus(ntree, column + 1, ctx);
+      link_nodes(ntree, invert.node, invert.sock_output_name, target_node, target_sock_name);
+      target_node = invert.node;
+      target_sock_name = invert.sock_input_name;
+    }
+
     if (normal_map.node) {
       /* If a scale-bias node is required, we need to re-adjust the output
        * so it can be passed into the NormalMap node properly. */
@@ -1085,8 +1120,8 @@ bool USDMaterialReader::follow_connection(const pxr::UsdShadeInput &usd_input,
         link_nodes(ntree,
                    separate_color.node,
                    separate_color.sock_output_name,
-                   dest_node,
-                   dest_socket_name);
+                   target_node,
+                   target_sock_name);
         link_nodes(ntree,
                    scale_bias.node,
                    scale_bias.sock_output_name,
@@ -1106,8 +1141,8 @@ bool USDMaterialReader::follow_connection(const pxr::UsdShadeInput &usd_input,
         link_nodes(ntree,
                    separate_color.node,
                    separate_color.sock_output_name,
-                   dest_node,
-                   dest_socket_name);
+                   target_node,
+                   target_sock_name);
       }
       target_node = separate_color.node;
       target_sock_name = separate_color.sock_input_name;

@@ -607,6 +607,20 @@ static const EnumPropertyItem *rna_NodeTreeInterfaceSocket_attribute_domain_item
   return item_array;
 }
 
+static void rna_NodeTreeInterfaceItems_active_index_set(PointerRNA *ptr, int value)
+{
+  bNodeTreeInterface *interface = static_cast<bNodeTreeInterface *>(ptr->data);
+
+  if (bNodeTreeInterfaceItem *original_active = interface->active_item()) {
+    original_active->set_selected(false);
+  }
+
+  interface->active_index = value;
+  if (bNodeTreeInterfaceItem *new_active = interface->active_item()) {
+    new_active->set_selected(true);
+  }
+}
+
 static PointerRNA rna_NodeTreeInterfaceItems_active_get(PointerRNA *ptr)
 {
   bNodeTreeInterface *interface = static_cast<bNodeTreeInterface *>(ptr->data);
@@ -826,6 +840,7 @@ static const EnumPropertyItem *rna_NodeTreeInterfaceSocketFloat_subtype_itemf(
 {
   return rna_subtype_filter_itemf({PROP_PERCENTAGE,
                                    PROP_FACTOR,
+                                   PROP_MASS,
                                    PROP_ANGLE,
                                    PROP_TIME,
                                    PROP_TIME_ABSOLUTE,
@@ -1198,6 +1213,12 @@ static void rna_def_node_interface_socket(BlenderRNA *brna)
       "may result in the label being skipped in some cases");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_NodeTreeInterfaceItem_update");
 
+  prop = RNA_def_property(srna, "select", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", NODE_INTERFACE_SOCKET_SELECT);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(prop, "Select", "Socket is selected in the interface");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_NodeTreeInterfaceItem_update");
+
   prop = RNA_def_property(srna, "attribute_domain", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_enum_attribute_domain_items);
   RNA_def_property_enum_funcs(
@@ -1298,6 +1319,12 @@ static void rna_def_node_interface_panel(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Default Closed", "Panel is closed by default on new nodes");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_NodeTreeInterfaceItem_update");
 
+  prop = RNA_def_property(srna, "select", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", NODE_INTERFACE_PANEL_SELECT);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(prop, "Select", "Panel is selected in the interface");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_NodeTreeInterfaceItem_update");
+
   prop = RNA_def_property(srna, "interface_items", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, nullptr, "items_array", "items_num");
   RNA_def_property_struct_type(prop, "NodeTreeInterfaceItem");
@@ -1319,6 +1346,8 @@ static void rna_def_node_tree_interface_items_api(StructRNA *srna)
 
   prop = RNA_def_property(srna, "active_index", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, nullptr, "active_index");
+  RNA_def_property_int_funcs(
+      prop, nullptr, "rna_NodeTreeInterfaceItems_active_index_set", nullptr);
   RNA_def_property_ui_text(prop, "Active Index", "Index of the active item");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_NODE, nullptr);

@@ -795,8 +795,6 @@ void animsys_evaluate_action_group(PointerRNA *ptr,
                                    bActionGroup *agrp,
                                    const AnimationEvalContext *anim_eval_context)
 {
-  FCurve *fcu;
-
   /* check if mapper is appropriate for use here (we set to nullptr if it's inappropriate) */
   if (ELEM(nullptr, act, agrp)) {
     return;
@@ -819,16 +817,6 @@ void animsys_evaluate_action_group(PointerRNA *ptr,
   };
 
   animrig::ChannelGroup channel_group = agrp->wrap();
-  if (channel_group.is_legacy()) {
-    /* calculate then execute each curve */
-    for (fcu = static_cast<FCurve *>(agrp->channels.first); (fcu) && (fcu->grp == agrp);
-         fcu = fcu->next)
-    {
-      visit_fcurve(fcu);
-    }
-    return;
-  }
-
   for (FCurve *fcurve : channel_group.fcurves()) {
     visit_fcurve(fcurve);
   }
@@ -862,7 +850,7 @@ void animsys_blend_in_action(PointerRNA *ptr,
                              const AnimationEvalContext *anim_eval_context,
                              const float blend_factor)
 {
-  Vector<FCurve *> fcurves = animrig::legacy::fcurves_for_action_slot(act, action_slot_handle);
+  Vector<FCurve *> fcurves = animrig::fcurves_for_action_slot(act->wrap(), action_slot_handle);
   animsys_blend_in_fcurves(ptr, fcurves, anim_eval_context, blend_factor);
 }
 
@@ -2568,7 +2556,7 @@ static void nlasnapshot_from_action(PointerRNA *ptr,
   const float modified_evaltime = evaluate_time_fmodifiers(
       &storage, modifiers, nullptr, 0.0f, evaltime);
 
-  for (const FCurve *fcu : animrig::legacy::fcurves_for_action_slot(action, slot_handle)) {
+  for (const FCurve *fcu : animrig::fcurves_for_action_slot(action->wrap(), slot_handle)) {
     if (!is_fcurve_evaluatable(fcu)) {
       continue;
     }
@@ -3060,7 +3048,7 @@ static void nla_eval_domain_action(PointerRNA *ptr,
     return;
   }
 
-  for (const FCurve *fcu : animrig::legacy::fcurves_for_action_slot(act, slot_handle)) {
+  for (const FCurve *fcu : animrig::fcurves_for_action_slot(act->wrap(), slot_handle)) {
     /* check if this curve should be skipped */
     if (!is_fcurve_evaluatable(fcu)) {
       continue;
