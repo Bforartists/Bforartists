@@ -2384,13 +2384,13 @@ class CYCLES_RENDER_PT_bake(CyclesButtonsPanel, Panel):
 
         if cbk.use_multires:
             layout.operator("object.bake_image", icon="RENDER_STILL")
-            layout.prop(cbk, "use_bake_multires")
+            layout.prop(cbk, "use_multires")
             layout.use_property_split = True
             layout.prop(cbk, "type")
 
         else:
             layout.operator("object.bake", icon="RENDER_STILL").type = cscene.bake_type
-            layout.prop(cbk, "use_bake_multires")
+            layout.prop(cbk, "use_multires")
             layout.use_property_split = True
             layout.prop(cscene, "bake_type")
 
