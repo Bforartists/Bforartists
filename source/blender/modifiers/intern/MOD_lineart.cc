@@ -498,8 +498,8 @@ static void occlusion_panel_draw(const bContext * /*C*/, Panel *panel)
   col.active_set(show_in_front);
 
   ui::Layout *row;         /* bfa - added row */
-  row = &layout.row(true); /* bfa - our layout */
-  row->use_property_decorate_set(false);
+  row = &col.row(true); /* bfa - our layout */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator(); /* bfa - Indent */
   row->prop(ptr, "use_multiple_levels", UI_ITEM_NONE, IFACE_("Range"), ICON_NONE);
   row->decorator(ptr, "use_multiple_levels", 0); /* bfa - decorator */
