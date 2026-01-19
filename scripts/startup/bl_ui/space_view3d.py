@@ -8816,7 +8816,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
             ("meta", "Meta", "OUTLINER_OB_META"),
             ("font", "Text", "OUTLINER_OB_FONT"),
             (None, None, None),
-            ("curves", "Hair Curves", "HAIR_DATA"),
+            ("curves", "Hair Curves", "OUTLINER_OB_CURVES"),
             ("pointcloud", "Point Cloud", "OUTLINER_OB_POINTCLOUD"),
             ("volume", "Volume", "OUTLINER_OB_VOLUME"),
             ("grease_pencil", "Grease Pencil", "OUTLINER_OB_GREASEPENCIL"),
