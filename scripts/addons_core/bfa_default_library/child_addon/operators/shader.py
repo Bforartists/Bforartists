@@ -93,9 +93,21 @@ classes = (
 )
 
 def register():
+    """Register shader operator classes."""
     for cls in classes:
-        bpy.utils.register_class(cls)
+        try:
+            bpy.utils.register_class(cls)
+        except ValueError as e:
+            if "already registered" not in str(e):
+                print(f"⚠ Error registering {cls.__name__}: {e}")
+
 
 def unregister():
+    """Unregister shader operator classes."""
     for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
+        try:
+            if hasattr(cls, 'bl_rna'):
+                bpy.utils.unregister_class(cls)
+        except RuntimeError as e:
+            if "not registered" not in str(e):
+                print(f"⚠ Error unregistering {cls.__name__}: {e}")

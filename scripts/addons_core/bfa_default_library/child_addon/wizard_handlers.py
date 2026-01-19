@@ -24,31 +24,11 @@
 import bpy
 from bpy.app.handlers import persistent
 
-# Import wizard operators (this assumes both files are in the same module)
-from . import wizard_operators as wiz_ops
-
 # Asset names for wizard recognition (import from operators)
 from .wizard_operators import BLEND_NORMALS_BY_PROXIMITY
 
-# Global wizard properties (shared with operators)
-bpy.types.Scene.target_collection = bpy.props.PointerProperty(type=bpy.types.Collection)
-bpy.types.Scene.use_wireframe_on_collection = bpy.props.BoolProperty(
-    name="Use Wireframe",
-    description="Enable Wireframe Display on the Target Collection",
-    default=False
-)
-
-bpy.types.Scene.use_relative_position = bpy.props.BoolProperty(
-    name="Use Relative Position",
-    description="Enable Relative Position of the new Blended mesh",
-    default=False
-)
-
-bpy.types.Scene.inject_intersection_nodegroup = bpy.props.BoolProperty(
-    name="Inject Intersection Nodegroup",
-    description="Inject S_Intersections node group into materials of target collection",
-    default=True
-)
+# Track if scene properties are registered (prevent duplicates from multiple parent addons)
+_scene_props_registered = False
 
 # Object that will store the handle to the msgbus subscription
 subscription_owner = object()
@@ -206,50 +186,72 @@ handler_registry = {
 }
 
 def register():
-    """Register all handlers."""
-    global handler_registry, subscription_owner
-    
+    """Register all handlers and scene properties."""
+    global handler_registry, subscription_owner, _scene_props_registered
+
+    # Register scene properties only once (prevent duplicates from multiple parent addons)
+    if not _scene_props_registered:
+        bpy.types.Scene.target_collection = bpy.props.PointerProperty(type=bpy.types.Collection)
+        bpy.types.Scene.use_wireframe_on_collection = bpy.props.BoolProperty(
+            name="Use Wireframe",
+            description="Enable Wireframe Display on the Target Collection",
+            default=False
+        )
+        bpy.types.Scene.use_relative_position = bpy.props.BoolProperty(
+            name="Use Relative Position",
+            description="Enable Relative Position of the new Blended mesh",
+            default=False
+        )
+        bpy.types.Scene.inject_intersection_nodegroup = bpy.props.BoolProperty(
+            name="Inject Intersection Nodegroup",
+            description="Inject S_Intersections node group into materials of target collection",
+            default=True
+        )
+        _scene_props_registered = True
+
     # Register handlers only if not already registered
     if not handler_registry['pre_collection_asset_added']:
         bpy.app.handlers.blend_import_pre.append(pre_collection_asset_added_handler)
         handler_registry['pre_collection_asset_added'] = True
-        
+
     if not handler_registry['collection_asset_added']:
         bpy.app.handlers.blend_import_post.append(collection_asset_added_handler)
         handler_registry['collection_asset_added'] = True
-    
+
     # Only subscribe once
     if not handler_registry['subscription_owner']:
         handler_registry['subscription_owner'] = subscription_owner
         subscribe_collection_handlers(subscription_owner)
 
-    # Note: Handlers are now managed directly
-    # The new operator registry focuses on operators, panels, and menus
-    # Handlers are global and handled separately
-    # If specific handler tracking is needed, consider using other_class registration
 
 def unregister():
-    """Unregister all handlers."""
-    global handler_registry
-    
-    # Handlers are handled directly by the addon system
-    # Since handlers are global, we unregister them regardless of addon status
-    # This means if multiple addons use these handlers, the first to unregister will remove them
-    # In practice, handlers should be designed to work across addons or be addon specific
-    
+    """Unregister all handlers and scene properties."""
+    global handler_registry, _scene_props_registered
+
     # Unregister handlers
     if pre_collection_asset_added_handler in bpy.app.handlers.blend_import_pre:
         bpy.app.handlers.blend_import_pre.remove(pre_collection_asset_added_handler)
         handler_registry['pre_collection_asset_added'] = False
-        
+
     if collection_asset_added_handler in bpy.app.handlers.blend_import_post:
         bpy.app.handlers.blend_import_post.remove(collection_asset_added_handler)
         handler_registry['collection_asset_added'] = False
-    
+
     # Unsubscribe handlers
     if handler_registry['subscription_owner']:
         unsubscribe_collection_handlers(handler_registry['subscription_owner'])
         handler_registry['subscription_owner'] = None
+
+    # Unregister scene properties
+    if _scene_props_registered:
+        try:
+            del bpy.types.Scene.target_collection
+            del bpy.types.Scene.use_wireframe_on_collection
+            del bpy.types.Scene.use_relative_position
+            del bpy.types.Scene.inject_intersection_nodegroup
+        except AttributeError:
+            pass
+        _scene_props_registered = False
 
 if __name__ == "__main__":
     register()
