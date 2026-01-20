@@ -820,25 +820,26 @@ def register_library(force_reregister=False):
     return registered_count
 
 
-def unregister_library():
+def unregister_library(full_cleanup=False):
     """
-    Remove individual libraries only when the parent addon is being uninstalled.
-    This function should only be called manually when the user uninstalls the addon.
+    Remove individual libraries while maintaining tracking unless doing full cleanup.
     """
-    print("🔄 Unregistering asset libraries (addon uninstallation)...")
+    print("🔄 Unregistering asset libraries...")
     
     try:
         central_base = get_central_library_base()
-
-        # Use parent addon info for proper tracking
         parent_addon_info = {
             'name': PARENT_ADDON_DISPLAY_NAME,
             'version': PARENT_ADDON_VERSION,
             'unique_id': PARENT_ADDON_UNIQUE_ID
         }
 
-        # Remove this parent addon from central library tracking
-        utility.remove_addon_from_central_library(parent_addon_info, central_base, cleanup_mode='force')
+        # Always maintain tracking unless explicitly doing full cleanup
+        if full_cleanup:
+            utility.remove_addon_from_central_library(parent_addon_info, central_base, cleanup_mode='force')
+        else:
+            # Update library presence without removing tracking
+            utility.update_addon_in_central_library(parent_addon_info, [], central_base, p.dirname(__file__))
 
         # Check if no other addons are using the central library
         active_addons = utility.get_active_addons_count(central_base)

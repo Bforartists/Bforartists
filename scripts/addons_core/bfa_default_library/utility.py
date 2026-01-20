@@ -27,6 +27,7 @@ import sys
 import json
 import shutil
 import glob
+import time
 from pathlib import Path
 from os import path as p
 
@@ -213,6 +214,21 @@ def add_addon_to_central_library(addon_info, library_folders, addon_path, centra
         # print(f"      ⏩ Updated tracking: {addon_id}")
 
     return central_lib_base
+
+
+def update_addon_in_central_library(parent_addon_info, libraries, central_base, source_dir):
+    """Update existing addon entry in central library tracking without changing activation status"""
+    addon_id = get_addon_identifier(parent_addon_info)
+    tracking_data = read_addon_tracking(central_base)
+    
+    if addon_id in tracking_data:
+        # Update existing entry
+        tracking_data[addon_id]["libraries"] = libraries
+        tracking_data[addon_id]["version"] = parent_addon_info['version']
+        tracking_data[addon_id]["timestamp"] = time.time()
+        write_addon_tracking(central_base, tracking_data)
+        return True
+    return False
 
 
 def remove_addon_from_central_library(addon_info, central_lib_base=None, cleanup_mode='normal'):
