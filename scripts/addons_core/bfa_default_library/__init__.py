@@ -312,7 +312,15 @@ def get_child_addon_tracking_data():
     try:
         if p.exists(central_base) and p.exists(tracking_file):
             with open(tracking_file, 'r') as f:
-                return json.load(f)
+                tracking_data = json.load(f)
+                
+                # Validate and fix tracking data
+                if not isinstance(tracking_data.get("active_parents"), list):
+                    tracking_data["active_parents"] = []
+                if not isinstance(tracking_data.get("is_functionality_loaded"), bool):
+                    tracking_data["is_functionality_loaded"] = False
+                    
+                return tracking_data
     except json.JSONDecodeError as e:
         print(f"⚠ Child addon tracking file is invalid JSON: {e}. Using default data.")
         return default_data
@@ -322,6 +330,24 @@ def get_child_addon_tracking_data():
 
     return default_data
 
+def reconcile_tracking_with_actual_state():
+    """Check if the tracking data matches the actual module state."""
+    tracking_data = get_child_addon_tracking_data()
+    
+    # Check if modules are actually loaded - look for any modules in our package
+    actual_loaded = any(
+        name.startswith("modular_child_addons") 
+        for name in sys.modules.keys()
+    )
+    
+    # If there's a mismatch, correct the tracking data
+    if tracking_data["is_functionality_loaded"] != actual_loaded:
+        print(f"⚠ Reconciling tracking data: tracking says {'loaded' if tracking_data['is_functionality_loaded'] else 'not loaded'}, but actual state is {'loaded' if actual_loaded else 'not loaded'}")
+        tracking_data["is_functionality_loaded"] = actual_loaded
+        save_child_addon_tracking_data(tracking_data)
+    
+    # Make sure tracking data is properly updated in memory
+    return tracking_data
 
 def save_child_addon_tracking_data(tracking_data):
     """Save child addon tracking data."""
@@ -512,6 +538,10 @@ def load_child_addon_functionality():
 def unload_child_addon_functionality(force=False):
     """Unload and unregister child addon functionality."""
     try:
+        # First reconcile tracking data with actual state
+        tracking_data = reconcile_tracking_with_actual_state()
+        
+
         # Check if we should keep child addon active
         if not force and should_keep_child_addon_active():
             print(f"⚠ Not unloading child addon - other parent addons still active")
@@ -557,31 +587,101 @@ def unload_child_addon_functionality(force=False):
         unregistered_count = 0
         modules_unregistered = []
 
-        for module_name in all_module_names:
+        # Use a set to track already processed modules to avoid duplicates
+        processed_modules = set()
+        
+        # We'll unregister in a specific order to prevent duplicate unregistration
+        # 1. Unregister submodules first (operators, ui, etc.)
+        # 2. Unregister top-level modules
+        # 3. Unregister the main package
+        unregister_order = [
+            # Submodules
+            *[f"modular_child_addons.operators.{name}" for name in operator_submodules],
+            "modular_child_addons.operators",
+            *[f"modular_child_addons.{name}" for name in CHILD_ADDON_SUBMODULES],
+            
+            # Top-level modules
+            "modular_child_addons_operators_geometry_nodes",
+            "modular_child_addons_operators_compositor",
+            "modular_child_addons_operators_shader",
+            *[f"modular_child_addons_{name}" for name in CHILD_ADDON_SUBMODULES],
+            "modular_child_addons_operators",
+            
+            # Main package
+            "modular_child_addons"
+        ]
+        
+        # Add any other modules that might have been missed
+        unregister_order += [name for name in all_module_names if name not in unregister_order]
+        
+        # First pass: unregister modules in the specific order
+        for module_name in unregister_order:
             if module_name in sys.modules:
                 module = sys.modules[module_name]
-                if hasattr(module, 'unregister'):
-                    try:
+                try:
+                    # Skip if already unregistered
+                    if module_name in processed_modules:
+                        continue
+                        
+                    processed_modules.add(module_name)
+                    
+                    # Check if the module has a registered unregister function
+                    if hasattr(module, 'unregister') and callable(module.unregister):
                         module.unregister()
                         unregistered_count += 1
                         modules_unregistered.append(module_name)
                         print(f"✓ Unregistered {module_name}")
-                    except Exception as e:
+                    else:
+                        print(f"⚠ Module {module_name} doesn't have callable unregister function")
+                except Exception as e:
+                    # Silence specific known-safe errors
+                    if "already unregistered" not in str(e) and "missing bl_rna" not in str(e):
                         print(f"⚠ Failed to unregister {module_name}: {e}")
-                else:
-                    # Module doesn't have unregister, but we should still clean it up
-                    print(f"⚠ Module {module_name} doesn't have unregister function")
+                    else:
+                        # Mark as unregistered even if we got an error
+                        if module_name not in modules_unregistered:
+                            modules_unregistered.append(module_name)
+
+        # Second pass: remove from sys.modules in reverse order
+        for module_name in reversed(unregister_order):
+            if module_name in sys.modules:
+                try:
+                    # Skip if already removed
+                    if module_name not in sys.modules:
+                        continue
+                        
+                    del sys.modules[module_name]
+                    print(f"✓ Removed from sys.modules: {module_name}")
+                except KeyError:
+                    pass  # Already removed
+                except Exception as e:
+                    print(f"⚠ Error removing {module_name} from sys.modules: {e}")
+
 
         # Also clean up the main package if it exists
         if package_name in sys.modules:
-            # The main package itself might not have unregister, but we should clean it up
+            # Only process if not already unregistered
             if package_name not in modules_unregistered:
                 try:
-                    # Just remove from sys.modules
+                    module = sys.modules[package_name]
+                    
+                    # Try to unregister if it has the method
+                    if hasattr(module, 'unregister') and callable(module.unregister):
+                        try:
+                            module.unregister()
+                            print(f"✓ Unregistered package: {package_name}")
+                            unregistered_count += 1
+                            modules_unregistered.append(package_name)
+                        except Exception as e:
+                            print(f"⚠ Failed to unregister package {package_name}: {e}")
+                    
+                    # Always remove from sys.modules
                     del sys.modules[package_name]
-                    print(f"✓ Cleaned up package: {package_name}")
+                    print(f"✓ Removed package from sys.modules: {package_name}")
                 except KeyError:
                     pass
+                except Exception as e:
+                    print(f"⚠ Error cleaning up package {package_name}: {e}")
 
         if unregistered_count > 0:
             # Update tracking data
@@ -722,9 +822,11 @@ def register_library(force_reregister=False):
 
 def unregister_library():
     """
-    Remove individual libraries if no other addons are using them.
-    Called when the parent addon is being uninstalled/disabled.
+    Remove individual libraries only when the parent addon is being uninstalled.
+    This function should only be called manually when the user uninstalls the addon.
     """
+    print("🔄 Unregistering asset libraries (addon uninstallation)...")
+    
     try:
         central_base = get_central_library_base()
 
@@ -743,7 +845,7 @@ def unregister_library():
 
         if active_addons == 0:
             # No other addons using any libraries, clean up
-            print("🔄 Cleaning up libraries (parent addon is being uninstalled)...")
+            print("🔄 Cleaning up libraries...")
 
             try:
                 prefs = bpy.context.preferences
@@ -752,16 +854,19 @@ def unregister_library():
                     lib_index = get_lib_path_index(prefs, lib_name, lib_path)
                     if lib_index != -1:
                         bpy.ops.preferences.asset_library_remove(index=lib_index)
+                        print(f"✓ Removed library: {lib_name}")
             except Exception as e:
-                print(f"⚠ Could not access preferences during unregistration: {e}")
+                print(f"⚠ Could not access preferences during uninstallation: {e}")
 
             # Clean up central library files
             try:
                 utility.cleanup_central_library(central_base)
+                print("✓ Cleaned up central library files")
             except Exception as e:
                 print(f"⚠ Could not cleanup central library files: {e}")
         else:
             print(f"✓ {active_addons} addon(s) still using central library, keeping libraries registered")
+
 
     except Exception as e:
         print(f"⚠ Error during library unregistration: {e}")
@@ -820,6 +925,12 @@ def register_all_libraries():
 def unregister_all_libraries():
     """Unregister the central asset library if needed."""
     unregister_library()
+
+    # Try to refresh the asset browser UI
+    try:
+        bpy.ops.asset.library_refresh()
+    except Exception:
+        pass
 
 
 
@@ -907,18 +1018,38 @@ def register():
     global _library_refresh_done
     _library_refresh_done = False
 
+    # First reconcile tracking data with actual state
+    reconcile_tracking_with_actual_state()
+
     # Import and register UI module (preferences panel and operators)
     from . import ui
     ui.register()
 
-    # Add delayed setup timer
-    bpy.app.timers.register(delayed_setup, first_interval=0.5)
+    # First check if child addon is already installed
+    child_addon_dir = get_child_addon_path()
+    child_init_file = p.join(child_addon_dir, "__init__.py")
+    
+    # Only install child addon if not already installed
+    if not p.exists(child_init_file):
+        # Add delayed setup timer to install child addon and set up libraries
+        bpy.app.timers.register(delayed_setup, first_interval=0.5)
+        print("🔄 Child addon not found - scheduling installation")
+    else:
+        print("✓ Child addon already installed - skipping copy")
+        # Still need to set up libraries and load functionality
+        bpy.app.timers.register(delayed_setup, first_interval=0.5)
 
     print("✅ Parent addon registered (library manager)")
-
+    
+    # Only run delayed setup if we're in Blender (not during background mode)
+    if not bpy.app.background:
+        # Add delayed setup timer
+        bpy.app.timers.register(delayed_setup, first_interval=0.5)
+    else:
+        print("ℹ Running in background mode - skipping delayed setup")
 
 def unregister():
-    """Unregister the parent addon."""
+    """Unregister the parent addon - called when Blender exits or addon is disabled."""
     global _library_refresh_done
     _library_refresh_done = True
 
@@ -929,72 +1060,64 @@ def unregister():
     except:
         pass
 
-    # Check if we should unload child addon functionality
-    # First check if other parents are still active
+    # Get current tracking data before modification
     tracking_data = get_child_addon_tracking_data()
-
-    # Remove this parent from child addon tracking
-    tracking_data = remove_parent_from_child_tracking()
-
-    # Only unload if no other parent addons are active
-    if len(tracking_data["active_parents"]) == 0:
-        print("🔄 No other parent addons active - unloading child addon functionality...")
-        unload_child_addon_functionality(force=True)
+    
+    # Check if this is a permanent uninstall or just session closure
+    is_permanent_uninstall = not bpy.context.preferences.addons.get(__name__, False)
+    
+    if is_permanent_uninstall:
+        print("🔧 Permanent uninstallation detected - cleaning up child addon...")
+        # Remove from tracking and unload
+        tracking_data = remove_parent_from_child_tracking()
+        if len(tracking_data["active_parents"]) == 0:
+            unload_child_addon_functionality(force=True)
+            # Clean up files only if uninstalling
+            remove_child_addon_from_user_prefs()
     else:
+        print("🔧 Session closure detected - keeping child addon available...")
+        # Only remove from active parents but keep functionality loaded
+        tracking_data["active_parents"] = [p for p in tracking_data["active_parents"] if p != PARENT_ADDON_UNIQUE_ID]
+        save_child_addon_tracking_data(tracking_data)
         print(f"🔄 {len(tracking_data['active_parents'])} other parent(s) still active - keeping child addon loaded")
 
-    # Unregister the asset library from Blender preferences
-    print("🔄 Unregistering asset library from preferences...")
-    unregister_library()
+    # Only clean up libraries if permanently uninstalling
+    if is_permanent_uninstall:
+        print("🔄 Unregistering libraries...")
+        unregister_library()
+    else:
+        print("ℹ Keeping libraries registered between sessions")
 
-    # Check if there are any active addons using the central library
-    try:
-        central_base = get_central_library_base()
-        active_addons = utility.get_active_addons_count(central_base)
-        print(f"📚 Library status: {active_addons} addon(s) tracked in central library")
+        # Update central library tracking only if uninstalling
+    if is_permanent_uninstall:
+        try:
+            central_base = get_central_library_base()
+            parent_addon_info = {
+                'name': PARENT_ADDON_DISPLAY_NAME,
+                'version': PARENT_ADDON_VERSION,
+                'unique_id': PARENT_ADDON_UNIQUE_ID
+            }
+            addon_id = utility.get_addon_identifier(parent_addon_info)
+            library_tracking_data = utility.read_addon_tracking(central_base)
 
-        # Check if this parent addon is still tracked
-        parent_addon_info = {
-            'name': PARENT_ADDON_DISPLAY_NAME,
-            'version': PARENT_ADDON_VERSION,
-            'unique_id': PARENT_ADDON_UNIQUE_ID
-        }
-        addon_id = utility.get_addon_identifier(parent_addon_info)
-        library_tracking_data = utility.read_addon_tracking(central_base)
+            if addon_id in library_tracking_data:
+                print(f"🔄 Removing {PARENT_ADDON_DISPLAY_NAME} from central library tracking")
+                del library_tracking_data[addon_id]
+                utility.write_addon_tracking(central_base, library_tracking_data)
+                print(f"📚 Updated library status: {len(library_tracking_data)} addon(s) remaining")
+                
+        except Exception as e:
+            print(f"⚠ Error updating central library tracking: {e}")
 
-        # Remove this addon from central library tracking
-        if addon_id in library_tracking_data:
-            print(f"🔄 Removing {PARENT_ADDON_DISPLAY_NAME} from central library tracking")
-            del library_tracking_data[addon_id]
-            utility.write_addon_tracking(central_base, library_tracking_data)
-
-            # Update active addons count after removal
-            active_addons = len(library_tracking_data)
-            print(f"📚 Updated library status: {active_addons} addon(s) remaining")
-
-        # Check if we should remove child addon files
-        # Only remove if no other addons are using the central library AND no parent addons are active
-        if active_addons == 0 and len(tracking_data["active_parents"]) == 0:
-            print("🔄 No addons using central library and no parent addons active - cleaning up child addon files...")
-            remove_child_addon_from_user_prefs()
-        else:
-            if active_addons > 0:
-                print(f"✓ {active_addons} addon(s) still using central library - keeping child addon files")
-            if len(tracking_data["active_parents"]) > 0:
-                print(f"✓ {len(tracking_data['active_parents'])} parent addon(s) still active - keeping child addon files")
-
-    except Exception as e:
-        print(f"⚠ Error checking library status: {e}")
-        print("📚 Keeping child addon files for safety")
-
-    # Force refresh the asset library after unregistering
-    try:
-        bpy.ops.asset.library_refresh()
-    except:
-        pass
+    # Never remove child addon files during unregister - they are persistent
+    print("ℹ Keeping child addon files for next session")
 
     # Unregister UI module (MUST be last to avoid issues with operators still being referenced)
-    from . import ui
-    ui.unregister()
+    try:
+        from . import ui
+        ui.unregister()
+        print("✓ Unregistered UI module")
+    except Exception as e:
+        print(f"⚠ Failed to unregister UI module: {e}")
 
     print("✅ Parent addon fully unregistered")
