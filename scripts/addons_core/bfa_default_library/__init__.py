@@ -58,12 +58,12 @@ bl_info = {
 # Addon identification - MUST BE UNIQUE for each compiled parent addon
 PARENT_ADDON_UNIQUE_ID = "default_asset_library_1_2_7"
 PARENT_ADDON_DISPLAY_NAME = "Default Asset Library"
-PARENT_ADDON_VERSION = (1, 2, 7)
+PARENT_ADDON_VERSION = (1, 2, 8)
 
 # Child addon info - this is the functional addon
 CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_2_7"
 CHILD_ADDON_DISPLAY_NAME = "Default Asset Library Functions"
-CHILD_ADDON_VERSION = (1, 2, 7)
+CHILD_ADDON_VERSION = (1, 2, 8)
 
 # Library configuration - Only include libraries that exist in your packaged addon
 CENTRAL_LIB_SUBFOLDERS = [
