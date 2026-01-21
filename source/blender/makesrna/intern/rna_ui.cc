@@ -1710,7 +1710,7 @@ static const EnumPropertyItem *rna_ShelfAssetSelectParams_import_method_itemf(
   EnumPropertyItem *items = nullptr;
   int items_num = 0;
   for (const EnumPropertyItem *item = asset_shelf_import_method_items; item->identifier; item++) {
-    switch (eFileAssetImportMethod(item->value)) {
+    switch (item->value) {
       case SHELF_ASSET_IMPORT_APPEND_REUSE: {
         if (U.experimental.no_data_block_packing) {
           RNA_enum_item_add(&items, &items_num, item);
