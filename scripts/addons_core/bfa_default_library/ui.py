@@ -29,9 +29,11 @@ from . import (
     PARENT_ADDON_DISPLAY_NAME,
     PARENT_ADDON_VERSION,
     is_child_addon_active,
-    fully_uninstall_library,
     register_library,
+    unregister_library,
+    get_central_library_base,
 )
+from .utility import add_addon_to_central_library
 
 
 # -----------------------------------------------------------------------------
@@ -46,8 +48,9 @@ class LIBADDON_OT_cleanup_libraries(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        fully_uninstall_library()
-        self.report({'INFO'}, "Default Library asset libraries removed from preferences")
+        # Manual cleanup without affecting tracking
+        unregister_library(full_cleanup=False)
+        self.report({'INFO'}, "Libraries removed but tracking maintained")
         return {'FINISHED'}
 
 
@@ -59,8 +62,9 @@ class LIBADDON_OT_readd_libraries(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
+        # Force re-register with tracking update
         register_library(force_reregister=True)
-
+        
         try:
             bpy.ops.asset.library_refresh()
         except:
