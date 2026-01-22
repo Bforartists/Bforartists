@@ -146,6 +146,7 @@ def copy_child_addon_to_user_prefs():
                 elif file.endswith('.toml'):
                     # Skip manifest files - child addon is not a separate addon
                     #print(f"  ⚠ Skipping manifest file: {file}")
+                    pass
                 else:
                     # Copy other files (if any)
                     src_file = os.path.join(root, file)
@@ -166,7 +167,7 @@ def copy_child_addon_to_user_prefs():
             return False
 
     except Exception as e:
-        #print(f"⚠ Error copying child addon: {e}")
+        print(f"⚠ Error copying child addon: {e}")
         # Debug:
         #import traceback  
         #traceback.print_exc()
@@ -210,8 +211,10 @@ def deactivate_child_addon():
         remove_parent_from_child_tracking()
         if other_parents_active > 0:
             #print(f"✅ Child addon functionality kept loaded for {other_parents_active} other parent(s)")
+            pass
         else:
             #print("✅ Child addon functionality unloaded and tracking updated")
+            pass
         return True
     else:
         #print("❌ Failed to unload child addon functionality")
@@ -228,7 +231,7 @@ def remove_child_addon_from_user_prefs():
             #print(f"✅ Child addon files removed from: {child_addon_dir}")
             return True
         except Exception as e:
-            #print(f"⚠ Error removing child addon files: {e}")
+            print(f"⚠ Error removing child addon files: {e}")
             return False
     else:
         #print(f"✓ Child addon directory not found: {child_addon_dir}")
@@ -323,10 +326,10 @@ def get_child_addon_tracking_data():
                     
                 return tracking_data
     except json.JSONDecodeError as e:
-        #print(f"⚠ Child addon tracking file is invalid JSON: {e}. Using default data.")
+        print(f"⚠ Child addon tracking file is invalid JSON: {e}. Using default data.")
         return default_data
     except Exception as e:
-        #print(f"⚠ Error reading child addon tracking: {e}")
+        print(f"⚠ Error reading child addon tracking: {e}")
         return default_data
 
     return default_data
@@ -363,7 +366,7 @@ def save_child_addon_tracking_data(tracking_data):
             json.dump(tracking_data, f, indent=2)
         return True
     except Exception as e:
-        #print(f"⚠ Error saving child addon tracking: {e}")
+        print(f"⚠ Error saving child addon tracking: {e}")
         return False
 
 
@@ -474,7 +477,7 @@ def load_child_addon_functionality():
                 child_package = importlib.import_module(package_name)
                 #print(f"✓ Imported child addon package: {package_name}")
             except ImportError as e:
-                #print(f"⚠ Failed to import child addon package: {e}")
+                print(f"⚠ Failed to import child addon package: {e}")
                 return False
 
             # Now import the submodules (use centralized constant)
@@ -487,7 +490,7 @@ def load_child_addon_functionality():
                     loaded_modules[submodule_name] = module
                     #print(f"✓ Loaded module: {submodule_name}")
                 except ImportError as e:
-                    #print(f"⚠ Failed to import module {submodule_name}: {e}")
+                    print(f"⚠ Failed to import module {submodule_name}: {e}")
 
             # Load operators subpackage
             operators_module = None
@@ -495,7 +498,7 @@ def load_child_addon_functionality():
                 operators_module = importlib.import_module(f"{package_name}.operators")
                 #print(f"✓ Loaded operators subpackage")
             except ImportError as e:
-                #print(f"⚠ Failed to import operators subpackage: {e}")
+                print(f"⚠ Failed to import operators subpackage: {e}")
 
             # Register all modules that have a register function
             # Register operators first (if it has a register function at the package level)
@@ -504,7 +507,7 @@ def load_child_addon_functionality():
                     operators_module.register()
                     #print(f"✓ Registered operators subpackage")
                 except Exception as e:
-                    #print(f"⚠ Failed to register operators subpackage: {e}")
+                    print(f"⚠ Failed to register operators subpackage: {e}")
 
             # Register other modules
             for module_name, module in loaded_modules.items():
@@ -513,7 +516,7 @@ def load_child_addon_functionality():
                         module.register()
                         #print(f"✓ Registered module: {module_name}")
                     except Exception as e:
-                        #print(f"⚠ Failed to register module {module_name}: {e}")
+                        print(f"⚠ Failed to register module {module_name}: {e}")
 
             # Update tracking data
             tracking_data = get_child_addon_tracking_data()
@@ -531,7 +534,7 @@ def load_child_addon_functionality():
             sys.path = original_sys_path
 
     except Exception as e:
-        #print(f"❌ Error loading child addon functionality: {e}")
+        print(f"❌ Error loading child addon functionality: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -634,10 +637,12 @@ def unload_child_addon_functionality(force=False):
                         #print(f"✓ Unregistered {module_name}")
                     else:
                         #print(f"⚠ Module {module_name} doesn't have callable unregister function")
+                        pass
                 except Exception as e:
                     # Silence specific known-safe errors
                     if "already unregistered" not in str(e) and "missing bl_rna" not in str(e):
-                        #print(f"⚠ Failed to unregister {module_name}: {e}")
+                        print(f"⚠ Failed to unregister {module_name}: {e}")
+                        pass
                     else:
                         # Mark as unregistered even if we got an error
                         if module_name not in modules_unregistered:
@@ -656,7 +661,7 @@ def unload_child_addon_functionality(force=False):
                 except KeyError:
                     pass  # Already removed
                 except Exception as e:
-                    #print(f"⚠ Error removing {module_name} from sys.modules: {e}")
+                    print(f"⚠ Error removing {module_name} from sys.modules: {e}")
 
 
         # Also clean up the main package if it exists
@@ -674,7 +679,7 @@ def unload_child_addon_functionality(force=False):
                             unregistered_count += 1
                             modules_unregistered.append(package_name)
                         except Exception as e:
-                            #print(f"⚠ Failed to unregister package {package_name}: {e}")
+                            print(f"⚠ Failed to unregister package {package_name}: {e}")
                     
                     # Always remove from sys.modules
                     del sys.modules[package_name]
@@ -682,7 +687,8 @@ def unload_child_addon_functionality(force=False):
                 except KeyError:
                     pass
                 except Exception as e:
-                    #print(f"⚠ Error cleaning up package {package_name}: {e}")
+                    print(f"⚠ Error cleaning up package {package_name}: {e}")
+                    pass
 
         if unregistered_count > 0:
             # Update tracking data
@@ -705,7 +711,7 @@ def unload_child_addon_functionality(force=False):
             return True
 
     except Exception as e:
-        #print(f"⚠ Error unloading child addon functionality: {e}")
+        print(f"⚠ Error unloading child addon functionality: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -807,7 +813,7 @@ def register_library(force_reregister=False):
                         registered_count += 1
                         break
             except Exception as e:
-                #print(f"❌ Could not create library {lib_name}: {e}")
+                print(f"❌ Could not create library {lib_name}: {e}")
         else:
             # Library already exists - ensure correct settings
             lib_index = get_lib_path_index(prefs, lib_name, library_path)
@@ -858,20 +864,22 @@ def unregister_library(full_cleanup=False):
                         bpy.ops.preferences.asset_library_remove(index=lib_index)
                         #print(f"✓ Removed library: {lib_name}")
             except Exception as e:
-                #print(f"⚠ Could not access preferences during uninstallation: {e}")
+                print(f"⚠ Could not access preferences during uninstallation: {e}")
 
             # Clean up central library files
             try:
                 utility.cleanup_central_library(central_base)
                 #print("✓ Cleaned up central library files")
             except Exception as e:
-                #print(f"⚠ Could not cleanup central library files: {e}")
+                print(f"⚠ Could not cleanup central library files: {e}")
+
         else:
             #print(f"✓ {active_addons} addon(s) still using central library, keeping libraries registered")
+            pass
 
 
     except Exception as e:
-        #print(f"⚠ Error during library unregistration: {e}")
+        print(f"⚠ Error during library unregistration: {e}")
 
 
 def fully_uninstall_library():
@@ -898,13 +906,13 @@ def fully_uninstall_library():
                 if lib_index != -1:
                     bpy.ops.preferences.asset_library_remove(index=lib_index)
         except Exception as e:
-            #print(f"⚠ Could not access preferences during forced cleanup: {e}")
+            print(f"⚠ Could not access preferences during forced cleanup: {e}")
 
         # Force cleanup of central library files
         try:
             utility.cleanup_central_library(central_base)
         except Exception as e:
-            #print(f"⚠ Could not cleanup central library files: {e}")
+            print(f"⚠ Could not cleanup central library files: {e}")
 
         #print("✅ Addon library cleanup complete")
 
@@ -1120,6 +1128,6 @@ def unregister():
         ui.unregister()
         #print("✓ Unregistered UI module")
     except Exception as e:
-        #print(f"⚠ Failed to unregister UI module: {e}")
+        print(f"⚠ Failed to unregister UI module: {e}")
 
     #print("✅ Parent addon fully unregistered")
