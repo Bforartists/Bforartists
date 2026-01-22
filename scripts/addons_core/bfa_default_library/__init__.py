@@ -917,7 +917,7 @@ def fully_uninstall_library():
         #print("✅ Addon library cleanup complete")
 
     except Exception as e:
-        #print(f"⚠ Error during addon library cleanup: {e}")
+        print(f"⚠ Error during addon library cleanup: {e}")
         pass
 
 
@@ -1018,7 +1018,7 @@ def delayed_setup():
         return None  # Don't repeat timer
 
     except Exception as e:
-        #print(f"⚠ Delayed setup failed: {e}")
+        print(f"⚠ Delayed setup failed: {e}")
         import traceback
         traceback.print_exc()
         return 2.0  # Try again in 2 seconds
@@ -1118,7 +1118,8 @@ def unregister():
                 #print(f"📚 Updated library status: {len(library_tracking_data)} addon(s) remaining")
                 
         except Exception as e:
-            #print(f"⚠ Error updating central library tracking: {e}")
+            print(f"⚠ Error updating central library tracking: {e}")
+            pass
 
     # Never remove child addon files during unregister - they are persistent
     #print("ℹ Keeping child addon files for next session")
