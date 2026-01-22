@@ -1180,9 +1180,6 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout.use_property_split_set(true);
 
   ui::Layout &col = layout.column(false);
-  col.prop(ptr, "use_edge_cut", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  col.prop(ptr, "use_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
   row = &col.row(true); /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(ptr, "use_edge_cut", UI_ITEM_NONE, std::nullopt, ICON_NONE);
