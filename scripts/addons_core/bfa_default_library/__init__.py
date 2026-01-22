@@ -917,7 +917,8 @@ def fully_uninstall_library():
         #print("✅ Addon library cleanup complete")
 
     except Exception as e:
-        #print(f"⚠ Error during addon library cleanup: {e}")
+        print(f"⚠ Error during addon library cleanup: {e}")
+        pass
 
 
 def register_all_libraries():
@@ -929,6 +930,7 @@ def register_all_libraries():
     try:
         bpy.ops.asset.library_refresh()
     except Exception:
+        print(f"Asset refresh skipped")
         pass
 
 
@@ -940,6 +942,7 @@ def unregister_all_libraries():
     try:
         bpy.ops.asset.library_refresh()
     except Exception:
+        print(f"Asset refresh skipped")
         pass
 
 
@@ -986,8 +989,10 @@ def delayed_setup():
             # Load child addon functionality
             if load_child_addon_functionality():
                 #print("✅ Child addon functionality loaded (first run)")
+                pass
             else:
                 #print("⚠ Could not load child addon functionality, but continuing...")
+                pass
         else:
             # Not first run - respect user's choice
             if PARENT_ADDON_UNIQUE_ID in tracking_data["active_parents"]:
@@ -997,12 +1002,16 @@ def delayed_setup():
                     # Load child addon functionality if not already loaded
                     if load_child_addon_functionality():
                         #print("✅ Child addon functionality loaded")
+                        pass
                     else:
                         #print("⚠ Could not load child addon functionality, but continuing...")
+                        pass
                 else:
                     #print("✓ Child addon functionality already loaded")
+                    pass
             else:
                 #print("ℹ Child addon functionality not auto-loaded (user disabled it)")
+                pass
 
         # Step 4: Try to refresh asset browser
         try:
@@ -1017,7 +1026,7 @@ def delayed_setup():
         return None  # Don't repeat timer
 
     except Exception as e:
-        #print(f"⚠ Delayed setup failed: {e}")
+        print(f"⚠ Delayed setup failed: {e}")
         import traceback
         traceback.print_exc()
         return 2.0  # Try again in 2 seconds
@@ -1057,6 +1066,7 @@ def register():
         bpy.app.timers.register(delayed_setup, first_interval=0.5)
     else:
         #print("ℹ Running in background mode - skipping delayed setup")
+        pass
 
 def unregister():
     """Unregister the parent addon - called when Blender exits or addon is disabled."""
@@ -1097,8 +1107,9 @@ def unregister():
         unregister_library()
     else:
         #print("ℹ Keeping libraries registered between sessions")
-
-        # Update central library tracking only if uninstalling
+        pass
+    
+    # Update central library tracking only if uninstalling
     if is_permanent_uninstall:
         try:
             central_base = get_central_library_base()
@@ -1117,7 +1128,8 @@ def unregister():
                 #print(f"📚 Updated library status: {len(library_tracking_data)} addon(s) remaining")
                 
         except Exception as e:
-            #print(f"⚠ Error updating central library tracking: {e}")
+            print(f"⚠ Error updating central library tracking: {e}")
+            pass
 
     # Never remove child addon files during unregister - they are persistent
     #print("ℹ Keeping child addon files for next session")
