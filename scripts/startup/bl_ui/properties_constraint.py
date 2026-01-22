@@ -345,6 +345,10 @@ class ConstraintButtonsPanel:
         row.use_property_split = False
         row.prop(con, "use_transform_limit")
         row.prop_decorator(con, "use_transform_limit")
+
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(con, "use_legacy_behavior")
         row.prop_decorator(con, "use_legacy_behavior")
 
         self.space_template(layout, con, target=False, owner=True)
