@@ -930,7 +930,7 @@ def register_all_libraries():
     try:
         bpy.ops.asset.library_refresh()
     except Exception:
-        print(f"Asset refresh skipped: {e}")
+        print(f"Asset refresh skipped")
         pass
 
 
@@ -942,7 +942,7 @@ def unregister_all_libraries():
     try:
         bpy.ops.asset.library_refresh()
     except Exception:
-        print(f"Asset refresh skipped: {e}")
+        print(f"Asset refresh skipped")
         pass
 
 
@@ -1066,6 +1066,7 @@ def register():
         bpy.app.timers.register(delayed_setup, first_interval=0.5)
     else:
         #print("ℹ Running in background mode - skipping delayed setup")
+        pass
 
 def unregister():
     """Unregister the parent addon - called when Blender exits or addon is disabled."""
@@ -1106,8 +1107,9 @@ def unregister():
         unregister_library()
     else:
         #print("ℹ Keeping libraries registered between sessions")
-
-        # Update central library tracking only if uninstalling
+        pass
+    
+    # Update central library tracking only if uninstalling
     if is_permanent_uninstall:
         try:
             central_base = get_central_library_base()
