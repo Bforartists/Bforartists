@@ -918,6 +918,7 @@ def fully_uninstall_library():
 
     except Exception as e:
         #print(f"⚠ Error during addon library cleanup: {e}")
+        pass
 
 
 def register_all_libraries():
