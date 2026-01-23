@@ -405,7 +405,7 @@ static wmOperatorStatus uv_move_on_axis_exec(bContext *C, wmOperator *op)
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -817,7 +817,7 @@ static wmOperatorStatus uv_arrange_islands_exec(bContext *C, wmOperator *op)
     }
     if (uvedit_uv_islands_arrange(scene, em->bm, axis, align, order, margin, position)) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -949,7 +949,7 @@ static void uv_weld(bContext *C)
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1008,7 +1008,7 @@ static void uv_align(bContext *C, eUVWeldAlign tool, UVAlignPositionMode positio
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1209,7 +1209,7 @@ static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *o
       if (changed[ob_index]) {
         Object *obedit = objects[ob_index];
         uvedit_live_unwrap_update(sima, scene, obedit);
-        DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+        DEG_id_tag_update(obedit->data, 0);
         WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
       }
     }
@@ -1270,7 +1270,7 @@ static wmOperatorStatus uv_remove_doubles_to_unselected(bContext *C, wmOperator 
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1382,7 +1382,7 @@ static wmOperatorStatus uv_remove_doubles_to_selected_shared_vertex(bContext *C,
     }
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1703,7 +1703,7 @@ static wmOperatorStatus uv_snap_selection_exec(bContext *C, wmOperator *op)
     if (changed) {
       changed_multi = true;
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1794,7 +1794,7 @@ static wmOperatorStatus uv_pin_exec(bContext *C, wmOperator *op)
 
     if (changed) {
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SYNC_TO_EVAL);
+      DEG_id_tag_update(obedit->data, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 
@@ -2109,7 +2109,7 @@ static wmOperatorStatus uv_hide_exec(bContext *C, wmOperator *op)
 
     BM_select_history_validate(em->bm);
 
-    DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(ob->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
   }
 
@@ -2257,7 +2257,7 @@ static wmOperatorStatus uv_reveal_exec(bContext *C, wmOperator *op)
     /* re-select tagged faces */
     BM_mesh_elem_hflag_enable_test(em->bm, BM_FACE, BM_ELEM_SELECT, true, false, BM_ELEM_TAG);
 
-    DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(ob->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
   }
 
@@ -2701,7 +2701,7 @@ static wmOperatorStatus uv_copy_mirrored_faces_exec(bContext *C, wmOperator *op)
     }
 
     if (changed) {
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
