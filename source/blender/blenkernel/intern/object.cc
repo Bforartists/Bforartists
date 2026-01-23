@@ -628,7 +628,7 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   }
 
   /* write LibData */
-  BLO_write_id_struct(writer, Object, id_address, &ob->id);
+  writer->write_id_struct(id_address, ob);
   BKE_id_blend_write(writer, &ob->id);
 
   /* direct data */
@@ -669,7 +669,7 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   BKE_modifier_blend_write(writer, &ob->id, &ob->modifiers);
   BKE_shaderfx_blend_write(writer, &ob->shader_fx);
 
-  BLO_write_struct_list(writer, LinkData, &ob->pc_ids);
+  writer->write_struct_list(&ob->pc_ids);
 
   BKE_previewimg_blend_write(writer, ob->preview);
 
@@ -4537,7 +4537,7 @@ bool BKE_object_shapekey_remove(Main *bmain, Object *ob, KeyBlock *kb)
     return false;
   }
 
-  BKE_animdata_drivers_remove_for_rna_struct(key->id, RNA_ShapeKey, kb);
+  BKE_animdata_drivers_remove_for_rna_struct(key->id, *RNA_ShapeKey, kb);
 
   kb_index = BLI_findindex(&key->block, kb);
   BLI_assert(kb_index != -1);

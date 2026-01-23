@@ -91,9 +91,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   const bool supports_fields = socket_type_supports_fields(data_type) &&
                                ntree->type == NTREE_GEOMETRY;
 
-  StructureType value_structure_type = socket_type_always_single(data_type) ?
-                                           StructureType::Single :
-                                           StructureType::Dynamic;
+  StructureType value_structure_type = StructureType::Dynamic;
   StructureType index_structure_type = value_structure_type;
 
   if (ntree->type == NTREE_COMPOSIT) {
@@ -545,7 +543,7 @@ std::unique_ptr<LazyFunction> get_index_switch_node_lazy_function(
   return std::make_unique<LazyFunctionForIndexSwitchNode>(node, lf_graph_info);
 }
 
-StructRNA *IndexSwitchItemsAccessor::item_srna = &RNA_IndexSwitchItem;
+StructRNA **IndexSwitchItemsAccessor::item_srna = &RNA_IndexSwitchItem;
 
 void IndexSwitchItemsAccessor::blend_write_item(BlendWriter * /*writer*/, const ItemT & /*item*/)
 {

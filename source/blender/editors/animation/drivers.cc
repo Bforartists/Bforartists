@@ -119,7 +119,7 @@ FCurve *alloc_driver_fcurve(const char rna_path[],
     insert_vert_fcurve(fcu, {0.0f, 0.0f}, settings, INSERTKEY_FAST);
     insert_vert_fcurve(fcu, {1.0f, 1.0f}, settings, INSERTKEY_FAST);
     fcu->extend = FCURVE_EXTRAPOLATE_LINEAR;
-    BKE_fcurve_handles_recalc(fcu);
+    BKE_fcurve_handles_recalc(*fcu);
   }
 
   return fcu;
@@ -192,7 +192,7 @@ static int add_driver_with_target(ReportList * /*reports*/,
      */
     dvar = driver_add_new_variable(driver);
 
-    if (ELEM(src_ptr->type, &RNA_Object, &RNA_PoseBone) &&
+    if (ELEM(src_ptr->type, RNA_Object, RNA_PoseBone) &&
         (STREQ(prop_name, "location") || STREQ(prop_name, "scale") ||
          STRPREFIX(prop_name, "rotation_")) &&
         (src_ptr->data != dst_ptr->data))
@@ -207,7 +207,7 @@ static int add_driver_with_target(ReportList * /*reports*/,
       dtar->id = src_id;
       dtar->idtype = GS(src_id->name);
 
-      if (src_ptr->type == &RNA_PoseBone) {
+      if (src_ptr->type == RNA_PoseBone) {
         RNA_string_get(src_ptr, "name", dtar->pchan_name);
       }
 

@@ -1261,8 +1261,7 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
     for (bNodeSocket &sock : node->outputs) {
       write_node_socket(writer, &sock);
     }
-    BLO_write_struct_array(
-        writer, bNodePanelState, node->num_panel_states, node->panel_states_array);
+    writer->write_struct_array(node->num_panel_states, node->panel_states_array);
 
     if (node->storage) {
       node_blend_write_storage(writer, ntree, node);
@@ -1287,8 +1286,7 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
     BLO_write_string(writer, ntree->geometry_node_asset_traits->node_tool_idname);
   }
 
-  BLO_write_struct_array(
-      writer, bNestedNodeRef, ntree->nested_node_refs_num, ntree->nested_node_refs);
+  writer->write_struct_array(ntree->nested_node_refs_num, ntree->nested_node_refs);
 
   BKE_previewimg_blend_write(writer, ntree->preview);
 
@@ -1314,7 +1312,7 @@ static void ntree_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   ntree->typeinfo = nullptr;
   ntree->runtime->execdata = nullptr;
 
-  BLO_write_id_struct(writer, bNodeTree, id_address, &ntree->id);
+  writer->write_id_struct(id_address, ntree);
 
   node_tree_blend_write(writer, ntree);
 }
@@ -2263,7 +2261,7 @@ static void node_init(const bContext *C, bNodeTree *ntree, bNode *node)
   }
 
   if (ntype->initfunc_api) {
-    PointerRNA ptr = RNA_pointer_create_discrete(&ntree->id, &RNA_Node, node);
+    PointerRNA ptr = RNA_pointer_create_discrete(&ntree->id, RNA_Node, node);
 
     /* XXX WARNING: context can be nullptr in case nodes are added in do_versions.
      * Delayed init is not supported for nodes with context-based `initfunc_api` at the moment. */
@@ -3028,7 +3026,7 @@ bool node_is_static_socket_type(const bNodeSocketType &stype)
    * Cannot rely on type==SOCK_CUSTOM here, because type is 0 by default
    * and can be changed on custom sockets.
    */
-  return RNA_struct_is_a(stype.ext_socket.srna, &RNA_NodeSocketStandard);
+  return RNA_struct_is_a(stype.ext_socket.srna, RNA_NodeSocketStandard);
 }
 
 std::optional<StringRefNull> node_static_socket_type(const int type,
@@ -3880,7 +3878,7 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
    * for cases like the dependency graph and localization. */
   if (node_dst->typeinfo->copyfunc_api && !(flag & LIB_ID_CREATE_NO_MAIN)) {
     PointerRNA ptr = RNA_pointer_create_discrete(
-        reinterpret_cast<ID *>(dst_tree), &RNA_Node, node_dst);
+        reinterpret_cast<ID *>(dst_tree), RNA_Node, node_dst);
 
     node_dst->typeinfo->copyfunc_api(&ptr, &node_src);
   }
@@ -4614,7 +4612,7 @@ void node_remove_node(
   if (do_id_user) {
     /* Free callback for NodeCustomGroup. */
     if (node.typeinfo->freefunc_api) {
-      PointerRNA ptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+      PointerRNA ptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
 
       node.typeinfo->freefunc_api(&ptr);
     }
@@ -5779,7 +5777,7 @@ bool node_tree_type_supports_socket_type_static(const int ntree_type,
 {
   if (bke::bNodeTreeType *ttype = bke::node_tree_type_find_builtin(ntree_type)) {
     bke::bNodeSocketType *stype = bke::node_socket_type_find_static(socket_type);
-    if (ttype->valid_socket_type) {
+    if (stype && ttype->valid_socket_type) {
       return ttype->valid_socket_type(ttype, stype);
     }
   }

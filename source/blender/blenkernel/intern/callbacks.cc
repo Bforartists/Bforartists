@@ -55,9 +55,20 @@ void BKE_callback_exec_id_depsgraph(Main *bmain, ID *id, Depsgraph *depsgraph, e
 {
   PointerRNA id_ptr = RNA_id_pointer_create(id);
 
-  PointerRNA depsgraph_ptr = RNA_pointer_create_discrete(nullptr, &RNA_Depsgraph, depsgraph);
+  PointerRNA depsgraph_ptr = RNA_pointer_create_discrete(nullptr, RNA_Depsgraph, depsgraph);
 
   PointerRNA *pointers[2] = {&id_ptr, &depsgraph_ptr};
+
+  BKE_callback_exec(bmain, pointers, ARRAY_SIZE(pointers), evt);
+}
+
+void BKE_callback_exec_boolean(Main *bmain, bool value, eCbEvent evt)
+{
+  PrimitiveBooleanRNA data = {};
+  data.value = value;
+  PointerRNA boolean_ptr = RNA_pointer_create_discrete(nullptr, RNA_PrimitiveBoolean, &data);
+
+  PointerRNA *pointers[1] = {&boolean_ptr};
 
   BKE_callback_exec(bmain, pointers, ARRAY_SIZE(pointers), evt);
 }
@@ -66,7 +77,7 @@ void BKE_callback_exec_string(Main *bmain, const char *str, eCbEvent evt)
 {
   PrimitiveStringRNA data = {nullptr};
   data.value = str;
-  PointerRNA str_ptr = RNA_pointer_create_discrete(nullptr, &RNA_PrimitiveString, &data);
+  PointerRNA str_ptr = RNA_pointer_create_discrete(nullptr, RNA_PrimitiveString, &data);
 
   PointerRNA *pointers[1] = {&str_ptr};
 

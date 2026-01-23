@@ -62,7 +62,7 @@ static StripEarlyOut early_out_speed(const Strip * /*strip*/, float /*fac*/)
 
 static FCurve *strip_effect_speed_speed_factor_curve_get(Scene *scene, Strip *strip)
 {
-  return id_data_find_fcurve(&scene->id, strip, &RNA_Strip, "speed_factor", 0, nullptr);
+  return id_data_find_fcurve(&scene->id, strip, RNA_Strip, "speed_factor", 0, nullptr);
 }
 
 void strip_effect_speed_rebuild_map(Scene *scene, Strip *strip)
@@ -138,6 +138,10 @@ float strip_speed_effect_target_frame_get(Scene *scene,
       }
       else {
         target_frame = frame_index * s->speed_fader;
+        if (s->speed_fader < 0) {
+          /* Treat `target_frame` as a negative offset from the last frame of the strip. */
+          target_frame += source->length(scene);
+        }
       }
       break;
     }

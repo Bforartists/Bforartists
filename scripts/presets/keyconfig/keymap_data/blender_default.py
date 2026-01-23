@@ -1259,6 +1259,41 @@ def km_property_editor(_params):
 
 
 # ------------------------------------------------------------------------------
+# Editor (Preferences)
+
+def km_preferences(_params):
+    items = []
+    keymap = (
+        "Preferences",
+        {"space_type": 'PREFERENCES', "region_type": 'WINDOW'},
+        {"items": items},
+    )
+
+    items.extend([
+        ("preferences.start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        ("preferences.clear_filter", {"type": 'F', "value": 'PRESS', "alt": True}, None),
+    ])
+
+    return keymap
+
+
+def km_preferences_nav(_params):
+    items = []
+    keymap = (
+        "Preferences_nav",
+        {"space_type": 'PREFERENCES', "region_type": 'UI'},
+        {"items": items},
+    )
+
+    items.extend([
+        ("preferences.start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        ("preferences.clear_filter", {"type": 'F', "value": 'PRESS', "alt": True}, None),
+    ])
+
+    return keymap
+
+
+# ------------------------------------------------------------------------------
 # Editor (Outliner)
 
 def km_outliner(params):
@@ -4018,11 +4053,11 @@ def km_grease_pencil_brush_stroke(_params):
     items.extend([
         ("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
         ("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
-         {"properties": [("mode", 'ERASE')]}),
+         {"properties": [("brush_toggle", 'ERASE')]}),
         ("grease_pencil.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         ("grease_pencil.brush_stroke", {"type": 'ERASER', "value": 'PRESS'},
-         {"properties": [("mode", 'ERASE')]}),
+         {"properties": [("brush_toggle", 'ERASE')]}),
         # Increase/Decrease brush size
         ("brush.scale_size", {"type": 'LEFT_BRACKET', "value": 'PRESS', "repeat": True},
          {"properties": [("scalar", 0.9)]}),
@@ -4178,7 +4213,7 @@ def km_grease_pencil_sculpt_mode(params):
         ("grease_pencil.sculpt_paint", {"type": 'LEFTMOUSE', "value": 'PRESS',
          "ctrl": True}, {"properties": [("mode", 'INVERT')]}),
         ("grease_pencil.sculpt_paint", {"type": 'LEFTMOUSE', "value": 'PRESS',
-         "shift": True}, {"properties": [("mode", 'SMOOTH')]}),
+         "shift": True}, {"properties": [("brush_toggle", 'SMOOTH')]}),
         # Selection mode
         ("wm.context_toggle", {"type": 'ONE', "value": 'PRESS'},
          {"properties": [("data_path", "scene.tool_settings.use_gpencil_select_mask_point")]}),
@@ -4806,6 +4841,15 @@ def _template_view3d_paint_mask_select_loop(params):
         ("paint.face_select_loop",
          {"type": params.select_mouse, "value": 'PRESS', "alt": True, "shift": True, "ctrl": True},
          {"properties": [("extend", True), ("select", False)]}),
+        ("paint.vert_select_loop",
+         {"type": params.select_mouse, "value": 'PRESS', "alt": True},
+         {"properties": [("extend", False), ("select", True)]}),
+        ("paint.vert_select_loop",
+         {"type": params.select_mouse, "value": 'PRESS', "alt": True, "shift": True},
+         {"properties": [("extend", True), ("select", True)]}),
+        ("paint.vert_select_loop",
+         {"type": params.select_mouse, "value": 'PRESS', "alt": True, "shift": True, "ctrl": True},
+         {"properties": [("extend", True), ("select", False)]}),
     ]
 
 
@@ -4938,7 +4982,7 @@ def km_image_paint(params):
         ("paint.image_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("paint.image_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         ("paint.brush_colors_flip", {"type": 'X', "value": 'PRESS'}, None),
         ("paint.grab_clone", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
         ("paint.sample_color",
@@ -4994,7 +5038,7 @@ def km_vertex_paint(params):
         ("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         ("paint.brush_colors_flip", {"type": 'X', "value": 'PRESS'}, None),
         ("paint.sample_color", {"type": 'X', "value": 'PRESS', "shift": True}, {"properties": [("merged", False)]}),
         ("paint.sample_color",
@@ -5056,7 +5100,7 @@ def km_weight_paint(params):
         ("paint.weight_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("paint.weight_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         ("paint.weight_sample", {"type": 'X', "value": 'PRESS', "shift": True}, None),
         ("paint.weight_sample_group", {"type": 'X', "value": 'PRESS', "ctrl": True, "shift": True}, None),
         ("paint.weight_gradient", {"type": 'A', "value": 'PRESS', "shift": True, "alt": True},
@@ -5158,8 +5202,9 @@ def km_paint_vertex_mask(params):
         ("paint.vert_select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True}, None),
     ])
 
-    # TODO: use `_template_view3d_paint_mask_select_loop` if loop-select is supported.
-    # See: `km_paint_face_mask`.
+    # For left mouse the tool key-maps are used because this interferes with Alt-LMB for regular selection.
+    if params.select_mouse == 'RIGHTMOUSE':
+        items.extend(_template_view3d_paint_mask_select_loop(params))
 
     return keymap
 
@@ -5181,7 +5226,9 @@ def km_sculpt(params):
         ("sculpt.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("sculpt.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
+        ("sculpt.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True},
+         {"properties": [("brush_toggle", 'MASK')]}),
         # Expand
         ("sculpt.expand", {"type": 'A', "value": 'PRESS', "shift": True},
          {"properties": [
@@ -5382,7 +5429,7 @@ def km_sculpt_curves(params):
         ("sculpt_curves.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("sculpt_curves.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         ("curves.set_selection_domain", {"type": 'ONE', "value": 'PRESS'}, {"properties": [("domain", 'POINT')]}),
         ("curves.set_selection_domain", {"type": 'TWO', "value": 'PRESS'}, {"properties": [("domain", 'CURVE')]}),
         *_template_paint_radial_control("curves_sculpt"),
@@ -8533,11 +8580,13 @@ def km_sequencer_tool_generic_select_rcs(params):
         ("sequencer.select_handle", {"type": 'LEFTMOUSE', "value": 'PRESS',
          "alt": True}, {"properties": [("ignore_connections", True)]}),
         ("anim.change_frame", {"type": params.action_mouse, "value": 'PRESS'},
-         {"properties": [("seq_solo_preview", True), ("pass_through_on_strip_handles", True)]}),
+         {"properties": [("pass_through_on_strip_handles", True)]}),
+        ("anim.change_frame", {"type": params.action_mouse, "value": 'PRESS', "shift": True},
+         {"properties": [("seq_solo_preview", True)]}),
         # Change frame takes precedence over the sequence slide operator. If a
         # mouse press happens on a strip handle, it is canceled, and the sequence
         # slide below activates instead.
-        ("transform.seq_slide", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+        ("transform.seq_slide", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'},
          {"properties": [("view2d_edge_pan", True), ("use_restore_handle_selection", True)]}),
     ]
 
@@ -8564,7 +8613,10 @@ def km_sequencer_tool_generic_select_box(params, *, fallback):
               if (params.select_mouse == 'RIGHTMOUSE') else
               km_sequencer_tool_generic_select_lcs(params)),
             # Don't use `tool_maybe_tweak_event`, see comment for this slot.
-            *([] if (fallback and not params.use_fallback_tool) else _template_items_tool_select_actions_simple(
+            # We do not add box select with left-click keymap items for RCS since click-drag already scrubs.
+            # These items should be re-added to this tool if/once we create a separate scrub tool.
+            *([] if (params.select_mouse == 'RIGHTMOUSE' or (fallback and not params.use_fallback_tool))
+              else _template_items_tool_select_actions_simple(
                 "sequencer.select_box",
                 **(params.select_tweak_event if (fallback and params.use_fallback_tool_select_mouse) else
                     params.tool_tweak_event),
@@ -8821,6 +8873,8 @@ def generate_keymaps(params=None):
 
         # Editors.
         km_outliner(params),
+        km_preferences(params),
+        km_preferences_nav(params),
         km_uv_editor(params),
         km_view3d_generic(params),
         km_view3d(params),

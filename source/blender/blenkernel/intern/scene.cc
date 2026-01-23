@@ -1086,7 +1086,7 @@ static void scene_blend_write_compositor_forward_compat(Scene &scene,
 
   BLO_Write_IDBuffer temp_embedded_id_buffer{temp_nodetree_copy->id, writer};
   bNodeTree *temp_nodetree = reinterpret_cast<bNodeTree *>(temp_embedded_id_buffer.get());
-  BLO_write_struct_at_address(writer, bNodeTree, scene.nodetree, temp_nodetree);
+  writer->write_struct_at_address(scene.nodetree, temp_nodetree);
 
   /* Todo(#140111): Forward compatibility support will be removed in 6.0. Do not write an embedded
    * nodetree at `scene->nodetree` anymore. */
@@ -1128,7 +1128,7 @@ static void scene_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   }
 
   /* write LibData */
-  BLO_write_id_struct(writer, Scene, id_address, &sce->id);
+  writer->write_id_struct(id_address, sce);
   BKE_id_blend_write(writer, &sce->id);
 
   BKE_keyingsets_blend_write(writer, &sce->keyingsets);
@@ -1272,7 +1272,7 @@ static void scene_blend_write(BlendWriter *writer, ID *id, const void *id_addres
     BLO_Write_IDBuffer temp_embedded_id_buffer{sce->master_collection->id, writer};
     Collection *temp_collection = reinterpret_cast<Collection *>(temp_embedded_id_buffer.get());
     BKE_collection_blend_write_prepare_nolib(writer, temp_collection);
-    BLO_write_struct_at_address(writer, Collection, sce->master_collection, temp_collection);
+    writer->write_struct_at_address(sce->master_collection, temp_collection);
     BKE_collection_blend_write_nolib(writer, temp_collection);
   }
 
@@ -1598,45 +1598,41 @@ static void scene_lib_override_apply_post(ID *id_dst, ID * /*id_src*/)
   }
 }
 
-constexpr IDTypeInfo get_type_info()
-{
-  IDTypeInfo info{};
-  info.id_code = ID_SCE;
-  info.id_filter = FILTER_ID_SCE;
-  info.dependencies_id_types = (FILTER_ID_OB | FILTER_ID_WO | FILTER_ID_SCE | FILTER_ID_MC |
-                                FILTER_ID_MA | FILTER_ID_GR | FILTER_ID_TXT | FILTER_ID_LS |
-                                FILTER_ID_MSK | FILTER_ID_SO | FILTER_ID_GD_LEGACY | FILTER_ID_BR |
-                                FILTER_ID_PAL | FILTER_ID_IM | FILTER_ID_NT);
-  info.main_listbase_index = INDEX_ID_SCE;
-  info.struct_size = sizeof(Scene);
-  info.name = "Scene";
-  info.name_plural = "scenes";
-  info.translation_context = BLT_I18NCONTEXT_ID_SCENE;
-  info.flags = IDTYPE_FLAGS_NEVER_UNUSED;
-  info.asset_type_info = nullptr;
+IDTypeInfo IDType_ID_SCE = {
+    /*id_code*/ Scene::id_type,
+    /*id_filter*/ FILTER_ID_SCE,
+    /*dependencies_id_types*/
+    (FILTER_ID_OB | FILTER_ID_WO | FILTER_ID_SCE | FILTER_ID_MC | FILTER_ID_MA | FILTER_ID_GR |
+     FILTER_ID_TXT | FILTER_ID_LS | FILTER_ID_MSK | FILTER_ID_SO | FILTER_ID_GD_LEGACY |
+     FILTER_ID_BR | FILTER_ID_PAL | FILTER_ID_IM | FILTER_ID_NT),
+    /*main_listbase_index*/ INDEX_ID_SCE,
+    /*struct_size*/ sizeof(Scene),
+    /*name*/ "Scene",
+    /*name_plural*/ "scenes",
+    /*translation_context*/ BLT_I18NCONTEXT_ID_SCENE,
+    /*flags*/ IDTYPE_FLAGS_NEVER_UNUSED,
+    /*asset_type_info*/ nullptr,
 
-  info.init_data = scene_init_data;
-  info.copy_data = scene_copy_data;
-  info.free_data = scene_free_data;
-  /* For now default `BKE_lib_id_make_local_generic()` should work, may need more work though to
-   * support all possible corner cases. */
-  info.make_local = nullptr;
-  info.foreach_id = scene_foreach_id;
-  info.foreach_cache = scene_foreach_cache;
-  info.foreach_path = scene_foreach_path;
-  info.foreach_working_space_color = scene_foreach_working_space_color;
-  info.owner_pointer_get = nullptr;
+    /*init_data*/ scene_init_data,
+    /*copy_data*/ scene_copy_data,
+    /*free_data*/ scene_free_data,
+    /* For now default `BKE_lib_id_make_local_generic()` should work, may need more work though to
+     * support all possible corner cases. */
+    /*make_local*/ nullptr,
+    /*foreach_id*/ scene_foreach_id,
+    /*foreach_cache*/ scene_foreach_cache,
+    /*foreach_path*/ scene_foreach_path,
+    /*foreach_working_space_color*/ scene_foreach_working_space_color,
+    /*owner_pointer_get*/ nullptr,
 
-  info.blend_write = scene_blend_write;
-  info.blend_read_data = scene_blend_read_data;
-  info.blend_read_after_liblink = scene_blend_read_after_liblink;
+    /*blend_write*/ scene_blend_write,
+    /*blend_read_data*/ scene_blend_read_data,
+    /*blend_read_after_liblink*/ scene_blend_read_after_liblink,
 
-  info.blend_read_undo_preserve = scene_undo_preserve;
+    /*blend_read_undo_preserve*/ scene_undo_preserve,
 
-  info.lib_override_apply_post = scene_lib_override_apply_post;
-  return info;
-}
-IDTypeInfo IDType_ID_SCE = get_type_info();
+    /*lib_override_apply_post*/ scene_lib_override_apply_post,
+};
 
 /** \} */
 

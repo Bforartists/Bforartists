@@ -114,7 +114,7 @@ static wmOperatorStatus toggle_pin_exec(bContext *C, wmOperator * /*op*/)
 
   /* Create the properties space pointer. */
   bScreen *screen = CTX_wm_screen(C);
-  PointerRNA sbuts_ptr = RNA_pointer_create_discrete(&screen->id, &RNA_SpaceProperties, sbuts);
+  PointerRNA sbuts_ptr = RNA_pointer_create_discrete(&screen->id, RNA_SpaceProperties, sbuts);
 
   /* Create the new ID pointer and set the pin ID with RNA
    * so we can use the property's RNA update functionality. */
@@ -311,8 +311,9 @@ static wmOperatorStatus file_browse_invoke(bContext *C, wmOperator *op, const wm
         BKE_build_template_variables_for_prop(C, &ptr, prop);
     BLI_assert(variables.has_value());
 
-    const Vector<bke::path_templates::Error> errors = BKE_path_apply_template(
-        path, FILE_MAX, *variables);
+    const Vector<bke::path_templates::Error> errors = BKE_path_apply_template_alloc(
+        &path, FILE_MAX, *variables);
+
     if (!errors.is_empty()) {
       BKE_report_path_template_errors(op->reports, RPT_ERROR, path, errors);
       return OPERATOR_CANCELLED;

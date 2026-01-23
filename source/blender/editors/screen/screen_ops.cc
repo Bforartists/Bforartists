@@ -298,7 +298,7 @@ bool ED_operator_region_view3d_active(bContext *C)
     return true;
   }
 
-  CTX_wm_operator_poll_msg_set(C, "expected a view3d region");
+  CTX_wm_operator_poll_msg_set(C, "Expected a view3d region");
   return false;
 }
 
@@ -324,7 +324,7 @@ bool ED_operator_animview_active(bContext *C)
     }
   }
 
-  CTX_wm_operator_poll_msg_set(C, "expected a timeline/animation area to be active");
+  CTX_wm_operator_poll_msg_set(C, "Expected a timeline/animation area to be active");
   return false;
 }
 
@@ -394,6 +394,11 @@ bool ED_operator_action_active(bContext *C)
 bool ED_operator_buttons_active(bContext *C)
 {
   return ed_spacetype_test(C, SPACE_PROPERTIES);
+}
+
+bool ED_operator_preferences_active(bContext *C)
+{
+  return ed_spacetype_test(C, SPACE_USERPREF);
 }
 
 bool ED_operator_node_active(bContext *C)
@@ -548,7 +553,7 @@ bool ED_operator_editmesh_region_view3d(bContext *C)
     return true;
   }
 
-  CTX_wm_operator_poll_msg_set(C, "expected a view3d region & editmesh");
+  CTX_wm_operator_poll_msg_set(C, "Expected a view3d region & editmesh");
   return false;
 }
 
@@ -688,7 +693,7 @@ bool ED_operator_editsurfcurve_region_view3d(bContext *C)
     return true;
   }
 
-  CTX_wm_operator_poll_msg_set(C, "expected a view3d region & editcurve");
+  CTX_wm_operator_poll_msg_set(C, "Expected a view3d region & editcurve");
   return false;
 }
 
@@ -729,7 +734,7 @@ bool ED_operator_editfont(bContext *C)
       return true;
     }
   }
-  CTX_wm_operator_poll_msg_set(C, "expected an active edit-font object");
+  CTX_wm_operator_poll_msg_set(C, "Expected an active edit-font object");
   return false;
 }
 
@@ -753,7 +758,7 @@ bool ED_operator_editmball(bContext *C)
 
 bool ED_operator_camera_poll(bContext *C)
 {
-  Camera *cam = static_cast<Camera *>(CTX_data_pointer_get_type(C, "camera", &RNA_Camera).data);
+  Camera *cam = static_cast<Camera *>(CTX_data_pointer_get_type(C, "camera", RNA_Camera).data);
   return (cam != nullptr && ID_IS_EDITABLE(cam));
 }
 
@@ -6228,7 +6233,7 @@ void ED_screens_header_tools_menu_create(bContext *C, ui::Layout *layout, void *
   ScrArea *area = CTX_wm_area(C);
   {
     PointerRNA ptr = RNA_pointer_create_discrete(
-        id_cast<ID *>(CTX_wm_screen(C)), &RNA_Space, area->spacedata.first);
+        id_cast<ID *>(CTX_wm_screen(C)), RNA_Space, area->spacedata.first);
     if (!ELEM(area->spacetype, SPACE_TOPBAR)) {
       layout->prop(&ptr, "show_region_header", UI_ITEM_NONE, IFACE_("Show Header"), ICON_NONE);
     }
@@ -6420,7 +6425,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, ui::Layout *layout, void *
 
   {
     PointerRNA ptr = RNA_pointer_create_discrete(
-        id_cast<ID *>(CTX_wm_screen(C)), &RNA_Space, area->spacedata.first);
+        id_cast<ID *>(CTX_wm_screen(C)), RNA_Space, area->spacedata.first);
     // layout->prop(&ptr, "show_region_footer", UI_ITEM_NONE, IFACE_("Show Footer"), ICON_NONE);
     // /*bfa - the toggle is a double to the view menu
   }
@@ -6447,7 +6452,7 @@ void ED_screens_region_flip_menu_create(bContext *C, ui::Layout *layout, void * 
 
 static void ed_screens_statusbar_menu_create(ui::Layout &layout, void * /*arg*/)
 {
-  PointerRNA ptr = RNA_pointer_create_discrete(nullptr, &RNA_PreferencesView, &U);
+  PointerRNA ptr = RNA_pointer_create_discrete(nullptr, RNA_PreferencesView, &U);
   layout.prop(&ptr, "show_statusbar_stats", UI_ITEM_NONE, IFACE_("Scene Statistics"), ICON_NONE);
   layout.prop(
       &ptr, "show_statusbar_scene_duration", UI_ITEM_NONE, IFACE_("Scene Duration"), ICON_NONE);
@@ -7133,17 +7138,19 @@ static wmOperatorStatus screen_animation_cancel_exec(bContext *C, wmOperator *op
   if (screen) {
     bool restore_start_frame = RNA_boolean_get(op->ptr, "restore_frame") && screen->animtimer;
     int frame;
+    Scene *scene;
     if (restore_start_frame) {
       ScreenAnimData *sad = static_cast<ScreenAnimData *>(screen->animtimer->customdata);
       frame = sad->sfra;
+      scene = sad->scene;
     }
 
     /* Stop playback */
     ED_screen_animation_play(C, 0, 0);
     if (restore_start_frame) {
-      Scene *scene = CTX_data_scene(C);
       /* reset current frame and just send a notifier to deal with the rest */
       scene->r.cfra = frame;
+      ed::vse::sync_active_scene_and_time_with_scene_strip(*C);
       WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
     }
   }
@@ -7286,7 +7293,7 @@ static wmOperatorStatus userpref_show_exec(bContext *C, wmOperator *op)
   if (prop && RNA_property_is_set(op->ptr, prop)) {
     /* Set active section via RNA, so it can fail properly. */
 
-    PointerRNA pref_ptr = RNA_pointer_create_discrete(nullptr, &RNA_Preferences, &U);
+    PointerRNA pref_ptr = RNA_pointer_create_discrete(nullptr, RNA_Preferences, &U);
     PropertyRNA *active_section_prop = RNA_struct_find_property(&pref_ptr, "active_section");
 
     RNA_property_enum_set(&pref_ptr, active_section_prop, RNA_property_enum_get(op->ptr, prop));
@@ -7677,7 +7684,7 @@ static wmOperatorStatus space_type_set_or_cycle_exec(bContext *C, wmOperator *op
   const int space_type = RNA_enum_get(op->ptr, "space_type");
 
   ScrArea *area = CTX_wm_area(C);
-  PointerRNA ptr = RNA_pointer_create_discrete(id_cast<ID *>(CTX_wm_screen(C)), &RNA_Area, area);
+  PointerRNA ptr = RNA_pointer_create_discrete(id_cast<ID *>(CTX_wm_screen(C)), RNA_Area, area);
   PropertyRNA *prop_type = RNA_struct_find_property(&ptr, "type");
   PropertyRNA *prop_ui_type = RNA_struct_find_property(&ptr, "ui_type");
 
@@ -7761,11 +7768,11 @@ static void context_cycle_prop_get(bScreen *screen,
   switch (area->spacetype) {
     case SPACE_PROPERTIES:
       *r_ptr = RNA_pointer_create_discrete(
-          &screen->id, &RNA_SpaceProperties, area->spacedata.first);
+          &screen->id, RNA_SpaceProperties, area->spacedata.first);
       propname = "context";
       break;
     case SPACE_USERPREF:
-      *r_ptr = RNA_pointer_create_discrete(nullptr, &RNA_Preferences, &U);
+      *r_ptr = RNA_pointer_create_discrete(nullptr, RNA_Preferences, &U);
       propname = "active_section";
       break;
     default:

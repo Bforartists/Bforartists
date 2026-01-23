@@ -739,10 +739,10 @@ static bool ui_rna_is_userdef(PointerRNA *ptr, PropertyRNA *prop)
 
   bool is_userdef = false;
   if (ELEM(base,
-           &RNA_AddonPreferences,
-           &RNA_KeyConfigPreferences,
-           &RNA_KeyMapItem,
-           &RNA_UserAssetLibrary))
+           RNA_AddonPreferences,
+           RNA_KeyConfigPreferences,
+           RNA_KeyMapItem,
+           RNA_UserAssetLibrary))
   {
     is_userdef = true;
   }
@@ -750,7 +750,7 @@ static bool ui_rna_is_userdef(PointerRNA *ptr, PropertyRNA *prop)
     switch (GS(ptr->owner_id->name)) {
       case ID_WM: {
         for (const AncestorPointerRNA &ancestor : ptr->ancestors) {
-          if (RNA_struct_is_a(ancestor.type, &RNA_KeyConfigPreferences)) {
+          if (RNA_struct_is_a(ancestor.type, RNA_KeyConfigPreferences)) {
             is_userdef = true;
             break;
           }
@@ -764,7 +764,7 @@ static bool ui_rna_is_userdef(PointerRNA *ptr, PropertyRNA *prop)
   }
   else if (ptr->owner_id == nullptr) {
     for (const AncestorPointerRNA &ancestor : ptr->ancestors) {
-      if (RNA_struct_is_a(ancestor.type, &RNA_AddonPreferences)) {
+      if (RNA_struct_is_a(ancestor.type, RNA_AddonPreferences)) {
         is_userdef = true;
         break;
       }
@@ -1010,7 +1010,7 @@ static void ui_apply_but_undo(Button *but)
 
   /* Skip undo push for buttons in redo panel, see: #134505. */
   const ARegion *region = CTX_wm_region(static_cast<bContext *>(but->block->evil_C));
-  if (region->regiontype == RGN_TYPE_HUD) {
+  if (region && region->regiontype == RGN_TYPE_HUD) {
     return;
   }
 
@@ -9801,14 +9801,26 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, Button *but
           button_activate_state(C, but, BUTTON_STATE_EXIT);
         }
         else {
-          /* Re-enable tool-tip on mouse move. */
+          /* While the pointer is moved around we need to reevaluate the
+           * tooltips. If a tooltip is already showing we normally don't
+           * want to reset it as this feels like the tooltip is chasing
+           * the mouse pointer after a short delay. The exception is large
+           * areas like thumbnails as we might want to dismiss them without
+           * leaving the area or move to reposition to reveal obscured parts. */
           bool reenable_tooltip = true;
           bScreen *screen = CTX_wm_screen(C);
           if (screen && screen->tool_tip) {
-            /* Allow some movement once the tooltip timer has started. */
-            const int threshold = WM_event_drag_threshold(event);
-            const int movement = len_manhattan_v2v2_int(event->xy, screen->tool_tip->event_xy);
-            reenable_tooltip = (movement > threshold);
+            if (but->type == ButtonType::Label && BLI_rctf_size_y(&but->rect) > UI_UNIT_Y) {
+              /* For some large buttons (like File/Asset thumbnails),
+               * allow some movement once the tooltip timer has started. */
+              const int threshold = WM_event_drag_threshold(event);
+              const int movement = len_manhattan_v2v2_int(event->xy, screen->tool_tip->event_xy);
+              reenable_tooltip = (movement > threshold);
+            }
+            else if (screen->tool_tip->region) {
+              /* Don't reset if already showing for a regular size button. */
+              reenable_tooltip = false;
+            }
           }
           if (reenable_tooltip) {
             ui_blocks_set_tooltips(region, true);

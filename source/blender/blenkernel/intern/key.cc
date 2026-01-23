@@ -119,7 +119,7 @@ static void shapekey_blend_write(BlendWriter *writer, ID *id, const void *id_add
   const bool is_undo = BLO_write_is_undo(writer);
 
   /* Write LibData. */
-  BLO_write_id_struct(writer, Key, id_address, &key->id);
+  writer->write_id_struct(id_address, key);
   BKE_id_blend_write(writer, &key->id);
 
   /* Direct data. */
@@ -130,7 +130,7 @@ static void shapekey_blend_write(BlendWriter *writer, ID *id, const void *id_add
       tmp_kb.totelem = 0;
       tmp_kb.data = nullptr;
     }
-    BLO_write_struct_at_address(writer, KeyBlock, &kb, &tmp_kb);
+    writer->write_struct_at_address(&kb, &tmp_kb);
     if (tmp_kb.data != nullptr) {
       BLO_write_raw(writer, tmp_kb.totelem * key->elemsize, tmp_kb.data);
     }
@@ -1435,7 +1435,7 @@ std::optional<std::string> BKE_keyblock_curval_rnapath_get(const Key *key, const
     return std::nullopt;
   }
   PointerRNA ptr = RNA_pointer_create_discrete(
-      const_cast<ID *>(&key->id), &RNA_ShapeKey, (KeyBlock *)kb);
+      const_cast<ID *>(&key->id), RNA_ShapeKey, (KeyBlock *)kb);
   PropertyRNA *prop = RNA_struct_find_property(&ptr, "value");
   return RNA_path_from_ID_to_property(&ptr, prop);
 }

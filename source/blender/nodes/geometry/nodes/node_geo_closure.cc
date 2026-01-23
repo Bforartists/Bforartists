@@ -44,7 +44,7 @@ static void node_layout_ex(ui::Layout &layout, bContext *C, PointerRNA *current_
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  PointerRNA output_node_ptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &output_node);
+  PointerRNA output_node_ptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &output_node);
 
   layout.op("node.sockets_sync", IFACE_("Sync"), ICON_FILE_REFRESH);
   layout.prop(&output_node_ptr, "define_signature", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -54,13 +54,10 @@ static void node_layout_ex(ui::Layout &layout, bContext *C, PointerRNA *current_
           C, panel, ntree, output_node);
       socket_items::ui::draw_active_item_props<ClosureInputItemsAccessor>(
           ntree, output_node, [&](PointerRNA *item_ptr) {
-            const auto &item = *item_ptr->data_as<NodeClosureInputItem>();
             panel->use_property_split_set(true);
             panel->use_property_decorate_set(false);
             panel->prop(item_ptr, "socket_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-            if (!socket_type_always_single(eNodeSocketDatatype(item.socket_type))) {
-              panel->prop(item_ptr, "structure_type", UI_ITEM_NONE, IFACE_("Shape"), ICON_NONE);
-            }
+            panel->prop(item_ptr, "structure_type", UI_ITEM_NONE, IFACE_("Shape"), ICON_NONE);
           });
     }
   }
@@ -70,13 +67,10 @@ static void node_layout_ex(ui::Layout &layout, bContext *C, PointerRNA *current_
           C, panel, ntree, output_node);
       socket_items::ui::draw_active_item_props<ClosureOutputItemsAccessor>(
           ntree, output_node, [&](PointerRNA *item_ptr) {
-            const auto &item = *item_ptr->data_as<NodeClosureOutputItem>();
             panel->use_property_split_set(true);
             panel->use_property_decorate_set(false);
             panel->prop(item_ptr, "socket_type", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-            if (!socket_type_always_single(eNodeSocketDatatype(item.socket_type))) {
-              panel->prop(item_ptr, "structure_type", UI_ITEM_NONE, IFACE_("Shape"), ICON_NONE);
-            }
+            panel->prop(item_ptr, "structure_type", UI_ITEM_NONE, IFACE_("Shape"), ICON_NONE);
           });
     }
   }
@@ -298,7 +292,7 @@ NOD_REGISTER_NODE(node_register)
 
 namespace nodes {
 
-StructRNA *ClosureInputItemsAccessor::item_srna = &RNA_NodeClosureInputItem;
+StructRNA **ClosureInputItemsAccessor::item_srna = &RNA_NodeClosureInputItem;
 
 void ClosureInputItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {
@@ -310,7 +304,7 @@ void ClosureInputItemsAccessor::blend_read_data_item(BlendDataReader *reader, It
   BLO_read_string(reader, &item.name);
 }
 
-StructRNA *ClosureOutputItemsAccessor::item_srna = &RNA_NodeClosureOutputItem;
+StructRNA **ClosureOutputItemsAccessor::item_srna = &RNA_NodeClosureOutputItem;
 
 void ClosureOutputItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {

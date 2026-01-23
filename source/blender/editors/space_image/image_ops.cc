@@ -183,7 +183,7 @@ static Image *image_from_context(const bContext *C)
 {
   /* Edit image is set by templates used throughout the interface, so image
    * operations work outside the image editor. */
-  Image *ima = static_cast<Image *>(CTX_data_pointer_get_type(C, "edit_image", &RNA_Image).data);
+  Image *ima = static_cast<Image *>(CTX_data_pointer_get_type(C, "edit_image", RNA_Image).data);
 
   if (ima) {
     return ima;
@@ -199,7 +199,7 @@ static ImageUser *image_user_from_context(const bContext *C)
   /* Edit image user is set by templates used throughout the interface, so
    * image operations work outside the image editor. */
   ImageUser *iuser = static_cast<ImageUser *>(
-      CTX_data_pointer_get_type(C, "edit_image_user", &RNA_ImageUser).data);
+      CTX_data_pointer_get_type(C, "edit_image_user", RNA_ImageUser).data);
 
   if (iuser) {
     return iuser;
@@ -1327,7 +1327,7 @@ static void image_open_init(bContext *C, wmOperator *op)
   ImageOpenData *iod;
   op->customdata = iod = MEM_new<ImageOpenData>(__func__);
   iod->iuser = static_cast<ImageUser *>(
-      CTX_data_pointer_get_type(C, "image_user", &RNA_ImageUser).data);
+      CTX_data_pointer_get_type(C, "image_user", RNA_ImageUser).data);
   ui::context_active_but_prop_get_templateID(C, &iod->pprop.ptr, &iod->pprop.prop);
 }
 
@@ -1468,14 +1468,13 @@ static wmOperatorStatus image_open_exec(bContext *C, wmOperator *op)
     iuser = &sima->iuser;
   }
   else {
-    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data);
+    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
     if (tex && tex->type == TEX_IMAGE) {
       iuser = &tex->iuser;
     }
 
     if (iuser == nullptr) {
-      Camera *cam = static_cast<Camera *>(
-          CTX_data_pointer_get_type(C, "camera", &RNA_Camera).data);
+      Camera *cam = static_cast<Camera *>(CTX_data_pointer_get_type(C, "camera", RNA_Camera).data);
       if (cam) {
         for (CameraBGImage &bgpic : cam->bg_images) {
           if (bgpic.ima == ima) {
@@ -1527,7 +1526,7 @@ static wmOperatorStatus image_open_invoke(bContext *C, wmOperator *op, const wmE
   }
 
   if (ima == nullptr) {
-    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data);
+    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
     if (tex && tex->type == TEX_IMAGE) {
       ima = tex->ima;
     }
@@ -1598,7 +1597,7 @@ static void image_open_draw(bContext * /*C*/, wmOperator *op)
                    false);
 
   /* image template */
-  PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, &RNA_ImageFormatSettings, imf);
+  PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, RNA_ImageFormatSettings, imf);
 
   /* multiview template */
   if (RNA_boolean_get(op->ptr, "show_multiview")) {
@@ -1787,7 +1786,7 @@ static wmOperatorStatus image_match_len_exec(bContext *C, wmOperator * /*op*/)
 
   if (!ima || !iuser) {
     /* Try to get a Texture, or a SpaceImage from context... */
-    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data);
+    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
     if (tex && tex->type == TEX_IMAGE) {
       ima = tex->ima;
       iuser = &tex->iuser;
@@ -2112,7 +2111,7 @@ static void image_save_as_draw(bContext *C, wmOperator *op)
 
   /* Image format settings. */
   PointerRNA imf_ptr = RNA_pointer_create_discrete(
-      nullptr, &RNA_ImageFormatSettings, &isd->opts.im_format);
+      nullptr, RNA_ImageFormatSettings, &isd->opts.im_format);
   uiTemplateImageSettings(&layout, C, &imf_ptr, save_as_render);
 
   if (!save_as_render) {
@@ -3446,12 +3445,17 @@ static bool image_pack_test(Image *ima, const char **r_error_message)
   }
 
   if (!ID_IS_EDITABLE(&ima->id)) {
-    *r_error_message = "Image is not editable";
+    *r_error_message = N_("Image is not editable");
     return false;
   }
 
   if (ELEM(ima->source, IMA_SRC_SEQUENCE, IMA_SRC_MOVIE)) {
-    *r_error_message = "Movies or image sequences do not support packing";
+    *r_error_message = N_("Movies or image sequences do not support packing");
+    return false;
+  }
+
+  if (ELEM(ima->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
+    *r_error_message = N_("Render Result and Viewer Nodes cannot be packed");
     return false;
   }
 
@@ -4265,8 +4269,11 @@ static wmOperatorStatus clear_render_border_exec(bContext *C, wmOperator * /*op*
 {
   Scene *scene = CTX_data_scene(C);
   scene->r.mode &= ~R_BORDER;
-  WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
   BLI_rctf_init(&scene->r.border, 0.0f, 1.0f, 0.0f, 1.0f);
+
+  WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+  DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
+
   return OPERATOR_FINISHED;
 }
 

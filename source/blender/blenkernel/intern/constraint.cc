@@ -92,7 +92,7 @@
 #endif
 
 #ifdef WITH_USD
-#  include "usd.hh"
+#  include "usd_api_modifier.hh"
 #endif
 
 namespace blender {
@@ -5971,7 +5971,7 @@ static bool constraint_remove(ListBaseT<bConstraint> *list, bConstraint *con)
 
 bool BKE_constraint_remove_ex(ListBaseT<bConstraint> *list, Object *ob, bConstraint *con)
 {
-  BKE_animdata_drivers_remove_for_rna_struct(ob->id, RNA_Constraint, con);
+  BKE_animdata_drivers_remove_for_rna_struct(ob->id, *RNA_Constraint, con);
 
   const short type = con->type;
   if (constraint_remove(list, con)) {

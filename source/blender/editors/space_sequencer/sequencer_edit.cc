@@ -438,7 +438,7 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
         if (view3d->camera == camera) {
           continue;
         }
-        PointerRNA view3d_ptr = RNA_pointer_create_discrete(&screen->id, &RNA_SpaceView3D, view3d);
+        PointerRNA view3d_ptr = RNA_pointer_create_discrete(&screen->id, RNA_SpaceView3D, view3d);
         RNA_pointer_set(&view3d_ptr, "camera", camera_ptr);
       }
     }
@@ -2034,8 +2034,7 @@ static wmOperatorStatus sequencer_box_blade_exec(bContext *C, wmOperator *op)
    * note that this means strips.size() can increase during the loops.  */
   for (int i = 0; i < strips.size(); i++) {
     Strip *strip = strips[i];
-    rctf strip_rect;
-    strip_rectf(scene, strip, &strip_rect);
+    rctf strip_rect = strip_bounds_get(scene, strip);
     if (BLI_rctf_isect(&strip_rect, &box_rect, nullptr)) {
       gap_removal_boundary[0] = math::min(gap_removal_boundary[0], strip->left_handle());
       gap_removal_boundary[1] = math::max(gap_removal_boundary[1], strip->right_handle(scene));
@@ -3330,16 +3329,11 @@ static wmOperatorStatus sequencer_swap_data_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (strip_act->runtime->scene_sound) {
-    BKE_sound_remove_scene_sound(scene, strip_act->runtime->scene_sound);
-  }
+  strip_act->runtime->remove_scene_sound(scene);
+  strip_other->runtime->remove_scene_sound(scene);
 
-  if (strip_other->runtime->scene_sound) {
-    BKE_sound_remove_scene_sound(scene, strip_other->runtime->scene_sound);
-  }
-
-  strip_act->runtime->scene_sound = nullptr;
-  strip_other->runtime->scene_sound = nullptr;
+  strip_act->runtime->clear_sound_time_stretch();
+  strip_other->runtime->clear_sound_time_stretch();
 
   if (strip_act->sound) {
     BKE_sound_add_scene_sound_defaults(scene, strip_act);
@@ -3551,7 +3545,7 @@ static wmOperatorStatus sequencer_change_path_exec(bContext *C, wmOperator *op)
     PropertyRNA *prop;
     char filepath[FILE_MAX];
 
-    PointerRNA strip_ptr = RNA_pointer_create_discrete(&scene->id, &RNA_Strip, strip);
+    PointerRNA strip_ptr = RNA_pointer_create_discrete(&scene->id, RNA_Strip, strip);
 
     RNA_string_get(op->ptr, "filepath", filepath);
     prop = RNA_struct_find_property(&strip_ptr, "filepath");
@@ -3988,7 +3982,7 @@ static wmOperatorStatus sequencer_strip_transform_clear_exec(bContext *C, wmOper
     if (strip.flag & SEQ_SELECT && strip.type != STRIP_TYPE_SOUND) {
       StripTransform *transform = strip.data->transform;
       PropertyRNA *prop;
-      PointerRNA ptr = RNA_pointer_create_discrete(&scene->id, &RNA_StripTransform, transform);
+      PointerRNA ptr = RNA_pointer_create_discrete(&scene->id, RNA_StripTransform, transform);
       switch (property) {
         case STRIP_TRANSFORM_POSITION:
           transform->xofs = 0;

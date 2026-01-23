@@ -99,7 +99,7 @@ class NodeSocketViewItem : public BasicTreeViewItem {
     set_is_active_fn([interface, &socket]() { return interface.active_item() == &socket.item; });
     set_on_activate_fn([&interface](bContext & /*C*/, BasicTreeViewItem &new_active) {
       NodeSocketViewItem &self = static_cast<NodeSocketViewItem &>(new_active);
-      interface.active_item_set(&self.socket_.item);
+      interface.active_item_set(&self.socket_.item, false);
     });
   }
 
@@ -203,7 +203,7 @@ class NodePanelViewItem : public BasicTreeViewItem {
     set_is_active_fn([interface, &panel]() { return interface.active_item() == &panel.item; });
     set_on_activate_fn([&interface](bContext & /*C*/, BasicTreeViewItem &new_active) {
       NodePanelViewItem &self = static_cast<NodePanelViewItem &>(new_active);
-      interface.active_item_set(&self.panel_.item);
+      interface.active_item_set(&self.panel_.item, false);
     });
     toggle_ = panel.header_toggle_socket();
     is_always_collapsible_ = true;
@@ -274,7 +274,7 @@ class NodePanelViewItem : public BasicTreeViewItem {
   bool rename(const bContext &C, StringRefNull new_name) override
   {
     PointerRNA panel_ptr = RNA_pointer_create_discrete(
-        &nodetree_.id, &RNA_NodeTreeInterfacePanel, &panel_);
+        &nodetree_.id, RNA_NodeTreeInterfacePanel, &panel_);
     PropertyRNA *name_prop = RNA_struct_find_property(&panel_ptr, "name");
     RNA_property_string_set(&panel_ptr, name_prop, new_name.c_str());
     RNA_property_update(const_cast<bContext *>(&C), &panel_ptr, name_prop);
@@ -608,7 +608,7 @@ void template_tree_interface(Layout *layout, const bContext *C, PointerRNA *ptr)
   if (!ptr->data) {
     return;
   }
-  if (!RNA_struct_is_a(ptr->type, &RNA_NodeTreeInterface)) {
+  if (!RNA_struct_is_a(ptr->type, RNA_NodeTreeInterface)) {
     return;
   }
   bNodeTree &nodetree = *reinterpret_cast<bNodeTree *>(ptr->owner_id);

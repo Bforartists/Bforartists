@@ -434,7 +434,7 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   if (dmd->segment_active_index >= 0 && dmd->segment_active_index < dmd->segments_num) {
     PointerRNA ds_ptr = RNA_pointer_create_discrete(ptr->owner_id,
-                                                    &RNA_GreasePencilDashModifierSegment,
+                                                    RNA_GreasePencilDashModifierSegment,
                                                     &dmd->segments()[dmd->segment_active_index]);
 
     sub = &layout.column(true);
@@ -494,8 +494,7 @@ static void blend_write(BlendWriter *writer, const ID * /*id_owner*/, const Modi
   writer->write_struct(dmd);
   modifier::greasepencil::write_influence_data(writer, &dmd->influence);
 
-  BLO_write_struct_array(
-      writer, GreasePencilDashModifierSegment, dmd->segments_num, dmd->segments_array);
+  writer->write_struct_array(dmd->segments_num, dmd->segments_array);
 }
 
 static void blend_read(BlendDataReader *reader, ModifierData *md)

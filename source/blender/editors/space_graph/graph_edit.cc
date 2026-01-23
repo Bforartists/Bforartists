@@ -321,7 +321,7 @@ static wmOperatorStatus graphkeys_click_insert_exec(bContext *C, wmOperator *op)
   /* When there are F-Modifiers on the curve, only allow adding
    * keyframes if these will be visible after doing so...
    */
-  if (BKE_fcurve_is_keyframable(fcu)) {
+  if (fcu && BKE_fcurve_is_keyframable(*fcu)) {
     ListBaseT<bAnimListElem> anim_data;
     ToolSettings *ts = ac.scene->toolsettings;
 
@@ -769,10 +769,12 @@ static bool delete_graph_keys(bAnimContext *ac)
   for (bAnimListElem &ale : anim_data) {
     FCurve *fcu = static_cast<FCurve *>(ale.key_data);
     AnimData *adt = ale.adt;
-    bool changed;
+    bool changed = false;
 
     /* Delete selected keyframes only. */
-    changed = BKE_fcurve_delete_keys_selected(fcu);
+    if (fcu) {
+      changed = BKE_fcurve_delete_keys_selected(*fcu);
+    }
 
     if (changed) {
       ale.update |= ANIM_UPDATE_DEFAULT;
@@ -2457,7 +2459,7 @@ static bool graph_has_selected_control_points(bContext *C)
   bool has_selected_control_points = false;
   for (bAnimListElem &ale : anim_data) {
     const FCurve *fcu = static_cast<const FCurve *>(ale.key_data);
-    if (BKE_fcurve_has_selected_control_points(fcu)) {
+    if (fcu && BKE_fcurve_has_selected_control_points(*fcu)) {
       has_selected_control_points = true;
       break;
     }
@@ -3117,7 +3119,7 @@ static wmOperatorStatus graph_driver_vars_copy_exec(bContext *C, wmOperator *op)
 {
   bool ok = false;
 
-  PointerRNA ptr = CTX_data_pointer_get_type(C, "active_editable_fcurve", &RNA_FCurve);
+  PointerRNA ptr = CTX_data_pointer_get_type(C, "active_editable_fcurve", RNA_FCurve);
 
   /* If this exists, call the copy driver vars API function. */
   FCurve *fcu = static_cast<FCurve *>(ptr.data);
@@ -3159,7 +3161,7 @@ static wmOperatorStatus graph_driver_vars_paste_exec(bContext *C, wmOperator *op
   const bool replace = RNA_boolean_get(op->ptr, "replace");
   bool ok = false;
 
-  PointerRNA ptr = CTX_data_pointer_get_type(C, "active_editable_fcurve", &RNA_FCurve);
+  PointerRNA ptr = CTX_data_pointer_get_type(C, "active_editable_fcurve", RNA_FCurve);
 
   /* If this exists, call the paste driver vars API function. */
   FCurve *fcu = static_cast<FCurve *>(ptr.data);

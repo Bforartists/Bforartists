@@ -149,7 +149,7 @@ static void vfont_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   }
 
   /* write LibData */
-  BLO_write_id_struct(writer, VFont, id_address, &vf->id);
+  writer->write_id_struct(id_address, vf);
   BKE_id_blend_write(writer, &vf->id);
 
   /* direct data */
@@ -397,6 +397,21 @@ VFont *BKE_vfont_builtin_ensure()
   id_us_min(&vfont->id);
   BLI_assert(vfont->id.us == 0);
   return vfont;
+}
+
+void BKE_vfont_packfile_ensure(Main *bmain, VFont *vfont, ReportList *reports)
+{
+  if (vfont->packedfile != nullptr) {
+    /* Font is already packed and considered unmodified, do not attempt to repack it, since its
+     * original file may not be available anymore on the current FS.
+     *
+     * See #152638.
+     */
+    return;
+  }
+
+  vfont->packedfile = BKE_packedfile_new(
+      reports, vfont->filepath, ID_BLEND_PATH(bmain, &vfont->id));
 }
 
 /** \} */

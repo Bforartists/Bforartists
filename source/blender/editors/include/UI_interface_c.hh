@@ -209,7 +209,7 @@ enum {
 };
 
 /** #Button.flag general state flags. */
-enum {
+enum ButtonFlag {
   /* WARNING: the first 8 flags are internal (see #UI_SELECT definition). */
 
   BUT_ICON_SUBMENU = 1 << 8,
@@ -2291,6 +2291,8 @@ void template_id(Layout *layout,
                  int filter = TEMPLATE_ID_FILTER_ALL,
                  bool live_icon = false,
                  std::optional<StringRef> text = std::nullopt);
+void template_ID_session_uid(
+    Layout &layout, bContext *C, PointerRNA *ptr, StringRefNull propname, short idcode);
 void template_id_browse(Layout *layout,
                         bContext *C,
                         PointerRNA *ptr,

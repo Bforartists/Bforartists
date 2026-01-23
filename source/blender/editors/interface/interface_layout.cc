@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <fmt/format.h>
 
 #include "MEM_guardedalloc.h"
 
@@ -44,7 +45,6 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "fmt/format.h"
 #include "interface_intern.hh"
 
 namespace blender {
@@ -1012,11 +1012,19 @@ static void ui_item_enum_expand_tabs(Layout *layout,
                                      PropertyRNA *prop_highlight,
                                      const std::optional<StringRef> uiname,
                                      const int h,
-                                     const bool icon_only)
+                                     const bool icon_only,
+                                     EnumTabExpand expand_as)
 {
   const int start_size = block->buttons.size();
 
-  ui_item_enum_expand_exec(layout, block, ptr, prop, uiname, h, ButtonType::Tab, icon_only);
+  ui_item_enum_expand_exec(layout,
+                           block,
+                           ptr,
+                           prop,
+                           uiname,
+                           h,
+                           expand_as == EnumTabExpand::Default ? ButtonType::Tab : ButtonType::Row,
+                           icon_only);
 
   if (block->buttons.is_empty()) {
     return;
@@ -1024,11 +1032,13 @@ static void ui_item_enum_expand_tabs(Layout *layout,
 
   BLI_assert(start_size != block->buttons.size());
 
-  for (int i = start_size; i < block->buttons.size(); i++) {
-    Button *tab = block->buttons[i].get();
-    button_drawflag_enable(tab, button_align_opposite_to_area_align_get(CTX_wm_region(C)));
-    if (icon_only) {
-      button_drawflag_enable(tab, BUT_HAS_QUICK_TOOLTIP);
+  if (expand_as == EnumTabExpand::Default) {
+    for (int i = start_size; i < block->buttons.size(); i++) {
+      Button *tab = block->buttons[i].get();
+      button_drawflag_enable(tab, button_align_opposite_to_area_align_get(CTX_wm_region(C)));
+      if (icon_only) {
+        button_drawflag_enable(tab, BUT_HAS_QUICK_TOOLTIP);
+      }
     }
   }
 
@@ -1098,7 +1108,7 @@ static Button *ui_item_with_label(Layout *layout,
                                  !ItemInternal::use_property_decorate_no_pad(layout);
 #endif
 
-  const bool is_keymapitem_ptr = RNA_struct_is_a(ptr->type, &RNA_KeyMapItem);
+  const bool is_keymapitem_ptr = RNA_struct_is_a(ptr->type, RNA_KeyMapItem);
   if ((flag & ITEM_R_FULL_EVENT) && !is_keymapitem_ptr) {
     RNA_warning_bare("%s: Data is not a keymap item struct: %s. Ignoring 'full_event' option.",
                      caller_fn_name,
@@ -3588,7 +3598,8 @@ void Layout::prop_tabs_enum(bContext *C,
                             PropertyRNA *prop,
                             PointerRNA *ptr_highlight,
                             PropertyRNA *prop_highlight,
-                            bool icon_only)
+                            bool icon_only,
+                            EnumTabExpand expand_as)
 {
   Block *block = this->block();
 
@@ -3602,7 +3613,8 @@ void Layout::prop_tabs_enum(bContext *C,
                            prop_highlight,
                            std::nullopt,
                            UI_UNIT_Y,
-                           icon_only);
+                           icon_only,
+                           expand_as);
 }
 
 /** \} */
@@ -4895,7 +4907,7 @@ PanelLayout Layout::panel(const bContext *C, const StringRef idname, const bool 
 
   LayoutPanelState *state = BKE_panel_layout_panel_state_ensure(
       root_panel, idname, default_closed);
-  PointerRNA state_ptr = RNA_pointer_create_discrete(nullptr, &RNA_LayoutPanelState, state);
+  PointerRNA state_ptr = RNA_pointer_create_discrete(nullptr, RNA_LayoutPanelState, state);
 
   return this->panel_prop(C, &state_ptr, "is_open");
 }
@@ -5819,7 +5831,7 @@ void Layout::context_set_from_but(const Button *but)
 
   if (but->rnapoin.data && but->rnaprop) {
     /* TODO: index could be supported as well */
-    PointerRNA ptr_prop = RNA_pointer_create_discrete(nullptr, &RNA_Property, but->rnaprop);
+    PointerRNA ptr_prop = RNA_pointer_create_discrete(nullptr, RNA_Property, but->rnaprop);
     this->context_ptr_set("button_prop", &ptr_prop);
     this->context_ptr_set("button_pointer", &but->rnapoin);
   }

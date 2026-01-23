@@ -704,7 +704,7 @@ static void envelope_panel_draw(const bContext *C, Panel *panel)
   FCM_EnvelopeData *fed = env->data;
   for (int i = 0; i < env->totvert; i++, fed++) {
     PointerRNA ctrl_ptr = RNA_pointer_create_discrete(
-        owner_id, &RNA_FModifierEnvelopeControlPoint, fed);
+        owner_id, RNA_FModifierEnvelopeControlPoint, fed);
 
     /* get a new row to operate on */
     row = &col->row(true);
@@ -883,7 +883,7 @@ void ANIM_fmodifier_panels(const bContext *C,
       panel_id_fn(&fcm, panel_idname);
 
       PointerRNA *fcm_ptr = MEM_new<PointerRNA>("panel customdata");
-      *fcm_ptr = RNA_pointer_create_discrete(owner_id, &RNA_FModifier, &fcm);
+      *fcm_ptr = RNA_pointer_create_discrete(owner_id, RNA_FModifier, &fcm);
 
       ui::panel_add_instanced(C, region, &region->panels, panel_idname, fcm_ptr);
     }
@@ -901,7 +901,7 @@ void ANIM_fmodifier_panels(const bContext *C,
       }
 
       PointerRNA *fcm_ptr = MEM_new<PointerRNA>("panel customdata");
-      *fcm_ptr = RNA_pointer_create_discrete(owner_id, &RNA_FModifier, &fcm);
+      *fcm_ptr = RNA_pointer_create_discrete(owner_id, RNA_FModifier, &fcm);
       ui::panel_custom_data_set(panel, fcm_ptr);
 
       panel = panel->next;
@@ -986,7 +986,7 @@ bool ANIM_fmodifiers_paste_from_buf(ListBaseT<FModifier> *modifiers, bool replac
     return false;
   }
 
-  bool was_cyclic = curve && BKE_fcurve_is_cyclic(curve);
+  bool was_cyclic = curve && BKE_fcurve_is_cyclic(*curve);
 
   /* if replacing the list, free the existing modifiers */
   if (replace) {
@@ -1009,8 +1009,8 @@ bool ANIM_fmodifiers_paste_from_buf(ListBaseT<FModifier> *modifiers, bool replac
   }
 
   /* adding or removing the Cycles modifier requires an update to handles */
-  if (curve && BKE_fcurve_is_cyclic(curve) != was_cyclic) {
-    BKE_fcurve_handles_recalc(curve);
+  if (curve && BKE_fcurve_is_cyclic(*curve) != was_cyclic) {
+    BKE_fcurve_handles_recalc(*curve);
   }
 
   /* did we succeed? */

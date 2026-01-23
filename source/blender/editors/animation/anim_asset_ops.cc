@@ -65,7 +65,7 @@ static const EnumPropertyItem *rna_asset_library_reference_itemf(bContext * /*C*
 
 static Vector<RNAPath> construct_pose_rna_paths(const PointerRNA &bone_pointer)
 {
-  BLI_assert(bone_pointer.type == &RNA_PoseBone);
+  BLI_assert(bone_pointer.type == RNA_PoseBone);
 
   Vector<RNAPath> paths;
   paths.append({"location"});
@@ -139,7 +139,7 @@ static blender::animrig::Action &extract_pose(Main &bmain, const Span<Object *> 
         continue;
       }
       PointerRNA bone_pointer = RNA_pointer_create_discrete(
-          &pose_object->id, &RNA_PoseBone, &pose_bone);
+          &pose_object->id, RNA_PoseBone, &pose_bone);
       Vector<RNAPath> rna_paths = construct_pose_rna_paths(bone_pointer);
       for (const RNAPath &rna_path : rna_paths) {
         PointerRNA resolved_pointer;
@@ -558,7 +558,7 @@ static Vector<PathValue> generate_path_values(Object &pose_object)
       continue;
     }
     PointerRNA bone_pointer = RNA_pointer_create_discrete(
-        &pose_object.id, &RNA_PoseBone, &pose_bone);
+        &pose_object.id, RNA_PoseBone, &pose_bone);
     Vector<RNAPath> rna_paths = construct_pose_rna_paths(bone_pointer);
 
     for (RNAPath &rna_path : rna_paths) {
@@ -599,7 +599,7 @@ static inline void replace_pose_key(Main &bmain,
 
   /* Clearing all keys beforehand in case the pose was not defined on frame defined in
    * `time_value`. */
-  BKE_fcurve_delete_keys_all(&fcurve);
+  BKE_fcurve_delete_keys_all(fcurve);
   const KeyframeSettings key_settings = {BEZT_KEYTYPE_KEYFRAME, HD_AUTO, BEZT_IPO_BEZ};
   insert_vert_fcurve(&fcurve, time_value, key_settings, INSERTKEY_NOFLAGS);
 }
