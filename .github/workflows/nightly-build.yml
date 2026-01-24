@@ -32,12 +32,8 @@ jobs:
     - name: Install deps and download libraries (Ubuntu)
       working-directory: ${{ github.workspace }}
       if: ${{ inputs.os == 'ubuntu-latest' }}
-      # Run BFA permissions for github
       run: |
-        chmod +x ./build_files/build_environment/install_linux_packages.py
-        chmod +x ./build_files/utils/make_update.py
-        ./build_files/build_environment/install_linux_packages.py
-        ./build_files/utils/make_update.py --use-linux-libraries
+        python ./build_files/build_environment/install_linux_packages.py
 
     - name: Run make update
       working-directory: ${{ github.workspace }}
