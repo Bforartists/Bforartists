@@ -1,51 +1,14 @@
-name: Bforartists daily build
-
+name: Linux
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - master
+      branches: [ "master" ]
   pull_request:
+      branches: [ "master" ]
 
 jobs:
-  build_bforartists:
-    name: Build Bforartists
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install initial packages
-        run: |
-          sudo apt update
-          sudo apt install python3 git git-lfs
-      - name: Install basic building environment
-        working-directory: ${{ github.workspace }}
-        run: |
-          python ./build_files/build_environment/install_linux_packages.py
-      - name: Download libraries
-        working-directory: ${{ github.workspace }}
-        run: |
-          python ./build_files/utils/make_update.py --use-linux-libraries
-      - name: Build Bforartists
-        working-directory: ${{ github.workspace }}
-        run: |
-          make update
-          make
-      - name: Test Bforartists Binary
-        run: |
-          ${{ github.workspace }}/../bfa_build_linux/bin/bforartists --background --factory-startup -noaudio
-      - name: Compress Bforartists for the artifacts
-        run: |
-          mkdir release
-          cp -r ${{ github.workspace }}/../bfa_build_linux/bin release/bforartists
-          cd release
-          tar Jcf bforartists.tar.xz bforartists
-          rm -rf bforartists
-      - name: Create MD5 checksum file
-        run: |
-          cd release
-          md5sum bforartists.tar.xz > bforartists.tar.xz.md5
-      - name: Upload artifact 
-        uses: actions/upload-artifact@v4
-        with:
-          name: bforartists
-          path: "release"
+  build:
+    uses: ./.github/workflows/nightly-build.yml
+    with:
+      os: "ubuntu-latest"
+      c_compiler: "gcc"
+      cpp_compiler: "g++"
