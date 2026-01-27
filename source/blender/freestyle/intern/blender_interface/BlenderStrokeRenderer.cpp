@@ -221,7 +221,7 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
     // make a copy of linestyle->nodetree
     if (ma->nodetree) {
       bke::node_tree_free_embedded_tree(ma->nodetree);
-      MEM_freeN(ma->nodetree);
+      MEM_delete(ma->nodetree);
       ma->nodetree = nullptr;
     }
     ntree = blender::bke::node_tree_copy_tree_ex(*iNodeTree, bmain, do_id_user);
@@ -252,7 +252,7 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
   mix_rgb_color->location[0] = 200.0f;
   mix_rgb_color->location[1] = -200.0f;
   tosock = (bNodeSocket *)BLI_findlink(&mix_rgb_color->inputs, 0);  // Fac
-  toptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, tosock);
+  toptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, tosock);
   RNA_float_set(&toptr, "default_value", 0.0f);
 
   bNode *input_attr_alpha = blender::bke::node_add_static_node(nullptr, *ntree, SH_NODE_ATTRIBUTE);
@@ -267,7 +267,7 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
   mix_rgb_alpha->location[0] = 600.0f;
   mix_rgb_alpha->location[1] = 300.0f;
   tosock = (bNodeSocket *)BLI_findlink(&mix_rgb_alpha->inputs, 0);  // Fac
-  toptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, tosock);
+  toptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, tosock);
   RNA_float_set(&toptr, "default_value", 0.0f);
 
   bNode *shader_emission = blender::bke::node_add_static_node(nullptr, *ntree, SH_NODE_EMISSION);
@@ -351,8 +351,8 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
     }
     else {
       float color[4];
-      fromptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, outsock);
-      toptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, tosock);
+      fromptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, outsock);
+      toptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, tosock);
       RNA_float_get_array(&fromptr, "default_value", color);
       RNA_float_set_array(&toptr, "default_value", color);
     }
@@ -365,8 +365,8 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
           *ntree, *link->fromnode, *link->fromsock, *mix_rgb_color, *tosock);
     }
     else {
-      fromptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, outsock);
-      toptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, tosock);
+      fromptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, outsock);
+      toptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, tosock);
       RNA_float_set(&toptr, "default_value", RNA_float_get(&fromptr, "default_value"));
     }
 
@@ -379,8 +379,8 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
     }
     else {
       float color[4];
-      fromptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, outsock);
-      toptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, tosock);
+      fromptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, outsock);
+      toptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, tosock);
       color[0] = color[1] = color[2] = RNA_float_get(&fromptr, "default_value");
       color[3] = 1.0f;
       RNA_float_set_array(&toptr, "default_value", color);
@@ -394,8 +394,8 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
           *ntree, *link->fromnode, *link->fromsock, *mix_rgb_alpha, *tosock);
     }
     else {
-      fromptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, outsock);
-      toptr = RNA_pointer_create_discrete((ID *)ntree, &RNA_NodeSocket, tosock);
+      fromptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, outsock);
+      toptr = RNA_pointer_create_discrete((ID *)ntree, RNA_NodeSocket, tosock);
       RNA_float_set(&toptr, "default_value", RNA_float_get(&fromptr, "default_value"));
     }
 
@@ -646,7 +646,7 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
   ColorGeometry4b *transp = transp_attr.span.data();
   BKE_id_attributes_active_color_set(&mesh->id, "Color");
 
-  mesh->mat = MEM_malloc_arrayN<Material *>(size_t(mesh->totcol), "MaterialList");
+  mesh->mat = MEM_new_array_uninitialized<Material *>(size_t(mesh->totcol), "MaterialList");
   for (const auto item : group->materials.items()) {
     Material *material = item.key;
     const int matnr = item.value;

@@ -51,7 +51,7 @@ static int py_rna_gizmo_parse(PyObject *o, void *p)
 {
   /* No type checking (this is `self` not a user defined argument). */
   BLI_assert(BPy_StructRNA_Check(o));
-  BLI_assert(RNA_struct_is_a(((const BPy_StructRNA *)o)->ptr->type, &RNA_Gizmo));
+  BLI_assert(RNA_struct_is_a(((const BPy_StructRNA *)o)->ptr->type, RNA_Gizmo));
 
   wmGizmo **gz_p = static_cast<wmGizmo **>(p);
   *gz_p = static_cast<wmGizmo *>((reinterpret_cast<const BPy_StructRNA *>(o))->ptr->data);
@@ -311,7 +311,7 @@ static void py_rna_gizmo_handler_free_cb(const wmGizmo * /*gz*/, wmGizmoProperty
   }
   PyGILState_Release(gilstate);
 
-  MEM_freeN(data);
+  MEM_delete(data);
 }
 
 PyDoc_STRVAR(
@@ -345,7 +345,6 @@ static PyObject *bpy_gizmo_target_set_handler(PyObject * /*self*/, PyObject *arg
    * (see: rna_wm_gizmo_api.cc). conventions should match. */
   static const char *const _keywords[] = {"self", "target", "get", "set", "range", nullptr};
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `self` */
       "O&" /* `target` */
       "|$" /* Optional keyword only arguments. */
@@ -398,7 +397,7 @@ static PyObject *bpy_gizmo_target_set_handler(PyObject * /*self*/, PyObject *arg
     }
   }
 
-  data = MEM_callocN<BPyGizmoHandlerUserData>(__func__);
+  data = MEM_new_zeroed<BPyGizmoHandlerUserData>(__func__);
 
   for (int i = 0; i < BPY_GIZMO_FN_SLOT_LEN; i++) {
     data->fn_slots[i] = params.py_fn_slots[i];
@@ -448,7 +447,6 @@ static PyObject *bpy_gizmo_target_get_value(PyObject * /*self*/, PyObject *args,
 
   static const char *const _keywords[] = {"self", "target", nullptr};
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `self` */
       "O&" /* `target` */
       ":target_get_value",
@@ -519,7 +517,6 @@ static PyObject *bpy_gizmo_target_set_value(PyObject * /*self*/, PyObject *args,
 
   static const char *const _keywords[] = {"self", "target", "value", nullptr};
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `self` */
       "O&" /* `target` */
       "O"  /* `value` */
@@ -605,7 +602,6 @@ static PyObject *bpy_gizmo_target_get_range(PyObject * /*self*/, PyObject *args,
 
   static const char *const _keywords[] = {"self", "target", nullptr};
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `self` */
       "O&" /* `target` */
       ":target_get_range",

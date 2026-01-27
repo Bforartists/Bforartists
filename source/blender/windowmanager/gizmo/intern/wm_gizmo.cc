@@ -52,7 +52,7 @@ static wmGizmo *wm_gizmo_create(const wmGizmoType *gzt, PointerRNA *properties)
   /* FIXME: Old C-style allocation is not trivial to port to C++ here, because actual allocation
    * depends on the 'subtype' of gizmo. The whole gizmo type hierarchy should probably be moved to
    * proper C++ virtual inheritance at some point. */
-  wmGizmo *gz = static_cast<wmGizmo *>(MEM_callocN(gzt->struct_size, __func__));
+  wmGizmo *gz = static_cast<wmGizmo *>(MEM_new_zeroed(gzt->struct_size, __func__));
   new (gz) wmGizmo();
   gz->type = gzt;
 
@@ -159,7 +159,7 @@ void WM_gizmo_free(wmGizmo *gz)
   /* Explicit calling of the destructor is needed here because allocation still happens 'the C
    * way', see FIXME note in #wm_gizmo_create. */
   gz->~wmGizmo();
-  MEM_freeN(static_cast<void *>(gz));
+  MEM_delete_void(static_cast<void *>(gz));
 }
 
 void WM_gizmo_unlink(ListBaseT<wmGizmo> *gizmolist, wmGizmoMap *gzmap, wmGizmo *gz, bContext *C)
@@ -599,7 +599,7 @@ void WM_gizmo_properties_create(PointerRNA *ptr, const StringRef gtstring)
     WM_gizmo_properties_create_ptr(ptr, const_cast<wmGizmoType *>(gzt));
   }
   else {
-    *ptr = RNA_pointer_create_discrete(nullptr, &RNA_GizmoProperties, nullptr);
+    *ptr = RNA_pointer_create_discrete(nullptr, RNA_GizmoProperties, nullptr);
   }
 }
 
@@ -633,7 +633,7 @@ void WM_gizmo_properties_sanitize(PointerRNA *ptr, const bool no_context)
         StructRNA *ptype = RNA_property_pointer_type(ptr, prop);
 
         /* Recurse into gizmo properties. */
-        if (RNA_struct_is_a(ptype, &RNA_GizmoProperties)) {
+        if (RNA_struct_is_a(ptype, RNA_GizmoProperties)) {
           PointerRNA opptr = RNA_property_pointer_get(ptr, prop);
           WM_gizmo_properties_sanitize(&opptr, no_context);
         }
@@ -653,7 +653,7 @@ bool WM_gizmo_properties_default(PointerRNA *ptr, const bool do_update)
     switch (RNA_property_type(prop)) {
       case PROP_POINTER: {
         StructRNA *ptype = RNA_property_pointer_type(ptr, prop);
-        if (ptype != &RNA_Struct) {
+        if (ptype != RNA_Struct) {
           PointerRNA opptr = RNA_property_pointer_get(ptr, prop);
           changed |= WM_gizmo_properties_default(&opptr, do_update);
         }

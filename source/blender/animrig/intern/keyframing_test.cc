@@ -24,6 +24,7 @@
 #include "DNA_object_types.h"
 
 #include "RNA_access.hh"
+#include "RNA_define.hh"
 #include "RNA_prototypes.hh"
 
 #include "BLI_listbase.h"
@@ -67,11 +68,14 @@ class KeyframingTest : public testing::Test {
 
     /* To make id_can_have_animdata() and friends work, the `id_types` array needs to be set up. */
     BKE_idtype_init();
+
+    RNA_init();
   }
 
   static void TearDownTestSuite()
   {
     CLG_exit();
+    RNA_exit();
   }
 
   void SetUp() override
@@ -81,7 +85,7 @@ class KeyframingTest : public testing::Test {
     object = BKE_object_add_only_object(bmain, OB_EMPTY, "Empty");
     object_rna_pointer = RNA_id_pointer_create(&object->id);
 
-    Bone *bone = MEM_new_for_free<Bone>("BONE");
+    Bone *bone = MEM_new<Bone>("BONE");
     STRNCPY(bone->name, "Bone");
 
     armature = BKE_armature_add(bmain, "Armature");
@@ -475,7 +479,7 @@ TEST_F(KeyframingTest, insert_keyframes__pose_bone_rna_pointer)
   AnimationEvalContext anim_eval_context = {nullptr, 1.0};
   bPoseChannel *pchan = BKE_pose_channel_find_name(armature_object->pose, "Bone");
   PointerRNA pose_bone_rna_pointer = RNA_pointer_create_discrete(
-      &armature_object->id, &RNA_PoseBone, pchan);
+      &armature_object->id, RNA_PoseBone, pchan);
 
   const CombinedKeyingResult result = insert_keyframes(bmain,
                                                        &pose_bone_rna_pointer,

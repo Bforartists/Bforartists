@@ -405,7 +405,7 @@ static wmOperatorStatus uv_move_on_axis_exec(bContext *C, wmOperator *op)
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -817,7 +817,7 @@ static wmOperatorStatus uv_arrange_islands_exec(bContext *C, wmOperator *op)
     }
     if (uvedit_uv_islands_arrange(scene, em->bm, axis, align, order, margin, position)) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -949,7 +949,7 @@ static void uv_weld(bContext *C)
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1008,7 +1008,7 @@ static void uv_align(bContext *C, eUVWeldAlign tool, UVAlignPositionMode positio
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1120,11 +1120,11 @@ static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *o
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       scene, view_layer, nullptr);
 
-  bool *changed = MEM_calloc_arrayN<bool>(objects.size(), __func__);
+  bool *changed = MEM_new_array_zeroed<bool>(objects.size(), __func__);
 
   /* Maximum index of an objects[i]'s UVs in UV_arr.
    * It helps find which UV in *uv_map_arr belongs to which object. */
-  uint *ob_uv_map_max_idx = MEM_calloc_arrayN<uint>(objects.size(), __func__);
+  uint *ob_uv_map_max_idx = MEM_new_array_zeroed<uint>(objects.size(), __func__);
 
   /* Calculate max possible number of kdtree nodes. */
   int uv_maxlen = 0;
@@ -1163,7 +1163,7 @@ static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *o
 
   if (found_duplicates > 0) {
     /* Calculate average uv for duplicates. */
-    int *uv_duplicate_count = MEM_calloc_arrayN<int>(uv_map_count, __func__);
+    int *uv_duplicate_count = MEM_new_array_zeroed<int>(uv_map_count, __func__);
     for (int i = 0; i < uv_map_count; i++) {
       if (duplicates[i] == -1) { /* If doesn't reference another */
         uv_duplicate_count[i]++; /* self */
@@ -1185,7 +1185,7 @@ static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *o
 
       mul_v2_fl(uv_map_arr[i], 1.0f / float(uv_duplicate_count[i]));
     }
-    MEM_freeN(uv_duplicate_count);
+    MEM_delete(uv_duplicate_count);
 
     /* Update duplicated uvs. */
     uint ob_index = 0;
@@ -1209,15 +1209,15 @@ static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *o
       if (changed[ob_index]) {
         Object *obedit = objects[ob_index];
         uvedit_live_unwrap_update(sima, scene, obedit);
-        DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+        DEG_id_tag_update(obedit->data, 0);
         WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
       }
     }
   }
 
   kdtree_2d_free(tree);
-  MEM_freeN(changed);
-  MEM_freeN(ob_uv_map_max_idx);
+  MEM_delete(changed);
+  MEM_delete(ob_uv_map_max_idx);
 
   return OPERATOR_FINISHED;
 }
@@ -1270,7 +1270,7 @@ static wmOperatorStatus uv_remove_doubles_to_unselected(bContext *C, wmOperator 
 
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1382,7 +1382,7 @@ static wmOperatorStatus uv_remove_doubles_to_selected_shared_vertex(bContext *C,
     }
     if (changed) {
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1703,7 +1703,7 @@ static wmOperatorStatus uv_snap_selection_exec(bContext *C, wmOperator *op)
     if (changed) {
       changed_multi = true;
       uvedit_live_unwrap_update(sima, scene, obedit);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }
@@ -1794,7 +1794,7 @@ static wmOperatorStatus uv_pin_exec(bContext *C, wmOperator *op)
 
     if (changed) {
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SYNC_TO_EVAL);
+      DEG_id_tag_update(obedit->data, ID_RECALC_SYNC_TO_EVAL);
     }
   }
 
@@ -2109,7 +2109,7 @@ static wmOperatorStatus uv_hide_exec(bContext *C, wmOperator *op)
 
     BM_select_history_validate(em->bm);
 
-    DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(ob->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
   }
 
@@ -2257,7 +2257,7 @@ static wmOperatorStatus uv_reveal_exec(bContext *C, wmOperator *op)
     /* re-select tagged faces */
     BM_mesh_elem_hflag_enable_test(em->bm, BM_FACE, BM_ELEM_SELECT, true, false, BM_ELEM_TAG);
 
-    DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(ob->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
   }
 
@@ -2701,7 +2701,7 @@ static wmOperatorStatus uv_copy_mirrored_faces_exec(bContext *C, wmOperator *op)
     }
 
     if (changed) {
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
     }
   }

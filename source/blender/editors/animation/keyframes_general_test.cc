@@ -20,6 +20,8 @@
 #include "DNA_anim_types.h"
 #include "DNA_object_types.h"
 
+#include "RNA_define.hh"
+
 #include "ED_keyframes_edit.hh"
 
 namespace blender {
@@ -94,11 +96,13 @@ struct keyframes_paste : public testing::Test {
   static void SetUpTestSuite()
   {
     ANIM_fcurves_copybuf_reset();
+    RNA_init();
   }
 
   static void TearDownTestSuite()
   {
     ANIM_fcurves_copybuf_free();
+    RNA_exit();
   }
 };
 
@@ -524,7 +528,7 @@ TEST_F(keyframes_paste, pastebuf_match_path_property)
 
     bArmature *armature = BKE_armature_add(bmain, "Armature");
     for (const auto &bone_name : {"hand.L", "hand.R", "middle"}) {
-      Bone *bone = MEM_new_for_free<Bone>(__func__);
+      Bone *bone = MEM_new<Bone>(__func__);
       STRNCPY_UTF8(bone->name, bone_name);
       BLI_addtail(&armature->bonebase, bone);
     }

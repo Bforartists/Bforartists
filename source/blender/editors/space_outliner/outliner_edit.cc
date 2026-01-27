@@ -62,6 +62,7 @@
 #include "WM_types.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_c.hh"
 #include "UI_interface_layout.hh"
 #include "UI_view2d.hh"
 
@@ -244,7 +245,7 @@ static wmOperatorStatus outliner_item_openclose_modal(bContext *C,
     }
   }
   else if (event->val == KM_RELEASE) {
-    MEM_freeN(data);
+    MEM_delete(data);
 
     return OPERATOR_FINISHED;
   }
@@ -285,7 +286,7 @@ static wmOperatorStatus outliner_item_openclose_invoke(bContext *C,
     }
 
     /* Store last expanded tselem and x coordinate of disclosure triangle */
-    OpenCloseData *toggle_data = MEM_callocN<OpenCloseData>("open_close_data");
+    OpenCloseData *toggle_data = MEM_new_zeroed<OpenCloseData>("open_close_data");
     toggle_data->prev_tselem = tselem;
     toggle_data->open = open;
     toggle_data->x_location = te->xs;
@@ -764,10 +765,11 @@ static wmOperatorStatus outliner_id_remap_exec(bContext *C, wmOperator *op)
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
 
   const short id_type = short(RNA_enum_get(op->ptr, "id_type"));
-  ID *old_id = static_cast<ID *>(
-      BLI_findlink(which_libbase(CTX_data_main(C), id_type), RNA_enum_get(op->ptr, "old_id")));
-  ID *new_id = static_cast<ID *>(
-      BLI_findlink(which_libbase(CTX_data_main(C), id_type), RNA_enum_get(op->ptr, "new_id")));
+
+  const uint32_t old_session_uid = RNA_int_get(op->ptr, "old_id");
+  const uint32_t new_session_uid = RNA_int_get(op->ptr, "new_id");
+  ID *old_id = BKE_libblock_find_session_uid(bmain, id_type, old_session_uid);
+  ID *new_id = BKE_libblock_find_session_uid(bmain, id_type, new_session_uid);
 
   /* check for invalid states */
   if (space_outliner == nullptr) {
@@ -819,8 +821,8 @@ static bool outliner_id_remap_find_tree_element(bContext *C,
 
       if ((tselem->type == TSE_SOME_ID) && tselem->id) {
         RNA_enum_set(op->ptr, "id_type", GS(tselem->id->name));
-        RNA_enum_set_identifier(C, op->ptr, "new_id", tselem->id->name + 2);
-        RNA_enum_set_identifier(C, op->ptr, "old_id", tselem->id->name + 2);
+        RNA_int_set(op->ptr, "new_id", int(tselem->id->session_uid));
+        RNA_int_set(op->ptr, "old_id", int(tselem->id->session_uid));
         return true;
       }
     }
@@ -846,32 +848,11 @@ static wmOperatorStatus outliner_id_remap_invoke(bContext *C, wmOperator *op, co
   return WM_operator_props_dialog_popup(C, op, 400, IFACE_("Remap Data ID"), IFACE_("Remap"));
 }
 
-static const EnumPropertyItem *outliner_id_itemf(bContext *C,
-                                                 PointerRNA *ptr,
-                                                 PropertyRNA * /*prop*/,
-                                                 bool *r_free)
+static void outliner_id_remap_ui(bContext *C, wmOperator *op)
 {
-  if (C == nullptr) {
-    return rna_enum_dummy_NULL_items;
-  }
-
-  EnumPropertyItem item_tmp = {0}, *item = nullptr;
-  int totitem = 0;
-  int i = 0;
-
-  short id_type = short(RNA_enum_get(ptr, "id_type"));
-  ID *id = static_cast<ID *>(which_libbase(CTX_data_main(C), id_type)->first);
-
-  for (; id; id = static_cast<ID *>(id->next)) {
-    item_tmp.identifier = item_tmp.name = id->name + 2;
-    item_tmp.value = i++;
-    RNA_enum_item_add(&item, &totitem, &item_tmp);
-  }
-
-  RNA_enum_item_end(&item, &totitem);
-  *r_free = true;
-
-  return item;
+  ui::Layout &layout = *op->layout;
+  layout.use_property_split_set(true);
+  ui::template_ID_session_uid(layout, C, op->ptr, "new_id", RNA_enum_get(op->ptr, "id_type"));
 }
 
 void OUTLINER_OT_id_remap(wmOperatorType *ot)
@@ -884,6 +865,7 @@ void OUTLINER_OT_id_remap(wmOperatorType *ot)
 
   /* callbacks */
   ot->invoke = outliner_id_remap_invoke;
+  ot->ui = outliner_id_remap_ui;
   ot->exec = outliner_id_remap_exec;
   ot->poll = ED_operator_region_outliner_active;
 
@@ -896,28 +878,22 @@ void OUTLINER_OT_id_remap(wmOperatorType *ot)
    */
   RNA_def_property_flag(prop, PROP_HIDDEN);
 
-  prop = RNA_def_enum(
-      ot->srna, "old_id", rna_enum_dummy_NULL_items, 0, "Old ID", "Old ID to replace");
-  RNA_def_property_enum_funcs_runtime(prop, nullptr, nullptr, outliner_id_itemf, nullptr, nullptr);
-  RNA_def_property_flag(prop, PROP_ENUM_NO_TRANSLATE | PROP_HIDDEN);
+  prop = RNA_def_int(
+      ot->srna, "old_id", 0, 0, 0, "Old ID", "Old ID's session uid to remap data from", 0, 0);
+  RNA_def_property_flag(prop, PROP_HIDDEN);
 
-  ot->prop = RNA_def_enum(ot->srna,
-                          "new_id",
-                          rna_enum_dummy_NULL_items,
-                          0,
-                          "New ID",
-                          "New ID to remap all selected IDs' users to");
-  RNA_def_property_enum_funcs_runtime(
-      ot->prop, nullptr, nullptr, outliner_id_itemf, nullptr, nullptr);
-  RNA_def_property_flag(ot->prop, PROP_ENUM_NO_TRANSLATE);
+  ot->prop = RNA_def_int(ot->srna,
+                         "new_id",
+                         0,
+                         0,
+                         0,
+                         "New ID",
+                         "New ID's session uid to remap all selected IDs' users to",
+                         0,
+                         0);
 }
 
-void id_remap_fn(bContext *C,
-                 ReportList * /*reports*/,
-                 Scene * /*scene*/,
-                 TreeElement * /*te*/,
-                 TreeStoreElem * /*tsep*/,
-                 TreeStoreElem *tselem)
+void id_remap_fn(bContext *C, TreeStoreElem *tselem)
 {
   wmOperatorType *ot = WM_operatortype_find("OUTLINER_OT_id_remap", false);
 
@@ -926,7 +902,7 @@ void id_remap_fn(bContext *C,
   PointerRNA op_props = WM_operator_properties_create_ptr(ot);
 
   RNA_enum_set(&op_props, "id_type", GS(tselem->id->name));
-  RNA_enum_set_identifier(C, &op_props, "old_id", tselem->id->name + 2);
+  RNA_int_set(&op_props, "old_id", int(tselem->id->session_uid));
 
   WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &op_props, nullptr);
 
@@ -1074,7 +1050,7 @@ static wmOperatorStatus outliner_id_relocate_invoke(bContext *C,
                                                     wmOperator *op,
                                                     const wmEvent * /*event*/)
 {
-  PointerRNA id_linked_ptr = CTX_data_pointer_get_type(C, "id", &RNA_ID);
+  PointerRNA id_linked_ptr = CTX_data_pointer_get_type(C, "id", RNA_ID);
   ID *id_linked = static_cast<ID *>(id_linked_ptr.data);
 
   if (!id_linked) {
@@ -1964,7 +1940,7 @@ static void tree_element_to_path(TreeElement *te,
 
   /* step 1: flatten out hierarchy of parents into a flat chain */
   for (TreeElement *tem = te->parent; tem; tem = tem->parent) {
-    LinkData *ld = MEM_callocN<LinkData>("LinkData for tree_element_to_path()");
+    LinkData *ld = MEM_new_zeroed<LinkData>("LinkData for tree_element_to_path()");
     ld->data = tem;
     BLI_addhead(&hierarchy, ld);
   }
@@ -2002,7 +1978,7 @@ static void tree_element_to_path(TreeElement *te,
             newpath = RNA_path_append(*path, nullptr, prop, 0, name);
 
             if (name != buf) {
-              MEM_freeN(name);
+              MEM_delete(name);
             }
           }
           else {
@@ -2024,7 +2000,7 @@ static void tree_element_to_path(TreeElement *te,
 
       if (newpath) {
         if (*path) {
-          MEM_freeN(*path);
+          MEM_delete(*path);
         }
         *path = newpath;
         newpath = nullptr;
@@ -2041,7 +2017,7 @@ static void tree_element_to_path(TreeElement *te,
 
           /* clear path */
           if (*path) {
-            MEM_freeN(*path);
+            MEM_delete(*path);
             path = nullptr;
           }
         }
@@ -2067,7 +2043,7 @@ static void tree_element_to_path(TreeElement *te,
     /* path */
     newpath = RNA_path_append(*path, nullptr, prop, 0, nullptr);
     if (*path) {
-      MEM_freeN(*path);
+      MEM_delete(*path);
     }
     *path = newpath;
   }
@@ -2158,7 +2134,7 @@ static void do_outliner_drivers_editop(SpaceOutliner *space_outliner,
       }
 
       /* free path, since it had to be generated */
-      MEM_freeN(path);
+      MEM_delete(path);
     }
   });
 }
@@ -2342,7 +2318,7 @@ static void do_outliner_keyingset_editop(SpaceOutliner *space_outliner,
       }
 
       /* free path, since it had to be generated */
-      MEM_freeN(path);
+      MEM_delete(path);
     }
   });
 }

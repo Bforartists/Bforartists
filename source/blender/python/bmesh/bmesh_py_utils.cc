@@ -287,7 +287,7 @@ static PyObject *bpy_bm_utils_vert_separate(PyObject * /*self*/, PyObject *args)
   BM_vert_separate(bm, py_vert->v, edge_array, edge_array_num, false, &elem, &elem_len);
   /* return collected verts */
   ret = BPy_BMVert_Array_As_Tuple(bm, elem, elem_len);
-  MEM_freeN(elem);
+  MEM_delete(elem);
 
   PyMem_FREE(edge_array);
 
@@ -798,7 +798,6 @@ static PyObject *bpy_bm_utils_uv_select_check(PyObject * /*self*/, PyObject *arg
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O!" /* `bm` */
       "|$" /* Optional keyword only arguments. */
       "O&" /* `sync` */

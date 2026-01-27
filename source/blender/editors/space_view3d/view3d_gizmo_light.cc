@@ -82,7 +82,7 @@ static void gizmo_spot_blend_foreach_rna_prop(
   ViewLayer *view_layer = CTX_data_view_layer(C);
   BKE_view_layer_synced_ensure(scene, view_layer);
   Light *la = id_cast<Light *>(BKE_view_layer_active_object_get(view_layer)->data);
-  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, &RNA_Light, la);
+  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, RNA_Light, la);
   PropertyRNA *spot_blend_prop = RNA_struct_find_property(&light_ptr, "spot_blend");
 
   callback(light_ptr, spot_blend_prop, 0);
@@ -107,7 +107,7 @@ static void gizmo_spot_blend_prop_matrix_set(const wmGizmo * /*gz*/,
 
   float spot_blend = safe_divide(clamp_f(c - a, 0.0f, 1.0f - a), 1.0f - a);
 
-  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, &RNA_Light, la);
+  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, RNA_Light, la);
   PropertyRNA *spot_blend_prop = RNA_struct_find_property(&light_ptr, "spot_blend");
   RNA_property_float_set(&light_ptr, spot_blend_prop, spot_blend);
 
@@ -124,7 +124,7 @@ static void gizmo_light_radius_foreach_rna_prop(
   ViewLayer *view_layer = CTX_data_view_layer(C);
   BKE_view_layer_synced_ensure(scene, view_layer);
   Light *la = id_cast<Light *>(BKE_view_layer_active_object_get(view_layer)->data);
-  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, &RNA_Light, la);
+  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, RNA_Light, la);
   PropertyRNA *radius_prop = RNA_struct_find_property(&light_ptr, "shadow_soft_size");
 
   callback(light_ptr, radius_prop, 0);
@@ -162,7 +162,7 @@ static void gizmo_light_radius_prop_matrix_set(const wmGizmo * /*gz*/,
 
   const float radius = 0.5f * len_v3(matrix[0]);
 
-  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, &RNA_Light, la);
+  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, RNA_Light, la);
   PropertyRNA *radius_prop = RNA_struct_find_property(&light_ptr, "shadow_soft_size");
   RNA_property_float_set(&light_ptr, radius_prop, radius);
 
@@ -199,7 +199,7 @@ static bool WIDGETGROUP_light_spot_poll(const bContext *C, wmGizmoGroupType * /*
 
 static void WIDGETGROUP_light_spot_setup(const bContext *C, wmGizmoGroup *gzgroup)
 {
-  LightSpotWidgetGroup *ls_gzgroup = MEM_mallocN<LightSpotWidgetGroup>(__func__);
+  LightSpotWidgetGroup *ls_gzgroup = MEM_new_uninitialized<LightSpotWidgetGroup>(__func__);
 
   gzgroup->customdata = ls_gzgroup;
 
@@ -271,7 +271,7 @@ static void WIDGETGROUP_light_spot_refresh(const bContext *C, wmGizmoGroup *gzgr
 
   /* Spot angle gizmo. */
   {
-    PointerRNA lamp_ptr = RNA_pointer_create_discrete(&la->id, &RNA_Light, la);
+    PointerRNA lamp_ptr = RNA_pointer_create_discrete(&la->id, RNA_Light, la);
 
     wmGizmo *gz = ls_gzgroup->spot_angle;
     float dir[3];
@@ -364,7 +364,7 @@ static bool WIDGETGROUP_light_point_poll(const bContext *C, wmGizmoGroupType * /
 
 static void WIDGETGROUP_light_point_setup(const bContext *C, wmGizmoGroup *gzgroup)
 {
-  wmGizmoWrapper *wwrapper = MEM_mallocN<wmGizmoWrapper>(__func__);
+  wmGizmoWrapper *wwrapper = MEM_new_uninitialized<wmGizmoWrapper>(__func__);
   wwrapper->gizmo = WM_gizmo_new("GIZMO_GT_cage_2d", gzgroup, nullptr);
   /* Point radius gizmo. */
   wmGizmo *gz = wwrapper->gizmo;
@@ -435,7 +435,7 @@ static void gizmo_area_light_foreach_rna_prop(
     const FunctionRef<void(PointerRNA &ptr, PropertyRNA *prop, int index)> callback)
 {
   Light *la = static_cast<Light *>(gz_prop->custom_func.user_data);
-  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, &RNA_Light, la);
+  PointerRNA light_ptr = RNA_pointer_create_discrete(&la->id, RNA_Light, la);
 
   PropertyRNA *area_size_prop = RNA_struct_find_property(&light_ptr, "size");
   callback(light_ptr, area_size_prop, 0);
@@ -509,7 +509,7 @@ static bool WIDGETGROUP_light_area_poll(const bContext *C, wmGizmoGroupType * /*
 
 static void WIDGETGROUP_light_area_setup(const bContext * /*C*/, wmGizmoGroup *gzgroup)
 {
-  wmGizmoWrapper *wwrapper = MEM_mallocN<wmGizmoWrapper>(__func__);
+  wmGizmoWrapper *wwrapper = MEM_new_uninitialized<wmGizmoWrapper>(__func__);
   wwrapper->gizmo = WM_gizmo_new("GIZMO_GT_cage_2d", gzgroup, nullptr);
   wmGizmo *gz = wwrapper->gizmo;
   RNA_enum_set(gz->ptr, "transform", ED_GIZMO_CAGE_XFORM_FLAG_SCALE);
@@ -610,7 +610,7 @@ static bool WIDGETGROUP_light_target_poll(const bContext *C, wmGizmoGroupType * 
 
 static void WIDGETGROUP_light_target_setup(const bContext * /*C*/, wmGizmoGroup *gzgroup)
 {
-  wmGizmoWrapper *wwrapper = MEM_mallocN<wmGizmoWrapper>(__func__);
+  wmGizmoWrapper *wwrapper = MEM_new_uninitialized<wmGizmoWrapper>(__func__);
   wwrapper->gizmo = WM_gizmo_new("GIZMO_GT_move_3d", gzgroup, nullptr);
   wmGizmo *gz = wwrapper->gizmo;
 

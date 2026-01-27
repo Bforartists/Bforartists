@@ -187,7 +187,7 @@ void library_selector_draw(const bContext *C, ui::Layout &layout, AssetShelf &sh
   layout.operator_context_set(wm::OpCallContext::InvokeDefault);
 
   PointerRNA shelf_ptr = RNA_pointer_create_discrete(
-      &CTX_wm_screen(C)->id, &RNA_AssetShelf, &shelf);
+      &CTX_wm_screen(C)->id, RNA_AssetShelf, &shelf);
 
   ui::Layout &row = layout.row(true);
   row.prop(&shelf_ptr, "asset_library_reference", UI_ITEM_NONE, "", ICON_NONE);
@@ -230,7 +230,7 @@ void catalog_selector_panel_register(ARegionType *region_type)
     return;
   }
 
-  PanelType *pt = MEM_callocN<PanelType>(__func__);
+  PanelType *pt = MEM_new_zeroed<PanelType>(__func__);
   STRNCPY_UTF8(pt->idname, "ASSETSHELF_PT_catalog_selector");
   STRNCPY_UTF8(pt->label, N_("Catalog Selector"));
   STRNCPY_UTF8(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);

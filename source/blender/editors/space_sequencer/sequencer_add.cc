@@ -198,7 +198,7 @@ static void sequencer_add_ui(bContext * /*C*/, wmOperator *op)
   layout.separator();
 
   /* Image template. */
-  PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, &RNA_ImageFormatSettings, imf);
+  PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, RNA_ImageFormatSettings, imf);
 
   /* Multiview template. */
   if (RNA_boolean_get(op->ptr, "show_multiview")) {
@@ -1181,7 +1181,7 @@ static void seq_build_proxy(bContext *C, Span<Strip *> movie_strips)
     seq::proxy_set(strip, true);
     strip->data->proxy->build_size_flags = seq_get_proxy_size_flags(C);
     strip->data->proxy->build_flags |= SEQ_PROXY_SKIP_EXISTING;
-    seq::proxy_rebuild_context(pj->main, pj->scene, strip, nullptr, true, pj->queue);
+    seq::proxy_build_start(pj->main, pj->scene, strip, nullptr, true, pj->queue);
   }
 
   if (!WM_jobs_is_running(wm_job)) {
@@ -1693,7 +1693,7 @@ void sequencer_image_strip_reserve_frames(
       SNPRINTF(se->filename, "%s%s", filename_stripped, ext);
     }
 
-    MEM_freeN(filename);
+    MEM_delete(filename);
   }
 }
 

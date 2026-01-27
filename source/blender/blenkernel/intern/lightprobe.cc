@@ -44,7 +44,7 @@ static void lightprobe_blend_write(BlendWriter *writer, ID *id, const void *id_a
   LightProbe *prb = id_cast<LightProbe *>(id);
 
   /* write LibData */
-  BLO_write_id_struct(writer, LightProbe, id_address, &prb->id);
+  writer->write_id_struct(id_address, prb);
   BKE_id_blend_write(writer, &prb->id);
 }
 
@@ -115,7 +115,7 @@ LightProbe *BKE_lightprobe_add(Main *bmain, const char *name)
 static void lightprobe_grid_cache_frame_blend_write(BlendWriter *writer,
                                                     const LightProbeGridCacheFrame *cache)
 {
-  BLO_write_struct_array(writer, LightProbeGridCacheFrame, cache->block_len, cache->block_infos);
+  writer->write_struct_array(cache->block_len, cache->block_infos);
 
   int64_t sample_count = BKE_lightprobe_grid_cache_frame_sample_count(cache);
 
@@ -190,34 +190,33 @@ void BKE_lightprobe_cache_blend_read(BlendDataReader *reader, LightProbeObjectCa
 
 template<typename T> static void spherical_harmonic_free(T &data)
 {
-  MEM_SAFE_FREE(data.L0);
-  MEM_SAFE_FREE(data.L1_a);
-  MEM_SAFE_FREE(data.L1_b);
-  MEM_SAFE_FREE(data.L1_c);
+  MEM_SAFE_DELETE(data.L0);
+  MEM_SAFE_DELETE(data.L1_a);
+  MEM_SAFE_DELETE(data.L1_b);
+  MEM_SAFE_DELETE(data.L1_c);
 }
 
 template<typename DataT, typename T> static void spherical_harmonic_copy(T &dst, T &src)
 {
-  dst.L0 = static_cast<DataT *>(MEM_dupallocN(src.L0));
-  dst.L1_a = static_cast<DataT *>(MEM_dupallocN(src.L1_a));
-  dst.L1_b = static_cast<DataT *>(MEM_dupallocN(src.L1_b));
-  dst.L1_c = static_cast<DataT *>(MEM_dupallocN(src.L1_c));
+  dst.L0 = MEM_dupalloc(src.L0);
+  dst.L1_a = MEM_dupalloc(src.L1_a);
+  dst.L1_b = MEM_dupalloc(src.L1_b);
+  dst.L1_c = MEM_dupalloc(src.L1_c);
 }
 
 LightProbeGridCacheFrame *BKE_lightprobe_grid_cache_frame_create()
 {
-  LightProbeGridCacheFrame *cache = MEM_new_for_free<LightProbeGridCacheFrame>(
-      "LightProbeGridCacheFrame");
+  LightProbeGridCacheFrame *cache = MEM_new<LightProbeGridCacheFrame>("LightProbeGridCacheFrame");
   return cache;
 }
 
 LightProbeGridCacheFrame *BKE_lightprobe_grid_cache_frame_copy(LightProbeGridCacheFrame *src)
 {
-  LightProbeGridCacheFrame *dst = static_cast<LightProbeGridCacheFrame *>(MEM_dupallocN(src));
-  dst->block_infos = static_cast<LightProbeBlockData *>(MEM_dupallocN(src->block_infos));
+  LightProbeGridCacheFrame *dst = MEM_dupalloc(src);
+  dst->block_infos = MEM_dupalloc(src->block_infos);
   spherical_harmonic_copy<float[3]>(dst->irradiance, src->irradiance);
   spherical_harmonic_copy<float>(dst->visibility, src->visibility);
-  dst->connectivity.validity = static_cast<uint8_t *>(MEM_dupallocN(src->connectivity.validity));
+  dst->connectivity.validity = MEM_dupalloc(src->connectivity.validity);
   /* NOTE: Don't copy baking since it wouldn't be freed nor updated after completion. */
   dst->baking.L0 = nullptr;
   dst->baking.L1_a = nullptr;
@@ -231,31 +230,30 @@ LightProbeGridCacheFrame *BKE_lightprobe_grid_cache_frame_copy(LightProbeGridCac
 
 void BKE_lightprobe_grid_cache_frame_free(LightProbeGridCacheFrame *cache)
 {
-  MEM_SAFE_FREE(cache->block_infos);
+  MEM_SAFE_DELETE(cache->block_infos);
   spherical_harmonic_free(cache->baking);
   spherical_harmonic_free(cache->irradiance);
   spherical_harmonic_free(cache->visibility);
-  MEM_SAFE_FREE(cache->baking.validity);
-  MEM_SAFE_FREE(cache->connectivity.validity);
-  MEM_SAFE_FREE(cache->surfels);
-  MEM_SAFE_FREE(cache->baking.virtual_offset);
+  MEM_SAFE_DELETE(cache->baking.validity);
+  MEM_SAFE_DELETE(cache->connectivity.validity);
+  MEM_SAFE_DELETE_VOID(cache->surfels);
+  MEM_SAFE_DELETE(cache->baking.virtual_offset);
 
-  MEM_SAFE_FREE(cache);
+  MEM_SAFE_DELETE(cache);
 }
 
 void BKE_lightprobe_cache_create(Object *object)
 {
   BLI_assert(object->lightprobe_cache == nullptr);
 
-  object->lightprobe_cache = MEM_new_for_free<LightProbeObjectCache>("LightProbeObjectCache");
+  object->lightprobe_cache = MEM_new<LightProbeObjectCache>("LightProbeObjectCache");
 }
 
 LightProbeObjectCache *BKE_lightprobe_cache_copy(LightProbeObjectCache *src_cache)
 {
   BLI_assert(src_cache != nullptr);
 
-  LightProbeObjectCache *dst_cache = static_cast<LightProbeObjectCache *>(
-      MEM_dupallocN(src_cache));
+  LightProbeObjectCache *dst_cache = MEM_dupalloc(src_cache);
 
   if (src_cache->grid_static_cache) {
     dst_cache->grid_static_cache = BKE_lightprobe_grid_cache_frame_copy(
@@ -278,7 +276,7 @@ void BKE_lightprobe_cache_free(Object *object)
     }
   }
 
-  MEM_SAFE_FREE(object->lightprobe_cache);
+  MEM_SAFE_DELETE(object->lightprobe_cache);
 }
 
 int64_t BKE_lightprobe_grid_cache_frame_sample_count(const LightProbeGridCacheFrame *cache)

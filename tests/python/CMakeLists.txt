@@ -30,9 +30,8 @@ endif()
 
 if(WITH_SYSTEM_PYTHON_TESTS)
   if(NOT EXISTS "${TEST_SYSTEM_PYTHON_EXE}")
-    message(ERROR
-      "'System Python' tests requested but no valid system python path, "
-      "set TEST_SYSTEM_PYTHON_EXE."
+    message(STATUS
+      "Tests: Disabling 'System Python', no valid system python path, set TEST_SYSTEM_PYTHON_EXE."
     )
     set(WITH_SYSTEM_PYTHON_TESTS OFF)
   endif()
@@ -109,7 +108,7 @@ if(WITH_UI_TESTS)
     )
   endif()
   function(add_blender_test_ui testname)
-    # Remove `--background`a
+    # Remove `--background`
     set(EXE_PARAMS ${TEST_BLENDER_EXE_PARAMS})
     list(REMOVE_ITEM EXE_PARAMS --background)
     add_blender_test_impl(
@@ -473,10 +472,20 @@ if(TEST_SRC_DIR_EXISTS)
 
   add_blender_test(
     modifiers
-    ${TEST_SRC_DIR}/modeling/modifiers.blend
-    --python ${TEST_PYTHON_DIR}/modifiers.py
-    --
-    --run-all-tests
+    ${TEST_SRC_DIR}/modeling/modifiers/modifiers.blend
+    --python ${TEST_PYTHON_DIR}/modeling/modifiers/modifiers.py
+  )
+
+  add_blender_test(
+    modifiers_multires
+    ${TEST_SRC_DIR}/modeling/modifiers/multires_modifier.blend
+    --python ${TEST_PYTHON_DIR}/modeling/modifiers/multires_modifier.py
+  )
+
+  add_blender_test(
+    modifiers_armature
+    ${TEST_SRC_DIR}/modeling/modifiers/armature_modifier.blend
+    --python ${TEST_PYTHON_DIR}/modeling/modifiers/armature_modifier.py
   )
 
   add_blender_test(
@@ -542,13 +551,6 @@ if(TEST_SRC_DIR_EXISTS)
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_constraints.py
     --
     --testdir "${TEST_SRC_DIR}/constraints"
-  )
-
-  add_blender_test(
-    multires
-    --python ${TEST_PYTHON_DIR}/bl_multires.py
-    --
-    --testdir "${TEST_SRC_DIR}/sculpting"
   )
 endif()
 
@@ -648,7 +650,7 @@ endif()
 # BRUSH TESTS
 add_blender_test(
   bl_brush
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_brush_test.py
+  --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/brush_asset_test.py
 )
 
 # ------------------------------------------------------------------------------
@@ -1188,7 +1190,7 @@ if(WITH_GPU_RENDER_TESTS AND TEST_SRC_DIR_EXISTS)
   )
 
   if(WITH_TESTS_EXPERIMENTAL)
-    # The viewport tests are flakey and difficult to keep up to date for use
+    # The viewport tests are flaky and difficult to keep up to date for use
     # in a CI environment due to constantly changing UI, but may still be helpful
     # for local development.
     #
@@ -1372,17 +1374,21 @@ endif()
 
 if(TEST_SRC_DIR_EXISTS)
   set(render_tests
-    effects
     filter
     transform
     blend_modes_byte
     blend_modes_float
-    ffmpeg
   )
+  set(video_output_tests)
 
-  set(video_output_tests
-    video_output
-  )
+  if(WITH_LIBMV)
+    list(APPEND render_tests effects)
+  endif()
+
+  if(WITH_CODEC_FFMPEG)
+    list(APPEND render_tests ffmpeg)
+    list(APPEND video_output_tests video_output)
+  endif()
 
   foreach(render_test ${render_tests})
     add_render_test(
@@ -1422,8 +1428,15 @@ endif()
 
 if(TEST_SRC_DIR_EXISTS)
   add_blender_test(
-    bl_sculpt_operators
-    --python ${CMAKE_CURRENT_LIST_DIR}/bl_sculpt.py
+    bl_sculpt_mask
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/mask_test.py
+    --
+    --testdir "${TEST_SRC_DIR}/sculpting"
+  )
+
+  add_blender_test(
+    bl_multires
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/multires_operators_test.py
     --
     --testdir "${TEST_SRC_DIR}/sculpting"
   )
@@ -1452,20 +1465,6 @@ if(TEST_SRC_DIR_EXISTS)
   add_blender_test(
     bl_sculpt_brush_curve_presets
     --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/brush_strength_curves_test.py
-    --
-    --testdir "${TEST_SRC_DIR}/sculpting"
-  )
-
-  add_blender_test(
-    bl_sculpt_mask_filter
-    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/mask_filter_test.py
-    --
-    --testdir "${TEST_SRC_DIR}/sculpting"
-  )
-
-  add_blender_test(
-    bl_sculpt_mask_flood_fill
-    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/mask_flood_fill_test.py
     --
     --testdir "${TEST_SRC_DIR}/sculpting"
   )
@@ -1525,6 +1524,9 @@ if(WITH_UI_TESTS)
     test_fullscreen.wm_toggle_fullscreen
     test_fullscreen.wm_toggle_stacked_fullscreen_file_browser
     test_fullscreen.wm_toggle_stacked_fullscreens
+    test_render.interactive_rendering_cycles
+    test_render.interactive_rendering_eevee
+    test_render.animation_rendering_and_player
   )
   foreach(ui_test ${_ui_tests})
     add_blender_test_ui(
@@ -1549,7 +1551,7 @@ if(TEST_SRC_DIR_EXISTS)
 endif()
 
 # ------------------------------------------------------------------------------
-# Linux Release sainty checks
+# Linux Release sanity checks
 # ------------------------------------------------------------------------------
 
 if(WITH_LINUX_OFFICIAL_RELEASE_TESTS)

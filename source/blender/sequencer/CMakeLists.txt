@@ -117,7 +117,6 @@ set(LIB
   PRIVATE bf::blentranslation
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
-  PRIVATE bf::extern::fmtlib
   PRIVATE bf::extern::xxhash
   PRIVATE bf::gpu
   PRIVATE bf::imbuf
@@ -130,6 +129,7 @@ set(LIB
   PRIVATE bf::windowmanager
   bf_compositor
   PRIVATE bf::dependencies::optional::audaspace
+  PRIVATE bf::dependencies::optional::fftw3
 )
 
 if(WITH_AUDASPACE)

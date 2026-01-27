@@ -888,7 +888,7 @@ void BlenderSession::draw(blender::bScreen &b_screen, blender::SpaceImage &space
 
   if (display_driver_) {
     blender::PointerRNA space_image_rna_ptr = RNA_pointer_create_id_subdata(
-        b_screen.id, &blender::RNA_SpaceImageEditor, &space_image);
+        b_screen.id, blender::RNA_SpaceImageEditor, &space_image);
     float zoom[2];
     RNA_float_get_array(&space_image_rna_ptr, "zoom", zoom);
     display_driver_->set_zoom(zoom[0], zoom[1]);
@@ -1120,7 +1120,7 @@ void BlenderSession::ensure_display_driver_if_needed()
   }
 
   unique_ptr<BlenderDisplayDriver> display_driver = make_unique<BlenderDisplayDriver>(
-      b_engine, *b_scene, background);
+      b_engine, *b_scene, b_rv3d, background);
   display_driver_ = display_driver.get();
   session->set_display_driver(std::move(display_driver));
 }

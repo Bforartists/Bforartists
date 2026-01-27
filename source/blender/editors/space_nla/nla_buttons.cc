@@ -94,16 +94,16 @@ bool nla_panel_context(const bContext *C,
         /* found it, now set the pointers */
         if (adt_ptr) {
           /* AnimData pointer */
-          *adt_ptr = RNA_pointer_create_discrete(ale.id, &RNA_AnimData, adt);
+          *adt_ptr = RNA_pointer_create_discrete(ale.id, RNA_AnimData, adt);
         }
         if (nlt_ptr) {
           /* NLA-Track pointer */
-          *nlt_ptr = RNA_pointer_create_discrete(ale.id, &RNA_NlaTrack, nlt);
+          *nlt_ptr = RNA_pointer_create_discrete(ale.id, RNA_NlaTrack, nlt);
         }
         if (strip_ptr) {
           /* NLA-Strip pointer */
           NlaStrip *strip = BKE_nlastrip_find_active(nlt);
-          *strip_ptr = RNA_pointer_create_discrete(ale.id, &RNA_NlaStrip, strip);
+          *strip_ptr = RNA_pointer_create_discrete(ale.id, RNA_NlaStrip, strip);
         }
 
         found = 1;
@@ -149,7 +149,7 @@ bool nla_panel_context(const bContext *C,
 
           /* AnimData pointer */
           if (adt_ptr) {
-            *adt_ptr = RNA_pointer_create_discrete(id, &RNA_AnimData, ale.adt);
+            *adt_ptr = RNA_pointer_create_discrete(id, RNA_AnimData, ale.adt);
           }
 
           /* set found status to -1, since setting to 1 would break the loop
@@ -664,7 +664,7 @@ void nla_buttons_register(ARegionType *art)
 {
   PanelType *pt;
 
-  pt = MEM_callocN<PanelType>("spacetype nla panel animdata");
+  pt = MEM_new_zeroed<PanelType>("spacetype nla panel animdata");
   STRNCPY_UTF8(pt->idname, "NLA_PT_animdata");
   STRNCPY_UTF8(pt->label, N_("Animation Data"));
   STRNCPY_UTF8(pt->category, "Edited Action");
@@ -674,7 +674,7 @@ void nla_buttons_register(ARegionType *art)
   pt->poll = nla_animdata_panel_poll;
   BLI_addtail(&art->paneltypes, pt);
 
-  pt = MEM_callocN<PanelType>("spacetype nla panel properties");
+  pt = MEM_new_zeroed<PanelType>("spacetype nla panel properties");
   STRNCPY_UTF8(pt->idname, "NLA_PT_stripname");
   STRNCPY_UTF8(pt->label, N_("Active Strip Name"));
   STRNCPY_UTF8(pt->category, "Strip");
@@ -684,7 +684,7 @@ void nla_buttons_register(ARegionType *art)
   pt->poll = nla_strip_panel_poll;
   BLI_addtail(&art->paneltypes, pt);
 
-  PanelType *pt_properties = pt = MEM_callocN<PanelType>("spacetype nla panel properties");
+  PanelType *pt_properties = pt = MEM_new_zeroed<PanelType>("spacetype nla panel properties");
   STRNCPY_UTF8(pt->idname, "NLA_PT_properties");
   STRNCPY_UTF8(pt->label, N_("Active Strip"));
   STRNCPY_UTF8(pt->category, "Strip");
@@ -693,7 +693,7 @@ void nla_buttons_register(ARegionType *art)
   pt->poll = nla_strip_panel_poll;
   BLI_addtail(&art->paneltypes, pt);
 
-  pt = MEM_callocN<PanelType>("spacetype nla panel properties");
+  pt = MEM_new_zeroed<PanelType>("spacetype nla panel properties");
   STRNCPY_UTF8(pt->idname, "NLA_PT_actionclip");
   STRNCPY_UTF8(pt->label, N_("Action Clip"));
   STRNCPY_UTF8(pt->category, "Strip");
@@ -703,7 +703,7 @@ void nla_buttons_register(ARegionType *art)
   pt->poll = nla_strip_actclip_panel_poll;
   BLI_addtail(&art->paneltypes, pt);
 
-  pt = MEM_callocN<PanelType>("spacetype nla panel evaluation");
+  pt = MEM_new_zeroed<PanelType>("spacetype nla panel evaluation");
   STRNCPY_UTF8(pt->idname, "NLA_PT_evaluation");
   STRNCPY_UTF8(pt->parent_id, "NLA_PT_properties");
   STRNCPY_UTF8(pt->label, N_("Animated Influence"));
@@ -717,7 +717,7 @@ void nla_buttons_register(ARegionType *art)
   BLI_addtail(&pt_properties->children, BLI_genericNodeN(pt));
   BLI_addtail(&art->paneltypes, pt);
 
-  pt = MEM_callocN<PanelType>("spacetype nla panel animated strip time");
+  pt = MEM_new_zeroed<PanelType>("spacetype nla panel animated strip time");
   STRNCPY_UTF8(pt->idname, "NLA_PT_animated_strip_time");
   STRNCPY_UTF8(pt->parent_id, "NLA_PT_properties");
   STRNCPY_UTF8(pt->label, N_("Animated Strip Time"));
@@ -731,7 +731,7 @@ void nla_buttons_register(ARegionType *art)
   BLI_addtail(&pt_properties->children, BLI_genericNodeN(pt));
   BLI_addtail(&art->paneltypes, pt);
 
-  pt = MEM_callocN<PanelType>("spacetype nla panel modifiers");
+  pt = MEM_new_zeroed<PanelType>("spacetype nla panel modifiers");
   STRNCPY_UTF8(pt->idname, "NLA_PT_modifiers");
   STRNCPY_UTF8(pt->label, N_("Modifiers"));
   STRNCPY_UTF8(pt->category, "Modifiers");

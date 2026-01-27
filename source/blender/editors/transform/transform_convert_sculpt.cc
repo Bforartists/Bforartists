@@ -55,8 +55,8 @@ static void createTransSculpt(bContext *C, TransInfo *t)
     TransDataContainer *tc = t->data_container;
     tc->data_len = 1;
     tc->is_active = true;
-    td = tc->data = MEM_callocN<TransData>(__func__);
-    td_ext = tc->data_ext = MEM_callocN<TransDataExtension>(__func__);
+    td = tc->data = MEM_new_zeroed<TransData>(__func__);
+    td_ext = tc->data_ext = MEM_new_zeroed<TransDataExtension>(__func__);
   }
 
   td->flag = TD_SELECTED;
@@ -65,10 +65,6 @@ static void createTransSculpt(bContext *C, TransInfo *t)
 
   td->loc = ss.pivot_pos;
   copy_v3_v3(td->iloc, ss.pivot_pos);
-
-  if (is_zero_v4(ss.pivot_rot)) {
-    ss.pivot_rot[3] = 1.0f;
-  }
 
   float obmat_inv[3][3];
   copy_m3_m4(obmat_inv, ob.object_to_world().ptr());

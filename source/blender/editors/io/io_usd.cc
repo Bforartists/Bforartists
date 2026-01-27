@@ -42,8 +42,6 @@
 #  include "io_utils.hh"
 #  include "usd.hh"
 
-#  include <pxr/pxr.h>
-
 #  include <string>
 #  include <utility>
 
@@ -229,7 +227,7 @@ static void free_operator_customdata(wmOperator *op)
 {
   if (op->customdata) {
     USDOperatorOptions *options = static_cast<USDOperatorOptions *>(op->customdata);
-    MEM_freeN(options);
+    MEM_delete(options);
     op->customdata = nullptr;
   }
 }
@@ -256,7 +254,7 @@ static wmOperatorStatus wm_usd_export_invoke(bContext *C,
                                              wmOperator *op,
                                              const wmEvent * /*event*/)
 {
-  USDOperatorOptions *options = MEM_callocN<USDOperatorOptions>("USDOperatorOptions");
+  USDOperatorOptions *options = MEM_new_zeroed<USDOperatorOptions>("USDOperatorOptions");
   options->as_background_job = true;
   op->customdata = options;
 
@@ -866,7 +864,7 @@ void WM_OT_usd_export(wmOperatorType *ot)
 
 static wmOperatorStatus wm_usd_import_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  USDOperatorOptions *options = MEM_callocN<USDOperatorOptions>("USDOperatorOptions");
+  USDOperatorOptions *options = MEM_new_zeroed<USDOperatorOptions>("USDOperatorOptions");
   options->as_background_job = true;
   op->customdata = options;
 

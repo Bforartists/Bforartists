@@ -21,7 +21,6 @@
 #include "BKE_report.hh"
 
 #include "BLI_listbase.h"
-#include "BLI_math_matrix.h"
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 #include "BLI_timeit.hh"
@@ -74,7 +73,7 @@ static bool gather_objects_paths(const pxr::UsdPrim &object,
     gather_objects_paths(childPrim, object_paths);
   }
 
-  CacheObjectPath *usd_path = MEM_new_for_free<CacheObjectPath>("CacheObjectPath");
+  CacheObjectPath *usd_path = MEM_new<CacheObjectPath>("CacheObjectPath");
 
   STRNCPY(usd_path->path, object.GetPrimPath().GetString().c_str());
   BLI_addtail(object_paths, usd_path);
@@ -597,13 +596,12 @@ void USD_free_handle(CacheArchiveHandle *handle)
   delete stage_reader;
 }
 
-void USD_get_transform(CacheReader *reader, float r_mat_world[4][4], float time, float scale)
+void USD_get_transform(CacheReader *reader, float4x4 &r_mat_world, float time, float scale)
 {
   if (!reader) {
     return;
   }
   const USDXformReader *usd_reader = reinterpret_cast<USDXformReader *>(reader);
-
   bool is_constant = false;
 
   /* Convert from the local matrix we obtain from USD to world coordinates
@@ -617,13 +615,14 @@ void USD_get_transform(CacheReader *reader, float r_mat_world[4][4], float time,
     return;
   }
 
-  float mat_parent[4][4];
-  BKE_object_get_parent_matrix(object, object->parent, mat_parent);
+  float4x4 mat_parent;
+  BKE_object_get_parent_matrix(object, object->parent, mat_parent.ptr());
 
-  float mat_local[4][4];
+  float4x4 mat_local;
   usd_reader->read_matrix(mat_local, time, scale, &is_constant);
-  mul_m4_m4m4(r_mat_world, mat_parent, object->parentinv);
-  mul_m4_m4m4(r_mat_world, r_mat_world, mat_local);
+
+  r_mat_world = mat_parent * float4x4(object->parentinv);
+  r_mat_world *= mat_local;
 }
 
 }  // namespace blender::io::usd

@@ -128,31 +128,31 @@ bool RNA_property_overridable_get(const PointerRNA *ptr, PropertyRNA *prop)
      * (like a special property in struct of items)
      * if we get more overridable collections,
      * for now we can live with those special-cases handling I think. */
-    if (RNA_struct_is_a(ptr->type, &RNA_Constraint)) {
+    if (RNA_struct_is_a(ptr->type, RNA_Constraint)) {
       bConstraint *con = static_cast<bConstraint *>(ptr->data);
       if (con->flag & CONSTRAINT_OVERRIDE_LIBRARY_LOCAL) {
         return true;
       }
     }
-    else if (RNA_struct_is_a(ptr->type, &RNA_Modifier)) {
+    else if (RNA_struct_is_a(ptr->type, RNA_Modifier)) {
       ModifierData *mod = static_cast<ModifierData *>(ptr->data);
       if (mod->flag & eModifierFlag_OverrideLibrary_Local) {
         return true;
       }
     }
-    else if (RNA_struct_is_a(ptr->type, &RNA_NlaTrack)) {
+    else if (RNA_struct_is_a(ptr->type, RNA_NlaTrack)) {
       NlaTrack *nla_track = static_cast<NlaTrack *>(ptr->data);
       if (nla_track->flag & NLATRACK_OVERRIDELIBRARY_LOCAL) {
         return true;
       }
     }
-    else if (RNA_struct_is_a(ptr->type, &RNA_CameraBackgroundImage)) {
+    else if (RNA_struct_is_a(ptr->type, RNA_CameraBackgroundImage)) {
       CameraBGImage *bgpic = static_cast<CameraBGImage *>(ptr->data);
       if (bgpic->flag & CAM_BGIMG_FLAG_OVERRIDE_LIBRARY_LOCAL) {
         return true;
       }
     }
-    else if (RNA_struct_is_a(ptr->type, &RNA_BoneCollection)) {
+    else if (RNA_struct_is_a(ptr->type, RNA_BoneCollection)) {
       BoneCollection *bcoll = static_cast<BoneCollection *>(ptr->data);
       if (bcoll->flags & BONE_COLLECTION_OVERRIDE_LIBRARY_LOCAL) {
         return true;
@@ -719,7 +719,7 @@ bool RNA_struct_override_matches(Main *bmain,
       if (!prop_local.is_idprop) {
         rna_path_len = root_path_len + 1 + prop_name_len;
         if (rna_path_len >= RNA_PATH_BUFFSIZE) {
-          rna_path = MEM_malloc_arrayN<char>(rna_path_len + 1, __func__);
+          rna_path = MEM_new_array_uninitialized<char>(rna_path_len + 1, __func__);
         }
 
         memcpy(rna_path_c, root_path, root_path_len);
@@ -730,7 +730,7 @@ bool RNA_struct_override_matches(Main *bmain,
       else {
         rna_path_len = root_path_len + 2 + prop_name_len + 2;
         if (rna_path_len >= RNA_PATH_BUFFSIZE) {
-          rna_path_c = MEM_malloc_arrayN<char>(rna_path_len + 1, __func__);
+          rna_path_c = MEM_new_array_uninitialized<char>(rna_path_len + 1, __func__);
         }
 
         memcpy(rna_path_c, root_path, root_path_len);
@@ -1024,7 +1024,7 @@ static bool rna_property_override_collection_subitem_name_id_match(
   is_match = ((item_name_len == namelen) && STREQ(item_name, name));
 
   if (UNLIKELY(name != name_buf)) {
-    MEM_freeN(name);
+    MEM_delete(name);
   }
 
   return is_match;
@@ -1644,7 +1644,7 @@ void RNA_struct_override_apply(Main *bmain,
   }
 
   /* Some cases (like point caches) may require additional post-processing. */
-  if (RNA_struct_is_a(id_ptr_dst->type, &RNA_ID)) {
+  if (RNA_struct_is_a(id_ptr_dst->type, RNA_ID)) {
     ID *id_dst = static_cast<ID *>(id_ptr_dst->data);
     ID *id_src = static_cast<ID *>(id_ptr_src->data);
     const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(id_dst);

@@ -57,9 +57,7 @@ static void node_declare(nodes::NodeDeclarationBuilder &b)
   const bool supports_fields = socket_type_supports_fields(data_type) &&
                                ntree->type == NTREE_GEOMETRY;
 
-  StructureType value_structure_type = socket_type_always_single(data_type) ?
-                                           StructureType::Single :
-                                           StructureType::Dynamic;
+  StructureType value_structure_type = StructureType::Dynamic;
   StructureType menu_structure_type = value_structure_type;
 
   if (ntree->type == NTREE_COMPOSIT) {
@@ -96,7 +94,7 @@ static void node_declare(nodes::NodeDeclarationBuilder &b)
     const std::string identifier = MenuSwitchItemsAccessor::socket_identifier_for_item(enum_item);
     auto &input = b.add_input(data_type, enum_item.name, identifier)
                       .socket_name_ptr(
-                          &ntree->id, MenuSwitchItemsAccessor::item_srna, &enum_item, "name")
+                          &ntree->id, *MenuSwitchItemsAccessor::item_srna, &enum_item, "name")
                       .compositor_realization_mode(CompositorInputRealizationMode::None)
                       .description("Becomes the output value if it is chosen by the menu input");
     if (supports_fields) {
@@ -140,7 +138,7 @@ static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 
 static void node_init(bNodeTree *tree, bNode *node)
 {
-  NodeMenuSwitch *data = MEM_new_for_free<NodeMenuSwitch>(__func__);
+  NodeMenuSwitch *data = MEM_new<NodeMenuSwitch>(__func__);
   data->data_type = tree->type == NTREE_GEOMETRY ? SOCK_GEOMETRY : SOCK_RGBA;
   data->enum_definition.next_identifier = 0;
   data->enum_definition.items_array = nullptr;
@@ -154,14 +152,13 @@ static void node_init(bNodeTree *tree, bNode *node)
 static void node_free_storage(bNode *node)
 {
   socket_items::destruct_array<MenuSwitchItemsAccessor>(*node);
-  MEM_freeN(reinterpret_cast<NodeMenuSwitch *>(node->storage));
+  MEM_delete(reinterpret_cast<NodeMenuSwitch *>(node->storage));
 }
 
 static void node_copy_storage(bNodeTree * /*dst_tree*/, bNode *dst_node, const bNode *src_node)
 {
   const NodeMenuSwitch &src_storage = node_storage(*src_node);
-  NodeMenuSwitch *dst_storage = MEM_new_for_free<NodeMenuSwitch>(__func__,
-                                                                 dna::shallow_copy(src_storage));
+  NodeMenuSwitch *dst_storage = MEM_new<NodeMenuSwitch>(__func__, dna::shallow_copy(src_storage));
   dst_node->storage = dst_storage;
 
   socket_items::copy_array<MenuSwitchItemsAccessor>(*src_node, *dst_node);
@@ -614,7 +611,7 @@ std::unique_ptr<LazyFunction> get_menu_switch_node_socket_usage_lazy_function(co
   return std::make_unique<LazyFunctionForMenuSwitchSocketUsage>(node);
 }
 
-StructRNA *MenuSwitchItemsAccessor::item_srna = &RNA_NodeEnumItem;
+StructRNA **MenuSwitchItemsAccessor::item_srna = &RNA_NodeEnumItem;
 
 void MenuSwitchItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {

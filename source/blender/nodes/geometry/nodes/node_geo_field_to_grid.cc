@@ -57,7 +57,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
     b.add_input(data_type, item.name, input_identifier)
         .supports_field()
-        .socket_name_ptr(&tree->id, FieldToGridItemsAccessor::item_srna, &item, "name");
+        .socket_name_ptr(&tree->id, *FieldToGridItemsAccessor::item_srna, &item, "name");
     b.add_output(data_type, item.name, output_identifier)
         .structure_type(StructureType::Grid)
         .align_with_previous()
@@ -351,7 +351,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
-  GeometryNodeFieldToGrid *data = MEM_new_for_free<GeometryNodeFieldToGrid>(__func__);
+  GeometryNodeFieldToGrid *data = MEM_new<GeometryNodeFieldToGrid>(__func__);
   data->data_type = SOCK_FLOAT;
   node->storage = data;
 }
@@ -359,14 +359,13 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 static void node_free_storage(bNode *node)
 {
   socket_items::destruct_array<ItemsAccessor>(*node);
-  MEM_freeN(node->storage);
+  MEM_delete_void(node->storage);
 }
 
 static void node_copy_storage(bNodeTree * /*dst_tree*/, bNode *dst_node, const bNode *src_node)
 {
   const GeometryNodeFieldToGrid &src_storage = node_storage(*src_node);
-  auto *dst_storage = MEM_new_for_free<GeometryNodeFieldToGrid>(__func__,
-                                                                dna::shallow_copy(src_storage));
+  auto *dst_storage = MEM_new<GeometryNodeFieldToGrid>(__func__, dna::shallow_copy(src_storage));
   dst_node->storage = dst_storage;
 
   socket_items::copy_array<ItemsAccessor>(*src_node, *dst_node);
@@ -430,7 +429,7 @@ NOD_REGISTER_NODE(node_register)
 
 namespace nodes {
 
-StructRNA *FieldToGridItemsAccessor::item_srna = &RNA_GeometryNodeFieldToGridItem;
+StructRNA **FieldToGridItemsAccessor::item_srna = &RNA_GeometryNodeFieldToGridItem;
 
 void FieldToGridItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {

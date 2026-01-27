@@ -108,10 +108,10 @@ PointerRNA *modifier_panel_get_property_pointers(Panel *panel, PointerRNA *r_ob_
 {
   PointerRNA *ptr = ui::panel_custom_data_get(panel);
   BLI_assert(!RNA_pointer_is_null(ptr));
-  BLI_assert(RNA_struct_is_a(ptr->type, &RNA_Modifier));
+  BLI_assert(RNA_struct_is_a(ptr->type, RNA_Modifier));
 
   if (r_ob_ptr != nullptr) {
-    *r_ob_ptr = RNA_pointer_create_discrete(ptr->owner_id, &RNA_Object, ptr->owner_id);
+    *r_ob_ptr = RNA_pointer_create_discrete(ptr->owner_id, RNA_Object, ptr->owner_id);
   }
 
   ui::Block *block = panel->layout->block();
@@ -214,7 +214,7 @@ static void modifier_ops_extra_draw(bContext *C, ui::Layout *layout, void *md_v)
   ModifierData *md = static_cast<ModifierData *>(md_v);
 
   Object *ob = ed::object::context_active_object(C);
-  PointerRNA ptr = RNA_pointer_create_discrete(&ob->id, &RNA_Modifier, md);
+  PointerRNA ptr = RNA_pointer_create_discrete(&ob->id, RNA_Modifier, md);
   layout->context_ptr_set("modifier", &ptr);
   layout->operator_context_set(wm::OpCallContext::InvokeDefault);
 
@@ -475,7 +475,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
 PanelType *modifier_panel_register(ARegionType *region_type, ModifierType type, PanelDrawFn draw)
 {
-  PanelType *panel_type = MEM_callocN<PanelType>(__func__);
+  PanelType *panel_type = MEM_new_zeroed<PanelType>(__func__);
 
   BKE_modifier_type_panel_id(type, panel_type->idname);
   STRNCPY_UTF8(panel_type->label, "");
@@ -507,7 +507,7 @@ PanelType *modifier_subpanel_register(ARegionType *region_type,
                                       PanelDrawFn draw,
                                       PanelType *parent)
 {
-  PanelType *panel_type = MEM_callocN<PanelType>(__func__);
+  PanelType *panel_type = MEM_new_zeroed<PanelType>(__func__);
 
   BLI_assert(parent != nullptr);
   SNPRINTF_UTF8(panel_type->idname, "%s_%s", parent->idname, name);

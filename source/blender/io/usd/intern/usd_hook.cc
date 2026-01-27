@@ -5,6 +5,7 @@
 #include "usd_hook.hh"
 
 #include "usd.hh"
+#include "usd_api_hook.hh"
 #include "usd_asset_utils.hh"
 #include "usd_hash_types.hh"
 #include "usd_hierarchy_iterator.hh"
@@ -111,7 +112,7 @@ class USDSceneExportContext {
   USDSceneExportContext(const USDHierarchyIterator *iter, Depsgraph *depsgraph)
       : stage_(iter->get_stage()), hierarchy_iterator_(iter)
   {
-    depsgraph_ptr_ = RNA_pointer_create_discrete(nullptr, &RNA_Depsgraph, depsgraph);
+    depsgraph_ptr_ = RNA_pointer_create_discrete(nullptr, RNA_Depsgraph, depsgraph);
   }
 
   pxr::UsdStageRefPtr get_stage() const
@@ -470,7 +471,7 @@ class OnMaterialExportInvoker final : public USDHookInvoker {
         hook_context_(stage, export_params, reports),
         usd_material_(usd_material)
   {
-    material_ptr_ = RNA_pointer_create_discrete(nullptr, &RNA_Material, material);
+    material_ptr_ = RNA_pointer_create_discrete(nullptr, RNA_Material, material);
   }
 
  private:
@@ -569,7 +570,7 @@ class OnMaterialImportInvoker final : public USDHookInvoker {
         hook_context_(stage, import_params, reports),
         usd_material_(usd_material)
   {
-    material_ptr_ = RNA_pointer_create_discrete(nullptr, &RNA_Material, material);
+    material_ptr_ = RNA_pointer_create_discrete(nullptr, RNA_Material, material);
   }
 
   bool result() const
@@ -636,7 +637,7 @@ void call_import_hooks(USDStageReader *archive, ReportList *reports)
         .append(RNA_id_pointer_create(&ob->id));
     if (ob->data) {
       prim_map.lookup_or_add_default(reader->data_prim_path())
-          .append(RNA_id_pointer_create(static_cast<ID *>(ob->data)));
+          .append(RNA_id_pointer_create(ob->data));
     }
   }
 

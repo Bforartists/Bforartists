@@ -121,17 +121,16 @@ static void grease_pencil_set_runtime_visibilities(ID &id_dst, GreasePencil &gre
     return;
   }
 
-  PropertyRNA *layer_hide_prop = RNA_struct_type_find_property(&RNA_GreasePencilLayer, "hide");
+  PropertyRNA *layer_hide_prop = RNA_struct_type_find_property(RNA_GreasePencilLayer, "hide");
   BLI_assert_msg(layer_hide_prop,
                  "RNA struct GreasePencilLayer is expected to have a 'hide' property.");
-  PropertyRNA *group_hide_prop = RNA_struct_type_find_property(&RNA_GreasePencilLayerGroup,
-                                                               "hide");
+  PropertyRNA *group_hide_prop = RNA_struct_type_find_property(RNA_GreasePencilLayerGroup, "hide");
   BLI_assert_msg(group_hide_prop,
                  "RNA struct GreasePencilLayerGroup is expected to have a 'hide' property.");
 
   for (greasepencil::LayerGroup *layer_group : grease_pencil.layer_groups_for_write()) {
     PointerRNA layer_ptr = RNA_pointer_create_discrete(
-        &id_dst, &RNA_GreasePencilLayerGroup, layer_group);
+        &id_dst, RNA_GreasePencilLayerGroup, layer_group);
     std::optional<std::string> rna_path = RNA_path_from_ID_to_property(&layer_ptr,
                                                                        group_hide_prop);
     BLI_assert_msg(
@@ -159,7 +158,7 @@ static void grease_pencil_set_runtime_visibilities(ID &id_dst, GreasePencil &gre
       layer->runtime->is_visibility_animated_ = true;
       continue;
     }
-    PointerRNA layer_ptr = RNA_pointer_create_discrete(&id_dst, &RNA_GreasePencilLayer, layer);
+    PointerRNA layer_ptr = RNA_pointer_create_discrete(&id_dst, RNA_GreasePencilLayer, layer);
     std::optional<std::string> rna_path = RNA_path_from_ID_to_property(&layer_ptr,
                                                                        layer_hide_prop);
     BLI_assert_msg(rna_path,
@@ -194,7 +193,7 @@ static void grease_pencil_copy_data(Main * /*bmain*/,
 
   /* Duplicate material array. */
   grease_pencil_dst->material_array = static_cast<Material **>(
-      MEM_dupallocN(grease_pencil_src->material_array));
+      MEM_dupalloc(grease_pencil_src->material_array));
 
   BKE_grease_pencil_duplicate_drawing_array(grease_pencil_src, grease_pencil_dst);
 
@@ -232,7 +231,7 @@ static void grease_pencil_free_data(ID *id)
   GreasePencil *grease_pencil = reinterpret_cast<GreasePencil *>(id);
   BKE_animdata_free(&grease_pencil->id, false);
 
-  MEM_SAFE_FREE(grease_pencil->material_array);
+  MEM_SAFE_DELETE(grease_pencil->material_array);
 
   grease_pencil->attribute_storage.wrap().~AttributeStorage();
 
@@ -298,7 +297,7 @@ static void grease_pencil_blend_write(BlendWriter *writer, ID *id, const void *i
   CustomData_reset(&grease_pencil->layers_data_legacy);
 
   /* Write LibData */
-  BLO_write_id_struct(writer, GreasePencil, id_address, &grease_pencil->id);
+  writer->write_id_struct(id_address, grease_pencil);
   BKE_id_blend_write(writer, &grease_pencil->id);
 
   grease_pencil->attribute_storage.wrap().blend_write(*writer, attribute_data);
@@ -711,9 +710,7 @@ void Drawing::set_texture_matrices(Span<float4x2> matrices, const IndexMask &sel
   SpanAttributeWriter<float2> uv_translations = attributes.lookup_or_add_for_write_span<float2>(
       "uv_translation", AttrDomain::Curve);
   SpanAttributeWriter<float2> uv_scales = attributes.lookup_or_add_for_write_span<float2>(
-      "uv_scale",
-      AttrDomain::Curve,
-      AttributeInitVArray(VArray<float2>::from_single(float2(1.0f, 1.0f), curves.curves_num())));
+      "uv_scale", AttrDomain::Curve, AttributeInitValue(float2(1.0f, 1.0f)));
 
   if (!uv_rotations || !uv_translations || !uv_scales) {
     /* FIXME: It might be better to ensure the attributes exist and are on the right domain. */
@@ -1048,12 +1045,12 @@ TreeNode::TreeNode(const TreeNode &other) : TreeNode(GreasePencilLayerTreeNodeTy
 
 TreeNode::~TreeNode()
 {
-  MEM_SAFE_FREE(this->GreasePencilLayerTreeNode::name);
+  MEM_SAFE_DELETE(this->GreasePencilLayerTreeNode::name);
 }
 
 void TreeNode::set_name(const StringRef name)
 {
-  MEM_SAFE_FREE(this->GreasePencilLayerTreeNode::name);
+  MEM_SAFE_DELETE(this->GreasePencilLayerTreeNode::name);
   this->GreasePencilLayerTreeNode::name = BLI_strdupn(name.data(), name.size());
 }
 
@@ -1124,7 +1121,7 @@ LayerMask::LayerMask(const LayerMask &other) : LayerMask()
 LayerMask::~LayerMask()
 {
   if (this->layer_name) {
-    MEM_freeN(this->layer_name);
+    MEM_delete(this->layer_name);
   }
 }
 
@@ -1206,16 +1203,16 @@ Layer::~Layer()
 {
   this->base.wrap().~TreeNode();
 
-  MEM_SAFE_FREE(this->frames_storage.keys);
-  MEM_SAFE_FREE(this->frames_storage.values);
+  MEM_SAFE_DELETE(this->frames_storage.keys);
+  MEM_SAFE_DELETE(this->frames_storage.values);
 
   for (GreasePencilLayerMask &mask : this->masks.items_mutable()) {
     MEM_delete(reinterpret_cast<LayerMask *>(&mask));
   }
   BLI_listbase_clear(&this->masks);
 
-  MEM_SAFE_FREE(this->parsubstr);
-  MEM_SAFE_FREE(this->viewlayername);
+  MEM_SAFE_DELETE(this->parsubstr);
+  MEM_SAFE_DELETE(this->viewlayername);
 
   MEM_delete(this->runtime);
   this->runtime = nullptr;
@@ -1484,13 +1481,13 @@ void Layer::prepare_for_dna_write()
     return;
   }
 
-  MEM_SAFE_FREE(frames_storage.keys);
-  MEM_SAFE_FREE(frames_storage.values);
+  MEM_SAFE_DELETE(frames_storage.keys);
+  MEM_SAFE_DELETE(frames_storage.values);
 
   const size_t frames_num = size_t(frames().size());
   frames_storage.num = int(frames_num);
-  frames_storage.keys = MEM_new_array_for_free<int>(frames_num, __func__);
-  frames_storage.values = MEM_new_array_for_free<GreasePencilFrame>(frames_num, __func__);
+  frames_storage.keys = MEM_new_array<int>(frames_num, __func__);
+  frames_storage.values = MEM_new_array<GreasePencilFrame>(frames_num, __func__);
   const Span<int> sorted_keys_data = sorted_keys();
   for (const int64_t i : sorted_keys_data.index_range()) {
     frames_storage.keys[i] = sorted_keys_data[i];
@@ -1545,7 +1542,7 @@ StringRefNull Layer::parent_bone_name() const
 void Layer::set_parent_bone_name(const StringRef new_name)
 {
   if (this->parsubstr != nullptr) {
-    MEM_freeN(this->parsubstr);
+    MEM_delete(this->parsubstr);
     this->parsubstr = nullptr;
   }
   if (!new_name.is_empty()) {
@@ -1593,7 +1590,7 @@ StringRefNull Layer::view_layer_name() const
 void Layer::set_view_layer_name(const StringRef new_name)
 {
   if (this->viewlayername != nullptr) {
-    MEM_freeN(this->viewlayername);
+    MEM_delete(this->viewlayername);
     this->viewlayername = nullptr;
   }
   if (!new_name.is_empty()) {
@@ -2039,7 +2036,7 @@ GreasePencil *BKE_grease_pencil_copy_for_eval(const GreasePencil *grease_pencil_
 void BKE_grease_pencil_copy_parameters(const GreasePencil &src, GreasePencil &dst)
 {
   dst.material_array_num = src.material_array_num;
-  dst.material_array = static_cast<Material **>(MEM_dupallocN(src.material_array));
+  dst.material_array = MEM_dupalloc(src.material_array);
   dst.attributes_active_index = src.attributes_active_index;
   dst.flag = src.flag;
   BLI_duplicatelist(&dst.vertex_group_names, &src.vertex_group_names);
@@ -2361,7 +2358,7 @@ void BKE_grease_pencil_duplicate_drawing_array(const GreasePencil *grease_pencil
 {
   grease_pencil_dst->drawing_array_num = grease_pencil_src->drawing_array_num;
   if (grease_pencil_dst->drawing_array_num > 0) {
-    grease_pencil_dst->drawing_array = MEM_new_array_for_free<GreasePencilDrawingBase *>(
+    grease_pencil_dst->drawing_array = MEM_new_array<GreasePencilDrawingBase *>(
         grease_pencil_src->drawing_array_num, __func__);
     bke::greasepencil::copy_drawing_array(grease_pencil_src->drawings(),
                                           grease_pencil_dst->drawings());
@@ -2825,11 +2822,11 @@ template<typename T> static void grow_array(T **array, int *num, const int add_n
 {
   BLI_assert(add_num > 0);
   const int new_array_num = *num + add_num;
-  T *new_array = MEM_calloc_arrayN<T>(new_array_num, __func__);
+  T *new_array = MEM_new_array_zeroed<T>(new_array_num, __func__);
 
   uninitialized_relocate_n(*array, *num, new_array);
   if (*array != nullptr) {
-    MEM_freeN(*array);
+    MEM_delete(*array);
   }
 
   *array = new_array;
@@ -2840,16 +2837,16 @@ template<typename T> static void shrink_array(T **array, int *num, const int shr
   BLI_assert(shrink_num > 0);
   const int new_array_num = *num - shrink_num;
   if (new_array_num == 0) {
-    MEM_freeN(*array);
+    MEM_delete(*array);
     *array = nullptr;
     *num = 0;
     return;
   }
 
-  T *new_array = MEM_calloc_arrayN<T>(new_array_num, __func__);
+  T *new_array = MEM_new_array_zeroed<T>(new_array_num, __func__);
 
   uninitialized_move_n(*array, new_array_num, new_array);
-  MEM_freeN(*array);
+  MEM_delete(*array);
 
   *array = new_array;
   *num = new_array_num;
@@ -3807,9 +3804,9 @@ static void reorder_attribute_domain(bke::AttributeStorage &data,
                                      const bke::AttrDomain domain,
                                      const Span<int> new_by_old_map)
 {
-  data.foreach([&](bke::Attribute &attr) {
+  for (bke::Attribute &attr : data) {
     if (attr.domain() != domain) {
-      return;
+      continue;
     }
     const CPPType &type = bke::attribute_type_to_cpp_type(attr.data_type());
     switch (attr.storage_type()) {
@@ -3820,12 +3817,13 @@ static void reorder_attribute_domain(bke::AttributeStorage &data,
                                     new_by_old_map,
                                     GMutableSpan(type, new_data.data, new_data.size));
         attr.assign_data(std::move(new_data));
+        break;
       }
       case bke::AttrStorageType::Single: {
-        return;
+        break;
       }
     }
-  });
+  }
 }
 
 static void reorder_layer_data(GreasePencil &grease_pencil,
@@ -4138,7 +4136,7 @@ static void shrink_attribute_storage(bke::AttributeStorage &storage,
   const IndexRange range_before(index_to_remove);
   const IndexRange range_after(index_to_remove + 1, size - index_to_remove - 1);
 
-  storage.foreach([&](bke::Attribute &attr) {
+  for (bke::Attribute &attr : storage) {
     const CPPType &type = bke::attribute_type_to_cpp_type(attr.data_type());
     switch (attr.storage_type()) {
       case bke::AttrStorageType::Array: {
@@ -4151,12 +4149,13 @@ static void shrink_attribute_storage(bke::AttributeStorage &storage,
                               range_after.size());
 
         attr.assign_data(std::move(new_data));
+        break;
       }
       case bke::AttrStorageType::Single: {
-        return;
+        break;
       }
     }
-  });
+  }
 }
 
 static void update_active_node_from_node_to_remove(GreasePencil &grease_pencil,
@@ -4348,7 +4347,7 @@ static void write_drawing_array(GreasePencil &grease_pencil,
         BLO_write_shared_tag(writer, curves.curve_offsets);
         BLO_write_shared_tag(writer, curves.custom_knots);
 
-        BLO_write_struct_at_address(writer, GreasePencilDrawing, drawing_base, &drawing_copy);
+        writer->write_struct_at_address_cast<GreasePencilDrawing>(drawing_base, &drawing_copy);
         curves.blend_write(*writer, grease_pencil.id, write_data);
         break;
       }
@@ -4453,10 +4452,9 @@ static void write_layer(BlendWriter *writer, GreasePencilLayer *node)
   BLO_write_string(writer, node->viewlayername);
 
   BLO_write_int32_array(writer, node->frames_storage.num, node->frames_storage.keys);
-  BLO_write_struct_array(
-      writer, GreasePencilFrame, node->frames_storage.num, node->frames_storage.values);
+  writer->write_struct_array(node->frames_storage.num, node->frames_storage.values);
 
-  BLO_write_struct_list(writer, GreasePencilLayerMask, &node->masks);
+  writer->write_struct_list(&node->masks);
   for (GreasePencilLayerMask &mask : node->masks) {
     BLO_write_string(writer, mask.layer_name);
   }

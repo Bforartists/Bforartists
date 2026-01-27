@@ -733,7 +733,7 @@ int context(const bContext *C, const char *member, bContextDataResult *result)
       return CTX_RESULT_NO_DATA;
     }
 
-    CTX_data_pointer_set(result, &screen->id, &RNA_AssetShelf, active_shelf);
+    CTX_data_pointer_set(result, &screen->id, RNA_AssetShelf, active_shelf);
     return CTX_RESULT_OK;
   }
 
@@ -745,7 +745,7 @@ int context(const bContext *C, const char *member, bContextDataResult *result)
 
     CTX_data_pointer_set(result,
                          &screen->id,
-                         &RNA_AssetLibraryReference,
+                         RNA_AssetLibraryReference,
                          &active_shelf->settings.asset_library_reference);
     return CTX_RESULT_OK;
   }
@@ -763,7 +763,7 @@ int context(const bContext *C, const char *member, bContextDataResult *result)
     }
 
     const PointerRNA *asset_ptr = CTX_store_ptr_lookup(
-        but_context, "asset", &RNA_AssetRepresentation);
+        but_context, "asset", RNA_AssetRepresentation);
     if (!asset_ptr) {
       return CTX_RESULT_NO_DATA;
     }
@@ -777,7 +777,7 @@ int context(const bContext *C, const char *member, bContextDataResult *result)
 
 static PointerRNA active_shelf_ptr_from_context(const bContext *C)
 {
-  return CTX_data_pointer_get_type(C, "asset_shelf", &RNA_AssetShelf);
+  return CTX_data_pointer_get_type(C, "asset_shelf", RNA_AssetShelf);
 }
 
 AssetShelf *active_shelf_from_context(const bContext *C)
@@ -924,7 +924,7 @@ static void asset_shelf_header_draw(const bContext *C, Header *header)
 
 static void header_regiontype_register(ARegionType *region_type, const int space_type)
 {
-  HeaderType *ht = MEM_callocN<HeaderType>(__func__);
+  HeaderType *ht = MEM_new_zeroed<HeaderType>(__func__);
   STRNCPY_UTF8(ht->idname, "ASSETSHELF_HT_settings");
   ht->space_type = space_type;
   ht->region_type = RGN_TYPE_ASSET_SHELF_HEADER;

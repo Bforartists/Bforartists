@@ -112,7 +112,7 @@ static void gizmo_mesh_extrude_orientation_matrix_set_for_adjust(GizmoExtrudeGro
 
 static void gizmo_mesh_extrude_setup(const bContext *C, wmGizmoGroup *gzgroup)
 {
-  GizmoExtrudeGroup *ggd = MEM_callocN<GizmoExtrudeGroup>(__func__);
+  GizmoExtrudeGroup *ggd = MEM_new_zeroed<GizmoExtrudeGroup>(__func__);
   gzgroup->customdata = ggd;
 
   const wmGizmoType *gzt_arrow = WM_gizmotype_find("GIZMO_GT_arrow_3d", true);
@@ -478,7 +478,7 @@ static void gizmo_mesh_extrude_message_subscribe(const bContext *C,
   {
     Scene *scene = CTX_data_scene(C);
     PointerRNA toolsettings_ptr = RNA_pointer_create_discrete(
-        &scene->id, &RNA_ToolSettings, scene->toolsettings);
+        &scene->id, RNA_ToolSettings, scene->toolsettings);
     const PropertyRNA *props[] = {
         &rna_ToolSettings_workspace_tool_type,
     };

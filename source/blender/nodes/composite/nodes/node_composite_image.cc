@@ -221,7 +221,7 @@ static void node_init(bNodeTree * /*node_tree*/, bNode *node)
 {
   node->flag |= NODE_PREVIEW;
 
-  ImageUser *iuser = MEM_new_for_free<ImageUser>(__func__);
+  ImageUser *iuser = MEM_new<ImageUser>(__func__);
   node->storage = iuser;
   iuser->frames = 1;
   iuser->sfra = 1;
@@ -327,7 +327,7 @@ static NodeOperation *get_compositor_operation(Context &context, const bNode &no
   return new ImageOperation(context, node);
 }
 
-static void register_node()
+static void node_register()
 {
   static bke::bNodeType ntype;
 
@@ -346,6 +346,6 @@ static void register_node()
 
   bke::node_register_type(ntype);
 }
-NOD_REGISTER_NODE(register_node)
+NOD_REGISTER_NODE(node_register)
 
 }  // namespace blender::nodes::node_composite_image_cc

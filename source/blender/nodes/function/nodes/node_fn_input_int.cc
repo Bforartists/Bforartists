@@ -33,7 +33,7 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
-  NodeInputInt *data = MEM_new_for_free<NodeInputInt>(__func__);
+  NodeInputInt *data = MEM_new<NodeInputInt>(__func__);
   node->storage = data;
 }
 
@@ -41,7 +41,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeInputInt", FN_NODE_INPUT_INT);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeInputInt", FN_NODE_INPUT_INT);
   ntype.ui_name = "Integer";
   ntype.ui_description =
       "Provide an integer value that can be connected to other nodes in the tree";

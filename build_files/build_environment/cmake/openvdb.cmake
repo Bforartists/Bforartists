@@ -27,11 +27,9 @@ set(OPENVDB_EXTRA_ARGS
   -DOPENVDB_CORE_STATIC=OFF
   -DOPENVDB_BUILD_BINARIES=OFF
   -DCMAKE_DEBUG_POSTFIX=_d
-  -DBLOSC_USE_STATIC_LIBS=ON
   -DUSE_NANOVDB=ON
   -DOPENVDB_BUILD_PYTHON_MODULE=ON
   -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON
-  -DUSE_NUMPY=ON
   -DPython_EXECUTABLE=${PYTHON_BINARY}
   -Dnanobind_DIR=${LIBDIR}/nanobind/nanobind/cmake/
   # Needed to still build with VS2019
@@ -50,10 +48,7 @@ set(OPENVDB_EXTRA_ARGS
 set(OPENVDB_PATCH
   ${PATCH_CMD} -p 1 -d
     ${BUILD_DIR}/openvdb/src/openvdb <
-    ${PATCH_DIR}/openvdb.diff &&
-  ${PATCH_CMD} -p 1 -d
-    ${BUILD_DIR}/openvdb/src/openvdb <
-    ${PATCH_DIR}/openvdb_1977.diff
+    ${PATCH_DIR}/openvdb.diff
 )
 
 ExternalProject_Add(openvdb
@@ -78,7 +73,7 @@ add_dependencies(
   external_zlib
   external_blosc
   external_python
-  external_numpy
+  external_numpy # Runtime dependency
   external_nanobind
 )
 
@@ -101,7 +96,7 @@ if(WIN32)
         ${HARVEST_TARGET}/openvdb/bin/openvdb.dll
       COMMAND ${CMAKE_COMMAND} -E copy
         ${LIBDIR}/openvdb/lib/python${PYTHON_SHORT_VERSION}/site-packages/openvdb.cp${PYTHON_SHORT_VERSION_NO_DOTS}-win_${OPENVDB_ARCH}.pyd
-        ${HARVEST_TARGET}openvdb/python/openvdb.cp${PYTHON_SHORT_VERSION_NO_DOTS}-win_${OPENVDB_ARCH}.pyd
+        ${HARVEST_TARGET}/openvdb/python/openvdb.cp${PYTHON_SHORT_VERSION_NO_DOTS}-win_${OPENVDB_ARCH}.pyd
       DEPENDEES install
     )
   endif()
@@ -115,7 +110,7 @@ if(WIN32)
         ${HARVEST_TARGET}/openvdb/bin/openvdb_d.dll
       COMMAND ${CMAKE_COMMAND} -E copy
         ${LIBDIR}/openvdb/lib/python${PYTHON_SHORT_VERSION}/site-packages/openvdb_d.cp${PYTHON_SHORT_VERSION_NO_DOTS}-win_${OPENVDB_ARCH}.pyd
-        ${HARVEST_TARGET}openvdb/python/openvdb_d.cp${PYTHON_SHORT_VERSION_NO_DOTS}-win_${OPENVDB_ARCH}.pyd
+        ${HARVEST_TARGET}/openvdb/python/openvdb_d.cp${PYTHON_SHORT_VERSION_NO_DOTS}-win_${OPENVDB_ARCH}.pyd
 
       DEPENDEES install
     )

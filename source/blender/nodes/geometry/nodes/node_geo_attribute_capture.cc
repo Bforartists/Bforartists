@@ -54,7 +54,7 @@ static void node_declare(NodeDeclarationBuilder &b)
           CaptureAttributeItemsAccessor::output_socket_identifier_for_item(item);
       b.add_input(data_type, item.name, input_identifier)
           .field_on_all()
-          .socket_name_ptr(&tree->id, CaptureAttributeItemsAccessor::item_srna, &item, "name");
+          .socket_name_ptr(&tree->id, *CaptureAttributeItemsAccessor::item_srna, &item, "name");
       b.add_output(data_type, item.name, output_identifier).field_on_all().align_with_previous();
     }
   }
@@ -73,7 +73,7 @@ static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
-  NodeGeometryAttributeCapture *data = MEM_new_for_free<NodeGeometryAttributeCapture>(__func__);
+  NodeGeometryAttributeCapture *data = MEM_new<NodeGeometryAttributeCapture>(__func__);
   data->domain = int8_t(AttrDomain::Point);
   node->storage = data;
 }
@@ -221,13 +221,13 @@ static bool node_insert_link(bke::NodeInsertLinkParams &params)
 static void node_free_storage(bNode *node)
 {
   socket_items::destruct_array<CaptureAttributeItemsAccessor>(*node);
-  MEM_freeN(reinterpret_cast<NodeGeometryAttributeCapture *>(node->storage));
+  MEM_delete(reinterpret_cast<NodeGeometryAttributeCapture *>(node->storage));
 }
 
 static void node_copy_storage(bNodeTree * /*dst_tree*/, bNode *dst_node, const bNode *src_node)
 {
   const NodeGeometryAttributeCapture &src_storage = node_storage(*src_node);
-  NodeGeometryAttributeCapture *dst_storage = MEM_new_for_free<NodeGeometryAttributeCapture>(
+  NodeGeometryAttributeCapture *dst_storage = MEM_new<NodeGeometryAttributeCapture>(
       __func__, dna::shallow_copy(src_storage));
   dst_node->storage = dst_storage;
 
@@ -304,7 +304,7 @@ NOD_REGISTER_NODE(node_register)
 
 namespace nodes {
 
-StructRNA *CaptureAttributeItemsAccessor::item_srna = &RNA_NodeGeometryCaptureAttributeItem;
+StructRNA **CaptureAttributeItemsAccessor::item_srna = &RNA_NodeGeometryCaptureAttributeItem;
 
 void CaptureAttributeItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {

@@ -193,7 +193,7 @@ class LayerViewItemDragController : public AbstractViewItemDragController {
 
   void *create_drag_data() const override
   {
-    wmDragGreasePencilLayer *drag_data = MEM_callocN<wmDragGreasePencilLayer>(__func__);
+    wmDragGreasePencilLayer *drag_data = MEM_new_zeroed<wmDragGreasePencilLayer>(__func__);
     drag_data->node = &dragged_node_;
     drag_data->grease_pencil = &grease_pencil_;
     return drag_data;
@@ -242,9 +242,9 @@ class LayerViewItem : public AbstractTreeViewItem {
   void on_activate(bContext &C) override
   {
     PointerRNA layers_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilv3Layers, nullptr);
+        &grease_pencil_.id, RNA_GreasePencilv3Layers, nullptr);
     PointerRNA value_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilLayer, &layer_);
+        &grease_pencil_.id, RNA_GreasePencilLayer, &layer_);
 
     PropertyRNA *prop = RNA_struct_find_property(&layers_ptr, "active");
 
@@ -270,7 +270,7 @@ class LayerViewItem : public AbstractTreeViewItem {
   bool rename(const bContext &C, StringRefNull new_name) override
   {
     PointerRNA layer_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilLayer, &layer_);
+        &grease_pencil_.id, RNA_GreasePencilLayer, &layer_);
     PropertyRNA *prop = RNA_struct_find_property(&layer_ptr, "name");
 
     RNA_property_string_set(&layer_ptr, prop, new_name.c_str());
@@ -324,7 +324,7 @@ class LayerViewItem : public AbstractTreeViewItem {
   void build_layer_buttons(Layout &row)
   {
     PointerRNA layer_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilLayer, &layer_);
+        &grease_pencil_.id, RNA_GreasePencilLayer, &layer_);
 
     Layout *sub = &row.row(true);
     sub->active_set(layer_.parent_group().use_masks());
@@ -374,7 +374,7 @@ class LayerGroupViewItem : public AbstractTreeViewItem {
     /* Let RNA handle the property change. This makes sure all the notifiers and DEG
      * update calls are properly called. */
     PointerRNA group_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilLayerGroup, &group_);
+        &grease_pencil_.id, RNA_GreasePencilLayerGroup, &group_);
     PropertyRNA *prop = RNA_struct_find_property(&group_ptr, "is_expanded");
 
     RNA_property_boolean_set(&group_ptr, prop, is_expanded);
@@ -411,9 +411,9 @@ class LayerGroupViewItem : public AbstractTreeViewItem {
   void on_activate(bContext &C) override
   {
     PointerRNA grease_pencil_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilv3LayerGroup, nullptr);
+        &grease_pencil_.id, RNA_GreasePencilv3LayerGroup, nullptr);
     PointerRNA value_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilLayerGroup, &group_);
+        &grease_pencil_.id, RNA_GreasePencilLayerGroup, &group_);
 
     PropertyRNA *prop = RNA_struct_find_property(&grease_pencil_ptr, "active");
 
@@ -439,7 +439,7 @@ class LayerGroupViewItem : public AbstractTreeViewItem {
   bool rename(const bContext &C, StringRefNull new_name) override
   {
     PointerRNA group_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilLayerGroup, &group_);
+        &grease_pencil_.id, RNA_GreasePencilLayerGroup, &group_);
     PropertyRNA *prop = RNA_struct_find_property(&group_ptr, "name");
 
     RNA_property_string_set(&group_ptr, prop, new_name.c_str());
@@ -498,7 +498,7 @@ class LayerGroupViewItem : public AbstractTreeViewItem {
   void build_layer_group_buttons(Layout &row)
   {
     PointerRNA group_ptr = RNA_pointer_create_discrete(
-        &grease_pencil_.id, &RNA_GreasePencilLayerGroup, &group_);
+        &grease_pencil_.id, RNA_GreasePencilLayerGroup, &group_);
 
     Layout *sub = &row.row(true);
     if (group_.as_node().parent_group()) {

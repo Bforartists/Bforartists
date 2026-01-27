@@ -113,13 +113,13 @@ struct bContext {
 
 bContext *CTX_create()
 {
-  bContext *C = MEM_callocN<bContext>(__func__);
+  bContext *C = MEM_new_zeroed<bContext>(__func__);
   return C;
 }
 
 bContext *CTX_copy(const bContext *C)
 {
-  bContext *newC = MEM_callocN<bContext>(__func__);
+  bContext *newC = MEM_new_zeroed<bContext>(__func__);
   *newC = *C;
 
   memset(&newC->wm.operator_poll_msg_dyn_params, 0, sizeof(newC->wm.operator_poll_msg_dyn_params));
@@ -132,7 +132,7 @@ void CTX_free(bContext *C)
   /* This may contain a dynamically allocated message, free. */
   CTX_wm_operator_poll_msg_clear(C);
 
-  MEM_freeN(C);
+  MEM_delete(C);
 }
 
 /* store */
@@ -317,7 +317,7 @@ static std::string ctx_result_brief_repr(const bContextDataResult &result)
             if (name && name[0] != '\0') {
               member_name = name;
               if (name != name_buf) {
-                MEM_freeN(name);
+                MEM_delete(name);
               }
             }
           }
@@ -638,7 +638,7 @@ static bool ctx_data_base_collection_get(const bContext *C,
     Object *ob = static_cast<Object *>(ctx_object.data);
     Base *base = BKE_view_layer_base_find(view_layer, ob);
     if (base != nullptr) {
-      CTX_data_list_add(&result, &scene->id, &RNA_ObjectBase, base);
+      CTX_data_list_add(&result, &scene->id, RNA_ObjectBase, base);
       ok = true;
     }
   }
@@ -774,7 +774,7 @@ static void data_dir_add(ListBaseT<LinkData> *lb, const char *member, const bool
     return;
   }
 
-  link = MEM_callocN<LinkData>(__func__);
+  link = MEM_new_zeroed<LinkData>(__func__);
   link->data = const_cast<char *>(member);
   BLI_addtail(lb, link);
 }
@@ -799,7 +799,7 @@ ListBaseT<LinkData> CTX_data_dir_get_ex(const bContext *C,
 
     PropertyRNA *iterprop;
     PointerRNA ctx_ptr = RNA_pointer_create_discrete(
-        nullptr, &RNA_Context, const_cast<bContext *>(C));
+        nullptr, RNA_Context, const_cast<bContext *>(C));
 
     iterprop = RNA_struct_iterator_property(ctx_ptr.type);
 
@@ -807,7 +807,7 @@ ListBaseT<LinkData> CTX_data_dir_get_ex(const bContext *C,
       name = RNA_struct_name_get_alloc(&itemptr, name_buf, sizeof(name_buf), &namelen);
       data_dir_add(&lb, name, use_all);
       if (name != name_buf) {
-        MEM_freeN(name);
+        MEM_delete(name);
       }
     }
     RNA_PROP_END;
@@ -938,24 +938,23 @@ bool CTX_wm_interface_locked(const bContext *C)
 
 wmWindow *CTX_wm_window(const bContext *C)
 {
-  return static_cast<wmWindow *>(
-      ctx_wm_python_context_get(C, "window", &RNA_Window, C->wm.window));
+  return static_cast<wmWindow *>(ctx_wm_python_context_get(C, "window", RNA_Window, C->wm.window));
 }
 
 WorkSpace *CTX_wm_workspace(const bContext *C)
 {
   return static_cast<WorkSpace *>(
-      ctx_wm_python_context_get(C, "workspace", &RNA_WorkSpace, C->wm.workspace));
+      ctx_wm_python_context_get(C, "workspace", RNA_WorkSpace, C->wm.workspace));
 }
 
 bScreen *CTX_wm_screen(const bContext *C)
 {
-  return static_cast<bScreen *>(ctx_wm_python_context_get(C, "screen", &RNA_Screen, C->wm.screen));
+  return static_cast<bScreen *>(ctx_wm_python_context_get(C, "screen", RNA_Screen, C->wm.screen));
 }
 
 ScrArea *CTX_wm_area(const bContext *C)
 {
-  return static_cast<ScrArea *>(ctx_wm_python_context_get(C, "area", &RNA_Area, C->wm.area));
+  return static_cast<ScrArea *>(ctx_wm_python_context_get(C, "area", RNA_Area, C->wm.area));
 }
 
 SpaceLink *CTX_wm_space_data(const bContext *C)
@@ -966,7 +965,7 @@ SpaceLink *CTX_wm_space_data(const bContext *C)
 
 ARegion *CTX_wm_region(const bContext *C)
 {
-  return static_cast<ARegion *>(ctx_wm_python_context_get(C, "region", &RNA_Region, C->wm.region));
+  return static_cast<ARegion *>(ctx_wm_python_context_get(C, "region", RNA_Region, C->wm.region));
 }
 
 void *CTX_wm_region_data(const bContext *C)

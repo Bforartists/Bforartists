@@ -576,8 +576,8 @@ wmOperatorStatus WM_gesture_lasso_modal(bContext *C, wmOperator *op, const wmEve
 
         if (gesture->points == gesture->points_alloc) {
           gesture->points_alloc *= 2;
-          gesture->customdata = MEM_reallocN(gesture->customdata,
-                                             sizeof(float[2]) * gesture->points_alloc);
+          gesture->customdata = MEM_realloc_uninitialized(
+              gesture->customdata, sizeof(float[2]) * gesture->points_alloc);
         }
 
         {
@@ -710,7 +710,7 @@ void WM_OT_lasso_gesture(wmOperatorType *ot)
   ot->flag = OPTYPE_DEPENDS_ON_CURSOR;
 
   prop = RNA_def_property(ot->srna, "path", PROP_COLLECTION, PROP_NONE);
-  RNA_def_property_struct_runtime(ot->srna, prop, &RNA_OperatorMousePath);
+  RNA_def_property_struct_runtime(ot->srna, prop, RNA_OperatorMousePath);
 }
 #endif
 
@@ -874,8 +874,8 @@ wmOperatorStatus WM_gesture_polyline_modal(bContext *C, wmOperator *op, const wm
                              (event->xy[1] - gesture->winrct.ymin));
         if (gesture->points == gesture->points_alloc) {
           gesture->points_alloc *= 2;
-          gesture->customdata = MEM_reallocN(gesture->customdata,
-                                             sizeof(short[2]) * gesture->points_alloc);
+          gesture->customdata = MEM_realloc_uninitialized(
+              gesture->customdata, sizeof(short[2]) * gesture->points_alloc);
         }
         short (*border)[2] = static_cast<short int (*)[2]>(gesture->customdata);
 

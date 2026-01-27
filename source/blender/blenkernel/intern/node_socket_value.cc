@@ -21,6 +21,7 @@
 #include "BLI_color.hh"
 #include "BLI_math_rotation_types.hh"
 #include "BLI_math_vector_types.hh"
+#include "BLI_memory_counter.hh"
 
 #include "FN_field.hh"
 
@@ -270,10 +271,21 @@ template<typename T> void SocketValueVariant::store_impl(T value)
   }
   else if constexpr (std::is_same_v<T, nodes::ListPtr>) {
     kind_ = Kind::List;
-    const std::optional<eNodeSocketDatatype> new_socket_type =
-        geo_nodes_base_cpp_type_to_socket_type(value->cpp_type());
-    BLI_assert(new_socket_type);
-    socket_type_ = *new_socket_type;
+    const CPPType &list_cpp_type = value->cpp_type();
+    if (list_cpp_type.is<bke::SocketValueVariant>()) {
+      /* For lists of #SocketValueVariant, use the socket type of the first element. */
+      const GVArray gvarray = value->varray();
+      const VArray varray = gvarray.typed<bke::SocketValueVariant>();
+      if (!varray.is_empty()) {
+        socket_type_ = varray[0].socket_type_;
+      }
+    }
+    else {
+      const std::optional<eNodeSocketDatatype> new_socket_type =
+          geo_nodes_base_cpp_type_to_socket_type(list_cpp_type);
+      BLI_assert(new_socket_type);
+      socket_type_ = *new_socket_type;
+    }
     value_.emplace<nodes::ListPtr>(std::move(value));
   }
 #ifdef WITH_OPENVDB
@@ -669,6 +681,46 @@ bool SocketValueVariant::valid_for_socket(eNodeSocketDatatype socket_type) const
     return false;
   }
   return socket_type_ == socket_type;
+}
+
+void SocketValueVariant::count_memory(MemoryCounter &memory) const
+{
+  switch (kind_) {
+    case Kind::None: {
+      break;
+    }
+    case Kind::Single: {
+      const GPointer value = this->get_single_ptr();
+      const CPPType &cpp_type = *value.type();
+      memory.add(cpp_type.size);
+      if (cpp_type.is<GeometrySet>()) {
+        const GeometrySet &geometry = *value.get<GeometrySet>();
+        geometry.count_memory(memory);
+      }
+      if (cpp_type.is<nodes::BundlePtr>()) {
+        const nodes::BundlePtr &bundle_ptr = *value.get<nodes::BundlePtr>();
+        if (bundle_ptr) {
+          bundle_ptr->count_memory(memory);
+        }
+      }
+      break;
+    }
+    case Kind::Field: {
+      break;
+    }
+    case Kind::Grid: {
+      if (const GVolumeGrid &grid = value_.get<GVolumeGrid>()) {
+        grid->count_memory(memory);
+      }
+      break;
+    }
+    case Kind::List: {
+      if (const nodes::ListPtr &list = value_.get<nodes::ListPtr>()) {
+        list->count_memory(memory);
+      }
+      break;
+    }
+  }
 }
 
 #define INSTANTIATE(TYPE) \

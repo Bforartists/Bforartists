@@ -117,7 +117,7 @@ static wmGizmo *tool_generic_create_gizmo(const bContext *C, wmGizmoGroup *gzgro
 
 static void WIDGETGROUP_tool_generic_setup(const bContext *C, wmGizmoGroup *gzgroup)
 {
-  wmGizmoWrapper *wwrapper = MEM_mallocN<wmGizmoWrapper>(__func__);
+  wmGizmoWrapper *wwrapper = MEM_new_uninitialized<wmGizmoWrapper>(__func__);
   wwrapper->gizmo = tool_generic_create_gizmo(C, gzgroup);
   gzgroup->customdata = wwrapper;
 
@@ -182,7 +182,7 @@ static void WIDGETGROUP_gizmo_message_subscribe(const bContext *C,
 
     Scene *scene = CTX_data_scene(C);
     PointerRNA toolsettings_ptr = RNA_pointer_create_discrete(
-        &scene->id, &RNA_ToolSettings, scene->toolsettings);
+        &scene->id, RNA_ToolSettings, scene->toolsettings);
 
     for (int i = 0; i < ARRAY_SIZE(props); i++) {
       WM_msg_subscribe_rna(
