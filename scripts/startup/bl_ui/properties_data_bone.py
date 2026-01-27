@@ -501,18 +501,11 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
                     row.label(icon='DISCLOSURE_TRI_RIGHT', text = "      ")
                 row.prop_decorator(bone, "show_wire")
 
-                # Disabled on Mac due to drawing issues with lacking geometry shader support. See #124691.
-                is_darwin = platform.system() == "Darwin"
-
                 if bone.show_wire:
                     row = sub.row()
                     row.use_property_split = True
                     row.separator()
                     row.prop(pchan, "custom_shape_wire_width")
-
-                if is_darwin:
-                    row = sub.row()
-                    row.label(text="Custom wire width not available on MacOS", icon='INFO')
 
 
 class BONE_PT_inverse_kinematics(BoneButtonsPanel, Panel):
