@@ -29,7 +29,7 @@ void BKE_toolshelf_runtime_exit(void)
   if (g_toolshelf_runtime_data) {
     GHashIterator gh_iter;
     GHASH_ITER (gh_iter, g_toolshelf_runtime_data) {
-      MEM_freeN(BLI_ghashIterator_getValue(&gh_iter));
+      MEM_delete_void(BLI_ghashIterator_getValue(&gh_iter));
     }
     BLI_ghash_free(g_toolshelf_runtime_data, NULL, NULL);
     g_toolshelf_runtime_data = NULL;
@@ -60,7 +60,7 @@ void BKE_toolshelf_category_tabs_offset_set(ARegion *region, float offset)
 
   if (!data) {
     data = static_cast<ToolshelfRuntimeData *>(
-        MEM_callocN(sizeof(ToolshelfRuntimeData), __func__));
+        MEM_new_zeroed(sizeof(ToolshelfRuntimeData), __func__));
     BLI_ghash_insert(g_toolshelf_runtime_data, region, data);
   }
 
@@ -79,9 +79,10 @@ void BKE_toolshelf_category_tabs_offset_set(ARegion *region, float offset)
 void BKE_toolshelf_region_free(ARegion *region)
 {
   if (g_toolshelf_runtime_data && region) {
-    void *data = BLI_ghash_popkey(g_toolshelf_runtime_data, region, MEM_freeN);
+    ToolshelfRuntimeData *data = static_cast<ToolshelfRuntimeData *>(
+        BLI_ghash_popkey(g_toolshelf_runtime_data, region, nullptr));
     if (data) {
-      MEM_freeN(data);
+      MEM_delete(data);
     }
   }
 }

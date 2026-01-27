@@ -107,7 +107,7 @@ endif()
 list(APPEND PLATFORM_LINKLIBS
   ws2_32 vfw32 winmm kernel32 user32 gdi32 comdlg32 Comctl32 version
   advapi32 shfolder shell32 ole32 oleaut32 uuid psapi Dbghelp Shlwapi
-  pathcch Shcore Dwmapi Crypt32 Bcrypt
+  pathcch Shcore Dwmapi Crypt32 Bcrypt Mpr
 )
 
 if(WITH_INPUT_IME)
@@ -383,8 +383,11 @@ set(ZLIB_INCLUDE_DIR ${LIBDIR}/zlib/include)
 set(ZLIB_LIBRARY ${LIBDIR}/zlib/lib/libz_st.lib)
 set(ZLIB_DIR ${LIBDIR}/zlib)
 
-set(fmt_DIR ${LIBDIR}/fmt/lib/cmake/fmt/)
+set(fmt_DIR ${LIBDIR}/fmt/lib/cmake/fmt)
 find_package(fmt REQUIRED CONFIG)
+
+# BFA - Manual workaround for fmt include issue
+include_directories(SYSTEM ${LIBDIR}/fmt/include)
 
 windows_find_package(ZLIB) # We want to find before finding things that depend on it like PNG.
 windows_find_package(PNG)

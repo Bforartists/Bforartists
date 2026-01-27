@@ -472,7 +472,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 // #define WITH_OCEANSIM
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  ui::Layout *col, *sub, *row; /*bfa - added *row*/
+  ui::Layout *col, *sub; /*bfa*/
   ui::Layout &layout = *panel->layout;
 #ifdef WITH_OCEANSIM
 

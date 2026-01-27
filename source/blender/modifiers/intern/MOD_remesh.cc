@@ -216,7 +216,6 @@ static Mesh *modify_mesh(ModifierData * /*md*/, const ModifierEvalContext * /*ct
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  ui::Layout *row, *col;
   ui::Layout &layout = *panel->layout;
 #ifdef WITH_MOD_REMESH
 

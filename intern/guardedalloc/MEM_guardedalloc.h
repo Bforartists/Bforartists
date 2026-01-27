@@ -627,9 +627,8 @@ inline T *MEM_new_array_uninitialized(const size_t length, const char *allocatio
 template<typename T> inline T *MEM_dupalloc(const T *other)
 {
 #  ifdef _MSC_VER
-/* TODO: Add back is_trivially_copyable_v condition, temporarily disabled
-* because of build error on MSVC. */
-// BFA - temporary fix
+  /* TODO: Add back is_trivially_copyable_v condition, temporarily disabled
+   * because of build error on MSVC. */
   static_assert(/*std::is_trivially_copyable_v<T> &&*/ std::is_trivially_destructible_v<T>,
                 "MEM_dupalloc can only duplicate types that are trivially copyable and "
                 "destructible, use MEM_new instead.");

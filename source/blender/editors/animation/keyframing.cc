@@ -1414,10 +1414,10 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
         /* BFA */
         if (is_alt_held) {
           blender::Vector<PointerRNA> selected_ptrs;
-          if (ptr.type == &RNA_Object) {
+          if (ptr.type == RNA_Object) {
             CTX_data_selected_objects(C, &selected_ptrs);
           }
-          else if (ptr.type == &RNA_PoseBone) {
+          else if (ptr.type == RNA_PoseBone) {
             CTX_data_selected_pose_bones(C, &selected_ptrs);
           }
           insert_keyframes_multi(bmain,
@@ -1613,10 +1613,10 @@ static wmOperatorStatus delete_key_button_exec(bContext *C, wmOperator *op)
         /* bfa - Apply animation to all selected through UI animate property */
         if (is_alt_held) {
           Vector<PointerRNA> pointers;
-          if (ptr.type == &RNA_Object) {
+          if (ptr.type == RNA_Object) {
             CTX_data_selected_objects(C, &pointers);
           }
-          else if (ptr.type == &RNA_PoseBone) {
+          else if (ptr.type == RNA_PoseBone) {
             CTX_data_selected_pose_bones(C, &pointers);
           }
           changed |= delete_key_multi(
