@@ -478,15 +478,24 @@ class BONE_PT_display_custom_shape(BoneButtonsPanel, Panel):
                 sub.prop(pchan, "custom_shape_scale_xyz", text="Scale")
                 
                 sub.prop_search(pchan, "custom_shape_transform", ob.pose, "bones", text="Override Transform")
-                sub.separator()
 
-                subsub = sub.column()
-                subsub.active = bool(pchan and pchan.custom_shape and pchan.custom_shape_transform)
-                subsub.prop(pchan, "use_transform_at_custom_shape")
-                subsubsub = subsub.column()
-                subsubsub.active = subsub.active and pchan.use_transform_at_custom_shape
-                subsubsub.prop(pchan, "use_transform_around_custom_shape")
-
+                # bfa - Only show the transform properties if custom_shape_transform has a bone selected
+                if pchan and pchan.custom_shape and pchan.custom_shape_transform:
+                    subsub = sub.row()
+                    subsub.use_property_split = False
+                    subsub.active = bool(pchan and pchan.custom_shape and pchan.custom_shape_transform)
+                    subsub.prop(pchan, "use_transform_at_custom_shape")
+                    subsub.prop_decorator(pchan, "use_transform_at_custom_shape")
+                    
+                    # bfa - Only show Use as Pivot when Affect Gizmo is enabled
+                    if pchan.use_transform_at_custom_shape:
+                        sub = col.column()
+                        subsubsub = sub.row()
+                        subsubsub.separator()
+                        subsubsub.use_property_split = False
+                        subsubsub.prop(pchan, "use_transform_around_custom_shape")
+                        subsubsub.prop_decorator(pchan, "use_transform_around_custom_shape")
+                        
                 row = sub.row()
                 row.use_property_split = False
                 row.prop(pchan, "use_custom_shape_bone_size")
