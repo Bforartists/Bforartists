@@ -3374,7 +3374,6 @@ static void node_draw_basis(const bContext &C,
     }
   }
   /* BFA Header outline. */
-  ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
   {
     const float outline_width = U.pixelsize;
     const rctf rect_header = {

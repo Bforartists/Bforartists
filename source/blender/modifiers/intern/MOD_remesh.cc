@@ -228,7 +228,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout.use_property_split_set(true);
 
-  col = &layout.column(false);
+  ui::LayoutColumn *col = &layout.column(false); /*BFA*/
   if (mode == MOD_REMESH_VOXEL) {
     col->prop(ptr, "voxel_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col->prop(ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -242,7 +242,8 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
     }
 
     /* bfa - our layout */
-    col = row = &layout.column(true);
+    ui::LayoutRow *row;
+    col = &layout.column(true);
     row = &col->row(true);
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);

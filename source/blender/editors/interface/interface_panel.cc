@@ -560,7 +560,7 @@ static bool panel_custom_pin_to_last_get(const Panel *panel)
   return false;
 }
 
-/* bfa - we use the toggle itself to unpin */
+/* bfa - TODO: Unused - we should use the toggle itself to unpin */
 static void panel_custom_pin_to_last_set(const bContext *C, const Panel *panel, const bool value)
 {
   if (panel->type->pin_to_last_property[0] != '\0') {

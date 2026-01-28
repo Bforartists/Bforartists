@@ -344,7 +344,8 @@ static EnumPropertyItem rna_enum_gpencil_fill_layers_modes_items[] = {
     {GP_FILL_GPLMODE_ALL_ABOVE, "ALL_ABOVE", 0, "All Above", "All layers above active"},
     {GP_FILL_GPLMODE_ALL_BELOW, "ALL_BELOW", 0, "All Below", "All layers below active"},
     {0, nullptr, 0, nullptr, nullptr}};
-/* BFA - */
+
+/* BFA - Temporary warning fix, ERASE and SMOOTH is not used */
 static EnumPropertyItem rna_enum_gpencil_fill_direction_items[] = {
     {0, "NORMAL", ICON_ADD, "Normal", "Fill internal area"},
     {BRUSH_DIR_IN, "INVERT", ICON_REMOVE, "Inverted", "Fill inverted area"},
