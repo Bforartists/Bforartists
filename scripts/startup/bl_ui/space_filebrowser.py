@@ -159,8 +159,6 @@ class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
 
         layout.prop(params, "recursion_level", text="Recursions")
 
-        layout.label(text="Sort By")  # BFA - added label
-
         layout.column().prop(params, "sort_method", text="Sort By", expand=True)
         layout.use_property_split = False
         layout.prop(params, "use_sort_invert")
