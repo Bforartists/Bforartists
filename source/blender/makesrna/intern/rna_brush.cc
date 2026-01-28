@@ -348,7 +348,7 @@ static EnumPropertyItem rna_enum_gpencil_fill_layers_modes_items[] = {
 static EnumPropertyItem rna_enum_gpencil_fill_direction_items[] = {
     {0, "NORMAL", ICON_ADD, "Normal", "Fill internal area"},
     {BRUSH_DIR_IN, "INVERT", ICON_REMOVE, "Inverted", "Fill inverted area"},
-    {2, "ERASE", ICON_ERASER, "Erase", "Erase fill area"},
+    {2, "ERASE", ICON_ERASE, "Erase", "Erase fill area"},
     {3, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", "Smooth fill area"},
     {0, nullptr, 0, nullptr, nullptr},
 };

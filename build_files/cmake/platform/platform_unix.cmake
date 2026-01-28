@@ -134,6 +134,13 @@ if(DEFINED fmt_DIR)
   mark_as_advanced(fmt_DIR)
 endif()
 
+# BFA - Manual workaround for fmt include issue with Blender 5.1 libs
+#   fmt is used by public headers like BLI_string_ref.hh, so we need to make
+#   the include directory available globally, not just to individual targets
+if(DEFINED LIBDIR)
+  include_directories(SYSTEM ${LIBDIR}/fmt/include)
+endif()
+
 # XXX Linking errors with debian static tiff :/
 # find_package_wrapper(TIFF REQUIRED)
 find_package(TIFF)

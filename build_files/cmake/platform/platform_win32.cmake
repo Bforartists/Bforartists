@@ -386,7 +386,9 @@ set(ZLIB_DIR ${LIBDIR}/zlib)
 set(fmt_DIR ${LIBDIR}/fmt/lib/cmake/fmt)
 find_package(fmt REQUIRED CONFIG)
 
-# BFA - Manual workaround for fmt include issue
+# BFA - Manual workaround for fmt include issue with Blender 5.1 libs
+#   fmt is used by public headers like BLI_string_ref.hh, so we need to make
+#   the include directory available globally, not just to individual targets
 include_directories(SYSTEM ${LIBDIR}/fmt/include)
 
 windows_find_package(ZLIB) # We want to find before finding things that depend on it like PNG.

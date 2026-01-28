@@ -244,6 +244,11 @@ find_package(TIFF REQUIRED)
 set(fmt_ROOT ${LIBDIR}/fmt)
 find_package(fmt REQUIRED)
 
+# BFA - Manual workaround for fmt include issue with Blender 5.1 libs
+#   fmt is used by public headers like BLI_string_ref.hh, so we need to make
+#   the include directory available globally, not just to individual targets
+include_directories(SYSTEM ${LIBDIR}/fmt/include)
+
 if(WITH_IMAGE_WEBP)
   set(WEBP_ROOT_DIR ${LIBDIR}/webp)
   find_package(WebP REQUIRED)
