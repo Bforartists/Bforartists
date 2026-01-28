@@ -2492,24 +2492,26 @@ static wmOperatorStatus sequencer_delete_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static wmOperatorStatus sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
-{
-  Scene *scene = CTX_data_sequencer_scene(C);
-  ListBaseT<TimeMarker> *markers = &scene->markers;
-
-  if (!BLI_listbase_is_empty(markers)) {
-    ARegion *region = CTX_wm_region(C);
-    if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
-      /* Bounding box of 30 pixels is used for markers shortcuts,
-       * prevent conflict with markers shortcuts here. */
-      if (event->mval[1] <= 30) {
-        return OPERATOR_PASS_THROUGH;
-      }
-    }
-  }
-
-  return sequencer_delete_exec(C, op);
-}
+/*bfa - turned this dialog off*/
+// static wmOperatorStatus sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent
+// *event)
+//{
+//   Scene *scene = CTX_data_sequencer_scene(C);
+// ListBaseT<TimeMarker> *markers = &scene->markers;
+//
+// if (!BLI_listbase_is_empty(markers)) {
+// ARegion *region = CTX_wm_region(C);
+// if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
+///* Bounding box of 30 pixels is used for markers shortcuts,
+//*prevent conflict with markers shortcuts here.* / if (event->mval[1] <= 30)
+//{
+// return OPERATOR_PASS_THROUGH;
+//}
+//  }
+//  }
+//
+// return sequencer_delete_exec(C, op);
+//}
 
 void SEQUENCER_OT_delete(wmOperatorType *ot)
 {
@@ -2519,7 +2521,7 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
   ot->description = "Delete selected strips from the sequencer"; /*BFA - updated tooltip*/
 
   /* API callbacks. */
-  /*ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
+  /*BFA - ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
   ot->exec = sequencer_delete_exec;
   ot->poll = sequencer_edit_poll;
 
