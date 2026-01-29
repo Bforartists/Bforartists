@@ -570,7 +570,7 @@ void BlenderSync::sync_film(blender::ViewLayer &b_view_layer,
   blender::PointerRNA scene_rna_ptr = RNA_id_pointer_create(&b_scene->id);
   blender::PointerRNA cscene = RNA_pointer_get(&scene_rna_ptr, "cycles");
   blender::PointerRNA view_layer_rna_ptr = RNA_pointer_create_id_subdata(
-      b_scene->id, &blender::RNA_ViewLayer, &b_view_layer);
+      b_scene->id, blender::RNA_ViewLayer, &b_view_layer);
   blender::PointerRNA crl = RNA_pointer_get(&view_layer_rna_ptr, "cycles");
 
   Film *film = scene->film;
@@ -733,8 +733,8 @@ static bool get_known_pass_type(blender::RenderPass &b_pass, PassType &type, Pas
   MAP_PASS("BakeSeed", PASS_BAKE_SEED, false);
   MAP_PASS("BakeDifferential", PASS_BAKE_DIFFERENTIAL, false);
 
-  MAP_PASS("Denoising Normal", PASS_DENOISING_NORMAL, true);
   MAP_PASS("Denoising Albedo", PASS_DENOISING_ALBEDO, true);
+  MAP_PASS("Denoising Normal", PASS_DENOISING_NORMAL, true);
   MAP_PASS("Denoising Depth", PASS_DENOISING_DEPTH, true);
 
   MAP_PASS("Shadow Catcher", PASS_SHADOW_CATCHER, false);
@@ -1100,7 +1100,7 @@ DenoiseParams BlenderSync::get_denoise_params(blender::Scene &b_scene,
 
     if (b_view_layer) {
       blender::PointerRNA view_layer_rna_ptr = RNA_pointer_create_id_subdata(
-          b_scene.id, &blender::RNA_ViewLayer, b_view_layer);
+          b_scene.id, blender::RNA_ViewLayer, b_view_layer);
       blender::PointerRNA clayer = RNA_pointer_get(&view_layer_rna_ptr, "cycles");
       if (!get_boolean(clayer, "use_denoising")) {
         denoising.use = false;

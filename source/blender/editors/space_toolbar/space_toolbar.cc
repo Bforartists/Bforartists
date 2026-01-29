@@ -33,7 +33,7 @@ static SpaceLink *toolbar_create(const ScrArea * /*area*/, const Scene * /*scene
   ARegion *region;
   SpaceToolbar *stoolbar;
 
-  stoolbar = static_cast<SpaceToolbar *>(MEM_callocN(sizeof(SpaceToolbar), "inittoolbar"));
+  stoolbar = static_cast<SpaceToolbar *>(MEM_new_zeroed(sizeof(SpaceToolbar), "inittoolbar"));
   stoolbar->spacetype = SPACE_TOOLBAR;
 
   /* header */
@@ -54,7 +54,7 @@ static SpaceLink *toolbar_create(const ScrArea * /*area*/, const Scene * /*scene
 
 static SpaceLink *toolbar_duplicate(SpaceLink *sl)
 {
-  SpaceToolbar *stoolbarn = static_cast<SpaceToolbar *>(MEM_dupallocN(sl));
+  SpaceToolbar *stoolbarn = static_cast<SpaceToolbar *>(MEM_dupalloc_void(sl));
 
   /* clear or remove stuff from old */
 
@@ -163,7 +163,7 @@ void ED_spacetype_toolbar(void)
   st->blend_write = toolbar_space_blend_write;
 
   /* regions: main window */
-  art = static_cast<ARegionType *>(MEM_callocN(sizeof(ARegionType), "spacetype toolbar region"));
+  art = static_cast<ARegionType *>(MEM_new_zeroed(sizeof(ARegionType), "spacetype toolbar region"));
   art->regionid = RGN_TYPE_WINDOW;
 
   art->init = toolbar_main_region_init;
@@ -173,7 +173,7 @@ void ED_spacetype_toolbar(void)
   BLI_addhead(&st->regiontypes, art);
 
   /* regions: header */
-  art = static_cast<ARegionType *>(MEM_callocN(sizeof(ARegionType), "spacetype toolbar region"));
+  art = static_cast<ARegionType *>(MEM_new_zeroed(sizeof(ARegionType), "spacetype toolbar region"));
   art->regionid = RGN_TYPE_HEADER;
   art->prefsizey = HEADERY;
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_HEADER;

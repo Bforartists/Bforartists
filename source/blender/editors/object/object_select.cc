@@ -568,7 +568,7 @@ static bool object_select_all_by_library_obdata(bContext *C, Library *lib)
 
   CTX_DATA_BEGIN (C, Base *, base, visible_bases) {
     if (((base->flag & BASE_SELECTED) == 0) && ((base->flag & BASE_SELECTABLE) != 0)) {
-      if (base->object->data && lib == (static_cast<ID *>(base->object->data))->lib) {
+      if (base->object->data && lib == (base->object->data)->lib) {
         base_select(base, BA_SELECT);
         changed = true;
       }
@@ -669,7 +669,7 @@ static wmOperatorStatus object_select_linked_exec(bContext *C, wmOperator *op)
       return OPERATOR_CANCELLED;
     }
 
-    changed = object_select_all_by_library_obdata(C, (static_cast<ID *>(ob->data))->lib);
+    changed = object_select_all_by_library_obdata(C, ob->data->lib);
   }
   else {
     return OPERATOR_CANCELLED;
@@ -1436,7 +1436,7 @@ static wmOperatorStatus object_select_random_exec(bContext *C, wmOperator *op)
   Vector<PointerRNA> ctx_data_list;
   CTX_data_selectable_bases(C, &ctx_data_list);
   int elem_map_len = 0;
-  Base **elem_map = MEM_malloc_arrayN<Base *>(ctx_data_list.size(), __func__);
+  Base **elem_map = MEM_new_array_uninitialized<Base *>(ctx_data_list.size(), __func__);
 
   for (PointerRNA &ptr : ctx_data_list) {
     elem_map[elem_map_len++] = static_cast<Base *>(ptr.data);
@@ -1447,7 +1447,7 @@ static wmOperatorStatus object_select_random_exec(bContext *C, wmOperator *op)
   for (int i = 0; i < count_select; i++) {
     base_select(elem_map[i], eObjectSelect_Mode(select));
   }
-  MEM_freeN(elem_map);
+  MEM_delete(elem_map);
 
   Scene *scene = CTX_data_scene(C);
   DEG_id_tag_update(&scene->id, ID_RECALC_SELECT);

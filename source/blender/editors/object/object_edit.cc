@@ -146,7 +146,7 @@ static bool object_mode_set_ok_or_report(ReportList *reports)
 
 Object *context_object(const bContext *C)
 {
-  return static_cast<Object *>(CTX_data_pointer_get_type(C, "object", &RNA_Object).data);
+  return static_cast<Object *>(CTX_data_pointer_get_type(C, "object", RNA_Object).data);
 }
 
 Object *context_active_object(const bContext *C)
@@ -1936,7 +1936,7 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
         break;
       }
       /* Remove the weak library reference, since the already loaded group is not valid anymore. */
-      MEM_SAFE_FREE(node_group_id->library_weak_reference);
+      MEM_SAFE_DELETE(node_group_id->library_weak_reference);
       /* Stay in the loop and load the asset again. */
       node_group = nullptr;
     }
@@ -2461,7 +2461,7 @@ static void move_to_collection_menu_draw(Menu *menu, Collection *collection, int
 static void move_to_collection_recursive_menu_draw(const bContext * /*C*/, Menu *menu)
 {
   ui::Layout &layout = *menu->layout;
-  const PointerRNA *ptr = layout.context_ptr_get("collection", &RNA_Collection);
+  const PointerRNA *ptr = layout.context_ptr_get("collection", RNA_Collection);
   Collection *collection = ptr ? ptr->data_as<Collection>() : nullptr;
   if (!collection) {
     return;
@@ -2487,7 +2487,7 @@ static void move_to_collection_menu_draw(const bContext *C, Menu *menu)
 void move_to_collection_menu_register()
 {
   /* Add recursive sub-menu type, to avoid each sub-menu from showing the main menu shortcut. */
-  MenuType *mt = MEM_callocN<MenuType>("OBJECT_MT_move_to_collection_recursive");
+  MenuType *mt = MEM_new_zeroed<MenuType>("OBJECT_MT_move_to_collection_recursive");
   STRNCPY_UTF8(mt->idname, "OBJECT_MT_move_to_collection_recursive");
   STRNCPY_UTF8(mt->label, N_("Move to Collection Recursive"));
   STRNCPY_UTF8(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
@@ -2495,7 +2495,7 @@ void move_to_collection_menu_register()
   mt->flag = MenuTypeFlag::ContextDependent;
   WM_menutype_add(mt);
 
-  mt = MEM_callocN<MenuType>("OBJECT_MT_move_to_collection");
+  mt = MEM_new_zeroed<MenuType>("OBJECT_MT_move_to_collection");
   STRNCPY_UTF8(mt->idname, "OBJECT_MT_move_to_collection");
   STRNCPY_UTF8(mt->label, N_("Move to Collection"));
   STRNCPY_UTF8(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
@@ -2507,7 +2507,7 @@ void move_to_collection_menu_register()
 void link_to_collection_menu_register()
 {
   /* Add recursive sub-menu type, to avoid each sub-menu from showing the main menu shortcut. */
-  MenuType *mt = MEM_callocN<MenuType>("OBJECT_MT_link_to_collection_recursive");
+  MenuType *mt = MEM_new_zeroed<MenuType>("OBJECT_MT_link_to_collection_recursive");
   STRNCPY_UTF8(mt->idname, "OBJECT_MT_link_to_collection_recursive");
   STRNCPY_UTF8(mt->label, N_("Link to Collection Recursive"));
   STRNCPY_UTF8(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
@@ -2515,7 +2515,7 @@ void link_to_collection_menu_register()
   mt->flag = MenuTypeFlag::ContextDependent;
   WM_menutype_add(mt);
 
-  mt = MEM_callocN<MenuType>("OBJECT_MT_link_to_collection");
+  mt = MEM_new_zeroed<MenuType>("OBJECT_MT_link_to_collection");
   STRNCPY_UTF8(mt->idname, "OBJECT_MT_link_to_collection");
   STRNCPY_UTF8(mt->label, N_("Link to Collection"));
   STRNCPY_UTF8(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);

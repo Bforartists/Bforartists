@@ -78,8 +78,8 @@ class ShapeKeyDragController : public ui::AbstractViewItemDragController {
     }();
 
     /* Allocate one extra element, to use it as null-delimiter. */
-    KeyBlock **selected_keys_ = MEM_calloc_arrayN<KeyBlock *>(selected_count + 1,
-                                                              "Selected Key Blocks");
+    KeyBlock **selected_keys_ = MEM_new_array_zeroed<KeyBlock *>(selected_count + 1,
+                                                                 "Selected Key Blocks");
 
     selected_count = 0;
 
@@ -184,7 +184,7 @@ class ShapeKeyDropTarget : public ui::TreeViewItemDropTarget {
       BKE_keyblock_move(ob, drag_index, drop_index);
     }
 
-    DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_GEOMETRY);
+    DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
     WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
     ED_undo_push(C, "Drop Active Shape Key");
 
@@ -212,7 +212,7 @@ class ShapeKeyItem : public ui::AbstractTreeViewItem {
     ui::Layout &sub = row.row(true);
     sub.use_property_decorate_set(false);
     PointerRNA shapekey_ptr = RNA_pointer_create_discrete(
-        &shape_key_.key->id, &RNA_ShapeKey, shape_key_.kb);
+        &shape_key_.key->id, RNA_ShapeKey, shape_key_.kb);
 
     if (shape_key_.key->type == KEY_NORMAL) {
       sub.prop(&shapekey_ptr, "frame", ui::ITEM_R_ICON_ONLY, std::nullopt, ICON_NONE);
@@ -238,7 +238,7 @@ class ShapeKeyItem : public ui::AbstractTreeViewItem {
   void on_activate(bContext &C) override
   {
     PointerRNA object_ptr = RNA_pointer_create_discrete(
-        &shape_key_.object->id, &RNA_Object, shape_key_.object);
+        &shape_key_.object->id, RNA_Object, shape_key_.object);
     PropertyRNA *prop = RNA_struct_find_property(&object_ptr, "active_shape_key_index");
     RNA_property_int_set(&object_ptr, prop, shape_key_.index);
     RNA_property_update(&C, &object_ptr, prop);
@@ -265,7 +265,7 @@ class ShapeKeyItem : public ui::AbstractTreeViewItem {
   bool rename(const bContext &C, StringRefNull new_name) override
   {
     PointerRNA shapekey_ptr = RNA_pointer_create_discrete(
-        &shape_key_.key->id, &RNA_ShapeKey, shape_key_.kb);
+        &shape_key_.key->id, RNA_ShapeKey, shape_key_.kb);
     RNA_string_set(&shapekey_ptr, "name", new_name.c_str());
     ED_undo_push(const_cast<bContext *>(&C), "Rename shape key");
     return true;

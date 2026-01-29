@@ -155,7 +155,6 @@ static PyObject *bpy_rna_data_temp_data(PyObject * /*self*/, PyObject *args, PyO
   BPy_DataContext *ret;
   static const char *_keywords[] = {"filepath", nullptr};
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "|$" /* Optional keyword only arguments. */
       "O&" /* `filepath` */
       ":temp_data",
@@ -181,7 +180,7 @@ static PyObject *bpy_rna_data_context_enter(BPy_DataContext *self)
   Main *bmain_temp = BKE_main_new();
   STRNCPY(bmain_temp->filepath, self->filepath);
 
-  PointerRNA ptr = RNA_pointer_create_discrete(nullptr, &RNA_BlendData, bmain_temp);
+  PointerRNA ptr = RNA_pointer_create_discrete(nullptr, RNA_BlendData, bmain_temp);
 
   self->data_rna = reinterpret_cast<BPy_StructRNA *>(pyrna_struct_CreatePyObject(&ptr));
 

@@ -708,18 +708,18 @@ static wmOperatorStatus walkEnd(bContext *C, WalkInfo *walk)
 
 #ifdef WITH_INPUT_NDOF
   if (walk->ndof) {
-    MEM_freeN(walk->ndof);
+    MEM_delete(walk->ndof);
   }
 #endif
 
   WM_cursor_grab_disable(win, nullptr);
 
   if (walk->state == WALK_CONFIRM) {
-    MEM_freeN(walk);
+    MEM_delete(walk);
     return OPERATOR_FINISHED;
   }
 
-  MEM_freeN(walk);
+  MEM_delete(walk);
   return OPERATOR_CANCELLED;
 }
 
@@ -768,8 +768,8 @@ static void walkEvent(WalkInfo *walk, const wmEvent *event)
         fflush(stdout);
 #  endif
         if (walk->ndof == nullptr) {
-          // walk->ndof = MEM_mallocN<wmNDOFMotionData>(tag_name);
-          walk->ndof = static_cast<wmNDOFMotionData *>(MEM_dupallocN(incoming_ndof));
+          // walk->ndof = MEM_new_uninitialized<wmNDOFMotionData>(tag_name);
+          walk->ndof = MEM_dupalloc(incoming_ndof);
           // walk->ndof = malloc(sizeof(wmNDOFMotionData));
         }
         else {
@@ -783,7 +783,7 @@ static void walkEvent(WalkInfo *walk, const wmEvent *event)
         puts("stop keeping track of 3D mouse position");
 #  endif
         if (walk->ndof) {
-          MEM_freeN(walk->ndof);
+          MEM_delete(walk->ndof);
           // free(walk->ndof);
           walk->ndof = nullptr;
         }
@@ -1580,12 +1580,12 @@ static wmOperatorStatus walk_invoke(bContext *C, wmOperator *op, const wmEvent *
     return OPERATOR_CANCELLED;
   }
 
-  WalkInfo *walk = MEM_callocN<WalkInfo>("NavigationWalkOperation");
+  WalkInfo *walk = MEM_new_zeroed<WalkInfo>("NavigationWalkOperation");
 
   op->customdata = walk;
 
   if (initWalkInfo(C, walk, op, event->mval) == false) {
-    MEM_freeN(walk);
+    MEM_delete(walk);
     return OPERATOR_CANCELLED;
   }
 

@@ -155,13 +155,13 @@ static void button2d_draw_intern(const bContext *C,
     else if (RNA_property_is_set(gz->ptr, shape_prop)) {
       const uint polys_len = RNA_property_string_length(gz->ptr, shape_prop);
       if (LIKELY(polys_len > 0)) {
-        char *polys = MEM_malloc_arrayN<char>(polys_len, __func__);
+        char *polys = MEM_new_array_uninitialized<char>(polys_len, __func__);
         RNA_property_string_get(gz->ptr, shape_prop, polys);
         button->shape_batch[0] = GPU_batch_tris_from_poly_2d_encoded(
             reinterpret_cast<const uchar *>(polys), polys_len, nullptr);
         button->shape_batch[1] = GPU_batch_wire_from_poly_2d_encoded(
             reinterpret_cast<const uchar *>(polys), polys_len, nullptr);
-        MEM_freeN(polys);
+        MEM_delete(polys);
       }
     }
   }
@@ -340,7 +340,7 @@ static int gizmo_button2d_cursor_get(wmGizmo *gz)
 }
 
 #define CIRCLE_RESOLUTION_3D 32
-static bool gizmo_button2d_bounds(bContext *C, wmGizmo *gz, rcti *r_bounding_box)
+static bool gizmo_button2d_bounds(const bContext *C, wmGizmo *gz, rcti *r_bounding_box)
 {
   ScrArea *area = CTX_wm_area(C);
   float rad = CIRCLE_RESOLUTION_3D * UI_SCALE_FAC / 2.0f;
@@ -375,8 +375,8 @@ static bool gizmo_button2d_bounds(bContext *C, wmGizmo *gz, rcti *r_bounding_box
   if (co != nullptr) {
     r_bounding_box->xmin = co[0] + area->totrct.xmin - rad;
     r_bounding_box->ymin = co[1] + area->totrct.ymin - rad;
-    r_bounding_box->xmax = r_bounding_box->xmin + rad;
-    r_bounding_box->ymax = r_bounding_box->ymin + rad;
+    r_bounding_box->xmax = co[0] + area->totrct.xmin + rad;
+    r_bounding_box->ymax = co[1] + area->totrct.ymin + rad;
     return true;
   }
   return false;

@@ -304,7 +304,7 @@ static void spreadsheet_row_filters_layout(const bContext *C, Panel *panel)
 
       PointerRNA *filter_ptr = MEM_new<PointerRNA>("panel customdata");
       *filter_ptr = RNA_pointer_create_discrete(
-          &screen->id, &RNA_SpreadsheetRowFilter, &row_filter);
+          &screen->id, RNA_SpreadsheetRowFilter, &row_filter);
 
       ui::panel_add_instanced(C, region, &region->panels, panel_idname, filter_ptr);
     }
@@ -322,7 +322,7 @@ static void spreadsheet_row_filters_layout(const bContext *C, Panel *panel)
 
       PointerRNA *filter_ptr = MEM_new<PointerRNA>("panel customdata");
       *filter_ptr = RNA_pointer_create_discrete(
-          &screen->id, &RNA_SpreadsheetRowFilter, &row_filter);
+          &screen->id, RNA_SpreadsheetRowFilter, &row_filter);
       ui::panel_custom_data_set(panel_iter, filter_ptr);
 
       panel_iter = panel_iter->next;
@@ -365,7 +365,7 @@ static void set_filter_expand_flag(const bContext * /*C*/, Panel *panel, short e
 void register_row_filter_panels(ARegionType &region_type)
 {
   {
-    PanelType *panel_type = MEM_callocN<PanelType>(__func__);
+    PanelType *panel_type = MEM_new_zeroed<PanelType>(__func__);
     STRNCPY_UTF8(panel_type->idname, "SPREADSHEET_PT_row_filters");
     STRNCPY_UTF8(panel_type->label, N_("Filters"));
     STRNCPY_UTF8(panel_type->category, "Filters");
@@ -376,7 +376,7 @@ void register_row_filter_panels(ARegionType &region_type)
   }
 
   {
-    PanelType *panel_type = MEM_callocN<PanelType>(__func__);
+    PanelType *panel_type = MEM_new_zeroed<PanelType>(__func__);
     STRNCPY_UTF8(panel_type->idname, "SPREADSHEET_PT_filter");
     STRNCPY_UTF8(panel_type->label, "");
     STRNCPY_UTF8(panel_type->category, "Filters");

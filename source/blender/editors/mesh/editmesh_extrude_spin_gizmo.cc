@@ -109,7 +109,7 @@ static void gizmo_mesh_spin_init_setup(const bContext * /*C*/, wmGizmoGroup *gzg
   const float scale_base = INIT_SCALE_BASE;
   const float scale_button = INIT_SCALE_BUTTON;
 
-  GizmoGroupData_SpinInit *ggd = MEM_callocN<GizmoGroupData_SpinInit>(__func__);
+  GizmoGroupData_SpinInit *ggd = MEM_new_zeroed<GizmoGroupData_SpinInit>(__func__);
   gzgroup->customdata = ggd;
   const wmGizmoType *gzt_dial = WM_gizmotype_find("GIZMO_GT_dial_3d", true);
   const wmGizmoType *gzt_button = WM_gizmotype_find("GIZMO_GT_button_2d", true);
@@ -432,7 +432,7 @@ static void gizmo_mesh_spin_init_message_subscribe(const bContext *C,
   msg_sub_value_gz_tag_refresh.notify = WM_gizmo_do_msg_notify_tag_refresh;
 
   PointerRNA cursor_ptr = RNA_pointer_create_discrete(
-      &scene->id, &RNA_View3DCursor, &scene->cursor);
+      &scene->id, RNA_View3DCursor, &scene->cursor);
   /* All cursor properties. */
   WM_msg_subscribe_rna(mbus, &cursor_ptr, nullptr, &msg_sub_value_gz_tag_refresh, __func__);
 
@@ -815,7 +815,7 @@ static void gizmo_mesh_spin_redo_setup(const bContext *C, wmGizmoGroup *gzgroup)
     return;
   }
 
-  GizmoGroupData_SpinRedo *ggd = MEM_callocN<GizmoGroupData_SpinRedo>(__func__);
+  GizmoGroupData_SpinRedo *ggd = MEM_new_zeroed<GizmoGroupData_SpinRedo>(__func__);
   gzgroup->customdata = ggd;
 
   const wmGizmoType *gzt_arrow = WM_gizmotype_find("GIZMO_GT_arrow_3d", true);

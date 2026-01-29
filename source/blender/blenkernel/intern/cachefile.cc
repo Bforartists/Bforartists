@@ -44,7 +44,7 @@
 #endif
 
 #ifdef WITH_USD
-#  include "usd.hh"
+#  include "usd_api_modifier.hh"
 #endif
 
 namespace blender {
@@ -100,7 +100,7 @@ static void cache_file_blend_write(BlendWriter *writer, ID *id, const void *id_a
   memset(cache_file->handle_filepath, 0, sizeof(cache_file->handle_filepath));
   cache_file->handle_readers = nullptr;
 
-  BLO_write_id_struct(writer, CacheFile, id_address, &cache_file->id);
+  writer->write_id_struct(id_address, cache_file);
   BKE_id_blend_write(writer, &cache_file->id);
 
   /* write layers */
@@ -422,7 +422,7 @@ CacheFileLayer *BKE_cachefile_add_layer(CacheFile *cache_file, const char filepa
 
   const int num_layers = BLI_listbase_count(&cache_file->layers);
 
-  CacheFileLayer *layer = MEM_new_for_free<CacheFileLayer>("CacheFileLayer");
+  CacheFileLayer *layer = MEM_new<CacheFileLayer>("CacheFileLayer");
   STRNCPY(layer->filepath, filepath);
 
   BLI_addtail(&cache_file->layers, layer);
@@ -442,7 +442,7 @@ void BKE_cachefile_remove_layer(CacheFile *cache_file, CacheFileLayer *layer)
 {
   cache_file->active_layer = 0;
   BLI_remlink(&cache_file->layers, layer);
-  MEM_freeN(layer);
+  MEM_delete(layer);
 }
 
 }  // namespace blender

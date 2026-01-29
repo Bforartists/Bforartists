@@ -366,7 +366,7 @@ static bool node_update_basis_buttons(const bContext &C,
     return false;
   }
 
-  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
 
   /* Round the node origin because text contents are always pixel-aligned. */
   const float2 loc = math::round(node_to_view(node.location));
@@ -522,12 +522,12 @@ static bool node_update_basis_socket(TreeDrawContext &tree_draw_ctx,
   }
 
   ui::Layout *row = &layout.row(true);
-  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
   row->context_ptr_set("node", &nodeptr);
 
   if (input_socket) {
     /* Context pointers for current node and socket. */
-    PointerRNA sockptr = RNA_pointer_create_discrete(&ntree.id, &RNA_NodeSocket, input_socket);
+    PointerRNA sockptr = RNA_pointer_create_discrete(&ntree.id, RNA_NodeSocket, input_socket);
     row->context_ptr_set("socket", &sockptr);
 
     row->alignment_set(ui::LayoutAlign::Expand);
@@ -537,7 +537,7 @@ static bool node_update_basis_socket(TreeDrawContext &tree_draw_ctx,
   }
   else {
     /* Context pointers for current node and socket. */
-    PointerRNA sockptr = RNA_pointer_create_discrete(&ntree.id, &RNA_NodeSocket, output_socket);
+    PointerRNA sockptr = RNA_pointer_create_discrete(&ntree.id, RNA_NodeSocket, output_socket);
     row->context_ptr_set("socket", &sockptr);
 
     /* Align output buttons to the right. */
@@ -1172,7 +1172,7 @@ static void node_update_basis_from_declaration(TreeDrawContext &tree_draw_ctx,
             if (!ID_IS_EDITABLE(&ntree.id)) {
               layout.enabled_set(false);
             }
-            PointerRNA node_ptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+            PointerRNA node_ptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
             layout.context_ptr_set("node", &node_ptr);
             decl.draw(layout, const_cast<bContext *>(&C), &node_ptr);
             block_align_end(&block);
@@ -1525,9 +1525,9 @@ void node_socket_color_get(const bContext &C,
     return;
   }
 
-  BLI_assert(RNA_struct_is_a(node_ptr.type, &RNA_Node));
+  BLI_assert(RNA_struct_is_a(node_ptr.type, RNA_Node));
   PointerRNA ptr = RNA_pointer_create_discrete(
-      &const_cast<ID &>(ntree.id), &RNA_NodeSocket, &const_cast<bNodeSocket &>(sock));
+      &const_cast<ID &>(ntree.id), RNA_NodeSocket, &const_cast<bNodeSocket &>(sock));
   sock.typeinfo->draw_color(const_cast<bContext *>(&C), &ptr, &node_ptr, r_color);
 }
 
@@ -1555,7 +1555,7 @@ void node_socket_add_tooltip(const bNodeTree &ntree, const bNodeSocket &sock, ui
     const bNodeSocket *socket;
   };
 
-  SocketTooltipData *data = MEM_callocN<SocketTooltipData>(__func__);
+  SocketTooltipData *data = MEM_new_zeroed<SocketTooltipData>(__func__);
   data->ntree = &ntree;
   data->socket = &sock;
 
@@ -1566,8 +1566,8 @@ void node_socket_add_tooltip(const bNodeTree &ntree, const bNodeSocket &sock, ui
         build_socket_tooltip(tip, C, but, *data->ntree, *data->socket);
       },
       data,
-      MEM_dupallocN,
-      MEM_freeN);
+      MEM_dupalloc_void,
+      MEM_delete_void);
 }
 
 #define NODE_SOCKET_OUTLINE U.pixelsize
@@ -1953,7 +1953,7 @@ static void node_draw_sockets(const bContext &C,
   }
 
   PointerRNA nodeptr = RNA_pointer_create_discrete(
-      const_cast<ID *>(&ntree.id), &RNA_Node, const_cast<bNode *>(&node));
+      const_cast<ID *>(&ntree.id), RNA_Node, const_cast<bNode *>(&node));
 
   const float outline_thickness = NODE_SOCKET_OUTLINE;
 
@@ -2130,8 +2130,7 @@ static void node_draw_panels(bNodeTree &ntree, const bNode &node, ui::Block &blo
 
     /* Panel toggle. */
     if (input_socket && !input_socket->is_logically_linked()) {
-      PointerRNA socket_ptr = RNA_pointer_create_discrete(
-          &ntree.id, &RNA_NodeSocket, input_socket);
+      PointerRNA socket_ptr = RNA_pointer_create_discrete(&ntree.id, RNA_NodeSocket, input_socket);
       ui::Button *panel_toggle_but = uiDefButR(&block,
                                                ui::ButtonType::Checkbox,
                                                "",
@@ -3375,7 +3374,6 @@ static void node_draw_basis(const bContext &C,
     }
   }
   /* BFA Header outline. */
-  ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
   {
     const float outline_width = U.pixelsize;
     const rctf rect_header = {
@@ -4213,7 +4211,7 @@ static void reroute_node_draw_body(const bContext &C,
   bNodeSocket &sock = *static_cast<bNodeSocket *>(node.inputs.first);
 
   PointerRNA nodeptr = RNA_pointer_create_discrete(
-      const_cast<ID *>(&ntree.id), &RNA_Node, const_cast<bNode *>(&node));
+      const_cast<ID *>(&ntree.id), RNA_Node, const_cast<bNode *>(&node));
 
   ColorTheme4f socket_color;
   ColorTheme4f outline_color;
@@ -4968,24 +4966,10 @@ static void draw_nodetree(const bContext &C,
   node_draw_nodetree(C, tree_draw_ctx, region, *snode, ntree, nodes, blocks, parent_key);
 }
 
-/**
- * Make the background slightly brighter to indicate that users are inside a node-group.
- */
-static void draw_background_color(const SpaceNode &snode)
+static void draw_background_color()
 {
-  const int max_tree_length = 3;
-  const float bright_factor = 0.25f;
-
-  /* We ignore the first element of the path since it is the top-most tree and it doesn't need to
-   * be brighter. We also set a cap to how many levels we want to set apart, to avoid the
-   * background from getting too bright. */
-  const int clamped_tree_path_length = BLI_listbase_count_at_most(&snode.treepath,
-                                                                  max_tree_length);
-  const int depth = max_ii(0, clamped_tree_path_length - 1);
-
   float color[3];
   ui::theme::get_color_3fv(TH_BACK, color);
-  mul_v3_fl(color, 1.0f + bright_factor * depth);
   GPU_clear_color(color[0], color[1], color[2], 1.0);
 }
 
@@ -5124,7 +5108,7 @@ void node_draw_space(const bContext &C, ARegion &region)
   GPU_framebuffer_bind_no_srgb(framebuffer_overlay);
 
   ui::view2d_view_ortho(&v2d);
-  draw_background_color(snode);
+  draw_background_color();
   GPU_depth_test(GPU_DEPTH_NONE);
   GPU_scissor_test(true);
 

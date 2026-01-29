@@ -33,7 +33,7 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
-  NodeInputBool *data = MEM_new_for_free<NodeInputBool>(__func__);
+  NodeInputBool *data = MEM_new<NodeInputBool>(__func__);
   node->storage = data;
 }
 
@@ -41,7 +41,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeInputBool", FN_NODE_INPUT_BOOL);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeInputBool", FN_NODE_INPUT_BOOL);
   ntype.ui_name = "Boolean";
   ntype.ui_description =
       "Provide a True/False value that can be connected to other nodes in the tree";

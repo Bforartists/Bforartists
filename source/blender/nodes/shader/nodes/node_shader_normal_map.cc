@@ -47,7 +47,7 @@ static void node_shader_buts_normal_map(ui::Layout &layout, bContext *C, Pointer
 
       if (depsgraph) {
         Object *object_eval = DEG_get_evaluated(depsgraph, object);
-        PointerRNA dataptr = RNA_id_pointer_create(static_cast<ID *>(object_eval->data));
+        PointerRNA dataptr = RNA_id_pointer_create(object_eval->data);
         layout.prop_search(ptr, "uv_map", &dataptr, "uv_layers", "", ICON_GROUP_UVS);
         return;
       }
@@ -59,7 +59,7 @@ static void node_shader_buts_normal_map(ui::Layout &layout, bContext *C, Pointer
 
 static void node_shader_init_normal_map(bNodeTree * /*ntree*/, bNode *node)
 {
-  NodeShaderNormalMap *attr = MEM_new_for_free<NodeShaderNormalMap>("NodeShaderNormalMap");
+  NodeShaderNormalMap *attr = MEM_new<NodeShaderNormalMap>("NodeShaderNormalMap");
   node->storage = attr;
 }
 

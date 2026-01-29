@@ -128,10 +128,10 @@ static void palette_blend_write(BlendWriter *writer, ID *id, const void *id_addr
 {
   Palette *palette = id_cast<Palette *>(id);
 
-  BLO_write_id_struct(writer, Palette, id_address, &palette->id);
+  writer->write_id_struct(id_address, palette);
   BKE_id_blend_write(writer, &palette->id);
 
-  BLO_write_struct_list(writer, PaletteColor, &palette->colors);
+  writer->write_struct_list(&palette->colors);
 }
 
 static void palette_blend_read_data(BlendDataReader *reader, ID *id)
@@ -193,7 +193,7 @@ static void paint_curve_copy_data(Main * /*bmain*/,
 
   if (paint_curve_src->tot_points != 0) {
     paint_curve_dst->points = static_cast<PaintCurvePoint *>(
-        MEM_dupallocN(paint_curve_src->points));
+        MEM_dupalloc(paint_curve_src->points));
   }
 }
 
@@ -201,7 +201,7 @@ static void paint_curve_free_data(ID *id)
 {
   PaintCurve *paint_curve = id_cast<PaintCurve *>(id);
 
-  MEM_SAFE_FREE(paint_curve->points);
+  MEM_SAFE_DELETE(paint_curve->points);
   paint_curve->tot_points = 0;
 }
 
@@ -209,10 +209,10 @@ static void paint_curve_blend_write(BlendWriter *writer, ID *id, const void *id_
 {
   PaintCurve *pc = id_cast<PaintCurve *>(id);
 
-  BLO_write_id_struct(writer, PaintCurve, id_address, &pc->id);
+  writer->write_id_struct(id_address, pc);
   BKE_id_blend_write(writer, &pc->id);
 
-  BLO_write_struct_array(writer, PaintCurvePoint, pc->tot_points, pc->points);
+  writer->write_struct_array(pc->tot_points, pc->points);
 }
 
 static void paint_curve_blend_read_data(BlendDataReader *reader, ID *id)
@@ -1399,7 +1399,7 @@ void BKE_palette_color_remove(Palette *palette, PaletteColor *color)
     palette->active_color = 0;
   }
 
-  MEM_freeN(color);
+  MEM_delete(color);
 }
 
 void BKE_palette_clear(Palette *palette)
@@ -1427,7 +1427,7 @@ Palette *BKE_palette_add(Main *bmain, const char *name)
 
 PaletteColor *BKE_palette_color_add(Palette *palette)
 {
-  PaletteColor *color = MEM_new_for_free<PaletteColor>(__func__);
+  PaletteColor *color = MEM_new<PaletteColor>(__func__);
   BLI_addtail(&palette->colors, color);
   return color;
 }
@@ -1581,7 +1581,7 @@ bool BKE_palette_from_hash(Main *bmain, GHash *color_table, const char *name)
   const int totpal = BLI_ghash_len(color_table);
 
   if (totpal > 0) {
-    color_array = MEM_new_array_for_free<tPaletteColorHSV>(totpal, __func__);
+    color_array = MEM_new_array<tPaletteColorHSV>(totpal, __func__);
     /* Put all colors in an array. */
     GHashIterator gh_iter;
     int t = 0;
@@ -1626,7 +1626,7 @@ bool BKE_palette_from_hash(Main *bmain, GHash *color_table, const char *name)
   }
 
   if (totpal > 0) {
-    MEM_SAFE_FREE(color_array);
+    MEM_SAFE_DELETE(color_array);
   }
 
   return done;
@@ -1767,38 +1767,38 @@ bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
   if ((reinterpret_cast<VPaint **>(r_paint) == &ts->vpaint) ||
       (reinterpret_cast<VPaint **>(r_paint) == &ts->wpaint))
   {
-    VPaint *data = MEM_new_for_free<VPaint>(__func__);
+    VPaint *data = MEM_new<VPaint>(__func__);
     paint = &data->paint;
     paint_init_data(*paint);
   }
   else if (reinterpret_cast<Sculpt **>(r_paint) == &ts->sculpt) {
-    Sculpt *data = MEM_new_for_free<Sculpt>(__func__);
+    Sculpt *data = MEM_new<Sculpt>(__func__);
 
     paint = &data->paint;
     paint_init_data(*paint);
   }
   else if (reinterpret_cast<GpPaint **>(r_paint) == &ts->gp_paint) {
-    GpPaint *data = MEM_new_for_free<GpPaint>(__func__);
+    GpPaint *data = MEM_new<GpPaint>(__func__);
     paint = &data->paint;
     paint_init_data(*paint);
   }
   else if (reinterpret_cast<GpVertexPaint **>(r_paint) == &ts->gp_vertexpaint) {
-    GpVertexPaint *data = MEM_new_for_free<GpVertexPaint>(__func__);
+    GpVertexPaint *data = MEM_new<GpVertexPaint>(__func__);
     paint = &data->paint;
     paint_init_data(*paint);
   }
   else if (reinterpret_cast<GpSculptPaint **>(r_paint) == &ts->gp_sculptpaint) {
-    GpSculptPaint *data = MEM_new_for_free<GpSculptPaint>(__func__);
+    GpSculptPaint *data = MEM_new<GpSculptPaint>(__func__);
     paint = &data->paint;
     paint_init_data(*paint);
   }
   else if (reinterpret_cast<GpWeightPaint **>(r_paint) == &ts->gp_weightpaint) {
-    GpWeightPaint *data = MEM_new_for_free<GpWeightPaint>(__func__);
+    GpWeightPaint *data = MEM_new<GpWeightPaint>(__func__);
     paint = &data->paint;
     paint_init_data(*paint);
   }
   else if (reinterpret_cast<CurvesSculpt **>(r_paint) == &ts->curves_sculpt) {
-    CurvesSculpt *data = MEM_new_for_free<CurvesSculpt>(__func__);
+    CurvesSculpt *data = MEM_new<CurvesSculpt>(__func__);
     paint = &data->paint;
     paint_init_data(*paint);
   }
@@ -2030,8 +2030,7 @@ void BKE_paint_blend_write(BlendWriter *writer, Paint *paint)
     if (tool_brush_bindings.main_brush_asset_reference) {
       BKE_asset_weak_reference_write(writer, tool_brush_bindings.main_brush_asset_reference);
     }
-    BLO_write_struct_list(
-        writer, NamedBrushAssetReference, &tool_brush_bindings.active_brush_per_brush_type);
+    writer->write_struct_list(&tool_brush_bindings.active_brush_per_brush_type);
     for (NamedBrushAssetReference &brush_ref : tool_brush_bindings.active_brush_per_brush_type) {
       BLO_write_string(writer, brush_ref.name);
       if (brush_ref.brush_asset_reference) {
@@ -2336,8 +2335,6 @@ SculptSession::~SculptSession()
   if (this->tex_pool) {
     BKE_image_pool_free(this->tex_pool);
   }
-
-  MEM_SAFE_FREE(this->last_paint_canvas_key);
 }
 
 ActiveVert SculptSession::active_vert() const
@@ -2630,20 +2627,8 @@ static void sculpt_update_object(Depsgraph *depsgraph,
   if (ss.shapekey_active != nullptr && ss.deform_cos.is_empty()) {
     ss.deform_cos = Span(static_cast<const float3 *>(ss.shapekey_active->data),
                          mesh_orig->verts_num);
-  }
-
-  /* if pbvh is deformed, key block is already applied to it */
-  if (ss.shapekey_active) {
-    if (ss.deform_cos.is_empty()) {
-      const Span key_data(static_cast<const float3 *>(ss.shapekey_active->data),
-                          mesh_orig->verts_num);
-
-      if (key_data.data() != nullptr) {
-        BKE_pbvh_vert_coords_apply(pbvh, key_data);
-        if (ss.deform_cos.is_empty()) {
-          ss.deform_cos = key_data;
-        }
-      }
+    if (!ss.deform_cos.is_empty()) {
+      BKE_pbvh_vert_coords_apply(pbvh, ss.deform_cos);
     }
   }
 
@@ -2653,16 +2638,11 @@ static void sculpt_update_object(Depsgraph *depsgraph,
      * The relevant changes are stored/encoded in the paint canvas key.
      * These include the active uv map, and resolutions. */
     if (USER_EXPERIMENTAL_TEST(&U, use_sculpt_texture_paint)) {
-      char *paint_canvas_key = BKE_paint_canvas_key_get(&scene->toolsettings->paint_mode, ob);
-      if (ss.last_paint_canvas_key == nullptr ||
-          !STREQ(paint_canvas_key, ss.last_paint_canvas_key))
-      {
-        MEM_SAFE_FREE(ss.last_paint_canvas_key);
+      std::string paint_canvas_key = BKE_paint_canvas_key_get(&scene->toolsettings->paint_mode,
+                                                              ob);
+      if (!ss.last_paint_canvas_key || paint_canvas_key != ss.last_paint_canvas_key) {
         ss.last_paint_canvas_key = paint_canvas_key;
         BKE_pbvh_mark_rebuild_pixels(pbvh);
-      }
-      else {
-        MEM_freeN(paint_canvas_key);
       }
     }
 
@@ -2797,7 +2777,7 @@ void BKE_sculpt_mask_layers_ensure(Depsgraph *depsgraph,
       GridPaintMask *gpm = &gmask[i];
 
       gpm->level = level;
-      gpm->data = MEM_calloc_arrayN<float>(gridarea, "GridPaintMask.data");
+      gpm->data = MEM_new_array_zeroed<float>(gridarea, "GridPaintMask.data");
     }
 
     /* If vertices already have mask, copy into multires data. */

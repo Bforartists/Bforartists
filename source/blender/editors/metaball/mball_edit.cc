@@ -562,7 +562,7 @@ static wmOperatorStatus duplicate_metaelems_exec(bContext *C, wmOperator * /*op*
     if (ml) {
       while (ml) {
         if (ml->flag & SELECT) {
-          newml = static_cast<MetaElem *>(MEM_dupallocN(ml));
+          newml = MEM_dupalloc(ml);
           BLI_addtail(mb->editelems, newml);
           mb->lastelem = newml;
           ml->flag &= ~SELECT;
@@ -570,7 +570,7 @@ static wmOperatorStatus duplicate_metaelems_exec(bContext *C, wmOperator * /*op*
         ml = ml->prev;
       }
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, mb);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
     }
   }
   return OPERATOR_FINISHED;
@@ -622,12 +622,12 @@ static wmOperatorStatus delete_metaelems_exec(bContext *C, wmOperator * /*op*/)
             mb->lastelem = nullptr;
           }
           BLI_remlink(mb->editelems, ml);
-          MEM_freeN(ml);
+          MEM_delete(ml);
         }
         ml = next;
       }
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, mb);
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+      DEG_id_tag_update(obedit->data, 0);
     }
   }
   return OPERATOR_FINISHED;
@@ -689,7 +689,7 @@ static wmOperatorStatus hide_metaelems_exec(bContext *C, wmOperator *op)
       ml = ml->next;
     }
     WM_event_add_notifier(C, NC_GEOM | ND_DATA, mb);
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+    DEG_id_tag_update(obedit->data, 0);
   }
 
   return OPERATOR_FINISHED;
@@ -748,7 +748,7 @@ static wmOperatorStatus reveal_metaelems_exec(bContext *C, wmOperator *op)
   }
   if (changed) {
     WM_event_add_notifier(C, NC_GEOM | ND_DATA, mb);
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), 0);
+    DEG_id_tag_update(obedit->data, 0);
   }
 
   return OPERATOR_FINISHED;

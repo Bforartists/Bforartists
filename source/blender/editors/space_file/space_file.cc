@@ -58,7 +58,7 @@ static SpaceLink *file_create(const ScrArea * /*area*/, const Scene * /*scene*/)
   ARegion *region;
   SpaceFile *sfile;
 
-  sfile = MEM_new_for_free<SpaceFile>("initfile");
+  sfile = MEM_new<SpaceFile>("initfile");
   sfile->spacetype = SPACE_FILE;
 
   /* header */
@@ -124,14 +124,14 @@ static void file_free(SpaceLink *sl)
 
   folder_history_list_free(sfile);
 
-  MEM_SAFE_FREE(sfile->params);
-  MEM_SAFE_FREE(sfile->asset_params);
+  MEM_SAFE_DELETE(sfile->params);
+  MEM_SAFE_DELETE(sfile->asset_params);
   if (sfile->runtime != nullptr) {
     BKE_reports_free(&sfile->runtime->is_blendfile_readable_reports);
   }
-  MEM_SAFE_FREE(sfile->runtime);
+  MEM_SAFE_DELETE(sfile->runtime);
 
-  MEM_SAFE_FREE(sfile->layout);
+  MEM_SAFE_DELETE(sfile->layout);
 }
 
 /* spacetype; init callback, area size changes, screen set, etc */
@@ -144,7 +144,7 @@ static void file_init(wmWindowManager * /*wm*/, ScrArea *area)
   }
 
   if (sfile->runtime == nullptr) {
-    sfile->runtime = MEM_callocN<SpaceFile_Runtime>(__func__);
+    sfile->runtime = MEM_new_zeroed<SpaceFile_Runtime>(__func__);
     BKE_reports_init(&sfile->runtime->is_blendfile_readable_reports, RPT_STORE);
   }
   /* Validate the params right after file read. */
@@ -166,7 +166,7 @@ static void file_exit(wmWindowManager *wm, ScrArea *area)
 static SpaceLink *file_duplicate(SpaceLink *sl)
 {
   SpaceFile *sfileo = reinterpret_cast<SpaceFile *>(sl);
-  SpaceFile *sfilen = static_cast<SpaceFile *>(MEM_dupallocN(sl));
+  SpaceFile *sfilen = MEM_dupalloc(reinterpret_cast<SpaceFile *>(sl));
 
   /* clear or remove stuff from old */
   sfilen->op = nullptr; /* file window doesn't own operators */
@@ -182,17 +182,17 @@ static SpaceLink *file_duplicate(SpaceLink *sl)
   }
 
   if (sfileo->params) {
-    sfilen->params = static_cast<FileSelectParams *>(MEM_dupallocN(sfileo->params));
+    sfilen->params = MEM_dupalloc(sfileo->params);
   }
   if (sfileo->asset_params) {
     sfilen->asset_params = static_cast<FileAssetSelectParams *>(
-        MEM_dupallocN(sfileo->asset_params));
+        MEM_dupalloc(sfileo->asset_params));
   }
 
   sfilen->folder_histories = folder_history_list_duplicate(&sfileo->folder_histories);
 
   if (sfileo->layout) {
-    sfilen->layout = static_cast<FileLayout *>(MEM_dupallocN(sfileo->layout));
+    sfilen->layout = MEM_dupalloc(sfileo->layout);
   }
   return reinterpret_cast<SpaceLink *>(sfilen);
 }
@@ -502,7 +502,7 @@ static void file_main_region_message_subscribe(const wmRegionMessageSubscribePar
 
   /* SpaceFile itself. */
   {
-    PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, &RNA_SpaceFileBrowser, sfile);
+    PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, RNA_SpaceFileBrowser, sfile);
 
     /* All properties for this space type. */
     WM_msg_subscribe_rna(mbus, &ptr, nullptr, &msg_sub_value_area_tag_refresh, __func__);
@@ -510,7 +510,7 @@ static void file_main_region_message_subscribe(const wmRegionMessageSubscribePar
 
   /* FileSelectParams */
   {
-    PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, &RNA_FileSelectParams, file_params);
+    PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, RNA_FileSelectParams, file_params);
 
     /* All properties for this space type. */
     WM_msg_subscribe_rna(mbus, &ptr, nullptr, &msg_sub_value_area_tag_refresh, __func__);
@@ -519,7 +519,7 @@ static void file_main_region_message_subscribe(const wmRegionMessageSubscribePar
   /* Experimental Asset Browser features option. */
   {
     PointerRNA ptr = RNA_pointer_create_discrete(
-        nullptr, &RNA_PreferencesExperimental, &U.experimental);
+        nullptr, RNA_PreferencesExperimental, &U.experimental);
     PropertyRNA *prop = RNA_struct_find_property(&ptr, "use_extended_asset_browser");
 
     /* All properties for this space type. */
@@ -979,7 +979,7 @@ void ED_spacetype_file()
   st->blend_write = file_space_blend_write;
 
   /* regions: main window */
-  art = MEM_callocN<ARegionType>("spacetype file region");
+  art = MEM_new_zeroed<ARegionType>("spacetype file region");
   art->regionid = RGN_TYPE_WINDOW;
   art->init = file_main_region_init;
   art->draw = file_main_region_draw;
@@ -989,7 +989,7 @@ void ED_spacetype_file()
   BLI_addhead(&st->regiontypes, art);
 
   /* regions: header */
-  art = MEM_callocN<ARegionType>("spacetype file region");
+  art = MEM_new_zeroed<ARegionType>("spacetype file region");
   art->regionid = RGN_TYPE_HEADER;
   art->prefsizey = HEADERY;
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_HEADER;
@@ -999,7 +999,7 @@ void ED_spacetype_file()
   BLI_addhead(&st->regiontypes, art);
 
   /* regions: ui */
-  art = MEM_callocN<ARegionType>("spacetype file region");
+  art = MEM_new_zeroed<ARegionType>("spacetype file region");
   art->regionid = RGN_TYPE_UI;
   art->keymapflag = ED_KEYMAP_UI;
   art->poll = file_region_poll;
@@ -1009,7 +1009,7 @@ void ED_spacetype_file()
   BLI_addhead(&st->regiontypes, art);
 
   /* regions: execution */
-  art = MEM_callocN<ARegionType>("spacetype file region");
+  art = MEM_new_zeroed<ARegionType>("spacetype file region");
   art->regionid = RGN_TYPE_EXECUTE;
   art->keymapflag = ED_KEYMAP_UI;
   art->poll = file_execution_region_poll;
@@ -1020,7 +1020,7 @@ void ED_spacetype_file()
   file_execute_region_panels_register(art);
 
   /* regions: channels (directories) */
-  art = MEM_callocN<ARegionType>("spacetype file region");
+  art = MEM_new_zeroed<ARegionType>("spacetype file region");
   art->regionid = RGN_TYPE_TOOLS;
   art->prefsizex = 240;
   art->prefsizey = 60;
@@ -1032,7 +1032,7 @@ void ED_spacetype_file()
   file_tools_region_panels_register(art);
 
   /* regions: tool properties */
-  art = MEM_callocN<ARegionType>("spacetype file operator region");
+  art = MEM_new_zeroed<ARegionType>("spacetype file operator region");
   art->regionid = RGN_TYPE_TOOL_PROPS;
   art->prefsizex = 240;
   art->prefsizey = 60;

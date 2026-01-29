@@ -899,9 +899,9 @@ static StructRNA *rna_Modifier_refine(PointerRNA *ptr)
   ModifierData *md = static_cast<ModifierData *>(ptr->data);
   const ModifierTypeInfo *modifier_type = BKE_modifier_get_info(ModifierType(md->type));
   if (modifier_type != nullptr) {
-    return modifier_type->srna;
+    return *modifier_type->srna;
   }
-  return &RNA_Modifier;
+  return RNA_Modifier;
 }
 
 static void rna_Modifier_name_set(PointerRNA *ptr, const char *value)
@@ -1219,7 +1219,7 @@ static void rna_HookModifier_vertex_indices_set(HookModifierData *hmd,
                                                 int indices_num)
 {
   if (indices_num <= 0) {
-    MEM_SAFE_FREE(hmd->indexar);
+    MEM_SAFE_DELETE(hmd->indexar);
     hmd->indexar_num = 0;
   }
   else {
@@ -1233,7 +1233,7 @@ static void rna_HookModifier_vertex_indices_set(HookModifierData *hmd,
 
     /* Copy and sort the index array. */
     size_t size = sizeof(int) * indices_num;
-    int *buffer = MEM_malloc_arrayN<int>(size_t(indices_num), "hook indexar");
+    int *buffer = MEM_new_array_uninitialized<int>(size_t(indices_num), "hook indexar");
     memcpy(buffer, indices, size);
 
     qsort(buffer, indices_num, sizeof(int), BLI_sortutil_cmp_int);
@@ -1242,13 +1242,13 @@ static void rna_HookModifier_vertex_indices_set(HookModifierData *hmd,
     for (int i = 1; i < indices_num; i++) {
       if (buffer[i] == buffer[i - 1]) {
         BKE_reportf(reports, RPT_ERROR, "Duplicate index %d in vertex_indices_set", buffer[i]);
-        MEM_freeN(buffer);
+        MEM_delete(buffer);
         return;
       }
     }
 
     /* Success - save the new array. */
-    MEM_SAFE_FREE(hmd->indexar);
+    MEM_SAFE_DELETE(hmd->indexar);
     hmd->indexar = buffer;
     hmd->indexar_num = indices_num;
   }
@@ -1366,19 +1366,19 @@ static bool rna_MeshDeformModifier_is_bound_get(PointerRNA *ptr)
 static PointerRNA rna_SoftBodyModifier_settings_get(PointerRNA *ptr)
 {
   Object *ob = id_cast<Object *>(ptr->owner_id);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_SoftBodySettings, ob->soft);
+  return RNA_pointer_create_with_parent(*ptr, RNA_SoftBodySettings, ob->soft);
 }
 
 static PointerRNA rna_SoftBodyModifier_point_cache_get(PointerRNA *ptr)
 {
   Object *ob = id_cast<Object *>(ptr->owner_id);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_PointCache, ob->soft->shared->pointcache);
+  return RNA_pointer_create_with_parent(*ptr, RNA_PointCache, ob->soft->shared->pointcache);
 }
 
 static PointerRNA rna_CollisionModifier_settings_get(PointerRNA *ptr)
 {
   Object *ob = id_cast<Object *>(ptr->owner_id);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_CollisionSettings, ob->pd);
+  return RNA_pointer_create_with_parent(*ptr, RNA_CollisionSettings, ob->pd);
 }
 
 /* Special update function for setting the number of segments of the modifier that also resamples
@@ -1404,7 +1404,7 @@ static void rna_BevelModifier_weight_attribute_visit_for_search(
   if (ob->type != OB_MESH) {
     return;
   }
-  PointerRNA mesh_ptr = RNA_id_pointer_create(static_cast<ID *>(ob->data));
+  PointerRNA mesh_ptr = RNA_id_pointer_create(ob->data);
   PropertyRNA *attributes_prop = RNA_struct_find_property(&mesh_ptr, "attributes");
   RNA_PROP_BEGIN (&mesh_ptr, itemptr, attributes_prop) {
     const CustomDataLayer *layer = static_cast<const CustomDataLayer *>(itemptr.data);
@@ -1810,7 +1810,7 @@ static void rna_CorrectiveSmoothModifier_update(Main *bmain, Scene *scene, Point
 {
   CorrectiveSmoothModifierData *csmd = static_cast<CorrectiveSmoothModifierData *>(ptr->data);
 
-  MEM_SAFE_FREE(csmd->delta_cache.deltas);
+  MEM_SAFE_DELETE(csmd->delta_cache.deltas);
 
   rna_Modifier_update(bmain, scene, ptr);
 }
@@ -1864,8 +1864,7 @@ static PointerRNA rna_ParticleInstanceModifier_particle_system_get(PointerRNA *p
   }
 
   psys = static_cast<ParticleSystem *>(BLI_findlink(&psmd->ob->particlesystem, psmd->psys - 1));
-  PointerRNA rptr = RNA_pointer_create_discrete(
-      id_cast<ID *>(psmd->ob), &RNA_ParticleSystem, psys);
+  PointerRNA rptr = RNA_pointer_create_discrete(id_cast<ID *>(psmd->ob), RNA_ParticleSystem, psys);
   return rptr;
 }
 
@@ -1965,7 +1964,7 @@ static PointerRNA rna_NodesModifier_node_warnings_iterator_get(CollectionPropert
   NodesModifierData *nmd = static_cast<NodesModifierData *>(iter->parent.data);
   Span warnings = get_node_modifier_warnings(*nmd);
   return RNA_pointer_create_with_parent(
-      iter->parent, &RNA_NodesModifierWarning, (void *)&warnings[iter->internal.count.item]);
+      iter->parent, RNA_NodesModifierWarning, (void *)&warnings[iter->internal.count.item]);
 }
 
 static int rna_NodesModifier_node_warnings_length(PointerRNA *ptr)
@@ -2048,7 +2047,7 @@ static PointerRNA rna_NodesModifierBake_node_get(PointerRNA *ptr)
   }
   BLI_assert(tree != nullptr);
   return RNA_pointer_create_discrete(
-      const_cast<ID *>(&tree->id), &RNA_Node, const_cast<bNode *>(node));
+      const_cast<ID *>(&tree->id), RNA_Node, const_cast<bNode *>(node));
 }
 
 static StructRNA *rna_NodesModifierBake_data_block_typef(PointerRNA *ptr)

@@ -135,7 +135,6 @@ static int rna_Operator_ui_popup(bContext *C, wmOperator *op, int width)
 
 static bool rna_event_modal_handler_add(bContext *C, ReportList *reports, wmOperator *op)
 {
-  wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win = CTX_wm_window(C);
   if (win == nullptr) {
     BKE_report(reports, RPT_ERROR, "No active window in context!");
@@ -143,7 +142,7 @@ static bool rna_event_modal_handler_add(bContext *C, ReportList *reports, wmOper
   }
   ScrArea *area = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
-  return WM_event_add_modal_handler_ex(wm, win, area, region, op) != nullptr;
+  return WM_event_add_modal_handler_ex(win, area, region, op) != nullptr;
 }
 
 static wmTimer *rna_event_timer_add(wmWindowManager *wm, float time_step, wmWindow *win)
@@ -457,7 +456,7 @@ static PointerRNA rna_KeyMap_item_find_match(
 {
   wmKeyMapItem *kmi_base = WM_keymap_item_find_match(km_base, km_match, kmi_match, reports);
   if (kmi_base) {
-    return RNA_pointer_create_discrete(id, &RNA_KeyMapItem, kmi_base);
+    return RNA_pointer_create_discrete(id, RNA_KeyMapItem, kmi_base);
   }
   return PointerRNA_NULL;
 }
@@ -474,14 +473,14 @@ static PointerRNA rna_KeyMap_item_find_from_operator(ID *id,
 
   wmKeyMapItem *kmi = WM_key_event_operator_from_keymap(
       km, idname_bl, static_cast<IDProperty *>(properties->data), include_mask, exclude_mask);
-  PointerRNA kmi_ptr = RNA_pointer_create_discrete(id, &RNA_KeyMapItem, kmi);
+  PointerRNA kmi_ptr = RNA_pointer_create_discrete(id, RNA_KeyMapItem, kmi);
   return kmi_ptr;
 }
 
 static PointerRNA rna_KeyMap_item_match_event(ID *id, wmKeyMap *km, bContext *C, wmEvent *event)
 {
   wmKeyMapItem *kmi = WM_event_match_keymap_item(C, km, event);
-  PointerRNA kmi_ptr = RNA_pointer_create_discrete(id, &RNA_KeyMapItem, kmi);
+  PointerRNA kmi_ptr = RNA_pointer_create_discrete(id, RNA_KeyMapItem, kmi);
   return kmi_ptr;
 }
 
@@ -604,8 +603,8 @@ static PointerRNA rna_KeyConfig_find_item_from_operator(wmWindowManager *wm,
                                             include_mask,
                                             exclude_mask,
                                             &km);
-  *km_ptr = RNA_pointer_create_discrete(&wm->id, &RNA_KeyMap, km);
-  PointerRNA kmi_ptr = RNA_pointer_create_discrete(&wm->id, &RNA_KeyMapItem, kmi);
+  *km_ptr = RNA_pointer_create_discrete(&wm->id, RNA_KeyMap, km);
+  PointerRNA kmi_ptr = RNA_pointer_create_discrete(&wm->id, RNA_KeyMapItem, kmi);
   return kmi_ptr;
 }
 
@@ -635,7 +634,7 @@ static PointerRNA rna_PopMenuBegin(bContext *C,
   }
 
   void *data = static_cast<void *>(ui::popup_menu_begin(C, title, icon));
-  PointerRNA ptr_result = RNA_pointer_create_discrete(nullptr, &RNA_UIPopupMenu, data);
+  PointerRNA ptr_result = RNA_pointer_create_discrete(nullptr, RNA_UIPopupMenu, data);
   return ptr_result;
 }
 
@@ -656,7 +655,7 @@ static PointerRNA rna_PopoverBegin(bContext *C,
 
   void *data = static_cast<void *>(
       ui::popover_begin(C, U.widget_unit * ui_units_x, from_active_button));
-  PointerRNA ptr_result = RNA_pointer_create_discrete(nullptr, &RNA_UIPopover, data);
+  PointerRNA ptr_result = RNA_pointer_create_discrete(nullptr, RNA_UIPopover, data);
   return ptr_result;
 }
 
@@ -676,7 +675,7 @@ static PointerRNA rna_PieMenuBegin(
   void *data = (void *)ui::pie_menu_begin(
       C, title, icon, static_cast<const wmEvent *>(event->data));
 
-  PointerRNA ptr_result = RNA_pointer_create_discrete(nullptr, &RNA_UIPieMenu, data);
+  PointerRNA ptr_result = RNA_pointer_create_discrete(nullptr, RNA_UIPieMenu, data);
   return ptr_result;
 }
 
@@ -1421,7 +1420,12 @@ void RNA_api_keymaps(StructRNA *srna)
   RNA_def_enum(func, "space_type", rna_enum_space_type_items, SPACE_EMPTY, "Space Type", "");
   RNA_def_enum(
       func, "region_type", rna_enum_region_type_items, RGN_TYPE_WINDOW, "Region Type", "");
-  RNA_def_boolean(func, "modal", false, "Modal", "Keymap for modal operators");
+  RNA_def_boolean(func,
+                  "modal",
+                  false,
+                  "Modal",
+                  "Keymap for modal operators. "
+                  "Modal keymaps are not supported for :class:`KeyConfigs.addons`.");
   RNA_def_boolean(func, "tool", false, "Tool", "Keymap for active tools");
   parm = RNA_def_pointer(func, "keymap", "KeyMap", "Key Map", "Added key map");
   RNA_def_function_return(func, parm);

@@ -85,10 +85,6 @@ struct ImageRuntime {
 
   /* The image's current update count. See deg::set_id_update_count for more information. */
   uint64_t update_count = 0;
-
-  /* Compositor viewer might be translated, and that translation will be stored in this runtime
-   * vector by the compositor so that the editor draw code can draw the image translated. */
-  float backdrop_offset[2] = {};
 };
 
 }  // namespace bke
@@ -420,6 +416,15 @@ void BKE_image_free_old_gputextures(Main *bmain);
 bool BKE_image_memorypack(Image *ima);
 void BKE_image_packfiles(ReportList *reports, Image *ima, const char *basepath);
 void BKE_image_packfiles_from_mem(ReportList *reports, Image *ima, char *data, size_t data_len);
+
+/**
+ * High-level pack function.
+ *
+ * Packs image data, handling dirty state and raw data input.
+ * Does nothing if image is already packed and not dirty (unless data is provided).
+ */
+void BKE_image_packfile_ensure(
+    Main *bmain, Image *image, ReportList *reports, const char *data, int data_len);
 
 /**
  * Prints memory statistics for images.

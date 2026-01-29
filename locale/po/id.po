@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Alpha (b'12e628ea43f8')\n"
+"Project-Id-Version: Blender 5.1.0 Alpha (b'bd8d088b2702')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-12 15:09+0000\n"
+"POT-Creation-Date: 2026-01-26 11:28+0000\n"
 "PO-Revision-Date: 2025-12-23 20:36+0000\n"
 "Last-Translator: \"Adriel Y.\" <mixnblend@users.noreply.translate.blender.org>\n"
 "Language-Team: Indonesian <https://translate.blender.org/projects/blender-ui/ui/id/>\n"
@@ -15695,28 +15695,8 @@ msgid "Use Material Mask"
 msgstr "Gunakan Masker Bahan"
 
 
-msgid "Math"
-msgstr "Matematika"
-
-
-msgid "Metaball"
-msgstr "Metabola"
-
-
-msgid "Utilities"
-msgstr "Utilitas"
-
-
-msgid "Names"
-msgstr "Nama"
-
-
 msgid "Sample"
 msgstr "Sampel"
-
-
-msgid "Snap"
-msgstr "Jepret"
 
 
 msgid "Gizmo"
@@ -15727,24 +15707,60 @@ msgid "Instances"
 msgstr "Contoh-contoh"
 
 
+msgid "Names"
+msgstr "Nama"
+
+
 msgid "Import"
 msgstr "Impor"
 
 
-msgid "Mirror"
-msgstr "Cermin"
+msgid "Metaball"
+msgstr "Metabola"
 
 
-msgid "Navigation"
-msgstr "Navigasi"
+msgid "Utilities"
+msgstr "Utilitas"
+
+
+msgid "Math"
+msgstr "Matematika"
+
+
+msgid "Merge"
+msgstr "Menggabungkan"
 
 
 msgid "UV"
 msgstr "UV"
 
 
-msgid "Select Linked"
-msgstr "Seleksi yang Terhubung"
+msgid "Apply"
+msgstr "Tetapkan"
+
+
+msgid "Hooks"
+msgstr "Kait"
+
+
+msgid "Asset"
+msgstr "Aset"
+
+
+msgid "Track"
+msgstr "Lacak"
+
+
+msgid "Add Image"
+msgstr "Tambah Gambar"
+
+
+msgid "Layout"
+msgstr "Tata Letak"
+
+
+msgid "Light Probe"
+msgstr "Probe Cahaya"
 
 
 msgid "Assign Material"
@@ -15755,40 +15771,24 @@ msgid "Light"
 msgstr "Cahaya"
 
 
-msgid "Light Probe"
-msgstr "Probe Cahaya"
-
-
-msgid "Add Image"
-msgstr "Tambah Gambar"
-
-
-msgid "Apply"
-msgstr "Tetapkan"
-
-
-msgid "Track"
-msgstr "Lacak"
-
-
-msgid "Asset"
-msgstr "Aset"
-
-
-msgid "Hooks"
-msgstr "Kait"
-
-
-msgid "Layout"
-msgstr "Tata Letak"
-
-
 msgid "Tracking"
 msgstr "Pelacakan"
 
 
-msgid "Merge"
-msgstr "Menggabungkan"
+msgid "Select Linked"
+msgstr "Seleksi yang Terhubung"
+
+
+msgid "Navigation"
+msgstr "Navigasi"
+
+
+msgid "Snap"
+msgstr "Jepret"
+
+
+msgid "Mirror"
+msgstr "Cermin"
 
 
 msgid "Animals"
@@ -18518,6 +18518,10 @@ msgid "Is Viewport"
 msgstr "Adalah Jendela Tampilan"
 
 
+msgid "Single"
+msgstr "Tunggal"
+
+
 msgid "Active Item"
 msgstr "Item Aktif"
 
@@ -18901,10 +18905,6 @@ msgstr "Tekstur"
 
 msgid "Node Output"
 msgstr "Keluaran Node"
-
-
-msgid "Single"
-msgstr "Tunggal"
 
 
 msgid "Node Instance Hash"
@@ -20725,12 +20725,22 @@ msgid "Target Frame"
 msgstr "Frame Target"
 
 
-msgid "Action taken when a paint stroke is made"
-msgstr "Aksi diambil saat garis luar cat dibuat"
-
-
 msgid "Apply brush normally"
 msgstr "Terapkan kuas biasanya"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Hapus"
+
+
+msgctxt "Operator"
+msgid "Mask"
+msgstr "Masker"
+
+
+msgid "Action taken when a paint stroke is made"
+msgstr "Aksi diambil saat garis luar cat dibuat"
 
 
 msgctxt "Operator"
@@ -20740,15 +20750,6 @@ msgstr "Balikkan"
 
 msgid "Invert action of brush for duration of stroke"
 msgstr "Balikkan aksi kuas untuk durasi garis luar"
-
-
-msgid "Switch brush to smooth mode for duration of stroke"
-msgstr "Gantikan kuas ke mode halus untuk durasi garis luar"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Hapus"
 
 
 msgid "Flat"
@@ -21429,10 +21430,6 @@ msgid "Remove from the selection"
 msgstr "Menghapus dari seleksi"
 
 
-msgid "Select ring"
-msgstr "Seleksi"
-
-
 msgid "Toggle Select"
 msgstr "Hapus"
 
@@ -21518,11 +21515,6 @@ msgstr "Perpotongan Sendiri"
 
 msgid "Cut new topology"
 msgstr "Potong topologi baru"
-
-
-msgctxt "Operator"
-msgid "Multi Select Loops"
-msgstr "Warna Standar"
 
 
 msgctxt "Operator"
@@ -25874,11 +25866,6 @@ msgstr "Ambil"
 msgctxt "Operator"
 msgid "Brush"
 msgstr "Kuas"
-
-
-msgctxt "Operator"
-msgid "Mask"
-msgstr "Masker"
 
 
 msgid "Type 1"
@@ -33244,12 +33231,12 @@ msgid "Exposure for motion blur as a factor of FPS"
 msgstr "Pencahayaan untuk buram gerakan sebagai faktor FPS"
 
 
-msgid "Absolute Frame"
-msgstr "Bingkai Absolut"
-
-
 msgid "Val"
 msgstr "Val"
+
+
+msgid "Absolute Frame"
+msgstr "Bingkai Absolut"
 
 
 msgid "Instance Count"

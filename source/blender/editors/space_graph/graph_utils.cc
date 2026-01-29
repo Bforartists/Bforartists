@@ -152,7 +152,7 @@ bool graphop_visible_keyframes_poll(bContext *C)
     if (fcu->bezt == nullptr) {
       continue;
     }
-    if (BKE_fcurve_are_keyframes_usable(fcu)) {
+    if (BKE_fcurve_are_keyframes_usable(*fcu)) {
       found = true;
       break;
     }
@@ -208,7 +208,7 @@ bool graphop_editable_keyframes_poll(bContext *C)
       /* This is a baked curve, it is never editable. */
       continue;
     }
-    if (BKE_fcurve_is_keyframable(fcu)) {
+    if (BKE_fcurve_is_keyframable(*fcu)) {
       found = true;
       break;
     }
@@ -256,7 +256,7 @@ bool graphop_active_fcurve_poll(bContext *C)
   }
 
   /* free temp data... */
-  MEM_freeN(ale);
+  MEM_delete(ale);
 
   /* return success */
   return has_fcurve;
@@ -264,7 +264,7 @@ bool graphop_active_fcurve_poll(bContext *C)
 
 bool graphop_active_editable_fcurve_ctx_poll(bContext *C)
 {
-  PointerRNA ptr = CTX_data_pointer_get_type(C, "active_editable_fcurve", &RNA_FCurve);
+  PointerRNA ptr = CTX_data_pointer_get_type(C, "active_editable_fcurve", RNA_FCurve);
 
   return ptr.data != nullptr;
 }

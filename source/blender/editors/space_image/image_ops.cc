@@ -183,7 +183,7 @@ static Image *image_from_context(const bContext *C)
 {
   /* Edit image is set by templates used throughout the interface, so image
    * operations work outside the image editor. */
-  Image *ima = static_cast<Image *>(CTX_data_pointer_get_type(C, "edit_image", &RNA_Image).data);
+  Image *ima = static_cast<Image *>(CTX_data_pointer_get_type(C, "edit_image", RNA_Image).data);
 
   if (ima) {
     return ima;
@@ -199,7 +199,7 @@ static ImageUser *image_user_from_context(const bContext *C)
   /* Edit image user is set by templates used throughout the interface, so
    * image operations work outside the image editor. */
   ImageUser *iuser = static_cast<ImageUser *>(
-      CTX_data_pointer_get_type(C, "edit_image_user", &RNA_ImageUser).data);
+      CTX_data_pointer_get_type(C, "edit_image_user", RNA_ImageUser).data);
 
   if (iuser) {
     return iuser;
@@ -383,7 +383,7 @@ static void image_view_pan_init(bContext *C, wmOperator *op, const wmEvent *even
   SpaceImage *sima = CTX_wm_space_image(C);
   ViewPanData *vpd;
 
-  op->customdata = vpd = MEM_callocN<ViewPanData>("ImageViewPanData");
+  op->customdata = vpd = MEM_new_zeroed<ViewPanData>("ImageViewPanData");
 
   /* Grab will be set when running from gizmo. */
   vpd->own_cursor = WM_cursor_modal_is_set_ok(win);
@@ -414,7 +414,7 @@ static void image_view_pan_exit(bContext *C, wmOperator *op, bool cancel)
   if (vpd->own_cursor) {
     WM_cursor_modal_restore(CTX_wm_window(C));
   }
-  MEM_freeN(vpd);
+  MEM_delete(vpd);
 }
 
 static wmOperatorStatus image_view_pan_exec(bContext *C, wmOperator *op)
@@ -544,7 +544,7 @@ static void image_view_zoom_init(bContext *C, wmOperator *op, const wmEvent *eve
   ARegion *region = CTX_wm_region(C);
   ViewZoomData *vpd;
 
-  op->customdata = vpd = MEM_callocN<ViewZoomData>("ImageViewZoomData");
+  op->customdata = vpd = MEM_new_zeroed<ViewZoomData>("ImageViewZoomData");
 
   /* Grab will be set when running from gizmo. */
   vpd->own_cursor = WM_cursor_modal_is_set_ok(win);
@@ -593,7 +593,7 @@ static void image_view_zoom_exit(bContext *C, wmOperator *op, bool cancel)
   if (vpd->own_cursor) {
     WM_cursor_modal_restore(CTX_wm_window(C));
   }
-  MEM_freeN(vpd);
+  MEM_delete(vpd);
 }
 
 static wmOperatorStatus image_view_zoom_exec(bContext *C, wmOperator *op)
@@ -1028,7 +1028,7 @@ static wmOperatorStatus image_view_selected_exec(bContext *C, wmOperator * /*op*
     }
   }
   else if (ED_space_image_check_show_maskedit(sima, obedit)) {
-    if (!ED_mask_selected_minmax(C, min, max, false)) {
+    if (!ED_mask_selected_minmax(C, min, max, false, false)) {
       return OPERATOR_CANCELLED;
     }
     BKE_mask_coord_to_image(sima->image, &sima->iuser, min, min);
@@ -1327,7 +1327,7 @@ static void image_open_init(bContext *C, wmOperator *op)
   ImageOpenData *iod;
   op->customdata = iod = MEM_new<ImageOpenData>(__func__);
   iod->iuser = static_cast<ImageUser *>(
-      CTX_data_pointer_get_type(C, "image_user", &RNA_ImageUser).data);
+      CTX_data_pointer_get_type(C, "image_user", RNA_ImageUser).data);
   ui::context_active_but_prop_get_templateID(C, &iod->pprop.ptr, &iod->pprop.prop);
 }
 
@@ -1468,14 +1468,13 @@ static wmOperatorStatus image_open_exec(bContext *C, wmOperator *op)
     iuser = &sima->iuser;
   }
   else {
-    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data);
+    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
     if (tex && tex->type == TEX_IMAGE) {
       iuser = &tex->iuser;
     }
 
     if (iuser == nullptr) {
-      Camera *cam = static_cast<Camera *>(
-          CTX_data_pointer_get_type(C, "camera", &RNA_Camera).data);
+      Camera *cam = static_cast<Camera *>(CTX_data_pointer_get_type(C, "camera", RNA_Camera).data);
       if (cam) {
         for (CameraBGImage &bgpic : cam->bg_images) {
           if (bgpic.ima == ima) {
@@ -1527,7 +1526,7 @@ static wmOperatorStatus image_open_invoke(bContext *C, wmOperator *op, const wmE
   }
 
   if (ima == nullptr) {
-    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data);
+    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
     if (tex && tex->type == TEX_IMAGE) {
       ima = tex->ima;
     }
@@ -1598,7 +1597,7 @@ static void image_open_draw(bContext * /*C*/, wmOperator *op)
                    false);
 
   /* image template */
-  PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, &RNA_ImageFormatSettings, imf);
+  PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, RNA_ImageFormatSettings, imf);
 
   /* multiview template */
   if (RNA_boolean_get(op->ptr, "show_multiview")) {
@@ -1787,7 +1786,7 @@ static wmOperatorStatus image_match_len_exec(bContext *C, wmOperator * /*op*/)
 
   if (!ima || !iuser) {
     /* Try to get a Texture, or a SpaceImage from context... */
-    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data);
+    Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
     if (tex && tex->type == TEX_IMAGE) {
       ima = tex->ima;
       iuser = &tex->iuser;
@@ -1966,13 +1965,13 @@ static ImageSaveData *image_save_as_init(bContext *C, wmOperator *op)
   ImageUser *iuser = image_user_from_context(C);
   Scene *scene = CTX_data_scene(C);
 
-  ImageSaveData *isd = MEM_new_for_free<ImageSaveData>(__func__);
+  ImageSaveData *isd = MEM_new<ImageSaveData>(__func__);
   isd->image = image;
   isd->iuser = iuser;
 
   if (!BKE_image_save_options_init(&isd->opts, bmain, scene, image, iuser, true, false)) {
     BKE_image_save_options_free(&isd->opts);
-    MEM_freeN(isd);
+    MEM_delete(isd);
     return nullptr;
   }
 
@@ -2009,7 +2008,7 @@ static void image_save_as_free(wmOperator *op)
     ImageSaveData *isd = static_cast<ImageSaveData *>(op->customdata);
     BKE_image_save_options_free(&isd->opts);
 
-    MEM_freeN(isd);
+    MEM_delete(isd);
     op->customdata = nullptr;
   }
 }
@@ -2112,7 +2111,7 @@ static void image_save_as_draw(bContext *C, wmOperator *op)
 
   /* Image format settings. */
   PointerRNA imf_ptr = RNA_pointer_create_discrete(
-      nullptr, &RNA_ImageFormatSettings, &isd->opts.im_format);
+      nullptr, RNA_ImageFormatSettings, &isd->opts.im_format);
   uiTemplateImageSettings(&layout, C, &imf_ptr, save_as_render);
 
   if (!save_as_render) {
@@ -2887,7 +2886,7 @@ static wmOperatorStatus image_flip_exec(bContext *C, wmOperator *op)
   if (ibuf->float_buffer.data) {
     float *float_pixels = ibuf->float_buffer.data;
 
-    float *orig_float_pixels = static_cast<float *>(MEM_dupallocN(float_pixels));
+    float *orig_float_pixels = MEM_dupalloc(float_pixels);
     for (int x = 0; x < size_x; x++) {
       const int source_pixel_x = use_flip_x ? size_x - x - 1 : x;
       for (int y = 0; y < size_y; y++) {
@@ -2900,7 +2899,7 @@ static wmOperatorStatus image_flip_exec(bContext *C, wmOperator *op)
         copy_v4_v4(target_pixel, source_pixel);
       }
     }
-    MEM_freeN(orig_float_pixels);
+    MEM_delete(orig_float_pixels);
 
     if (ibuf->byte_buffer.data) {
       IMB_byte_from_float(ibuf);
@@ -2908,7 +2907,7 @@ static wmOperatorStatus image_flip_exec(bContext *C, wmOperator *op)
   }
   else if (ibuf->byte_buffer.data) {
     uchar *char_pixels = ibuf->byte_buffer.data;
-    uchar *orig_char_pixels = static_cast<uchar *>(MEM_dupallocN(char_pixels));
+    uchar *orig_char_pixels = MEM_dupalloc(char_pixels);
     for (int x = 0; x < size_x; x++) {
       const int source_pixel_x = use_flip_x ? size_x - x - 1 : x;
       for (int y = 0; y < size_y; y++) {
@@ -2921,7 +2920,7 @@ static wmOperatorStatus image_flip_exec(bContext *C, wmOperator *op)
         copy_v4_v4_uchar(target_pixel, source_pixel);
       }
     }
-    MEM_freeN(orig_char_pixels);
+    MEM_delete(orig_char_pixels);
   }
   else {
     BKE_image_release_ibuf(ima, ibuf, nullptr);
@@ -3446,12 +3445,17 @@ static bool image_pack_test(Image *ima, const char **r_error_message)
   }
 
   if (!ID_IS_EDITABLE(&ima->id)) {
-    *r_error_message = "Image is not editable";
+    *r_error_message = N_("Image is not editable");
     return false;
   }
 
   if (ELEM(ima->source, IMA_SRC_SEQUENCE, IMA_SRC_MOVIE)) {
-    *r_error_message = "Movies or image sequences do not support packing";
+    *r_error_message = N_("Movies or image sequences do not support packing");
+    return false;
+  }
+
+  if (ELEM(ima->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
+    *r_error_message = N_("Render Result and Viewer Nodes cannot be packed");
     return false;
   }
 
@@ -4265,8 +4269,11 @@ static wmOperatorStatus clear_render_border_exec(bContext *C, wmOperator * /*op*
 {
   Scene *scene = CTX_data_scene(C);
   scene->r.mode &= ~R_BORDER;
-  WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
   BLI_rctf_init(&scene->r.border, 0.0f, 1.0f, 0.0f, 1.0f);
+
+  WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+  DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL);
+
   return OPERATOR_FINISHED;
 }
 

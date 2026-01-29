@@ -345,9 +345,12 @@ static EnumPropertyItem rna_enum_gpencil_fill_layers_modes_items[] = {
     {GP_FILL_GPLMODE_ALL_BELOW, "ALL_BELOW", 0, "All Below", "All layers below active"},
     {0, nullptr, 0, nullptr, nullptr}};
 
+/* BFA - Temporary warning fix, ERASE and SMOOTH is not used */
 static EnumPropertyItem rna_enum_gpencil_fill_direction_items[] = {
     {0, "NORMAL", ICON_ADD, "Normal", "Fill internal area"},
     {BRUSH_DIR_IN, "INVERT", ICON_REMOVE, "Inverted", "Fill inverted area"},
+    {2, "ERASE", ICON_ERASE, "Erase", "Erase fill area"},
+    {3, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", "Smooth fill area"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -635,31 +638,31 @@ static bool rna_BrushCapabilitiesWeightPaint_has_weight_get(PointerRNA *ptr)
 static PointerRNA rna_Sculpt_brush_capabilities_get(PointerRNA *ptr)
 {
   BLI_assert(ptr->owner_id == ptr->data);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_BrushCapabilitiesSculpt, ptr->data);
+  return RNA_pointer_create_with_parent(*ptr, RNA_BrushCapabilitiesSculpt, ptr->data);
 }
 
 static PointerRNA rna_Imapaint_brush_capabilities_get(PointerRNA *ptr)
 {
   BLI_assert(ptr->owner_id == ptr->data);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_BrushCapabilitiesImagePaint, ptr->data);
+  return RNA_pointer_create_with_parent(*ptr, RNA_BrushCapabilitiesImagePaint, ptr->data);
 }
 
 static PointerRNA rna_Vertexpaint_brush_capabilities_get(PointerRNA *ptr)
 {
   BLI_assert(ptr->owner_id == ptr->data);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_BrushCapabilitiesVertexPaint, ptr->data);
+  return RNA_pointer_create_with_parent(*ptr, RNA_BrushCapabilitiesVertexPaint, ptr->data);
 }
 
 static PointerRNA rna_Weightpaint_brush_capabilities_get(PointerRNA *ptr)
 {
   BLI_assert(ptr->owner_id == ptr->data);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_BrushCapabilitiesWeightPaint, ptr->data);
+  return RNA_pointer_create_with_parent(*ptr, RNA_BrushCapabilitiesWeightPaint, ptr->data);
 }
 
 static PointerRNA rna_Brush_capabilities_get(PointerRNA *ptr)
 {
   BLI_assert(ptr->owner_id == ptr->data);
-  return RNA_pointer_create_with_parent(*ptr, &RNA_BrushCapabilities, ptr->data);
+  return RNA_pointer_create_with_parent(*ptr, RNA_BrushCapabilities, ptr->data);
 }
 
 static void rna_Brush_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
@@ -952,7 +955,7 @@ static const EnumPropertyItem *rna_Brush_stroke_itemf(bContext *C,
        0,
        "Airbrush",
        "Keep applying paint effect while holding mouse (spray)"},
-      {BRUSH_LINE, "LINE", 0, "Line", "Drag a line with dabs separated according to spacing"},
+      {BRUSH_LINE, "LINE", 0, "Line", "Draw a line with dabs separated according to spacing"},
       {int(BRUSH_CURVE),
        "CURVE",
        0,

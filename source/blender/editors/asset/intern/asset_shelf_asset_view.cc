@@ -199,7 +199,7 @@ void AssetViewItem::disable_asset_drag()
 
 /**
  * Needs freeing with #WM_operator_properties_free() (will be done by button if passed to that) and
- * #MEM_freeN().
+ * #MEM_delete().
  */
 static std::optional<wmOperatorCallParams> create_asset_operator_params(
     const StringRefNull op_name, const asset_system::AssetRepresentation &asset)
@@ -222,7 +222,7 @@ void AssetViewItem::build_grid_tile(const bContext & /*C*/, ui::Layout &layout) 
   const AssetView &asset_view = reinterpret_cast<const AssetView &>(this->get_view());
   const AssetShelfType &shelf_type = *asset_view.shelf_.type;
 
-  PointerRNA asset_ptr = RNA_pointer_create_discrete(nullptr, &RNA_AssetRepresentation, &asset_);
+  PointerRNA asset_ptr = RNA_pointer_create_discrete(nullptr, RNA_AssetRepresentation, &asset_);
   button_context_ptr_set(
       layout.block(), reinterpret_cast<ui::Button *>(view_item_but_), "asset", &asset_ptr);
 

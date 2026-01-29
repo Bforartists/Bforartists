@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-if(CMAKE_COMPILER_IS_GNUCC)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # add here so we fail early.
   string(APPEND CMAKE_C_FLAGS " -Werror=implicit-function-declaration")
 endif()
@@ -162,7 +162,7 @@ set_source_files_properties(${GENSRC} PROPERTIES GENERATED TRUE)
 set(GENSRC_FLAGS)
 set(GENSRC_CFLAGS)
 set(GENSRC_CXXFLAGS)
-if(CMAKE_COMPILER_IS_GNUCC OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
   set(GENSRC_CFLAGS "-Wno-missing-prototypes")
   set(GENSRC_CXXFLAGS "-Wno-missing-declarations")
 endif()
@@ -411,10 +411,10 @@ target_link_libraries(makesrna PRIVATE bf_dna)
 target_link_libraries(makesrna PRIVATE bf::intern::atomic)
 target_link_libraries(makesrna PRIVATE bf::intern::guardedalloc)
 target_link_libraries(makesrna PRIVATE bf_dna_blenlib)
-target_link_libraries(makesrna PRIVATE bf::extern::fmtlib)
 target_link_libraries(makesrna PRIVATE bf_dna_defaults)
 target_link_libraries(makesrna PRIVATE bf::dependencies::optional::tbb)
 target_link_libraries(makesrna PRIVATE bf::dependencies::pthreads)
+target_link_libraries(makesrna PRIVATE bf::dependencies::fmt)
 
 # Output `rna_*_gen.cc`.
 # NOTE: (Linux only): with crashes try add this after COMMAND:
@@ -468,10 +468,10 @@ set(LIB
   bf_editor_transform
   bf_editor_undo
   PRIVATE bf::intern::guardedalloc
-  PRIVATE bf::extern::fmtlib
   PRIVATE bf::dependencies::optional::openvdb
   PRIVATE bf::dependencies::optional::tbb
   PRIVATE bf::dependencies::optional::audaspace
+  PUBLIC bf::dependencies::fmt
 )
 
 blender_add_lib(bf_rna "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

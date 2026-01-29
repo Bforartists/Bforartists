@@ -498,7 +498,7 @@ void rna_collection_search_update_fn(
         name = RNA_property_string_get_alloc(
             &itemptr, data->item_search_prop, name_buf, sizeof(name_buf), nullptr);
       }
-      else if (itemptr.type == &RNA_ActionSlot) {
+      else if (itemptr.type == RNA_ActionSlot) {
         /* FIXME: This special case is fairly annoying.
          *
          * `item_search_prop` now allows to specify another string property than the default RNA
@@ -532,7 +532,7 @@ void rna_collection_search_update_fn(
         cis->has_sep_char = has_sep_char;
         items_list.append(std::move(cis));
         if (name != name_buf) {
-          MEM_freeN(name);
+          MEM_delete(name);
         }
       }
     }
@@ -893,7 +893,7 @@ struct ButStoreElem {
 
 ButStore *butstore_create(Block *block)
 {
-  ButStore *bs_handle = MEM_callocN<ButStore>(__func__);
+  ButStore *bs_handle = MEM_new_zeroed<ButStore>(__func__);
 
   bs_handle->block = block;
   BLI_addtail(&block->butstore, bs_handle);
@@ -919,7 +919,7 @@ void butstore_free(Block *block, ButStore *bs_handle)
   BLI_assert(BLI_findindex(&block->butstore, bs_handle) != -1);
   BLI_remlink(&block->butstore, bs_handle);
 
-  MEM_freeN(bs_handle);
+  MEM_delete(bs_handle);
 }
 
 bool butstore_is_valid(ButStore *bs_handle)
@@ -942,7 +942,7 @@ bool butstore_is_registered(Block *block, Button *but)
 
 void butstore_register(ButStore *bs_handle, Button **but_p)
 {
-  ButStoreElem *bs_elem = MEM_callocN<ButStoreElem>(__func__);
+  ButStoreElem *bs_elem = MEM_new_zeroed<ButStoreElem>(__func__);
   BLI_assert(*but_p);
   bs_elem->but_p = but_p;
 
@@ -954,7 +954,7 @@ void butstore_unregister(ButStore *bs_handle, Button **but_p)
   for (ButStoreElem &bs_elem : bs_handle->items.items_mutable()) {
     if (bs_elem.but_p == but_p) {
       BLI_remlink(&bs_handle->items, &bs_elem);
-      MEM_freeN(&bs_elem);
+      MEM_delete(&bs_elem);
     }
   }
 

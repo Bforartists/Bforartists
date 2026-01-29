@@ -404,14 +404,14 @@ void ANIM_animdata_update(bAnimContext *ac, ListBaseT<bAnimListElem> *anim_data)
       if (ale.update & ANIM_UPDATE_ORDER) {
         ale.update &= ~ANIM_UPDATE_ORDER;
         if (fcu) {
-          sort_time_fcurve(fcu);
+          sort_time_fcurve(*fcu);
         }
       }
 
       if (ale.update & ANIM_UPDATE_HANDLES) {
         ale.update &= ~ANIM_UPDATE_HANDLES;
         if (fcu) {
-          BKE_fcurve_handles_recalc(fcu);
+          BKE_fcurve_handles_recalc(*fcu);
         }
       }
 
@@ -469,7 +469,7 @@ void ANIM_animdata_freelist(ListBaseT<bAnimListElem> *anim_data)
   for (ale = static_cast<bAnimListElem *>(anim_data->first); ale; ale = ale_next) {
     ale_next = ale->next;
     BLI_assert(ale->update == 0);
-    MEM_freeN(ale);
+    MEM_delete(ale);
   }
   BLI_listbase_clear(anim_data);
 #else

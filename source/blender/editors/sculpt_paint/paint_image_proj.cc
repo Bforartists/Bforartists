@@ -293,6 +293,7 @@ struct ProjPaintState {
   short brush_type;
   short blend;
   BrushStrokeMode mode;
+  BrushSwitchMode brush_switch_mode;
 
   float brush_size;
   Object *ob;
@@ -3851,7 +3852,8 @@ static void proj_paint_state_screen_coords_init(ProjPaintState *ps, const int di
 
   INIT_MINMAX2(ps->screenMin, ps->screenMax);
 
-  ps->screenCoords = MEM_malloc_arrayN<float[4]>(ps->totvert_eval, "ProjectPaint ScreenVerts");
+  ps->screenCoords = MEM_new_array_uninitialized<float[4]>(ps->totvert_eval,
+                                                           "ProjectPaint ScreenVerts");
   projScreenCo = *ps->screenCoords;
 
   if (ps->is_ortho) {
@@ -3927,9 +3929,9 @@ static void proj_paint_state_cavity_init(ProjPaintState *ps)
   int a;
 
   if (ps->do_mask_cavity) {
-    int *counter = MEM_calloc_arrayN<int>(ps->totvert_eval, "counter");
-    float (*edges)[3] = MEM_calloc_arrayN<float[3]>(ps->totvert_eval, "edges");
-    ps->cavities = MEM_malloc_arrayN<float>(ps->totvert_eval, "ProjectPaint Cavities");
+    int *counter = MEM_new_array_zeroed<int>(ps->totvert_eval, "counter");
+    float (*edges)[3] = MEM_new_array_zeroed<float[3]>(ps->totvert_eval, "edges");
+    ps->cavities = MEM_new_array_uninitialized<float>(ps->totvert_eval, "ProjectPaint Cavities");
     cavities = ps->cavities;
 
     for (const int64_t i : ps->edges_eval.index_range()) {
@@ -3953,8 +3955,8 @@ static void proj_paint_state_cavity_init(ProjPaintState *ps)
       }
     }
 
-    MEM_freeN(counter);
-    MEM_freeN(edges);
+    MEM_delete(counter);
+    MEM_delete(edges);
   }
 }
 
@@ -3962,11 +3964,12 @@ static void proj_paint_state_cavity_init(ProjPaintState *ps)
 static void proj_paint_state_seam_bleed_init(ProjPaintState *ps)
 {
   if (ps->seam_bleed_px > 0.0f) {
-    ps->vertFaces = MEM_calloc_arrayN<LinkNode *>(ps->totvert_eval, "paint-vertFaces");
-    ps->faceSeamFlags = MEM_calloc_arrayN<ushort>(ps->corner_tris_eval.size(), __func__);
-    ps->faceWindingFlags = MEM_calloc_arrayN<char>(ps->corner_tris_eval.size(), __func__);
-    ps->loopSeamData = MEM_malloc_arrayN<LoopSeamData>(ps->totloop_eval, "paint-loopSeamUVs");
-    ps->vertSeams = MEM_calloc_arrayN<ListBaseT<VertSeam>>(ps->totvert_eval, "paint-vertSeams");
+    ps->vertFaces = MEM_new_array_zeroed<LinkNode *>(ps->totvert_eval, "paint-vertFaces");
+    ps->faceSeamFlags = MEM_new_array_zeroed<ushort>(ps->corner_tris_eval.size(), __func__);
+    ps->faceWindingFlags = MEM_new_array_zeroed<char>(ps->corner_tris_eval.size(), __func__);
+    ps->loopSeamData = MEM_new_array_uninitialized<LoopSeamData>(ps->totloop_eval,
+                                                                 "paint-loopSeamUVs");
+    ps->vertSeams = MEM_new_array_zeroed<ListBaseT<VertSeam>>(ps->totvert_eval, "paint-vertSeams");
   }
 }
 #endif
@@ -3989,7 +3992,7 @@ static void proj_paint_state_thread_init(ProjPaintState *ps, const bool reset_th
 
   if (ps->is_shared_user == false) {
     if (ps->thread_tot > 1) {
-      ps->tile_lock = MEM_mallocN<SpinLock>("projpaint_tile_lock");
+      ps->tile_lock = MEM_new_uninitialized<SpinLock>("projpaint_tile_lock");
       BLI_spin_init(ps->tile_lock);
     }
 
@@ -4008,7 +4011,7 @@ static void proj_paint_state_vert_flags_init(ProjPaintState *ps)
     float no[3];
     int a;
 
-    ps->vertFlags = MEM_calloc_arrayN<char>(ps->totvert_eval, "paint-vertFlags");
+    ps->vertFlags = MEM_new_array_zeroed<char>(ps->totvert_eval, "paint-vertFlags");
 
     for (a = 0; a < ps->totvert_eval; a++) {
       copy_v3_v3(no, ps->vert_normals[a]);
@@ -4091,7 +4094,7 @@ static bool proj_paint_state_mesh_eval_init(const bContext *C, ProjPaintState *p
   /* Build final material array, we use this a lot here. */
   /* materials start from 1, default material is 0 */
   const int totmat = ob->totcol + 1;
-  ps->mat_array = MEM_malloc_arrayN<Material *>(totmat, __func__);
+  ps->mat_array = MEM_new_array_uninitialized<Material *>(totmat, __func__);
   /* We leave last material as empty - rationale here is being able to index
    * the materials by using the mf->mat_nr directly and leaving the last
    * material as nullptr in case no materials exist on mesh, so indexing will not fail. */
@@ -4146,8 +4149,8 @@ static bool proj_paint_state_mesh_eval_init(const bContext *C, ProjPaintState *p
   ps->corner_tris_eval = ps->mesh_eval->corner_tris();
   ps->corner_tri_faces_eval = ps->mesh_eval->corner_tri_faces();
 
-  ps->poly_to_loop_uv = MEM_malloc_arrayN<const float2 *>(ps->faces_num_eval,
-                                                          "proj_paint_mtfaces");
+  ps->poly_to_loop_uv = MEM_new_array_uninitialized<const float2 *>(ps->faces_num_eval,
+                                                                    "proj_paint_mtfaces");
 
   return true;
 }
@@ -4166,8 +4169,8 @@ static void proj_paint_layer_clone_init(ProjPaintState *ps, ProjPaintLayerClone 
 
   /* use clone mtface? */
   if (ps->do_layer_clone) {
-    ps->poly_to_loop_uv_clone = MEM_malloc_arrayN<const float2 *>(ps->faces_num_eval,
-                                                                  "proj_paint_mtfaces");
+    ps->poly_to_loop_uv_clone = MEM_new_array_uninitialized<const float2 *>(ps->faces_num_eval,
+                                                                            "proj_paint_mtfaces");
 
     if (const bke::GAttributeReader attr = attributes.lookup(mesh_orig.clone_uv_map_attribute)) {
       if (attr.domain == bke::AttrDomain::Corner && attr.varray.type().is<float2>()) {
@@ -4561,7 +4564,7 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
           iuser.tile = tile;
           iuser.framenr = tpage->lastframe;
           if (BKE_image_has_ibuf(tpage, &iuser)) {
-            PrepareImageEntry *e = MEM_new_for_free<PrepareImageEntry>("PrepareImageEntry");
+            PrepareImageEntry *e = MEM_new<PrepareImageEntry>("PrepareImageEntry");
             e->ima = tpage;
             e->iuser = iuser;
             BLI_addtail(&used_images, e);
@@ -4689,12 +4692,13 @@ static void project_paint_begin(const bContext *C,
   CLAMP(ps->buckets_x, PROJ_BUCKET_RECT_MIN, PROJ_BUCKET_RECT_MAX);
   CLAMP(ps->buckets_y, PROJ_BUCKET_RECT_MIN, PROJ_BUCKET_RECT_MAX);
 
-  ps->bucketRect = MEM_calloc_arrayN<LinkNode *>(ps->buckets_x * ps->buckets_y,
-                                                 "paint-bucketRect");
-  ps->bucketFaces = MEM_calloc_arrayN<LinkNode *>(ps->buckets_x * ps->buckets_y,
-                                                  "paint-bucketFaces");
+  ps->bucketRect = MEM_new_array_zeroed<LinkNode *>(ps->buckets_x * ps->buckets_y,
+                                                    "paint-bucketRect");
+  ps->bucketFaces = MEM_new_array_zeroed<LinkNode *>(ps->buckets_x * ps->buckets_y,
+                                                     "paint-bucketFaces");
 
-  ps->bucketFlags = MEM_calloc_arrayN<uchar>(ps->buckets_x * ps->buckets_y, "paint-bucketFaces");
+  ps->bucketFlags = MEM_new_array_zeroed<uchar>(ps->buckets_x * ps->buckets_y,
+                                                "paint-bucketFaces");
 #ifndef PROJ_DEBUG_NOSEAMBLEED
   if (ps->is_shared_user == false) {
     proj_paint_state_seam_bleed_init(ps);
@@ -4748,45 +4752,45 @@ static void project_paint_end(ProjPaintState *ps)
   }
   BKE_image_release_ibuf(ps->reproject_image, ps->reproject_ibuf, nullptr);
 
-  MEM_freeN(ps->screenCoords);
-  MEM_freeN(ps->bucketRect);
-  MEM_freeN(ps->bucketFaces);
-  MEM_freeN(ps->bucketFlags);
+  MEM_delete(ps->screenCoords);
+  MEM_delete(ps->bucketRect);
+  MEM_delete(ps->bucketFaces);
+  MEM_delete(ps->bucketFlags);
 
   if (ps->is_shared_user == false) {
     if (ps->mat_array != nullptr) {
-      MEM_freeN(ps->mat_array);
+      MEM_delete(ps->mat_array);
     }
 
     /* must be set for non-shared */
     BLI_assert(ps->poly_to_loop_uv || ps->is_shared_user);
     if (ps->poly_to_loop_uv) {
-      MEM_freeN(ps->poly_to_loop_uv);
+      MEM_delete(ps->poly_to_loop_uv);
     }
 
     if (ps->do_layer_clone) {
-      MEM_freeN(ps->poly_to_loop_uv_clone);
+      MEM_delete(ps->poly_to_loop_uv_clone);
     }
     if (ps->thread_tot > 1) {
       BLI_spin_end(ps->tile_lock);
       /* The void cast is needed when building without TBB. */
-      MEM_freeN((void *)ps->tile_lock);
+      MEM_delete_void((void *)ps->tile_lock);
     }
 
     ED_image_paint_tile_lock_end();
 
 #ifndef PROJ_DEBUG_NOSEAMBLEED
     if (ps->seam_bleed_px > 0.0f) {
-      MEM_freeN(ps->vertFaces);
-      MEM_freeN(ps->faceSeamFlags);
-      MEM_freeN(ps->faceWindingFlags);
-      MEM_freeN(ps->loopSeamData);
-      MEM_freeN(ps->vertSeams);
+      MEM_delete(ps->vertFaces);
+      MEM_delete(ps->faceSeamFlags);
+      MEM_delete(ps->faceWindingFlags);
+      MEM_delete(ps->loopSeamData);
+      MEM_delete(ps->vertSeams);
     }
 #endif
 
     if (ps->do_mask_cavity) {
-      MEM_freeN(ps->cavities);
+      MEM_delete(ps->cavities);
     }
 
     ps->mesh_eval = nullptr;
@@ -4798,7 +4802,7 @@ static void project_paint_end(ProjPaintState *ps)
   }
 
   if (ps->vertFlags) {
-    MEM_freeN(ps->vertFlags);
+    MEM_delete(ps->vertFlags);
   }
 
   for (a = 0; a < ps->thread_tot; a++) {
@@ -5085,7 +5089,7 @@ static void do_projectpaint_soften_f(ProjPaintState *ps,
   if (LIKELY(accum_tot != 0)) {
     mul_v4_fl(rgba, 1.0f / accum_tot);
 
-    if (ps->mode == BRUSH_STROKE_INVERT) {
+    if (ps->mode == BrushStrokeMode::Invert) {
       /* subtract blurred image from normal image gives high pass filter */
       sub_v3_v3v3(rgba, projPixel->pixel.f_pt, rgba);
 
@@ -5148,7 +5152,7 @@ static void do_projectpaint_soften(ProjPaintState *ps,
 
     mul_v4_fl(rgba, 1.0f / accum_tot);
 
-    if (ps->mode == BRUSH_STROKE_INVERT) {
+    if (ps->mode == BrushStrokeMode::Invert) {
       float rgba_pixel[4];
 
       straight_uchar_to_premul_float(rgba_pixel, projPixel->pixel.ch_pt);
@@ -5905,7 +5909,7 @@ static void paint_proj_stroke_ps(const bContext * /*C*/,
     paint_brush_color_get(paint,
                           brush,
                           ps_handle->initial_hsv_jitter,
-                          ps->mode == BRUSH_STROKE_INVERT,
+                          ps->mode == BrushStrokeMode::Invert,
                           distance,
                           pressure,
                           ps->paint_color_linear);
@@ -5940,7 +5944,7 @@ static void paint_proj_stroke_ps(const bContext * /*C*/,
   else if (ps->brush_type == IMAGE_PAINT_BRUSH_TYPE_MASK) {
     ps->stencil_value = brush->weight;
 
-    if ((ps->mode == BRUSH_STROKE_INVERT) ^
+    if ((ps->mode == BrushStrokeMode::Invert) ^
         ((scene->toolsettings->imapaint.flag & IMAGEPAINT_PROJECT_LAYER_STENCIL_INV) != 0))
     {
       ps->stencil_value = 1.0f - ps->stencil_value;
@@ -5997,28 +6001,33 @@ void paint_proj_stroke(const bContext *C,
 }
 
 /* initialize project paint settings from context */
-static void project_state_init(bContext *C, Object *ob, ProjPaintState *ps, int mode)
+static void project_state_init(bContext *C,
+                               Object *ob,
+                               ProjPaintState *ps,
+                               const BrushStrokeMode mode,
+                               const BrushSwitchMode brush_switch_mode)
 {
   Scene *scene = CTX_data_scene(C);
   ToolSettings *settings = scene->toolsettings;
 
   /* brush */
-  ps->mode = BrushStrokeMode(mode);
+  ps->mode = mode;
+  ps->brush_switch_mode = brush_switch_mode;
   ps->paint = BKE_paint_get_active_from_context(C);
   ps->brush = BKE_paint_brush(&settings->imapaint.paint);
   if (ps->brush) {
     Brush *brush = ps->brush;
     ps->brush_type = brush->image_brush_type;
     ps->blend = brush->blend;
-    if (mode == BRUSH_STROKE_SMOOTH) {
+    if (brush_switch_mode == BrushSwitchMode::Smooth) {
       ps->brush_type = IMAGE_PAINT_BRUSH_TYPE_SOFTEN;
     }
     /* only check for inversion for the soften brush, elsewhere,
      * a resident brush inversion flag can cause issues */
     if (ps->brush_type == IMAGE_PAINT_BRUSH_TYPE_SOFTEN) {
-      ps->mode = (((ps->mode == BRUSH_STROKE_INVERT) ^ ((brush->flag & BRUSH_DIR_IN) != 0)) ?
-                      BRUSH_STROKE_INVERT :
-                      BRUSH_STROKE_NORMAL);
+      ps->mode = (((ps->mode == BrushStrokeMode::Invert) ^ ((brush->flag & BRUSH_DIR_IN) != 0)) ?
+                      BrushStrokeMode::Invert :
+                      BrushStrokeMode::Normal);
 
       ps->blurkernel = paint_new_blur_kernel(brush, true);
     }
@@ -6108,7 +6117,11 @@ static void project_state_init(bContext *C, Object *ob, ProjPaintState *ps, int 
   ps->dither = settings->imapaint.dither;
 }
 
-void *paint_proj_new_stroke(bContext *C, Object *ob, const float mouse[2], int mode)
+void *paint_proj_new_stroke(bContext *C,
+                            Object *ob,
+                            const float mouse[2],
+                            const BrushStrokeMode mode,
+                            const BrushSwitchMode brush_switch_mode)
 {
   ProjStrokeHandle *ps_handle;
   Scene *scene = CTX_data_scene(C);
@@ -6124,7 +6137,7 @@ void *paint_proj_new_stroke(bContext *C, Object *ob, const float mouse[2], int m
     ps_handle->initial_hsv_jitter = seed_hsv_jitter();
   }
 
-  if (mode == BRUSH_STROKE_INVERT) {
+  if (mode == BrushStrokeMode::Invert) {
     /* Bypass regular stroke logic. */
     if (ps_handle->brush->image_brush_type == IMAGE_PAINT_BRUSH_TYPE_CLONE) {
       view3d_operator_needs_gpu(C);
@@ -6166,7 +6179,7 @@ void *paint_proj_new_stroke(bContext *C, Object *ob, const float mouse[2], int m
   for (int i = 0; i < ps_handle->ps_views_tot; i++) {
     ProjPaintState *ps = ps_handle->ps_views[i];
 
-    project_state_init(C, ob, ps, mode);
+    project_state_init(C, ob, ps, mode, brush_switch_mode);
 
     if (ps->ob == nullptr) {
       ps_handle->ps_views_tot = i + 1;
@@ -6288,7 +6301,7 @@ static wmOperatorStatus texture_paint_camera_project_exec(bContext *C, wmOperato
     return OPERATOR_CANCELLED;
   }
 
-  project_state_init(C, ob, &ps, BRUSH_STROKE_NORMAL);
+  project_state_init(C, ob, &ps, BrushStrokeMode::Normal, BrushSwitchMode::None);
 
   if (image == nullptr) {
     BKE_report(op->reports, RPT_ERROR, "Image could not be found");
@@ -6817,7 +6830,7 @@ static void default_paint_slot_color_get(int layer_type, Material *ma, float col
       /* Cleanup */
       if (ntree) {
         bke::node_tree_free_tree(*ntree);
-        MEM_freeN(ntree);
+        MEM_delete(ntree);
       }
       return;
     }
@@ -6957,7 +6970,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
     }
     if (layer) {
       BKE_texpaint_slot_refresh_cache(scene, ma, ob);
-      DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_GEOMETRY);
+      DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
       WM_main_add_notifier(NC_GEOM | ND_DATA, ob->data);
     }
 
@@ -7164,7 +7177,7 @@ static wmOperatorStatus add_simple_uvs_exec(bContext *C, wmOperator * /*op*/)
 
   ED_paint_proj_mesh_data_check(*scene, *ob, nullptr, nullptr, nullptr, nullptr);
 
-  DEG_id_tag_update(static_cast<ID *>(ob->data), 0);
+  DEG_id_tag_update(ob->data, 0);
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
   WM_event_add_notifier(C, NC_SCENE | ND_TOOLSETTINGS, scene);
   return OPERATOR_FINISHED;

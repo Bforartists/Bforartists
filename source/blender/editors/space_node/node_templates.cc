@@ -589,7 +589,7 @@ static void ui_node_menu_column(NodeLinkArg *arg, int nclass, const char *cname)
                              nullptr,
                              TIP_("Add node to input"));
 
-      argN = static_cast<NodeLinkArg *>(MEM_dupallocN(arg));
+      argN = MEM_dupalloc(arg);
       argN->item = item;
       button_funcN_set(but, ui_node_link, argN, nullptr);
     }
@@ -646,7 +646,7 @@ static void ui_template_node_link_menu(bContext *C, ui::Layout *layout, void *bu
                    0.0,
                    0.0,
                    TIP_("Remove nodes connected to the input"));
-    button_funcN_set(but, ui_node_link, MEM_dupallocN(arg), POINTER_FROM_INT(UI_NODE_LINK_REMOVE));
+    button_funcN_set(but, ui_node_link, MEM_dupalloc(arg), POINTER_FROM_INT(UI_NODE_LINK_REMOVE));
 
     but = uiDefBut(block,
                    ui::ButtonType::But,
@@ -660,7 +660,7 @@ static void ui_template_node_link_menu(bContext *C, ui::Layout *layout, void *bu
                    0.0,
                    TIP_("Disconnect nodes connected to the input"));
     button_funcN_set(
-        but, ui_node_link, MEM_dupallocN(arg), POINTER_FROM_INT(UI_NODE_LINK_DISCONNECT));
+        but, ui_node_link, MEM_dupalloc(arg), POINTER_FROM_INT(UI_NODE_LINK_DISCONNECT));
   }
 
   ui_node_menu_column(arg, NODE_CLASS_GROUP, N_("Group"));
@@ -678,13 +678,13 @@ void uiTemplateNodeLink(
   ui::Button *but;
   float socket_col[4];
 
-  arg = MEM_callocN<NodeLinkArg>("NodeLinkArg");
+  arg = MEM_new_zeroed<NodeLinkArg>("NodeLinkArg");
   arg->ntree = ntree;
   arg->node = node;
   arg->sock = input;
   node_link_item_init(arg->item);
 
-  PointerRNA node_ptr = RNA_pointer_create_discrete(&ntree->id, &RNA_Node, node);
+  PointerRNA node_ptr = RNA_pointer_create_discrete(&ntree->id, RNA_Node, node);
   node_socket_color_get(*C, *ntree, node_ptr, *input, socket_col);
 
   ui::block_layout_set_current(block, layout);
@@ -706,8 +706,8 @@ void uiTemplateNodeLink(
 
   but->poin = reinterpret_cast<char *>(but);
   but->func_argN = arg;
-  but->func_argN_free_fn = MEM_freeN;
-  but->func_argN_copy_fn = MEM_dupallocN;
+  but->func_argN_free_fn = MEM_delete_void;
+  but->func_argN_copy_fn = MEM_dupalloc_void;
 
   if (input->link && input->link->fromnode) {
     if (input->link->fromnode->flag & NODE_ACTIVE_TEXTURE) {
@@ -750,7 +750,7 @@ static void ui_node_draw_recursive(ui::Layout &layout,
     panel_layout.header->use_property_split_set(false);
     panel_layout.header->use_property_decorate_set(false);
     PointerRNA toggle_ptr = RNA_pointer_create_discrete(
-        &ntree.id, &RNA_NodeSocket, &node.socket_by_decl(*panel_toggle_decl));
+        &ntree.id, RNA_NodeSocket, &node.socket_by_decl(*panel_toggle_decl));
     panel_layout.header->prop(&toggle_ptr,
                               "default_value",
                               UI_ITEM_NONE,
@@ -777,8 +777,8 @@ static void ui_node_draw_recursive(ui::Layout &layout,
             ntree,
             node,
             socket,
-            RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node),
-            RNA_pointer_create_discrete(&ntree.id, &RNA_NodeSocket, &socket)};
+            RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node),
+            RNA_pointer_create_discrete(&ntree.id, RNA_NodeSocket, &socket)};
         (*socket_decl->custom_draw_fn)(params);
       }
       else if (socket_decl->in_out == SOCK_IN) {
@@ -791,7 +791,7 @@ static void ui_node_draw_recursive(ui::Layout &layout,
       ui_node_draw_recursive(*panel_layout.body, C, ntree, node, *sub_panel_decl, depth + 1);
     }
     else if (const auto *layout_decl = dynamic_cast<const nodes::LayoutDeclaration *>(item_decl)) {
-      PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+      PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
       layout_decl->draw(*panel_layout.body, &C, &nodeptr);
     }
   }
@@ -800,7 +800,7 @@ static void ui_node_draw_recursive(ui::Layout &layout,
 static void ui_node_draw_node(
     ui::Layout &layout, bContext &C, bNodeTree &ntree, bNode &node, int depth)
 {
-  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
 
   /* Draw top-level node buttons. */
   if (node.typeinfo->draw_buttons) {
@@ -827,8 +827,8 @@ static void ui_node_draw_node(
               ntree,
               node,
               socket,
-              RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node),
-              RNA_pointer_create_discrete(&ntree.id, &RNA_NodeSocket, &socket)};
+              RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node),
+              RNA_pointer_create_discrete(&ntree.id, RNA_NodeSocket, &socket)};
           (*socket_decl->custom_draw_fn)(params);
         }
         else if (socket_decl->in_out == SOCK_IN) {
@@ -838,7 +838,7 @@ static void ui_node_draw_node(
       else if (const auto *layout_decl = dynamic_cast<const nodes::LayoutDeclaration *>(item_decl))
       {
         if (!layout_decl->is_default) {
-          PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+          PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
           layout_decl->draw(layout, &C, &nodeptr);
         }
       }
@@ -878,8 +878,8 @@ static void ui_node_draw_input(ui::Layout &layout,
   }
 
   /* socket RNA pointer */
-  PointerRNA inputptr = RNA_pointer_create_discrete(&ntree.id, &RNA_NodeSocket, &input);
-  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, &RNA_Node, &node);
+  PointerRNA inputptr = RNA_pointer_create_discrete(&ntree.id, RNA_NodeSocket, &input);
+  PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
 
   row = &layout.row(true);
 

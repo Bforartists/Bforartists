@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Alpha (b'12e628ea43f8')\n"
+"Project-Id-Version: Blender 5.1.0 Alpha (b'bd8d088b2702')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-12 15:09+0000\n"
+"POT-Creation-Date: 2026-01-26 11:28+0000\n"
 "PO-Revision-Date: 2025-11-18 20:05+0000\n"
 "Last-Translator: Daniel Nylander <blender@danielnylander.se>\n"
 "Language-Team: Swedish <https://translate.blender.org/projects/blender-ui/ui/sv/>\n"
@@ -9339,34 +9339,6 @@ msgid "Use Material Mask"
 msgstr "Använd materialmask"
 
 
-msgid "Show/Hide"
-msgstr "Visa/dölj"
-
-
-msgid "Special Characters"
-msgstr "Specialtecken"
-
-
-msgid "Math"
-msgstr "Matematik"
-
-
-msgid "Metaball"
-msgstr "Metaboll"
-
-
-msgid "Utilities"
-msgstr "Verktyg"
-
-
-msgid "Names"
-msgstr "Namn"
-
-
-msgid "Clean Up"
-msgstr "Städa upp"
-
-
 msgid "Read"
 msgstr "Läs"
 
@@ -9375,80 +9347,56 @@ msgid "Write"
 msgstr "Skriv"
 
 
-msgid "Pivot Point"
-msgstr "Fast punkt"
+msgid "Show/Hide"
+msgstr "Visa/dölj"
 
 
-msgid "Primitives"
-msgstr "Primitiver"
-
-
-msgid "Snap"
-msgstr "Snäpp"
+msgid "Clean Up"
+msgstr "Städa upp"
 
 
 msgid "Instances"
 msgstr "Instanser"
 
 
+msgid "Names"
+msgstr "Namn"
+
+
+msgid "Primitives"
+msgstr "Primitiver"
+
+
 msgid "Import"
 msgstr "Importera"
+
+
+msgid "Metaball"
+msgstr "Metaboll"
+
+
+msgid "Special Characters"
+msgstr "Specialtecken"
+
+
+msgid "Utilities"
+msgstr "Verktyg"
 
 
 msgid "Deprecated"
 msgstr "Föråldrad"
 
 
-msgid "Mirror"
-msgstr "Spegla"
+msgid "Math"
+msgstr "Matematik"
 
 
-msgid "Local View"
-msgstr "Lokal vy"
-
-
-msgid "Viewpoint"
-msgstr "Visningspunkt"
-
-
-msgid "Navigation"
-msgstr "Navigering"
+msgid "Merge"
+msgstr "Sammanfoga"
 
 
 msgid "UV"
 msgstr "UV"
-
-
-msgid "Align View"
-msgstr "Justera vy"
-
-
-msgid "Align View to Active"
-msgstr "Justera vy till aktiv"
-
-
-msgid "Select More/Less"
-msgstr "Markera mera/mindre"
-
-
-msgid "Assign Material"
-msgstr "Tilldela material"
-
-
-msgid "Light"
-msgstr "Ljus"
-
-
-msgid "Light Probe"
-msgstr "Ljussond"
-
-
-msgid "Add Image"
-msgstr "Lägg till bild"
-
-
-msgid "Relations"
-msgstr "Relationer"
 
 
 msgid "Rigid Body"
@@ -9459,40 +9407,92 @@ msgid "Apply"
 msgstr "Applicera"
 
 
-msgid "Track"
-msgstr "Spår"
-
-
-msgid "Quick Effects"
-msgstr "Snabbeffekter"
-
-
-msgid "Asset"
-msgstr "Tillgång"
-
-
-msgid "Convert"
-msgstr "Konvertera"
+msgid "Propagate"
+msgstr "Propagera"
 
 
 msgid "Link/Transfer Data"
 msgstr "Länka/överför data"
 
 
+msgid "Convert"
+msgstr "Konvertera"
+
+
+msgid "Asset"
+msgstr "Tillgång"
+
+
+msgid "Quick Effects"
+msgstr "Snabbeffekter"
+
+
+msgid "Track"
+msgstr "Spår"
+
+
+msgid "Add Image"
+msgstr "Lägg till bild"
+
+
+msgid "Relations"
+msgstr "Relationer"
+
+
 msgid "Layout"
 msgstr "Layout"
+
+
+msgid "Light Probe"
+msgstr "Ljussond"
+
+
+msgid "Assign Material"
+msgstr "Tilldela material"
 
 
 msgid "Adjust"
 msgstr "Justera"
 
 
-msgid "Propagate"
-msgstr "Propagera"
+msgid "Light"
+msgstr "Ljus"
 
 
-msgid "Merge"
-msgstr "Sammanfoga"
+msgid "Select More/Less"
+msgstr "Markera mera/mindre"
+
+
+msgid "Align View to Active"
+msgstr "Justera vy till aktiv"
+
+
+msgid "Navigation"
+msgstr "Navigering"
+
+
+msgid "Align View"
+msgstr "Justera vy"
+
+
+msgid "Local View"
+msgstr "Lokal vy"
+
+
+msgid "Viewpoint"
+msgstr "Visningspunkt"
+
+
+msgid "Snap"
+msgstr "Snäpp"
+
+
+msgid "Mirror"
+msgstr "Spegla"
+
+
+msgid "Pivot Point"
+msgstr "Fast punkt"
 
 
 msgid "Animals"
@@ -9704,34 +9704,6 @@ msgstr "Återställ"
 
 msgid "Help"
 msgstr "Hjälp"
-
-
-msgid ""
-"\n"
-"    UI button context menu definition. Scripts can append/prepend this to\n"
-"    add own operators to the context menu. They must check context though, so\n"
-"    their items only draw in a valid context and for the correct buttons.\n"
-"    "
-msgstr ""
-"\n"
-"    Definition av kontextmeny för UI-knapp. Skript kan lägga till/förbereda detta för att\n"
-"    lägga till egna operatörer i snabbmenyn. De måste dock kontrollera sammanhanget,\n"
-"    så att deras objekt bara ritas i ett giltigt sammanhang och för rätt knappar.\n"
-"    "
-
-
-msgid ""
-"\n"
-"    UI List item context menu definition. Scripts can append/prepend this to\n"
-"    add own operators to the context menu. They must check context though, so\n"
-"    their items only draw in a valid context and for the correct UI list.\n"
-"    "
-msgstr ""
-"\n"
-"    UI Definition av kontextmeny för listobjekt. Skript kan lägga till/förbereda detta för att\n"
-"    lägga till egna operatörer i snabbmenyn. De måste dock kontrollera sammanhanget,\n"
-"    så att deras objekt bara ritas i en giltig kontext och för rätt UI-lista.\n"
-"    "
 
 
 msgid "Add-ons Settings"
@@ -11163,6 +11135,10 @@ msgid "Retrieve values from a field on a different domain besides the domain fro
 msgstr "Hämta värden från ett fält på en annan domän förutom domänen från kontexten"
 
 
+msgid "Create a list of values"
+msgstr "Skapa en lista över värden"
+
+
 msgid "Fill Curve"
 msgstr "Fyll kurva"
 
@@ -11264,10 +11240,6 @@ msgstr "Sammanfoga geometri"
 
 msgid "Merge separately generated geometries into a single one"
 msgstr "Slå ihop separat genererade geometrier till en och samma"
-
-
-msgid "Create a list of values"
-msgstr "Skapa en lista över värden"
 
 
 msgid "Retrieve a value from a list"
@@ -11536,54 +11508,6 @@ msgstr "64-bitars heltal"
 
 msgid "Unknown"
 msgstr "Okänt"
-
-
-msgid "Align text to the center"
-msgstr "Justera text till mitten"
-
-
-msgid "Align text to the left and the right"
-msgstr "Justera text till vänster och höger"
-
-
-msgid "Align text to the left and the right, with equal character spacing"
-msgstr "Justera text till vänster och höger, med jämnt avstånd mellan tecken"
-
-
-msgid "Let the text use more space than the specified height"
-msgstr "Låt texten använda mer utrymme än den angivna höjden"
-
-
-msgid "Scale To Fit"
-msgstr "Skala för att passa"
-
-
-msgid "Scale the text size to fit inside the width and height"
-msgstr "Skala texten så att den passar inom bredden och höjden"
-
-
-msgid "Top Left"
-msgstr "Topp vänster"
-
-
-msgid "Top Center"
-msgstr "Topp mitten"
-
-
-msgid "Top Right"
-msgstr "Topp höger"
-
-
-msgid "Bottom Left"
-msgstr "Botten vänster"
-
-
-msgid "Bottom Center"
-msgstr "Botten mitten"
-
-
-msgid "Bottom Right"
-msgstr "Botten höger"
 
 
 msgid "Selection"
@@ -13220,11 +13144,6 @@ msgstr "Lägg till nod"
 msgctxt "Operator"
 msgid "New Item"
 msgstr "Nytt objekt"
-
-
-msgctxt "Operator"
-msgid "Remove Item"
-msgstr "Ta bort objekt"
 
 
 msgctxt "Operator"
@@ -15753,6 +15672,16 @@ msgstr "Ta bort aktiva nyckelbilder från alla lager"
 
 
 msgctxt "Operator"
+msgid "Erase"
+msgstr "Radera"
+
+
+msgctxt "Operator"
+msgid "Mask"
+msgstr "Maskera"
+
+
+msgctxt "Operator"
 msgid "Regular"
 msgstr "Vanlig"
 
@@ -15760,11 +15689,6 @@ msgstr "Vanlig"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "Invertera"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Radera"
 
 
 msgid "Rounded"
@@ -16978,10 +16902,6 @@ msgid "Show just angle measurements"
 msgstr "Visa endast vinkelmått"
 
 
-msgid "Ring"
-msgstr "Ring"
-
-
 msgid "Merge selected vertices"
 msgstr "Sammanfoga markerade vertexar"
 
@@ -17558,6 +17478,11 @@ msgstr "Flytta objekt"
 
 msgid "Move direction"
 msgstr "Flytta riktning"
+
+
+msgctxt "Operator"
+msgid "Remove Item"
+msgstr "Ta bort objekt"
 
 
 msgctxt "Operator"
@@ -21371,36 +21296,36 @@ msgid "Palette Color"
 msgstr "Palettfärg"
 
 
-msgid "Active Tool"
-msgstr "Aktivt verktyg"
-
-
-msgid "Cavity"
-msgstr "Hålrum"
-
-
-msgid "Render Pass"
-msgstr "Renderingspass"
-
-
-msgid "Overlays"
-msgstr "Överlägg"
-
-
-msgid "Viewer Node"
-msgstr "Visningsnod"
-
-
-msgid "Measurement"
-msgstr "Mätning"
+msgid "VR"
+msgstr "VR"
 
 
 msgid "Stroke Placement"
 msgstr "Streckplacering"
 
 
-msgid "VR"
-msgstr "VR"
+msgid "Measurement"
+msgstr "Mätning"
+
+
+msgid "Viewer Node"
+msgstr "Visningsnod"
+
+
+msgid "Overlays"
+msgstr "Överlägg"
+
+
+msgid "Active Tool"
+msgstr "Aktivt verktyg"
+
+
+msgid "Render Pass"
+msgstr "Renderingspass"
+
+
+msgid "Cavity"
+msgstr "Hålrum"
 
 
 msgid "Import Settings"
@@ -21583,11 +21508,6 @@ msgstr "Suddig"
 msgctxt "Operator"
 msgid "Clone"
 msgstr "Klona"
-
-
-msgctxt "Operator"
-msgid "Mask"
-msgstr "Maskera"
 
 
 msgid "Texture Mask"
@@ -23411,6 +23331,11 @@ msgstr "Osignerad"
 
 
 msgctxt "Unit"
+msgid "Mass"
+msgstr "Massa"
+
+
+msgctxt "Unit"
 msgid "Angle"
 msgstr "Vinkel"
 
@@ -23517,11 +23442,6 @@ msgstr "Område"
 msgctxt "Unit"
 msgid "Volume"
 msgstr "Volym"
-
-
-msgctxt "Unit"
-msgid "Mass"
-msgstr "Massa"
 
 
 msgctxt "Unit"
@@ -24756,16 +24676,16 @@ msgid "Theme settings for the Blender Preferences"
 msgstr "Tema-inställningar för Blender-inställningarna"
 
 
+msgid "Search Match"
+msgstr "Sökträff"
+
+
 msgid "Theme Properties"
 msgstr "Temaegenskaper"
 
 
 msgid "Theme settings for the Properties"
 msgstr "Temainställningar för egenskaperna"
-
-
-msgid "Search Match"
-msgstr "Sökträff"
 
 
 msgid "Preview Background"
@@ -33127,12 +33047,16 @@ msgid "YCbCr Key Channel"
 msgstr "YCbCr-nyckelkanal"
 
 
+msgid "Midtones"
+msgstr "Mellantoner"
+
+
 msgid "Limit Strength"
 msgstr "Begränsa styrka"
 
 
-msgid "Midtones"
-msgstr "Mellantoner"
+msgid "Cb"
+msgstr "Cb"
 
 
 msgid "Convert from display to scene linear instead. Not all view transforms can be inverted exactly, and the result may not match the original scene linear image"
@@ -33177,10 +33101,6 @@ msgstr "Eccentricitet"
 
 msgid "Offset Y"
 msgstr "Y-förskjutning"
-
-
-msgid "Cb"
-msgstr "Cb"
 
 
 msgid "Bitwise %s"
@@ -33481,6 +33401,14 @@ msgstr "Strängar"
 
 msgid "Limit Surface"
 msgstr "Begränsa yta"
+
+
+msgid "Bottom Left"
+msgstr "Botten vänster"
+
+
+msgid "Top Right"
+msgstr "Topp höger"
 
 
 msgid "Manage"

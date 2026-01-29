@@ -2,10 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# LLVM does not switch over to cpp17 until llvm 16 and building earlier versions with
-# MSVC is leading to some crashes in ISPC. Switch back to their default on all platforms
-# for now.
-string(REPLACE "-DCMAKE_CXX_STANDARD=17" " " DPCPP_CMAKE_FLAGS "${DEFAULT_CMAKE_FLAGS}")
+string(REPLACE "-DCMAKE_CXX_STANDARD=20" " " DPCPP_CMAKE_FLAGS "${DEFAULT_CMAKE_FLAGS}")
 
 # DPCPP already generates debug libs, there isn't much point in compiling it in debug mode itself.
 string(REPLACE "-DCMAKE_BUILD_TYPE=Debug" "-DCMAKE_BUILD_TYPE=Release" DPCPP_CMAKE_FLAGS "${DPCPP_CMAKE_FLAGS}")
@@ -18,7 +15,7 @@ endif()
 
 set(DPCPP_CONFIGURE_ARGS
   # When external deps dpcpp needs are not found it will automatically
-  # download the during the configure stage using FetchContent. Given
+  # download them during the configure stage using FetchContent. Given
   # we need to keep an archive of all source used during build for compliance
   # reasons it CANNOT download anything we do not know about. By setting
   # this property to ON, all downloads are disabled, and we will have to
@@ -29,7 +26,7 @@ set(DPCPP_CONFIGURE_ARGS
 set(DPCPP_SOURCE_ROOT ${BUILD_DIR}/dpcpp/src/external_dpcpp/)
 set(DPCPP_EXTRA_ARGS
   # When external deps dpcpp needs are not found it will automatically
-  # download the during the configure stage using FetchContent. Given
+  # download them during the configure stage using FetchContent. Given
   # we need to keep an archive of all source used during build for compliance
   # reasons it CANNOT download anything we do not know about. By setting
   # this property to ON, all downloads are disabled, and we will have to
@@ -123,9 +120,10 @@ ExternalProject_Add(external_dpcpp
   #   echo "." # ${PYTHON_BINARY} ${BUILD_DIR}/dpcpp/src/external_dpcpp/buildbot/compile.py
   INSTALL_COMMAND ${CMAKE_COMMAND} --build . -- deploy-sycl-toolchain
 
-  PATCH_COMMAND ${PATCH_CMD} -p 1 -d
-    ${BUILD_DIR}/dpcpp/src/external_dpcpp <
-    ${PATCH_DIR}/dpcpp.diff
+  PATCH_COMMAND
+    ${PATCH_CMD} -p 1 -d
+      ${BUILD_DIR}/dpcpp/src/external_dpcpp <
+      ${PATCH_DIR}/dpcpp.diff
 
   INSTALL_DIR ${LIBDIR}/dpcpp
 )

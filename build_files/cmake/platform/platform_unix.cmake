@@ -36,7 +36,7 @@ else()
       endif()
     endif()
 
-    # Avoid namespace pollustion.
+    # Avoid namespace pollution.
     unset(LIBDIR_NATIVE_ABI)
     unset(LIBDIR_GLIBC228_ABI)
   endif()
@@ -100,6 +100,7 @@ if(DEFINED LIBDIR)
   set(OPENEXR_ROOT_DIR ${LIBDIR}/openexr)
   set(CLANG_ROOT_DIR ${LIBDIR}/llvm)
   set(MaterialX_DIR ${LIBDIR}/materialx/lib/cmake/MaterialX)
+  set(fmt_ROOT ${LIBDIR}/fmt)
 endif()
 
 # Wrapper to prefer static libraries
@@ -126,6 +127,19 @@ find_package_wrapper(PNG REQUIRED)
 find_package_wrapper(ZLIB REQUIRED)
 find_package_wrapper(Zstd REQUIRED)
 find_package_wrapper(Epoxy REQUIRED)
+find_package_wrapper(fmt REQUIRED)
+if(DEFINED fmt_DIR)
+  # Hide the fmt_DIR from the standard user settings to be consistent with our
+  # other "here is the library" settings.
+  mark_as_advanced(fmt_DIR)
+endif()
+
+# BFA - Manual workaround for fmt include issue with Blender 5.1 libs
+#   fmt is used by public headers like BLI_string_ref.hh, so we need to make
+#   the include directory available globally, not just to individual targets
+if(DEFINED LIBDIR)
+  include_directories(SYSTEM ${LIBDIR}/fmt/include)
+endif()
 
 # XXX Linking errors with debian static tiff :/
 # find_package_wrapper(TIFF REQUIRED)
@@ -257,6 +271,7 @@ if(WITH_IMAGE_OPENEXR)
 endif()
 add_bundled_libraries(openexr/lib)
 add_bundled_libraries(imath/lib)
+add_bundled_libraries(openjph/lib)
 
 if(WITH_IMAGE_OPENJPEG)
   find_package_wrapper(OpenJPEG)
@@ -885,7 +900,7 @@ endif()
 set(_IS_LINKER_DEFAULT ON)
 
 # GNU Compiler
-if(CMAKE_COMPILER_IS_GNUCC)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # ffp-contract=off:
   # Automatically turned on when building with "-march=native". This is
   # explicitly turned off here as it will make floating point math give a bit
@@ -944,21 +959,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
       unset(LD_VERSION)
     endif()
     unset(MOLD_BIN)
-  endif()
-
-  if(WITH_LINKER_GOLD AND _IS_LINKER_DEFAULT)
-    execute_process(
-      COMMAND ${CMAKE_C_COMPILER} -fuse-ld=gold -Wl,--version
-      ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
-    if("${LD_VERSION}" MATCHES "GNU gold")
-      string(APPEND CMAKE_EXE_LINKER_FLAGS    " -fuse-ld=gold")
-      string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=gold")
-      string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=gold")
-      set(_IS_LINKER_DEFAULT OFF)
-    else()
-      message(STATUS "GNU gold linker isn't available, using the default system linker.")
-    endif()
-    unset(LD_VERSION)
   endif()
 
   if(WITH_LINKER_LLD AND _IS_LINKER_DEFAULT)
@@ -1052,6 +1052,13 @@ unset(_IS_LINKER_DEFAULT)
 set(PLATFORM_SYMBOLS_MAP ${CMAKE_SOURCE_DIR}/source/creator/symbols_unix.map)
 set(PLATFORM_LINKFLAGS
   "${PLATFORM_LINKFLAGS} -Wl,--version-script='${PLATFORM_SYMBOLS_MAP}'"
+)
+
+# We do not ensure transitive dependencies of dynamic libraries are available at
+# link time, this allows that. The better solution would be to switch to cmake
+# configs but more work is needed for that.
+set(PLATFORM_LINKFLAGS
+  "${PLATFORM_LINKFLAGS} -Wl,--allow-shlib-undefined -Wl,--unresolved-symbols=ignore-in-shared-libs"
 )
 
 # Don't use position independent executable for portable install since file

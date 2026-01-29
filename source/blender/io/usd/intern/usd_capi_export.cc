@@ -46,7 +46,8 @@
 #include "BKE_scene.hh"
 
 #include "BLI_fileops.h"
-#include "BLI_math_matrix.h"
+#include "BLI_math_matrix.hh"
+#include "BLI_math_matrix_types.hh"
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
 #include "BLI_path_utils.hh"
@@ -174,22 +175,17 @@ static void ensure_root_prim(pxr::UsdStageRefPtr stage, const USDExportParams &p
     return;
   }
 
-  if (params.convert_scene_units) {
+  if (params.convert_scene_units != SceneUnits::Meters) {
     xf_api.SetScale(pxr::GfVec3f(float(1.0 / get_meters_per_unit(params))));
   }
 
   if (params.convert_orientation) {
-    float mrot[3][3];
-    mat3_from_axis_conversion(IO_AXIS_Y, IO_AXIS_Z, params.forward_axis, params.up_axis, mrot);
-    transpose_m3(mrot);
+    float3x3 mrot;
+    mat3_from_axis_conversion(
+        IO_AXIS_Y, IO_AXIS_Z, params.forward_axis, params.up_axis, mrot.ptr());
 
-    float eul[3];
-    mat3_to_eul(eul, mrot);
-
-    /* Convert radians to degrees. */
-    mul_v3_fl(eul, 180.0f / M_PI);
-
-    xf_api.SetRotate(pxr::GfVec3f(eul[0], eul[1], eul[2]));
+    const math::EulerXYZ eul = math::to_euler(math::transpose(mrot));
+    xf_api.SetRotate(pxr::GfVec3f(eul.x().degree(), eul.y().degree(), eul.z().degree()));
   }
 
   for (const auto &path : pxr::SdfPath(params.root_prim_path).GetPrefixes()) {
@@ -239,14 +235,14 @@ static void report_job_duration(const ExportJobData *data)
 
 static void process_usdz_textures(const ExportJobData *data, const char *path)
 {
-  const eUSDZTextureDownscaleSize enum_value = data->params.usdz_downscale_size;
-  if (enum_value == USD_TEXTURE_SIZE_KEEP) {
+  const TextureDownscaleSize enum_value = data->params.usdz_downscale_size;
+  if (enum_value == TextureDownscaleSize::Keep) {
     return;
   }
 
-  const int image_size = (enum_value == USD_TEXTURE_SIZE_CUSTOM) ?
+  const int image_size = (enum_value == TextureDownscaleSize::Custom) ?
                              data->params.usdz_downscale_custom_size :
-                             enum_value;
+                             int(enum_value);
 
   char texture_path[FILE_MAX];
   STRNCPY(texture_path, path);
@@ -519,7 +515,7 @@ pxr::UsdStageRefPtr export_to_stage(const USDExportParams &params,
 
   /* If we want to set the subdiv scheme, then we need to the export the mesh
    * without the subdiv modifier applied. */
-  if (ELEM(params.export_subdiv, USD_SUBDIV_BEST_MATCH, USD_SUBDIV_IGNORE)) {
+  if (ELEM(params.export_subdiv, SubdivExportMode::Match, SubdivExportMode::Ignore)) {
     mod_disabler.disable_modifiers();
     BKE_scene_graph_update_tagged(depsgraph, bmain);
   }
@@ -892,25 +888,25 @@ double get_meters_per_unit(const USDExportParams &params)
 {
   double result;
   switch (params.convert_scene_units) {
-    case USD_SCENE_UNITS_CENTIMETERS:
+    case SceneUnits::Centimeters:
       result = 0.01;
       break;
-    case USD_SCENE_UNITS_MILLIMETERS:
+    case SceneUnits::Millimeters:
       result = 0.001;
       break;
-    case USD_SCENE_UNITS_KILOMETERS:
+    case SceneUnits::Kilometers:
       result = 1000.0;
       break;
-    case USD_SCENE_UNITS_INCHES:
+    case SceneUnits::Inches:
       result = 0.0254;
       break;
-    case USD_SCENE_UNITS_FEET:
+    case SceneUnits::Feet:
       result = 0.3048;
       break;
-    case USD_SCENE_UNITS_YARDS:
+    case SceneUnits::Yards:
       result = 0.9144;
       break;
-    case USD_SCENE_UNITS_CUSTOM:
+    case SceneUnits::Custom:
       result = double(params.custom_meters_per_unit);
       break;
     default:

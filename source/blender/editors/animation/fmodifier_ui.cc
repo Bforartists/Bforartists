@@ -163,7 +163,7 @@ static PanelType *fmodifier_panel_register(ARegionType *region_type,
                                            PanelTypePollFn poll,
                                            const char *id_prefix)
 {
-  PanelType *panel_type = MEM_callocN<PanelType>(__func__);
+  PanelType *panel_type = MEM_new_zeroed<PanelType>(__func__);
 
   /* Intentionally leave the label field blank. The header is filled with buttons. */
   const FModifierTypeInfo *fmi = get_fmodifier_typeinfo(type);
@@ -201,7 +201,7 @@ static PanelType *fmodifier_subpanel_register(ARegionType *region_type,
                                               PanelTypePollFn poll,
                                               PanelType *parent)
 {
-  PanelType *panel_type = MEM_callocN<PanelType>(__func__);
+  PanelType *panel_type = MEM_new_zeroed<PanelType>(__func__);
 
   BLI_assert(parent != nullptr);
   SNPRINTF_UTF8(panel_type->idname, "%s_%s", parent->idname, name);
@@ -339,7 +339,7 @@ static void fmodifier_panel_header(const bContext *C, Panel *panel)
                                  0.0,
                                  TIP_("Delete Modifier"));
   button_retval_set(but, B_REDR);
-  FModifierDeleteContext *ctx = MEM_mallocN<FModifierDeleteContext>(__func__);
+  FModifierDeleteContext *ctx = MEM_new_uninitialized<FModifierDeleteContext>(__func__);
   ctx->owner_id = owner_id;
   ctx->modifiers = fmodifier_list_space_specific(C);
   BLI_assert(ctx->modifiers != nullptr);
@@ -601,7 +601,7 @@ static void fmod_envelope_addpoint_cb(bContext *C, void *fcm_dv, void * /*arg*/)
     }
 
     /* add new */
-    fedn = MEM_new_array_for_free<FCM_EnvelopeData>((env->totvert + 1), "FCM_EnvelopeData");
+    fedn = MEM_new_array<FCM_EnvelopeData>((env->totvert + 1), "FCM_EnvelopeData");
 
     /* add the points that should occur before the point to be pasted */
     if (i > 0) {
@@ -617,13 +617,13 @@ static void fmod_envelope_addpoint_cb(bContext *C, void *fcm_dv, void * /*arg*/)
     }
 
     /* replace (+ free) old with new */
-    MEM_freeN(env->data);
+    MEM_delete(env->data);
     env->data = fedn;
 
     env->totvert++;
   }
   else {
-    env->data = MEM_new_for_free<FCM_EnvelopeData>("FCM_EnvelopeData");
+    env->data = MEM_new<FCM_EnvelopeData>("FCM_EnvelopeData");
     *(env->data) = fed;
 
     env->totvert = 1;
@@ -641,7 +641,7 @@ static void fmod_envelope_deletepoint_cb(bContext * /*C*/, void *fcm_dv, void *i
   /* check that no data exists for the current frame... */
   if (env->totvert > 1) {
     /* allocate a new smaller array */
-    fedn = MEM_new_array_for_free<FCM_EnvelopeData>((env->totvert - 1), "FCM_EnvelopeData");
+    fedn = MEM_new_array<FCM_EnvelopeData>((env->totvert - 1), "FCM_EnvelopeData");
 
     memcpy(fedn, env->data, sizeof(FCM_EnvelopeData) * (index));
     memcpy(fedn + index,
@@ -649,13 +649,13 @@ static void fmod_envelope_deletepoint_cb(bContext * /*C*/, void *fcm_dv, void *i
            sizeof(FCM_EnvelopeData) * ((env->totvert - index) - 1));
 
     /* free old array, and set the new */
-    MEM_freeN(env->data);
+    MEM_delete(env->data);
     env->data = fedn;
     env->totvert--;
   }
   else {
     /* just free array, since the only vert was deleted */
-    MEM_SAFE_FREE(env->data);
+    MEM_SAFE_DELETE(env->data);
     env->totvert = 0;
   }
 }
@@ -704,7 +704,7 @@ static void envelope_panel_draw(const bContext *C, Panel *panel)
   FCM_EnvelopeData *fed = env->data;
   for (int i = 0; i < env->totvert; i++, fed++) {
     PointerRNA ctrl_ptr = RNA_pointer_create_discrete(
-        owner_id, &RNA_FModifierEnvelopeControlPoint, fed);
+        owner_id, RNA_FModifierEnvelopeControlPoint, fed);
 
     /* get a new row to operate on */
     row = &col->row(true);
@@ -883,7 +883,7 @@ void ANIM_fmodifier_panels(const bContext *C,
       panel_id_fn(&fcm, panel_idname);
 
       PointerRNA *fcm_ptr = MEM_new<PointerRNA>("panel customdata");
-      *fcm_ptr = RNA_pointer_create_discrete(owner_id, &RNA_FModifier, &fcm);
+      *fcm_ptr = RNA_pointer_create_discrete(owner_id, RNA_FModifier, &fcm);
 
       ui::panel_add_instanced(C, region, &region->panels, panel_idname, fcm_ptr);
     }
@@ -901,7 +901,7 @@ void ANIM_fmodifier_panels(const bContext *C,
       }
 
       PointerRNA *fcm_ptr = MEM_new<PointerRNA>("panel customdata");
-      *fcm_ptr = RNA_pointer_create_discrete(owner_id, &RNA_FModifier, &fcm);
+      *fcm_ptr = RNA_pointer_create_discrete(owner_id, RNA_FModifier, &fcm);
       ui::panel_custom_data_set(panel, fcm_ptr);
 
       panel = panel->next;
@@ -986,7 +986,7 @@ bool ANIM_fmodifiers_paste_from_buf(ListBaseT<FModifier> *modifiers, bool replac
     return false;
   }
 
-  bool was_cyclic = curve && BKE_fcurve_is_cyclic(curve);
+  bool was_cyclic = curve && BKE_fcurve_is_cyclic(*curve);
 
   /* if replacing the list, free the existing modifiers */
   if (replace) {
@@ -1009,8 +1009,8 @@ bool ANIM_fmodifiers_paste_from_buf(ListBaseT<FModifier> *modifiers, bool replac
   }
 
   /* adding or removing the Cycles modifier requires an update to handles */
-  if (curve && BKE_fcurve_is_cyclic(curve) != was_cyclic) {
-    BKE_fcurve_handles_recalc(curve);
+  if (curve && BKE_fcurve_is_cyclic(*curve) != was_cyclic) {
+    BKE_fcurve_handles_recalc(*curve);
   }
 
   /* did we succeed? */

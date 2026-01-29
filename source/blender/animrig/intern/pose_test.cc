@@ -22,6 +22,9 @@
 #include "ANIM_pose.hh"
 
 #include "CLG_log.h"
+
+#include "RNA_define.hh"
+
 #include "testing/testing.h"
 
 namespace blender {
@@ -48,11 +51,14 @@ class PoseTest : public testing::Test {
 
     /* To make id_can_have_animdata() and friends work, the `id_types` array needs to be set up. */
     BKE_idtype_init();
+
+    RNA_init();
   }
 
   static void TearDownTestSuite()
   {
     CLG_exit();
+    RNA_exit();
   }
 
   void SetUp() override
@@ -70,11 +76,11 @@ class PoseTest : public testing::Test {
     bArmature *armature = BKE_armature_add(bmain, "ArmatureA");
     obj_armature_a->data = id_cast<ID *>(armature);
 
-    Bone *bone = MEM_new_for_free<Bone>("BONE");
+    Bone *bone = MEM_new<Bone>("BONE");
     STRNCPY(bone->name, "BoneA");
     BLI_addtail(&armature->bonebase, bone);
 
-    bone = MEM_new_for_free<Bone>("BONE");
+    bone = MEM_new<Bone>("BONE");
     STRNCPY(bone->name, "BoneB");
     BLI_addtail(&armature->bonebase, bone);
 
@@ -83,11 +89,11 @@ class PoseTest : public testing::Test {
     armature = BKE_armature_add(bmain, "ArmatureB");
     obj_armature_b->data = id_cast<ID *>(armature);
 
-    bone = MEM_new_for_free<Bone>("BONE");
+    bone = MEM_new<Bone>("BONE");
     STRNCPY(bone->name, "BoneA");
     BLI_addtail(&armature->bonebase, bone);
 
-    bone = MEM_new_for_free<Bone>("BONE");
+    bone = MEM_new<Bone>("BONE");
     STRNCPY(bone->name, "BoneB");
     BLI_addtail(&armature->bonebase, bone);
 

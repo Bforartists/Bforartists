@@ -859,7 +859,8 @@ static void add_bezt_vertices(BezTriple *bezt,
   float prev_key[2], prev_handle[2], bez_handle[2], bez_key[2];
   /* Allocation needs +1 on resolution because BKE_curve_forward_diff_bezier uses it to iterate
    * inclusively. */
-  float *bezier_diff_points = MEM_malloc_arrayN<float>(((resolution + 1) * 2), "Draw bezt data");
+  float *bezier_diff_points = MEM_new_array_uninitialized<float>(((resolution + 1) * 2),
+                                                                 "Draw bezt data");
 
   prev_key[0] = prevbezt->vec[1][0];
   prev_key[1] = prevbezt->vec[1][1];
@@ -893,7 +894,7 @@ static void add_bezt_vertices(BezTriple *bezt,
     const float y = *(fp + 1);
     curve_vertices.append({x, y});
   }
-  MEM_freeN(bezier_diff_points);
+  MEM_delete(bezier_diff_points);
 }
 
 static void add_extrapolation_point_left(const FCurve *fcu,
@@ -1152,7 +1153,7 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
   {
     /* set color/drawing style for curve itself */
     /* draw active F-Curve thicker than the rest to make it stand out */
-    if (fcu->flag & FCURVE_ACTIVE && !BKE_fcurve_is_protected(fcu)) {
+    if (fcu->flag & FCURVE_ACTIVE && !BKE_fcurve_is_protected(*fcu)) {
       GPU_line_width(2.5);
     }
     else {
@@ -1171,7 +1172,7 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
     float viewport_size[4];
     GPU_viewport_size_get_f(viewport_size);
 
-    if (BKE_fcurve_is_protected(fcu)) {
+    if (BKE_fcurve_is_protected(*fcu)) {
       /* Protected curves (non editable) are drawn with dotted lines. */
       immBindBuiltinProgram(GPU_SHADER_3D_LINE_DASHED_UNIFORM_COLOR);
       immUniform2f(
@@ -1247,7 +1248,7 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
   if (!(U.animation_flag & USER_ANIM_ONLY_SHOW_SELECTED_CURVE_KEYS) ||
       (fcu->flag & FCURVE_SELECTED))
   {
-    if (!BKE_fcurve_are_keyframes_usable(fcu) && !(fcu->fpt && fcu->totvert)) {
+    if (!BKE_fcurve_are_keyframes_usable(*fcu) && !(fcu->fpt && fcu->totvert)) {
       /* only draw controls if this is the active modifier */
       if ((fcu->flag & FCURVE_ACTIVE) && (fcm)) {
         switch (fcm->type) {

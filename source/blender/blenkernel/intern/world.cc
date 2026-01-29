@@ -52,7 +52,7 @@ static void world_free_data(ID *id)
   /* is no lib link block, but world extension */
   if (wrld->nodetree) {
     bke::node_tree_free_embedded_tree(wrld->nodetree);
-    MEM_freeN(wrld->nodetree);
+    MEM_delete(wrld->nodetree);
     wrld->nodetree = nullptr;
   }
 
@@ -61,7 +61,7 @@ static void world_free_data(ID *id)
   BKE_icon_id_delete(id_cast<ID *>(wrld));
   BKE_previewimg_free(&wrld->preview);
 
-  MEM_SAFE_FREE(wrld->lightgroup);
+  MEM_SAFE_DELETE(wrld->lightgroup);
 }
 
 static void world_init_data(ID *id)
@@ -122,8 +122,7 @@ static void world_copy_data(Main *bmain,
   }
 
   if (wrld_src->lightgroup) {
-    wrld_dst->lightgroup = static_cast<LightgroupMembership *>(
-        MEM_dupallocN(wrld_src->lightgroup));
+    wrld_dst->lightgroup = MEM_dupalloc(wrld_src->lightgroup);
   }
 }
 
@@ -158,13 +157,13 @@ static void world_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   wrld->use_nodes = true;
 
   /* write LibData */
-  BLO_write_id_struct(writer, World, id_address, &wrld->id);
+  writer->write_id_struct(id_address, wrld);
   BKE_id_blend_write(writer, &wrld->id);
 
   /* nodetree is integral part of world, no libdata */
   if (wrld->nodetree) {
     BLO_Write_IDBuffer temp_embedded_id_buffer{wrld->nodetree->id, writer};
-    BLO_write_struct_at_address(writer, bNodeTree, wrld->nodetree, temp_embedded_id_buffer.get());
+    writer->write_struct_at_address_cast<bNodeTree>(wrld->nodetree, temp_embedded_id_buffer.get());
     bke::node_tree_blend_write(writer,
                                reinterpret_cast<bNodeTree *>(temp_embedded_id_buffer.get()));
   }

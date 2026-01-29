@@ -1073,7 +1073,7 @@ static wmOperatorStatus similar_vert_select_exec(bContext *C, wmOperator *op)
         }
         i += 1;
       }
-      MEM_freeN(defbase_selected);
+      MEM_delete(defbase_selected);
     }
   }
 
@@ -1128,7 +1128,7 @@ static wmOperatorStatus similar_vert_select_exec(bContext *C, wmOperator *op)
         }
       }
       if (found_any == false) {
-        MEM_freeN(defbase_selected);
+        MEM_delete(defbase_selected);
         continue;
       }
     }
@@ -1230,7 +1230,7 @@ static wmOperatorStatus similar_vert_select_exec(bContext *C, wmOperator *op)
     }
 
     if (type == SIMVERT_VGROUP) {
-      MEM_freeN(defbase_selected);
+      MEM_delete(defbase_selected);
     }
 
     if (changed) {

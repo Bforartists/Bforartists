@@ -90,7 +90,7 @@ static void foreach_ID_link(ModifierData *md, Object *ob, IDWalkFunc walk, void 
 
 static void foreach_tex_link(ModifierData *md, Object *ob, TexWalkFunc walk, void *user_data)
 {
-  PointerRNA ptr = RNA_pointer_create_discrete(&ob->id, &RNA_Modifier, md);
+  PointerRNA ptr = RNA_pointer_create_discrete(&ob->id, RNA_Modifier, md);
   PropertyRNA *prop = RNA_struct_find_property(&ptr, "texture");
   walk(user_data, ob, md, &ptr, prop);
 }
@@ -269,7 +269,7 @@ static void displaceModifier_do(DisplaceModifierData *dmd,
 
   Tex *tex_target = dmd->texture;
   if (tex_target != nullptr) {
-    tex_co = MEM_calloc_arrayN<float[3]>(positions.size(), "displaceModifier_do tex_co");
+    tex_co = MEM_new_array_zeroed<float[3]>(positions.size(), "displaceModifier_do tex_co");
     MOD_get_texture_coords(reinterpret_cast<MappingInfoModifierData *>(dmd),
                            ctx,
                            ob,
@@ -319,7 +319,7 @@ static void displaceModifier_do(DisplaceModifierData *dmd,
   }
 
   if (tex_co) {
-    MEM_freeN(tex_co);
+    MEM_delete(tex_co);
   }
 }
 

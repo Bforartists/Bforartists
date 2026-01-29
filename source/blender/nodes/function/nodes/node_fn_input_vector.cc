@@ -33,7 +33,7 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
 {
-  NodeInputVector *data = MEM_new_for_free<NodeInputVector>(__func__);
+  NodeInputVector *data = MEM_new<NodeInputVector>(__func__);
   node->storage = data;
 }
 
@@ -41,7 +41,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_node_type_base(&ntype, "FunctionNodeInputVector", FN_NODE_INPUT_VECTOR);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeInputVector", FN_NODE_INPUT_VECTOR);
   ntype.ui_name = "Vector";
   ntype.ui_description = "Provide a vector value that can be connected to other nodes in the tree";
   ntype.enum_name_legacy = "INPUT_VECTOR";

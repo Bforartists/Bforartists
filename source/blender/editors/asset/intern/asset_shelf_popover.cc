@@ -239,7 +239,7 @@ static void popover_panel_draw(const bContext *C, Panel *panel)
 
   bScreen *screen = CTX_wm_screen(C);
   PointerRNA library_ref_ptr = RNA_pointer_create_discrete(
-      &screen->id, &RNA_AssetLibraryReference, &shelf->settings.asset_library_reference);
+      &screen->id, RNA_AssetLibraryReference, &shelf->settings.asset_library_reference);
   layout.context_ptr_set("asset_library_reference", &library_ref_ptr);
 
   ui::Layout &row = layout.row(false);
@@ -252,7 +252,7 @@ static void popover_panel_draw(const bContext *C, Panel *panel)
   ui::Layout &right_col = row.column(false);
   ui::Layout &sub = right_col.row(false);
   /* Same as file/asset browser header. */
-  PointerRNA shelf_ptr = RNA_pointer_create_discrete(&screen->id, &RNA_AssetShelf, shelf);
+  PointerRNA shelf_ptr = RNA_pointer_create_discrete(&screen->id, RNA_AssetShelf, shelf);
   sub.prop(&shelf_ptr,
            "search_filter",
            /* Force the button to be active in a semi-modal state. */
@@ -286,7 +286,7 @@ void popover_panel_register(ARegionType *region_type)
     return;
   }
 
-  PanelType *pt = MEM_callocN<PanelType>(__func__);
+  PanelType *pt = MEM_new_zeroed<PanelType>(__func__);
   STRNCPY_UTF8(pt->idname, "ASSETSHELF_PT_popover_panel");
   STRNCPY_UTF8(pt->label, N_("Asset Shelf Panel"));
   STRNCPY_UTF8(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);

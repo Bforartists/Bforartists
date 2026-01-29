@@ -18,7 +18,7 @@ inline bool socket_type_supported_in_bundle(const eNodeSocketDatatype socket_typ
 
 struct CombineBundleItemsAccessor : public socket_items::SocketItemsAccessorDefaults {
   using ItemT = NodeCombineBundleItem;
-  static StructRNA *item_srna;
+  static StructRNA **item_srna;
   static int node_type;
   static constexpr StringRefNull node_idname = "NodeCombineBundle";
   static constexpr bool has_type = true;
@@ -52,7 +52,7 @@ struct CombineBundleItemsAccessor : public socket_items::SocketItemsAccessorDefa
 
   static void destruct_item(ItemT *item)
   {
-    MEM_SAFE_FREE(item->name);
+    MEM_SAFE_DELETE(item->name);
   }
 
   static void blend_write_item(BlendWriter *writer, const ItemT &item);
@@ -94,7 +94,7 @@ struct CombineBundleItemsAccessor : public socket_items::SocketItemsAccessorDefa
 
 struct SeparateBundleItemsAccessor : public socket_items::SocketItemsAccessorDefaults {
   using ItemT = NodeSeparateBundleItem;
-  static StructRNA *item_srna;
+  static StructRNA **item_srna;
   static int node_type;
   static constexpr StringRefNull node_idname = "NodeSeparateBundle";
   static constexpr bool has_type = true;
@@ -128,7 +128,7 @@ struct SeparateBundleItemsAccessor : public socket_items::SocketItemsAccessorDef
 
   static void destruct_item(ItemT *item)
   {
-    MEM_SAFE_FREE(item->name);
+    MEM_SAFE_DELETE(item->name);
   }
 
   static void blend_write_item(BlendWriter *writer, const ItemT &item);

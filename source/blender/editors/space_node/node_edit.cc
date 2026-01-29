@@ -175,8 +175,6 @@ static void compositor_job_start(void *compositor_job_data, wmJobWorkerStatus *w
                             compositor_job->needed_outputs);
     }
   }
-
-  WM_main_add_notifier(NC_SCENE | ND_COMPO_RESULT, nullptr);
 }
 
 static void compositor_job_cancel(void *compositor_job_data)
@@ -198,6 +196,7 @@ static void compositor_job_complete(void *compositor_job_data)
       scene->compositing_node_group, compositor_job->evaluated_node_tree, true);
   scene->runtime->compositor.per_node_execution_time =
       compositor_job->profiler.get_nodes_evaluation_times();
+  WM_main_add_notifier(NC_SCENE | ND_COMPO_RESULT, nullptr);
 }
 
 static void compositor_job_free(void *compositor_job_data)
@@ -329,7 +328,7 @@ void ED_node_compositor_job(const bContext *C)
   compositor_job->needed_outputs = needed_outputs;
 
   WM_jobs_customdata_set(job, compositor_job, compositor_job_free);
-  WM_jobs_timer(job, 0.1, NC_SCENE | ND_COMPO_RESULT, NC_SCENE | ND_COMPO_RESULT);
+  WM_jobs_timer(job, 0.1, 0, 0);
   WM_jobs_callbacks_ex(job,
                        compositor_job_start,
                        compositor_job_init,
@@ -679,7 +678,7 @@ static void node_resize_init(
     bContext *C, wmOperator *op, const float2 &cursor, const bNode *node, NodeResizeDirection dir)
 {
   Scene *scene = CTX_data_scene(C);
-  NodeSizeWidget *nsw = MEM_callocN<NodeSizeWidget>(__func__);
+  NodeSizeWidget *nsw = MEM_new_zeroed<NodeSizeWidget>(__func__);
 
   op->customdata = nsw;
 
@@ -716,7 +715,7 @@ static void node_resize_exit(bContext *C, wmOperator *op, bool cancel)
     node->height = nsw->oldheight;
   }
 
-  MEM_freeN(nsw);
+  MEM_delete(nsw);
   op->customdata = nullptr;
 }
 
@@ -750,8 +749,7 @@ wmKeyMap *node_resize_modal_keymap(wmKeyConfig *keyconf)
   return keymap;
 }
 
-/* Compute the nearest 1D coordinate corresponding to the nearest grid in node editors. */
-static float nearest_node_grid_coord(float co)
+float nearest_node_grid_coord(float co)
 {
   /* Size and location of nodes are independent of UI scale, so grid size should be independent of
    * UI scale as well. */
@@ -1252,7 +1250,7 @@ static wmOperatorStatus node_duplicate_exec(bContext *C, wmOperator *op)
     if (link.tonode && (link.tonode->flag & NODE_SELECT) &&
         (keep_inputs || (link.fromnode && (link.fromnode->flag & NODE_SELECT))))
     {
-      bNodeLink *newlink = MEM_new_for_free<bNodeLink>("bNodeLink");
+      bNodeLink *newlink = MEM_new<bNodeLink>("bNodeLink");
       newlink->flag = link.flag;
       newlink->tonode = node_map.lookup(link.tonode);
       newlink->tosock = socket_map.lookup(link.tosock);
@@ -2045,7 +2043,7 @@ static bool node_shader_script_update_poll(bContext *C)
 
   /* See if we have a shader script node in context. */
   bNode *node = static_cast<bNode *>(
-      CTX_data_pointer_get_type(C, "node", &RNA_ShaderNodeScript).data);
+      CTX_data_pointer_get_type(C, "node", RNA_ShaderNodeScript).data);
 
   if (!node && snode && snode->edittree) {
     node = bke::node_get_active(*snode->edittree);
@@ -2066,7 +2064,7 @@ static wmOperatorStatus node_shader_script_update_exec(bContext *C, wmOperator *
 {
   RenderEngineType *type = CTX_data_engine_type(C);
   SpaceNode *snode = CTX_wm_space_node(C);
-  PointerRNA nodeptr = CTX_data_pointer_get_type(C, "node", &RNA_ShaderNodeScript);
+  PointerRNA nodeptr = CTX_data_pointer_get_type(C, "node", RNA_ShaderNodeScript);
 
   /* setup render engine */
   RenderEngine *engine = RE_engine_create(type);

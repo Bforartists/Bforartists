@@ -5,17 +5,16 @@
 # Libs that adhere to strict flags
 add_subdirectory(curve_fit_nd)
 add_subdirectory(fast_float)
-add_subdirectory(fmtlib)
 add_subdirectory(json)
 if(WITH_IO_FBX)
   add_subdirectory(ufbx)
 endif()
 
-# Otherwise we get warnings here that we cant fix in external projects
+# Otherwise we get warnings here that we can't fix in external projects
 remove_strict_flags()
 
 # Not a strict flag, but noisy for code we don't maintain
-if(CMAKE_COMPILER_IS_GNUCC)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
   remove_cc_flag(
     "-Wmisleading-indentation"
   )

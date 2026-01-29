@@ -1187,6 +1187,7 @@ def km_node_editor(params):
          {"properties": [("exit", True)]}),
         ("node.clipboard_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
         ("node.clipboard_paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
+        ("node.delete_copy_reconnect", {"type": 'X', "value": 'PRESS', "ctrl": True}, None),
         ("node.viewer_border", {"type": 'Z', "value": 'PRESS'}, None),
         ("node.clear_viewer_border", {"type": 'Z', "value": 'PRESS', "alt": True}, None),
         ("node.translate_attach", {"type": 'W', "value": 'PRESS'}, None),
@@ -2814,7 +2815,7 @@ def km_vertex_paint(params):
         ("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         # Colors
         ("paint.sample_color", {"type": 'I', "value": 'PRESS'}, {"properties": [("merged", False)]}),
         ("paint.sample_color", {"type": 'I', "value": 'PRESS', "shift": True}, {"properties": [("merged", True)]}),
@@ -2873,7 +2874,7 @@ def km_weight_paint(params):
         ("paint.weight_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("paint.weight_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         # Weight
         ("paint.weight_sample", {"type": 'I', "value": 'PRESS'}, None),
         ("paint.weight_sample_group", {"type": 'I', "value": 'PRESS', "alt": True}, None),
@@ -2930,7 +2931,11 @@ def km_sculpt(params):
         ("sculpt.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("sculpt.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
+        ("sculpt.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True},
+         {"properties": [("brush_toggle", 'MASK')]}),
+        ("sculpt.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
+         {"properties": [("mode", 'INVERT'), ("brush_toggle", 'MASK')]}),
         # Expand
         ("sculpt.expand", {"type": 'A', "value": 'PRESS', "shift": True},
          {"properties": [
@@ -3051,18 +3056,18 @@ def km_mesh(params):
     items.extend([
         # Selection
         ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'},
-         {"properties": [("extend", False), ("deselect", False), ("toggle", False), ("ring", False)]}),
+         {"properties": [("extend", False), ("deselect", False), ("toggle", False)]}),
         ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
-         {"properties": [("extend", True), ("deselect", False), ("toggle", False), ("ring", False)]}),
+         {"properties": [("extend", True), ("deselect", False), ("toggle", False)]}),
         ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "ctrl": True},
-         {"properties": [("extend", False), ("deselect", True), ("toggle", False), ("ring", False)]}),
+         {"properties": [("extend", False), ("deselect", True), ("toggle", False)]}),
 
-        ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True},
-         {"properties": [("extend", False), ("deselect", False), ("toggle", False), ("ring", True)]}),
-        ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True, "shift": True},
-         {"properties": [("extend", True), ("deselect", False), ("toggle", False), ("ring", True)]}),
-        ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True, "ctrl": True},
-         {"properties": [("extend", False), ("deselect", True), ("toggle", False), ("ring", True)]}),
+        ("mesh.edgering_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True},
+         {"properties": [("extend", False), ("deselect", False), ("toggle", False)]}),
+        ("mesh.edgering_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True, "shift": True},
+         {"properties": [("extend", True), ("deselect", False), ("toggle", False)]}),
+        ("mesh.edgering_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True, "ctrl": True},
+         {"properties": [("extend", False), ("deselect", True), ("toggle", False)]}),
 
         ("mesh.shortest_path_pick", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("use_fill", False)]}),
@@ -3424,7 +3429,7 @@ def km_sculpt_curves(params):
         ("sculpt_curves.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("sculpt_curves.brush_stroke", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("mode", 'SMOOTH')]}),
+         {"properties": [("brush_toggle", 'SMOOTH')]}),
         # Selection modes
         ("curves.set_selection_domain", {"type": 'ONE', "value": 'PRESS'}, {"properties": [("domain", 'POINT')]}),
         ("curves.set_selection_domain", {"type": 'TWO', "value": 'PRESS'}, {"properties": [("domain", 'CURVE')]}),

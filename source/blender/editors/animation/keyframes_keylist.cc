@@ -490,7 +490,7 @@ static eKeyframeExtremeDrawOpts bezt_extreme_type(const BezTripleChain *chain)
 /* New node callback used for building ActKeyColumns from BezTripleChain */
 static ActKeyColumn *nalloc_ak_bezt(void *data)
 {
-  ActKeyColumn *ak = MEM_callocN<ActKeyColumn>("ActKeyColumn");
+  ActKeyColumn *ak = MEM_new_zeroed<ActKeyColumn>("ActKeyColumn");
   const BezTripleChain *chain = static_cast<const BezTripleChain *>(data);
   const BezTriple *bezt = chain->cur;
 
@@ -547,7 +547,7 @@ static void nupdate_ak_bezt(ActKeyColumn *ak, void *data)
 /* New node callback used for building ActKeyColumns from GPencil frames */
 static ActKeyColumn *nalloc_ak_cel(void *data)
 {
-  ActKeyColumn *ak = MEM_callocN<ActKeyColumn>("ActKeyColumnCel");
+  ActKeyColumn *ak = MEM_new_zeroed<ActKeyColumn>("ActKeyColumnCel");
   GreasePencilCel &cel = *static_cast<GreasePencilCel *>(data);
 
   /* Store settings based on state of BezTriple */
@@ -588,7 +588,7 @@ static void nupdate_ak_cel(ActKeyColumn *ak, void *data)
 /* New node callback used for building ActKeyColumns from GPencil frames. */
 static ActKeyColumn *nalloc_ak_gpframe(void *data)
 {
-  ActKeyColumn *ak = MEM_callocN<ActKeyColumn>("ActKeyColumnGPF");
+  ActKeyColumn *ak = MEM_new_zeroed<ActKeyColumn>("ActKeyColumnGPF");
   const bGPDframe *gpf = static_cast<bGPDframe *>(data);
 
   /* store settings based on state of BezTriple */
@@ -637,7 +637,7 @@ struct SeqAllocateData {
 /* New node callback used for building ActKeyColumns from Sequencer keys. */
 static ActKeyColumn *nalloc_ak_seqframe(void *data)
 {
-  ActKeyColumn *ak = MEM_callocN<ActKeyColumn>("ActKeyColumnGPF");
+  ActKeyColumn *ak = MEM_new_zeroed<ActKeyColumn>("ActKeyColumnGPF");
   const SeqAllocateData *allocate_data = static_cast<SeqAllocateData *>(data);
   const SeqRetimingKey *timing_key = allocate_data->key;
 
@@ -674,7 +674,7 @@ static void nupdate_ak_seqframe(ActKeyColumn *ak, void *data)
 /* New node callback used for building ActKeyColumns from GPencil frames */
 static ActKeyColumn *nalloc_ak_masklayshape(void *data)
 {
-  ActKeyColumn *ak = MEM_callocN<ActKeyColumn>("ActKeyColumnGPF");
+  ActKeyColumn *ak = MEM_new_zeroed<ActKeyColumn>("ActKeyColumnGPF");
   const MaskLayerShape *masklay_shape = static_cast<const MaskLayerShape *>(data);
 
   /* Store settings based on state of BezTriple. */
@@ -1287,7 +1287,7 @@ void fcurve_to_keylist(AnimData *adt,
     ANIM_nla_mapping_apply_fcurve(adt, fcu, false, false);
   }
 
-  const bool is_cyclic = BKE_fcurve_is_cyclic(fcu) && (fcu->totvert >= 2);
+  const bool is_cyclic = BKE_fcurve_is_cyclic(*fcu) && (fcu->totvert >= 2);
   const bool do_extremes = (saction_flag & SACTION_SHOW_EXTREMES) != 0;
 
   BezTripleChain chain = {nullptr};
@@ -1494,7 +1494,7 @@ void sequencer_strip_to_keylist(const Strip &strip, AnimKeylist &keylist, Scene 
   }
   keylist_reset_last_accessed(&keylist);
   for (const SeqRetimingKey &retime_key : seq::retiming_keys_get(&strip)) {
-    const float cfra = seq::retiming_key_timeline_frame_get(&scene, &strip, &retime_key);
+    const float cfra = seq::retiming_key_frame_get(&scene, &strip, &retime_key);
     SeqAllocateData allocate_data = {&retime_key, cfra};
     keylist_add_or_update_column(
         &keylist, cfra, nalloc_ak_seqframe, nupdate_ak_seqframe, &allocate_data);

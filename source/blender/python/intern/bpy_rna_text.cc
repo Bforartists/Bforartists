@@ -69,7 +69,6 @@ static PyObject *bpy_rna_region_as_string(PyObject *self, PyObject *args, PyObje
 
   static const char *_keywords[] = {"range", nullptr};
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "|$"         /* Optional keyword only arguments. */
       "((ii)(ii))" /* `range` */
       ":region_as_string",
@@ -92,7 +91,7 @@ static PyObject *bpy_rna_region_as_string(PyObject *self, PyObject *args, PyObje
   }
   char *buf = txt_sel_to_buf(text, nullptr);
   PyObject *sel_text = PyUnicode_FromString(buf);
-  MEM_freeN(buf);
+  MEM_delete(buf);
   /* Return the selected text. */
   return sel_text;
 }
@@ -148,7 +147,6 @@ static PyObject *bpy_rna_region_from_string(PyObject *self, PyObject *args, PyOb
 
   static const char *_keywords[] = {"", "range", nullptr};
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "s#"         /* `buf` (positional). */
       "|$"         /* Optional keyword only arguments. */
       "((ii)(ii))" /* `range` */

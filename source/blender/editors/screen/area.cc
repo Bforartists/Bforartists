@@ -41,6 +41,7 @@
 #include "ED_screen_types.hh"
 #include "ED_space_api.hh"
 #include "ED_time_scrub_ui.hh"
+#include "ED_userpref.hh"
 
 #include "GPU_framebuffer.hh"
 #include "GPU_immediate.hh"
@@ -589,7 +590,7 @@ void ED_region_do_draw(bContext *C, ARegion *region)
     {
       SpaceLink *sl = static_cast<SpaceLink *>(area->spacedata.first);
 
-      PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, &RNA_Space, sl);
+      PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, RNA_Space, sl);
 
       /* All properties for this space type. */
       wmMsgSubscribeValue msg_sub_value_region_tag_redraw{};
@@ -825,11 +826,16 @@ int ED_area_max_regionsize(const ScrArea *area, const ARegion *scale_region, con
 
 const char *ED_area_region_search_filter_get(const ScrArea *area, const ARegion *region)
 {
-  /* Only the properties editor has a search string for now. */
   if (area->spacetype == SPACE_PROPERTIES) {
     SpaceProperties *sbuts = static_cast<SpaceProperties *>(area->spacedata.first);
     if (region->regiontype == RGN_TYPE_WINDOW) {
       return ED_buttons_search_string_get(sbuts);
+    }
+  }
+  else if (area->spacetype == SPACE_USERPREF) {
+    SpaceUserPref *sprefs = static_cast<SpaceUserPref *>(area->spacedata.first);
+    if (region->regiontype == RGN_TYPE_WINDOW) {
+      return ED_userpref_search_string_get(sprefs);
     }
   }
 
@@ -872,13 +878,13 @@ void ED_area_status_text(ScrArea *area, const char *str)
   if (ar) {
     if (str) {
       if (ar->runtime->headerstr == nullptr) {
-        ar->runtime->headerstr = MEM_malloc_arrayN<char>(UI_MAX_DRAW_STR, "headerprint");
+        ar->runtime->headerstr = MEM_new_array_uninitialized<char>(UI_MAX_DRAW_STR, "headerprint");
       }
       BLI_strncpy_utf8(ar->runtime->headerstr, str, UI_MAX_DRAW_STR);
       BLI_str_rstrip(ar->runtime->headerstr);
     }
     else {
-      MEM_SAFE_FREE(ar->runtime->headerstr);
+      MEM_SAFE_DELETE(ar->runtime->headerstr);
     }
     ED_region_tag_redraw(ar);
   }
@@ -1095,7 +1101,7 @@ static void area_azone_init(const wmWindow *win, const bScreen *screen, ScrArea 
 #endif
 
     /* set area action zones */
-    AZone *az = MEM_new_for_free<AZone>("actionzone");
+    AZone *az = MEM_new<AZone>("actionzone");
     BLI_addtail(&(area->actionzones), az);
     az->type = AZONE_AREA;
     az->x1 = coords[i][0];
@@ -1112,7 +1118,7 @@ static void fullscreen_azone_init(ScrArea *area, ARegion *region)
     return;
   }
 
-  AZone *az = MEM_new_for_free<AZone>("fullscreen action zone");
+  AZone *az = MEM_new<AZone>("fullscreen action zone");
   BLI_addtail(&(area->actionzones), az);
   az->type = AZONE_FULLSCREEN;
   az->region = region;
@@ -1135,7 +1141,7 @@ static void fullscreen_azone_init(ScrArea *area, ARegion *region)
 
 static void quadview_azone_init(ScrArea *area, ARegion *region)
 {
-  AZone *az = MEM_callocN<AZone>("Quad View action zone");
+  AZone *az = MEM_new_zeroed<AZone>("Quad View action zone");
   BLI_addtail(&(area->actionzones), az);
   az->type = AZONE_REGION_QUAD;
   az->region = region;
@@ -1306,7 +1312,7 @@ static void region_azone_edge_init(ScrArea *area,
     return;
   }
 
-  AZone *az = MEM_new_for_free<AZone>("actionzone");
+  AZone *az = MEM_new<AZone>("actionzone");
   BLI_addtail(&(area->actionzones), az);
   az->type = AZONE_REGION;
   az->region = region;
@@ -1324,7 +1330,7 @@ static void region_azone_scrollbar_init(ScrArea *area,
                                         ARegion *region,
                                         AZScrollDirection direction)
 {
-  AZone *az = MEM_new_for_free<AZone>(__func__);
+  AZone *az = MEM_new<AZone>(__func__);
 
   BLI_addtail(&area->actionzones, az);
   az->type = AZONE_REGION_SCROLL;
@@ -2300,7 +2306,7 @@ static void area_offscreen_init(ScrArea *area)
 
 ScrArea *ED_area_offscreen_create(wmWindow *win, eSpace_Type space_type)
 {
-  ScrArea *area = MEM_new_for_free<ScrArea>(__func__);
+  ScrArea *area = MEM_new<ScrArea>(__func__);
   area->spacetype = space_type;
 
   screen_area_spacelink_add(WM_window_get_active_scene(win), area, space_type);
@@ -2324,7 +2330,7 @@ static void area_offscreen_exit(wmWindowManager *wm, wmWindow *win, ScrArea *are
     WM_draw_region_free(&region);
     region.runtime->visible = false;
 
-    MEM_SAFE_FREE(region.runtime->headerstr);
+    MEM_SAFE_DELETE(region.runtime->headerstr);
 
     if (region.runtime->regiontimer) {
       WM_event_timer_remove(wm, win, region.runtime->regiontimer);
@@ -2344,7 +2350,7 @@ void ED_area_offscreen_free(wmWindowManager *wm, wmWindow *win, ScrArea *area)
   area_offscreen_exit(wm, win, area);
 
   BKE_screen_area_free(area);
-  MEM_freeN(area);
+  MEM_delete(area);
 }
 
 static void region_update_rect(ARegion *region)
@@ -2701,7 +2707,7 @@ static void region_align_info_to_area(
 
 void ED_area_swapspace(bContext *C, ScrArea *sa1, ScrArea *sa2)
 {
-  ScrArea *tmp = MEM_new_for_free<ScrArea>(__func__);
+  ScrArea *tmp = MEM_new<ScrArea>(__func__);
   wmWindow *win = CTX_wm_window(C);
 
   ED_area_exit(C, sa1);
@@ -2934,7 +2940,7 @@ int ED_area_header_switchbutton(const bContext *C, ui::Block *block, int yco)
   bScreen *screen = CTX_wm_screen(C);
   int xco = 0.4 * U.widget_unit;
 
-  PointerRNA areaptr = RNA_pointer_create_discrete(&(screen->id), &RNA_Area, area);
+  PointerRNA areaptr = RNA_pointer_create_discrete(&(screen->id), RNA_Area, area);
 
   uiDefButR(block,
             ui::ButtonType::Menu,

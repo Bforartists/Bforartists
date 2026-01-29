@@ -417,14 +417,13 @@ set(SRC
 
 set(LIB
   PUBLIC bf::dna
-  PRIVATE bf::extern::fmtlib
   PRIVATE bf::extern::json
   PRIVATE bf::extern::xxhash
   bf_intern_eigen
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::extern::wcwidth
   PRIVATE bf::intern::atomic
-  PRIVATE bf::extern::fmtlib
+  PUBLIC bf::dependencies::fmt
   PRIVATE bf::dependencies::eigen
   PUBLIC bf::dependencies::optional::tbb
   PRIVATE bf::dependencies::zlib
@@ -567,7 +566,7 @@ if(WITH_GTESTS)
     tests/BLI_polyfill_2d_test.cc
     tests/BLI_pool_test.cc
     tests/BLI_random_access_iterator_mixin_test.cc
-    tests/BLI_ressource_strings.h
+    tests/BLI_resource_strings.h
     tests/BLI_serialize_test.cc
     tests/BLI_session_uid_test.cc
     tests/BLI_set_test.cc

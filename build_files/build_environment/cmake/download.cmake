@@ -61,7 +61,7 @@ function(download_source dep)
     # building a release package and one of the packages
     # is missing or incorrect.
     #
-    # For regular platform maintenaince this is not needed
+    # For regular platform maintenance this is not needed
     # since the actual build of the dep will notify the
     # platform maintainer if there is a problem with the
     # source package and refuse to build.
@@ -189,3 +189,9 @@ download_source(HIPRT)
 download_source(NANOBIND)
 download_source(MANIFOLD)
 download_source(RUBBERBAND)
+download_source(OPENJPH)
+download_source(THORVG)
+download_source(LIBHEIF)
+download_source(ABSEIL)
+download_source(EIGEN)
+download_source(CERES)

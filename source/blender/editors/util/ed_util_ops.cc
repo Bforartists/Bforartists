@@ -17,6 +17,8 @@
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
 
+#include "BLT_translation.hh"
+
 #include "BKE_context.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_override.hh"
@@ -46,7 +48,7 @@ namespace blender {
 Vector<PointerRNA> ED_operator_single_id_from_context_as_vec(const bContext *C)
 {
   Vector<PointerRNA> ids;
-  PointerRNA idptr = CTX_data_pointer_get_type(C, "id", &RNA_ID);
+  PointerRNA idptr = CTX_data_pointer_get_type(C, "id", RNA_ID);
   if (idptr.data) {
     ids.append(idptr);
   }
@@ -80,19 +82,19 @@ static bool lib_id_preview_editing_poll_ex(const ID *id, const char **r_disabled
   }
   if (!ID_IS_EDITABLE(id)) {
     if (r_disabled_hint) {
-      *r_disabled_hint = "Cannot edit external library data";
+      *r_disabled_hint = RPT_("Cannot edit external library data");
     }
     return false;
   }
   if (ID_IS_OVERRIDE_LIBRARY(id)) {
     if (r_disabled_hint) {
-      *r_disabled_hint = "Cannot edit previews of overridden library data";
+      *r_disabled_hint = RPT_("Cannot edit previews of overridden library data");
     }
     return false;
   }
   if (!BKE_previewimg_id_get_p(id)) {
     if (r_disabled_hint) {
-      *r_disabled_hint = "Data-block does not support previews";
+      *r_disabled_hint = RPT_("Data-block does not support previews");
     }
     return false;
   }
@@ -497,7 +499,7 @@ static void ED_OT_lib_id_unlink(wmOperatorType *ot)
 
 static bool lib_id_override_editable_toggle_poll(bContext *C)
 {
-  const PointerRNA id_ptr = CTX_data_pointer_get_type(C, "id", &RNA_ID);
+  const PointerRNA id_ptr = CTX_data_pointer_get_type(C, "id", RNA_ID);
   const ID *id = static_cast<ID *>(id_ptr.data);
 
   return id && ID_IS_OVERRIDE_LIBRARY_REAL(id) && !ID_IS_LINKED(id);
@@ -506,7 +508,7 @@ static bool lib_id_override_editable_toggle_poll(bContext *C)
 static wmOperatorStatus lib_id_override_editable_toggle_exec(bContext *C, wmOperator * /*op*/)
 {
   Main *bmain = CTX_data_main(C);
-  const PointerRNA id_ptr = CTX_data_pointer_get_type(C, "id", &RNA_ID);
+  const PointerRNA id_ptr = CTX_data_pointer_get_type(C, "id", RNA_ID);
   ID *id = static_cast<ID *>(id_ptr.data);
 
   const bool is_system_override = BKE_lib_override_library_is_system_defined(bmain, id);

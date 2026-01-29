@@ -482,7 +482,6 @@ Material *USDMaterialReader::add_material(const pxr::UsdShadeMaterial &usd_mater
 
   /* Create the material. */
   Material *mtl = BKE_material_add(&bmain_, mtl_name.c_str());
-  mtl->nodetree = mtl->nodetree;
   id_us_min(&mtl->id);
 
   if (read_usd_preview) {
@@ -1378,7 +1377,7 @@ void USDMaterialReader::load_tex_image(const pxr::UsdShadeShader &usd_shader,
 
   /* Optionally copy the asset if it's inside a USDZ package. */
   const bool is_relative = pxr::ArIsPackageRelativePath(file_path);
-  const bool import_textures = params_.import_textures_mode != USD_TEX_IMPORT_NONE && is_relative;
+  const bool import_textures = params_.import_textures_mode != TexImportMode::None && is_relative;
 
   std::string imported_file_source_path;
 
@@ -1387,14 +1386,14 @@ void USDMaterialReader::load_tex_image(const pxr::UsdShadeShader &usd_shader,
 
     /* If we are packing the imported textures, we first write them
      * to a temporary directory. */
-    const char *textures_dir = params_.import_textures_mode == USD_TEX_IMPORT_PACK ?
+    const char *textures_dir = params_.import_textures_mode == TexImportMode::Pack ?
                                    temp_textures_dir() :
                                    params_.import_textures_dir;
 
-    const eUSDTexNameCollisionMode name_collision_mode = params_.import_textures_mode ==
-                                                                 USD_TEX_IMPORT_PACK ?
-                                                             USD_TEX_NAME_COLLISION_OVERWRITE :
-                                                             params_.tex_name_collision_mode;
+    const TexNameCollisionMode name_collision_mode = params_.import_textures_mode ==
+                                                             TexImportMode::Pack ?
+                                                         TexNameCollisionMode::Overwrite :
+                                                         params_.tex_name_collision_mode;
 
     file_path = import_asset(file_path, textures_dir, name_collision_mode, reports());
   }
@@ -1465,7 +1464,7 @@ void USDMaterialReader::load_tex_image(const pxr::UsdShadeShader &usd_shader,
     ensure_usd_source_path_prop(imported_file_source_path, &image->id);
   }
 
-  if (import_textures && params_.import_textures_mode == USD_TEX_IMPORT_PACK &&
+  if (import_textures && params_.import_textures_mode == TexImportMode::Pack &&
       !BKE_image_has_packedfile(image))
   {
     BKE_image_packfiles(nullptr, image, ID_BLEND_PATH(&bmain_, &image->id));
@@ -1615,7 +1614,7 @@ Material *find_existing_material(const pxr::SdfPath &usd_mat_path,
                                  const Map<std::string, Material *> &mat_map,
                                  const Map<pxr::SdfPath, Material *> &usd_path_to_mat)
 {
-  if (params.mtl_name_collision_mode == USD_MTL_NAME_COLLISION_MAKE_UNIQUE) {
+  if (params.mtl_name_collision_mode == MtlNameCollisionMode::MakeUnique) {
     /* Check if we've already created the Blender material with a modified name. */
     return usd_path_to_mat.lookup_default(usd_mat_path, nullptr);
   }
