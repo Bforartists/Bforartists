@@ -228,37 +228,35 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout.use_property_split_set(true);
 
-  ui::LayoutColumn *col = &layout.column(false); /*BFA*/
+  ui::Layout &col = layout.column(false); /*BFA*/
   if (mode == MOD_REMESH_VOXEL) {
-    col->prop(ptr, "voxel_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    col->prop(ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    col.prop(ptr, "voxel_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    col.prop(ptr, "adaptivity", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   else {
-    col->prop(ptr, "octree_depth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    col->prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    col.prop(ptr, "octree_depth", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    col.prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     if (mode == MOD_REMESH_SHARP_FEATURES) {
-      col->prop(ptr, "sharpness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      col.prop(ptr, "sharpness", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
 
     /* bfa - our layout */
-    ui::LayoutRow *row;
-    col = &layout.column(true);
-    row = &col->row(true);
-    row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    row->decorator(ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
-    row = &layout.row(false);
-    row->active_set(RNA_boolean_get(ptr, "use_remove_disconnected"));
+    ui::Layout &row = col.row(true);
+    row.use_property_split_set(false); /* bfa - use_property_split = False */
+    row.prop(ptr, "use_remove_disconnected", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row.decorator(ptr, "use_remove_disconnected", 0); /*bfa - decorator*/
+    ui::Layout &row2 = layout.row(false);
+    row2.active_set(RNA_boolean_get(ptr, "use_remove_disconnected"));
     layout.prop(ptr, "threshold", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
   /* bfa - our layout */
-  col = &layout.column(true);
-  row = &col->row(true);
-  row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator();                   /*bfa - indent*/
-  row->prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  row->decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
+  ui::Layout &col3 = layout.column(true);
+  ui::Layout &row3 = col3.row(true);
+  row3.use_property_split_set(false); /* bfa - use_property_split = False */
+  row3.separator();                   /*bfa - indent*/
+  row3.prop(ptr, "use_smooth_shade", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  row3.decorator(ptr, "use_smooth_shade", 0); /*bfa - decorator*/
 
   modifier_error_message_draw(layout, ptr);
 
