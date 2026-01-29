@@ -306,7 +306,7 @@ bool selection_update(const ViewContext *vc,
   if (changed) {
     /* Use #ID_RECALC_GEOMETRY instead of #ID_RECALC_SELECT because it is handled as a
      * generic attribute for now. */
-    DEG_id_tag_update(static_cast<ID *>(object->data), ID_RECALC_GEOMETRY);
+    DEG_id_tag_update(object->data, ID_RECALC_GEOMETRY);
     WM_event_add_notifier(vc->C, NC_GEOM | ND_DATA, object->data);
   }
 
@@ -913,7 +913,7 @@ bool ensure_selection_domain(ToolSettings *ts, Object *object)
     const GVArray src = *attributes.lookup(".selection", domain);
     if (src) {
       const CPPType &type = src.type();
-      void *dst = MEM_malloc_arrayN(attributes.domain_size(domain), type.size, __func__);
+      void *dst = MEM_new_array_uninitialized(attributes.domain_size(domain), type.size, __func__);
       src.materialize(dst);
 
       attributes.remove(".selection");
@@ -922,7 +922,7 @@ bool ensure_selection_domain(ToolSettings *ts, Object *object)
                           bke::cpp_type_to_attribute_type(type),
                           bke::AttributeInitMoveArray(dst)))
       {
-        MEM_freeN(dst);
+        MEM_delete_void(dst);
       }
 
       changed = true;

@@ -88,7 +88,7 @@ static void camera_copy_data(Main * /*bmain*/,
   }
 
   if (cam_src->custom_bytecode) {
-    cam_dst->custom_bytecode = static_cast<char *>(MEM_dupallocN(cam_src->custom_bytecode));
+    cam_dst->custom_bytecode = MEM_dupalloc(cam_src->custom_bytecode);
   }
 }
 
@@ -98,7 +98,7 @@ static void camera_free_data(ID *id)
   Camera *cam = id_cast<Camera *>(id);
   BLI_freelistN(&cam->bg_images);
   if (cam->custom_bytecode) {
-    MEM_freeN(cam->custom_bytecode);
+    MEM_delete(cam->custom_bytecode);
   }
 }
 
@@ -215,7 +215,7 @@ static void camera_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   }
 
   /* write LibData */
-  BLO_write_id_struct(writer, Camera, id_address, &cam->id);
+  writer->write_id_struct(id_address, cam);
   BKE_id_blend_write(writer, &cam->id);
 
   for (CameraBGImage &bgpic : cam->bg_images) {
@@ -1240,7 +1240,7 @@ void BKE_camera_multiview_params(const RenderData *rd,
 
 CameraBGImage *BKE_camera_background_image_new(Camera *cam)
 {
-  CameraBGImage *bgpic = MEM_new_for_free<CameraBGImage>("Background Image");
+  CameraBGImage *bgpic = MEM_new<CameraBGImage>("Background Image");
 
   bgpic->scale = 1.0f;
   bgpic->alpha = 1.0f; /*bfa - changed from 0.5 to 1.0. Background should be solid.*/
@@ -1255,7 +1255,7 @@ CameraBGImage *BKE_camera_background_image_new(Camera *cam)
 
 CameraBGImage *BKE_camera_background_image_copy(const CameraBGImage *bgpic_src, const int flag)
 {
-  CameraBGImage *bgpic_dst = static_cast<CameraBGImage *>(MEM_dupallocN(bgpic_src));
+  CameraBGImage *bgpic_dst = MEM_dupalloc(bgpic_src);
 
   bgpic_dst->next = bgpic_dst->prev = nullptr;
 
@@ -1275,7 +1275,7 @@ void BKE_camera_background_image_remove(Camera *cam, CameraBGImage *bgpic)
 {
   BLI_remlink(&cam->bg_images, bgpic);
 
-  MEM_freeN(bgpic);
+  MEM_delete(bgpic);
 }
 
 void BKE_camera_background_image_clear(Camera *cam)

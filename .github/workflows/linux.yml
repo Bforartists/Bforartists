@@ -10,5 +10,5 @@ jobs:
     uses: ./.github/workflows/nightly-build.yml
     with:
       os: "ubuntu-latest"
-      c_compiler: "gcc"
-      cpp_compiler: "g++"
+      c_compiler: "gcc-14"
+      cpp_compiler: "g++-14"

@@ -67,14 +67,26 @@ class USERPREF_PT_navigation_bar(Panel):
 
     def draw(self, context):
         layout = self.layout
+        view = context.space_data
 
         prefs = context.preferences
+
+        layout.prop(view, "search_filter", icon='VIEWZOOM', text="")
+        layout.separator(factor=0.1)
 
         col = layout.column()
 
         col.scale_x = 1.3
         col.scale_y = 1.3
-        col.prop(prefs, "active_section", expand=True)
+        if view.search_filter:
+            col.prop_tabs_enum(
+                prefs,
+                "active_section",
+                data_highlight=view,
+                property_highlight="tab_search_results",
+                expand_as='ROW')
+        else:
+            col.prop(prefs, "active_section", expand=True)
 
 
 class USERPREF_MT_editor_menus(Menu):
@@ -117,14 +129,14 @@ class USERPREF_MT_save_load(Menu):
         layout.operator_context = 'EXEC_AREA'
         if prefs.use_preferences_save:
             layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS')  # BFA - added icon
+
+        layout.operator_context = 'INVOKE_AREA'
         sub_revert = layout.column(align=True)
         # NOTE: regarding `factory_startup`. To correctly show the active state of this menu item,
         # the user preferences themselves would need to have a `factory_startup` state.
         # Since showing an active menu item whenever factory-startup is used is not such a problem, leave this as-is.
         sub_revert.active = prefs.is_dirty or bpy.app.factory_startup
         sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon="UNDO")  # BFA - added icon
-
-        layout.operator_context = 'INVOKE_AREA'
 
         app_template = prefs.app_template
         if app_template:
@@ -1899,7 +1911,10 @@ class USERPREF_PT_file_paths_asset_libraries(FilePathsPanel, Panel):
 class USERPREF_UL_asset_libraries(UIList):
     def draw_item(self, _context, layout, _data, item, _icon, _active_data, _active_propname, _index):
         asset_library = item
-        layout.prop(asset_library, "name", text="", emboss=False)
+
+        row = layout.row(align=True)
+        row.prop(asset_library, "enabled", text="")
+        row.prop(asset_library, "name", text="", emboss=False)
 
 
 class USERPREF_UL_extension_repos(UIList):
@@ -3127,6 +3142,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
                 ({"property": "use_geometry_nodes_lists"}, ("blender/blender/issues/140918", "#140918")),
+                ({"property": "use_geometry_bundle"}, ("blender/blender/issues/150574", "#150574")),
             ),
         )
 

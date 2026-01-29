@@ -335,7 +335,7 @@ static int *parse_int_relative_clamp_n(
     }
   }
 
-  int *values = MEM_malloc_arrayN<int>(size_t(len), __func__);
+  int *values = MEM_new_array_uninitialized<int>(size_t(len), __func__);
   int i = 0;
   while (true) {
     const char *str_end = strchr(str, sep);
@@ -363,7 +363,7 @@ static int *parse_int_relative_clamp_n(
   return values;
 
 fail:
-  MEM_freeN(values);
+  MEM_delete(values);
   return nullptr;
 }
 
@@ -391,7 +391,7 @@ static int (*parse_int_range_relative_clamp_n(const char *str,
     }
   }
 
-  int (*values)[2] = MEM_malloc_arrayN<int[2]>(size_t(len), __func__);
+  int (*values)[2] = MEM_new_array_uninitialized<int[2]>(size_t(len), __func__);
   int i = 0;
   while (true) {
     const char *str_end_range;
@@ -428,7 +428,7 @@ static int (*parse_int_range_relative_clamp_n(const char *str,
   return values;
 
 fail:
-  MEM_freeN(values);
+  MEM_delete(values);
   return nullptr;
 }
 
@@ -448,7 +448,7 @@ fail:
 #  ifdef WIN32
 static char **argv_duplicate(const char **argv, int argc)
 {
-  char **argv_copy = MEM_malloc_arrayN<char *>(size_t(argc), __func__);
+  char **argv_copy = MEM_new_array_uninitialized<char *>(size_t(argc), __func__);
   for (int i = 0; i < argc; i++) {
     argv_copy[i] = BLI_strdup(argv[i]);
   }
@@ -458,9 +458,9 @@ static char **argv_duplicate(const char **argv, int argc)
 static void argv_free(char **argv, int argc)
 {
   for (int i = 0; i < argc; i++) {
-    MEM_freeN(argv[i]);
+    MEM_delete(argv[i]);
   }
-  MEM_freeN(argv);
+  MEM_delete(argv);
 }
 #  endif /* !WIN32 */
 
@@ -481,7 +481,7 @@ static bool main_arg_deferred_is_set()
 static void main_arg_deferred_setup(BA_ArgCallback func, int argc, const char **argv, void *data)
 {
   BLI_assert(app_state.main_arg_deferred == nullptr);
-  BA_ArgCallback_Deferred *d = MEM_callocN<BA_ArgCallback_Deferred>(__func__);
+  BA_ArgCallback_Deferred *d = MEM_new_zeroed<BA_ArgCallback_Deferred>(__func__);
   d->func = func;
   d->argc = argc;
   d->argv = argv;
@@ -500,7 +500,7 @@ void main_arg_deferred_free()
 #  ifdef WIN32
   argv_free(const_cast<char **>(d->argv), d->argc);
 #  endif
-  MEM_freeN(d);
+  MEM_delete(d);
 }
 
 static void main_arg_deferred_exit_code_set(int exit_code)
@@ -767,6 +767,9 @@ static void print_help(bArgs *ba, bool all)
   BLI_args_print_arg_doc(ba, "--debug-gpu-shader-debug-info");
   BLI_args_print_arg_doc(ba, "--debug-gpu-scope-capture");
   BLI_args_print_arg_doc(ba, "--debug-gpu-shader-source");
+  BLI_args_print_arg_doc(ba, "--debug-gpu-shader-no-preprocessor");
+  BLI_args_print_arg_doc(ba, "--debug-gpu-shader-no-dce");
+  BLI_args_print_arg_doc(ba, "--debug-gpu-no-texture-pool");
   if (defs.with_renderdoc) {
     BLI_args_print_arg_doc(ba, "--debug-gpu-renderdoc");
   }
@@ -1558,6 +1561,40 @@ static int arg_handle_debug_gpu_shader_source(int argc, const char **argv, void 
   return 0;
 }
 
+static const char arg_handle_debug_gpu_shader_no_preprocessor_doc[] =
+    "\n"
+    "\tSkip preprocessor pass and rely on driver or shader compiler preprocessor instead.\n"
+    "\tAlso disable dead code elimination.";
+static int arg_handle_debug_gpu_shader_no_preprocessor(int /*argc*/,
+                                                       const char ** /*argv*/,
+                                                       void * /*data*/)
+{
+  G.debug |= G_DEBUG_GPU_SHADER_NO_PREPROCESSOR;
+  return 0;
+}
+
+static const char arg_handle_debug_gpu_shader_no_dce_doc[] =
+    "\n"
+    "\tSkip dead code elimination pass.";
+static int arg_handle_debug_gpu_shader_no_dce(int /*argc*/,
+                                              const char ** /*argv*/,
+                                              void * /*data*/)
+{
+  G.debug |= G_DEBUG_GPU_SHADER_NO_DCE;
+  return 0;
+}
+
+static const char arg_handle_debug_gpu_no_texture_pool_set_doc[] =
+    "\n"
+    "\tDisable memory aliasing optimizations in the GPU texture pool.";
+static int arg_handle_debug_gpu_no_texture_pool_set(int /* argc */,
+                                                    const char ** /* argv */,
+                                                    void * /*data*/)
+{
+  G.debug |= G_DEBUG_GPU_NO_TEXTURE_POOL;
+  return 0;
+}
+
 static const char arg_handle_debug_gpu_renderdoc_set_doc[] =
     "\n"
     "\tEnable RenderDoc integration for GPU frame grabbing and debugging.";
@@ -1949,7 +1986,7 @@ static bool arg_handle_extension_registration(const bool do_register, const bool
   bool result = WM_platform_associate_set(do_register, all_users, &error_msg);
   if (error_msg) {
     fprintf(stderr, "Error: %s\n", error_msg);
-    MEM_freeN(error_msg);
+    MEM_delete(error_msg);
   }
   return result;
 #  endif
@@ -2372,7 +2409,7 @@ static int arg_handle_render_frame(int argc, const char **argv, void *data)
       }
       RE_SetReports(re, nullptr);
       BKE_reports_free(&reports);
-      MEM_freeN(frame_range_arr);
+      MEM_delete(frame_range_arr);
       return 1;
     }
     fprintf(stderr, "\nError: frame number must follow '%s'.\n", arg_id);
@@ -3050,11 +3087,23 @@ void main_args_setup(bContext *C, bArgs *ba, bool all)
                nullptr);
   BLI_args_add(ba,
                nullptr,
+               "--debug-gpu-no-texture-pool",
+               CB(arg_handle_debug_gpu_no_texture_pool_set),
+               nullptr);
+  BLI_args_add(ba,
+               nullptr,
                "--debug-gpu-scope-capture",
                CB(arg_handle_debug_gpu_scope_capture_set),
                nullptr);
   BLI_args_add(
       ba, nullptr, "--debug-gpu-shader-source", CB(arg_handle_debug_gpu_shader_source), nullptr);
+  BLI_args_add(ba,
+               nullptr,
+               "--debug-gpu-shader-no-preprocessor",
+               CB(arg_handle_debug_gpu_shader_no_preprocessor),
+               nullptr);
+  BLI_args_add(
+      ba, nullptr, "--debug-gpu-shader-no-dce", CB(arg_handle_debug_gpu_shader_no_dce), nullptr);
   if (defs.with_renderdoc) {
     BLI_args_add(
         ba, nullptr, "--debug-gpu-renderdoc", CB(arg_handle_debug_gpu_renderdoc_set), nullptr);

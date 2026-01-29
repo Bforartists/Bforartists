@@ -79,7 +79,7 @@ static void shader_get_from_context(const bContext *C,
     if (ob) {
       *r_from = &ob->id;
       if (ob->type == OB_LAMP) {
-        *r_id = static_cast<ID *>(ob->data);
+        *r_id = ob->data;
         *r_ntree = (id_cast<Light *>(ob->data))->nodetree;
       }
       else {
@@ -134,7 +134,7 @@ static void localize(bNodeTree *localtree, bNodeTree * /*ntree*/)
         /* Free the group like in #ntree_shader_groups_flatten. */
         bNodeTree *group = reinterpret_cast<bNodeTree *>(node.id);
         bke::node_tree_free_tree(*group);
-        MEM_freeN(group);
+        MEM_delete(group);
         node.id = nullptr;
       }
 
@@ -202,7 +202,7 @@ void register_node_tree_type_sh()
   tt->validate_link = shader_validate_link;
   tt->valid_socket_type = shader_node_tree_socket_type_valid;
 
-  tt->rna_ext.srna = &RNA_ShaderNodeTree;
+  tt->rna_ext.srna = RNA_ShaderNodeTree;
 
   bke::node_tree_type_add(*tt);
 }
@@ -1027,8 +1027,8 @@ bNodeTreeExec *ntreeShaderBeginExecTree_internal(bNodeExecContext *context,
   bNodeTreeExec *exec = ntree_exec_begin(context, ntree, parent_key);
 
   /* allocate the thread stack listbase array */
-  exec->threadstack = MEM_calloc_arrayN<ListBaseT<bNodeThreadStack>>(BLENDER_MAX_THREADS,
-                                                                     "thread stack array");
+  exec->threadstack = MEM_new_array_zeroed<ListBaseT<bNodeThreadStack>>(BLENDER_MAX_THREADS,
+                                                                        "thread stack array");
 
   for (bNode &node : exec->nodetree->nodes) {
     node.runtime->need_exec = 1;
@@ -1065,13 +1065,13 @@ void ntreeShaderEndExecTree_internal(bNodeTreeExec *exec)
     for (int a = 0; a < BLENDER_MAX_THREADS; a++) {
       for (bNodeThreadStack &nts : exec->threadstack[a]) {
         if (nts.stack) {
-          MEM_freeN(nts.stack);
+          MEM_delete(nts.stack);
         }
       }
       BLI_freelistN(&exec->threadstack[a]);
     }
 
-    MEM_freeN(exec->threadstack);
+    MEM_delete(exec->threadstack);
     exec->threadstack = nullptr;
   }
 

@@ -68,7 +68,7 @@ static bool lattice_deselect_all_multi(const Span<Base *> bases)
   for (Base *base : bases) {
     Object *ob_iter = base->object;
     changed_multi |= ED_lattice_flags_set(ob_iter, 0);
-    DEG_id_tag_update(static_cast<ID *>(ob_iter->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(ob_iter->data, ID_RECALC_SELECT);
   }
   return changed_multi;
 }
@@ -110,7 +110,7 @@ static wmOperatorStatus lattice_select_random_exec(bContext *C, wmOperator *op)
 
     int a = lt->pntsu * lt->pntsv * lt->pntsw;
     int elem_map_len = 0;
-    BPoint **elem_map = MEM_malloc_arrayN<BPoint *>(a, __func__);
+    BPoint **elem_map = MEM_new_array_uninitialized<BPoint *>(a, __func__);
     BPoint *bp = lt->def;
 
     while (a--) {
@@ -125,13 +125,13 @@ static wmOperatorStatus lattice_select_random_exec(bContext *C, wmOperator *op)
     for (int i = 0; i < count_select; i++) {
       bpoint_select_set(elem_map[i], select);
     }
-    MEM_freeN(elem_map);
+    MEM_delete(elem_map);
 
     if (select == false) {
       lt->actbp = LT_ACTBP_NONE;
     }
 
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(obedit->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
   }
 
@@ -194,7 +194,7 @@ static void ed_lattice_select_mirrored(Lattice *lt, const int axis, const bool e
     }
   }
 
-  MEM_freeN(selpoints);
+  MEM_delete(selpoints);
 }
 
 static wmOperatorStatus lattice_select_mirror_exec(bContext *C, wmOperator *op)
@@ -217,7 +217,7 @@ static wmOperatorStatus lattice_select_mirror_exec(bContext *C, wmOperator *op)
     }
 
     /* TODO: only notify changes. */
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(obedit->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
   }
 
@@ -304,10 +304,10 @@ static wmOperatorStatus lattice_select_more_less(bContext *C, const bool select)
       }
     }
 
-    MEM_freeN(selpoints);
+    MEM_delete(selpoints);
 
     changed = true;
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(obedit->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
   }
 
@@ -439,7 +439,7 @@ static wmOperatorStatus lattice_select_all_exec(bContext *C, wmOperator *op)
     }
     if (changed) {
       changed_multi = true;
-      DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT);
+      DEG_id_tag_update(obedit->data, ID_RECALC_SELECT);
       WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
     }
   }
@@ -529,7 +529,7 @@ static wmOperatorStatus lattice_select_ungrouped_exec(bContext *C, wmOperator *o
     }
 
     changed = true;
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(obedit->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
   }
 
@@ -641,7 +641,7 @@ bool ED_lattice_select_pick(bContext *C, const int mval[2], const SelectPick_Par
           vc.scene, vc.view_layer, vc.v3d);
       for (Object *ob : objects) {
         if (ED_lattice_flags_set(ob, 0)) {
-          DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_SELECT);
+          DEG_id_tag_update(ob->data, ID_RECALC_SELECT);
           WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
         }
       }
@@ -688,7 +688,7 @@ bool ED_lattice_select_pick(bContext *C, const int mval[2], const SelectPick_Par
       ed::object::base_activate(C, basact);
     }
 
-    DEG_id_tag_update(static_cast<ID *>(vc.obedit->data), ID_RECALC_SELECT);
+    DEG_id_tag_update(vc.obedit->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, vc.obedit->data);
 
     changed = true;

@@ -86,7 +86,7 @@ static eAction_TransformFlags get_item_transform_flags_and_fcurves(Object &ob,
   short flags = 0;
 
   /* Build PointerRNA from provided data to obtain the paths to use. */
-  PointerRNA ptr = RNA_pointer_create_discrete(reinterpret_cast<ID *>(&ob), &RNA_PoseBone, &pchan);
+  PointerRNA ptr = RNA_pointer_create_discrete(reinterpret_cast<ID *>(&ob), RNA_PoseBone, &pchan);
 
   /* Get the basic path to the properties of interest. */
   const std::optional<std::string> basePath = RNA_path_from_ID_to_struct(&ptr);
@@ -180,14 +180,14 @@ static void fcurves_to_pchan_links_get(ListBaseT<tPChanFCurveLink> &pfLinks,
     return;
   }
 
-  tPChanFCurveLink *pfl = MEM_callocN<tPChanFCurveLink>("tPChanFCurveLink");
+  tPChanFCurveLink *pfl = MEM_new_zeroed<tPChanFCurveLink>("tPChanFCurveLink");
 
   pfl->ob = &ob;
   pfl->fcurves = curves;
   pfl->pchan = &pchan;
 
   /* Get the RNA path to this pchan - this needs to be freed! */
-  PointerRNA ptr = RNA_pointer_create_discrete(reinterpret_cast<ID *>(&ob), &RNA_PoseBone, &pchan);
+  PointerRNA ptr = RNA_pointer_create_discrete(reinterpret_cast<ID *>(&ob), RNA_PoseBone, &pchan);
   pfl->pchan_path = BLI_strdup(RNA_path_from_ID_to_struct(&ptr).value_or("").c_str());
 
   BLI_addtail(&pfLinks, pfl);
@@ -319,7 +319,7 @@ void poseAnim_mapping_free(ListBaseT<tPChanFCurveLink> *pfLinks)
     BLI_freelistN(&pfl->fcurves);
 
     /* free pchan RNA Path */
-    MEM_freeN(pfl->pchan_path);
+    MEM_delete(pfl->pchan_path);
 
     /* free link itself */
     BLI_freelinkN(pfLinks, pfl);
@@ -421,7 +421,7 @@ void poseAnim_mapping_autoKeyframe(bContext *C,
     }
 
     /* Add data-source override for the PoseChannel, to be used later. */
-    animrig::relative_keyingset_add_source(sources, &pfl.ob->id, &RNA_PoseBone, pchan);
+    animrig::relative_keyingset_add_source(sources, &pfl.ob->id, RNA_PoseBone, pchan);
   }
 
   /* insert keyframes for all relevant bones in one go */

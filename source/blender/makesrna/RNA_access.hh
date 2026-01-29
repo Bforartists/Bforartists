@@ -79,7 +79,7 @@ PointerRNA RNA_pointer_create_with_parent(const PointerRNA &parent, StructRNA *t
  * and is a shortcut for:
  *
  *    PointerRNA id_ptr = RNA_id_pointer_create(id);
- *    PointerRNA ptr = RNA_pointer_create_with_parent(id_ptr, &RNA_Type, data);
+ *    PointerRNA ptr = RNA_pointer_create_with_parent(id_ptr, RNA_Type, data);
  */
 PointerRNA RNA_pointer_create_id_subdata(ID &id, StructRNA *type, void *data);
 
@@ -122,7 +122,7 @@ StructRNA *RNA_struct_base(StructRNA *type);
 /**
  * Use to find the sub-type directly below a base-type.
  *
- * So if type were `RNA_SpotLight`, `RNA_struct_base_of(type, &RNA_ID)` would return `&RNA_Light`.
+ * So if type were `RNA_SpotLight`, `RNA_struct_base_of(type, RNA_ID)` would return `RNA_Light`.
  */
 const StructRNA *RNA_struct_base_child_of(const StructRNA *type, const StructRNA *parent_type);
 
@@ -216,7 +216,7 @@ PropertyRNA *RNA_struct_type_find_property_no_base(StructRNA *srna, const char *
 PropertyRNA *RNA_struct_type_find_property(StructRNA *srna, const char *identifier);
 
 FunctionRNA *RNA_struct_find_function(StructRNA *srna, const char *identifier);
-const ListBaseT<FunctionRNA> *RNA_struct_type_functions(StructRNA *srna);
+Span<std::unique_ptr<FunctionRNA>> RNA_struct_type_functions(StructRNA *srna);
 
 [[nodiscard]] char *RNA_struct_name_get_alloc_ex(
     PointerRNA *ptr, char *fixedbuf, int fixedlen, int *r_len, PropertyRNA **r_nameprop);

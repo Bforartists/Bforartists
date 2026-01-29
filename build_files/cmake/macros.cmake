@@ -358,22 +358,22 @@ function(blender_link_libraries
   #
   #   set(FOO_LIBRARIES optimized libfoo.lib debug libfoo_d.lib)
   #
-  # Complications starts with a single argument for library_deps: all the elements are being
+  # Complications start with a single argument for library_deps: all the elements are being
   # put to a list: "${FOO_LIBRARIES}" will become "optimized;libfoo.lib;debug;libfoo_d.lib".
-  # This makes it impossible to pass it as-is to target_link_libraries sine it will treat
+  # This makes it impossible to pass it as-is to target_link_libraries since it will treat
   # this argument as a list of libraries to be linked against, causing missing libraries
   # for optimized.lib.
   #
-  # What this code does it traverses library_deps and extracts information about whether
-  # library is to provided as general, debug or optimized. This is a little state machine which
-  # keeps track of which build type library is to provided for:
+  # What this code does is traverse library_deps and extracts information about whether
+  # library is to be provided as general, debug or optimized. This is a little state machine which
+  # keeps track of which build type library is to be provided for:
   #
   # - If "debug" or "optimized" word is found, the next element in the list is expected to be
   #   a library which will be passed to target_link_libraries() under corresponding build type.
   #
   # - If there is no "debug" or "optimized" used library is specified for all build types.
   #
-  # NOTE: If separated libraries for debug and release are needed every library is the list are
+  # NOTE: If separated libraries for debug and release are needed every library in the list is
   # to be prefixed explicitly.
   #
   # Use: "optimized libfoo optimized libbar debug libfoo_d debug libbar_d"
@@ -448,7 +448,7 @@ function(blender_add_lib__impl
   # Not for system includes because they can resolve to the same path
   # list_assert_duplicates("${includes_sys}")
 
-  # blenders dependency loops are longer than cmake expects and we need additional loops to
+  # Blender's dependency loops are longer than cmake expects and we need additional loops to
   # properly link.
   set_property(TARGET ${name} APPEND PROPERTY LINK_INTERFACE_MULTIPLICITY 3)
 endfunction()
@@ -486,9 +486,10 @@ endfunction()
 function(setup_heavy_lib_pool)
   if(WITH_NINJA_POOL_JOBS AND NINJA_MAX_NUM_PARALLEL_COMPILE_HEAVY_JOBS)
     set(_HEAVY_LIBS)
+    set(_HEAVY_FILES)
     set(_TARGET)
     if(WITH_CYCLES)
-      list(APPEND _HEAVY_LIBS "cycles_device" "cycles_kernel")
+      list(APPEND _HEAVY_LIBS "cycles_device" "cycles_kernel" "cycles_hydra")
     endif()
     if(WITH_LIBMV)
       list(APPEND _HEAVY_LIBS "extern_ceres" "bf_intern_libmv")
@@ -497,13 +498,27 @@ function(setup_heavy_lib_pool)
       list(APPEND _HEAVY_LIBS "bf_intern_openvdb")
     endif()
 
+    # A few specific files are very heavy to compile in Clang or GCC
+    # (several GB of RAM required in debug + ASAN builds e.g.).
+    list(APPEND _HEAVY_FILES "source/blender/blenkernel/intern/volume.cc")
+    list(APPEND _HEAVY_FILES "source/blender/blenkernel/intern/volume_to_mesh.cc")
+    list(APPEND _HEAVY_FILES "source/blender/blenkernel/intern/volume_grid.cc")
+    list(APPEND _HEAVY_FILES "source/blender/modifiers/intern/MOD_volume_displace.cc")
+    list(APPEND _HEAVY_FILES "source/blender/geometry/intern/mesh_to_volume.cc")
+
     foreach(_TARGET ${_HEAVY_LIBS})
       if(TARGET ${_TARGET})
         set_property(TARGET ${_TARGET} PROPERTY JOB_POOL_COMPILE compile_heavy_job_pool)
       endif()
     endforeach()
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.2.0")
+      foreach(_FILE ${_HEAVY_FILES})
+        set_property(SOURCE ${_FILE} PROPERTY JOB_POOL_COMPILE compile_heavy_job_pool)
+      endforeach()
+    endif()
     unset(_TARGET)
     unset(_HEAVY_LIBS)
+    unset(_HEAVY_FILES)
   endif()
 endfunction()
 
@@ -559,14 +574,14 @@ macro(get_sse_flags
 
   if (CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64)" OR CMAKE_OSX_ARCHITECTURES MATCHES x86_64)
     # message(STATUS "Detecting SSE support")
-    if(CMAKE_COMPILER_IS_GNUCC OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+    if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
       set(${_sse42_flags} "-march=x86-64-v2")
     elseif(MSVC)
       # MSVC has no specific compile flags for SSE42 (only for AVX).
       set(${_sse42_flags})
       # It also doesn't define __SSE__/__MMX__ flags and only does the AVX and higher flags.
       # For consistency we define these flags for MSVC.
-      add_compile_definitions(__MMX__ __SSE__ __SSE2__ _SSE3__ __SSE4_1__ __SSE4_2__)
+      add_compile_definitions(__MMX__ __SSE__ __SSE2__ __SSE3__ __SSE4_1__ __SSE4_2__)
     elseif(CMAKE_C_COMPILER_ID STREQUAL "Intel")
       if(WIN32)
         set(${_sse42_flags} "/QxSSE4.2")
@@ -672,7 +687,7 @@ endmacro()
 
 macro(remove_strict_flags)
 
-  if(CMAKE_COMPILER_IS_GNUCC)
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
     remove_cc_flag(
       "-Wstrict-prototypes"
       "-Wsuggest-attribute=format"
@@ -727,7 +742,7 @@ macro(remove_strict_flags)
 endmacro()
 
 macro(remove_extra_strict_flags)
-  if(CMAKE_COMPILER_IS_GNUCC)
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
     remove_cc_flag(
       "-Wunused-parameter"
     )
@@ -753,7 +768,7 @@ endmacro()
 macro(remove_strict_c_flags_file
   filenames)
   foreach(_SOURCE ${ARGV})
-    if(CMAKE_COMPILER_IS_GNUCC OR
+    if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR
        (CMAKE_C_COMPILER_ID MATCHES "Clang"))
       set_source_files_properties(
         ${_SOURCE} PROPERTIES
@@ -769,9 +784,9 @@ endmacro()
 
 macro(remove_strict_cxx_flags_file
   filenames)
-  remove_strict_c_flags_file(${filenames} ${ARHV})
+  remove_strict_c_flags_file(${filenames} ${ARGV})
   foreach(_SOURCE ${ARGV})
-    if(CMAKE_COMPILER_IS_GNUCC OR
+    if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR
        (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
       set_source_files_properties(
         ${_SOURCE} PROPERTIES
@@ -787,7 +802,7 @@ endmacro()
 
 # External libs may need 'signed char' to be default.
 macro(remove_cc_flag_unsigned_char)
-  if(CMAKE_COMPILER_IS_GNUCC OR
+  if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR
      (CMAKE_C_COMPILER_ID MATCHES "Clang") OR
      (CMAKE_C_COMPILER_ID STREQUAL "Intel"))
     remove_cc_flag("-funsigned-char")
@@ -1537,7 +1552,7 @@ endmacro()
 
 macro(with_shader_cpp_compilation_config)
   # avoid noisy warnings
-  if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+  if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
     add_c_flag("-Wno-unused-result")
     remove_cc_flag("-Wmissing-declarations")
     # Would be nice to enable the warning once we support references.

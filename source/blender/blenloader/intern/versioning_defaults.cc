@@ -283,7 +283,7 @@ static void blo_update_defaults_screen(bScreen *screen,
   }
 
   /* Show tool-header by default (for most cases at least, hide for others). */
-  const bool hide_image_tool_header = STREQ(workspace_name, "Rendering");
+  const bool hide_image_tool_header = STR_ELEM(workspace_name, "Rendering", "Compositing");
   for (ScrArea &area : screen->areabase) {
     for (SpaceLink &sl : area.spacedata) {
       ListBaseT<ARegion> *regionbase = (&sl == static_cast<SpaceLink *>(area.spacedata.first)) ?
@@ -438,8 +438,8 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   /* BFA - Turn on the compositor nodes by default, or else they an unnecessary step for compositing.*/
   /* Don't enable compositing nodes. */
   //if (scene->nodetree) {
-  //  blender::bke::node_tree_free_embedded_tree(scene->nodetree);
-  //  MEM_freeN(scene->nodetree);
+  //  bke::node_tree_free_embedded_tree(scene->nodetree);
+  //  MEM_delete(scene->nodetree);
   //  scene->nodetree = nullptr;
   //  scene->use_nodes = false;
   //}

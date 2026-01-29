@@ -695,7 +695,7 @@ static void v3d_editvertex_buts(
             median->tilt += bezt->tilt;
             if (!totcurvedata) { /* I.e. first time... */
               selp = bezt;
-              seltype = &RNA_BezierSplinePoint;
+              seltype = RNA_BezierSplinePoint;
             }
             totcurvedata++;
           }
@@ -726,7 +726,7 @@ static void v3d_editvertex_buts(
             median->tilt += bp->tilt;
             if (!totcurvedata) { /* I.e. first time... */
               selp = bp;
-              seltype = &RNA_SplinePoint;
+              seltype = RNA_SplinePoint;
             }
             totcurvedata++;
           }
@@ -756,7 +756,7 @@ static void v3d_editvertex_buts(
         median->weight += bp->weight;
         if (!totlattdata) { /* I.e. first time... */
           selp = bp;
-          seltype = &RNA_LatticePoint;
+          seltype = RNA_LatticePoint;
         }
         totlattdata++;
       }
@@ -1767,7 +1767,7 @@ static void do_view3d_vgroup_buttons(bContext *C, void * /*arg*/, int event)
   BKE_view_layer_synced_ensure(scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   ed::object::vgroup_vert_active_mirror(ob, event - B_VGRP_PNL_EDIT_SINGLE);
-  DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_GEOMETRY);
+  DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
 }
 
@@ -1836,7 +1836,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
     bcol = &panel->layout->column(true);
     row = &bcol->row(true); /* The filter button row */
 
-    PointerRNA tools_ptr = RNA_pointer_create_discrete(nullptr, &RNA_ToolSettings, ts);
+    PointerRNA tools_ptr = RNA_pointer_create_discrete(nullptr, RNA_ToolSettings, ts);
     row->prop(&tools_ptr, "vertex_group_subset", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
 
     col = &bcol->column(true);
@@ -1930,7 +1930,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
         }
       }
     }
-    MEM_freeN(vgroup_validmap);
+    MEM_delete(vgroup_validmap);
 
     yco -= 2;
 
@@ -1977,7 +1977,7 @@ static void v3d_transform_butsR(ui::Layout &layout, PointerRNA *ptr)
   bool draw_location = true; /* bfa - boolean to decide show location or not */
   bool draw_4l = false;      /* bfa - boolean to decide show 4L button or not*/
 
-  if (ptr->type == &RNA_PoseBone) {
+  if (ptr->type == RNA_PoseBone) {
     PointerRNA boneptr;
     Bone *bone;
 
@@ -2130,7 +2130,7 @@ static void v3d_posearmature_buts(ui::Layout &layout, Object *ob)
     return;
   }
 
-  PointerRNA pchanptr = RNA_pointer_create_discrete(&ob->id, &RNA_PoseBone, pchan);
+  PointerRNA pchanptr = RNA_pointer_create_discrete(&ob->id, RNA_PoseBone, pchan);
 
   ui::Layout &col = layout.column(false);
 
@@ -2150,7 +2150,7 @@ static void v3d_editarmature_buts(ui::Layout &layout, Object *ob)
     return;
   }
 
-  PointerRNA eboneptr = RNA_pointer_create_discrete(&arm->id, &RNA_EditBone, ebone);
+  PointerRNA eboneptr = RNA_pointer_create_discrete(&arm->id, RNA_EditBone, ebone);
 
   layout.use_property_split_set(true);     /* bfa */
   layout.use_property_decorate_set(false); /* bfa */
@@ -2188,7 +2188,7 @@ static void v3d_editmetaball_buts(ui::Layout &layout, Object *ob)
     return;
   }
 
-  PointerRNA ptr = RNA_pointer_create_discrete(&mball->id, &RNA_MetaElement, mball->lastelem);
+  PointerRNA ptr = RNA_pointer_create_discrete(&mball->id, RNA_MetaElement, mball->lastelem);
 
   layout.use_property_split_set(true);     /* bfa */
   layout.use_property_decorate_set(false); /* bfa */
@@ -2250,7 +2250,7 @@ static void do_view3d_region_buttons(bContext *C, void * /*index*/, int event)
     case B_TRANSFORM_PANEL_MEDIAN:
       if (ob) {
         v3d_editvertex_buts(C, nullptr, v3d, ob, 1.0);
-        DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_GEOMETRY);
+        DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
       }
       break;
     case B_TRANSFORM_PANEL_DIMS:
@@ -2368,7 +2368,7 @@ static void apply_to_active_object(
     }
   }
 
-  DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_GEOMETRY);
+  DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
 }
 
@@ -2692,7 +2692,7 @@ void view3d_buttons_register(ARegionType *art)
 {
   PanelType *pt;
 
-  pt = MEM_callocN<PanelType>("spacetype view3d panel object");
+  pt = MEM_new_zeroed<PanelType>("spacetype view3d panel object");
   STRNCPY_UTF8(pt->idname, "VIEW3D_PT_transform");
   STRNCPY_UTF8(pt->label, N_("Transform")); /* XXX C panels unavailable through RNA bpy.types! */
   STRNCPY_UTF8(pt->category, "Item");
@@ -2701,7 +2701,7 @@ void view3d_buttons_register(ARegionType *art)
   pt->poll = view3d_panel_transform_poll;
   BLI_addtail(&art->paneltypes, pt);
 
-  pt = MEM_callocN<PanelType>("spacetype view3d panel vgroup");
+  pt = MEM_new_zeroed<PanelType>("spacetype view3d panel vgroup");
   STRNCPY_UTF8(pt->idname, "VIEW3D_PT_vgroup");
   STRNCPY_UTF8(pt->label,
                N_("Vertex Weights")); /* XXX C panels unavailable through RNA bpy.types! */
@@ -2711,7 +2711,7 @@ void view3d_buttons_register(ARegionType *art)
   pt->poll = view3d_panel_vgroup_poll;
   BLI_addtail(&art->paneltypes, pt);
 
-  pt = MEM_callocN<PanelType>("spacetype view3d panel curves");
+  pt = MEM_new_zeroed<PanelType>("spacetype view3d panel curves");
   STRNCPY_UTF8(pt->idname, "VIEW3D_PT_curves");
   STRNCPY_UTF8(pt->label, N_("Curve Data")); /* XXX C panels unavailable through RNA bpy.types! */
   STRNCPY_UTF8(pt->category, "Item");

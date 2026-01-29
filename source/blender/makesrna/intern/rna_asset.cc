@@ -203,7 +203,7 @@ static void rna_AssetMetaData_author_set(PointerRNA *ptr, const char *value)
   AssetMetaData *asset_data = static_cast<AssetMetaData *>(ptr->data);
 
   if (asset_data->author) {
-    MEM_freeN(asset_data->author);
+    MEM_delete(asset_data->author);
   }
 
   if (value[0]) {
@@ -237,7 +237,7 @@ static void rna_AssetMetaData_description_set(PointerRNA *ptr, const char *value
   AssetMetaData *asset_data = static_cast<AssetMetaData *>(ptr->data);
 
   if (asset_data->description) {
-    MEM_freeN(asset_data->description);
+    MEM_delete(asset_data->description);
   }
 
   if (value[0]) {
@@ -271,7 +271,7 @@ static void rna_AssetMetaData_copyright_set(PointerRNA *ptr, const char *value)
   AssetMetaData *asset_data = static_cast<AssetMetaData *>(ptr->data);
 
   if (asset_data->copyright) {
-    MEM_freeN(asset_data->copyright);
+    MEM_delete(asset_data->copyright);
   }
 
   if (value[0]) {
@@ -305,7 +305,7 @@ static void rna_AssetMetaData_license_set(PointerRNA *ptr, const char *value)
   AssetMetaData *asset_data = static_cast<AssetMetaData *>(ptr->data);
 
   if (asset_data->license) {
-    MEM_freeN(asset_data->license);
+    MEM_delete(asset_data->license);
   }
 
   if (value[0]) {
@@ -403,10 +403,10 @@ static PointerRNA rna_AssetRepresentation_metadata_get(PointerRNA *ptr)
 
   if (asset->is_local_id()) {
     PointerRNA id_ptr = RNA_id_pointer_create(asset->local_id());
-    return RNA_pointer_create_with_parent(id_ptr, &RNA_AssetMetaData, &asset_data);
+    return RNA_pointer_create_with_parent(id_ptr, RNA_AssetMetaData, &asset_data);
   }
 
-  return RNA_pointer_create_with_parent(*ptr, &RNA_AssetMetaData, &asset_data);
+  return RNA_pointer_create_with_parent(*ptr, RNA_AssetMetaData, &asset_data);
 }
 
 static int rna_AssetRepresentation_id_type_get(PointerRNA *ptr)

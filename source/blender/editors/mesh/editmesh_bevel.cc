@@ -146,8 +146,9 @@ static void edbm_bevel_update_status_text(bContext *C, wmOperator *op)
   }
   else {
     double offset_val = double(RNA_float_get(op->ptr, "offset"));
+    const int precision = opdata->shift_value[opdata->value_mode] == -1.0f ? 4 : 7;
     BKE_unit_value_as_string_scaled(
-        offset_str, NUM_STR_REP_LEN, offset_val, -3, B_UNIT_LENGTH, sce->unit, true);
+        offset_str, NUM_STR_REP_LEN, offset_val, precision * -1, B_UNIT_LENGTH, sce->unit, true);
   }
 
   PropertyRNA *prop;
@@ -1043,7 +1044,7 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
     /* Get an RNA pointer to ToolSettings to give to the curve profile template code. */
     Scene *scene = CTX_data_scene(C);
     PointerRNA toolsettings_ptr = RNA_pointer_create_discrete(
-        &scene->id, &RNA_ToolSettings, scene->toolsettings);
+        &scene->id, RNA_ToolSettings, scene->toolsettings);
     template_curve_profile(&layout, &toolsettings_ptr, "custom_bevel_profile_preset");
   }
 }

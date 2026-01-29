@@ -63,7 +63,7 @@ namespace blender {
 
 EditBone *ED_armature_ebone_add(bArmature *arm, const char *name)
 {
-  EditBone *bone = MEM_new_for_free<EditBone>("eBone");
+  EditBone *bone = MEM_new<EditBone>("eBone");
 
   STRNCPY_UTF8(bone->name, name);
   ED_armature_ebone_unique_name(arm->edbo, bone->name, nullptr);
@@ -223,6 +223,18 @@ static wmOperatorStatus armature_click_extrude_exec(bContext *C, wmOperator * /*
     newbone->length = len_v3v3(newbone->head, newbone->tail);
     newbone->rad_tail = newbone->length * 0.05f;
     newbone->dist = newbone->length * 0.25f;
+
+    /* Calculate the new bone roll:
+     * Ensure the Z-axis of the newly-created bone matches the Z-axis of the parent bone.
+     * The roll_to_vector operator can then take care of the bone roll angle. */
+    float parent_y[3];
+    sub_v3_v3v3(parent_y, ebone->tail, ebone->head);
+    normalize_v3(parent_y);
+    float parent_mat[3][3];
+    vec_roll_to_mat3_normalized(parent_y, ebone->roll, parent_mat);
+    float align_axis[3];
+    copy_v3_v3(align_axis, parent_mat[2]);
+    newbone->roll = ED_armature_ebone_roll_to_vector(newbone, align_axis, false);
   }
 
   ED_armature_edit_sync_selection(arm->edbo);
@@ -532,7 +544,7 @@ static void update_duplicate_action_constraint_settings(
       char *old_path = new_curve->rna_path;
 
       new_curve->rna_path = BLI_string_replaceN(old_path, orig_bone->name, dup_bone->name);
-      MEM_freeN(old_path);
+      MEM_delete(old_path);
 
       /* FIXME: deal with the case where this F-Curve already exists. */
 
@@ -1072,7 +1084,7 @@ EditBone *duplicateEditBoneObjects(EditBone *cur_bone,
                                    Object *src_ob,
                                    Object *dst_ob)
 {
-  EditBone *e_bone = MEM_new_for_free<EditBone>("addup_editbone");
+  EditBone *e_bone = MEM_new<EditBone>("addup_editbone");
 
   /* Copy data from old bone to new bone */
   ED_armature_ebone_copy(e_bone, cur_bone);
@@ -1638,7 +1650,7 @@ static wmOperatorStatus armature_extrude_exec(bContext *C, wmOperator *op)
           }
 
           totbone++;
-          newbone = MEM_new_for_free<EditBone>("extrudebone");
+          newbone = MEM_new<EditBone>("extrudebone");
 
           if (do_extrude == TIP_EXTRUDE) {
             copy_v3_v3(newbone->head, ebone->tail);
@@ -1893,7 +1905,7 @@ static wmOperatorStatus armature_subdivide_exec(bContext *C, wmOperator *op)
       float val2[3];
       float val3[3];
 
-      newbone = MEM_new_for_free<EditBone>("ebone subdiv", *ebone);
+      newbone = MEM_new<EditBone>("ebone subdiv", *ebone);
       BLI_addtail(arm->edbo, newbone);
 
       /* calculate location of newbone->head */

@@ -5,8 +5,10 @@
 #pragma once
 
 #include "BKE_node.hh"
-
 #include "BKE_node_socket_value.hh"
+
+#include "BLI_memory_counter_fwd.hh"
+
 #include "NOD_geometry_nodes_bundle_fwd.hh"
 #include "NOD_geometry_nodes_values.hh"
 
@@ -88,7 +90,11 @@ class Bundle : public ImplicitSharingMixin {
   const BundleItemValue *lookup_path(Span<StringRef> path) const;
   const BundleItemValue *lookup_path(StringRef path) const;
   template<typename T> std::optional<T> lookup(StringRef key) const;
+  template<typename T> std::optional<T> lookup_path(Span<StringRef> path) const;
   template<typename T> std::optional<T> lookup_path(StringRef path) const;
+
+  void merge(const Bundle &other);
+  void merge_override(const Bundle &other);
 
   bool is_empty() const;
   int64_t size() const;
@@ -102,6 +108,8 @@ class Bundle : public ImplicitSharingMixin {
   BundlePtr copy() const;
 
   void delete_self() override;
+
+  void count_memory(MemoryCounter &memory) const;
 
   /** Create the combined path by inserting '/' between each element. */
   static std::string combine_path(const Span<StringRef> path);
@@ -200,6 +208,14 @@ template<typename T> inline std::optional<T> BundleItemValue::as() const
     sharing_info->add_user();
     return ImplicitSharingPtr<SharingInfoT>{converted_value};
   }
+  else if constexpr (std::is_same_v<T, bke::SocketValueVariant>) {
+    if (const BundleItemSocketValue *socket_value = std::get_if<BundleItemSocketValue>(
+            &this->value))
+    {
+      return socket_value->value;
+    }
+    return std::nullopt;
+  }
   else if constexpr (std::is_same_v<T, ListPtr>) {
     const BundleItemSocketValue *socket_value = std::get_if<BundleItemSocketValue>(&this->value);
     if (!socket_value) {
@@ -221,6 +237,15 @@ template<typename T> inline std::optional<T> BundleItemValue::as() const
 template<typename T> inline std::optional<T> Bundle::lookup(const StringRef key) const
 {
   const BundleItemValue *item = this->lookup(key);
+  if (!item) {
+    return std::nullopt;
+  }
+  return item->as<T>();
+}
+
+template<typename T> inline std::optional<T> Bundle::lookup_path(const Span<StringRef> path) const
+{
+  const BundleItemValue *item = this->lookup_path(path);
   if (!item) {
     return std::nullopt;
   }

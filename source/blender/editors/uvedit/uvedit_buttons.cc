@@ -251,7 +251,7 @@ static void do_uvedit_vertex(bContext *C, void * /*arg*/, int event)
 
   WM_event_add_notifier(C, NC_IMAGE, sima->image);
   for (Object *obedit : objects) {
-    DEG_id_tag_update(static_cast<ID *>(obedit->data), ID_RECALC_GEOMETRY);
+    DEG_id_tag_update(obedit->data, ID_RECALC_GEOMETRY);
   }
 }
 
@@ -298,7 +298,7 @@ static void image_panel_uv(const bContext *C, Panel *panel)
 
 void ED_uvedit_buttons_register(ARegionType *art)
 {
-  PanelType *pt = MEM_callocN<PanelType>(__func__);
+  PanelType *pt = MEM_new_zeroed<PanelType>(__func__);
 
   STRNCPY_UTF8(pt->idname, "IMAGE_PT_uv");
   STRNCPY_UTF8(pt->label, N_("UV Vertex")); /* XXX C panels unavailable through RNA bpy.types! */

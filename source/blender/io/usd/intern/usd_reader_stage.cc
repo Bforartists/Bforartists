@@ -46,8 +46,9 @@
 
 #include "BLI_map.hh"
 #include "BLI_math_base.h"
-#include "BLI_math_matrix.h"
-#include "BLI_math_rotation.h"
+#include "BLI_math_euler_types.hh"
+#include "BLI_math_matrix.hh"
+#include "BLI_math_matrix_types.hh"
 #include "BLI_sort.hh"
 #include "BLI_string.h"
 
@@ -128,12 +129,7 @@ static void convert_to_z_up(pxr::UsdStageRefPtr stage, ImportSettings &settings)
   settings.do_convert_mat = true;
 
   /* Rotate 90 degrees about the X-axis. */
-  float rmat[3][3];
-  float axis[3] = {1.0f, 0.0f, 0.0f};
-  axis_angle_normalized_to_mat3(rmat, axis, M_PI_2);
-
-  unit_m4(settings.conversion_mat);
-  copy_m4_m3(settings.conversion_mat, rmat);
+  settings.conversion_mat = math::from_rotation<float4x4>(math::EulerXYZ(M_PI_2, 0.0f, 0.0f));
 }
 
 /**
@@ -650,7 +646,7 @@ void USDStageReader::import_all_materials(Main *bmain)
 
     settings_.mat_name_to_mat.add_new(new_mtl->id.name + 2, new_mtl);
 
-    if (params_.mtl_name_collision_mode == USD_MTL_NAME_COLLISION_MAKE_UNIQUE) {
+    if (params_.mtl_name_collision_mode == MtlNameCollisionMode::MakeUnique) {
       /* Record the Blender material we created for the USD material with the given path.
        * This is to prevent importing the material again when assigning materials to objects
        * elsewhere in the code. */

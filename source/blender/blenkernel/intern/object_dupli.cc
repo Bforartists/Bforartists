@@ -896,12 +896,12 @@ static void make_duplis_font(const DupliContext *ctx)
   }
 
   if (text_free) {
-    MEM_freeN(text);
+    MEM_delete(text);
   }
 
   BLI_ghash_free(family_gh, nullptr, nullptr);
 
-  MEM_freeN(chartransdata);
+  MEM_delete(chartransdata);
 }
 
 static const DupliGenerator gen_dupli_verts_font = {
@@ -1507,7 +1507,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
         FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
       }
 
-      oblist = MEM_calloc_arrayN<Object *>(totcollection, "dupcollection object list");
+      oblist = MEM_new_array_zeroed<Object *>(totcollection, "dupcollection object list");
 
       if (use_collection_count) {
         a = 0;
@@ -1705,7 +1705,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 
   /* Clean up. */
   if (oblist) {
-    MEM_freeN(oblist);
+    MEM_delete(oblist);
   }
 }
 
@@ -2096,7 +2096,7 @@ bool BKE_view_layer_find_rgba_attribute(const Scene *scene,
 {
   if (layer) {
     PointerRNA layer_ptr = RNA_pointer_create_discrete(
-        &const_cast<ID &>(scene->id), &RNA_ViewLayer, const_cast<ViewLayer *>(layer));
+        &const_cast<ID &>(scene->id), RNA_ViewLayer, const_cast<ViewLayer *>(layer));
 
     if (find_property_rgba(&layer_ptr, name, r_value)) {
       return true;

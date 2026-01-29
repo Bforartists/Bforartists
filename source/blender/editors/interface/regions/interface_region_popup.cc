@@ -398,7 +398,7 @@ static void ui_popup_block_position(wmWindow *window,
   }
 
   /* Keep a list of these, needed for pull-down menus. */
-  SafetyRect *saferct = MEM_new_for_free<SafetyRect>(__func__);
+  SafetyRect *saferct = MEM_new<SafetyRect>(__func__);
   saferct->parent = butrct;
   saferct->safety = block->safety;
   BLI_freelistN(&block->saferct);
@@ -631,8 +631,8 @@ struct PopupLayoutPanelStates {
   {
     for (LayoutPanelState &state : states.items_mutable()) {
       BLI_remlink(&states, &state);
-      MEM_freeN(state.idname);
-      MEM_freeN(&state);
+      MEM_delete(state.idname);
+      MEM_delete(&state);
     }
   }
 };
@@ -770,7 +770,7 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
   }
   else {
     /* Keep a list of these, needed for pull-down menus. */
-    SafetyRect *saferct = MEM_new_for_free<SafetyRect>(__func__);
+    SafetyRect *saferct = MEM_new<SafetyRect>(__func__);
     saferct->safety = block->safety;
     BLI_addhead(&block->saferct, saferct);
   }
@@ -844,9 +844,9 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     /* clip block with window boundary */
     ui_popup_block_clip(window, block);
 
-    /* Avoid menu moving down and losing cursor focus by keeping it at
-     * the same height. */
-    if (handle->refresh && handle->prev_block_rect.ymax > block->rect.ymax) {
+    /* Avoid menu moving down and losing cursor focus by keeping it at the same height when the
+     * popup is displaced down by at least one window unit. */
+    if (handle->refresh && (handle->prev_block_rect.ymax - block->rect.ymax) > 1.0f) {
       if (block->bounds_type != BLOCK_BOUNDS_POPUP_CENTER) {
         const float offset = handle->prev_block_rect.ymax - block->rect.ymax;
         block_translate(block, 0, offset);

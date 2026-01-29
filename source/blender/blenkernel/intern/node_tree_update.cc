@@ -939,9 +939,6 @@ class NodeTreeMainUpdater {
   static int get_socket_shape(const bNodeSocket &socket,
                               const bool use_inferred_structure_type = false)
   {
-    if (nodes::socket_type_always_single(socket.typeinfo->type)) {
-      return SOCK_DISPLAY_SHAPE_LINE;
-    }
     const SocketDeclaration *decl = socket.runtime->declaration;
     if (!decl) {
       return SOCK_DISPLAY_SHAPE_CIRCLE;
@@ -1964,15 +1961,15 @@ class NodeTreeMainUpdater {
       return false;
     }
 
-    MEM_SAFE_FREE(ntree.nested_node_refs);
+    MEM_SAFE_DELETE(ntree.nested_node_refs);
     if (new_path_by_id.is_empty()) {
       ntree.nested_node_refs_num = 0;
       return true;
     }
 
     /* Allocate new array for the nested node references contained in the node tree. */
-    bNestedNodeRef *new_refs = MEM_new_array_for_free<bNestedNodeRef>(
-        size_t(new_path_by_id.size()), __func__);
+    bNestedNodeRef *new_refs = MEM_new_array<bNestedNodeRef>(size_t(new_path_by_id.size()),
+                                                             __func__);
     int index = 0;
     for (const auto item : new_path_by_id.items()) {
       bNestedNodeRef &ref = new_refs[index];
@@ -2032,7 +2029,7 @@ class NodeTreeMainUpdater {
       bNodeTreeInterfacePanel *panel = reinterpret_cast<bNodeTreeInterfacePanel *>(item);
       if (bNodeTreeInterfaceSocket *toggle_socket = panel->header_toggle_socket()) {
         if (!STREQ(panel->name, toggle_socket->name)) {
-          MEM_SAFE_FREE(toggle_socket->name);
+          MEM_SAFE_DELETE(toggle_socket->name);
           toggle_socket->name = BLI_strdup_null(panel->name);
           changed = true;
         }

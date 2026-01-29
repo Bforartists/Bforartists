@@ -219,7 +219,7 @@ static bool find_isomorphism(UvElementMap *dest,
 
   GraphISO *graph_dest = build_iso_graph(dest, dest_island_index, cd_loop_uv_offset);
 
-  int (*solution)[2] = MEM_malloc_arrayN<int[2]>(graph_source->n, __func__);
+  int (*solution)[2] = MEM_new_array_uninitialized<int[2]>(graph_source->n, __func__);
   int solution_length = 0;
   const bool found = ED_uvedit_clipboard_maximum_common_subgraph(
       graph_source, graph_dest, solution, &solution_length, r_search_abandoned);
@@ -237,7 +237,7 @@ static bool find_isomorphism(UvElementMap *dest,
     }
   }
 
-  MEM_SAFE_FREE(solution);
+  MEM_SAFE_DELETE(solution);
   delete graph_dest;
   return found;
 }
@@ -353,7 +353,7 @@ static wmOperatorStatus uv_paste_exec(bContext *C, wmOperator *op)
     if (changed) {
       changed_multi = true;
 
-      DEG_id_tag_update(static_cast<ID *>(ob->data), ID_RECALC_GEOMETRY);
+      DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
     }
   }

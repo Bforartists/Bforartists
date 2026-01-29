@@ -162,7 +162,7 @@ static void image_copy_data(Main * /*bmain*/,
   copy_image_packedfiles(&image_dst->packedfiles, &image_src->packedfiles);
 
   image_dst->stereo3d_format = static_cast<Stereo3dFormat *>(
-      MEM_dupallocN(image_src->stereo3d_format));
+      MEM_dupalloc(image_src->stereo3d_format));
   BLI_duplicatelist(&image_dst->views, &image_src->views);
 
   /* Cleanup stuff that cannot be copied. */
@@ -203,7 +203,7 @@ static void image_free_data(ID *id)
   BLI_freelistN(&image->renderslots);
 
   BKE_image_free_views(image);
-  MEM_SAFE_FREE(image->stereo3d_format);
+  MEM_SAFE_DELETE(image->stereo3d_format);
 
   BKE_icon_id_delete(&image->id);
   BKE_previewimg_free(&image->preview);
@@ -295,7 +295,7 @@ static void image_foreach_path(ID *id, BPathForeachPathData *bpath_data)
         udim_pattern,
         tile_format,
         (static_cast<ImageTile *>(ima->tiles.first))->tile_number);
-    MEM_SAFE_FREE(udim_pattern);
+    MEM_SAFE_DELETE(udim_pattern);
 
     result = BKE_bpath_foreach_path_fixed_process(bpath_data, temp_path, sizeof(temp_path));
     if (result) {
@@ -351,7 +351,7 @@ static void image_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   }
 
   /* write LibData */
-  BLO_write_id_struct(writer, Image, id_address, &ima->id);
+  writer->write_id_struct(id_address, ima);
   BKE_id_blend_write(writer, &ima->id);
 
   for (ImagePackedFile &imapf : ima->packedfiles) {
@@ -366,11 +366,11 @@ static void image_blend_write(BlendWriter *writer, ID *id, const void *id_addres
   }
   writer->write_struct(ima->stereo3d_format);
 
-  BLO_write_struct_list(writer, ImageTile, &ima->tiles);
+  writer->write_struct_list(&ima->tiles);
 
   ima->packedfile = nullptr;
 
-  BLO_write_struct_list(writer, RenderSlot, &ima->renderslots);
+  writer->write_struct_list(&ima->renderslots);
 }
 
 static void image_blend_read_data(BlendDataReader *reader, ID *id)
@@ -392,7 +392,7 @@ static void image_blend_read_data(BlendDataReader *reader, ID *id)
       BKE_packedfile_blend_read(reader, &imapf.packedfile, imapf.filepath);
       if (!imapf.packedfile) {
         BLI_remlink(&ima->packedfiles, &imapf);
-        MEM_freeN(&imapf);
+        MEM_delete(&imapf);
       }
     }
     ima->packedfile = nullptr;
@@ -422,39 +422,36 @@ static void image_blend_read_after_liblink(BlendLibReader * /*reader*/, ID *id)
   }
 }
 
-constexpr IDTypeInfo get_type_info()
-{
-  IDTypeInfo info{};
-  info.id_code = ID_IM;
-  info.id_filter = FILTER_ID_IM;
-  info.dependencies_id_types = 0;
-  info.main_listbase_index = INDEX_ID_IM;
-  info.struct_size = sizeof(Image);
-  info.name = "Image";
-  info.name_plural = "images";
-  info.translation_context = BLT_I18NCONTEXT_ID_IMAGE;
-  info.flags = IDTYPE_FLAGS_NO_ANIMDATA | IDTYPE_FLAGS_APPEND_IS_REUSABLE;
-  info.asset_type_info = nullptr;
+IDTypeInfo IDType_ID_IM = {
+    /*id_code*/ Image::id_type,
+    /*id_filter*/ FILTER_ID_IM,
+    /*dependencies_id_types*/ 0,
+    /*main_listbase_index*/ INDEX_ID_IM,
+    /*struct_size*/ sizeof(Image),
+    /*name*/ "Image",
+    /*name_plural*/ "images",
+    /*translation_context*/ BLT_I18NCONTEXT_ID_IMAGE,
+    /*flags*/ IDTYPE_FLAGS_NO_ANIMDATA | IDTYPE_FLAGS_APPEND_IS_REUSABLE,
+    /*asset_type_info*/ nullptr,
 
-  info.init_data = image_init_data;
-  info.copy_data = image_copy_data;
-  info.free_data = image_free_data;
-  info.make_local = nullptr;
-  info.foreach_id = nullptr;
-  info.foreach_cache = image_foreach_cache;
-  info.foreach_path = image_foreach_path;
-  info.owner_pointer_get = nullptr;
+    /*init_data*/ image_init_data,
+    /*copy_data*/ image_copy_data,
+    /*free_data*/ image_free_data,
+    /*make_local*/ nullptr,
+    /*foreach_id*/ nullptr,
+    /*foreach_cache*/ image_foreach_cache,
+    /*foreach_path*/ image_foreach_path,
+    /*foreach_working_space_color*/ nullptr,
+    /*owner_pointer_get*/ nullptr,
 
-  info.blend_write = image_blend_write;
-  info.blend_read_data = image_blend_read_data;
-  info.blend_read_after_liblink = image_blend_read_after_liblink;
+    /*blend_write*/ image_blend_write,
+    /*blend_read_data*/ image_blend_read_data,
+    /*blend_read_after_liblink*/ image_blend_read_after_liblink,
 
-  info.blend_read_undo_preserve = nullptr;
+    /*blend_read_undo_preserve*/ nullptr,
 
-  info.lib_override_apply_post = nullptr;
-  return info;
-}
-IDTypeInfo IDType_ID_IM = get_type_info();
+    /*lib_override_apply_post*/ nullptr,
+};
 
 /* prototypes */
 static int image_num_viewfiles(Image *ima);
@@ -569,7 +566,7 @@ static void image_free_packedfiles(Image *ima)
       BKE_packedfile_free(imapf->packedfile);
     }
     BLI_remlink(&ima->packedfiles, imapf);
-    MEM_freeN(imapf);
+    MEM_delete(imapf);
   }
 }
 
@@ -592,7 +589,7 @@ static void image_free_anims(Image *ima)
       ia->anim = nullptr;
     }
     BLI_remlink(&ima->anims, ia);
-    MEM_freeN(ia);
+    MEM_delete(ia);
   }
 }
 
@@ -629,7 +626,7 @@ void BKE_image_free_data(Image *ima)
 
 static ImageTile *imagetile_alloc(int tile_number)
 {
-  ImageTile *tile = MEM_new_for_free<ImageTile>("Image Tile");
+  ImageTile *tile = MEM_new<ImageTile>("Image Tile");
   tile->tile_number = tile_number;
   tile->gen_x = 1024;
   tile->gen_y = 1024;
@@ -661,7 +658,7 @@ static void image_init(Image *ima, short source, short type)
   ima->runtime = MEM_new<bke::ImageRuntime>(__func__);
 
   BKE_color_managed_colorspace_settings_init(&ima->colorspace_settings);
-  ima->stereo3d_format = MEM_new_for_free<Stereo3dFormat>("Image Stereo Format");
+  ima->stereo3d_format = MEM_new<Stereo3dFormat>("Image Stereo Format");
 }
 
 static Image *image_alloc(Main *bmain,
@@ -725,7 +722,7 @@ static void copy_image_packedfiles(ListBaseT<ImagePackedFile> *lb_dst,
   for (imapf_src = static_cast<const ImagePackedFile *>(lb_src->first); imapf_src;
        imapf_src = imapf_src->next)
   {
-    ImagePackedFile *imapf_dst = MEM_new_for_free<ImagePackedFile>("Image Packed Files (copy)");
+    ImagePackedFile *imapf_dst = MEM_new<ImagePackedFile>("Image Packed Files (copy)");
 
     imapf_dst->view = imapf_src->view;
     imapf_dst->tile_number = imapf_src->tile_number;
@@ -1383,7 +1380,7 @@ static bool image_memorypack_imbuf(
   const int encoded_size = ibuf->encoded_size;
   PackedFile *pf = BKE_packedfile_new_from_memory(IMB_steal_encoded_buffer(ibuf), encoded_size);
 
-  imapf = MEM_new_for_free<ImagePackedFile>("Image PackedFile");
+  imapf = MEM_new<ImagePackedFile>("Image PackedFile");
   STRNCPY(imapf->filepath, filepath);
   imapf->packedfile = pf;
   imapf->view = view;
@@ -1475,7 +1472,7 @@ void BKE_image_packfiles(ReportList *reports, Image *ima, const char *basepath)
       char filepath[FILE_MAX];
       BKE_image_user_file_path(&iuser, ima, filepath);
 
-      ImagePackedFile *imapf = MEM_new_for_free<ImagePackedFile>("Image packed file");
+      ImagePackedFile *imapf = MEM_new<ImagePackedFile>("Image packed file");
       BLI_addtail(&ima->packedfiles, imapf);
 
       imapf->packedfile = BKE_packedfile_new(reports, filepath, basepath);
@@ -1505,7 +1502,7 @@ void BKE_image_packfiles_from_mem(ReportList *reports,
     BKE_report(reports, RPT_ERROR, "Cannot pack tiled images from raw data currently...");
   }
   else {
-    ImagePackedFile *imapf = MEM_new_for_free<ImagePackedFile>(__func__);
+    ImagePackedFile *imapf = MEM_new<ImagePackedFile>(__func__);
     BLI_addtail(&ima->packedfiles, imapf);
     imapf->packedfile = BKE_packedfile_new_from_memory(data, data_len);
     imapf->view = 0;
@@ -1515,6 +1512,39 @@ void BKE_image_packfiles_from_mem(ReportList *reports,
     /* The image should not be marked as "generated" since image data was provided. */
     ImageTile *base_tile = BKE_image_get_tile(ima, 0);
     base_tile->gen_flag &= ~IMA_GEN_TILE;
+  }
+}
+
+void BKE_image_packfile_ensure(
+    Main *bmain, Image *image, ReportList *reports, const char *data, const int data_len)
+{
+  const bool is_packed = BKE_image_has_packedfile(image);
+  const bool is_dirty = BKE_image_is_dirty(image);
+
+  if (is_packed && !is_dirty && !data) {
+    /* Image is already packed and considered unmodified, do not attempt to repack it, since:
+     * - Its original file may not be available anymore on the current FS.
+     * - Repacking from the current runtime buffer will force the packedfile format to OpenEXR or
+     *   PNG (see code of #image_memorypack_imbuf).
+     *
+     * See #152638.
+     */
+    return;
+  }
+
+  BKE_image_free_packedfiles(image);
+
+  if (data) {
+    char *data_dup = static_cast<char *>(
+        MEM_new_array_uninitialized(size_t(data_len), 1, __func__));
+    memcpy(data_dup, data, size_t(data_len));
+    BKE_image_packfiles_from_mem(reports, image, data_dup, size_t(data_len));
+  }
+  else if (is_dirty) {
+    BKE_image_memorypack(image);
+  }
+  else {
+    BKE_image_packfiles(reports, image, ID_BLEND_PATH(bmain, &image->id));
   }
 }
 
@@ -2315,7 +2345,7 @@ void BKE_render_result_stamp_info(Scene *scene,
   }
 
   if (!rr->stamp_data) {
-    stamp_data = MEM_callocN<StampData>("RenderResult.stamp_data");
+    stamp_data = MEM_new_zeroed<StampData>("RenderResult.stamp_data");
   }
   else {
     stamp_data = rr->stamp_data;
@@ -2340,7 +2370,7 @@ StampData *BKE_stamp_info_from_scene_static(const Scene *scene)
 
   /* Memory is allocated here (instead of by the caller) so that the caller
    * doesn't have to know the size of the StampData struct. */
-  stamp_data = MEM_callocN<StampData>(__func__);
+  stamp_data = MEM_new_zeroed<StampData>(__func__);
   stampdata(scene, nullptr, stamp_data, 0, false);
 
   return stamp_data;
@@ -2435,10 +2465,11 @@ void BKE_render_result_stamp_data(RenderResult *rr, const char *key, const char 
 {
   StampData *stamp_data;
   if (rr->stamp_data == nullptr) {
-    rr->stamp_data = MEM_callocN<StampData>("RenderResult.stamp_data");
+    rr->stamp_data = MEM_new_zeroed<StampData>("RenderResult.stamp_data");
   }
   stamp_data = rr->stamp_data;
-  StampDataCustomField *field = MEM_mallocN<StampDataCustomField>("StampData Custom Field");
+  StampDataCustomField *field = MEM_new_uninitialized<StampDataCustomField>(
+      "StampData Custom Field");
   STRNCPY_UTF8(field->key, key);
   field->value = BLI_strdup(value);
   BLI_addtail(&stamp_data->custom_fields, field);
@@ -2450,11 +2481,11 @@ StampData *BKE_stamp_data_copy(const StampData *stamp_data)
     return nullptr;
   }
 
-  StampData *stamp_datan = static_cast<StampData *>(MEM_dupallocN(stamp_data));
+  StampData *stamp_datan = MEM_dupalloc(stamp_data);
   BLI_duplicatelist(&stamp_datan->custom_fields, &stamp_data->custom_fields);
 
   for (StampDataCustomField &custom_fieldn : stamp_datan->custom_fields) {
-    custom_fieldn.value = static_cast<char *>(MEM_dupallocN(custom_fieldn.value));
+    custom_fieldn.value = MEM_dupalloc(custom_fieldn.value);
   }
 
   return stamp_datan;
@@ -2466,10 +2497,10 @@ void BKE_stamp_data_free(StampData *stamp_data)
     return;
   }
   for (StampDataCustomField &custom_field : stamp_data->custom_fields) {
-    MEM_freeN(custom_field.value);
+    MEM_delete(custom_field.value);
   }
   BLI_freelistN(&stamp_data->custom_fields);
-  MEM_freeN(stamp_data);
+  MEM_delete(stamp_data);
 }
 
 /* wrap for callback only */
@@ -2512,7 +2543,7 @@ static void metadata_copy_custom_fields(const char *field, const char *value, vo
 void BKE_stamp_info_from_imbuf(RenderResult *rr, ImBuf *ibuf)
 {
   if (rr->stamp_data == nullptr) {
-    rr->stamp_data = MEM_callocN<StampData>("RenderResult.stamp_data");
+    rr->stamp_data = MEM_new_zeroed<StampData>("RenderResult.stamp_data");
   }
   StampData *stamp_data = rr->stamp_data;
   IMB_metadata_ensure(&ibuf->metadata);
@@ -3063,7 +3094,7 @@ static bool image_remove_tile(Image *ima, ImageTile *tile)
 
   image_free_tile(ima, tile);
   BLI_remlink(&ima->tiles, tile);
-  MEM_freeN(tile);
+  MEM_delete(tile);
 
   return true;
 }
@@ -3136,7 +3167,7 @@ void BKE_image_signal(Main *bmain, Image *ima, ImageUser *iuser, int signal)
           char *udim_pattern = BKE_image_get_tile_strformat(ima->filepath, &tile_format);
           BKE_image_set_filepath_from_tile_number(
               ima->filepath, udim_pattern, tile_format, base_tile->tile_number);
-          MEM_freeN(udim_pattern);
+          MEM_delete(udim_pattern);
 
           if (was_relative) {
             const char *relbase = ID_BLEND_PATH(bmain, &ima->id);
@@ -3378,7 +3409,7 @@ bool BKE_image_get_tile_info(char *filepath,
     max_udim = max_ii(max_udim, id);
   }
   BLI_filelist_free(dirs, dirs_num);
-  MEM_SAFE_FREE(udim_pattern);
+  MEM_SAFE_DELETE(udim_pattern);
 
   if (all_valid_udim && min_udim <= IMA_UDIM_MAX) {
     BLI_path_join(filepath, FILE_MAX, dirname, filename);
@@ -3602,7 +3633,7 @@ bool BKE_image_tile_filepath_exists(const char *filepath)
     break;
   }
   BLI_filelist_free(dirs, dirs_num);
-  MEM_SAFE_FREE(udim_pattern);
+  MEM_SAFE_DELETE(udim_pattern);
 
   return found;
 }
@@ -3782,7 +3813,7 @@ static void image_init_multilayer_multiview(Image *ima, RenderResult *rr)
 
   if (rr) {
     for (RenderView &rv : rr->views) {
-      ImageView *iv = MEM_new_for_free<ImageView>("Viewer Image View");
+      ImageView *iv = MEM_new<ImageView>("Viewer Image View");
       STRNCPY_UTF8(iv->name, rv.name);
       BLI_addtail(&ima->views, iv);
     }
@@ -3893,7 +3924,7 @@ void BKE_image_backup_render(Scene *scene, Image *ima, bool free_current_slot)
 
 static void image_add_view(Image *ima, const char *viewname, const char *filepath)
 {
-  ImageView *iv = MEM_new_for_free<ImageView>("Viewer Image View");
+  ImageView *iv = MEM_new<ImageView>("Viewer Image View");
   STRNCPY_UTF8(iv->name, viewname);
   STRNCPY(iv->filepath, filepath);
 
@@ -4103,7 +4134,7 @@ static ImBuf *image_load_movie_file(Image *ima, ImageUser *iuser, int frame)
 
     for (int i = 0; i < tot_viewfiles; i++) {
       /* allocate the ImageAnim */
-      ImageAnim *ia = MEM_new_for_free<ImageAnim>("Image Anim");
+      ImageAnim *ia = MEM_new<ImageAnim>("Image Anim");
       BLI_addtail(&ima->anims, ia);
     }
   }
@@ -4223,7 +4254,7 @@ static ImBuf *load_image_single(Image *ima,
 
       /* Make packed file for auto-pack. */
       if (!is_sequence && (has_packed == false) && (G.fileflags & G_FILE_AUTOPACK)) {
-        ImagePackedFile *imapf = MEM_new_for_free<ImagePackedFile>("Image Pack-file");
+        ImagePackedFile *imapf = MEM_new<ImagePackedFile>("Image Pack-file");
         BLI_addtail(&ima->packedfiles, imapf);
 
         STRNCPY(imapf->filepath, filepath);
@@ -5206,7 +5237,7 @@ void BKE_image_user_file_path_ex(const Main *bmain,
       eUDIM_TILE_FORMAT tile_format;
       char *udim_pattern = BKE_image_get_tile_strformat(filepath, &tile_format);
       BKE_image_set_filepath_from_tile_number(filepath, udim_pattern, tile_format, index);
-      MEM_SAFE_FREE(udim_pattern);
+      MEM_SAFE_DELETE(udim_pattern);
     }
   }
 
@@ -5294,7 +5325,7 @@ uchar *BKE_image_get_pixels_for_frame(Image *image, int frame, int tile)
     pixels = ibuf->byte_buffer.data;
 
     if (pixels) {
-      pixels = static_cast<uchar *>(MEM_dupallocN(pixels));
+      pixels = MEM_dupalloc(pixels);
     }
 
     BKE_image_release_ibuf(image, ibuf, lock);
@@ -5324,7 +5355,7 @@ float *BKE_image_get_float_pixels_for_frame(Image *image, int frame, int tile)
     pixels = ibuf->float_buffer.data;
 
     if (pixels) {
-      pixels = static_cast<float *>(MEM_dupallocN(pixels));
+      pixels = MEM_dupalloc(pixels);
     }
 
     BKE_image_release_ibuf(image, ibuf, lock);
@@ -5558,7 +5589,7 @@ static void image_update_views_format(Image *ima, ImageUser *iuser)
         ImageView *iv_del = iv;
         iv = iv->prev;
         BLI_remlink(&ima->views, iv_del);
-        MEM_freeN(iv_del);
+        MEM_delete(iv_del);
       }
       else {
         iv = iv->prev;
@@ -5581,7 +5612,7 @@ static void image_update_views_format(Image *ima, ImageUser *iuser)
 
 RenderSlot *BKE_image_add_renderslot(Image *ima, const char *name)
 {
-  RenderSlot *slot = MEM_new_for_free<RenderSlot>("Image new Render Slot");
+  RenderSlot *slot = MEM_new<RenderSlot>("Image new Render Slot");
   if (name && name[0]) {
     STRNCPY_UTF8(slot->name, name);
   }
@@ -5656,7 +5687,7 @@ bool BKE_image_remove_renderslot(Image *ima, ImageUser *iuser, int slot)
   if (remove_slot->render) {
     RE_FreeRenderResult(remove_slot->render);
   }
-  MEM_freeN(remove_slot);
+  MEM_delete(remove_slot);
 
   return true;
 }

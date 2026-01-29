@@ -196,7 +196,7 @@ static BPyPropStore *bpy_prop_py_data_ensure(PropertyRNA *prop)
 {
   BPyPropStore *prop_store = static_cast<BPyPropStore *>(RNA_property_py_data_get(prop));
   if (prop_store == nullptr) {
-    prop_store = MEM_callocN<BPyPropStore>(__func__);
+    prop_store = MEM_new_zeroed<BPyPropStore>(__func__);
     RNA_def_py_data(prop, prop_store);
     BLI_addtail(&g_bpy_prop_store_list, prop_store);
   }
@@ -2055,7 +2055,6 @@ static bool bpy_prop_string_visit_fn_call(
         nullptr,
     };
     static _PyArg_Parser _parser = {
-        PY_ARG_PARSER_HEAD_COMPAT()
         "s" /* `text` */
         "s" /* `info` */
         ":search",
@@ -2507,7 +2506,7 @@ static const EnumPropertyItem *enum_items_from_py(PyObject *seq_fast,
   /* blank value */
   *r_default_value = 0;
 
-  items = MEM_calloc_arrayN<EnumPropertyItem>(size_t(seq_len) + 1, "enum_items_from_py1");
+  items = MEM_new_array_zeroed<EnumPropertyItem>(size_t(seq_len) + 1, "enum_items_from_py1");
 
   for (i = 0; i < seq_len; i++) {
     EnumPropertyItem tmp = {0, "", 0, "", ""};
@@ -2571,7 +2570,7 @@ static const EnumPropertyItem *enum_items_from_py(PyObject *seq_fast,
       items[i].identifier = "";
     }
     else {
-      MEM_freeN(items);
+      MEM_delete(items);
       PyErr_SetString(PyExc_TypeError,
                       "EnumProperty(...): expected a tuple containing "
                       "(identifier, name, description) and optionally an "
@@ -2583,7 +2582,7 @@ static const EnumPropertyItem *enum_items_from_py(PyObject *seq_fast,
   if (is_enum_flag) {
     /* strict check that all set members were used */
     if (default_py && default_used != PySet_GET_SIZE(default_py)) {
-      MEM_freeN(items);
+      MEM_delete(items);
 
       PyErr_Format(PyExc_TypeError,
                    "EnumProperty(..., default={...}): set has %d unused member(s)",
@@ -2593,7 +2592,7 @@ static const EnumPropertyItem *enum_items_from_py(PyObject *seq_fast,
   }
   else {
     if (default_py && default_used == 0) {
-      MEM_freeN(items);
+      MEM_delete(items);
 
       if (default_str_cmp) {
         PyErr_Format(PyExc_TypeError,
@@ -2613,9 +2612,9 @@ static const EnumPropertyItem *enum_items_from_py(PyObject *seq_fast,
   /* This would all work perfectly _but_ the python strings may be freed immediately after use,
    * so we need to duplicate them, ugh. annoying because it works most of the time without this. */
   {
-    EnumPropertyItem *items_dup = MEM_mallocN((sizeof(EnumPropertyItem) * (seq_len + 1)) +
-                                                  (sizeof(char) * totbuf),
-                                              "enum_items_from_py2");
+    EnumPropertyItem *items_dup = MEM_new_uninitialized(
+        (sizeof(EnumPropertyItem) * (seq_len + 1)) + (sizeof(char) * totbuf),
+        "enum_items_from_py2");
     EnumPropertyItem *items_ptr = items_dup;
     char *buf = ((char *)items_dup) + (sizeof(EnumPropertyItem) * (seq_len + 1));
     memcpy(items_dup, items, sizeof(EnumPropertyItem) * (seq_len + 1));
@@ -2624,7 +2623,7 @@ static const EnumPropertyItem *enum_items_from_py(PyObject *seq_fast,
       buf += strswapbufcpy(buf, &items_ptr->name);
       buf += strswapbufcpy(buf, &items_ptr->description);
     }
-    MEM_freeN(items);
+    MEM_delete(items);
     items = items_dup;
   }
 /* end string duplication */
@@ -3607,7 +3606,6 @@ static PyObject *BPy_BoolProperty(PyObject *self, PyObject *args, PyObject *kw)
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "|$" /* Optional, keyword only arguments. */
       "s"  /* `name` */
@@ -3792,7 +3790,6 @@ static PyObject *BPy_BoolVectorProperty(PyObject *self, PyObject *args, PyObject
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "|$" /* Optional, keyword only arguments. */
       "s"  /* `name` */
@@ -3988,7 +3985,6 @@ static PyObject *BPy_IntProperty(PyObject *self, PyObject *args, PyObject *kw)
       "set",      "get_transform", "set_transform", nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "|$" /* Optional, keyword only arguments. */
       "s"  /* `name` */
@@ -4178,7 +4174,6 @@ static PyObject *BPy_IntVectorProperty(PyObject *self, PyObject *args, PyObject 
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "|$" /* Optional, keyword only arguments. */
       "s"  /* `name` */
@@ -4395,7 +4390,6 @@ static PyObject *BPy_FloatProperty(PyObject *self, PyObject *args, PyObject *kw)
       "set_transform", nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "|$" /* Optional, keyword only arguments. */
       "s"  /* `name` */
@@ -4597,7 +4591,6 @@ static PyObject *BPy_FloatVectorProperty(PyObject *self, PyObject *args, PyObjec
       "get_transform", "set_transform", nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "|$" /* Optional, keyword only arguments. */
       "s"  /* `name` */
@@ -4832,7 +4825,6 @@ static PyObject *BPy_StringProperty(PyObject *self, PyObject *args, PyObject *kw
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "|$" /* Optional, keyword only arguments. */
       "s"  /* `name` */
@@ -5077,7 +5069,6 @@ static PyObject *BPy_EnumProperty(PyObject *self, PyObject *args, PyObject *kw)
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "O"  /* `items` */
       "|$" /* Optional, keyword only arguments. */
@@ -5221,7 +5212,7 @@ static PyObject *BPy_EnumProperty(PyObject *self, PyObject *args, PyObject *kw)
      * otherwise if this is a generator it may free the strings before we copy them */
     Py_DECREF(items_fast);
 
-    MEM_freeN(eitems);
+    MEM_delete(eitems);
   }
 
   Py_RETURN_NONE;
@@ -5326,7 +5317,6 @@ PyObject *BPy_PointerProperty(PyObject *self, PyObject *args, PyObject *kw)
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "O"  /* `type` */
       "|$" /* Optional, keyword only arguments. */
@@ -5367,11 +5357,11 @@ PyObject *BPy_PointerProperty(PyObject *self, PyObject *args, PyObject *kw)
   if (!ptype) {
     return nullptr;
   }
-  if (!RNA_struct_is_a(ptype, &RNA_PropertyGroup) && !RNA_struct_is_ID(ptype)) {
+  if (!RNA_struct_is_a(ptype, RNA_PropertyGroup) && !RNA_struct_is_ID(ptype)) {
     PyErr_Format(PyExc_TypeError,
                  "PointerProperty(...) expected an RNA type derived from %.200s or %.200s",
-                 RNA_struct_ui_name(&RNA_ID),
-                 RNA_struct_ui_name(&RNA_PropertyGroup));
+                 RNA_struct_ui_name(RNA_ID),
+                 RNA_struct_ui_name(RNA_PropertyGroup));
     return nullptr;
   }
   if (bpy_prop_callback_check(update_fn, "update", 2) == -1) {
@@ -5401,7 +5391,7 @@ PyObject *BPy_PointerProperty(PyObject *self, PyObject *args, PyObject *kw)
   }
 
   if (RNA_struct_idprops_contains_datablock(ptype)) {
-    if (RNA_struct_is_a(srna, &RNA_PropertyGroup)) {
+    if (RNA_struct_is_a(srna, RNA_PropertyGroup)) {
       RNA_def_struct_flag(srna, STRUCT_CONTAINS_DATABLOCK_IDPROPERTIES);
     }
   }
@@ -5473,7 +5463,6 @@ PyObject *BPy_CollectionProperty(PyObject *self, PyObject *args, PyObject *kw)
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "O&" /* `attr` */
       "O"  /* `type` */
       "|$" /* Optional, keyword only arguments. */
@@ -5511,10 +5500,10 @@ PyObject *BPy_CollectionProperty(PyObject *self, PyObject *args, PyObject *kw)
     return nullptr;
   }
 
-  if (!RNA_struct_is_a(ptype, &RNA_PropertyGroup)) {
+  if (!RNA_struct_is_a(ptype, RNA_PropertyGroup)) {
     PyErr_Format(PyExc_TypeError,
                  "CollectionProperty(...) expected an RNA type derived from %.200s",
-                 RNA_struct_ui_name(&RNA_PropertyGroup));
+                 RNA_struct_ui_name(RNA_PropertyGroup));
     return nullptr;
   }
 
@@ -5538,7 +5527,7 @@ PyObject *BPy_CollectionProperty(PyObject *self, PyObject *args, PyObject *kw)
   }
 
   if (RNA_struct_idprops_contains_datablock(ptype)) {
-    if (RNA_struct_is_a(srna, &RNA_PropertyGroup)) {
+    if (RNA_struct_is_a(srna, RNA_PropertyGroup)) {
       RNA_def_struct_flag(srna, STRUCT_CONTAINS_DATABLOCK_IDPROPERTIES);
     }
   }
@@ -5596,7 +5585,6 @@ static PyObject *BPy_RemoveProperty(PyObject *self, PyObject *args, PyObject *kw
       nullptr,
   };
   static _PyArg_Parser _parser = {
-      PY_ARG_PARSER_HEAD_COMPAT()
       "s" /* `attr` */
       ":RemoveProperty",
       _keywords,

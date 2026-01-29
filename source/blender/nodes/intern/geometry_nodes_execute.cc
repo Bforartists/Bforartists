@@ -13,6 +13,7 @@
 #include "BLI_string.h"
 
 #include "NOD_geometry.hh"
+#include "NOD_geometry_nodes_bundle.hh"
 #include "NOD_geometry_nodes_execute.hh"
 #include "NOD_geometry_nodes_lazy_function.hh"
 #include "NOD_menu_value.hh"
@@ -70,7 +71,7 @@ static void id_property_int_update_enum_items(const bNodeSocketValueMenu *value,
   if (value->enum_items && !value->enum_items->items.is_empty()) {
     const Span<bke::RuntimeNodeEnumItem> items = value->enum_items->items;
     idprop_items_num = items.size();
-    idprop_items = MEM_new_array_for_free<IDPropertyUIDataEnumItem>(items.size(), __func__);
+    idprop_items = MEM_new_array<IDPropertyUIDataEnumItem>(items.size(), __func__);
     for (const int i : items.index_range()) {
       const bke::RuntimeNodeEnumItem &item = items[i];
       IDPropertyUIDataEnumItem &idprop_item = idprop_items[i];
@@ -89,7 +90,7 @@ static void id_property_int_update_enum_items(const bNodeSocketValueMenu *value,
    * int value. */
   if (idprop_items_num == 0) {
     idprop_items_num = 1;
-    idprop_items = MEM_new_array_for_free<IDPropertyUIDataEnumItem>(1, __func__);
+    idprop_items = MEM_new_array<IDPropertyUIDataEnumItem>(1, __func__);
     idprop_items->value = 0;
     idprop_items->identifier = BLI_strdup("DUMMY");
     idprop_items->name = BLI_strdup("");
@@ -165,7 +166,8 @@ std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter> id_property_create_f
       ui_data->base.rna_subtype = value->subtype;
       ui_data->soft_min = double(value->min);
       ui_data->soft_max = double(value->max);
-      ui_data->default_array = MEM_malloc_arrayN<double>(value->dimensions, "mod_prop_default");
+      ui_data->default_array = MEM_new_array_uninitialized<double>(value->dimensions,
+                                                                   "mod_prop_default");
       ui_data->default_array_len = value->dimensions;
       for (const int i : IndexRange(value->dimensions)) {
         ui_data->default_array[i] = double(value->value[i]);
@@ -181,7 +183,7 @@ std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter> id_property_create_f
       IDPropertyUIDataFloat *ui_data = reinterpret_cast<IDPropertyUIDataFloat *>(
           IDP_ui_data_ensure(property.get()));
       ui_data->base.rna_subtype = PROP_COLOR;
-      ui_data->default_array = MEM_malloc_arrayN<double>(4, __func__);
+      ui_data->default_array = MEM_new_array_uninitialized<double>(4, __func__);
       ui_data->default_array_len = 4;
       ui_data->min = 0.0;
       ui_data->max = FLT_MAX;
@@ -805,9 +807,10 @@ static Vector<OutputAttributeToStore> compute_attributes_to_store(
             component_type,
             domain,
             output_info.name,
-            GMutableSpan{type,
-                         MEM_mallocN_aligned(type.size * domain_size, type.alignment, __func__),
-                         domain_size}};
+            GMutableSpan{
+                type,
+                MEM_new_uninitialized_aligned(type.size * domain_size, type.alignment, __func__),
+                domain_size}};
         fn::GField field = validator.validate_field_if_necessary(output_info.field);
         field_evaluator.add_with_destination(std::move(field), store.data);
         attributes_to_store.append(store);
@@ -856,7 +859,7 @@ static void store_computed_output_attributes(
 
     /* We were unable to reuse the data, so it must be destructed and freed. */
     store.data.type().destruct_n(store.data.data(), store.data.size());
-    MEM_freeN(store.data.data());
+    MEM_delete_void(store.data.data());
   }
 }
 
@@ -1002,6 +1005,12 @@ bke::GeometrySet execute_geometry_nodes_on_geometry(const bNodeTree &btree,
     }
   }
 
+  if (output_geometry.has_bundle()) {
+    /* Ensure that the bundle data is properly owned by the geometry. Do not call this in the
+     * geometry itself because it may just be referenced during modifier evaluation and an
+     * unnecessary copy can be avoided. See #GeometryOwnershipType::Editable. */
+    output_geometry.bundle_for_write().ensure_owns_direct_data();
+  }
   return output_geometry;
 }
 

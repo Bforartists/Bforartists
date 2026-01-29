@@ -49,7 +49,7 @@ class ArrayDataImplicitSharing : public ImplicitSharingInfo {
   {
     if (data_ != nullptr) {
       type_.destruct_n(data_, size_);
-      MEM_freeN(data_);
+      MEM_delete_void(data_);
     }
     MEM_delete(this);
   }
@@ -57,7 +57,7 @@ class ArrayDataImplicitSharing : public ImplicitSharingInfo {
   void delete_data_only() override
   {
     type_.destruct_n(data_, size_);
-    MEM_freeN(data_);
+    MEM_delete_void(data_);
     data_ = nullptr;
     size_ = 0;
   }
@@ -72,10 +72,11 @@ Attribute::ArrayData Attribute::ArrayData::from_value(const GPointer &value,
 
   /* Prefer `calloc` to zeroing after allocation since it is faster. */
   if (BLI_memory_is_zero(value_ptr, type.size)) {
-    data.data = MEM_calloc_arrayN_aligned(domain_size, type.size, type.alignment, __func__);
+    data.data = MEM_new_array_zeroed_aligned(domain_size, type.size, type.alignment, __func__);
   }
   else {
-    data.data = MEM_malloc_arrayN_aligned(domain_size, type.size, type.alignment, __func__);
+    data.data = MEM_new_array_uninitialized_aligned(
+        domain_size, type.size, type.alignment, __func__);
     type.fill_construct_n(value_ptr, data.data, domain_size);
   }
 
@@ -85,25 +86,31 @@ Attribute::ArrayData Attribute::ArrayData::from_value(const GPointer &value,
   return data;
 }
 
+static GPointer default_value_for_type(const CPPType &type)
+{
+  if (type.is<ColorGeometry4f>()) {
+    static constexpr ColorGeometry4f default_color(1.0f, 1.0f, 1.0f, 1.0f);
+    return GPointer(type, &default_color);
+  }
+  if (type.is<ColorGeometry4b>()) {
+    static constexpr ColorGeometry4b default_color(255, 255, 255, 255);
+    return GPointer(type, &default_color);
+  }
+  return GPointer(type, type.default_value());
+}
+
 Attribute::ArrayData Attribute::ArrayData::from_default_value(const CPPType &type,
                                                               const int64_t domain_size)
 {
-  if (type.is<ColorGeometry4f>()) {
-    constexpr ColorGeometry4f default_color(1.0f, 1.0f, 1.0f, 1.0f);
-    return from_value(GPointer(type, &default_color), domain_size);
-  }
-  if (type.is<ColorGeometry4b>()) {
-    constexpr ColorGeometry4b default_color(255, 255, 255, 255);
-    return from_value(GPointer(type, &default_color), domain_size);
-  }
-  return from_value(GPointer(type, type.default_value()), domain_size);
+  return from_value(default_value_for_type(type), domain_size);
 }
 
 Attribute::ArrayData Attribute::ArrayData::from_uninitialized(const CPPType &type,
                                                               const int64_t domain_size)
 {
   Attribute::ArrayData data{};
-  data.data = MEM_malloc_arrayN_aligned(domain_size, type.size, type.alignment, __func__);
+  data.data = MEM_new_array_uninitialized_aligned(
+      domain_size, type.size, type.alignment, __func__);
   data.size = domain_size;
   BLI_assert(type.is_trivially_destructible);
   data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.data));
@@ -122,7 +129,7 @@ Attribute::SingleData Attribute::SingleData::from_value(const GPointer &value)
 {
   Attribute::SingleData data{};
   const CPPType &type = *value.type();
-  data.value = MEM_mallocN_aligned(type.size, type.alignment, __func__);
+  data.value = MEM_new_uninitialized_aligned(type.size, type.alignment, __func__);
   type.copy_construct(value.get(), data.value);
   BLI_assert(type.is_trivially_destructible);
   data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.value));
@@ -131,37 +138,7 @@ Attribute::SingleData Attribute::SingleData::from_value(const GPointer &value)
 
 Attribute::SingleData Attribute::SingleData::from_default_value(const CPPType &type)
 {
-  return from_value(GPointer(type, type.default_value()));
-}
-
-void AttributeStorage::foreach(FunctionRef<void(Attribute &)> fn)
-{
-  for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
-    fn(*attribute);
-  }
-}
-void AttributeStorage::foreach(FunctionRef<void(const Attribute &)> fn) const
-{
-  for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
-    fn(*attribute);
-  }
-}
-
-void AttributeStorage::foreach_with_stop(FunctionRef<bool(Attribute &)> fn)
-{
-  for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
-    if (!fn(*attribute)) {
-      break;
-    }
-  }
-}
-void AttributeStorage::foreach_with_stop(FunctionRef<bool(const Attribute &)> fn) const
-{
-  for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
-    if (!fn(*attribute)) {
-      break;
-    }
-  }
+  return from_value(default_value_for_type(type));
 }
 
 AttrStorageType Attribute::storage_type() const
@@ -218,9 +195,9 @@ AttributeStorage::AttributeStorage(const AttributeStorage &other)
   this->dna_attributes_num = 0;
   this->runtime = MEM_new<AttributeStorageRuntime>(__func__);
   this->runtime->attributes.reserve(other.runtime->attributes.size());
-  other.foreach([&](const Attribute &attribute) {
+  for (const Attribute &attribute : other) {
     this->runtime->attributes.add_new(std::make_unique<Attribute>(attribute));
-  });
+  }
 }
 
 AttributeStorage &AttributeStorage::operator=(const AttributeStorage &other)
@@ -336,9 +313,9 @@ void AttributeStorage::rename(const StringRef old_name, std::string new_name)
 
 void AttributeStorage::resize(const AttrDomain domain, const int64_t new_size)
 {
-  this->foreach([&](Attribute &attr) {
+  for (Attribute &attr : *this) {
     if (attr.domain() != domain) {
-      return;
+      continue;
     }
     const CPPType &type = attribute_type_to_cpp_type(attr.data_type());
     switch (attr.storage_type()) {
@@ -354,12 +331,13 @@ void AttributeStorage::resize(const AttrDomain domain, const int64_t new_size)
         }
 
         attr.assign_data(std::move(new_data));
+        break;
       }
       case bke::AttrStorageType::Single: {
-        return;
+        break;
       }
     }
-  });
+  }
 }
 
 static void read_array_data(BlendDataReader &reader,
@@ -503,7 +481,7 @@ void AttributeStorage::blend_read(BlendDataReader &reader)
   for (const int i : IndexRange(this->dna_attributes_num)) {
     blender::Attribute &dna_attr = this->dna_attributes[i];
     BLO_read_string(&reader, &dna_attr.name);
-    BLI_SCOPED_DEFER([&]() { MEM_SAFE_FREE(dna_attr.name); });
+    BLI_SCOPED_DEFER([&]() { MEM_SAFE_DELETE(dna_attr.name); });
 
     const std::optional<AttrDomain> domain = read_attr_domain(dna_attr.domain);
     if (!domain) {
@@ -512,7 +490,7 @@ void AttributeStorage::blend_read(BlendDataReader &reader)
 
     std::optional<Attribute::DataVariant> data = read_attr_data(
         reader, dna_attr.storage_type, dna_attr.data_type, dna_attr);
-    BLI_SCOPED_DEFER([&]() { MEM_SAFE_FREE(dna_attr.data); });
+    BLI_SCOPED_DEFER([&]() { MEM_SAFE_DELETE_VOID(dna_attr.data); });
     if (!data) {
       continue;
     }
@@ -529,7 +507,7 @@ void AttributeStorage::blend_read(BlendDataReader &reader)
   }
 
   /* These fields are not used at runtime. */
-  MEM_SAFE_FREE(this->dna_attributes);
+  MEM_SAFE_DELETE(this->dna_attributes);
   this->dna_attributes_num = 0;
 }
 
@@ -577,8 +555,7 @@ static void write_array_data(BlendWriter &writer,
       BLO_write_float_array(&writer, size * 4, static_cast<const float *>(data));
       break;
     case AttrType::String:
-      BLO_write_struct_array(
-          &writer, MStringProperty, size, static_cast<const MStringProperty *>(data));
+      writer.write_struct_array_cast<MStringProperty>(size, data);
       break;
   }
 }
@@ -586,7 +563,7 @@ static void write_array_data(BlendWriter &writer,
 void attribute_storage_blend_write_prepare(AttributeStorage &data,
                                            AttributeStorage::BlendWriteData &write_data)
 {
-  data.foreach([&](Attribute &attr) {
+  for (Attribute &attr : data) {
     blender::Attribute attribute_dna{};
     attribute_dna.name = attr.name().c_str();
     attribute_dna.data_type = int16_t(attr.data_type());
@@ -615,7 +592,7 @@ void attribute_storage_blend_write_prepare(AttributeStorage &data,
     }
 
     write_data.attributes.append(attribute_dna);
-  });
+  }
   data.runtime = nullptr;
 }
 

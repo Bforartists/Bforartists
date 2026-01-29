@@ -5,68 +5,17 @@
 """
 This file does not run anything, its methods are accessed for tests by ``run_blender_setup.py``.
 """
-
-
-def _test_window(windows_exclude=None):
-    import bpy
-    wm = bpy.data.window_managers[0]
-    if windows_exclude is None:
-        return wm.windows[0]
-    for window in wm.windows:
-        if window not in windows_exclude:
-            return window
-    return None
-
-
-def _test_vars(window):
-    import unittest
-    from modules.easy_keys import EventGenerate
-    return (
-        EventGenerate(window),
-        unittest.TestCase(),
-    )
-
-
-def _call_by_name(e, text: str):
-    yield e.f3()
-    yield e.text(text)
-    yield e.ret()
-
-
-def _call_menu(e, text: str):
-    yield e.f3()
-    yield e.text_unicode(text.replace(" -> ", " \u25b8 "))
-    yield e.ret()
-
-
-def _cursor_position_from_area(area):
-    return (
-        area.x + area.width // 2,
-        area.y + area.height // 2,
-    )
-
-
-def _window_area_get_by_type(window, space_type):
-    for area in window.screen.areas:
-        if area.type == space_type:
-            return area
-
-
-def _cursor_position_from_spacetype(window, space_type):
-    area = _window_area_get_by_type(window, space_type)
-    if area is None:
-        raise Exception("Space Type {!r} not found".format(space_type))
-    return _cursor_position_from_area(area)
+import modules.ui_test_utils as ui
 
 
 def asset_shelf_brush_selection():
-    e, t = _test_vars(window := _test_window())
+    e, t, window = ui.test_window()
 
     yield e.shift.f5()                              # 3D Viewport.
     yield e.ctrl.alt.space()                        # Full-screen.
     yield e.ctrl.tab().s()                          # Sculpt via pie menu.
 
-    area = _window_area_get_by_type(window, 'VIEW_3D')
+    area = ui.get_window_area_by_type(window, 'VIEW_3D')
     # We use this hardcoded area percent position because the asset shelf is very large, this centers the cursor
     # in the correct position.
     position = (area.x + int(area.width * 0.30), area.y + area.height // 2)
@@ -131,17 +80,17 @@ def _num_fully_masked_vertices():
 
 
 def mask_expand_and_invert():
-    e, t = _test_vars(window := _test_window())
+    e, t, window = ui.test_window()
     yield from _view3d_startup_area_maximized(e)
 
-    yield from _call_menu(e, "Add -> Mesh -> Monkey")
+    yield from ui.call_menu(e, "Add -> Mesh -> Monkey")
     yield e.numpad_period()                                     # View monkey
 
     yield from _subdivide_mesh(e, 3)
 
     yield e.ctrl.tab().s()                                      # Sculpt via pie menu.
 
-    area = _window_area_get_by_type(window, 'VIEW_3D')
+    area = ui.get_window_area_by_type(window, 'VIEW_3D')
     position = (area.x + area.width // 2, area.y + area.height // 2)
     yield e.cursor_position_set(*position, move=True)           # Move mouse to center
 
@@ -164,3 +113,53 @@ def mask_expand_and_invert():
     mesh = bpy.context.object.data
     total_verts = mesh.attributes.domain_size('POINT')
     t.assertEqual(initial_masked_verts + inverted_masked_verts, total_verts)
+
+
+def _num_matching_face_set(face_set_id):
+    import bpy
+    import numpy as np
+
+    mesh = bpy.context.object.data
+
+    if not mesh.attributes.get('.sculpt_face_set'):
+        return 0
+
+    face_set_attr = mesh.attributes['.sculpt_face_set']
+
+    num_faces = mesh.attributes.domain_size('FACE')
+
+    face_set_data = np.zeros(num_faces, dtype=np.int32)
+    face_set_attr.data.foreach_get('value', face_set_data)
+
+    return np.count_nonzero(face_set_data == face_set_id)
+
+
+def face_set_expand():
+    import bpy
+    e, t, window = ui.test_window()
+    yield from _view3d_startup_area_maximized(e)
+
+    yield from ui.call_menu(e, "Add -> Mesh -> Monkey")
+    yield e.numpad_period()                                     # View monkey
+
+    yield from _subdivide_mesh(e, 3)
+
+    yield e.ctrl.tab().s()                                      # Sculpt via pie menu.
+
+    area = ui.get_window_area_by_type(window, 'VIEW_3D')
+    position = (area.x + area.width // 2, area.y + area.height // 2)
+    yield e.cursor_position_set(*position, move=True)           # Move mouse to center
+
+    yield e.shift.w()                                           # Expand operator
+
+    yield from _cursor_motion_data_x(e, position, 200)
+    e.leftmouse.tap()
+    yield
+
+    non_default_faces = _num_matching_face_set(2)
+    t.assertEqual(non_default_faces, 8682)
+
+    default_faces = _num_matching_face_set(1)
+    mesh = bpy.context.object.data
+    num_faces = mesh.attributes.domain_size('FACE')
+    t.assertEqual(default_faces + non_default_faces, num_faces)

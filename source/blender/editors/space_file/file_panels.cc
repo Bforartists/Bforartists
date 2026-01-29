@@ -103,7 +103,7 @@ void file_tool_props_region_panels_register(ARegionType *art)
 {
   PanelType *pt;
 
-  pt = MEM_callocN<PanelType>("spacetype file operator properties");
+  pt = MEM_new_zeroed<PanelType>("spacetype file operator properties");
   STRNCPY_UTF8(pt->idname, "FILE_PT_operator");
   STRNCPY_UTF8(pt->label, N_("Operator"));
   STRNCPY_UTF8(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
@@ -153,7 +153,7 @@ static void file_panel_execution_buttons_draw(const bContext *C, Panel *panel)
 #endif
 
   PointerRNA params_rna_ptr = RNA_pointer_create_discrete(
-      &screen->id, &RNA_FileSelectParams, params);
+      &screen->id, RNA_FileSelectParams, params);
 
   ui::Layout &row = panel->layout->row(false);
   row.scale_y_set(1.3f);
@@ -218,7 +218,7 @@ void file_execute_region_panels_register(ARegionType *art)
 {
   PanelType *pt;
 
-  pt = MEM_callocN<PanelType>("spacetype file execution buttons");
+  pt = MEM_new_zeroed<PanelType>("spacetype file execution buttons");
   STRNCPY_UTF8(pt->idname, "FILE_PT_execution_buttons");
   STRNCPY_UTF8(pt->label, N_("Execute Buttons"));
   STRNCPY_UTF8(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
@@ -241,7 +241,7 @@ static void file_panel_asset_catalog_buttons_draw(const bContext *C, Panel *pane
   ui::Layout &row = col.row(true);
 
   PointerRNA params_ptr = RNA_pointer_create_discrete(
-      &screen->id, &RNA_FileAssetSelectParams, params);
+      &screen->id, RNA_FileAssetSelectParams, params);
 
   row.prop(&params_ptr, "asset_library_reference", UI_ITEM_NONE, "", ICON_NONE);
   if (params->asset_library_ref.type == ASSET_LIBRARY_LOCAL) {
@@ -270,7 +270,7 @@ void file_tools_region_panels_register(ARegionType *art)
 {
   PanelType *pt;
 
-  pt = MEM_callocN<PanelType>("spacetype file asset catalog buttons");
+  pt = MEM_new_zeroed<PanelType>("spacetype file asset catalog buttons");
   STRNCPY_UTF8(pt->idname, "FILE_PT_asset_catalog_buttons");
   STRNCPY_UTF8(pt->label, N_("Asset Catalogs"));
   STRNCPY_UTF8(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);

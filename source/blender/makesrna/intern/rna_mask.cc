@@ -171,7 +171,7 @@ static PointerRNA rna_Mask_layer_active_get(PointerRNA *ptr)
   Mask *mask = id_cast<Mask *>(ptr->owner_id);
   MaskLayer *masklay = BKE_mask_layer_active(mask);
 
-  return RNA_pointer_create_with_parent(*ptr, &RNA_MaskLayer, masklay);
+  return RNA_pointer_create_with_parent(*ptr, RNA_MaskLayer, masklay);
 }
 
 static void rna_Mask_layer_active_set(PointerRNA *ptr, PointerRNA value, ReportList * /*reports*/)
@@ -206,7 +206,7 @@ static PointerRNA rna_MaskLayer_active_spline_get(PointerRNA *ptr)
 {
   MaskLayer *masklay = static_cast<MaskLayer *>(ptr->data);
 
-  return RNA_pointer_create_with_parent(*ptr, &RNA_MaskSpline, masklay->act_spline);
+  return RNA_pointer_create_with_parent(*ptr, RNA_MaskSpline, masklay->act_spline);
 }
 
 static void rna_MaskLayer_active_spline_set(PointerRNA *ptr,
@@ -229,7 +229,7 @@ static PointerRNA rna_MaskLayer_active_spline_point_get(PointerRNA *ptr)
 {
   MaskLayer *masklay = static_cast<MaskLayer *>(ptr->data);
 
-  return RNA_pointer_create_with_parent(*ptr, &RNA_MaskSplinePoint, masklay->act_point);
+  return RNA_pointer_create_with_parent(*ptr, RNA_MaskSplinePoint, masklay->act_point);
 }
 
 static void rna_MaskLayer_active_spline_point_set(PointerRNA *ptr,
@@ -514,7 +514,7 @@ static void rna_MaskSpline_points_add(ID *id, MaskSpline *spline, int count)
   }
 
   spline->points = static_cast<MaskSplinePoint *>(
-      MEM_recallocN(spline->points, sizeof(MaskSplinePoint) * (spline->tot_point + count)));
+      MEM_realloc_zeroed(spline->points, sizeof(MaskSplinePoint) * (spline->tot_point + count)));
   spline->tot_point += count;
 
   if (active_point_index >= 0) {
@@ -573,15 +573,15 @@ static void rna_MaskSpline_point_remove(ID *id,
 
   point_index = point - spline->points;
 
-  new_point_array = MEM_new_array_for_free<MaskSplinePoint>(size_t(spline->tot_point) - 1,
-                                                            "remove mask point");
+  new_point_array = MEM_new_array<MaskSplinePoint>(size_t(spline->tot_point) - 1,
+                                                   "remove mask point");
 
   memcpy(new_point_array, spline->points, sizeof(MaskSplinePoint) * point_index);
   memcpy(new_point_array + point_index,
          spline->points + point_index + 1,
          sizeof(MaskSplinePoint) * (spline->tot_point - point_index - 1));
 
-  MEM_freeN(spline->points);
+  MEM_delete(spline->points);
   spline->points = new_point_array;
   spline->tot_point--;
 

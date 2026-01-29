@@ -100,9 +100,10 @@ void convert_legacy_animato_action(bAction &dna_action)
   Channelbag &bag = strip.data<StripKeyframeData>(action).channelbag_for_slot_ensure(slot);
   const int fcu_count = BLI_listbase_count(&action.curves);
   const int group_count = BLI_listbase_count(&action.groups);
-  bag.fcurve_array = MEM_calloc_arrayN<FCurve *>(fcu_count, "Action versioning - fcurves");
+  bag.fcurve_array = MEM_new_array_zeroed<FCurve *>(fcu_count, "Action versioning - fcurves");
   bag.fcurve_array_num = fcu_count;
-  bag.group_array = MEM_calloc_arrayN<bActionGroup *>(group_count, "Action versioning - groups");
+  bag.group_array = MEM_new_array_zeroed<bActionGroup *>(group_count,
+                                                         "Action versioning - groups");
   bag.group_array_num = group_count;
 
   int fcurve_index = 0;
@@ -232,7 +233,7 @@ void convert_legacy_action_assignments(Main &bmain, ReportList *reports)
     }
 
     PointerRNA slot_to_assign_ptr = RNA_pointer_create_discrete(
-        &action.id, &RNA_ActionSlot, slot_to_assign);
+        &action.id, RNA_ActionSlot, slot_to_assign);
     RNA_property_pointer_set(
         &action_slot_owner_ptr, &action_slot_prop, slot_to_assign_ptr, reports);
     RNA_property_update_main(&bmain, nullptr, &action_slot_owner_ptr, &action_slot_prop);

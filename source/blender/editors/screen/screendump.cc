@@ -68,7 +68,7 @@ static int screenshot_data_create(bContext *C, wmOperator *op, ScrArea *area)
   uint8_t *dumprect = WM_window_pixels_read(C, win, dumprect_size);
 
   if (dumprect) {
-    ScreenshotData *scd = MEM_new_for_free<ScreenshotData>("screenshot");
+    ScreenshotData *scd = MEM_new<ScreenshotData>("screenshot");
 
     scd->dumpsx = dumprect_size[0];
     scd->dumpsy = dumprect_size[1];
@@ -93,9 +93,9 @@ static void screenshot_data_free(wmOperator *op)
 
   if (scd) {
     if (scd->dumprect) {
-      MEM_freeN(scd->dumprect);
+      MEM_delete(scd->dumprect);
     }
-    MEM_freeN(scd);
+    MEM_delete(scd);
     op->customdata = nullptr;
   }
 }
@@ -219,7 +219,7 @@ static void screenshot_draw(bContext *C, wmOperator *op)
   layout.use_property_decorate_set(false);
 
   /* image template */
-  PointerRNA ptr = RNA_pointer_create_discrete(nullptr, &RNA_ImageFormatSettings, &scd->im_format);
+  PointerRNA ptr = RNA_pointer_create_discrete(nullptr, RNA_ImageFormatSettings, &scd->im_format);
   uiTemplateImageSettings(&layout, C, &ptr, false);
 
   /* main draw call */

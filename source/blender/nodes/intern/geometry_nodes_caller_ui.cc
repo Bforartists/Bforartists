@@ -75,7 +75,8 @@ struct SocketSearchData {
 
   SearchInfo info(const bContext &C) const;
 };
-/* This class must not have a destructor, since it is used by buttons and freed with #MEM_freeN. */
+/* This class must not have a destructor, since it is used by buttons and freed with
+ * #MEM_delete_void. */
 BLI_STATIC_ASSERT(std::is_trivially_destructible_v<SocketSearchData>, "");
 
 struct DrawGroupInputsContext {
@@ -262,9 +263,9 @@ static void add_layer_name_search_button(DrawGroupInputsContext &ctx,
   }
 
   /* Using a custom free function make the search not work currently. So make sure this data can be
-   * freed with MEM_freeN. */
+   * freed with MEM_delete. */
   SocketSearchData *data = static_cast<SocketSearchData *>(
-      MEM_mallocN(sizeof(SocketSearchData), __func__));
+      MEM_new_uninitialized(sizeof(SocketSearchData), __func__));
   *data = ctx.socket_search_data_fn(socket);
   button_func_search_set_results_are_suggestions(but, true);
   button_func_search_set_sep_string(but, UI_MENU_ARROW_SEP);
@@ -377,9 +378,9 @@ static void add_attribute_search_button(DrawGroupInputsContext &ctx,
   }
 
   /* Using a custom free function make the search not work currently. So make sure this data can be
-   * freed with MEM_freeN. */
+   * freed with MEM_delete. */
   SocketSearchData *data = static_cast<SocketSearchData *>(
-      MEM_mallocN(sizeof(SocketSearchData), __func__));
+      MEM_new_uninitialized(sizeof(SocketSearchData), __func__));
   *data = ctx.socket_search_data_fn(socket);
   button_func_search_set_results_are_suggestions(but, true);
   button_func_search_set_sep_string(but, UI_MENU_ARROW_SEP);
@@ -1102,7 +1103,7 @@ void draw_geometry_nodes_modifier_ui(const bContext &C,
   ctx.panel_open_property_fn = [&](const bNodeTreeInterfacePanel &io_panel) -> PanelOpenProperty {
     NodesModifierPanel *panel = find_panel_by_id(nmd, io_panel.identifier);
     PointerRNA panel_ptr = RNA_pointer_create_discrete(
-        modifier_ptr->owner_id, &RNA_NodesModifierPanel, panel);
+        modifier_ptr->owner_id, RNA_NodesModifierPanel, panel);
     return {panel_ptr, "is_open"};
   };
   ctx.socket_search_data_fn = [&](const bNodeTreeInterfaceSocket &io_socket) -> SocketSearchData {
@@ -1180,7 +1181,7 @@ void draw_geometry_nodes_operator_redo_ui(const bContext &C,
         root_panel,
         "node_operator_panel_" + std::to_string(io_panel.identifier),
         io_panel.flag & NODE_INTERFACE_PANEL_DEFAULT_CLOSED);
-    PointerRNA state_ptr = RNA_pointer_create_discrete(nullptr, &RNA_LayoutPanelState, state);
+    PointerRNA state_ptr = RNA_pointer_create_discrete(nullptr, RNA_LayoutPanelState, state);
     return {state_ptr, "is_open"};
   };
   ctx.socket_search_data_fn = [&](const bNodeTreeInterfaceSocket &io_socket) -> SocketSearchData {
