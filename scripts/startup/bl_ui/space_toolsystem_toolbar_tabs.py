@@ -16,7 +16,7 @@ def draw_wizard_button(layout, obj, text, icon, scale):
         return False
 
     try:
-        wizard_handlers = sys.modules["bfa_default_library.wizard_handlers"]
+        wizard_handlers = sys.modules["modular_child_addons.wizard_handlers"]
 
         # Debug: print all attributes of the module
         #print(f"DEBUG: wizard_handlers module attributes: {dir(wizard_handlers)}")
