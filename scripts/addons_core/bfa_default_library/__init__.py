@@ -930,7 +930,7 @@ def register_all_libraries():
     try:
         bpy.ops.asset.library_refresh()
     except Exception:
-        print(f"Asset refresh skipped")
+        #print(f"Asset refresh skipped")
         pass
 
 
@@ -942,7 +942,7 @@ def unregister_all_libraries():
     try:
         bpy.ops.asset.library_refresh()
     except Exception:
-        print(f"Asset refresh skipped")
+        #print(f"Asset refresh skipped")
         pass
 
 
