@@ -10,9 +10,9 @@ if(NOT MSVC)
   message(FATAL_ERROR "Compiler is unsupported")
 endif()
 
-# By default CMAKE will map imported configs that lack a specific RELWITHDEBINFO 
+# By default CMAKE will map imported configs that lack a specific RELWITHDEBINFO
 # or MINSIZEREL location, to the debug libs, which is not good as this will cause
-# all sorts of linking issues with MSVC. Map them explicitly to Release libs. 
+# all sorts of linking issues with MSVC. Map them explicitly to Release libs.
 # for further reading: https://gitlab.kitware.com/cmake/cmake/-/issues/20319
 set(CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL MinSizeRel RelWithDebInfo Release Debug)
 set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RelWithDebInfo Release MinSizeRel Debug)
@@ -39,7 +39,7 @@ else()
   if(WITH_BLENDER)
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.44.35216) # MSVC 2022 17.14.14
       message(FATAL_ERROR
-        "Compiler is unsupported, MSVC 2022 17.14.14 or newer is required for building blender."
+        "Compiler is unsupported, MSVC 2022 17.14.14 or newer is required for building Bforartists."
       )
     endif()
   endif()
@@ -90,8 +90,6 @@ macro(find_package_wrapper)
   endif()
 endmacro()
 
-add_definitions(-DWIN32)
-
 # Needed, otherwise system encoding causes utf-8 encoding to fail in some cases (C4819)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
@@ -109,7 +107,7 @@ endif()
 list(APPEND PLATFORM_LINKLIBS
   ws2_32 vfw32 winmm kernel32 user32 gdi32 comdlg32 Comctl32 version
   advapi32 shfolder shell32 ole32 oleaut32 uuid psapi Dbghelp Shlwapi
-  pathcch Shcore Dwmapi Crypt32 Bcrypt
+  pathcch Shcore Dwmapi Crypt32 Bcrypt Mpr
 )
 
 if(WITH_INPUT_IME)
@@ -385,8 +383,13 @@ set(ZLIB_INCLUDE_DIR ${LIBDIR}/zlib/include)
 set(ZLIB_LIBRARY ${LIBDIR}/zlib/lib/libz_st.lib)
 set(ZLIB_DIR ${LIBDIR}/zlib)
 
-set(fmt_DIR ${LIBDIR}/fmt/lib/cmake/config) 
+set(fmt_DIR ${LIBDIR}/fmt/lib/cmake/fmt)
 find_package(fmt REQUIRED CONFIG)
+
+# BFA - Manual workaround for fmt include issue with Blender 5.1 libs
+#   fmt is used by public headers like BLI_string_ref.hh, so we need to make
+#   the include directory available globally, not just to individual targets
+include_directories(SYSTEM ${LIBDIR}/fmt/include)
 
 windows_find_package(ZLIB) # We want to find before finding things that depend on it like PNG.
 windows_find_package(PNG)
@@ -535,7 +538,7 @@ if(WITH_IMAGE_OPENEXR)
       ${OPENEXR_INCLUDE_DIR}/OpenEXR
     )
     set(OPENEXR_LIBPATH ${OPENEXR}/lib)
-    # Check if the blender 3.3 lib static library eixts
+    # Check if the blender 3.3 lib static library exists
     # if not assume this is a 3.4+ dynamic version.
     if(EXISTS "${OPENEXR_LIBPATH}/OpenEXR_s.lib")
       set(OPENEXR_POSTFIX _s)
@@ -1186,7 +1189,7 @@ if(WINDOWS_PYTHON_DEBUG)
   set_target_properties(blender_python_system_scripts PROPERTIES FOLDER "scripts")
   set_target_properties(blender_python_user_scripts PROPERTIES FOLDER "scripts")
   # Set the default debugging options for the project, only write this file once so the user
-  # is free to override them at their own perril.
+  # is free to override them at their own peril.
   set(USER_PROPS_FILE "${CMAKE_CURRENT_BINARY_DIR}/source/creator/bforartists.Cpp.user.props")
   if(NOT EXISTS ${USER_PROPS_FILE})
     # Layout below is messy, because otherwise the generated file will look messy.

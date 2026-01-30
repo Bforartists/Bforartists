@@ -2646,10 +2646,10 @@ static void rna_ConsoleLine_body_set(PointerRNA *ptr, const char *value)
   ConsoleLine *ci = static_cast<ConsoleLine *>(ptr->data);
   size_t len = strlen(value);
 
-  if ((len >= size_t(ci->len_alloc)) ||
-      (len * 2 < size_t(ci->len_alloc))) { /* allocate a new string */
-    MEM_freeN(ci->line);
-    ci->line = MEM_malloc_arrayN<char>(len + 1, "rna_consoleline");
+  if ((len >= size_t(ci->len_alloc)) || (len * 2 < size_t(ci->len_alloc)))
+  { /* allocate a new string */
+    MEM_delete(ci->line);
+    ci->line = MEM_new_array_uninitialized<char>(len + 1, "rna_consoleline");
     ci->len_alloc = int(len + 1);
   }
   memcpy(ci->line, value, len + 1);

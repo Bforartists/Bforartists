@@ -2485,7 +2485,7 @@ wmPaintCursor *WM_paint_cursor_activate(short space_type,
 {
   wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
 
-  wmPaintCursor *pc = MEM_callocN<wmPaintCursor>("paint cursor");
+  wmPaintCursor *pc = MEM_new_zeroed<wmPaintCursor>("paint cursor");
 
   BLI_addtail(&wm->runtime->paintcursors, pc);
 
@@ -2505,7 +2505,7 @@ bool WM_paint_cursor_end(wmPaintCursor *handle)
   for (wmPaintCursor &pc : wm->runtime->paintcursors) {
     if (&pc == handle) {
       BLI_remlink(&wm->runtime->paintcursors, &pc);
-      MEM_freeN(&pc);
+      MEM_delete(&pc);
       return true;
     }
   }
@@ -2520,7 +2520,7 @@ void WM_paint_cursor_remove_by_type(wmWindowManager *wm, void *draw_fn, void (*f
         free(pc.customdata);
       }
       BLI_remlink(&wm->runtime->paintcursors, &pc);
-      MEM_freeN(&pc);
+      MEM_delete(&pc);
     }
   }
 }
@@ -2683,8 +2683,8 @@ static void radial_control_set_tex(RadialControl *rc)
         GPU_texture_filter_mode(rc->texture, true);
         GPU_texture_swizzle_set(rc->texture, "111r");
 
-        MEM_freeN(ibuf->float_buffer.data);
-        MEM_freeN(ibuf);
+        MEM_delete(ibuf->float_buffer.data);
+        MEM_delete(ibuf);
       }
       break;
     default:

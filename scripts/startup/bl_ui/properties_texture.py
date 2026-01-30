@@ -431,7 +431,11 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
 
         row = col.row()
         row.use_property_split = False
-        row.prop(tex, "filter_size", text="Size")
+        row.label(text="Size") # BFA
+
+        row = row.row() # BFA
+        row.use_property_split = False
+        row.prop(tex, "filter_size", text="") # BFA
         row.prop_decorator(tex, "filter_size")
 
 

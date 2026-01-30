@@ -129,14 +129,14 @@ class USERPREF_MT_save_load(Menu):
         layout.operator_context = 'EXEC_AREA'
         if prefs.use_preferences_save:
             layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS')  # BFA - added icon
+
+        layout.operator_context = 'INVOKE_AREA'
         sub_revert = layout.column(align=True)
         # NOTE: regarding `factory_startup`. To correctly show the active state of this menu item,
         # the user preferences themselves would need to have a `factory_startup` state.
         # Since showing an active menu item whenever factory-startup is used is not such a problem, leave this as-is.
         sub_revert.active = prefs.is_dirty or bpy.app.factory_startup
         sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon="UNDO")  # BFA - added icon
-
-        layout.operator_context = 'INVOKE_AREA'
 
         app_template = prefs.app_template
         if app_template:
@@ -254,11 +254,11 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         flow.use_property_split = False
         flow.prop(prefs, "use_recent_searches", text="Sort Search by Most Recent")
+        flow.prop(prefs, "show_hidden_ids", text="Show Hidden")
         # bfa - gooengine disable_search_on_keypress
         flow.prop(prefs, "disable_search_on_keypress", text="Disable Search on Key Press")
         # bfa - gooengine disable_material_icon
         flow.prop(prefs, "disable_material_icon", text="Disable Material Icon Rendering")
-        layout.prop(prefs, "show_hidden_ids", text="Show Hidden")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):

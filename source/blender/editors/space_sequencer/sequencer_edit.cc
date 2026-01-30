@@ -2492,24 +2492,26 @@ static wmOperatorStatus sequencer_delete_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static wmOperatorStatus sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
-{
-  Scene *scene = CTX_data_sequencer_scene(C);
-  ListBaseT<TimeMarker> *markers = &scene->markers;
-
-  if (!BLI_listbase_is_empty(markers)) {
-    ARegion *region = CTX_wm_region(C);
-    if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
-      /* Bounding box of 30 pixels is used for markers shortcuts,
-       * prevent conflict with markers shortcuts here. */
-      if (event->mval[1] <= 30) {
-        return OPERATOR_PASS_THROUGH;
-      }
-    }
-  }
-
-  return sequencer_delete_exec(C, op);
-}
+/*bfa - turned this dialog off*/
+// static wmOperatorStatus sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent
+// *event)
+//{
+//   Scene *scene = CTX_data_sequencer_scene(C);
+// ListBaseT<TimeMarker> *markers = &scene->markers;
+//
+// if (!BLI_listbase_is_empty(markers)) {
+// ARegion *region = CTX_wm_region(C);
+// if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
+///* Bounding box of 30 pixels is used for markers shortcuts,
+//*prevent conflict with markers shortcuts here.* / if (event->mval[1] <= 30)
+//{
+// return OPERATOR_PASS_THROUGH;
+//}
+//  }
+//  }
+//
+// return sequencer_delete_exec(C, op);
+//}
 
 void SEQUENCER_OT_delete(wmOperatorType *ot)
 {
@@ -2519,7 +2521,7 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
   ot->description = "Delete selected strips from the sequencer"; /*BFA - updated tooltip*/
 
   /* API callbacks. */
-  /*ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
+  /*BFA - ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
   ot->exec = sequencer_delete_exec;
   ot->poll = sequencer_edit_poll;
 
@@ -2651,7 +2653,8 @@ static wmOperatorStatus sequencer_separate_images_exec(bContext *C, wmOperator *
         /* New stripdata, only one element now. */
         /* Note this assume all elements (images) have the same dimension,
          * since we only copy the name here. */
-        se_new = static_cast<StripElem *>(MEM_reallocN(data_new->stripdata, sizeof(*se_new)));
+        se_new = static_cast<StripElem *>(
+            MEM_realloc_uninitialized(data_new->stripdata, sizeof(*se_new)));
         STRNCPY_UTF8(se_new->filename, se->filename);
         data_new->stripdata = se_new;
 
@@ -3336,10 +3339,10 @@ static wmOperatorStatus sequencer_swap_data_exec(bContext *C, wmOperator *op)
   strip_other->runtime->clear_sound_time_stretch();
 
   if (strip_act->sound) {
-    BKE_sound_add_scene_sound_defaults(scene, strip_act);
+    BKE_sound_add_scene_sound(scene, strip_act);
   }
   if (strip_other->sound) {
-    BKE_sound_add_scene_sound_defaults(scene, strip_other);
+    BKE_sound_add_scene_sound(scene, strip_other);
   }
 
   seq::relations_invalidate_cache_raw(scene, strip_act);
@@ -3500,9 +3503,9 @@ static wmOperatorStatus sequencer_change_path_exec(bContext *C, wmOperator *op)
     STRNCPY(strip->data->dirpath, directory);
 
     if (strip->data->stripdata) {
-      MEM_freeN(strip->data->stripdata);
+      MEM_delete(strip->data->stripdata);
     }
-    strip->data->stripdata = se = MEM_new_array_for_free<StripElem>(len, "stripelem");
+    strip->data->stripdata = se = MEM_new_array<StripElem>(len, "stripelem");
 
     if (use_placeholders) {
       sequencer_image_strip_reserve_frames(op, se, len, minext_frameme, numdigits);
@@ -3744,7 +3747,7 @@ static bool strip_get_text_strip_cb(Strip *strip, void *user_data)
   if ((strip->type == STRIP_TYPE_TEXT) && !seq::render_is_muted(channels, strip) &&
       (strip->right_handle(cd->scene) > cd->scene->r.sfra))
   {
-    BLI_addtail(cd->text_seq, MEM_dupallocN(strip));
+    BLI_addtail(cd->text_seq, MEM_dupalloc(strip));
   }
   return true;
 }
@@ -3826,7 +3829,7 @@ static wmOperatorStatus sequencer_export_subtitles_exec(bContext *C, wmOperator 
             data->text_ptr);
 
     strip_next = static_cast<Strip *>(strip->next);
-    MEM_freeN(strip);
+    MEM_delete(strip);
   }
 
   fclose(file);

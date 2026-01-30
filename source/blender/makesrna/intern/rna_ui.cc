@@ -419,7 +419,7 @@ static StructRNA *rna_Panel_register(Main *bmain,
     over_alloc += description_size;
   }
   pt = static_cast<PanelType *>(
-      MEM_callocN(sizeof(PanelType) + over_alloc, "Python buttons panel"));
+      MEM_new_zeroed(sizeof(PanelType) + over_alloc, "Python buttons panel"));
   memcpy(pt, &dummy_pt, sizeof(dummy_pt));
 
   if (_panel_descr[0]) {
@@ -666,7 +666,7 @@ static void uilist_filter_items(uiList *ui_list,
   {
     int i;
     if (filter_flags) {
-      flt_data->items_filter_flags = MEM_malloc_arrayN<int>(size_t(len), __func__);
+      flt_data->items_filter_flags = MEM_new_array_uninitialized<int>(size_t(len), __func__);
       memcpy(flt_data->items_filter_flags, filter_flags, sizeof(int) * len);
 
       if (filter_neworder) {
@@ -682,7 +682,8 @@ static void uilist_filter_items(uiList *ui_list,
           }
         }
         items_shown = flt_data->items_shown = shown_idx;
-        flt_data->items_filter_neworder = MEM_malloc_arrayN<int>(size_t(items_shown), __func__);
+        flt_data->items_filter_neworder = MEM_new_array_uninitialized<int>(size_t(items_shown),
+                                                                           __func__);
         /* And now, bring back new indices into the [0, items_shown[ range!
          * XXX This is O(N^2). :/
          */
@@ -714,7 +715,7 @@ static void uilist_filter_items(uiList *ui_list,
       flt_data->items_shown = len;
 
       if (filter_neworder) {
-        flt_data->items_filter_neworder = MEM_malloc_arrayN<int>(size_t(len), __func__);
+        flt_data->items_filter_neworder = MEM_new_array_uninitialized<int>(size_t(len), __func__);
         memcpy(flt_data->items_filter_neworder, filter_neworder, sizeof(int) * len);
       }
     }
@@ -803,7 +804,7 @@ static StructRNA *rna_UIList_register(Main *bmain,
   }
 
   /* create a new menu type */
-  ult = MEM_callocN<uiListType>("python uilist");
+  ult = MEM_new_zeroed<uiListType>("python uilist");
   memcpy(ult, &dummy_ult, sizeof(dummy_ult));
 
   ult->rna_ext.srna = RNA_def_struct_ptr(&RNA_blender_rna_get(), ult->idname, RNA_UIList);
@@ -942,7 +943,7 @@ static StructRNA *rna_Header_register(Main *bmain,
   }
 
   /* create a new header type */
-  ht = MEM_callocN<HeaderType>(__func__);
+  ht = MEM_new_zeroed<HeaderType>(__func__);
   memcpy(ht, &dummy_ht, sizeof(dummy_ht));
 
   ht->rna_ext.srna = RNA_def_struct_ptr(&RNA_blender_rna_get(), ht->idname, RNA_Header);
@@ -1104,7 +1105,8 @@ static StructRNA *rna_Menu_register(Main *bmain,
     over_alloc += description_size;
   }
 
-  mt = static_cast<MenuType *>(MEM_callocN(sizeof(MenuType) + over_alloc, "Python buttons menu"));
+  mt = static_cast<MenuType *>(
+      MEM_new_zeroed(sizeof(MenuType) + over_alloc, "Python buttons menu"));
   memcpy(mt, &dummy_mt, sizeof(dummy_mt));
 
   if (_menu_descr[0]) {

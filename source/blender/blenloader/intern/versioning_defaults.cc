@@ -438,8 +438,8 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   /* BFA - Turn on the compositor nodes by default, or else they an unnecessary step for compositing.*/
   /* Don't enable compositing nodes. */
   //if (scene->nodetree) {
-  //  blender::bke::node_tree_free_embedded_tree(scene->nodetree);
-  //  MEM_freeN(scene->nodetree);
+  //  bke::node_tree_free_embedded_tree(scene->nodetree);
+  //  MEM_delete(scene->nodetree);
   //  scene->nodetree = nullptr;
   //  scene->use_nodes = false;
   //}

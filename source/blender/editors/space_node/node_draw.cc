@@ -1555,7 +1555,7 @@ void node_socket_add_tooltip(const bNodeTree &ntree, const bNodeSocket &sock, ui
     const bNodeSocket *socket;
   };
 
-  SocketTooltipData *data = MEM_callocN<SocketTooltipData>(__func__);
+  SocketTooltipData *data = MEM_new_zeroed<SocketTooltipData>(__func__);
   data->ntree = &ntree;
   data->socket = &sock;
 
@@ -1566,8 +1566,8 @@ void node_socket_add_tooltip(const bNodeTree &ntree, const bNodeSocket &sock, ui
         build_socket_tooltip(tip, C, but, *data->ntree, *data->socket);
       },
       data,
-      MEM_dupallocN,
-      MEM_freeN);
+      MEM_dupalloc_void,
+      MEM_delete_void);
 }
 
 #define NODE_SOCKET_OUTLINE U.pixelsize
@@ -3374,7 +3374,6 @@ static void node_draw_basis(const bContext &C,
     }
   }
   /* BFA Header outline. */
-  ColorTheme4f color_header = node_header_color_get(ntree, node, color_id);
   {
     const float outline_width = U.pixelsize;
     const rctf rect_header = {

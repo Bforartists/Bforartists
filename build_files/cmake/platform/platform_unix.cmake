@@ -36,7 +36,7 @@ else()
       endif()
     endif()
 
-    # Avoid namespace pollustion.
+    # Avoid namespace pollution.
     unset(LIBDIR_NATIVE_ABI)
     unset(LIBDIR_GLIBC228_ABI)
   endif()
@@ -132,6 +132,13 @@ if(DEFINED fmt_DIR)
   # Hide the fmt_DIR from the standard user settings to be consistent with our
   # other "here is the library" settings.
   mark_as_advanced(fmt_DIR)
+endif()
+
+# BFA - Manual workaround for fmt include issue with Blender 5.1 libs
+#   fmt is used by public headers like BLI_string_ref.hh, so we need to make
+#   the include directory available globally, not just to individual targets
+if(DEFINED LIBDIR)
+  include_directories(SYSTEM ${LIBDIR}/fmt/include)
 endif()
 
 # XXX Linking errors with debian static tiff :/
@@ -952,21 +959,6 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
       unset(LD_VERSION)
     endif()
     unset(MOLD_BIN)
-  endif()
-
-  if(WITH_LINKER_GOLD AND _IS_LINKER_DEFAULT)
-    execute_process(
-      COMMAND ${CMAKE_C_COMPILER} -fuse-ld=gold -Wl,--version
-      ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
-    if("${LD_VERSION}" MATCHES "GNU gold")
-      string(APPEND CMAKE_EXE_LINKER_FLAGS    " -fuse-ld=gold")
-      string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=gold")
-      string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=gold")
-      set(_IS_LINKER_DEFAULT OFF)
-    else()
-      message(STATUS "GNU gold linker isn't available, using the default system linker.")
-    endif()
-    unset(LD_VERSION)
   endif()
 
   if(WITH_LINKER_LLD AND _IS_LINKER_DEFAULT)

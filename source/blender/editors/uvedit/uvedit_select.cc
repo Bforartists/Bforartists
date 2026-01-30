@@ -2585,8 +2585,8 @@ static void uv_select_linked_multi(const Scene *scene,
       continue;
     }
 
-    stack = MEM_malloc_arrayN<int>(bm->totface + 1, "UvLinkStack");
-    flag = MEM_calloc_arrayN<char>(bm->totface, "UvLinkFlag");
+    stack = MEM_new_array_uninitialized<int>(bm->totface + 1, "UvLinkStack");
+    flag = MEM_new_array_zeroed<char>(bm->totface, "UvLinkFlag");
 
     if (hit == nullptr) {
       /* Use existing selection */
@@ -2793,8 +2793,8 @@ static void uv_select_linked_multi(const Scene *scene,
 
 #undef SET_SELECTION
 
-    MEM_freeN(stack);
-    MEM_freeN(flag);
+    MEM_delete(stack);
+    MEM_delete(flag);
     BM_uv_vert_map_free(vmap);
 
     if (uv_select_sync) {
@@ -5609,15 +5609,16 @@ static wmOperatorStatus uv_select_overlap(bContext *C, const bool extend)
     }
   }
 
-  UVOverlapData *overlap_data = MEM_malloc_arrayN<UVOverlapData>(uv_tri_len, "UvOverlapData");
+  UVOverlapData *overlap_data = MEM_new_array_uninitialized<UVOverlapData>(uv_tri_len,
+                                                                           "UvOverlapData");
   BVHTree *uv_tree = BLI_bvhtree_new(uv_tri_len, 0.0f, 4, 6);
 
   /* Use a global data index when inserting into the BVH. */
   int data_index = 0;
 
   int face_len_alloc = 3;
-  float (*uv_verts)[2] = MEM_malloc_arrayN<float[2]>(face_len_alloc, "UvOverlapCoords");
-  uint(*indices)[3] = MEM_malloc_arrayN<uint[3]>(face_len_alloc - 2, "UvOverlapTris");
+  float (*uv_verts)[2] = MEM_new_array_uninitialized<float[2]>(face_len_alloc, "UvOverlapCoords");
+  uint(*indices)[3] = MEM_new_array_uninitialized<uint[3]>(face_len_alloc - 2, "UvOverlapTris");
 
   MemArena *arena = BLI_memarena_new(BLI_MEMARENA_STD_BUFSIZE, __func__);
   Heap *heap = BLI_heap_new_ex(BLI_POLYFILL_ALLOC_NGON_RESERVE);
@@ -5643,10 +5644,10 @@ static wmOperatorStatus uv_select_overlap(bContext *C, const bool extend)
       const uint tri_len = face_len - 2;
 
       if (face_len_alloc < face_len) {
-        MEM_freeN(uv_verts);
-        MEM_freeN(indices);
-        uv_verts = MEM_malloc_arrayN<float[2]>(face_len, "UvOverlapCoords");
-        indices = MEM_malloc_arrayN<uint[3]>(tri_len, "UvOverlapTris");
+        MEM_delete(uv_verts);
+        MEM_delete(indices);
+        uv_verts = MEM_new_array_uninitialized<float[2]>(face_len, "UvOverlapCoords");
+        indices = MEM_new_array_uninitialized<uint[3]>(tri_len, "UvOverlapTris");
         face_len_alloc = face_len;
       }
 
@@ -5692,8 +5693,8 @@ static wmOperatorStatus uv_select_overlap(bContext *C, const bool extend)
 
   BLI_memarena_free(arena);
   BLI_heap_free(heap, nullptr);
-  MEM_freeN(uv_verts);
-  MEM_freeN(indices);
+  MEM_delete(uv_verts);
+  MEM_delete(indices);
 
   BLI_bvhtree_balance(uv_tree);
 
@@ -5818,7 +5819,7 @@ static wmOperatorStatus uv_select_overlap(bContext *C, const bool extend)
   BLI_bvhtree_free(uv_tree);
   BLI_bvhtree_free(probe_tree);
 
-  MEM_freeN(overlap_data);
+  MEM_delete(overlap_data);
 
   return OPERATOR_FINISHED;
 }
@@ -6412,8 +6413,8 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       scene, view_layer, nullptr);
 
-  ListBaseT<FaceIsland> *island_list_ptr = MEM_calloc_arrayN<ListBaseT<FaceIsland>>(objects.size(),
-                                                                                    __func__);
+  ListBaseT<FaceIsland> *island_list_ptr = MEM_new_array_zeroed<ListBaseT<FaceIsland>>(
+      objects.size(), __func__);
   int island_list_len = 0;
 
   const bool face_selected = !(scene->toolsettings->uv_flag & UV_FLAG_SELECT_SYNC);
@@ -6427,7 +6428,7 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
         scene, bm, &island_list_ptr[ob_index], face_selected, false, false, aspect_y, offsets);
   }
 
-  FaceIsland **island_array = MEM_calloc_arrayN<FaceIsland *>(island_list_len, __func__);
+  FaceIsland **island_array = MEM_new_array_zeroed<FaceIsland *>(island_list_len, __func__);
 
   int tree_index = 0;
   KDTree_1d *tree_1d = kdtree_1d_new(island_list_len);
@@ -6505,12 +6506,12 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
 
   BLI_assert(tot_island_index == island_list_len);
   for (int i = 0; i < island_list_len; i++) {
-    MEM_SAFE_FREE(island_array[i]->faces);
-    MEM_SAFE_FREE(island_array[i]);
+    MEM_SAFE_DELETE(island_array[i]->faces);
+    MEM_SAFE_DELETE(island_array[i]);
   }
 
-  MEM_SAFE_FREE(island_array);
-  MEM_SAFE_FREE(island_list_ptr);
+  MEM_SAFE_DELETE(island_array);
+  MEM_SAFE_DELETE(island_list_ptr);
   kdtree_1d_free(tree_1d);
 
   return OPERATOR_FINISHED;
@@ -6674,7 +6675,7 @@ BMFace **ED_uvedit_selected_faces(const Scene *scene, BMesh *bm, int len_max, in
 {
   CLAMP_MAX(len_max, bm->totface);
   int faces_len = 0;
-  BMFace **faces = MEM_malloc_arrayN<BMFace *>(len_max, __func__);
+  BMFace **faces = MEM_new_array_uninitialized<BMFace *>(len_max, __func__);
 
   BMIter iter;
   BMFace *f;
@@ -6692,7 +6693,7 @@ BMFace **ED_uvedit_selected_faces(const Scene *scene, BMesh *bm, int len_max, in
 finally:
   *r_faces_len = faces_len;
   if (faces_len != len_max) {
-    faces = static_cast<BMFace **>(MEM_reallocN(faces, sizeof(*faces) * faces_len));
+    faces = static_cast<BMFace **>(MEM_realloc_uninitialized(faces, sizeof(*faces) * faces_len));
   }
   return faces;
 }
@@ -6704,7 +6705,7 @@ BMLoop **ED_uvedit_selected_edges(const Scene *scene, BMesh *bm, int len_max, in
 
   CLAMP_MAX(len_max, bm->totloop);
   int edges_len = 0;
-  BMLoop **edges = MEM_malloc_arrayN<BMLoop *>(len_max, __func__);
+  BMLoop **edges = MEM_new_array_uninitialized<BMLoop *>(len_max, __func__);
 
   BMIter iter;
   BMFace *f;
@@ -6750,7 +6751,7 @@ BMLoop **ED_uvedit_selected_edges(const Scene *scene, BMesh *bm, int len_max, in
 finally:
   *r_edges_len = edges_len;
   if (edges_len != len_max) {
-    edges = static_cast<BMLoop **>(MEM_reallocN(edges, sizeof(*edges) * edges_len));
+    edges = static_cast<BMLoop **>(MEM_realloc_uninitialized(edges, sizeof(*edges) * edges_len));
   }
   return edges;
 }
@@ -6763,7 +6764,7 @@ BMLoop **ED_uvedit_selected_verts(const Scene *scene, BMesh *bm, int len_max, in
 
   CLAMP_MAX(len_max, bm->totloop);
   int verts_len = 0;
-  BMLoop **verts = MEM_malloc_arrayN<BMLoop *>(len_max, __func__);
+  BMLoop **verts = MEM_new_array_uninitialized<BMLoop *>(len_max, __func__);
 
   BMIter iter;
   BMFace *f;
@@ -6808,7 +6809,7 @@ BMLoop **ED_uvedit_selected_verts(const Scene *scene, BMesh *bm, int len_max, in
 finally:
   *r_verts_len = verts_len;
   if (verts_len != len_max) {
-    verts = static_cast<BMLoop **>(MEM_reallocN(verts, sizeof(*verts) * verts_len));
+    verts = static_cast<BMLoop **>(MEM_realloc_uninitialized(verts, sizeof(*verts) * verts_len));
   }
   return verts;
 }
