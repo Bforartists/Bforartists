@@ -64,6 +64,17 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         ('Misc', 'Misc', '', 0, 7)
     ])
 
+    bfa_toolbar_types: EnumProperty(name='Toolbar Types', description='', items=[
+        ('Files', 'Files', 'Files Options', 0, 0),
+        ('Mesh Edit', 'Mesh Edit', 'Mesh Edit Options', 0, 1),
+        ('Primitives', 'Primitives', 'Primitives Options', 0, 2),
+        ('Image', 'Image', '', 0, 3),
+        ('Tools', 'Tools', '', 0, 4),
+        ('Animation', 'Animation', '', 0, 5),
+        ('Edit', 'Edit', '', 0, 6),
+        ('Misc', 'Misc', '', 0, 7)
+    ])
+
     #bfa_options: EnumProperty(name='Adv Options', description='', items=[
     #    ('Reset', 'Reset', 'Reset Options', 0, 0),
     #    ('Other', 'Other', 'Other Options', 0, 1),])
@@ -675,8 +686,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
             grid.prop(self, "nla_tweak_isolate_action", toggle=addon_prefs.bfa_button_style)
 
 
-
-##### Reset Functions ####
+##### Topbar Reset Functions ####
 def bfa_reset_files(layout_function,):
         prefs = bpy.context.preferences.addons[__name__].preferences
         reset = prefs.property_unset
@@ -815,7 +825,7 @@ def bfa_reset_misc(layout_function,):
         reset("topbar_misc_info")
         reset("topbar_misc_operatorsearch")
 
-##### Reset Operators ####
+##### Topbar Reset Operators ####
 class BFA_OT_reset_topbar(Operator):
     """ Reset Topbar To Defaults """
     bl_idname = "bfa.reset_topbar"
@@ -846,7 +856,6 @@ class BFA_OT_reset_topbar(Operator):
 
         return {'FINISHED'}
 
-
 class BFA_OT_reset_files(Operator):
     """ Reset Topbar Files To Defaults """
     bl_idname = "bfa.reset_files"
@@ -861,7 +870,6 @@ class BFA_OT_reset_files(Operator):
         self.report({'INFO'}, message='Topbar Files Set to Defaults')
         return {'FINISHED'}
 
-
 class BFA_OT_reset_meshedit(Operator):
     """ Reset Topbar Mesh Edit To Defaults """
     bl_idname = "bfa.reset_meshedit"
@@ -874,7 +882,6 @@ class BFA_OT_reset_meshedit(Operator):
         bfa_reset_meshedit(layout_function,)
         self.report({'INFO'}, message='Topbar Mesh Edit Set to Defaults')
         return {'FINISHED'}
-
 
 class BFA_OT_reset_primitives(Operator):
     """ Reset Topbar Primitives To Defaults """
@@ -889,7 +896,6 @@ class BFA_OT_reset_primitives(Operator):
         self.report({'INFO'}, message='Topbar Primitives Set to Defaults')
         return {'FINISHED'}
 
-
 class BFA_OT_reset_image(Operator):
     """ Reset Topbar Image To Defaults """
     bl_idname = "bfa.reset_image"
@@ -902,7 +908,6 @@ class BFA_OT_reset_image(Operator):
         bfa_reset_image(layout_function,)
         self.report({'INFO'}, message='Topbar Image to Defaults')
         return {'FINISHED'}
-
 
 class BFA_OT_reset_tools(Operator):
     """ Reset Topbar Tools To Defaults """
@@ -917,7 +922,6 @@ class BFA_OT_reset_tools(Operator):
         self.report({'INFO'}, message='Topbar Tools Set to Defaults')
         return {'FINISHED'}
 
-
 class BFA_OT_reset_animation(Operator):
     """ Reset Topbar Animation To Defaults """
     bl_idname = "bfa.reset_animation"
@@ -930,7 +934,6 @@ class BFA_OT_reset_animation(Operator):
         bfa_reset_animation(layout_function,)
         self.report({'INFO'}, message='Topbar Animation Set to Defaults')
         return {'FINISHED'}
-
 
 class BFA_OT_reset_edit(Operator):
     """ Reset Topbar Edit To Defaults """
@@ -945,7 +948,6 @@ class BFA_OT_reset_edit(Operator):
         self.report({'INFO'}, message='Topbar Edit Set to Defaults')
         return {'FINISHED'}
 
-
 class BFA_OT_reset_misc(Operator):
     """ Reset Topbar Misc To Defaults """
     bl_idname = "bfa.reset_misc"
@@ -959,9 +961,302 @@ class BFA_OT_reset_misc(Operator):
         self.report({'INFO'}, message='Topbar Misc Set to Defaults')
         return {'FINISHED'}
 
+##### Toolbar Reset Functions ####
+def bfa_reset_toolbar_files(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Files Defaults #
+        # Reset the area property for file_toolbars visibility to default (True/visible)
+        if bpy.context.area:
+            bpy.context.area.file_toolbars = True
+
+        reset("file_load_save")
+        reset("file_recover")
+        reset("file_link_append")
+        reset("file_import_menu")
+        reset("file_export_menu")
+        reset("file_import_common")
+        reset("file_import_common2")
+        reset("file_import_uncommon")
+        reset("file_export_common")
+        reset("file_export_common2")
+        reset("file_export_uncommon")
+        reset("file_render")
+        reset("file_render_opengl")
+        reset("file_render_misc")
+
+def bfa_reset_toolbar_meshedit(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Mesh Edit Defaults #
+        # Reset the area property for meshedit_toolbars visibility to default (True/visible)
+        if bpy.context.area:
+            bpy.context.area.meshedit_toolbars = True
+
+        reset("mesh_vertices_splitconnect")
+        reset("mesh_vertices_misc")
+        reset("mesh_edges_subdiv")
+        reset("mesh_edges_sharp")
+        reset("mesh_edges_freestyle")
+        reset("mesh_edges_rotate")
+        reset("mesh_edges_misc")
+        reset("mesh_faces_general")
+        reset("mesh_faces_freestyle")
+        reset("mesh_faces_tris")
+        reset("mesh_faces_rotatemisc")
+        reset("mesh_cleanup")
+
+def bfa_reset_toolbar_primitives(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Primitives Defaults #
+        # Reset the area property for primitives_toolbars visibility to default (True/visible)
+        if bpy.context.area:
+            bpy.context.area.primitives_toolbars = True
+
+        reset("primitives_mesh")
+        reset("primitives_curve")
+        reset("primitives_surface")
+        reset("primitives_metaball")
+        reset("primitives_point_cloud")
+        reset("primitives_volume")
+        reset("primitives_gpencil")
+        reset("primitives_gpencil_lineart")
+        reset("primitives_light")
+        reset("primitives_other")
+        reset("primitives_empties")
+        reset("primitives_image")
+        reset("primitives_lightprobe")
+        reset("primitives_forcefield")
+        reset("primitives_collection")
+
+def bfa_reset_toolbar_image(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Image Defaults #
+        # Reset the area property for image_toolbars visibility to default (True/visible)
+        if bpy.context.area:
+            bpy.context.area.image_toolbars = False
+
+        reset("image_uv_mirror")
+        reset("image_uv_rotate")
+        reset("image_uv_align")
+        reset("image_uv_unwrap")
+        reset("image_uv_modify")
+
+def bfa_reset_toolbar_tools(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Tools Defaults #
+        # Reset the area property for tools_toolbars visibility to default (True/visible)
+        if bpy.context.area:
+            bpy.context.area.tools_toolbars = True
+
+        reset("tools_parent")
+        reset("tools_objectdata")
+        reset("tools_link_to_scn")
+        reset("tools_linked_objects")
+        reset("tools_join")
+        reset("tools_origin")
+        reset("tools_shading")
+        reset("tools_datatransfer")
+        reset("tools_relations")
+
+def bfa_reset_toolbar_animation(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Animation Defaults #
+        # Reset the area property for animation_toolbars visibility
+        if bpy.context.area:
+            bpy.context.area.animation_toolbars = False
+
+        reset("animation_keyframes")
+        reset("animation_range")
+        reset("animation_play")
+        reset("animation_sync")
+        reset("animation_keyframetype")
+        reset("animation_keyingset")
+
+def bfa_reset_toolbar_edit(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Edit Defaults #
+        # Reset the area property for edit_toolbars visibility
+        if bpy.context.area:
+            bpy.context.area.edit_toolbars = True
+
+        reset("edit_edit")
+        reset("edit_weightinedit")
+        reset("edit_objectapply")
+        reset("edit_objectapply2")
+        reset("edit_objectapplydeltas")
+        reset("edit_objectclear")
+
+def bfa_reset_toolbar_misc(layout_function,):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+
+        # Toolbar Misc Defaults #
+        # Reset the area property for misc_toolbars visibility
+        if bpy.context.area:
+            bpy.context.area.misc_toolbars = True
+
+        reset("misc_viewport")
+        reset("misc_undoredo")
+        reset("misc_undohistory")
+        reset("misc_repeat")
+        reset("misc_scene")
+        reset("misc_viewlayer")
+        reset("misc_last")
+        reset("misc_info")
+        reset("misc_operatorsearch")
+
+##### Toolbar Reset Operators ####
+class BFA_OT_reset_toolbar(Operator):
+    """ Reset Toolbar To Defaults """
+    bl_idname = "bfa.reset_toolbar"
+    bl_label = "Reset Toolbar All"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_files(layout_function,)
+        bfa_reset_toolbar_meshedit(layout_function,)
+        bfa_reset_toolbar_primitives(layout_function,)
+        bfa_reset_toolbar_image(layout_function,)
+        bfa_reset_toolbar_tools(layout_function,)
+        bfa_reset_toolbar_edit(layout_function,)
+        bfa_reset_toolbar_animation(layout_function,)
+        bfa_reset_toolbar_misc(layout_function,)
+
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        reset = prefs.property_unset
+        reset("bfa_toolbar_types")
+
+        prefs = bpy.context.scene
+        reset = prefs.property_unset
+        reset("bfa_defaults")
+
+        self.report({'INFO'}, message='Topbar Set to Defaults')
+
+        return {'FINISHED'}
+
+class BFA_OT_reset_toolbar_files(Operator):
+    """ Reset Toolbar Files To Defaults """
+    bl_idname = "bfa.reset_toolbar_files"
+    bl_label = "Files"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_files(layout_function,)
+        self.report({'INFO'}, message='Toolbar Files Set to Defaults')
+        return {'FINISHED'}
+    
+class BFA_OT_reset_toolbar_meshedit(Operator):
+    """ Reset Toolbar Mesh Edit To Defaults """
+    bl_idname = "bfa.reset_toolbar_meshedit"
+    bl_label = "Mesh Edit"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_meshedit(layout_function,)
+        self.report({'INFO'}, message='Toolbar Mesh Edit Set to Defaults')
+        return {'FINISHED'}
+    
+class BFA_OT_reset_toolbar_primitives(Operator):
+    """ Reset Toolbar Primitives To Defaults """
+    bl_idname = "bfa.reset_toolbar_primitives"
+    bl_label = "Primitives"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_primitives(layout_function,)
+        self.report({'INFO'}, message='Toolbar Primitives Set to Defaults')
+        return {'FINISHED'}
+    
+class BFA_OT_reset_toolbar_image(Operator):
+    """ Reset Toolbar Image To Defaults """
+    bl_idname = "bfa.reset_toolbar_image"
+    bl_label = "Images"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_image(layout_function,)
+        self.report({'INFO'}, message='Toolbar Image to Defaults')
+        return {'FINISHED'}
+    
+class BFA_OT_reset_toolbar_tools(Operator):
+    """ Reset Toolbar Tools To Defaults """
+    bl_idname = "bfa.reset_toolbar_tools"
+    bl_label = "Tools"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_tools(layout_function,)
+        self.report({'INFO'}, message='Toolbar Tools Set to Defaults')
+        return {'FINISHED'}
+    
+class BFA_OT_reset_toolbar_animation(Operator):
+    """ Reset Toolbar Animation To Defaults """
+    bl_idname = "bfa.reset_toolbar_animation"
+    bl_label = "Animation"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_animation(layout_function,)
+        self.report({'INFO'}, message='Toolbar Animation Set to Defaults')
+        return {'FINISHED'}
+    
+class BFA_OT_reset_toolbar_edit(Operator):
+    """ Reset Toolbar Edit To Defaults """
+    bl_idname = "bfa.reset_toolbar_edit"
+    bl_label = "Edit"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_edit(layout_function,)
+        self.report({'INFO'}, message='Toolbar Edit Set to Defaults')
+        return {'FINISHED'}
+    
+class BFA_OT_reset_toolbar_misc(Operator):
+    """ Reset Toolbar Misc To Defaults """
+    bl_idname = "bfa.reset_toolbar_misc"
+    bl_label = "Misc"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        layout = self.layout
+        layout_function = layout
+        bfa_reset_toolbar_misc(layout_function,)
+        self.report({'INFO'}, message='Toolbar Misc Set to Defaults')
+        return {'FINISHED'}
+
 
 classes = (
     BFA_OT_toolbar_settings_prefs,
+    ###### Topbar Reset Operators #####
     BFA_OT_reset_topbar,
     BFA_OT_reset_files,
     BFA_OT_reset_meshedit,
@@ -971,6 +1266,16 @@ classes = (
     BFA_OT_reset_animation,
     BFA_OT_reset_edit,
     BFA_OT_reset_misc,
+    ##### Toolbar Reset Operators #####
+    BFA_OT_reset_toolbar,
+    BFA_OT_reset_toolbar_files,
+    BFA_OT_reset_toolbar_meshedit,
+    BFA_OT_reset_toolbar_primitives,
+    BFA_OT_reset_toolbar_image,
+    BFA_OT_reset_toolbar_tools,
+    BFA_OT_reset_toolbar_animation,
+    BFA_OT_reset_toolbar_edit,
+    BFA_OT_reset_toolbar_misc,
 )
 
 
@@ -981,6 +1286,7 @@ def register():
        register_class(cls)
 
     Scene.bfa_defaults = BoolProperty(name='BFA Defaults', description='Resets Topbar to Default State', default=False)
+    Scene.bfa_toolbar_defaults = BoolProperty(name='BFA Toolbar Defaults', description='Resets Toolbar to Default State', default=False)
 
 
 def unregister():
@@ -989,6 +1295,7 @@ def unregister():
        unregister_class(cls)
 
     del Scene.bfa_defaults
+    del Scene.bfa_toolbar_defaults
 
 
 if __name__ == "__main__":
