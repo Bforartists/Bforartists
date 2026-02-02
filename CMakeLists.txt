@@ -756,25 +756,19 @@ if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
 Enable Ahead-Of-Time compilation for Cycles oneAPI device"
     OFF
   )
-  option(WITH_CYCLES_ONEAPI_HOST_TASK_EXECUTION "\
-Switch target of oneAPI implementation from SYCL devices to Host Task (single thread on CPU). \
-This option is only for debugging purposes."
-    OFF
-  )
 
   # https://www.intel.com/content/www/us/en/develop/documentation/oneapi-dpcpp-cpp-compiler-dev-guide-and-reference/top/compilation/ahead-of-time-compilation.html
   # The supported devices can be retrieved from `ocloc` output when running
   # `ocloc compile --help`.
   # If you have completed optimization work and now want to enable AoT for new Intel devices,
   # update the optimization status in OneapiDevice::architecture_information.
-  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH dg2 mtl lnl bmg ptl CACHE STRING "\
+  set(CYCLES_ONEAPI_INTEL_BINARIES_ARCH dg2 mtl arl-h bmg lnl ptl CACHE STRING "\
 oneAPI Intel GPU architectures to build binaries for"
   )
   set(CYCLES_ONEAPI_SYCL_TARGETS spir64 spir64_gen CACHE STRING "\
 oneAPI targets to build AOT binaries for"
   )
 
-  mark_as_advanced(WITH_CYCLES_ONEAPI_HOST_TASK_EXECUTION)
   mark_as_advanced(CYCLES_ONEAPI_INTEL_BINARIES_ARCH)
   mark_as_advanced(CYCLES_ONEAPI_SYCL_TARGETS)
 endif()
@@ -808,7 +802,6 @@ Use Clang Tidy to analyze the source code \
   mark_as_advanced(WITH_CLANG_TIDY)
 endif()
 
-option(WITH_BOOST "Enable features depending on boost" ON)
 option(WITH_TBB "\
 Enable multi-threading. TBB is also required for features such as Cycles, OpenVDB and USD"
   ON
@@ -1038,8 +1031,8 @@ Can cause linking issues due to too large binary size."
   OFF
 )
 mark_as_advanced(WITH_COMPILER_ASAN_EXTERN)
-# Note: Using tbbmalloc allocator seems to be fully compatible with current sanitizers
-# (both clang/llvm and gcc ones).
+# Note: Using TBBMALLOC allocator seems to be fully compatible with current sanitizers
+# (both CLANG/LLVM and GCC ones).
 set_and_warn_incompatible(WITH_COMPILER_ASAN WITH_MEM_VALGRIND OFF)
 set_and_warn_incompatible(WITH_COMPILER_ASAN_EXTERN WITH_MEM_VALGRIND OFF)
 
@@ -1365,13 +1358,7 @@ set_and_warn_dependency(WITH_PYTHON WITH_CYCLES        OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_DRACO         OFF)
 set_and_warn_dependency(WITH_PYTHON WITH_MOD_FLUID     OFF)
 
-# enable boost for cycles, audaspace or i18n
-# otherwise if the user disabled
-
-set_and_warn_dependency(WITH_BOOST WITH_OPENVDB        OFF)
-set_and_warn_dependency(WITH_BOOST WITH_USD            OFF)
 if(WITH_CYCLES)
-  set_and_warn_dependency(WITH_BOOST   WITH_CYCLES_OSL          OFF)
   set_and_warn_dependency(WITH_PUGIXML WITH_CYCLES_OSL          OFF)
   set_and_warn_dependency(WITH_PUGIXML WITH_CYCLES_STANDALONE   OFF)
   set_and_warn_dependency(WITH_CYCLES_OSL WITH_CYCLES_TEST_OSL  OFF)
@@ -1471,11 +1458,13 @@ if(WITH_PYTHON)
   # Do this before main 'platform_*' checks,
   # because UNIX will search for the old Python paths which may not exist.
   # giving errors about missing paths before this case is met.
-  if(DEFINED PYTHON_VERSION AND "${PYTHON_VERSION}" VERSION_LESS "3.13")
-    message(
-      FATAL_ERROR
-      "At least Python 3.13 is required to build, but found Python ${PYTHON_VERSION}"
-    )
+  if(DEFINED PYTHON_VERSION)
+    if("${PYTHON_VERSION}" VERSION_LESS "3.13")
+      message(
+        FATAL_ERROR
+        "At least Python 3.13 is required to build, but found Python ${PYTHON_VERSION}"
+      )
+    endif()
   endif()
 endif()
 
@@ -1490,18 +1479,18 @@ set(WITH_BINRELOC OFF)
 set(EXETYPE "")
 
 # C/C++ flags
-set(PLATFORM_CFLAGS)
+set(PLATFORM_CFLAGS "")
 
 # these are added to later on.
-set(C_WARNINGS)
-set(CXX_WARNINGS)
+set(C_WARNINGS "")
+set(CXX_WARNINGS "")
 
 # NOTE: These flags are intended for situations where it's impractical to
 # suppress warnings by modifying the code or for code which is maintained externally.
 # For GCC this typically means adding `-Wno-*` arguments to negate warnings
 # that are useful in the general case.
-set(C_REMOVE_STRICT_FLAGS)
-set(CXX_REMOVE_STRICT_FLAGS)
+set(C_REMOVE_STRICT_FLAGS "")
+set(CXX_REMOVE_STRICT_FLAGS "")
 
 # Libraries to link to targets in setup_platform_linker_libs
 set(PLATFORM_LINKLIBS "")
@@ -1604,7 +1593,7 @@ endif()
 # Add the default compiler SIMD flags if enabled
 #
 if(WITH_COMPILER_SIMD)
-  set(COMPILER_SSE42_FLAG)
+  set(COMPILER_SSE42_FLAG "")
   get_sse_flags(COMPILER_SSE42_FLAG)
   string(APPEND CMAKE_CXX_FLAGS " ${COMPILER_SSE42_FLAG}")
   string(APPEND CMAKE_C_FLAGS " ${COMPILER_SSE42_FLAG}")
@@ -1697,7 +1686,7 @@ if(WITH_LIBMV OR WITH_GTESTS)
       message(FATAL_ERROR "System wide Gflags is requested but was not found")
     endif()
     # `FindGflags` does not define this, and we are not even sure what to use here.
-    set(GFLAGS_DEFINES)
+    set(GFLAGS_DEFINES "")
   else()
     set(GFLAGS_DEFINES
       -DGFLAGS_DLL_DEFINE_FLAG=
@@ -1715,7 +1704,7 @@ if(WITH_LIBMV OR WITH_GTESTS)
       message(FATAL_ERROR "System wide Glog is requested but was not found")
     endif()
     # `FindGlog` does not define this, and we are not even sure what to use here.
-    set(GLOG_DEFINES)
+    set(GLOG_DEFINES "")
   else()
     set(GLOG_DEFINES
       -DGOOGLE_GLOG_DLL_DECL=
@@ -1815,8 +1804,8 @@ Keep at '0' to automatically compute optimal values for each build."
       "  NINJA_MAX_NUM_PARALLEL_LINK_JOBS: "
       "max concurrent linking jobs (computed): ${_link_jobs}"
     )
-    set(_link_mem)
-    set(_link_jobs_max)
+    unset(_link_mem)
+    unset(_link_jobs_max)
   endif()
   set_property(
     GLOBAL APPEND PROPERTY
@@ -1872,8 +1861,8 @@ Keep at '0' to automatically compute optimal values for each build."
       "max concurrent heavy compile jobs (computed): ${_compile_heavy_jobs}"
     )
 
-    set(_compile_heavy_mem)
-    set(_compile_heavy_jobs_max)
+    unset(_compile_heavy_mem)
+    unset(_compile_heavy_jobs_max)
   endif()
   set_property(
     GLOBAL APPEND PROPERTY
@@ -1934,8 +1923,8 @@ Keep at '0' to automatically compute optimal values for each build."
       "  NINJA_MAX_NUM_PARALLEL_COMPILE_JOBS: "
       "max concurrent regular compile jobs (computed): ${_compile_jobs}"
     )
-    set(_compile_mem)
-    set(_compile_jobs_max)
+    unset(_compile_mem)
+    unset(_compile_jobs_max)
   endif()
   set_property(
     GLOBAL APPEND PROPERTY
@@ -1943,11 +1932,11 @@ Keep at '0' to automatically compute optimal values for each build."
   )
   set(CMAKE_JOB_POOL_COMPILE compile_job_pool)
 
-  set(_link_jobs)
-  set(_compile_heavy_jobs)
-  set(_compile_jobs)
-  set(_NUM_CORES)
-  set(_TOT_MEM)
+  unset(_link_jobs)
+  unset(_compile_heavy_jobs)
+  unset(_compile_jobs)
+  unset(_NUM_CORES)
+  unset(_TOT_MEM)
 endif()
 
 
@@ -2148,8 +2137,6 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     CXX_WARNINGS
 
     CXX_WARN_ALL -Wall
-    # Using C++20 features while having C++17 as the project language isn't allowed by MSVC.
-    CXX_CXX20_DESIGNATOR -Wc++20-designator
 
     CXX_WARN_NO_AUTOLOGICAL_COMPARE -Wno-tautological-compare
     CXX_WARN_NO_UNKNOWN_PRAGMAS -Wno-unknown-pragmas
@@ -2573,7 +2560,6 @@ elseif(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     "/wd4828"  # The file contains a character that is illegal
     "/wd4996"  # identifier was declared deprecated
     "/wd4661"  # no suitable definition provided for explicit template instantiation request
-    "/wd4848"  # 'no_unique_address' is a vendor extension in C++17
     # errors:
     "/we4013"  # 'function' undefined; assuming extern returning int
     "/we4133"  # incompatible pointer types
@@ -2630,9 +2616,9 @@ if(WITH_PYTHON)
   endif()
 endif()
 
-# Select C++17 as the standard for C++ projects.
-set(CMAKE_CXX_STANDARD 17)
-# If C++17 is not available, downgrading to an earlier standard is NOT OK.
+# Select C++20 as the standard for C++ projects.
+set(CMAKE_CXX_STANDARD 20)
+# If C++20 is not available, downgrading to an earlier standard is NOT OK.
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Do not enable compiler specific language extensions.
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -2909,8 +2895,10 @@ if(FIRST_RUN)
   if(WITH_PYTHON)
     info_cfg_text("Python:")
     info_cfg_option(WITH_PYTHON_INSTALL)
-    info_cfg_option(WITH_PYTHON_INSTALL_NUMPY)
-    info_cfg_option(WITH_PYTHON_INSTALL_ZSTANDARD)
+    if(WITH_PYTHON_INSTALL)
+      info_cfg_option(WITH_PYTHON_INSTALL_NUMPY)
+      info_cfg_option(WITH_PYTHON_INSTALL_ZSTANDARD)
+    endif()
     info_cfg_option(WITH_PYTHON_MODULE)
     info_cfg_option(WITH_PYTHON_SAFETY)
   endif()

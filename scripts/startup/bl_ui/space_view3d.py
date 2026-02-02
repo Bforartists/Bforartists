@@ -2889,9 +2889,12 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
 
         layout.separator()
 
+        layout.operator_menu_enum("grease_pencil.select_by_stroke_type", "type", text="By Stroke Type")
+        layout.operator_menu_enum("grease_pencil.select_similar", "mode", text="Similar")
+        layout.operator("grease_pencil.select_fill")
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
-        layout.operator_menu_enum("grease_pencil.select_similar", "mode", text="Similar")
+
 
         layout.separator()
 
@@ -3893,6 +3896,7 @@ class VIEW3D_MT_object_animation(Menu):
             "grease_pencil.bake_grease_pencil_animation",
             text="Bake Object Transform to Grease Pencil",
             icon="BAKE_ACTION")
+        layout.operator("anim.replace_action")
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -7179,10 +7183,18 @@ class VIEW3D_MT_sculpt_grease_pencil_copy(Menu):
 class VIEW3D_MT_edit_greasepencil_delete(Menu):
     bl_label = "Delete"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        layout.operator("grease_pencil.delete", icon="DELETE")
+        tool_settings = context.tool_settings
+        is_stroke_selection = tool_settings.gpencil_selectmode_edit == 'STROKE'
+        layout.operator("grease_pencil.delete", text="Strokes" if is_stroke_selection else "Points", icon="DELETE").mode = 'ALL'
+        layout.operator("grease_pencil.delete", text="Only Strokes", icon="DELETE").mode = 'STROKES'
+        layout.operator("grease_pencil.delete", text="Only Fills", icon="DELETE").mode = 'FILLS'
+
+        layout.separator()
+
+        layout.operator_enum("grease_pencil.dissolve", "type")
 
         layout.separator()
 
@@ -8067,7 +8079,14 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
 
         layout.separator()
 
+        # Set stroke mode
+        layout.operator_menu_enum("grease_pencil.set_stroke_type", "type", text="Set Stroke Type")
+
+        layout.separator()
+
         layout.operator("grease_pencil.reset_uvs", icon="RESET")
+        layout.operator("grease_pencil.join_fills")
+        layout.operator("grease_pencil.separate_fills")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -11123,6 +11142,11 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
                 icon="SUBDIVIDE_EDGES",
             )
 
+            # Set stroke mode
+            col.operator_menu_enum("grease_pencil.set_stroke_type", "type", text="Set Stroke Type")
+
+            col.separator()
+
             # Deform Operators
             col.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
             col.operator("transform.transform", text="Radius", icon="RADIUS").mode = "CURVE_SHRINKFATTEN"
@@ -11173,8 +11197,19 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX",)
-            col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
+            # Set stroke mode
+            col.operator_menu_enum("grease_pencil.set_stroke_type", "type", text="Set Stroke Type")
+
+            col.separator()
+
+            # Deform Operators
+            col.operator("transform.tosphere", text="To Sphere")
+            col.operator("transform.shear", text="Shear")
+            col.operator("transform.bend", text="Bend")
+            col.operator("transform.push_pull", text="Push/Pull")
+            col.operator("transform.transform", text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points")
+            col.operator("grease_pencil.set_start_point", text="Set Start Point")
             col.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
             col.separator()

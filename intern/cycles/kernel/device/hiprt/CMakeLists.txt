@@ -19,6 +19,28 @@ set(SRC_KERNEL_DEVICE_HIPRT_HEADERS
   globals.h
 )
 
+set(SRC_KERNEL_DEVICE_HIPRT_SDK_HEADERS
+  hiprt/hiprt_common.h
+  hiprt/hiprt_device.h
+  hiprt/hiprt_types.h
+  hiprt/hiprt_vec.h
+  hiprt/hiprt_math.h
+)
+
+set(SRC_KERNEL_DEVICE_HIPRT_SDK
+  hiprt/impl/Aabb.h
+  hiprt/impl/BvhNode.h
+  hiprt/impl/Geometry.h
+  hiprt/impl/hiprt_device_impl.h
+  hiprt/impl/hiprt_kernels_bitcode.h
+  hiprt/impl/Instance.h
+  hiprt/impl/QrDecomposition.h
+  hiprt/impl/Quaternion.h
+  hiprt/impl/Scene.h
+  hiprt/impl/Transform.h
+  hiprt/impl/Triangle.h
+)
+
 set(LIB
 
 )
@@ -34,7 +56,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYCLES_DEVICE_HIPRT)
       ${HIP_HIPCC_EXECUTABLE})
   else()
     set(hiprt_compile_command ${HIP_HIPCC_EXECUTABLE})
-    set(hiprt_compile_flags)
+    set(hiprt_compile_flags "")
   endif()
 
   if(WITH_NANOVDB)
@@ -79,7 +101,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYCLES_DEVICE_HIPRT)
     -ffast-math
   )
 
-  set(hiprt_hipfb)
+  set(hiprt_hipfb "")
   foreach(arch ${CYCLES_HIP_BINARIES_ARCH})
     set(hiprt_file ${CMAKE_CURRENT_BINARY_DIR}/kernel_rt_${arch}.hipfb)
     set(hiprt_file_compressed ${hiprt_file}.zst)
@@ -116,3 +138,7 @@ endif()
 
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "${SRC_KERNEL_DEVICE_HIPRT}" ${CYCLES_INSTALL_PATH}/source/kernel/device/hiprt)
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "${SRC_KERNEL_DEVICE_HIPRT_HEADERS}" ${CYCLES_INSTALL_PATH}/source/kernel/device/hiprt)
+if(WITH_CYCLES_DEVICE_HIPRT)
+  delayed_install(${HIPRT_INCLUDE_DIR}        "${SRC_KERNEL_DEVICE_HIPRT_SDK_HEADERS}" ${CYCLES_INSTALL_PATH}/source/kernel/device/hiprt/hiprt)
+  delayed_install(${HIPRT_INCLUDE_DIR}        "${SRC_KERNEL_DEVICE_HIPRT_SDK}" ${CYCLES_INSTALL_PATH}/source/kernel/device/hiprt/hiprt/impl)
+endif()

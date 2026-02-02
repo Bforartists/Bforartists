@@ -268,8 +268,7 @@ static void nla_main_region_draw(const bContext *C, ARegion *region)
 
   /* time grid */
   if (region->winy > min_height) {
-    ui::view2d_draw_lines_x__discrete_frames_or_seconds(
-        v2d, scene, snla->flag & SNLA_DRAWTIME, true);
+    ui::view2d_draw_lines_x_frames(v2d, scene, snla->flag & SNLA_DRAWTIME, false, true);
   }
 
   ED_region_draw_cb_draw(C, region, REGION_DRAW_PRE_VIEW);
@@ -701,7 +700,7 @@ void ED_spacetype_nla()
   art = MEM_new_zeroed<ARegionType>("spacetype nla region");
   art->regionid = RGN_TYPE_FOOTER;
   art->prefsizey = HEADERY;
-  art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FOOTER;
+  art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FOOTER | ED_KEYMAP_FRAMES;
 
   art->init = nla_header_region_init;
   art->draw = nla_header_region_draw;

@@ -139,19 +139,6 @@ class IMemStream : public Imf::IStream {
       return true;
     }
 
-    /* OpenEXR requests chunks of 4096 bytes even if the file is smaller than that. Return
-     * zeros when reading up to 2x that amount past the end of the file.
-     * This was fixed after the OpenEXR 3.3.2 release, but not in an official release yet. */
-    if (n + _exrpos < _exrsize + 8192) {
-      const size_t remainder = _exrsize - _exrpos;
-      if (remainder > 0) {
-        memcpy(c, (void *)(&_exrbuf[_exrpos]), remainder);
-        memset(c + remainder, 0, n - remainder);
-        _exrpos += n;
-        return true;
-      }
-    }
-
     return false;
   }
 
@@ -464,7 +451,7 @@ static void openexr_header_compression(Header *header, int compression, int qual
       break;
 #endif
 #if COMBINED_OPENEXR_VERSION >= 30400
-      /* Always writing 32 scanlines for now, could add an option for 256 scanlines
+      /* Always writing 32 scan-lines for now, could add an option for 256 scan-lines
        * for slightly smaller files if there is demand for it. */
     case R_IMF_EXR_CODEC_HTJ2K:
       header->compression() = HTJ2K32_COMPRESSION;

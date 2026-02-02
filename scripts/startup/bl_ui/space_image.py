@@ -905,6 +905,7 @@ class IMAGE_MT_pivot_pie(Menu):
 
         sima = context.space_data
 
+        # BFA - NOTE: We still using the old icon names, information https://projects.blender.org/blender/blender/pulls/153560 
         pie.prop_enum(sima, "pivot_point", value="CENTER")
         pie.prop_enum(sima, "pivot_point", value="CURSOR")
         pie.prop_enum(sima, "pivot_point", value="INDIVIDUAL_ORIGINS")

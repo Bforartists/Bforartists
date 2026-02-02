@@ -660,20 +660,20 @@ class StrokePanel(BrushPanel):
         col.prop(brush, "stroke_method")
         col.separator()
 
-        if brush.use_anchor:
+        if brush.stroke_method == 'ANCHORED':
             col.use_property_split = False
             col.prop(brush, "use_edge_to_edge", text="Edge to Edge")
             col.use_property_split = True
 
-        if brush.use_airbrush:
+        if brush.stroke_method == 'AIRBRUSH':
             col.prop(brush, "rate", text="Rate", slider=True)
 
-        if brush.use_space:
+        if brush.stroke_method == 'SPACE':
             row = col.row(align=True)
             row.prop(brush, "spacing", text="Spacing")
             row.prop(brush, "use_pressure_spacing", toggle=True, text="")
 
-        if brush.use_line or brush.use_curve:
+        if brush.stroke_method in {'LINE', 'CURVE'}:
             row = col.row(align=True)
             row.prop(brush, "spacing", text="Spacing")
 
@@ -686,13 +686,13 @@ class StrokePanel(BrushPanel):
                 col.prop(brush, "use_space_attenuation")
                 col.use_property_split = True
 
-        if brush.use_curve:
+        if brush.stroke_method == 'CURVE':
             col.separator()
             col.template_ID(brush, "paint_curve", new="paintcurve.new")
             col.operator("paintcurve.draw")
             col.separator()
 
-        if brush.use_space or brush.use_line or brush.use_curve:
+        if brush.stroke_method in {'SPACE', 'LINE', 'CURVE'}:
             col.separator()
             row = col.row(align=True)
             col.prop(brush, "dash_ratio", text="Dash Ratio")
@@ -2126,29 +2126,20 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
     if gp_settings is None:
         return
 
-    grease_pencil_brush_type = brush.gpencil_brush_type
-
-    if grease_pencil_brush_type in {"DRAW", "ERASE", "TINT"} or tool.idname in {
+    is_primitive_tool = tool.idname in {
         "builtin.arc",
         "builtin.curve",
         "builtin.line",
         "builtin.box",
         "builtin.circle",
         "builtin.polyline",
-    }:
+    }
+
+    grease_pencil_brush_type = brush.gpencil_brush_type
+
+    if grease_pencil_brush_type in {'DRAW', 'ERASE', 'TINT'} or is_primitive_tool:
         size = "size"
-        if brush.use_locked_size == "SCENE" and (
-            grease_pencil_brush_type == "DRAW"
-            or tool.idname
-            in {
-                "builtin.arc",
-                "builtin.curve",
-                "builtin.line",
-                "builtin.box",
-                "builtin.circle",
-                "builtin.polyline",
-            }
-        ):
+        if brush.use_locked_size == 'SCENE' and (grease_pencil_brush_type == 'DRAW' or is_primitive_tool):
             size = "unprojected_size"
         row = layout.row(align=True)
         row.prop(brush, size, slider=True, text="Size")
@@ -2223,20 +2214,20 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         layout.prop(props, "subdivision")
 
     # Brush details
-    if tool.idname in {
-        "builtin.arc",
-        "builtin.curve",
-        "builtin.line",
-        "builtin.box",
-        "builtin.circle",
-        "builtin.polyline",
-    }:
+    if is_primitive_tool:
+        row = layout.row(align=True)
+        if context.region.type == 'TOOL_HEADER':
+            row.prop(brush.gpencil_settings, "stroke_type", expand=True)
+        else:
+            row.prop(brush.gpencil_settings, "stroke_type")
+
         row = layout.row(align=True)
         if context.region.type == "TOOL_HEADER":
             row.prop(gp_settings, "caps_type", text="", expand=True)
         else:
             row.prop(gp_settings, "caps_type", text="Caps Type")
 
+        row = layout.row(align=True)
         settings = context.tool_settings.gpencil_sculpt
         if compact:
             row = layout.row(align=True)
@@ -2256,6 +2247,12 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
                 # Pressure curve.
                 layout.template_curve_mapping(settings, "thickness_primitive_curve", brush=True, show_presets=True)
     elif grease_pencil_brush_type == "DRAW":
+        row = layout.row(align=True)
+        if compact:
+            row.prop(brush.gpencil_settings, "stroke_type", expand=True)
+        else:
+            row.prop(brush.gpencil_settings, "stroke_type")
+
         row = layout.row(align=True)
         if compact:
             row.prop(gp_settings, "caps_type", text="", expand=True)
