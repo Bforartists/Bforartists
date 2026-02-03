@@ -23,6 +23,7 @@
 
 import bpy
 from bpy.app.handlers import persistent
+from bpy.types import Operator
 
 # Asset names for wizard recognition (import from operators)
 from .wizard_operators import BLEND_NORMALS_BY_PROXIMITY
@@ -44,6 +45,27 @@ WIZARD_HANDLERS = {
     # "Your New Asset Name": "wizard.your_new_wizard",
     # "Another Asset Pattern": "wizard.another_wizard",
 }
+
+# -----------------------------------------------------------------------------#
+# Helper Functions
+# -----------------------------------------------------------------------------#
+
+def find_nested_target_collection(collection, search_names):
+    """Recursively search for a nested collection with target names"""
+    # Check direct children first
+    for child in collection.children:
+        child_name_lower = child.name.lower()
+        for name_pattern in search_names:
+            if name_pattern.lower() in child_name_lower:
+                return child
+    
+    # Recursively search deeper
+    for child in collection.children:
+        result = find_nested_target_collection(child, search_names)
+        if result:
+            return result
+    
+    return None
 
 # -----------------------------------------------------------------------------#
 # Collection Handler Functions
@@ -80,8 +102,13 @@ def pre_collection_asset_added_handler(scene):
 @persistent
 def collection_asset_added_handler(arg):
     """Detects new collections and triggers appropriate wizards"""
-    scene = bpy.context.scene
+    # Ensure we have a valid context
+    if not bpy.context or not bpy.context.scene:
+        # print("Warning: Invalid context in collection_asset_added_handler")
+        return
     
+    scene = bpy.context.scene
+
     if not hasattr(pre_collection_asset_added_handler, 'known_collections'):
         return
 
@@ -93,18 +120,34 @@ def collection_asset_added_handler(arg):
     for collection in new_collections:
         for asset_pattern, wizard_operator in WIZARD_HANDLERS.items():
             if asset_pattern in collection.name:
-                # Set the collection in the scene properties
-                scene.target_collection = collection
+                # Look for a nested target collection instead of using the parent collection
+                target_collection = collection
                 
-                # Set the active object if collection has objects
-                if collection.objects:
-                    bpy.context.view_layer.objects.active = collection.objects[0]
-                    
-                # Invoke the appropriate wizard
+                # Search for nested collection with common target names, case sensitive. Add more with commas and "".
+                nested_collection_names = ["Default Target Collection"]
+                nested_target = find_nested_target_collection(collection, nested_collection_names)
+                
+                if nested_target:
+                    target_collection = nested_target
+                    # print(f"Found nested target collection: {nested_target.name} in parent: {collection.name}")
+                else:
+                    # print(f"No nested target collection found in {collection.name}, using parent collection")
+                    pass
+                
+                # Set the collection in the scene properties
+                scene.target_collection = target_collection
+                
+                # Don't set active object - let the wizard handle it or work without it
+                # The wizard's poll method should be robust enough to work without an active object
+                
+                # Simple direct invocation - no timers, no wrappers
                 try:
+                    # print(f"Attempting to invoke wizard: {wizard_operator}")
                     bpy.ops.wizard.blend_normals_by_proximity('INVOKE_DEFAULT')
+                    # print(f"Successfully invoked wizard: {wizard_operator}")
                 except Exception as e:
-                    print(f"Failed to invoke wizard {wizard_operator}: {e}")
+                    # print(f"Failed to invoke wizard {wizard_operator}: {e}")
+                    pass
                 
                 break  # Only handle one wizard per collection
 

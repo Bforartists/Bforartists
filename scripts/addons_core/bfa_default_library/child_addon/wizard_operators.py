@@ -49,17 +49,30 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
     bl_idname = "wizard.blend_normals_by_proximity"
     bl_label = BLEND_NORMALS_BY_PROXIMITY
     bl_description = "Configure the Blend Normals by Proximity geometry nodes setup"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     @classmethod
     def poll(cls, context):
-        """Available when there's an active object with geometry nodes"""
-        return (context.object and
-                context.object.modifiers and
-                any(mod.type == 'NODES' for mod in context.object.modifiers))
+        """Always available - no checks at all"""
+        # Return True unconditionally
+        # This is the most permissive poll method possible
+        return True
 
     def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self, width=330)
+        # Try to open dialog, but handle failures gracefully
+        try:
+            # Check if we have the necessary UI context
+            if (hasattr(context, 'window_manager') and context.window_manager and
+                hasattr(context, 'area') and context.area):
+                return context.window_manager.invoke_props_dialog(self, width=350)
+            else:
+                # No UI context available - can't open dialog
+                # Just execute without dialog
+                return self.execute(context)
+        except Exception as e:
+            # If dialog fails, execute without it
+            print(f"Failed to open wizard dialog: {e}")
+            return self.execute(context)
 
     def draw(self, context):
         layout = self.layout
@@ -78,6 +91,11 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
         
         row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
+        
+        # DEBUG: Show current target collection name for feedback
+        #if context.scene.target_collection:
+        #    row = layout.row()
+        #    row.label(text=f"Current target: {context.scene.target_collection.name}", icon='OUTLINER_COLLECTION')
 
         row = layout.row()
         row.prop(context.scene, "inject_intersection_nodegroup", text="Apply Blend to Materials", icon="MATERIAL")
