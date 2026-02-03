@@ -2347,7 +2347,8 @@ void MESH_OT_loop_select(wmOperatorType *ot)
   /* Identifiers. */
   ot->name = "Loop Select";
   ot->idname = "MESH_OT_loop_select";
-  ot->description = "Select a loop of connected edges";
+  ot->description = "Select a loop of connected edges under mouse Cursor. \n "
+                    "To select, hold ALT and select where you want to the loop to be with the LMB"; /*BFA - made more explicit and discoverable*/
 
   /* API callbacks. */
   ot->invoke = edbm_select_loop_invoke;
