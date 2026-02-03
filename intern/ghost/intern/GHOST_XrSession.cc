@@ -15,8 +15,7 @@
 
 #include "BLI_span.hh"
 
-#include "GHOST_C-api.h"
-
+#include "GHOST_Context.hh"
 #include "GHOST_IXrGraphicsBinding.hh"
 #include "GHOST_XrAction.hh"
 #include "GHOST_XrContext.hh"
@@ -527,6 +526,7 @@ void GHOST_XrSession::drawView(GHOST_XrSwapchain &swapchain,
   GHOST_XrDrawViewInfo draw_view_info = {};
   draw_view_info.view_idx = char(view_idx);
   draw_view_info.swapchain_format = swapchain.getFormat();
+  draw_view_info.gpu_swapchain_format = swapchain.getGPUFormat();
   draw_view_info.expects_srgb_buffer = swapchain.isBufferSRGB();
   draw_view_info.ofsx = r_proj_layer_view.subImage.imageRect.offset.x;
   draw_view_info.ofsy = r_proj_layer_view.subImage.imageRect.offset.y;
@@ -659,7 +659,7 @@ void GHOST_XrSession::unbindGraphicsContext()
 {
   const GHOST_XrCustomFuncs &custom_funcs = context_->getCustomFuncs();
   if (custom_funcs.gpu_ctx_unbind_fn) {
-    custom_funcs.gpu_ctx_unbind_fn((GHOST_ContextHandle)gpu_ctx_);
+    custom_funcs.gpu_ctx_unbind_fn(gpu_ctx_);
   }
   gpu_ctx_ = nullptr;
 }

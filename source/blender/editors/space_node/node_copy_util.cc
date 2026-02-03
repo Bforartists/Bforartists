@@ -541,10 +541,13 @@ static void map_panel(NodeTreeInterfaceMapping &io_mapping,
 }
 
 NodeTreeInterfaceMapping map_group_node_interface(const NodeSetInterfaceParams &params,
+                                                  const bNodeTree &tree,
                                                   const bNode &group_node)
 {
   BLI_assert(group_node.is_group());
   const bNodeTree &group_tree = *id_cast<const bNodeTree *>(group_node.id);
+
+  tree.ensure_topology_cache();
 
   NodeTreeInterfaceMapping result;
   for (const bNodeTreeInterfaceItem *io_item : group_tree.interface_items()) {
@@ -583,8 +586,6 @@ NodeSetCopy NodeSetCopy::from_nodes(Main &bmain,
                                     const Span<const bNode *> src_nodes,
                                     bNodeTree &dst_tree)
 {
-  node_deselect_all(dst_tree);
-
   NodeSetCopy result(dst_tree);
   Vector<AnimationBasePathChange> anim_basepaths;
   /* Note: socket map is not stored in NodeSetCopy because socket pointers are easily invalidated
@@ -708,8 +709,11 @@ GroupInputOutputNodes connect_copied_nodes_to_interface(const bContext &C,
   }
   if (const std::optional<Bounds<float2>> bounds = node_bounds(nodes_vec)) {
     io_nodes.input_node->location[0] = bounds->min[0] - 200.0f;
-    io_nodes.input_node->location[1] = bounds->center()[1];
     io_nodes.output_node->location[0] = bounds->max[0] + 50.0f;
+  }
+  /* Ignore node dimensions for vertical placement. */
+  if (const std::optional<Bounds<float2>> bounds = node_location_bounds(nodes_vec)) {
+    io_nodes.input_node->location[1] = bounds->center()[1];
     io_nodes.output_node->location[1] = bounds->center()[1];
   }
 
@@ -807,7 +811,9 @@ void connect_group_node_to_external_sockets(bNode &group_node,
       continue;
     }
     const InterfaceSocketData *data = io_mapping.socket_data.lookup_ptr(interface);
-    BLI_assert(data);
+    if (!data) {
+      continue;
+    }
     for (const MutableNodeAndSocket &link : data->external_sockets) {
       BLI_assert(owner_tree.all_nodes().contains(&link.node));
       bke::node_add_link(owner_tree, link.node, link.find_socket(), group_node, *group_node_input);
@@ -823,7 +829,9 @@ void connect_group_node_to_external_sockets(bNode &group_node,
       continue;
     }
     const InterfaceSocketData *data = io_mapping.socket_data.lookup_ptr(interface);
-    BLI_assert(data);
+    if (!data) {
+      continue;
+    }
     for (const MutableNodeAndSocket &link : data->external_sockets) {
       BLI_assert(owner_tree.all_nodes().contains(&link.node));
       bke::node_add_link(

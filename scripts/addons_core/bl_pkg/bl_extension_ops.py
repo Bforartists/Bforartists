@@ -97,7 +97,7 @@ def url_normalize(url):
                 # Ensure:
                 # MS-Edge uses: `file://HOST/share/path`
                 # Firefox uses: `file://///HOST/share/path`
-                # Both can work prefer the shorter one.
+                # Both can work, prefer the shorter one.
                 url = prefix + path_lstrip
     return url
 
@@ -146,13 +146,13 @@ def repo_lookup_by_index_or_none(index):
 def repo_lookup_by_index_or_none_with_report(index, report_fn):
     result = repo_lookup_by_index_or_none(index)
     if result is None:
-        report_fn({'WARNING'}, "Called with invalid index")
+        report_fn({'WARNING'}, "Repository index is not valid")
     return result
 
 
 def repo_user_directory(repo_module_name):
     path = bpy.utils.user_resource('EXTENSIONS')
-    # Technically possible this is empty but in practice never happens.
+    # Technically possible this is empty but should not happen.
     if path:
         path = os.path.join(path, ".user", repo_module_name)
     return path
@@ -172,7 +172,6 @@ blender_extension_show = set()
 blender_filter_by_type_map = {
     "ALL": "",
     "ADDON": "add-on",
-    "KEYMAP": "keymap",
     "THEME": "theme",
 }
 
@@ -209,7 +208,7 @@ class CheckSIGINT_Context:
 # -----------------------------------------------------------------------------
 # Operator Notify State
 #
-# Support for
+# Support for non-blocking operations that update the UI during sync.
 
 class OperatorNonBlockingSyncHelper:
     __slots__ = (
@@ -344,8 +343,8 @@ def _extensions_repo_install_stale_package_clear(
 ):  # `-> None`
     # If install succeeds, ensure the package is not stale.
     #
-    # This can happen when a package fails to remove (if one of it's files are locked),
-    # it is queued for removal. Then the user successfully removes it & re-installs in.
+    # This can happen when a package fails to remove (if one of its files are locked),
+    # it is queued for removal. Then the user successfully removes it & re-installs it.
     # In this case the package will be tagged for later removal, so ensure it's removed.
     import addon_utils
 
@@ -383,7 +382,7 @@ def extension_url_find_repo_index_and_pkg_id(url):
     from .bl_extension_utils import (
         pkg_manifest_archive_url_abs_from_remote_url,
     )
-    # return repo_index, pkg_id
+    # return (repo_index, repo.name, pkg_id, item_remote, item_local | None)
 
     # NOTE: we might want to use `urllib.parse.urlsplit` so it's possible to include variables in the URL.
     url_basename = url.rpartition("/")[2]
@@ -392,7 +391,7 @@ def extension_url_find_repo_index_and_pkg_id(url):
     repo_cache_store = repo_cache_store_ensure()
 
     # Regarding `ignore_missing`, set to True, otherwise a user-repository
-    # or a new repository that has not yet been initialize will report errors.
+    # or a new repository that has not yet been initialized will report errors.
     # It's OK to silently ignore these.
 
     for repo_index, (
@@ -441,7 +440,7 @@ def online_user_agent_from_blender():
 
 def lock_result_any_failed_with_report(op, lock_result, report_type='ERROR'):
     """
-    Convert any locking errors from ``bl_extension_utils.RepoLock.acquire`` into reports.
+    Convert any locking errors from ``bl_extension_utils.RepoLock`` acquire/release into reports.
 
     Note that we might want to allow some repositories not to lock and still proceed (in the future).
     """
@@ -545,7 +544,7 @@ def wm_wait_cursor(value):
 
 
 def operator_finished_result(operator_result):
-    # Inspect results for modal operator, return None when the result isn't known.
+    # Inspect operator results, return True if cancelled, False if finished, None if still running.
     if 'CANCELLED' in operator_result:
         return True
     if 'FINISHED' in operator_result:
@@ -560,7 +559,7 @@ def pkg_manifest_params_compatible_or_error_for_this_system(
     platforms,  # `list[str]`
     python_versions,  # `list[str]`
 ):  # `str | None`
-    # Return true if the parameters are compatible with this system.
+    # Return an error message if the parameters are incompatible, or None if compatible.
     import sys
     from .bl_extension_utils import (
         pkg_manifest_params_compatible_or_error,
@@ -651,7 +650,7 @@ def _preferences_ensure_disabled(
         pkg_id_sequence,  # `list[str]`
         default_set,  # `bool`
         error_fn,  # `Callable[[Exception], None]`
-):  # `-> dict[str, tuple[boo, bool]]`
+):  # `-> dict[str, tuple[bool, bool]]`
     import sys
     import addon_utils
 
@@ -714,10 +713,10 @@ def _preferences_ensure_disabled(
             continue
 
         # Use pop instead of del because there is a (very) small chance
-        # that classes defined in a removed module define a `__del__` method manipulates modules.
+        # that classes defined in a removed module define a `__del__` method that manipulates modules.
         sys.modules.pop(key, None)
 
-    # Now remove from the module from it's parent (when found).
+    # Now remove the module from its parent (when found).
     # Although in most cases this isn't needed because disabling the add-on typically deletes the module,
     # don't report a warning if this is the case.
     if repo_module is not None:
@@ -760,7 +759,7 @@ def _preferences_install_post_enable_on_install(
         directory,
         pkg_manifest_local,
         pkg_id_sequence,
-        # There were already installed and an attempt to enable it will have already been made.
+        # These were already installed and an attempt to enable them will have already been made.
         pkg_id_sequence_upgrade,
         handle_error,
 ):
@@ -773,12 +772,12 @@ def _preferences_install_post_enable_on_install(
     for pkg_id in pkg_id_sequence:
         item_local = pkg_manifest_local.get(pkg_id)
         if item_local is None:
-            # Unlikely but possible, do nothing in this case.
-            print("Package should have been installed but not found:", pkg_id)
+            # Unlikely but possible, report and skip in this case.
+            print("Package was expected to be installed but not found:", pkg_id)
             return
 
         if item_local.type == "add-on":
-            # Check if the add-on will have been enabled from re-installing.
+            # Skip add-ons being upgraded, they are re-enabled as part of re-installation.
             if pkg_id in pkg_id_sequence_upgrade:
                 continue
 
@@ -898,7 +897,7 @@ def _extensions_repo_from_directory(directory):
 
 def _extensions_repo_from_directory_and_report(directory, report_fn):
     if not directory:
-        report_fn({'ERROR', "Directory not set"})
+        report_fn({'ERROR'}, "Directory not set")
         return None
 
     repo_item = _extensions_repo_from_directory(directory)
@@ -923,7 +922,7 @@ def _pkg_marked_by_repo(repo_cache_store, pkg_manifest_all):
             if not ui_visibility.test((pkg_id, repo_index)):
                 continue
         else:
-            # Background mode, just to a simple range check.
+            # Background mode, just do a simple range check.
             # While this should be prevented, any marked packages out of the range will cause problems, skip them.
             if repo_index >= len(pkg_manifest_all):
                 continue
@@ -949,7 +948,7 @@ def _extensions_wheel_filter_for_this_system(wheels):
 
     # Copied from `wheel.bwheel_dist.get_platform(..)` which isn't part of Python.
     # This misses some additional checks which aren't supported by official Blender builds,
-    # it's highly doubtful users ever run into this but we could add extend this if it's really needed.
+    # it's highly doubtful users ever run into this but we could extend this if it's really needed.
     # (e.g. `linux-i686` on 64 bit systems & `linux-armv7l`).
     import sysconfig
 
@@ -1043,7 +1042,8 @@ def _extensions_wheel_filter_for_this_system(wheels):
                             str,
                     ):
                         print("Error: wheel \"{:s}\" unable to parse Python ABI version {:s}".format(
-                            wheel_filename, python_versions,
+                            # `python_versions_stable_abi` is the error.
+                            wheel_filename, python_versions_stable_abi,
                         ))
                     elif (python_version_current[0],) in python_versions_stable_abi:
                         if python_version_current >= python_version:
@@ -1074,7 +1074,7 @@ def pkg_wheel_filter(
         pkg_id,  # `str`
         repo_directory,  # `str`
         wheels_rel,  # `list[str]`
-):  # `-> tuple[str, list[str]]`
+):  # `-> tuple[str, list[str]] | None`
     # Filter only the wheels for this platform.
     wheels_rel = _extensions_wheel_filter_for_this_system(wheels_rel)
     if not wheels_rel:
@@ -1112,8 +1112,8 @@ def _extensions_enabled():
 
 
 def _extensions_enabled_from_repo_directory_and_pkg_id_sequence(repo_directory_and_pkg_id_sequence):
-    # Use to calculate extensions which will be enabled,
-    # needed so the wheels for the extensions can be enabled before the add-on is enabled that uses them.
+    # Calculate which extensions are pending to be enabled,
+    # needed so wheels for extensions can be extracted before any add-on using them is enabled.
     extensions_enabled_pending = set()
     repo_directory_to_module_map = _extension_repos_directory_to_module_map()
     for repo_directory, pkg_id_sequence in repo_directory_and_pkg_id_sequence:
@@ -1242,21 +1242,22 @@ def _preferences_theme_state_create():
     if (result := file_mtime_or_none(filepath)) is not None:
         return result, filepath
 
-    # It's possible the XML was renamed after upgrading, detect another.
+    # Fallback for renamed XML theme files: the theme XML may have been renamed
+    # after upgrading (e.g. version bump), so scan the directory for any XML file.
     dirpath = os.path.dirname(filepath)
+    del filepath
 
     # Not essential, just avoids a demoted error from `scandir` which seems like it may be a bug.
     if not os.path.exists(dirpath):
         return None, None
 
-    filepath = ""
     for entry in scandir_with_demoted_errors(dirpath):
         if entry.is_dir():
             continue
-        # There must only ever be one.
+        # Theme directories contain only one XML file, use the first one found.
         if entry.name.lower().endswith(".xml"):
             if (result := file_mtime_or_none(entry.path)) is not None:
-                return result, filepath
+                return result, entry.path
     return None, None
 
 
@@ -1475,9 +1476,9 @@ class _ExtCmdMixIn:
     """
     Utility to execute mix-in.
 
-    Sub-class must define.
-    - bl_idname
-    - bl_label
+    Sub-class must define:
+    - bl_idname (Operator)
+    - bl_label (Operator)
     - exec_command_iter
     - exec_command_finish
     """
@@ -1489,7 +1490,7 @@ class _ExtCmdMixIn:
     def __init_subclass__(cls) -> None:
         for attr in ("exec_command_iter", "exec_command_finish"):
             if getattr(cls, attr) is getattr(_ExtCmdMixIn, attr):
-                raise Exception("Subclass did not define 'exec_command_iter'!")
+                raise Exception("Subclass did not define {!r}!".format(attr))
 
     def exec_command_iter(self, is_modal):
         raise Exception("Subclass must define!")
@@ -1509,7 +1510,7 @@ class _ExtCmdMixIn:
         if cmd_batch is None:
             return {'CANCELLED'}
 
-        # Needed in cast there are no commands within `cmd_batch`,
+        # Needed in case there are no commands within `cmd_batch`,
         # the title should still be set.
         repo_status_text.title = cmd_batch.title
 
@@ -1731,8 +1732,7 @@ class EXTENSIONS_OT_repo_sync_all(Operator, _ExtCmdMixIn):
 
 
 class EXTENSIONS_OT_repo_refresh_all(Operator):
-    """Scan extension & legacy add-ons for changes to modules & meta-data (similar to restarting). """ \
-        """Any issues are reported as warnings"""
+    """Refresh extension & legacy add-ons, reloading modules & meta-data (similar to restarting)"""
     bl_idname = "extensions.repo_refresh_all"
     bl_label = "Refresh Local"
 
@@ -1745,6 +1745,10 @@ class EXTENSIONS_OT_repo_refresh_all(Operator):
         self.report({'WARNING'}, "{:s}: {:s}".format(repo_name, str(ex)))
 
     def execute(self, _context):
+        # NOTE: report errors as warnings.
+        # - So the user is aware there are problems.
+        # - Because this operation may involve many repositories,
+        #   failing with a single error doesn't make sense.
         import importlib
         import addon_utils
 
@@ -1789,7 +1793,7 @@ class EXTENSIONS_OT_repo_refresh_all(Operator):
         # Ensure compatibility info and wheels is up to date.
         addon_utils.extensions_refresh(
             ensure_wheels=True,
-            handle_error=lambda ex: self.report({'ERROR'}, str(ex)),
+            handle_error=lambda ex: self.report({'WARNING'}, str(ex)),
         )
 
         _preferences_ui_redraw()
@@ -1865,7 +1869,7 @@ class EXTENSIONS_OT_repo_unlock(Operator):
         # Either return a message for why the lock cannot be unlocked, or,
         # the lock time and a possible error when accessing it.
         if not repos:
-            return "Active repository is not enabled has invalid settings", None, None
+            return "Active repository is not enabled or has invalid settings", None, None
         repo = repos[0]
 
         from . import bl_extension_utils
@@ -1953,7 +1957,7 @@ class EXTENSIONS_OT_repo_unlock(Operator):
 
 
 class EXTENSIONS_OT_package_upgrade_all(Operator, _ExtCmdMixIn):
-    """Upgrade all the extensions to their latest version for all the remote repositories"""
+    """Upgrade installed extensions to their latest version from remote repositories"""
     bl_idname = "extensions.package_upgrade_all"
     bl_label = "Install Available Updates"
     __slots__ = (
@@ -1963,7 +1967,7 @@ class EXTENSIONS_OT_package_upgrade_all(Operator, _ExtCmdMixIn):
 
     use_active_only: BoolProperty(
         name="Active Only",
-        description="Only sync the active repository",
+        description="Only upgrade the active repository",
     )
 
     @classmethod
@@ -2000,7 +2004,7 @@ class EXTENSIONS_OT_package_upgrade_all(Operator, _ExtCmdMixIn):
         repos_all = extension_repos_read(use_active_only=use_active_only)
         repo_cache_store = repo_cache_store_ensure()
 
-        repo_directory_supset = [repo_entry.directory for repo_entry in repos_all] if use_active_only else None
+        repo_directory_subset = [repo_entry.directory for repo_entry in repos_all] if use_active_only else None
 
         if not repos_all:
             if use_active_only:
@@ -2030,11 +2034,11 @@ class EXTENSIONS_OT_package_upgrade_all(Operator, _ExtCmdMixIn):
 
         pkg_manifest_local_all = list(repo_cache_store.pkg_manifest_from_local_ensure(
             error_fn=self.error_fn_from_exception,
-            directory_subset=repo_directory_supset,
+            directory_subset=repo_directory_subset,
         ))
         for repo_index, pkg_manifest_remote in enumerate(repo_cache_store.pkg_manifest_from_remote_ensure(
             error_fn=self.error_fn_from_exception,
-            directory_subset=repo_directory_supset,
+            directory_subset=repo_directory_subset,
         )):
             if pkg_manifest_remote is None:
                 continue
@@ -2160,7 +2164,7 @@ class EXTENSIONS_OT_package_upgrade_all(Operator, _ExtCmdMixIn):
 
 class EXTENSIONS_OT_package_install_marked(Operator, _ExtCmdMixIn):
     bl_idname = "extensions.package_install_marked"
-    bl_label = "Ext Package Install_marked"
+    bl_label = "Ext Package Install Marked"
     __slots__ = (
         *_ExtCmdMixIn.cls_slots,
         "_repo_directories",
@@ -2234,7 +2238,7 @@ class EXTENSIONS_OT_package_install_marked(Operator, _ExtCmdMixIn):
                 self._repo_map_packages_addon_only.append((repo_item.directory, pkg_id_sequence_addon_only))
 
         if not cmd_batch:
-            self.report({'ERROR'}, "No uninstalled packages marked")
+            self.report({'ERROR'}, "No installable packages marked")
             return None
 
         # Lock repositories.
@@ -2473,8 +2477,8 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
     # Used when dropping legacy add-ons:
     #
     # - None: Unset, not dropping a legacy add-on.
-    # - True: Drop treats the `filepath` as a legacy add-on.
-    #   `_drop_variables` will be None.
+    # - True: Drop treats the `filepath` as a legacy add-on,
+    #   in this case `_drop_variables` remains None (not extracted from ZIP).
     _legacy_drop = None
 
     filter_glob: StringProperty(default="*.zip;*.py", options={'HIDDEN'})
@@ -2822,7 +2826,7 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
                 return {'CANCELLED'}
 
             if isinstance(result := pkg_manifest_dict_from_archive_or_error(filepath), str):
-                self.report({'ERROR'}, rpt_("Error in manifest {:s}").format(result))
+                self.report({'ERROR'}, rpt_("Manifest validation failed: {:s}").format(result))
                 return {'CANCELLED'}
 
             pkg_id = result["id"]
@@ -2841,7 +2845,7 @@ class EXTENSIONS_OT_package_install_files(Operator, _ExtCmdMixIn):
             self._drop_variables = None
             self._legacy_drop = True
 
-        # Set to it's self to the property is considered "set".
+        # Set to itself so the property is considered "set".
         self.repo = self.repo
         self.filepath = filepath
 
@@ -2953,7 +2957,7 @@ class EXTENSIONS_OT_package_install(Operator, _ExtCmdMixIn):
     url: rna_prop_url
 
     # NOTE: this can be removed once upgrading from 4.1 is no longer relevant.
-    # Only used when moving from  previously built-in add-ons to extensions.
+    # Only used when moving from previously built-in add-ons to extensions.
     do_legacy_replace: BoolProperty(
         name="Do Legacy Replace",
         default=False,
@@ -3253,7 +3257,7 @@ class EXTENSIONS_OT_package_install(Operator, _ExtCmdMixIn):
         from .bl_extension_ui import extensions_map_from_legacy_addons_reverse_lookup
         addon_module_name = extensions_map_from_legacy_addons_reverse_lookup(pkg_id)
         if not addon_module_name:
-            # This shouldn't happen unless someone goes out of there way
+            # This shouldn't happen unless someone goes out of their way
             # to enable `do_legacy_replace` for a non-legacy extension.
             # Use a print here as it's such a corner case and harmless.
             print("Internal error, legacy lookup failed:", addon_module_name)
@@ -3590,12 +3594,13 @@ class EXTENSIONS_OT_package_disable(Operator):
     bl_label = "Disable extension"
 
     def execute(self, _context):
+        # NOTE: add-ons use `preferences.addon_disable`, so only themes reach this operator.
         self.report({'WARNING'}, "Disabling themes is not yet supported")
         return {'CANCELLED'}
 
 
 class EXTENSIONS_OT_package_theme_enable(Operator):
-    """Turn off this theme"""
+    """Turn on this theme"""
     bl_idname = "extensions.package_theme_enable"
     bl_label = "Enable theme extension"
 
@@ -3605,12 +3610,11 @@ class EXTENSIONS_OT_package_theme_enable(Operator):
     def execute(self, _context):
         repo_item = extension_repos_read_index(self.repo_index)
         extension_theme_enable(repo_item.directory, self.pkg_id)
-        print(repo_item.directory, self.pkg_id)
         return {'FINISHED'}
 
 
 class EXTENSIONS_OT_package_theme_disable(Operator):
-    """Turn off this theme"""
+    """Reset to the default theme if this theme is active"""
     bl_idname = "extensions.package_theme_disable"
     bl_label = "Disable theme extension"
 
@@ -3775,7 +3779,7 @@ class EXTENSIONS_OT_package_show_settings(Operator):
 # Testing Operators
 #
 
-class EXTENSIONS_OT_package_obselete_marked(Operator):
+class EXTENSIONS_OT_package_obsolete_marked(Operator):
     """Zeroes package versions, useful for development - to test upgrading"""
     bl_idname = "extensions.package_obsolete_marked"
     bl_label = "Obsolete Marked"
@@ -3865,7 +3869,7 @@ class EXTENSIONS_OT_repo_lock_all(Operator):
             lock_handle.release()
             return {'CANCELLED'}
 
-        self.report({'INFO'}, rpt_("Locked {:d} repos(s)").format(len(lock_result)))
+        self.report({'INFO'}, rpt_("Locked {:d} repo(s)").format(len(lock_result)))
         EXTENSIONS_OT_repo_lock_all.lock = lock_handle
         return {'FINISHED'}
 
@@ -3889,7 +3893,7 @@ class EXTENSIONS_OT_repo_unlock_all(Operator):
             # This isn't canceled, but there were issues unlocking.
             return {'FINISHED'}
 
-        self.report({'INFO'}, rpt_("Unlocked {:d} repos(s)").format(len(lock_result)))
+        self.report({'INFO'}, rpt_("Unlocked {:d} repo(s)").format(len(lock_result)))
         return {'FINISHED'}
 
 
@@ -4171,7 +4175,7 @@ classes = (
     EXTENSIONS_OT_package_mark_clear_all,
     EXTENSIONS_OT_package_show_settings,
 
-    EXTENSIONS_OT_package_obselete_marked,
+    EXTENSIONS_OT_package_obsolete_marked,
     EXTENSIONS_OT_repo_lock_all,
     EXTENSIONS_OT_repo_unlock_all,
 

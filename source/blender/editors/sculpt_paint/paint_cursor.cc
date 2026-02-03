@@ -64,20 +64,21 @@
 #include "UI_resources.hh"
 
 #include "paint_intern.hh"
-#include "sculpt_boundary.hh"
-#include "sculpt_cloth.hh"
-#include "sculpt_expand.hh"
+
+#include "mesh/sculpt_boundary.hh"
+#include "mesh/sculpt_cloth.hh"
+#include "mesh/sculpt_expand.hh"
 /* still needed for sculpt_stroke_get_location, should be
  * removed eventually (TODO) */
-#include "sculpt_intern.hh"
-#include "sculpt_pose.hh"
+#include "mesh/sculpt_intern.hh"
+#include "mesh/sculpt_pose.hh"
 
 #include "bmesh.hh"
 
 /* Needed for determining tool material/vertex-color pinning. */
-#include "grease_pencil_intern.hh"
+#include "grease_pencil/grease_pencil_intern.hh"
 
-#include "brushes/brushes.hh"
+#include "mesh/brushes/brushes.hh"
 
 namespace blender {
 
@@ -1050,7 +1051,7 @@ static void paint_cursor_update_unprojected_size(Paint &paint,
       projected_radius = paint_runtime.anchored_size;
     }
     else {
-      if (brush.flag & BRUSH_ANCHORED) {
+      if (brush.stroke_method == BRUSH_STROKE_ANCHORED) {
         projected_radius = 8;
       }
       else {
@@ -1358,7 +1359,7 @@ static bool paint_cursor_context_init(bContext *C,
 
   pcontext.vc = ED_view3d_viewcontext_init(C, pcontext.depsgraph);
 
-  if (pcontext.brush->flag & BRUSH_CURVE) {
+  if (pcontext.brush->stroke_method == BRUSH_STROKE_CURVE) {
     pcontext.cursor_type = PaintCursorDrawingType::Curve;
   }
   else if (paint_use_2d_cursor(pcontext.mode)) {

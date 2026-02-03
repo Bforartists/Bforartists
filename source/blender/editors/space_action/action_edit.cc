@@ -1298,6 +1298,19 @@ static std::string action_ot_clean_get_description(bContext * /*C*/,
   return "";
 }
 
+static std::string actkeys_clean_get_description(bContext * /*C*/,
+                                                 wmOperatorType * /*ot*/,
+                                                 PointerRNA *ptr)
+{
+  /* Custom description based on the 'channels' property */
+  if (RNA_boolean_get(ptr, "channels")) {
+    return TIP_("Simplify F-Curves and remove empty or redundant channels.");
+  }
+
+  /* Use the default description in the other case. */
+  return "";
+}
+
 void ACTION_OT_clean(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1307,6 +1320,7 @@ void ACTION_OT_clean(wmOperatorType *ot)
 
   /* API callbacks. */
   // ot->invoke =  /* XXX we need that number popup for this! */
+  ot->get_description = actkeys_clean_get_description;
   ot->exec = actkeys_clean_exec;
   ot->get_description = action_ot_clean_get_description; /*bfa - description*/
   ot->poll = ED_operator_action_active;

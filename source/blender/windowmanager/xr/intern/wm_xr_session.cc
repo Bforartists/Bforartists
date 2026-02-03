@@ -32,7 +32,7 @@
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
 
-#include "GHOST_C-api.h"
+#include "GHOST_Xr-api.hh"
 
 #include "GPU_batch.hh"
 #include "GPU_viewport.hh"
@@ -75,8 +75,8 @@ static void wm_xr_session_create_cb()
   state->prev_base_scale = settings->base_scale;
 
   /* Initialize vignette. */
-  state->vignette_data = MEM_new_zeroed<wmXrVignetteData>(__func__);
-  WM_xr_session_state_vignette_reset(state);
+  state->vignette_aperture = 1.0f;
+  state->vignette_last_update_time = BLI_time_now_seconds();
 }
 
 static void wm_xr_session_controller_data_free(wmXrSessionState *state)
@@ -90,18 +90,9 @@ static void wm_xr_session_controller_data_free(wmXrSessionState *state)
   }
 }
 
-static void wm_xr_session_vignette_data_free(wmXrSessionState *state)
-{
-  if (state->vignette_data) {
-    MEM_delete(state->vignette_data);
-    state->vignette_data = nullptr;
-  }
-}
-
 void wm_xr_session_data_free(wmXrSessionState *state)
 {
   wm_xr_session_controller_data_free(state);
-  wm_xr_session_vignette_data_free(state);
 }
 
 static void wm_xr_session_exit_cb(void *customdata)
@@ -627,49 +618,31 @@ void WM_xr_session_state_navigation_reset(wmXrSessionState *state)
   state->swap_hands = false;
 }
 
-void WM_xr_session_state_vignette_reset(wmXrSessionState *state)
-{
-  wmXrVignetteData *data = state->vignette_data;
-
-  /* Reset vignette state */
-  data->aperture = 1.0f;
-  data->aperture_velocity = 0.0f;
-
-  /* Set default vignette parameters */
-  data->initial_aperture = 0.25f;
-  data->initial_aperture_velocity = -0.03f;
-
-  data->aperture_min = 0.08f;
-  data->aperture_max = 0.3f;
-
-  data->aperture_velocity_max = 0.002f;
-  data->aperture_velocity_delta = 0.01f;
-}
-
 void WM_xr_session_state_vignette_activate(wmXrData *xr)
 {
   if (WM_xr_session_exists(xr)) {
-    wmXrVignetteData *data = xr->runtime->session_state.vignette_data;
-    data->aperture_velocity = data->initial_aperture_velocity;
-    data->aperture = min_ff(data->aperture, data->initial_aperture);
+    const float intensity_pref = U.xr_navigation.vignette_intensity * 0.01f; /* 0.0 -> 1.0f. */
+
+    constexpr float min_aperture = M_SQRT1_2; /* Intensity at 0%, aperture out of view square. */
+    constexpr float max_aperture = 0.0f;      /* Intensity at 100%, aperture fully closed. */
+
+    const float initial_aperture = interpf(max_aperture, min_aperture, intensity_pref);
+
+    wmXrSessionState *state = &xr->runtime->session_state;
+    state->vignette_aperture = min_ff(state->vignette_aperture, initial_aperture);
   }
 }
 
 void WM_xr_session_state_vignette_update(wmXrSessionState *state)
 {
-  wmXrVignetteData *data = state->vignette_data;
+  const double current_time = BLI_time_now_seconds();
+  const double delta_time = current_time - state->vignette_last_update_time;
+  constexpr float aperture_velocity_per_second = 0.3f;
 
-  const float vignette_intensity = U.xr_navigation.vignette_intensity;
-  const float aperture_min = interpf(
-      data->aperture_min, data->aperture_max, vignette_intensity * 0.01f);
-  data->aperture_velocity = min_ff(data->aperture_velocity_max,
-                                   data->aperture_velocity + data->aperture_velocity_delta);
-
-  if (data->aperture == aperture_min) {
-    data->aperture_velocity = data->aperture_velocity_max;
-  }
-
-  data->aperture = clamp_f(data->aperture + data->aperture_velocity, aperture_min, 1.0f);
+  /* Aperture fully opened at 1.0f, and fully closed at 0.0f. */
+  const float aperture_delta = float(delta_time) * aperture_velocity_per_second;
+  state->vignette_aperture = clamp_f(state->vignette_aperture + aperture_delta, 0.0f, 1.0f);
+  state->vignette_last_update_time = current_time;
 }
 
 /* -------------------------------------------------------------------- */
@@ -714,7 +687,7 @@ static void wm_xr_session_controller_pose_calc(const GHOST_XrPose *raw_pose,
 static void wm_xr_session_controller_data_update(const XrSessionSettings *settings,
                                                  const wmXrAction *grip_action,
                                                  const wmXrAction *aim_action,
-                                                 GHOST_XrContextHandle xr_context,
+                                                 GHOST_IXrContext *xr_context,
                                                  wmXrSessionState *state)
 {
   BLI_assert(grip_action->count_subaction_paths == aim_action->count_subaction_paths);
@@ -1206,7 +1179,7 @@ static wmXrActionData *wm_xr_session_event_create(const char *action_set_name,
 
 /* Dispatch events to window queues. */
 static void wm_xr_session_events_dispatch(wmXrData *xr,
-                                          GHOST_XrContextHandle xr_context,
+                                          GHOST_IXrContext *xr_context,
                                           wmXrActionSet *action_set,
                                           wmXrSessionState *session_state,
                                           wmWindow *win)
@@ -1296,7 +1269,7 @@ void wm_xr_session_actions_update(wmWindowManager *wm)
   }
 
   XrSessionSettings *settings = &xr->session_settings;
-  GHOST_XrContextHandle xr_context = xr->runtime->context;
+  GHOST_IXrContext *xr_context = xr->runtime->context;
   wmXrSessionState *state = &xr->runtime->session_state;
 
   if (state->is_navigation_dirty) {
@@ -1560,7 +1533,8 @@ static void wm_xr_session_surface_free_data(wmSurface *surface)
     MEM_delete(data->controller_art);
   }
 
-  MEM_delete_void(surface->customdata);
+  wmXrSurfaceData *xr_data = static_cast<wmXrSurfaceData *>(surface->customdata);
+  MEM_delete(xr_data);
 
   g_xr_surface = nullptr;
 }
@@ -1582,7 +1556,7 @@ static wmSurface *wm_xr_session_surface_create()
   surface->activate = DRW_xr_drawing_begin;
   surface->deactivate = DRW_xr_drawing_end;
 
-  surface->system_gpu_context = static_cast<GHOST_ContextHandle>(DRW_system_gpu_context_get());
+  surface->system_gpu_context = DRW_system_gpu_context_get();
   surface->blender_gpu_context = static_cast<GPUContext *>(DRW_xr_blender_gpu_context_get());
 
   data->controller_art->regionid = RGN_TYPE_XR;
@@ -1593,7 +1567,7 @@ static wmSurface *wm_xr_session_surface_create()
   return surface;
 }
 
-void *wm_xr_session_gpu_binding_context_create()
+GHOST_IContext *wm_xr_session_gpu_binding_context_create()
 {
   wmSurface *surface = wm_xr_session_surface_create();
 
@@ -1606,7 +1580,7 @@ void *wm_xr_session_gpu_binding_context_create()
   return surface->system_gpu_context;
 }
 
-void wm_xr_session_gpu_binding_context_destroy(GHOST_ContextHandle /*context*/)
+void wm_xr_session_gpu_binding_context_destroy(GHOST_IContext * /*context*/)
 {
   if (g_xr_surface) { /* Might have been freed already. */
     wm_surface_remove(g_xr_surface);
