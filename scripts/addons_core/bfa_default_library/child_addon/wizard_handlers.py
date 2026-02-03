@@ -238,12 +238,12 @@ def register():
         bpy.types.Scene.use_wireframe_on_collection = bpy.props.BoolProperty(
             name="Use Wireframe",
             description="Enable Wireframe Display on the Target Collection",
-            default=False
+            default=True
         )
         bpy.types.Scene.use_relative_position = bpy.props.BoolProperty(
             name="Use Relative Position",
             description="Enable Relative Position of the new Blended mesh",
-            default=False
+            default=True
         )
         bpy.types.Scene.inject_intersection_nodegroup = bpy.props.BoolProperty(
             name="Inject Intersection Nodegroup",

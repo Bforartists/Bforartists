@@ -48,7 +48,7 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
     """Wizard to configure Blend Normals by Proximity geometry nodes setup"""
     bl_idname = "wizard.blend_normals_by_proximity"
     bl_label = BLEND_NORMALS_BY_PROXIMITY
-    bl_description = "Configure the Blend Normals by Proximity geometry nodes setup"
+    bl_description = "Configure the Blend Normals by Proximity Geometry Nodes setup on Target Collection of Mesh Objects. /nFlat normals will not Blend, only Smooth or Autosmooth normals."
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     @classmethod
@@ -64,7 +64,7 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
             # Check if we have the necessary UI context
             if (hasattr(context, 'window_manager') and context.window_manager and
                 hasattr(context, 'area') and context.area):
-                return context.window_manager.invoke_props_dialog(self, width=350)
+                return context.window_manager.invoke_props_dialog(self, width=400)
             else:
                 # No UI context available - can't open dialog
                 # Just execute without dialog
@@ -87,15 +87,21 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
 
         # Collection selection panel
         row = layout.row()
-        row.label(text="Select an existing collection of mesh objects to apply", icon=icon1)
-        
+        row.label(text="Run this wizard again to change settings on the Target Collection", icon=icon1)
+
         row = layout.row()
         row.prop_search(context.scene, "target_collection", bpy.data, "collections", text="Target Collection")
-        
-        # DEBUG: Show current target collection name for feedback
-        #if context.scene.target_collection:
-        #    row = layout.row()
-        #    row.label(text=f"Current target: {context.scene.target_collection.name}", icon='OUTLINER_COLLECTION')
+
+        # Show current target collection name or warning
+        if context.scene.target_collection:
+            row = layout.row()
+            #row.label(text=f"Selected: {context.scene.target_collection.name}", icon='OUTLINER_COLLECTION')
+            if not context.scene.target_collection.objects:
+                row = layout.row()
+                row.label(text="Collection is empty, add Mesh Objects to blend", icon='WARNING')
+        else:
+            row = layout.row()
+            row.label(text="Please select a Target Collection", icon='ERROR')
 
         row = layout.row()
         row.prop(context.scene, "inject_intersection_nodegroup", text="Apply Blend to Materials", icon="MATERIAL")
@@ -108,15 +114,25 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
 
     def execute(self, context):
         try:
+            # Validate that a target collection is selected
+            if not context.scene.target_collection:
+                self.report({'ERROR'}, "Please select a Target Collection first")
+                return {'CANCELLED'}
+
+            # Validate that the target collection has objects
+            if not context.scene.target_collection.objects:
+                self.report({'WARNING'}, "Target collection is empty, add Mesh Objects to blend")
+                # Continue anyway - the operator might handle empty collections
+
             # RUN SCRIPTS: Import the geometry nodes operator and call it
             success = bpy.ops.object.meshblendbyproximity('EXEC_DEFAULT')
 
             if 'FINISHED' not in success:
                 self.report({'ERROR'}, "Failed to execute mesh blend by proximity operation")
                 return {'CANCELLED'}
-            
+
             return {'FINISHED'}
-            
+
         except Exception as e:
             self.report({'ERROR'}, f"An error occurred: {str(e)}")
             return {'CANCELLED'}
