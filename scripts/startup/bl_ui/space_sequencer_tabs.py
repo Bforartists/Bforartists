@@ -377,24 +377,26 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
 
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            #text buttons
+            # Determine the active strip from the pinned sequencer scene (respect workspace pin)
+            seq_scene = context.sequencer_scene or context.scene
+            ed_local = getattr(seq_scene, "sequence_editor", None)
+            active_strip = getattr(ed_local, "active_strip", None) or context.active_strip
+
+            strip = active_strip
+            strip_type = getattr(strip, "type", None)
+            strip_valid = strip and strip_type in {'MOVIE', 'IMAGE', 'SOUND'}
+
+            # text buttons
             if column_count == 4:
 
                 col = layout.column(align=True)
                 col.scale_y = 2
 
-                strip = context.active_strip
-                strip_type = strip.type
-
-                strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
-
                 if strip_valid:
-
-                    strip = context.active_strip
-
                     col.operator(
                         "sequencer.retiming_show",
-                        icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text="Disable Retiming" if (strip and strip.show_retiming_keys) else "Enable Retiming"
+                        icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME',
+                        text="Disable Retiming" if getattr(strip, "show_retiming_keys", False) else "Enable Retiming"
                     )
                     col.separator()
 
@@ -412,17 +414,11 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                 col.scale_y = 2
 
                 if column_count == 3:
-
-                    strip = context.active_strip
-                    strip_type = strip.type
-
-                    strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
-
                     if strip_valid:
                         row = col.row(align=True)
                         row.operator(
                             "sequencer.retiming_show",
-                            icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
+                            icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME', text=""
                         )
                         col.separator(factor = 0.5)
 
@@ -438,17 +434,11 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         layout.label(text="or sound strip")
 
                 elif column_count == 2:
-
-                    strip = context.active_strip
-                    strip_type = strip.type
-
-                    strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
-
                     if strip_valid:
                         row = col.row(align=True)
                         col.operator(
                             "sequencer.retiming_show",
-                            icon='MOD_TIME' if (strip and strip.show_retiming_keys) else 'TIME', text=""
+                            icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME', text=""
                         )
 
                         col.separator(factor = 0.5)
@@ -465,16 +455,10 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         layout.label(text="or sound strip")
 
                 elif column_count == 1:
-
-                    strip = context.active_strip
-                    strip_type = strip.type
-
-                    strip_valid = strip and strip.type in {'MOVIE', 'IMAGE', 'SOUND'}
-                    
                     if strip_valid:
                         col.operator(
                             "sequencer.retiming_show",
-                            icon='MOD_TIME' if strip.show_retiming_keys else 'TIME', text=""
+                            icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME', text=""
                         )
 
                         col.separator(factor = 0.5)
@@ -490,7 +474,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
                         layout.label(text="Select a movie", icon="QUESTION")
                         layout.label(text="or sound strip")
 
-        except:
+        except Exception:
             layout.label(text="Select a movie strip")
 
 
@@ -598,10 +582,11 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
 
 
     def draw(self, context):
-        ed = context.scene.sequence_editor
-        
-        # Check if we have selected retiming keys OR if retiming is active
-        if ed.selected_retiming_keys or (context.active_strip and context.active_strip.show_retiming_keys):
+        seq_scene = context.sequencer_scene or context.scene
+        ed = getattr(seq_scene, "sequence_editor", None)
+        active_strip = getattr(ed, "active_strip", None) or context.active_strip
+
+        if getattr(ed, "selected_retiming_keys", False) or getattr(active_strip, "show_retiming_keys", False):
             self.draw_retiming_context(context)
         else:
             self.draw_strip_context(context)
