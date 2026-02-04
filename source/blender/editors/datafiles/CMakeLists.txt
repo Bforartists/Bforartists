@@ -761,6 +761,9 @@ if(WITH_BLENDER)
       gp_caps_flat
       gp_caps_round
       gp_caps_sharp
+      gp_delete_fill
+      gp_delete_point
+      gp_delete_stroke
       gp_fill
       gp_fill_select
       gp_multiframe_editing

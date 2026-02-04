@@ -7191,9 +7191,9 @@ class VIEW3D_MT_edit_greasepencil_delete(Menu):
 
         tool_settings = context.tool_settings
         is_stroke_selection = tool_settings.gpencil_selectmode_edit == 'STROKE'
-        layout.operator("grease_pencil.delete", text="Strokes" if is_stroke_selection else "Points", icon="DELETE").mode = 'ALL'
-        layout.operator("grease_pencil.delete", text="Only Strokes", icon="DELETE").mode = 'STROKES'
-        layout.operator("grease_pencil.delete", text="Only Fills", icon="DELETE").mode = 'FILLS'
+        layout.operator("grease_pencil.delete", text="Strokes" if is_stroke_selection else "Points", icon="GP_DELETE_POINT").mode = 'ALL'
+        layout.operator("grease_pencil.delete", text="Only Strokes", icon="GP_DELETE_STROKE").mode = 'STROKES'
+        layout.operator("grease_pencil.delete", text="Only Fills", icon="GP_DELETE_FILL").mode = 'FILLS'
 
         layout.separator()
 
