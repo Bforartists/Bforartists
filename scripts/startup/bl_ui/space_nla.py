@@ -64,22 +64,26 @@ class NLA_HT_header(Header):
                 row.operator(
                     "nla.tweakmode_exit", text="Tweak", icon="ACTION_TWEAK_SOLO"
                 ).isolate_action = True
+                row.separator()
                 row.label(icon="CHECKBOX_HLT", text="Isolate")
             else:
                 row.operator(
                     "nla.tweakmode_enter", text="Tweak", icon="ACTION_TWEAK_SOLO"
                 ).isolate_action = True
+                row.separator()
                 row.prop(addon_prefs, "nla_tweak_isolate_action")
 
         else:
             if scene.is_nla_tweakmode:
                 row.active_default = True
                 row.operator("nla.tweakmode_exit", text="Tweak", icon="ACTION_TWEAK")
+                row.separator()
                 row.label(icon="CHECKBOX_DEHLT", text="Isolate")
             else:
                 row.operator(
                     "nla.tweakmode_enter", text="Tweak", icon="ACTION_TWEAK"
                 ).use_upper_stack_evaluation = True
+                row.separator()
                 row.prop(addon_prefs, "nla_tweak_isolate_action")
 
         ##########################
