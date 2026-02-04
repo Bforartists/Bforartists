@@ -1647,7 +1647,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
         userdef, "NODE_AST_compositor", "Utilities");
   }
 
-  /* start bfa asset shelf default catalogs */
+  /* start BFA asset shelf default catalogs */
   {
     /* 3D Viewport*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
@@ -1657,8 +1657,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Materials");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Geometry Nodegroups/Grease Pencil");
-
+        userdef, "VIEW3D_AST_object", "Generate");
 
     /* Node editors*/
 
@@ -1689,11 +1688,26 @@ UserDef *BKE_blendfile_userdef_from_defaults()
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh");
 
+
     /*Compositor*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-      userdef, "NODE_AST_compositor", "Compositor Nodegroups/Texture/Shapes");
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Color");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Creative");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Distortion");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Filters");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Lenses");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Output");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Texture");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Utilities");
   }
-  /* end bfa asset shelf default catalogs */
+  /* end BFA asset shelf default catalogs */
 
 
   return userdef;
