@@ -1385,7 +1385,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
         }:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = "CURVE_SHRINKFATTEN"
         if context.mode == 'EDIT_GREASE_PENCIL':
-            layout.operator("transform.transform", text="Opacity").mode = 'GPENCIL_OPACITY'
+            layout.operator("transform.transform", text="Opacity", icon="GP_OPACITY").mode = 'GPENCIL_OPACITY'
 
         if context.mode != "EDIT_CURVES" and context.mode != "EDIT_GREASE_PENCIL":
             layout.separator()
@@ -2894,7 +2894,7 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
 
         layout.operator_menu_enum("grease_pencil.select_by_stroke_type", "type", text="By Stroke Type")
         layout.operator_menu_enum("grease_pencil.select_similar", "mode", text="Similar")
-        layout.operator("grease_pencil.select_fill")
+        layout.operator("grease_pencil.select_fill", icon="GP_FILL_SELECT")
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
 
