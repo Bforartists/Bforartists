@@ -371,7 +371,12 @@ static void nla_panel_stripname(const bContext *C, Panel *panel)
 
   /* Strip Properties ------------------------------------- */
   /* strip type */
-  ui::Layout &row = layout.row(false);
+  ui::Layout &row = layout.row(true);
+
+  block_emboss_set(block, ui::EmbossType::NoneOrStatus);
+  row.prop(&strip_ptr, "mute", UI_ITEM_NONE, "", ICON_NONE);
+  block_emboss_set(block, ui::EmbossType::Emboss);
+
   const int strip_type = RNA_enum_get(&strip_ptr, "type");
   if (strip_type == NLASTRIP_TYPE_CLIP) {
     row.label("", ICON_ANIM);
@@ -387,10 +392,6 @@ static void nla_panel_stripname(const bContext *C, Panel *panel)
   }
 
   row.prop(&strip_ptr, "name", UI_ITEM_NONE, "", ICON_NLA);
-
-  block_emboss_set(block, ui::EmbossType::NoneOrStatus);
-  row.prop(&strip_ptr, "mute", UI_ITEM_NONE, "", ICON_NONE);
-  block_emboss_set(block, ui::EmbossType::Emboss);
 }
 
 /* generic settings for active NLA-Strip */
