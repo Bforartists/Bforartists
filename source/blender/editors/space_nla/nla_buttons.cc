@@ -373,6 +373,7 @@ static void nla_panel_stripname(const bContext *C, Panel *panel)
   /* strip type */
   ui::Layout &row = layout.row(true);
 
+  /* BFA - Move checkbox left */
   block_emboss_set(block, ui::EmbossType::NoneOrStatus);
   row.prop(&strip_ptr, "mute", UI_ITEM_NONE, "", ICON_NONE);
   block_emboss_set(block, ui::EmbossType::Emboss);
