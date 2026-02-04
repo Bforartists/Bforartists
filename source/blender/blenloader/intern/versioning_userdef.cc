@@ -1788,11 +1788,21 @@ void blo_do_versions_userdef(UserDef *userdef)
 
   if (!USER_VERSION_ATLEAST(500, 116)) {
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Camera & Lens Effects");
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Color");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Creative");
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Creative");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Utilities");
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Distortion");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Filters");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Lenses");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Output");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Texture");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositor Nodegroups/Utilities");
   }
 
   if (!USER_VERSION_ATLEAST(501, 17)) {
