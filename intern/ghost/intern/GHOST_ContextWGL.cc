@@ -253,6 +253,18 @@ static HWND clone_window(HWND hWnd, LPVOID lpParam)
   HWND hWndParent = (HWND)GetWindowLongPtr(hWnd, GWLP_HWNDPARENT);
   WIN32_CHK(GetLastError() == NO_ERROR);
 
+  /* BFA - Avoid using a parent HWND from another process. Destroying or releasing
+   * device context for windows owned by another process can fail with
+   * ERROR_ACCESS_DENIED during shutdown. If the parent belongs to a
+   * different process, discard it and create a top-level window instead. */
+  if (hWndParent != nullptr) {
+    DWORD parent_pid = 0;
+    GetWindowThreadProcessId(hWndParent, &parent_pid);
+    if (parent_pid != GetCurrentProcessId()) {
+      hWndParent = nullptr;
+    }
+  }
+
   HMENU hMenu = GetMenu(hWnd);
   WIN32_CHK(GetLastError() == NO_ERROR);
 
@@ -432,11 +444,18 @@ struct DummyContextWGL {
     }
 
     if (dummyHWND != nullptr) {
-      if (dummyHDC != nullptr) {
-        WIN32_CHK(::ReleaseDC(dummyHWND, dummyHDC));
-      }
+      /* BFA - Only operate on the window/DC if it still belongs to this process
+       * and is still a valid window. This avoids races on shutdown where
+       * the OS may have already torn down window resources, which can
+       * cause ERROR_ACCESS_DENIED from ReleaseDC/DestroyWindow. */
+      DWORD pid = 0;
+      if (IsWindow(dummyHWND) && GetWindowThreadProcessId(dummyHWND, &pid) && pid == GetCurrentProcessId()) {
+        if (dummyHDC != nullptr) {
+          WIN32_CHK_SILENT(::ReleaseDC(dummyHWND, dummyHDC), true);
+        }
 
-      WIN32_CHK(::DestroyWindow(dummyHWND));
+        WIN32_CHK_SILENT(::DestroyWindow(dummyHWND), true);
+      }
     }
   }
 };
@@ -676,11 +695,19 @@ GHOST_TSuccess GHOST_ContextWGL::releaseNativeHandles()
                                                                             GHOST_kFailure;
 
   if (own_window_handle_) {
-    if (h_DC_ != nullptr) {
-      WIN32_CHK(::ReleaseDC(h_wnd_, h_DC_));
-    }
     if (h_wnd_ != nullptr) {
-      WIN32_CHK(::DestroyWindow(h_wnd_));
+      /* BFA - Only operate on the window/DC if it still belongs to this process
+       * and is still a valid window. This avoids races on shutdown where
+       * the OS may have already torn down window resources, which can
+       * cause ERROR_ACCESS_DENIED from ReleaseDC/DestroyWindow. */
+      DWORD pid = 0;
+      if (IsWindow(h_wnd_) && GetWindowThreadProcessId(h_wnd_, &pid) && pid == GetCurrentProcessId()) {
+        if (h_DC_ != nullptr) {
+          WIN32_CHK_SILENT(::ReleaseDC(h_wnd_, h_DC_), true);
+        }
+
+        WIN32_CHK_SILENT(::DestroyWindow(h_wnd_), true);
+      }
     }
   }
 
