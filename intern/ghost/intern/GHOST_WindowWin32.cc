@@ -158,8 +158,15 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
       }
     }
     MessageBox(h_wnd_, text, title, MB_OK | MB_ICONERROR);
-    ::ReleaseDC(h_wnd_, h_DC_);
-    ::DestroyWindow(h_wnd_);
+    /* BFA - Only operate on the window/DC if it still belongs to this process
+     * and is still a valid window. This avoids races on shutdown where
+     * the OS may have already torn down window resources, which can
+     * cause ERROR_ACCESS_DENIED from ReleaseDC/DestroyWindow. */
+    DWORD pid = 0;
+    if (IsWindow(h_wnd_) && GetWindowThreadProcessId(h_wnd_, &pid) && pid == GetCurrentProcessId()) {
+      ::ReleaseDC(h_wnd_, h_DC_);
+      ::DestroyWindow(h_wnd_);
+    }
     h_wnd_ = nullptr;
     if (!parent_window) {
       exit(0);
@@ -281,7 +288,14 @@ GHOST_WindowWin32::~GHOST_WindowWin32()
   }
 
   if (h_wnd_ != nullptr && h_DC_ != nullptr && releaseNativeHandles()) {
-    ::ReleaseDC(h_wnd_, h_DC_);
+    /* BFA - Only operate on the window/DC if it still belongs to this process
+     * and is still a valid window. This avoids races on shutdown where
+     * the OS may have already torn down window resources, which can
+     * cause ERROR_ACCESS_DENIED from ReleaseDC/DestroyWindow. */
+    DWORD pid = 0;
+    if (IsWindow(h_wnd_) && GetWindowThreadProcessId(h_wnd_, &pid) && pid == GetCurrentProcessId()) {
+      ::ReleaseDC(h_wnd_, h_DC_);
+    }
     h_DC_ = nullptr;
   }
 
@@ -296,15 +310,22 @@ GHOST_WindowWin32::~GHOST_WindowWin32()
       }
     }
 
-    if (drop_target_) {
-      /* Disable DragDrop. */
-      RevokeDragDrop(h_wnd_);
-      /* Release our reference of the DropTarget and it will delete itself eventually. */
-      drop_target_->Release();
-      drop_target_ = nullptr;
+    /* BFA - Only operate on the window if it still belongs to this process
+     * and is still a valid window. This avoids races on shutdown where
+     * the OS may have already torn down window resources, which can
+     * cause ERROR_ACCESS_DENIED from window operations. */
+    DWORD pid = 0;
+    if (IsWindow(h_wnd_) && GetWindowThreadProcessId(h_wnd_, &pid) && pid == GetCurrentProcessId()) {
+      if (drop_target_) {
+        /* Disable DragDrop. */
+        RevokeDragDrop(h_wnd_);
+        /* Release our reference of the DropTarget and it will delete itself eventually. */
+        drop_target_->Release();
+        drop_target_ = nullptr;
+      }
+      ::SetWindowLongPtr(h_wnd_, GWLP_USERDATA, 0);
+      ::DestroyWindow(h_wnd_);
     }
-    ::SetWindowLongPtr(h_wnd_, GWLP_USERDATA, 0);
-    ::DestroyWindow(h_wnd_);
     h_wnd_ = 0;
   }
 
