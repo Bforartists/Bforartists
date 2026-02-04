@@ -1272,7 +1272,7 @@ static wmOperatorStatus grease_pencil_select_by_stroke_type_exec(bContext *C, wm
 
   return OPERATOR_FINISHED;
 }
-
+/*BFA - icon added*/
 static const EnumPropertyItem select_by_stroke_type_items[] = {
     {int(StrokeType::Stroke), "STROKE", ICON_STROKE, "Stroke", ""},
     {int(StrokeType::Fill), "FILL", ICON_GP_FILL, "Fill", ""},

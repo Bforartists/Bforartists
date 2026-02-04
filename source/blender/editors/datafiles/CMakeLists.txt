@@ -765,7 +765,9 @@ if(WITH_BLENDER)
       gp_delete_point
       gp_delete_stroke
       gp_fill
+      gp_fill_join
       gp_fill_select
+      gp_fill_separate
       gp_multiframe_editing
       gp_only_selected
       gp_opacity
