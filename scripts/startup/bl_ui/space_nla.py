@@ -55,32 +55,23 @@ class NLA_HT_header(Header):
         row.operator("wm.switch_editor_in_nla", text="", icon="NLA_ACTIVE")
 
         # tweak strip actions
-
         row = layout.row(align=True)
+        row.active_default = scene.is_nla_tweakmode
 
+        icon = "ACTION_TWEAK_SOLO" if addon_prefs.nla_tweak_isolate_action else "ACTION_TWEAK"
+        operator_id = "nla.tweakmode_exit" if scene.is_nla_tweakmode else "nla.tweakmode_enter"
+            
+        props = row.operator(operator_id, text="Tweak", icon=icon)
+        row.separator()
+                
         if addon_prefs.nla_tweak_isolate_action:
-            if scene.is_nla_tweakmode:
-                row.active_default = True
-                row.operator(
-                    "nla.tweakmode_exit", text="Tweak", icon="ACTION_TWEAK_SOLO"
-                ).isolate_action = True
-                row.label(icon="CHECKBOX_HLT", text="Isolate")
-            else:
-                row.operator(
-                    "nla.tweakmode_enter", text="Tweak", icon="ACTION_TWEAK_SOLO"
-                ).isolate_action = True
-                row.prop(addon_prefs, "nla_tweak_isolate_action")
-
-        else:
-            if scene.is_nla_tweakmode:
-                row.active_default = True
-                row.operator("nla.tweakmode_exit", text="Tweak", icon="ACTION_TWEAK")
-                row.label(icon="CHECKBOX_DEHLT", text="Isolate")
-            else:
-                row.operator(
-                    "nla.tweakmode_enter", text="Tweak", icon="ACTION_TWEAK"
-                ).use_upper_stack_evaluation = True
-                row.prop(addon_prefs, "nla_tweak_isolate_action")
+            props.isolate_action = True
+        elif not scene.is_nla_tweakmode:
+            props.use_upper_stack_evaluation = True
+            
+        subrow = row.row()
+        subrow.enabled = not scene.is_nla_tweakmode
+        subrow.prop(addon_prefs, "nla_tweak_isolate_action")
 
         ##########################
 
