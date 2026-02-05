@@ -90,8 +90,12 @@ class STRIP_PT_strip(StripButtonsPanel, Panel):
 
         row = layout.row(align=True)
         row.use_property_decorate = False
+        
+        # BFA - Put checkbox to the left of other elements
+        row.prop(strip, "mute", toggle=True, icon_only=True, emboss=False)
+        row.separator(factor=0.5)
+        
         row.label(text="", icon=icon_header)
-        row.separator()
         row.prop(strip, "name", text="")
 
         sub = row.row(align=True)
@@ -100,9 +104,6 @@ class STRIP_PT_strip(StripButtonsPanel, Panel):
         else:
             icon = 'STRIP_' + strip.color_tag
             sub.popover(panel="STRIP_PT_color_tag_picker", text="", icon=icon)
-
-        row.separator()
-        row.prop(strip, "mute", toggle=True, icon_only=True, emboss=False)
 
 
 class STRIP_PT_adjust_crop(StripButtonsPanel, Panel):
