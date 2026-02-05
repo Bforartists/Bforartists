@@ -11151,8 +11151,8 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Deform Operators
+            col.menu("VIEW3D_MT_transform", text="Transform") # BFA - compressed to menu
             col.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
-            col.operator("transform.transform", text="Radius", icon="RADIUS").mode = "CURVE_SHRINKFATTEN"
 
             col.separator()
 
@@ -11242,7 +11242,6 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.
             col.operator_menu_enum(
                 "grease_pencil.convert_curve_type",
                 text="Set Spline Type",
