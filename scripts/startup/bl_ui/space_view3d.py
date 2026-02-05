@@ -2894,7 +2894,7 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
 
         layout.operator_menu_enum("grease_pencil.select_by_stroke_type", "type", text="By Stroke Type")
         layout.operator_menu_enum("grease_pencil.select_similar", "mode", text="Similar")
-        layout.operator("grease_pencil.select_fill", icon="GP_FILL_SELECT")
+        layout.operator("grease_pencil.select_fill", text="Fill", icon="GP_FILL_SELECT")
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
 
@@ -11206,7 +11206,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Deform Operators
-            col.menu("VIEW3D_MT_transform_base", text="Transform") # BFA - compressed to menu
+            col.menu("VIEW3D_MT_transform", text="Transform") # BFA - compressed to menu
             col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX")
             col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
             col.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
@@ -11242,6 +11242,7 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
 
             col.separator()
 
+            col.
             col.operator_menu_enum(
                 "grease_pencil.convert_curve_type",
                 text="Set Spline Type",
