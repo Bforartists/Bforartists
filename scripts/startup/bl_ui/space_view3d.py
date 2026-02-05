@@ -8107,7 +8107,7 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.separator()
 
-        layout.operator("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH")
+        layout.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
 
         layout.separator()
 
@@ -11206,13 +11206,9 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Deform Operators
-            col.operator("transform.tosphere", text="To Sphere")
-            col.operator("transform.shear", text="Shear")
-            col.operator("transform.bend", text="Bend")
-            col.operator("transform.push_pull", text="Push/Pull")
-            col.operator("transform.transform", text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
-            col.operator("grease_pencil.stroke_smooth", text="Smooth Points")
-            col.operator("grease_pencil.set_start_point", text="Set Start Point")
+            col.menu("VIEW3D_MT_transform_base", text="Transform") # BFA - compressed to menu
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX")
+            col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
             col.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
             col.separator()
