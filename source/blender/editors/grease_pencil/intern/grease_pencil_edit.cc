@@ -5161,13 +5161,13 @@ static wmOperatorStatus grease_pencil_set_stroke_type_exec(bContext *C, wmOperat
 
   return OPERATOR_FINISHED;
 }
-
+/*BFA - icons added*/
 static void GREASE_PENCIL_OT_set_stroke_type(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_stroke_type_types[] = {
-      {int(StrokeType::Stroke), "STROKE", 0, "Stroke", ""},
-      {int(StrokeType::Fill), "FILL", 0, "Fill", ""},
-      {int(StrokeType::Both), "BOTH", 0, "Both", ""},
+      {int(StrokeType::Stroke), "STROKE", ICON_STROKE, "Stroke", ""},
+      {int(StrokeType::Fill), "FILL", ICON_GP_FILL, "Fill", ""},
+      {int(StrokeType::Both), "BOTH", ICON_GP_BOTH, "Both", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 

@@ -1385,7 +1385,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
         }:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = "CURVE_SHRINKFATTEN"
         if context.mode == 'EDIT_GREASE_PENCIL':
-            layout.operator("transform.transform", text="Opacity").mode = 'GPENCIL_OPACITY'
+            layout.operator("transform.transform", text="Opacity", icon="GP_OPACITY").mode = 'GPENCIL_OPACITY'
 
         if context.mode != "EDIT_CURVES" and context.mode != "EDIT_GREASE_PENCIL":
             layout.separator()
@@ -2894,7 +2894,7 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
 
         layout.operator_menu_enum("grease_pencil.select_by_stroke_type", "type", text="By Stroke Type")
         layout.operator_menu_enum("grease_pencil.select_similar", "mode", text="Similar")
-        layout.operator("grease_pencil.select_fill")
+        layout.operator("grease_pencil.select_fill", text="Fill", icon="GP_FILL_SELECT")
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
 
@@ -7191,9 +7191,9 @@ class VIEW3D_MT_edit_greasepencil_delete(Menu):
 
         tool_settings = context.tool_settings
         is_stroke_selection = tool_settings.gpencil_selectmode_edit == 'STROKE'
-        layout.operator("grease_pencil.delete", text="Strokes" if is_stroke_selection else "Points", icon="DELETE").mode = 'ALL'
-        layout.operator("grease_pencil.delete", text="Only Strokes", icon="DELETE").mode = 'STROKES'
-        layout.operator("grease_pencil.delete", text="Only Fills", icon="DELETE").mode = 'FILLS'
+        layout.operator("grease_pencil.delete", text="Strokes" if is_stroke_selection else "Points", icon="GP_DELETE_POINT").mode = 'ALL'
+        layout.operator("grease_pencil.delete", text="Only Strokes", icon="GP_DELETE_STROKE").mode = 'STROKES'
+        layout.operator("grease_pencil.delete", text="Only Fills", icon="GP_DELETE_FILL").mode = 'FILLS'
 
         layout.separator()
 
@@ -8088,8 +8088,8 @@ class VIEW3D_MT_edit_greasepencil_stroke(Menu):
         layout.separator()
 
         layout.operator("grease_pencil.reset_uvs", icon="RESET")
-        layout.operator("grease_pencil.join_fills")
-        layout.operator("grease_pencil.separate_fills")
+        layout.operator("grease_pencil.join_fills", icon="GP_FILL_JOIN")
+        layout.operator("grease_pencil.separate_fills", icon="GP_FILL_SEPARATE")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -8107,7 +8107,7 @@ class VIEW3D_MT_edit_greasepencil_point(Menu):
 
         layout.separator()
 
-        layout.operator("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH")
+        layout.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
 
         layout.separator()
 
@@ -11151,8 +11151,8 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Deform Operators
+            col.menu("VIEW3D_MT_transform", text="Transform") # BFA - compressed to menu
             col.operator("grease_pencil.stroke_smooth", text="Smooth", icon="SMOOTH_VERTEX")
-            col.operator("transform.transform", text="Radius", icon="RADIUS").mode = "CURVE_SHRINKFATTEN"
 
             col.separator()
 
@@ -11206,13 +11206,9 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Deform Operators
-            col.operator("transform.tosphere", text="To Sphere")
-            col.operator("transform.shear", text="Shear")
-            col.operator("transform.bend", text="Bend")
-            col.operator("transform.push_pull", text="Push/Pull")
-            col.operator("transform.transform", text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
-            col.operator("grease_pencil.stroke_smooth", text="Smooth Points")
-            col.operator("grease_pencil.set_start_point", text="Set Start Point")
+            col.menu("VIEW3D_MT_transform", text="Transform") # BFA - compressed to menu
+            col.operator("grease_pencil.stroke_smooth", text="Smooth Points", icon="SMOOTH_VERTEX")
+            col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
             col.operator_menu_enum("grease_pencil.set_corner_type", property="corner_type")
 
             col.separator()
