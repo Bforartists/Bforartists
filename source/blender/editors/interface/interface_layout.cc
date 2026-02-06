@@ -2111,8 +2111,17 @@ void Layout::prop(PointerRNA *ptr,
       }
     }
     else {
-      Layout *layout_split =
-          &(layout_row ? layout_row : layout)->split(UI_ITEM_PROP_SEP_DIVIDE, true);
+      Layout *layout_split;
+      if (type != PROP_BOOLEAN){ /* BFA - Only use split if prop is not boolean */
+        layout_split =
+            &(layout_row ? layout_row : layout)->split(UI_ITEM_PROP_SEP_DIVIDE, true);
+      }
+      else{ /* BFA - Draw boolean properties left-aligned */
+        layout_split =
+            &(layout_row ? layout_row : layout)->row(true);
+        layout_split->alignment_set(LayoutAlign::Left);
+      }
+
       bool label_added = false;
       Layout *layout_sub = &layout_split->column(true);
       layout_sub->space_ = 0;
