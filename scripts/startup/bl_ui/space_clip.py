@@ -1426,12 +1426,17 @@ class CLIP_PT_mask(MASK_PT_mask, Panel):
 # --- end mask ---
 
 
-class CLIP_PT_footage(CLIP_PT_clip_view_panel, Panel):
-    bl_space_type = "CLIP_EDITOR"
-    bl_region_type = "UI"
+class CLIP_PT_footage(Panel):
+    bl_space_type = 'CLIP_EDITOR'
+    bl_region_type = 'UI'
     bl_category = "Footage"
     bl_label = "Footage Settings"
     bl_options = {"DEFAULT_CLOSED"}
+
+    @classmethod
+    def poll(cls, context):
+        sc = context.space_data
+        return sc.view == 'CLIP'
 
     def draw(self, context):
         layout = self.layout
@@ -1440,9 +1445,12 @@ class CLIP_PT_footage(CLIP_PT_clip_view_panel, Panel):
 
         sc = context.space_data
 
-        col = layout.column()
-        col.template_movieclip(sc, "clip", compact=True)
-        col.template_movieclip_information(sc, "clip", sc.clip_user)
+        if not sc.clip:
+            layout.label(text="No active movie clip", icon='INFO')
+        else:
+            col = layout.column()
+            col.template_movieclip(sc, "clip", compact=True)
+            col.template_movieclip_information(sc, "clip", sc.clip_user)
 
 
 class CLIP_PT_animation(CLIP_PT_clip_view_panel, Panel):

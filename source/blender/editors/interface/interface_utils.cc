@@ -539,9 +539,8 @@ void rna_collection_search_update_fn(
     RNA_PROP_END;
 
     /* Sort alphabetically (matches other search layouts). */
-    std::sort(
-        items_list.begin(),
-        items_list.end(),
+    std::ranges::sort(
+        items_list,
         [](const std::unique_ptr<CollItemSearch> &a, const std::unique_ptr<CollItemSearch> &b) {
           return BLI_strcasecmp_natural(a->name.c_str(), b->name.c_str()) < 0;
         });
@@ -583,9 +582,8 @@ void rna_collection_search_update_fn(
                                });
 
     if (search_flag & PROP_STRING_SEARCH_SORT) {
-      std::sort(
-          items_list.begin(),
-          items_list.end(),
+      std::ranges::sort(
+          items_list,
           [](const std::unique_ptr<CollItemSearch> &a, const std::unique_ptr<CollItemSearch> &b) {
             return BLI_strcasecmp_natural(a->name.c_str(), b->name.c_str()) < 0;
           });

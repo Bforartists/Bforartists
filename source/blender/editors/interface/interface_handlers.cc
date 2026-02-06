@@ -2742,8 +2742,22 @@ static void ui_but_paste_curvemapping(bContext *C, Button *but)
 {
   if (but_copypaste_curve_alive && but->poin != nullptr) {
     button_activate_state(C, but, BUTTON_STATE_NUM_EDITING);
-    BKE_curvemapping_free_data(reinterpret_cast<CurveMapping *>(but->poin));
-    BKE_curvemapping_copy_data(reinterpret_cast<CurveMapping *>(but->poin), &but_copypaste_curve);
+
+    CurveMapping *dest = reinterpret_cast<CurveMapping *>(but->poin);
+
+    int source_channels = BKE_curvemapping_num_channels(&but_copypaste_curve);
+    int dest_channels = BKE_curvemapping_num_channels(dest);
+
+    if (source_channels == dest_channels) {
+      BKE_curvemapping_free_data(dest);
+      BKE_curvemapping_copy_data(dest, &but_copypaste_curve);
+    }
+    else {
+      BKE_curvemapping_free_data_single(dest, dest->cur);
+      BKE_curvemapping_copy_data_single(
+          dest, &but_copypaste_curve, dest->cur, but_copypaste_curve.cur, true);
+    }
+
     button_activate_state(C, but, BUTTON_STATE_EXIT);
   }
 }
@@ -10982,6 +10996,9 @@ static int ui_handle_menu_event(bContext *C,
             }
             break;
           }
+          else if (!block_is_menu(block)) {
+            break;
+          }
           ATTR_FALLTHROUGH;
         }
         case WHEELUPMOUSE:
@@ -10998,6 +11015,9 @@ static int ui_handle_menu_event(bContext *C,
               }
               WM_event_add_mousemove(CTX_wm_window(C));
             }
+            break;
+          }
+          else if (!block_is_menu(block)) {
             break;
           }
           ATTR_FALLTHROUGH;

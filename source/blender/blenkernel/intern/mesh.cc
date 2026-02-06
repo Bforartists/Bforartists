@@ -763,7 +763,7 @@ static void build_vertex_groups_for_leaves(const int verts_num,
 
       new (&verts_per_leaf[i]) Array<int>(verts.size());
       std::copy(verts.begin(), verts.end(), verts_per_leaf[i].begin());
-      std::sort(verts_per_leaf[i].begin(), verts_per_leaf[i].end());
+      std::ranges::sort(verts_per_leaf[i]);
       group.corner_count = corners_count;
     }
   });
@@ -929,6 +929,9 @@ void mesh_apply_spatial_organization(Mesh &mesh)
 
   MutableAttributeAccessor attributes_for_write = mesh.attributes_for_write();
   attributes_for_write.foreach_attribute([&](const bke::AttributeIter &iter) {
+    if (iter.storage_type == bke::AttrStorageType::Single) {
+      return;
+    }
     if (iter.domain == bke::AttrDomain::Face) {
       bke::GSpanAttributeWriter attribute = attributes_for_write.lookup_for_write_span(iter.name);
       const CPPType &type = attribute.span.type();

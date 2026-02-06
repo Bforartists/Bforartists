@@ -597,7 +597,7 @@ static void update_triangle_and_offsets_cache(const Span<float3> positions,
               return -1;
             }
             /* Just get the first point if there are multiple at the same position. */
-            return result.vert_orig[vert].first();
+            return int(result.vert_orig[vert].first());
           };
 
           for (const int i : result.face.index_range()) {
@@ -1594,7 +1594,7 @@ Span<FramesMapKeyT> Layer::sorted_keys() const
     for (const FramesMapKeyT key : this->frames().keys()) {
       r_data[i++] = key;
     }
-    std::sort(r_data.begin(), r_data.end());
+    std::ranges::sort(r_data);
   });
   return this->runtime->sorted_keys_cache_.data();
 }
@@ -3997,6 +3997,9 @@ bke::greasepencil::Layer &GreasePencil::duplicate_layer(
   this->attribute_storage.wrap().resize(bke::AttrDomain::Layer, numLayers + 1);
   bke::MutableAttributeAccessor attributes = this->attributes_for_write();
   attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
+    if (iter.storage_type == bke::AttrStorageType::Single) {
+      return;
+    }
     bke::GSpanAttributeWriter attr = attributes.lookup_for_write_span(iter.name);
     GMutableSpan span = attr.span;
     span.type().copy_assign(span[*duplicate_layer_idx], span[numLayers]);

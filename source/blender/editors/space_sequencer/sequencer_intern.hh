@@ -111,6 +111,7 @@ struct StripDrawContext {
   bool missing_media;
   bool is_connected;
   bool is_muted;
+  bool has_retiming;
 };
 
 struct TimelineDrawContext {
@@ -204,7 +205,8 @@ VectorSet<Strip *> all_strips_from_context(bContext *C);
 /* Externals. */
 
 extern const EnumPropertyItem sequencer_prop_effect_types[];
-extern const EnumPropertyItem prop_side_types[];
+extern const EnumPropertyItem prop_snap_side_types[];
+extern const EnumPropertyItem prop_split_side_types[];
 
 /* Operators. */
 

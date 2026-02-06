@@ -353,6 +353,9 @@ static const EnumPropertyItem rna_enum_media_type_image_items[] = {
 #  define R_IMF_ENUM_WEBP
 #endif
 
+#define R_IMF_ENUM_AVIF \
+  {R_IMF_IMTYPE_AVIF, "AVIF", 0, "AVIF (.avif)", "Output image in AVIF format"},
+
 #ifdef WITH_FFMPEG
 #  define R_IMF_ENUM_FFMPEG {R_IMF_IMTYPE_FFMPEG, "FFMPEG", ICON_FILE_MOVIE, "FFmpeg Video", ""},
 #else
@@ -365,6 +368,7 @@ static const EnumPropertyItem rna_enum_media_type_image_items[] = {
   R_IMF_ENUM_EXR \
   R_IMF_ENUM_PNG \
   R_IMF_ENUM_WEBP \
+  R_IMF_ENUM_AVIF \
   RNA_ENUM_ITEM_SEPR, \
       R_IMF_ENUM_BMP R_IMF_ENUM_CINEON R_IMF_ENUM_DPX R_IMF_ENUM_IRIS R_IMF_ENUM_JPEG2K \
           R_IMF_ENUM_HDR R_IMF_ENUM_TAGA R_IMF_ENUM_TAGA_RAW R_IMF_ENUM_TIFF
@@ -8269,6 +8273,24 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
                            "much noise and slow convergence at the cost of accuracy. "
                            "Used by light-probes.");
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+
+  prop = RNA_def_property(srna, "direct_light_intensity", PROP_FLOAT, PROP_NONE);
+  RNA_def_property_ui_text(
+      prop, "Direct Light Strength", "Scale the contribution of direct lighting");
+  RNA_def_property_range(prop, 0, FLT_MAX);
+  RNA_def_property_ui_range(prop, 0.0f, 3.0f, 1, 3);
+  RNA_def_property_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+
+  prop = RNA_def_property(srna, "indirect_light_intensity", PROP_FLOAT, PROP_NONE);
+  RNA_def_property_ui_text(
+      prop, "Indirect Light Strength", "Scale the contribution of indirect lighting");
+  RNA_def_property_range(prop, 0, FLT_MAX);
+  RNA_def_property_ui_range(prop, 0.0f, 3.0f, 1, 3);
+  RNA_def_property_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 

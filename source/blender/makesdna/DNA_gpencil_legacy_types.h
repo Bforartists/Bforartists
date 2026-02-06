@@ -268,12 +268,6 @@ enum eGP_OnionModes {
   GP_ONION_MODE_SELECTED = 2,
 };
 
-/* X-ray modes (Depth Ordering). */
-enum eGP_DepthOrdering {
-  GP_XRAY_FRONT = 0,
-  GP_XRAY_3DSPACE = 1,
-};
-
 /* draw modes (Use 2D or 3D position) */
 enum eGP_DrawMode {
   GP_DRAWMODE_2D = 0,
@@ -298,8 +292,6 @@ enum eGP_DrawMode {
  *    This assumes that the bottom-left corner is (0,0)
  */
 struct bGPDspoint {
-  DNA_DEFINE_CXX_METHODS(bGPDspoint)
-
   /** Co-ordinates of point (usually 2d, but can be 3d as well). */
   float x = 0, y = 0, z = 0;
   /** Pressure of input device (from 0 to 1) at this point. */
@@ -321,7 +313,6 @@ struct bGPDspoint {
   /** Vertex Color RGBA (A=mix factor). */
   float vert_color[4] = {};
 
-  /** Runtime data */
   char _pad2[4] = {};
 };
 
@@ -519,8 +510,6 @@ struct bGPDstroke {
 
 /* Runtime temp data for bGPDframe */
 struct bGPDframe_Runtime {
-  DNA_DEFINE_CXX_METHODS(bGPDframe_Runtime)
-
   /** Index of this frame in the listbase of frames. */
   int frameid = 0;
   /** Onion offset from active frame. 0 if not onion. INT_MAX to bypass frame. */

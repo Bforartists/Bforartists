@@ -5964,6 +5964,20 @@ static void def_sh_normal_map(BlenderRNA * /*brna*/, StructRNA *srna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem prop_convention_items[] = {
+      {SHD_NORMAL_MAP_CONVENTION_OPENGL,
+       "OPENGL",
+       0,
+       "OpenGL",
+       "Normal map uses OpenGL convention, with Y axis in the green channel pointing up"},
+      {SHD_NORMAL_MAP_CONVENTION_DIRECTX,
+       "DIRECTX",
+       0,
+       "DirectX",
+       "Normal map uses DirectX convention, with Y axis in the green channel pointing down"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   PropertyRNA *prop;
 
   RNA_def_struct_sdna_from(srna, "NodeShaderNormalMap", "storage");
@@ -5977,6 +5991,10 @@ static void def_sh_normal_map(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_ui_text(prop, "UV Map", "UV Map for tangent space maps");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
+  prop = RNA_def_property(srna, "convention", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, prop_convention_items);
+  RNA_def_property_ui_text(prop, "Mode", "OpenGL or DirectX");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
   RNA_def_struct_sdna_from(srna, "bNode", nullptr);
 }
 
@@ -5995,6 +6013,14 @@ static void def_sh_radial_tiling(BlenderRNA * /*brna*/, StructRNA *srna)
       "offset the Y coordinate into a [0, infinity) interval. When checked, the textures are "
       "stretched to fit into each angular segment. When not checked, the parts of the textures "
       "that don't fit into each angular segment are cropped");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_sh_raycast(BlenderRNA * /*brna*/, StructRNA *srna)
+{
+  PropertyRNA *prop = RNA_def_property(srna, "only_local", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "custom1", 0);
+  RNA_def_property_ui_text(prop, "Only Local", "Only raycast against the object itself");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -9547,8 +9573,10 @@ static void rna_def_composite_nodetree(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_viewer_border", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", NTREE_VIEWER_BORDER);
-  RNA_def_property_ui_text(
-      prop, "Viewer Region", "Use boundaries for viewer nodes and composite backdrop");
+  RNA_def_property_ui_text(prop,
+                           "Viewer Region",
+                           "Unused but kept for compatibility reasons. Use boundaries for viewer "
+                           "nodes and composite backdrop");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update");
 }
 
@@ -9863,6 +9891,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeParticleInfo", nullptr, ICON_NODE_PARTICLEINFO);
   define(brna, "ShaderNode", "ShaderNodePointInfo", nullptr, ICON_POINT_INFO);
   define(brna, "ShaderNode", "ShaderNodeRadialTiling", def_sh_radial_tiling, ICON_NODE_RADIAL_ARRAY);
+  define(brna, "ShaderNode", "ShaderNodeRaycast", def_sh_raycast, ICON_RAYCAST);
   define(brna, "ShaderNode", "ShaderNodeRGB", nullptr, ICON_NODE_RGB);
   define(brna, "ShaderNode", "ShaderNodeRGBCurve", def_rgb_curve, ICON_NODE_RGBCURVE);
   define(brna, "ShaderNode", "ShaderNodeRGBToBW", nullptr, ICON_NODE_RGBTOBW);
@@ -10153,7 +10182,9 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridMean", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridMedian", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeGridPrune", nullptr, ICON_NODE_PRUNEGRID);
+  define(brna, "GeometryNode", "GeometryNodeGridClip", nullptr, ICON_CLIP);
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NODE_GRIDTOMESH);
+  define(brna, "GeometryNode", "GeometryNodeGridToPoints", nullptr, ICON_MESH_TO_POINTS);
   define(brna, "GeometryNode", "GeometryNodeGridVoxelize", nullptr, ICON_NODE_VOXELIZEGRID);
   define(brna, "GeometryNode", "GeometryNodeImageInfo", nullptr, ICON_IMAGE_INFO);
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);
