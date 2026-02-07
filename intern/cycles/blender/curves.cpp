@@ -372,7 +372,7 @@ static void ExportCurveSegments(Scene *scene, Hair *hair, ParticleCurveData *CDa
         if (attr_normal) {
           /* NOTE: the geometry normals are not computed for legacy particle hairs. This hair
            * system is expected to be deprecated. */
-          attr_normal->add(make_float3(0.0f, 0.0f, 0.0f));
+          attr_normal->add(packed_normal(make_float3(0.0f, 0.0f, 0.0f)));
         }
 
         num_curve_keys++;
@@ -728,6 +728,21 @@ static void attr_create_motion_from_velocity(Hair *hair,
   }
 }
 
+static AttributeElement blender_domain_to_attr_element(const blender::bke::AttrDomain b_domain)
+{
+  switch (b_domain) {
+    case blender::bke::AttrDomain::Point:
+      return ATTR_ELEMENT_CURVE_KEY;
+      break;
+    case blender::bke::AttrDomain::Curve:
+      return ATTR_ELEMENT_CURVE;
+      break;
+    default:
+      assert(false);
+      return ATTR_ELEMENT_NONE;
+  }
+}
+
 static void attr_create_generic(Scene *scene,
                                 Hair *hair,
                                 const blender::bke::CurvesGeometry &b_curves,
@@ -778,26 +793,24 @@ static void attr_create_generic(Scene *scene,
 
     const blender::bke::GAttributeReader b_attr = iter.get();
 
-    AttributeElement element = ATTR_ELEMENT_NONE;
-    switch (b_attr.domain) {
-      case blender::bke::AttrDomain::Point:
-        element = ATTR_ELEMENT_CURVE_KEY;
-        break;
-      case blender::bke::AttrDomain::Curve:
-        element = ATTR_ELEMENT_CURVE;
-        break;
-      default:
-        return;
-    }
-
     blender::bke::attribute_math::to_static_type(b_attr.varray.type(), [&]<typename BlenderT>() {
       using Converter = typename ccl::AttributeConverter<BlenderT>;
       using CyclesT = typename Converter::CyclesT;
       if constexpr (!std::is_void_v<CyclesT>) {
+        const blender::VArray<BlenderT> src_varray = b_attr.varray.typed<BlenderT>();
+
+        if (const std::optional<BlenderT> single_value = src_varray.get_if_single()) {
+          Attribute *attr = attributes.add(name, Converter::type_desc, ATTR_ELEMENT_MESH);
+          CyclesT *data = reinterpret_cast<CyclesT *>(attr->data());
+          *data = Converter::convert(*single_value);
+          return;
+        }
+
+        const AttributeElement element = blender_domain_to_attr_element(b_attr.domain);
         Attribute *attr = attributes.add(name, Converter::type_desc, element);
         CyclesT *data = reinterpret_cast<CyclesT *>(attr->data());
 
-        const blender::VArraySpan src = b_attr.varray.typed<BlenderT>();
+        const blender::VArraySpan src = src_varray;
         for (const int i : src.index_range()) {
           data[i] = Converter::convert(src[i]);
         }
@@ -853,12 +866,13 @@ static void export_hair_curves(Scene *scene,
 
   if (hair->need_attribute(scene, ATTR_STD_VERTEX_NORMAL)) {
     /* Get geometry normals. */
-    float3 *attr_normal = hair->attributes.add(ATTR_STD_VERTEX_NORMAL)->data_float3();
+    packed_normal *attr_normal = hair->attributes.add(ATTR_STD_VERTEX_NORMAL)->data_normal();
     vector<blender::float3> point_normals(positions.size());
     blender::bke::curves_normals_point_domain_calc(
         b_curves, {point_normals.data(), int64_t(point_normals.size())});
     for (const int i : positions.index_range()) {
-      attr_normal[i] = make_float3(point_normals[i][0], point_normals[i][1], point_normals[i][2]);
+      attr_normal[i] = packed_normal(
+          make_float3(point_normals[i][0], point_normals[i][1], point_normals[i][2]));
     }
   }
 

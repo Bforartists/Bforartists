@@ -255,9 +255,8 @@ struct GeometrySet {
    */
   void ensure_no_shared_components();
 
-  using AttributeForeachCallback = FunctionRef<void(StringRef attribute_id,
-                                                    const AttributeMetaData &meta_data,
-                                                    const GeometryComponent &component)>;
+  using AttributeForeachCallback = FunctionRef<void(
+      StringRef name, const AttributeMetaData &meta_data, const GeometryComponent &component)>;
 
   void attribute_foreach(Span<GeometryComponent::Type> component_types,
                          bool include_instances,
@@ -302,6 +301,7 @@ struct GeometrySet {
   /**
    * Create a new geometry set that only contains the given instances.
    */
+  static GeometrySet from_instances(std::unique_ptr<Instances> instances);
   static GeometrySet from_instances(
       Instances *instances, GeometryOwnershipType ownership = GeometryOwnershipType::Owned);
   /**

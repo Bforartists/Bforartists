@@ -43,7 +43,11 @@ class FILEBROWSER_HT_header(Header):
                 else:
                     row = layout.row(align=True)
                     row.enabled = is_collection
-                    row.prop(params, "instance_collections_on_append", icon_only=True, icon="OUTLINER_OB_GROUP_INSTANCE")
+                    row.prop(
+                        params,
+                        "instance_collections_on_append",
+                        icon_only=True,
+                        icon="OUTLINER_OB_GROUP_INSTANCE")
                     row.prop(params, "drop_instances_to_origin", icon_only=True, icon="CENTER")
 
         if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
@@ -57,7 +61,7 @@ class FILEBROWSER_HT_header(Header):
             )  # BFA - change to make row of buttons
 
         # BFA - not used, exposed these to header for a top level UX
-        #if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
+        # if params.asset_library_reference not in {"LOCAL", "ESSENTIALS"}:
         #    layout.popover("ASSETBROWSER_PT_import_settings", text="")
 
         # layout.separator_spacer() #BFA
@@ -165,7 +169,7 @@ class FILEBROWSER_PT_display(FileBrowserPanel, Panel):
 
 
 class FILEBROWSER_PT_filter(FileBrowserPanel, Panel):
-    bl_space_type = "FILE_BROWSER" # BFA
+    bl_space_type = "FILE_BROWSER"  # BFA
     bl_region_type = 'HEADER'
     bl_label = "Filter Settings"  # Shows as tooltip in popover
     bl_ui_units_x = 10
@@ -696,7 +700,8 @@ class ASSETBROWSER_PT_display(asset_utils.AssetBrowserPanel, Panel):
             layout.prop(
                 params, "display_size_discrete", text="Text", expand=True
             )  # BFA - added quick thumbnail sizes.
-            layout.prop(params, "display_size", text="Preview Size") # BFA - changed to preview size, be consistent with horizontal list.
+            # BFA - changed to preview size, be consistent with horizontal list.
+            layout.prop(params, "display_size", text="Preview Size")
         elif params.display_type == "LIST_HORIZONTAL":
             layout.prop(
                 params, "list_display_size_discrete", text="Text", expand=True
@@ -852,7 +857,7 @@ class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
         col = layout.column(heading="Collection Instances")
         col.prop(params, "instance_collections_on_link", text="Link")
         col.prop(params, "instance_collections_on_append", text="Append")
-        col.prop(params, "drop_instances_to_origin", text="Drop To Origin") # BFA
+        col.prop(params, "drop_instances_to_origin", text="Drop To Origin")  # BFA
 
 
 class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
@@ -1080,7 +1085,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         st = context.space_data
         params = st.params
 
-        layout.operator("asset.library_refresh", icon="FILE_REFRESH")
+        layout.operator("asset.library_refresh", icon='FILE_REFRESH')
 
         layout.separator()
 
@@ -1095,7 +1100,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
         layout.separator()
 
-        layout.operator("asset.open_containing_blend_file", icon="FILE_FOLDER")
+        layout.operator("asset.open_containing_blend_file", icon='FILE_FOLDER')
 
         layout.separator()
 

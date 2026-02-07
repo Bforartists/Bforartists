@@ -39,39 +39,6 @@ using blender::Attribute;
 
 CCL_NAMESPACE_BEGIN
 
-void mesh_split_edges_for_corner_normals(blender::Mesh &mesh)
-{
-  using namespace blender;
-  const OffsetIndices polys = mesh.faces();
-  const Span<int> corner_edges = mesh.corner_edges();
-  const bke::AttributeAccessor attributes = mesh.attributes();
-  const VArray<bool> mesh_sharp_edges = *attributes.lookup_or_default<bool>(
-      "sharp_edge", bke::AttrDomain::Edge, false);
-  const VArraySpan<bool> sharp_faces = *attributes.lookup<bool>("sharp_face",
-                                                                bke::AttrDomain::Face);
-
-  Array<bool> sharp_edges(mesh.edges_num);
-  mesh_sharp_edges.materialize(sharp_edges);
-
-  threading::parallel_for(polys.index_range(), 1024, [&](const blender::IndexRange range) {
-    for (const int face_i : range) {
-      if (!sharp_faces.is_empty() && sharp_faces[face_i]) {
-        for (const int edge : corner_edges.slice(polys[face_i])) {
-          sharp_edges[edge] = true;
-        }
-      }
-    }
-  });
-
-  IndexMaskMemory memory;
-  const IndexMask split_mask = IndexMask::from_bools(sharp_edges, memory);
-  if (split_mask.is_empty()) {
-    return;
-  }
-
-  geometry::split_edges(mesh, split_mask, {});
-}
-
 static void attr_create_motion_from_velocity(Mesh *mesh,
                                              const blender::Span<blender::float3> b_attr,
                                              const float motion_scale)
@@ -102,6 +69,24 @@ static void attr_create_motion_from_velocity(Mesh *mesh,
     for (int i = 0; i < numverts; i++) {
       mP[i] = P[i] + make_float3(b_attr[i][0], b_attr[i][1], b_attr[i][2]) * relative_time;
     }
+  }
+}
+
+static AttributeElement blender_domain_to_attr_element(const blender::bke::AttrDomain b_domain)
+{
+  switch (b_domain) {
+    case blender::bke::AttrDomain::Corner:
+      return ATTR_ELEMENT_CORNER;
+      break;
+    case blender::bke::AttrDomain::Point:
+      return ATTR_ELEMENT_VERTEX;
+      break;
+    case blender::bke::AttrDomain::Face:
+      return ATTR_ELEMENT_FACE;
+      break;
+    default:
+      assert(false);
+      return ATTR_ELEMENT_NONE;
   }
 }
 
@@ -183,26 +168,23 @@ static void attr_create_generic(Scene *scene,
       return;
     }
 
-    AttributeElement element = ATTR_ELEMENT_NONE;
-    switch (b_domain) {
-      case blender::bke::AttrDomain::Corner:
-        element = ATTR_ELEMENT_CORNER;
-        break;
-      case blender::bke::AttrDomain::Point:
-        element = ATTR_ELEMENT_VERTEX;
-        break;
-      case blender::bke::AttrDomain::Face:
-        element = ATTR_ELEMENT_FACE;
-        break;
-      default:
-        assert(false);
-        return;
-    }
-
     blender::bke::attribute_math::to_static_type(b_attr.varray.type(), [&]<typename BlenderT>() {
       using Converter = typename ccl::AttributeConverter<BlenderT>;
       using CyclesT = typename Converter::CyclesT;
       if constexpr (!std::is_void_v<CyclesT>) {
+        const blender::VArray<BlenderT> src_varray = b_attr.varray.typed<BlenderT>();
+
+        if (const std::optional<BlenderT> single_value = src_varray.get_if_single()) {
+          Attribute *attr = attributes.add(name, Converter::type_desc, ATTR_ELEMENT_MESH);
+          if (is_render_color) {
+            attr->std = ATTR_STD_VERTEX_COLOR;
+          }
+          CyclesT *data = reinterpret_cast<CyclesT *>(attr->data());
+          *data = Converter::convert(*single_value);
+          return;
+        }
+
+        const AttributeElement element = blender_domain_to_attr_element(b_attr.domain);
         Attribute *attr = attributes.add(name, Converter::type_desc, element);
         if (is_render_color) {
           attr->std = ATTR_STD_VERTEX_COLOR;
@@ -625,10 +607,6 @@ static void create_mesh(Scene *scene,
       "material_index", blender::bke::AttrDomain::Face);
   const blender::VArraySpan sharp_faces = *b_attributes.lookup<bool>(
       "sharp_face", blender::bke::AttrDomain::Face);
-  blender::Span<blender::float3> corner_normals;
-  if (use_corner_normals) {
-    corner_normals = b_mesh.corner_normals();
-  }
 
   int numtris = 0;
   if (!subdivision) {
@@ -646,13 +624,14 @@ static void create_mesh(Scene *scene,
   }
 
   AttributeSet &attributes = (subdivision) ? mesh->subd_attributes : mesh->attributes;
-  Attribute *attr_N = attributes.add(ATTR_STD_VERTEX_NORMAL);
-  float3 *N = attr_N->data_float3();
 
-  if (subdivision || !(use_corner_normals && !corner_normals.is_empty())) {
+  if (subdivision || !use_corner_normals) {
+    Attribute *attr_N = attributes.add(ATTR_STD_VERTEX_NORMAL);
+    packed_normal *N = attr_N->data_normal();
     const blender::Span<blender::float3> vert_normals = b_mesh.vert_normals();
     for (const int i : vert_normals.index_range()) {
-      N[i] = make_float3(vert_normals[i][0], vert_normals[i][1], vert_normals[i][2]);
+      N[i] = packed_normal(
+          make_float3(vert_normals[i][0], vert_normals[i][1], vert_normals[i][2]));
     }
   }
 
@@ -701,9 +680,9 @@ static void create_mesh(Scene *scene,
     bool *smooth = mesh->get_smooth().data();
     int *shader = mesh->get_shader().data();
 
-    const blender::Span<blender::int3> corner_tris = b_mesh.corner_tris();
-    for (const int i : corner_tris.index_range()) {
-      const blender::int3 &tri = corner_tris[i];
+    const blender::Span<blender::int3> b_corner_tris = b_mesh.corner_tris();
+    for (const int i : b_corner_tris.index_range()) {
+      const blender::int3 &tri = b_corner_tris[i];
       triangles[i * 3 + 0] = corner_verts[tri[0]];
       triangles[i * 3 + 1] = corner_verts[tri[1]];
       triangles[i * 3 + 2] = corner_verts[tri[2]];
@@ -721,7 +700,7 @@ static void create_mesh(Scene *scene,
       std::fill(shader, shader + numtris, 0);
     }
 
-    if (!sharp_faces.is_empty() && !(use_corner_normals && !corner_normals.is_empty())) {
+    if (!sharp_faces.is_empty()) {
       for (const int face : faces.index_range()) {
         const bool face_smooth = !sharp_faces[face];
         const blender::IndexRange face_tris = blender::bke::mesh::face_triangles_range(faces,
@@ -734,14 +713,17 @@ static void create_mesh(Scene *scene,
       std::fill(smooth, smooth + numtris, normals_domain != blender::bke::MeshNormalDomain::Face);
     }
 
-    if (use_corner_normals && !corner_normals.is_empty()) {
-      for (const int i : corner_tris.index_range()) {
-        const blender::int3 &tri = corner_tris[i];
-        for (int i = 0; i < 3; i++) {
-          const int corner = tri[i];
-          const int vert = corner_verts[corner];
-          const float *normal = corner_normals[corner];
-          N[vert] = make_float3(normal[0], normal[1], normal[2]);
+    if (use_corner_normals) {
+      const blender::Span<blender::float3> b_corner_normals = b_mesh.corner_normals();
+      Attribute *attr_N = attributes.add(ATTR_STD_CORNER_NORMAL);
+      packed_normal *N = attr_N->data_normal();
+
+      for (const int i : b_corner_tris.index_range()) {
+        const blender::int3 &tri = b_corner_tris[i];
+        for (int j = 0; j < 3; j++) {
+          const int corner = tri[j];
+          const float *normal = b_corner_normals[corner];
+          N[i * 3 + j] = packed_normal(make_float3(normal[0], normal[1], normal[2]));
         }
       }
     }
@@ -983,6 +965,7 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
 {
   /* Skip if no vertices were exported. */
   const size_t numverts = mesh->get_verts().size();
+  const size_t numtris = mesh->num_triangles();
   if (numverts == 0) {
     return;
   }
@@ -1014,7 +997,9 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
     /* Find attributes. */
     Attribute *attr_mP = attributes.find(ATTR_STD_MOTION_VERTEX_POSITION);
     Attribute *attr_mN = attributes.find(ATTR_STD_MOTION_VERTEX_NORMAL);
+    Attribute *attr_mcN = mesh->attributes.find(ATTR_STD_MOTION_CORNER_NORMAL);
     Attribute *attr_N = attributes.find(ATTR_STD_VERTEX_NORMAL);
+    Attribute *attr_cN = mesh->attributes.find(ATTR_STD_CORNER_NORMAL);
     bool new_attribute = false;
     /* Add new attributes if they don't exist already. */
     if (!attr_mP) {
@@ -1022,12 +1007,19 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
       if (attr_N) {
         attr_mN = attributes.add(ATTR_STD_MOTION_VERTEX_NORMAL);
       }
+      if (attr_cN) {
+        attr_mcN = mesh->attributes.add(ATTR_STD_MOTION_CORNER_NORMAL);
+      }
 
       new_attribute = true;
     }
     /* Load vertex data from mesh. */
     float3 *mP = attr_mP->data_float3() + motion_step * numverts;
-    float3 *mN = (attr_mN) ? attr_mN->data_float3() + motion_step * numverts : nullptr;
+    packed_normal *mN = (attr_mN) ? attr_mN->data_normal() + motion_step * numverts : nullptr;
+    packed_normal *mcN = (attr_mcN) ? attr_mcN->data_normal() + motion_step * numtris * 3 :
+                                      nullptr;
+
+    bool topology_changed = b_verts_num != numverts;
 
     /* NOTE: We don't copy more that existing amount of vertices to prevent
      * possible memory corruption.
@@ -1038,16 +1030,32 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
     if (mN) {
       const blender::Span<blender::float3> b_vert_normals = b_mesh->vert_normals();
       for (int i = 0; i < std::min<size_t>(b_verts_num, numverts); i++) {
-        mN[i] = make_float3(b_vert_normals[i][0], b_vert_normals[i][1], b_vert_normals[i][2]);
+        mN[i] = packed_normal(
+            make_float3(b_vert_normals[i][0], b_vert_normals[i][1], b_vert_normals[i][2]));
       }
+    }
+    if (mcN) {
+      const blender::Span<blender::float3> b_corner_normals = b_mesh->corner_normals();
+      const blender::Span<blender::int3> b_corner_tris = b_mesh->corner_tris();
+      const int mincorners = std::min<int>(b_corner_tris.size(), numtris);
+
+      for (int i = 0; i < mincorners; i++) {
+        const blender::int3 &tri = b_corner_tris[i];
+        for (int j = 0; j < 3; j++) {
+          const int corner = tri[j];
+          const float *normal = b_corner_normals[corner];
+          mcN[i * 3 + j] = packed_normal(make_float3(normal[0], normal[1], normal[2]));
+        }
+      }
+
+      topology_changed |= b_corner_tris.size() != numtris;
     }
     if (new_attribute) {
       /* In case of new attribute, we verify if there really was any motion. */
-      if (b_verts_num != numverts ||
-          memcmp(mP, mesh->get_verts().data(), sizeof(float3) * numverts) == 0)
+      if (topology_changed || memcmp(mP, mesh->get_verts().data(), sizeof(float3) * numverts) == 0)
       {
         /* no motion, remove attributes again */
-        if (b_verts_num != numverts) {
+        if (topology_changed) {
           LOG_WARNING << "Topology differs, disabling motion blur for object " << ob_name;
         }
         else {
@@ -1057,30 +1065,41 @@ void BlenderSync::sync_mesh_motion(BObjectInfo &b_ob_info, Mesh *mesh, const int
         if (attr_mN) {
           attributes.remove(ATTR_STD_MOTION_VERTEX_NORMAL);
         }
+        if (attr_mcN) {
+          attributes.remove(ATTR_STD_MOTION_CORNER_NORMAL);
+        }
       }
       else if (motion_step > 0) {
         LOG_TRACE << "Filling deformation motion for object " << ob_name;
         /* motion, fill up previous steps that we might have skipped because
          * they had no motion, but we need them anyway now */
         const float3 *P = mesh->get_verts().data();
-        const float3 *N = (attr_N) ? attr_N->data_float3() : nullptr;
+        const packed_normal *N = (attr_N) ? attr_N->data_normal() : nullptr;
+        const packed_normal *cN = (attr_cN) ? attr_cN->data_normal() : nullptr;
         for (int step = 0; step < motion_step; step++) {
           std::copy_n(P, numverts, attr_mP->data_float3() + step * numverts);
           if (attr_mN) {
-            std::copy_n(N, numverts, attr_mN->data_float3() + step * numverts);
+            std::copy_n(N, numverts, attr_mN->data_normal() + step * numverts);
+          }
+          if (attr_mcN) {
+            std::copy_n(cN, numtris * 3, attr_mcN->data_normal() + step * (numtris * 3));
           }
         }
       }
     }
     else {
-      if (b_verts_num != numverts) {
+      if (topology_changed) {
         LOG_WARNING << "Topology differs, discarding motion blur for object " << ob_name
                     << " at time " << motion_step;
         const float3 *P = mesh->get_verts().data();
-        const float3 *N = (attr_N) ? attr_N->data_float3() : nullptr;
+        const packed_normal *N = (attr_N) ? attr_N->data_normal() : nullptr;
+        const packed_normal *cN = (attr_cN) ? attr_cN->data_normal() : nullptr;
         std::copy_n(P, numverts, mP);
         if (mN != nullptr) {
           std::copy_n(N, numverts, mN);
+        }
+        if (mcN != nullptr) {
+          std::copy_n(cN, numtris * 3, mcN);
         }
       }
     }
