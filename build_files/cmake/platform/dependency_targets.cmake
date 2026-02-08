@@ -444,11 +444,7 @@ endif()
 # Configure libfmt
 #
 
-add_library(bf_deps_fmt INTERFACE)
-add_library(bf::dependencies::fmt ALIAS bf_deps_fmt)
-
-target_include_directories(bf_deps_fmt SYSTEM INTERFACE ${fmt_INCLUDE_DIRS})
-target_link_libraries(bf_deps_fmt INTERFACE ${fmt_LIBRARIES})
+add_library(bf::dependencies::fmt ALIAS fmt::fmt)
 
 # -----------------------------------------------------------------------------
 # Configure OSL
