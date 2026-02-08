@@ -981,6 +981,17 @@ class STRIP_PT_adjust_transform(StripButtonsPanel, Panel):
             return False
 
         return strip.type != 'SOUND'
+    
+    @staticmethod
+    def indented_layout(col, text, align=False, **kwargs):
+        row = col.row()
+        row.label(text=text, **kwargs)
+        
+        row = col.row()
+        row.separator()
+        
+        subcol = row.column(align=align)
+        return subcol
 
     def draw(self, context):
         strip = context.active_strip
@@ -992,12 +1003,14 @@ class STRIP_PT_adjust_transform(StripButtonsPanel, Panel):
         col.prop(strip.transform, "filter", text="Filter")
 
         col = layout.column(align=True)
-        col.prop(strip.transform, "offset_x", text="Position X")
-        col.prop(strip.transform, "offset_y", text="Y")
+        subcol = self.indented_layout(col, text="Position", align=True)
+        subcol.prop(strip.transform, "offset_x", text="X")
+        subcol.prop(strip.transform, "offset_y", text="Y")
 
         col = layout.column(align=True)
-        col.prop(strip.transform, "scale_x", text="Scale X")
-        col.prop(strip.transform, "scale_y", text="Y")
+        subcol = self.indented_layout(col, text="Scale", align=True)
+        subcol.prop(strip.transform, "scale_x", text="X")
+        subcol.prop(strip.transform, "scale_y", text="Y")
 
         col = layout.column(align=True)
         col.prop(strip.transform, "rotation", text="Rotation")
