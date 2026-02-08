@@ -2286,7 +2286,28 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         strip = context.active_strip
-        return strip.type == "TEXT"
+        return strip.type == 'TEXT'
+    
+    @staticmethod
+    def sublayout(layout, strip, toggle_prop, color_prop):
+        header = layout.row(align=True)
+        header.use_property_split = False
+        
+        split = header.split(factor=0.4)
+        split.prop(strip, toggle_prop)
+        
+        if getattr(strip, toggle_prop):
+            row = layout.row()
+            row.separator(factor=1)
+            col = row.column()
+        
+            split.use_property_split = True
+            split.prop(strip, color_prop, text="")
+            return col
+            
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+            return None
 
     def draw(self, context):
         strip = context.active_strip
@@ -2301,154 +2322,33 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         row.prop(strip, "use_italic", text="", icon="ITALIC")
 
         col = layout.column()
-        split = col.split(factor=0.4, align=True)
-        split.label(text="Size")
-        split.prop(strip, "font_size", text="")
+        split = col.split(factor=0.4)
+        col1 = split.column()
+        col2 = split.column()
+        
+        col1.label(text="Size")
+        col2.prop(strip, "font_size", text="")
+        
+        col1.label(text="Color")
+        col2.prop(strip, "color", text="")
+        
+        col.separator(type='LINE', factor=1.5)
+        
+        main_col = layout.column()
+        
+        if (col := self.sublayout(main_col, strip, toggle_prop="use_shadow", color_prop="shadow_color")):
+            col.prop(strip, "shadow_angle", text="Angle")
+            col.prop(strip, "shadow_offset", text="Offset")
+            col.prop(strip, "shadow_blur", text="Blur")
+            col.separator()
 
-        split = col.split(factor=0.4, align=True)
-        split.label(text="Color")
-        split.prop(strip, "color", text="")
-
-        split = col.split(factor=0.4, align=True)
-        row = split.row()
-        row.use_property_decorate = False
-        row.use_property_split = False
-        row.prop(strip, "use_shadow", text="Shadow")
-        sub = split.column()
-        if strip.use_shadow and (not strip.mute):
-            sub.prop(strip, "shadow_color", text="")
-            row = col.row()
-            row.separator()
-            row.prop(strip, "shadow_angle", text="Angle")
-            row = col.row()
-            row.separator()
-            row.prop(strip, "shadow_offset", text="Offset")
-            row = col.row()
-            row.separator()
-            row.prop(strip, "shadow_blur", text="Blur")
-            sub.active = strip.use_shadow and (not strip.mute)
-        else:
-            sub.label(icon="DISCLOSURE_TRI_RIGHT")
-
-        split = col.split(factor=0.4, align=True)
-        row = split.row()
-        row.use_property_decorate = False
-        row.use_property_split = False
-        row.prop(strip, "use_outline", text="Outline")
-        sub = split.column()
-        if strip.use_outline and (not strip.mute):
-            sub.prop(strip, "outline_color", text="")
-            row = col.row()
-            row.separator()
-            row.prop(strip, "outline_width", text="Width")
-            row.active = strip.use_outline
-        else:
-            sub.label(icon="DISCLOSURE_TRI_RIGHT")
-
-        split = col.split(factor=0.4, align=True)
-        row = split.row()
-        row.use_property_decorate = False
-        row.use_property_split = False
-        row.prop(strip, "use_box", text="Box")
-        sub = split.column()
-        if strip.use_box and (not strip.mute):
-            sub.prop(strip, "box_color", text="")
-            row = col.row()
-            row.separator()
-            row.prop(strip, "box_margin", text="Margin")
-        else:
-            sub.label(icon="DISCLOSURE_TRI_RIGHT")
-
-# BFA - Legacy
-
-
-class SEQUENCER_PT_effect_text_outline(SequencerButtonsPanel, Panel):
-    bl_label = "Outline"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_category = "Strip"
-    bl_parent_id = "SEQUENCER_PT_effect_text_style"
-
-    @classmethod
-    def poll(cls, context):
-        strip = context.active_strip
-        return strip.type == "TEXT"
-
-    def draw_header(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.prop(strip, "use_outline", text="")
-
-    def draw(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.use_property_split = True
-
-        col = layout.column()
-        col.prop(strip, "outline_color", text="Color")
-        col.prop(strip, "outline_width", text="Width")
-        col.active = strip.use_outline and (not strip.mute)
-
-# BFA - Legacy
-
-
-class SEQUENCER_PT_effect_text_shadow(SequencerButtonsPanel, Panel):
-    bl_label = "Shadow"
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_category = "Strip"
-    bl_parent_id = "SEQUENCER_PT_effect_text_style"
-
-    @classmethod
-    def poll(cls, context):
-        strip = context.active_strip
-        return strip.type == "TEXT"
-
-    def draw_header(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.prop(strip, "use_shadow", text="")
-
-    def draw(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.use_property_split = True
-
-        col = layout.column()
-        col.prop(strip, "shadow_color", text="Color")
-        col.prop(strip, "shadow_angle", text="Angle")
-        col.prop(strip, "shadow_offset", text="Offset")
-        col.prop(strip, "shadow_blur", text="Blur")
-        col.active = strip.use_shadow and (not strip.mute)
-
-# BFA - Legacy
-
-
-class SEQUENCER_PT_effect_text_box(SequencerButtonsPanel, Panel):
-    bl_label = "Box"
-    bl_translation_context = i18n_contexts.id_sequence
-    bl_options = {"DEFAULT_CLOSED"}
-    bl_category = "Strip"
-    bl_parent_id = "SEQUENCER_PT_effect_text_style"
-
-    @classmethod
-    def poll(cls, context):
-        strip = context.active_strip
-        return strip.type == "TEXT"
-
-    def draw_header(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.prop(strip, "use_box", text="")
-
-    def draw(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.use_property_split = True
-
-        col = layout.column()
-        col.prop(strip, "box_color", text="Color")
-        col.prop(strip, "box_margin", text="Margin")
-        col.prop(strip, "box_roundness", text="Roundness")
-        col.active = strip.use_box and (not strip.mute)
+        if (col := self.sublayout(main_col, strip, toggle_prop="use_outline", color_prop="outline_color")):
+            col.prop(strip, "outline_width", text="Width")
+            col.separator()
+            
+        if (col := self.sublayout(main_col, strip, toggle_prop="use_box", color_prop="box_color")):
+            col.prop(strip, "box_margin", text="Margin")
+            col.separator()
 
 # BFA - Legacy
 
@@ -3939,9 +3839,6 @@ classes = (
     SEQUENCER_PT_scene_sound,  # BFA - Legacy
     SEQUENCER_PT_mask,  # BFA - Legacy
     SEQUENCER_PT_effect_text_style,  # BFA - Legacy
-    SEQUENCER_PT_effect_text_outline,  # BFA - Legacy
-    SEQUENCER_PT_effect_text_shadow,  # BFA - Legacy
-    SEQUENCER_PT_effect_text_box,  # BFA - Legacy
     SEQUENCER_PT_effect_text_layout,  # BFA - Legacy
     SEQUENCER_PT_movie_clip,  # BFA - Legacy
     SEQUENCER_PT_adjust_comp,  # BFA - Legacy
