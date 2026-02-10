@@ -8507,6 +8507,7 @@ static void rna_def_space_node_overlay(BlenderRNA *brna)
       prop, "Show Wire Colors", "Color node links based on their connected sockets");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE, nullptr);
 
+  // bfa node link draw
   prop = RNA_def_property(srna, "auto_link_routing", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(
       prop, nullptr, "overlay.flag", SN_OVERLAY_NO_LINK_ROUTING);

@@ -820,7 +820,6 @@ struct SpaceNodeOverlay {
   /* eSpaceNodeOverlay_preview_shape */
   int preview_shape = 0;
   float world_center_alpha = 0; /*BFA - World Center overlay*/
-  
   char _pad[4] = {}; /*BFA - World Center overlay*/
 };
 

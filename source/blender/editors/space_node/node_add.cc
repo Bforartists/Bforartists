@@ -223,7 +223,7 @@ static wmOperatorStatus add_reroute_exec(bContext *C, wmOperator *op)
   Map<bNodeSocket *, RerouteCutsForSocket> cuts_per_socket;
 
   int intersection_count = 0;
-  const bNodeLinkPaths link_paths = get_node_link_paths(snode);
+  const bNodeLinkPaths link_paths = get_node_link_paths(snode); // bfa node link draw
 
 
   for (bNodeLink &link : ntree.links) {
