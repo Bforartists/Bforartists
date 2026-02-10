@@ -842,6 +842,7 @@ enum eSpaceNodeOverlay_Flag {
    */
   SN_OVERLAY_SHOW_REROUTE_AUTO_LABELS = (1 << 7),
   SN_OVERLAY_SHOW_WORLD_CENTER = (1 << 8), /*BFA - World Center overlay*/
+  SN_OVERLAY_NO_LINK_ROUTING = (1 << 9), /*BFA - Node Link draw*/
 };
 
 enum eSpaceNodeOverlay_preview_shape {

@@ -30,6 +30,7 @@
 #include "BLI_map.hh"
 #include "BLI_math_base.h"  // bfa node blend
 #include "BLI_math_color.h"
+#include "BLI_math_rotation.hh" // bfa node draw link
 #include "BLI_set.hh"
 #include "BLI_span.hh"
 #include "BLI_string.h"
@@ -4761,6 +4762,499 @@ static ui::Block &invalid_links_uiblock_init(const bContext &C)
   return *block_begin(&C, scene, window, region, "invalid_links", ui::EmbossType::None);
 }
 
+// bfa node link draw start
+class LinkLayoutSolver {
+ private:
+  struct StraightSegment {
+    const bNodeSocket *origin;
+    float pos;
+    float min;
+    float max;
+  };
+
+  struct HorizontalSegment : public StraightSegment {};
+  struct VerticalSegment : public StraightSegment {};
+
+  struct LinkInfo {
+    const bNodeLink *link;
+    float2 start;
+    float2 end;
+    float length;
+  };
+
+  class SegmentFinder {
+   private:
+    float bucket_size_ = 10.0f;
+    MultiValueMap<int, StraightSegment> segments_by_bucket_;
+
+   public:
+    void add(const StraightSegment &segment)
+    {
+      const int bucket = this->pos_to_bucket(segment.pos);
+      segments_by_bucket_.add(bucket, segment);
+    }
+
+    std::optional<float> find(const StraightSegment &query,
+                              const float pad_extent,
+                              const float pad_width) const
+    {
+      const int min_bucket = this->pos_to_bucket(query.pos - pad_width);
+      const int max_bucket = this->pos_to_bucket(query.pos + pad_width);
+      for (int bucket = min_bucket; bucket <= max_bucket; bucket++) {
+        for (const StraightSegment &segment : segments_by_bucket_.lookup(bucket)) {
+          if (this->segments_are_compatible(segment, query)) {
+            continue;
+          }
+          if (segment.pos < query.pos + pad_width && segment.pos > query.pos - pad_width) {
+            if (segment.min < query.max + pad_extent && segment.max > query.min - pad_extent) {
+              return segment.pos;
+            }
+          }
+        }
+      }
+      return std::nullopt;
+    }
+
+   private:
+    bool segments_are_compatible(const StraightSegment &a, const StraightSegment &b) const
+    {
+      if (a.origin == b.origin) {
+        return true;
+      }
+      if (a.origin) {
+        const bNode &node = a.origin->owner_node();
+        if (node.is_reroute() && node.input_socket(0).directly_linked_sockets() == Span{b.origin})
+        {
+          return true;
+        }
+      }
+      if (b.origin) {
+        const bNode &node = b.origin->owner_node();
+        if (node.is_reroute() && node.input_socket(0).directly_linked_sockets() == Span{a.origin})
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    int pos_to_bucket(const float pos) const
+    {
+      return int(pos / bucket_size_);
+    }
+  };
+
+  SegmentFinder verticals_;
+  SegmentFinder horizontals_;
+  float pad_x_;
+  float pad_y_;
+
+ public:
+  LinkLayoutSolver()
+  {
+    pad_x_ = 0.5f * UI_UNIT_X;
+    pad_y_ = 0.15f * UI_UNIT_X;
+  }
+
+  Vector<Vector<float2>> solve_links(const Span<const bNodeLink *> links, const float2 cursor)
+  {
+    const int links_num = links.size();
+    Vector<LinkInfo> link_infos(links_num);
+    threading::parallel_for(links.index_range(), 512, [&](const IndexRange range) {
+      for (const int i : range) {
+        link_infos[i] = get_link_info(*links[i], cursor);
+      }
+    });
+
+    MultiValueMap<const bNodeSocket *, int> link_groups;
+    for (const int i : links.index_range()) {
+      const bNodeLink &link = *links[i];
+      link_groups.add(link.fromsock, i);
+    }
+
+    /* Sort links so that short links are solved first. */
+    Vector<const bNodeSocket *> sorted_outputs;
+    sorted_outputs.extend(link_groups.keys().begin(), link_groups.keys().end());
+    std::sort(sorted_outputs.begin(),
+              sorted_outputs.end(),
+              [&](const bNodeSocket *a, const bNodeSocket *b) {
+                const Span<int> a_group = link_groups.lookup(a);
+                const Span<int> b_group = link_groups.lookup(b);
+                return this->get_max_link_length(a_group, link_infos) <
+                       this->get_max_link_length(b_group, link_infos);
+              });
+
+    for (const LinkInfo &link : link_infos) {
+      this->save_link_endings(link);
+    }
+
+    Vector<Vector<float2>> routes(links_num);
+    for (const bNodeSocket *from_socket : sorted_outputs) {
+      const Span<int> link_indices = link_groups.lookup(from_socket);
+      this->solve_link_group(from_socket, link_indices, link_infos, routes);
+    }
+    return routes;
+  }
+
+ private:
+  float get_max_link_length(const Span<int> link_indices, const Span<LinkInfo> link_infos) const
+  {
+    float max_length = 0.0f;
+    for (const int link_i : link_indices) {
+      max_length = std::max(max_length, link_infos[link_i].length);
+    }
+    return max_length;
+  }
+
+  void save_link_endings(const LinkInfo &link)
+  {
+    if (link.link->fromsock) {
+      this->save_segment(this->horizontal(
+          link.link->fromsock, link.start.y, link.start.x, link.start.x + pad_x_));
+    }
+    if (link.link->tosock) {
+      this->save_segment(
+          this->horizontal(link.link->fromsock, link.end.y, link.end.x - pad_x_, link.end.x));
+    }
+  }
+
+  void solve_link_group(const bNodeSocket *from_socket,
+                        const Span<int> link_indices,
+                        const Span<LinkInfo> link_infos,
+                        MutableSpan<Vector<float2>> r_routes)
+  {
+    Vector<int> forward_link_indices;
+    Vector<int> backward_link_indices;
+    for (const int link_i : link_indices) {
+      const LinkInfo &link = link_infos[link_i];
+      if (link.start.x < link.end.x) {
+        forward_link_indices.append(link_i);
+      }
+      else {
+        backward_link_indices.append(link_i);
+      }
+    }
+    this->solve_forward_link_group(from_socket, forward_link_indices, link_infos, r_routes);
+    this->solve_backward_link_group(backward_link_indices, link_infos, r_routes);
+  }
+
+  void solve_forward_link_group(const bNodeSocket *from_socket,
+                                const Span<int> link_indices,
+                                const Span<LinkInfo> link_infos,
+                                MutableSpan<Vector<float2>> r_routes)
+  {
+    if (link_indices.is_empty()) {
+      return;
+    }
+
+    Array<std::optional<float>> vertical_xs(link_indices.size());
+    std::optional<float> max_vertical_x = -FLT_MAX;
+    float min_distance_x = FLT_MAX;
+    int min_distance_link_i = -1;
+
+    for (const int i : link_indices.index_range()) {
+      const int link_i = link_indices[i];
+      const LinkInfo &link = link_infos[link_i];
+      const std::optional<float> vertical_x = this->find_vertical_segment_x(link);
+      vertical_xs[i] = vertical_x;
+      if (vertical_x) {
+        max_vertical_x = std::max(max_vertical_x.value_or(-FLT_MAX), *vertical_x);
+      }
+      const float distance_x = math::abs(link.start.x - link.end.x);
+      if (distance_x < min_distance_x) {
+        min_distance_x = distance_x;
+        min_distance_link_i = link_i;
+      }
+    }
+    const LinkInfo &closest_link = link_infos[min_distance_link_i];
+    float y = closest_link.start.y;
+    if (max_vertical_x.has_value()) {
+      const float dir_factor = closest_link.start.y < closest_link.end.y ? 1.0f : -1.0f;
+      while (true) {
+        const HorizontalSegment segment = this->horizontal(
+            from_socket, y, closest_link.start.x, *max_vertical_x);
+        const std::optional<float> collision = this->find_overlap(segment);
+        if (collision) {
+          y = std::nexttowardf(*collision + dir_factor * pad_y_, dir_factor * FLT_MAX);
+          continue;
+        }
+        break;
+      }
+      this->save_segment(this->horizontal(from_socket, y, closest_link.start.x, *max_vertical_x));
+    }
+    for (const int i : link_indices.index_range()) {
+      const int link_i = link_indices[i];
+      const LinkInfo &link = link_infos[link_i];
+      Vector<float2> &route = r_routes[link_i];
+      route.append(link.start);
+      if (const std::optional<float> vertical_x = vertical_xs[i]) {
+        const float dir = y < link.end.y ? 1.0f : -1.0f;
+        this->save_segment(
+            this->vertical(from_socket, *vertical_x, y + dir * pad_x_, link.end.y - dir * pad_x_));
+        if (y != link.start.y || y != link.end.y) {
+          if (y != link.start.y) {
+            route.append({link.start.x + pad_x_, y});
+          }
+          route.append({*vertical_x, y});
+          if (y != link.end.y) {
+            const float height = math::distance(y, link.end.y);
+            const float fac = 1.0f - std::clamp(height / pad_x_, 0.0f, 1.0f);
+            route.append({*vertical_x + pad_x_ * fac, link.end.y});
+          }
+        }
+      }
+      route.append(link.end);
+    }
+  }
+
+  void solve_backward_link_group(const Span<int> link_indices,
+                                 const Span<LinkInfo> link_infos,
+                                 MutableSpan<Vector<float2>> r_routes)
+  {
+    if (link_indices.is_empty()) {
+      return;
+    }
+
+    const float2 offset{float(UI_UNIT_X), 0.0f};
+    for (const int link_i : link_indices) {
+      const LinkInfo &link = link_infos[link_i];
+      Vector<float2> &route = r_routes[link_i];
+      route.append(link.start);
+      route.append(link.start + offset);
+      route.append(link.end - offset);
+      route.append(link.end);
+    }
+  }
+
+  std::optional<float> find_vertical_segment_x(const LinkInfo &link) const
+  {
+    const float best_corner_x = link.end.x - pad_x_;
+    float corner_x = best_corner_x;
+    while (corner_x >= link.start.x + pad_x_) {
+      const VerticalSegment segment = this->vertical(
+          link.link->fromsock, corner_x, link.start.y, link.end.y);
+      const std::optional<float> collision = this->find_overlap(segment);
+      if (collision) {
+        corner_x = std::nexttowardf(*collision - pad_x_, -FLT_MAX);
+        continue;
+      }
+      return corner_x;
+    }
+    return std::nullopt;
+  }
+
+  std::optional<float> find_overlap(const VerticalSegment &query) const
+  {
+    return this->verticals_.find(query, pad_y_, pad_x_);
+  }
+
+  std::optional<float> find_overlap(const HorizontalSegment &query) const
+  {
+    return this->horizontals_.find(query, pad_x_, pad_y_);
+  }
+
+  LinkInfo get_link_info(const bNodeLink &link, const float2 cursor)
+  {
+    LinkInfo info;
+    info.link = &link;
+    info.start = link.fromsock ?
+                     socket_link_connection_location(*link.fromnode, *link.fromsock, link) :
+                     cursor;
+    info.end = link.tosock ? socket_link_connection_location(*link.tonode, *link.tosock, link) :
+                             cursor;
+    info.length = math::distance(info.start, info.end);
+    return info;
+  }
+
+  void save_segment(const HorizontalSegment &segment)
+  {
+    horizontals_.add(segment);
+  }
+
+  void save_segment(const VerticalSegment &segment)
+  {
+    verticals_.add(segment);
+  }
+
+  VerticalSegment vertical(const bNodeSocket *from_socket,
+                           const float x,
+                           const float start_y,
+                           const float end_y) const
+  {
+    return {from_socket, x, std::min(start_y, end_y), std::max(start_y, end_y)};
+  }
+
+  HorizontalSegment horizontal(const bNodeSocket *from_socket,
+                               const float y,
+                               const float start_x,
+                               const float end_x) const
+  {
+    return {from_socket, y, std::min(start_x, end_x), std::max(start_x, end_x)};
+  }
+};
+
+bNodeLinkPaths get_node_link_paths(const SpaceNode &snode)
+{
+  snode.edittree->ensure_topology_cache();
+  Vector<const bNodeLink *> links;
+  for (const bNodeLink *link : snode.edittree->all_links()) {
+    if (link->is_available()) {
+      links.append(link);
+    }
+  }
+
+  bNodeLinkPaths paths;
+  if (snode.overlay.flag & SN_OVERLAY_NO_LINK_ROUTING) {
+    for (const bNodeLink *link : links) {
+      std::array<float2, NODE_LINK_RESOL + 1> coords;
+      node_link_bezier_points_evaluated(*link, coords);
+      paths.paths.add(link, coords);
+    }
+  }
+  else {
+    LinkLayoutSolver layout_solver;
+    Vector<Vector<float2>> routes = layout_solver.solve_links(
+        links, snode.runtime->cursor * UI_SCALE_FAC);
+    for (const int i : links.index_range()) {
+      const bNodeLink &link = *links[i];
+      paths.paths.add(&link, routes[i]);
+    }
+  }
+  return paths;
+}
+
+static void draw_links_test(const bContext &C,
+                            TreeDrawContext &tree_draw_ctx,
+                            ARegion &region,
+                            SpaceNode &snode,
+                            bNodeTree &ntree,
+                            Span<bNode *> nodes)
+{
+  UNUSED_VARS(C, tree_draw_ctx, region, snode, ntree, nodes);
+  const bNodeTree &tree = *snode.edittree;
+  tree.ensure_topology_cache();
+
+  Vector<const bNodeLink *> links;
+  for (const bNodeLink *link : ntree.all_links()) {
+    if (link->is_available()) {
+      links.append(link);
+    }
+  }
+  if (snode.runtime->linkdrag) {
+    for (const bNodeLink &link : snode.runtime->linkdrag->links) {
+      links.append(&link);
+    }
+  }
+  if (links.is_empty()) {
+    return;
+  }
+
+  LinkLayoutSolver layout_solver;
+  Vector<Vector<float2>> routes = layout_solver.solve_links(links,
+                                                            snode.runtime->cursor * UI_SCALE_FAC);
+  int routes_points_num = 0;
+  for (const Span<float2> route : routes) {
+    routes_points_num += route.size();
+  }
+
+  GPUVertFormat *format = immVertexFormat();
+  const uint attr_pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+  const uint attr_color = GPU_vertformat_attr_add(
+      format, "color", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
+
+  bke::CurvesGeometry routes_curves(routes_points_num, routes.size());
+  {
+    routes_curves.fill_curve_types(CURVE_TYPE_POLY);
+    MutableSpan<float3> links_curves_positions = routes_curves.positions_for_write();
+    MutableSpan<int> links_curves_offsets = routes_curves.offsets_for_write();
+    int count = 0;
+    for (const int i : routes.index_range()) {
+      const Span<float2> route = routes[i];
+      links_curves_offsets[i] = count;
+      for (const int j : IndexRange(route.size())) {
+        links_curves_positions[count + j] = float3(route[j], 0.0f);
+      }
+      count += route.size();
+    }
+    links_curves_offsets.last() = count;
+  }
+  Array<float> fillet_radii(routes_points_num, 0.0f);
+  {
+    const Span<float3> positions = routes_curves.positions();
+    const OffsetIndices points_by_curve = routes_curves.points_by_curve();
+    for (const int curve_i : routes_curves.curves_range()) {
+      const IndexRange points = points_by_curve[curve_i];
+      for (const int point_i : points.drop_front(1).drop_back(1)) {
+        const float3 &a = positions[point_i - 1];
+        const float3 &b = positions[point_i];
+        const float3 &c = positions[point_i + 1];
+        const math::AngleRadian angle = math::angle_between(math::normalize(a - b),
+                                                            math::normalize(c - b));
+        const float fac = angle.degree() / 180.0f;
+        fillet_radii[point_i] = 2.0f * fac * fac * UI_UNIT_X;
+      }
+    }
+  }
+
+  routes_curves = geometry::fillet_curves_poly(routes_curves,
+                                               routes_curves.curves_range(),
+                                               VArray<float>::ForSpan(fillet_radii),
+                                               VArray<int>::ForSingle(5, routes_points_num),
+                                               true,
+                                               {});
+
+  float scale;
+  UI_view2d_scale_get(&region.v2d, &scale, nullptr);
+  float line_width = 2.0f * scale;
+  float viewport[4] = {};
+  GPU_viewport_size_get_f(viewport);
+
+  GPU_blend(GPU_BLEND_ALPHA);
+  immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_FLAT_COLOR);
+  immUniform2fv("viewportSize", &viewport[2]);
+  immUniform1f("lineWidth", line_width * U.pixelsize);
+
+  ColorTheme4f color_selected;
+  UI_GetThemeColor4fv(TH_EDGE_SELECT, color_selected);
+
+  const auto get_link_color = [&](const bNodeLink &link) {
+    if (link.is_muted()) {
+      return ColorTheme4f{0.8f, 0.3f, 0.3f, 0.7f};
+    }
+
+    ColorTheme4f color;
+    PointerRNA node_ptr = RNA_pointer_create_discrete(
+        &ntree.id, &RNA_Node, const_cast<bNode *>(link.fromnode ? link.fromnode : link.tonode));
+    node_socket_color_get(
+        C, ntree, node_ptr, link.fromsock ? *link.fromsock : *link.tosock, color);
+    return color;
+  };
+
+  int segments_num = routes_curves.points_num() - routes_curves.curves_num();
+  immBegin(GPU_PRIM_LINES, segments_num * 2);
+  const OffsetIndices points_by_curve = routes_curves.points_by_curve();
+  const Span<float3> positions = routes_curves.positions();
+  for (const int curve_i : routes_curves.curves_range()) {
+    const bNodeLink &link = *links[curve_i];
+
+    ColorTheme4f color = get_link_color(link);
+    const float dim_factor = node_link_dim_factor(region.v2d, link);
+    color.a *= dim_factor;
+    const IndexRange points = points_by_curve[curve_i];
+    for (const int i : points.drop_back(1)) {
+      const float3 &a = positions[i];
+      const float3 &b = positions[i + 1];
+      immAttr4fv(attr_color, color);
+      immVertex3f(attr_pos, a.x, a.y, 0.0f);
+      immAttr4fv(attr_color, color);
+      immVertex3f(attr_pos, b.x, b.y, 0.0f);
+    }
+  }
+  immEnd();
+  immUnbindProgram();
+}
+// bfa node link draw end
+
 #define USE_DRAW_TOT_UPDATE
 
 static void node_draw_nodetree(const bContext &C,
@@ -4784,26 +5278,32 @@ static void node_draw_nodetree(const bContext &C,
 #endif
   }
 
+  // bfa node link draw start
   /* Node lines. */
-  GPU_blend(GPU_BLEND_ALPHA);
-  nodelink_batch_start(snode);
+  if (snode.overlay.flag & SN_OVERLAY_NO_LINK_ROUTING) {
+    GPU_blend(GPU_BLEND_ALPHA);
+    nodelink_batch_start(snode);
 
-  for (const bNodeLink *link : ntree.all_links()) {
-    if (!bke::node_link_is_hidden(*link) && !bke::node_link_is_selected(*link)) {
-      node_draw_link(C, region.v2d, snode, *link, false);
+    for (const bNodeLink *link : ntree.all_links()) {
+      if (!bke::node_link_is_hidden(*link) && !bke::node_link_is_selected(*link)) {
+        node_draw_link(C, region.v2d, snode, *link, false);
+      }
     }
-  }
 
-  /* Draw selected node links after the unselected ones, so they are shown on top. */
-  for (const bNodeLink *link : ntree.all_links()) {
-    if (!bke::node_link_is_hidden(*link) && bke::node_link_is_selected(*link)) {
-      node_draw_link(C, region.v2d, snode, *link, true);
+    /* Draw selected node links after the unselected ones, so they are shown on top. */
+    for (const bNodeLink *link : ntree.all_links()) {
+      if (!bke::node_link_is_hidden(*link) && bke::node_link_is_selected(*link)) {
+        node_draw_link(C, region.v2d, snode, *link, true);
+      }
     }
+
+    nodelink_batch_end(snode);
+    GPU_blend(GPU_BLEND_NONE);
   }
-
-  nodelink_batch_end(snode);
-
-  GPU_blend(GPU_BLEND_NONE);
+  else {
+    draw_links_test(C, tree_draw_ctx, region, snode, ntree, nodes);
+  }
+  // bfa node link draw end
 
   draw_frame_overlays(C, tree_draw_ctx, region, snode, ntree, blocks);
 
@@ -5183,16 +5683,20 @@ void node_draw_space(const bContext &C, ARegion &region)
       draw_nodetree(C, region, *ntree, path->parent_key);
     }
 
+    // bfa node link draw start
     /* Temporary links. */
-    GPU_blend(GPU_BLEND_ALPHA);
-    GPU_line_smooth(true);
-    if (snode.runtime->linkdrag) {
-      for (const bNodeLink &link : snode.runtime->linkdrag->links) {
-        node_draw_link_dragged(C, v2d, snode, link);
+    if (snode.overlay.flag & SN_OVERLAY_NO_LINK_ROUTING) {
+      GPU_blend(GPU_BLEND_ALPHA);
+      GPU_line_smooth(true);
+      if (snode.runtime->linkdrag) {
+        for (const bNodeLink &link : snode.runtime->linkdrag->links) {
+          node_draw_link_dragged(C, v2d, snode, link);
+        }
       }
+      GPU_line_smooth(false);
+      GPU_blend(GPU_BLEND_NONE);
+      // bfa node link draw end
     }
-    GPU_line_smooth(false);
-    GPU_blend(GPU_BLEND_NONE);
 
     if (snode.overlay.flag & SN_OVERLAY_SHOW_OVERLAYS && snode.flag & SNODE_SHOW_GPENCIL) {
       /* Draw grease-pencil annotations. */

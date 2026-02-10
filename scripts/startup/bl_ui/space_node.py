@@ -1344,6 +1344,11 @@ class NODE_PT_overlay(Panel):
             row.separator()
             row.use_property_split = True
             row.prop(overlay, "world_center_alpha", text="Alpha")
+        
+        # BFA - Node Link draw
+        col.separator()
+        col.prop(overlay, "auto_link_routing", text="Auto Link Routing")
+
 
 class NODE_MT_node_tree_interface_context_menu(Menu):
     bl_label = "Node Tree Interface Specials"

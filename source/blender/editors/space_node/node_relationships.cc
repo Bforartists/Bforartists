@@ -1833,13 +1833,15 @@ static wmOperatorStatus cut_links_exec(bContext *C, wmOperator *op)
   bNodeTree &node_tree = *snode.edittree;
   node_tree.ensure_topology_cache();
 
+  const bNodeLinkPaths link_paths = get_node_link_paths(snode);
+
   Set<bNodeLink *> links_to_remove;
   for (bNodeLink &link : node_tree.links) {
     if (node_link_is_hidden_or_dimmed(region.v2d, link)) {
       continue;
     }
 
-    if (link_path_intersection(link, path)) {
+    if (link_path_intersection(link_paths, link, path)) {
 
       if (!found) {
         /* TODO(sergey): Why did we kill jobs twice? */
@@ -1939,12 +1941,13 @@ static wmOperatorStatus mute_links_exec(bContext *C, wmOperator *op)
 
   ntree.ensure_topology_cache();
 
+  const bNodeLinkPaths link_paths = get_node_link_paths(snode);
   Set<bNodeLink *> affected_links;
   for (bNodeLink &link : ntree.links) {
     if (node_link_is_hidden_or_dimmed(region.v2d, link)) {
       continue;
     }
-    if (!link_path_intersection(link, path)) {
+    if (!link_path_intersection(link_paths, link, path)) {
       continue;
     }
     affected_links.add(&link);

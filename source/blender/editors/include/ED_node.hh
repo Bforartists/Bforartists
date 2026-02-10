@@ -8,7 +8,7 @@
 
 #include "BLI_bounds.hh"
 #include "BLI_compute_context.hh"
-#include "BLI_math_vector_types.hh"
+#include "BLI_math_vector_types.hh" // bfa node link draw
 #include "BLI_string_ref.hh"
 #include "BLI_vector_set.hh"
 
@@ -35,6 +35,8 @@ struct Object;
 struct rcti;
 struct rctf;
 struct NodesModifierData;
+struct uiLayout; // bfa node link draw
+struct bNodeLink; // bfa node link draw
 
 namespace bke {
 class bNodeTreeZone;
@@ -93,6 +95,12 @@ void node_draw_nodesocket(const rctf *rect,
                           float outline_thickness,
                           int shape,
                           float aspect);
+/**
+ * BFA Node Link Draw
+*/
+float2 socket_link_connection_location(const bNode &node,
+                                       const bNodeSocket &socket,
+                                       const bNodeLink &link);
 
 void node_socket_virtual_color_get(float r_color[4]); /* BFA - Expose virtual socket color outside this file, used in interface_icons.cc*/
 void std_node_socket_colors_get(int socket_type, float *r_color);
