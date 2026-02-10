@@ -489,7 +489,7 @@ class NODE_MT_pie_menus(Menu):
         space = context.space_data
 
         layout.operator("wm.call_menu_pie", text="Region Toggle", icon="MENU_PANEL").name = "WM_MT_region_toggle_pie"
-        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'NODE_MT_view_pie'
+        layout.operator("wm.call_menu_pie", text="View", icon="MENU_PANEL").name = 'NODE_MT_view_pie'
 
 
 class NODE_MT_swap(node_add_menu.SwapNodeMenu):
@@ -534,7 +534,7 @@ class NODE_MT_view(Menu):
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
         layout.prop(snode, "show_toolshelf_tabs")
-        layout.prop(snode, "show_region_asset_shelf") # BFA - we dont need is_compositor since we show here!
+        layout.prop(snode, "show_region_asset_shelf")  # BFA - we dont need is_compositor since we show here!
 
         layout.separator()
 
@@ -1107,8 +1107,26 @@ class NODE_PT_active_node_generic(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        layout.prop(node, "name", icon='NODE')
-        layout.prop(node, "label", icon='NODE')
+        col = layout.column()
+        col.prop(node, "name", placeholder="Name")
+        col.prop(node, "label", placeholder="Custom Label")
+
+        col = col.column(heading="Color")
+        col.active = node.bl_idname != "NodeReroute"
+        row = col.row()
+        row.prop(node, "use_custom_color", text="")
+        sub = row.row(align=True)
+        sub.active = node.use_custom_color
+        sub.prop(node, "color", text="")
+        sub.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
+        sub.popover(
+            panel="NODE_PT_node_color_presets",
+            icon='PRESET',
+            text="",
+        )
+
+        col.prop(node, "show_options")
+        col.prop(node, "mute")
 
         if tree.type == 'GEOMETRY':
             layout.prop(node, "warning_propagation", text="Propagate")
@@ -1345,6 +1363,7 @@ class NODE_PT_overlay(Panel):
             row.use_property_split = True
             row.prop(overlay, "world_center_alpha", text="Alpha")
 
+
 class NODE_MT_node_tree_interface_context_menu(Menu):
     bl_label = "Node Tree Interface Specials"
 
@@ -1376,7 +1395,7 @@ class NODE_PT_node_tree_interface_new_input(Panel):
         layout = self.layout.column(align=True)
         layout.operator('node.interface_item_new_input', text='Input ', icon='GROUPINPUT').item_type = 'INPUT'
         layout.operator('node.interface_item_new_output', text='Output', icon='GROUPOUTPUT').item_type = 'OUTPUT'
-        
+
         layout.separator(factor=0.5)
         layout.operator('node.interface_item_new_panel', text='Panel', icon='MENU_PANEL').item_type = 'PANEL'
         layout.separator(factor=0.5)
@@ -1422,35 +1441,36 @@ class NODE_PT_node_tree_properties(Panel):
         layout = self.layout
         snode = context.space_data
         group = snode.edit_tree
-        layout.use_property_split = True # BFA - Use split layout for non-boolean properties
+        layout.use_property_split = True  # BFA - Use split layout for non-boolean properties
         layout.use_property_decorate = False
 
-        layout.prop(group, "name", text="Name")
+        col = layout.column()
+        col.prop(group, "name", text="Name", placeholder="Name")
 
         if group.asset_data:
-            layout.prop(group.asset_data, "description", text="Description")
+            col.prop(group.asset_data, "description", text="Description", placeholder="Description")
         else:
-            layout.prop(group, "description", text="Description")
+            col.prop(group, "description", text="Description", placeholder="Description")
 
         if not group.bl_use_group_interface:
             return
 
-        layout.prop(group, "color_tag")
-        row = layout.row(align=True)
+        col.prop(group, "color_tag")
+        row = col.row(align=True)
         row.prop(group, "default_group_node_width", text="Node Width")
         row.operator("node.default_group_width_set", text="", icon='NODE')
 
         if group.bl_idname == "GeometryNodeTree":
-            if group.is_modifier: # BFA - Hide property instead of greying it out
+            if group.is_modifier:  # BFA - Hide property instead of greying it out
                 row = layout.row()
-                row.use_property_split = False # BFA - Align booleans left
+                row.use_property_split = False  # BFA - Align booleans left
                 row.prop(group, "show_modifier_manage_panel")
 
-            header, body = layout.panel("group_usage")
+            header, body = col.panel("group_usage")
             header.label(text="Usage")
             if body:
                 col = body.column(align=True)
-                col.use_property_split = False # BFA - Align booleans left
+                col.use_property_split = False  # BFA - Align booleans left
                 col.prop(group, "is_modifier")
                 col.prop(group, "is_tool")
 
@@ -1641,7 +1661,6 @@ classes = (
     NODE_PT_node_tree_interface_new_input,  # BFA - Menu
     NODE_PT_node_tree_animation,
     NODE_PT_active_node_generic,
-    NODE_PT_active_node_color,
     NODE_PT_texture_mapping,
     NODE_PT_active_tool,
     NODE_PT_backdrop,

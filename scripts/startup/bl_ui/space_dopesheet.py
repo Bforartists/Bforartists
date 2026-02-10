@@ -859,6 +859,7 @@ class DOPESHEET_MT_action(Menu):
         layout.operator("anim.merge_animation", icon="MERGE")
         layout.operator("anim.separate_slots", icon="SEPARATE")
         layout.operator("anim.replace_action")
+        layout.operator("anim.replace_action_new")
 
         layout.separator()
         layout.operator("anim.slot_channels_move_to_new_action", icon="ACTION_SLOT")

@@ -34,10 +34,11 @@
 #include "ED_particle.hh"
 #include "ED_screen.hh"
 #include "ED_screen_types.hh"
-#include "ED_sequencer.hh"
 
 #include "ANIM_keyframing.hh"
 #include "ANIM_nla.hh"
+
+#include "SEQ_retiming.hh"
 
 #include "UI_view2d.hh"
 
@@ -95,7 +96,7 @@ static void make_sorted_index_map(TransDataContainer *tc, FunctionRef<bool(int, 
 
   const MutableSpan sorted_index_span(tc->sorted_index_map, tc->data_len);
   array_utils::fill_index_range(sorted_index_span);
-  std::sort(sorted_index_span.begin(), sorted_index_span.end(), compare);
+  std::ranges::sort(sorted_index_span, compare);
 }
 
 /**
@@ -943,7 +944,7 @@ static TransConvertTypeInfo *convert_type_get(const TransInfo *t, Object **r_obj
     if (t->options & CTX_SEQUENCER_IMAGE) {
       return &TransConvertType_SequencerImage;
     }
-    if (vse::sequencer_retiming_mode_is_active(t->scene)) {
+    if (seq::retiming_keys_are_selected(t->scene)) {
       return &TransConvertType_SequencerRetiming;
     }
     return &TransConvertType_Sequencer;

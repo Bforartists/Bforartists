@@ -339,6 +339,7 @@ set(GLSL_SRC
   engines/eevee/shaders/infos/eevee_material_infos.hh
   engines/eevee/shaders/infos/eevee_motion_blur_infos.hh
   engines/eevee/shaders/infos/eevee_nodetree_infos.hh
+  engines/eevee/shaders/infos/eevee_raycast_infos.hh
   engines/eevee/shaders/infos/eevee_sampling_infos.hh
   engines/eevee/shaders/infos/eevee_shadow_infos.hh
   engines/eevee/shaders/infos/eevee_shadow_pipeline_infos.hh
@@ -641,6 +642,7 @@ set(GLSL_SRC
   engines/workbench/workbench_defines.hh
   engines/workbench/workbench_shader_shared.hh
 
+  intern/shaders/osd_patch_defines.glsl
   intern/shaders/osd_patch_basis.glsl
   intern/shaders/subdiv_custom_data_interp_comp.glsl
   intern/shaders/subdiv_ibo_lines_comp.glsl

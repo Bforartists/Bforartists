@@ -2353,8 +2353,6 @@ def km_node_editor(params):
         ("node.render_changed", {"type": 'Z', "value": 'PRESS'}, None),
         ("node.clipboard_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
         ("node.clipboard_paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
-        ("node.viewer_border", {"type": 'B', "value": 'PRESS', "ctrl": True}, None),
-        ("node.clear_viewer_border", {"type": 'B', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         ("node.translate_attach",
          {"type": 'G', "value": 'PRESS'},
          {"properties": [("TRANSFORM_OT_translate", [("view2d_edge_pan", True)])]}),
@@ -3168,7 +3166,7 @@ def km_sequencer(params):
         ("sequencer.gap_remove", {"type": 'BACK_SPACE', "value": 'PRESS', "shift": True},
          {"properties": [("all", True)]}),
         ("sequencer.gap_insert", {"type": 'EQUAL', "value": 'PRESS', "shift": True}, None),
-        ("sequencer.snap", {"type": 'S', "value": 'PRESS', "shift": True}, None),
+        ("sequencer.snap", {"type": 'S', "value": 'PRESS', "shift": True}, {"properties": [("keep_offset", True)]}),
         ("sequencer.swap_inputs", {"type": 'S', "value": 'PRESS', "alt": True}, None),
         *(
             (("sequencer.split_multicam",

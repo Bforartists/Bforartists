@@ -71,9 +71,18 @@ static void geometry_set_points_to_vertices(GeometrySet &geometry_set,
     const StringRef dst_name = src_name == ".selection" ? ".select_vert" : src_name;
     const bke::AttrType data_type = attributes.kinds[i].data_type;
     const GAttributeReader src = src_attributes.lookup(src_name);
-    if (selection.size() == points->totpoint && src.sharing_info && src.varray.is_span()) {
-      const bke::AttributeInitShared init(src.varray.get_internal_span().data(),
-                                          *src.sharing_info);
+    const CommonVArrayInfo info = src.varray.common_info();
+    if (info.type == CommonVArrayInfo::Type::Single) {
+      const CPPType &type = src.varray.type();
+      const bke::AttributeInitValue init(GPointer(type, info.data));
+      dst_attributes.add(dst_name, AttrDomain::Point, data_type, init);
+      continue;
+    }
+
+    if (selection.size() == points->totpoint && src.sharing_info &&
+        info.type == CommonVArrayInfo::Type::Span)
+    {
+      const bke::AttributeInitShared init(info.data, *src.sharing_info);
       dst_attributes.add(dst_name, AttrDomain::Point, data_type, init);
     }
     else {

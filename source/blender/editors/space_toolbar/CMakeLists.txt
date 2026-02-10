@@ -26,6 +26,10 @@ set(SRC
 	space_toolbar.cc
 )
 
+set(LIB
+	PRIVATE bf::blenlib
+)
+
 blender_add_lib(bf_editor_space_toolbar "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 # dna_type_offsets.h dna_type_offsets.h

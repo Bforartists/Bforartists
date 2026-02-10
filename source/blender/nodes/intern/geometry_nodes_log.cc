@@ -79,15 +79,14 @@ FieldInfoLog::FieldInfoLog(const GField &field) : type(field.cpp_type())
                         field_input_nodes->deduplicated_nodes.end());
   }
 
-  std::sort(
-      field_inputs.begin(), field_inputs.end(), [](const FieldInput &a, const FieldInput &b) {
-        const int index_a = int(a.category());
-        const int index_b = int(b.category());
-        if (index_a == index_b) {
-          return a.socket_inspection_name().size() < b.socket_inspection_name().size();
-        }
-        return index_a < index_b;
-      });
+  std::ranges::sort(field_inputs, [](const FieldInput &a, const FieldInput &b) {
+    const int index_a = int(a.category());
+    const int index_b = int(b.category());
+    if (index_a == index_b) {
+      return a.socket_inspection_name().size() < b.socket_inspection_name().size();
+    }
+    return index_a < index_b;
+  });
 
   for (const FieldInput &field_input : field_inputs) {
     this->input_tooltips.append(field_input.socket_inspection_name());
@@ -110,16 +109,17 @@ GeometryInfoLog::GeometryInfoLog(const bke::GeometrySet &geometry_set)
    * attributes with the same name but different domains or data types on separate components. */
   Set<StringRef> names;
 
-  geometry_set.attribute_foreach(
-      all_component_types,
-      true,
-      [&](const StringRef attribute_id,
-          const bke::AttributeMetaData &meta_data,
-          const bke::GeometryComponent & /*component*/) {
-        if (!bke::attribute_name_is_anonymous(attribute_id) && names.add(attribute_id)) {
-          this->attributes.append({attribute_id, meta_data.domain, meta_data.data_type});
-        }
-      });
+  geometry_set.attribute_foreach(all_component_types,
+                                 true,
+                                 [&](const StringRef name,
+                                     const bke::AttributeMetaData &meta_data,
+                                     const bke::GeometryComponent & /*component*/) {
+                                   if (!bke::attribute_name_is_anonymous(name) && names.add(name))
+                                   {
+                                     this->attributes.append(
+                                         {name, meta_data.domain, meta_data.data_type});
+                                   }
+                                 });
 
   for (const bke::GeometryComponent *component : geometry_set.get_components()) {
     this->component_types.append(component->type());

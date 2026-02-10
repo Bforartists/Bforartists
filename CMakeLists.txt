@@ -445,10 +445,8 @@ endif()
 
 if(UNIX AND NOT APPLE)
   option(WITH_SYSTEM_FREETYPE "Use the freetype library provided by the operating system" OFF)
-  option(WITH_SYSTEM_EIGEN3 "Use the systems Eigen3 library" OFF)
 else()
   set(WITH_SYSTEM_FREETYPE OFF)
-  set(WITH_SYSTEM_EIGEN3 OFF)
 endif()
 
 if((NOT WITH_PYTHON_MODULE) AND (
@@ -1105,6 +1103,9 @@ if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang")
 -fsanitize=vla-bound \
 -fno-sanitize=alignment \
 ")
+    # Make sure we don't omit frame pointers as the leak backtraces might not be able to
+    # correctly track the source otherwise.
+    string(APPEND _asan_defaults " -fno-omit-frame-pointer")
 
     if(MSVC)
       # clang-cl doesn't support all sanitizers, but leak and object-size give errors/warnings.
@@ -1625,9 +1626,6 @@ if(WITH_IMAGE_OPENJPEG)
   endif()
 endif()
 
-if(NOT WITH_SYSTEM_EIGEN3)
-  set(EIGEN3_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/extern/Eigen3)
-endif()
 if (WITH_COMPILER_ASAN AND NOT WITH_COMPILER_ASAN_EXTERN)
   # See also:
   # - `EIGEN_MALLOC_ALREADY_ALIGNED` definition and usages in
