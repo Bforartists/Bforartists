@@ -445,6 +445,9 @@ endif()
 #
 
 add_library(bf::dependencies::fmt ALIAS fmt::fmt)
+if (WIN32)
+  target_include_directories(fmt::fmt ${FMT_INCLUDE_DIR})
+endif()
 
 # -----------------------------------------------------------------------------
 # Configure OSL
