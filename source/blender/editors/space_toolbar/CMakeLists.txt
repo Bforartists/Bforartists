@@ -27,7 +27,7 @@ set(SRC
 )
 
 set(LIB
-	PRIVATE bf::dependencies::fmt
+	PRIVATE bf::blenlib
 )
 
 blender_add_lib(bf_editor_space_toolbar "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
