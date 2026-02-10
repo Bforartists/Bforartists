@@ -1,45 +1,14 @@
 name: Windows
-
 on:
   push:
-    branches: [  build-test ]
-  schedule:
-    - cron: 0 0 * * 1
-  # pull_request:
-  #   branches: [ master ]
-  workflow_dispatch:
+      branches: [ "master" ]
+  pull_request:
+      branches: [ "master" ]
 
-permissions: {}
 jobs:
-  # check:
-  #   uses: ./.github/workflows/nightly-build.yml
-  #   with:
-  #     os: "windows-2022"
-  #     c_compiler: "cl"
-  #     cpp_compiler: "cl"
   build:
-    runs-on: windows-2022
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Run make update
-      working-directory: ${{ github.workspace }}
-      run: python ./build_files/utils/make_update.py
-    - name: Build
-      # Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      shell: cmd
-      run: |
-        make lite
-    - name: Directory
-      shell: cmd
-      run: |
-        dir
-        cd ..
-        dir 
-    - name: Upload Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: Bforartists-Release-${{ runner.os }}
-        path:
-            D:/a/Bforartists/*/bin
+    uses: ./.github/workflows/nightly-build.yml
+    with:
+      os: "windows-latest"
+      c_compiler: "cl"
+      cpp_compiler: "cl"
