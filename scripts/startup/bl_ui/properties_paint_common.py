@@ -2154,7 +2154,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
                 emboss=False)
 
 
-        ## BFA - WIP - collapsed pressure curves start
+        ## BFA - Collapsed pressure curves start
         settings = UnifiedPaintPanel.paint_settings(context)
         header = context.region.type == 'TOOL_HEADER'
         
@@ -2188,7 +2188,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
                 icon='DOWNARROW_HLT' if paint.show_strength_curve else 'RIGHTARROW',
                 emboss=False)
 
-        ## BFA - WIP collapsed strength curves start
+        ## BFA - collapsed strength curves start
         settings = UnifiedPaintPanel.paint_settings(context)
         header = context.region.type == 'TOOL_HEADER'
 
@@ -2283,7 +2283,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         layout.use_property_split = False
         layout.prop(gp_settings, "use_active_layer_only")
     elif grease_pencil_brush_type == "TINT":
-        layout.prop(gp_settings, "vertex_mode", text="Mode")
+        layout.prop(gp_settings, "vertex_mode", text="Mode", expand=True) # BFA - expanded
         layout.use_property_split = False
         layout.prop(gp_settings, "use_active_layer_only")
 
