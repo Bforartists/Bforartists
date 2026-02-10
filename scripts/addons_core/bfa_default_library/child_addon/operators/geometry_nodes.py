@@ -607,14 +607,20 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
     def execute(self, context):
         obj = context.object
 
+        # Validate target collection exists
+        if not context.scene.target_collection:
+            self.report({'ERROR'}, "No target collection selected. Please select a target collection first.")
+            return {'CANCELLED'}
+
         # Set viewport settings to bounds for all children objects if enabled
-        if context.scene.target_collection and context.scene.use_wireframe_on_collection:
+        if context.scene.use_wireframe_on_collection:
             for collection_obj in context.scene.target_collection.objects:
                 #if collection_obj.type == 'MESH':
                 if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
                     collection_obj.show_bounds = True
                     collection_obj.display_type = 'BOUNDS'
         else:
+            # Disable bounds
             for collection_obj in context.scene.target_collection.objects:
                 #if collection_obj.type == 'MESH':
                 if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
@@ -641,10 +647,11 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
                 if node.type == 'GROUP_INPUT':
                     for output in node.outputs:
                         if output.type == 'COLLECTION':
-                            # Set the collection in the modifier
-                            geom_nodes[output.identifier] = context.scene.target_collection
-                            output.default_value = context.scene.target_collection
-                            collection_socket_found = True
+                            # Set the collection in the modifier if target collection exists
+                            if context.scene.target_collection:
+                                geom_nodes[output.identifier] = context.scene.target_collection
+                                output.default_value = context.scene.target_collection
+                                collection_socket_found = True
                             break
                     if collection_socket_found:
                         break
@@ -669,14 +676,16 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
                             pass
 
             # Inject intersection nodegroup if enabled
-            if (context.scene.inject_intersection_nodegroup and
-                context.scene.target_collection):
-                success = inject_nodegroup_to_collection(context.scene.target_collection.name)
+            if context.scene.target_collection:
+                if context.scene.inject_intersection_nodegroup:
+                    success = inject_nodegroup_to_collection(context.scene.target_collection.name)
+                else:
+                    success = remove_nodegroup_from_collection(context.scene.target_collection.name)
+                    # DEBUG
+                    #if success:
+                    #    self.report({'INFO'}, "Intersection node group injected into materials to blend them")
             else:
-                success = remove_nodegroup_from_collection(context.scene.target_collection.name)
-                # DEBUG
-                #if success:
-                #    self.report({'INFO'}, "Intersection node group injected into materials to blend them")
+                self.report({'WARNING'}, "No target collection selected - skipping material injection")
 
             # Force update
             obj.update_tag()

@@ -579,23 +579,26 @@ enum {
   AREA_FLAG_OFFSCREEN = (1 << 9),
   /* bfa - show hide the editorsmenu */
   HEADER_NO_EDITORTYPEMENU = (1 << 10),
+};
+
+/** #ScrArea.toolbar_flag - dedicated toolbar flags to avoid 16-bit limitations */
+enum {
   /* bfa - show hide the File toolbars */
-  HEADER_TOOLBAR_FILE = (1 << 11),
+  HEADER_TOOLBAR_FILE = (1 << 0),
   /* bfa - show hide the View toolbars */
-  HEADER_TOOLBAR_MESHEDIT = (1 << 12),
+  HEADER_TOOLBAR_MESHEDIT = (1 << 1),
   /* bfa - show hide the Primitives toolbars */
-  HEADER_TOOLBAR_PRIMITIVES = (1 << 13),
+  HEADER_TOOLBAR_PRIMITIVES = (1 << 2),
   /* bfa - show hide the Image toolbars */
-  HEADER_TOOLBAR_IMAGE = (1 << 14),
+  HEADER_TOOLBAR_IMAGE = (1 << 3),
   /* bfa - show hide the Tools toolbars */
-  HEADER_TOOLBAR_TOOLS = (1 << 15),
+  HEADER_TOOLBAR_TOOLS = (1 << 4),
   /* bfa - show hide the Animation toolbars */
-  HEADER_TOOLBAR_ANIMATION = (1 << 16),
-  /*Other flags see above in the area->flag enum*/
+  HEADER_TOOLBAR_ANIMATION = (1 << 5),
   /* bfa - show hide the Edit toolbars */
-  HEADER_TOOLBAR_EDIT = (1 << 17),
+  HEADER_TOOLBAR_EDIT = (1 << 6),
   /* bfa - show hide the Misc toolbars */
-  HEADER_TOOLBAR_MISC = (1 << 18),
+  HEADER_TOOLBAR_MISC = (1 << 7),
 };
 
 #define AREAGRID 1
@@ -641,13 +644,18 @@ struct ScrArea {
   DNA_DEPRECATED char headertype = 0;
   /** Private, for spacetype refresh callback. */
   char do_refresh = 0;
+  
+  /** bfa - our own toolbar flag */
+  char toolbar_flag = 0;
+  char _pad0[5] = {};  // bfa
+  
   short flag = 0;
   /**
    * Index of last used region of 'RGN_TYPE_WINDOW'
    * runtime variable, updated by executing operators.
    */
   short region_active_win = 0;
-  char _pad[2] = {};
+  char _pad[4] = {};  // bfa - because of toolbar flag
 
   /** Callbacks for this space type. */
   struct SpaceType *type = nullptr;

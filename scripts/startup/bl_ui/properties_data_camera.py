@@ -386,8 +386,6 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
                             sub.template_image_stereo_3d(bg.image.stereo_3d_format)
 
                 elif bg.source == 'MOVIE_CLIP':
-                    box.use_property_split = False
-
                     row = box.row()
                     row.use_property_split = False
                     split = row.split(factor = 0.5)
@@ -411,6 +409,7 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
 
                     column = box.column()
                     column.active = has_bg
+                    column.use_property_split = False # BFA - float left
                     column.prop(bg.clip_user, "use_render_undistorted")
                     column.use_property_split = True
                     column.prop(bg.clip_user, "proxy_render_size")

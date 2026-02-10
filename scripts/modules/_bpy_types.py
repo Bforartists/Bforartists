@@ -1355,49 +1355,49 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
     # bfa - show hide the file toolbar
     @classmethod
     def hide_file_toolbar(cls, context, layout):
-        if not context.area.file_toolbars:
+        if context.area.file_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the mesh edit toolbar
     @classmethod
     def hide_meshedit_toolbar(cls, context, layout):
-        if not context.area.meshedit_toolbars:
+        if context.area.meshedit_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the primitives toolbar
     @classmethod
     def hide_primitives_toolbar(cls, context, layout):
-        if not context.area.primitives_toolbars:
+        if context.area.primitives_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the Images toolbar
     @classmethod
     def hide_image_toolbar(cls, context, layout):
-        if not context.area.image_toolbars:
+        if context.area.image_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the tools toolbar
     @classmethod
     def hide_tools_toolbar(cls, context, layout):
-        if not context.area.tools_toolbars:
+        if context.area.tools_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the animation toolbar
     @classmethod
     def hide_animation_toolbar(cls, context, layout):
-        if not context.area.animation_toolbars:
+        if context.area.animation_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the edit toolbar
     @classmethod
     def hide_edit_toolbar(cls, context, layout):
-        if not context.area.edit_toolbars:
+        if context.area.edit_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the misc toolbar
     @classmethod
     def hide_misc_toolbar(cls, context, layout):
-        if not context.area.misc_toolbars:
+        if context.area.misc_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - toolbar finish

@@ -757,11 +757,20 @@ if(WITH_BLENDER)
       gizmo
       goal
       goto
+      gp_both
       gp_caps_flat
       gp_caps_round
       gp_caps_sharp
+      gp_delete_fill
+      gp_delete_point
+      gp_delete_stroke
+      gp_fill
+      gp_fill_join
+      gp_fill_select
+      gp_fill_separate
       gp_multiframe_editing
       gp_only_selected
+      gp_opacity
       gp_select_between_strokes
       gp_select_points
       gp_select_strokes

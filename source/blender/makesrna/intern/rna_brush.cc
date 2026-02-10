@@ -1372,10 +1372,11 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   PropertyRNA *prop;
 
   /* modes */
+  /*BFA - icons, consistent label also*/
   static const EnumPropertyItem gppaint_mode_types_items[] = {
-      {GPPAINT_MODE_STROKE, "STROKE", 0, "Stroke", "Vertex Color affects to Stroke only"},
-      {GPPAINT_MODE_FILL, "FILL", 0, "Fill", "Vertex Color affects to Fill only"},
-      {GPPAINT_MODE_BOTH, "BOTH", 0, "Stroke & Fill", "Vertex Color affects to Stroke and Fill"},
+      {GPPAINT_MODE_STROKE, "STROKE", ICON_STROKE, "Stroke", "Vertex Color affects to Stroke only"},
+      {GPPAINT_MODE_FILL, "FILL", ICON_GP_FILL, "Fill", "Vertex Color affects to Fill only"},
+      {GPPAINT_MODE_BOTH, "BOTH", ICON_GP_BOTH, "Both", "Vertex Color affects to Stroke and Fill"},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1384,11 +1385,11 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
       {GP_STROKE_CAP_FLAT, "FLAT", ICON_GP_CAPS_FLAT, "Flat", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
-
+  /*BFA - icons*/
   static const EnumPropertyItem rna_enum_gpencil_brush_stroke_type_items[] = {
-      {GP_BRUSH_USE_STROKE, "STROKE", ICON_NONE, "Stroke", ""},
-      {GP_BRUSH_USE_FILL, "FILL", ICON_NONE, "Fill", ""},
-      {GP_BRUSH_USE_FILL | GP_BRUSH_USE_STROKE, "BOTH", ICON_NONE, "Both", ""},
+      {GP_BRUSH_USE_STROKE, "STROKE", ICON_STROKE, "Stroke", ""},
+      {GP_BRUSH_USE_FILL, "FILL", ICON_GP_FILL, "Fill", ""},
+      {GP_BRUSH_USE_FILL | GP_BRUSH_USE_STROKE, "BOTH", ICON_GP_BOTH, "Both", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 

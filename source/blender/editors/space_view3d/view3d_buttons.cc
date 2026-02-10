@@ -1781,12 +1781,33 @@ static void v3d_editvertex_buts(
 
 static void v3d_object_dimension_buts(bContext *C, ui::Layout *layout, View3D *v3d, Object *ob)
 {
-  ui::Block *block = (layout) ? layout->block() : nullptr;
-  ui::Layout *sub_layout = layout ? &layout->absolute(false) : nullptr;
   TransformProperties *tfp = v3d_transform_props_ensure(v3d);
   const bool is_editable = ID_IS_EDITABLE(&ob->id);
 
-  if (block) {
+  if (layout) {
+    /* BFA - Move axis labels outside of number slider - START */
+    layout->label("Dimensions", ICON_NONE);
+
+    layout = &layout->column(true);
+    ui::Layout &row = layout->row(true);
+
+    row.separator(2.0f);
+    ui::Layout &xyz_col = row.column(true);
+    row.separator(0.4f);
+    ui::Layout &val_col = row.column(true);
+
+    xyz_col.fixed_size_set(true);
+    xyz_col.alignment_set(ui::LayoutAlign::Left);
+
+    for (int i = 0; i < 3; i++) {
+      char axis[2] = {char('X' + i), '\0'};
+      xyz_col.label(axis, ICON_NONE);
+    }
+    /* BFA - Move axis labels outside of number slider - END */
+
+    ui::Block *block = val_col.block();                /* BFA */
+    ui::Layout *sub_layout = &val_col.absolute(false); /* BFA */
+
     BLI_assert(C == nullptr);
     int yi = 200;
     const int butw = 200;
@@ -1800,26 +1821,15 @@ static void v3d_object_dimension_buts(bContext *C, ui::Layout *layout, View3D *v
     if (!is_editable && sub_layout) {
       sub_layout->enabled_set(false);
     }
-
-    uiDefBut(block,
-             ui::ButtonType::Label,
-             IFACE_("Dimensions:"),
-             0,
-             yi -= buth,
-             butw,
-             buth,
-             nullptr,
-             0,
-             0,
-             "");
+    /* BFA - Remove "Dimensions:" label */
     block_align_begin(block);
     const float lim = FLT_MAX;
     for (int i = 0; i < 3; i++) {
       ui::Button *but;
-      const char text[3] = {char('X' + i), ':', '\0'};
+      /* BFA - Remove axis labels */
       but = uiDefButF(block,
                       ui::ButtonType::Num,
-                      text,
+                      nullptr, /* BFA - Move axis labels outside of number slider */
                       0,
                       yi -= buth,
                       butw,
@@ -2188,18 +2198,22 @@ static void v3d_transform_butsR(ui::Layout &layout, PointerRNA *ptr)
       break;
   }
 
-  row = &layout.row(false); /* bfa - needed for the mode row here */
+  row = &layout.row(false);              /* bfa - needed for the mode row here */
   row->label(IFACE_("Mode"), ICON_NONE); /* bfa - Label on its own layout */
-  
+
   row = &layout.row(true);
-  row->label("", ICON_BLANK1); /* bfa - icon has spacer - works better then separator at 4 factor */
-  row->separator(1.0); /* bfa - helps the icon has spacer! */
+  row->label("",
+             ICON_BLANK1); /* bfa - icon has spacer - works better then separator at 4 factor */
+  row->separator(1.0);     /* bfa - helps the icon has spacer! */
   row->use_property_decorate_set(false); /* bfa - no decorator before 4L/blank icon */
   row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE); /* bfa - no label */
 
   if (draw_4l) {
-    row->prop(ptr, "lock_rotations_4d", ui::ITEM_R_TOGGLE | ui::ITEM_R_ICON_ONLY, "",
-               RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
+    row->prop(ptr,
+              "lock_rotations_4d",
+              ui::ITEM_R_TOGGLE | ui::ITEM_R_ICON_ONLY,
+              "",
+              RNA_boolean_get(ptr, "lock_rotations_4d") ? ICON_4L_ON : ICON_4L_OFF);
   }
   else {
     /* bfa - When not in quaternion/axis modes, we show a blank icon instead of the 4l toggle */
