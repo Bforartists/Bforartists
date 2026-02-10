@@ -384,7 +384,6 @@ set(ZLIB_LIBRARY ${LIBDIR}/zlib/lib/libz_st.lib)
 set(ZLIB_DIR ${LIBDIR}/zlib)
 
 set(fmt_DIR ${LIBDIR}/fmt/lib/cmake/fmt)
-set(FMT_INCLUDE_DIR ${LIBDIR}/fmt/include)
 find_package(fmt REQUIRED CONFIG)
 
 set(Eigen3_DIR ${LIBDIR}/eigen)
