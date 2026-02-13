@@ -1361,7 +1361,7 @@ void popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
               UI_ITEM_NONE); /*BFA - icon added*/
     layout.separator();
     Block *block = layout.block();
-    Button *but = block->buttons.last().get();
+    Button *but = &block->buttons().back();
     but->flag |= BUT_HAS_SEP_CHAR;
   }
 
