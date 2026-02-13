@@ -1666,6 +1666,7 @@ if(WITH_BLENDER)
       reset
 
       # bfa-don't change the order of the icons
+      render_swap_dimensions
       restrict_color_on
       restrict_color_off
       restrict_render_on
