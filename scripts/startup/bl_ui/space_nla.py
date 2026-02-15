@@ -60,15 +60,15 @@ class NLA_HT_header(Header):
 
         icon = "ACTION_TWEAK_SOLO" if addon_prefs.nla_tweak_isolate_action else "ACTION_TWEAK"
         operator_id = "nla.tweakmode_exit" if scene.is_nla_tweakmode else "nla.tweakmode_enter"
-            
+
         props = row.operator(operator_id, text="Tweak", icon=icon)
         row.separator()
-                
+
         if addon_prefs.nla_tweak_isolate_action:
             props.isolate_action = True
         elif not scene.is_nla_tweakmode:
             props.use_upper_stack_evaluation = True
-            
+
         subrow = row.row()
         subrow.enabled = not scene.is_nla_tweakmode
         subrow.prop(addon_prefs, "nla_tweak_isolate_action")
@@ -393,7 +393,6 @@ class NLA_MT_strips(Menu):
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
         layout.operator("nla.delete", icon="DELETE")
-        layout.operator("nla.tracks_delete", icon="DELETE")
 
         layout.separator()
 
