@@ -216,6 +216,8 @@ if(WITH_BLENDER)
       absolutepath
       accumulate
       action
+      action_replace
+      action_replace_new
       action_slot
       action_tweak
       action_tweak_solo
