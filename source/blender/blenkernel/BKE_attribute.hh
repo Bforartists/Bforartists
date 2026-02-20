@@ -60,6 +60,7 @@ enum class AttrType : int16_t {
   ColorFloat = 10,
   Quaternion = 11,
   String = 12,
+  Float4 = 13,
 };
 
 const CPPType &attribute_type_to_cpp_type(AttrType type);
@@ -824,6 +825,9 @@ class MutableAttributeAccessor : public AttributeAccessor {
       return false;
     }
     if (this->contains(name)) {
+      return false;
+    }
+    if (name.is_empty()) {
       return false;
     }
     return fn_->add(owner_, name, domain, data_type, initializer);

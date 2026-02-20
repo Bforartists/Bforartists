@@ -19,7 +19,7 @@ this is not the built-in Python console but a terminal application which is used
 The three main use cases for the terminal are:
 
 - You can see the output of ``print()`` as your script runs, which is useful to view debug info.
-- The error traceback is printed in full to the terminal which won't always generate an report message in
+- The error traceback is printed in full to the terminal which won't always generate a report message in
   Bforartists's user interface (depending on how the script is executed).
 - If the script runs for too long or you accidentally enter an infinite loop,
   :kbd:`Ctrl-C` in the terminal (:kbd:`Ctrl-Break` on Windows) will quit the script early.
@@ -70,7 +70,7 @@ or by setting :mod:`bpy.app.debug_wm` to ``True`` while Bforartists is running.
 Use an External Editor
 ======================
 
-Bforartists's text editor is fine for small changes and writing tests but its not full featured,
+Bforartists's text editor is fine for small changes and writing tests but it's not full featured,
 for larger projects you'll probably want to use a standalone editor or Python IDE.
 Editing a text file externally and having the same text open in Bforartists does work
 but isn't that optimal so here are two ways you can use an external file from Bforartists.
@@ -143,8 +143,8 @@ and then loads the script as a module.
    myscript.main()
 
 
-Use Bforartists without it's User Interface
-=======================================
+Use Bforartists without its User Interface
+======================================
 
 While developing your own scripts Bforartists's interface can get in the way,
 manually reloading, running the scripts, opening file import, etc. adds overhead.
@@ -220,7 +220,7 @@ There are two ways to work around this:
   .. warning::
 
      The Python (major, minor) version must match the one that Bforartists comes with.
-     Therefor you can't use Python 3.6 with Bforartists built to use Python 3.7.
+     Therefore you can't use Python 3.6 with Bforartists built to use Python 3.7.
 
 - Copy or link the extensions into Bforartists's Python subdirectory so Bforartists can access them,
   you can also copy the entire Python installation into Bforartists's subdirectory,

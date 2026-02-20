@@ -179,7 +179,7 @@ void slip_modal_keymap(wmKeyConfig *keyconf);
 VectorSet<Strip *> strip_effect_get_new_inputs(const Scene *scene,
                                                int num_inputs,
                                                bool ignore_active = false);
-StringRef effect_inputs_validate(const VectorSet<Strip *> &inputs, int num_inputs);
+const char *effect_inputs_validate(int have_inputs, int num_inputs);
 
 /* Operator helpers. */
 bool sequencer_edit_poll(bContext *C);
@@ -330,6 +330,7 @@ void SEQUENCER_OT_strip_modifier_add(wmOperatorType *ot);
 void SEQUENCER_OT_strip_modifier_remove(wmOperatorType *ot);
 void SEQUENCER_OT_strip_modifier_move(wmOperatorType *ot);
 void SEQUENCER_OT_strip_modifier_copy(wmOperatorType *ot);
+void SEQUENCER_OT_strip_modifier_duplicate(wmOperatorType *ot);
 void SEQUENCER_OT_strip_modifier_move_to_index(wmOperatorType *ot);
 void SEQUENCER_OT_strip_modifier_set_active(wmOperatorType *ot);
 void SEQUENCER_OT_strip_modifier_equalizer_redefine(wmOperatorType *ot);

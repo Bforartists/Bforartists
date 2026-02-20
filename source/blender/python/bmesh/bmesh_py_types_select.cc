@@ -148,7 +148,7 @@ PyDoc_STRVAR(
     "\n"
     "   Discard an element from the selection history.\n"
     "\n"
-    "   Like remove but doesn't raise an error when the elements not in the selection list.\n"
+    "   Like remove but doesn't raise an error when the element is not in the selection list.\n"
     "\n"
     "   :param element: The element to discard.\n"
     "   :type element: :class:`BMVert` | :class:`BMEdge` | :class:`BMFace`\n");
@@ -440,6 +440,7 @@ void BPy_BM_init_types_select()
   BPy_BMEditSelSeq_Type.tp_iter = reinterpret_cast<getiterfunc>(bpy_bmeditselseq_iter);
 
   /* Only 1 iterator so far. */
+  BPy_BMEditSelIter_Type.tp_iter = PyObject_SelfIter;
   BPy_BMEditSelIter_Type.tp_iternext = reinterpret_cast<iternextfunc>(bpy_bmeditseliter_next);
 
   BPy_BMEditSelSeq_Type.tp_dealloc = nullptr;   //(destructor)bpy_bmeditselseq_dealloc;

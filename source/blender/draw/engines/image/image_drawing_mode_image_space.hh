@@ -23,12 +23,16 @@ class Instance;
 class ImageSpaceDrawingMode : public AbstractDrawingMode {
  private:
   Instance &instance_;
+  gpu::Texture *texture_;
+  gpu::Texture *tile_mapping_texture_ = nullptr;
 
  public:
-  ImageSpaceDrawingMode(Instance &instance) : instance_(instance) {}
+  ImageSpaceDrawingMode(Instance &instance,
+                        gpu::Texture *texture,
+                        gpu::Texture *tile_mapping_texture = nullptr);
+  ~ImageSpaceDrawingMode() override;
   void begin_sync() const override;
   void image_sync(blender::Image *image, blender::ImageUser *iuser) const override;
-  void draw_finish() const override;
   void draw_viewport() const override;
 };
 };  // namespace blender::image_engine

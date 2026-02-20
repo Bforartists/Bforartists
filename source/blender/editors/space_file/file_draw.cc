@@ -16,6 +16,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "AS_asset_representation.hh"
+#include "AS_remote_library.hh"
 
 #include "BLI_fileops.h"
 #include "BLI_fileops_types.h"
@@ -35,6 +36,9 @@
 
 #include "BKE_blendfile.hh"
 #include "BKE_context.hh"
+#include "BKE_global.hh"
+#include "BKE_icons.hh"
+#include "BKE_preferences.h"
 #include "BKE_report.hh"
 
 #include "BLO_readfile.hh"
@@ -59,6 +63,7 @@
 #include "ED_screen.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_c.hh"
 #include "UI_interface_icons.hh"
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
@@ -75,6 +80,8 @@
 #include "file_intern.hh" /* own include */
 
 namespace blender {
+
+using RemoteLibraryLoadingStatus = asset_system::RemoteLibraryLoadingStatus;
 
 void ED_file_path_button(bScreen *screen,
                          const SpaceFile *sfile,
@@ -576,6 +583,27 @@ static void file_draw_string_mulitline_clipped(const rcti *rect,
   fontstyle_draw_multiline_clipped(&fs, rect, string, col, align);
 }
 
+static rcti file_measure_string_multiline(const StringRef string, const int wrap_width)
+{
+  if (string[0] == '\0' || wrap_width < 1) {
+    return {.xmin = 0, .xmax = 0, .ymin = 0, .ymax = 0};
+  }
+
+  const uiStyle *style = ui::style_get();
+  const int font_id = style->widget.uifont_id;
+
+  rcti textbox;
+  BLF_wordwrap(font_id,
+               wrap_width,
+               BLFWrapMode(int(BLFWrapMode::Typographical) | int(BLFWrapMode::Path) |
+                           int(BLFWrapMode::HardLimit)));
+  BLF_enable(font_id, BLF_WORD_WRAP);
+  BLF_boundbox(font_id, string.data(), string.size(), &textbox);
+  BLF_disable(font_id, BLF_WORD_WRAP);
+
+  return textbox;
+}
+
 /**
  * \param r_sx, r_sy: The lower right corner of the last line drawn, plus the height of the last
  *                    line. This is the cursor position on completion to allow drawing more text
@@ -583,7 +611,7 @@ static void file_draw_string_mulitline_clipped(const rcti *rect,
  */
 static void file_draw_string_multiline(int sx,
                                        int sy,
-                                       const char *string,
+                                       const StringRef string,
                                        int wrap_width,
                                        int line_height,
                                        const uchar text_col[4],
@@ -597,14 +625,7 @@ static void file_draw_string_multiline(int sx,
   }
 
   const uiStyle *style = ui::style_get();
-  int font_id = style->widget.uifont_id;
-  int len = strlen(string);
-
-  rcti textbox;
-  BLF_wordwrap(font_id, wrap_width);
-  BLF_enable(font_id, BLF_WORD_WRAP);
-  BLF_boundbox(font_id, string, len, &textbox);
-  BLF_disable(font_id, BLF_WORD_WRAP);
+  const rcti textbox = file_measure_string_multiline(string, wrap_width);
 
   /* no text clipping needed, fontstyle_draw does it but is a bit too strict
    * (for buttons it works) */
@@ -620,23 +641,21 @@ static void file_draw_string_multiline(int sx,
   font_style_params.word_wrap = true;
 
   ResultBLF result;
-  fontstyle_draw_ex(
-      &style->widget, &rect, string, len, text_col, &font_style_params, nullptr, nullptr, &result);
+  fontstyle_draw_ex(&style->widget,
+                    &rect,
+                    string.data(),
+                    string.size(),
+                    text_col,
+                    &font_style_params,
+                    nullptr,
+                    nullptr,
+                    &result);
   if (r_sx) {
     *r_sx = result.width;
   }
   if (r_sy) {
     *r_sy = rect.ymin + line_height;
   }
-}
-
-void file_calc_previews(const bContext *C, ARegion *region)
-{
-  SpaceFile *sfile = CTX_wm_space_file(C);
-  View2D *v2d = &region->v2d;
-
-  ED_fileselect_init_layout(sfile, region);
-  ui::view2d_totRect_set(v2d, sfile->layout->width, sfile->layout->height);
 }
 
 static std::tuple<int, int, float> preview_image_scaled_dimensions_get(const int image_width,
@@ -677,7 +696,6 @@ static void file_add_preview_drag_but(const SpaceFile *sfile,
                                       const FileDirEntry *file,
                                       const char *path,
                                       const rcti *tile_draw_rect,
-                                      const ImBuf *preview_image,
                                       const int file_type_icon)
 {
   /* Invisible button for dragging. */
@@ -698,25 +716,26 @@ static void file_add_preview_drag_but(const SpaceFile *sfile,
                              0.0,
                              std::nullopt);
 
-  const ImBuf *drag_image = preview_image ? preview_image :
-                                            /* Larger directory or document icon. */
-                                            filelist_geticon_special_file_image_ex(file);
-  const float scale = (PREVIEW_DRAG_DRAW_SIZE * UI_SCALE_FAC) /
-                      std::max(drag_image->x, drag_image->y);
+  const ImBuf *preview_image = filelist_file_get_preview_image(file);
+  const ImBuf *drag_image = (preview_image || file->asset) ?
+                                preview_image :
+                                /* Larger directory or document icon. */
+                                filelist_geticon_special_file_image_ex(file);
+  const float scale = drag_image ? (PREVIEW_DRAG_DRAW_SIZE * UI_SCALE_FAC) /
+                                       std::max(drag_image->x, drag_image->y) :
+                                   1.0f;
   file_but_enable_drag(but, sfile, file, path, drag_image, file_type_icon, scale);
   file_but_tooltip_func_set(sfile, file, but);
 }
 
 static void file_draw_preview(const FileDirEntry *file,
                               const rcti *tile_draw_rect,
-                              const ImBuf *imb,
+                              const IconBufferRef &preview,
                               FileLayout *layout,
                               const bool dimmed)
 {
-  BLI_assert(imb != nullptr);
-
   const auto [scaled_width, scaled_height, scale] = preview_image_scaled_dimensions_get(
-      imb->x, imb->y, *layout);
+      preview.width, preview.height, *layout);
 
   /* Additional offset to keep the scaled image centered. Difference between maximum
    * width/height and the actual width/height, divided by two for centering. */
@@ -746,15 +765,18 @@ static void file_draw_preview(const FileDirEntry *file,
     GPU_blend(GPU_BLEND_ALPHA_PREMULT);
   }
 
+  const gpu::TextureFormat format = gpu::TextureFormat::UNORM_8_8_8_8;
+  BLI_assert_msg(preview.channels == 4, "preview images are expected to be 4 channels");
+
   IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_3D_IMAGE_COLOR);
   immDrawPixelsTexTiled_scaling(&state,
                                 float(xmin),
                                 float(ymin),
-                                imb->x,
-                                imb->y,
-                                gpu::TextureFormat::UNORM_8_8_8_8,
+                                preview.width,
+                                preview.height,
+                                format,
                                 true,
-                                imb->byte_buffer.data,
+                                preview.buffer.data(),
                                 scale,
                                 scale,
                                 1.0f,
@@ -894,7 +916,8 @@ static void file_draw_indicator_icons(const FileList *files,
                                       const rcti *tile_draw_rect,
                                       const float preview_icon_aspect,
                                       const int file_type_icon,
-                                      const bool has_special_file_image)
+                                      const bool has_special_file_image,
+                                      const eDirEntry_SelectFlag selflag)
 {
   const bool is_offline = (file->attributes & FILE_ATTR_OFFLINE);
   const bool is_link = (file->attributes & FILE_ATTR_ANY_LINK);
@@ -952,23 +975,38 @@ static void file_draw_indicator_icons(const FileList *files,
     }
   }
 
-  const bool is_current_main_data = filelist_file_get_id(file) != nullptr;
-  if (is_current_main_data) {
-    /* Smaller, fainter icon at the top-right indicating that the file represents data from the
-     * current file (from current #Main in fact). */
-    float icon_x, icon_y;
+  {
+    const float icon_x = float(tile_draw_rect->xmax) - (16.0f * UI_SCALE_FAC);
+    const float icon_y = float(tile_draw_rect->ymax) - (20.0f * UI_SCALE_FAC);
     const uchar light[4] = {255, 255, 255, 255};
-    icon_x = float(tile_draw_rect->xmax) - (16.0f * UI_SCALE_FAC);
-    icon_y = float(tile_draw_rect->ymax) - (20.0f * UI_SCALE_FAC);
-    ui::icon_draw_ex(icon_x,
-                     icon_y,
-                     ICON_CURRENT_FILE,
-                     1.0f / UI_SCALE_FAC,
-                     0.6f,
-                     0.0f,
-                     light,
-                     true,
-                     UI_NO_ICON_OVERLAY_TEXT);
+
+    const bool is_current_main_data = filelist_file_get_id(file) != nullptr;
+    if (is_current_main_data) {
+      /* Smaller, fainter icon at the top-right indicating that the file represents data from the
+       * current file (from current #Main in fact). */
+      ui::icon_draw_ex(icon_x,
+                       icon_y,
+                       ICON_CURRENT_FILE,
+                       1.0f / UI_SCALE_FAC,
+                       0.6f,
+                       0.0f,
+                       light,
+                       true,
+                       UI_NO_ICON_OVERLAY_TEXT);
+    }
+    else if ((file->typeflag & FILE_TYPE_ASSET_ONLINE) != 0) {
+      if (selflag & (FILE_SEL_HIGHLIGHTED | FILE_SEL_SELECTED)) {
+        ui::icon_draw_ex(icon_x,
+                         icon_y,
+                         ICON_INTERNET,
+                         1.0f / UI_SCALE_FAC,
+                         0.6f,
+                         0.0f,
+                         light,
+                         true,
+                         UI_NO_ICON_OVERLAY_TEXT);
+      }
+    }
   }
 }
 
@@ -1365,7 +1403,9 @@ void file_draw_list(const bContext *C, ARegion *region)
 
     /* Handle preview timer here,
      * since it's filelist_file_cache_block() and filelist_cache_previews_update()
-     * which controls previews task. */
+     * which controls previews task.
+     * Note that online assets don't use this system.
+     */
     {
       const bool previews_running = filelist_cache_previews_running(files) &&
                                     !filelist_cache_previews_done(files);
@@ -1387,26 +1427,27 @@ void file_draw_list(const bContext *C, ARegion *region)
 
   ui::theme::get_color_4ubv(TH_TEXT, text_col);
 
+  const bool filelist_loading = !filelist_is_ready(files);
+
   for (i = offset; (i < numfiles) && (i < offset + numfiles_layout); i++) {
-    eDirEntry_SelectFlag file_selflag;
     const int padx = 0.1f * UI_UNIT_X;
     int icon_ofs = 0;
 
     const rcti tile_draw_rect = tile_draw_rect_get(v2d, layout, i);
 
     file = filelist_file(files, i);
-    file_selflag = filelist_entry_select_get(sfile->files, file, CHECK_ALL);
+    eDirEntry_SelectFlag file_selflag = filelist_entry_select_get(sfile->files, file, CHECK_ALL);
+    if (params->highlight_file == i) {
+      file_selflag |= FILE_SEL_HIGHLIGHTED;
+    }
 
     char path[FILE_MAX_LIBEXTRA];
     filelist_file_get_full_path(files, file, path);
 
     if (!(file_selflag & FILE_SEL_EDITING)) {
-      if ((params->highlight_file == i) || (file_selflag & FILE_SEL_HIGHLIGHTED) ||
-          (file_selflag & FILE_SEL_SELECTED))
-      {
+      if (file_selflag & (FILE_SEL_HIGHLIGHTED | FILE_SEL_SELECTED)) {
         int colorid = (file_selflag & FILE_SEL_SELECTED) ? TH_HILITE : TH_BACK;
-        int shade = (params->highlight_file == i) || (file_selflag & FILE_SEL_HIGHLIGHTED) ? 35 :
-                                                                                             0;
+        int shade = (file_selflag & FILE_SEL_HIGHLIGHTED) ? 35 : 0;
         BLI_assert(i == 0 || !FILENAME_IS_CURRPAR(file->relpath));
 
         draw_tile_background(&tile_draw_rect, colorid, shade);
@@ -1419,8 +1460,21 @@ void file_draw_list(const bContext *C, ARegion *region)
     const bool is_hidden = (file->attributes & FILE_ATTR_HIDDEN);
 
     if (FILE_IMGDISPLAY == params->display) {
+      if ((file->typeflag & FILE_TYPE_ASSET_ONLINE) && !filelist_loading) {
+        filelist_online_asset_preview_request(C, file);
+        /* Trigger the preview loader to wait until the download is done and load the preview from
+         * disk. Has to be done explicitly here because the preview isn't attached to a button. */
+        if (!file->asset->is_local_id()) {
+          ui::icon_render_id_ex(
+              C, nullptr, nullptr, ICON_SIZE_PREVIEW, true, file->asset->get_preview());
+        }
+      }
+
       const int file_type_icon = filelist_geticon_file_type(files, i, false);
-      const ImBuf *preview_imb = filelist_get_preview_image(files, i);
+      std::optional<IconBufferRef> preview_buf = file->preview_icon_id ?
+                                                     BKE_icon_get_buffer(file->preview_icon_id,
+                                                                         ICON_SIZE_PREVIEW) :
+                                                     std::nullopt;
 
       bool has_special_file_image = false;
 
@@ -1428,8 +1482,8 @@ void file_draw_list(const bContext *C, ARegion *region)
       if (is_loading) {
         file_draw_loading_icon(&tile_draw_rect, thumb_icon_aspect, layout);
       }
-      else if (preview_imb) {
-        file_draw_preview(file, &tile_draw_rect, preview_imb, layout, is_hidden);
+      else if (preview_buf) {
+        file_draw_preview(file, &tile_draw_rect, *preview_buf, layout, is_hidden);
       }
       else {
         /* Larger folder or document icon, with file/folder type icon in the middle (if any). */
@@ -1444,18 +1498,18 @@ void file_draw_list(const bContext *C, ARegion *region)
                                 &tile_draw_rect,
                                 thumb_icon_aspect,
                                 file_type_icon,
-                                has_special_file_image);
+                                has_special_file_image,
+                                file_selflag);
 
       if (do_drag) {
         file_add_preview_drag_but(
-            sfile, block, layout, file, path, &tile_draw_rect, preview_imb, file_type_icon);
+            sfile, block, layout, file, path, &tile_draw_rect, file_type_icon);
       }
     }
     else {
-      const bool filelist_loading = !filelist_is_ready(files);
       const BIFIconID icon = [&]() {
         if (file->asset) {
-          file->asset->ensure_previewable();
+          file->asset->ensure_previewable(*C);
 
           if (filelist_loading) {
             return BIFIconID(ICON_PREVIEW_LOADING);
@@ -1667,7 +1721,7 @@ static void file_draw_invalid_asset_library_hint(const bContext *C,
 
     const char *suggestion = RPT_(
         "Asset Libraries are local directories that can contain .blend files with assets inside.\n"
-        "Manage Asset Libraries from the File Paths section in Preferences");
+        "Manage Asset Libraries from the Asset Libraries section in the Preferences");
     file_draw_string_multiline(
         sx + UI_UNIT_X, sy, suggestion, width - UI_UNIT_X, line_height, text_col, nullptr, &sy);
 
@@ -1685,11 +1739,203 @@ static void file_draw_invalid_asset_library_hint(const bContext *C,
                                             UI_UNIT_Y,
                                             std::nullopt);
     PointerRNA *but_opptr = button_operator_ptr_ensure(but);
-    RNA_enum_set(but_opptr, "section", USER_SECTION_FILE_PATHS);
+    RNA_enum_set(but_opptr, "section", USER_SECTION_ASSETS);
 
     block_end(C, block);
     block_draw(C, block);
   }
+}
+
+static void file_draw_asset_library_internet_access_required_hint(const bContext *C,
+                                                                  const SpaceFile *sfile,
+                                                                  ARegion *region)
+{
+  using namespace blender;
+
+  uchar text_col[4];
+  ui::theme::get_color_4ubv(TH_TEXT, text_col);
+
+  const View2D *v2d = &region->v2d;
+  const int pad_x = sfile->layout->tile_border_x * 2;
+  const int pad_y = sfile->layout->tile_border_y * 2;
+  const int available_width = BLI_rctf_size_x(&v2d->tot) - (2 * pad_x);
+  const int line_height = sfile->layout->text_line_height;
+  const char *message = RPT_(
+      "Allow Online Access in order to browse and download online assets, or turn off the "
+      "\"Remote Assets\" filter to show only the downloaded assets.\n\nYou can adjust this "
+      "later from the \"System\" preferences.");
+
+  const int box_width = std::min(available_width, UI_UNIT_X * 28);
+  /* The width we have available inside the box. */
+  const int wrap_width = box_width - 2 * pad_x;
+  const rcti message_textbox = file_measure_string_multiline(message, wrap_width);
+  /* The text box doesn't seem to encompass all text, apparently half a line too little. */
+  const int message_height = BLI_rcti_size_y(&message_textbox) + 0.5f * line_height;
+
+  const int heading_height = UI_UNIT_Y;
+  const int box_height = heading_height + message_height +
+                         /* Extra spacing after header and after main message. */
+                         2 * pad_y +
+                         /* Button height. */
+                         UI_UNIT_Y +
+                         /* Top and bottom padding. */
+                         2 * pad_y;
+
+  int sx = round_fl_to_int(BLI_rctf_cent_x(&v2d->tot) - box_width / 2.0f);
+  int sy = round_fl_to_int(BLI_rctf_cent_y(&v2d->tot) + box_height / 2.0f);
+
+  ui::Block *block = ui::block_begin(C, region, __func__, ui::EmbossType::Emboss);
+
+  uiDefBut(block,
+           ui::ButtonType::Roundbox,
+           "",
+           sx,
+           sy - box_height,
+           box_width,
+           box_height,
+           nullptr,
+           0.0,
+           0.0,
+           "");
+
+  /* Top left padding within the box. */
+  sx += pad_x;
+  sy -= pad_y;
+
+  {
+    uiDefIconTextBut(block,
+                     ui::ButtonType::Label,
+                     ICON_INTERNET_OFFLINE,
+                     "Internet Access Required",
+                     sx,
+                     sy - heading_height,
+                     wrap_width,
+                     heading_height,
+                     nullptr,
+                     {});
+
+    const int button_width = (wrap_width - pad_x) * 0.5f;
+    ui::Button *but = uiDefIconTextButO(block,
+                                        ui::ButtonType::But,
+                                        "WM_OT_context_set_boolean",
+                                        wm::OpCallContext::InvokeDefault,
+                                        ICON_X,
+                                        "Continue Offline",
+                                        sx,
+                                        sy + pad_y - box_height + pad_y,
+                                        button_width,
+                                        UI_UNIT_Y,
+                                        {});
+    PointerRNA *but_opptr = ui::button_operator_ptr_ensure(but);
+    RNA_string_set(but_opptr, "data_path", "preferences.extensions.use_online_access_handled");
+    RNA_boolean_set(but_opptr, "value", true);
+
+    uiDefIconTextButO(block,
+                      ui::ButtonType::But,
+                      "extensions.userpref_allow_online",
+                      wm::OpCallContext::InvokeDefault,
+                      ICON_CHECKMARK,
+                      "Allow Online Access",
+                      sx + button_width + pad_x,
+                      sy + pad_y - box_height + pad_y,
+                      button_width,
+                      UI_UNIT_Y,
+                      {});
+  }
+
+  ui::block_end(C, block);
+  ui::block_draw(C, block);
+
+  /* Draw multi-line text on top of widget drawing. */
+  file_draw_string_multiline(sx,
+                             sy - heading_height - pad_y,
+                             message,
+                             wrap_width,
+                             line_height,
+                             text_col,
+                             nullptr,
+                             nullptr);
+}
+
+static void file_draw_asset_library_remote_loading_failed_hint(const bContext *C,
+                                                               const SpaceFile *sfile,
+                                                               ARegion *region,
+                                                               const bUserAssetLibrary *library)
+{
+  using namespace blender;
+
+  uchar text_col[4];
+  ui::theme::get_color_4ubv(TH_TEXT, text_col);
+
+  const View2D *v2d = &region->v2d;
+  const int pad_x = sfile->layout->tile_border_x * 2;
+  const int pad_y = sfile->layout->tile_border_y * 2;
+  const int available_width = BLI_rctf_size_x(&v2d->tot) - (2 * pad_x);
+  const int line_height = sfile->layout->text_line_height;
+  StringRefNull message =
+      RemoteLibraryLoadingStatus::failure_message(library->remote_url).value_or("Unknown reason");
+
+  const int message_width = ui::fontstyle_string_width(&ui::style_get()->widget, message.c_str());
+  const int box_width = std::min({available_width, UI_UNIT_X * 28, message_width + (2 * pad_x)});
+  /* The width we have available inside the box. */
+  const int wrap_width = box_width - 2 * pad_x;
+  const rcti message_textbox = file_measure_string_multiline(message, wrap_width);
+  /* The text box doesn't seem to encompass all text, apparently half a line too little. */
+  const int message_height = BLI_rcti_size_y(&message_textbox) + 0.5f * line_height;
+
+  const int heading_height = UI_UNIT_Y;
+  const int box_height = heading_height + message_height +
+                         /* Extra spacing after header. */
+                         pad_y +
+                         /* Top and bottom padding. */
+                         2 * pad_y;
+
+  int sx = round_fl_to_int(BLI_rctf_cent_x(&v2d->tot) - box_width / 2.0f);
+  int sy = round_fl_to_int(BLI_rctf_cent_y(&v2d->tot) + box_height / 2.0f);
+
+  ui::Block *block = ui::block_begin(C, region, __func__, ui::EmbossType::Emboss);
+
+  uiDefBut(block,
+           ui::ButtonType::Roundbox,
+           "",
+           sx,
+           sy - box_height,
+           box_width,
+           box_height,
+           nullptr,
+           0.0,
+           0.0,
+           "");
+
+  /* Top left padding within the box. */
+  sx += pad_x;
+  sy -= pad_y;
+
+  {
+    uiDefIconTextBut(block,
+                     ui::ButtonType::Label,
+                     ICON_CANCEL,
+                     "Asset Library Download Failed",
+                     sx,
+                     sy - heading_height,
+                     wrap_width,
+                     heading_height,
+                     nullptr,
+                     {});
+  }
+
+  ui::block_end(C, block);
+  ui::block_draw(C, block);
+
+  /* Draw multi-line text on top of widget drawing. */
+  file_draw_string_multiline(sx,
+                             sy - heading_height - pad_y,
+                             message,
+                             wrap_width,
+                             line_height,
+                             text_col,
+                             nullptr,
+                             nullptr);
 }
 
 static void file_draw_invalid_library_hint(const bContext * /*C*/,
@@ -1744,6 +1990,27 @@ static void file_draw_invalid_library_hint(const bContext * /*C*/,
   }
 }
 
+static const bUserAssetLibrary *assetlib_as_remote_library(
+    const AssetLibraryReference &asset_library_ref)
+{
+  if (asset_library_ref.type != ASSET_LIBRARY_CUSTOM) {
+    return nullptr;
+  }
+
+  const bUserAssetLibrary *library = BKE_preferences_asset_library_find_index(
+      &U, asset_library_ref.custom_library_index);
+  if (!library) {
+    return nullptr;
+  }
+
+  const bool is_remote_lib = library->flag & ASSET_LIBRARY_USE_REMOTE_URL;
+  if (!is_remote_lib) {
+    return nullptr;
+  }
+
+  return library;
+}
+
 bool file_draw_hint_if_invalid(const bContext *C, const SpaceFile *sfile, ARegion *region)
 {
   char blendfile_path[FILE_MAX_LIBEXTRA];
@@ -1759,10 +2026,34 @@ bool file_draw_hint_if_invalid(const bContext *C, const SpaceFile *sfile, ARegio
   if (is_asset_browser) {
     FileAssetSelectParams *asset_params = ED_fileselect_get_asset_params(sfile);
 
+    const bUserAssetLibrary *remote_library = assetlib_as_remote_library(
+        asset_params->asset_library_ref);
+    const bool is_remote_library = remote_library != nullptr;
+
+    if (is_remote_library) {
+      const bool is_online_allowed = G.f & G_FLAG_INTERNET_ALLOW;
+      const bool was_choice_made = U.extension_flag & USER_EXTENSION_FLAG_ONLINE_ACCESS_HANDLED;
+      if (!is_online_allowed && !was_choice_made) {
+        setup_view();
+        file_draw_asset_library_internet_access_required_hint(C, sfile, region);
+        return true;
+      }
+      if (RemoteLibraryLoadingStatus::status(remote_library->remote_url) ==
+          RemoteLibraryLoadingStatus::Failure)
+      {
+        setup_view();
+        file_draw_asset_library_remote_loading_failed_hint(C, sfile, region, remote_library);
+        return true;
+      }
+    }
+
+    const bool is_on_disk_library = !ELEM(asset_params->asset_library_ref.type,
+                                          ASSET_LIBRARY_LOCAL,
+                                          ASSET_LIBRARY_ALL) &&
+                                    !is_remote_library;
+
     /* Check if the asset library exists. */
-    if (!((asset_params->asset_library_ref.type == ASSET_LIBRARY_LOCAL) ||
-          filelist_is_dir(sfile->files, asset_params->base_params.dir)))
-    {
+    if (is_on_disk_library && !filelist_is_dir(sfile->files, asset_params->base_params.dir)) {
       setup_view();
       file_draw_invalid_asset_library_hint(C, sfile, region, asset_params);
       return true;

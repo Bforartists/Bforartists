@@ -311,8 +311,7 @@ static bool sequencer_swap_inputs_poll(bContext *C)
   }
   Scene *scene = CTX_data_sequencer_scene(C);
   Strip *active_strip = seq::select_active_get(scene);
-
-  if (sequencer_effect_poll(C) && seq::effect_get_num_inputs(active_strip->type) == 2) {
+  if (active_strip && active_strip->effect_num_inputs_get() == 2) {
     return true;
   }
 
@@ -1617,18 +1616,18 @@ void SEQUENCER_OT_refresh_all(wmOperatorType *ot)
 /** \name Reassign Inputs Operator
  * \{ */
 
-StringRef effect_inputs_validate(const VectorSet<Strip *> &inputs, int num_inputs)
+const char *effect_inputs_validate(int have_inputs, int num_inputs)
 {
-  if (inputs.size() > 2) {
+  if (have_inputs > 2) {
     return "Cannot apply effect to more than 2 strips with video content";
   }
-  if (num_inputs == 2 && inputs.size() != 2) {
+  if (num_inputs == 2 && have_inputs != 2) {
     return "Exactly 2 selected strips with video content are needed";
   }
-  if (num_inputs == 1 && inputs.size() != 1) {
+  if (num_inputs == 1 && have_inputs != 1) {
     return "Exactly one selected strip with video content is needed";
   }
-  return "";
+  return nullptr;
 }
 
 VectorSet<Strip *> strip_effect_get_new_inputs(const Scene *scene,
@@ -1667,7 +1666,7 @@ static wmOperatorStatus sequencer_reassign_inputs_exec(bContext *C, wmOperator *
 {
   Scene *scene = CTX_data_sequencer_scene(C);
   Strip *active_strip = seq::select_active_get(scene);
-  const int num_inputs = seq::effect_get_num_inputs(active_strip->type);
+  const int num_inputs = active_strip->effect_num_inputs_get();
 
   if (num_inputs == 0) {
     BKE_report(op->reports, RPT_ERROR, "Cannot reassign inputs: strip has no inputs");
@@ -1675,7 +1674,7 @@ static wmOperatorStatus sequencer_reassign_inputs_exec(bContext *C, wmOperator *
   }
 
   VectorSet<Strip *> inputs = strip_effect_get_new_inputs(scene, num_inputs, true);
-  StringRef error_msg = effect_inputs_validate(inputs, num_inputs);
+  StringRef error_msg = effect_inputs_validate(inputs.size(), num_inputs);
 
   if (!error_msg.is_empty()) {
     BKE_report(op->reports, RPT_ERROR, error_msg.data());
@@ -1750,7 +1749,7 @@ static wmOperatorStatus sequencer_swap_inputs_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (seq::effect_get_num_inputs(active_strip->type) != 2 || active_strip->input1 == nullptr ||
+  if (active_strip->effect_num_inputs_get() != 2 || active_strip->input1 == nullptr ||
       active_strip->input2 == nullptr)
   {
     BKE_report(op->reports, RPT_ERROR, "Strip needs two inputs to swap");
@@ -3060,7 +3059,7 @@ void SEQUENCER_OT_strip_jump(wmOperatorType *ot)
   /* Identifiers. */
   ot->name = "Jump to Strip";
   ot->idname = "SEQUENCER_OT_strip_jump";
-  ot->description = "Move frame to previous edit point";
+  ot->description = "Move frame to next or previous edit point";
 
   /* API callbacks. */
   ot->exec = sequencer_strip_jump_exec;
@@ -3171,12 +3170,10 @@ static wmOperatorStatus sequencer_swap_exec(bContext *C, wmOperator *op)
   if (strip) {
 
     /* Disallow effect strips. */
-    if (seq::effect_get_num_inputs(strip->type) >= 1 &&
-        (strip->effectdata || strip->input1 || strip->input2))
-    {
+    if (strip->is_effect_with_inputs() && (strip->effectdata || strip->input1 || strip->input2)) {
       return OPERATOR_CANCELLED;
     }
-    if ((seq::effect_get_num_inputs(active_strip->type) >= 1) &&
+    if (active_strip->is_effect_with_inputs() &&
         (active_strip->effectdata || active_strip->input1 || active_strip->input2))
     {
       return OPERATOR_CANCELLED;
@@ -3471,6 +3468,7 @@ const EnumPropertyItem sequencer_prop_effect_types[] = {
     {STRIP_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", ICON_NODE_BLUR, "Gaussian Blur", ""},
     {STRIP_TYPE_TEXT, "TEXT", ICON_FONT_DATA, "Text", ""},
     {STRIP_TYPE_COLORMIX, "COLORMIX", ICON_NODE_MIXRGB, "Color Mix", ""},
+    {STRIP_TYPE_COMPOSITOR, "COMPOSITOR", ICON_NODE_COMPOSITING, "Compositor", "Compositor based effect"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -3478,16 +3476,20 @@ static wmOperatorStatus sequencer_change_effect_type_exec(bContext *C, wmOperato
 {
   Scene *scene = CTX_data_sequencer_scene(C);
   Strip *strip = seq::select_active_get(scene);
-  const int old_type = strip->type;
-  const int new_type = RNA_enum_get(op->ptr, "type");
+  const StripType old_type = StripType(strip->type);
+  const int have_inputs = strip->effect_num_inputs_get();
+  const StripType new_type = StripType(RNA_enum_get(op->ptr, "type"));
 
   if (!strip->is_effect()) {
     return OPERATOR_CANCELLED;
   }
 
-  if (seq::effect_get_num_inputs(strip->type) != seq::effect_get_num_inputs(new_type)) {
-    BKE_report(op->reports, RPT_ERROR, "New effect takes less or more inputs");
-    return OPERATOR_CANCELLED;
+  /* Note: allow changing to compositor effect; it can have any number of inputs. */
+  if (new_type != STRIP_TYPE_COMPOSITOR) {
+    if (have_inputs != seq::effect_type_get_min_num_inputs(new_type)) {
+      BKE_report(op->reports, RPT_ERROR, "New effect takes less or more inputs");
+      return OPERATOR_CANCELLED;
+    }
   }
 
   /* Free previous effect. */

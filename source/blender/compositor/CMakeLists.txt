@@ -309,6 +309,7 @@ set(GLSL_SRC
   shaders/compositor_morphological_distance.glsl
   shaders/compositor_morphological_distance_feather.glsl
   shaders/compositor_morphological_distance_threshold.glsl
+  shaders/compositor_morphological_distance_threshold_seeds.glsl
   shaders/compositor_morphological_step.glsl
   shaders/compositor_motion_blur.glsl
   shaders/compositor_motion_blur_max_velocity_dilate.glsl
@@ -438,14 +439,6 @@ list(APPEND SRC ${glsl_infos_list_file})
 list(APPEND INC ${CMAKE_CURRENT_BINARY_DIR})
 
 target_include_directories(bf_compositor_shaders PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-
-if(WITH_TBB)
-  if(WIN32)
-    # TBB includes Windows.h which will define min/max macros
-    # that will collide with the STL versions.
-    add_definitions(-DNOMINMAX)
-  endif()
-endif()
 
 blender_add_lib(bf_compositor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 

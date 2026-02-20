@@ -243,8 +243,9 @@ static bool image_from_context_has_data_poll(bContext *C)
   }
 
   void *lock;
-  ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
-  const bool has_buffer = (ibuf && (ibuf->byte_buffer.data || ibuf->float_buffer.data));
+  ImBuf *ibuf = BKE_image_acquire_ibuf_gpu(ima, iuser, &lock);
+  const bool has_buffer = (ibuf && (ibuf->byte_buffer.data || ibuf->float_buffer.data ||
+                                    ibuf->gpu.texture));
   BKE_image_release_ibuf(ima, ibuf, lock);
   return has_buffer;
 }
@@ -954,7 +955,7 @@ void IMAGE_OT_view_cursor_center(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Cursor To Center View";
-  ot->description = "Set 2D Cursor To Center View location";
+  ot->description = "Set 2D cursor to center view location";
   ot->idname = "IMAGE_OT_view_cursor_center";
 
   /* API callbacks. */
@@ -1811,7 +1812,7 @@ void IMAGE_OT_match_movie_length(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Match Movie Length";
-  ot->description = "Set image's user's length to the one of this video";
+  ot->description = "Set the image's frame range to match the video's duration";
   ot->idname = "IMAGE_OT_match_movie_length";
 
   /* API callbacks. */
@@ -3644,7 +3645,7 @@ bool ED_space_image_get_position(SpaceImage *sima,
                                  float r_fpos[2])
 {
   void *lock;
-  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, 0);
+  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, 0, false);
 
   if (ibuf == nullptr) {
     ED_space_image_release_buffer(sima, ibuf, lock);
@@ -3671,7 +3672,7 @@ bool ED_space_image_color_sample(
   int tile = BKE_image_get_tile_from_pos(sima->image, uv, uv, nullptr);
 
   void *lock;
-  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, tile);
+  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, tile, true);
   bool ret = false;
 
   if (ibuf == nullptr) {
@@ -3757,7 +3758,7 @@ static wmOperatorStatus image_sample_line_exec(bContext *C, wmOperator *op)
   sub_v2_v2(uv2, ofs);
 
   void *lock;
-  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, tile);
+  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, tile, true);
   Histogram *hist = &sima->sample_line_hist;
 
   if (ibuf == nullptr) {
