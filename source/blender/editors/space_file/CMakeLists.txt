@@ -24,6 +24,15 @@ set(SRC
   file_utils.cc
   filelist/filelist.cc
   filelist/filelist_filter.cc
+  filelist/filelist_readjob.cc
+  filelist/filelist_readjob_asset_library_current_file.cc
+  filelist/filelist_readjob_asset_library_on_disk.cc
+  filelist/filelist_readjob_asset_library_all.cc
+  filelist/filelist_readjob_asset_library_remote.cc
+  filelist/filelist_readjob_common.cc
+  filelist/filelist_readjob_directories.cc
+  filelist/filelist_readjob_library.cc
+
   filelist/filelist_sort.cc
   filesel.cc
   folder_history.cc
@@ -34,6 +43,7 @@ set(SRC
   file_intern.hh
   filelist.hh
   filelist/filelist_intern.hh
+  filelist/filelist_readjob.hh
   fsmenu.hh
 )
 
@@ -70,7 +80,6 @@ set(LIB
 )
 
 if(WIN32)
-  add_definitions(-DNOMINMAX)
   list(APPEND LIB
     PRIVATE bf::intern::utfconv
   )

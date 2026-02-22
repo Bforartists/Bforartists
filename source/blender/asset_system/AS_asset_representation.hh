@@ -27,12 +27,17 @@
 namespace blender {
 
 struct AssetMetaData;
+struct bContext;
 struct ID;
 struct PreviewImage;
+struct ReportList;
 
 namespace asset_system {
 
 class AssetLibrary;
+struct OnlineAssetInfo;
+struct OnlineAssetFile;
+struct URLWithHash;
 
 class AssetRepresentation : NonCopyable, NonMovable {
   /** Pointer back to the asset library that owns this asset representation. */
@@ -49,18 +54,35 @@ class AssetRepresentation : NonCopyable, NonMovable {
     int id_type = 0;
     std::unique_ptr<AssetMetaData> metadata_ = nullptr;
     PreviewImage *preview_ = nullptr;
+
+    /** Set if this is an online asset only. */
+    std::unique_ptr<OnlineAssetInfo> online_info_;
   };
   std::variant<ExternalAsset, ID *> asset_;
 
   friend class AssetLibrary;
 
  public:
-  /** Constructs an asset representation for an external ID. The asset will not be editable. */
+  /**
+   * Constructs an asset representation for an external ID stored on disk. The asset will not be
+   * editable.
+   *
+   * For online assets, use the version with #online_info below.
+   */
   AssetRepresentation(StringRef relative_asset_path,
                       StringRef name,
                       int id_type,
                       std::unique_ptr<AssetMetaData> metadata,
                       AssetLibrary &owner_asset_library);
+  /**
+   * Constructs an asset representation for an external ID stored online (requiring download).
+   */
+  AssetRepresentation(StringRef relative_asset_path,
+                      StringRef name,
+                      int id_type,
+                      std::unique_ptr<AssetMetaData> metadata,
+                      AssetLibrary &owner_asset_library,
+                      OnlineAssetInfo online_info);
   /**
    * Constructs an asset representation for an ID stored in the current file. This makes the asset
    * local and fully editable.
@@ -82,8 +104,10 @@ class AssetRepresentation : NonCopyable, NonMovable {
    * to the preview but doesn't actually load it. To load it, attach its
    * #PreviewImageRuntime::icon_id to a UI button (UI loads it asynchronously then) or call
    * #BKE_previewimg_ensure() (not asynchronous).
+   *
+   * For online assets this triggers downloading of the preview.
    */
-  void ensure_previewable();
+  void ensure_previewable(const bContext &C, ReportList *reports = nullptr);
   /**
    * Get the preview of this asset.
    *
@@ -115,6 +139,33 @@ class AssetRepresentation : NonCopyable, NonMovable {
   std::string full_library_path() const;
 
   /**
+   * For online assets (see #is_online()), the files that make up this asset.
+   *
+   * Will return an empty span if this is not an online asset.
+   */
+  Span<OnlineAssetFile> online_asset_files() const;
+  /**
+   * For online assets (see #is_online()), the URL the asset's preview should be requested from.
+   *
+   * Will return an empty value if this is not an online asset.
+   */
+  std::optional<StringRefNull> online_asset_preview_url() const;
+  /**
+   * For online assets (see #is_online()), the hash of the asset's preview.
+   *
+   * Will return an empty value if this is not an online asset.
+   */
+  std::optional<StringRefNull> online_asset_preview_hash() const;
+
+  /**
+   * Turn the online asset into a normal asset. This removes the online data, and the "is online"
+   * marking, turning it into a regular on-disk asset.
+   *
+   * No-op if this is not an online asset.
+   */
+  void online_asset_mark_downloaded();
+
+  /**
    * Get the import method to use for this asset. A different one may be used if
    * #may_override_import_method() returns true, otherwise, the returned value must be used. If
    * there is no import method predefined for this asset no value is returned.
@@ -134,6 +185,8 @@ class AssetRepresentation : NonCopyable, NonMovable {
   ID *local_id() const;
   /** Returns if this asset is stored inside this current file, and as such fully editable. */
   bool is_local_id() const;
+  /** The asset is stored online, not on disk. */
+  bool is_online() const;
   /**
    * Returns whether the asset is stored in a probably-editable .asset.blend file.
    *

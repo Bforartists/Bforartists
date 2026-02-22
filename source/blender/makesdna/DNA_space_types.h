@@ -464,7 +464,8 @@ struct FileAssetSelectParams {
 
   short import_method = 0; /* eFileAssetImportMethod */
   short import_flags = 0;  /* eFileImportFlags */
-  char _pad2[4] = {};
+
+  int asset_flags = 0; /* #eFileSel_AssetParams_Flag */
 };
 
 /**
@@ -579,7 +580,7 @@ struct FileDirEntry {
   /** Optional argument for shortcuts, aliases etc. */
   char *redirection_path = nullptr;
 
-  /** When showing local IDs (FILE_MAIN, FILE_MAIN_ASSET), ID this file represents. Note comment
+  /** When showing local IDs (#FILE_MAIN_ASSET), ID this file represents. Note comment
    * for FileListInternEntry.local_data, the same applies here! */
   ID *id = nullptr;
   /** If this file represents an asset, its asset data is here. Note that we may show assets of
@@ -1306,6 +1307,7 @@ struct SpreadsheetRowFilter {
   float threshold = 0;
   float value_float2[2] = {};
   float value_float3[3] = {};
+  float value_float4[4] = {};
   float value_color[4] = {};
   char _pad1[4] = {};
 };

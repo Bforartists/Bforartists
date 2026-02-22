@@ -282,7 +282,7 @@ static void try_convert_single_object(Object &curves_ob,
   const OffsetIndices<int> points_by_curve = curves.points_by_curve();
   IndexMaskMemory memory;
   const IndexMask multi_point_curves = IndexMask::from_predicate(
-      curves.curves_range(), GrainSize(4096), memory, [&](const int curve_i) {
+      curves.curves_range(), memory, [&](const int curve_i) {
         return points_by_curve[curve_i].size() > 1;
       });
 
@@ -965,7 +965,7 @@ static void CURVES_OT_select_random(wmOperatorType *ot)
 {
   ot->name = "Select Random";
   ot->idname = __func__;
-  ot->description = "Randomizes existing selection or create new random selection";
+  ot->description = "Randomize existing selection or create new random selection";
 
   ot->exec = select_random_exec;
   ot->poll = curves::editable_curves_poll;
@@ -1427,7 +1427,7 @@ static void CURVES_OT_cyclic_toggle(wmOperatorType *ot)
 {
   ot->name = "Toggle Cyclic";
   ot->idname = __func__;
-  ot->description = "Make active curve closed/opened loop";
+  ot->description = "Make active curve closed/open loop";
 
   ot->exec = cyclic_toggle::exec;
   ot->poll = editable_curves_in_edit_mode_poll;

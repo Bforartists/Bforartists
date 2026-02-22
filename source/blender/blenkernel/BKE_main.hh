@@ -140,7 +140,7 @@ struct MainIDRelationsEntryItem {
     /** For `from_ids` list, a user of the hashed ID. */
     ID *from;
     /** For `to_ids` list, an ID used by the hashed ID. */
-    ID **to;
+    ID *to;
   } id_pointer;
   /** Session uid of the `id_pointer`. */
   uint session_uid;
@@ -335,6 +335,11 @@ struct Main : NonCopyable, NonMovable {
    * \see `animrig::Slot::users_invalidate(Main &bmain)`
    */
   bool is_action_slot_to_id_map_dirty = false;
+
+  /**
+   * Set when reading a file from undo with incomplete preview, to trigger restart of preview jobs.
+   */
+  bool need_preview_render_restart = false;
 
   /**
    * The blend-file thumbnail. If set, it will show as image preview of the blend-file in the

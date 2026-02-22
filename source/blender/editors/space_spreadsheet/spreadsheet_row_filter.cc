@@ -25,7 +25,7 @@ static IndexMask apply_filter_operation(const VArray<T> &data,
                                         IndexMaskMemory &memory)
 {
   return IndexMask::from_predicate(
-      mask, GrainSize(1024), memory, [&](const int64_t i) { return check_fn(data[i]); });
+      mask, memory, [&](const int64_t i) { return check_fn(data[i]); });
 }
 
 static IndexMask apply_row_filter(const SpreadsheetRowFilter &row_filter,
@@ -282,6 +282,37 @@ static IndexMask apply_row_filter(const SpreadsheetRowFilter &row_filter,
             column_data.typed<float3>(),
             [&](const float3 cell) {
               return cell.x < value.x && cell.y < value.y && cell.z < value.z;
+            },
+            prev_mask,
+            memory);
+      }
+    }
+  }
+  else if (column_data.type().is<float4>()) {
+    const float4 value = row_filter.value_float4;
+    switch (row_filter.operation) {
+      case SPREADSHEET_ROW_FILTER_EQUAL: {
+        const float threshold_sq = pow2f(row_filter.threshold);
+        return apply_filter_operation(
+            column_data.typed<float4>(),
+            [&](const float4 cell) { return math::distance_squared(cell, value) <= threshold_sq; },
+            prev_mask,
+            memory);
+      }
+      case SPREADSHEET_ROW_FILTER_GREATER: {
+        return apply_filter_operation(
+            column_data.typed<float4>(),
+            [&](const float4 cell) {
+              return cell.x > value.x && cell.y > value.y && cell.z > value.z && cell.w > value.w;
+            },
+            prev_mask,
+            memory);
+      }
+      case SPREADSHEET_ROW_FILTER_LESS: {
+        return apply_filter_operation(
+            column_data.typed<float4>(),
+            [&](const float4 cell) {
+              return cell.x < value.x && cell.y < value.y && cell.z < value.z && cell.w < value.w;
             },
             prev_mask,
             memory);

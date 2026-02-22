@@ -871,10 +871,10 @@ class SEQUENCER_MT_change(Menu):
                     "ALPHA_OVER",
                     "ALPHA_UNDER",
                     "GAMMA_CROSS",
+                    "COMPOSITOR",
                     "MULTIPLY",
                     "WIPE",
                     "GLOW",
-                    "TRANSFORM",
                     "SPEED",
                     "MULTICAM",
                     "ADJUSTMENT",
@@ -1002,13 +1002,15 @@ class SEQUENCER_MT_add(Menu):
         layout.operator("sequencer.effect_strip_add", text="Text", icon="FONT_DATA").type = "TEXT"
 
         layout.separator()
+        total, nonsound = selected_strips_count(context)
 
-        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon="COLOR").type = "ADJUSTMENT"
+        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon='COLOR').type = 'ADJUSTMENT'
+        col = layout.column()
+        col.operator("sequencer.effect_strip_add", text="Compositor", icon='NODE_COMPOSITING').type = 'COMPOSITOR'
+        col.enabled = nonsound < 3
 
         layout.operator_context = "INVOKE_DEFAULT"
         layout.menu("SEQUENCER_MT_add_effect", icon="SHADERFX")
-
-        total, nonsound = selected_strips_count(context)
 
         col = layout.column()
         col.menu("SEQUENCER_MT_add_transitions", icon="ARROW_LEFTRIGHT")
@@ -1338,8 +1340,12 @@ class SEQUENCER_MT_strip_effect_change(Menu):
         strip = context.active_strip
 
         col = layout.column()
-        col.operator("sequencer.change_effect_type", text="Adjustment Layer", icon='COLOR').type = "ADJUSTMENT"
-        col.operator("sequencer.change_effect_type", text="Multicam Selector", icon='SEQ_MULTICAM').type = "MULTICAM"
+        col.operator("sequencer.change_effect_type", text="Compositor", icon='NODE_COMPOSITING').type = 'COMPOSITOR'
+        layout.separator()
+
+        col = layout.column()
+        col.operator("sequencer.change_effect_type", text="Adjustment Layer", icon='COLOR').type = 'ADJUSTMENT'
+        col.operator("sequencer.change_effect_type", text="Multicam Selector", icon='SEQ_MULTICAM').type = 'MULTICAM'
         col.enabled = strip.input_count == 0
 
         layout.separator()
@@ -1517,6 +1523,7 @@ class SEQUENCER_MT_strip(Menu):
                     "ALPHA_OVER",
                     "ALPHA_UNDER",
                     "GAMMA_CROSS",
+                    "COMPOSITOR",
                     "MULTIPLY",
                     "WIPE",
                     "GLOW",
@@ -1739,6 +1746,7 @@ class SEQUENCER_MT_context_menu(Menu):
                 "ALPHA_OVER",
                 "ALPHA_UNDER",
                 "GAMMA_CROSS",
+                "COMPOSITOR",
                 "MULTIPLY",
                 "WIPE",
                 "GLOW",

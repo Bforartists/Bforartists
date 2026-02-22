@@ -65,7 +65,7 @@ struct FileListInternEntry {
    * take care of that.
    */
   struct {
-    /** When showing local IDs (FILE_MAIN, FILE_MAIN_ASSET), the ID this file entry represents. */
+    /** When showing local IDs (#FILE_MAIN_ASSET), the ID this file entry represents. */
     ID *id = nullptr;
 
     /* For the few file types that have the preview already in memory. For others, there's delayed
@@ -189,6 +189,7 @@ enum {
   FLF_HIDE_PARENT = 1 << 2,
   FLF_HIDE_LIB_DIR = 1 << 3,
   FLF_ASSETS_ONLY = 1 << 4,
+  FLF_ASSETS_HIDE_ONLINE = 1 << 5,
 };
 
 struct FileListReadJob;
@@ -242,6 +243,10 @@ struct FileList {
                        char dirpath[FILE_MAX_LIBEXTRA],
                        const bool do_change);
 
+  /** Called from the main thread when starting the job. */
+  void (*start_job_fn)(FileListReadJob *job_params);
+  /** Called from the main thread in regular intervals. */
+  void (*timer_step_fn)(FileListReadJob *job_params);
   /** Fill `filelist` (to be called by read job). */
   void (*read_job_fn)(FileListReadJob *job_params, bool *stop, bool *do_update, float *progress);
 
@@ -268,6 +273,7 @@ enum {
   /** Trigger a call to #AS_asset_library_load() to update asset catalogs (won't reload the actual
    * assets) */
   FL_RELOAD_ASSET_LIBRARY = 1 << 7,
+  FL_ASSETS_INCLUDE_ONLINE = 1 << 8,
 };
 
 /** #FileList.tags */
@@ -292,6 +298,10 @@ enum class SpecialFileImages {
 
 void filelist_cache_clear(FileListEntryCache *cache, size_t new_size);
 
+FileUID filelist_uid_generate(FileList *filelist);
+
+const char *fileentry_uiname(const char *root, FileListInternEntry *entry, char *buff);
+
 bool filelist_intern_entry_is_main_file(const FileListInternEntry *intern_entry);
 
 void prepare_filter_asset_library(const FileList *filelist, FileListFilter *filter);
@@ -300,12 +310,25 @@ void prepare_filter_asset_library(const FileList *filelist, FileListFilter *filt
 bool is_filtered_file(FileListInternEntry *file, const char * /*root*/, FileListFilter *filter);
 bool is_filtered_asset(FileListInternEntry *file, FileListFilter *filter);
 bool is_filtered_lib(FileListInternEntry *file, const char *root, FileListFilter *filter);
-bool is_filtered_main(FileListInternEntry *file, const char * /*dir*/, FileListFilter *filter);
 bool is_filtered_main_assets(FileListInternEntry *file,
                              const char * /*dir*/,
                              FileListFilter *filter);
 bool is_filtered_asset_library(FileListInternEntry *file,
                                const char *root,
                                FileListFilter *filter);
+
+bool filelist_checkdir_dir(const FileList * /*filelist*/,
+                           char dirpath[FILE_MAX_LIBEXTRA],
+                           const bool do_change);
+bool filelist_checkdir_lib(const FileList * /*filelist*/,
+                           char dirpath[FILE_MAX_LIBEXTRA],
+                           const bool do_change);
+
+void filelist_set_readjob_directories(FileList *filelist);
+void filelist_set_readjob_library(FileList *filelist);
+void filelist_set_readjob_on_disk_asset_library(FileList *filelist);
+void filelist_set_readjob_remote_asset_library(FileList *filelist);
+void filelist_set_readjob_current_file_asset_library(FileList *filelist);
+void filelist_set_readjob_all_asset_library(FileList *filelist);
 
 }  // namespace blender

@@ -146,8 +146,7 @@ class Grid : Overlay {
     SpaceImage *sima = (SpaceImage *)state.space_data;
 
     /* Grid is currently visible in UV and Image editors, if enabled. */
-    const bool show_grid = ELEM(sima->mode, SI_MODE_UV, SI_MODE_VIEW) &&
-                           (sima->overlay.flag & SI_OVERLAY_SHOW_GRID_BACKGROUND);
+    const bool show_grid = bool(sima->overlay.flag & SI_OVERLAY_SHOW_GRID_BACKGROUND);
     if (!show_grid) {
       return false;
     }
@@ -275,6 +274,11 @@ class Grid : Overlay {
       }
     }
 
+    /* Disable grid rendering when no axis or grid is enabled. */
+    if (grid_flag_ == 0 && axis_flag_ == 0) {
+      return false;
+    }
+
     /* Query grid scales from unit/scaling; this range suffices for user-visible levels. */
     Array<float, SI_GRID_STEPS_LEN> steps(SI_GRID_STEPS_LEN);
     ED_view3d_grid_steps(state.scene, v3d, rv3d, steps.data());
@@ -343,8 +347,14 @@ class Grid : Overlay {
     /* TODO(not_mark): use for finite grid clipping. */
     if (rv3d->persp == RV3D_CAMOB && v3d->camera && v3d->camera->type == OB_CAMERA) {
       Object *camera_object = DEG_get_evaluated(state.depsgraph, v3d->camera);
-      grid_flag_ |= GRID_CAMERA;
-      axis_flag_ |= GRID_CAMERA;
+      /* Only set the GRID_CAMERA flag when the grid/axis is being drawn. Otherwise this could lead
+       * to an out of bound access in the shader. */
+      if (grid_flag_) {
+        grid_flag_ |= GRID_CAMERA;
+      }
+      if (axis_flag_) {
+        axis_flag_ |= GRID_CAMERA;
+      }
 
       float clip_dist = ((Camera *)(camera_object->data))->clip_end;
       grid_ubo_.clip_rect = float2(clip_dist);

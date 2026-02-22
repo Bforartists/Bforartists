@@ -702,12 +702,12 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         row.enabled = False
         row.prop(display_settings, "display_device", text="")
 
-        if ffmpeg.codec == 'DNXHD':
+        if needs_codec and ffmpeg.codec == 'DNXHD':
             layout.use_property_split = False
             layout.prop(ffmpeg, "use_lossless_output")
             layout.use_property_split = True
 
-        if ffmpeg.codec == 'PRORES':
+        if needs_codec and ffmpeg.codec == 'PRORES':
             layout.use_property_split = False
             layout.prop(ffmpeg, "ffmpeg_prores_profile")
             layout.use_property_split = Tru

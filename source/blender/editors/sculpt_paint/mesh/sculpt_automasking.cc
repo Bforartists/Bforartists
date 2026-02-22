@@ -691,7 +691,8 @@ void calc_vert_factors(const Depsgraph &depsgraph,
     }
 
     if (automasking.settings.flags & BRUSH_AUTOMASKING_FACE_SETS) {
-      if (!face_set::vert_has_face_set(
+      if (automasking.settings.initial_face_set != face_set_none_id &&
+          !face_set::vert_has_face_set(
               vert_to_face_map, face_sets, vert, automasking.settings.initial_face_set))
       {
         factors[i] = 0.0f;
@@ -709,8 +710,9 @@ void calc_vert_factors(const Depsgraph &depsgraph,
     if (automasking.settings.flags & BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS) {
       bool ignore = ss.cache && ss.cache->brush &&
                     ss.cache->brush->sculpt_brush_type == SCULPT_BRUSH_TYPE_DRAW_FACE_SETS &&
-                    face_set::vert_face_set_get(vert_to_face_map, face_sets, vert) ==
-                        ss.cache->paint_face_set;
+                    (automasking.settings.initial_face_set == face_set_none_id ||
+                     face_set::vert_face_set_get(vert_to_face_map, face_sets, vert) ==
+                         ss.cache->paint_face_set);
 
       if (!ignore && !face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, vert)) {
         factors[i] = 0.0f;
@@ -800,7 +802,8 @@ void calc_face_factors(const Depsgraph &depsgraph,
       }
 
       if (automasking.settings.flags & BRUSH_AUTOMASKING_FACE_SETS) {
-        if (!face_set::vert_has_face_set(
+        if (automasking.settings.initial_face_set != face_set_none_id &&
+            !face_set::vert_has_face_set(
                 vert_to_face_map, face_sets, vert, automasking.settings.initial_face_set))
         {
           factor = 0.0f;
@@ -818,8 +821,9 @@ void calc_face_factors(const Depsgraph &depsgraph,
       if (automasking.settings.flags & BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS) {
         bool ignore = ss.cache && ss.cache->brush &&
                       ss.cache->brush->sculpt_brush_type == SCULPT_BRUSH_TYPE_DRAW_FACE_SETS &&
-                      face_set::vert_face_set_get(vert_to_face_map, face_sets, vert) ==
-                          ss.cache->paint_face_set;
+                      (automasking.settings.initial_face_set == face_set_none_id ||
+                       face_set::vert_face_set_get(vert_to_face_map, face_sets, vert) ==
+                           ss.cache->paint_face_set);
 
         if (!ignore && !face_set::vert_has_unique_face_set(vert_to_face_map, face_sets, vert)) {
           factor = 0.0f;
@@ -926,7 +930,9 @@ void calc_grids_factors(const Depsgraph &depsgraph,
       }
 
       if (automasking.settings.flags & BRUSH_AUTOMASKING_FACE_SETS) {
-        if (grid_face_set != automasking.settings.initial_face_set) {
+        if (automasking.settings.initial_face_set != face_set_none_id &&
+            grid_face_set != automasking.settings.initial_face_set)
+        {
           factors[node_vert] = 0.0f;
           continue;
         }
@@ -948,7 +954,8 @@ void calc_grids_factors(const Depsgraph &depsgraph,
       if (automasking.settings.flags & BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS) {
         bool ignore = ss.cache && ss.cache->brush &&
                       ss.cache->brush->sculpt_brush_type == SCULPT_BRUSH_TYPE_DRAW_FACE_SETS &&
-                      grid_face_set == ss.cache->paint_face_set;
+                      (automasking.settings.initial_face_set == face_set_none_id ||
+                       grid_face_set == ss.cache->paint_face_set);
 
         if (!ignore && !face_set::vert_has_unique_face_set(faces,
                                                            corner_verts,
@@ -1045,7 +1052,8 @@ void calc_vert_factors(const Depsgraph &depsgraph,
     }
 
     if (automasking.settings.flags & BRUSH_AUTOMASKING_FACE_SETS) {
-      if (!face_set::vert_has_face_set(
+      if (automasking.settings.initial_face_set != face_set_none_id &&
+          !face_set::vert_has_face_set(
               face_set_offset, *vert, automasking.settings.initial_face_set))
       {
         factors[i] = 0.0f;
@@ -1063,8 +1071,9 @@ void calc_vert_factors(const Depsgraph &depsgraph,
     if (automasking.settings.flags & BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS) {
       bool ignore = ss.cache && ss.cache->brush &&
                     ss.cache->brush->sculpt_brush_type == SCULPT_BRUSH_TYPE_DRAW_FACE_SETS &&
-                    face_set::vert_face_set_get(face_set_offset, *vert) ==
-                        ss.cache->paint_face_set;
+                    (automasking.settings.initial_face_set == face_set_none_id ||
+                     face_set::vert_face_set_get(face_set_offset, *vert) ==
+                         ss.cache->paint_face_set);
 
       if (!ignore && !face_set::vert_has_unique_face_set(face_set_offset, *vert)) {
         factors[i] = 0.0f;
@@ -1768,36 +1777,42 @@ void Cache::calc_cavity_factor(const Depsgraph &depsgraph,
   switch (pbvh.type()) {
     case bke::pbvh::Type::Mesh: {
       const Span<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
-      node_mask.foreach_index(GrainSize(1), [&](const int i) {
-        const Span<int> verts = nodes[i].verts();
-        for (const int vert : verts) {
-          calc_cavity_factor_mesh(depsgraph, *this, object, vert);
-        }
-      });
+      node_mask.foreach_index(
+          [&](const int i) {
+            const Span<int> verts = nodes[i].verts();
+            for (const int vert : verts) {
+              calc_cavity_factor_mesh(depsgraph, *this, object, vert);
+            }
+          },
+          exec_mode::grain_size(1));
       break;
     }
     case bke::pbvh::Type::Grids: {
       const SubdivCCG &subdiv_ccg = *ss.subdiv_ccg;
       const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
       const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
-      node_mask.foreach_index(GrainSize(1), [&](const int i) {
-        const Span<int> grids = nodes[i].grids();
-        for (const int grid : grids) {
-          for (const int vert : bke::ccg::grid_range(subdiv_ccg.grid_area, grid)) {
-            calc_cavity_factor_grids(key, *this, object, vert);
-          }
-        }
-      });
+      node_mask.foreach_index(
+          [&](const int i) {
+            const Span<int> grids = nodes[i].grids();
+            for (const int grid : grids) {
+              for (const int vert : bke::ccg::grid_range(subdiv_ccg.grid_area, grid)) {
+                calc_cavity_factor_grids(key, *this, object, vert);
+              }
+            }
+          },
+          exec_mode::grain_size(1));
       break;
     }
     case bke::pbvh::Type::BMesh: {
       const Span<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
-      node_mask.foreach_index(GrainSize(1), [&](const int i) {
-        const Set<BMVert *, 0> verts = nodes[i].bm_unique_verts_;
-        for (BMVert *vert : verts) {
-          calc_cavity_factor_bmesh(*this, vert, BM_elem_index_get(vert));
-        }
-      });
+      node_mask.foreach_index(
+          [&](const int i) {
+            const Set<BMVert *, 0> verts = nodes[i].bm_unique_verts_;
+            for (BMVert *vert : verts) {
+              calc_cavity_factor_bmesh(*this, vert, BM_elem_index_get(vert));
+            }
+          },
+          exec_mode::grain_size(1));
     }
   }
 }

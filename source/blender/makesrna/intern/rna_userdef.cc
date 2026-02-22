@@ -76,6 +76,7 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_WORKSPACE_KEYMAPS, "WORKSPACE_KEYMAPS", 0, "Keymap Overrides", ""},
 #endif
     RNA_ENUM_ITEM_SEPR,
+    {USER_SECTION_ASSETS, "ASSETS", 0, "Asset Libraries", ""},   /* BFA TODO: Add Icon */
     {USER_SECTION_INPUT, "INPUT", ICON_INPUT_BOOL, "Input", ""}, /* BFA - Added Icons */
     {USER_SECTION_NAVIGATION,
      "NAVIGATION",
@@ -241,6 +242,8 @@ static const EnumPropertyItem rna_enum_preferences_asset_import_method_items[] =
 
 #ifdef RNA_RUNTIME
 
+#  include "AS_remote_library.hh"
+
 #  include "BLI_listbase.h"
 #  include "BLI_math_vector.h"
 #  include "BLI_memory_cache.hh"
@@ -280,6 +283,7 @@ static const EnumPropertyItem rna_enum_preferences_asset_import_method_items[] =
 #  include "MEM_CacheLimiterC-Api.h"
 #  include "MEM_guardedalloc.h"
 
+#  include "ED_asset_library.hh"
 #  include "ED_asset_list.hh"
 #  include "ED_screen.hh"
 
@@ -426,6 +430,17 @@ static void rna_userdef_asset_library_path_set(PointerRNA *ptr, const char *valu
   BKE_preferences_asset_library_path_set(library, value);
 }
 
+int rna_userdef_asset_library_path_editable(const PointerRNA *ptr, const char **r_info)
+{
+  bUserAssetLibrary *library = (bUserAssetLibrary *)ptr->data;
+  if ((library->flag & ASSET_LIBRARY_USE_REMOTE_URL) != 0) {
+    *r_info = N_("The download cache directory of remote asset libraries cannot be changed");
+    return PropertyFlag(0);
+  }
+
+  return PROP_EDITABLE;
+}
+
 static void rna_userdef_asset_libraries_refresh(bContext *C, PointerRNA *ptr)
 {
   ed::asset::list::clear_all_library(C);
@@ -434,6 +449,16 @@ static void rna_userdef_asset_libraries_refresh(bContext *C, PointerRNA *ptr)
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_ASSET_PARAMS, nullptr);
 
   rna_userdef_update(CTX_data_main(C), CTX_data_scene(C), ptr);
+}
+
+static void rna_userdef_asset_library_remote_sync_update(bContext *C, PointerRNA *ptr)
+{
+  bUserAssetLibrary *library = (bUserAssetLibrary *)ptr->data;
+  AssetLibraryReference library_ref = blender::ed::asset::user_library_to_library_ref(*library);
+  /* Make sure all visible instances of this asset library will be refreshed. */
+  blender::ed::asset::list::clear(&library_ref, C);
+  blender::asset_system::remote_library_request_download(*library);
+  rna_userdef_asset_libraries_refresh(C, ptr);
 }
 
 /**
@@ -5269,6 +5294,14 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_boolean_default(prop, true); /*BFA - default to on*/
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
+  prop = RNA_def_property(srna, "show_online_assets", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "uiflag2", USER_UIFLAG2_SHOW_ONLINE_ASSETS);
+  RNA_def_property_ui_text(
+      prop,
+      "Show Online Assets",
+      "When internet access is enabled, load and display online assets in asset shelves");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
   static const EnumPropertyItem header_align_items[] = {
       {0, "NONE", 0, "Keep Existing", "Keep existing header alignment"},
       {USER_HEADER_FROM_PREF, "TOP", 0, "Top", "Top aligned on load"},
@@ -6929,6 +6962,7 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
       prop, "Path", "Path to a directory with .blend files to use as an asset library");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
   RNA_def_property_string_funcs(prop, nullptr, nullptr, "rna_userdef_asset_library_path_set");
+  RNA_def_property_editable_func(prop, "rna_userdef_asset_library_path_editable");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, 0, "rna_userdef_asset_libraries_refresh");
 
@@ -6937,6 +6971,12 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Enabled", "Enable the asset library");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, 0, "rna_userdef_asset_libraries_refresh");
+
+  prop = RNA_def_property(srna, "remote_url", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_sdna(prop, nullptr, "remote_url");
+  RNA_def_property_ui_text(prop, "URL", "Remote URL to the asset library");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_update(prop, 0, "rna_userdef_asset_library_remote_sync_update");
 
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_enum_preferences_asset_import_method_items);
@@ -6954,6 +6994,11 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", ASSET_LIBRARY_RELATIVE_PATH);
   RNA_def_property_ui_text(
       prop, "Relative Path", "Use relative path when linking assets from this asset library");
+
+  prop = RNA_def_property(srna, "use_remote_url", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", ASSET_LIBRARY_USE_REMOTE_URL);
+  RNA_def_property_ui_text(prop, "Use Remote", "Synchronize the asset library with a remote URL");
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 }
 
 static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
@@ -7599,6 +7644,10 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Bundle in Geometry",
                            "Support storing custom bundles in a geometry in Geometry Nodes");
+
+  prop = RNA_def_property(srna, "use_remote_asset_libraries", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_ui_text(
+      prop, "Remote Asset Libraries", "Enable asset libraries served over HTTP/HTTPS");
 
   prop = RNA_def_property(srna, "use_extensions_debug", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(

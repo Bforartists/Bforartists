@@ -3780,6 +3780,24 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         )
     )
 
+    _sculpt_tool = ToolDef.from_dict(
+        dict(
+            idname="builtin.brush",
+            label="Brush",
+            icon="brush.sculpt",
+            options={'USE_BRUSHES'},
+        )
+    )
+
+    _draw_tool = ToolDef.from_dict(
+        dict(
+            idname="builtin.brush",
+            label="Brush",
+            icon="brush.draw",
+            options={'USE_BRUSHES'},
+        )
+    )
+
     _tools_transform = (
         _defs_transform.translate,
         _defs_transform.rotate,
@@ -4005,7 +4023,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_particle.generate_from_brushes,
         ],
         'SCULPT': [
-            _brush_tool,
+            _sculpt_tool,
             _defs_sculpt.paint,
             _defs_sculpt.mask,
             _defs_sculpt.draw_face_sets,
@@ -4066,7 +4084,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             *_tools_annotate,
         ],
         'SCULPT_GREASE_PENCIL': [
-            _brush_tool,
+            _sculpt_tool,
             _defs_grease_pencil_sculpt.clone,
             None,
             *_tools_annotate,
@@ -4132,7 +4150,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'PAINT_GREASE_PENCIL': [
             _defs_view3d_generic.cursor,
             None,
-            _brush_tool,
+            _draw_tool,
             _defs_grease_pencil_paint.erase,
             _defs_grease_pencil_paint.fill,
             *_tools_grease_pencil_primitives,
@@ -4167,7 +4185,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             ),
         ],
         'SCULPT_CURVES': [
-            _brush_tool,
+            _sculpt_tool,
             _defs_curves_sculpt.select,
             _defs_curves_sculpt.density,
             _defs_curves_sculpt.add,

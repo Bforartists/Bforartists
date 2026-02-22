@@ -172,6 +172,7 @@ enum eUserpref_UI_Flag2 {
   USER_REGION_OVERLAP = (1 << 1),
   USER_NODE_AUTOPOSITION_VIEWER = (1 << 2), /*BFA - Toggle Viewer Auto-Positioning*/
   USER_UIFLAG2_UNUSED_3 = (1 << 3),         /* dirty */
+  USER_UIFLAG2_SHOW_ONLINE_ASSETS = (1 << 4),
 };
 
 /** #UserDef.gpu_flag */
@@ -626,7 +627,12 @@ struct bUserAssetLibrary {
   struct bUserAssetLibrary *next = nullptr, *prev = nullptr;
 
   char name[/*MAX_NAME*/ 64] = "";
+  /** The path on disk for this asset library. For remote libraries
+   * (#ASSET_LIBRARY_USE_REMOTE_URL), this is the download cache directory, where already
+   * downloaded assets will be placed. */
   char dirpath[/*FILE_MAX*/ 1024] = "";
+  /** Only for remote asset libraries (#ASSET_LIBRARY_USE_REMOTE_URL is set). */
+  char remote_url[/*FILE_MAX*/ 1024];
 
   short import_method = ASSET_IMPORT_PACK;  /* eAssetImportMethod */
   short flag = ASSET_LIBRARY_RELATIVE_PATH; /* eAssetLibrary_Flag */
@@ -749,6 +755,7 @@ enum eUserPref_Section {
   USER_SECTION_EXPERIMENTAL = 16,
   USER_SECTION_EXTENSIONS = 17,
   USER_SECTION_DEVELOPER_TOOLS = 18,
+  USER_SECTION_ASSETS = 19,
 };
 
 /** #UserDef_SpaceData.flag (State of the user preferences UI). */
@@ -821,7 +828,8 @@ struct UserDef_Experimental {
   char use_shader_node_previews = 0;
   char use_geometry_nodes_lists = 0;
   char use_geometry_bundle = 0;
-  char _pad[4] = {};
+  char use_remote_asset_libraries = 0;
+  char _pad[3] = {};
 };
 
 #define USER_EXPERIMENTAL_TEST(userdef, member) (((userdef)->experimental).member)
@@ -929,7 +937,7 @@ struct UserDef {
   /** #eUserpref_UI_Flag2. */
   /*bfa - added USER_NODE_AUTOPOSITION_VIEWER & USER_ALWAYS_SHOW_NUMBER_ARROWS */
   char uiflag2 = USER_REGION_OVERLAP | USER_NODE_AUTOPOSITION_VIEWER |
-                 USER_ALWAYS_SHOW_NUMBER_ARROWS;
+                 USER_ALWAYS_SHOW_NUMBER_ARROWS | USER_UIFLAG2_SHOW_ONLINE_ASSETS;
   char gpu_flag = USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE | USER_GPU_FLAG_SUBDIVISION_EVALUATION;
   char _pad8[6] = {};
   /* Experimental flag for app-templates to make changes to behavior

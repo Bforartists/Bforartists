@@ -943,6 +943,15 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
   endif()
 endif()
 
+if(WITH_CYCLES AND WITH_CYCLES_OSL)
+  add_blender_test(
+    cycles_osl_compile_test
+    --python ${CMAKE_CURRENT_LIST_DIR}/cycles_osl_compile_test.py
+    --
+    --testdir "${TEST_SRC_DIR}/render"
+  )
+endif()
+
 # ------------------------------------------------------------------------------
 # COMPOSITOR TESTS
 # ------------------------------------------------------------------------------
@@ -1410,6 +1419,13 @@ if(TEST_SRC_DIR_EXISTS)
   )
 
   add_blender_test(
+    bl_sculpt_automasking
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/automask_test.py
+    --
+    --testdir "${TEST_SRC_DIR}/sculpting"
+  )
+
+  add_blender_test(
     bl_sculpt_brushes
     --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/sculpt_brushes_test.py
     --
@@ -1522,6 +1538,15 @@ if(TEST_SRC_DIR_EXISTS)
   # TODO: disabled for now after collection unification
   # add_subdirectory(view_layer)
 endif()
+
+# ------------------------------------------------------------------------------
+# Remote Asset Library tests
+# ------------------------------------------------------------------------------
+if(TEST_SRC_DIR_EXISTS)
+  add_subdirectory(assets)
+endif()
+
+
 
 # ------------------------------------------------------------------------------
 # Linux Release sanity checks

@@ -137,6 +137,7 @@ def register():
             register_class(cls)
 
     space_filebrowser.register_props()
+    properties_paint_common.register()
 
     from bpy.props import (
         EnumProperty,
@@ -201,6 +202,9 @@ def register():
 
 def unregister():
     from bpy.utils import unregister_class
+
+    properties_paint_common.unregister()
+
     for mod in reversed(_modules_loaded):
         for cls in reversed(mod.classes):
             if cls.is_registered:

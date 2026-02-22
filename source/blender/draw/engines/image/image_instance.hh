@@ -74,16 +74,13 @@ class Instance : public DrawEngine {
   {
     if (this->state.image->source != IMA_SRC_TILED) {
       void *lock;
-      const bool is_viewer = this->state.image->source == IMA_SRC_VIEWER;
-      ImBuf *buffer = BKE_image_acquire_ibuf(
-          this->state.image, space_->get_image_user(), is_viewer ? &lock : nullptr);
-      BLI_SCOPED_DEFER([&]() {
-        BKE_image_release_ibuf(this->state.image, buffer, is_viewer ? lock : nullptr);
-      });
+      ImBuf *buffer = BKE_image_acquire_ibuf_gpu(
+          this->state.image, space_->get_image_user(), &lock);
+      BLI_SCOPED_DEFER([&]() { BKE_image_release_ibuf(this->state.image, buffer, lock); });
 
-      /* The image buffer already have a GPU texture, so use image space drawing. */
+      /* The image buffer already has a GPU texture, so use image space drawing. */
       if (buffer && buffer->gpu.texture) {
-        return std::make_unique<ImageSpaceDrawingMode>(*this);
+        return std::make_unique<ImageSpaceDrawingMode>(*this, buffer->gpu.texture);
       }
 
       /* Buffer does not exist or image will not fit in a GPU texture, use screen space drawing. */
@@ -94,7 +91,10 @@ class Instance : public DrawEngine {
       }
 
       /* Image can fit in a GPU texture, use image space drawing. */
-      return std::make_unique<ImageSpaceDrawingMode>(*this);
+      BKE_image_ensure_gpu_texture(this->state.image, space_->get_image_user());
+      gpu::Texture *texture = BKE_image_get_gpu_viewer_texture(
+          this->state.image, space_->get_image_user(), buffer);
+      return std::make_unique<ImageSpaceDrawingMode>(*this, texture);
     }
 
     for (ImageTile &tile : this->state.image->tiles) {
@@ -102,7 +102,7 @@ class Instance : public DrawEngine {
       ImageUser tile_user = space_->get_image_user() ? *space_->get_image_user() :
                                                        ImageUser{.scene = nullptr};
       tile_user.tile = image_tile.get_tile_number();
-      ImBuf *buffer = BKE_image_acquire_ibuf(this->state.image, &tile_user, nullptr);
+      ImBuf *buffer = BKE_image_acquire_ibuf_gpu(this->state.image, &tile_user, nullptr);
       BLI_SCOPED_DEFER([&]() { BKE_image_release_ibuf(this->state.image, buffer, nullptr); });
       if (!buffer) {
         continue;
@@ -115,7 +115,11 @@ class Instance : public DrawEngine {
     }
 
     /* Image can fit in a GPU texture, use image space drawing. */
-    return std::make_unique<ImageSpaceDrawingMode>(*this);
+    BKE_image_ensure_gpu_texture(this->state.image, space_->get_image_user());
+    ImageGPUTextures gpu_tiles_textures = BKE_image_get_gpu_material_texture(
+        this->state.image, space_->get_image_user(), true);
+    return std::make_unique<ImageSpaceDrawingMode>(
+        *this, *gpu_tiles_textures.texture, *gpu_tiles_textures.tile_mapping);
   }
 
   void begin_sync() final
@@ -128,13 +132,12 @@ class Instance : public DrawEngine {
     state.flags.do_tile_drawing = false;
 
     this->image_sync();
+    drawing_mode_.reset();
+    this->state.float_buffers.reset_usage_flags();
     if (this->state.image) {
       this->drawing_mode_ = this->get_drawing_mode();
       drawing_mode_->begin_sync();
       drawing_mode_->image_sync(state.image, space_->get_image_user());
-    }
-    else {
-      drawing_mode_.reset();
     }
   }
 
@@ -183,13 +186,14 @@ class Instance : public DrawEngine {
     DRW_submission_start();
     if (drawing_mode_) {
       drawing_mode_->draw_viewport();
-      drawing_mode_->draw_finish();
     }
     else {
       GPU_framebuffer_clear_color_depth(
           DRW_context_get()->viewport_framebuffer_list_get()->default_fb, float4(0.0), 1.0f);
     }
+    this->state.float_buffers.remove_unused_buffers();
     state.image = nullptr;
+    drawing_mode_.reset();
     DRW_submission_end();
   }
 };
