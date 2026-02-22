@@ -7,7 +7,6 @@ set(INC
 )
 
 set(INC_SYS
-  ${ZSTD_INCLUDE_DIRS}
 )
 
 set(SRC
@@ -16,6 +15,7 @@ set(SRC
   debug.cpp
   guarded_allocator.cpp
   ies.cpp
+  image_maketx.cpp
   image_metadata.cpp
   log.cpp
   math_cdf.cpp
@@ -37,8 +37,16 @@ set(SRC
 
 set(LIB
   PUBLIC bf::dependencies::openimageio
-  ${TBB_LIBRARIES}
-  ${ZSTD_LIBRARIES}
+  PUBLIC bf::dependencies::optional::tbb
+  PUBLIC bf::dependencies::optional::embree
+  PUBLIC bf::dependencies::optional::openpgl
+  PUBLIC bf::dependencies::optional::openvdb
+  PRIVATE bf::dependencies::optional::opencolorio
+  PRIVATE bf::dependencies::zstd
+  PRIVATE bf::dependencies::optional::openexr
+  # Used by OpenImageIO headers, which fallback to a bundled version. But we
+  # need to use the same version as Blender to avoid symbol conflicts.
+  PRIVATE bf::dependencies::fmt
 )
 
 set(SRC_HEADERS
@@ -63,6 +71,7 @@ set(SRC_HEADERS
   ies.h
   image.h
   image_impl.h
+  image_maketx.h
   image_metadata.h
   list.h
   log.h
@@ -146,25 +155,13 @@ endif()
 include_directories(${INC})
 include_directories(SYSTEM ${INC_SYS})
 
-if(WITH_OPENVDB)
-  list(APPEND LIB
-    ${OPENVDB_LIBRARIES}
-  )
-
-  # This works around the issue described in #120317 and https://github.com/AcademySoftwareFoundation/openvdb/pull/1786
-  if(MSVC_CLANG)
-    set_source_files_properties(openvdb.cpp PROPERTIES COMPILE_FLAGS -fno-delayed-template-parsing)
-  endif()
+# This works around the issue described in #120317 and https://github.com/AcademySoftwareFoundation/openvdb/pull/1786
+if(WITH_OPENVDB AND MSVC_CLANG)
+  set_source_files_properties(openvdb.cpp PROPERTIES COMPILE_FLAGS -fno-delayed-template-parsing)
 endif()
 
-if(WITH_OPENCOLORIO)
-  add_definitions(-DWITH_OCIO)
-  list(APPEND LIB
-    bf::dependencies::optional::opencolorio
-  )
-  if(WIN32 AND NOT USD_OVERRIDE_OPENCOLORIO)
-    add_definitions(-DOpenColorIO_SKIP_IMPORTS)
-  endif()
+if(WITH_OPENCOLORIO AND WIN32 AND NOT USD_OVERRIDE_OPENCOLORIO)
+  add_definitions(-DOpenColorIO_SKIP_IMPORTS)
 endif()
 
 cycles_add_library(cycles_util "${LIB}" ${SRC} ${SRC_HEADERS})

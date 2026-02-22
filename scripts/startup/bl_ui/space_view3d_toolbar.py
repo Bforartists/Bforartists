@@ -147,6 +147,7 @@ class VIEW3D_PT_tools_object_options_transform(View3DPanel, Panel):
     bl_context = ".objectmode"  # dot on purpose (access from topbar)
     bl_label = "Transform"
     bl_parent_id = "VIEW3D_PT_tools_object_options"
+    bl_options = {'HIDE_HEADER'}
 
     def draw(self, context):
         layout = self.layout
@@ -2507,9 +2508,13 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_mixcolor(View3DPanel, Panel):
 
         sub_row.operator("paint.brush_colors_flip", icon="FILE_REFRESH", text="")
 
-        if brush.gpencil_brush_type in {"DRAW", "FILL"}:
-            col.prop(gp_settings, "vertex_mode", text="Mode")
-            col.prop(gp_settings, "vertex_color_factor", slider=True, text="Mix Factor")
+        ob = context.object
+        if brush.gpencil_brush_type in {'DRAW', 'FILL'}:
+            if ob.mode == 'VERTEX_GREASE_PENCIL':
+                row = layout.row(align=True)
+                row.prop(gp_settings, "vertex_mode", text="Mode")
+            row = layout.row(align=True)
+            row.prop(gp_settings, "vertex_color_factor", slider=True, text="Mix Factor")
 
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_mix_palette(View3DPanel, Panel):
