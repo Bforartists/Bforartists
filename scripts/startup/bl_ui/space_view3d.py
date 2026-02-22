@@ -3910,8 +3910,8 @@ class VIEW3D_MT_object_animation(Menu):
             "grease_pencil.bake_grease_pencil_animation",
             text="Bake Object Transform to Grease Pencil",
             icon="BAKE_ACTION")
-        layout.operator("anim.replace_action")
-        layout.operator("anim.replace_action_new")
+        layout.operator("anim.replace_action", icon="ACTION_REPLACE")
+        layout.operator("anim.replace_action_new", icon="ACTION_REPLACE_NEW")
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
