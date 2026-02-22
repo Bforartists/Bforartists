@@ -9581,9 +9581,44 @@ class VIEW3D_PT_overlay_guides(Panel):
                     row.separator()
                     row.prop(overlay, "grid_subdivisions", text="Subdivisions")
 
-        layout.separator()
+        # bfa - Camera and HDRi Preview options placed at the bottom,
+        # since they're only relevant in specific view modes.
+        if view.region_3d.view_perspective == "CAMERA" or shading.type == "MATERIAL":
 
-        layout.label(text="Options")
+            layout.separator() # bfa - spacer
+            
+            col = layout.column(align=True)
+            col.active = display_all
+            split = col.split()
+            sub = split.column(align=True)
+            row = sub.row()
+            row.separator()
+
+        if view.region_3d.view_perspective == "CAMERA":
+            layout.separator() # bfa - spacer
+            
+            row.prop(overlay, "show_camera_guides", text="Camera Guides")
+
+        if shading.type == "MATERIAL":
+            layout.separator() # bfa - spacer
+            
+            row = row if view.region_3d.view_perspective != "CAMERA" else row.row()
+            row.active = shading.render_pass == "COMBINED"
+            row.prop(overlay, "show_look_dev")
+
+
+class VIEW3D_PT_overlay_text(Panel): # bfa - options
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_parent_id = "VIEW3D_PT_overlay"
+    bl_label = "Options" # bfa - options
+
+    def draw(self, context):
+        layout = self.layout
+
+        view = context.space_data
+        overlay = view.overlay
+        display_all = overlay.show_overlays
 
         # bfa - indent the Options group, matching other panels.
         col = layout.column(align=True)
@@ -9598,43 +9633,12 @@ class VIEW3D_PT_overlay_guides(Panel):
 
         row = sub.row()
         row.separator()
+        row.prop(overlay, "show_performance", text="Performance")
         row.prop(overlay, "show_stats", text="Statistics")
+
+        row = sub.row()
+        row.separator()
         row.prop(overlay, "show_text", text="Text Info")
-
-        # bfa - Camera and HDRi Preview options placed at the bottom,
-        # since they're only relevant in specific view modes.
-        if view.region_3d.view_perspective == "CAMERA" or shading.type == "MATERIAL":
-            row = sub.row()
-            row.separator()
-
-        if view.region_3d.view_perspective == "CAMERA":
-            row.prop(overlay, "show_camera_guides", text="Camera Guides")
-
-        if shading.type == "MATERIAL":
-            row = row if view.region_3d.view_perspective != "CAMERA" else row.row()
-            row.active = shading.render_pass == "COMBINED"
-            row.prop(overlay, "show_look_dev")
-
-
-class VIEW3D_PT_overlay_text(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_parent_id = "VIEW3D_PT_overlay"
-    bl_label = "Text"
-
-    def draw(self, context):
-        layout = self.layout
-
-        view = context.space_data
-        overlay = view.overlay
-
-        split = layout.split()
-        sub = split.column(align=True)
-        sub.prop(overlay, "show_text", text="General Info")
-        sub.prop(overlay, "show_stats", text="Statistics")
-
-        sub = split.column(align=True)
-        sub.prop(overlay, "show_performance", text="Performance")
 
 
 class VIEW3D_PT_overlay_object(Panel):
