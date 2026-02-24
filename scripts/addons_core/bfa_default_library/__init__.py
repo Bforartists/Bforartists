@@ -44,7 +44,7 @@ from . import utility
 bl_info = {
     "name": "Default Asset Library",
     "author": "Andres (Draise) Stephens, Ereaser45-Studios, Iyad Ahmed, Juan Carlos Aragon",
-    "version": (1, 2, 8),
+    "version": (1, 2, 9),
     "blender": (4, 4, 3),
     "location": "Asset Browser>Default Library",
     "description": "Adds a modular default asset library and addon with wizards and complementary operators",
@@ -56,14 +56,16 @@ bl_info = {
 }
 
 # Addon identification - MUST BE UNIQUE for each compiled parent addon
-PARENT_ADDON_UNIQUE_ID = "default_asset_library_1_2_7"
+# TO DO: Update hte version in the bl_info above as well for consistency
+PARENT_ADDON_UNIQUE_ID = "default_asset_library_1_2_9"
 PARENT_ADDON_DISPLAY_NAME = "Default Asset Library"
-PARENT_ADDON_VERSION = (1, 2, 8)
+PARENT_ADDON_VERSION = (1, 2, 9)
 
 # Child addon info - this is the functional addon
-CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_2_7"
+# TO DO: Update the child_addon/blender_manifest.toml to reflect this version as well for consistency
+CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_0_1"
 CHILD_ADDON_DISPLAY_NAME = "Default Asset Library Functions"
-CHILD_ADDON_VERSION = (1, 2, 8)
+CHILD_ADDON_VERSION = (1, 0, 1)
 
 # Library configuration - Only include libraries that exist in your packaged addon
 CENTRAL_LIB_SUBFOLDERS = [
@@ -144,9 +146,11 @@ def copy_child_addon_to_user_prefs():
                     shutil.copy2(src_file, dest_file)
                     #print(f"  ✓ Copied Python: {file}")
                 elif file.endswith('.toml'):
-                    # Skip manifest files - child addon is not a separate addon
-                    #print(f"  ⚠ Skipping manifest file: {file}")
-                    pass
+                    # Copy manifest files to avoid empty manifest warnings
+                    src_file = os.path.join(root, file)
+                    dest_file = os.path.join(dest_dir, file)
+                    shutil.copy2(src_file, dest_file)
+                    #print(f"  ✓ Copied manifest: {file}")
                 else:
                     # Copy other files (if any)
                     src_file = os.path.join(root, file)
@@ -156,10 +160,30 @@ def copy_child_addon_to_user_prefs():
 
         #print(f"✅ Child addon copied to: {child_addon_dst}")
 
-        # Verify the copy worked - only check for Python files
+        # Verify the copy worked - check for Python files and manifest
         init_file = p.join(child_addon_dst, "__init__.py")
+        manifest_file = p.join(child_addon_dst, "blender_manifest.toml")
 
         if p.exists(init_file):
+            # Double-check that manifest file was copied
+            if not p.exists(manifest_file):
+                # Try to copy from source again
+                source_manifest = p.join(child_addon_src, "blender_manifest.toml")
+                if p.exists(source_manifest):
+                    shutil.copy2(source_manifest, manifest_file)
+                    #print(f"✓ Re-copied manifest from source: {source_manifest}")
+                else:
+                    # Create a minimal blender_manifest.toml if missing
+                    with open(manifest_file, 'w') as f:
+                        f.write('''[build-system]
+                                requires = ["setuptools"]
+                                build-backend = "setuptools.build_meta"
+
+                                [project]
+                                name = "default_asset_library_functions"
+                                version = "1.0.1"
+                                ''')
+                    #print(f"✓ Created minimal blender_manifest.toml")
             #print(f"✅ Verification: __init__.py present")
             return True
         else:
@@ -803,7 +827,12 @@ def register_library(force_reregister=False):
         if lib_name in libraries_to_create:
             # Library doesn't exist, create it
             try:
-                bpy.ops.preferences.asset_library_add(directory=library_path)
+                # Check Blender version for compatibility with online assets
+                # Blender 5.1+ requires 'type' parameter, earlier versions don't support it
+                if bpy.app.version >= (5, 1, 0):
+                    bpy.ops.preferences.asset_library_add(directory=library_path, type='LOCAL')
+                else:
+                    bpy.ops.preferences.asset_library_add(directory=library_path)
 
                 # Find the newly created library and set its name
                 for i, lib in enumerate(prefs.filepaths.asset_libraries):
@@ -847,6 +876,26 @@ def unregister_library(full_cleanup=False):
         else:
             # Update library presence without removing tracking
             utility.update_addon_in_central_library(parent_addon_info, [], central_base, p.dirname(__file__))
+
+            # Check which libraries are still used by other addons
+            tracking_data = utility.read_addon_tracking(central_base)
+            used_libraries = set()
+            for addon_data in tracking_data.values():
+                used_libraries.update(addon_data.get('libraries', []))
+
+            # Remove libraries that are no longer used
+            try:
+                prefs = bpy.context.preferences
+                for lib_name in CENTRAL_LIB_SUBFOLDERS:
+                    if lib_name not in used_libraries:
+                        lib_path = p.join(central_base, lib_name)
+                        lib_index = get_lib_path_index(prefs, lib_name, lib_path)
+                        if lib_index != -1:
+                            bpy.ops.preferences.asset_library_remove(index=lib_index)
+                            print(f"✓ Removed unused library: {lib_name}")
+            except Exception as e:
+                print(f"⚠ Could not remove unused libraries from preferences: {e}")
+
 
         # Check if no other addons are using the central library
         active_addons = utility.get_active_addons_count(central_base)
