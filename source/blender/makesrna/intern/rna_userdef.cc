@@ -9,6 +9,8 @@
 #include <climits>
 #include <cstdlib>
 
+#include "CLG_log.h"
+
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_userdef_types.h"
@@ -38,6 +40,8 @@
 #include "BLT_lang.hh"
 
 namespace blender {
+
+static CLG_LogRef LOG = {"preferncez"};
 
 const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_INTERFACE, "INTERFACE", ICON_UI, "Interface", ""}, /* BFA - Added Icons */
@@ -1638,8 +1642,6 @@ static void rna_experimental_no_data_block_packing_update(bContext *C, PointerRN
 #else
 
 namespace blender {
-
-static CLG_LogRef LOG = {"preferncez"};
 
 #  define USERDEF_TAG_DIRTY_PROPERTY_UPDATE_ENABLE \
     RNA_define_fallback_property_update(0, "rna_userdef_is_dirty_update")
