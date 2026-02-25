@@ -1,0 +1,77 @@
+# bl_extension.toml
+schema_version = "2.0.0"
+
+# Example of manifest file for a Blender extension
+# Change the values according to your extension
+id = "modular_child_addons"
+name = "Default Asset Library Functions"
+version = "1.0.1"
+blender_version_min = "4.4.0"
+author = "Andres (Draise) Stephens"
+maintainer = "Andres (Draise) Stephens"
+tagline = "Default Asset Library Functions for wizards and operators"
+type = "add-on"
+description = "These functions are bundled with the Default Asset Library addon for wizards and library operators. This is only a symbolic addon entry. You can safely uninstall without a problem."
+license = ["SPDX:GPL-3.0-or-later",]
+repository = "https://github.com/Bforartists/Bforartists"
+warning = "This is automatically copied to the user preferences when the Default Asset Library addon is installed or updated."
+
+# # Optional: link to documentation, support, source files, etc
+website = "https://www.bforartists.de/data/manualbfa4/28.1_Asset_Browser_-_Default_Asset_LIbrary.pdf"
+
+# # Optional: Blender version that the extension does not support, earlier versions are supported.
+# # This can be omitted and defined later on the extensions platform if an issue is found.
+# blender_version_max = "5.1.0"
+
+# License conforming to https://spdx.org/licenses/ (use "SPDX: prefix)
+# https://docs.blender.org/manual/en/dev/advanced/extensions/licenses.html
+# license = [
+#   "SPDX:GPL-3.0-or-later",
+# ]
+# # Optional: required by some licenses.
+# copyright = [
+#   "2002-2024 Developer Name",
+#   "1998 Company Name",
+# ]
+
+# # Optional: list of supported platforms. If omitted, the extension will be available in all operating systems.
+# platforms = ["windows-x64", "macos-arm64", "linux-x64"]
+# # Other supported platforms: "windows-arm64", "macos-x64"
+
+# # Optional: bundle 3rd party Python modules.
+# # https://docs.blender.org/manual/en/dev/advanced/extensions/python_wheels.html
+# wheels = [
+#   "./wheels/hexdump-3.3-py3-none-any.whl",
+#   "./wheels/jsmin-3.0.1-py3-none-any.whl",
+# ]
+
+# # Optional: add-ons can list which resources they will require:
+# # * files (for access of any filesystem operations)
+# # * network (for internet access)
+# # * clipboard (to read and/or write the system clipboard)
+# # * camera (to capture photos and videos)
+# # * microphone (to capture audio)
+# #
+# # If using network, remember to also check `bpy.app.online_access`
+# # https://docs.blender.org/manual/en/dev/advanced/extensions/addons.html#internet-access
+# #
+# # For each permission it is important to also specify the reason why it is required.
+# # Keep this a single short sentence without a period (.) at the end.
+# # For longer explanations use the documentation or detail page.
+#
+# [permissions]
+# network = "Need to sync motion-capture data to server"
+# files = "Import/export FBX from/to disk"
+# clipboard = "Copy and paste bone transforms"
+
+# # Optional: advanced build settings.
+# # https://docs.blender.org/manual/en/dev/advanced/extensions/command_line_arguments.html#command-line-args-extension-build
+# [build]
+# # These are the default build excluded patterns.
+# # You only need to edit them if you want different options.
+# paths_exclude_pattern = [
+#   "__pycache__/",
+#   "/.git/",
+#   "/*.zip",
+# ]
+

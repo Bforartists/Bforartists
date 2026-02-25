@@ -16,6 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Uninstalling this should not be done by the user
+# import bpy
+
 # -----------------------------------------------------------------------------
 # Operators Module Initialization
 # Central registry for all operator classes
