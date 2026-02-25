@@ -428,6 +428,7 @@ static void rna_userdef_asset_library_path_set(PointerRNA *ptr, const char *valu
 {
   bUserAssetLibrary *library = static_cast<bUserAssetLibrary *>(ptr->data);
   BKE_preferences_asset_library_path_set(library, value);
+  CLOG_WARN(&LOG, "Bforartists lifts this edit only param, avoid setting it through bpy.");
 }
 
 int rna_userdef_asset_library_path_editable(const PointerRNA *ptr, const char **r_info)
@@ -435,7 +436,7 @@ int rna_userdef_asset_library_path_editable(const PointerRNA *ptr, const char **
   bUserAssetLibrary *library = (bUserAssetLibrary *)ptr->data;
   if ((library->flag & ASSET_LIBRARY_USE_REMOTE_URL) != 0) {
     *r_info = N_("The download cache directory of remote asset libraries cannot be changed");
-    return PropertyFlag(0);
+    // return PropertyFlag(0); // bfa disabled this and warn
   }
 
   return PROP_EDITABLE;
@@ -1637,6 +1638,8 @@ static void rna_experimental_no_data_block_packing_update(bContext *C, PointerRN
 #else
 
 namespace blender {
+
+static CLG_LogRef LOG = {"preferncez"};
 
 #  define USERDEF_TAG_DIRTY_PROPERTY_UPDATE_ENABLE \
     RNA_define_fallback_property_update(0, "rna_userdef_is_dirty_update")
