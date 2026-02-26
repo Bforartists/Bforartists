@@ -53,6 +53,12 @@ class MemLeakPrinter {
        */
       abort();
     }
+    else {
+      /* When not failing on memory leak, we should still exit cleanly to avoid access violations
+       * that can occur when other static destructors run after the memory list has been cleared.
+       * This prevents EXCEPTION_ACCESS_VIOLATION in ucrtbase.dll on Windows. */
+      exit(EXIT_SUCCESS);
+    }
   }
 };
 }  // namespace
