@@ -1343,7 +1343,9 @@ class PREFERENCES_OT_asset_library_move(Operator):
         "name",
         "path",
         "import_method",
-        "use_relative_path"
+        "use_relative_path",
+        "use_remote_url",
+        "remote_url"
     )
 
     def execute(self, context):
