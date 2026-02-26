@@ -41,7 +41,7 @@
 
 namespace blender {
 
-static CLG_LogRef LOG = {"preferncez"};
+static CLG_LogRef LOG = {"asset library"};
 
 const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_INTERFACE, "INTERFACE", ICON_UI, "Interface", ""}, /* BFA - Added Icons */
