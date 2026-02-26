@@ -446,7 +446,7 @@ int rna_userdef_asset_library_path_editable(const PointerRNA *ptr, const char **
   return PROP_EDITABLE;
 }
 
-static void rna_userdef_asset_library_use_remote_url_set(PointerRNA *ptr, const char *value)
+static void rna_userdef_asset_library_use_remote_url_set(PointerRNA *ptr, bool value)
 {
   CLOG_WARN(&LOG, "Bforartists lifts `use_remote_url` not editable, avoid setting it through bpy.");
 }
