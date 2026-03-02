@@ -722,6 +722,39 @@ static void rna_userdef_asset_library_remove(bContext *C, ReportList *reports, P
   USERDEF_TAG_DIRTY;
 }
 
+static void rna_userdef_asset_library_move(bContext *C, ReportList *reports, int from_index, int to_index)
+{
+  const int count = BLI_listbase_count(&U.asset_libraries);
+  
+  if (from_index < 0 || from_index >= count || to_index < 0 || to_index >= count) {
+    BKE_reportf(reports, RPT_ERROR, "Invalid indices: from '%d' to '%d'", from_index, to_index);
+    return;
+  }
+
+  if (!BLI_listbase_move_index(&U.asset_libraries, from_index, to_index)) {
+    BKE_reportf(reports, RPT_ERROR, "Could not move asset library from index '%d' to '%d'", from_index, to_index);
+    return;
+  }
+
+  /* Update active library index if needed. */
+  if (U.active_asset_library == from_index) {
+    U.active_asset_library = to_index;
+  }
+  else if (from_index < U.active_asset_library && to_index >= U.active_asset_library) {
+    U.active_asset_library--;
+  }
+  else if (from_index > U.active_asset_library && to_index <= U.active_asset_library) {
+    U.active_asset_library++;
+  }
+
+  ed::asset::list::clear_all_library(C);
+
+  /* Trigger refresh for the Asset Browser. */
+  WM_main_add_notifier(NC_SPACE | ND_SPACE_ASSET_PARAMS, nullptr);
+
+  USERDEF_TAG_DIRTY;
+}
+
 static bUserExtensionRepo *rna_userdef_extension_repo_new(const char *name,
                                                           const char *module,
                                                           const char *custom_directory,
@@ -7211,6 +7244,14 @@ static void rna_def_userdef_asset_library_collection(BlenderRNA *brna, PropertyR
   parm = RNA_def_pointer(func, "library", "UserAssetLibrary", "", "");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, ParameterFlag(0));
+
+  func = RNA_def_function(srna, "move", "rna_userdef_asset_library_move");
+  RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_USE_CONTEXT | FUNC_USE_REPORTS);
+  RNA_def_function_ui_description(func, "Move an asset library to a different position");
+  parm = RNA_def_int(func, "from_index", -1, INT_MIN, INT_MAX, "From Index", "Index to move", 0, 10000);
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  parm = RNA_def_int(func, "to_index", -1, INT_MIN, INT_MAX, "To Index", "Target index", 0, 10000);
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 }
 
 static void rna_def_userdef_extension_repos_collection(BlenderRNA *brna, PropertyRNA *cprop)
