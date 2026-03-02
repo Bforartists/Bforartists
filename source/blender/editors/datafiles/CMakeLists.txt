@@ -26,18 +26,29 @@ set(LIB
 # See: `make icons_geom` and the script `./release/datafiles/blender_icons_geom_update.py`.
 set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   # BEGIN ICON_GEOM_NAMES
+  Cone
+  asset.grease_pencil
+  asset.grease_pencil_block
+  asset.grease_pencil_eraser_soft
+  asset.grease_pencil_ink_a
+  asset.grease_pencil_marker
+  asset.grease_pencil_pen
+  asset.pencil
   brush.draw
   brush.generic
   brush.gpencil_draw.erase
   brush.gpencil_draw.fill
+  brush.paint_texture.airbrush
   brush.paint_texture.blur
   brush.paint_texture.clone
   brush.paint_texture.fill
   brush.paint_texture.mask
+  brush.paint_texture.multiply
   brush.paint_texture.smear
   brush.paint_texture.soften
   brush.paint_vertex.average
   brush.paint_vertex.blur
+  brush.paint_vertex.replace
   brush.paint_vertex.smear
   brush.paint_weight.average
   brush.paint_weight.blur
@@ -49,13 +60,16 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.particle.puff
   brush.particle.smooth
   brush.particle.weight
+  brush.sculpt
   brush.sculpt.draw_face_sets
   brush.sculpt.mask
-  brush.sculpt
+  brush.sculpt.mask.old
   brush.sculpt.paint
   brush.uv_sculpt.grab
   brush.uv_sculpt.pinch
   brush.uv_sculpt.relax
+  cursor.suzanne
+  cursor.transform.rotate
   none
   ops.armature.bone.roll
   ops.armature.extrude_cursor
@@ -66,11 +80,15 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.curve.pen
   ops.curve.radius
   ops.curve.vertex_random
+  ops.curves.sculpt_add
+  ops.curves.sculpt_delete
+  ops.curves.sculpt_density
   ops.generic.cursor
   ops.generic.select
   ops.generic.select_box
   ops.generic.select_circle
   ops.generic.select_lasso
+  ops.generic.select_line
   ops.generic.select_paint
   ops.gpencil.draw
   ops.gpencil.draw.eraser
@@ -140,6 +158,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.sculpt.lasso_face_set
   ops.sculpt.lasso_hide
   ops.sculpt.lasso_mask
+  ops.sculpt.lasso_mask.old
   ops.sculpt.lasso_trim
   ops.sculpt.line_face_set
   ops.sculpt.line_hide
@@ -167,10 +186,13 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.transform.tilt
   ops.transform.tosphere
   ops.transform.transform
+  ops.transform.transformhvjfhj
   ops.transform.translate
   ops.transform.vert_slide
   ops.transform.vertex_random
   ops.view3d.ruler
+  tool_icon.pixeltest
+  tool_icon.pixeltest_small
   # END ICON_GEOM_NAMES
 )
 
@@ -524,6 +546,9 @@ if(WITH_BLENDER)
       curve_trim
       curves
       curves_data
+      curves_sculpt_add
+      curves_sculpt_delete
+      curves_sculpt_density
       cut
       cut_links
       cycles_modifier
@@ -1498,6 +1523,8 @@ if(WITH_BLENDER)
       paint_blur
       paint_darken
       paint_draw
+      paint_draw_line
+      paint_draw_poly
       paint_lighten
       paint_mix
       paint_multiply
