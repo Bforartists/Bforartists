@@ -7032,6 +7032,7 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", ASSET_LIBRARY_USE_REMOTE_URL);
   RNA_def_property_ui_text(prop, "Use Remote", "Synchronize the asset library with a remote URL");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+}
 
 static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
 {
