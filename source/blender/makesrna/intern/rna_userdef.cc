@@ -9,8 +9,6 @@
 #include <climits>
 #include <cstdlib>
 
-#include "CLG_log.h"
-
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_userdef_types.h"
@@ -40,8 +38,6 @@
 #include "BLT_lang.hh"
 
 namespace blender {
-
-static CLG_LogRef LOG = {"asset library"};
 
 const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_INTERFACE, "INTERFACE", ICON_UI, "Interface", ""}, /* BFA - Added Icons */
@@ -440,15 +436,10 @@ int rna_userdef_asset_library_path_editable(const PointerRNA *ptr, const char **
   bUserAssetLibrary *library = (bUserAssetLibrary *)ptr->data;
   if ((library->flag & ASSET_LIBRARY_USE_REMOTE_URL) != 0) {
     *r_info = N_("The download cache directory of remote asset libraries cannot be changed");
-    // return PropertyFlag(0); // bfa editable - disabled this and warn
+    return PropertyFlag(0);
   }
 
   return PROP_EDITABLE;
-}
-
-static void rna_userdef_asset_library_use_remote_url_set(PointerRNA *ptr, bool value)
-{
-  CLOG_WARN(&LOG, "Bforartists lifts `use_remote_url` not editable, avoid setting it through bpy.");
 }
 
 static void rna_userdef_asset_libraries_refresh(bContext *C, PointerRNA *ptr)
@@ -7041,10 +7032,7 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_remote_url", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", ASSET_LIBRARY_USE_REMOTE_URL);
   RNA_def_property_ui_text(prop, "Use Remote", "Synchronize the asset library with a remote URL");
-  // RNA_def_property_clear_flag(prop, PROP_EDITABLE); // bfa editable
-  RNA_def_property_boolean_funcs(prop, nullptr, "rna_userdef_asset_library_use_remote_url_set");
-
-}
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
 static void rna_def_userdef_filepaths_extension_repo(BlenderRNA *brna)
 {
