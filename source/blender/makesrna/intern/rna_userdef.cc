@@ -428,7 +428,6 @@ static void rna_userdef_asset_library_path_set(PointerRNA *ptr, const char *valu
 {
   bUserAssetLibrary *library = static_cast<bUserAssetLibrary *>(ptr->data);
   BKE_preferences_asset_library_path_set(library, value);
-  CLOG_WARN(&LOG, "Bforartists lifts `path` not editable, avoid setting it through bpy.");
 }
 
 int rna_userdef_asset_library_path_editable(const PointerRNA *ptr, const char **r_info)
