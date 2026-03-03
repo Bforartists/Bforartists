@@ -712,6 +712,7 @@ static void rna_userdef_asset_library_remove(bContext *C, ReportList *reports, P
   USERDEF_TAG_DIRTY;
 }
 
+/* BFA: Move asset library to new position and update active library index */
 static void rna_userdef_asset_library_move(bContext *C, ReportList *reports, int from_index, int to_index)
 {
   const int count = BLI_listbase_count(&U.asset_libraries);

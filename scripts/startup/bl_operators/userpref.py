@@ -1353,7 +1353,7 @@ class PREFERENCES_OT_asset_library_move(Operator):
             self.report({'INFO'}, "Library is already at the end of the list.")
             return {'CANCELLED'}
 
-        # Use the new move function to reorder the collection
+        # BFA: Use the RNA move function to reorder asset libraries in the collection
         filepaths.asset_libraries.move(active_library_index, new_index)
 
         return {'FINISHED'}
