@@ -76,7 +76,8 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_WORKSPACE_KEYMAPS, "WORKSPACE_KEYMAPS", 0, "Keymap Overrides", ""},
 #endif
     RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_ASSETS, "ASSETS", 0, "Asset Libraries", ""},   /* BFA TODO: Add Icon */
+    {USER_SECTION_ASSETS, "ASSETS", ICON_ASSET_MANAGER, "Asset Libraries", ""}, /* BFA - Added Icons */
+    RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_INPUT, "INPUT", ICON_INPUT_BOOL, "Input", ""}, /* BFA - Added Icons */
     {USER_SECTION_NAVIGATION,
      "NAVIGATION",
