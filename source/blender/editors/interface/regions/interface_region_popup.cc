@@ -544,12 +544,12 @@ void popup_block_scrolltest(Block *block)
   /* mark buttons overlapping arrows, if we have them */
   for (Button &bt : block->buttons()) {
     if (block->flag & BLOCK_CLIPBOTTOM) {
-      if (bt.rect.ymax < block->rect.ymin + UI_MENU_SCROLL_MOUSE) {
+      if (bt.rect.ymax < block->rect.ymin + UI_MENU_SCROLL_MOUSE / block->aspect) {
         bt.flag |= UI_SCROLLED;
       }
     }
     if (block->flag & BLOCK_CLIPTOP) {
-      if (bt.rect.ymin > block->rect.ymax - UI_MENU_SCROLL_MOUSE) {
+      if (bt.rect.ymin > block->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect) {
         bt.flag |= UI_SCROLLED;
       }
     }
@@ -872,7 +872,8 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
       ymin = min_ff(ymin, bt.rect.ymin);
       ymax = max_ff(ymax, bt.rect.ymax);
     }
-    const int scroll_pad = block_is_menu(block) ? UI_MENU_SCROLL_PAD : UI_UNIT_Y * 0.5f;
+    const float scroll_pad = (block_is_menu(block) ? UI_MENU_SCROLL_PAD : UI_UNIT_Y * 0.5f) /
+                             block->aspect;
     const float scroll_min = std::min(block->rect.ymax - ymax - scroll_pad, 0.0f);
     const float scroll_max = std::max(block->rect.ymin - ymin + scroll_pad, 0.0f);
     handle->scrolloffset = std::clamp(handle->scrolloffset, scroll_min, scroll_max);
@@ -885,7 +886,7 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     }
     /* Layout panels are relative to `block->rect.ymax`. Rather than a
      * scroll, this is a offset applied due to the overflow at the top. */
-    layout_panel_popup_scroll_apply(block->panel, -scroll_min);
+    layout_panel_popup_scroll_apply(block->panel, -scroll_min - scroll_pad);
   }
   /* Apply popup scroll offset to layout panels. */
   layout_panel_popup_scroll_apply(block->panel, handle->scrolloffset);

@@ -4176,7 +4176,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "autokey_mode", AUTOKEY_ON);
   RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
   RNA_def_property_ui_text(
-      prop, "Auto Keying", "Automatic keyframe insertion for objects, bones and masks");
+      prop, "Auto Keying", "Automatically insert keyframes on modified properties");
   RNA_def_property_ui_icon(prop, ICON_RECORD_OFF, 1);
   RNA_def_property_update(prop, NC_ANIMATION | ND_KEYFRAME_AUTO, nullptr);
 
@@ -4184,9 +4184,10 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "autokey_mode");
   RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
   RNA_def_property_enum_items(prop, auto_key_items);
-  RNA_def_property_ui_text(prop,
-                           "Auto-Keying Mode",
-                           "Mode of automatic keyframe insertion for objects, bones and masks");
+  RNA_def_property_ui_text(
+      prop,
+      "Auto-Keying Mode",
+      "Can add additional constraints on when auto keying can insert keyframes");
 
   prop = RNA_def_property(srna, "use_record_with_nla", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "keying_flag", AUTOKEY_FLAG_LAYERED_RECORD);
@@ -8730,6 +8731,31 @@ void RNA_def_scene(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem playback_loop_mode_items[] = {
+      {SCE_LOOP_MODE_INFINITE,
+       "INFINITE",
+       0,
+       "Infinite",
+       "After the last frame, jump back to the first and keep playing, inifinitely"},
+      {SCE_LOOP_MODE_STOP_END_FRAME,
+       "STOP_END_FRAME",
+       0,
+       "Stop at End Frame",
+       "Stop playback at the last frame, without looping"},
+      {SCE_LOOP_MODE_STOP_START_FRAME,
+       "STOP_START_FRAME",
+       0,
+       "Stop at Start Frame",
+       "After the last frame, jump back to the first and stop playback"},
+      {SCE_LOOP_MODE_RESTORE,
+       "RESTORE",
+       0,
+       "Restore Frame",
+       "After the last frame, stop at the frame the playback started from"},
+      {SCE_LOOP_MODE_BOUNCE, "BOUNCE", 0, "Bounce", "At the last frame, reverse playback"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   static const EnumPropertyItem time_jump_unit_items[] = {
       {SCE_TIME_JUMP_FRAME, "FRAME", 0, "Frame", "Jump by frames"},
       {SCE_TIME_JUMP_SECOND, "SECOND", 0, "Second", "Jump by seconds"},
@@ -8970,6 +8996,12 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, sync_mode_items);
   RNA_def_property_enum_default(prop, AUDIO_SYNC);
   RNA_def_property_ui_text(prop, "Sync Mode", "How to sync playback");
+  RNA_def_property_update(prop, NC_SCENE, nullptr);
+
+  prop = RNA_def_property(srna, "playback_loop_mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, playback_loop_mode_items);
+  RNA_def_property_enum_default(prop, SCE_LOOP_MODE_INFINITE);
+  RNA_def_property_ui_text(prop, "Loop Mode", "What to do when playback reaches the last frame");
   RNA_def_property_update(prop, NC_SCENE, nullptr);
 
   /* Nodes (Compositing) */

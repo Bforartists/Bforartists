@@ -3,7 +3,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-from bpy.types import Menu, Panel
+from bpy.types import (
+    Menu,
+)
 from bpy.app.translations import (
     contexts as i18n_contexts,
     pgettext_iface as iface_,
@@ -2366,6 +2368,10 @@ class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
 
 
 def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact=False):
+    if brush.gpencil_vertex_brush_type == 'DRAW':
+        layout.prop(brush, "blend", text="Blend")
+        layout.separator()
+
     UnifiedPaintPanel.prop_unified(
         layout,
         context,

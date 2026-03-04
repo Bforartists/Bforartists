@@ -8,10 +8,7 @@
 
 #include "BKE_node_runtime.hh"
 
-#include "COM_context.hh"
 #include "COM_domain.hh"
-#include "COM_node_group_operation.hh"
-#include "COM_realize_on_domain_operation.hh"
 
 #include "DEG_depsgraph_query.hh"
 
@@ -20,25 +17,22 @@
 #include "IMB_colormanagement.hh"
 #include "IMB_imbuf.hh"
 
-#include "SEQ_render.hh"
+#include "SEQ_sequencer.hh"
 
+#include "cache/compositor_cache.hh"
+#include "compositor.hh"
 #include "effects.hh"
 #include "render.hh"
 
 namespace blender::seq {
 
-class CompositorEffectContext : public compositor::Context {
-  const RenderData &render_data_;
+class CompositorEffectContext : public CompositorContext {
   bNodeTree *node_group_;
 
   ImBuf *input_1_;
   ImBuf *input_2_;
   ImBuf *output_;
   float factor_;
-  float2 result_translation_ = float2(0, 0);
-  const Strip *strip_;
-  /* Identifies if the output of the viewer was written. */
-  bool viewer_was_written_ = false;
 
  public:
   CompositorEffectContext(compositor::StaticCacheManager &cache_manager,
@@ -49,30 +43,13 @@ class CompositorEffectContext : public compositor::Context {
                           ImBuf *output,
                           float factor,
                           const Strip &strip)
-      : compositor::Context(cache_manager),
-        render_data_(render_data),
+      : CompositorContext(cache_manager, render_data, strip),
         node_group_(node_tree),
         input_1_(input_1),
         input_2_(input_2),
         output_(output),
-        factor_(factor),
-        strip_(&strip)
+        factor_(factor)
   {
-  }
-
-  float2 get_result_translation() const
-  {
-    return result_translation_;
-  }
-
-  const Scene &get_scene() const override
-  {
-    return *render_data_.scene;
-  }
-
-  bool treat_viewer_as_group_output() const override
-  {
-    return true;
   }
 
   compositor::Domain get_compositing_domain() const override
@@ -80,57 +57,11 @@ class CompositorEffectContext : public compositor::Context {
     return compositor::Domain(int2(this->output_->x, this->output_->y));
   }
 
-  void write_output(const compositor::Result &result)
-  {
-    /* Do not write the output if the viewer output was already written. */
-    if (viewer_was_written_) {
-      return;
-    }
-
-    if (result.is_single_value()) {
-      IMB_rectfill(this->output_, result.get_single_value<compositor::Color>());
-      return;
-    }
-
-    result_translation_ = result.domain().transformation.location();
-    const int2 size = result.domain().data_size;
-    if (size != int2(this->output_->x, this->output_->y)) {
-      /* Output size is different, need to allocate appropriately sized buffer. */
-      IMB_free_all_data(this->output_);
-      this->output_->x = size.x;
-      this->output_->y = size.y;
-      IMB_alloc_float_pixels(this->output_, 4, false);
-    }
-    std::memcpy(this->output_->float_buffer.data,
-                result.cpu_data().data(),
-                IMB_get_pixel_count(this->output_) * sizeof(float) * 4);
-  }
-
   void write_viewer(compositor::Result &result) override
   {
     /* Within compositor effect, output and viewer output function the same. */
-    this->write_output(result);
+    this->write_output(result, *this->output_);
     viewer_was_written_ = true;
-  }
-
-  const Strip *get_strip() const override
-  {
-    return strip_;
-  }
-
-  bool use_gpu() const override
-  {
-    return false;
-  }
-
-  compositor::NodeGroupOutputTypes needed_outputs() const
-  {
-    compositor::NodeGroupOutputTypes needed_outputs =
-        compositor::NodeGroupOutputTypes::GroupOutputNode;
-    if (!render_data_.render) {
-      needed_outputs |= compositor::NodeGroupOutputTypes::ViewerNode;
-    }
-    return needed_outputs;
   }
 
   void evaluate()
@@ -144,16 +75,7 @@ class CompositorEffectContext : public compositor::Context {
                                             nullptr,
                                             node_group.active_viewer_key,
                                             bke::NODE_INSTANCE_KEY_BASE);
-
-    /* Set the reference count for the outputs, only the first color output is actually needed,
-     * while the rest are ignored. */
-    node_group.ensure_interface_cache();
-    for (const bNodeTreeInterfaceSocket *output_socket : node_group.interface_outputs()) {
-      const bool is_first_output = output_socket == node_group.interface_outputs().first();
-      Result &output_result = node_group_operation.get_result(output_socket->identifier);
-      const bool is_color = output_result.type() == ResultType::Color;
-      output_result.set_reference_count(is_first_output && is_color ? 1 : 0);
-    }
+    set_output_refcount(node_group, node_group_operation);
 
     /* Map the inputs to the operation. */
     Vector<std::unique_ptr<Result>> inputs;
@@ -172,15 +94,13 @@ class CompositorEffectContext : public compositor::Context {
       else if (color_counter == 0 && this->input_1_) {
         /* First input image. */
         input_result = new Result(this->create_result(ResultType::Color, ResultPrecision::Full));
-        input_result->wrap_external(this->input_1_->float_buffer.data,
-                                    int2(this->input_1_->x, this->input_1_->y));
+        create_result_from_input(*input_result, *this->input_1_);
         color_counter++;
       }
       else if (color_counter == 1 && this->input_2_) {
         /* Second input image. */
         input_result = new Result(this->create_result(ResultType::Color, ResultPrecision::Full));
-        input_result->wrap_external(this->input_2_->float_buffer.data,
-                                    int2(this->input_2_->x, this->input_2_->y));
+        create_result_from_input(*input_result, *this->input_2_);
         color_counter++;
       }
       else {
@@ -194,40 +114,9 @@ class CompositorEffectContext : public compositor::Context {
     }
 
     node_group_operation.evaluate();
-
-    /* Write the outputs of the operation. */
-    for (const bNodeTreeInterfaceSocket *output_socket : node_group.interface_outputs()) {
-      Result &output_result = node_group_operation.get_result(output_socket->identifier);
-      if (!output_result.should_compute()) {
-        continue;
-      }
-
-      /* Realize the output transforms if needed. */
-      const InputDescriptor input_descriptor = {ResultType::Color,
-                                                InputRealizationMode::OperationDomain};
-      SimpleOperation *realization_operation = RealizeOnDomainOperation::construct_if_needed(
-          *this, output_result, input_descriptor, output_result.domain());
-      if (realization_operation) {
-        realization_operation->map_input_to_result(&output_result);
-        realization_operation->evaluate();
-        Result &realized_output_result = realization_operation->get_result();
-        this->write_output(realized_output_result);
-        realized_output_result.release();
-        delete realization_operation;
-        continue;
-      }
-
-      this->write_output(output_result);
-      output_result.release();
-    }
+    this->write_outputs(node_group, node_group_operation, *this->output_);
   }
 };
-
-static bool is_linear_float_buffer(const ImBuf *image)
-{
-  return image->float_buffer.data &&
-         IMB_colormanagement_space_is_scene_linear(image->float_buffer.colorspace);
-}
 
 static ImBuf *make_linear_float_buffer(ImBuf *src)
 {
@@ -294,13 +183,27 @@ static ImBuf *do_compositor_effect(const RenderData *context,
     ImBuf *linear_src1 = make_linear_float_buffer(src1);
     ImBuf *linear_src2 = make_linear_float_buffer(src2);
 
-    /* TODO: Should be persistent across evaluations. */
-    compositor::StaticCacheManager cache_manager;
-    CompositorEffectContext com_context(
-        cache_manager, *context, data->node_group, linear_src1, linear_src2, out, fac, *strip);
+    CompositorCache &com_cache = context->scene->ed->runtime->ensure_compositor_cache();
+    CompositorEffectContext com_context(com_cache.get_cache_manager(),
+                                        *context,
+                                        data->node_group,
+                                        linear_src1,
+                                        linear_src2,
+                                        out,
+                                        fac,
+                                        *strip);
+
+    const bool use_gpu = com_context.use_gpu();
+    if (use_gpu) {
+      render_begin_gpu(*context);
+    }
+    com_cache.recreate_if_needed(
+        com_context.use_gpu(), com_context.get_precision(), context->gpu_context);
     com_context.evaluate();
     com_context.cache_manager().reset();
-    // context.result_translation += com_context.get_result_translation(); //@TODO?
+    if (use_gpu) {
+      render_end_gpu(*context);
+    }
 
     if (linear_src1 != src1) {
       IMB_freeImBuf(linear_src1);
