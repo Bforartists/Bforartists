@@ -853,6 +853,7 @@ class ToolSelectPanelHelper:
                 panel="TOPBAR_PT_tool_fallback",
                 text=iface_(label, i18n_contexts.operator_default),
                 translate=False,
+                icon='TOOL_SETTINGS', # bfa - added icon
             )
 
         return tool
@@ -880,6 +881,7 @@ class ToolSelectPanelHelper:
             "workspace_tool_type",
             value='DEFAULT',
             text="Active Tool",
+            icon='TOOL_SETTINGS', # bfa - added icon
         )
         is_active_tool = (tool_settings.workspace_tool_type == 'DEFAULT')
 
@@ -896,6 +898,7 @@ class ToolSelectPanelHelper:
                 "wm.tool_set_by_id",
                 text=sub_item.label,
                 depress=is_active,
+                icon_value=ToolSelectPanelHelper._icon_value_from_icon_handle(sub_item.icon), # bfa - added icon
             )
             props.name = sub_item.idname
             props.as_fallback = True
