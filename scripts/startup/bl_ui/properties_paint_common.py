@@ -5,6 +5,7 @@
 import bpy
 from bpy.types import (
     Menu,
+    Panel,
 )
 from bpy.app.translations import (
     contexts as i18n_contexts,
