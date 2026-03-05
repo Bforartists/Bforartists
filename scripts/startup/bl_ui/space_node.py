@@ -691,6 +691,8 @@ class NODE_MT_node(Menu):
         layout.operator("transform.resize", icon="TRANSFORM_SCALE")
 
         layout.separator()
+        layout.operator("node.delete_copy_reconnect", text="Cut")
+        layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
         row = layout.row()
         row.operator_context = 'EXEC_DEFAULT'
@@ -1045,6 +1047,7 @@ class NODE_MT_context_menu(Menu):
 
             layout.separator()
 
+        layout.operator("node.delete_copy_reconnect", text="Cut") # BFA - WIP
         layout.operator("node.clipboard_copy", text="Copy", icon="COPYDOWN")
         layout.operator("node.clipboard_paste", text="Paste", icon="PASTEDOWN")
 
@@ -1132,6 +1135,7 @@ class NODE_PT_active_node_generic(Panel):
             text="",
         )
 
+        col = layout.column()
         col.prop(node, "show_options")
         col.prop(node, "mute")
 

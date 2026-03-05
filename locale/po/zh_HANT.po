@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.1.0 Beta (b'1fa1b22043cd')\n"
+"Project-Id-Version: Blender 5.1.0 Beta (b'fd269015ba63')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 10:28+0000\n"
+"POT-Creation-Date: 2026-03-02 13:27+0000\n"
 "PO-Revision-Date: 2026-02-15 20:12+0000\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hant/>\n"
@@ -5445,18 +5445,6 @@ msgid "Factor of Simplify using adaptive algorithm"
 msgstr "使用適應性演算法的簡化係數"
 
 
-msgid "Stroke"
-msgstr "筆觸"
-
-
-msgid "Fill"
-msgstr "填入"
-
-
-msgid "Both"
-msgstr "兩者"
-
-
 msgid "Active Layer"
 msgstr "作用分層"
 
@@ -5609,8 +5597,16 @@ msgid "Defines how vertex color affect to the strokes"
 msgstr "定義頂點色彩如何影響筆觸"
 
 
+msgid "Stroke"
+msgstr "筆觸"
+
+
 msgid "Vertex Color affects to Stroke only"
 msgstr "頂點色彩僅影響筆觸"
+
+
+msgid "Fill"
+msgstr "填入"
 
 
 msgid "Vertex Color affects to Fill only"
@@ -6885,44 +6881,53 @@ msgid "Blend Factor"
 msgstr "交混係數"
 
 
-msgid "Blend Type"
-msgstr "交混類型"
-
-
 msgid "Mode used to mix with texture output color"
 msgstr "用來混合紋理輸出色彩的模式"
 
 
-msgid "Mix"
-msgstr "混合"
-
-
+msgctxt "Color"
 msgid "Darken"
 msgstr "變暗"
 
 
+msgctxt "Color"
+msgid "Multiply"
+msgstr "相乘"
+
+
+msgctxt "Color"
 msgid "Lighten"
 msgstr "變亮"
 
 
-msgid "Screen"
-msgstr "螢幕"
-
-
-msgid "Overlay"
-msgstr "疊層"
-
-
+msgctxt "Color"
 msgid "Soft Light"
 msgstr "柔光"
 
 
+msgctxt "Color"
 msgid "Linear Light"
 msgstr "線性光"
 
 
-msgid "Divide"
-msgstr "除"
+msgctxt "Color"
+msgid "Hue"
+msgstr "色相"
+
+
+msgctxt "Color"
+msgid "Saturation"
+msgstr "飽和度"
+
+
+msgctxt "Color"
+msgid "Color"
+msgstr "色彩"
+
+
+msgctxt "Color"
+msgid "Value"
+msgstr "明度"
 
 
 msgid "Brightness"
@@ -11759,6 +11764,10 @@ msgid "Give randomness to the modified F-Curve"
 msgstr "給予修改的 F 曲線一些隨機感"
 
 
+msgid "Blend Type"
+msgstr "交混類型"
+
+
 msgid "Method of modifying the existing F-Curve"
 msgstr "修改既有 F 曲線的方法"
 
@@ -14571,6 +14580,10 @@ msgid "Blend mode"
 msgstr "交混模式"
 
 
+msgid "Divide"
+msgstr "除"
+
+
 msgid "List of Masking Layers"
 msgstr "遮罩分層列表"
 
@@ -15098,48 +15111,17 @@ msgid "View Normal Limit"
 msgstr "檢視法向限制"
 
 
-msgid "Blending Mode"
-msgstr "混合模式"
-
-
 msgid "Brush blending mode"
 msgstr "筆刷交混模式"
 
 
-msgid "Color Burn"
-msgstr "色彩加深"
-
-
-msgid "Linear Burn"
-msgstr "線性加深"
-
-
-msgid "Color Dodge"
-msgstr "色彩遮亮"
-
-
-msgid "Vivid Light"
-msgstr "強光"
-
-
-msgid "Pin Light"
-msgstr "針光"
-
-
+msgctxt "Color"
 msgid "Exclusion"
 msgstr "排除"
 
 
-msgid "Erase Alpha"
-msgstr "擦除 Alpha"
-
-
 msgid "Erase alpha while painting"
 msgstr "繪製時擦除 alpha"
-
-
-msgid "Add Alpha"
-msgstr "新增 Alpha"
 
 
 msgid "Add alpha while painting"
@@ -25551,6 +25533,10 @@ msgid "Specify how the modifier value is blended into the base value"
 msgstr "指定修改器的值如何與基礎值交混"
 
 
+msgid "Mix"
+msgstr "混合"
+
+
 msgid "Curve used for the curve mapping"
 msgstr "用於曲線映射的曲線"
 
@@ -25717,6 +25703,42 @@ msgstr "定義線條色彩修改器的基礎類型"
 
 msgid "Change line color along stroke"
 msgstr "沿筆觸變更線條色彩"
+
+
+msgid "Darken"
+msgstr "變暗"
+
+
+msgid "Color Burn"
+msgstr "色彩加深"
+
+
+msgid "Lighten"
+msgstr "變亮"
+
+
+msgid "Screen"
+msgstr "螢幕"
+
+
+msgid "Color Dodge"
+msgstr "色彩遮亮"
+
+
+msgid "Overlay"
+msgstr "疊層"
+
+
+msgid "Soft Light"
+msgstr "柔光"
+
+
+msgid "Linear Light"
+msgstr "線性光"
+
+
+msgid "Exclusion"
+msgstr "排除"
 
 
 msgid "Color ramp used to change line color"
@@ -26494,8 +26516,20 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Metaball"
+msgstr "變幻球"
+
+
 msgid "Read"
 msgstr "讀取"
+
+
+msgid "Show/Hide"
+msgstr "顯示/隱藏"
 
 
 msgid "Write"
@@ -26506,28 +26540,8 @@ msgid "Sample"
 msgstr "取樣"
 
 
-msgid "Clean Up"
-msgstr "清理"
-
-
 msgid "Primitives"
 msgstr "原形"
-
-
-msgid "Show/Hide"
-msgstr "顯示/隱藏"
-
-
-msgid "Special Characters"
-msgstr "特殊字元"
-
-
-msgid "Kerning"
-msgstr "字間微調"
-
-
-msgid "Metaball"
-msgstr "變幻球"
 
 
 msgid "Names"
@@ -26536,6 +26550,10 @@ msgstr "名稱"
 
 msgid "Bone Roll"
 msgstr "骨骼滾動"
+
+
+msgid "Clean Up"
+msgstr "清理"
 
 
 msgid "Pivot Point"
@@ -26566,10 +26584,6 @@ msgid "Vertex Group Locks"
 msgstr "頂點群組鎖定"
 
 
-msgid "Layout"
-msgstr "配置"
-
-
 msgid "Mirror"
 msgstr "鏡像"
 
@@ -26580,10 +26594,6 @@ msgstr "UV 映射處理"
 
 msgid "Local View"
 msgstr "區域檢視"
-
-
-msgid "Render Preview"
-msgstr "算繪預覽"
 
 
 msgid "Viewpoint"
@@ -26610,8 +26620,8 @@ msgid "Select More/Less"
 msgstr "選取更多/更少"
 
 
-msgid "Adjust"
-msgstr "調整"
+msgid "Layout"
+msgstr "配置"
 
 
 msgid "Select Similar"
@@ -26622,20 +26632,32 @@ msgid "Select All by Trait"
 msgstr "依特徵全選"
 
 
-msgid "Keying"
-msgstr "鍵處理"
-
-
 msgid "Select Linked"
 msgstr "選取連結項"
 
 
-msgid "Tracking"
-msgstr "跟蹤"
+msgid "Render Preview"
+msgstr "算繪預覽"
 
 
 msgid "Select Loops"
 msgstr "選取迴圈"
+
+
+msgid "Adjust"
+msgstr "調整"
+
+
+msgid "Assign Material"
+msgstr "指派材質"
+
+
+msgid "Keying"
+msgstr "鍵處理"
+
+
+msgid "Tracking"
+msgstr "跟蹤"
 
 
 msgid "Utilities"
@@ -26648,10 +26670,6 @@ msgstr "數學公式"
 
 msgid "Creative"
 msgstr "創意"
-
-
-msgid "Assign Material"
-msgstr "指派材質"
 
 
 msgid "Light"
@@ -26738,14 +26756,6 @@ msgid "Bone Collections"
 msgstr "骨骼集盒"
 
 
-msgid "Gizmo"
-msgstr "操縱器"
-
-
-msgid "Instances"
-msgstr "實例化"
-
-
 msgid "Toggle Bone Options"
 msgstr "開關骨骼選項"
 
@@ -26758,36 +26768,48 @@ msgid "Disable Bone Options"
 msgstr "停用骨骼設定"
 
 
-msgid "Import"
-msgstr "匯入"
-
-
 msgid "Mesh Select Mode"
 msgstr "網格選取模式"
+
+
+msgid "Gizmo"
+msgstr "操縱器"
 
 
 msgid "Face Data"
 msgstr "面資料"
 
 
+msgid "Instances"
+msgstr "實例化"
+
+
 msgid "Set Face Strength"
 msgstr "設定面強度"
 
 
-msgid "Deprecated"
-msgstr "已棄用"
-
-
-msgid "List"
-msgstr "列表"
+msgid "Import"
+msgstr "匯入"
 
 
 msgid "Merge"
 msgstr "合併"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Deprecated"
+msgstr "已棄用"
+
+
+msgid "Special Characters"
+msgstr "特殊字元"
+
+
+msgid "List"
+msgstr "列表"
+
+
+msgid "Kerning"
+msgstr "字間微調"
 
 
 msgid "Keyframe Insert Pie"
@@ -26985,13 +27007,13 @@ msgid "Track"
 msgstr "軌道"
 
 
-msgid "Node"
-msgstr "結點"
-
-
 msgctxt "NodeTree"
 msgid "Constant"
 msgstr "常數"
+
+
+msgid "Node"
+msgstr "結點"
 
 
 msgid "Node Color Specials"
@@ -31376,10 +31398,6 @@ msgid "Use local generated coordinates of another object"
 msgstr "使用另一個物體的區域生成座標系"
 
 
-msgid "Use Channel"
-msgstr "使用通道"
-
-
 msgid "Which texture channel to use for masking"
 msgstr "要用於遮罩處理的紋理通道"
 
@@ -35568,6 +35586,10 @@ msgid "To Degrees"
 msgstr "至度"
 
 
+msgid "Blending Mode"
+msgstr "混合模式"
+
+
 msgid "Clamp Factor"
 msgstr "限定係數"
 
@@ -35598,6 +35620,10 @@ msgstr "混合著色器"
 
 msgid "Generate a normal vector and a dot product"
 msgstr "生成一個法線向量和內積"
+
+
+msgid "Base"
+msgstr "基礎"
 
 
 msgid "OpenGL"
@@ -44520,6 +44546,10 @@ msgid "Side"
 msgstr "側"
 
 
+msgid "Both"
+msgstr "兩者"
+
+
 msgctxt "Operator"
 msgid "Euler Discontinuity Filter"
 msgstr "非連續性尤拉過濾器"
@@ -47592,8 +47622,9 @@ msgid "Only cut the front most geometry"
 msgstr "僅切割最前方的幾何形狀"
 
 
-msgid "Measurements"
-msgstr "測量"
+msgctxt "Mesh"
+msgid "Angle"
+msgstr "角度"
 
 
 msgid "X-Ray"
@@ -49773,14 +49804,6 @@ msgstr "柔光模式"
 
 msgid "Linear Light Mode"
 msgstr "線性光模式"
-
-
-msgid "Current"
-msgstr "目前"
-
-
-msgid "Prev"
-msgstr "上一個"
 
 
 msgid "Multiply Add Mode"
@@ -56770,11 +56793,6 @@ msgstr "選取文字"
 
 
 msgctxt "Operator"
-msgid "Delete Character"
-msgstr "刪除字元"
-
-
-msgctxt "Operator"
 msgid "Deselect All"
 msgstr "取消全選"
 
@@ -56786,11 +56804,6 @@ msgstr "編輯文字"
 
 msgid "Toggle text editing"
 msgstr "切換文字編輯"
-
-
-msgctxt "Operator"
-msgid "Insert Character"
-msgstr "插入字元"
 
 
 msgctxt "Operator"
@@ -61583,14 +61596,6 @@ msgid "Guides"
 msgstr "引導"
 
 
-msgid "glTF Variants"
-msgstr "glTF 變體"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF 材質變體"
-
-
 msgid "Viewer Node"
 msgstr "檢視器節點"
 
@@ -61615,12 +61620,12 @@ msgid "Curves Edit Mode"
 msgstr "曲線編輯模式"
 
 
-msgid "glTF"
-msgstr "glTF"
+msgid "glTF Variants"
+msgstr "glTF 變體"
 
 
-msgid "glTF Animations"
-msgstr "glTF 動畫"
+msgid "glTF Material Variants"
+msgstr "glTF 材質變體"
 
 
 msgid "Transform Orientations"
@@ -61649,6 +61654,14 @@ msgstr "洋蔥皮"
 
 msgid "Stereoscopy"
 msgstr "立體視覺"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 動畫"
 
 
 msgid "Multi Frame"
@@ -66350,10 +66363,6 @@ msgstr "略過預設集"
 
 msgid "Skip Save"
 msgstr "略過儲存"
-
-
-msgid "Base"
-msgstr "基礎"
 
 
 msgctxt "Unit"
@@ -71672,6 +71681,10 @@ msgid "Show reference frame only"
 msgstr "僅顯示參照影格"
 
 
+msgid "Current"
+msgstr "目前"
+
+
 msgid "Show current frame only"
 msgstr "僅顯示目前影格"
 
@@ -72288,11 +72301,6 @@ msgid "Dynamic Grid Size"
 msgstr "動態格線大小"
 
 
-msgctxt "Mesh"
-msgid "Angle"
-msgstr "角度"
-
-
 msgid "Angular distortion between UV and 3D angles"
 msgstr "UV 和 3D 角度之間的角度扭曲"
 
@@ -72581,56 +72589,6 @@ msgstr "替換"
 msgctxt "Color"
 msgid "Cross"
 msgstr "交叉"
-
-
-msgctxt "Color"
-msgid "Darken"
-msgstr "變暗"
-
-
-msgctxt "Color"
-msgid "Multiply"
-msgstr "相乘"
-
-
-msgctxt "Color"
-msgid "Lighten"
-msgstr "變亮"
-
-
-msgctxt "Color"
-msgid "Soft Light"
-msgstr "柔光"
-
-
-msgctxt "Color"
-msgid "Linear Light"
-msgstr "線性光"
-
-
-msgctxt "Color"
-msgid "Exclusion"
-msgstr "排除"
-
-
-msgctxt "Color"
-msgid "Hue"
-msgstr "色相"
-
-
-msgctxt "Color"
-msgid "Saturation"
-msgstr "飽和度"
-
-
-msgctxt "Color"
-msgid "Color"
-msgstr "色彩"
-
-
-msgctxt "Color"
-msgid "Value"
-msgstr "明度"
 
 
 msgctxt "Color"
@@ -88891,10 +88849,6 @@ msgid "Lightness:"
 msgstr "亮度："
 
 
-msgid "Value:"
-msgstr "值："
-
-
 msgid "Alpha:"
 msgstr "Alpha："
 
@@ -91434,6 +91388,10 @@ msgstr "表述式："
 
 msgid "Add Input Variable"
 msgstr "加入輸入變數"
+
+
+msgid "Value:"
+msgstr "值："
 
 
 msgid "Update Dependencies"

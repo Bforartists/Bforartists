@@ -342,6 +342,9 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         row = col.row()
         row.separator()
         row.prop(screen, "use_follow", text="Follow Current Frame")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "playback_loop_mode", text="Loop")
 
         col = layout.column(align=True)
         col.label(text="Play in")  # BFA - capitals on prepositions is bad grammar

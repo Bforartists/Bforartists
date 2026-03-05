@@ -2017,12 +2017,9 @@ static bool object_is_target_compat(const Object *ob)
       return true;
     }
   }
-  /* We might want to enable this later, for now just lights. */
-#if 0
   else if (ob->type == OB_CAMERA) {
     return true;
   }
-#endif
   return false;
 }
 
@@ -2392,13 +2389,13 @@ static wmOperatorStatus object_transform_axis_target_modal(bContext *C,
 void OBJECT_OT_transform_axis_target(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Interactive Light Track to Cursor";
+  ot->name = "Interactive Track to Cursor";
   ot->description =
-      "Interactively point a light towards an object (Ctrl translates and aligns to target "
-      "normal)\n"
-      "Select object and shift select light > "
-      "Perform tool and point to target\nWithout target object the light rotates freely\n"
-      "Hotkey tool. Please use the hotkey in the 3D View"; /* BFA - more explicit*/
+      "Interactively point a camera or lights towards the surface of an object\n"
+      "To use, trigger the hotkey in the 3D View and point to target\n"
+      "Without a target object surface, the light rotates freely\n"
+      "While using, hold CTRL to snap the camera or light to the surface of the object\n"
+      "Hotkey only tool. Please use the hotkey in the 3D View"; /* BFA - more explicit*/
   ot->idname = "OBJECT_OT_transform_axis_target";
 
   /* API callbacks. */
