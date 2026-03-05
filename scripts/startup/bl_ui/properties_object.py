@@ -494,29 +494,25 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
-        layout = self.layout
+        layout.use_property_split = True # bfa - this just sets decorators for all the props below, since we internally align left with 6162.
         ob = context.object
 
-        col = layout.column()
+        row = layout.row()
+        row.separator()
         # bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
         # col.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
-        col.prop(ob, "hide_surface_pick", text="Surface Picking", toggle=False, invert_checkbox=True)
+        row.prop(ob, "hide_surface_pick", text="Surface Picking", toggle=False, invert_checkbox=True)
         
         col = layout.column(align = True)
         col.label(text = "Show in")
 
         row = col.row()
-        row.use_property_split = False
         row.separator()
         row.prop(ob, "hide_viewport", text="Viewports", toggle=False, invert_checkbox=True)
-        row.prop_decorator(ob, "hide_viewport")
 
         row = col.row()
-        row.use_property_split = False
         row.separator()
         row.prop(ob, "hide_render", text = "Renders", toggle=False, invert_checkbox=True)
-        row.prop_decorator(ob, "hide_render")
         col.separator()
 
         if context.engine == 'BLENDER_EEVEE':
@@ -524,7 +520,6 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 layout.separator()
                 col.label(text = "Ray Visibility")
                 row = col.row()
-                row.use_property_split = False
                 row.separator()
                 row.prop(ob, "visible_camera", text="Camera", toggle=False)
                 row = col.row()
@@ -534,8 +529,6 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
             if ob.type in {'LIGHT'}:
                 col.label(text = "Ray Visibility")
-                row = col.row()
-                row.use_property_split = False
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_diffuse", text="Diffuse", toggle=False)
@@ -553,7 +546,6 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
                 col.label(text = "Light Probes")
                 row = col.row()
                 row.separator()
-                row.use_property_split = False
                 row.prop(ob, "hide_probe_volume", text="Volume", toggle=False, invert_checkbox=True)
                 row = col.row()
                 row.separator()
@@ -568,16 +560,13 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
             row = col.row()
             row.separator()
-            row.use_property_split = False
             row.prop(ob, "use_grease_pencil_lights", toggle=False)
-            row.prop_decorator(ob, "use_grease_pencil_lights")
         
         col.separator()
         col.label(text = "Mask")
         row = col.row()
         row.separator()
         row.prop(ob, "is_holdout")
-        row.prop_decorator(ob, "is_holdout")
 
 
 def has_geometry_visibility(ob):
