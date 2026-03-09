@@ -582,38 +582,6 @@ std::optional<AttrDomain> NamedLayerSelectionFieldInput::preferred_domain(
   return AttrDomain::Layer;
 }
 
-template<typename T>
-void copy_with_checked_indices(const VArray<T> &src,
-                               const VArray<int> &indices,
-                               const IndexMask &mask,
-                               MutableSpan<T> dst)
-{
-  const IndexRange src_range = src.index_range();
-  devirtualize_varray2(src, indices, [&](const auto src, const auto indices) {
-    mask.foreach_index(
-        [&](const int i) {
-          const int index = indices[i];
-          if (src_range.contains(index)) {
-            dst[i] = src[index];
-          }
-          else {
-            dst[i] = {};
-          }
-        },
-        exec_mode::grain_size(4096));
-  });
-}
-
-void copy_with_checked_indices(const GVArray &src,
-                               const VArray<int> &indices,
-                               const IndexMask &mask,
-                               GMutableSpan dst)
-{
-  bke::attribute_math::to_static_type(src.type(), [&]<typename T>() {
-    copy_with_checked_indices(src.typed<T>(), indices, mask, dst.typed<T>());
-  });
-}
-
 EvaluateAtIndexInput::EvaluateAtIndexInput(fn::Field<int> index_field,
                                            fn::GField value_field,
                                            AttrDomain value_field_domain)
@@ -641,11 +609,95 @@ GVArray EvaluateAtIndexInput::get_varray_for_context(const bke::GeometryFieldCon
   fn::FieldEvaluator index_evaluator{context, &mask};
   index_evaluator.add(index_field_);
   index_evaluator.evaluate();
-  const VArray<int> indices = index_evaluator.get_evaluated<int>(0);
+  const VArraySpan<int> indices = index_evaluator.get_evaluated<int>(0);
 
   GArray<> dst_array(values.type(), mask.min_array_size());
-  copy_with_checked_indices(values, indices, mask, dst_array);
+  IndexMaskMemory memory;
+  const IndexMask valid_mask = array_utils::indices_in_range(
+      mask, indices, values.index_range(), memory);
+  bke::attribute_math::gather(values, indices, valid_mask, dst_array);
+  dst_array.type().value_initialize_indices(dst_array.data(), valid_mask.complement(mask, memory));
   return GVArray::from_garray(std::move(dst_array));
+}
+
+static bool component_is_available(const GeometrySet &geometry,
+                                   const GeometryComponent::Type type,
+                                   const AttrDomain domain)
+{
+  if (!geometry.has(type)) {
+    return false;
+  }
+  const GeometryComponent &component = *geometry.get_component(type);
+  return component.attribute_domain_size(domain) != 0;
+}
+
+const GeometryComponent *SampleIndexFunction::find_source_component(const GeometrySet &geometry,
+                                                                    const AttrDomain domain)
+{
+  /* Choose the other component based on a consistent order, rather than some more complicated
+   * heuristic. This is the same order visible in the spreadsheet and used in the ray-cast node. */
+  static const Array<GeometryComponent::Type> supported_types = {
+      GeometryComponent::Type::Mesh,
+      GeometryComponent::Type::PointCloud,
+      GeometryComponent::Type::Curve,
+      GeometryComponent::Type::Instance,
+      GeometryComponent::Type::GreasePencil};
+  for (const GeometryComponent::Type src_type : supported_types) {
+    if (component_is_available(geometry, src_type, domain)) {
+      return geometry.get_component(src_type);
+    }
+  }
+
+  return nullptr;
+}
+
+SampleIndexFunction::SampleIndexFunction(GeometrySet geometry,
+                                         fn::GField src_field,
+                                         const AttrDomain domain)
+    : src_geometry_(std::move(geometry)), src_field_(std::move(src_field)), domain_(domain)
+{
+  src_geometry_.ensure_owns_direct_data();
+
+  mf::SignatureBuilder builder{"Sample Index", signature_};
+  builder.single_input<int>("Index");
+  builder.single_output("Value", src_field_.cpp_type());
+  this->set_signature(&signature_);
+
+  this->evaluate_field();
+}
+
+void SampleIndexFunction::evaluate_field()
+{
+  const GeometryComponent *component = find_source_component(src_geometry_, domain_);
+  if (component == nullptr) {
+    return;
+  }
+  const int domain_num = component->attribute_domain_size(domain_);
+  geometry_context_.emplace(GeometryFieldContext(*component, domain_));
+  evaluator_ = std::make_unique<fn::FieldEvaluator>(*geometry_context_, domain_num);
+  evaluator_->add(src_field_);
+  evaluator_->evaluate();
+  src_data_ = &evaluator_->get_evaluated(0);
+}
+
+void SampleIndexFunction::call(const IndexMask &mask,
+                               mf::Params params,
+                               mf::Context /*context*/) const
+{
+  const VArraySpan<int> indices = params.readonly_single_input<int>(0, "Index");
+  GMutableSpan dst = params.uninitialized_single_output(1, "Value");
+
+  const CPPType &type = dst.type();
+  if (src_data_ == nullptr) {
+    type.value_initialize_indices(dst.data(), mask);
+    return;
+  }
+
+  IndexMaskMemory memory;
+  const IndexMask valid_mask = array_utils::indices_in_range(
+      mask, indices, src_data_->index_range(), memory);
+  bke::attribute_math::gather(*src_data_, indices, valid_mask, dst);
+  dst.type().value_initialize_indices(dst.data(), valid_mask.complement(mask, memory));
 }
 
 EvaluateOnDomainInput::EvaluateOnDomainInput(fn::GField field, AttrDomain domain)

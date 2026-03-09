@@ -536,6 +536,7 @@ struct AfterFunc {
 
   char undostr[BKE_UNDO_STR_MAX];
   std::string drawstr;
+  bool use_undo_grouped = false;
 };
 
 static void button_activate_init(bContext *C,
@@ -1002,7 +1003,7 @@ static void ui_apply_but_func(bContext *C, Button *but)
 }
 
 /* typically call ui_apply_but_undo(), ui_apply_but_autokey() */
-static void ui_apply_but_undo(Button *but)
+static void ui_apply_but_undo(Button *but, bool use_undo_grouped = false)
 {
   if (!(but->flag & BUT_UNDO)) {
     return;
@@ -1076,6 +1077,7 @@ static void ui_apply_but_undo(Button *but)
   /* Delayed, after all other functions run, popups are closed, etc. */
   AfterFunc *after = ui_afterfunc_new();
   str->copy_utf8_truncated(after->undostr, min_zz(str_len_clip + 1, sizeof(after->undostr)));
+  after->use_undo_grouped = use_undo_grouped;
 }
 
 static void ui_apply_but_autokey(bContext *C, Button *but)
@@ -1201,7 +1203,12 @@ static void ui_apply_but_funcs_after(bContext *C)
       /* Remove "Adjust Last Operation" HUD. Using it would revert this undo push which isn't
        * obvious, see #78171. */
       WM_operator_stack_clear(CTX_wm_manager(C));
-      ED_undo_push(C, after.undostr);
+      if (after.use_undo_grouped) {
+        ED_undo_grouped_push(C, after.undostr);
+      }
+      else {
+        ED_undo_push(C, after.undostr);
+      }
     }
   }
 }
@@ -5083,8 +5090,8 @@ static int ui_do_but_TEX(
     else if (ELEM(event->type, WHEELUPMOUSE, WHEELDOWNMOUSE) && (event->modifier & KM_CTRL)) {
       if (but->type == ButtonType::SearchMenu) {
         /* Disable value cycling for search buttons. This causes issues because the search data is
-         * moved to the "afterfuncs", but search updating requires it again or somethimes this
-         * event can be triguered twice in row without the button being refreshed. See #147539 and
+         * moved to the `afterfuncs`, but search updating requires it again or sometimes this
+         * event can be triggered twice in row without the button being refreshed. See #147539 and
          * #152976. */
       }
       else {
@@ -10229,7 +10236,7 @@ static int ui_handle_list_event(bContext *C,
 
         Button *but = button_first(listbox->block);
         if (but && but->type == ButtonType::ListRow) {
-          ED_undo_grouped_push(C, but->tip.data());
+          ui_apply_but_undo(but, true);
         }
 
         ui_list->flag |= UILST_SCROLL_TO_ACTIVE_ITEM;
@@ -10588,12 +10595,12 @@ static char ui_menu_scroll_test(Block *block, int my)
 {
   if (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM)) {
     if (block->flag & BLOCK_CLIPTOP) {
-      if (my > block->rect.ymax - UI_MENU_SCROLL_MOUSE) {
+      if (my > block->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect) {
         return 't';
       }
     }
     if (block->flag & BLOCK_CLIPBOTTOM) {
-      if (my < block->rect.ymin + UI_MENU_SCROLL_MOUSE) {
+      if (my < block->rect.ymin + UI_MENU_SCROLL_MOUSE / block->aspect) {
         return 'b';
       }
     }
@@ -10605,7 +10612,8 @@ static void ui_menu_scroll_apply_offset_y(ARegion *region, Block *block, float d
 {
   BLI_assert(dy != 0.0f);
 
-  const int scroll_pad = block_is_menu(block) ? UI_MENU_SCROLL_PAD : UI_UNIT_Y * 0.5f;
+  const float scroll_pad = (block_is_menu(block) ? UI_MENU_SCROLL_PAD : UI_UNIT_Y * 0.5f) /
+                           block->aspect;
 
   if (dy < 0.0f) {
     /* Stop at top item, extra 0.5 UI_UNIT_Y makes it snap nicer. */
@@ -10613,7 +10621,7 @@ static void ui_menu_scroll_apply_offset_y(ARegion *region, Block *block, float d
     for (Button &bt : block->buttons()) {
       ymax = max_ff(ymax, bt.rect.ymax);
     }
-    if (ymax + dy - UI_UNIT_Y * 0.5f < block->rect.ymax - scroll_pad) {
+    if (ymax + dy - (UI_UNIT_Y * 0.5f) / block->aspect < block->rect.ymax - scroll_pad) {
       dy = block->rect.ymax - ymax - scroll_pad;
     }
   }
@@ -10623,7 +10631,7 @@ static void ui_menu_scroll_apply_offset_y(ARegion *region, Block *block, float d
     for (Button &bt : block->buttons()) {
       ymin = min_ff(ymin, bt.rect.ymin);
     }
-    if (ymin + dy + UI_UNIT_Y * 0.5f > block->rect.ymin + scroll_pad) {
+    if (ymin + dy + (UI_UNIT_Y * 0.5f) / block->aspect > block->rect.ymin + scroll_pad) {
       dy = block->rect.ymin - ymin + scroll_pad;
     }
   }
@@ -10650,13 +10658,13 @@ static bool ui_menu_scroll_to_but(ARegion *region, Block *block, Button *but_tar
 {
   float dy = 0.0;
   if (block->flag & BLOCK_CLIPTOP) {
-    if (but_target->rect.ymax > block->rect.ymax - UI_MENU_SCROLL_MOUSE) {
-      dy = block->rect.ymax - but_target->rect.ymax - UI_MENU_SCROLL_MOUSE;
+    if (but_target->rect.ymax > block->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect) {
+      dy = block->rect.ymax - but_target->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect;
     }
   }
   if (block->flag & BLOCK_CLIPBOTTOM) {
-    if (but_target->rect.ymin < block->rect.ymin + UI_MENU_SCROLL_MOUSE) {
-      dy = block->rect.ymin - but_target->rect.ymin + UI_MENU_SCROLL_MOUSE;
+    if (but_target->rect.ymin < block->rect.ymin + UI_MENU_SCROLL_MOUSE / block->aspect) {
+      dy = block->rect.ymin - but_target->rect.ymin + UI_MENU_SCROLL_MOUSE / block->aspect;
     }
   }
   if (dy != 0.0f) {
@@ -10672,10 +10680,10 @@ static bool ui_menu_scroll_to_y(ARegion *region, Block *block, int y)
   const char test = ui_menu_scroll_test(block, y);
   float dy = 0.0f;
   if (test == 't') {
-    dy = -UI_UNIT_Y; /* scroll to the top */
+    dy = -UI_UNIT_Y / block->aspect; /* scroll to the top */
   }
   else if (test == 'b') {
-    dy = UI_UNIT_Y; /* scroll to the bottom */
+    dy = UI_UNIT_Y / block->aspect; /* scroll to the bottom */
   }
   if (dy != 0.0f) {
     ui_menu_scroll_apply_offset_y(region, block, dy);
@@ -10691,13 +10699,13 @@ static bool ui_menu_scroll_step(ARegion *region, Block *block, const int scroll_
     if ((block->flag & BLOCK_CLIPTOP) == 0) {
       return false;
     }
-    my = block->rect.ymax + UI_UNIT_Y;
+    my = block->rect.ymax + UI_UNIT_Y / block->aspect;
   }
   else if (scroll_dir == -1) {
     if ((block->flag & BLOCK_CLIPBOTTOM) == 0) {
       return false;
     }
-    my = block->rect.ymin - UI_UNIT_Y;
+    my = block->rect.ymin - UI_UNIT_Y / block->aspect;
   }
   else {
     BLI_assert(0);

@@ -691,6 +691,8 @@ class NODE_MT_node(Menu):
         layout.operator("transform.resize", icon="TRANSFORM_SCALE")
 
         layout.separator()
+        layout.operator("node.delete_copy_reconnect", text="Cut")
+        layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
         row = layout.row()
         row.operator_context = 'EXEC_DEFAULT'
@@ -945,14 +947,7 @@ class NODE_PT_node_color_presets(PresetPanel, Panel):
     preset_add_operator = "node.node_color_preset_add"
 
 
-class NODE_MT_node_color_context_menu(Menu):
-    bl_label = "Node Color Specials"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        # BFA - Remove "Copy Color" Operator from this context menu
-        # layout.operator("node.node_copy_color", icon='COPY_ID')
+#  bfa - removed NODE_MT_node_color_context_menu operator to top level
 
 
 class NODE_MT_context_menu_show_hide_menu(Menu):
@@ -1045,6 +1040,7 @@ class NODE_MT_context_menu(Menu):
 
             layout.separator()
 
+        layout.operator("node.delete_copy_reconnect", text="Cut") # BFA - WIP
         layout.operator("node.clipboard_copy", text="Copy", icon="COPYDOWN")
         layout.operator("node.clipboard_paste", text="Paste", icon="PASTEDOWN")
 
@@ -1118,65 +1114,28 @@ class NODE_PT_active_node_generic(Panel):
         col.prop(node, "name", placeholder="Name")
         col.prop(node, "label", placeholder="Custom Label")
 
-        col = col.column(heading="Color")
         col.active = node.bl_idname != "NodeReroute"
+        
         row = col.row()
-        row.prop(node, "use_custom_color", text="")
+        row.prop(node, "use_custom_color", text="Color") # bfa - name after checkbox!
+        
         sub = row.row(align=True)
         sub.active = node.use_custom_color
+        
         sub.prop(node, "color", text="")
-        sub.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
+        sub.operator("node.node_copy_color", text="", icon='COPY_ID') # bfa - moved from NODE_MT_node_color_context_menu!
         sub.popover(
             panel="NODE_PT_node_color_presets",
             icon='PRESET',
             text="",
         )
 
+        col = layout.column()
         col.prop(node, "show_options")
         col.prop(node, "mute")
 
         if tree.type == 'GEOMETRY':
             layout.prop(node, "warning_propagation", text="Propagate")
-
-
-class NODE_PT_active_node_color(Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Node"
-    bl_label = "Color"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODE_PT_active_node_generic"
-
-    @classmethod
-    def poll(cls, context):
-        node = context.active_node
-        if node is None:
-            return False
-        if node.bl_idname == "NodeReroute":
-            return False
-        return True
-
-    def draw_header(self, context):
-        node = context.active_node
-        self.layout.prop(node, "use_custom_color", text="")
-
-    def draw_header_preset(self, _context):
-        NODE_PT_node_color_presets.draw_panel_header(self.layout)
-
-    def draw(self, context):
-        layout = self.layout
-        node = context.active_node
-
-        layout.enabled = node.use_custom_color
-
-        row = layout.row()
-
-        subrow = row.row(align=True)
-        subrow.prop(node, "color", text="")
-        subrow.operator("node.node_copy_color", icon='COPY_ID', text="")
-
-        # BFA - Temporarily disable this menu for as long as it doesn't have operators
-        # row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
 
 class NODE_PT_active_node_properties(Panel):
@@ -1649,7 +1608,6 @@ classes = (
     NODE_MT_node,
     NODE_MT_node_group,  # BFA - Menu
     NODE_MT_node_links,  # BFA - Menu
-    NODE_MT_node_color_context_menu,
     NODE_MT_context_menu_show_hide_menu,
     NODE_MT_context_menu_select_menu,
     NODE_MT_context_menu,
