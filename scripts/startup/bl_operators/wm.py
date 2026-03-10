@@ -3553,6 +3553,7 @@ class WM_MT_region_toggle_pie(Menu):
         'FOOTER': "show_region_footer",
         'ASSET_SHELF': "show_region_asset_shelf",
         'CHANNELS': "show_region_channels",
+        'TOOL_PROPS': "show_region_tool_props", # bfa - for temporary filebrowser pie menu toggles
     }
     # Map the `region.alignment` to the axis-aligned pie position.
     _region_align_pie = {
@@ -3569,6 +3570,7 @@ class WM_MT_region_toggle_pie(Menu):
         'FOOTER': 'UI_FOOTER_BAR',
         'ASSET_SHELF': 'ASSET_MANAGER',
         'CHANNELS': 'UI_CHANNELS',
+        'TOOL_PROPS': 'PREFERENCES', # bfa - for temporary filebrowser pie menu toggles
     }
     # Map the axis-aligned pie to alternative directions, see `ui_radial_dir_order` in C++ source.
     # The value is the preferred direction in order of priority, two diagonals, then the flipped direction.
@@ -3588,6 +3590,11 @@ class WM_MT_region_toggle_pie(Menu):
         space_data = context.space_data
         # Store each region by it's type.
         region_by_type = {}
+        
+        # bfa - check if we are in the asset browser
+        from bpy_extras.asset_utils import SpaceAssetInfo
+        is_file_browser = space_data.type == 'FILE_BROWSER'
+        is_asset_browser = is_file_browser and SpaceAssetInfo.is_asset_browser(space_data)
 
         for region in context.area.regions:
             region_type = region.type
@@ -3600,6 +3607,17 @@ class WM_MT_region_toggle_pie(Menu):
             assert hasattr(space_data, attr)
 
             if space_data.is_property_readonly(attr):
+                continue
+
+            # bfa - special handling for filebrowser TOOL_PROPS region
+            if region_type == 'TOOL_PROPS' and is_file_browser:
+                # For regular file browser, only show if there's an active operator
+                if not is_asset_browser:
+                    if not space_data.active_operator:
+                        continue
+            
+            # bfa - special handling for filebrowser UI region - Asset Browser doesn't have File Path
+            if region_type == 'UI' and is_file_browser and is_asset_browser:
                 continue
 
             # Technically possible these double-up, in practice this should never happen.
@@ -3648,6 +3666,11 @@ class WM_MT_region_toggle_pie(Menu):
         # Use to access the labels.
         enum_items = bpy.types.Region.bl_rna.properties["type"].enum_items_static_ui
 
+        # bfa - check if we are in the asset browser
+        from bpy_extras.asset_utils import SpaceAssetInfo
+        is_file_browser = space_data.type == 'FILE_BROWSER'
+        is_asset_browser = is_file_browser and SpaceAssetInfo.is_asset_browser(space_data)
+
         for region_type_list in (items + items_overflow):
             if not region_type_list:
                 pie.separator()
@@ -3658,6 +3681,19 @@ class WM_MT_region_toggle_pie(Menu):
             attr = cls._region_info[region_type]
             value = getattr(space_data, attr)
             icon = cls._region_icons[region_type]  # Get icon from mapping
+            
+            # bfa - customize labels for filebrowser context
+            if is_file_browser:
+                if region_type == 'TOOLS':
+                    text = "Source List"
+                elif region_type == 'UI':
+                    text = "File Path"
+                elif region_type == 'TOOL_PROPS':
+                    if is_asset_browser:
+                        text = "Asset Details"
+                    else:
+                        text = "Sidebar"
+            
             props = pie.operator(
                 "wm.context_toggle",
                 text=text,
