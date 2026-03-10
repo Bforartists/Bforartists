@@ -1974,10 +1974,10 @@ keyconfig_data = \
        ],
       },
      ),
-    ("wm.call_menu_pie",
-     {"type": 'ACCENT_GRAVE', "value": 'PRESS'},
+    ("screen.region_toggle",
+     {"type": 'T', "value": 'PRESS', "ctrl": True},
      {"properties":
-      [("name", 'FILEBROWSER_MT_view_pie'),
+      [("region_type", 'TOOL_PROPS'),
        ],
       },
      ),
