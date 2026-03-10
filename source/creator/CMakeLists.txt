@@ -1929,6 +1929,7 @@ unset(LIB)
 
 setup_platform_linker_flags(bforartists)
 setup_platform_linker_libs(bforartists)
+setup_platform_linker_symbol_hiding(bforartists)
 
 if(DEFINED PLATFORM_SYMBOLS_MAP)
   set_target_properties(bforartists PROPERTIES LINK_DEPENDS ${PLATFORM_SYMBOLS_MAP})

@@ -70,6 +70,7 @@ const EnumPropertyItem rna_enum_node_socket_data_type_items[] = {
     {SOCK_TEXT_ID, "TEXT", ICON_NODE_SOCKET_TEXT, "Text", ""},
     {SOCK_MASK, "MASK", ICON_NODE_SOCKET_MASK, "Mask", ""},
     {SOCK_SOUND, "SOUND", ICON_NODE_SOCKET_SOUND, "Sound", ""},
+    {SOCK_INT_VECTOR, "INT_VECTOR", ICON_NODE_SOCKET_INT_VECTOR, "Integer Vector", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -4235,6 +4236,29 @@ static int rna_NodeInputVector_vector_get_array_length(const PointerRNA *ptr,
   return storage.dimensions;
 }
 
+static void rna_NodeInputIntVector_vector_get(PointerRNA *ptr, int *values)
+{
+  const bNode &node = *ptr->data_as<bNode>();
+  const auto &storage = *static_cast<NodeInputIntVector *>(node.storage);
+  memcpy(values, storage.vector, sizeof(int) * storage.dimensions);
+}
+
+static void rna_NodeInputIntVector_vector_set(PointerRNA *ptr, const int *values)
+{
+  bNode &node = *ptr->data_as<bNode>();
+  auto &storage = *static_cast<NodeInputIntVector *>(node.storage);
+  memcpy(storage.vector, values, sizeof(int) * storage.dimensions);
+}
+
+static int rna_NodeInputIntVector_vector_get_array_length(const PointerRNA *ptr,
+                                                          int length[RNA_MAX_ARRAY_DIMENSION])
+{
+  const bNode &node = *ptr->data_as<bNode>();
+  const auto &storage = *static_cast<NodeInputIntVector *>(node.storage);
+  length[0] = storage.dimensions;
+  return storage.dimensions;
+}
+
 const EnumPropertyItem *rna_NodeInputMenu_menu_itemf(bContext * /*C*/,
                                                      PointerRNA *ptr,
                                                      PropertyRNA *prop,
@@ -5022,6 +5046,30 @@ static void def_fn_input_vector(BlenderRNA * /*brna*/, StructRNA *srna)
   prop = RNA_def_property(srna, "vector_dimensions", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "dimensions");
   RNA_def_property_range(prop, 2, 4);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(prop, "Dimensions", "Dimensions of the vector socket");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
+static void def_fn_input_int_vector(BlenderRNA * /*brna*/, StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeInputIntVector", "storage");
+
+  prop = RNA_def_property(srna, "vector", PROP_INT, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_DYNAMIC);
+  /* Note: Must be called before function definitions below, so that arraydimension is set. */
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_int_funcs(
+      prop, "rna_NodeInputIntVector_vector_get", "rna_NodeInputIntVector_vector_set", nullptr);
+  RNA_def_property_dynamic_array_funcs(prop, "rna_NodeInputIntVector_vector_get_array_length");
+  RNA_def_property_ui_text(prop, "Vector", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "vector_dimensions", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "dimensions");
+  RNA_def_property_range(prop, 2, 3);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop, "Dimensions", "Dimensions of the vector socket");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
@@ -10306,6 +10354,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeInputBool", def_fn_input_bool, ICON_INPUT_BOOL);
   define(brna, "FunctionNode", "FunctionNodeInputColor", def_fn_input_color, ICON_COLOR);
   define(brna, "FunctionNode", "FunctionNodeInputInt", def_fn_input_int, ICON_INTEGER);
+  define(brna, "FunctionNode", "FunctionNodeInputIntVector", def_fn_input_int_vector, ICON_NONE);
   define(brna, "FunctionNode", "FunctionNodeInputMenu", def_fn_input_menu, ICON_NONE);
   define(brna, "FunctionNode", "FunctionNodeInputRotation", def_fn_input_rotation, ICON_ROTATION);
   define(brna, "FunctionNode", "FunctionNodeInputSpecialCharacters", nullptr, ICON_SPECIAL);
@@ -10533,7 +10582,6 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSeparateGeometry", nullptr, ICON_SEPARATE_GEOMETRY);
   define(brna, "GeometryNode", "GeometryNodeSetCurveHandlePositions", nullptr, ICON_SET_CURVE_HANDLE_POSITIONS);
   define(brna, "GeometryNode", "GeometryNodeSetCurveNormal", nullptr, ICON_CURVE_NORMAL);
-  define(brna, "GeometryNode", "GeometryNodeSetCurveOrder", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeSetCurveRadius", nullptr, ICON_SET_CURVE_RADIUS);
   define(brna, "GeometryNode", "GeometryNodeSetCurveTilt", nullptr, ICON_SET_CURVE_TILT);
   define(brna, "GeometryNode", "GeometryNodeSetGeometryBundle", nullptr, ICON_NONE);
@@ -10543,6 +10591,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetMaterial", nullptr, ICON_MATERIAL_ADD);
   define(brna, "GeometryNode", "GeometryNodeSetMaterialIndex", nullptr, ICON_SET_MATERIAL_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSetMeshNormal", nullptr, ICON_SET_SMOOTH);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeSetPointRadius", nullptr, ICON_SET_CURVE_RADIUS);
   define(brna, "GeometryNode", "GeometryNodeSetPosition", nullptr, ICON_SET_POSITION);
   define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);
