@@ -338,7 +338,8 @@ struct PaintOperationExecutor {
         start_sample.pressure,
         start_location,
         self.placement_.to_world_space(),
-        settings_);
+        settings_, // bfa
+        scene_); // bfa
     start_radius = ed::greasepencil::randomize_radius(
         *settings_, self.stroke_random_radius_factor_, 0.0f, start_radius, start_sample.pressure);
 
@@ -699,7 +700,8 @@ struct PaintOperationExecutor {
                                                               extension_sample.pressure,
                                                               position,
                                                               self.placement_.to_world_space(),
-                                                              settings_);
+                                                              settings_, // bfa
+                                                              scene_); // bfa
     float opacity = ed::greasepencil::opacity_from_input_sample(
         extension_sample.pressure, brush_, settings_);
 

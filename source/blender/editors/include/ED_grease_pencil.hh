@@ -343,7 +343,8 @@ float radius_from_input_sample(const RegionView3D *rv3d,
                                float pressure,
                                const float3 &location,
                                const float4x4 &to_world,
-                               const BrushGpencilSettings *settings);
+                               const BrushGpencilSettings *settings, // bfa
+                               const Scene *scene); // bfa
 wmOperatorStatus grease_pencil_draw_operator_invoke(bContext *C,
                                                     wmOperator *op,
                                                     bool use_duplicate_previous_key);

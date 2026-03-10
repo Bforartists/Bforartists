@@ -733,7 +733,26 @@ static void rna_Brush_secondary_tex_update(bContext *C, PointerRNA *ptr)
 
 static void rna_Brush_size_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
+  Brush *brush = static_cast<Brush *>(ptr->data); // bfa - sync brush size with surface offset
+
   BKE_paint_invalidate_overlay_all();
+ 
+  /* bfa - sync brush size with surface offset */
+  if (scene != nullptr) {
+    ToolSettings *tool_settings = scene->toolsettings;
+    Paint *paint = (tool_settings != nullptr && tool_settings->gp_paint != nullptr) ?
+                       &tool_settings->gp_paint->paint :
+                       nullptr;
+
+    if (tool_settings != nullptr && paint != nullptr && paint->brush == brush &&
+        tool_settings->gpencil_sync_radius_surface && brush->gpencil_settings != nullptr &&
+        (brush->flag & BRUSH_LOCK_SIZE) != 0)
+    {
+      tool_settings->gpencil_surface_offset = brush->unprojected_size;
+      WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);
+    }
+  }
+
   rna_Brush_update(bmain, scene, ptr);
 }
 

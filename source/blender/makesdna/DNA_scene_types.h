@@ -2228,11 +2228,14 @@ struct ToolSettings {
   /** Normal offset used when drawing on surfaces. */
   float gpencil_surface_offset = 0;
 
+  /** Sync brush radius with surface offset when drawing on surfaces. */
+  char gpencil_sync_radius_surface = 0; // bfa
+
   /** Stroke selection mode for Edit. */
   char gpencil_selectmode_edit = 0;
   /** Stroke selection mode for Sculpt. */
   char gpencil_selectmode_sculpt = 0;
-  char _pad0[6] = {};
+  char _pad0[5] = {}; // bfa
 
   /** Grease Pencil Sculpt. */
   struct GP_Sculpt_Settings gp_sculpt;

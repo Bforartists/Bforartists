@@ -1640,7 +1640,8 @@ float radius_from_input_sample(const RegionView3D *rv3d,
                                const float pressure,
                                const float3 &location,
                                const float4x4 &to_world,
-                               const BrushGpencilSettings *settings)
+                               const BrushGpencilSettings *settings, // bfa
+                               const Scene * /*scene*/) // bfa
 {
   float radius = brush_radius_at_location(rv3d, region, brush, location, to_world);
   if (BKE_brush_use_size_pressure(brush)) {
