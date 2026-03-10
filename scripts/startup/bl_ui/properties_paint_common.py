@@ -1171,7 +1171,13 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "use_grab_active_vertex")
             layout.prop(brush, "use_grab_silhouette")
 
-        elif sculpt_brush_type == "PAINT":
+        elif sculpt_brush_type == 'SCENE_PROJECT':
+            layout.separator()
+            layout.prop(brush, "project_ray_direction_type")
+            layout.prop(brush, "minimum_distance")
+            layout.prop(brush, "use_bidirectional")
+
+        elif sculpt_brush_type == 'PAINT':
             row = layout.row(align=True)
             row.prop(brush, "flow")
             row.prop(brush, "invert_flow_pressure", text="")
@@ -1201,11 +1207,11 @@ def brush_settings(layout, context, brush, popover=False):
             row = layout.row()
             row.prop(brush, "tip_scale_x")
 
-        elif sculpt_brush_type == "SMEAR":
+        elif sculpt_brush_type == 'SMEAR':
             col = layout.column()
             col.prop(brush, "smear_deform_type")
 
-        elif sculpt_brush_type == "BOUNDARY":
+        elif sculpt_brush_type == 'BOUNDARY':
             layout.prop(brush, "deform_target")
             layout.separator()
             col = layout.column()
@@ -1213,26 +1219,26 @@ def brush_settings(layout, context, brush, popover=False):
             col.prop(brush, "boundary_falloff_type")
             col.prop(brush, "boundary_offset")
 
-        elif sculpt_brush_type == "TOPOLOGY":
+        elif sculpt_brush_type == 'TOPOLOGY':
             col = layout.column()
             col.prop(brush, "slide_deform_type")
 
-        elif sculpt_brush_type == "MULTIPLANE_SCRAPE":
+        elif sculpt_brush_type == 'MULTIPLANE_SCRAPE':
             col = layout.column()
             col.prop(brush, "multiplane_scrape_angle")
             col.use_property_split = False
             col.prop(brush, "use_multiplane_scrape_dynamic")
             col.prop(brush, "show_multiplane_scrape_planes_preview")
 
-        elif sculpt_brush_type == "SMOOTH":
+        elif sculpt_brush_type == 'SMOOTH':
             col = layout.column()
             col.prop(brush, "smooth_deform_type")
-            if brush.smooth_deform_type == "SURFACE":
+            if brush.smooth_deform_type == 'SURFACE':
                 col.prop(brush, "surface_smooth_shape_preservation")
                 col.prop(brush, "surface_smooth_current_vertex")
                 col.prop(brush, "surface_smooth_iterations")
 
-        elif sculpt_brush_type == "DISPLACEMENT_SMEAR":
+        elif sculpt_brush_type == 'DISPLACEMENT_SMEAR':
             col = layout.column()
             col.prop(brush, "smear_deform_type")
 
@@ -2213,7 +2219,9 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
     if is_primitive_tool:
         row = layout.row(align=True)
         if context.region.type == 'TOOL_HEADER':
-            row.prop(brush.gpencil_settings, "stroke_type", expand=True)
+            row.prop_enum(brush.gpencil_settings, "stroke_type", 'STROKE', text="", icon='GP_DRAW_STROKE')
+            row.prop_enum(brush.gpencil_settings, "stroke_type", 'FILL', text="", icon='GP_DRAW_FILL')
+            row.prop_enum(brush.gpencil_settings, "stroke_type", 'BOTH', text="", icon='GP_DRAW_BOTH')
         else:
             row.prop(brush.gpencil_settings, "stroke_type")
 
@@ -2245,7 +2253,9 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
     elif grease_pencil_brush_type == "DRAW":
         row = layout.row(align=True)
         if compact:
-            row.prop(brush.gpencil_settings, "stroke_type", expand=True)
+            row.prop_enum(brush.gpencil_settings, "stroke_type", 'STROKE', text="", icon='GP_DRAW_STROKE')
+            row.prop_enum(brush.gpencil_settings, "stroke_type", 'FILL', text="", icon='GP_DRAW_FILL')
+            row.prop_enum(brush.gpencil_settings, "stroke_type", 'BOTH', text="", icon='GP_DRAW_BOTH')
         else:
             row.prop(brush.gpencil_settings, "stroke_type")
 

@@ -4459,6 +4459,13 @@ static void rna_def_sequencer_tool_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Snap Current Frame to Strips", "Snap current frame to strip start or end");
 
+  prop = RNA_def_property(srna, "snap_to_all_channels", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "snap_flag", SEQ_SNAP_TO_ALL_CHANNEL_STRIPS);
+  RNA_def_property_ui_text(prop,
+                           "All Channels",
+                           "Allow snapping to any channel. If disabled, only snap to strips "
+                           "currently on the same channel as transformed strips");
+
   prop = RNA_def_property(srna, "snap_distance", PROP_INT, PROP_PIXEL);
   RNA_def_property_int_sdna(prop, nullptr, "snap_distance");
   RNA_def_property_int_default(prop, 15);
@@ -6892,6 +6899,31 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem anisotropic_items[] = {
+      {1, "FILTER_0", 0, "Off", "Turn off anisotropic filtering"},
+      {2,
+       "FILTER_2",
+       0,
+       "2" BLI_STR_UTF8_MULTIPLICATION_SIGN,
+       "Use 2 samples for anisotropic filtering"},
+      {4,
+       "FILTER_4",
+       0,
+       "4" BLI_STR_UTF8_MULTIPLICATION_SIGN,
+       "Use 4 samples for anisotropic filtering"},
+      {8,
+       "FILTER_8",
+       0,
+       "8" BLI_STR_UTF8_MULTIPLICATION_SIGN,
+       "Use 8 samples for anisotropic filtering"},
+      {16,
+       "FILTER_16",
+       0,
+       "16" BLI_STR_UTF8_MULTIPLICATION_SIGN,
+       "Use 16 samples for anisotropic filtering"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   static const EnumPropertyItem threads_mode_items[] = {
       {0,
        "AUTO",
@@ -7232,6 +7264,13 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
                            "High Quality Normals",
                            "Use high quality tangent space at the cost of lower performance");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_mesh_quality_update");
+
+  prop = RNA_def_property(srna, "anisotropic_filter", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "anisotropic_filter");
+  RNA_def_property_enum_items(prop, anisotropic_items);
+  RNA_def_property_ui_text(
+      prop, "Anisotropic Filtering", "Quality of anisotropic filtering in materials");
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_render_update");
 
   /* border */
   prop = RNA_def_property(srna, "use_border", PROP_BOOLEAN, PROP_NONE);

@@ -793,6 +793,9 @@ if(WITH_BLENDER)
       gp_delete_fill
       gp_delete_point
       gp_delete_stroke
+      gp_draw_stroke
+      gp_draw_fill
+      gp_draw_both
       gp_fill
       gp_fill_join
       gp_fill_select
