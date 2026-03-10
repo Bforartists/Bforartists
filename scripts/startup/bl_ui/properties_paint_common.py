@@ -2400,7 +2400,9 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
     gp_settings = brush.gpencil_settings
     if brush.gpencil_vertex_brush_type in {"DRAW", "REPLACE"}:
         row = layout.row(align=True)
-        row.prop(gp_settings, "vertex_mode", text="Mode", expand=True)
+        row.prop(gp_settings, "vertex_mode", text="Mode", expand=compact) # bfa - use compact!
+        # bfa - This sets expand to false for the sidebar, while keeping header true
+        # bfa - use 'not compact' for the opposite effect!
 
 
 classes = (
