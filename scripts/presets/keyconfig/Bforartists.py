@@ -1,4 +1,4 @@
-keyconfig_version = (5, 1, 21)
+keyconfig_version = (5, 2, 5)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1967,10 +1967,10 @@ keyconfig_data = \
  ("File Browser",
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
-   [("wm.context_toggle",
+   [("wm.call_menu_pie",
      {"type": 'T', "value": 'PRESS'},
      {"properties":
-      [("data_path", 'space_data.show_region_toolbar'),
+      [("name", 'WM_MT_region_toggle_pie'),
        ],
       },
      ),
