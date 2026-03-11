@@ -41,6 +41,11 @@ void file_handler_add(std::unique_ptr<FileHandlerType> file_handler)
 {
   BLI_assert(file_handler_find(file_handler->idname) == nullptr);
 
+  /* bfa - Initialize icon to none if not set. */
+  if (file_handler->icon == 0) {
+    file_handler->icon = 0;
+  }
+
   /** Load all extensions from the string list into the list. */
   const char char_separator = ';';
   const char *char_begin = file_handler->file_extensions_str;

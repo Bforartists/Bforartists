@@ -36,6 +36,8 @@ struct FileHandlerType {
    * start with a `.` and be separated by `;`. For Example: `".blend;.ble"`.
    */
   char file_extensions_str[FH_MAX_FILE_EXTENSIONS_STR];
+  /** bfa - Icon identifier for file handler. */
+  int icon;
 
   /** Check if file handler can be used on file drop. */
   bool (*poll_drop)(const bContext *C, FileHandlerType *file_handle_type);

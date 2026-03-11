@@ -2664,6 +2664,12 @@ static void rna_def_file_handler(BlenderRNA *brna)
       "start with a \".\" and be separated by \";\"."
       "\nFor Example: ``\".blend;.ble\"``");
 
+  /* bfa - added icon for file handler */
+  prop = RNA_def_property(srna, "bl_icon", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "type->icon");
+  RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
+  RNA_def_property_ui_text(prop, "Icon", "Icon to display for the file handler");
+
   PropertyRNA *parm;
   FunctionRNA *func;
 
