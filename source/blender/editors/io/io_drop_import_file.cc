@@ -153,7 +153,7 @@ static wmOperatorStatus wm_drop_import_file_invoke(bContext *C,
     wmOperatorType *ot = WM_operatortype_find(file_handler->import_operator, false);
     PointerRNA file_props = layout.op(ot,
                                       CTX_TIP_(ot->translation_context, ot->name),
-                                      ICON_NONE,
+                                      file_handler->icon, /* bfa - added icon */
                                       wm::OpCallContext::InvokeDefault,
                                       UI_ITEM_NONE);
     file_handler_import_operator_write_ptr(file_handler, file_props, paths);

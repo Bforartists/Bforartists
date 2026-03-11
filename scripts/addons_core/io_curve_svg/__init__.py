@@ -35,6 +35,7 @@ from bpy_extras.io_utils import (
     ImportHelper,
     poll_file_object_drop,
 )
+from addon_utils import get_icon_value # bfa - added icon - get_icon_value function needed!
 
 
 class ImportSVG(bpy.types.Operator, ImportHelper):
@@ -77,6 +78,7 @@ class IO_FH_svg_as_curves(bpy.types.FileHandler):
     bl_label = "SVG as Curves"
     bl_import_operator = "import_curve.svg"
     bl_file_extensions = ".svg"
+    bl_icon = get_icon_value('LOAD_SVG') # bfa - added icon - get_icon_value function needed!
 
     @classmethod
     def poll_drop(cls, context):

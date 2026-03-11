@@ -15,6 +15,7 @@ __all__ = (
     "extensions_refresh",
     "stale_pending_remove_paths",
     "stale_pending_stage_paths",
+    "get_icon_value", # bfa - added icon - get_icon_value function needed!
 )
 
 import bpy as _bpy
@@ -2002,6 +2003,37 @@ def _extensions_warnings_get():
 
 
 _extensions_warnings_get._is_first = True
+
+# bfa - added get_icon_value function
+def get_icon_value(icon_name):
+    """Get the integer value for an icon name from Blender's RNA system.
+    
+    This function provides dynamic icon lookup needed for FileHandler bl_icon properties.
+    IMPORTANT: Icon integer values can change when new icons are added to Blender,
+    so hardcoded values will break over time. This function ensures reliable icon lookup.
+    
+    This function extends Blender's existing icon access patterns to provide
+    integer values needed for FileHandler bl_icon properties.
+    
+    Usage:
+        bl_icon = get_icon_value('LOAD_SVG')     # Returns 759
+        bl_icon = get_icon_value('ICON_NONE')    # Returns 0
+        bl_icon = get_icon_value('MESH_CUBE')    # Returns 28
+    
+    Args:
+        icon_name (str): The icon name (e.g., 'LOAD_SVG', 'ICON_NONE', 'MESH_CUBE')
+    
+    Returns:
+        int: The integer value for the icon, or 0 if not found.
+    """
+    try:
+        icon_enum = _bpy.types.UILayout.bl_rna.functions["prop"].parameters["icon"].enum_items
+        for item in icon_enum:
+            if hasattr(item, 'identifier') and item.identifier == icon_name:
+                return item.value
+        return 0
+    except:
+        return 0
 
 
 def _is_first_reset():
