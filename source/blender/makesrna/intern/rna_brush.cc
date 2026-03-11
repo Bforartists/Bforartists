@@ -322,11 +322,11 @@ const EnumPropertyItem rna_enum_brush_curves_sculpt_brush_type_items[] = {
 static EnumPropertyItem rna_enum_gpencil_brush_eraser_modes_items[] = {
     {GP_BRUSH_ERASER_SOFT,
      "SOFT",
-     0,
+     ICON_DISSOLVE_VERTS,
      "Dissolve",
-     "Erase strokes, fading their points strength and thickness"},
-    {GP_BRUSH_ERASER_HARD, "HARD", 0, "Point", "Erase stroke points"},
-    {GP_BRUSH_ERASER_STROKE, "STROKE", 0, "Stroke", "Erase entire strokes"},
+     "Erase strokes, fading their points strength and thickness"},  /* bfa - added icon */
+    {GP_BRUSH_ERASER_HARD, "HARD", ICON_GP_SELECT_POINTS, "Point", "Erase stroke points"}, /* bfa - added icon */
+    {GP_BRUSH_ERASER_STROKE, "STROKE", ICON_STROKE, "Stroke", "Erase entire strokes"}, /* bfa - added icon */
     {0, nullptr, 0, nullptr, nullptr},
 };
 
