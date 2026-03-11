@@ -313,7 +313,7 @@ class OUTLINER_MT_view_pie(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.operator("outliner.show_hierarchy")
+        pie.operator("outliner.show_hierarchy", icon='HIERARCHY') # bfa - added icon
         pie.operator("outliner.show_active", icon='ZOOM_SELECTED')
 
 
