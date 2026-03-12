@@ -10652,7 +10652,12 @@ class VIEW3D_PT_grease_pencil_origin(Panel):
             row = layout.row()
             row.label(text="Offset")
             row = layout.row()
+            
+            # bfa - add icon to show if the surface offset is linked to the brush size
+            icon = "LINKED" if tool_settings.gpencil_sync_radius_surface else "UNLINKED" # bfa
             row.prop(tool_settings, "gpencil_surface_offset", text="")
+            row.prop(tool_settings, "gpencil_sync_radius_surface", text="", icon=icon) # bfa
+            
             row = layout.row()
             row.prop(tool_settings, "use_gpencil_project_only_selected")
 
