@@ -1,4 +1,4 @@
-keyconfig_version = (5, 2, 5)
+keyconfig_version = (5, 2, 7)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1971,13 +1971,6 @@ keyconfig_data = \
      {"type": 'T', "value": 'PRESS'},
      {"properties":
       [("name", 'WM_MT_region_toggle_pie'),
-       ],
-      },
-     ),
-    ("screen.region_toggle",
-     {"type": 'T', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("region_type", 'TOOL_PROPS'),
        ],
       },
      ),
