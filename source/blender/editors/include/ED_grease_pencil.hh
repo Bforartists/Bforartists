@@ -169,6 +169,12 @@ class DrawingPlacement {
   bool use_project_to_surface() const;
   bool use_project_to_stroke() const;
 
+  /* bfa - allow runtime override of the offset applied in surface/"Stroke" placement
+   * so that it can track the brush radius including pressure. */
+  void set_surface_offset(float offset);
+  float surface_offset() const;
+
+
   void cache_viewport_depths(Depsgraph *depsgraph, ARegion *region, View3D *view3d);
 
   /**

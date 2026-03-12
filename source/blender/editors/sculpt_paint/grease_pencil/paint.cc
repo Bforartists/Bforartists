@@ -340,6 +340,35 @@ struct PaintOperationExecutor {
         self.placement_.to_world_space(),
         settings_, // bfa
         scene_); // bfa
+
+    /* bfa - if the user asked for sync then make the offset follow the
+     * computed radius (pressure included).  if the projection has already
+     * happened using the old offset, redo it so brush and offset stay in lock
+     * step. */
+    if (scene_->toolsettings->gpencil_sync_radius_surface) {
+      self.placement_.set_surface_offset(start_radius);
+      if (self.placement_.use_project_to_stroke() ||
+          self.placement_.use_project_to_surface())
+      {
+        const std::optional<float> depth = self.placement_.get_depth(start_coords);
+        if (depth) {
+          start_location = self.placement_.place(start_coords, *depth);
+        }
+        else {
+          start_location = self.placement_.project(start_coords);
+        }
+        start_radius = ed::greasepencil::radius_from_input_sample(
+            rv3d,
+            region,
+            brush_,
+            start_sample.pressure,
+            start_location,
+            self.placement_.to_world_space(),
+            settings_, // bfa
+            scene_); // bfa
+      }
+    }
+
     start_radius = ed::greasepencil::randomize_radius(
         *settings_, self.stroke_random_radius_factor_, 0.0f, start_radius, start_sample.pressure);
 
@@ -702,6 +731,32 @@ struct PaintOperationExecutor {
                                                               self.placement_.to_world_space(),
                                                               settings_, // bfa
                                                               scene_); // bfa
+
+    if (scene_->toolsettings->gpencil_sync_radius_surface) {
+      self.placement_.set_surface_offset(radius);
+      if (self.placement_.use_project_to_stroke() ||
+          self.placement_.use_project_to_surface())
+      {
+        const std::optional<float> depth = self.stroke_placement_depths_.is_empty() ?
+                                               std::nullopt :
+                                               self.stroke_placement_depths_.last();
+        if (depth) {
+          position = self.placement_.place(coords, *depth);
+        }
+        else {
+          position = self.placement_.project(coords);
+        }
+        radius = ed::greasepencil::radius_from_input_sample(rv3d,
+                                                            region,
+                                                            brush_,
+                                                            extension_sample.pressure,
+                                                            position,
+                                                            self.placement_.to_world_space(),
+                                                            settings_, // bfa
+                                                            scene_); // bfa
+      }
+    }
+
     float opacity = ed::greasepencil::opacity_from_input_sample(
         extension_sample.pressure, brush_, settings_);
 
