@@ -1172,7 +1172,7 @@ static void TRANSFORM_OT_tosphere(wmOperatorType *ot)
 /*bfa - tool name*/
 static std::string transform_ot_mirror_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
-  if (RNA_boolean_get(ptr, "orient_type")) {
+  if (RNA_enum_get(ptr, "orient_type")) {
     return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Local");
   }
   return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Global");
@@ -1183,7 +1183,7 @@ static std::string transform_ot_mirror_get_description(bContext * /*C*/,
                                                        wmOperatorType * /*ot*/,
                                                        PointerRNA *ptr)
 {
-  if (RNA_boolean_get(ptr, "orient_type")) {
+  if (RNA_enum_get(ptr, "orient_type")) {
     return "Mirror selected items around the selected axis in local space";
   }
   return "Mirror selected items around the selected axis in global space";
