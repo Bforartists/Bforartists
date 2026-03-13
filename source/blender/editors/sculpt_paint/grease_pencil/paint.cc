@@ -346,7 +346,7 @@ struct PaintOperationExecutor {
      * happened using the old offset, redo it so brush and offset stay in lock
      * step. */
     if (scene_->toolsettings->gpencil_sync_radius_surface) {
-      self.placement_.set_surface_offset(start_radius);
+      self.placement_.set_surface_offset(start_radius + scene_->toolsettings->gpencil_surface_offset_extra);
       if (self.placement_.use_project_to_stroke() ||
           self.placement_.use_project_to_surface())
       {
@@ -733,7 +733,7 @@ struct PaintOperationExecutor {
                                                               scene_); // bfa
 
     if (scene_->toolsettings->gpencil_sync_radius_surface) {
-      self.placement_.set_surface_offset(radius);
+      self.placement_.set_surface_offset(radius + scene_->toolsettings->gpencil_surface_offset_extra);
       if (self.placement_.use_project_to_stroke() ||
           self.placement_.use_project_to_surface())
       {

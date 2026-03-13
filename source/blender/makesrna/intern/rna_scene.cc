@@ -4087,6 +4087,17 @@ static void rna_def_tool_settings(BlenderRNA *brna)
       "When enabled, brush size controls surface offset; when disabled, each is independent");
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_ToolSettings_gpencil_sync_radius_surface_update");
 
+  /* bfa - extra offset for synced surface offset */
+  prop = RNA_def_property(srna, "gpencil_surface_offset_extra", PROP_FLOAT, PROP_DISTANCE);
+  RNA_def_property_float_sdna(prop, nullptr, "gpencil_surface_offset_extra");
+  RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
+  RNA_def_property_ui_text(
+      prop, "Extra Offset", "Additional offset added to the synced surface offset");
+  RNA_def_property_range(prop, -FLT_MAX, FLT_MAX);
+  RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.01f, 3);
+  RNA_def_property_float_default(prop, 0.01f);
+  RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, nullptr);
+
   prop = RNA_def_property(srna, "use_gpencil_project_only_selected", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(
       prop, nullptr, "gpencil_v3d_align", GP_PROJECT_DEPTH_ONLY_SELECTED);

@@ -10658,6 +10658,11 @@ class VIEW3D_PT_grease_pencil_origin(Panel):
             row.prop(tool_settings, "gpencil_surface_offset", text="")
             row.prop(tool_settings, "gpencil_sync_radius_surface", text="", icon=icon) # bfa
 
+            # bfa - show extra offset when sync is enabled
+            if tool_settings.gpencil_sync_radius_surface:
+                row = layout.row()
+                row.prop(tool_settings, "gpencil_surface_offset_extra", text="Extra Offset")
+
             row = layout.row()
             row.prop(tool_settings, "use_gpencil_project_only_selected")
 
