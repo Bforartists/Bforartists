@@ -4345,8 +4345,71 @@ static void acf_nlatrack_color(bAnimContext * /*ac*/, bAnimListElem *ale, float 
     }
   }
 
-  /* set color for nla track */
-  ui::theme::get_color_shade_3fv(TH_NLA_TRACK, ((nonSolo == false) ? 20 : -20), r_color);
+  /* BFA - Use NLA strip theming logic for consistency with strips.
+   * Determine strip type from track content and apply appropriate theme.
+   */
+  const bool is_selected = nlt->flag & NLATRACK_SELECTED;
+  
+  /* BFA - Check what type of strips are in this track and use appropriate theme. */
+  int strip_type = NLASTRIP_TYPE_CLIP; /* Default to action clip */
+  if (nlt->strips.first) {
+    NlaStrip *first_strip = static_cast<NlaStrip *>(nlt->strips.first);
+    strip_type = first_strip->type;
+  }
+
+  switch (strip_type) {
+    case NLASTRIP_TYPE_CLIP:
+      /* BFA - Action Strip - use strip theme colors. */
+      ui::theme::get_color_3fv(is_selected ? TH_STRIP_SELECT : TH_STRIP, r_color);
+      break;
+    case NLASTRIP_TYPE_META:
+      /* BFA - Meta Strip. */
+      ui::theme::get_color_3fv(is_selected ? TH_NLA_META_SEL : TH_NLA_META, r_color);
+      break;
+    case NLASTRIP_TYPE_TRANSITION:
+      /* BFA - Transition Strip. */
+      ui::theme::get_color_3fv(is_selected ? TH_NLA_TRANSITION_SEL : TH_NLA_TRANSITION, r_color);
+      break;
+    case NLASTRIP_TYPE_SOUND:
+      /* BFA - Sound Strip. */
+      ui::theme::get_color_3fv(is_selected ? TH_NLA_SOUND_SEL : TH_NLA_SOUND, r_color);
+      break;
+    default:
+      /* BFA - Default to strip theme. */
+      ui::theme::get_color_3fv(is_selected ? TH_STRIP_SELECT : TH_STRIP, r_color);
+      break;
+  }
+
+  /* BFA - Apply solo/non-solo shading - dim non-solo tracks for visual distinction. */
+  if (nonSolo) {
+    r_color[0] *= 0.6f;
+    r_color[1] *= 0.6f;
+    r_color[2] *= 0.6f;
+  }
+}
+
+/* BFA - custom backdrop for nla track channels with selection support
+ * Uses strip theme colors for consistency with NLA strip visualization
+ */
+static void acf_nlatrack_backdrop(bAnimContext *ac, bAnimListElem *ale, float yminc, float ymaxc)
+{
+  const bAnimChannelType *acf = ANIM_channel_get_typeinfo(ale);
+  View2D *v2d = &ac->region->v2d;
+  short offset = (acf->get_offset) ? acf->get_offset(ac, ale) : 0;
+  float color[3];
+
+  uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
+
+  /* BFA - set backdrop drawing color */
+  acf->get_backdrop_color(ac, ale, color);
+
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  immUniformColor3fv(color);
+
+  /* BFA - no rounded corners - just rectangular box */
+  immRectf(pos, offset, yminc, v2d->cur.xmax + EXTRA_SCROLL_PAD, ymaxc);
+
+  immUnbindProgram();
 }
 
 /* name for nla track entries */
@@ -4478,7 +4541,7 @@ static bAnimChannelType ACF_NLATRACK = {
 
     /*get_backdrop_color*/ acf_nlatrack_color,
     /*get_channel_color*/ nullptr,
-    /*draw_backdrop*/ acf_generic_channel_backdrop,
+    /*draw_backdrop*/ acf_nlatrack_backdrop, /* BFA - match NLA strip backdrop drawing */
     /*get_indent_level*/ acf_generic_indentation_flexible,
     /*get_offset*/ acf_generic_group_offset, /* XXX? */
 
@@ -4538,12 +4601,15 @@ static void acf_nlaaction_backdrop(bAnimContext *ac, bAnimListElem *ale, float y
   short offset = (acf->get_offset) ? acf->get_offset(ac, ale) : 0;
   float color[4];
 
-  /* Action Line
-   *   The alpha values action_get_color returns are only useful for drawing
-   *   strips backgrounds but here we're doing track list backgrounds instead
-   *   so we ignore that and use our own when needed
-   */
+  /* BFA - Get original action color as base. */
   nla_action_get_color(adt, static_cast<bAction *>(ale->data), color);
+
+  /* BFA - Apply selection highlighting using NLA strip theme colors.
+   * This makes selected actions stand out consistently with strip selection.
+   */
+  if (adt && (adt->flag & ADT_UI_SELECTED)) {
+    ui::theme::get_color_4fv(TH_NLA_TRANSITION_SEL, color);
+  }
 
   if (adt && (adt->flag & ADT_NLA_EDIT_ON)) {
     color[3] = 1.0f;
@@ -5294,11 +5360,24 @@ void ANIM_channel_draw(
     /* set text color */
     /* XXX: if active, highlight differently? */
 
-    if (selected) {
-      ui::theme::get_color_4ubv(TH_TEXT_HI, col);
+    if (ale->type == ANIMTYPE_NLATRACK) {
+      /* BFA - Use same text color logic as NLA strips - black for selected, white for unselected. */
+      if (selected) {
+        col[0] = col[1] = col[2] = 0;  /* BFA - Black text for selected tracks */
+      }
+      else {
+        col[0] = col[1] = col[2] = 255;  /* BFA - White text for unselected tracks */
+      }
+      col[3] = 255;
     }
     else {
-      ui::theme::get_color_4ubv(TH_TEXT, col);
+      /* BFA - Use standard theme colors for other channel types. */
+      if (selected) {
+        ui::theme::get_color_4ubv(TH_TEXT_HI, col);
+      }
+      else {
+        ui::theme::get_color_4ubv(TH_TEXT, col);
+      }
     }
 
     /* Gray out disconnected action slots and their children. */
