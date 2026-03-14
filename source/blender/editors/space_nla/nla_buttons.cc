@@ -474,9 +474,11 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
                       RNA_boolean_get(&strip_ptr, "use_animated_time")));
     /* bfa */
     row = &column->row(false);
+    row->separator(); /* bfa - indent */
     row->prop(&strip_ptr, "use_reverse", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     row = &column->row(false);
+    row->separator(); /* bfa - indent */
     row->prop(&strip_ptr, "use_animated_time_cyclic", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
     layout.use_property_split_set(true);
