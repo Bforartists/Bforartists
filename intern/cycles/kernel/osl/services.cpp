@@ -16,6 +16,7 @@
 #include "util/colorspace.h"
 #include "util/log.h"
 #include "util/string.h"
+#include "util/types_image.h"
 
 #include "kernel/device/cpu/image.h"
 
@@ -426,7 +427,7 @@ bool OSLRenderServices::texture(OSLUStringHash filename,
     }
     case OSLTextureHandle::SVM: {
       const float4 rgba = kernel_image_interp_with_udim(
-          kernel_globals, sd, handle->id, make_float2(s, 1.0f - t));
+          kernel_globals, sd, handle->id, dual2(make_float2(s, 1.0f - t)));
 
       result[0] = rgba[0];
       if (nchannels > 1) {
@@ -759,24 +760,20 @@ bool OSLRenderServices::trace(TraceOpt &options,
 
   ray.P = make_float3(P.x, P.y, P.z);
   ray.D = make_float3(R.x, R.y, R.z);
-  ray.tmin = 0.0f;
-  ray.tmax = (options.maxdist == 1.0e30f) ? FLT_MAX : options.maxdist - options.mindist;
+  ray.tmin = options.mindist;
+  ray.tmax = (options.maxdist == 1.0e30f) ? FLT_MAX : options.maxdist;
   ray.time = sd->time;
   ray.self.object = OBJECT_NONE;
   ray.self.prim = PRIM_NONE;
   ray.self.light_object = OBJECT_NONE;
   ray.self.light_prim = PRIM_NONE;
 
-  if (options.mindist == 0.0f) {
+  if (ray.tmin == 0.0f) {
     /* avoid self-intersections */
     if (ray.P == sd->P) {
       ray.self.object = sd->object;
       ray.self.prim = sd->prim;
     }
-  }
-  else {
-    /* offset for minimum distance */
-    ray.P += options.mindist * ray.D;
   }
 
   /* ray differentials */

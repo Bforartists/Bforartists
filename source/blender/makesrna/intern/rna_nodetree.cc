@@ -10381,11 +10381,13 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeSeparateMatrix", nullptr, ICON_SEPARATE_MATRIX);
   define(brna, "FunctionNode", "FunctionNodeSeparateTransform", nullptr, ICON_SEPARATE_TRANSFORM);
   define(brna, "FunctionNode", "FunctionNodeSliceString", nullptr, ICON_STRING_SUBSTRING);
+  define(brna, "FunctionNode", "FunctionNodeSplitString", nullptr, ICON_NONE);
   define(brna, "FunctionNode", "FunctionNodeStringLength", nullptr, ICON_STRING_LENGTH);
   define(brna, "FunctionNode", "FunctionNodeStringToValue", nullptr, ICON_STRING_TO_VALUE);
   define(brna, "FunctionNode", "FunctionNodeTransformDirection", nullptr, ICON_TRANSFORM_DIRECTION);
   define(brna, "FunctionNode", "FunctionNodeTransformPoint", nullptr, ICON_TRANSFORM_POINT);
   define(brna, "FunctionNode", "FunctionNodeTransposeMatrix", nullptr, ICON_TRANSPOSE_MATRIX);
+  define(brna, "FunctionNode", "FunctionNodeTrimString", nullptr, ICON_NONE);
   define(brna, "FunctionNode", "FunctionNodeValueToString", nullptr, ICON_VALUE_TO_STRING);
 
   define(brna, "GeometryNode", "GeometryNodeAccumulateField", nullptr, ICON_ACCUMULATE);
@@ -10592,6 +10594,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetMaterialIndex", nullptr, ICON_SET_MATERIAL_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSetMeshNormal", nullptr, ICON_SET_SMOOTH);
   define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSWeight", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodeSetPointRadius", nullptr, ICON_SET_CURVE_RADIUS);
   define(brna, "GeometryNode", "GeometryNodeSetPosition", nullptr, ICON_SET_POSITION);
   define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);

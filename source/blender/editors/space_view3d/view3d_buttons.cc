@@ -2965,7 +2965,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
   }
 
   if (ob->type == OB_GREASE_PENCIL) {
-    add_labeled_field("Fill Opacity",
+    add_labeled_field(IFACE_("Fill Opacity"),
                       is_equal(status.fill_opacity.value_max * status.curve_count,
                                status.fill_opacity.value_sum),
                       [&]() {
@@ -2987,7 +2987,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
                       });
 
     add_labeled_field(
-        "Start Cap",
+        IFACE_("Start Cap"),
         status.start_cap.value_max * status.curve_count == status.start_cap.value_sum,
         [&]() {
           ui::Button *but = uiDefMenuBut(block,
@@ -3004,7 +3004,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
           return but;
         });
 
-    add_labeled_field("End Cap",
+    add_labeled_field(IFACE_("End Cap"),
                       status.end_cap.value_max * status.curve_count == status.end_cap.value_sum,
                       [&]() {
                         ui::Button *but = uiDefMenuBut(
@@ -3023,7 +3023,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
                       });
 
     add_labeled_field(
-        "Softness",
+        IFACE_("Softness"),
         is_equal(status.softness.value_max * status.curve_count, status.softness.value_sum),
         [&]() {
           ui::Button *but = uiDefButF(block,
@@ -3044,7 +3044,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
         });
 
     add_labeled_field(
-        "U Scale",
+        IFACE_("U Scale"),
         is_equal(status.u_scale.value_max * status.curve_count, status.u_scale.value_sum),
         [&]() {
           ui::Button *but = uiDefButF(block,
@@ -3064,7 +3064,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
           return but;
         });
 
-    add_labeled_field("Aspect Ratio",
+    add_labeled_field(IFACE_("Aspect Ratio"),
                       is_equal(status.aspect_ratio.value_max * status.curve_count,
                                status.aspect_ratio.value_sum),
                       [&]() {

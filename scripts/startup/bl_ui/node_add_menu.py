@@ -62,7 +62,7 @@ def draw_node_groups(context, layout, operator_id="node.add_node", use_transform
 
     # BFA - Check if there's an active node tree
     if node_tree is None:
-        return
+        return []
 
     from nodeitems_builtins import node_tree_group_type
 

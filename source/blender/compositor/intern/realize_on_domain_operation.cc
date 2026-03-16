@@ -9,7 +9,6 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_utildefines.h"
 
-#include "GPU_capabilities.hh"
 #include "GPU_shader.hh"
 #include "GPU_texture.hh"
 
@@ -164,9 +163,17 @@ const char *RealizeOnDomainOperation::get_realization_shader_name()
         return "compositor_realize_on_domain_int4";
       case ResultType::Bool:
         return "compositor_realize_on_domain_bool";
+      case ResultType::Float4x4:
+        return "compositor_realize_on_domain_float4x4";
       case ResultType::Menu:
         return "compositor_realize_on_domain_menu";
       case ResultType::String:
+      case ResultType::Object:
+      case ResultType::Image:
+      case ResultType::Font:
+      case ResultType::Scene:
+      case ResultType::Text:
+      case ResultType::Mask:
         /* Single only types do not support GPU code path. */
         BLI_assert(Result::is_single_value_only_type(this->get_input().type()));
         BLI_assert_unreachable();
@@ -195,9 +202,17 @@ const char *RealizeOnDomainOperation::get_realization_shader_name()
         return "compositor_realize_on_domain_int4";
       case ResultType::Bool:
         return "compositor_realize_on_domain_bool";
+      case ResultType::Float4x4:
+        return "compositor_realize_on_domain_float4x4";
       case ResultType::Menu:
         return "compositor_realize_on_domain_menu";
       case ResultType::String:
+      case ResultType::Object:
+      case ResultType::Image:
+      case ResultType::Font:
+      case ResultType::Scene:
+      case ResultType::Text:
+      case ResultType::Mask:
         /* Single only types do not support GPU code path. */
         BLI_assert(Result::is_single_value_only_type(this->get_input().type()));
         BLI_assert_unreachable();
@@ -241,6 +256,7 @@ void RealizeOnDomainOperation::realize_on_domain_cpu(const float3x3 &transformat
                       int2,
                       int3,
                       bool,
+                      float4x4,
                       nodes::MenuValue>(
           [&]<typename T>() { realize_on_domain<T>(input, output, transformation); });
 }
@@ -289,15 +305,7 @@ SimpleOperation *RealizeOnDomainOperation::construct_if_needed(
     return nullptr;
   }
 
-  if (!context.use_gpu()) {
-    return new RealizeOnDomainOperation(context, realized_target_domain, input_descriptor.type);
-  }
-
-  /* Make sure the data size of the domain does not surpass what is possible on GPU. */
-  Domain safe_realized_target_domain = realized_target_domain;
-  safe_realized_target_domain.data_size = math::min(realized_target_domain.data_size,
-                                                    int2(GPU_max_texture_size()));
-  return new RealizeOnDomainOperation(context, safe_realized_target_domain, input_descriptor.type);
+  return new RealizeOnDomainOperation(context, realized_target_domain, input_descriptor.type);
 }
 
 }  // namespace blender::compositor

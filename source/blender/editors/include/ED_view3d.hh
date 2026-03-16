@@ -993,8 +993,13 @@ enum eV3DSelectObjectFilter {
   VIEW3D_SELECT_FILTER_NOP = 0,
   /** Don't select objects outside the current mode. */
   VIEW3D_SELECT_FILTER_OBJECT_MODE_LOCK = 1,
+  /**
+   * Similar to #VIEW3D_SELECT_FILTER_OBJECT_MODE_LOCK but iterates on objects
+   * in the same mode & type.
+   */
+  VIEW3D_SELECT_FILTER_OBJECT_MODE_LOCK_SAME_TYPE = 2,
   /** A version of #VIEW3D_SELECT_FILTER_OBJECT_MODE_LOCK that allows pose-bone selection. */
-  VIEW3D_SELECT_FILTER_WPAINT_POSE_MODE_LOCK = 2,
+  VIEW3D_SELECT_FILTER_WPAINT_POSE_MODE_LOCK = 3,
 };
 
 enum class eV3DSelectShape {
@@ -1134,6 +1139,7 @@ void ED_view3d_draw_setup_view(const wmWindowManager *wm,
  * `mval` comes from event->mval, only use within region handlers.
  */
 Base *ED_view3d_give_base_under_cursor(bContext *C, const int mval[2]);
+Base *ED_view3d_give_base_under_cursor_skip_editmode(bContext *C, const int mval[2]);
 Object *ED_view3d_give_object_under_cursor(bContext *C, const int mval[2]);
 Object *ED_view3d_give_material_slot_under_cursor(bContext *C,
                                                   const int mval[2],

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "BLI_array.hh"
+#include "BLI_map.hh"
 #include "BLI_math_vector.hh"
 #include "BLI_rect.h"
 #include "BLI_vector.hh"
@@ -22,28 +23,6 @@
 #include "IMB_imbuf_types.hh"
 
 namespace blender::bke::pbvh::pixels {
-
-struct UVPrimitivePaintInput {
-  /** Corresponding index into triangles */
-  int tri_index;
-  /**
-   * Delta barycentric coordinates between 2 neighboring UVs in the U direction.
-   *
-   * Only the first two coordinates are stored. The third should be recalculated
-   */
-  float2 delta_barycentric_coord_u;
-
-  /**
-   * Initially only the vert indices are known.
-   *
-   * delta_barycentric_coord_u is initialized in a later stage as it requires image tile
-   * dimensions.
-   */
-  UVPrimitivePaintInput(int tri_index)
-      : tri_index(tri_index), delta_barycentric_coord_u(0.0f, 0.0f)
-  {
-  }
-};
 
 /**
  * Encode sequential pixels to reduce memory footprint.
@@ -64,7 +43,7 @@ struct PackedPixelRow {
  */
 struct UDIMTilePixels {
   /** UDIM Tile number. */
-  short tile_number;
+  image::TileNumber tile_number;
 
   struct {
     bool dirty : 1;
@@ -113,7 +92,18 @@ struct NodeData {
 
   Vector<UDIMTilePixels> tiles;
   Vector<UDIMTileUndo> undo_regions;
-  Vector<UVPrimitivePaintInput> uv_primitives;
+
+  struct {
+    /** Corresponding index into triangles */
+    Vector<int> tri_indices;
+
+    /**
+     * Delta barycentric coordinates between 2 neighboring UVs in the U direction.
+     *
+     * Only the first two coordinates are stored. The third should be recalculated
+     */
+    Vector<float2> delta_barycentric_coords;
+  } uv_primitives;
 
   NodeData()
   {
@@ -151,19 +141,21 @@ struct NodeData {
     }
   }
 
-  void mark_region(Image &image, const image::ImageTileWrapper &image_tile, ImBuf &image_buffer)
+  void mark_region(UDIMTilePixels &tile,
+                   Image &image,
+                   const image::ImageTileWrapper &image_tile,
+                   ImBuf &image_buffer)
   {
-    UDIMTilePixels *tile = find_tile_data(image_tile);
-    if (tile && tile->flags.dirty) {
+    if (tile.flags.dirty) {
       if (image_buffer.planes == 8) {
         image_buffer.planes = 32;
         BKE_image_partial_update_mark_full_update(&image);
       }
       else {
         BKE_image_partial_update_mark_region(
-            &image, image_tile.image_tile, &image_buffer, &tile->dirty_region);
+            &image, image_tile.image_tile, &image_buffer, &tile.dirty_region);
       }
-      tile->clear_dirty();
+      tile.clear_dirty();
     }
   }
 
@@ -179,7 +171,8 @@ struct NodeData {
   void clear_data()
   {
     tiles.clear();
-    uv_primitives.clear();
+    uv_primitives.tri_indices.clear();
+    uv_primitives.delta_barycentric_coords.clear();
   }
 
   static void free_func(void *instance)
@@ -357,13 +350,14 @@ struct PBVHData {
 };
 
 NodeData &node_data_get(bke::pbvh::Node &node);
-void mark_image_dirty(bke::pbvh::Node &node, Image &image, ImageUser &image_user);
+void mark_image_dirty(bke::pbvh::Node &node,
+                      Image &image,
+                      Map<image::TileNumber, ImBuf *> &buffers);
 PBVHData &data_get(bke::pbvh::Tree &pbvh);
 void collect_dirty_tiles(bke::pbvh::Node &node, Vector<image::TileNumber> &r_dirty_tiles);
 
 void copy_pixels(bke::pbvh::Tree &pbvh,
-                 Image &image,
-                 ImageUser &image_user,
+                 Map<image::TileNumber, ImBuf *> &buffers,
                  image::TileNumber tile_number);
 
 }  // namespace blender::bke::pbvh::pixels

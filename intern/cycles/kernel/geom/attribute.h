@@ -34,18 +34,17 @@ ccl_device_inline uint object_attribute_map_offset(KernelGlobals kg, const int o
   return kernel_data_fetch(objects, object).attribute_map_offset;
 }
 
-ccl_device_inline AttributeDescriptor find_attribute(const ccl_global AttributeMap *attributes_map,
-                                                     uint attr_offset,
-                                                     const int prim,
-                                                     const uint64_t id)
+ccl_device bool find_attr_offset(const ccl_global AttributeMap *attributes_map,
+                                 ccl_private uint &attr_offset,
+                                 const uint64_t id)
 {
-  /* for SVM, find attribute by unique id */
+  /* For SVM, find attribute by unique id. */
   AttributeMap attr_map = attributes_map[attr_offset];
 
   while (attr_map.id != id) {
     if (UNLIKELY(attr_map.id == ATTR_STD_NONE)) {
       if (UNLIKELY(attr_map.element == 0)) {
-        return attribute_not_found();
+        return false;
       }
       /* Chain jump to a different part of the table. */
       attr_offset = attr_map.offset;
@@ -55,6 +54,20 @@ ccl_device_inline AttributeDescriptor find_attribute(const ccl_global AttributeM
     }
     attr_map = attributes_map[attr_offset];
   }
+
+  return true;
+}
+
+ccl_device_inline AttributeDescriptor find_attribute(const ccl_global AttributeMap *attributes_map,
+                                                     uint attr_offset,
+                                                     const int prim,
+                                                     const uint64_t id)
+{
+  if (!find_attr_offset(attributes_map, attr_offset, id)) {
+    return attribute_not_found();
+  }
+
+  const AttributeMap attr_map = attributes_map[attr_offset];
 
   AttributeDescriptor desc;
   desc.element = (AttributeElement)attr_map.element;
