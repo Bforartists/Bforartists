@@ -346,7 +346,8 @@ struct PaintOperationExecutor {
      * happened using the old offset, redo it so brush and offset stay in lock
      * step. */
     if (scene_->toolsettings->gpencil_sync_radius_surface) {
-      self.placement_.set_surface_offset(start_radius + scene_->toolsettings->gpencil_surface_offset_extra);
+      const float sync_offset = start_radius * 2.0f + scene_->toolsettings->gpencil_surface_offset_extra;
+      self.placement_.set_surface_offset(sync_offset);
       if (self.placement_.use_project_to_stroke() ||
           self.placement_.use_project_to_surface())
       {
@@ -357,15 +358,7 @@ struct PaintOperationExecutor {
         else {
           start_location = self.placement_.project(start_coords);
         }
-        start_radius = ed::greasepencil::radius_from_input_sample(
-            rv3d,
-            region,
-            brush_,
-            start_sample.pressure,
-            start_location,
-            self.placement_.to_world_space(),
-            settings_, // bfa
-            scene_); // bfa
+        /* Don't recalculate radius after re-projection to avoid perspective effects */
       }
     }
 
@@ -731,9 +724,11 @@ struct PaintOperationExecutor {
                                                               self.placement_.to_world_space(),
                                                               settings_, // bfa
                                                               scene_); // bfa
-
+    // bfa - Grease Pencil radius and surface offset synchronization.  If enabled, the surface offset will be adjusted
+    // to keep the brush tip "stuck" to the surface, even when the radius
     if (scene_->toolsettings->gpencil_sync_radius_surface) {
-      self.placement_.set_surface_offset(radius + scene_->toolsettings->gpencil_surface_offset_extra);
+      const float sync_offset = radius * 2.0f + scene_->toolsettings->gpencil_surface_offset_extra;
+      self.placement_.set_surface_offset(sync_offset);
       if (self.placement_.use_project_to_stroke() ||
           self.placement_.use_project_to_surface())
       {
@@ -746,14 +741,7 @@ struct PaintOperationExecutor {
         else {
           position = self.placement_.project(coords);
         }
-        radius = ed::greasepencil::radius_from_input_sample(rv3d,
-                                                            region,
-                                                            brush_,
-                                                            extension_sample.pressure,
-                                                            position,
-                                                            self.placement_.to_world_space(),
-                                                            settings_, // bfa
-                                                            scene_); // bfa
+        /* Don't recalculate radius after re-projection to avoid perspective effects */
       }
     }
 
