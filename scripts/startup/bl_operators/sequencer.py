@@ -14,6 +14,7 @@ from bpy.props import (
     IntProperty,
 )
 from bpy.app.translations import pgettext_rpt as rpt_
+from addon_utils import get_icon_value
 
 
 def _animated_properties_get(strip):
@@ -409,6 +410,7 @@ class SEQUENCER_FH_image_strip(FileHandler, SequencerFileHandlerBase):
     bl_label = "Image strip"
     bl_import_operator = "SEQUENCER_OT_image_strip_add"
     bl_file_extensions = ";".join(bpy.path.extensions_image)
+    bl_icon = get_icon_value('FILE_IMAGE') # bfa - added icon
 
 
 class SEQUENCER_FH_movie_strip(FileHandler, SequencerFileHandlerBase):
@@ -416,6 +418,7 @@ class SEQUENCER_FH_movie_strip(FileHandler, SequencerFileHandlerBase):
     bl_label = "Movie strip"
     bl_import_operator = "SEQUENCER_OT_movie_strip_add"
     bl_file_extensions = ";".join(bpy.path.extensions_movie)
+    bl_icon = get_icon_value('FILE_MOVIE') # bfa - added icon
 
 
 class SEQUENCER_FH_sound_strip(FileHandler, SequencerFileHandlerBase):
@@ -423,6 +426,7 @@ class SEQUENCER_FH_sound_strip(FileHandler, SequencerFileHandlerBase):
     bl_label = "Sound strip"
     bl_import_operator = "SEQUENCER_OT_sound_strip_add"
     bl_file_extensions = ";".join(bpy.path.extensions_audio)
+    bl_icon = get_icon_value('FILE_SOUND') # bfa - added icon
 
 
 classes = (
