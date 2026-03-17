@@ -628,7 +628,8 @@ static bke::CurvesGeometry boundary_to_curves(const Scene &scene,
                                                                      pressure,
                                                                      position,
                                                                      placement.to_world_space(),
-                                                                     brush.gpencil_settings);
+                                                                     brush.gpencil_settings, // bfa
+                                                                     &scene); // bfa
     opacities.span[point_i] = ed::greasepencil::opacity_from_input_sample(
         pressure, &brush, brush.gpencil_settings);
   }

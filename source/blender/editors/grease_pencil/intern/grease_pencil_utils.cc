@@ -286,6 +286,18 @@ bool DrawingPlacement::use_project_to_stroke() const
   return depth_ == DrawingPlacementDepth::Stroke;
 }
 
+/* bfa - for grease pencil radius/offset sync we need to vary the offset during a stroke.
+ * the callers updates this value whenever the effective brush radius changes (like with pressure). */
+void DrawingPlacement::set_surface_offset(float offset)
+{
+  surface_offset_ = offset;
+}
+
+float DrawingPlacement::surface_offset() const
+{
+  return surface_offset_;
+}
+
 void DrawingPlacement::cache_viewport_depths(Depsgraph *depsgraph, ARegion *region, View3D *view3d)
 {
   const short previous_gp_flag = view3d->gp_flag;
@@ -1639,7 +1651,8 @@ float radius_from_input_sample(const RegionView3D *rv3d,
                                const float pressure,
                                const float3 &location,
                                const float4x4 &to_world,
-                               const BrushGpencilSettings *settings)
+                               const BrushGpencilSettings *settings, // bfa
+                               const Scene * /*scene*/) // bfa
 {
   float radius = brush_radius_at_location(rv3d, region, brush, location, to_world);
   if (BKE_brush_use_size_pressure(brush)) {

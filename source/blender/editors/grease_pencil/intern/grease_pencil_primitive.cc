@@ -511,7 +511,8 @@ static void grease_pencil_primitive_update_curves(PrimitiveToolOperation &ptd)
                                                                     pressure,
                                                                     positions_3d[point],
                                                                     ptd.placement.to_world_space(),
-                                                                    ptd.settings);
+                                                                    ptd.settings, // bfa
+                                                                    ptd.vc.scene); // bfa
     const float opacity = ed::greasepencil::opacity_from_input_sample(
         pressure, ptd.brush, ptd.settings);
 

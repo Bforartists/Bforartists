@@ -338,7 +338,30 @@ struct PaintOperationExecutor {
         start_sample.pressure,
         start_location,
         self.placement_.to_world_space(),
-        settings_);
+        settings_, // bfa
+        scene_); // bfa
+
+    /* bfa - if the user asked for sync then make the offset follow the
+     * computed radius (pressure included).  if the projection has already
+     * happened using the old offset, redo it so brush and offset stay in lock
+     * step. */
+    if (scene_->toolsettings->gpencil_sync_radius_surface) {
+      const float sync_offset = start_radius * 2.0f + scene_->toolsettings->gpencil_surface_offset_extra;
+      self.placement_.set_surface_offset(sync_offset);
+      if (self.placement_.use_project_to_stroke() ||
+          self.placement_.use_project_to_surface())
+      {
+        const std::optional<float> depth = self.placement_.get_depth(start_coords);
+        if (depth) {
+          start_location = self.placement_.place(start_coords, *depth);
+        }
+        else {
+          start_location = self.placement_.project(start_coords);
+        }
+        /* Don't recalculate radius after re-projection to avoid perspective effects */
+      }
+    }
+
     start_radius = ed::greasepencil::randomize_radius(
         *settings_, self.stroke_random_radius_factor_, 0.0f, start_radius, start_sample.pressure);
 
@@ -699,7 +722,29 @@ struct PaintOperationExecutor {
                                                               extension_sample.pressure,
                                                               position,
                                                               self.placement_.to_world_space(),
-                                                              settings_);
+                                                              settings_, // bfa
+                                                              scene_); // bfa
+    // bfa - Grease Pencil radius and surface offset synchronization.  If enabled, the surface offset will be adjusted
+    // to keep the brush tip "stuck" to the surface, even when the radius
+    if (scene_->toolsettings->gpencil_sync_radius_surface) {
+      const float sync_offset = radius * 2.0f + scene_->toolsettings->gpencil_surface_offset_extra;
+      self.placement_.set_surface_offset(sync_offset);
+      if (self.placement_.use_project_to_stroke() ||
+          self.placement_.use_project_to_surface())
+      {
+        const std::optional<float> depth = self.stroke_placement_depths_.is_empty() ?
+                                               std::nullopt :
+                                               self.stroke_placement_depths_.last();
+        if (depth) {
+          position = self.placement_.place(coords, *depth);
+        }
+        else {
+          position = self.placement_.project(coords);
+        }
+        /* Don't recalculate radius after re-projection to avoid perspective effects */
+      }
+    }
+
     float opacity = ed::greasepencil::opacity_from_input_sample(
         extension_sample.pressure, brush_, settings_);
 

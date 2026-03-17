@@ -8,6 +8,7 @@
 
 #include <cstdlib>
 
+#include "DNA_brush_types.h" // bfa - sync brush size with surface offset
 #include "DNA_curve_types.h"
 #include "DNA_layer_types.h"
 #include "DNA_scene_types.h"
@@ -23,7 +24,9 @@
 
 #include "BLT_translation.hh"
 
+#include "BKE_brush.hh" // bfa - sync brush size with surface offset
 #include "BKE_paint.hh"
+#include "DEG_depsgraph.hh" // bfa - sync brush size with surface offset
 
 #include "ED_object.hh"
 
@@ -914,14 +917,56 @@ static void rna_Gpencil_vertex_mask_segment_update(bContext *C, PointerRNA *ptr)
   }
 }
 
-static void rna_all_grease_pencil_update(bContext *C, PointerRNA * /*ptr*/)
+/* Internal helper — takes Main* directly, used by UpdateFunc callbacks. */
+static void rna_all_grease_pencil_update_main(Main *bmain)
 {
   /* FIXME: We shouldn't have to tag all the Grease Pencil IDs for an update! */
-  Main *bmain = CTX_data_main(C);
   for (GreasePencil &grease_pencil : bmain->grease_pencils) {
     DEG_id_tag_update(&grease_pencil.id, ID_RECALC_GEOMETRY);
   }
   WM_main_add_notifier(NC_GPENCIL | NA_EDITED, nullptr);
+}
+
+/* bfa - sync brush size with surface offset */
+static void rna_all_grease_pencil_update(bContext *C, PointerRNA * /*ptr*/)
+{
+  rna_all_grease_pencil_update_main(CTX_data_main(C));
+}
+
+static void rna_ToolSettings_gpencil_surface_offset_update(Main *bmain,
+                                                           Scene * /*scene*/,
+                                                           PointerRNA *ptr)
+{
+  ToolSettings *ts = static_cast<ToolSettings *>(ptr->data);
+
+  /* If sync is enabled, update brush unprojected_size to match surface offset. */
+  if (ts->gpencil_sync_radius_surface) {
+    Paint *paint = (ts->gp_paint != nullptr) ? &ts->gp_paint->paint : nullptr;
+    Brush *brush = (paint != nullptr) ? paint->brush : nullptr;
+    if (brush) {
+      brush->unprojected_size = ts->gpencil_surface_offset;
+    }
+  }
+
+  rna_all_grease_pencil_update_main(bmain);
+}
+
+static void rna_ToolSettings_gpencil_sync_radius_surface_update(Main *bmain,
+                                                                Scene * /*scene*/,
+                                                                PointerRNA *ptr)
+{
+  ToolSettings *ts = static_cast<ToolSettings *>(ptr->data);
+
+  Paint *paint = (ts->gp_paint != nullptr) ? &ts->gp_paint->paint : nullptr;
+  Brush *brush = (paint != nullptr) ? paint->brush : nullptr;
+
+  if (brush && ts->gpencil_sync_radius_surface) {
+    /* Enabling sync: initialise surface offset from the current brush size. */
+    ts->gpencil_surface_offset = brush->unprojected_size;
+  }
+  /* When disabling, keep current values independent — nothing extra needed. */
+
+  rna_all_grease_pencil_update_main(bmain);
 }
 
 /* Read-only Iterator of all the scene objects. */
@@ -4068,6 +4113,27 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_range(prop, -FLT_MAX, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.1f, 3);
   RNA_def_property_float_default(prop, 0.150f);
+  RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_ToolSettings_gpencil_surface_offset_update"); // bfa
+
+  /* bfa - sync brush size with surface offset */
+  prop = RNA_def_property(srna, "gpencil_sync_radius_surface", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "gpencil_sync_radius_surface", 1);
+  RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
+  RNA_def_property_ui_text(
+      prop, "Sync Radius with Surface", 
+      "When enabled, brush size controls surface offset; when disabled, each is independent");
+  RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_ToolSettings_gpencil_sync_radius_surface_update");
+
+  /* bfa - extra offset for synced surface offset */
+  prop = RNA_def_property(srna, "gpencil_surface_offset_extra", PROP_FLOAT, PROP_DISTANCE);
+  RNA_def_property_float_sdna(prop, nullptr, "gpencil_surface_offset_extra");
+  RNA_def_property_flag(prop, PROP_DEG_SYNC_ONLY);
+  RNA_def_property_ui_text(
+      prop, "Extra Offset", "Additional offset added to the synced surface offset");
+  RNA_def_property_range(prop, -FLT_MAX, FLT_MAX);
+  RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.01f, 3);
+  RNA_def_property_float_default(prop, 0.01f);
+  RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, nullptr);
 
   prop = RNA_def_property(srna, "use_gpencil_project_only_selected", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(

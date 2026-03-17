@@ -169,6 +169,12 @@ class DrawingPlacement {
   bool use_project_to_surface() const;
   bool use_project_to_stroke() const;
 
+  /* bfa - allow runtime override of the offset applied in surface/"Stroke" placement
+   * so that it can track the brush radius including pressure. */
+  void set_surface_offset(float offset);
+  float surface_offset() const;
+
+
   void cache_viewport_depths(Depsgraph *depsgraph, ARegion *region, View3D *view3d);
 
   /**
@@ -343,7 +349,8 @@ float radius_from_input_sample(const RegionView3D *rv3d,
                                float pressure,
                                const float3 &location,
                                const float4x4 &to_world,
-                               const BrushGpencilSettings *settings);
+                               const BrushGpencilSettings *settings, // bfa
+                               const Scene *scene); // bfa
 wmOperatorStatus grease_pencil_draw_operator_invoke(bContext *C,
                                                     wmOperator *op,
                                                     bool use_duplicate_previous_key);
