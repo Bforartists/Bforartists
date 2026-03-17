@@ -373,7 +373,7 @@ static void node_draw_buttons_extended(ui::Layout &layout,
 static void node_blend_write(const bNodeTree & /*tree*/, const bNode &node, BlendWriter &writer)
 {
   const NodeCompositorFileOutput &data = node_storage(node);
-  BLO_write_string(&writer, data.file_name);
+  writer.write_string(data.file_name);
   BKE_image_format_blend_write(&writer, const_cast<ImageFormatData *>(&data.format));
   socket_items::blend_write<FileOutputItemsAccessor>(&writer, node);
 }
@@ -639,8 +639,15 @@ class FileOutputOperation : public NodeOperation {
       case ResultType::Int3:
       case ResultType::Int:
       case ResultType::Bool:
+      case ResultType::Float4x4:
       case ResultType::Menu:
       case ResultType::String:
+      case ResultType::Object:
+      case ResultType::Image:
+      case ResultType::Font:
+      case ResultType::Scene:
+      case ResultType::Text:
+      case ResultType::Mask:
         /* Not supported. */
         BLI_assert_unreachable();
         break;
@@ -654,7 +661,7 @@ class FileOutputOperation : public NodeOperation {
     BLI_assert(result.is_single_value());
 
     const int64_t length = int64_t(size.x) * size.y;
-    const int64_t buffer_size = length * result.channels_count();
+    const int64_t buffer_size = length * (result.get_cpp_type().size / sizeof(float));
     float *buffer = MEM_new_array_uninitialized<float>(buffer_size,
                                                        "File Output Inflated Buffer.");
 
@@ -672,8 +679,15 @@ class FileOutputOperation : public NodeOperation {
       case ResultType::Int2:
       case ResultType::Int3:
       case ResultType::Bool:
+      case ResultType::Float4x4:
       case ResultType::Menu:
       case ResultType::String:
+      case ResultType::Object:
+      case ResultType::Image:
+      case ResultType::Font:
+      case ResultType::Scene:
+      case ResultType::Text:
+      case ResultType::Mask:
         /* Not supported. */
         BLI_assert_unreachable();
         return nullptr;
@@ -726,8 +740,15 @@ class FileOutputOperation : public NodeOperation {
       case ResultType::Int:
       case ResultType::Int3:
       case ResultType::Bool:
+      case ResultType::Float4x4:
       case ResultType::Menu:
       case ResultType::String:
+      case ResultType::Object:
+      case ResultType::Image:
+      case ResultType::Font:
+      case ResultType::Scene:
+      case ResultType::Text:
+      case ResultType::Mask:
         /* Not supported. */
         BLI_assert_unreachable();
         break;
@@ -904,7 +925,7 @@ StructRNA **FileOutputItemsAccessor::item_srna = &RNA_NodeCompositorFileOutputIt
 
 void FileOutputItemsAccessor::blend_write_item(BlendWriter *writer, const ItemT &item)
 {
-  BLO_write_string(writer, item.name);
+  writer->write_string(item.name);
   BKE_image_format_blend_write(writer, const_cast<ImageFormatData *>(&item.format));
 }
 

@@ -16,6 +16,7 @@ __all__ = (
     "RequestDescription",
     "HTTPRequestDownloadError",
     "ContentLengthUnknownError",
+    "ContentLengthTooBigError",
     "ContentLengthError",
     "HTTPRequestUnknownContentEncoding",
     "DownloadCancelled",
@@ -77,6 +78,9 @@ class ConditionalDownloader:
 
     http_session: requests.Session
     """Requests session, for control over retry behavior, TCP connection pooling, etc."""
+
+    max_size_bytes: int = 0
+    """Maximum allowed size of the download in bytes. 0 means no limit."""
 
     chunk_size: int = 8192
     """Download this many bytes before saving to disk and reporting progress."""
@@ -248,6 +252,12 @@ class ConditionalDownloader:
             # TODO: add support for this case.
             raise ContentLengthUnknownError(http_req_descr) from None
 
+        # Before actually downloading, check that the size is below the limit.
+        # During downloading, it's checked that the number of streamed bytes
+        # doesn't get larger than the declared content length.
+        if self.max_size_bytes > 0 and content_length > self.max_size_bytes:
+            raise ContentLengthTooBigError(http_req_descr, self.max_size_bytes, content_length)
+
         # The Content-Length header, obtained above, indicates the number of
         # bytes that we will be downloading. The Requests library automatically
         # decompresses this, and so if the normal (not `stream.raw`) streaming
@@ -389,6 +399,8 @@ class DownloaderOptions:
     When only one number is given, it is used for both timeouts.
     """
     http_headers: dict[str, str] = dataclasses.field(default_factory=dict)
+    max_size_bytes: int = 0
+    """Maximum download size, in bytes."""
 
     def __post_init__(self) -> None:
         self._ensure_user_agent()
@@ -397,12 +409,12 @@ class DownloaderOptions:
         """Make sure a custom User-Agent HTTP header is set.
 
         This is done here, instead of globally in the `requests` module, because
-        `requests` will be used in a Python subprocess, which doesn't run inside
+        `requests` will be used in a Python sub-process, which doesn't run inside
         of Blender. So in order to include the Blender version, the header has
         to be defined in the main process.
 
         Note that this information is NOT passed in the query string for GET
-        requests. This is to help HTTP caching infrastructure (like Cloudflare)
+        requests. This is to help HTTP caching infrastructure (like CloudFlare)
         to cache HTTP responses as much as possible.
         """
         if any(header.lower() == 'user-agent' for header in self.http_headers):
@@ -812,7 +824,7 @@ def _download_queued_items(
                     # practice I (Sybren) have also seen a ConnectionResetError
                     # being raised when Blender shuts down uncleanly. The
                     # implementation of .send() shows that it can also raise an
-                    # OSError, which is the superclass of ConnectionResetError
+                    # OSError, which is the super-class of ConnectionResetError
                     # as well, so that's why that's caught here.
                     log.warning("Blender is no longer running, shutting down the downloader process")
                     do_shutdown.set()
@@ -888,6 +900,7 @@ def _download_queued_items(
     downloader.add_reporter(reporter)
     downloader.periodic_check = periodic_check
     downloader.timeout = options.timeout
+    downloader.max_size_bytes = options.max_size_bytes
 
     try:
         while periodic_check():
@@ -1369,6 +1382,20 @@ class ContentLengthError(HTTPRequestDownloadError):
             self.__class__.__name__, self.expected_size, self.actual_size, self.http_req_desc)
 
 
+class ContentLengthTooBigError(HTTPRequestDownloadError):
+    """Raised when a HTTP response body is larger than the allowed size."""
+
+    def __init__(self, http_req_desc: RequestDescription, max_size: int, actual_size: int) -> None:
+        # This __init__ method is necessary to be able to (un)pickle instances.
+        super().__init__(http_req_desc, max_size, actual_size)
+        self.max_size = max_size
+        self.actual_size = actual_size
+
+    def __repr__(self) -> str:
+        return "{!s}(max_size={:d}, actual_size={:d}, {!s})".format(
+            self.__class__.__name__, self.max_size, self.actual_size, self.http_req_desc)
+
+
 class HTTPRequestUnknownContentEncoding(HTTPRequestDownloadError):
     """Raised when a HTTP response has an unsupported Content-Encoding header.."""
 
@@ -1478,7 +1505,6 @@ def _create_temp_file(dirpath: Path, prefix: str, suffix: str) -> Path:
 
     The caller is responsible for deleting the file after use.
     """
-    import os
     import tempfile
 
     fd, path_as_str = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=dirpath)

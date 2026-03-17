@@ -17,6 +17,36 @@
 
 CCL_NAMESPACE_BEGIN
 
+/* Transform p from a local coordinate system (spanned by X and Y) into global coordinates. */
+template<class T> ccl_device_inline T to_global(const float2 p, const T X, const T Y)
+{
+  return p.x * X + p.y * Y;
+}
+
+/* Transform p from a local coordinate system (spanned by X, Y and Z) into global coordinates. */
+template<class T> ccl_device_inline T to_global(const float3 p, const T X, const T Y, const T Z)
+{
+  return p.x * X + p.y * Y + p.z * Z;
+}
+
+/* Transform p from global coordinates into a local coordinate system (spanned by X and Y). */
+template<class T> ccl_device_inline float2 to_local(const T p, const T X, const T Y)
+{
+  return make_float2(dot(p, X), dot(p, Y));
+}
+
+/* Transform p from global coordinates into a local coordinate system (spanned by X, Y and Z). */
+template<class T> ccl_device_inline float3 to_local(const T p, const T X, const T Y, const T Z)
+{
+  return make_float3(dot(p, X), dot(p, Y), dot(p, Z));
+}
+
+template<class T>
+ccl_device_inline dual3 to_local(const dual<T> p, const T X, const T Y, const T Z)
+{
+  return make_float3(dot(p, X), dot(p, Y), dot(p, Z));
+}
+
 /* Affine transformation, stored as 4x3 matrix. */
 
 struct Transform {
@@ -79,7 +109,7 @@ ccl_device_inline float3 transform_point(const ccl_private Transform *t, const f
 ccl_device_inline dual3 transform_point(const ccl_private Transform *t, const dual3 a)
 {
 #if defined(__KERNEL_SSE__) && defined(__KERNEL_SSE2__)
-  /* NOTE: `dot()` has large lantency on Intel platforms, the following method of transpose + madd
+  /* NOTE: `dot()` has large latency on Intel platforms, the following method of transpose + madd
    * is faster. However, we did not measure on Neon platforms, it might be that `dot()` is fine
    * there, and we can use the simpler implementation at the end of the function. */
   float4 x = t->x;
@@ -146,14 +176,19 @@ ccl_device_inline float3 transform_direction(const ccl_private Transform *t, con
 #endif
 }
 
-ccl_device_inline float3 transform_direction_transposed(const ccl_private Transform *t,
-                                                        const float3 a)
+ccl_device_inline dual3 transform_direction(const ccl_private Transform *t, const dual3 a)
+{
+  return to_local(a, make_float3(t->x), make_float3(t->y), make_float3(t->z));
+}
+
+template<class T>
+ccl_device_inline T transform_direction_transposed(const ccl_private Transform *t, const T a)
 {
   const float3 x = make_float3(t->x.x, t->y.x, t->z.x);
   const float3 y = make_float3(t->x.y, t->y.y, t->z.y);
   const float3 z = make_float3(t->x.z, t->y.z, t->z.z);
 
-  return make_float3(dot(x, a), dot(y, a), dot(z, a));
+  return to_local(a, x, y, z);
 }
 
 ccl_device_inline Transform make_transform(const float a,
@@ -368,6 +403,11 @@ ccl_device_inline void transform_set_column(Transform *t, const int column, cons
   t->x[column] = value.x;
   t->y[column] = value.y;
   t->z[column] = value.z;
+}
+
+ccl_device_inline float3 transform_get_translation(const Transform *t)
+{
+  return transform_get_column(t, 3);
 }
 
 Transform transform_transposed_inverse(const Transform &tfm);

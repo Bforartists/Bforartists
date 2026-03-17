@@ -66,7 +66,7 @@ ccl_device void kernel_background_evaluate(KernelGlobals kg,
 
   /* Setup shader data. */
   ShaderData sd;
-  shader_setup_from_background(kg, &sd, ray_P, ray_D, ray_time);
+  shader_setup_from_background(kg, &sd, ray_P, ray_D, 0.0f, ray_time);
 
   /* Evaluate shader.
    * This is being evaluated for all BSDFs, so path flag does not contain a specific type.
@@ -180,7 +180,7 @@ ccl_device void kernel_volume_density_evaluate(KernelGlobals kg,
         index.x, PRNG_BAKE_VOLUME_DENSITY_EVAL, index.y, index.z);
     sd.P = ray.P + rand_p * voxel_size;
     if (need_transformation) {
-      /* Convert to world spcace. */
+      /* Convert to world space. */
       sd.P = transform_point(&tfm, sd.P);
     }
     sd.closure_transparent_extinction = zero_float3();

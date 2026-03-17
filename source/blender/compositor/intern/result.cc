@@ -53,9 +53,16 @@ bool Result::is_single_value_only_type(ResultType type)
     case ResultType::Int2:
     case ResultType::Int3:
     case ResultType::Bool:
+    case ResultType::Float4x4:
     case ResultType::Menu:
       return false;
     case ResultType::String:
+    case ResultType::Object:
+    case ResultType::Image:
+    case ResultType::Font:
+    case ResultType::Scene:
+    case ResultType::Text:
+    case ResultType::Mask:
       return true;
   }
 
@@ -90,11 +97,20 @@ gpu::TextureFormat Result::gpu_texture_format(ResultType type, ResultPrecision p
         case ResultType::Bool:
           /* No bool texture formats, so we store in an 8-bit integer. Precision doesn't matter. */
           return gpu::TextureFormat::SINT_8;
+        case ResultType::Float4x4:
+          /* Stored as an array of 4 RGBA texture. */
+          return gpu::TextureFormat::SFLOAT_16_16_16_16;
         case ResultType::Menu:
           /* Menu values are technically stored in 32-bit integers, but 8 is sufficient in
            * practice. */
           return gpu::TextureFormat::SINT_8;
         case ResultType::String:
+        case ResultType::Object:
+        case ResultType::Image:
+        case ResultType::Font:
+        case ResultType::Scene:
+        case ResultType::Text:
+        case ResultType::Mask:
           /* Single only types do not support GPU code path. */
           BLI_assert(Result::is_single_value_only_type(type));
           BLI_assert_unreachable();
@@ -125,11 +141,20 @@ gpu::TextureFormat Result::gpu_texture_format(ResultType type, ResultPrecision p
         case ResultType::Bool:
           /* No bool texture formats, so we store in an 8-bit integer. Precision doesn't matter. */
           return gpu::TextureFormat::SINT_8;
+        case ResultType::Float4x4:
+          /* Stored as an array of 4 RGBA texture. */
+          return gpu::TextureFormat::SFLOAT_32_32_32_32;
         case ResultType::Menu:
           /* Menu values are technically stored in 32-bit integers, but 8 is sufficient in
            * practice. */
           return gpu::TextureFormat::SINT_8;
         case ResultType::String:
+        case ResultType::Object:
+        case ResultType::Image:
+        case ResultType::Font:
+        case ResultType::Scene:
+        case ResultType::Text:
+        case ResultType::Mask:
           /* Single only types do not support GPU storage. */
           BLI_assert(Result::is_single_value_only_type(type));
           BLI_assert_unreachable();
@@ -150,6 +175,7 @@ eGPUDataFormat Result::gpu_data_format(ResultType type)
     case ResultType::Float4:
     case ResultType::Float3:
     case ResultType::Float2:
+    case ResultType::Float4x4:
       return GPU_DATA_FLOAT;
     case ResultType::Int:
     case ResultType::Int2:
@@ -158,6 +184,12 @@ eGPUDataFormat Result::gpu_data_format(ResultType type)
     case ResultType::Menu:
       return GPU_DATA_INT;
     case ResultType::String:
+    case ResultType::Object:
+    case ResultType::Image:
+    case ResultType::Font:
+    case ResultType::Scene:
+    case ResultType::Text:
+    case ResultType::Mask:
       /* Single only types do not support GPU storage. */
       BLI_assert(Result::is_single_value_only_type(type));
       BLI_assert_unreachable();
@@ -331,10 +363,24 @@ const CPPType &Result::cpp_type(const ResultType type)
       return CPPType::get<int3>();
     case ResultType::Bool:
       return CPPType::get<bool>();
+    case ResultType::Float4x4:
+      return CPPType::get<float4x4>();
     case ResultType::Menu:
       return CPPType::get<nodes::MenuValue>();
     case ResultType::String:
       return CPPType::get<std::string>();
+    case ResultType::Object:
+      return CPPType::get<Object *>();
+    case ResultType::Image:
+      return CPPType::get<Image *>();
+    case ResultType::Font:
+      return CPPType::get<VFont *>();
+    case ResultType::Scene:
+      return CPPType::get<Scene *>();
+    case ResultType::Text:
+      return CPPType::get<Text *>();
+    case ResultType::Mask:
+      return CPPType::get<Mask *>();
   }
 
   BLI_assert_unreachable();
@@ -362,10 +408,24 @@ const char *Result::type_name(const ResultType type)
       return "int3";
     case ResultType::Bool:
       return "bool";
+    case ResultType::Float4x4:
+      return "float4x4";
     case ResultType::Menu:
       return "menu";
     case ResultType::String:
       return "string";
+    case ResultType::Object:
+      return "object";
+    case ResultType::Image:
+      return "image";
+    case ResultType::Font:
+      return "font";
+    case ResultType::Scene:
+      return "scene";
+    case ResultType::Text:
+      return "text";
+    case ResultType::Mask:
+      return "mask";
   }
 
   BLI_assert_unreachable();
@@ -392,9 +452,9 @@ eGPUDataFormat Result::get_gpu_data_format() const
   return Result::gpu_data_format(type_);
 }
 
-static Domain sanitize_domain_size(const Domain domain,
-                                   const Context &context,
-                                   const std::optional<ResultStorageType> storage_type)
+static Domain sanitize_domain_data_size(const Domain domain,
+                                        const Context &context,
+                                        const std::optional<ResultStorageType> storage_type)
 {
   Domain sanitized_domain = domain;
   const bool use_gpu = storage_type.has_value() ? storage_type.value() == ResultStorageType::GPU :
@@ -413,7 +473,7 @@ void Result::allocate_texture(const Domain domain,
   BLI_assert(!Result::is_single_value_only_type(this->type()));
 
   is_single_value_ = false;
-  domain_ = sanitize_domain_size(domain, *context_, storage_type);
+  domain_ = sanitize_domain_data_size(domain, *context_, storage_type);
   this->allocate_data(domain_.data_size, from_pool, storage_type);
 }
 
@@ -466,11 +526,32 @@ void Result::allocate_single_value()
     case ResultType::Bool:
       this->set_single_value(false);
       break;
+    case ResultType::Float4x4:
+      this->set_single_value(float4x4::zero());
+      break;
     case ResultType::Menu:
       this->set_single_value(nodes::MenuValue(0));
       break;
     case ResultType::String:
       this->set_single_value(std::string(""));
+      break;
+    case ResultType::Object:
+      this->set_single_value(static_cast<Object *>(nullptr));
+      break;
+    case ResultType::Image:
+      this->set_single_value(static_cast<Image *>(nullptr));
+      break;
+    case ResultType::Font:
+      this->set_single_value(static_cast<VFont *>(nullptr));
+      break;
+    case ResultType::Scene:
+      this->set_single_value(static_cast<Scene *>(nullptr));
+      break;
+    case ResultType::Text:
+      this->set_single_value(static_cast<Text *>(nullptr));
+      break;
+    case ResultType::Mask:
+      this->set_single_value(static_cast<Mask *>(nullptr));
       break;
   }
 }
@@ -806,6 +887,46 @@ int Result::reference_count() const
   return reference_count_;
 }
 
+int64_t Result::channels_count() const
+{
+  if (storage_type_ == ResultStorageType::GPU) {
+    return GPU_texture_component_len(GPU_texture_format(this->gpu_texture()));
+  }
+
+  switch (type_) {
+    case ResultType::Float:
+    case ResultType::Int:
+    case ResultType::Bool:
+    case ResultType::Menu:
+      return 1;
+    case ResultType::Float2:
+    case ResultType::Int2:
+      return 2;
+    case ResultType::Float3:
+    case ResultType::Int3:
+      return 3;
+    case ResultType::Color:
+    case ResultType::Float4:
+      return 4;
+    case ResultType::Float4x4:
+      return 16;
+    case ResultType::String:
+    case ResultType::Object:
+    case ResultType::Image:
+    case ResultType::Font:
+    case ResultType::Scene:
+    case ResultType::Text:
+    case ResultType::Mask:
+      /* Single only types do not have channels. */
+      BLI_assert(Result::is_single_value_only_type(type_));
+      BLI_assert_unreachable();
+      break;
+  }
+
+  BLI_assert_unreachable();
+  return 4;
+}
+
 int64_t Result::size_in_bytes() const
 {
   const int64_t pixel_size = this->get_cpp_type().size;
@@ -859,7 +980,19 @@ void Result::update_single_value_data()
           GPU_texture_update(this->gpu_texture(), GPU_DATA_INT, vector_value);
           break;
         }
+        case ResultType::Float4x4: {
+          /* Float4x4 stores each column in one texture layer in a 4-layer texture. */
+          GPU_texture_update_sub(
+              this->gpu_texture(), GPU_DATA_FLOAT, this->single_value().get(), 0, 0, 0, 1, 1, 4);
+          break;
+        }
         case ResultType::String:
+        case ResultType::Object:
+        case ResultType::Image:
+        case ResultType::Font:
+        case ResultType::Scene:
+        case ResultType::Text:
+        case ResultType::Mask:
           /* Single only types do not support GPU storage. */
           BLI_assert(Result::is_single_value_only_type(this->type()));
           BLI_assert_unreachable();
@@ -882,14 +1015,20 @@ void Result::allocate_data(const int2 size,
                                                   context_->use_gpu();
   if (use_gpu) {
     storage_type_ = ResultStorageType::GPU;
-    is_from_pool_ = from_pool;
 
     const gpu::TextureFormat format = this->get_gpu_texture_format();
     const eGPUTextureUsage usage = GPU_TEXTURE_USAGE_GENERAL;
-    if (from_pool) {
+    if (this->type() == ResultType::Float4x4) {
+      is_from_pool_ = false;
+      gpu_texture_ = GPU_texture_create_2d_array(
+          __func__, size.x, size.y, 4, 1, format, usage, nullptr);
+    }
+    else if (from_pool) {
+      is_from_pool_ = true;
       gpu_texture_ = gpu::TexturePool::get().acquire_texture(size, format, usage);
     }
     else {
+      is_from_pool_ = false;
       gpu_texture_ = GPU_texture_create_2d(__func__, size.x, size.y, 1, format, usage, nullptr);
     }
   }

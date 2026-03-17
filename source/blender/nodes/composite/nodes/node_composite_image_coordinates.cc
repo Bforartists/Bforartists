@@ -24,7 +24,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .dimensions(2)
       .structure_type(StructureType::Dynamic)
       .description("Normalized coordinates with half pixel offsets");
-  b.add_output<decl::Vector>("Pixel")
+  b.add_output<decl::IntVector>("Pixel")
       .dimensions(2)
       .structure_type(StructureType::Dynamic)
       .description("Integer pixel coordinates");
@@ -43,24 +43,14 @@ class ImageCoordinatesOperation : public NodeOperation {
   void execute() override
   {
     const Result &input = this->get_input("Image");
-    Result &uniform_coordinates_result = this->get_result("Uniform");
-    Result &normalized_coordinates_result = this->get_result("Normalized");
-    Result &pixel_coordinates_result = this->get_result("Pixel");
     if (input.is_single_value()) {
-      if (uniform_coordinates_result.should_compute()) {
-        uniform_coordinates_result.allocate_invalid();
-      }
-      if (normalized_coordinates_result.should_compute()) {
-        normalized_coordinates_result.allocate_invalid();
-      }
-      if (pixel_coordinates_result.should_compute()) {
-        pixel_coordinates_result.allocate_invalid();
-      }
+      this->allocate_default_remaining_outputs();
       return;
     }
 
     const Domain domain = input.domain();
 
+    Result &uniform_coordinates_result = this->get_result("Uniform");
     if (uniform_coordinates_result.should_compute()) {
       const Result &uniform_coordinates = this->context().cache_manager().image_coordinates.get(
           this->context(), domain.data_size, CoordinatesType::Uniform);
@@ -68,6 +58,7 @@ class ImageCoordinatesOperation : public NodeOperation {
       uniform_coordinates_result.transform(domain.transformation);
     }
 
+    Result &normalized_coordinates_result = this->get_result("Normalized");
     if (normalized_coordinates_result.should_compute()) {
       const Result &normalized_coordinates = this->context().cache_manager().image_coordinates.get(
           this->context(), domain.data_size, CoordinatesType::Normalized);
@@ -75,6 +66,7 @@ class ImageCoordinatesOperation : public NodeOperation {
       normalized_coordinates_result.transform(domain.transformation);
     }
 
+    Result &pixel_coordinates_result = this->get_result("Pixel");
     if (pixel_coordinates_result.should_compute()) {
       const Result &pixel_coordinates = this->context().cache_manager().image_coordinates.get(
           this->context(), domain.data_size, CoordinatesType::Pixel);

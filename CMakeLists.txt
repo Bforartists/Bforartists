@@ -600,7 +600,7 @@ endif()
 option(WITH_PYTHON_INSTALL "Copy system python into the Bforartists install directory" ON)
 
 option(WITH_INSTALL_COPYRIGHT "\
-Copy the official Bforartists Authors's copyright.txt into the Bforartists install directory"
+Copy the official Bforartists Authorss copyright.txt into the Bforartists install directory"
   OFF
 )
 mark_as_advanced(WITH_INSTALL_COPYRIGHT)
@@ -887,7 +887,7 @@ endif()
 option(WITH_UI_TESTS_VULKAN "\
 Enable UI tests using the Vulkan backend. \
 Requires WITH_UI_TESTS and WITH_GPU_RENDER_TESTS_VULKAN."
-  OFF
+  ON
 )
 mark_as_advanced(WITH_UI_TESTS_VULKAN)
 

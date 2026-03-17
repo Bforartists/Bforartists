@@ -417,7 +417,7 @@ bNodeTreeInterfacePanel *NodeSetInterfaceBuilder::expose_panel(
     flag |= NODE_INTERFACE_PANEL_DEFAULT_CLOSED;
   }
   bNodeTreeInterfacePanel *io_panel = dst_tree_.tree_interface.add_panel(
-      panel_decl.name, panel_decl.description, flag, parent);
+      panel_decl.name.ref(), panel_decl.description, flag, parent);
   InterfacePanelData &data = io_mapping_.panel_data.lookup_or_add(io_panel, {});
 
   const Span<bNodePanelState> panel_states = src_node.panel_states();
@@ -962,7 +962,7 @@ static void replace_interface_socket(
     }
   }
   else {
-    /* A proxy is needed if any internal internal or external connection has a different type
+    /* A proxy is needed if any internal or external connection has a different type
      * and therefore cannot directly be connected without loss of conversion. */
     if (any_link_need_conversion(incoming_links, io_socket) &&
         any_link_need_conversion(outgoing_links, io_socket))

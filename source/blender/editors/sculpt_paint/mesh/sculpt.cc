@@ -2798,34 +2798,27 @@ static void update_brush_local_mat(const Sculpt &sd, Object &ob)
 /** \name Texture painting
  * \{ */
 
-static bool sculpt_needs_pbvh_pixels(PaintModeSettings &paint_mode_settings,
-                                     const Brush &brush,
-                                     Object &ob)
+static bool sculpt_needs_pbvh_pixels(const Brush &brush, const Object &ob)
 {
   if (brush.sculpt_brush_type == SCULPT_BRUSH_TYPE_PAINT &&
       USER_EXPERIMENTAL_TEST(&U, use_sculpt_texture_paint))
   {
-    Image *image;
-    ImageUser *image_user;
-    return SCULPT_paint_image_canvas_get(paint_mode_settings, ob, &image, &image_user);
+    return ob.runtime->sculpt_session->cache->image_data.get();
   }
 
   return false;
 }
 
-static void sculpt_pbvh_update_pixels(const Depsgraph &depsgraph,
-                                      PaintModeSettings &paint_mode_settings,
-                                      Object &ob)
+static void sculpt_pbvh_update_pixels(const Depsgraph &depsgraph, Object &ob)
 {
   BLI_assert(ob.type == OB_MESH);
 
-  Image *image;
-  ImageUser *image_user;
-  if (!SCULPT_paint_image_canvas_get(paint_mode_settings, ob, &image, &image_user)) {
+  ed::sculpt_paint::StrokeCache &cache = *ob.runtime->sculpt_session->cache;
+  if (!cache.image_data) {
     return;
   }
 
-  bke::pbvh::build_pixels(depsgraph, ob, *image, *image_user);
+  bke::pbvh::build_pixels(depsgraph, ob, *cache.image_data->image, *cache.image_data->image_user);
 }
 
 /** \} */
@@ -3263,10 +3256,10 @@ static void do_brush_action(const Depsgraph &depsgraph,
 
   const bool use_original = brush_type_needs_original(brush.sculpt_brush_type) ? true :
                                                                                  !ss.cache->accum;
-  const bool use_pixels = sculpt_needs_pbvh_pixels(paint_mode_settings, brush, ob);
+  const bool use_pixels = sculpt_needs_pbvh_pixels(brush, ob);
 
-  if (sculpt_needs_pbvh_pixels(paint_mode_settings, brush, ob)) {
-    sculpt_pbvh_update_pixels(depsgraph, paint_mode_settings, ob);
+  if (sculpt_needs_pbvh_pixels(brush, ob)) {
+    sculpt_pbvh_update_pixels(depsgraph, ob);
 
     texnode_mask = pbvh_gather_texpaint(ob, brush, use_original, 1.0f, memory);
 
@@ -4678,18 +4671,19 @@ bool cursor_geometry_info_update(bContext *C,
   ViewContext vc = ED_view3d_viewcontext_init(C, depsgraph);
   const Base *base = CTX_data_active_base(C);
 
-  return cursor_geometry_info_update(*depsgraph, sd, vc, base, out, mval, use_sampled_normal);
+  return cursor_geometry_info_update(
+      *depsgraph, sd.paint, &sd, vc, base, out, mval, use_sampled_normal);
 }
 
 bool cursor_geometry_info_update(Depsgraph &depsgraph,
-                                 const Sculpt &sd,
+                                 const Paint &paint,
+                                 const Sculpt *sd,
                                  ViewContext &vc,
                                  const Base *base,
                                  CursorGeometryInfo *out,
                                  const float2 &mval,
                                  const bool use_sampled_normal)
 {
-  const Paint &paint = sd.paint;
   const Brush &brush = *BKE_paint_brush_for_read(&paint);
   bool original = false;
 
@@ -4710,7 +4704,9 @@ bool cursor_geometry_info_update(Depsgraph &depsgraph,
   float3 ray_end;
   float3 ray_normal;
   float depth = raycast_init(&vc, mval, ray_start, ray_end, ray_normal, original);
-  SCULPT_stroke_modifiers_check(depsgraph, vc.rv3d, sd, ob, &brush);
+  if (sd) {
+    SCULPT_stroke_modifiers_check(depsgraph, vc.rv3d, *sd, ob, &brush);
+  }
 
   RaycastData srd{};
   srd.use_original = original;
@@ -5443,6 +5439,8 @@ void store_mesh_from_eval(const wmOperator &op,
         /* Use lower level API to add the position attribute to avoid copying the array and to
          * allow using #tag_positions_changed_no_normals instead of #tag_positions_changed (which
          * would be called by the attribute API). */
+        position.sharing_info->add_user();
+
         bke::Attribute::ArrayData data{};
         data.data = const_cast<float3 *>(position.varray.get_internal_span().data());
         data.size = position.varray.size();
@@ -5722,6 +5720,9 @@ void SculptPaintStroke::stroke_cache_init(const BrushStrokeMode stroke_mode,
       SCULPT_use_image_paint_brush(*paint_mode_settings_, ob))
   {
     cache->accum = true;
+
+    cache->image_data = paint::image::ImageData::init_active_image(
+        ob, this->scene->toolsettings->paint_mode);
   }
 
   if (BKE_brush_color_jitter_get_settings(this->paint, brush)) {
@@ -5767,7 +5768,8 @@ bool SculptPaintStroke::test_start(wmOperator *op, const float mval[2])
     }
 
     CursorGeometryInfo cgi;
-    cursor_geometry_info_update(*this->depsgraph, *sculpt_, this->vc, base_, &cgi, mval, false);
+    cursor_geometry_info_update(
+        *this->depsgraph, *paint, sculpt_, this->vc, base_, &cgi, mval, false);
 
     stroke_undo_begin(*this->scene, this->brush, *this->paint_mode_settings_, *this->object, op);
 

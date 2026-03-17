@@ -794,10 +794,10 @@ static void lineart_triangle_cull_single(LineartData *ld,
       tri->intersecting_verts);
 
   LineartVert *vt = &(static_cast<LineartVert *>(v_eln->pointer))[v_count];
-  LineartTriangle *tri1 = static_cast<LineartTriangle *>(
-      static_cast<void *>((static_cast<uchar *>(t_eln->pointer)) + ld->sizeof_triangle * t_count));
+  LineartTriangle *tri1 = static_cast<LineartTriangle *>(static_cast<void *>(
+      (static_cast<uchar *>(t_eln->pointer)) + (size_t)ld->sizeof_triangle * t_count));
   LineartTriangle *tri2 = static_cast<LineartTriangle *>(static_cast<void *>(
-      (static_cast<uchar *>(t_eln->pointer)) + ld->sizeof_triangle * (t_count + 1)));
+      (static_cast<uchar *>(t_eln->pointer)) + (size_t)ld->sizeof_triangle * (t_count + 1)));
 
   new_e = &(static_cast<LineartEdge *>(e_eln->pointer))[e_count];
   /* Init `edge` to the last `edge` entry. */
@@ -1314,8 +1314,8 @@ void lineart_main_cull_triangles(LineartData *ld, bool clip_far)
     ob = static_cast<Object *>(eln.object_ref);
     for (i = 0; i < eln.element_count; i++) {
       /* Select the triangle in the array. */
-      tri = static_cast<LineartTriangle *>(
-          static_cast<void *>((static_cast<uchar *>(eln.pointer)) + ld->sizeof_triangle * i));
+      tri = static_cast<LineartTriangle *>(static_cast<void *>(
+          (static_cast<uchar *>(eln.pointer)) + (size_t)ld->sizeof_triangle * i));
 
       if (tri->flags & LRT_CULL_DISCARD) {
         continue;
@@ -1479,7 +1479,7 @@ static LineartTriangle *lineart_triangle_from_index(LineartData *ld,
                                                     int index)
 {
   int8_t *b = reinterpret_cast<int8_t *>(rt_array);
-  b += (index * ld->sizeof_triangle);
+  b += ((size_t)index * ld->sizeof_triangle);
   return reinterpret_cast<LineartTriangle *>(b);
 }
 
@@ -1832,8 +1832,8 @@ static void lineart_load_tri_task(void *__restrict userdata,
   LineartVert *vert_arr = tri_task_data->vert_arr;
   LineartTriangle *tri = tri_task_data->tri_arr;
 
-  tri = reinterpret_cast<LineartTriangle *>((reinterpret_cast<uchar *>(tri)) +
-                                            tri_task_data->lineart_triangle_size * i);
+  tri = reinterpret_cast<LineartTriangle *>((reinterpret_cast<size_t>(tri)) +
+                                            (size_t)tri_task_data->lineart_triangle_size * i);
 
   int v1 = corner_verts[corner_tri[0]];
   int v2 = corner_verts[corner_tri[1]];
@@ -2547,8 +2547,16 @@ void lineart_main_load_geometries(Depsgraph *depsgraph,
       lineart_matrix_perspective_44d(proj, fov, asp, cam->clip_start, cam->clip_end);
     }
     else if (cam->type == CAM_ORTHO) {
-      const double w = cam->ortho_scale / 2;
-      lineart_matrix_ortho_44d(proj, -w, w, -w / asp, w / asp, cam->clip_start, cam->clip_end);
+      double horizontal = cam->ortho_scale / 2;
+      double vertical = horizontal;
+      if (fit == CAMERA_SENSOR_FIT_VERT) {
+        horizontal *= asp;
+      }
+      else {
+        vertical /= asp;
+      }
+      lineart_matrix_ortho_44d(
+          proj, -horizontal, horizontal, -vertical, vertical, cam->clip_start, cam->clip_end);
     }
     else {
       BLI_assert(!"Unsupported camera type in lineart_main_load_geometries");
@@ -4578,7 +4586,7 @@ static void lineart_add_triangles_worker(TaskPool *__restrict /*pool*/, LineartI
       int index_start = eln == th->pending_from ? th->index_from : 0;
       int index_end = eln == th->pending_to ? th->index_to : eln->element_count;
       LineartTriangle *tri = static_cast<LineartTriangle *>(static_cast<void *>(
-          (static_cast<uchar *>(eln->pointer)) + ld->sizeof_triangle * index_start));
+          (static_cast<uchar *>(eln->pointer)) + (size_t)ld->sizeof_triangle * index_start));
       for (int ei = index_start; ei < index_end; ei++) {
         int x1, x2, y1, y2;
         int r, co;

@@ -1305,7 +1305,7 @@ static int ptcache_frame_from_filename(const char *filename, const char *ext)
 #define MAX_PTCACHE_PATH FILE_MAX
 #define MAX_PTCACHE_FILE (FILE_MAX * 2)
 
-static int ptcache_path(PTCacheID *pid, char dirname[MAX_PTCACHE_PATH])
+int BKE_ptcache_path(PTCacheID *pid, char dirname[MAX_PTCACHE_PATH])
 {
   const char *blendfile_path = BKE_main_blendfile_path_from_global();
   Library *lib = (pid->owner_id) ? pid->owner_id->lib : nullptr;
@@ -1417,7 +1417,7 @@ static int ptcache_filepath(PTCacheID *pid,
 
   /* start with temp dir */
   if (do_path) {
-    len = ptcache_path(pid, filepath);
+    len = BKE_ptcache_path(pid, filepath);
     newname += len;
   }
   if (pid->cache->name[0] == '\0' && (pid->cache->flag & PTCACHE_EXTERNAL) == 0) {
@@ -1738,9 +1738,7 @@ int BKE_ptcache_mem_pointers_seek(int point_index, PTCacheMem *pm, void *cur[BPH
   if (index < 0) {
     /* Can't give proper location without reallocation, so don't give any location.
      * Some points will be cached improperly, but this only happens with simulation
-     * steps bigger than cache->step, so the cache has to be recalculated anyways
-     * at some point.
-     */
+     * steps bigger than cache->step, so the cache has to be recalculated anyway at some point. */
     return 0;
   }
 
@@ -2549,7 +2547,7 @@ void BKE_ptcache_id_clear(PTCacheID *pid, int mode, uint cfra)
     case PTCACHE_CLEAR_BEFORE:
     case PTCACHE_CLEAR_AFTER:
       if (pid->cache->flag & PTCACHE_DISK_CACHE) {
-        ptcache_path(pid, path);
+        BKE_ptcache_path(pid, path);
 
         dir = opendir(path);
         if (dir == nullptr) {
@@ -2755,7 +2753,7 @@ void BKE_ptcache_id_time(
       char ext[MAX_PTCACHE_FILE];
       uint len; /* store the length of the string */
 
-      ptcache_path(pid, path);
+      BKE_ptcache_path(pid, path);
 
       len = ptcache_filepath(pid, filepath, int(cfra), false, false); /* no path */
 
@@ -3472,7 +3470,7 @@ void BKE_ptcache_disk_cache_rename(PTCacheID *pid, const char *name_src, const c
 
   len = ptcache_filepath(pid, old_filepath, 0, false, false); /* no path */
 
-  ptcache_path(pid, path);
+  BKE_ptcache_path(pid, path);
   dir = opendir(path);
   if (dir == nullptr) {
     STRNCPY(pid->cache->name, old_name);
@@ -3523,7 +3521,7 @@ void BKE_ptcache_load_external(PTCacheID *pid)
     return;
   }
 
-  ptcache_path(pid, path);
+  BKE_ptcache_path(pid, path);
 
   len = ptcache_filepath(pid, filepath, 1, false, false); /* no path */
 
@@ -3739,13 +3737,12 @@ void BKE_ptcache_blend_write(BlendWriter *writer, ListBaseT<PointCache> *ptcache
               writer->write_struct_array_cast<BoidData>(pm.totpoint, pm.data[i]);
             }
             else if (i == BPHYS_DATA_INDEX) { /* Only 'cache type' to use uint values. */
-              BLO_write_uint32_array(
-                  writer, pm.totpoint, reinterpret_cast<uint32_t *>(pm.data[i]));
+              writer->write_uint32_array(pm.totpoint, reinterpret_cast<uint32_t *>(pm.data[i]));
             }
             else { /* All other types of caches use (vectors of) floats. */
               /* data_size returns bytes. */
               const uint32_t items_num = pm.totpoint * (BKE_ptcache_data_size(i) / sizeof(float));
-              BLO_write_float_array(writer, items_num, reinterpret_cast<float *>(pm.data[i]));
+              writer->write_float_array(items_num, reinterpret_cast<float *>(pm.data[i]));
             }
           }
         }
