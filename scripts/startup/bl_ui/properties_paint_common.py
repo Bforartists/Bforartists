@@ -1035,7 +1035,7 @@ def brush_settings(layout, context, brush, popover=False):
             layout.separator()
 
             if sculpt_brush_type != "PLANE":
-                split = layout.split(factor=0.36)
+                split = layout.split(factor=0.4)
                 col = split.column()
                 col.use_property_split = False
                 col.prop(brush, "use_plane_trim", text="Plane Trim")
@@ -1045,10 +1045,7 @@ def brush_settings(layout, context, brush, popover=False):
                 else:
                     col.label(icon="DISCLOSURE_TRI_RIGHT")
             else:
-                layout.label(
-                    text="Plane trim option not available with Plane sculpt tool",
-                    icon="ERROR",
-                )
+                layout.separator()
 
         # height
         if capabilities.has_height:
@@ -1743,12 +1740,6 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
                 row = col.row()
                 row.separator()
                 row.prop(brush, "use_original_plane", text="Plane")
-            else:
-                layout.label(
-                    text="Using original plane and normals is not available with the plane sculpt tool",
-                    icon="ERROR",
-                )
-
             layout.separator()
 
     elif mode == "SCULPT_GREASE_PENCIL":
@@ -1843,12 +1834,14 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
 
     # Draw shared settings.
     if use_accumulate:
-        layout.use_property_split = False  # BFA
-        layout.prop(brush, "use_accumulate")
+        row = col.row() # BFA
+        row.separator() # BFA
+        row.prop(brush, "use_accumulate")
 
     if use_frontface:
-        layout.use_property_split = False  # BFA
-        layout.prop(brush, "use_frontface", text="Front Faces Only")
+        row = col.row() # BFA
+        row.separator() # BFA
+        row.prop(brush, "use_frontface", text="Front Faces Only")
 
     # BFA - exposed in all areas
     if context.space_data.type in {"VIEW_3D", "IMAGE_EDITOR"}:
