@@ -1357,7 +1357,8 @@ class VIEW3D_MT_transform_base:
         layout = self.layout
         # BFA - removed translate, rotate and resize as redundant
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
-        layout.operator("mesh.circularize", text="To Circle") # BFA - WIP
+        if context.mode in {"EDIT_MESH"}: # BFA - show only in edit mode
+            layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
         layout.operator("transform.bend", text="Bend", icon="BEND")
         layout.operator("transform.push_pull", text="Push/Pull", icon="PUSH_PULL")
