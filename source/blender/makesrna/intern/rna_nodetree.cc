@@ -10486,7 +10486,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeInputCurveHandlePositions", nullptr, ICON_CURVE_HANDLE_POSITIONS);
   define(brna, "GeometryNode", "GeometryNodeInputCurveTilt", nullptr, ICON_CURVE_TILT);
   define(brna, "GeometryNode", "GeometryNodeInputEdgeSmooth", nullptr, ICON_SHADING_EDGE_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeInputFont", def_geo_input_font, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeInputFont", def_geo_input_font, ICON_FONT_DATA);
   define(brna, "GeometryNode", "GeometryNodeInputID", nullptr, ICON_GET_ID);
   define(brna, "GeometryNode", "GeometryNodeInputImage", def_geo_image, ICON_FILE_IMAGE);
   define(brna, "GeometryNode", "GeometryNodeInputIndex", nullptr, ICON_INDEX);

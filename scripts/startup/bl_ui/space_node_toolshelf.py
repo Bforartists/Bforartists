@@ -1513,6 +1513,7 @@ class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
             OperatorEntry("FunctionNodeInputBool",pad=8),
             OperatorEntry("GeometryNodeInputCollection",pad=5),
             OperatorEntry("FunctionNodeInputColor",pad=13),
+            OperatorEntry("GeometryNodeInputFont",pad=12),
             OperatorEntry("GeometryNodeInputImage",pad=11),
             OperatorEntry("FunctionNodeInputInt",pad=10),
             OperatorEntry("GeometryNodeInputMaterial",pad=9),
