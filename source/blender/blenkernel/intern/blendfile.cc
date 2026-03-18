@@ -1639,16 +1639,7 @@ UserDef *BKE_blendfile_userdef_from_defaults()
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_brush_gpencil_sculpt", "Brushes/Grease Pencil Sculpt/Utilities");
 
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Camera & Lens Effects");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Creative");
-    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Utilities");
-  }
-
   /* start BFA asset shelf default catalogs */
-  {
     /* 3D Viewport*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Geometry Nodegroups/Primitives");
@@ -1658,6 +1649,8 @@ UserDef *BKE_blendfile_userdef_from_defaults()
         userdef, "VIEW3D_AST_object", "Materials");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Generate");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "VIEW3D_AST_object", "Geometry Nodegroups");
 
     /* Node editors*/
 
@@ -1687,6 +1680,8 @@ UserDef *BKE_blendfile_userdef_from_defaults()
         userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Normals");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh/UV");
 
 
     /*Compositor*/
