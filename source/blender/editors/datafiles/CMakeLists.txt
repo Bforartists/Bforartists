@@ -2061,6 +2061,7 @@ if(WITH_BLENDER)
       three_dots
       tilt
       time
+      tocircle
       toggle_close
       toggle_cyclic
       toggle_meta
