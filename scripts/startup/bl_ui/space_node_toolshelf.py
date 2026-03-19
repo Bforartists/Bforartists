@@ -9,7 +9,7 @@ from bpy.app.translations import (
 import dataclasses
 
 from nodeitems_builtins import node_tree_group_type
-from .node_add_menu import draw_node_groups, add_empty_group
+from bl_ui.node_add_menu import draw_node_groups, add_empty_group
 
 
 # BFA - Custom panels for the sidebar toolshelf
