@@ -281,9 +281,10 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
+                OperatorEntry("ShaderNodeAttribute", pad=20),
+                OperatorEntry("ShaderNodeCameraData", pad=12),
                 OperatorEntry("ShaderNodeFresnel", pad=23),
                 OperatorEntry("ShaderNodeNewGeometry", pad=19),
-                OperatorEntry("ShaderNodeRGB", pad=28),
                 OperatorEntry("ShaderNodeTexCoord", pad=2),
             )
         else:
@@ -303,7 +304,6 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
                 Separator,
                 OperatorEntry("ShaderNodeParticleInfo", pad=12),
                 OperatorEntry("ShaderNodePointInfo", pad=17),
-                OperatorEntry("ShaderNodeRGB", pad=26),
                 OperatorEntry("ShaderNodeTangent", pad=19),
                 OperatorEntry("ShaderNodeTexCoord", pad=0),
                 OperatorEntry("ShaderNodeUVAlongStroke", pad=4, poll=is_shader_type(context, 'LINESTYLE')),
@@ -312,6 +312,47 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeValue", pad=23),
                 OperatorEntry("ShaderNodeVolumeInfo", pad=11),
                 OperatorEntry("ShaderNodeWireframe", pad=14),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_input_constant(bpy.types.Panel, NodePanel):
+    bl_label = "Constant"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_parent_id = "NODES_PT_toolshelf_shader_add_input"
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'ShaderNodeTree'
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeRGB", pad=20),
+                OperatorEntry("FunctionNodeInputInt",pad=16),
+                OperatorEntry("ShaderNodeValue", pad=18),
+                OperatorEntry("FunctionNodeInputVector",pad=17),
+            )
+        else:
+            entries = (
+                OperatorEntry("FunctionNodeInputBool",pad=16),
+                OperatorEntry("ShaderNodeRGB", pad=20),
+                OperatorEntry("FunctionNodeInputInt",pad=16),
+                OperatorEntry("FunctionNodeInputMenu",pad=19),
+                OperatorEntry("ShaderNodeValue", pad=18),
+                OperatorEntry("FunctionNodeInputVector",pad=17),
             )
 
         self.draw_entries(context, layout, entries)
@@ -788,9 +829,14 @@ class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePane
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeRGB", pad=20),
-            OperatorEntry("ShaderNodeValue", pad=18),
-            OperatorEntry("CompositorNodeNormal", pad=16),
+            OperatorEntry("FunctionNodeInputBool",pad=16),
+            OperatorEntry("CompositorNodeRGB", pad=22),
+            OperatorEntry("FunctionNodeInputInt",pad=18),
+            OperatorEntry("FunctionNodeInputIntVector",pad=4),
+            OperatorEntry("FunctionNodeInputMenu",pad=22),
+            OperatorEntry("CompositorNodeNormal", pad=18),
+            OperatorEntry("ShaderNodeValue", pad=20),
+            OperatorEntry("FunctionNodeInputVector",pad=18),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1519,6 +1565,7 @@ class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeInputImage",pad=11),
             OperatorEntry("FunctionNodeInputInt",pad=10),
             OperatorEntry("GeometryNodeInputMaterial",pad=9),
+            OperatorEntry("FunctionNodeInputMenu",pad=14),
             OperatorEntry("GeometryNodeInputObject",pad=11),
             OperatorEntry("FunctionNodeInputRotation",pad=8),
             OperatorEntry("FunctionNodeInputString",pad=12),
@@ -3005,6 +3052,7 @@ classes = (
     #-----------------------
     # Shader Nodes - Add
     NODES_PT_toolshelf_shader_add_input,
+    NODES_PT_toolshelf_shader_add_input_constant,
     NODES_PT_toolshelf_shader_add_output,
     NODES_PT_toolshelf_shader_add_shader,
     NODES_PT_toolshelf_shader_add_displacement,
