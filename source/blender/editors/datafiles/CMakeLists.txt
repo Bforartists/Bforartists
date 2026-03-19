@@ -1403,6 +1403,7 @@ if(WITH_BLENDER)
       node_uvtangent
       node_value
       node_vector
+      node_vectorint
       node_vector_blur
       node_vector_transform
       node_vectormath

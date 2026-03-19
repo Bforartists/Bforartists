@@ -10354,8 +10354,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeInputBool", def_fn_input_bool, ICON_INPUT_BOOL);
   define(brna, "FunctionNode", "FunctionNodeInputColor", def_fn_input_color, ICON_COLOR);
   define(brna, "FunctionNode", "FunctionNodeInputInt", def_fn_input_int, ICON_INTEGER);
-  define(brna, "FunctionNode", "FunctionNodeInputIntVector", def_fn_input_int_vector, ICON_NONE);
-  define(brna, "FunctionNode", "FunctionNodeInputMenu", def_fn_input_menu, ICON_NONE);
+  define(brna, "FunctionNode", "FunctionNodeInputIntVector", def_fn_input_int_vector, ICON_NODE_VECTORINT);
+  define(brna, "FunctionNode", "FunctionNodeInputMenu", def_fn_input_menu, ICON_MENU_PANEL);
   define(brna, "FunctionNode", "FunctionNodeInputRotation", def_fn_input_rotation, ICON_ROTATION);
   define(brna, "FunctionNode", "FunctionNodeInputSpecialCharacters", nullptr, ICON_SPECIAL);
   define(brna, "FunctionNode", "FunctionNodeInputString", def_fn_input_string, ICON_STRING);
