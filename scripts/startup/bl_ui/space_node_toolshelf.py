@@ -832,7 +832,7 @@ class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePane
             OperatorEntry("FunctionNodeInputBool",pad=16),
             OperatorEntry("CompositorNodeRGB", pad=22),
             OperatorEntry("FunctionNodeInputInt",pad=18),
-            OperatorEntry("FunctionNodeInputIntVector",pad=0),
+            OperatorEntry("FunctionNodeInputIntVector",pad=4),
             OperatorEntry("FunctionNodeInputMenu",pad=22),
             OperatorEntry("CompositorNodeNormal", pad=18),
             OperatorEntry("ShaderNodeValue", pad=20),
