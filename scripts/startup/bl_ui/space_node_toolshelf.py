@@ -602,10 +602,10 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
-                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),#
-                OperatorEntry(operator="node.add_repeat_zone", pad=18, text="Repeat Zone", icon="REPEAT"),
+                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=25, settings={"data_type": "'FLOAT_VECTOR'"}),#
+                OperatorEntry(operator="node.add_repeat_zone", pad=23, text="Repeat Zone", icon="REPEAT"),
                 Separator,
-                OperatorEntry("NodeCombineBundle", pad=17),
+                OperatorEntry("NodeCombineBundle", pad=16),
                 OperatorEntry("NodeSeparateBundle", pad=16),
                 Separator,
                 OperatorEntry("GeometryNodeMenuSwitch", pad=22),
@@ -613,13 +613,14 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
 
         else:
             entries = (
-                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),#
-                OperatorEntry(operator="node.add_repeat_zone", pad=18, text="Repeat Zone", icon="REPEAT"),
+                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=25, settings={"data_type": "'FLOAT_VECTOR'"}),#
+                OperatorEntry(operator="node.add_repeat_zone", pad=23, text="Repeat Zone", icon="REPEAT"),
                 Separator,
-                OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=24),
-                OperatorEntry("NodeEvaluateClosure", pad=8),
-                OperatorEntry("NodeCombineBundle", pad=15),
-                OperatorEntry("NodeSeparateBundle", pad=15),
+                OperatorEntry("NodeImplicitConversion", pad=10),
+                OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=31),
+                OperatorEntry("NodeEvaluateClosure", pad=15),
+                OperatorEntry("NodeCombineBundle", pad=16),
+                OperatorEntry("NodeSeparateBundle", pad=16),
                 Separator,
                 OperatorEntry("GeometryNodeMenuSwitch", pad=22),
             )
@@ -1179,16 +1180,17 @@ class NODES_PT_toolshelf_compositor_add_utilities(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeLevels", pad=22),
-            OperatorEntry("CompositorNodeNormalize", pad=16),
+            OperatorEntry("CompositorNodeLevels", pad=33),
+            OperatorEntry("CompositorNodeNormalize", pad=26),
             Separator,
-            OperatorEntry("CompositorNodeSplit", pad=26),
-            OperatorEntry("CompositorNodeSwitch", pad=22),
-            OperatorEntry("GeometryNodeIndexSwitch", pad=11),
-            OperatorEntry("GeometryNodeMenuSwitch", pad=11),
-            OperatorEntry("CompositorNodeSwitchView", pad=0, text="Switch Stereo View"),
+            OperatorEntry("NodeImplicitConversion", pad=8),
+            OperatorEntry("CompositorNodeSplit", pad=35),
+            OperatorEntry("CompositorNodeSwitch", pad=31),
+            OperatorEntry("GeometryNodeIndexSwitch", pad=19),
+            OperatorEntry("GeometryNodeMenuSwitch", pad=19),
+            OperatorEntry("CompositorNodeSwitchView", pad=8, text="Switch Stereo View"),
             Separator,
-            OperatorEntry("CompositorNodeRelativeToPixel", pad=5),
+            OperatorEntry("CompositorNodeRelativeToPixel", pad=13),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2661,12 +2663,13 @@ class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry(operator="node.add_foreach_geometry_element_zone", pad=1, text="For Each Element", icon="FOR_EACH"),
-            OperatorEntry("GeometryNodeIndexSwitch", pad=8),
-            OperatorEntry("GeometryNodeMenuSwitch", pad=9),
-            OperatorEntry("FunctionNodeRandomValue", pad=6),
-            OperatorEntry(operator="node.add_repeat_zone", pad=9, text="Repeat Zone", icon="REPEAT"),
-            OperatorEntry("GeometryNodeSwitch", pad=19),
+            OperatorEntry("NodeImplicitConversion", pad=6),
+            OperatorEntry(operator="node.add_foreach_geometry_element_zone", pad=9, text="For Each Element", icon="FOR_EACH"),
+            OperatorEntry("GeometryNodeIndexSwitch", pad=17),
+            OperatorEntry("GeometryNodeMenuSwitch", pad=17),
+            OperatorEntry("FunctionNodeRandomValue", pad=14),
+            OperatorEntry(operator="node.add_repeat_zone", pad=17, text="Repeat Zone", icon="REPEAT"),
+            OperatorEntry("GeometryNodeSwitch", pad=27),
         )
 
         self.draw_entries(context, layout, entries)
