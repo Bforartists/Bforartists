@@ -616,8 +616,8 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),#
                 OperatorEntry(operator="node.add_repeat_zone", pad=18, text="Repeat Zone", icon="REPEAT"),
                 Separator,
-                OperatorEntry("NodeClosureInput", pad=18),
-                OperatorEntry("NodeClosureOutput", pad=16),
+                OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=24),
+                OperatorEntry("NodeEvaluateClosure", pad=8),
                 OperatorEntry("NodeCombineBundle", pad=15),
                 OperatorEntry("NodeSeparateBundle", pad=15),
                 Separator,
@@ -2817,8 +2817,6 @@ class NODES_PT_toolshelf_gn_add_utilities_closure(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=24),
-            #OperatorEntry("NodeClosureInput", pad=12),
-            #OperatorEntry("NodeClosureOutput", pad=8),
             OperatorEntry("NodeEvaluateClosure", pad=8),
         )
 
