@@ -10102,7 +10102,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "NodeInternal", "NodeGroupInput", def_group_input, ICON_GROUPINPUT);
   define(brna, "NodeInternal", "NodeGroupOutput", def_group_output, ICON_GROUPOUTPUT);
   define(brna, "NodeInternal", "NodeReroute", def_reroute, ICON_NODE_REROUTE);
-  define(brna, "NodeInternal", "NodeImplicitConversion", def_implicit_conversion, ICON_NONE);
+  define(brna, "NodeInternal", "NodeImplicitConversion", def_implicit_conversion, ICON_IMPLICIT_CONVERSION);
 
   define(brna, "NodeInternal", "NodeClosureInput", def_closure_input, ICON_NODE_CLOSURE);
   define(brna, "NodeInternal", "NodeClosureOutput", def_closure_output, ICON_NODE_CLOSURE);

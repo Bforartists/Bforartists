@@ -876,6 +876,7 @@ if(WITH_BLENDER)
       image_zdepth
       imasel
       imgdisplay
+      implicit_conversion
       import
       inc_contrast
       increase_kerning
