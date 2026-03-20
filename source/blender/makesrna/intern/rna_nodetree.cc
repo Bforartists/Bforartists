@@ -10405,7 +10405,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeCornersOfEdge", nullptr, ICON_CORNERS_OF_EDGE);
   define(brna, "GeometryNode", "GeometryNodeCornersOfFace", nullptr, ICON_CORNERS_OF_FACE);
   define(brna, "GeometryNode", "GeometryNodeCornersOfVertex", nullptr, ICON_CORNERS_OF_VERTEX);
-  define(brna, "GeometryNode", "GeometryNodeCubeGridTopology", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeCubeGridTopology", nullptr, ICON_CUBE_GRID_TOPOLOGY);
   define(brna, "GeometryNode", "GeometryNodeCurveArc", nullptr, ICON_CURVE_ARC);
   define(brna, "GeometryNode", "GeometryNodeCurveEndpointSelection", nullptr, ICON_SELECT_LAST);
   define(brna, "GeometryNode", "GeometryNodeCurveHandleTypeSelection", def_geo_curve_handle_type_selection, ICON_SELECT_HANDLETYPE);

@@ -513,6 +513,7 @@ if(WITH_BLENDER)
       crease
       cryptomatte
       cube
+      cube_grid_topology
       cubeproject
       current_file
       cursor
