@@ -54,25 +54,25 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     ])
 
     bfa_topbar_types: EnumProperty(name='Topbar Types', description='', items=[
-        ('Files', 'Files', 'Files Options', 0, 0),
-        ('Mesh Edit', 'Mesh Edit', 'Mesh Edit Options', 0, 1),
-        ('Primitives', 'Primitives', 'Primitives Options', 0, 2),
-        ('Image', 'Image', '', 0, 3),
-        ('Tools', 'Tools', '', 0, 4),
-        ('Animation', 'Animation', '', 0, 5),
-        ('Edit', 'Edit', '', 0, 6),
-        ('Misc', 'Misc', '', 0, 7)
+        ('Files', 'Files', 'Files Options', "FILE_FOLDER", 0),
+        ('Mesh Edit', 'Mesh Edit', 'Mesh Edit Options', "EDITMODE_HLT", 1),
+        ('Primitives', 'Primitives', 'Primitives Options', "MESH_CUBE", 2),
+        ('Image', 'Image', '', "IMAGE", 3),
+        ('Tools', 'Tools', '', "TOOL_SETTINGS", 4),
+        ('Animation', 'Animation', '', "DECORATE_KEYFRAME", 5),
+        ('Edit', 'Edit', '', "EDIT", 6),
+        ('Misc', 'Misc', '', "PRESET", 7)
     ])
 
     bfa_toolbar_types: EnumProperty(name='Toolbar Types', description='', items=[
-        ('Files', 'Files', 'Files Options', 0, 0),
-        ('Mesh Edit', 'Mesh Edit', 'Mesh Edit Options', 0, 1),
-        ('Primitives', 'Primitives', 'Primitives Options', 0, 2),
-        ('Image', 'Image', '', 0, 3),
-        ('Tools', 'Tools', '', 0, 4),
-        ('Animation', 'Animation', '', 0, 5),
-        ('Edit', 'Edit', '', 0, 6),
-        ('Misc', 'Misc', '', 0, 7)
+        ('Files', 'Files', 'Files Options', "FILE_FOLDER", 0),
+        ('Mesh Edit', 'Mesh Edit', 'Mesh Edit Options', "EDITMODE_HLT", 1),
+        ('Primitives', 'Primitives', 'Primitives Options', "MESH_CUBE", 2),
+        ('Image', 'Image', '', "IMAGE", 3),
+        ('Tools', 'Tools', '', "TOOL_SETTINGS", 4),
+        ('Animation', 'Animation', '', "DECORATE_KEYFRAME", 5),
+        ('Edit', 'Edit', '', "EDIT", 6),
+        ('Misc', 'Misc', '', "PRESET", 7)
     ])
 
     #bfa_options: EnumProperty(name='Adv Options', description='', items=[
