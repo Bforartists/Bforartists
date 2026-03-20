@@ -6091,6 +6091,7 @@ keyconfig_data = \
     ("node.render_changed", {"type": 'Z', "value": 'PRESS'}, None),
     ("node.clipboard_copy", {"type": 'C', "value": 'PRESS', "oskey": True}, None),
     ("node.clipboard_paste", {"type": 'V', "value": 'PRESS', "oskey": True}, None),
+    ("node.delete_copy_reconnect", {"type": 'X', "value": 'PRESS', "oskey": True}, None),
     ("node.viewer_border", {"type": 'B', "value": 'PRESS', "oskey": True}, None),
     ("node.clear_viewer_border", {"type": 'B', "value": 'PRESS', "alt": True, "oskey": True}, None),
     ("node.translate_attach",
