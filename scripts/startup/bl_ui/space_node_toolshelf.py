@@ -2854,9 +2854,13 @@ class NODES_PT_toolshelf_gn_add_utilities_bundle(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("NodeCombineBundle", pad=10),
-            OperatorEntry("NodeSeparateBundle", pad=10),
-            OperatorEntry("NodeJoinBundle", pad=19),
+            OperatorEntry("NodeCombineBundle", pad=13),
+            OperatorEntry("NodeSeparateBundle", pad=13),
+            OperatorEntry("NodeGetBundleItem", pad=14),
+            OperatorEntry("NodeStoreBundleItem", pad=10),
+            OperatorEntry("GeometryNodeGetGeometryBundle", pad=4),
+            OperatorEntry("GeometryNodeSetGeometryBundle", pad=4),
+            OperatorEntry("NodeJoinBundle", pad=20),
         )
 
         self.draw_entries(context, layout, entries)
