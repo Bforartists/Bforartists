@@ -119,12 +119,13 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
       /* Lower SRT and Interfaces. */
       lower_entry_points(parser);
       lower_pipeline_definition(parser, filename);
+      /* Lower implicit members before we remove SRT member from their struct. */
+      lower_implicit_member(parser);
       lower_resource_table(parser);
       lower_resource_access_functions(parser);
       /* Lower class methods. */
       lower_default_constructors(parser);
       lower_function_default_arguments(parser);
-      lower_implicit_member(parser);
       lower_method_definitions(parser);
       lower_method_calls(parser);
       lower_empty_struct(parser);
@@ -1328,6 +1329,11 @@ void SourceProcessor::lower_function_default_arguments(Parser &parser)
       });
 
   parser.apply_mutations();
+
+  /* The above code can produce call to methods without `this->` prefix.
+   * Since lower_implicit_member was already called, we call it again to process these few
+   * occurrences. */
+  lower_implicit_member(parser);
 }
 
 /* Successive mutations can introduce a lot of unneeded line directives. */

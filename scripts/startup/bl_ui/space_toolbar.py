@@ -89,6 +89,195 @@ class TOOLBAR_PT_type(Panel):
     bl_region_type = 'HEADER'
     bl_ui_units_x=16
 
+    @classmethod
+    def poll(cls, context):
+        return (True)
+
+    @classmethod
+    def draw_show_hide_section(cls, context, layout):
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        header = layout.row()
+        header.alignment = 'CENTER'
+        header.label(text="Show/Hide Settings")
+
+        if (addon_prefs.bfa_toolbar_types == 'Files'):
+            if context.area.file_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "file_load_save",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_recover",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_link_append",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_import_menu",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_export_menu",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_import_common",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_import_common2",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_import_uncommon",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_export_common",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_export_common2",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_export_uncommon",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_render",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_render_opengl",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "file_render_misc",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Files is hidden', icon="NONE")
+
+        if (addon_prefs.bfa_toolbar_types == 'Mesh Edit'):
+            if context.area.meshedit_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "mesh_vertices_splitconnect",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_vertices_misc",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_edges_subdiv",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_edges_sharp",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_edges_freestyle",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_edges_misc",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_faces_general",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_faces_freestyle",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_faces_tris",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_faces_rotatemisc",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "mesh_cleanup",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Mesh Edit is hidden', icon="NONE")
+
+        if (addon_prefs.bfa_toolbar_types == 'Primitives'):
+            if context.area.primitives_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "primitives_mesh",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_curve",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_surface",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_metaball",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_volume",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_point_cloud",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_gpencil",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_gpencil_lineart",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_light",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_other",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_empties",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_image",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_lightprobe",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_forcefield",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "primitives_collection",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Primitives is hidden', icon="NONE")
+
+        if (addon_prefs.bfa_toolbar_types == 'Image'):
+            if context.area.image_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "image_uv_mirror",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "image_uv_rotate",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "image_uv_align",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "image_uv_unwrap",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "image_uv_modify",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Image is hidden', icon="NONE")
+
+        if (addon_prefs.bfa_toolbar_types == 'Tools'):
+            if context.area.tools_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "tools_parent",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_objectdata",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_link_to_scn",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_linked_objects",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_join",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_origin",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_shading",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_datatransfer",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "tools_relations",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Tools is hidden', icon="NONE")
+
+        if (addon_prefs.bfa_toolbar_types == 'Animation'):
+            if context.area.animation_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "animation_keyframes",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "animation_range",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "animation_play",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "animation_sync",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "animation_keyframetype",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "animation_keyingset",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Animation is hidden', icon="NONE")
+
+        if (addon_prefs.bfa_toolbar_types == 'Edit'):
+            if context.area.edit_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "edit_edit",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "edit_weightinedit",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "edit_objectapply",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "edit_objectapply2",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "edit_objectapplydeltas",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "edit_objectclear",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Edit is hidden', icon="NONE")
+
+        if (addon_prefs.bfa_toolbar_types == 'Misc'):
+            if context.area.misc_toolbars:
+                row = layout.grid_flow(columns=2, align=True)
+                row.prop(addon_prefs, "misc_viewport",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_undoredo",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_undohistory",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_repeat",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_scene",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_viewlayer",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_last",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_operatorsearch",toggle=addon_prefs.bfa_button_style)
+                row.prop(addon_prefs, "misc_info",toggle=addon_prefs.bfa_button_style)
+            else:
+                row = layout.row()
+                row.alignment = 'Center'.upper()
+                row.alert = True
+                row.label(text='Misc is hidden', icon="NONE")
+
+    @staticmethod
+    def icon_op_button(layout, operator_id, condition, icon_on, icon_off):
+        if condition:
+            layout.active_default = True
+            layout.operator(operator_id, text="", icon=icon_on)
+        else:
+            layout.active_default = False
+            layout.operator(operator_id, text="", icon=icon_off)
+    
+    @staticmethod
+    def draw_reset_section(layout):
+        row = layout.row(heading='', align=True)
+        row.alignment = 'Center'.upper()
+
+        row.label(text='Defaults')
+        row.separator()
+        row.operator("bfa.reset_toolbar", text='All')
+
+        grid = layout.grid_flow(row_major=False, columns=2, even_columns=True, even_rows=True, align=True)
+
+        grid.operator("bfa.reset_toolbar_files", text='Files')
+        grid.operator("bfa.reset_toolbar_meshedit", text='Mesh Edit')
+        grid.operator("bfa.reset_toolbar_primitives", text='Primitives')
+        grid.operator("bfa.reset_toolbar_image", text='Image')
+        grid.operator("bfa.reset_toolbar_tools", text='Tools')
+        grid.operator("bfa.reset_toolbar_animation", text='Animation')
+        grid.operator("bfa.reset_toolbar_edit", text='Edit')
+        grid.operator("bfa.reset_toolbar_misc", text='Misc')
+
     def draw(self, context):
         layout = self.layout
         screen = bpy.ops.screen
@@ -106,252 +295,28 @@ class TOOLBAR_PT_type(Panel):
 
         # Reset Settings Panel
         if (bpy.context.scene.bfa_toolbar_defaults == True):
-
-            row = box.row(heading='', align=True)
-            row.alignment = 'Center'.upper()
-
-            row.label(text='Defaults')
-            row.separator()
-            row.operator("bfa.reset_toolbar", text='All')
-
-            grid = box.grid_flow(row_major=False, columns=2, even_columns=True, even_rows=True, align=True)
-
-            grid.operator("bfa.reset_toolbar_files", text='Files')
-            grid.operator("bfa.reset_toolbar_meshedit", text='Mesh Edit')
-            grid.operator("bfa.reset_toolbar_primitives", text='Primitives')
-            grid.operator("bfa.reset_toolbar_image", text='Image')
-            grid.operator("bfa.reset_toolbar_tools", text='Tools')
-            grid.operator("bfa.reset_toolbar_animation", text='Animation')
-            grid.operator("bfa.reset_toolbar_edit", text='Edit')
-            grid.operator("bfa.reset_toolbar_misc", text='Misc')
-
-        grid = layout.grid_flow(row_major=False, columns=2, even_columns=True, even_rows=True, align=True)
-        col_amount = 2
-
-        # Main Panels Preferences
-        box = grid.box()
-        row = box.row()
-        row.alignment = 'Center'.upper()
-
-        row.label(text='Types', icon='DOWNARROW_HLT')
-        row = box.grid_flow(columns=col_amount, align=True)
-
-        # File toolbar button
-        if context.area.file_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_file", text = "Files")
-
-        # Mesh Edit toolbar button
-        if context.area.meshedit_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_meshedit", text = "Mesh Edit")
-
-        # Primitives toolbar button
-        if context.area.primitives_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_primitives", text = "Primitives")
-
-        # Image toolbar button
-        if context.area.image_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_image", text = "Image")
-
-        # Tools toolbar button
-        if context.area.tools_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_tools", text = "Tools")
-
-        # Animation toolbar button
-        if context.area.animation_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_animation", text = "Animation")
-
-        # Edit toolbar button
-        if context.area.edit_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_edit", text = "Edit")
-
-        # Misc toolbar button
-        if context.area.misc_toolbars:
-            row.active_default = True
-        else:
-            row.active_default = False
-        row.operator("screen.header_toolbar_misc", text = "Misc")
+            self.draw_reset_section(box)
 
         # Sub panels Settings
-        box = grid.box()
-        row = box.row()
-        row.alignment = 'Center'.upper()
-
-        row.label(text='Options', icon="RIGHTARROW")
-        row = box.grid_flow(columns=col_amount, align=True)
-        row.prop(addon_prefs, 'bfa_toolbar_types', text='Types', icon="NONE", emboss=True, expand=True)
-
         box = layout.box()
-        row = box.row(heading='', align=False)
-        row.alignment = 'Center'.upper()
-        row.label(text='Show / Hide Toolbars')
+        row = box.row(align=True)
+        col1 = row.column(align=True)
+        col2 = row.column(align=True)
 
-        if (addon_prefs.bfa_toolbar_types == 'Files'):
-            if context.area.file_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "file_load_save",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_recover",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_link_append",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_import_menu",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_export_menu",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_import_common",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_import_common2",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_import_uncommon",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_export_common",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_export_common2",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_export_uncommon",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_render",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_render_opengl",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "file_render_misc",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Files is hidden', icon="NONE")
+        col1.prop(addon_prefs, 'bfa_toolbar_types', expand=True)
 
-        if (addon_prefs.bfa_toolbar_types == 'Mesh Edit'):
-            if context.area.meshedit_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "mesh_vertices_splitconnect",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_vertices_misc",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_edges_subdiv",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_edges_sharp",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_edges_freestyle",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_edges_misc",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_faces_general",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_faces_freestyle",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_faces_tris",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_faces_rotatemisc",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "mesh_cleanup",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Mesh Edit is hidden', icon="NONE")
-
-        if (addon_prefs.bfa_toolbar_types == 'Primitives'):
-            if context.area.primitives_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "primitives_mesh",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_curve",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_surface",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_metaball",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_volume",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_point_cloud",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_gpencil",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_gpencil_lineart",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_light",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_other",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_empties",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_image",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_lightprobe",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_forcefield",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "primitives_collection",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Primitives is hidden', icon="NONE")
-
-        if (addon_prefs.bfa_toolbar_types == 'Image'):
-            if context.area.image_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "image_uv_mirror",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "image_uv_rotate",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "image_uv_align",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "image_uv_unwrap",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "image_uv_modify",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Image is hidden', icon="NONE")
-
-        if (addon_prefs.bfa_toolbar_types == 'Tools'):
-            if context.area.tools_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "tools_parent",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_objectdata",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_link_to_scn",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_linked_objects",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_join",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_origin",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_shading",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_datatransfer",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "tools_relations",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Tools is hidden', icon="NONE")
-
-        if (addon_prefs.bfa_toolbar_types == 'Animation'):
-            if context.area.animation_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "animation_keyframes",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "animation_range",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "animation_play",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "animation_sync",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "animation_keyframetype",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "animation_keyingset",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Animation is hidden', icon="NONE")
-
-        if (addon_prefs.bfa_toolbar_types == 'Edit'):
-            if context.area.edit_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "edit_edit",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "edit_weightinedit",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "edit_objectapply",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "edit_objectapply2",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "edit_objectapplydeltas",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "edit_objectclear",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Edit is hidden', icon="NONE")
-
-        if (addon_prefs.bfa_toolbar_types == 'Misc'):
-            if context.area.misc_toolbars:
-                row = box.grid_flow(columns=2, align=True)
-                row.prop(addon_prefs, "misc_viewport",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_undoredo",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_undohistory",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_repeat",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_scene",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_viewlayer",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_last",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_operatorsearch",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "misc_info",toggle=addon_prefs.bfa_button_style)
-            else:
-                row = box.row()
-                row.alignment = 'Center'.upper()
-                row.alert = True
-                row.label(text='Misc is hidden', icon="NONE")
+        # TODO - Convert to props and use bl_ui.utils.icon_button
+        self.icon_op_button(col2, "screen.header_toolbar_file", context.area.file_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        self.icon_op_button(col2, "screen.header_toolbar_meshedit", context.area.meshedit_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        self.icon_op_button(col2, "screen.header_toolbar_primitives", context.area.primitives_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        self.icon_op_button(col2, "screen.header_toolbar_image", context.area.image_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        self.icon_op_button(col2, "screen.header_toolbar_tools", context.area.tools_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        self.icon_op_button(col2, "screen.header_toolbar_animation", context.area.animation_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        self.icon_op_button(col2, "screen.header_toolbar_edit", context.area.edit_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        self.icon_op_button(col2, "screen.header_toolbar_misc", context.area.misc_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        
+        box = layout.box().column(align=True)
+        self.draw_show_hide_section(context, box)
 
         col = layout.column()
         col.label( text = "Extra Options:")

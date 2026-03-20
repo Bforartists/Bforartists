@@ -43,8 +43,9 @@
 #include <atomic>
 #include <optional>
 
-#include <cstring>  /* For `memcpy`. */
-#include <malloc.h> /* For `malloc_usable_size`. */
+#include <cstring>    /* For `memcpy`. */
+#include <malloc.h>   /* For `malloc_usable_size`. */
+#include <sys/mman.h> /* For `munmap`. */
 
 /* Logging, use `ghost.wl.*` prefix. */
 #include "CLG_log.h"
@@ -184,6 +185,24 @@ int gwl_window_scale_int_to(const GWL_WindowScaleParams &scale_params, const int
 int gwl_window_scale_int_from(const GWL_WindowScaleParams &scale_params, const int value)
 {
   return wl_fixed_to_int(gwl_window_scale_wl_fixed_from(scale_params, wl_fixed_from_int(value)));
+}
+
+static uint divide_ceil_uint(const uint x, const uint d)
+{
+  return ((x + d) - 1) / d;
+}
+
+int gwl_window_scale_buffer_size_to(const GWL_WindowScaleParams &scale_params,
+                                    const int logical_size,
+                                    int *r_buffer_scale)
+{
+  /* The buffer scale must be an integer, so use ceiling-division to round up.
+   * This is a no-op for integer scales but ensures fractional scales
+   * (e.g. 1.5x) produce a buffer whose logical size matches what the compositor requested. */
+  const int buffer_scale = divide_ceil_uint(gwl_window_scale_int_to(scale_params, logical_size),
+                                            logical_size);
+  *r_buffer_scale = buffer_scale;
+  return logical_size * buffer_scale;
 }
 
 /** \} */
@@ -350,6 +369,7 @@ struct GWL_Window {
   std::vector<GWL_Output *> outputs;
 
   GWL_XDG_Decor_Window *xdg_decor = nullptr;
+  GWL_XDG_WindowIcon xdg_icon;
 
 #ifdef WITH_GHOST_CSD
   /** Our own CSD (optionally use). */
@@ -821,6 +841,8 @@ static void gwl_window_frame_update_from_pending_no_lock(GWL_Window *win)
 #endif
 
   const bool dpi_changed = win->frame_pending.fractional_scale != win->frame.fractional_scale;
+  const bool scale_changed = dpi_changed ||
+                             (win->frame_pending.buffer_scale != win->frame.buffer_scale);
   bool surface_needs_commit = false;
   bool surface_needs_resize_for_backend = false;
   bool surface_needs_buffer_scale = false;
@@ -905,6 +927,11 @@ static void gwl_window_frame_update_from_pending_no_lock(GWL_Window *win)
   win->frame_pending.size[1] = win->frame.size[1];
 
   win->frame = win->frame_pending;
+
+  /* Update the toplevel icon at the new scale (after the frame is fully synced). */
+  if (scale_changed && win->xdg_decor) {
+    win->ghost_system->xdg_toplevel_icon_update(win->ghost_window, win->xdg_decor->toplevel);
+  }
 
   /* Signal not to apply the scale unless it's configured. */
   win->frame_pending.size[0] = 0;
@@ -1649,6 +1676,11 @@ GHOST_WindowWayland::GHOST_WindowWayland(GHOST_SystemWayland *system,
 
   wl_surface_set_buffer_scale(window_->wl.surface, window_->frame.buffer_scale);
 
+  /* Set the toplevel icon (after the scale is initialized). */
+  if (window_->xdg_decor) {
+    system_->xdg_toplevel_icon_update(this, window_->xdg_decor->toplevel);
+  }
+
   /* Apply Bounds.
    * Important to run after the buffer scale is known & before the buffer is created. */
   {
@@ -1752,6 +1784,8 @@ GHOST_WindowWayland::~GHOST_WindowWayland()
     delete window_->backend.vulkan_window_info;
   }
 #endif
+
+  gwl_xdg_window_icon_free(window_->xdg_icon);
 
   if (window_->xdg.activation_token) {
     xdg_activation_token_v1_destroy(window_->xdg.activation_token);
@@ -2177,6 +2211,20 @@ void GHOST_WindowWayland::endIME()
 int GHOST_WindowWayland::scale_get() const
 {
   return window_->frame.buffer_scale;
+}
+
+void gwl_xdg_window_icon_free(GWL_XDG_WindowIcon &icon)
+{
+  if (icon.buffer) {
+    wl_buffer_destroy(icon.buffer);
+    munmap(icon.buffer_data, icon.buffer_size);
+    icon = {};
+  }
+}
+
+GWL_XDG_WindowIcon &GHOST_WindowWayland::gwl_xdg_icon_get()
+{
+  return window_->xdg_icon;
 }
 
 const GWL_WindowScaleParams &GHOST_WindowWayland::scale_params_get() const
