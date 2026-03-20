@@ -10461,10 +10461,10 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NODE_GRIDDIVERGENCE);
   define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NODE_GRIDGRADIENT);
   define(brna, "GeometryNode", "GeometryNodeGridInfo", nullptr, ICON_NODE_GRID_INFO);
-  define(brna, "GeometryNode", "GeometryNodeGridDilateAndErode", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeGridDilateAndErode", nullptr, ICON_NODE_GRIDERODE);
   define(brna, "GeometryNode", "GeometryNodeGridLaplacian", nullptr, ICON_NODE_GRIDLAPLACIAN);
-  define(brna, "GeometryNode", "GeometryNodeGridMean", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeGridMedian", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeGridMean", nullptr, ICON_NODE_GRIDMEAN);
+  define(brna, "GeometryNode", "GeometryNodeGridMedian", nullptr, ICON_NODE_GRIDMEDIAN);
   define(brna, "GeometryNode", "GeometryNodeGridPrune", nullptr, ICON_NODE_PRUNEGRID);
   define(brna, "GeometryNode", "GeometryNodeGridClip", nullptr, ICON_CLIPPINGBORDER);
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NODE_GRIDTOMESH);

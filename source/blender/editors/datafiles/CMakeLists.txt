@@ -1314,8 +1314,11 @@ if(WITH_BLENDER)
       node_groupinsert
       node_gridcurl
       node_griddivergence
+      node_griderode
       node_gridgradient
       node_gridlaplacian
+      node_gridmean
+      node_gridmedian
       node_gridtomesh
       node_grid_info
       node_hairinfo
