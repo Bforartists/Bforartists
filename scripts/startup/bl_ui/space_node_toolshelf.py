@@ -2965,6 +2965,7 @@ class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
             OperatorEntry("FunctionNodeMatrixDeterminant", pad=2),
             OperatorEntry("FunctionNodeInvertMatrix", pad=12),
             OperatorEntry("FunctionNodeMatrixMultiply", pad=6),
+            OperatorEntry("FunctionNodeMatrixSVD", pad=10),
             OperatorEntry("FunctionNodeProjectPoint", pad=13),
             OperatorEntry("FunctionNodeSeparateMatrix", pad=8),
             OperatorEntry("FunctionNodeSeparateTransform", pad=0),

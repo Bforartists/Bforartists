@@ -1071,6 +1071,7 @@ if(WITH_BLENDER)
       mask_mesh_boundary
       mat_sphere_sky
       matrix_determinant
+      matrix_svd
       match_string
       matcloth
       matcube
