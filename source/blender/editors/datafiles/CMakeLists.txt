@@ -2126,6 +2126,7 @@ if(WITH_BLENDER)
       tria_up
       tria_up_bar
       triangulate
+      trim_string
       tristoquads
       type
 
