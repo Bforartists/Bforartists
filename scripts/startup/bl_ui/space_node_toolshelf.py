@@ -2572,18 +2572,25 @@ class NODES_PT_toolshelf_gn_add_volume_operations(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeGridToMesh", pad=22),
-            OperatorEntry("GeometryNodeSDFGridBoolean", pad=14),
+            OperatorEntry("GeometryNodeGridToMesh", pad=20),
+            OperatorEntry("GeometryNodeGridToPoints", pad=14),
+            OperatorEntry("GeometryNodeVolumeToMesh", pad=16),
+            Separator,
+            OperatorEntry("GeometryNodeSDFGridBoolean", pad=13),
             OperatorEntry("GeometryNodeSDFGridFillet", pad=18),
             OperatorEntry("GeometryNodeSDFGridLaplacian", pad=10),
             OperatorEntry("GeometryNodeSDFGridMean", pad=17),
             OperatorEntry("GeometryNodeSDFGridMeanCurvature", pad=0),
             OperatorEntry("GeometryNodeSDFGridMedian", pad=14),
             OperatorEntry("GeometryNodeSDFGridOffset", pad=16),
+            Separator,
             OperatorEntry("GeometryNodeFieldToGrid", pad=21),
-            OperatorEntry("GeometryNodeGridPrune", pad=25),
+            OperatorEntry("GeometryNodeGridClip", pad=27),
+            OperatorEntry("GeometryNodeGridDilateAndErode", pad=10),
+            OperatorEntry("GeometryNodeGridMean", pad=25),
+            OperatorEntry("GeometryNodeGridMedian", pad=23),
+            OperatorEntry("GeometryNodeGridPrune", pad=26),
             OperatorEntry("GeometryNodeGridVoxelize", pad=22),
-            OperatorEntry("GeometryNodeVolumeToMesh", pad=16),
         )
 
         self.draw_entries(context, layout, entries)
