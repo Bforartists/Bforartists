@@ -648,6 +648,8 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
                 Separator,
                 OperatorEntry("NodeCombineBundle", pad=16),
                 OperatorEntry("NodeSeparateBundle", pad=16),
+                OperatorEntry("NodeGetBundleItem", pad=14),
+                OperatorEntry("NodeStoreBundleItem", pad=10),
                 Separator,
                 OperatorEntry("GeometryNodeMenuSwitch", pad=22),
             )
@@ -662,6 +664,8 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
                 OperatorEntry("NodeEvaluateClosure", pad=15),
                 OperatorEntry("NodeCombineBundle", pad=16),
                 OperatorEntry("NodeSeparateBundle", pad=16),
+                OperatorEntry("NodeGetBundleItem", pad=14),
+                OperatorEntry("NodeStoreBundleItem", pad=10),
                 Separator,
                 OperatorEntry("GeometryNodeMenuSwitch", pad=22),
             )
