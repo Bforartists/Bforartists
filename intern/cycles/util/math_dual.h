@@ -54,7 +54,7 @@ template<class T> ccl_device_inline dual<T> operator*(const T a, const ccl_priva
 }
 
 /* Multiplication of duals.
- * (uv)' = uv' + u'v. */
+ * `(uv)' = uv' + u'v`. */
 template<class T1, class T2>
 ccl_device_inline dual<T1> operator*(const ccl_private dual<T1> &u, const ccl_private dual<T2> &v)
 {
@@ -69,7 +69,7 @@ template<class T> ccl_device_inline dual<T> operator/(const dual<T> a, T b)
 }
 
 /* Division of dual by dual.
- * (u/v)' = (u' - v' * u/v) / v. */
+ * `(u/v)' = (u' - v' * u/v) / v`. */
 template<class T1, class T2>
 ccl_device_inline dual<T1> operator/(const ccl_private dual<T1> &u, const ccl_private dual<T2> &v)
 {
@@ -128,7 +128,7 @@ template<class T> ccl_device_inline dual<T> operator-(const ccl_private dual<T> 
   return {-a.val, -a.dx, -a.dy};
 }
 
-/* dfdx = dfdu * dudx */
+/* `dfdx = dfdu * dudx`. */
 template<class T>
 ccl_device_inline dual<T> chain_rule(const ccl_private dual<T> &u,
                                      const ccl_private T &f,
@@ -137,7 +137,7 @@ ccl_device_inline dual<T> chain_rule(const ccl_private dual<T> &u,
   return {f, dfdu * u.dx, dfdu * u.dy};
 }
 
-/* dfdx = dfdu * dudx + dfdv * dvdx. */
+/* `dfdx = dfdu * dudx + dfdv * dvdx`. */
 template<class T>
 ccl_device_inline dual<T> chain_rule(const ccl_private dual<T> &u,
                                      const ccl_private dual<T> &v,
@@ -389,7 +389,7 @@ ccl_device_inline dual<T> safe_pow(const ccl_private dual<T> &u, const ccl_priva
   /* u^(v-1). */
   const T u_v_minus_1 = safe_pow(u.val, v.val - 1.0f);
   /* u^v = u * u^(v-1). */
-  /* NOTE: numerically `u^v != u*u^(v-1)`, but the current behaviour matches OSL. */
+  /* NOTE: numerically `u^v != u*u^(v-1)`, but the current behavior matches OSL. */
   const T f = u.val * u_v_minus_1;
   return chain_rule(u, v, f, v.val * u_v_minus_1, f * safe_log(u.val));
 }

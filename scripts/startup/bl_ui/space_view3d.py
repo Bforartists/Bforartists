@@ -5281,6 +5281,13 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_subdivision_set")  # BFA - add subdivion set menu
+
+        layout.separator()
+
+        props = layout.operator("sculpt.color_filter", text="Set Vertex Color")
+        props.type = 'FILL'
+        props.strength = 1.0
+        props.use_immediate = True
         layout.operator("paint.sample_color", text="Sample Color", icon="EYEDROPPER")  # BFA - icon added
 
         layout.separator()

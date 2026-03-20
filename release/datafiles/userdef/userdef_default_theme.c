@@ -258,6 +258,7 @@ const bTheme U_theme_default = {
       .shadedown = -10,
       .roundness = 0.2f,
     },
+    .link = RGBA(0x6FA9E6ff),
     .wcol_state = {
       .error = RGBA(0x804040ff),
       .warning = RGBA(0x806b40ff),

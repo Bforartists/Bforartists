@@ -6,6 +6,7 @@
  * \ingroup RNA
  */
 
+#include <algorithm>
 #include <cstdlib>
 
 #include "DNA_action_types.h"
@@ -1902,7 +1903,7 @@ static void rna_Object_boundbox_get(PointerRNA *ptr, float *values)
     *reinterpret_cast<std::array<float3, 8> *>(values) = bounds::corners(*bounds);
   }
   else {
-    copy_vn_fl(values, 8 * 3, 0.0f);
+    std::fill_n(values, 8 * 3, 0.0f);
   }
 }
 
@@ -1960,7 +1961,9 @@ static void rna_Object_vgroup_remove(Object *ob,
   BKE_object_defgroup_remove(ob, defgroup);
   defgroup_ptr->invalidate();
 
+  DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
   DEG_relations_tag_update(bmain);
+  WM_main_add_notifier(NC_GEOM | ND_VERTEX_GROUP, ob->data);
   WM_main_add_notifier(NC_OBJECT | ND_DRAW, ob);
 }
 
