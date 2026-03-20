@@ -10109,10 +10109,10 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "NodeInternal", "NodeCombineBundle", def_combine_bundle, ICON_NODE_BUNDLE_COMBINE);
   define(brna, "NodeInternal", "NodeEnableOutput", nullptr, ICON_NODE_ENABLE_OUTPUT);
   define(brna, "NodeInternal", "NodeEvaluateClosure", def_evaluate_closure, ICON_NODE_CLOSURE_EVALUATE);
-  define(brna, "NodeInternal", "NodeGetBundleItem", nullptr, ICON_NONE);
+  define(brna, "NodeInternal", "NodeGetBundleItem", nullptr, ICON_NODE_BUNDLE_GET_ITEM);
   define(brna, "NodeInternal", "NodeJoinBundle", nullptr, ICON_NODE_BUNDLE_JOIN);
   define(brna, "NodeInternal", "NodeSeparateBundle", def_separate_bundle, ICON_NODE_BUNDLE_SEPARATE);
-  define(brna, "NodeInternal", "NodeStoreBundleItem", nullptr, ICON_NONE);
+  define(brna, "NodeInternal", "NodeStoreBundleItem", nullptr, ICON_NODE_BUNDLE_STORE_ITEM);
 
   define(brna, "ShaderNode", "ShaderNodeAddShader", nullptr, ICON_NODE_ADD_SHADER);
   define(brna, "ShaderNode", "ShaderNodeAmbientOcclusion", def_sh_ambient_occlusion, ICON_NODE_AMBIENT_OCCLUSION);
@@ -10450,7 +10450,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementInput", def_geo_foreach_geometry_element_input, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementOutput", def_geo_foreach_geometry_element_output, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeGeometryToInstance", nullptr, ICON_GEOMETRY_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeGetGeometryBundle", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeGetGeometryBundle", nullptr, ICON_NODE_BUNDLE_GET);
   define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NODE_GET_NAMED_GRID);
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
@@ -10586,7 +10586,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetCurveNormal", nullptr, ICON_CURVE_NORMAL);
   define(brna, "GeometryNode", "GeometryNodeSetCurveRadius", nullptr, ICON_SET_CURVE_RADIUS);
   define(brna, "GeometryNode", "GeometryNodeSetCurveTilt", nullptr, ICON_SET_CURVE_TILT);
-  define(brna, "GeometryNode", "GeometryNodeSetGeometryBundle", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeSetGeometryBundle", nullptr, ICON_NODE_BUNDLE_SET);
   define(brna, "GeometryNode", "GeometryNodeSetGeometryName", nullptr, ICON_GEOMETRY_NAME);
   define(brna, "GeometryNode", "GeometryNodeSetID", nullptr, ICON_SET_ID);
   define(brna, "GeometryNode", "GeometryNodeSetInstanceTransform", nullptr, ICON_INSTANCE_TRANSFORM);

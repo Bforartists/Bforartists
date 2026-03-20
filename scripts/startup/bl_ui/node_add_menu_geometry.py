@@ -809,6 +809,8 @@ class NODE_MT_category_utilities_bundle_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "NodeSeparateBundle")
         self.node_operator(layout, "NodeGetBundleItem")
         self.node_operator(layout, "NodeStoreBundleItem")
+        self.node_operator(layout, "GeometryNodeGetGeometryBundle") # BFA
+        self.node_operator(layout, "GeometryNodeSetGeometryBundle") # BFA
         self.node_operator(layout, "NodeJoinBundle")
 
         self.draw_assets_for_catalog(layout, self.menu_path)
