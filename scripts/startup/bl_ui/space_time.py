@@ -340,6 +340,9 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         row.separator()
         row.prop(scene, "lock_frame_selection_to_range", text="Limit to Frame Range")
         row = col.row()
+        row.active = not scene.lock_frame_selection_to_range
+        row.prop(scene, "allow_preroll")
+        row = col.row()
         row.separator()
         row.prop(screen, "use_follow", text="Follow Current Frame")
         row = col.row()
