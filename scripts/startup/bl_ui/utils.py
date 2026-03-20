@@ -38,3 +38,17 @@ class PresetPanel:
         layout.operator_context = 'EXEC_DEFAULT'
 
         Menu.draw_preset(self, context)
+
+
+def icon_button(layout, data, property_name, icon_on, icon_off, invert_checkbox=False, **kwargs):
+    condition = (getattr(data, property_name) ^ invert_checkbox) # XOR both conditions
+    icon = icon_on if condition else icon_off
+
+    return layout.prop(
+        data, 
+        property_name, 
+        icon_only=True, 
+        icon=icon, 
+        invert_checkbox=invert_checkbox, 
+        **kwargs
+        )
