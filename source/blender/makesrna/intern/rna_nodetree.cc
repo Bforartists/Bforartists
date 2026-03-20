@@ -10593,8 +10593,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetMaterial", nullptr, ICON_MATERIAL_ADD);
   define(brna, "GeometryNode", "GeometryNodeSetMaterialIndex", nullptr, ICON_SET_MATERIAL_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSetMeshNormal", nullptr, ICON_SET_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NONE);
-  define(brna, "GeometryNode", "GeometryNodeSetNURBSWeight", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NODE_NURBS_ORDER);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSWeight", nullptr, ICON_NODE_NURBS_WEIGHT);
   define(brna, "GeometryNode", "GeometryNodeSetPointRadius", nullptr, ICON_SET_CURVE_RADIUS);
   define(brna, "GeometryNode", "GeometryNodeSetPosition", nullptr, ICON_SET_POSITION);
   define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);

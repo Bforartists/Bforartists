@@ -1349,6 +1349,8 @@ if(WITH_BLENDER)
       node_moviedistort
       node_normalize
       node_normalmap
+      node_nurbs_order
+      node_nurbs_weight
       node_objectinfo
       node_output
       node_particleinfo

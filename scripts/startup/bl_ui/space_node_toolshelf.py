@@ -1930,6 +1930,8 @@ class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeSetCurveNormal", pad=6),
+            OperatorEntry("GeometryNodeSetNURBSOrder", pad=8),
+            OperatorEntry("GeometryNodeSetNURBSWeight", pad=6),
             OperatorEntry("GeometryNodeSetCurveRadius", pad=7),
             OperatorEntry("GeometryNodeSetCurveTilt", pad=13),
             OperatorEntry("GeometryNodeSetCurveHandlePositions", pad=1),
