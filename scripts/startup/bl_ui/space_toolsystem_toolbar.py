@@ -751,7 +751,7 @@ class _defs_view3d_add:
         return dict(
             idname="builtin.primitive_ico_sphere_add",
             label="Add Ico Sphere",
-            icon="ops.mesh.primitive_sphere_add_gizmo",
+            icon="ops.mesh.primitive_icosphere_add_gizmo",
             description=lambda *args: _defs_view3d_add.description_interactive_add(
                 *args, prefix=tip_("Add sphere to mesh interactively"),
             ),
@@ -3915,7 +3915,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'OBJECT': [
             *_tools_default,
             None,
-            _tools_view3d_add,
+            *_tools_view3d_add,
         ],
         'POSE': [
             *_tools_default,
@@ -3945,7 +3945,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             *_tools_default,
 
             None,
-            _tools_view3d_add,
+            *_tools_view3d_add,
             None,
             (
                 _defs_edit_mesh.extrude,
@@ -4091,7 +4091,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 else ()
             ),
             None,
-            _tools_view3d_add,
+            *_tools_view3d_add,
             None,
             (
                 _defs_sculpt.mask_border,

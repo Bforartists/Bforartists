@@ -5480,33 +5480,33 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add")
         props.trim_mode = "JOIN"
 
-# BFA - WIP
+# BFA - Disabled as it doesn't make sense to have modal tools run from the header
+"""
 class VIEW3D_MT_add_object(Menu):
     bl_label = "Add Primitive"
 
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("wm.tool_set_by_id", text="Add Cube")
-        props.name = "builtin.primitive_cube_add"
+        props = layout.operator("wm.tool_set_by_id", text="Add Cube", icon='MESH_CUBE')
         props.space_type = 'VIEW_3D'
 
-        props = layout.operator("wm.tool_set_by_id", text="Add Cylinder")
+        props = layout.operator("wm.tool_set_by_id", text="Add Cylinder", icon='MESH_CYLINDER')
         props.name = "builtin.primitive_cylinder_add"
         props.space_type = 'VIEW_3D'
 
-        props = layout.operator("wm.tool_set_by_id", text="Add Cone")
+        props = layout.operator("wm.tool_set_by_id", text="Add Cone", icon='MESH_CONE')
         props.name = "builtin.primitive_cone_add"
         props.space_type = 'VIEW_3D'
 
-        props = layout.operator("wm.tool_set_by_id", text="Add UV Sphere")
+        props = layout.operator("wm.tool_set_by_id", text="Add UV Sphere", icon='MESH_UVSPHERE')
         props.name = "builtin.primitive_uv_sphere_add"
         props.space_type = 'VIEW_3D'
 
-        props = layout.operator("wm.tool_set_by_id", text="Add Ico Cube")
+        props = layout.operator("wm.tool_set_by_id", text="Add Ico Sphere", icon='MESH_ICOSPHERE')
         props.name = "builtin.primitive_ico_sphere_add"
         props.space_type = 'VIEW_3D'
-
+"""
 
 class VIEW3D_MT_sculpt_curves(Menu):
     bl_label = "Curves"
@@ -12323,7 +12323,7 @@ classes = (
     VIEW3D_MT_sculpt_transform,  # BFA - not used
     VIEW3D_MT_sculpt_showhide,  # BFA - menu
     VIEW3D_MT_sculpt_trim,  # BFA - not used
-    VIEW3D_MT_add_object,
+    #VIEW3D_MT_add_object, # BFA - not used
     VIEW3D_MT_mask,
     VIEW3D_MT_mask_legacy,  # BFA - menu
     VIEW3D_MT_face_sets_showhide,  # BFA - menu
