@@ -3915,7 +3915,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'OBJECT': [
             *_tools_default,
             None,
-            *_tools_view3d_add,
+            *_tools_view3d_add, # BFA - Expose at top-level
         ],
         'POSE': [
             *_tools_default,
@@ -3943,9 +3943,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         ],
         'EDIT_MESH': [
             *_tools_default,
-
-            None,
-            *_tools_view3d_add,
             None,
             (
                 _defs_edit_mesh.extrude,
@@ -3986,6 +3983,8 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 _defs_edit_mesh.rip_region,
                 _defs_edit_mesh.rip_edge,
             ),
+            None,
+            *_tools_view3d_add, # BFA - Expose at top-level and move down
         ],
         'EDIT_CURVE': [
             *_tools_default,
@@ -4091,8 +4090,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 else ()
             ),
             None,
-            *_tools_view3d_add,
-            None,
             (
                 _defs_sculpt.mask_border,
                 _defs_sculpt.mask_lasso,
@@ -4132,6 +4129,8 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_transform.transform,
             None,
             *_tools_annotate,
+            None,
+            *_tools_view3d_add, # BFA - Expose at top-level and move down
         ],
         'SCULPT_GREASE_PENCIL': [
             _sculpt_tool,
