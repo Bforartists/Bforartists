@@ -668,8 +668,8 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
             col.operator("uv.align", text="Straighten X", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
             col.operator("uv.align", text="Straighten Y", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
             col.operator("uv.align", text="Align Auto", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-            col.operator("uv.align", text="Align X", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
-            col.operator("uv.align", text="Align Y", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+            col.operator("uv.align", text="Align X", icon="ALIGN_X").axis = 'ALIGN_X'
+            col.operator("uv.align", text="Align Y", icon="ALIGN_Y").axis = 'ALIGN_Y'
             col.operator("uv.align_rotation", text="Align Rotation", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
         # icon buttons
@@ -688,8 +688,8 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-                row.operator("uv.align", text="", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
-                row.operator("uv.align", text="", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+                row.operator("uv.align", text="", icon="ALIGN_X").axis = 'ALIGN_X'
+                row.operator("uv.align", text="", icon="ALIGN_Y").axis = 'ALIGN_Y'
 
                 row = col.row(align=True)
                 row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
@@ -707,8 +707,8 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
                 row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
 
                 row = col.row(align=True)
-                row.operator("uv.align", text="", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
-                row.operator("uv.align", text="", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+                row.operator("uv.align", text="", icon="ALIGN_X").axis = 'ALIGN_X'
+                row.operator("uv.align", text="", icon="ALIGN_Y").axis = 'ALIGN_Y'
 
                 row = col.row(align=True)
                 row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
@@ -720,8 +720,8 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
                 col.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
                 col.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
                 col.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-                col.operator("uv.align", text="", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
-                col.operator("uv.align", text="", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+                col.operator("uv.align", text="", icon="ALIGN_X").axis = 'ALIGN_X'
+                col.operator("uv.align", text="", icon="ALIGN_Y").axis = 'ALIGN_Y'
                 col.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
 
