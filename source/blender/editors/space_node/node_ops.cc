@@ -239,8 +239,8 @@ void ED_operatormacros_node()
   WM_operatortype_macro_define(ot, "NODE_OT_translate_attach");
 
   ot = WM_operatortype_append_macro("NODE_OT_delete_copy_reconnect",
-                                    "Delete with Copy and Reconnect",
-                                    "Copy nodes to clipboard, remove and reconnect them.",
+                                    "Cut: Delete with Copy and Reconnect",
+                                    "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances.",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "NODE_OT_clipboard_copy");
   WM_operatortype_macro_define(ot, "NODE_OT_delete_reconnect");

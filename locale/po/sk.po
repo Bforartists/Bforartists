@@ -72822,11 +72822,11 @@ msgstr "Odstráni vybrané uzly"
 
 
 msgctxt "Operator"
-msgid "Delete with Copy and Reconnect"
+msgid "Cut: Delete with Copy and Reconnect"
 msgstr "Odstrániť kopírovaním a znovu pripojením"
 
 
-msgid "Copy nodes to clipboard, remove and reconnect them."
+msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
 msgstr "Kopíruje uzly do schránky, odstráni ich a znova ich pripojí."
 
 

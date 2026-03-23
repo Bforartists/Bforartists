@@ -72829,11 +72829,11 @@ msgstr "Remover nós seleccionados"
 
 
 msgctxt "Operator"
-msgid "Delete with Copy and Reconnect"
+msgid "Cut: Delete with Copy and Reconnect"
 msgstr "Apagar com Copia e Reconexão"
 
 
-msgid "Copy nodes to clipboard, remove and reconnect them."
+msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
 msgstr "Copiar nós para área de transferência, remover e reconectá-los."
 
 

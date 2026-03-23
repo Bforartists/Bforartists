@@ -41879,7 +41879,7 @@ msgstr "Odstrani aktivni element"
 
 
 msgctxt "Operator"
-msgid "Delete with Copy and Reconnect"
+msgid "Cut: Delete with Copy and Reconnect"
 msgstr "Izbriši, kopiraj in poveži"
 
 

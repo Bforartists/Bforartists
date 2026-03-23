@@ -73830,11 +73830,11 @@ msgstr "選択中のノードを削除します"
 
 
 msgctxt "Operator"
-msgid "Delete with Copy and Reconnect"
+msgid "Cut: Delete with Copy and Reconnect"
 msgstr "削除後にコピーと再リンク"
 
 
-msgid "Copy nodes to clipboard, remove and reconnect them."
+msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
 msgstr "ノードをクリップボードにコピーし，削除後再リンクします"
 
 
