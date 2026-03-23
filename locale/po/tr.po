@@ -64976,7 +64976,7 @@ msgstr "Tepe noktası rengini ayarlayın Ton/Doygunluk/Değer"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Tepe Noktası Renklerini Ayarla"
 
 

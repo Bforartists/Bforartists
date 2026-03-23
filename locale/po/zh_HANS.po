@@ -79178,7 +79178,7 @@ msgstr "调整顶点颜色色相/饱和度/明度"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "设置顶点色"
 
 

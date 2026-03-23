@@ -6151,7 +6151,7 @@ class VIEW3D_PT_gp_painttab_paint(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("gpencil.vertex_color_set", text="Set Vertex Colors", icon = "NODE_VERTEX_COLOR")
+            col.operator("gpencil.vertex_color_set", text="Set Vertex Color", icon = "NODE_VERTEX_COLOR")
             col.operator("gpencil.stroke_reset_vertex_color", icon = "RESET")
 
             col.separator(factor = 0.5)

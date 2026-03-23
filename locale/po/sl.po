@@ -44297,7 +44297,7 @@ msgstr "Barve oglišč iz uteži"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Nastavi barve oglišč"
 
 

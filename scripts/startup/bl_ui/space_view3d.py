@@ -5284,7 +5284,7 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.color_filter", text="Set Vertex Color")
+        props = layout.operator("sculpt.color_filter", text="Set Vertex Color", icon="COLOR")  # BFA - Expose operator
         props.type = 'FILL'
         props.strength = 1.0
         props.use_immediate = True

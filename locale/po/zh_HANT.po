@@ -53343,7 +53343,7 @@ msgstr "不要為凸出區域計算清理"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "設定頂點色彩"
 
 
