@@ -72761,7 +72761,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Vymaže okraje pre operácie zobrazovača"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Skopíruje vybrané uzly do internej schránky"
 
 

@@ -72761,7 +72761,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Wyczyść granice operacji dla widzów"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Kopiuj wybrane węzły do wewnętrznego schowka"
 
 

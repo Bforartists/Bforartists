@@ -72670,7 +72670,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Rensa gränserna för betraktarens åtgärder"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Kopiera de valda noderna till det interna urklippet"
 
 

@@ -70136,7 +70136,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Xóa hết các ranh giới cho các thao tác quan sát đi"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Sao chép các nút đã chọn vào bảng nhớ tạm nội bộ"
 
 

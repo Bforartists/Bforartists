@@ -72159,8 +72159,8 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Clear the boundaries for viewer operations"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
-msgstr "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
+msgstr "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 
 
 msgid "Paste nodes from the internal clipboard to the active node tree"

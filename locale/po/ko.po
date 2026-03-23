@@ -71544,7 +71544,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "뷰어 작업에 대한 경계를 지우기"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "선택한 노드를 내부 클립보드에 복사함"
 
 

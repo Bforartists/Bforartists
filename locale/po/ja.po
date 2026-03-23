@@ -73769,7 +73769,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "ビューアー処理用の境界をクリアします"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "選択中のノードを内部クリップボードにコピーします"
 
 

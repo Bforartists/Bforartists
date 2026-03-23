@@ -247,7 +247,7 @@ static wmOperatorStatus node_clipboard_copy_exec(bContext *C, wmOperator *op)
 void NODE_OT_clipboard_copy(wmOperatorType *ot)
 {
   ot->name = "Copy to Clipboard";
-  ot->description = "Copy the selected nodes to the internal clipboard";
+  ot->description = "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"; /* BFA - Made more explicit*/
   ot->idname = "NODE_OT_clipboard_copy";
 
   ot->exec = node_clipboard_copy_exec;
@@ -383,7 +383,7 @@ static wmOperatorStatus node_clipboard_paste_invoke(bContext *C,
 void NODE_OT_clipboard_paste(wmOperatorType *ot)
 {
   ot->name = "Paste from Clipboard";
-  ot->description = "Paste nodes from the internal clipboard to the active node tree";
+  ot->description = "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"; /* BFA - Made more explicit*/
   ot->idname = "NODE_OT_clipboard_paste";
 
   ot->invoke = node_clipboard_paste_invoke;
