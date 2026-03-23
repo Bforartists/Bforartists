@@ -607,10 +607,11 @@ static void workspace_add_menu_draw(ui::Layout &layout)
 
   BLI_freelistN(&templates);
 
-  layout.separator();
-  layout.op("WORKSPACE_OT_duplicate",
+  /* BFA - Removed as this is redundant and logical in the context menu on the tab*/
+  /*layout.separator();*/
+  /*layout.op("WORKSPACE_OT_duplicate",
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Duplicate Current"),
-            ICON_DUPLICATE);
+            ICON_DUPLICATE);*/
 }
 
 static void workspace_add_menu_register()
