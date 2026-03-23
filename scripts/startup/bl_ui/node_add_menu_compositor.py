@@ -284,8 +284,8 @@ class NODE_MT_compositor_node_utilities_base(node_add_menu.NodeMenu):
         del context
         layout = self.layout
         self.draw_menu(layout, path="Utilities/Math")
-        self.draw_menu(layout, path="Utilities/Vector")
-        self.draw_menu(layout, path="Utilities/Matrix")
+        self.draw_menu(layout, path="Utilities/Matrix") # BFA - Arrange in alphabetical order
+        self.draw_menu(layout, path="Utilities/Vector") # BFA - Arrange in alphabetical order
         layout.separator()
         self.node_operator(layout, "CompositorNodeLevels")
         self.node_operator(layout, "CompositorNodeNormalize")
