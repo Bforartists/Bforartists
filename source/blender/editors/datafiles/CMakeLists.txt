@@ -128,6 +128,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.mesh.primitive_cone_add_gizmo
   ops.mesh.primitive_cube_add_gizmo
   ops.mesh.primitive_cylinder_add_gizmo
+  ops.mesh.primitive_icosphere_add_gizmo
   ops.mesh.primitive_grid_add_gizmo
   ops.mesh.primitive_sphere_add_gizmo
   ops.mesh.primitive_torus_add_gizmo
@@ -1070,6 +1071,7 @@ if(WITH_BLENDER)
       mask_face_sets_boundary
       mask_face_sets_visible
       mask_mesh_boundary
+      mask_to_sdf
       mat_sphere_sky
       matrix_determinant
       matrix_svd
