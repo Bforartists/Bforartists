@@ -334,13 +334,12 @@ class TOPBAR_PT_main(Panel):
         row.separator()
         row.prop(addon_prefs, "topbar_show_quicktoggle")
 
-        col = layout.column()
-        row = col.row()
-        row.separator()
-        row.label( text = "Note that you need to save the startup file")
-        row = col.row()
-        row.separator()
-        row.label( text = "to make the changes to the topbar permanent")
+        layout.separator(type='LINE')
+        grid = layout.grid_flow(columns=2)
+        grid.label(text="", icon="INFO")
+        col = grid.column(align=True)
+        col.label(text="The startup file needs to be saved")
+        col.label(text="to make the changes to the toolbar permanent.")
 
 
 
