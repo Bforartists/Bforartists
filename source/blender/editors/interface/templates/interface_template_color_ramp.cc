@@ -130,7 +130,7 @@ static Block *colorband_tools_fn(bContext *C, ARegion *region, void *cb_v)
   {
     Button *but = uiDefIconTextBut(block,
                                    ButtonType::ButMenu,
-                                   ICON_ALIGNVERTICAL, /* BFA - icon */
+                                   ICON_ALIGN_Y, /* BFA - icon */
                                    IFACE_("Distribute Stops from Left"),
                                    0,
                                    yco -= UI_UNIT_Y,

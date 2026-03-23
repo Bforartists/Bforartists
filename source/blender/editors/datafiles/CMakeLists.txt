@@ -272,8 +272,6 @@ if(WITH_BLENDER)
       alignauto
       aligncamera_active
       aligncamera_view
-      alignhorizontal
-      alignvertical
       alternated
       anchor_bottom
       anchor_center
@@ -335,6 +333,8 @@ if(WITH_BLENDER)
       axis_front
       axis_side
       axis_top
+      align_x
+      align_y
 
       # letter B
       back
