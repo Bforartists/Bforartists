@@ -32,10 +32,10 @@ class NODE_MT_gn_color_base(node_add_menu.NodeMenu):
         layout = self.layout
 
         self.node_operator(layout, "ShaderNodeBlackbody")
-        self.node_operator(layout, "ShaderNodeGamma")
         self.node_operator(layout, "ShaderNodeValToRGB")
-        self.node_operator(layout, "ShaderNodeRGBCurve")
+        self.node_operator(layout, "ShaderNodeGamma") # BFA - Arrange in alphabetical order
         self.color_mix_node(context, layout, search_weight=-1.0)
+        self.node_operator(layout, "ShaderNodeRGBCurve") # BFA - Arrange in alphabetical order
         layout.separator()
         self.node_operator(layout, "FunctionNodeCombineColor")
         self.node_operator(layout, "FunctionNodeSeparateColor")
@@ -809,8 +809,6 @@ class NODE_MT_category_utilities_bundle_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "NodeSeparateBundle")
         self.node_operator(layout, "NodeGetBundleItem")
         self.node_operator(layout, "NodeStoreBundleItem")
-        self.node_operator(layout, "GeometryNodeGetGeometryBundle") # BFA
-        self.node_operator(layout, "GeometryNodeSetGeometryBundle") # BFA
         self.node_operator(layout, "NodeJoinBundle")
 
         self.draw_assets_for_catalog(layout, self.menu_path)
