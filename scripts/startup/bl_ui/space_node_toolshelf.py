@@ -70,7 +70,7 @@ def is_engine(context, valid_engines):
 
 def is_tool_tree(context):
     try:
-        return context.space_data.geometry_nodes_type == 'TOOL'
+        return context.space_data.node_tree_sub_type == 'TOOL'
     except AttributeError:
         return False
 
@@ -282,30 +282,30 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeAttribute", pad=20),
-                OperatorEntry("ShaderNodeCameraData", pad=12),
-                OperatorEntry("ShaderNodeFresnel", pad=23),
-                OperatorEntry("ShaderNodeNewGeometry", pad=19),
-                OperatorEntry("ShaderNodeTexCoord", pad=2),
+                OperatorEntry("ShaderNodeFresnel", pad=22),
+                OperatorEntry("ShaderNodeNewGeometry", pad=18),
+                OperatorEntry("ShaderNodeTexCoord", pad=1),
             )
         else:
             entries = (
                 OperatorEntry("ShaderNodeAmbientOcclusion", pad=2),
                 OperatorEntry("ShaderNodeAttribute", pad=20),
-                OperatorEntry("ShaderNodeBevel", pad=25),
-                OperatorEntry("ShaderNodeCameraData", pad=12),
-                OperatorEntry("ShaderNodeVertexColor", pad=9),
-                OperatorEntry("ShaderNodeFresnel", pad=21),
+                OperatorEntry("ShaderNodeBevel", pad=26),
+                OperatorEntry("ShaderNodeCameraData", pad=13),
+                OperatorEntry("ShaderNodeVertexColor", pad=10),
+                OperatorEntry("ShaderNodeHairInfo", pad=15),
                 Separator,
-                OperatorEntry("ShaderNodeNewGeometry", pad=17),
-                OperatorEntry("ShaderNodeHairInfo", pad=13),
-                OperatorEntry("ShaderNodeLayerWeight", pad=11),
+                OperatorEntry("ShaderNodeFresnel", pad=22),
+                OperatorEntry("ShaderNodeNewGeometry", pad=18),
+                OperatorEntry("ShaderNodeLayerWeight", pad=12),
                 OperatorEntry("ShaderNodeLightPath", pad=16),
                 OperatorEntry("ShaderNodeObjectInfo", pad=14),
                 Separator,
                 OperatorEntry("ShaderNodeParticleInfo", pad=12),
-                OperatorEntry("ShaderNodePointInfo", pad=17),
-                OperatorEntry("ShaderNodeTangent", pad=19),
-                OperatorEntry("ShaderNodeTexCoord", pad=0),
+                OperatorEntry("ShaderNodePointInfo", pad=16 ),
+                OperatorEntry("ShaderNodeRaycast", pad=21),
+                OperatorEntry("ShaderNodeTangent", pad=20),
+                OperatorEntry("ShaderNodeTexCoord", pad=1),
                 OperatorEntry("ShaderNodeUVAlongStroke", pad=4, poll=is_shader_type(context, 'LINESTYLE')),
                 Separator,
                 OperatorEntry("ShaderNodeUVMap", pad=19),
@@ -453,7 +453,7 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeBsdfMetallic", pad=16, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, poll=is_object and not is_eevee),
-                OperatorEntry("ShaderNodeBsdfRayPortal", pad=6, poll=is_object and not is_eevee),
+                OperatorEntry("ShaderNodeBsdfRayPortal", pad=11, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeBsdfRefraction", pad=11, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfSheen", pad=18, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeEeveeSpecular", pad=13, poll=is_object and is_eevee),
@@ -533,38 +533,38 @@ class NODES_PT_toolshelf_shader_add_color(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
-                OperatorEntry("ShaderNodeValToRGB", pad=8),
-                OperatorEntry("ShaderNodeBrightContrast", pad=3),
+                OperatorEntry("ShaderNodeBrightContrast", pad=2),
+                OperatorEntry("ShaderNodeValToRGB", pad=17),
                 OperatorEntry("ShaderNodeGamma", pad=24),
                 OperatorEntry("ShaderNodeHueSaturation", pad=0),
-                OperatorEntry("ShaderNodeInvert", pad=16),
-                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
-                OperatorEntry("ShaderNodeRGBCurve", pad=16),
+                OperatorEntry("ShaderNodeInvert", pad=17),
+                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=21, settings={"data_type": "'RGBA'"}),
+                OperatorEntry("ShaderNodeRGBCurve", pad=18),
                 Separator,
-                OperatorEntry("ShaderNodeCombineColor", pad=3),
-                OperatorEntry("ShaderNodeSeparateColor", pad=2),
+                OperatorEntry("ShaderNodeCombineColor", pad=12),
+                OperatorEntry("ShaderNodeSeparateColor", pad=12),
                 Separator,
-                OperatorEntry("ShaderNodeShaderToRGB", pad=3, poll=is_engine(context, 'BLENDER_EEVEE')),
-                OperatorEntry("ShaderNodeRGBToBW", pad=9),
+                OperatorEntry("ShaderNodeShaderToRGB", pad=13, poll=is_engine(context, 'BLENDER_EEVEE')),
+                OperatorEntry("ShaderNodeRGBToBW", pad=19),
             )
         else:
             entries = (
-                OperatorEntry("ShaderNodeBlackbody", pad=10),
-                OperatorEntry("ShaderNodeValToRGB", pad=8),
-                OperatorEntry("ShaderNodeBrightContrast", pad=3),
+                OperatorEntry("ShaderNodeBlackbody", pad=19),
+                OperatorEntry("ShaderNodeBrightContrast", pad=2),
+                OperatorEntry("ShaderNodeValToRGB", pad=17),
                 OperatorEntry("ShaderNodeGamma", pad=24),
                 OperatorEntry("ShaderNodeHueSaturation", pad=0),
-                OperatorEntry("ShaderNodeInvert", pad=16),
-                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=20, settings={"data_type": "'RGBA'"}),
-                OperatorEntry("ShaderNodeLightFalloff", pad=16),
-                OperatorEntry("ShaderNodeRGBCurve", pad=16),
-                OperatorEntry("ShaderNodeWavelength", pad=7),
+                OperatorEntry("ShaderNodeInvert", pad=17),
+                OperatorEntry("ShaderNodeLightFalloff", pad=17),
+                OperatorEntry("ShaderNodeMix", text="Mix Color", pad=21, settings={"data_type": "'RGBA'"}),
+                OperatorEntry("ShaderNodeRGBCurve", pad=18),
+                OperatorEntry("ShaderNodeWavelength", pad=17),
                 Separator,
-                OperatorEntry("ShaderNodeCombineColor", pad=3),
-                OperatorEntry("ShaderNodeSeparateColor", pad=2),
+                OperatorEntry("ShaderNodeCombineColor", pad=12),
+                OperatorEntry("ShaderNodeSeparateColor", pad=12),
                 Separator,
-                OperatorEntry("ShaderNodeShaderToRGB", pad=3, poll=is_engine(context, 'BLENDER_EEVEE')),
-                OperatorEntry("ShaderNodeRGBToBW", pad=9),
+                OperatorEntry("ShaderNodeShaderToRGB", pad=13, poll=is_engine(context, 'BLENDER_EEVEE')),
+                OperatorEntry("ShaderNodeRGBToBW", pad=19),
             )
 
         self.draw_entries(context, layout, entries)
@@ -594,24 +594,24 @@ class NODES_PT_toolshelf_shader_add_texture(bpy.types.Panel, NodePanel):
         if use_common:
             entries = (
                 OperatorEntry("ShaderNodeTexEnvironment", pad=0),
-                OperatorEntry("ShaderNodeTexImage", pad=10),
-                OperatorEntry("ShaderNodeTexNoise", pad=12),
-                OperatorEntry("ShaderNodeTexSky", pad=15),
+                OperatorEntry("ShaderNodeTexImage", pad=12),
+                OperatorEntry("ShaderNodeTexNoise", pad=13),
+                OperatorEntry("ShaderNodeTexSky", pad=16),
                 OperatorEntry("ShaderNodeTexVoronoi", pad=8),
             )
         else:
             entries = (
-                OperatorEntry("ShaderNodeTexBrick", pad=13),
-                OperatorEntry("ShaderNodeTexChecker", pad=7),
+                OperatorEntry("ShaderNodeTexBrick", pad=15),
+                OperatorEntry("ShaderNodeTexChecker", pad=9),
                 OperatorEntry("ShaderNodeTexEnvironment", pad=0),
-                OperatorEntry("ShaderNodeTexGabor", pad=11),
-                OperatorEntry("ShaderNodeTexGradient", pad=7),
-                OperatorEntry("ShaderNodeTexIES", pad=15),
+                OperatorEntry("ShaderNodeTexGabor", pad=12),
+                OperatorEntry("ShaderNodeTexGradient", pad=8),
+                OperatorEntry("ShaderNodeTexIES", pad=16),
                 Separator,
-                OperatorEntry("ShaderNodeTexImage", pad=10),
-                OperatorEntry("ShaderNodeTexMagic", pad=11),
-                OperatorEntry("ShaderNodeTexNoise", pad=12),
-                OperatorEntry("ShaderNodeTexSky", pad=15),
+                OperatorEntry("ShaderNodeTexImage", pad=12),
+                OperatorEntry("ShaderNodeTexMagic", pad=12),
+                OperatorEntry("ShaderNodeTexNoise", pad=13),
+                OperatorEntry("ShaderNodeTexSky", pad=16),
                 Separator,
                 OperatorEntry("ShaderNodeTexVoronoi", pad=8),
                 OperatorEntry("ShaderNodeTexWave", pad=12),
@@ -643,83 +643,26 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
-                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=25, settings={"data_type": "'FLOAT_VECTOR'"}),#
-                OperatorEntry(operator="node.add_repeat_zone", pad=23, text="Repeat Zone", icon="REPEAT"),
+                OperatorEntry(operator="node.add_repeat_zone", pad=24, text="Repeat Zone", icon="REPEAT"),
                 Separator,
-                OperatorEntry("NodeCombineBundle", pad=16),
-                OperatorEntry("NodeSeparateBundle", pad=16),
-                OperatorEntry("NodeGetBundleItem", pad=14),
-                OperatorEntry("NodeStoreBundleItem", pad=10),
+                OperatorEntry("NodeCombineBundle", pad=17),
+                OperatorEntry("NodeSeparateBundle", pad=17),
                 Separator,
-                OperatorEntry("GeometryNodeMenuSwitch", pad=22),
+                OperatorEntry("GeometryNodeMenuSwitch", pad=23),
             )
 
         else:
             entries = (
-                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=25, settings={"data_type": "'FLOAT_VECTOR'"}),#
-                OperatorEntry(operator="node.add_repeat_zone", pad=23, text="Repeat Zone", icon="REPEAT"),
+                OperatorEntry(operator="node.add_repeat_zone", pad=24, text="Repeat Zone", icon="REPEAT"),
                 Separator,
-                OperatorEntry("NodeImplicitConversion", pad=10),
-                OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=31),
-                OperatorEntry("NodeEvaluateClosure", pad=15),
-                OperatorEntry("NodeCombineBundle", pad=16),
-                OperatorEntry("NodeSeparateBundle", pad=16),
-                OperatorEntry("NodeGetBundleItem", pad=14),
-                OperatorEntry("NodeStoreBundleItem", pad=10),
+                OperatorEntry("NodeImplicitConversion", pad=11),
+                OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=32),
+                OperatorEntry("NodeEvaluateClosure", pad=16),
+                OperatorEntry("NodeCombineBundle", pad=17),
+                OperatorEntry("NodeSeparateBundle", pad=17),
+                OperatorEntry("NodeJoinBundle", pad=25),
                 Separator,
-                OperatorEntry("GeometryNodeMenuSwitch", pad=22),
-            )
-
-        self.draw_entries(context, layout, entries)
-
-
-class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
-    bl_label = "Vector"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'ShaderNodeTree'
-
-    def draw(self, context):
-        layout = self.layout
-
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-        use_common = addon_prefs.Node_shader_add_common
-
-        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
-        # There is currently no way to determine the correct padding length other than trial-and-error.
-        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
-        if use_common:
-            entries = (
-                OperatorEntry("ShaderNodeCombineXYZ", pad=12),
-                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=16, settings={"data_type": "'FLOAT_VECTOR'"}),
-                OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=17, settings={"data_type": "'VECTOR'"}),
-                OperatorEntry("ShaderNodeSeparateXYZ", pad=2),
-                Separator,
-                OperatorEntry("ShaderNodeMapping", pad=23),
-                OperatorEntry("ShaderNodeNormal", pad=25),
-                OperatorEntry("ShaderNodeRadialTiling", pad=18),
-                OperatorEntry("ShaderNodeVectorMath", pad=16),
-            )
-        else:
-            entries = (
-                OperatorEntry("ShaderNodeCombineXYZ", pad=12),
-                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=16, settings={"data_type": "'FLOAT_VECTOR'"}),
-                OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=17, settings={"data_type": "'VECTOR'"}),
-                OperatorEntry("ShaderNodeSeparateXYZ", pad=12),
-                Separator,
-                OperatorEntry("ShaderNodeMapping", pad=23),
-                OperatorEntry("ShaderNodeNormal", pad=25),
-                OperatorEntry("ShaderNodeRadialTiling", pad=18),
-                OperatorEntry("ShaderNodeVectorMath", pad=16),
-                OperatorEntry("ShaderNodeVectorCurve", pad=12),
-                OperatorEntry("ShaderNodeVectorRotate", pad=12),
-                OperatorEntry("ShaderNodeVectorTransform", pad=8),
+                OperatorEntry("GeometryNodeMenuSwitch", pad=23),
             )
 
         self.draw_entries(context, layout, entries)
@@ -748,19 +691,71 @@ class NODES_PT_toolshelf_shader_add_math(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         if use_common:
             entries = (
-                OperatorEntry("ShaderNodeClamp", pad=22),
-                OperatorEntry("ShaderNodeFloatCurve", pad=13),
-                OperatorEntry("ShaderNodeMapRange", pad=13),
-                OperatorEntry("ShaderNodeMath", pad=24),
-                OperatorEntry("ShaderNodeMix", pad=27),
+                OperatorEntry("ShaderNodeClamp", pad=24),
+                OperatorEntry("ShaderNodeFloatCurve", pad=15),
+                OperatorEntry("ShaderNodeMapRange", pad=15),
+                OperatorEntry("ShaderNodeMath", pad=26),
+                OperatorEntry("ShaderNodeMix", pad=28),
             )
         else:
             entries = (
-                OperatorEntry("ShaderNodeClamp", pad=22),
-                OperatorEntry("ShaderNodeFloatCurve", pad=13),
-                OperatorEntry("ShaderNodeMapRange", pad=13),
-                OperatorEntry("ShaderNodeMath", pad=24),
-                OperatorEntry("ShaderNodeMix", pad=27),
+                OperatorEntry("ShaderNodeClamp", pad=24),
+                OperatorEntry("ShaderNodeFloatCurve", pad=15),
+                OperatorEntry("ShaderNodeMapRange", pad=15),
+                OperatorEntry("ShaderNodeMath", pad=26),
+                OperatorEntry("ShaderNodeMix", pad=28),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
+    bl_label = "Vector"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'ShaderNodeTree'
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        if use_common:
+            entries = (
+                OperatorEntry("ShaderNodeCombineXYZ", pad=16),
+                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),
+                OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=20, settings={"data_type": "'VECTOR'"}),
+                OperatorEntry("ShaderNodeSeparateXYZ", pad=16),
+                Separator,
+                OperatorEntry("ShaderNodeMapping", pad=24),
+                OperatorEntry("ShaderNodeNormal", pad=27),
+                OperatorEntry("ShaderNodeRadialTiling", pad=18),
+                OperatorEntry("ShaderNodeVectorMath", pad=18),
+            )
+        else:
+            entries = (
+                OperatorEntry("ShaderNodeCombineXYZ", pad=16),
+                OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),
+                OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=20, settings={"data_type": "'VECTOR'"}),
+                OperatorEntry("ShaderNodeSeparateXYZ", pad=16),
+                Separator,
+                OperatorEntry("ShaderNodeMapping", pad=24),
+                OperatorEntry("ShaderNodeNormal", pad=27),
+                OperatorEntry("ShaderNodeRadialTiling", pad=18),
+                OperatorEntry("ShaderNodeVectorCurve", pad=15),
+                OperatorEntry("ShaderNodeVectorMath", pad=18),
+                OperatorEntry("ShaderNodeVectorRotate", pad=15),
+                OperatorEntry("ShaderNodeVectorTransform", pad=8),
             )
 
         self.draw_entries(context, layout, entries)
@@ -807,12 +802,13 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeBokehImage", pad=11),
-            OperatorEntry("CompositorNodeImage", pad=23),
-            OperatorEntry("CompositorNodeImageInfo", pad=15),
-            OperatorEntry("CompositorNodeImageCoordinates", pad=1),
-            OperatorEntry("CompositorNodeMask", pad=25),
-            OperatorEntry("CompositorNodeMovieClip", pad=16),
+            OperatorEntry("CompositorNodeBokehImage", pad=13),
+            OperatorEntry("NodeGroupInput", pad=14),
+            OperatorEntry("CompositorNodeImage", pad=24),
+            OperatorEntry("CompositorNodeImageInfo", pad=16),
+            OperatorEntry("CompositorNodeImageCoordinates", pad=2),
+            OperatorEntry("CompositorNodeMask", pad=27),
+            OperatorEntry("CompositorNodeMovieClip", pad=18),
         )
 
         self.draw_entries(context, layout, entries)
@@ -833,14 +829,15 @@ class NODES_PT_toolshelf_compositor_add_input_constant(bpy.types.Panel, NodePane
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("FunctionNodeInputBool",pad=16),
+            OperatorEntry("FunctionNodeInputBool", pad=17),
             OperatorEntry("CompositorNodeRGB", pad=22),
-            OperatorEntry("FunctionNodeInputInt",pad=18),
-            OperatorEntry("FunctionNodeInputIntVector",pad=4),
-            OperatorEntry("FunctionNodeInputMenu",pad=22),
-            OperatorEntry("CompositorNodeNormal", pad=18),
-            OperatorEntry("ShaderNodeValue", pad=20),
-            OperatorEntry("FunctionNodeInputVector",pad=18),
+            OperatorEntry("FunctionNodeInputInt", pad=19),
+            OperatorEntry("FunctionNodeInputIntVector", pad=7),
+            OperatorEntry("FunctionNodeInputMenu", pad=23),
+            OperatorEntry("GeometryNodeInputObject", pad=22),
+            OperatorEntry("CompositorNodeNormal", pad=20),
+            OperatorEntry("ShaderNodeValue", pad=23),
+            OperatorEntry("FunctionNodeInputVector", pad=21),
         )
 
         self.draw_entries(context, layout, entries)
@@ -861,6 +858,8 @@ class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("GeometryNodeInputActiveCamera", pad=4),
+            OperatorEntry("GeometryNodeCameraInfo", pad=7),
             OperatorEntry("CompositorNodeRLayers", pad=4),
             OperatorEntry("CompositorNodeSceneTime", pad=8),
             OperatorEntry("CompositorNodeTime", pad=8),
@@ -887,10 +886,10 @@ class NODES_PT_toolshelf_compositor_add_output(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("NodeEnableOutput", pad=15),
-            OperatorEntry("CompositorNodeViewer", pad=15),
+            OperatorEntry("NodeEnableOutput", pad=12),
+            OperatorEntry("CompositorNodeViewer", pad=25),
             Separator,
-            OperatorEntry("CompositorNodeOutputFile", pad=8),
+            OperatorEntry("CompositorNodeOutputFile", pad=17),
         )
 
         self.draw_entries(context, layout, entries)
@@ -919,18 +918,18 @@ class NODES_PT_toolshelf_compositor_add_color(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeSetAlpha", pad=23),
             Separator,
             OperatorEntry("CompositorNodeCombineColor", pad=13),
-            OperatorEntry("CompositorNodeSeparateColor", pad=13),
+            OperatorEntry("CompositorNodeSeparateColor", pad=14),
             Separator,
-            OperatorEntry("CompositorNodeZcombine", pad=11),
+            OperatorEntry("CompositorNodeZcombine", pad=12),
             OperatorEntry("ShaderNodeMix", text=iface_("Mix Color"), pad=22, settings={"data_type": "'RGBA'"}),
             Separator,
-            OperatorEntry("ShaderNodeBlackbody", pad=20),
-            OperatorEntry("ShaderNodeValToRGB", pad=18),
-            OperatorEntry("CompositorNodeConvertColorSpace", pad=3),
-            OperatorEntry("CompositorNodeConvertToDisplay", pad=5),
+            OperatorEntry("ShaderNodeBlackbody", pad=21),
+            OperatorEntry("ShaderNodeValToRGB", pad=19),
+            OperatorEntry("CompositorNodeConvertColorSpace", pad=4),
+            OperatorEntry("CompositorNodeConvertToDisplay", pad=6),
             Separator,
-            OperatorEntry("CompositorNodeInvert", pad=16),
-            OperatorEntry("CompositorNodeRGBToBW", pad=18),
+            OperatorEntry("CompositorNodeInvert", pad=17),
+            OperatorEntry("CompositorNodeRGBToBW", pad=19),
         )
 
         self.draw_entries(context, layout, entries)
@@ -951,16 +950,15 @@ class NODES_PT_toolshelf_compositor_add_color_adjust(bpy.types.Panel, NodePanel)
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeBrightContrast", pad=5),
-            OperatorEntry("CompositorNodeColorBalance", pad=14),
+            OperatorEntry("CompositorNodeBrightContrast", pad=4),
+            OperatorEntry("CompositorNodeColorBalance", pad=15),
             OperatorEntry("CompositorNodeColorCorrection", pad=10),
-
-            OperatorEntry("CompositorNodeExposure", pad=22),
-            OperatorEntry("ShaderNodeGamma", pad=25),
-            OperatorEntry("CompositorNodeHueCorrect", pad=17),
+            OperatorEntry("CompositorNodeExposure", pad=23),
+            OperatorEntry("ShaderNodeGamma", pad=26),
+            OperatorEntry("CompositorNodeHueCorrect", pad=18),
             OperatorEntry("CompositorNodeHueSat", pad=1),
-            OperatorEntry("CompositorNodeCurveRGB", pad=17),
-            OperatorEntry("CompositorNodeTonemap", pad=21),
+            OperatorEntry("CompositorNodeCurveRGB", pad=18),
+            OperatorEntry("CompositorNodeTonemap", pad=22),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1010,19 +1008,17 @@ class NODES_PT_toolshelf_compositor_add_filter(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeAntiAliasing", pad=1),
+            OperatorEntry("CompositorNodeAntiAliasing", pad=0),
             OperatorEntry("CompositorNodeConvolve", pad=7),
             OperatorEntry("CompositorNodeDenoise", pad=9),
             OperatorEntry("CompositorNodeDespeckle", pad=5),
             Separator,
             OperatorEntry("CompositorNodeDilateErode", pad=2),
+            OperatorEntry("CompositorNodeMaskToSDF", pad=0),
             OperatorEntry("CompositorNodeInpaint", pad=10),
             Separator,
             OperatorEntry("CompositorNodeFilter", pad=13),
             OperatorEntry("CompositorNodeGlare", pad=13),
-            OperatorEntry("CompositorNodeKuwahara", pad=5),
-            OperatorEntry("CompositorNodePixelate", pad=8),
-            OperatorEntry("CompositorNodePosterize", pad=6),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1072,15 +1068,15 @@ class NODES_PT_toolshelf_compositor_add_keying(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeChannelMatte", pad=5),
-            OperatorEntry("CompositorNodeChromaMatte", pad=6),
-            OperatorEntry("CompositorNodeColorMatte", pad=10),
+            OperatorEntry("CompositorNodeChannelMatte", pad=6),
+            OperatorEntry("CompositorNodeChromaMatte", pad=7),
+            OperatorEntry("CompositorNodeColorMatte", pad=11),
             OperatorEntry("CompositorNodeColorSpill", pad=9),
-            OperatorEntry("CompositorNodeDiffMatte", pad=1),
-            OperatorEntry("CompositorNodeDistanceMatte", pad=4),
-            OperatorEntry("CompositorNodeKeying", pad=15),
-            OperatorEntry("CompositorNodeKeyingScreen", pad=2),
-            OperatorEntry("CompositorNodeLumaMatte", pad=1),
+            OperatorEntry("CompositorNodeDiffMatte", pad=2),
+            OperatorEntry("CompositorNodeDistanceMatte", pad=5),
+            OperatorEntry("CompositorNodeKeying", pad=16),
+            OperatorEntry("CompositorNodeKeyingScreen", pad=3),
+            OperatorEntry("CompositorNodeLumaMatte", pad=2),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1104,7 +1100,7 @@ class NODES_PT_toolshelf_compositor_add_mask(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodeCryptomatteV2", pad=18),
+            OperatorEntry("CompositorNodeCryptomatteV2", pad=17),
             OperatorEntry("CompositorNodeCryptomatte", pad=1),
             Separator,
             OperatorEntry("CompositorNodeBoxMask", pad=22),
@@ -1135,9 +1131,9 @@ class NODES_PT_toolshelf_compositor_add_tracking(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("CompositorNodePlaneTrackDeform", pad=0),
+            OperatorEntry("CompositorNodePlaneTrackDeform", pad=1),
             OperatorEntry("CompositorNodeStabilize", pad=14),
-            OperatorEntry("CompositorNodeTrackPos", pad=10),
+            OperatorEntry("CompositorNodeTrackPos", pad=11),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1161,15 +1157,15 @@ class NODES_PT_toolshelf_compositor_add_texture(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("ShaderNodeTexBrick", pad=11),
-            OperatorEntry("ShaderNodeTexChecker", pad=6),
-            OperatorEntry("ShaderNodeTexGabor", pad=10),
-            OperatorEntry("ShaderNodeTexGradient", pad=6),
-            OperatorEntry("ShaderNodeTexMagic", pad=10),
-            OperatorEntry("ShaderNodeTexNoise", pad=10),
-            OperatorEntry("ShaderNodeTexVoronoi", pad=7),
-            OperatorEntry("ShaderNodeTexWave", pad=11),
-            OperatorEntry("ShaderNodeTexWhiteNoise", pad=0),
+            OperatorEntry("ShaderNodeTexBrick", pad=14),
+            OperatorEntry("ShaderNodeTexChecker", pad=9),
+            OperatorEntry("ShaderNodeTexGabor", pad=12),
+            OperatorEntry("ShaderNodeTexGradient", pad=8),
+            OperatorEntry("ShaderNodeTexMagic", pad=12),
+            OperatorEntry("ShaderNodeTexNoise", pad=13),
+            OperatorEntry("ShaderNodeTexVoronoi", pad=8),
+            OperatorEntry("ShaderNodeTexWave", pad=13),
+            OperatorEntry("ShaderNodeTexWhiteNoise", pad=1),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1275,6 +1271,39 @@ class NODES_PT_toolshelf_compositor_add_utilities_math(bpy.types.Panel, NodePane
         self.draw_entries(context, layout, entries)
 
 
+class NODES_PT_toolshelf_compositor_add_utilities_matrix(bpy.types.Panel, NodePanel):
+    bl_label = "Matrix"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("FunctionNodeCombineMatrix", pad=8),
+            OperatorEntry("FunctionNodeMatrixDeterminant", pad=14, text="Determinant"),
+            OperatorEntry("FunctionNodeInvertMatrix", pad=13),
+            OperatorEntry("FunctionNodeMatrixMultiply", pad=6),
+            OperatorEntry("FunctionNodeProjectPoint", pad=13),
+            OperatorEntry("FunctionNodeSeparateMatrix", pad=8),
+            OperatorEntry("FunctionNodeTransformDirection", pad=1),
+            OperatorEntry("FunctionNodeTransformPoint", pad=8),
+            OperatorEntry("FunctionNodeTransposeMatrix", pad=6),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
 class NODES_PT_toolshelf_compositor_add_utilities_vector(bpy.types.Panel, NodePanel):
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
@@ -1294,15 +1323,15 @@ class NODES_PT_toolshelf_compositor_add_utilities_vector(bpy.types.Panel, NodePa
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("ShaderNodeCombineXYZ", pad=4),
-            OperatorEntry("ShaderNodeMapRange", pad=9, settings={"data_type": "'FLOAT_VECTOR'"}),
-            OperatorEntry("ShaderNodeMix", text="Mix Vector", pad=9, settings={"data_type": "'VECTOR'"}),
-            OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
+            OperatorEntry("ShaderNodeCombineXYZ", pad=16),
+            OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),
+            OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=20, settings={"data_type": "'VECTOR'"}),
+            OperatorEntry("ShaderNodeSeparateXYZ", pad=16),
             Separator,
-            OperatorEntry("ShaderNodeRadialTiling", pad=10),
-            OperatorEntry("ShaderNodeVectorCurve", pad=3),
-            OperatorEntry("ShaderNodeVectorMath", pad=7),
-            OperatorEntry("ShaderNodeVectorRotate", pad=4),
+            OperatorEntry("ShaderNodeRadialTiling", pad=18),
+            OperatorEntry("ShaderNodeVectorCurve", pad=15),
+            OperatorEntry("ShaderNodeVectorMath", pad=18),
+            OperatorEntry("ShaderNodeVectorRotate", pad=15),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1504,36 +1533,6 @@ class NODES_PT_toolshelf_texture_add_texture(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
-    bl_label = "Attribute"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
-        # There is currently no way to determine the correct padding length other than trial-and-error.
-        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
-        entries = (
-            OperatorEntry("GeometryNodeAttributeStatistic", pad=15),
-            OperatorEntry("GeometryNodeAttributeDomainSize", pad=24),
-            Separator,
-            OperatorEntry("GeometryNodeBlurAttribute", pad=22),
-            OperatorEntry("GeometryNodeCaptureAttribute", pad=15),
-            OperatorEntry("GeometryNodeRemoveAttribute", pad=2),
-            OperatorEntry("GeometryNodeStoreNamedAttribute", pad=7),
-        )
-
-        self.draw_entries(context, layout, entries)
-
-
 class NODES_PT_toolshelf_gn_add_input(bpy.types.Panel, NodePanel):
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -1562,15 +1561,15 @@ class NODES_PT_toolshelf_gn_add_input_constant(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("FunctionNodeInputBool",pad=8),
+            OperatorEntry("FunctionNodeInputBool",pad=9),
             OperatorEntry("GeometryNodeInputCollection",pad=5),
             OperatorEntry("FunctionNodeInputColor",pad=13),
-            OperatorEntry("GeometryNodeInputFont",pad=12),
+            OperatorEntry("GeometryNodeInputFont",pad=13),
             OperatorEntry("GeometryNodeInputImage",pad=11),
             OperatorEntry("FunctionNodeInputInt",pad=10),
             OperatorEntry("GeometryNodeInputMaterial",pad=9),
-            OperatorEntry("FunctionNodeInputMenu",pad=14),
-            OperatorEntry("GeometryNodeInputObject",pad=11),
+            OperatorEntry("FunctionNodeInputMenu",pad=13),
+            OperatorEntry("GeometryNodeInputObject",pad=12),
             OperatorEntry("FunctionNodeInputRotation",pad=8),
             OperatorEntry("FunctionNodeInputString",pad=12),
             OperatorEntry("ShaderNodeValue",pad=12),
@@ -1587,6 +1586,10 @@ class NODES_PT_toolshelf_gn_add_input_gizmo(bpy.types.Panel, NodePanel):
     bl_category = "Add"
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
+    
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') and (not is_tool_tree(context))
 
     def draw(self, context):
         layout = self.layout
@@ -1645,18 +1648,18 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeTool3DCursor", pad=21, poll=is_tool),
-            OperatorEntry("GeometryNodeInputActiveCamera", pad=14),
+            OperatorEntry("GeometryNodeTool3DCursor", pad=22, poll=is_tool),
+            OperatorEntry("GeometryNodeInputActiveCamera", pad=15),
             OperatorEntry("GeometryNodeBoneInfo", pad=22),
             OperatorEntry("GeometryNodeCameraInfo", pad=18),
             OperatorEntry("GeometryNodeCollectionInfo", pad=14),
             OperatorEntry("GeometryNodeImageInfo", pad=21),
             OperatorEntry("GeometryNodeIsViewport", pad=20),
-            OperatorEntry("GeometryNodeInputNamedLayerSelection", pad=0),
+            OperatorEntry("GeometryNodeInputNamedLayerSelection", pad=1),
             OperatorEntry("GeometryNodeToolMousePosition", pad=14, poll=is_tool),
-            OperatorEntry("GeometryNodeObjectInfo", pad=20),
-            OperatorEntry("GeometryNodeInputSceneTime", pad=19),
-            OperatorEntry("GeometryNodeSelfObject", pad=21),
+            OperatorEntry("GeometryNodeObjectInfo", pad=21),
+            OperatorEntry("GeometryNodeInputSceneTime", pad=20),
+            OperatorEntry("GeometryNodeSelfObject", pad=22),
             OperatorEntry("GeometryNodeViewportTransform", pad=6, poll=is_tool),
         )
 
@@ -1684,6 +1687,36 @@ class NODES_PT_toolshelf_gn_add_output(bpy.types.Panel, NodePanel):
             OperatorEntry("NodeEnableOutput", pad=10),
             OperatorEntry("GeometryNodeViewer", pad=24),
             OperatorEntry("GeometryNodeWarning", pad=22),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
+    bl_label = "Attribute"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeAttributeStatistic", pad=15),
+            OperatorEntry("GeometryNodeAttributeDomainSize", pad=24),
+            Separator,
+            OperatorEntry("GeometryNodeBlurAttribute", pad=22),
+            OperatorEntry("GeometryNodeCaptureAttribute", pad=15),
+            OperatorEntry("GeometryNodeRemoveAttribute", pad=2),
+            OperatorEntry("GeometryNodeStoreNamedAttribute", pad=7),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1734,13 +1767,13 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeInputID", pad=24),
+            OperatorEntry("GeometryNodeInputID", pad=25),
             OperatorEntry("GeometryNodeInputIndex", pad=19),
             OperatorEntry("GeometryNodeInputNamedAttribute", pad=1),
-            OperatorEntry("GeometryNodeInputNormal", pad=17),
+            OperatorEntry("GeometryNodeInputNormal", pad=18),
             OperatorEntry("GeometryNodeInputPosition", pad=16),
             OperatorEntry("GeometryNodeInputRadius", pad=18),
-            OperatorEntry("GeometryNodeToolSelection", pad=13, poll=is_tool),
+            OperatorEntry("GeometryNodeToolSelection", pad=14, poll=is_tool),
             OperatorEntry("GeometryNodeToolActiveElement", pad=4, poll=is_tool),
         )
 
@@ -1795,10 +1828,39 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeSetGeometryName", pad=1),
+            OperatorEntry("GeometryNodeSetGeometryName", pad=2),
             OperatorEntry("GeometryNodeSetID", pad=25),
             OperatorEntry("GeometryNodeSetPosition", pad=15),
             OperatorEntry("GeometryNodeToolSetSelection", pad=13, poll=is_tool_tree(context)),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
+class NODES_PT_toolshelf_gn_add_geometry_material(bpy.types.Panel, NodePanel):
+    bl_label = "Material"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeReplaceMaterial", pad=3),
+            OperatorEntry("GeometryNodeInputMaterialIndex", pad=7),
+            OperatorEntry("GeometryNodeMaterialSelection", pad=1),
+            OperatorEntry("GeometryNodeSetMaterial", pad=11),
+            OperatorEntry("GeometryNodeSetMaterialIndex", pad=0),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1933,16 +1995,16 @@ class NODES_PT_toolshelf_gn_add_curve_write(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeSetCurveNormal", pad=6),
-            OperatorEntry("GeometryNodeSetNURBSOrder", pad=8),
-            OperatorEntry("GeometryNodeSetNURBSWeight", pad=6),
+            OperatorEntry("GeometryNodeSetCurveNormal", pad=7),
             OperatorEntry("GeometryNodeSetCurveRadius", pad=7),
             OperatorEntry("GeometryNodeSetCurveTilt", pad=13),
-            OperatorEntry("GeometryNodeSetCurveHandlePositions", pad=1),
+            OperatorEntry("GeometryNodeSetCurveHandlePositions", pad=0),
             OperatorEntry("GeometryNodeCurveSetHandles", pad=8),
+            OperatorEntry("GeometryNodeSetNURBSOrder", pad=8),
+            OperatorEntry("GeometryNodeSetNURBSWeight", pad=5),
             OperatorEntry("GeometryNodeSetSplineCyclic", pad=8),
-            OperatorEntry("GeometryNodeSetSplineResolution", pad=1),
-            OperatorEntry("GeometryNodeCurveSplineType", pad=10),
+            OperatorEntry("GeometryNodeSetSplineResolution", pad=0),
+            OperatorEntry("GeometryNodeCurveSplineType", pad=11),
         )
 
         self.draw_entries(context, layout, entries)
@@ -1967,17 +2029,16 @@ class NODES_PT_toolshelf_gn_add_curve_operations(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeCurvesToGreasePencil", pad=5),
-            OperatorEntry("GeometryNodeCurveToMesh", pad=21),
+            OperatorEntry("GeometryNodeCurveToMesh", pad=22),
             OperatorEntry("GeometryNodeCurveToPoints", pad=20),
-            OperatorEntry("GeometryNodeDeformCurvesOnSurface", pad=0),
+            OperatorEntry("GeometryNodeCurvesToGreasePencil", pad=6),
+            OperatorEntry("GeometryNodeDeformCurvesOnSurface", pad=1),
             OperatorEntry("GeometryNodeFillCurve", pad=30),
             OperatorEntry("GeometryNodeFilletCurve", pad=27),
-            OperatorEntry("GeometryNodeGreasePencilToCurves", pad=5),
             OperatorEntry("GeometryNodeInterpolateCurves", pad=13),
             OperatorEntry("GeometryNodeResampleCurve", pad=18),
             OperatorEntry("GeometryNodeReverseCurve", pad=21),
-            OperatorEntry("GeometryNodeSubdivideCurve", pad=18),
+            OperatorEntry("GeometryNodeSubdivideCurve", pad=17),
             OperatorEntry("GeometryNodeTrimCurve", pad=27),
         )
 
@@ -2035,9 +2096,9 @@ class NODES_PT_toolshelf_gn_add_curve_topology(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeCurveOfPoint", pad=11),
-            OperatorEntry("GeometryNodeOffsetPointInCurve", pad=0),
-            OperatorEntry("GeometryNodePointsOfCurve", pad=9),
+            OperatorEntry("GeometryNodeCurveOfPoint", pad=12),
+            OperatorEntry("GeometryNodeOffsetPointInCurve", pad=1),
+            OperatorEntry("GeometryNodePointsOfCurve", pad=10),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2154,18 +2215,19 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeInstanceOnPoints", pad=8),
-            OperatorEntry("GeometryNodeInstancesToPoints", pad=7),
-            OperatorEntry("GeometryNodeRealizeInstances", pad=10),
-            OperatorEntry("GeometryNodeRotateInstances", pad=11),
-            OperatorEntry("GeometryNodeScaleInstances", pad=13),
-            OperatorEntry("GeometryNodeTranslateInstances", pad=7),
-            OperatorEntry("GeometryNodeSetInstanceTransform", pad=0),
+            OperatorEntry("GeometryNodeInstanceOnPoints", pad=9),
+            OperatorEntry("GeometryNodeInstancesToPoints", pad=8),
             Separator,
-            OperatorEntry("GeometryNodeInputInstanceBounds", pad=11),
-            OperatorEntry("GeometryNodeInstanceTransform", pad=6),
-            OperatorEntry("GeometryNodeInputInstanceRotation", pad=10),
-            OperatorEntry("GeometryNodeInputInstanceScale", pad=14),
+            OperatorEntry("GeometryNodeRealizeInstances", pad=12),
+            OperatorEntry("GeometryNodeRotateInstances", pad=13),
+            OperatorEntry("GeometryNodeSetInstanceTransform", pad=1),
+            OperatorEntry("GeometryNodeScaleInstances", pad=15),
+            OperatorEntry("GeometryNodeTranslateInstances", pad=8),
+            Separator,
+            OperatorEntry("GeometryNodeInputInstanceBounds", pad=12),
+            OperatorEntry("GeometryNodeInstanceTransform", pad=7),
+            OperatorEntry("GeometryNodeInputInstanceRotation", pad=11),
+            OperatorEntry("GeometryNodeInputInstanceScale", pad=16),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2209,18 +2271,18 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeInputMeshEdgeNeighbors", pad=13),
             OperatorEntry("GeometryNodeInputMeshEdgeVertices", pad=17),
             OperatorEntry("GeometryNodeEdgesToFaceGroups", pad=3),
-            OperatorEntry("GeometryNodeInputMeshFaceArea", pad=23),
+            OperatorEntry("GeometryNodeInputMeshFaceArea", pad=24),
             Separator,
             OperatorEntry("GeometryNodeMeshFaceSetBoundaries", pad=0),
-            OperatorEntry("GeometryNodeInputMeshFaceNeighbors", pad=13),
-            OperatorEntry("GeometryNodeToolFaceSet", pad=25, poll=is_tool_tree(context)),
-            OperatorEntry("GeometryNodeInputMeshFaceIsPlanar", pad=15),
-            OperatorEntry("GeometryNodeInputShadeSmooth", pad=13),
-            OperatorEntry("GeometryNodeInputEdgeSmooth", pad=12),
+            OperatorEntry("GeometryNodeInputMeshFaceNeighbors", pad=14),
+            OperatorEntry("GeometryNodeToolFaceSet", pad=26, poll=is_tool_tree(context)),
+            OperatorEntry("GeometryNodeInputMeshFaceIsPlanar", pad=17),
+            OperatorEntry("GeometryNodeInputShadeSmooth", pad=14),
+            OperatorEntry("GeometryNodeInputEdgeSmooth", pad=14),
             Separator,
-            OperatorEntry("GeometryNodeInputMeshIsland", pad=19),
-            OperatorEntry("GeometryNodeInputShortestEdgePaths", pad=5),
-            OperatorEntry("GeometryNodeInputMeshVertexNeighbors", pad=9),
+            OperatorEntry("GeometryNodeInputMeshIsland", pad=21),
+            OperatorEntry("GeometryNodeInputShortestEdgePaths", pad=7),
+            OperatorEntry("GeometryNodeInputMeshVertexNeighbors", pad=12),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2298,7 +2360,7 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeDualMesh", pad=23),
+            OperatorEntry("GeometryNodeDualMesh", pad=24),
             OperatorEntry("GeometryNodeEdgePathsToCurves", pad=4),
             OperatorEntry("GeometryNodeEdgePathsToSelection", pad=0),
             OperatorEntry("GeometryNodeExtrudeMesh", pad=17),
@@ -2306,12 +2368,12 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("GeometryNodeMeshBoolean", pad=16),
             OperatorEntry("GeometryNodeMeshToCurve", pad=15),
-            OperatorEntry("GeometryNodeMeshToDensityGrid", pad=7),
+            OperatorEntry("GeometryNodeMeshToDensityGrid", pad=4),
             OperatorEntry("GeometryNodeMeshToPoints", pad=15),
-            OperatorEntry("GeometryNodeMeshToSDFGrid", pad=11),
-            OperatorEntry("GeometryNodeMeshToVolume", pad=13),
-            OperatorEntry("GeometryNodeScaleElements", pad=14),
+            OperatorEntry("GeometryNodeMeshToSDFGrid", pad=10),
+            OperatorEntry("GeometryNodeMeshToVolume", pad=12),
             Separator,
+            OperatorEntry("GeometryNodeScaleElements", pad=14),
             OperatorEntry("GeometryNodeSplitEdges", pad=21),
             OperatorEntry("GeometryNodeSubdivideMesh", pad=13),
             OperatorEntry("GeometryNodeSubdivisionSurface", pad=6),
@@ -2340,15 +2402,15 @@ class NODES_PT_toolshelf_gn_add_mesh_primitives(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeMeshCone", pad=12),
-            OperatorEntry("GeometryNodeMeshCube", pad=12),
-            OperatorEntry("GeometryNodeMeshCylinder", pad=7),
-            OperatorEntry("GeometryNodeMeshGrid", pad=14),
+            OperatorEntry("GeometryNodeMeshCone", pad=28),
+            OperatorEntry("GeometryNodeMeshCube", pad=28),
+            OperatorEntry("GeometryNodeMeshCylinder", pad=23),
+            OperatorEntry("GeometryNodeMeshGrid", pad=30),
             Separator,
-            OperatorEntry("GeometryNodeMeshIcoSphere", pad=2),
-            OperatorEntry("GeometryNodeMeshCircle", pad=1),
-            OperatorEntry("GeometryNodeMeshLine", pad=4),
-            OperatorEntry("GeometryNodeMeshUVSphere", pad=3),
+            OperatorEntry("GeometryNodeMeshIcoSphere", pad=18),
+            OperatorEntry("GeometryNodeMeshCircle", pad=17),
+            OperatorEntry("GeometryNodeMeshLine", pad=19),
+            OperatorEntry("GeometryNodeMeshUVSphere", pad=19),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2376,15 +2438,14 @@ class NODES_PT_toolshelf_gn_add_mesh_topology(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeCornersOfEdge", pad=10),
             OperatorEntry("GeometryNodeCornersOfFace", pad=10),
             OperatorEntry("GeometryNodeCornersOfVertex", pad=7),
-            OperatorEntry("GeometryNodeEdgesOfCorner", pad=10),
             Separator,
+            OperatorEntry("GeometryNodeEdgesOfCorner", pad=10),
             OperatorEntry("GeometryNodeEdgesOfVertex", pad=10),
+            Separator,
             OperatorEntry("GeometryNodeFaceOfCorner", pad=12),
             OperatorEntry("GeometryNodeOffsetCornerInFace", pad=1),
             OperatorEntry("GeometryNodeVertexOfCorner", pad=9),
         )
-
-        self.draw_entries(context, layout, entries)
 
 
 class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
@@ -2407,8 +2468,8 @@ class NODES_PT_toolshelf_gn_add_mesh_uv(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeUVPackIslands", pad=8),
-            OperatorEntry("GeometryNodeUVTangent", pad=14),
-            OperatorEntry("GeometryNodeUVUnwrap", pad=16),
+            OperatorEntry("GeometryNodeUVTangent", pad=16),
+            OperatorEntry("GeometryNodeUVUnwrap", pad=17),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2440,7 +2501,8 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodePointsToCurves", pad=19),
             OperatorEntry("GeometryNodePointsToSDFGrid", pad=16),
             OperatorEntry("GeometryNodePointsToVertices", pad=17),
-            OperatorEntry("GeometryNodePointsToVolume", pad=18),
+            OperatorEntry("GeometryNodePointsToVolume", pad=17),
+            Separator,
             OperatorEntry("GeometryNodeSetPointRadius", pad=19),
         )
 
@@ -2464,10 +2526,7 @@ class NODES_PT_toolshelf_gn_add_volume(bpy.types.Panel, NodePanel):
         # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
-        entries = (
-            #OperatorEntry("GeometryNodeVolumeCube", pad=5),
-            #OperatorEntry("GeometryNodeVolumeToMesh", pad=0),
-        )
+        entries = ()
 
         self.draw_entries(context, layout, entries)
 
@@ -2518,13 +2577,14 @@ class NODES_PT_toolshelf_gn_add_volume_sample(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeGridAdvect", pad=15),
-            OperatorEntry("GeometryNodeSampleGrid", pad=15),
-            OperatorEntry("GeometryNodeSampleGridIndex", pad=5),
-            OperatorEntry("GeometryNodeGridCurl", pad=22),
-            OperatorEntry("GeometryNodeGridDivergence", pad=10),
-            OperatorEntry("GeometryNodeGridGradient", pad=15),
-            OperatorEntry("GeometryNodeGridLaplacian", pad=13),
+            OperatorEntry("GeometryNodeSampleGrid", pad=18),
+            OperatorEntry("GeometryNodeSampleGridIndex", pad=6),
+            Separator,
+            OperatorEntry("GeometryNodeGridAdvect", pad=18),
+            OperatorEntry("GeometryNodeGridCurl", pad=23),
+            OperatorEntry("GeometryNodeGridDivergence", pad=11),
+            OperatorEntry("GeometryNodeGridGradient", pad=16),
+            OperatorEntry("GeometryNodeGridLaplacian", pad=14),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2549,9 +2609,9 @@ class NODES_PT_toolshelf_gn_add_volume_write(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeStoreNamedGrid", pad=17),
             OperatorEntry("GeometryNodeSetGridBackground", pad=12),
             OperatorEntry("GeometryNodeSetGridTransform", pad=15),
+            OperatorEntry("GeometryNodeStoreNamedGrid", pad=17),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2576,25 +2636,25 @@ class NODES_PT_toolshelf_gn_add_volume_operations(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeGridToMesh", pad=20),
-            OperatorEntry("GeometryNodeGridToPoints", pad=14),
-            OperatorEntry("GeometryNodeVolumeToMesh", pad=16),
+            OperatorEntry("GeometryNodeGridToMesh", pad=23),
+            OperatorEntry("GeometryNodeGridToPoints", pad=22),
+            OperatorEntry("GeometryNodeVolumeToMesh", pad=17),
             Separator,
-            OperatorEntry("GeometryNodeSDFGridBoolean", pad=13),
-            OperatorEntry("GeometryNodeSDFGridFillet", pad=18),
-            OperatorEntry("GeometryNodeSDFGridLaplacian", pad=10),
-            OperatorEntry("GeometryNodeSDFGridMean", pad=17),
+            OperatorEntry("GeometryNodeSDFGridBoolean", pad=15),
+            OperatorEntry("GeometryNodeSDFGridFillet", pad=20),
+            OperatorEntry("GeometryNodeSDFGridLaplacian", pad=12),
+            OperatorEntry("GeometryNodeSDFGridMean", pad=19),
             OperatorEntry("GeometryNodeSDFGridMeanCurvature", pad=0),
-            OperatorEntry("GeometryNodeSDFGridMedian", pad=14),
-            OperatorEntry("GeometryNodeSDFGridOffset", pad=16),
+            OperatorEntry("GeometryNodeSDFGridMedian", pad=16),
+            OperatorEntry("GeometryNodeSDFGridOffset", pad=18),
             Separator,
-            OperatorEntry("GeometryNodeFieldToGrid", pad=21),
-            OperatorEntry("GeometryNodeGridClip", pad=27),
-            OperatorEntry("GeometryNodeGridDilateAndErode", pad=10),
-            OperatorEntry("GeometryNodeGridMean", pad=25),
+            OperatorEntry("GeometryNodeFieldToGrid", pad=23),
+            OperatorEntry("GeometryNodeGridClip", pad=29),
+            OperatorEntry("GeometryNodeGridDilateAndErode", pad=11),
+            OperatorEntry("GeometryNodeGridMean", pad=26),
             OperatorEntry("GeometryNodeGridMedian", pad=23),
-            OperatorEntry("GeometryNodeGridPrune", pad=26),
-            OperatorEntry("GeometryNodeGridVoxelize", pad=22),
+            OperatorEntry("GeometryNodeGridPrune", pad=25),
+            OperatorEntry("GeometryNodeGridVoxelize", pad=21),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2650,8 +2710,8 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
-    bl_label = "Material"
+class NODES_PT_toolshelf_gn_add_color(bpy.types.Panel, NodePanel):
+    bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
@@ -2668,11 +2728,14 @@ class NODES_PT_toolshelf_gn_add_material(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeReplaceMaterial", pad=3),
-            OperatorEntry("GeometryNodeInputMaterialIndex", pad=7),
-            OperatorEntry("GeometryNodeMaterialSelection", pad=1),
-            OperatorEntry("GeometryNodeSetMaterial", pad=11),
-            OperatorEntry("GeometryNodeSetMaterialIndex", pad=0),
+            OperatorEntry("ShaderNodeBlackbody", pad=19),
+            OperatorEntry("ShaderNodeValToRGB", pad=17),
+            OperatorEntry("ShaderNodeGamma", pad=24),
+            OperatorEntry("ShaderNodeMix", text="Mix Color", pad=21, settings={"data_type": "'RGBA'"}),
+            OperatorEntry("ShaderNodeRGBCurve", pad=18),
+            Separator,
+            OperatorEntry("FunctionNodeCombineColor", pad=12),
+            OperatorEntry("FunctionNodeSeparateColor", pad=12),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2696,16 +2759,16 @@ class NODES_PT_toolshelf_gn_add_texture(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("ShaderNodeTexBrick", pad=13),
-            OperatorEntry("ShaderNodeTexChecker", pad=7),
-            OperatorEntry("ShaderNodeTexGabor", pad=11),
-            OperatorEntry("ShaderNodeTexGradient", pad=7),
-            OperatorEntry("GeometryNodeImageTexture", pad=10),
-            OperatorEntry("ShaderNodeTexMagic", pad=11),
-            OperatorEntry("ShaderNodeTexNoise", pad=12),
+            OperatorEntry("ShaderNodeTexBrick", pad=15),
+            OperatorEntry("ShaderNodeTexChecker", pad=9),
+            OperatorEntry("ShaderNodeTexGabor", pad=13),
+            OperatorEntry("ShaderNodeTexGradient", pad=8),
+            OperatorEntry("GeometryNodeImageTexture", pad=11),
+            OperatorEntry("ShaderNodeTexMagic", pad=12),
+            OperatorEntry("ShaderNodeTexNoise", pad=13),
             OperatorEntry("ShaderNodeTexVoronoi", pad=8),
             OperatorEntry("ShaderNodeTexWave", pad=12),
-            OperatorEntry("ShaderNodeTexWhiteNoise", pad=1),
+            OperatorEntry("ShaderNodeTexWhiteNoise", pad=0),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2741,8 +2804,8 @@ class NODES_PT_toolshelf_gn_add_utilities(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
-    bl_label = "Color"
+class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
+    bl_label = "Math"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Add"
@@ -2760,12 +2823,18 @@ class NODES_PT_toolshelf_gn_add_utilities_color(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("ShaderNodeValToRGB", pad=6),
-            OperatorEntry("ShaderNodeRGBCurve", pad=6),
+            OperatorEntry("FunctionNodeBitMath", pad=14),
+            OperatorEntry("FunctionNodeBooleanMath", pad=4),
+            OperatorEntry("FunctionNodeIntegerMath", pad=5),
+            OperatorEntry("ShaderNodeClamp", pad=17),
+            OperatorEntry("FunctionNodeCompare", pad=12),
+            OperatorEntry("ShaderNodeFloatCurve", pad=8),
             Separator,
-            OperatorEntry("FunctionNodeCombineColor", pad=1),
-            OperatorEntry("ShaderNodeMix", text="Mix Color", pad=10, settings={"data_type": "'RGBA'"}),
-            OperatorEntry("FunctionNodeSeparateColor", pad=1),
+            OperatorEntry("FunctionNodeFloatToInt", pad=1),
+            OperatorEntry("FunctionNodeHashValue", pad=8),
+            OperatorEntry("ShaderNodeMapRange", pad=9),
+            OperatorEntry("ShaderNodeMath", pad=19),
+            OperatorEntry("ShaderNodeMix", pad=22),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2790,20 +2859,20 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("FunctionNodeFormatString", pad=9),
-            OperatorEntry("GeometryNodeStringJoin", pad=12),
-            OperatorEntry("FunctionNodeMatchString", pad=11),
-            OperatorEntry("FunctionNodeReplaceString", pad=8),
-            OperatorEntry("FunctionNodeSliceString", pad=13),
-            OperatorEntry("FunctionNodeTrimString", pad=13),
+            OperatorEntry("FunctionNodeFormatString", pad=11),
+            OperatorEntry("GeometryNodeStringJoin", pad=14),
+            OperatorEntry("FunctionNodeMatchString", pad=13),
+            OperatorEntry("FunctionNodeReplaceString", pad=10),
+            OperatorEntry("FunctionNodeSliceString", pad=15),
+            OperatorEntry("FunctionNodeTrimString", pad=15),
             Separator,
             OperatorEntry("FunctionNodeFindInString", pad=10),
             OperatorEntry("FunctionNodeStringLength", pad=10),
-            OperatorEntry("GeometryNodeStringToCurves", pad=5),
-            OperatorEntry("FunctionNodeStringToValue", pad=7),
+            OperatorEntry("GeometryNodeStringToCurves", pad=6),
+            OperatorEntry("FunctionNodeStringToValue", pad=8),
             OperatorEntry("FunctionNodeValueToString", pad=7),
             Separator,
-            OperatorEntry("FunctionNodeInputSpecialCharacters", pad=0),
+            OperatorEntry("FunctionNodeInputSpecialCharacters", pad=1),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2828,15 +2897,15 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("ShaderNodeCombineXYZ", pad=4),
-            OperatorEntry("ShaderNodeMapRange", pad=9, settings={"data_type": "'FLOAT_VECTOR'"}),
-            OperatorEntry("ShaderNodeMix", text="Mix Vector", pad=9, settings={"data_type": "'VECTOR'"}),
-            OperatorEntry("ShaderNodeSeparateXYZ", pad=4),
+            OperatorEntry("ShaderNodeCombineXYZ", pad=16),
+            OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),
+            OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=20, settings={"data_type": "'VECTOR'"}),
+            OperatorEntry("ShaderNodeSeparateXYZ", pad=16),
             Separator,
-            OperatorEntry("ShaderNodeRadialTiling", pad=10),
-            OperatorEntry("ShaderNodeVectorCurve", pad=3),
-            OperatorEntry("ShaderNodeVectorMath", pad=7),
-            OperatorEntry("ShaderNodeVectorRotate", pad=4),
+            OperatorEntry("ShaderNodeRadialTiling", pad=18),
+            OperatorEntry("ShaderNodeVectorCurve", pad=14),
+            OperatorEntry("ShaderNodeVectorMath", pad=17),
+            OperatorEntry("ShaderNodeVectorRotate", pad=15),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2861,13 +2930,11 @@ class NODES_PT_toolshelf_gn_add_utilities_bundle(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("NodeCombineBundle", pad=13),
-            OperatorEntry("NodeSeparateBundle", pad=13),
+            OperatorEntry("NodeCombineBundle", pad=14),
+            OperatorEntry("NodeSeparateBundle", pad=15),
             OperatorEntry("NodeGetBundleItem", pad=14),
-            OperatorEntry("NodeStoreBundleItem", pad=10),
-            OperatorEntry("GeometryNodeGetGeometryBundle", pad=4),
-            OperatorEntry("GeometryNodeSetGeometryBundle", pad=4),
-            OperatorEntry("NodeJoinBundle", pad=20),
+            OperatorEntry("NodeStoreBundleItem", pad=11),
+            OperatorEntry("NodeJoinBundle", pad=22),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2929,42 +2996,6 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_gn_add_utilities_math(bpy.types.Panel, NodePanel):
-    bl_label = "Math"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Add"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
-        # There is currently no way to determine the correct padding length other than trial-and-error.
-        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
-        entries = (
-            OperatorEntry("FunctionNodeBitMath", pad=14),
-            OperatorEntry("FunctionNodeBooleanMath", pad=4),
-            OperatorEntry("FunctionNodeIntegerMath", pad=5),
-            OperatorEntry("ShaderNodeClamp", pad=17),
-            OperatorEntry("FunctionNodeCompare", pad=12),
-            OperatorEntry("ShaderNodeFloatCurve", pad=8),
-            Separator,
-            OperatorEntry("FunctionNodeFloatToInt", pad=1),
-            OperatorEntry("FunctionNodeHashValue", pad=8),
-            OperatorEntry("ShaderNodeMapRange", pad=9),
-            OperatorEntry("ShaderNodeMath", pad=19),
-            OperatorEntry("ShaderNodeMix", pad=22),
-        )
-
-        self.draw_entries(context, layout, entries)
-
-
 class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
     bl_label = "Matrix"
     bl_space_type = 'NODE_EDITOR'
@@ -2986,10 +3017,10 @@ class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("FunctionNodeCombineMatrix", pad=8),
             OperatorEntry("FunctionNodeCombineTransform", pad=1),
-            OperatorEntry("FunctionNodeMatrixDeterminant", pad=2),
-            OperatorEntry("FunctionNodeInvertMatrix", pad=12),
+            OperatorEntry("FunctionNodeMatrixDeterminant", pad=14, text="Determinant"),
+            OperatorEntry("FunctionNodeInvertMatrix", pad=13),
             OperatorEntry("FunctionNodeMatrixMultiply", pad=6),
-            OperatorEntry("FunctionNodeMatrixSVD", pad=10),
+            OperatorEntry("FunctionNodeMatrixSVD", pad=16),
             OperatorEntry("FunctionNodeProjectPoint", pad=13),
             OperatorEntry("FunctionNodeSeparateMatrix", pad=8),
             OperatorEntry("FunctionNodeSeparateTransform", pad=0),
@@ -3024,9 +3055,10 @@ class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
             OperatorEntry("FunctionNodeAxesToRotation", pad=15),
             OperatorEntry("FunctionNodeAxisAngleToRotation", pad=5),
             OperatorEntry("FunctionNodeEulerToRotation", pad=15),
-            OperatorEntry("FunctionNodeInvertRotation", pad=17),
+            OperatorEntry("FunctionNodeInvertRotation", pad=18),
+            OperatorEntry("ShaderNodeMix", text="Mix Rotation", pad=22, settings={"data_type": "'ROTATION'"}),
             OperatorEntry("FunctionNodeRotateRotation", pad=17),
-            OperatorEntry("FunctionNodeRotateVector", pad=19),
+            OperatorEntry("FunctionNodeRotateVector", pad=20),
             OperatorEntry("FunctionNodeRotationToAxisAngle", pad=5),
             OperatorEntry("FunctionNodeRotationToEuler", pad=15),
             OperatorEntry("FunctionNodeRotationToQuaternion", pad=4),
@@ -3086,8 +3118,8 @@ classes = (
     NODES_PT_toolshelf_shader_add_color,
     NODES_PT_toolshelf_shader_add_texture,
     NODES_PT_toolshelf_shader_add_utilities,
-    NODES_PT_toolshelf_shader_add_vector,
     NODES_PT_toolshelf_shader_add_math,
+    NODES_PT_toolshelf_shader_add_vector,
     NODES_PT_toolshelf_shader_add_script,
     #-----------------------
 
@@ -3109,6 +3141,7 @@ classes = (
     NODES_PT_toolshelf_compositor_add_transform,
     NODES_PT_toolshelf_compositor_add_utilities,
     NODES_PT_toolshelf_compositor_add_utilities_math,
+    NODES_PT_toolshelf_compositor_add_utilities_matrix,
     NODES_PT_toolshelf_compositor_add_utilities_vector,
     #-----------------------
 
@@ -3126,8 +3159,6 @@ classes = (
 
     #-----------------------
     # Geometry Nodes - Add
-    NODES_PT_toolshelf_gn_add_attribute,
-
     NODES_PT_toolshelf_gn_add_input,
     NODES_PT_toolshelf_gn_add_input_constant,
     NODES_PT_toolshelf_gn_add_input_gizmo,
@@ -3135,11 +3166,14 @@ classes = (
     NODES_PT_toolshelf_gn_add_input_scene,
 
     NODES_PT_toolshelf_gn_add_output,
+    
+    NODES_PT_toolshelf_gn_add_attribute,
 
     NODES_PT_toolshelf_gn_add_geometry,
     NODES_PT_toolshelf_gn_add_geometry_read,
     NODES_PT_toolshelf_gn_add_geometry_sample,
     NODES_PT_toolshelf_gn_add_geometry_write,
+    NODES_PT_toolshelf_gn_add_geometry_material,
     NODES_PT_toolshelf_gn_add_geometry_operations,
 
     NODES_PT_toolshelf_gn_add_curve,
@@ -3176,17 +3210,16 @@ classes = (
     NODES_PT_toolshelf_gn_add_volume_primitives,
 
     NODES_PT_toolshelf_gn_add_simulation,
-    NODES_PT_toolshelf_gn_add_material,
+    NODES_PT_toolshelf_gn_add_color,
     NODES_PT_toolshelf_gn_add_texture,
 
     NODES_PT_toolshelf_gn_add_utilities,
-    NODES_PT_toolshelf_gn_add_utilities_color,
+    NODES_PT_toolshelf_gn_add_utilities_math,
     NODES_PT_toolshelf_gn_add_utilities_text,
     NODES_PT_toolshelf_gn_add_utilities_vector,
     NODES_PT_toolshelf_gn_add_utilities_bundle,
     NODES_PT_toolshelf_gn_add_utilities_closure,
     NODES_PT_toolshelf_gn_add_utilities_field,
-    NODES_PT_toolshelf_gn_add_utilities_math,
     NODES_PT_toolshelf_gn_add_utilities_matrix,
     NODES_PT_toolshelf_gn_add_utilities_rotation,
     NODES_PT_toolshelf_gn_add_utilities_deprecated,
