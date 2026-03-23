@@ -57814,7 +57814,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Futa mipaka ya shughuli za watazamaji"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Nakili nodi zilizochaguliwa kwenye ubao wa kunakili wa ndani"
 
 

@@ -72159,8 +72159,8 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Clear the boundaries for viewer operations"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
-msgstr "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
+msgstr "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 
 
 msgid "Paste nodes from the internal clipboard to the active node tree"
@@ -72219,8 +72219,8 @@ msgid "Remove selected nodes"
 msgstr "Remove selected nodes"
 
 
-msgid "Copy nodes to clipboard, remove and reconnect them."
-msgstr "Copy nodes to clipboard, remove and reconnect them."
+msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
+msgstr "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
 
 
 msgid "Remove nodes and reconnect nodes as if deletion was muted"

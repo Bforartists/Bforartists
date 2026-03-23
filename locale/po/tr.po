@@ -59726,7 +59726,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Görüntüleyici işlemleri için sınırları temizleyin"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Seçili düğümleri dahili panoya kopyala"
 
 

@@ -72761,7 +72761,7 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Wyczyść granice operacji dla widzów"
 
 
-msgid "Copy the selected nodes to the internal clipboard"
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Kopiuj wybrane węzły do wewnętrznego schowka"
 
 
@@ -72822,11 +72822,11 @@ msgstr "Usuń wybrane węzły"
 
 
 msgctxt "Operator"
-msgid "Delete with Copy and Reconnect"
+msgid "Cut: Delete with Copy and Reconnect"
 msgstr "Usuń z kopią i ponownie podłącz"
 
 
-msgid "Copy nodes to clipboard, remove and reconnect them."
+msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
 msgstr "Kopiuj węzły do schowka, usuń je i ponownie podłącz."
 
 
