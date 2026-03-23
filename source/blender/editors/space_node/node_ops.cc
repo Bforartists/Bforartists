@@ -238,6 +238,7 @@ void ED_operatormacros_node()
   WM_operatortype_macro_define(ot, "NODE_OT_links_detach");
   WM_operatortype_macro_define(ot, "NODE_OT_translate_attach");
 
+  /* BFA - Made description more explicit*/
   ot = WM_operatortype_append_macro("NODE_OT_delete_copy_reconnect",
                                     "Cut: Delete with Copy and Reconnect",
                                     "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances.",
