@@ -79176,12 +79176,12 @@ msgstr "Ajusta to/saturació/calor del color de vèrtex"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Definir colors de vèrtex"
 
 
 msgid "Fill the active vertex color layer with the current paint color"
-msgstr "[Set Vertex Colors]: Emplena la capa de color de vèrtex activa amb el color de pintura actual"
+msgstr "[Set Vertex Color]: Emplena la capa de color de vèrtex activa amb el color de pintura actual"
 
 
 msgid "Set color completely opaque instead of reusing existing alpha"

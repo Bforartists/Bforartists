@@ -44654,7 +44654,7 @@ msgstr "Non calcola le pulizie per le aree convesse"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Imposta Colori Vertici"
 
 

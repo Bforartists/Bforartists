@@ -41780,7 +41780,7 @@ msgstr "Converte os pesos de influência ativos para uma gradiente de cores de v
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Configurar cores dos vértices"
 
 

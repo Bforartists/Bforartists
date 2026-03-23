@@ -80224,7 +80224,7 @@ msgstr "頂点カラーの HSV (色相/彩度/明度)を調整します"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "頂点カラーを設定"
 
 

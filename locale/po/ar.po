@@ -25307,7 +25307,7 @@ msgstr "ﻲﻤﻐﻨﻟﺍ ﻕﺎﻄﻨﻟﺍ ﻲﻓ ﺔﻠﻤﻌﺘﺴﻤﻟﺍ
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "ﻂﻘﻨﻟﺍ ﻥﺍﻮﻟﺍ ﻊﺿ"
 
 

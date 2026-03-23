@@ -77821,7 +77821,7 @@ msgstr "버텍스 색상 색조/채도/값 조정하기"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "버텍스 색상를 설정"
 
 

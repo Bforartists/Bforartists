@@ -79176,7 +79176,7 @@ msgstr "Upraví farby vrcholu Odtieň/Nasýtenie/Hodnota"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Nastaviť farbu vrcholu"
 
 

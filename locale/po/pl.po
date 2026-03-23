@@ -79176,7 +79176,7 @@ msgstr "Dostosuj barwę / nasycenie / wartość koloru wierzchołka"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Ustaw kolory wierzchołków"
 
 
