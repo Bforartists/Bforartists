@@ -339,7 +339,7 @@ class TOPBAR_PT_main(Panel):
         grid.label(text="", icon="INFO")
         col = grid.column(align=True)
         col.label(text="The startup file needs to be saved")
-        col.label(text="to make the changes to the toolbar permanent.")
+        col.label(text="to make the changes to the topbar permanent.")
 
 
 
