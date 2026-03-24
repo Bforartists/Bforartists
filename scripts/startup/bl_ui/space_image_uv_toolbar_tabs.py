@@ -27,41 +27,13 @@ from bl_ui.properties_grease_pencil_common import (
 )
 from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
+    toolsystem_column_count,
 )
 
 from bpy.app.translations import pgettext_iface as iface_
 
 
-class toolshelf_calculate(Panel):
-
-    @staticmethod
-    def ts_width(layout, region, scale_y):
-
-        # Currently this just checks the width,
-        # we could have different layouts as preferences too.
-        system = bpy.context.preferences.system
-        view2d = region.view2d
-        view2d_scale = (
-                view2d.region_to_view(1.0, 0.0)[0] -
-                view2d.region_to_view(0.0, 0.0)[0]
-        )
-        width_scale = region.width * view2d_scale / system.ui_scale
-
-        # how many rows. 4 is text buttons.
-
-        if width_scale > 160.0:
-            column_count = 4
-        elif width_scale > 140.0:
-            column_count = 3
-        elif width_scale > 90:
-            column_count = 2
-        else:
-            column_count = 1
-
-        return column_count
-
-
-class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
+class IMAGE_PT_uvtab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -79,7 +51,7 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -175,7 +147,7 @@ class IMAGE_PT_uvtab_transform(toolshelf_calculate, Panel):
                 col.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
 
 
-class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
+class IMAGE_PT_uvtab_mirror(Panel):
     bl_label = "Mirror"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -193,7 +165,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -243,7 +215,7 @@ class IMAGE_PT_uvtab_mirror(toolshelf_calculate, Panel):
                 col.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
 
 
-class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
+class IMAGE_PT_uvtab_snap(Panel):
     bl_label = "Snap"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -261,7 +233,7 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -333,7 +305,7 @@ class IMAGE_PT_uvtab_snap(toolshelf_calculate, Panel):
                 col.operator("uv.snap_cursor", text="", icon="CURSORTOSELECTION").target = 'SELECTED'
 
 
-class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
+class IMAGE_PT_uvtab_unwrap(Panel):
     bl_label = "Unwrap"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -351,7 +323,7 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -443,7 +415,7 @@ class IMAGE_PT_uvtab_unwrap(toolshelf_calculate, Panel):
                 col.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
 
 
-class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
+class IMAGE_PT_uvtab_merge(Panel):
     bl_label = "Merge"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -461,7 +433,7 @@ class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -511,7 +483,7 @@ class IMAGE_PT_uvtab_merge(toolshelf_calculate, Panel):
                 col.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
 
 
-class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
+class IMAGE_PT_uvtab_uvtools(Panel):
     bl_label = "UV Tools"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -529,7 +501,7 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -636,7 +608,7 @@ class IMAGE_PT_uvtab_uvtools(toolshelf_calculate, Panel):
                 col.operator("uv.reset", text="", icon="RESET")
 
 
-class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
+class IMAGE_PT_uvtab_align(Panel):
     bl_label = "Align"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -654,7 +626,7 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -725,7 +697,7 @@ class IMAGE_PT_uvtab_align(toolshelf_calculate, Panel):
                 col.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
 
-class IMAGE_PT_image_masktab_add(toolshelf_calculate, Panel):
+class IMAGE_PT_image_masktab_add(Panel):
     bl_label = "Add"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -743,7 +715,7 @@ class IMAGE_PT_image_masktab_add(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -794,7 +766,7 @@ class IMAGE_PT_image_masktab_add(toolshelf_calculate, Panel):
                 col.operator("mask.add_vertex_slide", text="", icon='SLIDE_VERTEX')
 
 
-class IMAGE_PT_image_masktab_transform(toolshelf_calculate, Panel):
+class IMAGE_PT_image_masktab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -812,7 +784,7 @@ class IMAGE_PT_image_masktab_transform(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -874,7 +846,7 @@ class IMAGE_PT_image_masktab_transform(toolshelf_calculate, Panel):
                 col.operator("mask.feather_weight_clear", text = "", icon = "CLEAR")
 
 
-class IMAGE_PT_image_masktab_mask(toolshelf_calculate, Panel):
+class IMAGE_PT_image_masktab_mask(Panel):
     bl_label = "Mask"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -892,7 +864,7 @@ class IMAGE_PT_image_masktab_mask(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -954,7 +926,7 @@ class IMAGE_PT_image_masktab_mask(toolshelf_calculate, Panel):
                 col.operator("mask.normals_make_consistent", text="", icon = "RECALC_NORMALS")
 
 
-class IMAGE_PT_image_masktab_handletype(toolshelf_calculate, Panel):
+class IMAGE_PT_image_masktab_handletype(Panel):
     bl_label = "Set Handle Type"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -972,7 +944,7 @@ class IMAGE_PT_image_masktab_handletype(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -1027,7 +999,7 @@ class IMAGE_PT_image_masktab_handletype(toolshelf_calculate, Panel):
                 col.operator("mask.handle_type_set", text="", icon = "HANDLE_FREE").type = 'FREE'
 
 
-class IMAGE_PT_image_masktab_animation(toolshelf_calculate, Panel):
+class IMAGE_PT_image_masktab_animation(Panel):
     bl_label = "Animation"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -1045,7 +1017,7 @@ class IMAGE_PT_image_masktab_animation(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y=1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 

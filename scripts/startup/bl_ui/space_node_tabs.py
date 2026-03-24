@@ -12,6 +12,7 @@ from bl_ui.properties_grease_pencil_common import (
 )
 from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
+    toolsystem_column_count,
 )
 from bl_ui.properties_material import (
     EEVEE_MATERIAL_PT_settings,
@@ -25,36 +26,8 @@ from bl_ui.properties_data_light import (
     DATA_PT_EEVEE_light,
 )
 
-class toolshelf_calculate(Panel):
 
-    @staticmethod
-    def ts_width(layout, region, scale_y):
-
-        # Currently this just checks the width,
-        # we could have different layouts as preferences too.
-        system = bpy.context.preferences.system
-        view2d = region.view2d
-        view2d_scale = (
-            view2d.region_to_view(1.0, 0.0)[0] -
-            view2d.region_to_view(0.0, 0.0)[0]
-        )
-        width_scale = region.width * view2d_scale / system.ui_scale
-
-        # how many rows. 4 is text buttons.
-
-        if width_scale > 160.0:
-            column_count = 4
-        elif width_scale > 140.0:
-            column_count = 3
-        elif width_scale > 90:
-            column_count = 2
-        else:
-            column_count = 1
-
-        return column_count
-
-
-class NODE_PT_transform(toolshelf_calculate, Panel):
+class NODE_PT_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -70,7 +43,7 @@ class NODE_PT_transform(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -113,7 +86,7 @@ class NODE_PT_transform(toolshelf_calculate, Panel):
                 col.operator("transform.resize", text = "",  icon = "TRANSFORM_SCALE")
 
 
-class NODE_PT_links(toolshelf_calculate, Panel):
+class NODE_PT_links(Panel):
     bl_label = "Links"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -129,7 +102,7 @@ class NODE_PT_links(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -185,7 +158,7 @@ class NODE_PT_links(toolshelf_calculate, Panel):
                 col.operator("node.links_mute", text="", icon = "MUTE_IPO_ON")
 
 
-class NODE_PT_separate(toolshelf_calculate, Panel):
+class NODE_PT_separate(Panel):
     bl_label = "Separate"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -201,7 +174,7 @@ class NODE_PT_separate(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -239,7 +212,7 @@ class NODE_PT_separate(toolshelf_calculate, Panel):
                 col.operator("node.group_separate", text = "", icon = "SEPARATE").type = 'MOVE'
 
 
-class NODE_PT_node_tools(toolshelf_calculate, Panel):
+class NODE_PT_node_tools(Panel):
     bl_label = "Frame Tools"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -255,7 +228,7 @@ class NODE_PT_node_tools(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -310,7 +283,7 @@ class NODE_PT_node_tools(toolshelf_calculate, Panel):
                 col.operator("node.join_named", text="", icon="NODE_JOINFRAMENAMED")
                 col.operator("node.parent_set", text="", icon="NODE_FRAMEPARENT")
 
-class NODE_PT_group(toolshelf_calculate, Panel):
+class NODE_PT_group(Panel):
     bl_label = "Group"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -326,7 +299,7 @@ class NODE_PT_group(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 

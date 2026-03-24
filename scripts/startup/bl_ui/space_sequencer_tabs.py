@@ -15,41 +15,12 @@ from bl_ui.properties_grease_pencil_common import (
 )
 from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
+    toolsystem_column_count, # BFA - Helper function
 )
 from rna_prop_ui import PropertyPanel
 
-class toolshelf_calculate(Panel):
 
-    @staticmethod
-    def ts_width(layout, region, scale_y):
-
-        # Currently this just checks the width,
-        # we could have different layouts as preferences too.
-        system = bpy.context.preferences.system
-        view2d = region.view2d
-        view2d_scale = (
-            view2d.region_to_view(1.0, 0.0)[0] -
-            view2d.region_to_view(0.0, 0.0)[0]
-        )
-        width_scale = region.width * view2d_scale / system.ui_scale
-
-        # how many rows. 4 is text buttons.
-
-        if width_scale > 160.0:
-            column_count = 4
-        elif width_scale > 140.0:
-            column_count = 3
-        elif width_scale > 90:
-            column_count = 2
-        else:
-            column_count = 1
-
-        return column_count
-
-# ------------------------------------- No limit ---------------------------------------------#
-
-
-class SEQUENCER_PT_imagetab_clear(toolshelf_calculate, Panel):
+class SEQUENCER_PT_imagetab_clear(Panel):
     bl_label = "Clear"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -65,7 +36,7 @@ class SEQUENCER_PT_imagetab_clear(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -116,7 +87,7 @@ class SEQUENCER_PT_imagetab_clear(toolshelf_calculate, Panel):
                 col.operator("sequencer.strip_transform_clear", text="", icon = "CLEAR").property = 'ALL'
 
 
-class SEQUENCER_PT_imagetab_image(toolshelf_calculate, Panel):
+class SEQUENCER_PT_imagetab_image(Panel):
     bl_label = "Image"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -132,7 +103,7 @@ class SEQUENCER_PT_imagetab_image(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -178,7 +149,7 @@ class SEQUENCER_PT_imagetab_image(toolshelf_calculate, Panel):
 # ------------------------------------- Just sequencer ---------------------------------------------#
 
 
-class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
+class SEQUENCER_PT_sequencer_striptab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -194,7 +165,7 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -298,7 +269,7 @@ class SEQUENCER_PT_sequencer_striptab_transform(toolshelf_calculate, Panel):
                 col.operator("sequencer.gap_insert", text="", icon = "SEQ_INSERT_GAPS")
 
 
-class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
+class SEQUENCER_PT_sequencer_striptab_split(Panel):
     bl_label = "Split"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -314,7 +285,7 @@ class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -354,7 +325,7 @@ class SEQUENCER_PT_sequencer_striptab_split(toolshelf_calculate, Panel):
                 col.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
 
 
-class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
+class SEQUENCER_PT_sequencer_striptab_retiming(Panel):
     bl_label = "Retiming"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -371,7 +342,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
         try:
             layout = self.layout
 
-            column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+            column_count = toolsystem_column_count(context.region)
 
             obj = context.object
 
@@ -481,7 +452,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(toolshelf_calculate, Panel):
     def draw_retiming_context(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 

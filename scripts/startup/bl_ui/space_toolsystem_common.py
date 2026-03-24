@@ -640,29 +640,15 @@ class ToolSelectPanelHelper:
         """
         Choose an appropriate layout for the toolbar.
         """
-        # Currently this just checks the width,
-        # we could have different layouts as preferences too.
-        system = bpy.context.preferences.system
-        view2d = region.view2d
-        view2d_scale = (
-            view2d.region_to_view(1.0, 0.0)[0] -
-            view2d.region_to_view(0.0, 0.0)[0]
-        )
-        width_scale = region.width * view2d_scale / system.ui_scale
+        # BFA - Refactored to use shared helper function
+        column_count = toolsystem_column_count(region)
 
-        # BFA - change to 3 column        
-        if width_scale > 160.0:
+        # BFA - change to 3 column
+        if column_count == 4:
             show_text = True
             column_count = 1
         else:
             show_text = False
-            # 2 or 3 column layout, disabled
-            if width_scale > 140.0:
-                column_count = 3
-            elif width_scale > 90:
-                column_count = 2
-            else:
-                column_count = 1
 
         if column_count == 1:
             ui_gen = ToolSelectPanelHelper._layout_generator_single_column(
@@ -1251,6 +1237,33 @@ def _keymap_from_item(context, item):
         keyconf = wm.keyconfigs.user
         return keyconf.keymaps.get(item.keymap[0])
     return None
+
+
+# BFA - Helper function for determining column count of tool system panels.
+def toolsystem_column_count(region):
+    system = bpy.context.preferences.system
+    view2d = region.view2d
+    view2d_scale = (
+        view2d.region_to_view(1.0, 0.0)[0] -
+        view2d.region_to_view(0.0, 0.0)[0]
+    )
+    width_scale = region.width * view2d_scale / system.ui_scale
+
+    # TODO: BFA - Factor if category tabs are visible or not
+    # Currently this is currently not exposed in the API. 
+
+    # Drawn as text buttons.
+    if width_scale > 180.0:
+        column_count = 4  
+    # Drawn as icon buttons.
+    elif width_scale > 140.0:
+        column_count = 3
+    elif width_scale > 90:
+        column_count = 2
+    else:
+        column_count = 1
+
+    return column_count
 
 
 classes = (

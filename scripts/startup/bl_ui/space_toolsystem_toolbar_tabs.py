@@ -8,6 +8,9 @@ import bmesh
 import sys
 
 from bpy.app.translations import contexts as i18n_contexts
+from bl_ui.space_toolsystem_common import (
+    toolsystem_column_count,
+)
 
 # BFA - Import the default library wizard functions
 def draw_wizard_button(layout, obj, text, icon, scale):
@@ -45,38 +48,9 @@ def draw_wizard_button(layout, obj, text, icon, scale):
 
     return False
 
-
-class toolshelf_calculate( Panel):
-
-    @staticmethod
-    def ts_width(layout, region, scale_y):
-
-        # Currently this just checks the width,
-        # we could have different layouts as preferences too.
-        system = bpy.context.preferences.system
-        view2d = region.view2d
-        view2d_scale = (
-            view2d.region_to_view(1.0, 0.0)[0] -
-            view2d.region_to_view(0.0, 0.0)[0]
-        )
-        width_scale = region.width * view2d_scale / system.ui_scale
-
-        # how many rows. 4 is text buttons.
-
-        if width_scale > 160.0:
-            column_count = 4
-        elif width_scale > 140.0:
-            column_count = 3
-        elif width_scale > 90:
-            column_count = 2
-        else:
-            column_count = 1
-
-        return column_count
-
 # ------------------------ Object
 
-class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -92,7 +66,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         obj = context.object
 
@@ -403,7 +377,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     col.operator("armature.align", text="", icon = "ALIGN")
 
 
-class VIEW3D_PT_objecttab_set_origin(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_set_origin(Panel):
     bl_label = "Set Origin"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -417,10 +391,10 @@ class VIEW3D_PT_objecttab_set_origin(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -507,7 +481,7 @@ class VIEW3D_MT_object_mirror_global_z(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_mirror(Panel):
     bl_label = "Mirror"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -520,10 +494,10 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -628,7 +602,7 @@ class VIEW3D_MT_object_mirror_local_z(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_mirror_local(Panel):
     bl_label = "Mirror Local"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -641,10 +615,10 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -689,7 +663,7 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
                 col.operator("mirror.local_z", text="", icon='MIRROR_Z')
 
 
-class VIEW3D_PT_objecttab_clear(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_clear(Panel):
     bl_label = "Clear"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -703,10 +677,10 @@ class VIEW3D_PT_objecttab_clear(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -760,7 +734,7 @@ class VIEW3D_PT_objecttab_clear(toolshelf_calculate, Panel):
                 col.operator("object.origin_clear", text="", icon = "CLEARORIGIN")
 
 
-class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_apply(Panel):
     bl_label = "Apply"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -774,11 +748,11 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
         context = bpy.context
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -960,7 +934,7 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
                     op.boolean_on_apply = False
                     op.remesh_on_apply = True
 
-class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_apply_delta(Panel):
     bl_label = "Apply Deltas"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -974,10 +948,10 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         # bfa - the desctription in myvar.arg comes from release\scripts\startup\bl_operators\object.py
         # defined in class TransformsToDeltas(Operator): by a string property
@@ -1068,7 +1042,7 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
                 col.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
 
 
-class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_snap(Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1081,10 +1055,10 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1162,7 +1136,7 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
                 col.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
 
-class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_shading(Panel):
     bl_label = "Shading"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1175,10 +1149,10 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1221,7 +1195,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
 
 # ------------------------ Utility
 
-class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
+class VIEW3D_PT_utilitytab_parent(Panel):
     bl_label = "Parents"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1234,10 +1208,10 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1273,7 +1247,7 @@ class VIEW3D_PT_utilitytab_parent(toolshelf_calculate, Panel):
                 col.operator("object.parent_clear", text = "", icon ='PARENT_CLEAR')
 
 
-class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
+class VIEW3D_PT_utilitytab_objectdata(Panel):
     bl_label = "Object Data"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1286,10 +1260,10 @@ class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1348,7 +1322,7 @@ class VIEW3D_PT_utilitytab_objectdata(toolshelf_calculate, Panel):
                 col.operator("object.make_override_library", text = "", icon ='LIBRARY_DATA_OVERRIDE')
 
 
-class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
+class VIEW3D_PT_utilitytab_assets(Panel):
     bl_label = "Assets"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1361,13 +1335,13 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
         
         context = bpy.context
         obj = context.object
         
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1417,7 +1391,7 @@ class VIEW3D_PT_utilitytab_assets(toolshelf_calculate, Panel):
                     draw_wizard_button(col, obj, "", 'WIZARD', 1)
 
 
-class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
+class VIEW3D_PT_utilitytab_constraints(Panel):
     bl_label = "Constraints"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1430,10 +1404,10 @@ class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1475,7 +1449,7 @@ class VIEW3D_PT_utilitytab_constraints(toolshelf_calculate, Panel):
                 col.operator("object.constraints_clear", text = "", icon="CLEAR_CONSTRAINT")
 
 
-class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
+class VIEW3D_PT_utilitytab_collection(Panel):
     bl_label = "Collection"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1488,10 +1462,10 @@ class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1526,7 +1500,7 @@ class VIEW3D_PT_utilitytab_collection(toolshelf_calculate, Panel):
                 col.operator("object.move_to_collection", text = "", icon='GROUP')
 
 
-class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
+class VIEW3D_PT_utilitytab_convert(Panel):
     bl_label = "Convert"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1539,10 +1513,10 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1649,7 +1623,7 @@ class VIEW3D_PT_utilitytab_convert(toolshelf_calculate, Panel):
 
 # -------------------------------------- Mesh
 
-class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_merge(Panel):
     bl_label = "Merge"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1663,10 +1637,10 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
         obedit = bpy.context.edit_object
 
         #text buttons
@@ -1779,7 +1753,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
                 col.operator("mesh.remove_doubles", text="", icon = "REMOVE_DOUBLES")
 
 
-class VIEW3D_PT_meshtab_split(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_split(Panel):
     bl_label = "Split"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1793,10 +1767,10 @@ class VIEW3D_PT_meshtab_split(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1837,7 +1811,7 @@ class VIEW3D_PT_meshtab_split(toolshelf_calculate, Panel):
                 col.operator("mesh.edge_split", text="", icon = "SPLIT_BYVERTICES").type = 'VERT'
 
 
-class VIEW3D_PT_meshtab_separate(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_separate(Panel):
     bl_label = "Separate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1851,10 +1825,10 @@ class VIEW3D_PT_meshtab_separate(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1895,7 +1869,7 @@ class VIEW3D_PT_meshtab_separate(toolshelf_calculate, Panel):
                 col.operator("mesh.separate", text="", icon = "SEPARATE_LOOSE").type = 'LOOSE'
 
 
-class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_tools(Panel):
     bl_label = "Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1909,12 +1883,12 @@ class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
         from math import pi
         with_bullet = bpy.app.build_options.bullet
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -1991,7 +1965,7 @@ class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
                 col.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
 
 
-class VIEW3D_PT_meshtab_normals(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_normals(Panel):
     bl_label = "Normals"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2005,10 +1979,10 @@ class VIEW3D_PT_meshtab_normals(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -2049,7 +2023,7 @@ class VIEW3D_PT_meshtab_normals(toolshelf_calculate, Panel):
                 col.operator("mesh.flip_normals", text = "", icon = 'FLIP_NORMALS')
 
 
-class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_shading(Panel):
     bl_label = "Shading"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2063,10 +2037,10 @@ class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -2144,7 +2118,7 @@ class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
                 col.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SHARP').use_verts = True
 
 
-class VIEW3D_PT_meshtab_cleanup(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_cleanup(Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2158,10 +2132,10 @@ class VIEW3D_PT_meshtab_cleanup(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -2243,7 +2217,7 @@ class VIEW3D_PT_meshtab_cleanup(toolshelf_calculate, Panel):
                 col.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
 
 
-class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_dissolve(Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2257,10 +2231,10 @@ class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -2330,7 +2304,7 @@ class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
                 col.operator("mesh.edge_collapse", text = "", icon='EDGE_COLLAPSE')
 
 
-class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
+class VIEW3D_PT_vertextab_vertex(Panel):
     bl_label = "Vertex"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2344,10 +2318,10 @@ class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -2449,7 +2423,7 @@ class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text="", icon = "VERTEX_PARENT")
 
 
-class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
+class VIEW3D_PT_edgetab_Edge(Panel):
     bl_label = "Edge"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2463,10 +2437,10 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         with_freestyle = bpy.app.build_options.freestyle
 
@@ -2631,7 +2605,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
                     col.operator("mesh.mark_freestyle_edge", text="", icon = "CLEAR_FS_EDGE").clear = True
 
 
-class VIEW3D_PT_facetab_face(toolshelf_calculate, Panel):
+class VIEW3D_PT_facetab_face(Panel):
     bl_label = "Face"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2645,10 +2619,10 @@ class VIEW3D_PT_facetab_face(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -2768,7 +2742,7 @@ class VIEW3D_PT_facetab_face(toolshelf_calculate, Panel):
                 col.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
 
 
-class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
+class VIEW3D_PT_uvtab_uv(Panel):
     bl_label = "UV"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2782,10 +2756,10 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -2967,7 +2941,7 @@ class MASK_MT_flood_fill_clear(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_sculpttab_transform(toolshelf_calculate, Panel):
+class VIEW3D_PT_sculpttab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2981,10 +2955,10 @@ class VIEW3D_PT_sculpttab_transform(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -3020,7 +2994,7 @@ class VIEW3D_PT_sculpttab_transform(toolshelf_calculate, Panel):
                 props.type = 'SPHERE'
 
 
-class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
+class VIEW3D_PT_sculpttab_sculpt(Panel):
     bl_label = "Sculpt"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3034,10 +3008,10 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -3235,7 +3209,7 @@ class VIEW3D_PT_sculpttab_sculpt(toolshelf_calculate, Panel):
                 col.operator("sculpt.sample_color", text="", icon='EYEDROPPER')
 
 
-class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
+class VIEW3D_PT_sculpttab_filters(Panel):
     bl_label = "Meshfilter"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3249,10 +3223,10 @@ class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -3390,7 +3364,7 @@ class VIEW3D_PT_sculpttab_filters(toolshelf_calculate, Panel):
                 props.type = 'RANDOM'
 
 
-class VIEW3D_PT_sculpttab_set_pivot(toolshelf_calculate, Panel):
+class VIEW3D_PT_sculpttab_set_pivot(Panel):
     bl_label = "Set Pivot"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3404,10 +3378,10 @@ class VIEW3D_PT_sculpttab_set_pivot(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -3494,7 +3468,7 @@ class VIEW3D_PT_sculpttab_set_pivot(toolshelf_calculate, Panel):
                 props.mode = 'SURFACE'
 
 
-class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
+class VIEW3D_PT_masktab_mask(Panel):
     bl_label = "Mask"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3508,10 +3482,10 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -3796,7 +3770,7 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props.boundary_mode = "FACE_SETS"
 
 
-class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
+class VIEW3D_PT_masktab_random_mask(Panel):
     bl_label = "Random Mask"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3810,10 +3784,10 @@ class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -3859,7 +3833,7 @@ class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
                 col.operator("sculpt.mask_init", text='', icon = "SELECT_LOOSE").mode = 'RANDOM_PER_LOOSE_PART'
 
 
-class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
+class VIEW3D_PT_facesetstab_facesets(Panel):
     bl_label = "Face Sets"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3873,10 +3847,10 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4032,7 +4006,7 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 col.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
 
 
-class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
+class VIEW3D_PT_facesetstab_init_facesets(Panel):
     bl_label = "Initialize Face Sets"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4046,10 +4020,10 @@ class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4119,7 +4093,7 @@ class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
                 col.operator("sculpt.face_sets_init", text='', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
 
 
-class VIEW3D_PT_painttab_paint(toolshelf_calculate, Panel):
+class VIEW3D_PT_painttab_paint(Panel):
     bl_label = "Paint"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4133,10 +4107,10 @@ class VIEW3D_PT_painttab_paint(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4212,7 +4186,7 @@ class VIEW3D_PT_painttab_paint(toolshelf_calculate, Panel):
                 col.operator("paint.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
 
 
-class VIEW3D_PT_painttab_colorpicker(toolshelf_calculate, Panel):
+class VIEW3D_PT_painttab_colorpicker(Panel):
     bl_label = "Color Picker"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4225,10 +4199,10 @@ class VIEW3D_PT_painttab_colorpicker(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'PAINT_VERTEX', 'PAINT_TEXTURE'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4260,7 +4234,7 @@ class VIEW3D_PT_painttab_colorpicker(toolshelf_calculate, Panel):
                 col.operator("paint.sample_color", text = "", icon='EYEDROPPER')
 
 
-class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
+class VIEW3D_PT_weightstab_weights(Panel):
     bl_label = "Weights"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4273,10 +4247,10 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         return view.show_toolshelf_tabs == True
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4413,7 +4387,7 @@ class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
 
 
 # ------------------------ Curve Edit Mode
-class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
+class VIEW3D_PT_curvetab_curve(Panel):
     bl_label = "Curve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4427,10 +4401,10 @@ class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4524,7 +4498,7 @@ class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
                 col.operator("curve.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
 
 
-class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
+class VIEW3D_PT_curvetab_controlpoints(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4538,10 +4512,10 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4653,7 +4627,7 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
 
-class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
+class VIEW3D_PT_curvetab_controlpoints_surface(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4667,10 +4641,10 @@ class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4737,7 +4711,7 @@ class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
 
 
 # ------------------------ Curves (Hair/Fur) Edit Mode
-class VIEW3D_PT_curvestab_edit_curves(toolshelf_calculate, Panel):
+class VIEW3D_PT_curvestab_edit_curves(Panel):
     bl_label = "Curves"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4751,10 +4725,10 @@ class VIEW3D_PT_curvestab_edit_curves(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4820,7 +4794,7 @@ class VIEW3D_PT_curvestab_edit_curves(toolshelf_calculate, Panel):
                 col.operator("curves.delete", text="", icon="DELETE")
 
 
-class VIEW3D_PT_curvestab_edit_controlpoints(toolshelf_calculate, Panel):
+class VIEW3D_PT_curvestab_edit_controlpoints(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4834,10 +4808,10 @@ class VIEW3D_PT_curvestab_edit_controlpoints(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4872,7 +4846,7 @@ class VIEW3D_PT_curvestab_edit_controlpoints(toolshelf_calculate, Panel):
                 col.operator("curvs.extrude_move", text = "", icon = 'EXTRUDE_REGION')
 
 
-class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
+class VIEW3D_PT_curvestab_edit_segments(Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4886,10 +4860,10 @@ class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode == 'EDIT_CURVES'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -4932,7 +4906,7 @@ class VIEW3D_PT_curvestab_edit_segments(toolshelf_calculate, Panel):
 
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
 
-class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
+class VIEW3D_PT_curvestab_sculpt_curves(Panel):
     bl_label = "Curves"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4946,10 +4920,10 @@ class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode == 'SCULPT_CURVES'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5002,7 +4976,7 @@ class VIEW3D_PT_curvestab_sculpt_curves(toolshelf_calculate, Panel):
 
 
 # ------------------------ Surface
-class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
+class VIEW3D_PT_surfacetab_surface(Panel):
     bl_label = "Surface"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5016,10 +4990,10 @@ class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5080,7 +5054,7 @@ class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
 
 
 # ------------------------ Grease Pencil
-class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
+class VIEW3D_PT_segmentstab_segments(Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5094,10 +5068,10 @@ class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
         # curve and surface object in edit mode by poll, not by bl_context
         return view.show_toolshelf_tabs == True and context.mode in {'EDIT_SURFACE','EDIT_CURVE'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5133,7 +5107,7 @@ class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
                 col.operator("curve.switch_direction", text = "", icon = 'SWITCH_DIRECTION')
 
 
-class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_gpenciltab_dissolve(Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5147,10 +5121,10 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5192,7 +5166,7 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
 
-class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_gpenciltab_cleanup(Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5206,10 +5180,10 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5269,7 +5243,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
 
 
-class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_gpenciltab_separate(Panel):
     bl_label = "Separate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5283,10 +5257,10 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5341,7 +5315,7 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.stroke_split", text="", icon = "SPLIT")
 
 
-class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_stroke(Panel):
     bl_label = "Stroke"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5355,10 +5329,10 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5520,7 +5494,7 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
 
 
 # BFA - Legacy
-class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_simplify(Panel):
     bl_label = "Simplify"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5534,10 +5508,10 @@ class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5579,7 +5553,7 @@ class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
                 col.operator("gpencil.stroke_sample", text="", icon = "SIMPLIFY_SAMPLE")
 
 
-class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
     bl_label = "Toggle Caps"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5593,10 +5567,10 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5644,7 +5618,7 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
 # BFA - legacy
-class VIEW3D_PT_gp_stroketab_reproject(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_reproject(Panel):
     bl_label = "Reproject Strokes"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5658,10 +5632,10 @@ class VIEW3D_PT_gp_stroketab_reproject(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5719,7 +5693,7 @@ class VIEW3D_PT_gp_stroketab_reproject(toolshelf_calculate, Panel):
                 col.operator("gpencil.reproject", text="", icon = "CURSOR").type = 'CURSOR'
 
 
-class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_pointtab_point(Panel):
     bl_label = "Point"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5733,10 +5707,10 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5772,7 +5746,7 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
 
 
-class VIEW3D_PT_gp_drawtab_draw(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_drawtab_draw(Panel):
     bl_label = "Draw"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5786,10 +5760,10 @@ class VIEW3D_PT_gp_drawtab_draw(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5825,7 +5799,7 @@ class VIEW3D_PT_gp_drawtab_draw(toolshelf_calculate, Panel):
                 col.operator("gpencil.interpolate_sequence", text="", icon = "SEQUENCE")
 
 
-class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_drawtab_animation(Panel):
     bl_label = "Animation"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5838,10 +5812,10 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'PAINT_GPENCIL', 'PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL', 'SCULPT_GPENCIL', 'SCULPT_GREASE_PENCIL', 'VERTEX_GPENCIL'}
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5917,7 +5891,7 @@ class VIEW3D_PT_gp_drawtab_animation(toolshelf_calculate, Panel):
                 col.operator("grease_pencil.interpolate_sequence", text="", icon = "SEQUENCE").use_selection = True
 
 
-class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_drawtab_cleanup(Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5931,11 +5905,11 @@ class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         ob = _context.active_object
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -5989,7 +5963,7 @@ class VIEW3D_PT_gp_drawtab_cleanup(toolshelf_calculate, Panel):
                 col.operator("gpencil.recalc_geometry", text="", icon = "FILE_REFRESH")
 
 
-class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_weightstab_weights(Panel):
     bl_label = "Weights"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6003,10 +5977,10 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         # text buttons
         if column_count == 4:
@@ -6072,7 +6046,7 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
                 col.operator("gpencil.weight_sample", text="", icon='EYEDROPPER')
 
 
-class VIEW3D_PT_gp_weightstab_generate_weights(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_weightstab_generate_weights(Panel):
     bl_label = "Generate Weights"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6086,10 +6060,10 @@ class VIEW3D_PT_gp_weightstab_generate_weights(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6126,7 +6100,7 @@ class VIEW3D_PT_gp_weightstab_generate_weights(toolshelf_calculate, Panel):
                 col.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
 
 
-class VIEW3D_PT_gp_painttab_paint(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_painttab_paint(Panel):
     bl_label = "Paint"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6140,10 +6114,10 @@ class VIEW3D_PT_gp_painttab_paint(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6208,7 +6182,7 @@ class VIEW3D_PT_gp_painttab_paint(toolshelf_calculate, Panel):
                 col.operator("gpencil.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
 
 
-class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_armaturetab_armature(Panel):
     bl_label = "Armature"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6222,13 +6196,13 @@ class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         edit_object = _context.edit_object
         arm = edit_object.data
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6385,7 +6359,7 @@ class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
                 col.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
 
 
-class VIEW3D_PT_gp_armaturetab_recalcboneroll(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
     bl_label = "Recalculate Bone Roll"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6399,13 +6373,13 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         edit_object = _context.edit_object
         arm = edit_object.data
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6548,7 +6522,7 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(toolshelf_calculate, Panel):
                 col.operator("armature.calculate_roll", text= "", icon = "CURSOR").type = 'CURSOR'
 
 
-class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_armaturetab_names(Panel):
     bl_label = "Names"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6562,10 +6536,10 @@ class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6619,7 +6593,7 @@ class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
                 col.operator("armature.flip_names", text="", icon = "FLIP")
 
 
-class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_pose(Panel):
     bl_label = "Pose"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6633,10 +6607,10 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6690,7 +6664,7 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
                 col.operator("poselib.create_pose_asset", text="", icon = "ASSET_MANAGER")
 
 
-class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_cleartransform(Panel):
     bl_label = "Clear Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6704,10 +6678,10 @@ class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6777,7 +6751,7 @@ class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
                 col.operator("pose.user_transforms_clear", text="", icon = "RESET")
 
 
-class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_apply(Panel):
     bl_label = "Apply"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6791,10 +6765,10 @@ class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6850,7 +6824,7 @@ class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
                 props.process_bones = True
 
 
-class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_inbetweens(Panel):
     bl_label = "In-Betweens"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6864,10 +6838,10 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6922,7 +6896,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
                 col.operator("pose.blend_to_neighbor", text = "", icon = 'BLEND_TO_NEIGHBOUR')
 
 
-class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_propagate(Panel):
     bl_label = "Propagate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6936,10 +6910,10 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -6999,7 +6973,7 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
                 col.operator("pose.propagate", text="", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
 
-class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_motionpaths(Panel):
     bl_label = "Motion Paths"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7013,10 +6987,10 @@ class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -7063,7 +7037,7 @@ class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
                 col.operator("object.paths_update_visible", text="", icon = "MOTIONPATHS_UPDATE_ALL")
 
 
-class VIEW3D_PT_gp_posetab_ik(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_ik(Panel):
     bl_label = "IK"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7077,10 +7051,10 @@ class VIEW3D_PT_gp_posetab_ik(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -7116,7 +7090,7 @@ class VIEW3D_PT_gp_posetab_ik(toolshelf_calculate, Panel):
                 col.operator("pose.ik_clear", text = "", icon = "CLEAR_IK")
 
 
-class VIEW3D_PT_gp_posetab_constraints(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_constraints(Panel):
     bl_label = "Constraints"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7130,10 +7104,10 @@ class VIEW3D_PT_gp_posetab_constraints(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -7182,7 +7156,7 @@ class VIEW3D_PT_gp_posetab_constraints(toolshelf_calculate, Panel):
                 col.operator("pose.constraints_clear", text = "", icon = "CLEAR_CONSTRAINT")
 
 
-class VIEW3D_PT_gp_posetab_names(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_posetab_names(Panel):
     bl_label = "Names"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7196,10 +7170,10 @@ class VIEW3D_PT_gp_posetab_names(toolshelf_calculate, Panel):
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
