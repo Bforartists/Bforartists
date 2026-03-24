@@ -79179,7 +79179,7 @@ msgstr "Ajuster les Teinte/Saturation/Valeur des couleurs de sommets"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Définir les couleurs de sommets"
 
 

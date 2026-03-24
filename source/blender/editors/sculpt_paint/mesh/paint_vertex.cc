@@ -2160,7 +2160,7 @@ void PAINT_OT_vertex_paint(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Set Vertex Colors Operator
+/** \name Set Vertex Color Operator
  * \{ */
 
 namespace ed::sculpt_paint {
@@ -2340,7 +2340,7 @@ static wmOperatorStatus vertex_color_set_exec(bContext *C, wmOperator *op)
 
 void PAINT_OT_vertex_color_set(wmOperatorType *ot)
 {
-  ot->name = "Set Vertex Colors";
+  ot->name = "Set Vertex Color";
   ot->idname = "PAINT_OT_vertex_color_set";
   ot->description = "Fill the active vertex color layer with the current paint color";
 

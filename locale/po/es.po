@@ -79176,7 +79176,7 @@ msgstr "Permite ajustar los valores de tono, saturación y valor del color del v
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Definir colores de vértices"
 
 

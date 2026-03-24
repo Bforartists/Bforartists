@@ -62661,7 +62661,7 @@ msgstr "Rekebisha rangi ya kipeo Hue/Kueneza/Thamani"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Weka Rangi za Kipeo"
 
 

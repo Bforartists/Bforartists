@@ -79183,7 +79183,7 @@ msgstr "Ajustar Tonalidade/saturação/Valor das cores dos vértices."
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Definir cores dos vértices"
 
 

@@ -34274,7 +34274,7 @@ msgstr "Nur Schmutz"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Knotenfarben festlegen"
 
 

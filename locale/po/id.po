@@ -23046,7 +23046,7 @@ msgstr "Kekuatan buram tiap iterasi"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Warna Standar"
 
 

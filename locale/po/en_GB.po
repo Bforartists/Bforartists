@@ -78522,7 +78522,7 @@ msgstr "Adjust vertex colour Hue/Saturation/Value"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Colors"
+msgid "Set Vertex Color"
 msgstr "Set Vertex Colours"
 
 
