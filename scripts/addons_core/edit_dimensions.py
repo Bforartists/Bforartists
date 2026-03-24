@@ -22,7 +22,9 @@ import bpy
 from bpy.types import Panel, Operator, PropertyGroup, Scene
 from bpy.utils import register_class, unregister_class
 from bpy.props import FloatProperty, PointerProperty
-
+from bl_ui.space_toolsystem_common import (
+    toolsystem_column_count, # BFA - Helper function
+)
 
 bl_info = {
     "name": "Mesh Tools - Bforartists version",
@@ -134,7 +136,7 @@ def add_button_to_panel(self, context):
     row.scale_y = 2
 
     if context.mode in {'EDIT_MESH'}:
-        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+        column_count = toolsystem_column_count(context.region)
 
         if column_count >= 4:
             row.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")

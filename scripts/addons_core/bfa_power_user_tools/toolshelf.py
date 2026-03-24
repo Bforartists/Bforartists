@@ -2,10 +2,12 @@ import bpy
 
 from bpy.types import Panel
 
-from . import common
 from . import ops
 
 from bpy.app.translations import contexts as i18n_contexts
+from bl_ui.space_toolsystem_common import (
+    toolsystem_column_count, # BFA - Helper function
+)
 
 context = bpy.context
 
@@ -29,7 +31,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        num_cols = common.column_count(context.region)
+        num_cols = toolsystem_column_count(context.region)
 
         #text buttons
         if num_cols == 4:
@@ -167,7 +169,7 @@ class BFA_PT_toolshelf_frames(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        num_cols = common.column_count(context.region)
+        num_cols = toolsystem_column_count(context.region)
 
         #text buttons
         if num_cols == 4:
