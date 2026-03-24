@@ -59,8 +59,8 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
         /*BFA - WIP - how this snaps could be relative to the tabbed toggle also*/
         column + margin + offset, /* need bfa offset for tabs */
         (2.0f * column) + margin + offset,
-        (2.7f * column) + margin + offset,
-        (3.4f * column) + margin + offset,
+        (3.0f * column) + margin + offset, /* BFA - Three-column icon buttons */
+        (3.7f * column) + margin + offset, /* BFA - Text button width */
     };
     int best_diff = std::numeric_limits<int>::max();
     int best_size = size;
