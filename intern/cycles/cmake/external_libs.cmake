@@ -147,7 +147,7 @@ if(WITH_CYCLES_DEVICE_ONEAPI AND WITH_CYCLES_ONEAPI_BINARIES)
     # bforartists - we use the install path, not the lib path
     # For Windows, use the correct oneAPI ocloc path
     if(WIN32)
-      set(OCLOC_INSTALL_DIR "C:/Program Files (x86)/Intel/oneAPI/ocloc")
+      set(OCLOC_INSTALL_DIR "C:/Program Files (x86)/Intel/oneAPI/ocloc/latest/bin") # BFA - made this exact when installing toolkit
     else()
       # For other platforms, keep original logic
       get_filename_component(OCLOC_INSTALL_DIR "${_sycl_compiler_root}/../lib/ocloc" ABSOLUTE)
