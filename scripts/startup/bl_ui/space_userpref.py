@@ -827,7 +827,7 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
             col.prop(system, "gpu_preferred_device")
 
         if system.gpu_backend != gpu.platform.backend_type_get():
-            layout.label(text="A restart of Blender is required", icon='INFO')
+            layout.label(text="A restart of Bforartists is required", icon='INFO') # bfa - our name
 
         if system.gpu_backend == 'VULKAN':
             if sys.platform == "win32" and gpu.platform.device_type_get() == 'QUALCOMM':
