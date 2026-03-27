@@ -19,10 +19,10 @@
 bl_info = {
     "name": "Presentation Slider",
     "author": "Draise (@trinumedia)",
-    "version": (0, 3, 4),
+    "version": (0, 4, 0),
     "blender": (4, 0, 0),
     "location": "View3D > Sidebar > View > Presentation Slider",
-    "description": "Add controls to switch to the next Scene then plays the animation once, useful for presentation slides setup as Scenes",
+    "description": "Add controls to switch to the next Scene then plays the animation once using built-in STOP_END_FRAME mode, useful for presentation slides setup as Scenes",
     "warning": "",
     "doc_url": "https://github.com/Bforartists/Manual",
     "tracker_url": "https://github.com/Bforartists/Bforartists",
@@ -32,7 +32,6 @@ bl_info = {
 
 
 import bpy
-import time
 import re
 
 from bpy.types import Operator, Panel, PropertyGroup
@@ -58,94 +57,6 @@ def unregister_properties():
     bpy.utils.unregister_class(SlideSettings)
 
 
-# Track playback state
-_presentation_playback_active = False
-
-# Function to completely reset presentation mode and remove handler
-def reset_presentation_mode():
-    global _presentation_playback_active
-    _presentation_playback_active = False
-    
-    # Remove the handler if it exists
-    if stop_playback in bpy.app.handlers.frame_change_post:
-        bpy.app.handlers.frame_change_post.remove(stop_playback)
-        print("Slide Playback stopped")
-
-# Simple handler for end of animation
-def stop_playback(scene):
-    global _presentation_playback_active
-    
-    # Only process if we're in presentation playback mode
-    if not _presentation_playback_active:
-        return
-    
-    # If animation is playing and we're at the end frame
-    if bpy.context.screen.is_animation_playing and scene.frame_current >= scene.frame_end:
-        # Stop animation playback
-        bpy.ops.screen.animation_cancel(restore_frame=False)
-        
-        # Completely reset presentation mode
-        reset_presentation_mode()
-
-# Monitor animation state continuously
-class PRESENTATION_OT_AnimationMonitor(bpy.types.Operator):
-    """Monitor animation state and remove handler when animation stops"""
-    bl_idname = "presentation.animation_monitor"
-    bl_label = "Monitor Animation State"
-    
-    _timer = None
-    _was_playing = False
-    
-    def modal(self, context, event):
-        global _presentation_playback_active
-        
-        # Check if animation state changed from playing to stopped
-        is_playing = context.screen.is_animation_playing
-        
-        # If animation was playing but now stopped
-        if self._was_playing and not is_playing:
-            # Reset presentation mode to ensure handler is removed
-            reset_presentation_mode()
-            # Remove the timer and exit modal
-            context.window_manager.event_timer_remove(self._timer)
-            return {'FINISHED'}
-            
-        # Update animation state
-        self._was_playing = is_playing
-        
-        # If presentation mode was disabled externally, exit
-        if not _presentation_playback_active:
-            context.window_manager.event_timer_remove(self._timer)
-            return {'FINISHED'}
-            
-        return {'PASS_THROUGH'}
-    
-    def invoke(self, context, event):
-        self._was_playing = context.screen.is_animation_playing
-        
-        # Start the timer
-        wm = context.window_manager
-        self._timer = wm.event_timer_add(0.2, window=context.window)
-        wm.modal_handler_add(self)
-        
-        return {'RUNNING_MODAL'}
-
-# Custom keybinding to ensure ESC key removes the handler
-def register_keymaps():
-    wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='Screen', space_type='EMPTY')
-    
-    # ESC key to stop animation and reset
-    kmi = km.keymap_items.new('screen.animation_cancel', 'ESC', 'PRESS')
-    kmi.properties.restore_frame = False
-    
-    return (km, kmi)
-
-def unregister_keymaps(km, kmi):
-    km.keymap_items.remove(kmi)
-
-# Store keymap reference
-_keymap_data = None
 
 
 def get_next_s_name(insert_idx=None):
@@ -406,14 +317,9 @@ class VIEW_OT_PlayAnimationOperator(Operator):
     """Plays the next slide scene and its animation"""
     bl_idname = "screen.play_animation"
     bl_label = "Next"
-    bl_description = "Plays the next slide as the next Scene\nThis will add a hook so playback stops on final frame of the timeline\nPress the Loop Animation button to remove the hook"
+    bl_description = "Plays the next slide as the next Scene\nUses built-in STOP_END_FRAME mode for automatic stop"
 
     def execute(self, context):
-        global _presentation_playback_active
-        
-        # First make sure any existing handlers/monitors are removed
-        reset_presentation_mode()
-        
         # If the timeline is playing, pause it
         if context.screen.is_animation_playing:
             bpy.ops.screen.animation_cancel(restore_frame=False)
@@ -422,11 +328,6 @@ class VIEW_OT_PlayAnimationOperator(Operator):
         bpy.context.scene.frame_set(bpy.context.scene.frame_start)
         bpy.ops.screen.frame_jump(end=False)
         
-        # Add frame change handler
-        if stop_playback not in bpy.app.handlers.frame_change_post:
-            bpy.app.handlers.frame_change_post.append(stop_playback)
-            print("Slide Playback started")
-
         # Get the current scene
         current_scene = context.scene
 
@@ -445,14 +346,11 @@ class VIEW_OT_PlayAnimationOperator(Operator):
             first_scene = scenes[0]
             context.window.scene = first_scene
 
-        # Enable presentation mode tracking
-        _presentation_playback_active = True
+        # Set playback mode to STOP_END_FRAME for automatic stop
+        context.scene.playback_loop_mode = 'STOP_END_FRAME'
             
         # Start playback
         bpy.ops.screen.animation_play()
-        
-        # Start the animation monitor
-        bpy.ops.presentation.animation_monitor('INVOKE_DEFAULT')
 
         return {'FINISHED'}
 
@@ -461,14 +359,9 @@ class VIEW_OT_ReverseAnimationOperator(Operator):
     """Plays the previous slide scene and its animation"""
     bl_idname = "screen.play_back_animation"
     bl_label = "Previous"
-    bl_description = "Plays the previous slide as the last Scene\nThis will add a hook so playback stops on final frame of the timeline\nPress the Loop Animation button to remove the hook"
+    bl_description = "Plays the previous slide as the last Scene\nUses built-in STOP_END_FRAME mode for automatic stop"
 
     def execute(self, context):
-        global _presentation_playback_active
-        
-        # First make sure any existing handlers/monitors are removed
-        reset_presentation_mode()
-        
         # If the timeline is playing, pause it
         if context.screen.is_animation_playing:
             bpy.ops.screen.animation_cancel(restore_frame=False)
@@ -476,11 +369,6 @@ class VIEW_OT_ReverseAnimationOperator(Operator):
         # Set the current frame to the first frame
         bpy.context.scene.frame_set(bpy.context.scene.frame_start)
         bpy.ops.screen.frame_jump(end=False)
-
-        # Add frame change handler
-        if stop_playback not in bpy.app.handlers.frame_change_post:
-            bpy.app.handlers.frame_change_post.append(stop_playback)
-            print("Presentation handler appended")
 
         # Get the current scene
         current_scene = context.scene
@@ -495,15 +383,12 @@ class VIEW_OT_ReverseAnimationOperator(Operator):
         if current_index > 0:
             prev_scene = scenes[current_index - 1]
             context.window.scene = prev_scene
-            
-        # Enable presentation mode tracking
-        _presentation_playback_active = True
+
+        # Set playback mode to STOP_END_FRAME for automatic stop
+        context.scene.playback_loop_mode = 'STOP_END_FRAME'
             
         # Start playback
         bpy.ops.screen.animation_play()
-        
-        # Start the animation monitor
-        bpy.ops.presentation.animation_monitor('INVOKE_DEFAULT')
 
         return {'FINISHED'}
 
@@ -511,14 +396,9 @@ class VIEW_OT_RemoveAnimationOperator(Operator):
     """Play animation for current scene with auto-stop"""
     bl_idname = "screen.remove_stop"
     bl_label = "Play Current Slide"
-    bl_description = "Plays animation for the current scene with automatic stop at the end, just like Next/Previous buttons"
+    bl_description = "Plays animation for the current scene with automatic stop at the end\nUses built-in STOP_END_FRAME mode"
 
     def execute(self, context):
-        global _presentation_playback_active
-        
-        # First make sure any existing handlers/monitors are removed
-        reset_presentation_mode()
-        
         # If the timeline is playing, pause it
         if context.screen.is_animation_playing:
             bpy.ops.screen.animation_cancel(restore_frame=False)
@@ -526,20 +406,12 @@ class VIEW_OT_RemoveAnimationOperator(Operator):
         # Set the current frame to the first frame
         bpy.context.scene.frame_set(bpy.context.scene.frame_start)
         bpy.ops.screen.frame_jump(end=False)
-        
-        # Add frame change handler
-        if stop_playback not in bpy.app.handlers.frame_change_post:
-            bpy.app.handlers.frame_change_post.append(stop_playback)
-            print("Presentation handler appended")
 
-        # Enable presentation mode tracking
-        _presentation_playback_active = True
+        # Set playback mode to STOP_END_FRAME for automatic stop
+        context.scene.playback_loop_mode = 'STOP_END_FRAME'
             
         # Start playback
         bpy.ops.screen.animation_play()
-        
-        # Start the animation monitor
-        bpy.ops.presentation.animation_monitor('INVOKE_DEFAULT')
 
         return {'FINISHED'}
 
@@ -693,41 +565,25 @@ classes = [
     VIEW_OT_RemoveAnimationOperator,
     VIEW_OT_HideInterface,
     VIEW_PT_PlayAnimationPanel,
-    PRESENTATION_OT_AnimationMonitor,
 ]
 
 def register():
-    global _keymap_data
-    
     register_properties()
 
     for cls in classes:
         bpy.utils.register_class(cls)
-    
-    # Register keymap
-    _keymap_data = register_keymaps()
 
 
 def unregister():
-    global _keymap_data, _presentation_playback_active, _presentation_view_active
-    
-    # Unregister keymap
-    if _keymap_data:
-        unregister_keymaps(*_keymap_data)
+    global _presentation_view_active
     
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
     unregister_properties()
 
-    # Reset all global state
-    _presentation_playback_active = False
+    # Reset presentation view state
     _presentation_view_active = False
-    
-    # Remove handler if it exists
-    if stop_playback in bpy.app.handlers.frame_change_post:
-        print("Removing presentation playback handler on unregister")
-        bpy.app.handlers.frame_change_post.remove(stop_playback)
 
 
 # Run the register function when the script is executed
