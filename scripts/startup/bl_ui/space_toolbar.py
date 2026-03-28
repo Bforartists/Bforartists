@@ -121,7 +121,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "file_render_misc",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Files is hidden', icon="NONE")
 
@@ -141,7 +141,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "mesh_cleanup",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Mesh Edit is hidden', icon="NONE")
 
@@ -165,7 +165,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "primitives_collection",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Primitives is hidden', icon="NONE")
 
@@ -179,7 +179,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "image_uv_modify",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Image is hidden', icon="NONE")
 
@@ -197,7 +197,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "tools_relations",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Tools is hidden', icon="NONE")
 
@@ -212,7 +212,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "animation_keyingset",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Animation is hidden', icon="NONE")
 
@@ -227,7 +227,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "edit_objectclear",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Edit is hidden', icon="NONE")
 
@@ -245,7 +245,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "misc_info",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Misc is hidden', icon="NONE")
 
@@ -261,7 +261,7 @@ class TOOLBAR_PT_type(Panel):
     @staticmethod
     def draw_reset_section(layout):
         row = layout.row(heading='', align=True)
-        row.alignment = 'Center'.upper()
+        row.alignment = 'CENTER'
 
         row.label(text='Defaults')
         row.separator()
@@ -287,10 +287,10 @@ class TOOLBAR_PT_type(Panel):
 
         box = layout.box()
         row = box.row()
-        row.alignment = 'Center'.upper()
+        row.alignment = 'CENTER'
         row.label(text='Toolbar Manager')
 
-        row.alignment = 'Center'.upper()
+        row.alignment = 'CENTER'
         row.prop(bpy.context.scene, 'bfa_toolbar_defaults', text='', icon='OPTIONS', emboss=True)
 
         # Reset Settings Panel
