@@ -3890,14 +3890,13 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     _tools_grease_pencil_primitives = (
-        (
-            _defs_grease_pencil_paint.box,
-            _defs_grease_pencil_paint.circle,
-            _defs_grease_pencil_paint.line,
-            _defs_grease_pencil_paint.polyline,
-            _defs_grease_pencil_paint.arc,
-            _defs_grease_pencil_paint.curve,
-        ),
+        # BFA - Move to top-level
+        _defs_grease_pencil_paint.box,
+        _defs_grease_pencil_paint.circle,
+        _defs_grease_pencil_paint.line,
+        _defs_grease_pencil_paint.polyline,
+        _defs_grease_pencil_paint.arc,
+        _defs_grease_pencil_paint.curve,
     )
 
     _tools_view3d_add = (
@@ -4217,6 +4216,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _draw_tool,
             _defs_grease_pencil_paint.erase,
             _defs_grease_pencil_paint.fill,
+            None,
             *_tools_grease_pencil_primitives,
             None,
             _defs_grease_pencil_paint.trim,
