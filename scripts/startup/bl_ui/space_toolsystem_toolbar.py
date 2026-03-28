@@ -4217,13 +4217,14 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_grease_pencil_paint.erase,
             _defs_grease_pencil_paint.fill,
             None,
-            *_tools_grease_pencil_primitives,
-            None,
             _defs_grease_pencil_paint.trim,
             None,
             _defs_grease_pencil_paint.eyedropper,
             None,
             _defs_grease_pencil_paint.interpolate,
+            None,
+            *_tools_grease_pencil_primitives, # BFA - Expose in top-level and move down
+            None,
         ],
         'WEIGHT_GREASE_PENCIL': [
             _brush_tool,
