@@ -101,6 +101,8 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
       lint_constructors(parser);
       lint_forward_declared_structs(parser);
 
+      /* Lower assert first to keep original condition. */
+      lower_assert(parser, filename);
       /* Lint and remove C++ accessor templates before lowering template. */
       lower_srt_accessor_templates(parser);
       lower_union_accessor_templates(parser);
@@ -135,7 +137,6 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
       lower_entry_points_signature(parser);
       lower_stage_function(parser);
       /* Lower string, assert, printf. */
-      lower_assert(parser, filename);
       lower_strings(parser);
       lower_printf(parser);
       /* Lower other C++ constructs. */
