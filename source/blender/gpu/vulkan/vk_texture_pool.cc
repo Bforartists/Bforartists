@@ -6,7 +6,7 @@
  * \ingroup gpu
  */
 
-#include <format>
+#include <fmt/format.h>
 
 #include "vk_backend.hh"
 #include "vk_texture_pool.hh"
@@ -125,7 +125,7 @@ VkImage VKImageCache::get_or_create(const VKImageInfo &info)
   /* Generate debug label name, if one is needed in the rendergraph. */
   std::string name_str;
   if (G.debug & G_DEBUG_GPU) {
-    name_str = std::format("VkImageFromPool_{}", cache_.size());
+    name_str = fmt::format("VkImageFromPool_{}", cache_.size());
   }
 
   /* Otherwise, create VkImage handle and insert into cache. */
@@ -411,7 +411,7 @@ Texture *VKTexturePool::acquire_texture(int2 extent,
   /* Generate debug label name, attempt to associate it with texture object. */
   std::string name_str;
   if (G.debug & G_DEBUG_GPU) {
-    name_str = name ? name : std::format("TexFromPool_{}", acquired_.size());
+    name_str = name ? name : fmt::format("TexFromPool_{}", acquired_.size());
   }
 
   /* Get or create a VkImage handle and assign it to the texture. */
@@ -545,13 +545,13 @@ void VKTexturePool::log_usage_data()
   float ratio = static_cast<float>(current_usage_data_.acquired_segment_size_max) /
                 static_cast<float>(total_allocation_size);
 
-  std::string log_message = std::format("VKTexturePool uses {}/{} mb ({:.1f}%% of {} allocations)",
+  std::string log_message = fmt::format("VKTexturePool uses {}/{} mb ({:.1f}%% of {} allocations)",
                                         current_usage_data_.acquired_segment_size_max >> 20,
                                         total_allocation_size >> 20,
                                         ratio * 100.0f,
                                         current_usage_data_.allocation_count);
   if (image_cache_) {
-    log_message += std::format(" ({} cached VkImages)", current_usage_data_.image_cache_size);
+    log_message += fmt::format(" ({} cached VkImages)", current_usage_data_.image_cache_size);
   }
 
   CLOG_TRACE(&LOG, "%s", log_message.c_str());
