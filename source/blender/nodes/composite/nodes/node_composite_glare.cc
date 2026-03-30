@@ -23,6 +23,7 @@
 #include "BLI_math_vector.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_noise.hh"
+#include "BLI_string.h"
 #include "BLI_task.hh"
 
 #include "BKE_node_runtime.hh"
@@ -247,6 +248,29 @@ static void node_init(bNodeTree * /*ntree*/, bNode *node)
   /* Unused, but kept for forward compatibility. */
   NodeGlare *ndg = MEM_new<NodeGlare>(__func__);
   node->storage = ndg;
+}
+
+static void node_update_glare_label(const bNodeTree *ntree,
+                                    const bNode *node,
+                                    char *label,
+                                    int maxlen)
+{
+  ntree->ensure_topology_cache();
+  const bNodeSocket *type_input = node->input_by_identifier("Type"_ustr);
+
+  if (type_input->is_logically_linked()) {
+    BLI_strncpy(label, IFACE_("Glare"), maxlen);
+    return;
+  }
+
+  const int type_value = type_input->default_value_typed<bNodeSocketValueMenu>()->value;
+
+  for (const EnumPropertyItem *item = type_items; item->identifier != nullptr; item++) {
+    if (item->value == type_value) {
+      BLI_strncpy(label, IFACE_(item->name), maxlen);
+      return;
+    }
+  }
 }
 
 class SocketSearchOp {
@@ -2799,6 +2823,7 @@ static void node_register()
   ntype.nclass = NODE_CLASS_OP_FILTER;
   ntype.declare = node_declare;
   ntype.initfunc = node_init;
+  ntype.labelfunc = node_update_glare_label;
   ntype.gather_link_search_ops = gather_link_searches;
   bke::node_type_storage(
       ntype, "NodeGlare", node_free_standard_storage, node_copy_standard_storage);
