@@ -2201,7 +2201,7 @@ def extensions_panel_draw(panel, context):
 
     row_b = row.row(align=True)
 
-    row_b.prop(wm, "extension_use_filter", text="", icon='TAG')
+    row_b.prop(wm, "extension_use_filter", text="", icon=('FILTER_FILLED' if wm.extension_use_filter else 'FILTER'))
     row_b.popover("USERPREF_PT_extensions_filter", text="", icon='DOWNARROW_HLT')
 
     row_b.separator()

@@ -5,6 +5,7 @@
 #include "GEO_join_geometries.hh"
 #include "GEO_realize_instances.hh"
 
+#include "DNA_customdata_types.h"
 #include "DNA_listBase.h"
 #include "DNA_object_types.h"
 
@@ -235,6 +236,12 @@ struct AllMeshesInfo {
   VectorSet<Material *> materials;
   bool create_id_attribute = false;
   bool create_material_index_attribute = false;
+
+  /** Propagate original indices (CD_ORIGINDEX) for modifier stack mapping. */
+  bool create_origindex_vert_attribute = false;
+  bool create_origindex_edge_attribute = false;
+  bool create_origindex_face_attribute = false;
+
   bke::mesh::NormalJoinInfo custom_normal_info;
 
   /** True if we know that there are no loose edges in any of the input meshes. */
@@ -1597,6 +1604,16 @@ static AllMeshesInfo preprocess_meshes(const bke::GeometrySet &geometry_set,
     mesh_info.material_indices = *attributes.lookup_or_default<int>(
         "material_index", bke::AttrDomain::Face, 0);
 
+    if (CustomData_has_layer(&mesh->vert_data, CD_ORIGINDEX)) {
+      info.create_origindex_vert_attribute = true;
+    }
+    if (CustomData_has_layer(&mesh->edge_data, CD_ORIGINDEX)) {
+      info.create_origindex_edge_attribute = true;
+    }
+    if (CustomData_has_layer(&mesh->face_data, CD_ORIGINDEX)) {
+      info.create_origindex_face_attribute = true;
+    }
+
     switch (info.custom_normal_info.result_type) {
       case bke::mesh::NormalJoinInfo::Output::None: {
         break;
@@ -1656,8 +1673,10 @@ static void execute_realize_mesh_task(const RealizeInstancesOptions &options,
                                       MutableSpan<int> all_dst_corner_verts,
                                       MutableSpan<int> all_dst_corner_edges,
                                       MutableSpan<int> all_dst_vert_ids,
-                                      MutableSpan<int> all_dst_material_indices,
-                                      GSpanAttributeWriter &all_dst_custom_normals)
+                                      GSpanAttributeWriter &all_dst_custom_normals,
+                                      MutableSpan<int> all_dst_origindex_vert,
+                                      MutableSpan<int> all_dst_origindex_edge,
+                                      MutableSpan<int> all_dst_origindex_face)
 {
   const MeshRealizeInfo &mesh_info = *task.mesh_info;
   const Mesh &mesh = *mesh_info.mesh;
@@ -1703,31 +1722,6 @@ static void execute_realize_mesh_task(const RealizeInstancesOptions &options,
       dst_face_offsets[i] = src_faces[i].start() + task.start_indices.corner;
     }
   });
-  if (!all_dst_material_indices.is_empty()) {
-    const Span<int> material_index_map = mesh_info.material_index_map;
-    MutableSpan<int> dst_material_indices = all_dst_material_indices.slice(dst_face_range);
-    if (mesh.totcol == 0) {
-      /* The material index map contains the index of the null material in the result. */
-      dst_material_indices.fill(material_index_map.first());
-    }
-    else {
-      if (mesh_info.material_indices.is_single()) {
-        const int src_index = mesh_info.material_indices.get_internal_single();
-        const bool valid = IndexRange(mesh.totcol).contains(src_index);
-        dst_material_indices.fill(valid ? material_index_map[src_index] : 0);
-      }
-      else {
-        VArraySpan<int> indices_span(mesh_info.material_indices);
-        threading::parallel_for(src_faces.index_range(), 1024, [&](const IndexRange face_range) {
-          for (const int i : face_range) {
-            const int src_index = indices_span[i];
-            const bool valid = IndexRange(mesh.totcol).contains(src_index);
-            dst_material_indices[i] = valid ? material_index_map[src_index] : 0;
-          }
-        });
-      }
-    }
-  }
 
   if (!all_dst_vert_ids.is_empty()) {
     create_result_ids(options,
@@ -1776,7 +1770,45 @@ static void execute_realize_mesh_task(const RealizeInstancesOptions &options,
                                     ordered_attributes,
                                     domain_to_range,
                                     dst_attribute_writers);
+
+  /* Copy original index data per instance. */
+  if (!all_dst_origindex_vert.is_empty()) {
+    const IndexRange dst_range(task.start_indices.vert, mesh.verts_num);
+    if (const int *src_data = static_cast<const int *>(
+            CustomData_get_layer(&mesh.vert_data, CD_ORIGINDEX)))
+    {
+      all_dst_origindex_vert.slice(dst_range).copy_from(Span<int>(src_data, mesh.verts_num));
+    }
+    else {
+      all_dst_origindex_vert.slice(dst_range).fill(ORIGINDEX_NONE);
+    }
+  }
+
+  if (!all_dst_origindex_edge.is_empty()) {
+    const IndexRange dst_range(task.start_indices.edge, mesh.edges_num);
+    if (const int *src_data = static_cast<const int *>(
+            CustomData_get_layer(&mesh.edge_data, CD_ORIGINDEX)))
+    {
+      all_dst_origindex_edge.slice(dst_range).copy_from(Span<int>(src_data, mesh.edges_num));
+    }
+    else {
+      all_dst_origindex_edge.slice(dst_range).fill(ORIGINDEX_NONE);
+    }
+  }
+
+  if (!all_dst_origindex_face.is_empty()) {
+    const IndexRange dst_range(task.start_indices.face, mesh.faces_num);
+    if (const int *src_data = static_cast<const int *>(
+            CustomData_get_layer(&mesh.face_data, CD_ORIGINDEX)))
+    {
+      all_dst_origindex_face.slice(dst_range).copy_from(Span<int>(src_data, mesh.faces_num));
+    }
+    else {
+      all_dst_origindex_face.slice(dst_range).fill(ORIGINDEX_NONE);
+    }
+  }
 }
+
 static void copy_vertex_group_name(ListBaseT<bDeformGroup> *dst_deform_group,
                                    const OrderedAttributes &ordered_attributes,
                                    const bDeformGroup &src_deform_group)
@@ -1814,6 +1846,129 @@ static void copy_vertex_group_names(Mesh &dst_mesh,
       copy_vertex_group_name(&dst_mesh.vertex_group_names, ordered_attributes, src);
     }
   }
+}
+
+static int get_mapped_material_index(const MeshRealizeInfo &info, const int index)
+{
+  const bool valid = IndexRange(info.mesh->totcol).contains(index);
+  return valid ? info.material_index_map[index] : 0;
+}
+
+/**
+ * If the max material index can be easily fetched from the inputs from the inputs without much
+ * work, return the common maximum.
+ */
+static std::optional<int> calc_material_index_max_hint(const Span<MeshRealizeInfo> infos)
+{
+  int final_max = std::numeric_limits<int>::min();
+  for (const MeshRealizeInfo &info : infos) {
+    if (info.mesh->runtime->max_material_index.is_cached()) {
+      if (const std::optional<int> max = info.mesh->runtime->max_material_index.data()) {
+        final_max = std::max(final_max, get_mapped_material_index(info, *max));
+      }
+      continue;
+    }
+    if (const std::optional<int> single = info.material_indices.get_if_single()) {
+      final_max = std::max(final_max, get_mapped_material_index(info, *single));
+      continue;
+    }
+    return std::nullopt;
+  }
+  return final_max;
+}
+
+static std::optional<int> calc_single_value_material_index(const AllMeshesInfo &all_meshes_info)
+{
+  const Span<MeshRealizeInfo> infos = all_meshes_info.realize_info;
+  const std::optional<int> first_opt = infos[0].material_indices.get_if_single();
+  if (!first_opt) {
+    return std::nullopt;
+  }
+  const int first = get_mapped_material_index(infos[0], *first_opt);
+  const bool all_equal = threading::parallel_reduce(
+      infos.index_range().drop_front(1),
+      32,
+      true,
+      [&](const IndexRange range, bool value) {
+        if (!value) {
+          return false;
+        }
+        for (const int i : range) {
+          const MeshRealizeInfo &info = infos[i];
+          const std::optional<int> value = info.material_indices.get_if_single();
+          if (!value) {
+            return false;
+          }
+          if (get_mapped_material_index(info, *value) != first) {
+            return false;
+          }
+        }
+        return true;
+      },
+      std::logical_and<bool>());
+  if (!all_equal) {
+    return std::nullopt;
+  }
+  return first;
+}
+
+static void join_mesh_material_indices(const AllMeshesInfo &all_meshes_info,
+                                       const Span<RealizeMeshTask> tasks,
+                                       Mesh &dst_mesh)
+{
+  if (all_meshes_info.materials.size() <= 1) {
+    dst_mesh.runtime->max_material_index.ensure([&](std::optional<int> &data) { data = 0; });
+    return;
+  }
+  if (const std::optional<int> max = calc_material_index_max_hint(all_meshes_info.realize_info)) {
+    dst_mesh.runtime->max_material_index.ensure([&](std::optional<int> &data) { data = max; });
+    if (max == 0) {
+      return;
+    }
+  }
+
+  bke::MutableAttributeAccessor dst_attributes = dst_mesh.attributes_for_write();
+  if (const std::optional<int> single = calc_single_value_material_index(all_meshes_info)) {
+    dst_attributes.add<int>(
+        "material_index", bke::AttrDomain::Face, bke::AttributeInitValue(*single));
+    return;
+  }
+
+  bke::SpanAttributeWriter dst_attr = dst_attributes.lookup_or_add_for_write_only_span<int>(
+      "material_index", bke::AttrDomain::Face);
+
+  threading::parallel_for(tasks.index_range(), 100, [&](const IndexRange range) {
+    for (const int task_i : range) {
+      const RealizeMeshTask &task = tasks[task_i];
+      const MeshRealizeInfo &mesh_info = *task.mesh_info;
+      const Mesh &mesh = *mesh_info.mesh;
+      const IndexRange dst_face_range(task.start_indices.face, mesh.faces_num);
+      MutableSpan<int> dst_material_indices = dst_attr.span.slice(dst_face_range);
+      if (mesh.totcol == 0) {
+        /* The material index map contains the index of the null material in the result. */
+        dst_material_indices.fill(get_mapped_material_index(mesh_info, 0));
+      }
+      else {
+        if (const std::optional<int> src_index = mesh_info.material_indices.get_if_single()) {
+          dst_material_indices.fill(get_mapped_material_index(mesh_info, *src_index));
+        }
+        else {
+          const VArraySpan<int> src_span(mesh_info.material_indices);
+          const Span<int> map = mesh_info.material_index_map;
+          const int src_mat_num = mesh.totcol;
+          threading::parallel_for(src_span.index_range(), 1024, [&](const IndexRange face_range) {
+            for (const int i : face_range) {
+              const int src_index = src_span[i];
+              const bool valid = IndexRange(src_mat_num).contains(src_index);
+              dst_material_indices[i] = valid ? map[src_index] : 0;
+            }
+          });
+        }
+      }
+    }
+  });
+
+  dst_attr.finish();
 }
 
 static void execute_realize_mesh_tasks(const RealizeInstancesOptions &options,
@@ -1855,6 +2010,27 @@ static void execute_realize_mesh_tasks(const RealizeInstancesOptions &options,
   Mesh *dst_mesh = BKE_mesh_new_nomain(verts_num, edges_num, faces_num, corners_num);
   r_result.geometry.replace_mesh(dst_mesh);
   bke::MutableAttributeAccessor dst_attributes = dst_mesh->attributes_for_write();
+
+  /** Prepare original index layers for Edit Mode / CrazySpace mapping. */
+  MutableSpan<int> dst_origindex_vert;
+  if (all_meshes_info.create_origindex_vert_attribute) {
+    int *data = static_cast<int *>(
+        CustomData_add_layer(&dst_mesh->vert_data, CD_ORIGINDEX, CD_SET_DEFAULT, verts_num));
+    dst_origindex_vert = MutableSpan<int>(data, verts_num);
+  }
+  MutableSpan<int> dst_origindex_edge;
+  if (all_meshes_info.create_origindex_edge_attribute) {
+    int *data = static_cast<int *>(
+        CustomData_add_layer(&dst_mesh->edge_data, CD_ORIGINDEX, CD_SET_DEFAULT, edges_num));
+    dst_origindex_edge = MutableSpan<int>(data, edges_num);
+  }
+  MutableSpan<int> dst_origindex_face;
+  if (all_meshes_info.create_origindex_face_attribute) {
+    int *data = static_cast<int *>(
+        CustomData_add_layer(&dst_mesh->face_data, CD_ORIGINDEX, CD_SET_DEFAULT, faces_num));
+    dst_origindex_face = MutableSpan<int>(data, faces_num);
+  }
+
   MutableSpan<float3> dst_positions = dst_mesh->vert_positions_for_write();
   MutableSpan<int2> dst_edges = dst_mesh->edges_for_write();
   MutableSpan<int> dst_face_offsets = dst_mesh->face_offsets_for_write();
@@ -1882,12 +2058,6 @@ static void execute_realize_mesh_tasks(const RealizeInstancesOptions &options,
   SpanAttributeWriter<int> vert_ids;
   if (all_meshes_info.create_id_attribute) {
     vert_ids = dst_attributes.lookup_or_add_for_write_only_span<int>("id", bke::AttrDomain::Point);
-  }
-  /* Prepare material indices. */
-  SpanAttributeWriter<int> material_indices;
-  if (all_meshes_info.create_material_index_attribute) {
-    material_indices = dst_attributes.lookup_or_add_for_write_only_span<int>(
-        "material_index", bke::AttrDomain::Face);
   }
 
   GSpanAttributeWriter custom_normals;
@@ -1945,17 +2115,20 @@ static void execute_realize_mesh_tasks(const RealizeInstancesOptions &options,
                                 dst_corner_verts,
                                 dst_corner_edges,
                                 vert_ids.span,
-                                material_indices.span,
-                                custom_normals);
+                                custom_normals,
+                                dst_origindex_vert,
+                                dst_origindex_edge,
+                                dst_origindex_face);
     }
   });
+
+  join_mesh_material_indices(all_meshes_info, tasks, *dst_mesh);
 
   /* Tag modified attributes. */
   for (GSpanAttributeWriter &dst_attribute : dst_attribute_writers) {
     dst_attribute.finish();
   }
   vert_ids.finish();
-  material_indices.finish();
   custom_normals.finish();
 
   if (all_meshes_info.no_loose_edges_hint) {

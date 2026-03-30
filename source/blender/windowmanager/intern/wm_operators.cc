@@ -1481,18 +1481,16 @@ struct wmOpPopUp {
 };
 
 /* Only invoked by OK button in popups created with #wm_block_dialog_create(). */
-static void dialog_exec_cb(bContext *C, void *arg1, void *arg2)
+static void dialog_exec_cb(bContext *C, wmOpPopUp *data, ui::Block *block)
 {
   wmOperator *op;
   {
     /* Execute will free the operator.
      * In this case, wm_operator_ui_popup_cancel won't run. */
-    wmOpPopUp *data = static_cast<wmOpPopUp *>(arg1);
     op = data->op;
     MEM_delete(data);
   }
 
-  ui::Block *block = static_cast<ui::Block *>(arg2);
   /* Explicitly set RETURN_OK flag, otherwise the menu might be canceled
    * in case WM_operator_call_ex exits/reloads the current file (#49199). */
 
@@ -1509,10 +1507,9 @@ static void dialog_exec_cb(bContext *C, void *arg1, void *arg2)
 static void wm_operator_ui_popup_cancel(bContext *C, void *user_data);
 
 /* Only invoked by Cancel button in popups created with #wm_block_dialog_create(). */
-static void dialog_cancel_cb(bContext *C, void *arg1, void *arg2)
+static void dialog_cancel_cb(bContext *C, wmOpPopUp *data, ui::Block *block)
 {
-  wm_operator_ui_popup_cancel(C, arg1);
-  ui::Block *block = static_cast<ui::Block *>(arg2);
+  wm_operator_ui_popup_cancel(C, data);
   popup_menu_retval_set(block, ui::RETURN_CANCEL, true);
   wmWindow *win = CTX_wm_window(C);
   popup_block_close(C, win, block);
@@ -1664,8 +1661,10 @@ static ui::Block *wm_block_dialog_create(bContext *C, ARegion *region, void *use
                              "");
     }
 
-    button_func_set(confirm_but, dialog_exec_cb, data, col_block);
-    button_func_set(cancel_but, dialog_cancel_cb, data, col_block);
+    button_func_set(confirm_but,
+                    [data, col_block](bContext &C) { dialog_exec_cb(&C, data, col_block); });
+    button_func_set(cancel_but,
+                    [data, col_block](bContext &C) { dialog_cancel_cb(&C, data, col_block); });
     button_flag_enable((data->cancel_default) ? cancel_but : confirm_but, ui::BUT_ACTIVE_DEFAULT);
   }
 

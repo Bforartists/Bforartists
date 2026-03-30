@@ -171,7 +171,7 @@ static void calc_faces(const Depsgraph &depsgraph,
   gather_data_mesh(layer_displacement_factor.as_span(), verts, displacement_factors);
 
   if (use_persistent_base) {
-    if (cache.invert) {
+    if (cache.toggle_settings.invert) {
       reset_displacement_factors(displacement_factors, tls.factors, cache.bstrength);
     }
     else {
@@ -268,7 +268,7 @@ static void calc_grids(const Depsgraph &depsgraph,
       subdiv_ccg, layer_displacement_factor.as_span(), grids, tls.displacement_factors);
 
   if (use_persistent_base) {
-    if (cache.invert) {
+    if (cache.toggle_settings.invert) {
       reset_displacement_factors(displacement_factors, tls.factors, cache.bstrength);
     }
     else {
@@ -420,8 +420,7 @@ void do_layer_brush(const Depsgraph &depsgraph,
 
       if (displacement.is_empty()) {
         if (ss.cache->layer_displacement_factor.is_empty()) {
-          ss.cache->layer_displacement_factor = Array<float>(SCULPT_vertex_count_get(object),
-                                                             0.0f);
+          ss.cache->layer_displacement_factor = Array<float>(vertex_count_get(object), 0.0f);
         }
         displacement = ss.cache->layer_displacement_factor;
       }
@@ -498,7 +497,7 @@ void do_layer_brush(const Depsgraph &depsgraph,
     }
     case bke::pbvh::Type::BMesh: {
       if (ss.cache->layer_displacement_factor.is_empty()) {
-        ss.cache->layer_displacement_factor = Array<float>(SCULPT_vertex_count_get(object), 0.0f);
+        ss.cache->layer_displacement_factor = Array<float>(vertex_count_get(object), 0.0f);
       }
       const MutableSpan<float> displacement = ss.cache->layer_displacement_factor;
       MutableSpan<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();

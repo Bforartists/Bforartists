@@ -2,9 +2,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0 */
 
-#include "scene/shader_nodes.h"
 #include "kernel/svm/types.h"
 #include "kernel/types.h"
+
 #include "scene/constant_fold.h"
 #include "scene/film.h"
 #include "scene/image.h"
@@ -14,6 +14,7 @@
 #include "scene/mesh.h"
 #include "scene/osl.h"
 #include "scene/scene.h"
+#include "scene/shader_nodes.h"
 #include "scene/svm.h"
 
 #include "sky_hosek.h"
@@ -381,8 +382,25 @@ void ImageTextureNode::update_images(const SVMCompiler &compiler)
 {
   if (handle.empty()) {
     ImageManager *image_manager = compiler.scene->image_manager.get();
-    cull_tiles(compiler.scene, compiler.current_graph);
+    const bool use_cache = image_manager->get_use_texture_cache();
+
+    if (!use_cache) {
+      cull_tiles(compiler.scene, compiler.current_graph);
+    }
+
     handle = image_manager->add_image(filename.string(), image_params(), tiles);
+
+    if (use_cache && !tiles.empty() && !image_manager->get_auto_texture_cache()) {
+      if (!handle.all_udim_tiled(compiler.progress)) {
+        cull_tiles(compiler.scene, compiler.current_graph);
+        handle = image_manager->add_image(filename.string(), image_params(), tiles);
+      }
+    }
+  }
+
+  const ImageMetaData metadata = handle.metadata(compiler.progress);
+  if (metadata.has_tiles_and_mipmaps && compiler.scene->image_manager->get_use_texture_cache()) {
+    set_need_derivatives();
   }
 }
 
@@ -443,29 +461,33 @@ void ImageTextureNode::compile(OSLCompiler &compiler)
   tex_mapping.compile(compiler);
 
   if (handle.empty()) {
+    cull_tiles(compiler.scene, compiler.current_graph);
     ImageManager *image_manager = compiler.scene->image_manager.get();
-    handle = image_manager->add_image(filename.string(), image_params());
+    const bool use_cache = image_manager->get_use_texture_cache();
+
+    if (!use_cache) {
+      cull_tiles(compiler.scene, compiler.current_graph);
+    }
+
+    handle = image_manager->add_image(filename.string(), image_params(), tiles);
+
+    if (use_cache && !tiles.empty() && !image_manager->get_auto_texture_cache()) {
+      if (!handle.all_udim_tiled(compiler.progress)) {
+        cull_tiles(compiler.scene, compiler.current_graph);
+        handle = image_manager->add_image(filename.string(), image_params(), tiles);
+      }
+    }
   }
 
   const ImageMetaData metadata = handle.metadata(compiler.progress);
   const bool is_float = metadata.is_float();
   const bool compress_as_srgb = metadata.is_compressible_as_srgb;
-  const ustring known_colorspace = metadata.colorspace;
 
-  if (handle.kernel_id() == KERNEL_IMAGE_NONE) {
-    compiler.parameter_texture(
-        "filename", filename, compress_as_srgb ? u_colorspace_scene_linear : known_colorspace);
-  }
-  else {
-    compiler.parameter_texture("filename", handle);
-  }
+  compiler.parameter_texture("filename", handle);
 
   const bool unassociate_alpha = !(ColorSpaceManager::colorspace_is_data(colorspace) ||
                                    alpha_type == IMAGE_ALPHA_CHANNEL_PACKED ||
                                    alpha_type == IMAGE_ALPHA_IGNORE);
-  const bool is_tiled = (filename.find("<UDIM>") != string::npos ||
-                         filename.find("<UVTILE>") != string::npos) ||
-                        handle.num_tiles() > 0;
 
   compiler.parameter(this, "projection");
   compiler.parameter(this, "projection_blend");
@@ -473,7 +495,6 @@ void ImageTextureNode::compile(OSLCompiler &compiler)
   compiler.parameter("ignore_alpha", alpha_type == IMAGE_ALPHA_IGNORE);
   compiler.parameter("unassociate_alpha", !alpha_out->links.empty() && unassociate_alpha);
   compiler.parameter("is_float", is_float);
-  compiler.parameter("is_tiled", is_tiled);
   compiler.parameter(this, "interpolation");
   compiler.parameter(this, "extension");
 
@@ -564,6 +585,11 @@ void EnvironmentTextureNode::update_images(const SVMCompiler &compiler)
     ImageManager *image_manager = compiler.scene->image_manager.get();
     handle = image_manager->add_image(filename.string(), image_params());
   }
+
+  const ImageMetaData metadata = handle.metadata(compiler.progress);
+  if (metadata.has_tiles_and_mipmaps && compiler.scene->image_manager->get_use_texture_cache()) {
+    set_need_derivatives();
+  }
 }
 
 void EnvironmentTextureNode::compile(SVMCompiler &compiler)
@@ -607,16 +633,8 @@ void EnvironmentTextureNode::compile(OSLCompiler &compiler)
   const ImageMetaData metadata = handle.metadata(compiler.progress);
   const bool is_float = metadata.is_float();
   const bool compress_as_srgb = metadata.is_compressible_as_srgb;
-  const ustring known_colorspace = metadata.colorspace;
 
-  if (handle.kernel_id() == KERNEL_IMAGE_NONE) {
-    compiler.parameter_texture(
-        "filename", filename, compress_as_srgb ? u_colorspace_scene_linear : known_colorspace);
-  }
-  else {
-    compiler.parameter_texture("filename", handle);
-  }
-
+  compiler.parameter_texture("filename", handle);
   compiler.parameter(this, "projection");
   compiler.parameter(this, "interpolation");
   compiler.parameter("compress_as_srgb", compress_as_srgb);
@@ -1480,7 +1498,7 @@ void IESLightNode::get_slot()
       slot = light_manager->add_ies_from_file(filename.string());
     }
     else {
-      slot = light_manager->add_ies(ies.string());
+      slot = light_manager->add_ies(ies.string(), true);
     }
   }
 }
@@ -6994,6 +7012,11 @@ void VectorMathNode::compile(SVMCompiler &compiler)
 
   const int vector1_stack_offset = compiler.stack_assign(vector1_in);
   const int vector2_stack_offset = compiler.stack_assign(vector2_in);
+  const int vector3_stack_offset = (math_type == NODE_VECTOR_MATH_WRAP ||
+                                    math_type == NODE_VECTOR_MATH_FACEFORWARD ||
+                                    math_type == NODE_VECTOR_MATH_MULTIPLY_ADD) ?
+                                       compiler.stack_assign(input("Vector3")) :
+                                       SVM_STACK_INVALID;
   const int param1_stack_offset = compiler.stack_assign(param1_in);
   const int value_stack_offset = compiler.stack_assign_if_linked(value_out);
   const int vector_stack_offset = compiler.stack_assign_if_linked(vector_out);
@@ -7005,11 +7028,7 @@ void VectorMathNode::compile(SVMCompiler &compiler)
       compiler.encode_uchar4(value_stack_offset, vector_stack_offset));
 
   /* 3 Vector Operators */
-  if (math_type == NODE_VECTOR_MATH_WRAP || math_type == NODE_VECTOR_MATH_FACEFORWARD ||
-      math_type == NODE_VECTOR_MATH_MULTIPLY_ADD)
-  {
-    ShaderInput *vector3_in = input("Vector3");
-    const int vector3_stack_offset = compiler.stack_assign(vector3_in);
+  if (vector3_stack_offset != SVM_STACK_INVALID) {
     compiler.add_node(vector3_stack_offset);
   }
 }

@@ -169,6 +169,10 @@ class SourceProcessor {
 
   /* --- Lowering --- */
 
+  /* Remove `maybe_unused` attribute. */
+  void lower_maybe_unused(Parser &parser);
+  /* Lower parameters that have no name (invalid in GLSL). */
+  void lower_namesless_parameters(Parser &parser);
   /**
    * Given our code-style, we don't need the disambiguation.
    * Example: `x.template foo<int>()` > `x.foo<int>()`
@@ -328,6 +332,9 @@ class SourceProcessor {
   int static_array_size(const Scope &array, int fallback_value);
 
  public:
+  /* Check for existence of preprocessor pragma in file. */
+  static bool has_pragma(Parser &parser, std::string_view pragma_str);
+
   /** Remove trailing white-spaces. */
   static std::string strip_whitespace(const std::string &str);
 

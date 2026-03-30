@@ -395,6 +395,14 @@ struct Scope {
                matches[8] == Const,
                matches[10].scope());
     });
+    foreach_match("m?A<..>A(..)c?{..}", [&](const std::vector<Token> matches) {
+      callback(matches[0] == Static,
+               matches[2],
+               matches[7],
+               matches[8].scope(),
+               matches[12] == Const,
+               matches[14].scope());
+    });
     foreach_match("m?AA::A(..)c?{..}", [&](const std::vector<Token> matches) {
       callback(matches[0] == Static,
                matches[2],

@@ -62,6 +62,13 @@ enum class SingleKeyingResult {
 };
 
 /**
+ * Add a message into the ReportList depending on which SingleKeyingResult is passed.
+ * This should only be used when a single keyframe is being added per user action. Otherwise use
+ * CombinedKeyingResult to avoid spamming the user with messages.
+ */
+void generate_single_keying_result_report(const SingleKeyingResult result, ReportList *reports);
+
+/**
  * Class for tracking the result of inserting keyframes. Tracks how often each of
  * `SingleKeyingResult` has happened.
  * */
@@ -118,6 +125,14 @@ bool key_insertion_may_create_fcurve(eInsertKeyFlags insert_key_flags);
 void update_autoflags_fcurve_direct(FCurve *fcu, PropertyType prop_type);
 
 /**
+ * Return all values of the given PropertyRNA.
+ * In case the property is an array, the length of the vector is the same as the length of the
+ * array. Otherwise the vector has just 1 element.
+ * All property types are cast to float.
+ */
+Vector<float> get_property_values(PointerRNA *ptr, PropertyRNA *prop, bool visual_key);
+
+/**
  * \brief Main key-frame insertion API.
  *
  * Insert keys for `struct_pointer`, for all paths in `rna_paths`. Any necessary
@@ -163,27 +178,33 @@ CombinedKeyingResult insert_keyframes(Main *bmain,
 /**
  * \brief Secondary Insert Key-framing API call.
  *
- * Use this when validation of necessary animation data is not necessary,
- * since an RNA-pointer to the necessary data being keyframed,
- * and a pointer to the F-Curve to use have both been provided.
+ * Retrieves the value of the PropertyRNA and sets a key at `fcurve_frame`. If the property is an
+ * array, the FCurve's array_index is used to find the element's value.
  *
- * This function can't keyframe quaternion channels on some NLA strip types.
+ * \warning This bypasses all animation layer and strip logic. Use with caution. If unsure, use
+ * `insert_keyframes` instead.
+ *
+ * \param fcurve_frame: The frame at which to insert the keyframe. No time remapping is done on the
+ * frame.
  *
  * \param keytype: The "keyframe type" (eBezTriple_KeyframeType), as shown in the Dope Sheet.
  *
  * \param flag: Used for special settings that alter the behavior of the keyframe insertion.
  * These include the 'visual' key-framing modes, quick refresh,
  * and extra keyframe filtering.
+ *
+ * \note this function no longer deals with the NLA. For NLA support use
+ * animrig::nla::insert_keyframe_direct Other high level keyframing functions still work with the
+ * NLA. See `insert_keyframes`.
+ *
  * \return Success.
  */
-bool insert_keyframe_direct(ReportList *reports,
-                            PointerRNA ptr,
-                            PropertyRNA *prop,
-                            FCurve *fcu,
-                            const AnimationEvalContext *anim_eval_context,
-                            eBezTriple_KeyframeType keytype,
-                            NlaKeyframingContext *nla_context,
-                            eInsertKeyFlags flag);
+SingleKeyingResult insert_keyframe_direct(PointerRNA &ptr,
+                                          PropertyRNA &prop,
+                                          FCurve &fcu,
+                                          float fcurve_frame,
+                                          eBezTriple_KeyframeType keytype,
+                                          eInsertKeyFlags flag);
 
 /**
  * \brief Main Delete Key-Framing API call.

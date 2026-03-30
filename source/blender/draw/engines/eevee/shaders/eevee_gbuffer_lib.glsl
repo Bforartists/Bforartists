@@ -184,9 +184,9 @@ float thickness_pack(Thickness thickness)
    * distance and remap to it. Or tweak the hyperbole equality. */
   /* NOTE: Sign encodes the thickness mode. */
   /* Remap [0..+inf) to [0..1/2]. */
-  float thickness_packed = thickness.data / (1.0f + 2.0f * thickness.data);
+  float thickness_packed = thickness.value() / (1.0f + 2.0f * thickness.value());
   /* Mirror the negative from [0..1/2] to [1..1/2]. O is mapped to 0 for precision. */
-  return thickness.data < 0.0f ? 1.0f - thickness_packed : thickness_packed;
+  return thickness.mode() == ThicknessMode::Slab ? 1.0f - thickness_packed : thickness_packed;
 }
 
 Thickness thickness_unpack(float thickness_packed)
@@ -196,7 +196,8 @@ Thickness thickness_unpack(float thickness_packed)
   /* Remap [0..1/2] to [0..+inf). */
   thickness = thickness / (1.0f - 2.0f * thickness);
   /* Retrieve mode. */
-  return {.data = (thickness_packed > 0.5f ? -thickness : thickness)};
+  return (thickness_packed > 0.5f) ? Thickness::from(thickness, ThicknessMode::Slab) :
+                                     Thickness::from(thickness, ThicknessMode::Sphere);
 }
 
 /**

@@ -276,6 +276,9 @@ static bool try_join_single_value_attribute(const Span<const Object *> objects_t
                                             const bke::AttrType data_type,
                                             bke::MutableAttributeAccessor dst_attributes)
 {
+  if (data_type == bke::AttrType::String) {
+    return false;
+  }
   const auto get_single_value = [&](const Object &object) {
     const Mesh &src_mesh = *id_cast<const Mesh *>(object.data);
     const bke::AttributeAccessor attributes = src_mesh.attributes();
@@ -433,7 +436,7 @@ static VectorSet<Material *> join_materials(const Span<const Object *> objects_t
 
   bke::MutableAttributeAccessor dst_attributes = dst_mesh.attributes_for_write();
   if (materials.size() <= 1) {
-    dst_attributes.remove("material_index");
+    BLI_assert(!dst_attributes.contains("material_index"));
     return materials;
   }
 

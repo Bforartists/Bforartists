@@ -23,7 +23,7 @@
 
 #include "GEO_foreach_geometry.hh"
 
-#include "FN_multi_function_builder.hh"
+#include "FN_multi_function_registry.hh"
 
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
@@ -1204,24 +1204,21 @@ static void duplicate_instances(GeometrySet &geometry_set,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
 
   const NodeGeometryDuplicateElements &storage = node_storage(params.node());
   const AttrDomain duplicate_domain = AttrDomain(storage.domain);
 
-  static auto max_zero_fn = mf::build::SI1_SO<int, int>(
-      "max_zero",
-      [](int value) { return std::max(0, value); },
-      mf::build::exec_presets::AllSpanOrSingle());
-  Field<int> count_field(
-      FieldOperation::from(max_zero_fn, {params.extract_input<Field<int>>("Amount")}));
+  const Field<int> count_field(FieldOperation::from(
+      fn::multi_function::registry::lookup("max(int, int)"_ustr),
+      {fn::make_constant_field<int>(0), params.extract_input<Field<int>>("Amount"_ustr)}));
 
-  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
+  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
   IndexAttributes attribute_outputs;
   attribute_outputs.duplicate_index = params.get_output_anonymous_attribute_id_if_needed(
-      "Duplicate Index");
+      "Duplicate Index"_ustr);
 
-  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Geometry");
+  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Geometry"_ustr);
 
   if (duplicate_domain == AttrDomain::Instance) {
     duplicate_instances(
@@ -1262,7 +1259,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  params.set_output("Geometry", std::move(geometry_set));
+  params.set_output("Geometry"_ustr, std::move(geometry_set));
 }
 
 /** \} */

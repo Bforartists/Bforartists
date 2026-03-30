@@ -6215,6 +6215,18 @@ static void rna_def_userdef_system(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Memory Cache Limit", "Memory cache limit (in megabytes)");
   RNA_def_property_update(prop, 0, "rna_Userdef_memcache_update");
 
+  /* Geometry Nodes. */
+
+  prop = RNA_def_property(srna, "geometry_nodes_stack_limit", PROP_INT, PROP_NONE);
+  RNA_def_property_range(prop, 1, INT32_MAX);
+  RNA_def_property_ui_text(prop,
+                           "Geometry Nodes Stack Limit",
+                           "Approximate maximum size of the call stack used by Geometry Nodes. "
+                           "For example, this corresponds to the number of allowed nested node "
+                           "groups. Setting this too high can result in crashes caused by "
+                           "running out of stack memory.");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
   /* Sequencer proxy setup */
 
   prop = RNA_def_property(srna, "sequencer_proxy_setup", PROP_ENUM, PROP_NONE);
@@ -7311,6 +7323,25 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem save_modified_images_items[] = {
+      {USER_SAVE_MODIFIED_IMAGES_ASK,
+       "ASK",
+       0,
+       "Ask Every Time",
+       "Show dialog to save modified images when saving the .blend file"},
+      {USER_SAVE_MODIFIED_IMAGES_ALWAYS,
+       "ALWAYS_SAVE",
+       0,
+       "Always Save",
+       "Always save modified images when saving the .blend file"},
+      {USER_SAVE_MODIFIED_IMAGES_NEVER,
+       "NEVER_SAVE",
+       0,
+       "Never Save",
+       "Never save modified images when saving the .blend file"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   srna = RNA_def_struct(brna, "PreferencesFilePaths", nullptr);
   RNA_def_struct_sdna(srna, "UserDef");
   RNA_def_struct_nested(brna, srna, "Preferences");
@@ -7429,6 +7460,16 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Render Cache Path", "Where to cache raw render results");
   RNA_def_property_flag(prop, PROP_PATH_SUPPORTS_BLEND_RELATIVE);
 
+  prop = RNA_def_property(srna, "texture_cache_directory", PROP_STRING, PROP_DIRPATH);
+  RNA_def_property_string_sdna(prop, nullptr, "texture_cachedir");
+  RNA_def_property_ui_text(
+      prop,
+      "Texture Cache Path",
+      "The directory for storing tx files generated from image files, for more efficient "
+      "rendering. Paths may be absolute, or relative to the image file. Leave blank to store "
+      "tx files in the same directory as image files");
+  RNA_def_property_flag(prop, PROP_PATH_SUPPORTS_BLEND_RELATIVE);
+
   prop = RNA_def_property(srna, "image_editor", PROP_STRING, PROP_FILEPATH);
   RNA_def_property_string_sdna(prop, nullptr, "image_editor");
   RNA_def_property_ui_text(prop, "Image Editor", "Path to an image editor");
@@ -7485,6 +7526,12 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
                            "uses process ID.\n"
                            "Warning: Sculpt and edit mode data won't be saved");
   RNA_def_property_update(prop, 0, "rna_userdef_autosave_update");
+
+  prop = RNA_def_property(srna, "save_modified_images", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, save_modified_images_items);
+  RNA_def_property_ui_text(prop,
+                           "Save Modified Images",
+                           "How modified images should be handled when saving the .blend file");
 
   prop = RNA_def_property(srna, "auto_save_time", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, nullptr, "savetime");
@@ -7691,6 +7738,11 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_remote_asset_libraries", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
       prop, "Remote Asset Libraries", "Enable asset libraries served over HTTP/HTTPS");
+
+  prop = RNA_def_property(srna, "use_collection_importer", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_ui_text(
+      prop, "Collection Import", "Enables a file importer to be configured on a Collection");
+  RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
 
   prop = RNA_def_property(srna, "use_extensions_debug", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
