@@ -32,7 +32,7 @@ void SourceProcessor::lower_strings_sequences(Parser &parser)
 }
 
 /* Turn assert into a printf. */
-void SourceProcessor::lower_assert(Parser &parser, const string &filename)
+void SourceProcessor::lower_assert(Parser &parser, [[maybe_unused]] const string &filename)
 {
   /* Example: `assert(i < 0)` > `if (!(i < 0)) { printf(...); }` */
   parser().foreach_match("A(..)", [&](const vector<Token> &tokens) {
@@ -41,24 +41,20 @@ void SourceProcessor::lower_assert(Parser &parser, const string &filename)
     }
     string replacement;
 #ifdef WITH_GPU_SHADER_ASSERT
-    string condition = tokens[1].scope().str();
+    string condition = string(tokens[1].scope().str());
     replacement += "if (!" + condition + ") ";
     replacement += "{";
     replacement += " printf(\"";
     replacement += "Assertion failed: " + condition + ", ";
     replacement += "file " + filename + ", ";
-    replacement += "line %d, ";
+    replacement += "line " + to_string(tokens[1].line_number()) + ", ";
     replacement += "thread (%u,%u,%u).\\n";
     replacement += "\"";
-    replacement += ", __LINE__, GPU_THREAD.x, GPU_THREAD.y, GPU_THREAD.z); ";
+    replacement += ", GPU_THREAD.x, GPU_THREAD.y, GPU_THREAD.z); ";
     replacement += "}";
 #endif
     parser.replace(tokens[0], tokens[4], replacement);
   });
-#ifndef WITH_GPU_SHADER_ASSERT
-  (void)filename;
-  (void)report_error_;
-#endif
   parser.apply_mutations();
 }
 

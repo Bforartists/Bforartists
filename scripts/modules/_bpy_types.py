@@ -1220,6 +1220,7 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
         add_operator=None,
         add_operator_props=None,
         translate=True,
+        recursive_paths=False,
     ):
         """
         Populate a menu from a list of paths.
@@ -1264,7 +1265,7 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
             for entry in os.scandir(directory):
                 if entry.name.startswith("."):
                     continue
-                if entry.is_dir():
+                if entry.is_dir() and recursive_paths:
                     subdirs.append((entry.name, entry.path))
                     continue
                 if (filter_ext is not None) and (not filter_ext(os.path.splitext(entry.name)[1])):

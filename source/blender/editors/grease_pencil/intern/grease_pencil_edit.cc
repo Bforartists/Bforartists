@@ -1216,9 +1216,7 @@ static wmOperatorStatus grease_pencil_set_uniform_opacity_exec(bContext *C, wmOp
     bke::curves::fill_points<float>(points_by_curve, strokes, opacity_stroke, opacities);
 
     if (SpanAttributeWriter<float> fill_opacities = attributes.lookup_or_add_for_write_span<float>(
-            "fill_opacity",
-            AttrDomain::Curve,
-            bke::AttributeInitVArray(VArray<float>::from_single(1.0f, curves.curves_num()))))
+            "fill_opacity", AttrDomain::Curve, bke::AttributeInitValue(1.0f)))
     {
       index_mask::masked_fill(fill_opacities.span, opacity_fill, strokes);
       fill_opacities.finish();
@@ -2264,7 +2262,8 @@ static Object *duplicate_grease_pencil_object(Main *bmain,
                                               Base *base_prev,
                                               const GreasePencil &grease_pencil_src)
 {
-  const eDupli_ID_Flags dupflag = eDupli_ID_Flags(U.dupflag & USER_DUP_GPENCIL);
+  const eDupli_ID_Flags dupflag = eDupli_ID_Flags((U.dupflag & USER_DUP_GPENCIL) |
+                                                  (U.dupflag & USER_DUP_ACT));
   Base *base_new = object::add_duplicate(bmain, scene, view_layer, base_prev, dupflag);
   Object *object_dst = base_new->object;
   object_dst->mode = OB_MODE_OBJECT;
@@ -5042,8 +5041,7 @@ static wmOperatorStatus grease_pencil_set_corner_type_exec(bContext *C, wmOperat
             attributes.lookup_or_add_for_write_span<float>(
                 "miter_angle",
                 bke::AttrDomain::Point,
-                bke::AttributeInitVArray(
-                    VArray<float>::from_single(GP_STROKE_MITER_ANGLE_ROUND, curves.points_num()))))
+                bke::AttributeInitValue(GP_STROKE_MITER_ANGLE_ROUND)))
     {
       index_mask::masked_fill(miter_angles.span, miter_angle, selection);
       miter_angles.finish();

@@ -1407,6 +1407,7 @@ void BKE_mesh_copy_parameters_for_eval(Mesh *me_dst, const Mesh *me_src)
   /* User counts aren't handled, don't copy into a mesh from #G_MAIN. */
   BLI_assert(me_dst->id.tag & (ID_TAG_NO_MAIN | ID_TAG_COPIED_ON_EVAL));
 
+  STRNCPY(me_dst->id.name, me_src->id.name);
   BKE_mesh_copy_parameters(me_dst, me_src);
   copy_attribute_names(*me_src, *me_dst);
 
@@ -1437,6 +1438,7 @@ Mesh *BKE_mesh_new_nomain_from_template_ex(const Mesh *me_src,
                             ((me_src->totface_legacy != 0) && (me_src->faces_num == 0)));
 
   Mesh *me_dst = BKE_id_new_nomain<Mesh>(nullptr);
+  STRNCPY(me_dst->id.name, me_src->id.name);
 
   me_dst->mselect = MEM_dupalloc(me_src->mselect);
 
@@ -1824,9 +1826,7 @@ void mesh_smooth_set(Mesh &mesh, const bool use_smooth, const bool keep_sharp_ed
   }
   attributes.remove("sharp_face");
   if (!use_smooth) {
-    attributes.add<bool>("sharp_face",
-                         AttrDomain::Face,
-                         AttributeInitVArray(VArray<bool>::from_single(true, mesh.faces_num)));
+    attributes.add<bool>("sharp_face", AttrDomain::Face, AttributeInitValue(true));
   }
 }
 
@@ -1915,9 +1915,7 @@ std::optional<int> Mesh::material_index_max() const
       return;
     }
     value = bounds::max<int>(
-        this->attributes()
-            .lookup_or_default<int>("material_index", bke::AttrDomain::Face, 0)
-            .varray);
+        *this->attributes().lookup_or_default<int>("material_index", bke::AttrDomain::Face, 0));
     if (value.has_value()) {
       value = std::clamp(*value, 0, MAXMAT);
     }
@@ -1948,10 +1946,8 @@ const VectorSet<int> &Mesh::material_indices_used() const
         used_indices[clamp_material_index(efa->mat_nr)] = true;
       }
     }
-    else if (const VArray<int> material_indices =
-                 this->attributes()
-                     .lookup_or_default<int>("material_index", bke::AttrDomain::Face, 0)
-                     .varray)
+    else if (const VArray<int> material_indices = *this->attributes().lookup_or_default<int>(
+                 "material_index", bke::AttrDomain::Face, 0))
     {
       if (const std::optional<int> single_material_index = material_indices.get_if_single()) {
         used_indices[clamp_material_index(*single_material_index)] = true;
@@ -1959,7 +1955,7 @@ const VectorSet<int> &Mesh::material_indices_used() const
       else {
         VArraySpan<int> material_indices_span = material_indices;
         threading::parallel_for(
-            material_indices_span.index_range(), 1024, [&](const IndexRange range) {
+            material_indices_span.index_range(), 8096, [&](const IndexRange range) {
               for (const int i : range) {
                 used_indices[clamp_material_index(material_indices_span[i])] = true;
               }

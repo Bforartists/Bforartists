@@ -3402,9 +3402,10 @@ class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
         col = layout.column()
         col.prop(render, "sequencer_gl_preview", text="Shading")
 
-        if render.sequencer_gl_preview in {"SOLID", "WIREFRAME"}:
+        if render.sequencer_gl_preview in {'SOLID', 'WIREFRAME'}:
+            col = layout.column(heading="Workbench")
             col.use_property_split = False
-            col.prop(render, "use_sequencer_override_scene_strip")
+            col.prop(render, "use_sequencer_override_scene_strip", text="Override Render Settings")
 
 
 class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):

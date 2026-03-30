@@ -51,6 +51,19 @@ def playback_controls(layout, context):
 
     if not scene:
         return
+    layout.popover(
+        panel="TIME_PT_playback",
+        text="Playback",
+    )
+
+    if tool_settings and not is_timeline:
+        # The Keyframe settings are not exposed in the Timeline view.
+        icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
+        layout.popover(
+            panel="TIME_PT_keyframing_settings",
+            text_ctxt=i18n_contexts.id_windowmanager,
+            icon=icon_keytype,
+        )
 
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:

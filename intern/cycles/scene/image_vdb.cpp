@@ -32,7 +32,9 @@ VDBImageLoader::VDBImageLoader(const string &grid_name, const float clipping)
 
 VDBImageLoader::~VDBImageLoader() = default;
 
-bool VDBImageLoader::load_metadata(ImageMetaData &metadata)
+bool VDBImageLoader::load_metadata(ImageMetaData &metadata,
+                                   const ImageLoaderParams & /*params*/,
+                                   Progress & /*progress*/)
 {
 #ifdef WITH_NANOVDB
   load_grid();
@@ -215,9 +217,9 @@ openvdb::GridBase::ConstPtr create_grid(const float *voxels,
                                           0.0,
                                           (double)(voxel_size.z * transform_3d[2][2]),
                                           0.0,
-                                          (double)transform_3d[0][3] + voxel_size.x,
-                                          (double)transform_3d[1][3] + voxel_size.y,
-                                          (double)transform_3d[2][3] + voxel_size.z,
+                                          (double)transform_3d[0][3],
+                                          (double)transform_3d[1][3],
+                                          (double)transform_3d[2][3],
                                           1.0);
 
   const openvdb::math::Transform::Ptr index_to_world_tfm =

@@ -452,14 +452,14 @@ void GeometryManager::device_update_preprocess(Device *device, Scene *scene, Pro
 
     if (geom->has_volume) {
       if (geom->is_modified()) {
-        scene->volume_manager->tag_update(geom);
+        scene->volume_manager->tag_update({geom});
       }
       if (!prev_has_volume) {
         scene->volume_manager->tag_update();
       }
     }
     else if (prev_has_volume) {
-      scene->volume_manager->tag_update(geom);
+      scene->volume_manager->tag_update({geom});
     }
 
     if (geom->is_hair()) {
@@ -759,8 +759,8 @@ void GeometryManager::device_update(Device *device,
     for (Geometry *geom : scene->geometry) {
       if (geom->is_hair()) {
         Hair *hair = static_cast<Hair *>(geom);
-        if ((geom->is_modified() && hair->need_shadow_transparency()) ||
-            hair->need_update_shadow_transparency())
+        if (hair->need_shadow_transparency() &&
+            (geom->is_modified() || hair->need_update_shadow_transparency()))
         {
           curve_need_update_shadow_transparency = true;
           break;

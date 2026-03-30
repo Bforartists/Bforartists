@@ -2281,9 +2281,17 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
             layout.prop(gp_settings, "use_keep_caps_eraser")
         layout.use_property_split = False
         layout.prop(gp_settings, "use_active_layer_only")
-    elif grease_pencil_brush_type == "TINT":
-        layout.prop(gp_settings, "vertex_mode", text="Mode")
+    elif grease_pencil_brush_type == 'TINT':
+        if context.region.type == 'TOOL_HEADER':
+            row = layout.row(align=True)
+            row.prop_enum(gp_settings, "vertex_mode", 'STROKE', text="", icon='GP_DRAW_STROKE')
+            row.prop_enum(gp_settings, "vertex_mode", 'FILL', text="", icon='GP_DRAW_FILL')
+            row.prop_enum(gp_settings, "vertex_mode", 'BOTH', text="", icon='GP_DRAW_BOTH')
+        else:
+            layout.prop(gp_settings, "vertex_mode", text="Mode")
         layout.use_property_split = False
+
+        layout.popover("VIEW3D_PT_tools_brush_falloff")
         layout.prop(gp_settings, "use_active_layer_only")
 
 
@@ -2401,11 +2409,17 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
         )
 
     gp_settings = brush.gpencil_settings
-    if brush.gpencil_vertex_brush_type in {"DRAW", "REPLACE"}:
-        row = layout.row(align=True)
-        row.prop(gp_settings, "vertex_mode", text="Mode", expand=compact) # bfa - use compact!
-        # bfa - This sets expand to false for the sidebar, while keeping header true
-        # bfa - use 'not compact' for the opposite effect!
+    if brush.gpencil_vertex_brush_type in {'DRAW', 'REPLACE'}:
+        if context.region.type == 'TOOL_HEADER':
+            row = layout.row(align=True)
+            row.prop_enum(gp_settings, "vertex_mode", 'STROKE', text="", icon='GP_DRAW_STROKE')
+            row.prop_enum(gp_settings, "vertex_mode", 'FILL', text="", icon='GP_DRAW_FILL')
+            row.prop_enum(gp_settings, "vertex_mode", 'BOTH', text="", icon='GP_DRAW_BOTH')
+        else:
+            row = layout.row(align=True)
+            row.prop(gp_settings, "vertex_mode", text="Mode", expand=compact) # bfa - use compact!
+            # bfa - This sets expand to false for the sidebar, while keeping header true
+            # bfa - use 'not compact' for the opposite effect!
 
 
 classes = (

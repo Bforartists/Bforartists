@@ -290,32 +290,6 @@ static bool rna_Paint_brush_poll(PointerRNA *ptr, PointerRNA value)
   return (brush == nullptr) || (paint->runtime->ob_mode & brush->ob_mode) != 0;
 }
 
-static PointerRNA rna_Paint_eraser_brush_get(PointerRNA *ptr)
-{
-  Paint *paint = static_cast<Paint *>(ptr->data);
-  Brush *brush = BKE_paint_eraser_brush(paint);
-  if (!brush) {
-    return PointerRNA_NULL;
-  }
-  return RNA_id_pointer_create(&brush->id);
-}
-
-static void rna_Paint_eraser_brush_set(PointerRNA *ptr, PointerRNA value, ReportList * /*reports*/)
-{
-  Paint *paint = static_cast<Paint *>(ptr->data);
-  Brush *brush = static_cast<Brush *>(value.data);
-  BKE_paint_eraser_brush_set(paint, brush);
-  BKE_paint_invalidate_overlay_all();
-}
-
-static bool rna_Paint_eraser_brush_poll(PointerRNA *ptr, PointerRNA value)
-{
-  const Paint *paint = static_cast<Paint *>(ptr->data);
-  const Brush *brush = static_cast<Brush *>(value.data);
-
-  return (brush == nullptr) || (paint->runtime->ob_mode & brush->ob_mode) != 0;
-}
-
 static void rna_Sculpt_update(bContext *C, PointerRNA * /*ptr*/)
 {
   Scene *scene = CTX_data_scene(C);
@@ -677,27 +651,6 @@ static void rna_def_paint(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(prop,
                            "Brush Asset Reference",
-                           "A weak reference to the matching brush asset, used e.g. to restore "
-                           "the last used brush on file load");
-
-  prop = RNA_def_property(srna, "eraser_brush", PROP_POINTER, PROP_NONE);
-  RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_UNLINK);
-  RNA_def_property_clear_flag(prop, PROP_ID_REFCOUNT);
-  RNA_def_property_struct_type(prop, "Brush");
-  RNA_def_property_pointer_funcs(prop,
-                                 "rna_Paint_eraser_brush_get",
-                                 "rna_Paint_eraser_brush_set",
-                                 nullptr,
-                                 "rna_Paint_eraser_brush_poll");
-  RNA_def_property_ui_text(prop,
-                           "Default Eraser Brush",
-                           "Default eraser brush for quickly alternating with the main brush");
-  RNA_def_property_update(prop, NC_BRUSH | NA_SELECTED, nullptr);
-
-  prop = RNA_def_property(srna, "eraser_brush_asset_reference", PROP_POINTER, PROP_NONE);
-  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop,
-                           "Eraser Brush Asset Reference",
                            "A weak reference to the matching brush asset, used e.g. to restore "
                            "the last used brush on file load");
 
@@ -1130,7 +1083,7 @@ static void rna_def_sculpt(BlenderRNA *brna)
                            "of Blender unit - higher value means smaller edge length)");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
-  const EnumPropertyItem *entry = rna_enum_brush_automasking_flag_items;
+  const EnumPropertyItem *entry = rna_enum_shared_automasking_flag_items;
   do {
     prop = RNA_def_property(srna, entry->identifier, PROP_BOOLEAN, PROP_NONE);
     RNA_def_property_boolean_sdna(prop, nullptr, "automasking_flags", entry->value);
@@ -1185,30 +1138,6 @@ static void rna_def_sculpt(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "CurveMapping");
   RNA_def_property_ui_text(prop, "Cavity Curve", "Curve used for the sensitivity");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
-
-  prop = RNA_def_property(srna, "use_automasking_start_normal", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(
-      prop, nullptr, "automasking_flags", BRUSH_AUTOMASKING_BRUSH_NORMAL);
-  RNA_def_property_ui_text(
-      prop,
-      "Area Normal",
-      "Affect only vertices with a similar normal to where the stroke starts");
-  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
-
-  prop = RNA_def_property(srna, "use_automasking_view_normal", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "automasking_flags", BRUSH_AUTOMASKING_VIEW_NORMAL);
-  RNA_def_property_ui_text(
-      prop, "View Normal", "Affect only vertices with a normal that faces the viewer");
-  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
-
-  prop = RNA_def_property(srna, "use_automasking_view_occlusion", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(
-      prop, nullptr, "automasking_flags", BRUSH_AUTOMASKING_VIEW_OCCLUSION);
-  RNA_def_property_ui_text(
-      prop,
-      "Occlusion",
-      "Only affect vertices that are not occluded by other faces (slower performance)");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
   prop = RNA_def_property(srna, "automasking_start_normal_limit", PROP_FLOAT, PROP_ANGLE);

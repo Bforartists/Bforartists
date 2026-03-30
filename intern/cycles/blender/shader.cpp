@@ -166,7 +166,7 @@ int blender_attribute_name_split_type(ustring name, string *r_real_name)
 
 static float3 get_node_output_rgba(blender::bNode &b_node, const string &name)
 {
-  blender::bNodeSocket *b_sock = b_node.output_by_identifier(name);
+  blender::bNodeSocket *b_sock = b_node.output_by_identifier(blender::UString(name));
   BLI_assert(b_sock->type == blender::SOCK_RGBA);
   const auto &default_value = *b_sock->default_value_typed<blender::bNodeSocketValueRGBA>();
   return make_float3(default_value.value[0], default_value.value[1], default_value.value[2]);
@@ -174,7 +174,7 @@ static float3 get_node_output_rgba(blender::bNode &b_node, const string &name)
 
 static float get_node_output_value(blender::bNode &b_node, const string &name)
 {
-  blender::bNodeSocket *b_sock = b_node.output_by_identifier(name);
+  blender::bNodeSocket *b_sock = b_node.output_by_identifier(blender::UString(name));
   BLI_assert(b_sock->type == blender::SOCK_FLOAT);
   const auto &default_value = *b_sock->default_value_typed<blender::bNodeSocketValueFloat>();
   return default_value.value;
@@ -182,7 +182,7 @@ static float get_node_output_value(blender::bNode &b_node, const string &name)
 
 static float3 get_node_output_vector(blender::bNode &b_node, const string &name)
 {
-  blender::bNodeSocket *b_sock = b_node.output_by_identifier(name);
+  blender::bNodeSocket *b_sock = b_node.output_by_identifier(blender::UString(name));
   BLI_assert(b_sock->type == blender::SOCK_VECTOR);
   const auto &default_value = *b_sock->default_value_typed<blender::bNodeSocketValueVector>();
   return make_float3(default_value.value[0], default_value.value[1], default_value.value[2]);
@@ -255,7 +255,8 @@ static void set_default_value(ShaderInput *input,
     }
     case SocketType::STRING: {
       const auto &default_value = *b_sock.default_value_typed<blender::bNodeSocketValueString>();
-      node->set(socket, (ustring)blender_absolute_path(b_data, b_id, default_value.value).c_str());
+      node->set(socket,
+                (ustring)blender_absolute_path(b_data, &b_id, default_value.value).c_str());
       break;
     }
     default:
@@ -812,7 +813,7 @@ static ShaderNode *add_node(Scene *scene,
       }
       else {
         const string absolute_filepath = blender_absolute_path(
-            b_data, b_ntree.id, storage.filepath);
+            b_data, &b_ntree.id, storage.filepath);
         node = OSLShaderManager::osl_node(graph, scene, absolute_filepath, "");
       }
     }
@@ -1044,13 +1045,10 @@ static ShaderNode *add_node(Scene *scene,
     IESLightNode *ies = graph->create_node<IESLightNode>();
     switch (storage.mode) {
       case blender::NODE_IES_EXTERNAL:
-        ies->set_filename(ustring(blender_absolute_path(b_data, b_ntree.id, storage.filepath)));
+        ies->set_filename(ustring(blender_absolute_path(b_data, &b_ntree.id, storage.filepath)));
         break;
       case blender::NODE_IES_INTERNAL:
         ustring ies_content = ustring(get_text_datablock_content(b_node.id));
-        if (ies_content.empty()) {
-          ies_content = "\n";
-        }
         ies->set_ies(ies_content);
         break;
     }

@@ -481,18 +481,18 @@
 
 #ifndef SMAA_AREATEX_SELECT
 #  if defined(SMAA_HLSL_3)
-#    define SMAA_AREATEX_SELECT(sample) sample.ra
+#    define SMAA_AREATEX_SELECT(samp) samp.ra
 #  else
-#    define SMAA_AREATEX_SELECT(sample) sample.rg
+#    define SMAA_AREATEX_SELECT(samp) samp.rg
 #  endif
 #endif
 
 #ifndef SMAA_SEARCHTEX_SELECT
-#  define SMAA_SEARCHTEX_SELECT(sample) sample.r
+#  define SMAA_SEARCHTEX_SELECT(samp) samp.r
 #endif
 
 #ifndef SMAA_DECODE_VELOCITY
-#  define SMAA_DECODE_VELOCITY(sample) sample.rg
+#  define SMAA_DECODE_VELOCITY(samp) samp.rg
 #endif
 
 /* ----------------------------------------------------------------------------
@@ -549,7 +549,7 @@ SamplerState PointSampler
 #  define SMAA_FLATTEN [flatten]
 #  define SMAA_BRANCH [branch]
 #  define SMAATexture2DMS2(tex) Texture2DMS<float4, 2> tex
-#  define SMAALoad(tex, pos, sample) tex.Load(pos, sample)
+#  define SMAALoad(tex, pos, samp) tex.Load(pos, samp)
 #  if defined(SMAA_HLSL_4_1)
 #    define SMAAGather(tex, coord) tex.Gather(LinearSampler, coord, 0)
 #  endif

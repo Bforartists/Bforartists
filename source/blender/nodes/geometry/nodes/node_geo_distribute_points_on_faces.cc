@@ -288,40 +288,41 @@ BLI_NOINLINE static void interpolate_attribute(const Mesh &mesh,
   }
 }
 
-BLI_NOINLINE static void propagate_existing_attributes(
-    const Mesh &mesh,
-    const GeometrySet::GatheredAttributes &attributes,
-    PointCloud &points,
-    const Span<float3> bary_coords,
-    const Span<int> tri_indices)
+BLI_NOINLINE static void propagate_existing_attributes(const Mesh &mesh,
+                                                       const bke::AttributeFilter &filter,
+                                                       PointCloud &points,
+                                                       const Span<float3> bary_coords,
+                                                       const Span<int> tri_indices)
 {
   const AttributeAccessor mesh_attributes = mesh.attributes();
   MutableAttributeAccessor point_attributes = points.attributes_for_write();
 
-  for (const int i : attributes.names.index_range()) {
-    const StringRef name = attributes.names[i];
-    const bke::AttrType output_data_type = attributes.kinds[i].data_type;
+  mesh_attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
+    if (iter.domain == AttrDomain::Edge) {
+      return;
+    }
+    const StringRef name = iter.name;
+    if (iter.is_builtin && !point_attributes.is_builtin(name)) {
+      return;
+    }
     if (name == "position") {
-      continue;
+      return;
     }
-
-    GAttributeReader src = mesh_attributes.lookup(name);
+    if (filter.allow_skip(name)) {
+      return;
+    }
+    GAttributeReader src = iter.get();
     if (!src) {
-      continue;
+      return;
     }
-    if (src.domain == AttrDomain::Edge) {
-      continue;
-    }
-
     GSpanAttributeWriter dst = point_attributes.lookup_or_add_for_write_only_span(
-        name, AttrDomain::Point, output_data_type);
+        name, AttrDomain::Point, iter.data_type);
     if (!dst) {
-      continue;
+      return;
     }
-
     interpolate_attribute(mesh, bary_coords, tri_indices, src.domain, src.varray, dst.span);
     dst.finish();
-  }
+  });
 }
 
 namespace {
@@ -526,15 +527,16 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
 
   switch (method) {
     case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_RANDOM: {
-      const Field<float> density_field = params.get_input<Field<float>>("Density");
+      const Field<float> density_field = params.get_input<Field<float>>("Density"_ustr);
       distribute_points_random(
           mesh, density_field, selection_field, seed, positions, bary_coords, tri_indices);
       break;
     }
     case GEO_NODE_POINT_DISTRIBUTE_POINTS_ON_FACES_POISSON: {
-      const float minimum_distance = params.get_input<float>("Distance Min");
-      const float density_max = params.get_input<float>("Density Max");
-      const Field<float> density_factors_field = params.get_input<Field<float>>("Density Factor");
+      const float minimum_distance = params.get_input<float>("Distance Min"_ustr);
+      const float density_max = params.get_input<float>("Density Max"_ustr);
+      const Field<float> density_factors_field = params.get_input<Field<float>>(
+          "Density Factor"_ustr);
       distribute_points_poisson_disk(mesh,
                                      minimum_distance,
                                      density_max,
@@ -562,14 +564,8 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
 
   geometry_set.replace_pointcloud(pointcloud);
 
-  GeometrySet::GatheredAttributes attributes;
-  geometry_set.gather_attributes_for_propagation({GeometryComponent::Type::Mesh},
-                                                 GeometryComponent::Type::PointCloud,
-                                                 false,
-                                                 params.get_attribute_filter("Points"),
-                                                 attributes);
-
-  propagate_existing_attributes(mesh, attributes, *pointcloud, bary_coords, tri_indices);
+  propagate_existing_attributes(
+      mesh, params.get_attribute_filter("Points"_ustr), *pointcloud, bary_coords, tri_indices);
 
   const bool use_legacy_normal = params.node().custom2 != 0;
   compute_attribute_outputs(
@@ -580,18 +576,19 @@ static void point_distribution_calculate(GeometrySet &geometry_set,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Mesh");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Mesh"_ustr);
 
   const GeometryNodeDistributePointsOnFacesMode method = GeometryNodeDistributePointsOnFacesMode(
       params.node().custom1);
 
-  const int seed = params.extract_input<int>("Seed") * 5383843;
-  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
+  const int seed = params.extract_input<int>("Seed"_ustr) * 5383843;
+  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
 
   AttributeOutputs attribute_outputs;
-  attribute_outputs.rotation_id = params.get_output_anonymous_attribute_id_if_needed("Rotation");
+  attribute_outputs.rotation_id = params.get_output_anonymous_attribute_id_if_needed(
+      "Rotation"_ustr);
   attribute_outputs.normal_id = params.get_output_anonymous_attribute_id_if_needed(
-      "Normal", bool(attribute_outputs.rotation_id));
+      "Normal"_ustr, bool(attribute_outputs.rotation_id));
 
   lazy_threading::send_hint();
 
@@ -603,7 +600,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     geometry_set.keep_only({GeometryComponent::Type::PointCloud, GeometryComponent::Type::Edit});
   });
 
-  params.set_output("Points", std::move(geometry_set));
+  params.set_output("Points"_ustr, std::move(geometry_set));
 }
 
 static void node_register()

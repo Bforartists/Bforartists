@@ -133,6 +133,7 @@ class Device {
   }
 
   string error_msg;
+  KernelImageLoadRequestedGPU image_load_requested_gpu_;
 
   virtual device_ptr mem_alloc_sub_ptr(device_memory & /*mem*/, size_t /*offset*/, size_t /*size*/)
   {
@@ -198,11 +199,26 @@ class Device {
 
   /* Get CPU kernel functions for native instruction set. */
   static const CPUKernels &get_cpu_kernels();
-  /* Get kernel globals to pass to kernels. */
-  virtual void get_cpu_kernel_thread_globals(
-      vector<ThreadKernelGlobalsCPU> & /*kernel_thread_globals*/);
+  /* Acquire thread globals for CPU kernel execution. Creates them if needed,
+   * and updates all data pointers from the device's kernel globals. */
+  virtual vector<ThreadKernelGlobalsCPU> *acquire_cpu_kernel_thread_globals();
+  /* Release thread globals, allowing them to be destroyed. */
+  virtual void release_cpu_kernel_thread_globals();
   /* Get OpenShadingLanguage memory buffer. */
   virtual OSLGlobals *get_cpu_osl_memory();
+
+  /* Image Cache. */
+  virtual void set_image_cache_func(KernelImageLoadRequestedCPU /*image_load_requested_cpu*/,
+                                    KernelImageLoadRequestedGPU image_load_requested_gpu)
+  {
+    image_load_requested_gpu_ = image_load_requested_gpu;
+  }
+  void image_load_requested_gpu(DeviceQueue &queue)
+  {
+    if (image_load_requested_gpu_) {
+      image_load_requested_gpu_(queue);
+    }
+  }
 
   /* Acceleration structure building. */
   virtual void build_bvh(BVH *bvh, Progress &progress, bool refit);
@@ -230,7 +246,16 @@ class Device {
      * is valid or not (since it may not have been allocated yet). */
     return sub_device == this;
   }
+
+  /* Return the real device pointer for mem on the given sub_device. */
+  virtual device_ptr mem_device_ptr(const device_memory &mem, Device *sub_device);
+
   virtual bool check_peer_access(Device * /*peer_device*/)
+  {
+    return false;
+  }
+
+  virtual bool has_unified_memory() const
   {
     return false;
   }
@@ -346,7 +371,7 @@ class GPUDevice : public Device {
   bool need_image_info = false;
   /* Returns true if the image info was copied to the device (meaning, some more
    * re-initialization might be needed). */
-  virtual bool load_image_info();
+  virtual bool load_image_info(DeviceQueue *queue);
 
  protected:
   /* Memory allocation, only accessed through device_memory. */

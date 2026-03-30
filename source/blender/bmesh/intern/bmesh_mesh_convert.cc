@@ -394,13 +394,13 @@ void BM_mesh_bm_from_me(BMesh *bm, const Mesh *mesh, const BMeshFromMeshParams *
 
   {
     const StringRef name = mesh->active_uv_map_name();
-    const int index = CustomData_get_named_layer_index(&bm->ldata, CD_PROP_FLOAT2, name);
-    CustomData_set_layer_active_index(&bm->ldata, CD_PROP_FLOAT2, std::max(index, 0));
+    const int index = CustomData_get_named_layer(&bm->ldata, CD_PROP_FLOAT2, name);
+    CustomData_set_layer_active(&bm->ldata, CD_PROP_FLOAT2, std::max(index, 0));
   }
   {
     const StringRef name = mesh->default_uv_map_name();
-    const int index = CustomData_get_named_layer_index(&bm->ldata, CD_PROP_FLOAT2, name);
-    CustomData_set_layer_render_index(&bm->ldata, CD_PROP_FLOAT2, std::max(index, 0));
+    const int index = CustomData_get_named_layer(&bm->ldata, CD_PROP_FLOAT2, name);
+    CustomData_set_layer_render(&bm->ldata, CD_PROP_FLOAT2, std::max(index, 0));
   }
 
   /* -------------------------------------------------------------------- */
@@ -1518,7 +1518,7 @@ static void bm_to_mesh_edges(Mesh &mesh,
 
   process_edges(bm_edges.index_range().take_front(1));
 
-  threading::parallel_for(dst_edges.index_range(), 512, [&](const IndexRange range) {
+  threading::parallel_for(dst_edges.index_range().drop_front(1), 512, [&](const IndexRange range) {
     process_edges(range);
     single_checker.check_range(range);
   });
@@ -1640,10 +1640,11 @@ static void bm_to_mesh_loops(Mesh &mesh,
 
   process_corners(bm_loops.index_range().take_front(1));
 
-  threading::parallel_for(dst_corner_verts.index_range(), 1024, [&](const IndexRange range) {
-    process_corners(range);
-    single_checker.check_range(range);
-  });
+  threading::parallel_for(
+      dst_corner_verts.index_range().drop_front(1), 1024, [&](const IndexRange range) {
+        process_corners(range);
+        single_checker.check_range(range);
+      });
 }
 
 void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *mesh, const BMeshToMeshParams *params)

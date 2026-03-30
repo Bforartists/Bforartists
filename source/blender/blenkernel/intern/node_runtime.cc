@@ -268,10 +268,12 @@ static void update_sockets_by_identifier(const bNodeTree &ntree)
       node->runtime->inputs_by_identifier.clear();
       node->runtime->outputs_by_identifier.clear();
       for (bNodeSocket *socket : node->runtime->inputs) {
-        node->runtime->inputs_by_identifier.add_new(socket->identifier, socket);
+        BLI_assert(socket->identifier == socket->identifier_ustr());
+        node->runtime->inputs_by_identifier.add_new(socket->identifier_ustr(), socket);
       }
       for (bNodeSocket *socket : node->runtime->outputs) {
-        node->runtime->outputs_by_identifier.add_new(socket->identifier, socket);
+        BLI_assert(socket->identifier == socket->identifier_ustr());
+        node->runtime->outputs_by_identifier.add_new(socket->identifier_ustr(), socket);
       }
     }
   });

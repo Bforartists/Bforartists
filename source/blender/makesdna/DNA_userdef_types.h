@@ -77,6 +77,13 @@ enum eUserpref_File_Preview_Type {
   USER_FILE_PREVIEW_CAMERA,
 };
 
+/** #UserDef.save_modified_images */
+enum eUserpref_Save_Modified_Images {
+  USER_SAVE_MODIFIED_IMAGES_ASK = 0,
+  USER_SAVE_MODIFIED_IMAGES_ALWAYS,
+  USER_SAVE_MODIFIED_IMAGES_NEVER,
+};
+
 enum eUserPref_PrefFlag {
   USER_PREF_FLAG_SAVE = (1 << 0),
 };
@@ -829,7 +836,8 @@ struct UserDef_Experimental {
   char use_geometry_nodes_lists = 0;
   char use_geometry_bundle = 0;
   char use_remote_asset_libraries = 0;
-  char _pad[3] = {};
+  char use_collection_importer = 0;
+  char _pad[2] = {};
 };
 
 #define USER_EXPERIMENTAL_TEST(userdef, member) (((userdef)->experimental).member)
@@ -903,6 +911,7 @@ struct UserDef {
   /* EXR cache path */
   char render_cachedir[/*FILE_MAXDIR*/ 768] = "";
   char textudir[/*FILE_MAXDIR*/ 768] = "//";
+  char texture_cachedir[/*FILE_MAXDIR*/ 768] = "";
   /* Deprecated, use #UserDef.script_directories instead. */
   DNA_DEPRECATED char pythondir_legacy[/*FILE_MAXDIR*/ 768] = "";
   char sounddir[/*FILE_MAXDIR*/ 768] = "//";
@@ -1067,11 +1076,11 @@ struct UserDef {
   short vbotimeout = 120, vbocollectrate = 60;
   short textimeout = 120, texcollectrate = 60;
   int memcachelimit = 4096;
+  int geometry_nodes_stack_limit = 100;
   /** Unused. */
   int prefetchframes = 0;
   /** Control the rotation step of the view when PAD2, PAD4, PAD6&PAD8 is use. */
   float pad_rot_angle = 15;
-  char _pad12[4] = {};
   /** Rotating view icon size. */
   short rvisize = 25;
   /** Rotating view icon brightness. */
@@ -1227,7 +1236,8 @@ struct UserDef {
 
   float collection_instance_empty_size = 1.0f;
   char text_flag = 0;
-  char _pad10[1] = {};
+
+  char save_modified_images = USER_SAVE_MODIFIED_IMAGES_ASK; /* eUserpref_Save_Modified_Images */
 
   char file_preview_type = USER_FILE_PREVIEW_AUTO; /* eUserpref_File_Preview_Type */
   char statusbar_flag = STATUSBAR_SHOW_VERSION |

@@ -7655,8 +7655,8 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "seq_flag", R_SEQ_OVERRIDE_SCENE_SETTINGS);
   RNA_def_property_ui_text(prop,
                            "Override Scene Settings",
-                           "Use workbench render settings from the sequencer scene, instead of "
-                           "each individual scene used in the strip");
+                           "Use workbench render and world settings from the sequencer scene, "
+                           "instead of each strip's scene");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_SceneSequencer_update");
 
   prop = RNA_def_property(srna, "use_single_layer", PROP_BOOLEAN, PROP_NONE);
@@ -7769,6 +7769,27 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
                            "Skip computing custom normals and face corner normals for displaying "
                            "meshes in the viewport");
   RNA_def_property_update(prop, 0, "rna_Scene_use_simplify_normals_update");
+
+  /* Texture Cache */
+  prop = RNA_def_property(srna, "use_texture_cache", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "scemode", R_USE_TEXTURE_CACHE);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(
+      prop,
+      "Texture Cache",
+      "Load texture tiles at appropriate resolution on demand to reduce memory usage. This avoids "
+      "loading all textures into memory, at the cost of extra disk space and some performance");
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
+
+  prop = RNA_def_property(srna, "use_auto_generate_texture_cache", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "scemode", R_TEXTURE_CACHE_AUTO_GENERATE);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(prop,
+                           "Auto Generate Texture Cache",
+                           "Automatically create tx files from image files when rendering, if the "
+                           "files do not exist or are outdated. The path to store the texture "
+                           "cache files is configured in the preferences");
+  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
 
   /* Grease Pencil - Simplify Options */
   prop = RNA_def_property(srna, "simplify_gpencil", PROP_BOOLEAN, PROP_NONE);
