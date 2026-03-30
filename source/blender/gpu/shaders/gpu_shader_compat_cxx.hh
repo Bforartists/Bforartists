@@ -129,50 +129,8 @@ template<typename T> struct union_t {
 #  define GPU_SHADER
 #endif
 
-#define reserved_keyword(keyword) static_assert(false, keyword " is a reserved keyword")
-/* List of reserved keywords in GLSL. */
-#define common reserved_keyword("common")
-#define partition reserved_keyword("partition")
-#define active reserved_keyword("active")
-// #define class /* Supported. */
-// #define union /* Supported. */
-// #define enum /* Supported. */
-#define typedef reserved_keyword("typedef")
-// #define template /* Needed for Stubs. */
-// #define this /* Needed for Stubs. */
-#define packed reserved_keyword("packed")
-#define resource reserved_keyword("resource")
-#define goto reserved_keyword("goto")
-// #define inline  /* Supported. */
-#define noinline reserved_keyword("noinline")
-// #define public /* Supported. */
-// #define private /* Supported. */
-// #define static /* Supported. */
-// #define extern /* Needed for Stubs. */
-#define external reserved_keyword("external")
-#define interface reserved_keyword("interface")
-#define long reserved_keyword("long")
-// #define short /* Supported. */
-// #define half /* Supported. */
-#define fixed reserved_keyword("fixed")
-#define unsigned reserved_keyword("unsigned")
-#define superp reserved_keyword("superp")
-#define input reserved_keyword("input")
-#define output reserved_keyword("output")
-#define hvec2 reserved_keyword("hvec2")
-#define hvec3 reserved_keyword("hvec3")
-#define hvec4 reserved_keyword("hvec4")
-#define fvec2 reserved_keyword("fvec2")
-#define fvec3 reserved_keyword("fvec3")
-#define fvec4 reserved_keyword("fvec4")
-#define sampler3DRect reserved_keyword("sampler3DRect")
-#define filter reserved_keyword("filter")
-#define sizeof reserved_keyword("sizeof")
-#define cast reserved_keyword("cast")
-// #define namespace /* Needed for Stubs. */
-// #define using /* Needed for Stubs. */
-#define row_major reserved_keyword("row_major")
-#define inout reserved_keyword("inout")
+/* Reserved keywords in GLSL that are allowed in preprocessor directives for compiling in C++. */
+#define sizeof static_assert(false, "sizeof is a reserved keyword")
 
 #ifdef GPU_SHADER_LIBRARY
 #  define GPU_VERTEX_SHADER
