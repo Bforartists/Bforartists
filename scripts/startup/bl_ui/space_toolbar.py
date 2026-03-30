@@ -24,13 +24,10 @@ class TOOLBAR_HT_header(Header):
 
         layout = self.layout
 
-        window = context.window
-        scene = context.scene
-
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.popover(panel="TOOLBAR_PT_type", text = "")
+        layout.popover(panel="TOOLBAR_PT_type", text="")
 
         ############## toolbars ##########################################################################
 
@@ -82,6 +79,21 @@ class TOOLBAR_HT_header(Header):
 
             TOOLBAR_MT_misc.draw_menus(layout, context)
 
+########################################################################
+
+# BFA - show/hide the editortype menu
+class ALL_MT_editormenu_toolbar(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
+
+########################################################################
 
 ############################### Toolbar Type Panel ########################################
 
@@ -105,7 +117,7 @@ class TOOLBAR_PT_type(Panel):
         header.alignment = 'CENTER'
         header.label(text="Show/Hide Settings")
 
-        if (addon_prefs.bfa_toolbar_types == 'Files'):
+        if addon_prefs.bfa_toolbar_types == "Files":
             if context.area.file_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "file_load_save",toggle=addon_prefs.bfa_button_style)
@@ -124,11 +136,11 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "file_render_misc",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Files is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Mesh Edit'):
+        if addon_prefs.bfa_toolbar_types == "Mesh Edit":
             if context.area.meshedit_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "mesh_vertices_splitconnect",toggle=addon_prefs.bfa_button_style)
@@ -144,11 +156,11 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "mesh_cleanup",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Mesh Edit is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Primitives'):
+        if addon_prefs.bfa_toolbar_types == "Primitives":
             if context.area.primitives_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "primitives_mesh",toggle=addon_prefs.bfa_button_style)
@@ -168,11 +180,11 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "primitives_collection",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Primitives is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Image'):
+        if addon_prefs.bfa_toolbar_types == "Image":
             if context.area.image_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "image_uv_mirror",toggle=addon_prefs.bfa_button_style)
@@ -182,11 +194,11 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "image_uv_modify",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Image is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Tools'):
+        if addon_prefs.bfa_toolbar_types == "Tools":
             if context.area.tools_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "tools_parent",toggle=addon_prefs.bfa_button_style)
@@ -200,7 +212,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "tools_relations",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Tools is hidden', icon="NONE")
 
@@ -215,11 +227,11 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "animation_keyingset",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Animation is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Edit'):
+        if addon_prefs.bfa_toolbar_types == "Edit":
             if context.area.edit_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "edit_edit",toggle=addon_prefs.bfa_button_style)
@@ -230,11 +242,11 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "edit_objectclear",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Edit is hidden', icon="NONE")
 
-        if (addon_prefs.bfa_toolbar_types == 'Misc'):
+        if addon_prefs.bfa_toolbar_types == "Misc":
             if context.area.misc_toolbars:
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "misc_viewport",toggle=addon_prefs.bfa_button_style)
@@ -248,7 +260,7 @@ class TOOLBAR_PT_type(Panel):
                 row.prop(addon_prefs, "misc_info",toggle=addon_prefs.bfa_button_style)
             else:
                 row = layout.row()
-                row.alignment = 'Center'.upper()
+                row.alignment = 'CENTER'
                 row.alert = True
                 row.label(text='Misc is hidden', icon="NONE")
 
@@ -264,7 +276,7 @@ class TOOLBAR_PT_type(Panel):
     @staticmethod
     def draw_reset_section(layout):
         row = layout.row(heading='', align=True)
-        row.alignment = 'Center'.upper()
+        row.alignment = 'CENTER'
 
         row.label(text='Defaults')
         row.separator()
@@ -290,11 +302,11 @@ class TOOLBAR_PT_type(Panel):
 
         box = layout.box()
         row = box.row()
-        row.alignment = 'Center'.upper()
+        row.alignment = 'CENTER'
         row.label(text='Toolbar Manager')
 
-        row.alignment = 'Center'.upper()
-        row.prop(bpy.context.scene, 'bfa_toolbar_defaults', text='', icon='OPTIONS', emboss=True)
+        row.alignment = 'CENTER'
+        row.prop(bpy.context.scene, 'bfa_toolbar_defaults', text="", icon='OPTIONS', emboss=True)
 
         # Reset Settings Panel
         if (bpy.context.scene.bfa_toolbar_defaults == True):
@@ -323,7 +335,7 @@ class TOOLBAR_PT_type(Panel):
         self.draw_show_hide_section(context, box)
 
         col = layout.column()
-        col.label( text = "Extra Options:")
+        col.label( text="Extra Options:")
         row = layout.row()
         row.separator()
         row.prop(addon_prefs, "toolbar_show_quicktoggle")
@@ -352,9 +364,6 @@ class TOOLBAR_MT_toolbar_type(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
-        rd = scene.render
-
         layout.operator("screen.toolbar_toolbox", text="Type")
 
 
@@ -376,9 +385,9 @@ class TOOLBAR_PT_menu_file(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars File:")
+        layout.label(text="Toolbars File:")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "file_load_save")
@@ -395,7 +404,7 @@ class TOOLBAR_PT_menu_file(Panel):
         row.separator()
         row.prop(addon_prefs, "file_export_menu")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "file_import_common")
@@ -415,7 +424,7 @@ class TOOLBAR_PT_menu_file(Panel):
         row.separator()
         row.prop(addon_prefs, "file_export_uncommon")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "file_render")
@@ -427,7 +436,7 @@ class TOOLBAR_PT_menu_file(Panel):
         row.prop(addon_prefs, "file_render_misc")
 
 
-############### bfa - Load Save menu hidable by the flag in the right click menu
+############### BFA - Load Save menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_file(Menu):
     bl_idname = "TOOLBAR_MT_file"
@@ -451,7 +460,6 @@ class TOOLBAR_MT_file(Menu):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         if addon_prefs.file_load_save:
-
             row = layout.row(align=True)
             row.operator("wm.read_homefile", text="", icon='NEW')
 
@@ -468,7 +476,6 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.save_as_mainfile", text="", icon='SAVE_COPY')
 
         if addon_prefs.file_recover:
-
             row = layout.row(align=True)
             row.operator("wm.revert_mainfile", text="", icon='FILE_REFRESH')
             row.operator("wm.recover_last_session", text="", icon='RECOVER_LAST')
@@ -477,7 +484,6 @@ class TOOLBAR_MT_file(Menu):
         ## ------------------ Link Append
 
         if addon_prefs.file_link_append:
-
             row = layout.row(align=True)
             row.operator("wm.link", text="", icon='LINK_BLEND')
             row.operator("wm.append", text="", icon='APPEND_BLEND')
@@ -485,92 +491,88 @@ class TOOLBAR_MT_file(Menu):
         ## ------------------ Import menu
 
         if addon_prefs.file_import_menu:
-
-            layout.menu("TOPBAR_MT_file_import", icon='IMPORT', text = "")
+            layout.menu("TOPBAR_MT_file_import", icon='IMPORT', text="")
 
         if addon_prefs.file_export_menu:
-
-            layout.menu("TOPBAR_MT_file_export", icon='EXPORT', text = "")
+            layout.menu("TOPBAR_MT_file_export", icon='EXPORT', text="")
 
         ## ------------------ Import single types
 
         if addon_prefs.file_import_common:
-
             row = layout.row(align=True)
+
             if bpy.app.build_options.io_fbx:
                 row.operator("wm.fbx_import", text="", icon='LOAD_FBX')
-            if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_scene_fbx" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
-            if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
+            if bpy.app.build_options.io_wavefront_obj: # BFA - only show if built option is true
                 row.operator("wm.obj_import", text="", icon='LOAD_OBJ')
-            if bpy.app.build_options.alembic: # bfa - only show if built option is true
-                row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
+            if bpy.app.build_options.alembic: # BFA - only show if built option is true
+                row.operator("wm.alembic_import", text="", icon="LOAD_ABC")
 
         if addon_prefs.file_import_common2:
-
             row = layout.row(align=True)
+
             row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
-            if bpy.app.build_options.usd: # bfa - only show if built option is true
+            if bpy.app.build_options.usd: # BFA - only show if built option is true
                 row.operator("wm.usd_import", text="", icon='LOAD_USD')
-            if "io_scene_gltf2" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_scene_gltf2" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                     row.operator("import_scene.gltf", text="", icon='LOAD_GLTF')
 
         ## ------------------ Import uncommon
 
         if addon_prefs.file_import_uncommon:
-
             row = layout.row(align=True)
 
-            if "io_mesh_stl" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_mesh_stl" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("import_mesh.stl", text="", icon='LOAD_STL')
-            if bpy.app.build_options.io_ply: # bfa - only show if built option is true
+            if bpy.app.build_options.io_ply: # BFA - only show if built option is true
                 row.operator("wm.ply_import", text="", icon='LOAD_PLY')
-            if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_scene_x3d" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
-            if "io_curve_svg" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_curve_svg" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("import_curve.svg", text="", icon='LOAD_SVG')
 
         ## ------------------ Export common
 
         if addon_prefs.file_export_common:
-
             row = layout.row(align=True)
             # BFA - WIP - future fbx api?
             #if bpy.app.build_options.io_fbx:
             #    row.operator("wm.fbx_export", text="", icon='SAVE_FBX')
-            if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_scene_fbx" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
-            if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
+            if bpy.app.build_options.io_wavefront_obj: # BFA - only show if built option is true
                 row.operator("wm.obj_export", text="", icon='SAVE_OBJ')
-            if bpy.app.build_options.alembic: # bfa - only show if built option is true
-                row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
+            if bpy.app.build_options.alembic: # BFA - only show if built option is true
+                row.operator("wm.alembic_export", text="", icon="SAVE_ABC")
 
         if addon_prefs.file_export_common2:
-
             row = layout.row(align=True)
+
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
-            if bpy.app.build_options.usd: # bfa - only show if built option is true
+            if bpy.app.build_options.usd: # BFA - only show if built option is true
                 row.operator("wm.usd_export", text="", icon='SAVE_USD')
-            if "io_scene_gltf2" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_scene_gltf2" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("export_scene.gltf", text="", icon='SAVE_GLTF')
 
         ## ------------------ Export uncommon
 
         if addon_prefs.file_export_uncommon:
-
             row = layout.row(align=True)
-            if "io_mesh_stl" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+
+            if "io_mesh_stl" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("export_mesh.stl", text="", icon='SAVE_STL')
-            if bpy.app.build_options.io_ply: # bfa - only show if built option is true
+            if bpy.app.build_options.io_ply: # BFA - only show if built option is true
                 row.operator("wm.ply_export", text="", icon='SAVE_PLY')
-            if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+            if "io_scene_x3d" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
                 row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
 
         ## ------------------ Render
 
         if addon_prefs.file_render:
-
             row = layout.row(align=True)
+
             row.operator("render.render", text="", icon='RENDER_STILL').use_viewport = True
             props = row.operator("render.render", text="", icon='RENDER_ANIMATION')
             props.animation = True
@@ -579,20 +581,18 @@ class TOOLBAR_MT_file(Menu):
         ## ------------------ Render
 
         if addon_prefs.file_render_opengl:
-
             row = layout.row(align=True)
-            row.operator("render.opengl", text="", icon = 'RENDER_STILL_VIEW')
-            row.operator("render.opengl", text="", icon = 'RENDER_ANI_VIEW').animation = True
+            row.operator("render.opengl", text="", icon='RENDER_STILL_VIEW')
+            row.operator("render.opengl", text="", icon='RENDER_ANI_VIEW').animation = True
 
         ## ------------------ Render
 
         if addon_prefs.file_render_misc:
-
             row = layout.row(align=True)
             row.operator("sound.mixdown", text="", icon='PLAY_AUDIO')
 
             row = layout.row(align=True)
-            row.operator("render.view_show", text="", icon = 'HIDE_RENDERVIEW')
+            row.operator("render.view_show", text="", icon='HIDE_RENDERVIEW')
             row.operator("render.play_rendered_anim", icon='PLAY', text="")
 
 
@@ -610,9 +610,9 @@ class TOOLBAR_PT_menu_meshedit(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars Mesh Edit:")
+        layout.label(text="Toolbars Mesh Edit:")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "mesh_vertices_splitconnect")
@@ -620,7 +620,7 @@ class TOOLBAR_PT_menu_meshedit(Panel):
         row.separator()
         row.prop(addon_prefs, "mesh_vertices_misc")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "mesh_edges_subdiv")
@@ -634,7 +634,7 @@ class TOOLBAR_PT_menu_meshedit(Panel):
         row.separator()
         row.prop(addon_prefs, "mesh_edges_misc")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "mesh_faces_general")
@@ -652,7 +652,7 @@ class TOOLBAR_PT_menu_meshedit(Panel):
         row.prop(addon_prefs, "mesh_cleanup")
 
 
-############### bfa - Load Save menu hidable by the flag in the right click menu
+############### BFA - Load Save menu hidable by the flag in the right click menu
 
 
 class TOOLBAR_MT_meshedit(Menu):
@@ -678,119 +678,109 @@ class TOOLBAR_MT_meshedit(Menu):
 
         obj = context.object
         if obj is not None:
-
             mode = obj.mode
             with_freestyle = bpy.app.build_options.freestyle
 
             if mode == 'EDIT':
-
                 if obj.type == 'MESH':
-
                     if addon_prefs.mesh_vertices_splitconnect:
-
                         row = layout.row(align=True)
-                        row.operator("mesh.split", text = "", icon = "SPLIT")
-                        row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
-                        row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
+
+                        row.operator("mesh.split", text="", icon="SPLIT")
+                        row.operator("mesh.vert_connect_path", text="", icon="VERTEXCONNECTPATH")
+                        row.operator("mesh.vert_connect", text="", icon="VERTEXCONNECT")
 
                     if addon_prefs.mesh_vertices_misc:
-
                         row = layout.row(align=True)
                         with_bullet = bpy.app.build_options.bullet
 
                         if with_bullet:
-                            row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
+                            row.operator("mesh.convex_hull", text="", icon="CONVEXHULL")
 
-                        row.operator("mesh.blend_from_shape", text = "", icon = "BLENDFROMSHAPE")
-                        row.operator("mesh.shape_propagate_to_all", text = "", icon = "SHAPEPROPAGATE")
+                        row.operator("mesh.blend_from_shape", text="", icon="BLENDFROMSHAPE")
+                        row.operator("mesh.shape_propagate_to_all", text="", icon="SHAPEPROPAGATE")
 
 
                     ## ------------------ Edges
 
                     if addon_prefs.mesh_edges_subdiv:
-
                         row = layout.row(align=True)
-                        row.operator("mesh.subdivide", text = "", icon = "SUBDIVIDE_EDGES")
-                        row.operator("mesh.subdivide_edgering", text = "", icon = "SUBDIVEDGELOOP")
-                        row.operator("mesh.unsubdivide", text = "", icon = "UNSUBDIVIDE")
+                        row.operator("mesh.subdivide", text="", icon="SUBDIVIDE_EDGES")
+                        row.operator("mesh.subdivide_edgering", text="", icon="SUBDIVEDGELOOP")
+                        row.operator("mesh.unsubdivide", text="", icon="UNSUBDIVIDE")
 
                     if addon_prefs.mesh_edges_sharp:
-
                         row = layout.row(align=True)
-                        row.operator("mesh.mark_sharp", text = "", icon = "MARKSHARPEDGES")
-                        row.operator("mesh.mark_sharp", text = "", icon = "CLEARSHARPEDGES").clear = True
-                        row.operator("mesh.set_sharpness_by_angle", text = "", icon="MARKSHARPANGLE")
+                        row.operator("mesh.mark_sharp", text="", icon="MARKSHARPEDGES")
+                        row.operator("mesh.mark_sharp", text="", icon="CLEARSHARPEDGES").clear = True
+                        row.operator("mesh.set_sharpness_by_angle", text="", icon="MARKSHARPANGLE")
 
                     if addon_prefs.mesh_edges_freestyle:
-
                         row = layout.row(align=True)
                         if with_freestyle:
-                            row.operator("mesh.mark_freestyle_edge", text = "", icon = "MARK_FS_EDGE").clear = False
-                            row.operator("mesh.mark_freestyle_edge", text = "", icon = "CLEAR_FS_EDGE").clear = True
+                            row.operator("mesh.mark_freestyle_edge", text="", icon="MARK_FS_EDGE").clear = False
+                            row.operator("mesh.mark_freestyle_edge", text="", icon="CLEAR_FS_EDGE").clear = True
 
                     if addon_prefs.mesh_edges_rotate:
-
                         row = layout.row(align=True)
-                        row.operator("mesh.edge_rotate", text = "", icon = "ROTATECW").use_ccw = False
+                        row.operator("mesh.edge_rotate", text="", icon="ROTATECW").use_ccw = False
 
                     if addon_prefs.mesh_edges_misc:
-
                         row = layout.row(align=True)
-                        row.operator("mesh.edge_split", text = "", icon = "SPLITEDGE")
-                        row.operator("mesh.bridge_edge_loops", text = "", icon = "BRIDGE_EDGELOOPS")
+                        row.operator("mesh.edge_split", text="", icon="SPLITEDGE")
+                        row.operator("mesh.bridge_edge_loops", text="", icon="BRIDGE_EDGELOOPS")
 
                     ## ------------------ Faces
 
                     if addon_prefs.mesh_faces_general:
-
                         with_freestyle = bpy.app.build_options.freestyle
                         row = layout.row(align=True)
-                        row.operator("mesh.fill", text = "", icon = "FILL")
-                        row.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
-                        row.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
-                        row.operator("mesh.solidify", text = "", icon = "SOLIDIFY")
-                        row.operator("mesh.intersect", text = "", icon = "INTERSECT")
-                        row.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
-                        row.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
+
+                        row.operator("mesh.fill", text="", icon="FILL")
+                        row.operator("mesh.fill_grid", text="", icon="GRIDFILL")
+                        row.operator("mesh.beautify_fill", text="", icon="BEAUTIFY")
+                        row.operator("mesh.solidify", text="", icon="SOLIDIFY")
+                        row.operator("mesh.intersect", text="", icon="INTERSECT")
+                        row.operator("mesh.intersect_boolean", text="", icon="BOOLEAN_INTERSECT")
+                        row.operator("mesh.wireframe", text="", icon="WIREFRAME")
 
                     if addon_prefs.mesh_faces_freestyle:
-
                         row = layout.row(align=True)
                         if with_freestyle:
-                            row.operator("mesh.mark_freestyle_face", text = "", icon = "MARKFSFACE").clear = False
-                            row.operator("mesh.mark_freestyle_face", text = "", icon = "CLEARFSFACE").clear = True
+                            row.operator("mesh.mark_freestyle_face", text="", icon="MARKFSFACE").clear = False
+                            row.operator("mesh.mark_freestyle_face", text="", icon="CLEARFSFACE").clear = True
 
                     if addon_prefs.mesh_faces_tris:
-
                         row = layout.row(align=True)
-                        row.operator("mesh.poke", text = "", icon = "POKEFACES")
-                        props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+                        row.operator("mesh.poke", text="", icon="POKEFACES")
+                        
+                        props = row.operator("mesh.quads_convert_to_tris", text="", icon="TRIANGULATE")
                         props.quad_method = props.ngon_method = 'BEAUTY'
-                        row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
-                        row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
+
+                        row.operator("mesh.tris_convert_to_quads", text="", icon="TRISTOQUADS")
+                        row.operator("mesh.face_split_by_edges", text="", icon="SPLITBYEDGES")
 
                     if addon_prefs.mesh_faces_rotatemisc:
-
                         row = layout.row(align=True)
-                        row.operator("mesh.uvs_rotate", text = "", icon = "ROTATE_UVS")
-                        row.operator("mesh.uvs_reverse", text = "", icon = "REVERSE_UVS")
-                        row.operator("mesh.colors_rotate", text = "", icon = "ROTATE_COLORS")
-                        row.operator("mesh.colors_reverse", text = "", icon = "REVERSE_COLORS")
+
+                        row.operator("mesh.uvs_rotate", text="", icon="ROTATE_UVS")
+                        row.operator("mesh.uvs_reverse", text="", icon="REVERSE_UVS")
+                        row.operator("mesh.colors_rotate", text="", icon="ROTATE_COLORS")
+                        row.operator("mesh.colors_reverse", text="", icon="REVERSE_COLORS")
 
                     ## ------------------ Cleanup
 
                     if addon_prefs.mesh_cleanup:
+                        row = layout.row(align=True)
+                        row.operator("mesh.delete_loose", text="", icon="DELETE_LOOSE")
 
                         row = layout.row(align=True)
-                        row.operator("mesh.delete_loose", text = "", icon = "DELETE_LOOSE")
-
-                        row = layout.row(align=True)
-                        row.operator("mesh.decimate", text = "", icon = "DECIMATE")
-                        row.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
-                        row.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
-                        row.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
-                        row.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
-                        row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
+                        row.operator("mesh.decimate", text="", icon="DECIMATE")
+                        row.operator("mesh.dissolve_degenerate", text="", icon="DEGENERATE_DISSOLVE")
+                        row.operator("mesh.face_make_planar", text="", icon="MAKE_PLANAR")
+                        row.operator("mesh.vert_connect_nonplanar", text="", icon="SPLIT_NONPLANAR")
+                        row.operator("mesh.vert_connect_concave", text="", icon="SPLIT_CONCAVE")
+                        row.operator("mesh.fill_holes", text="", icon="FILL_HOLE")
 
 
 ######################################## Primitives ##############################################
@@ -807,9 +797,9 @@ class TOOLBAR_PT_menu_primitives(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars Primitives:")
+        layout.label(text="Toolbars Primitives:")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "primitives_mesh")
@@ -823,7 +813,7 @@ class TOOLBAR_PT_menu_primitives(Panel):
         row.separator()
         row.prop(addon_prefs, "primitives_metaball")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "primitives_volume")
@@ -859,7 +849,7 @@ class TOOLBAR_PT_menu_primitives(Panel):
         row.prop(addon_prefs, "primitives_collection")
 
 
-############### bfa - menu hidable by the flag in the right click menu
+############### BFA - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_primitives(Menu):
     bl_idname = "TOOLBAR_MT_primitives"
@@ -872,9 +862,6 @@ class TOOLBAR_MT_primitives(Menu):
     def draw_menus(layout, context):
         if not context.area.primitives_toolbars:
             return
-        
-        scene = context.scene
-        #rd = scene.render
 
         layout.popover(panel="TOOLBAR_PT_menu_primitives", text = "")
 
@@ -884,12 +871,10 @@ class TOOLBAR_MT_primitives(Menu):
         obj = context.object
 
         if obj is None:
-
             ## ------------------ primitives sub toolbars
-
             if addon_prefs.primitives_mesh:
-
                 row = layout.row(align=True)
+
                 row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
                 row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
                 row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
@@ -898,11 +883,11 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
                 row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
                 row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
-                row.operator("mesh.primitive_grid_add", text = "", icon='MESH_GRID')
+                row.operator("mesh.primitive_grid_add", text="", icon='MESH_GRID')
 
             if addon_prefs.primitives_curve:
-
                 row = layout.row(align=True)
+
                 row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
                 row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
                 row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
@@ -910,8 +895,8 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
             if addon_prefs.primitives_surface:
-
                 row = layout.row(align=True)
+
                 row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
                 row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
                 row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
@@ -920,8 +905,8 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
 
             if addon_prefs.primitives_metaball:
-
                 row = layout.row(align=True)
+
                 row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
                 row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
                 row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
@@ -929,42 +914,39 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
             if addon_prefs.primitives_point_cloud:
-
                 row = layout.row(align=True)
                 row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
-
             if addon_prefs.primitives_volume:
-
                 row = layout.row(align=True)
                 row.operator("object.volume_import", text="", icon='FILE_VOLUME')
                 row.operator("object.volume_add", text="", icon='OUTLINER_OB_VOLUME')
 
             if addon_prefs.primitives_gpencil:
-
                 row = layout.row(align=True)
+
                 row.operator("object.grease_pencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
                 row.operator("object.grease_pencil_add", text="", icon='STROKE').type= 'STROKE'
                 row.operator("object.grease_pencil_add", text="", icon='MONKEY').type= 'MONKEY'
 
             if addon_prefs.primitives_gpencil_lineart:
-
                 row = layout.row(align=True)
+
                 row.operator("object.grease_pencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
                 row.operator("object.grease_pencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
                 row.operator("object.grease_pencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
 
             if addon_prefs.primitives_light:
-
                 row = layout.row(align=True)
+
                 row.operator("object.light_add", text="", icon='LIGHT_POINT').type= 'POINT'
                 row.operator("object.light_add", text="", icon='LIGHT_SUN').type= 'SUN'
                 row.operator("object.light_add", text="", icon='LIGHT_SPOT').type= 'SPOT'
                 row.operator("object.light_add", text="", icon='LIGHT_AREA').type= 'AREA'
 
             if addon_prefs.primitives_other:
-
                 row = layout.row(align=True)
+
                 row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
                 row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
                 row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
@@ -973,8 +955,8 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
             if addon_prefs.primitives_empties:
-
                 row = layout.row(align=True)
+
                 row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
                 row.operator("object.empty_add", text="", icon='EMPTY_SPHERE').type = 'SPHERE'
                 row.operator("object.empty_add", text="", icon='EMPTY_CIRCLE').type = 'CIRCLE'
@@ -985,20 +967,20 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
             if addon_prefs.primitives_image:
-
                 row = layout.row(align=True)
+
                 row.operator("image.import_as_mesh_planes", text="", icon='MESH_PLANE')
 
             if addon_prefs.primitives_lightprobe:
-
                 row = layout.row(align=True)
+
                 row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_SPHERE').type='SPHERE'
                 row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANE').type='PLANE'
                 row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_VOLUME').type='VOLUME'
 
             if addon_prefs.primitives_forcefield:
-
                 row = layout.row(align=True)
+
                 row.operator("object.effector_add", text="", icon='FORCE_BOID').type='BOID'
                 row.operator("object.effector_add", text="", icon='FORCE_CHARGE').type='CHARGE'
                 row.operator("object.effector_add", text="", icon='FORCE_CURVE').type='GUIDE'
@@ -1014,22 +996,17 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
 
             if addon_prefs.primitives_collection:
-
                 row = layout.row(align=True)
-
                 row.operator("object.collection_instance_add", text="", icon='GROUP')
 
         elif obj is not None:
-
             mode = obj.mode
 
             if mode == 'OBJECT':
-
                 ## ------------------ primitives sub toolbars
-
                 if addon_prefs.primitives_mesh:
-
                     row = layout.row(align=True)
+
                     row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
                     row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
                     row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
@@ -1038,11 +1015,11 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
                     row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
                     row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
-                    row.operator("mesh.primitive_grid_add", text = "", icon='MESH_GRID')
+                    row.operator("mesh.primitive_grid_add", text="", icon='MESH_GRID')
 
                 if addon_prefs.primitives_curve:
-
                     row = layout.row(align=True)
+
                     row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
                     row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
                     row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
@@ -1050,8 +1027,8 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
                 if addon_prefs.primitives_surface:
-
                     row = layout.row(align=True)
+                    
                     row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
                     row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
                     row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
@@ -1060,8 +1037,8 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
 
                 if addon_prefs.primitives_metaball:
-
                     row = layout.row(align=True)
+
                     row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
                     row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
                     row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
@@ -1069,41 +1046,40 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
                 if addon_prefs.primitives_point_cloud:
-
                     row = layout.row(align=True)
                     row.operator("object.pointcloud_random_add", text="", icon='OUTLINER_OB_POINTCLOUD')
 
                 if addon_prefs.primitives_volume:
-
                     row = layout.row(align=True)
+
                     row.operator("object.volume_import", text="", icon='FILE_VOLUME')
                     row.operator("object.volume_add", text="", icon='OUTLINER_OB_VOLUME')
 
                 if addon_prefs.primitives_gpencil:
-
                     row = layout.row(align=True)
+
                     row.operator("object.grease_pencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
                     row.operator("object.grease_pencil_add", text="", icon='STROKE').type= 'STROKE'
                     row.operator("object.grease_pencil_add", text="", icon='MONKEY').type= 'MONKEY'
 
                 if addon_prefs.primitives_gpencil_lineart:
-
                     row = layout.row(align=True)
+
                     row.operator("object.grease_pencil_add", text="", icon='LINEART_SCENE').type= 'LINEART_SCENE'
                     row.operator("object.grease_pencil_add", text="", icon='LINEART_COLLECTION').type= 'LINEART_COLLECTION'
                     row.operator("object.grease_pencil_add", text="", icon='LINEART_OBJECT').type= 'LINEART_OBJECT'
 
                 if addon_prefs.primitives_light:
-
                     row = layout.row(align=True)
+
                     row.operator("object.light_add", text="", icon='LIGHT_POINT').type= 'POINT'
                     row.operator("object.light_add", text="", icon='LIGHT_SUN').type= 'SUN'
                     row.operator("object.light_add", text="", icon='LIGHT_SPOT').type= 'SPOT'
                     row.operator("object.light_add", text="", icon='LIGHT_AREA').type= 'AREA'
 
                 if addon_prefs.primitives_other:
-
                     row = layout.row(align=True)
+
                     row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
                     row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
                     row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
@@ -1112,8 +1088,8 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
                 if addon_prefs.primitives_empties:
-
                     row = layout.row(align=True)
+
                     row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
                     row.operator("object.empty_add", text="", icon='EMPTY_SPHERE').type = 'SPHERE'
                     row.operator("object.empty_add", text="", icon='EMPTY_CIRCLE').type = 'CIRCLE'
@@ -1124,20 +1100,19 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
                 if addon_prefs.primitives_image:
-
                     row = layout.row(align=True)
                     row.operator("image.import_as_mesh_planes", text="", icon='MESH_PLANE')
 
                 if addon_prefs.primitives_lightprobe:
-
                     row = layout.row(align=True)
+
                     row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_SPHERE').type='SPHERE'
                     row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANE').type='PLANE'
                     row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_VOLUME').type='VOLUME'
 
                 if addon_prefs.primitives_forcefield:
-
                     row = layout.row(align=True)
+
                     row.operator("object.effector_add", text="", icon='FORCE_BOID').type='BOID'
                     row.operator("object.effector_add", text="", icon='FORCE_CHARGE').type='CHARGE'
                     row.operator("object.effector_add", text="", icon='FORCE_CURVE').type='GUIDE'
@@ -1153,17 +1128,14 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
 
                 if addon_prefs.primitives_collection:
-
                     row = layout.row(align=True)
                     row.operator("object.collection_instance_add", text="", icon='GROUP')
 
             if mode == 'EDIT':
-
                 if obj.type == 'MESH':
-
                     if addon_prefs.primitives_mesh:
-
                         row = layout.row(align=True)
+
                         row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
                         row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
                         row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
@@ -1172,13 +1144,12 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
                         row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
                         row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
-                        row.operator("mesh.primitive_grid_add", text = "", icon='MESH_GRID')
+                        row.operator("mesh.primitive_grid_add", text="", icon='MESH_GRID')
 
                 if obj.type == 'CURVE':
-
                     if addon_prefs.primitives_curve:
-
                         row = layout.row(align=True)
+
                         row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
                         row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
                         row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
@@ -1186,7 +1157,6 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
                 if obj.type == 'SURFACE':
-
                     if addon_prefs.primitives_surface:
 
                         row = layout.row(align=True)
@@ -1198,7 +1168,6 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
 
                 if obj.type == 'META':
-
                     if addon_prefs.primitives_metaball:
 
                         row = layout.row(align=True)
@@ -1242,20 +1211,21 @@ class TOOLBAR_PT_menu_image(Panel):
         obj = context.object
 
         if obj is None:
-            col = layout.column(align = True)
-            row = col.row()
-            col.label(text = "Toolbar Image:", icon="NONE")
+            col = layout.column(align=True)
+            col.label(text="Toolbar Image:", icon="NONE")
+
             col.alert=True
-            col.label(text = "No Active Mesh", icon="INFO")
+            col.label(text="No Active Mesh", icon="INFO")
 
         if obj is not None:
-            col = layout.column(align = True)
-            col.label(text = "Toolbar Image:", icon="NONE")
-            col.alert=True
-            col.label(text = "Edit Mode Only", icon="NONE")
-            col.label(text = "UV Editor must be open!", icon="NONE")
+            col = layout.column(align=True)
+            col.label(text="Toolbar Image:", icon="NONE")
 
-            col = layout.column(align = True)
+            col.alert=True
+            col.label(text="Edit Mode Only", icon="NONE")
+            col.label(text="UV Editor must be open!", icon="NONE")
+
+            col = layout.column(align=True)
             row = col.row()
             row.separator()
             row.prop(addon_prefs, "image_uv_mirror")
@@ -1273,7 +1243,7 @@ class TOOLBAR_PT_menu_image(Panel):
             row.prop(addon_prefs, "image_uv_modify")
 
 
-############### bfa - menu hidable by the flag in the right click menu
+############### BFA - menu hidable by the flag in the right click menu
 
 # special classes to call the rotate functionality in the image editor from the toolbar editor
 # Original operators doesn't work directly from toolbar
@@ -1343,8 +1313,6 @@ class TOOLBAR_MT_image(Menu):
     def draw_menus(layout, context):
         if not context.area.image_toolbars:
             return
-        
-        scene = context.scene
 
         layout.popover(panel="TOOLBAR_PT_menu_image", text = "")
 
@@ -1355,65 +1323,61 @@ class TOOLBAR_MT_image(Menu):
         mode = 'OBJECT' if obj is None else obj.mode
 
         if mode == 'EDIT':
-
         ## ------------------ image sub toolbars
-
             if addon_prefs.image_uv_mirror:
-
                 row = layout.row(align=True)
 
-                row.operator("image.uv_mirror_x", text="", icon = "MIRROR_X")
-                row.operator("image.uv_mirror_y", text="", icon = "MIRROR_Y")
+                row.operator("image.uv_mirror_x", text="", icon="MIRROR_X")
+                row.operator("image.uv_mirror_y", text="", icon="MIRROR_Y")
 
             if addon_prefs.image_uv_rotate:
-
                 row = layout.row(align=True)
 
-                row.operator("image.uv_rotate_clockwise", text="", icon = "ROTATE_PLUS_90")
-                row.operator("image.uv_rotate_counterclockwise", text="", icon = "ROTATE_MINUS_90")
+                row.operator("image.uv_rotate_clockwise", text="", icon="ROTATE_PLUS_90")
+                row.operator("image.uv_rotate_counterclockwise", text="", icon="ROTATE_MINUS_90")
 
             if addon_prefs.image_uv_align:
-
                 row = layout.row(align=True)
 
-                #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # bfa - enum is no good idea in header. It enums below each other. And the header just shows besides ...
+                #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # BFA - enum is no good idea in header. It enums below each other. And the header just shows besides ...
 
-                row.operator("uv.align", text= "", icon = "ALIGN").axis = 'ALIGN_S'
-                row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
-                row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
-                row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
-                row.operator("uv.align", text= "", icon = "ALIGN_X").axis = 'ALIGN_X'
-                row.operator("uv.align", text= "", icon = "ALIGN_Y").axis = 'ALIGN_Y'
-                row.operator("uv.align_rotation", text= "", icon = "DRIVER_ROTATIONAL_DIFFERENCE")
+                row.operator("uv.align", text="", icon="ALIGN").axis = 'ALIGN_S'
+                row.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
+                row.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
+                row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
+                row.operator("uv.align", text="", icon="ALIGNHORIZONTAL").axis = 'ALIGN_X'
+                row.operator("uv.align", text="", icon="ALIGNVERTICAL").axis = 'ALIGN_Y'
+                row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
                 # Try to give unique tooltip fails at wrong context issue. It throws an error when you are not in edit mode, have no uv editor open, and there is no mesh selected.
                 # Code remains here for now. Maybe we find a solution at a later point.
                 #row.operator("image.uv_straighten", text= "straighten")
 
             if addon_prefs.image_uv_unwrap:
-
                 row = layout.row(align=True)
                 row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+
                 sub = row.row()
                 sub.active = (mode == 'EDIT')
                 sub.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
+
                 row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
 
                 row = layout.row(align=True)
-                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
-                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'
-                row.operator("uv.unwrap", text = "", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.cube_project", text= "",icon = "CUBEPROJECT")
-                row.operator("uv.cylinder_project", text= "",icon = "CYLINDERPROJECT")
-                row.operator("uv.sphere_project", text= "",icon = "SPHEREPROJECT")
+                row.operator("uv.unwrap", text="", icon='UNWRAP_ABF').method='ANGLE_BASED'
+                row.operator("uv.unwrap", text="", icon='UNWRAP_LSCM').method='CONFORMAL'
+                row.operator("uv.unwrap", text="", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
+
+                row.operator_context='EXEC_REGION_WIN'
+                row.operator("uv.cube_project", text="", icon="CUBEPROJECT")
+                row.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
 
             if addon_prefs.image_uv_modify:
-
                 row = layout.row(align=True)
 
-                row.operator("uv.pin", text= "", icon = "PINNED").clear = False
-                row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+                row.operator("uv.pin", text="", icon="PINNED").clear = False
+                row.operator("uv.pin", text="", icon="UNPINNED").clear = True
 
                 row = layout.row(align=True)
                 row.operator("uv.weld", text="", icon='WELD')
@@ -1443,9 +1407,9 @@ class TOOLBAR_PT_menu_tools(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars Tools:")
+        layout.label(text="Toolbars Tools:")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "tools_parent")
@@ -1475,7 +1439,7 @@ class TOOLBAR_PT_menu_tools(Panel):
         row.prop(addon_prefs, "tools_relations")
 
 
-############### bfa - menu hidable by the flag in the right click menu
+############### BFA - menu hidable by the flag in the right click menu
 
 
 class TOOLBAR_MT_tools(Menu):
@@ -1489,8 +1453,6 @@ class TOOLBAR_MT_tools(Menu):
     def draw_menus(layout, context):
         if not context.area.tools_toolbars:
             return
-        
-        scene = context.scene
 
         layout.popover(panel="TOOLBAR_PT_menu_tools", text = "")
 
@@ -1502,93 +1464,76 @@ class TOOLBAR_MT_tools(Menu):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         if obj is not None:
-
             mode = obj.mode
-
             if mode == 'OBJECT':
-
                 if addon_prefs.tools_parent:
-
                     row = layout.row(align=True)
+
                     row.operator("object.parent_set", icon='PARENT_SET', text="")
                     row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
 
                 if addon_prefs.tools_objectdata:
-
                     row = layout.row(align=True)
-                    row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
-                    row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
 
+                    row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
+                    row.menu("VIEW3D_MT_make_links", text="", icon='LINK_DATA')
 
                 if addon_prefs.tools_link_to_scn:
-
-                    operator_context_default = layout.operator_context
                     if len(bpy.data.scenes) > 10:
-                        layout.operator_context = 'INVOKE_REGION_WIN'
+                        layout.operator_context='INVOKE_REGION_WIN'
                         layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
                     else:
-                        layout.operator_context = 'EXEC_REGION_WIN'
+                        layout.operator_context='EXEC_REGION_WIN'
                         layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
 
                 if addon_prefs.tools_linked_objects:
-
                     row = layout.row(align=True)
+
                     row.operator("object.make_local", icon='MAKE_LOCAL', text="")
-                    row.operator("object.make_override_library", text="", icon = "LIBRARY_DATA_OVERRIDE")
+                    row.operator("object.make_override_library", text="", icon="LIBRARY_DATA_OVERRIDE")
 
                 if addon_prefs.tools_join:
-
                     obj_type = obj.type
-
                     row = layout.row(align=True)
                     if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
-                        row.operator("object.join", icon ='JOIN', text= "" )
+                        row.operator("object.join", icon ='JOIN', text="")
 
                 if addon_prefs.tools_origin:
-
                     obj_type = obj.type
 
                     if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
-
                         row = layout.row(align=True)
+
                         row.operator("object.origin_set", icon ='GEOMETRY_TO_ORIGIN', text="").type='GEOMETRY_ORIGIN'
                         row.operator("object.origin_set", icon ='ORIGIN_TO_GEOMETRY', text="").type='ORIGIN_GEOMETRY'
                         row.operator("object.origin_set", icon ='ORIGIN_TO_CURSOR', text="").type='ORIGIN_CURSOR'
                         row.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text="").type='ORIGIN_CENTER_OF_MASS'
-                        row.operator("object.origin_set", icon ='ORIGIN_TO_VOLUME', text = "").type='ORIGIN_CENTER_OF_VOLUME'
+                        row.operator("object.origin_set", icon ='ORIGIN_TO_VOLUME', text="").type='ORIGIN_CENTER_OF_VOLUME'
 
                 if addon_prefs.tools_shading:
-
                     obj_type = obj.type
-
                     if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
-
                         row = layout.row(align=True)
+
                         row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
                         row.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH", text="")
                         row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
 
                 if addon_prefs.tools_datatransfer:
-
                     obj_type = obj.type
-
                     if obj_type == 'MESH':
 
                         row = layout.row(align=True)
                         row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
                         row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
-                        row.operator("object.join_uvs", icon ='TRANSFER_UV', text = "")
+                        row.operator("object.join_uvs", icon ='TRANSFER_UV', text="")
 
             if mode == 'EDIT':
-
                 if addon_prefs.tools_relations:
-
                     row = layout.row(align=True)
-
-                    row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT" )
+                    row.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
 
                     if obj.type == 'ARMATURE':
-
                         row = layout.row(align=True)
                         row.operator("armature.parent_set", icon='PARENT_SET', text="")
                         row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="")
@@ -1608,9 +1553,9 @@ class TOOLBAR_PT_menu_animation(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars Animation:")
+        layout.label(text="Toolbars Animation:")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "animation_keyframes")
@@ -1631,7 +1576,7 @@ class TOOLBAR_PT_menu_animation(Panel):
         row.prop(addon_prefs, "animation_keyingset")
 
 
-############### bfa - menu hidable by the flag in the right click menu
+############### BFA - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_animation(Menu):
     bl_idname = "TOOLBAR_MT_animation"
@@ -1648,9 +1593,8 @@ class TOOLBAR_MT_animation(Menu):
         scene = context.scene
         screen = context.screen
         toolsettings = context.tool_settings
-        userprefs = context.preferences
 
-        layout.popover(panel="TOOLBAR_PT_menu_animation", text = "")
+        layout.popover(panel="TOOLBAR_PT_menu_animation", text="")
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -1658,40 +1602,34 @@ class TOOLBAR_MT_animation(Menu):
         ## ------------------ Animation sub toolbars
 
         if addon_prefs.animation_keyframes:
-
             obj = context.object
 
             if obj is not None:
-
                 mode = obj.mode
-
                 if mode == 'OBJECT':
+                    row = layout.row(align=True)
+                    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="")
+                    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE', text="")
+                    row.operator("nla.bake", icon= 'BAKE_ACTION', text="")
+                    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR', text="")
 
                     row = layout.row(align=True)
-                    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
-                    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
-                    row.operator("nla.bake", icon= 'BAKE_ACTION',text="")
-                    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="")
-
-                    row = layout.row(align=True)
-                    row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
-                    row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
+                    row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="")
+                    row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR', text="")
 
                 if mode == 'POSE':
+                    row = layout.row(align=True)
+                    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="")
+                    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE', text="")
+                    row.operator("nla.bake", icon= 'BAKE_ACTION', text="")
+                    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR', text="")
 
                     row = layout.row(align=True)
-                    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
-                    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
-                    row.operator("nla.bake", icon= 'BAKE_ACTION',text="")
-                    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="")
 
-                    row = layout.row(align=True)
-
-                    row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
-                    row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
+                    row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="")
+                    row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR', text="")
 
         if addon_prefs.animation_play:
-
             row = layout.row(align=True)
             row.operator("screen.frame_jump", text="", icon='REW').end = False
             row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
@@ -1707,10 +1645,12 @@ class TOOLBAR_MT_animation(Menu):
                 else:
                     row.operator("screen.animation_play", text="", icon='PLAY_REVERSE').reverse = True
                     row.operator("screen.animation_play", text="", icon='PLAY')
+
             else:
                 sub = row.row(align=True)
                 sub.scale_x = 1.4
                 sub.operator("screen.animation_play", text="", icon='PAUSE')
+
             row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
             row.operator("screen.frame_jump", text="", icon='FF').end = True
 
@@ -1718,10 +1658,9 @@ class TOOLBAR_MT_animation(Menu):
             row.prop(scene, "frame_current", text="")
 
         if addon_prefs.animation_range:
-
             row = layout.row(align=True)
             row.prop(scene, "use_preview_range", text="", toggle=True)
-            row.prop(scene, "lock_frame_selection_to_range", text="", icon = "LOCKED", toggle=True)
+            row.prop(scene, "lock_frame_selection_to_range", text="", icon="LOCKED", toggle=True)
 
             row = layout.row(align=True)
             if not scene.use_preview_range:
@@ -1732,7 +1671,6 @@ class TOOLBAR_MT_animation(Menu):
                 row.prop(scene, "frame_preview_end", text="End")
 
         if addon_prefs.animation_keyingset:
-
             row = layout.row(align=True)
             row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
             row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
@@ -1741,14 +1679,11 @@ class TOOLBAR_MT_animation(Menu):
             row.prop(toolsettings, "use_keyframe_insert_auto", text="", toggle=True)
             row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
-
         if addon_prefs.animation_sync:
-
             row = layout.row(align=True)
             layout.prop(scene, "sync_mode", text="")
 
         if addon_prefs.animation_keyframetype:
-
             row = layout.row(align=True)
             layout.prop(toolsettings, "keyframe_type", text="", icon_only=True)
 
@@ -1819,9 +1754,9 @@ class TOOLBAR_PT_menu_edit(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars Edit:")
+        layout.label(text="Toolbars Edit:")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "edit_edit")
@@ -1841,7 +1776,7 @@ class TOOLBAR_PT_menu_edit(Panel):
         row.separator()
         row.prop(addon_prefs, "edit_objectclear")
 
-############### bfa - menu hidable by the flag in the right click menu
+############### BFA - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_edit(Menu):
     bl_idname = "TOOLBAR_MT_edit"
@@ -1855,10 +1790,9 @@ class TOOLBAR_MT_edit(Menu):
         if not context.area.edit_toolbars:
             return
         
-        scene = context.scene
         obj = context.object
 
-        layout.popover(panel="TOOLBAR_PT_menu_edit", text = "")
+        layout.popover(panel="TOOLBAR_PT_menu_edit", text="")
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -1866,13 +1800,10 @@ class TOOLBAR_MT_edit(Menu):
         ## ------------------ Edit sub toolbars
 
         if obj is not None:
-
             if addon_prefs.edit_edit:
-
                 mode = obj.mode
 
                 if mode == 'EDIT':
-
                     row = layout.row(align=True)
                     row.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS', text="")
                     row.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES', text="")
@@ -1885,82 +1816,73 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES', text="")
 
                     row = layout.row(align=True)
-                    row.operator_menu_enum("mesh.merge", "type", text = "", icon = "MERGE")
-                    row.operator_menu_enum("mesh.separate", "type", text = "", icon = "SEPARATE")
+                    row.operator_menu_enum("mesh.merge", "type", text="", icon="MERGE")
+                    row.operator_menu_enum("mesh.separate", "type", text="", icon="SEPARATE")
 
             if addon_prefs.edit_weightinedit:
-
                 mode = obj.mode
 
-                if mode in ( 'EDIT', 'WEIGHT_PAINT'):
-
+                if mode in ('EDIT', 'WEIGHT_PAINT'):
                     row = layout.row(align=True)
+
                     row.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="")
-                    row.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="")
-                    row.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="")
-                    row.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="")
-                    row.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="")
-                    row.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="")
-                    row.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="")
-                    row.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="")
-                    row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
+                    row.operator("object.vertex_group_normalize", icon='WEIGHT_NORMALIZE', text="")
+                    row.operator("object.vertex_group_mirror", icon='WEIGHT_MIRROR', text="")
+                    row.operator("object.vertex_group_invert", icon='WEIGHT_INVERT', text="")
+                    row.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN', text="")
+                    row.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE', text="")
+                    row.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS', text="")
+                    row.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH', text="")
+                    row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL', text="")
 
             if addon_prefs.edit_objectapply:
-
                 mode = obj.mode
-
                 if mode == 'OBJECT':
-
                     row = layout.row(align=True)
-                    row.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
-                    row.operator("view3d.tb_apply_rotate", text="", icon = "APPLYROTATE")
-                    row.operator("view3d.tb_apply_scale", text="", icon = "APPLYSCALE")
-                    row.operator("view3d.tb_apply_all", text="", icon = "APPLYALL")
-                    row.operator("view3d.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
+                    
+                    row.operator("view3d.tb_apply_location", text="", icon="APPLYMOVE") # needed a tooltip, so see above ...
+                    row.operator("view3d.tb_apply_rotate", text="", icon="APPLYROTATE")
+                    row.operator("view3d.tb_apply_scale", text="", icon="APPLYSCALE")
+                    row.operator("view3d.tb_apply_all", text="", icon="APPLYALL")
+                    row.operator("view3d.tb_apply_rotscale", text="", icon="APPLY_ROTSCALE")
 
             if addon_prefs.edit_objectapply2:
-
                 mode = obj.mode
-
                 if mode == 'OBJECT':
-
                     row = layout.row(align=True)
-                    row.operator("object.visual_transform_apply", text = "", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
-                    row.operator("object.duplicates_make_real", text = "", icon = "MAKEDUPLIREAL")
-                    row.operator("object.parent_inverse_apply", text="", icon = "APPLY_PARENT_INVERSE")
+
+                    row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon="VISUALTRANSFORM")
+                    row.operator("object.duplicates_make_real", text="", icon="MAKEDUPLIREAL")
+                    row.operator("object.parent_inverse_apply", text="", icon="APPLY_PARENT_INVERSE")
                     row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
 
             if addon_prefs.edit_objectapplydeltas:
-
                 if mode == 'OBJECT':
-
                     row = layout.row(align=True)
 
-                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYMOVEDELTA")
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYMOVEDELTA")
                     myvar.mode = 'LOC'
 
-                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYROTATEDELTA")
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYROTATEDELTA")
                     myvar.mode = 'ROT'
 
-                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYSCALEDELTA")
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYSCALEDELTA")
                     myvar.mode = 'SCALE'
 
-                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYALLDELTA")
                     myvar.mode = 'ALL'
 
                     row.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
 
             if addon_prefs.edit_objectclear:
-
                 mode = obj.mode
-
                 if mode == 'OBJECT':
-
                     row = layout.row(align=True)
-                    row.operator("object.location_clear", text="", icon = "CLEARMOVE")
-                    row.operator("object.rotation_clear", text="", icon = "CLEARROTATE")
-                    row.operator("object.scale_clear", text="", icon = "CLEARSCALE")
-                    row.operator("object.origin_clear", text="", icon = "CLEARORIGIN")
+                    
+                    row.operator("object.location_clear", text="", icon="CLEARMOVE")
+                    row.operator("object.rotation_clear", text="", icon="CLEARROTATE")
+                    row.operator("object.scale_clear", text="", icon="CLEARSCALE")
+                    row.operator("object.origin_clear", text="", icon="CLEARORIGIN")
 
 
 ######################################## Misc ##############################################
@@ -1977,9 +1899,9 @@ class TOOLBAR_PT_menu_misc(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.label(text = "Toolbars Misc:")
+        layout.label(text="Toolbars Misc:")
 
-        col = layout.column(align = True)
+        col = layout.column(align=True)
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "misc_viewport")
@@ -2009,7 +1931,7 @@ class TOOLBAR_PT_menu_misc(Panel):
         row.prop(addon_prefs, "misc_info")
 
 
-############### bfa - menu hidable by the flag in the right click menu
+############### BFA - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_misc(Menu):
     bl_idname = "TOOLBAR_MT_misc"
@@ -2024,68 +1946,52 @@ class TOOLBAR_MT_misc(Menu):
             return
         
         window = context.window
-        screen = context.screen
         scene = window.scene
         obj = context.object
 
-        layout.popover(panel="TOOLBAR_PT_menu_misc", text = "")
+        layout.popover(panel="TOOLBAR_PT_menu_misc", text="")
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ## ------------------ Misc sub toolbars
-
         if addon_prefs.misc_viewport:
-
             if obj is not None:
                 row = layout.row(align=True)
-                row.popover(panel="OBJECT_PT_display", text="", icon = "VIEW")
+                row.popover(panel="OBJECT_PT_display", text="", icon="VIEW")
 
         if addon_prefs.misc_undoredo:
-
             row = layout.row(align=True)
-            row.operator("ed.undo", icon='UNDO',text="")
-            row.operator("ed.redo", icon='REDO',text="")
+            row.operator("ed.undo", icon='UNDO', text="")
+            row.operator("ed.redo", icon='REDO', text="")
 
         if addon_prefs.misc_undohistory:
-
             row = layout.row(align=True)
-            row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+            row.operator("ed.undo_history", icon='UNDO_HISTORY', text="")
 
         if addon_prefs.misc_repeat:
-
             row = layout.row(align=True)
             row.operator("screen.repeat_last", icon='REPEAT', text="")
             row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
         if addon_prefs.misc_scene:
-
             row = layout.row(align=True)
-
-            layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
+            layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete") # BFA - the scene drodpown box from the info menu bar
 
         if addon_prefs.misc_viewlayer:
-
-            window = context.window
-            screen = context.screen
-            scene = window.scene
-
             row = layout.row(align=True)
             layout.template_search(window, "view_layer", scene, "view_layers", new="scene.view_layer_add", unlink="scene.view_layer_remove")
 
         if addon_prefs.misc_last:
-
             row = layout.row(align=True)
-            row.operator("screen.redo_last", text="Last", icon = "LASTOPERATOR")
+            row.operator("screen.redo_last", text="Last", icon="LASTOPERATOR")
 
         if addon_prefs.misc_operatorsearch:
-
             row = layout.row(align=True)
             row.operator("wm.search_menu", text="", icon='SEARCH_MENU')
             row.operator("wm.search_operator", text="", icon='VIEWZOOM')
 
         if addon_prefs.misc_info:
-
             row = layout.row(align=True)
             row.separator_spacer()
 
