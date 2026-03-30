@@ -83,6 +83,7 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
        * Merge tokens that can be combined together,
        * remove the token that are unsupported or that are noop.
        * All these steps should be independent. */
+      lower_namesless_parameters(parser);
       lower_attribute_sequences(parser);
       lower_strings_sequences(parser);
       lower_swizzle_methods(parser);
@@ -101,6 +102,8 @@ SourceProcessor::Result SourceProcessor::convert(vector<Symbol> symbols_set)
       lint_constructors(parser);
       lint_forward_declared_structs(parser);
 
+      /* Lower noop attributes after linting them. */
+      lower_maybe_unused(parser);
       /* Lower assert first to keep original condition. */
       lower_assert(parser, filename);
       /* Lint and remove C++ accessor templates before lowering template. */
@@ -468,6 +471,19 @@ void SourceProcessor::lint_pragma_once(Parser &parser, const string &filename)
   if (!has_pragma(parser, "once")) {
     report_error_(0, 0, "", "Header files must contain #pragma once directive.");
   }
+}
+
+void SourceProcessor::lower_namesless_parameters(Parser &parser)
+{
+  parser().foreach_function([&](bool, Token, Token, Scope fn_args, bool, Scope) {
+    int i = 0;
+    fn_args.foreach_scope(ScopeType::FunctionArg, [&](Scope arg) {
+      if (arg.token_count() == 1 || arg.back().prev() == Const || arg.back() == '&') {
+        /* Append a name for nameless argument. */
+        parser.insert_after(arg.back(), "unused" + std::to_string(i++));
+      }
+    });
+  });
 }
 
 string SourceProcessor::disabled_code_mutation(const string &str)

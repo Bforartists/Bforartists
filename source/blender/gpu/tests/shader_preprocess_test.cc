@@ -769,7 +769,35 @@ template void func(float a);
 )";
     string error;
     string output = process_test_string(input, error);
-    EXPECT_EQ(error, "Template instantiation unsupported syntax");
+    EXPECT_EQ(error,
+              "Template instantiation and specialization require explicit template arguments");
+  }
+  {
+    string input = R"(
+template A<f> fn(A<f> a);
+)";
+    string error;
+    string output = process_test_string(input, error);
+    EXPECT_EQ(error,
+              "Template instantiation and specialization require explicit template arguments");
+  }
+  {
+    string input = R"(
+template<> A fn(A a) {}
+)";
+    string error;
+    string output = process_test_string(input, error);
+    EXPECT_EQ(error,
+              "Template instantiation and specialization require explicit template arguments");
+  }
+  {
+    string input = R"(
+template<> A<f> fn(A<f> a) {}
+)";
+    string error;
+    string output = process_test_string(input, error);
+    EXPECT_EQ(error,
+              "Template instantiation and specialization require explicit template arguments");
   }
   {
     string input = R"(func<float, 1>(a);)";
@@ -811,6 +839,43 @@ static void test_preprocess_template_struct()
   using namespace shader;
   using namespace std;
 
+  {
+    string input = R"(
+template<typename T>
+struct A {
+  T a;
+  A method(T b) const 
+  {
+    return A<T>{b};
+  }
+};
+template struct A<float>;
+)";
+    string expect = R"(
+#line 3
+struct ATfloat {
+  float a;
+#line 9
+};
+
+#ifndef GPU_METAL
+ATfloat ATfloat_ctor_();
+ATfloat _method(const ATfloat this_, float b);
+#endif
+#line 3
+                       ATfloat ATfloat_ctor_() {ATfloat r;r.a=0.0f;return r;}
+#line 5
+  ATfloat _method(const ATfloat this_, float b)
+  {
+    return _ctor(ATfloat) b _rotc() ;
+  }
+#line 11
+)";
+    string error;
+    string output = process_test_string(input, error);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
   {
     string input = R"(
 template<typename T>

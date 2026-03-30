@@ -13,7 +13,7 @@ namespace builtin::mipmaps {
 
 /* Conversion functions. */
 template<typename DstType, typename SrcType>
-void convert(DstType &dst_value, const SrcType src_value)
+void convert(DstType & /*dst_value*/, const SrcType /*src_value*/)
 {
 }
 
@@ -212,7 +212,7 @@ struct Resources {
    */
   template<bool load_from_shared>
   InnerType reduce_store_sample(int2 src_coord,
-                                int src_level,
+                                int /*src_level*/,
                                 int2 kernel_size,
                                 int2 dst_image_size,
                                 int2 dst_coord,

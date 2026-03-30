@@ -117,6 +117,8 @@ static void lower_template_instantiation(
     report_error(ERROR_TOK(toks[3]), "Invalid amount of argument in template instantiation.");
   }
 
+  const bool is_struct = (fn_name.prev() == Struct);
+
   /* Specialize template content. */
   SourceProcessor::Parser instance_parser(fn_decl, report_error);
 
@@ -127,9 +129,15 @@ static void lower_template_instantiation(
         instance_parser.replace(word, arg_name_value.second, true);
       }
     }
+    if (is_struct && word.next() != AngleOpen && token_str == fn_name.str()) {
+      /* Append template args after unspecified struct typename references.
+       * `A func(A<T> b) {}` > `A<T> func(A<T> b) {}`. */
+      instance_parser.insert_after(word.str_index_last_no_whitespace(),
+                                   SourceProcessor::template_arguments_mangle(inst_args));
+    }
   });
 
-  if (!all_template_args_in_function_signature) {
+  if (!is_struct && !all_template_args_in_function_signature) {
     /* Append template args after function name.
      * `void func() {}` > `void func<a, 1>() {}`. */
     size_t pos = fn_decl.find(" " + string(fn_name.str()));
@@ -164,6 +172,18 @@ void SourceProcessor::lower_template_dependent_names(Parser &parser)
 
 void SourceProcessor::lower_templates(Parser &parser)
 {
+  auto lint_explicit = [&](const Token symbol_name) {
+    if (symbol_name.next().scope().type() != parser::ScopeType::Template) {
+      report_error_(
+          ERROR_TOK(symbol_name),
+          "Template instantiation and specialization require explicit template arguments");
+    }
+  };
+  parser().foreach_match("t<>AA", [&](const vector<Token> &toks) { lint_explicit(toks[4]); });
+  parser().foreach_match("t<>A<..>A", [&](const vector<Token> &toks) { lint_explicit(toks[8]); });
+  parser().foreach_match("tAA", [&](const vector<Token> &toks) { lint_explicit(toks[2]); });
+  parser().foreach_match("tA<..>A", [&](const vector<Token> &toks) { lint_explicit(toks[6]); });
+
   /* Process templated function calls first to avoid matching them later. */
   parser().foreach_match("A<..>(..)", [&](const vector<Token> &tokens) {
     const Scope template_args = tokens[1].scope();

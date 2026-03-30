@@ -169,6 +169,10 @@ class SourceProcessor {
 
   /* --- Lowering --- */
 
+  /* Remove `maybe_unused` attribute. */
+  void lower_maybe_unused(Parser &parser);
+  /* Lower parameters that have no name (invalid in GLSL). */
+  void lower_namesless_parameters(Parser &parser);
   /**
    * Given our code-style, we don't need the disambiguation.
    * Example: `x.template foo<int>()` > `x.foo<int>()`
