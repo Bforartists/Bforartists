@@ -9084,9 +9084,13 @@ class VIEW3D_PT_shading_lighting(Panel):
             row = col.row()
             row.separator()
             row.prop(shading, "use_scene_lights_render")
-            row = col.row()
+            split = col.split(factor=0.45) # bfa - better disclosure triangle alignment
+            row = split.row()
             row.separator()
             row.prop(shading, "use_scene_world_render")
+            row = split.row(align=True)
+            if shading.use_scene_world_render:
+                row.label(icon="DISCLOSURE_TRI_RIGHT") # bfa - better disclosure triangle alignment
 
             if not shading.use_scene_world_render:
                 col = layout.column()
@@ -9117,10 +9121,6 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row.separator()
                 row.prop(shading, "studiolight_background_blur")
                 col = split.column()  # to align properly with above
-            else:
-                row = col.row()
-                row.separator()
-                row.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 class VIEW3D_PT_shading_color(Panel):
@@ -9643,7 +9643,7 @@ class VIEW3D_PT_overlay_guides(Panel):
         if view.region_3d.view_perspective == "CAMERA" or shading.type == "MATERIAL":
 
             layout.separator() # bfa - spacer
-            
+
             col = layout.column(align=True)
             col.active = display_all
             split = col.split()
@@ -9653,12 +9653,12 @@ class VIEW3D_PT_overlay_guides(Panel):
 
         if view.region_3d.view_perspective == "CAMERA":
             layout.separator() # bfa - spacer
-            
+
             row.prop(overlay, "show_camera_guides", text="Camera Guides")
 
         if shading.type == "MATERIAL":
             layout.separator() # bfa - spacer
-            
+
             row = row if view.region_3d.view_perspective != "CAMERA" else row.row()
             row.active = shading.render_pass == "COMBINED"
             row.prop(overlay, "show_look_dev")
@@ -10672,7 +10672,7 @@ class VIEW3D_PT_grease_pencil_origin(Panel):
             row = layout.row()
             row.label(text="Offset")
             row = layout.row()
-            
+
             # bfa - add icon to show if the surface offset is linked to the brush size
             icon = "LINKED" if tool_settings.gpencil_sync_radius_surface else "UNLINKED" # bfa
             row.prop(tool_settings, "gpencil_surface_offset", text="")
