@@ -47,57 +47,56 @@ class TOPBAR_HT_tool_bar(Header):
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_file", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_file.hide_file_topbar(context, layout) # bfa - show hide the complete toolbar container
+                TOPBAR_MT_file.draw_menus(layout, context)
             if addon_prefs.topbar_mesh_cbox:
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_meshedit", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_meshedit.hide_meshedit_topbar(context, layout)
+                TOPBAR_MT_meshedit.draw_menus(layout, context)
             if addon_prefs.topbar_primitives_cbox:
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_primitives", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_primitives.hide_primitives_topbar(context, layout)
+                TOPBAR_MT_primitives.draw_menus(layout, context)
             if addon_prefs.topbar_image_cbox:
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_image", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_image.hide_image_topbar(context, layout)
+                TOPBAR_MT_image.draw_menus(layout, context)
             if addon_prefs.topbar_tools_cbox:
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_tools", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_tools.hide_tools_topbar(context, layout)
+                TOPBAR_MT_tools.draw_menus(layout, context)
             if addon_prefs.topbar_animation_cbox:
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_animation", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_animation.hide_animation_topbar(context, layout)
+                TOPBAR_MT_animation.draw_menus(layout, context)
             if addon_prefs.topbar_edit_cbox:
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_edit", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_edit.hide_edit_topbar(context, layout)
+                TOPBAR_MT_edit.draw_menus(layout, context)
 
             if addon_prefs.topbar_misc_cbox:
                 layout.separator_spacer()
                 layout.scale_x = 0.7
                 layout.operator("screen.header_topbar_misc", text = "", icon = "THREE_DOTS")
                 layout.scale_x = 1
-                TOPBAR_MT_misc.hide_misc_topbar(context, layout)
+                TOPBAR_MT_misc.draw_menus(layout, context)
         else:
-
-            TOPBAR_MT_file.hide_file_topbar(context, layout)
-            TOPBAR_MT_meshedit.hide_meshedit_topbar(context, layout)
-            TOPBAR_MT_primitives.hide_primitives_topbar(context, layout)
-            TOPBAR_MT_image.hide_image_topbar(context, layout)
-            TOPBAR_MT_tools.hide_tools_topbar(context, layout)
-            TOPBAR_MT_animation.hide_animation_topbar(context, layout)
-            TOPBAR_MT_edit.hide_edit_topbar(context, layout)
+            TOPBAR_MT_file.draw_menus(layout, context)
+            TOPBAR_MT_meshedit.draw_menus(layout, context)
+            TOPBAR_MT_primitives.draw_menus(layout, context)
+            TOPBAR_MT_image.draw_menus(layout, context)
+            TOPBAR_MT_tools.draw_menus(layout, context)
+            TOPBAR_MT_animation.draw_menus(layout, context)
+            TOPBAR_MT_edit.draw_menus(layout, context)
 
             layout.separator_spacer()
 
-            TOPBAR_MT_misc.hide_misc_topbar(context, layout)
+            TOPBAR_MT_misc.draw_menus(layout, context)
 
 
 ######################################## Main (Options) ########################################
@@ -375,6 +374,9 @@ class TOPBAR_MT_file(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.file_topbars:
+            return
+
         scene = context.scene
 
         preferences = context.preferences
@@ -574,6 +576,9 @@ class TOPBAR_MT_meshedit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.meshedit_topbars:
+            return
+        
         scene = context.scene
 
         preferences = context.preferences
@@ -758,6 +763,9 @@ class TOPBAR_MT_primitives(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.primitives_topbars:
+            return
+            
         scene = context.scene
         rd = scene.render
 
@@ -1157,6 +1165,9 @@ class TOPBAR_MT_image(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.image_topbars:
+            return
+        
         scene = context.scene
 
         preferences = context.preferences
@@ -1292,6 +1303,9 @@ class TOPBAR_MT_tools(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.tools_topbars:
+            return
+        
         scene = context.scene
 
         obj = context.object
@@ -1480,6 +1494,9 @@ class TOPBAR_MT_animation(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.animation_topbars:
+            return
+        
         scene = context.scene
         screen = context.screen
         toolsettings = context.tool_settings
@@ -1678,6 +1695,9 @@ class TOPBAR_MT_edit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.edit_topbars:
+            return
+        
         scene = context.scene
         obj = context.object
 
@@ -1847,6 +1867,9 @@ class TOPBAR_MT_misc(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.misc_topbars:
+            return
+        
         window = context.window
         scene = window.scene
         obj = context.object
