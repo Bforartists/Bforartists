@@ -10,6 +10,10 @@ from bpy.types import (
 )
 from bpy.app.translations import contexts as i18n_contexts
 
+from bl_ui.utils import (
+    icon_button,
+)
+
 ######################################## Toolbar ########################################
 
 class TOOLBAR_HT_header(Header):
@@ -305,14 +309,15 @@ class TOOLBAR_PT_type(Panel):
         col1.prop(addon_prefs, 'bfa_toolbar_types', expand=True)
 
         # TODO - Convert to props and use bl_ui.utils.icon_button
-        self.icon_op_button(col2, "screen.header_toolbar_file", context.area.file_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_meshedit", context.area.meshedit_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_primitives", context.area.primitives_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_image", context.area.image_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_tools", context.area.tools_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_animation", context.area.animation_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_edit", context.area.edit_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_misc", context.area.misc_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        area = context.area
+        icon_button(col2, area, "file_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "meshedit_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "primitives_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "image_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "tools_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "animation_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "edit_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "misc_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
         
         box = layout.box().column(align=True)
         self.draw_show_hide_section(context, box)
