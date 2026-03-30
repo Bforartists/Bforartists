@@ -22,9 +22,12 @@
 #include "types.hh"
 #include "vector.hh"
 
-#define LEXIT_DEBUG
+// #define LEXIT_DEBUG
 
 #ifdef LEXIT_DEBUG
+/* Make it a warning to avoid shipping with it. */
+#  warning "Lexit debug mode enabled"
+
 #  include <vector>
 #endif
 
@@ -47,7 +50,7 @@ struct Token {
   const TokenBuffer *buf_;
   int32_t index_;
   /* General purpose flag. */
-  int32_t flag;
+  int32_t flag = 0;
 
   Token(const TokenBuffer *buf, int32_t index);
 

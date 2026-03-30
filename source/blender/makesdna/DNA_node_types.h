@@ -17,6 +17,7 @@
 #include "DNA_vec_types.h" /* for #rctf */
 
 #include "BLI_enum_flags.hh"
+#include "BLI_ustring.hh"
 
 /** Workaround to forward-declare C++ type in C header. */
 #include "BLI_vector.hh"
@@ -1462,6 +1463,9 @@ struct bNodeSocket {
   bke::bNodeSocketRuntime *runtime = nullptr;
 
 #ifdef __cplusplus
+  /** The cached #UString that matches the socket identifier. */
+  UString identifier_ustr() const;
+
   /**
    * Whether the socket is hidden in a way that the user can control.
    *
@@ -1738,10 +1742,10 @@ struct bNode {
   bNodeSocket &output_socket(int index);
   const bNodeSocket &output_socket(int index) const;
   /** Lookup socket of this node by its identifier. */
-  const bNodeSocket *input_by_identifier(StringRef identifier) const;
-  const bNodeSocket *output_by_identifier(StringRef identifier) const;
-  bNodeSocket *input_by_identifier(StringRef identifier);
-  bNodeSocket *output_by_identifier(StringRef identifier);
+  const bNodeSocket *input_by_identifier(UString identifier) const;
+  const bNodeSocket *output_by_identifier(UString identifier) const;
+  bNodeSocket *input_by_identifier(UString identifier);
+  bNodeSocket *output_by_identifier(UString identifier);
   /** Lookup socket by its declaration. */
   const bNodeSocket &socket_by_decl(const nodes::SocketDeclaration &decl) const;
   bNodeSocket &socket_by_decl(const nodes::SocketDeclaration &decl);

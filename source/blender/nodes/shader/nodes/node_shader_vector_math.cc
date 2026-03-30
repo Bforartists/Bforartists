@@ -9,6 +9,10 @@
 #include "node_shader_util.hh"
 #include "node_util.hh"
 
+#include "BLI_math_vector.hh"
+
+#include "FN_multi_function_registry.hh"
+
 #include "NOD_inverse_eval_params.hh"
 #include "NOD_math_functions.hh"
 #include "NOD_multi_function.hh"
@@ -265,81 +269,12 @@ static void node_shader_update_vector_math(bNodeTree *ntree, bNode *node)
 
 static const mf::MultiFunction *get_multi_function(const bNode &node)
 {
-  NodeVectorMathOperation operation = NodeVectorMathOperation(node.custom1);
-
-  const mf::MultiFunction *multi_fn = nullptr;
-
-  try_dispatch_float_math_fl3_fl3_to_fl3(
-      operation, [&](auto exec_preset, auto function, const FloatMathOperationInfo &info) {
-        static auto fn = mf::build::SI2_SO<float3, float3, float3>(
-            info.title_case_name.c_str(), function, exec_preset);
-        multi_fn = &fn;
-      });
-  if (multi_fn != nullptr) {
-    return multi_fn;
+  const NodeVectorMathOperation operation = NodeVectorMathOperation(node.custom1);
+  const FloatMathOperationInfo *info = get_float3_math_operation_info(operation);
+  if (!info) {
+    return nullptr;
   }
-
-  try_dispatch_float_math_fl3_fl3_fl3_to_fl3(
-      operation, [&](auto exec_preset, auto function, const FloatMathOperationInfo &info) {
-        static auto fn = mf::build::SI3_SO<float3, float3, float3, float3>(
-            info.title_case_name.c_str(), function, exec_preset);
-        multi_fn = &fn;
-      });
-  if (multi_fn != nullptr) {
-    return multi_fn;
-  }
-
-  try_dispatch_float_math_fl3_fl3_fl_to_fl3(
-      operation, [&](auto exec_preset, auto function, const FloatMathOperationInfo &info) {
-        static auto fn = mf::build::SI3_SO<float3, float3, float, float3>(
-            info.title_case_name.c_str(), function, exec_preset);
-        multi_fn = &fn;
-      });
-  if (multi_fn != nullptr) {
-    return multi_fn;
-  }
-
-  try_dispatch_float_math_fl3_fl3_to_fl(
-      operation, [&](auto exec_preset, auto function, const FloatMathOperationInfo &info) {
-        static auto fn = mf::build::SI2_SO<float3, float3, float>(
-            info.title_case_name.c_str(), function, exec_preset);
-        multi_fn = &fn;
-      });
-  if (multi_fn != nullptr) {
-    return multi_fn;
-  }
-
-  try_dispatch_float_math_fl3_fl_to_fl3(
-      operation, [&](auto exec_preset, auto function, const FloatMathOperationInfo &info) {
-        static auto fn = mf::build::SI2_SO<float3, float, float3>(
-            info.title_case_name.c_str(), function, exec_preset);
-        multi_fn = &fn;
-      });
-  if (multi_fn != nullptr) {
-    return multi_fn;
-  }
-
-  try_dispatch_float_math_fl3_to_fl3(
-      operation, [&](auto exec_preset, auto function, const FloatMathOperationInfo &info) {
-        static auto fn = mf::build::SI1_SO<float3, float3>(
-            info.title_case_name.c_str(), function, exec_preset);
-        multi_fn = &fn;
-      });
-  if (multi_fn != nullptr) {
-    return multi_fn;
-  }
-
-  try_dispatch_float_math_fl3_to_fl(
-      operation, [&](auto exec_preset, auto function, const FloatMathOperationInfo &info) {
-        static auto fn = mf::build::SI1_SO<float3, float>(
-            info.title_case_name.c_str(), function, exec_preset);
-        multi_fn = &fn;
-      });
-  if (multi_fn != nullptr) {
-    return multi_fn;
-  }
-
-  return nullptr;
+  return &fn::multi_function::registry::lookup(info->multi_function_name);
 }
 
 static void sh_node_vector_math_build_multi_function(NodeMultiFunctionBuilder &builder)
@@ -358,18 +293,18 @@ static void node_eval_elem(value_elem::ElemEvalParams &params)
     case NODE_VECTOR_MATH_MULTIPLY:
     case NODE_VECTOR_MATH_DIVIDE: {
       VectorElem output_elem;
-      output_elem.merge(params.get_input_elem<VectorElem>("Vector"));
-      output_elem.merge(params.get_input_elem<VectorElem>("Vector_001"));
-      params.set_output_elem("Vector", output_elem);
+      output_elem.merge(params.get_input_elem<VectorElem>("Vector"_ustr));
+      output_elem.merge(params.get_input_elem<VectorElem>("Vector_001"_ustr));
+      params.set_output_elem("Vector"_ustr, output_elem);
       break;
     }
     case NODE_VECTOR_MATH_SCALE: {
       VectorElem output_elem;
-      output_elem.merge(params.get_input_elem<VectorElem>("Vector"));
-      if (params.get_input_elem<FloatElem>("Scale")) {
+      output_elem.merge(params.get_input_elem<VectorElem>("Vector"_ustr));
+      if (params.get_input_elem<FloatElem>("Scale"_ustr)) {
         output_elem = VectorElem::all();
       }
-      params.set_output_elem("Vector", output_elem);
+      params.set_output_elem("Vector"_ustr, output_elem);
     }
     default:
       break;
@@ -385,7 +320,8 @@ static void node_eval_inverse_elem(value_elem::InverseElemEvalParams &params)
     case NODE_VECTOR_MATH_MULTIPLY:
     case NODE_VECTOR_MATH_DIVIDE:
     case NODE_VECTOR_MATH_SCALE: {
-      params.set_input_elem("Vector", params.get_output_elem<value_elem::VectorElem>("Vector"));
+      params.set_input_elem("Vector"_ustr,
+                            params.get_output_elem<value_elem::VectorElem>("Vector"_ustr));
       break;
     }
     default:
@@ -396,10 +332,10 @@ static void node_eval_inverse_elem(value_elem::InverseElemEvalParams &params)
 static void node_eval_inverse(inverse_eval::InverseEvalParams &params)
 {
   const NodeVectorMathOperation op = NodeVectorMathOperation(params.node.custom1);
-  const StringRef first_input_id = "Vector";
-  const StringRef second_input_id = "Vector_001";
-  const StringRef scale_input_id = "Scale";
-  const StringRef output_vector_id = "Vector";
+  const UString first_input_id = "Vector"_ustr;
+  const UString second_input_id = "Vector_001"_ustr;
+  const UString scale_input_id = "Scale"_ustr;
+  const UString output_vector_id = "Vector"_ustr;
   switch (op) {
     case NODE_VECTOR_MATH_ADD: {
       params.set_input(first_input_id,

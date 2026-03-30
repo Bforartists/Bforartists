@@ -1775,6 +1775,14 @@ static Mesh *create_merged_mesh(const Mesh &mesh,
                  bke::AttrDomain::Corner,
                  {".corner_vert", ".corner_edge"},
                  dst_attributes);
+  if (const auto *src = static_cast<const float2 *>(
+          CustomData_get_layer(&mesh.corner_data, CD_ORIGSPACE_MLOOP)))
+  {
+    float2 *dst = static_cast<float2 *>(CustomData_add_layer(
+        &result->corner_data, CD_ORIGSPACE_MLOOP, CD_CONSTRUCT, result->corners_num));
+    bke::attribute_math::mix_groups(
+        Span(src, mesh.corners_num), dst_to_src_corners, MutableSpan(dst, result->corners_num));
+  }
 
   debug_randomize_mesh_order(result);
 

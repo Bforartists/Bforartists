@@ -408,14 +408,18 @@ PyObject *pyrna_struct_keyframe_insert(BPy_StructRNA *self, PyObject *args, PyOb
     if (prop) {
       NlaStrip *strip = static_cast<NlaStrip *>(ptr.data);
       FCurve *fcu = BKE_fcurve_find(&strip->fcurves, RNA_property_identifier(prop), index);
-      result = insert_keyframe_direct(&reports,
-                                      ptr,
-                                      prop,
-                                      fcu,
-                                      &anim_eval_context,
-                                      eBezTriple_KeyframeType(keytype),
-                                      nullptr,
-                                      eInsertKeyFlags(options));
+      if (fcu) {
+        SingleKeyingResult key_result = insert_keyframe_direct(ptr,
+                                                               *prop,
+                                                               *fcu,
+                                                               anim_eval_context.eval_time,
+                                                               eBezTriple_KeyframeType(keytype),
+                                                               eInsertKeyFlags(options));
+        result = key_result == SingleKeyingResult::SUCCESS;
+        if (key_result != SingleKeyingResult::SUCCESS) {
+          generate_single_keying_result_report(key_result, &reports);
+        }
+      }
     }
     else {
       BKE_reportf(&reports, RPT_ERROR, "Could not resolve path (%s)", path_full);

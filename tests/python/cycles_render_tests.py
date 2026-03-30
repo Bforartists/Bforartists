@@ -20,8 +20,6 @@ BLOCKLIST_ALL = [
     "hair_instancer_uv.blend",
     "principled_hair_directcoloring.blend",
     "visibility_particles.blend",
-    # Temporarily blocked for 4.4 lib upgrade, due to PNG alpha minor difference.
-    "image_log_osl.blend",
     # Tests for EEVEE-only setting (duplicates from the Cycles perspective)
     "camera_depth_of_field_jittered.blend",
     "shadow_resolution.blend",
@@ -48,19 +46,6 @@ BLOCKLIST_OSL_ALL = BLOCKLIST_OSL_LIMITED + [
     # AOVs are not supported. See 73266
     'aov_.*.blend',
     'render_passes_aov.*.blend',
-    # Image sampling is different from SVM. There are OSL variants of these tests
-    'image_byte.*.blend',
-    'image_float.*.blend',
-    'image_half.*.blend',
-    'image_mapping_.*_closest.blend',
-    'image_mapping_.*_cubic.blend',
-    'image_mapping_.*_linear.blend',
-    'image_alpha_blend.blend',
-    'image_alpha_channel_packed.blend',
-    'image_alpha_ignore.blend',
-    'image_log.blend',
-    'image_non_color.blend',
-    'image_mapping_udim.blend',
     # Tests that need investigating into why they're failing:
     # Noise differences due to Principled BSDF mixing/layering used in some of these scenes
     'render_passes_.*.blend',
@@ -76,7 +61,6 @@ BLOCKLIST_OPTIX = [
 
 # Blocklist for OSL tests that fail with the OptiX OSL backend.
 BLOCKLIST_OPTIX_OSL_LIMITED = [
-    'image_.*_osl.blend',
     # OptiX OSL doesn't support the trace function
     'osl_trace_shader.blend',
     # Noise functions do not return color with OptiX OSL
@@ -96,8 +80,6 @@ BLOCKLIST_OPTIX_OSL_ALL = BLOCKLIST_OPTIX_OSL_LIMITED + [
     'object_dicing.blend',
     'offscreen_dicing.blend',
     'panorama_dicing.blend',
-    # The mapping of the UDIM texture is incorrect. Need to investigate why.
-    'image_mapping_udim_packed.blend',
     # Error during rendering. Need to investigate why.
     'points_volume.blend',
 ]
@@ -136,6 +118,7 @@ BLOCKLIST_GPU = [
     'principled_hair_.*.blend',
     'transparent_shadow_hair.*.blend',
     "microfacet_hair_orientation.blend",
+    "instance_types.blend",
     # Inconsistent handling of overlapping objects.
     "sobol_uniform_41143.blend",
     "visibility_particles.blend",
@@ -145,21 +128,27 @@ BLOCKLIST_GPU = [
 
 
 class CyclesReport(render_report.Report):
-    def __init__(self, title, output_dir, oiiotool, device=None, blocklist=[], osl=False, ray_marching=False):
+    def __init__(
+            self,
+            title,
+            test_dir_name,
+            output_dir,
+            oiiotool,
+            device=None,
+            blocklist=[],
+            osl=False):
         # Split device name in format "<device_type>[-<RT>]" into individual
         # tokens, setting the RT suffix to an empty string if its not specified.
         self.device, suffix = (device.split("-") + [""])[:2]
         self.use_hwrt = (suffix == "RT")
         self.osl = osl
-        self.ray_marching = ray_marching
+        self.extra_args = []
 
         variation = self.device
         if suffix:
             variation += ' ' + suffix
         if self.osl:
             variation += ' OSL'
-        if ray_marching:
-            variation += ' Ray Marching'
 
         super().__init__(title, output_dir, oiiotool, variation, blocklist)
 
@@ -171,13 +160,18 @@ class CyclesReport(render_report.Report):
             self.set_compare_engine('cycles', 'CPU')
 
     def _get_render_arguments(self, arguments_cb, filepath, base_output_filepath):
-        return arguments_cb(filepath, base_output_filepath, self.use_hwrt, self.osl, self.ray_marching)
+        return arguments_cb(
+            filepath,
+            base_output_filepath,
+            self.use_hwrt,
+            self.osl,
+            self.extra_args)
 
     def _get_arguments_suffix(self):
         return ['--', '--cycles-device', self.device] if self.device else []
 
 
-def get_arguments(filepath, output_filepath, use_hwrt=False, osl=False, ray_marching=False):
+def get_arguments(filepath, output_filepath, use_hwrt, osl, extra_args):
     dirname = os.path.dirname(filepath)
     basedir = os.path.dirname(dirname)
     subject = os.path.basename(dirname)
@@ -218,8 +212,7 @@ def get_arguments(filepath, output_filepath, use_hwrt=False, osl=False, ray_marc
     if osl:
         args.extend(["--python-expr", "import bpy; bpy.context.scene.cycles.shading_system = True"])
 
-    if ray_marching:
-        args.extend(["--python-expr", "import bpy; bpy.context.scene.cycles.volume_biased = True"])
+    args.extend(extra_args)
 
     if subject == 'bake':
         args.extend(['--python', os.path.join(basedir, "util", "render_bake.py")])
@@ -245,10 +238,28 @@ def create_argparse():
     return parser
 
 
-def test_volume_ray_marching(args, device, blocklist):
+def test_volume_ray_marching(args, report):
     # Default volume rendering algorithm is null scattering, but we also want to test ray marching
-    report = CyclesReport('Cycles', args.outdir, args.oiiotool, device, blocklist, args.osl == 'all', ray_marching=True)
+    report.extra_args = ["--python-expr", "import bpy; bpy.context.scene.cycles.volume_biased = True"]
     report.set_reference_dir("cycles_ray_marching_renders")
+    report.set_test_name_suffix("_ray_marching")
+    return report.run(args.testdir, args.blender, get_arguments, batch=args.batch)
+
+
+def test_texture_cache(args, report):
+    # Use texture cache directory in output folder, and clear it to test auto generating.
+    test_dir_name = Path(args.testdir).name
+    texture_cache_dir = Path(args.outdir) / test_dir_name / "texture_cache"
+    for tx_file in texture_cache_dir.glob("*.tx"):
+        tx_file.unlink()
+
+    report.extra_args = ["--python-expr",
+                         "import bpy; "
+                         "bpy.context.scene.render.use_texture_cache = True; "
+                         "bpy.context.scene.render.use_auto_generate_texture_cache = True; "
+                         f"bpy.context.preferences.filepaths.texture_cache_directory = r\"{texture_cache_dir}\""]
+    report.set_reference_dir("cycles_tx_renders")
+    report.set_test_name_suffix("_tx")
     return report.run(args.testdir, args.blender, get_arguments, batch=args.batch)
 
 
@@ -283,7 +294,8 @@ def main():
         blocklist += BLOCKLIST_METAL
         blocklist += BLOCKLIST_METAL_RT
 
-    report = CyclesReport('Cycles', args.outdir, args.oiiotool, device, blocklist, args.osl == 'all')
+    test_dir_name = Path(args.testdir).name
+    report = CyclesReport('Cycles', test_dir_name, args.outdir, args.oiiotool, device, blocklist, args.osl == 'all')
 
     # Increase threshold for motion blur, see #78777.
     #
@@ -296,7 +308,6 @@ def main():
     #
     # both_displacement.blend has slight differences between Linux and other platforms.
 
-    test_dir_name = Path(args.testdir).name
     if (test_dir_name in {'motion_blur', 'integrator', "displacement"}) or \
        ((args.osl == 'all') and (test_dir_name in {'shader', 'hair'})):
         report.set_fail_threshold(0.032)
@@ -322,7 +333,10 @@ def main():
     ok = report.run(args.testdir, args.blender, get_arguments, batch=args.batch)
 
     if (test_dir_name == 'volume'):
-        ok = ok and test_volume_ray_marching(args, device, blocklist)
+        ok = ok and test_volume_ray_marching(args, report)
+
+    if (test_dir_name in {'image_colorspace', 'image_mapping'}):
+        ok = ok and test_texture_cache(args, report)
 
     sys.exit(not ok)
 

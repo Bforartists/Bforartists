@@ -10,6 +10,10 @@ from bpy.types import (
 )
 from bpy.app.translations import contexts as i18n_contexts
 
+from bl_ui.utils import (
+    icon_button,
+)
+
 ######################################## Toolbar ########################################
 
 class TOOLBAR_HT_header(Header):
@@ -31,50 +35,49 @@ class TOOLBAR_HT_header(Header):
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_file", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete toolbar container
+            TOOLBAR_MT_file.draw_menus(layout, context)
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_meshedit", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_meshedit.hide_meshedit_toolbar(context, layout)
+            TOOLBAR_MT_meshedit.draw_menus(layout, context)
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_primitives", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout)
+            TOOLBAR_MT_primitives.draw_menus(layout, context)
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_image", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_image.hide_image_toolbar(context, layout)
+            TOOLBAR_MT_image.draw_menus(layout, context)
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_tools", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_tools.hide_tools_toolbar(context, layout)
+            TOOLBAR_MT_tools.draw_menus(layout, context)
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_animation", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_animation.hide_animation_toolbar(context, layout)
+            TOOLBAR_MT_animation.draw_menus(layout, context)
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_edit", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_edit.hide_edit_toolbar(context, layout)
+            TOOLBAR_MT_edit.draw_menus(layout, context)
 
             layout.separator_spacer()
             layout.scale_x = 0.7
             layout.operator("screen.header_toolbar_misc", text = "", icon = "THREE_DOTS")
             layout.scale_x = 1
-            TOOLBAR_MT_misc.hide_misc_toolbar(context, layout)
+            TOOLBAR_MT_misc.draw_menus(layout, context)
         else:
-
-            TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete toolbar container
-            TOOLBAR_MT_meshedit.hide_meshedit_toolbar(context, layout)
-            TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout)
-            TOOLBAR_MT_image.hide_image_toolbar(context, layout)
-            TOOLBAR_MT_tools.hide_tools_toolbar(context, layout)
-            TOOLBAR_MT_animation.hide_animation_toolbar(context, layout)
-            TOOLBAR_MT_edit.hide_edit_toolbar(context, layout)
+            TOOLBAR_MT_file.draw_menus(layout, context)
+            TOOLBAR_MT_meshedit.draw_menus(layout, context)
+            TOOLBAR_MT_primitives.draw_menus(layout, context)
+            TOOLBAR_MT_image.draw_menus(layout, context)
+            TOOLBAR_MT_tools.draw_menus(layout, context)
+            TOOLBAR_MT_animation.draw_menus(layout, context)
+            TOOLBAR_MT_edit.draw_menus(layout, context)
 
             layout.separator_spacer()
 
-            TOOLBAR_MT_misc.hide_misc_toolbar(context, layout)
+            TOOLBAR_MT_misc.draw_menus(layout, context)
 
 ########################################################################
 
@@ -318,14 +321,15 @@ class TOOLBAR_PT_type(Panel):
         col1.prop(addon_prefs, 'bfa_toolbar_types', expand=True)
 
         # TODO - Convert to props and use bl_ui.utils.icon_button
-        self.icon_op_button(col2, "screen.header_toolbar_file", context.area.file_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_meshedit", context.area.meshedit_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_primitives", context.area.primitives_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_image", context.area.image_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_tools", context.area.tools_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_animation", context.area.animation_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_edit", context.area.edit_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
-        self.icon_op_button(col2, "screen.header_toolbar_misc", context.area.misc_toolbars, icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        area = context.area
+        icon_button(col2, area, "file_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "meshedit_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "primitives_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "image_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "tools_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "animation_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "edit_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
+        icon_button(col2, area, "misc_toolbars", icon_on='HIDE_OFF', icon_off='HIDE_ON')
         
         box = layout.box().column(align=True)
         self.draw_show_hide_section(context, box)
@@ -443,7 +447,12 @@ class TOOLBAR_MT_file(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        layout.popover(panel="TOOLBAR_PT_menu_file", text="")
+        if not context.area.file_toolbars:
+            return
+        
+        scene = context.scene
+
+        layout.popover(panel="TOOLBAR_PT_menu_file", text = "")
 
         ## ------------------ Load / Save sub toolbars
 
@@ -655,7 +664,12 @@ class TOOLBAR_MT_meshedit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        layout.popover(panel="TOOLBAR_PT_menu_meshedit", text="")
+        if not context.area.meshedit_toolbars:
+            return
+        
+        scene = context.scene
+
+        layout.popover(panel="TOOLBAR_PT_menu_meshedit", text = "")
 
         ## ------------------ Vertices
 
@@ -846,7 +860,10 @@ class TOOLBAR_MT_primitives(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        layout.popover(panel="TOOLBAR_PT_menu_primitives", text="")
+        if not context.area.primitives_toolbars:
+            return
+
+        layout.popover(panel="TOOLBAR_PT_menu_primitives", text = "")
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -1294,7 +1311,10 @@ class TOOLBAR_MT_image(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        layout.popover(panel="TOOLBAR_PT_menu_image", text="")
+        if not context.area.image_toolbars:
+            return
+
+        layout.popover(panel="TOOLBAR_PT_menu_image", text = "")
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -1431,7 +1451,10 @@ class TOOLBAR_MT_tools(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        layout.popover(panel="TOOLBAR_PT_menu_tools", text="")
+        if not context.area.tools_toolbars:
+            return
+
+        layout.popover(panel="TOOLBAR_PT_menu_tools", text = "")
 
         obj = context.object
 
@@ -1564,6 +1587,9 @@ class TOOLBAR_MT_animation(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.animation_toolbars:
+            return
+        
         scene = context.scene
         screen = context.screen
         toolsettings = context.tool_settings
@@ -1761,6 +1787,9 @@ class TOOLBAR_MT_edit(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.edit_toolbars:
+            return
+        
         obj = context.object
 
         layout.popover(panel="TOOLBAR_PT_menu_edit", text="")
@@ -1913,6 +1942,9 @@ class TOOLBAR_MT_misc(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
+        if not context.area.misc_toolbars:
+            return
+        
         window = context.window
         scene = window.scene
         obj = context.object

@@ -66,28 +66,27 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
   }
 
   const bke::AttributeAccessor src_attributes = instances.attributes();
-  bke::GeometrySet::GatheredAttributes attributes_to_propagate;
-  geometry_set.gather_attributes_for_propagation({GeometryComponent::Type::Instance},
-                                                 GeometryComponent::Type::PointCloud,
-                                                 false,
-                                                 attribute_filter,
-                                                 attributes_to_propagate);
 
   /* TODO: Investigate replacing this with #gather_attributes. */
-  for (const int i : attributes_to_propagate.names.index_range()) {
-    /* These two attributes are added by the implicit inputs above. */
-    if (ELEM(attributes_to_propagate.names[i], "position", "radius")) {
-      continue;
+  src_attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
+    const StringRef name = iter.name;
+    if (iter.is_builtin && !dst_attributes.is_builtin(name)) {
+      return;
     }
-    const StringRef name = attributes_to_propagate.names[i];
-    const bke::AttrType type = attributes_to_propagate.kinds[i].data_type;
-
-    const GAttributeReader src = src_attributes.lookup(name);
+    /* These two attributes are added by the implicit inputs above. */
+    if (ELEM(name, "position", "radius")) {
+      return;
+    }
+    if (attribute_filter.allow_skip(name)) {
+      return;
+    }
+    const bke::AttrType type = iter.data_type;
+    const GAttributeReader src = iter.get();
     const CommonVArrayInfo info = src.varray.common_info();
     if (info.type == CommonVArrayInfo::Type::Single) {
       const bke::AttributeInitValue init(GPointer(src.varray.type(), info.data));
       dst_attributes.add(name, AttrDomain::Point, type, init);
-      continue;
+      return;
     }
 
     if (selection.size() == instances.instances_num() && src.sharing_info &&
@@ -102,21 +101,21 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
       array_utils::gather(src.varray, selection, dst.span);
       dst.finish();
     }
-  }
+  });
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Instances");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Instances"_ustr);
 
   if (geometry_set.has_instances()) {
     convert_instances_to_points(geometry_set,
-                                params.extract_input<Field<float3>>("Position"),
-                                params.extract_input<Field<float>>("Radius"),
-                                params.extract_input<Field<bool>>("Selection"),
-                                params.get_attribute_filter("Points"));
+                                params.extract_input<Field<float3>>("Position"_ustr),
+                                params.extract_input<Field<float>>("Radius"_ustr),
+                                params.extract_input<Field<bool>>("Selection"_ustr),
+                                params.get_attribute_filter("Points"_ustr));
     geometry_set.keep_only({GeometryComponent::Type::PointCloud, GeometryComponent::Type::Edit});
-    params.set_output("Points", std::move(geometry_set));
+    params.set_output("Points"_ustr, std::move(geometry_set));
   }
   else {
     params.set_default_remaining_outputs();

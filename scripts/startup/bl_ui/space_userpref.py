@@ -827,7 +827,7 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
             col.prop(system, "gpu_preferred_device")
 
         if system.gpu_backend != gpu.platform.backend_type_get():
-            layout.label(text="A restart of Blender is required", icon='INFO')
+            layout.label(text="A restart of Bforartists is required", icon='INFO') # bfa - our name
 
         if system.gpu_backend == 'VULKAN':
             if sys.platform == "win32" and gpu.platform.device_type_get() == 'QUALCOMM':
@@ -952,6 +952,11 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
             col.row().prop(system, "shader_compilation_method", expand=True)
             label = iface_("Threads") if system.shader_compilation_method == 'THREAD' else iface_("Subprocesses")
             col.prop(system, "gpu_shader_workers", text=label, translate=False)
+
+        layout.separator()
+
+        col = layout.column()
+        col.prop(system, "geometry_nodes_stack_limit")
 
 
 class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
@@ -1766,6 +1771,7 @@ class USERPREF_PT_file_paths_render(FilePathsPanel, Panel):
         paths = context.preferences.filepaths
 
         col = self.layout.column()
+        col.prop(paths, "texture_cache_directory", text="Texture Cache")
         col.prop(paths, "render_output_directory", text="Render Output")
         col.prop(paths, "render_cache_directory", text="Render Cache")
 
@@ -1932,6 +1938,7 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
 
         flow.prop(paths, "use_tabs_as_spaces")
         flow.prop(view, "use_save_prompt")
+        flow.prop(paths, "save_modified_images")
 
         layout.separator()
 
@@ -3242,6 +3249,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_geometry_nodes_lists"}, ("blender/blender/issues/140918", "#140918")),
                 ({"property": "use_geometry_bundle"}, ("blender/blender/issues/150574", "#150574")),
                 ({"property": "use_remote_asset_libraries"}, ("blender/blender/issues/134495", "#134495")),
+                ({"property": "use_collection_importer"}, ("blender/blender/issues/132171", "#132171")),
             ),
         )
 

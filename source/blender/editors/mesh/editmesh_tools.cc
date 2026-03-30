@@ -6071,6 +6071,18 @@ static void edbm_dissolve_prop__use_angle_threshold(wmOperatorType *ot, int flag
     RNA_def_property_flag(prop, PropertyFlag(flag));
   }
 }
+static void edbm_dissolve_prop__use_preserve_quads(wmOperatorType *ot, bool value, int flag)
+{
+  PropertyRNA *prop = RNA_def_boolean(
+      ot->srna,
+      "use_preserve_quads",
+      value,
+      "Preserve Quads",
+      "When dissolving the edge between two triangles, don't dissolve vertices");
+  if (flag) {
+    RNA_def_property_flag(prop, PropertyFlag(flag));
+  }
+}
 
 static wmOperatorStatus edbm_dissolve_verts_exec(bContext *C, wmOperator *op)
 {
@@ -6142,6 +6154,7 @@ static wmOperatorStatus edbm_dissolve_edges_exec(bContext *C, wmOperator *op)
   const bool use_verts = RNA_boolean_get(op->ptr, "use_verts");
   const bool use_face_split = RNA_boolean_get(op->ptr, "use_face_split");
   const float angle_threshold = RNA_float_get(op->ptr, "angle_threshold");
+  const bool use_preserve_quads = RNA_boolean_get(op->ptr, "use_preserve_quads");
 
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -6156,14 +6169,15 @@ static wmOperatorStatus edbm_dissolve_edges_exec(bContext *C, wmOperator *op)
 
     BM_custom_loop_normals_to_vector_layer(em->bm);
 
-    if (!EDBM_op_callf(
-            em,
-            op,
-            "dissolve_edges edges=%he use_verts=%b use_face_split=%b angle_threshold=%f",
-            BM_ELEM_SELECT,
-            use_verts,
-            use_face_split,
-            angle_threshold))
+    if (!EDBM_op_callf(em,
+                       op,
+                       "dissolve_edges edges=%he use_verts=%b use_face_split=%b "
+                       "angle_threshold=%f use_preserve_quads=%b",
+                       BM_ELEM_SELECT,
+                       use_verts,
+                       use_face_split,
+                       angle_threshold,
+                       use_preserve_quads))
     {
       continue;
     }
@@ -6197,6 +6211,7 @@ void MESH_OT_dissolve_edges(wmOperatorType *ot)
   edbm_dissolve_prop__use_verts(ot, true, 0);
   edbm_dissolve_prop__use_angle_threshold(ot, 0);
   edbm_dissolve_prop__use_face_split(ot);
+  edbm_dissolve_prop__use_preserve_quads(ot, true, 0);
 }
 
 /** \} */
@@ -6312,6 +6327,10 @@ static bool dissolve_mode_poll_property(const bContext *C, wmOperator *op, const
     if (STREQ(prop_id, "angle_threshold")) {
       return false;
     }
+    /* Preserve Quads is only used in edge select mode. */
+    if (STREQ(prop_id, "use_preserve_quads")) {
+      return false;
+    }
   }
   return true;
 }
@@ -6333,6 +6352,7 @@ void MESH_OT_dissolve_mode(wmOperatorType *ot)
 
   edbm_dissolve_prop__use_verts(ot, false, PROP_SKIP_SAVE);
   edbm_dissolve_prop__use_angle_threshold(ot, PROP_SKIP_SAVE);
+  edbm_dissolve_prop__use_preserve_quads(ot, true, PROP_SKIP_SAVE);
   edbm_dissolve_prop__use_face_split(ot);
   edbm_dissolve_prop__use_boundary_tear(ot);
 }
