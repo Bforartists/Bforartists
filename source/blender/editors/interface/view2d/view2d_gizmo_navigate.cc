@@ -232,19 +232,23 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
 
   int icon_mini_slot = 0;
 
+  /* bfa- optional helper changed back navigation buttons to vertical, 10 px offset*/
+  auto apply_gizmo_pos = [&](wmGizmo *gz_ptr, int slot) {
+    if (U.uiflag2 & USER_VERTICAL_NAVIGATION_GIZMOS) {
+      gz_ptr->matrix_basis[3][0] = roundf(co[0]);
+      gz_ptr->matrix_basis[3][1] = roundf(co[1] - 10 - (icon_offset_mini * slot));
+    } else {
+      gz_ptr->matrix_basis[3][0] = roundf(co[0] - 10 - (icon_offset_mini * slot));
+      gz_ptr->matrix_basis[3][1] = roundf(co[1]);
+    }
+  };
+
   gz = navgroup->gz_array[GZ_INDEX_ZOOM];
-  gz->matrix_basis[3][0] =
-      roundf(co[0]) - 10 -
-      (icon_offset_mini *
-       icon_mini_slot++); /* bfa- changed back navigation buttons to horizontal, 10 px offset*/
-  gz->matrix_basis[3][1] = roundf(co[1]); /* bfa- changed back navigation buttons to horizontal*/
+  apply_gizmo_pos(gz, icon_mini_slot++);
   WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
   gz = navgroup->gz_array[GZ_INDEX_MOVE];
-  gz->matrix_basis[3][0] =
-      roundf(co[0]) - (icon_offset_mini *
-                       icon_mini_slot++); /* bfa- changed back navigation buttons to horizontal*/
-  gz->matrix_basis[3][1] = roundf(co[1]); /* bfa- changed back navigation buttons to horizontal*/
+  apply_gizmo_pos(gz, icon_mini_slot++);
   WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 }
 

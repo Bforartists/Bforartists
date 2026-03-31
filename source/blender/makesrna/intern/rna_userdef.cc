@@ -7888,6 +7888,15 @@ void RNA_def_userdef(BlenderRNA *brna)
                            "This can prevent stuttering from opening the material ID menu");
   RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
   /* BFA - GooEngine end */
+
+  /* bfa navigiation gizmo toolbar */
+  prop = RNA_def_property(srna, "flip_navigation_vertical", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "uiflag2", USER_VERTICAL_NAVIGATION_GIZMOS);
+  RNA_def_property_ui_text(prop,
+                           "Revert navigation toolbar navigation drawing back to be vertical.",
+                           "Default Bforartists is set to horizontal");
+  RNA_def_property_update(prop, 0, "rna_userdef_gizmo_update");
+
   prop = RNA_def_property(srna, "show_hidden_ids", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", USER_HIDE_DOT_DATABLOCK);
   RNA_def_property_ui_text(

@@ -74,13 +74,22 @@ void ED_gizmo_button2d_group_background(const bContext *C, wmGizmoGroup *gzgroup
 
   rctf draw_rect;
   BLI_rctf_rcti_copy(&draw_rect, &group_bounds);
-  const float rad = BLI_rctf_size_x(&draw_rect) / 2.0f;
+
+  // bfa navigation gizmo toolbar
+  const float rad = (U.flag & USER_FLIP_NAVIGATION_TOOLBAR ? BLI_rctf_size_y(&draw_rect) :
+                                                             BLI_rctf_size_x(&draw_rect)) /
+                    2.0f;
 
   ScrArea *area = CTX_wm_area(C);
   BLI_rctf_translate(&draw_rect, -area->totrct.xmin, -area->totrct.ymin);
 
-  /* A bit of padding above and below. */
-  BLI_rctf_pad(&draw_rect, 0.0f, rad * 0.2f);
+  // bfa navigation gizmo toolbar
+  if (U.flag & USER_FLIP_NAVIGATION_TOOLBAR) {
+    BLI_rctf_pad(&draw_rect, rad * 0.2f, 0.0f);
+  }
+  else {
+    BLI_rctf_pad(&draw_rect, 0.0f, rad * 0.2f);
+  }
   ui::draw_roundbox_corner_set(ui::CNR_ALL);
   ui::draw_roundbox_4fv_ex(&draw_rect,
                            gzgroup->type->background_color,
