@@ -75,7 +75,7 @@ void ED_gizmo_button2d_group_background(const bContext *C, wmGizmoGroup *gzgroup
   rctf draw_rect;
   BLI_rctf_rcti_copy(&draw_rect, &group_bounds);
 
-  const float rad = (U.flag & USER_VERTICAL_NAVIGATION_GIZMOS ? BLI_rctf_size_x(&draw_rect) :
+  const float rad = (U.uiflag2 & USER_VERTICAL_NAVIGATION_GIZMOS ? BLI_rctf_size_x(&draw_rect) :
                                                                 BLI_rctf_size_y(&draw_rect)) /
                     2.0f;
 
