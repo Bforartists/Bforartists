@@ -7893,7 +7893,8 @@ void RNA_def_userdef(BlenderRNA *brna)
   prop = RNA_def_property(srna, "flip_navigation_vertical", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "uiflag2", USER_VERTICAL_NAVIGATION_GIZMOS);
   RNA_def_property_ui_text(prop,
-                           "Revert navigation toolbar navigation drawing back to be vertical.",
+                           "Navigation toolbar vertical",
+                           "Revert navigation toolbar navigation drawing back to be vertical. "
                            "Default Bforartists is set to horizontal");
   RNA_def_property_update(prop, 0, "rna_userdef_gizmo_update");
 
