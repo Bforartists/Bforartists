@@ -180,6 +180,8 @@ enum eUserpref_UI_Flag2 {
   USER_NODE_AUTOPOSITION_VIEWER = (1 << 2), /*BFA - Toggle Viewer Auto-Positioning*/
   USER_UIFLAG2_UNUSED_3 = (1 << 3),         /* dirty */
   USER_UIFLAG2_SHOW_ONLINE_ASSETS = (1 << 4),
+  /* bfa - flip navigation gizmo toolbar */
+  USER_VERTICAL_NAVIGATION_GIZMOS = (1 << 5),
 };
 
 /** #UserDef.gpu_flag */

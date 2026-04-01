@@ -352,13 +352,14 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(view, "show_area_handle")
         flow.prop(view, "show_number_arrows", text="Numeric Input Arrows")
         flow.prop(view, "show_navigate_ui")
+        # bfa - navigation gizmo toolbar
+        flow.prop(view, "flip_navigation_vertical", text="Vertical Navigation Gizmos Alignment")
 
         flow.use_property_split = True
         flow.prop(view, "border_width")
         flow.prop(view, "color_picker_type")
         flow.row().prop(view, "header_align")
         flow.prop(view, "factor_display_type")
-
 
 class USERPREF_PT_interface_temporary_windows(InterfacePanel, CenterAlignMixIn, Panel):
     bl_label = "Temporary Editors"
@@ -1925,20 +1926,11 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.use_property_split = False
+        flow.prop(view, "use_save_prompt")
         flow.prop(paths, "use_relative_paths")
         flow.prop(paths, "use_file_compression")
         flow.prop(paths, "use_load_ui")
-
-        split = flow.split(factor=0.5)
-        row = split.row()
-        row.label(text="File Preview")
-        row = split.row()
-        row.use_property_split = False
-        row.prop(paths, "file_preview_type", text="")
-
         flow.prop(paths, "use_tabs_as_spaces")
-        flow.prop(view, "use_save_prompt")
-        flow.prop(paths, "save_modified_images")
 
         layout.separator()
 
@@ -1947,6 +1939,13 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.use_property_split = True
         flow.prop(paths, "save_version")
         flow.prop(paths, "recent_files")
+        flow.prop(paths, "save_modified_images")
+        split = flow.split(factor=0.4)
+        row = split.row()
+        row.label(text="File Preview")
+        row = split.row()
+        row.use_property_split = False
+        row.prop(paths, "file_preview_type", text="")
 
 
 # BFA - custom menu
