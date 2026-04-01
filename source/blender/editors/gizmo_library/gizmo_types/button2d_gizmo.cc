@@ -75,8 +75,8 @@ void ED_gizmo_button2d_group_background(const bContext *C, wmGizmoGroup *gzgroup
   rctf draw_rect;
   BLI_rctf_rcti_copy(&draw_rect, &group_bounds);
 
-  const float rad = (U.flag & USER_VERTICAL_NAVIGATION_GIZMOS ? BLI_rctf_size_y(&draw_rect) :
-                                                                BLI_rctf_size_x(&draw_rect)) /
+  const float rad = (U.flag & USER_VERTICAL_NAVIGATION_GIZMOS ? BLI_rctf_size_x(&draw_rect) :
+                                                                BLI_rctf_size_y(&draw_rect)) /
                     2.0f;
 
   ScrArea *area = CTX_wm_area(C);
@@ -84,10 +84,10 @@ void ED_gizmo_button2d_group_background(const bContext *C, wmGizmoGroup *gzgroup
 
   // bfa navigation gizmo toolbar
   if (U.uiflag2 & USER_VERTICAL_NAVIGATION_GIZMOS) {
-    BLI_rctf_pad(&draw_rect, rad * 0.2f, 0.0f);
+    BLI_rctf_pad(&draw_rect, 0.0f, rad * 0.2f);
   }
   else {
-    BLI_rctf_pad(&draw_rect, 0.0f, rad * 0.2f);
+    BLI_rctf_pad(&draw_rect, rad * 0.2f, 0.0f);
   }
   ui::draw_roundbox_corner_set(ui::CNR_ALL);
   ui::draw_roundbox_4fv_ex(&draw_rect,
