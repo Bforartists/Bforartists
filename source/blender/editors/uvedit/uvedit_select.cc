@@ -61,14 +61,13 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 #include "UI_view2d.hh"
 
 #include "uvedit_intern.hh"
 
 namespace blender {
-
-#include "UI_interface.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
-#include "UI_resources.hh" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 
 static void uv_select_all_perform_multi_ex(const Scene *scene,
                                            Span<Object *> objects,
