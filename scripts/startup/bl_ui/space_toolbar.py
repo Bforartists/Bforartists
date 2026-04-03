@@ -1345,8 +1345,8 @@ class TOOLBAR_MT_image(Menu):
                 row.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
                 row.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
                 row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-                row.operator("uv.align", text="", icon="ALIGNX").axis = 'ALIGN_X'
-                row.operator("uv.align", text="", icon="ALIGNY").axis = 'ALIGN_Y'
+                row.operator("uv.align", text="", icon="ALIGN_X").axis = 'ALIGN_X'
+                row.operator("uv.align", text="", icon="ALIGN_Y").axis = 'ALIGN_Y'
                 row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
 
                 # Try to give unique tooltip fails at wrong context issue. It throws an error when you are not in edit mode, have no uv editor open, and there is no mesh selected.
