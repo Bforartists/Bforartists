@@ -292,7 +292,6 @@ class TOPBAR_PT_main(Panel):
         row.label(text='Topbar Manager')
 
         row.alignment = 'CENTER'
-        row.prop(bpy.context.screen, 'show_bfa_topbar', text='', icon='TOPBAR', emboss=True)
         row.prop(bpy.context.scene, 'bfa_defaults', text='', icon='OPTIONS', emboss=True)
 
         # Reset Settings Panel
