@@ -48,6 +48,30 @@ def selected_strips_count(context):
 
     return total_count, nonsound_count
 
+# BFA - Helper function to check if selected strips are connected
+def are_selected_strips_connected(context):
+    """Check if selected strips are connected together."""
+    selected_strips = getattr(context, "selected_strips", None)
+    if not selected_strips or len(selected_strips) <= 1:
+        return False
+    
+    # Check if all selected strips are connected to each other
+    # We need to check if each strip has connections to the other selected strips
+    selected_strip_set = set(selected_strips)
+    
+    for strip in selected_strips:
+        connected_strips = getattr(strip, "connections", [])
+        # Check if any of the connected strips are in our selection
+        found_connection = False
+        for conn_strip in connected_strips:
+            if conn_strip in selected_strip_set:
+                found_connection = True
+                break
+        if not found_connection:
+            return False
+    
+    return True
+
 
 class SEQUENCER_PT_active_tool(ToolActivePanelHelper, Panel):
     bl_space_type = "SEQUENCE_EDITOR"
@@ -493,7 +517,7 @@ class SEQUENCER_MT_view(Menu):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
-        # bfa - we have it already separated with correct invoke.
+        # BFA - we have it already separated with correct invoke.
 
         # if st.view_type == 'PREVIEW':
         #     # Specifying the REGION_PREVIEW context is needed in preview-only
@@ -1568,10 +1592,14 @@ class SEQUENCER_MT_strip(Menu):
             layout.menu("SEQUENCER_MT_strip_input")
 
             layout.separator()
-            layout.operator("sequencer.connect", icon="LINKED").toggle = True
-            layout.operator("sequencer.disconnect", icon="UNLINKED")
+            
+            # BFA - Show connect or disconnect based on connection state
+            if are_selected_strips_connected(context):
+                layout.operator("sequencer.disconnect", icon="UNLINKED")
+            else:
+                layout.operator("sequencer.connect", icon="LINKED").toggle = False
 
-        # bfa - preview mode only
+        # BFA - preview mode only
         if has_preview:
             layout.separator()
             layout.menu("SEQUENCER_MT_strip_lock_mute")
@@ -1792,9 +1820,12 @@ class SEQUENCER_MT_context_menu(Menu):
         layout.menu("SEQUENCER_MT_strip_lock_mute")
 
         layout.separator()
-
-        layout.operator("sequencer.connect", icon="LINKED").toggle = True
-        layout.operator("sequencer.disconnect", icon="UNLINKED")
+        
+        # BFA - Show connect or disconnect based on connection state
+        if are_selected_strips_connected(context):
+            layout.operator("sequencer.disconnect", icon="UNLINKED")
+        else:
+            layout.operator("sequencer.connect", icon="LINKED").toggle = False
 
     def draw_retime(self, context):
         layout = self.layout
