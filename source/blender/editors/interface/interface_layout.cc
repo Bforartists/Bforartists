@@ -2123,7 +2123,6 @@ void Layout::prop(PointerRNA *ptr,
       else{ /* BFA - Draw boolean properties left-aligned */
         layout_split =
             &(layout_row ? layout_row : layout)->row(true);
-        layout_split->alignment_set(LayoutAlign::Left);
       }
 
       bool label_added = false;
