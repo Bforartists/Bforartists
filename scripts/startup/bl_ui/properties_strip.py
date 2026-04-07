@@ -1036,9 +1036,10 @@ class STRIP_PT_adjust_transform(StripButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(strip.transform, "origin")
 
-        col = layout.column(heading="Mirror", align=True, heading_ctxt=i18n_contexts.id_image)
-        col.prop(strip, "use_flip_x", text="X", toggle=True)
-        col.prop(strip, "use_flip_y", text="Y", toggle=True)
+        col = layout.column(align=True)
+        subcol = self.indented_layout(col, text="Mirror", text_ctxt=i18n_contexts.id_image, align=True)
+        subcol.prop(strip, "use_flip_x", text="X", toggle=True)
+        subcol.prop(strip, "use_flip_y", text="Y", toggle=True)
 
 
 class STRIP_PT_adjust_video(StripButtonsPanel, Panel):
