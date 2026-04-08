@@ -1021,12 +1021,12 @@ class STRIP_PT_adjust_transform(StripButtonsPanel, Panel):
         col.prop(strip.transform, "filter", text="Filter")
 
         col = layout.column(align=True)
-        subcol = self.indented_layout(col, text="Position", align=True)
+        subcol = self.indented_layout(col, text="Position", align=True) # BFA - Indent
         subcol.prop(strip.transform, "offset_x", text="X")
         subcol.prop(strip.transform, "offset_y", text="Y")
 
         col = layout.column(align=True)
-        subcol = self.indented_layout(col, text="Scale", align=True)
+        subcol = self.indented_layout(col, text="Scale", align=True) # BFA - Indent
         subcol.prop(strip.transform, "scale_x", text="X")
         subcol.prop(strip.transform, "scale_y", text="Y")
 
@@ -1036,9 +1036,10 @@ class STRIP_PT_adjust_transform(StripButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(strip.transform, "origin")
 
-        col = layout.column(heading="Mirror", align=True, heading_ctxt=i18n_contexts.id_image)
-        col.prop(strip, "use_flip_x", text="X", toggle=True)
-        col.prop(strip, "use_flip_y", text="Y", toggle=True)
+        col = layout.column(align=True)
+        subcol = self.indented_layout(col, text="Mirror", text_ctxt=i18n_contexts.id_image, align=True) # BFA - Indent
+        subcol.prop(strip, "use_flip_x", text="X", toggle=True)
+        subcol.prop(strip, "use_flip_y", text="Y", toggle=True)
 
 
 class STRIP_PT_adjust_video(StripButtonsPanel, Panel):

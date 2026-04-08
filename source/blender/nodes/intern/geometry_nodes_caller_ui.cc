@@ -532,11 +532,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       break;
     }
     case SOCK_FONT: {
-      PropertyRNA *prop = RNA_struct_find_property(ctx.properties_ptr, "value");
+      PropertyRNA *prop = RNA_struct_find_property(socket_props_ptr, "value");
       if (prop && RNA_property_type(prop) == PROP_POINTER) {
         template_id(&row,
                     &ctx.C,
-                    ctx.properties_ptr,
+                    socket_props_ptr,
                     "value",
                     nullptr,
                     "FONT_OT_open",
@@ -548,24 +548,24 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       else {
         /* #template_id only supports pointer properties currently. Node tools store
          * data-block pointers in strings currently. */
-        row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "fonts", name, ICON_FONT_DATA);
+        row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "fonts", name, ICON_FONT_DATA);
       }
       break;
     }
     case SOCK_SCENE: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "scenes", name, ICON_SCENE);
+      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "scenes", name, ICON_SCENE);
       break;
     }
     case SOCK_TEXT_ID: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "texts", name, ICON_TEXT);
+      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "texts", name, ICON_TEXT);
       break;
     }
     case SOCK_MASK: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "masks", name, ICON_NONE);
+      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "masks", name, ICON_NONE);
       break;
     }
     case SOCK_SOUND: {
-      row.prop_search(ctx.properties_ptr, "value", ctx.bmain_ptr, "sounds", name, ICON_SOUND);
+      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "sounds", name, ICON_SOUND);
       break;
     }
     case SOCK_IMAGE: {
@@ -599,7 +599,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       else {
         row.prop(socket_props_ptr, "value", UI_ITEM_NONE, name, ICON_NONE);
       }
-      row.decorator(ctx.properties_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1); /* BFA - Manually add keyframe decorator since layout is non-split*/
+      row.decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1); /* BFA - Manually add keyframe decorator since layout is non-split*/
       break;
     }
     case SOCK_BOOLEAN: {
@@ -622,11 +622,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
           case SOCK_FLOAT:
           case SOCK_INT: {
             row.use_property_decorate_set(false);
-            row.prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+            row.prop(socket_props_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
             row.label(
                 "",
                 ICON_BLANK1); /* BFA - added blank label so int sliders are aligned correctly */
-            row.decorator(ctx.properties_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
+            row.decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
             break;
           }
           case SOCK_VECTOR: {
@@ -646,17 +646,17 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
               ui::Layout *channels_row = &row.row(true);
               channels_row->use_property_split_set(
                   true); /* Enable property split for XYZ labels */
-              channels_row->prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, "", ICON_NONE);
+              channels_row->prop(socket_props_ptr, rna_path, UI_ITEM_NONE, "", ICON_NONE);
               /* BFA - Ensure decorators are shown for animation */
-              channels_row->decorator(ctx.properties_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
+              channels_row->decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
             }
             else {
               /* BFA - For normal vectors, use property split to show XYZ labels */
               row.use_property_decorate_set(false);
               row.use_property_split_set(true); /* Enable property split for XYZ labels */
-              row.prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+              row.prop(socket_props_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
               /* BFA - Ensure decorators are shown for animation */
-              row.decorator(ctx.properties_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
+              row.decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
             }
             break;
           }
@@ -665,7 +665,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
             /* BFA - Use property split for proper component layout and alignment */
             row.use_property_decorate_set(false);
             row.use_property_split_set(true); /* Enable property split for component labels */
-            row.prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+            row.prop(socket_props_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
             /* BFA - Add decorator manually even with property split to ensure animation indicators
              */
             row.decorator(ctx.properties_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
@@ -673,8 +673,8 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
           }
           default: {
             row.use_property_split_set(false);
-            row.prop(ctx.properties_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
-            row.decorator(ctx.properties_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
+            row.prop(socket_props_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
+            row.decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
             break;
           }
         }

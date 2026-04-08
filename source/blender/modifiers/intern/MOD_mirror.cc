@@ -129,7 +129,7 @@ static Mesh *modify_mesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh 
 
 static void panel_draw(const bContext * /*C*/, Panel *panel)
 {
-  ui::Layout *row, *col; /*bfa - no *sub*/
+  ui::Layout *row, *col; /* BFA - no *sub*/
   ui::Layout &layout = *panel->layout;
   const ui::eUI_Item_Flag toggles_flag = ui::ITEM_R_TOGGLE | ui::ITEM_R_FORCE_BLANK_DECORATE;
 
@@ -139,9 +139,10 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   MirrorModifierData *mmd = static_cast<MirrorModifierData *>(ptr->data);
   bool has_bisect = (mmd->flag &
                      (MOD_MIR_BISECT_AXIS_X | MOD_MIR_BISECT_AXIS_Y | MOD_MIR_BISECT_AXIS_Z));
+  bool has_merge = RNA_boolean_get(ptr, "use_mirror_merge"); /* BFA */
 
   col = &layout.column(false);
-  col->use_property_split_set(true);
+  col->use_property_split_set(false); /* BFA */
 
   prop = RNA_struct_find_property(ptr, "use_axis");
   row = &col->row(true, IFACE_("Axis"));
@@ -155,53 +156,41 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   row->prop(ptr, prop, 1, 0, toggles_flag, IFACE_("Y"), ICON_NONE);
   row->prop(ptr, prop, 2, 0, toggles_flag, IFACE_("Z"), ICON_NONE);
 
-  prop = RNA_struct_find_property(ptr, "use_bisect_flip_axis");
-  row = &col->row(true, IFACE_("Flip"));
-  row->active_set(has_bisect);
-  row->prop(ptr, prop, 0, 0, toggles_flag, IFACE_("X"), ICON_NONE);
-  row->prop(ptr, prop, 1, 0, toggles_flag, IFACE_("Y"), ICON_NONE);
-  row->prop(ptr, prop, 2, 0, toggles_flag, IFACE_("Z"), ICON_NONE);
+  if (has_bisect){ /* BFA - Hide instead of greying out*/
+    prop = RNA_struct_find_property(ptr, "use_bisect_flip_axis");
+    row = &col->row(true, IFACE_("Flip"));
+    row->prop(ptr, prop, 0, 0, toggles_flag, IFACE_("X"), ICON_NONE);
+    row->prop(ptr, prop, 1, 0, toggles_flag, IFACE_("Y"), ICON_NONE);
+    row->prop(ptr, prop, 2, 0, toggles_flag, IFACE_("Z"), ICON_NONE);
+  }
 
   col->separator();
-
+  
+  col->use_property_split_set(true); /* BFA */
   col->prop(ptr, "mirror_object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /* bfa - our layout */
-  col = &layout.column(true);
-  row = &col->row(true);
-  row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator();                   /*bfa - indent*/
-  row->prop(ptr, "use_clip", UI_ITEM_NONE, IFACE_("Clipping"), ICON_NONE);
-  row->decorator(ptr, "use_clip", 0); /*bfa - decorator*/
+  /* BFA - our layout */
+  col = &layout.column(false);
+  col->use_property_split_set(true); /* BFA */
+  col->prop(ptr, "use_clip", UI_ITEM_NONE, IFACE_("Clipping"), ICON_NONE);
+  col->prop(ptr, "use_mirror_merge", UI_ITEM_NONE, IFACE_("Merge"), ICON_NONE);
 
-  /* bfa - our layout */
-  /* NOTE: split amount here needs to be synced with normal labels */
-  ui::Layout *split = &layout.split(0.385f, true);
+  /* BFA - our layout */
+  if (has_merge || has_bisect){
+    col->separator();
+    col->label(IFACE_("Distance"), ICON_NONE);
+    row = &col->row(false);
+    row->separator();
+    col = &row->column(true);
 
-  /* bfa - our layout */
-  row = &split->row(true);
-  row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator();                   /*bfa - indent*/
-  row->prop(ptr, "use_mirror_merge", UI_ITEM_NONE, "Merge", ICON_NONE);
-  row->decorator(ptr, "use_mirror_merge", 0); /*bfa - decorator*/
+    if (has_merge){
+      col->prop(ptr, "merge_threshold", UI_ITEM_NONE, IFACE_("Merge"), ICON_NONE);
+    }
 
-  /* bfa - our layout */
-  row = &split->row(true);
-  if (RNA_boolean_get(ptr, "use_mirror_merge")) {
-    row->use_property_decorate_set(true);
-    row->prop(ptr, "merge_threshold", toggles_flag, "", ICON_NONE);
+    if (has_bisect){
+      col->prop(ptr, "bisect_threshold", UI_ITEM_NONE, IFACE_("Bisect"), ICON_NONE);
+    }  
   }
-  else {
-    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
-  }
-  bool is_bisect_set[3];
-  RNA_boolean_get_array(ptr, "use_bisect_axis", is_bisect_set);
-
-  /* bfa - our layout */
-  col = &layout.row(true);           /*bfa - col, not sub*/
-  col->use_property_split_set(true); /* bfa - use_property_split = true */
-  col->active_set(is_bisect_set[0] || is_bisect_set[1] || is_bisect_set[2]);
-  col->prop(ptr, "bisect_threshold", UI_ITEM_NONE, IFACE_("Bisect Distance"), ICON_NONE);
 
   modifier_error_message_draw(layout, ptr);
 }

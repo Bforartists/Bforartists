@@ -365,11 +365,35 @@ void ED_area_type_hud_ensure(bContext *C, ScrArea *area)
   ED_area_type_hud_clear(wm, area);
 
   ARegionType *art = BKE_regiontype_from_id(area->type, RGN_TYPE_HUD);
+
+  /* BFA - Support for TOOLBAR and TOPBAR operators to show redo panel in VIEW_3D. */
+  /* If the current area doesn't support HUD regions (e.g., TOPBAR or TOOLBAR),
+   * use a VIEW_3D area to show the redo panel there instead.
+   * This allows operators called from the topbar or toolbar to show their
+   * redo panels in the 3D viewport where the operation actually takes place. */
+  ScrArea *area_hud = area;
   if (art == nullptr) {
-    return;
+    wmWindow *win = CTX_wm_window(C);
+    if (win == nullptr) {
+      return;
+    }
+
+    /* BFA - Find a VIEW_3D area to show the redo panel in. */
+    bScreen *screen = WM_window_get_active_screen(win);
+    ScrArea *area_view3d = BKE_screen_find_big_area(screen, SPACE_VIEW3D, 0);
+    if (area_view3d == nullptr || area_view3d == area) {
+      return;
+    }
+
+    /* Use VIEW_3D area for HUD display, but keep original context for operator region tracking. */
+    area_hud = area_view3d;
+    art = BKE_regiontype_from_id(area_hud->type, RGN_TYPE_HUD);
+    if (art == nullptr) {
+      return;
+    }
   }
 
-  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_HUD);
+  ARegion *region = BKE_area_find_region_type(area_hud, RGN_TYPE_HUD); /* BFA - Find the HUD region. */
 
   if (region && (region->flag & RGN_FLAG_HIDDEN_BY_USER)) {
     /* The region is intentionally hidden by the user, don't show it. */
@@ -392,19 +416,19 @@ void ED_area_type_hud_ensure(bContext *C, ScrArea *area)
 
   if (region == nullptr) {
     init = true;
-    region = hud_region_add(area);
+    region = hud_region_add(area_hud); /* BFA - Add the HUD region. */
     region->runtime->type = art;
   }
 
   /* Let 'ED_area_update_region_sizes' do the work of placing the region.
    * Otherwise we could set the 'region->winrct' & 'region->winx/winy' here. */
   if (init) {
-    ED_area_tag_region_size_update(area, region);
+    ED_area_tag_region_size_update(area_hud, region); /* BFA - Update region size. */
   }
   else {
     if (region->flag & RGN_FLAG_HIDDEN) {
       /* Also forces recalculating HUD size in hud_region_layout(). */
-      ED_area_tag_region_size_update(area, region);
+      ED_area_tag_region_size_update(area_hud, region); /* BFA - Update region size. */
     }
     region->flag &= ~RGN_FLAG_HIDDEN;
   }
@@ -428,14 +452,14 @@ void ED_area_type_hud_ensure(bContext *C, ScrArea *area)
   if (init) {
     /* This is needed or 'winrct' will be invalid. */
     wmWindow *win = CTX_wm_window(C);
-    ED_area_update_region_sizes(wm, win, area);
+    ED_area_update_region_sizes(wm, win, area_hud); /* BFA - Update region sizes. */
   }
 
   ED_region_floating_init(region);
   ED_region_tag_redraw(region);
 
   /* We need to update/initialize the runtime offsets. */
-  ARegion *region_win = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ARegion *region_win = BKE_area_find_region_type(area_hud, RGN_TYPE_WINDOW); /* BFA - Find the window region. */
   if (region_win) {
     float x, y;
 
