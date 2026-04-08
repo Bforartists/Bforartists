@@ -201,6 +201,8 @@ struct ModifierData {
 
   char *error = nullptr;
 
+  struct IDProperty *system_properties = nullptr;
+
   /** Runtime field which contains runtime data which is specific to a modifier type. */
   void *runtime = nullptr;
 };
@@ -2567,7 +2569,7 @@ struct NodesModifierPanel {
 struct NodesModifierData {
   ModifierData modifier;
   struct bNodeTree *node_group = nullptr;
-  struct NodesModifierSettings settings;
+  struct NodesModifierSettings settings_legacy;
   /**
    * Directory where baked simulation states are stored. This may be relative to the .blend file.
    */
@@ -3224,7 +3226,8 @@ struct GreasePencilLineartModifierData {
 
   unsigned char shadow_selection = 0;
   unsigned char silhouette_selection = 0;
-  char _pad[5] = {};
+  unsigned char fill_strokes = 0;
+  char _pad[4] = {};
 
   /** `0..1` range for cosine angle */
   float crease_threshold = DEG2RAD(140.0f);

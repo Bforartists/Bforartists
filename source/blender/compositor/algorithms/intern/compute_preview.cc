@@ -44,19 +44,20 @@ static void compute_preview_cpu(Context &context, const Result &input, bke::bNod
     conversions.convert_to_initialized_n(input.cpu_data(), input_as_color.cpu_data());
   }
 
-  ColormanageProcessor *color_processor = IMB_colormanagement_display_processor_new(
+  ColormanageProcessor color_processor = ColormanageProcessor::display_processor_new(
       &context.get_scene().view_settings, &context.get_scene().display_settings);
 
+  uchar *data_dst = preview->ibuf->byte_data_for_write();
   threading::parallel_for(IndexRange(preview_size.y), 1, [&](const IndexRange sub_y_range) {
     for (const int64_t y : sub_y_range) {
       for (const int64_t x : IndexRange(preview_size.x)) {
         const int2 coordinates = int2((float2(x, y) / float2(preview_size)) * float2(input_size));
 
         Color color = input_as_color.load_pixel<Color>(coordinates);
-        IMB_colormanagement_processor_apply_v4(color_processor, color);
+        color_processor.apply_v4(color);
 
         const int64_t index = (y * preview_size.x + x) * 4;
-        rgba_float_to_uchar(preview->ibuf->byte_buffer.data + index, color);
+        rgba_float_to_uchar(data_dst + index, color);
       }
     }
   });
@@ -64,8 +65,6 @@ static void compute_preview_cpu(Context &context, const Result &input, bke::bNod
   if (input.type() != ResultType::Color) {
     input_as_color.release();
   }
-
-  IMB_colormanagement_processor_free(color_processor);
 }
 
 static void compute_preview_gpu(Context &context,
@@ -103,21 +102,21 @@ static void compute_preview_gpu(Context &context,
       GPU_texture_read(preview_result, GPU_DATA_FLOAT, 0));
   preview_result.release();
 
-  ColormanageProcessor *color_processor = IMB_colormanagement_display_processor_new(
+  ColormanageProcessor color_processor = ColormanageProcessor::display_processor_new(
       &context.get_scene().view_settings, &context.get_scene().display_settings);
 
+  uchar *data_dst = preview->ibuf->byte_data_for_write();
   threading::parallel_for(IndexRange(preview_size.y), 1, [&](const IndexRange sub_y_range) {
     for (const int64_t y : sub_y_range) {
       for (const int64_t x : IndexRange(preview_size.x)) {
         const int64_t index = (y * preview_size.x + x) * 4;
-        IMB_colormanagement_processor_apply_v4(color_processor, preview_pixels + index);
-        rgba_float_to_uchar(preview->ibuf->byte_buffer.data + index, preview_pixels + index);
+        color_processor.apply_v4(preview_pixels + index);
+        rgba_float_to_uchar(data_dst + index, preview_pixels + index);
       }
     }
   });
 
   MEM_delete(preview_pixels);
-  IMB_colormanagement_processor_free(color_processor);
 }
 
 /* Given the size of a result, compute a lower resolution size for a preview. The greater dimension

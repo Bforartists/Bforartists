@@ -13,13 +13,32 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <functional>
+#include <optional>
 #include <string>
 
 namespace blender::gpu::shader::parser {
 
-using report_callback = std::function<void(
-    int error_line, int error_char, std::string error_line_string, const char *error_str)>;
+struct Token;
+
+struct ErrorHandler {
+  struct Error {
+    /* Contain only the message passed to the report function. */
+    std::string message;
+    /* Contains filename, token location, source line and cursor. */
+    std::string full_report;
+  };
+
+  std::string default_filename;
+  std::optional<Error> err;
+
+  void report(Token tok, std::string_view message);
+  void report(int row, int column, std::string line, std::string_view message);
+
+  void reset()
+  {
+    err.reset();
+  }
+};
 
 /** Poor man's IndexRange. */
 struct IndexRange {
@@ -104,6 +123,8 @@ template<typename T> struct MutableSpan {
 size_t line_number(const std::string_view &str, size_t pos);
 /** Return the offset to the start of the line. */
 size_t char_number(const std::string_view &str, size_t pos);
+/** Return the filename at this position. Take into account the #line directives. */
+std::string filename(const std::string_view &str, size_t pos);
 /** Returns a string of the line containing the character at the given position. */
 std::string line_str(const std::string_view &str, size_t pos);
 

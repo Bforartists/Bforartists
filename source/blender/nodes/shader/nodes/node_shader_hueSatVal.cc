@@ -14,16 +14,21 @@ namespace nodes::node_shader_hueSatVal_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Hue").default_value(0.5f).min(0.0f).max(1.0f).description(
-      "Hue rotation offset, from 0 (-180°) to 1 (+180°). Note that 0 and 1 have the same result");
-  b.add_input<decl::Float>("Saturation")
+  b.add_input<decl::Float>("Hue"_ustr)
+      .default_value(0.5f)
+      .min(0.0f)
+      .max(1.0f)
+      .description(
+          "Hue rotation offset, from 0 (-180°) to 1 (+180°). Note that 0 and 1 have the same "
+          "result");
+  b.add_input<decl::Float>("Saturation"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
       .description(
           "Value of 0 removes color from the image, making it black-and-white. "
           "A value greater than 1.0 increases saturation");
-  b.add_input<decl::Float>("Value")
+  b.add_input<decl::Float>("Value"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
@@ -31,16 +36,16 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "Value shift. 0 makes the color black, 1 keeps it the same, and higher values make it "
           "brighter");
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Amount of influence the node exerts on the image");
-  b.add_input<decl::Color>("Color")
+  b.add_input<decl::Color>("Color"_ustr)
       .default_value({0.8f, 0.8f, 0.8f, 1.0f})
       .description("Color input on which HSV color transformation will be applied");
-  b.add_output<decl::Color>("Color");
+  b.add_output<decl::Color>("Color"_ustr);
 }
 
 static int gpu_shader_hue_sat(GPUMaterial *mat,

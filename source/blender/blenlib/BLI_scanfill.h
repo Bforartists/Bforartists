@@ -79,7 +79,7 @@ struct ScanFillFace {
   struct ScanFillVert *v1, *v2, *v3;
 };
 
-/* scanfill.c */
+/* scanfill.cc */
 
 struct ScanFillVert *BLI_scanfill_vert_add(ScanFillContext *sf_ctx, const float vec[3]);
 struct ScanFillEdge *BLI_scanfill_edge_add(ScanFillContext *sf_ctx,
@@ -110,7 +110,7 @@ void BLI_scanfill_end(ScanFillContext *sf_ctx);
 void BLI_scanfill_begin_arena(ScanFillContext *sf_ctx, struct MemArena *arena);
 void BLI_scanfill_end_arena(ScanFillContext *sf_ctx, struct MemArena *arena);
 
-/* scanfill_utils.c */
+/* scanfill_utils.cc */
 
 /**
  * Call before scan-fill to remove self intersections.

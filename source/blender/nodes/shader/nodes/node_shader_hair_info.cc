@@ -10,14 +10,14 @@ namespace nodes::node_shader_hair_info_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Is Strand");
+  b.add_output<decl::Float>("Is Strand"_ustr);
 #define INTERCEPT_SOCKET_INDEX 1
-  b.add_output<decl::Float>("Intercept");
+  b.add_output<decl::Float>("Intercept"_ustr);
 #define LENGTH_SOCKET_INDEX 2
-  b.add_output<decl::Float>("Length");
-  b.add_output<decl::Float>("Thickness");
-  b.add_output<decl::Vector>("Tangent Normal");
-  b.add_output<decl::Float>("Random");
+  b.add_output<decl::Float>("Length"_ustr);
+  b.add_output<decl::Float>("Thickness"_ustr);
+  b.add_output<decl::Vector>("Tangent Normal"_ustr);
+  b.add_output<decl::Float>("Random"_ustr);
 }
 
 static int node_shader_gpu_hair_info(GPUMaterial *mat,

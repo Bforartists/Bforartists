@@ -16,13 +16,13 @@ namespace blender::nodes::node_geo_import_text {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Path")
+  b.add_input<decl::String>("Path"_ustr)
       .subtype(PROP_FILEPATH)
       .path_filter("*.txt")
       .optional_label()
       .description("Path to a text file");
 
-  b.add_output<decl::String>("String");
+  b.add_output<decl::String>("String"_ustr);
 }
 
 class LoadTextCache : public memory_cache::CachedValue {
@@ -39,7 +39,7 @@ class LoadTextCache : public memory_cache::CachedValue {
 static void node_geo_exec(GeoNodeExecParams params)
 {
   const std::optional<std::string> path = params.ensure_absolute_path(
-      params.extract_input<std::string>("Path"));
+      params.extract_input<std::string>("Path"_ustr));
   if (!path) {
     params.set_default_remaining_outputs();
     return;
@@ -71,7 +71,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.error_message_add(warning.type, warning.message);
   }
 
-  params.set_output("String", cached_value->text);
+  params.set_output("String"_ustr, cached_value->text);
 }
 
 static void node_register()

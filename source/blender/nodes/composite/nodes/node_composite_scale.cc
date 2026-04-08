@@ -44,45 +44,49 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .compositor_realization_mode(CompositorInputRealizationMode::None)
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Menu>("Type").default_value(CMP_NODE_SCALE_RELATIVE).static_items(type_items);
-  b.add_input<decl::Float>("X")
+  b.add_input<decl::Menu>("Type"_ustr)
+      .default_value(CMP_NODE_SCALE_RELATIVE)
+      .static_items(type_items);
+  b.add_input<decl::Float>("X"_ustr)
       .default_value(1.0f)
       .min(0.0001f)
       .max(CMP_SCALE_MAX)
       .structure_type(StructureType::Dynamic)
-      .usage_by_menu("Type", {CMP_NODE_SCALE_RELATIVE, CMP_NODE_SCALE_ABSOLUTE});
-  b.add_input<decl::Float>("Y")
+      .usage_by_menu("Type"_ustr, {CMP_NODE_SCALE_RELATIVE, CMP_NODE_SCALE_ABSOLUTE});
+  b.add_input<decl::Float>("Y"_ustr)
       .default_value(1.0f)
       .min(0.0001f)
       .max(CMP_SCALE_MAX)
       .structure_type(StructureType::Dynamic)
-      .usage_by_menu("Type", {CMP_NODE_SCALE_RELATIVE, CMP_NODE_SCALE_ABSOLUTE});
-  b.add_input<decl::Menu>("Frame Type")
+      .usage_by_menu("Type"_ustr, {CMP_NODE_SCALE_RELATIVE, CMP_NODE_SCALE_ABSOLUTE});
+  b.add_input<decl::Menu>("Frame Type"_ustr)
       .default_value(CMP_NODE_SCALE_RENDER_SIZE_STRETCH)
       .static_items(frame_type_items)
-      .usage_by_menu("Type", CMP_NODE_SCALE_RENDER_SIZE)
+      .usage_by_menu("Type"_ustr, CMP_NODE_SCALE_RENDER_SIZE)
       .optional_label()
       .description("How the image fits in the camera frame");
 
   PanelDeclarationBuilder &sampling_panel = b.add_panel("Sampling"_ustr).default_closed(true);
-  sampling_panel.add_input<decl::Menu>("Interpolation")
+  sampling_panel.add_input<decl::Menu>("Interpolation"_ustr)
       .default_value(CMP_NODE_INTERPOLATION_BILINEAR)
       .static_items(rna_enum_node_compositor_interpolation_items)
       .optional_label()
       .description("Interpolation method");
-  sampling_panel.add_input<decl::Menu>("Extension X")
+  sampling_panel.add_input<decl::Menu>("Extension X"_ustr)
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
       .optional_label()
       .description("The extension mode applied to the X axis");
-  sampling_panel.add_input<decl::Menu>("Extension Y")
+  sampling_panel.add_input<decl::Menu>("Extension Y"_ustr)
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
       .optional_label()

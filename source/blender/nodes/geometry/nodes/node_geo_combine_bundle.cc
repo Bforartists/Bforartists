@@ -34,8 +34,8 @@ static void node_declare(NodeDeclarationBuilder &b)
     for (const int i : IndexRange(storage.items_num)) {
       const NodeCombineBundleItem &item = storage.items[i];
       const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-      const StringRef name = item.name ? item.name : "";
-      const std::string identifier = CombineBundleItemsAccessor::socket_identifier_for_item(item);
+      const UString name(item.name);
+      const UString identifier(CombineBundleItemsAccessor::socket_identifier_for_item(item));
       auto &decl = b.add_input(socket_type, name, identifier)
                        .socket_name_ptr(
                            &tree->id, *CombineBundleItemsAccessor::item_srna, &item, "name")
@@ -48,9 +48,11 @@ static void node_declare(NodeDeclarationBuilder &b)
       }
     }
   }
-  b.add_input<decl::Extend>("", "__extend__");
-  b.add_output<decl::Bundle>("Bundle").propagate_all().reference_pass_all().structure_type(
-      StructureType::Single);
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr);
+  b.add_output<decl::Bundle>("Bundle"_ustr)
+      .propagate_all()
+      .reference_pass_all()
+      .structure_type(StructureType::Single);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -138,11 +140,11 @@ static void node_geo_exec(GeoNodeExecParams params)
       continue;
     }
     bke::SocketValueVariant value = params.extract_input<bke::SocketValueVariant>(
-        node.input_socket(i).identifier);
-    bundle.add(name, BundleItemSocketValue{stype, std::move(value)});
+        node.input_socket(i).identifier_ustr());
+    bundle.add(UString(name), BundleItemSocketValue{stype, std::move(value)});
   }
 
-  params.set_output("Bundle", std::move(bundle_ptr));
+  params.set_output("Bundle"_ustr, std::move(bundle_ptr));
 }
 
 static void node_gather_link_searches(GatherLinkSearchOpParams &params)
@@ -159,7 +161,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       const auto *item =
           socket_items::add_item_with_socket_type_and_name<CombineBundleItemsAccessor>(
               params.node_tree, node, params.socket.typeinfo->type, params.socket.name);
-      params.update_and_connect_available_socket(node, item->name);
+      params.update_and_connect_available_socket(node, UString(item->name));
     });
   }
   else {
@@ -168,7 +170,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     }
     params.add_item(IFACE_("Bundle"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("NodeCombineBundle");
-      params.connect_available_socket(node, "Bundle");
+      params.connect_available_socket(node, "Bundle"_ustr);
 
       SpaceNode &snode = *CTX_wm_space_node(&params.C);
       sync_sockets_combine_bundle(snode, node, nullptr);

@@ -16,12 +16,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type({GeometryComponent::Type::Mesh, GeometryComponent::Type::GreasePencil})
       .description("Geometry to replace materials on");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Material>("Old");
-  b.add_input<decl::Material>("New").translation_context(BLT_I18NCONTEXT_ID_MATERIAL);
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Material>("Old"_ustr);
+  b.add_input<decl::Material>("New"_ustr).translation_context(BLT_I18NCONTEXT_ID_MATERIAL);
 }
 
 static void replace_materials(MutableSpan<Material *> materials,
@@ -37,10 +37,10 @@ static void replace_materials(MutableSpan<Material *> materials,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Material *old_material = params.extract_input<Material *>("Old");
-  Material *new_material = params.extract_input<Material *>("New");
+  Material *old_material = params.extract_input<Material *>("Old"_ustr);
+  Material *new_material = params.extract_input<Material *>("New"_ustr);
 
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
 
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     if (Mesh *mesh = geometry_set.get_mesh_for_write()) {
@@ -53,7 +53,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   });
 
-  params.set_output("Geometry", std::move(geometry_set));
+  params.set_output("Geometry"_ustr, std::move(geometry_set));
 }
 
 static void node_register()

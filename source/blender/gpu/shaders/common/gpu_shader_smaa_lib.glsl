@@ -481,18 +481,18 @@
 
 #ifndef SMAA_AREATEX_SELECT
 #  if defined(SMAA_HLSL_3)
-#    define SMAA_AREATEX_SELECT(sample) sample.ra
+#    define SMAA_AREATEX_SELECT(samp) samp.ra
 #  else
-#    define SMAA_AREATEX_SELECT(sample) sample.rg
+#    define SMAA_AREATEX_SELECT(samp) samp.rg
 #  endif
 #endif
 
 #ifndef SMAA_SEARCHTEX_SELECT
-#  define SMAA_SEARCHTEX_SELECT(sample) sample.r
+#  define SMAA_SEARCHTEX_SELECT(samp) samp.r
 #endif
 
 #ifndef SMAA_DECODE_VELOCITY
-#  define SMAA_DECODE_VELOCITY(sample) sample.rg
+#  define SMAA_DECODE_VELOCITY(samp) samp.rg
 #endif
 
 /* ----------------------------------------------------------------------------
@@ -549,7 +549,7 @@ SamplerState PointSampler
 #  define SMAA_FLATTEN [flatten]
 #  define SMAA_BRANCH [branch]
 #  define SMAATexture2DMS2(tex) Texture2DMS<float4, 2> tex
-#  define SMAALoad(tex, pos, sample) tex.Load(pos, sample)
+#  define SMAALoad(tex, pos, samp) tex.Load(pos, samp)
 #  if defined(SMAA_HLSL_4_1)
 #    define SMAAGather(tex, coord) tex.Gather(LinearSampler, coord, 0)
 #  endif
@@ -1182,10 +1182,10 @@ float2 SMAAArea(SMAATexture2D(areaTex), float2 dist, float e1, float e2, float o
 /* ----------------------------------------------------------------------------
  * Corner Detection Functions */
 
-void SMAADetectHorizontalCornerPattern(SMAATexture2D(edgesTex),
-                                       float2 &weights,
-                                       float4 texcoord,
-                                       float2 d)
+void SMAADetectHorizontalCornerPattern([[maybe_unused]] SMAATexture2D(edgesTex),
+                                       [[maybe_unused]] float2 &weights,
+                                       [[maybe_unused]] float4 texcoord,
+                                       [[maybe_unused]] float2 d)
 {
 #  if !defined(SMAA_DISABLE_CORNER_DETECTION)
   float2 leftRight = step(d.xy, d.yx);
@@ -1203,10 +1203,10 @@ void SMAADetectHorizontalCornerPattern(SMAATexture2D(edgesTex),
 #  endif
 }
 
-void SMAADetectVerticalCornerPattern(SMAATexture2D(edgesTex),
-                                     float2 &weights,
-                                     float4 texcoord,
-                                     float2 d)
+void SMAADetectVerticalCornerPattern([[maybe_unused]] SMAATexture2D(edgesTex),
+                                     [[maybe_unused]] float2 &weights,
+                                     [[maybe_unused]] float4 texcoord,
+                                     [[maybe_unused]] float2 d)
 {
 #  if !defined(SMAA_DISABLE_CORNER_DETECTION)
   float2 leftRight = step(d.xy, d.yx);

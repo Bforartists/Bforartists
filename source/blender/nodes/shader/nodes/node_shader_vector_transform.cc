@@ -18,12 +18,12 @@ namespace nodes::node_shader_vector_transform_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Vector>("Vector")
+  b.add_input<decl::Vector>("Vector"_ustr)
       .default_value({0.5f, 0.5f, 0.5f})
       .min(-10000.0f)
       .max(10000.0f)
       .description("Vector, point, or normal which will be used for conversion between spaces");
-  b.add_output<decl::Vector>("Vector");
+  b.add_output<decl::Vector>("Vector"_ustr);
 }
 
 static void node_shader_buts_vect_transform(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

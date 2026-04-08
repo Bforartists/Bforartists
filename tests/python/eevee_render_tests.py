@@ -44,6 +44,8 @@ BLOCKLIST = [
     "principled_bsdf_transmission.blend",
     # Blocked due to platform-dependent noise differences (likely floating-point/fast-math differences).
     "raycast_bump.blend",
+    # Blocked due to platform-dependent uninitialized pixels.
+    "image_mapping_udim.blend",
 ]
 
 BLOCKLIST_METAL = [
@@ -64,6 +66,9 @@ BLOCKLIST_VULKAN = [
     "image.blend",
 ]
 
+BLOCKLIST_OPENGL = [
+]
+
 BLOCKLIST_INTEL = [
 ]
 
@@ -81,6 +86,7 @@ def setup():
 
         skip_hair_setup = scene.get("EEVEE_skip_hair_setup", False)
         skip_shadow_setup = scene.get("EEVEE_skip_shadow_setup", False)
+        skip_subsurface_setup = scene.get("EEVEE_skip_subsurface_setup", False)
 
         # Enable Eevee features
         eevee = scene.eevee
@@ -125,6 +131,9 @@ def setup():
         ray_tracing.screen_trace_quality = 1.0
         ray_tracing.screen_trace_thickness = 1.0
 
+        # Fast GI
+        eevee.fast_gi_quality = 0.8
+
         # Light-probes
         eevee.gi_cubemap_resolution = '256'
 
@@ -144,9 +153,10 @@ def setup():
                 ob.hide_probe_plane = True
 
             # Counteract the versioning from legacy EEVEE. Should be changed per file at some point.
-            for mat_slot in ob.material_slots:
-                if mat_slot.material:
-                    mat_slot.material.thickness_mode = 'SPHERE'
+            if not skip_subsurface_setup:
+                for mat_slot in ob.material_slots:
+                    if mat_slot.material:
+                        mat_slot.material.thickness_mode = 'SPHERE'
 
         if bpy.data.objects.get('Volume_Probe_Baked') is not None:
             # Some file already have pre existing probe setup with baked data.
@@ -235,6 +245,8 @@ def main():
         blocklist += BLOCKLIST_METAL
     elif args.gpu_backend == "vulkan":
         blocklist += BLOCKLIST_VULKAN
+    elif args.gpu_backend == "opengl":
+        blocklist += BLOCKLIST_OPENGL
 
     if os.getenv("BLENDER_TEST_IGNORE_VENDOR_BLOCKLIST") is None:
         gpu_vendor = render_report.get_gpu_device_vendor(args.blender)

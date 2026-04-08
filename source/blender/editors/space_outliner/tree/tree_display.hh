@@ -150,6 +150,7 @@ class AbstractTreeDisplay {
  * \brief Tree-Display for the View Layer display mode.
  */
 class TreeDisplayViewLayer final : public AbstractTreeDisplay {
+  const Main *bmain_ = nullptr;
   Scene *scene_ = nullptr;
   ViewLayer *view_layer_ = nullptr;
   bool show_objects_ = true;

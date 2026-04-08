@@ -1215,11 +1215,6 @@ void draw_layout_panels_backdrop(const ARegion *region,
   /* Draw backdrops for layout panels. */
   const float aspect = block_is_popup_any(panel->runtime->block) ? panel->runtime->block->aspect :
                                                                    1.0f;
-  float scroll_pad = 0.0f;
-  if (block_is_popup_any(panel->runtime->block)) {
-    scroll_pad = (block_is_menu(panel->runtime->block) ? UI_MENU_SCROLL_PAD : UI_UNIT_Y * 0.5f) /
-                 aspect;
-  }
 
   for (const LayoutPanelBody &body : panel->runtime->layout_panels.bodies) {
 
@@ -1236,8 +1231,7 @@ void draw_layout_panels_backdrop(const ARegion *region,
       continue;
     }
     /* If the layout panel is at the end of the root panel, it's bottom corners are rounded. */
-    const bool is_main_panel_end = panel_blockspace.ymin -
-                                       (panel->runtime->block->rect.ymin + scroll_pad) <
+    const bool is_main_panel_end = panel_blockspace.ymin - panel->runtime->block->rect.ymin <
                                    (10.0f * UI_SCALE_FAC / aspect);
     if (is_main_panel_end) {
       panel_blockspace.ymin = panel->runtime->block->rect.ymin;
@@ -2382,7 +2376,8 @@ bool panel_category_is_visible(const ARegion *region)
 {
   /* Check for more than one category. */
   return region->runtime->panels_category.first &&
-         region->runtime->panels_category.first != region->runtime->panels_category.last;
+         (!bool(region->runtime->type->flag & ARegionTypeFlag::HideSinglePanelCategories) ||
+          region->runtime->panels_category.first != region->runtime->panels_category.last);
 }
 
 bool panel_category_tabs_is_visible(const ARegion *region)

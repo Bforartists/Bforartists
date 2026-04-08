@@ -90,7 +90,13 @@ void ED_node_tree_start(ARegion *region, SpaceNode *snode, bNodeTree *ntree, ID 
 
     /* Set initial view center from node tree. */
     copy_v2_v2(path->view_center, ntree->view_center);
+    path->view_width = ntree->view_width;
+
     if (region) {
+      /* Leave the zoom level unchanged if it hasn't been set before. */
+      if (ntree->view_width != 0.0f) {
+        ui::view2d_size_x_set(&region->v2d, ntree->view_width);
+      }
       ui::view2d_center_set(&region->v2d, ntree->view_center[0], ntree->view_center[1]);
     }
 
@@ -141,7 +147,11 @@ void ED_node_tree_push(ARegion *region, SpaceNode *snode, bNodeTree *ntree, bNod
 
   /* Set initial view center from node tree. */
   copy_v2_v2(path->view_center, ntree->view_center);
+  path->view_width = ntree->view_width;
   if (region) {
+    if (ntree->view_width != 0.0f) {
+      ui::view2d_size_x_set(&region->v2d, ntree->view_width);
+    }
     ui::view2d_center_set(&region->v2d, ntree->view_center[0], ntree->view_center[1]);
   }
 
@@ -174,8 +184,11 @@ void ED_node_tree_pop(ARegion *region, SpaceNode *snode)
   path = static_cast<bNodeTreePath *>(snode->treepath.last);
   snode->edittree = path->nodetree;
 
-  /* Set view center from node tree path. */
+  /* Set view center and zoom from node tree path. */
   if (region) {
+    if (path->view_width != 0.0f) {
+      ui::view2d_size_x_set(&region->v2d, path->view_width);
+    }
     ui::view2d_center_set(&region->v2d, path->view_center[0], path->view_center[1]);
   }
 
@@ -565,10 +578,12 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 
   snode->flag = SNODE_SHOW_GPENCIL | SNODE_USE_ALPHA;
   snode->overlay.flag = (SN_OVERLAY_SHOW_OVERLAYS | SN_OVERLAY_SHOW_WIRE_COLORS |
-                         SN_OVERLAY_SHOW_PATH | SN_OVERLAY_SHOW_PREVIEWS);
+                         SN_OVERLAY_SHOW_PATH | SN_OVERLAY_SHOW_PREVIEWS |
+                         SN_OVERLAY_SHOW_RENDER_REGION);
 
   /* backdrop */
   snode->zoom = 1.0f;
+  snode->overlay.passepartout_alpha = 0.5f;
 
   /* select the first tree type for valid type */
   for (const bke::bNodeTreeType *treetype : bke::node_tree_types_get()) {
@@ -849,7 +864,8 @@ static void node_area_refresh(const bContext *C, ScrArea *area)
   if (snode->nodetree && snode->nodetree == scene->compositing_node_group) {
     if (snode->runtime->recalc_regular_compositing) {
       snode->runtime->recalc_regular_compositing = false;
-      ED_node_compositor_job(C);
+      ED_node_compositor_job(
+          CTX_data_main(C), CTX_wm_window(C), CTX_data_scene(C), CTX_data_view_layer(C));
     }
   }
 }

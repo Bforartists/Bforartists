@@ -628,9 +628,10 @@ static bool ctx_data_base_collection_get(const bContext *C,
 
   bContextDataResult result{};
 
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
   bool ok = false;
 
@@ -1634,9 +1635,11 @@ Base *CTX_data_active_base(const bContext *C)
   if (ob == nullptr) {
     return nullptr;
   }
+
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   return BKE_view_layer_base_find(view_layer, ob);
 }
 

@@ -115,8 +115,8 @@ set(SRC
   mesh/sculpt_trim.cc
   mesh/sculpt_undo.cc
 
-  paint_intern.hh
   paint_cursor.hh
+  paint_intern.hh
 
   curves/sculpt_intern.hh
 

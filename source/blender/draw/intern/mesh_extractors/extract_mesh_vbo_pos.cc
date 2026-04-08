@@ -50,22 +50,20 @@ static void extract_positions_bm(const MeshRenderData &mr, MutableSpan<float3> v
     }
   });
 
-  const Span<int> loose_edges = mr.loose_edges;
-  threading::parallel_for(loose_edges.index_range(), 4096, [&](const IndexRange range) {
-    for (const int i : range) {
-      const BMEdge &edge = *BM_edge_at_index(&const_cast<BMesh &>(bm), loose_edges[i]);
-      loose_edge_data[i * 2 + 0] = bm_vert_co_get(mr, edge.v1);
-      loose_edge_data[i * 2 + 1] = bm_vert_co_get(mr, edge.v2);
-    }
-  });
+  mr.loose_edges.foreach_index(
+      [&](const int i, const int pos) {
+        const BMEdge &edge = *BM_edge_at_index(&const_cast<BMesh &>(bm), i);
+        loose_edge_data[pos * 2 + 0] = bm_vert_co_get(mr, edge.v1);
+        loose_edge_data[pos * 2 + 1] = bm_vert_co_get(mr, edge.v2);
+      },
+      exec_mode::grain_size(4096));
 
-  const Span<int> loose_verts = mr.loose_verts;
-  threading::parallel_for(loose_verts.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      const BMVert &vert = *BM_vert_at_index(&const_cast<BMesh &>(bm), loose_verts[i]);
-      loose_vert_data[i] = bm_vert_co_get(mr, &vert);
-    }
-  });
+  mr.loose_verts.foreach_index(
+      [&](const int i, const int pos) {
+        const BMVert &vert = *BM_vert_at_index(&const_cast<BMesh &>(bm), i);
+        loose_vert_data[pos] = bm_vert_co_get(mr, &vert);
+      },
+      exec_mode::grain_size(2048));
 }
 
 gpu::VertBufPtr extract_positions(const MeshRenderData &mr)
@@ -90,7 +88,7 @@ static void extract_loose_positions_subdiv(const DRWSubdivCache &subdiv_cache,
                                            const MeshRenderData &mr,
                                            gpu::VertBuf &vbo)
 {
-  const Span<int> loose_verts = mr.loose_verts;
+  const IndexMask &loose_verts = mr.loose_verts;
   const int loose_edges_num = mr.loose_edges.size();
   if (loose_verts.is_empty() && loose_edges_num == 0) {
     return;
@@ -120,12 +118,10 @@ static void extract_loose_positions_subdiv(const DRWSubdivCache &subdiv_cache,
 
   const int loose_verts_start = loose_geom_start + loose_edges_num * verts_per_edge;
   const Span<float3> positions = mr.vert_positions;
-  for (const int i : loose_verts.index_range()) {
-    GPU_vertbuf_update_sub(&vbo,
-                           (loose_verts_start + i) * sizeof(float3),
-                           sizeof(float3),
-                           &positions[loose_verts[i]]);
-  }
+  loose_verts.foreach_index([&](const int i, const int pos) {
+    GPU_vertbuf_update_sub(
+        &vbo, (loose_verts_start + pos) * sizeof(float3), sizeof(float3), &positions[i]);
+  });
 }
 
 gpu::VertBufPtr extract_positions_subdiv(const DRWSubdivCache &subdiv_cache,

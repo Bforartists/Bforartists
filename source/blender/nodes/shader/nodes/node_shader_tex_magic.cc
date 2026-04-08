@@ -19,16 +19,19 @@ namespace nodes::node_shader_tex_magic_cc {
 static void sh_node_tex_magic_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Vector").implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Float>("Scale").min(-1000.0f).max(1000.0f).default_value(5.0f).description(
-      "Scale of the texture");
-  b.add_input<decl::Float>("Distortion")
+  b.add_input<decl::Vector>("Vector"_ustr).implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_input<decl::Float>("Scale"_ustr)
+      .min(-1000.0f)
+      .max(1000.0f)
+      .default_value(5.0f)
+      .description("Scale of the texture");
+  b.add_input<decl::Float>("Distortion"_ustr)
       .min(-1000.0f)
       .max(1000.0f)
       .default_value(1.0f)
       .description("Amount of distortion");
-  b.add_output<decl::Color>("Color").no_muted_links();
-  b.add_output<decl::Float>("Factor", "Fac").no_muted_links();
+  b.add_output<decl::Color>("Color"_ustr).no_muted_links();
+  b.add_output<decl::Float>("Factor"_ustr, "Fac"_ustr).no_muted_links();
 }
 
 static void node_shader_buts_tex_magic(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

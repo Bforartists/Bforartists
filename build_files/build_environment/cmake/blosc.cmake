@@ -13,6 +13,9 @@ set(BLOSC_EXTRA_ARGS
   -DDEACTIVATE_ZLIB=ON
   -DDEACTIVATE_ZSTD=ON
   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+  # Fix for building with GCC 15, which defaults to C23. Fixed in main in the c-blosc repo, remove on upgrade.
+  # See commit: https://github.com/Blosc/c-blosc/commit/774f6a0ebaa0c617f7f13ccf6bc89d17eba04654
+  -DCMAKE_C_STANDARD=17
 )
 
 ExternalProject_Add(external_blosc

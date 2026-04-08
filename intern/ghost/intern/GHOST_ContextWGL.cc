@@ -252,13 +252,20 @@ static HWND clone_window(HWND hWnd, LPVOID lpParam)
   DWORD dwExStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
   WIN32_CHK(GetLastError() == NO_ERROR);
 
-  WCHAR lpClassName[100] = L"";
-  count = GetClassNameW(hWnd, lpClassName, sizeof(lpClassName));
+  /* The maximum length for WNDCLASSEXW.lpszClassName is 256. */
+  WCHAR lpClassName[257] = L"";
+  count = GetClassNameW(hWnd, lpClassName, sizeof(lpClassName) / sizeof(WCHAR));
   WIN32_CHK(count != 0);
 
-  WCHAR lpWindowName[100] = L"";
-  count = GetWindowTextW(hWnd, lpWindowName, sizeof(lpWindowName));
-  WIN32_CHK(count != 0);
+  const int titleLength = GetWindowTextLengthW(hWnd);
+  WIN32_CHK(titleLength != 0 || GetLastError() == NO_ERROR);
+
+  /* Allocate space for characters + terminating null. */
+  std::wstring WindowName(static_cast<size_t>(titleLength) + 1, L'\0');
+  count = GetWindowTextW(hWnd, WindowName.data(), static_cast<int>(WindowName.size()));
+  WIN32_CHK(count >= 0);
+
+  WindowName.resize(static_cast<size_t>(count));
 
   DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
   WIN32_CHK(GetLastError() == NO_ERROR);
@@ -278,7 +285,7 @@ static HWND clone_window(HWND hWnd, LPVOID lpParam)
 
   HWND hwndCloned = CreateWindowExW(dwExStyle,
                                     lpClassName,
-                                    lpWindowName,
+                                    WindowName.c_str(),
                                     dwStyle,
                                     rect.left,
                                     rect.top,

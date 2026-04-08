@@ -30,17 +30,17 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
-  b.add_output<decl::Color>("Image").align_with_previous();
-  b.add_output<decl::Float>("Matte");
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image"_ustr).align_with_previous();
+  b.add_output<decl::Float>("Matte"_ustr);
 
-  b.add_input<decl::Color>("Key Color").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Menu>("Color Space")
+  b.add_input<decl::Color>("Key Color"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Menu>("Color Space"_ustr)
       .default_value(CMP_NODE_DISTANCE_MATTE_COLOR_SPACE_RGBA)
       .static_items(color_space_items)
       .expanded()
       .optional_label();
-  b.add_input<decl::Float>("Tolerance")
+  b.add_input<decl::Float>("Tolerance"_ustr)
       .default_value(0.1f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -48,7 +48,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "If the distance between the color and the key color in the given color space is less "
           "than this threshold, it is keyed");
-  b.add_input<decl::Float>("Falloff")
+  b.add_input<decl::Float>("Falloff"_ustr)
       .default_value(0.1f)
       .subtype(PROP_FACTOR)
       .min(0.0f)

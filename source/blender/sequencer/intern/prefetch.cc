@@ -56,6 +56,9 @@ struct ThreadSlot;
 
 namespace seq {
 
+/* Prefetch several frames before the playhead, so that it is fast to move it a bit backwards. */
+static constexpr int before_playhead_frames = 5;
+
 struct PrefetchJob {
   PrefetchJob *next = nullptr;
   PrefetchJob *prev = nullptr;
@@ -284,7 +287,7 @@ void PrefetchJob::free_gpu()
 
 static void seq_prefetch_update_area(PrefetchJob *pfjob)
 {
-  int cfra = pfjob->scene->r.cfra;
+  int cfra = pfjob->scene->r.cfra - before_playhead_frames;
 
   /* rebase */
   if (cfra > pfjob->cfra) {
@@ -622,10 +625,12 @@ static PrefetchJob *seq_prefetch_start_ex(const RenderData *context, float cfra)
   pfjob->bmain = context->bmain;
 
   Scene *scene = pfjob->scene; /* For the start/end frame macros. */
-  pfjob->cfra = cfra;
   pfjob->timeline_start = PSFRA;
   pfjob->timeline_end = PEFRA;
   pfjob->timeline_length = PEFRA - PSFRA;
+
+  pfjob->cfra = math::max(int(cfra - before_playhead_frames), pfjob->timeline_start);
+
   pfjob->num_frames_prefetched = 1;
   pfjob->cache_flags = scene->ed->cache_flag;
 

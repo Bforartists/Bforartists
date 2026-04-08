@@ -36,7 +36,7 @@ void SourceProcessor::lint_constructors(Parser &parser)
         return;
       }
       if (t[0].str() == struct_name.str()) {
-        report_error_(ERROR_TOK(t[0]), "Constructors are not supported.");
+        report_error(t[0], "Constructors are not supported.");
       }
     });
   });
@@ -48,7 +48,7 @@ void SourceProcessor::lint_forward_declared_structs(Parser &parser)
 {
   parser().foreach_match("sA;", [&](const Tokens &t) {
     if (t[0].scope().type() == ScopeType::Global) {
-      report_error_(ERROR_TOK(t[0]), "Forward declaration of types are not supported.");
+      report_error(t[0], "Forward declaration of types are not supported.");
     }
   });
 }
@@ -143,7 +143,7 @@ void SourceProcessor::lower_implicit_member(Parser &parser)
 
     auto check_shadowing = [&](const Tokens &toks) {
       if (is_class_token(members_tokens, toks[1].str())) {
-        report_error_(ERROR_TOK(toks[1]), "Class member shadowing.");
+        report_error(toks[1], "Class member shadowing.");
       }
     };
 
@@ -174,15 +174,14 @@ void SourceProcessor::lower_implicit_member(Parser &parser)
             /* Reject namespace qualified symbols. */
             (tok.prev() != Colon || tok.prev().prev() != Colon))
         {
-          if (tok.next() == '(') {
-            if (!is_class_token(methods_tokens, tok.str())) {
-              return;
-            }
+          bool is_method = tok.next() == '(';
+          if (tok.next() == '<' && !tok.next().followed_by_whitespace()) {
+            /* Might be templated method call. */
+            is_method = tok.next().scope().back().next() == '(';
           }
-          else {
-            if (!is_class_token(members_tokens, tok.str())) {
-              return;
-            }
+
+          if (!is_class_token(is_method ? methods_tokens : members_tokens, tok.str())) {
+            return;
           }
           parser.insert_before(tok, "this->");
         }
@@ -209,16 +208,16 @@ void SourceProcessor::lower_method_definitions(Parser &parser)
 
   parser().foreach_match("sA:", [&](const Tokens &toks) {
     if (toks[2] == ':') {
-      report_error_(ERROR_TOK(toks[2]), "class inheritance is not supported");
+      report_error(toks[2], "class inheritance is not supported");
       return;
     }
   });
 
   parser().foreach_match("cAA(..)c?{..}", [&](const Tokens &toks) {
     if (toks[0].prev() == Const) {
-      report_error_(ERROR_TOK(toks[0]),
-                    "function return type is marked `const` but it makes no sense for values "
-                    "and returning reference is not supported");
+      report_error(toks[0],
+                   "function return type is marked `const` but it makes no sense for values "
+                   "and returning reference is not supported");
       return;
     }
   });
@@ -242,8 +241,7 @@ void SourceProcessor::lower_method_definitions(Parser &parser)
           const Token const_tok = is_const ? fn_args.back().next() : Token(parser);
 
           if (fn_name.str()[0] == '_') {
-            report_error_(ERROR_TOK(fn_name),
-                          "function name starting with an underscore are reserved");
+            report_error(fn_name, "function name starting with an underscore are reserved");
           }
 
           if (is_static) {
@@ -276,8 +274,7 @@ void SourceProcessor::lower_method_definitions(Parser &parser)
                 (fn_name.str().find_first_not_of("xyzw") == string::npos ||
                  fn_name.str().find_first_not_of("rgba") == string::npos))
             {
-              report_error_(ERROR_TOK(fn_name),
-                            "Method name matching swizzles accessor are forbidden.");
+              report_error(fn_name, "Method name matching swizzles accessor are forbidden.");
             }
           }
         });
@@ -307,7 +304,7 @@ void SourceProcessor::lower_method_definitions(Parser &parser)
 
             string proto_str = parser.substr_range_inclusive(fn_start, fn_args.back());
             proto_str = strip_whitespace(proto_str) + ";\n";
-            Parser proto(proto_str, report_error_);
+            Parser proto(proto_str, error_handler);
 
             parser.insert_after(struct_end, proto.result_get());
           });
@@ -364,10 +361,10 @@ void SourceProcessor::lower_method_calls(Parser &parser)
             /* End of chain. */
             break;
           }
-          report_error_(start_of_this.line_number(),
-                        start_of_this.char_number(),
-                        start_of_this.line_str(),
-                        "lower_method_call parsing error");
+          report_error(start_of_this.line_number(),
+                       start_of_this.char_number(),
+                       start_of_this.line_str(),
+                       "lower_method_call parsing error");
           break;
         }
         string this_str = parser.substr_range_inclusive(start_of_this, end_of_this);

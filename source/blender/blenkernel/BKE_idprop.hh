@@ -9,6 +9,7 @@
  */
 
 #include <memory>
+#include <optional>
 
 #include "DNA_ID.h"
 #include "DNA_ID_enums.h"
@@ -376,6 +377,14 @@ const IDProperty *_IDP_assert_type_mask(const IDProperty *prop, int ty_mask);
 #define IDP_ID_get(prop) ((void)0, ((ID *)_IDP_assert_type(prop, IDP_ID)->data.pointer))
 /* No `IDP_ID_set` needed. */
 
+std::optional<StringRefNull> IDP_group_lookup_string(const IDProperty &group, StringRef name);
+std::optional<float> IDP_group_lookup_float(const IDProperty &group, StringRef name);
+std::optional<int> IDP_group_lookup_int(const IDProperty &group, StringRef name);
+std::optional<bool> IDP_group_lookup_bool(const IDProperty &group, StringRef name);
+std::optional<Span<float>> IDP_group_lookup_float_array(const IDProperty &group,
+                                                        StringRef name,
+                                                        int required_size);
+
 /**
  * Return an int from an #IDProperty with a compatible type. This should be avoided, but
  * it's sometimes necessary, for example when legacy files have incorrect property types.
@@ -469,7 +478,9 @@ std::unique_ptr<io::serialize::ArrayValue> convert_to_serialize_values(
     const IDProperty *properties);
 
 /**
- * \brief Convert the given `value` to an `IDProperty`.
+ * \brief Convert the given `value` (which must be an array) to an `IDProperty`.
+ * \return The first successfully converted property with further array elements in the
+ *    `IDProperty.next` chain, or null if none could be converted or \a value is not an array.
  */
 IDProperty *convert_from_serialize_value(const io::serialize::Value &value);
 

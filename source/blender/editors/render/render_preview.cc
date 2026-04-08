@@ -319,7 +319,7 @@ static void switch_preview_floor_visibility(Main *pr_main,
                                             const ePreviewRenderMethod pr_method)
 {
   /* Hide floor for icon renders. */
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*pr_main, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     if (STREQ(base.object->id.name + 2, "Floor")) {
       base.object->visibility_flag &= ~OB_HIDE_RENDER;
@@ -344,7 +344,7 @@ void ED_preview_set_visibility(Main *pr_main,
 {
   switch_preview_collection_visibility(view_layer, pr_type);
   switch_preview_floor_visibility(pr_main, scene, view_layer, pr_method);
-  BKE_layer_collection_sync(scene, view_layer);
+  BKE_layer_collection_sync(*pr_main, scene, view_layer);
 }
 
 static World *preview_get_localized_world(ShaderPreview *sp, World *world)
@@ -581,7 +581,7 @@ static Scene *preview_prepare_scene(
       else {
         sce->display.render_aa = SCE_DISPLAY_AA_OFF;
       }
-      BKE_view_layer_synced_ensure(sce, view_layer);
+      BKE_view_layer_synced_ensure(*pr_main, sce, view_layer);
       for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
         if (base.object->id.name[2] == 'p') {
           /* copy over object color, in case material uses it */
@@ -633,7 +633,7 @@ static Scene *preview_prepare_scene(
         ED_preview_world_simple_set_rgb(sce->world, black);
       }
 
-      BKE_view_layer_synced_ensure(sce, view_layer);
+      BKE_view_layer_synced_ensure(*pr_main, sce, view_layer);
       for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
         if (base.object->id.name[2] == 'p') {
           if (base.object->type == OB_LAMP) {
@@ -868,7 +868,7 @@ static Scene *object_preview_scene_create(const ObjectPreviewData *preview_data,
   scene->r.ysch = preview_data->sizey;
   scene->r.size = 100;
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*preview_data->pr_main, scene, view_layer);
   Base *preview_base = BKE_view_layer_base_find(view_layer, preview_data->object);
   /* For 'view selected' below. */
   preview_base->flag |= BASE_SELECTED;
@@ -1172,7 +1172,7 @@ static void shader_preview_texture(ShaderPreview *sp, Tex *tex, Scene *sce, Rend
   BKE_texture_fetch_images_for_pool(tex, img_pool);
 
   /* Fill in image buffer. */
-  float *rect_float = rv_ibuf->float_buffer.data;
+  float *rect_float = rv_ibuf->float_data_for_write();
   float tex_coord[3] = {0.0f, 0.0f, 0.0f};
 
   for (int y = 0; y < height; y++) {
@@ -1388,8 +1388,8 @@ static void shader_preview_free(void *customdata)
 
 static void icon_copy_rect(const ImBuf *ibuf, uint w, uint h, uint *rect)
 {
-  if (ibuf == nullptr ||
-      (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr) || rect == nullptr)
+  if (ibuf == nullptr || (ibuf->byte_data() == nullptr && ibuf->float_data() == nullptr) ||
+      rect == nullptr)
   {
     return;
   }
@@ -1417,11 +1417,11 @@ static void icon_copy_rect(const ImBuf *ibuf, uint w, uint h, uint *rect)
   }
 
   /* if needed, convert to 32 bits */
-  if (ima->byte_buffer.data == nullptr) {
+  if (ima->byte_data() == nullptr) {
     IMB_byte_from_float(ima);
   }
 
-  const uint *srect = reinterpret_cast<const uint *>(ima->byte_buffer.data);
+  const uint *srect = reinterpret_cast<const uint *>(ima->byte_data());
   uint *drect = rect;
 
   drect += dy * w + dx;
@@ -1475,9 +1475,7 @@ static void icon_preview_startjob(void *customdata, bool *stop, bool *do_update)
      * already there. Very expensive for large images. Need to find a way to
      * only get existing `ibuf`. */
     ibuf = BKE_image_acquire_ibuf(ima, &iuser, nullptr);
-    if (ibuf == nullptr ||
-        (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr))
-    {
+    if (ibuf == nullptr || (ibuf->byte_data() == nullptr && ibuf->float_data() == nullptr)) {
       BKE_image_release_ibuf(ima, ibuf, nullptr);
       return;
     }
@@ -2055,7 +2053,7 @@ void PreviewLoadJob::run_fn(void *customdata, wmJobWorkerStatus *worker_status)
         preview->h[request->icon_size] = thumb->y;
         BLI_assert(preview->rect[request->icon_size] == nullptr);
         preview->rect[request->icon_size] = reinterpret_cast<uint *>(
-            MEM_dupalloc(thumb->byte_buffer.data));
+            MEM_dupalloc(thumb->byte_data()));
       }
       else {
         icon_copy_rect(thumb,

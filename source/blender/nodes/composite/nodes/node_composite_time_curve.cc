@@ -16,10 +16,10 @@ namespace blender::nodes::node_composite_time_curves_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Start Frame").default_value(1);
-  b.add_input<decl::Int>("End Frame").default_value(250);
+  b.add_input<decl::Int>("Start Frame"_ustr).default_value(1);
+  b.add_input<decl::Int>("End Frame"_ustr).default_value(250);
 
-  b.add_output<decl::Float>("Factor", "Fac");
+  b.add_output<decl::Float>("Factor"_ustr, "Fac"_ustr);
 }
 
 static void node_init(bNodeTree * /*ntree*/, bNode *node)

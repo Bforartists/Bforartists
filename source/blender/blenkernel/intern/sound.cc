@@ -1778,7 +1778,9 @@ bool bke::sound_mixdown(AUD_Sequence sequence,
                         aud::Codec codec,
                         unsigned int bitrate,
                         bool split_channels,
-                        std::string &r_error)
+                        std::string &r_error,
+                        bool (*progress_callback)(float, void *),
+                        void *progress_data)
 {
   using namespace aud;
   try {
@@ -1789,7 +1791,8 @@ bool bke::sound_mixdown(AUD_Sequence sequence,
     if (!split_channels) {
       std::shared_ptr<IWriter> writer = FileWriter::createWriter(
           filename, specs, format, codec, bitrate);
-      FileWriter::writeReader(reader, writer, length, buffersize, nullptr, nullptr);
+      FileWriter::writeReader(
+          reader, writer, length, buffersize, progress_callback, progress_data);
     }
     else {
       std::vector<std::shared_ptr<IWriter>> writers;
@@ -1815,7 +1818,8 @@ bool bke::sound_mixdown(AUD_Sequence sequence,
         }
         writers.push_back(FileWriter::createWriter(stream, specs_mono, format, codec, bitrate));
       }
-      FileWriter::writeReader(reader, writers, length, buffersize, nullptr, nullptr);
+      FileWriter::writeReader(
+          reader, writers, length, buffersize, progress_callback, progress_data);
     }
     return true;
   }

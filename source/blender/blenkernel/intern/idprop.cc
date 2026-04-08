@@ -13,6 +13,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <xxhash.h>
+
 #include <fmt/format.h>
 
 #include "BLI_listbase.h"
@@ -22,6 +24,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_idprop.hh"
+#include "BKE_idprop_hash.hh"
 #include "BKE_lib_id.hh"
 
 #include "CLG_log.h"
@@ -791,6 +794,56 @@ static void IDP_FreeGroup(IDProperty *prop, const bool do_id_user)
     IDP_FreePropertyContent_ex(&loop, do_id_user);
   }
   BLI_freelistN(&prop->data.group);
+}
+
+std::optional<StringRefNull> IDP_group_lookup_string(const IDProperty &group, StringRef name)
+{
+  const IDProperty *prop = IDP_GetPropertyFromGroup(&group, name);
+  if (!prop || prop->type != IDP_STRING) {
+    return std::nullopt;
+  }
+  return IDP_string_get(prop);
+}
+
+std::optional<float> IDP_group_lookup_float(const IDProperty &group, StringRef name)
+{
+  const IDProperty *prop = IDP_GetPropertyFromGroup(&group, name);
+  if (!prop || prop->type != IDP_FLOAT) {
+    return std::nullopt;
+  }
+  return IDP_float_get(prop);
+}
+
+std::optional<int> IDP_group_lookup_int(const IDProperty &group, StringRef name)
+{
+  const IDProperty *prop = IDP_GetPropertyFromGroup(&group, name);
+  if (!prop || prop->type != IDP_INT) {
+    return std::nullopt;
+  }
+  return IDP_int_get(prop);
+}
+
+std::optional<bool> IDP_group_lookup_bool(const IDProperty &group, StringRef name)
+{
+  const IDProperty *prop = IDP_GetPropertyFromGroup(&group, name);
+  if (!prop || prop->type != IDP_BOOLEAN) {
+    return std::nullopt;
+  }
+  return IDP_bool_get(prop);
+}
+
+std::optional<Span<float>> IDP_group_lookup_float_array(const IDProperty &group,
+                                                        StringRef name,
+                                                        int required_size)
+{
+  const IDProperty *prop = IDP_GetPropertyFromGroup(&group, name);
+  if (!prop || prop->type != IDP_FLOAT) {
+    return std::nullopt;
+  }
+  if (prop->len != required_size) {
+    return std::nullopt;
+  }
+  return Span(IDP_array_float_get(prop), prop->len);
 }
 
 /** \} */
@@ -1984,6 +2037,59 @@ IDPropertyUIData *IDP_TryConvertUIData(IDPropertyUIData *src,
   ui_data_free(src, src_type);
   return nullptr;
 }
+
+namespace bke::idprop {
+
+void hash(const IDProperty &base_prop, XXH3_state_t *hash_state)
+{
+  IDP_foreach_property(&const_cast<IDProperty &>(base_prop), 0, [&](const IDProperty *prop) {
+    XXH3_64bits_update(hash_state, prop->name, strlen(prop->name));
+    XXH3_64bits_update(hash_state, &prop->type, sizeof(prop->type));
+
+    switch (eIDPropertyType(prop->type)) {
+      case IDP_INT:
+      case IDP_FLOAT:
+      case IDP_BOOLEAN: {
+        XXH3_64bits_update(hash_state, &prop->data.val, sizeof(prop->data.val));
+        break;
+      }
+      case IDP_DOUBLE: {
+        const double val = IDP_double_get(prop);
+        XXH3_64bits_update(hash_state, &val, sizeof(double));
+        break;
+      }
+      case IDP_STRING: {
+        if (prop->data.pointer) {
+          XXH3_64bits_update(hash_state, prop->data.pointer, size_t(prop->len));
+        }
+        break;
+      }
+      case IDP_ARRAY: {
+        if (prop->data.pointer) {
+          XXH3_64bits_update(hash_state, &prop->subtype, sizeof(prop->subtype));
+          const size_t elem_size = idp_size_table[int(prop->subtype)];
+          XXH3_64bits_update(hash_state, prop->data.pointer, elem_size * size_t(prop->len));
+        }
+        break;
+      }
+      case IDP_ID: {
+        /* NOTE: Hashing the session_uid of the ID makes the hash session-specific. An alternative
+         * hash wouldn't be complete though, because data-block names aren't necessarily unique. */
+        if (const ID *id = static_cast<const ID *>(prop->data.pointer)) {
+          XXH3_64bits_update(hash_state, &id->session_uid, sizeof(ID::session_uid));
+        }
+        break;
+      }
+      case IDP_GROUP:
+      case IDP_IDPARRAY: {
+        /* Handled by the recursion in #IDP_foreach_property. */
+        break;
+      }
+    }
+  });
+}
+
+}  // namespace bke::idprop
 
 /** \} */
 

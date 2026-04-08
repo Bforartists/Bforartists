@@ -8,14 +8,15 @@ namespace blender::nodes::node_geo_viewport_transform_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Matrix>("Projection")
+  b.add_output<decl::Matrix>("Projection"_ustr)
       .description(
           "Transforms points in view space to region space (\"clip space\" or \"normalized device "
           "coordinates\")");
-  b.add_output<decl::Matrix>("View").description(
-      "Transforms points from object space to view space using the viewport's location and "
-      "rotation");
-  b.add_output<decl::Bool>("Is Orthographic")
+  b.add_output<decl::Matrix>("View"_ustr)
+      .description(
+          "Transforms points from object space to view space using the viewport's location and "
+          "rotation");
+  b.add_output<decl::Bool>("Is Orthographic"_ustr)
       .description("Whether the viewport is using orthographic projection");
 }
 
@@ -27,9 +28,9 @@ static void node_geo_exec(GeoNodeExecParams params)
   const Object &self_object = *params.self_object();
   const GeoNodesOperatorData &data = *params.user_data()->call_data->operator_data;
 
-  params.set_output("Projection", data.viewport_winmat);
-  params.set_output("View", data.viewport_viewmat * self_object.object_to_world());
-  params.set_output("Is Orthographic", !data.viewport_is_perspective);
+  params.set_output("Projection"_ustr, data.viewport_winmat);
+  params.set_output("View"_ustr, data.viewport_viewmat * self_object.object_to_world());
+  params.set_output("Is Orthographic"_ustr, !data.viewport_is_perspective);
 }
 
 static void node_register()

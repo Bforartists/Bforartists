@@ -8,13 +8,18 @@
 
 #pragma once
 
+#include "common.hh"
+
 #include "on_disk_library.hh"
 
 namespace blender::asset_system {
 
 class PreferencesOnDiskAssetLibrary : public OnDiskAssetLibrary {
+  /** Helper to get the #bUserAssetLibrary from the preferences (if still valid). */
+  UserAssetLibraryWrapper user_library_;
+
  public:
-  PreferencesOnDiskAssetLibrary(StringRef name = "", StringRef root_path = "");
+  explicit PreferencesOnDiskAssetLibrary(const bUserAssetLibrary &user_asset_library);
 
   std::optional<AssetLibraryReference> library_reference() const override;
   bool is_enabled() const override;

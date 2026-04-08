@@ -24,8 +24,8 @@ namespace nodes::node_shader_tex_sky_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Vector>("Vector").hide_value();
-  b.add_output<decl::Color>("Color").no_muted_links();
+  b.add_input<decl::Vector>("Vector"_ustr).hide_value();
+  b.add_output<decl::Color>("Color"_ustr).no_muted_links();
 }
 
 static void node_shader_buts_tex_sky(ui::Layout &layout, bContext *C, PointerRNA *ptr)
@@ -350,7 +350,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       bNode &node = params.add_node("ShaderNodeTexSky");
       NodeTexSky *tex = static_cast<NodeTexSky *>(node.storage);
       tex->sun_disc = false;
-      params.update_and_connect_available_socket(node, "Vector");
+      params.update_and_connect_available_socket(node, "Vector"_ustr);
     });
   }
 }

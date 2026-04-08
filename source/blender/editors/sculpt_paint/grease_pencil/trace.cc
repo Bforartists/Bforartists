@@ -370,7 +370,7 @@ static wmOperatorStatus grease_pencil_trace_image_exec(bContext *C, wmOperator *
   const TargetObjectMode target = TargetObjectMode(RNA_enum_get(op->ptr, "target"));
   job->ob_grease_pencil = (target == TargetObjectMode::Selected) ?
                               BKE_view_layer_non_active_selected_object(
-                                  scene, CTX_data_view_layer(C), job->v3d) :
+                                  *job->bmain, scene, CTX_data_view_layer(C), job->v3d) :
                               nullptr;
 
   if (job->ob_grease_pencil != nullptr) {

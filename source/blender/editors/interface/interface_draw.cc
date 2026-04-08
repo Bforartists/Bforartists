@@ -366,7 +366,7 @@ void draw_but_IMAGE(ARegion * /*region*/,
                         ibuf->y,
                         gpu::TextureFormat::UNORM_8_8_8_8,
                         false,
-                        ibuf->byte_buffer.data,
+                        ibuf->byte_data(),
                         1.0f,
                         1.0f,
                         col);
@@ -2388,11 +2388,11 @@ void draw_but_TRACKPREVIEW(ARegion *region,
                                                  height,
                                                  scopes->track_pos);
     if (tmpibuf) {
-      if (tmpibuf->float_buffer.data) {
+      if (tmpibuf->float_data()) {
         IMB_byte_from_float(tmpibuf);
       }
 
-      if (tmpibuf->byte_buffer.data) {
+      if (tmpibuf->byte_data()) {
         scopes->track_preview = tmpibuf;
       }
       else {
@@ -2430,7 +2430,7 @@ void draw_but_TRACKPREVIEW(ARegion *region,
                             drawibuf->y,
                             gpu::TextureFormat::UNORM_8_8_8_8,
                             true,
-                            drawibuf->byte_buffer.data,
+                            drawibuf->byte_data(),
                             1.0f,
                             1.0f,
                             nullptr);

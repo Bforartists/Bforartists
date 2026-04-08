@@ -32,32 +32,34 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
-  b.add_output<decl::Float>("Plane").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
+  b.add_output<decl::Float>("Plane"_ustr).structure_type(StructureType::Dynamic);
 
-  b.add_input<decl::Vector>("Upper Left")
+  b.add_input<decl::Vector>("Upper Left"_ustr)
       .subtype(PROP_FACTOR)
       .dimensions(2)
       .default_value({0.0f, 1.0f})
       .min(0.0f)
       .max(1.0f);
-  b.add_input<decl::Vector>("Upper Right")
+  b.add_input<decl::Vector>("Upper Right"_ustr)
       .subtype(PROP_FACTOR)
       .dimensions(2)
       .default_value({1.0f, 1.0f})
       .min(0.0f)
       .max(1.0f);
-  b.add_input<decl::Vector>("Lower Left")
+  b.add_input<decl::Vector>("Lower Left"_ustr)
       .subtype(PROP_FACTOR)
       .dimensions(2)
       .default_value({0.0f, 0.0f})
       .min(0.0f)
       .max(1.0f);
-  b.add_input<decl::Vector>("Lower Right")
+  b.add_input<decl::Vector>("Lower Right"_ustr)
       .subtype(PROP_FACTOR)
       .dimensions(2)
       .default_value({1.0f, 0.0f})
@@ -65,17 +67,17 @@ static void node_declare(NodeDeclarationBuilder &b)
       .max(1.0f);
 
   PanelDeclarationBuilder &sampling_panel = b.add_panel("Sampling"_ustr).default_closed(true);
-  sampling_panel.add_input<decl::Menu>("Interpolation")
+  sampling_panel.add_input<decl::Menu>("Interpolation"_ustr)
       .default_value(CMP_NODE_INTERPOLATION_BILINEAR)
       .static_items(rna_enum_node_compositor_interpolation_items)
       .description("Interpolation method")
       .optional_label();
-  sampling_panel.add_input<decl::Menu>("Extension X")
+  sampling_panel.add_input<decl::Menu>("Extension X"_ustr)
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
       .description("The extension mode applied to the X axis")
       .optional_label();
-  sampling_panel.add_input<decl::Menu>("Extension Y")
+  sampling_panel.add_input<decl::Menu>("Extension Y"_ustr)
       .default_value(CMP_NODE_EXTENSION_MODE_CLIP)
       .static_items(rna_enum_node_compositor_extension_items)
       .description("The extension mode applied to the Y axis")
@@ -222,11 +224,13 @@ class CornerPinOperation : public NodeOperation {
             projected_coordinates, interpolation, extension_mode_x, extension_mode_y));
       }
       else {
-        /* The derivatives of the projected coordinates with respect to x and y are the first and
-         * second columns respectively, divided by the z projection factor as can be shown by
-         * differentiating the above matrix multiplication with respect to x and y. */
-        float2 x_gradient = homography_matrix[0].xy() / transformed_coordinates.z;
-        float2 y_gradient = homography_matrix[1].xy() / transformed_coordinates.z;
+        /* Derivative of transformed_coordinates.xy / transformed_coordinates.z vs texels. */
+        float2 x_gradient = (homography_matrix[0].xy() * transformed_coordinates.z -
+                             transformed_coordinates.xy() * homography_matrix[0].z) /
+                            (math::square(transformed_coordinates.z) * size.x);
+        float2 y_gradient = (homography_matrix[1].xy() * transformed_coordinates.z -
+                             transformed_coordinates.xy() * homography_matrix[1].z) /
+                            (math::square(transformed_coordinates.z) * size.y);
         const float2x2 jacobian = float2x2(x_gradient, y_gradient);
         sampled_color = float4(input.sample<Color>(projected_coordinates,
                                                    Interpolation::Anisotropic,

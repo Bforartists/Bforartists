@@ -214,7 +214,7 @@ static bool copy_dupli_context(DupliContext *r_ctx,
 
   if (r_ctx->level == MAX_DUPLI_RECUR - 1) {
     const StringRef object_name = ob ? ob->id.name + 2 : "";
-    const StringRef geometry_name = geometry ? geometry->name : "";
+    const StringRef geometry_name = geometry ? geometry->name() : "";
 
     if (geometry_name.is_empty() && !object_name.is_empty()) {
       std::cerr << fmt::format(
@@ -1341,7 +1341,10 @@ static void make_duplis_faces(const DupliContext *ctx)
 
   if (em != nullptr) {
     const int cd_loop_uv_offset = CustomData_get_offset_named(
-        &em->bm->ldata, CD_PROP_FLOAT2, mesh_eval->active_uv_map_name());
+        &em->bm->ldata,
+        CD_PROP_FLOAT2,
+        mesh_eval ? mesh_eval->active_uv_map_name().c_str() :
+                    CustomData_get_active_layer_name(&em->bm->ldata, CD_PROP_FLOAT2));
     FaceDupliData_EditMesh fdd{};
     fdd.params = fdd_params;
     fdd.em = em;

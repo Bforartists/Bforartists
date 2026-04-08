@@ -75,14 +75,14 @@ static uchar *imb_save_avif_padding_workaround_begin(const ImBuf *ibuf,
                                                      const bool prefer_float)
 {
   /* The bug only affects the 8-bit path (the 10/12-bit path copies per-pixel). */
-  const bool use_float = prefer_float && (ibuf->float_buffer.data != nullptr);
+  const bool use_float = prefer_float && (ibuf->float_data() != nullptr);
   if (use_float || (ibuf->x % AVIF_BLOCK_SIZE) == 0) {
     return nullptr;
   }
 
   const size_t size_orig = size_t(ibuf->y) * ctx.mem_ystride;
   const size_t size_pad = size_orig + (AVIF_BLOCK_SIZE * ctx.mem_xstride);
-  const uchar *src_base = ibuf->byte_buffer.data;
+  const uchar *src_base = ibuf->byte_data();
 
   uchar *buf_padded = MEM_new_array_uninitialized<uchar>(size_pad, __func__);
   memcpy(buf_padded, src_base, size_orig);

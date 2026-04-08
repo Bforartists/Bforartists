@@ -24,7 +24,7 @@ struct MovieTrackingMarker;
 struct MovieTrackingPlaneTrack;
 struct MovieTrackingPlaneMarker;
 
-/* tracking_utils.c */
+/* tracking_ops_utils.cc */
 
 void clip_tracking_clear_invisible_track_selection(SpaceClip *sc, MovieClip *clip);
 

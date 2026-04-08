@@ -129,7 +129,7 @@ void FinalEngine::update_render_result(int width, int height, const char *layer_
     for (RenderPass &rpass : rlayer->passes) {
       pxr::TfToken *aov_token = aov_tokens_.lookup_ptr(rpass.name);
       if (aov_token) {
-        render_task_delegate_->read_aov(*aov_token, rpass.ibuf->float_buffer.data);
+        render_task_delegate_->read_aov(*aov_token, rpass.ibuf->float_data_for_write());
       }
     }
   }

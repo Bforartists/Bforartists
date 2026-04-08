@@ -24,6 +24,8 @@ template<typename T = ImplicitSharingInfo, bool IsStrong = true> class ImplicitS
  private:
   const T *data_ = nullptr;
 
+  template<typename U, bool OtherIsStrong> friend class ImplicitSharingPtr;
+
  public:
   using element_type = T;
 
@@ -40,6 +42,22 @@ template<typename T = ImplicitSharingInfo, bool IsStrong = true> class ImplicitS
   }
 
   ImplicitSharingPtr(ImplicitSharingPtr &&other) : data_(other.data_)
+  {
+    other.data_ = nullptr;
+  }
+
+  template<typename U>
+  ImplicitSharingPtr(const ImplicitSharingPtr<U, IsStrong> &other)
+    requires std::is_base_of_v<T, U>
+      : data_(static_cast<const U *>(other.data_))
+  {
+    this->add_user(data_);
+  }
+
+  template<typename U>
+  ImplicitSharingPtr(ImplicitSharingPtr<U, IsStrong> &&other)
+    requires std::is_base_of_v<T, U>
+      : data_(static_cast<U *>(other.data_))
   {
     other.data_ = nullptr;
   }

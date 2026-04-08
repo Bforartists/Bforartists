@@ -17,14 +17,16 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Bool>("Flip X").default_value(false);
-  b.add_input<decl::Bool>("Flip Y").default_value(false);
+  b.add_input<decl::Bool>("Flip X"_ustr).default_value(false);
+  b.add_input<decl::Bool>("Flip Y"_ustr).default_value(false);
 }
 
 using namespace blender::compositor;

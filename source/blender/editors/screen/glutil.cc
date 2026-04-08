@@ -71,8 +71,14 @@ void immDrawPixelsTexScaledFullSize(const IMMDrawPixelsTexState *state,
   const bool use_mipmap = use_filter && ((draw_width < img_w) || (draw_height < img_h));
   const int mip_len = use_mipmap ? 9999 : 1;
 
-  gpu::Texture *tex = GPU_texture_create_2d(
-      "immDrawPixels", img_w, img_h, mip_len, gpu_format, GPU_TEXTURE_USAGE_SHADER_READ, nullptr);
+  gpu::Texture *tex = GPU_texture_create_2d("immDrawPixels",
+                                            img_w,
+                                            img_h,
+                                            mip_len,
+                                            gpu_format,
+                                            GPU_TEXTURE_USAGE_SHADER_READ |
+                                                GPU_TEXTURE_USAGE_SHADER_WRITE,
+                                            nullptr);
 
   const bool use_float_data = ELEM(gpu_format,
                                    gpu::TextureFormat::SFLOAT_16_16_16_16,
@@ -419,7 +425,7 @@ void ED_draw_imbuf_clipping(ImBuf *ibuf,
   bool need_fallback = true;
 
   /* Early out */
-  if (ibuf->byte_buffer.data == nullptr && ibuf->float_buffer.data == nullptr) {
+  if (ibuf->byte_data() == nullptr && ibuf->float_data() == nullptr) {
     return;
   }
 
@@ -438,7 +444,7 @@ void ED_draw_imbuf_clipping(ImBuf *ibuf,
     state.do_shader_unbind = false;
     immDrawPixelsTexSetupAttributes(&state);
 
-    if (ibuf->float_buffer.data) {
+    if (ibuf->float_data()) {
       if (ibuf->float_buffer.colorspace) {
         ok = IMB_colormanagement_setup_glsl_draw_from_space(view_settings,
                                                             display_settings,
@@ -462,7 +468,7 @@ void ED_draw_imbuf_clipping(ImBuf *ibuf,
     }
 
     if (ok) {
-      if (ibuf->float_buffer.data) {
+      if (ibuf->float_data()) {
         TextureFormat format = TextureFormat::Invalid;
 
         if (ibuf->channels == 3) {
@@ -483,7 +489,7 @@ void ED_draw_imbuf_clipping(ImBuf *ibuf,
                                          ibuf->y,
                                          format,
                                          use_filter,
-                                         ibuf->float_buffer.data,
+                                         ibuf->float_data(),
                                          clip_min_x,
                                          clip_min_y,
                                          clip_max_x,
@@ -493,7 +499,7 @@ void ED_draw_imbuf_clipping(ImBuf *ibuf,
                                          nullptr);
         }
       }
-      else if (ibuf->byte_buffer.data) {
+      else if (ibuf->byte_data()) {
         /* ibuf->rect is always RGBA */
         immDrawPixelsTexTiled_clipping(&state,
                                        x,
@@ -502,7 +508,7 @@ void ED_draw_imbuf_clipping(ImBuf *ibuf,
                                        ibuf->y,
                                        gpu::TextureFormat::UNORM_8_8_8_8,
                                        use_filter,
-                                       ibuf->byte_buffer.data,
+                                       ibuf->byte_data(),
                                        clip_min_x,
                                        clip_min_y,
                                        clip_max_x,
@@ -615,7 +621,7 @@ int ED_draw_imbuf_method(const ImBuf *ibuf)
     /* Use faster GLSL when CPU to GPU transfer is unlikely to be a bottleneck,
      * otherwise do color management on CPU side. */
     const size_t threshold = sizeof(float[4]) * 2048 * 2048;
-    const size_t data_size = (ibuf->float_buffer.data) ? sizeof(float) : sizeof(uchar);
+    const size_t data_size = (ibuf->float_data()) ? sizeof(float) : sizeof(uchar);
     const size_t size = size_t(ibuf->x) * size_t(ibuf->y) * size_t(ibuf->channels) * data_size;
 
     return (size > threshold) ? IMAGE_DRAW_METHOD_2DTEXTURE : IMAGE_DRAW_METHOD_GLSL;

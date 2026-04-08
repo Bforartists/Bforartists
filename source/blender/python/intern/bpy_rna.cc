@@ -4438,7 +4438,7 @@ static PyObject *pyrna_struct_bl_rna_get_subclass(PyObject *cls, PyObject *args)
 
   if (srna_base == RNA_Node) {
     /* If the given idname is an alias, translate it to the proper idname. */
-    id = bke::node_type_find_alias(id).c_str();
+    id = bke::node_type_find_alias(UString(id)).c_str();
 
     bke::bNodeType *nt = bke::node_type_find(id);
     if (nt) {

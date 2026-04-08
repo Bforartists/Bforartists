@@ -210,22 +210,23 @@ struct ParticleUndoStep {
 static bool particle_undosys_poll(bContext *C)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   PTCacheEdit *edit = PE_get_current(depsgraph, scene, ob);
 
   return (edit != nullptr);
 }
 
-static bool particle_undosys_step_encode(bContext *C, Main * /*bmain*/, UndoStep *us_p)
+static bool particle_undosys_step_encode(bContext *C, Main *bmain, UndoStep *us_p)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   ParticleUndoStep *us = reinterpret_cast<ParticleUndoStep *>(us_p);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   us->scene_ref.ptr = CTX_data_scene(C);
-  BKE_view_layer_synced_ensure(us->scene_ref.ptr, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, us->scene_ref.ptr, view_layer);
   us->object_ref.ptr = BKE_view_layer_active_object_get(view_layer);
   PTCacheEdit *edit = PE_get_current(depsgraph, us->scene_ref.ptr, us->object_ref.ptr);
   undoptcache_from_editcache(&us->data, edit);
@@ -233,7 +234,7 @@ static bool particle_undosys_step_encode(bContext *C, Main * /*bmain*/, UndoStep
 }
 
 static void particle_undosys_step_decode(
-    bContext *C, Main * /*bmain*/, UndoStep *us_p, const eUndoStepDir /*dir*/, bool /*is_final*/)
+    bContext *C, Main *bmain, UndoStep *us_p, const eUndoStepDir /*dir*/, bool /*is_final*/)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
 
@@ -266,7 +267,7 @@ static void particle_undosys_step_decode(
   }
   DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
-  ED_undo_object_set_active_or_warn(scene, view_layer, ob, us_p->name, &LOG);
+  ED_undo_object_set_active_or_warn(*bmain, scene, view_layer, ob, us_p->name, &LOG);
 
   /* Check after setting active (unless undoing into another scene). */
   BLI_assert(particle_undosys_poll(C) || (scene != CTX_data_scene(C)));

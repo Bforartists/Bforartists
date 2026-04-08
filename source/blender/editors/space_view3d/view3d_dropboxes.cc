@@ -440,7 +440,7 @@ static void make_selected_objects_local(Main &bmain,
     for (Collection *collection : collections_to_localize) {
       make_id_local(&collection->id);
     }
-    BKE_view_layer_synced_ensure(&scene, &view_layer);
+    BKE_view_layer_synced_ensure(bmain, &scene, &view_layer);
 
     FOREACH_SELECTED_OBJECT_BEGIN (&view_layer, &v3d, ob_selected) {
       make_id_local(&ob_selected->id);
@@ -473,7 +473,8 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
-  BKE_view_layer_base_deselect_all(scene, view_layer);
+  BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
+
   /* start bfa asset shelf props*/
   bool use_override = false;
   if (!asset_drag->import_settings.is_from_browser) {
@@ -504,7 +505,7 @@ static void view3d_ob_drop_copy_external_asset(bContext *C, wmDrag *drag, wmDrop
   DEG_relations_tag_update(bmain);
   WM_event_add_notifier(C, NC_SCENE | ND_LAYER_CONTENT, scene);
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Base *base = BKE_view_layer_base_find(view_layer, id_cast<Object *>(id));
   if (base != nullptr) {
     BKE_view_layer_base_select_and_set_active(view_layer, base);
@@ -592,7 +593,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
-  BKE_view_layer_base_deselect_all(scene, view_layer);
+  BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
 
   const bool use_instance_collections = asset_drag->import_settings.use_instance_collections;
   /* Temporarily disable instancing for the import, the drop operator handles that. */
@@ -646,7 +647,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
 
   /* Make an object active, just use the first one in the collection. */
   CollectionObject *cobject = static_cast<CollectionObject *>(collection->gobject.first);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Base *base = cobject ? BKE_view_layer_base_find(view_layer, cobject->ob) : nullptr;
   if (base) {
     BLI_assert((base->flag & BASE_SELECTABLE) && (base->flag & BASE_ENABLED_VIEWPORT));

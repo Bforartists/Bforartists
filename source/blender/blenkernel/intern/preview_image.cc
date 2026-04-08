@@ -397,7 +397,7 @@ void BKE_previewimg_ensure(PreviewImage *prv, const int size)
     prv->w[ICON_SIZE_PREVIEW] = thumb->x;
     prv->h[ICON_SIZE_PREVIEW] = thumb->y;
     prv->rect[ICON_SIZE_PREVIEW] = reinterpret_cast<unsigned int *>(
-        MEM_dupalloc<uint8_t>(thumb->byte_buffer.data));
+        MEM_dupalloc<uint8_t>(thumb->byte_data()));
     prv->flag[ICON_SIZE_PREVIEW] &= ~(PRV_CHANGED | PRV_USER_EDITED | PRV_RENDERING);
   }
   if (do_icon) {
@@ -417,7 +417,7 @@ void BKE_previewimg_ensure(PreviewImage *prv, const int size)
     prv->w[ICON_SIZE_ICON] = icon_w;
     prv->h[ICON_SIZE_ICON] = icon_h;
     prv->rect[ICON_SIZE_ICON] = reinterpret_cast<unsigned int *>(
-        MEM_dupalloc<uint8_t>(thumb->byte_buffer.data));
+        MEM_dupalloc<uint8_t>(thumb->byte_data()));
     prv->flag[ICON_SIZE_ICON] &= ~(PRV_CHANGED | PRV_USER_EDITED | PRV_RENDERING);
   }
   IMB_freeImBuf(thumb);
@@ -461,7 +461,7 @@ ImBuf *BKE_previewimg_to_imbuf(const PreviewImage *prv, const int size)
   if (w > 0 && h > 0 && rect) {
     /* first allocate imbuf for copying preview into it */
     ima = IMB_allocImBuf(w, h, 32, IB_byte_data);
-    memcpy(ima->byte_buffer.data, rect, w * h * sizeof(uint8_t) * 4);
+    memcpy(ima->byte_data_for_write(), rect, w * h * sizeof(uint8_t) * 4);
   }
 
   return ima;

@@ -11,20 +11,22 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.is_function_node();
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::String>("String").optional_label();
-  b.add_output<decl::String>("String").align_with_previous();
-  b.add_input<decl::String>("Characters")
+  b.add_input<decl::String>("String"_ustr).optional_label();
+  b.add_output<decl::String>("String"_ustr).align_with_previous();
+  b.add_input<decl::String>("Characters"_ustr)
       .optional_label()
       .description("Individual characters to trim. The order of characters does not matter");
-  b.add_input<decl::Bool>("Whitespace")
+  b.add_input<decl::Bool>("Whitespace"_ustr)
       .default_value(true)
       .description("Trim whitespace characters in addition to the provided characters");
   {
     auto &p = b.add_panel("Limit"_ustr).default_closed(true);
-    p.add_input<decl::Bool>("Start").default_value(true).description(
-        "Trim the beginning of the string");
-    p.add_input<decl::Bool>("End").default_value(true).description(
-        "Trim at the end of the string");
+    p.add_input<decl::Bool>("Start"_ustr)
+        .default_value(true)
+        .description("Trim the beginning of the string");
+    p.add_input<decl::Bool>("End"_ustr)
+        .default_value(true)
+        .description("Trim at the end of the string");
   }
 }
 

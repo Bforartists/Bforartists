@@ -78,7 +78,8 @@ ListBaseT<TimeMarker> *ED_scene_markers_get(const bContext *C, Scene *scene)
   return ac.markers;
 }
 
-ListBaseT<TimeMarker> *ED_scene_markers_get_from_area(Scene *scene,
+ListBaseT<TimeMarker> *ED_scene_markers_get_from_area(const Main &bmain,
+                                                      Scene *scene,
                                                       ViewLayer *view_layer,
                                                       const ScrArea *area)
 {
@@ -95,7 +96,7 @@ ListBaseT<TimeMarker> *ED_scene_markers_get_from_area(Scene *scene,
     }
   }
 
-  bAction *active_action = ANIM_active_action_from_area(scene, view_layer, area);
+  bAction *active_action = ANIM_active_action_from_area(bmain, scene, view_layer, area);
   if (active_action) {
     return &active_action->markers;
   }
@@ -1375,10 +1376,9 @@ static void select_marker_camera_switch(
     bContext *C, bool camera, bool extend, ListBaseT<TimeMarker> *markers, int cfra)
 {
   using namespace blender::ed;
-  if (camera) {
-    BLI_assert(CTX_data_mode_enum(C) == CTX_MODE_OBJECT);
-
+  if (camera && CTX_data_mode_enum(C) == CTX_MODE_OBJECT) {
     const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+    const Main *bmain = CTX_data_main(C);
     Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
 
     ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1386,7 +1386,7 @@ static void select_marker_camera_switch(
     int sel = 0;
 
     if (!extend) {
-      BKE_view_layer_base_deselect_all(scene, view_layer);
+      BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
     }
 
     for (TimeMarker &marker : *markers) {
@@ -1396,7 +1396,7 @@ static void select_marker_camera_switch(
       }
     }
 
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
     for (TimeMarker &marker : *markers) {
       if (marker.camera) {
@@ -1510,26 +1510,39 @@ static wmOperatorStatus ed_marker_select_exec(bContext *C, wmOperator *op)
 {
   const bool extend = RNA_boolean_get(op->ptr, "extend");
   const bool wait_to_deselect_others = RNA_boolean_get(op->ptr, "wait_to_deselect_others");
-  bool camera = false;
-  camera = RNA_boolean_get(op->ptr, "camera");
-  if (camera) {
-    /* Supporting mode switching from this operator doesn't seem so useful.
-     * So only allow setting the active camera in object-mode. */
-    if (CTX_data_mode_enum(C) != CTX_MODE_OBJECT) {
-      BKE_report(
-          op->reports, RPT_WARNING, "Selecting the camera is only supported in object mode");
-      camera = false;
-    }
-  }
+
   int mval[2];
   mval[0] = RNA_int_get(op->ptr, "mouse_x");
   mval[1] = RNA_int_get(op->ptr, "mouse_y");
-  bool deselect_all = true;
+  const View2D *v2d = ui::view2d_fromcontext(C);
 
-  wmOperatorStatus ret_value = ed_marker_select(
+  const float marker_frame = ui::view2d_region_to_view_x(v2d, mval[0]);
+  ListBaseT<TimeMarker> *markers = ED_context_get_markers(C);
+  const TimeMarker *marker = ED_markers_find_nearest_marker(markers, marker_frame);
+  const bool is_over_marker = region_position_is_over_marker(v2d, markers, mval[0]);
+
+  const bool camera = RNA_boolean_get(op->ptr, "camera");
+
+  if (camera && marker->camera && CTX_data_mode_enum(C) != CTX_MODE_OBJECT) {
+    /* Supporting mode switching from this operator doesn't seem so useful.
+     * So only select the camera in object-mode. */
+    BKE_report(op->reports,
+               RPT_WARNING,
+               "Automatic selection of the camera bound to this marker is only supported in "
+               "object mode");
+  }
+
+  if (camera && !is_over_marker) {
+    /* Activating a camera can only work if the marker is clicked. Exit early if not on a marker to
+     * let the MARKER_OT_select_leftright operator work. */
+    return OPERATOR_PASS_THROUGH;
+  }
+
+  const bool deselect_all = true;
+  const wmOperatorStatus result = ed_marker_select(
       C, mval, extend, deselect_all, camera, wait_to_deselect_others);
 
-  return ret_value | OPERATOR_PASS_THROUGH;
+  return result | OPERATOR_PASS_THROUGH;
 }
 
 static void MARKER_OT_select(wmOperatorType *ot)
@@ -1714,54 +1727,85 @@ static void MARKER_OT_select_all(wmOperatorType *ot)
 enum eMarkers_LeftRightSelect_Mode {
   MARKERS_LRSEL_LEFT = 0,
   MARKERS_LRSEL_RIGHT,
+  MARKERS_LRSEL_CLICK_SIDE,
 };
 
 static const EnumPropertyItem prop_markers_select_leftright_modes[] = {
     {MARKERS_LRSEL_LEFT, "LEFT", 0, "Before Current Frame", ""},
     {MARKERS_LRSEL_RIGHT, "RIGHT", 0, "After Current Frame", ""},
+    {MARKERS_LRSEL_CLICK_SIDE, "CLICK_SIDE", 0, "Check which side was clicked", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
-
-static void markers_select_leftright(bAnimContext *ac,
-                                     const eMarkers_LeftRightSelect_Mode mode,
-                                     const bool extend)
-{
-  ListBaseT<TimeMarker> *markers = ac->markers;
-  Scene *scene = ac->scene;
-
-  if (markers == nullptr) {
-    return;
-  }
-
-  if (!extend) {
-    deselect_markers(markers);
-  }
-
-  for (TimeMarker &marker : *markers) {
-    if ((mode == MARKERS_LRSEL_LEFT && marker.frame <= scene->r.cfra) ||
-        (mode == MARKERS_LRSEL_RIGHT && marker.frame >= scene->r.cfra))
-    {
-      marker.flag |= SELECT;
-    }
-  }
-}
 
 static wmOperatorStatus ed_marker_select_leftright_exec(bContext *C, wmOperator *op)
 {
   const eMarkers_LeftRightSelect_Mode mode = eMarkers_LeftRightSelect_Mode(
       RNA_enum_get(op->ptr, "mode"));
   const bool extend = RNA_boolean_get(op->ptr, "extend");
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  ListBaseT<TimeMarker> *markers = is_sequencer ? ED_sequencer_context_get_markers(C) :
+                                                  ED_context_get_markers(C);
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
 
-  bAnimContext ac;
-  if (ANIM_animdata_get_context(C, &ac) == 0) {
+  if (!markers || !scene) {
     return OPERATOR_CANCELLED;
   }
 
-  markers_select_leftright(&ac, mode, extend);
+  if (!extend) {
+    deselect_markers(markers);
+  }
 
-  WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, nullptr);
+  const float cfra = BKE_scene_frame_get(scene);
+  for (TimeMarker &marker : *markers) {
+    if ((mode == MARKERS_LRSEL_LEFT && marker.frame <= cfra) ||
+        (mode == MARKERS_LRSEL_RIGHT && marker.frame >= cfra))
+    {
+      marker.flag |= SELECT;
+    }
+  }
+
+  if (is_sequencer) {
+    WM_event_add_notifier(C, NC_ANIMATION | ND_MARKERS, nullptr);
+    WM_event_add_notifier(C, NC_SCENE | ND_MARKERS, nullptr);
+  }
+  else {
+    WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, nullptr);
+  }
 
   return OPERATOR_FINISHED;
+}
+
+static wmOperatorStatus ed_marker_select_leftright_invoke(bContext *C,
+                                                          wmOperator *op,
+                                                          const wmEvent *event)
+{
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  ListBaseT<TimeMarker> *markers = is_sequencer ? ED_sequencer_context_get_markers(C) :
+                                                  ED_context_get_markers(C);
+  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  const View2D *v2d = ui::view2d_fromcontext(C);
+
+  if (!markers || !v2d || !scene) {
+    return OPERATOR_PASS_THROUGH;
+  }
+
+  /* Check if the user clicked on a marker or empty space. */
+  if (region_position_is_over_marker(v2d, markers, event->mval[0])) {
+    /* User clicked a marker so let 'select_marker_camera_switch' take care of it. */
+    return OPERATOR_PASS_THROUGH;
+  }
+
+  eMarkers_LeftRightSelect_Mode mode = eMarkers_LeftRightSelect_Mode(
+      RNA_enum_get(op->ptr, "mode"));
+
+  if (mode == MARKERS_LRSEL_CLICK_SIDE) {
+    const float mouse_frame = ui::view2d_region_to_view_x(v2d, event->mval[0]);
+    const float scene_frame = BKE_scene_frame_get(scene);
+    mode = mouse_frame < scene_frame ? MARKERS_LRSEL_LEFT : MARKERS_LRSEL_RIGHT;
+  }
+  RNA_enum_set(op->ptr, "mode", mode);
+
+  return ed_marker_select_leftright_exec(C, op);
 }
 
 static void MARKER_OT_select_leftright(wmOperatorType *ot)
@@ -1772,6 +1816,7 @@ static void MARKER_OT_select_leftright(wmOperatorType *ot)
   ot->idname = "MARKER_OT_select_leftright";
 
   /* API callbacks. */
+  ot->invoke = ed_marker_select_leftright_invoke;
   ot->exec = ed_marker_select_leftright_exec;
   ot->poll = ed_markers_poll_markers_exist;
 

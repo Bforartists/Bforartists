@@ -960,18 +960,19 @@ GVMutableArray DataTypeConversions::try_convert(GVMutableArray varray,
       std::move(varray), to_type, *this);
 }
 
-fn::GField DataTypeConversions::try_convert(fn::GField field, const CPPType &to_type) const
+std::optional<fn::GField> DataTypeConversions::try_convert(fn::GField field,
+                                                           const CPPType &to_type) const
 {
   const CPPType &from_type = field.cpp_type();
   if (from_type == to_type) {
     return field;
   }
   if (!this->is_convertible(from_type, to_type)) {
-    return {};
+    return std::nullopt;
   }
   const mf::MultiFunction &fn = *this->get_conversion_multi_function(
       mf::DataType::ForSingle(from_type), mf::DataType::ForSingle(to_type));
-  return {fn::FieldOperation::from(fn, {std::move(field)})};
+  return fn::GField{fn::FieldOperation::from(fn, {std::move(field)})};
 }
 
 }  // namespace blender::bke

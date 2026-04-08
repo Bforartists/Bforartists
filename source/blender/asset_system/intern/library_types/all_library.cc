@@ -25,7 +25,11 @@ static CLG_LogRef LOG = {"asset.library"};
 
 namespace asset_system {
 
-AllAssetLibrary::AllAssetLibrary() : AssetLibrary(ASSET_LIBRARY_ALL) {}
+AllAssetLibrary::AllAssetLibrary()
+    : AssetLibrary(ASSET_LIBRARY_ALL,
+                   /*is_read_only=*/true)
+{
+}
 
 std::optional<AssetLibraryReference> AllAssetLibrary::library_reference() const
 {

@@ -1123,7 +1123,10 @@ bool BKE_camera_multiview_spherical_stereo(const RenderData *rd, const Object *c
   return false;
 }
 
-static Object *camera_multiview_advanced(const Scene *scene, Object *camera, const char *suffix)
+static Object *camera_multiview_advanced(const Main &bmain,
+                                         const Scene *scene,
+                                         Object *camera,
+                                         const char *suffix)
 {
   char name[MAX_NAME];
   const char *camera_name = camera->id.name + 2;
@@ -1147,7 +1150,7 @@ static Object *camera_multiview_advanced(const Scene *scene, Object *camera, con
   }
 
   if (name[0] != '\0') {
-    Object *ob = BKE_scene_object_find_by_name(scene, name);
+    Object *ob = BKE_scene_object_find_by_name(bmain, scene, name);
     if (ob != nullptr) {
       return ob;
     }
@@ -1156,7 +1159,10 @@ static Object *camera_multiview_advanced(const Scene *scene, Object *camera, con
   return camera;
 }
 
-Object *BKE_camera_multiview_render(const Scene *scene, Object *camera, const char *viewname)
+Object *BKE_camera_multiview_render(const Main &bmain,
+                                    const Scene *scene,
+                                    Object *camera,
+                                    const char *viewname)
 {
   const bool is_multiview = (camera != nullptr) && (scene->r.scemode & R_MULTIVIEW) != 0;
 
@@ -1168,7 +1174,7 @@ Object *BKE_camera_multiview_render(const Scene *scene, Object *camera, const ch
   }
   /* SCE_VIEWS_FORMAT_MULTIVIEW */
   const char *suffix = BKE_scene_multiview_view_suffix_get(&scene->r, viewname);
-  return camera_multiview_advanced(scene, camera, suffix);
+  return camera_multiview_advanced(bmain, scene, camera, suffix);
 }
 
 static float camera_stereo3d_shift_x(const Object *camera, const char *viewname)

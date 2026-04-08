@@ -39,52 +39,54 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
 
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Menu>("Type")
+  b.add_input<decl::Menu>("Type"_ustr)
       .default_value(CMP_NODE_TONE_MAP_PHOTORECEPTOR)
       .static_items(type_items)
       .optional_label();
 
-  b.add_input<decl::Float>("Key")
+  b.add_input<decl::Float>("Key"_ustr)
       .default_value(0.18f)
       .min(0.0f)
       .usage_by_single_menu(CMP_NODE_TONE_MAP_SIMPLE)
       .description(
           "The luminance that will be mapped to the log average luminance, typically set to the "
           "middle gray value");
-  b.add_input<decl::Float>("Balance")
+  b.add_input<decl::Float>("Balance"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .usage_by_single_menu(CMP_NODE_TONE_MAP_SIMPLE)
       .description(
           "Balances low and high luminance areas. Lower values emphasize details in shadows, "
           "while higher values compress highlights more smoothly");
-  b.add_input<decl::Float>("Gamma")
+  b.add_input<decl::Float>("Gamma"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .usage_by_single_menu(CMP_NODE_TONE_MAP_SIMPLE)
       .description("Gamma correction factor applied after tone mapping");
 
-  b.add_input<decl::Float>("Intensity")
+  b.add_input<decl::Float>("Intensity"_ustr)
       .default_value(0.0f)
       .usage_by_single_menu(CMP_NODE_TONE_MAP_PHOTORECEPTOR)
       .description(
           "Controls the intensity of the image, lower values makes it darker while higher values "
           "makes it lighter");
-  b.add_input<decl::Float>("Contrast")
+  b.add_input<decl::Float>("Contrast"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .usage_by_single_menu(CMP_NODE_TONE_MAP_PHOTORECEPTOR)
       .description(
           "Controls the contrast of the image. Zero automatically sets the contrast based on its "
           "global range for better luminance distribution");
-  b.add_input<decl::Float>("Light Adaptation")
+  b.add_input<decl::Float>("Light Adaptation"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -93,7 +95,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "Specifies if tone mapping operates on the entire image or per pixel, 0 means the "
           "entire image, 1 means it is per pixel, and values in between blends between both");
-  b.add_input<decl::Float>("Chromatic Adaptation")
+  b.add_input<decl::Float>("Chromatic Adaptation"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)

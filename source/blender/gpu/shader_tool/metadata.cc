@@ -121,7 +121,7 @@ std::string ParsedFragOuput::serialize() const
   std::stringstream ss;
   if (!dual_source.empty()) {
     ss << "FRAGMENT_OUT_DUAL(" << slot << ", " << var_type << ", " << var_name << ", "
-       << dual_source << ")";
+       << "SRC_" << dual_source << ")";
   }
   else if (!raster_order_group.empty()) {
     ss << "FRAGMENT_OUT_ROG(" << slot << ", " << var_type << ", " << var_name << ", "
@@ -232,6 +232,11 @@ std::string Source::serialize_infos() const
   ss << "\n";
   for (auto res_table : resource_tables) {
     ss << "GPU_SHADER_CREATE_INFO(" << res_table.name << ")\n";
+
+    if (res_table.empty()) {
+      /* Add unused define to avoid warning about unused expression. */
+      ss << "DEFINE(\"EMPTY_CREATE_INFO\")\n";
+    }
     for (const auto &res : res_table) {
       ss << res.serialize() << "\n";
     }

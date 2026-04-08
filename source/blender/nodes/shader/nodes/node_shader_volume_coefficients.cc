@@ -19,13 +19,13 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
 
-  b.add_output<decl::Shader>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
+  b.add_output<decl::Shader>("Volume"_ustr).translation_context(BLT_I18NCONTEXT_ID_ID);
 
-  b.add_input<decl::Float>("Weight").available(false);
+  b.add_input<decl::Float>("Weight"_ustr).available(false);
 #define SOCK_WEIGHT_ID 0
 
   PanelDeclarationBuilder &abs = b.add_panel("Absorption"_ustr).default_closed(false);
-  abs.add_input<decl::Vector>("Absorption Coefficients")
+  abs.add_input<decl::Vector>("Absorption Coefficients"_ustr)
       .default_value({1.0f, 1.0f, 1.0f})
       .min(0.0f)
       .max(1000.0f)
@@ -37,7 +37,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   sca.add_layout([](ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr) {
     layout.prop(ptr, "phase", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
   });
-  sca.add_input<decl::Vector>("Scatter Coefficients")
+  sca.add_input<decl::Vector>("Scatter Coefficients"_ustr)
       .default_value({1.0f, 1.0f, 1.0f})
       .min(0.0f)
       .max(1000.0f)
@@ -45,7 +45,7 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Probability density per color channel of an out-scattering event occurring per unit "
           "distance");
 #define SOCK_SCATTER_COEFFICIENTS_ID 2
-  sca.add_input<decl::Float>("Anisotropy")
+  sca.add_input<decl::Float>("Anisotropy"_ustr)
       .default_value(0.0f)
       .min(-1.0f)
       .max(1.0f)
@@ -55,7 +55,7 @@ static void node_declare(NodeDeclarationBuilder &b)
           "positive is forward")
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_HENYEY_GREENSTEIN; });
 #define SOCK_SCATTER_ANISOTROPY_ID 3
-  sca.add_input<decl::Float>("IOR")
+  sca.add_input<decl::Float>("IOR"_ustr)
       .default_value(1.33f)
       .min(1.0f)
       .max(2.0f)
@@ -63,7 +63,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description("Index Of Refraction of the scattering particles")
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_FOURNIER_FORAND; });
 #define SOCK_SCATTER_IOR_ID 4
-  sca.add_input<decl::Float>("Backscatter")
+  sca.add_input<decl::Float>("Backscatter"_ustr)
       .default_value(0.1f)
       .min(0.0f)
       .max(0.5f)
@@ -71,10 +71,13 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description("Fraction of light that is scattered backwards")
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_FOURNIER_FORAND; });
 #define SOCK_SCATTER_BACKSCATTER_ID 5
-  sca.add_input<decl::Float>("Alpha").default_value(0.5f).min(0.0f).max(500.0f).make_available(
-      [](bNode &node) { node.custom1 = SHD_PHASE_DRAINE; });
+  sca.add_input<decl::Float>("Alpha"_ustr)
+      .default_value(0.5f)
+      .min(0.0f)
+      .max(500.0f)
+      .make_available([](bNode &node) { node.custom1 = SHD_PHASE_DRAINE; });
 #define SOCK_SCATTER_ALPHA_ID 6
-  sca.add_input<decl::Float>("Diameter")
+  sca.add_input<decl::Float>("Diameter"_ustr)
       .default_value(20.0f)
       .min(0.0f)
       .max(50.0f)
@@ -82,7 +85,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_MIE; });
 #define SOCK_SCATTER_DIAMETER_ID 7
   PanelDeclarationBuilder &emi = b.add_panel("Emission"_ustr).default_closed(false);
-  emi.add_input<decl::Vector>("Emission Coefficients")
+  emi.add_input<decl::Vector>("Emission Coefficients"_ustr)
       .default_value({0.0f, 0.0f, 0.0f})
       .min(0.0f)
       .max(1000.0f)
@@ -122,10 +125,10 @@ static int node_shader_gpu_volume_coefficients(GPUMaterial *mat,
                                                GPUNodeStack *in,
                                                GPUNodeStack *out)
 {
-  if (node_socket_not_black(in[SOCK_SCATTER_COEFFICIENTS_ID])) {
+  if (in[SOCK_SCATTER_COEFFICIENTS_ID].socket_not_black()) {
     GPU_material_flag_set(mat, GPU_MATFLAG_VOLUME_SCATTER | GPU_MATFLAG_VOLUME_ABSORPTION);
   }
-  if (node_socket_not_black(in[SOCK_ABSORPTION_COEFFICIENTS_ID])) {
+  if (in[SOCK_ABSORPTION_COEFFICIENTS_ID].socket_not_black()) {
     GPU_material_flag_set(mat, GPU_MATFLAG_VOLUME_ABSORPTION);
   }
   return GPU_stack_link(mat, node, "node_volume_coefficients", in, out);

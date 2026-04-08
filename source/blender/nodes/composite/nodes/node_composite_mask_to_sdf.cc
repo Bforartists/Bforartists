@@ -15,14 +15,14 @@ namespace blender::nodes::node_composite_mask_to_sdf_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Mask").hide_value().structure_type(StructureType::Dynamic);
+  b.add_input<decl::Bool>("Mask"_ustr).hide_value().structure_type(StructureType::Dynamic);
 
-  b.add_output<decl::Float>("SDF")
+  b.add_output<decl::Float>("SDF"_ustr)
       .structure_type(StructureType::Dynamic)
       .description(
           "The distance in pixel to the nearest pixel at the boundary of the mask. The distance "
           "is negative inside the mask");
-  b.add_output<decl::IntVector>("Nearest Pixel")
+  b.add_output<decl::IntVector>("Nearest Pixel"_ustr)
       .dimensions(2)
       .structure_type(StructureType::Dynamic)
       .description("The integer coordinates of the nearest pixel at the boundary of the mask");

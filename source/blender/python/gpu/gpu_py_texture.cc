@@ -802,24 +802,26 @@ static PyMethodDef pygpu_texture__tp_methods[] = {
 PyDoc_STRVAR(
     /* Wrap. */
     pygpu_texture__tp_doc,
-    ".. class:: GPUTexture(size, *, layers=0, is_cubemap=False, format='RGBA8', "
-    "data=None)\n"
+    ".. class:: GPUTexture\n"
     "\n"
     "   This object gives access to GPU textures.\n"
     "\n"
-    "   :param size: Dimensions of the texture 1D, 2D, 3D or cubemap.\n"
-    "   :type size: int | Sequence[int]\n"
-    "   :param layers: Number of layers in texture array or number of cubemaps in cubemap array\n"
-    "   :type layers: int\n"
-    "   :param is_cubemap: Indicates the creation of a cubemap texture.\n"
-    "   :type is_cubemap: bool\n"
-    "   :param format: Internal data format inside GPU memory.\n"
-    "      ``DEPTH24_STENCIL8`` is deprecated, use ``DEPTH32F_STENCIL8``.\n"
-    "      ``DEPTH_COMPONENT24`` is deprecated, use ``DEPTH_COMPONENT32F``.\n"
-    "   :type format: " PYDOC_TEX_FORMAT_LITERAL
+    "   .. method:: __init__(size, *, layers=0, is_cubemap=False, format='RGBA8', data=None)\n"
     "\n"
-    "   :param data: Buffer object to fill the texture.\n"
-    "   :type data: :class:`gpu.types.Buffer` | None\n");
+    "      :param size: Dimensions of the texture 1D, 2D, 3D or cubemap.\n"
+    "      :type size: int | Sequence[int]\n"
+    "      :param layers: Number of layers in texture array or number of cubemaps in cubemap "
+    "array\n"
+    "      :type layers: int\n"
+    "      :param is_cubemap: Indicates the creation of a cubemap texture.\n"
+    "      :type is_cubemap: bool\n"
+    "      :param format: Internal data format inside GPU memory.\n"
+    "         ``DEPTH24_STENCIL8`` is deprecated, use ``DEPTH32F_STENCIL8``.\n"
+    "         ``DEPTH_COMPONENT24`` is deprecated, use ``DEPTH_COMPONENT32F``.\n"
+    "      :type format: " PYDOC_TEX_FORMAT_LITERAL
+    "\n"
+    "      :param data: Buffer object to fill the texture.\n"
+    "      :type data: :class:`gpu.types.Buffer` | None\n");
 PyTypeObject BPyGPUTexture_Type = {
     /*ob_base*/ PyVarObject_HEAD_INIT(nullptr, 0)
     /*tp_name*/ "GPUTexture",

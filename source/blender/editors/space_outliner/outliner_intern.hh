@@ -241,6 +241,8 @@ struct TreeViewContext {
   /* Workspace. */
   WorkSpace *workspace;
 
+  Main *bmain;
+
   /* Scene level. */
   Scene *scene;
   ViewLayer *view_layer;
@@ -311,7 +313,8 @@ void outliner_tree_dimensions(SpaceOutliner *space_outliner, int *r_width, int *
 
 TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te);
 
-void outliner_collection_isolate_flag(Scene *scene,
+void outliner_collection_isolate_flag(const Main &bmain,
+                                      Scene *scene,
                                       ViewLayer *view_layer,
                                       LayerCollection *layer_collection,
                                       Collection *collection,
@@ -469,6 +472,11 @@ void outliner_set_coordinates(const ARegion *region, SpaceOutliner *space_outlin
  * Open or close a tree element, optionally toggling all children recursively.
  */
 void outliner_item_openclose(TreeElement *te, bool open, bool toggle_all);
+
+void outliner_scroll_to_active(const bContext *C,
+                               SpaceOutliner *space_outliner,
+                               ARegion *region,
+                               TreeViewContext *tvc);
 
 /* `outliner_dragdrop.cc` */
 
@@ -685,8 +693,9 @@ void outliner_tag_redraw_avoid_rebuild_on_open_change(const SpaceOutliner *space
 
 /**
  * If outliner is dirty sync selection from view layer and sequencer.
+ * \return true if active is changed.
  */
-void outliner_sync_selection(const bContext *C,
+bool outliner_sync_selection(const bContext *C,
                              const TreeViewContext &tvc,
                              SpaceOutliner *space_outliner);
 

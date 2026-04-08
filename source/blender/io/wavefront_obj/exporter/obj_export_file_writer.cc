@@ -13,9 +13,10 @@
 #include "BKE_blender_version.h"
 #include "BKE_mesh.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_fileops.h"
+#include "BLI_math_color.h"
 #include "BLI_math_matrix.h"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_rotation.h"
@@ -456,18 +457,11 @@ void OBJWriter::write_edges_indices(FormatHandler &fh,
                                     const OBJMesh &obj_mesh_data) const
 {
   const Mesh &mesh = *obj_mesh_data.get_mesh();
-  const bke::LooseEdgeCache &loose_edges = mesh.loose_edges();
-  if (loose_edges.count == 0) {
-    return;
-  }
-
   const Span<int2> edges = mesh.edges();
-  for (const int64_t i : edges.index_range()) {
-    if (loose_edges.is_loose_bits[i]) {
-      const int2 obj_edge = edges[i] + offsets.vertex_offset + 1;
-      fh.write_obj_edge(obj_edge[0], obj_edge[1]);
-    }
-  }
+  mesh.loose_edges().foreach_index([&](const int i) {
+    const int2 obj_edge = edges[i] + offsets.vertex_offset + 1;
+    fh.write_obj_edge(obj_edge[0], obj_edge[1]);
+  });
 }
 
 static float4x4 compute_world_axes_transform(const OBJExportParams &export_params,

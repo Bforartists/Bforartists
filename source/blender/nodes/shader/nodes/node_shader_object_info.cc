@@ -12,12 +12,12 @@ namespace nodes::node_shader_object_info_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("Location");
-  b.add_output<decl::Color>("Color");
-  b.add_output<decl::Float>("Alpha");
-  b.add_output<decl::Float>("Object Index");
-  b.add_output<decl::Float>("Material Index");
-  b.add_output<decl::Float>("Random");
+  b.add_output<decl::Vector>("Location"_ustr);
+  b.add_output<decl::Color>("Color"_ustr);
+  b.add_output<decl::Float>("Alpha"_ustr);
+  b.add_output<decl::Float>("Object Index"_ustr);
+  b.add_output<decl::Float>("Material Index"_ustr);
+  b.add_output<decl::Float>("Random"_ustr);
 }
 
 static int node_shader_gpu_object_info(GPUMaterial *mat,

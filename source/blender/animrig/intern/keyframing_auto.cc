@@ -296,14 +296,17 @@ bool autokeyframe_property(bContext *C,
       ReportList *reports = CTX_wm_reports(C);
       ToolSettings *ts = scene->toolsettings;
 
-      changed = insert_keyframe_direct(reports,
-                                       *ptr,
-                                       prop,
-                                       fcu,
-                                       &anim_eval_context,
-                                       eBezTriple_KeyframeType(ts->keyframe_type),
-                                       nullptr,
-                                       eInsertKeyFlags(0));
+      const SingleKeyingResult result = insert_keyframe_direct(
+          *ptr,
+          *prop,
+          *fcu,
+          anim_eval_context.eval_time,
+          eBezTriple_KeyframeType(ts->keyframe_type),
+          eInsertKeyFlags(0));
+      changed = result == SingleKeyingResult::SUCCESS;
+      if (result != SingleKeyingResult::SUCCESS) {
+        generate_single_keying_result_report(result, reports);
+      }
       WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, nullptr);
     }
   }

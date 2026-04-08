@@ -132,7 +132,7 @@ ENUM_OPERATORS(eWinOverrideFlag)
  * Override defaults or startup file when #eWinOverrideFlag is set.
  * These values are typically set by command line arguments.
  */
-static struct WMInitStruct {
+static struct wmInitStruct {
   /**
    * Window geometry:
    * - Defaults to the main screen-size.
@@ -2825,12 +2825,12 @@ bool WM_clipboard_image_set_byte_buffer(ImBuf *ibuf)
   if (G.background) {
     return false;
   }
-  if (ibuf->byte_buffer.data == nullptr) {
+  if (ibuf->byte_data() == nullptr) {
     return false;
   }
 
   bool success = bool(g_system->putClipboardImage(
-      reinterpret_cast<uint *>(ibuf->byte_buffer.data), ibuf->x, ibuf->y));
+      reinterpret_cast<uint *>(ibuf->byte_data_for_write()), ibuf->x, ibuf->y));
 
   return success;
 }

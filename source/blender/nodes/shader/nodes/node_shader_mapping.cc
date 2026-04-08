@@ -17,30 +17,30 @@ namespace nodes::node_shader_mapping_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Vector>("Vector")
+  b.add_input<decl::Vector>("Vector"_ustr)
       .default_value({0.0f, 0.0f, 0.0f})
       .min(-FLT_MAX)
       .max(FLT_MAX)
       .description("The vector to be transformed");
-  b.add_input<decl::Vector>("Location")
+  b.add_input<decl::Vector>("Location"_ustr)
       .default_value({0.0f, 0.0f, 0.0f})
       .min(-FLT_MAX)
       .max(FLT_MAX)
       .subtype(PROP_TRANSLATION)
       .description("The amount of translation along each axis");
-  b.add_input<decl::Vector>("Rotation")
+  b.add_input<decl::Vector>("Rotation"_ustr)
       .default_value({0.0f, 0.0f, 0.0f})
       .min(-FLT_MAX)
       .max(FLT_MAX)
       .subtype(PROP_EULER)
       .description("The amount of rotation along each axis, XYZ order");
-  b.add_input<decl::Vector>("Scale")
+  b.add_input<decl::Vector>("Scale"_ustr)
       .default_value({1.0f, 1.0f, 1.0f})
       .min(-FLT_MAX)
       .max(FLT_MAX)
       .subtype(PROP_XYZ)
       .description("The amount of scaling along each axis");
-  b.add_output<decl::Vector>("Vector");
+  b.add_output<decl::Vector>("Vector"_ustr);
 }
 
 static void node_shader_buts_mapping(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

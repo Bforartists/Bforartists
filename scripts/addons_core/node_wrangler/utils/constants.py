@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 from collections import namedtuple
+from bpy.types import ShaderNodeMath, ShaderNodeMix
 
 
 #################
@@ -43,71 +44,13 @@ rl_outputs = (
 
 # list of blend types of "Mix" nodes in a form that can be used as 'items' for EnumProperty.
 # used list, not tuple for easy merging with other lists.
-blend_types = [
-    ('MIX', 'Mix', 'Mix Mode'),
-    ('ADD', 'Add', 'Add Mode'),
-    ('MULTIPLY', 'Multiply', 'Multiply Mode'),
-    ('SUBTRACT', 'Subtract', 'Subtract Mode'),
-    ('SCREEN', 'Screen', 'Screen Mode'),
-    ('DIVIDE', 'Divide', 'Divide Mode'),
-    ('DIFFERENCE', 'Difference', 'Difference Mode'),
-    ('DARKEN', 'Darken', 'Darken Mode'),
-    ('LIGHTEN', 'Lighten', 'Lighten Mode'),
-    ('OVERLAY', 'Overlay', 'Overlay Mode'),
-    ('DODGE', 'Color Dodge', 'Dodge Mode'),
-    ('BURN', 'Color Burn', 'Burn Mode'),
-    ('HUE', 'Hue', 'Hue Mode'),
-    ('SATURATION', 'Saturation', 'Saturation Mode'),
-    ('VALUE', 'Value', 'Value Mode'),
-    ('COLOR', 'Color', 'Color Mode'),
-    ('SOFT_LIGHT', 'Soft Light', 'Soft Light Mode'),
-    ('LINEAR_LIGHT', 'Linear Light', 'Linear Light Mode'),
-]
+blend_types = [(enum.identifier, enum.name, enum.description)
+               for enum in ShaderNodeMix.bl_rna.properties['blend_type'].enum_items_static]
 
 # list of operations of "Math" nodes in a form that can be used as 'items' for EnumProperty.
 # used list, not tuple for easy merging with other lists.
-operations = [
-    ('ADD', 'Add', 'Add Mode'),
-    ('SUBTRACT', 'Subtract', 'Subtract Mode'),
-    ('MULTIPLY', 'Multiply', 'Multiply Mode'),
-    ('DIVIDE', 'Divide', 'Divide Mode'),
-    ('MULTIPLY_ADD', 'Multiply Add', 'Multiply Add Mode'),
-    ('SINE', 'Sine', 'Sine Mode'),
-    ('COSINE', 'Cosine', 'Cosine Mode'),
-    ('TANGENT', 'Tangent', 'Tangent Mode'),
-    ('ARCSINE', 'Arcsine', 'Arcsine Mode'),
-    ('ARCCOSINE', 'Arccosine', 'Arccosine Mode'),
-    ('ARCTANGENT', 'Arctangent', 'Arctangent Mode'),
-    ('ARCTAN2', 'Arctan2', 'Arctan2 Mode'),
-    ('SINH', 'Hyperbolic Sine', 'Hyperbolic Sine Mode'),
-    ('COSH', 'Hyperbolic Cosine', 'Hyperbolic Cosine Mode'),
-    ('TANH', 'Hyperbolic Tangent', 'Hyperbolic Tangent Mode'),
-    ('POWER', 'Power', 'Power Mode'),
-    ('LOGARITHM', 'Logarithm', 'Logarithm Mode'),
-    ('SQRT', 'Square Root', 'Square Root Mode'),
-    ('INVERSE_SQRT', 'Inverse Square Root', 'Inverse Square Root Mode'),
-    ('EXPONENT', 'Exponent', 'Exponent Mode'),
-    ('MINIMUM', 'Minimum', 'Minimum Mode'),
-    ('MAXIMUM', 'Maximum', 'Maximum Mode'),
-    ('LESS_THAN', 'Less Than', 'Less Than Mode'),
-    ('GREATER_THAN', 'Greater Than', 'Greater Than Mode'),
-    ('SIGN', 'Sign', 'Sign Mode'),
-    ('COMPARE', 'Compare', 'Compare Mode'),
-    ('SMOOTH_MIN', 'Smooth Minimum', 'Smooth Minimum Mode'),
-    ('SMOOTH_MAX', 'Smooth Maximum', 'Smooth Maximum Mode'),
-    ('FRACT', 'Fraction', 'Fraction Mode'),
-    ('MODULO', 'Modulo', 'Modulo Mode'),
-    ('SNAP', 'Snap', 'Snap Mode'),
-    ('WRAP', 'Wrap', 'Wrap Mode'),
-    ('PINGPONG', 'Pingpong', 'Pingpong Mode'),
-    ('ABSOLUTE', 'Absolute', 'Absolute Mode'),
-    ('ROUND', 'Round', 'Round Mode'),
-    ('FLOOR', 'Floor', 'Floor Mode'),
-    ('CEIL', 'Ceil', 'Ceil Mode'),
-    ('TRUNCATE', 'Truncate', 'Truncate Mode'),
-    ('RADIANS', 'To Radians', 'To Radians Mode'),
-    ('DEGREES', 'To Degrees', 'To Degrees Mode'),
-]
+operations = [(enum.identifier, enum.name, enum.description)
+              for enum in ShaderNodeMath.bl_rna.properties['operation'].enum_items_static]
 
 # Operations used by the geometry boolean node and join geometry node
 geo_combine_operations = [

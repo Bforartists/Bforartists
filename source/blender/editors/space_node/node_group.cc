@@ -286,6 +286,15 @@ static void node_group_ungroup(bContext &C, bNodeTree &ntree, bNode &group_node)
       node->location[1] += center[1];
     }
   }
+  /* Attach to the same parent as the group node. */
+  if (group_node.parent) {
+    for (bNode *node : copied_nodes.node_map().values()) {
+      node->parent = group_node.parent;
+    }
+    for (bNode *node : proxy_nodes.values()) {
+      node->parent = group_node.parent;
+    }
+  }
 
   update_nested_node_refs_after_ungroup(ntree, group_node, copied_nodes);
 
@@ -667,6 +676,9 @@ static bNode *node_group_make_from_nodes(const bContext &C,
     gnode->location[0] = bounds->center()[0];
     gnode->location[1] = bounds->center()[1];
   }
+  if (bNode *parent = ed::space_node::find_common_parent_node(nodes_to_group)) {
+    gnode->parent = parent;
+  }
 
   node_group_make_insert_selected(C, ntree, gnode, nodes_to_group);
 
@@ -683,6 +695,7 @@ static bNode *node_group_make_from_node_declaration(bContext &C,
   bNodeTree *wrapper_group = bke::node_tree_add_tree(
       &bmain, bke::node_label(ntree, src_node), ntree.idname);
   wrapper_group->color_tag = int(bke::node_color_tag(src_node));
+  wrapper_group->default_group_node_width = src_node.width;
 
   NodeSetInterfaceParams params;
   /* Hidden sockets are exposed but hidden on the group node instance. */

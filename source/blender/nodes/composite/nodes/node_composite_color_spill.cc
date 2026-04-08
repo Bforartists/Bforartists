@@ -48,33 +48,33 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.is_function_node();
   b.use_custom_socket_order();
 
-  b.add_output<decl::Color>("Image");
+  b.add_output<decl::Color>("Image"_ustr);
 
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR);
-  b.add_input<decl::Menu>("Spill Channel")
+  b.add_input<decl::Menu>("Spill Channel"_ustr)
       .default_value(RGBChannel::G)
       .static_items(rgb_channel_items)
       .expanded()
       .translation_context(BLT_I18NCONTEXT_COLOR)
       .optional_label();
-  b.add_input<decl::Menu>("Limit Method")
+  b.add_input<decl::Menu>("Limit Method"_ustr)
       .default_value(CMP_NODE_COLOR_SPILL_LIMIT_ALGORITHM_SINGLE)
       .static_items(limit_method_items)
       .expanded()
       .optional_label();
-  b.add_input<decl::Menu>("Limit Channel")
+  b.add_input<decl::Menu>("Limit Channel"_ustr)
       .default_value(RGBChannel::R)
       .static_items(rgb_channel_items)
       .expanded()
       .translation_context(BLT_I18NCONTEXT_COLOR)
       .optional_label()
-      .usage_by_menu("Limit Method", CMP_NODE_COLOR_SPILL_LIMIT_ALGORITHM_SINGLE);
-  b.add_input<decl::Float>("Limit Strength")
+      .usage_by_menu("Limit Method"_ustr, CMP_NODE_COLOR_SPILL_LIMIT_ALGORITHM_SINGLE);
+  b.add_input<decl::Float>("Limit Strength"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -83,13 +83,13 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   PanelDeclarationBuilder &use_spill_strength_panel =
       b.add_panel("Spill Strength"_ustr).default_closed(true);
-  use_spill_strength_panel.add_input<decl::Bool>("Use Spill Strength")
+  use_spill_strength_panel.add_input<decl::Bool>("Use Spill Strength"_ustr)
       .default_value(false)
       .panel_toggle()
       .description(
           "If enabled, the spill strength for each color channel can be specified. If disabled, "
           "the spill channel will have a unit scale, while other channels will be zero");
-  use_spill_strength_panel.add_input<decl::Color>("Strength", "Spill Strength")
+  use_spill_strength_panel.add_input<decl::Color>("Strength"_ustr, "Spill Strength"_ustr)
       .default_value({0.0f, 1.0f, 0.0f, 1.0f})
       .description("Specifies the spilling strength of each color channel");
 }

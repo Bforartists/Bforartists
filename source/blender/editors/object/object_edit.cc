@@ -166,9 +166,10 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
                                              void *filter_user_data)
 {
   ScrArea *area = CTX_wm_area(C);
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob_active = BKE_view_layer_active_object_get(view_layer);
   ID *id_pin = nullptr;
   const bool use_objects_in_mode = (ob_active != nullptr) &&
@@ -225,7 +226,8 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
     params.no_dup_data = true;
     params.filter_fn = filter_fn;
     params.filter_userdata = filter_user_data;
-    return BKE_view_layer_array_from_objects_in_mode_params(scene, view_layer, v3d, &params);
+    return BKE_view_layer_array_from_objects_in_mode_params(
+        *bmain, scene, view_layer, v3d, &params);
   }
 
   ObjectsInViewLayerParams params{};
@@ -241,7 +243,8 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
 /** \name Object Index Lookup/Creation
  * \{ */
 
-int object_in_mode_to_index(const Scene *scene,
+int object_in_mode_to_index(const Main &bmain,
+                            const Scene *scene,
                             ViewLayer *view_layer,
                             const eObjectMode mode,
                             const Object *ob)
@@ -252,7 +255,7 @@ int object_in_mode_to_index(const Scene *scene,
    * invalid-parameters. */
   int index = -1;
   int i = 0;
-  FOREACH_BASE_IN_MODE_BEGIN (scene, view_layer, nullptr, -1, mode, base_iter) {
+  FOREACH_BASE_IN_MODE_BEGIN (&bmain, scene, view_layer, nullptr, -1, mode, base_iter) {
     if (base_iter->object == ob) {
       index = i;
       break;
@@ -263,7 +266,8 @@ int object_in_mode_to_index(const Scene *scene,
   return index;
 }
 
-Object *object_in_mode_from_index(const Scene *scene,
+Object *object_in_mode_from_index(const Main &bmain,
+                                  const Scene *scene,
                                   ViewLayer *view_layer,
                                   const eObjectMode mode,
                                   int index)
@@ -271,7 +275,7 @@ Object *object_in_mode_from_index(const Scene *scene,
   BLI_assert(index >= 0);
   Object *ob = nullptr;
   int i = 0;
-  FOREACH_BASE_IN_MODE_BEGIN (scene, view_layer, nullptr, -1, mode, base_iter) {
+  FOREACH_BASE_IN_MODE_BEGIN (&bmain, scene, view_layer, nullptr, -1, mode, base_iter) {
     if (index == i) {
       ob = base_iter->object;
       break;
@@ -298,12 +302,13 @@ static bool object_hide_poll(bContext *C)
 
 static wmOperatorStatus object_hide_view_clear_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const bool select = RNA_boolean_get(op->ptr, "select");
   bool changed = false;
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     if (base.flag & BASE_HIDDEN) {
       base.flag &= ~BASE_HIDDEN;
@@ -349,6 +354,7 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
 
 static wmOperatorStatus object_hide_view_set_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const bool unselected = RNA_boolean_get(op->ptr, "unselected");
@@ -357,7 +363,7 @@ static wmOperatorStatus object_hide_view_set_exec(bContext *C, wmOperator *op)
   uint hide_count = 0;
 
   /* Hide selected or unselected objects. */
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     if (!(base.flag & BASE_ENABLED_AND_VISIBLE_IN_DEFAULT_VIEWPORT)) {
       continue;
@@ -435,6 +441,7 @@ static wmOperatorStatus object_hide_collection_exec(bContext *C, wmOperator *op)
   const bool extend = RNA_boolean_get(op->ptr, "extend");
   const bool toggle = RNA_boolean_get(op->ptr, "toggle");
 
+  Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   LayerCollection *lc = BKE_layer_collection_from_index(view_layer, index);
@@ -451,10 +458,10 @@ static wmOperatorStatus object_hide_collection_exec(bContext *C, wmOperator *op)
     }
     if (toggle) {
       lc->local_collections_bits ^= v3d->local_collections_uid;
-      BKE_layer_collection_local_sync(scene, view_layer, v3d);
+      BKE_layer_collection_local_sync(*bmain, scene, view_layer, v3d);
     }
     else {
-      BKE_layer_collection_isolate_local(scene, view_layer, v3d, lc, extend);
+      BKE_layer_collection_isolate_local(*bmain, scene, view_layer, v3d, lc, extend);
     }
   }
   else {
@@ -470,6 +477,7 @@ static wmOperatorStatus object_hide_collection_exec(bContext *C, wmOperator *op)
 
 void collection_hide_menu_draw(const bContext *C, ui::Layout &layout)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   LayerCollection *lc_scene = static_cast<LayerCollection *>(view_layer->layer_collections.first);
@@ -490,7 +498,7 @@ void collection_hide_menu_draw(const bContext *C, ui::Layout &layout)
     }
 
     int icon = ICON_NONE;
-    if (BKE_layer_collection_has_selected_objects(scene, view_layer, &lc)) {
+    if (BKE_layer_collection_has_selected_objects(*bmain, scene, view_layer, &lc)) {
       icon = ICON_LAYER_ACTIVE;
     }
     else if (lc.runtime_flag & LAYER_COLLECTION_HAS_OBJECTS) {
@@ -844,7 +852,7 @@ bool editmode_free_ex(Main *bmain, Object *obedit)
 
 bool editmode_exit_multi_ex(Main *bmain, Scene *scene, ViewLayer *view_layer, int flag)
 {
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *obedit = BKE_view_layer_edit_object_get(view_layer);
   if (obedit == nullptr) {
     return false;
@@ -852,7 +860,7 @@ bool editmode_exit_multi_ex(Main *bmain, Scene *scene, ViewLayer *view_layer, in
   bool changed = false;
   const short obedit_type = obedit->type;
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     Object *ob = base.object;
     if ((ob->type == obedit_type) && (ob->mode & OB_MODE_EDIT)) {
@@ -1012,7 +1020,7 @@ static wmOperatorStatus editmode_toggle_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   View3D *v3d = CTX_wm_view3d(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *obact = BKE_view_layer_active_object_get(view_layer);
   const int mode_flag = OB_MODE_EDIT;
   const bool is_mode_set = (obact->mode & mode_flag) != 0;
@@ -1043,7 +1051,7 @@ static wmOperatorStatus editmode_toggle_exec(bContext *C, wmOperator *op)
     editmode_exit_ex(bmain, scene, obact, EM_FREEDATA);
 
     if ((obact->mode & mode_flag) == 0) {
-      FOREACH_OBJECT_BEGIN (scene, view_layer, ob) {
+      FOREACH_OBJECT_BEGIN (bmain, scene, view_layer, ob) {
         if ((ob != obact) && (ob->type == obact->type)) {
           editmode_exit_ex(bmain, scene, ob, EM_FREEDATA);
         }
@@ -1065,8 +1073,9 @@ static bool editmode_toggle_poll(bContext *C)
 {
   /* Get object the same way as in editmode_toggle_exec(). Otherwise overriding context can crash,
    * see #137998. */
+  const Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(CTX_data_scene(C), view_layer);
+  BKE_view_layer_synced_ensure(*bmain, CTX_data_scene(C), view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   /* Covers liboverrides too. */
@@ -1138,7 +1147,7 @@ static wmOperatorStatus posemode_exec(bContext *C, wmOperator *op)
   }
 
   {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *obedit = BKE_view_layer_edit_object_get(view_layer);
     if (obact == obedit) {
       editmode_exit_ex(bmain, scene, obedit, EM_FREEDATA);
@@ -1149,7 +1158,7 @@ static wmOperatorStatus posemode_exec(bContext *C, wmOperator *op)
   if (is_mode_set) {
     bool ok = ED_object_posemode_exit(C, obact);
     if (ok) {
-      FOREACH_OBJECT_BEGIN (scene, view_layer, ob) {
+      FOREACH_OBJECT_BEGIN (bmain, scene, view_layer, ob) {
         if ((ob != obact) && (ob->type == OB_ARMATURE) && (ob->mode & mode_flag)) {
           ED_object_posemode_exit_ex(bmain, ob);
         }
@@ -1709,9 +1718,10 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
 
   /* For modes that only use an active object, don't handle the whole selection. */
   {
+    const Main *bmain = CTX_data_main(C);
     Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *obact = BKE_view_layer_active_object_get(view_layer);
     if (obact && (obact->mode & OB_MODE_ALL_PAINT)) {
       ctx_objects.append(RNA_id_pointer_create(&obact->id));
@@ -1784,9 +1794,10 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
 
 static bool shade_poll(bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *obact = BKE_view_layer_active_object_get(view_layer);
   if (obact != nullptr) {
     /* Doesn't handle edit-data, sculpt dynamic-topology, or their undo systems. */
@@ -1973,14 +1984,11 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
         BKE_modifier_unique_name(&object->modifiers, &smooth_by_angle_nmd->modifier);
       }
 
-      IDProperty *angle_prop = IDP_GetPropertyFromGroup(smooth_by_angle_nmd->settings.properties,
-                                                        angle_identifier.c_str());
-      if (angle_prop->type == IDP_FLOAT) {
-        IDP_float_set(angle_prop, angle);
-      }
-      else if (angle_prop->type == IDP_DOUBLE) {
-        IDP_double_set(angle_prop, angle);
-      }
+      PointerRNA nmd_ptr = RNA_pointer_create_discrete(
+          &object->id, RNA_NodesModifier, smooth_by_angle_nmd);
+      PointerRNA properties_ptr = RNA_pointer_get(&nmd_ptr, "properties");
+
+      RNA_float_set(&properties_ptr, angle_identifier.c_str(), angle);
 
       DEG_id_tag_update(&object->id, ID_RECALC_GEOMETRY);
       WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, object);
@@ -2285,9 +2293,10 @@ static wmOperatorStatus move_to_collection_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (!ID_IS_EDITABLE(collection) || ID_IS_OVERRIDE_LIBRARY(collection)) {
-    BKE_report(
-        op->reports, RPT_ERROR, "Cannot add objects to a library override or linked collection");
+  std::string reason;
+  if (!BKE_collection_is_content_editable(collection, &reason)) {
+    BKE_reportf(
+        op->reports, RPT_ERROR, "Cannot add objects to the collection. %s", reason.c_str());
     return OPERATOR_CANCELLED;
   }
 

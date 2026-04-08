@@ -22,9 +22,9 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.allow_any_socket_order();
   b.add_default_layout();
   b.is_function_node();
-  b.add_input<decl::Rotation>("Rotation");
-  b.add_output<decl::Rotation>("Rotation").align_with_previous();
-  b.add_input<decl::Rotation>("Rotate By");
+  b.add_input<decl::Rotation>("Rotation"_ustr);
+  b.add_output<decl::Rotation>("Rotation"_ustr).align_with_previous();
+  b.add_input<decl::Rotation>("Rotate By"_ustr);
 };
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

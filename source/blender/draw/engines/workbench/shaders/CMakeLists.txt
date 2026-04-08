@@ -25,8 +25,6 @@ set(INC_GLSL
 set(SRC_GLSL_VERT
   workbench_effect_smaa_vert.glsl
   workbench_fullscreen_vert.glsl
-  workbench_shadow_caps_vert.glsl
-  workbench_shadow_vert.glsl
 )
 
 set(SRC_GLSL_FRAG
@@ -40,13 +38,7 @@ set(SRC_GLSL_FRAG
   workbench_effect_taa_frag.glsl
   workbench_merge_depth_frag.glsl
   workbench_overlay_depth_frag.glsl
-  workbench_shadow_frag.glsl
-  workbench_shadow_debug_frag.glsl
   workbench_transparent_resolve_frag.glsl
-)
-
-set(SRC_GLSL_COMP
-  workbench_shadow_visibility_comp.glsl
 )
 
 set(SRC_GLSL_LIB
@@ -54,7 +46,6 @@ set(SRC_GLSL_LIB
   workbench_common_lib.glsl
   workbench_image_lib.glsl
   workbench_matcap_lib.glsl
-  workbench_shadow_lib.glsl
   workbench_world_light_lib.glsl
 )
 
@@ -69,7 +60,6 @@ if(WITH_GPU_SHADER_CPP_COMPILATION)
 
   compile_sources_as_cpp(workbench_cpp_shaders_vert "${SRC_GLSL_VERT}" "GPU_VERTEX_SHADER")
   compile_sources_as_cpp(workbench_cpp_shaders_frag "${SRC_GLSL_FRAG}" "GPU_FRAGMENT_SHADER")
-  compile_sources_as_cpp(workbench_cpp_shaders_comp "${SRC_GLSL_COMP}" "GPU_COMPUTE_SHADER")
   compile_sources_as_cpp(workbench_cpp_shaders_bsl  "${SRC_BSL}" "")
   # Only enable to make sure they compile on their own.
   # Otherwise it creates a warning about `pragma once`.

@@ -146,10 +146,13 @@ void ED_view3d_viewcontext_init_object(ViewContext *vc, Object *obact)
 /** \name Internal Object Utilities
  * \{ */
 
-static bool object_deselect_all_visible(const Scene *scene, ViewLayer *view_layer, View3D *v3d)
+static bool object_deselect_all_visible(const Main &bmain,
+                                        const Scene *scene,
+                                        ViewLayer *view_layer,
+                                        View3D *v3d)
 {
   bool changed = false;
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     if (base.flag & BASE_SELECTED) {
       if (BASE_SELECTABLE(v3d, &base)) {
@@ -162,10 +165,13 @@ static bool object_deselect_all_visible(const Scene *scene, ViewLayer *view_laye
 }
 
 /* deselect all except b */
-static bool object_deselect_all_except(const Scene *scene, ViewLayer *view_layer, Base *b)
+static bool object_deselect_all_except(const Main &bmain,
+                                       const Scene *scene,
+                                       ViewLayer *view_layer,
+                                       Base *b)
 {
   bool changed = false;
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     if (base.flag & BASE_SELECTED) {
       if (b != &base) {
@@ -198,14 +204,14 @@ static void editselect_buf_cache_init(const ViewContext *vc, short select_mode)
 {
   if (vc->obedit) {
     Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
-        vc->scene, vc->view_layer, vc->v3d);
+        *vc->bmain, vc->scene, vc->view_layer, vc->v3d);
 
     DRW_select_buffer_context_create(vc->depsgraph, bases, select_mode);
   }
   else {
     /* Use for paint modes, currently only a single object at a time. */
     if (vc->obact) {
-      BKE_view_layer_synced_ensure(vc->scene, vc->view_layer);
+      BKE_view_layer_synced_ensure(*vc->bmain, vc->scene, vc->view_layer);
       Base *base = BKE_view_layer_base_find(vc->view_layer, vc->obact);
       DRW_select_buffer_context_create(vc->depsgraph, {base}, select_mode);
     }
@@ -571,9 +577,9 @@ static bool do_lasso_select_objects(const ViewContext *vc,
 
   bool changed = false;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
-    changed |= object_deselect_all_visible(vc->scene, vc->view_layer, vc->v3d);
+    changed |= object_deselect_all_visible(*vc->bmain, vc->scene, vc->view_layer, vc->v3d);
   }
-  BKE_view_layer_synced_ensure(vc->scene, vc->view_layer);
+  BKE_view_layer_synced_ensure(*vc->bmain, vc->scene, vc->view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(vc->view_layer)) {
     if (BASE_SELECTABLE(v3d, &base)) { /* Use this to avoid unnecessary lasso look-ups. */
       float region_co[2];
@@ -630,7 +636,7 @@ static Vector<Base *> do_pose_tag_select_op_prepare(const ViewContext *vc)
   }
   else {
     FOREACH_BASE_IN_MODE_BEGIN (
-        vc->scene, vc->view_layer, vc->v3d, OB_ARMATURE, OB_MODE_POSE, base_iter)
+        vc->bmain, vc->scene, vc->view_layer, vc->v3d, OB_ARMATURE, OB_MODE_POSE, base_iter)
     {
       bases_tag_and_append_fn(bases, base_iter);
     }
@@ -1445,7 +1451,8 @@ static bool view3d_lasso_select(bContext *C,
       vc->em = BKE_editmesh_from_object(vc->obedit);
     }
 
-    FOREACH_OBJECT_IN_MODE_BEGIN (vc->scene, vc->view_layer, vc->v3d, ob->type, ob->mode, ob_iter)
+    FOREACH_OBJECT_IN_MODE_BEGIN (
+        vc->bmain, vc->scene, vc->view_layer, vc->v3d, ob->type, ob->mode, ob_iter)
     {
       ED_view3d_viewcontext_init_object(vc, ob_iter);
       bool changed = false;
@@ -1614,10 +1621,11 @@ static wmOperatorStatus object_select_menu_exec(bContext *C, wmOperator *op)
   bool changed = false;
   const char *name = object_mouse_select_menu_data[name_index].idname;
 
+  const Main *bmain = CTX_data_main(C);
   View3D *v3d = CTX_wm_view3d(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   const Base *oldbasact = BKE_view_layer_active_base_get(view_layer);
 
   Base *basact = nullptr;
@@ -1658,7 +1666,7 @@ static wmOperatorStatus object_select_menu_exec(bContext *C, wmOperator *op)
     }
   }
   else {
-    object_deselect_all_except(scene, view_layer, basact);
+    object_deselect_all_except(*bmain, scene, view_layer, basact);
     ed::object::base_select(basact, ed::object::BA_SELECT);
     changed = true;
   }
@@ -1844,9 +1852,10 @@ static wmOperatorStatus bone_select_menu_exec(bContext *C, wmOperator *op)
   params.sel_op = ED_select_op_from_operator(op->ptr);
 
   View3D *v3d = CTX_wm_view3d(C);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   const Base *oldbasact = BKE_view_layer_active_base_get(view_layer);
 
   Base *basact = object_mouse_select_menu_data[name_index].base_ptr;
@@ -1864,7 +1873,8 @@ static wmOperatorStatus bone_select_menu_exec(bContext *C, wmOperator *op)
   else {
     bPoseChannel *pchan = static_cast<bPoseChannel *>(
         object_mouse_select_menu_data[name_index].item_ptr);
-    ED_armature_pose_select_pick_bone(scene, view_layer, v3d, basact->object, pchan, params);
+    ED_armature_pose_select_pick_bone(
+        *bmain, scene, view_layer, v3d, basact->object, pchan, params);
   }
 
   /* Weak but ensures we activate the menu again before using the enum. */
@@ -1888,7 +1898,7 @@ static wmOperatorStatus bone_select_menu_exec(bContext *C, wmOperator *op)
        * Selection causes this to be considered the 'active' pose in weight-paint mode.
        * Eventually this limitation may be removed.
        * For now, de-select all other pose objects deforming this mesh. */
-      ED_armature_pose_select_in_wpaint_mode(scene, view_layer, basact);
+      ED_armature_pose_select_in_wpaint_mode(*bmain, scene, view_layer, basact);
     }
     else {
       if (oldbasact != basact) {
@@ -2366,7 +2376,7 @@ static Base *mouse_select_eval_buffer(const ViewContext *vc,
     /* It's possible there are no hits (all objects contained bones). */
     if (hits > 0) {
       /* Only exclude active object when it is selected. */
-      BKE_view_layer_synced_ensure(scene, view_layer);
+      BKE_view_layer_synced_ensure(*vc->bmain, scene, view_layer);
       Base *base = BKE_view_layer_active_base_get(view_layer);
       if (base && (base->flag & BASE_SELECTED)) {
         const int select_id_active = base->object->runtime->select_id;
@@ -2396,7 +2406,7 @@ static Base *mouse_select_eval_buffer(const ViewContext *vc,
 
   Base *basact = nullptr;
   if (found) {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*vc->bmain, scene, view_layer);
     for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
       if (has_bones ? BASE_VISIBLE(v3d, &base) : BASE_SELECTABLE(v3d, &base)) {
         if (base.object->runtime->select_id == select_id) {
@@ -2421,7 +2431,7 @@ static Base *mouse_select_object_center(const ViewContext *vc, Base *startbase, 
   ViewLayer *view_layer = vc->view_layer;
   View3D *v3d = vc->v3d;
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*vc->bmain, scene, view_layer);
   Base *oldbasact = BKE_view_layer_active_base_get(view_layer);
 
   const float mval_fl[2] = {float(mval[0]), float(mval[1])};
@@ -2650,6 +2660,7 @@ static bool ed_object_select_pick(bContext *C,
   /* Setup view context for argument to callbacks. */
   ViewContext vc = ED_view3d_viewcontext_init(C, depsgraph);
 
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = vc.scene;
   View3D *v3d = vc.v3d;
 
@@ -2727,7 +2738,7 @@ static bool ed_object_select_pick(bContext *C,
   /* No menu, continue with selection. */
 
   ViewLayer *view_layer = vc.view_layer;
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*vc.bmain, scene, view_layer);
   /* Don't set when the context has no active object (hidden), see: #60807. */
   const Base *oldbasact = vc.obact ? BKE_view_layer_active_base_get(view_layer) : nullptr;
   /* Always start list from `basact` when cycling the selection. */
@@ -2829,6 +2840,7 @@ static bool ed_object_select_pick(bContext *C,
         }
       }
       else if ((basact || oldbasact) && ED_armature_pose_select_pick_with_buffer(
+                                            *vc.bmain,
                                             scene,
                                             view_layer,
                                             v3d,
@@ -2865,7 +2877,7 @@ static bool ed_object_select_pick(bContext *C,
                * Selection causes this to be considered the 'active' pose in weight-paint mode.
                * Eventually this limitation may be removed.
                * For now, de-select all other pose objects deforming this mesh. */
-              ED_armature_pose_select_in_wpaint_mode(scene, view_layer, basact);
+              ED_armature_pose_select_in_wpaint_mode(*bmain, scene, view_layer, basact);
 
               handled = true;
             }
@@ -2945,7 +2957,7 @@ static bool ed_object_select_pick(bContext *C,
   else if (basact && vc.obedit) {
     /* Only do the select (use for setting vertex parents & hooks).
      * In edit-mode do not activate. */
-    object_deselect_all_except(scene, view_layer, basact);
+    object_deselect_all_except(*vc.bmain, scene, view_layer, basact);
     ed::object::base_select(basact, ed::object::BA_SELECT);
 
     changed_object = true;
@@ -2977,7 +2989,7 @@ static bool ed_object_select_pick(bContext *C,
       else if (found || params.deselect_all) {
         /* Deselect everything. */
         /* `basact` may be nullptr. */
-        if (object_deselect_all_except(scene, view_layer, basact)) {
+        if (object_deselect_all_except(*vc.bmain, scene, view_layer, basact)) {
           changed_object = true;
         }
       }
@@ -3152,7 +3164,7 @@ static bool pointcloud_select_pick(bContext &C, const int2 mval, const SelectPic
   const ViewContext vc = ED_view3d_viewcontext_init(&C, depsgraph);
 
   const Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode_unique_data(
-      vc.scene, vc.view_layer, vc.v3d);
+      *vc.bmain, vc.scene, vc.view_layer, vc.v3d);
 
   const ClosestPointCloud closest = threading::parallel_reduce(
       bases.index_range(),
@@ -3248,7 +3260,7 @@ static bool ed_curves_select_pick(bContext &C, const int mval[2], const SelectPi
   const ViewContext vc = ED_view3d_viewcontext_init(&C, depsgraph);
 
   const Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode_unique_data(
-      vc.scene, vc.view_layer, vc.v3d);
+      *vc.bmain, vc.scene, vc.view_layer, vc.v3d);
 
   Curves &active_curves_id = *id_cast<Curves *>(vc.obedit->data);
   const bke::AttrDomain selection_domain = bke::AttrDomain(active_curves_id.selection_domain);
@@ -4268,7 +4280,7 @@ static bool do_armature_box_select(const ViewContext *vc, const rcti *rect, cons
       vc, &buffer, rect, VIEW3D_SELECT_ALL, VIEW3D_SELECT_FILTER_NOP, eV3DSelectShape::BOX);
 
   Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode_unique_data(
-      vc->scene, vc->view_layer, vc->v3d);
+      *vc->bmain, vc->scene, vc->view_layer, vc->v3d);
 
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
     changed |= ED_armature_edit_deselect_all_visible_multi_ex(bases);
@@ -4347,14 +4359,14 @@ static bool do_object_box_select(bContext *C,
                                                                                  vc->obact);
   const int hits = view3d_gpu_select(
       vc, &buffer, rect, VIEW3D_SELECT_ALL, select_filter, eV3DSelectShape::BOX);
-  BKE_view_layer_synced_ensure(vc->scene, vc->view_layer);
+  BKE_view_layer_synced_ensure(*vc->bmain, vc->scene, vc->view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(vc->view_layer)) {
     base.object->id.tag &= ~ID_TAG_DOIT;
   }
 
   bool changed = false;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
-    changed |= object_deselect_all_visible(vc->scene, vc->view_layer, vc->v3d);
+    changed |= object_deselect_all_visible(*vc->bmain, vc->scene, vc->view_layer, vc->v3d);
   }
 
   ListBaseT<Base> *object_bases = BKE_view_layer_object_bases_get(vc->view_layer);
@@ -4584,7 +4596,7 @@ static wmOperatorStatus view3d_box_select_exec(bContext *C, wmOperator *op)
 
   if (vc.obedit) {
     FOREACH_OBJECT_IN_MODE_BEGIN (
-        vc.scene, vc.view_layer, vc.v3d, vc.obedit->type, vc.obedit->mode, ob_iter)
+        vc.bmain, vc.scene, vc.view_layer, vc.v3d, vc.obedit->type, vc.obedit->mode, ob_iter)
     {
       ED_view3d_viewcontext_init_object(&vc, ob_iter);
       bool changed = false;
@@ -5519,11 +5531,11 @@ static bool object_circle_select(const ViewContext *vc,
 
   bool changed = false;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
-    changed |= object_deselect_all_visible(vc->scene, vc->view_layer, vc->v3d);
+    changed |= object_deselect_all_visible(*vc->bmain, vc->scene, vc->view_layer, vc->v3d);
   }
   const bool select = (sel_op != SEL_OP_SUB);
   const int select_flag = select ? BASE_SELECTED : 0;
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*vc->bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     if (BASE_SELECTABLE(v3d, &base) && ((base.flag & BASE_SELECTED) != select_flag)) {
       float screen_co[2];
@@ -5554,7 +5566,7 @@ static void view3d_circle_select_recalc(void *user_data)
       case OB_MESH: {
         ViewContext vc = em_setup_viewcontext(C);
         FOREACH_OBJECT_IN_MODE_BEGIN (
-            vc.scene, vc.view_layer, vc.v3d, vc.obact->type, vc.obact->mode, ob_iter)
+            vc.bmain, vc.scene, vc.view_layer, vc.v3d, vc.obact->type, vc.obact->mode, ob_iter)
         {
           ED_view3d_viewcontext_init_object(&vc, ob_iter);
           BM_mesh_select_mode_flush_ex(vc.em->bm, vc.em->selectmode, BMSelectFlushFlag_All);
@@ -5622,7 +5634,7 @@ static wmOperatorStatus view3d_circle_select_exec(bContext *C, wmOperator *op)
     }
 
     FOREACH_OBJECT_IN_MODE_BEGIN (
-        vc.scene, vc.view_layer, vc.v3d, obact->type, obact->mode, ob_iter)
+        vc.bmain, vc.scene, vc.view_layer, vc.v3d, obact->type, obact->mode, ob_iter)
     {
       ED_view3d_viewcontext_init_object(&vc, ob_iter);
 

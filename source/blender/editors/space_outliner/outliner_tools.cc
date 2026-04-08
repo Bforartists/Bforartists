@@ -989,10 +989,11 @@ static void object_select_fn(bContext *C,
                              TreeStoreElem * /*tsep*/,
                              TreeStoreElem *tselem)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *ob = id_cast<Object *>(tselem->id);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Base *base = BKE_view_layer_base_find(view_layer, ob);
 
   if (base) {
@@ -1027,10 +1028,11 @@ static void object_deselect_fn(bContext *C,
                                TreeStoreElem * /*tsep*/,
                                TreeStoreElem *tselem)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *ob = id_cast<Object *>(tselem->id);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Base *base = BKE_view_layer_base_find(view_layer, ob);
 
   if (base) {
@@ -1549,7 +1551,7 @@ static void id_override_library_clear_single_process(bContext *C,
            * delete it and remap its usages to its linked reference. Otherwise, keep it as a reset
            * system override. */
           bool do_remap_active = false;
-          BKE_view_layer_synced_ensure(scene, view_layer);
+          BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
           if (BKE_view_layer_active_object_get(view_layer) == reinterpret_cast<Object *>(id)) {
             BLI_assert(GS(id->name) == ID_OB);
             do_remap_active = true;
@@ -1557,7 +1559,7 @@ static void id_override_library_clear_single_process(bContext *C,
           BKE_libblock_remap(
               bmain, id, id->override_library->reference, ID_REMAP_SKIP_INDIRECT_USAGE);
           if (do_remap_active) {
-            BKE_view_layer_synced_ensure(scene, view_layer);
+            BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
             Object *ref_object = reinterpret_cast<Object *>(id->override_library->reference);
             Base *basact = BKE_view_layer_base_find(view_layer, ref_object);
             if (basact != nullptr) {
@@ -2516,8 +2518,9 @@ static void object_batch_delete_hierarchy_tag_fn(bContext *C,
     /* Object has already been processed and tagged for removal as part of another parenting
      * hierarchy. */
 #ifndef NDEBUG
+    const Main *bmain = CTX_data_main(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     BLI_assert(BKE_view_layer_base_find(view_layer, ob) == nullptr);
 #endif
     return;
@@ -2776,7 +2779,7 @@ static wmOperatorStatus outliner_delete_exec(bContext *C, wmOperator *op)
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
   wmMsgBus *mbus = CTX_wm_message_bus(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   const Base *basact_prev = BKE_view_layer_active_base_get(view_layer);
 
   const bool delete_hierarchy = RNA_boolean_get(op->ptr, "hierarchy");
@@ -2796,7 +2799,7 @@ static wmOperatorStatus outliner_delete_exec(bContext *C, wmOperator *op)
   if (delete_hierarchy) {
     BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
     /* #object_batch_delete_hierarchy_fn callback will only remove objects from collections and tag
      * them for deletion. */
@@ -2825,7 +2828,7 @@ static wmOperatorStatus outliner_delete_exec(bContext *C, wmOperator *op)
   DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL | ID_RECALC_HIERARCHY);
   DEG_relations_tag_update(bmain);
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   if (basact_prev != BKE_view_layer_active_base_get(view_layer)) {
     WM_event_add_notifier(C, NC_SCENE | ND_OB_ACTIVE, scene);
     WM_msg_publish_rna_prop(mbus, &scene->id, view_layer, LayerObjects, active);

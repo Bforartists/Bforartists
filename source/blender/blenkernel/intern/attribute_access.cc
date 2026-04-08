@@ -19,7 +19,7 @@
 #include "DNA_pointcloud_types.h"
 
 #include "BLI_array_utils.hh"
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_span.hh"
 
@@ -534,41 +534,19 @@ GSpanAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write_only_span
   return {};
 }
 
-bool MutableAttributeAccessor::rename(const StringRef old_name, const StringRef new_name)
+bool MutableAttributeAccessor::rename(const StringRef old_name,
+                                      const StringRef new_name,
+                                      const bool overwrite)
 {
-  if (new_name.is_empty()) {
-    return false;
-  }
-  if (old_name == new_name) {
-    return true;
-  }
-  if (this->contains(new_name)) {
-    return false;
-  }
-  const GAttributeReader old_attribute = this->lookup(old_name);
-  if (!old_attribute) {
-    return false;
-  }
-  const AttrType type = cpp_type_to_attribute_type(old_attribute.varray.type());
-  if (old_attribute.sharing_info != nullptr && old_attribute.varray.is_span()) {
-    if (!this->add(new_name,
-                   old_attribute.domain,
-                   type,
-                   AttributeInitShared{old_attribute.varray.get_internal_span().data(),
-                                       *old_attribute.sharing_info}))
-    {
-      return false;
-    }
-  }
-  else {
-    if (!this->add(
-            new_name, old_attribute.domain, type, AttributeInitVArray{old_attribute.varray}))
-    {
-      return false;
-    }
-  }
-  this->remove(old_name);
-  return true;
+  Map<StringRef, StringRef> map;
+  map.add_new(old_name, new_name);
+  return fn_->rename(owner_, map, overwrite).is_empty();
+}
+
+Set<StringRef> MutableAttributeAccessor::rename(const Map<StringRef, StringRef> &map,
+                                                const bool overwrite)
+{
+  return fn_->rename(owner_, map, overwrite);
 }
 
 fn::GField AttributeValidator::validate_field_if_necessary(const fn::GField &field) const

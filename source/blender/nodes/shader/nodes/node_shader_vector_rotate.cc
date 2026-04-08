@@ -30,19 +30,19 @@ static void sh_node_vector_rotate_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Vector>("Vector").min(0.0f).max(1.0f).hide_value();
-  b.add_output<decl::Vector>("Vector").align_with_previous();
-  b.add_input<decl::Vector>("Center").description("Point to rotate around");
-  b.add_input<decl::Vector>("Axis")
+  b.add_input<decl::Vector>("Vector"_ustr).min(0.0f).max(1.0f).hide_value();
+  b.add_output<decl::Vector>("Vector"_ustr).align_with_previous();
+  b.add_input<decl::Vector>("Center"_ustr).description("Point to rotate around");
+  b.add_input<decl::Vector>("Axis"_ustr)
       .min(-1.0f)
       .max(1.0f)
       .default_value({0.0f, 0.0f, 1.0f})
       .make_available([](bNode &node) { node.custom1 = NODE_VECTOR_ROTATE_TYPE_AXIS; })
       .description("Axis to rotate around");
-  b.add_input<decl::Float>("Angle")
+  b.add_input<decl::Float>("Angle"_ustr)
       .subtype(PROP_ANGLE)
       .description("Angle to rotate the input vector by");
-  b.add_input<decl::Vector>("Rotation")
+  b.add_input<decl::Vector>("Rotation"_ustr)
       .subtype(PROP_EULER)
       .make_available([](bNode &node) { node.custom1 = NODE_VECTOR_ROTATE_TYPE_EULER_XYZ; })
       .description(

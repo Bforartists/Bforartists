@@ -397,7 +397,7 @@ void view_layer_remove_disabled_bases(const Depsgraph *depsgraph,
     return;
   }
   ListBaseT<Base> enabled_bases = {nullptr, nullptr};
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*depsgraph->bmain, scene, view_layer);
   for (Base &base : BKE_view_layer_object_bases_get(view_layer)->items_mutable()) {
     /* TODO(sergey): Would be cool to optimize this somehow, or make it so
      * builder tags bases.

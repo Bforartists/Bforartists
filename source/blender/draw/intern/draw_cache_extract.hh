@@ -239,9 +239,11 @@ BLI_STATIC_ASSERT(MBC_BATCH_LEN < 64, "Number of batches exceeded the limit of b
 
 struct MeshExtractLooseGeom {
   /** Indices of all vertices not used by edges in the #Mesh or #BMesh. */
-  Array<int> verts;
+  IndexMask verts;
   /** Indices of all edges not used by faces in the #Mesh or #BMesh. */
-  Array<int> edges;
+  IndexMask edges;
+  /** Used for BMesh which does not cache loose geometry index masks. */
+  std::unique_ptr<LinearAllocator<>> allocator;
 };
 
 struct SortedFaceData {

@@ -20,9 +20,11 @@ namespace nodes::node_shader_tex_white_noise_cc {
 static void sh_node_tex_white_noise_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Vector").min(-10000.0f).max(10000.0f).implicit_field(
-      NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Float>("W")
+  b.add_input<decl::Vector>("Vector"_ustr)
+      .min(-10000.0f)
+      .max(10000.0f)
+      .implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_input<decl::Float>("W"_ustr)
       .min(-10000.0f)
       .max(10000.0f)
       .make_available([](bNode &node) {
@@ -30,8 +32,8 @@ static void sh_node_tex_white_noise_declare(NodeDeclarationBuilder &b)
         node.custom1 = 1;
       })
       .description("Value used as seed in 1D and 4D dimensions");
-  b.add_output<decl::Float>("Value");
-  b.add_output<decl::Color>("Color");
+  b.add_output<decl::Float>("Value"_ustr);
+  b.add_output<decl::Color>("Color"_ustr);
 }
 
 static void node_shader_buts_white_noise(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

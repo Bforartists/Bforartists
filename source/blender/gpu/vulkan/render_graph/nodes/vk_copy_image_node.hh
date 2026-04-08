@@ -11,7 +11,6 @@
 #include "../vk_command_buffer_wrapper.hh"
 #include "../vk_render_graph_links.hh"
 #include "../vk_resource_state_tracker.hh"
-#include "vk_common.hh"
 #include "vk_node_info.hh"
 
 namespace blender::gpu::render_graph {
@@ -22,6 +21,12 @@ struct VKCopyImageData {
   VkImage src_image;
   VkImage dst_image;
   VkImageCopy region;
+  /**
+   * \brief The number of mip-levels to copy.
+   *
+   * Additional regions are added just before sending to the command buffer.
+   */
+  int32_t mip_levels;
 };
 
 struct VKCopyImageCreateInfo {
@@ -45,6 +50,7 @@ class VKCopyImageNode : public VKNodeInfo<VKNodeType::COPY_IMAGE,
   template<typename Node, typename Storage>
   static void set_node_data(Node &node, Storage &storage, const CreateInfo &create_info)
   {
+    BLI_assert(create_info.node_data.mip_levels > 0);
     node.storage_index = storage.copy_image.append_and_get_index(create_info.node_data);
   }
 
@@ -74,12 +80,24 @@ class VKCopyImageNode : public VKNodeInfo<VKNodeType::COPY_IMAGE,
                       Span<uint8_t> /*storage_push_constants*/,
                       VKBoundPipelines & /*r_bound_pipelines*/) override
   {
+    /* Expand the regions to contain all requested mipmap levels. */
+    Array<VkImageCopy> regions(data.mip_levels);
+    regions.fill(data.region);
+    const VkImageCopy &src_region = regions[0];
+    for (int index : regions.index_range().drop_front(1)) {
+      regions[index].extent.width = std::max(src_region.extent.width >> index, 1u);
+      regions[index].extent.height = std::max(src_region.extent.height >> index, 1u);
+      regions[index].extent.depth = std::max(src_region.extent.depth >> index, 1u);
+      regions[index].srcSubresource.mipLevel = src_region.srcSubresource.mipLevel + index;
+      regions[index].dstSubresource.mipLevel = src_region.dstSubresource.mipLevel + index;
+    }
+
     command_buffer.copy_image(data.src_image,
                               VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                               data.dst_image,
                               VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                              1,
-                              &data.region);
+                              uint32_t(regions.size()),
+                              regions.data());
   }
 };
 }  // namespace blender::gpu::render_graph

@@ -25,12 +25,12 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
-  b.add_output<decl::Color>("Image").align_with_previous();
-  b.add_output<decl::Float>("Matte");
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image"_ustr).align_with_previous();
+  b.add_output<decl::Float>("Matte"_ustr);
 
-  b.add_input<decl::Color>("Key Color").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Float>("Hue")
+  b.add_input<decl::Color>("Key Color"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>("Hue"_ustr)
       .default_value(0.01f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -38,7 +38,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "If the difference in hue between the color and key color is less than this threshold, "
           "it is keyed");
-  b.add_input<decl::Float>("Saturation")
+  b.add_input<decl::Float>("Saturation"_ustr)
       .default_value(0.1f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -46,7 +46,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "If the difference in saturation between the color and key color is less than this "
           "threshold, it is keyed");
-  b.add_input<decl::Float>("Value")
+  b.add_input<decl::Float>("Value"_ustr)
       .default_value(0.1f)
       .subtype(PROP_FACTOR)
       .min(0.0f)

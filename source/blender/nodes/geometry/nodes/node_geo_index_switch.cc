@@ -104,14 +104,15 @@ static void node_declare(NodeDeclarationBuilder &b)
   }
 
   const Span<IndexSwitchItem> items = storage.items_span();
-  auto &index = b.add_input<decl::Int>("Index").min(0).max(std::max<int>(0, items.size() - 1));
+  auto &index =
+      b.add_input<decl::Int>("Index"_ustr).min(0).max(std::max<int>(0, items.size() - 1));
   if (supports_fields) {
     index.supports_field().structure_type(index_structure_type);
   }
 
   for (const int i : items.index_range()) {
     const std::string identifier = IndexSwitchItemsAccessor::socket_identifier_for_item(items[i]);
-    auto &input = b.add_input(data_type, std::to_string(i), std::move(identifier));
+    auto &input = b.add_input(data_type, UString(std::to_string(i)), UString(identifier));
     input.custom_draw(
         [index = i](CustomSocketDrawParams &params) { draw_item_socket(params, index); });
     if (supports_fields) {
@@ -131,7 +132,7 @@ static void node_declare(NodeDeclarationBuilder &b)
     input.structure_type(value_structure_type);
   }
 
-  auto &output = b.add_output(data_type, "Output");
+  auto &output = b.add_output(data_type, "Output"_ustr);
   if (supports_fields) {
     output.dependent_field().reference_pass_all();
   }
@@ -143,12 +144,13 @@ static void node_declare(NodeDeclarationBuilder &b)
   }
   output.structure_type(value_structure_type);
 
-  b.add_input<decl::Extend>("", "__extend__").custom_draw([](CustomSocketDrawParams &params) {
-    ui::Layout &layout = params.layout;
-    layout.emboss_set(ui::EmbossType::None);
-    PointerRNA op_ptr = layout.op("node.index_switch_item_add", "", ICON_ADD);
-    RNA_int_set(&op_ptr, "node_identifier", params.node.identifier);
-  });
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr)
+      .custom_draw([](CustomSocketDrawParams &params) {
+        ui::Layout &layout = params.layout;
+        layout.emboss_set(ui::EmbossType::None);
+        PointerRNA op_ptr = layout.op("node.index_switch_item_add", "", ICON_ADD);
+        RNA_int_set(&op_ptr, "node_identifier", params.node.identifier);
+      });
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -213,7 +215,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(IFACE_("Output"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeIndexSwitch");
       node_storage(node).data_type = params.socket.type;
-      params.update_and_connect_available_socket(node, "Output");
+      params.update_and_connect_available_socket(node, "Output"_ustr);
     });
   }
   else {
@@ -221,7 +223,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     if (params.node_tree().typeinfo->validate_link(other_type, SOCK_INT)) {
       params.add_item(IFACE_("Index"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeIndexSwitch");
-        params.update_and_connect_available_socket(node, "Index");
+        params.update_and_connect_available_socket(node, "Index"_ustr);
       });
     }
   }

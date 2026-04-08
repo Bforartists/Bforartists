@@ -419,6 +419,7 @@ void view2d_scale_get_inverse(const View2D *v2d, float *r_x, float *r_y);
  */
 void view2d_center_get(const View2D *v2d, float *r_x, float *r_y);
 void view2d_center_set(View2D *v2d, float x, float y);
+void view2d_size_x_set(View2D *v2d, float size_x);
 
 /**
  * Simple pan function

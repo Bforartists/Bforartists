@@ -78,6 +78,7 @@ static bool object_rand_transverts(TransVertStore *tvs,
 
 static wmOperatorStatus object_rand_verts_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *ob_active = CTX_data_edit_object(C);
@@ -91,7 +92,7 @@ static wmOperatorStatus object_rand_verts_exec(bContext *C, wmOperator *op)
   bool changed_multi = false;
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C), eObjectMode(ob_mode));
+      *bmain, scene, view_layer, CTX_wm_view3d(C), eObjectMode(ob_mode));
   for (const int ob_index : objects.index_range()) {
     Object *ob_iter = objects[ob_index];
 

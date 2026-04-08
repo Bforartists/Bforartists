@@ -21,9 +21,9 @@ namespace blender::nodes::node_composite_difference_key_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Color>("Image 1").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Color>("Image 2").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Float>("Tolerance")
+  b.add_input<decl::Color>("Image 1"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Color>("Image 2"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>("Tolerance"_ustr)
       .default_value(0.1f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -31,7 +31,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "If the average color difference between the two images is less than this threshold, "
           "it is keyed");
-  b.add_input<decl::Float>("Falloff")
+  b.add_input<decl::Float>("Falloff"_ustr)
       .default_value(0.1f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -40,8 +40,8 @@ static void node_declare(NodeDeclarationBuilder &b)
           "If the average color difference between the two images is less than this threshold, "
           "it is partially keyed, otherwise, it is not keyed");
 
-  b.add_output<decl::Color>("Image");
-  b.add_output<decl::Float>("Matte");
+  b.add_output<decl::Color>("Image"_ustr);
+  b.add_output<decl::Float>("Matte"_ustr);
 }
 
 using namespace blender::compositor;

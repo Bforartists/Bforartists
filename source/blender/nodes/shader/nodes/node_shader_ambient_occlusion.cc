@@ -15,11 +15,11 @@ namespace nodes::node_shader_ambient_occlusion_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Color").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Float>("Distance").default_value(1.0f).min(0.0f).max(1000.0f);
-  b.add_input<decl::Vector>("Normal").min(-1.0f).max(1.0f).hide_value();
-  b.add_output<decl::Color>("Color");
-  b.add_output<decl::Float>("AO");
+  b.add_input<decl::Color>("Color"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>("Distance"_ustr).default_value(1.0f).min(0.0f).max(1000.0f);
+  b.add_input<decl::Vector>("Normal"_ustr).min(-1.0f).max(1.0f).hide_value();
+  b.add_output<decl::Color>("Color"_ustr);
+  b.add_output<decl::Float>("AO"_ustr);
 }
 
 static void node_shader_buts_ambient_occlusion(ui::Layout &layout,

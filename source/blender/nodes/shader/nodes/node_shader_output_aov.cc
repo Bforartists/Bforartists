@@ -21,8 +21,8 @@ namespace nodes::node_shader_output_aov_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Color").default_value({0.0f, 0.0f, 0.0f, 1.0f});
-  b.add_input<decl::Float>("Value").default_value(0.0f).min(0.0f).max(1.0f);
+  b.add_input<decl::Color>("Color"_ustr).default_value({0.0f, 0.0f, 0.0f, 1.0f});
+  b.add_input<decl::Float>("Value"_ustr).default_value(0.0f).min(0.0f).max(1.0f);
 }
 
 static BIFIconID aov_icon(const ViewLayer *view_layer, PointerRNA *ptr)

@@ -12,20 +12,24 @@ namespace blender::nodes::node_geo_curve_topology_points_of_curve_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Curve Index")
+  b.add_input<decl::Int>("Curve Index"_ustr)
       .implicit_field(NODE_DEFAULT_INPUT_INDEX_FIELD)
       .description("The curve to retrieve data from. Defaults to the curve from the context")
       .structure_type(StructureType::Field);
-  b.add_input<decl::Float>("Weights").supports_field().hide_value().description(
-      "Values used to sort the curve's points. Uses indices by default");
-  b.add_input<decl::Int>("Sort Index")
+  b.add_input<decl::Float>("Weights"_ustr)
+      .supports_field()
+      .hide_value()
+      .description("Values used to sort the curve's points. Uses indices by default");
+  b.add_input<decl::Int>("Sort Index"_ustr)
       .supports_field()
       .description("Which of the sorted points to output. Negative indexing is supported");
-  b.add_output<decl::Int>("Point Index")
+  b.add_output<decl::Int>("Point Index"_ustr)
       .field_source_reference_all()
       .description("A point of the curve, chosen by the sort index");
-  b.add_output<decl::Int>("Total").field_source().reference_pass({0}).description(
-      "The number of points in the curve");
+  b.add_output<decl::Int>("Total"_ustr)
+      .field_source()
+      .reference_pass({0})
+      .description("The number of points in the curve");
 }
 
 /**
@@ -37,10 +41,10 @@ static bool use_start_point_special_case(const Field<int> &curve_index,
                                          const Field<int> &sort_index,
                                          const Field<float> &sort_weights)
 {
-  if (!dynamic_cast<const fn::IndexFieldInput *>(&curve_index.node())) {
+  if (!curve_index.get_input_if<fn::IndexFieldInput>()) {
     return false;
   }
-  if (sort_index.node().depends_on_input() || sort_weights.node().depends_on_input()) {
+  if (sort_index.depends_on_input() || sort_weights.depends_on_input()) {
     return false;
   }
   return fn::evaluate_constant_field(sort_index) == 0;
@@ -58,7 +62,6 @@ class PointsOfCurveInput final : public bke::GeometryFieldInput {
         sort_index_(std::move(sort_index)),
         sort_weight_(std::move(sort_weight))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,
@@ -135,11 +138,11 @@ class PointsOfCurveInput final : public bke::GeometryFieldInput {
     return VArray<int>::from_container(std::move(point_of_curve));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    curve_index_.node().for_each_field_input_recursive(fn);
-    sort_index_.node().for_each_field_input_recursive(fn);
-    sort_weight_.node().for_each_field_input_recursive(fn);
+    fn(curve_index_);
+    fn(sort_index_);
+    fn(sort_weight_);
   }
 
   uint64_t hash() const override
@@ -147,7 +150,7 @@ class PointsOfCurveInput final : public bke::GeometryFieldInput {
     return 26978695677882;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const auto *typed = dynamic_cast<const PointsOfCurveInput *>(&other)) {
       return typed->curve_index_ == curve_index_ && typed->sort_index_ == sort_index_ &&
@@ -164,10 +167,7 @@ class PointsOfCurveInput final : public bke::GeometryFieldInput {
 
 class CurvePointCountInput final : public bke::CurvesFieldInput {
  public:
-  CurvePointCountInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Curve Point Count")
-  {
-    category_ = Category::Generated;
-  }
+  CurvePointCountInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Curve Point Count") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,
@@ -187,7 +187,7 @@ class CurvePointCountInput final : public bke::CurvesFieldInput {
     return 903847569873762;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const CurvePointCountInput *>(&other) != nullptr;
   }
@@ -200,20 +200,19 @@ class CurvePointCountInput final : public bke::CurvesFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const Field<int> curve_index = params.extract_input<Field<int>>("Curve Index");
-  if (params.output_is_required("Total")) {
-    params.set_output("Total",
-                      Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
-                          curve_index,
-                          Field<int>(std::make_shared<CurvePointCountInput>()),
-                          AttrDomain::Curve)));
+  const Field<int> curve_index = params.extract_input<Field<int>>("Curve Index"_ustr);
+  if (params.output_is_required("Total"_ustr)) {
+    params.set_output(
+        "Total"_ustr,
+        Field<int>::from_input<bke::EvaluateAtIndexInput>(
+            curve_index, Field<int>::from_input<CurvePointCountInput>(), AttrDomain::Curve));
   }
-  if (params.output_is_required("Point Index")) {
-    params.set_output("Point Index",
-                      Field<int>(std::make_shared<PointsOfCurveInput>(
+  if (params.output_is_required("Point Index"_ustr)) {
+    params.set_output("Point Index"_ustr,
+                      Field<int>::from_input<PointsOfCurveInput>(
                           curve_index,
-                          params.extract_input<Field<int>>("Sort Index"),
-                          params.extract_input<Field<float>>("Weights"))));
+                          params.extract_input<Field<int>>("Sort Index"_ustr),
+                          params.extract_input<Field<float>>("Weights"_ustr)));
   }
 }
 

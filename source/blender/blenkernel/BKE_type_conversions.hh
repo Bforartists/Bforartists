@@ -66,7 +66,17 @@ class DataTypeConversions {
 
   GVArray try_convert(GVArray varray, const CPPType &to_type) const;
   GVMutableArray try_convert(GVMutableArray varray, const CPPType &to_type) const;
-  fn::GField try_convert(fn::GField field, const CPPType &to_type) const;
+  std::optional<fn::GField> try_convert(fn::GField field, const CPPType &to_type) const;
+
+  template<typename T> std::optional<fn::Field<T>> try_convert(fn::GField field) const
+  {
+    if (std::optional<fn::GField> converted_field = this->try_convert(std::move(field),
+                                                                      CPPType::get<T>()))
+    {
+      return std::move(converted_field->typed<T>());
+    }
+    return std::nullopt;
+  }
 };
 
 const DataTypeConversions &get_implicit_type_conversions();

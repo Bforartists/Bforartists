@@ -410,8 +410,8 @@ set(GLSL_INC
   ../gpu/shaders/common
 
   shaders
-  shaders/library
   shaders/infos
+  shaders/library
 )
 
 set(GLSL_C "")

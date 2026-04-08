@@ -28,15 +28,15 @@ namespace blender::nodes::node_composite_image_cc {
 /** Default declaration for contextless static declarations and when the image is not assigned. */
 static void declare_default(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
 }
 
 /* Declaration for simple single layer images. */
 static void declare_single_layer(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
 }
 
 /* Declares an already existing output. */
@@ -45,12 +45,12 @@ static BaseSocketDeclarationBuilder &declare_existing_output(NodeDeclarationBuil
 {
   if (output->type == SOCK_VECTOR) {
     const int dimensions = output->default_value_typed<bNodeSocketValueVector>()->dimensions;
-    return b.add_output<decl::Vector>(output->name)
+    return b.add_output<decl::Vector>(UString(output->name))
         .dimensions(dimensions)
         .structure_type(StructureType::Dynamic)
         .available(output->is_available());
   }
-  return b.add_output(eNodeSocketDatatype(output->type), output->name)
+  return b.add_output(eNodeSocketDatatype(output->type), UString(output->name))
       .structure_type(StructureType::Dynamic)
       .available(output->is_available());
 }
@@ -69,26 +69,27 @@ static void declare_existing(NodeDeclarationBuilder &b)
 /* Declares an output that matches the type of the given pass. */
 static void declare_pass(NodeDeclarationBuilder &b, const RenderPass &pass)
 {
+  const UString name(pass.name);
   switch (pass.channels) {
     case 1:
-      b.add_output<decl::Float>(pass.name).structure_type(StructureType::Dynamic);
+      b.add_output<decl::Float>(name).structure_type(StructureType::Dynamic);
       return;
     case 2:
-      b.add_output<decl::Vector>(pass.name).dimensions(2).structure_type(StructureType::Dynamic);
+      b.add_output<decl::Vector>(name).dimensions(2).structure_type(StructureType::Dynamic);
       return;
     case 3:
       if (STR_ELEM(pass.chan_id, "RGB", "rgb")) {
-        b.add_output<decl::Color>(pass.name).structure_type(StructureType::Dynamic);
+        b.add_output<decl::Color>(name).structure_type(StructureType::Dynamic);
         return;
       }
-      b.add_output<decl::Vector>(pass.name).dimensions(3).structure_type(StructureType::Dynamic);
+      b.add_output<decl::Vector>(name).dimensions(3).structure_type(StructureType::Dynamic);
       return;
     case 4:
       if (STR_ELEM(pass.chan_id, "RGBA", "rgba")) {
-        b.add_output<decl::Color>(pass.name).structure_type(StructureType::Dynamic);
+        b.add_output<decl::Color>(name).structure_type(StructureType::Dynamic);
         return;
       }
-      b.add_output<decl::Vector>(pass.name).dimensions(4).structure_type(StructureType::Dynamic);
+      b.add_output<decl::Vector>(name).dimensions(4).structure_type(StructureType::Dynamic);
       return;
   }
 
@@ -122,7 +123,28 @@ static void node_declare_multi_layer(NodeDeclarationBuilder &b,
     }
   }
 
+  /* The special 0 view in the image user denotes the view currently being composited, but since
+   * this is not known at declaration time, we add all passes regardless of their view. */
+  const bool should_add_all_views = image_user->view == 0;
+  /* If the special 0 value is not chosen, the selected view will be the image user view minus 1,
+   * to offset for the special value. */
+  const int selected_view = image_user->view - 1;
+
+  Set<StringRef> added_passes;
   for (RenderPass &pass : render_layer->passes) {
+    if (should_add_all_views) {
+      /* Pass already added from another view. */
+      if (added_passes.contains(pass.name)) {
+        continue;
+      }
+      added_passes.add_new(pass.name);
+    }
+    else {
+      if (pass.view_id != selected_view) {
+        continue;
+      }
+    }
+
     declare_pass(b, pass);
 
     /* If the image does not have an alpha pass add an extra alpha pass that is generated based on
@@ -130,7 +152,7 @@ static void node_declare_multi_layer(NodeDeclarationBuilder &b,
     if (!has_alpha_pass && StringRef(pass.name) == RE_PASSNAME_COMBINED && pass.channels == 4 &&
         StringRef(pass.chan_id) == "RGBA")
     {
-      b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
+      b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
     }
   }
 }
@@ -159,7 +181,7 @@ static void prepare_image(Image *image, const ImageUser *image_user)
  * changed through some external factor without an explicit action from the user. */
 static void declare_old_linked_outputs(NodeDeclarationBuilder &b)
 {
-  Set<std::string> added_outputs_identifiers;
+  Set<UString> added_outputs_identifiers;
   for (const SocketDeclaration *output_declaration : b.declaration().sockets(SOCK_OUT)) {
     added_outputs_identifiers.add_new(output_declaration->identifier);
   }
@@ -168,7 +190,7 @@ static void declare_old_linked_outputs(NodeDeclarationBuilder &b)
   const bNode *node = b.node_or_null();
   node_tree->ensure_topology_cache();
   for (const bNodeSocket *output : node->output_sockets()) {
-    if (added_outputs_identifiers.contains(output->identifier)) {
+    if (added_outputs_identifiers.contains(output->identifier_ustr())) {
       continue;
     }
     if (!output->is_directly_linked()) {

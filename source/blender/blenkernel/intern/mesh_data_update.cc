@@ -19,7 +19,6 @@
 #include "BLI_math_matrix.h"
 #include "BLI_math_vector_types.hh"
 #include "BLI_span.hh"
-#include "BLI_string.h"
 #include "BLI_task.hh"
 #include "BLI_utildefines.h"
 #include "BLI_vector.hh"
@@ -194,19 +193,6 @@ static void add_orco_mesh(Object &ob,
       BKE_mesh_orco_verts_transform(id_cast<Mesh *>(ob.data), layer_orco, false);
     }
   }
-}
-
-/**
- * Does final touches to the final evaluated mesh, making sure it is perfectly usable.
- *
- * This is needed because certain information is not passed along intermediate meshes allocated
- * during stack evaluation.
- */
-static void mesh_calc_finalize(const Mesh &mesh_input, Mesh &mesh_eval)
-{
-  /* Make sure the name is the same. This is because mesh allocation from template does not
-   * take care of naming. */
-  STRNCPY(mesh_eval.id.name, mesh_input.id.name);
 }
 
 /**
@@ -677,20 +663,14 @@ static void mesh_calc_modifiers(Depsgraph &depsgraph,
    * Save some memory, and ensure GPU subdivision does not need to deal with this. */
   CustomData_free_layers(&mesh->vert_data, CD_CLOTH_ORCO);
 
-  /* Compute normals. */
-  if (is_own_mesh) {
-    mesh_calc_finalize(mesh_input, *mesh);
-  }
-  else {
+  if (!is_own_mesh) {
     MeshRuntime *runtime = mesh_input.runtime;
     if (runtime->mesh_eval == nullptr) {
       std::lock_guard lock{mesh_input.runtime->eval_mutex};
       if (runtime->mesh_eval == nullptr) {
-        /* Not yet finalized by any instance, do it now
-         * Isolate since computing normals is multithreaded and we are holding a lock. */
+        /* Not yet finalized by any instance, do it now. */
         threading::isolate_task([&] {
           mesh = BKE_mesh_copy_for_eval(mesh_input);
-          mesh_calc_finalize(mesh_input, *mesh);
           runtime->mesh_eval = mesh;
         });
       }
@@ -1079,7 +1059,7 @@ static void object_get_datamask(const Depsgraph &depsgraph,
     return;
   }
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*DEG_get_bmain(&depsgraph), scene, view_layer);
   Object *actob = BKE_view_layer_active_object_get(view_layer);
   if (actob) {
     actob = DEG_get_original(actob);

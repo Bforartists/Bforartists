@@ -29,7 +29,7 @@ static void node_init(bNodeTree * /*ntree*/, bNode *node)
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Red")
+  b.add_input<decl::Float>("Red"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
@@ -47,7 +47,7 @@ static void node_declare(NodeDeclarationBuilder &b)
             return IFACE_("Y");
         }
       });
-  b.add_input<decl::Float>("Green")
+  b.add_input<decl::Float>("Green"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
@@ -66,7 +66,7 @@ static void node_declare(NodeDeclarationBuilder &b)
             return IFACE_("U");
         }
       });
-  b.add_input<decl::Float>("Blue")
+  b.add_input<decl::Float>("Blue"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
@@ -86,8 +86,12 @@ static void node_declare(NodeDeclarationBuilder &b)
             return IFACE_("V");
         }
       });
-  b.add_input<decl::Float>("Alpha").default_value(1.0f).min(0.0f).max(1.0f).subtype(PROP_FACTOR);
-  b.add_output<decl::Color>("Image");
+  b.add_input<decl::Float>("Alpha"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .max(1.0f)
+      .subtype(PROP_FACTOR);
+  b.add_output<decl::Color>("Image"_ustr);
 }
 
 using namespace blender::compositor;

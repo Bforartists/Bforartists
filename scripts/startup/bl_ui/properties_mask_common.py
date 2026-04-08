@@ -121,8 +121,13 @@ class MASK_PT_layers:
             layout.prop(active_layer, "falloff")
 
             col = layout.column()
-            col.use_property_split = False
-            col.prop(active_layer, "use_fill_overlap", text="Overlap")
+            col.prop(active_layer, "fill_solver") # BFA - WIP
+            if active_layer.fill_solver != 'SWEEP_LINE':
+                sub = col.column()
+                sub.active = False
+            else:
+                sub = col
+            sub.prop(active_layer, "use_fill_overlap", text="Overlap")
             col.prop(active_layer, "use_fill_holes", text="Holes")
 
 
@@ -400,6 +405,26 @@ class MASK_MT_add(Menu):
         layout.operator("mask.add_feather_vertex_slide", text="Feather Vertex Slide", icon='SLIDE_VERTEX') # bfa - added back to show it exists
 
 
+class MASK_MT_move_to_layer(Menu):
+    bl_label = "Move to Layer"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        mask = context.space_data.mask
+
+        layout.operator("mask.move_to_layer", text="New Layer", icon='ADD').add_new_layer = True
+
+        if not mask.layers:
+            return
+
+        layout.separator()
+
+        for layer in mask.layers:
+            icon = 'NONE'
+            layout.operator("mask.move_to_layer", text=layer.name, icon=icon).target_layer_name = layer.name
+
+
 class MASK_MT_visibility(Menu):
     bl_label = "Show/Hide"
 
@@ -484,6 +509,7 @@ classes = (
     MASK_UL_layers,
     MASK_MT_mask,
     MASK_MT_add,
+    MASK_MT_move_to_layer,
     MASK_MT_visibility,
     MASK_MT_transform,
     MASK_MT_animation,

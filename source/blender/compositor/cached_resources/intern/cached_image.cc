@@ -40,21 +40,23 @@ namespace blender::compositor {
  * Cached Image Key.
  */
 
-CachedImageKey::CachedImageKey(ImageUser image_user, std::string pass_name)
-    : image_user(image_user), pass_name(pass_name)
+CachedImageKey::CachedImageKey(const int layer_index,
+                               const std::string pass_name,
+                               const std::string view_name,
+                               const int frame)
+    : layer_index(layer_index), pass_name(pass_name), view_name(view_name), frame(frame)
 {
 }
 
 uint64_t CachedImageKey::hash() const
 {
-  return get_default_hash(image_user.framenr, image_user.layer, image_user.view, pass_name);
+  return get_default_hash(this->layer_index, this->view_name, this->pass_name, this->frame);
 }
 
 bool operator==(const CachedImageKey &a, const CachedImageKey &b)
 {
-  return a.image_user.framenr == b.image_user.framenr &&
-         a.image_user.layer == b.image_user.layer && a.image_user.view == b.image_user.view &&
-         a.pass_name == b.pass_name;
+  return a.layer_index == b.layer_index && a.pass_name == b.pass_name &&
+         a.view_name == b.view_name && a.frame == b.frame;
 }
 
 /* --------------------------------------------------------------------
@@ -204,7 +206,7 @@ static ImBuf *compute_linear_buffer(ImBuf *image_buffer)
 
   /* If no float buffer exists, assign it then compute a float buffer from it. This is the main
    * call of this function. */
-  if (!linear_image_buffer->float_buffer.data) {
+  if (!linear_image_buffer->float_data()) {
     IMB_assign_byte_buffer(
         linear_image_buffer, image_buffer->byte_buffer, IB_DO_NOT_TAKE_OWNERSHIP);
     IMB_float_from_byte(linear_image_buffer);
@@ -331,14 +333,14 @@ CachedImage::CachedImage(Context &context,
   /* For GPU, we wrap the texture returned by IMB module and free it ourselves in destructor. For
    * CPU, we allocate the result and copy to it from the image buffer. */
   if (context.use_gpu()) {
-    texture_ = IMB_create_gpu_texture("Image Texture", linear_image_buffer, true, true);
+    texture_ = IMB_create_gpu_texture("Image Texture", linear_image_buffer, true, true, false);
     GPU_texture_update_mipmap_chain(texture_);
     this->result.wrap_external(texture_);
   }
   else {
     const int2 size = int2(image_buffer->x, image_buffer->y);
     Result buffer_result(context, float_type(image_buffer->channels), ResultPrecision::Full);
-    buffer_result.wrap_external(linear_image_buffer->float_buffer.data, size);
+    buffer_result.wrap_external(linear_image_buffer->float_data_for_write(), size);
     this->result.allocate_texture(size, false);
 
     if (buffer_result.type() == ResultType::Color && result.type() == ResultType::Float4) {
@@ -361,6 +363,7 @@ CachedImage::CachedImage(Context &context,
             });
           });
     }
+    buffer_result.release();
   }
 
   if (image_buffer->flags & IB_has_display_window) {
@@ -485,7 +488,14 @@ Result CachedImageContainer::get(Context &context,
   ImageUser image_user_for_frame = *image_user;
   BKE_image_user_frame_calc(image, &image_user_for_frame, context.get_frame_number());
 
-  const CachedImageKey key(image_user_for_frame, pass_name);
+  /* A view of 0 is a special value that means the current view being rendered so use the context
+   * view name. For other values, just convert the view index into a string and use it as the name,
+   * while this is not correct it works as the cache key and is very fast compared to reading the
+   * views from file and finding out their name. */
+  const std::string view_name = image_user->view == 0 ? std::string(context.get_view_name()) :
+                                                        std::to_string(image_user->view);
+
+  const CachedImageKey key(image_user->layer, pass_name, view_name, image_user_for_frame.framenr);
 
   const std::string library_key = image->id.lib ? image->id.lib->id.name : "";
   const std::string id_key = std::string(image->id.name) + library_key;

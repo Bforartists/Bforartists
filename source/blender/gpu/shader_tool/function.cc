@@ -65,7 +65,7 @@ void SourceProcessor::lower_entry_points(Parser &parser)
     }
 
     if (is_entry_point && type.str() != "void") {
-      report_error_(ERROR_TOK(type), "Entry point function must return void.");
+      report_error(type, "Entry point function must return void.");
       return;
     }
 
@@ -87,12 +87,10 @@ void SourceProcessor::lower_entry_points(Parser &parser)
 
     /* For now, just emit good old create info macros. */
     string create_info_decl;
-    create_info_decl += "GPU_SHADER_CREATE_INFO(" + string(fn_name.str()) + "_infos_)\n";
 
     if (!local_size.empty()) {
       if (!is_compute_func) {
-        report_error_(ERROR_TOK(type),
-                      "Only compute entry point function can use [[local_size(x,y,z)]].");
+        report_error(type, "Only compute entry point function can use [[local_size(x,y,z)]].");
       }
       else {
         create_info_decl += "LOCAL_GROUP_SIZE" + local_size + "\n";
@@ -101,8 +99,7 @@ void SourceProcessor::lower_entry_points(Parser &parser)
 
     if (use_early_frag_test) {
       if (!is_fragment_func) {
-        report_error_(ERROR_TOK(type),
-                      "Only fragment entry point function can use [[use_early_frag_test]].");
+        report_error(type, "Only fragment entry point function can use [[use_early_frag_test]].");
       }
       else {
         create_info_decl += "EARLY_FRAGMENT_TEST(true)\n";
@@ -111,9 +108,9 @@ void SourceProcessor::lower_entry_points(Parser &parser)
 
     if (!metal_max_total_threads_per_threadgroup.empty()) {
       if (!is_compute_func) {
-        report_error_(ERROR_TOK(type),
-                      "Only compute entry point function can use "
-                      "[[metal_max_total_threads_per_threadgroup(x)]].");
+        report_error(type,
+                     "Only compute entry point function can use "
+                     "[[metal_max_total_threads_per_threadgroup(x)]].");
       }
       else {
         create_info_decl += "MTL_MAX_TOTAL_THREADS_PER_THREADGROUP" +
@@ -129,11 +126,10 @@ void SourceProcessor::lower_entry_points(Parser &parser)
 
       if (srt_attr == "vertex_id" && is_entry_point) {
         if (!is_vertex_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[vertex_id]] is only supported in vertex functions.");
+          report_error(attributes[1], "[[vertex_id]] is only supported in vertex functions.");
         }
         else if (!is_const || srt_type != "int") {
-          report_error_(ERROR_TOK(type), "[[vertex_id]] must be declared as `const int`.");
+          report_error(type, "[[vertex_id]] must be declared as `const int`.");
         }
         replace_word(srt_var, "gl_VertexID");
         metadata_.builtins.emplace_back(Builtin(hash("gl_VertexID")));
@@ -141,11 +137,10 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "instance_id" && is_entry_point) {
         if (!is_vertex_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[instance_id]] is only supported in vertex functions.");
+          report_error(attributes[1], "[[instance_id]] is only supported in vertex functions.");
         }
         else if (!is_const || srt_type != "int") {
-          report_error_(ERROR_TOK(type), "[[instance_id]] must be declared as `const int`.");
+          report_error(type, "[[instance_id]] must be declared as `const int`.");
         }
         replace_word(srt_var, "gl_InstanceID");
         metadata_.builtins.emplace_back(Builtin(hash("gl_InstanceID")));
@@ -153,87 +148,83 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "base_instance" && is_entry_point) {
         if (!is_vertex_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[base_instance]] is only supported in vertex functions.");
+          report_error(attributes[1], "[[base_instance]] is only supported in vertex functions.");
         }
         else if (!is_const || srt_type != "int") {
-          report_error_(ERROR_TOK(type),
-                        "[[base_instance]] must be declared as "
-                        "`const int`.");
+          report_error(type,
+                       "[[base_instance]] must be declared as "
+                       "`const int`.");
         }
         replace_word(srt_var, "gl_BaseInstance");
         metadata_.builtins.emplace_back(Builtin(hash("gl_BaseInstance")));
       }
       else if (srt_attr == "point_size" && is_entry_point) {
         if (!is_vertex_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[point_size]] is only supported in vertex functions.");
+          report_error(attributes[1], "[[point_size]] is only supported in vertex functions.");
         }
         else if (is_const || srt_type != "float") {
-          report_error_(ERROR_TOK(type),
-                        "[[point_size]] must be declared as non-const reference (aka `float &`).");
+          report_error(type,
+                       "[[point_size]] must be declared as non-const reference (aka `float &`).");
         }
         replace_word(srt_var, "gl_PointSize");
         create_info_decl += "BUILTINS(BuiltinBits::POINT_SIZE)\n";
       }
       else if (srt_attr == "clip_distance" && is_entry_point) {
         if (!is_vertex_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[clip_distance]] is only supported in vertex functions.");
+          report_error(attributes[1], "[[clip_distance]] is only supported in vertex functions.");
         }
         else if (is_const || srt_type != "float") {
-          report_error_(ERROR_TOK(type),
-                        "[[clip_distance]] must be declared as non-const reference "
-                        "(aka `float (&)[]`).");
+          report_error(type,
+                       "[[clip_distance]] must be declared as non-const reference "
+                       "(aka `float (&)[]`).");
         }
         replace_word(srt_var, "gl_ClipDistance");
         create_info_decl += "BUILTINS(BuiltinBits::CLIP_DISTANCES)\n";
       }
       else if (srt_attr == "layer" && is_entry_point) {
         if (is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[layer]] is only supported in vertex and fragment functions.");
+          report_error(attributes[1],
+                       "[[layer]] is only supported in vertex and fragment functions.");
         }
         else if (is_vertex_func && (is_const || srt_type != "int")) {
-          report_error_(ERROR_TOK(type),
-                        "[[layer]] must be declared as non-const reference "
-                        "(aka `int &`).");
+          report_error(type,
+                       "[[layer]] must be declared as non-const reference "
+                       "(aka `int &`).");
         }
         else if (is_fragment_func && (!is_const || srt_type != "int")) {
-          report_error_(ERROR_TOK(type),
-                        "[[layer]] must be declared as const reference "
-                        "(aka `const int &`).");
+          report_error(type,
+                       "[[layer]] must be declared as const reference "
+                       "(aka `const int &`).");
         }
         replace_word(srt_var, "gl_Layer");
         create_info_decl += "BUILTINS(BuiltinBits::LAYER)\n";
       }
       else if (srt_attr == "viewport_index" && is_entry_point) {
         if (is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[viewport_index]] is only supported in vertex and "
-                        "fragment functions.");
+          report_error(attributes[1],
+                       "[[viewport_index]] is only supported in vertex and "
+                       "fragment functions.");
         }
         else if (is_vertex_func && (is_const || srt_type != "int")) {
-          report_error_(ERROR_TOK(type),
-                        "[[viewport_index]] must be declared as non-const reference "
-                        "(aka `int &`).");
+          report_error(type,
+                       "[[viewport_index]] must be declared as non-const reference "
+                       "(aka `int &`).");
         }
         else if (is_fragment_func && (!is_const || srt_type != "int")) {
-          report_error_(ERROR_TOK(type),
-                        "[[viewport_index]] must be declared as const reference "
-                        "(aka `const int &`).");
+          report_error(type,
+                       "[[viewport_index]] must be declared as const reference "
+                       "(aka `const int &`).");
         }
         replace_word(srt_var, "gl_ViewportIndex");
         create_info_decl += "BUILTINS(BuiltinBits::VIEWPORT_INDEX)\n";
       }
       else if (srt_attr == "position" && is_entry_point) {
         if (!is_vertex_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[position]] is only supported in vertex functions.");
+          report_error(attributes[1], "[[position]] is only supported in vertex functions.");
         }
         else if (is_const || srt_type != "float4") {
-          report_error_(ERROR_TOK(type),
-                        "[[position]] must be declared as non-const reference (aka `float4 &`).");
+          report_error(type,
+                       "[[position]] must be declared as non-const reference (aka `float4 &`).");
         }
         else {
           replace_word(srt_var, "gl_Position");
@@ -241,11 +232,10 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "frag_coord" && is_entry_point) {
         if (!is_fragment_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[frag_coord]] is only supported in fragment functions.");
+          report_error(attributes[1], "[[frag_coord]] is only supported in fragment functions.");
         }
         else if (!is_const || srt_type != "float4") {
-          report_error_(ERROR_TOK(type), "[[frag_coord]] must be declared as `const float4`.");
+          report_error(type, "[[frag_coord]] must be declared as `const float4`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::FRAG_COORD)\n";
@@ -254,11 +244,10 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "point_coord" && is_entry_point) {
         if (!is_fragment_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[point_coord]] is only supported in fragment functions.");
+          report_error(attributes[1], "[[point_coord]] is only supported in fragment functions.");
         }
         else if (!is_const || srt_type != "float2") {
-          report_error_(ERROR_TOK(type), "[[point_coord]] must be declared as `const float2`.");
+          report_error(type, "[[point_coord]] must be declared as `const float2`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::POINT_COORD)\n";
@@ -267,11 +256,10 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "front_facing" && is_entry_point) {
         if (!is_fragment_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[front_facing]] is only supported in fragment functions.");
+          report_error(attributes[1], "[[front_facing]] is only supported in fragment functions.");
         }
         else if (!is_const || srt_type != "bool") {
-          report_error_(ERROR_TOK(type), "[[front_facing]] must be declared as `const bool`.");
+          report_error(type, "[[front_facing]] must be declared as `const bool`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::FRONT_FACING)\n";
@@ -280,12 +268,11 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "global_invocation_id" && is_entry_point) {
         if (!is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[global_invocation_id]] is only supported in compute functions.");
+          report_error(attributes[1],
+                       "[[global_invocation_id]] is only supported in compute functions.");
         }
         else if (!is_const || srt_type != "uint3") {
-          report_error_(ERROR_TOK(type),
-                        "[[global_invocation_id]] must be declared as `const uint3`.");
+          report_error(type, "[[global_invocation_id]] must be declared as `const uint3`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::GLOBAL_INVOCATION_ID)\n";
@@ -294,12 +281,11 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "local_invocation_id" && is_entry_point) {
         if (!is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[local_invocation_id]] is only supported in compute functions.");
+          report_error(attributes[1],
+                       "[[local_invocation_id]] is only supported in compute functions.");
         }
         else if (!is_const || srt_type != "uint3") {
-          report_error_(ERROR_TOK(type),
-                        "[[local_invocation_id]] must be declared as `const uint3`.");
+          report_error(type, "[[local_invocation_id]] must be declared as `const uint3`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::LOCAL_INVOCATION_ID)\n";
@@ -308,12 +294,11 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "local_invocation_index" && is_entry_point) {
         if (!is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[local_invocation_index]] is only supported in compute functions.");
+          report_error(attributes[1],
+                       "[[local_invocation_index]] is only supported in compute functions.");
         }
         else if (!is_const || srt_type != "uint") {
-          report_error_(ERROR_TOK(type),
-                        "[[local_invocation_index]] must be declared as `const uint`.");
+          report_error(type, "[[local_invocation_index]] must be declared as `const uint`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::LOCAL_INVOCATION_INDEX)\n";
@@ -322,13 +307,12 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "work_group_id" && is_entry_point) {
         if (!is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[work_group_id]] is only supported in compute functions.");
+          report_error(attributes[1], "[[work_group_id]] is only supported in compute functions.");
         }
         else if (!is_const || srt_type != "uint3") {
-          report_error_(ERROR_TOK(type),
-                        "[[work_group_id]] must be declared as "
-                        "`const uint3`.");
+          report_error(type,
+                       "[[work_group_id]] must be declared as "
+                       "`const uint3`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::WORK_GROUP_ID)\n";
@@ -337,13 +321,13 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "num_work_groups" && is_entry_point) {
         if (!is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[num_work_groups]] is only supported in compute functions.");
+          report_error(attributes[1],
+                       "[[num_work_groups]] is only supported in compute functions.");
         }
         else if (!is_const || srt_type != "uint3") {
-          report_error_(ERROR_TOK(type),
-                        "[[num_work_groups]] must be declared as "
-                        "`const uint3`.");
+          report_error(type,
+                       "[[num_work_groups]] must be declared as "
+                       "`const uint3`.");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::NUM_WORK_GROUP)\n";
@@ -352,11 +336,11 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "in") {
         if (is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[in]] is only supported in vertex and fragment functions.");
+          report_error(attributes[1],
+                       "[[in]] is only supported in vertex and fragment functions.");
         }
         else if (!is_const) {
-          report_error_(ERROR_TOK(type), "[[in]] must be declared as const reference.");
+          report_error(type, "[[in]] must be declared as const reference.");
         }
         else if (is_vertex_func) {
           replace_word_and_accessor(srt_var, "");
@@ -369,11 +353,11 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "out") {
         if (is_compute_func) {
-          report_error_(ERROR_TOK(attributes[1]),
-                        "[[out]] is only supported in vertex and fragment functions.");
+          report_error(attributes[1],
+                       "[[out]] is only supported in vertex and fragment functions.");
         }
         else if (is_const) {
-          report_error_(ERROR_TOK(type), "[[out]] must be declared as non-const reference.");
+          report_error(type, "[[out]] must be declared as non-const reference.");
         }
         else if (is_vertex_func) {
           replace_word_and_accessor(srt_var, srt_type + "_");
@@ -394,13 +378,12 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "frag_depth") {
         if (srt_type != "float") {
-          report_error_(ERROR_TOK(type), "[[frag_depth]] needs to be declared as float");
+          report_error(type, "[[frag_depth]] needs to be declared as float");
         }
         const string mode(attributes[3].str());
 
         if (mode != "any" && mode != "greater" && mode != "less") {
-          report_error_(ERROR_TOK(attributes[3]),
-                        "unrecognized mode, expecting 'any', 'greater' or 'less'");
+          report_error(attributes[3], "unrecognized mode, expecting 'any', 'greater' or 'less'");
         }
         else {
           create_info_decl += "DEPTH_WRITE(" + to_uppercase(mode) + ")\n";
@@ -409,7 +392,7 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       }
       else if (srt_attr == "frag_stencil_ref") {
         if (srt_type != "int") {
-          report_error_(ERROR_TOK(type), "[[frag_stencil_ref]] needs to be declared as int");
+          report_error(type, "[[frag_stencil_ref]] needs to be declared as int");
         }
         else {
           create_info_decl += "BUILTINS(BuiltinBits::STENCIL_REF)\n";
@@ -417,7 +400,7 @@ void SourceProcessor::lower_entry_points(Parser &parser)
         }
       }
       else {
-        report_error_(ERROR_TOK(attributes[1]), "Invalid attribute.");
+        report_error(attributes[1], "Invalid attribute.");
       }
     };
 
@@ -432,9 +415,13 @@ void SourceProcessor::lower_entry_points(Parser &parser)
       process_argument(toks[8], toks[11], toks[1].scope());
     });
 
-    create_info_decl += "GPU_SHADER_CREATE_END()\n";
-
     if (is_entry_point) {
+      if (create_info_decl.empty()) {
+        /* Add unused define to avoid warning about unused expression. */
+        create_info_decl += "DEFINE(\"EMPTY_CREATE_INFO\")\n";
+      }
+      create_info_decl = "GPU_SHADER_CREATE_INFO(" + string(fn_name.str()) + "_infos_)\n" +
+                         create_info_decl + "GPU_SHADER_CREATE_END()\n";
       metadata_.create_infos_declarations.emplace_back(create_info_decl);
     }
   });

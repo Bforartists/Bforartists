@@ -27,7 +27,7 @@ static void alloc_scale_dst_buffers(
     const ImBuf *ibuf, uint newx, uint newy, uchar4 **r_dst_byte, float **r_dst_float)
 {
   *r_dst_byte = nullptr;
-  if (ibuf->byte_buffer.data != nullptr) {
+  if (ibuf->byte_data() != nullptr) {
     *r_dst_byte = MEM_new_array_uninitialized<uchar4>(size_t(newx) * size_t(newy),
                                                       "scale_buf_byte");
     if (*r_dst_byte == nullptr) {
@@ -35,7 +35,7 @@ static void alloc_scale_dst_buffers(
     }
   }
   *r_dst_float = nullptr;
-  if (ibuf->float_buffer.data != nullptr) {
+  if (ibuf->float_data() != nullptr) {
     *r_dst_float = MEM_new_array_uninitialized<float>(size_t(ibuf->channels) * newx * newy,
                                                       "scale_buf_float");
     if (*r_dst_float == nullptr) {
@@ -277,23 +277,23 @@ static void instantiate_pixel_op(T & /*op*/,
                                  bool threaded)
 {
   if (dst_byte != nullptr) {
-    const uchar4 *src = reinterpret_cast<const uchar4 *>(ibuf->byte_buffer.data);
+    const uchar4 *src = reinterpret_cast<const uchar4 *>(ibuf->byte_data());
     T::op(src, dst_byte, ibuf->x, ibuf->y, newx, newy, threaded);
   }
   if (dst_float != nullptr) {
     if (ibuf->channels == 1) {
-      T::op(ibuf->float_buffer.data, dst_float, ibuf->x, ibuf->y, newx, newy, threaded);
+      T::op(ibuf->float_data(), dst_float, ibuf->x, ibuf->y, newx, newy, threaded);
     }
     else if (ibuf->channels == 2) {
-      const float2 *src = reinterpret_cast<const float2 *>(ibuf->float_buffer.data);
+      const float2 *src = reinterpret_cast<const float2 *>(ibuf->float_data());
       T::op(src, reinterpret_cast<float2 *>(dst_float), ibuf->x, ibuf->y, newx, newy, threaded);
     }
     else if (ibuf->channels == 3) {
-      const float3 *src = reinterpret_cast<const float3 *>(ibuf->float_buffer.data);
+      const float3 *src = reinterpret_cast<const float3 *>(ibuf->float_data());
       T::op(src, reinterpret_cast<float3 *>(dst_float), ibuf->x, ibuf->y, newx, newy, threaded);
     }
     else if (ibuf->channels == 4) {
-      const float4 *src = reinterpret_cast<const float4 *>(ibuf->float_buffer.data);
+      const float4 *src = reinterpret_cast<const float4 *>(ibuf->float_data());
       T::op(src, reinterpret_cast<float4 *>(dst_float), ibuf->x, ibuf->y, newx, newy, threaded);
     }
   }
@@ -401,26 +401,26 @@ static void scale_nearest_func(
   threading::parallel_for(IndexRange(newy), grain_size, [&](IndexRange y_range) {
     /* Byte pixels. */
     if (dst_byte != nullptr) {
-      const uchar4 *src = reinterpret_cast<const uchar4 *>(ibuf->byte_buffer.data);
+      const uchar4 *src = reinterpret_cast<const uchar4 *>(ibuf->byte_data());
       scale_nearest(src, dst_byte, ibuf->x, ibuf->y, newx, newy, y_range);
     }
     /* Float pixels. */
     if (dst_float != nullptr) {
       if (ibuf->channels == 1) {
-        scale_nearest(ibuf->float_buffer.data, dst_float, ibuf->x, ibuf->y, newx, newy, y_range);
+        scale_nearest(ibuf->float_data(), dst_float, ibuf->x, ibuf->y, newx, newy, y_range);
       }
       else if (ibuf->channels == 2) {
-        const float2 *src = reinterpret_cast<const float2 *>(ibuf->float_buffer.data);
+        const float2 *src = reinterpret_cast<const float2 *>(ibuf->float_data());
         scale_nearest(
             src, reinterpret_cast<float2 *>(dst_float), ibuf->x, ibuf->y, newx, newy, y_range);
       }
       else if (ibuf->channels == 3) {
-        const float3 *src = reinterpret_cast<const float3 *>(ibuf->float_buffer.data);
+        const float3 *src = reinterpret_cast<const float3 *>(ibuf->float_data());
         scale_nearest(
             src, reinterpret_cast<float3 *>(dst_float), ibuf->x, ibuf->y, newx, newy, y_range);
       }
       else if (ibuf->channels == 4) {
-        const float4 *src = reinterpret_cast<const float4 *>(ibuf->float_buffer.data);
+        const float4 *src = reinterpret_cast<const float4 *>(ibuf->float_data());
         scale_nearest(
             src, reinterpret_cast<float4 *>(dst_float), ibuf->x, ibuf->y, newx, newy, y_range);
       }
@@ -449,7 +449,7 @@ static void scale_bilinear_func(
         if (dst_float) {
           float *pixel = dst_float + ibuf->channels * offset;
           math::interpolate_bilinear_fl(
-              ibuf->float_buffer.data, pixel, ibuf->x, ibuf->y, ibuf->channels, u, v);
+              ibuf->float_data(), pixel, ibuf->x, ibuf->y, ibuf->channels, u, v);
         }
       }
     }

@@ -13,6 +13,7 @@ namespace blender {
 
 struct bContext;
 struct bPoseChannel;
+struct Main;
 struct Object;
 struct Scene;
 struct TransformOrientation;
@@ -81,7 +82,8 @@ enum {
  *
  * \param v3d: The 3D viewport or null.
  */
-int getTransformOrientation_ex(const Scene *scene,
+int getTransformOrientation_ex(const Main &bmain,
+                               const Scene *scene,
                                ViewLayer *view_layer,
                                const View3D *v3d,
                                Object *ob,

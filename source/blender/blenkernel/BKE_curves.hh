@@ -513,7 +513,7 @@ class CurvesGeometry : public blender::CurvesGeometry {
     Vector<CustomDataLayer, 16> &point_layers;
     Vector<CustomDataLayer, 16> &curve_layers;
     AttributeStorage::BlendWriteData attribute_data;
-    explicit BlendWriteData(ResourceScope &scope);
+    explicit BlendWriteData(BlendWriter *writer, ResourceScope &scope);
   };
   /**
    * This function needs to be called before `blend_write` and before the `CurvesGeometry` struct

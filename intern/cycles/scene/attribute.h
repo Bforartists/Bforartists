@@ -8,6 +8,7 @@
 
 #include "kernel/types.h"
 
+#include "util/implicit_sharing.h"
 #include "util/list.h"
 #include "util/param.h"
 #include "util/set.h"
@@ -55,7 +56,13 @@ class Attribute {
   AttributeStandard std;
 
   TypeDesc type;
-  vector<char> buffer;
+  /**
+   * Optionally used to share ownership of #buffer, see implicit_sharing.h.
+   * If this is null, #buffer is wholly owned by this Attribute.
+   */
+  ImplicitSharingInfo sharing_info = nullptr;
+  const void *buffer = nullptr;
+  int size = 0;
   AttributeElement element;
   uint flags; /* enum AttributeFlag */
 
@@ -66,7 +73,14 @@ class Attribute {
             AttributeElement element,
             Geometry *geom,
             AttributePrimitive prim);
-  Attribute(Attribute &&other) = default;
+  Attribute(ustring name,
+            const TypeDesc type,
+            AttributeElement element,
+            const void *data,
+            int size,
+            ImplicitSharingInfo sharing_info);
+  Attribute(Attribute &&other) = delete;
+  Attribute &operator=(Attribute &&other) = delete;
   Attribute(const Attribute &other) = delete;
   Attribute &operator=(const Attribute &other) = delete;
   ~Attribute();
@@ -76,94 +90,102 @@ class Attribute {
   void resize(const size_t num_elements);
 
   size_t data_sizeof() const;
-  size_t element_size(Geometry *geom, AttributePrimitive prim) const;
+  static size_t element_size(Geometry *geom, AttributeElement element, AttributePrimitive prim);
   size_t buffer_size(Geometry *geom, AttributePrimitive prim) const;
 
-  char *data()
-  {
-    return (!buffer.empty()) ? buffer.data() : nullptr;
-  }
-  float2 *data_float2()
+  char *data_for_write();
+  float2 *data_float2_for_write()
   {
     assert(data_sizeof() == sizeof(float2));
-    return (float2 *)data();
+    return reinterpret_cast<float2 *>(this->data_for_write());
   }
-  float3 *data_float3()
+  float3 *data_float3_for_write()
   {
     assert(data_sizeof() == sizeof(float3));
-    return (float3 *)data();
+    return reinterpret_cast<float3 *>(this->data_for_write());
   }
-  float4 *data_float4()
+  float4 *data_float4_for_write()
   {
     assert(data_sizeof() == sizeof(float4));
-    return (float4 *)data();
+    return reinterpret_cast<float4 *>(this->data_for_write());
   }
-  float *data_float()
+  float *data_float_for_write()
   {
     assert(data_sizeof() == sizeof(float));
-    return (float *)data();
+    return reinterpret_cast<float *>(this->data_for_write());
   }
-  uchar4 *data_uchar4()
+  uchar4 *data_uchar4_for_write()
   {
     assert(data_sizeof() == sizeof(uchar4));
-    return (uchar4 *)data();
+    return reinterpret_cast<uchar4 *>(this->data_for_write());
   }
-  packed_normal *data_normal()
+  packed_normal *data_normal_for_write()
   {
     assert(data_sizeof() == sizeof(packed_normal));
-    return (packed_normal *)data();
+    return reinterpret_cast<packed_normal *>(this->data_for_write());
   }
-  Transform *data_transform()
+  Transform *data_transform_for_write()
   {
     assert(data_sizeof() == sizeof(Transform));
-    return (Transform *)data();
+    return reinterpret_cast<Transform *>(this->data_for_write());
   }
-
   /* Attributes for voxels are images */
-  ImageHandle &data_voxel()
+  ImageHandle &data_voxel_for_write()
   {
     assert(data_sizeof() == sizeof(ImageHandle));
-    return *(ImageHandle *)data();
+    return *reinterpret_cast<ImageHandle *>(this->data_for_write());
   }
 
   const char *data() const
   {
-    return (!buffer.empty()) ? buffer.data() : nullptr;
+    return static_cast<const char *>(buffer);
   }
   const float2 *data_float2() const
   {
     assert(data_sizeof() == sizeof(float2));
-    return (const float2 *)data();
+    return reinterpret_cast<const float2 *>(this->data());
   }
   const float3 *data_float3() const
   {
     assert(data_sizeof() == sizeof(float3));
-    return (const float3 *)data();
+    return reinterpret_cast<const float3 *>(this->data());
   }
   const float4 *data_float4() const
   {
     assert(data_sizeof() == sizeof(float4));
-    return (const float4 *)data();
+    return reinterpret_cast<const float4 *>(this->data());
   }
   const float *data_float() const
   {
     assert(data_sizeof() == sizeof(float));
-    return (const float *)data();
+    return reinterpret_cast<const float *>(this->data());
+  }
+  const uchar4 *data_uchar4() const
+  {
+    assert(data_sizeof() == sizeof(uchar4));
+    return reinterpret_cast<const uchar4 *>(this->data());
+  }
+  const packed_normal *data_normal() const
+  {
+    assert(data_sizeof() == sizeof(packed_normal));
+    return reinterpret_cast<const packed_normal *>(this->data());
   }
   const Transform *data_transform() const
   {
     assert(data_sizeof() == sizeof(Transform));
-    return (const Transform *)data();
+    return reinterpret_cast<const Transform *>(this->data());
   }
   const ImageHandle &data_voxel() const
   {
     assert(data_sizeof() == sizeof(ImageHandle));
-    return *(const ImageHandle *)data();
+    return *reinterpret_cast<const ImageHandle *>(this->data());
   }
 
   void zero_data(void *dst);
 
   void set_data_from(Attribute &&other);
+
+  void free_data();
 
   static bool same_storage(const TypeDesc a, const TypeDesc b);
   static const char *standard_name(AttributeStandard std);
@@ -191,10 +213,21 @@ class AttributeSet {
   ~AttributeSet();
 
   Attribute *add(ustring name, const TypeDesc type, AttributeElement element);
+  Attribute *add_shared(ustring name,
+                        const TypeDesc type,
+                        AttributeElement element,
+                        const void *data,
+                        int size,
+                        ImplicitSharingInfo sharing_info);
   Attribute *find(ustring name) const;
   void remove(ustring name);
 
   Attribute *add(AttributeStandard std, ustring name = ustring());
+  Attribute *add_shared(AttributeStandard std,
+                        ustring name,
+                        const void *data,
+                        int size,
+                        ImplicitSharingInfo sharing_info);
   Attribute *find(AttributeStandard std) const;
   void remove(AttributeStandard std);
 

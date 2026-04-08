@@ -231,7 +231,7 @@ void PassAccessor::init_kernel_film_convert(KernelFilmConvert *kfilm_convert,
 {
   const PassType type = pass_access_info_.type;
   const PassMode mode = pass_access_info_.mode;
-  const PassInfo &pass_info = Pass::get_info(
+  const PassInfo pass_info = Pass::get_info(
       type, mode, pass_access_info_.include_albedo, pass_access_info_.is_lightgroup);
 
   kfilm_convert->pass_offset = pass_access_info_.offset;
@@ -270,6 +270,10 @@ void PassAccessor::init_kernel_film_convert(KernelFilmConvert *kfilm_convert,
   }
   else {
     kfilm_convert->scale = pass_info.scale;
+
+    if (!pass_access_info_.use_sample_count) {
+      kfilm_convert->pass_use_filter = false;
+    }
   }
 
   if (pass_info.use_exposure) {

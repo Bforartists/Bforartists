@@ -62,6 +62,7 @@ static Object *get_camera_with_movieclip(Scene *scene, const MovieClip *clip)
 
 static Object *get_orientation_object(bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceClip *sc = CTX_wm_space_clip(C);
@@ -74,7 +75,7 @@ static Object *get_orientation_object(bContext *C)
     object = get_camera_with_movieclip(scene, clip);
   }
   else {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     object = BKE_view_layer_active_object_get(view_layer);
   }
 
@@ -89,6 +90,7 @@ static bool set_orientation_poll(bContext *C)
 {
   SpaceClip *sc = CTX_wm_space_clip(C);
   if (sc != nullptr) {
+    const Main *bmain = CTX_data_main(C);
     const Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
     MovieClip *clip = ED_space_clip_get_clip(sc);
@@ -98,7 +100,7 @@ static bool set_orientation_poll(bContext *C)
       if (tracking_object->flag & TRACKING_OBJECT_CAMERA) {
         return true;
       }
-      BKE_view_layer_synced_ensure(scene, view_layer);
+      BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
       return BKE_view_layer_active_object_get(view_layer) != nullptr;
     }
   }

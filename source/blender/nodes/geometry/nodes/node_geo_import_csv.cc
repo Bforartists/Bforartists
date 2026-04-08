@@ -19,14 +19,14 @@ namespace blender::nodes::node_geo_import_csv {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("Path")
+  b.add_input<decl::String>("Path"_ustr)
       .subtype(PROP_FILEPATH)
       .path_filter("*.csv")
       .optional_label()
       .description("Path to a CSV file");
-  b.add_input<decl::String>("Delimiter").default_value(",");
+  b.add_input<decl::String>("Delimiter"_ustr).default_value(",");
 
-  b.add_output<decl::Geometry>("Point Cloud");
+  b.add_output<decl::Geometry>("Point Cloud"_ustr);
 }
 
 class LoadCsvCache : public memory_cache::CachedValue {
@@ -43,12 +43,12 @@ class LoadCsvCache : public memory_cache::CachedValue {
 static void node_geo_exec(GeoNodeExecParams params)
 {
   const std::optional<std::string> path = params.ensure_absolute_path(
-      params.extract_input<std::string>("Path"));
+      params.extract_input<std::string>("Path"_ustr));
   if (!path) {
     params.set_default_remaining_outputs();
     return;
   }
-  const std::string delimiter = params.extract_input<std::string>("Delimiter");
+  const std::string delimiter = params.extract_input<std::string>("Delimiter"_ustr);
   if (delimiter.size() != 1) {
     params.error_message_add(NodeWarningType::Error, TIP_("Delimiter must be a single character"));
     params.set_default_remaining_outputs();
@@ -89,7 +89,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.error_message_add(warning.type, warning.message);
   }
 
-  params.set_output("Point Cloud", cached_value->geometry);
+  params.set_output("Point Cloud"_ustr, cached_value->geometry);
 }
 
 static void node_register()

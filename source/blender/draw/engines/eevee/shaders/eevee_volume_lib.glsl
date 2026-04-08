@@ -10,7 +10,7 @@ SHADER_LIBRARY_CREATE_INFO(eevee_global_ubo)
 
 #include "draw_view_lib.glsl"
 #include "eevee_sampling_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 #include "gpu_shader_math_matrix_transform_lib.glsl"
 
 /* Based on Frosbite Unified Volumetric.
@@ -164,7 +164,7 @@ float volume_phase_function(float3 V, float3 L, float g)
   return (1 - sqr_g) / max(1e-8f, 4.0f * M_PI * pow(1 + sqr_g - 2 * g * cos_theta, 3.0f / 2.0f));
 }
 
-SphericalHarmonicL1 volume_phase_function_as_sh_L1(float3 V, float g)
+SphericalHarmonicL1<float4> volume_phase_function_as_sh_L1(float3 V, float g)
 {
   /* Compute rotated zonal harmonic.
    * From Bartlomiej Wronsky
@@ -172,11 +172,11 @@ SphericalHarmonicL1 volume_phase_function_as_sh_L1(float3 V, float g)
    * SIGGRAPH 2014
    * https://bartwronski.files.wordpress.com/2014/08/bwronski_volumetric_fog_siggraph2014.pdf
    */
-  SphericalHarmonicL1 sh;
-  sh.L0.M0 = spherical_harmonics_L0_M0(V) * float4(1.0f);
-  sh.L1.Mn1 = spherical_harmonics_L1_Mn1(V) * float4(g);
-  sh.L1.M0 = spherical_harmonics_L1_M0(V) * float4(g);
-  sh.L1.Mp1 = spherical_harmonics_L1_Mp1(V) * float4(g);
+  SphericalHarmonicL1<float4> sh;
+  sh.L0.M0 = spherical_harmonics::L0_M0_coef(V) * float4(1.0f);
+  sh.L1.Mn1 = spherical_harmonics::L1_Mn1_coef(V) * float4(g);
+  sh.L1.M0 = spherical_harmonics::L1_M0_coef(V) * float4(g);
+  sh.L1.Mp1 = spherical_harmonics::L1_Mp1_coef(V) * float4(g);
   return sh;
 }
 

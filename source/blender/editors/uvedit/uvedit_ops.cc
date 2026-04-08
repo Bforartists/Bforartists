@@ -295,7 +295,8 @@ bool ED_uvedit_center_multi(const Scene *scene,
   return changed;
 }
 
-bool ED_uvedit_center_from_pivot_ex(const SpaceImage *sima,
+bool ED_uvedit_center_from_pivot_ex(const Main &bmain,
+                                    const SpaceImage *sima,
                                     Scene *scene,
                                     ViewLayer *view_layer,
                                     float r_center[2],
@@ -310,7 +311,7 @@ bool ED_uvedit_center_from_pivot_ex(const SpaceImage *sima,
       if (r_has_select != nullptr) {
         Vector<Object *> objects =
             BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-                scene, view_layer, nullptr);
+                bmain, scene, view_layer, nullptr);
         *r_has_select = uvedit_select_is_any_selected_multi(scene, objects);
       }
       break;
@@ -318,7 +319,7 @@ bool ED_uvedit_center_from_pivot_ex(const SpaceImage *sima,
     default: {
       Vector<Object *> objects =
           BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-              scene, view_layer, nullptr);
+              bmain, scene, view_layer, nullptr);
       changed = ED_uvedit_center_multi(scene, objects, r_center, mode);
       if (r_has_select != nullptr) {
         *r_has_select = changed;
@@ -369,11 +370,12 @@ static std::string move_on_axis_description(bContext * /* C */,
 static wmOperatorStatus uv_move_on_axis_exec(bContext *C, wmOperator *op)
 
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
   UVMoveType type = UVMoveType(RNA_enum_get(op->ptr, "type"));
   UVMoveDirection axis = UVMoveDirection(RNA_enum_get(op->ptr, "axis"));
   int distance = RNA_int_get(op->ptr, "distance");
@@ -747,12 +749,13 @@ static bool uvedit_uv_islands_arrange(const Scene *scene,
 
 static wmOperatorStatus uv_arrange_islands_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   const UVAlignInitialPosition initial_position = UVAlignInitialPosition(
       RNA_enum_get(op->ptr, "initial_position"));
@@ -927,13 +930,14 @@ static void UV_OT_arrange_islands(wmOperatorType *ot)
 
 static void uv_weld(bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
   float cent[2];
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   ED_uvedit_center_multi(scene, objects, cent, 0);
 
@@ -957,6 +961,7 @@ static void uv_weld(bContext *C)
 
 static void uv_align(bContext *C, eUVWeldAlign tool, UVAlignPositionMode position_mode)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
@@ -965,7 +970,7 @@ static void uv_align(bContext *C, eUVWeldAlign tool, UVAlignPositionMode positio
   INIT_MINMAX2(min, max);
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   if (tool == UV_ALIGN_AUTO) {
     ED_uvedit_foreach_uv_multi(
@@ -1111,6 +1116,7 @@ static void UV_OT_align(wmOperatorType *ot)
 
 static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
@@ -1118,7 +1124,7 @@ static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *o
   const float threshold = RNA_float_get(op->ptr, "threshold");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   bool *changed = MEM_new_array_zeroed<bool>(objects.size(), __func__);
 
@@ -1224,13 +1230,14 @@ static wmOperatorStatus uv_remove_doubles_to_selected(bContext *C, wmOperator *o
 
 static wmOperatorStatus uv_remove_doubles_to_unselected(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
   const float threshold = RNA_float_get(op->ptr, "threshold");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   /* Calculate max possible number of kdtree nodes. */
   int uv_maxlen = 0;
@@ -1285,11 +1292,12 @@ static wmOperatorStatus uv_remove_doubles_to_selected_shared_vertex(bContext *C,
   /* NOTE: The calculation for the center-point of loops belonging to a vertex will be skewed
    * if one UV coordinate holds more loops than the others. */
 
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   SpaceImage *sima = CTX_wm_space_image(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   /* Only use the squared distance, to avoid a square-root. */
   const float threshold_sq = math::square(RNA_float_get(op->ptr, "threshold"));
@@ -1503,12 +1511,13 @@ static wmOperatorStatus uv_snap_cursor_exec(bContext *C, wmOperator *op)
       changed = true;
       break;
     case 1: {
+      const Main *bmain = CTX_data_main(C);
       Scene *scene = CTX_data_scene(C);
       ViewLayer *view_layer = CTX_data_view_layer(C);
 
       Vector<Object *> objects =
           BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-              scene, view_layer, nullptr);
+              *bmain, scene, view_layer, nullptr);
       changed = uv_snap_cursor_to_selection(scene, objects, sima);
       break;
     }
@@ -1659,6 +1668,7 @@ static bool uv_snap_uvs_to_pixels(SpaceImage *sima, Scene *scene, Object *obedit
 
 static wmOperatorStatus uv_snap_selection_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
@@ -1666,7 +1676,7 @@ static wmOperatorStatus uv_snap_selection_exec(bContext *C, wmOperator *op)
   float offset[2] = {0};
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   if (target == 2) {
     float center[2];
@@ -1744,6 +1754,7 @@ static void UV_OT_snap_selected(wmOperatorType *ot)
 
 static wmOperatorStatus uv_pin_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   BMFace *efa;
@@ -1753,7 +1764,7 @@ static wmOperatorStatus uv_pin_exec(bContext *C, wmOperator *op)
   const bool invert = RNA_boolean_get(op->ptr, "invert");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   for (Object *obedit : objects) {
     Mesh &mesh = *id_cast<Mesh *>(obedit->data);
@@ -1984,6 +1995,7 @@ static bool uv_mesh_hide_sync_select(const ToolSettings *ts, Object *ob, BMEditM
 
 static wmOperatorStatus uv_hide_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Scene *scene = CTX_data_scene(C);
   const ToolSettings *ts = scene->toolsettings;
@@ -1992,7 +2004,7 @@ static wmOperatorStatus uv_hide_exec(bContext *C, wmOperator *op)
   const bool use_select_linked = ED_uvedit_select_island_check(ts);
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   for (Object *ob : objects) {
     BMEditMesh *em = BKE_editmesh_from_object(ob);
@@ -2144,6 +2156,7 @@ static void UV_OT_hide(wmOperatorType *ot)
 
 static wmOperatorStatus uv_reveal_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Scene *scene = CTX_data_scene(C);
   const ToolSettings *ts = scene->toolsettings;
@@ -2152,7 +2165,7 @@ static wmOperatorStatus uv_reveal_exec(bContext *C, wmOperator *op)
   const bool select = RNA_boolean_get(op->ptr, "select");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   for (Object *ob : objects) {
     BMEditMesh *em = BKE_editmesh_from_object(ob);
@@ -2360,6 +2373,7 @@ static void UV_OT_cursor_set(wmOperatorType *ot)
 
 static wmOperatorStatus uv_seams_from_islands_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const bool mark_seams = RNA_boolean_get(op->ptr, "mark_seams");
@@ -2367,7 +2381,7 @@ static wmOperatorStatus uv_seams_from_islands_exec(bContext *C, wmOperator *op)
   bool changed_multi = false;
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   for (Object *ob : objects) {
     Mesh *mesh = id_cast<Mesh *>(ob->data);
@@ -2457,6 +2471,7 @@ static void UV_OT_seams_from_islands(wmOperatorType *ot)
 
 static wmOperatorStatus uv_mark_seam_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const ToolSettings *ts = scene->toolsettings;
@@ -2469,7 +2484,7 @@ static wmOperatorStatus uv_mark_seam_exec(bContext *C, wmOperator *op)
   const bool synced_selection = (ts->uv_flag & UV_FLAG_SELECT_SYNC) != 0;
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   bool changed = false;
 
@@ -2678,10 +2693,11 @@ static bool uv_copy_mirrored_faces(
 
 static wmOperatorStatus uv_copy_mirrored_faces_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
   const int direction = RNA_enum_get(op->ptr, "direction");
   const int precision = RNA_int_get(op->ptr, "precision");
 

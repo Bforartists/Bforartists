@@ -28,67 +28,67 @@ static void node_declare(NodeDeclarationBuilder &b)
     node_storage(node).mode = GEO_NODE_CURVE_PRIMITIVE_ARC_TYPE_RADIUS;
   };
 
-  b.add_input<decl::Int>("Resolution")
+  b.add_input<decl::Int>("Resolution"_ustr)
       .default_value(16)
       .min(2)
       .max(256)
       .subtype(PROP_UNSIGNED)
       .description("The number of points on the arc");
-  auto &start = b.add_input<decl::Vector>("Start")
+  auto &start = b.add_input<decl::Vector>("Start"_ustr)
                     .default_value({-1.0f, 0.0f, 0.0f})
                     .subtype(PROP_TRANSLATION)
                     .description("Position of the first control point")
                     .make_available(enable_points);
-  auto &middle = b.add_input<decl::Vector>("Middle")
+  auto &middle = b.add_input<decl::Vector>("Middle"_ustr)
                      .default_value({0.0f, 2.0f, 0.0f})
                      .subtype(PROP_TRANSLATION)
                      .description("Position of the middle control point")
                      .make_available(enable_points);
-  auto &end = b.add_input<decl::Vector>("End")
+  auto &end = b.add_input<decl::Vector>("End"_ustr)
                   .default_value({1.0f, 0.0f, 0.0f})
                   .subtype(PROP_TRANSLATION)
                   .description("Position of the last control point")
                   .make_available(enable_points);
-  auto &radius = b.add_input<decl::Float>("Radius")
+  auto &radius = b.add_input<decl::Float>("Radius"_ustr)
                      .default_value(1.0f)
                      .min(0.0f)
                      .subtype(PROP_DISTANCE)
                      .description("Distance of the points from the origin")
                      .make_available(enable_radius);
-  auto &start_angle = b.add_input<decl::Float>("Start Angle")
+  auto &start_angle = b.add_input<decl::Float>("Start Angle"_ustr)
                           .default_value(0.0f)
                           .subtype(PROP_ANGLE)
                           .description("Starting angle of the arc")
                           .make_available(enable_radius);
-  auto &sweep_angle = b.add_input<decl::Float>("Sweep Angle")
+  auto &sweep_angle = b.add_input<decl::Float>("Sweep Angle"_ustr)
                           .default_value(1.75f * M_PI)
                           .min(-2 * M_PI)
                           .max(2 * M_PI)
                           .subtype(PROP_ANGLE)
                           .description("Length of the arc")
                           .make_available(enable_radius);
-  auto &offset_angle = b.add_input<decl::Float>("Offset Angle")
+  auto &offset_angle = b.add_input<decl::Float>("Offset Angle"_ustr)
                            .default_value(0.0f)
                            .subtype(PROP_ANGLE)
                            .description("Offset angle of the arc")
                            .make_available(enable_points);
-  b.add_input<decl::Bool>("Connect Center")
+  b.add_input<decl::Bool>("Connect Center"_ustr)
       .default_value(false)
       .description("Connect the arc at the center");
-  b.add_input<decl::Bool>("Invert Arc")
+  b.add_input<decl::Bool>("Invert Arc"_ustr)
       .default_value(false)
       .description("Invert and draw opposite arc");
 
-  b.add_output<decl::Geometry>("Curve");
-  auto &center_out = b.add_output<decl::Vector>("Center")
+  b.add_output<decl::Geometry>("Curve"_ustr);
+  auto &center_out = b.add_output<decl::Vector>("Center"_ustr)
                          .description("The center of the circle described by the three points")
                          .make_available(enable_points);
-  auto &normal_out = b.add_output<decl::Vector>("Normal")
+  auto &normal_out = b.add_output<decl::Vector>("Normal"_ustr)
                          .description(
                              "The normal direction of the plane described by the three points, "
                              "pointing towards the positive Z axis")
                          .make_available(enable_points);
-  auto &radius_out = b.add_output<decl::Float>("Radius")
+  auto &radius_out = b.add_output<decl::Float>("Radius"_ustr)
                          .description("The radius of the circle described by the three points")
                          .make_available(enable_points);
 
@@ -311,32 +311,32 @@ static void node_geo_exec(GeoNodeExecParams params)
       float3 center, normal;
       float radius;
       Curves *curves = create_arc_curve_from_points(
-          std::max(params.extract_input<int>("Resolution"), 2),
-          params.extract_input<float3>("Start"),
-          params.extract_input<float3>("Middle"),
-          params.extract_input<float3>("End"),
-          params.extract_input<float>("Offset Angle"),
-          params.extract_input<bool>("Connect Center"),
-          params.extract_input<bool>("Invert Arc"),
+          std::max(params.extract_input<int>("Resolution"_ustr), 2),
+          params.extract_input<float3>("Start"_ustr),
+          params.extract_input<float3>("Middle"_ustr),
+          params.extract_input<float3>("End"_ustr),
+          params.extract_input<float>("Offset Angle"_ustr),
+          params.extract_input<bool>("Connect Center"_ustr),
+          params.extract_input<bool>("Invert Arc"_ustr),
           center,
           normal,
           radius);
-      params.set_output("Curve", GeometrySet::from_curves(curves));
-      params.set_output("Center", center);
-      params.set_output("Normal", normal);
-      params.set_output("Radius", radius);
+      params.set_output("Curve"_ustr, GeometrySet::from_curves(curves));
+      params.set_output("Center"_ustr, center);
+      params.set_output("Normal"_ustr, normal);
+      params.set_output("Radius"_ustr, radius);
       break;
     }
     case GEO_NODE_CURVE_PRIMITIVE_ARC_TYPE_RADIUS: {
       Curves *curves = create_arc_curve_from_radius(
-          std::max(params.extract_input<int>("Resolution"), 2),
-          params.extract_input<float>("Radius"),
-          params.extract_input<float>("Start Angle"),
-          params.extract_input<float>("Sweep Angle"),
-          params.extract_input<bool>("Connect Center"),
-          params.extract_input<bool>("Invert Arc"));
+          std::max(params.extract_input<int>("Resolution"_ustr), 2),
+          params.extract_input<float>("Radius"_ustr),
+          params.extract_input<float>("Start Angle"_ustr),
+          params.extract_input<float>("Sweep Angle"_ustr),
+          params.extract_input<bool>("Connect Center"_ustr),
+          params.extract_input<bool>("Invert Arc"_ustr));
 
-      params.set_output("Curve", GeometrySet::from_curves(curves));
+      params.set_output("Curve"_ustr, GeometrySet::from_curves(curves));
       break;
     }
   }

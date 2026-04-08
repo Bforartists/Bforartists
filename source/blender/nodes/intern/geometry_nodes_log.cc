@@ -9,6 +9,7 @@
 
 #include "BLI_listbase.h"
 #include "BLI_stack.hh"
+#include "BLI_string.h"
 #include "BLI_string_ref.hh"
 #include "BLI_string_utf8.h"
 
@@ -70,32 +71,26 @@ StringLog::StringLog(StringRef string, LinearAllocator<> &allocator)
 
 FieldInfoLog::FieldInfoLog(const GField &field) : type(field.cpp_type())
 {
-  const std::shared_ptr<const fn::FieldInputs> &field_input_nodes = field.node().field_inputs();
+  const fn::FieldInputsPtr &field_inputs_ptr = field.field_inputs();
 
   /* Put the deduplicated field inputs into a vector so that they can be sorted below. */
   Vector<std::reference_wrapper<const FieldInput>> field_inputs;
-  if (field_input_nodes) {
-    field_inputs.extend(field_input_nodes->deduplicated_nodes.begin(),
-                        field_input_nodes->deduplicated_nodes.end());
+  if (field_inputs_ptr) {
+    field_inputs.extend(field_inputs_ptr->inputs.begin(), field_inputs_ptr->inputs.end());
   }
 
-  std::ranges::sort(field_inputs, [](const FieldInput &a, const FieldInput &b) {
-    const int index_a = int(a.category());
-    const int index_b = int(b.category());
-    if (index_a == index_b) {
-      return a.socket_inspection_name().size() < b.socket_inspection_name().size();
-    }
-    return index_a < index_b;
-  });
-
+  this->input_tooltips.reserve(field_inputs.size());
   for (const FieldInput &field_input : field_inputs) {
-    this->input_tooltips.append(field_input.socket_inspection_name());
+    input_tooltips.append(field_input.socket_inspection_name());
   }
+  std::ranges::sort(input_tooltips, [](const std::string &a, const std::string &b) {
+    return BLI_strcasecmp_natural(a.c_str(), b.c_str()) < 0;
+  });
 }
 
 GeometryInfoLog::GeometryInfoLog(const bke::GeometrySet &geometry_set)
 {
-  this->name = geometry_set.name;
+  this->name = geometry_set.name();
 
   static std::array all_component_types = {bke::GeometryComponent::Type::Curve,
                                            bke::GeometryComponent::Type::Instance,

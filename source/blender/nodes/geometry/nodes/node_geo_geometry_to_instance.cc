@@ -10,16 +10,16 @@ namespace blender::nodes::node_geo_geometry_to_instance_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .multi_input()
       .description("Each input geometry is turned into a separate instance");
-  b.add_output<decl::Geometry>("Instances").propagate_all();
+  b.add_output<decl::Geometry>("Instances"_ustr).propagate_all();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
   GeoNodesMultiInput<GeometrySet> geometries =
-      params.extract_input<GeoNodesMultiInput<GeometrySet>>("Geometry");
+      params.extract_input<GeoNodesMultiInput<GeometrySet>>("Geometry"_ustr);
   auto instances = std::make_unique<bke::Instances>(geometries.values.size());
 
   MutableSpan<int> handles = instances->reference_handles_for_write();
@@ -32,7 +32,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   instances->transforms_for_write().fill(float4x4::identity());
 
-  params.set_output("Instances", GeometrySet::from_instances(std::move(instances)));
+  params.set_output("Instances"_ustr, GeometrySet::from_instances(std::move(instances)));
 }
 
 static void node_register()

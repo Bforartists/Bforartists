@@ -273,7 +273,7 @@ static wmOperatorStatus palette_extract_img_exec(bContext *C, wmOperator *op)
 
   ibuf = BKE_image_acquire_ibuf(image, &iuser, &lock);
 
-  if (ibuf && ibuf->byte_buffer.data) {
+  if (ibuf && ibuf->byte_data()) {
     /* Extract all colors. */
     const int range = int(pow(10.0f, threshold));
     for (int row = 0; row < ibuf->y; row++) {
@@ -1092,7 +1092,7 @@ void ED_keymap_paint(wmKeyConfig *keyconf)
 
   /* Sculpt mode */
   keymap = WM_keymap_ensure(keyconf, "Sculpt", SPACE_EMPTY, RGN_TYPE_WINDOW);
-  keymap->poll = SCULPT_mode_poll;
+  keymap->poll = sculpt_mode_poll;
 
   /* Vertex Paint mode */
   keymap = WM_keymap_ensure(keyconf, "Vertex Paint", SPACE_EMPTY, RGN_TYPE_WINDOW);

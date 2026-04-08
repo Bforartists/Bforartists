@@ -10,8 +10,8 @@ namespace blender::nodes::node_geo_tool_face_set_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Face Set").field_source();
-  b.add_output<decl::Bool>("Exists").field_source();
+  b.add_output<decl::Int>("Face Set"_ustr).field_source();
+  b.add_output<decl::Bool>("Exists"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
@@ -19,8 +19,9 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (!check_tool_context_and_error(params)) {
     return;
   }
-  params.set_output("Face Set", bke::AttributeFieldInput::from<int>(".sculpt_face_set"));
-  params.set_output("Exists", bke::AttributeExistsFieldInput::from(".sculpt_face_set"));
+  params.set_output("Face Set"_ustr,
+                    bke::AttributeFieldInput::get_field<int, ".sculpt_face_set">());
+  params.set_output("Exists"_ustr, bke::AttributeExistsFieldInput::from(".sculpt_face_set"));
 }
 
 static void node_register()

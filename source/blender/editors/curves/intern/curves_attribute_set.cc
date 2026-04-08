@@ -136,6 +136,8 @@ static wmOperatorStatus set_attribute_exec(bContext *C, wmOperator *op)
     const GPointer dst_value(dst_type, dst_buffer);
     if (selection.size() == attributes.domain_size(meta_data->domain)) {
       if (attributes.assign_data(name, bke::AttributeInitValue(dst_value))) {
+        DEG_id_tag_update(&curves_id->id, ID_RECALC_GEOMETRY);
+        WM_event_add_notifier(C, NC_GEOM | ND_DATA, curves_id);
         continue;
       }
     }

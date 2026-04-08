@@ -14,7 +14,7 @@ SHADER_LIBRARY_CREATE_INFO(eevee_lightprobe_sphere_data)
 
 #include "eevee_lightprobe_sphere_mapping_lib.glsl"
 #include "eevee_octahedron_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 #include "gpu_shader_math_vector_lib.glsl"
 
 #ifdef SPHERE_PROBE
@@ -35,7 +35,7 @@ float4 lightprobe_spheres_sample(float3 L, float lod, SphereProbeUvArea uv_area)
 }
 #endif
 
-ReflectionProbeLowFreqLight lightprobe_spheres_extract_low_freq(SphericalHarmonicL1 sh)
+ReflectionProbeLowFreqLight lightprobe_spheres_extract_low_freq(SphericalHarmonicL1<float4> sh)
 {
   /* To avoid color shift and negative values, we reduce saturation and directionality. */
   ReflectionProbeLowFreqLight result;
@@ -54,7 +54,7 @@ ReflectionProbeLowFreqLight lightprobe_spheres_extract_low_freq(SphericalHarmoni
   return result;
 }
 
-float lightprobe_spheres_normalization_eval(float3 L,
+float lightprobe_spheres_normalization_eval(float3 /*L*/,
                                             ReflectionProbeLowFreqLight numerator,
                                             ReflectionProbeLowFreqLight denominator)
 {

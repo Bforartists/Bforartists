@@ -255,8 +255,10 @@ static bool clip_uv_transform_shear(const TransInfo *t, float *vec, float *vec_i
 static void apply_shear(TransInfo *t)
 {
   float value = t->values[0] + t->values_modal_offset[0];
-  transform_snap_increment(t, &value);
-  applyNumInput(&t->num, &value);
+  float angle = atanf(value);
+  transform_snap_increment(t, &angle);
+  applyNumInput(&t->num, &angle);
+  value = tanf(angle);
   t->values_final[0] = value;
 
   apply_shear_value(t, value);
@@ -282,7 +284,7 @@ static void apply_shear(TransInfo *t)
     SNPRINTF_UTF8(str, IFACE_("Shear: %s %s"), c, t->proptext);
   }
   else {
-    const float angle_deg = RAD2DEGF(atanf(value));
+    const float angle_deg = RAD2DEGF(angle);
     /* Default header print. */
     SNPRINTF_UTF8(str, IFACE_("Shear: %.3f° %s"), angle_deg, t->proptext);
   }
@@ -334,12 +336,12 @@ static void initShear(TransInfo *t, wmOperator *op)
 
   t->idx_max = 0;
   t->num.idx_max = 0;
-  t->increment[0] = 0.1f;
-  t->increment_precision = 0.1f;
+  initSnapAngleIncrements(t);
 
-  copy_v3_fl(t->num.val_inc, t->increment[0]);
+  copy_v3_fl(t->num.val_inc, t->increment[0] * t->increment_precision);
   t->num.unit_sys = t->scene->unit.system;
-  t->num.unit_type[0] = B_UNIT_NONE; /* Don't think we have any unit here? */
+  t->num.unit_use_radians = (t->scene->unit.system_rotation == USER_UNIT_ROT_RADIANS);
+  t->num.unit_type[0] = B_UNIT_ROTATION;
 
   ShearCustomData *custom_data = MEM_new_zeroed<ShearCustomData>(__func__);
   t->custom.mode.data = custom_data;

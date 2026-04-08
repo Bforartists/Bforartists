@@ -11,11 +11,11 @@ namespace blender::nodes::node_fn_quaternion_to_rotation_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("W").default_value(1.0f);
-  b.add_input<decl::Float>("X").default_value(0.0f);
-  b.add_input<decl::Float>("Y").default_value(0.0f);
-  b.add_input<decl::Float>("Z").default_value(0.0f);
-  b.add_output<decl::Rotation>("Rotation");
+  b.add_input<decl::Float>("W"_ustr).default_value(1.0f);
+  b.add_input<decl::Float>("X"_ustr).default_value(0.0f);
+  b.add_input<decl::Float>("Y"_ustr).default_value(0.0f);
+  b.add_input<decl::Float>("Z"_ustr).default_value(0.0f);
+  b.add_output<decl::Rotation>("Rotation"_ustr);
 };
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

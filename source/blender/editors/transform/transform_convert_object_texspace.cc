@@ -41,7 +41,7 @@ static void createTransTexspace(bContext * /*C*/, TransInfo *t)
   ID *id;
   char *texspace_flag;
 
-  BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+  BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
   ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ob == nullptr) { /* Shouldn't logically happen, but still. */

@@ -151,7 +151,7 @@ static void SCULPT_OT_set_persistent_base(wmOperatorType *ot)
   ot->description = "Reset the copy of the mesh that is being sculpted on";
 
   ot->exec = set_persistent_base_exec;
-  ot->poll = SCULPT_mode_poll;
+  ot->poll = sculpt_mode_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
@@ -185,7 +185,7 @@ static void SCULPT_OT_optimize(wmOperatorType *ot)
   ot->description = "Recalculate the sculpt BVH to improve performance";
 
   ot->exec = optimize_exec;
-  ot->poll = SCULPT_mode_poll;
+  ot->poll = sculpt_mode_poll;
 
   ot->flag = OPTYPE_REGISTER;
 }
@@ -206,7 +206,7 @@ static bool no_multires_poll(bContext *C)
     return false;
   }
   const bke::pbvh::Tree *pbvh = bke::object::pbvh_get(*ob);
-  if (SCULPT_mode_poll(C) && ob->runtime->sculpt_session && pbvh) {
+  if (sculpt_mode_poll(C) && ob->runtime->sculpt_session && pbvh) {
     return pbvh->type() != bke::pbvh::Type::Grids;
   }
   return false;
@@ -412,7 +412,7 @@ void object_sculpt_mode_enter(Main &bmain,
   Paint *paint = BKE_paint_get_active_from_paintmode(&scene, PaintMode::Sculpt);
   BKE_paint_init(&bmain, &scene, PaintMode::Sculpt);
 
-  ED_paint_cursor_start(paint, SCULPT_brush_cursor_poll);
+  ED_paint_cursor_start(paint, brush_cursor_poll);
 
   /* Check dynamic-topology flag; re-enter dynamic-topology mode when changing modes,
    * As long as no data was added that is not supported. */
@@ -476,7 +476,7 @@ void object_sculpt_mode_enter(bContext *C, Depsgraph &depsgraph, ReportList *rep
   Main &bmain = *CTX_data_main(C);
   Scene &scene = *CTX_data_scene(C);
   ViewLayer &view_layer = *CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(&scene, &view_layer);
+  BKE_view_layer_synced_ensure(bmain, &scene, &view_layer);
   Object &ob = *BKE_view_layer_active_object_get(&view_layer);
   object_sculpt_mode_enter(bmain, depsgraph, scene, ob, false, reports);
 }
@@ -532,7 +532,7 @@ void object_sculpt_mode_exit(bContext *C, Depsgraph &depsgraph)
   Main &bmain = *CTX_data_main(C);
   Scene &scene = *CTX_data_scene(C);
   ViewLayer &view_layer = *CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(&scene, &view_layer);
+  BKE_view_layer_synced_ensure(bmain, &scene, &view_layer);
   Object &ob = *BKE_view_layer_active_object_get(&view_layer);
   object_sculpt_mode_exit(bmain, depsgraph, scene, ob);
 }
@@ -545,7 +545,7 @@ static wmOperatorStatus sculpt_mode_toggle_exec(bContext *C, wmOperator *op)
   Scene &scene = *CTX_data_scene(C);
   ToolSettings &ts = *scene.toolsettings;
   ViewLayer &view_layer = *CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(&scene, &view_layer);
+  BKE_view_layer_synced_ensure(bmain, &scene, &view_layer);
   Object &ob = *BKE_view_layer_active_object_get(&view_layer);
   const int mode_flag = OB_MODE_SCULPT;
   const bool is_mode_set = (ob.mode & mode_flag) != 0;
@@ -813,7 +813,7 @@ static void SCULPT_OT_mask_by_color(wmOperatorType *ot)
 
   ot->invoke = mask_by_color_invoke;
   ot->exec = mask_by_color_exec;
-  ot->poll = SCULPT_mode_poll;
+  ot->poll = sculpt_mode_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_DEPENDS_ON_CURSOR;
 
@@ -1213,7 +1213,7 @@ static wmOperatorStatus mask_from_cavity_exec(bContext *C, wmOperator *op)
 
   pbvh.tag_masks_changed(node_mask);
   flush_update_done(C, ob, UpdateType::Mask);
-  SCULPT_tag_update_overlays(C);
+  tag_update_overlays(C);
 
   return OPERATOR_FINISHED;
 }
@@ -1272,7 +1272,7 @@ static void SCULPT_OT_mask_from_cavity(wmOperatorType *ot)
 
   ot->ui = mask_from_cavity_ui;
   ot->exec = mask_from_cavity_exec;
-  ot->poll = SCULPT_mode_poll;
+  ot->poll = sculpt_mode_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -1404,7 +1404,7 @@ static wmOperatorStatus mask_from_boundary_exec(bContext *C, wmOperator *op)
 
   pbvh.tag_masks_changed(node_mask);
   flush_update_done(C, ob, UpdateType::Mask);
-  SCULPT_tag_update_overlays(C);
+  tag_update_overlays(C);
 
   return OPERATOR_FINISHED;
 }
@@ -1447,7 +1447,7 @@ static void SCULPT_OT_mask_from_boundary(wmOperatorType *ot)
 
   ot->ui = mask_from_boundary_ui;
   ot->exec = mask_from_boundary_exec;
-  ot->poll = SCULPT_mode_poll;
+  ot->poll = sculpt_mode_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 

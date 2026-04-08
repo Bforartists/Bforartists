@@ -151,18 +151,20 @@ static void apply_effect_op(const OpT &op, const ImBuf *src1, const ImBuf *src2,
                  "Sequencer only supports 4 channel images");
   BLI_assert_msg(dst->channels == 0 || dst->channels == 4,
                  "Sequencer only supports 4 channel images");
+  float *dst_float_data = dst->float_data_for_write();
+  uchar *dst_byte_data = dst->byte_data_for_write();
   threading::parallel_for(IndexRange(size_t(dst->x) * dst->y), 32 * 1024, [&](IndexRange range) {
     int64_t offset = range.first() * 4;
-    if (dst->float_buffer.data) {
-      const float *src1_ptr = src1->float_buffer.data + offset;
-      const float *src2_ptr = src2->float_buffer.data + offset;
-      float *dst_ptr = dst->float_buffer.data + offset;
+    if (dst_float_data) {
+      const float *src1_ptr = src1->float_data() + offset;
+      const float *src2_ptr = src2->float_data() + offset;
+      float *dst_ptr = dst_float_data + offset;
       op.apply(src1_ptr, src2_ptr, dst_ptr, range.size());
     }
     else {
-      const uchar *src1_ptr = src1->byte_buffer.data + offset;
-      const uchar *src2_ptr = src2->byte_buffer.data + offset;
-      uchar *dst_ptr = dst->byte_buffer.data + offset;
+      const uchar *src1_ptr = src1->byte_data() + offset;
+      const uchar *src2_ptr = src2->byte_data() + offset;
+      uchar *dst_ptr = dst_byte_data + offset;
       op.apply(src1_ptr, src2_ptr, dst_ptr, range.size());
     }
   });

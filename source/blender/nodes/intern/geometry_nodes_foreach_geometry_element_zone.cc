@@ -157,8 +157,8 @@ class ForeachGeometryElementNodeExecuteWrapper : public lf::GraphExecutorNodeExe
         user_data.compute_context, *output_bnode_, index};
     GeoNodesUserData body_user_data = user_data;
     body_user_data.compute_context = &body_compute_context;
-    body_user_data.log_socket_values = should_log_socket_values_for_context(
-        user_data, body_compute_context.hash());
+    body_user_data.verbose_log = should_log_verbose_in_context(user_data,
+                                                               body_compute_context.hash());
 
     GeoNodesLocalUserData body_local_user_data{body_user_data};
     lf::Context body_context{context.storage, &body_user_data, &body_local_user_data};
@@ -918,12 +918,12 @@ void LazyFunctionForReduceForeachGeometryElement::handle_main_items_and_geometry
     }
 
     /* Output the field for the anonymous attribute. */
-    auto attribute_field = std::make_shared<bke::AttributeFieldInput>(
+    auto attribute_field = bke::AttributeFieldInput::from(
         attribute_name,
         *base_cpp_type,
         make_anonymous_attribute_socket_inspection_string(
             parent_.output_bnode_.output_socket(parent_.indices_.main.bsocket_outer[item_i])));
-    params.set_output(1 + item_i, SocketValueVariant::From(GField(std::move(attribute_field))));
+    params.set_output(1 + item_i, SocketValueVariant::From(std::move(attribute_field)));
   }
 
   /* Output the original geometry with potentially additional attributes. */
@@ -1185,13 +1185,13 @@ void LazyFunctionForReduceForeachGeometryElement::handle_generation_items_group(
     const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
     const CPPType &base_cpp_type = *bke::socket_type_to_geo_nodes_base_cpp_type(socket_type);
     const StringRef attribute_name = attribute_names[local_item_i];
-    auto attribute_field = std::make_shared<bke::AttributeFieldInput>(
+    auto attribute_field = bke::AttributeFieldInput::from(
         attribute_name,
         base_cpp_type,
         make_anonymous_attribute_socket_inspection_string(
             parent_.output_bnode_.output_socket(2 + node_storage.main_items.items_num + item_i)));
     params.set_output(parent_.indices_.generation.lf_outer[item_i],
-                      bke::SocketValueVariant::From(GField(std::move(attribute_field))));
+                      bke::SocketValueVariant::From(std::move(attribute_field)));
   }
 }
 

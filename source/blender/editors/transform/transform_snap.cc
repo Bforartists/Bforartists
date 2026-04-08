@@ -777,7 +777,7 @@ static eSnapTargetOP snap_target_select_from_spacetype_and_tool_settings(TransIn
   eSnapTargetOP target_operation = SCE_SNAP_TARGET_ALL;
 
   if (ELEM(t->spacetype, SPACE_VIEW3D, SPACE_IMAGE) && !(t->options & CTX_CAMERA)) {
-    BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+    BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
     Base *base_act = BKE_view_layer_active_base_get(t->view_layer);
     const int obedit_type = t->obedit_type;
     if (base_act && (base_act->object->mode & OB_MODE_PARTICLE_EDIT)) {
@@ -1039,7 +1039,7 @@ void initSnapping(TransInfo *t, wmOperator *op)
   }
   else if (t->spacetype == SPACE_SEQ) {
     if (t->tsnap.seq_context == nullptr) {
-      t->tsnap.seq_context = snap_sequencer_data_alloc(t);
+      t->tsnap.seq_context = snap_sequencer_data_build(t);
     }
   }
 
@@ -1098,7 +1098,7 @@ static void setSnappingCallback(TransInfo *t)
   }
   else if (t->spacetype == SPACE_IMAGE) {
     SpaceImage *sima = static_cast<SpaceImage *>(t->area->spacedata.first);
-    BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+    BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
     Object *obact = BKE_view_layer_active_object_get(t->view_layer);
 
     const bool is_uv_editor = sima->mode == SI_MODE_UV;
@@ -1352,7 +1352,7 @@ static void snap_target_uv_fn(TransInfo *t, float * /*vec*/)
   if (t->tsnap.mode & SCE_SNAP_TO_VERTEX) {
     const Vector<Object *> objects =
         BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-            t->scene, t->view_layer, nullptr);
+            *t->bmain, t->scene, t->view_layer, nullptr);
 
     float dist_sq = square_f(float(SNAP_MIN_DISTANCE));
     if (ED_uvedit_nearest_uv_multi(&t->region->v2d,

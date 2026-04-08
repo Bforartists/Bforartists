@@ -18,21 +18,28 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({0.8f, 0.8f, 0.8f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Color>("Bokeh")
+  b.add_input<decl::Color>("Bokeh"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .compositor_realization_mode(CompositorInputRealizationMode::Transforms)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Float>("Size").default_value(0.0f).min(0.0f).structure_type(
-      StructureType::Dynamic);
-  b.add_input<decl::Float>("Mask").default_value(1.0f).min(0.0f).max(1.0f).structure_type(
-      StructureType::Dynamic);
-  b.add_input<decl::Bool>("Extend Bounds").default_value(false);
+  b.add_input<decl::Float>("Size"_ustr)
+      .default_value(0.0f)
+      .min(0.0f)
+      .structure_type(StructureType::Dynamic);
+  b.add_input<decl::Float>("Mask"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .max(1.0f)
+      .structure_type(StructureType::Dynamic);
+  b.add_input<decl::Bool>("Extend Bounds"_ustr).default_value(false);
 }
 
 using namespace blender::compositor;

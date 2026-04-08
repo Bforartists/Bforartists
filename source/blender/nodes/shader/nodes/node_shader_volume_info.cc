@@ -10,10 +10,10 @@ namespace nodes::node_shader_volume_info_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>("Color");
-  b.add_output<decl::Float>("Density");
-  b.add_output<decl::Float>("Flame");
-  b.add_output<decl::Float>("Temperature");
+  b.add_output<decl::Color>("Color"_ustr);
+  b.add_output<decl::Float>("Density"_ustr);
+  b.add_output<decl::Float>("Flame"_ustr);
+  b.add_output<decl::Float>("Temperature"_ustr);
 }
 
 static int node_shader_gpu_volume_info(GPUMaterial *mat,

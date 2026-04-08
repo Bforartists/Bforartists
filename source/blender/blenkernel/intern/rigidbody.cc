@@ -1463,7 +1463,7 @@ void BKE_rigidbody_ensure_local_object(Main *bmain, Object *ob)
     for (Scene *scene = static_cast<Scene *>(bmain->scenes.first); scene;
          scene = static_cast<Scene *>(scene->id.next))
     {
-      if (BKE_scene_object_find(scene, ob)) {
+      if (BKE_scene_object_find(*bmain, scene, ob)) {
         rigidbody_add_object_to_scene(bmain, scene, ob);
       }
     }
@@ -1473,7 +1473,7 @@ void BKE_rigidbody_ensure_local_object(Main *bmain, Object *ob)
     for (Scene *scene = static_cast<Scene *>(bmain->scenes.first); scene;
          scene = static_cast<Scene *>(scene->id.next))
     {
-      if (BKE_scene_object_find(scene, ob)) {
+      if (BKE_scene_object_find(*bmain, scene, ob)) {
         rigidbody_add_constraint_to_scene(bmain, scene, ob);
       }
     }
@@ -1672,7 +1672,7 @@ static void rigidbody_update_sim_ob(Depsgraph *depsgraph, Object *ob, RigidBodyO
 
   const Scene *scene = DEG_get_input_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*DEG_get_bmain(depsgraph), scene, view_layer);
   Base *base = BKE_view_layer_base_find(view_layer, ob);
   const bool is_selected = base ? (base->flag & BASE_SELECTED) != 0 : false;
 
@@ -2030,7 +2030,7 @@ static void rigidbody_update_simulation_post_step(Depsgraph *depsgraph, RigidBod
 {
   const Scene *scene = DEG_get_input_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*DEG_get_bmain(depsgraph), scene, view_layer);
 
   FOREACH_COLLECTION_OBJECT_RECURSIVE_BEGIN (rbw->group, ob) {
     Base *base = BKE_view_layer_base_find(view_layer, ob);

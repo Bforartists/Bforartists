@@ -531,8 +531,8 @@ static PyObject *py_blf_bind_imbuf_enter(BPyBLFImBufContext *self)
     return nullptr;
   }
   BLF_buffer(self->fontid,
-             ibuf->float_buffer.data,
-             ibuf->byte_buffer.data,
+             ibuf->float_data_for_write(),
+             ibuf->byte_data_for_write(),
              ibuf->x,
              ibuf->y,
              ibuf->byte_buffer.colorspace);

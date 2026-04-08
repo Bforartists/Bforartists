@@ -198,7 +198,6 @@ std::optional<Bounds<float3>> view3d_calc_minmax_visible(Depsgraph *depsgraph,
 
   const View3D *v3d = static_cast<View3D *>(area->spacedata.first);
   const RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-  Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
 
   float3 min, max;
@@ -210,7 +209,9 @@ std::optional<Bounds<float3>> view3d_calc_minmax_visible(Depsgraph *depsgraph,
                             /* any one of the regions may be locked */
                             (use_all_regions && v3d->flag2 & V3D_LOCK_CAMERA));
 
-  BKE_view_layer_synced_ensure(scene_eval, view_layer_eval);
+  /* Evaluated view layers should always be in sync with the evaluated scene and its collections.
+   */
+  BLI_assert(BKE_view_layer_is_synced(*view_layer_eval));
   for (Base &base_eval : *BKE_view_layer_object_bases_get(view_layer_eval)) {
     if (BASE_VISIBLE(v3d, &base_eval)) {
       bool only_center = false;
@@ -255,7 +256,8 @@ std::optional<Bounds<float3>> view3d_calc_minmax_selected(Depsgraph *depsgraph,
   const Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
 
-  BKE_view_layer_synced_ensure(scene_eval, view_layer_eval);
+  /* NOTE: evaluated data is _always_ expected to have up-to-date view-layers/collections data. */
+  BLI_assert(BKE_view_layer_is_synced(*view_layer_eval));
   Object *ob_eval = BKE_view_layer_active_object_get(view_layer_eval);
   Object *obedit = OBEDIT_FROM_OBACT(ob_eval);
   const bool is_face_map = (region->runtime->gizmo_map &&
@@ -296,21 +298,24 @@ std::optional<Bounds<float3>> view3d_calc_minmax_selected(Depsgraph *depsgraph,
     }
   }
 
+  constexpr Main *null_bmain = nullptr;
   if (is_face_map) {
     changed = WM_gizmomap_minmax(region->runtime->gizmo_map, true, true, min, max);
   }
   else if (obedit) {
     /* only selected */
     FOREACH_OBJECT_IN_MODE_BEGIN (
-        scene_eval, view_layer_eval, v3d, obedit->type, obedit->mode, ob_eval_iter)
+        null_bmain, scene_eval, view_layer_eval, v3d, obedit->type, obedit->mode, ob_eval_iter)
     {
       changed |= ED_view3d_minmax_verts(scene_eval, ob_eval_iter, min, max);
     }
     FOREACH_OBJECT_IN_MODE_END;
   }
   else if (ob_eval && (ob_eval->mode & OB_MODE_POSE)) {
+    /* NOTE: Passing `bmain` here because this iterator ensures that view-layers are in sync.
+     * We already assert about it in code above. */
     FOREACH_OBJECT_IN_MODE_BEGIN (
-        scene_eval, view_layer_eval, v3d, ob_eval->type, ob_eval->mode, ob_eval_iter)
+        null_bmain, scene_eval, view_layer_eval, v3d, ob_eval->type, ob_eval->mode, ob_eval_iter)
     {
       const std::optional<Bounds<float3>> bounds = BKE_pose_minmax(ob_eval_iter, true);
       if (bounds) {
@@ -330,8 +335,10 @@ std::optional<Bounds<float3>> view3d_calc_minmax_selected(Depsgraph *depsgraph,
     changed = PE_minmax(depsgraph, scene, view_layer, min, max);
   }
   else if (ob_eval && (ob_eval->mode & OB_MODE_SCULPT_CURVES)) {
+    /* NOTE: Passing `bmain` here because this iterator ensures that view-layers are in sync.
+     * We already assert about it in code above. */
     FOREACH_OBJECT_IN_MODE_BEGIN (
-        scene_eval, view_layer_eval, v3d, ob_eval->type, ob_eval->mode, ob_eval_iter)
+        null_bmain, scene_eval, view_layer_eval, v3d, ob_eval->type, ob_eval->mode, ob_eval_iter)
     {
       changed |= ED_view3d_minmax_verts(scene_eval, ob_eval_iter, min, max);
     }

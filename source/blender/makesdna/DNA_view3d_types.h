@@ -54,6 +54,7 @@ enum {
   V3D_FLAG_UNUSED_2 = 1 << 3, /* cleared */
   V3D_XR_SESSION_MIRROR = 1 << 4,
   V3D_XR_SESSION_SURFACE = 1 << 5,
+  V3D_CUSTOM_MATRIX = 1 << 6,
 
   V3D_FLAG_UNUSED_10 = 1 << 10, /* cleared */
   V3D_SELECT_OUTLINE = 1 << 11,

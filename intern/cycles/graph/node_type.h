@@ -134,10 +134,9 @@ struct NodeType {
                        Type type = NONE,
                        const NodeType *base = nullptr);
   static const NodeType *find(ustring name);
+  static vector<ustring> type_names();
 
- private:
-  static unordered_map<ustring, NodeType> &types();
-  static thread_mutex types_mutex_;
+  static bool register_on_init(const NodeType *(*init_func)());
 };
 
 /* Node Definition Macros
@@ -155,6 +154,8 @@ struct NodeType {
 #define NODE_DEFINE(structname) \
   const NodeType *structname::node_type_ = nullptr; \
   thread_mutex structname::node_type_mutex_; \
+  static bool structname##_register_on_init = NodeType::register_on_init( \
+      structname::get_node_type); \
   unique_ptr<Node> structname::create(const NodeType *) \
   { \
     return make_unique<structname>(); \

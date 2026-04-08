@@ -550,7 +550,8 @@ static bool fluid_modifier_init(
 }
 
 /* Forward declarations. */
-static void manta_smoke_calc_transparency(FluidDomainSettings *fds,
+static void manta_smoke_calc_transparency(const Main &bmain,
+                                          FluidDomainSettings *fds,
                                           Scene *scene,
                                           ViewLayer *view_layer);
 static float calc_voxel_transp(
@@ -562,12 +563,12 @@ static void update_distances(int index,
                              float surface_thickness,
                              bool use_plane_init);
 
-static int get_light(Scene *scene, ViewLayer *view_layer, float *light)
+static int get_light(const Main &bmain, Scene *scene, ViewLayer *view_layer, float *light)
 {
   int found_light = 0;
 
   /* Try to find a lamp, preferably local. */
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   for (Base &base_tmp : *BKE_view_layer_object_bases_get(view_layer)) {
     if (base_tmp.object->type == OB_LAMP) {
       Light *la = id_cast<Light *>(base_tmp.object->data);
@@ -3548,8 +3549,10 @@ static int manta_step(
 
   /* Compute shadow grid for gas simulations. Make sure to skip if bake job was canceled early. */
   if (fds->type == FLUID_DOMAIN_TYPE_GAS && result) {
-    manta_smoke_calc_transparency(
-        fds, DEG_get_evaluated_scene(depsgraph), DEG_get_evaluated_view_layer(depsgraph));
+    manta_smoke_calc_transparency(*DEG_get_bmain(depsgraph),
+                                  fds,
+                                  DEG_get_evaluated_scene(depsgraph),
+                                  DEG_get_evaluated_view_layer(depsgraph));
   }
 
   return result;
@@ -4249,7 +4252,8 @@ static void bresenham_linie_3D(int x1,
   cb(result, input, res, pixel, t_ray, correct);
 }
 
-static void manta_smoke_calc_transparency(FluidDomainSettings *fds,
+static void manta_smoke_calc_transparency(const Main &bmain,
+                                          FluidDomainSettings *fds,
                                           Scene *scene,
                                           ViewLayer *view_layer)
 {
@@ -4260,7 +4264,7 @@ static void manta_smoke_calc_transparency(FluidDomainSettings *fds,
   float *shadow = manta_smoke_get_shadow(fds->fluid);
   float correct = -7.0f * fds->dx;
 
-  if (!get_light(scene, view_layer, light)) {
+  if (!get_light(bmain, scene, view_layer, light)) {
     return;
   }
 

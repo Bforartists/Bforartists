@@ -16,7 +16,7 @@ float2 proj(float4 pos)
   return (0.5f * (pos.xy / pos.w) + 0.5f) * uniform_buf.size_viewport;
 }
 
-float2 compute_dir(float2 v0, float2 v1, float2 v2)
+float2 compute_dir(float2 v0, float2 /*v1*/, float2 v2)
 {
   float2 dir = normalize(v2 - v0);
   dir = float2(dir.y, -dir.x);

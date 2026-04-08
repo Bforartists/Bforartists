@@ -91,7 +91,7 @@ static void gizmo_axis_draw(const bContext *C, wmGizmo *gz)
   float matrix_unit[4][4];
   unit_m4(matrix_unit);
 
-  WM_GizmoMatrixParams params{};
+  wmGizmoMatrixParams params{};
   params.matrix_offset = matrix_unit;
   WM_gizmo_calc_matrix_final_params(gz, &params, matrix_screen);
   GPU_matrix_push();
@@ -357,12 +357,18 @@ static bool gizmo_axis_screen_bounds_get(const bContext *C, wmGizmo *gz, rcti *r
   return true;
 }
 
+static void gizmo_axis_setup(wmGizmo *gz)
+{
+  WM_gizmo_set_flag(gz, WM_GIZMO_NO_GROUPING, true);
+}
+
 void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
 {
   /* identifiers */
   gzt->idname = "VIEW3D_GT_navigate_rotate";
 
   /* API callbacks. */
+  gzt->setup = gizmo_axis_setup;
   gzt->draw = gizmo_axis_draw;
   gzt->test_select = gizmo_axis_test_select;
   gzt->cursor_get = gizmo_axis_cursor_get;

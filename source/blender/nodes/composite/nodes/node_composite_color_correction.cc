@@ -26,37 +26,37 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
-  b.add_output<decl::Color>("Image").align_with_previous();
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image"_ustr).align_with_previous();
 
-  b.add_input<decl::Float>("Mask").default_value(1.0f).min(0.0f).max(1.0f);
+  b.add_input<decl::Float>("Mask"_ustr).default_value(1.0f).min(0.0f).max(1.0f);
 
   PanelDeclarationBuilder &master_panel = b.add_panel("Master"_ustr).default_closed(true);
-  master_panel.add_input<decl::Float>("Saturation", "Master Saturation")
+  master_panel.add_input<decl::Float>("Saturation"_ustr, "Master Saturation"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the saturation of the entire image");
-  master_panel.add_input<decl::Float>("Contrast", "Master Contrast")
+  master_panel.add_input<decl::Float>("Contrast"_ustr, "Master Contrast"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the contrast of the entire image");
-  master_panel.add_input<decl::Float>("Gamma", "Master Gamma")
+  master_panel.add_input<decl::Float>("Gamma"_ustr, "Master Gamma"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gamma of the entire image");
-  master_panel.add_input<decl::Float>("Gain", "Master Gain")
+  master_panel.add_input<decl::Float>("Gain"_ustr, "Master Gain"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gain of the entire image");
-  master_panel.add_input<decl::Float>("Offset", "Master Offset")
+  master_panel.add_input<decl::Float>("Offset"_ustr, "Master Offset"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(-1.0f)
@@ -64,31 +64,31 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description("Controls the offset of the entire image");
 
   PanelDeclarationBuilder &highlights_panel = b.add_panel("Highlights"_ustr).default_closed(true);
-  highlights_panel.add_input<decl::Float>("Saturation", "Highlights Saturation")
+  highlights_panel.add_input<decl::Float>("Saturation"_ustr, "Highlights Saturation"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the saturation of the highlights");
-  highlights_panel.add_input<decl::Float>("Contrast", "Highlights Contrast")
+  highlights_panel.add_input<decl::Float>("Contrast"_ustr, "Highlights Contrast"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the contrast of the highlights");
-  highlights_panel.add_input<decl::Float>("Gamma", "Highlights Gamma")
+  highlights_panel.add_input<decl::Float>("Gamma"_ustr, "Highlights Gamma"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gamma of the highlights");
-  highlights_panel.add_input<decl::Float>("Gain", "Highlights Gain")
+  highlights_panel.add_input<decl::Float>("Gain"_ustr, "Highlights Gain"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gain of the highlights");
-  highlights_panel.add_input<decl::Float>("Offset", "Highlights Offset")
+  highlights_panel.add_input<decl::Float>("Offset"_ustr, "Highlights Offset"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(-1.0f)
@@ -96,31 +96,31 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description("Controls the offset of the highlights");
 
   PanelDeclarationBuilder &midtones_panel = b.add_panel("Midtones"_ustr).default_closed(true);
-  midtones_panel.add_input<decl::Float>("Saturation", "Midtones Saturation")
+  midtones_panel.add_input<decl::Float>("Saturation"_ustr, "Midtones Saturation"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the saturation of the midtones");
-  midtones_panel.add_input<decl::Float>("Contrast", "Midtones Contrast")
+  midtones_panel.add_input<decl::Float>("Contrast"_ustr, "Midtones Contrast"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the contrast of the midtones");
-  midtones_panel.add_input<decl::Float>("Gamma", "Midtones Gamma")
+  midtones_panel.add_input<decl::Float>("Gamma"_ustr, "Midtones Gamma"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gamma of the midtones");
-  midtones_panel.add_input<decl::Float>("Gain", "Midtones Gain")
+  midtones_panel.add_input<decl::Float>("Gain"_ustr, "Midtones Gain"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gain of the midtones");
-  midtones_panel.add_input<decl::Float>("Offset", "Midtones Offset")
+  midtones_panel.add_input<decl::Float>("Offset"_ustr, "Midtones Offset"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(-1.0f)
@@ -128,31 +128,31 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description("Controls the offset of the midtones");
 
   PanelDeclarationBuilder &shadows_panel = b.add_panel("Shadows"_ustr).default_closed(true);
-  shadows_panel.add_input<decl::Float>("Saturation", "Shadows Saturation")
+  shadows_panel.add_input<decl::Float>("Saturation"_ustr, "Shadows Saturation"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the saturation of the shadows");
-  shadows_panel.add_input<decl::Float>("Contrast", "Shadows Contrast")
+  shadows_panel.add_input<decl::Float>("Contrast"_ustr, "Shadows Contrast"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the contrast of the shadows");
-  shadows_panel.add_input<decl::Float>("Gamma", "Shadows Gamma")
+  shadows_panel.add_input<decl::Float>("Gamma"_ustr, "Shadows Gamma"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gamma of the shadows");
-  shadows_panel.add_input<decl::Float>("Gain", "Shadows Gain")
+  shadows_panel.add_input<decl::Float>("Gain"_ustr, "Shadows Gain"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(4.0f)
       .description("Controls the gain of the shadows");
-  shadows_panel.add_input<decl::Float>("Offset", "Shadows Offset")
+  shadows_panel.add_input<decl::Float>("Offset"_ustr, "Shadows Offset"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(-1.0f)
@@ -161,14 +161,14 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   PanelDeclarationBuilder &tonal_range_panel =
       b.add_panel("Tonal Range"_ustr).default_closed(true);
-  tonal_range_panel.add_input<decl::Float>("Midtones Start")
+  tonal_range_panel.add_input<decl::Float>("Midtones Start"_ustr)
       .default_value(0.2f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(1.0f)
       .description(
           "Specifies the luminance at which the midtones of the image start and the shadows end");
-  tonal_range_panel.add_input<decl::Float>("Midtones End")
+  tonal_range_panel.add_input<decl::Float>("Midtones End"_ustr)
       .default_value(0.7f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -178,13 +178,13 @@ static void node_declare(NodeDeclarationBuilder &b)
           "start");
 
   PanelDeclarationBuilder &tone_range_panel = b.add_panel("Channels"_ustr).default_closed(true);
-  tone_range_panel.add_input<decl::Bool>("Red", "Apply On Red")
+  tone_range_panel.add_input<decl::Bool>("Red"_ustr, "Apply On Red"_ustr)
       .default_value(true)
       .description("If true, the correction will be applied on the red channel");
-  tone_range_panel.add_input<decl::Bool>("Green", "Apply On Green")
+  tone_range_panel.add_input<decl::Bool>("Green"_ustr, "Apply On Green"_ustr)
       .default_value(true)
       .description("If true, the correction will be applied on the green channel");
-  tone_range_panel.add_input<decl::Bool>("Blue", "Apply On Blue")
+  tone_range_panel.add_input<decl::Bool>("Blue"_ustr, "Apply On Blue"_ustr)
       .default_value(true)
       .description("If true, the correction will be applied on the blue channel");
 }

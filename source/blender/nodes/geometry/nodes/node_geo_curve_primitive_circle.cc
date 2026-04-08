@@ -26,40 +26,40 @@ static void node_declare(NodeDeclarationBuilder &b)
     node_storage(node).mode = GEO_NODE_CURVE_PRIMITIVE_CIRCLE_TYPE_RADIUS;
   };
 
-  b.add_input<decl::Int>("Resolution")
+  b.add_input<decl::Int>("Resolution"_ustr)
       .default_value(32)
       .min(3)
       .max(512)
       .description("Number of points on the circle");
-  auto &start = b.add_input<decl::Vector>("Point 1")
+  auto &start = b.add_input<decl::Vector>("Point 1"_ustr)
                     .default_value({-1.0f, 0.0f, 0.0f})
                     .subtype(PROP_TRANSLATION)
                     .description(
                         "One of the three points on the circle. The point order determines the "
                         "circle's direction")
                     .make_available(endable_points);
-  auto &middle = b.add_input<decl::Vector>("Point 2")
+  auto &middle = b.add_input<decl::Vector>("Point 2"_ustr)
                      .default_value({0.0f, 1.0f, 0.0f})
                      .subtype(PROP_TRANSLATION)
                      .description(
                          "One of the three points on the circle. The point order determines the "
                          "circle's direction")
                      .make_available(endable_points);
-  auto &end = b.add_input<decl::Vector>("Point 3")
+  auto &end = b.add_input<decl::Vector>("Point 3"_ustr)
                   .default_value({1.0f, 0.0f, 0.0f})
                   .subtype(PROP_TRANSLATION)
                   .description(
                       "One of the three points on the circle. The point order determines the "
                       "circle's direction")
                   .make_available(endable_points);
-  auto &radius = b.add_input<decl::Float>("Radius")
+  auto &radius = b.add_input<decl::Float>("Radius"_ustr)
                      .default_value(1.0f)
                      .min(0.0f)
                      .subtype(PROP_DISTANCE)
                      .description("Distance of the points from the origin")
                      .make_available(enable_radius);
-  b.add_output<decl::Geometry>("Curve");
-  auto &center = b.add_output<decl::Vector>("Center").make_available(endable_points);
+  b.add_output<decl::Geometry>("Curve"_ustr);
+  auto &center = b.add_output<decl::Vector>("Center"_ustr).make_available(endable_points);
 
   const bNode *node = b.node_or_null();
   if (node != nullptr) {
@@ -183,20 +183,20 @@ static void node_geo_exec(GeoNodeExecParams params)
   Curves *curves = nullptr;
   if (mode == GEO_NODE_CURVE_PRIMITIVE_CIRCLE_TYPE_POINTS) {
     float3 center_point;
-    curves = create_point_circle_curve(params.extract_input<float3>("Point 1"),
-                                       params.extract_input<float3>("Point 2"),
-                                       params.extract_input<float3>("Point 3"),
-                                       std::max(params.extract_input<int>("Resolution"), 3),
+    curves = create_point_circle_curve(params.extract_input<float3>("Point 1"_ustr),
+                                       params.extract_input<float3>("Point 2"_ustr),
+                                       params.extract_input<float3>("Point 3"_ustr),
+                                       std::max(params.extract_input<int>("Resolution"_ustr), 3),
                                        center_point);
-    params.set_output("Center", center_point);
+    params.set_output("Center"_ustr, center_point);
   }
   else if (mode == GEO_NODE_CURVE_PRIMITIVE_CIRCLE_TYPE_RADIUS) {
-    curves = create_radius_circle_curve(std::max(params.extract_input<int>("Resolution"), 3),
-                                        params.extract_input<float>("Radius"));
+    curves = create_radius_circle_curve(std::max(params.extract_input<int>("Resolution"_ustr), 3),
+                                        params.extract_input<float>("Radius"_ustr));
   }
 
   if (curves) {
-    params.set_output("Curve", GeometrySet::from_curves(curves));
+    params.set_output("Curve"_ustr, GeometrySet::from_curves(curves));
   }
   else {
     params.set_default_remaining_outputs();

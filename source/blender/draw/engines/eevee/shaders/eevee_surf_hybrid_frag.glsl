@@ -30,7 +30,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_cryptomatte_out)
 /* Global thickness because it is needed for closure_to_rgba. */
 Thickness g_thickness;
 
-float4 closure_to_rgba(Closure cl_unused)
+float4 closure_to_rgba(Closure /*cl*/)
 {
   float3 radiance, transmittance;
   forward_lighting_eval(g_thickness, radiance, transmittance);

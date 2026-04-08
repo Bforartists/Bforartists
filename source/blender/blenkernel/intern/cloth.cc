@@ -1582,15 +1582,14 @@ static bool cloth_build_springs(ClothModifierData *clmd, const Mesh *mesh)
   }
 
   /* Structural springs. */
-  const LooseEdgeCache &loose_edges = mesh->loose_edges();
+  BitVector<> loose_edges(edges.size());
+  mesh->loose_edges().to_bits(loose_edges);
   for (int i = 0; i < numedges; i++) {
     spring = MEM_new_zeroed<ClothSpring>("cloth spring");
 
     if (spring) {
       spring_verts_ordered_set(spring, edges[i][0], edges[i][1]);
-      if (clmd->sim_parms->flags & CLOTH_SIMSETTINGS_FLAG_SEW && loose_edges.count > 0 &&
-          loose_edges.is_loose_bits[i])
-      {
+      if (clmd->sim_parms->flags & CLOTH_SIMSETTINGS_FLAG_SEW && loose_edges[i]) {
         /* handle sewing (loose edges will be pulled together) */
         spring->restlen = 0.0f;
         spring->lin_stiffness = 1.0f;

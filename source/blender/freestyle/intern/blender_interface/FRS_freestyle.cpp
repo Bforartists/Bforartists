@@ -442,7 +442,7 @@ static void prepare(Render *re, ViewLayer *view_layer, Depsgraph *depsgraph)
   RenderLayer *rl = RE_GetRenderLayer(re->result, view_layer->name);
   bool diffuse = false, z = false;
   for (RenderPass &rpass : rl->passes) {
-    float *rpass_buffer_data = rpass.ibuf->float_buffer.data;
+    float *rpass_buffer_data = rpass.ibuf->float_data_for_write();
     if (STREQ(rpass.name, RE_PASSNAME_DIFFUSE_COLOR)) {
       controller->setPassDiffuse(rpass_buffer_data, rpass.rectx, rpass.recty);
       diffuse = true;

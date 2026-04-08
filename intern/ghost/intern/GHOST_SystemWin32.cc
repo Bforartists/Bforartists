@@ -2560,7 +2560,7 @@ static uint *getClipboardImageFilepath(int *r_width, int *r_height)
       const uint64_t byte_count = static_cast<uint64_t>(ibuf->x) * ibuf->y * 4;
       uint *rgba = static_cast<uint *>(malloc(byte_count));
       if (rgba) {
-        memcpy(rgba, ibuf->byte_buffer.data, byte_count);
+        memcpy(rgba, ibuf->byte_data(), byte_count);
       }
       blender::IMB_freeImBuf(ibuf);
       return rgba;
@@ -2678,7 +2678,7 @@ static uint *getClipboardImageImBuf(int *r_width, int *r_height, UINT format)
     *r_height = ibuf->y;
     const uint64_t byte_count = uint64_t(ibuf->x) * ibuf->y * 4;
     rgba = (uint *)malloc(byte_count);
-    memcpy(rgba, ibuf->byte_buffer.data, byte_count);
+    memcpy(rgba, ibuf->byte_data(), byte_count);
     blender::IMB_freeImBuf(ibuf);
   }
 

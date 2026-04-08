@@ -303,7 +303,7 @@ const ImFileType IMB_FILE_TYPES[] = {
         0,
         eImFileTypeCapability::Zero,
         eImFileTypeCapability::Zero,
-        0,
+        IMB_FTYPE_NONE,
         nullptr,
         nullptr,
         0,
@@ -312,7 +312,7 @@ const ImFileType IMB_FILE_TYPES[] = {
 
 const ImFileType *IMB_FILE_TYPES_LAST = &IMB_FILE_TYPES[ARRAY_SIZE(IMB_FILE_TYPES) - 1];
 
-const ImFileType *IMB_file_type_from_ftype(int ftype)
+const ImFileType *IMB_file_type_from_ftype(eImbFileType ftype)
 {
   for (const ImFileType *type = IMB_FILE_TYPES; type < IMB_FILE_TYPES_LAST; type++) {
     if (ftype == type->filetype) {
@@ -327,18 +327,18 @@ const ImFileType *IMB_file_type_from_ibuf(const ImBuf *ibuf)
   return IMB_file_type_from_ftype(ibuf->ftype);
 }
 
-bool IMB_ftype_is_supported(int ftype)
+bool IMB_ftype_is_supported(eImbFileType ftype)
 {
   return IMB_file_type_from_ftype(ftype) != nullptr;
 }
 
-const char *IMB_ftype_to_id(int ftype)
+const char *IMB_ftype_to_id(eImbFileType ftype)
 {
   const ImFileType *type = IMB_file_type_from_ftype(ftype);
   return type ? type->filetype_id : nullptr;
 }
 
-int IMB_ftype_from_id(const char *id)
+eImbFileType IMB_ftype_from_id(const char *id)
 {
   for (const ImFileType *type = IMB_FILE_TYPES; type < IMB_FILE_TYPES_LAST; type++) {
     if (type->filetype_id && STREQ(id, type->filetype_id)) {
@@ -348,19 +348,19 @@ int IMB_ftype_from_id(const char *id)
   return IMB_FTYPE_NONE;
 }
 
-const char **IMB_ftype_file_extensions(int ftype)
+const char **IMB_ftype_file_extensions(eImbFileType ftype)
 {
   const ImFileType *type = IMB_file_type_from_ftype(ftype);
   return type ? type->file_extensions : nullptr;
 }
 
-eImFileTypeCapability IMB_ftype_capability_read(int ftype)
+eImFileTypeCapability IMB_ftype_capability_read(eImbFileType ftype)
 {
   const ImFileType *type = IMB_file_type_from_ftype(ftype);
   return type ? type->capability_read : eImFileTypeCapability::Zero;
 }
 
-eImFileTypeCapability IMB_ftype_capability_write(int ftype)
+eImFileTypeCapability IMB_ftype_capability_write(eImbFileType ftype)
 {
   const ImFileType *type = IMB_file_type_from_ftype(ftype);
   return type ? type->capability_write : eImFileTypeCapability::Zero;

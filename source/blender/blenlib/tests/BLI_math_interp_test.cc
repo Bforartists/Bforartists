@@ -4,7 +4,6 @@
 
 #include "testing/testing.h"
 
-#include "BLI_color.hh"
 #include "BLI_math_interp.hh"
 
 namespace blender {

@@ -295,12 +295,35 @@ def run(
 
     TICKS = 4  # 3 works, 4  to be on the safe side.
 
+    # If we try to handle events this many times
+    TICKS_HANDLING_BREAK_MAX = 256
+
     def event_step():
+
+        # Handle `is_event_handling_break` here so we don't incorrectly detect
+        # consecutive `is_event_handling_break` based on other functions exiting early.
+        is_event_handling_break = bpy.context.window_manager.is_event_handling_break
+        if is_event_handling_break:
+            if event_step._ticks_handling_break_consecutive > TICKS_HANDLING_BREAK_MAX:
+                raise RuntimeError(
+                    "window_manager.is_event_handling_break set {:d} times, may be an event handling bug!".format(
+                        TICKS_HANDLING_BREAK_MAX,
+                    )
+                )
+            event_step._ticks_handling_break_consecutive += 1
+        else:
+            event_step._ticks_handling_break_consecutive = 0
+
         # Run once 'TICKS' is reached.
         if event_step._ticks < TICKS:
             event_step._ticks += 1
             return 0.0
         event_step._ticks = 0
+
+        # Wait for any pending event queue break to be cleared before advancing,
+        # otherwise events injected by the next step may be deferred unexpectedly.
+        if is_event_handling_break:
+            return 0.0
 
         if on_step_command_pre:
             if event_step.run_events.gi_frame is not None:
@@ -353,6 +376,7 @@ def run(
 
     event_step.run_events = iter(event_iter)
     event_step._ticks = 0
+    event_step._ticks_handling_break_consecutive = 0
 
     # Persistent so this keeps working when tests load a blend file.
     bpy.app.timers.register(event_step, first_interval=0.0, persistent=True)

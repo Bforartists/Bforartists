@@ -20,6 +20,7 @@
 #  ifndef _PCONVERT_H
 #    define _PCONVERT_H
 
+#    include <functional>
 #    include <string>
 #    include <map>
 #    include <vector>
@@ -36,8 +37,10 @@ struct ArgLocker {
 
 PyObject *getPyNone();
 
+using TmpCleanupFn = std::function<void()>;
+
 // for PbClass-derived classes
-template<class T> T *fromPyPtr(PyObject *obj, std::vector<void *> *tmp)
+template<class T> T *fromPyPtr(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   if (PbClass::isNullRef(obj) || PbClass::isNoneRef(obj))
     return 0;
@@ -48,19 +51,19 @@ template<class T> T *fromPyPtr(PyObject *obj, std::vector<void *> *tmp)
   return (T *)(pbo);
 }
 
-template<> float *fromPyPtr<float>(PyObject *obj, std::vector<void *> *tmp);
-template<> double *fromPyPtr<double>(PyObject *obj, std::vector<void *> *tmp);
-template<> int *fromPyPtr<int>(PyObject *obj, std::vector<void *> *tmp);
-template<> std::string *fromPyPtr<std::string>(PyObject *obj, std::vector<void *> *tmp);
-template<> bool *fromPyPtr<bool>(PyObject *obj, std::vector<void *> *tmp);
-template<> Vec3 *fromPyPtr<Vec3>(PyObject *obj, std::vector<void *> *tmp);
-template<> Vec3i *fromPyPtr<Vec3i>(PyObject *obj, std::vector<void *> *tmp);
-template<> Vec4 *fromPyPtr<Vec4>(PyObject *obj, std::vector<void *> *tmp);
-template<> Vec4i *fromPyPtr<Vec4i>(PyObject *obj, std::vector<void *> *tmp);
+template<> float *fromPyPtr<float>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> double *fromPyPtr<double>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> int *fromPyPtr<int>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> std::string *fromPyPtr<std::string>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> bool *fromPyPtr<bool>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> Vec3 *fromPyPtr<Vec3>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> Vec3i *fromPyPtr<Vec3i>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> Vec4 *fromPyPtr<Vec4>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
+template<> Vec4i *fromPyPtr<Vec4i>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
 template<>
-std::vector<PbClass *> *fromPyPtr<std::vector<PbClass *>>(PyObject *obj, std::vector<void *> *tmp);
+std::vector<PbClass *> *fromPyPtr<std::vector<PbClass *>>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
 template<>
-std::vector<float> *fromPyPtr<std::vector<float>>(PyObject *obj, std::vector<void *> *tmp);
+std::vector<float> *fromPyPtr<std::vector<float>>(PyObject *obj, std::vector<TmpCleanupFn> *tmp);
 
 PyObject *incref(PyObject *obj);
 template<class T> PyObject *toPy(const T &v)
@@ -205,10 +208,10 @@ class PbArgs {
     visit(number, key);
     PyObject *o = getItem(key, false, lk);
     if (o)
-      return fromPyPtr<T>(o, &mTmpStorage);
+      return fromPyPtr<T>(o, &mTmpStorageCleanup);
     if (number >= 0)
       o = getItem(number, false, lk);
-    return o ? fromPyPtr<T>(o, &mTmpStorage) : defarg;
+    return o ? fromPyPtr<T>(o, &mTmpStorageCleanup) : defarg;
   }
   template<class T>
   inline T *getPtr(const std::string &key, int number = -1, ArgLocker *lk = nullptr)
@@ -216,10 +219,10 @@ class PbArgs {
     visit(number, key);
     PyObject *o = getItem(key, false, lk);
     if (o)
-      return fromPyPtr<T>(o, &mTmpStorage);
+      return fromPyPtr<T>(o, &mTmpStorageCleanup);
     o = getItem(number, false, lk);
     if (o)
-      return fromPyPtr<T>(o, &mTmpStorage);
+      return fromPyPtr<T>(o, &mTmpStorageCleanup);
     errMsg("Argument '" + key + "' is not defined.");
   }
 
@@ -250,7 +253,7 @@ class PbArgs {
   std::map<std::string, DataElement> mData;
   std::vector<DataElement> mLinData;
   PyObject *mLinArgs, *mKwds;
-  std::vector<void *> mTmpStorage;
+  std::vector<TmpCleanupFn> mTmpStorageCleanup;
 };
 
 }  // namespace Manta

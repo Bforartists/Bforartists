@@ -540,6 +540,7 @@ struct AttributeAccessorFunctions {
               AttrDomain domain,
               AttrType data_type,
               const AttributeInit &initializer);
+  Set<StringRef> (*rename)(void *owner, const Map<StringRef, StringRef> &map, bool overwrite);
   bool (*assign_data)(void *owner, StringRef name, const AttributeInit &initializer);
 };
 
@@ -807,9 +808,15 @@ class MutableAttributeAccessor : public AttributeAccessor {
   }
 
   /**
-   * Replace the existing attribute with a new one with a different name.
+   * Replace the name of an attribute, optionally replacing existing use of the new name.
+   * \return True if the rename was successful.
    */
-  bool rename(StringRef old_name, StringRef new_name);
+  bool rename(StringRef old_name, StringRef new_name, bool overwrite = false);
+  /**
+   * Replace the names of attributes, optionally replacing existing use of the new names.
+   * \return A set of failed renames.
+   */
+  Set<StringRef> rename(const Map<StringRef, StringRef> &map, bool overwrite = false);
 
   /**
    * Create a new attribute.

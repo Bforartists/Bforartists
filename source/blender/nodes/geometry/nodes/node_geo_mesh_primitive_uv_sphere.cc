@@ -12,26 +12,29 @@ namespace blender::nodes::node_geo_mesh_primitive_uv_sphere_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Segments")
+  b.add_input<decl::Int>("Segments"_ustr)
       .default_value(32)
       .min(3)
       .max(1024)
       .description("Horizontal resolution of the sphere");
-  b.add_input<decl::Int>("Rings").default_value(16).min(2).max(1024).description(
-      "The number of horizontal rings");
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Int>("Rings"_ustr)
+      .default_value(16)
+      .min(2)
+      .max(1024)
+      .description("The number of horizontal rings");
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Distance from the generated points to the origin");
-  b.add_output<decl::Geometry>("Mesh");
-  b.add_output<decl::Vector>("UV Map").field_on_all();
+  b.add_output<decl::Geometry>("Mesh"_ustr);
+  b.add_output<decl::Vector>("UV Map"_ustr).field_on_all();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const int segments_num = params.extract_input<int>("Segments");
-  const int rings_num = params.extract_input<int>("Rings");
+  const int segments_num = params.extract_input<int>("Segments"_ustr);
+  const int rings_num = params.extract_input<int>("Rings"_ustr);
   if (segments_num < 3 || rings_num < 2) {
     if (segments_num < 3) {
       params.error_message_add(NodeWarningType::Info, TIP_("Segments must be at least 3"));
@@ -43,14 +46,14 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  const float radius = params.extract_input<float>("Radius");
+  const float radius = params.extract_input<float>("Radius"_ustr);
 
   std::optional<std::string> uv_map_id = params.get_output_anonymous_attribute_id_if_needed(
-      "UV Map");
+      "UV Map"_ustr);
 
   Mesh *mesh = geometry::create_uv_sphere_mesh(radius, segments_num, rings_num, uv_map_id);
   BKE_id_material_eval_ensure_default_slot(reinterpret_cast<ID *>(mesh));
-  params.set_output("Mesh", GeometrySet::from_mesh(mesh));
+  params.set_output("Mesh"_ustr, GeometrySet::from_mesh(mesh));
 }
 
 static void node_register()

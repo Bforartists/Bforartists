@@ -10,17 +10,17 @@ namespace blender::nodes::node_composite_switch_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Switch").default_value(false);
-  b.add_input<decl::Color>("Off")
+  b.add_input<decl::Bool>("Switch"_ustr).default_value(false);
+  b.add_input<decl::Color>("Off"_ustr)
       .default_value({0.8f, 0.8f, 0.8f, 1.0f})
       .compositor_realization_mode(CompositorInputRealizationMode::None)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Color>("On")
+  b.add_input<decl::Color>("On"_ustr)
       .default_value({0.8f, 0.8f, 0.8f, 1.0f})
       .compositor_realization_mode(CompositorInputRealizationMode::None)
       .structure_type(StructureType::Dynamic);
 
-  b.add_output<decl::Color>("Image");
+  b.add_output<decl::Color>("Image"_ustr);
 }
 
 using namespace blender::compositor;

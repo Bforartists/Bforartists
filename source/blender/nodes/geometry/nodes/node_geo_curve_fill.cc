@@ -46,25 +46,25 @@ static const EnumPropertyItem fill_rule_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description(
           "Curves to fill. All curves are treated as cyclic and projected to the XY plane");
-  b.add_input<decl::Int>("Group ID")
+  b.add_input<decl::Int>("Group ID"_ustr)
       .field_on_all()
       .hide_value()
       .description(
           "An index used to group curves together. Filling is done separately for each group");
-  b.add_input<decl::Menu>("Mode")
+  b.add_input<decl::Menu>("Mode"_ustr)
       .static_items(mode_items)
       .default_value(GEO_NODE_CURVE_FILL_MODE_TRIANGULATED)
       .optional_label();
-  b.add_input<decl::Menu>("Fill Rule")
+  b.add_input<decl::Menu>("Fill Rule"_ustr)
       .static_items(fill_rule_items)
       .default_value(GEO_NODE_CURVE_FILL_RULE_EVEN_ODD)
       .optional_label()
       .description("Rule used to determine which regions are inside or outside");
-  b.add_output<decl::Geometry>("Mesh").propagate_all_instance_attributes();
+  b.add_output<decl::Geometry>("Mesh"_ustr).propagate_all_instance_attributes();
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -360,16 +360,17 @@ static void curve_fill_calculate(GeometrySet &geometry_set,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve");
-  Field<int> group_index = params.extract_input<Field<int>>("Group ID");
-  const GeometryNodeCurveFillMode mode = params.extract_input<GeometryNodeCurveFillMode>("Mode");
-  const auto fill_rule = params.extract_input<GeometryNodeCurveFillRule>("Fill Rule");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve"_ustr);
+  Field<int> group_index = params.extract_input<Field<int>>("Group ID"_ustr);
+  const GeometryNodeCurveFillMode mode = params.extract_input<GeometryNodeCurveFillMode>(
+      "Mode"_ustr);
+  const auto fill_rule = params.extract_input<GeometryNodeCurveFillRule>("Fill Rule"_ustr);
 
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry) {
     curve_fill_calculate(geometry, mode, fill_rule, group_index);
   });
 
-  params.set_output("Mesh", std::move(geometry_set));
+  params.set_output("Mesh"_ustr, std::move(geometry_set));
 }
 
 static void node_register()

@@ -827,7 +827,7 @@ void uiTemplateMovieclipInformation(ui::Layout *layout,
   ofs += BLI_snprintf_utf8_rlen(str + ofs, sizeof(str) - ofs, RPT_("%d x %d"), width, height);
 
   if (ibuf) {
-    if (ibuf->float_buffer.data) {
+    if (ibuf->float_data()) {
       if (ibuf->channels != 4) {
         ofs += BLI_snprintf_utf8_rlen(
             str + ofs, sizeof(str) - ofs, RPT_(", %d float channel(s)"), ibuf->channels);

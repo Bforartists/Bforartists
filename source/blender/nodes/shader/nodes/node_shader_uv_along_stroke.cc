@@ -13,7 +13,7 @@ namespace nodes::node_shader_uv_along_stroke_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("UV");
+  b.add_output<decl::Vector>("UV"_ustr);
 }
 
 static void node_shader_buts_uvalongstroke(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

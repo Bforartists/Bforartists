@@ -1,9 +1,6 @@
 on:
   pull_request_target:
-    branches:
-      - main
-      - blender-v*-release
-    types: [opened, ready_for_review, reopened, review_requested, synchronize]
+     types: [opened, ready_for_review, reopened, review_requested, synchronize]
 
 env:
   COMMENTS_API_TOKEN: "${{ secrets.COMMENTS_API_TOKEN }}"

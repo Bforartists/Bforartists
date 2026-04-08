@@ -53,6 +53,7 @@
 #include "BKE_fluid.h"
 #include "BKE_geometry_set.hh"
 #include "BKE_global.hh"
+#include "BKE_idprop.hh"
 #include "BKE_idtype.hh"
 #include "BKE_key.hh"
 #include "BKE_lib_id.hh"
@@ -91,7 +92,7 @@ void BKE_modifier_init()
   ModifierData *md;
 
   /* Initialize modifier types */
-  modifier_type_init(modifier_types); /* MOD_utils.c */
+  modifier_type_init(modifier_types); /* MOD_util.cc */
 
   /* Initialize global common storage used for virtual modifier list. */
   md = BKE_modifier_new(eModifierType_Armature);
@@ -198,6 +199,9 @@ void BKE_modifier_free_ex(ModifierData *md, const int flag)
   if (md->error) {
     MEM_delete(md->error);
   }
+  if (md->system_properties != nullptr) {
+    IDP_FreeProperty_ex(md->system_properties, false);
+  }
 
   MEM_delete(md);
 }
@@ -289,7 +293,9 @@ void BKE_modifiers_foreach_ID_link(Object *ob, IDWalkFunc walk, void *user_data)
 {
   for (ModifierData &md : ob->modifiers) {
     const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md.type));
-
+    IDP_foreach_property(md.system_properties, IDP_TYPE_FILTER_ID, [&](IDProperty *id_prop) {
+      walk(user_data, ob, (ID **)&id_prop->data.pointer, IDWALK_CB_USER);
+    });
     if (mti->foreach_ID_link) {
       mti->foreach_ID_link(&md, ob, walk, user_data);
     }
@@ -367,6 +373,10 @@ void BKE_modifier_copydata_ex(const ModifierData *md, ModifierData *target, cons
     if (mti->foreach_ID_link) {
       mti->foreach_ID_link(target, nullptr, modifier_copy_data_id_us_cb, nullptr);
     }
+  }
+
+  if (md->system_properties) {
+    target->system_properties = IDP_CopyProperty_ex(md->system_properties, flag);
   }
 }
 
@@ -1127,6 +1137,10 @@ void BKE_modifier_blend_write(BlendWriter *writer,
       continue;
     }
 
+    if (md.system_properties) {
+      IDP_BlendWrite(writer, md.system_properties);
+    }
+
     /* If the blend_write callback is defined, it should handle the whole writing process. */
     if (mti->blend_write != nullptr) {
       mti->blend_write(writer, id_owner, &md);
@@ -1347,6 +1361,9 @@ void BKE_modifier_blend_read_data(BlendDataReader *reader, ListBaseT<ModifierDat
     ModifierData *md = &md_iter;
     md->error = nullptr;
     md->runtime = nullptr;
+
+    BLO_read_struct(reader, IDProperty, &md->system_properties);
+    IDP_BlendDataRead(reader, &md->system_properties);
 
     /* If linking from a library, clear 'local' library override flag. */
     if (ID_IS_LINKED(ob)) {

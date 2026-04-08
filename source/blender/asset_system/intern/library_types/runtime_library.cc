@@ -10,7 +10,8 @@
 
 namespace blender::asset_system {
 
-RuntimeAssetLibrary::RuntimeAssetLibrary() : AssetLibrary(ASSET_LIBRARY_LOCAL)
+RuntimeAssetLibrary::RuntimeAssetLibrary()
+    : AssetLibrary(ASSET_LIBRARY_LOCAL, /*is_read_only=*/false)
 {
   this->on_blend_save_handler_register();
 }

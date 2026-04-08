@@ -49,7 +49,7 @@ static void gizmo_calc_matrix_final_no_offset(const wmGizmo *gz,
                                               bool use_space)
 {
   float mat_identity[4][4];
-  WM_GizmoMatrixParams params = {nullptr};
+  wmGizmoMatrixParams params = {nullptr};
   unit_m4(mat_identity);
   if (use_space == false) {
     params.matrix_basis = mat_identity;

@@ -17,11 +17,11 @@ namespace nodes::node_shader_volume_scatter_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Color").default_value({0.8f, 0.8f, 0.8f, 1.0f});
+  b.add_input<decl::Color>("Color"_ustr).default_value({0.8f, 0.8f, 0.8f, 1.0f});
 #define SOCK_COLOR_ID 0
-  b.add_input<decl::Float>("Density").default_value(1.0f).min(0.0f).max(1000.0f);
+  b.add_input<decl::Float>("Density"_ustr).default_value(1.0f).min(0.0f).max(1000.0f);
 #define SOCK_DENSITY_ID 1
-  b.add_input<decl::Float>("Anisotropy")
+  b.add_input<decl::Float>("Anisotropy"_ustr)
       .default_value(0.0f)
       .min(-1.0f)
       .max(1.0f)
@@ -30,30 +30,33 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Directionality of the scattering. Zero is isotropic, negative is backward, "
           "positive is forward")
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_HENYEY_GREENSTEIN; });
-  b.add_input<decl::Float>("IOR")
+  b.add_input<decl::Float>("IOR"_ustr)
       .default_value(1.33f)
       .min(1.0f)
       .max(2.0f)
       .subtype(PROP_FACTOR)
       .description("Index Of Refraction of the scattering particles")
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_FOURNIER_FORAND; });
-  b.add_input<decl::Float>("Backscatter")
+  b.add_input<decl::Float>("Backscatter"_ustr)
       .default_value(0.1f)
       .min(0.0f)
       .max(0.5f)
       .subtype(PROP_FACTOR)
       .description("Fraction of light that is scattered backwards")
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_FOURNIER_FORAND; });
-  b.add_input<decl::Float>("Alpha").default_value(0.5f).min(0.0f).max(500.0f).make_available(
-      [](bNode &node) { node.custom1 = SHD_PHASE_DRAINE; });
-  b.add_input<decl::Float>("Diameter")
+  b.add_input<decl::Float>("Alpha"_ustr)
+      .default_value(0.5f)
+      .min(0.0f)
+      .max(500.0f)
+      .make_available([](bNode &node) { node.custom1 = SHD_PHASE_DRAINE; });
+  b.add_input<decl::Float>("Diameter"_ustr)
       .default_value(20.0f)
       .min(0.0f)
       .max(50.0f)
       .description("Diameter of the water droplets, in micrometers")
       .make_available([](bNode &node) { node.custom1 = SHD_PHASE_MIE; });
-  b.add_input<decl::Float>("Weight").available(false);
-  b.add_output<decl::Shader>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
+  b.add_input<decl::Float>("Weight"_ustr).available(false);
+  b.add_output<decl::Shader>("Volume"_ustr).translation_context(BLT_I18NCONTEXT_ID_ID);
 }
 
 static void node_shader_buts_scatter(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -93,7 +96,7 @@ static int node_shader_gpu_volume_scatter(GPUMaterial *mat,
                                           GPUNodeStack *in,
                                           GPUNodeStack *out)
 {
-  if (node_socket_not_zero(in[SOCK_DENSITY_ID]) && node_socket_not_black(in[SOCK_COLOR_ID])) {
+  if (in[SOCK_DENSITY_ID].socket_not_zero() && in[SOCK_COLOR_ID].socket_not_black()) {
     /* Consider there is absorption phenomenon when there is scattering since
      * `extinction = scattering + absorption`. */
     GPU_material_flag_set(mat, GPU_MATFLAG_VOLUME_SCATTER | GPU_MATFLAG_VOLUME_ABSORPTION);

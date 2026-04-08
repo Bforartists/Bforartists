@@ -144,37 +144,40 @@ def _get_asset_meta(asset_data: bpy.types.AssetData) -> api_models.AssetMetadata
     # Convert custom properties.
     import rna_prop_ui
 
-    custom_props: api_models.CustomPropertiesV1 = {}
+    custom_props: api_models.CustomPropertiesV1 = []
     for prop_name, prop_value in asset_data.items():
         is_array = isinstance(prop_value, rna_prop_ui.ARRAY_TYPES) and len(prop_value) > 0
         item_value = prop_value[0] if is_array else prop_value
 
         match item_value:
             case bool():
-                value_type = api_models.CustomPropertyTypeV1.BOOLEAN
+                value_type = api_models.CustomPropertyTypeV1.IDP_BOOLEAN
             case int():
-                value_type = api_models.CustomPropertyTypeV1.INT
+                value_type = api_models.CustomPropertyTypeV1.IDP_INT
             case str():
-                value_type = api_models.CustomPropertyTypeV1.STRING
+                value_type = api_models.CustomPropertyTypeV1.IDP_STRING
             case float():
-                value_type = api_models.CustomPropertyTypeV1.FLOAT
+                value_type = api_models.CustomPropertyTypeV1.IDP_FLOAT
             case _:
                 # Unsupported type, just ignore it.
                 continue
 
         if is_array:
             custom_prop = api_models.CustomPropertyV1(
-                type=api_models.CustomPropertyTypeV1.ARRAY,
+                name=prop_name,
+                type=api_models.CustomPropertyTypeV1.IDP_ARRAY,
                 value=list(prop_value),
                 itemtype=value_type,
             )
         else:
-            custom_prop = api_models.CustomPropertyV1(type=value_type, value=prop_value)
+            custom_prop = api_models.CustomPropertyV1(
+                name=prop_name, type=value_type, value=prop_value
+            )
 
-        custom_props[prop_name] = custom_prop
+        custom_props.append(custom_prop)
 
     if custom_props:
-        meta.custom = custom_props
+        meta.properties = custom_props
 
     if meta == api_models.AssetMetadataV1():
         return None

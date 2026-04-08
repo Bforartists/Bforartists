@@ -11,6 +11,7 @@
 #include "DNA_object_types.h"
 
 #include "NOD_rna_define.hh"
+#include "NOD_socket_search_link.hh"
 
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
@@ -21,6 +22,8 @@
 
 #include "BLT_translation.hh"
 
+#include "COM_node_operation.hh"
+
 #include "node_geometry_util.hh"
 
 namespace blender::nodes::node_geo_object_info_cc {
@@ -29,23 +32,28 @@ NODE_STORAGE_FUNCS(NodeGeometryObjectInfo)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Object>("Object").optional_label();
-  b.add_input<decl::Bool>("As Instance")
+  const bool is_geometry = b.tree_or_null() ? b.tree_or_null()->type == NTREE_GEOMETRY : true;
+  b.add_input<decl::Object>("Object"_ustr).optional_label();
+  b.add_input<decl::Bool>("As Instance"_ustr)
       .description(
           "Output the entire object as single instance. "
-          "This allows instancing non-geometry object types");
-  b.add_output<decl::Matrix>("Transform")
+          "This allows instancing non-geometry object types")
+      .available(is_geometry);
+  b.add_output<decl::Matrix>("Transform"_ustr)
       .description(
           "Transformation matrix containing the location, rotation and scale of the object");
-  b.add_output<decl::Vector>("Location");
-  b.add_output<decl::Rotation>("Rotation");
-  b.add_output<decl::Vector>("Scale");
-  b.add_output<decl::Geometry>("Geometry");
+  b.add_output<decl::Vector>("Location"_ustr);
+  b.add_output<decl::Rotation>("Rotation"_ustr).available(is_geometry);
+  b.add_output<decl::Vector>("Scale"_ustr);
+  b.add_output<decl::Geometry>("Geometry"_ustr).available(is_geometry);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  layout.prop(ptr, "transform_space", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  const bNodeTree &node_tree = *reinterpret_cast<bNodeTree *>(ptr->owner_id);
+  if (node_tree.type == NTREE_GEOMETRY) {
+    layout.prop(ptr, "transform_space", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+  }
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
@@ -54,7 +62,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const bool transform_space_relative = (storage.transform_space ==
                                          GEO_NODE_TRANSFORM_SPACE_RELATIVE);
 
-  Object *object = params.extract_input<Object *>("Object");
+  Object *object = params.extract_input<Object *>("Object"_ustr);
 
   const Object *self_object = params.self_object();
   if (object == nullptr) {
@@ -94,12 +102,12 @@ static void node_geo_exec(GeoNodeExecParams params)
   math::Quaternion rotation;
   math::to_loc_rot_scale_safe<true>(output_transform, location, rotation, scale);
 
-  params.set_output("Location", location);
-  params.set_output("Rotation", rotation);
-  params.set_output("Scale", scale);
-  params.set_output("Transform", output_transform);
+  params.set_output("Location"_ustr, location);
+  params.set_output("Rotation"_ustr, rotation);
+  params.set_output("Scale"_ustr, scale);
+  params.set_output("Transform"_ustr, output_transform);
 
-  if (!params.output_is_required("Geometry")) {
+  if (!params.output_is_required("Geometry"_ustr)) {
     return;
   }
   /* Compare by `orig_id` because objects may be copied into separate depsgraphs. */
@@ -137,7 +145,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
 
   GeometrySet geometry_set;
-  if (params.extract_input<bool>("As Instance")) {
+  if (params.extract_input<bool>("As Instance"_ustr)) {
     auto instances = std::make_unique<bke::Instances>(1);
     instances->reference_handles_for_write().first() = instances->add_reference(*object);
     if (transform_space_relative) {
@@ -155,8 +163,53 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   }
 
-  geometry_set.name = object->id.name + 2;
-  params.set_output("Geometry", geometry_set);
+  geometry_set.set_name(object->id.name + 2);
+  params.set_output("Geometry"_ustr, geometry_set);
+}
+
+using namespace blender::compositor;
+
+class ObjectInfoOperation : public NodeOperation {
+ public:
+  using NodeOperation::NodeOperation;
+
+  void execute() override
+  {
+    const Object *object = this->get_input("Object").get_single_value<Object *>();
+    if (!object) {
+      this->allocate_default_remaining_outputs();
+      return;
+    }
+
+    const float4x4 transform = object->object_to_world();
+
+    float3 location, scale;
+    math::Quaternion rotation;
+    math::to_loc_rot_scale_safe<true>(transform, location, rotation, scale);
+
+    Result &transform_result = this->get_result("Transform");
+    if (transform_result.should_compute()) {
+      transform_result.allocate_single_value();
+      transform_result.set_single_value(transform);
+    }
+
+    Result &location_result = this->get_result("Location");
+    if (location_result.should_compute()) {
+      location_result.allocate_single_value();
+      location_result.set_single_value(location);
+    }
+
+    Result &scale_result = this->get_result("Scale");
+    if (scale_result.should_compute()) {
+      scale_result.allocate_single_value();
+      scale_result.set_single_value(scale);
+    }
+  }
+};
+
+static NodeOperation *get_compositor_operation(Context &context, const bNode &node)
+{
+  return new ObjectInfoOperation(context, node);
 }
 
 static void node_node_init(bNodeTree * /*tree*/, bNode *node)
@@ -195,11 +248,23 @@ static void node_rna(StructRNA *srna)
   RNA_def_property_update_runtime(prop, rna_Node_update_relations);
 }
 
+static void node_gather_link_searches(nodes::GatherLinkSearchOpParams &params)
+{
+  if (params.node_tree().type == NTREE_GEOMETRY) {
+    search_link_ops_for_basic_node(params);
+    return;
+  }
+
+  static Set<UString> skip_socket_identifiers = {
+      "As Instance"_ustr, "Rotation"_ustr, "Geometry"_ustr};
+  nodes::search_filtered_link_ops_for_basic_node(params, skip_socket_identifiers);
+}
+
 static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_node_type_base(&ntype, "GeometryNodeObjectInfo", GEO_NODE_OBJECT_INFO);
+  geo_cmp_node_type_base(&ntype, "GeometryNodeObjectInfo", GEO_NODE_OBJECT_INFO);
   ntype.ui_name = "Object Info";
   ntype.ui_description = "Retrieve information from an object";
   ntype.enum_name_legacy = "OBJECT_INFO";
@@ -210,6 +275,8 @@ static void node_register()
   ntype.geometry_node_execute = node_geo_exec;
   ntype.draw_buttons = node_layout;
   ntype.declare = node_declare;
+  ntype.gather_link_search_ops = node_gather_link_searches;
+  ntype.get_compositor_operation = get_compositor_operation;
   bke::node_register_type(ntype);
 
   node_rna(ntype.rna_ext.srna);

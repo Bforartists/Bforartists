@@ -953,6 +953,7 @@ struct TransInfo {
   ScrArea *area;
   ARegion *region;
   Depsgraph *depsgraph;
+  Main *bmain;
   Scene *scene;
   ViewLayer *view_layer;
   ToolSettings *settings;

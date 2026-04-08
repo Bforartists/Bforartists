@@ -265,7 +265,8 @@ struct DRWContext {
     VIEWPORT_XR,
     /** Render for a 3D viewport offscreen render (python). Runs on main thread. */
     VIEWPORT_OFFSCREEN,
-    /** Render for a 3D viewport image render (render preview). Runs on main thread. */
+    /** Render for a 3D viewport image render (Render Viewport Preview, also VSE scene strips).
+       Runs on main thread. */
     VIEWPORT_RENDER,
 
     /** Render for object mode selection. Runs on main thread. */

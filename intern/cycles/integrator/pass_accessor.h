@@ -30,6 +30,8 @@ class PassAccessor {
     bool is_lightgroup = false;
     int offset = -1;
 
+    bool use_sample_count = true;
+
     /* For the shadow catcher matte pass: whether to approximate shadow catcher pass into its
      * matte pass, so that both artificial objects and shadows can be alpha-overed onto a backdrop.
      */

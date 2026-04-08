@@ -10,8 +10,8 @@ namespace blender::nodes::node_geo_input_spline_length_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Length").field_source();
-  b.add_output<decl::Int>("Point Count").field_source();
+  b.add_output<decl::Float>("Length"_ustr).field_source();
+  b.add_output<decl::Int>("Point Count"_ustr).field_source();
 }
 
 /* --------------------------------------------------------------------
@@ -37,10 +37,7 @@ static VArray<int> construct_curve_point_count_gvarray(const bke::CurvesGeometry
 
 class SplineCountFieldInput final : public bke::CurvesFieldInput {
  public:
-  SplineCountFieldInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Spline Point Count")
-  {
-    category_ = Category::Generated;
-  }
+  SplineCountFieldInput() : bke::CurvesFieldInput(CPPType::get<int>(), "Spline Point Count") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,
@@ -55,7 +52,7 @@ class SplineCountFieldInput final : public bke::CurvesFieldInput {
     return 456364322625;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const SplineCountFieldInput *>(&other) != nullptr;
   }
@@ -68,11 +65,8 @@ class SplineCountFieldInput final : public bke::CurvesFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<float> spline_length_field{std::make_shared<bke::CurveLengthFieldInput>()};
-  Field<int> spline_count_field{std::make_shared<SplineCountFieldInput>()};
-
-  params.set_output("Length", std::move(spline_length_field));
-  params.set_output("Point Count", std::move(spline_count_field));
+  params.set_output("Length"_ustr, Field<float>::from_input<bke::CurveLengthFieldInput>());
+  params.set_output("Point Count"_ustr, Field<int>::from_input<SplineCountFieldInput>());
 }
 
 static void node_register()

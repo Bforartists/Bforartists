@@ -13,9 +13,9 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Vector>("Vector").is_default_link_socket();
-  b.add_output<decl::Vector>("Vector").align_with_previous();
-  b.add_input<decl::Rotation>("Rotation");
+  b.add_input<decl::Vector>("Vector"_ustr).is_default_link_socket();
+  b.add_output<decl::Vector>("Vector"_ustr).align_with_previous();
+  b.add_input<decl::Rotation>("Rotation"_ustr);
 };
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

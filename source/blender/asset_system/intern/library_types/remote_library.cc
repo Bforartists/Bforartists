@@ -12,7 +12,6 @@
 #include "BLI_fileops.h"
 #include "BLI_hash_md5.hh"
 #include "BLI_listbase.h"
-#include "BLI_memory_utils.hh"
 #include "BLI_path_utils.hh"
 #include "BLI_string.h"
 #include "BLI_string_ref.hh"
@@ -45,32 +44,39 @@
 
 namespace blender::asset_system {
 
-RemoteAssetLibrary::RemoteAssetLibrary(const StringRef remote_url,
-                                       const StringRef name,
-                                       const StringRef cache_root_path)
-    : AssetLibrary(ASSET_LIBRARY_CUSTOM, name, cache_root_path)
+RemoteAssetLibrary::RemoteAssetLibrary(const bUserAssetLibrary &custom_library)
+    : AssetLibrary(ASSET_LIBRARY_CUSTOM,
+                   /*is_read_only=*/true,
+                   custom_library.name,
+                   custom_library.dirpath),
+      user_library_(custom_library)
 {
+  BLI_assert(custom_library.flag & ASSET_LIBRARY_USE_REMOTE_URL);
+
   import_method_ = ASSET_IMPORT_APPEND_REUSE;
   may_override_import_method_ = false;
-  remote_url_ = remote_url;
+  remote_url_ = custom_library.remote_url;
 }
 
 std::optional<AssetLibraryReference> RemoteAssetLibrary::library_reference() const
 {
-  for (auto [i, asset_library] : U.asset_libraries.enumerate()) {
-    if ((asset_library.flag & ASSET_LIBRARY_USE_REMOTE_URL) == 0) {
-      continue;
-    }
-
-    if (asset_library.remote_url == this->remote_url_) {
-      AssetLibraryReference library_ref{};
-      library_ref.type = ASSET_LIBRARY_CUSTOM;
-      library_ref.custom_library_index = i;
-      return library_ref;
-    }
+  const bUserAssetLibrary *library_definition = user_library_.user_asset_library();
+  if (library_definition == nullptr) {
+    return {};
   }
 
-  return {};
+  const int index = BLI_findindex(&U.asset_libraries, library_definition);
+  if (index == -1) {
+    /* Should have been caught by the #user_asset_library() call above already. */
+    BLI_assert_unreachable();
+    return {};
+  }
+
+  BLI_assert(library_definition->flag & ASSET_LIBRARY_USE_REMOTE_URL);
+  AssetLibraryReference library_ref{};
+  library_ref.type = ASSET_LIBRARY_CUSTOM;
+  library_ref.custom_library_index = index;
+  return library_ref;
 }
 
 std::optional<StringRefNull> RemoteAssetLibrary::remote_url() const

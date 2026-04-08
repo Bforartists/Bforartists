@@ -324,53 +324,53 @@ template<> PbTypeVec fromPy<PbTypeVec>(PyObject *obj)
   return vec;
 }
 
-template<class T> T *tmpAlloc(PyObject *obj, std::vector<void *> *tmp)
+template<class T> T *tmpAlloc(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   if (!tmp)
     throw Error("dynamic de-ref not supported for this type");
 
   T *ptr = new T(fromPy<T>(obj));
-  tmp->push_back(ptr);
+  tmp->push_back([ptr]() { delete ptr; });
   return ptr;
 }
-template<> float *fromPyPtr<float>(PyObject *obj, std::vector<void *> *tmp)
+template<> float *fromPyPtr<float>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<float>(obj, tmp);
 }
-template<> double *fromPyPtr<double>(PyObject *obj, std::vector<void *> *tmp)
+template<> double *fromPyPtr<double>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<double>(obj, tmp);
 }
-template<> int *fromPyPtr<int>(PyObject *obj, std::vector<void *> *tmp)
+template<> int *fromPyPtr<int>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<int>(obj, tmp);
 }
-template<> std::string *fromPyPtr<std::string>(PyObject *obj, std::vector<void *> *tmp)
+template<> std::string *fromPyPtr<std::string>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<std::string>(obj, tmp);
 }
-template<> bool *fromPyPtr<bool>(PyObject *obj, std::vector<void *> *tmp)
+template<> bool *fromPyPtr<bool>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<bool>(obj, tmp);
 }
-template<> Vec3 *fromPyPtr<Vec3>(PyObject *obj, std::vector<void *> *tmp)
+template<> Vec3 *fromPyPtr<Vec3>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<Vec3>(obj, tmp);
 }
-template<> Vec3i *fromPyPtr<Vec3i>(PyObject *obj, std::vector<void *> *tmp)
+template<> Vec3i *fromPyPtr<Vec3i>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<Vec3i>(obj, tmp);
 }
-template<> Vec4 *fromPyPtr<Vec4>(PyObject *obj, std::vector<void *> *tmp)
+template<> Vec4 *fromPyPtr<Vec4>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<Vec4>(obj, tmp);
 }
-template<> Vec4i *fromPyPtr<Vec4i>(PyObject *obj, std::vector<void *> *tmp)
+template<> Vec4i *fromPyPtr<Vec4i>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<Vec4i>(obj, tmp);
 }
 template<>
-std::vector<PbClass *> *fromPyPtr<std::vector<PbClass *>>(PyObject *obj, std::vector<void *> *tmp)
+std::vector<PbClass *> *fromPyPtr<std::vector<PbClass *>>(PyObject *obj, std::vector<TmpCleanupFn> *tmp)
 {
   return tmpAlloc<std::vector<PbClass *>>(obj, tmp);
 }
@@ -501,9 +501,9 @@ PbArgs::PbArgs(PyObject *linarg, PyObject *dict) : mLinArgs(0), mKwds(0)
 }
 PbArgs::~PbArgs()
 {
-  for (int i = 0; i < (int)mTmpStorage.size(); i++)
-    operator delete(mTmpStorage[i]);
-  mTmpStorage.clear();
+  for (auto &fn : mTmpStorageCleanup)
+    fn();
+  mTmpStorageCleanup.clear();
 }
 
 void PbArgs::copy(PbArgs &a)

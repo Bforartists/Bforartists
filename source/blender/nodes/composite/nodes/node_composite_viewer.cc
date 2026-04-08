@@ -10,7 +10,7 @@ namespace blender::nodes::node_composite_viewer_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({0.0f, 0.0f, 0.0f, 1.0f})
       .structure_type(StructureType::Dynamic)
       .compositor_realization_mode(CompositorInputRealizationMode::None);

@@ -219,7 +219,9 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_ATTR)
       IF_KERNEL_NODES_FEATURE(VOLUME)
       {
+#ifdef __VOLUME__
         svm_node_attr_volume(kg, sd, stack, node);
+#endif
       }
       else {
         svm_node_attr_surface(kg, sd, stack, node);
@@ -514,10 +516,10 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       }
       break;
       SVM_CASE(NODE_AOV_COLOR)
-      svm_node_aov_color<node_feature_mask>(kg, state, stack, node, render_buffer);
+      svm_node_aov_color<node_feature_mask>(kg, sd, state, stack, node, render_buffer);
       break;
       SVM_CASE(NODE_AOV_VALUE)
-      svm_node_aov_value<node_feature_mask>(kg, state, stack, node, render_buffer);
+      svm_node_aov_value<node_feature_mask>(kg, sd, state, stack, node, render_buffer);
       break;
       SVM_CASE(NODE_FLOAT_CURVE)
       offset = svm_node_curve(kg, stack, node, offset);

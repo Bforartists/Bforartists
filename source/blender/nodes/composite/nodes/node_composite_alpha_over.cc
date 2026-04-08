@@ -43,25 +43,25 @@ static const EnumPropertyItem type_items[] = {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Color>("Background").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Color>("Foreground").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Color>("Background"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Color>("Foreground"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR);
-  b.add_input<decl::Menu>("Type")
+  b.add_input<decl::Menu>("Type"_ustr)
       .default_value(CMP_NODE_ALPHA_OVER_OPERATION_TYPE_OVER)
       .static_items(type_items)
       .optional_label();
-  b.add_input<decl::Bool>("Straight Alpha")
+  b.add_input<decl::Bool>("Straight Alpha"_ustr)
       .default_value(false)
       .description(
           "Defines whether the foreground is in straight alpha form, which is necessary to know "
           "for proper alpha compositing. Images in the compositor are in premultiplied alpha form "
           "by default, so this should be false in most cases. But if, and only if, the foreground "
           "was converted to straight alpha form for some reason, this should be set to true");
-  b.add_output<decl::Color>("Image");
+  b.add_output<decl::Color>("Image"_ustr);
 }
 
 static int node_gpu_material(GPUMaterial *material,

@@ -267,7 +267,7 @@ static void copy_submesh(const Mesh &mesh,
   /* If all triangles are part of this submesh and there are no loose vertices that shouldn't be
    * copied (Hydra will warn about this), vertex index compression can be completely skipped. */
   const bool copy_all_verts = triangles.size() == corner_tris.size() &&
-                              mesh.verts_no_face().count == 0;
+                              mesh.verts_no_face().is_empty();
 
   int dst_verts_num;
   VectorSet<int> verts;

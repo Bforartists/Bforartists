@@ -1379,7 +1379,7 @@ bNodeTreeInterfaceSocket *add_interface_socket_from_node(
   ntree.ensure_topology_cache();
 
   BLI_assert(from_sock.typeinfo);
-  const StringRef socket_type = from_sock.typeinfo->idname;
+  const StringRef socket_type = from_sock.typeinfo->idname.ref();
   const bool is_input = in_out ? bool(*in_out & SOCK_IN) : from_sock.is_input();
 
   bNodeTreeInterfaceSocket *iosock = nullptr;
@@ -1723,7 +1723,7 @@ bNode *create_proxy_converter_node(const eNodeSocketDatatype socket_type,
     return nullptr;
   }
 
-  const std::string socket_idname = socket_typeinfo->idname;
+  const std::string socket_idname = socket_typeinfo->idname.string();
   const void *src_value = src_socket ? src_socket->default_value : nullptr;
 
   bNode *proxy_node = bke::node_add_node(&C, dst_tree, "NodeImplicitConversion");

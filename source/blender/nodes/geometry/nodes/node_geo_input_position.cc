@@ -8,13 +8,12 @@ namespace blender::nodes::node_geo_input_position_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("Position").field_source();
+  b.add_output<decl::Vector>("Position"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<float3> position_field{AttributeFieldInput::from<float3>("position")};
-  params.set_output("Position", std::move(position_field));
+  params.set_output("Position"_ustr, AttributeFieldInput::get_field<float3, "position">());
 }
 
 static void node_register()

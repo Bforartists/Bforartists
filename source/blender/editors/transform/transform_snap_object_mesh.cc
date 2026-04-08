@@ -491,8 +491,9 @@ static eSnapMode mesh_snap_mode_supported(const Mesh *mesh, bool skip_hidden)
   /* When skipping hidden geometry, we still cannot obtain the number of loose verts
    * until computing #BVHTREE_FROM_LOOSEVERTS_NO_HIDDEN. Therefore, consider #SCE_SNAP_TO_POINT
    * supported even if the mesh has no loose vertices in this case. */
-  eSnapMode snap_mode_supported = (skip_hidden || mesh->loose_verts().count) ? SCE_SNAP_TO_POINT :
-                                                                               SCE_SNAP_TO_NONE;
+  eSnapMode snap_mode_supported = (skip_hidden || !mesh->loose_verts().is_empty()) ?
+                                      SCE_SNAP_TO_POINT :
+                                      SCE_SNAP_TO_NONE;
   if (mesh->faces_num) {
     snap_mode_supported |= SCE_SNAP_TO_FACE | SCE_SNAP_TO_FACE_MIDPOINT |
                            SCE_SNAP_INDIVIDUAL_NEAREST | SNAP_TO_EDGE_ELEMENTS;

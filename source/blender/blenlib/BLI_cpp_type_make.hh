@@ -91,10 +91,14 @@ template<typename T> void copy_assign_indices_cb(const void *src, void *dst, con
   BLI_assert(mask.size() == 0 || src != dst);
   BLI_assert(mask.size() == 0 || pointer_can_point_to_instance<T>(src));
   BLI_assert(mask.size() == 0 || pointer_can_point_to_instance<T>(dst));
-  const T *src_ = static_cast<const T *>(src);
-  T *dst_ = static_cast<T *>(dst);
-
-  mask.foreach_index_optimized<int64_t>([&](int64_t i) { dst_[i] = src_[i]; });
+  if constexpr (std::is_trivially_copy_assignable_v<T>) {
+    index_mask::detail::copy_assign(static_cast<const T *>(src), mask, static_cast<T *>(dst));
+  }
+  else {
+    const T *src_ = static_cast<const T *>(src);
+    T *dst_ = static_cast<T *>(dst);
+    mask.foreach_index([&](int64_t i) { dst_[i] = src_[i]; });
+  }
 }
 template<typename T> void copy_assign_n_cb(const void *src, void *dst, const int64_t n)
 {
@@ -106,11 +110,14 @@ void copy_assign_compressed_cb(const void *src, void *dst, const IndexMask &mask
   BLI_assert(mask.size() == 0 || src != dst);
   BLI_assert(mask.size() == 0 || pointer_can_point_to_instance<T>(src));
   BLI_assert(mask.size() == 0 || pointer_can_point_to_instance<T>(dst));
-  const T *src_ = static_cast<const T *>(src);
-  T *dst_ = static_cast<T *>(dst);
-
-  mask.foreach_index_optimized<int64_t>(
-      [&](const int64_t i, const int64_t pos) { dst_[pos] = src_[i]; });
+  if constexpr (std::is_trivially_copy_assignable_v<T>) {
+    index_mask::detail::gather_assign(static_cast<const T *>(src), mask, static_cast<T *>(dst));
+  }
+  else {
+    const T *src_ = static_cast<const T *>(src);
+    T *dst_ = static_cast<T *>(dst);
+    mask.foreach_index([&](const int64_t i, const int64_t pos) { dst_[pos] = src_[i]; });
+  }
 }
 
 template<typename T> void copy_construct_cb(const void *src, void *dst)
@@ -256,10 +263,14 @@ void fill_assign_indices_cb(const void *value, void *dst, const IndexMask &mask)
 {
   BLI_assert(mask.size() == 0 || pointer_can_point_to_instance<T>(value));
   BLI_assert(mask.size() == 0 || pointer_can_point_to_instance<T>(dst));
-  const T &value_ = *static_cast<const T *>(value);
-  T *dst_ = static_cast<T *>(dst);
-
-  mask.foreach_index_optimized<int64_t>([&](int64_t i) { dst_[i] = value_; });
+  if constexpr (std::is_trivially_copy_assignable_v<T>) {
+    index_mask::detail::fill(static_cast<T *>(dst), *static_cast<const T *>(value), mask);
+  }
+  else {
+    const T &value_ = *static_cast<const T *>(value);
+    T *dst_ = static_cast<T *>(dst);
+    mask.foreach_index([&](int64_t i) { dst_[i] = value_; });
+  }
 }
 template<typename T> void fill_assign_n_cb(const void *value, void *dst, const int64_t n)
 {

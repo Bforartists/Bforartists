@@ -55,27 +55,32 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Vector>("UV").hide_value().supports_field();
-  b.add_output<decl::Vector>("UV").field_source_reference_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection")
+  b.add_input<decl::Vector>("UV"_ustr).hide_value().supports_field();
+  b.add_output<decl::Vector>("UV"_ustr).field_source_reference_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .supports_field()
       .description("Faces to consider when packing islands");
-  b.add_input<decl::Float>("Margin").default_value(0.001f).min(0.0f).max(1.0f).description(
-      "Space between islands");
-  b.add_input<decl::Bool>("Rotate").default_value(true).description("Rotate islands for best fit");
-  b.add_input<decl::Menu>("Method")
+  b.add_input<decl::Float>("Margin"_ustr)
+      .default_value(0.001f)
+      .min(0.0f)
+      .max(1.0f)
+      .description("Space between islands");
+  b.add_input<decl::Bool>("Rotate"_ustr)
+      .default_value(true)
+      .description("Rotate islands for best fit");
+  b.add_input<decl::Menu>("Method"_ustr)
       .static_items(shape_method_items)
       .default_value(ShapeMethod::Aabb)
       .optional_label()
       .description("Method used for packing UV islands");
-  b.add_input<decl::Vector>("Bottom Left")
+  b.add_input<decl::Vector>("Bottom Left"_ustr)
       .default_value({0.0f, 0.0f})
       .dimensions(2)
       .subtype(PROP_XYZ)
       .description("Bottom-left corner of packing bounds");
-  b.add_input<decl::Vector>("Top Right")
+  b.add_input<decl::Vector>("Top Right"_ustr)
       .default_value({1.0f, 1.0f})
       .dimensions(2)
       .subtype(PROP_XYZ)
@@ -185,7 +190,6 @@ class PackIslandsFieldInput final : public bke::MeshFieldInput {
         bottom_(bottom),
         top_(top)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -196,10 +200,10 @@ class PackIslandsFieldInput final : public bke::MeshFieldInput {
         mesh, selection_field_, uv_field_, rotate_, margin_, shape_method_, bottom_, top_, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    selection_field_.node().for_each_field_input_recursive(fn);
-    uv_field_.node().for_each_field_input_recursive(fn);
+    fn(selection_field_);
+    fn(uv_field_);
   }
 
   std::optional<AttrDomain> preferred_domain(const Mesh & /*mesh*/) const override
@@ -210,18 +214,18 @@ class PackIslandsFieldInput final : public bke::MeshFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const ShapeMethod local_shape_method = params.get_input<ShapeMethod>("Method");
+  const ShapeMethod local_shape_method = params.get_input<ShapeMethod>("Method"_ustr);
   const eUVPackIsland_ShapeMethod shape_method = convert_shape_method(local_shape_method);
 
-  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
-  const Field<float3> uv_field = params.extract_input<Field<float3>>("UV");
-  const bool rotate = params.extract_input<bool>("Rotate");
-  const float margin = params.extract_input<float>("Margin");
-  const float3 bottom = params.extract_input<float3>("Bottom Left");
-  const float3 top = params.extract_input<float3>("Top Right");
-  params.set_output("UV",
-                    Field<float3>(std::make_shared<PackIslandsFieldInput>(
-                        selection_field, uv_field, rotate, margin, shape_method, bottom, top)));
+  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
+  const Field<float3> uv_field = params.extract_input<Field<float3>>("UV"_ustr);
+  const bool rotate = params.extract_input<bool>("Rotate"_ustr);
+  const float margin = params.extract_input<float>("Margin"_ustr);
+  const float3 bottom = params.extract_input<float3>("Bottom Left"_ustr);
+  const float3 top = params.extract_input<float3>("Top Right"_ustr);
+  params.set_output("UV"_ustr,
+                    Field<float3>::from_input<PackIslandsFieldInput>(
+                        selection_field, uv_field, rotate, margin, shape_method, bottom, top));
 }
 
 static void node_register()

@@ -14,14 +14,14 @@ namespace blender::nodes::node_geo_grid_curl_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Vector>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output<decl::Vector>("Curl").structure_type(StructureType::Grid);
+  b.add_input<decl::Vector>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output<decl::Vector>("Curl"_ustr).structure_type(StructureType::Grid);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  const bke::VolumeGrid<float3> grid = params.extract_input<bke::VolumeGrid<float3>>("Grid");
+  const bke::VolumeGrid<float3> grid = params.extract_input<bke::VolumeGrid<float3>>("Grid"_ustr);
   if (!grid) {
     params.set_default_remaining_outputs();
     return;
@@ -29,7 +29,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   bke::VolumeTreeAccessToken tree_token;
   const openvdb::Vec3SGrid &vdb_grid = grid.grid(tree_token);
   openvdb::Vec3SGrid::Ptr curl_vdb_grid = openvdb::tools::curl(vdb_grid);
-  params.set_output("Curl", bke::VolumeGrid<float3>(std::move(curl_vdb_grid)));
+  params.set_output("Curl"_ustr, bke::VolumeGrid<float3>(std::move(curl_vdb_grid)));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

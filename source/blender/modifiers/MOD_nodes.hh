@@ -39,7 +39,7 @@ class NodesModifierUsageInferenceCache {
   Array<nodes::socket_usage_inference::SocketUsage> inputs;
   Array<nodes::socket_usage_inference::SocketUsage> outputs;
 
-  void ensure(const NodesModifierData &nmd);
+  void ensure(const Object &object, const NodesModifierData &nmd);
   void reset();
 };
 

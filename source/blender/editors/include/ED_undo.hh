@@ -15,6 +15,7 @@ namespace blender {
 
 struct Base;
 struct ID;
+struct Main;
 struct MemFile;
 struct PointerRNA;
 struct Object;
@@ -26,7 +27,7 @@ struct wmOperator;
 struct wmOperatorType;
 struct wmWindowManager;
 
-/* undo.c */
+/* ed_undo.cc */
 
 /**
  * Run from the main event loop, basic checks that undo is left in a correct state.
@@ -106,9 +107,12 @@ void ED_undo_object_editmode_restore_helper(Scene *scene,
                                             uint object_array_len,
                                             uint object_array_stride);
 
-Vector<Object *> ED_undo_editmode_objects_from_view_layer(const Scene *scene,
+Vector<Object *> ED_undo_editmode_objects_from_view_layer(const Main &bmain,
+                                                          const Scene *scene,
                                                           ViewLayer *view_layer);
-Vector<Base *> ED_undo_editmode_bases_from_view_layer(const Scene *scene, ViewLayer *view_layer);
+Vector<Base *> ED_undo_editmode_bases_from_view_layer(const Main &bmain,
+                                                      const Scene *scene,
+                                                      ViewLayer *view_layer);
 
 /**
  * Ideally we won't access the stack directly,
@@ -121,8 +125,12 @@ UndoStack *ED_undo_stack_get();
 
 /* Helpers. */
 
-void ED_undo_object_set_active_or_warn(
-    Scene *scene, ViewLayer *view_layer, Object *ob, const char *info, CLG_LogRef *log);
+void ED_undo_object_set_active_or_warn(const Main &bmain,
+                                       Scene *scene,
+                                       ViewLayer *view_layer,
+                                       Object *ob,
+                                       const char *info,
+                                       CLG_LogRef *log);
 
 /* `undo_system_types.cc` */
 

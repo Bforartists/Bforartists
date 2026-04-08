@@ -311,7 +311,7 @@ static bNodeTree *rna_Main_nodetree_new(Main *bmain, const char *name, int type)
 
   bke::bNodeTreeType *typeinfo = rna_node_tree_type_from_enum(type);
   if (typeinfo) {
-    bNodeTree *ntree = bke::node_tree_add_tree(bmain, safe_name, typeinfo->idname);
+    bNodeTree *ntree = bke::node_tree_add_tree(bmain, safe_name, typeinfo->idname.ref());
     BKE_main_ensure_invariants(*bmain);
 
     id_us_min(&ntree->id);

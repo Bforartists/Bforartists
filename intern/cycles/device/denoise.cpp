@@ -75,13 +75,12 @@ NODE_DEFINE(DenoiseParams)
 
   SOCKET_INT(start_sample, "Start Sample", 0);
 
-  SOCKET_BOOLEAN(use_pass_albedo, "Use Pass Albedo", true);
-  SOCKET_BOOLEAN(use_pass_normal, "Use Pass Normal", false);
-
+  SOCKET_INT(passes, "Passes", DENOISER_PASS_ALBEDO | DENOISER_PASS_NORMAL);
   SOCKET_BOOLEAN(temporally_stable, "Temporally Stable", false);
 
   SOCKET_ENUM(prefilter, "Prefilter", *prefilter_enum, DENOISER_PREFILTER_FAST);
   SOCKET_ENUM(quality, "Quality", *quality_enum, DENOISER_QUALITY_HIGH);
+  SOCKET_FLOAT(upscale_factor, "Upscale Factor", 1.0f);
 
   return type;
 }

@@ -23,16 +23,16 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Volume").description("Volume geometry to add a grid to");
-  b.add_output<decl::Geometry>("Volume").align_with_previous();
-  b.add_input<decl::String>("Name").optional_label().is_volume_grid_name();
+  b.add_input<decl::Geometry>("Volume"_ustr).description("Volume geometry to add a grid to");
+  b.add_output<decl::Geometry>("Volume"_ustr).align_with_previous();
+  b.add_input<decl::String>("Name"_ustr).optional_label().is_volume_grid_name();
 
   const bNode *node = b.node_or_null();
   if (!node) {
     return;
   }
 
-  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid")
+  b.add_input(*bke::grid_type_to_socket_type(VolumeGridType(node->custom1)), "Grid"_ustr)
       .hide_value()
       .structure_type(StructureType::Grid);
 }
@@ -42,14 +42,14 @@ static void search_link_ops(GatherLinkSearchOpParams &params)
   if (params.other_socket().type == SOCK_GEOMETRY) {
     params.add_item(IFACE_("Volume"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
-      params.update_and_connect_available_socket(node, "Volume");
+      params.update_and_connect_available_socket(node, "Volume"_ustr);
     });
   }
   if (params.in_out() == SOCK_IN) {
     if (params.other_socket().type == SOCK_STRING) {
       params.add_item(IFACE_("Name"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
-        params.update_and_connect_available_socket(node, "Name");
+        params.update_and_connect_available_socket(node, "Name"_ustr);
       });
     }
     if (const std::optional<VolumeGridType> data_type = bke::socket_type_to_grid_type(
@@ -58,7 +58,7 @@ static void search_link_ops(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeStoreNamedGrid");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Grid");
+        params.update_and_connect_available_socket(node, "Grid"_ustr);
       });
     }
   }
@@ -80,9 +80,9 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 static void try_store_grid(GeoNodeExecParams params, Volume &volume)
 {
-  const std::string grid_name = params.extract_input<std::string>("Name");
+  const std::string grid_name = params.extract_input<std::string>("Name"_ustr);
 
-  bke::GVolumeGrid grid = params.extract_input<bke::GVolumeGrid>("Grid");
+  bke::GVolumeGrid grid = params.extract_input<bke::GVolumeGrid>("Grid"_ustr);
   if (!grid) {
     return;
   }
@@ -97,7 +97,7 @@ static void try_store_grid(GeoNodeExecParams params, Volume &volume)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Volume");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Volume"_ustr);
   Volume *volume = geometry_set.get_volume_for_write();
   if (!volume) {
     volume = BKE_id_new_nomain<Volume>("Store Named Grid Output");
@@ -106,7 +106,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   try_store_grid(params, *volume);
 
-  params.set_output("Volume", geometry_set);
+  params.set_output("Volume"_ustr, geometry_set);
 }
 
 #else /* WITH_OPENVDB */

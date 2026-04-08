@@ -17,10 +17,10 @@ namespace nodes::node_shader_attribute_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>("Color");
-  b.add_output<decl::Vector>("Vector");
-  b.add_output<decl::Float>("Factor", "Fac");
-  b.add_output<decl::Float>("Alpha");
+  b.add_output<decl::Color>("Color"_ustr);
+  b.add_output<decl::Vector>("Vector"_ustr);
+  b.add_output<decl::Float>("Factor"_ustr, "Fac"_ustr);
+  b.add_output<decl::Float>("Alpha"_ustr);
 }
 
 static void node_shader_buts_attribute(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

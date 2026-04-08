@@ -92,7 +92,7 @@ const EnumPropertyItem rna_enum_brush_curve_preset_items[] = {
 
 /* NOTE: we don't actually turn these into a single enum bit-mask property,
  * instead we construct individual boolean properties. */
-const EnumPropertyItem rna_enum_brush_automasking_flag_items[] = {
+const EnumPropertyItem rna_enum_shared_automasking_flag_items[] = {
     {BRUSH_AUTOMASKING_TOPOLOGY,
      "use_automasking_topology",
      0,
@@ -133,6 +133,21 @@ const EnumPropertyItem rna_enum_brush_automasking_flag_items[] = {
      0,
      "Custom Cavity Curve",
      "Use custom curve"},
+    {BRUSH_AUTOMASKING_BRUSH_NORMAL,
+     "use_automasking_start_normal",
+     0,
+     "Area Normal",
+     "Affect only vertices with a similar normal to where the stroke starts"},
+    {BRUSH_AUTOMASKING_VIEW_NORMAL,
+     "use_automasking_view_normal",
+     0,
+     "View Normal",
+     "Affect only vertices with a normal that faces the viewer"},
+    {BRUSH_AUTOMASKING_VIEW_OCCLUSION,
+     "use_automasking_view_occlusion",
+     0,
+     "Occlusion",
+     "Only affect vertices that are not occluded by other faces (slower performance)"},
     {0, nullptr, 0, nullptr, nullptr}};
 
 const EnumPropertyItem rna_enum_brush_sculpt_brush_type_items[] = {
@@ -717,7 +732,7 @@ static void rna_Brush_main_tex_update(bContext *C, PointerRNA *ptr)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Brush *br = static_cast<Brush *>(ptr->data);
-  BKE_paint_invalidate_overlay_tex(scene, view_layer, br->mtex.tex);
+  BKE_paint_invalidate_overlay_tex(*bmain, scene, view_layer, br->mtex.tex);
   rna_Brush_update(bmain, scene, ptr);
 }
 
@@ -727,7 +742,7 @@ static void rna_Brush_secondary_tex_update(bContext *C, PointerRNA *ptr)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Brush *br = static_cast<Brush *>(ptr->data);
-  BKE_paint_invalidate_overlay_tex(scene, view_layer, br->mask_mtex.tex);
+  BKE_paint_invalidate_overlay_tex(*bmain, scene, view_layer, br->mask_mtex.tex);
   rna_Brush_update(bmain, scene, ptr);
 }
 
@@ -764,12 +779,13 @@ static void rna_Brush_stroke_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 
 static void rna_TextureSlot_brush_angle_update(bContext *C, PointerRNA *ptr)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   MTex *mtex = static_cast<MTex *>(ptr->data);
   /* skip invalidation of overlay for stencil mode */
   if (mtex->mapping != MTEX_MAP_MODE_STENCIL) {
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_paint_invalidate_overlay_tex(scene, view_layer, mtex->tex);
+    BKE_paint_invalidate_overlay_tex(*bmain, scene, view_layer, mtex->tex);
   }
 
   rna_TextureSlot_update(C, ptr);
@@ -1043,9 +1059,10 @@ static void rna_BrushGpencilSettings_update(Main * /*bmain*/, Scene * /*scene*/,
 
 static void rna_BrushGpencilSettings_use_material_pin_update(bContext *C, PointerRNA *ptr)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   Brush *brush = reinterpret_cast<Brush *>(ptr->owner_id);
 
@@ -1788,6 +1805,16 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, ParameterFlag(0));
   RNA_def_property_update(prop, 0, "rna_BrushGpencilSettings_update");
 
+  /* Threshold distance for converting curve types. */
+  prop = RNA_def_property(srna, "conversion_threshold", PROP_FLOAT, PROP_DISTANCE);
+  RNA_def_property_float_sdna(prop, nullptr, "conversion_threshold");
+  RNA_def_property_range(prop, 0.0f, FLT_MAX);
+  RNA_def_property_float_default(prop, 0.001f);
+  RNA_def_property_ui_text(
+      prop, "Threshold", "Threshold distance for between points for conversion");
+  RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, ParameterFlag(0));
+  RNA_def_property_update(prop, 0, "rna_BrushGpencilSettings_update");
+
   /* Flags */
   prop = RNA_def_property(srna, "use_pressure", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", GP_BRUSH_USE_PRESSURE);
@@ -2070,6 +2097,13 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
                            "Auto-Remove Fill Guides",
                            "Automatically remove fill guide strokes after fill operation");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_update(prop, 0, "rna_BrushGpencilSettings_update");
+
+  prop = RNA_def_property(srna, "curve_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_curves_type_items);
+  RNA_def_property_ui_text(prop, "Curve Type", "Type of curves");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
   RNA_def_property_update(prop, 0, "rna_BrushGpencilSettings_update");
 
   prop = RNA_def_property(srna, "use_fill_limit", PROP_BOOLEAN, PROP_NONE);
@@ -3601,7 +3635,7 @@ static void rna_def_brush(BlenderRNA *brna)
       "When locked keep using the plane origin of surface where stroke was initiated");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
-  const EnumPropertyItem *entry = rna_enum_brush_automasking_flag_items;
+  const EnumPropertyItem *entry = rna_enum_shared_automasking_flag_items;
   do {
     prop = RNA_def_property(srna, entry->identifier, PROP_BOOLEAN, PROP_NONE);
     RNA_def_property_boolean_sdna(prop, nullptr, "automasking_flags", entry->value);
@@ -3642,15 +3676,6 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
-  prop = RNA_def_property(srna, "use_automasking_start_normal", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(
-      prop, nullptr, "automasking_flags", BRUSH_AUTOMASKING_BRUSH_NORMAL);
-  RNA_def_property_ui_text(
-      prop,
-      "Area Normal",
-      "Affect only vertices with a similar normal to where the stroke starts");
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
-
   prop = RNA_def_property(srna, "automasking_start_normal_limit", PROP_FLOAT, PROP_ANGLE);
   RNA_def_property_float_sdna(prop, nullptr, "automasking_start_normal_limit");
   RNA_def_property_range(prop, 0.0001f, M_PI);
@@ -3662,21 +3687,6 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0001f, 1.0f);
   RNA_def_property_ui_text(
       prop, "Area Normal Falloff", "Extend the angular range with a falloff gradient");
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
-
-  prop = RNA_def_property(srna, "use_automasking_view_normal", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "automasking_flags", BRUSH_AUTOMASKING_VIEW_NORMAL);
-  RNA_def_property_ui_text(
-      prop, "View Normal", "Affect only vertices with a normal that faces the viewer");
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
-
-  prop = RNA_def_property(srna, "use_automasking_view_occlusion", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(
-      prop, nullptr, "automasking_flags", BRUSH_AUTOMASKING_VIEW_OCCLUSION);
-  RNA_def_property_ui_text(
-      prop,
-      "Occlusion",
-      "Only affect vertices that are not occluded by other faces (slower performance)");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "automasking_view_normal_limit", PROP_FLOAT, PROP_ANGLE);
@@ -3864,7 +3874,7 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag2", BRUSH_PROJECT_USE_BIDIRECTIONAL);
   RNA_def_property_ui_text(prop,
                            "Bidirectional",
-                           "Project vertices both along along the projection direction and its "
+                           "Project vertices both along the projection direction and its "
                            "inverse, choosing the closest intersection.");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 

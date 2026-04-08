@@ -70,12 +70,13 @@ static wmOperatorStatus view_axis_exec(bContext *C, wmOperator *op)
     Object *obact = CTX_data_active_object(C);
     if (obact != nullptr) {
       float twmat[3][3];
+      const Main *bmain = CTX_data_main(C);
       const Scene *scene = CTX_data_scene(C);
       ViewLayer *view_layer = CTX_data_view_layer(C);
       Object *obedit = CTX_data_edit_object(C);
       /* same as transform gizmo when normal is set */
       ed::transform::ED_getTransformOrientationMatrix(
-          scene, view_layer, v3d, obact, obedit, V3D_AROUND_ACTIVE, twmat);
+          *bmain, scene, view_layer, v3d, obact, obedit, V3D_AROUND_ACTIVE, twmat);
       align_quat = align_quat_buf;
       mat3_to_quat(align_quat, twmat);
       invert_qt_normalized(align_quat);

@@ -97,8 +97,9 @@ class SessionParams {
     return !(device == params.device && headless == params.headless &&
              background == params.background && pixel_size == params.pixel_size &&
              threads == params.threads && use_profiling == params.use_profiling &&
-             shadingsystem == params.shadingsystem && use_auto_tile == params.use_auto_tile &&
-             tile_size == params.tile_size);
+             use_auto_tile == params.use_auto_tile && tile_size == params.tile_size &&
+             use_resolution_divider == params.use_resolution_divider &&
+             shadingsystem == params.shadingsystem);
   }
 };
 

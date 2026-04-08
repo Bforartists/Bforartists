@@ -61,9 +61,10 @@ static bool WIDGETGROUP_camera_poll(const bContext *C, wmGizmoGroupType * /*gzgt
     return false;
   }
 
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Base *base = BKE_view_layer_active_base_get(view_layer);
   if (base && BASE_SELECTABLE(v3d, base)) {
     Object *ob = base->object;
@@ -80,9 +81,10 @@ static bool WIDGETGROUP_camera_poll(const bContext *C, wmGizmoGroupType * /*gzgt
 
 static void WIDGETGROUP_camera_setup(const bContext *C, wmGizmoGroup *gzgroup)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   const float4x4 &ob_mat = ob->object_to_world();
   float dir[3];
@@ -142,9 +144,10 @@ static void gizmo_orthoscale_prop_matrix_get(const wmGizmo * /*gz*/,
   float (*matrix)[4] = static_cast<float (*)[4]>(value_p);
 
   const bContext *C = static_cast<const bContext *>(gz_prop->custom_func.user_data);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
   const Object *ob = static_cast<const Object *>(BKE_view_layer_active_object_get(view_layer));
   Camera *camera = id_cast<Camera *>(ob->data);
@@ -172,9 +175,10 @@ static void gizmo_orthoscale_prop_matrix_set(const wmGizmo * /*gz*/,
   BLI_assert(gz_prop->type->array_length == 16);
 
   const bContext *C = static_cast<const bContext *>(gz_prop->custom_func.user_data);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
   const Object *ob = static_cast<const Object *>(BKE_view_layer_active_object_get(view_layer));
   Camera *camera = id_cast<Camera *>(ob->data);
@@ -197,9 +201,10 @@ static void WIDGETGROUP_camera_refresh(const bContext *C, wmGizmoGroup *gzgroup)
 
   CameraWidgetGroup *cagzgroup = static_cast<CameraWidgetGroup *>(gzgroup->customdata);
   View3D *v3d = CTX_wm_view3d(C);
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   Camera *ca = id_cast<Camera *>(ob->data);
   const float4x4 &ob_mat = ob->object_to_world();
@@ -364,9 +369,10 @@ static void WIDGETGROUP_camera_message_subscribe(const bContext *C,
                                                  wmMsgBus *mbus)
 {
   ARegion *region = CTX_wm_region(C);
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   Camera *ca = id_cast<Camera *>(ob->data);
 
@@ -485,6 +491,7 @@ static void gizmo_render_border_prop_matrix_set(const wmGizmo * /*gz*/,
 
 static bool WIDGETGROUP_camera_view_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
 
   /* This is just so the border isn't always in the way,
@@ -492,7 +499,7 @@ static bool WIDGETGROUP_camera_view_poll(const bContext *C, wmGizmoGroupType * /
    * We could change the rules for when to show. */
   {
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     if (scene->camera != BKE_view_layer_active_object_get(view_layer)) {
       return false;
     }

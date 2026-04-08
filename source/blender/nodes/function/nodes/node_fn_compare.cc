@@ -29,32 +29,36 @@ NODE_STORAGE_FUNCS(NodeFunctionCompare)
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("A").min(-10000.0f).max(10000.0f).translation_context(
+  b.add_input<decl::Float>("A"_ustr).min(-10000.0f).max(10000.0f).translation_context(
       BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Float>("B").min(-10000.0f).max(10000.0f).translation_context(
+  b.add_input<decl::Float>("B"_ustr).min(-10000.0f).max(10000.0f).translation_context(
       BLT_I18NCONTEXT_ID_NODETREE);
 
-  b.add_input<decl::Int>("A", "A_INT").translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Int>("B", "B_INT").translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_input<decl::Int>("A"_ustr, "A_INT"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_input<decl::Int>("B"_ustr, "B_INT"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
 
-  b.add_input<decl::Vector>("A", "A_VEC3").translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Vector>("B", "B_VEC3").translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_input<decl::Vector>("A"_ustr, "A_VEC3"_ustr)
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_input<decl::Vector>("B"_ustr, "B_VEC3"_ustr)
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
 
-  b.add_input<decl::Color>("A", "A_COL").translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Color>("B", "B_COL").translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_input<decl::Color>("A"_ustr, "A_COL"_ustr)
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_input<decl::Color>("B"_ustr, "B_COL"_ustr)
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
 
-  b.add_input<decl::String>("A", "A_STR")
+  b.add_input<decl::String>("A"_ustr, "A_STR"_ustr)
       .translation_context(BLT_I18NCONTEXT_ID_NODETREE)
       .optional_label();
-  b.add_input<decl::String>("B", "B_STR")
+  b.add_input<decl::String>("B"_ustr, "B_STR"_ustr)
       .translation_context(BLT_I18NCONTEXT_ID_NODETREE)
       .optional_label();
 
-  b.add_input<decl::Float>("C").default_value(0.9f);
-  b.add_input<decl::Float>("Angle").default_value(0.0872665f).subtype(PROP_ANGLE);
-  b.add_input<decl::Float>("Epsilon").default_value(0.001).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>("C"_ustr).default_value(0.9f);
+  b.add_input<decl::Float>("Angle"_ustr).default_value(0.0872665f).subtype(PROP_ANGLE);
+  b.add_input<decl::Float>("Epsilon"_ustr).default_value(0.001).min(-10000.0f).max(10000.0f);
 
-  b.add_output<decl::Bool>("Result");
+  b.add_output<decl::Bool>("Result"_ustr);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -108,7 +112,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 class SocketSearchOp {
  public:
-  const StringRef socket_name;
+  UString socket_name;
   eNodeSocketDatatype data_type;
   NodeCompareOperation operation;
   NodeCompareMode mode = NODE_COMPARE_MODE_ELEMENT;
@@ -165,7 +169,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   if (!ELEM(type, SOCK_INT, SOCK_BOOLEAN, SOCK_FLOAT, SOCK_VECTOR, SOCK_RGBA, SOCK_STRING)) {
     return;
   }
-  const StringRef socket_name = params.in_out() == SOCK_IN ? "A" : "Result";
+  const UString socket_name = params.in_out() == SOCK_IN ? "A"_ustr : "Result"_ustr;
   for (const EnumPropertyItem *item = rna_enum_node_compare_operation_items;
        item->identifier != nullptr;
        item++)
@@ -184,7 +188,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(
         IFACE_("Angle"),
         SocketSearchOp{
-            "Angle", SOCK_VECTOR, NODE_COMPARE_GREATER_THAN, NODE_COMPARE_MODE_DIRECTION});
+            "Angle"_ustr, SOCK_VECTOR, NODE_COMPARE_GREATER_THAN, NODE_COMPARE_MODE_DIRECTION});
   }
 }
 

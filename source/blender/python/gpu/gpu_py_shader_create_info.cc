@@ -442,12 +442,14 @@ static void pygpu_interface_info__tp_dealloc(PyObject *self)
 PyDoc_STRVAR(
     /* Wrap. */
     pygpu_interface_info__tp_doc,
-    ".. class:: GPUStageInterfaceInfo(name)\n"
+    ".. class:: GPUStageInterfaceInfo\n"
     "\n"
     "   List of varyings between shader stages.\n"
     "\n"
-    "   :param name: Name of the interface block.\n"
-    "   :type name: str\n");
+    "   .. method:: __init__(name)\n"
+    "\n"
+    "      :param name: Name of the interface block.\n"
+    "      :type name: str\n");
 PyTypeObject BPyGPUStageInterfaceInfo_Type = {
     /*ob_base*/ PyVarObject_HEAD_INIT(nullptr, 0)
     /*tp_name*/ "GPUStageInterfaceInfo",

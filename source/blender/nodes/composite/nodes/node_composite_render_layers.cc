@@ -55,8 +55,8 @@ static void node_init(const bContext *context, PointerRNA *node_pointer)
  * engine has no extra passes. */
 static void declare_default(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
 }
 
 /* Declares an already existing output. */
@@ -65,11 +65,11 @@ static BaseSocketDeclarationBuilder &declare_existing_output(NodeDeclarationBuil
 {
   if (output->type == SOCK_VECTOR) {
     const int dimensions = output->default_value_typed<bNodeSocketValueVector>()->dimensions;
-    return b.add_output<decl::Vector>(output->identifier)
+    return b.add_output<decl::Vector>(output->identifier_ustr())
         .dimensions(dimensions)
         .structure_type(StructureType::Dynamic);
   }
-  return b.add_output(eNodeSocketDatatype(output->type), output->identifier)
+  return b.add_output(eNodeSocketDatatype(output->type), output->identifier_ustr())
       .structure_type(StructureType::Dynamic);
 }
 
@@ -97,9 +97,10 @@ static void declare_pass_callback(void *user_data,
   NodeDeclarationBuilder &b = *static_cast<NodeDeclarationBuilder *>(user_data);
 
   /* The combined pass is aliased as Image. */
-  const char *name = StringRef(pass_name) == RE_PASSNAME_COMBINED ? "Image" : pass_name;
+  const UString name = StringRef(pass_name) == RE_PASSNAME_COMBINED ? "Image"_ustr :
+                                                                      UString(pass_name);
   if (socket_type == SOCK_VECTOR) {
-    b.add_output<decl::Vector>(name)
+    b.add_output<decl::Vector>(UString(name))
         .dimensions(channels_count)
         .structure_type(StructureType::Dynamic);
   }
@@ -109,7 +110,7 @@ static void declare_pass_callback(void *user_data,
 
   /* The Alpha pass is generated based on the combined pass. */
   if (StringRef(pass_name) == RE_PASSNAME_COMBINED) {
-    b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
+    b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
   }
 }
 
@@ -120,11 +121,13 @@ static void declare_extra_passes(NodeDeclarationBuilder &b,
   if ((scene->r.mode & R_EDGE_FRS) &&
       (view_layer->freestyle_config.flags & FREESTYLE_AS_RENDER_PASS))
   {
-    b.add_output<decl::Color>(RE_PASSNAME_FREESTYLE).structure_type(StructureType::Dynamic);
+    b.add_output<decl::Color>(RE_PASSNAME_FREESTYLE ""_ustr)
+        .structure_type(StructureType::Dynamic);
   }
 
   if (view_layer->grease_pencil_flags & GREASE_PENCIL_AS_SEPARATE_PASS) {
-    b.add_output<decl::Color>(RE_PASSNAME_GREASE_PENCIL).structure_type(StructureType::Dynamic);
+    b.add_output<decl::Color>(RE_PASSNAME_GREASE_PENCIL ""_ustr)
+        .structure_type(StructureType::Dynamic);
   }
 }
 
@@ -134,7 +137,7 @@ static void declare_extra_passes(NodeDeclarationBuilder &b,
  * changed. */
 static void declare_old_linked_outputs(NodeDeclarationBuilder &b)
 {
-  Set<std::string> added_outputs_identifiers;
+  Set<UString> added_outputs_identifiers;
   for (const SocketDeclaration *output_declaration : b.declaration().sockets(SOCK_OUT)) {
     added_outputs_identifiers.add_new(output_declaration->identifier);
   }
@@ -142,7 +145,7 @@ static void declare_old_linked_outputs(NodeDeclarationBuilder &b)
   const bNode *node = b.node_or_null();
   node_tree->ensure_topology_cache();
   for (const bNodeSocket *output : node->output_sockets()) {
-    if (added_outputs_identifiers.contains(output->identifier)) {
+    if (added_outputs_identifiers.contains(output->identifier_ustr())) {
       continue;
     }
     if (!output->is_directly_linked()) {

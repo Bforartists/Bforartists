@@ -277,11 +277,12 @@ static wmOperatorStatus uv_copy_exec(bContext *C, wmOperator * /*op*/)
   UV_clipboard_free();
   uv_clipboard = new UV_ClipboardBuffer();
 
+  const Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Scene *scene = CTX_data_scene(C);
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   for (Object *ob : objects) {
     BMEditMesh *em = BKE_editmesh_from_object(ob);
@@ -307,11 +308,12 @@ static wmOperatorStatus uv_paste_exec(bContext *C, wmOperator *op)
   if (!uv_clipboard) {
     return OPERATOR_FINISHED; /* Nothing to do. */
   }
+  const Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Scene *scene = CTX_data_scene(C);
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      scene, view_layer, nullptr);
+      *bmain, scene, view_layer, nullptr);
 
   bool changed_multi = false;
   int complicated_search = 0;

@@ -30,6 +30,7 @@
 #  include "RNA_access.hh"
 
 #  include "BKE_context.hh"
+#  include "BKE_global.hh"
 #  include "BKE_idprop.hh"
 #  include "BKE_layer.hh"
 #  include "BKE_main.hh"
@@ -56,7 +57,9 @@ static PointerRNA rna_ViewLayer_active_layer_collection_get(PointerRNA *ptr)
 {
   const Scene *scene = id_cast<const Scene *>(ptr->owner_id);
   ViewLayer *view_layer = static_cast<ViewLayer *>(ptr->data);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  /* FIXME Using G_MAIN is very weak here, and may cause random issues when handling data not in
+   * the G_MAIN, though in practice this is _probably_ not a very likely issue for now. */
+  BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
   LayerCollection *lc = BKE_view_layer_active_collection_get(view_layer);
   return RNA_pointer_create_with_parent(*ptr, RNA_LayerCollection, lc);
 }
@@ -68,7 +71,9 @@ static void rna_ViewLayer_active_layer_collection_set(PointerRNA *ptr,
   const Scene *scene = id_cast<const Scene *>(ptr->owner_id);
   ViewLayer *view_layer = static_cast<ViewLayer *>(ptr->data);
   LayerCollection *lc = static_cast<LayerCollection *>(value.data);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  /* FIXME Using G_MAIN is very weak here, and may cause random issues when handling data not in
+   * the G_MAIN, though in practice this is _probably_ not a very likely issue for now. */
+  BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
   const int index = BKE_layer_collection_findindex(view_layer, lc);
   if (index != -1) {
     BKE_layer_collection_activate(view_layer, lc);
@@ -79,7 +84,9 @@ static PointerRNA rna_LayerObjects_active_object_get(PointerRNA *ptr)
 {
   const Scene *scene = id_cast<Scene *>(ptr->owner_id);
   ViewLayer *view_layer = static_cast<ViewLayer *>(ptr->data);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  /* FIXME Using G_MAIN is very weak here, and may cause random issues when handling data not in
+   * the G_MAIN, though in practice this is _probably_ not a very likely issue for now. */
+  BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
   return RNA_id_pointer_create(
       reinterpret_cast<ID *>(BKE_view_layer_active_object_get(view_layer)));
 }
@@ -92,7 +99,9 @@ static void rna_LayerObjects_active_object_set(PointerRNA *ptr,
   ViewLayer *view_layer = static_cast<ViewLayer *>(ptr->data);
   if (value.data) {
     Object *ob = static_cast<Object *>(value.data);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    /* FIXME Using G_MAIN is very weak here, and may cause random issues when handling data not in
+     * the G_MAIN, though in practice this is _probably_ not a very likely issue for now. */
+    BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
     Base *basact_test = BKE_view_layer_base_find(view_layer, ob);
     if (basact_test != nullptr) {
       view_layer->basact = basact_test;
@@ -336,7 +345,7 @@ static void rna_LayerCollection_exclude_update(Main *bmain, Scene * /*scene*/, P
   if (!exclude) {
     /* We need to update animation of objects added back to the scene through enabling this view
      * layer. */
-    FOREACH_OBJECT_BEGIN (scene, view_layer, ob) {
+    FOREACH_OBJECT_BEGIN (bmain, scene, view_layer, ob) {
       DEG_id_tag_update(&ob->id, ID_RECALC_ANIMATION);
     }
     FOREACH_OBJECT_END;
@@ -375,7 +384,7 @@ static bool rna_LayerCollection_has_selected_objects(LayerCollection *lc,
   for (Scene &scene : bmain->scenes) {
     for (ViewLayer &scene_view_layer : scene.view_layers) {
       if (&scene_view_layer == view_layer) {
-        return BKE_layer_collection_has_selected_objects(&scene, view_layer, lc);
+        return BKE_layer_collection_has_selected_objects(*bmain, &scene, view_layer, lc);
       }
     }
   }
@@ -387,7 +396,9 @@ void rna_LayerCollection_children_begin(CollectionPropertyIterator *iter, Pointe
   Scene *scene = id_cast<Scene *>(ptr->owner_id);
   LayerCollection *lc = static_cast<LayerCollection *>(ptr->data);
   ViewLayer *view_layer = BKE_view_layer_find_from_collection(scene, lc);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  /* FIXME Using G_MAIN is very weak here, and may cause random issues when handling data not in
+   * the G_MAIN, though in practice this is _probably_ not a very likely issue for now. */
+  BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
 
   rna_iterator_listbase_begin(iter, ptr, &lc->layer_collections, nullptr);
 }
@@ -398,7 +409,9 @@ static bool rna_LayerCollection_children_lookupint(PointerRNA *ptr, int key, Poi
   LayerCollection *lc = static_cast<LayerCollection *>(ptr->data);
   /* TODO: replace by using RNA ancestors. */
   ViewLayer *view_layer = BKE_view_layer_find_from_collection(scene, lc);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  /* FIXME Using G_MAIN is very weak here, and may cause random issues when handling data not in
+   * the G_MAIN, though in practice this is _probably_ not a very likely issue for now. */
+  BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
 
   LayerCollection *child = static_cast<LayerCollection *>(
       BLI_findlink(&lc->layer_collections, key));
@@ -417,7 +430,9 @@ static bool rna_LayerCollection_children_lookupstring(PointerRNA *ptr,
   LayerCollection *lc = static_cast<LayerCollection *>(ptr->data);
   /* TODO: replace by using RNA ancestors. */
   ViewLayer *view_layer = BKE_view_layer_find_from_collection(scene, lc);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  /* FIXME Using G_MAIN is very weak here, and may cause random issues when handling data not in
+   * the G_MAIN, though in practice this is _probably_ not a very likely issue for now. */
+  BKE_view_layer_synced_ensure(*G_MAIN, scene, view_layer);
 
   for (LayerCollection &child : lc->layer_collections) {
     if (STREQ(child.collection->id.name + 2, key)) {

@@ -924,10 +924,10 @@ static void update_gpu_scopes(const ImBuf *input_ibuf,
   const uint tex_coord = GPU_vertformat_attr_add(
       imm_format, "texCoord", gpu::VertAttrType::SFLOAT_32_32);
 
-  const ColorSpace *input_colorspace = input_ibuf->float_buffer.data ?
+  const ColorSpace *input_colorspace = input_ibuf->float_data() ?
                                            input_ibuf->float_buffer.colorspace :
                                            input_ibuf->byte_buffer.colorspace;
-  const bool predivide = input_ibuf->float_buffer.data != nullptr;
+  const bool predivide = input_ibuf->float_data() != nullptr;
   if (IMB_colormanagement_setup_glsl_draw_from_space(
           &view_settings, &display_settings, input_colorspace, 0.0f, predivide, false))
   {
@@ -1507,7 +1507,7 @@ static gpu::Texture *create_texture(const ImBuf &ibuf)
 
   gpu::Texture *texture = nullptr;
 
-  if (ibuf.float_buffer.data) {
+  if (ibuf.float_data()) {
     gpu::TextureFormat texture_format;
     switch (ibuf.channels) {
       case 1:
@@ -1527,10 +1527,10 @@ static gpu::Texture *create_texture(const ImBuf &ibuf)
     texture = GPU_texture_create_2d(
         "seq_display_buf", ibuf.x, ibuf.y, 1, texture_format, texture_usage, nullptr);
     if (texture) {
-      GPU_texture_update(texture, GPU_DATA_FLOAT, ibuf.float_buffer.data);
+      GPU_texture_update(texture, GPU_DATA_FLOAT, ibuf.float_data());
     }
   }
-  else if (ibuf.byte_buffer.data) {
+  else if (ibuf.byte_data()) {
     texture = GPU_texture_create_2d("seq_display_buf",
                                     ibuf.x,
                                     ibuf.y,
@@ -1539,7 +1539,7 @@ static gpu::Texture *create_texture(const ImBuf &ibuf)
                                     texture_usage,
                                     nullptr);
     if (texture) {
-      GPU_texture_update(texture, GPU_DATA_UBYTE, ibuf.byte_buffer.data);
+      GPU_texture_update(texture, GPU_DATA_UBYTE, ibuf.byte_data());
     }
   }
 
@@ -1559,14 +1559,14 @@ static gpu::Texture *create_texture(const ImBuf &ibuf)
  * If there are no buffers at all scene linear space is returned. */
 static const char *get_texture_colorspace_name(const ImBuf &ibuf)
 {
-  if (ibuf.float_buffer.data) {
+  if (ibuf.byte_data()) {
     if (ibuf.float_buffer.colorspace) {
       return IMB_colormanagement_colorspace_get_name(ibuf.float_buffer.colorspace);
     }
     return IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR);
   }
 
-  if (ibuf.byte_buffer.data) {
+  if (ibuf.byte_data()) {
     if (ibuf.byte_buffer.colorspace) {
       return IMB_colormanagement_colorspace_get_name(ibuf.byte_buffer.colorspace);
     }
@@ -1594,7 +1594,7 @@ static void sequencer_preview_draw_color_render(const SpaceSeq &space_sequencer,
     const rctf position = preview_get_full_position(region);
     const rctf texture_coord = preview_get_full_texture_coord();
     const char *texture_colorspace = get_texture_colorspace_name(*current_ibuf);
-    const bool predivide = (current_ibuf->float_buffer.data != nullptr);
+    const bool predivide = (current_ibuf->float_data() != nullptr);
     preview_draw_texture_to_linear(
         *current_texture, texture_colorspace, predivide, position, texture_coord);
   }
@@ -1604,7 +1604,7 @@ static void sequencer_preview_draw_color_render(const SpaceSeq &space_sequencer,
     const rctf position = preview_get_reference_position(space_sequencer, editing, region);
     const rctf texture_coord = preview_get_reference_texture_coord(space_sequencer, editing);
     const char *texture_colorspace = get_texture_colorspace_name(*reference_ibuf);
-    const bool predivide = (reference_ibuf->float_buffer.data != nullptr);
+    const bool predivide = (reference_ibuf->float_data() != nullptr);
     preview_draw_texture_to_linear(
         *reference_texture, texture_colorspace, predivide, position, texture_coord);
   }
@@ -1656,7 +1656,7 @@ static void sequencer_preview_draw_overlays(const bContext *C,
 
   /* Update scopes before starting regular draw (GPU scopes update changes framebuffer, etc.). */
   space_sequencer.runtime->scopes.last_ibuf_float = input_ibuf &&
-                                                    input_ibuf->float_buffer.data != nullptr;
+                                                    input_ibuf->float_data() != nullptr;
   if (has_cpu_scope) {
     update_cpu_scopes(
         space_sequencer, view_settings, display_settings, *input_ibuf, timeline_frame);
@@ -1681,7 +1681,7 @@ static void sequencer_preview_draw_overlays(const bContext *C,
                           timeline_frame,
                           input_ibuf->x,
                           input_ibuf->y,
-                          input_ibuf->float_buffer.data != nullptr);
+                          input_ibuf->float_data() != nullptr);
   }
   else if (space_sequencer.flag & SEQ_USE_ALPHA) {
     /* Draw checked-board. */

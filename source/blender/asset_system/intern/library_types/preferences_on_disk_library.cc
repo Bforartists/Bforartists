@@ -6,56 +6,54 @@
  * \ingroup asset_system
  */
 
+#include "BLI_assert.h"
 #include "BLI_fileops.h"
 #include "BLI_listbase.h"
-#include "BLI_path_utils.hh"
 
 #include "DNA_userdef_types.h"
 
+#include "common.hh"
 #include "preferences_on_disk_library.hh"
 
 namespace blender::asset_system {
 
-PreferencesOnDiskAssetLibrary::PreferencesOnDiskAssetLibrary(StringRef name, StringRef root_path)
-    : OnDiskAssetLibrary(ASSET_LIBRARY_CUSTOM, name, root_path)
+PreferencesOnDiskAssetLibrary::PreferencesOnDiskAssetLibrary(
+    const bUserAssetLibrary &user_asset_library)
+    : OnDiskAssetLibrary(ASSET_LIBRARY_CUSTOM,
+                         user_asset_library.name,
+                         user_asset_library.dirpath,
+                         /*is_read_only=*/false),
+      user_library_(user_asset_library)
 {
 }
 
 std::optional<AssetLibraryReference> PreferencesOnDiskAssetLibrary::library_reference() const
 {
-
-  for (const auto [i, asset_library] : U.asset_libraries.enumerate()) {
-    if (asset_library.flag & ASSET_LIBRARY_USE_REMOTE_URL) {
-      continue;
-    }
-    if (!BLI_is_dir(asset_library.dirpath)) {
-      continue;
-    }
-
-    if (BLI_path_cmp_normalized(asset_library.dirpath, this->root_path().c_str()) == 0) {
-      AssetLibraryReference library_ref{};
-      library_ref.type = ASSET_LIBRARY_CUSTOM;
-      library_ref.custom_library_index = i;
-      return library_ref;
-    }
+  const bUserAssetLibrary *library_definition = user_library_.user_asset_library();
+  if (!library_definition) {
+    return {};
+  }
+  const int index = BLI_findindex(&U.asset_libraries, library_definition);
+  if (index == -1) {
+    /* Should have been caught by the #user_asset_library() call above already. */
+    BLI_assert_unreachable();
+    return {};
   }
 
-  return {};
+  AssetLibraryReference library_ref{};
+  library_ref.type = ASSET_LIBRARY_CUSTOM;
+  library_ref.custom_library_index = index;
+  return library_ref;
 }
 
 bool PreferencesOnDiskAssetLibrary::is_enabled() const
 {
-  for (const bUserAssetLibrary &asset_library : U.asset_libraries) {
-    if (!BLI_is_dir(asset_library.dirpath)) {
-      continue;
-    }
-
-    if (BLI_path_cmp_normalized(asset_library.dirpath, this->root_path().c_str()) == 0) {
-      return (asset_library.flag & ASSET_LIBRARY_DISABLED) == 0;
-    }
+  const bUserAssetLibrary *library_definition = user_library_.user_asset_library();
+  if (!library_definition) {
+    return false;
   }
 
-  return false;
+  return (library_definition->flag & ASSET_LIBRARY_DISABLED) == 0;
 }
 
 }  // namespace blender::asset_system

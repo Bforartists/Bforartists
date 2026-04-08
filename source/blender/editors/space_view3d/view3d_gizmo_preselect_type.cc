@@ -130,14 +130,15 @@ static int gizmo_preselect_elem_test_select(bContext *C, wmGizmo *gz, const int 
   best.dist = ED_view3d_select_dist_px();
 
   {
+    const Main *bmain = CTX_data_main(C);
     const Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
     View3D *v3d = CTX_wm_view3d(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     if (gz_ele->bases.is_empty() ||
         (gz_ele->bases[0] != BKE_view_layer_active_base_get(view_layer)))
     {
-      gz_ele->bases = BKE_view_layer_array_from_bases_in_edit_mode(scene, view_layer, v3d);
+      gz_ele->bases = BKE_view_layer_array_from_bases_in_edit_mode(*bmain, scene, view_layer, v3d);
     }
   }
 
@@ -388,14 +389,16 @@ static int gizmo_preselect_edgering_test_select(bContext *C, wmGizmo *gz, const 
   prev.edge_index = gz_ring->edge_index;
 
   {
+    const Main *bmain = CTX_data_main(C);
     const Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
     View3D *v3d = CTX_wm_view3d(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     if (gz_ring->bases.is_empty() ||
         (gz_ring->bases[0] != BKE_view_layer_active_base_get(view_layer)))
     {
-      gz_ring->bases = BKE_view_layer_array_from_bases_in_edit_mode(scene, view_layer, v3d);
+      gz_ring->bases = BKE_view_layer_array_from_bases_in_edit_mode(
+          *bmain, scene, view_layer, v3d);
     }
   }
 
@@ -529,6 +532,7 @@ void ED_view3d_gizmo_mesh_preselect_get_active(const bContext *C,
                                                Base **r_base,
                                                BMElem **r_ele)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
@@ -539,7 +543,7 @@ void ED_view3d_gizmo_mesh_preselect_get_active(const bContext *C,
   Object *obedit = nullptr;
   if (object_index != -1) {
     Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
-        scene, view_layer, CTX_wm_view3d(C));
+        *bmain, scene, view_layer, CTX_wm_view3d(C));
     if (object_index < bases.size()) {
       base = bases[object_index];
       obedit = base->object;

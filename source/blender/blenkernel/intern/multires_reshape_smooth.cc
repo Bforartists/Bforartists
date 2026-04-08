@@ -143,7 +143,7 @@ struct MultiresReshapeSmoothContext : NonCopyable, NonMovable {
   LinearGrids linear_delta_grids;
 
   /* From #Mesh::loose_edges(). May be empty. */
-  BitSpan loose_base_edges = {};
+  BitVector<> loose_base_edges = {};
 
   /* Subdivision surface created for geometry at a reshape level. */
   bke::subdiv::Subdiv *reshape_subdiv = nullptr;
@@ -723,20 +723,23 @@ static void geometry_init_loose_information(MultiresReshapeSmoothContext *reshap
   const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
   const Mesh *base_mesh = reshape_context->base_mesh;
 
-  const bke::LooseEdgeCache &loose_edges = base_mesh->loose_edges();
-  reshape_smooth_context->loose_base_edges = loose_edges.is_loose_bits;
+  const IndexMask &loose_edges = base_mesh->loose_edges();
+  if (loose_edges.is_empty()) {
+    reshape_smooth_context->loose_base_edges.resize(base_mesh->edges_num);
+    loose_edges.to_bits(reshape_smooth_context->loose_base_edges);
+  }
 
+  IndexMaskMemory memory;
+  const IndexMask non_loose_edges = loose_edges.complement(IndexRange(base_mesh->edges_num),
+                                                           memory);
   int num_used_edges = 0;
-  for (const int edge : IndexRange(base_mesh->edges_num)) {
-    if (loose_edges.count > 0 && loose_edges.is_loose_bits[edge]) {
-      continue;
-    }
+  non_loose_edges.foreach_index([&](const int edge) {
     const float crease = get_effective_crease(reshape_smooth_context, edge);
     if (crease == 0.0f) {
-      continue;
+      return;
     }
     num_used_edges++;
-  }
+  });
 
   const int resolution = get_reshape_level_resolution(reshape_context);
   const int num_subdiv_vertices_per_base_edge = resolution - 2;

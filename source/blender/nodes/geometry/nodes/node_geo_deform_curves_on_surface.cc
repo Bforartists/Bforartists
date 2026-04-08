@@ -33,10 +33,10 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Curves")
+  b.add_input<decl::Geometry>("Curves"_ustr)
       .supported_type(GeometryComponent::Type::Curve)
       .description("Curves to deform");
-  b.add_output<decl::Geometry>("Curves").propagate_all().align_with_previous();
+  b.add_output<decl::Geometry>("Curves"_ustr).propagate_all().align_with_previous();
 }
 
 static void deform_curves(const CurvesGeometry &curves,
@@ -205,7 +205,7 @@ static void deform_curves(const CurvesGeometry &curves,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet curves_geometry = params.extract_input<GeometrySet>("Curves");
+  GeometrySet curves_geometry = params.extract_input<GeometrySet>("Curves"_ustr);
 
   Mesh *surface_mesh_orig = nullptr;
   bool free_suface_mesh_orig = false;
@@ -215,7 +215,9 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   });
 
-  auto pass_through_input = [&]() { params.set_output("Curves", std::move(curves_geometry)); };
+  auto pass_through_input = [&]() {
+    params.set_output("Curves"_ustr, std::move(curves_geometry));
+  };
 
   const Object *self_ob_eval = params.self_object();
   if (self_ob_eval == nullptr || self_ob_eval->type != OB_CURVES) {
@@ -392,7 +394,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.error_message_add(NodeWarningType::Warning, message);
   }
 
-  params.set_output("Curves", curves_geometry);
+  params.set_output("Curves"_ustr, curves_geometry);
 }
 
 static void node_register()

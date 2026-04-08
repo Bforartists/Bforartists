@@ -133,7 +133,7 @@ void importer_main(Main *bmain,
 
   Mesh *mesh_in_main = BKE_mesh_add(bmain, ob_name);
   BKE_mesh_nomain_to_mesh(mesh, mesh_in_main, nullptr);
-  BKE_view_layer_base_deselect_all(scene, view_layer);
+  BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
   LayerCollection *lc = BKE_layer_collection_get_active_editable(view_layer);
   if (!ID_IS_EDITABLE(lc->collection)) {
     BKE_report(import_params.reports,
@@ -144,7 +144,7 @@ void importer_main(Main *bmain,
   Object *obj = BKE_object_add_only_object(bmain, OB_MESH, ob_name);
   obj->data = id_cast<ID *>(mesh_in_main);
   BKE_collection_object_add(bmain, lc->collection, obj);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   if (Base *base = BKE_view_layer_base_find(view_layer, obj)) {
     /* `base` will be nullptr if the Object could not be instantiated in the current viewlayer. */
     BKE_view_layer_base_select_and_set_active(view_layer, base);

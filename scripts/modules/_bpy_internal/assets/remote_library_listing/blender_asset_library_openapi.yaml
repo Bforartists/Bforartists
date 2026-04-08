@@ -287,14 +287,14 @@ components:
         "description": { type: string }
         "license": { type: string }
         "copyright": { type: string }
-        "custom": { $ref: "#/components/schemas/CustomPropertiesV1" }
+        "properties": { $ref: "#/components/schemas/CustomPropertiesV1" }
 
     CustomPropertiesV1:
-      type: object
+      type: array
+      items:
+        $ref: "#/components/schemas/CustomPropertyV1"
       description: >
         Arbitrary custom properties of the asset. Keys are the property names.
-      additionalProperties:
-        $ref: "#/components/schemas/CustomPropertyV1"
 
     CustomPropertyV1:
       type: object
@@ -304,6 +304,7 @@ components:
         as `CustomPropertiesV1` object again. Arrays should specify an
         `itemtype`.
       properties:
+        "name": { type: string }
         "type": { $ref: "#/components/schemas/CustomPropertyTypeV1" }
         "itemtype": { $ref: "#/components/schemas/CustomPropertyTypeV1" }
         "value":
@@ -314,14 +315,23 @@ components:
             - { type: integer }
             - { type: string }
             - { type: boolean }
-      required: [type, value]
+      required: [name, type, value]
 
     CustomPropertyTypeV1:
       type: string
       description: >
-        Type of IDProperty without the `IDP_` prefix, see `eIDPropertyType` in `DNA_ID_enumms.h`.
-        For now, type `ID` and `IDPARRAY` are not supported.
-      enum: [STRING, INT, FLOAT, ARRAY, GROUP, DOUBLE, BOOLEAN]
+        Type of IDProperty, see `eIDPropertyType` in `DNA_ID_enumms.h`. For now,
+        type `ID` and `IDPARRAY` are not supported.
+      enum:
+        [
+          IDP_STRING,
+          IDP_INT,
+          IDP_FLOAT,
+          IDP_ARRAY,
+          IDP_GROUP,
+          IDP_DOUBLE,
+          IDP_BOOLEAN,
+        ]
 
     CatalogV1:
       type: object

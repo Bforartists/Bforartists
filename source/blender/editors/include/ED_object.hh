@@ -159,6 +159,7 @@ enum {
 struct XFormObjectSkipChild_Container;
 XFormObjectSkipChild_Container *xform_skip_child_container_create();
 void xform_skip_child_container_item_ensure_from_array(XFormObjectSkipChild_Container *xcs,
+                                                       const Main &bmain,
                                                        const Scene *scene,
                                                        ViewLayer *view_layer,
                                                        Object **objects,
@@ -259,9 +260,14 @@ void base_free_and_unlink(Main *bmain, Scene *scene, Object *ob);
  * `ob` must not be indirectly used.
  */
 void base_free_and_unlink_no_indirect_check(Main *bmain, Scene *scene, Object *ob);
-bool base_deselect_all_ex(
-    const Scene *scene, ViewLayer *view_layer, View3D *v3d, int action, bool *r_any_visible);
-bool base_deselect_all(const Scene *scene, ViewLayer *view_layer, View3D *v3d, int action);
+bool base_deselect_all_ex(const Main &bmain,
+                          const Scene *scene,
+                          ViewLayer *view_layer,
+                          View3D *v3d,
+                          int action,
+                          bool *r_any_visible);
+bool base_deselect_all(
+    const Main &bmain, const Scene *scene, ViewLayer *view_layer, View3D *v3d, int action);
 
 /**
  * Single object duplicate, if `dupflag == 0`, fully linked, else it uses the flags given.
@@ -473,7 +479,8 @@ void posemode_set_for_weight_paint(bContext *C, Main *bmain, Object *ob, bool is
  *
  * \note The active object is always index 0.
  */
-int object_in_mode_to_index(const Scene *scene,
+int object_in_mode_to_index(const Main &bmain,
+                            const Scene *scene,
                             ViewLayer *view_layer,
                             eObjectMode mode,
                             const Object *ob);
@@ -481,10 +488,8 @@ int object_in_mode_to_index(const Scene *scene,
 /**
  * Access the object from the index returned by #object_in_mode_to_index.
  */
-Object *object_in_mode_from_index(const Scene *scene,
-                                  ViewLayer *view_layer,
-                                  eObjectMode mode,
-                                  int index);
+Object *object_in_mode_from_index(
+    const Main &bmain, const Scene *scene, ViewLayer *view_layer, eObjectMode mode, int index);
 
 /**
  * Retrieve the alpha factors of the currently active mode transfer overlay animations. The key is
@@ -586,7 +591,7 @@ void check_force_modifiers(Main *bmain, Scene *scene, Object *object);
  * If id is not already an Object, try to find an object that uses it as data.
  * Prefers active, then selected, then visible/selectable.
  */
-Base *find_first_by_data_id(const Scene *scene, ViewLayer *view_layer, ID *id);
+Base *find_first_by_data_id(const Main &bmain, const Scene *scene, ViewLayer *view_layer, ID *id);
 
 /**
  * Select and make the target object active in the view layer.

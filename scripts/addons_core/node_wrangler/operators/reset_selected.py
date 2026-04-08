@@ -11,7 +11,6 @@ from itertools import chain
 
 from ..utils.nodes import (
     nw_check,
-    nw_check_active,
     nw_check_selected,
 )
 
@@ -27,8 +26,7 @@ class NODE_OT_reset_selected(Operator):
     @classmethod
     def poll(cls, context):
         return (nw_check(cls, context)
-                and nw_check_selected(cls, context)
-                and nw_check_active(cls, context))
+                and nw_check_selected(cls, context))
 
     @staticmethod
     def is_frame_node(node):
@@ -59,28 +57,13 @@ class NODE_OT_reset_selected(Operator):
         selected_node_names = [n.name for n in node_selected]
         success_names = []
 
-        # Reset all valid children in a frame
-        node_active_is_frame = False
-        if len(node_selected) == 1 and self.is_frame_node(node_active):
-            node_tree = node_active.id_data
-            children = [n for n in node_tree.nodes if n.parent == node_active]
-            if children:
-                valid_nodes = [n for n in children if not self.ignore_node(n)]
-                selected_node_names = [n.name for n in children if not self.ignore_node(n)]
-                node_active_is_frame = True
-
         # Check if valid nodes in selection
-        if not (len(valid_nodes) > 0):
-            # Check for frames only
-            frames_selected = [n for n in node_selected if self.is_frame_node(n)]
-            if (len(frames_selected) > 1 and len(frames_selected) == len(node_selected)):
-                self.report({'ERROR'}, "Please select only 1 frame to reset")
-            else:
-                self.report({'ERROR'}, "No valid node(s) in selection")
+        if len(valid_nodes) < 1:
+            self.report({'ERROR'}, "No valid node(s) in selection")
             return {'CANCELLED'}
 
         # Report nodes that are not valid
-        if len(valid_nodes) != len(node_selected) and node_active_is_frame is False:
+        if len(valid_nodes) != len(node_selected):
             valid_node_names = [n.name for n in valid_nodes]
             not_valid_names = list(set(selected_node_names) - set(valid_node_names))
             message = rpt_("Ignored {}").format(", ".join(not_valid_names))
@@ -127,7 +110,7 @@ class NODE_OT_reset_selected(Operator):
             success_names.append(new_node.name)
 
         # Reselect all nodes
-        if selected_node_names and node_active_is_frame is False:
+        if selected_node_names:
             for i in selected_node_names:
                 node_tree.nodes[i].select = True
 

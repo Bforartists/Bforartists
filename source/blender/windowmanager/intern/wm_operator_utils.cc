@@ -203,10 +203,11 @@ static wmOperatorStatus op_generic_value_invoke(bContext *C, wmOperator *op, con
     return WM_operator_call_notest(C, op);
   }
 
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   if (objects.is_empty()) {
     return OPERATOR_CANCELLED;
   }

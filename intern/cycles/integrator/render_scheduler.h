@@ -18,7 +18,8 @@ class TileManager;
 
 class RenderWork {
  public:
-  int resolution_divider = 1;
+  float resolution_divider = 1;
+  float denoised_resolution_divider = 1;
 
   /* Initialize render buffers.
    * Includes steps like zeroing the buffer on the device, and optional reading of pixels from the

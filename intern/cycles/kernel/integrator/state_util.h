@@ -8,6 +8,8 @@
 
 #include "kernel/integrator/state.h"
 
+#include "kernel/sample/lcg.h"
+
 #include "kernel/util/differential.h"
 
 CCL_NAMESPACE_BEGIN
@@ -101,7 +103,7 @@ ccl_device_forceinline void integrator_state_write_shadow_ray_self(
   /* There is a bit of implicit knowledge about the way how the kernels are invoked and what the
    * state is actually storing. Special logic here is needed because the intersect_shadow kernel
    * might be called multiple times. This happens when the total number of intersections by the
-   * ray (shadow_path.num_hits) exceeds INTEGRATOR_SHADOW_ISECT_SIZE.
+   * ray (shadow_path.packed_num_hits) exceeds INTEGRATOR_SHADOW_ISECT_SIZE.
    *
    * Writing of the shadow_ray.self to the state happens only during the shadow ray setup, and
    * the shadow_isect array gets overwritten by the intersect_shadow kernel. It is important to
@@ -547,6 +549,28 @@ ccl_device_inline int integrator_state_portal_bounce(KernelGlobals kg,
   return (kernel_data.kernel_features & KERNEL_FEATURE_NODE_PORTAL) ?
              INTEGRATOR_STATE(state, shadow_path, portal_bounce) :
              0;
+}
+
+ccl_device_inline uint integrator_state_lcg_init(ConstIntegratorShadowState state, const uint hash)
+{
+  return lcg_state_init(INTEGRATOR_STATE(state, shadow_path, rng_pixel),
+                        INTEGRATOR_STATE(state, shadow_path, rng_offset),
+                        INTEGRATOR_STATE(state, shadow_path, sample),
+                        hash);
+}
+
+ccl_device_inline uint integrator_state_lcg_init(ConstIntegratorState state, const uint hash)
+{
+  return lcg_state_init(INTEGRATOR_STATE(state, path, rng_pixel),
+                        INTEGRATOR_STATE(state, path, rng_offset),
+                        INTEGRATOR_STATE(state, path, sample),
+                        hash);
+}
+
+ccl_device_inline uint integrator_state_lcg_init(ConstIntegratorBakeState /*state*/,
+                                                 const uint /*hash*/)
+{
+  return 0;
 }
 
 CCL_NAMESPACE_END

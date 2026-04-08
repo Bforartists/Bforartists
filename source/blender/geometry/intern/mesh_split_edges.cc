@@ -547,7 +547,12 @@ void split_edges(Mesh &mesh,
       orig_edges, selected_edges, orig_verts_num, memory);
   BitVector<> selection_bits(orig_edges.size());
   selected_edges.to_bits(selection_bits);
-  const bke::LooseEdgeCache &loose_edges = mesh.loose_edges();
+  const IndexMask &loose_edges = mesh.loose_edges();
+  BitVector<> loose_edge_bits;
+  if (!loose_edges.is_empty()) {
+    loose_edge_bits.resize(orig_edges.size());
+    loose_edges.to_bits(loose_edge_bits);
+  }
 
   const GroupedSpan<int> vert_to_corner_map = mesh.vert_to_corner_map();
 
@@ -559,7 +564,7 @@ void split_edges(Mesh &mesh,
   Array<int> vert_to_edge_offsets;
   Array<int> vert_to_edge_indices;
   GroupedSpan<int> vert_to_edge_map;
-  if (loose_edges.count > 0) {
+  if (!loose_edges.is_empty()) {
     vert_to_edge_map = bke::mesh::build_vert_to_edge_map(
         orig_edges, orig_verts_num, vert_to_edge_offsets, vert_to_edge_indices);
   }
@@ -580,7 +585,7 @@ void split_edges(Mesh &mesh,
       affected_verts,
       corner_groups,
       vert_to_edge_map,
-      loose_edges.is_loose_bits,
+      loose_edge_bits,
       selection_bits,
       vert_new_vert_offset_data);
 
@@ -604,11 +609,11 @@ void split_edges(Mesh &mesh,
                           unselected_edges,
                           mesh.edges_for_write());
 
-  if (loose_edges.count > 0) {
+  if (!loose_edges.is_empty()) {
     reassign_loose_edge_verts(orig_verts_num,
                               affected_verts,
                               vert_to_edge_map,
-                              loose_edges.is_loose_bits,
+                              loose_edge_bits,
                               selection_bits,
                               corner_groups,
                               new_verts_by_affected_vert,

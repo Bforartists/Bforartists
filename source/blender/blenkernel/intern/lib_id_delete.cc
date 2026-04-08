@@ -202,7 +202,7 @@ void BKE_id_free_ex(Main *bmain, void *idv, const int flag_orig, const bool use_
    * between the Scene's master collection and its view_layers become invalid
    * (due to remapping). */
   if (bmain && (flag_orig & LIB_ID_FREE_NO_MAIN) == 0) {
-    BKE_layer_collection_resync_forbid();
+    BKE_layer_collection_resync_forbid(*bmain);
   }
 
   const ID_Type id_type = GS(static_cast<ID *>(idv)->name);
@@ -211,7 +211,7 @@ void BKE_id_free_ex(Main *bmain, void *idv, const int flag_orig, const bool use_
 
   if (bmain) {
     if ((flag_orig & LIB_ID_FREE_NO_MAIN) == 0) {
-      BKE_layer_collection_resync_allow();
+      BKE_layer_collection_resync_allow(*bmain);
     }
 
     if ((flag_final & LIB_ID_FREE_NO_MAIN) == 0) {
@@ -274,7 +274,7 @@ static size_t id_delete(Main *bmain, Set<ID *> &ids_to_delete, const int extra_r
   const int base_count = lbarray.size();
 
   BKE_main_lock(bmain);
-  BKE_layer_collection_resync_forbid();
+  BKE_layer_collection_resync_forbid(*bmain);
   IDRemapper id_remapper;
 
   /* Main idea of batch deletion is to remove all IDs to be deleted from Main database.
@@ -372,7 +372,7 @@ static size_t id_delete(Main *bmain, Set<ID *> &ids_to_delete, const int extra_r
   }
 
   BKE_main_unlock(bmain);
-  BKE_layer_collection_resync_allow();
+  BKE_layer_collection_resync_allow(*bmain);
   BKE_main_collection_sync_remap(bmain);
 
   if (has_deleted_library) {

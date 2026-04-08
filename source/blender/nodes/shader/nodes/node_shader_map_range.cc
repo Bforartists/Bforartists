@@ -34,20 +34,20 @@ NODE_STORAGE_FUNCS(NodeMapRange)
 static void sh_node_map_range_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Value").min(-10000.0f).max(10000.0f).default_value(1.0f);
-  b.add_input<decl::Float>("From Min").min(-10000.0f).max(10000.0f);
-  b.add_input<decl::Float>("From Max").min(-10000.0f).max(10000.0f).default_value(1.0f);
-  b.add_input<decl::Float>("To Min").min(-10000.0f).max(10000.0f);
-  b.add_input<decl::Float>("To Max").min(-10000.0f).max(10000.0f).default_value(1.0f);
-  b.add_input<decl::Float>("Steps").min(-10000.0f).max(10000.0f).default_value(4.0f);
-  b.add_input<decl::Vector>("Vector").min(0.0f).max(1.0f).hide_value();
-  b.add_input<decl::Vector>("From Min", "From_Min_FLOAT3");
-  b.add_input<decl::Vector>("From Max", "From_Max_FLOAT3").default_value(float3(1.0f));
-  b.add_input<decl::Vector>("To Min", "To_Min_FLOAT3");
-  b.add_input<decl::Vector>("To Max", "To_Max_FLOAT3").default_value(float3(1.0f));
-  b.add_input<decl::Vector>("Steps", "Steps_FLOAT3").default_value(float3(4.0f));
-  b.add_output<decl::Float>("Result");
-  b.add_output<decl::Vector>("Vector");
+  b.add_input<decl::Float>("Value"_ustr).min(-10000.0f).max(10000.0f).default_value(1.0f);
+  b.add_input<decl::Float>("From Min"_ustr).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>("From Max"_ustr).min(-10000.0f).max(10000.0f).default_value(1.0f);
+  b.add_input<decl::Float>("To Min"_ustr).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>("To Max"_ustr).min(-10000.0f).max(10000.0f).default_value(1.0f);
+  b.add_input<decl::Float>("Steps"_ustr).min(-10000.0f).max(10000.0f).default_value(4.0f);
+  b.add_input<decl::Vector>("Vector"_ustr).min(0.0f).max(1.0f).hide_value();
+  b.add_input<decl::Vector>("From Min"_ustr, "From_Min_FLOAT3"_ustr);
+  b.add_input<decl::Vector>("From Max"_ustr, "From_Max_FLOAT3"_ustr).default_value(float3(1.0f));
+  b.add_input<decl::Vector>("To Min"_ustr, "To_Min_FLOAT3"_ustr);
+  b.add_input<decl::Vector>("To Max"_ustr, "To_Max_FLOAT3"_ustr).default_value(float3(1.0f));
+  b.add_input<decl::Vector>("Steps"_ustr, "Steps_FLOAT3"_ustr).default_value(float3(4.0f));
+  b.add_output<decl::Float>("Result"_ustr);
+  b.add_output<decl::Vector>("Vector"_ustr);
 }
 
 static void node_shader_buts_map_range(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -118,7 +118,7 @@ static void node_shader_init_map_range(bNodeTree * /*ntree*/, bNode *node)
 
 class SocketSearchOp {
  public:
-  std::string socket_name;
+  UString socket_name;
   eCustomDataType data_type;
   int interpolation_type = NODE_MAP_RANGE_LINEAR;
 
@@ -155,23 +155,24 @@ static void node_map_range_gather_link_searches(GatherLinkSearchOpParams &params
 
   if (params.in_out() == SOCK_IN) {
     if (*type == CD_PROP_FLOAT3) {
-      params.add_item(IFACE_("Vector"), SocketSearchOp{"Vector", *type}, 0);
+      params.add_item(IFACE_("Vector"), SocketSearchOp{"Vector"_ustr, *type}, 0);
     }
     else {
-      params.add_item(IFACE_("Value"), SocketSearchOp{"Value", *type}, 0);
+      params.add_item(IFACE_("Value"), SocketSearchOp{"Value"_ustr, *type}, 0);
     }
-    params.add_item(IFACE_("From Min"), SocketSearchOp{"From Min", *type}, -1);
-    params.add_item(IFACE_("From Max"), SocketSearchOp{"From Max", *type}, -1);
-    params.add_item(IFACE_("To Min"), SocketSearchOp{"To Min", *type}, -2);
-    params.add_item(IFACE_("To Max"), SocketSearchOp{"To Max", *type}, -2);
-    params.add_item(IFACE_("Steps"), SocketSearchOp{"Steps", *type, NODE_MAP_RANGE_STEPPED}, -3);
+    params.add_item(IFACE_("From Min"), SocketSearchOp{"From Min"_ustr, *type}, -1);
+    params.add_item(IFACE_("From Max"), SocketSearchOp{"From Max"_ustr, *type}, -1);
+    params.add_item(IFACE_("To Min"), SocketSearchOp{"To Min"_ustr, *type}, -2);
+    params.add_item(IFACE_("To Max"), SocketSearchOp{"To Max"_ustr, *type}, -2);
+    params.add_item(
+        IFACE_("Steps"), SocketSearchOp{"Steps"_ustr, *type, NODE_MAP_RANGE_STEPPED}, -3);
   }
   else {
     if (*type == CD_PROP_FLOAT3) {
-      params.add_item(IFACE_("Vector"), SocketSearchOp{"Vector", *type});
+      params.add_item(IFACE_("Vector"), SocketSearchOp{"Vector"_ustr, *type});
     }
     else {
-      params.add_item(IFACE_("Result"), SocketSearchOp{"Result", *type});
+      params.add_item(IFACE_("Result"), SocketSearchOp{"Result"_ustr, *type});
     }
   }
 }

@@ -81,11 +81,12 @@ void OBJECT_OT_light_linking_blocker_collection_new(wmOperatorType *ot)
 template<LightLinkingType link_type>
 static wmOperatorStatus light_linking_select_exec(bContext *C, wmOperator * /*op*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *emitter = context_active_object(C);
 
-  BKE_light_linking_select_receivers_of_emitter(scene, view_layer, emitter, link_type);
+  BKE_light_linking_select_receivers_of_emitter(*bmain, scene, view_layer, emitter, link_type);
 
   WM_event_add_notifier(C, NC_SCENE | ND_OB_SELECT, scene);
 

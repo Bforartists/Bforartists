@@ -10,7 +10,7 @@
 #include "eevee_lightprobe_sphere_eval_lib.glsl"
 #include "eevee_lightprobe_volume_eval_lib.glsl"
 #include "eevee_sampling_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 #include "eevee_subsurface_lib.glsl"
 #include "gpu_shader_codegen_lib.glsl"
 #include "gpu_shader_math_base_lib.glsl"
@@ -18,7 +18,7 @@
 #ifdef SPHERE_PROBE
 
 struct LightProbeSample {
-  SphericalHarmonicL1 volume_irradiance;
+  SphericalHarmonicL1<float4> volume_irradiance;
   int spherical_id;
 };
 
@@ -93,11 +93,11 @@ float3 lightprobe_eval_direction(LightProbeSample samp, float3 P, float3 L, floa
 
 /* TODO: Port that inside a BSSDF file. */
 float3 lightprobe_eval(
-    LightProbeSample samp, ClosureSubsurface cl, float3 P, float3 V, Thickness thickness)
+    LightProbeSample samp, ClosureSubsurface cl, float3 /*P*/, float3 /*V*/, Thickness thickness)
 {
   float3 sss_profile = subsurface_transmission(cl.sss_radius, thickness.value());
-  float3 radiance_sh = spherical_harmonics_evaluate_lambert(cl.N, samp.volume_irradiance);
-  radiance_sh += spherical_harmonics_evaluate_lambert(-cl.N, samp.volume_irradiance) * sss_profile;
+  float3 radiance_sh = samp.volume_irradiance.evaluate_lambert(cl.N).rgb;
+  radiance_sh += samp.volume_irradiance.evaluate_lambert(-cl.N).rgb * sss_profile;
   return radiance_sh;
 }
 
@@ -111,8 +111,7 @@ float3 lightprobe_eval(
 
   float3 radiance_cube = lightprobe_spherical_sample_normalized_with_parallax(
       samp, P, ray.dominant_direction, lod);
-  float3 radiance_sh = spherical_harmonics_evaluate_lambert(ray.dominant_direction,
-                                                            samp.volume_irradiance);
+  float3 radiance_sh = samp.volume_irradiance.evaluate_lambert(ray.dominant_direction).rgb;
   return mix(radiance_cube, radiance_sh, fac);
 }
 

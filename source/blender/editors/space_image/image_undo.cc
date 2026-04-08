@@ -226,7 +226,7 @@ void *ED_image_paint_tile_push(PaintTileMap *paint_tile_map,
   if (use_thread_lock) {
     BLI_spin_lock(&paint_tiles_lock);
   }
-  const bool has_float = (ibuf->float_buffer.data != nullptr);
+  const bool has_float = (ibuf->float_data() != nullptr);
 
   /* check if tile is already pushed */
 
@@ -262,7 +262,7 @@ void *ED_image_paint_tile_push(PaintTileMap *paint_tile_map,
                                                            "PaintTile.mask");
   }
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     ptile->rect.pt = MEM_new_array_zeroed<float[4]>(square_i(ED_IMAGE_UNDO_TILE_SIZE),
                                                     "PaintTile.rect");
   }
@@ -323,7 +323,7 @@ static void ptile_restore_runtime_map(PaintTileMap *paint_tile_map)
   for (PaintTile *ptile : paint_tile_map->map.values()) {
     Image *image = ptile->image;
     ImBuf *ibuf = BKE_image_acquire_ibuf(image, &ptile->iuser, nullptr);
-    const bool has_float = (ibuf->float_buffer.data != nullptr);
+    const bool has_float = (ibuf->float_data() != nullptr);
 
     if (has_float) {
       ptile->rect.fp = image_undo_steal_and_assign_float_buffer(tmpibuf, ptile->rect.fp);
@@ -355,7 +355,7 @@ static void ptile_restore_runtime_map(PaintTileMap *paint_tile_map)
     /* Force OpenGL reload (maybe partial update will operate better?) */
     BKE_image_free_gputextures(image);
 
-    if (ibuf->float_buffer.data) {
+    if (ibuf->float_data()) {
       ibuf->userflags |= IB_RECT_INVALID; /* force recreate of char rect */
     }
     ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
@@ -404,7 +404,7 @@ static UndoImageTile *utile_alloc(bool has_float)
 static void utile_init_from_imbuf(
     UndoImageTile *utile, const uint32_t x, const uint32_t y, const ImBuf *ibuf, ImBuf *tmpibuf)
 {
-  const bool has_float = ibuf->float_buffer.data;
+  const bool has_float = ibuf->float_data();
 
   if (has_float) {
     utile->rect.fp = image_undo_steal_and_assign_float_buffer(tmpibuf, utile->rect.fp);
@@ -428,9 +428,9 @@ static void utile_init_from_imbuf(
 static void utile_restore(
     const UndoImageTile *utile, const uint x, const uint y, ImBuf *ibuf, ImBuf *tmpibuf)
 {
-  const bool has_float = ibuf->float_buffer.data;
-  float *prev_rect_float = tmpibuf->float_buffer.data;
-  uint8_t *prev_rect = tmpibuf->byte_buffer.data;
+  const bool has_float = ibuf->float_data();
+  float *prev_rect_float = tmpibuf->float_data_for_write();
+  uint8_t *prev_rect = tmpibuf->byte_data_for_write();
 
   if (has_float) {
     tmpibuf->float_buffer.data = utile->rect.fp;
@@ -464,34 +464,34 @@ static void utile_decref(UndoImageTile *utile)
  * \{ */
 
 struct UndoImageBuf {
-  UndoImageBuf *next, *prev;
+  UndoImageBuf *next = nullptr, *prev = nullptr;
 
   /**
    * The buffer after the undo step has executed.
    */
-  UndoImageBuf *post;
+  UndoImageBuf *post = nullptr;
 
-  char ibuf_filepath[IMB_FILEPATH_SIZE];
-  int ibuf_fileframe;
+  std::string ibuf_filepath;
+  int ibuf_fileframe = 0;
 
-  UndoImageTile **tiles;
+  UndoImageTile **tiles = nullptr;
 
   /** Can calculate these from dims, just for convenience. */
-  uint32_t tiles_len;
-  uint32_t tiles_dims[2];
+  uint32_t tiles_len = 0;
+  uint32_t tiles_dims[2] = {};
 
-  uint32_t image_dims[2];
+  uint32_t image_dims[2] = {};
 
   /** Store variables from the image. */
   struct {
     short source;
     bool use_float;
-  } image_state;
+  } image_state = {};
 };
 
 static UndoImageBuf *ubuf_from_image_no_tiles(Image *image, const ImBuf *ibuf)
 {
-  UndoImageBuf *ubuf = MEM_new_zeroed<UndoImageBuf>(__func__);
+  UndoImageBuf *ubuf = MEM_new<UndoImageBuf>(__func__);
 
   ubuf->image_dims[0] = ibuf->x;
   ubuf->image_dims[1] = ibuf->y;
@@ -502,10 +502,10 @@ static UndoImageBuf *ubuf_from_image_no_tiles(Image *image, const ImBuf *ibuf)
   ubuf->tiles_len = ubuf->tiles_dims[0] * ubuf->tiles_dims[1];
   ubuf->tiles = MEM_new_array_zeroed<UndoImageTile *>(ubuf->tiles_len, __func__);
 
-  STRNCPY(ubuf->ibuf_filepath, ibuf->filepath);
+  ubuf->ibuf_filepath = ibuf->filepath;
   ubuf->ibuf_fileframe = ibuf->fileframe;
   ubuf->image_state.source = image->source;
-  ubuf->image_state.use_float = ibuf->float_buffer.data != nullptr;
+  ubuf->image_state.use_float = ibuf->float_data() != nullptr;
 
   return ubuf;
 }
@@ -514,7 +514,7 @@ static void ubuf_from_image_all_tiles(UndoImageBuf *ubuf, const ImBuf *ibuf)
 {
   ImBuf *tmpibuf = imbuf_alloc_temp_tile();
 
-  const bool has_float = ibuf->float_buffer.data;
+  const bool has_float = ibuf->float_data();
   int i = 0;
   for (uint y_tile = 0; y_tile < ubuf->tiles_dims[1]; y_tile += 1) {
     uint y = y_tile << ED_IMAGE_UNDO_TILE_BITS;
@@ -541,13 +541,13 @@ static void ubuf_ensure_compat_ibuf(const UndoImageBuf *ubuf, ImBuf *ibuf)
 {
   /* We could have both float and rect buffers,
    * in this case free the float buffer if it's unused. */
-  if ((ibuf->float_buffer.data != nullptr) && (ubuf->image_state.use_float == false)) {
+  if ((ibuf->float_data() != nullptr) && (ubuf->image_state.use_float == false)) {
     IMB_free_float_pixels(ibuf);
   }
 
   if (ibuf->x == ubuf->image_dims[0] && ibuf->y == ubuf->image_dims[1] &&
-      (ubuf->image_state.use_float ? static_cast<void *>(ibuf->float_buffer.data) :
-                                     static_cast<void *>(ibuf->byte_buffer.data)))
+      (ubuf->image_state.use_float ? static_cast<void *>(ibuf->float_data_for_write()) :
+                                     static_cast<void *>(ibuf->byte_data_for_write())))
   {
     return;
   }
@@ -636,7 +636,7 @@ static void uhandle_restore_list(ListBaseT<UndoImageHandle> *undo_handles, bool 
       /* TODO(@jbakker): only mark areas that are actually updated to improve performance. */
       BKE_image_partial_update_mark_full_update(image);
 
-      if (ibuf->float_buffer.data) {
+      if (ibuf->float_data()) {
         ibuf->userflags |= IB_RECT_INVALID; /* Force recreate of char `rect` */
       }
       ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
@@ -670,11 +670,11 @@ static void uhandle_free_list(ListBaseT<UndoImageHandle> *undo_handles)
 
 static UndoImageBuf *uhandle_lookup_ubuf(UndoImageHandle *uh,
                                          const Image * /*image*/,
-                                         const char *ibuf_filepath,
+                                         const StringRef ibuf_filepath,
                                          const int ibuf_fileframe)
 {
   for (UndoImageBuf &ubuf : uh->buffers) {
-    if (STREQ(ubuf.ibuf_filepath, ibuf_filepath) && ubuf.ibuf_fileframe == ibuf_fileframe) {
+    if (ubuf.ibuf_filepath == ibuf_filepath && ubuf.ibuf_fileframe == ibuf_fileframe) {
       return &ubuf;
     }
   }
@@ -850,7 +850,7 @@ static bool image_undosys_step_encode(bContext *C, Main * /*bmain*/, UndoStep *u
 
         ImBuf *ibuf = BKE_image_acquire_ibuf(uh.image_ref.ptr, &uh.iuser, nullptr);
 
-        const bool has_float = ibuf->float_buffer.data;
+        const bool has_float = ibuf->float_data();
 
         BLI_assert(ubuf_pre.post == nullptr);
         ubuf_pre.post = ubuf_from_image_no_tiles(uh.image_ref.ptr, ibuf);

@@ -25,17 +25,17 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
-  b.add_output<decl::Color>("Image").align_with_previous();
-  b.add_output<decl::Float>("Matte");
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image"_ustr).align_with_previous();
+  b.add_output<decl::Float>("Matte"_ustr);
 
-  b.add_input<decl::Float>("Minimum")
+  b.add_input<decl::Float>("Minimum"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(1.0f)
       .description("Pixels whose luminance values lower than this minimum are keyed");
-  b.add_input<decl::Float>("Maximum")
+  b.add_input<decl::Float>("Maximum"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)

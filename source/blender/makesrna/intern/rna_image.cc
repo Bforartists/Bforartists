@@ -372,7 +372,7 @@ static void rna_Image_file_format_set(PointerRNA *ptr, int value)
   Image *image = static_cast<Image *>(ptr->data);
   if (BKE_imtype_is_movie(value) == 0) { /* should be able to throw an error here */
     ImbFormatOptions options;
-    int ftype = BKE_imtype_to_ftype(value, &options);
+    eImbFileType ftype = BKE_imtype_to_ftype(value, &options);
     BKE_image_file_format_set(image, ftype, &options);
   }
 }
@@ -581,7 +581,7 @@ static int rna_Image_depth_get(PointerRNA *ptr)
   if (!ibuf) {
     planes = 0;
   }
-  else if (ibuf->float_buffer.data) {
+  else if (ibuf->float_data()) {
     planes = ibuf->planes * 4;
   }
   else {
@@ -646,12 +646,13 @@ static void rna_Image_pixels_get(PointerRNA *ptr, float *values)
   if (ibuf) {
     const size_t size = IMB_get_pixel_count(ibuf) * size_t(ibuf->channels);
 
-    if (ibuf->float_buffer.data) {
-      memcpy(values, ibuf->float_buffer.data, sizeof(float) * size);
+    if (ibuf->float_data()) {
+      memcpy(values, ibuf->float_data(), sizeof(float) * size);
     }
     else {
+      const uchar *byte_data = ibuf->byte_data();
       for (size_t i = 0; i < size; i++) {
-        values[i] = ibuf->byte_buffer.data[i] * (1.0f / 255.0f);
+        values[i] = byte_data[i] * (1.0f / 255.0f);
       }
     }
   }
@@ -670,12 +671,13 @@ static void rna_Image_pixels_set(PointerRNA *ptr, const float *values)
   if (ibuf) {
     const size_t size = IMB_get_pixel_count(ibuf) * size_t(ibuf->channels);
 
-    if (ibuf->float_buffer.data) {
-      memcpy(ibuf->float_buffer.data, values, sizeof(float) * size);
+    if (float *float_data = ibuf->float_data_for_write()) {
+      memcpy(float_data, values, sizeof(float) * size);
     }
     else {
+      uchar *byte_data = ibuf->byte_data_for_write();
       for (size_t i = 0; i < size; i++) {
-        ibuf->byte_buffer.data[i] = unit_float_to_uchar_clamp(values[i]);
+        byte_data[i] = unit_float_to_uchar_clamp(values[i]);
       }
     }
 
@@ -721,7 +723,7 @@ static bool rna_Image_is_float_get(PointerRNA *ptr)
 
   ibuf = BKE_image_acquire_ibuf(im, nullptr, &lock);
   if (ibuf) {
-    is_float = ibuf->float_buffer.data != nullptr;
+    is_float = ibuf->float_data() != nullptr;
   }
 
   BKE_image_release_ibuf(im, ibuf, lock);
@@ -1400,7 +1402,8 @@ static void rna_def_image(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", IMA_HIGH_BITDEPTH);
   RNA_def_property_ui_text(prop,
                            "Half Float Precision",
-                           "Use 16 bits per channel to lower the memory usage during rendering");
+                           "Use 16 bits per channel to lower the memory usage during rendering."
+                           "\nNote: Not supported by Cycles");
   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Image_gpu_texture_update");
 
   prop = RNA_def_property(srna, "seam_margin", PROP_INT, PROP_NONE);

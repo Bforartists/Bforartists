@@ -22,6 +22,7 @@ struct ImageFormatData;
 struct ImBuf;
 struct Scene;
 struct RenderData;
+enum eImbFileType : int8_t;
 
 /* Init/Copy/Free */
 
@@ -101,8 +102,8 @@ int BKE_image_path_ext_from_imtype_ensure(char *filepath, size_t filepath_maxncp
 #define IMA_CHAN_FLAG_RGB 2
 #define IMA_CHAN_FLAG_RGBA 4
 
-char BKE_ftype_to_imtype(int ftype, const ImbFormatOptions *options);
-int BKE_imtype_to_ftype(char imtype, ImbFormatOptions *r_options);
+char BKE_ftype_to_imtype(eImbFileType ftype, const ImbFormatOptions *options);
+eImbFileType BKE_imtype_to_ftype(char imtype, ImbFormatOptions *r_options);
 
 /* Returns true if the given imtype represents an image. This excludes multi-layer images, use
  * BKE_imtype_is_multi_layer_image to detect those images. */

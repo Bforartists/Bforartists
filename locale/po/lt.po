@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'45d5533d8e66')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 11:01+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2025-07-23 15:18+0000\n"
 "Last-Translator: Aras Pranckevičius <aras@nesnausk.org>\n"
 "Language-Team: Lithuanian <https://translate.blender.org/projects/blender-ui/ui/lt/>\n"
@@ -1199,6 +1199,10 @@ msgid "Flat"
 msgstr "Plokščia"
 
 
+msgid "Threshold"
+msgstr "Slenkstis"
+
+
 msgctxt "GPencil"
 msgid "Mode"
 msgstr "Veiksena"
@@ -1263,10 +1267,6 @@ msgstr "Visi sluoksniai po aktyviu"
 
 msgid "Simplify"
 msgstr "Supaprastinti"
-
-
-msgid "Threshold"
-msgstr "Slenkstis"
 
 
 msgid "Hardness"
@@ -3089,24 +3089,24 @@ msgid "Dots"
 msgstr "Taškai"
 
 
-msgid "Show/Hide"
-msgstr "Rodyti/Slėpti"
+msgid "Import"
+msgstr "Importuoti"
 
 
 msgid "Apply"
 msgstr "Pritaikyti"
 
 
-msgid "Layout"
-msgstr "Išdėstymas/Maketas"
-
-
-msgid "Import"
-msgstr "Importuoti"
-
-
 msgid "Track"
 msgstr "Sekti"
+
+
+msgid "Show/Hide"
+msgstr "Rodyti/Slėpti"
+
+
+msgid "Layout"
+msgstr "Išdėstymas/Maketas"
 
 
 msgid "Animals"
@@ -3481,10 +3481,6 @@ msgstr "Kampas"
 msgctxt "Action"
 msgid "Object"
 msgstr "Objektas"
-
-
-msgid "Add Mode"
-msgstr "Pridėti veikseną"
 
 
 msgid "BMP"

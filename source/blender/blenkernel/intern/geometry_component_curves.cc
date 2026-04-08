@@ -274,7 +274,6 @@ static VArray<float> construct_curve_length_gvarray(const CurvesGeometry &curves
 CurveLengthFieldInput::CurveLengthFieldInput()
     : CurvesFieldInput(CPPType::get<float>(), "Spline Length node")
 {
-  category_ = Category::Generated;
 }
 
 GVArray CurveLengthFieldInput::get_varray_for_context(const CurvesGeometry &curves,
@@ -290,7 +289,7 @@ uint64_t CurveLengthFieldInput::hash() const
   return 3549623580;
 }
 
-bool CurveLengthFieldInput::is_equal_to(const fn::FieldNode &other) const
+bool CurveLengthFieldInput::is_equal_to(const fn::FieldInput &other) const
 {
   return dynamic_cast<const CurveLengthFieldInput *>(&other) != nullptr;
 }

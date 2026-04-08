@@ -12,14 +12,14 @@ namespace blender::nodes::node_geo_mesh_face_group_boundaries_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Face Group ID", "Face Set")
+  b.add_input<decl::Int>("Face Group ID"_ustr, "Face Set"_ustr)
       .default_value(0)
       .hide_value()
       .supports_field()
       .description(
           "An identifier for the group of each face. All contiguous faces with the "
           "same value are in the same region");
-  b.add_output<decl::Bool>("Boundary Edges")
+  b.add_output<decl::Bool>("Boundary Edges"_ustr)
       .field_source_reference_all()
       .description("The edges that lie on the boundaries between the different face groups");
 }
@@ -32,7 +32,6 @@ class BoundaryFieldInput final : public bke::MeshFieldInput {
   BoundaryFieldInput(const Field<int> face_set)
       : bke::MeshFieldInput(CPPType::get<bool>(), "Face Group Boundaries"), face_set_(face_set)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -104,9 +103,9 @@ class BoundaryFieldInput final : public bke::MeshFieldInput {
         VArray<bool>::from_container(std::move(boundary)), AttrDomain::Edge, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    face_set_.node().for_each_field_input_recursive(fn);
+    fn(face_set_);
   }
 
   std::optional<AttrDomain> preferred_domain(const Mesh & /*mesh*/) const override
@@ -117,9 +116,9 @@ class BoundaryFieldInput final : public bke::MeshFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const Field<int> face_set_field = params.extract_input<Field<int>>("Face Set");
-  Field<bool> face_set_boundaries{std::make_shared<BoundaryFieldInput>(face_set_field)};
-  params.set_output("Boundary Edges", std::move(face_set_boundaries));
+  const Field<int> face_set_field = params.extract_input<Field<int>>("Face Set"_ustr);
+  params.set_output("Boundary Edges"_ustr,
+                    Field<bool>::from_input<BoundaryFieldInput>(face_set_field));
 }
 
 static void node_register()

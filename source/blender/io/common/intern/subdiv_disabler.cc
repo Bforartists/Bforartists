@@ -84,7 +84,7 @@ void SubdivModifierDisabler::disable_modifiers()
   Scene *scene = DEG_get_input_scene(depsgraph_);
   ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph_);
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*DEG_get_bmain(depsgraph_), scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     Object *object = base.object;
 

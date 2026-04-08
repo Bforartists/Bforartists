@@ -84,7 +84,7 @@ class Instance : public DrawEngine {
       }
 
       /* Buffer does not exist or image will not fit in a GPU texture, use screen space drawing. */
-      if (!buffer || (!buffer->float_buffer.data && !buffer->byte_buffer.data) ||
+      if (!buffer || (!buffer->float_data() && !buffer->byte_data()) ||
           !GPU_is_safe_texture_size(buffer->x, buffer->y))
       {
         return std::make_unique<ScreenSpaceDrawingMode>(*this);

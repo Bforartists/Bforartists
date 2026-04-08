@@ -20,7 +20,7 @@ namespace blender::nodes::node_composite_normal_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_output<decl::Vector>("Normal")
+  b.add_output<decl::Vector>("Normal"_ustr)
       .default_value({0.0f, 0.0f, 1.0f})
       .min(-1.0f)
       .max(1.0f)
@@ -32,7 +32,7 @@ using namespace blender::compositor;
 /* The vector value is stored in the default value of the output socket. */
 static float3 get_normal(const bNode &node)
 {
-  const bNodeSocket &normal_output = *node.output_by_identifier("Normal");
+  const bNodeSocket &normal_output = *node.output_by_identifier("Normal"_ustr);
   const float3 node_normal = normal_output.default_value_typed<bNodeSocketValueVector>()->value;
   return math::normalize(node_normal);
 }

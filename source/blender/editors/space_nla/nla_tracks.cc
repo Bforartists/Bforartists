@@ -126,7 +126,7 @@ static int mouse_nla_tracks(bContext *C, bAnimContext *ac, int track_index, shor
         else {
           /* deselect all */
           /* TODO: should this deselect all other types of tracks too? */
-          BKE_view_layer_synced_ensure(ac->scene, view_layer);
+          BKE_view_layer_synced_ensure(*ac->bmain, ac->scene, view_layer);
           for (Base &b : *BKE_view_layer_object_bases_get(view_layer)) {
             ed::object::base_select(&b, ed::object::BA_DESELECT);
             if (b.object->adt) {

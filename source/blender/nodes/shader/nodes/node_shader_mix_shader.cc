@@ -10,7 +10,7 @@ namespace nodes::node_shader_mix_shader_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .default_value(0.5f)
       .min(0.0f)
       .max(1.0f)
@@ -18,9 +18,9 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "Blend weight to use for mixing two shaders. "
           "At zero it uses the first shader entirely and at one the second shader");
-  b.add_input<decl::Shader>("Shader");
-  b.add_input<decl::Shader>("Shader", "Shader_001");
-  b.add_output<decl::Shader>("Shader");
+  b.add_input<decl::Shader>("Shader"_ustr);
+  b.add_input<decl::Shader>("Shader"_ustr, "Shader_001"_ustr);
+  b.add_output<decl::Shader>("Shader"_ustr);
 }
 
 static int node_shader_gpu_mix_shader(GPUMaterial *mat,

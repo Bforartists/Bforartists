@@ -834,6 +834,7 @@ static void init_TransDataContainers(TransInfo *t, Object *obact, Span<Object *>
       /* Pose transform operates on `ob->pose` so don't skip duplicate object-data. */
       params.no_dup_data = (object_mode & OB_MODE_POSE) == 0;
       local_objects = BKE_view_layer_array_from_objects_in_mode_params(
+          *t->bmain,
           t->scene,
           t->view_layer,
           static_cast<const View3D *>((t->spacetype == SPACE_VIEW3D) ? t->view : nullptr),
@@ -888,7 +889,7 @@ static void init_TransDataContainers(TransInfo *t, Object *obact, Span<Object *>
 static TransConvertTypeInfo *convert_type_get(const TransInfo *t, Object **r_obj_armature)
 {
   ViewLayer *view_layer = t->view_layer;
-  BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+  BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   /* If tests must match recalc_data for correct updates. */
@@ -1045,7 +1046,7 @@ void create_trans_data(bContext *C, TransInfo *t)
     init_TransDataContainers(t, ob_armature, {ob_armature});
   }
   else {
-    BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+    BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
     Object *ob = BKE_view_layer_active_object_get(t->view_layer);
     init_TransDataContainers(t, ob, {});
   }

@@ -19,36 +19,39 @@ namespace blender::nodes::node_geo_cube_grid_topology_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
-  b.add_output<decl::Bool>("Topology")
+  b.add_output<decl::Bool>("Topology"_ustr)
       .structure_type(StructureType::Grid)
       .description("Boolean grid defining the topology/active regions");
-  b.add_input<decl::Vector>("Bounds Min")
+  b.add_input<decl::Vector>("Bounds Min"_ustr)
       .default_value(float3(-1.0f))
       .description("Minimum boundary of the grid (world space)");
-  b.add_input<decl::Vector>("Bounds Max")
+  b.add_input<decl::Vector>("Bounds Max"_ustr)
       .default_value(float3(1.0f))
       .description("Maximum boundary of the grid (world space)");
 
-  b.add_input<decl::Int>("Resolution X")
+  b.add_input<decl::Int>("Resolution X"_ustr)
       .default_value(32)
       .min(1)
       .description("Number of voxels in the X axis");
-  b.add_input<decl::Int>("Resolution Y")
+  b.add_input<decl::Int>("Resolution Y"_ustr)
       .default_value(32)
       .min(1)
       .description("Number of voxels in the Y axis");
-  b.add_input<decl::Int>("Resolution Z")
+  b.add_input<decl::Int>("Resolution Z"_ustr)
       .default_value(32)
       .min(1)
       .description("Number of voxels in the Z axis");
 
   PanelDeclarationBuilder &min_panel = b.add_panel("Min"_ustr).default_closed(true);
-  min_panel.add_input<decl::Int>("Min X").default_value(0).description(
-      "Minimum coordinate in X axis (grid index space)");
-  min_panel.add_input<decl::Int>("Min Y").default_value(0).description(
-      "Minimum coordinate in Y axis (grid index space)");
-  min_panel.add_input<decl::Int>("Min Z").default_value(0).description(
-      "Minimum coordinate in Z axis (grid index space)");
+  min_panel.add_input<decl::Int>("Min X"_ustr)
+      .default_value(0)
+      .description("Minimum coordinate in X axis (grid index space)");
+  min_panel.add_input<decl::Int>("Min Y"_ustr)
+      .default_value(0)
+      .description("Minimum coordinate in Y axis (grid index space)");
+  min_panel.add_input<decl::Int>("Min Z"_ustr)
+      .default_value(0)
+      .description("Minimum coordinate in Z axis (grid index space)");
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
@@ -60,15 +63,15 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   auto openvdb_grid = GridType::create(false /* background */);
 
-  const int3 grid_min_inclusive = int3(params.extract_input<int>("Min X"),
-                                       params.extract_input<int>("Min Y"),
-                                       params.extract_input<int>("Min Z"));
-  const int3 resolution = int3(params.extract_input<int>("Resolution X"),
-                               params.extract_input<int>("Resolution Y"),
-                               params.extract_input<int>("Resolution Z"));
+  const int3 grid_min_inclusive = int3(params.extract_input<int>("Min X"_ustr),
+                                       params.extract_input<int>("Min Y"_ustr),
+                                       params.extract_input<int>("Min Z"_ustr));
+  const int3 resolution = int3(params.extract_input<int>("Resolution X"_ustr),
+                               params.extract_input<int>("Resolution Y"_ustr),
+                               params.extract_input<int>("Resolution Z"_ustr));
 
-  const float3 bounds_min = params.extract_input<float3>("Bounds Min");
-  const float3 bounds_max = params.extract_input<float3>("Bounds Max");
+  const float3 bounds_min = params.extract_input<float3>("Bounds Min"_ustr);
+  const float3 bounds_max = params.extract_input<float3>("Bounds Max"_ustr);
 
   if (resolution.x <= 0 || resolution.y <= 0 || resolution.z <= 0) {
     params.error_message_add(NodeWarningType::Warning, TIP_("Resolution must be positive"));
@@ -104,7 +107,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       openvdb::math::Vec3d(translation.x, translation.y, translation.z));
 
   bke::VolumeGrid<bool> topology_grid(std::move(openvdb_grid));
-  params.set_output("Topology", bke::GVolumeGrid(std::move(topology_grid)));
+  params.set_output("Topology"_ustr, bke::GVolumeGrid(std::move(topology_grid)));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

@@ -27,23 +27,24 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .is_default_link_socket()
       .description("Geometry to transform");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Menu>("Mode")
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Menu>("Mode"_ustr)
       .static_items(mode_items)
       .optional_label()
       .description("How the transformation is specified");
-  b.add_input<decl::Vector>("Translation")
+  b.add_input<decl::Vector>("Translation"_ustr)
       .subtype(PROP_TRANSLATION)
       .usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
-  b.add_input<decl::Rotation>("Rotation").usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
-  b.add_input<decl::Vector>("Scale")
+  b.add_input<decl::Rotation>("Rotation"_ustr)
+      .usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
+  b.add_input<decl::Vector>("Scale"_ustr)
       .default_value({1, 1, 1})
       .subtype(PROP_XYZ)
       .usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_COMPONENTS);
-  b.add_input<decl::Matrix>("Transform").usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_MATRIX);
+  b.add_input<decl::Matrix>("Transform"_ustr).usage_by_single_menu(GEO_NODE_TRANSFORM_MODE_MATRIX);
 }
 
 static bool use_translate(const math::Quaternion &rotation, const float3 scale)
@@ -74,19 +75,19 @@ static void report_errors(GeoNodeExecParams &params,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const auto mode = params.get_input<NodeGeometryTransformMode>("Mode");
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
+  const auto mode = params.get_input<NodeGeometryTransformMode>("Mode"_ustr);
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
 
   if (mode == GEO_NODE_TRANSFORM_MODE_MATRIX) {
-    const float4x4 transform = params.extract_input<float4x4>("Transform");
+    const float4x4 transform = params.extract_input<float4x4>("Transform"_ustr);
     if (auto errors = geometry::transform_geometry(geometry_set, transform)) {
       report_errors(params, *errors);
     }
   }
   else {
-    const float3 translation = params.extract_input<float3>("Translation");
-    const math::Quaternion rotation = params.extract_input<math::Quaternion>("Rotation");
-    const float3 scale = params.extract_input<float3>("Scale");
+    const float3 translation = params.extract_input<float3>("Translation"_ustr);
+    const math::Quaternion rotation = params.extract_input<math::Quaternion>("Rotation"_ustr);
+    const float3 scale = params.extract_input<float3>("Scale"_ustr);
 
     /* Use only translation if rotation and scale don't apply. */
     if (use_translate(rotation, scale)) {
@@ -101,7 +102,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   }
 
-  params.set_output("Geometry", std::move(geometry_set));
+  params.set_output("Geometry"_ustr, std::move(geometry_set));
 }
 
 static void register_node()

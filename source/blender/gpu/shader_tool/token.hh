@@ -141,6 +141,15 @@ struct Token : lexit::Token {
     return parser::char_number(buf_->str_, str_index_start());
   }
 
+  /* Return the name of the file containing the token. */
+  std::string filename() const
+  {
+    if (is_invalid()) {
+      return "";
+    }
+    return parser::filename(buf_->str_, str_index_start());
+  }
+
   /* Return the line the token is at. */
   std::string line_str() const
   {

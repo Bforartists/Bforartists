@@ -333,6 +333,84 @@ static void SOUND_OT_bake_animation(wmOperatorType *ot)
 
 /******************** mixdown operator ********************/
 
+#ifdef WITH_AUDASPACE
+static bool sound_mixdown_progress(float progress, void *data)
+{
+  wmJobWorkerStatus *worker_status = static_cast<wmJobWorkerStatus *>(data);
+  worker_status->progress = progress;
+  worker_status->do_update = true;
+  return G.is_break == false && worker_status->stop == false;
+}
+
+struct SoundMixdownJobData {
+  wmWindowManager *wm = nullptr;
+  bool interface_locked = false;
+
+  Scene *scene_eval = nullptr;
+  std::string filepath;
+  aud::Container container{};
+  aud::Codec codec{};
+  aud::DeviceSpecs specs{};
+  int bitrate = 0;
+  int accuracy = 0;
+  bool split = false;
+
+  bool succeeded = false;
+  std::string error_message;
+};
+
+static void sound_mixdown_startjob(void *customdata, wmJobWorkerStatus *worker_status)
+{
+  SoundMixdownJobData *mixdown_job_data = static_cast<SoundMixdownJobData *>(customdata);
+
+  Scene *scene_eval = mixdown_job_data->scene_eval;
+  const char *filepath = mixdown_job_data->filepath.c_str();
+  aud::Container container = mixdown_job_data->container;
+  aud::Codec codec = mixdown_job_data->codec;
+  int bitrate = mixdown_job_data->bitrate;
+  int accuracy = mixdown_job_data->accuracy;
+  aud::DeviceSpecs specs = mixdown_job_data->specs;
+  bool split = mixdown_job_data->split;
+
+  const double fps = scene_eval->frames_per_second();
+  const int start_frame = scene_eval->r.sfra;
+  const int end_frame = scene_eval->r.efra;
+
+  std::string error_message;
+  bool result = bke::sound_mixdown(scene_eval->runtime->audio.sound_scene,
+                                   start_frame * specs.rate / fps,
+                                   (end_frame - start_frame + 1) * specs.rate / fps,
+                                   accuracy,
+                                   filepath,
+                                   specs,
+                                   container,
+                                   codec,
+                                   bitrate,
+                                   split,
+                                   error_message,
+                                   sound_mixdown_progress,
+                                   worker_status);
+
+  BKE_sound_reset_scene_specs(scene_eval);
+
+  mixdown_job_data->succeeded = result;
+  mixdown_job_data->error_message = error_message;
+}
+
+static void sound_mixdown_endjob(void *customdata)
+{
+  SoundMixdownJobData *mixdown_job_data = static_cast<SoundMixdownJobData *>(customdata);
+
+  if (mixdown_job_data->interface_locked) {
+    WM_locked_interface_set(mixdown_job_data->wm, false);
+  }
+
+  if (!mixdown_job_data->succeeded) {
+    WM_global_report(RPT_ERROR, mixdown_job_data->error_message.c_str());
+  }
+}
+#endif
+
 static wmOperatorStatus sound_mixdown_exec(bContext *C, wmOperator *op)
 {
 #ifdef WITH_AUDASPACE
@@ -340,6 +418,7 @@ static wmOperatorStatus sound_mixdown_exec(bContext *C, wmOperator *op)
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
   Main *bmain = CTX_data_main(C);
+  wmWindowManager *wm = CTX_wm_manager(C);
 
   int bitrate, accuracy;
   aud::DeviceSpecs specs;
@@ -358,29 +437,38 @@ static wmOperatorStatus sound_mixdown_exec(bContext *C, wmOperator *op)
 
   BLI_path_abs(filepath, BKE_main_blendfile_path(bmain));
 
-  const double fps = double(scene_eval->r.frs_sec) / double(scene_eval->r.frs_sec_base);
-  const int start_frame = scene_eval->r.sfra;
-  const int end_frame = scene_eval->r.efra;
+  SoundMixdownJobData *mixdown_job_data = MEM_new<SoundMixdownJobData>(__func__);
+  mixdown_job_data->wm = wm;
+  mixdown_job_data->scene_eval = scene_eval;
+  mixdown_job_data->filepath = filepath;
+  mixdown_job_data->container = container;
+  mixdown_job_data->codec = codec;
+  mixdown_job_data->specs = specs;
+  mixdown_job_data->bitrate = bitrate;
+  mixdown_job_data->accuracy = accuracy;
+  mixdown_job_data->split = split;
 
-  std::string error_message;
-  bool result = bke::sound_mixdown(scene_eval->runtime->audio.sound_scene,
-                                   start_frame * specs.rate / fps,
-                                   (end_frame - start_frame + 1) * specs.rate / fps,
-                                   accuracy,
-                                   filepath,
-                                   specs,
-                                   container,
-                                   codec,
-                                   bitrate,
-                                   split,
-                                   error_message);
-
-  BKE_sound_reset_scene_specs(scene_eval);
-
-  if (!result) {
-    BKE_report(op->reports, RPT_ERROR, error_message.c_str());
-    return OPERATOR_CANCELLED;
+  if (scene_eval->r.use_lock_interface) {
+    WM_locked_interface_set(mixdown_job_data->wm, true);
+    /* Save the state in the main thread to avoid any issues if the user messes with the setting
+     * during rendering. */
+    mixdown_job_data->interface_locked = true;
   }
+
+  wmJob *wm_job = WM_jobs_get(wm,
+                              CTX_wm_window(C),
+                              CTX_data_scene(C),
+                              "Rendering Audio...",
+                              WM_JOB_PROGRESS,
+                              WM_JOB_TYPE_SOUND_MIXDOWN);
+
+  WM_jobs_customdata_set(wm_job, mixdown_job_data, [](void *j) {
+    MEM_delete(static_cast<SoundMixdownJobData *>(j));
+  });
+  WM_jobs_timer(wm_job, 0.1, NC_SCENE | ND_SEQUENCER, NC_SCENE | ND_SEQUENCER);
+  WM_jobs_callbacks(wm_job, sound_mixdown_startjob, nullptr, nullptr, sound_mixdown_endjob);
+
+  WM_jobs_start(wm, wm_job);
 #else  /* WITH_AUDASPACE */
   (void)C;
   (void)op;

@@ -19,7 +19,7 @@ namespace blender::nodes::node_composite_switch_view_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>(N_("Image")).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
 
   const bNode *node = b.node_or_null();
   if (node == nullptr) {
@@ -34,7 +34,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       if (srv.viewflag & SCE_VIEW_DISABLE) {
         continue;
       }
-      b.add_input<decl::Color>(srv.name)
+      b.add_input<decl::Color>(UString(srv.name))
           .default_value({0.0f, 0.0f, 0.0f, 1.0f})
           .structure_type(StructureType::Dynamic);
     }

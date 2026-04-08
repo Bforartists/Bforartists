@@ -254,7 +254,9 @@ bool sound_mixdown(AUD_Sequence sequence,
                    aud::Codec codec,
                    unsigned int bitrate,
                    bool split_channels,
-                   std::string &r_error);
+                   std::string &r_error,
+                   bool (*progress_callback)(float, void *),
+                   void *progress_data);
 
 }  // namespace bke
 #endif  // #if defined(WITH_AUDASPACE)

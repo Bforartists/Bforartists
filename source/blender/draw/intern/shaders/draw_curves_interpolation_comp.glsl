@@ -26,7 +26,7 @@ struct InterpPosition {
 /** Input Load. */
 
 /* Template this function to be able to call it with only no extra argument. */
-template<typename T> T input_load(int point_index)
+template<typename T> T input_load(int /*point_index*/)
 {
   return T(0);
 }
@@ -69,7 +69,7 @@ template<> float input_load<float>(int point_index)
 /** Output Load. */
 
 /* Template this function to be able to call it with only no extra argument. */
-template<typename T> T output_load(int evaluated_point_index)
+template<typename T> T output_load(int /*evaluated_point_index*/)
 {
   return T(0);
 }

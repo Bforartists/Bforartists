@@ -1168,7 +1168,7 @@ static ImBuf *add_ibuf_for_tile(Image *ima, ImageTile *tile)
     }
 
     if (ibuf != nullptr) {
-      rect_float = ibuf->float_buffer.data;
+      rect_float = ibuf->float_data_for_write();
       IMB_colormanagement_check_is_data(ibuf, ima->colorspace_settings.name);
     }
 
@@ -1192,7 +1192,7 @@ static ImBuf *add_ibuf_for_tile(Image *ima, ImageTile *tile)
     }
 
     if (ibuf != nullptr) {
-      rect = ibuf->byte_buffer.data;
+      rect = ibuf->byte_data_for_write();
       IMB_colormanagement_assign_byte_colorspace(ibuf, ima->colorspace_settings.name);
     }
 
@@ -1203,8 +1203,10 @@ static ImBuf *add_ibuf_for_tile(Image *ima, ImageTile *tile)
     return nullptr;
   }
 
-  STRNCPY(ibuf->filepath, ima->filepath);
-  BLI_path_abs(ibuf->filepath, ID_BLEND_PATH_FROM_GLOBAL(&ima->id));
+  char filepath[FILE_MAX];
+  STRNCPY(filepath, ima->filepath);
+  BLI_path_abs(filepath, ID_BLEND_PATH_FROM_GLOBAL(&ima->id));
+  ibuf->filepath = filepath;
 
   /* Mark the tile itself as having been generated. */
   tile->gen_flag |= IMA_GEN_TILE;
@@ -1291,7 +1293,7 @@ static void image_colorspace_from_imbuf(Image *image, const ImBuf *ibuf)
 {
   const char *colorspace_name = nullptr;
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     if (ibuf->float_buffer.colorspace) {
       colorspace_name = IMB_colormanagement_colorspace_get_name(ibuf->float_buffer.colorspace);
     }
@@ -1300,7 +1302,7 @@ static void image_colorspace_from_imbuf(Image *image, const ImBuf *ibuf)
     }
   }
 
-  if (ibuf->byte_buffer.data && !colorspace_name) {
+  if (ibuf->byte_data() && !colorspace_name) {
     if (ibuf->byte_buffer.colorspace) {
       colorspace_name = IMB_colormanagement_colorspace_get_name(ibuf->byte_buffer.colorspace);
     }
@@ -1317,7 +1319,7 @@ static void image_colorspace_from_imbuf(Image *image, const ImBuf *ibuf)
 Image *BKE_image_add_from_imbuf(Main *bmain, ImBuf *ibuf, const char *name)
 {
   if (name == nullptr) {
-    name = BLI_path_basename(ibuf->filepath);
+    name = BLI_path_basename(ibuf->filepath.c_str());
   }
 
   /* When the image buffer has valid path create a new image with "file" source and copy the path
@@ -1349,7 +1351,7 @@ void BKE_image_replace_imbuf(Image *image, ImBuf *ibuf)
   /* Keep generated image type flags consistent with the image buffer. */
   if (image->source == IMA_SRC_GENERATED) {
     ImageTile *base_tile = BKE_image_get_tile(image, 0);
-    if (ibuf->float_buffer.data) {
+    if (ibuf->float_data()) {
       base_tile->gen_flag |= IMA_GEN_FLOAT;
     }
     else {
@@ -1369,7 +1371,7 @@ void BKE_image_replace_imbuf(Image *image, ImBuf *ibuf)
 static bool image_memorypack_imbuf(
     Image *ima, ImBuf *ibuf, int view, int tile_number, const char *filepath)
 {
-  ibuf->ftype = (ibuf->float_buffer.data) ? IMB_FTYPE_OPENEXR : IMB_FTYPE_PNG;
+  ibuf->ftype = ibuf->float_data() ? IMB_FTYPE_OPENEXR : IMB_FTYPE_PNG;
 
   IMB_save_image(ibuf, filepath, IB_byte_data | IB_mem);
 
@@ -1419,7 +1421,7 @@ bool BKE_image_memorypack(Image *ima)
         break;
       }
 
-      const char *filepath = ibuf->filepath;
+      const char *filepath = ibuf->filepath.c_str();
       if (is_tiled) {
         iuser.tile = tile.tile_number;
         BKE_image_user_file_path(&iuser, ima, tiled_filepath);
@@ -2051,7 +2053,7 @@ void BKE_image_stamp_buf(Scene *scene,
 #define BUFF_MARGIN_X 2
 #define BUFF_MARGIN_Y 1
 
-  if (!ibuf->byte_buffer.data && !ibuf->float_buffer.data) {
+  if (!ibuf->byte_data() && !ibuf->float_data()) {
     return;
   }
 
@@ -2073,8 +2075,8 @@ void BKE_image_stamp_buf(Scene *scene,
   BLF_wordwrap(mono, ibuf->x - (BUFF_MARGIN_X * 2));
 
   BLF_buffer(mono,
-             ibuf->float_buffer.data,
-             ibuf->byte_buffer.data,
+             ibuf->float_data_for_write(),
+             ibuf->byte_data_for_write(),
              ibuf->x,
              ibuf->y,
              ibuf->byte_buffer.colorspace);
@@ -2557,16 +2559,14 @@ void BKE_stamp_info_from_imbuf(RenderResult *rr, ImBuf *ibuf)
 
 bool BKE_imbuf_alpha_test(ImBuf *ibuf)
 {
-  if (ibuf->float_buffer.data) {
-    const float *buf = ibuf->float_buffer.data;
+  if (const float *buf = ibuf->float_data()) {
     for (size_t tot = IMB_get_pixel_count(ibuf); tot--; buf += 4) {
       if (buf[3] < 1.0f) {
         return true;
       }
     }
   }
-  else if (ibuf->byte_buffer.data) {
-    uchar *buf = ibuf->byte_buffer.data;
+  else if (const uchar *buf = ibuf->byte_data()) {
     for (size_t tot = IMB_get_pixel_count(ibuf); tot--; buf += 4) {
       if (buf[3] != 255) {
         return true;
@@ -4449,7 +4449,7 @@ static ImBuf *image_get_render_result(Image *ima, ImageUser *iuser, void **r_loc
   if (rres.have_combined && layer == 0) {
     /* pass */
   }
-  else if (pass_ibuf && pass_ibuf->byte_buffer.data && layer == 0) {
+  else if (pass_ibuf && pass_ibuf->byte_data() && layer == 0) {
     /* pass */
   }
   else if (rres.layers.first) {
@@ -5345,7 +5345,7 @@ uchar *BKE_image_get_pixels_for_frame(Image *image, int frame, int tile)
   ibuf = BKE_image_acquire_ibuf(image, &iuser, &lock);
 
   if (ibuf) {
-    pixels = ibuf->byte_buffer.data;
+    pixels = ibuf->byte_data_for_write();
 
     if (pixels) {
       pixels = MEM_dupalloc(pixels);
@@ -5375,7 +5375,7 @@ float *BKE_image_get_float_pixels_for_frame(Image *image, int frame, int tile)
   ibuf = BKE_image_acquire_ibuf(image, &iuser, &lock);
 
   if (ibuf) {
-    pixels = ibuf->float_buffer.data;
+    pixels = ibuf->float_data_for_write();
 
     if (pixels) {
       pixels = MEM_dupalloc(pixels);
@@ -5469,7 +5469,7 @@ bool BKE_image_buffer_format_writable(ImBuf *ibuf)
   return (BKE_imtype_to_ftype(im_format.imtype, &options_dummy) == ibuf->ftype);
 }
 
-void BKE_image_file_format_set(Image *image, int ftype, const ImbFormatOptions *options)
+void BKE_image_file_format_set(Image *image, eImbFileType ftype, const ImbFormatOptions *options)
 {
   std::scoped_lock lock(image->runtime->cache_mutex);
   if (image->runtime->cache != nullptr) {
@@ -5478,7 +5478,7 @@ void BKE_image_file_format_set(Image *image, int ftype, const ImbFormatOptions *
     while (!IMB_moviecacheIter_done(iter)) {
       ImBuf *ibuf = IMB_moviecacheIter_getImBuf(iter);
       if (ibuf != nullptr) {
-        ibuf->ftype = static_cast<eImbFileType>(ftype);
+        ibuf->ftype = ftype;
         ibuf->foptions = *options;
       }
       IMB_moviecacheIter_step(iter);
@@ -5520,7 +5520,7 @@ ImBuf *BKE_image_get_ibuf_with_name(Image *image, const char *filepath)
 
     while (!IMB_moviecacheIter_done(iter)) {
       ImBuf *current_ibuf = IMB_moviecacheIter_getImBuf(iter);
-      if (current_ibuf != nullptr && STREQ(current_ibuf->filepath, filepath)) {
+      if (current_ibuf != nullptr && current_ibuf->filepath == filepath) {
         ibuf = current_ibuf;
         IMB_refImBuf(ibuf);
         break;

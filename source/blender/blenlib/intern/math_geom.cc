@@ -3859,16 +3859,6 @@ void barycentric_weights_v2_quad(const float v1[2],
                                  const float co[2],
                                  float w[4])
 {
-  /* NOTE(@ideasman42): fabsf() here is not needed for convex quads
-   * (and not used in #interp_weights_poly_v2).
-   * But in the case of concave/bow-tie quads for the mask rasterizer it
-   * gives unreliable results without adding `absf()`. If this becomes an issue for more general
-   * usage we could have this optional or use a different function. */
-#define MEAN_VALUE_HALF_TAN_V2(_area, i1, i2) \
-  ((_area = cross_v2v2(dirs[i1], dirs[i2])) != 0.0f ? \
-       fabsf(((lens[i1] * lens[i2]) - dot_v2v2(dirs[i1], dirs[i2])) / _area) : \
-       0.0f)
-
   const float dirs[4][2] = {
       {v1[0] - co[0], v1[1] - co[1]},
       {v2[0] - co[0], v2[1] - co[1]},
@@ -3901,27 +3891,53 @@ void barycentric_weights_v2_quad(const float v1[2],
     w[0] = w[1] = w[2] = 0.0f;
   }
   else {
-    float wtot, area;
 
-    /* variable 'area' is just for storage,
-     * the order its initialized doesn't matter */
-#ifdef __clang__
-#  pragma clang diagnostic push
-#  pragma clang diagnostic ignored "-Wunsequenced"
-#endif
-
-    /* inline mean_value_half_tan four times here */
-    const float t[4] = {
-        MEAN_VALUE_HALF_TAN_V2(area, 0, 1),
-        MEAN_VALUE_HALF_TAN_V2(area, 1, 2),
-        MEAN_VALUE_HALF_TAN_V2(area, 2, 3),
-        MEAN_VALUE_HALF_TAN_V2(area, 3, 0),
+    const float areas[4] = {
+        cross_v2v2(dirs[0], dirs[1]),
+        cross_v2v2(dirs[1], dirs[2]),
+        cross_v2v2(dirs[2], dirs[3]),
+        cross_v2v2(dirs[3], dirs[0]),
+    };
+    const float dots[4] = {
+        dot_v2v2(dirs[0], dirs[1]),
+        dot_v2v2(dirs[1], dirs[2]),
+        dot_v2v2(dirs[2], dirs[3]),
+        dot_v2v2(dirs[3], dirs[0]),
+    };
+    const float lens_prod[4] = {
+        lens[0] * lens[1],
+        lens[1] * lens[2],
+        lens[2] * lens[3],
+        lens[3] * lens[0],
     };
 
-#ifdef __clang__
-#  pragma clang diagnostic pop
-#endif
+    /* Handle cases where point lies exactly on the edge. */
+    for (int i = 0; i < 4; i++) {
+      const float area = areas[i];
+      /* Collinear with edge i-j and between the endpoints. */
+      if (fabsf(area) < 1.0e-12f * lens_prod[i] && dots[i] <= 0.0f) {
+        const int j = (i + 1) & 3;
+        const float sum = lens[i] + lens[j];
+        w[0] = w[1] = w[2] = w[3] = 0.0f;
+        w[i] = lens[j] / sum;
+        w[j] = lens[i] / sum;
+        return;
+      }
+    }
 
+    /* NOTE(@ideasman42): fabsf() here is not needed for convex quads
+     * (and not used in #interp_weights_poly_v2).
+     * But in the case of concave/bow-tie quads for the mask rasterizer it
+     * gives unreliable results without adding `absf()`. If this becomes an issue for more general
+     * usage we could have this optional or use a different function. */
+#define MEAN_VALUE_HALF_TAN_V2(i1) \
+  (areas[i1] != 0.0f ? fabsf((lens_prod[i1] - dots[i1]) / areas[i1]) : 0.0f)
+    const float t[4] = {
+        MEAN_VALUE_HALF_TAN_V2(0),
+        MEAN_VALUE_HALF_TAN_V2(1),
+        MEAN_VALUE_HALF_TAN_V2(2),
+        MEAN_VALUE_HALF_TAN_V2(3),
+    };
 #undef MEAN_VALUE_HALF_TAN_V2
 
     w[0] = (t[3] + t[0]) / lens[0];
@@ -3929,7 +3945,7 @@ void barycentric_weights_v2_quad(const float v1[2],
     w[2] = (t[1] + t[2]) / lens[2];
     w[3] = (t[2] + t[3]) / lens[3];
 
-    wtot = w[0] + w[1] + w[2] + w[3];
+    float wtot = w[0] + w[1] + w[2] + w[3];
 
 #ifndef NDEBUG /* Avoid floating point exception when debugging. */
     if (wtot != 0.0f)

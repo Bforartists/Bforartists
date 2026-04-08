@@ -34,98 +34,24 @@
 
 namespace blender::draw {
 
-static void extract_set_bits(const BitSpan bits, MutableSpan<int> indices)
-{
-  int count = 0;
-  for (const int64_t i : bits.index_range()) {
-    if (bits[i]) {
-      indices[count] = int(i);
-      count++;
-    }
-  }
-  BLI_assert(count == indices.size());
-}
-
-static void mesh_render_data_loose_geom_mesh(const MeshRenderData &mr, MeshBufferCache &cache)
-{
-  const Mesh &mesh = *mr.mesh;
-  const bool no_loose_vert_hint = mesh.runtime->loose_verts_cache.is_cached() &&
-                                  mesh.runtime->loose_verts_cache.data().count == 0;
-  const bool no_loose_edge_hint = mesh.runtime->loose_edges_cache.is_cached() &&
-                                  mesh.runtime->loose_edges_cache.data().count == 0;
-  threading::parallel_invoke(
-      mesh.edges_num > 4096 && !no_loose_vert_hint && !no_loose_edge_hint,
-      [&]() {
-        const bke::LooseEdgeCache &loose_edges = mesh.loose_edges();
-        if (loose_edges.count > 0) {
-          cache.loose_geom.edges.reinitialize(loose_edges.count);
-          extract_set_bits(loose_edges.is_loose_bits, cache.loose_geom.edges);
-        }
-      },
-      [&]() {
-        const bke::LooseVertCache &loose_verts = mesh.loose_verts();
-        if (loose_verts.count > 0) {
-          cache.loose_geom.verts.reinitialize(loose_verts.count);
-          extract_set_bits(loose_verts.is_loose_bits, cache.loose_geom.verts);
-        }
-      });
-}
-
-static void mesh_render_data_loose_verts_bm(const MeshRenderData &mr,
-                                            MeshBufferCache &cache,
-                                            BMesh &bm)
-{
-  int i;
-  BMIter iter;
-  BMVert *vert;
-  int count = 0;
-  Array<int> loose_verts(mr.verts_num);
-  BM_ITER_MESH_INDEX (vert, &iter, &bm, BM_VERTS_OF_MESH, i) {
-    if (vert->e == nullptr) {
-      loose_verts[count] = i;
-      count++;
-    }
-  }
-  if (count < mr.verts_num) {
-    cache.loose_geom.verts = loose_verts.as_span().take_front(count);
-  }
-  else {
-    cache.loose_geom.verts = std::move(loose_verts);
-  }
-}
-
-static void mesh_render_data_loose_edges_bm(const MeshRenderData &mr,
-                                            MeshBufferCache &cache,
-                                            BMesh &bm)
-{
-  int i;
-  BMIter iter;
-  BMEdge *edge;
-  int count = 0;
-  Array<int> loose_edges(mr.edges_num);
-  BM_ITER_MESH_INDEX (edge, &iter, &bm, BM_EDGES_OF_MESH, i) {
-    if (edge->l == nullptr) {
-      loose_edges[count] = i;
-      count++;
-    }
-  }
-  if (count < mr.edges_num) {
-    cache.loose_geom.edges = loose_edges.as_span().take_front(count);
-  }
-  else {
-    cache.loose_geom.edges = std::move(loose_edges);
-  }
-}
-
 static void mesh_render_data_loose_geom_build(const MeshRenderData &mr, MeshBufferCache &cache)
 {
   if (mr.extract_type == MeshExtractType::Mesh) {
-    mesh_render_data_loose_geom_mesh(mr, cache);
+    cache.loose_geom.verts = mr.mesh->loose_verts();
+    cache.loose_geom.edges = mr.mesh->loose_edges();
   }
   else {
     BMesh &bm = *mr.bm;
-    mesh_render_data_loose_verts_bm(mr, cache, bm);
-    mesh_render_data_loose_edges_bm(mr, cache, bm);
+    /* Use LinearAllocator instead of IndexMaskMemory to avoid over-allocation. */
+    cache.loose_geom.allocator = std::make_unique<LinearAllocator<>>();
+    cache.loose_geom.verts = IndexMask::from_predicate(
+        IndexRange(bm.totvert), *cache.loose_geom.allocator, [&](const int i) {
+          return BM_vert_at_index(&bm, i)->e == nullptr;
+        });
+    cache.loose_geom.edges = IndexMask::from_predicate(
+        IndexRange(bm.totedge), *cache.loose_geom.allocator, [&](const int i) {
+          return BM_edge_at_index(&bm, i)->l == nullptr;
+        });
   }
 }
 

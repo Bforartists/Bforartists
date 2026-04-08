@@ -70,7 +70,7 @@ static void world_init_data(ID *id)
   INIT_DEFAULT_STRUCT_AFTER(wrld, id);
 
   wrld->nodetree = bke::node_tree_add_tree_embedded(
-      nullptr, &wrld->id, "World Nodetree", ntreeType_Shader->idname);
+      nullptr, &wrld->id, "World Nodetree", ntreeType_Shader->idname.ref());
 }
 
 /**

@@ -110,8 +110,7 @@ void main()
   float mip_roughness_clamped = max(mip_roughness, BSDF_ROUGHNESS_THRESHOLD);
   float cone_cos = cone_cosine_from_roughness(mip_roughness_clamped);
 
-  float3 out_direction = sphere_probe_texel_to_direction(
-      float2(out_local_texel), out_texel_area, sample_coord);
+  float3 out_direction = sphere_probe_texel_to_direction(float2(out_local_texel), out_texel_area);
   out_direction = normalize(out_direction);
 
   float3x3 basis = tangent_basis(out_direction);

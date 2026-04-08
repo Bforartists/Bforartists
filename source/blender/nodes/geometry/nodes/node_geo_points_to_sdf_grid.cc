@@ -13,15 +13,18 @@ namespace blender::nodes::node_geo_points_to_sdf_grid_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Points").description(
-      "Points whose volume is converted to a signed distance field grid");
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Geometry>("Points"_ustr)
+      .description("Points whose volume is converted to a signed distance field grid");
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(0.5f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .field_on_all();
-  b.add_input<decl::Float>("Voxel Size").default_value(0.3f).min(0.01f).subtype(PROP_DISTANCE);
-  b.add_output<decl::Float>("SDF Grid").structure_type(StructureType::Grid);
+  b.add_input<decl::Float>("Voxel Size"_ustr)
+      .default_value(0.3f)
+      .min(0.01f)
+      .subtype(PROP_DISTANCE);
+  b.add_output<decl::Float>("SDF Grid"_ustr).structure_type(StructureType::Grid);
 }
 
 #ifdef WITH_OPENVDB
@@ -90,11 +93,11 @@ static bke::VolumeGrid<float> points_to_grid(const GeometrySet &geometry_set,
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  bke::VolumeGrid<float> grid = points_to_grid(params.extract_input<GeometrySet>("Points"),
-                                               params.extract_input<Field<float>>("Radius"),
-                                               params.extract_input<float>("Voxel Size"));
+  bke::VolumeGrid<float> grid = points_to_grid(params.extract_input<GeometrySet>("Points"_ustr),
+                                               params.extract_input<Field<float>>("Radius"_ustr),
+                                               params.extract_input<float>("Voxel Size"_ustr));
   if (grid) {
-    params.set_output("SDF Grid", std::move(grid));
+    params.set_output("SDF Grid"_ustr, std::move(grid));
   }
 
   params.set_default_remaining_outputs();

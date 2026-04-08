@@ -48,14 +48,16 @@ static ImBuf *do_solid_color(const RenderData *context,
 
   SolidColorVars *cv = static_cast<SolidColorVars *>(strip->effectdata);
 
+  uchar *byte_data = out->byte_data_for_write();
+  float *float_data = out->float_data_for_write();
   threading::parallel_for(IndexRange(out->y), 64, [&](const IndexRange y_range) {
-    if (out->byte_buffer.data) {
+    if (byte_data) {
       /* Byte image. */
       uchar color[4];
       rgb_float_to_uchar(color, cv->col);
       color[3] = 255;
 
-      uchar *dst = out->byte_buffer.data + y_range.first() * out->x * 4;
+      uchar *dst = byte_data + y_range.first() * out->x * 4;
       uchar *dst_end = dst + y_range.size() * out->x * 4;
       while (dst < dst_end) {
         memcpy(dst, color, sizeof(color));
@@ -70,7 +72,7 @@ static ImBuf *do_solid_color(const RenderData *context,
       color[2] = cv->col[2];
       color[3] = 1.0f;
 
-      float *dst = out->float_buffer.data + y_range.first() * out->x * 4;
+      float *dst = float_data + y_range.first() * out->x * 4;
       float *dst_end = dst + y_range.size() * out->x * 4;
       while (dst < dst_end) {
         memcpy(dst, color, sizeof(color));

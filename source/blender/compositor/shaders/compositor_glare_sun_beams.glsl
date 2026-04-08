@@ -19,7 +19,7 @@ COMPUTE_SHADER_CREATE_INFO(compositor_glare_sun_beams_shared)
  * Without jitter, the integer index `i` is returned
  * directly.
  */
-float get_sample_position(int i, float random_offset)
+float get_sample_position(int i, [[maybe_unused]] float random_offset)
 {
 #if defined(JITTER)
   return safe_divide(i + random_offset, 1.0f - jitter_factor);

@@ -37,31 +37,31 @@ float3 attr_load_orco(PointCloudPoint point, float4 orco, int index)
 }
 #endif
 
-float4 attr_load_tangent(PointCloudPoint point, samplerBuffer cd_buf, int index)
+float4 attr_load_tangent(PointCloudPoint point, samplerBuffer cd_buf, int /*index*/)
 {
   return pointcloud::get_customdata_vec4(point.point_id, cd_buf);
 }
-float3 attr_load_uv(PointCloudPoint point, samplerBuffer cd_buf, int index)
+float3 attr_load_uv(PointCloudPoint point, samplerBuffer cd_buf, int /*index*/)
 {
   return pointcloud::get_customdata_vec3(point.point_id, cd_buf);
 }
-float4 attr_load_color(PointCloudPoint point, samplerBuffer cd_buf, int index)
+float4 attr_load_color(PointCloudPoint point, samplerBuffer cd_buf, int /*index*/)
 {
   return pointcloud::get_customdata_vec4(point.point_id, cd_buf);
 }
-float4 attr_load_float4(PointCloudPoint point, samplerBuffer cd_buf, int index)
+float4 attr_load_float4(PointCloudPoint point, samplerBuffer cd_buf, int /*index*/)
 {
   return pointcloud::get_customdata_vec4(point.point_id, cd_buf);
 }
-float3 attr_load_float3(PointCloudPoint point, samplerBuffer cd_buf, int index)
+float3 attr_load_float3(PointCloudPoint point, samplerBuffer cd_buf, int /*index*/)
 {
   return pointcloud::get_customdata_vec3(point.point_id, cd_buf);
 }
-float2 attr_load_float2(PointCloudPoint point, samplerBuffer cd_buf, int index)
+float2 attr_load_float2(PointCloudPoint point, samplerBuffer cd_buf, int /*index*/)
 {
   return pointcloud::get_customdata_vec2(point.point_id, cd_buf);
 }
-float attr_load_float(PointCloudPoint point, samplerBuffer cd_buf, int index)
+float attr_load_float(PointCloudPoint point, samplerBuffer cd_buf, int /*index*/)
 {
   return pointcloud::get_customdata_float(point.point_id, cd_buf);
 }

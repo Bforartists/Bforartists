@@ -129,7 +129,7 @@ uint4 to_uint4(Bits occupancy)
 /**
  * From a entry and exit occupancy tuple, returns if a specific bit is inside the volume.
  */
-bool bit_resolve(Bits entry, Bits exit, int bit_n, int bit_count)
+bool bit_resolve(Bits entry, Bits exit, int bit_n, int /*bit_count*/)
 {
   int first_exit = find_lsb(exit);
   int first_entry = find_lsb(entry);

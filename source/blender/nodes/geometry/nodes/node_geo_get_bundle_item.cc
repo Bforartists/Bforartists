@@ -26,12 +26,15 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_default_layout();
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Bundle>("Bundle");
-  b.add_output<decl::Bundle>("Bundle").align_with_previous().propagate_all().reference_pass_all();
+  b.add_input<decl::Bundle>("Bundle"_ustr);
+  b.add_output<decl::Bundle>("Bundle"_ustr)
+      .align_with_previous()
+      .propagate_all()
+      .reference_pass_all();
   if (node != nullptr) {
     const NodeGetBundleItem &storage = node_storage(*node);
     const eNodeSocketDatatype socket_type = eNodeSocketDatatype(storage.socket_type);
-    auto &decl = b.add_output(socket_type, "Item");
+    auto &decl = b.add_output(socket_type, "Item"_ustr);
     if (storage.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
       decl.structure_type(StructureType::Dynamic);
     }
@@ -39,9 +42,9 @@ static void node_declare(NodeDeclarationBuilder &b)
       decl.structure_type(StructureType(storage.structure_type));
     }
   }
-  b.add_output<decl::Bool>("Exists");
-  b.add_input<decl::String>("Path").optional_label();
-  b.add_input<decl::Bool>("Remove");
+  b.add_output<decl::Bool>("Exists"_ustr);
+  b.add_input<decl::String>("Path"_ustr).optional_label();
+  b.add_input<decl::Bool>("Remove"_ustr);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -70,30 +73,30 @@ static void node_geo_exec(GeoNodeExecParams params)
   const bNode &node = params.node();
   const NodeGetBundleItem &storage = node_storage(node);
 
-  nodes::BundlePtr bundle = params.extract_input<nodes::BundlePtr>("Bundle");
+  nodes::BundlePtr bundle = params.extract_input<nodes::BundlePtr>("Bundle"_ustr);
   if (!bundle) {
     params.set_default_remaining_outputs();
     return;
   }
 
-  const std::string path = params.extract_input<std::string>("Path");
-  const bool remove = params.extract_input<bool>("Remove");
+  const std::string path = params.extract_input<std::string>("Path"_ustr);
+  const bool remove = params.extract_input<bool>("Remove"_ustr);
 
   if (!Bundle::is_valid_path(path)) {
     if (!path.empty()) {
       params.error_message_add(NodeWarningType::Warning, "Invalid bundle path");
     }
-    params.set_output("Bundle", std::move(bundle));
+    params.set_output("Bundle"_ustr, std::move(bundle));
     params.set_default_remaining_outputs();
     return;
   }
 
   const BundleItemValue *value = bundle->lookup_path(path);
   if (!value) {
-    if (!params.output_is_required("Exists")) {
+    if (!params.output_is_required("Exists"_ustr)) {
       params.error_message_add(NodeWarningType::Warning, "Bundle path not found");
     }
-    params.set_output("Bundle", std::move(bundle));
+    params.set_output("Bundle"_ustr, std::move(bundle));
     params.set_default_remaining_outputs();
     return;
   }
@@ -102,7 +105,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.error_message_add(
         NodeWarningType::Error,
         fmt::format("{}: \"{}\"", TIP_("Cannot get internal value from bundle"), path));
-    params.set_output("Bundle", std::move(bundle));
+    params.set_output("Bundle"_ustr, std::move(bundle));
     params.set_default_remaining_outputs();
     return;
   }
@@ -118,7 +121,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     else {
       params.error_message_add(NodeWarningType::Error,
                                "Cannot implicitly convert item to the selected type");
-      params.set_output("Bundle", std::move(bundle));
+      params.set_output("Bundle"_ustr, std::move(bundle));
       params.set_default_remaining_outputs();
       return;
     }
@@ -128,9 +131,9 @@ static void node_geo_exec(GeoNodeExecParams params)
     bundle.ensure_mutable_inplace().remove_path(path);
   }
 
-  params.set_output("Bundle", std::move(bundle));
-  params.set_output("Item", std::move(output_value));
-  params.set_output("Exists", true);
+  params.set_output("Bundle"_ustr, std::move(bundle));
+  params.set_output("Item"_ustr, std::move(output_value));
+  params.set_output("Exists"_ustr, true);
 }
 
 static void node_rna(StructRNA *srna)

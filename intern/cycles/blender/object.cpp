@@ -50,9 +50,10 @@ bool BlenderSync::BKE_object_is_modified(blender::Object &b_ob)
     return true;
   }
 
-  /* object level material links */
+  /* Object level material links. Note the geometry material slot array may not match
+   * the object matbits array, so we need to guard against out of bounds. */
   for (const int i : blender::IndexRange(BKE_object_material_count_eval(&b_ob))) {
-    if (b_ob.matbits[i] != 0) {
+    if (i < b_ob.totcol && b_ob.matbits && b_ob.matbits[i] != 0) {
       return true;
     }
   }
@@ -496,7 +497,7 @@ void BlenderSync::sync_objects(blender::Depsgraph &b_depsgraph,
 
   blender::ViewLayer &b_view_layer = *DEG_get_evaluated_view_layer(&b_depsgraph);
 
-  BKE_view_layer_synced_ensure(b_scene, &b_view_layer);
+  BKE_view_layer_synced_ensure(*b_data, b_scene, &b_view_layer);
 
   blender::DEGObjectIterSettings deg_iter_settings{};
   deg_iter_settings.depsgraph = &b_depsgraph;

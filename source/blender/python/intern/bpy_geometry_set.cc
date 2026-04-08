@@ -261,7 +261,7 @@ PyDoc_STRVAR(
     ":type: str\n");
 static PyObject *BPy_GeometrySet_get_name(BPy_GeometrySet *self, void * /*closure*/)
 {
-  return PyC_UnicodeFromStdStr(self->geometry.name);
+  return PyC_UnicodeFromStdStr(self->geometry.name());
 }
 
 static int BPy_GeometrySet_set_name(BPy_GeometrySet *self, PyObject *value, void * /*closure*/)
@@ -271,7 +271,7 @@ static int BPy_GeometrySet_set_name(BPy_GeometrySet *self, PyObject *value, void
     return -1;
   }
   const char *name = PyUnicode_AsUTF8(value);
-  self->geometry.name = name;
+  self->geometry.set_name(name);
   return 0;
 }
 

@@ -38,14 +38,14 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Value").supports_field().hide_value().is_default_link_socket();
-    b.add_output(data_type, "Value").field_source_reference_all().align_with_previous();
+    b.add_input(data_type, "Value"_ustr).supports_field().hide_value().is_default_link_socket();
+    b.add_output(data_type, "Value"_ustr).field_source_reference_all().align_with_previous();
   }
-  b.add_input<decl::Int>("Iterations")
+  b.add_input<decl::Int>("Iterations"_ustr)
       .default_value(1)
       .min(0)
       .description("How many times to blur the values for all elements");
-  b.add_input<decl::Float>("Weight")
+  b.add_input<decl::Float>("Weight"_ustr)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -95,7 +95,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   params.add_item(IFACE_("Value"), [node_type, fixed_data_type](LinkSearchOpParams &params) {
     bNode &node = params.add_node(node_type);
     node.custom1 = fixed_data_type;
-    params.update_and_connect_available_socket(node, "Value");
+    params.update_and_connect_available_socket(node, "Value"_ustr);
   });
 }
 
@@ -421,10 +421,10 @@ class BlurAttributeFieldInput final : public bke::GeometryFieldInput {
     return GVArray::from_garray(std::move(buffer_b));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    weight_field_.node().for_each_field_input_recursive(fn);
-    value_field_.node().for_each_field_input_recursive(fn);
+    fn(weight_field_);
+    fn(value_field_);
   }
 
   uint64_t hash() const override
@@ -432,7 +432,7 @@ class BlurAttributeFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(iterations_, weight_field_, value_field_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const BlurAttributeFieldInput *other_blur = dynamic_cast<const BlurAttributeFieldInput *>(
             &other))
@@ -455,13 +455,13 @@ class BlurAttributeFieldInput final : public bke::GeometryFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const int iterations = params.extract_input<int>("Iterations");
-  Field<float> weight_field = params.extract_input<Field<float>>("Weight");
+  const int iterations = params.extract_input<int>("Iterations"_ustr);
+  Field<float> weight_field = params.extract_input<Field<float>>("Weight"_ustr);
 
-  GField value_field = params.extract_input<GField>("Value");
-  GField output_field{std::make_shared<BlurAttributeFieldInput>(
-      std::move(weight_field), std::move(value_field), iterations)};
-  params.set_output<GField>("Value", std::move(output_field));
+  GField value_field = params.extract_input<GField>("Value"_ustr);
+  params.set_output<GField>("Value"_ustr,
+                            GField::from_input<BlurAttributeFieldInput>(
+                                std::move(weight_field), std::move(value_field), iterations));
 }
 
 static void node_rna(StructRNA *srna)

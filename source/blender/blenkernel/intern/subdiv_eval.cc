@@ -9,6 +9,7 @@
 #include "BKE_attribute.hh"
 #include "BKE_subdiv_eval.hh"
 
+#include "BLI_array_utils.hh"
 #include "BLI_math_vector.h"
 #include "BLI_math_vector.hh"
 #include "BLI_task.h"
@@ -93,24 +94,18 @@ bool eval_begin(Subdiv *subdiv,
 
 static void set_coarse_positions(Subdiv *subdiv,
                                  const Span<float3> positions,
-                                 const bke::LooseVertCache &verts_no_face)
+                                 const IndexMask &verts_no_face)
 {
   OpenSubdiv_Evaluator *evaluator = subdiv->evaluator;
-  if (verts_no_face.count == 0) {
+  if (verts_no_face.is_empty()) {
     evaluator->eval_output->setCoarsePositions(
         reinterpret_cast<const float *>(positions.data()), 0, positions.size());
     return;
   }
-  Array<float3> used_vert_positions(positions.size() - verts_no_face.count);
-  const BitSpan bits = verts_no_face.is_loose_bits;
-  int used_vert_count = 0;
-  for (const int vert : positions.index_range()) {
-    if (bits[vert]) {
-      continue;
-    }
-    used_vert_positions[used_vert_count] = positions[vert];
-    used_vert_count++;
-  }
+  Array<float3> used_vert_positions(positions.size() - verts_no_face.size());
+  IndexMaskMemory memory;
+  const IndexMask verts = verts_no_face.complement(positions.index_range(), memory);
+  array_utils::gather(positions, verts, used_vert_positions.as_mutable_span());
   evaluator->eval_output->setCoarsePositions(
       reinterpret_cast<const float *>(used_vert_positions.data()), 0, used_vert_positions.size());
 }

@@ -21,22 +21,22 @@ namespace blender::nodes::node_geo_bone_info_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Object>("Armature")
+  b.add_input<decl::Object>("Armature"_ustr)
       .optional_label()
       .description("Armature object to retrieve the bone information from");
-  b.add_input<decl::String>("Bone Name")
+  b.add_input<decl::String>("Bone Name"_ustr)
       .optional_label()
       .description("Name of the bone to retrieve");
 
-  b.add_output<decl::Matrix>("Pose").description(
-      "Evaluated final transform of the bone in armature space");
-  b.add_output<decl::Matrix>("Local Pose")
+  b.add_output<decl::Matrix>("Pose"_ustr)
+      .description("Evaluated final transform of the bone in armature space");
+  b.add_output<decl::Matrix>("Local Pose"_ustr)
       .description("Difference between the pose and rest pose relative to the parent bone");
-  b.add_output<decl::Matrix>("Transform Pose")
+  b.add_output<decl::Matrix>("Transform Pose"_ustr)
       .description("Matrix representing the bone's location, rotation, and scale properties");
-  b.add_output<decl::Matrix>("Rest Pose")
+  b.add_output<decl::Matrix>("Rest Pose"_ustr)
       .description("Original transform of the bone in armature space, defined in edit mode");
-  b.add_output<decl::Float>("Rest Length").description("Original length of the bone");
+  b.add_output<decl::Float>("Rest Length"_ustr).description("Original length of the bone");
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -52,25 +52,25 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     if (ELEM(other_type, SOCK_MATRIX, SOCK_ROTATION)) {
       params.add_item(IFACE_("Pose"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeBoneInfo");
-        params.update_and_connect_available_socket(node, "Pose");
+        params.update_and_connect_available_socket(node, "Pose"_ustr);
       });
       params.add_item(IFACE_("Local Pose"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeBoneInfo");
-        params.update_and_connect_available_socket(node, "Local Pose");
+        params.update_and_connect_available_socket(node, "Local Pose"_ustr);
       });
       params.add_item(IFACE_("Transform Pose"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeBoneInfo");
-        params.update_and_connect_available_socket(node, "Transform Pose");
+        params.update_and_connect_available_socket(node, "Transform Pose"_ustr);
       });
       params.add_item(IFACE_("Rest Pose"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeBoneInfo");
-        params.update_and_connect_available_socket(node, "Rest Pose");
+        params.update_and_connect_available_socket(node, "Rest Pose"_ustr);
       });
     }
     if (params.node_tree().typeinfo->validate_link(other_type, SOCK_FLOAT)) {
       params.add_item(IFACE_("Rest Length"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeBoneInfo");
-        params.update_and_connect_available_socket(node, "Rest Length");
+        params.update_and_connect_available_socket(node, "Rest Length"_ustr);
       });
     }
   }
@@ -78,13 +78,13 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     if (other_type == SOCK_STRING) {
       params.add_item(IFACE_("Bone Name"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeBoneInfo");
-        params.update_and_connect_available_socket(node, "Bone Name");
+        params.update_and_connect_available_socket(node, "Bone Name"_ustr);
       });
     }
     if (other_type == SOCK_OBJECT) {
       params.add_item(IFACE_("Armature"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeBoneInfo");
-        params.update_and_connect_available_socket(node, "Armature");
+        params.update_and_connect_available_socket(node, "Armature"_ustr);
       });
     }
   }
@@ -97,7 +97,7 @@ static void node_node_init(bNodeTree * /*tree*/, bNode *node)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Object *object = params.extract_input<Object *>("Armature");
+  Object *object = params.extract_input<Object *>("Armature"_ustr);
   if (!object) {
     params.set_default_remaining_outputs();
     return;
@@ -107,7 +107,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.error_message_add(NodeWarningType::Error, TIP_("Object is not an armature"));
     return;
   }
-  const std::string bone_name = params.extract_input<std::string>("Bone Name");
+  const std::string bone_name = params.extract_input<std::string>("Bone Name"_ustr);
   if (bone_name.empty()) {
     params.set_default_remaining_outputs();
     return;
@@ -156,11 +156,11 @@ static void node_geo_exec(GeoNodeExecParams params)
   float4x4 transform_pose;
   BKE_pchan_to_mat4(pchan, transform_pose.ptr());
 
-  params.set_output("Pose", pose);
-  params.set_output("Local Pose", local_pose);
-  params.set_output("Transform Pose", transform_pose);
-  params.set_output("Rest Pose", rest_pose);
-  params.set_output("Rest Length", bone->length);
+  params.set_output("Pose"_ustr, pose);
+  params.set_output("Local Pose"_ustr, local_pose);
+  params.set_output("Transform Pose"_ustr, transform_pose);
+  params.set_output("Rest Pose"_ustr, rest_pose);
+  params.set_output("Rest Length"_ustr, bone->length);
 }
 
 static void node_rna(StructRNA *srna)

@@ -23,11 +23,11 @@ NODE_STORAGE_FUNCS(NodeConvertColorSpace)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .structure_type(StructureType::Dynamic);
 
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
 }
 
 static void node_init(bNodeTree * /*ntree*/, bNode *node)
@@ -122,8 +122,8 @@ class ConvertColorSpaceOperation : public NodeOperation {
   {
     const char *source = node_storage(node()).from_color_space;
     const char *target = node_storage(node()).to_color_space;
-    ColormanageProcessor *color_processor = IMB_colormanagement_colorspace_processor_new(source,
-                                                                                         target);
+    ColormanageProcessor color_processor = ColormanageProcessor::colorspace_processor_new(source,
+                                                                                          target);
 
     Result &input_image = get_input("Image");
 
@@ -135,27 +135,24 @@ class ConvertColorSpaceOperation : public NodeOperation {
       output_image.store_pixel(texel, input_image.load_pixel<Color>(texel));
     });
 
-    IMB_colormanagement_processor_apply(color_processor,
-                                        static_cast<float *>(output_image.cpu_data().data()),
-                                        domain.data_size.x,
-                                        domain.data_size.y,
-                                        input_image.channels_count(),
-                                        false);
-    IMB_colormanagement_processor_free(color_processor);
+    color_processor.apply(static_cast<float *>(output_image.cpu_data().data()),
+                          domain.data_size.x,
+                          domain.data_size.y,
+                          input_image.channels_count(),
+                          false);
   }
 
   void execute_single()
   {
     const char *source = node_storage(node()).from_color_space;
     const char *target = node_storage(node()).to_color_space;
-    ColormanageProcessor *color_processor = IMB_colormanagement_colorspace_processor_new(source,
-                                                                                         target);
+    ColormanageProcessor color_processor = ColormanageProcessor::colorspace_processor_new(source,
+                                                                                          target);
 
     Result &input_image = get_input("Image");
     Color color = input_image.get_single_value<Color>();
 
-    IMB_colormanagement_processor_apply_pixel(color_processor, color, 3);
-    IMB_colormanagement_processor_free(color_processor);
+    color_processor.apply_pixel(color, 3);
 
     Result &output_image = get_result("Image");
     output_image.allocate_single_value();

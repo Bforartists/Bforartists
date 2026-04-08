@@ -493,9 +493,11 @@ static void protectflag_to_drawflags(short protectflag, short *drawflags)
 }
 
 /* Similar to #transform_object_deform_pose_armature_get but does not check visibility. */
-static Object *gizmo_3d_transform_space_object_get(Scene *scene, ViewLayer *view_layer)
+static Object *gizmo_3d_transform_space_object_get(const Main &bmain,
+                                                   Scene *scene,
+                                                   ViewLayer *view_layer)
 {
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   if (ob && ob->mode & OB_MODE_WEIGHT_PAINT) {
     /* It is assumed that when the object is in Weight Paint mode, it is not in Edit mode. So we
@@ -540,6 +542,7 @@ static int gizmo_3d_foreach_selected(const bContext *C,
       };
 
   ScrArea *area = CTX_wm_area(C);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   /* TODO(sergey): This function is used from operator's modal() and from gizmo's refresh().
    * Is it fine to possibly evaluate dependency graph here? */
@@ -548,7 +551,7 @@ static int gizmo_3d_foreach_selected(const bContext *C,
   View3D *v3d = static_cast<View3D *>(area->spacedata.first);
   int a, totsel = 0;
 
-  Object *ob = gizmo_3d_transform_space_object_get(scene, view_layer);
+  Object *ob = gizmo_3d_transform_space_object_get(*bmain, scene, view_layer);
 
   if (Object *obedit = OBEDIT_FROM_OBACT(ob)) {
 
@@ -556,7 +559,7 @@ static int gizmo_3d_foreach_selected(const bContext *C,
   { \
     invert_m4_m4(obedit->runtime->world_to_object.ptr(), obedit->object_to_world().ptr()); \
     Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode( \
-        scene, view_layer, CTX_wm_view3d(C)); \
+        *bmain, scene, view_layer, CTX_wm_view3d(C)); \
     for (Object *ob_iter : objects) { \
       const bool use_mat_local = (ob_iter != obedit);
 
@@ -853,7 +856,8 @@ static int gizmo_3d_foreach_selected(const bContext *C,
   else if (ob && (ob->mode & OB_MODE_POSE)) {
     invert_m4_m4(ob->runtime->world_to_object.ptr(), ob->object_to_world().ptr());
 
-    Vector<Object *> objects = BKE_object_pose_array_get(scene, view_layer, v3d);
+    const Main *bmain = CTX_data_main(C);
+    Vector<Object *> objects = BKE_object_pose_array_get(*bmain, scene, view_layer, v3d);
 
     for (Object *ob_iter : objects) {
       const bool use_mat_local = (ob_iter != ob);
@@ -919,9 +923,10 @@ static int gizmo_3d_foreach_selected(const bContext *C,
     }
   }
   else {
+    const Main *bmain = CTX_data_main(C);
 
     /* We need the one selected object, if its not active. */
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     {
       Base *base = BKE_view_layer_active_base_get(view_layer);
       ob = base ? base->object : nullptr;
@@ -983,6 +988,7 @@ int calc_gizmo_stats(const bContext *C,
                      TransformBounds *tbounds,
                      RegionView3D *rv3d)
 {
+  const Main *bmain = CTX_data_main(C);
   ScrArea *area = CTX_wm_area(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -994,7 +1000,7 @@ int calc_gizmo_stats(const bContext *C,
                                  (params->orientation_index - 1) :
                                  BKE_scene_orientation_get_index(scene, SCE_ORIENT_DEFAULT);
 
-  Object *ob = gizmo_3d_transform_space_object_get(scene, view_layer);
+  Object *ob = gizmo_3d_transform_space_object_get(*bmain, scene, view_layer);
   Object *obedit = OBEDIT_FROM_OBACT(ob);
 
   tbounds->use_matrix_space = false;
@@ -1005,7 +1011,7 @@ int calc_gizmo_stats(const bContext *C,
   if (ob) {
     float mat[3][3];
     calc_orientation_from_type_ex(
-        scene, view_layer, v3d, rv3d, ob, obedit, orient_index, pivot_point, mat);
+        *bmain, scene, view_layer, v3d, rv3d, ob, obedit, orient_index, pivot_point, mat);
     copy_m3_m3(tbounds->axis, mat);
   }
 
@@ -1092,8 +1098,9 @@ static bool gizmo_3d_calc_pos(const bContext *C,
       copy_v3_v3(r_pivot_pos, scene->cursor.location);
       return true;
     case V3D_AROUND_ACTIVE: {
+      const Main *bmain = CTX_data_main(C);
       ViewLayer *view_layer = CTX_data_view_layer(C);
-      BKE_view_layer_synced_ensure(scene, view_layer);
+      BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
       Object *ob = BKE_view_layer_active_object_get(view_layer);
       if (ob != nullptr) {
         if ((ob->mode & OB_MODE_ALL_SCULPT) && ob->runtime->sculpt_session) {

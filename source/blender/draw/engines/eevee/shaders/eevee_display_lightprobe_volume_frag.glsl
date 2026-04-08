@@ -7,7 +7,7 @@
 FRAGMENT_SHADER_CREATE_INFO(eevee_display_lightprobe_volume)
 
 #include "draw_view_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 #include "gpu_shader_math_matrix_transform_lib.glsl"
 
 void main()
@@ -20,7 +20,7 @@ void main()
     return;
   }
 
-  SphericalHarmonicL1 sh;
+  SphericalHarmonicL1<float4> sh;
   sh.L0.M0 = texelFetch(irradiance_a_tx, cell, 0);
   sh.L1.Mn1 = texelFetch(irradiance_b_tx, cell, 0);
   sh.L1.M0 = texelFetch(irradiance_c_tx, cell, 0);
@@ -31,7 +31,7 @@ void main()
   float3 N = drw_normal_view_to_world(vN);
   float3 lN = transform_direction(world_to_grid, N);
 
-  float3 irradiance = spherical_harmonics_evaluate_lambert(lN, sh);
+  float3 irradiance = sh.evaluate_lambert(lN).rgb;
 
   if (display_validity) {
     out_color = float4(mix(float3(1.0f, 0.0f, 0.0f), float3(0.0f, 1.0f, 0.0f), validity), 0.0f);

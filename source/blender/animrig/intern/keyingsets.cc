@@ -298,6 +298,10 @@ static int insert_key_to_keying_set_path(bContext *C,
                                          const ModifyKeyMode mode,
                                          const float frame)
 {
+  if (!keyingset_path->rna_path) {
+    /* In case the path is incomplete/not filled in by the user. */
+    return 0;
+  }
   /* Since keying settings can be defined on the paths too,
    * apply the settings for this path first. */
   const eInsertKeyFlags path_insert_key_flags = keyingset_apply_keying_flags(

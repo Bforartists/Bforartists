@@ -78,8 +78,8 @@ void ApplyPrimvars(AttributeSet &attributes,
   Attribute *const attr = attributes.add(name, attrType, elem);
   attr->std = std;
 
-  assert(size == attr->buffer.size());
-  std::memcpy(attr->data(), data, size);
+  assert(size == attr->data_sizeof() * attr->size);
+  std::memcpy(attr->data_for_write(), data, size);
 }
 
 HDCYCLES_NAMESPACE_CLOSE_SCOPE

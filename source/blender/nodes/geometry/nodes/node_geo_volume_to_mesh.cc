@@ -43,30 +43,30 @@ static EnumPropertyItem resolution_mode_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Volume")
+  b.add_input<decl::Geometry>("Volume"_ustr)
       .supported_type(GeometryComponent::Type::Volume)
       .translation_context(BLT_I18NCONTEXT_ID_ID)
       .is_default_link_socket()
       .description("Volume to convert to a mesh");
-  b.add_input<decl::Menu>("Resolution Mode")
+  b.add_input<decl::Menu>("Resolution Mode"_ustr)
       .static_items(resolution_mode_items)
       .optional_label()
       .description("How the voxel size is specified")
       .translation_context(BLT_I18NCONTEXT_COUNTABLE);
-  b.add_input<decl::Float>("Voxel Size")
+  b.add_input<decl::Float>("Voxel Size"_ustr)
       .default_value(0.3f)
       .min(0.01f)
       .subtype(PROP_DISTANCE)
       .usage_by_single_menu(VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE);
-  b.add_input<decl::Float>("Voxel Amount")
+  b.add_input<decl::Float>("Voxel Amount"_ustr)
       .default_value(64.0f)
       .min(0.0f)
       .usage_by_single_menu(VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT);
-  b.add_input<decl::Float>("Threshold")
+  b.add_input<decl::Float>("Threshold"_ustr)
       .default_value(0.1f)
       .description("Values larger than the threshold are inside the generated mesh");
-  b.add_input<decl::Float>("Adaptivity").min(0.0f).max(1.0f).subtype(PROP_FACTOR);
-  b.add_output<decl::Geometry>("Mesh");
+  b.add_input<decl::Float>("Adaptivity"_ustr).min(0.0f).max(1.0f).subtype(PROP_FACTOR);
+  b.add_output<decl::Geometry>("Mesh"_ustr);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -80,12 +80,13 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 static bke::VolumeToMeshResolution get_resolution_param(const GeoNodeExecParams &params)
 {
   bke::VolumeToMeshResolution resolution;
-  resolution.mode = params.get_input<VolumeToMeshResolutionMode>("Resolution Mode");
+  resolution.mode = params.get_input<VolumeToMeshResolutionMode>("Resolution Mode"_ustr);
   if (resolution.mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT) {
-    resolution.settings.voxel_amount = std::max(params.get_input<float>("Voxel Amount"), 0.0f);
+    resolution.settings.voxel_amount = std::max(params.get_input<float>("Voxel Amount"_ustr),
+                                                0.0f);
   }
   else if (resolution.mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE) {
-    resolution.settings.voxel_size = std::max(params.get_input<float>("Voxel Size"), 0.0f);
+    resolution.settings.voxel_size = std::max(params.get_input<float>("Voxel Size"_ustr), 0.0f);
   }
 
   return resolution;
@@ -187,8 +188,8 @@ static Mesh *create_mesh_from_volume(GeometrySet &geometry_set, GeoNodeExecParam
 
   return create_mesh_from_volume_grids(grids,
                                        params,
-                                       params.get_input<float>("Threshold"),
-                                       params.get_input<float>("Adaptivity"),
+                                       params.get_input<float>("Threshold"_ustr),
+                                       params.get_input<float>("Adaptivity"_ustr),
                                        resolution);
 }
 
@@ -197,13 +198,13 @@ static Mesh *create_mesh_from_volume(GeometrySet &geometry_set, GeoNodeExecParam
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Volume");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Volume"_ustr);
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     Mesh *mesh = create_mesh_from_volume(geometry_set, params);
     geometry_set.replace_mesh(mesh);
     geometry_set.keep_only({GeometryComponent::Type::Mesh, GeometryComponent::Type::Edit});
   });
-  params.set_output("Mesh", std::move(geometry_set));
+  params.set_output("Mesh"_ustr, std::move(geometry_set));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

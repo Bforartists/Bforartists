@@ -361,8 +361,8 @@ void WM_operator_stack_clear(wmWindowManager *wm, const Set<wmOperatorType *> &t
   bool any_removed = false;
   for (wmOperator &op : wm->runtime->operators.items_mutable()) {
     if (types.contains(op.type)) {
-      WM_operator_free(&op);
       BLI_remlink(&wm->runtime->operators, &op);
+      WM_operator_free(&op);
       any_removed = true;
     }
   }

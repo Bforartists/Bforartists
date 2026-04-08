@@ -736,7 +736,7 @@ static wmOperatorStatus edbm_shortest_path_pick_invoke(bContext *C,
 
   ViewContext vc = em_setup_viewcontext(C);
   copy_v2_v2_int(vc.mval, event->mval);
-  BKE_view_layer_synced_ensure(vc.scene, vc.view_layer);
+  BKE_view_layer_synced_ensure(*vc.bmain, vc.scene, vc.view_layer);
   Base *basact = BKE_view_layer_active_base_get(vc.view_layer);
   BMEditMesh *em = vc.em;
 
@@ -745,7 +745,7 @@ static wmOperatorStatus edbm_shortest_path_pick_invoke(bContext *C,
   {
     int base_index = -1;
     Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
-        vc.scene, vc.view_layer, vc.v3d);
+        *vc.bmain, vc.scene, vc.view_layer, vc.v3d);
     if (EDBM_unified_findnearest(&vc, bases, &base_index, &eve, &eed, &efa)) {
       basact = bases[base_index];
       ED_view3d_viewcontext_init_object(&vc, basact->object);
@@ -791,7 +791,7 @@ static wmOperatorStatus edbm_shortest_path_pick_invoke(bContext *C,
     return OPERATOR_PASS_THROUGH;
   }
 
-  BKE_view_layer_synced_ensure(vc.scene, vc.view_layer);
+  BKE_view_layer_synced_ensure(*vc.bmain, vc.scene, vc.view_layer);
   if (BKE_view_layer_active_base_get(vc.view_layer) != basact) {
     ed::object::base_activate(C, basact);
   }
@@ -869,12 +869,13 @@ void MESH_OT_shortest_path_pick(wmOperatorType *ot)
 
 static wmOperatorStatus edbm_shortest_path_select_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   bool found_valid_elements = false;
 
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *obedit : objects) {
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
     BMesh *bm = em->bm;

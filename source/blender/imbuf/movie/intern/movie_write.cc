@@ -300,7 +300,7 @@ static ImBuf *alloc_imbuf_for_colorspace_transform(const ImBuf *input_ibuf)
    * This is a common pattern used in few areas with the goal to bypass the hardcoded number of
    * channels used by IMB_allocImBuf(). */
   ImBuf *result_ibuf = IMB_allocImBuf(input_ibuf->x, input_ibuf->y, input_ibuf->planes, 0);
-  result_ibuf->channels = input_ibuf->float_buffer.data ? input_ibuf->channels : 4;
+  result_ibuf->channels = input_ibuf->float_data() ? input_ibuf->channels : 4;
 
   /* Allocate float buffer with the proper number of channels. */
   const size_t num_pixels = IMB_get_pixel_count(input_ibuf);
@@ -311,11 +311,11 @@ static ImBuf *alloc_imbuf_for_colorspace_transform(const ImBuf *input_ibuf)
   /* Transfer flags related to color space conversion from the original image buffer. */
   result_ibuf->flags |= (input_ibuf->flags & IB_alphamode_channel_packed);
 
-  if (input_ibuf->float_buffer.data) {
+  if (input_ibuf->float_data()) {
     /* Simple case: copy pixels from the source image as-is, without any conversion.
      * The result has the same colorspace as the input. */
-    memcpy(result_ibuf->float_buffer.data,
-           input_ibuf->float_buffer.data,
+    memcpy(result_ibuf->float_data_for_write(),
+           input_ibuf->float_data(),
            num_pixels * input_ibuf->channels * sizeof(float));
     result_ibuf->float_buffer.colorspace = input_ibuf->float_buffer.colorspace;
   }
@@ -325,7 +325,7 @@ static ImBuf *alloc_imbuf_for_colorspace_transform(const ImBuf *input_ibuf)
      * that the function only does alpha and byte->float conversions. */
     const bool predivide = IMB_alpha_affects_rgb(input_ibuf);
     IMB_buffer_float_from_byte(buffer,
-                               input_ibuf->byte_buffer.data,
+                               input_ibuf->byte_data(),
                                IB_PROFILE_SRGB,
                                IB_PROFILE_SRGB,
                                predivide,
@@ -347,12 +347,12 @@ static AVFrame *generate_video_frame(MovieWriter *context, const ImBuf *input_ib
       !(context->img_convert_frame->format == AV_PIX_FMT_RGBA &&
         ELEM(context->img_convert_frame->colorspace, AVCOL_SPC_RGB, AVCOL_SPC_UNSPECIFIED));
 
-  const ImBuf *image = (use_float && input_ibuf->float_buffer.data == nullptr) ?
+  const ImBuf *image = (use_float && input_ibuf->float_data() == nullptr) ?
                            alloc_imbuf_for_colorspace_transform(input_ibuf) :
                            input_ibuf;
 
-  const uint8_t *pixels = image->byte_buffer.data;
-  const float *pixels_fl = image->float_buffer.data;
+  const uint8_t *pixels = image->byte_data();
+  const float *pixels_fl = image->float_data();
 
   if ((!use_float && (pixels == nullptr)) || (use_float && (pixels_fl == nullptr))) {
     if (image != input_ibuf) {

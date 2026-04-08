@@ -17,6 +17,7 @@ set(SRC
   ies.cpp
   image_maketx.cpp
   image_metadata.cpp
+  implicit_sharing.cpp
   log.cpp
   math_cdf.cpp
   md5.cpp
@@ -37,6 +38,7 @@ set(SRC
 
 set(LIB
   PUBLIC bf::dependencies::openimageio
+  PRIVATE bf::dependencies::jpeg
   PUBLIC bf::dependencies::optional::tbb
   PUBLIC bf::dependencies::optional::embree
   PUBLIC bf::dependencies::optional::openpgl
@@ -74,6 +76,7 @@ set(SRC_HEADERS
   image_impl.h
   image_maketx.h
   image_metadata.h
+  implicit_sharing.h
   list.h
   log.h
   map.h

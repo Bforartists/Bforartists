@@ -120,6 +120,7 @@ static void edbm_inset_update_header(wmOperator *op, bContext *C)
 static bool edbm_inset_init(bContext *C, wmOperator *op, const bool is_modal)
 {
   InsetData *opdata;
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
@@ -136,7 +137,7 @@ static bool edbm_inset_init(bContext *C, wmOperator *op, const bool is_modal)
 
   {
     Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-        scene, view_layer, CTX_wm_view3d(C));
+        *bmain, scene, view_layer, CTX_wm_view3d(C));
     opdata->ob_store = MEM_new_array_uninitialized<InsetObjectStore>(objects.size(), __func__);
     for (uint ob_index = 0; ob_index < objects.size(); ob_index++) {
       Object *obedit = objects[ob_index];

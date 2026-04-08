@@ -486,6 +486,9 @@ enum PropertyFlag {
 
   /** Do not write in presets (#PROP_HIDDEN and #PROP_SKIP_SAVE won't either). */
   PROP_SKIP_PRESET = (1 << 11),
+
+  /** Use full geometry depsgraph evaluation when this property changes. */
+  PROP_FORCE_GEOMETRY_EVAL = (1 << 3),
 };
 ENUM_OPERATORS(PropertyFlag)
 
@@ -780,6 +783,11 @@ using StringPropertySetTransformFunc = std::string (*)(PointerRNA *ptr,
                                                        const std::string &new_value,
                                                        const std::string &curr_value,
                                                        bool is_set);
+using PointerPropertyGetFunc = PointerRNA (*)(PointerRNA *ptr);
+using PointerPropertySetFunc = void (*)(PointerRNA *ptr, PointerRNA value, ReportList *reports);
+using PointerPropertyTypeFunc = StructRNA *(*)(PointerRNA * ptr);
+
+using StructPathFunc = std::optional<std::string> (*)(const PointerRNA *ptr);
 
 struct StringPropertySearchVisitParams {
   /** Text being searched for. */

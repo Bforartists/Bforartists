@@ -106,7 +106,7 @@ bool ED_curve_pick_vert_ex(ViewContext *vc,
   data.mval_fl[1] = vc->mval[1];
 
   Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode_unique_data(
-      vc->scene, vc->view_layer, vc->v3d);
+      *vc->bmain, vc->scene, vc->view_layer, vc->v3d);
   for (Base *base : bases) {
     data.is_changed = false;
 

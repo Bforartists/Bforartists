@@ -46,10 +46,7 @@ void SourceProcessor::lower_enums(Parser &parser)
    */
 
   auto missing_underlying_type = [&](vector<Token> tokens) {
-    report_error_(tokens[0].line_number(),
-                  tokens[0].char_number(),
-                  tokens[0].line_str(),
-                  "enum declaration must explicitly use an underlying type");
+    report_error(tokens[0], "enum declaration must explicitly use an underlying type");
   };
 
   parser().foreach_match("MA{", missing_underlying_type);
@@ -107,8 +104,8 @@ void SourceProcessor::lower_enums(Parser &parser)
                             "#define " + enum_name_str + " " + string(enum_type.str()) + "\n");
     if (is_host_shared) {
       if (type_str != "uint32_t" && type_str != "int32_t") {
-        report_error_(ERROR_TOK(enum_type),
-                      "Host shared enum declaration must use uint32_t or int32_t underlying type");
+        report_error(enum_type,
+                     "Host shared enum declaration must use uint32_t or int32_t underlying type");
         return;
       }
 
@@ -138,7 +135,7 @@ void SourceProcessor::lower_enums(Parser &parser)
   parser.apply_mutations();
 
   parser().foreach_token(Enum, [&](Token tok) {
-    report_error_(ERROR_TOK(tok), "invalid enum declaration, likely missing underlying type");
+    report_error(tok, "invalid enum declaration, likely missing underlying type");
   });
 }
 

@@ -15,14 +15,14 @@ namespace nodes::node_shader_raycast_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Vector>("Position").hide_value();
-  b.add_input<decl::Vector>("Direction").hide_value();
-  b.add_input<decl::Float>("Length").default_value(1.0);
-  b.add_output<decl::Float>("Is Hit");
-  b.add_output<decl::Float>("Self Hit");
-  b.add_output<decl::Float>("Hit Distance");
-  b.add_output<decl::Vector>("Hit Position");
-  b.add_output<decl::Vector>("Hit Normal");
+  b.add_input<decl::Vector>("Position"_ustr).hide_value();
+  b.add_input<decl::Vector>("Direction"_ustr).hide_value();
+  b.add_input<decl::Float>("Length"_ustr).default_value(1.0);
+  b.add_output<decl::Float>("Is Hit"_ustr);
+  b.add_output<decl::Float>("Self Hit"_ustr);
+  b.add_output<decl::Float>("Hit Distance"_ustr);
+  b.add_output<decl::Vector>("Hit Position"_ustr);
+  b.add_output<decl::Vector>("Hit Normal"_ustr);
 }
 
 static void node_shader_init(bNodeTree * /*ntree*/, bNode *node)

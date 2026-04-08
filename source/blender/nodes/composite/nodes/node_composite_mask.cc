@@ -32,44 +32,45 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
 
-  b.add_output<decl::Float>("Mask").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Mask"_ustr).structure_type(StructureType::Dynamic);
 
   b.add_layout([](ui::Layout &layout, bContext *C, PointerRNA *ptr) {
     template_id(&layout, C, ptr, "mask", "mask.new", nullptr, nullptr);
   });
 
-  b.add_input<decl::Menu>("Size Source")
+  b.add_input<decl::Menu>("Size Source"_ustr)
       .default_value(MenuValue(0))
       .static_items(size_source_items)
       .optional_label()
       .description("The source where the size of the mask is retrieved");
-  b.add_input<decl::Int>("Size X")
+  b.add_input<decl::Int>("Size X"_ustr)
       .default_value(256)
       .min(1)
-      .usage_by_menu("Size Source",
+      .usage_by_menu("Size Source"_ustr,
                      {CMP_NODE_MASK_FLAG_SIZE_FIXED, CMP_NODE_MASK_FLAG_SIZE_FIXED_SCENE})
       .description("The resolution of the mask along the X direction");
-  b.add_input<decl::Int>("Size Y")
+  b.add_input<decl::Int>("Size Y"_ustr)
       .default_value(256)
       .min(1)
-      .usage_by_menu("Size Source",
+      .usage_by_menu("Size Source"_ustr,
                      {CMP_NODE_MASK_FLAG_SIZE_FIXED, CMP_NODE_MASK_FLAG_SIZE_FIXED_SCENE})
       .description("The resolution of the mask along the Y direction");
-  b.add_input<decl::Bool>("Feather").default_value(true).description(
-      "Use feather information from the mask");
+  b.add_input<decl::Bool>("Feather"_ustr)
+      .default_value(true)
+      .description("Use feather information from the mask");
 
   PanelDeclarationBuilder &motion_blur_panel =
       b.add_panel("Motion Blur"_ustr).default_closed(true);
-  motion_blur_panel.add_input<decl::Bool>("Motion Blur")
+  motion_blur_panel.add_input<decl::Bool>("Motion Blur"_ustr)
       .default_value(false)
       .panel_toggle()
       .description("Use multi-sampled motion blur of the mask");
-  motion_blur_panel.add_input<decl::Int>("Samples", "Motion Blur Samples")
+  motion_blur_panel.add_input<decl::Int>("Samples"_ustr, "Motion Blur Samples"_ustr)
       .default_value(16)
       .min(1)
       .max(64)
       .description("Number of motion blur samples");
-  motion_blur_panel.add_input<decl::Float>("Shutter", "Motion Blur Shutter")
+  motion_blur_panel.add_input<decl::Float>("Shutter"_ustr, "Motion Blur Shutter"_ustr)
       .default_value(0.5f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -105,8 +106,10 @@ class MaskOperation : public NodeOperation {
         domain,
         this->get_aspect_ratio(),
         this->get_use_feather(),
+        this->context().get_frame_number(),
         this->get_motion_blur_samples(),
-        this->get_motion_blur_shutter());
+        this->get_motion_blur_shutter(),
+        false);
 
     Result &output_mask = this->get_result("Mask");
     output_mask.wrap_external(cached_mask);

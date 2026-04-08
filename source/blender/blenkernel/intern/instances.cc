@@ -142,7 +142,7 @@ StringRefNull InstanceReference::name() const
     case Type::Collection:
       return this->collection().id.name + 2;
     case Type::GeometrySet:
-      return this->geometry_set().name;
+      return this->geometry_set().name();
     case Type::None:
       break;
   }

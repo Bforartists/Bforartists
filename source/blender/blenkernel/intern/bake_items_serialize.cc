@@ -18,6 +18,7 @@
 #include "BLI_listbase.h"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_path_utils.hh"
+#include "BLI_string.h"
 #include "BLI_string_utf8.h"
 
 #include "DNA_object_types.h"
@@ -832,6 +833,18 @@ static Mesh *try_load_mesh(const DictionaryValue &io_geometry,
     }
   }
 
+  if (const std::optional<StringRefNull> default_uv_map_name = io_mesh->lookup_str(
+          "default_uv_map_name"))
+  {
+    mesh->uv_maps_default_set(*default_uv_map_name);
+  }
+  if (const std::optional<StringRefNull> default_color_attribute = io_mesh->lookup_str(
+          "default_color_name"))
+  {
+    mesh->default_color_attribute = BLI_strdupn(default_color_attribute->data(),
+                                                default_color_attribute->size());
+  }
+
   return mesh;
 }
 
@@ -1088,6 +1101,15 @@ static std::shared_ptr<DictionaryValue> serialize_geometry_set(const GeometrySet
       for (bDeformGroup &defgroup : mesh.vertex_group_names) {
         io_vertex_group_names->append_str(defgroup.name);
       }
+    }
+
+    const StringRef default_uv_map_name = mesh.default_uv_map_name();
+    if (!default_uv_map_name.is_empty()) {
+      io_mesh->append_str("default_uv_map_name", default_uv_map_name);
+    }
+    const StringRef default_color_attribute = mesh.default_color_attribute;
+    if (!default_color_attribute.is_empty()) {
+      io_mesh->append_str("default_color_name", default_color_attribute);
     }
 
     auto io_attributes = serialize_attributes(mesh.attributes(), blob_writer, blob_sharing, {});
@@ -1444,8 +1466,8 @@ template<typename T>
     if (!value) {
       return false;
     }
-    r_bake_item.items.append(
-        BundleBakeItem::Item{*key, BundleBakeItem::SocketValue{*socket_idname, std::move(value)}});
+    r_bake_item.items.append(BundleBakeItem::Item{
+        UString(*key), BundleBakeItem::SocketValue{*socket_idname, std::move(value)}});
   }
   return true;
 }
@@ -1511,7 +1533,7 @@ static void serialize_bake_item(const BakeItem &item,
     for (const BundleBakeItem::Item &item : bundle_state_item->items) {
       if (const auto *socket_value = std::get_if<BundleBakeItem::SocketValue>(&item.value)) {
         DictionaryValue &io_bundle_item = *io_items.append_dict();
-        io_bundle_item.append_str("key", item.key);
+        io_bundle_item.append_str("key", item.key.string());
         io_bundle_item.append_str("socket_idname", socket_value->socket_idname);
         io::serialize::DictionaryValue &io_bundle_item_value = *io_bundle_item.append_dict(
             "value");

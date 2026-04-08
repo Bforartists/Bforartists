@@ -221,9 +221,9 @@ static void node_declare(NodeDeclarationBuilder &b)
   for (const int i : IndexRange(storage.items_num)) {
     const NodeGeometryViewerItem &item = storage.items[i];
     const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-    const StringRef name = item.name ? item.name : "";
+    const UString name = item.name ? UString(item.name) : ""_ustr;
     const std::string identifier = GeoViewerItemsAccessor::socket_identifier_for_item(item);
-    auto &input_decl = b.add_input(socket_type, name, identifier)
+    auto &input_decl = b.add_input(socket_type, name, UString(identifier))
                            .socket_name_ptr(
                                &tree->id, *GeoViewerItemsAccessor::item_srna, &item, "name");
     if (socket_type_supports_attributes(socket_type)) {
@@ -233,7 +233,7 @@ static void node_declare(NodeDeclarationBuilder &b)
     input_decl.custom_draw([](CustomSocketDrawParams &params) { draw_input_socket(params); });
   }
 
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Dynamic);
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr).structure_type(StructureType::Dynamic);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -293,7 +293,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       bNode &node = params.add_node("GeometryNodeViewer");
       const auto *item = socket_items::add_item_with_socket_type_and_name<GeoViewerItemsAccessor>(
           params.node_tree, node, params.socket.typeinfo->type, params.socket.name);
-      params.update_and_connect_available_socket(node, item->name);
+      params.update_and_connect_available_socket(node, UString(item->name));
       SpaceNode *snode = CTX_wm_space_node(&params.C);
       Main *bmain = CTX_data_main(&params.C);
       ed::viewer_path::activate_geometry_node(*bmain, *snode, node);

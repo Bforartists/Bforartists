@@ -6,7 +6,7 @@
  * \ingroup bli
  */
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_cpp_type_make.hh"
 #include "BLI_cpp_types_make.hh"
 #include "BLI_math_matrix_types.hh"

@@ -85,6 +85,8 @@
 /* Fragment shader output. Set stencil reference value per pixel.
  * Only supported on some platform. Check for compatibility first. */
 #  define frag_stencil_ref maybe_unused
+/* Fragment shader color output index for dual source blending. */
+#  define index(i) maybe_unused
 
 /* Graphic pipeline stage in/out. */
 #  define in maybe_unused
@@ -107,6 +109,8 @@
 #  define resource_table maybe_unused
 /* Only declare the member if cond evaluates to true. */
 #  define condition(cond) maybe_unused
+/* Set binding frequency of a resource (storage, uniform, image, sampler). */
+#  define frequency(freq) maybe_unused
 
 /* Make a structure layout or enum shared between CPU and GPU code.
  * Required for structs defining storage and uniform buffer layout. */

@@ -23,7 +23,7 @@ void Instance::init()
   /* TODO(fclem): Remove DRW global usage. */
   const DRWContext *ctx = DRW_context_get();
   /* Was needed by `object_wire_theme_id()` when doing the port. Not sure if needed nowadays. */
-  BKE_view_layer_synced_ensure(ctx->scene, ctx->view_layer);
+  BKE_view_layer_synced_ensure(*DEG_get_bmain(ctx->depsgraph), ctx->scene, ctx->view_layer);
 
   clipping_enabled_ = RV3D_CLIPPING_ENABLED(ctx->v3d, ctx->rv3d);
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'45d5533d8e66')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 11:01+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2026-01-20 15:20+0000\n"
 "Last-Translator: golden dragon <trmhtk2@gmail.com>\n"
 "Language-Team: Hebrew <https://translate.blender.org/projects/blender-ui/ui/he/>\n"
@@ -1128,6 +1128,10 @@ msgid "Saturation"
 msgstr "היוור"
 
 
+msgid "Both"
+msgstr "םהינש"
+
+
 msgctxt "File browser"
 msgid "Path"
 msgstr "ביתנ"
@@ -2241,12 +2245,16 @@ msgid "Grease Pencil Color"
 msgstr "Grease Pencil יאבצ"
 
 
-msgid "Convert"
-msgstr "רמה"
+msgid "Mirror"
+msgstr "הארמ"
 
 
 msgid "Apply"
 msgstr "לחה"
+
+
+msgid "Convert"
+msgstr "רמה"
 
 
 msgid "Face Data"
@@ -2255,10 +2263,6 @@ msgstr "האפ ינותנ"
 
 msgid "Layout"
 msgstr "הסירפ"
-
-
-msgid "Mirror"
-msgstr "הארמ"
 
 
 msgid "Proxy"
@@ -2567,10 +2571,6 @@ msgstr "הרונמ"
 
 msgid "Eraser"
 msgstr "קחמ"
-
-
-msgid "Both"
-msgstr "םהינש"
 
 
 msgid "Image Name"

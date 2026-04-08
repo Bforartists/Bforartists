@@ -31,7 +31,7 @@ NODE_STORAGE_FUNCS(NodeSeparateBundle);
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bundle>("Bundle").structure_type(StructureType::Single);
+  b.add_input<decl::Bundle>("Bundle"_ustr).structure_type(StructureType::Single);
   const bNodeTree *tree = b.tree_or_null();
   const bNode *node = b.node_or_null();
   if (tree && node) {
@@ -39,8 +39,8 @@ static void node_declare(NodeDeclarationBuilder &b)
     for (const int i : IndexRange(storage.items_num)) {
       const NodeSeparateBundleItem &item = storage.items[i];
       const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-      const StringRef name = item.name ? item.name : "";
-      const std::string identifier = SeparateBundleItemsAccessor::socket_identifier_for_item(item);
+      const UString name = item.name ? UString(item.name) : ""_ustr;
+      const UString identifier(SeparateBundleItemsAccessor::socket_identifier_for_item(item));
       auto &decl = b.add_output(socket_type, name, identifier)
                        .socket_name_ptr(
                            &tree->id, *SeparateBundleItemsAccessor::item_srna, &item, "name")
@@ -54,7 +54,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       }
     }
   }
-  b.add_output<decl::Extend>("", "__extend__");
+  b.add_output<decl::Extend>(""_ustr, "__extend__"_ustr);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -125,7 +125,7 @@ static void node_operators()
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  nodes::BundlePtr bundle = params.extract_input<nodes::BundlePtr>("Bundle");
+  nodes::BundlePtr bundle = params.extract_input<nodes::BundlePtr>("Bundle"_ustr);
   if (!bundle) {
     params.set_default_remaining_outputs();
     return;
@@ -146,7 +146,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     if (!stype || !stype->geometry_nodes_default_value) {
       continue;
     }
-    const BundleItemValue *value = bundle->lookup(name);
+    const BundleItemValue *value = bundle->lookup(UString(name));
     if (!value) {
       params.error_message_add(
           NodeWarningType::Error,
@@ -206,7 +206,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       const auto *item =
           socket_items::add_item_with_socket_type_and_name<SeparateBundleItemsAccessor>(
               params.node_tree, node, params.socket.typeinfo->type, params.socket.name);
-      params.update_and_connect_available_socket(node, item->name);
+      params.update_and_connect_available_socket(node, UString(item->name));
     });
   }
   else {
@@ -215,7 +215,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     }
     params.add_item(IFACE_("Bundle"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("NodeSeparateBundle");
-      params.connect_available_socket(node, "Bundle");
+      params.connect_available_socket(node, "Bundle"_ustr);
 
       SpaceNode &snode = *CTX_wm_space_node(&params.C);
       sync_sockets_separate_bundle(snode, node, nullptr);

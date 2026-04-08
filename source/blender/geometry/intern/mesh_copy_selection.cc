@@ -77,7 +77,7 @@ static void remap_edges(const OffsetIndices<int> src_faces,
 static void copy_loose_vert_hint(const Mesh &src, Mesh &dst)
 {
   const auto &src_cache = src.runtime->loose_verts_cache;
-  if (src_cache.is_cached() && src_cache.data().count == 0) {
+  if (src_cache.is_cached() && src_cache.data().mask.is_empty()) {
     dst.tag_loose_verts_none();
   }
 }
@@ -85,7 +85,7 @@ static void copy_loose_vert_hint(const Mesh &src, Mesh &dst)
 static void copy_loose_edge_hint(const Mesh &src, Mesh &dst)
 {
   const auto &src_cache = src.runtime->loose_edges_cache;
-  if (src_cache.is_cached() && src_cache.data().count == 0) {
+  if (src_cache.is_cached() && src_cache.data().mask.is_empty()) {
     dst.tag_loose_edges_none();
   }
 }

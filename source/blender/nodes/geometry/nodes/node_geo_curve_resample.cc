@@ -45,22 +45,22 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curves to resample");
-  b.add_output<decl::Geometry>("Curve").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).field_on_all().hide_value();
-  b.add_input<decl::Menu>("Mode")
+  b.add_output<decl::Geometry>("Curve"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).field_on_all().hide_value();
+  b.add_input<decl::Menu>("Mode"_ustr)
       .static_items(mode_items)
       .optional_label()
       .description("How to specify the amount of samples");
-  b.add_input<decl::Int>("Count")
+  b.add_input<decl::Int>("Count"_ustr)
       .default_value(10)
       .min(1)
       .max(100000)
       .field_on_all()
       .usage_by_single_menu(GEO_NODE_CURVE_RESAMPLE_COUNT);
-  b.add_input<decl::Float>("Length")
+  b.add_input<decl::Float>("Length"_ustr)
       .default_value(0.1f)
       .min(0.01f)
       .subtype(PROP_DISTANCE)
@@ -82,18 +82,18 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve");
-  const auto mode = params.extract_input<GeometryNodeCurveResampleMode>("Mode");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve"_ustr);
+  const auto mode = params.extract_input<GeometryNodeCurveResampleMode>("Mode"_ustr);
 
   const NodeGeometryCurveResample &storage = node_storage(params.node());
 
-  const Field<bool> selection = params.extract_input<Field<bool>>("Selection");
+  const Field<bool> selection = params.extract_input<Field<bool>>("Selection"_ustr);
 
   GeometryComponentEditData::remember_deformed_positions_if_necessary(geometry_set);
 
   switch (mode) {
     case GEO_NODE_CURVE_RESAMPLE_COUNT: {
-      Field<int> count = params.extract_input<Field<int>>("Count");
+      Field<int> count = params.extract_input<Field<int>>("Count"_ustr);
       geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry) {
         if (const Curves *src_curves_id = geometry.get_curves()) {
           const bke::CurvesGeometry &src_curves = src_curves_id->geometry.wrap();
@@ -125,7 +125,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       break;
     }
     case GEO_NODE_CURVE_RESAMPLE_LENGTH: {
-      Field<float> length = params.extract_input<Field<float>>("Length");
+      Field<float> length = params.extract_input<Field<float>>("Length"_ustr);
       geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry) {
         if (const Curves *src_curves_id = geometry.get_curves()) {
           const bke::CurvesGeometry &src_curves = src_curves_id->geometry.wrap();
@@ -186,7 +186,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       break;
   }
 
-  params.set_output("Curve", std::move(geometry_set));
+  params.set_output("Curve"_ustr, std::move(geometry_set));
 }
 
 static void node_rna(StructRNA *srna)

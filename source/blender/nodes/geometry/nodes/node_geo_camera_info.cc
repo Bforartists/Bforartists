@@ -18,20 +18,20 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
 
-  b.add_output<decl::Matrix>("Projection Matrix").description("Camera projection matrix");
-  b.add_output<decl::Float>("Focal Length").description("Perspective camera focal length");
-  b.add_output<decl::Vector>("Sensor").dimensions(2).description("Size of the camera sensor");
-  b.add_output<decl::Vector>("Shift").dimensions(2).description("Camera shift");
-  b.add_output<decl::Float>("Clip Start").description("Camera near clipping distance");
-  b.add_output<decl::Float>("Clip End").description("Camera far clipping distance");
-  b.add_output<decl::Float>("Focus Distance")
+  b.add_output<decl::Matrix>("Projection Matrix"_ustr).description("Camera projection matrix");
+  b.add_output<decl::Float>("Focal Length"_ustr).description("Perspective camera focal length");
+  b.add_output<decl::Vector>("Sensor"_ustr).dimensions(2).description("Size of the camera sensor");
+  b.add_output<decl::Vector>("Shift"_ustr).dimensions(2).description("Camera shift");
+  b.add_output<decl::Float>("Clip Start"_ustr).description("Camera near clipping distance");
+  b.add_output<decl::Float>("Clip End"_ustr).description("Camera far clipping distance");
+  b.add_output<decl::Float>("Focus Distance"_ustr)
       .description("Distance to the focus point for depth of field");
-  b.add_output<decl::Bool>("Is Orthographic")
+  b.add_output<decl::Bool>("Is Orthographic"_ustr)
       .description("Whether the camera is using orthographic projection");
-  b.add_output<decl::Float>("Orthographic Scale")
+  b.add_output<decl::Float>("Orthographic Scale"_ustr)
       .description("Orthographic camera scale (similar to zoom)");
 
-  b.add_input<decl::Object>("Camera").optional_label();
+  b.add_input<decl::Object>("Camera"_ustr).optional_label();
 }
 
 static CameraParams get_camera_parameters(const Scene &scene, const Object &camera_object)
@@ -53,7 +53,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  const Object *camera_obj = params.extract_input<Object *>("Camera");
+  const Object *camera_obj = params.extract_input<Object *>("Camera"_ustr);
 
   if (!camera_obj || camera_obj->type != OB_CAMERA) {
     params.set_default_remaining_outputs();
@@ -70,15 +70,15 @@ static void node_geo_exec(GeoNodeExecParams params)
   const float4x4 projection_matrix(camera_params.winmat);
   float focus_distance = BKE_camera_object_dof_distance(camera_obj);
 
-  params.set_output("Projection Matrix", projection_matrix);
-  params.set_output("Focal Length", camera_params.lens);
-  params.set_output("Sensor", float3{camera_params.sensor_x, camera_params.sensor_y, 0.0f});
-  params.set_output("Shift", float3{camera_params.shiftx, camera_params.shifty, 0.0f});
-  params.set_output("Clip Start", camera_params.clip_start);
-  params.set_output("Clip End", camera_params.clip_end);
-  params.set_output("Focus Distance", focus_distance);
-  params.set_output("Is Orthographic", camera_params.is_ortho);
-  params.set_output("Orthographic Scale", camera_params.ortho_scale);
+  params.set_output("Projection Matrix"_ustr, projection_matrix);
+  params.set_output("Focal Length"_ustr, camera_params.lens);
+  params.set_output("Sensor"_ustr, float3{camera_params.sensor_x, camera_params.sensor_y, 0.0f});
+  params.set_output("Shift"_ustr, float3{camera_params.shiftx, camera_params.shifty, 0.0f});
+  params.set_output("Clip Start"_ustr, camera_params.clip_start);
+  params.set_output("Clip End"_ustr, camera_params.clip_end);
+  params.set_output("Focus Distance"_ustr, focus_distance);
+  params.set_output("Is Orthographic"_ustr, camera_params.is_ortho);
+  params.set_output("Orthographic Scale"_ustr, camera_params.ortho_scale);
 }
 
 using namespace blender::compositor;

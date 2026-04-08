@@ -43,6 +43,8 @@ class AssetRepresentation;
  */
 class AssetLibrary {
   eAssetLibraryType library_type_;
+  /** See #is_read_only(). */
+  bool is_read_only_ = true;
   /**
    * The name this asset library will be displayed as in the UI. Will also be used as a weak way
    * to identify an asset library (e.g. by #AssetWeakReference).
@@ -87,11 +89,13 @@ class AssetLibrary {
   std::unique_ptr<AssetCatalogService> catalog_service_;
   Mutex catalog_service_mutex_;
 
+  /* TODO: Add virtual getter. */
   std::optional<eAssetImportMethod> import_method_;
   /** Assets owned by this library may be imported with a different method than set in
    * #import_method_ above, it's just a default. */
   bool may_override_import_method_ = false;
 
+  /* TODO: Add virtual getter. */
   bool use_relative_path_ = true;
 
   bCallbackFuncStore on_save_callback_store_{};
@@ -105,17 +109,18 @@ class AssetLibrary {
   friend class AssetRepresentation;
 
   /**
+   * \param is_read_only: If true, the user should not be able to edit assets or asset catalogs
+   *                      from this library. See #is_read_only().
    * \param name: The name this asset library will be displayed in the UI as. Will also be used as
    *              a weak way to identify an asset library (e.g. by #AssetWeakReference). Make sure
    *              this is set for any custom (not builtin) asset library. That is,
    *              #ASSET_LIBRARY_CUSTOM ones.
    * \param root_path: If this is an asset library on disk, the top-level directory path.
    */
-  AssetLibrary(
-      eAssetLibraryType library_type,
-      StringRef name = "",
-      StringRef root_path = "",
-      std::optional<AssetCatalogService::read_only_tag> catalogs_read_only_tag = std::nullopt);
+  AssetLibrary(eAssetLibraryType library_type,
+               bool is_read_only,
+               StringRef name = "",
+               StringRef root_path = "");
   virtual ~AssetLibrary();
 
   /**
@@ -136,7 +141,7 @@ class AssetLibrary {
   virtual std::optional<AssetLibraryReference> library_reference() const = 0;
 
   /**
-   * Return the URL of the remote asset library, or std::nullopt if this is not a remote library.
+   * Return the URL of the remote asset library, or #std::nullopt if this is not a remote library.
    *
    * Note: don't use this as a way to distinguish remote vs. local libraries. Either query the
    * asset itself, or use #is_or_contains_remote_libraries(). The Essentials and All libraries may
@@ -213,6 +218,18 @@ class AssetLibrary {
   eAssetLibraryType library_type() const;
   StringRefNull name() const;
   StringRefNull root_path() const;
+  /**
+   * Check if this is a read-only library, meaning the user shouldn't be able to do edits to
+   * assets and asset catalogs from this library.
+   *
+   * \note This isn't enforced by the asset system - the UI or other editing code has to respect
+   * this flag. Also see #AssetCatalogService::is_read_only().
+   *
+   * Of course it's possible to modify the .blend files containing the assets manually; and
+   * similarly, to open a .blend file in the library directory to edit asset catalogs. This
+   * function only speaks for editing directly *via this library*.
+   */
+  bool is_read_only() const;
 
  protected:
   /** Load catalogs that have changed on disk. */

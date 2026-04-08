@@ -89,6 +89,8 @@ namespace blender {
 static Base *find_view_layer_base_with_synced_ensure(
     Object *ob, bContext *C, PointerRNA *view_layer_ptr, Scene **r_scene, ViewLayer **r_view_layer)
 {
+  const Main *bmain = CTX_data_main(C);
+
   Scene *scene;
   ViewLayer *view_layer;
   if (view_layer_ptr->data) {
@@ -106,7 +108,7 @@ static Base *find_view_layer_base_with_synced_ensure(
     *r_view_layer = view_layer;
   }
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   return BKE_view_layer_base_find(view_layer, ob);
 }
 
@@ -239,7 +241,10 @@ static Base *rna_Object_local_view_property_helper(bScreen *screen,
     view_layer = WM_window_get_active_view_layer(win);
   }
 
-  BKE_view_layer_synced_ensure(win ? WM_window_get_active_scene(win) : nullptr, view_layer);
+  /* FIXME Using G_MAIN is weak, but should work in practrice given current context (code already
+   * relies on 'G_MAIN data'). */
+  BKE_view_layer_synced_ensure(
+      *G_MAIN, win ? WM_window_get_active_scene(win) : nullptr, view_layer);
   Base *base = BKE_view_layer_base_find(view_layer, ob);
   if (base == nullptr) {
     BKE_reportf(

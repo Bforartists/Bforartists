@@ -43,7 +43,7 @@ ImBuf *prepare_effect_imbufs(const RenderData *context,
     /* Hmm, global float option? */
     out = IMB_allocImBuf(x, y, 32, IB_byte_data | base_flags);
   }
-  else if ((ibuf1 && ibuf1->float_buffer.data) || (ibuf2 && ibuf2->float_buffer.data)) {
+  else if ((ibuf1 && ibuf1->float_data()) || (ibuf2 && ibuf2->float_data())) {
     /* if any inputs are float, output is float too */
     out = IMB_allocImBuf(x, y, 32, IB_float_data | base_flags);
   }
@@ -51,23 +51,21 @@ ImBuf *prepare_effect_imbufs(const RenderData *context,
     out = IMB_allocImBuf(x, y, 32, IB_byte_data | base_flags);
   }
 
-  if (out->float_buffer.data) {
-    if (ibuf1 && !ibuf1->float_buffer.data) {
-      seq_imbuf_to_sequencer_space(scene, ibuf1, true);
+  if (out->float_data()) {
+    if (ibuf1) {
+      ensure_ibuf_is_sequencer_space(scene, ibuf1, true);
     }
-
-    if (ibuf2 && !ibuf2->float_buffer.data) {
-      seq_imbuf_to_sequencer_space(scene, ibuf2, true);
+    if (ibuf2) {
+      ensure_ibuf_is_sequencer_space(scene, ibuf2, true);
     }
-
     IMB_colormanagement_assign_float_colorspace(out, scene->sequencer_colorspace_settings.name);
   }
   else {
-    if (ibuf1 && !ibuf1->byte_buffer.data) {
+    if (ibuf1 && !ibuf1->byte_data()) {
       IMB_byte_from_float(ibuf1);
     }
 
-    if (ibuf2 && !ibuf2->byte_buffer.data) {
+    if (ibuf2 && !ibuf2->byte_data()) {
       IMB_byte_from_float(ibuf2);
     }
   }

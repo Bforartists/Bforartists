@@ -6,7 +6,7 @@
 
 #include "gpu_shader_compat.hh"
 
-void view_clipping_distances(float3 wpos)
+void view_clipping_distances([[maybe_unused]] float3 wpos)
 {
 #if defined(GPU_VERTEX_SHADER)
   VERTEX_SHADER_CREATE_INFO(drw_clipped)

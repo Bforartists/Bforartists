@@ -16,29 +16,29 @@ namespace blender::nodes::node_geo_grid_to_mesh_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_input<decl::Float>("Threshold")
+  b.add_input<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_input<decl::Float>("Threshold"_ustr)
       .default_value(0.1f)
       .description("Values larger than the threshold are inside the generated mesh");
-  b.add_input<decl::Float>("Adaptivity").min(0.0f).max(1.0f).subtype(PROP_FACTOR);
-  b.add_output<decl::Geometry>("Mesh");
+  b.add_input<decl::Float>("Adaptivity"_ustr).min(0.0f).max(1.0f).subtype(PROP_FACTOR);
+  b.add_output<decl::Geometry>("Mesh"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  const bke::VolumeGrid<float> grid = params.extract_input<bke::VolumeGrid<float>>("Grid");
+  const bke::VolumeGrid<float> grid = params.extract_input<bke::VolumeGrid<float>>("Grid"_ustr);
   if (!grid) {
     params.set_default_remaining_outputs();
     return;
   }
   bke::VolumeTreeAccessToken tree_token;
   Mesh *mesh = bke::volume_grid_to_mesh(grid.get().grid(tree_token),
-                                        params.extract_input<float>("Threshold"),
-                                        params.extract_input<float>("Adaptivity"));
+                                        params.extract_input<float>("Threshold"_ustr),
+                                        params.extract_input<float>("Adaptivity"_ustr));
   BKE_id_material_eval_ensure_default_slot(&mesh->id);
   geometry::debug_randomize_mesh_order(mesh);
-  params.set_output("Mesh", GeometrySet::from_mesh(mesh));
+  params.set_output("Mesh"_ustr, GeometrySet::from_mesh(mesh));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

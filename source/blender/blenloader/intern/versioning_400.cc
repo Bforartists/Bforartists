@@ -281,8 +281,16 @@ static void version_principled_bsdf_update_animdata(ID *owner_id, bNodeTree *ntr
         {21, 4}   /* Alpha */
     };
     for (const auto &entry : remap_table) {
-      BKE_animdata_fix_paths_rename(
-          id, adt, owner_id, prefix.c_str(), nullptr, nullptr, entry.first, entry.second, false);
+      BKE_animdata_fix_paths_rename(id,
+                                    adt,
+                                    owner_id,
+                                    prefix.c_str(),
+                                    nullptr,
+                                    nullptr,
+                                    entry.first,
+                                    entry.second,
+                                    /*verify_paths=*/false,
+                                    /*infix_is_name=*/true);
     }
   }
 }
@@ -533,7 +541,9 @@ static void version_mesh_crease_generic(Main &bmain)
       if (md.type != eModifierType_Nodes) {
         continue;
       }
-      if (IDProperty *settings = reinterpret_cast<NodesModifierData *>(&md)->settings.properties) {
+      if (IDProperty *settings =
+              reinterpret_cast<NodesModifierData *>(&md)->settings_legacy.properties)
+      {
         for (IDProperty &prop : settings->data.group) {
           if (StringRef(prop.name).endswith("_attribute_name")) {
             if (STREQ(IDP_string_get(&prop), "crease")) {
@@ -622,7 +632,7 @@ static void version_replace_velvet_sheen_node(bNodeTree *ntree)
       bNodeSocket *sigmaInput = bke::node_find_socket(node, SOCK_IN, "Sigma");
       if (sigmaInput != nullptr) {
         node.custom1 = SHD_SHEEN_ASHIKHMIN;
-        STRNCPY_UTF8(sigmaInput->identifier, "Roughness");
+        version_node_socket_identifier_set(*sigmaInput, "Roughness");
         STRNCPY_UTF8(sigmaInput->name, "Roughness");
       }
     }

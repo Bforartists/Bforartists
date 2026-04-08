@@ -41,7 +41,7 @@ static void attr_create_motion_from_velocity(PointCloud *pointcloud,
   const float motion_times[2] = {-1.0f, 1.0f};
   for (int step = 0; step < 2; step++) {
     const float relative_time = motion_times[step] * 0.5f * motion_scale;
-    float4 *mP = attr_mP->data_float4() + step * num_points;
+    float4 *mP = attr_mP->data_float4_for_write() + step * num_points;
 
     for (int i = 0; i < num_points; i++) {
       const float3 Pi = P[i] +
@@ -82,16 +82,30 @@ static void copy_attributes(PointCloud *pointcloud,
       using CyclesT = typename Converter::CyclesT;
       if constexpr (!std::is_void_v<CyclesT>) {
         const blender::VArray<BlenderT> src_varray = b_attr.varray.typed<BlenderT>();
+        const blender::CommonVArrayInfo info = b_attr.varray.common_info();
 
-        if (const std::optional<BlenderT> single_value = src_varray.get_if_single()) {
+        if (info.type == blender::CommonVArrayInfo::Type::Single) {
+          const auto &single_value = *static_cast<const BlenderT *>(info.data);
           Attribute *attr = attributes.add(name, Converter::type_desc, ATTR_ELEMENT_MESH);
-          CyclesT *data = reinterpret_cast<CyclesT *>(attr->data());
-          *data = Converter::convert(*single_value);
+          CyclesT *data = reinterpret_cast<CyclesT *>(attr->data_for_write());
+          *data = Converter::convert(single_value);
           return;
         }
 
+        if constexpr (Converter::layout_compatible) {
+          if (info.type == blender::CommonVArrayInfo::Type::Span && b_attr.sharing_info) {
+            attributes.add_shared(name,
+                                  Converter::type_desc,
+                                  ATTR_ELEMENT_VERTEX,
+                                  info.data,
+                                  src_varray.size(),
+                                  b_attr.sharing_info);
+            return;
+          }
+        }
+
         Attribute *attr = attributes.add(name, Converter::type_desc, ATTR_ELEMENT_VERTEX);
-        CyclesT *data = reinterpret_cast<CyclesT *>(attr->data());
+        CyclesT *data = reinterpret_cast<CyclesT *>(attr->data_for_write());
 
         const blender::VArraySpan src = src_varray;
         for (const int i : src.index_range()) {
@@ -133,7 +147,7 @@ static void export_pointcloud(Scene *scene,
 
   if (pointcloud->need_attribute(scene, ATTR_STD_POINT_RANDOM)) {
     Attribute *attr_random = pointcloud->attributes.add(ATTR_STD_POINT_RANDOM);
-    float *data = attr_random->data_float();
+    float *data = attr_random->data_float_for_write();
     for (const int i : b_positions.index_range()) {
       data[i] = hash_uint2_to_float(i, 0);
     }
@@ -159,7 +173,7 @@ static void export_pointcloud_motion(PointCloud *pointcloud,
   /* Point cloud attributes are stored as float4 with the radius in the w element.
    * This is explicit now as float3 is no longer interchangeable with float4 as it
    * is packed now. */
-  float4 *mP = attr_mP->data_float4() + motion_step * num_points;
+  float4 *mP = attr_mP->data_float4_for_write() + motion_step * num_points;
   bool have_motion = false;
   const array<float3> &pointcloud_points = pointcloud->get_points();
 

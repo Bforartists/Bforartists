@@ -103,11 +103,10 @@ CryptomatteSession::CryptomatteSession(const ViewLayer *view_layer)
 CryptomatteSession::CryptomatteSession(const Scene *scene, bool build_meta_data)
 {
 
-  if (build_meta_data) {
-    BKE_scene_view_layers_synced_ensure(scene);
-  }
-
   for (const ViewLayer &view_layer : scene->view_layers) {
+    if (build_meta_data) {
+      BLI_assert(BKE_view_layer_is_synced(view_layer));
+    }
     init(&view_layer, build_meta_data);
   }
 }

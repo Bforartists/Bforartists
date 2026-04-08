@@ -84,7 +84,7 @@ static void image_sample_pixel_color_ubyte(const ImBuf *ibuf,
                                            uchar r_col[4],
                                            float r_col_linear[4])
 {
-  const uchar *cp = ibuf->byte_buffer.data + 4 * (coord[1] * ibuf->x + coord[0]);
+  const uchar *cp = ibuf->byte_data() + 4 * (coord[1] * ibuf->x + coord[0]);
   copy_v4_v4_uchar(r_col, cp);
   rgba_uchar_to_float(r_col_linear, r_col);
   IMB_colormanagement_colorspace_to_scene_linear_v4(
@@ -93,7 +93,7 @@ static void image_sample_pixel_color_ubyte(const ImBuf *ibuf,
 
 static void image_sample_pixel_color_float(ImBuf *ibuf, const int coord[2], float r_col[4])
 {
-  const float *cp = ibuf->float_buffer.data + (ibuf->channels) * (coord[1] * ibuf->x + coord[0]);
+  const float *cp = ibuf->float_data() + (ibuf->channels) * (coord[1] * ibuf->x + coord[0]);
   copy_v4_v4(r_col, cp);
 }
 
@@ -204,7 +204,7 @@ static void image_sample_apply(bContext *C, wmOperator *op, const wmEvent *event
     sample_rect.xmax = min_ii(ibuf->x - 1, x - offset[0] + info->sample_size / 2);
     sample_rect.ymax = min_ii(ibuf->y - 1, y - offset[1] + info->sample_size / 2);
 
-    if (ibuf->byte_buffer.data) {
+    if (ibuf->byte_data()) {
       image_sample_rect_color_ubyte(ibuf, &sample_rect, info->col, info->linearcol);
       rgba_uchar_to_float(info->colf, info->col);
 
@@ -212,7 +212,7 @@ static void image_sample_apply(bContext *C, wmOperator *op, const wmEvent *event
       info->colfp = info->colf;
       info->color_manage = true;
     }
-    if (ibuf->float_buffer.data) {
+    if (ibuf->float_data()) {
       image_sample_rect_color_float(ibuf, &sample_rect, info->colf);
 
       if (ibuf->channels == 4) {
@@ -308,8 +308,8 @@ static void sequencer_sample_apply(bContext *C, wmOperator *op, const wmEvent *e
     info->colp = nullptr;
     info->colfp = nullptr;
 
-    if (ibuf->byte_buffer.data) {
-      cp = ibuf->byte_buffer.data + 4 * (y * ibuf->x + x);
+    if (ibuf->byte_data()) {
+      cp = ibuf->byte_data() + 4 * (y * ibuf->x + x);
 
       info->col[0] = cp[0];
       info->col[1] = cp[1];
@@ -329,8 +329,8 @@ static void sequencer_sample_apply(bContext *C, wmOperator *op, const wmEvent *e
 
       info->color_manage = true;
     }
-    if (ibuf->float_buffer.data) {
-      fp = (ibuf->float_buffer.data + (ibuf->channels) * (y * ibuf->x + x));
+    if (ibuf->float_data()) {
+      fp = (ibuf->float_data() + (ibuf->channels) * (y * ibuf->x + x));
 
       info->colf[0] = fp[0];
       info->colf[1] = fp[1];
@@ -338,9 +338,9 @@ static void sequencer_sample_apply(bContext *C, wmOperator *op, const wmEvent *e
       info->colf[3] = fp[3];
       info->colfp = info->colf;
 
-      /* sequencer's image buffers are in non-linear space, need to make them linear */
       copy_v4_v4(info->linearcol, info->colf);
-      seq::render_pixel_from_sequencer_space_v4(scene, info->linearcol);
+      IMB_colormanagement_colorspace_to_scene_linear_v4(
+          info->linearcol, true, ibuf->float_buffer.colorspace);
 
       info->color_manage = true;
     }

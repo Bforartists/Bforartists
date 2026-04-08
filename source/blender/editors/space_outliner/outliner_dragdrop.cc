@@ -198,6 +198,33 @@ static bool is_collection_element(TreeElement *te)
   return outliner_is_collection_tree_element(te);
 }
 
+/* Check if a collection is being dragged inside its own hierarchy. */
+static bool outliner_is_collection_dragged_into_itself(TreeElement *drop_target_te, ID *dragged_id)
+{
+  if (!(drop_target_te && dragged_id && GS(dragged_id->name) == ID_GR)) {
+    return false;
+  }
+
+  /* The drop_target_te could be anything. So, traverse up to get the
+   * parent tree_element that represents a collection. */
+  TreeElement *coll_te = outliner_data_from_tree_element_and_parents(is_collection_element,
+                                                                     drop_target_te);
+
+  while (coll_te && coll_te->parent != nullptr) {
+    /* Get the actual collection type. */
+    Collection *te_parent_coll = outliner_collection_from_tree_element(coll_te->parent);
+
+    if (&te_parent_coll->id == dragged_id) {
+      /* The destination te is inside the dragged collection's hierarchy. */
+      return true;
+    }
+
+    /* Keep going up the hierarchy */
+    coll_te = coll_te->parent;
+  }
+  return false;
+}
+
 static bool is_object_element(TreeElement *te)
 {
   TreeStoreElem *tselem = TREESTORE(te);
@@ -276,7 +303,7 @@ static int outliner_get_insert_index(TreeElement *drag_te,
 /** \name Parent Drop Operator
  * \{ */
 
-static bool parent_drop_allowed(TreeElement *te, Object *potential_child)
+static bool parent_drop_allowed(const Main &bmain, TreeElement *te, Object *potential_child)
 {
   TreeStoreElem *tselem = TREESTORE(te);
   if ((te->idcode != ID_OB) || (tselem->type != TSE_SOME_ID)) {
@@ -303,7 +330,7 @@ static bool parent_drop_allowed(TreeElement *te, Object *potential_child)
    * active scene and parenting them is allowed (sergey) */
   if (scene) {
     for (ViewLayer &view_layer : scene->view_layers) {
-      BKE_view_layer_synced_ensure(scene, &view_layer);
+      BKE_view_layer_synced_ensure(bmain, scene, &view_layer);
       if (BKE_view_layer_base_find(&view_layer, potential_child)) {
         return true;
       }
@@ -350,7 +377,9 @@ static bool parent_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
     return false;
   }
 
-  if (parent_drop_allowed(te, potential_child)) {
+  const Main *bmain = CTX_data_main(C);
+
+  if (parent_drop_allowed(*bmain, te, potential_child)) {
     TREESTORE(te)->flag |= TSE_DRAG_INTO;
     ED_region_tag_redraw_no_rebuild(CTX_wm_region(C));
     return true;
@@ -578,7 +607,7 @@ static wmOperatorStatus scene_drop_invoke(bContext *C, wmOperator * /*op*/, cons
     return OPERATOR_CANCELLED;
   }
 
-  if (BKE_scene_has_object(scene, ob)) {
+  if (BKE_scene_has_object(*bmain, scene, ob)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -594,7 +623,7 @@ static wmOperatorStatus scene_drop_invoke(bContext *C, wmOperator * /*op*/, cons
   BKE_collection_object_add(bmain, collection, ob);
 
   for (ViewLayer &view_layer : scene->view_layers) {
-    BKE_view_layer_synced_ensure(scene, &view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, &view_layer);
     Base *base = BKE_view_layer_base_find(&view_layer, ob);
     if (base) {
       object::base_select(base, object::BA_SELECT);
@@ -1159,6 +1188,10 @@ static bool collection_drop_init(bContext *C, wmDrag *drag, const int xy[2], Col
 
   ID *id = drag_id->id;
   if (!(id && ELEM(GS(id->name), ID_GR, ID_OB))) {
+    return false;
+  }
+
+  if (outliner_is_collection_dragged_into_itself(te, id)) {
     return false;
   }
 

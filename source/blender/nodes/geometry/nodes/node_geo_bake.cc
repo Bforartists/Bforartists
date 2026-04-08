@@ -68,8 +68,8 @@ static void node_declare(NodeDeclarationBuilder &b)
   for (const int i : IndexRange(storage.items_num)) {
     const NodeGeometryBakeItem &item = storage.items[i];
     const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-    const StringRef name = item.name;
-    const std::string identifier = BakeItemsAccessor::socket_identifier_for_item(item);
+    const UString name(item.name);
+    const UString identifier(BakeItemsAccessor::socket_identifier_for_item(item));
     auto &input_decl = b.add_input(socket_type, name, identifier)
                            .socket_name_ptr(
                                &ntree->id, *BakeItemsAccessor::item_srna, &item, "name");
@@ -90,8 +90,8 @@ static void node_declare(NodeDeclarationBuilder &b)
           .pass_through_input_index(input_decl.index());
     }
   }
-  b.add_input<decl::Extend>("", "__extend__").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Extend>("", "__extend__")
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Extend>(""_ustr, "__extend__"_ustr)
       .structure_type(StructureType::Dynamic)
       .align_with_previous();
 }
@@ -428,17 +428,18 @@ class LazyFunctionForBakeNode final : public LazyFunction {
         });
   }
 
-  std::shared_ptr<AttributeFieldInput> make_attribute_field(const Object &self_object,
-                                                            const ComputeContext &compute_context,
-                                                            const NodeGeometryBakeItem &item,
-                                                            const CPPType &type) const
+  ImplicitSharingPtr<AttributeFieldInput> make_attribute_field(
+      const Object &self_object,
+      const ComputeContext &compute_context,
+      const NodeGeometryBakeItem &item,
+      const CPPType &type) const
   {
     std::string attribute_name = bke::hash_to_anonymous_attribute_name(
         compute_context.hash(), self_object.id.name, node_.identifier, item.identifier);
     std::string socket_inspection_name = make_anonymous_attribute_socket_inspection_string(
         node_.label_or_name(), item.name);
-    return std::make_shared<AttributeFieldInput>(
-        std::move(attribute_name), type, std::move(socket_inspection_name));
+    return ImplicitSharingPtr<AttributeFieldInput>(MEM_new<AttributeFieldInput>(
+        __func__, std::move(attribute_name), type, std::move(socket_inspection_name)));
   }
 };
 
@@ -523,7 +524,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         bNode &node = params.add_node("GeometryNodeBake");
         socket_items::add_item_with_socket_type_and_name<BakeItemsAccessor>(
             params.node_tree, node, type, params.socket.name);
-        params.update_and_connect_available_socket(node, params.socket.name);
+        params.update_and_connect_available_socket(node, UString(params.socket.name));
       },
       -1);
 }
@@ -533,7 +534,7 @@ static const bNodeSocket *node_internally_linked_input(const bNodeTree & /*tree*
                                                        const bNodeSocket &output_socket)
 {
   /* Internal links should always map corresponding input and output sockets. */
-  return node.input_by_identifier(output_socket.identifier);
+  return node.input_by_identifier(output_socket.identifier_ustr());
 }
 
 static void node_blend_write(const bNodeTree & /*tree*/, const bNode &node, BlendWriter &writer)

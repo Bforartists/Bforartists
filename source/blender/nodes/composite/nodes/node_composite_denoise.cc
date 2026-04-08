@@ -71,28 +71,30 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Color>("Albedo")
+  b.add_input<decl::Color>("Albedo"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Vector>("Normal")
+  b.add_input<decl::Vector>("Normal"_ustr)
       .default_value({0.0f, 0.0f, 0.0f})
       .min(-1.0f)
       .max(1.0f)
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Bool>("HDR").default_value(true);
-  b.add_input<decl::Menu>("Prefilter")
+  b.add_input<decl::Bool>("HDR"_ustr).default_value(true);
+  b.add_input<decl::Menu>("Prefilter"_ustr)
       .default_value(CMP_NODE_DENOISE_PREFILTER_ACCURATE)
       .static_items(prefilter_items)
       .optional_label();
-  b.add_input<decl::Menu>("Quality")
+  b.add_input<decl::Menu>("Quality"_ustr)
       .default_value(CMP_NODE_DENOISE_QUALITY_SCENE)
       .static_items(quality_items)
       .optional_label();

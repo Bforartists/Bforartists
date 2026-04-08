@@ -34,30 +34,35 @@ static const EnumPropertyItem type_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Mask").default_value(0.0f).min(0.0f).max(1.0f).structure_type(
-      StructureType::Dynamic);
-  b.add_input<decl::Int>("Size").default_value(0).description(
-      "The size of dilation/erosion in pixels. Positive values dilates and negative values "
-      "erodes");
-  b.add_input<decl::Menu>("Type")
+  b.add_input<decl::Float>("Mask"_ustr)
+      .default_value(0.0f)
+      .min(0.0f)
+      .max(1.0f)
+      .structure_type(StructureType::Dynamic);
+  b.add_input<decl::Int>("Size"_ustr)
+      .default_value(0)
+      .description(
+          "The size of dilation/erosion in pixels. Positive values dilates and negative values "
+          "erodes");
+  b.add_input<decl::Menu>("Type"_ustr)
       .default_value(CMP_NODE_DILATE_ERODE_STEP)
       .static_items(type_items)
       .optional_label();
-  b.add_input<decl::Float>("Falloff Size")
+  b.add_input<decl::Float>("Falloff Size"_ustr)
       .default_value(0.0f)
       .min(0.0f)
-      .usage_by_menu("Type", CMP_NODE_DILATE_ERODE_DISTANCE_THRESHOLD)
+      .usage_by_menu("Type"_ustr, CMP_NODE_DILATE_ERODE_DISTANCE_THRESHOLD)
       .description(
           "The size of the falloff from the edges in pixels. If less than two pixels, the edges "
           "will be anti-aliased");
-  b.add_input<decl::Menu>("Falloff")
+  b.add_input<decl::Menu>("Falloff"_ustr)
       .default_value(PROP_SMOOTH)
       .static_items(rna_enum_proportional_falloff_curve_only_items)
       .optional_label()
-      .usage_by_menu("Type", CMP_NODE_DILATE_ERODE_DISTANCE_FEATHER)
+      .usage_by_menu("Type"_ustr, CMP_NODE_DILATE_ERODE_DISTANCE_FEATHER)
       .translation_context(BLT_I18NCONTEXT_ID_CURVE_LEGACY);
 
-  b.add_output<decl::Float>("Mask").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Mask"_ustr).structure_type(StructureType::Dynamic);
 }
 
 static void node_init(bNodeTree * /*ntree*/, bNode *node)

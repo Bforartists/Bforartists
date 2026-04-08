@@ -1266,7 +1266,7 @@ static blender::ImBuf *NSImageToImBuf(NSImage *image)
       return nullptr;
     }
 
-    uint8_t *ibuf_data = ibuf->byte_buffer.data;
+    uint8_t *ibuf_data = ibuf->byte_data_for_write();
     uint8_t *bmp_data = (uint8_t *)bitmapImage.bitmapData;
 
     /* Vertical Flip. */
@@ -2112,7 +2112,7 @@ uint *GHOST_SystemCocoa::getClipboardImage(int *r_width, int *r_height) const
         return nullptr;
       }
 
-      memcpy(rgba, ibuf->byte_buffer.data, byteCount);
+      memcpy(rgba, ibuf->byte_data(), byteCount);
       blender::IMB_freeImBuf(ibuf);
 
       *r_width = clipboardImageSize.width;

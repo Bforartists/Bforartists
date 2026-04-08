@@ -28,12 +28,12 @@ namespace blender::nodes::node_composite_movie_clip_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Offset X");
-  b.add_output<decl::Float>("Offset Y");
-  b.add_output<decl::Float>("Scale");
-  b.add_output<decl::Float>("Angle");
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Offset X"_ustr);
+  b.add_output<decl::Float>("Offset Y"_ustr);
+  b.add_output<decl::Float>("Scale"_ustr);
+  b.add_output<decl::Float>("Angle"_ustr);
 }
 
 static void node_init(const bContext *C, PointerRNA *ptr)
@@ -95,12 +95,13 @@ class MovieClipOperation : public NodeOperation {
     result.allocate_texture(Domain(size));
 
     if (context().use_gpu()) {
-      GPU_texture_update(result, GPU_DATA_FLOAT, movie_clip_buffer->float_buffer.data);
+      GPU_texture_update(result, GPU_DATA_FLOAT, movie_clip_buffer->float_data());
     }
     else {
+      const float *src = movie_clip_buffer->float_data();
       parallel_for(size, [&](const int2 texel) {
         int64_t pixel_index = (int64_t(texel.y) * size.x + texel.x) * 4;
-        result.store_pixel(texel, Color(movie_clip_buffer->float_buffer.data + pixel_index));
+        result.store_pixel(texel, Color(src + pixel_index));
       });
     }
   }
@@ -123,17 +124,19 @@ class MovieClipOperation : public NodeOperation {
 
     if (context().use_gpu()) {
       Array<float> alpha_values(size.x * size.y);
+      const float *src = movie_clip_buffer->float_data();
       parallel_for(size, [&](const int2 texel) {
         int64_t pixel_index = int64_t(texel.y) * size.x + texel.x;
         int64_t input_pixel_index = pixel_index * 4;
-        alpha_values[pixel_index] = movie_clip_buffer->float_buffer.data[input_pixel_index + 3];
+        alpha_values[pixel_index] = src[input_pixel_index + 3];
       });
       GPU_texture_update(result, GPU_DATA_FLOAT, alpha_values.data());
     }
     else {
+      const float *src = movie_clip_buffer->float_data();
       parallel_for(size, [&](const int2 texel) {
         int64_t pixel_index = (int64_t(texel.y) * size.x + texel.x) * 4;
-        result.store_pixel(texel, movie_clip_buffer->float_buffer.data[pixel_index + 3]);
+        result.store_pixel(texel, src[pixel_index + 3]);
       });
     }
   }
@@ -217,13 +220,13 @@ class MovieClipOperation : public NodeOperation {
       return nullptr;
     }
 
-    if (movie_clip_buffer->float_buffer.data) {
+    if (movie_clip_buffer->float_data()) {
       return movie_clip_buffer;
     }
 
     /* Create a float buffer from the byte buffer if it exists, if not, return nullptr. */
     IMB_float_from_byte(movie_clip_buffer);
-    if (!movie_clip_buffer->float_buffer.data) {
+    if (!movie_clip_buffer->float_data()) {
       return nullptr;
     }
 

@@ -321,7 +321,7 @@ bool IMB_alloc_float_pixels(ImBuf *ibuf, const uint channels, bool initialize_pi
     return false;
   }
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     IMB_free_float_pixels(ibuf);
   }
 
@@ -525,13 +525,13 @@ ImBuf *IMB_allocFromBuffer(
      * needs a dedicated investigation. */
     imb_alloc_buffer(ibuf->float_buffer, w, h, 4, sizeof(float), false);
 
-    memcpy(ibuf->float_buffer.data, float_buffer, sizeof(float[4]) * w * h);
+    memcpy(ibuf->float_data_for_write(), float_buffer, sizeof(float[4]) * w * h);
   }
 
   if (byte_buffer) {
     imb_alloc_buffer(ibuf->byte_buffer, w, h, 4, sizeof(uint8_t), false);
 
-    memcpy(ibuf->byte_buffer.data, byte_buffer, sizeof(uint8_t[4]) * w * h);
+    memcpy(ibuf->byte_data_for_write(), byte_buffer, sizeof(uint8_t[4]) * w * h);
   }
 
   return ibuf;
@@ -594,7 +594,7 @@ ImBuf *IMB_dupImBuf(const ImBuf *ibuf1)
     return nullptr;
   }
 
-  if (ibuf1->byte_buffer.data) {
+  if (ibuf1->byte_data()) {
     flags |= IB_byte_data;
   }
 
@@ -607,10 +607,10 @@ ImBuf *IMB_dupImBuf(const ImBuf *ibuf1)
   }
 
   if (flags & IB_byte_data) {
-    memcpy(ibuf2->byte_buffer.data, ibuf1->byte_buffer.data, size_t(x) * y * 4 * sizeof(uint8_t));
+    memcpy(ibuf2->byte_data_for_write(), ibuf1->byte_data(), size_t(x) * y * 4 * sizeof(uint8_t));
   }
 
-  if (ibuf1->float_buffer.data) {
+  if (ibuf1->float_data()) {
     /* Ensure the correct number of channels are being allocated for the new #ImBuf. Some
      * compositing scenarios might end up with >4 channels and we want to duplicate them properly.
      */
@@ -619,8 +619,8 @@ ImBuf *IMB_dupImBuf(const ImBuf *ibuf1)
       return nullptr;
     }
 
-    memcpy(ibuf2->float_buffer.data,
-           ibuf1->float_buffer.data,
+    memcpy(ibuf2->float_data_for_write(),
+           ibuf1->float_data(),
            size_t(ibuf2->channels) * x * y * sizeof(float));
   }
 
@@ -675,11 +675,11 @@ size_t IMB_get_size_in_memory(const ImBuf *ibuf)
 
   size += sizeof(ImBuf);
 
-  if (ibuf->byte_buffer.data) {
+  if (ibuf->byte_data()) {
     channel_size += sizeof(char);
   }
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     channel_size += sizeof(float);
   }
 

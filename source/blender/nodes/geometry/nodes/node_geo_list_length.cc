@@ -22,10 +22,10 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   if (node != nullptr) {
     const eNodeSocketDatatype type = eNodeSocketDatatype(node->custom1);
-    b.add_input(type, "List").structure_type(StructureType::List).hide_value();
+    b.add_input(type, "List"_ustr).structure_type(StructureType::List).hide_value();
   }
 
-  b.add_output<decl::Int>("Length");
+  b.add_output<decl::Int>("Length"_ustr);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -35,7 +35,7 @@ static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 
 class SocketSearchOp {
  public:
-  const StringRef socket_name;
+  UString socket_name;
   eNodeSocketDatatype socket_type;
   void operator()(LinkSearchOpParams &params)
   {
@@ -52,23 +52,23 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   }
   const eNodeSocketDatatype socket_type = eNodeSocketDatatype(params.other_socket().type);
   if (params.in_out() == SOCK_IN) {
-    params.add_item(IFACE_("List"), SocketSearchOp{"List", socket_type});
+    params.add_item(IFACE_("List"), SocketSearchOp{"List"_ustr, socket_type});
   }
   else {
     if (params.node_tree().typeinfo->validate_link(socket_type, SOCK_INT)) {
-      params.add_item(IFACE_("Length"), SocketSearchOp{"Length", SOCK_INT});
+      params.add_item(IFACE_("Length"), SocketSearchOp{"Length"_ustr, SOCK_INT});
     }
   }
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  ListPtr list = params.extract_input<ListPtr>("List");
+  ListPtr list = params.extract_input<ListPtr>("List"_ustr);
   if (!list) {
     params.set_default_remaining_outputs();
     return;
   }
-  params.set_output("Length", int(list->size()));
+  params.set_output("Length"_ustr, int(list->size()));
 }
 
 static void node_rna(StructRNA *srna)

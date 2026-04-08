@@ -25,17 +25,25 @@ NODE_STORAGE_FUNCS(NodeTexNoise)
 static void sh_node_tex_noise_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Vector").implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Float>("W").min(-1000.0f).max(1000.0f).make_available([](bNode &node) {
+  b.add_input<decl::Vector>("Vector"_ustr).implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_input<decl::Float>("W"_ustr).min(-1000.0f).max(1000.0f).make_available([](bNode &node) {
     /* Default to 1 instead of 4, because it is much faster. */
     node_storage(node).dimensions = 1;
   });
-  b.add_input<decl::Float>("Scale").min(-1000.0f).max(1000.0f).default_value(5.0f).description(
-      "Scale of the base noise octave");
-  b.add_input<decl::Float>("Detail").min(0.0f).max(15.0f).default_value(2.0f).description(
-      "The number of noise octaves. Higher values give more detailed noise but increase render "
-      "time");
-  b.add_input<decl::Float>("Roughness")
+  b.add_input<decl::Float>("Scale"_ustr)
+      .min(-1000.0f)
+      .max(1000.0f)
+      .default_value(5.0f)
+      .description("Scale of the base noise octave");
+  b.add_input<decl::Float>("Detail"_ustr)
+      .min(0.0f)
+      .max(15.0f)
+      .default_value(2.0f)
+      .description(
+          "The number of noise octaves. Higher values give more detailed noise but increase "
+          "render "
+          "time");
+  b.add_input<decl::Float>("Roughness"_ustr)
       .min(0.0f)
       .max(1.0f)
       .default_value(0.5f)
@@ -43,14 +51,14 @@ static void sh_node_tex_noise_declare(NodeDeclarationBuilder &b)
       .description(
           "Blend factor between an octave and its previous one. A value of zero corresponds to "
           "zero detail");
-  b.add_input<decl::Float>("Lacunarity")
+  b.add_input<decl::Float>("Lacunarity"_ustr)
       .min(0.0f)
       .max(1000.0f)
       .default_value(2.0f)
       .description(
           "The difference between the scale of each two consecutive octaves. Larger values "
           "corresponds to larger scale for higher octaves");
-  b.add_input<decl::Float>("Offset")
+  b.add_input<decl::Float>("Offset"_ustr)
       .min(-1000.0f)
       .max(1000.0f)
       .default_value(0.0f)
@@ -58,19 +66,19 @@ static void sh_node_tex_noise_declare(NodeDeclarationBuilder &b)
       .description(
           "An added offset to each octave, determines the level where the highest octave will "
           "appear");
-  b.add_input<decl::Float>("Gain")
+  b.add_input<decl::Float>("Gain"_ustr)
       .min(0.0f)
       .max(1000.0f)
       .default_value(1.0f)
       .make_available([](bNode &node) { node_storage(node).type = SHD_NOISE_RIDGED_MULTIFRACTAL; })
       .description("An extra multiplier to tune the magnitude of octaves");
-  b.add_input<decl::Float>("Distortion")
+  b.add_input<decl::Float>("Distortion"_ustr)
       .min(-1000.0f)
       .max(1000.0f)
       .default_value(0.0f)
       .description("Amount of distortion");
-  b.add_output<decl::Float>("Factor", "Fac").no_muted_links();
-  b.add_output<decl::Color>("Color").no_muted_links();
+  b.add_output<decl::Float>("Factor"_ustr, "Fac"_ustr).no_muted_links();
+  b.add_output<decl::Color>("Color"_ustr).no_muted_links();
 }
 
 static void node_shader_buts_tex_noise(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

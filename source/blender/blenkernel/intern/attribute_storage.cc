@@ -27,6 +27,8 @@
 #include "BKE_attribute_storage_blend_write.hh"
 #include "BKE_idtype.hh"
 
+#include <ranges>
+
 namespace blender {
 
 static CLG_LogRef LOG = {"geom.attribute"};
@@ -305,6 +307,14 @@ bool AttributeStorage::remove(const StringRef name)
   return true;
 }
 
+bool AttributeStorage::remove(const Set<StringRef> &names)
+{
+  const int start_size = this->runtime->attributes.size();
+  this->runtime->attributes.remove_if(
+      [&](const std::unique_ptr<Attribute> &attr) { return names.contains(attr->name()); });
+  return this->runtime->attributes.size() != start_size;
+}
+
 std::string AttributeStorage::unique_name_calc(const StringRef name) const
 {
   const StringRef name_final = name.is_empty() ? DATA_("Attribute") : name;
@@ -314,16 +324,46 @@ std::string AttributeStorage::unique_name_calc(const StringRef name) const
       name_final);
 }
 
-void AttributeStorage::rename(const StringRef old_name, std::string new_name)
+void AttributeStorage::rename(Attribute &attr, std::string new_name)
 {
   BLI_assert(!new_name.empty());
   /* The VectorSet must be rebuilt from scratch because the data used to create the hash is
    * changed. */
-  const int index = this->runtime->attributes.index_of_try_as(old_name);
   Vector<std::unique_ptr<Attribute>> old_vector = this->runtime->attributes.extract_vector();
-  old_vector[index]->name_ = std::move(new_name);
+  attr.name_ = std::move(new_name);
   this->runtime->attributes.reserve(old_vector.size());
   for (std::unique_ptr<Attribute> &attribute : old_vector) {
+    if (attribute->name() == attr.name_ && attribute.get() != &attr) {
+      continue;
+    }
+    this->runtime->attributes.add_new(std::move(attribute));
+  }
+}
+
+void AttributeStorage::rename(const StringRef old_name, std::string new_name)
+{
+  BLI_assert(this->lookup(old_name) != nullptr);
+  this->rename(*this->lookup(old_name), std::move(new_name));
+}
+
+void AttributeStorage::rename(const Map<Attribute *, StringRef> &renames)
+{
+  /* All the attributes need to be contained in this #AttributeStorage. */
+  BLI_assert(std::all_of(renames.keys().begin(), renames.keys().end(), [&](const Attribute *attr) {
+    return std::any_of(this->runtime->attributes.begin(),
+                       this->runtime->attributes.end(),
+                       [&](const std::unique_ptr<Attribute> &a) { return a.get() == attr; });
+  }));
+  Vector<std::unique_ptr<Attribute>, 16> renamed;
+  renamed.reserve(this->runtime->attributes.size());
+  while (!this->runtime->attributes.is_empty()) {
+    std::unique_ptr<Attribute> attr = this->runtime->attributes.pop();
+    if (const std::optional<StringRef> name = renames.lookup_try(attr.get())) {
+      attr->name_ = *name;
+    }
+    renamed.append_unchecked(std::move(attr));
+  }
+  for (std::unique_ptr<Attribute> &attribute : renamed | std::views::reverse) {
     this->runtime->attributes.add_new(std::move(attribute));
   }
 }
@@ -643,6 +683,7 @@ void attribute_storage_blend_write_prepare(AttributeStorage &data,
     }
 
     write_data.attributes.append(attribute_dna);
+    BLO_write_generated_pointer_tag(write_data.writer, attribute_dna.data);
   }
   data.runtime = nullptr;
 }
@@ -659,8 +700,8 @@ static void write_shared_array(BlendWriter &writer,
   });
 }
 
-AttributeStorage::BlendWriteData::BlendWriteData(ResourceScope &scope)
-    : scope(scope), attributes(scope.construct<Vector<blender::Attribute, 16>>())
+AttributeStorage::BlendWriteData::BlendWriteData(BlendWriter *writer, ResourceScope &scope)
+    : writer(writer), scope(scope), attributes(scope.construct<Vector<blender::Attribute, 16>>())
 {
 }
 

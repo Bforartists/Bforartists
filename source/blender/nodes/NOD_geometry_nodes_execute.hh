@@ -19,6 +19,7 @@ namespace blender {
 
 struct bNodeTree;
 struct bNodeTreeInterfaceSocket;
+struct PointerRNA;
 namespace bke {
 struct GeometrySet;
 }
@@ -42,9 +43,6 @@ struct IDPropNameGetter {
   }
 };
 
-std::optional<StringRef> input_attribute_name_get(const IDProperty *properties,
-                                                  const bNodeTreeInterfaceSocket &io_input);
-
 /**
  * \return Whether using an attribute to input values of this type is supported.
  */
@@ -56,29 +54,11 @@ bool socket_type_has_attribute_toggle(eNodeSocketDatatype type);
  */
 bool input_has_attribute_toggle(const bNodeTree &node_tree, const int socket_index);
 
-bool id_property_type_matches_socket(const bNodeTreeInterfaceSocket &socket,
-                                     const IDProperty &property,
-                                     bool use_name_for_ids = false);
-
-std::unique_ptr<IDProperty, bke::idprop::IDPropertyDeleter> id_property_create_from_socket(
-    const bNodeTreeInterfaceSocket &socket,
-    nodes::StructureType structure_type,
-    bool use_name_for_ids);
-
 bke::GeometrySet execute_geometry_nodes_on_geometry(const bNodeTree &btree,
-                                                    const IDProperty *properties,
+                                                    const PointerRNA &properties_ptr,
                                                     const ComputeContext &base_compute_context,
                                                     GeoNodesCallData &call_data,
                                                     bke::GeometrySet input_geometry);
-
-void update_input_properties_from_node_tree(const bNodeTree &tree,
-                                            const IDProperty *old_properties,
-                                            IDProperty &properties,
-                                            bool use_name_for_ids = false);
-
-void update_output_properties_from_node_tree(const bNodeTree &tree,
-                                             const IDProperty *old_properties,
-                                             IDProperty &properties);
 
 /**
  * Get input values for the node tree for static value/usage inferencing. Inferencing does not
@@ -86,7 +66,7 @@ void update_output_properties_from_node_tree(const bNodeTree &tree,
  * this function may return #InferenceValue::Unknown for some sockets.
  */
 Vector<InferenceValue> get_geometry_nodes_input_inference_values(const bNodeTree &btree,
-                                                                 const IDProperty *properties,
+                                                                 const PointerRNA &properties_ptr,
                                                                  ResourceScope &scope);
 
 }  // namespace nodes

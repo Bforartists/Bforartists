@@ -1538,7 +1538,7 @@ Mesh *subdiv_to_mesh(Subdiv *subdiv, const ToMeshSettings *settings, const Mesh 
   subdiv_context.coarse_edges = coarse_mesh->edges();
   subdiv_context.coarse_faces = coarse_mesh->faces();
   subdiv_context.coarse_corner_verts = coarse_mesh->corner_verts();
-  if (coarse_mesh->loose_edges().count > 0) {
+  if (!coarse_mesh->loose_edges().is_empty()) {
     subdiv_context.vert_to_edge_map = mesh::build_vert_to_edge_map(
         subdiv_context.coarse_edges,
         coarse_mesh->verts_num,
@@ -1571,10 +1571,10 @@ Mesh *subdiv_to_mesh(Subdiv *subdiv, const ToMeshSettings *settings, const Mesh 
         subdiv_context.subdiv_display_edges);
   }
 
-  if (coarse_mesh->verts_no_face().count == 0) {
+  if (coarse_mesh->verts_no_face().is_empty()) {
     result->tag_loose_verts_none();
   }
-  if (coarse_mesh->loose_edges().count == 0) {
+  if (coarse_mesh->loose_edges().is_empty()) {
     result->tag_loose_edges_none();
   }
   result->tag_overlapping_none();

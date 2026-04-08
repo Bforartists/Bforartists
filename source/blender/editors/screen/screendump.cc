@@ -127,7 +127,7 @@ static wmOperatorStatus screenshot_exec(bContext *C, wmOperator *op)
       /* crop to show only single editor */
       if (use_crop) {
         IMB_rect_crop(ibuf, &scd->crop);
-        scd->dumprect = ibuf->byte_buffer.data;
+        scd->dumprect = ibuf->byte_data_for_write();
       }
 
       if ((scd->im_format.planes == R_IMF_PLANES_BW) &&

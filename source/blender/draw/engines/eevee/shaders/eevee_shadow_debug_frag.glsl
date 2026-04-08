@@ -38,7 +38,7 @@ float3 debug_random_color(int v)
   return debug_random_color(int2(v, 0));
 }
 
-void debug_tile_print(ShadowTileData tile, int4 tile_coord)
+void debug_tile_print([[maybe_unused]] ShadowTileData tile, [[maybe_unused]] int4 tile_coord)
 {
   /* This `printf` injection is based on string literal detection. Comment it out unless needed. */
   /* NOTE: using `#if 0` here causes a crash on exit for debug builds, stick to C++ comments. */
@@ -123,7 +123,7 @@ LightData debug_light_get()
 }
 
 /** Return true if a pixel was written. */
-bool debug_tilemaps(float3 P, LightData light, bool do_debug_sample_tile)
+bool debug_tilemaps(float3 /*P*/, LightData light, bool do_debug_sample_tile)
 {
   constexpr int debug_tile_size_px = 4;
   int2 px = int2(gl_FragCoord.xy) / debug_tile_size_px;
@@ -138,7 +138,7 @@ bool debug_tilemaps(float3 P, LightData light, bool do_debug_sample_tile)
       /* Leave 1 px border between tile-maps. */
       if (!any(equal(int2(gl_FragCoord.xy) % (SHADOW_TILEMAP_RES * debug_tile_size_px), int2(0))))
       {
-        gl_FragDepth = 0.0f;
+        gl_FragDepth = 1.0f;
         out_color_add = float4(debug_tile_lod(light.type, tile), 0.0f);
         out_color_mul = float4(0.0f);
 
@@ -154,7 +154,7 @@ bool debug_tilemaps(float3 P, LightData light, bool do_debug_sample_tile)
       /* Leave 1 px border between tile-maps. */
       if (!any(equal(int2(gl_FragCoord.xy) % (SHADOW_TILEMAP_RES * debug_tile_size_px), int2(0))))
       {
-        gl_FragDepth = 0.0f;
+        gl_FragDepth = 1.0f;
         out_color_add = float4(debug_tile_state_color(tile), 0.0f);
         out_color_mul = float4(0.0f);
 
@@ -202,14 +202,13 @@ void debug_random_tilemap_color(float3 P, LightData light)
 void main()
 {
   /* Default to no output. */
-  gl_FragDepth = 1.0f;
   out_color_add = float4(0.0f);
   out_color_mul = float4(1.0f);
 
   float depth = texelFetch(hiz_tx, int2(gl_FragCoord.xy), 0).r;
   float3 P = drw_point_screen_to_world(float3(screen_uv, depth));
   /* Make it pass the depth test. */
-  gl_FragDepth = depth - 1e-6f;
+  gl_FragDepth = 1.0f - depth + 1e-6f;
 
   LightData light = debug_light_get();
 

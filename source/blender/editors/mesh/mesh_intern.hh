@@ -24,6 +24,7 @@ struct BMVert;
 struct BMOperator;
 struct EnumPropertyItem;
 struct LinkNode;
+struct Main;
 struct Object;
 struct Scene;
 struct wmGizmoGroupType;
@@ -88,9 +89,14 @@ BMElem *EDBM_elem_from_selectmode(BMEditMesh *em, BMVert *eve, BMEdge *eed, BMFa
 int EDBM_elem_to_index_any(BMEditMesh *em, BMElem *ele);
 BMElem *EDBM_elem_from_index_any(BMEditMesh *em, uint index);
 
-int EDBM_elem_to_index_any_multi(
-    const Scene *scene, ViewLayer *view_layer, BMEditMesh *em, BMElem *ele, int *r_object_index);
-BMElem *EDBM_elem_from_index_any_multi(const Scene *scene,
+int EDBM_elem_to_index_any_multi(const Main &bmain,
+                                 const Scene *scene,
+                                 ViewLayer *view_layer,
+                                 BMEditMesh *em,
+                                 BMElem *ele,
+                                 int *r_object_index);
+BMElem *EDBM_elem_from_index_any_multi(const Main &bmain,
+                                       const Scene *scene,
                                        ViewLayer *view_layer,
                                        uint object_index,
                                        uint elem_index,
@@ -198,6 +204,7 @@ void MESH_OT_select_similar_region(wmOperatorType *ot);
 void MESH_OT_select_mode(wmOperatorType *ot);
 void MESH_OT_select_edge_loop_multi(wmOperatorType *ot);
 void MESH_OT_select_edge_ring_multi(wmOperatorType *ot);
+void MESH_OT_select_boundary_loop_multi(wmOperatorType *ot);
 void MESH_OT_loop_select(wmOperatorType *ot);
 void MESH_OT_edgering_select(wmOperatorType *ot);
 void MESH_OT_select_all(wmOperatorType *ot);

@@ -64,27 +64,27 @@ ClosureUndetermined g_closure_get_resolved(uchar i, float weight_fac)
   return cl;
 }
 
-ClosureType closure_type_get(ClosureDiffuse cl)
+ClosureType closure_type_get(ClosureDiffuse /*cl*/)
 {
   return CLOSURE_BSDF_DIFFUSE_ID;
 }
 
-ClosureType closure_type_get(ClosureTranslucent cl)
+ClosureType closure_type_get(ClosureTranslucent /*cl*/)
 {
   return CLOSURE_BSDF_TRANSLUCENT_ID;
 }
 
-ClosureType closure_type_get(ClosureReflection cl)
+ClosureType closure_type_get(ClosureReflection /*cl*/)
 {
   return CLOSURE_BSDF_MICROFACET_GGX_REFLECTION_ID;
 }
 
-ClosureType closure_type_get(ClosureRefraction cl)
+ClosureType closure_type_get(ClosureRefraction /*cl*/)
 {
   return CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID;
 }
 
-ClosureType closure_type_get(ClosureSubsurface cl)
+ClosureType closure_type_get(ClosureSubsurface /*cl*/)
 {
   return CLOSURE_BSSRDF_BURLEY_ID;
 }

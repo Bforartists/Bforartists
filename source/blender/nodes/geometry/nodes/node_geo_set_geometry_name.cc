@@ -10,17 +10,17 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry").description("Geometry to override the name of");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::String>("Name").optional_label();
+  b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to override the name of");
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::String>("Name"_ustr).optional_label();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
-  std::string name = params.extract_input<std::string>("Name");
-  geometry_set.name = std::move(name);
-  params.set_output("Geometry", std::move(geometry_set));
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
+  std::string name = params.extract_input<std::string>("Name"_ustr);
+  geometry_set.set_name(std::move(name));
+  params.set_output("Geometry"_ustr, std::move(geometry_set));
 }
 
 static void node_register()

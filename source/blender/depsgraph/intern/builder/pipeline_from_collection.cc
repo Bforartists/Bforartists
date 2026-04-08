@@ -9,6 +9,7 @@
 #include "DNA_layer_types.h"
 
 #include "DEG_depsgraph.hh"
+#include "DEG_depsgraph_query.hh"
 
 #include "intern/builder/deg_builder_nodes.h"
 #include "intern/builder/deg_builder_relations.h"
@@ -81,7 +82,8 @@ FromCollectionBuilderPipeline::FromCollectionBuilderPipeline(blender::Depsgraph 
                                                              Collection *collection)
     : AbstractBuilderPipeline(graph)
 {
-  Base *base = BKE_collection_or_layer_objects(scene_, view_layer_, collection);
+  Base *base = BKE_collection_or_layer_objects(
+      *DEG_get_bmain(graph), scene_, view_layer_, collection);
   const int base_flag = (deg_graph_->mode == DAG_EVAL_RENDER) ? BASE_ENABLED_RENDER :
                                                                 BASE_ENABLED_VIEWPORT;
   for (; base; base = base->next) {

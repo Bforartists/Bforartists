@@ -22,33 +22,33 @@ namespace blender::nodes::node_geo_volume_cube_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Density")
+  b.add_input<decl::Float>("Density"_ustr)
       .default_value(1.0f)
       .description("Volume density per voxel")
       .supports_field();
-  b.add_input<decl::Float>("Background").description("Value for voxels outside of the cube");
+  b.add_input<decl::Float>("Background"_ustr).description("Value for voxels outside of the cube");
 
-  b.add_input<decl::Vector>("Min")
+  b.add_input<decl::Vector>("Min"_ustr)
       .default_value(float3(-1.0f))
       .description("Minimum boundary of volume");
-  b.add_input<decl::Vector>("Max")
+  b.add_input<decl::Vector>("Max"_ustr)
       .default_value(float3(1.0f))
       .description("Maximum boundary of volume");
 
-  b.add_input<decl::Int>("Resolution X")
+  b.add_input<decl::Int>("Resolution X"_ustr)
       .default_value(32)
       .min(2)
       .description("Number of voxels in the X axis");
-  b.add_input<decl::Int>("Resolution Y")
+  b.add_input<decl::Int>("Resolution Y"_ustr)
       .default_value(32)
       .min(2)
       .description("Number of voxels in the Y axis");
-  b.add_input<decl::Int>("Resolution Z")
+  b.add_input<decl::Int>("Resolution Z"_ustr)
       .default_value(32)
       .min(2)
       .description("Number of voxels in the Z axis");
 
-  b.add_output<decl::Geometry>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
+  b.add_output<decl::Geometry>("Volume"_ustr).translation_context(BLT_I18NCONTEXT_ID_ID);
 }
 
 static float map(const float x,
@@ -114,12 +114,12 @@ class Grid3DFieldContext : public FieldContext {
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  const float3 bounds_min = params.extract_input<float3>("Min");
-  const float3 bounds_max = params.extract_input<float3>("Max");
+  const float3 bounds_min = params.extract_input<float3>("Min"_ustr);
+  const float3 bounds_max = params.extract_input<float3>("Max"_ustr);
 
-  const int3 resolution = int3(params.extract_input<int>("Resolution X"),
-                               params.extract_input<int>("Resolution Y"),
-                               params.extract_input<int>("Resolution Z"));
+  const int3 resolution = int3(params.extract_input<int>("Resolution X"_ustr),
+                               params.extract_input<int>("Resolution Y"_ustr),
+                               params.extract_input<int>("Resolution Z"_ustr));
 
   if (resolution.x < 2 || resolution.y < 2 || resolution.z < 2) {
     params.error_message_add(NodeWarningType::Error, TIP_("Resolution must be greater than 1"));
@@ -143,7 +143,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  Field<float> input_field = params.extract_input<Field<float>>("Density");
+  Field<float> input_field = params.extract_input<Field<float>>("Density"_ustr);
 
   /* Evaluate input field on a 3D grid. */
   Grid3DFieldContext context(resolution, bounds_min, bounds_max);
@@ -153,7 +153,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   evaluator.evaluate();
 
   /* Store resulting values in openvdb grid. */
-  const float background = params.extract_input<float>("Background");
+  const float background = params.extract_input<float>("Background"_ustr);
   openvdb::FloatGrid::Ptr grid = openvdb::FloatGrid::create(background);
   grid->setGridClass(openvdb::GRID_FOG_VOLUME);
 
@@ -171,7 +171,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   GeometrySet r_geometry_set;
   r_geometry_set.replace_volume(volume);
-  params.set_output("Volume", r_geometry_set);
+  params.set_output("Volume"_ustr, r_geometry_set);
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

@@ -238,6 +238,12 @@ static void calc_radius_without_interpolation(CurvesGeometry &curves,
                                               const IndexRange new_points_range,
                                               const float radius)
 {
+  const VArray<float> radii = curves.radius();
+  if (const std::optional<float> single = radii.get_if_single()) {
+    if (compare_ff_relative(*single, radius, FLT_EPSILON, 16)) {
+      return;
+    }
+  }
   curves.radius_for_write().slice(new_points_range).fill(radius);
   curves.tag_radii_changed();
 }

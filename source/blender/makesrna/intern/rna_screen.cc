@@ -88,6 +88,13 @@ static void rna_Screen_bar_update(Main * /*bmain*/, Scene * /*scene*/, PointerRN
   screen->do_refresh = true;
 }
 
+/* BFA - UI redraw callback for toolbar properties */
+static void rna_Area_toolbar_redraw(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+{
+  ScrArea *area = (ScrArea *)ptr->data;
+  ED_area_tag_redraw(area);
+}
+
 static void rna_Screen_redraw_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
   bScreen *screen = static_cast<bScreen *>(ptr->data);
@@ -491,41 +498,49 @@ static void rna_def_area(BlenderRNA *brna)
   prop = RNA_def_property(srna, "file_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_FILE); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "File Toolbars", "Shows or hides the File Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the Mesh Edit toolbars
   prop = RNA_def_property(srna, "meshedit_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_MESHEDIT); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "Mesh Edit Toolbars", "Shows or hides the Mesh Edit Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the Primitives toolbars
   prop = RNA_def_property(srna, "primitives_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_PRIMITIVES); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "Primitives Toolbars", "Shows or hides the Primitives Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the Image toolbars
   prop = RNA_def_property(srna, "image_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_IMAGE); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "Image Toolbars", "Shows or hides the Image Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the Tools toolbars
   prop = RNA_def_property(srna, "tools_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_TOOLS); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "Tools Toolbars", "Shows or hides the Tools Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the Animation toolbars
   prop = RNA_def_property(srna, "animation_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_ANIMATION); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "Animation Toolbars", "Shows or hides the Animation Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the Edit toolbars
   prop = RNA_def_property(srna, "edit_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_EDIT); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "Edit Toolbars", "Shows or hides the Edit Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the Misc toolbars
   prop = RNA_def_property(srna, "misc_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "toolbar_flag", HEADER_TOOLBAR_MISC); // bfa - now uses toolbar_flag
   RNA_def_property_ui_text(prop, "Misc Toolbars", "Shows or hides the Misc Toolbars");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TOOLBAR, "rna_Area_toolbar_redraw");
 
   // bfa - show hide the File topbars
   prop = RNA_def_property(srna, "file_topbars", PROP_BOOLEAN, PROP_NONE);

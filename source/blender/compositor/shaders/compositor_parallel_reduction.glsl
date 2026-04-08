@@ -57,7 +57,7 @@ float4 to_storage_value(float4 value)
 /* Group Shard Data Loading Utilities.
  *
  * Utility functions to load the element with the given index from the group shared data. */
-template<typename T> T load_shared_data(uint index)
+template<typename T> T load_shared_data(uint /*index*/)
 {
   return T(0);
 }

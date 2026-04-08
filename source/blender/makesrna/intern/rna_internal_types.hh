@@ -58,7 +58,6 @@ using EditableFunc = int (*)(const PointerRNA *ptr, const char **r_info);
 using ItemEditableFunc = int (*)(const PointerRNA *ptr, int index);
 using IDPropertiesFunc = IDProperty **(*)(PointerRNA * ptr);
 using StructRefineFunc = StructRNA *(*)(PointerRNA * ptr);
-using StructPathFunc = std::optional<std::string> (*)(const PointerRNA *ptr);
 using PropUINameFunc = const char *(*)(const PointerRNA *ptr,
                                        const PropertyRNA *prop,
                                        bool do_translate);
@@ -746,6 +745,14 @@ struct BlenderRNA {
    * These are ensured to have unique names (with #STRUCT_PUBLIC_NAMESPACE enabled).
    */
   Map<StringRef, StructRNA *> structs_map;
+
+  /**
+   * This RNA container is created at runtime and is not the main static RNA. This is currently
+   * needed because we the main RNA static RNA container is cleared via #RNA_exit() rather than
+   * relying on static initialization order (and therefore the destructor), and we need some way to
+   * signal this.
+   */
+  bool runtime;
 };
 
 #define CONTAINER_RNA_ID(cont) (*(const char **)(((ContainerRNA *)(cont)) + 1))

@@ -269,7 +269,7 @@ static wmOperatorStatus wm_link_append_exec(bContext *C, wmOperator *op)
   /* From here down, no error returns. */
 
   if (view_layer && RNA_boolean_get(op->ptr, "autoselect")) {
-    BKE_view_layer_base_deselect_all(scene, view_layer);
+    BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
   }
 
   /* Sanity checks for flag. */
@@ -617,7 +617,7 @@ static wmOperatorStatus wm_id_linked_relocate_exec(bContext *C, wmOperator *op)
   /* From here down, no error returns. */
 
   if (view_layer && RNA_boolean_get(op->ptr, "autoselect")) {
-    BKE_view_layer_base_deselect_all(scene, view_layer);
+    BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
   }
 
   /* Never enforce instantiation of anything when relocating. */

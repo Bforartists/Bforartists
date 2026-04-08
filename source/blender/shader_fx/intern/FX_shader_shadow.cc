@@ -87,13 +87,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
   layout.use_property_split_set(true);
 
   layout.prop(ptr, "shadow_color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-
-  /* Add the X, Y labels manually because size is a #PROP_PIXEL. */
-  ui::Layout &col = layout.column(true);
-  PropertyRNA *prop = RNA_struct_find_property(ptr, "offset");
-  col.prop(ptr, prop, 0, 0, UI_ITEM_NONE, IFACE_("Offset X"), ICON_NONE);
-  col.prop(ptr, prop, 1, 0, UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
-
+  layout.prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "rotation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
@@ -112,12 +106,7 @@ static void blur_panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout.use_property_split_set(true);
 
-  /* Add the X, Y labels manually because size is a #PROP_PIXEL. */
-  ui::Layout &col = layout.column(true);
-  PropertyRNA *prop = RNA_struct_find_property(ptr, "blur");
-  col.prop(ptr, prop, 0, 0, UI_ITEM_NONE, IFACE_("Blur X"), ICON_NONE);
-  col.prop(ptr, prop, 1, 0, UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
-
+  layout.prop(ptr, "blur", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "samples", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 

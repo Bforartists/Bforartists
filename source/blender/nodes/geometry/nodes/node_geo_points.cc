@@ -12,20 +12,22 @@ namespace blender::nodes::node_geo_points_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Count").default_value(1).min(0).description(
-      "The number of points to create");
-  b.add_input<decl::Vector>("Position")
+  b.add_input<decl::Int>("Count"_ustr)
+      .default_value(1)
+      .min(0)
+      .description("The number of points to create");
+  b.add_input<decl::Vector>("Position"_ustr)
       .subtype(PROP_TRANSLATION)
       .default_value(float3(0.0f))
       .supports_field()
       .description("The positions of the new points");
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Float>("Radius"_ustr)
       .min(0.0f)
       .default_value(0.1f)
       .subtype(PROP_DISTANCE)
       .supports_field()
       .description("The radii of the new points");
-  b.add_output<decl::Geometry>("Points", "Geometry");
+  b.add_output<decl::Geometry>("Points"_ustr, "Geometry"_ustr);
 }
 
 class PointsFieldContext : public FieldContext {
@@ -60,14 +62,14 @@ class PointsFieldContext : public FieldContext {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const int count = params.extract_input<int>("Count");
+  const int count = params.extract_input<int>("Count"_ustr);
   if (count <= 0) {
     params.set_default_remaining_outputs();
     return;
   }
 
-  Field<float3> position_field = params.extract_input<Field<float3>>("Position");
-  Field<float> radius_field = params.extract_input<Field<float>>("Radius");
+  Field<float3> position_field = params.extract_input<Field<float3>>("Position"_ustr);
+  Field<float> radius_field = params.extract_input<Field<float>>("Radius"_ustr);
 
   PointCloud *points = BKE_pointcloud_new_nomain(count);
   MutableAttributeAccessor attributes = points->attributes_for_write();
@@ -75,7 +77,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   PointsFieldContext context{count};
   fn::FieldEvaluator evaluator{context, count};
   evaluator.add_with_destination(position_field, points->positions_for_write());
-  if (radius_field.node().depends_on_input()) {
+  if (radius_field.depends_on_input()) {
     AttributeWriter<float> output_radii = attributes.lookup_or_add_for_write<float>(
         "radius", AttrDomain::Point);
     evaluator.add_with_destination(radius_field, output_radii.varray);
@@ -88,7 +90,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     attributes.add<float>("radius", AttrDomain::Point, bke::AttributeInitValue(radius));
   }
 
-  params.set_output("Geometry", GeometrySet::from_pointcloud(points));
+  params.set_output("Geometry"_ustr, GeometrySet::from_pointcloud(points));
 }
 
 static void node_register()

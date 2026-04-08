@@ -22,7 +22,7 @@ namespace nodes::node_shader_uvmap_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("UV");
+  b.add_output<decl::Vector>("UV"_ustr);
 }
 
 static void node_shader_buts_uvmap(ui::Layout &layout, bContext *C, PointerRNA *ptr)

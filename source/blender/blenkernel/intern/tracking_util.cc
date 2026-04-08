@@ -632,7 +632,7 @@ static ImBuf *make_grayscale_ibuf_copy(ImBuf *ibuf)
     IMB_assign_float_buffer(grayscale, rect_float, IB_TAKE_OWNERSHIP);
 
     for (int i = 0; i < grayscale->x * grayscale->y; i++) {
-      const float *pixel = ibuf->float_buffer.data + ibuf->channels * i;
+      const float *pixel = ibuf->float_data() + ibuf->channels * i;
 
       rect_float[i] = 0.2126f * pixel[0] + 0.7152f * pixel[1] + 0.0722f * pixel[2];
     }
@@ -641,10 +641,10 @@ static ImBuf *make_grayscale_ibuf_copy(ImBuf *ibuf)
   return grayscale;
 }
 
-static void ibuf_to_float_image(const ImBuf *ibuf, libmv_FloatImage *float_image)
+static void ibuf_to_float_image(ImBuf *ibuf, libmv_FloatImage *float_image)
 {
-  BLI_assert(ibuf->float_buffer.data != nullptr);
-  float_image->buffer = ibuf->float_buffer.data;
+  BLI_assert(ibuf->float_data() != nullptr);
+  float_image->buffer = ibuf->float_data_for_write();
   float_image->width = ibuf->x;
   float_image->height = ibuf->y;
   float_image->channels = ibuf->channels;
@@ -698,7 +698,7 @@ static ImBuf *accessor_get_ibuf(TrackingImageAccessor *accessor,
 
     final_ibuf = IMB_allocImBuf(width, height, 32, IB_float_data);
 
-    if (orig_ibuf->float_buffer.data != nullptr) {
+    if (orig_ibuf->float_data() != nullptr) {
       IMB_rectcpy(final_ibuf,
                   orig_ibuf,
                   dst_offset_x,
@@ -713,14 +713,15 @@ static ImBuf *accessor_get_ibuf(TrackingImageAccessor *accessor,
        * here. Probably Libmv is better to work in the linear space,
        * but keep sRGB space here for compatibility for now.
        */
+      const uchar *data_src = orig_ibuf->byte_data();
+      float *data_dst = final_ibuf->float_data_for_write();
       for (int y = 0; y < clamped_height; y++) {
         for (int x = 0; x < clamped_width; x++) {
           int src_x = x + clamped_origin_x, src_y = y + clamped_origin_y;
           int dst_x = x + dst_offset_x, dst_y = y + dst_offset_y;
           int dst_index = (dst_y * width + dst_x) * 4,
               src_index = (src_y * orig_ibuf->x + src_x) * 4;
-          rgba_uchar_to_float(final_ibuf->float_buffer.data + dst_index,
-                              orig_ibuf->byte_buffer.data + src_index);
+          rgba_uchar_to_float(data_dst + dst_index, data_src + src_index);
         }
       }
     }
@@ -806,7 +807,7 @@ static libmv_CacheKey accessor_get_image_callback(libmv_FrameAccessorUserData *u
   ibuf = accessor_get_ibuf(accessor, clip_index, frame, input_mode, downscale, region, transform);
 
   if (ibuf) {
-    *destination = ibuf->float_buffer.data;
+    *destination = ibuf->float_data_for_write();
     *width = ibuf->x;
     *height = ibuf->y;
     *channels = ibuf->channels;

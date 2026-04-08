@@ -140,38 +140,36 @@ static void extract_edit_data_mesh(const MeshRenderData &mr, MutableSpan<EditLoo
   });
 
   const Span<int2> edges = mr.edges;
-  const Span<int> loose_edges = mr.loose_edges;
-  threading::parallel_for(loose_edges.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      EditLoopData &value_1 = loose_edge_data[i * 2 + 0];
-      EditLoopData &value_2 = loose_edge_data[i * 2 + 1];
-      if (const BMEdge *bm_edge = bm_original_edge_get(mr, loose_edges[i])) {
-        value_1 = {};
-        mesh_render_data_edge_flag(mr, bm_edge, value_1);
-        value_2 = value_1;
-      }
-      else {
-        value_2 = value_1 = {};
-      }
-      const int2 edge = edges[loose_edges[i]];
-      if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[0])) {
-        mesh_render_data_vert_flag(mr, bm_vert, value_1);
-      }
-      if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[1])) {
-        mesh_render_data_vert_flag(mr, bm_vert, value_2);
-      }
-    }
-  });
+  mr.loose_edges.foreach_index(
+      [&](const int edge_i, const int pos) {
+        EditLoopData &value_1 = loose_edge_data[pos * 2 + 0];
+        EditLoopData &value_2 = loose_edge_data[pos * 2 + 1];
+        if (const BMEdge *bm_edge = bm_original_edge_get(mr, edge_i)) {
+          value_1 = {};
+          mesh_render_data_edge_flag(mr, bm_edge, value_1);
+          value_2 = value_1;
+        }
+        else {
+          value_2 = value_1 = {};
+        }
+        const int2 edge = edges[edge_i];
+        if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[0])) {
+          mesh_render_data_vert_flag(mr, bm_vert, value_1);
+        }
+        if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[1])) {
+          mesh_render_data_vert_flag(mr, bm_vert, value_2);
+        }
+      },
+      exec_mode::grain_size(2048));
 
-  const Span<int> loose_verts = mr.loose_verts;
-  threading::parallel_for(loose_verts.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      loose_vert_data[i] = {};
-      if (const BMVert *eve = bm_original_vert_get(mr, loose_verts[i])) {
-        mesh_render_data_vert_flag(mr, eve, loose_vert_data[i]);
-      }
-    }
-  });
+  mr.loose_verts.foreach_index(
+      [&](const int vert, const int pos) {
+        loose_vert_data[pos] = {};
+        if (const BMVert *eve = bm_original_vert_get(mr, vert)) {
+          mesh_render_data_vert_flag(mr, eve, loose_vert_data[pos]);
+        }
+      },
+      exec_mode::grain_size(2048));
 }
 
 static void extract_edit_data_bm(const MeshRenderData &mr, MutableSpan<EditLoopData> vbo_data)
@@ -200,28 +198,26 @@ static void extract_edit_data_bm(const MeshRenderData &mr, MutableSpan<EditLoopD
     }
   });
 
-  const Span<int> loose_edges = mr.loose_edges;
-  threading::parallel_for(loose_edges.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      EditLoopData &value_1 = loose_edge_data[i * 2 + 0];
-      EditLoopData &value_2 = loose_edge_data[i * 2 + 1];
-      const BMEdge &edge = *BM_edge_at_index(&const_cast<BMesh &>(bm), loose_edges[i]);
-      value_1 = {};
-      mesh_render_data_edge_flag(mr, &edge, value_1);
-      value_2 = value_1;
-      mesh_render_data_vert_flag(mr, edge.v1, value_1);
-      mesh_render_data_vert_flag(mr, edge.v2, value_2);
-    }
-  });
+  mr.loose_edges.foreach_index(
+      [&](const int edge_i, const int pos) {
+        EditLoopData &value_1 = loose_edge_data[pos * 2 + 0];
+        EditLoopData &value_2 = loose_edge_data[pos * 2 + 1];
+        const BMEdge &edge = *BM_edge_at_index(&const_cast<BMesh &>(bm), edge_i);
+        value_1 = {};
+        mesh_render_data_edge_flag(mr, &edge, value_1);
+        value_2 = value_1;
+        mesh_render_data_vert_flag(mr, edge.v1, value_1);
+        mesh_render_data_vert_flag(mr, edge.v2, value_2);
+      },
+      exec_mode::grain_size(2048));
 
-  const Span<int> loose_verts = mr.loose_verts;
-  threading::parallel_for(loose_verts.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      loose_vert_data[i] = {};
-      const BMVert &vert = *BM_vert_at_index(&const_cast<BMesh &>(bm), loose_verts[i]);
-      mesh_render_data_vert_flag(mr, &vert, loose_vert_data[i]);
-    }
-  });
+  mr.loose_verts.foreach_index(
+      [&](const int vert_i, const int pos) {
+        loose_vert_data[pos] = {};
+        const BMVert &vert = *BM_vert_at_index(&const_cast<BMesh &>(bm), vert_i);
+        mesh_render_data_vert_flag(mr, &vert, loose_vert_data[pos]);
+      },
+      exec_mode::grain_size(2048));
 }
 
 gpu::VertBufPtr extract_edit_data(const MeshRenderData &mr)
@@ -286,37 +282,36 @@ static void extract_edit_subdiv_data_mesh(const MeshRenderData &mr,
   });
 
   const Span<int2> edges = mr.edges;
-  const Span<int> loose_edges = mr.loose_edges;
-  threading::parallel_for(loose_edges.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      MutableSpan<EditLoopData> data = loose_edge_data.slice(i * verts_per_edge, verts_per_edge);
-      if (const BMEdge *edge = bm_original_edge_get(mr, loose_edges[i])) {
-        EditLoopData value{};
-        mesh_render_data_edge_flag(mr, edge, value);
-        data.fill(value);
-      }
-      else {
-        data.fill({});
-      }
-      const int2 edge = edges[loose_edges[i]];
-      if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[0])) {
-        mesh_render_data_vert_flag(mr, bm_vert, data.first());
-      }
-      if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[1])) {
-        mesh_render_data_vert_flag(mr, bm_vert, data.last());
-      }
-    }
-  });
+  mr.loose_edges.foreach_index(
+      [&](const int edge_i, const int pos) {
+        MutableSpan<EditLoopData> data = loose_edge_data.slice(pos * verts_per_edge,
+                                                               verts_per_edge);
+        if (const BMEdge *edge = bm_original_edge_get(mr, edge_i)) {
+          EditLoopData value{};
+          mesh_render_data_edge_flag(mr, edge, value);
+          data.fill(value);
+        }
+        else {
+          data.fill({});
+        }
+        const int2 edge = edges[edge_i];
+        if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[0])) {
+          mesh_render_data_vert_flag(mr, bm_vert, data.first());
+        }
+        if (const BMVert *bm_vert = bm_original_vert_get(mr, edge[1])) {
+          mesh_render_data_vert_flag(mr, bm_vert, data.last());
+        }
+      },
+      exec_mode::grain_size(2048));
 
-  const Span<int> loose_verts = mr.loose_verts;
-  threading::parallel_for(loose_verts.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      loose_vert_data[i] = {};
-      if (const BMVert *eve = bm_original_vert_get(mr, loose_verts[i])) {
-        mesh_render_data_vert_flag(mr, eve, loose_vert_data[i]);
-      }
-    }
-  });
+  mr.loose_verts.foreach_index(
+      [&](const int vert, const int pos) {
+        loose_vert_data[pos] = {};
+        if (const BMVert *eve = bm_original_vert_get(mr, vert)) {
+          mesh_render_data_vert_flag(mr, eve, loose_vert_data[pos]);
+        }
+      },
+      exec_mode::grain_size(2048));
 }
 
 static void extract_edit_subdiv_data_bm(const MeshRenderData &mr,
@@ -363,27 +358,26 @@ static void extract_edit_subdiv_data_bm(const MeshRenderData &mr,
     }
   });
 
-  const Span<int> loose_edges = mr.loose_edges;
-  threading::parallel_for(loose_edges.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      MutableSpan<EditLoopData> data = loose_edge_data.slice(i * verts_per_edge, verts_per_edge);
-      const BMEdge *edge = BM_edge_at_index(&bm, loose_edges[i]);
-      EditLoopData value{};
-      mesh_render_data_edge_flag(mr, edge, value);
-      data.fill(value);
-      mesh_render_data_vert_flag(mr, edge->v1, data.first());
-      mesh_render_data_vert_flag(mr, edge->v2, data.last());
-    }
-  });
+  mr.loose_edges.foreach_index(
+      [&](const int edge_i, const int pos) {
+        MutableSpan<EditLoopData> data = loose_edge_data.slice(pos * verts_per_edge,
+                                                               verts_per_edge);
+        const BMEdge *edge = BM_edge_at_index(&bm, edge_i);
+        EditLoopData value{};
+        mesh_render_data_edge_flag(mr, edge, value);
+        data.fill(value);
+        mesh_render_data_vert_flag(mr, edge->v1, data.first());
+        mesh_render_data_vert_flag(mr, edge->v2, data.last());
+      },
+      exec_mode::grain_size(2048));
 
-  const Span<int> loose_verts = mr.loose_verts;
-  threading::parallel_for(loose_verts.index_range(), 2048, [&](const IndexRange range) {
-    for (const int i : range) {
-      loose_vert_data[i] = {};
-      const BMVert *vert = BM_vert_at_index(&bm, loose_verts[i]);
-      mesh_render_data_vert_flag(mr, vert, loose_vert_data[i]);
-    }
-  });
+  mr.loose_verts.foreach_index(
+      [&](const int vert_i, const int pos) {
+        loose_vert_data[pos] = {};
+        const BMVert *vert = BM_vert_at_index(&bm, vert_i);
+        mesh_render_data_vert_flag(mr, vert, loose_vert_data[pos]);
+      },
+      exec_mode::grain_size(2048));
 }
 
 gpu::VertBufPtr extract_edit_data_subdiv(const MeshRenderData &mr,

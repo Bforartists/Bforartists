@@ -39,7 +39,7 @@ static void createTransParticleVerts(bContext * /*C*/, TransInfo *t)
 
     TransData *td = nullptr;
     TransDataExtension *tx;
-    BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+    BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
     Object *ob = BKE_view_layer_active_object_get(t->view_layer);
     ParticleEditSettings *pset = PE_settings(t->scene);
     PTCacheEdit *edit = PE_get_current(t->depsgraph, t->scene, ob);
@@ -187,7 +187,7 @@ static void flushTransParticles(TransInfo *t)
   FOREACH_TRANS_DATA_CONTAINER (t, tc) {
     Scene *scene = t->scene;
     ViewLayer *view_layer = t->view_layer;
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*t->bmain, scene, view_layer);
     Object *ob = BKE_view_layer_active_object_get(view_layer);
     PTCacheEdit *edit = PE_get_current(t->depsgraph, scene, ob);
     ParticleSystem *psys = edit->psys;

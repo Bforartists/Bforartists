@@ -164,7 +164,8 @@ void BKE_light_linking_link_receiver_to_emitter(struct Main *bmain,
 /**
  * Select all objects which are linked to the given emitter via the given light link type.
  */
-void BKE_light_linking_select_receivers_of_emitter(struct Scene *scene,
+void BKE_light_linking_select_receivers_of_emitter(const Main &bmain,
+                                                   struct Scene *scene,
                                                    struct ViewLayer *view_layer,
                                                    struct Object *emitter,
                                                    LightLinkingType link_type);

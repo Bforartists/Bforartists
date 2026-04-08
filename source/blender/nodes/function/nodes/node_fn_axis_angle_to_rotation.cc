@@ -14,9 +14,9 @@ namespace blender::nodes::node_fn_axis_angle_to_rotation_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Axis").default_value({0.0f, 0.0f, 1.0f});
-  b.add_input<decl::Float>("Angle").subtype(PROP_ANGLE);
-  b.add_output<decl::Rotation>("Rotation");
+  b.add_input<decl::Vector>("Axis"_ustr).default_value({0.0f, 0.0f, 1.0f});
+  b.add_input<decl::Float>("Angle"_ustr).subtype(PROP_ANGLE);
+  b.add_output<decl::Rotation>("Rotation"_ustr);
 };
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
@@ -37,31 +37,31 @@ static void node_eval_elem(value_elem::ElemEvalParams &params)
 {
   using namespace value_elem;
   RotationElem rotation_elem;
-  rotation_elem.axis = params.get_input_elem<VectorElem>("Axis");
-  rotation_elem.angle = params.get_input_elem<FloatElem>("Angle");
+  rotation_elem.axis = params.get_input_elem<VectorElem>("Axis"_ustr);
+  rotation_elem.angle = params.get_input_elem<FloatElem>("Angle"_ustr);
   if (rotation_elem) {
     rotation_elem.euler = VectorElem::all();
   }
-  params.set_output_elem("Rotation", rotation_elem);
+  params.set_output_elem("Rotation"_ustr, rotation_elem);
 }
 
 static void node_eval_inverse_elem(value_elem::InverseElemEvalParams &params)
 {
   using namespace value_elem;
-  const RotationElem rotation_elem = params.get_output_elem<RotationElem>("Rotation");
+  const RotationElem rotation_elem = params.get_output_elem<RotationElem>("Rotation"_ustr);
   VectorElem axis_elem = rotation_elem.axis;
   FloatElem angle_elem = rotation_elem.angle;
-  params.set_input_elem("Axis", axis_elem);
-  params.set_input_elem("Angle", angle_elem);
+  params.set_input_elem("Axis"_ustr, axis_elem);
+  params.set_input_elem("Angle"_ustr, angle_elem);
 }
 
 static void node_eval_inverse(inverse_eval::InverseEvalParams &params)
 {
   using namespace inverse_eval;
-  const math::Quaternion rotation = params.get_output<math::Quaternion>("Rotation");
+  const math::Quaternion rotation = params.get_output<math::Quaternion>("Rotation"_ustr);
   const math::AxisAngle axis_angle = math::to_axis_angle(rotation);
-  params.set_input("Axis", axis_angle.axis());
-  params.set_input("Angle", axis_angle.angle().radian());
+  params.set_input("Axis"_ustr, axis_angle.axis());
+  params.set_input("Angle"_ustr, axis_angle.angle().radian());
 }
 
 static void node_register()

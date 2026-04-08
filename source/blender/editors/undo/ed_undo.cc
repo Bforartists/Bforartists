@@ -216,6 +216,10 @@ static void ed_undo_step_post(bContext *C,
     }
   }
 
+  /* Undo/redo may have invalidated a lot of data, ensure UI has also been fully updated before
+   * handling next events. */
+  WM_event_handling_break(*C);
+
   WM_event_add_notifier(C, NC_WINDOW, nullptr);
   WM_event_add_notifier(C, NC_WM | ND_UNDO, nullptr);
 
@@ -387,10 +391,11 @@ bool ED_undo_is_memfile_compatible(const bContext *C)
 {
   /* Some modes don't co-exist with memfile undo, disable their use: #60593
    * (this matches 2.7x behavior). */
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   if (view_layer != nullptr) {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *obact = BKE_view_layer_active_object_get(view_layer);
     if (obact != nullptr) {
       if (obact->mode & OB_MODE_EDIT) {
@@ -411,10 +416,11 @@ bool ED_undo_is_legacy_compatible_for_property(bContext *C, ID *id, PointerRNA &
     return false;
   }
 
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   if (view_layer != nullptr) {
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *obact = BKE_view_layer_active_object_get(view_layer);
     if (obact != nullptr) {
       if (obact->mode & OB_MODE_SCULPT) {
@@ -770,11 +776,15 @@ void ED_OT_undo_history(wmOperatorType *ot)
 /** \name Undo Helper Functions
  * \{ */
 
-void ED_undo_object_set_active_or_warn(
-    Scene *scene, ViewLayer *view_layer, Object *ob, const char *info, CLG_LogRef *log)
+void ED_undo_object_set_active_or_warn(const Main &bmain,
+                                       Scene *scene,
+                                       ViewLayer *view_layer,
+                                       Object *ob,
+                                       const char *info,
+                                       CLG_LogRef *log)
 {
   using namespace blender::ed;
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   Object *ob_prev = BKE_view_layer_active_object_get(view_layer);
   if (ob_prev != ob) {
     Base *base = BKE_view_layer_base_find(view_layer, ob);
@@ -816,7 +826,7 @@ void ED_undo_object_editmode_restore_helper(Scene *scene,
   Main *bmain = G_MAIN;
   /* Don't request unique data because we want to de-select objects when exiting edit-mode
    * for that to be done on all objects we can't skip ones that share data. */
-  Vector<Base *> bases = ED_undo_editmode_bases_from_view_layer(scene, view_layer);
+  Vector<Base *> bases = ED_undo_editmode_bases_from_view_layer(*bmain, scene, view_layer);
   for (Base *base : bases) {
     (base->object->data)->tag |= ID_TAG_DOIT;
   }
@@ -851,10 +861,11 @@ void ED_undo_object_editmode_restore_helper(Scene *scene,
  * and local collections may be used.
  * \{ */
 
-Vector<Object *> ED_undo_editmode_objects_from_view_layer(const Scene *scene,
+Vector<Object *> ED_undo_editmode_objects_from_view_layer(const Main &bmain,
+                                                          const Scene *scene,
                                                           ViewLayer *view_layer)
 {
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   Base *baseact = BKE_view_layer_active_base_get(view_layer);
   if ((baseact == nullptr) || (baseact->object->mode & OB_MODE_EDIT) == 0) {
     return {};
@@ -881,9 +892,11 @@ Vector<Object *> ED_undo_editmode_objects_from_view_layer(const Scene *scene,
   return objects;
 }
 
-Vector<Base *> ED_undo_editmode_bases_from_view_layer(const Scene *scene, ViewLayer *view_layer)
+Vector<Base *> ED_undo_editmode_bases_from_view_layer(const Main &bmain,
+                                                      const Scene *scene,
+                                                      ViewLayer *view_layer)
 {
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   Base *baseact = BKE_view_layer_active_base_get(view_layer);
   if ((baseact == nullptr) || (baseact->object->mode & OB_MODE_EDIT) == 0) {
     return {};

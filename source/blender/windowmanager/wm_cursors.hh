@@ -13,7 +13,7 @@ namespace blender {
 struct wmEvent;
 struct wmWindow;
 
-enum WMCursorType {
+enum wmCursorType {
   WM_CURSOR_DEFAULT = 1,
   WM_CURSOR_TEXT_EDIT,
   WM_CURSOR_WAIT,

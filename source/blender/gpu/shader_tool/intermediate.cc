@@ -55,6 +55,38 @@ size_t char_number(const std::string_view &str, size_t pos)
              (sub_str.size() - nearest_line_directive - 1);
 }
 
+std::string filename(const std::string_view &str, size_t pos)
+{
+  std::string_view directive = "#line ";
+  std::string_view sub_str = str.substr(0, pos);
+
+  while (!sub_str.empty()) {
+    size_t nearest_line_directive = sub_str.rfind(directive);
+    /* If no directive is found, break and return an empty string. */
+    if (nearest_line_directive == std::string_view::npos) {
+      break;
+    }
+    /* Extract just the line containing the directive. */
+    size_t line_end = sub_str.find('\n', nearest_line_directive);
+    std::string_view directive_line = sub_str.substr(nearest_line_directive,
+                                                     line_end - nearest_line_directive);
+    /* Look for the quotes containing the filepath. */
+    size_t first_quote = directive_line.find('"');
+    if (first_quote != std::string_view::npos) {
+      size_t second_quote = directive_line.find('"', first_quote + 1);
+      if (second_quote != std::string_view::npos) {
+        return std::string(directive_line.substr(first_quote + 1, second_quote - first_quote - 1));
+      }
+    }
+    /* If this directive didn't have a filename, shrink the search space to look further up. */
+    if (nearest_line_directive == 0) {
+      break;
+    }
+    sub_str = sub_str.substr(0, nearest_line_directive);
+  }
+  return "";
+}
+
 std::string line_str(const std::string_view &str, size_t pos)
 {
   size_t start = str.rfind('\n', pos);
@@ -96,6 +128,42 @@ Scope Token::attribute_after() const
     return next.next().scope();
   }
   return Scope(parser, -1);
+}
+
+void ErrorHandler::report(Token tok, std::string_view message)
+{
+  /* Only log the first error. */
+  if (err) {
+    return;
+  }
+
+  std::string token_filename = tok.filename();
+  std::string full_report = token_filename.empty() ? default_filename : token_filename;
+  full_report += ":" + std::to_string(tok.line_number());
+  full_report += ":" + std::to_string(tok.char_number() + 1);
+  full_report += ": " + std::string(message);
+  if (tok.is_valid()) {
+    full_report += "\n";
+    full_report += tok.line_str() + "\n";
+    full_report += std::string(tok.char_number(), ' ') + "^" +
+                   std::string(tok.str().size() - 1, '~');
+  }
+  err = {std::string(message), full_report};
+}
+
+void ErrorHandler::report(int row, int column, std::string line, std::string_view message)
+{
+  /* Only log the first error. */
+  if (err) {
+    return;
+  }
+
+  std::string full_report = default_filename;
+  full_report += ":" + std::to_string(row);
+  full_report += ":" + std::to_string(column + 1);
+  full_report += ": " + std::string(message) + "\n";
+  full_report += line;
+  err = {std::string(message), full_report};
 }
 
 alignas(128) const std::array<CharClass, 128> LexerBase::default_char_class_table = [] {

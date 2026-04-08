@@ -606,12 +606,13 @@ void IMB_buffer_byte_from_byte(uchar *rect_to,
 void IMB_byte_from_float(ImBuf *ibuf)
 {
   /* Nothing to do if there's no float buffer */
-  if (ibuf->float_buffer.data == nullptr) {
+  const float *float_data = ibuf->float_data();
+  if (float_data == nullptr) {
     return;
   }
 
   /* Allocate byte buffer if needed. */
-  if (ibuf->byte_buffer.data == nullptr) {
+  if (ibuf->byte_data() == nullptr) {
     if (!IMB_alloc_byte_pixels(ibuf, false)) {
       return;
     }
@@ -626,34 +627,34 @@ void IMB_byte_from_float(ImBuf *ibuf)
                                       COLOR_ROLE_DEFAULT_BYTE) :
                                   ibuf->byte_buffer.colorspace->name().c_str();
   const bool predivide = IMB_alpha_affects_rgb(ibuf);
-  ColormanageProcessor *processor = STREQ(from_colorspace, to_colorspace) ?
-                                        nullptr :
-                                        IMB_colormanagement_colorspace_processor_new(
-                                            from_colorspace, to_colorspace);
-  if (processor && IMB_colormanagement_processor_is_noop(processor)) {
-    IMB_colormanagement_processor_free(processor);
-    processor = nullptr;
+  std::optional<ColormanageProcessor> processor =
+      STREQ(from_colorspace, to_colorspace) ?
+          std::nullopt :
+          std::make_optional<>(
+              ColormanageProcessor::colorspace_processor_new(from_colorspace, to_colorspace));
+  if (processor && processor->is_noop()) {
+    processor.reset();
   }
 
   /* At 4 floats per pixel, this is 32KB of data, and fits into typical CPU L1 cache. */
   static constexpr int grain_size = 2048;
+  uchar *byte_data = ibuf->byte_data_for_write();
   threading::parallel_for(
       IndexRange(IMB_get_pixel_count(ibuf)), grain_size, [&](const IndexRange range) {
         /* Copy chunk of source float pixels into a local buffer. */
         Array<float, grain_size * 4> buffer(range.size() * ibuf->channels);
         buffer.as_mutable_span().copy_from(
-            Span(ibuf->float_buffer.data + range.first() * ibuf->channels, buffer.size()));
+            Span(float_data + range.first() * ibuf->channels, buffer.size()));
         /* Unpremultiply alpha if needed. */
         if (predivide) {
           IMB_unpremultiply_rect_float(buffer.data(), ibuf->channels, range.size(), 1);
         }
         /* Convert to byte color space if needed. */
         if (processor) {
-          IMB_colormanagement_processor_apply(
-              processor, buffer.data(), range.size(), 1, ibuf->channels, false);
+          processor->apply(buffer.data(), range.size(), 1, ibuf->channels, false);
         }
         /* Convert to bytes. */
-        IMB_buffer_byte_from_float(ibuf->byte_buffer.data + range.first() * 4,
+        IMB_buffer_byte_from_float(byte_data + range.first() * 4,
                                    buffer.data(),
                                    ibuf->channels,
                                    ibuf->dither,
@@ -665,9 +666,6 @@ void IMB_byte_from_float(ImBuf *ibuf)
                                    ibuf->x,
                                    ibuf->x);
       });
-  if (processor != nullptr) {
-    IMB_colormanagement_processor_free(processor);
-  }
 
   /* ensure user flag is reset */
   ibuf->userflags &= ~IB_RECT_INVALID;
@@ -675,10 +673,9 @@ void IMB_byte_from_float(ImBuf *ibuf)
 
 void IMB_float_from_byte_ex(ImBuf *dst, const ImBuf *src, const rcti *region_to_update)
 {
-  BLI_assert_msg(dst->float_buffer.data != nullptr,
+  BLI_assert_msg(dst->float_data() != nullptr,
                  "Destination buffer should have a float buffer assigned.");
-  BLI_assert_msg(src->byte_buffer.data != nullptr,
-                 "Source buffer should have a byte buffer assigned.");
+  BLI_assert_msg(src->byte_data() != nullptr, "Source buffer should have a byte buffer assigned.");
   BLI_assert_msg(dst->x == src->x, "Source and destination buffer should have the same dimension");
   BLI_assert_msg(dst->y == src->y, "Source and destination buffer should have the same dimension");
   BLI_assert_msg(dst->channels = 4, "Destination buffer should have 4 channels.");
@@ -695,12 +692,12 @@ void IMB_float_from_byte_ex(ImBuf *dst, const ImBuf *src, const rcti *region_to_
   const int region_height = BLI_rcti_size_y(region_to_update);
   const bool premultiply_alpha = IMB_alpha_affects_rgb(src);
 
+  const uchar *byte_data = src->byte_data();
+  float *float_data = dst->float_data_for_write();
   threading::parallel_for(
       IndexRange(region_to_update->ymin, region_height), 64, [&](const IndexRange y_range) {
-        const uchar *src_ptr = src->byte_buffer.data;
-        src_ptr += (region_to_update->xmin + y_range.first() * dst->x) * 4;
-        float *dst_ptr = dst->float_buffer.data;
-        dst_ptr += (region_to_update->xmin + y_range.first() * dst->x) * 4;
+        const uchar *src_ptr = byte_data + (region_to_update->xmin + y_range.first() * dst->x) * 4;
+        float *dst_ptr = float_data + (region_to_update->xmin + y_range.first() * dst->x) * 4;
 
         /* Convert byte -> float without color or alpha conversions. */
         IMB_buffer_float_from_byte(dst_ptr,
@@ -729,12 +726,12 @@ void IMB_float_from_byte_ex(ImBuf *dst, const ImBuf *src, const rcti *region_to_
 void IMB_float_from_byte(ImBuf *ibuf)
 {
   /* Nothing to do if there's no byte buffer. */
-  if (ibuf->byte_buffer.data == nullptr) {
+  if (ibuf->byte_data() == nullptr) {
     return;
   }
 
   /* Allocate float buffer if needed. */
-  if (ibuf->float_buffer.data == nullptr) {
+  if (ibuf->float_data() == nullptr) {
     if (!IMB_alloc_float_pixels(ibuf, 4, false)) {
       return;
     }
@@ -753,8 +750,8 @@ void IMB_float_from_byte(ImBuf *ibuf)
 
 void IMB_color_to_bw(ImBuf *ibuf)
 {
-  float *rct_fl = ibuf->float_buffer.data;
-  uchar *rct = ibuf->byte_buffer.data;
+  float *rct_fl = ibuf->float_data_for_write();
+  uchar *rct = ibuf->byte_data_for_write();
   size_t i;
 
   if (rct_fl) {
@@ -781,9 +778,9 @@ void IMB_color_to_bw(ImBuf *ibuf)
 void IMB_saturation(ImBuf *ibuf, float sat)
 {
   const size_t pixel_count = IMB_get_pixel_count(ibuf);
-  if (ibuf->byte_buffer.data != nullptr) {
+  if (uchar *byte_data = ibuf->byte_data_for_write()) {
     threading::parallel_for(IndexRange(pixel_count), 64 * 1024, [&](IndexRange range) {
-      uchar *ptr = ibuf->byte_buffer.data + range.first() * 4;
+      uchar *ptr = byte_data + range.first() * 4;
       float rgb[3];
       float hsv[3];
       for ([[maybe_unused]] const int64_t i : range) {
@@ -796,10 +793,11 @@ void IMB_saturation(ImBuf *ibuf, float sat)
     });
   }
 
-  if (ibuf->float_buffer.data != nullptr && ibuf->channels >= 3) {
+  float *float_data = ibuf->float_data_for_write();
+  if (float_data != nullptr && ibuf->channels >= 3) {
     threading::parallel_for(IndexRange(pixel_count), 64 * 1024, [&](IndexRange range) {
       const int channels = ibuf->channels;
-      float *ptr = ibuf->float_buffer.data + range.first() * channels;
+      float *ptr = float_data + range.first() * channels;
       float hsv[3];
       for ([[maybe_unused]] const int64_t i : range) {
         rgb_to_hsv_v(ptr, hsv);

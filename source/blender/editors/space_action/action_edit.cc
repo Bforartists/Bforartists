@@ -89,8 +89,9 @@ static bool act_markers_make_local_poll(bContext *C)
   }
 
   /* 3) */
+  const Main *bmain = CTX_data_main(C);
   bAction *active_action = ANIM_active_action_from_area(
-      CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_area(C));
+      *bmain, CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_area(C));
   if (!active_action) {
     return false;
   }
@@ -102,8 +103,9 @@ static bool act_markers_make_local_poll(bContext *C)
 static wmOperatorStatus act_markers_make_local_exec(bContext *C, wmOperator * /*op*/)
 {
   ListBaseT<TimeMarker> *markers = ED_context_get_markers(C);
+  const Main *bmain = CTX_data_main(C);
   bAction *act = ANIM_active_action_from_area(
-      CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_area(C));
+      *bmain, CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_area(C));
 
   TimeMarker *marker, *markern = nullptr;
 

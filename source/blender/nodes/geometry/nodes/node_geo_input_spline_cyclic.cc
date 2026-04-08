@@ -8,13 +8,13 @@ namespace blender::nodes::node_geo_input_spline_cyclic_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Bool>("Cyclic").field_source();
+  b.add_output<decl::Bool>("Cyclic"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<bool> cyclic_field = AttributeFieldInput::from<bool>("cyclic");
-  params.set_output("Cyclic", std::move(cyclic_field));
+  Field<bool> cyclic_field = AttributeFieldInput::get_field<bool, "cyclic">();
+  params.set_output("Cyclic"_ustr, std::move(cyclic_field));
 }
 
 static void node_register()

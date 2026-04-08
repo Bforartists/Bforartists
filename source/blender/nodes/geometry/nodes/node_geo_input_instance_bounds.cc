@@ -11,13 +11,13 @@ namespace blender::nodes::node_geo_input_instance_bounds_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Use Radius")
+  b.add_input<decl::Bool>("Use Radius"_ustr)
       .default_value(true)
       .description(
           "For curves, point clouds, and Grease Pencil, take the radius attribute into account "
           "when computing the bounds.");
-  b.add_output<decl::Vector>("Min").field_source();
-  b.add_output<decl::Vector>("Max").field_source();
+  b.add_output<decl::Vector>("Min"_ustr).field_source();
+  b.add_output<decl::Vector>("Max"_ustr).field_source();
 }
 
 class InstanceBoundsField final : public bke::InstancesFieldInput {
@@ -100,7 +100,7 @@ class InstanceBoundsField final : public bke::InstancesFieldInput {
     return get_default_hash(use_radius_, return_max_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const auto *other_field = dynamic_cast<const InstanceBoundsField *>(&other)) {
       return use_radius_ == other_field->use_radius_ && return_max_ == other_field->return_max_;
@@ -111,10 +111,9 @@ class InstanceBoundsField final : public bke::InstancesFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const bool use_radius = params.extract_input<bool>("Use Radius");
-  params.set_output("Min",
-                    Field<float3>(std::make_shared<InstanceBoundsField>(use_radius, false)));
-  params.set_output("Max", Field<float3>(std::make_shared<InstanceBoundsField>(use_radius, true)));
+  const bool use_radius = params.extract_input<bool>("Use Radius"_ustr);
+  params.set_output("Min"_ustr, Field<float3>::from_input<InstanceBoundsField>(use_radius, false));
+  params.set_output("Max"_ustr, Field<float3>::from_input<InstanceBoundsField>(use_radius, true));
 }
 
 static void node_register()

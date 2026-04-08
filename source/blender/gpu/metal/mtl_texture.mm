@@ -336,7 +336,12 @@ void gpu::MTLTexture::blit(id<MTLBlitCommandEncoder> blit_encoder,
   MTLOrigin src_origin = MTLOriginMake(src_x_offset, src_y_offset, src_z_offset);
   MTLOrigin dst_origin = MTLOriginMake(dst_x_offset, dst_y_offset, dst_z_offset);
 
-  if (this->format_get() != dst->format_get()) {
+  if (!((this->format_get() == dst->format_get()) ||
+        (this->format_get() == TextureFormat::SRGBA_8_8_8_8 &&
+         dst->format_get() == TextureFormat::UNORM_8_8_8_8) ||
+        (this->format_get() == TextureFormat::UNORM_8_8_8_8 &&
+         dst->format_get() == TextureFormat::SRGBA_8_8_8_8)))
+  {
     MTL_LOG_WARNING(
         "gpu::MTLTexture: Cannot copy between two textures of different types using a "
         "blit encoder. TODO: Support this operation");
@@ -1289,14 +1294,18 @@ void gpu::MTLTexture::generate_mipmap()
   }
 }
 
-void gpu::MTLTexture::copy_to(Texture *dst)
+void gpu::MTLTexture::copy_to(Texture *dst, IndexRange mip_levels)
 {
   /* Safety Checks. */
   gpu::MTLTexture *mt_src = this;
   gpu::MTLTexture *mt_dst = static_cast<gpu::MTLTexture *>(dst);
   BLI_assert((mt_dst->w_ == mt_src->w_) && (mt_dst->h_ == mt_src->h_) &&
              (mt_dst->d_ == mt_src->d_));
-  BLI_assert(mt_dst->format_ == mt_src->format_);
+  BLI_assert(mt_dst->format_ == mt_src->format_ ||
+             (mt_src->format_ == TextureFormat::SRGBA_8_8_8_8 &&
+              mt_dst->format_ == TextureFormat::UNORM_8_8_8_8) ||
+             (mt_src->format_ == TextureFormat::UNORM_8_8_8_8 &&
+              mt_dst->format_ == TextureFormat::SRGBA_8_8_8_8));
   BLI_assert(mt_dst->type_ == mt_src->type_);
 
   UNUSED_VARS_NDEBUG(mt_src);
@@ -1313,14 +1322,6 @@ void gpu::MTLTexture::copy_to(Texture *dst)
     id<MTLBlitCommandEncoder> blit_encoder = ctx->main_command_buffer.ensure_begin_blit_encoder();
     BLI_assert(blit_encoder != nil);
 
-    /* TODO(Metal): Consider supporting multiple mip levels IF the GL implementation
-     * follows, currently it does not. */
-    int mip = 0;
-
-    /* NOTE: mip_size_get() won't override any dimension that is equal to 0. */
-    int extent[3] = {1, 1, 1};
-    this->mip_size_get(mip, extent);
-
     switch (mt_dst->type_) {
       case GPU_TEXTURE_2D_ARRAY:
       case GPU_TEXTURE_CUBE_ARRAY:
@@ -1332,23 +1333,30 @@ void gpu::MTLTexture::copy_to(Texture *dst)
         [blit_encoder optimizeContentsForGPUAccess:mt_dst->get_metal_handle_base()];
       } break;
       default: {
-        int slice = 0;
-        this->blit(blit_encoder,
-                   0,
-                   0,
-                   0,
-                   slice,
-                   mip,
-                   mt_dst,
-                   0,
-                   0,
-                   0,
-                   slice,
-                   mip,
-                   extent[0],
-                   extent[1],
-                   extent[2]);
-      } break;
+        for (int mip : mip_levels) {
+          /* NOTE: mip_size_get() won't override any dimension that is equal to 0. */
+          int extent[3] = {1, 1, 1};
+          this->mip_size_get(mip, extent);
+
+          int slice = 0;
+          this->blit(blit_encoder,
+                     0,
+                     0,
+                     0,
+                     slice,
+                     mip,
+                     mt_dst,
+                     0,
+                     0,
+                     0,
+                     slice,
+                     mip,
+                     extent[0],
+                     extent[1],
+                     extent[2]);
+        }
+        break;
+      }
     }
   }
 }
@@ -1380,7 +1388,7 @@ void gpu::MTLTexture::clear(const double4 data)
       MTLContext *ctx = MTLContext::get();
       BLI_assert(ctx);
 
-      /* Begin compute encoder. */
+      /* Begin blit encoder. */
       id<MTLBlitCommandEncoder> blit_encoder =
           ctx->main_command_buffer.ensure_begin_blit_encoder();
       [blit_encoder fillBuffer:backing_buffer_->get_metal_buffer()
@@ -1392,6 +1400,19 @@ void gpu::MTLTexture::clear(const double4 data)
                      "Non-repeating-byte-pattern clear for buffer-backed textures not supported!");
     }
     return;
+  }
+  /* For texture views, the actual Metal handle used for rendering is mip_swizzle_view_,
+   * not texture_ (which holds the parent's Metal handle). Metal strips
+   * MTLTextureUsageRenderTarget from cross-format views, so delegate the clear
+   * to the parent texture which retains full usage flags. */
+  else if (resource_mode_ == MTL_TEXTURE_MODE_TEXTURE_VIEW && source_texture_) {
+    id<MTLTexture> clear_texture = (mip_swizzle_view_ != nil) ? mip_swizzle_view_ : texture_;
+    if (!(clear_texture.usage & MTLTextureUsageRenderTarget)) {
+      gpu::MTLTexture *source_texture = const_cast<gpu::MTLTexture *>(
+          static_cast<const gpu::MTLTexture *>(source_texture_));
+      source_texture->clear(data);
+      return;
+    }
   }
 
   /* Create clear frame-buffer for fast clear. */

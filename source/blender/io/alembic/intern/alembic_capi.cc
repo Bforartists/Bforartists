@@ -670,10 +670,11 @@ static void import_endjob(void *user_data)
     }
   }
   else {
+    const Main *bmain = data->bmain;
     const Scene *scene = data->scene;
     ViewLayer *view_layer = data->view_layer;
 
-    BKE_view_layer_base_deselect_all(scene, view_layer);
+    BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
 
     LayerCollection *lc = BKE_layer_collection_get_active_editable(view_layer);
     if (!ID_IS_EDITABLE(lc->collection)) {
@@ -687,7 +688,7 @@ static void import_endjob(void *user_data)
       BKE_collection_object_add(data->bmain, lc->collection, ob);
     }
     /* Sync and do the view layer operations. */
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     bool has_instantiated_object = false;
     bool has_uninstantiated_object = false;
     for (AbcObjectReader *reader : data->readers) {

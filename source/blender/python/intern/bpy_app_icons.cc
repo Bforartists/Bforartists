@@ -83,6 +83,7 @@ static PyObject *bpy_app_icons_new_triangles(PyObject * /*self*/, PyObject *args
   geom->coords = coords;
   geom->colors = colors;
   geom->icon_id = 0;
+  geom->mem = nullptr;
   const int icon_id = BKE_icon_geom_ensure(geom);
   return PyLong_FromLong(icon_id);
 }

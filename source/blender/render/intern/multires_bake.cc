@@ -433,10 +433,10 @@ class MultiresBaker {
   {
     const int64_t pixel = int64_t(ibuf.x) * coord.y + coord.x;
 
-    if (ibuf.float_buffer.data) {
+    if (ibuf.float_data()) {
       /* TODO(sergey): Properly tackle ibuf.channels. */
       BLI_assert(ibuf.channels == 4);
-      float *rrgbf = ibuf.float_buffer.data + pixel * 4;
+      float *rrgbf = ibuf.float_data_for_write() + pixel * 4;
       rrgbf[0] = value[0];
       rrgbf[1] = value[1];
       rrgbf[2] = value[2];
@@ -444,8 +444,8 @@ class MultiresBaker {
       ibuf.userflags |= IB_RECT_INVALID;
     }
 
-    if (ibuf.byte_buffer.data) {
-      uchar *rrgb = ibuf.byte_buffer.data + pixel * 4;
+    if (ibuf.byte_data()) {
+      uchar *rrgb = ibuf.byte_data_for_write() + pixel * 4;
       unit_float_to_uchar_clamp_v3(rrgb, value);
       rrgb[3] = 255;
     }
@@ -1538,21 +1538,23 @@ static void bake_ibuf_normalize_displacement(ImBuf &ibuf,
 
   /* TODO(sergey): Look into multi-threading this loop. */
   const size_t ibuf_pixel_count = IMB_get_pixel_count(&ibuf);
+  uchar *byte_data = ibuf.byte_data_for_write();
+  float *float_data = ibuf.float_data_for_write();
   for (size_t i = 0; i < ibuf_pixel_count; i++) {
     if (*current_mask == FILTER_MASK_USED) {
       const float normalized_displacement = (*current_displacement + max_distance) /
                                             (max_distance * 2);
 
-      if (ibuf.float_buffer.data) {
+      if (float_data) {
         /* TODO(sergey): Properly tackle ibuf.channels. */
         BLI_assert(ibuf.channels == 4);
-        float *fp = ibuf.float_buffer.data + int64_t(i) * 4;
+        float *fp = float_data + int64_t(i) * 4;
         fp[0] = fp[1] = fp[2] = normalized_displacement;
         fp[3] = 1.0f;
       }
 
-      if (ibuf.byte_buffer.data) {
-        uchar *cp = ibuf.byte_buffer.data + int64_t(i) * 4;
+      if (byte_data) {
+        uchar *cp = byte_data + int64_t(i) * 4;
         cp[0] = cp[1] = cp[2] = unit_float_to_uchar_clamp(normalized_displacement);
         cp[3] = 255;
       }
@@ -1632,7 +1634,7 @@ static void finish_images(MultiresBakeRender &bake,
     ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
     BKE_image_mark_dirty(image, ibuf);
 
-    if (ibuf->float_buffer.data) {
+    if (ibuf->float_data()) {
       ibuf->userflags |= IB_RECT_INVALID;
     }
 

@@ -29,14 +29,16 @@ NODE_STORAGE_FUNCS(NodeConvertToDisplay)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Bool>("Invert").default_value(false).description(
-      "Convert from display to scene linear instead. Not all view transforms can be inverted "
-      "exactly, and the result may not match the original scene linear image");
+  b.add_input<decl::Bool>("Invert"_ustr)
+      .default_value(false)
+      .description(
+          "Convert from display to scene linear instead. Not all view transforms can be inverted "
+          "exactly, and the result may not match the original scene linear image");
 
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
 }
 
 static void node_init(bNodeTree * /*ntree*/, bNode *node)
@@ -151,7 +153,7 @@ class ConvertToDisplayOperation : public NodeOperation {
   void execute_cpu()
   {
     const NodeConvertToDisplay &nctd = node_storage(node());
-    ColormanageProcessor *color_processor = IMB_colormanagement_display_processor_new(
+    ColormanageProcessor color_processor = ColormanageProcessor::display_processor_new(
         &nctd.view_settings, &nctd.display_settings, DISPLAY_SPACE_VIDEO_OUTPUT, do_inverse());
 
     Result &input_image = get_input("Image");
@@ -164,26 +166,23 @@ class ConvertToDisplayOperation : public NodeOperation {
       output_image.store_pixel(texel, input_image.load_pixel<Color>(texel));
     });
 
-    IMB_colormanagement_processor_apply(color_processor,
-                                        static_cast<float *>(output_image.cpu_data().data()),
-                                        domain.data_size.x,
-                                        domain.data_size.y,
-                                        input_image.channels_count(),
-                                        false);
-    IMB_colormanagement_processor_free(color_processor);
+    color_processor.apply(static_cast<float *>(output_image.cpu_data().data()),
+                          domain.data_size.x,
+                          domain.data_size.y,
+                          input_image.channels_count(),
+                          false);
   }
 
   void execute_single()
   {
     const NodeConvertToDisplay &nctd = node_storage(node());
-    ColormanageProcessor *color_processor = IMB_colormanagement_display_processor_new(
+    ColormanageProcessor color_processor = ColormanageProcessor::display_processor_new(
         &nctd.view_settings, &nctd.display_settings, DISPLAY_SPACE_VIDEO_OUTPUT, do_inverse());
 
     Result &input_image = get_input("Image");
     Color color = input_image.get_single_value<Color>();
 
-    IMB_colormanagement_processor_apply_pixel(color_processor, color, 3);
-    IMB_colormanagement_processor_free(color_processor);
+    color_processor.apply_pixel(color, 3);
 
     Result &output_image = get_result("Image");
     output_image.allocate_single_value();

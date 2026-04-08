@@ -18,7 +18,7 @@
 COMPUTE_SHADER_CREATE_INFO(eevee_lightprobe_volume_load)
 
 #include "eevee_lightprobe_volume_eval_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 #include "gpu_shader_math_base_lib.glsl"
 
 #include "gpu_shader_math_matrix_normalize_lib.glsl"
@@ -31,11 +31,11 @@ void atlas_store(float4 sh_coefficient, int2 atlas_coord, int layer)
              sh_coefficient);
 }
 
-SphericalHarmonicL1 irradiance_load(int3 input_coord)
+SphericalHarmonicL1<float4> irradiance_load(int3 input_coord)
 {
   input_coord = clamp(input_coord, int3(0), textureSize(irradiance_a_tx, 0) - 1);
 
-  SphericalHarmonicL1 sh;
+  SphericalHarmonicL1<float4> sh;
   sh.L0.M0 = texelFetch(irradiance_a_tx, input_coord, 0);
   sh.L1.Mn1 = texelFetch(irradiance_b_tx, input_coord, 0);
   sh.L1.M0 = texelFetch(irradiance_c_tx, input_coord, 0);
@@ -70,7 +70,7 @@ void main()
   IrradianceBrick brick = irradiance_brick_unpack(bricks_infos_buf[brick_index]);
   int2 output_coord = int2(brick.atlas_coord);
 
-  SphericalHarmonicL1 sh_local;
+  SphericalHarmonicL1<float4> sh_local;
 
   float validity = texelFetch(validity_tx, input_coord, 0).r;
   if (validity > dilation_threshold) {
@@ -82,7 +82,7 @@ void main()
     /* NOTE: Still load the center sample and give it low weight in case there is not valid sample
      * in the neighborhood. */
     float weight_accum = 1e-8f;
-    sh_local = spherical_harmonics_mul(irradiance_load(input_coord), weight_accum);
+    sh_local = spherical_harmonics::mul(irradiance_load(input_coord), weight_accum);
     int radius = int(dilation_radius);
     for (int x = -radius; x <= radius; x++) {
       for (int y = -radius; y <= radius; y++) {
@@ -102,21 +102,21 @@ void main()
             continue;
           }
           float weight = 1.0f / dist_sqr;
-          sh_local = spherical_harmonics_madd(irradiance_load(neighbor_coord), weight, sh_local);
+          sh_local = spherical_harmonics::madd(irradiance_load(neighbor_coord), weight, sh_local);
           weight_accum += weight;
         }
       }
     }
     float inv_weight_accum = safe_rcp(weight_accum);
-    sh_local = spherical_harmonics_mul(sh_local, inv_weight_accum);
+    sh_local = spherical_harmonics::mul(sh_local, inv_weight_accum);
   }
 
   /* Rotate Spherical Harmonic into world space. */
   float3x3 grid_to_world_rot = normalize(
       to_float3x3(grids_infos_buf[grid_index].world_to_grid_transposed));
-  sh_local = spherical_harmonics_rotate(grid_to_world_rot, sh_local);
+  sh_local = spherical_harmonics::rotate(grid_to_world_rot, sh_local);
 
-  SphericalHarmonicL1 sh_visibility;
+  SphericalHarmonicL1<float4> sh_visibility;
   sh_visibility.L0.M0 = sh_local.L0.M0.aaaa;
   sh_visibility.L1.Mn1 = sh_local.L1.Mn1.aaaa;
   sh_visibility.L1.M0 = sh_local.L1.M0.aaaa;
@@ -124,7 +124,7 @@ void main()
 
   float3 P = lightprobe_volume_grid_sample_position(grid_local_to_world, grid_size, input_coord);
 
-  SphericalHarmonicL1 sh_distant = lightprobe_volume_sample(P);
+  SphericalHarmonicL1<float4> sh_distant = lightprobe_volume_sample(P);
 
   if (is_padding_voxel) {
     /* Padding voxels just contain the distant lighting. */
@@ -132,14 +132,14 @@ void main()
   }
   else {
     /* Mask distant lighting by local visibility. */
-    sh_distant = spherical_harmonics_triple_product(sh_visibility, sh_distant);
+    sh_distant = spherical_harmonics::triple_product(sh_visibility, sh_distant);
     /* Apply intensity scaling. */
-    sh_local = spherical_harmonics_mul(sh_local, grid_intensity_factor);
+    sh_local = spherical_harmonics::mul(sh_local, grid_intensity_factor);
     /* Add local lighting to distant lighting. */
-    sh_local = spherical_harmonics_add(sh_local, sh_distant);
+    sh_local = spherical_harmonics::add(sh_local, sh_distant);
   }
 
-  sh_local = spherical_harmonics_dering(sh_local);
+  sh_local = spherical_harmonics::dering(sh_local);
 
   atlas_store(sh_local.L0.M0, output_coord, 0);
   atlas_store(sh_local.L1.Mn1, output_coord, 1);

@@ -80,8 +80,8 @@ static void render_init_buffers(const DRWContext *draw_ctx,
   RenderPass *rpass_z_src = RE_pass_find_by_name(render_layer, RE_PASSNAME_DEPTH, viewname);
   RenderPass *rpass_col_src = RE_pass_find_by_name(render_layer, RE_PASSNAME_COMBINED, viewname);
 
-  float *pix_z = (rpass_z_src) ? rpass_z_src->ibuf->float_buffer.data : nullptr;
-  float *pix_col = (rpass_col_src) ? rpass_col_src->ibuf->float_buffer.data : nullptr;
+  float *pix_z = (rpass_z_src) ? rpass_z_src->ibuf->float_data_for_write() : nullptr;
+  float *pix_col = (rpass_col_src) ? rpass_col_src->ibuf->float_data_for_write() : nullptr;
 
   if (!pix_z || !pix_col) {
     RE_engine_set_error_message(engine,
@@ -168,7 +168,7 @@ static void render_result_z(const DRWContext *draw_ctx,
     return;
   }
 
-  float *ro_buffer_data = rp->ibuf->float_buffer.data;
+  float *ro_buffer_data = rp->ibuf->float_data_for_write();
 
   GPU_framebuffer_read_depth(instance.render_fb,
                              rect->xmin,
@@ -229,7 +229,7 @@ static void render_result_combined(RenderLayer *rl,
                              4,
                              0,
                              GPU_DATA_FLOAT,
-                             rp->ibuf->float_buffer.data);
+                             rp->ibuf->float_data_for_write());
 }
 
 static void render_result_separated_pass(float *data, Instance &instance, const rcti *rect)

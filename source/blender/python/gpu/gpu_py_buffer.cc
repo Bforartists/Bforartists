@@ -686,18 +686,20 @@ static PyBufferProcs pygpu_buffer__tp_as_buffer = {
 PyDoc_STRVAR(
     /* Wrap. */
     pygpu_buffer__tp_doc,
-    ".. class:: Buffer(format, dimensions, data)\n"
+    ".. class:: Buffer\n"
     "\n"
     "   For Python access to GPU functions requiring a pointer.\n"
     "\n"
-    "   :param format: Format type to interpret the buffer.\n"
-    "      ``UINT_24_8`` is deprecated, use ``FLOAT`` instead.\n"
-    "   :type format: " PYDOC_DATAFORMAT_LITERAL
+    "   .. method:: __init__(format, dimensions, data)\n"
     "\n"
-    "   :param dimensions: Array describing the dimensions.\n"
-    "   :type dimensions: int | Sequence[int]\n"
-    "   :param data: Optional data array.\n"
-    "   :type data: Buffer | Sequence[float] | Sequence[int]\n");
+    "      :param format: Format type to interpret the buffer.\n"
+    "         ``UINT_24_8`` is deprecated, use ``FLOAT`` instead.\n"
+    "      :type format: " PYDOC_DATAFORMAT_LITERAL
+    "\n"
+    "      :param dimensions: Array describing the dimensions.\n"
+    "      :type dimensions: int | Sequence[int]\n"
+    "      :param data: Optional data array.\n"
+    "      :type data: Buffer | Sequence[float] | Sequence[int]\n");
 PyTypeObject BPyGPU_BufferType = {
     /*ob_base*/ PyVarObject_HEAD_INIT(nullptr, 0)
     /*tp_name*/ "Buffer",

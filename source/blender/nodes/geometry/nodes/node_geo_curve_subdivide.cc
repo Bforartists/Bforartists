@@ -16,12 +16,16 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curves to subdivide");
-  b.add_output<decl::Geometry>("Curve").propagate_all().align_with_previous();
-  b.add_input<decl::Int>("Cuts").default_value(1).min(0).max(1000).field_on_all().description(
-      "The number of control points to create on the segment following each point");
+  b.add_output<decl::Geometry>("Curve"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Int>("Cuts"_ustr)
+      .default_value(1)
+      .min(0)
+      .max(1000)
+      .field_on_all()
+      .description("The number of control points to create on the segment following each point");
 }
 
 static Curves *subdivide_curves(const Curves &src_curves_id,
@@ -83,11 +87,11 @@ static void subdivide_grease_pencil_curves(GreasePencil &grease_pencil,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve");
-  Field<int> cuts_field = params.extract_input<Field<int>>("Cuts");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve"_ustr);
+  Field<int> cuts_field = params.extract_input<Field<int>>("Cuts"_ustr);
 
   GeometryComponentEditData::remember_deformed_positions_if_necessary(geometry_set);
-  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Curve");
+  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Curve"_ustr);
 
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     if (geometry_set.has_curves()) {
@@ -102,7 +106,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       subdivide_grease_pencil_curves(grease_pencil, cuts_field, attribute_filter);
     }
   });
-  params.set_output("Curve", geometry_set);
+  params.set_output("Curve"_ustr, geometry_set);
 }
 
 static void node_register()

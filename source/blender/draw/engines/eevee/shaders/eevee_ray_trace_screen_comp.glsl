@@ -19,7 +19,7 @@ COMPUTE_SHADER_CREATE_INFO(eevee_ray_trace_screen)
 #include "eevee_ray_types_lib.glsl"
 #include "eevee_reverse_z_lib.glsl"
 #include "eevee_sampling_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 
 void main()
 {
@@ -142,7 +142,8 @@ void main()
     LightProbeSample samp = lightprobe_load(float2(texel), ray.origin, Ng, V);
     /* Clamp SH to have parity with forward evaluation. */
     float clamp_indirect = uniform_buf.clamp.surface_indirect;
-    samp.volume_irradiance = spherical_harmonics_clamp(samp.volume_irradiance, clamp_indirect);
+    samp.volume_irradiance = spherical_harmonics::clamp_energy(samp.volume_irradiance,
+                                                               clamp_indirect);
 
     radiance = lightprobe_eval_direction(samp, ray.origin, ray.direction, ray_pdf_inv);
     /* Set point really far for correct reprojection of background. */

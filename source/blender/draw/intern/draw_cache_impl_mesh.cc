@@ -173,11 +173,13 @@ static bool attribute_exists(const Mesh &mesh, const StringRef name)
 static std::optional<bke::AttributeMetaData> lookup_meta_data(const Mesh &mesh,
                                                               const StringRef name)
 {
-  if (BMEditMesh *em = mesh.runtime->edit_mesh.get()) {
-    if (const BMDataLayerLookup attr = BM_data_layer_lookup(*em->bm, name)) {
-      return bke::AttributeMetaData{attr.domain, attr.type};
+  if (mesh.runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH) {
+    if (BMEditMesh *em = mesh.runtime->edit_mesh.get()) {
+      if (const BMDataLayerLookup attr = BM_data_layer_lookup(*em->bm, name)) {
+        return bke::AttributeMetaData{attr.domain, attr.type};
+      }
+      return std::nullopt;
     }
-    return std::nullopt;
   }
   return mesh.attributes().lookup_meta_data(name);
 }

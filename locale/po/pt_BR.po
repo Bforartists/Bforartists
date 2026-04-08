@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'45d5533d8e66')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-03-16 11:01+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2025-11-11 12:13+0000\n"
 "Last-Translator: Rafael Teixeira de Avila Soares <rafaeltas@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -743,14 +743,6 @@ msgstr "Base"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "Coloque o nó de Mistura na mesma altura do nó mais baixo"
-
-
-msgid "Show Hotkey List"
-msgstr "Exibir lista de teclas de atalho"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "Expanda essa caixa em uma lista de todas as teclas de atalho para funções neste addon"
 
 
 msgid "Fribidi Library"
@@ -3976,6 +3968,10 @@ msgid "Vertex Color"
 msgstr "Cor dos vértices"
 
 
+msgid "Threshold"
+msgstr "Ajuste"
+
+
 msgid "Curve Jitter"
 msgstr "Curva de tremulação"
 
@@ -4000,6 +3996,11 @@ msgid "Curve used for the strength"
 msgstr "A curva usada para a força."
 
 
+msgctxt "Operator"
+msgid "Poly"
+msgstr "Polígonos"
+
+
 msgid "All"
 msgstr "Todos"
 
@@ -4022,10 +4023,6 @@ msgstr "Tudo Abaixo"
 
 msgid "Simplify"
 msgstr "Simplificar"
-
-
-msgid "Threshold"
-msgstr "Ajuste"
 
 
 msgid "Input Samples"
@@ -4156,8 +4153,8 @@ msgid "Fill"
 msgstr "Preencher"
 
 
-msgid "Stroke & Fill"
-msgstr "Contorno e Preenchimento"
+msgid "Both"
+msgstr "Ambos"
 
 
 msgid "Path to the archive"
@@ -20951,10 +20948,6 @@ msgid "Calculate Overlap"
 msgstr "Calcular sobreposições"
 
 
-msgid "Calculate self intersections and overlap before filling"
-msgstr "Calcula as intersecções e sobreposições internas antes do preenchimento."
-
-
 msgid "Mask Layers"
 msgstr "Camadas de máscara"
 
@@ -21203,124 +21196,16 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Quick Effects"
-msgstr "Efeitos instantâneos"
-
-
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
 msgid "Math"
 msgstr "Matemática"
 
 
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Make Single User"
-msgstr "Tornar usuário único"
-
-
-msgid "Convert"
-msgstr "Converter"
-
-
-msgid "Hooks"
-msgstr "Ganchos"
-
-
-msgid "Random Mask"
-msgstr "Máscara Aleatória"
-
-
-msgid "Clear Transform"
-msgstr "Limpar transformações"
-
-
-msgid "In-Betweens"
-msgstr "Entre as continuidades"
-
-
-msgid "Propagate"
-msgstr "Propagar"
-
-
-msgid "Names"
-msgstr "Nomes"
-
-
-msgid "Apply"
-msgstr "Aplicar"
-
-
-msgid "Toggle Bone Options"
-msgstr "Alternar opções de ossos"
-
-
-msgid "Enable Bone Options"
-msgstr "Habilitar opções de ossos"
-
-
-msgid "Disable Bone Options"
-msgstr "Desabilitar as opções de ossos"
-
-
-msgid "Mesh Select Mode"
-msgstr "Modo de seleção de malhas"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Merge"
-msgstr "Fundir"
-
-
-msgid "Special Characters"
-msgstr "Caracteres especiais"
-
-
-msgid "Layout"
-msgstr "Organizar"
-
-
-msgid "Metaball"
-msgstr "Meta-esfera"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem dos ossos"
-
-
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
-
-
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
+msgid "Mirror"
+msgstr "Espelhar"
 
 
 msgid "Snap"
 msgstr "Atrair"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
-
-
-msgid "Mirror"
-msgstr "Espelhar"
 
 
 msgid "UV Mapping"
@@ -21371,16 +21256,24 @@ msgid "Select Loops"
 msgstr "Selecionar anéis"
 
 
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Metaball"
+msgstr "Meta-esfera"
+
+
+msgid "Import"
+msgstr "Importar"
+
+
 msgid "Light"
 msgstr "Luz"
 
 
 msgid "Light Probe"
 msgstr "Sonda de Luz"
-
-
-msgid "Instances"
-msgstr "Instâncias"
 
 
 msgid "Add Image"
@@ -21391,16 +21284,116 @@ msgid "Relations"
 msgstr "Relações"
 
 
-msgid "Import"
-msgstr "Importar"
-
-
 msgid "Rigid Body"
 msgstr "Corpo rígido"
 
 
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Apply"
+msgstr "Aplicar"
+
+
 msgid "Track"
 msgstr "Rastrear"
+
+
+msgid "Quick Effects"
+msgstr "Efeitos instantâneos"
+
+
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Make Single User"
+msgstr "Tornar usuário único"
+
+
+msgid "Convert"
+msgstr "Converter"
+
+
+msgid "Hooks"
+msgstr "Ganchos"
+
+
+msgid "Random Mask"
+msgstr "Máscara Aleatória"
+
+
+msgid "Clear Transform"
+msgstr "Limpar transformações"
+
+
+msgid "In-Betweens"
+msgstr "Entre as continuidades"
+
+
+msgid "Propagate"
+msgstr "Propagar"
+
+
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Toggle Bone Options"
+msgstr "Alternar opções de ossos"
+
+
+msgid "Enable Bone Options"
+msgstr "Habilitar opções de ossos"
+
+
+msgid "Disable Bone Options"
+msgstr "Desabilitar as opções de ossos"
+
+
+msgid "Mesh Select Mode"
+msgstr "Modo de seleção de malhas"
+
+
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Merge"
+msgstr "Fundir"
+
+
+msgid "Layout"
+msgstr "Organizar"
+
+
+msgid "Special Characters"
+msgstr "Caracteres especiais"
+
+
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem dos ossos"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
+
+
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
 
 
 msgid "Basic"
@@ -23518,6 +23511,10 @@ msgstr "Temporização"
 
 msgid "Grow"
 msgstr "Crescer"
+
+
+msgid "Stroke & Fill"
+msgstr "Contorno e Preenchimento"
 
 
 msgid "Hook Modifier"
@@ -34447,10 +34444,6 @@ msgid "Side"
 msgstr "Lado"
 
 
-msgid "Both"
-msgstr "Ambos"
-
-
 msgctxt "Operator"
 msgid "Euler Discontinuity Filter"
 msgstr "Filtro de descontinuidade para Euler"
@@ -37102,22 +37095,6 @@ msgid "Merge method to use"
 msgstr "Método de fusão para usar."
 
 
-msgid "At Center"
-msgstr "No centro"
-
-
-msgid "At Cursor"
-msgstr "No cursor"
-
-
-msgid "At First"
-msgstr "No primeiro"
-
-
-msgid "At Last"
-msgstr "No último"
-
-
 msgid "Move UVs according to merge"
 msgstr "Remove as UVs de acordo com a fusão."
 
@@ -37416,11 +37393,6 @@ msgstr "Triangular faces"
 
 msgid "Triangulate selected faces"
 msgstr "Torna as faces selecionadas triangulares."
-
-
-msgctxt "Operator"
-msgid "Select Boundary Loop"
-msgstr "Selecionar os anéis das extremidades"
 
 
 msgid "Select boundary edges around the selected faces"
@@ -38751,14 +38723,6 @@ msgstr "Tipo de árvore"
 
 msgid "Copy color to all selected nodes"
 msgstr "Copia as cores para todos os nós selecionados"
-
-
-msgid "Overlay Mode"
-msgstr "Modo de sobreposição"
-
-
-msgid "Sign Mode"
-msgstr "Modo Sinal"
 
 
 msgctxt "Operator"
@@ -51773,58 +51737,6 @@ msgid "Seed value for integrator to get different noise patterns"
 msgstr "Valor de semente para que o integrador obtenha diferentes padrões de ruído."
 
 
-msgid "Viewport Texture Limit"
-msgstr "Limitar texturas na janela de exibição"
-
-
-msgid "Limit texture size used by viewport rendering"
-msgstr "Limita o tamanho das texturas usadas pela renderização na janela de exibição."
-
-
-msgid "No Limit"
-msgstr "Sem limitações"
-
-
-msgid "No texture size limit"
-msgstr "Sem limitações de tamanho de texturas."
-
-
-msgid "Limit texture size to 128 pixels"
-msgstr "Limita o tamanho da textura para 128 pixeis."
-
-
-msgid "Limit texture size to 256 pixels"
-msgstr "Limita o tamanho da textura para 256 pixeis."
-
-
-msgid "Limit texture size to 512 pixels"
-msgstr "Limita o tamanho da textura para 512 pixeis."
-
-
-msgid "Limit texture size to 1024 pixels"
-msgstr "Limita o tamanho da textura para 1024 pixeis."
-
-
-msgid "Limit texture size to 2048 pixels"
-msgstr "Limita o tamanho da textura para 2048 pixeis."
-
-
-msgid "Limit texture size to 4096 pixels"
-msgstr "Limita o tamanho da textura para 4096 pixeis."
-
-
-msgid "Limit texture size to 8192 pixels"
-msgstr "Limita o tamanho da textura para 8192 pixeis."
-
-
-msgid "Render Texture Limit"
-msgstr "Limitar texturas de renderização"
-
-
-msgid "Limit texture size used by final rendering"
-msgstr "Limita o tamanho da textura utilizada para a renderização final."
-
-
 msgid "Tile Size"
 msgstr "Tamanho dos ladrilhos"
 
@@ -54226,6 +54138,10 @@ msgid "Mask displayed and edited in this space"
 msgstr "Mascara os mostrados e editados dentro deste espaço."
 
 
+msgid "Overlay Mode"
+msgstr "Modo de sobreposição"
+
+
 msgid "Overlay mode of rasterized mask"
 msgstr "Modo de sobreposição da máscara rasterizada."
 
@@ -55790,14 +55706,6 @@ msgstr "Som"
 
 msgid "Use Default Fade"
 msgstr "Usar esmaecimento padrão"
-
-
-msgid "Use Linear Modifiers"
-msgstr "Usar modificadores lineares"
-
-
-msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Calcula os modificadores dentro do espaço linear invés do espaço do sequenciador."
 
 
 msgid "Sequence strip applying an effect on the images created by other strips"
@@ -59069,6 +58977,10 @@ msgid "Report a Bug"
 msgstr "Relatar defeito (em inglês)"
 
 
+msgid "Object Index"
+msgstr "Índice de objeto"
+
+
 msgid "OSL shader compilation succeeded"
 msgstr "Compilação de sombreador OSL realizada com sucesso."
 
@@ -59635,11 +59547,6 @@ msgstr "Cursos para a Origem do Mundo"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Cursor para a grade"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "Polígonos"
 
 
 msgid "Data Source:"
@@ -62332,24 +62239,8 @@ msgid "Cannot change action, as it is still being edited in NLA"
 msgstr "Não é possível alterar a ação, pois esta ainda está sendo editada no editor de animação não linear."
 
 
-msgid "<No ID pointer>"
-msgstr "<Sem ponteiro para o identificador >"
-
-
-msgid "No F-Curve to add keyframes to"
-msgstr "Sem curvas-f para as quais adicionar quadros-chave."
-
-
-msgid "No RNA pointer available to retrieve values for keyframing from"
-msgstr "Sem ponteiro RNA disponível para obter valores nos quais colocar o conjunto de inserção de chaves."
-
-
 msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Sem identificador de bloco e / ou dados de animação a partir dos quais apagar o quadro-chave."
-
-
-msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "Não é possível inserir quadro-chave, pois o caminho RNA é inválido para o identificador fornecido (ID = %s, Caminho = %s)."
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -62366,6 +62257,22 @@ msgstr "Não é possível limpar o quadro-chave, pois o caminho RNA é inválido
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
 msgstr "Saltando caminho dentro do conjunto de inserção de chaves, pois este não possui identificador (KS = '%s', Caminho = '%s[%d]')."
+
+
+msgid "<No ID pointer>"
+msgstr "<Sem ponteiro para o identificador >"
+
+
+msgid "No F-Curve to add keyframes to"
+msgstr "Sem curvas-f para as quais adicionar quadros-chave."
+
+
+msgid "No RNA pointer available to retrieve values for keyframing from"
+msgstr "Sem ponteiro RNA disponível para obter valores nos quais colocar o conjunto de inserção de chaves."
+
+
+msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
+msgstr "Não é possível inserir quadro-chave, pois o caminho RNA é inválido para o identificador fornecido (ID = %s, Caminho = %s)."
 
 
 msgid "KeyingSet"
@@ -67329,10 +67236,6 @@ msgid "Dot"
 msgstr "Ponto"
 
 
-msgid "Object Index"
-msgstr "Índice de objeto"
-
-
 msgid "Color Fac"
 msgstr "Fator para cor"
 
@@ -67476,10 +67379,6 @@ msgstr "Faixas devem possuir o mesmo número de entradas."
 
 msgid "Glow"
 msgstr "Incandescência"
-
-
-msgid "Blur X"
-msgstr "Desfocar X"
 
 
 msgid "Rim"

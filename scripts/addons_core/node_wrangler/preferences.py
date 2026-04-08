@@ -96,41 +96,23 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
             "specify the position of the new nodes"
         ),
     )
-
-    show_hotkey_list: BoolProperty(
-        name="Show Hotkey List",
-        default=False,
-        description="Expand this box into a list of all the hotkeys for functions in this addon"
-    )
     hotkey_list_filter: StringProperty(
         name="        Filter by Name",
         default="",
         description="Show only hotkeys that have this text in their name",
         options={'TEXTEDIT_UPDATE'}
     )
-    show_principled_lists: BoolProperty(
-        name="Show Principled Naming Tags",
-        default=False,
-        description="Expand this box into a list of all naming tags for Principled Texture setup"
-    )
     principled_tags: bpy.props.PointerProperty(type=NWPrincipledPreferences)
 
-    def draw(self, context):
-        layout = self.layout
-        col = layout.column()
-        col.prop(self, "merge_position")
-        col.prop(self, "merge_hide")
+    def draw_principled_tags(self, layout):
+        header, panel = layout.panel("NW_PT_prefs_principled_tags", default_closed=True)
+        header.label(text="Principled Texture Tags")
 
-        box = layout.box()
-        col = box.column(align=True)
-        col.prop(
-            self,
-            "show_principled_lists",
-            text='Edit tags for auto texture detection in Principled BSDF setup',
-            toggle=True)
-        if self.show_principled_lists:
+        if panel:
+            panel.separator(factor=0.5)
+
             tags = self.principled_tags
-
+            col = panel.column(align=True)
             col.prop(tags, "base_color")
             col.prop(tags, "metallic")
             col.prop(tags, "specular")
@@ -144,13 +126,17 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
             col.prop(tags, "alpha")
             col.prop(tags, "ambient_occlusion")
 
-        box = layout.box()
-        col = box.column(align=True)
-        hotkey_button_name = iface_("Hide Hotkey List") if self.show_hotkey_list else iface_("Show Hotkey List")
-        col.prop(self, "show_hotkey_list", text=hotkey_button_name, translate=False, toggle=True)
-        if self.show_hotkey_list:
+    def draw_hotkey_list(self, layout):
+        header, panel = layout.panel("NW_PT_prefs_hotkey_list", default_closed=True)
+        header.label(text="Hotkey List")
+
+        if panel:
+            panel.separator(factor=0.5)
+            col = panel.column(align=True)
+
             col.prop(self, "hotkey_list_filter", icon="VIEWZOOM")
             col.separator()
+
             for hotkey in kmi_defs:
                 if hotkey[7]:
                     hotkey_name = hotkey[7]
@@ -167,6 +153,20 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
                         if hotkey[3]:
                             keystr = iface_("Ctrl", i18n_contexts.ui_events_keymaps) + " " + keystr
                         row.label(text=keystr, translate=False)
+
+    def draw(self, _context):
+        layout = self.layout
+        col = layout.column()
+        col.prop(self, "merge_position")
+        col.prop(self, "merge_hide")
+
+        col = layout.column(align=True)
+
+        box = col.box().column(align=True)
+        self.draw_principled_tags(box)
+
+        box = col.box().column(align=True)
+        self.draw_hotkey_list(box)
 
 
 #

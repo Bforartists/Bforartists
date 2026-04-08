@@ -692,7 +692,7 @@ bool psys_in_edit_mode(Depsgraph *depsgraph, const ParticleSystem *psys)
 {
   const Scene *scene = DEG_get_input_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*DEG_get_bmain(depsgraph), scene, view_layer);
   const Object *object = BKE_view_layer_active_object_get(view_layer);
   if (object == nullptr) {
     /* TODO(sergey): Needs double-check with multi-object edit. */

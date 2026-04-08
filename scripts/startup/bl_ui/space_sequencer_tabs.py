@@ -17,6 +17,7 @@ from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
     toolsystem_column_count, # BFA - Helper function
 )
+from bl_ui.space_sequencer import are_selected_strips_connected # BFA - Helper function
 from rna_prop_ui import PropertyPanel
 
 
@@ -562,6 +563,67 @@ class SEQUENCER_PT_sequencer_striptab_retiming(Panel):
         else:
             self.draw_strip_context(context)
 
+class SEQUENCER_PT_sequencer_striptab_connect(Panel):
+    bl_label = "Connect"
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Strip"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+     # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return space.show_toolshelf_tabs and space.view_type in {'SEQUENCER'}
+    
+    def draw(self, context):
+        layout = self.layout
+        strip = context.active_strip
+
+        column_count = toolsystem_column_count(context.region)
+
+        obj = context.object
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            # Show connect or disconnect based on connection state
+            if are_selected_strips_connected(context):
+                col.operator("sequencer.disconnect", icon="UNLINKED")
+            else:
+                col.operator("sequencer.connect", icon="LINKED").toggle = False
+        
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+                # Show connect or disconnect based on connection state
+                if are_selected_strips_connected(context):
+                    col.operator("sequencer.disconnect", icon="UNLINKED")
+                else:
+                    col.operator("sequencer.connect", icon="LINKED").toggle = False
+
+            elif column_count == 2:
+                # Show connect or disconnect based on connection state
+                if are_selected_strips_connected(context):
+                    col.operator("sequencer.disconnect", text="", icon='UNLINKED')
+                else:
+                    col.operator("sequencer.connect", text="", icon='LINKED').toggle = False
+
+            elif column_count == 1:
+                # Show connect or disconnect based on connection state
+                if are_selected_strips_connected(context):
+                    col.operator("sequencer.disconnect", text="", icon='UNLINKED')
+                else:
+                    col.operator("sequencer.connect", text="", icon='LINKED').toggle = False
 
 classes = (
     SEQUENCER_PT_imagetab_clear,
@@ -569,6 +631,7 @@ classes = (
     SEQUENCER_PT_sequencer_striptab_transform,
     SEQUENCER_PT_sequencer_striptab_split,
     SEQUENCER_PT_sequencer_striptab_retiming,
+    SEQUENCER_PT_sequencer_striptab_connect,
 )
 
 if __name__ == "__main__":  # only for live edit.

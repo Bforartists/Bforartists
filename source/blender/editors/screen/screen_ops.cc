@@ -4330,6 +4330,8 @@ static bool area_join_apply(bContext *C, wmOperator *op)
     WM_window_title_refresh(CTX_wm_manager(C), CTX_wm_window(C));
   }
 
+  CTX_wm_window(C)->tag_cursor_refresh = true;
+
   return true;
 }
 
@@ -6829,6 +6831,11 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
     }
   }
 
+  /* Calling stop_playback() frees the animation timer `wt`, and `sad` with it. Instead of calling
+   * that function directly, set this boolean to `true`, which will call the function at the end of
+   * this function. */
+  bool do_stop_playback = false;
+
   /* Handle reaching the extreme frames. */
   const int start_frame = PSFRA;
   const int end_frame = PEFRA;
@@ -6840,7 +6847,7 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
 
     switch (scene->playback_loop_mode) {
       case SCE_LOOP_MODE_STOP_START_FRAME:
-        stop_playback(C);
+        do_stop_playback = true;
         ATTR_FALLTHROUGH;
       case SCE_LOOP_MODE_INFINITE:
         scene->r.cfra = is_playing_forward ? start_frame : end_frame;
@@ -6851,11 +6858,11 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
          * clamping). If this turns out to be undesired, the `is_extreme_frame` computation will
          * have to take the loop mode into account. */
         CLAMP(scene->r.cfra, start_frame, end_frame);
-        stop_playback(C);
+        do_stop_playback = true;
         break;
       case SCE_LOOP_MODE_RESTORE:
         scene->r.cfra = sad->sfra;
-        stop_playback(C);
+        do_stop_playback = true;
         break;
       case SCE_LOOP_MODE_BOUNCE:
         if (is_playing_forward) {
@@ -6947,6 +6954,10 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
   /* TODO: this may make evaluation a bit slower if the value doesn't change...
    * any way to avoid this? */
   wt->time_step = (1.0 / scene->frames_per_second());
+
+  if (do_stop_playback) {
+    stop_playback(C);
+  }
 
   return OPERATOR_FINISHED;
 }

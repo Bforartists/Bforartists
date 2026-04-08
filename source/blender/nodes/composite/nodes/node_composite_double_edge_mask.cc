@@ -12,28 +12,28 @@ namespace blender::nodes::node_composite_double_edge_mask_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Outer Mask")
+  b.add_input<decl::Float>("Outer Mask"_ustr)
       .default_value(0.8f)
       .min(0.0f)
       .max(1.0f)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Float>("Inner Mask")
+  b.add_input<decl::Float>("Inner Mask"_ustr)
       .default_value(0.8f)
       .min(0.0f)
       .max(1.0f)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Bool>("Image Edges")
+  b.add_input<decl::Bool>("Image Edges"_ustr)
       .default_value(false)
       .description(
           "The edges of the image that intersects the outer mask will be considered edges of the "
           "outer mask. Otherwise, the outer mask will be considered open-ended");
-  b.add_input<decl::Bool>("Only Inside Outer")
+  b.add_input<decl::Bool>("Only Inside Outer"_ustr)
       .default_value(false)
       .description(
           "Only edges of the inner mask that lie inside the outer mask will be considered. "
           "Otherwise, all edges of the inner mask will be considered");
 
-  b.add_output<decl::Float>("Mask").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Mask"_ustr).structure_type(StructureType::Dynamic);
 }
 
 using namespace blender::compositor;

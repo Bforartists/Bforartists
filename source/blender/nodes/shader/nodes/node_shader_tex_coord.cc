@@ -15,13 +15,13 @@ namespace nodes::node_shader_tex_coord_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("Generated").translation_context(BLT_I18NCONTEXT_ID_TEXTURE);
-  b.add_output<decl::Vector>("Normal");
-  b.add_output<decl::Vector>("UV");
-  b.add_output<decl::Vector>("Object");
-  b.add_output<decl::Vector>("Camera");
-  b.add_output<decl::Vector>("Window");
-  b.add_output<decl::Vector>("Reflection");
+  b.add_output<decl::Vector>("Generated"_ustr).translation_context(BLT_I18NCONTEXT_ID_TEXTURE);
+  b.add_output<decl::Vector>("Normal"_ustr);
+  b.add_output<decl::Vector>("UV"_ustr);
+  b.add_output<decl::Vector>("Object"_ustr);
+  b.add_output<decl::Vector>("Camera"_ustr);
+  b.add_output<decl::Vector>("Window"_ustr);
+  b.add_output<decl::Vector>("Reflection"_ustr);
 }
 
 static void node_shader_buts_tex_coord(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

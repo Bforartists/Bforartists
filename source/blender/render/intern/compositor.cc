@@ -187,7 +187,7 @@ class Context : public compositor::Context {
         float *data = MEM_new_array_uninitialized<float>(
             4 * size_t(render_result->rectx) * size_t(render_result->recty), __func__);
         IMB_assign_float_buffer(image_buffer, data, IB_TAKE_OWNERSHIP);
-        std::memcpy(image_buffer->float_buffer.data,
+        std::memcpy(image_buffer->float_data_for_write(),
                     result.cpu_data().data(),
                     render_result->rectx * render_result->recty * 4 * sizeof(float));
       }
@@ -260,7 +260,7 @@ class Context : public compositor::Context {
       IMB_free_gpu_textures(image_buffer);
 
       /* Allocate float buffer if not using GPU and no float buffer exists. */
-      if (!image_buffer->float_buffer.data) {
+      if (!image_buffer->float_data()) {
         IMB_alloc_float_pixels(image_buffer, 4, false);
       }
     }
@@ -281,7 +281,7 @@ class Context : public compositor::Context {
         IMB_rectfill(image_buffer, viewer_result.get_single_value<compositor::Color>());
       }
       else {
-        std::memcpy(image_buffer->float_buffer.data,
+        std::memcpy(image_buffer->float_data_for_write(),
                     viewer_result.cpu_data().data(),
                     size.x * size.y * 4 * sizeof(float));
       }
@@ -426,7 +426,7 @@ class Context : public compositor::Context {
       return this->get_invalid_pass();
     }
 
-    if (!render_pass || !render_pass->ibuf || !render_pass->ibuf->float_buffer.data) {
+    if (!render_pass || !render_pass->ibuf || !render_pass->ibuf->float_data()) {
       return this->get_invalid_pass();
     }
 
@@ -443,7 +443,7 @@ class Context : public compositor::Context {
     else {
       /* Don't assume render will keep pass data stored, add our own reference. */
       IMB_refImBuf(render_pass->ibuf);
-      pass_data.wrap_external(render_pass->ibuf->float_buffer.data,
+      pass_data.wrap_external(render_pass->ibuf->float_data_for_write(),
                               int2(render_pass->ibuf->x, render_pass->ibuf->y));
       cached_cpu_passes_.append(render_pass->ibuf);
     }

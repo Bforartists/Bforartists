@@ -79,6 +79,8 @@
 
 #include "RNA_define.hh"
 
+#include "FN_init.hh"
+
 #ifdef WITH_OPENGL_BACKEND
 #  include "GPU_compilation_subprocess.hh"
 #endif
@@ -490,6 +492,7 @@ int main(int argc,
   BKE_blender_globals_init(); /* `blender.cc` */
 
   BKE_cpp_types_init();
+  fn::multi_function::register_common_functions();
   BKE_idtype_init();
   BKE_modifier_init();
   seq::modifiers_init();
@@ -546,6 +549,7 @@ int main(int argc,
 
 #ifdef WITH_CYCLES
   CCL_log_init();
+  CCL_implicit_sharing_init();
 #endif
 
   /* Must be initialized after #BKE_appdir_init to account for color-management paths. */

@@ -12,7 +12,7 @@
 
 COMPUTE_SHADER_CREATE_INFO(eevee_lightprobe_volume_world)
 
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 
 void atlas_store(float4 sh_coefficient, int2 atlas_coord, int layer)
 {
@@ -29,13 +29,13 @@ void main()
   IrradianceBrick brick = irradiance_brick_unpack(bricks_infos_buf[brick_index]);
   int2 output_coord = int2(brick.atlas_coord);
 
-  SphericalHarmonicL1 sh;
+  SphericalHarmonicL1<float4> sh;
   sh.L0.M0 = harmonic_buf.L0_M0;
   sh.L1.Mn1 = harmonic_buf.L1_Mn1;
   sh.L1.M0 = harmonic_buf.L1_M0;
   sh.L1.Mp1 = harmonic_buf.L1_Mp1;
 
-  sh = spherical_harmonics_dering(sh);
+  sh = spherical_harmonics::dering(sh);
 
   atlas_store(sh.L0.M0, output_coord, 0);
   atlas_store(sh.L1.Mn1, output_coord, 1);

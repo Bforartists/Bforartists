@@ -433,6 +433,7 @@ void ED_spacetype_userpref()
   /* regions: navigation window */
   art = MEM_new_zeroed<ARegionType>("spacetype userpref region");
   art->regionid = RGN_TYPE_UI;
+  art->flag = ARegionTypeFlag::HideSinglePanelCategories;
   art->prefsizex = UI_NAVIGATION_REGION_WIDTH;
   art->init = userpref_navigation_region_init;
   art->draw = userpref_navigation_region_draw;

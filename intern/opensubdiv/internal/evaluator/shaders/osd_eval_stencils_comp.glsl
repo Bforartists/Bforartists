@@ -72,7 +72,7 @@ void writeVertex(int index, Vertex v)
   }
 }
 
-void addWithWeight(inout Vertex v, const Vertex src, float weight)
+void addWithWeight(Vertex &v, const Vertex src, float weight)
 {
   for (int i = 0; i < LENGTH; ++i) {
     v.vertexData[i] += weight * src.vertexData[i];

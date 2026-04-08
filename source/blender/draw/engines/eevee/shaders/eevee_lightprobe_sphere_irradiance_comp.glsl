@@ -12,13 +12,13 @@ COMPUTE_SHADER_CREATE_INFO(eevee_lightprobe_sphere_irradiance)
 #include "eevee_lightprobe_sphere_lib.glsl"
 #include "eevee_lightprobe_sphere_mapping_lib.glsl"
 #include "eevee_sampling_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 
 shared float4 local_sh_coefs[gl_WorkGroupSize.x][4];
 
 void main()
 {
-  SphericalHarmonicL1 sh;
+  SphericalHarmonicL1<float4> sh;
   sh.L0.M0 = float4(0.0f);
   sh.L1.Mn1 = float4(0.0f);
   sh.L1.M0 = float4(0.0f);
@@ -32,12 +32,12 @@ void main()
     if (index >= valid_data_len) {
       break;
     }
-    SphericalHarmonicL1 sh_sample;
+    SphericalHarmonicL1<float4> sh_sample;
     sh_sample.L0.M0 = in_sh[index].L0_M0;
     sh_sample.L1.Mn1 = in_sh[index].L1_Mn1;
     sh_sample.L1.M0 = in_sh[index].L1_M0;
     sh_sample.L1.Mp1 = in_sh[index].L1_Mp1;
-    sh = spherical_harmonics_add(sh, sh_sample);
+    sh = spherical_harmonics::add(sh, sh_sample);
   }
 
   /* Then sum across invocations. */

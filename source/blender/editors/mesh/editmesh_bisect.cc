@@ -109,6 +109,7 @@ static void mesh_bisect_interactive_calc(bContext *C,
 
 static wmOperatorStatus mesh_bisect_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   int valid_objects = 0;
@@ -122,7 +123,7 @@ static wmOperatorStatus mesh_bisect_invoke(bContext *C, wmOperator *op, const wm
   }
 
   const Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *obedit : objects) {
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
@@ -230,6 +231,7 @@ static wmOperatorStatus mesh_bisect_modal(bContext *C, wmOperator *op, const wmE
 
 static wmOperatorStatus mesh_bisect_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
 
   /* both can be nullptr, fallbacks values are used */
@@ -291,7 +293,7 @@ static wmOperatorStatus mesh_bisect_exec(bContext *C, wmOperator *op)
   /* -------------------------------------------------------------------- */
 
   const Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C));
+      *bmain, scene, CTX_data_view_layer(C), CTX_wm_view3d(C));
 
   for (const int ob_index : objects.index_range()) {
     Object *obedit = objects[ob_index];

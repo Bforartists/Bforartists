@@ -8,6 +8,8 @@
  * \ingroup bke
  */
 
+#include <string>
+
 #include "BLI_ghash.h"
 #include "BLI_iterator.h"
 #include "BLI_map.hh"
@@ -29,6 +31,7 @@ struct BlendWriter;
 struct Collection;
 struct ID;
 struct CollectionChild;
+struct CollectionImport;
 struct CollectionExport;
 struct GHash;
 struct Main;
@@ -119,6 +122,18 @@ void BKE_collection_add_from_collection(Main *bmain,
 void BKE_collection_free_data(Collection *collection);
 
 /**
+ * Can the collection contents be modified. Returns an optional reason if the content is not
+ * editable.
+ */
+bool BKE_collection_is_content_editable(const Collection *collection,
+                                        std::string *reason = nullptr);
+
+/**
+ * Add a new collection importer to the collection.
+ */
+CollectionImport *BKE_collection_importer_add(Collection *collection, const char *idname);
+
+/**
  * Add a new collection exporter to the collection.
  */
 CollectionExport *BKE_collection_exporter_add(Collection *collection, char *idname, char *label);
@@ -141,8 +156,9 @@ void BKE_collection_exporter_name_set(const ListBaseT<CollectionExport> *exporte
                                       const char *newname);
 
 /**
- * Free all data owned by the collection exporter.
+ * Free all data owned by the collection importers/exporters.
  */
+void BKE_collection_importer_free_data(CollectionImport *data);
 void BKE_collection_exporter_free_data(CollectionExport *data);
 
 /**
@@ -317,7 +333,8 @@ void BKE_collection_object_cache_free(const Main *bmain,
  */
 void BKE_main_collections_object_cache_free(const Main *bmain);
 
-Base *BKE_collection_or_layer_objects(const Scene *scene,
+Base *BKE_collection_or_layer_objects(const Main &bmain,
+                                      const Scene *scene,
                                       ViewLayer *view_layer,
                                       Collection *collection);
 
@@ -470,6 +487,7 @@ void BKE_scene_objects_iterator_end(BLI_Iterator *iter);
  * \note The object->flag is tested against flag.
  */
 struct SceneObjectsIteratorExData {
+  Main *bmain;
   Scene *scene;
   int flag;
   void *iter_data;

@@ -121,7 +121,7 @@ float4 radiance_history_fetch(int2 texel, float bilinear_weight)
 
 float4 radiance_history_sample(float3 P, LocalStatistics local)
 {
-  float2 uv = project_point(uniform_buf.raytrace.history_persmat, P).xy * 0.5f + 0.5f;
+  float2 uv = project_point(uniform_buf.raytrace.denoise_history_persmat, P).xy * 0.5f + 0.5f;
 
   /* FIXME(fclem): Find why we need this half pixel offset. */
   float2 texel_co = uv * float2(textureSize(radiance_history_tx, 0).xy) - 0.5f;
@@ -149,7 +149,7 @@ float4 radiance_history_sample(float3 P, LocalStatistics local)
 
 float2 variance_history_sample(float3 P)
 {
-  float2 uv = project_point(uniform_buf.raytrace.history_persmat, P).xy * 0.5f + 0.5f;
+  float2 uv = project_point(uniform_buf.raytrace.denoise_history_persmat, P).xy * 0.5f + 0.5f;
 
   if (!in_range_exclusive(uv, float2(0.0f), float2(1.0f))) {
     /* Out of history view. Return sample without weight. */

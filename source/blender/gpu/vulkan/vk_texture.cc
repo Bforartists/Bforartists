@@ -82,18 +82,25 @@ void VKTexture::generate_mipmap()
   context.render_graph().add_node(update_mipmaps);
 }
 
-void VKTexture::copy_to(VKTexture &dst_texture, VkImageAspectFlags vk_image_aspect)
+void VKTexture::copy_to(VKTexture &dst_texture,
+                        IndexRange mip_levels,
+                        VkImageAspectFlags vk_image_aspect)
 {
+  if (mip_levels.is_empty()) {
+    return;
+  }
+
   render_graph::VKCopyImageNode::CreateInfo copy_image = {};
+  copy_image.node_data.mip_levels = uint32_t(mip_levels.size());
   copy_image.node_data.src_image = vk_image_handle();
   copy_image.node_data.dst_image = dst_texture.vk_image_handle();
   copy_image.node_data.region.srcSubresource.aspectMask = vk_image_aspect;
-  copy_image.node_data.region.srcSubresource.mipLevel = 0;
+  copy_image.node_data.region.srcSubresource.mipLevel = mip_levels.first();
   copy_image.node_data.region.srcSubresource.layerCount = vk_layer_count(1);
   copy_image.node_data.region.dstSubresource.aspectMask = vk_image_aspect;
-  copy_image.node_data.region.dstSubresource.mipLevel = 0;
+  copy_image.node_data.region.dstSubresource.mipLevel = mip_levels.first();
   copy_image.node_data.region.dstSubresource.layerCount = vk_layer_count(1);
-  copy_image.node_data.region.extent = vk_extent_3d(0);
+  copy_image.node_data.region.extent = vk_extent_3d(mip_levels.first());
   copy_image.vk_image_aspect = to_vk_image_aspect_flag_bits(device_format_get());
 
   VKContext &context = *VKContext::get();
@@ -102,17 +109,21 @@ void VKTexture::copy_to(VKTexture &dst_texture, VkImageAspectFlags vk_image_aspe
   dst_texture.has_data_ = true;
 }
 
-void VKTexture::copy_to(Texture *texture)
+void VKTexture::copy_to(Texture *texture, IndexRange mip_levels)
 {
   VKTexture *dst = unwrap(texture);
   VKTexture *src = this;
   BLI_assert(dst);
   BLI_assert(src->w_ == dst->w_ && src->h_ == dst->h_ && src->d_ == dst->d_);
-  BLI_assert(src->device_format_ == dst->device_format_);
+  BLI_assert((src->format_ == dst->format_) ||
+             (src->format_ == TextureFormat::SRGBA_8_8_8_8 &&
+              dst->format_ == TextureFormat::UNORM_8_8_8_8) ||
+             (src->format_ == TextureFormat::UNORM_8_8_8_8 &&
+              dst->format_ == TextureFormat::SRGBA_8_8_8_8));
   BLI_assert(!is_texture_view());
   UNUSED_VARS_NDEBUG(src);
 
-  copy_to(*dst, to_vk_image_aspect_flag_bits(device_format_));
+  copy_to(*dst, mip_levels, to_vk_image_aspect_flag_bits(device_format_));
 }
 
 void VKTexture::clear(const double4 data)

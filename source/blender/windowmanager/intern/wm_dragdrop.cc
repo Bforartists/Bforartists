@@ -1144,7 +1144,7 @@ static void wm_drag_draw_icon(bContext * /*C*/, wmWindow * /*win*/, wmDrag *drag
                                   drag->imb->y,
                                   gpu::TextureFormat::UNORM_8_8_8_8,
                                   false,
-                                  drag->imb->byte_buffer.data,
+                                  drag->imb->byte_data(),
                                   drag->imbuf_scale,
                                   drag->imbuf_scale,
                                   1.0f,

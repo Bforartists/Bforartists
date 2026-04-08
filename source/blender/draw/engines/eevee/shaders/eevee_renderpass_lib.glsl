@@ -9,7 +9,7 @@
 
 SHADER_LIBRARY_CREATE_INFO(eevee_render_pass_out)
 
-void output_renderpass_color(int id, float4 color)
+void output_renderpass_color([[maybe_unused]] int id, [[maybe_unused]] float4 color)
 {
 #if defined(MAT_RENDER_PASS_SUPPORT) && defined(GPU_FRAGMENT_SHADER)
   if (id >= 0) {
@@ -19,7 +19,7 @@ void output_renderpass_color(int id, float4 color)
 #endif
 }
 
-void output_renderpass_value(int id, float value)
+void output_renderpass_value([[maybe_unused]] int id, [[maybe_unused]] float value)
 {
 #if defined(MAT_RENDER_PASS_SUPPORT) && defined(GPU_FRAGMENT_SHADER)
   if (id >= 0) {
@@ -41,7 +41,11 @@ void clear_aovs()
 #endif
 }
 
-void output_aov(float4 color, float value, uint hash, float holdout, eObjectInfoFlag ob_flag)
+void output_aov([[maybe_unused]] float4 color,
+                [[maybe_unused]] float value,
+                [[maybe_unused]] uint hash,
+                [[maybe_unused]] float holdout,
+                [[maybe_unused]] eObjectInfoFlag ob_flag)
 {
 #if defined(MAT_RENDER_PASS_SUPPORT) && defined(GPU_FRAGMENT_SHADER)
   uint total_len = uniform_buf.render_pass.aovs.color_len + uniform_buf.render_pass.aovs.value_len;

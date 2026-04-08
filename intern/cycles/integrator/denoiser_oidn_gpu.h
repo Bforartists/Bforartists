@@ -19,11 +19,6 @@ class OIDNDenoiserGPU : public DenoiserGPU {
 
   OIDNDenoiserGPU(Device *denoiser_device, const DenoiseParams &params);
 
-  bool denoise_buffer(const BufferParams &buffer_params,
-                      RenderBuffers *render_buffers,
-                      const int num_samples,
-                      bool allow_inplace_modification) override;
-
   static bool is_device_supported(const DeviceInfo &device);
 
  protected:
@@ -31,8 +26,6 @@ class OIDNDenoiserGPU : public DenoiserGPU {
     SYNC,
     ASYNC,
   };
-
-  uint get_device_type_mask() const override;
 
   /* Create OIDN denoiser descriptor if needed.
    * Will do nothing if the current OIDN descriptor is usable for the given parameters.

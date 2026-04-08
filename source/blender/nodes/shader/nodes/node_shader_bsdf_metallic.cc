@@ -15,31 +15,31 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
 
-  b.add_output<decl::Shader>("BSDF");
+  b.add_output<decl::Shader>("BSDF"_ustr);
   b.add_default_layout();
 
-  b.add_input<decl::Color>("Base Color")
+  b.add_input<decl::Color>("Base Color"_ustr)
       .default_value({0.617f, 0.577f, 0.540f, 1.0f})
       .description("Color of the material")
       .make_available([](bNode &node) { node.custom2 = SHD_CONDUCTOR_F82; });
-  b.add_input<decl::Color>("Edge Tint")
+  b.add_input<decl::Color>("Edge Tint"_ustr)
       .default_value({0.695f, 0.726f, 0.770f, 1.0f})
       .description(
           "Tint reflection at near-grazing incidence to simulate complex index of refraction")
       .make_available([](bNode &node) { node.custom2 = SHD_CONDUCTOR_F82; });
-  b.add_input<decl::Vector>("IOR")
+  b.add_input<decl::Vector>("IOR"_ustr)
       .default_value({2.757f, 2.513f, 2.231f})
       .min(0.0f)
       .max(100.0f)
       .description("Real part of the conductor's refractive index, often called n")
       .make_available([](bNode &node) { node.custom2 = SHD_PHYSICAL_CONDUCTOR; });
-  b.add_input<decl::Vector>("Extinction")
+  b.add_input<decl::Vector>("Extinction"_ustr)
       .default_value({3.867f, 3.404f, 3.009f})
       .min(0.0f)
       .max(100.0f)
       .description("Imaginary part of the conductor's refractive index, often called k")
       .make_available([](bNode &node) { node.custom2 = SHD_PHYSICAL_CONDUCTOR; });
-  b.add_input<decl::Float>("Roughness")
+  b.add_input<decl::Float>("Roughness"_ustr)
       .default_value(0.5f)
       .min(0.0f)
       .max(1.0f)
@@ -47,7 +47,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "Microfacet roughness of the surface (0.0 is a perfect mirror reflection, 1.0 is "
           "completely rough)");
-  b.add_input<decl::Float>("Anisotropy")
+  b.add_input<decl::Float>("Anisotropy"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
@@ -55,24 +55,24 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "Amount of anisotropy for reflection. Higher values give elongated highlights along the "
           "tangent direction");
-  b.add_input<decl::Float>("Rotation")
+  b.add_input<decl::Float>("Rotation"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Rotates the direction of anisotropy, with 1.0 going full circle");
-  b.add_input<decl::Vector>("Normal").hide_value();
-  b.add_input<decl::Vector>("Tangent").hide_value();
-  b.add_input<decl::Float>("Weight").available(false);
+  b.add_input<decl::Vector>("Normal"_ustr).hide_value();
+  b.add_input<decl::Vector>("Tangent"_ustr).hide_value();
+  b.add_input<decl::Float>("Weight"_ustr).available(false);
 
   PanelDeclarationBuilder &film = b.add_panel("Thin Film"_ustr).default_closed(true);
-  film.add_input<decl::Float>("Thin Film Thickness")
+  film.add_input<decl::Float>("Thin Film Thickness"_ustr)
       .default_value(0.0)
       .min(0.0f)
       .max(100000.0f)
       .subtype(PROP_WAVELENGTH)
       .description("Thickness of the film in nanometers");
-  film.add_input<decl::Float>("Thin Film IOR")
+  film.add_input<decl::Float>("Thin Film IOR"_ustr)
       .default_value(1.33f)
       .min(1.0f)
       .max(1000.0f)

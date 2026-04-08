@@ -10,10 +10,10 @@ namespace nodes::node_shader_output_material_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Shader>("Surface");
-  b.add_input<decl::Shader>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
-  b.add_input<decl::Vector>("Displacement").hide_value();
-  b.add_input<decl::Float>("Thickness").hide_value();
+  b.add_input<decl::Shader>("Surface"_ustr);
+  b.add_input<decl::Shader>("Volume"_ustr).translation_context(BLT_I18NCONTEXT_ID_ID);
+  b.add_input<decl::Vector>("Displacement"_ustr).hide_value();
+  b.add_input<decl::Float>("Thickness"_ustr).hide_value();
 }
 
 static int node_shader_gpu_output_material(GPUMaterial *mat,

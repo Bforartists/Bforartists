@@ -10,11 +10,12 @@ namespace blender::nodes::node_geo_tool_selection_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Bool>("Boolean", "Selection")
+  b.add_output<decl::Bool>("Boolean"_ustr, "Selection"_ustr)
       .field_source()
       .description("The selection of each element as a true or false value");
-  b.add_output<decl::Float>("Float").field_source().description(
-      "The selection of each element as a floating point value");
+  b.add_output<decl::Float>("Float"_ustr)
+      .field_source()
+      .description("The selection of each element as a floating point value");
 }
 
 static const void *true_value(const bke::AttrType data_type)
@@ -74,7 +75,6 @@ class EditSelectionFieldInput final : public bke::GeometryFieldInput {
   EditSelectionFieldInput(bke::AttrType data_type)
       : bke::GeometryFieldInput(bke::attribute_type_to_cpp_type(data_type), "Edit Selection")
   {
-    category_ = Category::NamedAttribute;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,
@@ -103,7 +103,6 @@ class SculptSelectionFieldInput final : public bke::GeometryFieldInput {
   SculptSelectionFieldInput(bke::AttrType data_type)
       : bke::GeometryFieldInput(bke::attribute_type_to_cpp_type(data_type), "Sculpt Selection")
   {
-    category_ = Category::NamedAttribute;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,
@@ -154,20 +153,20 @@ static GField get_selection_field(const eObjectMode object_mode, const bke::Attr
 {
   switch (object_mode) {
     case OB_MODE_OBJECT:
-      return fn::make_constant_field(bke::attribute_type_to_cpp_type(data_type),
-                                     true_value(data_type));
+      return fn::GField::from_non_owning_constant(bke::attribute_type_to_cpp_type(data_type),
+                                                  true_value(data_type));
     case OB_MODE_EDIT:
-      return GField(std::make_shared<EditSelectionFieldInput>(data_type));
+      return GField::from_input<EditSelectionFieldInput>(data_type);
     case OB_MODE_SCULPT:
     case OB_MODE_SCULPT_CURVES:
     case OB_MODE_SCULPT_GREASE_PENCIL:
-      return GField(std::make_shared<SculptSelectionFieldInput>(data_type));
+      return GField::from_input<SculptSelectionFieldInput>(data_type);
     case OB_MODE_PAINT_GREASE_PENCIL:
-      return fn::make_constant_field(bke::attribute_type_to_cpp_type(data_type),
-                                     true_value(data_type));
+      return fn::GField::from_non_owning_constant(bke::attribute_type_to_cpp_type(data_type),
+                                                  true_value(data_type));
     default:
-      return fn::make_constant_field(bke::attribute_type_to_cpp_type(data_type),
-                                     false_value(data_type));
+      return fn::GField::from_non_owning_constant(bke::attribute_type_to_cpp_type(data_type),
+                                                  false_value(data_type));
   }
 }
 
@@ -177,8 +176,8 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
   const eObjectMode mode = params.user_data()->call_data->operator_data->mode;
-  params.set_output("Selection", get_selection_field(mode, bke::AttrType::Bool));
-  params.set_output("Float", get_selection_field(mode, bke::AttrType::Float));
+  params.set_output("Selection"_ustr, get_selection_field(mode, bke::AttrType::Bool));
+  params.set_output("Float"_ustr, get_selection_field(mode, bke::AttrType::Float));
 }
 
 static void node_register()

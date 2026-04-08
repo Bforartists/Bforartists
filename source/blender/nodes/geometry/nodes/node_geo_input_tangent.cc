@@ -12,7 +12,7 @@ namespace blender::nodes::node_geo_input_tangent_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("Tangent").field_source();
+  b.add_output<decl::Vector>("Tangent"_ustr).field_source();
 }
 
 static Array<float3> curve_tangent_point_domain(const bke::CurvesGeometry &curves)
@@ -92,10 +92,7 @@ static VArray<float3> construct_curve_tangent_gvarray(const bke::CurvesGeometry 
 
 class TangentFieldInput final : public bke::CurvesFieldInput {
  public:
-  TangentFieldInput() : bke::CurvesFieldInput(CPPType::get<float3>(), "Tangent node")
-  {
-    category_ = Category::Generated;
-  }
+  TangentFieldInput() : bke::CurvesFieldInput(CPPType::get<float3>(), "Tangent node") {}
 
   GVArray get_varray_for_context(const bke::CurvesGeometry &curves,
                                  const AttrDomain domain,
@@ -110,7 +107,7 @@ class TangentFieldInput final : public bke::CurvesFieldInput {
     return 91827364589;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const TangentFieldInput *>(&other) != nullptr;
   }
@@ -123,8 +120,7 @@ class TangentFieldInput final : public bke::CurvesFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<float3> tangent_field{std::make_shared<TangentFieldInput>()};
-  params.set_output("Tangent", std::move(tangent_field));
+  params.set_output("Tangent"_ustr, Field<float3>::from_input<TangentFieldInput>());
 }
 
 static void node_register()

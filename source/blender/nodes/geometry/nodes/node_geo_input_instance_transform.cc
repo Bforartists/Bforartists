@@ -8,13 +8,13 @@ namespace blender::nodes::node_geo_input_instance_transform_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Matrix>("Transform").field_source();
+  b.add_output<decl::Matrix>("Transform"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<float4x4> position_field{AttributeFieldInput::from<float4x4>("instance_transform")};
-  params.set_output("Transform", std::move(position_field));
+  Field<float4x4> position_field{AttributeFieldInput::get_field<float4x4, "instance_transform">()};
+  params.set_output("Transform"_ustr, std::move(position_field));
 }
 
 static void node_register()

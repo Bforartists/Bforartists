@@ -135,16 +135,18 @@ class GeometryToObjectsBuilder {
                                             const bke::GeometrySet &geometry)
   {
     ComponentObjects component_objects = this->get_objects_for_geometry(src_ob_eval, geometry);
-    const StringRefNull name = geometry.name.empty() ? StringRefNull(BKE_id_name(src_ob_eval.id)) :
-                                                       StringRefNull(geometry.name);
+    const StringRefNull name = geometry.name().is_empty() ?
+                                   StringRefNull(BKE_id_name(src_ob_eval.id)) :
+                                   StringRefNull(geometry.name());
     return this->collection_from_component_objects(component_objects, name);
   }
 
   ComponentObjects get_objects_for_geometry(const Object &src_ob_eval,
                                             const bke::GeometrySet &geometry)
   {
-    const StringRefNull name = geometry.name.empty() ? StringRefNull(BKE_id_name(src_ob_eval.id)) :
-                                                       StringRefNull(geometry.name);
+    const StringRefNull name = geometry.name().is_empty() ?
+                                   StringRefNull(BKE_id_name(src_ob_eval.id)) :
+                                   StringRefNull(geometry.name());
     ComponentObjects objects;
     if (const Mesh *mesh = geometry.get_mesh()) {
       if (mesh->verts_num > 0) {
@@ -488,10 +490,10 @@ static wmOperatorStatus visual_geometry_to_objects_exec(bContext *C, wmOperator 
     BKE_collection_child_add(&bmain, scene.master_collection, new_collection);
   }
   /* Ensure that the #Base for objects and #LayerCollection for collections are created. */
-  BKE_scene_view_layers_synced_ensure(&scene);
+  BKE_scene_view_layers_synced_ensure(bmain, &scene);
 
   /* Deselect everything so that we can select the new objects. */
-  BKE_view_layer_base_deselect_all(&scene, &active_view_layer);
+  BKE_view_layer_base_deselect_all(bmain, &scene, &active_view_layer);
   /* Select the new objects. */
   for (Object *object : all_new_top_level_objects) {
     Base *base = BKE_view_layer_base_find(&active_view_layer, object);

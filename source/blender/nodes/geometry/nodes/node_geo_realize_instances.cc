@@ -21,22 +21,25 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .description("Geometry whose instances are (partially) realized");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection")
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .field_on_all()
       .description("Which top-level instances to realize");
-  b.add_input<decl::Bool>("Realize All")
+  b.add_input<decl::Bool>("Realize All"_ustr)
       .default_value(true)
       .field_on_all()
       .description(
           "Realize all levels of nested instances for a top-level instances. Overrides the value "
           "of the Depth input");
-  b.add_input<decl::Int>("Depth").default_value(0).min(0).field_on_all().description(
-      "Number of levels of nested instances to realize for each top-level instance");
+  b.add_input<decl::Int>("Depth"_ustr)
+      .default_value(0)
+      .min(0)
+      .field_on_all()
+      .description("Number of levels of nested instances to realize for each top-level instance");
 }
 
 static void node_layout_ex(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -46,16 +49,16 @@ static void node_layout_ex(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
   if (!geometry_set.has_instances()) {
-    params.set_output("Geometry", std::move(geometry_set));
+    params.set_output("Geometry"_ustr, std::move(geometry_set));
     return;
   }
 
   GeometryComponentEditData::remember_deformed_positions_if_necessary(geometry_set);
 
-  Field<bool> realize_all_field = params.extract_input<Field<bool>>("Realize All");
-  Field<int> depth_field = params.extract_input<Field<int>>("Depth");
+  Field<bool> realize_all_field = params.extract_input<Field<bool>>("Realize All"_ustr);
+  Field<int> depth_field = params.extract_input<Field<int>>("Depth"_ustr);
   const bNode &node = params.node();
   const bool realize_to_point_domain = node.custom1 & GEO_NODE_REALIZE_TO_POINT_DOMAIN;
 
@@ -67,7 +70,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   Field<int> depth_field_overridden(FieldOperation::from(
       depth_override, {std::move(depth_field), std::move(realize_all_field)}));
 
-  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
+  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
 
   static auto selection_override = mf::build::SI2_SO<int, bool, bool>(
       "selection_override",
@@ -92,15 +95,15 @@ static void node_geo_exec(GeoNodeExecParams params)
   options.keep_original_ids = false;
   options.realize_instance_attributes = true;
   options.realize_to_point_domain = realize_to_point_domain;
-  const NodeAttributeFilter attribute_filter = params.get_attribute_filter("Geometry");
+  const NodeAttributeFilter attribute_filter = params.get_attribute_filter("Geometry"_ustr);
   options.attribute_filter = attribute_filter;
   geometry::RealizeInstancesResult realize_result = geometry::realize_instances(
       geometry_set, options, varied_depth_option);
   for (const StringRef error : realize_result.errors) {
     params.error_message_add(NodeWarningType::Error, error);
   }
-  realize_result.geometry.name = geometry_set.name;
-  params.set_output("Geometry", std::move(realize_result.geometry));
+  realize_result.geometry.set_name(geometry_set.name());
+  params.set_output("Geometry"_ustr, std::move(realize_result.geometry));
 }
 
 static void node_rna(StructRNA *srna)

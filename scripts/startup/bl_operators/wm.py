@@ -1158,15 +1158,18 @@ class WM_OT_url_open_preset(Operator):
     ]
 
     @staticmethod
-    def lookup_url_from_type(type):
+    def lookup_url_from_type(ty):
         for (item_id, _, _), url in WM_OT_url_open_preset.preset_items:
-            if item_id == type:
+            if item_id == ty:
                 if callable(url):
                     return url()
                 return url
+        return None
 
     def execute(self, _context):
-        return bpy.ops.wm.url_open(url=WM_OT_url_open_preset.lookup_url_from_type(self.type))
+        url = WM_OT_url_open_preset.lookup_url_from_type(self.type)
+        assert url is not None, "Unexpected enum not found (internal error)"
+        return bpy.ops.wm.url_open(url=url)
 
 
 class WM_OT_path_open(Operator):

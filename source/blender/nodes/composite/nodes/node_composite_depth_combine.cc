@@ -18,29 +18,35 @@ namespace blender::nodes::node_composite_depth_combin_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("A")
+  b.add_input<decl::Color>("A"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Float>("Depth A").default_value(1.0f).min(0.0f).max(10000.0f).structure_type(
-      StructureType::Dynamic);
-  b.add_input<decl::Color>("B")
+  b.add_input<decl::Float>("Depth A"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .max(10000.0f)
+      .structure_type(StructureType::Dynamic);
+  b.add_input<decl::Color>("B"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Float>("Depth B").default_value(1.0f).min(0.0f).max(10000.0f).structure_type(
-      StructureType::Dynamic);
-  b.add_input<decl::Bool>("Use Alpha")
+  b.add_input<decl::Float>("Depth B"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .max(10000.0f)
+      .structure_type(StructureType::Dynamic);
+  b.add_input<decl::Bool>("Use Alpha"_ustr)
       .default_value(false)
       .description(
           "Use the alpha of the first input as mixing factor and return the more opaque alpha of "
           "the two inputs");
-  b.add_input<decl::Bool>("Anti-Alias")
+  b.add_input<decl::Bool>("Anti-Alias"_ustr)
       .default_value(true)
       .description(
           "Anti-alias the generated mask before combining for smoother boundaries at the cost of "
           "more expensive processing");
 
-  b.add_output<decl::Color>("Result").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Depth").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Result"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Depth"_ustr).structure_type(StructureType::Dynamic);
 }
 
 using namespace blender::compositor;

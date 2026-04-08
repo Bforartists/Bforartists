@@ -75,8 +75,13 @@ class BlenderSmokeLoader : public VDBImageLoader {
 
     /* Create a matrix to transform from object space to mesh texture space.
      * This does not work with deformations but that can probably only be done
-     * well with a volume grid mapping of coordinates. */
-    Transform transform_3d = transform_translate(-texspace_loc) * transform_scale(texspace_size);
+     * well with a volume grid mapping of coordinates.
+     *
+     * Mantaflow stores values at cell centers, while OpenVDB convention is
+     * at corners. Offset by half a voxel to compensate for that. */
+    const float3 half_voxel = make_float3(0.5f / width, 0.5f / height, 0.5f / depth);
+    Transform transform_3d = transform_translate(-texspace_loc - half_voxel) *
+                             transform_scale(texspace_size);
 
     vector<float> voxels;
     if (!get_voxels(width, height, depth, channels, voxels)) {
@@ -224,7 +229,7 @@ static void sync_smoke_volume(blender::Scene &b_scene,
     Attribute *attr = volume->attributes.add(std);
 
     if (!frame_interval.contains(frame)) {
-      attr->data_voxel().clear();
+      attr->data_voxel_for_write().clear();
       continue;
     }
 
@@ -233,7 +238,7 @@ static void sync_smoke_volume(blender::Scene &b_scene,
     ImageParams params;
     params.frame = frame;
 
-    attr->data_voxel() = scene->image_manager->add_image(std::move(loader), params);
+    attr->data_voxel_for_write() = scene->image_manager->add_image(std::move(loader), params);
   }
 }
 
@@ -373,7 +378,8 @@ static void sync_volume_object(blender::Main &b_data,
       ImageParams params;
       params.frame = b_volume.runtime->frame;
 
-      attr->data_voxel() = scene->image_manager->add_image(std::move(loader), params, false);
+      attr->data_voxel_for_write() = scene->image_manager->add_image(
+          std::move(loader), params, false);
     }
   }
 #endif

@@ -10,9 +10,12 @@ namespace nodes::node_shader_displacement_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Height").default_value(0.0f).min(0.0f).max(1000.0f).description(
-      "Distance to displace the surface along the normal");
-  b.add_input<decl::Float>("Midlevel")
+  b.add_input<decl::Float>("Height"_ustr)
+      .default_value(0.0f)
+      .min(0.0f)
+      .max(1000.0f)
+      .description("Distance to displace the surface along the normal");
+  b.add_input<decl::Float>("Midlevel"_ustr)
       .default_value(0.5f)
       .min(0.0f)
       .max(1000.0f)
@@ -20,10 +23,13 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Neutral displacement value that causes no displacement.\n"
           "Lower values cause the surface to move inwards, "
           "higher values push the surface outwards");
-  b.add_input<decl::Float>("Scale").default_value(0.01f).min(0.0f).max(1000.0f).description(
-      "Increase or decrease the amount of displacement");
-  b.add_input<decl::Vector>("Normal").hide_value();
-  b.add_output<decl::Vector>("Displacement");
+  b.add_input<decl::Float>("Scale"_ustr)
+      .default_value(0.01f)
+      .min(0.0f)
+      .max(1000.0f)
+      .description("Increase or decrease the amount of displacement");
+  b.add_input<decl::Vector>("Normal"_ustr).hide_value();
+  b.add_output<decl::Vector>("Displacement"_ustr);
 }
 
 static void node_shader_init_displacement(bNodeTree * /*ntree*/, bNode *node)

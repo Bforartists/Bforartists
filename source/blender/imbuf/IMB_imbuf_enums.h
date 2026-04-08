@@ -15,7 +15,7 @@ namespace blender {
 #define IM_MAX_SPACE 64
 
 /** #ImBuf.ftype: main image types. */
-enum eImbFileType {
+enum eImbFileType : int8_t {
   IMB_FTYPE_NONE = 0,
   IMB_FTYPE_PNG = 1,
   IMB_FTYPE_TGA = 2,

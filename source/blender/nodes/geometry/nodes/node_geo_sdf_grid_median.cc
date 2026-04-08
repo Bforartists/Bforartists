@@ -16,11 +16,13 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Float>("Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output<decl::Float>("Grid").structure_type(StructureType::Grid).align_with_previous();
-  b.add_input<decl::Int>("Width").default_value(1).min(0).description(
-      "Filter kernel radius in voxels");
-  b.add_input<decl::Int>("Iterations")
+  b.add_input<decl::Float>("Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output<decl::Float>("Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
+  b.add_input<decl::Int>("Width"_ustr)
+      .default_value(1)
+      .min(0)
+      .description("Filter kernel radius in voxels");
+  b.add_input<decl::Int>("Iterations"_ustr)
       .default_value(1)
       .min(0)
       .description("Number of iterations to apply the filter");
@@ -29,16 +31,16 @@ static void node_declare(NodeDeclarationBuilder &b)
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  auto grid = params.extract_input<bke::VolumeGrid<float>>("Grid");
+  auto grid = params.extract_input<bke::VolumeGrid<float>>("Grid"_ustr);
   if (!grid) {
     params.set_default_remaining_outputs();
     return;
   }
 
-  const int iterations = params.extract_input<int>("Iterations");
-  const int width = params.extract_input<int>("Width");
+  const int iterations = params.extract_input<int>("Iterations"_ustr);
+  const int width = params.extract_input<int>("Width"_ustr);
   if (iterations <= 0 || width <= 0) {
-    params.set_output("Grid", std::move(grid));
+    params.set_output("Grid"_ustr, std::move(grid));
     return;
   }
 
@@ -56,7 +58,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  params.set_output("Grid", std::move(grid));
+  params.set_output("Grid"_ustr, std::move(grid));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

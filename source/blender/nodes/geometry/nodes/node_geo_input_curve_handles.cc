@@ -10,14 +10,14 @@ namespace blender::nodes::node_geo_input_curve_handles_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Relative")
+  b.add_input<decl::Bool>("Relative"_ustr)
       .default_value(false)
       .supports_field()
       .description(
           "Output the handle positions relative to the corresponding control point "
           "instead of in the local space of the geometry");
-  b.add_output<decl::Vector>("Left").field_source_reference_all();
-  b.add_output<decl::Vector>("Right").field_source_reference_all();
+  b.add_output<decl::Vector>("Left"_ustr).field_source_reference_all();
+  b.add_output<decl::Vector>("Right"_ustr).field_source_reference_all();
 }
 
 class HandlePositionFieldInput final : public bke::GeometryFieldInput {
@@ -78,9 +78,9 @@ class HandlePositionFieldInput final : public bke::GeometryFieldInput {
         VArray<float3>::from_container(std::move(output)), AttrDomain::Point, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const final
   {
-    relative_.node().for_each_field_input_recursive(fn);
+    fn(relative_);
   }
 
   uint64_t hash() const final
@@ -88,7 +88,7 @@ class HandlePositionFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(relative_, left_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const HandlePositionFieldInput *other_handle =
             dynamic_cast<const HandlePositionFieldInput *>(&other))
@@ -107,12 +107,12 @@ class HandlePositionFieldInput final : public bke::GeometryFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<bool> relative = params.extract_input<Field<bool>>("Relative");
-  Field<float3> left_field{std::make_shared<HandlePositionFieldInput>(relative, true)};
-  Field<float3> right_field{std::make_shared<HandlePositionFieldInput>(relative, false)};
+  Field<bool> relative = params.extract_input<Field<bool>>("Relative"_ustr);
+  Field<float3> left_field = Field<float3>::from_input<HandlePositionFieldInput>(relative, true);
+  Field<float3> right_field = Field<float3>::from_input<HandlePositionFieldInput>(relative, false);
 
-  params.set_output("Left", std::move(left_field));
-  params.set_output("Right", std::move(right_field));
+  params.set_output("Left"_ustr, std::move(left_field));
+  params.set_output("Right"_ustr, std::move(right_field));
 }
 
 static void node_register()

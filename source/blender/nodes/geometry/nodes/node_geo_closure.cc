@@ -92,8 +92,8 @@ static void node_declare(NodeDeclarationBuilder &b)
       for (const int i : IndexRange(output_storage.input_items.items_num)) {
         const NodeClosureInputItem &item = output_storage.input_items.items[i];
         const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-        const std::string identifier = ClosureInputItemsAccessor::socket_identifier_for_item(item);
-        auto &decl = b.add_output(socket_type, item.name, identifier);
+        const UString identifier(ClosureInputItemsAccessor::socket_identifier_for_item(item));
+        auto &decl = b.add_output(socket_type, UString(item.name), identifier);
         if (item.structure_type != NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
           decl.structure_type(StructureType(item.structure_type));
         }
@@ -103,7 +103,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       }
     }
   }
-  b.add_output<decl::Extend>("", "__extend__");
+  b.add_output<decl::Extend>(""_ustr, "__extend__"_ustr);
 }
 
 static void node_label(const bNodeTree * /*ntree*/,
@@ -164,8 +164,8 @@ static void node_declare(NodeDeclarationBuilder &b)
     for (const int i : IndexRange(storage.output_items.items_num)) {
       const NodeClosureOutputItem &item = storage.output_items.items[i];
       const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-      const std::string identifier = ClosureOutputItemsAccessor::socket_identifier_for_item(item);
-      auto &decl = b.add_input(socket_type, item.name, identifier).supports_field();
+      const UString identifier(ClosureOutputItemsAccessor::socket_identifier_for_item(item));
+      auto &decl = b.add_input(socket_type, UString(item.name), identifier).supports_field();
       if (item.structure_type != NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
         decl.structure_type(StructureType(item.structure_type));
       }
@@ -174,8 +174,8 @@ static void node_declare(NodeDeclarationBuilder &b)
       }
     }
   }
-  b.add_input<decl::Extend>("", "__extend__");
-  b.add_output<decl::Closure>("Closure");
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr);
+  b.add_output<decl::Closure>("Closure"_ustr);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -245,7 +245,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     auto &input_storage = *static_cast<NodeClosureInput *>(input_node.storage);
     input_storage.output_node_id = output_node.identifier;
 
-    params.connect_available_socket(output_node, "Closure");
+    params.connect_available_socket(output_node, "Closure"_ustr);
 
     SpaceNode &snode = *CTX_wm_space_node(&params.C);
     sync_sockets_closure(snode, input_node, output_node, nullptr);

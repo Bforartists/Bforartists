@@ -440,7 +440,7 @@ static wmOperatorStatus collection_hierarchy_delete_exec(bContext *C, wmOperator
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   wmMsgBus *mbus = CTX_wm_message_bus(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   const Base *basact_prev = BKE_view_layer_active_base_get(view_layer);
 
   outliner_collection_delete(C, bmain, scene, op->reports, true);
@@ -450,7 +450,7 @@ static wmOperatorStatus collection_hierarchy_delete_exec(bContext *C, wmOperator
 
   WM_main_add_notifier(NC_SCENE | ND_LAYER, nullptr);
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   if (basact_prev != BKE_view_layer_active_base_get(view_layer)) {
     WM_msg_publish_rna_prop(mbus, &scene->id, view_layer, LayerObjects, active);
   }
@@ -522,6 +522,7 @@ static LayerCollection *outliner_active_layer_collection(bContext *C)
 
 static wmOperatorStatus collection_objects_select_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
@@ -543,7 +544,7 @@ static wmOperatorStatus collection_objects_select_exec(bContext *C, wmOperator *
     TreeElement *te = static_cast<TreeElement *>(link.data);
     if (te->store_elem->type == TSE_LAYER_COLLECTION) {
       LayerCollection *layer_collection = static_cast<LayerCollection *>(te->directdata);
-      BKE_layer_collection_objects_select(scene, view_layer, layer_collection, deselect);
+      BKE_layer_collection_objects_select(*bmain, scene, view_layer, layer_collection, deselect);
     }
   }
 
@@ -644,7 +645,7 @@ static wmOperatorStatus collection_duplicate_exec(bContext *C, wmOperator *op)
 
   /* Can happen when calling from a key binding. */
   if (BLI_listbase_is_empty(&selected_collections.selected_array)) {
-    BKE_report(op->reports, RPT_ERROR, "No active collection");
+    BKE_report(op->reports, RPT_ERROR, "No collection selected");
     return OPERATOR_CANCELLED;
   }
 
@@ -1102,6 +1103,7 @@ void OUTLINER_OT_collection_indirect_only_clear(wmOperatorType *ot)
 
 static wmOperatorStatus collection_isolate_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
@@ -1132,7 +1134,7 @@ static wmOperatorStatus collection_isolate_exec(bContext *C, wmOperator *op)
        * was called. */
       const bool value = !RNA_property_boolean_get(&ptr, prop);
       outliner_collection_isolate_flag(
-          scene, view_layer, layer_collection, nullptr, prop, "hide_viewport", value);
+          *bmain, scene, view_layer, layer_collection, nullptr, prop, "hide_viewport", value);
       break;
     }
   }
@@ -1196,6 +1198,7 @@ static bool collection_inside_poll(bContext *C)
 
 static wmOperatorStatus collection_visibility_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
@@ -1215,7 +1218,7 @@ static wmOperatorStatus collection_visibility_exec(bContext *C, wmOperator *op)
                          &data);
 
   for (LayerCollection *layer_collection : data.layer_collections_to_edit) {
-    BKE_layer_collection_set_visible(scene, view_layer, layer_collection, show, is_inside);
+    BKE_layer_collection_set_visible(*bmain, scene, view_layer, layer_collection, show, is_inside);
   }
 
   BKE_view_layer_need_resync_tag(view_layer);
@@ -1471,6 +1474,7 @@ void OUTLINER_OT_collection_disable_render(wmOperatorType *ot)
 }
 
 struct OutlinerHideEditData {
+  const Main *bmain;
   Scene *scene;
   ViewLayer *view_layer;
   SpaceOutliner *space_outliner;
@@ -1508,7 +1512,7 @@ static TreeTraversalAction outliner_hide_collect_data_to_edit(TreeElement *te, v
   }
   else if ((tselem->type == TSE_SOME_ID) && (te->idcode == ID_OB)) {
     Object *ob = id_cast<Object *>(tselem->id);
-    BKE_view_layer_synced_ensure(data->scene, data->view_layer);
+    BKE_view_layer_synced_ensure(*data->bmain, data->scene, data->view_layer);
     Base *base = BKE_view_layer_base_find(data->view_layer, ob);
     data->bases_to_edit.add(base);
   }
@@ -1518,10 +1522,12 @@ static TreeTraversalAction outliner_hide_collect_data_to_edit(TreeElement *te, v
 
 static wmOperatorStatus outliner_hide_exec(bContext *C, wmOperator * /*op*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
   OutlinerHideEditData data{};
+  data.bmain = bmain;
   data.scene = scene;
   data.view_layer = view_layer;
   data.space_outliner = space_outliner;
@@ -1534,7 +1540,7 @@ static wmOperatorStatus outliner_hide_exec(bContext *C, wmOperator * /*op*/)
                          &data);
 
   for (LayerCollection *layer_collection : data.collections_to_edit) {
-    BKE_layer_collection_set_visible(scene, view_layer, layer_collection, false, false);
+    BKE_layer_collection_set_visible(*bmain, scene, view_layer, layer_collection, false, false);
   }
 
   for (Base *base : data.bases_to_edit) {
@@ -1565,6 +1571,7 @@ void OUTLINER_OT_hide(wmOperatorType *ot)
 
 static wmOperatorStatus outliner_unhide_all_exec(bContext *C, wmOperator * /*op*/)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
@@ -1575,7 +1582,7 @@ static wmOperatorStatus outliner_unhide_all_exec(bContext *C, wmOperator * /*op*
   }
 
   /* Unhide all objects. */
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     base.flag &= ~BASE_HIDDEN;
   }

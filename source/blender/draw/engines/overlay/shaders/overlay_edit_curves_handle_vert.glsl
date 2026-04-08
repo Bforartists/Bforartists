@@ -137,7 +137,7 @@ float4 get_bezier_handle_color(uint color_id, float sel)
 void geometry_main(VertOut geom_in[2],
                    uint out_vertex_id,
                    uint out_primitive_id,
-                   uint out_invocation_id)
+                   uint /*out_invocation_id*/)
 {
   float4 v1 = geom_in[0].gpu_position;
   float4 v2 = geom_in[1].gpu_position;

@@ -1251,7 +1251,8 @@ void transform_mode_default_modal_orientation_set(TransInfo *t, int type)
     rv3d = static_cast<RegionView3D *>(t->region->regiondata);
   }
 
-  t->orient[O_DEFAULT].type = calc_orientation_from_type_ex(t->scene,
+  t->orient[O_DEFAULT].type = calc_orientation_from_type_ex(*t->bmain,
+                                                            t->scene,
                                                             t->view_layer,
                                                             v3d,
                                                             rv3d,

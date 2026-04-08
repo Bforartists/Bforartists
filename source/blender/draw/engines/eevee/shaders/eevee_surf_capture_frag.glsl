@@ -23,7 +23,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_surf_capture)
 #include "eevee_surf_lib.glsl"
 #include "gpu_shader_math_vector_lib.glsl"
 
-float4 closure_to_rgba(Closure cl)
+float4 closure_to_rgba(Closure /*cl*/)
 {
   return float4(0.0f);
 }

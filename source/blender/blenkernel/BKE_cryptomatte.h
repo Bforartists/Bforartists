@@ -15,6 +15,7 @@ namespace blender {
 
 /* Forward declarations. */
 struct CryptomatteSession;
+struct Main;
 struct Material;
 struct Object;
 struct RenderResult;

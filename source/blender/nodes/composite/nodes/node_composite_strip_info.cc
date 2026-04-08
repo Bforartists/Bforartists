@@ -21,11 +21,11 @@ namespace blender::nodes::node_composite_strip_info_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Start Frame");
-  b.add_output<decl::Int>("End Frame");
-  b.add_output<decl::Vector>("Location").dimensions(2);
-  b.add_output<decl::Float>("Rotation");
-  b.add_output<decl::Vector>("Scale").dimensions(2);
+  b.add_output<decl::Int>("Start Frame"_ustr);
+  b.add_output<decl::Int>("End Frame"_ustr);
+  b.add_output<decl::Vector>("Location"_ustr).dimensions(2);
+  b.add_output<decl::Float>("Rotation"_ustr);
+  b.add_output<decl::Vector>("Scale"_ustr).dimensions(2);
 }
 
 using namespace blender::compositor;

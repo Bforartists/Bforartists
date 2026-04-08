@@ -128,6 +128,7 @@ TEST_F(VKRenderGraphTestTransfer, clear_clear_copy_and_read_back)
   VKCopyImageNode::CreateInfo copy_image = {};
   copy_image.node_data.src_image = src_image;
   copy_image.node_data.dst_image = dst_image;
+  copy_image.node_data.mip_levels = 1u;
   copy_image.node_data.region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
   copy_image.node_data.region.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
   copy_image.vk_image_aspect = VK_IMAGE_ASPECT_COLOR_BIT;

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BLI_bounds.hh"
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_enum_flags.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_math_base.hh"
@@ -98,7 +98,7 @@ class ImageBufferAccessor {
     ibuf_ = BKE_image_acquire_ibuf(&ima, nullptr, &lock_);
     size_ = {ibuf_->x, ibuf_->y};
     data_ = MutableSpan<ColorGeometry4b>(
-        reinterpret_cast<ColorGeometry4b *>(ibuf_->byte_buffer.data), ibuf_->x * ibuf_->y);
+        reinterpret_cast<ColorGeometry4b *>(ibuf_->byte_data_for_write()), ibuf_->x * ibuf_->y);
   }
 
   void release()

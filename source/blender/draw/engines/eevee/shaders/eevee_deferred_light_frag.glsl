@@ -135,7 +135,8 @@ void main()
     LightProbeSample samp = lightprobe_load(gl_FragCoord.xy, P, Ng, V);
 
     float clamp_indirect = uniform_buf.clamp.surface_indirect;
-    samp.volume_irradiance = spherical_harmonics_clamp(samp.volume_irradiance, clamp_indirect);
+    samp.volume_irradiance = spherical_harmonics::clamp_energy(samp.volume_irradiance,
+                                                               clamp_indirect);
 
     uint3 bin_indices = gbuf.header.bin_index_per_layer();
     for (uchar i = 0; i < LIGHT_CLOSURE_EVAL_COUNT && i < closure_count; i++) {

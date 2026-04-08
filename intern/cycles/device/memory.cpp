@@ -119,6 +119,15 @@ void device_memory::host_and_device_free()
   data_height = 0;
 }
 
+void device_memory::host_only_free()
+{
+  /* Free only the host buffer, leaving device allocation intact. */
+  if (host_pointer && host_pointer != shared_pointer) {
+    device->host_free(type, host_pointer, memory_size());
+    host_pointer = nullptr;
+  }
+}
+
 void device_memory::device_alloc()
 {
   assert(!device_pointer && type != MEM_IMAGE_TEXTURE && type != MEM_GLOBAL);
@@ -291,6 +300,8 @@ void *device_image::alloc(const size_t width, const size_t height)
 
   info.width = width;
   info.height = height;
+  info.inv_width = (width > 0) ? 1.0f / (float)width : 0.0f;
+  info.inv_height = (height > 0) ? 1.0f / (float)height : 0.0f;
 
   return host_pointer;
 }

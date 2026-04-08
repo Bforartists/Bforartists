@@ -405,7 +405,7 @@ static IndexMask apply_row_filter(const SpreadsheetRowFilter &row_filter,
               return value == (reinterpret_cast<ID &>(cell.collection()).name + 2);
             }
             case bke::InstanceReference::Type::GeometrySet: {
-              return value == cell.geometry_set().name;
+              return value == cell.geometry_set().name();
             }
             case bke::InstanceReference::Type::None: {
               return false;

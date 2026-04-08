@@ -190,13 +190,14 @@ XFormObjectSkipChild_Container *xform_skip_child_container_create()
 }
 
 void xform_skip_child_container_item_ensure_from_array(XFormObjectSkipChild_Container *xcs,
+                                                       const Main &bmain,
                                                        const Scene *scene,
                                                        ViewLayer *view_layer,
                                                        Object **objects,
                                                        uint objects_len)
 {
   Set<Object *> objects_in_transdata(Span(objects, objects_len));
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   ListBaseT<Base> *object_bases = BKE_view_layer_object_bases_get(view_layer);
   for (Base &base : *object_bases) {
     Object *ob = base.object;

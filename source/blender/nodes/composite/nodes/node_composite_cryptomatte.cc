@@ -585,13 +585,13 @@ NODE_STORAGE_FUNCS(NodeCryptomatte)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({0.0f, 0.0f, 0.0f, 1.0f})
       .structure_type(StructureType::Dynamic);
 
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Matte").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Pick").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Matte"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Pick"_ustr).structure_type(StructureType::Dynamic);
 }
 
 static void node_init(bNodeTree * /*ntree*/, bNode *node)
@@ -951,24 +951,24 @@ namespace nodes::node_composite_legacy_cryptomatte_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({0.0f, 0.0f, 0.0f, 1.0f})
       .structure_type(StructureType::Dynamic);
 
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Float>("Matte").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Pick").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Matte"_ustr).structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Pick"_ustr).structure_type(StructureType::Dynamic);
 
   const bNode *node = b.node_or_null();
   if (!node) {
-    b.add_input<decl::Color>("Crypto 00").structure_type(StructureType::Dynamic);
+    b.add_input<decl::Color>("Crypto 00"_ustr).structure_type(StructureType::Dynamic);
     return;
   }
 
   const int inputs_count = static_cast<NodeCryptomatte *>(node->storage)->inputs_num;
   for (int i = 0; i < inputs_count; i++) {
     const std::string name = fmt::format("Crypto {:02}", i);
-    b.add_input<decl::Color>(name).structure_type(StructureType::Dynamic);
+    b.add_input<decl::Color>(UString(name)).structure_type(StructureType::Dynamic);
   }
 }
 

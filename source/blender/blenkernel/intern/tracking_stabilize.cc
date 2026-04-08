@@ -1311,9 +1311,9 @@ static void tracking_stabilize_frame_interpolation_cb(void *__restrict userdata,
   float vec[3] = {0.0f, float(y), 0.0f};
   float rvec[3];
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     /* Float image. */
-    float4 *dst = reinterpret_cast<float4 *>(tmpibuf->float_buffer.data) + y * tmpibuf->x;
+    float4 *dst = reinterpret_cast<float4 *>(tmpibuf->float_data_for_write()) + y * tmpibuf->x;
     if (data->tracking_filter == TRACKING_FILTER_BILINEAR) {
       for (int x = 0; x < tmpibuf->x; x++, dst++) {
         vec[0] = float(x);
@@ -1337,9 +1337,9 @@ static void tracking_stabilize_frame_interpolation_cb(void *__restrict userdata,
       }
     }
   }
-  else if (ibuf->byte_buffer.data) {
+  else if (ibuf->byte_data()) {
     /* Byte image. */
-    uchar4 *dst = reinterpret_cast<uchar4 *>(tmpibuf->byte_buffer.data) + y * tmpibuf->x;
+    uchar4 *dst = reinterpret_cast<uchar4 *>(tmpibuf->byte_data_for_write()) + y * tmpibuf->x;
     if (data->tracking_filter == TRACKING_FILTER_BILINEAR) {
       for (int x = 0; x < tmpibuf->x; x++, dst++) {
         vec[0] = float(x);
@@ -1404,10 +1404,10 @@ ImBuf *BKE_tracking_stabilize_frame(
 
   /* Allocate frame for stabilization result, copy alpha mode and color-space. */
   ibuf_flags = 0;
-  if (ibuf->byte_buffer.data) {
+  if (ibuf->byte_data()) {
     ibuf_flags |= IB_byte_data;
   }
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     ibuf_flags |= IB_float_data;
   }
 
@@ -1436,7 +1436,7 @@ ImBuf *BKE_tracking_stabilize_frame(
   BLI_task_parallel_range(
       0, tmpibuf->y, &data, tracking_stabilize_frame_interpolation_cb, &settings);
 
-  if (tmpibuf->float_buffer.data) {
+  if (tmpibuf->float_data()) {
     tmpibuf->userflags |= IB_RECT_INVALID;
   }
 

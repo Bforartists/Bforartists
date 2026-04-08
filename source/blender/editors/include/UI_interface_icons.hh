@@ -119,5 +119,8 @@ int icon_color_from_collection(const Collection *collection);
 
 void icon_text_overlay_init_from_count(IconTextOverlay *text_overlay,
                                        const int icon_indicator_number);
+
+void icon_ensure_deferred(const bContext *C, int icon_id, bool big);
+
 }  // namespace ui
 }  // namespace blender

@@ -35,11 +35,10 @@ static std::vector<std::string> list_files(const std::string &dir)
   return files;
 }
 
-static std::vector<metadata::Symbol> scan_external_symbols(
-    const std::vector<std::string> &file_list,
-    std::vector<std::string> &visited_files,
-    const std::string &file_buffer,
-    const std::string &file_name)
+static metadata::Source scan_external_symbols(const std::vector<std::string> &file_list,
+                                              std::vector<std::string> &visited_files,
+                                              const std::string &file_buffer,
+                                              const std::string &file_name)
 {
   Language language = language_from_filename(file_name);
   SourceProcessor processor(file_buffer, file_name, language);
@@ -72,17 +71,16 @@ static std::vector<metadata::Symbol> scan_external_symbols(
         std::stringstream buffer;
         buffer << input_file.rdbuf();
 
-        std::vector<blender::gpu::shader::metadata::Symbol> symbols = scan_external_symbols(
+        metadata::Source source = scan_external_symbols(
             file_list, visited_files, buffer.str(), file);
 
-        /* Set line number for each symbol to 0 as they are defined outside of the target file. */
-        for (auto &symbol : include_data.symbol_table) {
-          symbol.definition_line = 0;
-        }
-
         /* Extend list. */
-        include_data.symbol_table.insert(
-            include_data.symbol_table.end(), symbols.begin(), symbols.end());
+        include_data.symbol_table.insert(include_data.symbol_table.end(),
+                                         source.symbol_table.begin(),
+                                         source.symbol_table.end());
+        include_data.template_definitions.insert(include_data.template_definitions.end(),
+                                                 source.template_definitions.begin(),
+                                                 source.template_definitions.end());
       }
     }
   }
@@ -90,7 +88,7 @@ static std::vector<metadata::Symbol> scan_external_symbols(
   if (errors) {
     exit(1);
   }
-  return include_data.symbol_table;
+  return include_data;
 }
 
 int main(int argc, char **argv)
@@ -138,7 +136,7 @@ int main(int argc, char **argv)
 
   /* Open the output file for writing */
   std::ofstream metadata_file(metadata_file_name, std::ofstream::out | std::ofstream::binary);
-  if (!output_file) {
+  if (!metadata_file) {
     std::cerr << "Error: Could not open output file " << metadata_file_name << std::endl;
     input_file.close();
     exit(1);
@@ -146,7 +144,7 @@ int main(int argc, char **argv)
 
   /* Open the output file for writing */
   std::ofstream infos_file(infos_file_name, std::ofstream::out | std::ofstream::binary);
-  if (!output_file) {
+  if (!infos_file) {
     std::cerr << "Error: Could not open output file " << infos_file_name << std::endl;
     input_file.close();
     exit(1);
@@ -163,22 +161,8 @@ int main(int argc, char **argv)
   std::stringstream buffer;
   buffer << input_file.rdbuf();
 
-  int error = 0;
-
-  auto report_error =
-      [&](int err_line, int err_char, const std::string &line, const char *err_msg) {
-        std::cerr << input_file_name;
-        std::cerr << ':' << std::to_string(err_line) << ':' << std::to_string(err_char + 1);
-        std::cerr << ": error: " << err_msg << std::endl;
-        std::cerr << line << std::endl;
-        std::cerr << std::string(err_char, ' ') << '^' << std::endl;
-
-        error++;
-      };
-
   std::string filename(output_file_name);
-  const bool is_info = filename.find("infos.hh") != std::string::npos ||
-                       buffer.str().find("#pragma create_info") != std::string::npos;
+  const bool is_info = filename.ends_with("infos.hh") || filename.ends_with(".bsl.hh");
 
   using namespace gpu::shader;
 
@@ -189,15 +173,15 @@ int main(int argc, char **argv)
     language = Language::BLENDER_GLSL;
   }
 
-  std::vector<metadata::Symbol> external_symbols;
+  metadata::Source external_symbols;
   if (language == Language::BLENDER_GLSL) {
     std::vector<std::string> visited_files{input_file_name};
     external_symbols = scan_external_symbols(file_list, visited_files, buffer.str(), filename);
   }
 
-  SourceProcessor processor(buffer.str(), input_file_name, language, report_error);
+  SourceProcessor processor(buffer.str(), input_file_name, language);
 
-  auto [result, metadata] = processor.convert(external_symbols);
+  auto [result, metadata, error] = processor.convert(external_symbols);
 
   output_file << result;
 
@@ -217,5 +201,9 @@ int main(int argc, char **argv)
   metadata_file.close();
   infos_file.close();
 
-  return error;
+  if (error) {
+    std::cerr << error.value().full_report << std::endl;
+  }
+
+  return error.has_value() ? 1 : 0;
 }

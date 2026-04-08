@@ -613,7 +613,7 @@ class ToolSelectPanelHelper:
         column_index = 0
         while True:
             if is_sep is True:
-                if column_index != column_last:
+                if column_index > column_last: # BFA - Fix spacing issue in when layout is three-column. 
                     row.label(text="")
                 col = layout.column(align=True)
                 row = col.row(align=True)

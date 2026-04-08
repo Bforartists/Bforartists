@@ -11,11 +11,11 @@ namespace blender::nodes::node_fn_rotation_to_quaternion_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Rotation>("Rotation");
-  b.add_output<decl::Float>("W");
-  b.add_output<decl::Float>("X");
-  b.add_output<decl::Float>("Y");
-  b.add_output<decl::Float>("Z");
+  b.add_input<decl::Rotation>("Rotation"_ustr);
+  b.add_output<decl::Float>("W"_ustr);
+  b.add_output<decl::Float>("X"_ustr);
+  b.add_output<decl::Float>("Y"_ustr);
+  b.add_output<decl::Float>("Z"_ustr);
 };
 
 class SeparateQuaternionFunction : public mf::MultiFunction {

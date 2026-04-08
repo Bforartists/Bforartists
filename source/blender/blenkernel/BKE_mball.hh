@@ -54,7 +54,7 @@ bool BKE_mball_is_basis(const Object *ob);
  *
  * \warning #BKE_mball_is_basis() can fail on returned object, see function docs for details.
  */
-Object *BKE_mball_basis_find(Scene *scene, Object *ob);
+Object *BKE_mball_basis_find(const Main &bmain, Scene *scene, Object *ob);
 
 /**
  * Copy some properties from a meta-ball obdata to all other meta-ball obdata belonging to the same

@@ -26,12 +26,12 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curves to shorten");
-  b.add_output<decl::Geometry>("Curve").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  auto &start_fac = b.add_input<decl::Float>("Start")
+  b.add_output<decl::Geometry>("Curve"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  auto &start_fac = b.add_input<decl::Float>("Start"_ustr)
                         .min(0.0f)
                         .max(1.0f)
                         .subtype(PROP_FACTOR)
@@ -39,7 +39,7 @@ static void node_declare(NodeDeclarationBuilder &b)
                           node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_FACTOR;
                         })
                         .field_on_all();
-  auto &end_fac = b.add_input<decl::Float>("End")
+  auto &end_fac = b.add_input<decl::Float>("End"_ustr)
                       .min(0.0f)
                       .max(1.0f)
                       .default_value(1.0f)
@@ -48,14 +48,14 @@ static void node_declare(NodeDeclarationBuilder &b)
                         node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_FACTOR;
                       })
                       .field_on_all();
-  auto &start_len = b.add_input<decl::Float>("Start", "Start_001")
+  auto &start_len = b.add_input<decl::Float>("Start"_ustr, "Start_001"_ustr)
                         .min(0.0f)
                         .subtype(PROP_DISTANCE)
                         .make_available([](bNode &node) {
                           node_storage(node).mode = GEO_NODE_CURVE_SAMPLE_LENGTH;
                         })
                         .field_on_all();
-  auto &end_len = b.add_input<decl::Float>("End", "End_001")
+  auto &end_len = b.add_input<decl::Float>("End"_ustr, "End_001"_ustr)
                       .min(0.0f)
                       .default_value(1.0f)
                       .subtype(PROP_DISTANCE)
@@ -91,7 +91,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 class SocketSearchOp {
  public:
-  StringRef socket_name;
+  UString socket_name;
   GeometryNodeCurveSampleMode mode;
   void operator()(LinkSearchOpParams &params)
   {
@@ -113,11 +113,13 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
                                                    SOCK_FLOAT))
     {
       params.add_item(IFACE_("Start (Factor)"),
-                      SocketSearchOp{"Start", GEO_NODE_CURVE_SAMPLE_FACTOR});
-      params.add_item(IFACE_("End (Factor)"), SocketSearchOp{"End", GEO_NODE_CURVE_SAMPLE_FACTOR});
+                      SocketSearchOp{"Start"_ustr, GEO_NODE_CURVE_SAMPLE_FACTOR});
+      params.add_item(IFACE_("End (Factor)"),
+                      SocketSearchOp{"End"_ustr, GEO_NODE_CURVE_SAMPLE_FACTOR});
       params.add_item(IFACE_("Start (Length)"),
-                      SocketSearchOp{"Start", GEO_NODE_CURVE_SAMPLE_LENGTH});
-      params.add_item(IFACE_("End (Length)"), SocketSearchOp{"End", GEO_NODE_CURVE_SAMPLE_LENGTH});
+                      SocketSearchOp{"Start"_ustr, GEO_NODE_CURVE_SAMPLE_LENGTH});
+      params.add_item(IFACE_("End (Length)"),
+                      SocketSearchOp{"End"_ustr, GEO_NODE_CURVE_SAMPLE_LENGTH});
     }
   }
 }
@@ -211,30 +213,30 @@ static void node_geo_exec(GeoNodeExecParams params)
   const NodeGeometryCurveTrim &storage = node_storage(params.node());
   const GeometryNodeCurveSampleMode mode = GeometryNodeCurveSampleMode(storage.mode);
 
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve"_ustr);
   GeometryComponentEditData::remember_deformed_positions_if_necessary(geometry_set);
 
-  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Curve");
+  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Curve"_ustr);
 
-  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
+  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
   if (mode == GEO_NODE_CURVE_SAMPLE_FACTOR) {
-    Field<float> start_field = params.extract_input<Field<float>>("Start");
-    Field<float> end_field = params.extract_input<Field<float>>("End");
+    Field<float> start_field = params.extract_input<Field<float>>("Start"_ustr);
+    Field<float> end_field = params.extract_input<Field<float>>("End"_ustr);
     geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
       geometry_set_curve_trim(
           geometry_set, mode, selection_field, start_field, end_field, attribute_filter);
     });
   }
   else if (mode == GEO_NODE_CURVE_SAMPLE_LENGTH) {
-    Field<float> start_field = params.extract_input<Field<float>>("Start_001");
-    Field<float> end_field = params.extract_input<Field<float>>("End_001");
+    Field<float> start_field = params.extract_input<Field<float>>("Start_001"_ustr);
+    Field<float> end_field = params.extract_input<Field<float>>("End_001"_ustr);
     geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
       geometry_set_curve_trim(
           geometry_set, mode, selection_field, start_field, end_field, attribute_filter);
     });
   }
 
-  params.set_output("Curve", std::move(geometry_set));
+  params.set_output("Curve"_ustr, std::move(geometry_set));
 }
 
 static void node_rna(StructRNA *srna)

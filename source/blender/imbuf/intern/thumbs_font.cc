@@ -29,7 +29,8 @@ ImBuf *IMB_thumb_load_font(const char *filepath, uint x, uint y)
   const float col[4] = {1.0f, 1.0f, 1.0f, 0.0f};
   IMB_rectfill(ibuf, col);
 
-  if (!BLF_thumb_preview(filepath, ibuf->byte_buffer.data, ibuf->x, ibuf->y, ibuf->channels)) {
+  if (!BLF_thumb_preview(filepath, ibuf->byte_data_for_write(), ibuf->x, ibuf->y, ibuf->channels))
+  {
     IMB_freeImBuf(ibuf);
     ibuf = nullptr;
   }
@@ -76,7 +77,8 @@ ImBuf *IMB_font_preview(const char *filepath,
   const float col[4] = {1.0f, 1.0f, 1.0f, 0.0f};
   IMB_rectfill(ibuf, col);
 
-  BLF_buffer(font_id, ibuf->float_buffer.data, ibuf->byte_buffer.data, width, height, nullptr);
+  BLF_buffer(
+      font_id, ibuf->float_data_for_write(), ibuf->byte_data_for_write(), width, height, nullptr);
 
   BLF_position(font_id, 0.0f, height * 0.3f, 0.0f);
   BLF_draw_buffer(font_id, sample, 1024);

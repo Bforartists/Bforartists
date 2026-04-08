@@ -6,7 +6,7 @@
 #include "NOD_multi_function.hh"
 #include "node_shader_util.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "IMB_colormanagement.hh"
 
 namespace blender {
@@ -16,12 +16,12 @@ namespace nodes::node_shader_blackbody_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Temperature")
+  b.add_input<decl::Float>("Temperature"_ustr)
       .default_value(6500.0f)
       .min(800.0f)
       .max(12000.0f)
       .subtype(PROP_COLOR_TEMPERATURE);
-  b.add_output<decl::Color>("Color");
+  b.add_output<decl::Color>("Color"_ustr);
 }
 
 static int node_shader_gpu_blackbody(GPUMaterial *mat,

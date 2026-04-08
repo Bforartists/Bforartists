@@ -1952,6 +1952,13 @@ void view2d_center_set(View2D *v2d, float x, float y)
   view2d_curRect_validate(v2d);
 }
 
+void view2d_size_x_set(View2D *v2d, float size_x)
+{
+  BLI_assert(BLI_rctf_size_y(&v2d->cur) != 0.0f);
+  const float aspect = BLI_rctf_size_x(&v2d->cur) / BLI_rctf_size_y(&v2d->cur);
+  BLI_rctf_resize(&v2d->cur, size_x, size_x / aspect);
+}
+
 void view2d_offset(View2D *v2d, float xfac, float yfac)
 {
   if (xfac != -1.0f) {

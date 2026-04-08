@@ -850,10 +850,10 @@ void blo_do_versions_440(FileData *fd, Library * /*lib*/, Main *bmain)
           continue;
         }
         NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(&modifier);
-        if (!nmd->settings.properties) {
+        if (!nmd->settings_legacy.properties) {
           continue;
         }
-        for (IDProperty &idprop : nmd->settings.properties->data.group) {
+        for (IDProperty &idprop : nmd->settings_legacy.properties->data.group) {
           if (idprop.type != IDP_STRING) {
             continue;
           }
@@ -889,7 +889,7 @@ void blo_do_versions_440(FileData *fd, Library * /*lib*/, Main *bmain)
           if (node.type_legacy == SH_NODE_MIX_SHADER) {
             for (bNodeSocket &socket : node.inputs) {
               if (STREQ(socket.identifier, "Shader.001")) {
-                STRNCPY_UTF8(socket.identifier, "Shader_001");
+                version_node_socket_identifier_set(socket, "Shader_001");
               }
             }
           }

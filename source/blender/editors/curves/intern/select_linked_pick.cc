@@ -74,7 +74,7 @@ static bool select_linked_pick(bContext &C, const int2 &mval, const SelectPick_P
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(&C);
   const ViewContext vc = ED_view3d_viewcontext_init(&C, depsgraph);
   const Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode_unique_data(
-      vc.scene, vc.view_layer, vc.v3d);
+      *vc.bmain, vc.scene, vc.view_layer, vc.v3d);
 
   const ClosestCurveDataBlock closest = find_closest_curve(*depsgraph, vc, bases, mval);
   if (!closest.curves_id) {

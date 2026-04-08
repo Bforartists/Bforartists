@@ -174,7 +174,7 @@ struct MutableString {
 
   /* Replace the content from `from` to `to` (inclusive) by whitespaces without changing
    * line count and keep the remaining indentation spaces. */
-  void erase(size_t from, size_t to)
+  bool erase_try(size_t from, size_t to)
   {
     IndexRange range = IndexRange(from, to + 1 - from);
     std::string content = str_.substr(range.start, range.size);
@@ -186,32 +186,56 @@ struct MutableString {
     else {
       spaces = content.length();
     }
-    replace(from, to, std::string(lines, '\n') + std::string(spaces, ' '));
+    return replace_try(from, to, std::string(lines, '\n') + std::string(spaces, ' '));
+  }
+  void erase(size_t from, size_t to)
+  {
+    bool result = erase_try(from, to);
+    assert(result);
+    (void)result;
   }
   /* Replace the content from `from` to `to` (inclusive) by whitespaces without changing
    * line count and keep the remaining indentation spaces. */
-  void erase(Token from, Token to)
+  bool erase_try(Token from, Token to)
   {
-    if (from.is_invalid() && to.is_invalid()) {
-      return;
+    if (from.is_invalid() || to.is_invalid()) {
+      return true;
     }
     assert(from.index_ <= to.index_);
-    erase(from.str_index_start(), to.str_index_last());
+    return erase_try(from.str_index_start(), to.str_index_last());
+  }
+  void erase(Token from, Token to)
+  {
+    bool result = erase_try(from, to);
+    assert(result);
+    (void)result;
   }
   /* Replace the content from `from` to `to` (inclusive) by whitespaces without changing
    * line count and keep the remaining indentation spaces. */
-  void erase(Token tok)
+  bool erase_try(Token tok)
   {
     if (tok.is_invalid()) {
-      return;
+      return true;
     }
-    erase(tok, tok);
+    return erase_try(tok, tok);
+  }
+  void erase(Token tok)
+  {
+    bool result = erase_try(tok);
+    assert(result);
+    (void)result;
   }
   /* Replace the content of the scope by whitespaces without changing
    * line count and keep the remaining indentation spaces. */
+  bool erase_try(Scope scope)
+  {
+    return erase_try(scope.front(), scope.back());
+  }
   void erase(Scope scope)
   {
-    erase(scope.front(), scope.back());
+    bool result = erase_try(scope);
+    assert(result);
+    (void)result;
   }
 
   /* If prepend is true, will prepend the new content to the list of modifications.
@@ -241,13 +265,17 @@ struct MutableString {
     insert_after(at.str_index_last(), content);
   }
 
-  void insert_line_number(size_t at, int line)
+  void insert_line_number(size_t at, int line, std::string_view filename = "")
   {
-    insert_after(at, "#line " + std::to_string(line) + "\n");
+    std::string str = "\n#line " + std::to_string(line);
+    if (!filename.empty()) {
+      str = str + " \"" + std::string(filename) + "\"";
+    }
+    insert_after(at, str + "\n");
   }
-  void insert_line_number(Token at, int line)
+  void insert_line_number(Token at, int line, std::string_view filename = "")
   {
-    insert_line_number(at.str_index_last(), line);
+    insert_line_number(at.str_index_last(), line, filename);
   }
 
   /* Insert a preprocessor directive after the given token.
@@ -307,10 +335,10 @@ inline std::ostream &operator<<(std::ostream &out, const std::vector<int> &v)
 template<typename LexerFn, typename ParserFn>
 struct IntermediateForm : MutableString, Parser<LexerFn, ParserFn> {
  protected:
-  report_callback &report_error;
+  ErrorHandler &report_error;
 
  public:
-  IntermediateForm(const std::string_view input, report_callback &report_error)
+  IntermediateForm(const std::string_view input, ErrorHandler &report_error)
       : MutableString(input), report_error(report_error)
   {
     parse(report_error);
@@ -349,7 +377,7 @@ struct IntermediateForm : MutableString, Parser<LexerFn, ParserFn> {
     return str_;
   }
 
-  void parse(report_callback &report_error)
+  void parse(ErrorHandler &report_error)
   {
     this->lexical_analysis(str_);
     this->semantic_analysis(report_error);

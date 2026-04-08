@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'45d5533d8e66')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 11:01+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2025-07-23 14:56+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian (Latin script) <https://translate.blender.org/projects/blender-ui/ui/sr_Latn/>\n"
@@ -1497,6 +1497,15 @@ msgid "Vertex Color"
 msgstr "Boja temena"
 
 
+msgid "Threshold"
+msgstr "Prag"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "Poligon"
+
+
 msgid "All"
 msgstr "Sve"
 
@@ -1507,10 +1516,6 @@ msgstr "Preciznost"
 
 msgid "Simplify"
 msgstr "Pojednostavljivanje"
-
-
-msgid "Threshold"
-msgstr "Prag"
 
 
 msgid "Input Samples"
@@ -1535,6 +1540,10 @@ msgstr "Potez"
 
 msgid "Fill"
 msgstr "Ispuna"
+
+
+msgid "Both"
+msgstr "Obe"
 
 
 msgid "Background Image"
@@ -8485,20 +8494,76 @@ msgid "Material slot name"
 msgstr "Naziv slota materijala"
 
 
+msgid "Math"
+msgstr "Matematika"
+
+
+msgid "Mirror"
+msgstr "Ogledalo"
+
+
+msgid "Snap"
+msgstr "Lepljenje"
+
+
+msgid "UV Mapping"
+msgstr "UV Mapiranje"
+
+
+msgid "Local View"
+msgstr "Lokalni pogled"
+
+
+msgid "Navigation"
+msgstr "Navigacija"
+
+
+msgid "Align View"
+msgstr "Poravnaj pogled"
+
+
+msgid "Select Linked"
+msgstr "Izaberi povezano"
+
+
+msgid "Metaball"
+msgstr "Meta lopta"
+
+
+msgid "Import"
+msgstr "Uvoz"
+
+
+msgid "Light"
+msgstr "Svetlost"
+
+
+msgid "Relations"
+msgstr "Odnosi"
+
+
+msgid "Rigid Body"
+msgstr "Kruto telo"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Apply"
+msgstr "Primeni"
+
+
+msgid "Track"
+msgstr "Staza"
+
+
 msgid "Quick Effects"
 msgstr "Brzi efekti"
 
 
 msgid "Show/Hide"
 msgstr "Prikaži/sakrij"
-
-
-msgid "Math"
-msgstr "Matematika"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Hooks"
@@ -8519,10 +8584,6 @@ msgstr "Prenesi"
 
 msgid "Names"
 msgstr "Imena"
-
-
-msgid "Apply"
-msgstr "Primeni"
 
 
 msgid "Toggle Bone Options"
@@ -8549,68 +8610,16 @@ msgid "Special Characters"
 msgstr "Specijalni znaci"
 
 
-msgid "Metaball"
-msgstr "Meta lopta"
+msgid "Keying"
+msgstr "Zbirka tastera"
 
 
 msgid "Bone Roll"
 msgstr "Rolna kostiju"
 
 
-msgid "Keying"
-msgstr "Zbirka tastera"
-
-
 msgid "Tracking"
 msgstr "Praćenje"
-
-
-msgid "Snap"
-msgstr "Lepljenje"
-
-
-msgid "Mirror"
-msgstr "Ogledalo"
-
-
-msgid "UV Mapping"
-msgstr "UV Mapiranje"
-
-
-msgid "Local View"
-msgstr "Lokalni pogled"
-
-
-msgid "Navigation"
-msgstr "Navigacija"
-
-
-msgid "Align View"
-msgstr "Poravnaj pogled"
-
-
-msgid "Select Linked"
-msgstr "Izaberi povezano"
-
-
-msgid "Light"
-msgstr "Svetlost"
-
-
-msgid "Relations"
-msgstr "Odnosi"
-
-
-msgid "Import"
-msgstr "Uvoz"
-
-
-msgid "Rigid Body"
-msgstr "Kruto telo"
-
-
-msgid "Track"
-msgstr "Staza"
 
 
 msgid "Basic"
@@ -13814,10 +13823,6 @@ msgid "Side"
 msgstr "Sa strane"
 
 
-msgid "Both"
-msgstr "Obe"
-
-
 msgctxt "Operator"
 msgid "Add F-Curve Modifier"
 msgstr "Dodaj modifikator F-krive"
@@ -14795,22 +14800,6 @@ msgstr "Spoji izabrana temena"
 
 msgid "Merge method to use"
 msgstr "Izbor metoda spajanja."
-
-
-msgid "At Center"
-msgstr "U centar"
-
-
-msgid "At Cursor"
-msgstr "Za kursor"
-
-
-msgid "At First"
-msgstr "Za prvo"
-
-
-msgid "At Last"
-msgstr "Za poslednje"
 
 
 msgid "Median"
@@ -21409,10 +21398,6 @@ msgid "Sound"
 msgstr "Zvuk"
 
 
-msgid "Use Linear Modifiers"
-msgstr "Koristi linearni modifikator"
-
-
 msgid "Multiply Colors"
 msgstr "Umnožene boje"
 
@@ -22588,6 +22573,10 @@ msgid "Report a Bug"
 msgstr "Prijava greške"
 
 
+msgid "Object Index"
+msgstr "Indeks objekta"
+
+
 msgid "No output node"
 msgstr "Bez izlaznog čvora"
 
@@ -22796,11 +22785,6 @@ msgstr "Kursor na izbor"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Kursor na vođice"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "Poligon"
 
 
 msgid "Data Source:"
@@ -25258,10 +25242,6 @@ msgstr "Boja1"
 
 msgid "Color2"
 msgstr "Boja2"
-
-
-msgid "Object Index"
-msgstr "Indeks objekta"
 
 
 msgid "Color Fac"

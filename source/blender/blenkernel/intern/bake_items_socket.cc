@@ -59,9 +59,10 @@ static void move_bundle_socket_value_to_bake_item(
       if (std::unique_ptr<BakeItem> bake_item = move_common_socket_value_to_bake_item(
               *item_socket_value->type, value_variant, std::nullopt, r_geometry_bake_items))
       {
-        bundle_bake_item.items.append(BundleBakeItem::Item{
-            bundle_item.key,
-            BundleBakeItem::SocketValue{item_socket_value->type->idname, std::move(bake_item)}});
+        bundle_bake_item.items.append(
+            BundleBakeItem::Item{UString(bundle_item.key),
+                                 BundleBakeItem::SocketValue{item_socket_value->type->idname.ref(),
+                                                             std::move(bake_item)}});
       }
     }
     else if (const auto *internal_value = std::get_if<nodes::BundleItemInternalValue>(
@@ -246,7 +247,7 @@ Array<std::unique_ptr<BakeItem>> move_socket_values_to_bake_items(
 [[nodiscard]] static std::optional<SocketValueVariant> copy_bake_item_to_socket_value(
     const BakeItem &bake_item,
     const eNodeSocketDatatype socket_type,
-    const FunctionRef<std::shared_ptr<AttributeFieldInput>(const CPPType &type)>
+    const FunctionRef<ImplicitSharingPtr<AttributeFieldInput>(const CPPType &type)>
         make_attribute_field,
     BakeDataBlockMap *data_block_map,
     Map<std::string, std::string> &r_attribute_map);
@@ -293,7 +294,7 @@ static bool copy_bundle_bake_item_to_socket_value(const BundleBakeItem &bundle_b
 [[nodiscard]] static std::optional<SocketValueVariant> copy_bake_item_to_socket_value(
     const BakeItem &bake_item,
     const eNodeSocketDatatype socket_type,
-    const FunctionRef<std::shared_ptr<AttributeFieldInput>(const CPPType &type)>
+    const FunctionRef<ImplicitSharingPtr<AttributeFieldInput>(const CPPType &type)>
         make_attribute_field,
     BakeDataBlockMap *data_block_map,
     Map<std::string, std::string> &r_attribute_map)
@@ -327,7 +328,7 @@ static bool copy_bundle_bake_item_to_socket_value(const BundleBakeItem &bundle_b
         if (!make_attribute_field) {
           return std::nullopt;
         }
-        std::shared_ptr<AttributeFieldInput> attribute_field = make_attribute_field(base_type);
+        ImplicitSharingPtr<AttributeFieldInput> attribute_field = make_attribute_field(base_type);
         r_attribute_map.add(item->name(), attribute_field->attribute_name());
         fn::GField field{attribute_field};
         return SocketValueVariant::From(std::move(field));
@@ -448,7 +449,8 @@ Vector<SocketValueVariant> move_bake_items_to_socket_values(
     const Span<BakeItem *> bake_items,
     const BakeSocketConfig &config,
     BakeDataBlockMap *data_block_map,
-    FunctionRef<std::shared_ptr<AttributeFieldInput>(int, const CPPType &)> make_attribute_field)
+    FunctionRef<ImplicitSharingPtr<AttributeFieldInput>(int, const CPPType &)>
+        make_attribute_field)
 {
   Map<std::string, std::string> attribute_map;
   Vector<SocketValueVariant> socket_values;
@@ -494,7 +496,8 @@ Vector<SocketValueVariant> copy_bake_items_to_socket_values(
     const Span<const BakeItem *> bake_items,
     const BakeSocketConfig &config,
     BakeDataBlockMap *data_block_map,
-    FunctionRef<std::shared_ptr<AttributeFieldInput>(int, const CPPType &)> make_attribute_field)
+    FunctionRef<ImplicitSharingPtr<AttributeFieldInput>(int, const CPPType &)>
+        make_attribute_field)
 {
   Map<std::string, std::string> attribute_map;
   Vector<SocketValueVariant> socket_values;

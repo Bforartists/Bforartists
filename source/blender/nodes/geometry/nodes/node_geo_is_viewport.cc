@@ -10,7 +10,7 @@ namespace blender::nodes::node_geo_is_viewport_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Bool>("Is Viewport");
+  b.add_output<decl::Bool>("Is Viewport"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
@@ -19,7 +19,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const eEvaluationMode mode = DEG_get_mode(depsgraph);
   const bool is_viewport = mode == DAG_EVAL_VIEWPORT;
 
-  params.set_output("Is Viewport", is_viewport);
+  params.set_output("Is Viewport"_ustr, is_viewport);
 }
 
 static void node_register()

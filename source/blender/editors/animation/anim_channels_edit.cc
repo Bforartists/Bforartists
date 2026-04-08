@@ -4031,6 +4031,7 @@ static int click_select_channel_object(bContext *C,
                                        const short /* eEditKeyframes_Select or -1 */ selectmode)
 {
   using namespace blender::ed;
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = ac->scene;
   ViewLayer *view_layer = ac->view_layer;
   Base *base = static_cast<Base *>(ale->data);
@@ -4056,7 +4057,7 @@ static int click_select_channel_object(bContext *C,
   else {
     /* deselect all */
     ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     /* TODO: should this deselect all other types of channels too? */
     for (Base &b : *BKE_view_layer_object_bases_get(view_layer)) {
       object::base_select(&b, object::BA_DESELECT);
@@ -5283,10 +5284,11 @@ static wmOperatorStatus slot_channels_move_to_new_action_exec(bContext *C, wmOpe
 
 static bool slot_channels_move_to_new_action_poll(bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   ScrArea *area = CTX_wm_area(C);
-  bAction *action = ANIM_active_action_from_area(scene, view_layer, area);
+  bAction *action = ANIM_active_action_from_area(*bmain, scene, view_layer, area);
 
   if (!action) {
     CTX_wm_operator_poll_msg_set(C, "No active action to operate on");

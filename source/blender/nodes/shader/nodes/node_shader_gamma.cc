@@ -20,13 +20,13 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Color>("Color")
+  b.add_input<decl::Color>("Color"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .description("Color input on which correction will be applied");
-  b.add_output<decl::Color>("Color").align_with_previous();
+  b.add_output<decl::Color>("Color"_ustr).align_with_previous();
 
-  b.add_input<decl::Float>("Gamma")
+  b.add_input<decl::Float>("Gamma"_ustr)
       .default_value(1.0f)
       .min(0.001f)
       .max(10.0f)

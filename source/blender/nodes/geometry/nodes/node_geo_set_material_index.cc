@@ -18,12 +18,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type({GeometryComponent::Type::Mesh, GeometryComponent::Type::GreasePencil})
       .description("Geometry to update the material indices on");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  b.add_input<decl::Int>("Material Index").min(0).field_on_all();
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Int>("Material Index"_ustr).min(0).field_on_all();
 }
 
 static void set_material_index_in_grease_pencil(GreasePencil &grease_pencil,
@@ -48,9 +48,9 @@ static void set_material_index_in_grease_pencil(GreasePencil &grease_pencil,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
-  const Field<bool> selection = params.extract_input<Field<bool>>("Selection");
-  const Field<int> material_index = params.extract_input<Field<int>>("Material Index");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
+  const Field<bool> selection = params.extract_input<Field<bool>>("Selection"_ustr);
+  const Field<int> material_index = params.extract_input<Field<int>>("Material Index"_ustr);
 
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     if (Mesh *mesh = geometry_set.get_mesh_for_write()) {
@@ -65,7 +65,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       set_material_index_in_grease_pencil(*grease_pencil, selection, material_index);
     }
   });
-  params.set_output("Geometry", std::move(geometry_set));
+  params.set_output("Geometry"_ustr, std::move(geometry_set));
 }
 
 static void node_register()

@@ -230,9 +230,10 @@ static RenderResult *render_result_from_bake(
   /* Fill render passes from bake pixel array, to be read by the render engine. */
   for (int ty = 0; ty < h; ty++) {
     size_t offset = ty * w;
-    float *primitive = primitive_pass->ibuf->float_buffer.data + 3 * offset;
-    float *seed = (seed_pass != nullptr) ? (seed_pass->ibuf->float_buffer.data + offset) : nullptr;
-    float *differential = differential_pass->ibuf->float_buffer.data + 4 * offset;
+    float *primitive = primitive_pass->ibuf->float_data_for_write() + 3 * offset;
+    float *seed = (seed_pass != nullptr) ? (seed_pass->ibuf->float_data_for_write() + offset) :
+                                           nullptr;
+    float *differential = differential_pass->ibuf->float_data_for_write() + 4 * offset;
 
     size_t bake_offset = (y + ty) * image->width + x;
     const BakePixel *bake_pixel = pixels + bake_offset;
@@ -304,7 +305,7 @@ static void render_result_to_bake(RenderEngine *engine, RenderResult *rr)
     const size_t offset = ty * w;
     const size_t bake_offset = (y + ty) * image->width + x;
 
-    const float *pass_rect = rpass->ibuf->float_buffer.data + offset * channels_num;
+    const float *pass_rect = rpass->ibuf->float_data() + offset * channels_num;
     const BakePixel *bake_pixel = pixels + bake_offset;
     float *bake_result = result + bake_offset * channels_num;
 

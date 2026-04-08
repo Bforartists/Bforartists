@@ -45,19 +45,19 @@ class CustomPropertiesTest(unittest.TestCase):
 
         Types = api_models.CustomPropertyTypeV1
         Prop = api_models.CustomPropertyV1
-        expected_custom = {
-            'amazing': Prop(type=Types.BOOLEAN, value=True),
-            'barcode': Prop(type=Types.STRING, value='155366'),
-            'count': Prop(type=Types.INT, value=47),
-            'location': Prop(type=Types.STRING, value='café'),
-            'size': Prop(type=Types.FLOAT, value=32.7),
-            'dimensions': Prop(type=Types.ARRAY,
-                               value=[2.0, 2.0, 2.0],
-                               itemtype=Types.FLOAT),
-        }
+        # autopep8: off
+        expected_props = [
+            Prop(name='dimensions', type=Types.IDP_ARRAY, value=[2.0, 2.0, 2.0], itemtype=Types.IDP_FLOAT),
+            Prop(name='barcode', type=Types.IDP_STRING, value='155366'),
+            Prop(name='location', type=Types.IDP_STRING, value='café'),
+            Prop(name='size', type=Types.IDP_FLOAT, value=32.7),
+            Prop(name='count', type=Types.IDP_INT, value=47),
+            Prop(name='amazing', type=Types.IDP_BOOLEAN, value=True),
+        ]
+        # autopep8: on
 
         assert meta is not None
-        self.assertEqual(expected_custom, meta.custom)
+        self.assertEqual(expected_props, meta.properties)
 
     def test_array_properties(self) -> None:
         asset_data = self.cube.asset_data
@@ -70,17 +70,17 @@ class CustomPropertiesTest(unittest.TestCase):
 
         Types = api_models.CustomPropertyTypeV1
         Prop = api_models.CustomPropertyV1
-        expected_custom = {
-            'agents': Prop(type=Types.ARRAY, value=["007", "47", "327"], itemtype=Types.STRING),
-            'locations': Prop(type=Types.ARRAY, value=["Hokkaido", "Santa Fortuna", "Sapienza"], itemtype=Types.STRING),
-            'boundingbox': Prop(type=Types.ARRAY, value=[-3.0, -4.0, -0.1, 1.0, 2.0, 3.0], itemtype=Types.FLOAT),
-            'dimensions': Prop(type=Types.ARRAY,
-                               value=[2.0, 2.0, 2.0],
-                               itemtype=Types.FLOAT),
-        }
+        # autopep8: off
+        expected_prop = [
+            Prop(name='dimensions', type=Types.IDP_ARRAY, value=[2.0, 2.0, 2.0], itemtype=Types.IDP_FLOAT),
+            Prop(name='agents', type=Types.IDP_ARRAY, value=["007", "47", "327"], itemtype=Types.IDP_STRING),
+            Prop(name='locations', type=Types.IDP_ARRAY, value=["Hokkaido", "Santa Fortuna", "Sapienza"], itemtype=Types.IDP_STRING),
+            Prop(name='boundingbox', type=Types.IDP_ARRAY, value=[-3.0, -4.0, -0.1, 1.0, 2.0, 3.0], itemtype=Types.IDP_FLOAT),
+        ]
+        # autopep8: on
 
         assert meta is not None
-        self.assertEqual(expected_custom, meta.custom)
+        self.assertEqual(expected_prop, meta.properties)
 
     def test_serialize_to_json(self) -> None:
         meta = asset_finder._get_asset_meta(self.cube.asset_data)

@@ -252,7 +252,19 @@ AssetMetaData *asset_metadata_from_dictionary(const DictionaryValue &entry)
   }
 
   if (const std::shared_ptr<Value> *value = entry.lookup(ATTRIBUTE_ENTRIES_PROPERTIES)) {
-    asset_data->properties = convert_from_serialize_value(**value);
+    IDProperty *properties = convert_from_serialize_value(**value);
+
+    /* The top level property must be a group, further asset metadata property lookups assume
+     * that. This is also the only way to support more than a single property. */
+    if (properties && (properties->next || properties->type != IDP_GROUP)) {
+      asset_data->properties = bke::idprop::create_group("AssetMetaData.properties").release();
+      for (IDProperty *property = properties; property != nullptr; property = property->next) {
+        IDP_AddToGroup(asset_data->properties, property);
+      }
+    }
+    else {
+      asset_data->properties = properties;
+    }
   }
 
   return asset_data;

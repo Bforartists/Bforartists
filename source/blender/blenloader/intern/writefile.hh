@@ -32,18 +32,31 @@ struct WriteDataStableAddressIDs {
   /**
    * Maps each runtime-pointer to a unique identifier that's written in the .blend file.
    *
-   * Currently, no pointers are ever removed from this map during writing of a single file.
+   * Currently, for regular blendfile writing, no pointers are ever removed from this map during
+   * writing of a single file.
    * Correctness wise, this is fine. However, when some data-blocks write temporary addresses,
    * those may be reused across IDs while actually pointing to different data. This can break
    * address id stability in some situations. In the future this could be improved by clearing
    * such temporary pointers before writing the next data-block.
+   *
+   * In undo case, only a very small sub-set of 'generated' addresses (temp data generated for
+   * writefile only) is added to this mapping, most pointers are written as-is (since their
+   * addresses are always stable in undo context: if unchanged, address remains the same).
+   * The mapping is also cleared after every ID writing, to allow temp allocated data to re-use the
+   * same source address across different IDs. The generated address ids will always be unique
+   * though (see also #used_ids description below).
    */
   Map<const void *, uint64_t> pointer_map;
   /**
-   * Contains all the #pointer_map.values(). This is used to make sure that the same id is never
-   * reused for a different pointer. While this is technically allowed in .blend files (when the
-   * pointers are local data of different objects), we currently don't always know what type a
-   * pointer points to when writing it. So we can't determine if a pointer is local or not.
+   * Contains all the #pointer_map.values() ever generated during a writefile operation.
+   *
+   * This is used to make sure that the same id is never reused for a different pointer. While this
+   * is technically allowed in .blend files (when the pointers are local data of different
+   * objects), we currently don't always know what type a pointer points to when writing it. So we
+   * can't determine if a pointer is local or not.
+   *
+   * Note that in undo (memfile) case, this set is _not_ reset after every ID writing, to ensure
+   * that all generated address ids remain unique across a whole blenfile writing operation.
    */
   Set<uint64_t> used_ids;
   /**

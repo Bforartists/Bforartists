@@ -27,7 +27,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_cryptomatte_out)
 #include "eevee_surf_lib.glsl"
 #include "eevee_thickness_lib.glsl"
 
-float4 closure_to_rgba(Closure cl)
+float4 closure_to_rgba(Closure /*cl*/)
 {
   float4 out_color;
   out_color.rgb = g_emission;

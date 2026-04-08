@@ -182,23 +182,8 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
       gz->color_hi[3] = 0.5f;
     }
     else {
-      uchar icon_color[3];
-      ui::theme::get_color_3ubv(TH_TEXT, icon_color);
-      int color_tint, color_tint_hi;
-      if (icon_color[0] > 128) {
-        color_tint = -40;
-        color_tint_hi = 60;
-        gz->color[3] = 0.5f;
-        gz->color_hi[3] = 0.5f;
-      }
-      else {
-        color_tint = 60;
-        color_tint_hi = 60;
-        gz->color[3] = 0.5f;
-        gz->color_hi[3] = 0.75f;
-      }
-      ui::theme::get_color_shade_3fv(TH_HEADER, color_tint, gz->color);
-      ui::theme::get_color_shade_3fv(TH_HEADER, color_tint_hi, gz->color_hi);
+      gz->color[3] = 0.0f;
+      gz->color_hi[3] = 0.0f;
     }
 
     /* may be overwritten later */
@@ -343,11 +328,18 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       break;
   }
 
-  const float co[2] = {
+  float co[2] = {
       /* bfa- changed back navigation buttons to horizontal*/
       roundf(rect_visible->xmax - icon_offset_from_axis),
       roundf(rect_visible->ymax - icon_offset_mini * 0.75f),
   };
+  if (U.uiflag2 & USER_VERTICAL_NAVIGATION_GIZMOS) {
+    const float co_vertical[2] = {
+        roundf(rect_visible->xmax - icon_offset_mini * 0.75f),
+        roundf(rect_visible->ymax - icon_offset_from_axis),
+    };
+    copy_v2_v2(co, co_vertical);
+  }
 
   wmGizmo *gz;
 
@@ -365,35 +357,39 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
 
   if (show_navigate) {
     int icon_mini_slot = 0;
+    /* bfa - optional helper to changed back navigation buttons to vertical*/
+    auto apply_gizmo_pos = [&](wmGizmo *gz_ptr, int slot) {
+      if (U.uiflag2 & USER_VERTICAL_NAVIGATION_GIZMOS) {
+        gz_ptr->matrix_basis[3][0] = roundf(co[0]);
+        gz_ptr->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * slot));
+      }
+      else {
+        gz_ptr->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * slot));
+        gz_ptr->matrix_basis[3][1] = roundf(co[1]);
+      }
+    };
+
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ZOOM_AND_DOLLY) == 0) {
       gz = navgroup->gz_array[GZ_INDEX_ZOOM];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      apply_gizmo_pos(gz, icon_mini_slot++);
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
 
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_LOCATION) == 0) {
       gz = navgroup->gz_array[GZ_INDEX_MOVE];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      apply_gizmo_pos(gz, icon_mini_slot++);
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
 
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {
       gz = navgroup
                ->gz_array[(rv3d->persp == RV3D_CAMOB) ? GZ_INDEX_CAMERA_ON : GZ_INDEX_CAMERA_OFF];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      apply_gizmo_pos(gz, icon_mini_slot++);
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
       if (navgroup->state.rv3d.is_camera == false) {
         gz = navgroup->gz_array[rv3d->is_persp ? GZ_INDEX_PERSP : GZ_INDEX_ORTHO];
-        /* bfa- changed back navigation buttons to horizontal*/
-        gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-        gz->matrix_basis[3][1] = roundf(co[1]);
+        apply_gizmo_pos(gz, icon_mini_slot++);
         WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
       }
     }
@@ -401,9 +397,7 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     if (navgroup->state.rv3d.is_camera == true) {
       gz = navgroup->gz_array[(v3d->flag2 & V3D_LOCK_CAMERA) ? GZ_INDEX_CAMERA_LOCK :
                                                                GZ_INDEX_CAMERA_UNLOCK];
-      /* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][0] = roundf(co[0] - (icon_offset_mini * icon_mini_slot++));
-      gz->matrix_basis[3][1] = roundf(co[1]);
+      apply_gizmo_pos(gz, icon_mini_slot++);
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
   }
@@ -420,6 +414,9 @@ void VIEW3D_GGT_navigate(wmGizmoGroupType *gzgt)
   gzgt->poll = WIDGETGROUP_navigate_poll;
   gzgt->setup = WIDGETGROUP_navigate_setup;
   gzgt->draw_prepare = WIDGETGROUP_navigate_draw_prepare;
+  gzgt->draw_background = ED_gizmo_button2d_group_background;
+  gzgt->background_color = {0.0f, 0.0f, 0.0f, 0.3f};
+  gzgt->outline_color = {0.0f, 0.0f, 0.0f, 0.4f};
 }
 
 /** \} */

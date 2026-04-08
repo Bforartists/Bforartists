@@ -36,30 +36,35 @@ static EnumPropertyItem method_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Selection")
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .supports_field()
       .description("Faces to participate in the unwrap operation");
-  b.add_input<decl::Bool>("Seam").hide_value().supports_field().description(
-      "Edges to mark where the mesh is \"cut\" for the purposes of unwrapping");
-  b.add_input<decl::Float>("Margin").default_value(0.001f).min(0.0f).max(1.0f).description(
-      "Space between islands");
-  b.add_input<decl::Bool>("Fill Holes")
+  b.add_input<decl::Bool>("Seam"_ustr)
+      .hide_value()
+      .supports_field()
+      .description("Edges to mark where the mesh is \"cut\" for the purposes of unwrapping");
+  b.add_input<decl::Float>("Margin"_ustr)
+      .default_value(0.001f)
+      .min(0.0f)
+      .max(1.0f)
+      .description("Space between islands");
+  b.add_input<decl::Bool>("Fill Holes"_ustr)
       .default_value(true)
       .description(
           "Virtually fill holes in mesh before unwrapping, to better avoid overlaps "
           "and preserve symmetry");
-  b.add_input<decl::Menu>("Method").static_items(method_items).optional_label();
-  b.add_input<decl::Int>("Iterations")
+  b.add_input<decl::Menu>("Method"_ustr).static_items(method_items).optional_label();
+  b.add_input<decl::Int>("Iterations"_ustr)
       .default_value(10)
       .min(1)
       .usage_by_single_menu(GEO_NODE_UV_UNWRAP_METHOD_MINIMUM_STRETCH)
       .description("Number of iterations to run the SLIM solver for");
-  b.add_input<decl::Bool>("No Flip")
+  b.add_input<decl::Bool>("No Flip"_ustr)
       .usage_by_single_menu(GEO_NODE_UV_UNWRAP_METHOD_MINIMUM_STRETCH)
       .description("Prevents flipping UVs");
-  b.add_output<decl::Vector>("UV").field_source_reference_all().description(
+  b.add_output<decl::Vector>("UV"_ustr).field_source_reference_all().description(
       "UV coordinates between 0 and 1 for each face corner in the selected faces");
 }
 
@@ -191,7 +196,6 @@ class UnwrapFieldInput final : public bke::MeshFieldInput {
         iterations_(iterations),
         no_flip_(no_flip)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -202,10 +206,10 @@ class UnwrapFieldInput final : public bke::MeshFieldInput {
         mesh, selection_, seam_, fill_holes_, margin_, method_, iterations_, no_flip_, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    selection_.node().for_each_field_input_recursive(fn);
-    seam_.node().for_each_field_input_recursive(fn);
+    fn(selection_);
+    fn(seam_);
   }
 
   std::optional<AttrDomain> preferred_domain(const Mesh & /*mesh*/) const override
@@ -216,21 +220,21 @@ class UnwrapFieldInput final : public bke::MeshFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const auto method = params.get_input<GeometryNodeUVUnwrapMethod>("Method");
-  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
-  const Field<bool> seam_field = params.extract_input<Field<bool>>("Seam");
-  const bool fill_holes = params.extract_input<bool>("Fill Holes");
-  const float margin = params.extract_input<float>("Margin");
+  const auto method = params.get_input<GeometryNodeUVUnwrapMethod>("Method"_ustr);
+  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
+  const Field<bool> seam_field = params.extract_input<Field<bool>>("Seam"_ustr);
+  const bool fill_holes = params.extract_input<bool>("Fill Holes"_ustr);
+  const float margin = params.extract_input<float>("Margin"_ustr);
   int iterations = 0;
   bool no_flip = false;
   if ((GeometryNodeUVUnwrapMethod)method == GEO_NODE_UV_UNWRAP_METHOD_MINIMUM_STRETCH) {
-    iterations = params.extract_input<int>("Iterations");
-    no_flip = params.extract_input<bool>("No Flip");
+    iterations = params.extract_input<int>("Iterations"_ustr);
+    no_flip = params.extract_input<bool>("No Flip"_ustr);
   }
   params.set_output(
-      "UV",
-      Field<float3>(std::make_shared<UnwrapFieldInput>(
-          selection_field, seam_field, fill_holes, margin, method, iterations, no_flip)));
+      "UV"_ustr,
+      Field<float3>::from_input<UnwrapFieldInput>(
+          selection_field, seam_field, fill_holes, margin, method, iterations, no_flip));
 }
 
 static void node_register()

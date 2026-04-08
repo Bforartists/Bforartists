@@ -41,14 +41,13 @@ static void extract_vert_index_mesh(const MeshRenderData &mr, MutableSpan<int> v
   else {
     array_utils::copy(mr.corner_verts, corners_data);
     const Span<int2> edges = mr.edges;
-    const Span<int> loose_edges = mr.loose_edges;
-    threading::parallel_for(loose_edges.index_range(), 4096, [&](const IndexRange range) {
-      for (const int i : range) {
-        loose_edge_data[i * 2 + 0] = edges[loose_edges[i]][0];
-        loose_edge_data[i * 2 + 1] = edges[loose_edges[i]][1];
-      }
-    });
-    array_utils::copy(mr.loose_verts, loose_vert_data);
+    mr.loose_edges.foreach_index_optimized<int>(
+        [&](const int i, const int pos) {
+          loose_edge_data[pos * 2 + 0] = edges[i][0];
+          loose_edge_data[pos * 2 + 1] = edges[i][1];
+        },
+        exec_mode::grain_size(4096));
+    mr.loose_verts.to_indices(loose_vert_data);
   }
 }
 
@@ -71,16 +70,15 @@ static void extract_vert_index_bm(const MeshRenderData &mr, MutableSpan<int> vbo
     }
   });
 
-  const Span<int> loose_edges = mr.loose_edges;
-  threading::parallel_for(loose_edges.index_range(), 4096, [&](const IndexRange range) {
-    for (const int i : range) {
-      const BMEdge &edge = *BM_edge_at_index(&const_cast<BMesh &>(bm), loose_edges[i]);
-      loose_edge_data[i * 2 + 0] = BM_elem_index_get(edge.v1);
-      loose_edge_data[i * 2 + 1] = BM_elem_index_get(edge.v2);
-    }
-  });
+  mr.loose_edges.foreach_index(
+      [&](const int i, const int pos) {
+        const BMEdge &edge = *BM_edge_at_index(&const_cast<BMesh &>(bm), i);
+        loose_edge_data[pos * 2 + 0] = BM_elem_index_get(edge.v1);
+        loose_edge_data[pos * 2 + 1] = BM_elem_index_get(edge.v2);
+      },
+      exec_mode::grain_size(4096));
 
-  array_utils::copy(mr.loose_verts, loose_vert_data);
+  mr.loose_verts.to_indices(loose_vert_data);
 }
 
 gpu::VertBufPtr extract_vert_index(const MeshRenderData &mr)
@@ -100,25 +98,24 @@ static void extract_edge_index_mesh(const MeshRenderData &mr, MutableSpan<int> v
   MutableSpan corners_data = vbo_data.take_front(mr.corners_num);
   MutableSpan loose_edge_data = vbo_data.slice(mr.corners_num, mr.loose_edges.size() * 2);
 
-  const Span<int> loose_edges = mr.loose_edges;
   if (mr.orig_index_edge) {
     const Span<int> orig_index_edge(mr.orig_index_edge, mr.edges_num);
     array_utils::gather(orig_index_edge, mr.corner_edges, corners_data);
-    threading::parallel_for(loose_edges.index_range(), 4096, [&](const IndexRange range) {
-      for (const int i : range) {
-        loose_edge_data[i * 2 + 0] = orig_index_edge[loose_edges[i]];
-        loose_edge_data[i * 2 + 1] = orig_index_edge[loose_edges[i]];
-      }
-    });
+    mr.loose_edges.foreach_index_optimized<int>(
+        [&](const int i, const int pos) {
+          loose_edge_data[pos * 2 + 0] = orig_index_edge[i];
+          loose_edge_data[pos * 2 + 1] = orig_index_edge[i];
+        },
+        exec_mode::grain_size(4096));
   }
   else {
     array_utils::copy(mr.corner_edges, corners_data);
-    threading::parallel_for(loose_edges.index_range(), 4096, [&](const IndexRange range) {
-      for (const int i : range) {
-        loose_edge_data[i * 2 + 0] = loose_edges[i];
-        loose_edge_data[i * 2 + 1] = loose_edges[i];
-      }
-    });
+    mr.loose_edges.foreach_index_optimized<int>(
+        [&](const int i, const int pos) {
+          loose_edge_data[pos * 2 + 0] = i;
+          loose_edge_data[pos * 2 + 1] = i;
+        },
+        exec_mode::grain_size(4096));
   }
 }
 
@@ -140,13 +137,12 @@ static void extract_edge_index_bm(const MeshRenderData &mr, MutableSpan<int> vbo
     }
   });
 
-  const Span<int> loose_edges = mr.loose_edges;
-  threading::parallel_for(loose_edges.index_range(), 4096, [&](const IndexRange range) {
-    for (const int i : range) {
-      loose_edge_data[i * 2 + 0] = loose_edges[i];
-      loose_edge_data[i * 2 + 1] = loose_edges[i];
-    }
-  });
+  mr.loose_edges.foreach_index_optimized<int>(
+      [&](const int i, const int pos) {
+        loose_edge_data[pos * 2 + 0] = i;
+        loose_edge_data[pos * 2 + 1] = i;
+      },
+      exec_mode::grain_size(4096));
 }
 
 gpu::VertBufPtr extract_edge_index(const MeshRenderData &mr)
@@ -205,8 +201,8 @@ static void extract_vert_idx_loose_geom_subdiv(const DRWSubdivCache &subdiv_cach
                                                const MeshRenderData &mr,
                                                MutableSpan<int32_t> vbo_data)
 {
-  const Span<int> loose_verts = mr.loose_verts;
-  const Span<int> loose_edges = mr.loose_edges;
+  const IndexMask &loose_verts = mr.loose_verts;
+  const IndexMask &loose_edges = mr.loose_edges;
   if (loose_edges.is_empty() && loose_verts.is_empty()) {
     return;
   }
@@ -215,19 +211,19 @@ static void extract_vert_idx_loose_geom_subdiv(const DRWSubdivCache &subdiv_cach
   const int verts_per_edge = subdiv_verts_per_coarse_edge(subdiv_cache);
   MutableSpan<int32_t> edge_data = vbo_data.slice(subdiv_cache.num_subdiv_loops,
                                                   loose_edges.size() * verts_per_edge);
-  for (const int i : loose_edges.index_range()) {
-    const int2 edge = coarse_edges[loose_edges[i]];
-    MutableSpan data = edge_data.slice(i * verts_per_edge, verts_per_edge);
+  loose_edges.foreach_index([&](const int i, const int pos) {
+    const int2 edge = coarse_edges[i];
+    MutableSpan data = edge_data.slice(pos * verts_per_edge, verts_per_edge);
     data.first() = mr.orig_index_vert ? mr.orig_index_vert[edge[0]] : edge[0];
     data.last() = mr.orig_index_vert ? mr.orig_index_vert[edge[1]] : edge[1];
-  }
+  });
 
   MutableSpan<int32_t> loose_vert_data = vbo_data.take_back(loose_verts.size());
   if (mr.orig_index_vert) {
     array_utils::gather(Span(mr.orig_index_vert, mr.verts_num), loose_verts, loose_vert_data);
   }
   else {
-    array_utils::copy(loose_verts, loose_vert_data);
+    loose_verts.to_indices(loose_vert_data);
   }
 }
 
@@ -262,7 +258,7 @@ static void extract_edge_idx_loose_geom_subdiv(const DRWSubdivCache &subdiv_cach
                                                const MeshRenderData &mr,
                                                MutableSpan<int32_t> vbo_data)
 {
-  const Span<int> loose_edges = mr.loose_edges;
+  const IndexMask &loose_edges = mr.loose_edges;
   if (loose_edges.is_empty()) {
     return;
   }
@@ -270,11 +266,10 @@ static void extract_edge_idx_loose_geom_subdiv(const DRWSubdivCache &subdiv_cach
   const int verts_per_edge = subdiv_verts_per_coarse_edge(subdiv_cache);
   MutableSpan data = vbo_data.slice(subdiv_cache.num_subdiv_loops,
                                     loose_edges.size() * verts_per_edge);
-  for (const int i : loose_edges.index_range()) {
-    const int edge = loose_edges[i];
+  loose_edges.foreach_index([&](const int edge, const int i) {
     const int index = mr.orig_index_edge ? mr.orig_index_edge[edge] : edge;
     data.slice(i * verts_per_edge, verts_per_edge).fill(index);
-  }
+  });
 }
 
 gpu::VertBufPtr extract_edge_index_subdiv(const DRWSubdivCache &subdiv_cache,

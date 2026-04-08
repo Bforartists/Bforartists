@@ -23,6 +23,7 @@ from bpy.types import (
 from bpy.app.translations import (
     pgettext_iface as iface_,
     pgettext_tip as tip_,
+    contexts as i18n_contexts,
 )
 
 from bl_ui.space_toolsystem_common import (
@@ -236,7 +237,7 @@ class _defs_annotate:
                 row.ui_units_x = 15
                 row.prop(props, "arrowstyle_start", text="Start")
                 row.separator()
-                row.prop(props, "arrowstyle_end", text="End")
+                row.prop(props, "arrowstyle_end", text="End", translation_context=i18n_contexts.id_curve)
             else:
                 col = layout.row().column(align=True)
                 col.prop(props, "arrowstyle_start", text="Style Start")

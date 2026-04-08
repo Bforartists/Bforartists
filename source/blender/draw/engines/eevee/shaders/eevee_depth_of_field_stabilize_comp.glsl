@@ -266,7 +266,9 @@ DofSample dof_sample_history(float2 input_texel)
 }
 
 /* Modulate the history color to avoid ghosting artifact. */
-DofSample dof_amend_history(DofNeighborhoodMinMax bbox, DofSample history, DofSample src)
+DofSample dof_amend_history(DofNeighborhoodMinMax bbox,
+                            DofSample history,
+                            [[maybe_unused]] DofSample src)
 {
 #if 0
   /* Clip instead of clamping to avoid color accumulating in the AABB corners. */

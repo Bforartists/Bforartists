@@ -12,20 +12,24 @@ namespace blender::nodes::node_geo_mesh_topology_corners_of_vertex_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Vertex Index")
+  b.add_input<decl::Int>("Vertex Index"_ustr)
       .implicit_field(NODE_DEFAULT_INPUT_INDEX_FIELD)
       .description("The vertex to retrieve data from. Defaults to the vertex from the context")
       .structure_type(StructureType::Field);
-  b.add_input<decl::Float>("Weights").supports_field().hide_value().description(
-      "Values used to sort corners attached to the vertex. Uses indices by default");
-  b.add_input<decl::Int>("Sort Index")
+  b.add_input<decl::Float>("Weights"_ustr)
+      .supports_field()
+      .hide_value()
+      .description("Values used to sort corners attached to the vertex. Uses indices by default");
+  b.add_input<decl::Int>("Sort Index"_ustr)
       .supports_field()
       .description("Which of the sorted corners to output. Negative indexing is supported");
-  b.add_output<decl::Int>("Corner Index")
+  b.add_output<decl::Int>("Corner Index"_ustr)
       .field_source_reference_all()
       .description("A corner connected to the face, chosen by the sort index");
-  b.add_output<decl::Int>("Total").field_source().reference_pass({0}).description(
-      "The number of faces or corners connected to each vertex");
+  b.add_output<decl::Int>("Total"_ustr)
+      .field_source()
+      .reference_pass({0})
+      .description("The number of faces or corners connected to each vertex");
 }
 
 class CornersOfVertInput final : public bke::MeshFieldInput {
@@ -40,7 +44,6 @@ class CornersOfVertInput final : public bke::MeshFieldInput {
         sort_index_(std::move(sort_index)),
         sort_weight_(std::move(sort_weight))
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -115,11 +118,11 @@ class CornersOfVertInput final : public bke::MeshFieldInput {
     return VArray<int>::from_container(std::move(corner_of_vertex));
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    vert_index_.node().for_each_field_input_recursive(fn);
-    sort_index_.node().for_each_field_input_recursive(fn);
-    sort_weight_.node().for_each_field_input_recursive(fn);
+    fn(vert_index_);
+    fn(sort_index_);
+    fn(sort_weight_);
   }
 
   uint64_t hash() const final
@@ -127,7 +130,7 @@ class CornersOfVertInput final : public bke::MeshFieldInput {
     return 3541871368173645;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const auto *typed = dynamic_cast<const CornersOfVertInput *>(&other)) {
       return typed->vert_index_ == vert_index_ && typed->sort_index_ == sort_index_ &&
@@ -144,10 +147,7 @@ class CornersOfVertInput final : public bke::MeshFieldInput {
 
 class CornersOfVertCountInput final : public bke::MeshFieldInput {
  public:
-  CornersOfVertCountInput() : bke::MeshFieldInput(CPPType::get<int>(), "Vertex Corner Count")
-  {
-    category_ = Category::Generated;
-  }
+  CornersOfVertCountInput() : bke::MeshFieldInput(CPPType::get<int>(), "Vertex Corner Count") {}
 
   GVArray get_varray_for_context(const Mesh &mesh,
                                  const AttrDomain domain,
@@ -166,7 +166,7 @@ class CornersOfVertCountInput final : public bke::MeshFieldInput {
     return 253098745374645;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     return dynamic_cast<const CornersOfVertCountInput *>(&other) != nullptr;
   }
@@ -179,20 +179,19 @@ class CornersOfVertCountInput final : public bke::MeshFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const Field<int> vert_index = params.extract_input<Field<int>>("Vertex Index");
-  if (params.output_is_required("Total")) {
-    params.set_output("Total",
-                      Field<int>(std::make_shared<bke::EvaluateAtIndexInput>(
-                          vert_index,
-                          Field<int>(std::make_shared<CornersOfVertCountInput>()),
-                          AttrDomain::Point)));
+  const Field<int> vert_index = params.extract_input<Field<int>>("Vertex Index"_ustr);
+  if (params.output_is_required("Total"_ustr)) {
+    params.set_output(
+        "Total"_ustr,
+        Field<int>::from_input<bke::EvaluateAtIndexInput>(
+            vert_index, Field<int>::from_input<CornersOfVertCountInput>(), AttrDomain::Point));
   }
-  if (params.output_is_required("Corner Index")) {
-    params.set_output("Corner Index",
-                      Field<int>(std::make_shared<CornersOfVertInput>(
+  if (params.output_is_required("Corner Index"_ustr)) {
+    params.set_output("Corner Index"_ustr,
+                      Field<int>::from_input<CornersOfVertInput>(
                           vert_index,
-                          params.extract_input<Field<int>>("Sort Index"),
-                          params.extract_input<Field<float>>("Weights"))));
+                          params.extract_input<Field<int>>("Sort Index"_ustr),
+                          params.extract_input<Field<float>>("Weights"_ustr)));
   }
 }
 

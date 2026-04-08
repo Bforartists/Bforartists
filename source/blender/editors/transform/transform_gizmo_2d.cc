@@ -244,11 +244,12 @@ static bool gizmo2d_calc_bounds(const bContext *C, float *r_center, float *r_min
     const SpaceImage *sima = static_cast<const SpaceImage *>(area->spacedata.first);
     switch (sima->mode) {
       case SI_MODE_UV: {
+        const Main *bmain = CTX_data_main(C);
         Scene *scene = CTX_data_scene(C);
         ViewLayer *view_layer = CTX_data_view_layer(C);
         Vector<Object *> objects =
             BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-                scene, view_layer, nullptr);
+                *bmain, scene, view_layer, nullptr);
         if (ED_uvedit_minmax_multi(scene, objects, r_min, r_max)) {
           has_select = true;
         }
@@ -387,6 +388,7 @@ static bool gizmo2d_calc_transform_pivot(const bContext *C,
                                          float r_pivot[2])
 {
   ScrArea *area = CTX_wm_area(C);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   bool has_select = false;
 
@@ -396,7 +398,7 @@ static bool gizmo2d_calc_transform_pivot(const bContext *C,
     switch (sima->mode) {
       case SI_MODE_UV:
         ED_uvedit_center_from_pivot_ex(
-            sima, scene, view_layer, r_pivot, sima->around, &has_select);
+            *bmain, sima, scene, view_layer, r_pivot, sima->around, &has_select);
         break;
       case SI_MODE_MASK:
         ED_mask_center_from_pivot_ex(

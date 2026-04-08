@@ -13,9 +13,9 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Geometry").description("Geometry to override the bundle of");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Bundle>("Bundle");
+  b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to override the bundle of");
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bundle>("Bundle"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
@@ -26,10 +26,10 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.set_default_remaining_outputs();
     return;
   }
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
-  BundlePtr bundle = params.extract_input<BundlePtr>("Bundle");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
+  BundlePtr bundle = params.extract_input<BundlePtr>("Bundle"_ustr);
   geometry_set.bundle_ptr() = bundle;
-  params.set_output("Geometry", std::move(geometry_set));
+  params.set_output("Geometry"_ustr, std::move(geometry_set));
 }
 
 static void node_gather_link_searches(GatherLinkSearchOpParams &params)

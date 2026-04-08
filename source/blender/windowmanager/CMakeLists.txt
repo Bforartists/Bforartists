@@ -132,11 +132,11 @@ if(WITH_GHOST_WAYLAND)
   )
   # Full-color application icon for the Wayland window icon.
   data_to_c(
-    "${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg"
-    "${CMAKE_CURRENT_BINARY_DIR}/blender_app_icon.svg.c"
+    "${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/bforartists.svg" # bfa - our icon
+    "${CMAKE_CURRENT_BINARY_DIR}/bforartists_app_icon.svg.c" # bfa - our icon
     SRC
-    # Name override to avoid conflicting with the UI icon `datatoc_blender_svg`.
-    "blender_app_icon_svg"
+    # Name override to avoid conflicting with the UI icon `datatoc_bforartists_svg`.
+    "bforartists_app_icon_svg" # bfa - our icon
   )
   add_definitions(-DWITH_GHOST_WAYLAND)
 endif()

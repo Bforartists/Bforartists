@@ -94,7 +94,7 @@ void DepsgraphRelationBuilder::build_view_layer(Scene *scene,
 {
   /* Setup currently building context. */
   scene_ = scene;
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain_, scene, view_layer);
   /* Scene objects. */
   /* NOTE: Nodes builder requires us to pass evaluated base because it's being
    * passed to the evaluation functions. During relations builder we only

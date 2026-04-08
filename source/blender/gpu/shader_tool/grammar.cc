@@ -157,10 +157,12 @@ struct ScopeParser {
   using Node = Scope;
   Node curr_node = Node(parser);
 
-  std::string error_str;
-  Token error_tok;
+  ErrorHandler &error_handler;
 
-  ScopeParser(ParserBase &parser, Token tok) : curr(tok), parser(parser), error_tok(parser) {}
+  ScopeParser(ParserBase &parser, Token tok, ErrorHandler &error_handler)
+      : curr(tok), parser(parser), error_handler(error_handler)
+  {
+  }
 
   void translation_unit()
   {
@@ -1129,13 +1131,9 @@ struct ScopeParser {
 
   void error(const std::string &str)
   {
-    /* Only emit one error to avoid a cascade of error. */
-    if (error_str.empty()) {
-      error_str = str;
-      error_tok = curr;
-      /* Set token to EndOfFile/Invalid. */
-      curr = Token(parser);
-    }
+    error_handler.report(curr, str);
+    /* Set token to EndOfFile/Invalid. */
+    curr = Token(parser);
   }
 
   void match(char expected)
@@ -1172,7 +1170,7 @@ struct ScopeParser {
   }
 };
 
-void ParserBase::build_scope_tree(report_callback &report_error)
+void ParserBase::build_scope_tree(ErrorHandler &err_handler)
 {
   LexerBase &lex = *this;
 
@@ -1187,20 +1185,11 @@ void ParserBase::build_scope_tree(report_callback &report_error)
   scope_ranges.reserve(predicted_scope_count);
   scope_links.reserve(predicted_scope_count);
 
-  ScopeParser p(*this, lex[0]);
+  ScopeParser p(*this, lex[0], err_handler);
   p.translation_unit();
 
   lex.reset_template_tokens();
 
-  if (!p.error_str.empty()) {
-    report_error(p.error_tok.line_number(),
-                 p.error_tok.char_number(),
-                 p.error_tok.line_str(),
-                 p.error_str.c_str());
-    /* Avoid out of bound access for the rest of the processing. Empty everything. */
-    scope_types = {ScopeType::Global};
-    scope_ranges = {IndexRange(0, 0)};
-  }
   update_string_view();
 }
 

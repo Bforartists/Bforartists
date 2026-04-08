@@ -13,13 +13,15 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Float>("Threshold")
+  b.add_input<decl::Float>("Threshold"_ustr)
       .default_value(0.2f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -27,14 +29,14 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "Specifies the threshold or sensitivity to edges. Lowering this value you will be able "
           "to detect more edges at the expense of performance");
-  b.add_input<decl::Float>("Contrast Limit")
+  b.add_input<decl::Float>("Contrast Limit"_ustr)
       .default_value(2.0f)
       .min(0.0f)
       .description(
           "If there is an neighbor edge that has a Contrast Limit times bigger contrast than "
           "current edge, current edge will be discarded. This allows to eliminate spurious "
           "crossing edges");
-  b.add_input<decl::Float>("Corner Rounding")
+  b.add_input<decl::Float>("Corner Rounding"_ustr)
       .default_value(0.25f)
       .subtype(PROP_FACTOR)
       .min(0.0f)

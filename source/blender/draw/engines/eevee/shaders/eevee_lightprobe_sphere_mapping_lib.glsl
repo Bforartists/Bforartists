@@ -33,7 +33,6 @@ SphereProbeUvArea reinterpret_as_atlas_coord(int4 packed_coord)
  * Returned vector is not normalized. */
 float3 sphere_probe_texel_to_direction(float2 local_texel,
                                        SphereProbePixelArea texel_area,
-                                       SphereProbeUvArea uv_area,
                                        float2 &sampling_uv)
 {
   /* UV in sampling area. No half pixel bias to texel as the octahedral map edges area lined up
@@ -46,12 +45,10 @@ float3 sphere_probe_texel_to_direction(float2 local_texel,
 
 /* local_texel is the texel coordinate inside the probe area [0..texel_area.extent) range.
  * Returned vector is not normalized. */
-float3 sphere_probe_texel_to_direction(float2 local_texel,
-                                       SphereProbePixelArea texel_area,
-                                       SphereProbeUvArea uv_area)
+float3 sphere_probe_texel_to_direction(float2 local_texel, SphereProbePixelArea texel_area)
 {
   float2 sampling_uv_unused;
-  return sphere_probe_texel_to_direction(local_texel, texel_area, uv_area, sampling_uv_unused);
+  return sphere_probe_texel_to_direction(local_texel, texel_area, sampling_uv_unused);
 }
 
 /* Apply correct bias and scale for the given level of detail. */

@@ -33,14 +33,14 @@ NODE_STORAGE_FUNCS(NodeKeyingScreenData)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Smoothness")
+  b.add_input<decl::Float>("Smoothness"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
       .max(1.0f)
       .description("Specifies the smoothness of the keying screen");
 
-  b.add_output<decl::Color>("Screen")
+  b.add_output<decl::Color>("Screen"_ustr)
       .translation_context(BLT_I18NCONTEXT_ID_SCREEN)
       .structure_type(StructureType::Dynamic);
 }

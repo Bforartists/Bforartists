@@ -418,6 +418,7 @@ set(SRC
   BKE_icons.hh
   BKE_id_hash.hh
   BKE_idprop.hh
+  BKE_idprop_hash.hh
   BKE_idtype.hh
   BKE_image.hh
   BKE_image_format.hh

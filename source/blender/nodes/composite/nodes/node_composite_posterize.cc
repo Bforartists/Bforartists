@@ -23,10 +23,10 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
-  b.add_output<decl::Color>("Image").align_with_previous();
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image"_ustr).align_with_previous();
 
-  b.add_input<decl::Float>("Steps").default_value(8.0f).min(2.0f).max(1024.0f);
+  b.add_input<decl::Float>("Steps"_ustr).default_value(8.0f).min(2.0f).max(1024.0f);
 }
 
 using namespace blender::compositor;

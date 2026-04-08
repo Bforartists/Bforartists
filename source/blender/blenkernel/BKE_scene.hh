@@ -40,22 +40,22 @@ enum eSceneCopyMethod {
 };
 
 /** Use as the contents of a 'for' loop: `for (SETLOOPER(...)) { ... }`. */
-#define SETLOOPER(_sce_basis, _sce_iter, _base) \
+#define SETLOOPER(_bmain, _sce_basis, _sce_iter, _base) \
   _sce_iter = _sce_basis, \
   _base = _setlooper_base_step( \
-      &_sce_iter, BKE_view_layer_context_active_PLACEHOLDER(_sce_basis), NULL); \
+      (_bmain), &_sce_iter, BKE_view_layer_context_active_PLACEHOLDER(_sce_basis), NULL); \
   _base; \
-  _base = _setlooper_base_step(&_sce_iter, NULL, _base)
+  _base = _setlooper_base_step((_bmain), &_sce_iter, NULL, _base)
 
-#define SETLOOPER_VIEW_LAYER(_sce_basis, _view_layer, _sce_iter, _base) \
-  _sce_iter = _sce_basis, _base = _setlooper_base_step(&_sce_iter, _view_layer, NULL); \
+#define SETLOOPER_VIEW_LAYER(_bmain, _sce_basis, _view_layer, _sce_iter, _base) \
+  _sce_iter = _sce_basis, _base = _setlooper_base_step((_bmain), &_sce_iter, _view_layer, NULL); \
   _base; \
-  _base = _setlooper_base_step(&_sce_iter, NULL, _base)
+  _base = _setlooper_base_step((_bmain), &_sce_iter, NULL, _base)
 
-#define SETLOOPER_SET_ONLY(_sce_basis, _sce_iter, _base) \
-  _sce_iter = _sce_basis, _base = _setlooper_base_step(&_sce_iter, NULL, NULL); \
+#define SETLOOPER_SET_ONLY(_bmain, _sce_basis, _sce_iter, _base) \
+  _sce_iter = _sce_basis, _base = _setlooper_base_step((_bmain), &_sce_iter, NULL, NULL); \
   _base; \
-  _base = _setlooper_base_step(&_sce_iter, NULL, _base)
+  _base = _setlooper_base_step((_bmain), &_sce_iter, NULL, _base)
 
 /**
  * Helper function for the #SETLOOPER and #SETLOOPER_VIEW_LAYER macros
@@ -63,7 +63,7 @@ enum eSceneCopyMethod {
  * It iterates over the bases of the active layer and then the bases
  * of the active layer of the background (set) scenes recursively.
  */
-Base *_setlooper_base_step(Scene **sce_iter, ViewLayer *view_layer, Base *base);
+Base *_setlooper_base_step(const Main &bmain, Scene **sce_iter, ViewLayer *view_layer, Base *base);
 
 Scene *BKE_scene_add(Main *bmain, const char *name);
 
@@ -72,8 +72,8 @@ void BKE_scene_remove_rigidbody_object(Main *bmain, Scene *scene, Object *ob, bo
 /**
  * Check if there is any instance of the object in the scene.
  */
-bool BKE_scene_object_find(Scene *scene, Object *ob);
-Object *BKE_scene_object_find_by_name(const Scene *scene, const char *name);
+bool BKE_scene_object_find(const Main &bmain, Scene *scene, Object *ob);
+Object *BKE_scene_object_find_by_name(const Main &bmain, const Scene *scene, const char *name);
 
 /* Scene base iteration function.
  * Define struct here, so no need to bother with alloc/free it.
@@ -94,7 +94,7 @@ struct SceneBaseIter {
 int BKE_scene_base_iter_next(
     Depsgraph *depsgraph, SceneBaseIter *iter, Scene **scene, int val, Base **base, Object **ob);
 
-void BKE_scene_base_flag_to_objects(const Scene *scene, ViewLayer *view_layer);
+void BKE_scene_base_flag_to_objects(const Main &bmain, const Scene *scene, ViewLayer *view_layer);
 /**
  * Synchronize object base flags
  *

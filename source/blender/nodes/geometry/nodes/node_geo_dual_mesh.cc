@@ -20,11 +20,11 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh to compute the dual of");
-  b.add_output<decl::Geometry>("Dual Mesh").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Keep Boundaries")
+  b.add_output<decl::Geometry>("Dual Mesh"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Keep Boundaries"_ustr)
       .default_value(false)
       .description(
           "Keep non-manifold boundaries of the input mesh in place by avoiding the dual "
@@ -934,17 +934,17 @@ static Mesh *calc_dual_mesh(const Mesh &src_mesh,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Mesh");
-  const bool keep_boundaries = params.extract_input<bool>("Keep Boundaries");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Mesh"_ustr);
+  const bool keep_boundaries = params.extract_input<bool>("Keep Boundaries"_ustr);
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     if (const Mesh *mesh = geometry_set.get_mesh()) {
       Mesh *new_mesh = calc_dual_mesh(
-          *mesh, keep_boundaries, params.get_attribute_filter("Dual Mesh"));
+          *mesh, keep_boundaries, params.get_attribute_filter("Dual Mesh"_ustr));
       geometry::debug_randomize_mesh_order(new_mesh);
       geometry_set.replace_mesh(new_mesh);
     }
   });
-  params.set_output("Dual Mesh", std::move(geometry_set));
+  params.set_output("Dual Mesh"_ustr, std::move(geometry_set));
 }
 
 static void node_register()

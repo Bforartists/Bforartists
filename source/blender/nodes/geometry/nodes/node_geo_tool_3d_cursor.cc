@@ -10,11 +10,11 @@ namespace blender::nodes::node_geo_tool_3d_cursor_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("Location")
+  b.add_output<decl::Vector>("Location"_ustr)
       .subtype(PROP_TRANSLATION)
       .description(
           "The location of the scene's 3D cursor, in the local space of the modified object");
-  b.add_output<decl::Rotation>("Rotation")
+  b.add_output<decl::Rotation>("Rotation"_ustr)
       .description(
           "The rotation of the scene's 3D cursor, in the local space of the modified object");
 }
@@ -28,10 +28,10 @@ static void node_geo_exec(GeoNodeExecParams params)
   const float4x4 &world_to_object = params.self_object()->world_to_object();
 
   const float3 location_global = data.cursor_position;
-  params.set_output("Location", math::transform_point(world_to_object, location_global));
+  params.set_output("Location"_ustr, math::transform_point(world_to_object, location_global));
 
   math::Quaternion rotation_global = data.cursor_rotation;
-  params.set_output("Rotation", math::to_quaternion(world_to_object) * rotation_global);
+  params.set_output("Rotation"_ustr, math::to_quaternion(world_to_object) * rotation_global);
 }
 
 static void node_register()

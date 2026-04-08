@@ -10,9 +10,9 @@ namespace nodes::node_shader_point_info_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("Position");
-  b.add_output<decl::Float>("Radius");
-  b.add_output<decl::Float>("Random");
+  b.add_output<decl::Vector>("Position"_ustr);
+  b.add_output<decl::Float>("Radius"_ustr);
+  b.add_output<decl::Float>("Random"_ustr);
 }
 
 static int node_shader_gpu_point_info(GPUMaterial *mat,

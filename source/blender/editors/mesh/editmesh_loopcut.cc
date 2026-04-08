@@ -382,11 +382,12 @@ static wmOperatorStatus loopcut_init(bContext *C, wmOperator *op, const wmEvent 
   exec_data.base_index = uint(RNA_int_get(op->ptr, "object_index"));
   exec_data.e_index = uint(RNA_int_get(op->ptr, "edge_index"));
 
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
 
   if (is_interactive) {
     for (Base *base : bases) {
@@ -716,28 +717,6 @@ static wmOperatorStatus loopcut_modal(bContext *C, wmOperator *op, const wmEvent
   /* keep going until the user confirms */
   return OPERATOR_RUNNING_MODAL;
 }
-
-/* for bmesh this tool is in bmesh_select.c */
-#if 0
-
-void MESH_OT_edgering_select(wmOperatorType *ot)
-{
-  /* description */
-  ot->name = "Edge Ring Select";
-  ot->idname = "MESH_OT_edgering_select";
-  ot->description = "Select an edge ring";
-
-  /* callbacks */
-  ot->invoke = ringsel_invoke;
-  ot->poll = ED_operator_editmesh_region_view3d;
-
-  /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-
-  RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the selection");
-}
-
-#endif
 
 void MESH_OT_loopcut(wmOperatorType *ot)
 {

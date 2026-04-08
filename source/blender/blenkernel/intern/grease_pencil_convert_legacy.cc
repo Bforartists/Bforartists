@@ -35,7 +35,7 @@
 #include "BLO_read_write.hh"
 #include "BLO_readfile.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
@@ -1476,15 +1476,16 @@ static void layer_adjustments_to_modifiers(ConversionData &conversion_data,
       BLI_addtail(&dst_object.modifiers, md);
       BKE_modifiers_persistent_uid_init(dst_object, md->modifier);
 
-      md->settings.properties = bke::idprop::create_group("Nodes Modifier Settings").release();
+      md->settings_legacy.properties =
+          bke::idprop::create_group("Nodes Modifier Settings").release();
       IDProperty *radius_offset_prop =
           bke::idprop::create(DATA_("Socket_2"), radius_offset).release();
       auto *ui_data = reinterpret_cast<IDPropertyUIDataFloat *>(
           IDP_ui_data_ensure(radius_offset_prop));
       ui_data->soft_min = 0.0;
       ui_data->base.rna_subtype = PROP_TRANSLATION;
-      IDP_AddToGroup(md->settings.properties, radius_offset_prop);
-      IDP_AddToGroup(md->settings.properties,
+      IDP_AddToGroup(md->settings_legacy.properties, radius_offset_prop);
+      IDP_AddToGroup(md->settings_legacy.properties,
                      bke::idprop::create(DATA_("Socket_3"), gpl.info).release());
 
       if (has_thickness_adjustment_animation) {

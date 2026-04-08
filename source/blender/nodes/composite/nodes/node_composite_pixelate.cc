@@ -18,11 +18,15 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Color>("Color").structure_type(StructureType::Dynamic).hide_value();
-  b.add_output<decl::Color>("Color").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_input<decl::Color>("Color"_ustr).structure_type(StructureType::Dynamic).hide_value();
+  b.add_output<decl::Color>("Color"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Int>("Size").default_value(1).min(1).description(
-      "The number of pixels that correspond to the same output pixel");
+  b.add_input<decl::Int>("Size"_ustr)
+      .default_value(1)
+      .min(1)
+      .description("The number of pixels that correspond to the same output pixel");
 }
 
 using namespace blender::compositor;

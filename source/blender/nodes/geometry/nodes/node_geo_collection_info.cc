@@ -27,15 +27,15 @@ NODE_STORAGE_FUNCS(NodeGeometryCollectionInfo)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Collection>("Collection").optional_label();
-  b.add_input<decl::Bool>("Separate Children")
+  b.add_input<decl::Collection>("Collection"_ustr).optional_label();
+  b.add_input<decl::Bool>("Separate Children"_ustr)
       .description(
           "Output each child of the collection as a separate instance, sorted alphabetically");
-  b.add_input<decl::Bool>("Reset Children")
+  b.add_input<decl::Bool>("Reset Children"_ustr)
       .description(
           "Reset the transforms of every child instance in the output. Only used when Separate "
           "Children is enabled");
-  b.add_output<decl::Geometry>("Instances")
+  b.add_output<decl::Geometry>("Instances"_ustr)
       .description(
           "Instance of the collection or instances of all the children in the collection");
 }
@@ -60,7 +60,7 @@ struct InstanceListEntry {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Collection *collection = params.extract_input<Collection *>("Collection");
+  Collection *collection = params.extract_input<Collection *>("Collection"_ustr);
 
   if (collection == nullptr) {
     params.set_default_remaining_outputs();
@@ -89,9 +89,9 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   std::unique_ptr<bke::Instances> instances = std::make_unique<bke::Instances>();
 
-  const bool separate_children = params.extract_input<bool>("Separate Children");
+  const bool separate_children = params.extract_input<bool>("Separate Children"_ustr);
   if (separate_children) {
-    const bool reset_children = params.extract_input<bool>("Reset Children");
+    const bool reset_children = params.extract_input<bool>("Reset Children"_ustr);
     Vector<Collection *> children_collections;
     for (CollectionChild &collection_child : collection->children) {
       children_collections.append(collection_child.collection);
@@ -157,9 +157,9 @@ static void node_geo_exec(GeoNodeExecParams params)
     instances->transforms_for_write().first() = transform;
   }
   GeometrySet geometry = GeometrySet::from_instances(std::move(instances));
-  geometry.name = collection->id.name + 2;
+  geometry.set_name(collection->id.name + 2);
 
-  params.set_output("Instances", std::move(geometry));
+  params.set_output("Instances"_ustr, std::move(geometry));
 }
 
 static void node_rna(StructRNA *srna)

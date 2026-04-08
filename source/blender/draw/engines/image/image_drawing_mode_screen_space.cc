@@ -105,10 +105,10 @@ void ScreenSpaceDrawingMode::do_partial_update_float_buffer(
     ImBuf *float_buffer, PartialUpdateChecker<ImageTileData>::CollectResult &iterator) const
 {
   ImBuf *src = iterator.tile_data.tile_buffer;
-  BLI_assert(float_buffer->float_buffer.data != nullptr);
-  BLI_assert(float_buffer->byte_buffer.data == nullptr);
-  BLI_assert(src->float_buffer.data == nullptr);
-  BLI_assert(src->byte_buffer.data != nullptr);
+  BLI_assert(float_buffer->float_data() != nullptr);
+  BLI_assert(float_buffer->byte_data() == nullptr);
+  BLI_assert(src->float_data() == nullptr);
+  BLI_assert(src->byte_data() != nullptr);
 
   /* Calculate the overlap between the updated region and the buffer size. Partial Update Checker
    * always returns a tile (256x256). Which could lay partially outside the buffer when using
@@ -211,6 +211,7 @@ void ScreenSpaceDrawingMode::do_partial_update(
           &extracted_buffer, texture_region_width, texture_region_height, 32, IB_float_data);
 
       int offset = 0;
+      float *float_data = extracted_buffer.float_data_for_write();
       for (int y = gpu_texture_region_to_update.ymin; y < gpu_texture_region_to_update.ymax; y++) {
         float yf = y / float(texture_height);
         float v = info.clipping_uv_bounds.ymax * yf + info.clipping_uv_bounds.ymin * (1.0 - yf) -
@@ -220,10 +221,8 @@ void ScreenSpaceDrawingMode::do_partial_update(
           float xf = x / float(texture_width);
           float u = info.clipping_uv_bounds.xmax * xf + info.clipping_uv_bounds.xmin * (1.0 - xf) -
                     tile_offset_x;
-          imbuf::interpolate_nearest_border_fl(tile_buffer,
-                                               &extracted_buffer.float_buffer.data[offset * 4],
-                                               u * tile_buffer->x,
-                                               v * tile_buffer->y);
+          imbuf::interpolate_nearest_border_fl(
+              tile_buffer, &float_data[offset * 4], u * tile_buffer->x, v * tile_buffer->y);
           offset++;
         }
       }
@@ -231,7 +230,7 @@ void ScreenSpaceDrawingMode::do_partial_update(
 
       GPU_texture_update_sub(texture,
                              GPU_DATA_FLOAT,
-                             extracted_buffer.float_buffer.data,
+                             float_data,
                              gpu_texture_region_to_update.xmin,
                              gpu_texture_region_to_update.ymin,
                              0,
@@ -279,7 +278,7 @@ void ScreenSpaceDrawingMode::do_full_update_gpu_texture(TextureInfo &info,
     BKE_image_release_ibuf(image, tile_buffer, lock);
   }
   IMB_gpu_clamp_half_float(&texture_buffer);
-  GPU_texture_update(info.texture, GPU_DATA_FLOAT, texture_buffer.float_buffer.data);
+  GPU_texture_update(info.texture, GPU_DATA_FLOAT, texture_buffer.float_data());
   IMB_free_all_data(&texture_buffer);
 }
 

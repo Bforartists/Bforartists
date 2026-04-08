@@ -205,7 +205,7 @@ static StructRNA *rna_NodeSocket_register(Main *bmain,
   }
 
   /* check if we have registered this socket type before */
-  st = bke::node_socket_type_find(dummy_st.idname);
+  st = bke::node_socket_type_find(dummy_st.idname.ref());
   if (!st) {
     /* create a new node socket type */
     st = MEM_new<bke::bNodeSocketType>(__func__, dummy_st);
@@ -306,7 +306,7 @@ static void rna_NodeSocket_bl_idname_get(PointerRNA *ptr, char *value)
 {
   const bNodeSocket *node = static_cast<const bNodeSocket *>(ptr->data);
   const bke::bNodeSocketType *ntype = node->typeinfo;
-  StringRef(ntype->idname).copy_unsafe(value);
+  ntype->idname.ref().copy_unsafe(value);
 }
 
 static int rna_NodeSocket_bl_idname_length(PointerRNA *ptr)
@@ -327,7 +327,7 @@ static void rna_NodeSocket_bl_idname_set(PointerRNA *ptr, const char *value)
     return;
   }
 
-  ntype->idname = value;
+  ntype->idname = UString(value);
 }
 
 static void rna_NodeSocket_bl_label_get(PointerRNA *ptr, char *value)

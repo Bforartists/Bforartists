@@ -6,6 +6,7 @@ import bpy
 from bpy.types import Panel, Menu
 from bpy.props import StringProperty
 from bpy.app.translations import contexts as i18n_contexts
+from bl_ui.node_add_menu import AddNodeMenu, SwapNodeMenu
 
 from .utils.constants import blend_types, geo_combine_operations, operations
 from .utils.nodes import get_nodes_links, NWBaseMenu
@@ -314,8 +315,7 @@ class NWLinkUseOutputsNamesMenu(Menu, NWBaseMenu):
         props.use_outputs_names = True
 
 
-class NWAttributeMenu(bpy.types.Menu):
-    bl_idname = "NODE_MT_nw_node_attribute_menu"
+class NWAttributeMenuBase:
     bl_label = "Attributes"
 
     @classmethod
@@ -346,14 +346,21 @@ class NWAttributeMenu(bpy.types.Menu):
         attrs = list(set(attrs))  # get a unique list
 
         if attrs:
-            for attr in attrs:
-                l.operator(
-                    "node.nw_add_attr_node",
-                    text=attr,
-                    translate=False,
-                ).attr_name = attr
+            for attr_name in attrs:
+                props = self.node_operator(l, "ShaderNodeAttribute", label=attr_name, translate=False)
+                ops = props.settings.add()
+                ops.name = "attribute_name"
+                ops.value = repr(attr_name)
         else:
             l.label(text="No attributes on objects with this material")
+
+
+class NWAttributeMenuAdd(NWAttributeMenuBase, AddNodeMenu):
+    bl_idname = "NODE_MT_nw_node_attribute_menu_add"
+
+
+class NWAttributeMenuSwap(NWAttributeMenuBase, SwapNodeMenu):
+    bl_idname = "NODE_MT_nw_node_attribute_menu_swap"
 
 
 #
@@ -367,9 +374,15 @@ def select_parent_children_buttons(self, context):
     layout.operator("node.nw_select_parent_child", text="Select Parent Frame").option = 'PARENT'
 
 
-def attr_nodes_menu_func(self, context):
+def attr_nodes_add_menu_func(self, context):
     col = self.layout.column(align=True)
-    col.menu("NODE_MT_nw_node_attribute_menu")
+    col.menu("NODE_MT_nw_node_attribute_menu_add")
+    col.separator()
+
+
+def attr_nodes_swap_menu_func(self, context):
+    col = self.layout.column(align=True)
+    col.menu("NODE_MT_nw_node_attribute_menu_swap")
     col.separator()
 
 
@@ -397,24 +410,16 @@ def save_viewer_menu_func(self, context):
 
 
 def reset_nodes_button(self, context):
+    layout = self.layout
     node_active = context.active_node
     node_selected = context.selected_nodes
 
     # Check if active node is in the selection, ignore some node types
-    if (len(node_selected) != 1
-            or node_active is None
-            or not node_active.select
-            or node_active.type in {"REROUTE", "GROUP"}):
+    if len(node_selected) < 1:
         return
 
-    row = self.layout.row()
-
-    if node_active.type == "FRAME":
-        row.operator("node.nw_reset_nodes", text="Reset Nodes in Frame", icon="FILE_REFRESH")
-    else:
-        row.operator("node.nw_reset_nodes", text="Reset Node", icon="FILE_REFRESH")
-
-    self.layout.separator()
+    layout.operator("node.nw_reset_nodes", icon="FILE_REFRESH")
+    layout.separator()
 
 
 classes = (
@@ -435,7 +440,8 @@ classes = (
     NWLinkStandardMenu,
     NWLinkUseNodeNameMenu,
     NWLinkUseOutputsNamesMenu,
-    NWAttributeMenu,
+    NWAttributeMenuAdd,
+    NWAttributeMenuSwap,
 )
 
 
@@ -446,7 +452,8 @@ def register():
 
     # menu items
     bpy.types.NODE_MT_select.append(select_parent_children_buttons)
-    bpy.types.NODE_MT_category_shader_input.prepend(attr_nodes_menu_func)
+    bpy.types.NODE_MT_category_shader_input.prepend(attr_nodes_add_menu_func)
+    bpy.types.NODE_MT_shader_node_input_swap.prepend(attr_nodes_swap_menu_func)
     bpy.types.NODE_PT_backdrop.append(bgreset_menu_func)
     bpy.types.NODE_PT_active_node_generic.append(save_viewer_menu_func)
     bpy.types.NODE_MT_category_shader_texture.prepend(multipleimages_menu_func)
@@ -458,7 +465,8 @@ def register():
 def unregister():
     # menu items
     bpy.types.NODE_MT_select.remove(select_parent_children_buttons)
-    bpy.types.NODE_MT_category_shader_input.remove(attr_nodes_menu_func)
+    bpy.types.NODE_MT_category_shader_input.remove(attr_nodes_add_menu_func)
+    bpy.types.NODE_MT_shader_node_input_swap.remove(attr_nodes_swap_menu_func)
     bpy.types.NODE_PT_backdrop.remove(bgreset_menu_func)
     bpy.types.NODE_PT_active_node_generic.remove(save_viewer_menu_func)
     bpy.types.NODE_MT_category_shader_texture.remove(multipleimages_menu_func)

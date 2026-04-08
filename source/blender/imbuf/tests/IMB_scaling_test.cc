@@ -12,7 +12,7 @@ namespace blender::imbuf::tests {
 static ImBuf *create_6x2_test_image()
 {
   ImBuf *img = IMB_allocImBuf(6, 2, 32, IB_byte_data);
-  uchar4 *col = reinterpret_cast<uchar4 *>(img->byte_buffer.data);
+  uchar4 *col = reinterpret_cast<uchar4 *>(img->byte_data_for_write());
 
   /* Source pixels are spelled out in 2x2 blocks below:
    * nearest filter results in corner pixel from each block, bilinear
@@ -39,7 +39,7 @@ static ImBuf *create_6x2_test_image_fl(int channels)
 {
   ImBuf *img = IMB_allocImBuf(6, 2, 32, IB_float_data);
   img->channels = channels;
-  float *col = img->float_buffer.data;
+  float *col = img->float_data_for_write();
 
   for (int y = 0; y < img->y; y++) {
     for (int x = 0; x < img->x; x++) {
@@ -106,7 +106,7 @@ static ImBuf *scale_fractional_larger(bool nearest, bool threaded, int float_cha
 TEST(imbuf_scaling, nearest_2x_smaller)
 {
   ImBuf *res = scale_2x_smaller(true, false);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   EXPECT_EQ(uint4(got[0]), uint4(0, 0, 0, 255));
   EXPECT_EQ(uint4(got[1]), uint4(133, 55, 31, 13));
   EXPECT_EQ(uint4(got[2]), uint4(50, 200, 0, 255));
@@ -116,7 +116,7 @@ TEST(imbuf_scaling, nearest_2x_smaller)
 TEST(imbuf_scaling, threaded_2x_smaller)
 {
   ImBuf *res = scale_2x_smaller(false, true);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   EXPECT_EQ(uint4(got[0]), uint4(191, 128, 64, 255));
   EXPECT_EQ(uint4(got[1]), uint4(133, 55, 31, 16));
   EXPECT_EQ(uint4(got[2]), uint4(55, 50, 48, 254));
@@ -126,7 +126,7 @@ TEST(imbuf_scaling, threaded_2x_smaller)
 TEST(imbuf_scaling, bilinear_2x_smaller)
 {
   ImBuf *res = scale_2x_smaller(false, false);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   /* NOTE: #IMB_transform results in (191, 128, 64, 255), <same>,
    * (55, 50, 48, 254) i.e. different rounding. */
   EXPECT_EQ(uint4(got[0]), uint4(191, 127, 63, 255));
@@ -138,7 +138,7 @@ TEST(imbuf_scaling, bilinear_2x_smaller)
 TEST(imbuf_scaling, nearest_to_1x1)
 {
   ImBuf *res = scale_to_1x1(true, false);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   EXPECT_EQ(uint4(got[0]), uint4(0, 0, 0, 255));
   IMB_freeImBuf(res);
 }
@@ -146,7 +146,7 @@ TEST(imbuf_scaling, nearest_to_1x1)
 TEST(imbuf_scaling, threaded_to_1x1)
 {
   ImBuf *res = scale_to_1x1(false, true);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   EXPECT_EQ(uint4(got[0]), uint4(133, 55, 31, 16));
   IMB_freeImBuf(res);
 }
@@ -154,7 +154,7 @@ TEST(imbuf_scaling, threaded_to_1x1)
 TEST(imbuf_scaling, bilinear_to_1x1)
 {
   ImBuf *res = scale_to_1x1(false, false);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   EXPECT_EQ(uint4(got[0]), uint4(126, 78, 47, 174));
   IMB_freeImBuf(res);
 }
@@ -162,7 +162,7 @@ TEST(imbuf_scaling, bilinear_to_1x1)
 TEST(imbuf_scaling, nearest_fractional_larger)
 {
   ImBuf *res = scale_fractional_larger(true, false);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   EXPECT_EQ(uint4(got[0 + 0 * res->x]), uint4(0, 0, 0, 255));
   EXPECT_EQ(uint4(got[1 + 0 * res->x]), uint4(0, 0, 0, 255));
   EXPECT_EQ(uint4(got[7 + 0 * res->x]), uint4(50, 200, 0, 255));
@@ -175,7 +175,7 @@ TEST(imbuf_scaling, nearest_fractional_larger)
 TEST(imbuf_scaling, bilinear_fractional_larger)
 {
   ImBuf *res = scale_fractional_larger(false, false);
-  const uchar4 *got = reinterpret_cast<uchar4 *>(res->byte_buffer.data);
+  const uchar4 *got = reinterpret_cast<const uchar4 *>(res->byte_data());
   EXPECT_EQ(uint4(got[0 + 0 * res->x]), uint4(0, 0, 0, 255));
   EXPECT_EQ(uint4(got[1 + 0 * res->x]), uint4(127, 0, 0, 255));
   EXPECT_EQ(uint4(got[7 + 0 * res->x]), uint4(52, 100, 16, 255));
@@ -193,7 +193,7 @@ static constexpr float EPS = 0.0001f;
 TEST(imbuf_scaling, nearest_2x_smaller_fl1)
 {
   ImBuf *res = scale_2x_smaller(true, false, 1);
-  const float *got = res->float_buffer.data;
+  const float *got = res->float_data();
   EXPECT_NEAR(got[0], 0.0f, EPS);
   EXPECT_NEAR(got[1], 2.5f, EPS);
   EXPECT_NEAR(got[2], 5.0f, EPS);
@@ -203,7 +203,7 @@ TEST(imbuf_scaling, nearest_2x_smaller_fl1)
 TEST(imbuf_scaling, nearest_2x_smaller_fl2)
 {
   ImBuf *res = scale_2x_smaller(true, false, 2);
-  const float2 *got = reinterpret_cast<float2 *>(res->float_buffer.data);
+  const float2 *got = reinterpret_cast<const float2 *>(res->float_data());
   EXPECT_V2_NEAR(got[0], float2(0.0f, 0.125f), EPS);
   EXPECT_V2_NEAR(got[1], float2(2.5f, 2.625f), EPS);
   EXPECT_V2_NEAR(got[2], float2(5.0f, 5.125f), EPS);
@@ -213,7 +213,7 @@ TEST(imbuf_scaling, nearest_2x_smaller_fl2)
 TEST(imbuf_scaling, nearest_2x_smaller_fl3)
 {
   ImBuf *res = scale_2x_smaller(true, false, 3);
-  const float3 *got = reinterpret_cast<float3 *>(res->float_buffer.data);
+  const float3 *got = reinterpret_cast<const float3 *>(res->float_data());
   EXPECT_V3_NEAR(got[0], float3(0.0f, 0.125f, 0.25f), EPS);
   EXPECT_V3_NEAR(got[1], float3(2.5f, 2.625f, 2.75f), EPS);
   EXPECT_V3_NEAR(got[2], float3(5.0f, 5.125f, 5.25f), EPS);
@@ -223,7 +223,7 @@ TEST(imbuf_scaling, nearest_2x_smaller_fl3)
 TEST(imbuf_scaling, nearest_2x_smaller_fl4)
 {
   ImBuf *res = scale_2x_smaller(true, false, 4);
-  const float4 *got = reinterpret_cast<float4 *>(res->float_buffer.data);
+  const float4 *got = reinterpret_cast<const float4 *>(res->float_data());
   EXPECT_V4_NEAR(got[0], float4(0.0f, 0.125f, 0.25f, 0.375f), EPS);
   EXPECT_V4_NEAR(got[1], float4(2.5f, 2.625f, 2.75f, 2.875f), EPS);
   EXPECT_V4_NEAR(got[2], float4(5.0f, 5.125f, 5.25f, 5.375f), EPS);
@@ -233,7 +233,7 @@ TEST(imbuf_scaling, nearest_2x_smaller_fl4)
 TEST(imbuf_scaling, nearest_to_1x1_fl3)
 {
   ImBuf *res = scale_to_1x1(true, false, 3);
-  const float3 *got = reinterpret_cast<float3 *>(res->float_buffer.data);
+  const float3 *got = reinterpret_cast<const float3 *>(res->float_data());
   EXPECT_V3_NEAR(got[0], float3(0, 0.125f, 0.25f), EPS);
   IMB_freeImBuf(res);
 }
@@ -241,7 +241,7 @@ TEST(imbuf_scaling, nearest_to_1x1_fl3)
 TEST(imbuf_scaling, threaded_to_1x1_fl3)
 {
   ImBuf *res = scale_to_1x1(false, true, 3);
-  const float3 *got = reinterpret_cast<float3 *>(res->float_buffer.data);
+  const float3 *got = reinterpret_cast<const float3 *>(res->float_data());
   EXPECT_V3_NEAR(got[0], float3(3.375f, 3.5f, 3.625f), EPS);
   IMB_freeImBuf(res);
 }
@@ -249,7 +249,7 @@ TEST(imbuf_scaling, threaded_to_1x1_fl3)
 TEST(imbuf_scaling, bilinear_to_1x1_fl3)
 {
   ImBuf *res = scale_to_1x1(false, false, 3);
-  const float3 *got = reinterpret_cast<float3 *>(res->float_buffer.data);
+  const float3 *got = reinterpret_cast<const float3 *>(res->float_data());
   EXPECT_V3_NEAR(got[0], float3(3.36853f, 3.49353f, 3.61853f), EPS);
   IMB_freeImBuf(res);
 }
@@ -257,7 +257,7 @@ TEST(imbuf_scaling, bilinear_to_1x1_fl3)
 TEST(imbuf_scaling, bilinear_2x_smaller_fl3)
 {
   ImBuf *res = scale_2x_smaller(false, false, 3);
-  const float3 *got = reinterpret_cast<float3 *>(res->float_buffer.data);
+  const float3 *got = reinterpret_cast<const float3 *>(res->float_data());
   EXPECT_V3_NEAR(got[0], float3(0.87270f, 0.99770f, 1.12270f), EPS);
   EXPECT_V3_NEAR(got[1], float3(3.36853f, 3.49353f, 3.61853f), EPS);
   EXPECT_V3_NEAR(got[2], float3(5.86435f, 5.98935f, 6.11435f), EPS);
@@ -267,7 +267,7 @@ TEST(imbuf_scaling, bilinear_2x_smaller_fl3)
 TEST(imbuf_scaling, bilinear_2x_smaller_fl4)
 {
   ImBuf *res = scale_2x_smaller(false, false, 4);
-  const float4 *got = reinterpret_cast<float4 *>(res->float_buffer.data);
+  const float4 *got = reinterpret_cast<const float4 *>(res->float_data());
   EXPECT_V4_NEAR(got[0], float4(0.87270f, 0.99770f, 1.12270f, 1.24770f), EPS);
   EXPECT_V4_NEAR(got[1], float4(3.36853f, 3.49353f, 3.61853f, 3.74353f), EPS);
   EXPECT_V4_NEAR(got[2], float4(5.86435f, 5.98935f, 6.11435f, 6.23935f), EPS);
@@ -277,7 +277,7 @@ TEST(imbuf_scaling, bilinear_2x_smaller_fl4)
 TEST(imbuf_scaling, threaded_2x_smaller_fl3)
 {
   ImBuf *res = scale_2x_smaller(false, true, 3);
-  const float3 *got = reinterpret_cast<float3 *>(res->float_buffer.data);
+  const float3 *got = reinterpret_cast<const float3 *>(res->float_data());
   EXPECT_V3_NEAR(got[0], float3(0.875f, 1.0f, 1.125f), EPS);
   EXPECT_V3_NEAR(got[1], float3(3.375f, 3.5f, 3.625f), EPS);
   EXPECT_V3_NEAR(got[2], float3(5.875f, 6.0f, 6.125f), EPS);
@@ -287,7 +287,7 @@ TEST(imbuf_scaling, threaded_2x_smaller_fl3)
 TEST(imbuf_scaling, threaded_2x_smaller_fl4)
 {
   ImBuf *res = scale_2x_smaller(false, true, 4);
-  const float4 *got = reinterpret_cast<float4 *>(res->float_buffer.data);
+  const float4 *got = reinterpret_cast<const float4 *>(res->float_data());
   EXPECT_V4_NEAR(got[0], float4(0.875f, 1.0f, 1.125f, 1.25f), EPS);
   EXPECT_V4_NEAR(got[1], float4(3.375f, 3.5f, 3.625f, 3.75f), EPS);
   EXPECT_V4_NEAR(got[2], float4(5.875f, 6.0f, 6.125f, 6.25f), EPS);

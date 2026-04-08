@@ -26,22 +26,22 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Value")
+    b.add_input(data_type, "Value"_ustr)
         .supports_field()
         .description("The values the minimum and maximum will be calculated from");
   }
 
-  b.add_input<decl::Int>("Group ID", "Group Index")
+  b.add_input<decl::Int>("Group ID"_ustr, "Group Index"_ustr)
       .supports_field()
       .hide_value()
       .description("An index used to group values together for multiple separate operations");
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_output(data_type, "Min")
+    b.add_output(data_type, "Min"_ustr)
         .field_source_reference_all()
         .description("The lowest value in each group");
-    b.add_output(data_type, "Max")
+    b.add_output(data_type, "Max"_ustr)
         .field_source_reference_all()
         .description("The highest value in each group");
   }
@@ -93,7 +93,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldMinAndMax");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Min");
+          params.update_and_connect_available_socket(node, "Min"_ustr);
         },
         0);
     params.add_item(
@@ -101,7 +101,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldMinAndMax");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Max");
+          params.update_and_connect_available_socket(node, "Max"_ustr);
         },
         -1);
   }
@@ -111,7 +111,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldMinAndMax");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Value");
+          params.update_and_connect_available_socket(node, "Value"_ustr);
         },
         0);
   }
@@ -226,10 +226,10 @@ class FieldMinMaxInput final : public bke::GeometryFieldInput {
     return attributes.adapt_domain(std::move(g_outputs), source_domain_, context.domain());
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const final
   {
-    input_.node().for_each_field_input_recursive(fn);
-    group_index_.node().for_each_field_input_recursive(fn);
+    fn(input_);
+    fn(group_index_);
   }
 
   uint64_t hash() const override
@@ -237,7 +237,7 @@ class FieldMinMaxInput final : public bke::GeometryFieldInput {
     return get_default_hash(input_, group_index_, source_domain_, operation_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const FieldMinMaxInput *other_field = dynamic_cast<const FieldMinMaxInput *>(&other)) {
       return input_ == other_field->input_ && group_index_ == other_field->group_index_ &&
@@ -258,17 +258,17 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   const AttrDomain source_domain = AttrDomain(params.node().custom2);
 
-  const Field<int> group_index_field = params.extract_input<Field<int>>("Group Index");
-  const GField input_field = params.extract_input<GField>("Value");
-  if (params.output_is_required("Min")) {
-    params.set_output<GField>("Min",
-                              GField{std::make_shared<FieldMinMaxInput>(
-                                  source_domain, input_field, group_index_field, Operation::Min)});
+  const Field<int> group_index_field = params.extract_input<Field<int>>("Group Index"_ustr);
+  const GField input_field = params.extract_input<GField>("Value"_ustr);
+  if (params.output_is_required("Min"_ustr)) {
+    params.set_output<GField>("Min"_ustr,
+                              GField::from_input<FieldMinMaxInput>(
+                                  source_domain, input_field, group_index_field, Operation::Min));
   }
-  if (params.output_is_required("Max")) {
-    params.set_output<GField>("Max",
-                              GField{std::make_shared<FieldMinMaxInput>(
-                                  source_domain, input_field, group_index_field, Operation::Max)});
+  if (params.output_is_required("Max"_ustr)) {
+    params.set_output<GField>("Max"_ustr,
+                              GField::from_input<FieldMinMaxInput>(
+                                  source_domain, input_field, group_index_field, Operation::Max));
   }
 }
 

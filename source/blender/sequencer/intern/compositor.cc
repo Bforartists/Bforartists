@@ -8,7 +8,6 @@
 
 #include "BKE_node_runtime.hh"
 #include "COM_realize_on_domain_operation.hh"
-#include "IMB_colormanagement.hh"
 #include "IMB_imbuf.hh"
 
 #include "compositor.hh"
@@ -32,7 +31,7 @@ compositor::ResultPrecision CompositorContext::get_precision() const
 void CompositorContext::create_result_from_input(compositor::Result &result,
                                                  const ImBuf &input) const
 {
-  BLI_assert(input.float_buffer.data);
+  BLI_assert(input.float_data());
   const bool gpu = this->use_gpu();
   const int2 size = int2(input.x, input.y);
   if (!gpu) {
@@ -40,7 +39,7 @@ void CompositorContext::create_result_from_input(compositor::Result &result,
   }
   else {
     result.allocate_texture(size);
-    GPU_texture_update(result, GPU_DATA_FLOAT, input.float_buffer.data);
+    GPU_texture_update(result, GPU_DATA_FLOAT, input.float_data());
   }
 }
 
@@ -69,7 +68,7 @@ void CompositorContext::write_output(const compositor::Result &result, ImBuf &im
     image.y = output_size_y;
     IMB_alloc_float_pixels(&image, 4, false);
   }
-  std::memcpy(image.float_buffer.data,
+  std::memcpy(image.float_data_for_write(),
               result_cpu.cpu_data().data(),
               IMB_get_pixel_count(&image) * sizeof(float) * 4);
 
@@ -122,12 +121,6 @@ void CompositorContext::set_output_refcount(const bNodeTree &node_group,
     const bool is_color = output_result.type() == ResultType::Color;
     output_result.set_reference_count(is_first_output && is_color ? 1 : 0);
   }
-}
-
-bool is_linear_float_buffer(const ImBuf *image_buffer)
-{
-  return image_buffer->float_buffer.data &&
-         IMB_colormanagement_space_is_scene_linear(image_buffer->float_buffer.colorspace);
 }
 
 }  // namespace blender::seq

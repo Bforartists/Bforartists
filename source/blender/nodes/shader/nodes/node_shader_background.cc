@@ -10,17 +10,17 @@ namespace nodes::node_shader_background_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Color>("Color")
+  b.add_input<decl::Color>("Color"_ustr)
       .default_value({0.8f, 0.8f, 0.8f, 1.0f})
       .description("Color of the emitted light");
-  b.add_input<decl::Float>("Strength")
+  b.add_input<decl::Float>("Strength"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1000000.0f)
       .description("Strength of the emitted light")
       .translation_context(BLT_I18NCONTEXT_AMOUNT);
-  b.add_input<decl::Float>("Weight").available(false);
-  b.add_output<decl::Shader>("Background");
+  b.add_input<decl::Float>("Weight"_ustr).available(false);
+  b.add_output<decl::Shader>("Background"_ustr);
 }
 
 static int node_shader_gpu_background(GPUMaterial *mat,

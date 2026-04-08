@@ -21,10 +21,10 @@ namespace nodes::node_shader_sepcomb_xyz_cc::sep {
 static void sh_node_sepxyz_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Vector").min(-10000.0f).max(10000.0f);
-  b.add_output<decl::Float>("X");
-  b.add_output<decl::Float>("Y");
-  b.add_output<decl::Float>("Z");
+  b.add_input<decl::Vector>("Vector"_ustr).min(-10000.0f).max(10000.0f);
+  b.add_output<decl::Float>("X"_ustr);
+  b.add_output<decl::Float>("Y"_ustr);
+  b.add_output<decl::Float>("Z"_ustr);
 }
 
 static int gpu_shader_sepxyz(GPUMaterial *mat,
@@ -97,28 +97,28 @@ static void sh_node_sepxyz_build_multi_function(NodeMultiFunctionBuilder &builde
 static void sh_node_sepxyz_eval_elem(value_elem::ElemEvalParams &params)
 {
   using namespace value_elem;
-  const VectorElem vector_elem = params.get_input_elem<VectorElem>("Vector");
-  params.set_output_elem("X", vector_elem.x);
-  params.set_output_elem("Y", vector_elem.y);
-  params.set_output_elem("Z", vector_elem.z);
+  const VectorElem vector_elem = params.get_input_elem<VectorElem>("Vector"_ustr);
+  params.set_output_elem("X"_ustr, vector_elem.x);
+  params.set_output_elem("Y"_ustr, vector_elem.y);
+  params.set_output_elem("Z"_ustr, vector_elem.z);
 }
 
 static void sh_node_sepxyz_eval_inverse_elem(value_elem::InverseElemEvalParams &params)
 {
   using namespace value_elem;
   value_elem::VectorElem result;
-  result.x = params.get_output_elem<FloatElem>("X");
-  result.y = params.get_output_elem<FloatElem>("Y");
-  result.z = params.get_output_elem<FloatElem>("Z");
-  params.set_input_elem("Vector", result);
+  result.x = params.get_output_elem<FloatElem>("X"_ustr);
+  result.y = params.get_output_elem<FloatElem>("Y"_ustr);
+  result.z = params.get_output_elem<FloatElem>("Z"_ustr);
+  params.set_input_elem("Vector"_ustr, result);
 }
 
 static void sh_node_sepxyz_eval_inverse(inverse_eval::InverseEvalParams &params)
 {
-  params.set_input("Vector",
-                   float3(params.get_output<float>("X"),
-                          params.get_output<float>("Y"),
-                          params.get_output<float>("Z")));
+  params.set_input("Vector"_ustr,
+                   float3(params.get_output<float>("X"_ustr),
+                          params.get_output<float>("Y"_ustr),
+                          params.get_output<float>("Z"_ustr)));
 }
 
 NODE_SHADER_MATERIALX_BEGIN
@@ -162,10 +162,10 @@ namespace nodes::node_shader_sepcomb_xyz_cc::comb {
 static void sh_node_combxyz_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("X").min(-10000.0f).max(10000.0f);
-  b.add_input<decl::Float>("Y").min(-10000.0f).max(10000.0f);
-  b.add_input<decl::Float>("Z").min(-10000.0f).max(10000.0f);
-  b.add_output<decl::Vector>("Vector");
+  b.add_input<decl::Float>("X"_ustr).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>("Y"_ustr).min(-10000.0f).max(10000.0f);
+  b.add_input<decl::Float>("Z"_ustr).min(-10000.0f).max(10000.0f);
+  b.add_output<decl::Vector>("Vector"_ustr);
 }
 
 static int gpu_shader_combxyz(GPUMaterial *mat,
@@ -190,27 +190,27 @@ static void sh_node_combxyz_eval_elem(value_elem::ElemEvalParams &params)
 {
   using namespace value_elem;
   VectorElem vector_elem;
-  vector_elem.x = params.get_input_elem<FloatElem>("X");
-  vector_elem.y = params.get_input_elem<FloatElem>("Y");
-  vector_elem.z = params.get_input_elem<FloatElem>("Z");
-  params.set_output_elem("Vector", vector_elem);
+  vector_elem.x = params.get_input_elem<FloatElem>("X"_ustr);
+  vector_elem.y = params.get_input_elem<FloatElem>("Y"_ustr);
+  vector_elem.z = params.get_input_elem<FloatElem>("Z"_ustr);
+  params.set_output_elem("Vector"_ustr, vector_elem);
 }
 
 static void sh_node_combxyz_eval_inverse_elem(value_elem::InverseElemEvalParams &params)
 {
   using namespace value_elem;
-  const VectorElem output_elem = params.get_output_elem<VectorElem>("Vector");
-  params.set_input_elem("X", output_elem.x);
-  params.set_input_elem("Y", output_elem.y);
-  params.set_input_elem("Z", output_elem.z);
+  const VectorElem output_elem = params.get_output_elem<VectorElem>("Vector"_ustr);
+  params.set_input_elem("X"_ustr, output_elem.x);
+  params.set_input_elem("Y"_ustr, output_elem.y);
+  params.set_input_elem("Z"_ustr, output_elem.z);
 }
 
 static void sh_node_combxyz_eval_inverse(inverse_eval::InverseEvalParams &params)
 {
-  const float3 output = params.get_output<float3>("Vector");
-  params.set_input("X", output.x);
-  params.set_input("Y", output.y);
-  params.set_input("Z", output.z);
+  const float3 output = params.get_output<float3>("Vector"_ustr);
+  params.set_input("X"_ustr, output.x);
+  params.set_input("Y"_ustr, output.y);
+  params.set_input("Z"_ustr, output.z);
 }
 
 NODE_SHADER_MATERIALX_BEGIN

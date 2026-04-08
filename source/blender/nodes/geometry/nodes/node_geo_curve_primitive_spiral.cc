@@ -10,32 +10,32 @@ namespace blender::nodes::node_geo_curve_primitive_spiral_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Resolution")
+  b.add_input<decl::Int>("Resolution"_ustr)
       .default_value(32)
       .min(1)
       .max(1024)
       .subtype(PROP_UNSIGNED)
       .description("Number of points in one rotation of the spiral");
-  b.add_input<decl::Float>("Rotations")
+  b.add_input<decl::Float>("Rotations"_ustr)
       .default_value(2.0f)
       .min(0.0f)
       .description("Number of times the spiral makes a full rotation")
       .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Float>("Start Radius")
+  b.add_input<decl::Float>("Start Radius"_ustr)
       .default_value(1.0f)
       .subtype(PROP_DISTANCE)
       .description("Horizontal Distance from the Z axis at the start of the spiral");
-  b.add_input<decl::Float>("End Radius")
+  b.add_input<decl::Float>("End Radius"_ustr)
       .default_value(2.0f)
       .subtype(PROP_DISTANCE)
       .description("Horizontal Distance from the Z axis at the end of the spiral");
-  b.add_input<decl::Float>("Height")
+  b.add_input<decl::Float>("Height"_ustr)
       .default_value(2.0f)
       .subtype(PROP_DISTANCE)
       .description("The height perpendicular to the base of the spiral");
-  b.add_input<decl::Bool>("Reverse").description(
-      "Switch the direction from clockwise to counterclockwise");
-  b.add_output<decl::Geometry>("Curve");
+  b.add_input<decl::Bool>("Reverse"_ustr)
+      .description("Switch the direction from clockwise to counterclockwise");
+  b.add_output<decl::Geometry>("Curve"_ustr);
 }
 
 static Curves *create_spiral_curve(const float rotations,
@@ -71,19 +71,19 @@ static Curves *create_spiral_curve(const float rotations,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const float rotations = std::max(params.extract_input<float>("Rotations"), 0.0f);
+  const float rotations = std::max(params.extract_input<float>("Rotations"_ustr), 0.0f);
   if (rotations == 0.0f) {
     params.set_default_remaining_outputs();
     return;
   }
 
   Curves *curves = create_spiral_curve(rotations,
-                                       std::max(params.extract_input<int>("Resolution"), 1),
-                                       params.extract_input<float>("Start Radius"),
-                                       params.extract_input<float>("End Radius"),
-                                       params.extract_input<float>("Height"),
-                                       params.extract_input<bool>("Reverse"));
-  params.set_output("Curve", GeometrySet::from_curves(curves));
+                                       std::max(params.extract_input<int>("Resolution"_ustr), 1),
+                                       params.extract_input<float>("Start Radius"_ustr),
+                                       params.extract_input<float>("End Radius"_ustr),
+                                       params.extract_input<float>("Height"_ustr),
+                                       params.extract_input<bool>("Reverse"_ustr));
+  params.set_output("Curve"_ustr, GeometrySet::from_curves(curves));
 }
 
 static void node_register()

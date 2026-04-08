@@ -53,9 +53,10 @@ int view3d_context(const bContext *C, const char *member, bContextDataResult *re
      * without showing the object.
      *
      * See #85532 for alternatives that were considered. */
+    const Main *bmain = CTX_data_main(C);
     const Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Base *base = BKE_view_layer_active_base_get(view_layer);
     if (base) {
       Object *ob = base->object;

@@ -3596,8 +3596,16 @@ static void knife_constrain_axis(const KnifeTool_OpData *kcd,
                                                        kcd->constrain_axis_mode - 1;
     const int pivot_point = scene->toolsettings->transform_pivot_point;
     float mat[3][3];
-    ed::transform::calc_orientation_from_type_ex(
-        scene, view_layer, kcd->vc.v3d, rv3d, obedit, obedit, orientation_type, pivot_point, mat);
+    ed::transform::calc_orientation_from_type_ex(*kcd->vc.bmain,
+                                                 scene,
+                                                 view_layer,
+                                                 kcd->vc.v3d,
+                                                 rv3d,
+                                                 obedit,
+                                                 obedit,
+                                                 orientation_type,
+                                                 pivot_point,
+                                                 mat);
 
     constrain_dir = mat[kcd->constrain_axis - 1];
   }
@@ -4574,17 +4582,17 @@ static wmOperatorStatus knifetool_invoke(bContext *C, wmOperator *op, const wmEv
   /* alloc new customdata */
   KnifeTool_OpData *kcd = MEM_new<KnifeTool_OpData>(__func__);
   op->customdata = kcd;
-  knifetool_init(
-      &vc,
-      kcd,
-      BKE_view_layer_array_from_objects_in_edit_mode_unique_data(vc.scene, vc.view_layer, vc.v3d),
-      only_select,
-      cut_through,
-      xray,
-      visible_measurements,
-      angle_snapping,
-      angle_snapping_increment,
-      true);
+  knifetool_init(&vc,
+                 kcd,
+                 BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
+                     *vc.bmain, vc.scene, vc.view_layer, vc.v3d),
+                 only_select,
+                 cut_through,
+                 xray,
+                 visible_measurements,
+                 angle_snapping,
+                 angle_snapping_increment,
+                 true);
 
   if (only_select) {
     bool faces_selected = false;

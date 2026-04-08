@@ -1036,11 +1036,12 @@ void BKE_animdata_fix_paths_rename(ID *owner_id,
                                    AnimData *adt,
                                    ID *ref_id,
                                    const char *prefix,
-                                   const char *oldName,
-                                   const char *newName,
+                                   const char *old_infix,
+                                   const char *new_infix,
                                    int oldSubscript,
                                    int newSubscript,
-                                   bool verify_paths)
+                                   bool verify_paths,
+                                   bool infix_is_name)
 {
   char *oldN, *newN;
   /* If no AnimData, no need to proceed. */
@@ -1049,19 +1050,25 @@ void BKE_animdata_fix_paths_rename(ID *owner_id,
   }
   bool is_self_changed = false;
   /* Name sanitation logic - shared with BKE_action_fix_paths_rename(). */
-  if ((oldName != nullptr) && (newName != nullptr)) {
-    /* Pad the names with [" "] so that only exact matches are made. */
-    const size_t name_old_len = strlen(oldName);
-    const size_t name_new_len = strlen(newName);
-    char *name_old_esc = static_cast<char *>(
-        BLI_array_alloca(name_old_esc, (name_old_len * 2) + 1));
-    char *name_new_esc = static_cast<char *>(
-        BLI_array_alloca(name_new_esc, (name_new_len * 2) + 1));
+  if ((old_infix != nullptr) && (new_infix != nullptr)) {
+    if (infix_is_name) {
+      /* Pad the names with [" "] so that only exact matches are made. */
+      const size_t name_old_len = strlen(old_infix);
+      const size_t name_new_len = strlen(new_infix);
+      char *name_old_esc = static_cast<char *>(
+          BLI_array_alloca(name_old_esc, (name_old_len * 2) + 1));
+      char *name_new_esc = static_cast<char *>(
+          BLI_array_alloca(name_new_esc, (name_new_len * 2) + 1));
 
-    BLI_str_escape(name_old_esc, oldName, (name_old_len * 2) + 1);
-    BLI_str_escape(name_new_esc, newName, (name_new_len * 2) + 1);
-    oldN = BLI_sprintfN("[\"%s\"]", name_old_esc);
-    newN = BLI_sprintfN("[\"%s\"]", name_new_esc);
+      BLI_str_escape(name_old_esc, old_infix, (name_old_len * 2) + 1);
+      BLI_str_escape(name_new_esc, new_infix, (name_new_len * 2) + 1);
+      oldN = BLI_sprintfN("[\"%s\"]", name_old_esc);
+      newN = BLI_sprintfN("[\"%s\"]", name_new_esc);
+    }
+    else {
+      oldN = BLI_strdup(old_infix);
+      newN = BLI_strdup(new_infix);
+    }
   }
   else {
     oldN = BLI_sprintfN("[%d]", oldSubscript);
@@ -1073,8 +1080,8 @@ void BKE_animdata_fix_paths_rename(ID *owner_id,
                         adt->slot_handle,
                         owner_id,
                         prefix,
-                        oldName,
-                        newName,
+                        old_infix,
+                        new_infix,
                         oldN,
                         newN,
                         verify_paths);
@@ -1084,19 +1091,19 @@ void BKE_animdata_fix_paths_rename(ID *owner_id,
                         adt->tmp_slot_handle,
                         owner_id,
                         prefix,
-                        oldName,
-                        newName,
+                        old_infix,
+                        new_infix,
                         oldN,
                         newN,
                         verify_paths);
   }
   /* Drivers - Drivers are really F-Curves */
   is_self_changed |= drivers_path_rename_fix(
-      owner_id, ref_id, prefix, oldName, newName, oldN, newN, &adt->drivers, verify_paths);
+      owner_id, ref_id, prefix, old_infix, new_infix, oldN, newN, &adt->drivers, verify_paths);
   /* NLA Data - Animation Data for Strips */
   for (NlaTrack &nlt : adt->nla_tracks) {
     is_self_changed |= nlastrips_path_rename_fix(
-        owner_id, prefix, oldName, newName, oldN, newN, &nlt.strips, verify_paths);
+        owner_id, prefix, old_infix, new_infix, oldN, newN, &nlt.strips, verify_paths);
   }
   /* Tag owner ID if it */
   if (is_self_changed) {

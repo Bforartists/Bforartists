@@ -16,28 +16,28 @@ NODE_STORAGE_FUNCS(NodeGeometryMeshToVolume)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh whose inner volume is converted to a density grid");
-  b.add_input<decl::Float>("Density").default_value(1.0f).min(0.01f).max(FLT_MAX);
-  b.add_input<decl::Float>("Voxel Size")
+  b.add_input<decl::Float>("Density"_ustr).default_value(1.0f).min(0.01f).max(FLT_MAX);
+  b.add_input<decl::Float>("Voxel Size"_ustr)
       .default_value(0.3f)
       .min(0.01f)
       .max(FLT_MAX)
       .subtype(PROP_DISTANCE);
-  b.add_input<decl::Float>("Gradient Width")
+  b.add_input<decl::Float>("Gradient Width"_ustr)
       .default_value(0.2f)
       .min(0.0001f)
       .max(FLT_MAX)
       .subtype(PROP_DISTANCE)
       .description("Width of the gradient inside of the mesh");
-  b.add_output<decl::Float>("Density Grid").structure_type(StructureType::Grid);
+  b.add_output<decl::Float>("Density Grid"_ustr).structure_type(StructureType::Grid);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  const GeometrySet geometry_set = params.extract_input<GeometrySet>("Mesh");
+  const GeometrySet geometry_set = params.extract_input<GeometrySet>("Mesh"_ustr);
   const Mesh *mesh = geometry_set.get_mesh();
   if (!mesh || mesh->faces_num == 0) {
     params.set_default_remaining_outputs();
@@ -47,14 +47,14 @@ static void node_geo_exec(GeoNodeExecParams params)
       mesh->vert_positions(),
       mesh->corner_verts(),
       mesh->corner_tris(),
-      params.extract_input<float>("Voxel Size"),
-      params.extract_input<float>("Gradient Width"),
-      params.extract_input<float>("Density"));
+      params.extract_input<float>("Voxel Size"_ustr),
+      params.extract_input<float>("Gradient Width"_ustr),
+      params.extract_input<float>("Density"_ustr));
   if (!grid) {
     params.set_default_remaining_outputs();
     return;
   }
-  params.set_output("Density Grid", std::move(grid));
+  params.set_output("Density Grid"_ustr, std::move(grid));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

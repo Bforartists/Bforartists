@@ -463,7 +463,7 @@ uint64_t AttributeFieldInput::hash() const
   return get_default_hash(name_, type_);
 }
 
-bool AttributeFieldInput::is_equal_to(const fn::FieldNode &other) const
+bool AttributeFieldInput::is_equal_to(const fn::FieldInput &other) const
 {
   if (const AttributeFieldInput *other_typed = dynamic_cast<const AttributeFieldInput *>(&other)) {
     return name_ == other_typed->name_ && type_ == other_typed->type_;
@@ -522,10 +522,17 @@ uint64_t IDAttributeFieldInput::hash() const
   return 92386459827;
 }
 
-bool IDAttributeFieldInput::is_equal_to(const fn::FieldNode &other) const
+bool IDAttributeFieldInput::is_equal_to(const fn::FieldInput &other) const
 {
   /* All random ID attribute inputs are the same within the same evaluation context. */
   return dynamic_cast<const IDAttributeFieldInput *>(&other) != nullptr;
+}
+
+const fn::Field<int> &IDAttributeFieldInput::get_field()
+{
+  static const fn::Field<int> field = fn::Field<int>::from_input<IDAttributeFieldInput>();
+  static const fn::Field<int> field_ref = fn::Field<int>::from_non_owning_ref(field);
+  return field_ref;
 }
 
 GVArray NamedLayerSelectionFieldInput::get_varray_for_context(
@@ -566,7 +573,7 @@ uint64_t NamedLayerSelectionFieldInput::hash() const
   return get_default_hash(layer_name_, type_);
 }
 
-bool NamedLayerSelectionFieldInput::is_equal_to(const fn::FieldNode &other) const
+bool NamedLayerSelectionFieldInput::is_equal_to(const fn::FieldInput &other) const
 {
   if (const NamedLayerSelectionFieldInput *other_named_layer =
           dynamic_cast<const NamedLayerSelectionFieldInput *>(&other))
@@ -749,10 +756,9 @@ GVArray EvaluateOnDomainInput::get_varray_for_context(const bke::GeometryFieldCo
   return attributes.adapt_domain(GVArray::from_garray(std::move(values)), src_domain_, dst_domain);
 }
 
-void EvaluateOnDomainInput::for_each_field_input_recursive(
-    FunctionRef<void(const FieldInput &)> fn) const
+void EvaluateOnDomainInput::foreach_recursive_field(FunctionRef<void(const fn::GField &)> fn) const
 {
-  src_field_.node().for_each_field_input_recursive(fn);
+  fn(src_field_);
 }
 
 std::optional<AttrDomain> EvaluateOnDomainInput::preferred_domain(
@@ -792,7 +798,7 @@ uint64_t NormalFieldInput::hash() const
   return get_default_hash(2980541, legacy_corner_normals_, true_normals_);
 }
 
-bool NormalFieldInput::is_equal_to(const fn::FieldNode &other) const
+bool NormalFieldInput::is_equal_to(const fn::FieldInput &other) const
 {
   if (const NormalFieldInput *other_typed = dynamic_cast<const NormalFieldInput *>(&other)) {
     return legacy_corner_normals_ == other_typed->legacy_corner_normals_ &&
@@ -801,10 +807,17 @@ bool NormalFieldInput::is_equal_to(const fn::FieldNode &other) const
   return false;
 }
 
+const fn::Field<float3> &NormalFieldInput::get_field()
+{
+  static const fn::Field<float3> field = fn::Field<float3>::from_input<NormalFieldInput>();
+  static const fn::Field<float3> field_ref = fn::Field<float3>::from_non_owning_ref(field);
+  return field_ref;
+}
+
 static std::optional<StringRefNull> try_get_field_direct_attribute_id(const fn::GField &any_field)
 {
-  if (const auto *field = dynamic_cast<const AttributeFieldInput *>(&any_field.node())) {
-    return field->attribute_name();
+  if (const auto *attribute_input = any_field.get_input_if<AttributeFieldInput>()) {
+    return attribute_input->attribute_name();
   }
   return {};
 }
@@ -913,7 +926,7 @@ bool try_capture_fields_on_geometry(MutableAttributeAccessor attributes,
   fn::FieldEvaluator evaluator{field_context, domain_size};
   evaluator.set_selection(selection);
 
-  const bool selection_is_full = !selection.node().depends_on_input() &&
+  const bool selection_is_full = !selection.depends_on_input() &&
                                  fn::evaluate_constant_field(selection);
 
   struct StoreResult {
@@ -971,7 +984,7 @@ bool try_capture_fields_on_geometry(MutableAttributeAccessor attributes,
       }
     }
 
-    if (field.node().depends_on_input() || !selection_is_full) {
+    if (field.depends_on_input() || !selection_is_full) {
       /* Could avoid allocating a new buffer if:
        * - The field does not depend on that attribute (we can't easily check for that yet). */
       void *buffer = MEM_new_uninitialized_aligned(
@@ -1093,7 +1106,7 @@ bool try_capture_fields_on_geometry(GeometryComponent &component,
                                     const AttrDomain domain,
                                     const Span<fn::GField> fields)
 {
-  const fn::Field<bool> selection = fn::make_constant_field<bool>(true);
+  const fn::Field<bool> selection = fn::Field<bool>(true);
   return try_capture_fields_on_geometry(component, names, domain, selection, fields);
 }
 
@@ -1110,7 +1123,7 @@ std::optional<AttrDomain> try_detect_field_domain(const GeometryComponent &compo
   if (component_type == GeometryComponent::Type::Instance) {
     return AttrDomain::Instance;
   }
-  const std::shared_ptr<const fn::FieldInputs> &field_inputs = field.node().field_inputs();
+  const fn::FieldInputsPtr &field_inputs = field.field_inputs();
   if (!field_inputs) {
     return std::nullopt;
   }
@@ -1134,7 +1147,7 @@ std::optional<AttrDomain> try_detect_field_domain(const GeometryComponent &compo
     if (mesh == nullptr) {
       return std::nullopt;
     }
-    for (const fn::FieldInput &field_input : field_inputs->deduplicated_nodes) {
+    for (const fn::FieldInput &field_input : field_inputs->inputs) {
       if (const auto *geometry_field_input = dynamic_cast<const GeometryFieldInput *>(
               &field_input))
       {
@@ -1158,7 +1171,7 @@ std::optional<AttrDomain> try_detect_field_domain(const GeometryComponent &compo
     if (curves == nullptr) {
       return std::nullopt;
     }
-    for (const fn::FieldInput &field_input : field_inputs->deduplicated_nodes) {
+    for (const fn::FieldInput &field_input : field_inputs->inputs) {
       if (const auto *geometry_field_input = dynamic_cast<const GeometryFieldInput *>(
               &field_input))
       {

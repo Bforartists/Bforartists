@@ -20,19 +20,22 @@ namespace blender::nodes::node_geo_curve_to_mesh_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type({GeometryComponent::Type::Curve, GeometryComponent::Type::GreasePencil})
       .description("Curve to convert to a mesh using the given profile");
-  b.add_input<decl::Geometry>("Profile Curve")
+  b.add_input<decl::Geometry>("Profile Curve"_ustr)
       .only_realized_data()
       .supported_type(GeometryComponent::Type::Curve)
       .description("Curves that are swept along the main curve");
-  b.add_input<decl::Float>("Scale").default_value(1.0f).min(0.0f).field_on({0}).description(
-      "Scale of the profile at each point");
-  b.add_input<decl::Bool>("Fill Caps")
+  b.add_input<decl::Float>("Scale"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .field_on({0})
+      .description("Scale of the profile at each point");
+  b.add_input<decl::Bool>("Fill Caps"_ustr)
       .description(
           "If the profile spline is cyclic, fill the ends of the generated mesh with N-gons");
-  b.add_output<decl::Geometry>("Mesh").propagate_all();
+  b.add_output<decl::Geometry>("Mesh"_ustr).propagate_all();
 }
 
 static Mesh *curve_to_mesh(const bke::CurvesGeometry &curves,
@@ -120,13 +123,13 @@ static void grease_pencil_to_mesh(GeometrySet &geometry_set,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet curve_set = params.extract_input<GeometrySet>("Curve");
-  GeometrySet profile_set = params.extract_input<GeometrySet>("Profile Curve");
-  const Field<float> scale_field = params.extract_input<Field<float>>("Scale");
-  const bool fill_caps = params.extract_input<bool>("Fill Caps");
+  GeometrySet curve_set = params.extract_input<GeometrySet>("Curve"_ustr);
+  GeometrySet profile_set = params.extract_input<GeometrySet>("Profile Curve"_ustr);
+  const Field<float> scale_field = params.extract_input<Field<float>>("Scale"_ustr);
+  const bool fill_caps = params.extract_input<bool>("Fill Caps"_ustr);
 
   bke::GeometryComponentEditData::remember_deformed_positions_if_necessary(curve_set);
-  const AttributeFilter &attribute_filter = params.get_attribute_filter("Mesh");
+  const AttributeFilter &attribute_filter = params.get_attribute_filter("Mesh"_ustr);
 
   geometry::foreach_real_geometry(curve_set, [&](GeometrySet &geometry_set) {
     if (geometry_set.has_curves()) {
@@ -149,7 +152,7 @@ static void node_geo_exec(GeoNodeExecParams params)
                             GeometryComponent::Type::Edit});
   });
 
-  params.set_output("Mesh", std::move(curve_set));
+  params.set_output("Mesh"_ustr, std::move(curve_set));
 }
 
 static void node_register()

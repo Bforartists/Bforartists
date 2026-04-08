@@ -457,7 +457,7 @@ struct ProjPaintState {
   const bool *select_poly_eval;
   const bool *hide_poly_eval;
   const int *material_indices;
-  const bool *sharp_faces_eval;
+  Span<float3> corner_normals_eval;
   Span<int3> corner_tris_eval;
   Span<int> corner_tri_faces_eval;
 
@@ -783,7 +783,7 @@ static bool project_paint_PickColor(
     y -= 0.5f;
   }
 
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     float4 col = interp ? imbuf::interpolate_bilinear_wrap_fl(ibuf, x, y) :
                           imbuf::interpolate_nearest_wrap_fl(ibuf, x, y);
     col = math::clamp(col, 0.0f, 1.0f);
@@ -1648,7 +1648,7 @@ static void project_face_pixel(
   float x = uv_other[0] * ibuf_other->x - 0.5f;
   float y = uv_other[1] * ibuf_other->y - 0.5f;
 
-  if (ibuf_other->float_buffer.data) {
+  if (ibuf_other->float_data()) {
     float4 col = imbuf::interpolate_bilinear_wrap_fl(ibuf_other, x, y);
     col = math::clamp(col, 0.0f, 1.0f);
     memcpy(rgba_f, &col, sizeof(col));
@@ -1684,7 +1684,7 @@ static float project_paint_uvpixel_mask(const ProjPaintState *ps,
 
       project_face_pixel(other_tri_uv, ibuf_other, w, rgba_ub, rgba_f);
 
-      if (ibuf_other->float_buffer.data) { /* from float to float */
+      if (ibuf_other->float_data()) { /* from float to float */
         mask = ((rgba_f[0] + rgba_f[1] + rgba_f[2]) * (1.0f / 3.0f)) * rgba_f[3];
       }
       else { /* from char to float */
@@ -1728,28 +1728,19 @@ static float project_paint_uvpixel_mask(const ProjPaintState *ps,
   /* calculate mask */
   if (ps->do_mask_normal) {
     const int3 &tri = ps->corner_tris_eval[tri_index];
-    const int face_i = ps->corner_tri_faces_eval[tri_index];
     const int vert_tri[3] = {PS_CORNER_TRI_AS_VERT_INDEX_3(ps, tri)};
     float no[3], angle_cos;
 
-    if (!(ps->sharp_faces_eval && ps->sharp_faces_eval[face_i])) {
+    {
       const float *no1, *no2, *no3;
-      no1 = ps->vert_normals[vert_tri[0]];
-      no2 = ps->vert_normals[vert_tri[1]];
-      no3 = ps->vert_normals[vert_tri[2]];
+      no1 = ps->corner_normals_eval[tri[0]];
+      no2 = ps->corner_normals_eval[tri[1]];
+      no3 = ps->corner_normals_eval[tri[2]];
 
       no[0] = w[0] * no1[0] + w[1] * no2[0] + w[2] * no3[0];
       no[1] = w[0] * no1[1] + w[1] * no2[1] + w[2] * no3[1];
       no[2] = w[0] * no1[2] + w[1] * no2[2] + w[2] * no3[2];
       normalize_v3(no);
-    }
-    else {
-      /* In case the normalizing per pixel isn't optimal,
-       * we could cache or access from evaluated mesh. */
-      normal_tri_v3(no,
-                    ps->vert_positions_eval[vert_tri[0]],
-                    ps->vert_positions_eval[vert_tri[1]],
-                    ps->vert_positions_eval[vert_tri[2]]);
     }
 
     if (UNLIKELY(ps->is_flip_object)) {
@@ -1926,15 +1917,15 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
 
   projPixel->valid = projima->valid[tile_index];
 
-  if (ibuf->float_buffer.data) {
-    projPixel->pixel.f_pt = ibuf->float_buffer.data + ((x_px + y_px * ibuf->x) * 4);
+  if (ibuf->float_data()) {
+    projPixel->pixel.f_pt = ibuf->float_data_for_write() + ((x_px + y_px * ibuf->x) * 4);
     projPixel->origColor.f_pt = static_cast<float *>(
                                     const_cast<void *>(projima->undoRect[tile_index])) +
                                 4 * tile_offset;
     zero_v4(projPixel->newColor.f);
   }
   else {
-    projPixel->pixel.ch_pt = ibuf->byte_buffer.data + (x_px + y_px * ibuf->x) * 4;
+    projPixel->pixel.ch_pt = ibuf->byte_data_for_write() + (x_px + y_px * ibuf->x) * 4;
     projPixel->origColor.uint_pt = static_cast<uint *>(
                                        const_cast<void *>(projima->undoRect[tile_index])) +
                                    tile_offset;
@@ -1978,8 +1969,8 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
 
         /* #BKE_image_acquire_ibuf - TODO: this may be slow. */
 
-        if (ibuf->float_buffer.data) {
-          if (ibuf_other->float_buffer.data) { /* from float to float */
+        if (ibuf->float_data()) {
+          if (ibuf_other->float_data()) { /* from float to float */
             project_face_pixel(other_tri_uv,
                                ibuf_other,
                                w,
@@ -1998,7 +1989,7 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
           }
         }
         else {
-          if (ibuf_other->float_buffer.data) { /* float to char */
+          if (ibuf_other->float_data()) { /* float to char */
             float rgba[4];
             project_face_pixel(other_tri_uv, ibuf_other, w, nullptr, rgba);
             premul_to_straight_v4(rgba);
@@ -2017,7 +2008,7 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
         BKE_image_release_ibuf(other_tpage, ibuf_other, nullptr);
       }
       else {
-        if (ibuf->float_buffer.data) {
+        if (ibuf->float_data()) {
           (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.f[3] = 0;
         }
         else {
@@ -2031,7 +2022,7 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
 
       /* no need to initialize the bucket, we're only checking buckets faces and for this
        * the faces are already initialized in project_paint_delayed_face_init(...) */
-      if (ibuf->float_buffer.data) {
+      if (ibuf->float_data()) {
         if (!project_paint_PickColor(
                 ps, co, (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.f, nullptr, true))
         {
@@ -2054,7 +2045,7 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
   }
 
 #ifdef PROJ_DEBUG_PAINT
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     projPixel->pixel.f_pt[0] = 0;
   }
   else {
@@ -4105,13 +4096,13 @@ static bool proj_paint_state_mesh_eval_init(const bContext *C, ProjPaintState *p
 
   ps->vert_positions_eval = ps->mesh_eval->vert_positions();
   ps->vert_normals = ps->mesh_eval->vert_normals();
+  ps->corner_normals_eval = ps->mesh_eval->corner_normals();
   ps->edges_eval = ps->mesh_eval->edges();
   ps->faces_eval = ps->mesh_eval->faces();
   ps->corner_verts_eval = ps->mesh_eval->corner_verts();
   ps->select_poly_eval = nullptr;
   ps->hide_poly_eval = nullptr;
   ps->material_indices = nullptr;
-  ps->sharp_faces_eval = nullptr;
   const bke::AttributeAccessor attributes = ps->mesh_eval->attributes();
   if (const bke::GAttributeReader attr = attributes.lookup(".select_poly")) {
     if (attr.domain == bke::AttrDomain::Face && attr.varray.type().is<bool>()) {
@@ -4131,13 +4122,6 @@ static bool proj_paint_state_mesh_eval_init(const bContext *C, ProjPaintState *p
     if (attr.domain == bke::AttrDomain::Face && attr.varray.type().is<int>()) {
       if (attr.varray.is_span()) {
         ps->material_indices = attr.varray.get_internal_span().typed<int>().data();
-      }
-    }
-  }
-  if (const bke::GAttributeReader attr = attributes.lookup("sharp_face")) {
-    if (attr.domain == bke::AttrDomain::Face && attr.varray.type().is<bool>()) {
-      if (attr.varray.is_span()) {
-        ps->sharp_faces_eval = attr.varray.get_internal_span().typed<bool>().data();
       }
     }
   }
@@ -5402,7 +5386,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
           last_projIma = projImages + last_index;
 
           last_projIma->touch = true;
-          is_floatbuf = (last_projIma->ibuf->float_buffer.data != nullptr);
+          is_floatbuf = (last_projIma->ibuf->float_data() != nullptr);
         }
         /* end copy */
 
@@ -5502,7 +5486,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
         }
         else {
           if (is_floatbuf) {
-            BLI_assert(ps->reproject_ibuf->float_buffer.data != nullptr);
+            BLI_assert(ps->reproject_ibuf->float_data() != nullptr);
 
             imbuf::interpolate_cubic_bspline_fl(ps->reproject_ibuf,
                                                 projPixel->newColor.f,
@@ -5518,7 +5502,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
             }
           }
           else {
-            BLI_assert(ps->reproject_ibuf->byte_buffer.data != nullptr);
+            BLI_assert(ps->reproject_ibuf->byte_data() != nullptr);
             imbuf::interpolate_cubic_bspline_byte(ps->reproject_ibuf,
                                                   projPixel->newColor.ch,
                                                   projPixel->projCoSS[0],
@@ -5633,7 +5617,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
                 last_projIma = projImages + last_index;
 
                 last_projIma->touch = true;
-                is_floatbuf = (last_projIma->ibuf->float_buffer.data != nullptr);
+                is_floatbuf = (last_projIma->ibuf->float_data() != nullptr);
               }
               /* end copy */
 
@@ -5774,20 +5758,20 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
     bool uchar_dest = false;
     /* Check if the destination images are float or uchar. */
     for (i = 0; i < ps->image_tot; i++) {
-      if (ps->projImages[i].ibuf->byte_buffer.data != nullptr) {
+      if (ps->projImages[i].ibuf->byte_data() != nullptr) {
         uchar_dest = true;
       }
-      if (ps->projImages[i].ibuf->float_buffer.data != nullptr) {
+      if (ps->projImages[i].ibuf->float_data() != nullptr) {
         float_dest = true;
       }
     }
 
     /* Generate missing data if needed. */
-    if (float_dest && ps->reproject_ibuf->float_buffer.data == nullptr) {
+    if (float_dest && ps->reproject_ibuf->float_data() == nullptr) {
       IMB_float_from_byte(ps->reproject_ibuf);
       ps->reproject_ibuf_free_float = true;
     }
-    if (uchar_dest && ps->reproject_ibuf->byte_buffer.data == nullptr) {
+    if (uchar_dest && ps->reproject_ibuf->byte_data() == nullptr) {
       IMB_byte_from_float(ps->reproject_ibuf);
       ps->reproject_ibuf_free_uchar = true;
     }
@@ -5927,7 +5911,7 @@ static void paint_proj_stroke_ps(const bContext * /*C*/,
       if (ibuf->colormanage_flag & IMB_COLORMANAGE_IS_DATA) {
         img->is_data = true;
       }
-      else if (ibuf->byte_buffer.data && ibuf->byte_buffer.colorspace) {
+      else if (ibuf->byte_data() && ibuf->byte_buffer.colorspace) {
         img->byte_colorspace = ibuf->byte_buffer.colorspace;
         img->is_srgb = IMB_colormanagement_space_is_srgb(img->byte_colorspace);
         if (img->is_srgb) {
@@ -6286,7 +6270,7 @@ static wmOperatorStatus texture_paint_camera_project_exec(bContext *C, wmOperato
   int orig_brush_size;
   IDProperty *idgroup;
   IDProperty *view_data = nullptr;
-  BKE_view_layer_synced_ensure(&scene, &view_layer);
+  BKE_view_layer_synced_ensure(*bmain, &scene, &view_layer);
   Object *ob = BKE_view_layer_active_object_get(&view_layer);
   bool uvs, mat, tex;
 
@@ -6312,7 +6296,7 @@ static wmOperatorStatus texture_paint_camera_project_exec(bContext *C, wmOperato
   ps.reproject_ibuf = BKE_image_acquire_ibuf(image, nullptr, nullptr);
 
   if ((ps.reproject_ibuf == nullptr) ||
-      ((ps.reproject_ibuf->byte_buffer.data || ps.reproject_ibuf->float_buffer.data) == false))
+      ((ps.reproject_ibuf->byte_data() || ps.reproject_ibuf->float_data()) == false))
   {
     BKE_report(op->reports, RPT_ERROR, "Image data could not be found");
     return OPERATOR_CANCELLED;
@@ -6500,7 +6484,7 @@ static wmOperatorStatus texture_paint_image_from_view_exec(bContext *C, wmOperat
     return OPERATOR_CANCELLED;
   }
 
-  STRNCPY(ibuf->filepath, filepath);
+  ibuf->filepath = filepath;
 
   image = BKE_image_add_from_imbuf(bmain, ibuf, "image_view");
 
@@ -6802,7 +6786,7 @@ static void default_paint_slot_color_get(int layer_type, Material *ma, float col
         /* An existing material or Principled BSDF node could not be found.
          * Copy default color values from a default Principled BSDF instead. */
         ntree = bke::node_tree_add_tree(
-            nullptr, "Temporary Shader Nodetree", ntreeType_Shader->idname);
+            nullptr, "Temporary Shader Nodetree", ntreeType_Shader->idname.ref());
         in_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_BSDF_PRINCIPLED);
       }
       bNodeSocket *in_sock = bke::node_find_socket(

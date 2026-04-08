@@ -65,7 +65,7 @@ void ABCMetaballWriter::free_export_mesh(Mesh *mesh)
 
 bool ABCMetaballWriter::is_basis_ball(Scene *scene, Object *ob) const
 {
-  Object *basis_ob = BKE_mball_basis_find(scene, ob);
+  Object *basis_ob = BKE_mball_basis_find(*DEG_get_bmain(args_.depsgraph), scene, ob);
   return ob == basis_ob;
 }
 

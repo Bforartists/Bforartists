@@ -14,16 +14,16 @@ namespace blender::nodes::node_geo_curves_to_grease_pencil_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Curves").description("Either plain curves or curve instances");
-  b.add_input<decl::Bool>("Selection")
+  b.add_input<decl::Geometry>("Curves"_ustr).description("Either plain curves or curve instances");
+  b.add_input<decl::Bool>("Selection"_ustr)
       .default_value(true)
       .hide_value()
       .field_on_all()
       .description("Either a curve or instance selection");
-  b.add_input<decl::Bool>("Instances as Layers")
+  b.add_input<decl::Bool>("Instances as Layers"_ustr)
       .default_value(true)
       .description("Create a separate layer for each instance");
-  b.add_output<decl::Geometry>("Grease Pencil").propagate_all();
+  b.add_output<decl::Geometry>("Grease Pencil"_ustr).propagate_all();
 }
 
 static GreasePencil *curves_to_grease_pencil_with_one_layer(
@@ -181,10 +181,10 @@ static GreasePencil *curve_instances_to_grease_pencil_layers(
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet curves_geometry = params.extract_input<GeometrySet>("Curves");
-  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
-  const bool instances_as_layers = params.extract_input<bool>("Instances as Layers");
-  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Grease Pencil");
+  GeometrySet curves_geometry = params.extract_input<GeometrySet>("Curves"_ustr);
+  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
+  const bool instances_as_layers = params.extract_input<bool>("Instances as Layers"_ustr);
+  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Grease Pencil"_ustr);
 
   GreasePencil *grease_pencil = nullptr;
   if (instances_as_layers) {
@@ -209,13 +209,13 @@ static void node_geo_exec(GeoNodeExecParams params)
       return;
     }
     grease_pencil = curves_to_grease_pencil_with_one_layer(
-        *curves_id, selection_field, curves_geometry.name, attribute_filter);
+        *curves_id, selection_field, curves_geometry.name(), attribute_filter);
   }
 
   GeometrySet grease_pencil_geometry = GeometrySet::from_grease_pencil(grease_pencil);
-  grease_pencil_geometry.name = std::move(curves_geometry.name);
+  grease_pencil_geometry.set_name(curves_geometry.name());
   grease_pencil_geometry.copy_bundle_from(curves_geometry);
-  params.set_output("Grease Pencil", std::move(grease_pencil_geometry));
+  params.set_output("Grease Pencil"_ustr, std::move(grease_pencil_geometry));
 }
 
 static void node_register()

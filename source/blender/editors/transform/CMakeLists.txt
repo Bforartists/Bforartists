@@ -70,6 +70,8 @@ set(SRC
   transform_mode_push_pull.cc
   transform_mode_resize.cc
   transform_mode_rotate.cc
+  transform_mode_rotate_quadrants.cc
+  transform_mode_rotate_quadrants.hh
   transform_mode_shear.cc
   transform_mode_shrink_fatten.cc
   transform_mode_skin_resize.cc

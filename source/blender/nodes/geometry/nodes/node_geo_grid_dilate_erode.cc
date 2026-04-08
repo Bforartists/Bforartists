@@ -43,8 +43,8 @@ static void node_declare(NodeDeclarationBuilder &b)
     return;
   }
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
-  b.add_input(data_type, "Grid").hide_value().structure_type(StructureType::Grid);
-  b.add_output(data_type, "Grid").structure_type(StructureType::Grid).align_with_previous();
+  b.add_input(data_type, "Grid"_ustr).hide_value().structure_type(StructureType::Grid);
+  b.add_output(data_type, "Grid"_ustr).structure_type(StructureType::Grid).align_with_previous();
 
   static EnumPropertyItem connectivity_items[] = {
       {int(Connectivity::Face),
@@ -84,19 +84,19 @@ static void node_declare(NodeDeclarationBuilder &b)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
-  b.add_input<decl::Menu>("Connectivity")
+  b.add_input<decl::Menu>("Connectivity"_ustr)
       .static_items(connectivity_items)
       .default_value(MenuValue(Connectivity::Face))
       .structure_type(StructureType::Single)
       .optional_label();
 
-  b.add_input<decl::Menu>("Tiles")
+  b.add_input<decl::Menu>("Tiles"_ustr)
       .static_items(tile_policy_items)
       .default_value(MenuValue(TilePolicy::Preserve))
       .structure_type(StructureType::Single)
       .optional_label();
 
-  b.add_input<decl::Int>("Steps")
+  b.add_input<decl::Int>("Steps"_ustr)
       .default_value(1)
       .min(-100)
       .max(100)
@@ -144,7 +144,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
   {
     params.add_item(IFACE_("Steps"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeGridDilateAndErode");
-      params.update_and_connect_available_socket(node, "Steps");
+      params.update_and_connect_available_socket(node, "Steps"_ustr);
     });
   }
   if (params.node_tree().typeinfo->validate_link(eNodeSocketDatatype(params.other_socket().type),
@@ -154,14 +154,14 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeGridDilateAndErode");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Grid");
+        params.update_and_connect_available_socket(node, "Grid"_ustr);
       });
     }
     else if (params.in_out() == SOCK_OUT) {
       params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeGridDilateAndErode");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Grid");
+        params.update_and_connect_available_socket(node, "Grid"_ustr);
       });
     }
   }
@@ -200,17 +200,17 @@ static openvdb::tools::TilePolicy tile_policy_to_openvdb(const TilePolicy policy
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  bke::GVolumeGrid grid = params.extract_input<bke::GVolumeGrid>("Grid");
+  bke::GVolumeGrid grid = params.extract_input<bke::GVolumeGrid>("Grid"_ustr);
   if (!grid) {
     params.set_default_remaining_outputs();
     return;
   }
 
-  const Connectivity connectivity = params.extract_input<Connectivity>("Connectivity");
-  const TilePolicy tile_policy = params.extract_input<TilePolicy>("Tiles");
-  const int steps = params.extract_input<int>("Steps");
+  const Connectivity connectivity = params.extract_input<Connectivity>("Connectivity"_ustr);
+  const TilePolicy tile_policy = params.extract_input<TilePolicy>("Tiles"_ustr);
+  const int steps = params.extract_input<int>("Steps"_ustr);
   if (steps == 0) {
-    params.set_output("Grid", std::move(grid));
+    params.set_output("Grid"_ustr, std::move(grid));
     return;
   }
 
@@ -228,7 +228,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   });
 
-  params.set_output("Grid", std::move(grid));
+  params.set_output("Grid"_ustr, std::move(grid));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

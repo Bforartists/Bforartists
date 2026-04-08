@@ -29,11 +29,6 @@ OptiXDenoiser::~OptiXDenoiser()
   }
 }
 
-uint OptiXDenoiser::get_device_type_mask() const
-{
-  return DEVICE_MASK_OPTIX;
-}
-
 bool OptiXDenoiser::is_device_supported(const DeviceInfo &device)
 {
   if (device.type == DEVICE_OPTIX) {
@@ -42,21 +37,35 @@ bool OptiXDenoiser::is_device_supported(const DeviceInfo &device)
   return false;
 }
 
-bool OptiXDenoiser::denoise_buffer(const DenoiseTask &task)
+bool OptiXDenoiser::denoise_buffer(const BufferParams &buffer_params,
+                                   const BufferParams &denoised_buffer_params,
+                                   RenderBuffers *render_buffers,
+                                   const int num_samples,
+                                   const bool allow_inplace_modification)
 {
   OptiXDevice *const optix_device = static_cast<OptiXDevice *>(denoiser_device_);
-
   const CUDAContextScope scope(optix_device);
 
-  return DenoiserGPU::denoise_buffer(task);
+  return DenoiserGPU::denoise_buffer(buffer_params,
+                                     denoised_buffer_params,
+                                     render_buffers,
+                                     num_samples,
+                                     allow_inplace_modification);
 }
 
 bool OptiXDenoiser::denoise_create_if_needed(DenoiseContext &context)
 {
+  const bool use_pass_albedo = (context.denoise_params.passes & DENOISER_PASS_ALBEDO) != 0;
+  const bool use_pass_normal = (context.denoise_params.passes & DENOISER_PASS_NORMAL) != 0;
+  const bool use_pass_motion = context.denoise_params.temporally_stable &&
+                               (context.denoise_params.passes & DENOISER_PASS_MOTION) != 0;
+  const bool use_upscale_model = context.denoise_params.upscale_factor == 2.0f;
+
   const bool recreate_denoiser = (optix_denoiser_ == nullptr) ||
-                                 (use_pass_albedo_ != context.use_pass_albedo) ||
-                                 (use_pass_normal_ != context.use_pass_normal) ||
-                                 (use_pass_motion_ != context.use_pass_motion);
+                                 (use_pass_albedo_ != use_pass_albedo) ||
+                                 (use_pass_normal_ != use_pass_normal) ||
+                                 (use_pass_motion_ != use_pass_motion) ||
+                                 (use_upscale_model_ != use_upscale_model);
   if (!recreate_denoiser) {
     return true;
   }
@@ -68,12 +77,22 @@ bool OptiXDenoiser::denoise_create_if_needed(DenoiseContext &context)
 
   /* Create OptiX denoiser handle on demand when it is first used. */
   OptixDenoiserOptions denoiser_options = {};
-  denoiser_options.guideAlbedo = context.use_pass_albedo;
-  denoiser_options.guideNormal = context.use_pass_normal;
+  denoiser_options.guideAlbedo = use_pass_albedo;
+  denoiser_options.guideNormal = use_pass_normal;
 
   OptixDenoiserModelKind model = OPTIX_DENOISER_MODEL_KIND_AOV;
-  if (context.use_pass_motion) {
-    model = OPTIX_DENOISER_MODEL_KIND_TEMPORAL;
+  if (use_pass_motion) {
+    if (use_upscale_model) {
+      model = OPTIX_DENOISER_MODEL_KIND_TEMPORAL_UPSCALE2X;
+    }
+    else {
+      model = OPTIX_DENOISER_MODEL_KIND_TEMPORAL;
+    }
+  }
+  else {
+    if (use_upscale_model) {
+      model = OPTIX_DENOISER_MODEL_KIND_UPSCALE2X;
+    }
   }
 
   const OptixResult result = optixDenoiserCreate(
@@ -88,9 +107,10 @@ bool OptiXDenoiser::denoise_create_if_needed(DenoiseContext &context)
   }
 
   /* OptiX denoiser handle was created with the requested number of input passes. */
-  use_pass_albedo_ = context.use_pass_albedo;
-  use_pass_normal_ = context.use_pass_normal;
-  use_pass_motion_ = context.use_pass_motion;
+  use_pass_albedo_ = use_pass_albedo;
+  use_pass_normal_ = use_pass_normal;
+  use_pass_motion_ = use_pass_motion;
+  use_upscale_model_ = use_upscale_model;
 
   /* OptiX denoiser has been created, but it needs configuration. */
   is_configured_ = false;
@@ -145,10 +165,6 @@ bool OptiXDenoiser::denoise_configure_if_needed(DenoiseContext &context)
 
 bool OptiXDenoiser::denoise_run(const DenoiseContext &context, const DenoisePass &pass)
 {
-  const BufferParams &buffer_params = context.buffer_params;
-  const int width = buffer_params.width;
-  const int height = buffer_params.height;
-
   /* Set up input and output layer information. */
   OptixImage2D color_layer = {0};
   OptixImage2D albedo_layer = {0};
@@ -165,62 +181,66 @@ bool OptiXDenoiser::denoise_run(const DenoiseContext &context, const DenoisePass
 
     color_layer.data = context.render_buffers->buffer.device_pointer +
                        pass_denoised * sizeof(float);
-    color_layer.width = width;
-    color_layer.height = height;
+    color_layer.width = context.buffer_params.width;
+    color_layer.height = context.buffer_params.height;
     color_layer.rowStrideInBytes = pass_stride_in_bytes * context.buffer_params.stride;
     color_layer.pixelStrideInBytes = pass_stride_in_bytes;
     color_layer.format = OPTIX_PIXEL_FORMAT_FLOAT3;
   }
 
   /* Previous output. */
-  if (context.prev_output.offset != PASS_UNUSED) {
+  if (use_pass_motion_ && context.prev_output.offset != PASS_UNUSED) {
     const int64_t pass_stride_in_bytes = context.prev_output.pass_stride * sizeof(float);
 
     prev_output_layer.data = context.prev_output.device_pointer +
                              context.prev_output.offset * sizeof(float);
-    prev_output_layer.width = width;
-    prev_output_layer.height = height;
+    prev_output_layer.width = context.denoised_buffer_params.width;
+    prev_output_layer.height = context.denoised_buffer_params.height;
     prev_output_layer.rowStrideInBytes = pass_stride_in_bytes * context.prev_output.stride;
     prev_output_layer.pixelStrideInBytes = pass_stride_in_bytes;
     prev_output_layer.format = OPTIX_PIXEL_FORMAT_FLOAT3;
   }
 
   /* Optional albedo and color passes. */
-  if (context.num_input_passes > 1) {
-    const device_ptr d_guiding_buffer = context.guiding_params.device_pointer;
-    const int64_t pixel_stride_in_bytes = context.guiding_params.pass_stride * sizeof(float);
-    const int64_t row_stride_in_bytes = context.guiding_params.stride * pixel_stride_in_bytes;
+  const device_ptr d_guiding_buffer = context.guiding_params.device_pointer;
+  const int64_t pixel_stride_in_bytes = context.guiding_params.pass_stride * sizeof(float);
+  const int64_t row_stride_in_bytes = context.guiding_params.stride * pixel_stride_in_bytes;
 
-    if (context.use_pass_albedo) {
-      albedo_layer.data = d_guiding_buffer + context.guiding_params.pass_albedo * sizeof(float);
-      albedo_layer.width = width;
-      albedo_layer.height = height;
-      albedo_layer.rowStrideInBytes = row_stride_in_bytes;
-      albedo_layer.pixelStrideInBytes = pixel_stride_in_bytes;
-      albedo_layer.format = OPTIX_PIXEL_FORMAT_FLOAT3;
-    }
+  if (use_pass_albedo_) {
+    albedo_layer.data = d_guiding_buffer + context.guiding_params.pass_albedo * sizeof(float);
+    albedo_layer.width = context.buffer_params.width;
+    albedo_layer.height = context.buffer_params.height;
+    albedo_layer.rowStrideInBytes = row_stride_in_bytes;
+    albedo_layer.pixelStrideInBytes = pixel_stride_in_bytes;
+    albedo_layer.format = OPTIX_PIXEL_FORMAT_FLOAT3;
+  }
 
-    if (context.use_pass_normal) {
-      normal_layer.data = d_guiding_buffer + context.guiding_params.pass_normal * sizeof(float);
-      normal_layer.width = width;
-      normal_layer.height = height;
-      normal_layer.rowStrideInBytes = row_stride_in_bytes;
-      normal_layer.pixelStrideInBytes = pixel_stride_in_bytes;
-      normal_layer.format = OPTIX_PIXEL_FORMAT_FLOAT3;
-    }
+  if (use_pass_normal_) {
+    normal_layer.data = d_guiding_buffer + context.guiding_params.pass_normal * sizeof(float);
+    normal_layer.width = context.buffer_params.width;
+    normal_layer.height = context.buffer_params.height;
+    normal_layer.rowStrideInBytes = row_stride_in_bytes;
+    normal_layer.pixelStrideInBytes = pixel_stride_in_bytes;
+    normal_layer.format = OPTIX_PIXEL_FORMAT_FLOAT3;
+  }
 
-    if (context.use_pass_motion) {
-      flow_layer.data = d_guiding_buffer + context.guiding_params.pass_flow * sizeof(float);
-      flow_layer.width = width;
-      flow_layer.height = height;
-      flow_layer.rowStrideInBytes = row_stride_in_bytes;
-      flow_layer.pixelStrideInBytes = pixel_stride_in_bytes;
-      flow_layer.format = OPTIX_PIXEL_FORMAT_FLOAT2;
-    }
+  if (use_pass_motion_) {
+    flow_layer.data = d_guiding_buffer + context.guiding_params.pass_flow * sizeof(float);
+    flow_layer.width = context.buffer_params.width;
+    flow_layer.height = context.buffer_params.height;
+    flow_layer.rowStrideInBytes = row_stride_in_bytes;
+    flow_layer.pixelStrideInBytes = pixel_stride_in_bytes;
+    flow_layer.format = OPTIX_PIXEL_FORMAT_FLOAT2;
   }
 
   /* Denoise in-place of the noisy input in the render buffers. */
-  output_layer = color_layer;
+  {
+    output_layer = color_layer;
+    output_layer.width = context.denoised_buffer_params.width;
+    output_layer.height = context.denoised_buffer_params.height;
+    output_layer.rowStrideInBytes = output_layer.pixelStrideInBytes *
+                                    context.denoised_buffer_params.stride;
+  }
 
   OptixDenoiserGuideLayer guide_layers = {};
   guide_layers.albedo = albedo_layer;

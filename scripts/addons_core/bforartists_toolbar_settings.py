@@ -310,7 +310,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         layout = self.layout
         box = layout.box()
         row = box.row()
-        row.alignment = 'Center'.upper()
+        row.alignment = 'CENTER'
         row.label(text='Bforartists Preferences Manager',)
 
         grid = box.grid_flow(row_major=True, columns=5, even_columns=True, even_rows=True, align=True)
@@ -321,7 +321,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The File Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -343,7 +343,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Mesh Edit Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -363,7 +363,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Primitives Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -386,7 +386,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Image Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -399,7 +399,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Tools Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -416,7 +416,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Animation Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -430,7 +430,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Edit Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -443,7 +443,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Misc Topbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -466,7 +466,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The File Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -488,7 +488,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Mesh Edit Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -508,7 +508,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Primitives Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -531,7 +531,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Image Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -544,7 +544,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Tools Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -561,7 +561,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Animation Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -575,7 +575,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Edit Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -588,7 +588,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Misc Toolbar Container")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -608,7 +608,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="The Toolbar Quicktoggle")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=True, align=True)
@@ -621,14 +621,14 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="Text or Icon Buttons in the Properties Sidebar")
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
             grid.prop(self, "Node_text_or_icon", toggle=addon_prefs.bfa_button_style)
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="Show Only The Most Common Nodes")
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
             grid.prop(self, "Node_shader_add_common", toggle=addon_prefs.bfa_button_style)
@@ -638,7 +638,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="Show/Hide Search in the Outliner.")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
@@ -650,14 +650,14 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="Addon Options")
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
             grid.prop(addon_prefs, 'bfa_button_style', text='Button Style', icon="NONE", emboss=True, expand=True, toggle=addon_prefs.bfa_button_style)
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="Topbar Defaults Option")
 
             box.operator("bfa.reset_topbar")
@@ -678,7 +678,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             box = layout.box()
             row = box.row()
-            row.alignment = 'Center'.upper()
+            row.alignment = 'CENTER'
             row.label(text="Toggle Between Action Tweak Mode All and Isolated")
 
             grid = box.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)

@@ -11,11 +11,11 @@ namespace blender::nodes::node_fn_matrix_svd_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Matrix>("Matrix").description(
-      "Matrix to decompose, only the 3x3 part is used");
-  b.add_output<decl::Matrix>("U").description("Left singular vectors");
-  b.add_output<decl::Vector>("S").description("Singular values");
-  b.add_output<decl::Matrix>("V").description("Right singular vectors");
+  b.add_input<decl::Matrix>("Matrix"_ustr)
+      .description("Matrix to decompose, only the 3x3 part is used");
+  b.add_output<decl::Matrix>("U"_ustr).description("Left singular vectors");
+  b.add_output<decl::Vector>("S"_ustr).description("Singular values");
+  b.add_output<decl::Matrix>("V"_ustr).description("Right singular vectors");
 }
 
 class MatrixSVDFunction : public mf::MultiFunction {

@@ -92,7 +92,7 @@ void emit_vertex(const uint strip_index,
 void geometry_main(VertOut geom_in[4],
                    uint out_vertex_id,
                    uint out_primitive_id,
-                   uint out_invocation_id)
+                   uint /*out_invocation_id*/)
 {
   bool is_persp = (drw_view().winmat[3][3] == 0.0f);
 

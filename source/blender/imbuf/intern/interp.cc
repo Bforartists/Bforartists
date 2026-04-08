@@ -15,7 +15,7 @@ namespace blender {
 
 void IMB_sampleImageAtLocation(ImBuf *ibuf, float x, float y, float scene_linear_rgb[3])
 {
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     float rgba[4];
     imbuf::interpolate_nearest_border_fl(ibuf, rgba, x, y);
     premul_to_straight_v4_v4(rgba, rgba);

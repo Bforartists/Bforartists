@@ -18,70 +18,70 @@ NODE_STORAGE_FUNCS(NodeGeometryCurvePrimitiveQuad)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  auto &width = b.add_input<decl::Float>("Width")
+  auto &width = b.add_input<decl::Float>("Width"_ustr)
                     .default_value(2.0f)
                     .min(0.0f)
                     .subtype(PROP_DISTANCE)
                     .description("The X axis size of the shape")
                     .available(false);
-  auto &height = b.add_input<decl::Float>("Height")
+  auto &height = b.add_input<decl::Float>("Height"_ustr)
                      .default_value(2.0f)
                      .min(0.0f)
                      .subtype(PROP_DISTANCE)
                      .description("The Y axis size of the shape")
                      .available(false);
-  auto &bottom = b.add_input<decl::Float>("Bottom Width")
+  auto &bottom = b.add_input<decl::Float>("Bottom Width"_ustr)
                      .default_value(4.0f)
                      .min(0.0f)
                      .subtype(PROP_DISTANCE)
                      .description("The X axis size of the shape")
                      .available(false);
-  auto &top = b.add_input<decl::Float>("Top Width")
+  auto &top = b.add_input<decl::Float>("Top Width"_ustr)
                   .default_value(2.0f)
                   .min(0.0f)
                   .subtype(PROP_DISTANCE)
                   .description("The X axis size of the shape")
                   .available(false);
   auto &offset =
-      b.add_input<decl::Float>("Offset")
+      b.add_input<decl::Float>("Offset"_ustr)
           .default_value(1.0f)
           .subtype(PROP_DISTANCE)
           .description(
               "For Parallelogram, the relative X difference between the top and bottom edges. For "
               "Trapezoid, the amount to move the top edge in the positive X axis")
           .available(false);
-  auto &bottom_height = b.add_input<decl::Float>("Bottom Height")
+  auto &bottom_height = b.add_input<decl::Float>("Bottom Height"_ustr)
                             .default_value(3.0f)
                             .min(0.0f)
                             .subtype(PROP_DISTANCE)
                             .description("The distance between the bottom point and the X axis")
                             .available(false);
-  auto &top_height = b.add_input<decl::Float>("Top Height")
+  auto &top_height = b.add_input<decl::Float>("Top Height"_ustr)
                          .default_value(1.0f)
                          .subtype(PROP_DISTANCE)
                          .description("The distance between the top point and the X axis")
                          .available(false);
-  auto &p1 = b.add_input<decl::Vector>("Point 1")
+  auto &p1 = b.add_input<decl::Vector>("Point 1"_ustr)
                  .default_value({-1.0f, -1.0f, 0.0f})
                  .subtype(PROP_TRANSLATION)
                  .description("The exact location of the point to use")
                  .available(false);
-  auto &p2 = b.add_input<decl::Vector>("Point 2")
+  auto &p2 = b.add_input<decl::Vector>("Point 2"_ustr)
                  .default_value({1.0f, -1.0f, 0.0f})
                  .subtype(PROP_TRANSLATION)
                  .description("The exact location of the point to use")
                  .available(false);
-  auto &p3 = b.add_input<decl::Vector>("Point 3")
+  auto &p3 = b.add_input<decl::Vector>("Point 3"_ustr)
                  .default_value({1.0f, 1.0f, 0.0f})
                  .subtype(PROP_TRANSLATION)
                  .description("The exact location of the point to use")
                  .available(false);
-  auto &p4 = b.add_input<decl::Vector>("Point 4")
+  auto &p4 = b.add_input<decl::Vector>("Point 4"_ustr)
                  .default_value({-1.0f, 1.0f, 0.0f})
                  .subtype(PROP_TRANSLATION)
                  .description("The exact location of the point to use")
                  .available(false);
-  b.add_output<decl::Geometry>("Curve");
+  b.add_output<decl::Geometry>("Curve"_ustr);
 
   const bNode *node = b.node_or_null();
   if (node != nullptr) {
@@ -131,7 +131,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 class SocketSearchOp {
  public:
-  std::string socket_name;
+  UString socket_name;
   GeometryNodeCurvePrimitiveQuadMode quad_mode;
   void operator()(LinkSearchOpParams &params)
   {
@@ -151,17 +151,20 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
                eNodeSocketDatatype(params.other_socket().type), SOCK_FLOAT))
   {
     params.add_item(IFACE_("Width"),
-                    SocketSearchOp{"Width", GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_RECTANGLE});
+                    SocketSearchOp{"Width"_ustr, GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_RECTANGLE});
     params.add_item(IFACE_("Height"),
-                    SocketSearchOp{"Height", GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_RECTANGLE});
-    params.add_item(IFACE_("Bottom Width"),
-                    SocketSearchOp{"Bottom Width", GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_TRAPEZOID});
-    params.add_item(IFACE_("Top Width"),
-                    SocketSearchOp{"Top Width", GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_TRAPEZOID});
-    params.add_item(IFACE_("Offset"),
-                    SocketSearchOp{"Offset", GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_PARALLELOGRAM});
+                    SocketSearchOp{"Height"_ustr, GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_RECTANGLE});
+    params.add_item(
+        IFACE_("Bottom Width"),
+        SocketSearchOp{"Bottom Width"_ustr, GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_TRAPEZOID});
+    params.add_item(
+        IFACE_("Top Width"),
+        SocketSearchOp{"Top Width"_ustr, GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_TRAPEZOID});
+    params.add_item(
+        IFACE_("Offset"),
+        SocketSearchOp{"Offset"_ustr, GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_PARALLELOGRAM});
     params.add_item(IFACE_("Point 1"),
-                    SocketSearchOp{"Point 1", GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_POINTS});
+                    SocketSearchOp{"Point 1"_ustr, GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_POINTS});
   }
 }
 
@@ -234,42 +237,42 @@ static void node_geo_exec(GeoNodeExecParams params)
   switch (mode) {
     case GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_RECTANGLE:
       create_rectangle_curve(positions,
-                             std::max(params.extract_input<float>("Height"), 0.0f),
-                             std::max(params.extract_input<float>("Width"), 0.0f));
+                             std::max(params.extract_input<float>("Height"_ustr), 0.0f),
+                             std::max(params.extract_input<float>("Width"_ustr), 0.0f));
       break;
 
     case GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_PARALLELOGRAM:
       create_parallelogram_curve(positions,
-                                 std::max(params.extract_input<float>("Height"), 0.0f),
-                                 std::max(params.extract_input<float>("Width"), 0.0f),
-                                 params.extract_input<float>("Offset"));
+                                 std::max(params.extract_input<float>("Height"_ustr), 0.0f),
+                                 std::max(params.extract_input<float>("Width"_ustr), 0.0f),
+                                 params.extract_input<float>("Offset"_ustr));
       break;
     case GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_TRAPEZOID:
       create_trapezoid_curve(positions,
-                             std::max(params.extract_input<float>("Bottom Width"), 0.0f),
-                             std::max(params.extract_input<float>("Top Width"), 0.0f),
-                             params.extract_input<float>("Offset"),
-                             std::max(params.extract_input<float>("Height"), 0.0f));
+                             std::max(params.extract_input<float>("Bottom Width"_ustr), 0.0f),
+                             std::max(params.extract_input<float>("Top Width"_ustr), 0.0f),
+                             params.extract_input<float>("Offset"_ustr),
+                             std::max(params.extract_input<float>("Height"_ustr), 0.0f));
       break;
     case GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_KITE:
       create_kite_curve(positions,
-                        std::max(params.extract_input<float>("Width"), 0.0f),
-                        std::max(params.extract_input<float>("Bottom Height"), 0.0f),
-                        params.extract_input<float>("Top Height"));
+                        std::max(params.extract_input<float>("Width"_ustr), 0.0f),
+                        std::max(params.extract_input<float>("Bottom Height"_ustr), 0.0f),
+                        params.extract_input<float>("Top Height"_ustr));
       break;
     case GEO_NODE_CURVE_PRIMITIVE_QUAD_MODE_POINTS:
       create_points_curve(positions,
-                          params.extract_input<float3>("Point 1"),
-                          params.extract_input<float3>("Point 2"),
-                          params.extract_input<float3>("Point 3"),
-                          params.extract_input<float3>("Point 4"));
+                          params.extract_input<float3>("Point 1"_ustr),
+                          params.extract_input<float3>("Point 2"_ustr),
+                          params.extract_input<float3>("Point 3"_ustr),
+                          params.extract_input<float3>("Point 4"_ustr));
       break;
     default:
       params.set_default_remaining_outputs();
       return;
   }
 
-  params.set_output("Curve", GeometrySet::from_curves(curves_id));
+  params.set_output("Curve"_ustr, GeometrySet::from_curves(curves_id));
 }
 
 static void node_rna(StructRNA *srna)

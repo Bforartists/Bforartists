@@ -15,7 +15,7 @@ namespace blender::nodes::node_geo_input_font_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Font>("Font").custom_draw([](CustomSocketDrawParams &params) {
+  b.add_output<decl::Font>("Font"_ustr).custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     ui::template_id(&params.layout,
                     &params.C,
@@ -35,7 +35,7 @@ static void node_init(bNodeTree * /*ntree*/, bNode *node)
 static void node_geo_exec(GeoNodeExecParams params)
 {
   VFont *font = id_cast<VFont *>(params.node().id);
-  params.set_output("Font", font);
+  params.set_output("Font"_ustr, font);
 }
 
 static void node_register()

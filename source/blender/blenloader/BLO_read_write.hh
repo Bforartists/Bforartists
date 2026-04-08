@@ -233,10 +233,6 @@ struct BLO_Write_IDBuffer {
  * user count of the sharing-info is increased making the data immutable. The provided callback
  * should serialize the potentially shared data. It is only called when necessary.
  *
- * This should be called before the data is referenced in other written data (there is an assert
- * that checks for this). If that's not possible, at least #BLO_write_shared_tag needs to be called
- * before the pointer is first written.
- *
  * \param approximate_size_in_bytes: Used to be able to approximate how large the undo step is in
  * total.
  * \param write_fn: Use the #BlendWrite to serialize the potentially shared data.
@@ -248,9 +244,14 @@ void BLO_write_shared(BlendWriter *writer,
                       FunctionRef<void()> write_fn);
 
 /**
- * Needs to be called if the pointer is somewhere written before the call to #BLO_write_shared.
+ * Needs to be called for all pointers that _need_ to be 'stabilized' when writing undo steps,
+ * _before_ any of these pointers are actually written (so typically at the very start of a write
+ * function)..
+ *
+ * Typically required for data dynamically generated as part of the write process, see e.g.
+ * AttributeStorage::dna_attributes.
  */
-void BLO_write_shared_tag(BlendWriter *writer, const void *data);
+void BLO_write_generated_pointer_tag(BlendWriter *writer, const void *data);
 
 /**
  * Sometimes different data is written depending on whether the file is saved to disk or used for

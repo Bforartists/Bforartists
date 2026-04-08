@@ -3221,7 +3221,7 @@ int dynamicPaint_createUVSurface(Scene *scene,
  */
 struct DynamicPaintOutputSurfaceImageData {
   const DynamicPaintSurface *surface;
-  ImBuf *ibuf;
+  float *ibuf_float_data;
 };
 
 static void dynamic_paint_output_surface_image_paint_cb(void *__restrict userdata,
@@ -3234,7 +3234,6 @@ static void dynamic_paint_output_surface_image_paint_cb(void *__restrict userdat
   const DynamicPaintSurface *surface = data->surface;
   const PaintPoint *point = &(static_cast<PaintPoint *>(surface->data->type_data))[index];
 
-  ImBuf *ibuf = data->ibuf;
   /* image buffer position */
   const int pos = surface->data->format_data->uv_p[index].pixel_index * 4;
 
@@ -3243,11 +3242,11 @@ static void dynamic_paint_output_surface_image_paint_cb(void *__restrict userdat
               point->color[3],
               point->e_color,
               point->e_color[3],
-              &ibuf->float_buffer.data[pos]);
+              &data->ibuf_float_data[pos]);
 
   /* Multiply color by alpha if enabled */
   if (surface->flags & MOD_DPAINT_MULALPHA) {
-    mul_v3_fl(&ibuf->float_buffer.data[pos], ibuf->float_buffer.data[pos + 3]);
+    mul_v3_fl(&data->ibuf_float_data[pos], data->ibuf_float_data[pos + 3]);
   }
 }
 
@@ -3260,7 +3259,6 @@ static void dynamic_paint_output_surface_image_displace_cb(
   const DynamicPaintSurface *surface = data->surface;
   float depth = (static_cast<float *>(surface->data->type_data))[index];
 
-  ImBuf *ibuf = data->ibuf;
   /* image buffer position */
   const int pos = surface->data->format_data->uv_p[index].pixel_index * 4;
 
@@ -3274,8 +3272,8 @@ static void dynamic_paint_output_surface_image_displace_cb(
 
   CLAMP(depth, 0.0f, 1.0f);
 
-  copy_v3_fl(&ibuf->float_buffer.data[pos], depth);
-  ibuf->float_buffer.data[pos + 3] = 1.0f;
+  copy_v3_fl(&data->ibuf_float_data[pos], depth);
+  data->ibuf_float_data[pos + 3] = 1.0f;
 }
 
 static void dynamic_paint_output_surface_image_wave_cb(void *__restrict userdata,
@@ -3289,7 +3287,6 @@ static void dynamic_paint_output_surface_image_wave_cb(void *__restrict userdata
   const PaintWavePoint *wPoint = &(static_cast<PaintWavePoint *>(surface->data->type_data))[index];
   float depth = wPoint->height;
 
-  ImBuf *ibuf = data->ibuf;
   /* image buffer position */
   const int pos = surface->data->format_data->uv_p[index].pixel_index * 4;
 
@@ -3300,8 +3297,8 @@ static void dynamic_paint_output_surface_image_wave_cb(void *__restrict userdata
   depth = (0.5f + depth / 2.0f);
   CLAMP(depth, 0.0f, 1.0f);
 
-  copy_v3_fl(&ibuf->float_buffer.data[pos], depth);
-  ibuf->float_buffer.data[pos + 3] = 1.0f;
+  copy_v3_fl(&data->ibuf_float_data[pos], depth);
+  data->ibuf_float_data[pos + 3] = 1.0f;
 }
 
 static void dynamic_paint_output_surface_image_wetmap_cb(void *__restrict userdata,
@@ -3314,12 +3311,11 @@ static void dynamic_paint_output_surface_image_wetmap_cb(void *__restrict userda
   const DynamicPaintSurface *surface = data->surface;
   const PaintPoint *point = &(static_cast<PaintPoint *>(surface->data->type_data))[index];
 
-  ImBuf *ibuf = data->ibuf;
   /* image buffer position */
   const int pos = surface->data->format_data->uv_p[index].pixel_index * 4;
 
-  copy_v3_fl(&ibuf->float_buffer.data[pos], (point->wetness > 1.0f) ? 1.0f : point->wetness);
-  ibuf->float_buffer.data[pos + 3] = 1.0f;
+  copy_v3_fl(&data->ibuf_float_data[pos], (point->wetness > 1.0f) ? 1.0f : point->wetness);
+  data->ibuf_float_data[pos + 3] = 1.0f;
 }
 
 void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
@@ -3359,7 +3355,7 @@ void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
 
   DynamicPaintOutputSurfaceImageData data{};
   data.surface = surface;
-  data.ibuf = ibuf;
+  data.ibuf_float_data = ibuf->float_data_for_write();
 
   switch (surface->type) {
     case MOD_DPAINT_SURFACE_T_PAINT:

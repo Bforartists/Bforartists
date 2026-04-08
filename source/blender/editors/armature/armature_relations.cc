@@ -722,7 +722,7 @@ static wmOperatorStatus separate_armature_exec(bContext *C, wmOperator *op)
   WM_cursor_wait(true);
 
   Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
 
   for (Base *base_old : bases) {
     Object *ob_old = base_old->object;
@@ -1086,6 +1086,7 @@ static void editbone_clear_parent(EditBone *ebone, int mode)
 
 static wmOperatorStatus armature_parent_clear_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const int val = RNA_enum_get(op->ptr, "type");
@@ -1096,7 +1097,7 @@ static wmOperatorStatus armature_parent_clear_exec(bContext *C, wmOperator *op)
   CTX_DATA_END;
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *ob : objects) {
     bArmature *arm = id_cast<bArmature *>(ob->data);
     bool changed = false;

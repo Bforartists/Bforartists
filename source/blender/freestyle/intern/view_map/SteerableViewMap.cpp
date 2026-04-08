@@ -248,6 +248,7 @@ void SteerableViewMap::saveSteerableViewMap() const
       int rowbytes = ow * 4;
       uchar *pix;
 
+      uchar *byte_data = ibuf->byte_data_for_write();
       for (int y = 0; y < oh; ++y) {    // soc
         for (int x = 0; x < ow; ++x) {  // soc
           int c = int(coeff * _imagesPyramids[i]->pixel(x, y, j));
@@ -257,7 +258,7 @@ void SteerableViewMap::saveSteerableViewMap() const
           // int c = int(_imagesPyramids[i]->pixel(x, y, j));
 
           // soc qtmp.setPixel(x, y, qRgb(c, c, c));
-          pix = ibuf->byte_buffer.data + y * rowbytes + x * 4;
+          pix = byte_data + y * rowbytes + x * 4;
           pix[0] = pix[1] = pix[2] = c;
         }
       }

@@ -17,6 +17,7 @@ namespace blender {
 
 struct ARegion;
 struct bContext;
+struct Main;
 struct Scene;
 struct ReportList;
 struct TransformOrientation;
@@ -96,7 +97,8 @@ bool BIF_createTransformOrientation(bContext *C,
                                     bool overwrite);
 void BIF_selectTransformOrientation(bContext *C, TransformOrientation *target);
 
-void ED_getTransformOrientationMatrix(const Scene *scene,
+void ED_getTransformOrientationMatrix(const Main &bmain,
+                                      const Scene *scene,
                                       ViewLayer *view_layer,
                                       const View3D *v3d,
                                       Object *ob,
@@ -143,7 +145,8 @@ void calc_orientation_from_type(const bContext *C, float r_mat[3][3]);
  * - #V3D_ORIENT_LOCAL may contain shear from non-uniform scale in parent/child relationships.
  * - #V3D_ORIENT_CUSTOM may have been created from #V3D_ORIENT_LOCAL.
  */
-short calc_orientation_from_type_ex(const Scene *scene,
+short calc_orientation_from_type_ex(const Main &bmain,
+                                    const Scene *scene,
                                     ViewLayer *view_layer,
                                     const View3D *v3d,
                                     const RegionView3D *rv3d,

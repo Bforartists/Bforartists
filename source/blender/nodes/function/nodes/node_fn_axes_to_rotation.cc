@@ -17,9 +17,9 @@ namespace blender::nodes::node_fn_axes_to_rotation_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>(N_("Primary Axis")).default_value(float3(0, 0, 1));
-  b.add_input<decl::Vector>(N_("Secondary Axis")).default_value(float3(1, 0, 0));
-  b.add_output<decl::Rotation>(N_("Rotation"));
+  b.add_input<decl::Vector>("Primary Axis"_ustr).default_value(float3(0, 0, 1));
+  b.add_input<decl::Vector>("Secondary Axis"_ustr).default_value(float3(1, 0, 0));
+  b.add_output<decl::Rotation>("Rotation"_ustr);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -131,6 +131,10 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
 {
   const bNode &node = builder.node();
   if (node.custom1 == node.custom2) {
+    static auto fallback_fn = mf::build::SI2_SO<float3, float3, math::Quaternion>(
+        "Axes to Rotation fallback",
+        [](const float3 & /*a*/, const float3 & /*b*/) { return math::Quaternion::identity(); });
+    builder.set_matching_fn(fallback_fn);
     return;
   }
   builder.construct_and_set_matching_fn<AxesToRotationFunction>(

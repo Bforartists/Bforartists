@@ -270,7 +270,7 @@ AUD_API int AUD_readSound(AUD_Sound* sound, float* buffer, int length, int sampl
 	return length;
 }
 
-AUD_API int AUD_mixdown(AUD_Sound* sound, unsigned int start, unsigned int length, unsigned int buffersize, const char* filename, AUD_DeviceSpecs specs, AUD_Container format, AUD_Codec codec, unsigned int bitrate, AUD_ResampleQuality quality, void(*callback)(float, void*), void* data, char* error, size_t errorsize)
+AUD_API int AUD_mixdown(AUD_Sound* sound, unsigned int start, unsigned int length, unsigned int buffersize, const char* filename, AUD_DeviceSpecs specs, AUD_Container format, AUD_Codec codec, unsigned int bitrate, AUD_ResampleQuality quality, bool(*callback)(float, void*), void* data, char* error, size_t errorsize)
 {
 	try
 	{
@@ -295,7 +295,7 @@ AUD_API int AUD_mixdown(AUD_Sound* sound, unsigned int start, unsigned int lengt
 	}
 }
 
-AUD_API int AUD_mixdown_per_channel(AUD_Sound* sound, unsigned int start, unsigned int length, unsigned int buffersize, const char* filename, AUD_DeviceSpecs specs, AUD_Container format, AUD_Codec codec, unsigned int bitrate, AUD_ResampleQuality quality, void(*callback)(float, void*), void* data, char* error, size_t errorsize)
+AUD_API int AUD_mixdown_per_channel(AUD_Sound* sound, unsigned int start, unsigned int length, unsigned int buffersize, const char* filename, AUD_DeviceSpecs specs, AUD_Container format, AUD_Codec codec, unsigned int bitrate, AUD_ResampleQuality quality, bool(*callback)(float, void*), void* data, char* error, size_t errorsize)
 {
 	try
 	{

@@ -67,7 +67,7 @@ struct RayTraceBuffer {
    * Perspective matrix for which the radiance feedback buffer was recorded.
    * Can be different from de-noise buffer's history matrix.
    */
-  float4x4 history_persmat;
+  float4x4 history_persmat = float4x4::zero();
 
   gpu::Texture *feedback_ensure(bool is_dummy, int2 extent)
   {

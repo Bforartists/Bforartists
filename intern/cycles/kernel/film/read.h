@@ -72,15 +72,15 @@ ccl_device_inline bool film_get_scale_and_scale_exposure(
     return true;
   }
 
-  const uint sample_count = *(
-      (const ccl_global uint *)(buffer + kfilm_convert->pass_sample_count));
-  if (!sample_count) {
-    *scale = 0.0f;
-    *scale_exposure = 0.0f;
-    return false;
-  }
-
   if (kfilm_convert->pass_use_filter) {
+    const uint sample_count = *(
+        (const ccl_global uint *)(buffer + kfilm_convert->pass_sample_count));
+    if (!sample_count) {
+      *scale = 0.0f;
+      *scale_exposure = 0.0f;
+      return false;
+    }
+
     *scale = kfilm_convert->scale / sample_count;
   }
   else {

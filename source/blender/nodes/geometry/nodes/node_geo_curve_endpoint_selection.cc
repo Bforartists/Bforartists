@@ -12,17 +12,17 @@ namespace blender::nodes::node_geo_curve_endpoint_selection_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Start Size")
+  b.add_input<decl::Int>("Start Size"_ustr)
       .min(0)
       .default_value(1)
       .supports_field()
       .description("The amount of points to select from the start of each spline");
-  b.add_input<decl::Int>("End Size")
+  b.add_input<decl::Int>("End Size"_ustr)
       .min(0)
       .default_value(1)
       .supports_field()
       .description("The amount of points to select from the end of each spline");
-  b.add_output<decl::Bool>("Selection")
+  b.add_output<decl::Bool>("Selection"_ustr)
       .field_source_reference_all()
       .description("The selection from the start and end of the splines based on the input sizes");
 }
@@ -37,7 +37,6 @@ class EndpointFieldInput final : public bke::GeometryFieldInput {
         start_size_(start_size),
         end_size_(end_size)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const bke::GeometryFieldContext &context,
@@ -82,10 +81,10 @@ class EndpointFieldInput final : public bke::GeometryFieldInput {
     return VArray<bool>::from_container(std::move(selection));
   };
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const final
   {
-    start_size_.node().for_each_field_input_recursive(fn);
-    end_size_.node().for_each_field_input_recursive(fn);
+    fn(start_size_);
+    fn(end_size_);
   }
 
   uint64_t hash() const final
@@ -93,7 +92,7 @@ class EndpointFieldInput final : public bke::GeometryFieldInput {
     return get_default_hash(start_size_, end_size_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const final
+  bool is_equal_to(const fn::FieldInput &other) const final
   {
     if (const EndpointFieldInput *other_endpoint = dynamic_cast<const EndpointFieldInput *>(
             &other))
@@ -111,10 +110,10 @@ class EndpointFieldInput final : public bke::GeometryFieldInput {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<int> start_size = params.extract_input<Field<int>>("Start Size");
-  Field<int> end_size = params.extract_input<Field<int>>("End Size");
-  Field<bool> selection_field{std::make_shared<EndpointFieldInput>(start_size, end_size)};
-  params.set_output("Selection", std::move(selection_field));
+  Field<int> start_size = params.extract_input<Field<int>>("Start Size"_ustr);
+  Field<int> end_size = params.extract_input<Field<int>>("End Size"_ustr);
+  Field<bool> selection_field = Field<bool>::from_input<EndpointFieldInput>(start_size, end_size);
+  params.set_output("Selection"_ustr, std::move(selection_field));
 }
 
 static void node_register()

@@ -45,24 +45,27 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Geometry to scale elements of");
-  b.add_output<decl::Geometry>("Geometry").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
 
-  b.add_input<decl::Float>("Scale", "Scale").default_value(1.0f).min(0.0f).field_on_all();
-  b.add_input<decl::Vector>("Center")
+  b.add_input<decl::Float>("Scale"_ustr, "Scale"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .field_on_all();
+  b.add_input<decl::Vector>("Center"_ustr)
       .subtype(PROP_TRANSLATION)
       .implicit_field_on_all(NODE_DEFAULT_INPUT_POSITION_FIELD)
       .description(
           "Origin of the scaling for each element. If multiple elements are connected, their "
           "center is averaged");
-  b.add_input<decl::Menu>("Scale Mode")
+  b.add_input<decl::Menu>("Scale Mode"_ustr)
       .static_items(scale_mode_items)
       .default_value(GEO_NODE_SCALE_ELEMENTS_UNIFORM)
       .optional_label();
-  b.add_input<decl::Vector>("Axis")
+  b.add_input<decl::Vector>("Axis"_ustr)
       .default_value({1.0f, 0.0f, 0.0f})
       .field_on_all()
       .description("Direction in which to scale the element")
@@ -442,13 +445,13 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   const bNode &node = params.node();
   const AttrDomain domain = AttrDomain(node.custom1);
-  const auto scale_mode = params.get_input<GeometryNodeScaleElementsMode>("Scale Mode");
+  const auto scale_mode = params.get_input<GeometryNodeScaleElementsMode>("Scale Mode"_ustr);
 
-  GeometrySet geometry = params.extract_input<GeometrySet>("Geometry");
+  GeometrySet geometry = params.extract_input<GeometrySet>("Geometry"_ustr);
 
-  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
-  const Field<float> scale_field = params.extract_input<Field<float>>("Scale");
-  const Field<float3> center_field = params.extract_input<Field<float3>>("Center");
+  const Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
+  const Field<float> scale_field = params.extract_input<Field<float>>("Scale"_ustr);
+  const Field<float3> center_field = params.extract_input<Field<float3>>("Center"_ustr);
 
   geometry::foreach_real_geometry(geometry, [&](GeometrySet &geometry) {
     if (Mesh *mesh = geometry.get_mesh_for_write()) {
@@ -458,7 +461,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       evaluator.add(scale_field);
       evaluator.add(center_field);
       if (scale_mode == GEO_NODE_SCALE_ELEMENTS_SINGLE_AXIS) {
-        evaluator.add(params.get_input<Field<float3>>("Axis"));
+        evaluator.add(params.get_input<Field<float3>>("Axis"_ustr));
       }
       evaluator.evaluate();
       const IndexMask &mask = evaluator.get_evaluated_selection_as_mask();
@@ -504,7 +507,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   });
 
-  params.set_output("Geometry", std::move(geometry));
+  params.set_output("Geometry"_ustr, std::move(geometry));
 }
 
 static void node_rna(StructRNA *srna)

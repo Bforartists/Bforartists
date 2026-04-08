@@ -111,11 +111,8 @@ static void curves_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   curves->attributes_active_index_legacy = curves->geometry.attributes_active_index;
 
   ResourceScope scope;
-  bke::CurvesGeometry::BlendWriteData write_data(scope);
+  bke::CurvesGeometry::BlendWriteData write_data(writer, scope);
   curves->geometry.wrap().blend_write_prepare(write_data, !BLO_write_is_undo(writer));
-
-  BLO_write_shared_tag(writer, curves->geometry.curve_offsets);
-  BLO_write_shared_tag(writer, curves->geometry.custom_knots);
 
   /* Write LibData */
   writer->write_id_struct(id_address, curves);
@@ -386,7 +383,7 @@ void curves_normals_point_domain_calc(const CurvesGeometry &curves, MutableSpan<
 {
   const bke::CurvesFieldContext context(curves, AttrDomain::Point);
   fn::FieldEvaluator evaluator(context, curves.points_num());
-  fn::Field<float3> field(std::make_shared<bke::NormalFieldInput>());
+  fn::Field<float3> field = fn::Field<float3>::from_input<bke::NormalFieldInput>();
   evaluator.add_with_destination(std::move(field), normals);
   evaluator.evaluate();
 }

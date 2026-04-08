@@ -8750,7 +8750,7 @@ uint *GHOST_SystemWayland::getClipboardImage(int *r_width, int *r_height) const
       *r_height = ibuf->y;
       const size_t byte_count = size_t(ibuf->x) * size_t(ibuf->y) * 4;
       rgba = (uint *)malloc(byte_count);
-      std::memcpy(rgba, ibuf->byte_buffer.data, byte_count);
+      std::memcpy(rgba, ibuf->byte_data(), byte_count);
       blender::IMB_freeImBuf(ibuf);
     }
   }
@@ -9929,8 +9929,9 @@ void GHOST_SystemWayland::ime_begin(const GHOST_WindowWayland *win,
     seat->ime.has_preedit = false;
     seat->ime.is_enabled = true;
 
+    /* Don't commit here, bundle enable + cursor rectangle into a single commit below.
+     * Otherwise the proper location wont be used. */
     zwp_text_input_v3_enable(seat->wp.text_input);
-    zwp_text_input_v3_commit(seat->wp.text_input);
 
     /* Now that it's enabled, set the input properties. */
     zwp_text_input_v3_set_content_type(seat->wp.text_input,

@@ -7,6 +7,8 @@
  * \ingroup wm
  */
 
+#include "BKE_paint_types.hh"
+
 namespace blender {
 
 struct Brush;
@@ -26,6 +28,7 @@ struct wmMsgSubscribeKey;
 struct wmMsgSubscribeValue;
 struct wmOperatorType;
 struct wmWindow;
+struct AssetWeakReference;
 
 /* `wm_toolsystem.cc` */
 
@@ -64,6 +67,12 @@ bToolRef_Runtime *WM_toolsystem_runtime_find(WorkSpace *workspace, const bToolKe
  */
 bool WM_toolsystem_activate_brush_and_tool(bContext *C, Paint *paint, Brush *brush);
 
+/**
+ * Get an asset reference to the last activated brush asset of a specific brush type.
+ */
+std::optional<AssetWeakReference> WM_toolsystem_last_brush_asset_from_brush_type(
+    Scene *scene, const int brush_type, const PaintMode paint_mode);
+
 void WM_toolsystem_unlink(bContext *C, WorkSpace *workspace, const bToolKey *tkey);
 void WM_toolsystem_refresh(const bContext *C, WorkSpace *workspace, const bToolKey *tkey);
 void WM_toolsystem_reinit(bContext *C, WorkSpace *workspace, const bToolKey *tkey);
@@ -91,14 +100,10 @@ void WM_toolsystem_ref_sync_from_context(Main *bmain, WorkSpace *workspace, bToo
 
 void WM_toolsystem_init(const bContext *C);
 
-int WM_toolsystem_mode_from_spacetype(const Scene *scene,
-                                      ViewLayer *view_layer,
-                                      ScrArea *area,
-                                      int space_type);
-bool WM_toolsystem_key_from_context(const Scene *scene,
-                                    ViewLayer *view_layer,
-                                    ScrArea *area,
-                                    bToolKey *tkey);
+int WM_toolsystem_mode_from_spacetype(
+    const Main &bmain, const Scene *scene, ViewLayer *view_layer, ScrArea *area, int space_type);
+bool WM_toolsystem_key_from_context(
+    const Main &bmain, const Scene *scene, ViewLayer *view_layer, ScrArea *area, bToolKey *tkey);
 
 void WM_toolsystem_update_from_context_view3d(bContext *C);
 void WM_toolsystem_update_from_context(
@@ -153,11 +158,12 @@ void WM_toolsystem_refresh_active(bContext *C);
 /**
  * \return true if the tool changed.
  */
-bool WM_toolsystem_refresh_screen_area(WorkSpace *workspace,
+bool WM_toolsystem_refresh_screen_area(const Main &bmain,
+                                       WorkSpace *workspace,
                                        const Scene *scene,
                                        ViewLayer *view_layer,
                                        ScrArea *area);
-void WM_toolsystem_refresh_screen_window(wmWindow *win);
+void WM_toolsystem_refresh_screen_window(const Main &bmain, wmWindow *win);
 void WM_toolsystem_refresh_screen_all(Main *bmain);
 
 }  // namespace blender

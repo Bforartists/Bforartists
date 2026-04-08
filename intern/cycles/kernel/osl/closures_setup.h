@@ -191,6 +191,29 @@ ccl_device void osl_closure_translucent_setup(KernelGlobals kg,
   sd->flag |= bsdf_translucent_setup(bsdf);
 }
 
+ccl_device void osl_closure_translucent_bsdf_setup(
+    KernelGlobals kg,
+    ccl_private ShaderData *sd,
+    const uint32_t path_flag,
+    const float3 weight,
+    const ccl_private TranslucentBSDFClosure *closure,
+    float3 * /*layer_albedo*/)
+{
+  if (osl_closure_skip(kg, path_flag, LABEL_DIFFUSE)) {
+    return;
+  }
+
+  ccl_private DiffuseBsdf *bsdf = (ccl_private DiffuseBsdf *)bsdf_alloc(
+      sd, sizeof(DiffuseBsdf), rgb_to_spectrum(weight * closure->albedo));
+  if (!bsdf) {
+    return;
+  }
+
+  bsdf->N = safe_normalize_fallback(closure->N, sd->N);
+
+  sd->flag |= bsdf_translucent_setup(bsdf);
+}
+
 ccl_device void osl_closure_reflection_setup(KernelGlobals kg,
                                              ccl_private ShaderData *sd,
                                              const uint32_t path_flag,
@@ -244,6 +267,17 @@ ccl_device void osl_closure_transparent_setup(KernelGlobals /*kg*/,
                                               const float3 weight,
                                               const ccl_private TransparentClosure * /*closure*/,
                                               float3 * /*layer_albedo*/)
+{
+  bsdf_transparent_setup(sd, rgb_to_spectrum(weight), path_flag);
+}
+
+ccl_device void osl_closure_transparent_bsdf_setup(
+    KernelGlobals /*kg*/,
+    ccl_private ShaderData *sd,
+    const uint32_t path_flag,
+    const float3 weight,
+    const ccl_private TransparentBSDFClosure * /*closure*/,
+    float3 * /*layer_albedo*/)
 {
   bsdf_transparent_setup(sd, rgb_to_spectrum(weight), path_flag);
 }

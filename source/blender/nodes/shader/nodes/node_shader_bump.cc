@@ -20,7 +20,7 @@ namespace nodes::node_shader_bump_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
 #define SOCK_STRENGTH_ID 0
-  b.add_input<decl::Float>("Strength")
+  b.add_input<decl::Float>("Strength"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
@@ -30,14 +30,14 @@ static void node_declare(NodeDeclarationBuilder &b)
           "no bump mapping and full bump mapping")
       .translation_context(BLT_I18NCONTEXT_AMOUNT);
 #define SOCK_DISTANCE_ID 1
-  b.add_input<decl::Float>("Distance")
+  b.add_input<decl::Float>("Distance"_ustr)
       .default_value(0.001f)
       .min(0.0f)
       .max(1000.0f)
       .description(
           "Multiplier for the height value to control the overall distance for bump mapping");
 #define SOCK_FILTER_WIDTH_ID 2
-  b.add_input<decl::Float>("Filter Width")
+  b.add_input<decl::Float>("Filter Width"_ustr)
       .default_value(0.1f)
       .min(0.001)
       .max(10.0f)
@@ -47,15 +47,15 @@ static void node_declare(NodeDeclarationBuilder &b)
           "the default value of 0.1 enables subpixel filtering for stable results. For stepwise "
           "textures a larger filter width can be used to get a bevel like effect on the edges");
 #define SOCK_HEIGHT_ID 3
-  b.add_input<decl::Float>("Height")
+  b.add_input<decl::Float>("Height"_ustr)
       .default_value(1.0f)
       .min(-1000.0f)
       .max(1000.0f)
       .hide_value()
       .description("Height above surface. Connect the height map texture to this input");
 #define SOCK_NORMAL_ID 4
-  b.add_input<decl::Vector>("Normal").min(-1.0f).max(1.0f).hide_value();
-  b.add_output<decl::Vector>("Normal");
+  b.add_input<decl::Vector>("Normal"_ustr).min(-1.0f).max(1.0f).hide_value();
+  b.add_output<decl::Vector>("Normal"_ustr);
 }
 
 static void node_shader_buts_bump(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

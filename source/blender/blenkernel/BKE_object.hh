@@ -294,31 +294,31 @@ Object *BKE_object_pose_armature_get(Object *ob);
  * which isn't the case when the object using the armature isn't in weight-paint mode.
  */
 Object *BKE_object_pose_armature_get_with_wpaint_check(Object *ob);
-Object *BKE_object_pose_armature_get_visible(Object *ob,
-                                             const Scene *scene,
-                                             ViewLayer *view_layer,
-                                             View3D *v3d);
+Object *BKE_object_pose_armature_get_visible(
+    const Main &bmain, Object *ob, const Scene *scene, ViewLayer *view_layer, View3D *v3d);
 
 /**
  * Access pose array with special check to get pose object when in weight paint mode.
  */
-Vector<Object *> BKE_object_pose_array_get_ex(const Scene *scene,
-                                              ViewLayer *view_layer,
-                                              View3D *v3d,
-                                              bool unique);
-Vector<Object *> BKE_object_pose_array_get_unique(const Scene *scene,
+Vector<Object *> BKE_object_pose_array_get_ex(
+    const Main &bmain, const Scene *scene, ViewLayer *view_layer, View3D *v3d, bool unique);
+Vector<Object *> BKE_object_pose_array_get_unique(const Main &bmain,
+                                                  const Scene *scene,
                                                   ViewLayer *view_layer,
                                                   View3D *v3d);
-Vector<Object *> BKE_object_pose_array_get(const Scene *scene, ViewLayer *view_layer, View3D *v3d);
+Vector<Object *> BKE_object_pose_array_get(const Main &bmain,
+                                           const Scene *scene,
+                                           ViewLayer *view_layer,
+                                           View3D *v3d);
 
-Vector<Base *> BKE_object_pose_base_array_get_ex(const Scene *scene,
-                                                 ViewLayer *view_layer,
-                                                 View3D *v3d,
-                                                 bool unique);
-Vector<Base *> BKE_object_pose_base_array_get_unique(const Scene *scene,
+Vector<Base *> BKE_object_pose_base_array_get_ex(
+    const Main &bmain, const Scene *scene, ViewLayer *view_layer, View3D *v3d, bool unique);
+Vector<Base *> BKE_object_pose_base_array_get_unique(const Main &bmain,
+                                                     const Scene *scene,
                                                      ViewLayer *view_layer,
                                                      View3D *v3d);
-Vector<Base *> BKE_object_pose_base_array_get(const Scene *scene,
+Vector<Base *> BKE_object_pose_base_array_get(const Main &bmain,
+                                              const Scene *scene,
                                               ViewLayer *view_layer,
                                               View3D *v3d);
 
@@ -632,7 +632,8 @@ enum eObjectSet {
  * If #OB_SET_VISIBLE or#OB_SET_SELECTED are collected,
  * then also add related objects according to the given \a includeFilter.
  */
-LinkNode *BKE_object_relational_superset(const Scene *scene,
+LinkNode *BKE_object_relational_superset(const Main &bmain,
+                                         const Scene *scene,
                                          ViewLayer *view_layer,
                                          eObjectSet objectSet,
                                          eObRelationTypes includeFilter);

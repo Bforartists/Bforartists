@@ -65,29 +65,15 @@ MeshRuntime::~MeshRuntime()
   free_batch_cache(*this);
 }
 
-static int reset_bits_and_count(MutableBitSpan bits, const Span<int> indices_to_reset)
+static void set_bools(MutableSpan<bool> bools, const Span<int> indices_to_set)
 {
-  int count = bits.size();
-  for (const int i : indices_to_reset) {
-    if (bits[i]) {
-      bits[i].reset();
-      count--;
-    }
-  }
-  return count;
-}
-
-static void bit_vector_with_reset_bits_or_empty(const Span<int> indices_to_reset,
-                                                const int indexed_elems_num,
-                                                BitVector<> &r_bits,
-                                                int &r_count)
-{
-  r_bits.resize(0);
-  r_bits.resize(indexed_elems_num, true);
-  r_count = reset_bits_and_count(r_bits, indices_to_reset);
-  if (r_count == 0) {
-    r_bits.clear_and_shrink();
-  }
+  threading::memory_bandwidth_bound_task(indices_to_set.size(), [&]() {
+    threading::parallel_for(indices_to_set.index_range(), 8192, [&](const IndexRange range) {
+      for (const int i : range) {
+        bools[indices_to_set[i]] = true;
+      }
+    });
+  });
 }
 
 /**
@@ -95,15 +81,16 @@ static void bit_vector_with_reset_bits_or_empty(const Span<int> indices_to_reset
  */
 static void try_tag_verts_no_face_none(const Mesh &mesh)
 {
-  if (!mesh.runtime->loose_edges_cache.is_cached() || mesh.loose_edges().count > 0) {
+  if (!mesh.runtime->loose_edges_cache.is_cached() || !mesh.loose_edges().is_empty()) {
     return;
   }
-  if (!mesh.runtime->loose_verts_cache.is_cached() || mesh.loose_verts().count > 0) {
+  if (!mesh.runtime->loose_verts_cache.is_cached() || !mesh.loose_verts().is_empty()) {
     return;
   }
-  mesh.runtime->verts_no_face_cache.ensure([&](LooseVertCache &r_data) {
-    r_data.is_loose_bits.clear_and_shrink();
-    r_data.count = 0;
+  mesh.runtime->verts_no_face_cache.ensure([&](LooseGeomCache &r_data) {
+    r_data.allocator.~LinearAllocator<>();
+    new (&r_data.allocator) LinearAllocator<>();
+    r_data.mask = {};
   });
 }
 
@@ -157,26 +144,30 @@ GroupedSpan<int> Mesh::vert_to_corner_map() const
   return {offsets, this->runtime->vert_to_corner_map_cache.data()};
 }
 
-const bke::LooseVertCache &Mesh::loose_verts() const
+const IndexMask &Mesh::loose_verts() const
 {
   using namespace blender::bke;
-  this->runtime->loose_verts_cache.ensure([&](LooseVertCache &r_data) {
-    const Span<int> verts = this->edges().cast<int>();
-    bit_vector_with_reset_bits_or_empty(
-        verts, this->verts_num, r_data.is_loose_bits, r_data.count);
+  this->runtime->loose_verts_cache.ensure([&](LooseGeomCache &r_data) {
+    Array<bool, 256> bools(this->verts_num, false);
+    set_bools(bools, this->edges().cast<int>());
+    r_data.allocator.~LinearAllocator<>();
+    new (&r_data.allocator) LinearAllocator<>();
+    r_data.mask = IndexMask::from_bools_inverse(bools, r_data.allocator);
   });
-  return this->runtime->loose_verts_cache.data();
+  return this->runtime->loose_verts_cache.data().mask;
 }
 
-const bke::LooseVertCache &Mesh::verts_no_face() const
+const IndexMask &Mesh::verts_no_face() const
 {
   using namespace blender::bke;
-  this->runtime->verts_no_face_cache.ensure([&](LooseVertCache &r_data) {
-    const Span<int> verts = this->corner_verts();
-    bit_vector_with_reset_bits_or_empty(
-        verts, this->verts_num, r_data.is_loose_bits, r_data.count);
+  this->runtime->verts_no_face_cache.ensure([&](LooseGeomCache &r_data) {
+    Array<bool, 256> bools(this->verts_num, false);
+    set_bools(bools, this->corner_verts());
+    r_data.allocator.~LinearAllocator<>();
+    new (&r_data.allocator) LinearAllocator<>();
+    r_data.mask = IndexMask::from_bools_inverse(bools, r_data.allocator);
   });
-  return this->runtime->verts_no_face_cache.data();
+  return this->runtime->verts_no_face_cache.data().mask;
 }
 
 bool Mesh::no_overlapping_topology() const
@@ -184,23 +175,26 @@ bool Mesh::no_overlapping_topology() const
   return this->flag & ME_NO_OVERLAPPING_TOPOLOGY;
 }
 
-const bke::LooseEdgeCache &Mesh::loose_edges() const
+const IndexMask &Mesh::loose_edges() const
 {
   using namespace blender::bke;
-  this->runtime->loose_edges_cache.ensure([&](LooseEdgeCache &r_data) {
-    const Span<int> edges = this->corner_edges();
-    bit_vector_with_reset_bits_or_empty(
-        edges, this->edges_num, r_data.is_loose_bits, r_data.count);
+  this->runtime->loose_edges_cache.ensure([&](LooseGeomCache &r_data) {
+    Array<bool, 256> bools(this->edges_num, false);
+    set_bools(bools, this->corner_edges());
+    r_data.allocator.~LinearAllocator<>();
+    new (&r_data.allocator) LinearAllocator<>();
+    r_data.mask = IndexMask::from_bools_inverse(bools, r_data.allocator);
   });
-  return this->runtime->loose_edges_cache.data();
+  return this->runtime->loose_edges_cache.data().mask;
 }
 
 void Mesh::tag_loose_verts_none() const
 {
   using namespace blender::bke;
-  this->runtime->loose_verts_cache.ensure([&](LooseVertCache &r_data) {
-    r_data.is_loose_bits.clear_and_shrink();
-    r_data.count = 0;
+  this->runtime->loose_verts_cache.ensure([&](LooseGeomCache &r_data) {
+    r_data.allocator.~LinearAllocator<>();
+    new (&r_data.allocator) LinearAllocator<>();
+    r_data.mask = {};
   });
   try_tag_verts_no_face_none(*this);
 }
@@ -208,9 +202,10 @@ void Mesh::tag_loose_verts_none() const
 void Mesh::tag_loose_edges_none() const
 {
   using namespace blender::bke;
-  this->runtime->loose_edges_cache.ensure([&](LooseEdgeCache &r_data) {
-    r_data.is_loose_bits.clear_and_shrink();
-    r_data.count = 0;
+  this->runtime->loose_edges_cache.ensure([&](LooseGeomCache &r_data) {
+    r_data.allocator.~LinearAllocator<>();
+    new (&r_data.allocator) LinearAllocator<>();
+    r_data.mask = {};
   });
   try_tag_verts_no_face_none(*this);
 }
@@ -342,17 +337,17 @@ void Mesh::tag_edges_split()
   this->runtime->vert_to_face_map_cache.tag_dirty();
   this->runtime->vert_to_corner_map_cache.tag_dirty();
   if (this->runtime->loose_edges_cache.is_cached() &&
-      this->runtime->loose_edges_cache.data().count != 0)
+      !this->runtime->loose_edges_cache.data().mask.is_empty())
   {
     this->runtime->loose_edges_cache.tag_dirty();
   }
   if (this->runtime->loose_verts_cache.is_cached() &&
-      this->runtime->loose_verts_cache.data().count != 0)
+      !this->runtime->loose_verts_cache.data().mask.is_empty())
   {
     this->runtime->loose_verts_cache.tag_dirty();
   }
   if (this->runtime->verts_no_face_cache.is_cached() &&
-      this->runtime->verts_no_face_cache.data().count != 0)
+      !this->runtime->verts_no_face_cache.data().mask.is_empty())
   {
     this->runtime->verts_no_face_cache.tag_dirty();
   }

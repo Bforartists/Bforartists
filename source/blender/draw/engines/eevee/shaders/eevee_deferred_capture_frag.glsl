@@ -92,11 +92,11 @@ void main()
 
   /* Indirect light. */
   /* Can only load irradiance to avoid dependency loop with the reflection probe. */
-  SphericalHarmonicL1 sh = lightprobe_volume_sample(P, V, Ng);
+  SphericalHarmonicL1<float4> sh = lightprobe_volume_sample(P, V, Ng);
 
-  radiance_front += spherical_harmonics_evaluate_lambert(Ng, sh);
+  radiance_front += sh.evaluate_lambert(Ng).rgb;
   /* TODO(fclem): Correct transmission eval. */
-  radiance_back += spherical_harmonics_evaluate_lambert(-Ng, sh);
+  radiance_back += sh.evaluate_lambert(-Ng).rgb;
 
   out_radiance = float4(radiance_front * albedo_front + radiance_back * albedo_back, 0.0f);
 }

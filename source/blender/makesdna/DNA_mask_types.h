@@ -88,6 +88,7 @@ enum MaskLayerFlag {
 
   /* no holes */
   MASK_LAYERFLAG_FILL_DISCRETE = (1 << 6),
+  /** Only for #the MASK_FILL_SOLVER_SWEEP_LINE solver. */
   MASK_LAYERFLAG_FILL_OVERLAP = (1 << 7),
 };
 
@@ -98,6 +99,19 @@ enum MaskLayerShapeFlag {
 
 enum MaskAnimFlag {
   MASK_ANIMF_EXPAND = (1 << 4),
+};
+
+/** #Mask.fill_solver */
+enum MaskLayerFillSolverType {
+  /**
+   * Fast filling without support for self-intersections.
+   * Uses `BLI_scanfill`.
+   */
+  MASK_FILL_SOLVER_SWEEP_LINE = 0,
+  /**
+   * Constrained Delaunay Triangulation with self-intersection and fill rule support.
+   */
+  MASK_FILL_SOLVER_CDT = 1,
 };
 
 struct MaskLayerShapeElem;
@@ -249,7 +263,8 @@ struct MaskLayer {
   char blend = 0;      /* MaskLayerBlend */
   char blend_flag = 0; /* MaskLayerBlendFlag */
   char falloff = 0;
-  char _pad[7] = {};
+  char fill_solver = MASK_FILL_SOLVER_CDT; /* MaskLayerFillSolverType */
+  char _pad[6] = {};
 
   char flag = 0; /* MaskLayerFlag */
   /** Matching 'Object' flag of the same name - eventually use in the outliner

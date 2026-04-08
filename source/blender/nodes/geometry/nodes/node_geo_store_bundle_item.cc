@@ -24,14 +24,17 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_default_layout();
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Bundle>("Bundle");
-  b.add_output<decl::Bundle>("Bundle").align_with_previous().propagate_all().reference_pass_all();
-  b.add_input<decl::String>("Path").optional_label();
+  b.add_input<decl::Bundle>("Bundle"_ustr);
+  b.add_output<decl::Bundle>("Bundle"_ustr)
+      .align_with_previous()
+      .propagate_all()
+      .reference_pass_all();
+  b.add_input<decl::String>("Path"_ustr).optional_label();
 
   if (node != nullptr) {
     const NodeStoreBundleItem &storage = node_storage(*node);
     const eNodeSocketDatatype socket_type = eNodeSocketDatatype(storage.socket_type);
-    auto &decl = b.add_input(socket_type, "Item");
+    auto &decl = b.add_input(socket_type, "Item"_ustr);
     if (ELEM(storage.structure_type,
              NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC,
              NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD,
@@ -74,37 +77,37 @@ static void node_geo_exec(GeoNodeExecParams params)
   const bNode &bnode = params.node();
   const NodeStoreBundleItem &storage = node_storage(bnode);
 
-  BundlePtr bundle_ptr = params.extract_input<nodes::BundlePtr>("Bundle");
+  BundlePtr bundle_ptr = params.extract_input<nodes::BundlePtr>("Bundle"_ustr);
   if (!bundle_ptr) {
     bundle_ptr = Bundle::create();
   }
   Bundle &bundle = bundle_ptr.ensure_mutable_inplace();
 
-  const std::string path = params.extract_input<std::string>("Path");
+  const std::string path = params.extract_input<std::string>("Path"_ustr);
   if (!Bundle::is_valid_path(path)) {
     if (!path.empty()) {
       params.error_message_add(NodeWarningType::Warning, "Invalid bundle path");
     }
-    params.set_output("Bundle", std::move(bundle_ptr));
+    params.set_output("Bundle"_ustr, std::move(bundle_ptr));
     return;
   }
 
-  bke::SocketValueVariant value = params.extract_input<bke::SocketValueVariant>("Item");
-  const bNodeSocket *item_sock = bnode.input_by_identifier("Item");
+  bke::SocketValueVariant value = params.extract_input<bke::SocketValueVariant>("Item"_ustr);
+  const bNodeSocket *item_sock = bnode.input_by_identifier("Item"_ustr);
   if (!item_sock) {
-    params.set_output("Bundle", std::move(bundle_ptr));
+    params.set_output("Bundle"_ustr, std::move(bundle_ptr));
     return;
   }
 
   const bke::bNodeSocketType *stype = bke::node_socket_type_find_static(storage.socket_type, 0);
   if (!stype || !stype->geometry_nodes_default_value) {
-    params.set_output("Bundle", std::move(bundle_ptr));
+    params.set_output("Bundle"_ustr, std::move(bundle_ptr));
     return;
   }
 
   bundle.add_path_override(path, BundleItemSocketValue{stype, std::move(value)});
 
-  params.set_output("Bundle", std::move(bundle_ptr));
+  params.set_output("Bundle"_ustr, std::move(bundle_ptr));
 }
 
 static void node_rna(StructRNA *srna)

@@ -706,7 +706,6 @@ Mesh *MOD_solidify_extrude_modifyMesh(ModifierData *md, const ModifierEvalContex
 #ifdef USE_NONMANIFOLD_WORKAROUND
     const bool check_non_manifold = (smd->flag & MOD_SOLIDIFY_NORMAL_CALC) != 0;
 #endif
-    /* same as EM_solidify() in editmesh_lib.c */
     float *vert_angles = MEM_new_array_zeroed<float>(2 * verts_num, "mod_solid_pair"); /* 2 in 1 */
     float *vert_accum = vert_angles + verts_num;
     uint vidx;

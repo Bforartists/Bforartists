@@ -10,8 +10,8 @@ namespace blender::nodes::node_composite_scene_time_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Seconds");
-  b.add_output<decl::Float>("Frame");
+  b.add_output<decl::Float>("Seconds"_ustr);
+  b.add_output<decl::Float>("Frame"_ustr);
 }
 
 using namespace blender::compositor;

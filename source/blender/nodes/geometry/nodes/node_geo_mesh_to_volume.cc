@@ -37,33 +37,33 @@ static EnumPropertyItem resolution_mode_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh to convert the inner volume to a fog volume geometry");
-  b.add_input<decl::Float>("Density").default_value(1.0f).min(0.01f).max(FLT_MAX);
-  b.add_input<decl::Menu>("Resolution Mode")
+  b.add_input<decl::Float>("Density"_ustr).default_value(1.0f).min(0.01f).max(FLT_MAX);
+  b.add_input<decl::Menu>("Resolution Mode"_ustr)
       .static_items(resolution_mode_items)
       .optional_label()
       .description("How the voxel size is specified")
       .translation_context(BLT_I18NCONTEXT_COUNTABLE);
-  b.add_input<decl::Float>("Voxel Size")
+  b.add_input<decl::Float>("Voxel Size"_ustr)
       .default_value(0.3f)
       .min(0.01f)
       .max(FLT_MAX)
       .subtype(PROP_DISTANCE)
       .usage_by_single_menu(MESH_TO_VOLUME_RESOLUTION_MODE_VOXEL_SIZE);
-  b.add_input<decl::Float>("Voxel Amount")
+  b.add_input<decl::Float>("Voxel Amount"_ustr)
       .default_value(64.0f)
       .min(0.0f)
       .max(FLT_MAX)
       .usage_by_single_menu(MESH_TO_VOLUME_RESOLUTION_MODE_VOXEL_AMOUNT);
-  b.add_input<decl::Float>("Interior Band Width")
+  b.add_input<decl::Float>("Interior Band Width"_ustr)
       .default_value(0.2f)
       .min(0.0001f)
       .max(FLT_MAX)
       .subtype(PROP_DISTANCE)
       .description("Width of the gradient inside of the mesh");
-  b.add_output<decl::Geometry>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
+  b.add_output<decl::Geometry>("Volume"_ustr).translation_context(BLT_I18NCONTEXT_ID_ID);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -76,20 +76,20 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 
 static Volume *create_volume_from_mesh(const Mesh &mesh, GeoNodeExecParams &params)
 {
-  const float density = params.get_input<float>("Density");
-  const float interior_band_width = params.get_input<float>("Interior Band Width");
-  const auto mode = params.get_input<MeshToVolumeModifierResolutionMode>("Resolution Mode");
+  const float density = params.get_input<float>("Density"_ustr);
+  const float interior_band_width = params.get_input<float>("Interior Band Width"_ustr);
+  const auto mode = params.get_input<MeshToVolumeModifierResolutionMode>("Resolution Mode"_ustr);
 
   geometry::MeshToVolumeResolution resolution;
   resolution.mode = mode;
   if (resolution.mode == MESH_TO_VOLUME_RESOLUTION_MODE_VOXEL_AMOUNT) {
-    resolution.settings.voxel_amount = params.get_input<float>("Voxel Amount");
+    resolution.settings.voxel_amount = params.get_input<float>("Voxel Amount"_ustr);
     if (resolution.settings.voxel_amount <= 0.0f) {
       return nullptr;
     }
   }
   else if (resolution.mode == MESH_TO_VOLUME_RESOLUTION_MODE_VOXEL_SIZE) {
-    resolution.settings.voxel_size = params.get_input<float>("Voxel Size");
+    resolution.settings.voxel_size = params.get_input<float>("Voxel Size"_ustr);
     if (resolution.settings.voxel_size <= 0.0f) {
       return nullptr;
     }
@@ -129,7 +129,7 @@ static Volume *create_volume_from_mesh(const Mesh &mesh, GeoNodeExecParams &para
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  GeometrySet geometry_set(params.extract_input<GeometrySet>("Mesh"));
+  GeometrySet geometry_set(params.extract_input<GeometrySet>("Mesh"_ustr));
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     if (geometry_set.has_mesh()) {
       Volume *volume = create_volume_from_mesh(*geometry_set.get_mesh(), params);
@@ -137,7 +137,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       geometry_set.keep_only({GeometryComponent::Type::Volume, GeometryComponent::Type::Edit});
     }
   });
-  params.set_output("Volume", std::move(geometry_set));
+  params.set_output("Volume"_ustr, std::move(geometry_set));
 #else
   node_geo_exec_with_missing_openvdb(params);
   return;

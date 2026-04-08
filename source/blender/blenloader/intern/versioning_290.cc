@@ -1497,7 +1497,7 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ModifierData &md : ob.modifiers) {
         if (md.type == eModifierType_Nodes) {
           NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(&md);
-          IDProperty *nmd_properties = nmd->settings.properties;
+          IDProperty *nmd_properties = nmd->settings_legacy.properties;
 
           BLI_assert(nmd_properties->type == IDP_GROUP);
           for (IDProperty &nmd_socket_idprop : nmd_properties->data.group) {

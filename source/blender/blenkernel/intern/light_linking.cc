@@ -531,7 +531,8 @@ void BKE_light_linking_link_receiver_to_emitter(Main *bmain,
   BKE_light_linking_add_receiver_to_collection(bmain, collection, &receiver->id, link_state);
 }
 
-void BKE_light_linking_select_receivers_of_emitter(Scene *scene,
+void BKE_light_linking_select_receivers_of_emitter(const Main &bmain,
+                                                   Scene *scene,
                                                    ViewLayer *view_layer,
                                                    Object *emitter,
                                                    const LightLinkingType link_type)
@@ -541,7 +542,7 @@ void BKE_light_linking_select_receivers_of_emitter(Scene *scene,
     return;
   }
 
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
 
   /* Deselect all currently selected objects in the view layer, but keep the emitter selected.
    * This is because the operation is called from the emitter being active, and it will be

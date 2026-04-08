@@ -291,7 +291,7 @@ static void grease_pencil_blend_write(BlendWriter *writer, ID *id, const void *i
   ResourceScope scope;
 
   Vector<CustomDataLayer, 16> layers_data_layers;
-  bke::AttributeStorage::BlendWriteData attribute_data{scope};
+  bke::AttributeStorage::BlendWriteData attribute_data{writer, scope};
   attribute_storage_blend_write_prepare(
       grease_pencil->attribute_storage.wrap(),
       !BLO_write_is_undo(writer),
@@ -299,6 +299,7 @@ static void grease_pencil_blend_write(BlendWriter *writer, ID *id, const void *i
       attribute_data);
   grease_pencil->attribute_storage.dna_attributes = attribute_data.attributes.data();
   grease_pencil->attribute_storage.dna_attributes_num = attribute_data.attributes.size();
+  BLO_write_generated_pointer_tag(writer, grease_pencil->attribute_storage.dna_attributes);
 
   CustomData_reset(&grease_pencil->layers_data_legacy);
 
@@ -4610,12 +4611,9 @@ static void write_drawing_array(GreasePencil &grease_pencil,
         drawing_copy = *reinterpret_cast<GreasePencilDrawing *>(drawing_base);
         bke::CurvesGeometry &curves = drawing_copy.geometry.wrap();
 
-        bke::CurvesGeometry::BlendWriteData write_data(scope);
+        bke::CurvesGeometry::BlendWriteData write_data(writer, scope);
         curves.blend_write_prepare(write_data, !BLO_write_is_undo(writer));
         drawing_copy.runtime = nullptr;
-
-        BLO_write_shared_tag(writer, curves.curve_offsets);
-        BLO_write_shared_tag(writer, curves.custom_knots);
 
         writer->write_struct_at_address_cast<GreasePencilDrawing>(drawing_base, &drawing_copy);
         curves.blend_write(*writer, grease_pencil.id, write_data);

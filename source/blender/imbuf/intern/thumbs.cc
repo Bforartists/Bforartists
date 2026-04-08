@@ -429,8 +429,8 @@ static ImBuf *thumb_create_ex(const char *file_path,
         short ex = std::max(short(1), short(img->x * scale));
         short ey = std::max(short(1), short(img->y * scale));
         /* Save some time by only scaling byte buffer. */
-        if (img->float_buffer.data) {
-          if (img->byte_buffer.data == nullptr) {
+        if (img->float_data()) {
+          if (img->byte_data() == nullptr) {
             IMB_byte_from_float(img);
           }
           IMB_free_float_pixels(img);

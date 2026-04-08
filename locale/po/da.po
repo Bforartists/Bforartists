@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'45d5533d8e66')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 11:01+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
 "PO-Revision-Date: 2025-07-31 16:24+0000\n"
 "Last-Translator: leif larsen <linuxdk1978@gmail.com>\n"
 "Language-Team: Danish <https://translate.blender.org/projects/blender-ui/ui/da/>\n"
@@ -745,14 +745,6 @@ msgstr "Bund"
 
 msgid "Place the Mix node at the same height as the lowest node"
 msgstr "Placer Mix-noden mellem de to noder"
-
-
-msgid "Show Hotkey List"
-msgstr "Vis genvejsliste"
-
-
-msgid "Expand this box into a list of all the hotkeys for functions in this addon"
-msgstr "Udvid denne boks til en liste over alle genvejstaster til funktioner i denne tilføjelse"
 
 
 msgid "Fribidi Library"
@@ -3128,12 +3120,12 @@ msgid "Material"
 msgstr "Materiale"
 
 
-msgid "All"
-msgstr "alle"
-
-
 msgid "Threshold"
 msgstr "Tærskel"
+
+
+msgid "All"
+msgstr "alle"
 
 
 msgid "Object Path"

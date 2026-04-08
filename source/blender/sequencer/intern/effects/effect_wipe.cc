@@ -215,23 +215,23 @@ static ImBuf *do_wipe_effect(const RenderData *context,
 {
   ImBuf *out = prepare_effect_imbufs(context, ibuf1, ibuf2);
 
-  if (out->float_buffer.data) {
+  if (out->float_data()) {
     do_wipe_effect(strip,
                    fac,
                    context->rectx,
                    context->recty,
-                   ibuf1->float_buffer.data,
-                   ibuf2->float_buffer.data,
-                   out->float_buffer.data);
+                   ibuf1->float_data(),
+                   ibuf2->float_data(),
+                   out->float_data_for_write());
   }
   else {
     do_wipe_effect(strip,
                    fac,
                    context->rectx,
                    context->recty,
-                   ibuf1->byte_buffer.data,
-                   ibuf2->byte_buffer.data,
-                   out->byte_buffer.data);
+                   ibuf1->byte_data(),
+                   ibuf2->byte_data(),
+                   out->byte_data_for_write());
   }
 
   return out;

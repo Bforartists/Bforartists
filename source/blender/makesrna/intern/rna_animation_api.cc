@@ -64,7 +64,15 @@ void rna_id_animdata_fix_paths_rename_all(ID *id,
                                           const char *oldName,
                                           const char *newName)
 {
-  BKE_animdata_fix_paths_rename_all_ex(bmain, id, prefix, oldName, newName, 0, 0, true);
+  BKE_animdata_fix_paths_rename_all_ex(bmain,
+                                       id,
+                                       prefix,
+                                       oldName,
+                                       newName,
+                                       0,
+                                       0,
+                                       /*verify_paths=*/true,
+                                       /*infix_is_name=*/true);
 }
 
 }  // namespace blender

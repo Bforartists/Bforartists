@@ -451,7 +451,7 @@ static void draw_text_shadow(
   clamp_rect(width, height, shadow_rect);
 
   /* Initialize shadow by copying existing text/outline alpha. */
-  initialize_shadow_alpha(width, height, offset, shadow_rect, out->byte_buffer.data, shadow_mask);
+  initialize_shadow_alpha(width, height, offset, shadow_rect, out->byte_data(), shadow_mask);
 
   if (do_blur) {
     /* Create blur kernel weights. */
@@ -497,7 +497,7 @@ static void draw_text_shadow(
   color.x *= color.w;
   color.y *= color.w;
   color.z *= color.w;
-  composite_shadow(width, shadow_rect, color, shadow_mask, out->byte_buffer.data);
+  composite_shadow(width, shadow_rect, color, shadow_mask, out->byte_data_for_write());
 }
 
 /* Text outline calculation is done by Jump Flooding Algorithm (JFA).
@@ -659,10 +659,11 @@ static rcti draw_text_outline(const RenderData *context,
   /* We have distances to the closest opaque parts of the image now. Composite the
    * outline into the output image. */
 
+  uchar *byte_data = out->byte_data_for_write();
   threading::parallel_for(rect_y_range, 8, [&](const IndexRange y_range) {
     for (const int y : y_range) {
       size_t index = size_t(y) * size.x + rect_x_range.start();
-      uchar *dst = out->byte_buffer.data + index * 4;
+      uchar *dst = byte_data + index * 4;
       for (int x = rect_x_range.start(); x < rect_x_range.one_after_last(); x++, index++, dst += 4)
       {
         JFACoord closest_texel = (*result_to_flood)[index];
@@ -701,8 +702,7 @@ static rcti draw_text_outline(const RenderData *context,
       }
     }
   });
-  BLF_buffer(
-      runtime->font, nullptr, out->byte_buffer.data, size.x, size.y, out->byte_buffer.colorspace);
+  BLF_buffer(runtime->font, nullptr, byte_data, size.x, size.y, out->byte_buffer.colorspace);
 
   return outline_rect;
 }
@@ -710,7 +710,7 @@ static rcti draw_text_outline(const RenderData *context,
 /* Similar to #IMB_rectfill_area but blends the given color under the
  * existing image. Also can do rounded corners. Only works on byte buffers. */
 static void fill_rect_alpha_under(
-    const ImBuf *ibuf, const float col[4], int x1, int y1, int x2, int y2, float corner_radius)
+    ImBuf *ibuf, const float col[4], int x1, int y1, int x2, int y2, float corner_radius)
 {
   const int width = ibuf->x;
   const int height = ibuf->y;
@@ -733,9 +733,10 @@ static void fill_rect_alpha_under(
   float4 premul_col_base;
   straight_to_premul_v4_v4(premul_col_base, col);
 
+  uchar *byte_data = ibuf->byte_data_for_write();
   threading::parallel_for(IndexRange::from_begin_end(y1, y2), 16, [&](const IndexRange y_range) {
     for (const int y : y_range) {
-      uchar *dst = ibuf->byte_buffer.data + (size_t(width) * y + x1) * 4;
+      uchar *dst = byte_data + (size_t(width) * y + x1) * 4;
       float origin_x = 0.0f, origin_y = 0.0f;
       for (int x = x1; x < x2; x++) {
         float4 pix = load_premul_pixel(dst);
@@ -1085,7 +1086,8 @@ static ImBuf *do_text_effect(const RenderData *context,
   data->runtime = runtime;
 
   rcti outline_rect = draw_text_outline(context, data, runtime, out);
-  BLF_buffer(font, nullptr, out->byte_buffer.data, out->x, out->y, out->byte_buffer.colorspace);
+  BLF_buffer(
+      font, nullptr, out->byte_data_for_write(), out->x, out->y, out->byte_buffer.colorspace);
   text_draw(data->text_ptr, runtime, data->color);
   BLF_buffer(font, nullptr, nullptr, 0, 0, nullptr);
   BLF_disable(font, font_flags);
@@ -1097,7 +1099,7 @@ static ImBuf *do_text_effect(const RenderData *context,
 
   /* Draw box under text. */
   if (data->flag & SEQ_TEXT_BOX) {
-    if (out->byte_buffer.data) {
+    if (out->byte_data()) {
       const int margin = data->box_margin * out->x;
       const int minx = runtime->text_boundbox.xmin - margin;
       const int maxx = runtime->text_boundbox.xmax + margin;

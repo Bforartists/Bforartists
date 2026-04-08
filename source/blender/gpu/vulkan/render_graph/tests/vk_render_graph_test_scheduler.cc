@@ -556,6 +556,7 @@ TEST_P(VKRenderGraphTestScheduler, begin_draw_copy_framebuffer_draw_end)
     copy_image.vk_image_aspect = VK_IMAGE_ASPECT_COLOR_BIT;
     copy_image.node_data.src_image = image_attachment;
     copy_image.node_data.dst_image = image_feedback;
+    copy_image.node_data.mip_levels = 1u;
     copy_image.node_data.region.extent.width = 1920;
     copy_image.node_data.region.extent.height = 1080;
     copy_image.node_data.region.extent.depth = 1;
@@ -965,6 +966,7 @@ TEST_P(VKRenderGraphTestScheduler, begin_draw_copy_to_attachment_draw_end)
     copy_image.vk_image_aspect = VK_IMAGE_ASPECT_COLOR_BIT;
     copy_image.node_data.src_image = image_editor;
     copy_image.node_data.dst_image = image_attachment;
+    copy_image.node_data.mip_levels = 1u;
     copy_image.node_data.region.extent.width = 1920;
     copy_image.node_data.region.extent.height = 1080;
     copy_image.node_data.region.extent.depth = 1;

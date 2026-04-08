@@ -31,11 +31,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
 
-  b.add_input(data_type, "Grid").hide_value().structure_type(StructureType::Grid);
+  b.add_input(data_type, "Grid"_ustr).hide_value().structure_type(StructureType::Grid);
 
-  b.add_output<decl::Matrix>("Transform")
+  b.add_output<decl::Matrix>("Transform"_ustr)
       .description("Transform from grid index space to object space");
-  b.add_output(data_type, "Background Value").description("Default value outside of grid voxels");
+  b.add_output(data_type, "Background Value"_ustr)
+      .description("Default value outside of grid voxels");
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -77,7 +78,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
         params.add_item(IFACE_("Grid"), [data_type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeGridInfo");
           node.custom1 = *data_type;
-          params.update_and_connect_available_socket(node, "Grid");
+          params.update_and_connect_available_socket(node, "Grid"_ustr);
         });
       }
     }
@@ -86,7 +87,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
     if (params.node_tree().typeinfo->validate_link(SOCK_MATRIX, other_type)) {
       params.add_item(IFACE_("Transform"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeGridInfo");
-        params.update_and_connect_available_socket(node, "Transform");
+        params.update_and_connect_available_socket(node, "Transform"_ustr);
       });
     }
     const std::optional<eNodeSocketDatatype> data_type = node_type_for_socket_type(other_socket);
@@ -94,7 +95,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Background Value"), [data_type](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeGridInfo");
         node.custom1 = *data_type;
-        params.update_and_connect_available_socket(node, "Background Value");
+        params.update_and_connect_available_socket(node, "Background Value"_ustr);
       });
     }
   }
@@ -105,7 +106,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 #ifdef WITH_OPENVDB
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(params.node().custom1);
 
-  const auto grid = params.extract_input<bke::GVolumeGrid>("Grid");
+  const auto grid = params.extract_input<bke::GVolumeGrid>("Grid"_ustr);
   if (!grid) {
     params.set_default_remaining_outputs();
     return;
@@ -113,7 +114,7 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   bke::VolumeTreeAccessToken tree_token;
   const std::shared_ptr<const openvdb::GridBase> vdb_grid = grid->grid_ptr(tree_token);
-  params.set_output("Transform", BKE_volume_transform_to_blender(vdb_grid->transform()));
+  params.set_output("Transform"_ustr, BKE_volume_transform_to_blender(vdb_grid->transform()));
 
   bke::attribute_math::to_static_type(
       *bke::socket_type_to_geo_nodes_base_cpp_type(data_type), [&]<typename ValueT>() {
@@ -124,7 +125,7 @@ static void node_geo_exec(GeoNodeExecParams params)
         if constexpr (!std::is_same_v<typename type_traits::BlenderType, void>) {
           const std::shared_ptr<const GridType> vdb_typed_grid = openvdb::GridBase::grid<GridType>(
               vdb_grid);
-          params.set_output("Background Value",
+          params.set_output("Background Value"_ustr,
                             type_traits::to_blender(vdb_typed_grid->background()));
         }
       });

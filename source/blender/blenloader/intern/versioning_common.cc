@@ -140,7 +140,7 @@ static void change_node_socket_name(ListBaseT<bNodeSocket> *sockets,
       STRNCPY_UTF8(socket.name, new_name);
     }
     if (STREQ(socket.identifier, old_name)) {
-      STRNCPY_UTF8(socket.identifier, new_name);
+      version_node_socket_identifier_set(socket, new_name);
     }
   }
 }
@@ -169,7 +169,14 @@ void version_node_socket_id_delim(bNodeSocket *socket)
 
   if (id_number.startswith(".")) {
     socket->identifier[name.size()] = '_';
+    socket->runtime->identifier_ustr = UString(socket->identifier);
   }
+}
+
+void version_node_socket_identifier_set(bNodeSocket &socket, const StringRefNull identifier)
+{
+  STRNCPY_UTF8(socket.identifier, identifier.c_str());
+  socket.runtime->identifier_ustr = UString(socket.identifier);
 }
 
 void version_node_socket_name(bNodeTree *ntree,
@@ -275,7 +282,7 @@ bNode &version_node_add_unknown(bNodeTree &ntree,
 {
   using namespace blender::bke;
 
-  ntype.idname = idname;
+  ntype.idname = UString(idname);
   ntype.type_legacy = legacy_type;
   ntype.height = height;
   ntype.width = width;
@@ -337,6 +344,7 @@ bNodeSocket &version_node_add_socket(bNodeTree &ntree,
 
   STRNCPY_UTF8(socket->idname, idname);
   STRNCPY_UTF8(socket->identifier, identifier);
+  socket->runtime->identifier_ustr = UString(socket->identifier);
   STRNCPY_UTF8(socket->name, identifier);
 
   if (in_out == SOCK_IN) {
@@ -450,8 +458,15 @@ void version_node_socket_index_animdata(Main *bmain,
         char *rna_path_prefix = BLI_sprintfN("nodes[\"%s\"].inputs", node_name_escaped);
 
         const int new_index = input_index + socket_index_offset;
-        BKE_animdata_fix_paths_rename_all_ex(
-            bmain, owner_id, rna_path_prefix, nullptr, nullptr, input_index, new_index, false);
+        BKE_animdata_fix_paths_rename_all_ex(bmain,
+                                             owner_id,
+                                             rna_path_prefix,
+                                             nullptr,
+                                             nullptr,
+                                             input_index,
+                                             new_index,
+                                             /*verify_paths=*/false,
+                                             /*infix_is_name=*/true);
         MEM_delete(rna_path_prefix);
       }
     }

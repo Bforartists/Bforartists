@@ -1343,14 +1343,17 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
       FCurve *fcu = BKE_fcurve_find(&strip->fcurves, RNA_property_identifier(prop), index);
 
       if (fcu) {
-        changed = insert_keyframe_direct(op->reports,
-                                         ptr,
-                                         prop,
-                                         fcu,
-                                         &anim_eval_context,
-                                         eBezTriple_KeyframeType(ts->keyframe_type),
-                                         nullptr,
-                                         eInsertKeyFlags(0));
+        const SingleKeyingResult result = insert_keyframe_direct(
+            ptr,
+            *prop,
+            *fcu,
+            anim_eval_context.eval_time,
+            eBezTriple_KeyframeType(ts->keyframe_type),
+            eInsertKeyFlags(0));
+        changed = result == SingleKeyingResult::SUCCESS;
+        if (result != SingleKeyingResult::SUCCESS) {
+          generate_single_keying_result_report(result, op->reports);
+        }
       }
       else {
         BKE_report(op->reports,
@@ -1369,16 +1372,17 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
       if (fcu && driven) {
         const float driver_frame = evaluate_driver_from_rna_pointer(
             &anim_eval_context, &ptr, prop, fcu);
-        AnimationEvalContext remapped_context = BKE_animsys_eval_context_construct(
-            CTX_data_depsgraph_pointer(C), driver_frame);
-        changed = insert_keyframe_direct(op->reports,
-                                         ptr,
-                                         prop,
-                                         fcu,
-                                         &remapped_context,
-                                         eBezTriple_KeyframeType(ts->keyframe_type),
-                                         nullptr,
-                                         INSERTKEY_NOFLAGS);
+        const SingleKeyingResult result = insert_keyframe_direct(
+            ptr,
+            *prop,
+            *fcu,
+            driver_frame,
+            eBezTriple_KeyframeType(ts->keyframe_type),
+            INSERTKEY_NOFLAGS);
+        changed = result == SingleKeyingResult::SUCCESS;
+        if (result != SingleKeyingResult::SUCCESS) {
+          generate_single_keying_result_report(result, op->reports);
+        }
       }
     }
     else {

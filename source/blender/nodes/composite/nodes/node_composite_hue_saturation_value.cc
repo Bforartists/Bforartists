@@ -24,22 +24,26 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
-  b.add_output<decl::Color>("Image").align_with_previous();
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image"_ustr).align_with_previous();
 
-  b.add_input<decl::Float>("Hue").default_value(0.5f).min(0.0f).max(1.0f).subtype(PROP_FACTOR);
-  b.add_input<decl::Float>("Saturation")
+  b.add_input<decl::Float>("Hue"_ustr)
+      .default_value(0.5f)
+      .min(0.0f)
+      .max(1.0f)
+      .subtype(PROP_FACTOR);
+  b.add_input<decl::Float>("Saturation"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
       .subtype(PROP_FACTOR);
-  b.add_input<decl::Float>("Value")
+  b.add_input<decl::Float>("Value"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
       .subtype(PROP_FACTOR)
       .translation_context(BLT_I18NCONTEXT_COLOR);
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)

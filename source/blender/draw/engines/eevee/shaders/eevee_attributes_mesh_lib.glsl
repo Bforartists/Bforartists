@@ -37,32 +37,32 @@ float3 attr_load_orco(MeshVertex vert, float4 orco, int index)
   return orco.xyz * 0.5f + 0.5f;
 }
 #endif
-float4 attr_load_tangent(MeshVertex vert, float4 tangent, int index)
+float4 attr_load_tangent(MeshVertex /*vert*/, float4 tangent, int /*index*/)
 {
   tangent.xyz = safe_normalize(drw_normal_object_to_world(tangent.xyz));
   return tangent;
 }
-float4 attr_load_float4(MeshVertex vert, float4 attr, int index)
+float4 attr_load_float4(MeshVertex /*vert*/, float4 attr, int /*index*/)
 {
   return attr;
 }
-float3 attr_load_float3(MeshVertex vert, float3 attr, int index)
+float3 attr_load_float3(MeshVertex /*vert*/, float3 attr, int /*index*/)
 {
   return attr;
 }
-float2 attr_load_float2(MeshVertex vert, float2 attr, int index)
+float2 attr_load_float2(MeshVertex /*vert*/, float2 attr, int /*index*/)
 {
   return attr;
 }
-float attr_load_float(MeshVertex vert, float attr, int index)
+float attr_load_float(MeshVertex /*vert*/, float attr, int /*index*/)
 {
   return attr;
 }
-float4 attr_load_color(MeshVertex vert, float4 attr, int index)
+float4 attr_load_color(MeshVertex /*vert*/, float4 attr, int /*index*/)
 {
   return attr;
 }
-float3 attr_load_uv(MeshVertex vert, float3 attr, int index)
+float3 attr_load_uv(MeshVertex /*vert*/, float3 attr, int /*index*/)
 {
   return attr;
 }

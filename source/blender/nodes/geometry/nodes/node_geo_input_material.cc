@@ -11,7 +11,7 @@ namespace blender::nodes::node_geo_input_material_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Material>("Material").custom_draw([](CustomSocketDrawParams &params) {
+  b.add_output<decl::Material>("Material"_ustr).custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     params.layout.prop(&params.node_ptr, "material", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
   });
@@ -20,7 +20,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 static void node_geo_exec(GeoNodeExecParams params)
 {
   Material *material = reinterpret_cast<Material *>(params.node().id);
-  params.set_output("Material", material);
+  params.set_output("Material"_ustr, material);
 }
 
 static void node_register()

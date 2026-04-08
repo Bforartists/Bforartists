@@ -159,7 +159,7 @@ void do_vertex(const uint i,
 void geometry_main(VertOut geom_in[2],
                    uint out_vertex_id,
                    uint out_primitive_id,
-                   uint out_invocation_id)
+                   uint /*out_invocation_id*/)
 {
   float4 p0 = clip_line_point_homogeneous_space(geom_in[0].gpu_position, geom_in[1].gpu_position);
   float4 p1 = clip_line_point_homogeneous_space(geom_in[1].gpu_position, geom_in[0].gpu_position);

@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "AS_asset_catalog.hh"
 #include "AS_asset_catalog_tree.hh"
 #include "AS_asset_library.hh"
 #include "AS_asset_representation.hh"
@@ -228,15 +229,17 @@ void AS_asset_library_essential_import_method_update()
 
 namespace asset_system {
 
-AssetLibrary::AssetLibrary(
-    eAssetLibraryType library_type,
-    StringRef name,
-    StringRef root_path,
-    std::optional<AssetCatalogService::read_only_tag> catalogs_read_only_tag)
+AssetLibrary::AssetLibrary(eAssetLibraryType library_type,
+                           const bool is_read_only,
+                           StringRef name,
+                           StringRef root_path)
     : library_type_(library_type),
+      is_read_only_(is_read_only),
       name_(name),
       root_path_(std::make_shared<std::string>(utils::normalize_directory_path(root_path))),
-      catalog_service_(std::make_unique<AssetCatalogService>(*root_path_, catalogs_read_only_tag))
+      catalog_service_(std::make_unique<AssetCatalogService>(
+          *root_path_,
+          is_read_only ? std::optional{AssetCatalogService::read_only_tag{}} : std::nullopt))
 {
 }
 
@@ -450,6 +453,11 @@ StringRefNull AssetLibrary::name() const
 StringRefNull AssetLibrary::root_path() const
 {
   return *root_path_;
+}
+
+bool AssetLibrary::is_read_only() const
+{
+  return is_read_only_;
 }
 
 Vector<AssetLibraryReference> all_valid_asset_library_refs()

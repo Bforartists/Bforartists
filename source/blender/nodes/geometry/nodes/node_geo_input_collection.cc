@@ -11,16 +11,18 @@ namespace blender::nodes::node_geo_input_collection_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Collection>("Collection").custom_draw([](CustomSocketDrawParams &params) {
-    params.layout.alignment_set(ui::LayoutAlign::Expand);
-    params.layout.prop(&params.node_ptr, "collection", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
-  });
+  b.add_output<decl::Collection>("Collection"_ustr)
+      .custom_draw([](CustomSocketDrawParams &params) {
+        params.layout.alignment_set(ui::LayoutAlign::Expand);
+        params.layout.prop(
+            &params.node_ptr, "collection", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
+      });
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
   Collection *collection = reinterpret_cast<Collection *>(params.node().id);
-  params.set_output("Collection", collection);
+  params.set_output("Collection"_ustr, collection);
 }
 
 static void node_register()

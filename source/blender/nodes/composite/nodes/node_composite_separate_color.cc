@@ -29,8 +29,8 @@ static void node_init(bNodeTree * /*ntree*/, bNode *node)
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f});
-  b.add_output<decl::Float>("Red").label_fn([](bNode node) {
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f});
+  b.add_output<decl::Float>("Red"_ustr).label_fn([](bNode node) {
     switch (node_storage(node).mode) {
       case CMP_NODE_COMBSEP_COLOR_RGB:
       default:
@@ -43,7 +43,7 @@ static void node_declare(NodeDeclarationBuilder &b)
         return IFACE_("Y");
     }
   });
-  b.add_output<decl::Float>("Green").label_fn([](bNode node) {
+  b.add_output<decl::Float>("Green"_ustr).label_fn([](bNode node) {
     switch (node_storage(node).mode) {
       case CMP_NODE_COMBSEP_COLOR_RGB:
       default:
@@ -57,7 +57,7 @@ static void node_declare(NodeDeclarationBuilder &b)
         return IFACE_("U");
     }
   });
-  b.add_output<decl::Float>("Blue").label_fn([](bNode node) {
+  b.add_output<decl::Float>("Blue"_ustr).label_fn([](bNode node) {
     switch (node_storage(node).mode) {
       case CMP_NODE_COMBSEP_COLOR_RGB:
       default:
@@ -72,7 +72,7 @@ static void node_declare(NodeDeclarationBuilder &b)
         return IFACE_("V");
     }
   });
-  b.add_output<decl::Float>("Alpha");
+  b.add_output<decl::Float>("Alpha"_ustr);
 }
 
 static int node_gpu_material(GPUMaterial *material,

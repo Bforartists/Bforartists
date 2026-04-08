@@ -11,9 +11,9 @@ namespace blender::nodes::node_fn_split_string_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::String>("String").optional_label();
-  b.add_input<decl::String>("Separator").optional_label();
-  b.add_output<decl::String>("List")
+  b.add_input<decl::String>("String"_ustr).optional_label();
+  b.add_input<decl::String>("Separator"_ustr).optional_label();
+  b.add_output<decl::String>("List"_ustr)
       .structure_type(StructureType::List)
       .description(
           "The parts of the input string. This contains at least one element which may be empty");
@@ -39,11 +39,11 @@ static Vector<std::string> split_string(const StringRef original_str, const Stri
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const std::string str = params.extract_input<std::string>("String");
-  const std::string separator = params.extract_input<std::string>("Separator");
+  const std::string str = params.extract_input<std::string>("String"_ustr);
+  const std::string separator = params.extract_input<std::string>("Separator"_ustr);
 
   Vector<std::string> list = split_string(str, separator);
-  params.set_output("List", List::from_container(std::move(list)));
+  params.set_output("List"_ustr, List::from_container(std::move(list)));
 }
 
 static void node_register()

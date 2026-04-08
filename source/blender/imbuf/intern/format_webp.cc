@@ -108,7 +108,7 @@ ImBuf *imb_load_filepath_thumbnail_webp(const char *filepath,
   config.options.flip = 1;
   config.output.is_external_memory = 1;
   config.output.colorspace = MODE_RGBA;
-  config.output.u.RGBA.rgba = ibuf->byte_buffer.data;
+  config.output.u.RGBA.rgba = ibuf->byte_data_for_write();
   config.output.u.RGBA.stride = 4 * ibuf->x;
   config.output.u.RGBA.size = size_t(config.output.u.RGBA.stride) * size_t(ibuf->y);
 

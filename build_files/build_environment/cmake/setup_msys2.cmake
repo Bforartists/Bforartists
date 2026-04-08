@@ -10,7 +10,9 @@
 # Note - no compiler is actually installed here, we just use the tools
 ##################################################################################################
 
-macro(download_package package_name)
+# Modifies in parent scope:
+# - `MSYS2_${package_name}_FILE`: path to the downloaded file.
+function(download_package package_name)
   # This will:
   # 1 - Download the required package from either the upstream location or blender mirror
   #     depending on `MSYS2_USE_UPSTREAM_PACKAGES`.
@@ -21,7 +23,7 @@ macro(download_package package_name)
   string(REPLACE "/" ";" _url_list ${URL})
   list(GET _url_list -1 _file_name)
   set(_final_filename "${DOWNLOAD_DIR}/${_file_name}")
-  set(MSYS2_${package_name}_FILE ${_final_filename})
+  set(MSYS2_${package_name}_FILE ${_final_filename} PARENT_SCOPE)
   if(NOT EXISTS "${_final_filename}")
     if(MSYS2_USE_UPSTREAM_PACKAGES)
       set(_final_url ${URL})
@@ -45,13 +47,7 @@ macro(download_package package_name)
       endif()
     endif()
   endif()
-  unset(URL)
-  unset(HASH)
-  unset(_final_url)
-  unset(_final_filename)
-  unset(_url_list)
-  unset(_file_name)
-endmacro()
+endfunction()
 
 # Note we use URL here rather than URI as the dependencies checker will check all `*_URI`
 # variables for package/license/homepage requirements since none of this will end up
@@ -60,7 +56,7 @@ set(MSYS2_BASE_URL https://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20221
 set(MSYS2_BASE_HASH 545cc6a4c36bb98058f2b2945c5d06de523516db)
 
 set(MSYS2_NASM_URL https://www.nasm.us/pub/nasm/releasebuilds/3.01/win64/nasm-3.01-win64.zip)
-set(MSYS2_NASM_HASH 6ae5eaffde68aa7450fadd7f45ba5c6df3dce558)
+set(MSYS2_NASM_HASH f11c96089462db07cb42de03ebb11dcb101b5154)
 
 set(MSYS2_PERL_URL https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5380_5361/strawberry-perl-5.38.0.1-64bit-portable.zip)
 set(MSYS2_PERL_HASH 987c870cc2401e481e3ddbdd1462d2a52da34187)
@@ -78,13 +74,16 @@ download_package(GAS)
 download_package(AR)
 
 message(STATUS "LIBDIR = ${LIBDIR}")
-macro(cmake_to_msys_path MsysPath ResultingPath)
+# Return values:
+# - `${ResultingPath}`: the MSYS2-style path.
+function(cmake_to_msys_path MsysPath ResultingPath)
   string(REPLACE ":" "" TmpPath "${MsysPath}")
   string(SUBSTRING ${TmpPath} 0 1 Drive)
   string(SUBSTRING ${TmpPath} 1 255 PathPart)
   string(TOLOWER ${Drive} LowerDrive)
-  string(CONCAT ${ResultingPath} "/" ${LowerDrive} ${PathPart})
-endmacro()
+  string(CONCAT _result "/" ${LowerDrive} ${PathPart})
+  set(${ResultingPath} "${_result}" PARENT_SCOPE)
+endfunction()
 cmake_to_msys_path(${LIBDIR} msys2_LIBDIR)
 message(STATUS "msys2_LIBDIR = ${msys2_LIBDIR}")
 

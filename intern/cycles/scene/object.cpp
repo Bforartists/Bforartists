@@ -19,6 +19,7 @@
 #include "scene/stats.h"
 #include "scene/volume.h"
 
+#include "util/hash.h"
 #include "util/log.h"
 #include "util/map.h"
 #include "util/murmurhash.h"
@@ -231,7 +232,7 @@ void Object::tag_update(Scene *scene)
     if (tfm_is_modified() || motion_is_modified()) {
       flag |= ObjectManager::TRANSFORM_MODIFIED;
       if (geometry->has_volume) {
-        scene->volume_manager->tag_update(this, flag);
+        scene->volume_manager->tag_update({this}, flag);
       }
     }
 
@@ -342,7 +343,7 @@ float Object::compute_volume_step_size(Progress &progress) const
 
     for (Attribute &attr : volume->attributes.attributes) {
       if (attr.element == ATTR_ELEMENT_VOXEL) {
-        ImageHandle &handle = attr.data_voxel();
+        ImageHandle &handle = attr.data_voxel_for_write();
         const ImageMetaData &metadata = handle.metadata(progress);
         if (metadata.nanovdb_byte_size == 0) {
           continue;
@@ -453,8 +454,12 @@ void Object::adjust_volume_tfm(Transform &tfm)
        * meshes. The proper solution would be to improve intersection in the kernel to support
        * robust handling of multiple overlapping faces or use an all-hit intersection similar to
        * shadows. */
-      const float3 offset = transform_direction(
-          &tfm, make_float3(hash_uint_to_float(hash_string(name.c_str())) * 0.001f));
+      const uint name_hash = hash_string(name.c_str());
+      const float3 offset = transform_direction(&tfm,
+                                                make_float3(hash_uint2_to_float(name_hash, 0),
+                                                            hash_uint2_to_float(name_hash, 1),
+                                                            hash_uint2_to_float(name_hash, 2)) *
+                                                    0.001f);
       transform_translate(tfm, offset);
     }
   }

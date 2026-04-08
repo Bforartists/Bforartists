@@ -241,7 +241,7 @@ static void texture_changed(Main *bmain, Tex *tex)
   {
     /* paint overlays */
     for (ViewLayer &view_layer : scene->view_layers) {
-      BKE_paint_invalidate_overlay_tex(scene, &view_layer, tex);
+      BKE_paint_invalidate_overlay_tex(*bmain, scene, &view_layer, tex);
     }
   }
 

@@ -355,7 +355,7 @@ static StructRNA *rna_NodeTreeInterfaceSocket_register(Main * /*bmain*/,
   else {
     /* Create a new node socket type. */
     st = MEM_new<bke::bNodeSocketType>(__func__);
-    st->idname = dummy_socket.socket_type;
+    st->idname = UString(dummy_socket.socket_type);
 
     bke::node_register_socket_type(*st);
   }
@@ -420,7 +420,7 @@ static void rna_NodeTreeInterfaceSocket_socket_type_set(PointerRNA *ptr, int val
 
   if (typeinfo) {
     bNodeTreeInterfaceSocket *socket = static_cast<bNodeTreeInterfaceSocket *>(ptr->data);
-    socket->set_socket_type(typeinfo->idname);
+    socket->set_socket_type(typeinfo->idname.ref());
   }
 }
 
@@ -668,7 +668,7 @@ static bNodeTreeInterfaceSocket *rna_NodeTreeInterfaceItems_new_socket(
       return nullptr;
     }
   }
-  const StringRef socket_type = typeinfo->idname;
+  const StringRef socket_type = typeinfo->idname.ref();
   NodeTreeInterfaceSocketFlag flag = NodeTreeInterfaceSocketFlag(in_out);
   bNodeTreeInterfaceSocket *socket = interface->add_socket(
       name, description, socket_type, flag, parent);

@@ -47,6 +47,7 @@ struct RenderSlot;
 struct ReportList;
 struct Scene;
 struct StampData;
+enum eImbFileType : int8_t;
 
 #define IMA_MAX_SPACE 64
 #define IMA_UDIM_MAX 2000
@@ -85,6 +86,9 @@ struct ImageRuntime {
 
   /* The image's current update count. See deg::set_id_update_count for more information. */
   uint64_t update_count = 0;
+
+  float view_offset[2] = {};
+  float view_zoom = 1.0f;
 };
 
 }  // namespace bke
@@ -584,7 +588,7 @@ bool BKE_image_is_animated(Image *image);
  * Checks whether the image consists of multiple buffers.
  */
 bool BKE_image_has_multiple_ibufs(Image *image);
-void BKE_image_file_format_set(Image *image, int ftype, const ImbFormatOptions *options);
+void BKE_image_file_format_set(Image *image, eImbFileType ftype, const ImbFormatOptions *options);
 bool BKE_image_has_loaded_ibuf(Image *image);
 /**
  * References the result, #BKE_image_release_ibuf is to be called to de-reference.

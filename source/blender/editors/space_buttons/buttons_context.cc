@@ -158,12 +158,13 @@ static bool buttons_context_path_collection(const bContext *C,
     return true;
   }
 
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
 
   /* if we have a view layer, use the view layer's active collection */
   if (buttons_context_path_view_layer(path, window)) {
     ViewLayer *view_layer = static_cast<ViewLayer *>(path->ptr[path->len - 1].data);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Collection *c = BKE_view_layer_active_collection_get(view_layer)->collection;
 
     /* BFA - always show the collection tab even if blank. */
@@ -467,9 +468,10 @@ static bool buttons_context_path_brush(const bContext *C, ButsContextPath *path)
 
     Brush *br = nullptr;
     if (scene) {
+      const Main *bmain = CTX_data_main(C);
       wmWindow *window = CTX_wm_window(C);
       ViewLayer *view_layer = WM_window_get_active_view_layer(window);
-      br = BKE_paint_brush(BKE_paint_get_active(scene, view_layer));
+      br = BKE_paint_brush(BKE_paint_get_active(*bmain, scene, view_layer));
     }
 
     if (br) {
@@ -720,9 +722,10 @@ static bool buttons_context_path(
 static bool buttons_shading_context(const bContext *C, int mainb)
 {
   wmWindow *window = CTX_wm_window(C);
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = WM_window_get_active_scene(window);
   ViewLayer *view_layer = WM_window_get_active_view_layer(window);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (ELEM(mainb, BCONTEXT_MATERIAL, BCONTEXT_WORLD, BCONTEXT_TEXTURE)) {
@@ -738,9 +741,10 @@ static bool buttons_shading_context(const bContext *C, int mainb)
 static int buttons_shading_new_context(const bContext *C, int flag)
 {
   wmWindow *window = CTX_wm_window(C);
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = WM_window_get_active_scene(window);
   ViewLayer *view_layer = WM_window_get_active_view_layer(window);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   if (flag & (1 << BCONTEXT_MATERIAL)) {

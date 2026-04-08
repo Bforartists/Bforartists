@@ -12,44 +12,44 @@ namespace blender::nodes::node_geo_bounding_box_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .description(
           "Geometry to compute the bounding box of. Instances have to be realized before the full "
           "bounding box can be computed");
-  b.add_input<decl::Bool>("Use Radius")
+  b.add_input<decl::Bool>("Use Radius"_ustr)
       .default_value(true)
       .description(
           "For curves, point clouds, and Grease Pencil, take the radius attribute into account "
           "when computing the bounds.");
-  b.add_output<decl::Geometry>("Bounding Box")
+  b.add_output<decl::Geometry>("Bounding Box"_ustr)
       .propagate_all_instance_attributes()
       .description("A cube mesh enclosing the input geometry");
-  b.add_output<decl::Vector>("Min");
-  b.add_output<decl::Vector>("Max");
+  b.add_output<decl::Vector>("Min"_ustr);
+  b.add_output<decl::Vector>("Max"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
-  const bool use_radius = params.extract_input<bool>("Use Radius");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry"_ustr);
+  const bool use_radius = params.extract_input<bool>("Use Radius"_ustr);
 
   /* Compute the min and max of all realized geometry for the two
    * vector outputs, which are only meant to consider real geometry. */
   const std::optional<Bounds<float3>> bounds = geometry_set.compute_boundbox_without_instances(
       use_radius);
   if (!bounds) {
-    params.set_output("Min", float3(0));
-    params.set_output("Max", float3(0));
+    params.set_output("Min"_ustr, float3(0));
+    params.set_output("Max"_ustr, float3(0));
   }
   else {
-    params.set_output("Min", bounds->min);
-    params.set_output("Max", bounds->max);
+    params.set_output("Min"_ustr, bounds->min);
+    params.set_output("Max"_ustr, bounds->max);
   }
 
   /* Generate the bounding box meshes inside each unique geometry set (including individually for
    * every instance). Because geometry components are reference counted anyway, we can just
    * repurpose the original geometry sets for the output. */
-  if (params.output_is_required("Bounding Box")) {
+  if (params.output_is_required("Bounding Box"_ustr)) {
     geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &sub_geometry) {
       std::optional<Bounds<float3>> sub_bounds;
 
@@ -74,7 +74,7 @@ static void node_geo_exec(GeoNodeExecParams params)
       }
     });
 
-    params.set_output("Bounding Box", std::move(geometry_set));
+    params.set_output("Bounding Box"_ustr, std::move(geometry_set));
   }
 }
 

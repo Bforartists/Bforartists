@@ -109,9 +109,10 @@ void uiTemplateEditModeSelection(ui::Layout *layout, bContext *C)
 
 static void uiTemplatePaintModeSelection(ui::Layout *layout, bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   /* Gizmos aren't used in paint modes */
@@ -137,9 +138,10 @@ static void uiTemplatePaintModeSelection(ui::Layout *layout, bContext *C)
 
 void template_header3D_mode(ui::Layout *layout, bContext *C)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object *ob = BKE_view_layer_active_object_get(view_layer);
   Object *obedit = CTX_data_edit_object(C);
 

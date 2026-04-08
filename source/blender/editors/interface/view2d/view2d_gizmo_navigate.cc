@@ -166,25 +166,8 @@ static void WIDGETGROUP_navigate_setup(const bContext * /*C*/, wmGizmoGroup *gzg
     wmGizmo *gz = navgroup->gz_array[i];
     gz->flag |= WM_GIZMO_MOVE_CURSOR | WM_GIZMO_DRAW_MODAL;
 
-    {
-      uchar icon_color[3];
-      theme::get_color_3ubv(TH_TEXT, icon_color);
-      int color_tint, color_tint_hi;
-      if (icon_color[0] > 128) {
-        color_tint = -40;
-        color_tint_hi = 60;
-        gz->color[3] = 0.5f;
-        gz->color_hi[3] = 0.5f;
-      }
-      else {
-        color_tint = 60;
-        color_tint_hi = 60;
-        gz->color[3] = 0.5f;
-        gz->color_hi[3] = 0.75f;
-      }
-      theme::get_color_shade_3fv(TH_HEADER, color_tint, gz->color);
-      theme::get_color_shade_3fv(TH_HEADER, color_tint_hi, gz->color_hi);
-    }
+    gz->color[3] = 0.0f;
+    gz->color_hi[3] = 0.0f;
 
     /* may be overwritten later */
     gz->scale_basis = (GIZMO_SIZE * GIZMO_MINI_FAC) / 2;
@@ -249,19 +232,23 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
 
   int icon_mini_slot = 0;
 
+  /* bfa- optional helper changed back navigation buttons to vertical, 10 px offset*/
+  auto apply_gizmo_pos = [&](wmGizmo *gz_ptr, int slot) {
+    if (U.uiflag2 & USER_VERTICAL_NAVIGATION_GIZMOS) {
+      gz_ptr->matrix_basis[3][0] = roundf(co[0]);
+      gz_ptr->matrix_basis[3][1] = roundf(co[1] - 10 - (icon_offset_mini * slot));
+    } else {
+      gz_ptr->matrix_basis[3][0] = roundf(co[0] - 10 - (icon_offset_mini * slot));
+      gz_ptr->matrix_basis[3][1] = roundf(co[1]);
+    }
+  };
+
   gz = navgroup->gz_array[GZ_INDEX_ZOOM];
-  gz->matrix_basis[3][0] =
-      roundf(co[0]) - 10 -
-      (icon_offset_mini *
-       icon_mini_slot++); /* bfa- changed back navigation buttons to horizontal, 10 px offset*/
-  gz->matrix_basis[3][1] = roundf(co[1]); /* bfa- changed back navigation buttons to horizontal*/
+  apply_gizmo_pos(gz, icon_mini_slot++);
   WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
   gz = navgroup->gz_array[GZ_INDEX_MOVE];
-  gz->matrix_basis[3][0] =
-      roundf(co[0]) - (icon_offset_mini *
-                       icon_mini_slot++); /* bfa- changed back navigation buttons to horizontal*/
-  gz->matrix_basis[3][1] = roundf(co[1]); /* bfa- changed back navigation buttons to horizontal*/
+  apply_gizmo_pos(gz, icon_mini_slot++);
   WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 }
 
@@ -276,6 +263,9 @@ void VIEW2D_GGT_navigate_impl(wmGizmoGroupType *gzgt, const char *idname)
   gzgt->poll = WIDGETGROUP_navigate_poll;
   gzgt->setup = WIDGETGROUP_navigate_setup;
   gzgt->draw_prepare = WIDGETGROUP_navigate_draw_prepare;
+  gzgt->draw_background = ED_gizmo_button2d_group_background;
+  gzgt->background_color = {0.0f, 0.0f, 0.0f, 0.3f};
+  gzgt->outline_color = {0.0f, 0.0f, 0.0f, 0.4f};
 }
 
 /** \} */

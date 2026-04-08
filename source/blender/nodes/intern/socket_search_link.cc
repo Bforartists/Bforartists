@@ -41,7 +41,7 @@ void GatherLinkSearchOpParams::add_item_full_name(std::string name,
 
     /* BFA - Get Node RNA Icon*/
     int icon = 0;
-    if (!node_type_.idname.empty()) {
+    if (!node_type_.idname.ref().is_empty()) {
         StructRNA *srna = RNA_struct_find(node_type_.idname.c_str());
         if (srna) {
             icon = RNA_struct_ui_icon(srna);
@@ -83,10 +83,11 @@ eNodeSocketInOut GatherLinkSearchOpParams::in_out() const
   return other_socket_.in_out == SOCK_IN ? SOCK_OUT : SOCK_IN;
 }
 
-void LinkSearchOpParams::connect_available_socket(bNode &new_node, StringRef socket_name)
+void LinkSearchOpParams::connect_available_socket(bNode &new_node, UString socket_name)
 {
   const eNodeSocketInOut in_out = socket.in_out == SOCK_IN ? SOCK_OUT : SOCK_IN;
-  bNodeSocket *new_node_socket = bke::node_find_enabled_socket(new_node, in_out, socket_name);
+  bNodeSocket *new_node_socket = bke::node_find_enabled_socket(
+      new_node, in_out, socket_name.ref());
   if (new_node_socket == nullptr) {
     /* If the socket isn't found, some node's search gather functions probably aren't configured
      * properly. It's likely enough that it's worth avoiding a crash in a release build though. */
@@ -97,10 +98,10 @@ void LinkSearchOpParams::connect_available_socket(bNode &new_node, StringRef soc
 }
 
 void LinkSearchOpParams::connect_available_socket_by_identifier(bNode &new_node,
-                                                                const StringRef socket_identifier)
+                                                                const UString socket_identifier)
 {
   const eNodeSocketInOut in_out = this->socket.in_out == SOCK_IN ? SOCK_OUT : SOCK_IN;
-  bNodeSocket *new_node_socket = bke::node_find_socket(new_node, in_out, socket_identifier);
+  bNodeSocket *new_node_socket = bke::node_find_socket(new_node, in_out, socket_identifier.ref());
   BLI_assert(new_node_socket);
   this->connect_socket(new_node, *new_node_socket);
 }
@@ -126,11 +127,10 @@ bNode &LinkSearchOpParams::add_node(StringRef idname)
 
 bNode &LinkSearchOpParams::add_node(const bke::bNodeType &node_type)
 {
-  return this->add_node(node_type.idname);
+  return this->add_node(node_type.idname.ref());
 }
 
-void LinkSearchOpParams::update_and_connect_available_socket(bNode &new_node,
-                                                             StringRef socket_name)
+void LinkSearchOpParams::update_and_connect_available_socket(bNode &new_node, UString socket_name)
 {
   update_node_declaration_and_sockets(this->node_tree, new_node);
   if (new_node.typeinfo->updatefunc) {
@@ -147,7 +147,7 @@ void search_link_ops_for_declarations(GatherLinkSearchOpParams &params,
   const SocketDeclaration *main_socket = nullptr;
   Vector<const SocketDeclaration *> connectable_sockets;
 
-  Set<StringRef> socket_names;
+  Set<UString> socket_names;
   for (const int i : declarations.index_range()) {
     const SocketDeclaration &socket = *declarations[i];
     if (!socket_names.add(socket.name)) {
@@ -174,7 +174,7 @@ void search_link_ops_for_declarations(GatherLinkSearchOpParams &params,
      * sockets. */
     const int weight = (&socket == main_socket) ? 0 : -1 - i;
     params.add_item(
-        IFACE_(socket.name),
+        IFACE_(socket.name.ref()),
         [&node_type, &socket](LinkSearchOpParams &params) {
           bNode &node = params.add_node(node_type);
           socket.make_available(node);
@@ -195,7 +195,7 @@ void search_link_ops_for_basic_node(GatherLinkSearchOpParams &params)
 }
 
 void search_filtered_link_ops_for_basic_node(GatherLinkSearchOpParams &params,
-                                             const Set<std::string> &skip_socket_identifiers)
+                                             const Set<UString> &skip_socket_identifiers)
 {
   const bke::bNodeType &node_type = params.node_type();
   if (!node_type.static_declaration) {

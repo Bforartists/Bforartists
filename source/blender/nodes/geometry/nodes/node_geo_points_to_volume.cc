@@ -74,7 +74,7 @@ static void initialize_volume_component_from_points(GeoNodeExecParams &params,
 {
   Vector<float3> positions;
   Vector<float> radii;
-  Field<float> radius_field = params.get_input<Field<float>>("Radius");
+  Field<float> radius_field = params.get_input<Field<float>>("Radius"_ustr);
 
   for (const GeometryComponent::Type type : {GeometryComponent::Type::Mesh,
                                              GeometryComponent::Type::PointCloud,
@@ -91,14 +91,14 @@ static void initialize_volume_component_from_points(GeoNodeExecParams &params,
   }
 
   const auto resolution_mode = params.get_input<GeometryNodePointsToVolumeResolutionMode>(
-      "Resolution Mode");
+      "Resolution Mode"_ustr);
 
   float voxel_size = 0.0f;
   if (resolution_mode == GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_SIZE) {
-    voxel_size = params.get_input<float>("Voxel Size");
+    voxel_size = params.get_input<float>("Voxel Size"_ustr);
   }
   else if (resolution_mode == GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_AMOUNT) {
-    const float voxel_amount = params.get_input<float>("Voxel Amount");
+    const float voxel_amount = params.get_input<float>("Voxel Amount"_ustr);
     const float max_radius = *std::max_element(radii.begin(), radii.end());
     voxel_size = compute_voxel_size_from_amount(voxel_amount, positions, max_radius);
   }
@@ -112,7 +112,7 @@ static void initialize_volume_component_from_points(GeoNodeExecParams &params,
 
   Volume *volume = BKE_id_new_nomain<Volume>(nullptr);
 
-  const float density = params.get_input<float>("Density");
+  const float density = params.get_input<float>("Density"_ustr);
   geometry::fog_volume_grid_add_from_points(
       volume, "density", positions, radii, voxel_size, density);
 
@@ -141,29 +141,30 @@ static EnumPropertyItem resolution_mode_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Points").is_default_link_socket().description(
-      "Points which are converted to a volume");
-  b.add_input<decl::Float>("Density").default_value(1.0f).min(0.0f);
-  b.add_input<decl::Menu>("Resolution Mode")
+  b.add_input<decl::Geometry>("Points"_ustr)
+      .is_default_link_socket()
+      .description("Points which are converted to a volume");
+  b.add_input<decl::Float>("Density"_ustr).default_value(1.0f).min(0.0f);
+  b.add_input<decl::Menu>("Resolution Mode"_ustr)
       .static_items(resolution_mode_items)
       .optional_label()
       .description("How the voxel size is specified")
       .translation_context(BLT_I18NCONTEXT_COUNTABLE);
-  b.add_input<decl::Float>("Voxel Size")
+  b.add_input<decl::Float>("Voxel Size"_ustr)
       .default_value(0.3f)
       .min(0.01f)
       .subtype(PROP_DISTANCE)
       .usage_by_single_menu(GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_SIZE);
-  b.add_input<decl::Float>("Voxel Amount")
+  b.add_input<decl::Float>("Voxel Amount"_ustr)
       .default_value(64.0f)
       .min(0.0f)
       .usage_by_single_menu(GEO_NODE_POINTS_TO_VOLUME_RESOLUTION_MODE_AMOUNT);
-  b.add_input<decl::Float>("Radius")
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(0.5f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .field_on_all();
-  b.add_output<decl::Geometry>("Volume").translation_context(BLT_I18NCONTEXT_ID_ID);
+  b.add_output<decl::Geometry>("Volume"_ustr).translation_context(BLT_I18NCONTEXT_ID_ID);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -175,11 +176,11 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 static void node_geo_exec(GeoNodeExecParams params)
 {
 #ifdef WITH_OPENVDB
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Points");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Points"_ustr);
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     initialize_volume_component_from_points(params, geometry_set);
   });
-  params.set_output("Volume", std::move(geometry_set));
+  params.set_output("Volume"_ustr, std::move(geometry_set));
 #else
   node_geo_exec_with_missing_openvdb(params);
 #endif

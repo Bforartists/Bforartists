@@ -607,6 +607,7 @@ static void float_planar_to_interleaved(const AVFrame *frame, const int rotation
   BLI_assert_msg(frame->linesize[1] == src_linesize && frame->linesize[2] == src_linesize &&
                      frame->linesize[3] == src_linesize,
                  "ffmpeg frame should be 4 same size planes for a floating point image case");
+  float *float_data = ibuf->float_data_for_write();
   threading::parallel_for(IndexRange(ibuf->y), 256, [&](const IndexRange y_range) {
     const int size_x = ibuf->x;
     const int size_y = ibuf->y;
@@ -618,7 +619,7 @@ static void float_planar_to_interleaved(const AVFrame *frame, const int rotation
         const float *src_b = reinterpret_cast<const float *>(frame->data[1] + src_offset);
         const float *src_r = reinterpret_cast<const float *>(frame->data[2] + src_offset);
         const float *src_a = reinterpret_cast<const float *>(frame->data[3] + src_offset);
-        float *dst = ibuf->float_buffer.data + (y + (size_x - 1) * size_y) * 4;
+        float *dst = float_data + (y + (size_x - 1) * size_y) * 4;
         for (int x = 0; x < size_x; x++) {
           dst[0] = *src_r++;
           dst[1] = *src_g++;
@@ -636,7 +637,7 @@ static void float_planar_to_interleaved(const AVFrame *frame, const int rotation
         const float *src_b = reinterpret_cast<const float *>(frame->data[1] + src_offset);
         const float *src_r = reinterpret_cast<const float *>(frame->data[2] + src_offset);
         const float *src_a = reinterpret_cast<const float *>(frame->data[3] + src_offset);
-        float *dst = ibuf->float_buffer.data + ((size_y - y - 1) * size_x + size_x - 1) * 4;
+        float *dst = float_data + ((size_y - y - 1) * size_x + size_x - 1) * 4;
         for (int x = 0; x < size_x; x++) {
           dst[0] = *src_r++;
           dst[1] = *src_g++;
@@ -654,7 +655,7 @@ static void float_planar_to_interleaved(const AVFrame *frame, const int rotation
         const float *src_b = reinterpret_cast<const float *>(frame->data[1] + src_offset);
         const float *src_r = reinterpret_cast<const float *>(frame->data[2] + src_offset);
         const float *src_a = reinterpret_cast<const float *>(frame->data[3] + src_offset);
-        float *dst = ibuf->float_buffer.data + (size_y - y - 1) * 4;
+        float *dst = float_data + (size_y - y - 1) * 4;
         for (int x = 0; x < size_x; x++) {
           dst[0] = *src_r++;
           dst[1] = *src_g++;
@@ -672,7 +673,7 @@ static void float_planar_to_interleaved(const AVFrame *frame, const int rotation
         const float *src_b = reinterpret_cast<const float *>(frame->data[1] + src_offset);
         const float *src_r = reinterpret_cast<const float *>(frame->data[2] + src_offset);
         const float *src_a = reinterpret_cast<const float *>(frame->data[3] + src_offset);
-        float *dst = ibuf->float_buffer.data + size_x * y * 4;
+        float *dst = float_data + size_x * y * 4;
         for (int x = 0; x < size_x; x++) {
           *dst++ = *src_r++;
           *dst++ = *src_g++;
@@ -761,7 +762,7 @@ static void ffmpeg_postprocess(MovieReader *anim, AVFrame *input, ImBuf *ibuf)
       /* Decode RGB and do vertical flip directly into destination image, by using negative
        * line size. */
       anim->pFrameRGB->linesize[0] = -ibuf_linesize;
-      anim->pFrameRGB->data[0] = ibuf->byte_buffer.data + (ibuf->y - 1) * ibuf_linesize;
+      anim->pFrameRGB->data[0] = ibuf->byte_data_for_write() + (ibuf->y - 1) * ibuf_linesize;
 
       ffmpeg_sws_scale_frame(anim->img_convert_ctx, anim->pFrameRGB, input);
 
@@ -780,7 +781,7 @@ static void ffmpeg_postprocess(MovieReader *anim, AVFrame *input, ImBuf *ibuf)
                                               anim->pFrameRGB->width,
                                               anim->pFrameRGB->height,
                                               1);
-      av_image_copy_to_buffer(ibuf->byte_buffer.data,
+      av_image_copy_to_buffer(ibuf->byte_data_for_write(),
                               dst_size,
                               src,
                               src_linesize,
@@ -1475,7 +1476,7 @@ ImBuf *MOV_decode_frame(MovieReader *anim,
 #endif
 
   if (ibuf) {
-    STRNCPY(ibuf->filepath, anim->filepath);
+    ibuf->filepath = anim->filepath;
     ibuf->fileframe = anim->cur_position + 1;
   }
   return ibuf;

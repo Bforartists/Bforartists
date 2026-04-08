@@ -21,7 +21,7 @@ namespace blender::nodes::node_composite_relative_to_pixel_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Vector>("Value", "Vector Value")
+  b.add_input<decl::Vector>("Value"_ustr, "Vector Value"_ustr)
       .subtype(PROP_FACTOR)
       .dimensions(2)
       .default_value({0.0f, 0.0f})
@@ -30,7 +30,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .structure_type(StructureType::Dynamic)
       .description(
           "A value that is relative to the image size and needs to be converted to be in pixels");
-  b.add_input<decl::Float>("Value", "Float Value")
+  b.add_input<decl::Float>("Value"_ustr, "Float Value"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(0.0f)
@@ -38,12 +38,13 @@ static void node_declare(NodeDeclarationBuilder &b)
       .structure_type(StructureType::Dynamic)
       .description(
           "A value that is relative to the image size and needs to be converted to be in pixels");
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .compositor_realization_mode(CompositorInputRealizationMode::None)
       .structure_type(StructureType::Dynamic);
 
-  b.add_output<decl::Float>("Value", "Float Value").structure_type(StructureType::Dynamic);
-  b.add_output<decl::Vector>("Value", "Vector Value")
+  b.add_output<decl::Float>("Value"_ustr, "Float Value"_ustr)
+      .structure_type(StructureType::Dynamic);
+  b.add_output<decl::Vector>("Value"_ustr, "Vector Value"_ustr)
       .dimensions(2)
       .structure_type(StructureType::Dynamic);
 }

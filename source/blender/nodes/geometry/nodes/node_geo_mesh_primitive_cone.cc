@@ -22,41 +22,44 @@ NODE_STORAGE_FUNCS(NodeGeometryMeshCone)
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Int>("Vertices")
+  b.add_input<decl::Int>("Vertices"_ustr)
       .default_value(32)
       .min(3)
       .max(512)
       .description("Number of points on the circle at the top and bottom");
-  b.add_input<decl::Int>("Side Segments")
+  b.add_input<decl::Int>("Side Segments"_ustr)
       .default_value(1)
       .min(1)
       .max(512)
       .description("The number of edges running vertically along the side of the cone");
-  auto &fill = b.add_input<decl::Int>("Fill Segments")
+  auto &fill = b.add_input<decl::Int>("Fill Segments"_ustr)
                    .default_value(1)
                    .min(1)
                    .max(512)
                    .description("Number of concentric rings used to fill the round face");
-  b.add_input<decl::Float>("Radius Top")
+  b.add_input<decl::Float>("Radius Top"_ustr)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Radius of the top circle of the cone");
-  b.add_input<decl::Float>("Radius Bottom")
+  b.add_input<decl::Float>("Radius Bottom"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Radius of the bottom circle of the cone");
-  b.add_input<decl::Float>("Depth")
+  b.add_input<decl::Float>("Depth"_ustr)
       .default_value(2.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Height of the generated cone");
-  b.add_output<decl::Geometry>("Mesh");
-  b.add_output<decl::Bool>("Top").field_on_all().translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_output<decl::Bool>("Bottom").field_on_all().translation_context(
-      BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_output<decl::Bool>("Side").field_on_all();
-  b.add_output<decl::Vector>("UV Map").field_on_all();
+  b.add_output<decl::Geometry>("Mesh"_ustr);
+  b.add_output<decl::Bool>("Top"_ustr)
+      .field_on_all()
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_output<decl::Bool>("Bottom"_ustr)
+      .field_on_all()
+      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  b.add_output<decl::Bool>("Side"_ustr).field_on_all();
+  b.add_output<decl::Vector>("UV Map"_ustr).field_on_all();
 
   const bNode *node = b.node_or_null();
   if (node != nullptr) {
@@ -88,14 +91,14 @@ static void node_geo_exec(GeoNodeExecParams params)
   const NodeGeometryMeshCone &storage = node_storage(params.node());
   const GeometryNodeMeshCircleFillType fill = GeometryNodeMeshCircleFillType(storage.fill_type);
 
-  const int circle_segments = params.extract_input<int>("Vertices");
+  const int circle_segments = params.extract_input<int>("Vertices"_ustr);
   if (circle_segments < 3) {
     params.error_message_add(NodeWarningType::Info, TIP_("Vertices must be at least 3"));
     params.set_default_remaining_outputs();
     return;
   }
 
-  const int side_segments = params.extract_input<int>("Side Segments");
+  const int side_segments = params.extract_input<int>("Side Segments"_ustr);
   if (side_segments < 1) {
     params.error_message_add(NodeWarningType::Info, TIP_("Side Segments must be at least 1"));
     params.set_default_remaining_outputs();
@@ -103,22 +106,22 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
 
   const bool no_fill = fill == GEO_NODE_MESH_CIRCLE_FILL_NONE;
-  const int fill_segments = no_fill ? 1 : params.extract_input<int>("Fill Segments");
+  const int fill_segments = no_fill ? 1 : params.extract_input<int>("Fill Segments"_ustr);
   if (fill_segments < 1) {
     params.error_message_add(NodeWarningType::Info, TIP_("Fill Segments must be at least 1"));
     params.set_default_remaining_outputs();
     return;
   }
 
-  const float radius_top = params.extract_input<float>("Radius Top");
-  const float radius_bottom = params.extract_input<float>("Radius Bottom");
-  const float depth = params.extract_input<float>("Depth");
+  const float radius_top = params.extract_input<float>("Radius Top"_ustr);
+  const float radius_bottom = params.extract_input<float>("Radius Bottom"_ustr);
+  const float depth = params.extract_input<float>("Depth"_ustr);
 
   geometry::ConeAttributeOutputs attribute_outputs;
-  attribute_outputs.top_id = params.get_output_anonymous_attribute_id_if_needed("Top");
-  attribute_outputs.bottom_id = params.get_output_anonymous_attribute_id_if_needed("Bottom");
-  attribute_outputs.side_id = params.get_output_anonymous_attribute_id_if_needed("Side");
-  attribute_outputs.uv_map_id = params.get_output_anonymous_attribute_id_if_needed("UV Map");
+  attribute_outputs.top_id = params.get_output_anonymous_attribute_id_if_needed("Top"_ustr);
+  attribute_outputs.bottom_id = params.get_output_anonymous_attribute_id_if_needed("Bottom"_ustr);
+  attribute_outputs.side_id = params.get_output_anonymous_attribute_id_if_needed("Side"_ustr);
+  attribute_outputs.uv_map_id = params.get_output_anonymous_attribute_id_if_needed("UV Map"_ustr);
 
   Mesh *mesh = geometry::create_cylinder_or_cone_mesh(radius_top,
                                                       radius_bottom,
@@ -133,7 +136,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   /* Transform the mesh so that the base of the cone is at the origin. */
   bke::mesh_translate(*mesh, float3(0.0f, 0.0f, depth * 0.5f), false);
 
-  params.set_output("Mesh", GeometrySet::from_mesh(mesh));
+  params.set_output("Mesh"_ustr, GeometrySet::from_mesh(mesh));
 }
 
 static void node_rna(StructRNA *srna)

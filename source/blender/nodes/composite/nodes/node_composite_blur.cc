@@ -40,23 +40,25 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Vector>("Size")
+  b.add_input<decl::Vector>("Size"_ustr)
       .dimensions(2)
       .default_value({0.0f, 0.0f})
       .min(0.0f)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Menu>("Type")
+  b.add_input<decl::Menu>("Type"_ustr)
       .default_value(CMP_NODE_BLUR_TYPE_GAUSS)
       .static_items(type_items)
       .optional_label();
-  b.add_input<decl::Bool>("Extend Bounds").default_value(false);
-  b.add_input<decl::Bool>("Separable")
+  b.add_input<decl::Bool>("Extend Bounds"_ustr).default_value(false);
+  b.add_input<decl::Bool>("Separable"_ustr)
       .default_value(true)
       .description(
           "Use faster approximation by blurring along the horizontal and vertical directions "

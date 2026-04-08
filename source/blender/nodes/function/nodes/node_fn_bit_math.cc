@@ -12,6 +12,8 @@
 #include "NOD_rna_define.hh"
 #include "NOD_socket_search_link.hh"
 
+#include "FN_multi_function_registry.hh"
+
 #include "node_function_util.hh"
 
 namespace blender {
@@ -71,10 +73,10 @@ constexpr static int32_t min_shift = -max_shift;
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Int>("A");
-  auto &b_socket = b.add_input<decl::Int>("B");
-  auto &shift = b.add_input<decl::Int>("Shift").min(min_shift).max(max_shift);
-  b.add_output<decl::Int>("Value");
+  b.add_input<decl::Int>("A"_ustr);
+  auto &b_socket = b.add_input<decl::Int>("B"_ustr);
+  auto &shift = b.add_input<decl::Int>("Shift"_ustr).min(min_shift).max(max_shift);
+  b.add_output<decl::Int>("Value"_ustr);
 
   if (const bNode *node = b.node_or_null()) {
     const BitMathOperation operation = BitMathOperation(node->custom1);
@@ -91,7 +93,7 @@ static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 
 class SocketSearchOp {
  public:
-  std::string socket_name;
+  UString socket_name;
   BitMathOperation operation;
   void operator()(LinkSearchOpParams &params)
   {
@@ -112,7 +114,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
   const bool is_integer = params.other_socket().type == SOCK_INT;
   const int weight = is_integer ? 0 : -1;
 
-  const StringRef socket_name = (params.in_out() == SOCK_OUT) ? "Value" : "A";
+  const UString socket_name = (params.in_out() == SOCK_OUT) ? "Value"_ustr : "A"_ustr;
 
   for (const auto &item : bit_math_operation_items) {
     if (item.name != nullptr && item.identifier[0] != '\0') {
@@ -140,48 +142,19 @@ static void node_label(const bNodeTree * /*ntree*/,
 static const mf::MultiFunction *get_multi_function(const bNode &bnode)
 {
   const BitMathOperation operation = BitMathOperation(bnode.custom1);
-  static auto exec_preset = mf::build::exec_presets::AllSpanOrSingle();
-  static auto and_fn = mf::build::SI2_SO<int, int, int>(
-      "And", [](int a, int b) { return a & b; }, exec_preset);
-  static auto or_fn = mf::build::SI2_SO<int, int, int>(
-      "Or", [](int a, int b) { return a | b; }, exec_preset);
-  static auto xor_fn = mf::build::SI2_SO<int, int, int>(
-      "Xor", [](int a, int b) { return a ^ b; }, exec_preset);
-  static auto not_fn = mf::build::SI1_SO<int, int>("Not", [](int a) { return ~a; }, exec_preset);
-  static auto shift_fn = mf::build::SI2_SO<int, int, int>(
-      "Shift",
-      [](int a, int b) {
-        const uint32_t value = a;
-        const int shift = math::clamp(b, -32, 32);
-        const uint64_t wide_value = uint64_t(value) << 16;
-        const uint64_t wide_result = shift > 0 ? wide_value << shift : wide_value >> -shift;
-        return uint32_t(wide_result >> 16);
-      },
-      exec_preset);
-  static auto rotate_fn = mf::build::SI2_SO<int, int, int>(
-      "Rotate",
-      [](int a, int b) {
-        const uint32_t value = a;
-        const int shift = math::mod_periodic(b, 32);
-        const uint64_t wide_value = uint64_t(value) | (uint64_t(value) << 32);
-        const uint64_t double_result = (wide_value << shift);
-        return uint32_t((double_result | (double_result >> 32)) & ((uint64_t(1) << 33) - 1));
-      },
-      exec_preset);
-
   switch (operation) {
     case BitMathOperation::And:
-      return &and_fn;
+      return &fn::multi_function::registry::lookup("int & int"_ustr);
     case BitMathOperation::Or:
-      return &or_fn;
+      return &fn::multi_function::registry::lookup("int | int"_ustr);
     case BitMathOperation::Xor:
-      return &xor_fn;
+      return &fn::multi_function::registry::lookup("int ^ int"_ustr);
     case BitMathOperation::Not:
-      return &not_fn;
+      return &fn::multi_function::registry::lookup("~int"_ustr);
     case BitMathOperation::Shift:
-      return &shift_fn;
+      return &fn::multi_function::registry::lookup("shift(int, int)"_ustr);
     case BitMathOperation::Rotate:
-      return &rotate_fn;
+      return &fn::multi_function::registry::lookup("rotate(int, int)"_ustr);
   }
   BLI_assert_unreachable();
   return nullptr;

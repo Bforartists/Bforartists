@@ -381,11 +381,12 @@ void poseAnim_mapping_autoKeyframe(bContext *C,
                                    ListBaseT<tPChanFCurveLink> *pfLinks,
                                    float cframe)
 {
+  const Main *bmain = CTX_data_main(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   View3D *v3d = CTX_wm_view3d(C);
   bool skip = true;
 
-  FOREACH_OBJECT_IN_MODE_BEGIN (scene, view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
+  FOREACH_OBJECT_IN_MODE_BEGIN (bmain, scene, view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
     ob->id.tag &= ~ID_TAG_DOIT;
     ob = poseAnim_object_get(ob);
 
@@ -431,7 +432,7 @@ void poseAnim_mapping_autoKeyframe(bContext *C,
    * - only do this if keyframes should have been added
    * - do not calculate unless there are paths already to update...
    */
-  FOREACH_OBJECT_IN_MODE_BEGIN (scene, view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
+  FOREACH_OBJECT_IN_MODE_BEGIN (bmain, scene, view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
     if (ob->id.tag & ID_TAG_DOIT) {
       if (ob->pose->avs.path_bakeflag & MOTIONPATH_BAKE_HAS_PATHS) {
         // ED_pose_clear_paths(C, ob); /* XXX for now, don't need to clear. */

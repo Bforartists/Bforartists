@@ -12,48 +12,48 @@ namespace blender::nodes::node_geo_mesh_primitive_grid_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Size X")
+  b.add_input<decl::Float>("Size X"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Side length of the plane in the X direction");
-  b.add_input<decl::Float>("Size Y")
+  b.add_input<decl::Float>("Size Y"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
       .description("Side length of the plane in the Y direction");
-  b.add_input<decl::Int>("Vertices X")
+  b.add_input<decl::Int>("Vertices X"_ustr)
       .default_value(3)
       .min(2)
       .max(1000)
       .description("Number of vertices in the X direction");
-  b.add_input<decl::Int>("Vertices Y")
+  b.add_input<decl::Int>("Vertices Y"_ustr)
       .default_value(3)
       .min(2)
       .max(1000)
       .description("Number of vertices in the Y direction");
-  b.add_output<decl::Geometry>("Mesh");
-  b.add_output<decl::Vector>("UV Map").field_on_all();
+  b.add_output<decl::Geometry>("Mesh"_ustr);
+  b.add_output<decl::Vector>("UV Map"_ustr).field_on_all();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  const float size_x = params.extract_input<float>("Size X");
-  const float size_y = params.extract_input<float>("Size Y");
-  const int verts_x = params.extract_input<int>("Vertices X");
-  const int verts_y = params.extract_input<int>("Vertices Y");
+  const float size_x = params.extract_input<float>("Size X"_ustr);
+  const float size_y = params.extract_input<float>("Size Y"_ustr);
+  const int verts_x = params.extract_input<int>("Vertices X"_ustr);
+  const int verts_y = params.extract_input<int>("Vertices Y"_ustr);
   if (verts_x < 1 || verts_y < 1) {
     params.set_default_remaining_outputs();
     return;
   }
 
   std::optional<std::string> uv_map_id = params.get_output_anonymous_attribute_id_if_needed(
-      "UV Map");
+      "UV Map"_ustr);
 
   Mesh *mesh = geometry::create_grid_mesh(verts_x, verts_y, size_x, size_y, uv_map_id);
   BKE_id_material_eval_ensure_default_slot(reinterpret_cast<ID *>(mesh));
 
-  params.set_output("Mesh", GeometrySet::from_mesh(mesh));
+  params.set_output("Mesh"_ustr, GeometrySet::from_mesh(mesh));
 }
 
 static void node_register()

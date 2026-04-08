@@ -15,8 +15,8 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.is_function_node();
-  b.add_input<decl::Matrix>("Matrix");
-  b.add_output<decl::Matrix>("Matrix").align_with_previous();
+  b.add_input<decl::Matrix>("Matrix"_ustr);
+  b.add_output<decl::Matrix>("Matrix"_ustr).align_with_previous();
 }
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

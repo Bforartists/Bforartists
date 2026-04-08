@@ -29,13 +29,13 @@ type AssetIDTypeV1 = str
 
 
 class CustomPropertyTypeV1(StrEnum):
-    STRING = "STRING"
-    INT = "INT"
-    FLOAT = "FLOAT"
-    ARRAY = "ARRAY"
-    GROUP = "GROUP"
-    DOUBLE = "DOUBLE"
-    BOOLEAN = "BOOLEAN"
+    IDP_STRING = "IDP_STRING"
+    IDP_INT = "IDP_INT"
+    IDP_FLOAT = "IDP_FLOAT"
+    IDP_ARRAY = "IDP_ARRAY"
+    IDP_GROUP = "IDP_GROUP"
+    IDP_DOUBLE = "IDP_DOUBLE"
+    IDP_BOOLEAN = "IDP_BOOLEAN"
 
 
 @dataclass
@@ -96,14 +96,15 @@ class AssetMetadataV1:
     description: str | None = None
     license: str | None = None
     copyright: str | None = None
-    custom: CustomPropertiesV1 | None = None
+    properties: CustomPropertiesV1 | None = None
 
 
-type CustomPropertiesV1 = dict[str, CustomPropertyV1]
+type CustomPropertiesV1 = list[CustomPropertyV1]
 
 
 @dataclass
 class CustomPropertyV1:
+    name: str
     type: CustomPropertyTypeV1
     value: CustomPropertiesV1 | list[Any] | float | int | str | bool
     itemtype: CustomPropertyTypeV1 | None = None

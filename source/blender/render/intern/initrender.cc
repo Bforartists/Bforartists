@@ -31,7 +31,7 @@ namespace blender {
 Object *RE_GetCamera(Render *re)
 {
   Object *camera = re->camera_override ? re->camera_override : re->scene->camera;
-  return BKE_camera_multiview_render(re->scene, camera, re->viewname);
+  return BKE_camera_multiview_render(*re->main, re->scene, camera, re->viewname);
 }
 
 void RE_SetOverrideCamera(Render *re, Object *cam_ob)

@@ -55,7 +55,10 @@ float closure_evaluate_pdf(ClosureUndetermined cl, float3 L, float3 V, Thickness
   return 0.0f;
 }
 
-LightProbeRay bxdf_lightprobe_ray(ClosureUndetermined cl, float3 P, float3 V, Thickness thickness)
+LightProbeRay bxdf_lightprobe_ray(ClosureUndetermined cl,
+                                  float3 /*P*/,
+                                  float3 V,
+                                  Thickness thickness)
 {
   switch (cl.type) {
     case CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID:

@@ -130,6 +130,11 @@ struct BrushGpencilSettings {
   float outline_fac = 0;
   /** Screen space simplify threshold. Points within this margin are treated as a straight line. */
   float simplify_px = 0;
+  /** Threshold distance for converting curve types. */
+  float conversion_threshold = 0;
+  /* #CurveType Used for converting. */
+  int8_t curve_type = 0;
+  char _pad4[3] = {};
 
   /* optional link of material to replace default in context */
   /** Material. */

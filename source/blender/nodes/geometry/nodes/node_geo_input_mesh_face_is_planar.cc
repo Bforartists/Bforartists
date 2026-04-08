@@ -14,7 +14,7 @@ namespace blender::nodes::node_geo_input_mesh_face_is_planar_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Threshold")
+  b.add_input<decl::Float>("Threshold"_ustr)
       .default_value(0.01f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
@@ -22,7 +22,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "The distance a point can be from the surface before the face is no longer "
           "considered planar");
-  b.add_output<decl::Bool>("Planar")
+  b.add_output<decl::Bool>("Planar"_ustr)
       .translation_context(BLT_I18NCONTEXT_ID_NODETREE)
       .field_source();
 }
@@ -35,7 +35,6 @@ class PlanarFieldInput final : public bke::MeshFieldInput {
   PlanarFieldInput(Field<float> threshold)
       : bke::MeshFieldInput(CPPType::get<bool>(), "Planar"), threshold_(threshold)
   {
-    category_ = Category::Generated;
   }
 
   GVArray get_varray_for_context(const Mesh &mesh,
@@ -76,9 +75,9 @@ class PlanarFieldInput final : public bke::MeshFieldInput {
         VArray<bool>::from_func(faces.size(), planar_fn), AttrDomain::Face, domain);
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const override
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const override
   {
-    threshold_.node().for_each_field_input_recursive(fn);
+    fn(threshold_);
   }
 
   uint64_t hash() const override
@@ -87,7 +86,7 @@ class PlanarFieldInput final : public bke::MeshFieldInput {
     return 2356235652;
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     return dynamic_cast<const PlanarFieldInput *>(&other) != nullptr;
   }
@@ -100,9 +99,8 @@ class PlanarFieldInput final : public bke::MeshFieldInput {
 
 static void geo_node_exec(GeoNodeExecParams params)
 {
-  Field<float> threshold = params.extract_input<Field<float>>("Threshold");
-  Field<bool> planar_field{std::make_shared<PlanarFieldInput>(threshold)};
-  params.set_output("Planar", std::move(planar_field));
+  Field<float> threshold = params.extract_input<Field<float>>("Threshold"_ustr);
+  params.set_output("Planar"_ustr, Field<bool>::from_input<PlanarFieldInput>(threshold));
 }
 
 static void node_register()

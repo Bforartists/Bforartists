@@ -28,22 +28,22 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Value")
+    b.add_input(data_type, "Value"_ustr)
         .supports_field()
         .description("The values the standard deviation and variance will be calculated from");
   }
 
-  b.add_input<decl::Int>("Group ID", "Group Index")
+  b.add_input<decl::Int>("Group ID"_ustr, "Group Index"_ustr)
       .supports_field()
       .hide_value()
       .description("An index used to group values together for multiple separate operations");
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_output(data_type, "Standard Deviation")
+    b.add_output(data_type, "Standard Deviation"_ustr)
         .field_source_reference_all()
         .description("The square root of the variance for each group");
-    b.add_output(data_type, "Variance")
+    b.add_output(data_type, "Variance"_ustr)
         .field_source_reference_all()
         .description("The expected squared deviation from the mean for each group");
   }
@@ -93,7 +93,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldVariance");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Standard Deviation");
+          params.update_and_connect_available_socket(node, "Standard Deviation"_ustr);
         },
         0);
     params.add_item(
@@ -101,7 +101,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldVariance");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Variance");
+          params.update_and_connect_available_socket(node, "Variance"_ustr);
         },
         -1);
   }
@@ -111,7 +111,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
         [type](LinkSearchOpParams &params) {
           bNode &node = params.add_node("GeometryNodeFieldVariance");
           node.custom1 = *type;
-          params.update_and_connect_available_socket(node, "Value");
+          params.update_and_connect_available_socket(node, "Value"_ustr);
         },
         0);
   }
@@ -241,10 +241,10 @@ class FieldVarianceInput final : public bke::GeometryFieldInput {
     return attributes.adapt_domain(std::move(g_outputs), source_domain_, context.domain());
   }
 
-  void for_each_field_input_recursive(FunctionRef<void(const FieldInput &)> fn) const final
+  void foreach_recursive_field(FunctionRef<void(const GField &)> fn) const final
   {
-    input_.node().for_each_field_input_recursive(fn);
-    group_index_.node().for_each_field_input_recursive(fn);
+    fn(input_);
+    fn(group_index_);
   }
 
   uint64_t hash() const override
@@ -252,7 +252,7 @@ class FieldVarianceInput final : public bke::GeometryFieldInput {
     return get_default_hash(input_, group_index_, source_domain_, operation_);
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const FieldVarianceInput *other_field = dynamic_cast<const FieldVarianceInput *>(&other)) {
       return input_ == other_field->input_ && group_index_ == other_field->group_index_ &&
@@ -273,19 +273,19 @@ static void node_geo_exec(GeoNodeExecParams params)
 {
   const AttrDomain source_domain = AttrDomain(params.node().custom2);
 
-  const Field<int> group_index_field = params.extract_input<Field<int>>("Group Index");
-  const GField input_field = params.extract_input<GField>("Value");
-  if (params.output_is_required("Standard Deviation")) {
+  const Field<int> group_index_field = params.extract_input<Field<int>>("Group Index"_ustr);
+  const GField input_field = params.extract_input<GField>("Value"_ustr);
+  if (params.output_is_required("Standard Deviation"_ustr)) {
     params.set_output<GField>(
-        "Standard Deviation",
-        GField{std::make_shared<FieldVarianceInput>(
-            source_domain, input_field, group_index_field, Operation::StdDev)});
+        "Standard Deviation"_ustr,
+        GField::from_input<FieldVarianceInput>(
+            source_domain, input_field, group_index_field, Operation::StdDev));
   }
-  if (params.output_is_required("Variance")) {
+  if (params.output_is_required("Variance"_ustr)) {
     params.set_output<GField>(
-        "Variance",
-        GField{std::make_shared<FieldVarianceInput>(
-            source_domain, input_field, group_index_field, Operation::Variance)});
+        "Variance"_ustr,
+        GField::from_input<FieldVarianceInput>(
+            source_domain, input_field, group_index_field, Operation::Variance));
   }
 }
 

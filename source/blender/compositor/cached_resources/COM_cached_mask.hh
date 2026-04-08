@@ -30,19 +30,22 @@ class CachedMaskKey {
   int2 data_offset;
   float aspect_ratio;
   bool use_feather;
+  bool srgb_to_linear;
+  int frame;
   int motion_blur_samples;
   float motion_blur_shutter;
 
   CachedMaskKey(const Domain &domain,
                 float aspect_ratio,
                 bool use_feather,
+                bool srgb_to_linear,
+                int frame,
                 int motion_blur_samples,
                 float motion_blur_shutter);
 
   uint64_t hash() const;
+  friend bool operator==(const CachedMaskKey &a, const CachedMaskKey &b) = default;
 };
-
-bool operator==(const CachedMaskKey &a, const CachedMaskKey &b);
 
 /* -------------------------------------------------------------------------------------------------
  * Cached Mask.
@@ -60,7 +63,8 @@ class CachedMask : public CachedResource {
              float aspect_ratio,
              bool use_feather,
              int motion_blur_samples,
-             float motion_blur_shutter);
+             float motion_blur_shutter,
+             bool srgb_to_linear);
 
   ~CachedMask();
 };
@@ -89,8 +93,10 @@ class CachedMaskContainer : CachedResourceContainer {
               const Domain &domain,
               float aspect_ratio,
               bool use_feather,
+              int frame,
               int motion_blur_samples,
-              float motion_blur_shutter);
+              float motion_blur_shutter,
+              bool srgb_to_linear);
 };
 
 }  // namespace blender::compositor

@@ -210,11 +210,11 @@ static void image_buffer_rect_update(RenderJob *rj,
     }
 
     /* find current float rect for display, first case is after composite... still weak */
-    if (rv->ibuf->float_buffer.data) {
-      rectf = rv->ibuf->float_buffer.data;
+    if (rv->ibuf->float_data()) {
+      rectf = rv->ibuf->float_data();
     }
     else {
-      if (rv->ibuf->byte_buffer.data) {
+      if (rv->ibuf->byte_data()) {
         /* special case, currently only happens with sequencer rendering,
          * which updates the whole frame, so we can only mark display buffer
          * as invalid here (sergey)
@@ -237,7 +237,7 @@ static void image_buffer_rect_update(RenderJob *rj,
     linear_offset_y = offset_y;
   }
   else {
-    rectf = ibuf->float_buffer.data;
+    rectf = ibuf->float_data();
     linear_stride = ibuf->x;
     linear_offset_x = 0;
     linear_offset_y = 0;
@@ -1040,7 +1040,7 @@ static void clean_viewport_memory(Main *bmain, Scene *scene)
   for (wmWindowManager &wm : bmain->wm) {
     for (wmWindow &win : wm.windows) {
       ViewLayer *view_layer = WM_window_get_active_view_layer(&win);
-      BKE_view_layer_synced_ensure(scene, view_layer);
+      BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
       for (Base &b : *BKE_view_layer_object_bases_get(view_layer)) {
         clean_viewport_memory_base(&b);
@@ -1048,7 +1048,7 @@ static void clean_viewport_memory(Main *bmain, Scene *scene)
     }
   }
 
-  for (SETLOOPER_SET_ONLY(scene, sce_iter, base)) {
+  for (SETLOOPER_SET_ONLY(*bmain, scene, sce_iter, base)) {
     clean_viewport_memory_base(base);
   }
 }
@@ -1119,7 +1119,7 @@ static wmOperatorStatus screen_render_invoke(bContext *C, wmOperator *op, const 
     return OPERATOR_CANCELLED;
   }
 
-  if (!RE_is_rendering_allowed(scene, single_layer, camera_override, op->reports)) {
+  if (!RE_is_rendering_allowed(*bmain, scene, single_layer, camera_override, op->reports)) {
     return OPERATOR_CANCELLED;
   }
 

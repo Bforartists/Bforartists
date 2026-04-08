@@ -17,7 +17,7 @@ static void node_declare(NodeDeclarationBuilder &b)
     const auto &storage = *static_cast<NodeInputIntVector *>(node->storage);
     dimensions = storage.dimensions;
   }
-  b.add_output<decl::IntVector>("Vector")
+  b.add_output<decl::IntVector>("Vector"_ustr)
       .dimensions(dimensions)
       .custom_draw([](CustomSocketDrawParams &params) {
         params.layout.alignment_set(ui::LayoutAlign::Expand);

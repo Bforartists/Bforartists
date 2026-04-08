@@ -993,7 +993,7 @@ static void recalcData_actedit(TransInfo *t)
   ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
   int filter;
 
-  BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+  BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
 
   /* Initialize relevant anim-context `context` data from #TransInfo data. */
   /* NOTE: sync this with the code in #ANIM_animdata_get_context(). */

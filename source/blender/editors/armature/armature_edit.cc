@@ -277,6 +277,7 @@ static const EnumPropertyItem prop_calc_roll_types[] = {
 
 static wmOperatorStatus armature_calc_roll_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *ob_active = CTX_data_edit_object(C);
@@ -289,7 +290,7 @@ static wmOperatorStatus armature_calc_roll_exec(bContext *C, wmOperator *op)
                                                     false);
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *ob : objects) {
     bArmature *arm = id_cast<bArmature *>(ob->data);
     bool changed = false;
@@ -485,12 +486,13 @@ void ARMATURE_OT_calculate_roll(wmOperatorType *ot)
 
 static wmOperatorStatus armature_roll_clear_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const float roll = RNA_float_get(op->ptr, "roll");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *ob : objects) {
     bArmature *arm = id_cast<bArmature *>(ob->data);
     bool changed = false;
@@ -733,8 +735,9 @@ static wmOperatorStatus armature_fill_bones_exec(bContext *C, wmOperator *op)
 
   Object *obedit = nullptr;
   {
+    const Main *bmain = CTX_data_main(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    FOREACH_OBJECT_IN_EDIT_MODE_BEGIN (scene, view_layer, v3d, ob_iter) {
+    FOREACH_OBJECT_IN_EDIT_MODE_BEGIN (bmain, scene, view_layer, v3d, ob_iter) {
       if (ob_iter->data == id_cast<const ID *>(arm)) {
         obedit = ob_iter;
       }
@@ -926,10 +929,11 @@ static void armature_clear_swap_done_flags(bArmature *arm)
 
 static wmOperatorStatus armature_switch_direction_exec(bContext *C, wmOperator * /*op*/)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
 
   for (Object *ob : objects) {
     bArmature *arm = id_cast<bArmature *>(ob->data);
@@ -1197,11 +1201,12 @@ void ARMATURE_OT_align(wmOperatorType *ot)
 
 static wmOperatorStatus armature_split_exec(bContext *C, wmOperator * /*op*/)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *ob : objects) {
     bArmature *arm = id_cast<bArmature *>(ob->data);
 
@@ -1264,10 +1269,11 @@ static wmOperatorStatus armature_delete_selected_exec(bContext *C, wmOperator * 
     return OPERATOR_CANCELLED;
   }
 
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *obedit : objects) {
     bArmature *arm = id_cast<bArmature *>(obedit->data);
     bool changed = false;
@@ -1349,13 +1355,14 @@ static bool armature_dissolve_ebone_cb(const char *bone_name, void *arm_p)
 
 static wmOperatorStatus armature_dissolve_selected_exec(bContext *C, wmOperator * /*op*/)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   EditBone *ebone, *ebone_next;
   bool changed_multi = false;
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *obedit : objects) {
     bArmature *arm = id_cast<bArmature *>(obedit->data);
     bool changed = false;
@@ -1502,6 +1509,7 @@ void ARMATURE_OT_dissolve(wmOperatorType *ot)
 
 static wmOperatorStatus armature_hide_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const int invert = RNA_boolean_get(op->ptr, "unselected") ? BONE_SELECTED : 0;
@@ -1512,7 +1520,7 @@ static wmOperatorStatus armature_hide_exec(bContext *C, wmOperator *op)
   }
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *obedit : objects) {
     bArmature *arm = id_cast<bArmature *>(obedit->data);
     bool changed = false;
@@ -1577,11 +1585,12 @@ void ARMATURE_OT_hide(wmOperatorType *ot)
 
 static wmOperatorStatus armature_reveal_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const bool select = RNA_boolean_get(op->ptr, "select");
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *obedit : objects) {
     bArmature *arm = id_cast<bArmature *>(obedit->data);
     bool changed = false;

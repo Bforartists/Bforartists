@@ -107,7 +107,7 @@ static void geometry_to_blender_geometry_set(const OBJImportParams &import_param
       geometry_set = bke::GeometrySet::from_curves(curves_id);
     }
 
-    geometry_set.name = geometry->geometry_name_;
+    geometry_set.set_name(geometry->geometry_name_);
     geometries.append(std::move(geometry_set));
   }
 }
@@ -177,7 +177,7 @@ static void geometry_to_blender_objects(Main *bmain,
   }
 
   /* Do object selections in a separate loop (allows just one view layer sync). */
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   bool has_instantiated_object = false;
   bool has_uninstantiated_object = false;
   for (Object *obj : objects) {
@@ -253,7 +253,7 @@ void importer_main(Main *bmain,
   }
 
   if (import_params.clear_selection) {
-    BKE_view_layer_base_deselect_all(scene, view_layer);
+    BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
   }
 
   LayerCollection *lc = BKE_layer_collection_get_active_editable(view_layer);

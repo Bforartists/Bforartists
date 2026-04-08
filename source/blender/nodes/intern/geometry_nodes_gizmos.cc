@@ -26,6 +26,9 @@
 
 #include "ED_node.hh"
 
+#include "RNA_access.hh"
+#include "RNA_prototypes.hh"
+
 namespace blender::nodes::gizmos {
 
 bool is_builtin_gizmo_node(const bNode &node)
@@ -383,10 +386,13 @@ static void foreach_active_gizmo_exposed_to_modifier(
   }
 
   tree.ensure_interface_cache();
+  PointerRNA nmd_ptr = RNA_pointer_create_discrete(
+      const_cast<ID *>(&object.id), RNA_NodesModifier, const_cast<NodesModifierData *>(&nmd));
+  PointerRNA properties_ptr = RNA_pointer_get(&nmd_ptr, "properties");
 
   ResourceScope scope;
   const Vector<InferenceValue> input_values = get_geometry_nodes_input_inference_values(
-      *nmd.node_group, nmd.settings.properties, scope);
+      *nmd.node_group, properties_ptr, scope);
 
   const auto get_input_value = [&](const int group_input_i) {
     return input_values[group_input_i];

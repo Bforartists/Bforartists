@@ -8,13 +8,13 @@ namespace blender::nodes::node_geo_input_curve_tilt_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Tilt").field_source();
+  b.add_output<decl::Float>("Tilt"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<float> tilt_field = AttributeFieldInput::from<float>("tilt");
-  params.set_output("Tilt", std::move(tilt_field));
+  Field<float> tilt_field = AttributeFieldInput::get_field<float, "tilt">();
+  params.set_output("Tilt"_ustr, std::move(tilt_field));
 }
 
 static void node_register()

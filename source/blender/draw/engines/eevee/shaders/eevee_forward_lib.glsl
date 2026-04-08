@@ -95,7 +95,8 @@ void forward_lighting_eval(Thickness thickness, float3 &radiance, float3 &transm
   LightProbeSample samp = lightprobe_load(gl_FragCoord.xy, g_data.P, g_data.Ng, V);
 
   float clamp_indirect_sh = uniform_buf.clamp.surface_indirect;
-  samp.volume_irradiance = spherical_harmonics_clamp(samp.volume_irradiance, clamp_indirect_sh);
+  samp.volume_irradiance = spherical_harmonics::clamp_energy(samp.volume_irradiance,
+                                                             clamp_indirect_sh);
 
   /* Combine all radiance. */
   float3 radiance_direct = float3(0.0f);

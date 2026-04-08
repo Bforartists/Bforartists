@@ -999,7 +999,7 @@ endif()
 
 if(WIN32)
   getDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)
-  set(CPACK_INSTALL_PREFIX ${CMAKE_GENERIC_PROGRAM_FILES}/${})
+  set(CPACK_INSTALL_PREFIX ${CMAKE_GENERIC_PROGRAM_FILES}/)
 endif()
 
 option(WITH_STRSIZE_DEBUG "\
@@ -1490,8 +1490,9 @@ set(CXX_WARNINGS "")
 # suppress warnings by modifying the code or for code which is maintained externally.
 # For GCC this typically means adding `-Wno-*` arguments to negate warnings
 # that are useful in the general case.
-set(C_REMOVE_STRICT_FLAGS "")
-set(CXX_REMOVE_STRICT_FLAGS "")
+set(C_REMOVE_STRICT_FLAGS "")    # C-only.
+set(CXX_REMOVE_STRICT_FLAGS "")  # C++-only.
+set(C_AND_CXX_REMOVE_STRICT_FLAGS "")   # Shared C & C++.
 
 # Libraries to link to targets in setup_platform_linker_libs
 set(PLATFORM_LINKLIBS "")
@@ -2075,18 +2076,18 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
 
   # flags to undo strict flags
   add_check_c_compiler_flags(
-    C_REMOVE_STRICT_FLAGS
+    C_AND_CXX_REMOVE_STRICT_FLAGS
 
-    C_WARN_NO_DEPRECATED_DECLARATIONS -Wno-deprecated-declarations
-    C_WARN_NO_UNUSED_PARAMETER -Wno-unused-parameter
-    C_WARN_NO_UNUSED_FUNCTION -Wno-unused-function
-    C_WARN_NO_TYPE_LIMITS -Wno-type-limits
-    C_WARN_NO_INT_IN_BOOL_CONTEXT -Wno-int-in-bool-context
-    C_WARN_NO_FORMAT -Wno-format
-    C_WARN_NO_SWITCH -Wno-switch
-    C_WARN_NO_UNUSED_VARIABLE -Wno-unused-variable
-    C_WARN_NO_UNUSED_VARIABLE -Wno-uninitialized
-    C_WARN_NO_IMPLICIT_FALLTHROUGH -Wno-implicit-fallthrough
+    C_AND_CXX_WARN_NO_DEPRECATED_DECLARATIONS -Wno-deprecated-declarations
+    C_AND_CXX_WARN_NO_UNUSED_PARAMETER -Wno-unused-parameter
+    C_AND_CXX_WARN_NO_UNUSED_FUNCTION -Wno-unused-function
+    C_AND_CXX_WARN_NO_TYPE_LIMITS -Wno-type-limits
+    C_AND_CXX_WARN_NO_INT_IN_BOOL_CONTEXT -Wno-int-in-bool-context
+    C_AND_CXX_WARN_NO_FORMAT -Wno-format
+    C_AND_CXX_WARN_NO_SWITCH -Wno-switch
+    C_AND_CXX_WARN_NO_UNUSED_VARIABLE -Wno-unused-variable
+    C_AND_CXX_WARN_NO_UNINITIALIZED -Wno-uninitialized
+    C_AND_CXX_WARN_NO_IMPLICIT_FALLTHROUGH -Wno-implicit-fallthrough
   )
 
 
@@ -2096,16 +2097,14 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
     CXX_WARN_NO_CLASS_MEMACCESS -Wno-class-memaccess
     CXX_WARN_NO_COMMENT -Wno-comment
     CXX_WARN_NO_UNUSED_TYPEDEFS -Wno-unused-local-typedefs
-    CXX_WARN_NO_UNUSED_VARIABLE -Wno-unused-variable
-    CXX_WARN_NO_UNINITIALIZED -Wno-uninitialized
     CXX_WARN_NO_REORDER -Wno-reorder
   )
 
 
   if(NOT APPLE)
     add_check_c_compiler_flags(
-      C_REMOVE_STRICT_FLAGS
-      C_WARN_NO_ERROR_UNUSED_BUT_SET_VARIABLE -Wno-error=unused-but-set-variable
+      C_AND_CXX_REMOVE_STRICT_FLAGS
+      C_AND_CXX_WARN_NO_ERROR_UNUSED_BUT_SET_VARIABLE -Wno-error=unused-but-set-variable
     )
   endif()
 
@@ -2116,7 +2115,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     # it's a bit odd to remove this flag and then add it right back in
     # but order matters here, the C/CXX warn flags come before the standard
     # W3 flag, which will reset all flags to their default state.
-    remove_cc_flag("/W3")
+    remove_c_and_cxx_flag("/W3")
     # From the clang-cl docs
     # `/W0                     Disable all warnings`
     # `/W1                     Enable -Wall`
@@ -2189,27 +2188,27 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
   # flags to undo strict flags
 
   add_check_c_compiler_flags(
-    C_REMOVE_STRICT_FLAGS
+    C_AND_CXX_REMOVE_STRICT_FLAGS
 
-    C_WARN_NO_UNUSED_PARAMETER -Wno-unused-parameter
-    C_WARN_NO_UNUSED_VARIABLE -Wno-unused-variable
-    C_WARN_NO_UNUSED_MACROS -Wno-unused-macros
-    C_WARN_NO_MISLEADING_INDENTATION -Wno-misleading-indentation
+    C_AND_CXX_WARN_NO_UNUSED_PARAMETER -Wno-unused-parameter
+    C_AND_CXX_WARN_NO_UNUSED_VARIABLE -Wno-unused-variable
+    C_AND_CXX_WARN_NO_UNUSED_MACROS -Wno-unused-macros
+    C_AND_CXX_WARN_NO_MISLEADING_INDENTATION -Wno-misleading-indentation
 
-    C_WARN_NO_MISSING_VARIABLE_DECLARATIONS -Wno-missing-variable-declarations
-    C_WARN_NO_INCOMPAT_PTR_DISCARD_QUAL -Wno-incompatible-pointer-types-discards-qualifiers
-    C_WARN_NO_UNUSED_FUNCTION -Wno-unused-function
-    C_WARN_NO_INT_TO_VOID_POINTER_CAST -Wno-int-to-void-pointer-cast
-    C_WARN_NO_MISSING_PROTOTYPES -Wno-missing-prototypes
-    C_WARN_NO_DUPLICATE_ENUM -Wno-duplicate-enum
-    C_WARN_NO_UNDEF -Wno-undef
-    C_WARN_NO_MISSING_NORETURN -Wno-missing-noreturn
-    C_WARN_NO_UNUSED_BUT_SET_VARIABLE -Wno-unused-but-set-variable
-    C_WARN_NO_DEPRECATED_DECLARATIONS -Wno-deprecated-declarations
-    C_WARN_NO_STRICT_PROTOTYPES -Wno-strict-prototypes
-    C_WARN_NO_BITWISE_INSTEAD_OF_LOGICAL -Wno-bitwise-instead-of-logical
-    C_WARN_NO_IMPLICIT_CONST_INT_FLOAT_CONVERSION -Wno-implicit-const-int-float-conversion
-    C_WARN_NO_SINGLE_BIT_BITFIELD_CONSTANT_CONVERSION -Wno-single-bit-bitfield-constant-conversion
+    C_AND_CXX_WARN_NO_MISSING_VARIABLE_DECLARATIONS -Wno-missing-variable-declarations
+    C_AND_CXX_WARN_NO_INCOMPAT_PTR_DISCARD_QUAL -Wno-incompatible-pointer-types-discards-qualifiers
+    C_AND_CXX_WARN_NO_UNUSED_FUNCTION -Wno-unused-function
+    C_AND_CXX_WARN_NO_INT_TO_VOID_POINTER_CAST -Wno-int-to-void-pointer-cast
+    C_AND_CXX_WARN_NO_MISSING_PROTOTYPES -Wno-missing-prototypes
+    C_AND_CXX_WARN_NO_DUPLICATE_ENUM -Wno-duplicate-enum
+    C_AND_CXX_WARN_NO_UNDEF -Wno-undef
+    C_AND_CXX_WARN_NO_MISSING_NORETURN -Wno-missing-noreturn
+    C_AND_CXX_WARN_NO_UNUSED_BUT_SET_VARIABLE -Wno-unused-but-set-variable
+    C_AND_CXX_WARN_NO_DEPRECATED_DECLARATIONS -Wno-deprecated-declarations
+    C_AND_CXX_WARN_NO_STRICT_PROTOTYPES -Wno-strict-prototypes
+    C_AND_CXX_WARN_NO_BITWISE_INSTEAD_OF_LOGICAL -Wno-bitwise-instead-of-logical
+    C_AND_CXX_WARN_NO_IMPLICIT_CONST_INT_FLOAT_CONVERSION -Wno-implicit-const-int-float-conversion
+    C_AND_CXX_WARN_NO_SINGLE_BIT_BITFIELD_CONSTANT_CONVERSION -Wno-single-bit-bitfield-constant-conversion
   )
 
   add_check_cxx_compiler_flags(
@@ -2356,6 +2355,16 @@ if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR
 endif()
 
 if(WITH_COMPILER_SHORT_FILE_MACRO)
+
+  set(_is_new_c TRUE)
+  if (DEFINED CACHE{C_MACRO_PREFIX_MAP})
+    set(_is_new_c FALSE)
+  endif()
+  set(_is_new_cxx TRUE)
+  if (DEFINED CACHE{CXX_MACRO_PREFIX_MAP})
+    set(_is_new_cxx FALSE)
+  endif()
+
   # Use `-fmacro-prefix-map` for Clang and GCC (MSVC doesn't support this).
   set(C_PREFIX_MAP_FLAGS "")
   set(CXX_PREFIX_MAP_FLAGS "")
@@ -2392,15 +2401,19 @@ if(WITH_COMPILER_SHORT_FILE_MACRO)
       unset(_bin_dir)
     endif()
   else()
-    message(
-      WARNING
-      "-fmacro-prefix-map flag is NOT supported by C/C++ compiler."
-      " Disabling WITH_COMPILER_SHORT_FILE_MACRO."
-    )
+    if(_is_new_c OR _is_new_cxx)
+      message(
+        WARNING
+        "-fmacro-prefix-map flag is NOT supported by C/C++ compiler."
+        " Disabling WITH_COMPILER_SHORT_FILE_MACRO."
+      )
+    endif()
     set(WITH_COMPILER_SHORT_FILE_MACRO OFF)
   endif()
   unset(C_PREFIX_MAP_FLAGS)
   unset(CXX_PREFIX_MAP_FLAGS)
+  unset(_is_new_c)
+  unset(_is_new_cxx)
 endif()
 
 # Include warnings first, so its possible to disable them with user defined flags
@@ -2437,8 +2450,8 @@ endif()
 if(WITH_ASSERT_RELEASE)
   # CMake seemingly be setting the NDEBUG flag on its own already on some configurations
   # therefore we need to remove the flags if they happen to be set.
-  remove_cc_flag("-DNDEBUG") # GCC/CLang
-  remove_cc_flag("/DNDEBUG") # MSVC
+  remove_c_and_cxx_flag("-DNDEBUG") # GCC/CLang
+  remove_c_and_cxx_flag("/DNDEBUG") # MSVC
 else()
   set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
     $<$<CONFIG:Release>:NDEBUG>

@@ -597,17 +597,20 @@ static void pygpu_batch__tp_dealloc(BPyGPUBatch *self)
 PyDoc_STRVAR(
     /* Wrap. */
     pygpu_batch__tp_doc,
-    ".. class:: GPUBatch(type, buf, elem=None)\n"
+    ".. class:: GPUBatch\n"
     "\n"
     "   Reusable container for drawable geometry.\n"
     "\n"
-    "   :param type: The primitive type of geometry to be drawn.\n"
-    "   :type type: " PYDOC_PRIMTYPE_LITERAL
+    "   .. method:: __init__(type, buf, elem=None)\n"
     "\n"
-    "   :param buf: Vertex buffer containing all or some of the attributes required for drawing.\n"
-    "   :type buf: :class:`gpu.types.GPUVertBuf`\n"
-    "   :param elem: An optional index buffer.\n"
-    "   :type elem: :class:`gpu.types.GPUIndexBuf` | None\n");
+    "      :param type: The primitive type of geometry to be drawn.\n"
+    "      :type type: " PYDOC_PRIMTYPE_LITERAL
+    "\n"
+    "      :param buf: Vertex buffer containing all or some of the attributes required for "
+    "drawing.\n"
+    "      :type buf: :class:`gpu.types.GPUVertBuf`\n"
+    "      :param elem: An optional index buffer.\n"
+    "      :type elem: :class:`gpu.types.GPUIndexBuf` | None\n");
 PyTypeObject BPyGPUBatch_Type = {
     /*ob_base*/ PyVarObject_HEAD_INIT(nullptr, 0)
     /*tp_name*/ "GPUBatch",

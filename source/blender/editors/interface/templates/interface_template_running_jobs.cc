@@ -21,6 +21,7 @@
 
 #include "ED_screen.hh"
 
+#include "UI_resources.hh"
 #include "WM_api.hh"
 
 #include "UI_interface_c.hh"
@@ -179,6 +180,11 @@ void template_running_jobs(Layout *layout, bContext *C)
       icon = ICON_MOD_OCEAN;
       break;
     }
+    if (WM_jobs_test(wm, &scene, WM_JOB_TYPE_SOUND_MIXDOWN)) {
+      cancel_fn = set_global_break;
+      icon = ICON_FILE_SOUND;
+      break;
+    }
   }
   if (!owner) {
     for (wmWindow &win : wm->windows) {
@@ -209,6 +215,15 @@ void template_running_jobs(Layout *layout, bContext *C)
       if (owner) {
         break;
       }
+    }
+  }
+
+  /* Blend file wide jobs. */
+  if (owner == nullptr) {
+    if (WM_jobs_test(wm, bmain, WM_JOB_TYPE_GENERATE_TEXTURE_CACHE)) {
+      owner = bmain;
+      cancel_fn = set_global_break;
+      icon = ICON_TEXTURE;
     }
   }
 

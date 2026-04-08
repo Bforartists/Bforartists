@@ -18,14 +18,15 @@ class OptiXDenoiser : public DenoiserGPU {
   OptiXDenoiser(Device *denoiser_device, const DenoiseParams &params);
   ~OptiXDenoiser();
 
+  virtual bool denoise_buffer(const BufferParams &buffer_params,
+                              const BufferParams &denoised_buffer_params,
+                              RenderBuffers *render_buffers,
+                              int num_samples,
+                              bool allow_inplace_modification) override;
+
   static bool is_device_supported(const DeviceInfo &device);
 
- protected:
-  virtual uint get_device_type_mask() const override;
-
  private:
-  virtual bool denoise_buffer(const DenoiseTask &task) override;
-
   /* Set fake albedo pixels in the albedo guiding pass storage.
    * After this point only passes which do not need albedo for denoising can be processed. */
   bool denoise_filter_guiding_set_fake_albedo(const DenoiseContext &context);
@@ -57,6 +58,7 @@ class OptiXDenoiser : public DenoiserGPU {
   bool use_pass_albedo_ = false;
   bool use_pass_normal_ = false;
   bool use_pass_motion_ = false;
+  bool use_upscale_model_ = false;
 };
 
 CCL_NAMESPACE_END

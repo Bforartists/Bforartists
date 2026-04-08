@@ -146,7 +146,7 @@ void WM_gizmo_set_color_highlight(wmGizmo *gz, const float color_hi[4]);
 /**
  * Leaving values NULL use values from #wmGizmo.
  */
-struct WM_GizmoMatrixParams {
+struct wmGizmoMatrixParams {
   const float (*matrix_space)[4];
   const float (*matrix_basis)[4];
   const float (*matrix_offset)[4];
@@ -154,7 +154,7 @@ struct WM_GizmoMatrixParams {
 };
 
 void WM_gizmo_calc_matrix_final_params(const wmGizmo *gz,
-                                       const WM_GizmoMatrixParams *params,
+                                       const wmGizmoMatrixParams *params,
                                        float r_mat[4][4]);
 void WM_gizmo_calc_matrix_final_no_offset(const wmGizmo *gz, float r_mat[4][4]);
 

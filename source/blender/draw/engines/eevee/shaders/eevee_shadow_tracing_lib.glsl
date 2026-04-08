@@ -149,8 +149,10 @@ struct ShadowRayDirectional {
 };
 
 /* `lP` is supposed to be in light rotated space. But not translated. */
-ShadowRayDirectional shadow_ray_generate_directional(
-    LightData light, float2 random_2d, float3 lP, float3 lNg, float texel_radius)
+ShadowRayDirectional shadow_ray_generate_directional(LightData light,
+                                                     float2 random_2d,
+                                                     float3 lP,
+                                                     float texel_radius)
 {
   float clip_near = orderedIntBitsToFloat(light.clip_near);
   /* Assumed to be non-null. */
@@ -218,10 +220,7 @@ struct ShadowRayPunctual {
 };
 
 /* Return ray in UV clip space [0..1]. */
-ShadowRayPunctual shadow_ray_generate_punctual(LightData light,
-                                               float2 random_2d,
-                                               float3 lP,
-                                               float3 lNg)
+ShadowRayPunctual shadow_ray_generate_punctual(LightData light, float2 random_2d, float3 lP)
 {
   if (light.type == LIGHT_RECT) {
     random_2d = random_2d * 2.0f - 1.0f;
@@ -501,11 +500,11 @@ float shadow_eval(LightData light,
     bool has_hit;
     if (is_directional) {
       ShadowRayDirectional clip_ray = shadow_ray_generate_directional(
-          light, random_ray_2d, lP, lNg, texel_radius);
+          light, random_ray_2d, lP, texel_radius);
       has_hit = shadow_map_trace(clip_ray, ray_step_count, random_shadow_3d.z);
     }
     else {
-      ShadowRayPunctual clip_ray = shadow_ray_generate_punctual(light, random_ray_2d, lP, lNg);
+      ShadowRayPunctual clip_ray = shadow_ray_generate_punctual(light, random_ray_2d, lP);
       has_hit = shadow_map_trace(clip_ray, ray_step_count, random_shadow_3d.z);
     }
 

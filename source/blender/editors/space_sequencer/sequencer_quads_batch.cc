@@ -8,7 +8,7 @@
 
 #include "sequencer_quads_batch.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_math_vector_types.hh"
 
 #include "GPU_batch.hh"

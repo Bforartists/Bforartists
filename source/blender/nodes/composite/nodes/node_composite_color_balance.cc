@@ -50,102 +50,102 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Color>("Image").default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
-  b.add_output<decl::Color>("Image").align_with_previous();
+  b.add_input<decl::Color>("Image"_ustr).default_value({1.0f, 1.0f, 1.0f, 1.0f}).hide_value();
+  b.add_output<decl::Color>("Image"_ustr).align_with_previous();
 
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR);
 
-  b.add_input<decl::Menu>("Type")
+  b.add_input<decl::Menu>("Type"_ustr)
       .default_value(CMP_NODE_COLOR_BALANCE_LGG)
       .static_items(type_items)
       .optional_label();
 
-  b.add_input<decl::Float>("Lift", "Base Lift")
+  b.add_input<decl::Float>("Lift"_ustr, "Base Lift"_ustr)
       .default_value(0.0f)
       .min(-1.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_LGG)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_LGG)
       .description("Correction for shadows");
-  b.add_input<decl::Color>("Lift", "Color Lift")
+  b.add_input<decl::Color>("Lift"_ustr, "Color Lift"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_LGG)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_LGG)
       .description("Correction for shadows");
-  b.add_input<decl::Float>("Gamma", "Base Gamma")
+  b.add_input<decl::Float>("Gamma"_ustr, "Base Gamma"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
       .subtype(PROP_FACTOR)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_LGG)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_LGG)
       .description("Correction for midtones");
-  b.add_input<decl::Color>("Gamma", "Color Gamma")
+  b.add_input<decl::Color>("Gamma"_ustr, "Color Gamma"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_LGG)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_LGG)
       .description("Correction for midtones");
-  b.add_input<decl::Float>("Gain", "Base Gain")
+  b.add_input<decl::Float>("Gain"_ustr, "Base Gain"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
       .subtype(PROP_FACTOR)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_LGG)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_LGG)
       .description("Correction for highlights");
-  b.add_input<decl::Color>("Gain", "Color Gain")
+  b.add_input<decl::Color>("Gain"_ustr, "Color Gain"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_LGG)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_LGG)
       .description("Correction for highlights");
 
-  b.add_input<decl::Float>("Offset", "Base Offset")
+  b.add_input<decl::Float>("Offset"_ustr, "Base Offset"_ustr)
       .default_value(0.0f)
       .min(-1.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_ASC_CDL)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_ASC_CDL)
       .description("Correction for shadows");
-  b.add_input<decl::Color>("Offset", "Color Offset")
+  b.add_input<decl::Color>("Offset"_ustr, "Color Offset"_ustr)
       .default_value({0.0f, 0.0f, 0.0f, 1.0f})
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_ASC_CDL)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_ASC_CDL)
       .description("Correction for shadows");
-  b.add_input<decl::Float>("Power", "Base Power")
+  b.add_input<decl::Float>("Power"_ustr, "Base Power"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
       .subtype(PROP_FACTOR)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_ASC_CDL)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_ASC_CDL)
       .description("Correction for midtones");
-  b.add_input<decl::Color>("Power", "Color Power")
+  b.add_input<decl::Color>("Power"_ustr, "Color Power"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_ASC_CDL)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_ASC_CDL)
       .description("Correction for midtones");
-  b.add_input<decl::Float>("Slope", "Base Slope")
+  b.add_input<decl::Float>("Slope"_ustr, "Base Slope"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(2.0f)
       .subtype(PROP_FACTOR)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_ASC_CDL)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_ASC_CDL)
       .description("Correction for highlights");
-  b.add_input<decl::Color>("Slope", "Color Slope")
+  b.add_input<decl::Color>("Slope"_ustr, "Color Slope"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_ASC_CDL)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_ASC_CDL)
       .description("Correction for highlights");
 
   PanelDeclarationBuilder &input_panel = b.add_panel("Input"_ustr);
-  input_panel.add_input<decl::Float>("Temperature", "Input Temperature")
+  input_panel.add_input<decl::Float>("Temperature"_ustr, "Input Temperature"_ustr)
       .default_value(6500.0f)
       .subtype(PROP_COLOR_TEMPERATURE)
       .min(1800.0f)
       .max(100000.0f)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_WHITEPOINT)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_WHITEPOINT)
       .description("Color temperature of the input's white point");
-  input_panel.add_input<decl::Float>("Tint", "Input Tint")
+  input_panel.add_input<decl::Float>("Tint"_ustr, "Input Tint"_ustr)
       .default_value(10.0f)
       .subtype(PROP_FACTOR)
       .min(-150.0f)
       .max(150.0f)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_WHITEPOINT)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_WHITEPOINT)
       .description("Color tint of the input's white point (the default of 10 matches daylight)");
   input_panel.add_layout([](ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr) {
     ui::Layout &split = layout.split(0.2f, false);
@@ -153,19 +153,19 @@ static void node_declare(NodeDeclarationBuilder &b)
   });
 
   PanelDeclarationBuilder &output_panel = b.add_panel("Output"_ustr);
-  output_panel.add_input<decl::Float>("Temperature", "Output Temperature")
+  output_panel.add_input<decl::Float>("Temperature"_ustr, "Output Temperature"_ustr)
       .default_value(6500.0f)
       .subtype(PROP_COLOR_TEMPERATURE)
       .min(1800.0f)
       .max(100000.0f)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_WHITEPOINT)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_WHITEPOINT)
       .description("Color temperature of the output's white point");
-  output_panel.add_input<decl::Float>("Tint", "Output Tint")
+  output_panel.add_input<decl::Float>("Tint"_ustr, "Output Tint"_ustr)
       .default_value(10.0f)
       .subtype(PROP_FACTOR)
       .min(-150.0f)
       .max(150.0f)
-      .usage_by_menu("Type", CMP_NODE_COLOR_BALANCE_WHITEPOINT)
+      .usage_by_menu("Type"_ustr, CMP_NODE_COLOR_BALANCE_WHITEPOINT)
       .description("Color tint of the output's white point (the default of 10 matches daylight)");
   output_panel.add_layout([](ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr) {
     ui::Layout &split = layout.split(0.2f, false);
@@ -192,15 +192,15 @@ static int node_gpu_material(GPUMaterial *material,
                              GPUNodeStack *inputs,
                              GPUNodeStack *outputs)
 {
-  const bNodeSocket &type = *node->input_by_identifier("Type");
+  const bNodeSocket &type = *node->input_by_identifier("Type"_ustr);
   const bool is_white_point = !type.is_directly_linked() &&
                               type.default_value_typed<bNodeSocketValueMenu>()->value ==
                                   CMP_NODE_COLOR_BALANCE_WHITEPOINT;
 
-  const bNodeSocket &input_temperature = *node->input_by_identifier("Input Temperature");
-  const bNodeSocket &input_tint = *node->input_by_identifier("Input Tint");
-  const bNodeSocket &output_temperature = *node->input_by_identifier("Output Temperature");
-  const bNodeSocket &output_tint = *node->input_by_identifier("Output Tint");
+  const bNodeSocket &input_temperature = *node->input_by_identifier("Input Temperature"_ustr);
+  const bNodeSocket &input_tint = *node->input_by_identifier("Input Tint"_ustr);
+  const bNodeSocket &output_temperature = *node->input_by_identifier("Output Temperature"_ustr);
+  const bNodeSocket &output_tint = *node->input_by_identifier("Output Tint"_ustr);
 
   /* As an optimization for white point balancing, if all inputs are constant, compute the white
    * point matrix on the host and pass it to the shader. */

@@ -10,15 +10,15 @@ namespace nodes::node_shader_geometry_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("Position");
-  b.add_output<decl::Vector>("Normal");
-  b.add_output<decl::Vector>("Tangent");
-  b.add_output<decl::Vector>("True Normal");
-  b.add_output<decl::Vector>("Incoming");
-  b.add_output<decl::Vector>("Parametric");
-  b.add_output<decl::Float>("Backfacing");
-  b.add_output<decl::Float>("Pointiness");
-  b.add_output<decl::Float>("Random Per Island");
+  b.add_output<decl::Vector>("Position"_ustr);
+  b.add_output<decl::Vector>("Normal"_ustr);
+  b.add_output<decl::Vector>("Tangent"_ustr);
+  b.add_output<decl::Vector>("True Normal"_ustr);
+  b.add_output<decl::Vector>("Incoming"_ustr);
+  b.add_output<decl::Vector>("Parametric"_ustr);
+  b.add_output<decl::Float>("Backfacing"_ustr);
+  b.add_output<decl::Float>("Pointiness"_ustr);
+  b.add_output<decl::Float>("Random Per Island"_ustr);
 }
 
 static int node_shader_gpu_geometry(GPUMaterial *mat,

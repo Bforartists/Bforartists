@@ -92,8 +92,8 @@ class VKTexture : public Texture {
   virtual ~VKTexture() override;
 
   void generate_mipmap() override;
-  void copy_to(Texture *texture) override;
-  void copy_to(VKTexture &dst_texture, VkImageAspectFlags vk_image_aspect);
+  void copy_to(Texture *texture, IndexRange mip_levels) override;
+  void copy_to(VKTexture &dst_texture, IndexRange mip_levels, VkImageAspectFlags vk_image_aspect);
   void clear(const double4 data) override;
   void clear_depth_stencil(const GPUFrameBufferBits buffer,
                            float clear_depth,

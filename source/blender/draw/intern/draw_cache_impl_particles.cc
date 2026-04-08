@@ -8,7 +8,7 @@
  * \brief Particle API for render engines
  */
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "DNA_collection_types.h"
 #include "DNA_curves_types.h"
 #include "DNA_scene_types.h"

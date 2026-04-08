@@ -28,12 +28,12 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
   b.add_default_layout();
-  b.add_input<decl::Geometry>("Grease Pencil")
+  b.add_input<decl::Geometry>("Grease Pencil"_ustr)
       .supported_type(GeometryComponent::Type::GreasePencil)
       .description("Grease Pencil data to merge layers of");
-  b.add_output<decl::Geometry>("Grease Pencil").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  auto &group_id = b.add_input<decl::Int>("Group ID")
+  b.add_output<decl::Geometry>("Grease Pencil"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  auto &group_id = b.add_input<decl::Int>("Group ID"_ustr)
                        .hide_value()
                        .field_on_all()
                        .make_available([](bNode &node) {
@@ -65,7 +65,7 @@ static GreasePencil *merge_by_name(const GreasePencil &src_grease_pencil,
                                    const AttributeFilter &attribute_filter)
 {
   using namespace bke::greasepencil;
-  const Field<bool> selection_field = params.get_input<Field<bool>>("Selection");
+  const Field<bool> selection_field = params.get_input<Field<bool>>("Selection"_ustr);
 
   bke::GreasePencilFieldContext field_context{src_grease_pencil};
   FieldEvaluator field_evaluator{field_context, src_grease_pencil.layers().size()};
@@ -84,8 +84,8 @@ static GroupedSpan<int> get_layers_map_by_id(const GreasePencil &src_grease_penc
 
   const int old_layers_num = src_grease_pencil.layers().size();
 
-  const Field<bool> selection_field = params.get_input<Field<bool>>("Selection");
-  const Field<int> group_id_field = params.get_input<Field<int>>("Group ID");
+  const Field<bool> selection_field = params.get_input<Field<bool>>("Selection"_ustr);
+  const Field<int> group_id_field = params.get_input<Field<int>>("Group ID"_ustr);
 
   bke::GreasePencilFieldContext field_context{src_grease_pencil};
   FieldEvaluator field_evaluator{field_context, old_layers_num};
@@ -149,17 +149,17 @@ static void merge_layers(GeometrySet &geometry,
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet main_geometry = params.extract_input<GeometrySet>("Grease Pencil");
+  GeometrySet main_geometry = params.extract_input<GeometrySet>("Grease Pencil"_ustr);
   const bNode &node = params.node();
   const NodeGeometryMergeLayers &storage = node_storage(node);
 
-  const NodeAttributeFilter attribute_filter = params.get_attribute_filter("Grease Pencil");
+  const NodeAttributeFilter attribute_filter = params.get_attribute_filter("Grease Pencil"_ustr);
 
   geometry::foreach_real_geometry(main_geometry, [&](GeometrySet &geometry) {
     merge_layers(geometry, storage, params, attribute_filter);
   });
 
-  params.set_output("Grease Pencil", std::move(main_geometry));
+  params.set_output("Grease Pencil"_ustr, std::move(main_geometry));
 }
 
 static void node_rna(StructRNA *srna)

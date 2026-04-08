@@ -23,7 +23,7 @@ namespace nodes::node_shader_curves_cc::vec {
 static void sh_node_curve_vec_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .min(0.0f)
       .max(1.0f)
       .default_value(1.0f)
@@ -31,12 +31,12 @@ static void sh_node_curve_vec_declare(NodeDeclarationBuilder &b)
       .no_muted_links()
       .description("Amount of influence the node exerts on the output vector")
       .compositor_domain_priority(1);
-  b.add_input<decl::Vector>("Vector")
+  b.add_input<decl::Vector>("Vector"_ustr)
       .min(-1.0f)
       .max(1.0f)
       .description("Vector which would be mapped to the curve")
       .compositor_domain_priority(0);
-  b.add_output<decl::Vector>("Vector");
+  b.add_output<decl::Vector>("Vector"_ustr);
 }
 
 static void node_shader_init_curve_vec(bNodeTree * /*ntree*/, bNode *node)
@@ -164,7 +164,7 @@ namespace nodes::node_shader_curves_cc::rgb {
 static void sh_node_curve_rgb_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .min(0.0f)
       .max(1.0f)
       .default_value(1.0f)
@@ -172,11 +172,11 @@ static void sh_node_curve_rgb_declare(NodeDeclarationBuilder &b)
       .no_muted_links()
       .description("Amount of influence the node exerts on the output color")
       .compositor_domain_priority(1);
-  b.add_input<decl::Color>("Color")
+  b.add_input<decl::Color>("Color"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .description("Color input on which correction will be applied")
       .compositor_domain_priority(0);
-  b.add_output<decl::Color>("Color");
+  b.add_output<decl::Color>("Color"_ustr);
 }
 
 static void node_shader_init_curve_rgb(bNodeTree * /*ntree*/, bNode *node)
@@ -333,18 +333,18 @@ namespace nodes::node_shader_curves_cc::flt {
 static void sh_node_curve_float_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Factor")
+  b.add_input<decl::Float>("Factor"_ustr)
       .min(0.0f)
       .max(1.0f)
       .default_value(1.0f)
       .subtype(PROP_FACTOR)
       .no_muted_links()
       .compositor_domain_priority(1);
-  b.add_input<decl::Float>("Value")
+  b.add_input<decl::Float>("Value"_ustr)
       .default_value(1.0f)
       .is_default_link_socket()
       .compositor_domain_priority(0);
-  b.add_output<decl::Float>("Value");
+  b.add_output<decl::Float>("Value"_ustr);
 }
 
 static void node_shader_init_curve_float(bNodeTree * /*ntree*/, bNode *node)

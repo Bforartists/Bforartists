@@ -512,7 +512,7 @@ static void loose_data_instantiate_object_base_instance_init(Main *bmain,
   }
 
   BKE_collection_object_add(bmain, collection, ob);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Base *base = BKE_view_layer_base_find(view_layer, ob);
 
   if (v3d != nullptr) {
@@ -714,7 +714,7 @@ static void loose_data_instantiate_collection_process(
     else {
       /* Add collection as child of active collection. */
       BKE_collection_child_add(bmain, active_collection, collection);
-      BKE_view_layer_synced_ensure(scene, view_layer);
+      BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
       if ((lapp_context->params->flag & FILE_AUTOSELECT) != 0) {
         /* All objects contained in this collection need to be processed, including the ones
@@ -733,14 +733,20 @@ static void loose_data_instantiate_collection_process(
 }
 
 static void loose_data_gather_instanciated_objects_for_viewlayer(
-    const Scene &scene, ViewLayer &view_layer, Set<Object *> &r_instanciated_objects)
+    LooseDataInstantiateContext &instantiate_context,
+    const Scene &scene,
+    ViewLayer &view_layer,
+    Set<Object *> &r_instanciated_objects)
 {
-  BKE_view_layer_synced_ensure(&scene, &view_layer);
+  BKE_view_layer_synced_ensure(
+      *instantiate_context.lapp_context->params->bmain, &scene, &view_layer);
 
   Stack<Collection *> instance_collections;
   Set<Collection *> known_instance_collections;
 
-  FOREACH_OBJECT_BEGIN (&scene, &view_layer, ob_iter) {
+  FOREACH_OBJECT_BEGIN (
+      instantiate_context.lapp_context->params->bmain, &scene, &view_layer, ob_iter)
+  {
     r_instanciated_objects.add(ob_iter);
     Collection *instance_collection = ob_iter->instance_collection;
     if (instance_collection && !known_instance_collections.contains(instance_collection)) {
@@ -780,7 +786,8 @@ static void loose_data_gather_instanciated_objects(
    * - Directly instantiated there (i.e. in one of the view layer instantiated collections).
    * - Indirectly instanciated (i.e. being in a collection that is object-instanciated).
    */
-  loose_data_gather_instanciated_objects_for_viewlayer(*scene, *view_layer, instanciated_objects);
+  loose_data_gather_instanciated_objects_for_viewlayer(
+      instantiate_context, *scene, *view_layer, instanciated_objects);
 
   /* When linking or appending a whole Scene, typically its objects are already instantiated there,
    * so no need to instantiate them in the active Scene.
@@ -796,7 +803,7 @@ static void loose_data_gather_instanciated_objects(
     Scene &scene_iter = *id_cast<Scene *>(item.new_id);
     for (ViewLayer &view_layer_iter : scene_iter.view_layers) {
       loose_data_gather_instanciated_objects_for_viewlayer(
-          scene_iter, view_layer_iter, instanciated_objects);
+          instantiate_context, scene_iter, view_layer_iter, instanciated_objects);
     }
   }
 }
@@ -2265,14 +2272,14 @@ void BKE_blendfile_library_relocate(BlendfileLinkAppendContext *lapp_context,
     }
   }
 
-  BKE_layer_collection_resync_forbid();
+  BKE_layer_collection_resync_forbid(*bmain);
 
   /* Note that in reload case, we also want to replace indirect usages. */
   const int remap_flags = ID_REMAP_SKIP_NEVER_NULL_USAGE |
                           (do_reload ? 0 : ID_REMAP_SKIP_INDIRECT_USAGE);
   blendfile_library_relocate_id_remap(*lapp_context, reports, do_reload, remap_flags);
 
-  BKE_layer_collection_resync_allow();
+  BKE_layer_collection_resync_allow(*bmain);
   BKE_main_collection_sync_remap(bmain);
 
   BKE_main_unlock(bmain);
@@ -2333,13 +2340,13 @@ void BKE_blendfile_id_relocate(BlendfileLinkAppendContext &lapp_context, ReportL
 #endif
 
   BKE_main_lock(bmain);
-  BKE_layer_collection_resync_forbid();
+  BKE_layer_collection_resync_forbid(*bmain);
 
   /* Do not affect indirect usages. */
   const int remap_flags = ID_REMAP_SKIP_NEVER_NULL_USAGE | ID_REMAP_SKIP_INDIRECT_USAGE;
   blendfile_library_relocate_id_remap(lapp_context, reports, false, remap_flags);
 
-  BKE_layer_collection_resync_allow();
+  BKE_layer_collection_resync_allow(*bmain);
   BKE_main_collection_sync_remap(bmain);
   BKE_main_unlock(bmain);
 

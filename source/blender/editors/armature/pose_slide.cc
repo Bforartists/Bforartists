@@ -220,8 +220,9 @@ static int pose_slide_init(bContext *C, wmOperator *op, ePoseSlide_Modes mode)
   params.object_mode = OB_MODE_POSE;
   /* Explicitly setting this to false because we *do* want this to work for armature instances. */
   params.no_dup_data = false;
+  const Main *bmain = CTX_data_main(C);
   const Vector<Object *> objects = BKE_view_layer_array_from_objects_in_mode_params(
-      CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C), &params);
+      *bmain, CTX_data_scene(C), CTX_data_view_layer(C), CTX_wm_view3d(C), &params);
   pso->ob_data_array.reinitialize(objects.size());
 
   for (const int ob_index : objects.index_range()) {
@@ -1822,6 +1823,7 @@ static void get_selected_frames(ListBaseT<tPChanFCurveLink> *pflinks,
 
 static wmOperatorStatus pose_propagate_exec(bContext *C, wmOperator *op)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   View3D *v3d = CTX_wm_view3d(C);
@@ -1894,7 +1896,7 @@ static wmOperatorStatus pose_propagate_exec(bContext *C, wmOperator *op)
   poseAnim_mapping_free(&pflinks);
 
   /* Updates + notifiers. */
-  FOREACH_OBJECT_IN_MODE_BEGIN (scene, view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
+  FOREACH_OBJECT_IN_MODE_BEGIN (bmain, scene, view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
     poseAnim_mapping_refresh(C, scene, ob);
   }
   FOREACH_OBJECT_IN_MODE_END;

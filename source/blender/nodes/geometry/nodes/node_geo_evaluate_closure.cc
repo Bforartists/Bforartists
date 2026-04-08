@@ -30,7 +30,7 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Closure>("Closure");
+  b.add_input<decl::Closure>("Closure"_ustr);
 
   const bNode *node = b.node_or_null();
   auto &panel = b.add_panel("Interface"_ustr);
@@ -39,9 +39,9 @@ static void node_declare(NodeDeclarationBuilder &b)
     for (const int i : IndexRange(storage.output_items.items_num)) {
       const NodeEvaluateClosureOutputItem &item = storage.output_items.items[i];
       const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-      const std::string identifier =
-          EvaluateClosureOutputItemsAccessor::socket_identifier_for_item(item);
-      auto &decl = panel.add_output(socket_type, item.name, identifier);
+      const UString identifier(
+          EvaluateClosureOutputItemsAccessor::socket_identifier_for_item(item));
+      auto &decl = panel.add_output(socket_type, UString(item.name), identifier);
       if (item.structure_type != NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
         decl.structure_type(StructureType(item.structure_type));
       }
@@ -49,13 +49,13 @@ static void node_declare(NodeDeclarationBuilder &b)
         decl.structure_type(StructureType::Dynamic);
       }
     }
-    panel.add_output<decl::Extend>("", "__extend__");
+    panel.add_output<decl::Extend>(""_ustr, "__extend__"_ustr);
     for (const int i : IndexRange(storage.input_items.items_num)) {
       const NodeEvaluateClosureInputItem &item = storage.input_items.items[i];
       const eNodeSocketDatatype socket_type = eNodeSocketDatatype(item.socket_type);
-      const std::string identifier = EvaluateClosureInputItemsAccessor::socket_identifier_for_item(
-          item);
-      auto &decl = panel.add_input(socket_type, item.name, identifier);
+      const UString identifier(
+          EvaluateClosureInputItemsAccessor::socket_identifier_for_item(item));
+      auto &decl = panel.add_input(socket_type, UString(item.name), identifier);
       if (item.structure_type != NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
         decl.structure_type(StructureType(item.structure_type));
       }
@@ -63,7 +63,7 @@ static void node_declare(NodeDeclarationBuilder &b)
         decl.structure_type(StructureType::Dynamic);
       }
     }
-    panel.add_input<decl::Extend>("", "__extend__");
+    panel.add_input<decl::Extend>(""_ustr, "__extend__"_ustr);
   }
 }
 
@@ -163,14 +163,14 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       const auto *item =
           socket_items::add_item_with_socket_type_and_name<EvaluateClosureOutputItemsAccessor>(
               params.node_tree, node, params.socket.typeinfo->type, params.socket.name);
-      params.update_and_connect_available_socket(node, item->name);
+      params.update_and_connect_available_socket(node, UString(item->name));
     });
     return;
   }
   if (other_socket.type == SOCK_CLOSURE) {
     params.add_item(IFACE_("Closure"), [](LinkSearchOpParams &params) {
       bNode &node = params.add_node("NodeEvaluateClosure");
-      params.connect_available_socket(node, "Closure");
+      params.connect_available_socket(node, "Closure"_ustr);
 
       SpaceNode &snode = *CTX_wm_space_node(&params.C);
       sync_sockets_evaluate_closure(snode, node, nullptr);
@@ -188,7 +188,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
                   params.node_tree, node, params.socket.typeinfo->type, params.socket.name);
           nodes::update_node_declaration_and_sockets(params.node_tree, node);
           params.connect_available_socket_by_identifier(
-              node, EvaluateClosureInputItemsAccessor::socket_identifier_for_item(*item));
+              node, UString(EvaluateClosureInputItemsAccessor::socket_identifier_for_item(*item)));
         },
         other_socket.type == SOCK_CLOSURE ? -1 : 0);
   }

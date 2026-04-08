@@ -13,9 +13,9 @@ namespace nodes::node_shader_bevel_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("Radius").default_value(0.05f).min(0.0f).max(1000.0f);
-  b.add_input<decl::Vector>("Normal").hide_value();
-  b.add_output<decl::Vector>("Normal");
+  b.add_input<decl::Float>("Radius"_ustr).default_value(0.05f).min(0.0f).max(1000.0f);
+  b.add_input<decl::Vector>("Normal"_ustr).hide_value();
+  b.add_output<decl::Vector>("Normal"_ustr);
 }
 
 static void node_shader_buts_bevel(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

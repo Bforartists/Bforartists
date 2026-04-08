@@ -1056,10 +1056,11 @@ static void refine_subdiv(Depsgraph *depsgraph,
 
 static void restore_list(bContext *C, Depsgraph *depsgraph, StepData &step_data)
 {
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   RegionView3D *rv3d = CTX_wm_region_view3d(C);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Object &object = *BKE_view_layer_active_object_get(view_layer);
   if (step_data.object_name != object.id.name) {
     return;
@@ -2269,7 +2270,7 @@ static void step_decode(
   {
     Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *ob = BKE_view_layer_active_object_get(view_layer);
     if (ob && (ob->type == OB_MESH)) {
       if (ob->mode & (OB_MODE_SCULPT)) {

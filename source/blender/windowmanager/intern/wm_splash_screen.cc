@@ -67,7 +67,7 @@ static void wm_block_splash_close(bContext *C, void *arg_block, void * /*arg*/)
 #ifndef WITH_HEADLESS
 static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
 {
-  uchar *rct = ibuf->byte_buffer.data;
+  uchar *rct = ibuf->byte_data_for_write();
   if (!rct) {
     return;
   }

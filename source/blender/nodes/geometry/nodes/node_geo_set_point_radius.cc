@@ -14,12 +14,12 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Geometry>("Points")
+  b.add_input<decl::Geometry>("Points"_ustr)
       .supported_type(GeometryComponent::Type::PointCloud)
       .description("Points to set the radius of");
-  b.add_output<decl::Geometry>("Points").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  b.add_input<decl::Float>("Radius")
+  b.add_output<decl::Geometry>("Points"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Float>("Radius"_ustr)
       .default_value(0.05f)
       .min(0.0f)
       .subtype(PROP_DISTANCE)
@@ -28,9 +28,9 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Points");
-  const Field<bool> selection = params.extract_input<Field<bool>>("Selection");
-  const Field<float> radius = params.extract_input<Field<float>>("Radius");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Points"_ustr);
+  const Field<bool> selection = params.extract_input<Field<bool>>("Selection"_ustr);
+  const Field<float> radius = params.extract_input<Field<float>>("Radius"_ustr);
 
   geometry::foreach_real_geometry(geometry_set, [&](GeometrySet &geometry_set) {
     if (PointCloud *pointcloud = geometry_set.get_pointcloud_for_write()) {
@@ -43,7 +43,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     }
   });
 
-  params.set_output("Points", std::move(geometry_set));
+  params.set_output("Points"_ustr, std::move(geometry_set));
 }
 
 static void node_register()

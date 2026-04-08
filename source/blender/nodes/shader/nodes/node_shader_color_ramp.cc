@@ -10,7 +10,7 @@
 
 #include "BKE_colorband.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 
 #include "NOD_multi_function.hh"
 
@@ -24,7 +24,7 @@ namespace nodes::node_shader_color_ramp_cc {
 static void sh_node_valtorgb_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("Factor", "Fac")
+  b.add_input<decl::Float>("Factor"_ustr, "Fac"_ustr)
       .default_value(0.5f)
       .min(0.0f)
       .max(1.0f)
@@ -32,8 +32,8 @@ static void sh_node_valtorgb_declare(NodeDeclarationBuilder &b)
       .description(
           "The value used to map onto the color gradient. 0.0 results in the leftmost color, "
           "while 1.0 results in the rightmost");
-  b.add_output<decl::Color>("Color");
-  b.add_output<decl::Float>("Alpha");
+  b.add_output<decl::Color>("Color"_ustr);
+  b.add_output<decl::Float>("Alpha"_ustr);
 }
 
 static void node_shader_init_valtorgb(bNodeTree * /*ntree*/, bNode *node)

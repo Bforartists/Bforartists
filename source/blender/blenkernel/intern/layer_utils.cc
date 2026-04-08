@@ -72,13 +72,15 @@ Vector<Object *> BKE_view_layer_array_selected_objects_params(
 /** \name Objects in Mode Array
  * \{ */
 
-Vector<Base *> BKE_view_layer_array_from_bases_in_mode_params(const Scene *scene,
+Vector<Base *> BKE_view_layer_array_from_bases_in_mode_params(const Main &bmain,
+                                                              const Scene *scene,
                                                               ViewLayer *view_layer,
                                                               const View3D *v3d,
                                                               const ObjectsInModeParams *params)
 {
   if (params->no_dup_data) {
-    FOREACH_BASE_IN_MODE_BEGIN (scene, view_layer, v3d, -1, params->object_mode, base_iter) {
+    FOREACH_BASE_IN_MODE_BEGIN (&bmain, scene, view_layer, v3d, -1, params->object_mode, base_iter)
+    {
       ID *id = base_iter->object->data;
       if (id) {
         id->tag |= ID_TAG_DOIT;
@@ -89,7 +91,7 @@ Vector<Base *> BKE_view_layer_array_from_bases_in_mode_params(const Scene *scene
 
   Vector<Base *> bases;
 
-  FOREACH_BASE_IN_MODE_BEGIN (scene, view_layer, v3d, -1, params->object_mode, base_iter) {
+  FOREACH_BASE_IN_MODE_BEGIN (&bmain, scene, view_layer, v3d, -1, params->object_mode, base_iter) {
     if (params->filter_fn) {
       if (!params->filter_fn(base_iter->object, params->filter_userdata)) {
         continue;
@@ -114,68 +116,74 @@ Vector<Base *> BKE_view_layer_array_from_bases_in_mode_params(const Scene *scene
 }
 
 Vector<Object *> BKE_view_layer_array_from_objects_in_mode_params(
+    const Main &bmain,
     const Scene *scene,
     ViewLayer *view_layer,
     const View3D *v3d,
     const ObjectsInModeParams *params)
 {
   const Vector<Base *> bases = BKE_view_layer_array_from_bases_in_mode_params(
-      scene, view_layer, v3d, params);
+      bmain, scene, view_layer, v3d, params);
   Vector<Object *> objects(bases.size());
   std::transform(
       bases.begin(), bases.end(), objects.begin(), [](Base *base) { return base->object; });
   return objects;
 }
 
-Vector<Object *> BKE_view_layer_array_from_objects_in_edit_mode(const Scene *scene,
+Vector<Object *> BKE_view_layer_array_from_objects_in_edit_mode(const Main &bmain,
+                                                                const Scene *scene,
                                                                 ViewLayer *view_layer,
                                                                 const View3D *v3d)
 {
   ObjectsInModeParams params = {0};
   params.object_mode = OB_MODE_EDIT;
-  return BKE_view_layer_array_from_objects_in_mode_params(scene, view_layer, v3d, &params);
+  return BKE_view_layer_array_from_objects_in_mode_params(bmain, scene, view_layer, v3d, &params);
 }
 
-Vector<Base *> BKE_view_layer_array_from_bases_in_edit_mode(const Scene *scene,
+Vector<Base *> BKE_view_layer_array_from_bases_in_edit_mode(const Main &bmain,
+                                                            const Scene *scene,
                                                             ViewLayer *view_layer,
                                                             const View3D *v3d)
 {
   ObjectsInModeParams params = {0};
   params.object_mode = OB_MODE_EDIT;
-  return BKE_view_layer_array_from_bases_in_mode_params(scene, view_layer, v3d, &params);
+  return BKE_view_layer_array_from_bases_in_mode_params(bmain, scene, view_layer, v3d, &params);
 }
 
-Vector<Object *> BKE_view_layer_array_from_objects_in_edit_mode_unique_data(const Scene *scene,
+Vector<Object *> BKE_view_layer_array_from_objects_in_edit_mode_unique_data(const Main &bmain,
+                                                                            const Scene *scene,
                                                                             ViewLayer *view_layer,
                                                                             const View3D *v3d)
 {
   ObjectsInModeParams params = {0};
   params.object_mode = OB_MODE_EDIT;
   params.no_dup_data = true;
-  return BKE_view_layer_array_from_objects_in_mode_params(scene, view_layer, v3d, &params);
+  return BKE_view_layer_array_from_objects_in_mode_params(bmain, scene, view_layer, v3d, &params);
 }
 
-Vector<Base *> BKE_view_layer_array_from_bases_in_edit_mode_unique_data(const Scene *scene,
+Vector<Base *> BKE_view_layer_array_from_bases_in_edit_mode_unique_data(const Main &bmain,
+                                                                        const Scene *scene,
                                                                         ViewLayer *view_layer,
                                                                         const View3D *v3d)
 {
   ObjectsInModeParams params = {0};
   params.object_mode = OB_MODE_EDIT;
   params.no_dup_data = true;
-  return BKE_view_layer_array_from_bases_in_mode_params(scene, view_layer, v3d, &params);
+  return BKE_view_layer_array_from_bases_in_mode_params(bmain, scene, view_layer, v3d, &params);
 }
 
 Vector<Object *> BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-    const Scene *scene, ViewLayer *view_layer, const View3D *v3d)
+    const Main &bmain, const Scene *scene, ViewLayer *view_layer, const View3D *v3d)
 {
   ObjectsInModeParams params = {0};
   params.object_mode = OB_MODE_EDIT;
   params.no_dup_data = true;
   params.filter_fn = BKE_view_layer_filter_edit_mesh_has_uvs;
-  return BKE_view_layer_array_from_objects_in_mode_params(scene, view_layer, v3d, &params);
+  return BKE_view_layer_array_from_objects_in_mode_params(bmain, scene, view_layer, v3d, &params);
 }
 
-Vector<Object *> BKE_view_layer_array_from_objects_in_mode_unique_data(const Scene *scene,
+Vector<Object *> BKE_view_layer_array_from_objects_in_mode_unique_data(const Main &bmain,
+                                                                       const Scene *scene,
                                                                        ViewLayer *view_layer,
                                                                        const View3D *v3d,
                                                                        const eObjectMode mode)
@@ -183,7 +191,7 @@ Vector<Object *> BKE_view_layer_array_from_objects_in_mode_unique_data(const Sce
   ObjectsInModeParams params = {0};
   params.object_mode = mode;
   params.no_dup_data = true;
-  return BKE_view_layer_array_from_objects_in_mode_params(scene, view_layer, v3d, &params);
+  return BKE_view_layer_array_from_objects_in_mode_params(bmain, scene, view_layer, v3d, &params);
 }
 
 ListBaseT<Base> *BKE_view_layer_object_bases_unsynced_get(ViewLayer *view_layer)
@@ -244,11 +252,12 @@ bool BKE_view_layer_filter_edit_mesh_has_edges(const Object *ob, void * /*user_d
   return false;
 }
 
-Object *BKE_view_layer_non_active_selected_object(const Scene *scene,
+Object *BKE_view_layer_non_active_selected_object(const Main &bmain,
+                                                  const Scene *scene,
                                                   ViewLayer *view_layer,
                                                   const View3D *v3d)
 {
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_synced_ensure(bmain, scene, view_layer);
   Object *ob_active = BKE_view_layer_active_object_get(view_layer);
   Object *ob_result = nullptr;
   FOREACH_SELECTED_OBJECT_BEGIN (view_layer, v3d, ob_iter) {

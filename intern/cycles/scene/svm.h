@@ -204,6 +204,7 @@ class SVMCompiler {
   int stack_size(SocketType::Type type);
   int stack_size(const ShaderIO *io);
   void stack_clear_users(ShaderNode *node, ShaderNodeSet &done);
+  void stack_zero_incomplete_derivatives(const ShaderNode *node);
 
   /* single closure */
   void find_dependencies(ShaderNodeSet &dependencies,

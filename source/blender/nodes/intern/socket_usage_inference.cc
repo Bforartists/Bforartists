@@ -454,7 +454,7 @@ class SocketUsageInferencerImpl {
   {
     const NodeInContext node = socket.owner_node();
     this->usage_task__with_dependent_sockets(
-        socket, {node->output_by_identifier(socket->identifier)}, {}, socket.context);
+        socket, {node->output_by_identifier(socket->identifier_ustr())}, {}, socket.context);
   }
 
   void usage_task__input__capture_attribute_node(const SocketInContext &socket)
@@ -567,7 +567,7 @@ class SocketUsageInferencerImpl {
     }
     Vector<const bNodeSocket *, 16> dependent_sockets;
     if (StringRef(socket->identifier).startswith("Input_")) {
-      dependent_sockets.append(node->output_by_identifier(socket->identifier));
+      dependent_sockets.append(node->output_by_identifier(socket->identifier_ustr()));
     }
     else {
       /* The geometry and selection inputs are used whenever any of the zone outputs is used. */
@@ -1030,14 +1030,14 @@ void infer_group_interface_inputs_usage(const bNodeTree &group,
   infer_group_interface_usage(group, input_values, r_input_usages, {});  // TODO
 }
 
-void infer_group_interface_usage(const bNodeTree &group,
-                                 const IDProperty *properties,
-                                 MutableSpan<SocketUsage> r_input_usages,
-                                 std::optional<MutableSpan<SocketUsage>> r_output_usages)
+void infer_group_interface_inputs_usage(const bNodeTree &group,
+                                        const PointerRNA &properties_ptr,
+                                        MutableSpan<SocketUsage> r_input_usages,
+                                        std::optional<MutableSpan<SocketUsage>> r_output_usages)
 {
   ResourceScope scope;
   const Vector<InferenceValue> group_input_values =
-      nodes::get_geometry_nodes_input_inference_values(group, properties, scope);
+      nodes::get_geometry_nodes_input_inference_values(group, properties_ptr, scope);
   nodes::socket_usage_inference::infer_group_interface_usage(
       group, group_input_values, r_input_usages, r_output_usages);
 }
@@ -1055,7 +1055,7 @@ SocketUsageParams::SocketUsageParams(SocketUsageInferencer &inferencer,
 {
 }
 
-InferenceValue SocketUsageParams::get_input(const StringRef identifier) const
+InferenceValue SocketUsageParams::get_input(const UString identifier) const
 {
   const SocketInContext input_socket{compute_context_, this->node.input_by_identifier(identifier)};
   return inferencer_.impl_.get_socket_value(input_socket);
@@ -1083,7 +1083,7 @@ std::optional<bool> SocketUsageParams::any_output_is_used() const
   return false;
 }
 
-bool SocketUsageParams::menu_input_may_be(const StringRef identifier, const int enum_value) const
+bool SocketUsageParams::menu_input_may_be(const UString identifier, const int enum_value) const
 {
   BLI_assert(this->node.input_by_identifier(identifier)->type == SOCK_MENU);
   const InferenceValue value = this->get_input(identifier);

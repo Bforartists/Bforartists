@@ -16,15 +16,17 @@ namespace nodes::node_shader_tex_checker_cc {
 static void sh_node_tex_checker_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Vector>("Vector").min(-10000.0f).max(10000.0f).implicit_field(
-      NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_input<decl::Color>("Color1")
+  b.add_input<decl::Vector>("Vector"_ustr)
+      .min(-10000.0f)
+      .max(10000.0f)
+      .implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_input<decl::Color>("Color1"_ustr)
       .default_value({0.8f, 0.8f, 0.8f, 1.0f})
       .description("Color of the first checker");
-  b.add_input<decl::Color>("Color2")
+  b.add_input<decl::Color>("Color2"_ustr)
       .default_value({0.2f, 0.2f, 0.2f, 1.0f})
       .description("Color of the second checker");
-  b.add_input<decl::Float>("Scale")
+  b.add_input<decl::Float>("Scale"_ustr)
       .min(-10000.0f)
       .max(10000.0f)
       .default_value(5.0f)
@@ -32,8 +34,8 @@ static void sh_node_tex_checker_declare(NodeDeclarationBuilder &b)
       .description(
           "Overall texture scale.\n"
           "The scale is a factor of the bounding box of the face divided by the Scale value");
-  b.add_output<decl::Color>("Color");
-  b.add_output<decl::Float>("Factor", "Fac");
+  b.add_output<decl::Color>("Color"_ustr);
+  b.add_output<decl::Float>("Factor"_ustr, "Fac"_ustr);
 }
 
 static void node_shader_init_tex_checker(bNodeTree * /*ntree*/, bNode *node)

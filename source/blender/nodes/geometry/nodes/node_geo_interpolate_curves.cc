@@ -14,7 +14,7 @@
 
 #include "BKE_curves.hh"
 
-#include "FN_multi_function_builder.hh"
+#include "FN_multi_function_registry.hh"
 
 #include "GEO_randomize.hh"
 
@@ -22,38 +22,38 @@ namespace blender::nodes::node_geo_interpolate_curves_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Guide Curves")
+  b.add_input<decl::Geometry>("Guide Curves"_ustr)
       .description("Base curves that new curves are interpolated between");
-  b.add_input<decl::Vector>("Guide Up")
+  b.add_input<decl::Vector>("Guide Up"_ustr)
       .field_on({0})
       .hide_value()
       .description("Optional up vector that is typically a surface normal");
-  b.add_input<decl::Int>("Guide Group ID")
+  b.add_input<decl::Int>("Guide Group ID"_ustr)
       .field_on({0})
       .hide_value()
       .description(
           "Splits guides into separate groups. New curves interpolate existing curves "
           "from a single group");
-  b.add_input<decl::Geometry>("Points").description(
-      "First control point positions for new interpolated curves");
-  b.add_input<decl::Vector>("Point Up")
+  b.add_input<decl::Geometry>("Points"_ustr)
+      .description("First control point positions for new interpolated curves");
+  b.add_input<decl::Vector>("Point Up"_ustr)
       .field_on({3})
       .hide_value()
       .description("Optional up vector that is typically a surface normal");
-  b.add_input<decl::Int>("Point Group ID")
+  b.add_input<decl::Int>("Point Group ID"_ustr)
       .field_on({3})
       .hide_value()
       .description("The curve group to interpolate in");
-  b.add_input<decl::Int>("Max Neighbors")
+  b.add_input<decl::Int>("Max Neighbors"_ustr)
       .default_value(4)
       .min(1)
       .description(
           "Maximum amount of close guide curves that are taken into account for interpolation");
-  b.add_output<decl::Geometry>("Curves").propagate_all();
-  b.add_output<decl::Int>("Closest Index")
+  b.add_output<decl::Geometry>("Curves"_ustr).propagate_all();
+  b.add_output<decl::Int>("Closest Index"_ustr)
       .field_on_all()
       .description("Index of the closest guide curve for each generated curve");
-  b.add_output<decl::Float>("Closest Weight")
+  b.add_output<decl::Float>("Closest Weight"_ustr)
       .field_on_all()
       .description("Weight of the closest guide curve for each generated curve");
 }
@@ -793,8 +793,8 @@ static GeometrySet generate_interpolated_curves(
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet guide_curves_geometry = params.extract_input<GeometrySet>("Guide Curves");
-  const GeometrySet points_geometry = params.extract_input<GeometrySet>("Points");
+  GeometrySet guide_curves_geometry = params.extract_input<GeometrySet>("Guide Curves"_ustr);
+  const GeometrySet points_geometry = params.extract_input<GeometrySet>("Points"_ustr);
 
   if (!guide_curves_geometry.has_curves() ||
       guide_curves_geometry.get_curves()->geometry.curve_num == 0)
@@ -811,21 +811,19 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  const int max_neighbors = std::max<int>(1, params.extract_input<int>("Max Neighbors"));
+  const int max_neighbors = std::max<int>(1, params.extract_input<int>("Max Neighbors"_ustr));
 
-  static auto normalize_fn = mf::build::SI1_SO<float3, float3>(
-      "Normalize",
-      [](const float3 &v) { return math::normalize(v); },
-      mf::build::exec_presets::AllSpanOrSingle());
+  static const mf::MultiFunction &normalize_fn = fn::multi_function::registry::lookup(
+      "normalize(float3)"_ustr);
 
   /* Normalize up fields so that is done as part of field evaluation. */
   Field<float3> guides_up_field(
-      FieldOperation::from(normalize_fn, {params.extract_input<Field<float3>>("Guide Up")}));
+      FieldOperation::from(normalize_fn, {params.extract_input<Field<float3>>("Guide Up"_ustr)}));
   Field<float3> points_up_field(
-      FieldOperation::from(normalize_fn, {params.extract_input<Field<float3>>("Point Up")}));
+      FieldOperation::from(normalize_fn, {params.extract_input<Field<float3>>("Point Up"_ustr)}));
 
-  Field<int> guide_group_field = params.extract_input<Field<int>>("Guide Group ID");
-  Field<int> point_group_field = params.extract_input<Field<int>>("Point Group ID");
+  Field<int> guide_group_field = params.extract_input<Field<int>>("Guide Group ID"_ustr);
+  Field<int> point_group_field = params.extract_input<Field<int>>("Point Group ID"_ustr);
 
   const Curves &guide_curves_id = *guide_curves_geometry.get_curves();
 
@@ -846,12 +844,12 @@ static void node_geo_exec(GeoNodeExecParams params)
   const VArray<float3> points_up = points_evaluator.get_evaluated<float3>(0);
   const VArray<int> point_group_ids = points_evaluator.get_evaluated<int>(1);
 
-  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Curves");
+  const NodeAttributeFilter &attribute_filter = params.get_attribute_filter("Curves"_ustr);
 
   std::optional<std::string> index_attribute_id =
-      params.get_output_anonymous_attribute_id_if_needed("Closest Index");
+      params.get_output_anonymous_attribute_id_if_needed("Closest Index"_ustr);
   std::optional<std::string> weight_attribute_id =
-      params.get_output_anonymous_attribute_id_if_needed("Closest Weight");
+      params.get_output_anonymous_attribute_id_if_needed("Closest Weight"_ustr);
 
   GeometrySet new_curves = generate_interpolated_curves(guide_curves_id,
                                                         *points_component->attributes(),
@@ -870,10 +868,10 @@ static void node_geo_exec(GeoNodeExecParams params)
   {
     new_curves.add(*curve_edit_data);
   }
-  new_curves.name = guide_curves_geometry.name;
+  new_curves.set_name(guide_curves_geometry.name());
   new_curves.copy_bundle_from(guide_curves_geometry);
 
-  params.set_output("Curves", std::move(new_curves));
+  params.set_output("Curves"_ustr, std::move(new_curves));
 }
 
 static void node_register()

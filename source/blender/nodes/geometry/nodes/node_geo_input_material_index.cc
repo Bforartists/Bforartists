@@ -8,13 +8,13 @@ namespace blender::nodes::node_geo_input_material_index_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("Material Index").field_source();
+  b.add_output<decl::Int>("Material Index"_ustr).field_source();
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<int> material_index_field = AttributeFieldInput::from<int>("material_index");
-  params.set_output("Material Index", std::move(material_index_field));
+  Field<int> material_index_field = AttributeFieldInput::get_field<int, "material_index">();
+  params.set_output("Material Index"_ustr, std::move(material_index_field));
 }
 
 static void node_register()

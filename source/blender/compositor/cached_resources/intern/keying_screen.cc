@@ -91,13 +91,15 @@ static void compute_marker_points(MovieClip *movie_clip,
 
     /* Find the mean color of the rectangular search pattern of the marker. */
     float4 mean_color = float4(0.0f);
+    const uchar *byte_data = pattern_image_buffer->byte_data();
+    const float *float_data = pattern_image_buffer->float_data();
     for (int i = 0; i < pattern_image_buffer->x * pattern_image_buffer->y; i++) {
-      if (pattern_image_buffer->float_buffer.data) {
-        mean_color += float4(&pattern_image_buffer->float_buffer.data[i * 4]);
+      if (float_data) {
+        mean_color += float4(&float_data[i * 4]);
       }
       else {
         float4 linear_color;
-        uchar4 srgb_color = uchar4(&pattern_image_buffer->byte_buffer.data[i * 4]);
+        uchar4 srgb_color = uchar4(&byte_data[i * 4]);
         srgb_to_linearrgb_uchar4(linear_color, srgb_color);
         mean_color += linear_color;
       }

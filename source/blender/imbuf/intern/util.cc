@@ -139,7 +139,7 @@ static int64_t imb_test_image_read_header_from_filepath(const char *filepath,
   return size;
 }
 
-int IMB_test_image_type_from_memory(const uchar *buf, const size_t buf_size)
+eImbFileType IMB_test_image_type_from_memory(const uchar *buf, const size_t buf_size)
 {
   for (const ImFileType *type = IMB_FILE_TYPES; type < IMB_FILE_TYPES_LAST; type++) {
     if (type->is_a != nullptr) {
@@ -152,7 +152,7 @@ int IMB_test_image_type_from_memory(const uchar *buf, const size_t buf_size)
   return IMB_FTYPE_NONE;
 }
 
-int IMB_test_image_type(const char *filepath)
+eImbFileType IMB_test_image_type(const char *filepath)
 {
   uchar buf[HEADER_SIZE];
   const int64_t buf_size = imb_test_image_read_header_from_filepath(filepath, buf);
@@ -162,7 +162,7 @@ int IMB_test_image_type(const char *filepath)
   return IMB_test_image_type_from_memory(buf, size_t(buf_size));
 }
 
-bool IMB_test_image_type_matches(const char *filepath, int filetype)
+bool IMB_test_image_type_matches(const char *filepath, eImbFileType filetype)
 {
   uchar buf[HEADER_SIZE];
   const int64_t buf_size = imb_test_image_read_header_from_filepath(filepath, buf);

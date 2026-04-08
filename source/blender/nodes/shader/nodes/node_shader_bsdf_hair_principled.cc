@@ -36,18 +36,18 @@ static void node_declare(NodeDeclarationBuilder &b)
     static_cast<NodeShaderHairPrincipled *>(node.storage)->model = SHD_PRINCIPLED_HAIR_CHIANG;
   };
 
-  b.add_input<decl::Color>("Color")
+  b.add_input<decl::Color>("Color"_ustr)
       .default_value({0.017513f, 0.005763f, 0.002059f, 1.0f})
       .description("The RGB color of the strand. Only used in Direct Coloring")
       .make_available(set_parametrization_reflectance);
-  b.add_input<decl::Float>("Melanin")
+  b.add_input<decl::Float>("Melanin"_ustr)
       .default_value(0.8f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Hair pigment. Specify its absolute quantity between 0 and 1")
       .make_available(set_parametrization_pigment_concentration);
-  b.add_input<decl::Float>("Melanin Redness")
+  b.add_input<decl::Float>("Melanin Redness"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
@@ -56,11 +56,11 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Fraction of pheomelanin in melanin, gives yellowish to reddish color, as opposed to "
           "the brownish to black color of eumelanin")
       .make_available(set_parametrization_pigment_concentration);
-  b.add_input<decl::Color>("Tint")
+  b.add_input<decl::Color>("Tint"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .description("Additional color used for dyeing the hair")
       .make_available(set_parametrization_pigment_concentration);
-  b.add_input<decl::Vector>("Absorption Coefficient")
+  b.add_input<decl::Vector>("Absorption Coefficient"_ustr)
       .default_value({0.245531f, 0.52f, 1.365f})
       .min(0.0f)
       .max(1000.0f)
@@ -68,7 +68,7 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Specifies energy absorption per unit length as light passes through the hair. A higher "
           "value leads to a darker color")
       .make_available(set_parametrization_direct_absorption);
-  b.add_input<decl::Float>("Aspect Ratio")
+  b.add_input<decl::Float>("Aspect Ratio"_ustr)
       .default_value(0.85f)
       .min(0.0f)
       .max(1.0f)
@@ -79,19 +79,19 @@ static void node_declare(NodeDeclarationBuilder &b)
           "African hair. The major axis is aligned with the curve normal, which is not supported "
           "in particle hair")
       .make_available(set_model_huang);
-  b.add_input<decl::Float>("Roughness")
+  b.add_input<decl::Float>("Roughness"_ustr)
       .default_value(0.3f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Hair roughness. A low value leads to a metallic look");
-  b.add_input<decl::Float>("Radial Roughness")
+  b.add_input<decl::Float>("Radial Roughness"_ustr)
       .default_value(0.3f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .make_available(set_model_chiang);
-  b.add_input<decl::Float>("Coat")
+  b.add_input<decl::Float>("Coat"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
@@ -101,11 +101,17 @@ static void node_declare(NodeDeclarationBuilder &b)
           "light bounce (diffuse). Range [0, 1] is equivalent to a reduction of [0%, 100%] of the "
           "original roughness")
       .make_available(set_model_chiang);
-  b.add_input<decl::Float>("IOR").default_value(1.55f).min(0.0f).max(1000.0f).description(
-      "Index of refraction determines how much the ray is bent. At 1.0 rays pass straight through "
-      "like in a transparent material; higher values cause larger deflection in angle. Default "
-      "value is 1.55 (the IOR of keratin)");
-  b.add_input<decl::Float>("Offset")
+  b.add_input<decl::Float>("IOR"_ustr)
+      .default_value(1.55f)
+      .min(0.0f)
+      .max(1000.0f)
+      .description(
+          "Index of refraction determines how much the ray is bent. At 1.0 rays pass straight "
+          "through "
+          "like in a transparent material; higher values cause larger deflection in angle. "
+          "Default "
+          "value is 1.55 (the IOR of keratin)");
+  b.add_input<decl::Float>("Offset"_ustr)
       .default_value(2.0f * float(M_PI) / 180.0f)
       .min(-M_PI_2)
       .max(M_PI_2)
@@ -113,22 +119,22 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "The tilt angle of the cuticle scales (the outermost part of the hair). They are always "
           "tilted towards the hair root. The value is usually between 2 and 4 for human hair");
-  b.add_input<decl::Float>("Random Color")
+  b.add_input<decl::Float>("Random Color"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Vary the melanin concentration for each strand")
       .make_available(set_parametrization_pigment_concentration);
-  b.add_input<decl::Float>("Random Roughness")
+  b.add_input<decl::Float>("Random Roughness"_ustr)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
       .subtype(PROP_FACTOR)
       .description("Vary roughness values for each strand");
-  b.add_input<decl::Float>("Random").hide_value();
-  b.add_input<decl::Float>("Weight").available(false);
-  b.add_input<decl::Float>("Reflection", "R lobe")
+  b.add_input<decl::Float>("Random"_ustr).hide_value();
+  b.add_input<decl::Float>("Weight"_ustr).available(false);
+  b.add_input<decl::Float>("Reflection"_ustr, "R lobe"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
@@ -137,7 +143,7 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Optional factor for modulating the first light bounce off the hair surface. The color "
           "of this component is always white. Keep this 1.0 for physical correctness")
       .make_available(set_model_huang);
-  b.add_input<decl::Float>("Transmission", "TT lobe")
+  b.add_input<decl::Float>("Transmission"_ustr, "TT lobe"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
@@ -146,7 +152,7 @@ static void node_declare(NodeDeclarationBuilder &b)
           "Optional factor for modulating the transmission component. Picks up the color of the "
           "pigment inside the hair. Keep this 1.0 for physical correctness")
       .make_available(set_model_huang);
-  b.add_input<decl::Float>("Secondary Reflection", "TRT lobe")
+  b.add_input<decl::Float>("Secondary Reflection"_ustr, "TRT lobe"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
@@ -157,7 +163,7 @@ static void node_declare(NodeDeclarationBuilder &b)
           "component is oriented approximately around the incoming direction, and picks up the "
           "color of the pigment inside the hair. Keep this 1.0 for physical correctness")
       .make_available(set_model_huang);
-  b.add_output<decl::Shader>("BSDF");
+  b.add_output<decl::Shader>("BSDF"_ustr);
 }
 
 static void node_shader_buts_principled_hair(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

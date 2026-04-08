@@ -25,10 +25,10 @@ static void node_declare(NodeDeclarationBuilder &b)
   const bNode *node = b.node_or_null();
   if (node) {
     const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
-    b.add_input(data_type, "Value");
+    b.add_input(data_type, "Value"_ustr);
   }
-  b.add_input<decl::Int>("Seed", "Seed");
-  b.add_output<decl::Int>("Hash");
+  b.add_input<decl::Int>("Seed"_ustr, "Seed"_ustr);
+  b.add_output<decl::Int>("Hash"_ustr);
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -99,7 +99,7 @@ static const mf::MultiFunction *get_multi_function(const bNode &bnode)
 
 class SocketSearchOp {
  public:
-  const StringRef socket_name;
+  UString socket_name;
   eNodeSocketDatatype socket_type;
   void operator()(LinkSearchOpParams &params)
   {
@@ -135,13 +135,13 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     if (socket_type == SOCK_BOOLEAN) {
       socket_type = SOCK_INT;
     }
-    params.add_item(IFACE_("Value"), SocketSearchOp{"Value", socket_type});
-    params.add_item(IFACE_("Seed"), SocketSearchOp{"Seed", SOCK_INT});
+    params.add_item(IFACE_("Value"), SocketSearchOp{"Value"_ustr, socket_type});
+    params.add_item(IFACE_("Seed"), SocketSearchOp{"Seed"_ustr, SOCK_INT});
   }
   else {
     if (!ELEM(socket_type, SOCK_STRING)) {
       const int weight = ELEM(params.other_socket().type, SOCK_INT) ? 0 : -1;
-      params.add_item(IFACE_("Hash"), SocketSearchOp{"Hash", SOCK_INT}, weight);
+      params.add_item(IFACE_("Hash"), SocketSearchOp{"Hash"_ustr, SOCK_INT}, weight);
     }
   }
 }

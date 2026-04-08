@@ -55,7 +55,8 @@ ImBuf *imb_load_filepath_thumbnail_svg(const char *filepath,
 
   ImBuf *ibuf = IMB_allocImBuf(dest_w, dest_h, 32, IB_byte_data);
   if (ibuf != nullptr) {
-    nsvgRasterize(rast, image, 0, 0, scale, ibuf->byte_buffer.data, dest_w, dest_h, dest_w * 4);
+    nsvgRasterize(
+        rast, image, 0, 0, scale, ibuf->byte_data_for_write(), dest_w, dest_h, dest_w * 4);
     IMB_flipy(ibuf);
   }
 

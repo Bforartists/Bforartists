@@ -35,24 +35,26 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::Color>("Image").hide_value().structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_input<decl::Color>("Image"_ustr).hide_value().structure_type(StructureType::Dynamic);
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Menu>("Kernel Data Type")
+  b.add_input<decl::Menu>("Kernel Data Type"_ustr)
       .default_value(KernelDataType::Float)
       .static_items(kernel_data_type_items)
       .optional_label();
-  b.add_input<decl::Float>("Kernel", "Float Kernel")
+  b.add_input<decl::Float>("Kernel"_ustr, "Float Kernel"_ustr)
       .hide_value()
       .structure_type(StructureType::Dynamic)
       .usage_by_single_menu(int(KernelDataType::Float))
       .compositor_realization_mode(CompositorInputRealizationMode::Transforms);
-  b.add_input<decl::Color>("Kernel", "Color Kernel")
+  b.add_input<decl::Color>("Kernel"_ustr, "Color Kernel"_ustr)
       .hide_value()
       .structure_type(StructureType::Dynamic)
       .usage_by_single_menu(int(KernelDataType::Color))
       .compositor_realization_mode(CompositorInputRealizationMode::Transforms);
-  b.add_input<decl::Bool>("Normalize Kernel")
+  b.add_input<decl::Bool>("Normalize Kernel"_ustr)
       .default_value(true)
       .description("Normalizes the kernel such that it integrates to one");
 }

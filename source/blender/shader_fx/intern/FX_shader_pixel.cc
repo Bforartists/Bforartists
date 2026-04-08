@@ -45,12 +45,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   layout.use_property_split_set(true);
 
-  /* Add the X, Y labels manually because size is a #PROP_PIXEL. */
-  ui::Layout &col = layout.column(true);
-  PropertyRNA *prop = RNA_struct_find_property(ptr, "size");
-  col.prop(ptr, prop, 0, 0, UI_ITEM_NONE, IFACE_("Size X"), ICON_NONE);
-  col.prop(ptr, prop, 1, 0, UI_ITEM_NONE, IFACE_("Y"), ICON_NONE);
-
+  layout.prop(ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "use_antialiasing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
   shaderfx_panel_end(layout, ptr);

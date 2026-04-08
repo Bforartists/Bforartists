@@ -992,6 +992,20 @@ static void rna_def_mask_layer(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem fill_solver_items[] = {
+      {MASK_FILL_SOLVER_SWEEP_LINE,
+       "SWEEP_LINE",
+       0,
+       "Sweep Line",
+       "Fast without support for self-intersection"},
+      {MASK_FILL_SOLVER_CDT,
+       "CDT",
+       0,
+       "Delaunay",
+       "Constrained Delaunay Triangulation (CDT), robust with support for self-intersections"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   StructRNA *srna;
   PropertyRNA *prop;
 
@@ -1080,6 +1094,12 @@ static void rna_def_mask_layer(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_MASK | NA_EDITED, nullptr);
 
   /* filling options */
+  prop = RNA_def_property(srna, "fill_solver", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, nullptr, "fill_solver");
+  RNA_def_property_enum_items(prop, fill_solver_items);
+  RNA_def_property_ui_text(prop, "Fill Solver", "Triangulation solver for filling 2D curves");
+  RNA_def_property_update(prop, NC_MASK | ND_DRAW, nullptr);
+
   prop = RNA_def_property(srna, "use_fill_holes", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", MASK_LAYERFLAG_FILL_DISCRETE);
   RNA_def_property_ui_text(
@@ -1088,8 +1108,10 @@ static void rna_def_mask_layer(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_fill_overlap", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", MASK_LAYERFLAG_FILL_OVERLAP);
-  RNA_def_property_ui_text(
-      prop, "Calculate Overlap", "Calculate self intersections and overlap before filling");
+  RNA_def_property_ui_text(prop,
+                           "Calculate Overlap",
+                           "Calculate self intersections and overlap before filling "
+                           "(only for the sweep-line solver)");
   RNA_def_property_update(prop, NC_MASK | NA_EDITED, nullptr);
 }
 

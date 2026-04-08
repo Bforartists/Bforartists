@@ -155,7 +155,7 @@ Closure closure_eval(ClosureVolumeAbsorption volume_absorption)
   return Closure(0);
 }
 
-Closure closure_eval(ClosureHair hair)
+Closure closure_eval(ClosureHair /*hair*/)
 {
   /* TODO */
   return Closure(0);
@@ -219,19 +219,19 @@ Closure closure_eval(ClosureDiffuse diffuse,
 }
 
 /* NOP since we are sampling closures. */
-Closure closure_add(Closure cl1, Closure cl2)
+Closure closure_add(Closure /*cl1*/, Closure /*cl2*/)
 {
   return Closure(0);
 }
-Closure closure_mix(Closure cl1, Closure cl2, float fac)
+Closure closure_mix(Closure /*cl1*/, Closure /*cl2*/, float /*fac*/)
 {
   return Closure(0);
 }
 
-float ambient_occlusion_eval(float3 normal,
-                             float max_distance,
-                             const float inverted,
-                             const float sample_count)
+float ambient_occlusion_eval([[maybe_unused]] float3 normal,
+                             [[maybe_unused]] float max_distance,
+                             [[maybe_unused]] const float inverted,
+                             [[maybe_unused]] const float sample_count)
 {
   /* Avoid multi-line pre-processor conditionals.
    * Some drivers don't handle them correctly. */
@@ -290,10 +290,10 @@ float ambient_occlusion_eval(float3 normal,
 #endif
 }
 
-void raycast_eval(float3 position,
+void raycast_eval([[maybe_unused]] float3 position,
                   float3 direction,
                   float max_distance,
-                  bool self_only,
+                  [[maybe_unused]] bool self_only,
                   bool &is_hit,
                   bool &self_hit,
                   float &hit_distance,
@@ -746,7 +746,7 @@ float4 attr_load_color_post(float4 attr)
  *
  * \{ */
 
-float4 attr_load_uniform(float4 attr, const uint attr_hash)
+float4 attr_load_uniform(float4 /*attr*/, const uint attr_hash)
 {
   return drw_object_attribute(attr_hash);
 }

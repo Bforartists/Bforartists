@@ -278,8 +278,8 @@ static short pose_grab_with_ik(Main *bmain, Object *ob)
           continue;
         }
 
-        /* Rule: if selected Bone is not a root bone, it gets a temporal IK. */
-        if (pchan.parent) {
+        /* Rule: if selected Bone is not the root of a connected chain, it gets temporary IK. */
+        if (pchan.parent && (pchan.bone->flag & BONE_CONNECTED)) {
           /* Only adds if there's no IK yet (and no parent bone was selected). */
           bPoseChannel *parent;
           for (parent = pchan.parent; parent; parent = parent->parent) {
@@ -588,9 +588,15 @@ static void createTransPose(bContext * /*C*/, TransInfo *t)
     /* Set flags. */
     transform_convert_pose_transflags_update(ob, t->mode, t->around);
 
-    /* Now count, and check if we have autoIK or have to switch from translate to rotate. */
+    /* Check if we're doing auto-IK or switching from translate to rotate.
+     * Also collect needed information (such as bone count)
+     * and clear flags from previous runs that can interfere. */
     for (bPoseChannel &pchan : ob->pose->chanbase) {
       Bone *bone = pchan.bone;
+
+      /* Clear the MIRROR flag from previous runs. */
+      bone->flag &= ~BONE_TRANSFORM_MIRROR;
+
       if (!(pchan.runtime.flag & POSE_RUNTIME_TRANSFORM)) {
         continue;
       }
@@ -638,9 +644,6 @@ static void createTransPose(bContext * /*C*/, TransInfo *t)
     if (mirror) {
       int total_mirrored = 0;
       for (bPoseChannel &pchan : ob->pose->chanbase) {
-        /* Clear the MIRROR flag from previous runs. */
-        pchan.bone->flag &= ~BONE_TRANSFORM_MIRROR;
-
         if ((pchan.runtime.flag & POSE_RUNTIME_TRANSFORM) &&
             BKE_pose_channel_get_mirrored(ob->pose, pchan.name))
         {

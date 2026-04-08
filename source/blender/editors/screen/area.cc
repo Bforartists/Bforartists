@@ -2232,6 +2232,7 @@ void ED_area_init(bContext *C, const wmWindow *win, ScrArea *area)
   wmWindowManager *wm = CTX_wm_manager(C);
   WorkSpace *workspace = WM_window_get_active_workspace(win);
   const bScreen *screen = BKE_workspace_active_screen_get(win->workspace_hook);
+  const Main *bmain = CTX_data_main(C);
   const Scene *scene = WM_window_get_active_scene(win);
   ViewLayer *view_layer = WM_window_get_active_view_layer(win);
 
@@ -2291,7 +2292,7 @@ void ED_area_init(bContext *C, const wmWindow *win, ScrArea *area)
   /* Avoid re-initializing tools while resizing areas & regions. */
   if ((G.moving & G_TRANSFORM_WM) == 0) {
     if ((1 << area->spacetype) & WM_TOOLSYSTEM_SPACE_MASK) {
-      if (WM_toolsystem_refresh_screen_area(workspace, scene, view_layer, area) ||
+      if (WM_toolsystem_refresh_screen_area(*bmain, workspace, scene, view_layer, area) ||
           /* When the tool is null it may not be initialized.
            * This happens when switching to a new area, see: #126990.
            *

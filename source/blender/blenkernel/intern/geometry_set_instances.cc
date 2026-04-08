@@ -128,7 +128,7 @@ void Instances::ensure_geometry_instances()
           break;
         }
         GeometrySet object_geometry_set = object_get_evaluated_geometry_set(object);
-        object_geometry_set.name = BKE_id_name(object.id);
+        object_geometry_set.set_name(BKE_id_name(object.id));
         if (object_geometry_set.has_instances()) {
           object_geometry_set.get_instances_for_write()->ensure_geometry_instances();
         }
@@ -156,7 +156,7 @@ void Instances::ensure_geometry_instances()
         }
         instances->ensure_geometry_instances();
         GeometrySet geometry_set = GeometrySet::from_instances(std::move(instances));
-        geometry_set.name = BKE_id_name(collection.id);
+        geometry_set.set_name(BKE_id_name(collection.id));
         new_references.append(std::move(geometry_set));
         break;
       }

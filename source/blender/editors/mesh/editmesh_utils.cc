@@ -1893,12 +1893,17 @@ BMElem *EDBM_elem_from_index_any(BMEditMesh *em, uint index)
   return nullptr;
 }
 
-int EDBM_elem_to_index_any_multi(
-    const Scene *scene, ViewLayer *view_layer, BMEditMesh *em, BMElem *ele, int *r_object_index)
+int EDBM_elem_to_index_any_multi(const Main &bmain,
+                                 const Scene *scene,
+                                 ViewLayer *view_layer,
+                                 BMEditMesh *em,
+                                 BMElem *ele,
+                                 int *r_object_index)
 {
   int elem_index = -1;
   *r_object_index = -1;
-  Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(scene, view_layer, nullptr);
+  Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
+      bmain, scene, view_layer, nullptr);
   for (const int base_index : bases.index_range()) {
     Base *base_iter = bases[base_index];
     if (BKE_editmesh_from_object(base_iter->object) == em) {
@@ -1910,13 +1915,15 @@ int EDBM_elem_to_index_any_multi(
   return elem_index;
 }
 
-BMElem *EDBM_elem_from_index_any_multi(const Scene *scene,
+BMElem *EDBM_elem_from_index_any_multi(const Main &bmain,
+                                       const Scene *scene,
                                        ViewLayer *view_layer,
                                        uint object_index,
                                        uint elem_index,
                                        Object **r_obedit)
 {
-  Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(scene, view_layer, nullptr);
+  Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
+      bmain, scene, view_layer, nullptr);
   *r_obedit = nullptr;
   Object *obedit = (object_index < bases.size()) ? bases[object_index]->object : nullptr;
   if (obedit != nullptr) {

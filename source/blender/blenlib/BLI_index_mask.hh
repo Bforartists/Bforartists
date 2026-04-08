@@ -604,11 +604,17 @@ inline const std::array<int16_t, max_segment_size> &get_static_indices_array()
   return data;
 }
 
+/** Fill selected indices of the dst span with the given value. */
 template<typename T>
-inline void masked_fill(MutableSpan<T> data, const T &value, const IndexMask &mask)
-{
-  mask.foreach_index_optimized<int64_t>([&](const int64_t i) { data[i] = value; });
-}
+inline void masked_fill(MutableSpan<T> data, const T &value, const IndexMask &mask);
+
+/** Copy every indexed value from src to the same index in dst. */
+template<typename T>
+inline void copy_assign(const Span<T> src, const IndexMask &mask, const MutableSpan<T> dst);
+
+/** Fill the dst span such that for every index i, dst[i] = src[mask[i]]. */
+template<typename T>
+inline void gather_assign(const Span<T> src, const IndexMask &mask, const MutableSpan<T> dst);
 
 /**
  * Fill masked indices of \a r_mask with the index of that item in the mask such that
@@ -1150,6 +1156,116 @@ inline void index_range_to_mask_segments(const IndexRange range,
     r_segments.append(
         IndexMaskSegment(range.first() + i, Span(static_indices_array).take_front(size)));
   }
+}
+
+namespace detail {
+
+template<typename T, typename SegmentT>
+#if (defined(__GNUC__) && !defined(__clang__))
+[[gnu::optimize("-funroll-loops")]] [[gnu::optimize("O3")]]
+#endif
+inline void gather_assign_segment(const T *__restrict src,
+                                  const SegmentT segment,
+                                  T *__restrict dst)
+{
+  for (int16_t i = 0; i < segment.size(); i++) {
+    dst[i] = src[segment[i]];
+  }
+}
+
+template<typename T, typename SegmentT>
+#if (defined(__GNUC__) && !defined(__clang__))
+[[gnu::optimize("-funroll-loops")]] [[gnu::optimize("O3")]]
+#endif
+inline void copy_assign_segment(const T *__restrict src, const SegmentT segment, T *__restrict dst)
+{
+  for (const int64_t i : segment) {
+    dst[i] = src[i];
+  }
+}
+
+template<typename T, typename SegmentT>
+#if (defined(__GNUC__) && !defined(__clang__))
+[[gnu::optimize("-funroll-loops")]] [[gnu::optimize("O3")]]
+#endif
+inline void fill_segment(T *__restrict data, const T &value, const SegmentT segment)
+{
+  if constexpr (std::is_same_v<SegmentT, IndexRange>) {
+    if constexpr (std::is_trivially_copy_assignable_v<T>) {
+      if (memory_is_zero(&value, sizeof(T))) {
+        const IndexRange range = segment;
+/* GCC warns about memset on types without trivial copy-assignment even when guarded by
+ * `if constexpr (std::is_trivially_copy_assignable_v<T>)`. Quiet the compiler bug. */
+#if defined(__GNUC__) && !defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wclass-memaccess"
+#endif
+        memset(data + range.start(), 0, range.size() * sizeof(T));
+#if defined(__GNUC__) && !defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
+        return;
+      }
+    }
+  }
+  for (const int64_t i : segment) {
+    data[i] = value;
+  }
+}
+
+template<typename T>
+BLI_NOINLINE void copy_assign(const T *__restrict src, const IndexMask &mask, T *__restrict dst)
+{
+  mask.foreach_segment_optimized(
+      [src, dst](const auto segment) { copy_assign_segment(src, segment, dst); },
+      exec_mode::serial);
+}
+
+template<typename T>
+BLI_NOINLINE void gather_assign(const T *__restrict src,
+                                const IndexMask &indices,
+                                T *__restrict dst)
+{
+  indices.foreach_segment_optimized(
+      [src, dst](const auto segment, const int64_t segment_pos) {
+        gather_assign_segment(src, segment, dst + segment_pos);
+      },
+      exec_mode::serial);
+}
+
+template<typename T>
+BLI_NOINLINE void fill(T *__restrict data, const T &value, const IndexMask &mask)
+{
+  mask.foreach_segment_optimized(
+      [data, value](const auto segment) { fill_segment(data, value, segment); },
+      exec_mode::serial);
+}
+
+}  // namespace detail
+
+template<typename T>
+inline void masked_fill(MutableSpan<T> data, const T &value, const IndexMask &mask)
+{
+  BLI_assert(data.size() >= mask.min_array_size());
+  detail::fill(data.data(), value, mask);
+}
+
+/** Copy every indexed value from src to the same index in dst. */
+template<typename T>
+inline void copy_assign(const Span<T> src, const IndexMask &mask, const MutableSpan<T> dst)
+{
+  BLI_assert(src.size() >= mask.min_array_size());
+  BLI_assert(dst.size() >= mask.min_array_size());
+  detail::copy_assign(src.data(), mask, dst.data());
+}
+
+/** Fill the dst span such that for every index i, dst[i] = src[mask[i]]. */
+template<typename T>
+inline void gather_assign(const Span<T> src, const IndexMask &mask, const MutableSpan<T> dst)
+{
+  BLI_assert(src.size() >= mask.min_array_size());
+  BLI_assert(dst.size() == mask.size());
+  detail::gather_assign(src.data(), mask, dst.data());
 }
 
 /**

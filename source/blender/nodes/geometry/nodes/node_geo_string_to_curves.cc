@@ -132,50 +132,50 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_output<decl::Geometry>("Curve Instances");
-  b.add_output<decl::String>("Remainder")
-      .usage_by_menu("Overflow", GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE);
-  b.add_output<decl::Int>("Line").field_on_all().translation_context(BLT_I18NCONTEXT_ID_TEXT);
-  b.add_output<decl::Int>("Word").field_on_all().translation_context(BLT_I18NCONTEXT_ID_TEXT);
-  b.add_output<decl::Vector>("Pivot Point").field_on_all();
+  b.add_output<decl::Geometry>("Curve Instances"_ustr);
+  b.add_output<decl::String>("Remainder"_ustr)
+      .usage_by_menu("Overflow"_ustr, GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE);
+  b.add_output<decl::Int>("Line"_ustr).field_on_all().translation_context(BLT_I18NCONTEXT_ID_TEXT);
+  b.add_output<decl::Int>("Word"_ustr).field_on_all().translation_context(BLT_I18NCONTEXT_ID_TEXT);
+  b.add_output<decl::Vector>("Pivot Point"_ustr).field_on_all();
 
-  b.add_input<decl::String>("String").optional_label();
-  b.add_input<decl::Float>("Size").default_value(1.0f).min(0.0f).subtype(PROP_DISTANCE);
-  b.add_input<decl::Font>("Font")
+  b.add_input<decl::String>("String"_ustr).optional_label();
+  b.add_input<decl::Float>("Size"_ustr).default_value(1.0f).min(0.0f).subtype(PROP_DISTANCE);
+  b.add_input<decl::Font>("Font"_ustr)
       .default_value_fn(
           [](const bNode & /*node*/) { return id_cast<ID *>(BKE_vfont_builtin_ensure()); })
       .optional_label();
   {
     auto &p = b.add_panel("Alignment"_ustr).default_closed(true);
-    p.add_input<decl::Menu>("Align X")
+    p.add_input<decl::Menu>("Align X"_ustr)
         .static_items(rna_node_geometry_string_to_curves_align_x_items)
         .optional_label();
-    p.add_input<decl::Menu>("Align Y")
+    p.add_input<decl::Menu>("Align Y"_ustr)
         .static_items(rna_node_geometry_string_to_curves_align_y_items)
         .optional_label();
-    p.add_input<decl::Menu>("Pivot Point")
+    p.add_input<decl::Menu>("Pivot Point"_ustr)
         .static_items(rna_node_geometry_string_to_curves_pivot_mode);
   }
   {
     auto &p = b.add_panel("Spacing"_ustr).default_closed(true);
-    p.add_input<decl::Float>("Character Spacing").default_value(1.0f).min(0.0f);
-    p.add_input<decl::Float>("Word Spacing").default_value(1.0f).min(0.0f);
-    p.add_input<decl::Float>("Line Spacing").default_value(1.0f).min(0.0f);
+    p.add_input<decl::Float>("Character Spacing"_ustr).default_value(1.0f).min(0.0f);
+    p.add_input<decl::Float>("Word Spacing"_ustr).default_value(1.0f).min(0.0f);
+    p.add_input<decl::Float>("Line Spacing"_ustr).default_value(1.0f).min(0.0f);
   }
   {
     auto &p = b.add_panel("Text Box"_ustr).default_closed(true);
-    p.add_input<decl::Menu>("Overflow")
+    p.add_input<decl::Menu>("Overflow"_ustr)
         .static_items(rna_node_geometry_string_to_curves_overflow_items)
         .optional_label();
-    p.add_input<decl::Float>("Text Box Width")
+    p.add_input<decl::Float>("Text Box Width"_ustr)
         .default_value(0.0f)
         .min(0.0f)
         .subtype(PROP_DISTANCE);
-    p.add_input<decl::Float>("Text Box Height")
+    p.add_input<decl::Float>("Text Box Height"_ustr)
         .default_value(0.0f)
         .min(0.0f)
         .subtype(PROP_DISTANCE)
-        .usage_by_menu("Overflow", GEO_NODE_STRING_TO_CURVES_MODE_SCALE_TO_FIT);
+        .usage_by_menu("Overflow"_ustr, GEO_NODE_STRING_TO_CURVES_MODE_SCALE_TO_FIT);
   }
 }
 
@@ -189,7 +189,7 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
 static float3 get_pivot_point(GeoNodeExecParams &params, bke::CurvesGeometry &curves)
 {
   const GeometryNodeStringToCurvesPivotMode pivot_mode =
-      params.get_input<GeometryNodeStringToCurvesPivotMode>("Pivot Point");
+      params.get_input<GeometryNodeStringToCurvesPivotMode>("Pivot Point"_ustr);
 
   const std::optional<Bounds<float3>> bounds = bounds::min_max(curves.positions());
 
@@ -247,30 +247,30 @@ struct TextLayout {
 
 static std::optional<TextLayout> get_text_layout(GeoNodeExecParams &params)
 {
-  VFont *vfont = params.get_input<VFont *>("Font");
+  VFont *vfont = params.get_input<VFont *>("Font"_ustr);
   if (!vfont) {
     params.error_message_add(NodeWarningType::Error, TIP_("Font not specified"));
     return std::nullopt;
   }
 
   TextLayout layout;
-  layout.text = params.extract_input<std::string>("String");
+  layout.text = params.extract_input<std::string>("String"_ustr);
   if (layout.text.empty()) {
     return std::nullopt;
   }
 
-  const auto overflow = params.get_input<GeometryNodeStringToCurvesOverflowMode>("Overflow");
-  const auto align_x = params.get_input<GeometryNodeStringToCurvesAlignXMode>("Align X");
-  const auto align_y = params.get_input<GeometryNodeStringToCurvesAlignYMode>("Align Y");
+  const auto overflow = params.get_input<GeometryNodeStringToCurvesOverflowMode>("Overflow"_ustr);
+  const auto align_x = params.get_input<GeometryNodeStringToCurvesAlignXMode>("Align X"_ustr);
+  const auto align_y = params.get_input<GeometryNodeStringToCurvesAlignYMode>("Align Y"_ustr);
 
-  const float font_size = std::max(params.extract_input<float>("Size"), 0.0f);
-  const float char_spacing = params.extract_input<float>("Character Spacing");
-  const float word_spacing = params.extract_input<float>("Word Spacing");
-  const float line_spacing = params.extract_input<float>("Line Spacing");
-  const float textbox_w = params.extract_input<float>("Text Box Width");
+  const float font_size = std::max(params.extract_input<float>("Size"_ustr), 0.0f);
+  const float char_spacing = params.extract_input<float>("Character Spacing"_ustr);
+  const float word_spacing = params.extract_input<float>("Word Spacing"_ustr);
+  const float line_spacing = params.extract_input<float>("Line Spacing"_ustr);
+  const float textbox_w = params.extract_input<float>("Text Box Width"_ustr);
   const float textbox_h = overflow == GEO_NODE_STRING_TO_CURVES_MODE_OVERFLOW ?
                               0.0f :
-                              params.extract_input<float>("Text Box Height");
+                              params.extract_input<float>("Text Box Height"_ustr);
 
   Curve cu = dna::shallow_zero_initialize();
   cu.ob_type = OB_FONT;
@@ -338,7 +338,7 @@ static std::optional<TextLayout> get_text_layout(GeoNodeExecParams &params)
     }
   }
 
-  if (params.anonymous_attribute_output_is_required("Line")) {
+  if (params.anonymous_attribute_output_is_required("Line"_ustr)) {
     layout.line_numbers.reinitialize(layout.positions.size());
     for (const int i : layout.positions.index_range()) {
       CharTrans &ct = chartransdata[i];
@@ -346,7 +346,7 @@ static std::optional<TextLayout> get_text_layout(GeoNodeExecParams &params)
     }
   }
 
-  if (params.anonymous_attribute_output_is_required("Word")) {
+  if (params.anonymous_attribute_output_is_required("Word"_ustr)) {
     layout.word_numbers.reinitialize(layout.positions.size());
     for (const int i : layout.positions.index_range()) {
       CharTrans &ct = chartransdata[i];
@@ -373,9 +373,9 @@ static Map<int, int> create_curve_instances(GeoNodeExecParams &params,
                                             TextLayout &layout,
                                             bke::Instances &instances)
 {
-  VFont *vfont = params.get_input<VFont *>("Font");
+  VFont *vfont = params.get_input<VFont *>("Font"_ustr);
   Map<int, int> handles;
-  bool pivot_required = params.anonymous_attribute_output_is_required("Pivot Point");
+  bool pivot_required = params.anonymous_attribute_output_is_required("Pivot Point"_ustr);
 
   for (int i : layout.char_codes.index_range()) {
     if (handles.contains(layout.char_codes[i])) {
@@ -419,7 +419,7 @@ static Map<int, int> create_curve_instances(GeoNodeExecParams &params,
       const char32_t char_code[2] = {layout.char_codes[i], 0};
       char inserted_utf8[8] = {0};
       const size_t len = BLI_str_utf32_as_utf8(inserted_utf8, char_code, sizeof(inserted_utf8));
-      geometry_set.name = std::string(inserted_utf8, len);
+      geometry_set.set_name(std::string(inserted_utf8, len));
     }
 
     handles.add_new(layout.char_codes[i], instances.add_reference(std::move(geometry_set)));
@@ -451,7 +451,7 @@ static void create_attributes(GeoNodeExecParams &params,
   MutableAttributeAccessor attributes = instances.attributes_for_write();
 
   if (std::optional<std::string> line_id = params.get_output_anonymous_attribute_id_if_needed(
-          "Line"))
+          "Line"_ustr))
   {
     SpanAttributeWriter<int> line_attribute = attributes.lookup_or_add_for_write_only_span<int>(
         *line_id, AttrDomain::Instance);
@@ -459,7 +459,7 @@ static void create_attributes(GeoNodeExecParams &params,
     line_attribute.finish();
   }
   if (std::optional<std::string> line_id = params.get_output_anonymous_attribute_id_if_needed(
-          "Word"))
+          "Word"_ustr))
   {
     SpanAttributeWriter<int> word_attribute = attributes.lookup_or_add_for_write_only_span<int>(
         *line_id, AttrDomain::Instance);
@@ -468,7 +468,7 @@ static void create_attributes(GeoNodeExecParams &params,
   }
 
   if (std::optional<std::string> pivot_id = params.get_output_anonymous_attribute_id_if_needed(
-          "Pivot Point"))
+          "Pivot Point"_ustr))
   {
     SpanAttributeWriter<float3> pivot_attribute =
         attributes.lookup_or_add_for_write_only_span<float3>(*pivot_id, AttrDomain::Instance);
@@ -489,13 +489,13 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  const auto overflow = params.get_input<GeometryNodeStringToCurvesOverflowMode>("Overflow");
+  const auto overflow = params.get_input<GeometryNodeStringToCurvesOverflowMode>("Overflow"_ustr);
   if (overflow == GEO_NODE_STRING_TO_CURVES_MODE_TRUNCATE) {
-    params.set_output("Remainder", std::move(layout->truncated_text));
+    params.set_output("Remainder"_ustr, std::move(layout->truncated_text));
   }
 
   if (layout->positions.is_empty()) {
-    params.set_output("Curve Instances", GeometrySet());
+    params.set_output("Curve Instances"_ustr, GeometrySet());
     params.set_default_remaining_outputs();
     return;
   }
@@ -506,7 +506,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   add_instances_from_handles(*instances, char_handles, *layout);
   create_attributes(params, *layout, *instances);
 
-  params.set_output("Curve Instances", GeometrySet::from_instances(std::move(instances)));
+  params.set_output("Curve Instances"_ustr, GeometrySet::from_instances(std::move(instances)));
 }
 
 static void node_register()

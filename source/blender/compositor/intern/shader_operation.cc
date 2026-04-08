@@ -6,10 +6,13 @@
 #include <sstream>
 #include <string>
 
+#include <fmt/format.h>
+
 #include "BLI_assert.h"
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
 #include "BLI_string_ref.hh"
+#include "BLI_ustring.hh"
 #include "BLI_vector_set.hh"
 
 #include "GPU_debug.hh"
@@ -23,8 +26,11 @@
 #include "DNA_customdata_types.h"
 #include "DNA_node_types.h"
 
+#include "IMB_colormanagement.hh"
+
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
+#include "BKE_type_conversions.hh"
 
 #include "COM_context.hh"
 #include "COM_pixel_operation.hh"
@@ -152,13 +158,16 @@ void ShaderOperation::link_node_inputs(const bNode &node)
      * material graph and is linked appropriately. */
     if (compile_unit_.contains(&output->owner_node())) {
       this->link_node_input_internal(*input, *output);
-      continue;
+    }
+    else {
+      /* Otherwise, the source node is not part of the shader operation, then the link is
+       * external to the GPU material graph and an input to the shader operation must be declared
+       * and linked to the node input. */
+      this->link_node_input_external(*input, *output);
     }
 
-    /* Otherwise, the source node is not part of the shader operation, then the link is external to
-     * the GPU material graph and an input to the shader operation must be declared and linked to
-     * the node input. */
-    this->link_node_input_external(*input, *output);
+    /* Implicitly convert the input link type to the expected input type if needed. */
+    this->convert_input_link_type(*input, *output);
   }
 }
 
@@ -550,6 +559,46 @@ void ShaderOperation::populate_operation_result(const bNodeSocket &output_socket
   /* Declare the output link of the storer node as an output of the GPU material to help the GPU
    * code generator to track the nodes that contribute to the output of the shader. */
   GPU_material_add_output_link_composite(material_, storer_output_link);
+}
+
+void ShaderOperation::convert_input_link_type(const bNodeSocket &input, const bNodeSocket &output)
+{
+  const ResultType source_type = get_node_socket_result_type(&output);
+  const ResultType target_type = get_node_socket_result_type(&input);
+  if (target_type == source_type) {
+    return;
+  }
+
+  ShaderNode &input_node = *shader_nodes_.lookup(&input.owner_node());
+  GPUNodeStack &input_stack = input_node.get_input(input.identifier);
+
+  /* Conversion is not possible, link a zero constant instead. */
+  const bke::DataTypeConversions &conversions = bke::get_implicit_type_conversions();
+  if (!conversions.is_convertible(Result::cpp_type(source_type), Result::cpp_type(target_type))) {
+    const char *function_name = get_set_function_name(target_type);
+    const float *default_value = static_cast<const float *>(
+        Result::cpp_type(target_type).default_value());
+    GPU_link(material_, function_name, GPU_constant(default_value), &input_stack.link);
+    return;
+  }
+
+  const UString function_name = UString(
+      fmt::format("{}_to_{}", Result::type_name(source_type), Result::type_name(target_type)));
+
+  if (source_type == ResultType::Color &&
+      ELEM(target_type, ResultType::Float, ResultType::Int, ResultType::Bool))
+  {
+    float luminance_coefficients[3];
+    IMB_colormanagement_get_luminance_coefficients(luminance_coefficients);
+    GPU_link(material_,
+             function_name.c_str(),
+             input_stack.link,
+             GPU_constant(luminance_coefficients),
+             &input_stack.link);
+  }
+  else {
+    GPU_link(material_, function_name.c_str(), input_stack.link, &input_stack.link);
+  }
 }
 
 using namespace gpu::shader;

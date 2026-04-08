@@ -13,10 +13,10 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.is_function_node();
   b.use_custom_socket_order();
   b.allow_any_socket_order();
-  b.add_input<decl::String>("String").optional_label();
-  b.add_output<decl::String>("String").align_with_previous();
-  b.add_input<decl::Int>("Position");
-  b.add_input<decl::Int>("Length").min(0).default_value(10);
+  b.add_input<decl::String>("String"_ustr).optional_label();
+  b.add_output<decl::String>("String"_ustr).align_with_previous();
+  b.add_input<decl::Int>("Position"_ustr);
+  b.add_input<decl::Int>("Length"_ustr).min(0).default_value(10);
 }
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

@@ -91,6 +91,12 @@ struct ClosureUndetermined {
   packed_float4 data;
 };
 
+bool closure_has_transmission(const ClosureType closure)
+{
+  return closure == CLOSURE_BSDF_TRANSLUCENT_ID ||
+         closure == CLOSURE_BSDF_MICROFACET_GGX_REFRACTION_ID;
+}
+
 ClosureUndetermined closure_new(ClosureType type)
 {
   ClosureUndetermined cl;

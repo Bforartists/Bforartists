@@ -25,7 +25,7 @@ FRAGMENT_SHADER_CREATE_INFO(eevee_surf_world)
 #include "eevee_sampling_lib.glsl"
 #include "eevee_surf_lib.glsl"
 
-float4 closure_to_rgba(Closure cl)
+float4 closure_to_rgba(Closure /*cl*/)
 {
   return float4(0.0f);
 }
@@ -54,9 +54,9 @@ void main()
     float4 probe_color = lightprobe_spheres_sample(-g_data.N, lod, world_atlas_coord);
     out_background.rgb = mix(out_background.rgb, probe_color.rgb, mix_factor);
 
-    SphericalHarmonicL1 volume_irradiance = lightprobe_volume_sample(
+    SphericalHarmonicL1<float4> volume_irradiance = lightprobe_volume_sample(
         g_data.P, float3(0.0f), g_data.Ng);
-    float3 radiance_sh = spherical_harmonics_evaluate_lambert(-g_data.N, volume_irradiance);
+    float3 radiance_sh = volume_irradiance.evaluate_lambert(-g_data.N).rgb;
     float radiance_mix_factor = sphere_probe_roughness_to_mix_fac(world_background_blur);
     out_background.rgb = mix(out_background.rgb, radiance_sh, radiance_mix_factor);
   }

@@ -23,14 +23,14 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::String>("Name").is_attribute_name().optional_label();
+  b.add_input<decl::String>("Name"_ustr).is_attribute_name().optional_label();
 
   if (node != nullptr) {
     const NodeGeometryInputNamedAttribute &storage = node_storage(*node);
     const eCustomDataType data_type = eCustomDataType(storage.data_type);
-    b.add_output(data_type, "Attribute").field_source();
+    b.add_output(data_type, "Attribute"_ustr).field_source();
   }
-  b.add_output<decl::Bool>("Exists").field_source();
+  b.add_output<decl::Bool>("Exists"_ustr).field_source();
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -59,7 +59,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Attribute"), [node_type, type](LinkSearchOpParams &params) {
         bNode &node = params.add_node(node_type);
         node_storage(node).data_type = *type;
-        params.update_and_connect_available_socket(node, "Attribute");
+        params.update_and_connect_available_socket(node, "Attribute"_ustr);
       });
       if (params.node_tree().typeinfo->validate_link(
               SOCK_BOOLEAN, eNodeSocketDatatype(params.other_socket().type)))
@@ -68,7 +68,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
             IFACE_("Exists"),
             [node_type](LinkSearchOpParams &params) {
               bNode &node = params.add_node(node_type);
-              params.update_and_connect_available_socket(node, "Exists");
+              params.update_and_connect_available_socket(node, "Exists"_ustr);
             },
             -1);
       }
@@ -81,7 +81,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   const NodeGeometryInputNamedAttribute &storage = node_storage(params.node());
   const eCustomDataType data_type = eCustomDataType(storage.data_type);
 
-  std::string name = params.extract_input<std::string>("Name");
+  std::string name = params.extract_input<std::string>("Name"_ustr);
 
   if (name.empty()) {
     params.set_default_remaining_outputs();
@@ -103,8 +103,8 @@ static void node_geo_exec(GeoNodeExecParams params)
 
   const CPPType &type = *bke::custom_data_type_to_cpp_type(data_type);
 
-  params.set_output<GField>("Attribute", AttributeFieldInput::from(name, type));
-  params.set_output("Exists", bke::AttributeExistsFieldInput::from(std::move(name)));
+  params.set_output<GField>("Attribute"_ustr, AttributeFieldInput::from(name, type));
+  params.set_output("Exists"_ustr, bke::AttributeExistsFieldInput::from(std::move(name)));
 }
 
 static void node_rna(StructRNA *srna)

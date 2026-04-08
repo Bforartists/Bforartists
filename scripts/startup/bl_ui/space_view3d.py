@@ -1357,7 +1357,7 @@ class VIEW3D_MT_transform_base:
         layout = self.layout
         # BFA - removed translate, rotate and resize as redundant
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
-        if context.mode in {"EDIT_MESH"}: # BFA - show only in edit mode
+        if context.mode in {"EDIT_MESH"}:
             layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
         layout.operator("transform.bend", text="Bend", icon="BEND")
@@ -2457,11 +2457,12 @@ class VIEW3D_MT_edit_mesh_select_loops(Menu):
 
         layout.operator("mesh.select_edge_loop_multi", text="Edge Loops")
         layout.operator("mesh.select_edge_ring_multi", text="Edge Rings")
+        layout.operator("mesh.select_boundary_loop_multi", text="Boundary Loops") # BFA - WIP
 
         layout.separator()
 
-        layout.operator("mesh.loop_to_region")
-        layout.operator("mesh.region_to_loop")
+        layout.operator("mesh.loop_to_region", text="Loop Inner-Region")
+        layout.operator("mesh.region_to_loop", text="Boundary of Selected")
 
 
 class VIEW3D_MT_select_edit_mesh(Menu):
@@ -3051,6 +3052,12 @@ class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
         layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
+        layout.separator()
+        layout.operator("paint.face_vert_reveal", text="Reveal Hidden")
+        layout.operator("paint.face_select_hide", text="Hide Selected")
+        props = layout.operator("paint.face_select_hide", text="Hide Unselected")
+        props.unselected = True
+
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
     bl_label = "Select"
@@ -3086,6 +3093,12 @@ class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
 
         layout.operator("paint.vert_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
+
+        layout.separator()
+        layout.operator("paint.face_vert_reveal", text="Reveal Hidden")
+        layout.operator("paint.vert_select_hide", text="Hide Selected")
+        props = layout.operator("paint.vert_select_hide", text="Hide Unselected")
+        props.unselected = True
 
 
 class VIEW3D_MT_select_edit_pointcloud(Menu):
@@ -9072,9 +9085,13 @@ class VIEW3D_PT_shading_lighting(Panel):
             row = col.row()
             row.separator()
             row.prop(shading, "use_scene_lights_render")
-            row = col.row()
+            split = col.split(factor=0.45) # bfa - better disclosure triangle alignment
+            row = split.row()
             row.separator()
             row.prop(shading, "use_scene_world_render")
+            row = split.row(align=True)
+            if shading.use_scene_world_render:
+                row.label(icon="DISCLOSURE_TRI_RIGHT") # bfa - better disclosure triangle alignment
 
             if not shading.use_scene_world_render:
                 col = layout.column()
@@ -9105,10 +9122,6 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row.separator()
                 row.prop(shading, "studiolight_background_blur")
                 col = split.column()  # to align properly with above
-            else:
-                row = col.row()
-                row.separator()
-                row.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 class VIEW3D_PT_shading_color(Panel):
@@ -9631,7 +9644,7 @@ class VIEW3D_PT_overlay_guides(Panel):
         if view.region_3d.view_perspective == "CAMERA" or shading.type == "MATERIAL":
 
             layout.separator() # bfa - spacer
-            
+
             col = layout.column(align=True)
             col.active = display_all
             split = col.split()
@@ -9641,12 +9654,12 @@ class VIEW3D_PT_overlay_guides(Panel):
 
         if view.region_3d.view_perspective == "CAMERA":
             layout.separator() # bfa - spacer
-            
+
             row.prop(overlay, "show_camera_guides", text="Camera Guides")
 
         if shading.type == "MATERIAL":
             layout.separator() # bfa - spacer
-            
+
             row = row if view.region_3d.view_perspective != "CAMERA" else row.row()
             row.active = shading.render_pass == "COMBINED"
             row.prop(overlay, "show_look_dev")
@@ -10660,7 +10673,7 @@ class VIEW3D_PT_grease_pencil_origin(Panel):
             row = layout.row()
             row.label(text="Offset")
             row = layout.row()
-            
+
             # bfa - add icon to show if the surface offset is linked to the brush size
             icon = "LINKED" if tool_settings.gpencil_sync_radius_surface else "UNLINKED" # bfa
             row.prop(tool_settings, "gpencil_surface_offset", text="")

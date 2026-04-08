@@ -22,7 +22,7 @@ namespace nodes::node_shader_value_cc {
 
 static void sh_node_value_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Float>("Value").custom_draw([](CustomSocketDrawParams &params) {
+  b.add_output<decl::Float>("Value"_ustr).custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     ui::Layout &row = params.layout.row(true);
     row.prop(&params.socket_ptr, "default_value", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);

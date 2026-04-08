@@ -150,7 +150,7 @@ static ImBuf *do_gaussian_blur_effect(const RenderData *context,
 
   const int width = context->rectx;
   const int height = context->recty;
-  const bool is_float = ibuf1->float_buffer.data;
+  const bool is_float = ibuf1->float_data();
 
   /* Horizontal blur: create output, blur ibuf1 into it. */
   ImBuf *out = prepare_effect_imbufs(context, ibuf1, nullptr);
@@ -164,8 +164,8 @@ static ImBuf *do_gaussian_blur_effect(const RenderData *context,
                       width,
                       y_size,
                       height,
-                      ibuf1->float_buffer.data,
-                      out->float_buffer.data);
+                      ibuf1->float_data(),
+                      out->float_data_for_write());
     }
     else {
       gaussian_blur_x(gaussian_x,
@@ -174,8 +174,8 @@ static ImBuf *do_gaussian_blur_effect(const RenderData *context,
                       width,
                       y_size,
                       height,
-                      ibuf1->byte_buffer.data,
-                      out->byte_buffer.data);
+                      ibuf1->byte_data(),
+                      out->byte_data_for_write());
     }
   });
 
@@ -192,8 +192,8 @@ static ImBuf *do_gaussian_blur_effect(const RenderData *context,
                       width,
                       y_size,
                       height,
-                      ibuf1->float_buffer.data,
-                      out->float_buffer.data);
+                      ibuf1->float_data(),
+                      out->float_data_for_write());
     }
     else {
       gaussian_blur_y(gaussian_y,
@@ -202,8 +202,8 @@ static ImBuf *do_gaussian_blur_effect(const RenderData *context,
                       width,
                       y_size,
                       height,
-                      ibuf1->byte_buffer.data,
-                      out->byte_buffer.data);
+                      ibuf1->byte_data(),
+                      out->byte_data_for_write());
     }
   });
 

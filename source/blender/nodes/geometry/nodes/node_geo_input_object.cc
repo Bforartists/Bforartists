@@ -13,7 +13,7 @@ namespace blender::nodes::node_geo_input_object_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Object>("Object").custom_draw([](CustomSocketDrawParams &params) {
+  b.add_output<decl::Object>("Object"_ustr).custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     params.layout.prop(&params.node_ptr, "object", ui::ITEM_R_SPLIT_EMPTY_NAME, "", ICON_NONE);
   });
@@ -22,7 +22,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 static void node_geo_exec(GeoNodeExecParams params)
 {
   Object *object = reinterpret_cast<Object *>(params.node().id);
-  params.set_output("Object", object);
+  params.set_output("Object"_ustr, object);
 }
 
 using namespace blender::compositor;

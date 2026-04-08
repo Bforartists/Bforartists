@@ -13,7 +13,7 @@
 COMPUTE_SHADER_CREATE_INFO(eevee_lookdev_copy_world)
 
 #include "eevee_lightprobe_sphere_mapping_lib.glsl"
-#include "eevee_spherical_harmonics_lib.glsl"
+#include "eevee_spherical_harmonics.bsl.hh"
 
 float4 get_mip_data(int mip,
                     int2 texel,
@@ -21,8 +21,7 @@ float4 get_mip_data(int mip,
                     SphereProbePixelArea write_coord,
                     float3x3 rotation_mat)
 {
-  float3 rotated_ws_direction = sphere_probe_texel_to_direction(
-      float2(texel), write_coord, read_coord);
+  float3 rotated_ws_direction = sphere_probe_texel_to_direction(float2(texel), write_coord);
   /* Multiplying with the inverse (which is also the transposed given the rotation matrix is
    * orthonormal) as we want the reversed transform. */
   float3 original_ws_direction = transpose(rotation_mat) * rotated_ws_direction;
@@ -35,12 +34,12 @@ void main()
   float3x3 rotation_mat = to_float3x3(lookdev_rotation);
   if (all(equal(gl_GlobalInvocationID.xy, uint2(0)))) {
     {
-      SphericalHarmonicL1 sh;
+      SphericalHarmonicL1<float4> sh;
       sh.L0.M0 = in_sh.L0_M0;
       sh.L1.M0 = in_sh.L1_M0;
       sh.L1.Mn1 = in_sh.L1_Mn1;
       sh.L1.Mp1 = in_sh.L1_Mp1;
-      sh = spherical_harmonics_rotate(rotation_mat, sh);
+      sh = spherical_harmonics::rotate(rotation_mat, sh);
       out_sh.L0_M0 = sh.L0.M0;
       out_sh.L1_M0 = sh.L1.M0;
       out_sh.L1_Mn1 = sh.L1.Mn1;

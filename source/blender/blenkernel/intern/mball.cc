@@ -53,6 +53,7 @@
 #include "BKE_object_types.hh"
 
 #include "DEG_depsgraph.hh"
+#include "DEG_depsgraph_query.hh"
 
 #include "BLO_read_write.hh"
 
@@ -414,7 +415,7 @@ void BKE_mball_properties_copy(Main *bmain, MetaBall *metaball_src)
   }
 }
 
-Object *BKE_mball_basis_find(Scene *scene, Object *object)
+Object *BKE_mball_basis_find(const Main &bmain, Scene *scene, Object *object)
 {
   Object *bob = object;
   int basisnr, obnr;
@@ -423,7 +424,7 @@ Object *BKE_mball_basis_find(Scene *scene, Object *object)
   BLI_string_split_name_number(object->id.name + 2, '.', basisname, &basisnr);
 
   for (ViewLayer &view_layer : scene->view_layers) {
-    BKE_view_layer_synced_ensure(scene, &view_layer);
+    BKE_view_layer_synced_ensure(bmain, scene, &view_layer);
     for (Base &base : *BKE_view_layer_object_bases_get(&view_layer)) {
       Object *ob = base.object;
       if ((ob->type == OB_MBALL) && !(base.flag & BASE_FROM_DUPLI)) {
@@ -652,7 +653,7 @@ void BKE_mball_data_update(Depsgraph *depsgraph, Scene *scene, Object *ob)
 
   BKE_object_free_derived_caches(ob);
 
-  const Object *basis_object = BKE_mball_basis_find(scene, ob);
+  const Object *basis_object = BKE_mball_basis_find(*DEG_get_bmain(depsgraph), scene, ob);
   if (ob != basis_object) {
     return;
   }

@@ -8,15 +8,14 @@ namespace blender::nodes::node_geo_input_id_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Int>("ID").field_source().description(
+  b.add_output<decl::Int>("ID"_ustr).field_source().description(
       "The values from the \"id\" attribute on points, or the index if that attribute does not "
       "exist");
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  Field<int> position_field{std::make_shared<bke::IDAttributeFieldInput>()};
-  params.set_output("ID", std::move(position_field));
+  params.set_output("ID"_ustr, Field<int>::from_input<bke::IDAttributeFieldInput>());
 }
 
 static void node_register()

@@ -284,26 +284,28 @@ void ED_pose_recalculate_paths(bContext *C, Scene *scene, Object *ob, ePosePathC
 /**
  * \return True when pick finds an element or the selection changed.
  */
-bool ED_armature_pose_select_pick_bone(const Scene *scene,
+bool ED_armature_pose_select_pick_bone(const Main &bmain,
+                                       const Scene *scene,
                                        ViewLayer *view_layer,
                                        View3D *v3d,
                                        Object *ob,
                                        bPoseChannel *pchan,
-                                       const SelectPick_Params &params) ATTR_NONNULL(1, 2, 3, 4);
+                                       const SelectPick_Params &params) ATTR_NONNULL(2, 3, 4, 5);
 /**
  * Called for mode-less pose selection.
  * assumes the active object is still on old situation.
  *
  * \return True when pick finds an element or the selection changed.
  */
-bool ED_armature_pose_select_pick_with_buffer(const Scene *scene,
+bool ED_armature_pose_select_pick_with_buffer(const Main &bmain,
+                                              const Scene *scene,
                                               ViewLayer *view_layer,
                                               View3D *v3d,
                                               Base *base,
                                               const GPUSelectResult *hit_results,
                                               int hits,
                                               const SelectPick_Params &params,
-                                              bool do_nearest) ATTR_NONNULL(1, 2, 3, 4, 5);
+                                              bool do_nearest) ATTR_NONNULL(2, 3, 4, 5, 6);
 /**
  * While in weight-paint mode, a single pose may be active as well.
  * While not common, it's possible we have multiple armatures deforming a mesh.
@@ -312,7 +314,8 @@ bool ED_armature_pose_select_pick_with_buffer(const Scene *scene,
  * It can't be set to the active object because we need
  * to keep this set to the weight paint object.
  */
-void ED_armature_pose_select_in_wpaint_mode(const Scene *scene,
+void ED_armature_pose_select_in_wpaint_mode(const Main &bmain,
+                                            const Scene *scene,
                                             ViewLayer *view_layer,
                                             Base *base_select);
 bool ED_pose_deselect_all_multi_ex(Span<Base *> bases, int select_mode, bool ignore_visibility);

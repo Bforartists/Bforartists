@@ -14,9 +14,9 @@ namespace nodes::node_shader_camera_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Vector>("View Vector");
-  b.add_output<decl::Float>("View Z Depth");
-  b.add_output<decl::Float>("View Distance");
+  b.add_output<decl::Vector>("View Vector"_ustr);
+  b.add_output<decl::Float>("View Z Depth"_ustr);
+  b.add_output<decl::Float>("View Distance"_ustr);
 }
 
 static int gpu_shader_camera(GPUMaterial *mat,

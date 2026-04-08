@@ -119,6 +119,11 @@ struct VKWorkarounds {
    */
   bool not_aligned_pixel_formats = false;
 
+  /**
+   * Intel 7th to 10th Gen GPUs show visual artifacts with texture pool usage.
+   */
+  bool no_texture_pool = false;
+
   /** Log enabled workarounds. */
   void log() const;
 };

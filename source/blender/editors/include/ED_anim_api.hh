@@ -621,14 +621,15 @@ void ANIM_animdata_freelist(ListBaseT<bAnimListElem> *anim_data);
  */
 bool ANIM_animdata_can_have_greasepencil(const eAnimCont_Types type);
 
-bAction *ANIM_active_action_from_area(Scene *scene,
+bAction *ANIM_active_action_from_area(const Main &bmain,
+                                      Scene *scene,
                                       ViewLayer *view_layer,
                                       const ScrArea *area,
                                       ID **r_action_user = nullptr);
 
 /* ************************************************ */
 /* ANIMATION CHANNELS LIST */
-/* anim_channels_*.c */
+/* anim_channels_*.cc */
 
 /** \} */
 

@@ -8,7 +8,7 @@
 
 #include "vk_data_conversion.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
 #include "BLI_math_half.hh"
 
 namespace blender::gpu {

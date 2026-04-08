@@ -13,7 +13,7 @@ namespace blender::nodes::node_geo_image_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Image>("Image").custom_draw([](CustomSocketDrawParams &params) {
+  b.add_output<decl::Image>("Image"_ustr).custom_draw([](CustomSocketDrawParams &params) {
     params.layout.alignment_set(ui::LayoutAlign::Expand);
     template_id(&params.layout,
                 &params.C,
@@ -27,7 +27,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  params.set_output("Image", reinterpret_cast<Image *>(params.node().id));
+  params.set_output("Image"_ustr, reinterpret_cast<Image *>(params.node().id));
 }
 
 static void node_register()

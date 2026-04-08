@@ -310,6 +310,7 @@ MaskLayer *BKE_mask_layer_new(Mask *mask, const char *name)
   masklay->blend = MASK_BLEND_MERGE_ADD;
   masklay->alpha = 1.0f;
   masklay->flag = MASK_LAYERFLAG_FILL_DISCRETE | MASK_LAYERFLAG_FILL_OVERLAP;
+  masklay->fill_solver = MASK_FILL_SOLVER_CDT;
 
   return masklay;
 }
@@ -317,6 +318,16 @@ MaskLayer *BKE_mask_layer_new(Mask *mask, const char *name)
 MaskLayer *BKE_mask_layer_active(Mask *mask)
 {
   return static_cast<MaskLayer *>(BLI_findlink(&mask->masklayers, mask->masklay_act));
+}
+
+MaskLayer *BKE_mask_layer_by_name(Mask *mask, const char *layer_name)
+{
+  for (MaskLayer &mask_layer : mask->masklayers) {
+    if (STREQ(mask_layer.name, layer_name)) {
+      return &mask_layer;
+    }
+  }
+  return nullptr;
 }
 
 void BKE_mask_layer_active_set(Mask *mask, MaskLayer *masklay)
@@ -370,6 +381,7 @@ MaskLayer *BKE_mask_layer_copy(const MaskLayer *masklay)
   masklay_new->blend_flag = masklay->blend_flag;
   masklay_new->flag = masklay->flag;
   masklay_new->falloff = masklay->falloff;
+  masklay_new->fill_solver = masklay->fill_solver;
   masklay_new->visibility_flag = masklay->visibility_flag;
 
   for (MaskSpline &spline : masklay->splines) {
@@ -439,6 +451,16 @@ MaskSpline *BKE_mask_spline_add(MaskLayer *masklay)
   BKE_mask_parent_init(&spline->parent);
 
   return spline;
+}
+
+void BKE_mask_spline_move_to_layer(MaskSpline *spline,
+                                   MaskLayer *src_mask_layer,
+                                   MaskLayer *dst_mask_layer)
+{
+  if (src_mask_layer != dst_mask_layer) {
+    BLI_remlink(&src_mask_layer->splines, spline);
+    BLI_addtail(&dst_mask_layer->splines, spline);
+  }
 }
 
 bool BKE_mask_spline_remove(MaskLayer *mask_layer, MaskSpline *spline)

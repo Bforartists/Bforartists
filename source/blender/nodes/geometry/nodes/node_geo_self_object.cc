@@ -8,12 +8,12 @@ namespace blender::nodes::node_geo_self_object_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Object>("Self Object");
+  b.add_output<decl::Object>("Self Object"_ustr);
 }
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  params.set_output("Self Object", const_cast<Object *>(params.self_object()));
+  params.set_output("Self Object"_ustr, const_cast<Object *>(params.self_object()));
 }
 
 static void node_register()

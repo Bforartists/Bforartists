@@ -22,8 +22,8 @@ namespace blender::nodes::node_composite_rgb_to_bw_cc {
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Color>("Image").default_value({0.8f, 0.8f, 0.8f, 1.0f});
-  b.add_output<decl::Float>("Val");
+  b.add_input<decl::Color>("Image"_ustr).default_value({0.8f, 0.8f, 0.8f, 1.0f});
+  b.add_output<decl::Float>("Val"_ustr);
 }
 
 using namespace blender::compositor;

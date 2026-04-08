@@ -77,8 +77,8 @@ VertOut vertex_main(VertIn v_in)
 
 void geometry_main(VertOut geom_in[4],
                    uint out_vertex_id,
-                   uint out_primitive_id,
-                   uint out_invocation_id)
+                   uint /*out_primitive_id*/,
+                   uint /*out_invocation_id*/)
 {
   float3 view_vec = -drw_view_incident_vector(geom_in[1].vs_P);
 

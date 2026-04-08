@@ -29,16 +29,16 @@ void SeqScopes::cleanup()
   last_timeline_frame = 0;
 }
 
-static void rgba_float_to_display_space(ColormanageProcessor *processor,
+static void rgba_float_to_display_space(const ColormanageProcessor &processor,
                                         const ColorSpace *src_colorspace,
                                         MutableSpan<float4> pixels)
 {
   IMB_colormanagement_colorspace_to_scene_linear(
       &pixels.data()->x, pixels.size(), 1, 4, src_colorspace, false);
-  IMB_colormanagement_processor_apply(processor, &pixels.data()->x, pixels.size(), 1, 4, false);
+  processor.apply(&pixels.data()->x, pixels.size(), 1, 4, false);
 }
 
-static Array<float4> pixels_to_display_space(ColormanageProcessor *processor,
+static Array<float4> pixels_to_display_space(const ColormanageProcessor &processor,
                                              const ColorSpace *src_colorspace,
                                              int64_t num,
                                              const float *src,
@@ -53,7 +53,7 @@ static Array<float4> pixels_to_display_space(ColormanageProcessor *processor,
   return result;
 }
 
-static Array<float4> pixels_to_display_space(ColormanageProcessor *processor,
+static Array<float4> pixels_to_display_space(const ColormanageProcessor &processor,
                                              const ColorSpace *src_colorspace,
                                              int64_t num,
                                              const uchar *src,
@@ -72,10 +72,10 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
                                     const ColorManagedViewSettings &view_settings,
                                     const ColorManagedDisplaySettings &display_settings)
 {
-  ColormanageProcessor *cm_processor = IMB_colormanagement_display_processor_for_imbuf(
-      ibuf, &view_settings, &display_settings);
+  std::optional<ColormanageProcessor> cm_processor =
+      ColormanageProcessor::display_processor_for_imbuf(ibuf, &view_settings, &display_settings);
 
-  const bool is_float = ibuf->float_buffer.data != nullptr;
+  const bool is_float = ibuf->float_data() != nullptr;
   const int hist_size = is_float ? BINS_HDR : BINS_01;
 
   /* Calculate histogram of input image with parallel reduction:
@@ -89,7 +89,7 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
         Array<uint3> res = init;
 
         if (is_float) {
-          const float *src = ibuf->float_buffer.data + range.first() * 4;
+          const float *src = ibuf->float_data() + range.first() * 4;
           if (!cm_processor) {
             /* Float image, no color space conversions needed. */
             for ([[maybe_unused]] const int64_t index : range) {
@@ -104,7 +104,7 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
           else {
             /* Float image, with color space conversions. */
             Array<float4> pixels = pixels_to_display_space(
-                cm_processor, ibuf->float_buffer.colorspace, range.size(), src, 4);
+                cm_processor.value(), ibuf->float_buffer.colorspace, range.size(), src, 4);
             for (const float4 &pixel : pixels) {
               res[float_to_bin(pixel.x)].x++;
               res[float_to_bin(pixel.y)].y++;
@@ -114,7 +114,7 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
         }
         else {
           /* Byte images just use 256 histogram bins, directly indexed by value. */
-          const uchar *src = ibuf->byte_buffer.data + range.first() * 4;
+          const uchar *src = ibuf->byte_data() + range.first() * 4;
           if (!cm_processor) {
             /* Byte image, no color space conversions needed. */
             for ([[maybe_unused]] const int64_t index : range) {
@@ -127,7 +127,7 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
           else {
             /* Byte image, with color space conversions. */
             Array<float4> pixels = pixels_to_display_space(
-                cm_processor, ibuf->byte_buffer.colorspace, range.size(), src, 4);
+                cm_processor.value(), ibuf->byte_buffer.colorspace, range.size(), src, 4);
             for (const float4 &pixel : pixels) {
               uchar pixel_b[4];
               rgba_float_to_uchar(pixel_b, pixel);
@@ -148,10 +148,6 @@ void ScopeHistogram::calc_from_ibuf(const ImBuf *ibuf,
         }
         return res;
       });
-
-  if (cm_processor) {
-    IMB_colormanagement_processor_free(cm_processor);
-  }
 
   max_value = uint3(0);
   max_bin = uint3(0);

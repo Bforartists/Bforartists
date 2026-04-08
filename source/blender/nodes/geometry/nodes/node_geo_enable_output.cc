@@ -28,7 +28,9 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.allow_any_socket_order();
 
   b.add_default_layout();
-  b.add_input<decl::Bool>("Enable").default_value(false).structure_type(StructureType::Single);
+  b.add_input<decl::Bool>("Enable"_ustr)
+      .default_value(false)
+      .structure_type(StructureType::Single);
 
   const bNode *node = b.node_or_null();
   if (!node) {
@@ -36,8 +38,8 @@ static void node_declare(NodeDeclarationBuilder &b)
   }
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
 
-  auto &input_value = b.add_input(data_type, "Value").hide_value();
-  auto &output_value = b.add_output(data_type, "Value").align_with_previous();
+  auto &input_value = b.add_input(data_type, "Value"_ustr).hide_value();
+  auto &output_value = b.add_output(data_type, "Value"_ustr).align_with_previous();
 
   if (socket_type_supports_attributes(data_type)) {
     input_value.supports_field();
@@ -182,7 +184,7 @@ static const bNodeSocket *node_internally_linked_input(const bNodeTree & /*tree*
                                                        const bNodeSocket &output_socket)
 {
   /* Internal links should always map corresponding input and output sockets. */
-  return node.input_by_identifier(output_socket.identifier);
+  return node.input_by_identifier(output_socket.identifier_ustr());
 }
 
 static void node_register()

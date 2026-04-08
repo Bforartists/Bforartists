@@ -667,7 +667,7 @@ static void write_render_color_output(RenderLayer *layer,
                                4,
                                0,
                                GPU_DATA_FLOAT,
-                               rp->ibuf->float_buffer.data);
+                               rp->ibuf->float_data_for_write());
   }
 }
 
@@ -686,13 +686,13 @@ static void write_render_z_output(RenderLayer *layer,
                                BLI_rcti_size_x(rect),
                                BLI_rcti_size_y(rect),
                                GPU_DATA_FLOAT,
-                               rp->ibuf->float_buffer.data);
+                               rp->ibuf->float_data_for_write());
 
     int pix_num = BLI_rcti_size_x(rect) * BLI_rcti_size_y(rect);
 
     /* Convert GPU depth [0..1] to view Z [near..far] */
     if (draw::View::default_get().is_persp()) {
-      for (float &z : MutableSpan(rp->ibuf->float_buffer.data, pix_num)) {
+      for (float &z : MutableSpan(rp->ibuf->float_data_for_write(), pix_num)) {
         if (z == 1.0f) {
           z = 1e10f; /* Background */
         }
@@ -708,7 +708,7 @@ static void write_render_z_output(RenderLayer *layer,
       float far = draw::View::default_get().far_clip();
       float range = fabsf(far - near);
 
-      for (float &z : MutableSpan(rp->ibuf->float_buffer.data, pix_num)) {
+      for (float &z : MutableSpan(rp->ibuf->float_data_for_write(), pix_num)) {
         if (z == 1.0f) {
           z = 1e10f; /* Background */
         }

@@ -26,31 +26,31 @@ static void node_declare(NodeDeclarationBuilder &b)
 {
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Geometry>("Mesh")
+  b.add_input<decl::Geometry>("Mesh"_ustr)
       .supported_type(GeometryComponent::Type::Mesh)
       .description("Mesh to find the closest surface point on");
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_input(data_type, "Value").hide_value().field_on_all();
+    b.add_input(data_type, "Value"_ustr).hide_value().field_on_all();
   }
-  b.add_input<decl::Int>("Group ID")
+  b.add_input<decl::Int>("Group ID"_ustr)
       .hide_value()
       .field_on_all()
       .description(
           "Splits the faces of the input mesh into groups which can be sampled individually");
-  b.add_input<decl::Vector>("Sample Position")
+  b.add_input<decl::Vector>("Sample Position"_ustr)
       .implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Int>("Sample Group ID")
+  b.add_input<decl::Int>("Sample Group ID"_ustr)
       .hide_value()
       .supports_field()
       .structure_type(StructureType::Dynamic);
 
   if (node != nullptr) {
     const eCustomDataType data_type = eCustomDataType(node->custom1);
-    b.add_output(data_type, "Value").dependent_field({3, 4});
+    b.add_output(data_type, "Value"_ustr).dependent_field({3, 4});
   }
-  b.add_output<decl::Bool>("Is Valid")
+  b.add_output<decl::Bool>("Is Valid"_ustr)
       .dependent_field({3, 4})
       .description(
           "Whether the sampling was successful. It can fail when the sampled group is empty");
@@ -78,7 +78,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     params.add_item(IFACE_("Value"), [type](LinkSearchOpParams &params) {
       bNode &node = params.add_node("GeometryNodeSampleNearestSurface");
       node.custom1 = *type;
-      params.update_and_connect_available_socket(node, "Value");
+      params.update_and_connect_available_socket(node, "Value"_ustr);
     });
   }
 }
@@ -187,7 +187,7 @@ class SampleNearestSurfaceFunction : public mf::MultiFunction {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry = params.extract_input<GeometrySet>("Mesh");
+  GeometrySet geometry = params.extract_input<GeometrySet>("Mesh"_ustr);
   const Mesh *mesh = geometry.get_mesh();
   if (mesh == nullptr) {
     params.set_default_remaining_outputs();
@@ -203,10 +203,10 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  GField value = params.extract_input<GField>("Value");
-  Field<int> group_id_field = params.extract_input<Field<int>>("Group ID");
-  auto sample_position = params.extract_input<bke::SocketValueVariant>("Sample Position");
-  auto sample_group_id = params.extract_input<bke::SocketValueVariant>("Sample Group ID");
+  GField value = params.extract_input<GField>("Value"_ustr);
+  Field<int> group_id_field = params.extract_input<Field<int>>("Group ID"_ustr);
+  auto sample_position = params.extract_input<bke::SocketValueVariant>("Sample Position"_ustr);
+  auto sample_group_id = params.extract_input<bke::SocketValueVariant>("Sample Group ID"_ustr);
 
   std::string error_message;
 
@@ -253,8 +253,8 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  params.set_output("Value", std::move(sample_value));
-  params.set_output("Is Valid", std::move(is_valid));
+  params.set_output("Value"_ustr, std::move(sample_value));
+  params.set_output("Is Valid"_ustr, std::move(is_valid));
 }
 
 static void node_rna(StructRNA *srna)

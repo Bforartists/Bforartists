@@ -15,6 +15,8 @@
 
 #include "IMB_imbuf_enums.h"
 
+#include <string>
+
 namespace blender {
 
 struct ColormanageCache;
@@ -28,8 +30,6 @@ namespace ocio {
 class ColorSpace;
 }
 using ColorSpace = ocio::ColorSpace;
-
-#define IMB_FILEPATH_SIZE 1024
 
 /**
  * \ingroup imbuf
@@ -165,10 +165,8 @@ struct DDSData {
 
 /* Different storage specialization.
  *
- * NOTE: Avoid direct assignments and allocations, use the buffer utilities from the IMB_imbuf.hh
- * instead.
- *
- * Accessing the data pointer directly is fine and is an expected way of accessing it. */
+ * NOTE: Avoid direct access. Use the buffer utilities from the IMB_imbuf.hh  instead
+ */
 
 struct ImBufByteBuffer {
   uint8_t *data = nullptr;
@@ -275,11 +273,11 @@ struct ImBuf {
 
   /* file information */
   /** file type we are going to save as */
-  enum eImbFileType ftype = IMB_FTYPE_NONE;
+  eImbFileType ftype = IMB_FTYPE_NONE;
   /** file format specific flags */
   ImbFormatOptions foptions;
   /** The absolute file path associated with this image. */
-  char filepath[IMB_FILEPATH_SIZE] = "";
+  std::string filepath;
   /** For movie files, the frame number loaded from the file. */
   int fileframe = 0;
 
@@ -304,6 +302,12 @@ struct ImBuf {
 
   /** Information for compressed textures. */
   DDSData dds_data;
+
+  const uint8_t *byte_data() const;
+  uint8_t *byte_data_for_write();
+
+  const float *float_data() const;
+  float *float_data_for_write();
 };
 
 /**
@@ -378,5 +382,25 @@ enum {
 };
 
 /** \} */
+
+inline const uint8_t *ImBuf::byte_data() const
+{
+  return this->byte_buffer.data;
+}
+
+inline uint8_t *ImBuf::byte_data_for_write()
+{
+  return this->byte_buffer.data;
+}
+
+inline const float *ImBuf::float_data() const
+{
+  return this->float_buffer.data;
+}
+
+inline float *ImBuf::float_data_for_write()
+{
+  return this->float_buffer.data;
+}
 
 }  // namespace blender

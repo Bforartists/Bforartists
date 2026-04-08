@@ -13,7 +13,8 @@
 
 #include "GEO_mesh_merge_by_distance.hh"
 
-#include "BLI_color.hh"
+#include "BLI_color_types.hh"
+#include "BLI_math_color.h"
 #include "BLI_math_vector.h"
 #include "BLI_span.hh"
 

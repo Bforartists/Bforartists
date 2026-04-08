@@ -445,8 +445,8 @@ void importer_main(Main *bmain, Scene *scene, ViewLayer *view_layer, const FBXIm
   }
 
   /* Select objects, sync layers etc. */
-  BKE_view_layer_base_deselect_all(scene, view_layer);
-  BKE_view_layer_synced_ensure(scene, view_layer);
+  BKE_view_layer_base_deselect_all(*bmain, scene, view_layer);
+  BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   bool has_instantiated_object = false;
   bool has_uninstantiated_object = false;
   for (Object *obj : ctx.mapping.imported_objects) {

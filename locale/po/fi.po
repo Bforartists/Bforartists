@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'45d5533d8e66')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'a0888131c6dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 11:01+0000\n"
-"PO-Revision-Date: 2025-07-23 15:32+0000\n"
+"POT-Creation-Date: 2026-04-06 09:15+0000\n"
+"PO-Revision-Date: 2026-04-06 09:16+0000\n"
 "Last-Translator: Leevi Oksanen <laavi.oksanen@gmail.com>\n"
 "Language-Team: Finnish <https://translate.blender.org/projects/blender-ui/ui/fi/>\n"
 "Language: fi\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.1"
+"X-Generator: Weblate 5.16.2"
 
 
 msgid "Shader AOV"
@@ -2893,6 +2893,10 @@ msgid "Flat"
 msgstr "Tasainen"
 
 
+msgid "Threshold"
+msgstr "Kynnysarvo"
+
+
 msgid "Random Curve"
 msgstr "Satunnainen käyrä"
 
@@ -3010,10 +3014,6 @@ msgstr "Yksinkertaista"
 
 msgid "Number of simplify steps (large values reduce fill accuracy)"
 msgstr "Yksinkertaistusaskelien määrä (suuret arvot vähentävät täytön tarkkuutta)"
-
-
-msgid "Threshold"
-msgstr "Kynnysarvo"
 
 
 msgid "Input Samples"
@@ -3181,24 +3181,8 @@ msgid "Stroke"
 msgstr "Piirto"
 
 
-msgid "Vertex Color affects to Stroke only"
-msgstr "Kärkiväri vaikuttaa ainoastaan viivaan"
-
-
 msgid "Fill"
 msgstr "Täytä"
-
-
-msgid "Vertex Color affects to Fill only"
-msgstr "Kärkiväri vaikuttaa ainoastaan täyttöön"
-
-
-msgid "Stroke & Fill"
-msgstr "Piirrä & täytä"
-
-
-msgid "Vertex Color affects to Stroke and Fill"
-msgstr "Kärkiväri vaikuttaa viivaan ja täyttöön"
 
 
 msgid "Byte Color Attribute Value"
@@ -7248,44 +7232,8 @@ msgid "ID Type"
 msgstr "ID-tyyppi"
 
 
-msgid "Show/Hide"
-msgstr "Näytä/Piilota"
-
-
 msgid "Math"
 msgstr "Matematiikka"
-
-
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Read"
-msgstr "Lue"
-
-
-msgid "Write"
-msgstr "Kirjoita"
-
-
-msgid "Hooks"
-msgstr "Koukut"
-
-
-msgid "Random Mask"
-msgstr "Satunnainen maski"
-
-
-msgid "Names"
-msgstr "Nimet"
-
-
-msgid "Mesh Select Mode"
-msgstr "Muodon valintatila"
-
-
-msgid "Metaball"
-msgstr "Metapallo"
 
 
 msgid "Utilities"
@@ -7304,12 +7252,32 @@ msgid "Select Similar"
 msgstr "Valitse samankaltainen"
 
 
+msgid "Read"
+msgstr "Lue"
+
+
 msgid "Select All by Trait"
 msgstr "Valitse kaikki piirteen mukaan"
 
 
+msgid "Write"
+msgstr "Kirjoita"
+
+
 msgid "Select Loops"
 msgstr "Valitse silmukat"
+
+
+msgid "Instances"
+msgstr "Instanssit"
+
+
+msgid "Metaball"
+msgstr "Metapallo"
+
+
+msgid "Import"
+msgstr "Tuo"
 
 
 msgid "Light"
@@ -7320,20 +7288,36 @@ msgid "Light Probe"
 msgstr "Valoluotain"
 
 
-msgid "Instances"
-msgstr "Instanssit"
-
-
 msgid "Add Image"
 msgstr "Lisää kuva"
 
 
-msgid "Import"
-msgstr "Tuo"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Track"
 msgstr "Raide"
+
+
+msgid "Show/Hide"
+msgstr "Näytä/Piilota"
+
+
+msgid "Hooks"
+msgstr "Koukut"
+
+
+msgid "Random Mask"
+msgstr "Satunnainen maski"
+
+
+msgid "Names"
+msgstr "Nimet"
+
+
+msgid "Mesh Select Mode"
+msgstr "Muodon valintatila"
 
 
 msgid "Basic"
@@ -7597,6 +7581,10 @@ msgstr "UV-partikkeli"
 
 msgid "Protect"
 msgstr "Suojaa"
+
+
+msgid "Stroke & Fill"
+msgstr "Piirrä & täytä"
 
 
 msgid "Read Data"
@@ -12158,6 +12146,10 @@ msgid "Downloading..."
 msgstr "Ladataan..."
 
 
+msgid "Object Index"
+msgstr "Objekti-indeksi"
+
+
 msgid "Viewports"
 msgstr "Näkymät"
 
@@ -13228,6 +13220,10 @@ msgid "Text"
 msgstr "Teksti"
 
 
+msgid "Workbench"
+msgstr "Työtila"
+
+
 msgid "Add Transition"
 msgstr "Lisää siirtymä"
 
@@ -13671,10 +13667,6 @@ msgstr "Veistäminen"
 
 msgid "VFX"
 msgstr "VFX"
-
-
-msgid "Workbench"
-msgstr "Työtila"
 
 
 msgid "Create"
@@ -15490,6 +15482,14 @@ msgid "Start Position"
 msgstr "Aloitussijainti"
 
 
+msgid "The size of the image"
+msgstr "Kuvan koko"
+
+
+msgid "An image of the given size and constant color"
+msgstr "Annetun kokoinen ja vakiovärinen kuva"
+
+
 msgid "Key Color"
 msgstr "Avainväri"
 
@@ -16393,10 +16393,6 @@ msgid "Dot"
 msgstr "Piste"
 
 
-msgid "Object Index"
-msgstr "Objekti-indeksi"
-
-
 msgid "Color Fac"
 msgstr "Väritekijä"
 
@@ -16549,10 +16545,6 @@ msgstr "Audio"
 
 msgid "Colorize"
 msgstr "Väritä"
-
-
-msgid "Blur X"
-msgstr "Sumenna X"
 
 
 msgid "Rim"

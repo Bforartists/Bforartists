@@ -58,16 +58,18 @@ static const EnumPropertyItem mode_items[] = {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Menu>("Mode")
+  b.add_input<decl::Menu>("Mode"_ustr)
       .default_value(CMP_NODE_TRACK_POSITION_ABSOLUTE)
       .static_items(mode_items)
       .optional_label();
-  b.add_input<decl::Int>("Frame").usage_by_menu(
-      "Mode", {CMP_NODE_TRACK_POSITION_RELATIVE_FRAME, CMP_NODE_TRACK_POSITION_ABSOLUTE_FRAME});
+  b.add_input<decl::Int>("Frame"_ustr)
+      .usage_by_menu(
+          "Mode"_ustr,
+          {CMP_NODE_TRACK_POSITION_RELATIVE_FRAME, CMP_NODE_TRACK_POSITION_ABSOLUTE_FRAME});
 
-  b.add_output<decl::Float>("X");
-  b.add_output<decl::Float>("Y");
-  b.add_output<decl::Vector>("Speed").subtype(PROP_VELOCITY).dimensions(4);
+  b.add_output<decl::Float>("X"_ustr);
+  b.add_output<decl::Float>("Y"_ustr);
+  b.add_output<decl::Vector>("Speed"_ustr).subtype(PROP_VELOCITY).dimensions(4);
 }
 
 static void node_init(const bContext *C, PointerRNA *ptr)

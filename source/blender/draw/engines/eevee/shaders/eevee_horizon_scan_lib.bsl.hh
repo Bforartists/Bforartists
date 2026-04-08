@@ -81,11 +81,6 @@ float bitmask_to_occlusion_cosine(uint bitmask)
 #endif
 }
 
-float bsdf_eval(float3 N, float3 L, float3 V)
-{
-  return dot(N, L);
-}
-
 /**
  * Projects the normal `N` onto a plane defined by `V` and `T`.
  * V, T, B forms an orthonormal basis around V.

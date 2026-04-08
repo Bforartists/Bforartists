@@ -14,12 +14,12 @@ namespace blender::nodes::node_geo_edges_to_face_groups_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Bool>("Boundary Edges")
+  b.add_input<decl::Bool>("Boundary Edges"_ustr)
       .default_value(true)
       .hide_value()
       .supports_field()
       .description("Edges used to split faces into separate groups");
-  b.add_output<decl::Int>("Face Group ID")
+  b.add_output<decl::Int>("Face Group ID"_ustr)
       .field_source_reference_all()
       .description("Index of the face group inside each boundary edge region");
 }
@@ -77,7 +77,7 @@ class FaceSetFromBoundariesInput final : public bke::MeshFieldInput {
     return non_boundary_edge_field_.hash();
   }
 
-  bool is_equal_to(const fn::FieldNode &other) const override
+  bool is_equal_to(const fn::FieldInput &other) const override
   {
     if (const auto *other_field = dynamic_cast<const FaceSetFromBoundariesInput *>(&other)) {
       return other_field->non_boundary_edge_field_ == non_boundary_edge_field_;
@@ -93,11 +93,11 @@ class FaceSetFromBoundariesInput final : public bke::MeshFieldInput {
 
 static void geo_node_exec(GeoNodeExecParams params)
 {
-  Field<bool> boundary_edges = params.extract_input<Field<bool>>("Boundary Edges");
+  Field<bool> boundary_edges = params.extract_input<Field<bool>>("Boundary Edges"_ustr);
   Field<bool> non_boundary_edges = fn::invert_boolean_field(std::move(boundary_edges));
   params.set_output(
-      "Face Group ID",
-      Field<int>(std::make_shared<FaceSetFromBoundariesInput>(std::move(non_boundary_edges))));
+      "Face Group ID"_ustr,
+      Field<int>::from_input<FaceSetFromBoundariesInput>(std::move(non_boundary_edges)));
 }
 
 static void node_register()

@@ -19,6 +19,8 @@ struct [[host_shared]] RayTraceData {
   float4x4 history_persmat;
   /** ViewProjection matrix used to render the radiance texture. */
   float4x4 radiance_persmat;
+  /** ViewProjection matrix used to denoise the previous frame. */
+  float4x4 denoise_history_persmat;
   /** Input resolution. */
   int2 full_resolution;
   /** Inverse of input resolution to get screen UVs. */

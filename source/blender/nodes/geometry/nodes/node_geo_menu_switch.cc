@@ -69,7 +69,7 @@ static void node_declare(nodes::NodeDeclarationBuilder &b)
     menu_structure_type = StructureType::Single;
   }
 
-  auto &output = b.add_output(data_type, "Output");
+  auto &output = b.add_output(data_type, "Output"_ustr);
   if (supports_fields) {
     output.dependent_field().reference_pass_all();
   }
@@ -83,7 +83,7 @@ static void node_declare(nodes::NodeDeclarationBuilder &b)
 
   b.add_default_layout();
 
-  auto &menu = b.add_input<decl::Menu>("Menu");
+  auto &menu = b.add_input<decl::Menu>("Menu"_ustr);
   if (supports_fields) {
     menu.supports_field();
   }
@@ -94,8 +94,9 @@ static void node_declare(nodes::NodeDeclarationBuilder &b)
   menu.optional_label();
 
   for (const NodeEnumItem &enum_item : storage.enum_definition.items()) {
-    const std::string identifier = MenuSwitchItemsAccessor::socket_identifier_for_item(enum_item);
-    auto &input = b.add_input(data_type, enum_item.name, identifier)
+    const UString name(enum_item.name);
+    const UString identifier(MenuSwitchItemsAccessor::socket_identifier_for_item(enum_item));
+    auto &input = b.add_input(data_type, name, identifier)
                       .socket_name_ptr(
                           &ntree->id, *MenuSwitchItemsAccessor::item_srna, &enum_item, "name")
                       .compositor_realization_mode(CompositorInputRealizationMode::None)
@@ -115,7 +116,7 @@ static void node_declare(nodes::NodeDeclarationBuilder &b)
                               SOCK_MASK,
                               SOCK_SOUND));
     input.structure_type(value_structure_type);
-    auto &item_output = b.add_output<decl::Bool>(enum_item.name, std::move(identifier))
+    auto &item_output = b.add_output<decl::Bool>(name, identifier)
                             .align_with_previous()
                             .description("True if this item is chosen by the menu input");
     if (supports_fields) {
@@ -124,7 +125,7 @@ static void node_declare(nodes::NodeDeclarationBuilder &b)
     }
   }
 
-  b.add_input<decl::Extend>("", "__extend__")
+  b.add_input<decl::Extend>(""_ustr, "__extend__"_ustr)
       .structure_type(StructureType::Dynamic)
       .custom_draw([](CustomSocketDrawParams &params) {
         ui::Layout &layout = params.layout;
@@ -174,7 +175,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     if (data_type == SOCK_MENU) {
       params.add_item(IFACE_("Menu"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeMenuSwitch");
-        params.update_and_connect_available_socket(node, "Menu");
+        params.update_and_connect_available_socket(node, "Menu"_ustr);
       });
     }
   }
@@ -183,7 +184,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
       params.add_item(IFACE_("Output"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeMenuSwitch");
         node_storage(node).data_type = params.socket.type;
-        params.update_and_connect_available_socket(node, "Output");
+        params.update_and_connect_available_socket(node, "Output"_ustr);
       });
     }
   }
@@ -387,15 +388,16 @@ class LazyFunctionForMenuSwitchNode : public LazyFunction {
       return;
     }
 
-    Vector<GField> item_fields(enum_def_.items_num + 1);
-    item_fields[0] = std::move(condition);
+    Vector<GField> item_fields;
+    item_fields.reserve(enum_def_.items_num + 1);
+    item_fields.append(std::move(condition));
     for (const int i : IndexRange(enum_def_.items_num)) {
-      item_fields[i + 1] = input_values[i]->extract<GField>();
+      item_fields.append(input_values[i]->extract<GField>());
     }
     std::unique_ptr<MultiFunction> multi_function = std::make_unique<MenuSwitchFn>(
         enum_def_, *field_base_type_);
-    std::shared_ptr<fn::FieldOperation> operation = FieldOperation::from(std::move(multi_function),
-                                                                         std::move(item_fields));
+    fn::FieldOperationPtr operation = FieldOperation::from(std::move(multi_function),
+                                                           std::move(item_fields));
 
     params.set_output(0, SocketValueVariant::From(GField(operation, 0)));
     for (const int item_i : IndexRange(enum_def_.items_num)) {

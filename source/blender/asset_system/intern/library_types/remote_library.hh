@@ -8,15 +8,19 @@
 
 #pragma once
 
+#include "common.hh"
+
 #include "AS_asset_library.hh"
 
 namespace blender::asset_system {
 
 class RemoteAssetLibrary : public AssetLibrary {
   std::string remote_url_;
+  /** Helper to get the #bUserAssetLibrary from the preferences (if still valid). */
+  UserAssetLibraryWrapper user_library_;
 
  public:
-  RemoteAssetLibrary(StringRef remote_url, StringRef name, StringRef cache_root_path);
+  RemoteAssetLibrary(const bUserAssetLibrary &custom_library);
   std::optional<AssetLibraryReference> library_reference() const override;
   std::optional<StringRefNull> remote_url() const override;
   void refresh_catalogs() override;

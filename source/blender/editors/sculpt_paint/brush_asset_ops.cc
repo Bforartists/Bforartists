@@ -261,14 +261,6 @@ static wmOperatorStatus brush_asset_save_as_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static bool library_is_editable(const AssetLibraryReference &library)
-{
-  if (library.type == ASSET_LIBRARY_ESSENTIALS) {
-    return false;
-  }
-  return true;
-}
-
 static wmOperatorStatus brush_asset_save_as_invoke(bContext *C,
                                                    wmOperator *op,
                                                    const wmEvent * /*event*/)
@@ -488,7 +480,7 @@ static bool brush_asset_edit_metadata_poll(bContext *C)
     BLI_assert_unreachable();
     return false;
   }
-  if (!library_is_editable(*library_ref)) {
+  if (asset->owner_asset_library().is_read_only()) {
     CTX_wm_operator_poll_msg_set(C, "Asset library is not editable");
     return false;
   }

@@ -12,6 +12,7 @@
 
 namespace blender {
 
+struct Main;
 struct Scene;
 struct ScrArea;
 struct TimeMarker;
@@ -56,7 +57,8 @@ ListBaseT<TimeMarker> *ED_scene_markers_get(const bContext *C, Scene *scene);
  */
 ListBaseT<TimeMarker> *ED_context_get_markers(const bContext *C);
 ListBaseT<TimeMarker> *ED_sequencer_context_get_markers(const bContext *C);
-ListBaseT<TimeMarker> *ED_scene_markers_get_from_area(Scene *scene,
+ListBaseT<TimeMarker> *ED_scene_markers_get_from_area(const Main &bmain,
+                                                      Scene *scene,
                                                       ViewLayer *view_layer,
                                                       const ScrArea *area);
 

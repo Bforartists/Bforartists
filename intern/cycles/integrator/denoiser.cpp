@@ -141,6 +141,7 @@ DenoiseParams get_effective_denoise_params(Device *denoiser_device,
   /* Always fallback to OIDN on CPU. */
   effective_denoise_params.type = DENOISER_OPENIMAGEDENOISE;
   effective_denoise_params.use_gpu = false;
+  effective_denoise_params.upscale_factor = 1.0f;
 
   return effective_denoise_params;
 }

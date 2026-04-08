@@ -79,6 +79,7 @@ static wmOperatorStatus snap_sel_to_grid_exec(bContext *C, wmOperator *op)
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
   Object *obact = CTX_data_active_object(C);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ARegion *region = CTX_wm_region(C);
   View3D *v3d = CTX_wm_view3d(C);
@@ -90,9 +91,10 @@ static wmOperatorStatus snap_sel_to_grid_exec(bContext *C, wmOperator *op)
   gridf = ED_view3d_grid_view_scale(scene, v3d, region, nullptr);
 
   if (OBEDIT_FROM_OBACT(obact)) {
+    const Main *bmain = CTX_data_main(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
     Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-        scene, view_layer, CTX_wm_view3d(C));
+        *bmain, scene, view_layer, CTX_wm_view3d(C));
     for (Object *obedit : objects) {
       if (obedit->type == OB_MESH) {
         BMEditMesh *em = BKE_editmesh_from_object(obedit);
@@ -135,7 +137,7 @@ static wmOperatorStatus snap_sel_to_grid_exec(bContext *C, wmOperator *op)
   }
   else if (OBPOSE_FROM_OBACT(obact)) {
     KeyingSet *ks = animrig::get_keyingset_for_autokeying(scene, ANIM_KS_LOCATION_ID);
-    Vector<Object *> objects_eval = BKE_object_pose_array_get(scene, view_layer_eval, v3d);
+    Vector<Object *> objects_eval = BKE_object_pose_array_get(*bmain, scene, view_layer_eval, v3d);
     for (Object *ob_eval : objects_eval) {
       Object *ob = DEG_get_original(ob_eval);
       bArmature *arm_eval = id_cast<bArmature *>(ob_eval->data);
@@ -213,7 +215,7 @@ static wmOperatorStatus snap_sel_to_grid_exec(bContext *C, wmOperator *op)
       BKE_scene_graph_evaluated_ensure(depsgraph, bmain);
       xcs = object::xform_skip_child_container_create();
       object::xform_skip_child_container_item_ensure_from_array(
-          xcs, scene, view_layer, objects.data(), objects.size());
+          xcs, *bmain, scene, view_layer, objects.data(), objects.size());
     }
     if (use_transform_data_origin) {
       BKE_scene_graph_evaluated_ensure(depsgraph, bmain);
@@ -355,9 +357,10 @@ static bool snap_selected_to_location_rotation(bContext *C,
 
   if (obedit) {
     float3 target_loc_local;
+    const Main *bmain = CTX_data_main(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
     Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-        scene, view_layer, v3d);
+        *bmain, scene, view_layer, v3d);
     for (const int ob_index : objects.index_range()) {
       obedit = objects[ob_index];
 
@@ -409,9 +412,9 @@ static bool snap_selected_to_location_rotation(bContext *C,
   }
   else if (OBPOSE_FROM_OBACT(obact)) {
     KeyingSet *ks = animrig::get_keyingset_for_autokeying(scene, ANIM_KS_LOCATION_ID);
-    ViewLayer *view_layer = CTX_data_view_layer(C);
-    Vector<Object *> objects = BKE_object_pose_array_get(scene, view_layer, v3d);
     Main *bmain = CTX_data_main(C);
+    ViewLayer *view_layer = CTX_data_view_layer(C);
+    Vector<Object *> objects = BKE_object_pose_array_get(*bmain, scene, view_layer, v3d);
     Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
     BKE_scene_graph_evaluated_ensure(depsgraph, bmain);
 
@@ -560,7 +563,7 @@ static bool snap_selected_to_location_rotation(bContext *C,
     if (use_transform_skip_children) {
       xcs = object::xform_skip_child_container_create();
       object::xform_skip_child_container_item_ensure_from_array(
-          xcs, scene, view_layer, objects.data(), objects.size());
+          xcs, *bmain, scene, view_layer, objects.data(), objects.size());
     }
     if (use_transform_data_origin) {
       xds = object::data_xform_container_create();
@@ -935,6 +938,7 @@ static bool snap_curs_to_sel_ex(bContext *C, const int pivot_point, float r_curs
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   ViewLayer *view_layer_eval = DEG_get_evaluated_view_layer(depsgraph);
   Object *obedit = CTX_data_edit_object(C);
+  const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   View3D *v3d = CTX_wm_view3d(C);
   TransVertStore tvs = {nullptr};
@@ -948,7 +952,7 @@ static bool snap_curs_to_sel_ex(bContext *C, const int pivot_point, float r_curs
   if (obedit) {
     ViewLayer *view_layer = CTX_data_view_layer(C);
     Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-        scene, view_layer, CTX_wm_view3d(C));
+        *bmain, scene, view_layer, CTX_wm_view3d(C));
     for (const int ob_index : objects.index_range()) {
       obedit = objects[ob_index];
 

@@ -20,10 +20,6 @@ set(CMAKE_MAP_IMPORTED_CONFIG_RELEASE Release RelWithDebInfo MinSizeRel Debug)
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
   set(MSVC_CLANG ON)
-  if(NOT WITH_WINDOWS_EXTERNAL_MANIFEST)
-    message(WARNING "WITH_WINDOWS_EXTERNAL_MANIFEST is required for clang, turning ON")
-    set(WITH_WINDOWS_EXTERNAL_MANIFEST ON)
-  endif()
   set(VC_TOOLS_DIR $ENV{VCToolsRedistDir} CACHE STRING "Location of the msvc redistributables")
   set(MSVC_REDIST_DIR ${VC_TOOLS_DIR})
   if(DEFINED MSVC_REDIST_DIR)
@@ -78,18 +74,22 @@ if(WITH_BLENDER AND NOT WITH_PYTHON_MODULE)
   set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT bforartists)
 endif()
 
-macro(warn_hardcoded_paths package_name)
+function(warn_hardcoded_paths package_name)
   if(WITH_WINDOWS_FIND_MODULES)
     message(WARNING "Using HARDCODED ${package_name} locations")
   endif()
-endmacro()
+endfunction()
 
+# NOTE: must be a macro, forwards to `find_package()`
+# whose result variables must be visible in the caller's scope.
 macro(windows_find_package package_name)
   if(WITH_WINDOWS_FIND_MODULES)
     find_package(${package_name})
   endif()
 endmacro()
 
+# NOTE: must be a macro, forwards `${ARGV}` to `find_package()`
+# whose result variables must be visible in the caller's scope.
 macro(find_package_wrapper)
   if(WITH_WINDOWS_FIND_MODULES)
     find_package(${ARGV})
@@ -108,6 +108,16 @@ string(APPEND CMAKE_MODULE_LINKER_FLAGS " /SAFESEH:NO /ignore:4099")
 
 if(WITH_WINDOWS_EXTERNAL_MANIFEST)
   string(APPEND CMAKE_EXE_LINKER_FLAGS " /manifest:no")
+else()
+  if(MSVC_CLANG)
+    # lld-link.exe corrupts the manifest by supplying UAC information in the
+    # wrong namespace. Since we supply this our selves in our manifests already
+    # we can just disable this. See https://github.com/llvm/llvm-project/issues/120394
+    # for details.
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " /manifestuac:no")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " /manifestuac:no")
+    string(APPEND CMAKE_MODULE_LINKER_FLAGS " /manifestuac:no")
+  endif()
 endif()
 
 list(APPEND PLATFORM_LINKLIBS
@@ -139,7 +149,7 @@ add_definitions(-D_ALLOW_KEYWORD_MACROS)
 # to remove for individual files that want to disable it
 # using the /GR- flag without generating a build warning
 # that both /GR and /GR- are specified.
-remove_cc_flag("/GR")
+remove_c_and_cxx_flag("/GR")
 
 # Make the Windows 8.1 API available for use.
 add_definitions(-D_WIN32_WINNT=0x603)
@@ -187,7 +197,7 @@ configure_file(
   @ONLY
 )
 
-remove_cc_flag(
+remove_c_and_cxx_flag(
   "/MDd"
   "/MD"
   "/Zi"

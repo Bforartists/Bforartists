@@ -31,19 +31,19 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   const bNode *node = b.node_or_null();
 
-  b.add_input<decl::Geometry>("Curve")
+  b.add_input<decl::Geometry>("Curve"_ustr)
       .supported_type(GeometryComponent::Type::Curve)
       .description("Curves to change the handles on");
-  b.add_output<decl::Geometry>("Curve").propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection").default_value(true).hide_value().field_on_all();
-  auto &position = b.add_input<decl::Vector>("Position");
+  b.add_output<decl::Geometry>("Curve"_ustr).propagate_all().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  auto &position = b.add_input<decl::Vector>("Position"_ustr);
   if (node) {
     const NodeGeometrySetCurveHandlePositions &storage = node_storage(*node);
     position.implicit_field_on_all(storage.mode == GEO_NODE_CURVE_HANDLE_LEFT ?
                                        NODE_DEFAULT_INPUT_HANDLE_LEFT_FIELD :
                                        NODE_DEFAULT_INPUT_HANDLE_RIGHT_FIELD);
   }
-  b.add_input<decl::Vector>("Offset")
+  b.add_input<decl::Vector>("Offset"_ustr)
       .default_value(float3(0.0f, 0.0f, 0.0f))
       .subtype(PROP_TRANSLATION)
       .field_on_all();
@@ -172,10 +172,10 @@ static void node_geo_exec(GeoNodeExecParams params)
   const NodeGeometrySetCurveHandlePositions &storage = node_storage(params.node());
   const GeometryNodeCurveHandleMode mode = GeometryNodeCurveHandleMode(storage.mode);
 
-  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve");
-  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection");
-  Field<float3> position_field = params.extract_input<Field<float3>>("Position");
-  Field<float3> offset_field = params.extract_input<Field<float3>>("Offset");
+  GeometrySet geometry_set = params.extract_input<GeometrySet>("Curve"_ustr);
+  Field<bool> selection_field = params.extract_input<Field<bool>>("Selection"_ustr);
+  Field<float3> position_field = params.extract_input<Field<float3>>("Position"_ustr);
+  Field<float3> offset_field = params.extract_input<Field<float3>>("Offset"_ustr);
 
   std::atomic<bool> has_curves = false;
   std::atomic<bool> has_bezier = false;
@@ -198,7 +198,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     params.error_message_add(NodeWarningType::Info, TIP_("Input curves do not have Bézier type"));
   }
 
-  params.set_output("Curve", std::move(geometry_set));
+  params.set_output("Curve"_ustr, std::move(geometry_set));
 }
 
 static void node_rna(StructRNA *srna)

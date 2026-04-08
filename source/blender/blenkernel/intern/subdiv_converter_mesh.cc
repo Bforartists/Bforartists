@@ -282,12 +282,17 @@ static void init_functions(OpenSubdiv_Converter *converter)
   converter->freeUserData = free_user_data;
 }
 
-static void initialize_manifold_index_array(const BitSpan not_used_map,
+static void initialize_manifold_index_array(const IndexMask &not_used_mask,
                                             const int num_elements,
                                             int **r_indices,
                                             int **r_indices_reverse,
                                             int *r_num_manifold_elements)
 {
+  BitVector<> not_used_map;
+  if (!not_used_mask.is_empty()) {
+    not_used_map.resize(num_elements);
+    not_used_mask.to_bits(not_used_map);
+  }
   int *indices = nullptr;
   if (r_indices != nullptr) {
     indices = MEM_new_array_uninitialized<int>(size_t(num_elements), "manifold indices");
@@ -326,29 +331,27 @@ static void initialize_manifold_index_array(const BitSpan not_used_map,
 static void initialize_manifold_indices(ConverterStorage *storage)
 {
   const Mesh *mesh = storage->mesh;
-  const bke::LooseVertCache &loose_verts = mesh->verts_no_face();
-  const bke::LooseEdgeCache &loose_edges = mesh->loose_edges();
-  initialize_manifold_index_array(loose_verts.is_loose_bits,
+  const IndexMask &loose_verts = mesh->verts_no_face();
+  const IndexMask &loose_edges = mesh->loose_edges();
+  initialize_manifold_index_array(loose_verts,
                                   mesh->verts_num,
                                   &storage->manifold_vertex_index,
                                   &storage->manifold_vertex_index_reverse,
                                   &storage->num_manifold_vertices);
-  initialize_manifold_index_array(loose_edges.is_loose_bits,
+  initialize_manifold_index_array(loose_edges,
                                   mesh->edges_num,
                                   nullptr,
                                   &storage->manifold_edge_index_reverse,
                                   &storage->num_manifold_edges);
   /* Initialize infinite sharp mapping. */
-  if (loose_edges.count > 0) {
+  if (!loose_edges.is_empty()) {
     const Span<int2> edges = storage->edges;
     storage->infinite_sharp_vertices_map.resize(mesh->verts_num, false);
-    for (int edge_index = 0; edge_index < mesh->edges_num; edge_index++) {
-      if (loose_edges.is_loose_bits[edge_index]) {
-        const int2 edge = edges[edge_index];
-        storage->infinite_sharp_vertices_map[edge[0]].set();
-        storage->infinite_sharp_vertices_map[edge[1]].set();
-      }
-    }
+    loose_edges.foreach_index([&](const int edge_index) {
+      const int2 edge = edges[edge_index];
+      storage->infinite_sharp_vertices_map[edge[0]].set();
+      storage->infinite_sharp_vertices_map[edge[1]].set();
+    });
   }
 }
 

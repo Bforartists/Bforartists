@@ -19,17 +19,23 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.use_custom_socket_order();
   b.allow_any_socket_order();
 
-  b.add_input<decl::Color>("Image")
+  b.add_input<decl::Color>("Image"_ustr)
       .default_value({1.0f, 1.0f, 1.0f, 1.0f})
       .hide_value()
       .structure_type(StructureType::Dynamic);
-  b.add_output<decl::Color>("Image").structure_type(StructureType::Dynamic).align_with_previous();
+  b.add_output<decl::Color>("Image"_ustr)
+      .structure_type(StructureType::Dynamic)
+      .align_with_previous();
 
-  b.add_input<decl::Int>("Samples").default_value(1).min(1).max(29).description(
-      "The number of samples used to compute the blur. The more samples the smoother the "
-      "result, but at the expense of more compute time. The actual number of samples is two "
-      "to the power of this input, so it increases exponentially");
-  b.add_input<decl::Vector>("Center")
+  b.add_input<decl::Int>("Samples"_ustr)
+      .default_value(1)
+      .min(1)
+      .max(29)
+      .description(
+          "The number of samples used to compute the blur. The more samples the smoother the "
+          "result, but at the expense of more compute time. The actual number of samples is two "
+          "to the power of this input, so it increases exponentially");
+  b.add_input<decl::Vector>("Center"_ustr)
       .subtype(PROP_FACTOR)
       .dimensions(2)
       .default_value({0.5f, 0.5f})
@@ -39,16 +45,18 @@ static void node_declare(NodeDeclarationBuilder &b)
           "The position at which the transformations pivot around. Defined in normalized "
           "coordinates, so 0 means lower left corner and 1 means upper right corner of the image");
 
-  b.add_input<decl::Float>("Rotation")
+  b.add_input<decl::Float>("Rotation"_ustr)
       .default_value(0.0f)
       .subtype(PROP_ANGLE)
       .description("The amount of rotation that the blur spans");
-  b.add_input<decl::Float>("Scale").default_value(1.0f).min(0.0f).description(
-      "The amount of scaling that the blur spans");
+  b.add_input<decl::Float>("Scale"_ustr)
+      .default_value(1.0f)
+      .min(0.0f)
+      .description("The amount of scaling that the blur spans");
 
   PanelDeclarationBuilder &translation_panel =
       b.add_panel("Translation"_ustr).default_closed(false);
-  translation_panel.add_input<decl::Float>("Amount", "Translation Amount")
+  translation_panel.add_input<decl::Float>("Amount"_ustr, "Translation Amount"_ustr)
       .default_value(0.0f)
       .subtype(PROP_FACTOR)
       .min(-1.0f)
@@ -56,7 +64,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .description(
           "The amount of translation that the blur spans in the specified direction relative to "
           "the size of the image. Negative values indicate translation in the opposite direction");
-  translation_panel.add_input<decl::Float>("Direction", "Translation Direction")
+  translation_panel.add_input<decl::Float>("Direction"_ustr, "Translation Direction"_ustr)
       .default_value(0.0f)
       .subtype(PROP_ANGLE)
       .description("The angle that defines the direction of the translation");

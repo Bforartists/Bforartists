@@ -569,14 +569,14 @@ static void openexr_header_metadata_colorspace(Header *header, ImBuf *ibuf)
 {
   /* Get colorspace from image buffer. */
   const ColorSpace *colorspace = nullptr;
-  if (ibuf->float_buffer.data) {
+  if (ibuf->float_data()) {
     colorspace = ibuf->float_buffer.colorspace;
     if (colorspace == nullptr) {
       colorspace = IMB_colormanagement_space_get_named(
           IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR));
     }
   }
-  else if (ibuf->byte_buffer.data) {
+  else if (ibuf->byte_data()) {
     colorspace = ibuf->byte_buffer.colorspace;
   }
 
@@ -642,11 +642,11 @@ static bool imb_save_openexr_half(ImBuf *ibuf, const char *filepath, const int f
     if (is_alpha) {
       frameBuffer.insert("A", Slice(HALF, (char *)&to->a, xstride, ystride));
     }
-    if (ibuf->float_buffer.data) {
-      float *from;
+    if (ibuf->float_data()) {
+      const float *float_data = ibuf->float_data();
 
       for (int i = ibuf->y - 1; i >= 0; i--) {
-        from = ibuf->float_buffer.data + int64_t(channels) * i * width;
+        const float *from = float_data + int64_t(channels) * i * width;
 
         for (int j = ibuf->x; j > 0; j--) {
           to->r = float_to_half_safe(from[0], half_max_val);
@@ -659,10 +659,10 @@ static bool imb_save_openexr_half(ImBuf *ibuf, const char *filepath, const int f
       }
     }
     else {
-      uchar *from;
+      const uchar *byte_data = ibuf->byte_data();
 
       for (int i = ibuf->y - 1; i >= 0; i--) {
-        from = ibuf->byte_buffer.data + int64_t(4) * i * width;
+        const uchar *from = byte_data + int64_t(4) * i * width;
 
         for (int j = ibuf->x; j > 0; j--) {
           to->r = srgb_to_linearrgb(float(from[0]) / 255.0f);
@@ -737,7 +737,7 @@ static bool imb_save_openexr_float(ImBuf *ibuf, const char *filepath, const int 
 
     /* Last scan-line, stride negative. */
     float *rect[4] = {nullptr, nullptr, nullptr, nullptr};
-    rect[0] = ibuf->float_buffer.data + int64_t(channels) * (height - 1) * width;
+    rect[0] = ibuf->float_data_for_write() + int64_t(channels) * (height - 1) * width;
     rect[1] = (channels >= 2) ? rect[0] + 1 : rect[0];
     rect[2] = (channels >= 3) ? rect[0] + 2 : rect[0];
     rect[3] = (channels >= 4) ?
@@ -781,7 +781,7 @@ bool imb_save_openexr(ImBuf *ibuf, const char *filepath, int flags)
   }
 
   /* when no float rect, we save as half (16 bits is sufficient) */
-  if (ibuf->float_buffer.data == nullptr) {
+  if (ibuf->float_data() == nullptr) {
     return imb_save_openexr_half(ibuf, filepath, flags);
   }
 
@@ -2200,7 +2200,7 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
 
           /* Inverse correct first pixel for data-window
            * coordinates (- dw.min.y because of y flip). */
-          first = ibuf->float_buffer.data - 4 * (dw.min.x - dw.min.y * width);
+          first = ibuf->float_data_for_write() - 4 * (dw.min.x - dw.min.y * width);
           /* But, since we read y-flipped (negative y stride) we move to last scan-line. */
           first += 4 * (height - 1) * width;
 
@@ -2250,9 +2250,10 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
           }
 #endif
 
+          float *float_data = ibuf->float_data_for_write();
           if (num_rgb_channels == 0 && has_luma && exr_has_chroma(*file)) {
             for (size_t a = 0; a < size_t(ibuf->x) * ibuf->y; a++) {
-              float *color = ibuf->float_buffer.data + a * 4;
+              float *color = float_data + a * 4;
               ycc_to_rgb(color[0] * 255.0f,
                          color[1] * 255.0f,
                          color[2] * 255.0f,
@@ -2265,7 +2266,7 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
           else if (!has_xyz && num_rgb_channels <= 1) {
             /* Convert 1 to 3 channels. */
             for (size_t a = 0; a < size_t(ibuf->x) * ibuf->y; a++) {
-              float *color = ibuf->float_buffer.data + a * 4;
+              float *color = float_data + a * 4;
               color[1] = color[0];
               color[2] = color[0];
             }
@@ -2378,6 +2379,7 @@ ImBuf *imb_load_filepath_thumbnail_openexr(const char *filepath,
     Imf::Array<Imf::Rgba> pixels(source_w);
 
     /* Loop through destination thumbnail rows. */
+    float *float_data = ibuf->float_data_for_write();
     for (int h = 0; h < dest_h; h++) {
 
       /* Load the single source row that corresponds with destination row. */
@@ -2388,7 +2390,7 @@ ImBuf *imb_load_filepath_thumbnail_openexr(const char *filepath,
       for (int w = 0; w < dest_w; w++) {
         /* For each destination pixel find single corresponding source pixel. */
         int source_x = int(std::min<int>((w / scale_factor), dw.max.x - 1));
-        float *dest_px = &ibuf->float_buffer.data[(h * dest_w + w) * 4];
+        float *dest_px = &float_data[(h * dest_w + w) * 4];
         dest_px[0] = pixels[source_x].r;
         dest_px[1] = pixels[source_x].g;
         dest_px[2] = pixels[source_x].b;

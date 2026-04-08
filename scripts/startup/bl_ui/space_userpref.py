@@ -352,13 +352,14 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(view, "show_area_handle")
         flow.prop(view, "show_number_arrows", text="Numeric Input Arrows")
         flow.prop(view, "show_navigate_ui")
+        # bfa - navigation gizmo toolbar
+        flow.prop(view, "flip_navigation_vertical", text="Vertical Navigation Gizmos Alignment")
 
         flow.use_property_split = True
         flow.prop(view, "border_width")
         flow.prop(view, "color_picker_type")
         flow.row().prop(view, "header_align")
         flow.prop(view, "factor_display_type")
-
 
 class USERPREF_PT_interface_temporary_windows(InterfacePanel, CenterAlignMixIn, Panel):
     bl_label = "Temporary Editors"
@@ -827,7 +828,7 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
             col.prop(system, "gpu_preferred_device")
 
         if system.gpu_backend != gpu.platform.backend_type_get():
-            layout.label(text="A restart of Blender is required", icon='INFO')
+            layout.label(text="A restart of Bforartists is required", icon='INFO') # bfa - our name
 
         if system.gpu_backend == 'VULKAN':
             if sys.platform == "win32" and gpu.platform.device_type_get() == 'QUALCOMM':
@@ -952,6 +953,11 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
             col.row().prop(system, "shader_compilation_method", expand=True)
             label = iface_("Threads") if system.shader_compilation_method == 'THREAD' else iface_("Subprocesses")
             col.prop(system, "gpu_shader_workers", text=label, translate=False)
+
+        layout.separator()
+
+        col = layout.column()
+        col.prop(system, "geometry_nodes_stack_limit")
 
 
 class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
@@ -1766,6 +1772,7 @@ class USERPREF_PT_file_paths_render(FilePathsPanel, Panel):
         paths = context.preferences.filepaths
 
         col = self.layout.column()
+        col.prop(paths, "texture_cache_directory", text="Texture Cache")
         col.prop(paths, "render_output_directory", text="Render Output")
         col.prop(paths, "render_cache_directory", text="Render Cache")
 
@@ -1919,19 +1926,11 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.use_property_split = False
+        flow.prop(view, "use_save_prompt")
         flow.prop(paths, "use_relative_paths")
         flow.prop(paths, "use_file_compression")
         flow.prop(paths, "use_load_ui")
-
-        split = flow.split(factor=0.5)
-        row = split.row()
-        row.label(text="File Preview")
-        row = split.row()
-        row.use_property_split = False
-        row.prop(paths, "file_preview_type", text="")
-
         flow.prop(paths, "use_tabs_as_spaces")
-        flow.prop(view, "use_save_prompt")
 
         layout.separator()
 
@@ -1940,6 +1939,13 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.use_property_split = True
         flow.prop(paths, "save_version")
         flow.prop(paths, "recent_files")
+        flow.prop(paths, "save_modified_images")
+        split = flow.split(factor=0.4)
+        row = split.row()
+        row.label(text="File Preview")
+        row = split.row()
+        row.use_property_split = False
+        row.prop(paths, "file_preview_type", text="")
 
 
 # BFA - custom menu
@@ -3242,6 +3248,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_geometry_nodes_lists"}, ("blender/blender/issues/140918", "#140918")),
                 ({"property": "use_geometry_bundle"}, ("blender/blender/issues/150574", "#150574")),
                 ({"property": "use_remote_asset_libraries"}, ("blender/blender/issues/134495", "#134495")),
+                ({"property": "use_collection_importer"}, ("blender/blender/issues/132171", "#132171")),
             ),
         )
 

@@ -221,7 +221,7 @@ static Scene *preview_prepare_scene(const Main *bmain,
 
   ED_preview_set_visibility(pr_main, scene_preview, view_layer, preview_type, PR_BUTS_RENDER);
 
-  BKE_view_layer_synced_ensure(scene_preview, view_layer);
+  BKE_view_layer_synced_ensure(*pr_main, scene_preview, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
     if (base.object->id.name[2] == 'p') {
       if (OB_TYPE_SUPPORT_MATERIAL(base.object->type)) {
@@ -602,7 +602,7 @@ static void preview_render(ShaderNodesPreviewJob &job_data)
   ViewLayer *AOV_layer = static_cast<ViewLayer *>(scene->view_layers.first);
   for (const NodeSocketPair &nodesocket_iter : job_data.shader_nodes) {
     ViewLayer *vl = BKE_view_layer_add(
-        scene, nodesocket_iter.first->name, AOV_layer, VIEWLAYER_ADD_COPY);
+        job_data.bmain, scene, nodesocket_iter.first->name, AOV_layer, VIEWLAYER_ADD_COPY);
     STRNCPY_UTF8(vl->name, nodesocket_iter.first->name);
   }
   for (const NodeSocketPair &nodesocket_iter : job_data.AOV_nodes) {

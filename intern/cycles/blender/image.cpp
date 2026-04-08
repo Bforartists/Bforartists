@@ -43,7 +43,9 @@ BlenderImageLoader::BlenderImageLoader(blender::Image *b_image,
   }
 }
 
-bool BlenderImageLoader::load_metadata(ImageMetaData &metadata)
+bool BlenderImageLoader::load_metadata(ImageMetaData &metadata,
+                                       const ImageLoaderParams & /*params*/,
+                                       Progress & /*progress*/)
 {
   bool is_float = false;
   bool is_data = false;
@@ -52,7 +54,7 @@ bool BlenderImageLoader::load_metadata(ImageMetaData &metadata)
     void *lock;
     blender::ImBuf *ibuf = BKE_image_acquire_ibuf(b_image, &b_iuser, &lock);
     if (ibuf) {
-      is_float = ibuf->float_buffer.data != nullptr;
+      is_float = ibuf->float_data() != nullptr;
       is_data = ibuf->colormanage_flag & blender::IMB_COLORMANAGE_IS_DATA;
       metadata.width = ibuf->x;
       metadata.height = ibuf->y;
@@ -98,7 +100,7 @@ static void load_float_pixels(const blender::ImBuf *ibuf,
   const size_t num_pixels = ((size_t)metadata.width) * metadata.height;
   const int out_channels = metadata.channels;
   const int in_channels = ibuf->channels;
-  const float *in_pixels = ibuf->float_buffer.data;
+  const float *in_pixels = ibuf->float_data();
 
   if (in_pixels && out_channels == in_channels) {
     /* Straight copy pixel data. */
@@ -139,7 +141,7 @@ static void load_half_pixels(const blender::ImBuf *ibuf,
    * conversion. */
   const size_t num_pixels = ((size_t)metadata.width) * metadata.height;
   const int out_channels = metadata.channels;
-  const uchar *in_pixels = ibuf->byte_buffer.data;
+  const uchar *in_pixels = ibuf->byte_data();
 
   if (in_pixels) {
     /* Convert uchar to half. */
@@ -171,7 +173,7 @@ static void load_byte_pixels(const blender::ImBuf *ibuf,
   const size_t num_pixels = ((size_t)metadata.width) * metadata.height;
   const int out_channels = metadata.channels;
   const int in_channels = 4;
-  const uchar *in_pixels = ibuf->byte_buffer.data;
+  const uchar *in_pixels = ibuf->byte_data();
 
   if (in_pixels) {
     /* Straight copy pixel data. */

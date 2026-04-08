@@ -154,14 +154,14 @@ NODE_DEFINE(Integrator)
   SOCKET_BOOLEAN(use_denoise, "Use Denoiser", false);
   SOCKET_ENUM(denoiser_type, "Denoiser Type", denoiser_type_enum, DENOISER_OPENIMAGEDENOISE);
   SOCKET_INT(denoise_start_sample, "Start Sample to Denoise", 0);
-  SOCKET_BOOLEAN(use_denoise_pass_albedo, "Use Albedo Pass for Denoiser", true);
-  SOCKET_BOOLEAN(use_denoise_pass_normal, "Use Normal Pass for Denoiser", true);
+  SOCKET_INT(denoiser_passes, "Denoiser Passes", DENOISER_PASS_ALBEDO | DENOISER_PASS_NORMAL);
   SOCKET_ENUM(denoiser_prefilter,
               "Denoiser Prefilter",
               denoiser_prefilter_enum,
               DENOISER_PREFILTER_ACCURATE);
   SOCKET_BOOLEAN(denoise_use_gpu, "Denoise on GPU", true);
   SOCKET_ENUM(denoiser_quality, "Denoiser Quality", denoiser_quality_enum, DENOISER_QUALITY_HIGH);
+  SOCKET_FLOAT(denoiser_upscale_factor, "Denoiser Upscale Factor", 1.0f);
 
   return type;
 }
@@ -417,6 +417,11 @@ AdaptiveSampling Integrator::get_adaptive_sampling() const
 
   adaptive_sampling.use = use_adaptive_sampling;
 
+  /* Disable sample count pass with upscaling. */
+  if (use_denoise && denoiser_upscale_factor != 1.0f) {
+    adaptive_sampling.use = false;
+  }
+
   if (!adaptive_sampling.use) {
     return adaptive_sampling;
   }
@@ -476,11 +481,11 @@ DenoiseParams Integrator::get_denoise_params() const
 
   denoise_params.start_sample = denoise_start_sample;
 
-  denoise_params.use_pass_albedo = use_denoise_pass_albedo;
-  denoise_params.use_pass_normal = use_denoise_pass_normal;
+  denoise_params.passes = denoiser_passes;
 
   denoise_params.prefilter = denoiser_prefilter;
   denoise_params.quality = denoiser_quality;
+  denoise_params.upscale_factor = denoiser_upscale_factor;
 
   return denoise_params;
 }

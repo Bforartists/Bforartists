@@ -26,7 +26,8 @@ using namespace metadata;
  */
 void SourceProcessor::lower_srt_accessor_templates(Parser &parser)
 {
-  parser().foreach_struct([&](Token, Scope, Token, Scope body) {
+  parser().foreach_token(Struct, [&](Token tok) {
+    Scope body = tok.find_next(lexit::BracketOpen).scope();
     body.foreach_declaration([&](Scope attributes,
                                  Token,
                                  Token type,
@@ -36,22 +37,24 @@ void SourceProcessor::lower_srt_accessor_templates(Parser &parser)
                                  Token) {
       if (attributes[1].str() != "resource_table") {
         if (type.str() == "srt_t") {
-          report_error_(ERROR_TOK(name),
-                        "The srt_t<T> template is only to be used with members declared with the "
-                        "[[resource_table]] attribute.");
+          report_error(name,
+                       "The srt_t<T> template is only to be used with members declared with the "
+                       "[[resource_table]] attribute.");
         }
         return;
       }
 
       if (type.str() != "srt_t") {
-        report_error_(
-            ERROR_TOK(type),
-            "Members declared with the [[resource_table]] attribute must wrap their type "
-            "with the srt_t<T> template.");
+        report_error(type,
+                     "Members declared with the [[resource_table]] attribute must wrap their type "
+                     "with the srt_t<T> template.");
       }
 
       if (array.is_valid()) {
-        report_error_(ERROR_TOK(name), "[[resource_table]] members cannot be arrays.");
+        report_error(name, "[[resource_table]] members cannot be arrays.");
+      }
+      if (name.prev() == '&') {
+        report_error(name.prev(), "[[resource_table]] members cannot be references.");
       }
 
       /* Remove the template but not the wrapped type. */
@@ -113,7 +116,7 @@ void SourceProcessor::lower_srt_member_access(Parser &parser)
     fn_args.foreach_match("[[A]]c?AA", [&](const vector<Token> toks) {
       if (toks[2].str() == srt_attribute) {
         parser.erase(toks[0].scope());
-        report_error_(ERROR_TOK(toks[8]), "Shader Resource Table arguments must be references.");
+        report_error(toks[8], "Shader Resource Table arguments must be references.");
       }
     });
   });
@@ -212,9 +215,9 @@ void SourceProcessor::lower_resource_access_functions(Parser &parser)
 void SourceProcessor::lower_using(Parser &parser)
 {
   parser().foreach_match("un", [&](const vector<Token> &tokens) {
-    report_error_(ERROR_TOK(tokens[0]),
-                  "Unsupported `using namespace`. "
-                  "Add individual `using` directives for each needed symbol.");
+    report_error(tokens[0],
+                 "Unsupported `using namespace`. "
+                 "Add individual `using` directives for each needed symbol.");
   });
 
   auto process_using = [&](const Token &using_tok,
@@ -228,7 +231,7 @@ void SourceProcessor::lower_using(Parser &parser)
 
     /* Using the keyword in global or at namespace scope. */
     if (scope.type() == ScopeType::Global) {
-      report_error_(ERROR_TOK(using_tok), "The `using` keyword is not allowed in global scope.");
+      report_error(using_tok, "The `using` keyword is not allowed in global scope.");
       return;
     }
     if (scope.type() == ScopeType::Namespace) {
@@ -236,8 +239,8 @@ void SourceProcessor::lower_using(Parser &parser)
        * Otherwise we can have different shadowing outcome between shader and C++. */
       string namespace_name = scope.front().prev().full_symbol_name();
       if (namespace_name != namespace_prefix) {
-        report_error_(
-            ERROR_TOK(using_tok),
+        report_error(
+            using_tok,
             "The `using` keyword is only allowed in namespace scope to make visible symbols "
             "from the same namespace declared in another scope, potentially from another "
             "file.");
@@ -288,7 +291,7 @@ void SourceProcessor::lower_using(Parser &parser)
 
   /* Verify all using were processed. */
   parser().foreach_token(Using, [&](const Token &token) {
-    report_error_(ERROR_TOK(token), "Unsupported `using` keyword usage.");
+    report_error(token, "Unsupported `using` keyword usage.");
   });
 }
 
@@ -370,7 +373,7 @@ void SourceProcessor::lower_resource_table(Parser &parser)
         resource.res_type = type;
       }
       else {
-        report_error_(ERROR_TOK(attribute[0]), "Invalid attribute in resource table");
+        report_error(attribute[0], "Invalid attribute in resource table");
       }
     });
     return resource;
@@ -378,7 +381,7 @@ void SourceProcessor::lower_resource_table(Parser &parser)
 
   auto parse_vertex_input = [&](Scope attributes, Token type, Token name, Scope array) {
     if (array.is_valid()) {
-      report_error_(ERROR_TOK(array[0]), "Array are not supported as vertex attributes");
+      report_error(array[0], "Array are not supported as vertex attributes");
     }
 
     metadata::ParsedVertInput vert_in{type.line_number(), string(type.str()), string(name.str())};
@@ -386,7 +389,7 @@ void SourceProcessor::lower_resource_table(Parser &parser)
     if (vert_in.var_type == "float3x3" || vert_in.var_type == "float2x2" ||
         vert_in.var_type == "float4x4" || vert_in.var_type == "float3x4")
     {
-      report_error_(ERROR_TOK(name), "Matrices are not supported as vertex attributes");
+      report_error(name, "Matrices are not supported as vertex attributes");
     }
 
     attributes.foreach_scope(ScopeType::Attribute, [&](const Scope &attribute) {
@@ -395,7 +398,7 @@ void SourceProcessor::lower_resource_table(Parser &parser)
         vert_in.slot = attribute[2].str();
       }
       else {
-        report_error_(ERROR_TOK(attribute[0]), "Invalid attribute in vertex input interface");
+        report_error(attribute[0], "Invalid attribute in vertex input interface");
       }
     });
     return vert_in;
@@ -404,7 +407,7 @@ void SourceProcessor::lower_resource_table(Parser &parser)
   auto parse_vertex_output =
       [&](Token struct_name, Scope attributes, Token type, Token name, Scope array) {
         if (array.is_valid()) {
-          report_error_(ERROR_TOK(array[0]), "Array are not supported in stage interface");
+          report_error(array[0], "Array are not supported in stage interface");
         }
 
         Token interpolation_mode = attributes[1];
@@ -417,13 +420,13 @@ void SourceProcessor::lower_resource_table(Parser &parser)
         if (attr.var_type == "float3x3" || attr.var_type == "float2x2" ||
             attr.var_type == "float4x4" || attr.var_type == "float3x4")
         {
-          report_error_(ERROR_TOK(name), "Matrices are not supported in stage interface");
+          report_error(name, "Matrices are not supported in stage interface");
         }
 
         if (attr.interpolation_mode != "smooth" && attr.interpolation_mode != "flat" &&
             attr.interpolation_mode != "no_perspective")
         {
-          report_error_(ERROR_TOK(attributes[0]), "Invalid attribute in shader stage interface");
+          report_error(attributes[0], "Invalid attribute in shader stage interface");
         }
         return attr;
       };
@@ -446,8 +449,7 @@ void SourceProcessor::lower_resource_table(Parser &parser)
             frag_out.dual_source = attribute[2].str();
           }
           else {
-            report_error_(ERROR_TOK(attributes[0]),
-                          "Invalid attribute in fragment output interface");
+            report_error(attributes[0], "Invalid attribute in fragment output interface");
           }
         });
         return frag_out;
@@ -519,22 +521,19 @@ void SourceProcessor::lower_resource_table(Parser &parser)
       else if (srt_type != decl_type) {
         switch (srt_type) {
           case SrtType::resource_table:
-            report_error_(ERROR_TOK(struct_name), "Structure expected to contain resources...");
+            report_error(struct_name, "Structure expected to contain resources...");
             break;
           case SrtType::vertex_input:
-            report_error_(ERROR_TOK(struct_name),
-                          "Structure expected to contain vertex inputs...");
+            report_error(struct_name, "Structure expected to contain vertex inputs...");
             break;
           case SrtType::vertex_output:
-            report_error_(ERROR_TOK(struct_name),
-                          "Structure expected to contain vertex outputs...");
+            report_error(struct_name, "Structure expected to contain vertex outputs...");
             break;
           case SrtType::fragment_output:
-            report_error_(ERROR_TOK(struct_name),
-                          "Structure expected to contain fragment inputs...");
+            report_error(struct_name, "Structure expected to contain fragment inputs...");
             break;
           case SrtType::none:
-            report_error_(ERROR_TOK(struct_name), "Structure expected to contain plain data...");
+            report_error(struct_name, "Structure expected to contain plain data...");
             break;
           case SrtType::undefined:
             break;
@@ -542,19 +541,19 @@ void SourceProcessor::lower_resource_table(Parser &parser)
 
         switch (decl_type) {
           case SrtType::resource_table:
-            report_error_(ERROR_TOK(attributes[1]), "...but member declared as resource.");
+            report_error(attributes[1], "...but member declared as resource.");
             break;
           case SrtType::vertex_input:
-            report_error_(ERROR_TOK(attributes[1]), "...but member declared as vertex input.");
+            report_error(attributes[1], "...but member declared as vertex input.");
             break;
           case SrtType::vertex_output:
-            report_error_(ERROR_TOK(attributes[1]), "...but member declared as vertex output.");
+            report_error(attributes[1], "...but member declared as vertex output.");
             break;
           case SrtType::fragment_output:
-            report_error_(ERROR_TOK(attributes[1]), "...but member declared as fragment output.");
+            report_error(attributes[1], "...but member declared as fragment output.");
             break;
           case SrtType::none:
-            report_error_(ERROR_TOK(name), "...but member declared as plain data.");
+            report_error(name, "...but member declared as plain data.");
             break;
           case SrtType::undefined:
             break;

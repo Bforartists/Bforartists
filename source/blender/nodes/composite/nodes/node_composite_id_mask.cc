@@ -19,15 +19,15 @@ namespace blender::nodes::node_composite_id_mask_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Float>("ID value")
+  b.add_input<decl::Float>("ID value"_ustr)
       .default_value(1.0f)
       .min(0.0f)
       .max(1.0f)
       .structure_type(StructureType::Dynamic);
-  b.add_input<decl::Int>("Index").default_value(0).min(0);
-  b.add_input<decl::Bool>("Anti-Alias").default_value(false);
+  b.add_input<decl::Int>("Index"_ustr).default_value(0).min(0);
+  b.add_input<decl::Bool>("Anti-Alias"_ustr).default_value(false);
 
-  b.add_output<decl::Float>("Alpha").structure_type(StructureType::Dynamic);
+  b.add_output<decl::Float>("Alpha"_ustr).structure_type(StructureType::Dynamic);
 }
 
 using namespace blender::compositor;

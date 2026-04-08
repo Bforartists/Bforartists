@@ -43,6 +43,7 @@
 #include "RNA_access.hh"
 #include "RNA_prototypes.hh"
 
+#include "UI_interface.hh"
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
@@ -51,8 +52,6 @@
 
 #include "WM_api.hh"
 #include "WM_types.hh"
-
-#include "../interface/interface_intern.hh"
 
 #include "buttons_intern.hh" /* own include */
 
@@ -272,6 +271,7 @@ static void buttons_texture_users_from_context(ListBaseT<ButsTextureUser> *users
   if (!scene) {
     scene = CTX_data_scene(C);
   }
+  const Main *bmain = CTX_data_main(C);
 
   const ID_Type id_type = ID_Type(pinid != nullptr ? GS(pinid->name) : -1);
   if (!pinid || id_type == ID_SCE) {
@@ -281,7 +281,7 @@ static void buttons_texture_users_from_context(ListBaseT<ButsTextureUser> *users
 
     brush = BKE_paint_brush(BKE_paint_get_active_from_context(C));
     linestyle = BKE_linestyle_active_from_view_layer(view_layer);
-    BKE_view_layer_synced_ensure(scene, view_layer);
+    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     ob = BKE_view_layer_active_object_get(view_layer);
   }
 
@@ -492,14 +492,11 @@ static void template_texture_user_menu(bContext *C, ui::Layout *layout, void * /
   const char *last_category = nullptr;
 
   for (ButsTextureUser &user : ct->users) {
-    ui::Button *but;
     char name[UI_MAX_NAME_STR];
 
     /* add label per category */
     if (!last_category || !STREQ(last_category, user.category)) {
       layout->label(IFACE_(user.category), ICON_NONE);
-      but = block->buttons_ptrs.last().get();
-      but->drawflag = ui::BUT_TEXT_LEFT;
     }
 
     /* create button */
@@ -518,7 +515,7 @@ static void template_texture_user_menu(bContext *C, ui::Layout *layout, void * /
       SNPRINTF_UTF8(name, "  %s", user.name);
     }
 
-    but = uiDefIconTextBut(
+    ui::Button *but = uiDefIconTextBut(
         block, ui::ButtonType::But, user.icon, name, 0, 0, UI_UNIT_X * 4, UI_UNIT_Y, nullptr, "");
     button_funcN_set(but,
                      template_texture_select,
@@ -578,7 +575,7 @@ void uiTemplateTextureUser(ui::Layout *layout, bContext *C)
   /* some cosmetic tweaks */
   button_type_set_menu_from_pulldown(but);
 
-  but->flag &= ~ui::BUT_ICON_SUBMENU;
+  button_flag_disable(but, ui::BUT_ICON_SUBMENU);
 }
 
 /************************* Texture Show **************************/

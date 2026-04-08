@@ -646,10 +646,7 @@ bke::BVHTreeFromMesh Mesh::bvh_loose_verts() const
   using namespace blender::bke;
   const Span<float3> positions = this->vert_positions();
   this->runtime->bvh_cache_loose_verts.ensure([&](std::unique_ptr<BVHTree, BVHTreeDeleter> &data) {
-    const LooseVertCache &loose_verts = this->loose_verts();
-    IndexMaskMemory memory;
-    const IndexMask mask = IndexMask::from_bits(loose_verts.is_loose_bits, memory);
-    data = create_tree_from_verts(positions, mask);
+    data = create_tree_from_verts(positions, this->loose_verts());
   });
   return create_verts_tree_data(this->runtime->bvh_cache_loose_verts.data().get(), positions);
 }
@@ -684,10 +681,7 @@ bke::BVHTreeFromMesh Mesh::bvh_loose_edges() const
   const Span<float3> positions = this->vert_positions();
   const Span<int2> edges = this->edges();
   this->runtime->bvh_cache_loose_edges.ensure([&](std::unique_ptr<BVHTree, BVHTreeDeleter> &data) {
-    const LooseEdgeCache &loose_edges = this->loose_edges();
-    IndexMaskMemory memory;
-    const IndexMask mask = IndexMask::from_bits(loose_edges.is_loose_bits, memory);
-    data = create_tree_from_edges(positions, edges, mask);
+    data = create_tree_from_edges(positions, edges, this->loose_edges());
   });
   return create_edges_tree_data(
       this->runtime->bvh_cache_loose_edges.data().get(), positions, edges);

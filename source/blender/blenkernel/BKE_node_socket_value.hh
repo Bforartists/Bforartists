@@ -63,15 +63,18 @@ class SocketValueVariant {
     List,
   };
 
-  /**
-   * High level category of the stored type.
-   */
-  Kind kind_ = Kind::None;
-  /**
-   * The socket type that corresponds to the stored value type, e.g. `SOCK_INT` for an `int` or
-   * integer field.
-   */
-  eNodeSocketDatatype socket_type_;
+  struct AnyExtraData {
+    /**
+     * High level category of the stored type.
+     */
+    Kind kind = Kind::None;
+    /**
+     * The socket type that corresponds to the stored value type, e.g. `SOCK_INT` for an `int` or
+     * integer field.
+     */
+    eNodeSocketDatatype socket_type;
+  };
+
   /**
    * Contains the actual socket value. For single values this contains the value directly (e.g.
    * `int` or `float3`). For fields this always contains a #GField and not e.g. #Field<int>. This
@@ -79,7 +82,7 @@ class SocketValueVariant {
    *
    * Small types are embedded directly, while larger types are separately allocated.
    */
-  Any<void, 24> value_;
+  Any<void, 32, 16, AnyExtraData> value_;
 
  public:
   /**
@@ -212,11 +215,13 @@ class SocketValueVariant {
    * type. So only `store_impl<int>` is necessary, but not `store_impl<const int &>`.
    */
   template<typename T> void store_impl(T value);
+
+  Kind kind() const;
 };
 
 inline eNodeSocketDatatype SocketValueVariant::socket_type() const
 {
-  return socket_type_;
+  return value_.extra.socket_type;
 }
 
 template<typename T>
@@ -242,8 +247,13 @@ template<typename T> inline void SocketValueVariant::set(T &&value)
 
 inline const void *SocketValueVariant::get_single_ptr_raw() const
 {
-  BLI_assert(kind_ == Kind::Single);
+  BLI_assert(this->kind() == Kind::Single);
   return value_.get();
+}
+
+inline SocketValueVariant::Kind SocketValueVariant::kind() const
+{
+  return value_.extra.kind;
 }
 
 }  // namespace blender::bke

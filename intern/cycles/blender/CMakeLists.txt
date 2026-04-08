@@ -17,6 +17,7 @@ set(SRC
   device.cpp
   display_driver.cpp
   image.cpp
+  implicit_sharing.cpp
   geometry.cpp
   light.cpp
   light_linking.cpp
@@ -32,6 +33,7 @@ set(SRC
   session.cpp
   shader.cpp
   sync.cpp
+  texture_cache.cpp
   viewport.cpp
   volume.cpp
 
@@ -82,6 +84,7 @@ set(ADDON_FILES
   addon/__init__.py
   addon/camera.py
   addon/engine.py
+  addon/maketx.py
   addon/operators.py
   addon/osl.py
   addon/presets.py

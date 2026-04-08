@@ -71,7 +71,7 @@ struct FloatBufferCache {
   ImBuf *cached_float_buffer(ImBuf *image_buffer)
   {
     /* Check if we can use the float buffer of the given image_buffer. */
-    if (image_buffer->float_buffer.data != nullptr) {
+    if (image_buffer->float_data() != nullptr) {
       BLI_assert_msg(
           IMB_colormanagement_space_name_is_scene_linear(
               IMB_colormanagement_get_float_colorspace(image_buffer)) ||

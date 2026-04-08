@@ -58,11 +58,12 @@ namespace nodes::node_geo_sample_nearest_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_input<decl::Geometry>("Geometry")
+  b.add_input<decl::Geometry>("Geometry"_ustr)
       .supported_type({GeometryComponent::Type::Mesh, GeometryComponent::Type::PointCloud})
       .description("Mesh or point cloud to find the nearest point on");
-  b.add_input<decl::Vector>("Sample Position").implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
-  b.add_output<decl::Int>("Index").dependent_field({1});
+  b.add_input<decl::Vector>("Sample Position"_ustr)
+      .implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  b.add_output<decl::Int>("Index"_ustr).dependent_field({1});
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -304,7 +305,7 @@ class SampleNearestFunction : public mf::MultiFunction {
 
 static void node_geo_exec(GeoNodeExecParams params)
 {
-  GeometrySet geometry = params.extract_input<GeometrySet>("Geometry");
+  GeometrySet geometry = params.extract_input<GeometrySet>("Geometry"_ustr);
   const AttrDomain domain = AttrDomain(params.node().custom2);
   if (geometry.has_curves() && !geometry.has_mesh() && !geometry.has_pointcloud()) {
     params.error_message_add(NodeWarningType::Error,
@@ -313,7 +314,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  auto sample_position = params.extract_input<bke::SocketValueVariant>("Sample Position");
+  auto sample_position = params.extract_input<bke::SocketValueVariant>("Sample Position"_ustr);
 
   std::string error_message;
   bke::SocketValueVariant index;
@@ -329,7 +330,7 @@ static void node_geo_exec(GeoNodeExecParams params)
     return;
   }
 
-  params.set_output("Index", std::move(index));
+  params.set_output("Index"_ustr, std::move(index));
 }
 
 static void node_rna(StructRNA *srna)

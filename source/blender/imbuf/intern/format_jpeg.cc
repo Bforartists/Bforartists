@@ -312,9 +312,10 @@ static ImBuf *ibJpegImageFromCinfo(
       row_pointer = (*cinfo->mem->alloc_sarray)(
           reinterpret_cast<j_common_ptr>(cinfo), JPOOL_IMAGE, row_stride, 1);
 
+      uchar *byte_data = ibuf->byte_data_for_write();
       for (y = ibuf->y - 1; y >= 0; y--) {
         jpeg_read_scanlines(cinfo, row_pointer, 1);
-        rect = ibuf->byte_buffer.data + 4 * y * size_t(ibuf->x);
+        rect = byte_data + 4 * y * size_t(ibuf->x);
         buffer = row_pointer[0];
 
         switch (depth) {
@@ -567,7 +568,6 @@ static void write_jpeg(jpeg_compress_struct *cinfo, ImBuf *ibuf)
 {
   JSAMPLE *buffer = nullptr;
   JSAMPROW row_pointer[1];
-  uchar *rect;
   int x, y;
   char neogeo[128];
   NeoGeo_Word *neogeo_word;
@@ -644,8 +644,9 @@ static void write_jpeg(jpeg_compress_struct *cinfo, ImBuf *ibuf)
   row_pointer[0] = MEM_new_array_uninitialized<std::remove_pointer_t<JSAMPROW>>(
       size_t(cinfo->input_components) * size_t(cinfo->image_width), "jpeg row_pointer");
 
+  const uchar *byte_data = ibuf->byte_data();
   for (y = ibuf->y - 1; y >= 0; y--) {
-    rect = ibuf->byte_buffer.data + 4 * y * size_t(ibuf->x);
+    const uchar *rect = byte_data + 4 * y * size_t(ibuf->x);
     buffer = row_pointer[0];
 
     switch (cinfo->in_color_space) {

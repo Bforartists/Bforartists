@@ -115,6 +115,11 @@ const char *RNA_struct_ui_description_raw(const StructRNA *type);
 const char *RNA_struct_translation_context(const StructRNA *type);
 int RNA_struct_ui_icon(const StructRNA *type);
 
+/**
+ * Debug utility to print a #StructRNA.
+ */
+std::string RNA_struct_to_string(const StructRNA &type);
+
 PropertyRNA *RNA_struct_name_property(const StructRNA *type);
 const EnumPropertyItem *RNA_struct_property_tag_defines(const StructRNA *type);
 PropertyRNA *RNA_struct_iterator_property(StructRNA *type);
@@ -166,6 +171,12 @@ bool RNA_struct_idprops_contains_datablock(const StructRNA *type);
  * Remove an id-property.
  */
 bool RNA_struct_system_idprops_unset(PointerRNA *ptr, const char *identifier);
+
+/**
+ * If true, the name of the struct is unique among all names in the public namespace and can be
+ * looked up with #RNA_struct_find.
+ */
+bool RNA_struct_in_public_namespace(const StructRNA *type);
 
 PropertyRNA *RNA_struct_find_property(PointerRNA *ptr, const char *identifier);
 
@@ -665,6 +676,12 @@ int RNA_property_collection_raw_set(ReportList *reports,
                                     int len);
 size_t RNA_raw_type_sizeof(RawPropertyType type);
 RawPropertyType RNA_property_raw_type(PropertyRNA *prop);
+
+/**
+ * Update the system properties (IDProperties) for a specific RNA type, converting so that
+ * properties match the current RNA definition.
+ */
+void RNA_sync_system_properties(PointerRNA &ptr, IDProperty &idprops);
 
 /* to create ID property groups */
 void RNA_property_pointer_add(PointerRNA *ptr, PropertyRNA *prop);

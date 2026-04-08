@@ -333,38 +333,40 @@ void store_pixel_raw(float4 pix, float *ptr)
   *reinterpret_cast<float4 *>(ptr) = pix;
 }
 
-/**
- * \a timeline_frame is offset by \a fra_offset only in case we are using a real mask.
- */
-static ImBuf *modifier_render_mask_input(const RenderData &context,
-                                         SeqRenderState &state,
-                                         int mask_input_type,
-                                         Strip *mask_strip,
-                                         Mask *mask_id,
-                                         int timeline_frame,
-                                         int fra_offset)
+ImBuf *modifier_render_mask_input(const ModifierApplyContext &context,
+                                  const StripModifierData &smd,
+                                  int timeline_frame)
 {
-  ImBuf *mask_input = nullptr;
+  ImBuf *mask = nullptr;
 
-  if (mask_input_type == STRIP_MASK_INPUT_STRIP) {
-    if (mask_strip) {
-      mask_input = seq_render_strip(&context, &state, mask_strip, timeline_frame);
+  if (smd.mask_input_type == STRIP_MASK_INPUT_STRIP) {
+    if (smd.mask_strip) {
+      mask = seq_render_strip(
+          &context.render_data, &context.render_state, smd.mask_strip, timeline_frame);
     }
   }
-  else if (mask_input_type == STRIP_MASK_INPUT_ID) {
+  else if (smd.mask_input_type == STRIP_MASK_INPUT_ID) {
+    int frame_offset = 0;
+    if (smd.mask_time == STRIP_MASK_TIME_RELATIVE) {
+      frame_offset = context.strip.start;
+    }
+    else if (smd.mask_time == STRIP_MASK_TIME_ABSOLUTE) {
+      frame_offset = smd.mask_id ? smd.mask_id->sfra : 0;
+    }
+
     /* Note that we do not request mask to be float image: if it is that is
      * fine, but if it is a byte image then we also just take that without
      * extra memory allocations or conversions. All modifiers are expected
      * to handle mask being either type. */
-    mask_input = seq_render_mask(context.depsgraph,
-                                 context.rectx,
-                                 context.recty,
-                                 mask_id,
-                                 timeline_frame - fra_offset,
-                                 false);
+    mask = seq_render_mask(context.render_data.depsgraph,
+                           context.render_data.rectx,
+                           context.render_data.recty,
+                           smd.mask_id,
+                           timeline_frame - frame_offset,
+                           false);
   }
 
-  return mask_input;
+  return mask;
 }
 
 /* -------------------------------------------------------------------- */
@@ -519,10 +521,6 @@ void modifier_apply_stack(ModifierApplyContext &context, int timeline_frame)
     return;
   }
 
-  if (context.strip.flag & SEQ_USE_LINEAR_MODIFIERS) {
-    render_imbuf_from_sequencer_space(context.render_data.scene, context.image);
-  }
-
   for (StripModifierData &smd : context.strip.modifiers) {
     const StripModifierTypeInfo *smti = modifier_type_info_get(smd.type);
 
@@ -537,30 +535,8 @@ void modifier_apply_stack(ModifierApplyContext &context, int timeline_frame)
     }
 
     if (smti->apply && !skip_modifier(context.render_data.scene, &smd, timeline_frame)) {
-      int frame_offset;
-      if (smd.mask_time == STRIP_MASK_TIME_RELATIVE) {
-        frame_offset = context.strip.start;
-      }
-      else /* if (smd->mask_time == STRIP_MASK_TIME_ABSOLUTE) */ {
-        frame_offset = smd.mask_id ? (static_cast<Mask *>(smd.mask_id))->sfra : 0;
-      }
-
-      ImBuf *mask = modifier_render_mask_input(context.render_data,
-                                               context.render_state,
-                                               smd.mask_input_type,
-                                               smd.mask_strip,
-                                               smd.mask_id,
-                                               timeline_frame,
-                                               frame_offset);
-      smti->apply(context, &smd, mask);
-      if (mask) {
-        IMB_freeImBuf(mask);
-      }
+      smti->apply(context, &smd, timeline_frame);
     }
-  }
-
-  if (context.strip.flag & SEQ_USE_LINEAR_MODIFIERS) {
-    seq_imbuf_to_sequencer_space(context.render_data.scene, context.image, false);
   }
 }
 

@@ -36,12 +36,12 @@ static void createTransSculpt(bContext *C, TransInfo *t)
   TransDataExtension *td_ext;
 
   Scene *scene = t->scene;
-  if (!BKE_id_is_editable(CTX_data_main(C), &scene->id)) {
+  if (!BKE_id_is_editable(t->bmain, &scene->id)) {
     BKE_report(t->reports, RPT_ERROR, "Cannot create transform on linked data");
     return;
   }
 
-  BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+  BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
   Object &ob = *BKE_view_layer_active_object_get(t->view_layer);
   SculptSession &ss = *ob.runtime->sculpt_session;
 
@@ -106,7 +106,7 @@ static void createTransSculpt(bContext *C, TransInfo *t)
 
 static void recalcData_sculpt(TransInfo *t)
 {
-  BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+  BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
   Object *ob = BKE_view_layer_active_object_get(t->view_layer);
 
   if (t->state == TRANS_CANCEL) {
@@ -120,12 +120,12 @@ static void recalcData_sculpt(TransInfo *t)
 static void special_aftertrans_update__sculpt(bContext *C, TransInfo *t)
 {
   Scene *scene = t->scene;
-  if (!BKE_id_is_editable(CTX_data_main(C), &scene->id)) {
+  if (!BKE_id_is_editable(t->bmain, &scene->id)) {
     /* `sculpt_paint::init_transform` was not called in this case. */
     return;
   }
 
-  BKE_view_layer_synced_ensure(t->scene, t->view_layer);
+  BKE_view_layer_synced_ensure(*t->bmain, t->scene, t->view_layer);
   Object *ob = BKE_view_layer_active_object_get(t->view_layer);
   BLI_assert(!(t->options & CTX_PAINT_CURVE));
   sculpt_paint::end_transform(C, *ob);

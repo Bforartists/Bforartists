@@ -382,9 +382,10 @@ void Canvas::loadMap(const char *iFileName, const char *iMapName, uint iNbLevels
   GrayImage tmp(w, h);
   uchar *pix;
 
+  uchar *qimg_byte_data = qimg->byte_data_for_write();
   for (y = 0; y < h; ++y) {
     for (x = 0; x < w; ++x) {
-      pix = qimg->byte_buffer.data + y * rowbytes + x * 4;
+      pix = qimg_byte_data + y * rowbytes + x * 4;
       float c = (pix[0] * 11 + pix[1] * 16 + pix[2] * 5) / 32;
       tmp.setPixel(x, y, c);
     }
@@ -417,11 +418,12 @@ void Canvas::loadMap(const char *iFileName, const char *iMapName, uint iNbLevels
     blender::ImBuf *qtmp = IMB_allocImBuf(ow, oh, 32, blender::IB_byte_data);
 
     // int k = (1 << i);
+    uchar *qtmp_byte_data = qtmp->byte_data_for_write();
     for (y = 0; y < oh; ++y) {
       for (x = 0; x < ow; ++x) {
         int c = pyramid->pixel(x, y, i);  // 255 * pyramid->pixel(x, y, i);
         // soc qtmp.setPixel(x, y, qRgb(c, c, c));
-        pix = qtmp->byte_buffer.data + y * rowbytes + x * 4;
+        pix = qtmp_byte_data + y * rowbytes + x * 4;
         pix[0] = pix[1] = pix[2] = c;
       }
     }

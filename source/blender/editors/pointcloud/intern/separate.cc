@@ -32,7 +32,7 @@ static wmOperatorStatus separate_exec(bContext *C, wmOperator * /*op*/)
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
   Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
-      scene, view_layer, CTX_wm_view3d(C));
+      *bmain, scene, view_layer, CTX_wm_view3d(C));
 
   VectorSet<PointCloud *> src_pointclouds;
   for (Base *base_src : bases) {

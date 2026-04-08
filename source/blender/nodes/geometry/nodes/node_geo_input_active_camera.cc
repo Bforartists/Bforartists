@@ -12,7 +12,7 @@ namespace blender::nodes::node_geo_input_active_camera_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
-  b.add_output<decl::Object>("Active Camera")
+  b.add_output<decl::Object>("Active Camera"_ustr)
       .description("The camera used for rendering the scene");
 }
 
@@ -20,7 +20,7 @@ static void node_exec(GeoNodeExecParams params)
 {
   const Scene *scene = DEG_get_evaluated_scene(params.depsgraph());
   Object *camera = DEG_get_evaluated(params.depsgraph(), scene->camera);
-  params.set_output("Active Camera", camera);
+  params.set_output("Active Camera"_ustr, camera);
 }
 
 using namespace blender::compositor;

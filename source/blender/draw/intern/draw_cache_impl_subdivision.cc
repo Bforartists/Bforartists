@@ -1708,7 +1708,7 @@ static bool draw_subdiv_create_requested_buffers(Object &ob,
 
 void DRW_subdivide_loose_geom(DRWSubdivCache &subdiv_cache, const MeshBufferCache &cache)
 {
-  const Span<int> loose_edges = cache.loose_geom.edges;
+  const IndexMask &loose_edges = cache.loose_geom.edges;
   if (loose_edges.is_empty()) {
     return;
   }
@@ -1736,18 +1736,15 @@ void DRW_subdivide_loose_geom(DRWSubdivCache &subdiv_cache, const MeshBufferCach
   subdiv_cache.loose_edge_positions.reinitialize(loose_edges.size() * resolution);
   MutableSpan<float3> edge_positions = subdiv_cache.loose_edge_positions;
 
-  threading::parallel_for(loose_edges.index_range(), 1024, [&](const IndexRange range) {
-    for (const int i : range) {
-      const int coarse_edge = loose_edges[i];
-      MutableSpan positions = edge_positions.slice(i * resolution, resolution);
-      for (const int j : positions.index_range()) {
-        positions[j] = bke::subdiv::mesh_interpolate_position_on_edge(coarse_positions,
-                                                                      coarse_edges,
-                                                                      vert_to_edge_map,
-                                                                      coarse_edge,
-                                                                      is_simple,
-                                                                      j * inv_resolution_1);
-      }
+  loose_edges.foreach_index([&](const int coarse_edge, const int i) {
+    MutableSpan positions = edge_positions.slice(i * resolution, resolution);
+    for (const int j : positions.index_range()) {
+      positions[j] = bke::subdiv::mesh_interpolate_position_on_edge(coarse_positions,
+                                                                    coarse_edges,
+                                                                    vert_to_edge_map,
+                                                                    coarse_edge,
+                                                                    is_simple,
+                                                                    j * inv_resolution_1);
     }
   });
 }
