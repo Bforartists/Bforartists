@@ -38,11 +38,12 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.generic
   brush.gpencil_draw.erase
   brush.gpencil_draw.fill
-  brush.paint_texture.blur
   brush.paint_texture.airbrush
+  brush.paint_texture.blur
   brush.paint_texture.clone
   brush.paint_texture.fill
   brush.paint_texture.mask
+  brush.paint_texture.multiply
   brush.paint_texture.smear
   brush.paint_texture.soften
   brush.paint_vertex.average
@@ -158,6 +159,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.sculpt.lasso_face_set
   ops.sculpt.lasso_hide
   ops.sculpt.lasso_mask
+  ops.sculpt.lasso_mask.old
   ops.sculpt.lasso_trim
   ops.sculpt.line_face_set
   ops.sculpt.line_hide
@@ -185,10 +187,13 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.transform.tilt
   ops.transform.tosphere
   ops.transform.transform
+  ops.transform.transformhvjfhj
   ops.transform.translate
   ops.transform.vert_slide
   ops.transform.vertex_random
   ops.view3d.ruler
+  tool_icon.pixeltest
+  tool_icon.pixeltest_small
   # END ICON_GEOM_NAMES
 )
 
