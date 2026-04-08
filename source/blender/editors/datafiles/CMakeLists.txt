@@ -26,33 +26,18 @@ set(LIB
 # See: `make icons_geom` and the script `./release/datafiles/blender_icons_geom_update.py`.
 set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   # BEGIN ICON_GEOM_NAMES
-  Cone
-  asset.grease_pencil
-  asset.grease_pencil_block
-  asset.grease_pencil_eraser_soft
-  asset.grease_pencil_ink_a
-  asset.grease_pencil_marker
-  asset.grease_pencil_pen
-  asset.pencil
-  brush.draw
   brush.generic
   brush.gpencil_draw.erase
   brush.gpencil_draw.fill
-  brush.paint_texture.airbrush
   brush.paint_texture.blur
   brush.paint_texture.clone
   brush.paint_texture.fill
   brush.paint_texture.mask
-  brush.paint_texture.multiply
   brush.paint_texture.smear
   brush.paint_texture.soften
   brush.paint_vertex.average
   brush.paint_vertex.blur
-  brush.paint_vertex.replace
   brush.paint_vertex.smear
-  brush.paint_weight.average
-  brush.paint_weight.blur
-  brush.paint_weight.smear
   brush.particle.add
   brush.particle.comb
   brush.particle.cut
@@ -60,16 +45,12 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.particle.puff
   brush.particle.smooth
   brush.particle.weight
-  brush.sculpt
   brush.sculpt.draw_face_sets
   brush.sculpt.mask
-  brush.sculpt.mask.old
   brush.sculpt.paint
   brush.uv_sculpt.grab
   brush.uv_sculpt.pinch
   brush.uv_sculpt.relax
-  cursor.suzanne
-  cursor.transform.rotate
   none
   ops.armature.bone.roll
   ops.armature.extrude_cursor
@@ -80,15 +61,11 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.curve.pen
   ops.curve.radius
   ops.curve.vertex_random
-  ops.curves.sculpt_add
-  ops.curves.sculpt_delete
-  ops.curves.sculpt_density
   ops.generic.cursor
   ops.generic.select
   ops.generic.select_box
   ops.generic.select_circle
   ops.generic.select_lasso
-  ops.generic.select_line
   ops.generic.select_paint
   ops.gpencil.draw
   ops.gpencil.draw.eraser
@@ -108,7 +85,6 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.gpencil.radius
   ops.gpencil.sculpt_average
   ops.gpencil.sculpt_blur
-  ops.gpencil.sculpt_clone
   ops.gpencil.sculpt_smear
   ops.gpencil.stroke_cutter
   ops.gpencil.stroke_trim
@@ -128,8 +104,8 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.mesh.primitive_cone_add_gizmo
   ops.mesh.primitive_cube_add_gizmo
   ops.mesh.primitive_cylinder_add_gizmo
-  ops.mesh.primitive_icosphere_add_gizmo
   ops.mesh.primitive_grid_add_gizmo
+  ops.mesh.primitive_icosphere_add_gizmo
   ops.mesh.primitive_sphere_add_gizmo
   ops.mesh.primitive_torus_add_gizmo
   ops.mesh.rip
@@ -159,7 +135,6 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.sculpt.lasso_face_set
   ops.sculpt.lasso_hide
   ops.sculpt.lasso_mask
-  ops.sculpt.lasso_mask.old
   ops.sculpt.lasso_trim
   ops.sculpt.line_face_set
   ops.sculpt.line_hide
@@ -187,13 +162,10 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.transform.tilt
   ops.transform.tosphere
   ops.transform.transform
-  ops.transform.transformhvjfhj
   ops.transform.translate
   ops.transform.vert_slide
   ops.transform.vertex_random
   ops.view3d.ruler
-  tool_icon.pixeltest
-  tool_icon.pixeltest_small
   # END ICON_GEOM_NAMES
 )
 
