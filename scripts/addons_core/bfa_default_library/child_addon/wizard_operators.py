@@ -81,9 +81,11 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
         if "OUTLINER_MT_view" in dir(bpy.types):
             icon1 = "WIZARD"
             icon2 = "MOUSE_POSITION"
+            icon3 = "WARNING"
         else:
-            icon1 = "INFO"
+            icon1 = "EXPERIMENTAL"
             icon2 = "TRANSFORM_ORIGINS"
+            icon3 = "WARNING_LARGE"
 
         # Collection selection panel
         row = layout.row()
@@ -98,7 +100,7 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
             #row.label(text=f"Selected: {context.scene.target_collection.name}", icon='OUTLINER_COLLECTION')
             if not context.scene.target_collection.objects:
                 row = layout.row()
-                row.label(text="Collection is empty, add Mesh Objects to blend", icon='WARNING')
+                row.label(text="Collection is empty, add Mesh Objects to blend", icon=icon3)
         else:
             row = layout.row()
             row.label(text="Please select a Target Collection", icon='ERROR')

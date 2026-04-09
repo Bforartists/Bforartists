@@ -139,7 +139,7 @@ def wizard_menu_func(self, context):
 
         if has_wizard:
             # WIZARD icon is Bforartists-only, use INFO for Blender
-            icon = get_icon("WIZARD", "INFO")
+            icon = get_icon("WIZARD", "EXPERIMENTAL")
             draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
 
 # 3D View - Object - Apply

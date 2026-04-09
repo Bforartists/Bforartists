@@ -66,6 +66,34 @@ class OBJECT_OT_ApplySelected(Operator):
         precision=3
     )
 
+    preserve_volume: bpy.props.BoolProperty(
+        name="Preserve Volume",
+        description="Projects the mesh to preserve the volume and details of the original mesh",
+        default=True
+    )
+
+    preserve_attributes: bpy.props.BoolProperty(
+        name="Preserve Attributes",
+        description="Transfer all attributes to the new mesh",
+        default=True
+    )
+
+    fix_poles: bpy.props.BoolProperty(
+        name="Fix Poles",
+        description="Produces fewer poles and a better topology flow",
+        default=False
+    )
+
+    adaptivity: bpy.props.FloatProperty(
+        name="Adaptivity",
+        description="Reduces the final face count by simplifying geometry where detail is not needed (0.0 = no adaptivity)",
+        default=0.0,
+        min=0.0,
+        max=1.0,
+        step=0.01,
+        precision=3
+    )
+
     @classmethod
     def poll(cls, context):
         """Available if there are objects selected and only compatible types"""
@@ -180,54 +208,87 @@ class OBJECT_OT_ApplySelected(Operator):
                             final_object = None
                     
                     if final_object:
-                        # Add a remesh modifier with the specified voxel size
-                        remesh_mod = final_object.modifiers.new(name="TempRemesh", type='REMESH')
-                        remesh_mod.mode = 'VOXEL'
-                        remesh_mod.voxel_size = self.voxel_size
-                        
-                        # Set smooth shading for better results
-                        remesh_mod.use_smooth_shade = True
-                        
-                        # Ensure proper selection and context for modifier application
-                        bpy.ops.object.select_all(action='DESELECT')
-                        final_object.select_set(True)
-                        context.view_layer.objects.active = final_object
-                        context.view_layer.update()
-                        
-                        # Apply the modifier with robust error handling
-                        try:
-                            # Make sure modifier is valid and object is selected
-                            if remesh_mod.name in final_object.modifiers:
-                                # Apply the modifier via bpy.ops
-                                bpy.ops.object.modifier_apply(modifier=remesh_mod.name, report=True)
-                                #print(f"✓ Successfully applied remesh with voxel size: {self.voxel_size}")
-                            else:
-                                #print("⚠ Remesh modifier was not properly created")
-                                pass
-                        except RuntimeError as e:
-                            #print(f"⚠ Remesh operation failed: {str(e)}")
-                            
-                            # Clean up the modifier if it couldn't be applied
-                            if remesh_mod.name in final_object.modifiers:
-                                final_object.modifiers.remove(remesh_mod)
-                            
-                            # Fallback: Try creating the modifier again with different approach
+                        # Ensure we have a mesh object
+                        if final_object.type != 'MESH':
                             try:
-                                remesh_mod2 = final_object.modifiers.new(name="RemeshFallback", type='REMESH')
-                                remesh_mod2.mode = 'VOXEL'
-                                remesh_mod2.voxel_size = self.voxel_size
-                                remesh_mod2.use_smooth_shade = True
-
-                                bpy.ops.object.modifier_apply(modifier=remesh_mod2.name)
+                                bpy.ops.object.convert(target='MESH')
                             except RuntimeError:
-                                # Fallback remesh also failed - silently continue
-                                pass
-                        
-                        # Final cleanup and selection
-                        context.view_layer.update()
-                        bpy.ops.object.select_all(action='DESELECT')
-                        final_object.select_set(True)
-                        context.view_layer.objects.active = final_object
+                                # Could not convert to mesh
+                                final_object = None
+                                
+                        if final_object and final_object.data:
+                            # Set mesh properties for voxel remeshing
+                            mesh = final_object.data
+                            mesh.remesh_voxel_size = self.voxel_size
+                            mesh.remesh_voxel_adaptivity = self.adaptivity
+                            
+                            # Set preservation flags
+                            if self.preserve_volume:
+                                mesh.use_remesh_preserve_volume = True
+                            else:
+                                mesh.use_remesh_preserve_volume = False
+                                
+                            if self.preserve_attributes:
+                                mesh.use_remesh_preserve_attributes = True
+                            else:
+                                mesh.use_remesh_preserve_attributes = False
+                                
+                            if self.fix_poles:
+                                mesh.use_remesh_fix_poles = True
+                            else:
+                                mesh.use_remesh_fix_poles = False
+                            
+                            # Ensure proper selection and context
+                            bpy.ops.object.select_all(action='DESELECT')
+                            final_object.select_set(True)
+                            context.view_layer.objects.active = final_object
+                            context.view_layer.update()
+                            
+                            # Apply voxel remesh with robust error handling
+                            try:
+                                # Execute the voxel remesh operator
+                                result = bpy.ops.object.voxel_remesh()
+                                
+                                if result != {'FINISHED'}:
+                                    # Try alternative approach if operator fails
+                                    self.report({'WARNING'}, "Voxel remesh operator did not finish successfully")
+                                    
+                                    # Fallback: Try with modifier approach
+                                    try:
+                                        remesh_mod = final_object.modifiers.new(name="TempRemesh", type='REMESH')
+                                        remesh_mod.mode = 'VOXEL'
+                                        remesh_mod.voxel_size = self.voxel_size
+                                        remesh_mod.use_smooth_shade = True
+                                        
+                                        bpy.ops.object.modifier_apply(modifier=remesh_mod.name)
+                                    except RuntimeError:
+                                        # Fallback also failed
+                                        pass
+                            except RuntimeError as e:
+                                # Operator failed completely
+                                error_msg = str(e)
+                                if "voxel size of 0.0" in error_msg:
+                                    self.report({'WARNING'}, "Voxel size cannot be 0.0")
+                                else:
+                                    self.report({'WARNING'}, f"Voxel remesh failed: {error_msg}")
+                                
+                                # Try fallback modifier approach
+                                try:
+                                    remesh_mod = final_object.modifiers.new(name="RemeshFallback", type='REMESH')
+                                    remesh_mod.mode = 'VOXEL'
+                                    remesh_mod.voxel_size = self.voxel_size
+                                    remesh_mod.use_smooth_shade = True
+
+                                    bpy.ops.object.modifier_apply(modifier=remesh_mod.name)
+                                except RuntimeError:
+                                    # Fallback remesh also failed - silently continue
+                                    pass
+                            
+                            # Final cleanup and selection
+                            context.view_layer.update()
+                            bpy.ops.object.select_all(action='DESELECT')
+                            final_object.select_set(True)
+                            context.view_layer.objects.active = final_object
 
                     # DEBUG:
                     #self.report({'INFO'}, f"Applied remesh with voxel size: {self.voxel_size}")
@@ -303,6 +364,34 @@ def register():
             step=0.01,
             precision=3
         )
+
+        bpy.types.Scene.preserve_volume_apply = bpy.props.BoolProperty(
+            name="Preserve Volume",
+            description="Projects the mesh to preserve the volume and details of the original mesh",
+            default=True
+        )
+
+        bpy.types.Scene.preserve_attributes_apply = bpy.props.BoolProperty(
+            name="Preserve Attributes",
+            description="Transfer all attributes to the new mesh",
+            default=True
+        )
+
+        bpy.types.Scene.fix_poles_apply = bpy.props.BoolProperty(
+            name="Fix Poles",
+            description="Produces fewer poles and a better topology flow",
+            default=False
+        )
+
+        bpy.types.Scene.adaptivity_apply = bpy.props.FloatProperty(
+            name="Adaptivity",
+            description="Reduces the final face count by simplifying geometry where detail is not needed (0.0 = no adaptivity)",
+            default=0.0,
+            min=0.0,
+            max=1.0,
+            step=0.01,
+            precision=3
+        )
         _scene_props_registered = True
 
     from bpy.utils import register_class
@@ -325,6 +414,10 @@ def unregister():
             del bpy.types.Scene.boolean_apply
             del bpy.types.Scene.remesh_apply
             del bpy.types.Scene.voxel_size_apply
+            del bpy.types.Scene.preserve_volume_apply
+            del bpy.types.Scene.preserve_attributes_apply
+            del bpy.types.Scene.fix_poles_apply
+            del bpy.types.Scene.adaptivity_apply
         except AttributeError:
             pass
         _scene_props_registered = False

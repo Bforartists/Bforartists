@@ -92,9 +92,15 @@ def get_geometry_nodes_inputs(modifier):
                 'panel': None
             }
 
-            # First check if this socket identifier exists in the modifier
-            if item.identifier not in modifier:
-                continue  # Skip this socket if it doesn't exist in the modifier
+            # Some modifier types do not support IDProperty membership checks.
+            # Safely test membership and skip unsupported sockets.
+            if item.identifier is None:
+                continue
+            try:
+                if item.identifier not in modifier:
+                    continue  # Skip this socket if it doesn't exist in the modifier
+            except TypeError:
+                continue
 
             # If socket is in a panel, add to panel's children
             if item.parent and item.parent.name in panel_map:

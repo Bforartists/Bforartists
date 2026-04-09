@@ -1833,6 +1833,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         layout.prop(brush, "curves_sculpt_brush_type")
 
     # Draw shared settings.
+    col = layout.column()
     if use_accumulate:
         row = col.row() # BFA
         row.separator() # BFA

@@ -187,7 +187,7 @@ def detect_wizard_for_object(obj):
 if "OUTLINER_MT_view" in dir(bpy.types):
     icon = "WIZARD"
 else:
-    icon = "INFO"
+    icon = "EXPERIMENTAL"
 
 def draw_wizard_button(layout, obj, button_text="Open Asset Wizard", icon=icon, scale_y=1.5):
     """

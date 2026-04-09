@@ -95,7 +95,7 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
             if "OUTLINER_MT_view" in dir(bpy.types):
                 icon = "WIZARD"
             else:
-                icon = "INFO"
+                icon = "EXPERIMENTAL"
 
             draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
             layout.separator()
@@ -169,7 +169,7 @@ class OBJECT_PT_AssetsModifierPanel(Panel):
         if "OUTLINER_MT_view" in dir(bpy.types):
             icon = "WIZARD"
         else:
-            icon = "INFO"
+            icon = "EXPERIMENTAL"
 
         draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
 
