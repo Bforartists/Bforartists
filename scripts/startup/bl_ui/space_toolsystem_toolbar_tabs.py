@@ -512,7 +512,7 @@ class VIEW3D_PT_objecttab_mirror(Panel):
             col.operator("mirror.global_y", text="Y Global", icon='MIRROR_Y')
             col.operator("mirror.global_z", text="Z Global", icon='MIRROR_Z')
 
-            if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+            if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
                 col.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
         # icon buttons
@@ -534,7 +534,7 @@ class VIEW3D_PT_objecttab_mirror(Panel):
                 row = col.row(align=True)
                 row.operator("mirror.global_z", text="", icon='MIRROR_Z')
 
-                if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+                if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
                     row.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
 
             elif column_count == 2:
@@ -549,7 +549,7 @@ class VIEW3D_PT_objecttab_mirror(Panel):
                 row.operator("mirror.global_y", text="", icon='MIRROR_Y')
                 row.operator("mirror.global_z", text="", icon='MIRROR_Z')
 
-                if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+                if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
                     row = col.row(align=True)
                     row.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
 
@@ -562,7 +562,7 @@ class VIEW3D_PT_objecttab_mirror(Panel):
                 col.operator("mirror.global_y", text="", icon='MIRROR_Y')
                 col.operator("mirror.global_z", text="", icon='MIRROR_Z')
 
-                if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+                if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
                     col.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
 
 
@@ -5908,7 +5908,7 @@ class VIEW3D_PT_gp_drawtab_cleanup(Panel):
     def draw(self, context):
         layout = self.layout
 
-        ob = _context.active_object
+        ob = context.active_object
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -6199,7 +6199,7 @@ class VIEW3D_PT_gp_armaturetab_armature(Panel):
     def draw(self, context):
         layout = self.layout
 
-        edit_object = _context.edit_object
+        edit_object = context.edit_object
         arm = edit_object.data
 
         column_count = toolsystem_column_count(context.region)
@@ -6376,7 +6376,7 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
     def draw(self, context):
         layout = self.layout
 
-        edit_object = _context.edit_object
+        edit_object = context.edit_object
         arm = edit_object.data
 
         column_count = toolsystem_column_count(context.region)

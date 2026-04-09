@@ -65,7 +65,119 @@ PARENT_ADDON_VERSION = (1, 3, 0)
 # TO DO: Update the child_addon/blender_manifest.toml to reflect this version as well for consistency
 CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_0_2"
 CHILD_ADDON_DISPLAY_NAME = "Default Asset Library Functions"
-CHILD_ADDON_VERSION = (1, 0, 1)
+CHILD_ADDON_VERSION = (1, 0, 2)
+
+# Note: The version in blender_manifest.toml should match or be newer than this
+
+# -----------------------------------------------------------------------------
+# Version Comparison Utilities
+# -----------------------------------------------------------------------------
+
+def parse_version_string(version_str):
+    """
+    Parse a version string into a tuple of integers.
+    
+    Args:
+        version_str: Version string like "1.0.2" or "1.2"
+    
+    Returns:
+        Tuple of integers, e.g., (1, 0, 2) or (1, 2, 0)
+    """
+    try:
+        # Split by dots and convert to integers
+        parts = version_str.strip().split('.')
+        version_tuple = tuple(int(part) for part in parts)
+        
+        # Ensure we have at least 3 parts (major, minor, patch)
+        while len(version_tuple) < 3:
+            version_tuple = version_tuple + (0,)
+            
+        return version_tuple
+    except (ValueError, AttributeError):
+        # If parsing fails, return (0, 0, 0)
+        return (0, 0, 0)
+
+
+def compare_versions(version_a, version_b):
+    """
+    Compare two version tuples.
+    
+    Args:
+        version_a: First version tuple (e.g., (1, 0, 1))
+        version_b: Second version tuple (e.g., (1, 0, 2))
+    
+    Returns:
+        -1 if version_a < version_b
+         0 if version_a == version_b
+         1 if version_a > version_b
+    """
+    # Compare major, minor, patch in order
+    for a, b in zip(version_a, version_b):
+        if a < b:
+            return -1
+        elif a > b:
+            return 1
+    return 0
+
+
+def is_version_newer(installed_version, parent_version):
+    """
+    Check if the installed version is newer than the parent version.
+    
+    Args:
+        installed_version: Version tuple of installed child addon
+        parent_version: Version tuple from parent addon
+    
+    Returns:
+        True if installed_version is newer than parent_version
+    """
+    return compare_versions(installed_version, parent_version) > 0
+
+
+def is_version_older(installed_version, parent_version):
+    """
+    Check if the installed version is older than the parent version.
+    
+    Args:
+        installed_version: Version tuple of installed child addon
+        parent_version: Version tuple from parent addon
+    
+    Returns:
+        True if installed_version is older than parent_version
+    """
+    return compare_versions(installed_version, parent_version) < 0
+
+
+def get_installed_child_addon_version():
+    """
+    Get the version of the installed child addon from its manifest file.
+    
+    Returns:
+        Version tuple if found, None if not installed or manifest not found
+    """
+    child_addon_dir = get_child_addon_path()
+    manifest_file = p.join(child_addon_dir, "blender_manifest.toml")
+    
+    if not p.exists(manifest_file):
+        return None
+    
+    try:
+        # Simple TOML parsing for version string
+        with open(manifest_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
+        # Look for version line in the manifest
+        for line in content.split('\n'):
+            line = line.strip()
+            if line.startswith('version ='):
+                # Extract version string, handling quotes
+                version_str = line.split('=', 1)[1].strip().strip('"\'')
+                return parse_version_string(version_str)
+    except Exception as e:
+        print(f"⚠ Error reading child addon manifest: {e}")
+        
+    return None
+
 
 # Library configuration - Only include libraries that exist in your packaged addon
 CENTRAL_LIB_SUBFOLDERS = [
@@ -427,23 +539,62 @@ def should_keep_child_addon_active():
 
 
 def ensure_child_addon_installed():
-    """Ensure child addon files are copied to extensions folder, but don't try to activate it."""
+    """
+    Ensure child addon files are copied to extensions folder, but don't try to activate it.
+    
+    This function checks the version of the installed child addon and updates it
+    if the parent addon has a newer version.
+    """
     child_addon_dir = get_child_addon_path()
-
-    # Check if already installed
+    
+    # Check if child addon is already installed
     child_init_file = p.join(child_addon_dir, "__init__.py")
-    if p.exists(child_init_file):
-        #print(f"✓ Child addon already installed at: {child_addon_dir}")
-        return True
-
-    # Install if not exists
-    #print("📦 Installing child addon files...")
-    if copy_child_addon_to_user_prefs():
-        #print(f"✅ Child addon files installed to: {child_addon_dir}")
-        return True
+    manifest_file = p.join(child_addon_dir, "blender_manifest.toml")
+    
+    is_installed = p.exists(child_init_file) and p.exists(manifest_file)
+    
+    if is_installed:
+        # Get installed version
+        installed_version = get_installed_child_addon_version()
+        
+        if installed_version is not None:
+            # Compare with parent version
+            if is_version_newer(installed_version, CHILD_ADDON_VERSION):
+                # Installed version is NEWER than parent version
+                # This shouldn't normally happen, but we should keep the newer version
+                #print(f"✓ Child addon already installed (version {'.'.join(map(str, installed_version))}) is NEWER than parent version ({'.'.join(map(str, CHILD_ADDON_VERSION))}) - keeping installed version")
+                return True
+            elif is_version_older(installed_version, CHILD_ADDON_VERSION):
+                # Installed version is OLDER than parent version - update it
+                #print(f"🔄 Child addon version {'.'.join(map(str, installed_version))} is OLDER than parent version {'.'.join(map(str, CHILD_ADDON_VERSION))} - updating...")
+                if copy_child_addon_to_user_prefs():
+                    #print(f"✅ Child addon updated to version {'.'.join(map(str, CHILD_ADDON_VERSION))}")
+                    return True
+                else:
+                    #print(f"❌ Failed to update child addon")
+                    return False
+            else:
+                # Versions are equal
+                #print(f"✓ Child addon already installed with matching version {'.'.join(map(str, installed_version))}")
+                return True
+        else:
+            # Could not read version, assume it needs update
+            #print(f"⚠ Could not read installed child addon version - updating...")
+            if copy_child_addon_to_user_prefs():
+                #print(f"✅ Child addon updated")
+                return True
+            else:
+                #print(f"❌ Failed to update child addon")
+                return False
     else:
-        #print(f"❌ Failed to install child addon files")
-        return False
+        # Not installed at all
+        #print("📦 Installing child addon files...")
+        if copy_child_addon_to_user_prefs():
+            #print(f"✅ Child addon files installed to: {child_addon_dir}")
+            return True
+        else:
+            #print(f"❌ Failed to install child addon files")
+            return False
 
 
 def load_child_addon_functionality():
