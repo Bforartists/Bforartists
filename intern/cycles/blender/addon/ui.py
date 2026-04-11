@@ -1617,6 +1617,7 @@ class CYCLES_OBJECT_PT_motion_blur(CyclesButtonsPanel, Panel):
             row = col.row()
             row.separator() # indent
             row.prop(cob, "use_deform_motion", text="Deformation")
+            row.prop_decorator(cob, "use_deform_motion")
 
 
 class CYCLES_OBJECT_PT_shading_gi_approximation(CyclesButtonsPanel, Panel):
