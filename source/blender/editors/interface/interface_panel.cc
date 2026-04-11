@@ -571,18 +571,7 @@ static bool panel_custom_pin_to_last_get(const Panel *panel)
   return false;
 }
 
-/* bfa - TODO: Unused - we should use the toggle itself to unpin */
-static void panel_custom_pin_to_last_set(const bContext *C, const Panel *panel, const bool value)
-{
-  if (panel->type->pin_to_last_property[0] != '\0') {
-    PointerRNA *ptr = panel_custom_data_get(panel);
-    if (ptr != nullptr && !RNA_pointer_is_null(ptr)) {
-      PropertyRNA *prop = RNA_struct_find_property(ptr, panel->type->pin_to_last_property);
-      RNA_boolean_set(ptr, panel->type->pin_to_last_property, value);
-      RNA_property_update(const_cast<bContext *>(C), ptr, prop);
-    }
-  }
-}
+/* bfa - REMOVED: panel_custom_pin_to_last_set - we use the toggle itself to unpin */
 
 static bool panel_custom_data_active_get(const Panel *panel)
 {
@@ -2351,8 +2340,7 @@ static void handle_panel_header(const bContext *C,
     const float drag_area_xmax = block->rect.xmax;
     if (IN_RANGE(mx, drag_area_xmin, drag_area_xmax)) {
       if (panel_custom_pin_to_last_get(panel)) {
-        /* bfa - we use the toggle itself to unpin */
-        /* panel_custom_pin_to_last_set(C, panel, false); */
+        /* bfa - REMOVED: panel_custom_pin_to_last_set - we use the toggle itself to unpin */
         return;
       }
       panel_activate_state(C, panel, PANEL_STATE_DRAG);

@@ -52,12 +52,11 @@ void template_cache_file_time_settings(Layout *layout, PointerRNA *fileptr)
   /* Ensure that the context has a CacheFile as this may not be set inside of modifiers panels. */
   layout->context_ptr_set("edit_cachefile", fileptr);
 
-  Layout *row, *col; /* BFA , added *col, removed *sub, *subsub */
+  Layout *row; /* BFA - row */
 
   row = &layout->row(false);
 
   /*------------------- bfa - original props */
-  col = &layout->column(true);
   row = &layout->row(true);
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->prop(fileptr, "is_sequence", UI_ITEM_NONE, std::nullopt, ICON_NONE);
