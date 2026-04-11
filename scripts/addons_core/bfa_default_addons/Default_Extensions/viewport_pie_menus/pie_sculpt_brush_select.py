@@ -184,7 +184,7 @@ def draw_brush_operator(layout, brush_name: str, brush_icon: str = ""):
         )
         op.asset_library_type = 'ESSENTIALS'
         op.relative_asset_identifier = os.path.join(
-            "brushes", "essentials_brushes.blend", "Brush", brush_name
+            "brushes", "essentials_brushes-mesh_sculpt.blend", "Brush", brush_name
         )
     else:
         # Pre-4.3
