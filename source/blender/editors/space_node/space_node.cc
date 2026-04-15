@@ -584,6 +584,7 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
   /* backdrop */
   snode->zoom = 1.0f;
   snode->overlay.passepartout_alpha = 0.5f;
+  // bfa node minimap add gizmo flags, default values
   snode->gizmo_flag = SNODE_GIZMO_SHOW_MINIMAP | SNODE_GIZMO_MINIMAP_USE_NODE_COLORS |
                       SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS |
                       SNODE_GIZMO_MINIMAP_SHOW_NODES_IN_FRAME | SNODE_GIZMO_MINIMAP_MOVE_TO_TOP |
@@ -1563,7 +1564,6 @@ static void node_widgets()
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_ellipse_mask);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_split);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_minimap);
-  WM_gizmotype_append(NODE_GT_minimap);
 }
 
 static void node_id_remap(ID *old_id, ID *new_id, SpaceNode *snode)

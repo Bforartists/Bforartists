@@ -177,7 +177,7 @@ void NODE_GGT_backdrop_split(wmGizmoGroupType *gzgt)
 }
 
 /* -------------------------------------------------------------------- */
-/** \name Minimap Gizmo
+/** \name BFA Minimap Gizmo
  * \{ */
 
 struct NodeMinimapWidgetGroup {

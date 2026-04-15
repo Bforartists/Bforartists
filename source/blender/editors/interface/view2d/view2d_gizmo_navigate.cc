@@ -258,7 +258,7 @@ void VIEW2D_GGT_navigate_impl(wmGizmoGroupType *gzgt, const char *idname)
   gzgt->idname = idname;
 
   gzgt->flag |= (WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_SCALE |
-                 WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL);
+                 WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_UI);
 
   gzgt->poll = WIDGETGROUP_navigate_poll;
   gzgt->setup = WIDGETGROUP_navigate_setup;
