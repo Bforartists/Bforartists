@@ -183,6 +183,13 @@ struct TreeDrawContext {
   }
 };
 
+struct MinimapDraw {
+  rctf space;
+  rctf rect;
+  float scale;
+  float offset_x, offset_y;
+};
+
 float grid_size_get()
 {
   return NODE_GRID_STEP_SIZE;
@@ -349,6 +356,102 @@ static bool is_node_panels_supported(const bNode &node)
   return node.declaration() && node.declaration()->use_custom_socket_order;
 }
 
+static std::optional<rctf> get_minimap_rect(const SpaceNode &snode, ARegion &region)
+{
+  float minimap_overlay_scale = snode.minimap_scale;
+  float minimap_size = 150.0f * minimap_overlay_scale * UI_SCALE_FAC;
+  float padding = 10.0f * UI_SCALE_FAC;
+
+  float minimap_aspect_ratio = snode.minimap_aspect_ratio;
+
+  float minimap_width = minimap_size * minimap_aspect_ratio;
+  float minimap_height = minimap_size;
+  if (minimap_aspect_ratio > 1.0f) {
+    minimap_width = minimap_size;
+    minimap_height = minimap_size / minimap_aspect_ratio;
+  }
+
+  const rcti *rect_visible = ED_region_visible_rect(&region);
+  View2D &v2d = region.v2d;
+  const float viewport_height = BLI_rcti_size_y(&v2d.mask);
+  float viewport_width = BLI_rcti_size_x(&v2d.mask);
+  
+  /* Calculate offset based on header/footer visibility. */
+  float tile_height = viewport_height - BLI_rcti_size_y(rect_visible);
+  float padding_top = padding;
+
+  if (snode.gizmo_flag & SNODE_GIZMO_MINIMAP_MOVE_TO_TOP) {
+    viewport_width = BLI_rcti_size_x(rect_visible);
+    tile_height = 0;
+    padding_top = viewport_height - minimap_height - padding;
+  }
+
+  /* Get the overall area, size of the minimap. */
+  float min[2], max[2];
+  INIT_MINMAX2(min, max);
+
+  // Using your preferred loop style
+  // Note: ensure node_tree is accessible (e.g., bNodeTree *node_tree = snode.nodetree;)
+  bNodeTree *node_tree = snode.nodetree;
+  if (!node_tree) {
+    return std::nullopt;
+  }
+
+  for (bNode &node : node_tree->nodes) {
+    float pos_min[2] = {node.runtime->draw_bounds.xmin, node.runtime->draw_bounds.ymin};
+    float pos_max[2] = {node.runtime->draw_bounds.xmax, node.runtime->draw_bounds.ymax};
+    minmax_v2v2_v2(min, max, pos_min);
+    minmax_v2v2_v2(min, max, pos_max);
+  }
+
+  rctf nodes_bounds;
+  BLI_rctf_init(&nodes_bounds, min[0], max[0], min[1], max[1]);
+  const float nodes_width = BLI_rctf_size_x(&nodes_bounds);
+  const float nodes_height = BLI_rctf_size_y(&nodes_bounds);
+
+  /* Turn off minimap if view is large enough and auto-hide is enabled. */
+  if ((snode.gizmo_flag & SNODE_GIZMO_MINIMAP_AUTO_HIDE) &&
+      BLI_rctf_size_x(&v2d.cur) >= nodes_width && 
+      BLI_rctf_size_y(&v2d.cur) >= nodes_height) 
+  {
+    return std::nullopt;
+  }
+
+  rctf minimap_rect;
+  BLI_rctf_init(&minimap_rect,
+                viewport_width - padding - minimap_width,
+                viewport_width - padding,
+                padding_top + tile_height,
+                padding_top + minimap_height + tile_height);
+
+  return minimap_rect;
+}
+
+static bool view_rect_intersects_minimap(const SpaceNode &snode,
+                                          ARegion &region,
+                                          const float view_xmin,
+                                          const float view_ymax,
+                                          const float view_xmax,
+                                          const float view_ymin,
+                                          const float padding = 0.1f)
+{
+  const std::optional<rctf> minimap_opt = get_minimap_rect(snode, region);
+  if (!minimap_opt.has_value()) {
+    return false;
+  }
+  rctf minimap = minimap_opt.value();
+  BLI_rctf_pad(&minimap, padding, padding);
+
+  float screen_xmin, screen_ymin, screen_xmax, screen_ymax;
+  ui::view2d_view_to_region_fl(&region.v2d, view_xmin, view_ymin, &screen_xmin, &screen_ymin);
+  ui::view2d_view_to_region_fl(&region.v2d, view_xmax, view_ymax, &screen_xmax, &screen_ymax);
+
+  rctf button_rect;
+  BLI_rctf_init(&button_rect, screen_xmin, screen_xmax, screen_ymin, screen_ymax);
+
+  return BLI_rctf_isect(&minimap, &button_rect, nullptr);
+}
+
 /* Draw UI for options, buttons, and previews. */
 static bool node_update_basis_buttons(const bContext &C,
                                       bNodeTree &ntree,
@@ -369,6 +472,10 @@ static bool node_update_basis_buttons(const bContext &C,
   const float2 loc = math::round(node_to_view(node.location));
 
   dy -= NODE_DYS / 4;
+
+  SpaceNode &snode = *CTX_wm_space_node(&C);
+  ARegion &region = *CTX_wm_region(&C);
+
 
   ui::Layout &layout = ui::block_layout(&block,
                                         ui::LayoutDirection::Vertical,
@@ -489,6 +596,9 @@ static bool node_update_basis_socket(TreeDrawContext &tree_draw_ctx,
     return false;
   }
 
+  SpaceNode &snode = *CTX_wm_space_node(&C);
+  ARegion &region = *CTX_wm_region(&C);
+
   const int topy = locy;
 
   /* Add the half the height of a multi-input socket to cursor Y
@@ -541,7 +651,7 @@ static bool node_update_basis_socket(TreeDrawContext &tree_draw_ctx,
     row->alignment_set(ui::LayoutAlign::Right);
 
     draw_socket_layout(
-        tree_draw_ctx, C, *row, *output_socket, ntree, node, nodeptr, sockptr, panel_label);
+        tree_draw_ctx, C, *row, *output_socket, ntree, node, nodeptr, sockptr, panel_label);  
   }
 
   if (input_socket) {
@@ -3650,6 +3760,16 @@ static const bNode *find_node_under_cursor(SpaceNode &snode, const float2 &curso
 
 void node_set_cursor(wmWindow &win, ARegion &region, SpaceNode &snode, const float2 &cursor)
 {
+  const std::optional<rctf> minimap_rect = get_minimap_rect(snode, region);
+  if (minimap_rect.has_value()) {
+    float screen_x, screen_y;
+    ui::view2d_view_to_region_fl(&region.v2d, cursor.x, cursor.y, &screen_x, &screen_y);
+    if (BLI_rctf_isect_pt(&minimap_rect.value(), screen_x, screen_y)) {
+      WM_cursor_set(&win, WM_CURSOR_DEFAULT);
+      return;
+    }
+  }
+
   const bNodeTree *ntree = snode.edittree;
   if (ntree == nullptr) {
     WM_cursor_set(&win, WM_CURSOR_DEFAULT);
@@ -4000,10 +4120,13 @@ static void frame_node_draw_label(const bNode &node, const SpaceNode &snode)
 
 static void frame_node_draw_background(const ARegion &region,
                                        const SpaceNode &snode,
-                                       const bNode &node)
+                                       const bNode &node,
+                                       const MinimapDraw *minimap_data = nullptr)
 {
   /* Skip if out of view. */
-  if (BLI_rctf_isect(&node.runtime->draw_bounds, &region.v2d.cur, nullptr) == false) {
+  if (BLI_rctf_isect(&node.runtime->draw_bounds, &region.v2d.cur, nullptr) == false &&
+      minimap_data == nullptr)
+  {
     return;
   }
 
@@ -4016,9 +4139,26 @@ static void frame_node_draw_background(const ARegion &region,
   node_frame_get_color(node, color);
   color[3] = alpha;
 
-  node_draw_shadow(snode, node, BASIS_RAD, alpha);
-
-  const rctf &rct = node.runtime->draw_bounds;
+  rctf rct = node.runtime->draw_bounds;
+  /* Node frame when used in minimap. */
+  if (minimap_data != nullptr) {
+    float pos[2], size[2];
+    pos[0] = (node.runtime->draw_bounds.xmin - minimap_data->space.xmin) * minimap_data->scale +
+             minimap_data->rect.xmin + minimap_data->offset_x;
+    pos[1] = (node.runtime->draw_bounds.ymin - minimap_data->space.ymin) * minimap_data->scale +
+             minimap_data->rect.ymin + minimap_data->offset_y;
+    size[0] = BLI_rctf_size_x(&node.runtime->draw_bounds) * minimap_data->scale;
+    size[1] = BLI_rctf_size_y(&node.runtime->draw_bounds) * minimap_data->scale;
+    if (!(snode.gizmo_flag & SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS)) {
+      ui::theme::get_color_shade_alpha_4fv(TH_NODE_FRAME, 10, 0, temp_theme_color);
+      copy_v4_v4(color, temp_theme_color);
+      color[3] = alpha;
+    }
+    BLI_rctf_init(&rct, pos[0], pos[0] + size[0], pos[1], pos[1] + size[1]);
+  }
+  else {
+    node_draw_shadow(snode, node, BASIS_RAD, alpha);
+  }
   draw_roundbox_corner_set(ui::CNR_ALL);
   ui::draw_roundbox_4fv(&rct, true, BASIS_RAD, color);
 }
@@ -4420,7 +4560,8 @@ static void find_bounds_by_zone_recursive(const SpaceNode &snode,
 
 static void node_draw_zones_and_frames(const ARegion &region,
                                        const SpaceNode &snode,
-                                       const bNodeTree &ntree)
+                                       const bNodeTree &ntree,
+                                       const MinimapDraw *minimap_data = nullptr)
 {
   const bNodeTreeZones *zones = ntree.zones();
   if (!zones) {
@@ -4466,6 +4607,17 @@ static void node_draw_zones_and_frames(const ARegion &region,
         true,
         {});
   }
+
+  /* Coordinate transformation minimap. */
+  auto project_pos = [&](float3 p) {
+    if (minimap_data) {
+      p.x = (p.x - minimap_data->space.xmin) * minimap_data->scale + minimap_data->rect.xmin +
+            minimap_data->offset_x;
+      p.y = (p.y - minimap_data->space.ymin) * minimap_data->scale + minimap_data->rect.ymin +
+            minimap_data->offset_y;
+    }
+    return p;
+  };
 
   const View2D &v2d = region.v2d;
   float scale;
@@ -4532,16 +4684,16 @@ static void node_draw_zones_and_frames(const ARegion &region,
 
       immBegin(GPU_PRIM_TRI_FAN, fillet_boundary_positions.size() + 1);
       for (const float3 &p : fillet_boundary_positions) {
-        immVertex3fv(pos, p);
+        immVertex3fv(pos, project_pos(p));
       }
-      immVertex3fv(pos, fillet_boundary_positions[0]);
+      immVertex3fv(pos, project_pos(fillet_boundary_positions[0]));
       immEnd();
 
       immUnbindProgram();
     }
     if (const bNode *const *node_p = std::get_if<const bNode *>(&zone_or_node)) {
       const bNode &node = **node_p;
-      frame_node_draw_background(region, snode, node);
+      frame_node_draw_background(region, snode, node, minimap_data);
     }
   }
 
@@ -4571,16 +4723,20 @@ static void node_draw_zones_and_frames(const ARegion &region,
       immUniformThemeColorAlpha(theme_id, 1.0f);
       immBegin(GPU_PRIM_LINE_STRIP, fillet_boundary_positions.size() + 1);
       for (const float3 &p : fillet_boundary_positions) {
-        immVertex3fv(pos, p);
+        immVertex3fv(pos, project_pos(p));
       }
-      immVertex3fv(pos, fillet_boundary_positions[0]);
+      immVertex3fv(pos, project_pos(fillet_boundary_positions[0]));
       immEnd();
 
       immUnbindProgram();
     }
+
     if (const bNode *const *node_p = std::get_if<const bNode *>(&zone_or_node)) {
-      const bNode &node = **node_p;
-      frame_node_draw_outline(region, snode, node);
+      if (minimap_data == nullptr) {
+        /* Prevent draw node frame select outline for minimap */
+        const bNode &node = **node_p;
+        frame_node_draw_outline(region, snode, node);
+      }
     }
   }
 
@@ -4897,9 +5053,232 @@ static Map<const bNode *, const bNode *> find_menu_switch_sources_for_index_swit
   return result;
 }
 
+static void draw_node_minimap(const bContext &C, TreeDrawContext &tree_draw_ctx, bNodeTree &ntree, ARegion &region)
+{
+  SpaceNode *snode = CTX_wm_space_node(&C);
+  View2D &v2d = region.v2d;
+
+  bNodeTree *node_tree = snode->edittree;
+
+  float viewport[4];
+  GPU_viewport_size_get_f(viewport);
+
+  const float minimap_overlay_scale = snode->minimap_scale;
+
+  const float minimap_size = 150.0f * minimap_overlay_scale * UI_SCALE_FAC;
+  const float minimap_border_radius = BASIS_RAD + 0.5f;
+  const float inner_padding = 10.0f * UI_SCALE_FAC;
+
+  const float minimap_aspect_ratio = snode->minimap_aspect_ratio;
+  float minimap_width = minimap_size * minimap_aspect_ratio;
+  float minimap_height = minimap_size;
+  if (minimap_aspect_ratio > 1) {
+    minimap_width = minimap_size;
+    minimap_height = minimap_size / minimap_aspect_ratio;
+  }
+
+  const float minimap_width_without_padding = minimap_width - inner_padding * 2;
+  const float minimap_height_without_padding = minimap_height - inner_padding * 2;
+
+
+  /* Get the overall area, size of the minimap. */
+  float min[2], max[2];
+  INIT_MINMAX2(min, max);
+  for (bNode &node : node_tree->nodes) {
+    float pos_min[2] = {node.runtime->draw_bounds.xmin, node.runtime->draw_bounds.ymin};
+    float pos_max[2] = {node.runtime->draw_bounds.xmax, node.runtime->draw_bounds.ymax};
+    minmax_v2v2_v2(min, max, pos_min);
+    minmax_v2v2_v2(min, max, pos_max);
+  }
+
+  rctf minimap_space;
+  BLI_rctf_init(&minimap_space, min[0], max[0], min[1], max[1]);
+  const float minimap_space_width = BLI_rctf_size_x(&minimap_space);
+  const float minimap_space_height = BLI_rctf_size_y(&minimap_space);
+
+  const std::optional<rctf> minimap_rect_opt = get_minimap_rect(*snode, region);
+  if (!minimap_rect_opt.has_value()) {
+    return;
+  }
+  rctf minimap_rect = minimap_rect_opt.value();
+
+  /* Initialize the minimap data. */
+  MinimapDraw minimap_data;
+  minimap_data.space = minimap_space;
+  minimap_data.rect = minimap_rect;
+  minimap_data.scale = min_ff(minimap_width_without_padding / minimap_space_width,
+                              minimap_height_without_padding / minimap_space_height);
+  minimap_data.offset_x = (minimap_width_without_padding -
+                           minimap_space_width * minimap_data.scale) *
+                              0.5f +
+                          inner_padding;
+  minimap_data.offset_y = (minimap_height_without_padding -
+                           minimap_space_height * minimap_data.scale) *
+                              0.5f +
+                          inner_padding;
+
+  /* Draw Backdrop. */
+  float backdrop_color[4];
+  float backdrop_color_outline[4];
+  ui::theme::get_color_shade_alpha_4fv(TH_BACK, 20, 0, backdrop_color_outline);
+  ui::theme::get_color_shade_alpha_4fv(TH_BACK, -7, -10, backdrop_color);
+  ui::draw_roundbox_corner_set(ui::CNR_ALL);
+  ui::draw_roundbox_4fv_ex(&minimap_rect,
+                           backdrop_color,
+                           nullptr,
+                           1.0f,
+                           backdrop_color_outline,
+                           4.0f,
+                           minimap_border_radius);
+  GPU_blend(GPU_BLEND_NONE);
+
+  /* Colors. */
+  const float node_border_radius = 3.0f;
+  float node_color[4];
+  float node_color_outline_selected[4];
+  float node_color_outline_active[4];
+  float node_color_outline_group_input_output[4];
+
+  ui::theme::get_color_shade_alpha_4fv(TH_BACK, 30, 0, node_color);
+  ui::theme::get_color_shade_alpha_4fv(TH_BACK, 30, 0, node_color_outline_group_input_output);
+  ui::theme::get_color_shade_alpha_4fv(TH_SELECT, 0, 0, node_color_outline_selected);
+  ui::theme::get_color_shade_alpha_4fv(TH_ACTIVE, 0, 0, node_color_outline_active);
+
+  /* Draw node frames and zones. */
+  node_draw_zones_and_frames(region, *snode, *node_tree, &minimap_data);
+
+  /* Draw nodes. */
+  for (bNode &node : node_tree->nodes) {
+    /* Skip frame. */
+    if (node.type_legacy == NODE_FRAME) {
+      continue;
+    }
+
+    if (node.parent && !(snode->gizmo_flag & SNODE_GIZMO_MINIMAP_SHOW_NODES_IN_FRAME)) {
+      continue;
+    }
+
+    float pos[2], size[2];
+
+    pos[0] = (node.runtime->draw_bounds.xmin - minimap_space.xmin) * minimap_data.scale +
+             minimap_rect.xmin + minimap_data.offset_x;
+    pos[1] = (node.runtime->draw_bounds.ymin - minimap_space.ymin) * minimap_data.scale +
+             minimap_rect.ymin + minimap_data.offset_y;
+    size[0] = BLI_rctf_size_x(&node.runtime->draw_bounds) * minimap_data.scale;
+    size[1] = BLI_rctf_size_y(&node.runtime->draw_bounds) * minimap_data.scale;
+
+    if (snode->gizmo_flag & SNODE_GIZMO_MINIMAP_USE_NODE_COLORS) {
+      int color_id = node_get_colorid(tree_draw_ctx, node);
+
+      if (node_undefined_or_unsupported(ntree, node)) {
+        ui::theme::get_color_shade_4fv(TH_REDALERT, -40, node_color);
+      }
+      else if (node.flag & NODE_CUSTOM_COLOR) {
+        rgba_float_args_set(node_color, node.color[0], node.color[1], node.color[2], 1.0f);
+      }
+      else {
+        ui::theme::get_color_3fv(color_id, node_color);
+      }
+    }
+
+    rctf node_rect;
+    BLI_rctf_init(&node_rect, pos[0], pos[0] + size[0], pos[1], pos[1] + size[1]);
+    if (node.flag & NODE_ACTIVE) {
+      ui::draw_roundbox_4fv_ex(&node_rect,
+                               node_color,
+                               nullptr,
+                               1.0f,
+                               node_color_outline_active,
+                               3.0f,
+                               node_border_radius);
+    }
+    else if (node.flag & NODE_SELECT) {
+      ui::draw_roundbox_4fv_ex(&node_rect,
+                               node_color,
+                               nullptr,
+                               1.0f,
+                               node_color_outline_selected,
+                               3.0f,
+                               node_border_radius);
+    }
+    else if (const bke::bNodeZoneType *zone_type = bke::zone_type_by_node_type(node.type_legacy)) {
+      ui::theme::get_color_4fv(zone_type->theme_id, node_color_outline_group_input_output);
+      node_color_outline_group_input_output[3] = 1.0f;
+      ui::draw_roundbox_4fv_ex(&node_rect,
+                               node_color,
+                               nullptr,
+                               1.0f,
+                               node_color_outline_group_input_output,
+                               3.0f,
+                               node_border_radius);
+    }
+    else if (ELEM(node.type_legacy, NODE_GROUP_INPUT, NODE_GROUP_OUTPUT)) {
+      ui::theme::get_color_shade_alpha_4fv(TH_BACK, 30, 0, node_color_outline_group_input_output);
+      if (ELEM(node.type_legacy, NODE_GROUP_INPUT)) {
+        node_color_outline_group_input_output[1] += 0.3f;
+      }
+      else {
+        node_color_outline_group_input_output[0] += 0.3f;
+      }
+      node_color_outline_group_input_output[3] = 0.8f;
+
+      ui::draw_roundbox_4fv_ex(&node_rect,
+                               node_color,
+                               nullptr,
+                               1.0f,
+                               node_color_outline_group_input_output,
+                               3.0f,
+                               node_border_radius);
+    }
+    else {
+      ui::draw_roundbox_4fv(&node_rect, true, node_border_radius, node_color);
+    }
+  }
+
+  /* Draw view-rect. */
+  float pos[2], size[2];
+  pos[0] = (v2d.cur.xmin - minimap_space.xmin) * minimap_data.scale + minimap_rect.xmin +
+           minimap_data.offset_x;
+  pos[1] = (v2d.cur.ymin - minimap_space.ymin) * minimap_data.scale + minimap_rect.ymin +
+           minimap_data.offset_y;
+  size[0] = BLI_rctf_size_x(&v2d.cur) * minimap_data.scale;
+  size[1] = BLI_rctf_size_y(&v2d.cur) * minimap_data.scale;
+  rctf viewport_rect;
+  BLI_rctf_init(&viewport_rect,
+                clamp_f(pos[0], minimap_rect.xmin, minimap_rect.xmax),
+                clamp_f(pos[0] + size[0], minimap_rect.xmin, minimap_rect.xmax),
+                clamp_f(pos[1], minimap_rect.ymin, minimap_rect.ymax),
+                clamp_f(pos[1] + size[1], minimap_rect.ymin, minimap_rect.ymax));
+  float viewport_rect_outline[4];
+  ui::theme::get_color_shade_alpha_4fv(TH_BACK, 100, 0, viewport_rect_outline);
+  ui::draw_roundbox_corner_set(ui::CNR_ALL);
+  ui::draw_roundbox_4fv(&viewport_rect, false, 2.0f, viewport_rect_outline);
+
+  /* Draw outline of the minimap and another outline in background color to hide mask corners. */
+  float space_node_background_color[4];
+  ui::theme::get_color_shade_alpha_4fv(TH_BACK, 0, 0, space_node_background_color);
+  rctf minimap_outer_rect;
+  float minimap_outer_rect_offset = 6.0f;
+  BLI_rctf_init(&minimap_outer_rect,
+                minimap_rect.xmin - minimap_outer_rect_offset,
+                minimap_rect.xmax + minimap_outer_rect_offset,
+                minimap_rect.ymin - minimap_outer_rect_offset,
+                minimap_rect.ymax + minimap_outer_rect_offset);
+  ui::draw_roundbox_4fv_ex(&minimap_outer_rect,
+                           nullptr,
+                           nullptr,
+                           1.0f,
+                           space_node_background_color,
+                           minimap_outer_rect_offset,
+                           minimap_border_radius + minimap_outer_rect_offset);
+
+  ui::draw_roundbox_4fv(&minimap_rect, false, minimap_border_radius, backdrop_color_outline);
+}
+
 static void draw_nodetree(const bContext &C,
                           ARegion &region,
                           bNodeTree &ntree,
+                          TreeDrawContext tree_draw_ctx,
                           bNodeInstanceKey parent_key)
 {
   SpaceNode *snode = CTX_wm_space_node(&C);
@@ -4911,7 +5290,6 @@ static void draw_nodetree(const bContext &C,
 
   bke::ComputeContextCache compute_context_cache;
 
-  TreeDrawContext tree_draw_ctx;
   tree_draw_ctx.bmain = CTX_data_main(&C);
   tree_draw_ctx.window = CTX_wm_window(&C);
   tree_draw_ctx.scene = CTX_data_scene(&C);
@@ -5098,6 +5476,25 @@ static void draw_world_center_icon(const SpaceNode &snode, const View2D &v2d)
   immUnbindProgram();
 }
 
+static void draw_node_gizmos(const bContext &C,
+                             const ARegion &region,
+                             eWM_GizmoFlagMapDrawStep draw_step)
+{
+
+  float original_proj[4][4];
+  GPU_matrix_projection_get(original_proj);
+
+  GPU_matrix_push();
+  GPU_matrix_identity_set();
+
+  wmOrtho2_pixelspace(region.winx, region.winy);
+
+  WM_gizmomap_draw(region.runtime->gizmo_map, &C, draw_step);
+
+  GPU_matrix_pop();
+  GPU_matrix_projection_set(original_proj);
+}
+
 void node_draw_space(const bContext &C, ARegion &region)
 {
   wmWindow *win = CTX_wm_window(&C);
@@ -5139,6 +5536,8 @@ void node_draw_space(const bContext &C, ARegion &region)
   /* BFA - World Center overlay - Draw world center icon (X and Y axes) */
   draw_world_center_icon(snode, v2d);
 
+  TreeDrawContext tree_draw_ctx;
+  bNodeTree *ntree = nullptr;
   /* Draw parent node trees. */
   if (snode.treepath.last) {
     bNodeTreePath *path = static_cast<bNodeTreePath *>(snode.treepath.last);
@@ -5165,7 +5564,8 @@ void node_draw_space(const bContext &C, ARegion &region)
     }
 
     /* Top-level edit tree. */
-    bNodeTree *ntree = path->nodetree;
+    ntree = path->nodetree;
+
     if (ntree) {
       snode_setup_v2d(snode, region, center, size_x);
 
@@ -5211,7 +5611,9 @@ void node_draw_space(const bContext &C, ARegion &region)
         GPU_matrix_projection_set(original_proj);
       }
 
-      draw_nodetree(C, region, *ntree, path->parent_key);
+      draw_node_gizmos(C, region, WM_GIZMOMAP_DRAWSTEP_2D);
+      draw_nodetree(C, region, *ntree, tree_draw_ctx, path->parent_key);
+      draw_node_gizmos(C, region, WM_GIZMOMAP_DRAWSTEP_2D_UI);
     }
 
     /* Temporary links. */
@@ -5251,6 +5653,13 @@ void node_draw_space(const bContext &C, ARegion &region)
     if (snode.overlay.flag & SN_OVERLAY_SHOW_PATH) {
       draw_tree_path(C, region);
     }
+  }
+
+  /* Minimap. */
+  if (ntree && !(snode.gizmo_flag & SNODE_GIZMO_HIDE) &&
+      (snode.gizmo_flag & SNODE_GIZMO_SHOW_MINIMAP))
+  {
+    draw_node_minimap(C, tree_draw_ctx, *ntree, region);
   }
 
   /* Scrollers. */

@@ -936,6 +936,23 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
     CTX_wm_region_popup_set(C, handler->context.region_popup);
   }
 
+  /* Check for navigation gizmos first in case other UI elements are present in the same region,
+   * e.g. buttons on nodes in node editors. */
+  ARegion *region_check = handler->context.region ? handler->context.region : region;
+  if (region_check && region_check->runtime->gizmo_map) {
+    wmGizmoMap *gzmap = region_check->runtime->gizmo_map;
+    int part = -1;
+    wmGizmo *gz = wm_gizmomap_highlight_find(gzmap, C, event, &part);
+                       
+    if (gz != nullptr) {
+      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
+        gz->parent_gzgroup);
+      if (step == WM_GIZMOMAP_DRAWSTEP_2D_UI) {
+        return WM_HANDLER_CONTINUE;
+      }
+    }
+  }
+
   int retval = handler->handle_fn(C, event, handler->user_data);
 
   /* Putting back screen context. */
@@ -3291,17 +3308,18 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
   /* Needed so UI blocks over gizmos don't let events fall through to the gizmos,
    * noticeable for the node editor - where dragging on a node should move it, see: #73212.
    * note we still allow for starting the gizmo drag outside, then travel 'inside' the node. */
-  if (region->runtime->type->clip_gizmo_events_by_ui) {
-    if (ui::region_block_find_mouse_over(region, event->xy, true)) {
-      if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
-        if (restore_highlight_unless_activated == false) {
-          WM_tooltip_clear(C, CTX_wm_window(C));
-          wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
-        }
-      }
-      return action;
-    }
-  }
+  // bfa node minimap
+  // if (region->runtime->type->clip_gizmo_events_by_ui) {
+  //   if (ui::region_block_find_mouse_over(region, event->xy, true)) {
+  //     if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
+  //       if (restore_highlight_unless_activated == false) {
+  //         WM_tooltip_clear(C, CTX_wm_window(C));
+  //         wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
+  //       }
+  //     }
+  //     return action;
+  //   }
+  // }
 
   struct PrevGizmoData {
     wmGizmo *gz_modal;
@@ -3350,9 +3368,40 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
     }
   }
 
+  /* Navigation gizmos are checked before nodes. */
+  wmGizmo *gz_test = nullptr;
+  int part_test = -1;
+  bool is_view_controls_gizmo = false;
+
+  if (handle_highlight || handle_keymap) {
+    gz_test = wm_gizmomap_highlight_find(gzmap, C, event, &part_test);
+
+    if (gz_test != nullptr) {
+      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
+          gz_test->parent_gzgroup);
+      is_view_controls_gizmo = (step == WM_GIZMOMAP_DRAWSTEP_2D_UI);
+    }
+  }
+
+  /* Needed so UI blocks over gizmos don't let events fall through to tools gizmos,
+   * noticeable for the node editor - where dragging on a node should move it, see: #73212.
+   * note we still allow for starting the gizmo drag outside, then travel 'inside' the node. */
+  if (region->runtime->type->clip_gizmo_events_by_ui && !is_view_controls_gizmo) {
+    if (ui::region_block_find_mouse_over(region, event->xy, true)) {
+      if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
+        if (restore_highlight_unless_activated == false) {
+          WM_tooltip_clear(C, CTX_wm_window(C));
+          wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
+        }
+      }
+      return action;
+    }
+  }
+
   if (handle_highlight) {
-    int part = -1;
-    gz = wm_gizmomap_highlight_find(gzmap, C, event, &part);
+    /* Reuse the same gizmo found above. */
+    gz = gz_test;
+    int part = part_test;
 
     /* If no gizmos are/were active, don't clear tool-tips. */
     if (gz || prev.gz) {

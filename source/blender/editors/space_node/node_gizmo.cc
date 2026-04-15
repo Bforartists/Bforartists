@@ -176,6 +176,78 @@ void NODE_GGT_backdrop_split(wmGizmoGroupType *gzgt)
   gzgt->refresh = nodes::gizmos::split_refresh;
 }
 
+/* -------------------------------------------------------------------- */
+/** \name Minimap Gizmo
+ * \{ */
+
+struct NodeMinimapWidgetGroup {
+  wmGizmo *gizmo;
+};
+
+static bool WIDGETGROUP_node_minimap_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
+{
+  SpaceNode *snode = CTX_wm_space_node(C);
+  ARegion *region = CTX_wm_region(C);
+  View2D v2d = region->v2d;
+
+  if (snode && !(snode->gizmo_flag & SNODE_GIZMO_HIDE) &&
+      snode->gizmo_flag & SNODE_GIZMO_SHOW_MINIMAP && snode->edittree)
+  {
+    float min[2], max[2];
+    INIT_MINMAX2(min, max);
+    for (bNode &node : snode->edittree->nodes) {
+      float pos_min[2] = {node.runtime->draw_bounds.xmin, node.runtime->draw_bounds.ymin};
+      float pos_max[2] = {node.runtime->draw_bounds.xmax, node.runtime->draw_bounds.ymax};
+      minmax_v2v2_v2(min, max, pos_min);
+      minmax_v2v2_v2(min, max, pos_max);
+    }
+    rctf minimap_space;
+    BLI_rctf_init(&minimap_space, min[0], max[0], min[1], max[1]);
+    float minimap_space_width = BLI_rctf_size_x(&minimap_space);
+    float minimap_space_height = BLI_rctf_size_y(&minimap_space);
+    const float v2d_width = BLI_rctf_size_x(&v2d.cur);
+    const float v2d_height = BLI_rctf_size_y(&v2d.cur);
+    if (v2d_width >= minimap_space_width && v2d_height >= minimap_space_height && snode->gizmo_flag & SNODE_GIZMO_MINIMAP_AUTO_HIDE) {
+      return false;
+    }
+    return true;
+  }
+
+  return false;
+}
+
+static void WIDGETGROUP_node_minimap_setup(const bContext * /*C*/, wmGizmoGroup *gzgroup)
+{
+  NodeMinimapWidgetGroup *minimap_group = MEM_new<NodeMinimapWidgetGroup>(__func__);
+  minimap_group->gizmo = WM_gizmo_new("NODE_GT_minimap", gzgroup, nullptr);
+  minimap_group->gizmo->flag |= (WM_GIZMO_MOVE_CURSOR | WM_GIZMO_DRAW_MODAL);
+
+  gzgroup->customdata = minimap_group;
+  gzgroup->customdata_free = [](void *customdata) {
+    MEM_delete(static_cast<NodeMinimapWidgetGroup *>(customdata));
+  };
+}
+
+static void WIDGETGROUP_node_minimap_draw_prepare(const bContext * /*C*/, wmGizmoGroup *gzgroup)
+{
+  NodeMinimapWidgetGroup *minimap_group = (NodeMinimapWidgetGroup *)gzgroup->customdata;
+  wmGizmo *gz = minimap_group->gizmo;
+  gz->scale_basis = 2.0f;
+}
+
+void NODE_GGT_minimap(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "Minimap Widget";
+  gzgt->idname = "NODE_GGT_minimap";
+
+  gzgt->flag |= (WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_2D_UI);
+
+  gzgt->poll = WIDGETGROUP_node_minimap_poll;
+  gzgt->setup = WIDGETGROUP_node_minimap_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->draw_prepare = WIDGETGROUP_node_minimap_draw_prepare;
+}
+
 /** \} */
 
 }  // namespace blender::ed::space_node

@@ -897,6 +897,10 @@ struct SpaceNode {
   char gizmo_flag = 0;
   char _pad2[7] = {};
 
+  /* Gizmo Minimap */
+  float minimap_aspect_ratio = 0;
+  float minimap_scale = 0;
+
   SpaceNodeOverlay overlay;
 
   ed::space_node::SpaceNode_Runtime *runtime = nullptr;

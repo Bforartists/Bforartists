@@ -54,6 +54,7 @@ void DRW_draw_gizmo_3d(const bContext *C, ARegion *region)
 void DRW_draw_gizmo_2d(const bContext *C, ARegion *region)
 {
   WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
+  WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_UI);
   GPU_depth_mask(true);
 }
 
