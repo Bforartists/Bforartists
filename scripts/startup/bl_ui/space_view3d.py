@@ -11785,7 +11785,7 @@ class VIEW3D_PT_sculpt_automasking(Panel):
             col.use_property_split = True
             row = col.row()
             row.separator(factor=3.5)
-            row.prop(settings, "automasking_boundary_edges_propagation_steps", text="Steps")
+            row.prop(settings, "boundary_edges_propagation_steps", text="Steps")
 
         col = layout.column()
         split = col.split(factor=0.9)
@@ -11797,8 +11797,6 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         is_cavity_active = settings.use_automasking_cavity or settings.use_automasking_cavity_inverted
 
         if is_cavity_active:
-            props = row.operator("sculpt.mask_from_cavity", text="Create Mask")
-            props.settings_source = "SCENE"
             split.label(icon="DISCLOSURE_TRI_DOWN")
         else:
             split.label(icon="DISCLOSURE_TRI_RIGHT")
@@ -11820,14 +11818,14 @@ class VIEW3D_PT_sculpt_automasking(Panel):
             col = layout.column(align=True)
             row = col.row()
             row.separator(factor=3.5)
-            props = row.operator("sculpt.mask_from_cavity", text="Create Mask")
+            props = row.operator("sculpt.mask_from_cavity", text="Create Mask", icon="MOD_MASK")
             props.settings_source = "SCENE"
             row = col.row()
             row.separator(factor=3.5)
-            row.prop(settings, "automasking_cavity_factor", text="Factor")
+            row.prop(settings, "cavity_factor", text="Factor")
             row = col.row()
             row.separator(factor=3.5)
-            row.prop(settings, "automasking_cavity_blur_steps", text="Blur")
+            row.prop(settings, "cavity_blur_steps", text="Blur")
 
             col = layout.column()
             col.use_property_split = False
@@ -11836,7 +11834,7 @@ class VIEW3D_PT_sculpt_automasking(Panel):
             row.prop(settings, "use_automasking_custom_cavity_curve", text="Custom Curve")
 
             if settings.use_automasking_custom_cavity_curve:
-                col.template_curve_mapping(sculpt, "automasking_cavity_curve", brush=True)
+                col.template_curve_mapping(settings, "cavity_curve", brush=True)
 
         col = layout.column()
         split = col.split(factor=0.9)
@@ -11860,10 +11858,10 @@ class VIEW3D_PT_sculpt_automasking(Panel):
                 subcol.use_property_split = True
                 row = subcol.row()
                 row.separator(factor=3.5)
-                row.prop(settings, "automasking_view_normal_limit", text="Limit")
+                row.prop(settings, "view_normal_limit", text="Limit")
                 row = subcol.row()
                 row.separator(factor=3.5)
-                row.prop(settings, "automasking_view_normal_falloff", text="Falloff")
+                row.prop(settings, "view_normal_falloff", text="Falloff")
 
         # col = layout.column()
         split = col.split(factor=0.9)
@@ -11882,11 +11880,11 @@ class VIEW3D_PT_sculpt_automasking(Panel):
             row = col.row()
             row.use_property_split = True  # BFA - label outside
             row.separator(factor=3.5)
-            row.prop(settings, "automasking_start_normal_limit", text="Limit")
+            row.prop(settings, "start_normal_limit", text="Limit")
             row = col.row()
             row.use_property_split = True  # BFA - label outside
             row.separator(factor=3.5)
-            row.prop(settings, "automasking_start_normal_falloff", text="Falloff")
+            row.prop(settings, "start_normal_falloff", text="Falloff")
             col.separator()
 
 
