@@ -7,10 +7,88 @@ from bpy.types import Panel
 import bmesh
 import sys
 
+import dataclasses
+
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui.space_toolsystem_common import (
     toolsystem_column_count,
 )
+
+
+# Null object used to abstractly represent a separator
+Separator = object()
+
+
+@dataclasses.dataclass(slots=True)
+class OperatorEntry:
+    operator : str
+    text : str = None
+    icon : str = 'ICON_NONE'
+    props : dict = None
+    poll : bool = True
+
+    as_dict = dataclasses.asdict
+    
+    def draw_text_button(self, layout):
+        if not self.poll:
+            return
+        
+        if self.text is not None:
+            props = layout.operator(self.operator, text=self.text, icon=self.icon)
+        else:
+            props = layout.operator(self.operator, icon=self.icon)
+            
+        if self.props:
+            for key, value in self.props.items():
+                setattr(props, key, value)
+        
+    def draw_icon_button(self, layout):
+        if not self.poll:
+            return
+
+        props = layout.operator(self.operator, text="", icon=self.icon)
+
+        if self.props:
+            for key, value in self.props.items():
+                setattr(props, key, value)
+
+
+def draw_text_buttons(layout, entries):
+    col = layout.column(align=True)
+    col.scale_y = 2
+    
+    for entry in entries:
+        if entry is Separator:
+            col.separator(factor=0.5)
+        else:
+            entry.draw_text_button(col)
+        
+
+def draw_icon_buttons(layout, entries, column_count):
+    index = 0
+    
+    col = layout.column(align=True)
+    
+    for entry in entries:
+        if entry is Separator:
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.scale_x = 2
+            row.scale_y = 2
+            row.alignment = 'LEFT'
+            
+            index = 0
+        else:
+            if index == 0:
+                row = col.row(align=True)
+                row.scale_x = 2
+                row.scale_y = 2
+                row.alignment = 'LEFT'
+            
+            entry.draw_icon_button(row)
+                    
+            index = (index + 1) % column_count
+
 
 # BFA - Import the default library wizard functions
 def draw_wizard_button(layout, obj, text, icon, scale):
