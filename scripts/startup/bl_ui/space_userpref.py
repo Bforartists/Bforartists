@@ -1866,7 +1866,7 @@ class USERPREF_PT_saveload_autorun(FilePathsPanel, Panel):
         for i, path_cmp in enumerate(prefs.autoexec_paths):
             row = box.row()
             row.prop(path_cmp, "path", text="")
-            row.prop(path_cmp, "use_glob", text="", icon='FILTER')
+            row.prop(path_cmp, "use_glob", text="", icon=('FILTER' if path_cmp.use_glob else 'FILTER_OFF'))
             row.operator("preferences.autoexec_path_remove", text="", icon='X', emboss=False).index = i
 
 
