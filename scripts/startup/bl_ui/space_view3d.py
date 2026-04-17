@@ -4231,7 +4231,7 @@ class VIEW3D_MT_object_context_menu(Menu):
 
             if obj.type in {"MESH", "CURVE", "SURFACE", "ARMATURE", "GREASEPENCIL"}:
                 if selected_objects_len > 1:
-                    layout.operator("object.join")
+                    layout.operator("object.join", icon="JOIN")
 
             if obj.type in {
                 "MESH",
