@@ -23,20 +23,23 @@ Separator = object()
 class OperatorEntry:
     operator : str
     text : str = None
+    text_ctxt : str = None
     icon : str = 'ICON_NONE'
     props : dict = None
     poll : bool = True
 
     as_dict = dataclasses.asdict
+
+    @property
+    def op_params(self):
+        params = ("text", "text_ctxt", "icon")
+        return {key: getattr(self, key) for key in params}
     
     def draw_text_button(self, layout):
         if not self.poll:
             return
         
-        if self.text is not None:
-            props = layout.operator(self.operator, text=self.text, icon=self.icon)
-        else:
-            props = layout.operator(self.operator, icon=self.icon)
+        props = layout.operator(self.operator, **self.op_params)
             
         if self.props:
             for key, value in self.props.items():
