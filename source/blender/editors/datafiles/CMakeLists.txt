@@ -722,7 +722,7 @@ if(WITH_BLENDER)
       fill_mask
       fillbetween
       filter
-      filter_filled
+      filter_off
       fixed_size
       flatten_handler
       flip
