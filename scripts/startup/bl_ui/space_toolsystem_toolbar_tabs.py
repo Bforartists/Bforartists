@@ -128,7 +128,7 @@ def draw_wizard_button(layout, obj, text, icon, scale):
 
 # ------------------------ Object
 
-class VIEW3D_PT_objecttab_transform(Panel):
+class VIEW3D_PT_object_tab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -455,7 +455,7 @@ class VIEW3D_PT_objecttab_transform(Panel):
                     col.operator("armature.align", text="", icon="ALIGN")
 
 
-class VIEW3D_PT_objecttab_set_origin(Panel):
+class VIEW3D_PT_object_tab_set_origin(Panel):
     bl_label = "Set Origin"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -559,7 +559,7 @@ class VIEW3D_MT_object_mirror_global_z(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_objecttab_mirror(Panel):
+class VIEW3D_PT_object_tab_mirror(Panel):
     bl_label = "Mirror"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -680,7 +680,7 @@ class VIEW3D_MT_object_mirror_local_z(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_objecttab_mirror_local(Panel):
+class VIEW3D_PT_object_tab_mirror_local(Panel):
     bl_label = "Mirror Local"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -741,7 +741,7 @@ class VIEW3D_PT_objecttab_mirror_local(Panel):
                 col.operator("mirror.local_z", text="", icon='MIRROR_Z')
 
 
-class VIEW3D_PT_objecttab_clear(Panel):
+class VIEW3D_PT_object_tab_clear(Panel):
     bl_label = "Clear"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -812,7 +812,7 @@ class VIEW3D_PT_objecttab_clear(Panel):
                 col.operator("object.origin_clear", text="", icon="CLEARORIGIN")
 
 
-class VIEW3D_PT_objecttab_apply(Panel):
+class VIEW3D_PT_object_tab_apply(Panel):
     bl_label = "Apply"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1012,7 +1012,7 @@ class VIEW3D_PT_objecttab_apply(Panel):
                     op.boolean_on_apply = False
                     op.remesh_on_apply = True
 
-class VIEW3D_PT_objecttab_apply_delta(Panel):
+class VIEW3D_PT_object_tab_apply_delta(Panel):
     bl_label = "Apply Deltas"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1120,7 +1120,7 @@ class VIEW3D_PT_objecttab_apply_delta(Panel):
                 col.operator("object.anim_transforms_to_deltas", text="", icon="APPLYANIDELTA")
 
 
-class VIEW3D_PT_objecttab_snap(Panel):
+class VIEW3D_PT_object_tab_snap(Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1214,7 +1214,7 @@ class VIEW3D_PT_objecttab_snap(Panel):
                 col.operator("view3d.snap_cursor_to_grid", text="", icon="CURSORTOGRID")
 
 
-class VIEW3D_PT_objecttab_shading(Panel):
+class VIEW3D_PT_object_tab_shading(Panel):
     bl_label = "Shading"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1273,7 +1273,7 @@ class VIEW3D_PT_objecttab_shading(Panel):
 
 # ------------------------ Utility
 
-class VIEW3D_PT_utilitytab_parent(Panel):
+class VIEW3D_PT_utility_tab_parent(Panel):
     bl_label = "Parents"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1325,7 +1325,7 @@ class VIEW3D_PT_utilitytab_parent(Panel):
                 col.operator("object.parent_clear", text="", icon='PARENT_CLEAR')
 
 
-class VIEW3D_PT_utilitytab_objectdata(Panel):
+class VIEW3D_PT_utility_tab_objectdata(Panel):
     bl_label = "Object Data"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1400,7 +1400,7 @@ class VIEW3D_PT_utilitytab_objectdata(Panel):
                 col.operator("object.make_override_library", text="", icon='LIBRARY_DATA_OVERRIDE')
 
 
-class VIEW3D_PT_utilitytab_assets(Panel):
+class VIEW3D_PT_utility_tab_assets(Panel):
     bl_label = "Assets"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1469,7 +1469,7 @@ class VIEW3D_PT_utilitytab_assets(Panel):
                     draw_wizard_button(col, obj, "", 'WIZARD', 1)
 
 
-class VIEW3D_PT_utilitytab_constraints(Panel):
+class VIEW3D_PT_utility_tab_constraints(Panel):
     bl_label = "Constraints"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1527,7 +1527,7 @@ class VIEW3D_PT_utilitytab_constraints(Panel):
                 col.operator("object.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
 
 
-class VIEW3D_PT_utilitytab_collection(Panel):
+class VIEW3D_PT_utility_tab_collection(Panel):
     bl_label = "Collection"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1578,7 +1578,7 @@ class VIEW3D_PT_utilitytab_collection(Panel):
                 col.operator("object.move_to_collection", text="", icon='GROUP')
 
 
-class VIEW3D_PT_utilitytab_convert(Panel):
+class VIEW3D_PT_utility_tab_convert(Panel):
     bl_label = "Convert"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1701,7 +1701,7 @@ class VIEW3D_PT_utilitytab_convert(Panel):
 
 # -------------------------------------- Mesh
 
-class VIEW3D_PT_meshtab_merge(Panel):
+class VIEW3D_PT_mesh_tab_merge(Panel):
     bl_label = "Merge"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1831,7 +1831,7 @@ class VIEW3D_PT_meshtab_merge(Panel):
                 col.operator("mesh.remove_doubles", text="", icon="REMOVE_DOUBLES")
 
 
-class VIEW3D_PT_meshtab_split(Panel):
+class VIEW3D_PT_mesh_tab_split(Panel):
     bl_label = "Split"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1889,7 +1889,7 @@ class VIEW3D_PT_meshtab_split(Panel):
                 col.operator("mesh.edge_split", text="", icon="SPLIT_BYVERTICES").type = 'VERT'
 
 
-class VIEW3D_PT_meshtab_separate(Panel):
+class VIEW3D_PT_mesh_tab_separate(Panel):
     bl_label = "Separate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1947,7 +1947,7 @@ class VIEW3D_PT_meshtab_separate(Panel):
                 col.operator("mesh.separate", text="", icon="SEPARATE_LOOSE").type = 'LOOSE'
 
 
-class VIEW3D_PT_meshtab_tools(Panel):
+class VIEW3D_PT_mesh_tab_tools(Panel):
     bl_label = "Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2043,7 +2043,7 @@ class VIEW3D_PT_meshtab_tools(Panel):
                 col.operator("mesh.symmetry_snap", text="", icon="SNAP_SYMMETRY")
 
 
-class VIEW3D_PT_meshtab_normals(Panel):
+class VIEW3D_PT_mesh_tab_normals(Panel):
     bl_label = "Normals"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2101,7 +2101,7 @@ class VIEW3D_PT_meshtab_normals(Panel):
                 col.operator("mesh.flip_normals", text="", icon='FLIP_NORMALS')
 
 
-class VIEW3D_PT_meshtab_shading(Panel):
+class VIEW3D_PT_mesh_tab_shading(Panel):
     bl_label = "Shading"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2196,7 +2196,7 @@ class VIEW3D_PT_meshtab_shading(Panel):
                 col.operator("mesh.mark_sharp", text="", icon='SHADING_VERT_SHARP').use_verts = True
 
 
-class VIEW3D_PT_meshtab_cleanup(Panel):
+class VIEW3D_PT_mesh_tab_cleanup(Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2295,7 +2295,7 @@ class VIEW3D_PT_meshtab_cleanup(Panel):
                 col.operator("mesh.fill_holes", text="", icon="FILL_HOLE")
 
 
-class VIEW3D_PT_meshtab_dissolve(Panel):
+class VIEW3D_PT_mesh_tab_dissolve(Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2382,7 +2382,7 @@ class VIEW3D_PT_meshtab_dissolve(Panel):
                 col.operator("mesh.edge_collapse", text="", icon='EDGE_COLLAPSE')
 
 
-class VIEW3D_PT_vertextab_vertex(Panel):
+class VIEW3D_PT_vertex_tab_vertex(Panel):
     bl_label = "Vertex"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2501,7 +2501,7 @@ class VIEW3D_PT_vertextab_vertex(Panel):
                 col.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
 
 
-class VIEW3D_PT_edgetab_Edge(Panel):
+class VIEW3D_PT_edge_tab_Edge(Panel):
     bl_label = "Edge"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2683,7 +2683,7 @@ class VIEW3D_PT_edgetab_Edge(Panel):
                     col.operator("mesh.mark_freestyle_edge", text="", icon="CLEAR_FS_EDGE").clear = True
 
 
-class VIEW3D_PT_facetab_face(Panel):
+class VIEW3D_PT_face_tab_face(Panel):
     bl_label = "Face"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2820,7 +2820,7 @@ class VIEW3D_PT_facetab_face(Panel):
                 col.operator("mesh.face_split_by_edges", text="", icon="SPLITBYEDGES")
 
 
-class VIEW3D_PT_uvtab_uv(Panel):
+class VIEW3D_PT_uv_tab_uv(Panel):
     bl_label = "UV"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3019,7 +3019,7 @@ class MASK_MT_flood_fill_clear(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_sculpttab_transform(Panel):
+class VIEW3D_PT_sculpt_tab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3072,7 +3072,7 @@ class VIEW3D_PT_sculpttab_transform(Panel):
                 props.type = 'SPHERE'
 
 
-class VIEW3D_PT_sculpttab_sculpt(Panel):
+class VIEW3D_PT_sculpt_tab_sculpt(Panel):
     bl_label = "Sculpt"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3287,7 +3287,7 @@ class VIEW3D_PT_sculpttab_sculpt(Panel):
                 col.operator("sculpt.sample_color", text="", icon='EYEDROPPER')
 
 
-class VIEW3D_PT_sculpttab_filters(Panel):
+class VIEW3D_PT_sculpt_tab_filters(Panel):
     bl_label = "Meshfilter"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3442,7 +3442,7 @@ class VIEW3D_PT_sculpttab_filters(Panel):
                 props.type = 'RANDOM'
 
 
-class VIEW3D_PT_sculpttab_set_pivot(Panel):
+class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
     bl_label = "Set Pivot"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3546,7 +3546,7 @@ class VIEW3D_PT_sculpttab_set_pivot(Panel):
                 props.mode = 'SURFACE'
 
 
-class VIEW3D_PT_masktab_mask(Panel):
+class VIEW3D_PT_mask_tab_mask(Panel):
     bl_label = "Mask"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3848,7 +3848,7 @@ class VIEW3D_PT_masktab_mask(Panel):
                 props.boundary_mode = "FACE_SETS"
 
 
-class VIEW3D_PT_masktab_random_mask(Panel):
+class VIEW3D_PT_mask_tab_random_mask(Panel):
     bl_label = "Random Mask"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3911,7 +3911,7 @@ class VIEW3D_PT_masktab_random_mask(Panel):
                 col.operator("sculpt.mask_init", text='', icon="SELECT_LOOSE").mode = 'RANDOM_PER_LOOSE_PART'
 
 
-class VIEW3D_PT_facesetstab_facesets(Panel):
+class VIEW3D_PT_facesets_tab_facesets(Panel):
     bl_label = "Face Sets"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4084,7 +4084,7 @@ class VIEW3D_PT_facesetstab_facesets(Panel):
                 col.operator("sculpt.face_sets_randomize_colors", text='', icon="COLOR")
 
 
-class VIEW3D_PT_facesetstab_init_facesets(Panel):
+class VIEW3D_PT_facesets_tab_init_facesets(Panel):
     bl_label = "Initialize Face Sets"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4171,7 +4171,7 @@ class VIEW3D_PT_facesetstab_init_facesets(Panel):
                 col.operator("sculpt.face_sets_init", text='', icon="SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
 
 
-class VIEW3D_PT_painttab_paint(Panel):
+class VIEW3D_PT_paint_tab_paint(Panel):
     bl_label = "Paint"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4264,7 +4264,7 @@ class VIEW3D_PT_painttab_paint(Panel):
                 col.operator("paint.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
 
 
-class VIEW3D_PT_painttab_colorpicker(Panel):
+class VIEW3D_PT_paint_tab_colorpicker(Panel):
     bl_label = "Color Picker"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4312,7 +4312,7 @@ class VIEW3D_PT_painttab_colorpicker(Panel):
                 col.operator("paint.sample_color", text="", icon='EYEDROPPER')
 
 
-class VIEW3D_PT_weightstab_weights(Panel):
+class VIEW3D_PT_weights_tab_weights(Panel):
     bl_label = "Weights"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4465,7 +4465,7 @@ class VIEW3D_PT_weightstab_weights(Panel):
 
 
 # ------------------------ Curve Edit Mode
-class VIEW3D_PT_curvetab_curve(Panel):
+class VIEW3D_PT_curve_tab_curve(Panel):
     bl_label = "Curve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4576,7 +4576,7 @@ class VIEW3D_PT_curvetab_curve(Panel):
                 col.operator("curve.dissolve_verts", text="", icon='DISSOLVE_VERTS')
 
 
-class VIEW3D_PT_curvetab_controlpoints(Panel):
+class VIEW3D_PT_curve_tab_controlpoints(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4705,7 +4705,7 @@ class VIEW3D_PT_curvetab_controlpoints(Panel):
                 col.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
 
 
-class VIEW3D_PT_curvetab_controlpoints_surface(Panel):
+class VIEW3D_PT_curve_tab_controlpoints_surface(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4789,7 +4789,7 @@ class VIEW3D_PT_curvetab_controlpoints_surface(Panel):
 
 
 # ------------------------ Curves (Hair/Fur) Edit Mode
-class VIEW3D_PT_curvestab_edit_curves(Panel):
+class VIEW3D_PT_curves_tab_edit_curves(Panel):
     bl_label = "Curves"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4872,7 +4872,7 @@ class VIEW3D_PT_curvestab_edit_curves(Panel):
                 col.operator("curves.delete", text="", icon="DELETE")
 
 
-class VIEW3D_PT_curvestab_edit_controlpoints(Panel):
+class VIEW3D_PT_curves_tab_edit_controlpoints(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4924,7 +4924,7 @@ class VIEW3D_PT_curvestab_edit_controlpoints(Panel):
                 col.operator("curvs.extrude_move", text="", icon='EXTRUDE_REGION')
 
 
-class VIEW3D_PT_curvestab_edit_segments(Panel):
+class VIEW3D_PT_curves_tab_edit_segments(Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4984,7 +4984,7 @@ class VIEW3D_PT_curvestab_edit_segments(Panel):
 
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
 
-class VIEW3D_PT_curvestab_sculpt_curves(Panel):
+class VIEW3D_PT_curves_tab_sculpt_curves(Panel):
     bl_label = "Curves"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5054,7 +5054,7 @@ class VIEW3D_PT_curvestab_sculpt_curves(Panel):
 
 
 # ------------------------ Surface
-class VIEW3D_PT_surfacetab_surface(Panel):
+class VIEW3D_PT_surface_tab_surface(Panel):
     bl_label = "Surface"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5132,7 +5132,7 @@ class VIEW3D_PT_surfacetab_surface(Panel):
 
 
 # ------------------------ Grease Pencil
-class VIEW3D_PT_segmentstab_segments(Panel):
+class VIEW3D_PT_segments_tab_segments(Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5185,7 +5185,7 @@ class VIEW3D_PT_segmentstab_segments(Panel):
                 col.operator("curve.switch_direction", text="", icon='SWITCH_DIRECTION')
 
 
-class VIEW3D_PT_gp_gpenciltab_dissolve(Panel):
+class VIEW3D_PT_gp_gpencil_tab_dissolve(Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5244,7 +5244,7 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(Panel):
                 col.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
 
-class VIEW3D_PT_gp_gpenciltab_cleanup(Panel):
+class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5321,7 +5321,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(Panel):
                 col.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
 
 
-class VIEW3D_PT_gp_gpenciltab_separate(Panel):
+class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
     bl_label = "Separate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5393,7 +5393,7 @@ class VIEW3D_PT_gp_gpenciltab_separate(Panel):
                 col.operator("grease_pencil.stroke_split", text="", icon="SPLIT")
 
 
-class VIEW3D_PT_gp_stroketab_stroke(Panel):
+class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
     bl_label = "Stroke"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5572,7 +5572,7 @@ class VIEW3D_PT_gp_stroketab_stroke(Panel):
 
 
 # BFA - Legacy
-class VIEW3D_PT_gp_stroketab_simplify(Panel):
+class VIEW3D_PT_gp_stroke_tab_simplify(Panel):
     bl_label = "Simplify"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5631,7 +5631,7 @@ class VIEW3D_PT_gp_stroketab_simplify(Panel):
                 col.operator("gpencil.stroke_sample", text="", icon="SIMPLIFY_SAMPLE")
 
 
-class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
+class VIEW3D_PT_gp_stroke_tab_togglecaps(Panel):
     bl_label = "Toggle Caps"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5696,7 +5696,7 @@ class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
                 col.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_END").type = 'END'
 
 # BFA - legacy
-class VIEW3D_PT_gp_stroketab_reproject(Panel):
+class VIEW3D_PT_gp_stroke_tab_reproject(Panel):
     bl_label = "Reproject Strokes"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5771,7 +5771,7 @@ class VIEW3D_PT_gp_stroketab_reproject(Panel):
                 col.operator("gpencil.reproject", text="", icon="CURSOR").type = 'CURSOR'
 
 
-class VIEW3D_PT_gp_pointtab_point(Panel):
+class VIEW3D_PT_gp_point_tab_point(Panel):
     bl_label = "Point"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5824,7 +5824,7 @@ class VIEW3D_PT_gp_pointtab_point(Panel):
                 col.operator("grease_pencil.stroke_smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
 
 
-class VIEW3D_PT_gp_drawtab_draw(Panel):
+class VIEW3D_PT_gp_draw_tab_draw(Panel):
     bl_label = "Draw"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5877,7 +5877,7 @@ class VIEW3D_PT_gp_drawtab_draw(Panel):
                 col.operator("gpencil.interpolate_sequence", text="", icon="SEQUENCE")
 
 
-class VIEW3D_PT_gp_drawtab_animation(Panel):
+class VIEW3D_PT_gp_draw_tab_animation(Panel):
     bl_label = "Animation"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -5969,7 +5969,7 @@ class VIEW3D_PT_gp_drawtab_animation(Panel):
                 col.operator("grease_pencil.interpolate_sequence", text="", icon="SEQUENCE").use_selection = True
 
 
-class VIEW3D_PT_gp_drawtab_cleanup(Panel):
+class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6041,7 +6041,7 @@ class VIEW3D_PT_gp_drawtab_cleanup(Panel):
                 col.operator("gpencil.recalc_geometry", text="", icon="FILE_REFRESH")
 
 
-class VIEW3D_PT_gp_weightstab_weights(Panel):
+class VIEW3D_PT_gp_weights_tab_weights(Panel):
     bl_label = "Weights"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6124,7 +6124,7 @@ class VIEW3D_PT_gp_weightstab_weights(Panel):
                 col.operator("gpencil.weight_sample", text="", icon='EYEDROPPER')
 
 
-class VIEW3D_PT_gp_weightstab_generate_weights(Panel):
+class VIEW3D_PT_gp_weights_tab_generate_weights(Panel):
     bl_label = "Generate Weights"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6178,7 +6178,7 @@ class VIEW3D_PT_gp_weightstab_generate_weights(Panel):
                 col.operator("gpencil.generate_weights", text="", icon="PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
 
 
-class VIEW3D_PT_gp_painttab_paint(Panel):
+class VIEW3D_PT_gp_paint_tab_paint(Panel):
     bl_label = "Paint"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6260,7 +6260,7 @@ class VIEW3D_PT_gp_painttab_paint(Panel):
                 col.operator("gpencil.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
 
 
-class VIEW3D_PT_gp_armaturetab_armature(Panel):
+class VIEW3D_PT_gp_armature_tab_armature(Panel):
     bl_label = "Armature"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6437,7 +6437,7 @@ class VIEW3D_PT_gp_armaturetab_armature(Panel):
                 col.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
 
 
-class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
+class VIEW3D_PT_gp_armature_tab_recalcboneroll(Panel):
     bl_label = "Recalculate Bone Roll"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6600,7 +6600,7 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
                 col.operator("armature.calculate_roll", text= "", icon="CURSOR").type = 'CURSOR'
 
 
-class VIEW3D_PT_gp_armaturetab_names(Panel):
+class VIEW3D_PT_gp_armature_tab_names(Panel):
     bl_label = "Names"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6671,7 +6671,7 @@ class VIEW3D_PT_gp_armaturetab_names(Panel):
                 col.operator("armature.flip_names", text="", icon="FLIP")
 
 
-class VIEW3D_PT_gp_posetab_pose(Panel):
+class VIEW3D_PT_gp_pose_tab_pose(Panel):
     bl_label = "Pose"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6742,7 +6742,7 @@ class VIEW3D_PT_gp_posetab_pose(Panel):
                 col.operator("poselib.create_pose_asset", text="", icon="ASSET_MANAGER")
 
 
-class VIEW3D_PT_gp_posetab_cleartransform(Panel):
+class VIEW3D_PT_gp_pose_tab_cleartransform(Panel):
     bl_label = "Clear Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6829,7 +6829,7 @@ class VIEW3D_PT_gp_posetab_cleartransform(Panel):
                 col.operator("pose.user_transforms_clear", text="", icon="RESET")
 
 
-class VIEW3D_PT_gp_posetab_apply(Panel):
+class VIEW3D_PT_gp_pose_tab_apply(Panel):
     bl_label = "Apply"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6902,7 +6902,7 @@ class VIEW3D_PT_gp_posetab_apply(Panel):
                 props.process_bones = True
 
 
-class VIEW3D_PT_gp_posetab_inbetweens(Panel):
+class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
     bl_label = "In-Betweens"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6974,7 +6974,7 @@ class VIEW3D_PT_gp_posetab_inbetweens(Panel):
                 col.operator("pose.blend_to_neighbor", text="", icon='BLEND_TO_NEIGHBOUR')
 
 
-class VIEW3D_PT_gp_posetab_propagate(Panel):
+class VIEW3D_PT_gp_pose_tab_propagate(Panel):
     bl_label = "Propagate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7051,7 +7051,7 @@ class VIEW3D_PT_gp_posetab_propagate(Panel):
                 col.operator("pose.propagate", text="", icon="PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
 
-class VIEW3D_PT_gp_posetab_motionpaths(Panel):
+class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
     bl_label = "Motion Paths"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7115,7 +7115,7 @@ class VIEW3D_PT_gp_posetab_motionpaths(Panel):
                 col.operator("object.paths_update_visible", text="", icon="MOTIONPATHS_UPDATE_ALL")
 
 
-class VIEW3D_PT_gp_posetab_ik(Panel):
+class VIEW3D_PT_gp_pose_tab_ik(Panel):
     bl_label = "IK"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7168,7 +7168,7 @@ class VIEW3D_PT_gp_posetab_ik(Panel):
                 col.operator("pose.ik_clear", text="", icon="CLEAR_IK")
 
 
-class VIEW3D_PT_gp_posetab_constraints(Panel):
+class VIEW3D_PT_gp_pose_tab_constraints(Panel):
     bl_label = "Constraints"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7234,7 +7234,7 @@ class VIEW3D_PT_gp_posetab_constraints(Panel):
                 col.operator("pose.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
 
 
-class VIEW3D_PT_gp_posetab_names(Panel):
+class VIEW3D_PT_gp_pose_tab_names(Panel):
     bl_label = "Names"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -7308,109 +7308,109 @@ class VIEW3D_PT_gp_posetab_names(Panel):
 classes = (
 
     #object menu
-    VIEW3D_PT_objecttab_transform,
-    VIEW3D_PT_objecttab_set_origin,
-    VIEW3D_PT_objecttab_mirror,
-    VIEW3D_PT_objecttab_mirror_local,
-    VIEW3D_PT_objecttab_clear,
-    VIEW3D_PT_objecttab_apply,
-    VIEW3D_PT_objecttab_apply_delta,
-    VIEW3D_PT_objecttab_snap,
-    VIEW3D_PT_objecttab_shading,
+    VIEW3D_PT_object_tab_transform,
+    VIEW3D_PT_object_tab_set_origin,
+    VIEW3D_PT_object_tab_mirror,
+    VIEW3D_PT_object_tab_mirror_local,
+    VIEW3D_PT_object_tab_clear,
+    VIEW3D_PT_object_tab_apply,
+    VIEW3D_PT_object_tab_apply_delta,
+    VIEW3D_PT_object_tab_snap,
+    VIEW3D_PT_object_tab_shading,
 
     #Utility menu
-    VIEW3D_PT_utilitytab_parent,
-    VIEW3D_PT_utilitytab_objectdata,
-    VIEW3D_PT_utilitytab_assets,
-    VIEW3D_PT_utilitytab_constraints,
-    VIEW3D_PT_utilitytab_collection,
-    VIEW3D_PT_utilitytab_convert,
+    VIEW3D_PT_utility_tab_parent,
+    VIEW3D_PT_utility_tab_objectdata,
+    VIEW3D_PT_utility_tab_assets,
+    VIEW3D_PT_utility_tab_constraints,
+    VIEW3D_PT_utility_tab_collection,
+    VIEW3D_PT_utility_tab_convert,
 
     #mesh menu
-    VIEW3D_PT_meshtab_merge,
-    VIEW3D_PT_meshtab_split,
-    VIEW3D_PT_meshtab_separate,
-    VIEW3D_PT_meshtab_tools,
-    VIEW3D_PT_meshtab_normals,
-    VIEW3D_PT_meshtab_shading,
-    VIEW3D_PT_meshtab_cleanup,
-    VIEW3D_PT_meshtab_dissolve,
+    VIEW3D_PT_mesh_tab_merge,
+    VIEW3D_PT_mesh_tab_split,
+    VIEW3D_PT_mesh_tab_separate,
+    VIEW3D_PT_mesh_tab_tools,
+    VIEW3D_PT_mesh_tab_normals,
+    VIEW3D_PT_mesh_tab_shading,
+    VIEW3D_PT_mesh_tab_cleanup,
+    VIEW3D_PT_mesh_tab_dissolve,
 
     #mesh edit mode
-    VIEW3D_PT_vertextab_vertex,
-    VIEW3D_PT_edgetab_Edge,
-    VIEW3D_PT_facetab_face,
-    VIEW3D_PT_uvtab_uv,
+    VIEW3D_PT_vertex_tab_vertex,
+    VIEW3D_PT_edge_tab_Edge,
+    VIEW3D_PT_face_tab_face,
+    VIEW3D_PT_uv_tab_uv,
 
     #mesh sculpt mode
-    VIEW3D_PT_sculpttab_transform,
-    VIEW3D_PT_sculpttab_sculpt,
-    VIEW3D_PT_sculpttab_filters,
-    VIEW3D_PT_sculpttab_set_pivot,
-    VIEW3D_PT_masktab_mask,
-    VIEW3D_PT_masktab_random_mask,
-    VIEW3D_PT_facesetstab_facesets,
-    VIEW3D_PT_facesetstab_init_facesets,
+    VIEW3D_PT_sculpt_tab_transform,
+    VIEW3D_PT_sculpt_tab_sculpt,
+    VIEW3D_PT_sculpt_tab_filters,
+    VIEW3D_PT_sculpt_tab_set_pivot,
+    VIEW3D_PT_mask_tab_mask,
+    VIEW3D_PT_mask_tab_random_mask,
+    VIEW3D_PT_facesets_tab_facesets,
+    VIEW3D_PT_facesets_tab_init_facesets,
 
     #mesh vertex paint mode
-    VIEW3D_PT_painttab_paint,
-    VIEW3D_PT_painttab_colorpicker,
+    VIEW3D_PT_paint_tab_paint,
+    VIEW3D_PT_paint_tab_colorpicker,
 
     #mesh weight paint mode
-    VIEW3D_PT_weightstab_weights,
+    VIEW3D_PT_weights_tab_weights,
 
     #curve edit mode
-    VIEW3D_PT_curvetab_curve,
-    VIEW3D_PT_curvetab_controlpoints,
-    VIEW3D_PT_surfacetab_surface,
-    VIEW3D_PT_curvetab_controlpoints_surface,
-    VIEW3D_PT_segmentstab_segments,
+    VIEW3D_PT_curve_tab_curve,
+    VIEW3D_PT_curve_tab_controlpoints,
+    VIEW3D_PT_surface_tab_surface,
+    VIEW3D_PT_curve_tab_controlpoints_surface,
+    VIEW3D_PT_segments_tab_segments,
 
     # Curves (Hair/Fur) Edit Mode
-    VIEW3D_PT_curvestab_edit_curves,
-    VIEW3D_PT_curvestab_edit_controlpoints,
-    VIEW3D_PT_curvestab_edit_segments,
+    VIEW3D_PT_curves_tab_edit_curves,
+    VIEW3D_PT_curves_tab_edit_controlpoints,
+    VIEW3D_PT_curves_tab_edit_segments,
 
     # Curves (Hair/Fur) Sculpt Mode
-    VIEW3D_PT_curvestab_sculpt_curves,
+    VIEW3D_PT_curves_tab_sculpt_curves,
 
     # grease pencil edit mode
-    VIEW3D_PT_gp_gpenciltab_dissolve,
-    VIEW3D_PT_gp_gpenciltab_cleanup,
-    VIEW3D_PT_gp_gpenciltab_separate,
-    VIEW3D_PT_gp_stroketab_stroke,
-    #VIEW3D_PT_gp_stroketab_simplify, # BFA - Legacy
-    VIEW3D_PT_gp_stroketab_togglecaps,
-    #VIEW3D_PT_gp_stroketab_reproject, # BFA - Legacy
-    VIEW3D_PT_gp_pointtab_point,
+    VIEW3D_PT_gp_gpencil_tab_dissolve,
+    VIEW3D_PT_gp_gpencil_tab_cleanup,
+    VIEW3D_PT_gp_gpencil_tab_separate,
+    VIEW3D_PT_gp_stroke_tab_stroke,
+    #VIEW3D_PT_gp_stroke_tab_simplify, # BFA - Legacy
+    VIEW3D_PT_gp_stroke_tab_togglecaps,
+    #VIEW3D_PT_gp_stroke_tab_reproject, # BFA - Legacy
+    VIEW3D_PT_gp_point_tab_point,
 
     # grease pencil draw mode
-    VIEW3D_PT_gp_drawtab_draw,
-    VIEW3D_PT_gp_drawtab_animation,
-    VIEW3D_PT_gp_drawtab_cleanup,
+    VIEW3D_PT_gp_draw_tab_draw,
+    VIEW3D_PT_gp_draw_tab_animation,
+    VIEW3D_PT_gp_draw_tab_cleanup,
 
     # grease pencil weights mode
-    VIEW3D_PT_gp_weightstab_weights,
-    VIEW3D_PT_gp_weightstab_generate_weights,
+    VIEW3D_PT_gp_weights_tab_weights,
+    VIEW3D_PT_gp_weights_tab_generate_weights,
 
     # grease pencil vertex paint
-    VIEW3D_PT_gp_painttab_paint,
+    VIEW3D_PT_gp_paint_tab_paint,
 
     # armature edit mode
-    VIEW3D_PT_gp_armaturetab_armature,
-    VIEW3D_PT_gp_armaturetab_recalcboneroll,
-    VIEW3D_PT_gp_armaturetab_names,
+    VIEW3D_PT_gp_armature_tab_armature,
+    VIEW3D_PT_gp_armature_tab_recalcboneroll,
+    VIEW3D_PT_gp_armature_tab_names,
 
     #armature pose mode
-    VIEW3D_PT_gp_posetab_pose,
-    VIEW3D_PT_gp_posetab_cleartransform,
-    VIEW3D_PT_gp_posetab_apply,
-    VIEW3D_PT_gp_posetab_inbetweens,
-    VIEW3D_PT_gp_posetab_propagate,
-    VIEW3D_PT_gp_posetab_motionpaths,
-    VIEW3D_PT_gp_posetab_ik,
-    VIEW3D_PT_gp_posetab_constraints,
-    VIEW3D_PT_gp_posetab_names,
+    VIEW3D_PT_gp_pose_tab_pose,
+    VIEW3D_PT_gp_pose_tab_cleartransform,
+    VIEW3D_PT_gp_pose_tab_apply,
+    VIEW3D_PT_gp_pose_tab_inbetweens,
+    VIEW3D_PT_gp_pose_tab_propagate,
+    VIEW3D_PT_gp_pose_tab_motionpaths,
+    VIEW3D_PT_gp_pose_tab_ik,
+    VIEW3D_PT_gp_pose_tab_constraints,
+    VIEW3D_PT_gp_pose_tab_names,
 
     # bfa - separated tooltips
     MASK_MT_flood_fill_invert,
