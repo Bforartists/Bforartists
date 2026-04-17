@@ -68,7 +68,7 @@ const EnumPropertyItem rna_enum_fmodifier_type_items[] = {
      "Snap values to nearest grid step, e.g. for a stop-motion look"},
     {FMODIFIER_TYPE_SMOOTH,
      "SMOOTH",
-     0,
+     ICON_PARTICLEBRUSH_SMOOTH,
      "Smooth (Gaussian)",
      "Smooth curve using Gaussian smoothing"},
     {0, nullptr, 0, nullptr, nullptr},
