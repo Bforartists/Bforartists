@@ -398,7 +398,7 @@ void recurs_sel_strip(Strip *strip_meta)
 
 bool strip_point_image_isect(const Scene *scene, const Strip *strip, float point_view[2])
 {
-  const Array<float2> strip_image_quad = seq::image_transform_final_quad_get(scene, strip);
+  const Array<float2> strip_image_quad = seq::image_transform_quad_get(scene, strip);
   return isect_point_quad_v2(point_view,
                              strip_image_quad[0],
                              strip_image_quad[1],
@@ -750,7 +750,7 @@ static Strip *strip_select_from_preview(
     float center_dist_sq_test = 0.0f;
     if (center) {
       /* Detect overlapping center points (scaled by the zoom level). */
-      float2 co = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
+      float2 co = seq::image_transform_origin_preview_offset_get(scene, strip);
       sub_v2_v2(co, mouseco_view);
       mul_v2_v2(co, center_scale_px);
       center_dist_sq_test = len_squared_v2(co);
@@ -2095,7 +2095,7 @@ static bool strip_box_select_rect_image_isect(const Scene *scene,
                                               const Strip *strip,
                                               const rctf *rect)
 {
-  const Array<float2> strip_image_quad = seq::image_transform_final_quad_get(scene, strip);
+  const Array<float2> strip_image_quad = seq::image_transform_quad_get(scene, strip);
   float rect_quad[4][2] = {{rect->xmax, rect->ymax},
                            {rect->xmax, rect->ymin},
                            {rect->xmin, rect->ymin},
@@ -2409,7 +2409,7 @@ static bool do_lasso_select_preview(bContext *C,
   VectorSet strips = seq::query_rendered_strips(
       scene, channels, seqbase, scene->r.cfra, sseq->chanshown);
   for (Strip *strip : strips) {
-    float2 origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
+    float2 origin = seq::image_transform_origin_preview_offset_get(scene, strip);
     if (do_lasso_select_is_origin_inside(region, &rect, mcoords, origin)) {
       changed = true;
       if (ELEM(sel_op, SEL_OP_ADD, SEL_OP_SET)) {
@@ -2492,7 +2492,7 @@ static bool strip_circle_select_radius_image_isect(const Scene *scene,
                                                    const int *radius,
                                                    const float2 mval)
 {
-  float2 origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
+  float2 origin = seq::image_transform_origin_preview_offset_get(scene, strip);
 
   float dx = origin.x - float(mval[0]);
   float dy = origin.y - float(mval[1]);

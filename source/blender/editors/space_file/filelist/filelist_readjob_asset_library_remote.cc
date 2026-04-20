@@ -82,7 +82,7 @@ static void filelist_readjob_remote_asset_library_index_read(
 
     ListBaseT<FileListInternEntry> entries = {nullptr};
 
-    BLI_strncpy(job_params->cur_relbase, asset_file.c_str(), sizeof(job_params->cur_relbase));
+    STRNCPY(job_params->cur_relbase, asset_file.c_str());
     filelist_readjob_list_lib_add_datablock(job_params,
                                             &entries,
                                             &entry.datablock_info,

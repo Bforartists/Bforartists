@@ -948,7 +948,9 @@ void Camera::set_osl_camera(Scene *scene,
       /* Skip unsupported types. */
       if (param->varlenarray || param->isstruct || param->type.arraylen > 1 || param->isoutput ||
           param->isclosure)
+      {
         continue;
+      }
 
       vector<uint8_t> raw_data;
       int vec_size = (int)param->type.aggregate;
@@ -976,8 +978,9 @@ void Camera::set_osl_camera(Scene *scene,
         raw_data.resize(data.length() + 1);
         memcpy(raw_data.data(), data.c_str(), data.length() + 1);
       }
-      else
+      else {
         continue;
+      }
 
       auto entry = std::make_pair(raw_data, param->type);
       auto it = script_params.find(param->name);
@@ -995,7 +998,7 @@ void Camera::set_osl_camera(Scene *scene,
 
     /* Remove unused parameters. */
     for (auto it = script_params.begin(); it != script_params.end();) {
-      if (used_params.count(it->first)) {
+      if (used_params.contains(it->first)) {
         it++;
       }
       else {

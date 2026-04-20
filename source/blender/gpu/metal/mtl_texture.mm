@@ -1496,9 +1496,8 @@ void gpu::MTLTexture::mip_range_set(int min, int max)
   texture_view_dirty_flags_ |= TEXTURE_VIEW_MIP_DIRTY;
 }
 
-void *gpu::MTLTexture::read(int mip, eGPUDataFormat type)
+void gpu::MTLTexture::read(int mip, eGPUDataFormat type, void *data)
 {
-  /* Prepare Array for return data. */
   BLI_assert(!(format_flag_ & GPU_FORMAT_COMPRESSED));
   BLI_assert(mip <= mipmaps_);
   BLI_assert(validate_data_format(format_, type));
@@ -1507,24 +1506,18 @@ void *gpu::MTLTexture::read(int mip, eGPUDataFormat type)
   int extent[3] = {1, 1, 1};
   this->mip_size_get(mip, extent);
 
-  size_t sample_len = extent[0] * max_ii(extent[1], 1) * max_ii(extent[2], 1);
-  size_t sample_size = to_bytesize(format_, type);
-  size_t texture_size = sample_len * sample_size;
+  size_t texture_size = read_size_get(mip, type);
   int num_channels = to_component_len(format_);
-
-  void *data = MEM_new_uninitialized(texture_size + 8, "GPU_texture_read");
 
   /* Ensure texture is baked. */
   if (is_baked_) {
     this->read_internal(
-        mip, 0, 0, 0, extent[0], extent[1], extent[2], type, num_channels, texture_size + 8, data);
+        mip, 0, 0, 0, extent[0], extent[1], extent[2], type, num_channels, texture_size, data);
   }
   else {
     /* Clear return values? */
     MTL_LOG_WARNING("MTLTexture::read - reading from texture with no image data");
   }
-
-  return data;
 }
 
 /* Fetch the raw buffer data from a texture and copy to CPU host ptr. */

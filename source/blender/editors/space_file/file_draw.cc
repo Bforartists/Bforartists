@@ -84,7 +84,7 @@ namespace blender {
 using RemoteLibraryLoadingStatus = asset_system::RemoteLibraryLoadingStatus;
 
 void ED_file_path_button(bScreen *screen,
-                         const SpaceFile *sfile,
+                         SpaceFile *sfile,
                          FileSelectParams *params,
                          ui::Block *block)
 {
@@ -92,9 +92,11 @@ void ED_file_path_button(bScreen *screen,
 
   BLI_assert_msg(params != nullptr,
                  "File select parameters not set. The caller is expected to check this.");
+  BLI_assert(params == sfile->params || params == &sfile->asset_params->base_params);
 
-  PointerRNA params_rna_ptr = RNA_pointer_create_discrete(
-      &screen->id, RNA_FileSelectParams, params);
+  PointerRNA space_ptr = RNA_pointer_create_discrete(&screen->id, RNA_SpaceFileBrowser, sfile);
+  PointerRNA params_rna_ptr = RNA_pointer_create_with_parent(
+      space_ptr, RNA_FileSelectParams, params);
 
   /* callbacks for operator check functions */
   block_func_set(block, file_draw_check_cb, nullptr, nullptr);

@@ -252,14 +252,14 @@ static void build_sources_preview(const Scene *scene,
 {
   for (Strip *strip : strip_sources) {
     if (!translate_origin) {
-      const Array<float2> strip_image_quad = seq::image_transform_final_quad_get(scene, strip);
+      const Array<float2> strip_image_quad = seq::image_transform_quad_get(scene, strip);
       for (const float2 &point : strip_image_quad) {
         snap_data->sources.append(point);
       }
     }
 
     /* Add origins last */
-    const float2 image_origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
+    const float2 image_origin = seq::image_transform_origin_preview_offset_get(scene, strip);
     snap_data->sources.append(image_origin);
   }
 }
@@ -348,7 +348,7 @@ static void build_targets_preview(const Scene *scene,
   }
 
   auto build_corners = [&](Strip *strip) {
-    const Array<float2> corners = seq::image_transform_final_quad_get(scene, strip);
+    const Array<float2> corners = seq::image_transform_quad_get(scene, strip);
     for (const float2 &point : corners) {
       snap_data->targets.append(point);
     }
@@ -358,7 +358,7 @@ static void build_targets_preview(const Scene *scene,
   if (snap_mode & SEQ_SNAP_TO_STRIPS_PREVIEW) {
     for (Strip *strip : strip_targets) {
       build_corners(strip);
-      const float2 image_origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
+      const float2 image_origin = seq::image_transform_origin_preview_offset_get(scene, strip);
       snap_data->targets.append(image_origin);
     }
   }
@@ -586,7 +586,7 @@ static int snap_sequencer_calc_drag_drop_impl(TransInfo *t,
   TransSeqSnapData *snap_data = MEM_new<TransSeqSnapData>(__func__);
 
   VectorSet<Strip *> empty_col;
-  VectorSet<Strip *> strip_targets = query_strip_targets_timeline(scene, empty_col, false);
+  VectorSet<Strip *> strip_targets = query_strip_targets_timeline(scene, empty_col, true);
 
   BLI_assert(left_frame <= right_frame);
 

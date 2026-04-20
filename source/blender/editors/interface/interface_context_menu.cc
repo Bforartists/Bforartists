@@ -867,7 +867,7 @@ bool popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *even
     /* Swap render X and Y dimensions. */
     if (but->rnaprop && but->rnapoin.type == RNA_RenderSettings) {
       const std::string prop_id = RNA_property_identifier(but->rnaprop);
-      if (prop_id == "resolution_x" || prop_id == "resolution_y") {
+      if (ELEM(prop_id, "resolution_x", "resolution_y")) {
         layout.op("RENDER_OT_swap_dimensions",
                   CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Swap Dimensions"),
                   ICON_RENDER_SWAP_DIMENSIONS);

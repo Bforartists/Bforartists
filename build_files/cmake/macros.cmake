@@ -84,32 +84,6 @@ function(path_strip_trailing_slash
   set(${path_new} "${${path_new}}" PARENT_SCOPE)
 endfunction()
 
-# Our own version of `cmake_path(IS_PREFIX ..)`.
-# This can be removed when 3.20 or greater is the minimum supported version.
-#
-# Return values:
-# - `${result_var}`: `TRUE` if `path_prefix` is a prefix of `path`.
-function(path_is_prefix
-  path_prefix path result_var
-  )
-  # Remove when CMAKE version is bumped to "3.20" or greater.
-  # `cmake_path(IS_PREFIX ${path_prefix} ${path} NORMALIZE result_var)`
-  # Get the normalized paths (needed to remove `..`).
-  get_filename_component(_abs_prefix "${${path_prefix}}" ABSOLUTE)
-  get_filename_component(_abs_suffix "${${path}}" ABSOLUTE)
-  string(LENGTH "${_abs_prefix}" _len)
-  string(SUBSTRING "${_abs_suffix}" 0 "${_len}" _substr)
-  string(COMPARE EQUAL "${_abs_prefix}" "${_substr}" _is_prefix)
-  # Ensure "/foo/bar" isn't considered a prefix of "/foo/bar_baz".
-  # Checking "/" is sufficient on WIN32 since `get_filename_component` normalizes paths.
-  if(_is_prefix)
-    string(SUBSTRING "${_abs_suffix}" "${_len}" 1 _next_char)
-    if(NOT "${_next_char}" STREQUAL "" AND NOT "${_next_char}" STREQUAL "/")
-      set(_is_prefix FALSE)
-    endif()
-  endif()
-  set("${result_var}" "${_is_prefix}" PARENT_SCOPE)
-endfunction()
 
 # foo_bar.spam --> foo_barMySuffix.spam
 #

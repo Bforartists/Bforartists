@@ -428,8 +428,9 @@ void VKContext::swap_buffer_draw_handler(const GHOST_VulkanSwapChainData &swap_c
                                          bool wait_for_submission)
 {
   const bool do_blit_to_swapchain = swap_chain_data.image != VK_NULL_HANDLE;
-  const bool use_shader = swap_chain_data.surface_format.colorSpace ==
-                          VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT;
+  const bool use_shader = ELEM(swap_chain_data.surface_format.colorSpace,
+                               VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT,
+                               VK_COLOR_SPACE_PASS_THROUGH_EXT);
 
   /* When swapchain is invalid/minimized we only flush the render graph to free GPU resources. */
   if (!do_blit_to_swapchain) {
@@ -569,7 +570,9 @@ void VKContext::openxr_acquire_framebuffer_image_handler(GHOST_VulkanOpenXRData 
 
   switch (openxr_data.data_transfer_mode) {
     case GHOST_kVulkanXRModeCPU:
-      openxr_data.cpu.image_data = color_attachment->read(0, data_format);
+      openxr_data.cpu.image_data = MEM_new_uninitialized(
+          color_attachment->read_size_get(0, data_format), __func__);
+      color_attachment->read(0, data_format, openxr_data.cpu.image_data);
       break;
 
     case GHOST_kVulkanXRModeFD: {

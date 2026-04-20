@@ -33,7 +33,7 @@ struct Object;
 namespace io::alembic {
 
 class AbcObjectReader;
-struct ImportSettings;
+struct AbcReaderConstructorArgs;
 
 std::string get_valid_abc_name(const char *name);
 
@@ -111,7 +111,7 @@ std::optional<SampleInterpolationSettings> get_sample_interpolation_settings(
     const Alembic::AbcCoreAbstract::TimeSamplingPtr &time_sampling,
     size_t samples_number);
 
-AbcObjectReader *create_reader(const Alembic::AbcGeom::IObject &object, ImportSettings &settings);
+AbcObjectReader *create_reader(const AbcReaderConstructorArgs &args);
 
 }  // namespace io::alembic
 }  // namespace blender

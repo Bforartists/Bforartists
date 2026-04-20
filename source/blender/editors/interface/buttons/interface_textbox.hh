@@ -34,7 +34,7 @@ void textbox_textedit_set_cursor_pos(ButtonTextBox *textbox,
                                      const ARegion *region,
                                      const float2 xy);
 
-/** Returns the index of the which containings the string offset. */
+/** Returns the index of the line which contains the string offset. */
 int textbox_wrapped_line_index_from_char_offset(Span<StringRef> lines, int offset);
 
 /**

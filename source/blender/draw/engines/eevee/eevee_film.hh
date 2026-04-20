@@ -147,7 +147,7 @@ class Film {
   {
     return data_.render_extent;
   }
-  inline bool is_valid_render_extent() const
+  bool is_valid_render_extent() const
   {
     return is_valid_render_extent_;
   }

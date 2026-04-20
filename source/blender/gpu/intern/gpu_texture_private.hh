@@ -158,7 +158,7 @@ class Texture {
   virtual void clear(const double4 data) = 0;
   virtual void swizzle_set(const char swizzle_mask[4]) = 0;
   virtual void mip_range_set(int min, int max) = 0;
-  virtual void *read(int mip, eGPUDataFormat format) = 0;
+  virtual void read(int mip, eGPUDataFormat format, void *dst) = 0;
 
   void attach_to(FrameBuffer *fb, GPUAttachmentType type);
   void detach_from(FrameBuffer *fb);
@@ -193,6 +193,8 @@ class Texture {
   {
     return gpu_image_usage_flags_;
   }
+
+  size_t read_size_get(int mip, eGPUDataFormat format) const;
 
   void mip_size_get(int mip, int r_size[3]) const
   {

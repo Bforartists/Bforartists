@@ -475,6 +475,42 @@ static const EnumPropertyItem *rna_NodeTreeInterfaceSocket_socket_type_itemf(
       ntree->typeinfo, rna_NodeTreeInterfaceSocket_socket_type_poll, r_free);
 }
 
+static void rna_NodeTreeInterfaceSocket_is_panel_toggle_set(PointerRNA *ptr, bool value)
+{
+  bNodeTree &ntree = *blender::id_cast<bNodeTree *>(ptr->owner_id);
+  bNodeTreeInterfaceSocket &io_socket = *static_cast<bNodeTreeInterfaceSocket *>(ptr->data);
+  const bke::bNodeSocketType *base_typeinfo = bke::node_socket_type_find(io_socket.socket_type);
+  BLI_assert(base_typeinfo);
+  bNodeTreeInterfacePanel *parent = ntree.tree_interface.find_item_parent(io_socket.item);
+  BLI_assert(parent);
+
+  if (value) {
+    if (base_typeinfo->type != SOCK_BOOLEAN) {
+      return;
+    }
+    if (io_socket.flag & NODE_INTERFACE_SOCKET_PANEL_TOGGLE) {
+      return;
+    }
+
+    io_socket.flag |= NODE_INTERFACE_SOCKET_PANEL_TOGGLE;
+    /* Panel toggle item must always be at the first position. */
+    parent->move_item(io_socket.item, 0);
+    ntree.tree_interface.tag_items_changed();
+  }
+  else {
+    BLI_assert(base_typeinfo->type == SOCK_BOOLEAN);
+    if (!(io_socket.flag & NODE_INTERFACE_SOCKET_PANEL_TOGGLE)) {
+      return;
+    }
+
+    io_socket.flag &= ~NODE_INTERFACE_SOCKET_PANEL_TOGGLE;
+    /* Panel toggles are always the first socket. Unsetting the flag may require reordering of
+     * sockets (inputs after outputs). Reinserting the item makes sure the position is valid. */
+    parent->move_item(io_socket.item, parent->item_position(io_socket.item));
+    ntree.tree_interface.tag_items_changed();
+  }
+}
+
 /**
  * Also control the structure type when setting the "Is Single" status. To be removed when the
  * structure type feature is moved out of experimental.
@@ -1241,6 +1277,7 @@ static void rna_def_node_interface_socket(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "is_panel_toggle", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", NODE_INTERFACE_SOCKET_PANEL_TOGGLE);
+  RNA_def_property_boolean_funcs(prop, nullptr, "rna_NodeTreeInterfaceSocket_is_panel_toggle_set");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop,
                            "Is Panel Toggle",

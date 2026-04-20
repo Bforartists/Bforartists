@@ -691,6 +691,12 @@ void GPU_shader_uniform_mat4(gpu::Shader *sh, const char *name, const float data
   GPU_shader_uniform_float_ex(sh, loc, 16, 1, reinterpret_cast<const float *>(data));
 }
 
+void GPU_shader_uniform_mat3(gpu::Shader *sh, const char *name, const float data[3][3])
+{
+  const int loc = GPU_shader_get_uniform(sh, name);
+  GPU_shader_uniform_float_ex(sh, loc, 9, 1, reinterpret_cast<const float *>(data));
+}
+
 void GPU_shader_uniform_mat3_as_mat4(gpu::Shader *sh, const char *name, const float data[3][3])
 {
   float matrix[4][4];

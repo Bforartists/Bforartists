@@ -151,6 +151,7 @@ DEF_ENUM(rna_enum_rigidbody_object_shape_items)
 DEF_ENUM(rna_enum_rigidbody_constraint_type_items)
 
 DEF_ENUM(rna_enum_object_axis_items)
+DEF_ENUM(rna_enum_object_axis_flip_items)
 
 DEF_ENUM(rna_enum_bake_pass_type_items)
 DEF_ENUM(rna_enum_bake_pass_filter_type_items)

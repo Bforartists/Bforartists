@@ -134,6 +134,7 @@ class GPUDisplayShader : NonCopyable, NonMovable {
   bool use_hdr_buffer = false;
   bool use_hdr_display = false;
   bool use_display_emulation = false;
+  bool use_scope_space = false;
 
   /* The shader is valid and can be bound.
    * Note that the cache might contain invalid shaders to prevent Blender from attempting to keep

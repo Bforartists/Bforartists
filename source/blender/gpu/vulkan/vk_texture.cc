@@ -327,7 +327,7 @@ void VKTexture::read_sub(
   }
 }
 
-void *VKTexture::read(int mip, eGPUDataFormat format)
+void VKTexture::read(int mip, eGPUDataFormat format, void *data)
 {
   BLI_assert(!(format_flag_ & GPU_FORMAT_COMPRESSED));
 
@@ -346,18 +346,13 @@ void *VKTexture::read(int mip, eGPUDataFormat format)
     default:
       break;
   }
-
   if (mip_size[2] == 0) {
     mip_size[2] = 1;
   }
   IndexRange layers = IndexRange(layer_offset_, vk_layer_count(1));
-  size_t sample_len = mip_size[0] * mip_size[1] * mip_size[2] * layers.size();
-  size_t host_memory_size = sample_len * to_bytesize(format_, format);
 
-  void *data = MEM_new_uninitialized(host_memory_size, __func__);
   int region[6] = {0, 0, 0, mip_size[0], mip_size[1], mip_size[2]};
   read_sub(mip, format, region, layers, data);
-  return data;
 }
 
 void VKTexture::update_sub(int mip,

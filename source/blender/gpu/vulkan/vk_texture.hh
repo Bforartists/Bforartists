@@ -101,7 +101,7 @@ class VKTexture : public Texture {
                            std::optional<int> layer);
   void swizzle_set(const char swizzle_mask[4]) override;
   void mip_range_set(int min, int max) override;
-  void *read(int mip, eGPUDataFormat format) override;
+  void read(int mip, eGPUDataFormat format, void *data) override;
   void read_sub(
       int mip, eGPUDataFormat format, const int region[6], IndexRange layers, void *r_data);
   void update_sub(int mip,

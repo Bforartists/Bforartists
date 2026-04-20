@@ -533,7 +533,6 @@ struct TileInfo {
   SpinLock *lock;
   bool masked;
   ushort tile_width;
-  ImBuf **tmpibuf;
   ProjPaintImage *pjima;
 };
 
@@ -1828,7 +1827,6 @@ static int project_paint_undo_subtiles(const TileInfo *tinf, int tx, int ty)
       undorect = ED_image_paint_tile_push(undo_tiles,
                                           pjIma->ima,
                                           pjIma->ibuf,
-                                          tinf->tmpibuf,
                                           &pjIma->iuser,
                                           tx,
                                           ty,
@@ -1841,7 +1839,6 @@ static int project_paint_undo_subtiles(const TileInfo *tinf, int tx, int ty)
       undorect = ED_image_paint_tile_push(undo_tiles,
                                           pjIma->ima,
                                           pjIma->ibuf,
-                                          tinf->tmpibuf,
                                           &pjIma->iuser,
                                           tx,
                                           ty,
@@ -3003,8 +3000,7 @@ static void project_paint_face_init(const ProjPaintState *ps,
                                     const int image_index,
                                     const rctf *clip_rect,
                                     const rctf *bucket_bounds,
-                                    ImBuf *ibuf,
-                                    ImBuf **tmpibuf)
+                                    ImBuf *ibuf)
 {
   /* Projection vars, to get the 3D locations into screen space. */
   MemArena *arena = ps->arena_mt[thread_index];
@@ -3016,7 +3012,6 @@ static void project_paint_face_init(const ProjPaintState *ps,
       ps->tile_lock,
       ps->do_masking,
       ushort(ED_IMAGE_UNDO_TILE_NUMBER(ibuf->x)),
-      tmpibuf,
       ps->projImages + image_index,
   };
 
@@ -3536,7 +3531,6 @@ static void project_bucket_init(const ProjPaintState *ps,
   int tri_index, image_index = 0;
   ImBuf *ibuf = nullptr;
   Image *tpage_last = nullptr, *tpage;
-  ImBuf *tmpibuf = nullptr;
   int tile_last = 0;
 
   if (ps->image_tot == 1) {
@@ -3551,8 +3545,7 @@ static void project_bucket_init(const ProjPaintState *ps,
                               0,
                               clip_rect,
                               bucket_bounds,
-                              ibuf,
-                              &tmpibuf);
+                              ibuf);
     }
   }
   else {
@@ -3584,20 +3577,9 @@ static void project_bucket_init(const ProjPaintState *ps,
       }
       /* context switching done */
 
-      project_paint_face_init(ps,
-                              thread_index,
-                              bucket_index,
-                              tri_index,
-                              image_index,
-                              clip_rect,
-                              bucket_bounds,
-                              ibuf,
-                              &tmpibuf);
+      project_paint_face_init(
+          ps, thread_index, bucket_index, tri_index, image_index, clip_rect, bucket_bounds, ibuf);
     }
-  }
-
-  if (tmpibuf) {
-    IMB_freeImBuf(tmpibuf);
   }
 
   ps->bucketFlags[bucket_index] |= PROJ_BUCKET_INIT;

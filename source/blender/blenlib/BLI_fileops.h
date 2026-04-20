@@ -242,7 +242,7 @@ char *BLI_current_working_dir(char *dir, size_t maxncpy) ATTR_WARN_UNUSED_RESULT
  * instead of attempting to create a fallback such as `/`, `/tmp`, `C:\` ... etc.
  * Although there may be rare cases where a fallback is appropriate.
  */
-const char *BLI_dir_home(void);
+const char *BLI_dir_home();
 
 eFileAttributes BLI_file_attributes(const char *path);
 /**

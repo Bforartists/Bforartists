@@ -589,7 +589,7 @@ std::string remote_library_asset_preview_path(const AssetRepresentation &asset)
      * either the period before the last extension, or the null character at the end of the file
      * name). */
     const char *ext = BLI_path_extension_or_end(preview_url->c_str());
-    BLI_snprintf(thumb_name, sizeof(thumb_name), "%s%s", hexdigest, ext);
+    SNPRINTF(thumb_name, "%s%s", hexdigest, ext);
   }
 
   /* First two letters of the thumbnail name (MD5 hash of the URI) as sub-directory name. */

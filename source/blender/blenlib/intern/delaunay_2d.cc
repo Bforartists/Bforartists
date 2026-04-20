@@ -2916,7 +2916,7 @@ template<typename T> void detect_holes_with_fillrule_nonzero(CDT_state<T> *cdt_s
     const int region = f->visit_index;
     if (region >= 0) {
       const int winding = region_winding[region];
-      f->hole = (winding == 0 || winding == INT_MIN);
+      f->hole = (ELEM(winding, 0, INT_MIN));
     }
   }
 }

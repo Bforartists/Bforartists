@@ -34,7 +34,7 @@ struct Tex *BKE_texture_add(struct Main *bmain, const char *name);
 void BKE_texture_type_set(struct Tex *tex, int type);
 
 void BKE_texture_mtex_default(struct MTex *mtex);
-struct MTex *BKE_texture_mtex_add(void);
+struct MTex *BKE_texture_mtex_add();
 /**
  * Slot -1 for first free ID.
  */
@@ -57,7 +57,7 @@ struct TexMapping *BKE_texture_mapping_add(int type);
 void BKE_texture_mapping_default(struct TexMapping *texmap, int type);
 void BKE_texture_mapping_init(struct TexMapping *texmap);
 
-struct ColorMapping *BKE_texture_colormapping_add(void);
+struct ColorMapping *BKE_texture_colormapping_add();
 void BKE_texture_colormapping_default(struct ColorMapping *colormap);
 
 bool BKE_texture_dependsOnTime(const struct Tex *texture);

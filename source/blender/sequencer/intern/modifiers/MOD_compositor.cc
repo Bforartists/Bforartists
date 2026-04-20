@@ -394,7 +394,6 @@ class CompositorModifierContext : public CompositorContext {
       this->mask_buffer_ = seq_render_strip(
           &context.render_data, &context.render_state, smd.mask_strip, timeline_frame);
       if (this->mask_buffer_ != nullptr) {
-        ensure_ibuf_is_linear_space(this->mask_buffer_, true);
         this->create_result_from_input(this->mask_, *this->mask_buffer_);
         this->owns_mask_ = true;
       }
@@ -448,8 +447,6 @@ static void compositor_modifier_apply(ModifierApplyContext &context,
     return;
   }
 
-  /* Note: compositor always operates in linear space, float pixels. */
-  ensure_ibuf_is_linear_space(context.image, true);
   CompositorCache &com_cache = context.render_data.scene->ed->runtime->ensure_compositor_cache();
   CompositorModifierContext com_mod_context(context, com_cache.get_cache_manager(), modifier_data);
 

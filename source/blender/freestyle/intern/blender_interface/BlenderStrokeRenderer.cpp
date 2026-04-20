@@ -234,6 +234,7 @@ Material *BlenderStrokeRenderer::GetStrokeShader(blender::Main *bmain,
       }
     }
     ma->nodetree = ntree;
+    ntree->owner_id = &ma->id;
   }
   else {
     ntree = ma->nodetree;

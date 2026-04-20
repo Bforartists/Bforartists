@@ -68,7 +68,7 @@ ccl_device void primitive_normal_set_undisplaced(KernelGlobals kg,
 
   if (sd->shader & SHADER_SMOOTH_NORMAL) {
     const AttributeDescriptor ndesc = find_attribute(kg, sd, ATTR_STD_NORMAL_UNDISPLACED);
-    if (ndesc.offset == ATTR_STD_NOT_FOUND) {
+    if (!is_attribute_found(ndesc)) {
       return;
     }
     N = safe_normalize(primitive_surface_attribute<float3>(kg, sd, ndesc));
@@ -112,7 +112,7 @@ ccl_device_forceinline float3 primitive_uv(KernelGlobals kg, const ccl_private S
 {
   const AttributeDescriptor desc = find_attribute(kg, sd, ATTR_STD_UV);
 
-  if (desc.offset == ATTR_STD_NOT_FOUND) {
+  if (!is_attribute_found(desc)) {
     return make_float3(0.0f, 0.0f, 0.0f);
   }
 
@@ -131,7 +131,7 @@ ccl_device bool primitive_ptex(KernelGlobals kg,
   const AttributeDescriptor desc_face_id = find_attribute(kg, sd, ATTR_STD_PTEX_FACE_ID);
   const AttributeDescriptor desc_uv = find_attribute(kg, sd, ATTR_STD_PTEX_UV);
 
-  if (desc_face_id.offset == ATTR_STD_NOT_FOUND || desc_uv.offset == ATTR_STD_NOT_FOUND) {
+  if (!is_attribute_found(desc_face_id) || !is_attribute_found(desc_uv)) {
     return false;
   }
 
@@ -162,7 +162,7 @@ ccl_device Float3Type primitive_tangent(KernelGlobals kg, ccl_private ShaderData
   /* try to create spherical tangent from generated coordinates */
   const AttributeDescriptor desc = find_attribute(kg, sd, ATTR_STD_GENERATED);
 
-  if (desc.offset != ATTR_STD_NOT_FOUND) {
+  if (is_attribute_found(desc)) {
     if constexpr (is_dual_v<Float3Type>) {
       dual3 data = primitive_surface_attribute<dual3>(kg, sd, desc);
       data = make_float3(-(data.y() - 0.5f), (data.x() - 0.5f), dual1());
@@ -224,7 +224,7 @@ ccl_device_forceinline float4 primitive_motion_vector(KernelGlobals kg,
   /* deformation motion */
   AttributeDescriptor desc = find_attribute(kg, sd, ATTR_STD_MOTION_VERTEX_POSITION);
 
-  if (desc.offset != ATTR_STD_NOT_FOUND) {
+  if (is_attribute_found(desc)) {
     /* get motion info */
     const int numverts = kernel_data_fetch(objects, sd->object).numverts;
 

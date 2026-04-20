@@ -30,9 +30,9 @@ struct [[host_shared]] RayTraceData {
   int resolution_scale;
   /** View space thickness the objects. */
   float thickness;
-  /** Scale and bias to go from horizon-trace resolution to input resolution. */
-  int2 horizon_resolution_bias;
-  int horizon_resolution_scale;
+  /** Scale and bias to go from fast GI resolution to input resolution. */
+  int2 fast_gi_resolution_bias;
+  int fast_gi_resolution_scale;
   /** Determine how fast the sample steps are getting bigger. */
   float quality;
   /** Maximum roughness for which we will trace a ray. */

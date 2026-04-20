@@ -396,7 +396,7 @@ void BKE_previewimg_ensure(PreviewImage *prv, const int size)
   if (do_preview) {
     prv->w[ICON_SIZE_PREVIEW] = thumb->x;
     prv->h[ICON_SIZE_PREVIEW] = thumb->y;
-    prv->rect[ICON_SIZE_PREVIEW] = reinterpret_cast<unsigned int *>(
+    prv->rect[ICON_SIZE_PREVIEW] = reinterpret_cast<uint *>(
         MEM_dupalloc<uint8_t>(thumb->byte_data()));
     prv->flag[ICON_SIZE_PREVIEW] &= ~(PRV_CHANGED | PRV_USER_EDITED | PRV_RENDERING);
   }
@@ -416,7 +416,7 @@ void BKE_previewimg_ensure(PreviewImage *prv, const int size)
     IMB_scale(thumb, icon_w, icon_h, IMBScaleFilter::Box, false);
     prv->w[ICON_SIZE_ICON] = icon_w;
     prv->h[ICON_SIZE_ICON] = icon_h;
-    prv->rect[ICON_SIZE_ICON] = reinterpret_cast<unsigned int *>(
+    prv->rect[ICON_SIZE_ICON] = reinterpret_cast<uint *>(
         MEM_dupalloc<uint8_t>(thumb->byte_data()));
     prv->flag[ICON_SIZE_ICON] &= ~(PRV_CHANGED | PRV_USER_EDITED | PRV_RENDERING);
   }

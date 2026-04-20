@@ -101,6 +101,7 @@ static void modifier_ops_extra_draw(bContext *C, ui::Layout *layout, void *smd_v
     return;
   }
   StripModifierData *smd = static_cast<StripModifierData *>(smd_v);
+  PointerRNA mod_ptr = RNA_pointer_create_discrete(&sequencer_scene->id, RNA_StripModifier, smd);
 
   PointerRNA op_ptr;
   /* Duplicate. */
@@ -141,6 +142,11 @@ static void modifier_ops_extra_draw(bContext *C, ui::Layout *layout, void *smd_v
     RNA_string_set(&op_ptr, "modifier", smd->name);
     RNA_int_set(&op_ptr, "index", BLI_listbase_count(&strip->modifiers) - 1);
     row.enabled_set(smd->next != nullptr);
+  }
+
+  if (smd->type == eSeqModifierType_Compositor) {
+    layout->separator();
+    layout->prop(&mod_ptr, "show_group_selector", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }
 

@@ -75,10 +75,12 @@ class AssetLibrary {
      * not dangling before accessing. */
 
     Set<std::shared_ptr<AssetRepresentation>> external_assets;
+    Mutex external_assets_mutex;
     /* Store local ID assets separately for efficient lookups.
      * TODO(Julian): A [ID *, asset] or even [ID.session_uid, asset] map would be preferable for
      * faster lookups. Not possible until each asset is only represented once in the storage. */
     Set<std::shared_ptr<AssetRepresentation>> local_id_assets;
+    Mutex local_id_assets_mutex;
   };
   AssetStorage asset_storage_;
 

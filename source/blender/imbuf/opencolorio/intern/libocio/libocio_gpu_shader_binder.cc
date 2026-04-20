@@ -38,6 +38,7 @@ static ConstProcessorRcPtr create_to_display_processor(
   display_parameters.look = display_shader.look;
   display_parameters.use_hdr_buffer = display_shader.use_hdr_buffer;
   display_parameters.use_display_emulation = display_shader.use_display_emulation;
+  display_parameters.use_scope_space = display_shader.use_scope_space;
   return create_ocio_display_processor(config, display_parameters);
 }
 

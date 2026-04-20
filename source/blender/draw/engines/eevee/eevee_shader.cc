@@ -172,8 +172,8 @@ ShaderGroups ShaderModule::static_shaders_load(const ShaderGroups request_bits,
   }
   {
     const eShaderType shader_list[] = {
-        HORIZON_DENOISE, HORIZON_RESOLVE, HORIZON_SCAN, HORIZON_SETUP};
-    request(HORIZON_SCAN_SHADERS, AS_SPAN(shader_list));
+        FAST_GI_DENOISE, FAST_GI_RESOLVE, FAST_GI_SCAN, FAST_GI_SETUP};
+    request(FAST_GI_SHADERS, AS_SPAN(shader_list));
   }
   {
     const eShaderType shader_list[] = {LIGHT_CULLING_DEBUG,
@@ -362,7 +362,7 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
     case DEFERRED_AOV_CLEAR:
       return "eevee_deferred_aov_clear";
     case DEFERRED_CAPTURE_EVAL:
-      return "eevee_deferred_capture_eval";
+      return "eevee_deferred_sphere_eval";
     case DEFERRED_PLANAR_EVAL:
       return "eevee_deferred_planar_eval";
     case DEFERRED_THICKNESS_AMEND:
@@ -375,14 +375,14 @@ const char *ShaderModule::static_shader_create_info_name_get(eShaderType shader_
       return "eevee_hiz_update";
     case HIZ_UPDATE_LAYER:
       return "eevee_hiz_update_layer";
-    case HORIZON_DENOISE:
-      return "eevee_horizon_denoise";
-    case HORIZON_RESOLVE:
-      return "eevee_horizon_resolve";
-    case HORIZON_SCAN:
-      return "eevee_horizon_scan";
-    case HORIZON_SETUP:
-      return "eevee_horizon_setup";
+    case FAST_GI_DENOISE:
+      return "eevee_fast_gi_denoise";
+    case FAST_GI_RESOLVE:
+      return "eevee_fast_gi_resolve";
+    case FAST_GI_SCAN:
+      return "eevee_fast_gi_scan";
+    case FAST_GI_SETUP:
+      return "eevee_fast_gi_setup";
     case LOOKDEV_COPY_WORLD:
       return "eevee_lookdev_copy_world";
     case LOOKDEV_DISPLAY:
@@ -602,9 +602,8 @@ class SlotAllocator {
 
   Set<std::string> visited_infos;
 
- public:
-  /** WATCH: Recursive. */
-  void reserve_slots(const gpu::shader::ShaderCreateInfo &info)
+  void reserve_slots_recursive(const gpu::shader::ShaderCreateInfo &info,
+                               bool is_gpumat_info = true)
   {
     if (!visited_infos.add_overwrite(info.name_)) {
       /* Avoid infinite recursion or visiting an info more than once. */
@@ -619,14 +618,18 @@ class SlotAllocator {
         available_samplers_ &= ~(uint32_t(1) << res.slot);
       }
     }
-    for (const ShaderCreateInfo::Resource &res : info.batch_resources_) {
+    for (const ShaderCreateInfo::Resource &res : info.geometry_resources_) {
       if (res.bind_type == ShaderCreateInfo::Resource::SAMPLER) {
         available_samplers_ &= ~(uint32_t(1) << res.slot);
       }
     }
-    for (const ShaderCreateInfo::Resource &res : info.geometry_resources_) {
-      if (res.bind_type == ShaderCreateInfo::Resource::SAMPLER) {
-        available_samplers_ &= ~(uint32_t(1) << res.slot);
+    if (!is_gpumat_info) {
+      /* Don't assign slots for material textures until all the internal engine slots are reserved,
+       * they may overlap with our internal slots. */
+      for (const ShaderCreateInfo::Resource &res : info.batch_resources_) {
+        if (res.bind_type == ShaderCreateInfo::Resource::SAMPLER) {
+          available_samplers_ &= ~(uint32_t(1) << res.slot);
+        }
       }
     }
 
@@ -634,10 +637,22 @@ class SlotAllocator {
       const ShaderCreateInfo *info = reinterpret_cast<const ShaderCreateInfo *>(
           GPU_shader_create_info_get(info_name.c_str()));
       /** WATCH: Recursive. */
-      reserve_slots(*info);
+      reserve_slots_recursive(*info, false);
     }
+  }
 
+ public:
+  void reserve_slots(gpu::shader::ShaderCreateInfo &info)
+  {
+    reserve_slots_recursive(info);
     total_requested_samplers_ = count_bits_uint64(uint64_t(~available_samplers_));
+
+    for (auto &resource : info.batch_resources_) {
+      if (resource.bind_type == gpu::shader::ShaderCreateInfo::Resource::BindType::SAMPLER) {
+        /* Assign non overlapping slots for material textures. */
+        resource.slot = get_next_sampler();
+      }
+    }
   }
 
   bool sampler_overflow() const
@@ -657,8 +672,9 @@ class SlotAllocator {
 
   int get_next_sampler()
   {
-    int next_sampler = available_samplers_ == 0 ? total_requested_samplers_++ :
+    int next_sampler = available_samplers_ == 0 ? total_requested_samplers_ :
                                                   bitscan_forward_clear_uint(&available_samplers_);
+    total_requested_samplers_++;
     if (next_sampler >= GPU_max_textures()) {
       /* Should result in compilation failure. */
       sampler_overflow_ = true;
@@ -887,12 +903,6 @@ void ShaderModule::material_create_info_amend(GPUMaterial *gpumat, GPUCodegenOut
 
   SlotAllocator slots = add_pipeline_create_info(
       info, pipeline_type, geometry_type, use_shader_to_rgba);
-
-  for (auto &resource : info.batch_resources_) {
-    if (resource.bind_type == ShaderCreateInfo::Resource::BindType::SAMPLER) {
-      resource.slot = slots.get_next_sampler();
-    }
-  }
 
   if (GPU_material_flag_get(gpumat, GPU_MATFLAG_SHADER_TO_RGBA)) {
     info.define("MAT_SHADER_TO_RGBA");

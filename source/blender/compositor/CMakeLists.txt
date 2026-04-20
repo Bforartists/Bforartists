@@ -122,6 +122,7 @@ set(SRC
   cached_resources/intern/morphological_distance_feather_weights.cc
   cached_resources/intern/ocio_color_space_conversion_shader.cc
   cached_resources/intern/smaa_precomputed_textures.cc
+  cached_resources/intern/string_image.cc
   cached_resources/intern/symmetric_blur_weights.cc
   cached_resources/intern/symmetric_separable_blur_weights.cc
   cached_resources/intern/van_vliet_gaussian_coefficients.cc
@@ -139,6 +140,7 @@ set(SRC
   cached_resources/COM_morphological_distance_feather_weights.hh
   cached_resources/COM_ocio_color_space_conversion_shader.hh
   cached_resources/COM_smaa_precomputed_textures.hh
+  cached_resources/COM_string_image.hh
   cached_resources/COM_symmetric_blur_weights.hh
   cached_resources/COM_symmetric_separable_blur_weights.hh
   cached_resources/COM_van_vliet_gaussian_coefficients.hh
@@ -147,15 +149,14 @@ set(SRC
 
   derived_resources/COM_denoised_auxiliary_pass.hh
 
-  utilities/intern/gpu_material.cc
   utilities/intern/oidn.cc
 
   utilities/COM_utilities_diagonals.hh
-  utilities/COM_utilities_gpu_material.hh
   utilities/COM_utilities_oidn.hh
 )
 
 set(LIB
+  PRIVATE bf::blenfont
   PRIVATE bf::blenkernel
   PRIVATE bf::blentranslation
   PRIVATE bf::functions

@@ -441,6 +441,8 @@ struct bNodeTreeInterfaceItemReference {
   int items_count;
 };
 
+void item_reference_free(bNodeTreeInterfaceItemReference *item_reference);
+
 }  // namespace node_interface
 
 }  // namespace blender::bke

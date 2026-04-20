@@ -14,7 +14,6 @@
 
 #include "COM_shader_node.hh"
 #include "COM_utilities.hh"
-#include "COM_utilities_gpu_material.hh"
 
 namespace blender::compositor {
 
@@ -32,12 +31,12 @@ void ShaderNode::compile(GPUMaterial *material)
 
 GPUNodeStack &ShaderNode::get_input(const StringRef identifier)
 {
-  return get_shader_node_input(node_, inputs_.data(), identifier);
+  return GPU_node_get_input(node_, inputs_.data(), identifier);
 }
 
 GPUNodeStack &ShaderNode::get_output(const StringRef identifier)
 {
-  return get_shader_node_output(node_, outputs_.data(), identifier);
+  return GPU_node_get_output(node_, outputs_.data(), identifier);
 }
 
 static GPUType gpu_type_from_socket(const bNodeSocket &socket)

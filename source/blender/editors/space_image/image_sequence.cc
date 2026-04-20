@@ -30,8 +30,12 @@ namespace blender {
  * The files and directory are read from standard file-select operator properties.
  *
  * The output is a list of frame ranges, each containing a list of frames with matching names.
+ *
+ * \param blendfile_path: Blend file path, used to expand the `directory`.
+ * \param root_path: When relative is enabled, the path will be made relative to this directory.
  */
-static void image_sequence_get_frame_ranges(StringRefNull root_path,
+static void image_sequence_get_frame_ranges(StringRefNull blendfile_path,
+                                            StringRefNull root_path,
                                             wmOperator *op,
                                             ListBaseT<ImageFrameRange> *ranges,
                                             bool *r_was_relative)
@@ -44,6 +48,8 @@ static void image_sequence_get_frame_ranges(StringRefNull root_path,
   char base_head[FILE_MAX], base_tail[FILE_MAX];
 
   RNA_string_get(op->ptr, "directory", dir);
+  /* Make absolute so we can be sure a relative path is always `root_path` relative. */
+  BLI_path_abs(dir, blendfile_path.c_str());
   /* Operators using `ED_image_filesel_detect_sequences` should have a `relative_path` option. */
   BLI_assert(RNA_struct_find_property(op->ptr, "relative_path"));
   if (RNA_boolean_get(op->ptr, "relative_path")) {
@@ -161,14 +167,17 @@ ListBaseT<ImageFrameRange> ED_image_filesel_detect_sequences(StringRefNull blend
   BLI_listbase_clear(&ranges);
 
   bool was_relative = false;
+  StringRefNull base_path = blendfile_path;
 
   /* File browser. */
   if (RNA_struct_property_is_set(op->ptr, "directory") &&
       RNA_struct_property_is_set(op->ptr, "files"))
   {
-    image_sequence_get_frame_ranges(root_path, op, &ranges, &was_relative);
+    image_sequence_get_frame_ranges(blendfile_path, root_path, op, &ranges, &was_relative);
+    /* The `root_path` will be used as the blend-file path, if it is relative. */
+    base_path = root_path;
   }
-  /* Filepath property for drag & drop etc. */
+  /* File-path property for drag & drop etc. */
   else {
     char filepath[FILE_MAX];
     RNA_string_get(op->ptr, "filepath", filepath);
@@ -181,8 +190,9 @@ ListBaseT<ImageFrameRange> ED_image_filesel_detect_sequences(StringRefNull blend
   }
 
   for (ImageFrameRange &range : ranges) {
+    /* Expand the path if necessary so UDIM files can be resolved. */
     if (was_relative) {
-      BLI_path_abs(range.filepath, blendfile_path.c_str());
+      BLI_path_abs(range.filepath, base_path.c_str());
     }
     image_detect_frame_range(&range, detect_udim);
     if (was_relative) {

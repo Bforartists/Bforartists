@@ -141,7 +141,7 @@ struct ShaderFxTypeInfo {
 /**
  * Initialize global data (type info and some common global storage).
  */
-void BKE_shaderfx_init(void);
+void BKE_shaderfx_init();
 
 /**
  * Get an effect's panel type, which was defined in the #panel_register callback.

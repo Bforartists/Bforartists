@@ -2241,7 +2241,7 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
     if (scroll <= line_cursor && line_cursor < scroll + visible_lines) {
       const int t = BLF_str_offset_to_cursor(fstyle->uifont_id,
                                              lines[line_cursor].begin(),
-                                             UI_MAX_DRAW_STR,
+                                             lines[line_cursor].size(),
                                              but_pos - (lines[line_cursor].begin() - str),
                                              caret_width);
 
@@ -5641,11 +5641,11 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
         break;
 
       case ButtonType::Waveform:
-        draw_but_WAVEFORM(region, but, &tui->wcol_regular, rect);
+        draw_but_WAVEFORM(C, region, but, &tui->wcol_regular, rect);
         break;
 
       case ButtonType::Vectorscope:
-        draw_but_VECTORSCOPE(region, but, &tui->wcol_regular, rect);
+        draw_but_VECTORSCOPE(C, region, but, &tui->wcol_regular, rect);
         break;
 
       case ButtonType::Curve:

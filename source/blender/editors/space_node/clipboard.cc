@@ -5,6 +5,7 @@
 #include "DNA_space_types.h"
 
 #include "BLI_listbase.h"
+#include "BLI_string_utf8.h"
 
 #include "BKE_appdir.hh"
 #include "BKE_blendfile.hh"
@@ -173,7 +174,7 @@ static wmOperatorStatus node_clipboard_copy_exec(bContext *C, wmOperator *op)
                             {(PartialWriteContext::IDAddOperations::SET_FAKE_USER |
                               PartialWriteContext::IDAddOperations::SET_CLIPBOARD_MARK)}));
 
-  strcpy(copy_tree->idname, node_tree->typeinfo->idname.c_str());
+  STRNCPY_UTF8(copy_tree->idname, node_tree->typeinfo->idname.c_str());
   bke::node_tree_set_type(*copy_tree);
 
   /* Copy node interface to avoid losing links to Group Input and Group Output nodes.

@@ -103,8 +103,7 @@ ScrArea *area_split(const wmWindow *win,
                     bScreen *screen,
                     ScrArea *area,
                     const eScreenAxis dir_axis,
-                    const float fac,
-                    const bool merge)
+                    const float fac)
 {
   ScrArea *newa = nullptr;
 
@@ -187,10 +186,6 @@ ScrArea *area_split(const wmWindow *win,
     ED_area_data_copy(newa, area, true);
   }
 
-  /* remove double vertices en edges */
-  if (merge) {
-    BKE_screen_remove_double_scrverts(screen);
-  }
   BKE_screen_remove_double_scredges(screen);
   BKE_screen_remove_unused_scredges(screen);
 
@@ -457,7 +452,6 @@ static bool screen_area_join_aligned(
   }
 
   screen_delarea(C, screen, sa2);
-  BKE_screen_remove_double_scrverts(screen);
   /* Update preview thumbnail */
   BKE_icon_changed(screen->id.icon_id);
 
@@ -478,7 +472,7 @@ static ScrArea *screen_area_trim(
                                            ((*area)->v3->vec.y - (*area)->v1->vec.y));
   fac = (reverse == vertical) ? 1.0f - fac : fac;
   ScrArea *newsa = area_split(
-      CTX_wm_window(C), screen, *area, vertical ? SCREEN_AXIS_V : SCREEN_AXIS_H, fac, true);
+      CTX_wm_window(C), screen, *area, vertical ? SCREEN_AXIS_V : SCREEN_AXIS_H, fac);
 
   /* area_split always returns smallest of the two areas, so might have to swap. */
   if (((fac > 0.5f) == vertical) != reverse) {
@@ -576,7 +570,7 @@ bool screen_area_close(
   float best_alignment = 0.0f;
 
   for (ScrArea &neighbor : screen->areabase) {
-    if (&neighbor == area || &neighbor == not_area) {
+    if (ELEM(&neighbor, area, not_area)) {
       continue;
     }
     const eScreenDir dir = area_getorientation(area, &neighbor);

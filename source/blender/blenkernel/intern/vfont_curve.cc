@@ -1859,16 +1859,16 @@ static bool vfont_to_curve(Object *ob,
       }
 
       i = min_ii(i, char_end);
-      const float char_yof = chartransdata[i].offset.y;
+      const short char_line = chartransdata[i].linenr;
 
       /* Loop back until find the first character of the line, this because `cursor_location` can
        * be positioned further below the text, so #i can be the last character of the last line. */
-      for (; i >= char_beg + 1 && chartransdata[i - 1].offset.y == char_yof; i--) {
+      for (; i >= char_beg + 1 && chartransdata[i - 1].linenr == char_line; i--) {
         /* Pass. */
       }
       /* Loop until find the first character to the right of `cursor_location`
        * (using the character midpoint on the x-axis as a reference). */
-      for (; i <= char_end && char_yof == chartransdata[i].offset.y; i++) {
+      for (; i <= char_end && chartransdata[i].linenr == char_line; i++) {
         info = &custrinfo[i];
         const char32_t charcode = vfont_char_apply_smallcaps(mem[i], info);
 
@@ -1876,6 +1876,10 @@ static bool vfont_to_curve(Object *ob,
         che = vfont_char_find_or_placeholder(vfinfo_ctx.vfd, charcode, che_placeholder);
 
         const float charwidth = vfont_char_width(cu, che, info);
+        if (charwidth == 0.0f) {
+          /* Combining character, skip so the cursor won't be between combining characters. */
+          continue;
+        }
         const float charhalf = (charwidth / 2.0f);
         if (cursor_location.x <= ((chartransdata[i].offset.x + charhalf) * font_size)) {
           break;
@@ -1885,7 +1889,7 @@ static bool vfont_to_curve(Object *ob,
 
       /* If there is no character to the right of the cursor we are on the next line, go back to
        * the last character of the previous line. */
-      if (i > char_beg && chartransdata[i].offset.y != char_yof) {
+      if (i > char_beg && chartransdata[i].linenr != char_line) {
         i -= 1;
       }
       cursor_params->r_string_offset = i;

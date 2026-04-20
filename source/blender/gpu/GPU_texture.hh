@@ -128,7 +128,7 @@ enum class TextureFormat : uint8_t {
 #undef DECLARE
 };
 
-inline constexpr DataFormat to_data_format(TextureFormat format)
+constexpr DataFormat to_data_format(TextureFormat format)
 {
   return DataFormat(int(format));
 }
@@ -199,7 +199,7 @@ enum class TextureTargetFormat : uint8_t {
 #undef DECLARE
 };
 
-inline constexpr TextureFormat to_texture_format(TextureTargetFormat format)
+constexpr TextureFormat to_texture_format(TextureTargetFormat format)
 {
   return TextureFormat(int(format));
 }
@@ -264,7 +264,7 @@ enum class TextureWriteFormat : uint8_t {
 #undef DECLARE
 };
 
-inline constexpr TextureFormat to_texture_format(TextureWriteFormat format)
+constexpr TextureFormat to_texture_format(TextureWriteFormat format)
 {
   return TextureFormat(int(format));
 }
@@ -1021,12 +1021,26 @@ void GPU_texture_copy(gpu::Texture *dst, gpu::Texture *src);
 void GPU_texture_update_mipmap_chain(gpu::Texture *texture);
 
 /**
- * Read the content of a \a mip_level from a \a tex and returns a copy of its data.
+ * Read the content of a \a mip_level from a \a texture and returns a copy of its data.
+ * Use #MEM_delete to free the data.
+ *
  * \warning the texture must have been created using GPU_TEXTURE_USAGE_HOST_READ.
  * \note synchronization of shader writes via `imageStore()` needs to be explicitly done using
  * `GPU_memory_barrier(GPU_BARRIER_TEXTURE_FETCH)`.
  */
 void *GPU_texture_read(gpu::Texture *texture, eGPUDataFormat data_format, int mip_level);
+
+/**
+ * Read the content of a \a mip_level from a \a texture into user-provided memory buffer \a dst.
+ */
+void GPU_texture_read(gpu::Texture *texture, eGPUDataFormat data_format, int mip_level, void *dst);
+
+/**
+ * Calculate memory size in bytes needed to read a \a mip_level from a \a texture.
+ */
+size_t GPU_texture_read_size_get(const gpu::Texture *texture,
+                                 eGPUDataFormat data_format,
+                                 int mip_level);
 
 /** \} */
 

@@ -334,11 +334,7 @@ else
 	ifneq ("$(wildcard $(DEPS_BUILD_DIR)/build.ninja)","")
 		DEPS_BUILD_COMMAND:=ninja
 	else
-		ifeq ($(OS), Darwin)
-			DEPS_BUILD_COMMAND:=make -s
-		else
-			DEPS_BUILD_COMMAND:="$(BLENDER_DIR)/build_files/build_environment/linux/make_deps_wrapper.sh" -s
-		endif
+		DEPS_BUILD_COMMAND:="$(BLENDER_DIR)/build_files/build_environment/linux/make_deps_wrapper.sh" -s
 	endif
 endif
 

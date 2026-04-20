@@ -663,9 +663,7 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       }
     }
 
-    if (app_template &&
-        (STREQ(app_template, "2D_Animation") || STREQ(app_template, "Storyboarding")))
-    {
+    if (app_template && (STR_ELEM(app_template, "2D_Animation", "Storyboarding"))) {
       /* Since !153036, the base colors for stroke & fill were getting versioned to have 0% opacity
        * if the stroke/fill was disabled. This meant that in a new file using the following App
        * Templates, the "Solid Stroke" material wouldn't show anything when trying to draw a fill.

@@ -658,12 +658,12 @@ struct Layout : public Item, NonCopyable, NonMovable {
                    int icon);
 
   /**
-   * Adds a string property item as textbox, this will let multiline text editing, textbox state
+   * Adds a string property item as textbox, this will let multi-line text editing, textbox state
    * will be persistent at runtime.
    */
   void textbox(const bContext *C, PointerRNA *ptr, StringRefNull propname);
   /**
-   * Adds a string property item as textbox, this will let multiline text editing.
+   * Adds a string property item as textbox, this will let multi-line text editing.
    * \param textbox_state: custom allocation for persistent textbox state.
    */
   void textbox_with_state(PointerRNA *ptr, StringRefNull propname, TextboxState *textbox_state);

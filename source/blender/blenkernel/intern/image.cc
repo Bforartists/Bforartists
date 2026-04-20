@@ -2069,6 +2069,7 @@ void BKE_image_stamp_buf(Scene *scene,
              ibuf->byte_data_for_write(),
              ibuf->x,
              ibuf->y,
+             4,
              ibuf->byte_buffer.colorspace);
   /* No conversion to scene linear needed, #BLF_buffer_col accepts sRGB. */
   BLF_buffer_col(mono, scene->r.fg_stamp);
@@ -2319,7 +2320,7 @@ void BKE_image_stamp_buf(Scene *scene,
   }
 
   /* cleanup the buffer. */
-  BLF_buffer(mono, nullptr, nullptr, 0, 0, nullptr);
+  BLF_buffer(mono, nullptr, nullptr, 0, 0, 4, nullptr);
   BLF_wordwrap(mono, 0);
 
 #undef TEXT_SIZE_CHECK

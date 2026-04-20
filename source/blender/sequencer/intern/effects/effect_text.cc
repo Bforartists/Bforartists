@@ -204,8 +204,8 @@ static void init_text_effect(Strip *strip)
 
   data->loc[0] = 0.5f;
   data->loc[1] = 0.5f;
-  data->anchor_x = SEQ_TEXT_ALIGN_X_CENTER;
-  data->anchor_y = SEQ_TEXT_ALIGN_Y_CENTER;
+  data->anchor_x = SEQ_TEXT_ANCHOR_X_CENTER;
+  data->anchor_y = SEQ_TEXT_ANCHOR_Y_CENTER;
   data->align = SEQ_TEXT_ALIGN_X_CENTER;
   data->wrap_width = 1.0f;
 }
@@ -601,6 +601,7 @@ static rcti draw_text_outline(const RenderData *context,
              reinterpret_cast<uchar *>(tmp_buf.data()),
              size.x,
              size.y,
+             4,
              out->byte_buffer.colorspace);
 
   text_draw(data->text_ptr, runtime, float4(1.0f));
@@ -702,7 +703,7 @@ static rcti draw_text_outline(const RenderData *context,
       }
     }
   });
-  BLF_buffer(runtime->font, nullptr, byte_data, size.x, size.y, out->byte_buffer.colorspace);
+  BLF_buffer(runtime->font, nullptr, byte_data, size.x, size.y, 4, out->byte_buffer.colorspace);
 
   return outline_rect;
 }
@@ -967,24 +968,24 @@ static float2 anchor_offset_get(const TextVars *data, int width_max, int text_he
   float2 anchor_offset;
 
   switch (data->anchor_x) {
-    case SEQ_TEXT_ALIGN_X_LEFT:
+    case SEQ_TEXT_ANCHOR_X_LEFT:
       anchor_offset.x = 0;
       break;
-    case SEQ_TEXT_ALIGN_X_CENTER:
+    case SEQ_TEXT_ANCHOR_X_CENTER:
       anchor_offset.x = -width_max / 2.0f;
       break;
-    case SEQ_TEXT_ALIGN_X_RIGHT:
+    case SEQ_TEXT_ANCHOR_X_RIGHT:
       anchor_offset.x = -width_max;
       break;
   }
   switch (data->anchor_y) {
-    case SEQ_TEXT_ALIGN_Y_TOP:
+    case SEQ_TEXT_ANCHOR_Y_TOP:
       anchor_offset.y = 0;
       break;
-    case SEQ_TEXT_ALIGN_Y_CENTER:
+    case SEQ_TEXT_ANCHOR_Y_CENTER:
       anchor_offset.y = text_height / 2.0f;
       break;
-    case SEQ_TEXT_ALIGN_Y_BOTTOM:
+    case SEQ_TEXT_ANCHOR_Y_BOTTOM:
       anchor_offset.y = text_height;
       break;
   }
@@ -1087,9 +1088,9 @@ static ImBuf *do_text_effect(const RenderData *context,
 
   rcti outline_rect = draw_text_outline(context, data, runtime, out);
   BLF_buffer(
-      font, nullptr, out->byte_data_for_write(), out->x, out->y, out->byte_buffer.colorspace);
+      font, nullptr, out->byte_data_for_write(), out->x, out->y, 4, out->byte_buffer.colorspace);
   text_draw(data->text_ptr, runtime, data->color);
-  BLF_buffer(font, nullptr, nullptr, 0, 0, nullptr);
+  BLF_buffer(font, nullptr, nullptr, 0, 0, 4, nullptr);
   BLF_disable(font, font_flags);
 
   /* Draw shadow. */

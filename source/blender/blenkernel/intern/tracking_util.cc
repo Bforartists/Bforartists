@@ -699,14 +699,14 @@ static ImBuf *accessor_get_ibuf(TrackingImageAccessor *accessor,
     final_ibuf = IMB_allocImBuf(width, height, 32, IB_float_data);
 
     if (orig_ibuf->float_data() != nullptr) {
-      IMB_rectcpy(final_ibuf,
-                  orig_ibuf,
-                  dst_offset_x,
-                  dst_offset_y,
-                  clamped_origin_x,
-                  clamped_origin_y,
-                  clamped_width,
-                  clamped_height);
+      IMB_copy_rect(final_ibuf->float_data_for_write(),
+                    int2(final_ibuf->x, final_ibuf->y),
+                    orig_ibuf->float_data(),
+                    int2(orig_ibuf->x, orig_ibuf->y),
+                    orig_ibuf->channels,
+                    int2(clamped_origin_x, clamped_origin_y),
+                    int2(dst_offset_x, dst_offset_y),
+                    int2(clamped_width, clamped_height));
     }
     else {
       /* TODO(sergey): We don't do any color space or alpha conversion

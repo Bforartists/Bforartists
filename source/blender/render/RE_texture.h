@@ -46,8 +46,8 @@ bool RE_texture_evaluate(const struct MTex *mtex,
  */
 float texture_value_blend(float tex, float out, float fact, float facg, int blendtype);
 
-void RE_texture_rng_init(void);
-void RE_texture_rng_exit(void);
+void RE_texture_rng_init();
+void RE_texture_rng_exit();
 
 /* `texture_image.cc` */
 

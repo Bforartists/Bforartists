@@ -393,7 +393,7 @@ void ED_preview_world_simple_set_rgb(World *world, const float color[4])
   bNode *background = bke::node_find_node_by_name(*world->nodetree, "Background");
   BLI_assert(background != nullptr);
 
-  auto color_socket = static_cast<bNodeSocketValueRGBA *>(
+  auto *color_socket = static_cast<bNodeSocketValueRGBA *>(
       bke::node_find_socket(*background, SOCK_IN, "Color")->default_value);
   copy_v4_v4(color_socket->value, color);
 }

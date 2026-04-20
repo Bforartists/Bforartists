@@ -470,23 +470,13 @@ void GLTexture::copy_to(Texture *dst_, IndexRange mip_levels)
   has_pixels_ = true;
 }
 
-void *GLTexture::read(int mip, eGPUDataFormat type)
+void GLTexture::read(int mip, eGPUDataFormat type, void *data)
 {
   BLI_assert(!(format_flag_ & GPU_FORMAT_COMPRESSED));
   BLI_assert(mip <= mipmaps_ || mip == 0);
   BLI_assert(validate_data_format(format_, type));
 
-  /* NOTE: mip_size_get() won't override any dimension that is equal to 0. */
-  int extent[3] = {1, 1, 1};
-  this->mip_size_get(mip, extent);
-
-  size_t sample_len = extent[0] * extent[1] * extent[2];
-  size_t sample_size = to_bytesize(format_, type);
-  size_t texture_size = sample_len * sample_size;
-
-  /* AMD Pro driver have a bug that write 8 bytes past buffer size
-   * if the texture is big. (see #66573) */
-  void *data = MEM_new_uninitialized(texture_size + 8, "GPU_texture_read");
+  size_t texture_size = read_size_get(mip, type);
 
   GLenum gl_format = to_gl_data_format(
       format_ == TextureFormat::SFLOAT_32_DEPTH_UINT_8 ? TextureFormat::SFLOAT_32_DEPTH : format_);
@@ -508,7 +498,6 @@ void *GLTexture::read(int mip, eGPUDataFormat type)
       glGetTexImage(target_, mip, gl_format, gl_type, data);
     }
   }
-  return data;
 }
 
 /** \} */
@@ -564,7 +553,14 @@ void GLTexture::mip_range_set(int min, int max)
 FrameBuffer *GLTexture::framebuffer_get()
 {
   if (framebuffer_) {
-    return framebuffer_;
+    GLFrameBuffer *gl_framebuffer = static_cast<GLFrameBuffer *>(framebuffer_);
+    if (gl_framebuffer->context_get() == GLContext::get()) {
+      return framebuffer_;
+    }
+
+    /* Textures can be shared between contexts but this helper framebuffer cannot. */
+    GPU_framebuffer_free(framebuffer_);
+    framebuffer_ = nullptr;
   }
   BLI_assert(!(type_ & GPU_TEXTURE_1D));
   framebuffer_ = GPU_framebuffer_create(name_.c_str());

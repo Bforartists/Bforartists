@@ -105,6 +105,8 @@ class ConvertColorSpaceOperation : public NodeOperation {
       return;
     }
 
+    GPU_shader_uniform_1b(shader, "premultiply_output", false);
+
     input_image.bind_as_texture(shader, ocio_shader.input_sampler_name());
 
     const Domain domain = compute_domain();

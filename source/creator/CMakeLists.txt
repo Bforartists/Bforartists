@@ -1805,7 +1805,7 @@ endif()
 # the site-packages directory.
 if(WITH_PYTHON_MODULE AND LIBDIR AND NOT WIN32)
   # It's possible for a build using LIBDIR to reference a non-standard Python installation.
-  path_is_prefix(LIBDIR PYTHON_INCLUDE_DIR _is_python_in_libdir)
+  cmake_path(IS_PREFIX LIBDIR "${PYTHON_INCLUDE_DIR}" NORMALIZE _is_python_in_libdir)
   if(_is_python_in_libdir)
     install(
       DIRECTORY ${LIBDIR}/python/lib/python${PYTHON_VERSION}/site-packages/MaterialX

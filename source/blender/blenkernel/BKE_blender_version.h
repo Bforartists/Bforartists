@@ -50,22 +50,22 @@ namespace blender {
 #define BLENDER_FILE_MIN_SUBVERSION 85
 
 /** User readable version string. */
-const char *BKE_blender_version_string(void);
+const char *BKE_blender_version_string();
 /** bfa - User readable version string. */
-const char *BKE_bforartists_version_string(void);
+const char *BKE_bforartists_version_string();
 
 /** As above but does not show patch version. */
-const char *BKE_blender_version_string_compact(void);
+const char *BKE_blender_version_string_compact();
 /** bfa as above but does not show patch version. */
-const char *BKE_bforartists_version_string_compact(void);
+const char *BKE_bforartists_version_string_compact();
 /** bfa Blender blend file sub version */
-const char *BKE_bforartists_sub_version_string(void);
+const char *BKE_bforartists_sub_version_string();
 
 /** Returns true when version cycle is alpha, otherwise (beta, rc) returns false. */
-bool BKE_blender_version_is_alpha(void);
+bool BKE_blender_version_is_alpha();
 
 /** Returns true when version suffix is LTS, otherwise returns false. */
-bool BKE_blender_version_is_lts(void);
+bool BKE_blender_version_is_lts();
 
 /**
  * Fill in given string buffer with user-readable formatted file version and subversion (if

@@ -511,7 +511,7 @@ wmOperatorStatus sequencer_clipboard_paste_exec(bContext *C, wmOperator *op)
         seq::must_render_strip(seq::query_all_strips(&nseqbase), &istrip))
     {
       strip_mean_pos += static_cast<int2>(
-          seq::image_transform_origin_offset_pixelspace_get(scene, &istrip));
+          seq::image_transform_origin_preview_offset_get(scene, &istrip));
       image_strip_count++;
     }
   }
@@ -528,7 +528,7 @@ wmOperatorStatus sequencer_clipboard_paste_exec(bContext *C, wmOperator *op)
     {
       StripTransform *transform = istrip.data->transform;
       const float2 mirror = seq::image_transform_mirror_factor_get(&istrip);
-      const float2 origin = seq::image_transform_origin_offset_pixelspace_get(scene, &istrip);
+      const float2 origin = seq::image_transform_origin_preview_offset_get(scene, &istrip);
       transform->xofs = (view_mval[0] - (strip_mean_pos[0] - origin[0])) * mirror[0];
       transform->yofs = (view_mval[1] - (strip_mean_pos[1] - origin[1])) * mirror[1];
       seq::relations_invalidate_cache(scene, &istrip);

@@ -141,7 +141,7 @@ template<typename T> static T calculate_median(MutableSpan<T> values)
     const auto middle_itr = values.begin() + values.size() / 2;
     std::nth_element(values.begin(), middle_itr, values.end());
     if (values.size() % 2 == 0) {
-      const auto left_middle_itr = std::max_element(values.begin(), middle_itr);
+      auto *const left_middle_itr = std::max_element(values.begin(), middle_itr);
       return math::midpoint<T>(*left_middle_itr, *middle_itr);
     }
     return *middle_itr;

@@ -88,10 +88,10 @@ void drw_debug_quad(float3 v1, float3 v2, float3 v3, float3 v4, float4 v_color, 
   uint vertid = drw_debug_start_draw(v_needed);
   if (vertid + v_needed < DRW_DEBUG_DRAW_VERT_MAX) {
     uint pcolor = debug_color_pack(v_color);
-    drw_debug_line(vertid, v1, v2, pcolor, drw_debug_default_lifetime);
-    drw_debug_line(vertid, v2, v3, pcolor, drw_debug_default_lifetime);
-    drw_debug_line(vertid, v3, v4, pcolor, drw_debug_default_lifetime);
-    drw_debug_line(vertid, v4, v1, pcolor, drw_debug_default_lifetime);
+    drw_debug_line(vertid, v1, v2, pcolor, lifetime);
+    drw_debug_line(vertid, v2, v3, pcolor, lifetime);
+    drw_debug_line(vertid, v3, v4, pcolor, lifetime);
+    drw_debug_line(vertid, v4, v1, pcolor, lifetime);
   }
 }
 void drw_debug_quad(float3 v1, float3 v2, float3 v3, float3 v4, float4 v_color)

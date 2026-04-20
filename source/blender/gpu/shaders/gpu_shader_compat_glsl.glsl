@@ -182,6 +182,12 @@ RESHAPE(float3x3, mat3x3, mat3x4)
 #define thread
 #define threadgroup
 
+/* MSL component compatibility. */
+#define gatherComp0 0
+#define gatherComp1 1
+#define gatherComp2 2
+#define gatherComp3 3
+
 /**
  * This string type is much like the OSL string.
  * It is merely a hash of the actual string and it immutable.

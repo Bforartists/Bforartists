@@ -1239,13 +1239,13 @@ bool bNodeTreeInterfacePanel::move_item(bNodeTreeInterfaceItem &item, int new_po
   if (!this->items().index_range().contains(old_position)) {
     return false;
   }
+
+  new_position = find_valid_insert_position_for_item(item, new_position);
+  new_position = std::min(std::max(new_position, 0), items_num);
   if (old_position == new_position) {
     /* Nothing changes. */
     return true;
   }
-
-  new_position = find_valid_insert_position_for_item(item, new_position);
-  new_position = std::min(std::max(new_position, 0), items_num);
 
   if (old_position < new_position) {
     /* Actual target position and all existing items shifted by 1. */
@@ -1756,7 +1756,7 @@ bNode *create_proxy_converter_node(const eNodeSocketDatatype socket_type,
 
   bNode *proxy_node = bke::node_add_node(&C, dst_tree, "NodeImplicitConversion"_ustr);
   auto &data = *static_cast<NodeImplicitConversion *>(proxy_node->storage);
-  BLI_strncpy(data.type_idname, socket_idname.c_str(), sizeof(data.type_idname));
+  STRNCPY(data.type_idname, socket_idname.c_str());
   BKE_ntree_update_tag_node_property(&dst_tree, proxy_node);
   BKE_ntree_update_after_single_tree_change(*CTX_data_main(&C), dst_tree);
 
@@ -1791,6 +1791,16 @@ static bNodeTreeInterfacePanel *make_panel(const int uid,
   new_panel->identifier = uid;
   new_panel->flag = flag;
   return new_panel;
+}
+
+void item_reference_free(bNodeTreeInterfaceItemReference *item_reference)
+{
+  if (item_reference == nullptr) {
+    return;
+  }
+
+  MEM_delete(item_reference->items);
+  MEM_delete(item_reference);
 }
 
 }  // namespace bke::node_interface

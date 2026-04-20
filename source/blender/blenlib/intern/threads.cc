@@ -715,7 +715,7 @@ bool BLI_thread_queue_cancel_work(ThreadQueue *queue, uint64_t work_id)
 
 void *BLI_thread_queue_pop(ThreadQueue *queue)
 {
-  ThreadQueueWork work_reference = {0};
+  ThreadQueueWork work_reference = {nullptr};
 
   /* wait until there is work */
   pthread_mutex_lock(&queue->mutex);
@@ -786,7 +786,7 @@ static void wait_timeout(timespec *timeout, int ms)
 void *BLI_thread_queue_pop_timeout(ThreadQueue *queue, int ms)
 {
   double t;
-  ThreadQueueWork work_reference = {0};
+  ThreadQueueWork work_reference = {nullptr};
   timespec timeout;
 
   t = BLI_time_now_seconds();

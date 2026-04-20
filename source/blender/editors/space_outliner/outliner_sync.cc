@@ -480,7 +480,7 @@ static void outliner_sync_selection_to_outliner(const Main &bmain,
 {
   for (TreeElement &te : *tree) {
     TreeStoreElem *tselem = TREESTORE(&te);
-    const bool is_active_old = (tselem->flag & TSE_ACTIVE) != 0;
+    const bool is_active_old = (tselem->flag & TSE_ACTIVE) && (tselem->flag & TSE_SELECTED);
 
     if ((tselem->type == TSE_SOME_ID) && te.idcode == ID_OB) {
       if (sync_types->object) {
@@ -506,7 +506,7 @@ static void outliner_sync_selection_to_outliner(const Main &bmain,
     else {
       tselem->flag &= ~(TSE_SELECTED | TSE_ACTIVE);
     }
-    const bool is_active_new = (tselem->flag & TSE_ACTIVE) != 0;
+    const bool is_active_new = (tselem->flag & TSE_ACTIVE) && (tselem->flag & TSE_SELECTED);
     *r_any_new_active |= is_active_new && !is_active_old;
     /* Sync subtree elements */
     outliner_sync_selection_to_outliner(bmain,

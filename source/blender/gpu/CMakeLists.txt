@@ -180,10 +180,13 @@ set(SRC
   intern/gpu_shader_create_info.hh
   intern/gpu_shader_create_info_pipeline.hh
   intern/gpu_shader_create_info_private.hh
+  intern/gpu_shader_dead_code_elimination.hh
   intern/gpu_shader_dependency_private.hh
   intern/gpu_shader_interface.hh
   intern/gpu_shader_metadata_private.hh
   intern/gpu_shader_private.hh
+  intern/gpu_shader_srd_cpp.hh
+  intern/gpu_shader_srd_info.hh
   intern/gpu_state_private.hh
   intern/gpu_storage_buffer_private.hh
   intern/gpu_texture_pool_private.hh
@@ -738,7 +741,7 @@ set(GLSL_SRC
   GPU_shader_shared_utils.hh
 )
 
-set(GLSL_SRC_TEST
+set(GLSL_TEST_SRC
   shaders/infos/gpu_shader_test_infos.hh
 
   tests/shaders/gpu_math_test.glsl
@@ -798,7 +801,7 @@ set(VULKAN_BACKEND_GLSL_SRC
 
 if(WITH_GTESTS)
   if(WITH_GPU_BACKEND_TESTS)
-    list(APPEND GLSL_SRC ${GLSL_SRC_TEST})
+    list(APPEND GLSL_SRC ${GLSL_TEST_SRC})
   endif()
 endif()
 

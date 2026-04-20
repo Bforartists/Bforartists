@@ -11,7 +11,7 @@ from ...io.exp.user_extensions import export_user_extensions
 from ...io.com import constants as gltf2_io_constants
 from ..com import conversion as gltf2_blender_conversion
 from ..com.gltf2_blender_utils import fast_structured_np_unique
-from .material.materials import get_base_material, get_render_uvmap_index, get_new_material_texture_shared
+from .material.materials import get_base_material, get_new_material_texture_shared
 from .material.texture_info import gather_udim_texture_info
 from . import skins as gltf2_blender_gather_skins
 from . attribute_utils import extract_attribute_data
@@ -63,6 +63,7 @@ class PrimitiveCreator:
 
         self.vc_infos = []
         self.vc_infos_index = 0
+        self.material_idxs_using_vc = {}
 
         self.export_settings = export_settings
 
@@ -564,8 +565,10 @@ class PrimitiveCreator:
                                     'gltf_name': 'COLOR_' + str(self.vc_infos_index),
                                     'forced': False
                                 })
+                                self.material_idxs_using_vc[material_idx] = 'COLOR_' + str(self.vc_infos_index)
                                 self.vc_infos_index += 1
                             else:
+                                self.material_idxs_using_vc[material_idx] = materials_use_vc
                                 pass  # Using the same Vertex Color
 
                     elif base_material is not None and self.export_settings['gltf_vertex_color'] == "MATERIAL":
@@ -632,9 +635,11 @@ class PrimitiveCreator:
                                 'gltf_name': 'COLOR_' + str(self.vc_infos_index),
                                 'forced': False
                             })
+                            self.material_idxs_using_vc[material_idx] = 'COLOR_' + str(self.vc_infos_index)
                             self.vc_infos_index += 1
 
                         else:
+                            self.material_idxs_using_vc[material_idx] = materials_use_vc
                             pass  # Using the same Vertex Color
 
             ##### UDIM #####
@@ -654,13 +659,13 @@ class PrimitiveCreator:
             all_uvmaps = {}
             for tex in material_info['udim_info'].keys():
                 if material_info['uv_info'][tex]['type'] == "Render":
-                    index_uvmap = get_render_uvmap_index(self.blender_mesh)
+                    index_uvmap = self.blender_mesh.uv_layers.active_render_index
                     uvmap_name = "TEXCOORD_" + str(index_uvmap)
                 elif material_info['uv_info'][tex]['type'] == "Fixed":
                     index_uvmap = self.blender_mesh.uv_layers.find(material_info['uv_info'][tex]['value'])
                     if index_uvmap < 0:
                         # Using render index
-                        index_uvmap = get_render_uvmap_index(self.blender_mesh)
+                        index_uvmap = self.blender_mesh.uv_layers.active_render_index
                     uvmap_name = "TEXCOORD_" + str(index_uvmap)
                 else:  # Attribute
                     # This can be a regular UVMap, or a custom attribute
@@ -807,6 +812,9 @@ class PrimitiveCreator:
                         'gltf_name': 'COLOR_0',
                         'forced': True
                     })
+                    # This fake Vertex Color will be used by all materials
+                    for material_idx in self.prim_indices.keys():
+                        self.material_idxs_using_vc[material_idx] = 'COLOR_0'
                     self.vc_infos_index += 1
 
             # Now, loop on existing Vertex Color, and add the missing ones
@@ -822,6 +830,9 @@ class PrimitiveCreator:
                             'gltf_name': 'COLOR_' + str(self.vc_infos_index),
                             'forced': False
                         })
+                        # This Vertex Color will be used by all materials
+                        for material_idx in self.prim_indices.keys():
+                            self.material_idxs_using_vc[material_idx] = 'COLOR_' + str(self.vc_infos_index)
                         self.vc_infos_index += 1
 
         # Now, we need to populate Vertex Color data
@@ -1270,6 +1281,25 @@ class PrimitiveCreator:
                         self.dots_edges[vc['gltf_name'] + str(i)] = data_dots_edges[:, i]
                     if self.export_settings['gltf_loose_points'] and attr.domain == "POINT":
                         self.dots_points[vc['gltf_name'] + str(i)] = data_dots_points[:, i]
+
+                # As the Vertex Color can be used only for some materials, and not by other ones,
+                # We need to artificially set data to 1.0 for any dots that are
+                # corresponding to a material not using this Vertex Color
+                for material_idx, prim_info in self.prim_indices.items():
+                    if self.material_idxs_using_vc.get(material_idx) == vc['gltf_name']:
+                        # This material is using this Vertex Color, so keep real values
+                        continue
+
+                    # This material is not using this Vertex Color, so we set it to 1.0 for all corresponding dots
+                    # to avoid having them impact the base color of the material
+                    dot_indices = prim_info
+                    self.dots[vc['gltf_name'] + str(0)][dot_indices] = 1.0
+                    self.dots[vc['gltf_name'] + str(1)][dot_indices] = 1.0
+                    self.dots[vc['gltf_name'] + str(2)][dot_indices] = 1.0
+                    if vc['add_alpha']:
+                        self.dots[vc['gltf_name'] + str(3)][dot_indices] = 1.0
+
+                    # Edges & Points don't have material, so we don't need to manage them for this workaround
 
                 # Add COLOR_x in attribute list
                 attr_color_x = {}

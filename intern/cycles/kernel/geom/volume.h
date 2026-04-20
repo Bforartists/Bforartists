@@ -35,7 +35,7 @@ ccl_device_inline Float3Type volume_normalized_position(KernelGlobals kg,
 
   object_inverse_position_transform_if_object(kg, sd, &P);
 
-  if (desc.offset != ATTR_STD_NOT_FOUND) {
+  if (is_attribute_found(desc)) {
     const Transform tfm = primitive_attribute_matrix(kg, desc);
     P = transform_point(&tfm, P);
   }

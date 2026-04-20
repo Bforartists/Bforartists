@@ -387,13 +387,12 @@ static PyObject *M_Geometry_normal(PyObject * /*self*/, PyObject *args)
 
   if (coords_len < 3) {
     PyErr_SetString(PyExc_ValueError, "Expected 3 or more vectors");
-    goto finally;
+  }
+  else {
+    normal_poly_v3(n, coords, coords_len);
+    ret = Vector_CreatePyObject(n, 3, nullptr);
   }
 
-  normal_poly_v3(n, coords, coords_len);
-  ret = Vector_CreatePyObject(n, 3, nullptr);
-
-finally:
   PyMem_Free(coords);
   return ret;
 }

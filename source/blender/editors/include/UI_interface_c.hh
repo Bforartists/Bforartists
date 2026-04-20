@@ -3154,7 +3154,11 @@ bool view_item_drag_start(bContext &C, AbstractViewItem &item);
  * \param xy: Coordinate to find a view item at, in window space.
  * \param pad: Extra padding added to the bounding box of the view.
  */
-AbstractView *region_view_find_at(const ARegion *region, const int xy[2], int pad);
+AbstractView *region_view_find_at(const ARegion *region,
+                                  const int xy[2],
+                                  int pad,
+                                  Block **r_block = nullptr);
+void region_view_scroll_at_borders(bContext *C, wmDropBox &dropbox, const wmEvent *event);
 /**
  * \param xy: Coordinate to find a view item at, in window space.
  */

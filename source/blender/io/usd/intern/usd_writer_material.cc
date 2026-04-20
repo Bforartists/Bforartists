@@ -4,6 +4,7 @@
 
 #include "usd_writer_material.hh"
 #include "usd_asset_utils.hh"
+#include "usd_colorspace_utils.hh"
 #include "usd_exporter_context.hh"
 #include "usd_hook.hh"
 #include "usd_utils.hh"
@@ -1027,24 +1028,6 @@ static void get_absolute_path(const Image *ima, char *r_path)
   BLI_path_normalize(r_path);
 }
 
-static pxr::TfToken get_node_tex_image_color_space(const bNode *node)
-{
-  if (!node->id) {
-    return pxr::TfToken();
-  }
-
-  const Image *ima = reinterpret_cast<const Image *>(node->id);
-
-  if (IMB_colormanagement_space_name_is_data(ima->colorspace_settings.name)) {
-    return usdtokens::raw;
-  }
-  if (IMB_colormanagement_space_name_is_srgb(ima->colorspace_settings.name)) {
-    return usdtokens::sRGB;
-  }
-
-  return pxr::TfToken();
-}
-
 static pxr::TfToken get_node_tex_image_wrap(const bNode *node)
 {
   if (node->type_legacy != SH_NODE_TEX_IMAGE) {
@@ -1196,10 +1179,7 @@ static pxr::UsdShadeShader create_usd_preview_shader(const USDExporterContext &u
         .Set(pxr::SdfAssetPath(imagePath));
   }
 
-  pxr::TfToken colorSpace = get_node_tex_image_color_space(node);
-  if (!colorSpace.IsEmpty()) {
-    shader.CreateInput(usdtokens::sourceColorSpace, pxr::SdfValueTypeNames->Token).Set(colorSpace);
-  }
+  io::usd::colorspace_from_image_texture(reinterpret_cast<const Image *>(node->id), shader);
 
   pxr::TfToken wrap = get_node_tex_image_wrap(node);
   if (!wrap.IsEmpty()) {

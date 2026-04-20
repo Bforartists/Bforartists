@@ -95,6 +95,7 @@ set(SRC
   bpy_library.hh
   bpy_msgbus.hh
   bpy_operator.hh
+  bpy_operator_function.hh
   bpy_operator_wrap.hh
   bpy_path.hh
   bpy_props.hh

@@ -25,8 +25,8 @@ struct ThreadSlot;
 /**
  * This is run once at startup.
  */
-void BLI_threadapi_init(void);
-void BLI_threadapi_exit(void);
+void BLI_threadapi_init();
+void BLI_threadapi_exit();
 
 /**
  * \param tot: When 0 only initializes `malloc` mutex in a safe way (see sequence.c)
@@ -46,16 +46,16 @@ void BLI_threadpool_remove(ListBaseT<ThreadSlot> *threadbase, void *callerdata);
 void BLI_threadpool_remove_index(ListBaseT<ThreadSlot> *threadbase, int index);
 void BLI_threadpool_clear(ListBaseT<ThreadSlot> *threadbase);
 void BLI_threadpool_end(ListBaseT<ThreadSlot> *threadbase);
-int BLI_thread_is_main(void);
+int BLI_thread_is_main();
 
 /* System Information */
 
 /**
  * \return the number of threads the system can make use of.
  */
-int BLI_system_thread_count(void);
+int BLI_system_thread_count();
 void BLI_system_num_threads_override_set(int num);
-int BLI_system_num_threads_override_get(void);
+int BLI_system_num_threads_override_get();
 
 /**
  * Global Mutex Locks
@@ -85,7 +85,7 @@ typedef pthread_mutex_t ThreadMutex;
 void BLI_mutex_init(ThreadMutex *mutex);
 void BLI_mutex_end(ThreadMutex *mutex);
 
-ThreadMutex *BLI_mutex_alloc(void);
+ThreadMutex *BLI_mutex_alloc();
 void BLI_mutex_free(ThreadMutex *mutex);
 
 void BLI_mutex_lock(ThreadMutex *mutex);
@@ -127,7 +127,7 @@ typedef pthread_rwlock_t ThreadRWMutex;
 void BLI_rw_mutex_init(ThreadRWMutex *mutex);
 void BLI_rw_mutex_end(ThreadRWMutex *mutex);
 
-ThreadRWMutex *BLI_rw_mutex_alloc(void);
+ThreadRWMutex *BLI_rw_mutex_alloc();
 void BLI_rw_mutex_free(ThreadRWMutex *mutex);
 
 void BLI_rw_mutex_lock(ThreadRWMutex *mutex, int mode);
@@ -140,7 +140,7 @@ void BLI_rw_mutex_unlock(ThreadRWMutex *mutex);
 
 struct TicketMutex;
 
-TicketMutex *BLI_ticket_mutex_alloc(void);
+TicketMutex *BLI_ticket_mutex_alloc();
 void BLI_ticket_mutex_free(TicketMutex *ticket);
 void BLI_ticket_mutex_lock(TicketMutex *ticket);
 bool BLI_ticket_mutex_lock_check_recursive(TicketMutex *ticket);
@@ -172,7 +172,7 @@ enum ThreadQueueWorkPriority {
 /**
  * Allocate a new ThreadQueue.
  */
-ThreadQueue *BLI_thread_queue_init(void);
+ThreadQueue *BLI_thread_queue_init();
 
 /**
  * Deallocate the ThreadQueue.

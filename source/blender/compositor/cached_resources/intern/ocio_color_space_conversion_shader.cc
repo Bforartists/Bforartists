@@ -156,7 +156,7 @@ class GPUShaderCreator : public OCIO::GpuShaderCreator {
                   const VectorFloatGetter &get_vector_float
 #  if OCIO_VERSION_HEX >= 0x02050000
                   ,
-                  const unsigned /*maxSize*/
+                  const uint /*maxSize*/
 #  endif
                   ) override
   {
@@ -183,7 +183,7 @@ class GPUShaderCreator : public OCIO::GpuShaderCreator {
                   const VectorIntGetter &get_vector_int
 #  if OCIO_VERSION_HEX >= 0x02050000
                   ,
-                  const unsigned /*maxSize*/
+                  const uint /*maxSize*/
 #  endif
                   ) override
   {
@@ -206,7 +206,7 @@ class GPUShaderCreator : public OCIO::GpuShaderCreator {
   }
 
 #  if OCIO_VERSION_HEX >= 0x02050000
-  unsigned
+  uint
 #  else
   void
 #  endif
@@ -260,7 +260,7 @@ class GPUShaderCreator : public OCIO::GpuShaderCreator {
   }
 
 #  if OCIO_VERSION_HEX >= 0x02050000
-  unsigned
+  uint
 #  else
   void
 #  endif
@@ -325,6 +325,7 @@ class GPUShaderCreator : public OCIO::GpuShaderCreator {
     shader_create_info_.local_group_size(16, 16);
     shader_create_info_.sampler(0, ImageType::Float2D, input_sampler_name());
     shader_create_info_.builtins(BuiltinBits::GLOBAL_INVOCATION_ID);
+    shader_create_info_.push_constant(Type::bool_t, "premultiply_output");
     shader_create_info_.image(0,
                               Result::gpu_texture_format(ResultType::Color, precision_),
                               Qualifier::write,

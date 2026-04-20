@@ -232,7 +232,7 @@ void Instance::init(const int2 &output_res,
   SET_FLAG_FROM_TEST(shader_request, needs_planar_probe_passes(), DEFERRED_PLANAR_SHADERS);
   SET_FLAG_FROM_TEST(shader_request, needs_lightprobe_sphere_passes(), DEFERRED_CAPTURE_SHADERS);
   SET_FLAG_FROM_TEST(shader_request, motion_blur.postfx_enabled(), MOTION_BLUR_SHADERS);
-  SET_FLAG_FROM_TEST(shader_request, raytracing.use_fast_gi(), HORIZON_SCAN_SHADERS);
+  SET_FLAG_FROM_TEST(shader_request, raytracing.use_fast_gi(), FAST_GI_SHADERS);
   SET_FLAG_FROM_TEST(shader_request, raytracing.use_raytracing(), RAYTRACING_SHADERS);
 
   loaded_shaders = ShaderGroups::NONE;

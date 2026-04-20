@@ -37,6 +37,7 @@
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
+#include "BKE_node_tree_interface.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_screen.hh"
 
@@ -357,12 +358,24 @@ void WM_event_start_drag(bContext *C, int icon, eWM_DragDataType type, void *poi
   WM_event_start_prepared_drag(C, drag);
 }
 
+static void wm_dragdrop_free_timer(wmWindowManager *wm, wmWindow *win)
+{
+  for (wmDrag &drag : wm->runtime->drags) {
+    if (wmDropBox *dropbox = drag.drop_state.active_dropbox) {
+      WM_event_timer_remove(wm, win, dropbox->timer);
+      dropbox->timer = nullptr;
+    }
+  }
+}
+
 void wm_drags_exit(wmWindowManager *wm, wmWindow *win)
 {
   /* Turn off modal cursor for all windows. */
   for (wmWindow &win : wm->windows) {
     WM_cursor_modal_restore(&win);
   }
+
+  wm_dragdrop_free_timer(wm, win);
 
   /* Active area should always redraw, even if canceled. */
   int event_xy_target[2];
@@ -446,6 +459,12 @@ void WM_drag_data_free(eWM_DragDataType dragtype, void *poin)
     case WM_DRAG_STRING: {
       std::string *str = static_cast<std::string *>(poin);
       MEM_delete(str);
+      break;
+    }
+    case WM_DRAG_NODE_TREE_INTERFACE: {
+      bke::node_interface::bNodeTreeInterfaceItemReference *item_reference =
+          static_cast<bke::node_interface::bNodeTreeInterfaceItemReference *>(poin);
+      bke::node_interface::item_reference_free(item_reference);
       break;
     }
     default:
@@ -562,7 +581,7 @@ static wmDropBox *wm_dropbox_active(bContext *C, wmDrag *drag, const wmEvent *ev
   drag->drop_state.disabled_info = std::nullopt;
 
   if (area) {
-    ARegion *region = BKE_area_find_region_xy(area, RGN_TYPE_ANY, event->xy);
+    ARegion *region = ED_area_find_region_xy_visual(area, RGN_TYPE_ANY, event->xy);
     if (region) {
       drop = dropbox_active(C, &region->runtime->handlers, drag, event);
     }
@@ -600,9 +619,14 @@ static void wm_drop_update_active(bContext *C, wmDrag *drag, const wmEvent *even
   wmDropBox *drop_prev = drag->drop_state.active_dropbox;
   wmDropBox *drop = wm_dropbox_active(C, drag, event);
   if (drop != drop_prev) {
-    if (drop_prev && drop_prev->on_exit) {
-      drop_prev->on_exit(drop_prev, drag);
-      BLI_assert(drop_prev->draw_data == nullptr);
+    if (drop_prev) {
+      /* Remove timer if any when exiting the dropbox. */
+      WM_event_timer_remove(CTX_wm_manager(C), nullptr, drop_prev->timer);
+      drop_prev->timer = nullptr;
+      if (drop_prev->on_exit) {
+        drop_prev->on_exit(drop_prev, drag);
+        BLI_assert(drop_prev->draw_data == nullptr);
+      }
     }
     if (drop && drop->on_enter) {
       drop->on_enter(drop, drag);
@@ -640,22 +664,56 @@ void wm_drop_end(bContext *C, wmDrag * /*drag*/, wmDropBox * /*drop*/)
   CTX_store_set(C, nullptr);
 }
 
-void wm_drags_check_ops(bContext *C, const wmEvent *event)
+void wm_drags_handle_events(bContext *C, const wmEvent *event)
 {
-  wmWindowManager *wm = CTX_wm_manager(C);
+  if (!ELEM(event->type, TIMER, MOUSEMOVE, EVT_DROP)) {
+    return;
+  }
+  const wmWindowManager *wm = CTX_wm_manager(C);
+  const ARegion *region = CTX_wm_region(C);
+
+  /* Make sure the timer event belongs to an active dropbox in the currently handled region, skip
+   * handling this event otherwise. */
+  {
+    if (event->type == TIMER) {
+      bool has_drag_timer = false;
+
+      for (const wmDrag &drag : wm->runtime->drags) {
+        if (drag.drop_state.active_dropbox &&
+            (event->customdata == drag.drop_state.active_dropbox->timer) &&
+            (region == drag.drop_state.region_from))
+        {
+          has_drag_timer = true;
+        }
+      }
+      if (!has_drag_timer) {
+        return;
+      }
+    }
+  }
 
   bool any_active = false;
   for (wmDrag &drag : wm->runtime->drags) {
-    wm_drop_update_active(C, &drag, event);
+    switch (event->type) {
+      case MOUSEMOVE:
+      case EVT_DROP:
+        wm_drop_update_active(C, &drag, event);
+        break;
+      default:
+        break;
+    }
 
-    if (drag.drop_state.active_dropbox) {
+    if (wmDropBox *dropbox = drag.drop_state.active_dropbox) {
       any_active = true;
+      if (dropbox->on_event_while_hover) {
+        dropbox->on_event_while_hover(C, *dropbox, event);
+      }
     }
   }
 
   /* Change the cursor to display that dropping isn't possible here. But only if there is something
    * being dragged actually. Cursor will be restored in #wm_drags_exit(). */
-  if (!BLI_listbase_is_empty(&wm->runtime->drags)) {
+  if (!BLI_listbase_is_empty(&wm->runtime->drags) && ELEM(event->type, MOUSEMOVE, EVT_DROP)) {
     WM_cursor_modal_set(CTX_wm_window(C), any_active ? WM_CURSOR_DEFAULT : WM_CURSOR_STOP);
   }
 }

@@ -6,6 +6,7 @@
 
 #include "usd.hh"
 #include "usd_asset_utils.hh"
+#include "usd_colorspace_utils.hh"
 #include "usd_private.hh"
 #include "usd_utils.hh"
 #include "usd_writer_material.hh"
@@ -171,6 +172,7 @@ void world_material_to_dome_light(const USDExportParams &params,
   /* Create USD dome light. */
   pxr::SdfPath env_light_path = get_unique_path(stage, params.root_prim_path + "/env_light");
   pxr::UsdLuxDomeLight dome_light = pxr::UsdLuxDomeLight::Define(stage, env_light_path);
+  colorspace_apply_to_prim(dome_light.GetPrim());
 
   if (res.image) {
     /* Use existing image texture file. */

@@ -170,6 +170,8 @@ class ImageManager {
 
   bool set_animation_frame_update(const int frame);
 
+  void evict_unused(Device *device, Scene *scene);
+
   void collect_statistics(RenderStats *stats, Scene *scene);
 
   void tag_update();
