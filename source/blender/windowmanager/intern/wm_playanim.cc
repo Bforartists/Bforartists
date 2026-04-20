@@ -272,7 +272,7 @@ struct PlayState {
   ListBaseT<PlayAnimPict> picsbase;
 
   /** Current frame (picture). */
-  struct PlayAnimPict *picture;
+  PlayAnimPict *picture;
 
   /** Image size in pixels, set once at the start. */
   int2 ibuf_size;

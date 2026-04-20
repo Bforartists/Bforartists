@@ -17,11 +17,11 @@ else()
 endif()
 
 set(PIP_CONSTRAINT_FILE ${BUILD_DIR}/constraints.txt)
-  # setuptools-scm is causing issues with their latest version
-  # issue: https://github.com/pypa/setuptools-scm/issues/1316
-  # but pinning it doesn't work since downstream package dependencies
-  # also seem to resolve the later versions
-  # we can alter this behaviour by using pip constraints
+# setuptools-scm is causing issues with their latest version
+# issue: https://github.com/pypa/setuptools-scm/issues/1316
+# but pinning it doesn't work since downstream package dependencies
+# also seem to resolve the later versions
+# we can alter this behaviour by using pip constraints
 file(WRITE ${PIP_CONSTRAINT_FILE}
 "setuptools-scm==${SETUPTOOLS_SCM_VERSION}\n"
 )

@@ -2016,7 +2016,7 @@ static void rna_def_action_keyframe_strip(BlenderRNA *brna)
         func,
         "array_index",
         -1,
-        -INT_MAX,
+        INT_MIN,
         INT_MAX,
         "Array Index",
         "Index of the animated array element, or -1 if the property is not an array",

@@ -149,7 +149,7 @@ class OBJCurvesTest : public testing::Test {
         expected_points.data(), result_points.data(), expected_points.size(), 3, 1e-4);
 
     if (result_curve->nurbs_knots_modes()[0] != KnotsMode::NURBS_KNOT_MODE_CUSTOM) {
-      ASSERT_TRUE(result_curve->custom_knots == NULL);
+      ASSERT_TRUE(result_curve->custom_knots == nullptr);
     }
   }
 };

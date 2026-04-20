@@ -678,9 +678,10 @@ class FILEBROWSER_MT_view_pie(Menu):
         pie = layout.menu_pie()
         view = context.space_data
 
-        pie.prop_enum(view.params, "display_type", value="LIST_VERTICAL")
-        pie.prop_enum(view.params, "display_type", value="LIST_HORIZONTAL")
-        pie.prop_enum(view.params, "display_type", value="THUMBNAIL")
+        if view.browse_mode == 'FILES':
+            pie.prop_enum(view.params, "display_type", value='LIST_VERTICAL')
+        pie.prop_enum(view.params, "display_type", value='LIST_HORIZONTAL')
+        pie.prop_enum(view.params, "display_type", value='THUMBNAIL')
 
 
 class ASSETBROWSER_PT_display(asset_utils.AssetBrowserPanel, Panel):

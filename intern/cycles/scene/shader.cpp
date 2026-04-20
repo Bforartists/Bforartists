@@ -892,7 +892,7 @@ string ShaderManager::get_cryptomatte_materials(Scene *scene)
   string manifest = "{";
   unordered_set<ustring> materials;
   for (Shader *shader : scene->shaders) {
-    if (materials.count(shader->name)) {
+    if (materials.contains(shader->name)) {
       continue;
     }
     materials.insert(shader->name);

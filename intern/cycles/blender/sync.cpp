@@ -836,7 +836,7 @@ void BlenderSync::sync_render_passes(blender::RenderLayer &b_rlay,
     PassMode pass_mode = PassMode::DENOISED;
 
     if (!get_known_pass_type(b_pass, pass_type, pass_mode)) {
-      if (!expected_passes.count(b_pass.name)) {
+      if (!expected_passes.contains(b_pass.name)) {
         LOG_ERROR << "Unknown pass " << b_pass.name;
       }
       continue;

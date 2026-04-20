@@ -545,7 +545,7 @@ void BVH2::pack_instances(size_t nodes_size, size_t leaf_nodes_size)
      * node offset for this object */
     const unordered_map<Geometry *, int>::iterator it = geometry_map.find(geom);
 
-    if (geometry_map.find(geom) != geometry_map.end()) {
+    if (geometry_map.contains(geom)) {
       const int noffset = it->second;
       pack.object_node[object_offset++] = noffset;
       continue;

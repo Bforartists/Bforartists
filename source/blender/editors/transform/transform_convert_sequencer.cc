@@ -474,7 +474,7 @@ static void create_trans_seq_clamp_data(TransInfo *t, const Scene *scene)
   bool only_handles_selected = true;
 
   /* Prevent snaps and change in `values` past `offset_clamp` for all selected strips. */
-  BLI_rcti_init(&ts->offset_clamp, -INT_MAX, INT_MAX, -seq::MAX_CHANNELS, seq::MAX_CHANNELS);
+  BLI_rcti_init(&ts->offset_clamp, INT_MIN, INT_MAX, -seq::MAX_CHANNELS, seq::MAX_CHANNELS);
 
   VectorSet<Strip *> strips = seq::query_selected_strips(seq::active_seqbase_get(ed));
   for (Strip *strip : strips) {
@@ -493,7 +493,7 @@ static void create_trans_seq_clamp_data(TransInfo *t, const Scene *scene)
 
   /* Try to clamp handles by default. */
   t->modifiers |= MOD_STRIP_CLAMP_HOLDS;
-  ts->hold_clamp_min = -INT_MAX;
+  ts->hold_clamp_min = INT_MIN;
   ts->hold_clamp_max = INT_MAX;
   for (Strip *strip : strips) {
     if (seq::transform_is_locked(seq::channels_displayed_get(ed), strip)) {

@@ -198,6 +198,7 @@ set(SRC
   BLI_cache_mutex.hh
   BLI_color.hh
   BLI_color_mix.hh
+  BLI_color_types.hh
   BLI_colorspace.hh
   BLI_compiler_attrs.h
   BLI_compiler_compat.h
@@ -323,6 +324,7 @@ set(SRC
   BLI_math_vector.h
   BLI_math_vector.hh
   BLI_math_vector_mpq_types.hh
+  BLI_math_vector_swizzle.hh
   BLI_math_vector_types.hh
   BLI_math_vector_unroll.hh
   BLI_memarena.h

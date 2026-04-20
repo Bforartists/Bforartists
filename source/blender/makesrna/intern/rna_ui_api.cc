@@ -1513,7 +1513,7 @@ void RNA_api_ui_layout(StructRNA *srna)
   func = RNA_def_function(srna, "textbox", "rna_uiItemTextBox");
   RNA_def_function_flag(func, FUNC_USE_CONTEXT);
   api_ui_item_rna_common(func);
-  parm = RNA_def_pointer(func, "textbox_state", "TextboxState", 0, "");
+  parm = RNA_def_pointer(func, "textbox_state", "TextboxState", nullptr, "");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_RNAPTR);
 
   func = RNA_def_function(srna, "prop", "rna_uiItemR");

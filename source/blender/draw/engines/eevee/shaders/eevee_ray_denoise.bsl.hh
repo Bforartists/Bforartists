@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 /**
- * Raytracing denoising pipeline.
+ * Ray-tracing denoising pipeline.
  *
  * Following "Stochastic All The Things: Raytracing in Hybrid Real-Time Rendering"
  * by Tomasz Stachowiak

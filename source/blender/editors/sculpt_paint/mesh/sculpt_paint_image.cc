@@ -370,8 +370,7 @@ static void push_undo(const PixelNode &node_data,
                       Image &image,
                       ImageUser &image_user,
                       const TileNumber tile_number,
-                      ImBuf &image_buffer,
-                      ImBuf **tmpibuf)
+                      ImBuf &image_buffer)
 {
   for (const UDIMTileUndo &tile_undo : node_data.undo_regions) {
     if (tile_undo.tile_number != tile_number) {
@@ -390,17 +389,8 @@ static void push_undo(const PixelNode &node_data,
                       &tileh);
     for (int ty = tiley; ty <= tileh; ty++) {
       for (int tx = tilex; tx <= tilew; tx++) {
-        ED_image_paint_tile_push(undo_tiles,
-                                 &image,
-                                 &image_buffer,
-                                 tmpibuf,
-                                 &image_user,
-                                 tx,
-                                 ty,
-                                 nullptr,
-                                 nullptr,
-                                 true,
-                                 true);
+        ED_image_paint_tile_push(
+            undo_tiles, &image, &image_buffer, &image_user, tx, ty, nullptr, nullptr, true, true);
       }
     }
   }
@@ -410,22 +400,13 @@ static void do_push_undo_tile(ImageData &image_data,
                               bke::pbvh::Node & /*node*/,
                               PixelNode &pixel_node)
 {
-  ImBuf *tmpibuf = nullptr;
   for (const UDIMTilePixels &tile : pixel_node.tiles) {
     ImBuf *buffer = image_data.buffers.lookup_default(tile.tile_number, nullptr);
     if (buffer == nullptr) {
       continue;
     }
 
-    push_undo(pixel_node,
-              *image_data.image,
-              *image_data.image_user,
-              tile.tile_number,
-              *buffer,
-              &tmpibuf);
-  }
-  if (tmpibuf) {
-    IMB_freeImBuf(tmpibuf);
+    push_undo(pixel_node, *image_data.image, *image_data.image_user, tile.tile_number, *buffer);
   }
 }
 

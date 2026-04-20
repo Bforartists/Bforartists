@@ -408,4 +408,145 @@ void screen_geom_select_connected_edge(const wmWindow *win, ScrEdge *edge)
   }
 }
 
+bool screen_geom_edge_can_extend(const wmWindow *win, ScrEdge *edge)
+{
+  bScreen *screen = WM_window_get_active_screen(win);
+  bool can_extend = false;
+  const eScreenAxis dir_axis = (edge->v1->vec.x == edge->v2->vec.x) ? SCREEN_AXIS_V :
+                                                                      SCREEN_AXIS_H;
+  screen_geom_select_connected_edge(win, edge);
+
+  for (ScrEdge &se : screen->edgebase) {
+    if (se.v1->flag + se.v2->flag != 0) {
+      continue;
+    }
+    if (dir_axis == SCREEN_AXIS_H) {
+      for (ScrVert &v : screen->vertbase) {
+        if (v.flag && v.vec.x == se.v1->vec.x &&
+            (abs(v.vec.y - se.v1->vec.y) < EDGE_ALIGN_TOLERANCE ||
+             abs(v.vec.y - se.v2->vec.y) < EDGE_ALIGN_TOLERANCE))
+        {
+          se.v1->flag = se.v2->flag = 1;
+          can_extend = true;
+          break;
+        }
+      }
+    }
+    else if (dir_axis == SCREEN_AXIS_V) {
+      for (ScrVert &v : screen->vertbase) {
+        if (v.flag && v.vec.y == se.v1->vec.y &&
+            (abs(v.vec.x - se.v1->vec.x) < EDGE_ALIGN_TOLERANCE ||
+             abs(v.vec.x - se.v2->vec.x) < EDGE_ALIGN_TOLERANCE))
+        {
+          se.v1->flag = se.v2->flag = 1;
+          can_extend = true;
+          break;
+        }
+      }
+    }
+  }
+
+  ED_screen_verts_iter(win, screen, sv)
+  {
+    sv->flag = 0;
+  }
+
+  return can_extend;
+}
+
+void screen_geom_select_extended_edge(const wmWindow *win, ScrEdge *edge)
+{
+  bScreen *screen = WM_window_get_active_screen(win);
+  const eScreenAxis dir_axis = (edge->v1->vec.x == edge->v2->vec.x) ? SCREEN_AXIS_V :
+                                                                      SCREEN_AXIS_H;
+  ED_screen_verts_iter(win, screen, sv)
+  {
+    sv->flag = 0;
+  }
+
+  for (ScrVert &v : screen->vertbase) {
+    if (dir_axis == SCREEN_AXIS_H) {
+      if (abs(v.vec.y - edge->v1->vec.y) < EDGE_ALIGN_TOLERANCE) {
+        v.flag = 1;
+      }
+    }
+    else if (dir_axis == SCREEN_AXIS_V) {
+      if (abs(v.vec.x - edge->v1->vec.x) < EDGE_ALIGN_TOLERANCE) {
+        v.flag = 1;
+      }
+    }
+  }
+}
+
+void screen_geom_edge_aligned_merge(const wmWindow *win, ScrEdge *edge)
+{
+  bScreen *screen = WM_window_get_active_screen(win);
+  screen_geom_select_extended_edge(win, edge);
+  const eScreenAxis dir_axis = (edge->v1->vec.x == edge->v2->vec.x) ? SCREEN_AXIS_V :
+                                                                      SCREEN_AXIS_H;
+  /* Align the vertices if close. */
+  for (ScrVert &v : screen->vertbase) {
+    if (dir_axis == SCREEN_AXIS_V && abs(v.vec.x - edge->v2->vec.x) < EDGE_ALIGN_TOLERANCE) {
+      v.vec.x = edge->v2->vec.x;
+    }
+    else if (abs(v.vec.y - edge->v2->vec.y) < EDGE_ALIGN_TOLERANCE) {
+      v.vec.y = edge->v2->vec.y;
+    }
+  }
+
+  for (ScrVert &v : screen->vertbase) {
+    if (v.flag == 1 && v.newv == nullptr) { /* !!! */
+      ScrVert *v1 = v.next;
+      while (v1) {
+        if (v1->newv == nullptr) { /* !?! */
+          if (abs(v1->vec.x - v.vec.x) < EDGE_ALIGN_TOLERANCE &&
+              abs(v1->vec.y - v.vec.y) < EDGE_ALIGN_TOLERANCE)
+          {
+            v1->newv = &v;
+          }
+        }
+        v1 = v1->next;
+      }
+    }
+  }
+
+  /* Replace pointers in edges and faces. */
+  for (ScrEdge &se : screen->edgebase) {
+    if (se.v1->newv) {
+      se.v1 = se.v1->newv;
+    }
+    if (se.v2->newv) {
+      se.v2 = se.v2->newv;
+    }
+    BKE_screen_sort_scrvert(&(se.v1), &(se.v2));
+  }
+  for (ScrArea &area : screen->areabase) {
+    if (area.v1->newv) {
+      area.v1 = area.v1->newv;
+    }
+    if (area.v2->newv) {
+      area.v2 = area.v2->newv;
+    }
+    if (area.v3->newv) {
+      area.v3 = area.v3->newv;
+    }
+    if (area.v4->newv) {
+      area.v4 = area.v4->newv;
+    }
+  }
+
+  /* Remove. */
+  for (ScrVert &v : screen->vertbase.items_mutable()) {
+    if (v.newv) {
+      BLI_remlink(&screen->vertbase, &v);
+      MEM_delete(&v);
+    }
+  }
+
+  ED_screen_verts_iter(win, screen, sv)
+  {
+    sv->flag = 0;
+  }
+}
+
 }  // namespace blender

@@ -7,7 +7,6 @@
  */
 
 #include "BLI_assert.h"
-#include "BLI_fileops.h"
 #include "BLI_listbase.h"
 
 #include "DNA_userdef_types.h"

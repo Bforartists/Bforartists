@@ -1473,7 +1473,7 @@ void bonecolls_rotate_block(bArmature *armature,
                             const int count,
                             const int direction)
 {
-  BLI_assert_msg(direction == 1 || direction == -1, "`direction` must be either -1 or +1");
+  BLI_assert_msg(ELEM(direction, 1, -1), "`direction` must be either -1 or +1");
 
   if (count == 0) {
     return;

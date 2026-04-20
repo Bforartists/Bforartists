@@ -250,16 +250,19 @@ Vector<StringRef> textbox_wrap_lines(ButtonTextBox *textbox)
     lines.append(StringRef(text.end(), text.end()));
   }
   textbox->last_total_lines = lines.size();
-  if (textbox->wrap_cache) {
-    textbox->wrap_cache->wrapped_lines = lines;
-  }
+
   /* WORKAROUND: Textbox event handling and drawing requires lines to not include line breaks, but
-   * sometimes text wrapp adds them and other times not. */
+   * sometimes text wrap adds them and other times not. */
   for (int i : lines.index_range()) {
     if (lines[i].endswith("\n")) {
       lines[i] = lines[i].drop_suffix(1);
     }
   }
+
+  if (textbox->wrap_cache) {
+    textbox->wrap_cache->wrapped_lines = lines;
+  }
+
   return lines;
 }
 

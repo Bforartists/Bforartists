@@ -633,7 +633,7 @@ bool BKE_volume_is_y_up(const Volume *volume)
     if (!creator) {
       creator = grids.metadata->getMetadata<openvdb::StringMetadata>("Creator");
     }
-    return (creator && creator->str().rfind("Houdini", 0) == 0);
+    return (creator && creator->str().starts_with("Houdini"));
   }
 #else
   UNUSED_VARS(volume);

@@ -1963,8 +1963,9 @@ void clip_draw_main(const bContext *C, SpaceClip *sc, ARegion *region)
 
   if (width && height) {
     draw_stabilization_border(sc, region, width, height, zoomx, zoomy);
-    if (sc->overlay.flag & SC_SHOW_OVERLAYS)
+    if (sc->overlay.flag & SC_SHOW_OVERLAYS) {
       draw_tracking_tracks(sc, scene, region, clip, width, height, zoomx, zoomy);
+    }
     draw_distortion(sc, region, clip, width, height, zoomx, zoomy);
   }
 }

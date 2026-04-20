@@ -1325,6 +1325,7 @@ static int pygpu_shader_info__tp_traverse(PyObject *self, visitproc visit, void 
   Py_VISIT(py_info->vertex_source);
   Py_VISIT(py_info->fragment_source);
   Py_VISIT(py_info->compute_source);
+  Py_VISIT(py_info->typedef_source);
   Py_VISIT(py_info->references);
   return 0;
 }
@@ -1335,6 +1336,7 @@ static int pygpu_shader_info__tp_clear(PyObject *self)
   Py_CLEAR(py_info->vertex_source);
   Py_CLEAR(py_info->fragment_source);
   Py_CLEAR(py_info->compute_source);
+  Py_CLEAR(py_info->typedef_source);
   Py_CLEAR(py_info->references);
   return 0;
 }
@@ -1349,14 +1351,7 @@ static void pygpu_shader_info__tp_dealloc(PyObject *self)
 
 #ifdef USE_GPU_PY_REFERENCES
   PyObject_GC_UnTrack(self);
-  if (py_info->references || py_info->vertex_source || py_info->fragment_source) {
-    pygpu_shader_info__tp_clear(self);
-    Py_XDECREF(py_info->vertex_source);
-    Py_XDECREF(py_info->fragment_source);
-    Py_XDECREF(py_info->compute_source);
-    Py_XDECREF(py_info->references);
-  }
-
+  pygpu_shader_info__tp_clear(self);
 #endif
 
   Py_TYPE(self)->tp_free(self);

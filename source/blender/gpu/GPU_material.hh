@@ -468,4 +468,20 @@ GHash *GPU_uniform_attr_list_hash_new(const char *info);
 void GPU_uniform_attr_list_copy(GPUUniformAttrList *dest, const GPUUniformAttrList *src);
 void GPU_uniform_attr_list_free(GPUUniformAttrList *set);
 
+/* Returns the GPU node stack of the input with the given identifier in the given node within the
+ * given inputs stack array. */
+GPUNodeStack &GPU_node_get_input(const bNode &node, GPUNodeStack inputs[], StringRef identifier);
+
+/* Returns the GPU node stack of the output with the given identifier in the given node within the
+ * given output stack array. */
+GPUNodeStack &GPU_node_get_output(const bNode &node, GPUNodeStack outputs[], StringRef identifier);
+
+/* Returns the GPU node link of the input with the given identifier in the given node within the
+ * given inputs stack array, if the input is not linked, a uniform link carrying the value of the
+ * input will be created and returned. It is expected that the caller will use the returned link in
+ * a GPU material, otherwise, the link may not be properly freed. */
+GPUNodeLink *GPU_node_get_input_link(const bNode &node,
+                                     GPUNodeStack inputs[],
+                                     StringRef identifier);
+
 }  // namespace blender

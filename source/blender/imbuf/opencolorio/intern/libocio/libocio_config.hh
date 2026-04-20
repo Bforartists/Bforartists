@@ -44,7 +44,7 @@ class LibOCIOConfig : public Config {
   LibOCIOGPUShaderBinder gpu_shader_binder_{*this};
 
  public:
-  ~LibOCIOConfig();
+  ~LibOCIOConfig() override;
 
   static std::unique_ptr<Config> create_from_environment();
 

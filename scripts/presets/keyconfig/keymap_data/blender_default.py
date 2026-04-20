@@ -921,6 +921,7 @@ def km_screen_editing(params):
         ("screen.area_move", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
         ("screen.area_move", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("snap", True)]}),
+        ("screen.area_move", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True}, None),
         ("screen.area_options", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
     ])
 
@@ -3962,6 +3963,8 @@ def km_grease_pencil_selection(params):
         ("grease_pencil.select_fill", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
         # Select linked
         ("grease_pencil.select_linked", {"type": 'L', "value": 'PRESS'}, None),
+        ("grease_pencil.select_linked", {"type": 'L', "value": 'PRESS', "shift": True},
+         {"properties": [("deselect", True)]}),
         # Select more/less
         ("grease_pencil.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("grease_pencil.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),

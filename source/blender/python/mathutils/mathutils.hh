@@ -242,10 +242,12 @@ void _BaseMathObject_RaiseNotFrozenExc(const BaseMathObject *self);
  */
 [[nodiscard]] Py_hash_t mathutils_array_hash(const float *array, size_t array_len);
 
-/* zero remaining unused elements of the array */
+/** Zero remaining unused elements of the array. */
 #define MU_ARRAY_ZERO (1u << 30)
-/* ignore larger py sequences than requested (just use first elements),
- * handy when using 3d vectors as 2d */
+/**
+ * Ignore larger py sequences than requested (just use first elements),
+ * handy when using 3d vectors as 2d.
+ */
 #define MU_ARRAY_SPILL (1u << 31)
 
 #define MU_ARRAY_FLAGS (MU_ARRAY_ZERO | MU_ARRAY_SPILL)
@@ -266,7 +268,6 @@ void _BaseMathObject_RaiseNotFrozenExc(const BaseMathObject *self);
                                                MatrixObject *mat);
 
 #ifndef MATH_STANDALONE
-/* dynstr as python string utility functions */
 /* dynstr as python string utility functions, frees 'ds'! */
 [[nodiscard]] PyObject *mathutils_dynstr_to_py(struct DynStr *ds);
 #endif

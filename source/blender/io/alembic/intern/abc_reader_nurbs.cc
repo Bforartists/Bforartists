@@ -36,8 +36,7 @@ using Alembic::AbcGeom::IObject;
 
 namespace io::alembic {
 
-AbcNurbsReader::AbcNurbsReader(const IObject &object, ImportSettings &settings)
-    : AbcObjectReader(object, settings)
+AbcNurbsReader::AbcNurbsReader(const AbcReaderConstructorArgs &args) : AbcObjectReader(args)
 {
   getNurbsPatches(m_iobject);
   get_min_max_time(m_iobject, m_schemas[0].first, m_min_time, m_max_time);

@@ -4437,9 +4437,8 @@ static PyObject *pyrna_struct_bl_rna_get_subclass(PyObject *cls, PyObject *args)
   const StructRNA *srna_base = static_cast<const StructRNA *>(py_srna->ptr->data);
 
   if (srna_base == RNA_Node) {
-    const UString idname(id);
     /* If the given idname is an alias, translate it to the proper idname. */
-    id = bke::node_type_find_alias(idname).c_str();
+    const UString idname = bke::node_type_find_alias(UString(id));
 
     bke::bNodeType *nt = bke::node_type_find(idname);
     if (nt) {
@@ -8586,15 +8585,14 @@ static PyObject *pyrna_struct_CreatePyObject_from_type(const PointerRNA *ptr,
   }
 #endif
 
+  BLI_assert(pyrna == nullptr || pyrna->ptr.has_value());
+  Py_DECREF(pyptr_rna);
   if (pyrna == nullptr) {
     if (!PyErr_Occurred()) {
       PyErr_SetString(PyExc_MemoryError, "couldn't create bpy_struct object");
     }
     return nullptr;
   }
-
-  BLI_assert(pyrna->ptr.has_value());
-  Py_DECREF(pyptr_rna);
 
   /* Blender's instance owns a reference (to avoid Python freeing it). */
   if (instance) {
@@ -8705,13 +8703,12 @@ PyObject *pyrna_prop_CreatePyObject(PointerRNA *ptr, PropertyRNA *prop)
   BPy_PropertyRNA *pyrna = reinterpret_cast<BPy_PropertyRNA *>(
       PyObject_CallOneArg(reinterpret_cast<PyObject *>(type), pypropptr_rna));
 
+  BLI_assert(pyrna == nullptr || pyrna->ptr.has_value());
+  Py_DECREF(pypropptr_rna);
   if (pyrna == nullptr) {
     PyErr_SetString(PyExc_MemoryError, "couldn't create BPy_rna object");
     return nullptr;
   }
-
-  BLI_assert(pyrna->ptr.has_value());
-  Py_DECREF(pypropptr_rna);
 
 #ifdef USE_WEAKREFS
   pyrna->in_weakreflist = nullptr;

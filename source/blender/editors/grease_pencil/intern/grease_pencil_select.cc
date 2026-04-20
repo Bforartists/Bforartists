@@ -432,11 +432,12 @@ static void GREASE_PENCIL_OT_select_less(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static wmOperatorStatus select_linked_exec(bContext *C, wmOperator * /*op*/)
+static wmOperatorStatus select_linked_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   Object *object = CTX_data_active_object(C);
   GreasePencil &grease_pencil = *id_cast<GreasePencil *>(object->data);
+  const bool unselect = RNA_boolean_get(op->ptr, "deselect");
 
   const Vector<MutableDrawingInfo> drawings = retrieve_editable_drawings(*scene, grease_pencil);
   threading::parallel_for_each(drawings, [&](const MutableDrawingInfo &info) {
@@ -446,7 +447,7 @@ static wmOperatorStatus select_linked_exec(bContext *C, wmOperator * /*op*/)
     if (selectable_strokes.is_empty()) {
       return;
     }
-    ed::curves::select_linked(info.drawing.strokes_for_write(), selectable_strokes);
+    ed::curves::select_linked(info.drawing.strokes_for_write(), selectable_strokes, unselect);
   });
 
   /* Use #ID_RECALC_GEOMETRY instead of #ID_RECALC_SELECT because it is handled as a generic
@@ -467,6 +468,10 @@ static void GREASE_PENCIL_OT_select_linked(wmOperatorType *ot)
   ot->poll = editable_grease_pencil_point_selection_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  PropertyRNA *prop = RNA_def_boolean(
+      ot->srna, "deselect", false, "Deselect linked", "Deselect linked strokes");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 static wmOperatorStatus select_random_exec(bContext *C, wmOperator *op)

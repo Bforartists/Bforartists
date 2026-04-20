@@ -285,7 +285,10 @@ static PyObject *py_imbuf_crop(Py_ImBuf *self, PyObject *args, PyObject *kw)
     PyErr_SetString(PyExc_ValueError, "ImBuf crop min/max not in range");
     return nullptr;
   }
-  IMB_rect_crop(self->ibuf, &crop);
+
+  IMB_crop(self->ibuf,
+           int2(crop.xmin, crop.ymin),
+           int2(BLI_rcti_size_x(&crop) + 1, BLI_rcti_size_y(&crop) + 1));
   Py_RETURN_NONE;
 }
 
@@ -669,7 +672,7 @@ static PyObject *py_imbuf_filepath_get(Py_ImBuf *self, void * /*closure*/)
 {
   PY_IMBUF_CHECK_OBJ(self);
   ImBuf *ibuf = self->ibuf;
-  return PyC_UnicodeFromBytes(ibuf->filepath.c_str());
+  return PyC_UnicodeFromStdStr(ibuf->filepath);
 }
 
 static int py_imbuf_filepath_set(Py_ImBuf *self, PyObject *value, void * /*closure*/)
@@ -1668,7 +1671,7 @@ static PyObject *M_imbuf_file_type_from_buffer(PyObject * /*self*/, PyObject *ar
     return nullptr;
   }
   const eImbFileType ftype = IMB_test_image_type_from_memory(
-      reinterpret_cast<const unsigned char *>(pybuffer.buf), pybuffer.len);
+      reinterpret_cast<const uchar *>(pybuffer.buf), pybuffer.len);
   PyBuffer_Release(&pybuffer);
 
   if (ftype == IMB_FTYPE_NONE) {

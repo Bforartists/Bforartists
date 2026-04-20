@@ -262,7 +262,7 @@ ShadowRayPunctual shadow_ray_generate_punctual(LightData light, float2 random_2d
   float3 shadow_position = light.local().local.shadow_position;
   /* Clip the ray to not cross the near plane.
    * Avoid traces that starts on tiles that have not been queried, creating noise. */
-  float clip_distance = length(lP - shadow_position) - clip_near;
+  float clip_distance = max(0.0f, length(lP - shadow_position) - clip_near);
   /* Still clamp to a minimal size to avoid issue with zero length vectors. */
   direction *= saturate(1e-6f + clip_distance * inversesqrt(length_squared(direction)));
 

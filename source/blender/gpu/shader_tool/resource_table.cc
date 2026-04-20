@@ -353,7 +353,7 @@ void SourceProcessor::lower_resource_table(Parser &parser)
       }
       else if (type == "specialization_constant") {
         resource.res_type = type;
-        resource.res_value = attribute[2].str();
+        resource.res_value = attribute[1].scope().str_exclusive();
       }
       else if (type == "condition") {
         attribute[1].scope().foreach_token(Word, [&](const Token tok) {

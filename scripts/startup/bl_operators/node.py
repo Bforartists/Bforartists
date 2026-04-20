@@ -1421,8 +1421,6 @@ class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
         # Use the same name as the panel in the UI for clarity.
         active_item.name = parent_panel.name
 
-        # Move the socket to the first position.
-        interface.move_to_parent(active_item, parent_panel, 0)
         # Make the panel active.
         interface.active = parent_panel
 

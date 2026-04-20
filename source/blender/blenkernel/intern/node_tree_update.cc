@@ -1875,12 +1875,16 @@ class NodeTreeMainUpdater {
         return true;
       }
       if (node.runtime->changed_flag != NTREE_CHANGED_NOTHING) {
-        const bool only_unused_internal_link_changed = !node.is_muted() &&
-                                                       node.runtime->changed_flag ==
-                                                           NTREE_CHANGED_INTERNAL_LINK;
-        const bool only_parent_changed = node.runtime->changed_flag == NTREE_CHANGED_PARENT;
-        const bool change_affects_output = !(only_unused_internal_link_changed ||
-                                             only_parent_changed);
+        bool change_affects_output = true;
+        if (!node.is_muted() && node.runtime->changed_flag == NTREE_CHANGED_INTERNAL_LINK) {
+          change_affects_output = false;
+        }
+        if (node.runtime->changed_flag == NTREE_CHANGED_PARENT) {
+          change_affects_output = false;
+        }
+        if (node.is_muted() && node.runtime->changed_flag == NTREE_CHANGED_NODE_PROPERTY) {
+          change_affects_output = false;
+        }
         if (change_affects_output) {
           return true;
         }

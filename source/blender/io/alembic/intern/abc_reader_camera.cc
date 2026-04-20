@@ -30,8 +30,7 @@ using Alembic::AbcGeom::kWrapExisting;
 
 namespace io::alembic {
 
-AbcCameraReader::AbcCameraReader(const Alembic::Abc::IObject &object, ImportSettings &settings)
-    : AbcObjectReader(object, settings)
+AbcCameraReader::AbcCameraReader(const AbcReaderConstructorArgs &args) : AbcObjectReader(args)
 {
   ICamera abc_cam(m_iobject, kWrapExisting);
   m_schema = abc_cam.getSchema();

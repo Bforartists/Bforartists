@@ -4,6 +4,7 @@
 
 #include "usd_reader_material.hh"
 #include "usd_asset_utils.hh"
+#include "usd_colorspace_utils.hh"
 #include "usd_hash_types.hh"
 #include "usd_reader_utils.hh"
 
@@ -72,16 +73,9 @@ static const pxr::TfToken rgb("rgb", pxr::TfToken::Immortal);
 static const pxr::TfToken rgba("rgba", pxr::TfToken::Immortal);
 static const pxr::TfToken roughness("roughness", pxr::TfToken::Immortal);
 static const pxr::TfToken scale("scale", pxr::TfToken::Immortal);
-static const pxr::TfToken sourceColorSpace("sourceColorSpace", pxr::TfToken::Immortal);
 static const pxr::TfToken specularColor("specularColor", pxr::TfToken::Immortal);
 static const pxr::TfToken st("st", pxr::TfToken::Immortal);
 static const pxr::TfToken varname("varname", pxr::TfToken::Immortal);
-
-/* Color space names. */
-static const pxr::TfToken auto_("auto", pxr::TfToken::Immortal);
-static const pxr::TfToken sRGB("sRGB", pxr::TfToken::Immortal);
-static const pxr::TfToken raw("raw", pxr::TfToken::Immortal);
-static const pxr::TfToken RAW("RAW", pxr::TfToken::Immortal);
 
 /* Wrap mode names. */
 static const pxr::TfToken black("black", pxr::TfToken::Immortal);
@@ -254,26 +248,6 @@ static float get_opacity_threshold(const pxr::UsdShadeShader &usd_shader,
   return default_value;
 }
 
-static pxr::TfToken get_source_color_space(const pxr::UsdShadeShader &usd_shader)
-{
-  if (!usd_shader) {
-    return pxr::TfToken();
-  }
-
-  pxr::UsdShadeInput color_space_input = usd_shader.GetInput(usdtokens::sourceColorSpace);
-
-  if (!color_space_input) {
-    return pxr::TfToken();
-  }
-
-  pxr::VtValue color_space_val;
-  if (color_space_input.Get(&color_space_val) && color_space_val.IsHolding<pxr::TfToken>()) {
-    return color_space_val.UncheckedGet<pxr::TfToken>();
-  }
-
-  return pxr::TfToken();
-}
-
 static int get_image_extension(const pxr::UsdShadeShader &usd_shader, const int default_value)
 {
   pxr::UsdShadeInput wrap_input = usd_shader.GetInput(usdtokens::wrapS);
@@ -348,6 +322,7 @@ static void set_viewport_material_props(Material *mtl, const pxr::UsdShadeShader
       pxr::VtValue val;
       if (attrs[0].Get(&val) && val.IsHolding<pxr::GfVec3f>()) {
         pxr::GfVec3f color = val.UncheckedGet<pxr::GfVec3f>();
+        io::usd::colorspace_attr_to_scene_linear(attrs[0], color);
         /* Note: The material is expected to be rendered by the Workbench render engine (Viewport
          * Display), so no need to define a material node tree. */
         mtl->r = color[0];
@@ -747,6 +722,7 @@ bool USDMaterialReader::set_node_input(const pxr::UsdShadeInput &usd_input,
     case SOCK_RGBA:
       if (val.IsHolding<pxr::GfVec3f>()) {
         pxr::GfVec3f v3f = val.UncheckedGet<pxr::GfVec3f>();
+        colorspace_attr_to_scene_linear(attrs[0], v3f);
         copy_v3_v3(sock->default_value_typed<bNodeSocketValueRGBA>()->value, v3f.data());
         return true;
       }
@@ -1419,43 +1395,7 @@ void USDMaterialReader::load_tex_image(const pxr::UsdShadeShader &usd_shader,
 
   tex_image->id = &image->id;
 
-  /* Set texture color space.
-   * TODO(makowalski): For now, just checking for RAW color space,
-   * assuming sRGB otherwise, but more complex logic might be
-   * required if the color space is "auto". */
-
-  pxr::TfToken color_space = get_source_color_space(usd_shader);
-
-  if (color_space.IsEmpty()) {
-    color_space = file_input.GetAttr().GetColorSpace();
-  }
-
-  if (color_space.IsEmpty()) {
-    /* At this point, assume the "auto" space and translate accordingly. */
-    color_space = usdtokens::auto_;
-  }
-
-  if (color_space == usdtokens::auto_) {
-    /* If it's auto, determine whether to apply color correction based
-     * on incoming connection (passed in from outer functions). */
-    STRNCPY_UTF8(image->colorspace_settings.name,
-                 IMB_colormanagement_role_colorspace_name_get(
-                     extra.is_color_corrected ? COLOR_ROLE_DEFAULT_BYTE : COLOR_ROLE_DATA));
-  }
-
-  else if (color_space == usdtokens::sRGB) {
-    STRNCPY_UTF8(image->colorspace_settings.name, IMB_colormanagement_srgb_colorspace_name_get());
-  }
-
-  /*
-   * Due to there being a lot of non-compliant USD assets out there, this is
-   * a special case where we need to check for different spellings here.
-   * On write, we are *only* using the correct, lower-case "raw" token.
-   */
-  else if (ELEM(color_space, usdtokens::RAW, usdtokens::raw)) {
-    STRNCPY_UTF8(image->colorspace_settings.name,
-                 IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DATA));
-  }
+  colorspace_to_image_texture(usd_shader, file_input, !extra.is_color_corrected, image);
 
   NodeTexImage *storage = static_cast<NodeTexImage *>(tex_image->storage);
   storage->extension = get_image_extension(usd_shader, storage->extension);

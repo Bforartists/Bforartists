@@ -72,14 +72,14 @@ static void version_geometry_nodes_properties(FileData &fd,
     return;
   }
   if (ID_MISSING(&nmd.node_group->id)) {
-    /* Keeping the old idproperties is not an option, and not really usefull, since if the
-     * blendfile is saved in this current state, it won't be re-versionned here later anyway.
+    /* Keeping the old idproperties is not an option, and not really useful, since if the
+     * blend-file is saved in this current state, it won't be re-versioned here later anyway.
      *
      * Furthermore, the whole remaining part of the code expects this to be nullptr, and keeping it
      * at runtime actually causes weird issues in depsgraph nodes building phase.
      *
      * So all in all, it's simpler and safer to also just lose these values here - if file is not
-     * saved in this state, next loading will do the versionning if the nodegroup is available
+     * saved in this state, next loading will do the versioning if the node-group is available
      * again, otherwise that data is lost.
      */
     IDP_FreeProperty(nmd.settings_legacy.properties);

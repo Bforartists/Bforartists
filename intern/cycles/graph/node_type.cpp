@@ -265,7 +265,7 @@ NodeType *NodeType::add(const char *name_, CreateFunc create_, Type type_, const
   /* Types can be lazily registered from multiple threads. */
   thread_scoped_lock lock(types_mutex());
 
-  if (types().find(name) != types().end()) {
+  if (types().contains(name)) {
     LOG_ERROR << "Node type " << name_ << " registered twice";
     assert(0);
     return nullptr;

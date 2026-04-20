@@ -318,7 +318,7 @@ class FieldInput : public ImplicitSharingMixin {
 
  public:
   FieldInput(const CPPType &type, std::string debug_name = "");
-  ~FieldInput();
+  ~FieldInput() override;
 
   StringRefNull debug_name() const;
   virtual std::string socket_inspection_name() const;

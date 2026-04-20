@@ -21,9 +21,13 @@ ExternalProject_Add(external_rubberband
   URL_HASH ${RUBBERBAND_HASH_TYPE}=${RUBBERBAND_HASH}
   PREFIX ${BUILD_DIR}/rubberband
 
-  PATCH_COMMAND ${PATCH_CMD} -p 1 
-    -d ${BUILD_DIR}/rubberband/src/external_rubberband 
-    -i ${PATCH_DIR}/rubberband_remove_dll_exports.diff
+  PATCH_COMMAND
+    ${PATCH_CMD} -p 1
+      -d ${BUILD_DIR}/rubberband/src/external_rubberband
+      -i ${PATCH_DIR}/rubberband_remove_dll_exports.diff &&
+    ${PATCH_CMD} -p 1
+      -d ${BUILD_DIR}/rubberband/src/external_rubberband
+      -i ${PATCH_DIR}/rubberband_missing_cstdlib.diff
 
   CONFIGURE_COMMAND ${RUBBERBAND_CONFIGURE_ENV} &&
     ${CMAKE_COMMAND} -E env ${RUBBERBAND_PKG_ENV} ${MESON} setup

@@ -136,13 +136,6 @@ static ImBuf *do_compositor_effect(const RenderData *context,
     IMB_rectfill(out, float4(0, 0, 0, 1));
   }
   else {
-    if (src1) {
-      ensure_ibuf_is_linear_space(src1, true);
-    }
-    if (src2) {
-      ensure_ibuf_is_linear_space(src2, true);
-    }
-
     CompositorCache &com_cache = context->scene->ed->runtime->ensure_compositor_cache();
     CompositorEffectContext com_context(
         com_cache.get_cache_manager(), *context, data->node_group, src1, src2, out, fac, *strip);

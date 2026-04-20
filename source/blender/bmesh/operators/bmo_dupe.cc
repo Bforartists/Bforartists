@@ -624,19 +624,14 @@ void bmo_spin_exec(BMesh *bm, BMOperator *op)
                    true);
       BMO_op_exec(bm, &extop);
       if ((use_merge && (a == steps - 1)) == false) {
-        /* For extrude mode, we need to rotate the extruded geometry.
-         * The extruded geometry is at the position of the previous step,
-         * so we rotate it by phi to get to the current step position. */
-        const float step_angle_prev = angle_total * (float(a) / float(steps));
-        const float step_angle_curr = angle_total * (float(a + 1) / float(steps));
-        const float step_angle_delta = step_angle_curr - step_angle_prev;
-        float rmat_delta[3][3];
-        axis_angle_normalized_to_mat3(rmat_delta, axis, step_angle_delta);
+        /* For extrude mode, rotate the extruded geometry to the current step position.
+         * Use `rmat` which is computed fresh each step from the origin angle to avoid
+         * floating-point error accumulation. */
         BMO_op_callf(bm,
                      op->flag,
                      "rotate cent=%v matrix=%m3 space=%s verts=%S",
                      cent,
-                     rmat_delta,
+                     rmat,
                      op,
                      "space",
                      &extop,

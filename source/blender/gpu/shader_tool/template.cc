@@ -462,7 +462,7 @@ void SourceProcessor::lower_templates(Parser &parser)
    * This holds true for instanciated struct templates. */
   parser().foreach_struct([&](Token, Scope, Token, Scope body) {
     body.foreach_match("t<..>", [&](const vector<Token> &toks) {
-      /* Sincte this can be an instanciated struct, we need to make sure to instanciate its own
+      /* Since this can be an instanciated struct, we need to make sure to instanciate its own
        * methods. Hence the need to parse the definition. */
       TemplateDefinition template_def = parse_template_definition(
           parser, toks[0], true, toks[0].scope(), filepath_);

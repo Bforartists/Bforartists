@@ -28,7 +28,6 @@
 #include "BLI_string_utf8.h"
 
 #include "CLG_log.h"
-#include "testing/testing.h"
 
 #include <functional>
 #include <optional>

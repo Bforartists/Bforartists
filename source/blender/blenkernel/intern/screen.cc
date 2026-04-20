@@ -1098,6 +1098,23 @@ std::optional<std::string> BKE_screen_path_from_screen_to_space(const PointerRNA
   return std::nullopt;
 }
 
+std::optional<std::string> BKE_screen_path_from_screen_to_area(const PointerRNA *ptr)
+{
+  if (GS(ptr->owner_id->name) != ID_SCR) {
+    BLI_assert_unreachable();
+    return std::nullopt;
+  }
+
+  const bScreen *screen = reinterpret_cast<const bScreen *>(ptr->owner_id);
+  const ScrArea *area = static_cast<const ScrArea *>(ptr->data);
+  const int area_index = BLI_findindex(&screen->areabase, area);
+  if (area_index == -1) {
+    return std::nullopt;
+  }
+
+  return fmt::format("areas[{}]", area_index);
+}
+
 ScrArea *BKE_screen_find_big_area(const bScreen *screen, const int spacetype, const short min)
 {
   ScrArea *big = nullptr;

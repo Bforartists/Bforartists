@@ -48,6 +48,8 @@ AssetCatalogService::AssetCatalogService(read_only_tag /*unused*/) : AssetCatalo
   const_cast<bool &>(is_read_only_) = true;
 }
 
+AssetCatalogService::~AssetCatalogService() = default;
+
 void AssetCatalogService::tag_has_unsaved_changes(AssetCatalog *edited_catalog)
 {
   BLI_assert(!is_read_only_);
@@ -624,14 +626,14 @@ void AssetCatalogService::create_missing_catalogs()
     const AssetCatalogPath path = *paths_to_check.begin();
     paths_to_check.erase(paths_to_check.begin());
 
-    if (seen_paths.find(path) != seen_paths.end()) {
+    if (seen_paths.contains(path)) {
       /* This path has been seen already, so it can be ignored. */
       continue;
     }
     seen_paths.insert(path);
 
     const AssetCatalogPath parent_path = path.parent();
-    if (seen_paths.find(parent_path) != seen_paths.end()) {
+    if (seen_paths.contains(parent_path)) {
       /* The parent exists, continue to the next path. */
       continue;
     }

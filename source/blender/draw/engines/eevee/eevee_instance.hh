@@ -210,7 +210,7 @@ class Instance : public DrawEngine {
         volume_probes(*this),
         light_probes(*this),
         volume(*this, uniform_data.data.volumes) {};
-  ~Instance() {};
+  ~Instance() override {};
 
   StringRefNull name_get() final
   {

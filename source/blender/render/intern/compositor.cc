@@ -295,6 +295,9 @@ class Context : public compositor::Context {
       copy_v2_v2_int(image_buffer->display_offset, display_offset);
       copy_v2_v2_int(image_buffer->data_offset, viewer_result.domain().data_offset);
     }
+    else {
+      image_buffer->flags &= ~IB_has_display_window;
+    }
 
     BKE_image_partial_update_mark_full_update(image);
     BKE_image_release_ibuf(image, image_buffer, lock);

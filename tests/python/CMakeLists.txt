@@ -373,6 +373,35 @@ add_blender_test(
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_annotations.py
 )
 
+add_blender_test(
+  script_pyapi_blf_buffer
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
+  --
+  --mode=BUFFER
+)
+
+# TODO: investigate if this can be supported, as the GPU can be used for rendering.
+# Requires `gpu.init()`, not available for the build-bots for the default environment.
+if(FALSE)
+  add_blender_test(
+    script_pyapi_blf_gpu
+    --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
+    --
+    --mode=GPU
+  )
+endif()
+
+add_blender_test(
+  script_pyapi_blf_vfont
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
+  --
+  --mode=VFONT
+  # Use Workbench render instead of simple GPU rasterization.
+  # Most build-bots systems fail with `gpu.init()` otherwise this could be avoided.
+  # Ideally it could be removed eventually as it's slower.
+  --use-vfont-render
+)
+
 # ------------------------------------------------------------------------------
 # DATA MANAGEMENT TESTS
 # ------------------------------------------------------------------------------
@@ -879,14 +908,14 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
   if(WITH_FREESTYLE)
     list(APPEND render_tests render_layer)
     list(APPEND workbench_tests render_layer)
-    endif()
-    
-    if(WITH_MOD_FLUID)
+  endif()
+
+  if(WITH_MOD_FLUID)
     list(APPEND render_tests motion_blur reports volume)
     list(APPEND workbench_tests volume)
-    endif()
-    
-    if(WITH_OPENVDB AND WITH_MOD_FLUID)
+  endif()
+
+  if(WITH_OPENVDB AND WITH_MOD_FLUID)
     # Some tests in the OpenVDB folder make use of fluid simulations to generate smoke
     list(APPEND render_tests openvdb)
     list(APPEND workbench_tests openvdb)

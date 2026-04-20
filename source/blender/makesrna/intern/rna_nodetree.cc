@@ -4303,13 +4303,6 @@ static const EnumPropertyItem prop_view_layer_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static const EnumPropertyItem prop_tri_channel_items[] = {
-    {1, "R", 0, "R", "Red"},
-    {2, "G", 0, "G", "Green"},
-    {3, "B", 0, "B", "Blue"},
-    {0, nullptr, 0, nullptr, nullptr},
-};
-
 static const EnumPropertyItem node_ycc_items[] = {
     {0, "ITUBT601", 0, "ITU 601", ""},
     {1, "ITUBT709", 0, "ITU 709", ""},
@@ -5091,6 +5084,7 @@ static void def_fn_input_string(BlenderRNA * /*brna*/, StructRNA *srna)
 
   prop = RNA_def_property(srna, "string", PROP_STRING, PROP_NONE);
   RNA_def_property_ui_text(prop, "String", "");
+  RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "textbox_state", PROP_POINTER, PROP_NONE);
@@ -6833,27 +6827,6 @@ static void def_cmp_defocus(BlenderRNA * /*brna*/, StructRNA *srna)
 static void def_cmp_colorbalance(BlenderRNA * /*brna*/, StructRNA *srna)
 {
   PropertyRNA *prop;
-
-  static const EnumPropertyItem type_items[] = {
-      {CMP_NODE_COLOR_BALANCE_LGG, "LIFT_GAMMA_GAIN", 0, "Lift/Gamma/Gain", ""},
-      {CMP_NODE_COLOR_BALANCE_ASC_CDL,
-       "OFFSET_POWER_SLOPE",
-       0,
-       "Offset/Power/Slope (ASC-CDL)",
-       "ASC-CDL standard color correction"},
-      {CMP_NODE_COLOR_BALANCE_WHITEPOINT,
-       "WHITEPOINT",
-       0,
-       "White Point",
-       "Chromatic adaption from a different white point"},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
-
-  prop = RNA_def_property(srna, "correction_method", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, nullptr, "custom1");
-  RNA_def_property_enum_items(prop, type_items);
-  RNA_def_property_ui_text(prop, "Correction Formula", "");
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "input_whitepoint", PROP_FLOAT, PROP_COLOR);
   RNA_def_property_array(prop, 3);
@@ -10302,6 +10275,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "CompositorNode", "CompositorNodeSplit", nullptr, ICON_NODE_VIWERSPLIT);
   define(brna, "CompositorNode", "CompositorNodeStabilize", def_cmp_stabilize2d, ICON_NODE_STABILIZE2D);
   define(brna, "CompositorNode", "CompositorNodeSequencerStripInfo", nullptr, ICON_SEQUENCE);
+  define(brna, "CompositorNode", "CompositorNodeStringToImage", nullptr, ICON_NONE);
   define(brna, "CompositorNode", "CompositorNodeSwitch", nullptr, ICON_SWITCH_DIRECTION);
   define(brna, "CompositorNode", "CompositorNodeSwitchView", nullptr, ICON_VIEW_SWITCHACTIVECAM);
   define(brna, "CompositorNode", "CompositorNodeTime", def_time, ICON_NODE_CURVE_TIME);

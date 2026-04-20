@@ -19,6 +19,9 @@ namespace nodes::node_shader_bsdf_principled_cc {
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
+  const bNodeTree *ntree = b.tree_or_null();
+  const bool is_gpu_internal = ntree && (ntree->flag & NTREE_IS_GPU_SHADER_INTERNAL);
+
   /**
    * Define static socket numbers to avoid string based lookups for GPU material creation as these
    * could run on animated materials.
@@ -71,7 +74,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 #define SOCK_ALPHA_ID 4
   b.add_input<decl::Vector>("Normal"_ustr).hide_value();
 #define SOCK_NORMAL_ID 5
-  b.add_input<decl::Float>("Weight"_ustr).available(false);
+  b.add_input<decl::Float>("Weight"_ustr).available(is_gpu_internal);
 #define SOCK_WEIGHT_ID 6
 
   /* Panel for Diffuse settings. */

@@ -67,6 +67,20 @@ template<typename Schema> static bool has_animations(Schema &schema, ImportSetti
   return settings->is_sequence || !schema.isConstant();
 }
 
+struct AbcReadGeometryParams {
+  std::string velocity_name;
+  int read_flag = 0;
+  float velocity_scale = 1.0f;
+};
+
+struct AbcReaderConstructorArgs {
+  const Alembic::Abc::IObject &object;
+  ImportSettings &settings;
+};
+
+AbcReaderConstructorArgs create_reader_constructor_args(const Alembic::Abc::IObject &object,
+                                                        ImportSettings &settings);
+
 class AbcObjectReader {
  protected:
   std::string m_name;
@@ -95,7 +109,8 @@ class AbcObjectReader {
  public:
   AbcObjectReader *parent_reader;
 
-  explicit AbcObjectReader(const Alembic::Abc::IObject &object, ImportSettings &settings);
+ public:
+  explicit AbcObjectReader(const AbcReaderConstructorArgs &args);
 
   virtual ~AbcObjectReader() = default;
 
@@ -138,9 +153,7 @@ class AbcObjectReader {
 
   virtual void read_geometry(bke::GeometrySet &geometry_set,
                              const Alembic::Abc::ISampleSelector &sample_sel,
-                             int read_flag,
-                             const char *velocity_name,
-                             float velocity_scale,
+                             const AbcReadGeometryParams &read_params,
                              const char **r_err_str);
 
   virtual bool topology_changed(const Mesh *existing_mesh,

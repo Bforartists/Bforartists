@@ -60,7 +60,7 @@ if(WIN32)
     ${PATCH_CMD} -p 1 -d
       ${BUILD_DIR}/llvm/src/external_llvm <
       ${PATCH_DIR}/llvm_clang_cuda_msvc_header_fix.diff
-    )
+  )
 else()
   set(LLVM_GENERATOR "Unix Makefiles")
 endif()

@@ -287,6 +287,16 @@ const EnumPropertyItem rna_enum_object_axis_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
+const EnumPropertyItem rna_enum_object_axis_flip_items[] = {
+    {OB_POSX, "POS_X", 0, "-X to +X", ""},
+    {OB_POSY, "POS_Y", 0, "-Y to +Y", ""},
+    {OB_POSZ, "POS_Z", 0, "-Z to +Z", ""},
+    {OB_NEGX, "NEG_X", 0, "+X to -X", ""},
+    {OB_NEGY, "NEG_Y", 0, "+Y to -Y", ""},
+    {OB_NEGZ, "NEG_Z", 0, "+Z to -Z", ""},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 }  // namespace blender
 
 #ifdef RNA_RUNTIME

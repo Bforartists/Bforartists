@@ -2686,7 +2686,25 @@ ImBuf *BKE_tracking_get_search_imbuf(const ImBuf *ibuf,
 
   searchibuf = IMB_allocImBuf(w, h, 32, ibuf->float_data() ? IB_float_data : IB_byte_data);
 
-  IMB_rectcpy(searchibuf, ibuf, 0, 0, x, y, w, h);
+  /* Clamp copy region to image bounds. */
+  int dst_x = 0, dst_y = 0;
+  if (x < 0) {
+    dst_x = -x;
+    w += x;
+    x = 0;
+  }
+  if (y < 0) {
+    dst_y = -y;
+    h += y;
+    y = 0;
+  }
+  if (x + w > ibuf->x) {
+    w = ibuf->x - x;
+  }
+  if (y + h > ibuf->y) {
+    h = ibuf->y - y;
+  }
+  IMB_copy_rect(searchibuf, ibuf, int2(x, y), int2(dst_x, dst_y), int2(w, h));
 
   if (disable_channels) {
     if ((track->flag & TRACK_PREVIEW_GRAYSCALE) || (track->flag & TRACK_DISABLE_RED) ||
@@ -3253,7 +3271,7 @@ static void tracking_dopesheet_calc_coverage(MovieTracking *tracking)
 {
   MovieTrackingDopesheet *dopesheet = &tracking->dopesheet;
   MovieTrackingObject *tracking_object = BKE_tracking_object_get_active(tracking);
-  int frames, start_frame = INT_MAX, end_frame = -INT_MAX;
+  int frames, start_frame = INT_MAX, end_frame = INT_MIN;
   int *per_frame_counter;
   TrackingCoverage prev_coverage;
   int last_segment_frame;

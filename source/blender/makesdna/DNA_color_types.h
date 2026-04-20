@@ -23,10 +23,6 @@ namespace blender {
 #define GPU_SKY_WIDTH 512
 #define GPU_SKY_HEIGHT 256
 
-/* Multiplier to map YUV U,V range (+-0.436, +-0.615) to +-0.5 on both axes. */
-#define SCOPES_VEC_U_SCALE float(0.5f / 0.436f)
-#define SCOPES_VEC_V_SCALE float(0.5f / 0.615f)
-
 /** #CurveMapPoint.flag */
 enum {
   CUMA_SELECT = (1 << 0),

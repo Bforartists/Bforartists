@@ -1604,7 +1604,7 @@ static bke::bNodeSocketType *make_socket_type_int_vector(PropertySubType subtype
                               "value",
                               data->dimensions,
                               data->value,
-                              -INT_MAX,
+                              INT_MIN,
                               INT_MAX,
                               socket.name,
                               socket.description,

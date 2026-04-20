@@ -102,6 +102,11 @@ class GLFrameBuffer : public FrameBuffer {
                int dst_offset_x,
                int dst_offset_y) override;
 
+  GLContext *context_get() const
+  {
+    return context_;
+  }
+
   void apply_state();
 
  private:

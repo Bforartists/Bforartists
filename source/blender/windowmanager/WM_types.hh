@@ -502,6 +502,8 @@ struct wmNotifier {
 /* For updating motion paths in 3dview. */
 #define ND_DRAW_ANIMVIZ (33 << 16)
 #define ND_BONE_COLLECTION (34 << 16)
+/* For sequencer prefetch indicator redraw. */
+#define ND_SEQUENCER_PREFETCH (35 << 16)
 
 /* NC_MATERIAL Material. */
 #define ND_SHADING (30 << 16)
@@ -1452,6 +1454,13 @@ struct wmDropBox {
    */
   void (*draw_in_view)(bContext *C, wmWindow *win, wmDrag *drag, const int xy[2]);
 
+  /**
+   * Used by tree views to scroll when the mouse is near the edge.
+   * Called for every event while the dropbox is active (hovered and poll succeeds).
+   * For #wmEventType::TIMER events, only the ones created from this #wmDropBox.timer are passed to
+   * it.
+   */
+  void (*on_event_while_hover)(bContext *C, wmDropBox &dropbox, const wmEvent *event);
   /** Custom data for drawing. */
   void *draw_data;
 
@@ -1472,6 +1481,7 @@ struct wmDropBox {
   IDProperty *properties;
   /** RNA pointer to access properties. */
   PointerRNA *ptr;
+  wmTimer *timer;
 };
 
 /**

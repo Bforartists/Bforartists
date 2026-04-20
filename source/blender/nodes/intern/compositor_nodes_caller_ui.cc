@@ -275,10 +275,12 @@ void draw_compositor_nodes_modifier_ui(const bContext &C,
 
   layout.use_property_split_set(true);
 
-  const char *newop = (cmd.node_group == nullptr) ?
-                          "node.new_compositor_sequencer_node_group" :
-                          "node.duplicate_compositing_modifier_node_group";
-  template_id(&layout, &C, modifier_ptr, "node_group", newop, nullptr, nullptr);
+  if ((cmd.flag & HIDE_DATABLOCK_SELECTOR) == 0) {
+    const char *newop = (cmd.node_group == nullptr) ?
+                            "node.new_compositor_sequencer_node_group" :
+                            "node.duplicate_compositing_modifier_node_group";
+    template_id(&layout, &C, modifier_ptr, "node_group", newop, nullptr, nullptr);
+  }
 
   const StripModifierData &smd = cmd.modifier;
   const bool is_mask_used = smd.mask_input_type == STRIP_MASK_INPUT_STRIP ?

@@ -114,10 +114,12 @@ LibOCIODisplay::LibOCIODisplay(const int index, const LibOCIOConfig &config) : c
 
     /* Detect if view is HDR, through encoding of display colorspace. */
     bool view_is_hdr = false;
+    bool view_is_data = false;
     if (ocio_display_colorspace) {
       StringRefNull encoding = ocio_display_colorspace->getEncoding();
       view_is_hdr = encoding == "hdr-video" || encoding == "edr-video";
       is_hdr_ |= view_is_hdr;
+      view_is_data = ocio_display_colorspace->isData();
     }
 
     /* Detect if display emulation is supported. */
@@ -190,6 +192,7 @@ LibOCIODisplay::LibOCIODisplay(const int index, const LibOCIOConfig &config) : c
                      view_name,
                      view_description,
                      view_is_hdr,
+                     view_is_data,
                      view_support_emulation,
                      gamut,
                      transfer_function,

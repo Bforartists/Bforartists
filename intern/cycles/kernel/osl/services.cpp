@@ -229,7 +229,7 @@ bool OSLRenderServices::get_attribute(ShaderGlobals *globals,
 
   /* find attribute on object */
   const AttributeDescriptor desc = find_attribute(kg, object, sd->prim, name.hash());
-  if (desc.offset != ATTR_STD_NOT_FOUND) {
+  if (is_attribute_found(desc)) {
     return osl_shared_get_object_attribute(kg, sd, desc, type, derivatives, val);
   }
 

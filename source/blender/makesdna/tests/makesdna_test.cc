@@ -17,12 +17,12 @@ namespace blender::dna {
 namespace {
 
 class SDNATest : public ::testing::Test {
-  virtual void SetUp() override
+  void SetUp() override
   {
     sdna = DNA_sdna_from_data(DNAstr, DNAlen, false, true, nullptr);
   }
 
-  virtual void TearDown() override
+  void TearDown() override
   {
     if (sdna) {
       DNA_sdna_free(sdna);

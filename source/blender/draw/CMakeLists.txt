@@ -174,6 +174,7 @@ set(SRC
   intern/draw_manager.hh
   intern/draw_manager_text.hh
   intern/draw_pass.hh
+  intern/draw_pointcloud_private.hh
   intern/draw_resource.hh
   intern/draw_sculpt.hh
   intern/draw_shader.hh
@@ -381,6 +382,7 @@ set(GLSL_SRC
 
   engines/workbench/shaders/infos/workbench_depth_infos.hh
   engines/workbench/shaders/infos/workbench_effect_antialiasing_infos.hh
+  # engines/workbench/shaders/infos/workbench_effect_dof_info.hh  # Excluded (shared).
   engines/workbench/shaders/infos/workbench_effect_dof_infos.hh
   engines/workbench/shaders/infos/workbench_effect_outline_infos.hh
   engines/workbench/shaders/infos/workbench_prepass_infos.hh
@@ -409,11 +411,9 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_debug_irradiance_grid_vert.glsl
   engines/eevee/shaders/eevee_debug_irradiance_grid_frag.glsl
   engines/eevee/shaders/eevee_deferred_aov_clear_frag.glsl
-  engines/eevee/shaders/eevee_deferred_capture_frag.glsl
+  engines/eevee/shaders/eevee_deferred_eval.bsl.hh
   engines/eevee/shaders/eevee_deferred_combine_frag.glsl
   engines/eevee/shaders/eevee_deferred_thickness_amend_frag.glsl
-  engines/eevee/shaders/eevee_deferred_light_frag.glsl
-  engines/eevee/shaders/eevee_deferred_planar_frag.glsl
   engines/eevee/shaders/eevee_deferred_tile_classify_frag.glsl
   engines/eevee/shaders/eevee_depth_of_field_accumulator_lib.glsl
   engines/eevee/shaders/eevee_depth_of_field_bokeh_lut_comp.glsl
@@ -456,8 +456,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_geom_world_vert.glsl
   engines/eevee/shaders/eevee_hiz_debug_frag.glsl
   engines/eevee/shaders/eevee_hiz_update_comp.glsl
-  engines/eevee/shaders/eevee_horizon_scan.bsl.hh
-  engines/eevee/shaders/eevee_horizon_scan_lib.bsl.hh
+  engines/eevee/shaders/eevee_fast_gi.bsl.hh
   engines/eevee/shaders/eevee_light_culling.bsl.hh
   engines/eevee/shaders/eevee_light_shadow_setup.bsl.hh
   engines/eevee/shaders/eevee_light_eval_lib.glsl
@@ -571,6 +570,7 @@ set(GLSL_SRC
   engines/eevee/eevee_hizbuffer_shared.hh
   engines/eevee/eevee_light_shared.hh
   engines/eevee/eevee_lightprobe_shared.hh
+  # engines/eevee/eevee_material_shared.hh  # Excluded (shared).
   engines/eevee/eevee_motion_blur_shared.hh
   engines/eevee/eevee_precompute_shared.hh
   engines/eevee/eevee_raytrace_shared.hh
@@ -833,7 +833,7 @@ set(GLSL_SRC
 set(GLSL_SRC_TEST
   engines/eevee/shaders/eevee_gbuffer_closure_test.glsl
   engines/eevee/shaders/eevee_gbuffer_normal_test.glsl
-  engines/eevee/shaders/eevee_horizon_scan_test.glsl
+  engines/eevee/shaders/eevee_fast_gi_test.glsl
   engines/eevee/shaders/eevee_occupancy_test.glsl
   engines/eevee/shaders/eevee_shadow_test.glsl
 )

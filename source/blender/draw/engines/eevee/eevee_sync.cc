@@ -62,7 +62,7 @@ static inline void geometry_volume_call(PassMain::Sub *pass,
   if (pass != nullptr) {
     PassMain::Sub *object_pass = volume_sub_pass(*pass, scene, ob, gpumat);
     if (object_pass != nullptr) {
-      object_pass->draw(geom, {res_handle});
+      object_pass->draw(geom, {ResourceID(res_handle)});
     }
   }
 }

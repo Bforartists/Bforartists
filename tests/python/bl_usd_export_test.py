@@ -2164,6 +2164,49 @@ class USDExportTest(AbstractUSDTest):
         # Check that the accessibility information is pulled from the export args.
         verify_accessibility_api(root_prim, UsdUI.Tokens.default_, root_label, root_description)
 
+    def test_export_colorspace(self):
+        """Validate that exported USD files have ColorSpaceAPI applied to the
+        relevant prims with scene linear interop ID."""
+
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "empty.blend"))
+
+        # Add a light with a specific color.
+        bpy.ops.object.light_add(type='POINT')
+        light_obj = bpy.context.active_object
+        light_obj.data.color = (0.5, 0.3, 0.1)
+
+        # Add a mesh with a color attribute and a material.
+        bpy.ops.mesh.primitive_plane_add()
+        mesh_obj = bpy.context.active_object
+        mesh_obj.data.color_attributes.new(name="Col", type='FLOAT_COLOR', domain='POINT')
+        mat = bpy.data.materials.new(name="Mat")
+        mat.use_nodes = True
+        mesh_obj.data.materials.append(mat)
+
+        export_path = self.tempdir / "colorspace_export.usda"
+        self.export_and_validate(
+            filepath=str(export_path),
+            evaluation_mode="RENDER",
+        )
+
+        expected = bpy.data.colorspace.working_space_interop_id
+
+        def check_colorspace(prim, label):
+            self.assertTrue(prim.IsValid(), f"{label} prim should exist")
+            self.assertTrue(prim.HasAPI(Usd.ColorSpaceAPI),
+                            f"{label} prim should have ColorSpaceAPI applied")
+            cs_name = Usd.ColorSpaceAPI(prim).GetColorSpaceNameAttr().Get()
+            self.assertEqual(cs_name, expected,
+                             f"{label} colorspace '{cs_name}' should match working space "
+                             f"interop ID '{expected}'")
+
+        stage = Usd.Stage.Open(str(export_path))
+        light_name = light_obj.name
+        mesh_name = mesh_obj.name
+        check_colorspace(stage.GetPrimAtPath(f"/root/{light_name}/{light_name}"), "Light")
+        check_colorspace(stage.GetPrimAtPath(f"/root/_materials/{mat.name}"), "Material")
+        check_colorspace(stage.GetPrimAtPath(f"/root/{mesh_name}/{mesh_name}"), "Mesh")
+
 
 class USDHookBase:
     instructions = {}

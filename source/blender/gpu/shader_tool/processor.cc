@@ -194,6 +194,7 @@ SourceProcessor::Result SourceProcessor::convert_bsl(metadata::Source external_s
   lower_aggregate_initializers(parser);
   lower_array_initializations(parser);
   lower_scope_resolution_operators(parser);
+  lower_structured_bindings(parser);
   /* Lower references. */
   lower_reference_arguments(parser);
   lower_reference_variables(parser);
@@ -1166,7 +1167,7 @@ void SourceProcessor::lint_reserved_tokens(Parser &parser)
   };
 
   parser().foreach_token(Word, [&](Token tok) {
-    if (reserved_symbols.find(string(tok.str())) != reserved_symbols.end()) {
+    if (reserved_symbols.contains(string(tok.str()))) {
       string err = string(tok.str()) + " is a reserved token";
       report_error(tok, err.c_str());
     }
@@ -1327,7 +1328,7 @@ void SourceProcessor::lower_aggregate_initializers(Parser &parser)
       if (t[0].prev() == Struct) {
         return;
       }
-      if (builtin_types.find(string(t[0].str())) != builtin_types.end()) {
+      if (builtin_types.contains(string(t[0].str()))) {
         report_error(t[0],
                      "Aggregate is error prone for built-in vector and matrix types, use "
                      "constructors instead");

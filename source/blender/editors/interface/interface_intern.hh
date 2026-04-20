@@ -195,7 +195,7 @@ struct Button : NonMovable {
 
   ButtonType type = ButtonType(0);
   ButPointerType pointype = ButPointerType::None;
-  bool bit = 0;
+  bool bit = false;
   /* 0-31 bit index. */
   char bitnr = 0;
 
@@ -375,7 +375,7 @@ struct TextWrapCache {
 /** Derived struct for #ButtonType::TextBox */
 struct ButtonTextBox : public Button {
 
-  /** Total number of wrapped lines in the last textbox redraw/event handling. */
+  /** Total number of wrapped lines in the last text-box redraw/event handling. */
   int last_total_lines = 0;
 
   TextboxState *state;
@@ -1238,11 +1238,13 @@ void draw_but_HISTOGRAM(ARegion *region,
                         Button *but,
                         const uiWidgetColors *wcol,
                         const rcti *recti);
-void draw_but_WAVEFORM(ARegion *region,
+void draw_but_WAVEFORM(const bContext *C,
+                       ARegion *region,
                        Button *but,
                        const uiWidgetColors *wcol,
                        const rcti *recti);
-void draw_but_VECTORSCOPE(ARegion *region,
+void draw_but_VECTORSCOPE(const bContext *C,
+                          ARegion *region,
                           Button *but,
                           const uiWidgetColors *wcol,
                           const rcti *recti);

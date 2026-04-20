@@ -275,8 +275,7 @@ static bool gizmo2d_calc_bounds(const bContext *C, float *r_center, float *r_min
     int selected_strips = strips.size();
     if (selected_strips > 0) {
       has_select = true;
-      const Bounds<float2> box = seq::image_transform_bounding_box_from_collection(
-          scene, strips, selected_strips != 1);
+      const Bounds<float2> box = seq::image_transform_bounding_box_from_strips_get(scene, strips);
       copy_v2_v2(r_min, box.min);
       copy_v2_v2(r_max, box.max);
     }
@@ -374,7 +373,7 @@ static bool seq_get_strip_pivot_median(const Scene *scene, float r_pivot[2])
 
   if (has_select) {
     for (Strip *strip : strips) {
-      const float2 origin = seq::image_transform_origin_offset_pixelspace_get(scene, strip);
+      const float2 origin = seq::image_transform_origin_preview_offset_get(scene, strip);
       add_v2_v2(r_pivot, origin);
     }
     mul_v2_fl(r_pivot, 1.0f / strips.size());

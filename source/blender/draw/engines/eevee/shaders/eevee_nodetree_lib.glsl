@@ -240,7 +240,7 @@ float ambient_occlusion_eval([[maybe_unused]] float3 normal,
 #if defined(GPU_FRAGMENT_SHADER) && defined(MAT_AMBIENT_OCCLUSION) && !defined(MAT_DEPTH) && !defined(MAT_SHADOW)
   // clang-format on
 #  if 0 /* TODO(fclem): Finish inverted horizon scan. */
-  /* TODO(fclem): Replace eevee_ambient_occlusion_lib by eevee_horizon_scan_eval_lib when this is
+  /* TODO(fclem): Replace eevee_ambient_occlusion_lib by eevee_fast_gi when this is
    * finished. */
   float3 vP = drw_point_world_to_view(g_data.P);
   float3 vN = drw_normal_world_to_view(normal);

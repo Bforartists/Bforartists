@@ -499,10 +499,9 @@ gpu::Texture *GPU_texture_create_view(const char *name,
 }
 
 /* ------ Usage ------ */
-eGPUTextureUsage GPU_texture_usage(const gpu::Texture *texture_)
+eGPUTextureUsage GPU_texture_usage(const gpu::Texture *texture)
 {
-  const Texture *tex = reinterpret_cast<const Texture *>(texture_);
-  return tex->usage_get();
+  return texture->usage_get();
 }
 
 /* ------ Update ------ */
@@ -549,13 +548,49 @@ void GPU_texture_update_sub_from_pixel_buffer(gpu::Texture *texture,
   texture->update_sub(offset, extent, data_format, pixel_buf);
 }
 
-void *GPU_texture_read(gpu::Texture *texture, eGPUDataFormat data_format, int mip_level)
+void *GPU_texture_read(Texture *texture, eGPUDataFormat data_format, int mip_level)
 {
+  BLI_assert(texture);
+  size_t size = texture->read_size_get(mip_level, data_format);
+
+  /* AMD Pro OpenGL drivers have a bug that write 8 bytes past buffer size
+   * if the texture is big. Note, this seemingly only affects cube map arrays. (see #66573) */
+  if (texture->type_get() == GPU_TEXTURE_CUBE_ARRAY) {
+    size += 8;
+  }
+
+  void *data = MEM_new_uninitialized(size, __func__);
+  GPU_texture_read(texture, data_format, mip_level, data);
+  return data;
+}
+
+void GPU_texture_read(Texture *texture, eGPUDataFormat data_format, int mip_level, void *dst)
+{
+  BLI_assert(texture);
   BLI_assert_msg(
       GPU_texture_usage(texture) & GPU_TEXTURE_USAGE_HOST_READ,
       "The host-read usage flag must be specified up-front. Only textures which require data "
       "reads should be flagged, allowing the backend to make certain optimizations.");
-  return texture->read(mip_level, data_format);
+  texture->read(mip_level, data_format, dst);
+}
+
+size_t Texture::read_size_get(int mip, eGPUDataFormat format) const
+{
+  BLI_assert(!(format_flag_ & GPU_FORMAT_COMPRESSED));
+  BLI_assert(mip <= mipmaps_ || mip == 0);
+  BLI_assert(validate_data_format(format_, format));
+  int extent[3] = {1, 1, 1};
+  this->mip_size_get(mip, extent);
+
+  size_t sample_len = extent[0] * std::max(1, extent[1]) * std::max(1, extent[2]);
+  size_t sample_size = to_bytesize(format_, format);
+  return sample_len * sample_size;
+}
+
+size_t GPU_texture_read_size_get(const Texture *texture, eGPUDataFormat data_format, int mip_level)
+{
+  BLI_assert(texture);
+  return texture->read_size_get(mip_level, data_format);
 }
 
 void GPU_texture_clear(gpu::Texture *tex, eGPUDataFormat data_format, const void *data)

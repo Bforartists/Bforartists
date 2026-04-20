@@ -365,9 +365,7 @@ Texture *VKTexturePool::acquire_texture(int2 extent,
                VK_IMAGE_CREATE_ALIAS_BIT,
       .imageType = VK_IMAGE_TYPE_2D,
       .format = to_vk_format(format),
-      .extent = {.width = static_cast<uint32_t>(extent.x),
-                 .height = static_cast<uint32_t>(extent.y),
-                 .depth = 1},
+      .extent = {.width = uint32_t(extent.x), .height = uint32_t(extent.y), .depth = 1},
       .mipLevels = 1,
       .arrayLayers = 1,
       .samples = VK_SAMPLE_COUNT_1_BIT,
@@ -545,8 +543,8 @@ void VKTexturePool::log_usage_data()
   for (const AllocationHandle &handle : allocations_) {
     total_allocation_size += handle.allocation_info.size;
   }
-  float ratio = static_cast<float>(current_usage_data_.acquired_segment_size_max) /
-                static_cast<float>(total_allocation_size);
+  float ratio = float(current_usage_data_.acquired_segment_size_max) /
+                float(total_allocation_size);
 
   std::string log_message = fmt::format("VKTexturePool uses {}/{} mb ({:.1f}%% of {} allocations)",
                                         current_usage_data_.acquired_segment_size_max >> 20,

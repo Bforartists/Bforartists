@@ -52,6 +52,7 @@
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
+#include "RNA_enum_types.hh"
 
 #include "WM_api.hh"
 #include "WM_message.hh"
@@ -2563,8 +2564,12 @@ static void UV_OT_mark_seam(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "clear", false, "Clear Seams", "Clear instead of marking seams");
 }
 
-static bool uv_copy_mirrored_faces(
-    const Scene *scene, BMesh *bm, int direction, int precision, int *r_double_warn)
+static bool uv_copy_mirrored_faces(const Scene *scene,
+                                   BMesh *bm,
+                                   const int mesh_axis,
+                                   const int uv_axis,
+                                   const int precision,
+                                   int *r_double_warn)
 {
   *r_double_warn = 0;
   const float precision_scale = powf(10.0f, precision);
@@ -2578,14 +2583,15 @@ static bool uv_copy_mirrored_faces(
   BMVert *v;
   BMIter iter;
 
+  const int axis = mesh_axis % 3;
   BM_ITER_MESH (v, &iter, bm, BM_VERTS_OF_MESH) {
     float3 pos = math::round(float3(v->co) * precision_scale);
-    if (pos.x >= 0.0f) {
+    if (pos[axis] >= 0.0f) {
       if (!mirror_gt.add_overwrite(pos, v)) {
         (*r_double_warn)++;
       }
     }
-    if (pos.x <= 0.0f) {
+    if (pos[axis] <= 0.0f) {
       if (!mirror_lt.add_overwrite(pos, v)) {
         (*r_double_warn)++;
       }
@@ -2594,7 +2600,7 @@ static bool uv_copy_mirrored_faces(
 
   for (const auto &[pos, v] : mirror_gt.items()) {
     float3 mirror_pos = pos;
-    mirror_pos[0] = -mirror_pos[0];
+    mirror_pos[axis] = -mirror_pos[axis];
     BMVert *v_mirror = mirror_lt.lookup_default(mirror_pos, nullptr);
     if (v_mirror) {
       vmap.add(v, v_mirror);
@@ -2602,7 +2608,7 @@ static bool uv_copy_mirrored_faces(
   }
   for (const auto &[pos, v] : mirror_lt.items()) {
     float3 mirror_pos = pos;
-    mirror_pos[0] = -mirror_pos[0];
+    mirror_pos[axis] = -mirror_pos[axis];
     BMVert *v_mirror = mirror_gt.lookup_default(mirror_pos, nullptr);
     if (v_mirror) {
       vmap.add(v, v_mirror);
@@ -2651,6 +2657,8 @@ static bool uv_copy_mirrored_faces(
   const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_PROP_FLOAT2);
 
   bool changed = false;
+  const int other_uv_axis = 1 - uv_axis;
+  const bool is_negative = mesh_axis >= OB_NEGX;
   for (const auto &[f_dst, f_src] : face_map.items()) {
 
     /* Skip unless both faces have all their UVs selected. */
@@ -2661,7 +2669,7 @@ static bool uv_copy_mirrored_faces(
     {
       float f_dst_center[3];
       BM_face_calc_center_median(f_dst, f_dst_center);
-      if (direction ? (f_dst_center[0] > 0.0f) : (f_dst_center[0] < 0.0f)) {
+      if (is_negative ? (f_dst_center[axis] > 0.0f) : (f_dst_center[axis] < 0.0f)) {
         continue;
       }
     }
@@ -2682,8 +2690,8 @@ static bool uv_copy_mirrored_faces(
       const float *uv_src = BM_ELEM_CD_GET_FLOAT_P(l_src, cd_loop_uv_offset);
       float *uv_dst = BM_ELEM_CD_GET_FLOAT_P(l_dst, cd_loop_uv_offset);
 
-      uv_dst[0] = -(uv_src[0] - 0.5f) + 0.5f;
-      uv_dst[1] = uv_src[1];
+      uv_dst[uv_axis] = -(uv_src[uv_axis] - 0.5f) + 0.5f;
+      uv_dst[other_uv_axis] = uv_src[other_uv_axis];
       changed = true;
     }
   }
@@ -2698,8 +2706,10 @@ static wmOperatorStatus uv_copy_mirrored_faces_exec(bContext *C, wmOperator *op)
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       *bmain, scene, view_layer, nullptr);
-  const int direction = RNA_enum_get(op->ptr, "direction");
   const int precision = RNA_int_get(op->ptr, "precision");
+
+  const int mesh_axis = RNA_enum_get(op->ptr, "mesh_axis");
+  const int uv_axis = RNA_enum_get(op->ptr, "uv_axis");
 
   int total_duplicates = 0;
   int meshes_with_duplicates = 0;
@@ -2709,7 +2719,8 @@ static wmOperatorStatus uv_copy_mirrored_faces_exec(bContext *C, wmOperator *op)
 
     int double_warn = 0;
 
-    bool changed = uv_copy_mirrored_faces(scene, em->bm, direction, precision, &double_warn);
+    bool changed = uv_copy_mirrored_faces(
+        scene, em->bm, mesh_axis, uv_axis, precision, &double_warn);
 
     if (double_warn) {
       total_duplicates += double_warn;
@@ -2734,14 +2745,8 @@ static wmOperatorStatus uv_copy_mirrored_faces_exec(bContext *C, wmOperator *op)
 }
 void UV_OT_copy_mirrored_faces(wmOperatorType *ot)
 {
-  static const EnumPropertyItem direction_items[] = {
-      {0, "POSITIVE", 0, "Positive", ""},
-      {1, "NEGATIVE", 0, "Negative", ""},
-      {0, nullptr, 0, nullptr, nullptr},
-  };
-
   ot->name = "Copy Mirrored UV Coords";
-  ot->description = "Copy mirror UV coordinates on the X axis based on a mirrored mesh";
+  ot->description = "Copy mirror UV coordinates based on a mirrored mesh";
   ot->idname = "UV_OT_copy_mirrored_faces";
 
   ot->exec = uv_copy_mirrored_faces_exec;
@@ -2749,7 +2754,14 @@ void UV_OT_copy_mirrored_faces(wmOperatorType *ot)
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  RNA_def_enum(ot->srna, "direction", direction_items, 0, "Axis Direction", "");
+  RNA_def_enum(ot->srna,
+               "mesh_axis",
+               rna_enum_object_axis_flip_items,
+               OB_POSX,
+               "Mesh Axis",
+               "Mirror vertices based on mesh axis");
+  RNA_def_enum(
+      ot->srna, "uv_axis", rna_enum_axis_xy_items, 0, "UV Axis", "Axis to mirror UV coordinates");
   RNA_def_int(ot->srna,
               "precision",
               3,

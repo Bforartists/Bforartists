@@ -226,7 +226,7 @@ void ED_file_change_dir_ex(bContext *C, ScrArea *area);
 void ED_file_change_dir(bContext *C);
 
 void ED_file_path_button(bScreen *screen,
-                         const SpaceFile *sfile,
+                         SpaceFile *sfile,
                          FileSelectParams *params,
                          ui::Block *block);
 

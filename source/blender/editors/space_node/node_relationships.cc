@@ -100,6 +100,13 @@ static void pick_link(bNodeLinkDrag &nldrag,
 
   bNodeLink link = create_drag_link(*link_to_pick.fromnode, *link_to_pick.fromsock);
 
+  bke::node_link_set_mute(*snode.edittree, link, (link_to_pick.flag & NODE_LINK_MUTED));
+
+  /* So we can restore order on cancel. */
+  if (link_to_pick.tosock->is_multi_input()) {
+    link.multi_input_sort_id = link_to_pick.multi_input_sort_id;
+  }
+
   nldrag.links.append(link);
   bke::node_remove_link(snode.edittree, link_to_pick);
   snode.edittree->ensure_topology_cache();
@@ -528,7 +535,7 @@ static std::string get_viewer_source_name(const bNodeSocket &socket)
     }
     return reroute_input.logically_linked_sockets()[0]->name;
   }
-  return socket.name;
+  return blender::bke::node_socket_label(socket);
 }
 /**
  * Find the socket to link to in a viewer node.
@@ -1377,12 +1384,80 @@ static void add_dragged_links_to_tree(bContext &C, bNodeLinkDrag &nldrag)
 static void node_link_cancel(bContext *C, wmOperator *op)
 {
   SpaceNode *snode = CTX_wm_space_node(C);
+  bNodeTree &ntree = *snode->edittree;
   bNodeLinkDrag *nldrag = static_cast<bNodeLinkDrag *>(op->customdata);
+
+  /* Restore pre-existing links. */
+  for (bNodeLink &link : nldrag->links) {
+    if (nldrag->start_socket->is_output() && nldrag->in_out == SOCK_OUT) {
+      /* Dragged from output socket (to create a new link), nothing to restore. */
+      continue;
+    }
+
+    bNode *fromnode = nullptr, *tonode = nullptr;
+    bNodeSocket *fromsock = nullptr, *tosock = nullptr;
+
+    if (nldrag->start_socket->is_output() && nldrag->in_out == SOCK_IN) {
+      /* Existing, disconnected (from output socket) link, fixed on an input socket. */
+      fromnode = nldrag->start_node;
+      fromsock = nldrag->start_socket;
+      tonode = link.tonode;
+      tosock = link.tosock;
+    }
+    else if (nldrag->start_socket->is_input() && nldrag->in_out == SOCK_OUT) {
+      /* Existing, disconnected (from input socket) link, fixed on an output socket. */
+      fromnode = link.fromnode;
+      fromsock = link.fromsock;
+      tonode = nldrag->start_node;
+      tosock = nldrag->start_socket;
+    }
+
+    if (ELEM(nullptr, fromnode, fromsock, tonode, tosock)) {
+      continue;
+    }
+
+    bNodeLink &link_restored = bke::node_add_link(ntree, *fromnode, *fromsock, *tonode, *tosock);
+
+    bke::node_link_set_mute(ntree, link_restored, (link.flag & NODE_LINK_MUTED));
+
+    if ((tosock->flag & SOCK_MULTI_INPUT)) {
+      ntree.ensure_topology_cache();
+      link_restored.multi_input_sort_id = link.multi_input_sort_id;
+      /* When drag-disconnected from input socket, order from other links will
+       * have changed, so update sort IDs to prevent invalid cases later on. */
+      if (nldrag->start_socket->is_input()) {
+        for (bNodeLink *other_link : tosock->directly_linked_links()) {
+          if (other_link == &link_restored) {
+            continue;
+          }
+          if (other_link->multi_input_sort_id >= link_restored.multi_input_sort_id) {
+            other_link->multi_input_sort_id += 1;
+          }
+        }
+      }
+    }
+
+    if (link_restored.fromnode->typeinfo->insert_link) {
+      bke::NodeInsertLinkParams params{ntree, *link_restored.fromnode, link_restored, C};
+      if (!link_restored.fromnode->typeinfo->insert_link(params)) {
+        bke::node_remove_link(&ntree, link_restored);
+        continue;
+      }
+    }
+    if (link_restored.tonode->typeinfo->insert_link) {
+      bke::NodeInsertLinkParams params{ntree, *link_restored.tonode, link_restored, C};
+      if (!link_restored.tonode->typeinfo->insert_link(params)) {
+        bke::node_remove_link(&ntree, link_restored);
+        continue;
+      }
+    }
+  }
+
   draw_draglink_tooltip_deactivate(*CTX_wm_region(C), *nldrag);
   view2d_edge_pan_cancel(C, &nldrag->pan_data);
   snode->runtime->linkdrag.reset();
   clear_picking_highlight(&snode->edittree->links);
-  BKE_ntree_update_tag_link_removed(snode->edittree);
+  BKE_ntree_update_tag_link_changed(snode->edittree);
   BKE_main_ensure_invariants(*CTX_data_main(C), snode->edittree->id);
 }
 

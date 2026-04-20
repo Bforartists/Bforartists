@@ -252,7 +252,7 @@ static bool bake_single_target(LineartBakeJob *bj, Object *ob, int frame)
     }
   }
 
-  ed::greasepencil::LineartLimitInfo info;
+  ed::greasepencil::LineartLimitInfo info = {0};
   ed::greasepencil::get_lineart_modifier_limits(*ob, info);
 
   LineartCache *lc = nullptr;

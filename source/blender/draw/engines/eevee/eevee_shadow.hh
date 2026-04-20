@@ -310,10 +310,10 @@ class ShadowModule {
 
    protected:
     /** Special culling pass to take shadow linking into consideration. */
-    virtual void compute_visibility(ObjectBoundsBuf &bounds,
-                                    ObjectInfosBuf &infos,
-                                    uint resource_len,
-                                    bool debug_freeze) override;
+    void compute_visibility(ObjectBoundsBuf &bounds,
+                            ObjectInfosBuf &infos,
+                            uint resource_len,
+                            bool debug_freeze) override;
   };
 
   /** Multi-View containing a maximum of 64 view to be rendered with the shadow pipeline. */

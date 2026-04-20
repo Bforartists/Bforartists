@@ -335,6 +335,9 @@ class ShaderNodesInliner {
       case ID_LA:
         add_output_type("ShaderNodeOutputLight"_ustr);
         break;
+      case ID_LS:
+        add_output_type("ShaderNodeOutputLineStyle"_ustr);
+        break;
       default:
         BLI_assert_unreachable();
     }

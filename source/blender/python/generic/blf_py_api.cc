@@ -535,6 +535,7 @@ static PyObject *py_blf_bind_imbuf_enter(BPyBLFImBufContext *self)
              ibuf->byte_data_for_write(),
              ibuf->x,
              ibuf->y,
+             4,
              ibuf->byte_buffer.colorspace);
   self->buffer_state = buffer_state;
 

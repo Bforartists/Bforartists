@@ -493,7 +493,7 @@ bool Film::update_lightgroups(Scene *scene)
   for (const Pass *pass : scene->passes) {
     const ustring lightgroup = pass->get_lightgroup();
     if (!lightgroup.empty()) {
-      if (!lightgroups.count(lightgroup)) {
+      if (!lightgroups.contains(lightgroup)) {
         lightgroups[lightgroup] = i++;
       }
     }

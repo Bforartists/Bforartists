@@ -1385,7 +1385,7 @@ void OSLCompiler::find_dependencies(ShaderNodeSet &dependencies, ShaderInput *in
 {
   ShaderNode *node = (input->link) ? input->link->parent : nullptr;
 
-  if (node != nullptr && dependencies.find(node) == dependencies.end()) {
+  if (node != nullptr && !dependencies.contains(node)) {
     for (ShaderInput *in : node->inputs) {
       if (!node_skip_input(node, in)) {
         find_dependencies(dependencies, in);
@@ -1405,12 +1405,12 @@ void OSLCompiler::generate_nodes(const ShaderNodeSet &nodes)
     nodes_done = true;
 
     for (ShaderNode *node : nodes) {
-      if (done.find(node) == done.end()) {
+      if (!done.contains(node)) {
         bool inputs_done = true;
 
         for (ShaderInput *input : node->inputs) {
           if (!node_skip_input(node, input)) {
-            if (input->link && done.find(input->link->parent) == done.end()) {
+            if (input->link && !done.contains(input->link->parent)) {
               inputs_done = false;
             }
           }
