@@ -90,9 +90,9 @@ class COLLECTION_MT_context_menu_instance_offset(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.instance_offset_from_cursor")
-        layout.operator("object.instance_offset_from_object")
-        layout.operator("object.instance_offset_to_cursor")
+        layout.operator("object.instance_offset_from_cursor", icon='ORIGIN_TO_CURSOR')
+        layout.operator("object.instance_offset_from_object", icon='ORIGIN_TO_GEOMETRY')
+        layout.operator("object.instance_offset_to_cursor", icon='CURSORTOCENTER')
 
 
 class COLLECTION_PT_instancing(CollectionButtonsPanel, Panel):
