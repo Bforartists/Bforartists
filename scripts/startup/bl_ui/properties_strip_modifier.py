@@ -27,18 +27,6 @@ class STRIP_PT_modifiers(StripModButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
 
-        strip = context.active_strip
-        if strip.type == 'SOUND':
-            sound = strip.sound
-        else:
-            sound = None
-
-        if sound is None:
-            row = layout.row()  # BFA - float left
-            row.use_property_split = False
-            row.prop(strip, "use_linear_modifiers")
-            row.prop_decorator(strip, "use_linear_modifiers")
-
         row = layout.row()
         row.operator("wm.call_menu", text="Add Modifier", icon='ADD').name = "SEQUENCER_MT_modifier_add"
         
