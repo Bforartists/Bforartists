@@ -1716,6 +1716,7 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeBlurAttribute", pad=22),
             OperatorEntry("GeometryNodeCaptureAttribute", pad=15),
             OperatorEntry("GeometryNodeRemoveAttribute", pad=2),
+            OperatorEntry("GeometryNodeRenameAttribute", pad=16),
             OperatorEntry("GeometryNodeStoreNamedAttribute", pad=7),
         )
 
