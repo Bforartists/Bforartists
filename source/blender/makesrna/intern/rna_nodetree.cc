@@ -10544,7 +10544,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeRaycast", nullptr, ICON_RAYCAST);
   define(brna, "GeometryNode", "GeometryNodeRealizeInstances", nullptr, ICON_MOD_INSTANCE);
   define(brna, "GeometryNode", "GeometryNodeRemoveAttribute", nullptr, ICON_ATTRIBUTE_REMOVE);
-  define(brna, "GeometryNode", "GeometryNodeRenameAttribute", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodeRenameAttribute", nullptr, ICON_RENAME);
   define(brna, "GeometryNode", "GeometryNodeRepeatInput", def_geo_repeat_input, ICON_REPEAT);
   define(brna, "GeometryNode", "GeometryNodeRepeatOutput", def_geo_repeat_output, ICON_REPEAT);
   define(brna, "GeometryNode", "GeometryNodeReplaceMaterial", nullptr, ICON_MATERIAL_REPLACE);
