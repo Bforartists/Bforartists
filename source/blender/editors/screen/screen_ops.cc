@@ -5369,7 +5369,7 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
     layout.separator();
     ptr = layout.op("SCREEN_OT_edge_merge",
                     IFACE_("Merge Edge"),
-                    ICON_NONE,
+                    ICON_MERGE_EDGE,
                     blender::wm::OpCallContext::ExecDefault,
                     UI_ITEM_NONE);
     RNA_int_set_array(&ptr, "cursor", event->xy);

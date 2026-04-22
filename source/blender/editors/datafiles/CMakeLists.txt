@@ -1097,6 +1097,7 @@ if(WITH_BLENDER)
       merge_at_last
       merge_center
       merge_cursor
+      merge_edge
       mesh_capsule
       mesh_circle
       mesh_cone
