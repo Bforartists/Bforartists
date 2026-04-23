@@ -1337,6 +1337,43 @@ class NODES_PT_toolshelf_compositor_add_utilities_vector(bpy.types.Panel, NodePa
         self.draw_entries(context, layout, entries)
 
 
+
+class NODES_PT_toolshelf_compositor_add_utilities_text(bpy.types.Panel, NodePanel):
+    bl_label = "Text"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("FunctionNodeFormatString", pad=12),
+            OperatorEntry("FunctionNodeMatchString", pad=14),
+            OperatorEntry("FunctionNodeReplaceString", pad=10),
+            OperatorEntry("FunctionNodeSliceString", pad=14),
+            OperatorEntry("FunctionNodeTrimString", pad=14),
+            Separator,
+            OperatorEntry("FunctionNodeFindInString", pad=10),
+            OperatorEntry("FunctionNodeStringLength", pad=10),
+            OperatorEntry("FunctionNodeStringToValue", pad=8),
+            OperatorEntry("FunctionNodeValueToString", pad=8),
+            Separator,
+            OperatorEntry("FunctionNodeInputSpecialCharacters", pad=0),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
 class NODES_PT_toolshelf_texture_add_input(bpy.types.Panel, NodePanel):
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -3144,6 +3181,7 @@ classes = (
     NODES_PT_toolshelf_compositor_add_utilities_math,
     NODES_PT_toolshelf_compositor_add_utilities_matrix,
     NODES_PT_toolshelf_compositor_add_utilities_vector,
+    NODES_PT_toolshelf_compositor_add_utilities_text,
     #-----------------------
 
     #-----------------------
