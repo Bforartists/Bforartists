@@ -809,7 +809,7 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeImageCoordinates", pad=4),
             OperatorEntry("CompositorNodeMask", pad=27),
             OperatorEntry("CompositorNodeMovieClip", pad=19),
-            OperatorEntry("CompositorNodeStringToImage", pad=12)
+            OperatorEntry("CompositorNodeStringToImage", pad=8)
         )
 
         self.draw_entries(context, layout, entries)
