@@ -46,7 +46,7 @@ class POINTCLOUD_MT_attribute_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("geometry.attribute_convert")
+        layout.operator("geometry.attribute_convert", icon="ATTRIBUTE_CONVERT") # BFA - added icon
 
 
 class POINTCLOUD_MT_add_attribute(Menu):
