@@ -1815,6 +1815,33 @@ void blo_do_versions_userdef(UserDef *userdef)
         userdef, "NODE_AST_compositor", "Compositor Nodegroups/Texture");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_compositor", "Compositor Nodegroups/Utilities");
+
+    /* BFA - Enable default asset shelf categories for Shader and Geometry Nodes editors. */
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Color");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Mapping");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Masks");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Texture/Patterns");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shader");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Texture/Shapes");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Utility");
+
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Grease Pencil");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Hair");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Normals");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh/UV");
   }
 
   if (!USER_VERSION_ATLEAST(501, 17)) {
