@@ -268,13 +268,15 @@ class UnifiedPaintPanel:
             some 'brush-like' tools."""
         row = layout.row(align=True)
         settings = UnifiedPaintPanel.paint_settings(context)
-        if settings is None:  # BFA - Early return if settings is None for the Annotation tool
+
+        # BFA - Modified early return to allow unified_paint_settings_override for tools like Gradient Weight
+        if settings is None and not unified_paint_settings_override:
             return
-        ups = settings.unified_paint_settings
-        if unified_paint_settings_override:
-            ups = unified_paint_settings_override
-        else:
-            ups = UnifiedPaintPanel.paint_settings(context).unified_paint_settings
+        ups = unified_paint_settings_override if unified_paint_settings_override else settings.unified_paint_settings
+        # BFA - Added check for brush being None to prevent errors
+        if not brush:
+            return
+
         prop_owner = brush
         if unified_name and getattr(ups, unified_name):
             prop_owner = ups
