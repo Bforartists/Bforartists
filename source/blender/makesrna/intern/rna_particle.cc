@@ -99,9 +99,9 @@ static const EnumPropertyItem part_hair_ren_as_items[] = {
 #endif
 
 static const EnumPropertyItem part_type_items[] = {
-    {PART_EMITTER, "EMITTER", 0, "Emitter", ""},
+    {PART_EMITTER, "EMITTER", ICON_OUTLINER_DATA_POINTCLOUD, "Emitter", ""},
     // {PART_REACTOR, "REACTOR", 0, "Reactor", ""},
-    {PART_HAIR, "HAIR", 0, "Hair", ""},
+    {PART_HAIR, "HAIR", ICON_CURVES, "Hair", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 

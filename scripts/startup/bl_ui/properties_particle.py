@@ -89,7 +89,7 @@ class PARTICLE_MT_context_menu(Menu):
         props.remove_target_particles = True
 
         if psys is not None and psys.settings.type == 'HAIR':
-            layout.operator("curves.convert_from_particle_system", text="Convert to Curves")
+            layout.operator("curves.convert_from_particle_system", text="Convert to Curves", icon='CURVES_DATA') # BFA - added icon
 
         layout.separator()
 
@@ -97,7 +97,7 @@ class PARTICLE_MT_context_menu(Menu):
             "particle.duplicate_particle_system",
             icon='DUPLICATE',
         )
-        layout.operator("particle.particle_system_remove_all", text="Remove All Particle Systems")
+        layout.operator("particle.particle_system_remove_all", text="Remove All Particle Systems", icon="DELETE") # BFA - added icon
 
 
 class PARTICLE_PT_hair_dynamics_presets(PresetPanel, Panel):
