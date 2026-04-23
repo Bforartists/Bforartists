@@ -803,12 +803,13 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("CompositorNodeBokehImage", pad=13),
-            OperatorEntry("NodeGroupInput", pad=14),
+            OperatorEntry("NodeGroupInput", pad=15),
             OperatorEntry("CompositorNodeImage", pad=24),
             OperatorEntry("CompositorNodeImageInfo", pad=16),
-            OperatorEntry("CompositorNodeImageCoordinates", pad=2),
+            OperatorEntry("CompositorNodeImageCoordinates", pad=4),
             OperatorEntry("CompositorNodeMask", pad=27),
-            OperatorEntry("CompositorNodeMovieClip", pad=18),
+            OperatorEntry("CompositorNodeMovieClip", pad=19),
+            OperatorEntry("CompositorNodeStringToImage", pad=12)
         )
 
         self.draw_entries(context, layout, entries)

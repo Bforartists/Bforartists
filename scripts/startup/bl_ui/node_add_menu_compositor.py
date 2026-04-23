@@ -24,7 +24,6 @@ class NODE_MT_compositor_node_input_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "CompositorNodeImageCoordinates")
         self.node_operator(layout, "CompositorNodeMask")
         self.node_operator(layout, "CompositorNodeMovieClip")
-        self.node_operator(layout, "CompositorNodeStringToImage")
         if context.space_data.node_tree_sub_type == 'SEQUENCER':
             self.node_operator(layout, "CompositorNodeSequencerStripInfo")
         self.node_operator(layout, "CompositorNodeStringToImage")
