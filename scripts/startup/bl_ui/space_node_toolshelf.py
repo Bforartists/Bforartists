@@ -802,6 +802,7 @@ class NODES_PT_toolshelf_compositor_add_input(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("CompositorNodeBlankImage", pad=14),
             OperatorEntry("CompositorNodeBokehImage", pad=13),
             OperatorEntry("NodeGroupInput", pad=15),
             OperatorEntry("CompositorNodeImage", pad=24),
