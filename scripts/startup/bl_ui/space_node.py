@@ -1079,8 +1079,8 @@ class NODE_MT_context_menu(Menu):
 
                 layout.separator()
 
-        layout.operator("node.join", text="Join in New Frame", icon='JOIN')
-        layout.operator("node.detach", text="Remove from Frame", icon='DELETE')
+        layout.operator("node.join", text="Join in New Frame", icon='NODE_FRAMEJOIN')
+        layout.operator("node.detach", text="Remove from Frame", icon='NODE_FRAMEREMOVE')
 
         layout.separator()
 
