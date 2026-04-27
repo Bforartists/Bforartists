@@ -1195,8 +1195,8 @@ static bool strip_colorbalance_update_cb(Strip *strip, void * /*user_data*/)
 
 static bool strip_set_alpha_mode_cb(Strip *strip, void * /*user_data*/)
 {
-  enum { SEQ_MAKE_PREMUL = (1 << 6) };
-  if (strip->flag & SEQ_MAKE_PREMUL) {
+  const eStripFlag make_premul = eStripFlag(1 << 6);
+  if (strip->flag & make_premul) {
     strip->alpha_mode = SEQ_ALPHA_STRAIGHT;
   }
   else {

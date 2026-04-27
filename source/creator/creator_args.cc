@@ -98,7 +98,6 @@ struct BuildDefs {
   bool with_ffmpeg;
   bool with_freestyle;
   bool with_libmv;
-  bool with_opencolorio;
   bool with_opengl_backend;
   bool with_renderdoc;
   bool with_input_ndof;
@@ -138,9 +137,6 @@ static void build_defs_init(BuildDefs *build_defs, bool force_all)
 #  endif
 #  ifdef WITH_OPENGL_BACKEND
   build_defs->with_opengl_backend = true;
-#  endif
-#  ifdef WITH_OPENCOLORIO
-  build_defs->with_opencolorio = true;
 #  endif
 #  ifdef WITH_RENDERDOC
   build_defs->with_renderdoc = true;
@@ -899,11 +895,9 @@ static void print_help(bArgs *ba, bool all)
   PRINT(
       "  $BLENDER_CUSTOM_SPLASH_BANNER Full path to an image to overlay on the splash screen.\n");
 
-  if (defs.with_opencolorio) {
-    PRINT(
-        "  $BLENDER_OCIO              Path to override the OpenColorIO configuration file.\n"
-        "                             If not set, the 'OCIO' environment variable is used.\n");
-  }
+  PRINT(
+      "  $BLENDER_OCIO              Path to override the OpenColorIO configuration file.\n"
+      "                             If not set, the 'OCIO' environment variable is used.\n");
 
   /* Non `BLENDER_` prefixed, conventions from 3rd party libraries or the operating system. */
 

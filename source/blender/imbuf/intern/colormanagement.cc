@@ -22,12 +22,12 @@
 #include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
 
+#include "IMB_cache.hh"
 #include "IMB_filetype.hh"
 #include "IMB_filter.hh"
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
 #include "IMB_metadata.hh"
-#include "IMB_moviecache.hh"
 
 #include "MEM_guardedalloc.h"
 
@@ -180,7 +180,7 @@ static struct GlobalColorPickingState {
  *
  *      It contains two parts:
  *        - data
- *        - moviecache
+ *        - imbufcache
  *
  *      Data field is used to store additional information about cached
  *      buffers which affects on whether cached buffer could be used.
@@ -194,7 +194,7 @@ static struct GlobalColorPickingState {
  *      data field is not null only for elements of cache, not used for
  *      original image buffers.
  *
- *      Color management cache is using generic MovieCache implementation
+ *      Color management cache is using generic ImBufCache implementation
  *      to make it easier to deal with memory limitation.
  *
  *      Currently color management is using the same memory limitation
@@ -252,18 +252,18 @@ struct ColormanageCacheData {
 };
 
 struct ColormanageCache {
-  MovieCache *moviecache;
+  ImBufCache *imbufcache;
 
   ColormanageCacheData *data;
 };
 
-static MovieCache *colormanage_moviecache_get(const ImBuf *ibuf)
+static ImBufCache *colormanage_imbufcache_get(const ImBuf *ibuf)
 {
   if (!ibuf->colormanage_cache) {
     return nullptr;
   }
 
-  return ibuf->colormanage_cache->moviecache;
+  return ibuf->colormanage_cache->imbufcache;
 }
 
 static ColormanageCacheData *colormanage_cachedata_get(const ImBuf *ibuf)
@@ -292,24 +292,24 @@ static bool colormanage_hashcmp(const void *av, const void *bv)
   return ((a->view != b->view) || (a->display != b->display));
 }
 
-static MovieCache *colormanage_moviecache_ensure(ImBuf *ibuf)
+static ImBufCache *colormanage_imbufcache_ensure(ImBuf *ibuf)
 {
   if (!ibuf->colormanage_cache) {
     ibuf->colormanage_cache = MEM_new_zeroed<ColormanageCache>("imbuf colormanage cache");
   }
 
-  if (!ibuf->colormanage_cache->moviecache) {
-    MovieCache *moviecache;
+  if (!ibuf->colormanage_cache->imbufcache) {
+    ImBufCache *imbufcache;
 
-    moviecache = IMB_moviecache_create("colormanage cache",
-                                       sizeof(ColormanageCacheKey),
-                                       colormanage_hashhash,
-                                       colormanage_hashcmp);
+    imbufcache = IMB_cache_create("colormanage cache",
+                                  sizeof(ColormanageCacheKey),
+                                  colormanage_hashhash,
+                                  colormanage_hashcmp);
 
-    ibuf->colormanage_cache->moviecache = moviecache;
+    ibuf->colormanage_cache->imbufcache = imbufcache;
   }
 
-  return ibuf->colormanage_cache->moviecache;
+  return ibuf->colormanage_cache->imbufcache;
 }
 
 static void colormanage_cachedata_set(ImBuf *ibuf, ColormanageCacheData *data)
@@ -361,17 +361,17 @@ static ImBuf *colormanage_cache_get_ibuf(ImBuf *ibuf,
                                          void **cache_handle)
 {
   ImBuf *cache_ibuf;
-  MovieCache *moviecache = colormanage_moviecache_get(ibuf);
+  ImBufCache *imbufcache = colormanage_imbufcache_get(ibuf);
 
-  if (!moviecache) {
-    /* If there's no moviecache it means no color management was applied
+  if (!imbufcache) {
+    /* If there's no imbufcache it means no color management was applied
      * on given image buffer before. */
     return nullptr;
   }
 
   *cache_handle = nullptr;
 
-  cache_ibuf = IMB_moviecache_get(moviecache, key, nullptr);
+  cache_ibuf = IMB_cache_get(imbufcache, key, nullptr);
 
   *cache_handle = cache_ibuf;
 
@@ -442,7 +442,7 @@ static void colormanage_cache_put(ImBuf *ibuf,
   ImBuf *cache_ibuf;
   ColormanageCacheData *cache_data;
   int view_flag = 1 << view_settings->view;
-  MovieCache *moviecache = colormanage_moviecache_ensure(ibuf);
+  ImBufCache *imbufcache = colormanage_imbufcache_ensure(ibuf);
   CurveMapping *curve_mapping = view_settings->curve_mapping;
   int curve_mapping_timestamp = curve_mapping ? curve_mapping->changed_timestamp : 0;
 
@@ -472,7 +472,7 @@ static void colormanage_cache_put(ImBuf *ibuf,
 
   *cache_handle = cache_ibuf;
 
-  IMB_moviecache_put(moviecache, &key, cache_ibuf);
+  IMB_cache_put(imbufcache, &key, cache_ibuf);
 }
 
 static void colormanage_cache_handle_release(void *cache_handle)
@@ -670,10 +670,7 @@ void colormanagement_init()
 
   /* Then use fallback. */
   if (g_config() == nullptr) {
-#ifdef WITH_OPENCOLORIO
-    /* Without OpenColorIO this just adds noise. */
     CLOG_STR_INFO_NOCHECK(&LOG, "Using fallback mode for management");
-#endif
     g_config() = ocio::Config::create_fallback();
     colormanage_load_config(*g_config());
   }
@@ -755,14 +752,14 @@ void colormanage_cache_free(ImBuf *ibuf)
 
   if (ibuf->colormanage_cache) {
     ColormanageCacheData *cache_data = colormanage_cachedata_get(ibuf);
-    MovieCache *moviecache = colormanage_moviecache_get(ibuf);
+    ImBufCache *imbufcache = colormanage_imbufcache_get(ibuf);
 
     if (cache_data) {
       MEM_delete(cache_data);
     }
 
-    if (moviecache) {
-      IMB_moviecache_free(moviecache);
+    if (imbufcache) {
+      IMB_cache_free(imbufcache);
     }
 
     MEM_delete(ibuf->colormanage_cache);

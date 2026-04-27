@@ -1421,9 +1421,6 @@ if(TEST_SRC_DIR_EXISTS AND TEST_OPENIMAGEIO_TOOL_EXISTS)
   if(WITH_IMAGE_CINEON)
     set(OPTIONAL_FORMATS "${OPTIONAL_FORMATS} CINEON")
   endif()
-  if(WITH_IMAGE_OPENEXR)
-    set(OPTIONAL_FORMATS "${OPTIONAL_FORMATS} OPENEXR")
-  endif()
   if(WITH_IMAGE_OPENJPEG)
     set(OPTIONAL_FORMATS "${OPTIONAL_FORMATS} OPENJPEG")
   endif()
@@ -1611,6 +1608,13 @@ if(TEST_SRC_DIR_EXISTS)
   add_blender_test(
     bl_weight_paint_brushes
     --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/weight_paint_brushes_test.py
+    --
+    --testdir "${TEST_SRC_DIR}/mesh_paint"
+  )
+
+  add_blender_test(
+    bl_texture_paint_brushes
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/texture_paint_brushes_test.py
     --
     --testdir "${TEST_SRC_DIR}/mesh_paint"
   )

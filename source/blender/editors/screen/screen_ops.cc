@@ -3779,6 +3779,7 @@ static wmOperatorStatus frame_jump_exec(bContext *C, wmOperator *op)
     else {
       scene->r.cfra = playback_range.start_frame;
     }
+    scene->r.subframe = 0.0f;
 
     ED_areas_do_frame_follow(C, true);
 
@@ -7034,6 +7035,9 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
     sad->flag &= ~ANIMPLAY_FLAG_USE_NEXT_FRAME;
     sad->flag |= ANIMPLAY_FLAG_JUMPED;
   }
+
+  /* Always reset the subframe on animation playback. */
+  scene->r.subframe = 0.0f;
 
   if (sad->flag & ANIMPLAY_FLAG_JUMPED) {
     DEG_id_tag_update(&scene->id, ID_RECALC_FRAME_CHANGE);

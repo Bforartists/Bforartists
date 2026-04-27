@@ -330,8 +330,8 @@ static void version_clear_unused_strip_flags(Main &bmain)
         constexpr int flag_delete = 1 << 10;
         constexpr int flag_ignore_channel_lock = 1 << 16;
         constexpr int flag_show_offsets = 1 << 20;
-        strip->flag &= ~(flag_overlap | flag_ipo_frame_locked | flag_effect_not_loaded |
-                         flag_delete | flag_ignore_channel_lock | flag_show_offsets);
+        strip->flag &= ~eStripFlag(flag_overlap | flag_ipo_frame_locked | flag_effect_not_loaded |
+                                   flag_delete | flag_ignore_channel_lock | flag_show_offsets);
         return true;
       });
     }

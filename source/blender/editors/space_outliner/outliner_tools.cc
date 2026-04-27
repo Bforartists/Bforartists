@@ -3474,7 +3474,7 @@ void OUTLINER_OT_animdata_operation(wmOperatorType *ot)
   /* callbacks */
   ot->invoke = WM_menu_invoke;
   ot->exec = outliner_animdata_operation_exec;
-  ot->poll = ED_operator_outliner_active;
+  ot->poll = outliner_operation_tree_element_poll;
 
   ot->flag = 0;
 

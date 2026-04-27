@@ -332,7 +332,12 @@ Material &MaterialModule::material_sync(const ObjectHandle &ob_handle,
     prepass_pipe = has_motion ? MAT_PIPE_PREPASS_DEFERRED_VELOCITY : MAT_PIPE_PREPASS_DEFERRED;
   }
 
-  MaterialKey material_key(blender_mat, geometry_type, surface_pipe, ob->visibility_flag);
+  /** NOTE: Use prepass_pipe instead of surface_pipe, since surface_pipe doesn't take velocity
+   * variants into account, causing all users of the same material to use velocity or not based on
+   * the first object that was synced.
+   * Note that prepass already takes deferrend vs forward into account. */
+  /** TODO: Find a cleaner solution. */
+  MaterialKey material_key(blender_mat, geometry_type, prepass_pipe, ob->visibility_flag);
 
   Material &mat = material_map_.lookup_or_add_cb(material_key, [&]() {
     Material mat;

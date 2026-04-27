@@ -694,6 +694,17 @@ void BKE_armature_deform_coords_with_editmesh(
 
 namespace bke {
 
+struct bArmature_Runtime {
+  /**
+   * Index of the active collection, -1 if there is no collection active.
+   *
+   * For UIList support in the user interface. Assigning here does nothing, use
+   * `ANIM_armature_bonecoll_active_set` to set the active bone collection.
+   */
+  int active_collection_index = 0;
+  BoneCollection *active_collection = nullptr;
+};
+
 struct SelectedBonesResult {
   bool all_bones_selected = true;
   bool no_bones_selected = true;

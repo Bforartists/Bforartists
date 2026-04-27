@@ -413,7 +413,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_deferred_aov_clear_frag.glsl
   engines/eevee/shaders/eevee_deferred_eval.bsl.hh
   engines/eevee/shaders/eevee_deferred_combine_frag.glsl
-  engines/eevee/shaders/eevee_deferred_thickness_amend_frag.glsl
+  engines/eevee/shaders/eevee_deferred_thickness_amend.bsl.hh
   engines/eevee/shaders/eevee_deferred_tile_classify_frag.glsl
   engines/eevee/shaders/eevee_depth_of_field_accumulator_lib.glsl
   engines/eevee/shaders/eevee_depth_of_field_bokeh_lut_comp.glsl
@@ -522,8 +522,8 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_shadow_tag_update.bsl.hh
   engines/eevee/shaders/eevee_shadow_tag_usage.bsl.hh
   engines/eevee/shaders/eevee_shadow_tag_usage_transparent.bsl.hh
-  engines/eevee/shaders/eevee_shadow_tilemap_amend_comp.glsl
-  engines/eevee/shaders/eevee_shadow_tilemap_bounds_comp.glsl
+  engines/eevee/shaders/eevee_shadow_tilemap_amend.bsl.hh
+  engines/eevee/shaders/eevee_shadow_tilemap_bounds.bsl.hh
   engines/eevee/shaders/eevee_shadow_tilemap_finalize_comp.glsl
   engines/eevee/shaders/eevee_shadow_tilemap_init_comp.glsl
   engines/eevee/shaders/eevee_shadow_tilemap_lib.bsl.hh

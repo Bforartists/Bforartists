@@ -21,8 +21,8 @@
 #include "BLI_string_utf8.h"
 #include "BLI_utildefines.h"
 
+#include "IMB_cache.hh"
 #include "IMB_imbuf.hh"
-#include "IMB_moviecache.hh"
 
 #include "MOV_util.hh"
 
@@ -83,7 +83,7 @@ void BKE_blender_free()
 
   BKE_callback_global_finalize();
 
-  IMB_moviecache_destruct();
+  IMB_cache_destruct();
   seq::fontmap_clear();
   MOV_exit();
 

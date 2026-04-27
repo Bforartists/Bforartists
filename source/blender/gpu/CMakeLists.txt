@@ -440,7 +440,7 @@ set(LIB
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::nodes
-  PRIVATE bf::dependencies::optional::opencolorio
+  PRIVATE bf::dependencies::opencolorio
 )
 
 # Select Backend source based on availability

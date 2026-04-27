@@ -260,9 +260,7 @@ endif()
 find_package(OpenImageIO REQUIRED)
 add_bundled_libraries(openimageio/lib)
 
-if(WITH_OPENCOLORIO)
-  find_package(OpenColorIO 2.0.0 REQUIRED)
-endif()
+find_package(OpenColorIO 2.0.0 REQUIRED CONFIG)
 add_bundled_libraries(opencolorio/lib)
 
 if(WITH_OPENVDB)

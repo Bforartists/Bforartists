@@ -161,6 +161,8 @@ const char *RealizeOnDomainOperation::get_realization_shader_name()
       case ResultType::Int3:
         /* Int3 is internally stored in a int4 texture due to GPU module limitations. */
         return "compositor_realize_on_domain_int4";
+      case ResultType::Int4:
+        return "compositor_realize_on_domain_int4";
       case ResultType::Bool:
         return "compositor_realize_on_domain_bool";
       case ResultType::Float4x4:
@@ -199,6 +201,8 @@ const char *RealizeOnDomainOperation::get_realization_shader_name()
         return "compositor_realize_on_domain_int2";
       case ResultType::Int3:
         /* Int3 is internally stored in a int4 texture due to GPU module limitations. */
+        return "compositor_realize_on_domain_int4";
+      case ResultType::Int4:
         return "compositor_realize_on_domain_int4";
       case ResultType::Bool:
         return "compositor_realize_on_domain_bool";
@@ -255,6 +259,7 @@ void RealizeOnDomainOperation::realize_on_domain_cpu(const float3x3 &transformat
                       int32_t,
                       int2,
                       int3,
+                      int4,
                       bool,
                       float4x4,
                       nodes::MenuValue>(

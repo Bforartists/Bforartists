@@ -87,6 +87,7 @@ static void armature_init_data(ID *id)
 {
   bArmature *armature = id_cast<bArmature *>(id);
   INIT_DEFAULT_STRUCT_AFTER(armature, id);
+  armature->runtime = MEM_new<bke::bArmature_Runtime>(__func__);
 }
 
 /**
@@ -138,6 +139,7 @@ static void armature_copy_data(Main * /*bmain*/,
 {
   bArmature *armature_dst = id_cast<bArmature *>(id_dst);
   const bArmature *armature_src = id_cast<const bArmature *>(id_src);
+  armature_dst->runtime = MEM_new<bke::bArmature_Runtime>(__func__);
 
   Bone *bone_src, *bone_dst;
   Bone *bone_dst_act = nullptr;
@@ -191,7 +193,7 @@ static void armature_copy_data(Main * /*bmain*/,
   }
 
   ANIM_armature_bonecoll_active_index_set(armature_dst,
-                                          armature_src->runtime.active_collection_index);
+                                          armature_src->runtime->active_collection_index);
   ANIM_armature_runtime_refresh(armature_dst);
 }
 
@@ -200,6 +202,7 @@ static void armature_free_data(ID *id)
 {
   bArmature *armature = id_cast<bArmature *>(id);
   ANIM_armature_runtime_free(armature);
+  MEM_delete(armature->runtime);
 
   /* Free all BoneCollectionMembership objects. */
   if (armature->collection_array) {
@@ -341,8 +344,8 @@ static void armature_blend_write(BlendWriter *writer, ID *id, const void *id_add
   arm->needs_flush_to_id = 0;
   arm->act_edbone = nullptr;
 
-  const bArmature_Runtime runtime_backup = arm->runtime;
-  arm->runtime = bArmature_Runtime{};
+  bke::bArmature_Runtime *runtime_backup = arm->runtime;
+  arm->runtime = nullptr;
 
   /* Convert BoneCollections over to a listbase for writing. */
   BoneCollection **collection_array_backup = arm->collection_array;
@@ -488,7 +491,7 @@ static void armature_blend_read_data(BlendDataReader *reader, ID *id)
 
   BKE_armature_bone_hash_make(arm);
 
-  arm->runtime = bArmature_Runtime{};
+  arm->runtime = MEM_new<bke::bArmature_Runtime>(__func__);
   ANIM_armature_runtime_refresh(arm);
 }
 

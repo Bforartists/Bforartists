@@ -250,10 +250,21 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_split", text="Split", icon="SPLIT")
         layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
         layout.operator("uv.select_similar", text="Similar", icon="SIMILAR")
+        layout.menu("IMAGE_MT_select_all_by_trait")
 
         layout.separator()
         layout.menu("IMAGE_MT_select_more_less")
 
+
+class IMAGE_MT_select_all_by_trait(Menu):
+    bl_label = "Select All by Trait"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("uv.select_tile", text="Tile") # BFA - WIP
+        layout.operator("uv.select_pinned", text="Pinned") # BFA - WIP
+        layout.operator("uv.select_overlap", text="Overlap") # BFA - WIP
+        layout.operator("uv.select_by_winding", text="Winding") # BFA - WIP
 
 # BFA - menu
 class IMAGE_MT_select_more_less(Menu):
@@ -2306,6 +2317,7 @@ classes = (
     IMAGE_MT_select,
     IMAGE_MT_select_legacy,  # BFA menu
     IMAGE_MT_select_linked, # BFA - not used
+    IMAGE_MT_select_all_by_trait,
     IMAGE_MT_select_more_less,  # BFA menu
     IMAGE_MT_image,
     IMAGE_MT_image_transform,

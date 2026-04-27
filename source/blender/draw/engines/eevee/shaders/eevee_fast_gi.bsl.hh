@@ -685,7 +685,7 @@ struct Denoise {
 [[compute]] [[local_size(RAYTRACE_GROUP_SIZE, RAYTRACE_GROUP_SIZE)]]
 void denoise([[work_group_id]] const uint3 group_id,
              [[local_invocation_id]] const uint3 local_id,
-             [[resource_table]] Denoise &srt,
+             [[resource_table]] Denoise & /*srt*/,
              [[resource_table]] SampleInput &sh_in,
              [[resource_table]] SampleOutput &sh_out,
              [[resource_table]] Tiles &tiles)

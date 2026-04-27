@@ -140,7 +140,7 @@ float nextafter(float value)
 
 [[vertex]]
 void tag_usage_vert([[resource_table]] TagUsageTransparent &srt,
-                    [[resource_table]] TagUsage &tag,
+                    [[resource_table]] TagUsage & /*tag*/,
                     [[in]] const VertIn &v_in,
                     [[out]] VertOut &v_out,
                     [[position]] float4 &out_position)

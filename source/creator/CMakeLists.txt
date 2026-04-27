@@ -23,7 +23,7 @@ set(LIB
   PRIVATE bf::render
   PRIVATE bf::sequencer
   PRIVATE bf::windowmanager
-  PRIVATE bf::dependencies::optional::opencolorio
+  PRIVATE bf::dependencies::opencolorio
 )
 
 if(HAVE_FEENABLEEXCEPT)
@@ -547,12 +547,10 @@ if(WITH_INTERNATIONAL)
 endif()
 
 # Color management.
-if(WITH_OPENCOLORIO)
-  install(
-    DIRECTORY ${CMAKE_SOURCE_DIR}/release/datafiles/colormanagement
-    DESTINATION ${TARGETDIR_VER}/datafiles
-  )
-endif()
+install(
+  DIRECTORY ${CMAKE_SOURCE_DIR}/release/datafiles/colormanagement
+  DESTINATION ${TARGETDIR_VER}/datafiles
+)
 if(WIN32)
   if(EXISTS ${LIBDIR}/osl/lib/python${PYTHON_VERSION}/site-packages/oslquery) # 4.4+
     install(

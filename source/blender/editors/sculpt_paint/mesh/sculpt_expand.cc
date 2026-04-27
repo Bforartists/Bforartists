@@ -1830,51 +1830,66 @@ static bool update_mask_grids(const SculptSession &ss,
   return any_changed;
 }
 
+static float calc_new_mask_bmesh(const SculptSession &ss,
+                                 const Cache &expand_cache,
+                                 const float old_mask,
+                                 const BitSpan enabled_verts,
+                                 const BMVert *vert)
+{
+  const int vert_index = BM_elem_index_get(vert);
+  if (expand_cache.check_islands && !is_vert_in_active_component(ss, expand_cache, vert_index)) {
+    return old_mask;
+  }
+  float new_mask;
+  if (enabled_verts[vert_index]) {
+    new_mask = gradient_value_get(ss, expand_cache, vert->co, vert_index);
+  }
+  else {
+    new_mask = 0.0f;
+  }
+  if (expand_cache.preserve) {
+    if (expand_cache.invert) {
+      new_mask = min_ff(new_mask, expand_cache.original_mask[vert_index]);
+    }
+    else {
+      new_mask = max_ff(new_mask, expand_cache.original_mask[vert_index]);
+    }
+  }
+  return clamp_f(new_mask, 0.0f, 1.0f);
+}
+
 static bool update_mask_bmesh(SculptSession &ss,
                               const BitSpan enabled_verts,
                               const int mask_offset,
+                              const Span<float> old_mask,
                               bke::pbvh::BMeshNode *node)
 {
   const Cache &expand_cache = *ss.expand_cache;
 
   bool any_changed = false;
   for (BMVert *vert : BKE_pbvh_bmesh_node_unique_verts(node)) {
-    const int vert_index = BM_elem_index_get(vert);
     const float initial_mask = BM_ELEM_CD_GET_FLOAT(vert, mask_offset);
-
-    if (expand_cache.check_islands && !is_vert_in_active_component(ss, expand_cache, vert_index)) {
-      continue;
+    float new_mask = calc_new_mask_bmesh(ss, expand_cache, initial_mask, enabled_verts, vert);
+    if (new_mask != initial_mask) {
+      any_changed = true;
     }
-
-    float new_mask;
-
-    if (enabled_verts[vert_index]) {
-      new_mask = gradient_value_get(ss, expand_cache, vert->co, vert_index);
-    }
-    else {
-      new_mask = 0.0f;
-    }
-
-    if (expand_cache.preserve) {
-      if (expand_cache.invert) {
-        new_mask = min_ff(new_mask, expand_cache.original_mask[BM_elem_index_get(vert)]);
-      }
-      else {
-        new_mask = max_ff(new_mask, expand_cache.original_mask[BM_elem_index_get(vert)]);
-      }
-    }
-
-    if (new_mask == initial_mask) {
-      continue;
-    }
-
-    BM_ELEM_CD_SET_FLOAT(vert, mask_offset, clamp_f(new_mask, 0.0f, 1.0f));
-    any_changed = true;
+    BM_ELEM_CD_SET_FLOAT(vert, mask_offset, new_mask);
   }
-  if (any_changed) {
-    bke::pbvh::node_update_mask_bmesh(mask_offset, *node);
+  if (!any_changed) {
+    int i = 0;
+    for (BMVert *vert : BKE_pbvh_bmesh_node_other_verts(node)) {
+      if (calc_new_mask_bmesh(ss, expand_cache, old_mask[i], enabled_verts, vert) != old_mask[i]) {
+        any_changed = true;
+        break;
+      }
+      i++;
+    }
   }
-  return any_changed;
+  if (!any_changed) {
+    return false;
+  }
+  bke::pbvh::node_update_mask_bmesh(mask_offset, *node);
+  return true;
 }
 
 /**
@@ -2091,10 +2106,23 @@ static void update_for_vert(bContext *C, Object &ob, const std::optional<int> ve
               &ss.bm->vdata, CD_PROP_FLOAT, ".sculpt_mask");
           MutableSpan<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
 
+          Array<Vector<float>> old_masks(node_mask.min_array_size());
+          node_mask.foreach_index(
+              [&](const int i) {
+                const Set<BMVert *, 0> &other = BKE_pbvh_bmesh_node_other_verts(&nodes[i]);
+                old_masks[i].resize(other.size());
+                int j = 0;
+                for (BMVert *vert : other) {
+                  old_masks[i][j] = BM_ELEM_CD_GET_FLOAT(vert, mask_offset);
+                  j++;
+                }
+              },
+              exec_mode::grain_size(1));
           Array<bool> node_changed(node_mask.min_array_size(), false);
           node_mask.foreach_index(
               [&](const int i) {
-                node_changed[i] = update_mask_bmesh(ss, enabled_verts, mask_offset, &nodes[i]);
+                node_changed[i] = update_mask_bmesh(
+                    ss, enabled_verts, mask_offset, old_masks[i].as_span(), &nodes[i]);
               },
               exec_mode::grain_size(1));
 

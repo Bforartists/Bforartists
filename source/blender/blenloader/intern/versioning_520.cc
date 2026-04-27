@@ -261,7 +261,7 @@ static void version_clear_strip_linear_modifier_flag(Main &bmain)
     Editing *ed = seq::editing_get(&scene);
     if (ed != nullptr) {
       seq::foreach_strip(&ed->seqbase, [&](Strip *strip) {
-        constexpr int flag_linear_modifiers = 1 << 23;
+        constexpr eStripFlag flag_linear_modifiers = eStripFlag(1 << 23);
         strip->flag &= ~flag_linear_modifiers;
         return true;
       });
@@ -481,6 +481,20 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       brush.mesh_automasking_settings->cavity_curve = BKE_curvemapping_copy(
           brush.automasking_cavity_curve);
       brush.mesh_automasking_settings->cavity_curve_op = nullptr;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 21)) {
+    for (Material &materials : bmain->materials) {
+      if (materials.gp_style != nullptr) {
+        materials.gp_style->random_size_factor = 0.0f;
+        materials.gp_style->random_strength_factor = 0.0f;
+        materials.gp_style->random_rotation_factor = 0.0f;
+        materials.gp_style->random_hue_factor = 0.0f;
+        materials.gp_style->random_saturation_factor = 0.0f;
+        materials.gp_style->random_value_factor = 0.0f;
+        materials.gp_style->random_noise_scale = 1.0f;
+      }
     }
   }
   /**

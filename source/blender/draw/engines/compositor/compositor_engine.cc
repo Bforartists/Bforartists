@@ -184,7 +184,7 @@ class Context : public compositor::Context {
 
     if (realization_operation) {
       Result realize_input = this->create_result(ResultType::Color, viewer_result.precision());
-      realize_input.wrap_external(viewer_result);
+      realize_input.share_data(viewer_result);
       realization_operation->map_input_to_result(&realize_input);
       realization_operation->evaluate();
 

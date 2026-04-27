@@ -103,7 +103,7 @@ class KeyingScreenOperation : public NodeOperation {
     }
 
     Result &keying_screen = get_result("Screen");
-    keying_screen.wrap_external(cached_keying_screen);
+    keying_screen.share_data(cached_keying_screen);
   }
 
   Domain compute_domain() override

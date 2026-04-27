@@ -705,7 +705,7 @@ class DOPESHEET_MT_select(Menu):
         layout.operator("action.select_circle", icon="CIRCLE_SELECT")
         layout.operator_menu_enum("action.select_lasso", "mode")
 
-        # BFA moved below
+        # BFA moved to top level
         layout.separator()
 
         layout.operator("action.select_column", text="Columns on Selected Keys", icon="COLUMNS_KEYS").mode = "KEYS"
@@ -727,6 +727,9 @@ class DOPESHEET_MT_select(Menu):
 
             layout.separator()
 
+            layout.operator("action.select_linked") # BFA - WIP
+            layout.operator_menu_enum("action.select_by_type", "type") # BFA - WIP
+
         props = layout.operator("action.select_leftright", text="Before Current Frame", icon="BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = "LEFT"
@@ -738,7 +741,6 @@ class DOPESHEET_MT_select(Menu):
         layout.menu("DOPESHEET_MT_select_more_less")
 
 
-# BFA menu
 class DOPESHEET_MT_select_more_less(Menu):
     bl_label = "More/Less"
 
@@ -750,6 +752,7 @@ class DOPESHEET_MT_select_more_less(Menu):
             layout.operator("action.select_more", text="More", icon="SELECTMORE")
             layout.operator("action.select_less", text="Less", icon="SELECTLESS")
 
+        # BFA - most of these are moved to a top level so this menu is consistent with other menus
 
 class DOPESHEET_MT_marker(Menu):
     bl_label = "Marker"
@@ -882,7 +885,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("action.frame_jump", icon="JUMP_TO_KEYFRAMES")
+        layout.operator("action.frame_jump", icon="JUMP_TO_KEYFRAMES", text="Jump to Selected")
 
         layout.separator()
 
@@ -1452,7 +1455,7 @@ classes = (
     DOPESHEET_MT_view_pie_menus,  # BFA menu
     DOPESHEET_MT_cache,
     DOPESHEET_MT_select,
-    DOPESHEET_MT_select_more_less,  # BFA menu
+    DOPESHEET_MT_select_more_less,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
     DOPESHEET_MT_channel_extrapolation,  # BFA menu

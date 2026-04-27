@@ -74,6 +74,7 @@ if(WITH_GTESTS)
   )
   set(TEST_LIB
     bf_functions
+    PRIVATE bf::blenkernel
   )
   blender_add_test_suite_lib(function "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")
 endif()

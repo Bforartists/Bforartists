@@ -123,7 +123,7 @@ static void init_facesets(const Mesh *object_mesh, Mesh *primitive_mesh)
       primitive_attributes.lookup_or_add_for_write_span<int>(".sculpt_face_set",
                                                              bke::AttrDomain::Face);
 
-  primitive_face_sets.span.fill(object_mesh->face_sets_color_default);
+  primitive_face_sets.span.fill(ed::sculpt_paint::face_set::find_next_available_id(*object_mesh));
   primitive_face_sets.finish();
 }
 

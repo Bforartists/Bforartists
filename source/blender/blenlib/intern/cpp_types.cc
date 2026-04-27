@@ -8,44 +8,11 @@
 
 #include "BLI_color_types.hh"
 #include "BLI_cpp_type_make.hh"
-#include "BLI_cpp_types_make.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_quaternion_types.hh"
 #include "BLI_math_vector_types.hh"
 
 namespace blender {
-
-static auto &get_vector_from_self_map()
-{
-  static Map<const CPPType *, const VectorCPPType *> map;
-  return map;
-}
-
-static auto &get_vector_from_value_map()
-{
-  static Map<const CPPType *, const VectorCPPType *> map;
-  return map;
-}
-
-void VectorCPPType::register_self()
-{
-  get_vector_from_self_map().add_new(&this->self, this);
-  get_vector_from_value_map().add_new(&this->value, this);
-}
-
-const VectorCPPType *VectorCPPType::get_from_self(const CPPType &self)
-{
-  const VectorCPPType *type = get_vector_from_self_map().lookup_default(&self, nullptr);
-  BLI_assert(type == nullptr || type->self == self);
-  return type;
-}
-
-const VectorCPPType *VectorCPPType::get_from_value(const CPPType &value)
-{
-  const VectorCPPType *type = get_vector_from_value_map().lookup_default(&value, nullptr);
-  BLI_assert(type == nullptr || type->value == value);
-  return type;
-}
 
 BLI_CPP_TYPE_MAKE(bool, CPPTypeFlags::BasicType)
 
@@ -61,6 +28,7 @@ BLI_CPP_TYPE_MAKE(int32_t, CPPTypeFlags::BasicType)
 BLI_CPP_TYPE_MAKE(short2, CPPTypeFlags::BasicType)
 BLI_CPP_TYPE_MAKE(int2, CPPTypeFlags::BasicType)
 BLI_CPP_TYPE_MAKE(int3, CPPTypeFlags::BasicType)
+BLI_CPP_TYPE_MAKE(int4, CPPTypeFlags::BasicType)
 BLI_CPP_TYPE_MAKE(int64_t, CPPTypeFlags::BasicType)
 
 BLI_CPP_TYPE_MAKE(uint8_t, CPPTypeFlags::BasicType)
@@ -74,8 +42,6 @@ BLI_CPP_TYPE_MAKE(ColorGeometry4b, CPPTypeFlags::BasicType)
 BLI_CPP_TYPE_MAKE(math::Quaternion, CPPTypeFlags::BasicType | CPPTypeFlags::IdentityDefaultValue)
 
 BLI_CPP_TYPE_MAKE(std::string, CPPTypeFlags::BasicType)
-
-BLI_VECTOR_CPP_TYPE_MAKE(std::string)
 
 void register_cpp_types()
 {
@@ -91,6 +57,7 @@ void register_cpp_types()
   BLI_CPP_TYPE_REGISTER(int32_t);
   BLI_CPP_TYPE_REGISTER(int2);
   BLI_CPP_TYPE_REGISTER(int3);
+  BLI_CPP_TYPE_REGISTER(int4);
   BLI_CPP_TYPE_REGISTER(int64_t);
 
   BLI_CPP_TYPE_REGISTER(uint8_t);
@@ -104,8 +71,6 @@ void register_cpp_types()
   BLI_CPP_TYPE_REGISTER(math::Quaternion);
 
   BLI_CPP_TYPE_REGISTER(std::string);
-
-  BLI_VECTOR_CPP_TYPE_REGISTER(std::string);
 }
 
 }  // namespace blender

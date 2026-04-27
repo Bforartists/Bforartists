@@ -268,7 +268,7 @@ void PrefetchJob::init_depsgraph()
   seq_prefetch_update_depsgraph(this);
 
   this->scene_eval = DEG_get_evaluated_scene(this->depsgraph);
-  this->scene_eval->ed->cache_flag = 0;
+  this->scene_eval->ed->cache_flag = SEQ_CACHE_NONE;
 }
 
 void PrefetchJob::init_gpu()
