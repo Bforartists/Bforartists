@@ -603,8 +603,16 @@ class OUTLINER_PT_filter(Panel):
         if display_mode != 'DATA_API':
             col.prop(space, "use_sort_alpha")
         if display_mode != 'LIBRARY_OVERRIDES':
-            col.prop(space, "use_sync_select", text="Sync Selection")
-            col.prop(space, "show_mode_column", text="Show Mode Column")
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.prop(space, "use_sync_select", text="Sync Selection")
+            row = col.row(align=True)
+            row.active = space.use_sync_select
+            row.prop(space, "scroll_to_active", text="Scroll to Active") # BFA - WIP, float left
+
+            row = layout.row(align=True)
+            row.prop(space, "show_mode_column", text="Show Mode Column")
+            layout.separator()
 
         # Same exception for library overrides as in OUTLINER_HT_header.
         if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'HIERARCHIES':

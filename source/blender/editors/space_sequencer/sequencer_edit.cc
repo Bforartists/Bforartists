@@ -469,6 +469,41 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
   WM_event_add_notifier(&C, NC_SCENE | ND_FRAME, nullptr);
 }
 
+void sync_vse_camera_for_view3d(const WorkSpace *workspace, const Scene *active_scene, View3D *v3d)
+{
+  /* Parameters must not be nullptr. */
+  BLI_assert(workspace != nullptr);
+  BLI_assert(active_scene != nullptr);
+  BLI_assert(v3d != nullptr);
+
+  /* Check if VSE sync mode is enabled. */
+  if (!workspace->sequencer_scene) {
+    return;
+  }
+  if ((workspace->flags & WORKSPACE_SYNC_SCENE_TIME) == 0) {
+    return;
+  }
+
+  const Scene *sequencer_scene = workspace->sequencer_scene;
+  const Strip *scene_strip = get_scene_strip_for_time_sync(sequencer_scene);
+  if (!scene_strip || !scene_strip->scene) {
+    return;
+  }
+
+  if (active_scene != scene_strip->scene) {
+    return;
+  }
+
+  /* Determine which camera to use. */
+  const Object *camera = scene_strip->scene_camera ? scene_strip->scene_camera :
+                                                     scene_strip->scene->camera;
+
+  /* Sync camera for this specific View3D. */
+  if (camera && v3d->camera != camera) {
+    v3d->camera = const_cast<Object *>(camera);
+  }
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -2465,7 +2500,7 @@ static wmOperatorStatus sequencer_add_duplicate_exec(bContext *C, wmOperator *op
     if (active_strip != nullptr && STREQ(strip->name, active_strip->name)) {
       seq::select_active_set(scene, strip);
     }
-    strip->flag &= ~(SEQ_LEFTSEL + SEQ_RIGHTSEL + SEQ_LOCK);
+    strip->flag &= ~(SEQ_LEFTSEL | SEQ_RIGHTSEL | SEQ_LOCK);
     strip->runtime->flag |= seq::StripRuntimeFlag::IgnoreChannelLock;
 
     seq::animation_duplicate_backup_to_scene(scene, strip, &animation_backup);
@@ -3476,7 +3511,7 @@ static wmOperatorStatus sequencer_change_effect_type_exec(bContext *C, wmOperato
 {
   Scene *scene = CTX_data_sequencer_scene(C);
   Strip *strip = seq::select_active_get(scene);
-  const StripType old_type = StripType(strip->type);
+  const StripType old_type = strip->type;
   const int have_inputs = strip->effect_num_inputs_get();
   const StripType new_type = StripType(RNA_enum_get(op->ptr, "type"));
 
@@ -4232,7 +4267,7 @@ static wmOperatorStatus sequencer_strip_color_tag_set_exec(bContext *C, wmOperat
 {
   Scene *scene = CTX_data_sequencer_scene(C);
   const Editing *ed = seq::editing_get(scene);
-  const short color_tag = RNA_enum_get(op->ptr, "color");
+  const StripColorTag color_tag = StripColorTag(RNA_enum_get(op->ptr, "color"));
 
   for (Strip &strip : *ed->current_strips()) {
     if (strip.flag & SEQ_SELECT) {

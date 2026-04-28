@@ -4730,7 +4730,7 @@ keyconfig_data = \
    [("paint.image_paint",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'NORMAL'),
+      [("mode", 'None'),
        ],
       },
      ),
@@ -8282,7 +8282,7 @@ keyconfig_data = \
    [("sculpt.brush_stroke",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'NORMAL'),
+      [("mode", 'None'),
        ],
       },
      ),
@@ -8533,7 +8533,7 @@ keyconfig_data = \
    [("sculpt_curves.brush_stroke",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'NORMAL'),
+      [("mode", 'None'),
        ],
       },
      ),

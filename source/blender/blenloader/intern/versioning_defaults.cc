@@ -571,6 +571,13 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
 
   /* Weight Paint settings */
   ts->weightuser = OB_DRAW_GROUPUSER_ACTIVE;
+
+  /* Cycles settings. */
+  IDProperty *cscene = version_cycles_properties_from_ID(&scene->id);
+  if (cscene) {
+    /* Set the default sampling pattern to AUTOMATIC. */
+    version_cycles_property_int_set(cscene, "sampling_pattern", 5);
+  }
 }
 
 void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)

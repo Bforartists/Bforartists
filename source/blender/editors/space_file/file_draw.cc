@@ -597,8 +597,7 @@ static rcti file_measure_string_multiline(const StringRef string, const int wrap
   rcti textbox;
   BLF_wordwrap(font_id,
                wrap_width,
-               BLFWrapMode(int(BLFWrapMode::Typographical) | int(BLFWrapMode::Path) |
-                           int(BLFWrapMode::HardLimit)));
+               BLFWrapMode::Typographical | BLFWrapMode::Path | BLFWrapMode::HardLimit);
   BLF_enable(font_id, BLF_WORD_WRAP);
   BLF_boundbox(font_id, string.data(), string.size(), &textbox);
   BLF_disable(font_id, BLF_WORD_WRAP);

@@ -224,7 +224,7 @@ void BlenderSync::sync_recalc(blender::Depsgraph &b_depsgraph,
       }
       shader_map.set_recalc(b_id);
     }
-    /* World */
+    /* Scene */
     else if (GS(b_id->name) == blender::ID_SCE) {
       shader_map.set_recalc(b_id);
     }

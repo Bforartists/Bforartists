@@ -22,6 +22,7 @@
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_idprop.hh"
+#include "DNA_asset_types.h"
 
 #ifdef WITH_PYTHON
 #  include "BPY_extern_run.hh"
@@ -54,7 +55,6 @@ RemoteAssetLibrary::RemoteAssetLibrary(const bUserAssetLibrary &custom_library)
 {
   BLI_assert(custom_library.flag & ASSET_LIBRARY_USE_REMOTE_URL);
 
-  import_method_ = ASSET_IMPORT_APPEND_REUSE;
   may_override_import_method_ = false;
   remote_url_ = custom_library.remote_url;
 }
@@ -78,6 +78,14 @@ std::optional<AssetLibraryReference> RemoteAssetLibrary::library_reference() con
   library_ref.type = ASSET_LIBRARY_CUSTOM;
   library_ref.custom_library_index = index;
   return library_ref;
+}
+
+std::optional<eAssetImportMethod> RemoteAssetLibrary::import_method() const
+{
+  if (U.experimental.no_data_block_packing) {
+    return ASSET_IMPORT_APPEND_REUSE;
+  }
+  return ASSET_IMPORT_PACK;
 }
 
 std::optional<StringRefNull> RemoteAssetLibrary::remote_url() const

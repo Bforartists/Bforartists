@@ -124,8 +124,6 @@ class ImBufSaveTest(ImBufTest):
         self.check(src="rgba32", ext="png", settings={"file_format": "PNG", "color_mode": "RGBA", "color_depth": "16", "compression": 25})
 
     def test_save_exr(self):
-        self.skip_if_format_missing("OPENEXR")
-
         self.check(src="rgba08", ext="exr", settings={"file_format": "OPEN_EXR", "color_mode": "BW", "color_depth": "16", "exr_codec": "ZIP"})
         self.check(src="rgba08", ext="exr", settings={"file_format": "OPEN_EXR", "color_mode": "RGB", "color_depth": "16", "exr_codec": "DWAA", "quality": 97})
         self.check(src="rgba08", ext="exr", settings={"file_format": "OPEN_EXR", "color_mode": "RGBA", "color_depth": "16", "exr_codec": "DWAB", "quality": 97})
@@ -147,8 +145,6 @@ class ImBufSaveTest(ImBufTest):
         self.check(src="rgba32", ext="exr", settings={"file_format": "OPEN_EXR", "color_mode": "RGBA", "color_depth": "32", "exr_codec": "HTJ2K"})
 
     def test_save_exr_dwa_high_values(self):
-        self.skip_if_format_missing("OPENEXR")
-
         # Tests for correct clamping of values that exceed HALF_MAX.
         self.check(src="high-values", ext="exr", settings={"file_format": "OPEN_EXR", "color_mode": "RGB", "color_depth": "16", "exr_codec": "DWAA", "quality": 100})
         self.check(src="high-values", ext="exr", settings={"file_format": "OPEN_EXR", "color_mode": "RGB", "color_depth": "16", "exr_codec": "DWAA", "quality": 90})

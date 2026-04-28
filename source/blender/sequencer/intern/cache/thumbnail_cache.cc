@@ -191,6 +191,8 @@ static std::string get_path_from_strip(Scene *scene, const Strip *strip, float t
           filepath, sizeof(filepath), strip->data->dirpath, strip->data->stripdata->filename);
       BLI_path_abs(filepath, ID_BLEND_PATH_FROM_GLOBAL(&scene->id));
       break;
+    default:
+      break;
   }
   return filepath;
 }
@@ -477,7 +479,7 @@ static ImBuf *query_thumbnail(ThumbnailCache &cache,
     ThumbnailCache::Request request(key,
                                     frame_index,
                                     strip->streamindex,
-                                    StripType(strip->type),
+                                    strip->type,
                                     cur_time,
                                     timeline_frame,
                                     strip->channel,

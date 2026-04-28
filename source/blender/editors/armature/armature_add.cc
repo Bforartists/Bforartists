@@ -121,8 +121,8 @@ EditBone *ED_armature_ebone_add_primitive(Object *obedit_arm,
 
   bone->tail[view_aligned ? 1 : 2] = length;
 
-  if (arm->runtime.active_collection) {
-    ANIM_armature_bonecoll_assign_editbone(arm->runtime.active_collection, bone);
+  if (arm->runtime->active_collection) {
+    ANIM_armature_bonecoll_assign_editbone(arm->runtime->active_collection, bone);
   }
 
   return bone;

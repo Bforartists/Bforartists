@@ -292,7 +292,7 @@ static void tonemapmodifier_apply(ModifierApplyContext &context, StripModifierDa
       reinterpret_cast<const SequencerTonemapModifierData *>(smd);
 
   TonemapApplyOp op;
-  op.type = eModTonemapType(tmmd->type);
+  op.type = tmmd->type;
   op.ibuf = context.image;
   op.lum = tonemap_calc_input_luminance(context.image);
   if (op.lum.pixel_count == 0) {

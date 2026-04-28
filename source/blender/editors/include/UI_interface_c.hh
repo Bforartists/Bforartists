@@ -447,10 +447,11 @@ enum {
 /* Minimum width threshold for storing preferred toolbar width */
 #define UI_TOOLBAR_MIN_WIDTH_THRESHOLD 1.0f /* BFA */
 
-#define UI_PANEL_CATEGORY_MARGIN_WIDTH (U.widget_unit * 1.0f)
+#define UI_PANEL_CATEGORY_MARGIN_WIDTH \
+  (((U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 1.4f : 1.0f) * U.widget_unit)
 
 /* Minimum width for a panel showing only category tabs. */
-#define UI_PANEL_CATEGORY_MIN_WIDTH 26.0f
+#define UI_PANEL_CATEGORY_MIN_WIDTH ((U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 32.0f : 26.0f)
 /* Minimum width for a panel showing content and category tabs. */
 #define UI_PANEL_CATEGORY_MIN_SNAP_WIDTH 90.0f
 
@@ -2261,7 +2262,7 @@ bool panel_can_be_pinned(const Panel *panel);
 
 bool panel_category_is_visible(const ARegion *region);
 bool panel_category_tabs_is_visible(const ARegion *region);
-void panel_category_add(ARegion *region, const char *name);
+void panel_category_add(ARegion *region, const char *name, int icon = 0);
 PanelCategoryDyn *panel_category_find(const ARegion *region, const char *idname);
 int panel_category_index_find(ARegion *region, const char *idname);
 PanelCategoryStack *panel_category_active_find(ARegion *region, const char *idname);
@@ -3057,6 +3058,11 @@ ARegion *tooltip_create_from_button_or_extra_icon(bContext *C,
                                                   ButtonExtraOpIcon *extra_icon,
                                                   bool is_quick_tip);
 ARegion *tooltip_create_from_gizmo(bContext *C, wmGizmo *gz);
+ARegion *tooltip_create_from_panel_category(bContext *C,
+                                            const std::string &category_name,
+                                            const int x,
+                                            const int y);
+
 void tooltip_free(bContext *C, bScreen *screen, ARegion *region);
 
 /**

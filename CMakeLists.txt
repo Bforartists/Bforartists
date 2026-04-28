@@ -307,7 +307,6 @@ Use the systems bullet library (currently unsupported due to missing features in
   OFF
 )
 mark_as_advanced(WITH_SYSTEM_BULLET)
-option(WITH_OPENCOLORIO "Enable OpenColorIO color management" ON)
 
 option(WITH_XR_OPENXR "Enable VR features through the OpenXR specification" ON)
 
@@ -433,7 +432,6 @@ option(WITH_MOD_OCEANSIM "Enable Ocean Modifier" ON)
 option(WITH_UV_SLIM "SLIM UV unwrapping solver" ON)
 
 # Image format support
-option(WITH_IMAGE_OPENEXR "Enable OpenEXR Support (http://www.openexr.com)" ON)
 option(WITH_IMAGE_OPENJPEG "Enable OpenJpeg Support (http://www.openjpeg.org)" ON)
 option(WITH_IMAGE_CINEON "Enable CINEON and DPX Image Support" ON)
 option(WITH_IMAGE_WEBP "Enable WebP Image Support" ON)
@@ -1330,11 +1328,6 @@ set_and_warn_dependency(WITH_TBB WITH_MOD_FLUID         OFF)
 
 # NanoVDB requires OpenVDB to convert the data structure
 set_and_warn_dependency(WITH_OPENVDB WITH_NANOVDB       OFF)
-
-# OpenVDB, Alembic and OSL uses `half` or `imath` from OpenEXR
-set_and_warn_dependency(WITH_IMAGE_OPENEXR WITH_OPENVDB OFF)
-set_and_warn_dependency(WITH_IMAGE_OPENEXR WITH_ALEMBIC OFF)
-set_and_warn_dependency(WITH_IMAGE_OPENEXR WITH_CYCLES_OSL OFF)
 
 # Hydra requires USD.
 set_and_warn_dependency(WITH_USD WITH_HYDRA OFF)
@@ -2529,7 +2522,6 @@ if(FIRST_RUN)
   info_cfg_option(WITH_INPUT_IME)
   info_cfg_option(WITH_INTERNATIONAL)
   info_cfg_option(WITH_MANIFOLD)
-  info_cfg_option(WITH_OPENCOLORIO)
   info_cfg_option(WITH_OPENIMAGEDENOISE)
   info_cfg_option(WITH_OPENSUBDIV)
   info_cfg_option(WITH_OPENVDB)
@@ -2568,7 +2560,6 @@ if(FIRST_RUN)
 
   info_cfg_text("Image Formats:")
   info_cfg_option(WITH_IMAGE_CINEON)
-  info_cfg_option(WITH_IMAGE_OPENEXR)
   info_cfg_option(WITH_IMAGE_OPENJPEG)
 
   info_cfg_text("Audio:")

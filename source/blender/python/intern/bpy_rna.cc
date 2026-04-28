@@ -5010,6 +5010,7 @@ static int pyrna_struct_setattro(BPy_StructRNA *self, PyObject *pyname, PyObject
 {
   const char *name = PyUnicode_AsUTF8(pyname);
   PropertyRNA *prop = nullptr;
+  FunctionRNA *func = nullptr;
 
   PYRNA_STRUCT_CHECK_INT(self);
 
@@ -5031,6 +5032,18 @@ static int pyrna_struct_setattro(BPy_StructRNA *self, PyObject *pyname, PyObject
                    RNA_struct_identifier(self->ptr->type));
       return -1;
     }
+  }
+  else if (name[0] != '_' && (func = RNA_struct_find_function(self->ptr->type, name)) &&
+           RNA_function_defined(func))
+  {
+    /* Python differentiates between non-existent and read-only for values in __dict__ which covers
+     * PyMethodDef and PyGetSetDef. This is only needed because RNA functions are not part of the
+     * __dict__. */
+    PyErr_Format(PyExc_AttributeError,
+                 "bpy_struct: attribute \"%.200s\" from \"%.200s\" is read-only",
+                 RNA_function_identifier(func),
+                 RNA_struct_identifier(self->ptr->type));
+    return -1;
   }
   else if (self->ptr->type == RNA_Context) {
     /* Code just raises correct error, context prop's can't be set,

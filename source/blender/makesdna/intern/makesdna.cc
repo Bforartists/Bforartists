@@ -1,4 +1,5 @@
 /* SPDX-FileCopyrightText: 2001-2002 NaN Holding BV. All rights reserved.
+ * SPDX-FileCopyrightText: 2002-2026 Blender Authors
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
@@ -34,11 +35,9 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_alloca.h"
 #include "BLI_ghash.h"
 #include "BLI_memarena.h"
 #include "BLI_set.hh"
-#include "BLI_string.h"
 #include "BLI_string_ref.hh"
 #include "BLI_sys_types.h" /* For `intptr_t` support. */
 #include "BLI_system.h"    /* For #BLI_system_backtrace stub. */
@@ -46,11 +45,10 @@
 #include "BLI_vector.hh"
 
 #include "DNA_sdna_types.h"
+#include "dna_parse.h"
 #include "dna_utils.h"
 
 namespace blender {
-
-#define SDNA_MAX_FILENAME_LENGTH 255
 
 /* The include files that are needed to generate full Blender DNA.
  *
@@ -100,6 +98,11 @@ static short *types_size_64;
  * - `sp[2]` sp[3] is [(type_index, member_index), ..] (number of pairs is defined by `sp[1]`),
  */
 static short **structs, *structdata;
+/**
+ * Optional alignment requirement for struct members, to override the standard
+ * alignment of the type. Indexed by the same offset as #structdata.
+ */
+static short *structdata_alignment;
 
 /** Versioning data */
 static struct {
@@ -117,8 +120,7 @@ static struct {
  * - 2 = full trace, tell which names and types were found
  * - 4 = full trace, plus all gritty details
  */
-static int debugSDNA = 0;
-static int additional_slen_offset;
+int debugSDNA = 0;
 
 #define DEBUG_PRINTF(debug_level, ...) \
   { \
@@ -148,14 +150,14 @@ void BLI_system_backtrace(FILE *fp)
  * \param size: The struct size in bytes.
  * \return Index in the #types array.
  */
-static int add_type(const char *type_name, int size);
+static int add_type(StringRefNull type_name, int size);
 
 /**
  * Ensure that \a member_name is in the #members array.
  * \param member_name: Full struct member name (may include pointer prefix & array size).
  * \return Index in the #members array.
  */
-static int add_member(const char *member_name);
+static int add_member(StringRefNull member_name);
 
 /**
  * Add a new structure definition, of type matching the given \a type_index.
@@ -163,17 +165,6 @@ static int add_member(const char *member_name);
  * NOTE: there is no lookup performed here, a new struct definition is always added.
  */
 static short *add_struct(int type_index);
-
-/**
- * Remove comments from this buffer. Assumes that the buffer refers to
- * ASCII-code text.
- */
-static int preprocess_include(char *maindata, const int maindata_len);
-
-/**
- * Scan this file for serializable types.
- */
-static int convert_include(const char *filepath);
 
 /**
  * Determine how many bytes are needed for each struct.
@@ -197,38 +188,6 @@ void print_struct_sizes();
  *
  * Make DNA string (write to file).
  * \{ */
-
-static bool match_identifier_with_len(const char *str,
-                                      const char *identifier,
-                                      const size_t identifier_len)
-{
-  if (strncmp(str, identifier, identifier_len) == 0) {
-    /* Check `str` isn't a prefix to a longer identifier. */
-    if (isdigit(str[identifier_len]) || isalpha(str[identifier_len]) ||
-        (str[identifier_len] == '_'))
-    {
-      return false;
-    }
-    return true;
-  }
-  return false;
-}
-
-static bool match_identifier(const char *str, const char *identifier)
-{
-  const size_t identifier_len = strlen(identifier);
-  return match_identifier_with_len(str, identifier, identifier_len);
-}
-
-static bool match_identifier_and_advance(char **str_ptr, const char *identifier)
-{
-  const size_t identifier_len = strlen(identifier);
-  if (match_identifier_with_len(*str_ptr, identifier, identifier_len)) {
-    (*str_ptr) += identifier_len;
-    return true;
-  }
-  return false;
-}
 
 static const char *version_struct_static_from_alias(const char *type_alias)
 {
@@ -254,7 +213,8 @@ static const char *version_member_static_from_alias(const int type_index,
                                                     const char *member_alias_full)
 {
   const uint member_alias_full_len = strlen(member_alias_full);
-  char *member_alias = static_cast<char *>(alloca(member_alias_full_len + 1));
+  std::string member_alias_storage(member_alias_full_len + 1, '\0');
+  char *member_alias = member_alias_storage.data();
   const int member_alias_len = DNA_member_id_strip_copy(member_alias, member_alias_full);
   const char *str_pair[2] = {types[type_index], member_alias};
   const char *member_static = static_cast<const char *>(
@@ -272,62 +232,9 @@ static const char *version_member_static_from_alias(const int type_index,
   return member_alias_full;
 }
 
-/**
- * Enforce '_pad123' naming convention, disallow 'pad123' or 'pad_123',
- * special exception for [a-z] after since there is a 'pad_rot_angle' preference.
- */
-static bool is_name_legal(const char *name)
+static int add_type(const StringRefNull type_name_input, const int size)
 {
-  const int name_size = strlen(name) + 1;
-  char *name_strip = static_cast<char *>(alloca(name_size));
-  DNA_member_id_strip_copy(name_strip, name);
-
-  const char prefix[] = {'p', 'a', 'd'};
-
-  if (name[0] == '_') {
-    if (strncmp(&name_strip[1], prefix, sizeof(prefix)) != 0) {
-      fprintf(
-          stderr, "Error: only '_pad' variables can start with an underscore, found '%s'\n", name);
-      return false;
-    }
-  }
-  else if (strncmp(name_strip, prefix, sizeof(prefix)) == 0) {
-    int i = sizeof(prefix);
-    if (name_strip[i] >= 'a' && name_strip[i] <= 'z') {
-      /* may be part of a word, allow that. */
-      return true;
-    }
-    bool has_only_digit_or_none = true;
-    for (; name_strip[i]; i++) {
-      const char c = name_strip[i];
-      if (!((c >= '0' && c <= '9') || c == '_')) {
-        has_only_digit_or_none = false;
-        break;
-      }
-    }
-    if (has_only_digit_or_none) {
-      /* found 'pad' or 'pad123'. */
-      fprintf(
-          stderr, "Error: padding variables must be formatted '_pad[number]', found '%s'\n", name);
-      return false;
-    }
-  }
-  return true;
-}
-
-static int add_type(const char *type_name, int size)
-{
-  /* first do validity check */
-  if (type_name[0] == 0) {
-    return -1;
-  }
-  if (strchr(type_name, '*')) {
-    /* NOTE: this is valid C syntax but we can't parse, complain!
-     * `struct SomeStruct* some_var;` <-- correct but we can't handle right now. */
-    return -1;
-  }
-
-  type_name = version_struct_static_from_alias(type_name);
+  const char *type_name = version_struct_static_from_alias(type_name_input.c_str());
 
   /* search through type array */
   for (int type_index = 0; type_index < types_num; type_index++) {
@@ -344,9 +251,9 @@ static int add_type(const char *type_name, int size)
   }
 
   /* append new type */
-  const int type_name_len = strlen(type_name) + 1;
-  char *cp = static_cast<char *>(BLI_memarena_alloc(mem_arena, type_name_len));
-  memcpy(cp, type_name, type_name_len);
+  const size_t type_name_len = strlen(type_name);
+  char *cp = static_cast<char *>(BLI_memarena_alloc(mem_arena, type_name_len + 1));
+  std::copy_n(type_name, type_name_len + 1, cp);
   types[types_num] = cp;
   types_size_native[types_num] = size;
   types_size_32[types_num] = size;
@@ -363,139 +270,23 @@ static int add_type(const char *type_name, int size)
 }
 
 /**
- * Because of the weird way of tokenizing, we have to 'cast' function
- * pointers to ... (*f)(), whatever the original signature. In fact,
- * we add name and type at the same time... There are two special
- * cases, unfortunately. These are explicitly checked.
+ * Add a member to the members table. The name is expected to already be in canonical
+ * form (function pointers rewritten as `(*name)()`, `(*name)(void)`, and name validate
+ * already checked by the parser).
  */
-static int add_member(const char *member_name)
+static int add_member(const StringRefNull member_name)
 {
-  char buf[255]; /* stupid limit, change it :) */
-  const char *name;
-
-  additional_slen_offset = 0;
-
-  if (member_name[0] == 0 /* `|| (member_name[1] == 0)` */) {
-    return -1;
-  }
-
-  if (member_name[0] == '(' && member_name[1] == '*') {
-    /* We handle function pointer and special array cases here, e.g.
-     * `void (*function)(...)` and `float (*array)[..]`. the array case
-     * name is still converted to (array *)() though because it is that
-     * way in old DNA too, and works correct with #DNA_struct_member_size. */
-    int isfuncptr = (strchr(member_name + 1, '(')) != nullptr;
-
-    DEBUG_PRINTF(3, "\t\t\t\t*** Function pointer or multidim array pointer found\n");
-    /* function-pointer: transform the type (sometimes). */
-    int i = 0;
-
-    while (member_name[i] != ')') {
-      buf[i] = member_name[i];
-      i++;
-    }
-
-    /* Another number we need is the extra slen offset. This extra
-     * offset is the overshoot after a space. If there is no
-     * space, no overshoot should be calculated. */
-    int j = i; /* j at first closing brace */
-
-    DEBUG_PRINTF(3, "first brace after offset %d\n", i);
-
-    j++; /* j beyond closing brace ? */
-    while ((member_name[j] != 0) && (member_name[j] != ')')) {
-      DEBUG_PRINTF(3, "seen %c (%d)\n", member_name[j], member_name[j]);
-      j++;
-    }
-    DEBUG_PRINTF(3,
-                 "seen %c (%d)\n"
-                 "special after offset%d\n",
-                 member_name[j],
-                 member_name[j],
-                 j);
-
-    if (!isfuncptr) {
-      /* multidimensional array pointer case */
-      if (member_name[j] == 0) {
-        DEBUG_PRINTF(3, "offsetting for multi-dimensional array pointer\n");
-      }
-      else {
-        printf("Error during tokenizing multi-dimensional array pointer\n");
-      }
-    }
-    else if (member_name[j] == 0) {
-      DEBUG_PRINTF(3, "offsetting for space\n");
-      /* get additional offset */
-      int k = 0;
-      while (member_name[j] != ')') {
-        j++;
-        k++;
-      }
-      DEBUG_PRINTF(3, "extra offset %d\n", k);
-      additional_slen_offset = k;
-    }
-    else if (member_name[j] == ')') {
-      DEBUG_PRINTF(3, "offsetting for brace\n");
-      /* don't get extra offset */
-    }
-    else {
-      printf("Error during tokening function pointer argument list\n");
-    }
-
-    /*
-     * Put `)(void)` at the end? Maybe `)()`. Should check this with
-     * old `sdna`. Actually, sometimes `)()`, sometimes `)(void...)`
-     * Alas.. such is the nature of brain-damage :(
-     *
-     * Sorted it out: always do )(), except for `headdraw` and
-     * `windraw`, part of #ScrArea. This is important, because some
-     * linkers will treat different fp's differently when called
-     * !!! This has to do with interference in byte-alignment and
-     * the way arguments are pushed on the stack.
-     */
-    buf[i] = 0;
-    DEBUG_PRINTF(3, "Name before chomping: %s\n", buf);
-    if ((strncmp(buf, "(*headdraw", 10) == 0) || strncmp(buf, "(*windraw", 9) == 0) {
-      buf[i] = ')';
-      buf[i + 1] = '(';
-      buf[i + 2] = 'v';
-      buf[i + 3] = 'o';
-      buf[i + 4] = 'i';
-      buf[i + 5] = 'd';
-      buf[i + 6] = ')';
-      buf[i + 7] = 0;
-    }
-    else {
-      buf[i] = ')';
-      buf[i + 1] = '(';
-      buf[i + 2] = ')';
-      buf[i + 3] = 0;
-    }
-    /* Now proceed with buf. */
-    DEBUG_PRINTF(3, "\t\t\t\t\tProposing fp name %s\n", buf);
-    name = buf;
-  }
-  else {
-    /* normal field: old code */
-    name = member_name;
-  }
-
   /* search name array */
   for (int member_index = 0; member_index < members_num; member_index++) {
-    if (STREQ(name, members[member_index])) {
+    if (member_name == members[member_index]) {
       return member_index;
     }
   }
 
-  /* Sanity check the name. */
-  if (!is_name_legal(name)) {
-    return -1;
-  }
-
   /* Append new name. */
-  const int name_len = strlen(name) + 1;
-  char *cp = static_cast<char *>(BLI_memarena_alloc(mem_arena, name_len));
-  memcpy(cp, name, name_len);
+  const size_t name_len = member_name.size();
+  char *cp = static_cast<char *>(BLI_memarena_alloc(mem_arena, name_len + 1));
+  std::copy_n(member_name.c_str(), name_len + 1, cp);
   members[members_num] = cp;
 
   if (members_num >= max_array_len) {
@@ -530,481 +321,25 @@ static short *add_struct(int type_index)
   return sp;
 }
 
-/* Copied from `BLI_str_startswith` string.c
- * to avoid complicating the compilation process of makesdna. */
-static bool str_startswith(const char *__restrict str, const char *__restrict start)
-{
-  for (; *str && *start; str++, start++) {
-    if (*str != *start) {
-      return false;
-    }
-  }
-
-  return (*start == '\0');
-}
-
-/**
- * Check if `str` is a preprocessor string that starts with `start`.
- * The `start` doesn't need the `#` prefix.
- * `ifdef VALUE` will match `#ifdef VALUE` as well as `#  ifdef VALUE`.
- */
-static bool match_preproc_prefix(const char *__restrict str, const char *__restrict start)
-{
-  if (*str != '#') {
-    return false;
-  }
-  str++;
-  while (*str == ' ') {
-    str++;
-  }
-  return str_startswith(str, start);
-}
-
-/**
- * \return The point in `str` that starts with `start` or nullptr when not found.
- */
-static char *match_preproc_strstr(char *__restrict str, const char *__restrict start)
-{
-  while ((str = strchr(str, '#'))) {
-    str++;
-    while (*str == ' ') {
-      str++;
-    }
-    if (str_startswith(str, start)) {
-      return str;
-    }
-  }
-  return nullptr;
-}
-
-static int preprocess_include(char *maindata, const int maindata_len)
-{
-  /* NOTE: len + 1, last character is a dummy to prevent
-   * comparisons using uninitialized memory */
-  char *temp = MEM_new_array_uninitialized<char>(size_t(maindata_len) + 1, "preprocess_include");
-  temp[maindata_len] = ' ';
-
-  memcpy(temp, maindata, maindata_len);
-
-  /* remove all strings literals and comments */
-  /* replace all enters/tabs/etc with spaces */
-  bool c_comment = false;
-  bool cxx_comment = false;
-  bool string_literal = false;
-  for (char *cp = temp; cp < temp + maindata_len; cp++) {
-    if (string_literal) {
-      if (cp[0] == '"') {
-        /* End string literal */
-        string_literal = false;
-      }
-      else if (cp[0] == '\\' && cp[1] == '"') {
-        /* Skip escaped quote in string literal. */
-        cp[0] = ' ';
-        cp++;
-      }
-      cp[0] = ' ';
-    }
-    else if (cxx_comment) {
-      if (*cp == '\n') {
-        cxx_comment = false;
-      }
-      cp[0] = ' ';
-    }
-    else if (c_comment) {
-      if (cp[0] == '*' && cp[1] == '/') {
-        /* End C comment */
-        c_comment = false;
-        cp[0] = ' ';
-        cp++;
-      }
-      cp[0] = ' ';
-    }
-    else if (cp[0] == '"') {
-      /* Start string literal. */
-      string_literal = true;
-      cp[0] = ' ';
-    }
-    else if (cp[0] == '/' && cp[1] == '/') {
-      /* Start C++ comment */
-      cxx_comment = true;
-      cp[0] = ' ';
-      cp++;
-      cp[0] = ' ';
-    }
-    else if (cp[0] == '/' && cp[1] == '*') {
-      /* Start C comment */
-      c_comment = true;
-      cp[0] = ' ';
-      cp++;
-      cp[0] = ' ';
-    }
-    else if (cp[0] < ' ' || cp[0] > 128) {
-      cp[0] = ' ';
-    }
-  }
-
-  /* No need for leading '#' character. */
-  const char *cpp_block_start = "ifdef __cplusplus";
-  const char *cpp_block_start_alt = "if defined(__cplusplus)";
-  const char *cpp_block_end = "endif";
-
-  /* data from temp copy to maindata, remove irrelevant identifiers and double spaces */
-  char *md = maindata;
-  int newlen = 0;
-  bool skip_until_closing_brace = false;
-  int square_bracket_level = 0;
-  int angle_bracket_level = 0;
-  for (char *cp = temp; cp < temp + maindata_len; cp++) {
-    if (cp[0] == '[') {
-      square_bracket_level++;
-    }
-    else if (cp[0] == ']') {
-      square_bracket_level--;
-    }
-
-    /* do not copy when: */
-    if (cp[0] == ' ' && (square_bracket_level > 0)) {
-      /* NOTE(@ideasman42): This is done to allow `member[C_STYLE_COMMENT 1024]`,
-       * which is then read as `member[1024]`.
-       * It's important to skip the spaces here,
-       * otherwise the literal would be read as: `member[` and `1024]`. */
-    }
-    else if (cp[0] == ' ' && cp[1] == ' ') {
-      /* pass */
-    }
-    else if (cp[-1] == '*' && cp[0] == ' ') {
-      /* pointers with a space */
-    } /* skip special keywords */
-    else if (match_identifier(cp, "DNA_DEPRECATED")) {
-      /* single values are skipped already, so decrement 1 less */
-      cp += strlen("DNA_DEPRECATED") - 1;
-    }
-    else if (match_identifier(cp, "DNA_DEFINE_CXX_METHODS")) {
-      /* single values are skipped already, so decrement 1 less */
-      cp += strlen("DNA_DEFINE_CXX_METHODS") - 1;
-      skip_until_closing_brace = true;
-    }
-    else if (skip_until_closing_brace) {
-      if (cp[0] == ')') {
-        skip_until_closing_brace = false;
-      }
-    }
-    else if (match_preproc_prefix(cp, cpp_block_start) ||
-             match_preproc_prefix(cp, cpp_block_start_alt))
-    {
-      char *end_ptr = match_preproc_strstr(cp, cpp_block_end);
-
-      if (end_ptr == nullptr) {
-        fprintf(stderr, "Error: '%s' block must end with '%s'\n", cpp_block_start, cpp_block_end);
-      }
-      else {
-        const int skip_offset = end_ptr - cp + strlen(cpp_block_end);
-        cp += skip_offset;
-      }
-    }
-    /* Assume that type names ending with `T<` are templated types of legacy types. This is used to
-     * treat `ListBaseT<Type>` as `ListBase` in SDNA. */
-    else if (cp[0] == 'T' && cp[1] == '<') {
-      angle_bracket_level = 1;
-      cp++;
-    }
-    else if (angle_bracket_level >= 1) {
-      if (cp[0] == '<') {
-        angle_bracket_level++;
-      }
-      else if (cp[0] == '>') {
-        angle_bracket_level--;
-      }
-    }
-    else {
-      md[0] = cp[0];
-      md++;
-      newlen++;
-    }
-  }
-
-  BLI_assert(square_bracket_level == 0);
-
-  MEM_delete(temp);
-  return newlen;
-}
-
-static void *read_file_data(const char *filepath, int *r_len)
-{
-#ifdef WIN32
-  FILE *fp = fopen(filepath, "rb");
-#else
-  FILE *fp = fopen(filepath, "r");
-#endif
-  void *data;
-
-  if (!fp) {
-    *r_len = -1;
-    return nullptr;
-  }
-
-  fseek(fp, 0L, SEEK_END);
-  *r_len = ftell(fp);
-  fseek(fp, 0L, SEEK_SET);
-
-  if (*r_len == -1) {
-    fclose(fp);
-    return nullptr;
-  }
-
-  data = MEM_new_uninitialized(*r_len, "read_file_data");
-  if (!data) {
-    *r_len = -1;
-    fclose(fp);
-    return nullptr;
-  }
-
-  if (fread(data, *r_len, 1, fp) != 1) {
-    *r_len = -1;
-    MEM_delete_void(data);
-    fclose(fp);
-    return nullptr;
-  }
-
-  fclose(fp);
-  return data;
-}
-
-static int convert_include(const char *filepath)
-{
-  /* read include file, skip structs with a '#' before it.
-   * store all data in temporal arrays.
-   */
-
-  int maindata_len;
-  char *maindata = static_cast<char *>(read_file_data(filepath, &maindata_len));
-  char *md = maindata;
-  if (maindata_len == -1) {
-    fprintf(stderr, "Can't read file %s\n", filepath);
-    return 1;
-  }
-
-  maindata_len = preprocess_include(maindata, maindata_len);
-  char *mainend = maindata + maindata_len - 1;
-
-  /* we look for '{' and then back to 'struct' */
-  int count = 0;
-  bool skip_struct = false;
-  while (count < maindata_len) {
-
-    /* code for skipping a struct: two hashes on 2 lines. (preprocess added a space) */
-    if (md[0] == '#' && md[1] == ' ' && md[2] == '#') {
-      skip_struct = true;
-    }
-
-    if (md[0] == '{') {
-      md[0] = 0;
-      if (skip_struct) {
-        skip_struct = false;
-      }
-      else {
-        if (md[-1] == ' ') {
-          md[-1] = 0;
-        }
-        char *md1 = md - 2;
-        while (*md1 != 32) {
-          /* to beginning of word */
-          md1--;
-        }
-        md1++;
-
-        /* we've got a struct name when... */
-        if (match_identifier(md1 - 7, "struct")) {
-
-          const int struct_type_index = add_type(md1, 0);
-          if (struct_type_index == -1) {
-            fprintf(stderr, "File '%s' contains struct we can't parse \"%s\"\n", filepath, md1);
-            return 1;
-          }
-
-          short *structpoin = add_struct(struct_type_index);
-          short *sp = structpoin + 2;
-
-          DEBUG_PRINTF(1, "\t|\t|-- detected struct %s\n", types[struct_type_index]);
-
-          /* first lets make it all nice strings */
-          md1 = md + 1;
-          while (*md1 != '}') {
-            if (md1 > mainend) {
-              break;
-            }
-
-            /* Skip default value initializers. */
-            if (*md1 == '=') {
-              int braces_depth = 0;
-              int brackets_depth = 0;
-              while (true) {
-                if (md1 > mainend) {
-                  break;
-                }
-
-                if (*md1 == '{') {
-                  braces_depth++;
-                }
-                else if (*md1 == '}') {
-                  braces_depth--;
-                }
-                else if (*md1 == '(') {
-                  brackets_depth++;
-                }
-                else if (*md1 == ')') {
-                  brackets_depth--;
-                }
-                else if (braces_depth == 0 && brackets_depth == 0 && ELEM(*md1, ';', ',')) {
-                  break;
-                }
-
-                *md1 = 0;
-                md1++;
-              }
-            }
-
-            if (ELEM(*md1, ',', ' ')) {
-              *md1 = 0;
-            }
-            md1++;
-          }
-
-          /* read types and names until first character that is not '}' */
-          md1 = md + 1;
-          while (*md1 != '}') {
-            if (md1 > mainend) {
-              break;
-            }
-
-            /* skip when it says 'struct' or 'unsigned' or 'const' */
-            if (*md1) {
-              const char *md1_prev = md1;
-              while (match_identifier_and_advance(&md1, "struct") ||
-                     match_identifier_and_advance(&md1, "unsigned") ||
-                     match_identifier_and_advance(&md1, "const"))
-              {
-                if (UNLIKELY(!ELEM(*md1, '\0', ' '))) {
-                  /* This will happen with: `unsigned(*value)[3]` which isn't supported. */
-                  fprintf(stderr,
-                          "File '%s' contains non white space character "
-                          "\"%c\" after identifier \"%s\"\n",
-                          filepath,
-                          *md1,
-                          md1_prev);
-                  return 1;
-                }
-                /* Skip ' ' or '\0'. */
-                md1++;
-              }
-
-              /* we've got a type! */
-              if (STR_ELEM(md1, "long", "ulong")) {
-                /* Forbid using long/ulong because those can be either 32 or 64 bit. */
-                fprintf(stderr,
-                        "File '%s' contains use of \"%s\" in DNA struct which is not allowed\n",
-                        filepath,
-                        md1);
-                return -1;
-              }
-              const int member_type_index = add_type(md1, 0);
-              if (member_type_index == -1) {
-                fprintf(
-                    stderr, "File '%s' contains struct we can't parse \"%s\"\n", filepath, md1);
-                return 1;
-              }
-
-              DEBUG_PRINTF(1, "\t|\t|\tfound type %s (", md1);
-
-              md1 += strlen(md1);
-
-              /* read until ';' */
-              while (*md1 != ';') {
-                if (md1 > mainend) {
-                  break;
-                }
-
-                if (*md1) {
-                  /* We've got a name. slen needs
-                   * correction for function
-                   * pointers! */
-                  int slen = int(strlen(md1));
-                  if (md1[slen - 1] == ';') {
-                    md1[slen - 1] = 0;
-
-                    const int name = add_member(
-                        version_member_static_from_alias(struct_type_index, md1));
-                    if (name == -1) {
-                      fprintf(stderr,
-                              "File '%s' contains struct with name that can't be added \"%s\"\n",
-                              filepath,
-                              md1);
-                      return 1;
-                    }
-                    slen += additional_slen_offset;
-                    sp[0] = member_type_index;
-                    sp[1] = name;
-
-                    if (members[name] != nullptr) {
-                      DEBUG_PRINTF(1, "%s |", members[name]);
-                    }
-
-                    structpoin[1]++;
-                    sp += 2;
-
-                    md1 += slen;
-                    break;
-                  }
-
-                  const int name = add_member(
-                      version_member_static_from_alias(struct_type_index, md1));
-                  if (name == -1) {
-                    fprintf(stderr,
-                            "File '%s' contains struct with name that can't be added \"%s\"\n",
-                            filepath,
-                            md1);
-                    return 1;
-                  }
-                  slen += additional_slen_offset;
-
-                  sp[0] = member_type_index;
-                  sp[1] = name;
-                  if (members[name] != nullptr) {
-                    DEBUG_PRINTF(1, "%s ||", members[name]);
-                  }
-
-                  structpoin[1]++;
-                  sp += 2;
-
-                  md1 += slen;
-                }
-                md1++;
-              }
-
-              DEBUG_PRINTF(1, ")\n");
-            }
-            md1++;
-          }
-        }
-      }
-    }
-    count++;
-    md++;
-  }
-
-  MEM_delete(maindata);
-
-  return 0;
-}
-
 static bool check_field_alignment(int firststruct,
                                   int struct_type_index,
                                   int type,
                                   int len,
+                                  int member_align_override,
                                   const char *name,
                                   const char *detail)
 {
   bool result = true;
+  if (member_align_override > 0 && (len % member_align_override)) {
+    fprintf(stderr,
+            "Align %d error (%s) in struct: %s %s (add %d padding bytes)\n",
+            member_align_override,
+            detail,
+            types[struct_type_index],
+            name,
+            member_align_override - (len % member_align_override));
+    result = false;
+  }
   if (type < firststruct && types_size_native[type] > 4 && (len % 8)) {
     fprintf(stderr,
             "Align 8 error (%s) in struct: %s %s (add %d padding bytes)\n",
@@ -1088,7 +423,7 @@ static int calculate_struct_sizes(int firststruct, FILE *file_verify, const char
 
           /* Write size verification to file. */
           {
-            /* Normally 'alloca' would be used here, however we can't in a loop.
+            /* Normally `alloca` would be used here, however we can't in a loop.
              * Use an over-sized buffer instead. */
             char name_static[1024];
             BLI_assert(sizeof(name_static) > namelen);
@@ -1197,14 +532,17 @@ static int calculate_struct_sizes(int firststruct, FILE *file_verify, const char
               }
             }
 
-            /* Check 2-4-8 aligned. */
+            /* Per-member C++ alignment override from the parser. */
+            const int member_align = structdata_alignment[sp - structdata];
+
+            /* Check 2-4-8 aligned, plus any stricter C++ alignment. */
             if (!check_field_alignment(
-                    firststruct, struct_type_index, type, size_32, cp, "32 bit"))
+                    firststruct, struct_type_index, type, size_32, member_align, cp, "32 bit"))
             {
               dna_error = true;
             }
             if (!check_field_alignment(
-                    firststruct, struct_type_index, type, size_64, cp, "64 bit"))
+                    firststruct, struct_type_index, type, size_64, member_align, cp, "64 bit"))
             {
               dna_error = true;
             }
@@ -1214,6 +552,8 @@ static int calculate_struct_sizes(int firststruct, FILE *file_verify, const char
             size_64 += mul * types_size_64[type];
             max_align_32 = std::max<int>(max_align_32, types_align_32[type]);
             max_align_64 = std::max<int>(max_align_64, types_align_64[type]);
+            max_align_32 = std::max<int>(max_align_32, member_align);
+            max_align_64 = std::max<int>(max_align_64, member_align);
           }
           else {
             size_native = 0;
@@ -1238,9 +578,10 @@ static int calculate_struct_sizes(int firststruct, FILE *file_verify, const char
           BLI_assert(max_align_64);
 
           /* Sanity check 2: alignment should always be equal or smaller than the maximum
-           * size of a build in type which is 8 bytes (i.e. `int64_t` or double). */
-          BLI_assert(max_align_32 <= 8);
-          BLI_assert(max_align_64 <= 8);
+           * alignment we support. 8 bytes for built-in types (e.g. `int64_t`, `double`),
+           * up to 16 bytes for C++ over-aligned types like `float4x4`. */
+          BLI_assert(max_align_32 <= 16);
+          BLI_assert(max_align_64 <= 16);
 
           if (size_32 % max_align_32) {
             /* There is an one odd case where only the 32 bit struct has alignment issues
@@ -1361,6 +702,29 @@ void print_struct_sizes()
   printf("*** End of list\n");
 }
 
+/** Register parsed structs, types, and members into the SDNA tables. */
+static void register_parsed_structs(const Span<dna::ParsedStruct> parsed_structs)
+{
+  for (const dna::ParsedStruct &parsed_struct : parsed_structs) {
+    const int struct_type_index = add_type(parsed_struct.type_name, 0);
+    short *structpoin = add_struct(struct_type_index);
+    short *sp = structpoin + 2;
+
+    for (const dna::ParsedMember &parsed_member : parsed_struct.members) {
+      const int member_type_index = add_type(parsed_member.type_name, 0);
+      const char *versioned_name = version_member_static_from_alias(
+          struct_type_index, parsed_member.member_name.c_str());
+      const int name = add_member(versioned_name);
+
+      sp[0] = member_type_index;
+      sp[1] = name;
+      structdata_alignment[sp - structdata] = short(parsed_member.alignment);
+      structpoin[1]++;
+      sp += 2;
+    }
+  }
+}
+
 static int make_structDNA(const char *base_directory,
                           FILE *file,
                           FILE *file_offsets,
@@ -1377,6 +741,7 @@ static int make_structDNA(const char *base_directory,
 
   /* the longest known struct is 50k, so we assume 100k is sufficient! */
   structdata = MEM_new_array_zeroed<short>(max_data_size, "structdata");
+  structdata_alignment = MEM_new_array_zeroed<short>(max_data_size, "structdata_alignment");
 
   /* a maximum of 5000 variables, must be sufficient? */
   members = MEM_new_array_zeroed<char *>(max_array_len, "names");
@@ -1447,19 +812,23 @@ static int make_structDNA(const char *base_directory,
    * Mind the breaking condition here! */
   DEBUG_PRINTF(0, "\tStart of header scan:\n");
   int header_count = 0;
+  Vector<dna::ParsedStruct> parsed_structs;
+  Vector<dna::ParsedEnum> parsed_enums;
   for (int i = 0; *(includefiles[i]) != '\0'; i++) {
     header_count++;
 
-    /* NOTE(nzc): `str` contains filenames.
-     * Since we now include paths, I stretched it a bit. Hope this is enough :). */
-    char str[SDNA_MAX_FILENAME_LENGTH];
-    SNPRINTF(str, "%s%s", base_directory, includefiles[i]);
-    DEBUG_PRINTF(0, "\t|-- Converting %s\n", str);
-    if (convert_include(str)) {
+    const std::string path = std::string(base_directory) + includefiles[i];
+    DEBUG_PRINTF(0, "\t|-- Converting %s\n", path.c_str());
+    if (!dna::parse_dna_header(path, parsed_structs, parsed_enums)) {
       return 1;
     }
   }
   DEBUG_PRINTF(0, "\tFinished scanning %d headers.\n", header_count);
+
+  if (!dna::substitute_cpp_types(parsed_structs, parsed_enums)) {
+    return 1;
+  }
+  register_parsed_structs(parsed_structs);
 
   if (calculate_struct_sizes(firststruct, file_verify, base_directory)) {
     /* error */
@@ -1670,6 +1039,7 @@ static int make_structDNA(const char *base_directory,
   }
 
   MEM_delete(structdata);
+  MEM_delete(structdata_alignment);
   MEM_delete(members);
   MEM_delete(types);
   MEM_delete(types_size_native);

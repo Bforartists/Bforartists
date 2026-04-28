@@ -50,7 +50,7 @@ struct TransDataSeq {
   float2 orig_translation;
   float2 orig_scale;
   float orig_rotation;
-  int orig_flag;
+  eStripFlag orig_flag;
   float active_seq_orig_rotation;
   float2 orig_mirror;
 };

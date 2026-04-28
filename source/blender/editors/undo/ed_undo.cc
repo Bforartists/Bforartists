@@ -38,6 +38,7 @@
 #include "ED_render.hh"
 #include "ED_screen.hh"
 #include "ED_sculpt.hh"
+#include "ED_sequencer.hh"
 #include "ED_undo.hh"
 
 #include "WM_api.hh"
@@ -207,6 +208,18 @@ static void ed_undo_step_post(bContext *C,
     BKE_callback_exec_id(
         bmain, &scene->id, (undo_dir == STEP_UNDO) ? BKE_CB_EVT_UNDO_POST : BKE_CB_EVT_REDO_POST);
     wm->op_undo_depth--;
+  }
+
+  /* Resync VSE camera after all outliner/undo operations. See issue #152866. */
+  View3D *v3d = CTX_wm_view3d(C);
+  if (v3d) {
+    const WorkSpace *workspace = CTX_wm_workspace(C);
+    const wmWindow *win = CTX_wm_window(C);
+    const Scene *active_scene = WM_window_get_active_scene(win);
+
+    if (workspace && active_scene) {
+      blender::ed::vse::sync_vse_camera_for_view3d(workspace, active_scene, v3d);
+    }
   }
 
   if (G.debug & G_DEBUG_IO) {

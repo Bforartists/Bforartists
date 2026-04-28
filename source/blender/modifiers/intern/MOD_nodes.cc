@@ -97,7 +97,6 @@
 namespace blender {
 
 namespace lf = fn::lazy_function;
-namespace geo_log = nodes::geo_eval_log;
 namespace bake = bke::bake;
 
 static void init_data(ModifierData *md)
@@ -895,8 +894,8 @@ static void find_verbose_log_contexts(const NodesModifierData &nmd,
           continue;
         }
         const Map<const bke::bNodeTreeZone *, ComputeContextHash> hash_by_zone =
-            geo_log::GeoNodesLog::get_context_hash_by_zone_for_node_editor(snode,
-                                                                           compute_context_cache);
+            nodes::eval_log::NodesEvalLog::get_context_hash_by_zone_for_node_editor(
+                snode, compute_context_cache);
         for (const ComputeContextHash &hash : hash_by_zone.values()) {
           r_socket_log_contexts.add(hash);
         }
@@ -1821,7 +1820,7 @@ static void modifyGeometry(ModifierData *md,
   nodes::GeoNodesModifierData modifier_eval_data{};
   modifier_eval_data.depsgraph = ctx->depsgraph;
   modifier_eval_data.self_object = ctx->object;
-  auto eval_log = std::make_unique<geo_log::GeoNodesLog>();
+  auto eval_log = std::make_unique<nodes::eval_log::NodesEvalLog>();
   call_data.modifier_data = &modifier_eval_data;
 
   NodesModifierSimulationParams simulation_params(*nmd, *ctx);

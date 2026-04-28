@@ -24,7 +24,6 @@
 
 #include "DNA_lightprobe_types.h"
 
-#include "DNA_view3d_types.h"
 #include "DRW_render.hh"
 
 #include "eevee_ambient_occlusion.hh"
@@ -313,12 +312,6 @@ class Instance : public DrawEngine {
   bool is_baking() const
   {
     return is_light_bake;
-  }
-
-  bool is_custom_matrix() const
-  {
-    return (v3d && v3d->flag & V3D_CUSTOM_MATRIX) ||
-           (draw_ctx && draw_ctx->mode == DRWContext::VIEWPORT_XR);
   }
 
   bool overlays_enabled() const

@@ -1303,8 +1303,11 @@ class NODE_OT_interface_item_new_panel_toggle(Operator):
         active_panel = interface.active
 
         item = interface.new_socket(active_panel.name, socket_type='NodeSocketBool', in_out='INPUT')
-        item.is_panel_toggle = True
+
+        # Set is_panel_toggle after moving into parent
         interface.move_to_parent(item, active_panel, 0)
+        item.is_panel_toggle = True
+
         return {'FINISHED'}
 
 

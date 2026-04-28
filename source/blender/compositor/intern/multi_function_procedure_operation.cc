@@ -92,7 +92,7 @@ void MultiFunctionProcedureOperation::execute()
       }
       else {
         output.allocate_texture(domain);
-        parameter_builder.add_uninitialized_single_output(output.cpu_data());
+        parameter_builder.add_uninitialized_single_output(output.cpu_data_for_write());
       }
     }
   }

@@ -41,6 +41,7 @@
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_viewer_path.hh"
+#include "BKE_workspace.hh"
 
 #include "ED_asset_shelf.hh"
 #include "ED_geometry.hh"
@@ -49,6 +50,7 @@
 #include "ED_outliner.hh"
 #include "ED_render.hh"
 #include "ED_screen.hh"
+#include "ED_sequencer.hh"
 #include "ED_space_api.hh"
 #include "ED_transform.hh"
 #include "ED_undo.hh"
@@ -611,6 +613,10 @@ static void view3d_main_region_listener(const wmRegionListenerParams *params)
         case ND_LAYER:
           if (wmn->reference) {
             BKE_screen_view3d_sync(v3d, static_cast<Scene *>(wmn->reference));
+            WorkSpace *workspace = BKE_workspace_active_get(window->workspace_hook);
+            if (workspace && scene) {
+              blender::ed::vse::sync_vse_camera_for_view3d(workspace, scene, v3d);
+            }
           }
           ED_region_tag_redraw(region);
           WM_gizmomap_tag_refresh(gzmap);

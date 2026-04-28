@@ -210,8 +210,6 @@ set(SRC
   BLI_convexhull_2d.hh
   BLI_cpp_type.hh
   BLI_cpp_type_make.hh
-  BLI_cpp_types.hh
-  BLI_cpp_types_make.hh
   BLI_csv_parse.hh
   BLI_delaunay_2d.hh
   BLI_devirtualize_parameters.hh

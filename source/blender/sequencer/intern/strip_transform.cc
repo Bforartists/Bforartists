@@ -714,6 +714,8 @@ Array<float2> image_transform_quad_get(const Scene *scene, const Strip *strip)
       case SEQ_TEXT_ANCHOR_X_RIGHT:
         offset.x += -image_size.x / 2.0f;
         break;
+      default:
+        break;
     }
     switch (data->anchor_y) {
       case SEQ_TEXT_ANCHOR_Y_BOTTOM:
@@ -721,6 +723,8 @@ Array<float2> image_transform_quad_get(const Scene *scene, const Strip *strip)
         break;
       case SEQ_TEXT_ANCHOR_Y_TOP:
         offset.y += -image_size.y / 2.0f;
+        break;
+      default:
         break;
     }
 

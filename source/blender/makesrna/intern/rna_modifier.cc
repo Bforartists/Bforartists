@@ -37,7 +37,7 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
-#include "NOD_geometry_nodes_log.hh"
+#include "NOD_eval_log.hh"
 
 namespace blender {
 
@@ -1961,8 +1961,8 @@ static PointerRNA rna_NodesModifierProperties_get(PointerRNA *ptr)
   return RNA_pointer_create_with_parent(*ptr, RNA_NodesModifierProperties, nmd);
 }
 
-static nodes::geo_eval_log::GeoTreeLog *get_nodes_modifier_log(const Object &object,
-                                                               NodesModifierData &nmd)
+static nodes::eval_log::NodeTreeLog *get_nodes_modifier_log(const Object &object,
+                                                            NodesModifierData &nmd)
 {
   if (!nmd.runtime->eval_log) {
     return nullptr;
@@ -1972,8 +1972,8 @@ static nodes::geo_eval_log::GeoTreeLog *get_nodes_modifier_log(const Object &obj
   return &nmd.runtime->eval_log->get_tree_log(modifier_context.hash());
 }
 
-static Span<nodes::geo_eval_log::NodeWarning> get_node_modifier_warnings(const Object &object,
-                                                                         NodesModifierData &nmd)
+static Span<nodes::eval_log::NodeWarning> get_node_modifier_warnings(const Object &object,
+                                                                     NodesModifierData &nmd)
 {
   if (auto *log = get_nodes_modifier_log(object, nmd)) {
     log->ensure_node_warnings(nmd);
@@ -2017,19 +2017,19 @@ static int rna_NodesModifier_node_warnings_length(PointerRNA *ptr)
 
 static void rna_NodesModifierWarning_message_get(PointerRNA *ptr, char *r_value)
 {
-  const auto *warning = static_cast<const nodes::geo_eval_log::NodeWarning *>(ptr->data);
+  const auto *warning = static_cast<const nodes::eval_log::NodeWarning *>(ptr->data);
   strcpy(r_value, warning->message.c_str());
 }
 
 static int rna_NodesModifierWarning_message_length(PointerRNA *ptr)
 {
-  const auto *warning = static_cast<const nodes::geo_eval_log::NodeWarning *>(ptr->data);
+  const auto *warning = static_cast<const nodes::eval_log::NodeWarning *>(ptr->data);
   return warning->message.size();
 }
 
 static int rna_NodesModifierWarning_type_get(PointerRNA *ptr)
 {
-  const auto *warning = static_cast<const nodes::geo_eval_log::NodeWarning *>(ptr->data);
+  const auto *warning = static_cast<const nodes::eval_log::NodeWarning *>(ptr->data);
   return int(warning->type);
 }
 

@@ -272,13 +272,14 @@ static bool mesh_has_color_attribute(const Mesh &mesh)
 
 static bool mesh_has_uv_map_attribute(const Mesh &mesh)
 {
+  StringRef active_uv_map = mesh.active_or_default_uv_map_name();
   if (mesh.runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH) {
     const BMesh &bm = *mesh.runtime->edit_mesh->bm;
-    const BMDataLayerLookup attr = BM_data_layer_lookup(bm, mesh.active_uv_map_name());
+    const BMDataLayerLookup attr = BM_data_layer_lookup(bm, active_uv_map);
     return attr && bke::mesh::is_uv_map(bke::AttributeMetaData{attr.domain, attr.type});
   }
   const bke::AttributeAccessor attributes = mesh.attributes();
-  return bke::mesh::is_uv_map(attributes.lookup_meta_data(mesh.active_uv_map_name()));
+  return bke::mesh::is_uv_map(attributes.lookup_meta_data(active_uv_map));
 }
 
 ObjectState::ObjectState(const DRWContext *draw_ctx,

@@ -1963,7 +1963,7 @@ static wmOperatorStatus new_compositor_sequencer_node_group_exec(bContext *C, wm
 
       SequencerCompositorModifierData *modifier_data =
           reinterpret_cast<SequencerCompositorModifierData *>(smd);
-      modifier_data->flag &= ~HIDE_DATABLOCK_SELECTOR;
+      modifier_data->flag &= ~SEQ_COMP_MOD_HIDE_DATABLOCK_SELECTOR;
       modifier_data->node_group = ntree;
       assigned_node_tree = true;
     }

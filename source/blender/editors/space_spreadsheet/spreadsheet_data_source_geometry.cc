@@ -34,10 +34,10 @@
 #include "ED_curves.hh"
 #include "ED_outliner.hh"
 
+#include "NOD_eval_log.hh"
 #include "NOD_geometry_nodes_bundle.hh"
 #include "NOD_geometry_nodes_closure.hh"
 #include "NOD_geometry_nodes_list.hh"
-#include "NOD_geometry_nodes_log.hh"
 
 #include "BLT_translation.hh"
 
@@ -1079,10 +1079,9 @@ int get_instance_reference_icon(const bke::InstanceReference &reference)
   return ICON_NONE;
 }
 
-const nodes::geo_eval_log::ViewerNodeLog *viewer_node_log_lookup(
-    const SpaceSpreadsheet &sspreadsheet)
+const nodes::eval_log::ViewerNodeLog *viewer_node_log_lookup(const SpaceSpreadsheet &sspreadsheet)
 {
-  return nodes::geo_eval_log::GeoNodesLog::find_viewer_node_log_for_path(
+  return nodes::eval_log::NodesEvalLog::find_viewer_node_log_for_path(
       sspreadsheet.geometry_id.viewer_path);
 }
 
@@ -1146,8 +1145,8 @@ bke::SocketValueVariant root_display_data_get(const SpaceSpreadsheet *sspreadshe
     return bke::SocketValueVariant::From(bke::object_get_evaluated_geometry_set(*object_eval));
   }
 
-  const nodes::geo_eval_log::ViewerNodeLog *viewer_log =
-      nodes::geo_eval_log::GeoNodesLog::find_viewer_node_log_for_path(
+  const nodes::eval_log::ViewerNodeLog *viewer_log =
+      nodes::eval_log::NodesEvalLog::find_viewer_node_log_for_path(
           sspreadsheet->geometry_id.viewer_path);
   if (!viewer_log) {
     return {};

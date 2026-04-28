@@ -476,7 +476,6 @@ char BKE_imtype_from_arg(const char *imtype_arg)
   if (STREQ(imtype_arg, "TIFF")) {
     return R_IMF_IMTYPE_TIFF;
   }
-#ifdef WITH_IMAGE_OPENEXR
   if (STREQ(imtype_arg, "OPEN_EXR")) {
     return R_IMF_IMTYPE_OPENEXR;
   }
@@ -489,7 +488,6 @@ char BKE_imtype_from_arg(const char *imtype_arg)
   if (STREQ(imtype_arg, "MULTILAYER")) {
     return R_IMF_IMTYPE_MULTILAYER;
   }
-#endif
 #ifdef WITH_FFMPEG
   if (STREQ(imtype_arg, "FFMPEG")) {
     return R_IMF_IMTYPE_FFMPEG;
@@ -557,11 +555,9 @@ static int image_path_ext_from_imformat_impl(const char imtype,
   else if (imtype == R_IMF_IMTYPE_PSD) {
     r_ext[ext_num++] = ".psd";
   }
-#ifdef WITH_IMAGE_OPENEXR
   else if (ELEM(imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
     r_ext[ext_num++] = ".exr";
   }
-#endif
 #ifdef WITH_IMAGE_CINEON
   else if (imtype == R_IMF_IMTYPE_CINEON) {
     r_ext[ext_num++] = ".cin";
@@ -800,7 +796,6 @@ void BKE_image_format_to_imbuf(ImBuf *ibuf, const ImageFormatData *imf)
       ibuf->foptions.flag |= TIF_COMPRESS_PACKBITS;
     }
   }
-#ifdef WITH_IMAGE_OPENEXR
   else if (ELEM(imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
     ibuf->ftype = IMB_FTYPE_OPENEXR;
     if (imf->depth == R_IMF_CHAN_DEPTH_16) {
@@ -812,7 +807,6 @@ void BKE_image_format_to_imbuf(ImBuf *ibuf, const ImageFormatData *imf)
       ibuf->foptions.flag |= OPENEXR_MULTIPART;
     }
   }
-#endif
 #ifdef WITH_IMAGE_CINEON
   else if (imtype == R_IMF_IMTYPE_CINEON) {
     ibuf->ftype = IMB_FTYPE_CINEON;
@@ -1009,7 +1003,6 @@ void BKE_image_format_from_imbuf(ImageFormatData *im_format, const ImBuf *imbuf)
     }
   }
 
-#ifdef WITH_IMAGE_OPENEXR
   else if (ftype == IMB_FTYPE_OPENEXR) {
     im_format->imtype = R_IMF_IMTYPE_OPENEXR;
     char exr_codec = custom_flags & OPENEXR_CODEC_MASK;
@@ -1028,7 +1021,6 @@ void BKE_image_format_from_imbuf(ImageFormatData *im_format, const ImBuf *imbuf)
       im_format->exr_flag |= R_IMF_EXR_FLAG_MULTIPART;
     }
   }
-#endif
 
 #ifdef WITH_IMAGE_CINEON
   else if (ftype == IMB_FTYPE_CINEON) {

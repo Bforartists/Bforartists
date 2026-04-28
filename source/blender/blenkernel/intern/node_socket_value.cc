@@ -611,15 +611,17 @@ void SocketValueVariant::ensure_owns_direct_data()
     case SOCK_BUNDLE: {
       if (this->is_single()) {
         if (nodes::BundlePtr &bundle_ptr = value_.get<nodes::BundlePtr>()) {
-          if (!bundle_ptr->is_mutable()) {
-            bundle_ptr = bundle_ptr->copy();
-          }
+          bundle_ptr.ensure_mutable_inplace();
           nodes::Bundle &bundle = const_cast<nodes::Bundle &>(*bundle_ptr);
           bundle.ensure_owns_direct_data();
         }
       }
-      else if (this->is_list()) {
-        /* TODO: Handle lists before #use_geometry_nodes_lists is removed. */
+      if (this->is_list()) {
+        if (nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+          list_ptr.ensure_mutable_inplace();
+          nodes::List &list = const_cast<nodes::List &>(*list_ptr);
+          list.ensure_owns_direct_data();
+        }
       }
       break;
     }
@@ -628,8 +630,12 @@ void SocketValueVariant::ensure_owns_direct_data()
         GeometrySet &geometry = value_.get<GeometrySet>();
         geometry.ensure_owns_direct_data();
       }
-      else if (this->is_list()) {
-        /* TODO: Handle lists before #use_geometry_nodes_lists is removed. */
+      if (this->is_list()) {
+        if (nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+          list_ptr.ensure_mutable_inplace();
+          nodes::List &list = const_cast<nodes::List &>(*list_ptr);
+          list.ensure_owns_direct_data();
+        }
       }
       break;
     }
@@ -673,7 +679,9 @@ bool SocketValueVariant::owns_direct_data() const
         }
       }
       else if (this->is_list()) {
-        /* TODO: Handle lists before #use_geometry_nodes_lists is removed. */
+        if (const nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+          return list_ptr->owns_direct_data();
+        }
       }
       return true;
     }
@@ -683,7 +691,9 @@ bool SocketValueVariant::owns_direct_data() const
         return geometry.owns_direct_data();
       }
       if (this->is_list()) {
-        /* TODO: Handle lists before #use_geometry_nodes_lists is removed. */
+        if (const nodes::ListPtr &list_ptr = value_.get<nodes::ListPtr>()) {
+          return list_ptr->owns_direct_data();
+        }
       }
       return true;
     }

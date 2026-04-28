@@ -1326,21 +1326,19 @@ void popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
   if (!any_item_visible) {
     return;
   }
-  if (panel->type->parent != nullptr) {
-    return;
-  }
-  if (!panel_can_be_pinned(panel)) {
+  if (panel && panel->type->parent != nullptr) {
     return;
   }
 
   PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, RNA_Panel, panel);
 
-  PopupMenu *pup = popup_menu_begin(C, IFACE_("Panel"), ICON_NONE);
+  PopupMenu *pup = popup_menu_begin(C, IFACE_("Sidebar"), ICON_NONE);
   Layout &layout = *popup_menu_layout(pup);
 
-  if (has_panel_category) {
+  if (has_panel_category && panel && panel_can_be_pinned(panel)) {
     char tmpstr[80];
-    SNPRINTF_UTF8(tmpstr, "%s" UI_SEP_CHAR_S "%s", IFACE_("Pin"), IFACE_("Shift Left Mouse"));
+    SNPRINTF_UTF8(
+        tmpstr, "%s" UI_SEP_CHAR_S "%s", IFACE_("Pin Panel"), IFACE_("Shift Left Mouse"));
     layout.prop(&ptr, "use_pin", UI_ITEM_NONE, tmpstr, ICON_NONE);
 
     /* evil, force shortcut flag */
@@ -1349,6 +1347,7 @@ void popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
       Button *but = block->buttons_ptrs.last().get();
       but->flag |= BUT_HAS_SEP_CHAR;
     }
+    layout.separator();
   }
 
   /* BFA - View2D reset option if view2d is initialized */
@@ -1372,6 +1371,9 @@ void popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
     Button *but = &block->buttons().back();
     but->flag |= BUT_HAS_SEP_CHAR;
   }
+
+  PointerRNA prefs_ptr = RNA_pointer_create_discrete(nullptr, RNA_PreferencesSystem, &U);
+  layout.prop(&prefs_ptr, "show_panel_tabs_compact", UI_ITEM_NONE, "Compact Tabs", ICON_NONE); /*BFA - WIP*/
 
   popup_menu_end(C, pup);
 }

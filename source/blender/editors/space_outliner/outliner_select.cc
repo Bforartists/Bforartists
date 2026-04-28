@@ -1028,7 +1028,7 @@ static eOLDrawState tree_element_bone_collection_state_get(const TreeElement *te
   const bArmature *arm = reinterpret_cast<const bArmature *>(tselem->id);
   const BoneCollection *bcoll = reinterpret_cast<const BoneCollection *>(te->directdata);
 
-  if (arm->runtime.active_collection == bcoll) {
+  if (arm->runtime->active_collection == bcoll) {
     return OL_DRAWSEL_ACTIVE;
   }
   return OL_DRAWSEL_NONE;

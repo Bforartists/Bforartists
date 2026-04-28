@@ -2777,8 +2777,8 @@ static void seq_build_proxy(bContext *C, PointerRNA *ptr)
     }
 
     /* Add new proxy size. */
-    strip.data->proxy->build_size_flags |= seq::rendersize_to_proxysize(
-        eSpaceSeq_Proxy_RenderSize(sseq->render_size));
+    strip.data->proxy->build_size_flags |= eStripProxyBuildSize(
+        seq::rendersize_to_proxysize(eSpaceSeq_Proxy_RenderSize(sseq->render_size)));
 
     /* Build proxy. */
     seq::proxy_build_start(pj->main, pj->scene, &strip, &processed_paths, true, pj->queue);
@@ -4079,12 +4079,25 @@ static void rna_FileAssetSelectParams_catalog_id_set(PointerRNA *ptr, const char
 }
 
 static const EnumPropertyItem *rna_FileAssetSelectParams_import_method_itemf(
-    bContext * /*C*/, PointerRNA * /*ptr*/, PropertyRNA * /*prop*/, bool *r_free)
+    bContext * /*C*/, PointerRNA *ptr, PropertyRNA * /*prop*/, bool *r_free)
 {
+  const FileAssetSelectParams *params = static_cast<FileAssetSelectParams *>(ptr->data);
+
   EnumPropertyItem *items = nullptr;
   int items_num = 0;
   for (const EnumPropertyItem *item = rna_enum_asset_import_method_items; item->identifier; item++)
   {
+    if ((item->value == FILE_ASSET_IMPORT_LINK) &&
+        (params->asset_library_ref.type == ASSET_LIBRARY_CUSTOM))
+    {
+      const bUserAssetLibrary *user_library = BKE_preferences_asset_library_find_index(
+          &U, params->asset_library_ref.custom_library_index);
+      if (user_library && user_library->flag & ASSET_LIBRARY_USE_REMOTE_URL) {
+        /* Don't allow linking with remote libraries. */
+        continue;
+      }
+    }
+
     switch (eFileAssetImportMethod(item->value)) {
       case FILE_ASSET_IMPORT_APPEND_REUSE: {
         if (U.experimental.no_data_block_packing) {
@@ -4646,6 +4659,14 @@ static void rna_def_space_outliner(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SO_MODE_COLUMN);
   RNA_def_property_ui_text(
       prop, "Show Mode Column", "Show the mode column for mode toggle and activation");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
+
+  prop = RNA_def_property(srna, "scroll_to_active", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SO_SCROLL_TO_ACTIVE);
+  RNA_def_property_ui_text(
+      prop,
+      "Scroll to Active",
+      "Scroll the active item into view when it changes outside of the Outliner");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
   /* Granular restriction column option. */

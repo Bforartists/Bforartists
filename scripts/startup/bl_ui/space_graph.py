@@ -682,8 +682,7 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_mirror")
 
         layout.separator()
-
-        layout.operator_menu_enum("graph.keyframe_insert", "type")
+        layout.operator_menu_enum("graph.keyframe_insert", "type", text="Insert")
 
         layout.separator()
 

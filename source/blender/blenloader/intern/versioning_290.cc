@@ -174,9 +174,9 @@ static void strip_convert_transform_crop(const Scene *scene,
   int image_size_x = scene->r.xsch;
   int image_size_y = scene->r.ysch;
 
-  /* Hard-coded legacy bit-flags which has been removed. */
-  const uint32_t use_transform_flag = (1 << 16);
-  const uint32_t use_crop_flag = (1 << 17);
+  /* Hard-coded legacy bit-flags which have been removed. */
+  const eStripFlag use_transform_flag = eStripFlag(1 << 16);
+  const eStripFlag use_crop_flag = eStripFlag(1 << 17);
 
   const StripElem *s_elem = strip->data->stripdata;
   if (s_elem != nullptr) {

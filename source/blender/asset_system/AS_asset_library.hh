@@ -91,14 +91,9 @@ class AssetLibrary {
   std::unique_ptr<AssetCatalogService> catalog_service_;
   Mutex catalog_service_mutex_;
 
-  /* TODO: Add virtual getter. */
-  std::optional<eAssetImportMethod> import_method_;
   /** Assets owned by this library may be imported with a different method than set in
    * #import_method_ above, it's just a default. */
   bool may_override_import_method_ = false;
-
-  /* TODO: Add virtual getter. */
-  bool use_relative_path_ = true;
 
   bCallbackFuncStore on_save_callback_store_{};
 
@@ -141,6 +136,17 @@ class AssetLibrary {
    * were loaded directly through a path.
    */
   virtual std::optional<AssetLibraryReference> library_reference() const = 0;
+
+  /**
+   * Get the import method that should be used for assets in this library.
+   *
+   * \return The import method or no value if the library doesn't support importing. For example
+   *   because the library is the "Current File" library or the library was removed from the
+   *   Preferences.
+   */
+  virtual std::optional<eAssetImportMethod> import_method() const = 0;
+
+  virtual bool use_relative_paths() const;
 
   /**
    * Return the URL of the remote asset library, or #std::nullopt if this is not a remote library.
@@ -362,11 +368,5 @@ void AS_asset_full_path_explode_from_weak_ref(const AssetWeakReference *asset_re
  * #U.experimental.no_data_block_packing.
  */
 void AS_asset_library_import_method_ensure_valid(Main &bmain);
-/**
- * This is not done as part of #AS_asset_library_import_method_ensure_valid because it changes
- * run-time data only and does not need to happen during versioning (also it appears to break tests
- * when run during versioning).
- */
-void AS_asset_library_essential_import_method_update();
 
 }  // namespace blender
