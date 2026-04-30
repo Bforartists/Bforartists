@@ -138,8 +138,16 @@ def write_addon_tracking(central_lib_base, tracking_data):
         print(f"Warning: Could not write addon tracking file: {tracking_file}")
 
 
-def add_addon_to_central_library(addon_info, library_folders, addon_path, central_lib_base=None):
-    """Add an addon's assets to the central library and update tracking."""
+def add_addon_to_central_library(addon_info, library_folders, addon_path, central_lib_base=None, force_copy=False):
+    """Add an addon's assets to the central library and update tracking.
+    
+    Args:
+        addon_info: Dict with 'name', 'version', 'unique_id'
+        library_folders: List of library subfolder names
+        addon_path: Path to the addon's source directory
+        central_lib_base: Path to central library (optional)
+        force_copy: If True, always overwrite existing files regardless of mtime
+    """
     if central_lib_base is None:
         central_lib_base = get_central_library_path()
 
@@ -180,8 +188,9 @@ def add_addon_to_central_library(addon_info, library_folders, addon_path, centra
                 dest_file = p.join(target_dir, filename)
                 relative_dest_path = p.relpath(dest_file, central_lib_base)
 
-                # Only copy if source is newer or destination doesn't exist
-                if not p.exists(dest_file) or p.getmtime(src_file) > p.getmtime(dest_file):
+                # Copy if forced, or source is newer, or destination doesn't exist
+                should_copy = force_copy or not p.exists(dest_file) or p.getmtime(src_file) > p.getmtime(dest_file)
+                if should_copy:
                     shutil.copy2(src_file, dest_file)
                     # print(f"      ✅ Copied {filename} to central library")
                     files_copied += 1
@@ -207,9 +216,11 @@ def add_addon_to_central_library(addon_info, library_folders, addon_path, centra
         write_addon_tracking(central_lib_base, tracking_data)
         # print(f"      ✅ Added to tracking: {addon_id}")
     else:
-        # Update existing entry with current file list
+        # Update existing entry with current file list and version
         tracking_data[addon_id]['files'] = files_copied_by_addon
         tracking_data[addon_id]['libraries'] = library_folders.copy()
+        tracking_data[addon_id]['version'] = list(addon_info['version'])
+        tracking_data[addon_id]['path'] = addon_path
         write_addon_tracking(central_lib_base, tracking_data)
         # print(f"      ⏩ Updated tracking: {addon_id}")
 
