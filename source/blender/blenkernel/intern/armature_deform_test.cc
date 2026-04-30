@@ -13,14 +13,13 @@
 #include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
 #include "BKE_grease_pencil.hh"
+#include "BKE_gtest_base.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh.hh"
 #include "BKE_object.hh"
 #include "BKE_object_deform.h"
-
-#include "CLG_log.h"
 
 #include "DNA_armature_types.h"
 #include "DNA_curves_types.h"
@@ -629,13 +628,12 @@ class ArmatureDeformParamTest : public ArmatureDeformTestBase,
  public:
   static void SetUpTestSuite()
   {
-    CLG_init();
-    BKE_idtype_init();
+    bke::gtest_setup();
   }
 
   static void TearDownTestSuite()
   {
-    CLG_exit();
+    bke::gtest_teardown();
   }
 
   void SetUp() override
@@ -767,13 +765,12 @@ class ArmatureDeformTest : public ArmatureDeformTestBase, public testing::Test {
  public:
   static void SetUpTestSuite()
   {
-    CLG_init();
-    BKE_idtype_init();
+    bke::gtest_setup();
   }
 
   static void TearDownTestSuite()
   {
-    CLG_exit();
+    bke::gtest_teardown();
   }
 
   void SetUp() override

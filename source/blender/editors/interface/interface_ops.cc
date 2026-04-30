@@ -16,7 +16,8 @@
 #include "DNA_key_types.h"
 #include "DNA_material_types.h"
 #include "DNA_modifier_types.h" /* for handling geometry nodes properties */
-#include "DNA_object_types.h"   /* for OB_DATA_SUPPORT_ID */
+#include "DNA_node_tree_interface_types.h"
+#include "DNA_object_types.h" /* for OB_DATA_SUPPORT_ID */
 #include "DNA_screen_types.h"
 
 #include "ANIM_keyframing.hh"
@@ -74,6 +75,8 @@
 
 /* Only for #UI_OT_editsource. */
 #include "ED_screen.hh"
+
+#include "NOD_socket.hh"
 
 namespace blender {
 
@@ -1038,6 +1041,66 @@ static void context_selected_key_blocks(ID *owner_id_key, Vector<PointerRNA> *r_
   }
 }
 
+static bool tree_interface_item_can_set_prop(const bNodeTreeInterfaceItem &item,
+                                             const bNodeTreeInterfaceItem &active_item,
+                                             PropertyRNA *prop)
+{
+  if (active_item.item_type != item.item_type) {
+    return false;
+  }
+  const char *prop_id = RNA_property_identifier(prop);
+  const bool is_generic_prop = STR_ELEM(
+      prop_id, "socket_type", "description", "optional_label", "hide_value", "hide_in_modifier");
+
+  switch (eNodeTreeInterfaceItemType(item.item_type)) {
+    case NODE_INTERFACE_SOCKET: {
+      const auto &sock = reinterpret_cast<const bNodeTreeInterfaceSocket &>(item);
+      if ((sock.flag & NODE_INTERFACE_SOCKET_SELECT) == 0) {
+        return false;
+      }
+      /* Switch logic based on the property being edited. */
+      if (is_generic_prop) {
+        if (sock.flag & NODE_INTERFACE_SOCKET_PANEL_TOGGLE) {
+          /* Disallow changing socket type for panel toggle. */
+          return !STREQ(prop_id, "socket_type");
+        }
+        return true;
+      }
+      if (STREQ(prop_id, "structure_type")) {
+        return sock.flag & NODE_INTERFACE_SOCKET_INPUT;
+      }
+      if (STREQ(prop_id, "attribute_domain") && sock.flag & NODE_INTERFACE_SOCKET_OUTPUT) {
+        return nodes::socket_type_supports_attributes(sock.socket_typeinfo()->type);
+      }
+      /* Other properties only support batch setting for selected items of the same type. */
+      const auto &active_sock = reinterpret_cast<const bNodeTreeInterfaceSocket &>(active_item);
+      return sock.socket_typeinfo()->type == active_sock.socket_typeinfo()->type;
+    }
+    case NODE_INTERFACE_PANEL: {
+      const auto &panel = reinterpret_cast<const bNodeTreeInterfacePanel &>(item);
+      return panel.flag & NODE_INTERFACE_PANEL_SELECT;
+    }
+  }
+  return false;
+}
+
+static void ui_context_matched_tree_interface_items(PointerRNA *ptr,
+                                                    PropertyRNA *prop,
+                                                    Vector<PointerRNA> *r_lb)
+{
+  bNodeTree *ntree = id_cast<bNodeTree *>(ptr->owner_id);
+  bNodeTreeInterfaceItem *active_item = static_cast<bNodeTreeInterfaceItem *>(ptr->data);
+  if (!active_item) {
+    return;
+  }
+  ntree->tree_interface.foreach_item([&](bNodeTreeInterfaceItem &item) {
+    if (tree_interface_item_can_set_prop(item, *active_item, prop)) {
+      r_lb->append(RNA_pointer_create_discrete(&ntree->id, RNA_NodeTreeInterfaceItem, &item));
+    }
+    return true;
+  });
+}
+
 bool context_copy_to_selected_list(bContext *C,
                                    PointerRNA *ptr,
                                    PropertyRNA *prop,
@@ -1245,6 +1308,9 @@ bool context_copy_to_selected_list(bContext *C,
 
     *r_lb = lb;
     *r_path = path;
+  }
+  else if (RNA_struct_is_a(ptr->type, RNA_NodeTreeInterfaceItem)) {
+    ui_context_matched_tree_interface_items(ptr, prop, r_lb);
   }
   else if (RNA_struct_is_a(ptr->type, RNA_AssetMetaData)) {
     /* Remap from #AssetRepresentation to #AssetMetaData. */

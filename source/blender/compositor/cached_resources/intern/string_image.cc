@@ -206,7 +206,7 @@ StringImage::StringImage(Context &context,
 
   BLF_buffer_col(font_identifier, Color(1.0f, 1.0f, 1.0f, 1.0f));
   BLF_buffer(font_identifier,
-             static_cast<float *>(this->result.cpu_data().data()),
+             static_cast<float *>(this->result.cpu_data_for_write().data()),
              nullptr,
              total_width,
              total_height,

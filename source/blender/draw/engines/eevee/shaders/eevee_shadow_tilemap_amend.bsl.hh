@@ -15,21 +15,40 @@
  * Currently this shader is dispatched with one thread-group for all directional light.
  */
 
-#include "infos/eevee_shadow_pipeline_infos.hh"
+#pragma once
 
-COMPUTE_SHADER_CREATE_INFO(eevee_shadow_tilemap_amend)
+#include "draw_view_infos.hh"
 
+FRAGMENT_SHADER_CREATE_INFO(draw_view)
+
+#include "eevee_defines.hh"
 #include "eevee_light_iter_lib.glsl"
+#include "eevee_shadow_shared.hh"
 #include "eevee_shadow_tilemap_lib.bsl.hh"
 
-shared uint tiles_local[gl_WorkGroupSize.x][gl_WorkGroupSize.y];
+namespace eevee {
 
-void main()
+struct TilemapAmend {
+  [[legacy_info]] ShaderCreateInfo draw_view;
+
+  [[storage(LIGHT_CULL_BUF_SLOT, read)]] const LightCullingData &light_cull_buf;
+  [[storage(LIGHT_BUF_SLOT, read_write)]] LightData (&light_buf)[];
+  /* The call bind_resources(lights) also uses LIGHT_ZBIN_BUF_SLOT and LIGHT_TILE_BUF_SLOT. */
+  [[storage(4, read)]] const ShadowTileMapData (&tilemaps_buf)[];
+
+  [[shared]] uint tiles_local[SHADOW_TILEMAP_RES][SHADOW_TILEMAP_RES];
+
+  [[image(0, read_write, UINT_32)]] uimage2D tilemaps_img;
+};
+
+[[compute, local_size(SHADOW_TILEMAP_RES, SHADOW_TILEMAP_RES)]]
+void tilemap_amend([[resource_table]] TilemapAmend &srt,
+                   [[global_invocation_id]] const uint3 global_id)
 {
-  int2 tile_co = int2(gl_GlobalInvocationID.xy);
+  int2 tile_co = int2(global_id.xy);
 
-  LIGHT_FOREACH_BEGIN_DIRECTIONAL (light_cull_buf, l_idx) {
-    LightData light = light_buf[l_idx];
+  LIGHT_FOREACH_BEGIN_DIRECTIONAL (srt.light_cull_buf, l_idx) {
+    LightData light = srt.light_buf[l_idx];
     /* This only works on clip-maps. Cascade have already the same LOD for every tile-maps. */
     if (light.type != LIGHT_SUN) {
       break;
@@ -47,7 +66,7 @@ void main()
       int tilemap_index = light.tilemap_index + lod;
       uint2 atlas_texel = shadow_tile_coord_in_atlas(uint2(tile_co), tilemap_index);
 
-      ShadowSamplingTilePacked tile_packed = imageLoad(tilemaps_img, int2(atlas_texel)).x;
+      ShadowSamplingTilePacked tile_packed = imageLoad(srt.tilemaps_img, int2(atlas_texel)).x;
       ShadowSamplingTile tile = shadow_sampling_tile_unpack(tile_packed);
 
       if (lod != lod_max && !tile.is_valid) {
@@ -57,7 +76,8 @@ void main()
         int2 tile_co_prev = (tile_co + offset_centered) >> 1;
 
         /* Load tile from the previous LOD. */
-        ShadowSamplingTilePacked tile_prev_packed = tiles_local[tile_co_prev.y][tile_co_prev.x];
+        ShadowSamplingTilePacked tile_prev_packed =
+            srt.tiles_local[tile_co_prev.y][tile_co_prev.x];
         ShadowSamplingTile tile_prev = shadow_sampling_tile_unpack(tile_prev_packed);
 
         /* We can only propagate LODs up to a certain level.
@@ -82,7 +102,7 @@ void main()
 
           tile_prev_packed = shadow_sampling_tile_pack(tile_prev);
           /* Replace the missing page with the one from the lower LOD. */
-          imageStoreFast(tilemaps_img, int2(atlas_texel), uint4(tile_prev_packed));
+          imageStoreFast(srt.tilemaps_img, int2(atlas_texel), uint4(tile_prev_packed));
           /* Push this amended tile to the local tiles. */
           tile_packed = tile_prev_packed;
           tile.is_valid = true;
@@ -90,15 +110,15 @@ void main()
       }
 
       barrier();
-      tiles_local[tile_co.y][tile_co.x] = (tile.is_valid) ? tile_packed : SHADOW_NO_DATA;
+      srt.tiles_local[tile_co.y][tile_co.x] = (tile.is_valid) ? tile_packed : SHADOW_NO_DATA;
       barrier();
     }
   }
   LIGHT_FOREACH_END
 
-  LIGHT_FOREACH_BEGIN_LOCAL_NO_CULL(light_cull_buf, l_idx)
+  LIGHT_FOREACH_BEGIN_LOCAL_NO_CULL(srt.light_cull_buf, l_idx)
   {
-    LightData light = light_buf[l_idx];
+    LightData light = srt.light_buf[l_idx];
     if (light.tilemap_index == LIGHT_NO_SHADOW) {
       continue;
     }
@@ -106,15 +126,19 @@ void main()
     int lod_min = 0;
     int tilemap_count = light_local_tilemap_count(light);
     for (int i = 0; i < tilemap_count; i++) {
-      ShadowTileMapData tilemap = tilemaps_buf[light.tilemap_index + i];
+      ShadowTileMapData tilemap = srt.tilemaps_buf[light.tilemap_index + i];
       lod_min = max(lod_min, tilemap.effective_lod_min);
     }
     if (lod_min > 0) {
       /* Override the effective lod min distance in absolute mode (negative).
        * Note that this only changes the sampling for this AA sample. */
       constexpr float projection_diagonal = 2.0f * M_SQRT2;
-      light_buf[l_idx].lod_min = -(projection_diagonal / float(SHADOW_MAP_MAX_RES >> lod_min));
+      srt.light_buf[l_idx].lod_min = -(projection_diagonal / float(SHADOW_MAP_MAX_RES >> lod_min));
     }
   }
   LIGHT_FOREACH_END
 }
+
+PipelineCompute shadow_tilemap_amend(tilemap_amend);
+
+}  // namespace eevee

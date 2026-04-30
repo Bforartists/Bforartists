@@ -4,6 +4,7 @@
 
 #include "BLI_memory_counter.hh"
 
+#include "NOD_geometry_nodes_bundle.hh"
 #include "NOD_geometry_nodes_list.hh"
 
 namespace blender::nodes {
@@ -159,6 +160,85 @@ void List::count_memory(MemoryCounter &memory) const
     single_data->count_memory(memory, cpp_type_);
     return;
   }
+}
+
+void List::ensure_owns_direct_data()
+{
+  if (cpp_type_.is<BundlePtr>()) {
+    this->foreach_for_write<BundlePtr>([](BundlePtr &bundle_ptr) {
+      bundle_ptr.ensure_mutable_inplace();
+      const_cast<Bundle &>(*bundle_ptr).ensure_owns_direct_data();
+    });
+  }
+  else if (cpp_type_.is<bke::SocketValueVariant>()) {
+    this->foreach_for_write<bke::SocketValueVariant>(
+        [](bke::SocketValueVariant &value) { value.ensure_owns_direct_data(); });
+  }
+  else if (cpp_type_.is<bke::GeometrySet>()) {
+    this->foreach_for_write<bke::GeometrySet>(
+        [](bke::GeometrySet &geometry) { geometry.ensure_owns_direct_data(); });
+  }
+}
+
+bool List::owns_direct_data() const
+{
+  const std::variant<GSpan, GPointer> &values = this->values();
+  if (cpp_type_.is<BundlePtr>()) {
+    return std::visit(
+        []<typename T>(const T &value) {
+          if constexpr (std::is_same_v<T, GSpan>) {
+            const Span span = value.template typed<BundlePtr>();
+            return std::all_of(span.begin(), span.end(), [](const BundlePtr &bundle_ptr) {
+              if (!bundle_ptr) {
+                return false;
+              }
+              return bundle_ptr->owns_direct_data();
+            });
+          }
+          else if constexpr (std::is_same_v<T, GPointer>) {
+            const BundlePtr *value_ptr = value.template get<BundlePtr>();
+            if (!value_ptr) {
+              return false;
+            }
+            return (*value_ptr)->owns_direct_data();
+          }
+          return true;
+        },
+        values);
+  }
+  if (cpp_type_.is<bke::SocketValueVariant>()) {
+    return std::visit(
+        []<typename T>(const T &value) {
+          if constexpr (std::is_same_v<T, GSpan>) {
+            const Span span = value.template typed<bke::SocketValueVariant>();
+            return std::all_of(span.begin(), span.end(), [](const bke::SocketValueVariant &value) {
+              return value.owns_direct_data();
+            });
+          }
+          else if constexpr (std::is_same_v<T, GPointer>) {
+            return value.template get<bke::SocketValueVariant>()->owns_direct_data();
+          }
+          return true;
+        },
+        values);
+  }
+  if (cpp_type_.is<bke::GeometrySet>()) {
+    return std::visit(
+        []<typename T>(const T &value) {
+          if constexpr (std::is_same_v<T, GSpan>) {
+            const Span span = value.template typed<bke::GeometrySet>();
+            return std::all_of(span.begin(), span.end(), [](const bke::GeometrySet &value) {
+              return value.owns_direct_data();
+            });
+          }
+          else if constexpr (std::is_same_v<T, GPointer>) {
+            return value.template get<bke::GeometrySet>()->owns_direct_data();
+          }
+          return true;
+        },
+        values);
+  }
+  return true;
 }
 
 void List::ArrayData::count_memory(MemoryCounter &memory,

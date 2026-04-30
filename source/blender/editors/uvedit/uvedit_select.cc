@@ -6204,6 +6204,98 @@ void UV_OT_select_overlap(wmOperatorType *ot)
                   "Extend selection rather than clearing the existing selection");
 }
 
+enum class UVWinding {
+  Positive = 0,
+  Negative = 1,
+};
+
+static wmOperatorStatus uv_select_by_winding_exec(bContext *C, wmOperator *op)
+{
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  const Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
+  const ToolSettings *ts = scene->toolsettings;
+  ViewLayer *view_layer = CTX_data_view_layer(C);
+  const bool extend = RNA_boolean_get(op->ptr, "extend");
+  const int winding = RNA_enum_get(op->ptr, "winding");
+  const float winding_sign = winding == int(UVWinding::Positive) ? -1.0f : 1.0f;
+
+  Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
+      *bmain, scene, view_layer, nullptr);
+
+  if (!extend) {
+    uv_select_all_perform_multi(scene, objects, SEL_DESELECT);
+  }
+
+  for (Object *obedit : objects) {
+    BMesh *bm = BKE_editmesh_from_object(obedit)->bm;
+    const BMUVOffsets offsets = BM_uv_map_offsets_get(bm);
+
+    BM_mesh_elem_hflag_disable_all(bm, BM_FACE, BM_ELEM_TAG, false);
+
+    bool changed = false;
+    BMFace *efa;
+    BMIter iter;
+    BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
+      if (!uvedit_face_visible_test(scene, efa)) {
+        continue;
+      }
+      const float area = BM_face_calc_area_uv_signed(efa, offsets.uv);
+      if (area * winding_sign > 0.0f) {
+        BM_elem_flag_enable(efa, BM_ELEM_TAG);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      uv_select_flush_from_tag_face(scene, obedit, true);
+
+      if (ts->uv_flag & UV_FLAG_SELECT_SYNC) {
+        ED_uvedit_select_sync_flush(ts, bm, true);
+      }
+      else {
+        ED_uvedit_selectmode_flush(scene, bm);
+      }
+
+      uv_select_tag_update_for_object(depsgraph, ts, obedit);
+    }
+  }
+
+  return OPERATOR_FINISHED;
+}
+
+void UV_OT_select_by_winding(wmOperatorType *ot)
+{
+  static const EnumPropertyItem prop_winding_types[] = {
+      {int(UVWinding::Positive), "POSITIVE", 0, "Positive", ""},
+      {int(UVWinding::Negative), "NEGATIVE", 0, "Negative", ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  /* identifiers */
+  ot->name = "Select by Winding";
+  ot->description = "Select UV faces by their winding";
+  ot->idname = "UV_OT_select_by_winding";
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* API callbacks. */
+  ot->exec = uv_select_by_winding_exec;
+  ot->poll = ED_operator_uvedit;
+
+  /* properties */
+  RNA_def_enum(ot->srna,
+               "winding",
+               prop_winding_types,
+               int(UVWinding::Negative),
+               "Winding",
+               "Select faces with positive or negative winding");
+  RNA_def_boolean(ot->srna,
+                  "extend",
+                  false,
+                  "Extend",
+                  "Extend selection rather than clearing the existing selection");
+}
+
 /** \} */
 /** \name Select Similar Operator
  * \{ */

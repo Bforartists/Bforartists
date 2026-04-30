@@ -69,7 +69,6 @@ static void gpu_backend_discard();
 
 namespace gpu {
 
-int Context::context_counter = 0;
 Context::Context()
 {
   thread_ = pthread_self();

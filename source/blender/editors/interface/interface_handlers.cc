@@ -4155,11 +4155,6 @@ static int do_but_textedit(
           searchbox_event(C, data->searchbox, but, data->region, event);
           break;
         }
-        if (textbox && event->type == WHEELDOWNMOUSE) {
-          textbox_add_scroll(textbox, 1);
-          retval = WM_UI_HANDLER_BREAK;
-          break;
-        }
         if (textbox && event->type == EVT_DOWNARROWKEY) {
           textbox_jump_line(textbox, STRCUR_DIR_NEXT, event->modifier & KM_SHIFT);
           retval = WM_UI_HANDLER_BREAK;
@@ -4185,11 +4180,6 @@ static int do_but_textedit(
           mouse_motion_keynav_init(&data->searchbox_keynav_state, event);
 #endif
           searchbox_event(C, data->searchbox, but, data->region, event);
-          break;
-        }
-        if (textbox && event->type == WHEELUPMOUSE) {
-          textbox_add_scroll(textbox, -1);
-          retval = WM_UI_HANDLER_BREAK;
           break;
         }
         if (textbox && event->type == EVT_UPARROWKEY) {
@@ -5282,43 +5272,69 @@ static int do_but_TEXTBOX(bContext *C,
   switch (data->state) {
     case BUTTON_STATE_TEXT_EDITING:
     case BUTTON_STATE_HIGHLIGHT: {
-      if (!(event->val == KM_PRESS && event->type == LEFTMOUSE)) {
-        break;
+      if (ELEM(event->type, WHEELUPMOUSE, WHEELDOWNMOUSE)) {
+        if (textbox->last_total_lines > textbox->visible_lines()) {
+          textbox_add_scroll(textbox, (event->type == WHEELUPMOUSE ? -1 : 1));
+          ED_region_tag_redraw(data->region);
+          return WM_UI_HANDLER_BREAK;
+        }
+        return data->state == BUTTON_STATE_HIGHLIGHT ? WM_UI_HANDLER_CONTINUE :
+                                                       WM_UI_HANDLER_BREAK;
       }
       rctf rect;
       block_to_window_rctf(data->region, block, &rect, &textbox->rect);
 
-      /* Try activate text-box scroll-bar. */
       rctf scroll_rect = rect;
       scroll_rect.xmin = rect.xmax - button_text_padding(textbox);
       scroll_rect.ymin += textbox_padding_bottom() / block->aspect;
 
-      if (BLI_rctf_isect_pt(&scroll_rect, UNPACK2(event->xy))) {
-        if (data->state == BUTTON_STATE_HIGHLIGHT) {
-          WM_cursor_modal_set(win, WM_CURSOR_NS_SCROLL);
-        }
-        else {
-          WM_cursor_set(win, WM_CURSOR_NS_SCROLL);
-        }
-        button_activate_state(C, textbox, BUTTON_STATE_TEXTBOX_SCROLLING);
-        WM_cursor_set(win, WM_CURSOR_NS_SCROLL);
-        WM_event_add_mousemove(win);
-        return WM_UI_HANDLER_BREAK;
-      }
-
-      /* Try activate text-box grip button. */
       rctf grip_rect = rect;
       grip_rect.ymax = grip_rect.ymin + textbox_grip_height() / block->aspect;
 
+      /* Update mouse cursor on mouse move. */
+      if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
+        if (BLI_rctf_isect_pt(&scroll_rect, UNPACK2(event->xy))) {
+          if (textbox->last_total_lines > textbox->visible_lines()) {
+            WM_cursor_modal_restore(win);
+            WM_cursor_set(win, WM_CURSOR_DEFAULT);
+            data->changed_cursor = false;
+            break;
+          }
+        }
+        if (BLI_rctf_isect_pt(&grip_rect, UNPACK2(event->xy))) {
+          if (win->cursor != WM_CURSOR_NS_SCROLL) {
+            WM_cursor_modal_set(win, WM_CURSOR_NS_SCROLL);
+            data->changed_cursor = true;
+          }
+          break;
+        }
+        if (win->cursor != WM_CURSOR_TEXT_EDIT) {
+          WM_cursor_modal_set(win, WM_CURSOR_TEXT_EDIT);
+          data->changed_cursor = true;
+        }
+        break;
+      }
+
+      if (!(event->val == KM_PRESS && event->type == LEFTMOUSE)) {
+        break;
+      }
+      /* Try activate the text-box scroll-bar. */
+      if (textbox->last_total_lines > textbox->visible_lines() &&
+          BLI_rctf_isect_pt(&scroll_rect, UNPACK2(event->xy)))
+      {
+        WM_cursor_modal_restore(win);
+        WM_cursor_set(win, WM_CURSOR_DEFAULT);
+        data->changed_cursor = false;
+        button_activate_state(C, textbox, BUTTON_STATE_TEXTBOX_SCROLLING);
+        /* Scroll to mouse cursor with mouse move. */
+        WM_event_add_mousemove(win);
+        return WM_UI_HANDLER_BREAK;
+      }
+      /* Try activate the text-box grip button. */
       if (BLI_rctf_isect_pt(&grip_rect, UNPACK2(event->xy))) {
-        if (data->state == BUTTON_STATE_HIGHLIGHT) {
-          WM_cursor_modal_set(win, WM_CURSOR_NS_SCROLL);
-        }
-        else {
-          WM_cursor_set(win, WM_CURSOR_NS_SCROLL);
-        }
         button_activate_state(C, textbox, BUTTON_STATE_TEXTBOX_RESIZING);
-        WM_cursor_set(win, WM_CURSOR_NS_SCROLL);
+        WM_cursor_modal_set(win, WM_CURSOR_NS_SCROLL);
+        data->changed_cursor = true;
         data->dragstarty = event->xy[1];
         data->origvalue = textbox->visible_lines();
         return WM_UI_HANDLER_BREAK;
@@ -5327,12 +5343,6 @@ static int do_but_TEXTBOX(bContext *C,
     }
     case BUTTON_STATE_TEXTBOX_SCROLLING: {
       if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
-        if (textbox->editstr) {
-          WM_cursor_set(win, WM_CURSOR_TEXT_EDIT);
-        }
-        else {
-          WM_cursor_modal_restore(win);
-        }
         button_activate_state(
             C, textbox, textbox->editstr ? BUTTON_STATE_TEXT_EDITING : BUTTON_STATE_HIGHLIGHT);
         return WM_UI_HANDLER_BREAK;
@@ -5357,12 +5367,6 @@ static int do_but_TEXTBOX(bContext *C,
     }
     case BUTTON_STATE_TEXTBOX_RESIZING: {
       if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
-        if (textbox->editstr) {
-          WM_cursor_set(win, WM_CURSOR_TEXT_EDIT);
-        }
-        else {
-          WM_cursor_modal_restore(win);
-        }
         button_activate_state(
             C, textbox, textbox->editstr ? BUTTON_STATE_TEXT_EDITING : BUTTON_STATE_HIGHLIGHT);
         return WM_UI_HANDLER_BREAK;
@@ -9408,6 +9412,17 @@ static void button_activate_state(bContext *C, Button *but, HandleButtonState st
     }
   }
 
+  if (but->type == ButtonType::TextBox &&
+      ELEM(state, BUTTON_STATE_TEXT_EDITING, BUTTON_STATE_HIGHLIGHT))
+  {
+    /* Text-box buttons allows to start text selection, or to use the handles for resize the
+     * text-box or scroll the text content while in #BUTTON_STATE_TEXT_EDITING or
+     * #BUTTON_STATE_HIGHLIGHT with left click, add mouse move event to update the mouse cursor so
+     * it can properly hint what action it can perform with left click.
+     */
+    WM_event_add_mousemove(data->window);
+  }
+
   data->state = state;
 
   if (state != BUTTON_STATE_EXIT) {
@@ -9507,10 +9522,6 @@ static void button_activate_init(bContext *C,
   if (but->type == ButtonType::Grip) {
     const bool horizontal = (BLI_rctf_size_x(&but->rect) < BLI_rctf_size_y(&but->rect));
     WM_cursor_modal_set(data->window, horizontal ? WM_CURSOR_X_MOVE : WM_CURSOR_Y_MOVE);
-  }
-  /* Text-box buttons allows to select text activation, show text edit cursor when hovering. */
-  if (but->type == ButtonType::TextBox) {
-    WM_cursor_modal_set(data->window, WM_CURSOR_TEXT_EDIT);
   }
   else if (but->type == ButtonType::Num) {
     numedit_set_active(but);
@@ -9628,6 +9639,9 @@ static void button_activate_exit(
 #endif
 
   if (data->changed_cursor) {
+    if (but->type == ButtonType::TextBox) {
+      WM_cursor_modal_restore(win);
+    }
     WM_cursor_set(win, WM_CURSOR_DEFAULT);
   }
   if (data->changed_wokspace_status) {
@@ -12202,16 +12216,14 @@ static int pie_handler(bContext *C, const wmEvent *event, PopupBlockHandle *menu
 
         /* handle animation */
         if (!(block->pie_data->flags & PIE_ANIMATION_FINISHED)) {
-          const double final_time = (U.uiflag & USER_REDUCE_MOTION) ?
-                                        0.0f :
-                                        0.01 * U.pie_animation_timeout;
-          float fac = duration / final_time;
-          const float pie_radius = U.pie_menu_radius * UI_SCALE_FAC;
-
-          if (fac > 1.0f) {
+          const bool animate = !(U.uiflag & USER_REDUCE_MOTION) && U.pie_animation_timeout;
+          float fac = animate ? duration / (0.01f * double(U.pie_animation_timeout)) : 1.0f;
+          if (fac >= 1.0f) {
             fac = 1.0f;
             block->pie_data->flags |= PIE_ANIMATION_FINISHED;
           }
+
+          const float pie_radius = U.pie_menu_radius * UI_SCALE_FAC;
 
           for (Button &but : block->buttons()) {
             if (but.pie_dir != UI_RADIAL_NONE) {

@@ -88,6 +88,9 @@ class List : public ImplicitSharingMixin {
   template<typename T> VArray<T> varray() const;
 
   void count_memory(MemoryCounter &memory) const;
+
+  void ensure_owns_direct_data();
+  bool owns_direct_data() const;
 };
 
 template<typename ContainerT> inline ListPtr List::from_container(ContainerT &&container)

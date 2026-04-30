@@ -1319,7 +1319,7 @@ static int rna_Strip_color_tag_get(PointerRNA *ptr)
 static void rna_Strip_color_tag_set(PointerRNA *ptr, int value)
 {
   Strip *strip = static_cast<Strip *>(ptr->data);
-  strip->color_tag = value;
+  strip->color_tag = StripColorTag(value);
 }
 
 static bool colbalance_seq_cmp_fn(Strip *strip, void *arg_pt)
@@ -1710,7 +1710,7 @@ static bool rna_StripModifier_otherStrip_poll(PointerRNA *ptr, PointerRNA value)
 static StripModifierData *rna_Strip_modifier_new(
     Strip *strip, bContext *C, ReportList *reports, const char *name, int type)
 {
-  if (!seq::sequence_supports_modifiers(strip)) {
+  if (!seq::strip_supports_modifiers(strip)) {
     BKE_report(reports, RPT_ERROR, "Strip type does not support modifiers");
 
     return nullptr;
@@ -1719,7 +1719,7 @@ static StripModifierData *rna_Strip_modifier_new(
     Scene *scene = CTX_data_sequencer_scene(C);
     StripModifierData *smd;
 
-    smd = seq::modifier_new(strip, name, type);
+    smd = seq::modifier_new(strip, name, eStripModifierType(type));
     seq::modifier_persistent_uid_init(*strip, *smd);
 
     seq::relations_invalidate_cache(scene, strip);
@@ -3996,7 +3996,7 @@ static void rna_def_text(StructRNA *srna)
 
   prop = RNA_def_property(srna, "textbox_state", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "TextboxState");
-  RNA_def_property_ui_text(prop, "UI Textbot State", "Textbox state in the UI");
+  RNA_def_property_ui_text(prop, "UI Textbox State", "Textbox state in the UI");
 }
 
 static void rna_def_color_mix(StructRNA *srna)
@@ -4439,7 +4439,8 @@ static void rna_def_compositor_modifier(BlenderRNA *brna)
       prop, NC_SCENE | ND_SEQUENCER, "rna_CompositorModifier_node_group_update");
 
   prop = RNA_def_property(srna, "show_group_selector", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", HIDE_DATABLOCK_SELECTOR);
+  RNA_def_property_boolean_negative_sdna(
+      prop, nullptr, "flag", SEQ_COMP_MOD_HIDE_DATABLOCK_SELECTOR);
   RNA_def_property_ui_text(prop, "Show Node Group", "");
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
   RNA_def_property_update(prop, NC_OBJECT | ND_MODIFIER, nullptr);

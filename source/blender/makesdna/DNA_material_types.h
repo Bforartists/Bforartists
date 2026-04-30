@@ -50,6 +50,8 @@ enum eMaterialGPencilStyle_Flag {
   GP_MATERIAL_IS_STROKE_HOLDOUT = (1 << 13),
   /* Material used as fill masking. */
   GP_MATERIAL_IS_FILL_HOLDOUT = (1 << 14),
+  /* Material use randomization. */
+  GP_MATERIAL_USE_DOTS_RANDOMIZATION = (1 << 15),
 };
 
 enum eMaterialGPencilStyle_Mode {
@@ -331,6 +333,17 @@ struct MaterialGPencilStyle {
   float placement_radius_spacing = 0;
   /* Point density per unit when placement mode is `GP_MATERIAL_PLACEMENT_DENSITY` */
   float placement_density = 0;
+
+  float random_size_factor = 0;
+  float random_strength_factor = 0;
+  float random_rotation_factor = 0;
+
+  float random_hue_factor = 0;
+  float random_saturation_factor = 0;
+  float random_value_factor = 0;
+
+  float random_noise_scale = 0;
+  char _pad3[4] = {};
 };
 
 struct MaterialLineArt {

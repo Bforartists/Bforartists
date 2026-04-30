@@ -1595,7 +1595,9 @@ static wmOperatorStatus assets_download_exec(bContext *C, wmOperator *op)
   const Vector<const asset_system::AssetRepresentation *> assets = selected_or_active_assets(C);
 
   for (const asset_system::AssetRepresentation *asset : assets) {
-    asset_system::remote_library_request_asset_download(*C, *asset, op->reports);
+    if (asset->is_online()) {
+      asset_system::remote_library_request_asset_download(*C, *asset, op->reports);
+    }
   }
 
   return OPERATOR_FINISHED;

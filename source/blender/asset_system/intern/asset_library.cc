@@ -212,18 +212,6 @@ void AS_asset_library_import_method_ensure_valid(Main &bmain)
   update_import_method_for_asset_browsers(bmain);
 }
 
-void AS_asset_library_essential_import_method_update()
-{
-  AssetLibraryReference library_ref{};
-  library_ref.custom_library_index = -1;
-  library_ref.type = ASSET_LIBRARY_ESSENTIALS;
-  EssentialsAssetLibrary *library = dynamic_cast<EssentialsAssetLibrary *>(
-      AS_asset_library_load(nullptr, library_ref));
-  if (library) {
-    library->update_default_import_method();
-  }
-}
-
 namespace asset_system {
 
 AssetLibrary::AssetLibrary(eAssetLibraryType library_type,
@@ -252,6 +240,11 @@ void AssetLibrary::foreach_loaded(FunctionRef<void(AssetLibrary &)> fn,
 {
   AssetLibraryService *service = AssetLibraryService::get();
   service->foreach_loaded_asset_library(fn, include_all_library);
+}
+
+bool AssetLibrary::use_relative_paths() const
+{
+  return true;
 }
 
 std::optional<StringRefNull> AssetLibrary::remote_url() const

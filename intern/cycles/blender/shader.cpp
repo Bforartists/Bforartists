@@ -1578,6 +1578,27 @@ void BlenderSync::sync_materials(blender::Depsgraph &b_depsgraph, bool update_al
   TaskPool pool;
   set<Shader *> updated_shaders;
 
+  /* When consecutive view layers to be rendered have different AOVs or if those AOVs are merely
+   * reordered, the AOV offsets in the shaders that have AOV output nodes must be updated via
+   * OutputAOVNode::simplify_settings() further down the line.
+   * This tracking ensures that the inputs of the AOV output nodes are connected when needed,
+   * disconnected when not, and that the offsets, which also depend on the data types, are correct.
+   * Storing the new AOV data must take place even if no shaders are affected so the new data
+   * is available as the old data when the next view layer is rendered, but the check could be
+   * deferred.
+   */
+  blender::Vector<std::pair<std::string, int>> new_shader_view_layer_aovs;
+  /* Store info on the new AOVs. */
+  blender::ViewLayer *const b_view_layer = DEG_get_evaluated_view_layer(&b_depsgraph);
+  for (blender::ViewLayerAOV &b_aov : b_view_layer->aovs) {
+    if ((b_aov.flag & blender::AOV_CONFLICT) != 0) {
+      continue;
+    }
+    new_shader_view_layer_aovs.append({b_aov.name, b_aov.type});
+  }
+  const bool aovs_changed_between_view_layers = new_shader_view_layer_aovs !=
+                                                shader_view_layer_aovs;
+
   blender::DEGIDIterData data{};
   data.graph = &b_depsgraph;
   ITER_BEGIN (blender::DEG_iterator_ids_begin,
@@ -1596,7 +1617,7 @@ void BlenderSync::sync_materials(blender::Depsgraph &b_depsgraph, bool update_al
 
     /* test if we need to sync */
     if (shader_map.add_or_update(&shader, &b_mat.id) || update_all ||
-        scene_attr_needs_recalc(shader, b_depsgraph))
+        scene_attr_needs_recalc(shader, b_depsgraph) || aovs_changed_between_view_layers)
     {
       unique_ptr<ShaderGraph> graph = make_unique<ShaderGraph>();
 
@@ -1657,6 +1678,9 @@ void BlenderSync::sync_materials(blender::Depsgraph &b_depsgraph, bool update_al
   ITER_END;
 
   pool.wait_work();
+
+  /* Info on the new AOVs becomes info on the old AOVs. */
+  shader_view_layer_aovs = std::move(new_shader_view_layer_aovs);
 
   for (Shader *shader : updated_shaders) {
     shader->tag_update(scene);

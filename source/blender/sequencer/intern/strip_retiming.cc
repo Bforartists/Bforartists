@@ -386,7 +386,7 @@ SeqRetimingKey fake_retiming_key_init(const Scene *scene, const Strip *strip, in
   SeqRetimingKey fake_key = {0};
   fake_key.strip_frame_index = (frame - strip->content_start() - sound_offset) *
                                strip->media_playback_rate_factor(scene_fps);
-  fake_key.flag = 0;
+  fake_key.flag = SEQ_RETIMING_FLAG_NONE;
   return fake_key;
 }
 

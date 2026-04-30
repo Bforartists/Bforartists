@@ -1694,27 +1694,27 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
         else:
             split.label(icon="DISCLOSURE_TRI_RIGHT")
 
-        if brush.use_automasking_view_normal:
+        if automasking.use_automasking_view_normal:
             row = col.row()
             row.use_property_split = False
             row.separator(factor=3.5)
             row.prop(automasking, "use_automasking_view_occlusion", text="Occlusion")
             subcol = col.column(align=True)
-            if not brush.use_automasking_view_occlusion:
+            if not automasking.use_automasking_view_occlusion:
                 subcol.use_property_split = True
                 row = subcol.row()
                 row.separator(factor=3.5)
-                row.prop(automasking, "automasking_view_normal_limit", text="Limit")
+                row.prop(automasking, "view_normal_limit", text="Limit")
                 row = subcol.row()
                 row.separator(factor=3.5)
-                row.prop(automasking, "automasking_view_normal_falloff", text="Falloff")
+                row.prop(automasking, "view_normal_falloff", text="Falloff")
 
         # col = layout.column()
         split = col.split(factor=0.9)
         split.use_property_split = False
         row = split.row()
         row.separator()
-        row.automasking(brush, "use_automasking_start_normal", text="Area Normal")
+        row.prop(automasking, "use_automasking_start_normal", text="Area Normal")
 
         if automasking.use_automasking_start_normal:
             split.label(icon="DISCLOSURE_TRI_DOWN")
@@ -1725,10 +1725,10 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
             col = layout.column(align=True)
             row = col.row()
             row.separator(factor=3.5)
-            row.prop(automasking, "automasking_start_normal_limit", text="Limit")
+            row.prop(automasking, "start_normal_limit", text="Limit")
             row = col.row()
             row.separator(factor=3.5)
-            row.prop(automasking, "automasking_start_normal_falloff", text="Falloff")
+            row.prop(automasking, "start_normal_falloff", text="Falloff")
             col.separator()
 
         layout.separator()

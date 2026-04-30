@@ -17,9 +17,7 @@
 
 #include "oiio/openimageio_api.h"
 
-#ifdef WITH_IMAGE_OPENEXR
-#  include "openexr/openexr_api.h"
-#endif
+#include "openexr/openexr_api.h"
 
 namespace blender {
 
@@ -170,7 +168,6 @@ const ImFileType IMB_FILE_TYPES[] = {
         /*file_extensions*/ imb_file_extensions_hdr,
         /*default_save_role*/ COLOR_ROLE_DEFAULT_FLOAT,
     },
-#ifdef WITH_IMAGE_OPENEXR
     {
         /*init*/ imb_initopenexr,
         /*exit*/ imb_exitopenexr,
@@ -187,7 +184,6 @@ const ImFileType IMB_FILE_TYPES[] = {
         /*file_extensions*/ imb_file_extensions_openexr,
         /*default_save_role*/ COLOR_ROLE_DEFAULT_FLOAT,
     },
-#endif
 #ifdef WITH_IMAGE_OPENJPEG
     {
         /*init*/ nullptr,

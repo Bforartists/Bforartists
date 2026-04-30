@@ -907,6 +907,8 @@ static bool strip_write_data_cb(Strip *strip, void *userdata)
         case STRIP_TYPE_COMPOSITOR:
           writer->write_struct_cast<CompositorEffectVars>(strip->effectdata);
           break;
+        default:
+          break;
       }
     }
 
@@ -1328,7 +1330,7 @@ ListBaseT<SeqTimelineChannel> *Editing::current_channels() const
 
 bool Strip::is_effect() const
 {
-  return blender::seq::strip_type_is_effect(StripType(this->type));
+  return blender::seq::strip_type_is_effect(this->type);
 }
 
 int Strip::effect_num_inputs_get() const
@@ -1337,7 +1339,7 @@ int Strip::effect_num_inputs_get() const
   if (this->type == STRIP_TYPE_COMPOSITOR) {
     return this->input1 && this->input2 ? 2 : this->input1 ? 1 : 0;
   }
-  return blender::seq::effect_type_get_min_num_inputs(StripType(this->type));
+  return blender::seq::effect_type_get_min_num_inputs(this->type);
 }
 
 }  // namespace blender

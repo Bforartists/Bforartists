@@ -125,6 +125,7 @@ enum eImBufFlags {
   /** Perform no color space conversions when reading, leave the image in the file colorspace. */
   IB_no_colorspace_convert = 1 << 18,
 };
+ENUM_OPERATORS(eImBufFlags);
 
 /** \} */
 

@@ -381,7 +381,11 @@ static int node_shader_gpu_bsdf_principled(GPUMaterial *mat,
     flag |= GPU_MATFLAG_REFRACTION_MAYBE_COLORED;
   }
   if (use_coat && in[SOCK_COAT_TINT_ID].might_be_tinted()) {
+    /* Coat tints lower layers. */
     flag |= GPU_MATFLAG_REFLECTION_MAYBE_COLORED;
+    if (use_refract) {
+      flag |= GPU_MATFLAG_REFRACTION_MAYBE_COLORED;
+    }
   }
 
   GPU_material_flag_set(mat, flag);

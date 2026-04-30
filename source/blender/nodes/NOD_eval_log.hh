@@ -10,17 +10,17 @@
  * search, node warnings, socket inspection and the viewer node.
  *
  * This file provides the system for logging data during evaluation and accessing the data after
- * evaluation. At the root of the logging data is a #GeoNodesLog which is created by the code that
+ * evaluation. At the root of the logging data is a #NodesEvalLog which is created by the code that
  * invokes Geometry Nodes (e.g. the Geometry Nodes modifier).
  *
  * The system makes a distinction between "loggers" and the "log":
- * - Logger (#GeoTreeLogger): Is used during geometry nodes evaluation. Each thread logs data
+ * - Logger (#NodeTreeLogger): Is used during geometry nodes evaluation. Each thread logs data
  *   independently to avoid communication between threads. Logging should generally be fast.
  *   Generally, the logged data is just dumped into simple containers. Any processing of the data
  *   happens later if necessary. This is important for performance, because in practice, most of
  *   the logged data is never used again. So any processing of the data is likely to be a waste of
  *   resources.
- * - Log (#GeoTreeLog, #GeoNodeLog): Those are used when accessing logged data in UI code. They
+ * - Log (#NodeTreeLog, #NodeLog): Those are used when accessing logged data in UI code. They
  *   contain and cache preprocessed data produced during logging. The log combines data from all
  *   thread-local loggers to provide simple access. Importantly, the (preprocessed) log is only
  *   created when it is actually used by UI code.
@@ -59,7 +59,7 @@ struct SpaceNode;
 struct NodesModifierData;
 struct Report;
 
-namespace nodes::geo_eval_log {
+namespace nodes::eval_log {
 
 using fn::GField;
 
@@ -278,7 +278,7 @@ using TimePoint = Clock::time_point;
  * Logs all data for a specific geometry node tree in a specific context. When the same node group
  * is used in multiple times each instantiation will have a separate logger.
  */
-class GeoTreeLogger {
+class NodeTreeLogger {
  public:
   std::optional<ComputeContextHash> parent_hash;
   std::optional<int32_t> parent_node_id;
@@ -334,21 +334,21 @@ class GeoTreeLogger {
   /** Keeps track of which gizmo nodes have been tracked by this evaluation. */
   linear_allocator::ChunkedList<EvaluatedGizmoNode> evaluated_gizmo_nodes;
 
-  GeoTreeLogger();
-  ~GeoTreeLogger();
+  NodeTreeLogger();
+  ~NodeTreeLogger();
 
   void log_value(const bNode &node, const bNodeSocket &socket, GPointer value);
 };
 
 /**
  * Contains data that has been logged for a specific node in a context. So when the node is in a
- * node group that is used multiple times, there will be a different #GeoNodeLog for every
+ * node group that is used multiple times, there will be a different #NodeLog for every
  * instance.
  *
- * By default, not all of the info below is valid. A #GeoTreeLog::ensure_* method has to be called
+ * By default, not all of the info below is valid. A #NodeTreeLog::ensure_* method has to be called
  * first.
  */
-class GeoNodeLog {
+class NodeLog {
  public:
   /** Warnings generated for that node. */
   VectorSet<NodeWarning> warnings;
@@ -362,23 +362,23 @@ class GeoNodeLog {
   /** Messages that are used for debugging purposes during development. */
   Vector<StringRefNull> debug_messages;
 
-  GeoNodeLog();
-  ~GeoNodeLog();
+  NodeLog();
+  ~NodeLog();
 };
 
-class GeoNodesLog;
+class NodesEvalLog;
 
 /**
  * Contains data that has been logged for a specific node group in a context. If the same node
- * group is used multiple times, there will be a different #GeoTreeLog for every instance.
+ * group is used multiple times, there will be a different #NodeTreeLog for every instance.
  *
  * This contains lazily evaluated data. Call the corresponding `ensure_*` methods before accessing
  * data.
  */
-class GeoTreeLog {
+class NodeTreeLog {
  private:
-  GeoNodesLog *root_log_;
-  Vector<GeoTreeLogger *> tree_loggers_;
+  NodesEvalLog *root_log_;
+  Vector<NodeTreeLogger *> tree_loggers_;
   VectorSet<ComputeContextHash> children_hashes_;
   bool reduced_node_warnings_ = false;
   bool reduced_execution_times_ = false;
@@ -391,7 +391,7 @@ class GeoTreeLog {
   bool reduced_layer_names_ = false;
 
  public:
-  Map<int32_t, GeoNodeLog> nodes;
+  Map<int32_t, NodeLog> nodes;
   Map<int32_t, ViewerNodeLog *, 0> viewer_node_logs;
   VectorSet<NodeWarning> all_warnings;
   std::chrono::nanoseconds execution_time{0};
@@ -400,8 +400,8 @@ class GeoTreeLog {
   Set<int> evaluated_gizmo_nodes;
   Vector<std::string> all_layer_names;
 
-  GeoTreeLog(GeoNodesLog *root_log, Vector<GeoTreeLogger *> tree_loggers);
-  ~GeoTreeLog();
+  NodeTreeLog(NodesEvalLog *root_log, Vector<NodeTreeLogger *> tree_loggers);
+  ~NodeTreeLog();
 
   /**
    * Propagate node warnings. This needs access to the node group pointers, because propagation
@@ -441,64 +441,63 @@ class GeoTreeLog {
   }
 };
 
-class ContextualGeoTreeLogs {
+class ContextualNodeTreeLogs {
  private:
-  Map<const bke::bNodeTreeZone *, GeoTreeLog *> tree_logs_by_zone_;
+  Map<const bke::bNodeTreeZone *, NodeTreeLog *> tree_logs_by_zone_;
 
  public:
-  ContextualGeoTreeLogs(Map<const bke::bNodeTreeZone *, GeoTreeLog *> tree_logs_by_zone = {});
+  ContextualNodeTreeLogs(Map<const bke::bNodeTreeZone *, NodeTreeLog *> tree_logs_by_zone = {});
 
   /**
    * Get a tree log for the given zone/node/socket if available.
    */
-  GeoTreeLog *get_main_tree_log(const bke::bNodeTreeZone *zone) const;
-  GeoTreeLog *get_main_tree_log(const bNode &node) const;
-  GeoTreeLog *get_main_tree_log(const bNodeSocket &socket) const;
+  NodeTreeLog *get_main_tree_log(const bke::bNodeTreeZone *zone) const;
+  NodeTreeLog *get_main_tree_log(const bNode &node) const;
+  NodeTreeLog *get_main_tree_log(const bNodeSocket &socket) const;
 
   /**
    * Runs a callback for each tree log that may be returned above.
    */
-  void foreach_tree_log(FunctionRef<void(GeoTreeLog &)> callback) const;
+  void foreach_tree_log(FunctionRef<void(NodeTreeLog &)> callback) const;
 };
 
 /**
- * There is one #GeoNodesLog for every modifier that evaluates geometry nodes. It contains all
- * the loggers that are used during evaluation as well as the preprocessed logs that are used by UI
- * code.
+ * This contains all the loggers that are used during evaluation as well as the preprocessed logs
+ * that are used by UI code.
  */
-class GeoNodesLog {
+class NodesEvalLog {
  private:
   /** Data that is stored for each thread. */
   struct LocalData {
     /** Each thread has its own allocator. */
     LinearAllocator<> allocator;
     /**
-     * Store a separate #GeoTreeLogger for each instance of the corresponding node group (e.g.
+     * Store a separate #NodeTreeLogger for each instance of the corresponding node group (e.g.
      * when the same node group is used multiple times).
      */
-    Map<ComputeContextHash, destruct_ptr<GeoTreeLogger>> tree_logger_by_context;
+    Map<ComputeContextHash, destruct_ptr<NodeTreeLogger>> tree_logger_by_context;
   };
 
   /** Container for all thread-local data. */
   threading::EnumerableThreadSpecific<LocalData> data_per_thread_;
   /**
-   * A #GeoTreeLog for every compute context. Those are created lazily when requested by UI code.
+   * A #NodeTreeLog for every compute context. Those are created lazily when requested by UI code.
    */
-  Map<ComputeContextHash, std::unique_ptr<GeoTreeLog>> tree_logs_;
+  Map<ComputeContextHash, std::unique_ptr<NodeTreeLog>> tree_logs_;
 
  public:
-  GeoNodesLog();
-  ~GeoNodesLog();
+  NodesEvalLog();
+  ~NodesEvalLog();
 
   /**
    * Get a thread-local logger for the current node tree.
    */
-  GeoTreeLogger &get_local_tree_logger(const ComputeContext &compute_context);
+  NodeTreeLogger &get_local_tree_logger(const ComputeContext &compute_context);
 
   /**
    * Get a log a specific node tree instance.
    */
-  GeoTreeLog &get_tree_log(const ComputeContextHash &compute_context_hash);
+  NodeTreeLog &get_tree_log(const ComputeContextHash &compute_context_hash);
 
   /**
    * Utility accessor to logged data.
@@ -507,10 +506,10 @@ class GeoNodesLog {
   get_context_hash_by_zone_for_node_editor(const SpaceNode &snode,
                                            bke::ComputeContextCache &compute_context_cache);
 
-  static ContextualGeoTreeLogs get_contextual_tree_logs(const SpaceNode &snode);
+  static ContextualNodeTreeLogs get_contextual_tree_logs(const SpaceNode &snode);
   static const ViewerNodeLog *find_viewer_node_log_for_path(const ViewerPath &viewer_path);
 };
 
-}  // namespace nodes::geo_eval_log
+}  // namespace nodes::eval_log
 
 }  // namespace blender

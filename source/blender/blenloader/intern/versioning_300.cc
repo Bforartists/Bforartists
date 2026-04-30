@@ -470,7 +470,7 @@ static void do_versions_sequencer_speed_effect_recursive(Scene *scene,
         substr = "speed_frame_number";
       }
 
-      v->flags &= ~(STRIP_SPEED_INTEGRATE | STRIP_SPEED_COMPRESS_IPO_Y);
+      v->flags &= ~eEffectSpeedControlFlags(STRIP_SPEED_INTEGRATE | STRIP_SPEED_COMPRESS_IPO_Y);
 
       if (substr || globalSpeed_legacy != 1.0f) {
         FCurve *fcu = id_data_find_fcurve(

@@ -1278,29 +1278,43 @@ void split_setup(const bContext * /*C*/, wmGizmoGroup *gzgroup)
   };
 }
 
-static void gizmo_node_backdrop_prop_matrix_get(const wmGizmo * /*gz*/,
+struct NodeTransformWidgetGroup {
+  wmGizmo *gizmo;
+
+  struct {
+    float2 offset;
+  } state;
+};
+
+static void gizmo_node_backdrop_prop_matrix_get(const wmGizmo *gz,
                                                 wmGizmoProperty *gz_prop,
                                                 void *value_p)
 {
   float (*matrix)[4] = static_cast<float (*)[4]>(value_p);
   BLI_assert(gz_prop->type->array_length == 16);
   const SpaceNode *snode = static_cast<const SpaceNode *>(gz_prop->custom_func.user_data);
+  NodeTransformWidgetGroup *transform_group = static_cast<NodeTransformWidgetGroup *>(
+      gz->parent_gzgroup->customdata);
+  const float2 offset = transform_group->state.offset;
   matrix[0][0] = snode->zoom;
   matrix[1][1] = snode->zoom;
-  matrix[3][0] = snode->xof;
-  matrix[3][1] = snode->yof;
+  matrix[3][0] = snode->xof + offset.x * snode->zoom;
+  matrix[3][1] = snode->yof + offset.y * snode->zoom;
 }
 
-static void gizmo_node_backdrop_prop_matrix_set(const wmGizmo * /*gz*/,
+static void gizmo_node_backdrop_prop_matrix_set(const wmGizmo *gz,
                                                 wmGizmoProperty *gz_prop,
                                                 const void *value_p)
 {
   const float (*matrix)[4] = static_cast<const float (*)[4]>(value_p);
   BLI_assert(gz_prop->type->array_length == 16);
+  NodeTransformWidgetGroup *transform_group = static_cast<NodeTransformWidgetGroup *>(
+      gz->parent_gzgroup->customdata);
+  const float2 offset = transform_group->state.offset;
   SpaceNode *snode = static_cast<SpaceNode *>(gz_prop->custom_func.user_data);
   snode->zoom = matrix[0][0];
-  snode->xof = matrix[3][0];
-  snode->yof = matrix[3][1];
+  snode->xof = matrix[3][0] - offset.x * snode->zoom;
+  snode->yof = matrix[3][1] - offset.y * snode->zoom;
 }
 
 bool transform_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
@@ -1324,25 +1338,30 @@ bool transform_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
 
 void transform_setup(const bContext * /*C*/, wmGizmoGroup *gzgroup)
 {
-  wmGizmoWrapper *wwrapper = MEM_new_uninitialized<wmGizmoWrapper>(__func__);
+  NodeTransformWidgetGroup *transform_group = MEM_new<NodeTransformWidgetGroup>(__func__);
 
-  wwrapper->gizmo = WM_gizmo_new("GIZMO_GT_cage_2d", gzgroup, nullptr);
+  transform_group->gizmo = WM_gizmo_new("GIZMO_GT_cage_2d", gzgroup, nullptr);
 
-  RNA_enum_set(wwrapper->gizmo->ptr,
+  RNA_enum_set(transform_group->gizmo->ptr,
                "transform",
                ED_GIZMO_CAGE_XFORM_FLAG_TRANSLATE | ED_GIZMO_CAGE_XFORM_FLAG_SCALE_UNIFORM);
-  RNA_enum_set(wwrapper->gizmo->ptr,
+  RNA_enum_set(transform_group->gizmo->ptr,
                "draw_options",
                ED_GIZMO_CAGE_DRAW_FLAG_XFORM_CENTER_HANDLE |
                    ED_GIZMO_CAGE_DRAW_FLAG_CORNER_HANDLES);
 
-  gzgroup->customdata = wwrapper;
+  gzgroup->customdata = transform_group;
+  gzgroup->customdata_free = [](void *customdata) {
+    MEM_delete(static_cast<NodeTransformWidgetGroup *>(customdata));
+  };
 }
 
 void transform_refresh(const bContext *C, wmGizmoGroup *gzgroup)
 {
   Main *bmain = CTX_data_main(C);
-  wmGizmo *cage = (static_cast<wmGizmoWrapper *>(gzgroup->customdata))->gizmo;
+  NodeTransformWidgetGroup *transform_group = static_cast<NodeTransformWidgetGroup *>(
+      gzgroup->customdata);
+  wmGizmo *cage = transform_group->gizmo;
   const ARegion *region = CTX_wm_region(C);
   /* center is always at the origin */
   const float origin[3] = {float(region->winx / 2), float(region->winy / 2), 0.0f};
@@ -1357,6 +1376,9 @@ void transform_refresh(const bContext *C, wmGizmoGroup *gzgroup)
     return;
   }
 
+  transform_group->state.offset = ibuf->flags & IB_has_display_window ?
+                                      float2(ibuf->display_offset) :
+                                      float2(0.0f);
   const float2 dims = node_gizmo_safe_calc_dims(ibuf, GIZMO_NODE_DEFAULT_DIMS);
 
   RNA_float_set_array(cage->ptr, "dimensions", dims);

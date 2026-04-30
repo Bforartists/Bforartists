@@ -9,31 +9,46 @@
  * This needs to happen first in the pipeline to allow tagging all relevant tile-map as dirty if
  * their range changes.
  */
+#pragma once
 
-#include "infos/eevee_shadow_pipeline_infos.hh"
-
-COMPUTE_SHADER_CREATE_INFO(eevee_shadow_tilemap_bounds)
-
+#include "draw_shader_shared.hh"
 #include "draw_shape_lib.glsl"
 #include "eevee_light_iter_lib.glsl"
+#include "eevee_shadow_shared.hh"
 #include "gpu_shader_utildefines_lib.glsl"
 
-shared int global_min;
-shared int global_max;
+namespace eevee {
 
-void main()
+struct TilemapBounds {
+  [[storage(LIGHT_CULL_BUF_SLOT, read)]] const LightCullingData &light_cull_buf;
+  [[storage(LIGHT_BUF_SLOT, read_write)]] LightData (&light_buf)[];
+  [[storage(4, read)]] const uint (&casters_id_buf)[];
+  [[storage(5, read_write)]] ShadowTileMapData (&tilemaps_buf)[];
+  [[storage(6, read)]] const ObjectBounds (&bounds_buf)[];
+  [[storage(7, read_write)]] ShadowTileMapClip (&tilemaps_clip_buf)[];
+
+  [[push_constant]] const int resource_len;
+
+  [[shared]] int global_min;
+  [[shared]] int global_max;
+};
+
+[[compute, local_size(SHADOW_BOUNDS_GROUP_SIZE)]]
+void tilemap_bounds_compute([[resource_table]] TilemapBounds &srt,
+                            [[global_invocation_id]] const uint3 global_id,
+                            [[local_invocation_index]] const uint local_index)
 {
   Box box;
   bool is_valid = true;
 
-  if (resource_len > 0) {
-    uint index = gl_GlobalInvocationID.x;
+  if (srt.resource_len > 0) {
+    uint index = global_id.x;
     /* Keep uniform control flow. Do not return. */
-    index = min(index, uint(resource_len) - 1);
-    uint resource_id = casters_id_buf[index];
+    index = min(index, uint(srt.resource_len) - 1);
+    uint resource_id = srt.casters_id_buf[index];
     resource_id = (resource_id & 0x7FFFFFFFu);
 
-    ObjectBounds bounds = bounds_buf[resource_id];
+    ObjectBounds bounds = srt.bounds_buf[resource_id];
     is_valid = drw_bounds_corners_are_valid(bounds);
     box = shape_box(bounds.bounding_corners[0].xyz,
                     bounds.bounding_corners[0].xyz + bounds.bounding_corners[1].xyz,
@@ -48,8 +63,8 @@ void main()
                     float3(-1.0f) + float3(0.0f, 0.0f, 1.0f));
   }
 
-  LIGHT_FOREACH_BEGIN_DIRECTIONAL (light_cull_buf, l_idx) {
-    LightData light = light_buf[l_idx];
+  LIGHT_FOREACH_BEGIN_DIRECTIONAL (srt.light_cull_buf, l_idx) {
+    LightData light = srt.light_buf[l_idx];
 
     if (light.tilemap_index == LIGHT_NO_SHADOW) {
       continue;
@@ -63,9 +78,9 @@ void main()
       local_max = max(local_max, z);
     }
 
-    if (gl_LocalInvocationIndex == 0u) {
-      global_min = floatBitsToOrderedInt(FLT_MAX);
-      global_max = floatBitsToOrderedInt(-FLT_MAX);
+    if (local_index == 0u) {
+      srt.global_min = floatBitsToOrderedInt(FLT_MAX);
+      srt.global_max = floatBitsToOrderedInt(-FLT_MAX);
     }
 
     barrier();
@@ -76,22 +91,22 @@ void main()
 
     if (is_valid) {
       /* Intermediate result. Min/Max of a compute group. */
-      atomicMin(global_min, floatBitsToOrderedInt(local_min));
-      atomicMax(global_max, floatBitsToOrderedInt(local_max));
+      atomicMin(srt.global_min, floatBitsToOrderedInt(local_min));
+      atomicMax(srt.global_max, floatBitsToOrderedInt(local_max));
     }
 
     barrier();
 
-    if (gl_LocalInvocationIndex == 0u) {
+    if (local_index == 0u) {
       /* Final result. Min/Max of the whole dispatch. */
-      atomicMin(light_buf[l_idx].clip_near, global_min);
-      atomicMax(light_buf[l_idx].clip_far, global_max);
+      atomicMin(srt.light_buf[l_idx].clip_near, srt.global_min);
+      atomicMax(srt.light_buf[l_idx].clip_far, srt.global_max);
       /* TODO(fclem): This feel unnecessary but we currently have no indexing from
        * tile-map to lights. This is because the lights are selected by culling phase. */
       for (int i = light.tilemap_index; i <= light_tilemap_max_get(light); i++) {
-        int index = tilemaps_buf[i].clip_data_index;
-        atomicMin(tilemaps_clip_buf[index].clip_near, global_min);
-        atomicMax(tilemaps_clip_buf[index].clip_far, global_max);
+        int index = srt.tilemaps_buf[i].clip_data_index;
+        atomicMin(srt.tilemaps_clip_buf[index].clip_near, srt.global_min);
+        atomicMax(srt.tilemaps_clip_buf[index].clip_far, srt.global_max);
       }
     }
 
@@ -100,3 +115,7 @@ void main()
   }
   LIGHT_FOREACH_END
 }
+
+PipelineCompute shadow_tilemap_bounds(tilemap_bounds_compute);
+
+}  // namespace eevee

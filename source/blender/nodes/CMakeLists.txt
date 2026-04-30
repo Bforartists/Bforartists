@@ -74,6 +74,7 @@ set(SRC
   intern/compositor_nodes_caller_ui.cc
   intern/compositor_nodes_srna.cc
   intern/dependencies.cc
+  intern/eval_log.cc
   intern/geometry_nodes_bundle.cc
   intern/geometry_nodes_caller_ui.cc
   intern/geometry_nodes_closure.cc
@@ -83,7 +84,6 @@ set(SRC
   intern/geometry_nodes_gizmos.cc
   intern/geometry_nodes_lazy_function.cc
   intern/geometry_nodes_list.cc
-  intern/geometry_nodes_log.cc
   intern/geometry_nodes_repeat_zone.cc
   intern/geometry_nodes_srna.cc
   intern/geometry_nodes_warning.cc
@@ -120,6 +120,7 @@ set(SRC
   NOD_compositor_nodes_srna.hh
   NOD_defaults.hh
   NOD_dependencies.hh
+  NOD_eval_log.hh
   NOD_geometry.hh
   NOD_geometry_exec.hh
   NOD_geometry_nodes_bundle.hh
@@ -136,7 +137,6 @@ set(SRC
   NOD_geometry_nodes_lazy_function.hh
   NOD_geometry_nodes_list.hh
   NOD_geometry_nodes_list_fwd.hh
-  NOD_geometry_nodes_log.hh
   NOD_geometry_nodes_srna.hh
   NOD_geometry_nodes_values.hh
   NOD_geometry_nodes_warning.hh
@@ -205,10 +205,6 @@ set(LIB
   PRIVATE bf::dependencies::optional::gmp
   PRIVATE bf::dependencies::optional::bullet
 )
-
-if(WITH_IMAGE_OPENEXR)
-  add_definitions(-DWITH_IMAGE_OPENEXR)
-endif()
 
 if(WITH_FREESTYLE)
   add_definitions(-DWITH_FREESTYLE)

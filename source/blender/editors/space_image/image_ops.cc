@@ -54,10 +54,10 @@
 
 #include "DEG_depsgraph.hh"
 
+#include "IMB_cache.hh"
 #include "IMB_colormanagement.hh"
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
-#include "IMB_moviecache.hh"
 
 #include "MOV_read.hh"
 
@@ -2363,7 +2363,7 @@ static wmOperatorStatus image_save_sequence_exec(bContext *C, wmOperator *op)
   ImBuf *ibuf, *first_ibuf = nullptr;
   int tot = 0;
   char di[FILE_MAX];
-  MovieCacheIter *iter;
+  ImBufCacheIter *iter;
 
   if (image == nullptr) {
     return OPERATOR_CANCELLED;
@@ -2382,18 +2382,18 @@ static wmOperatorStatus image_save_sequence_exec(bContext *C, wmOperator *op)
   /* get total dirty buffers and first dirty buffer which is used for menu */
   ibuf = nullptr;
   if (image->runtime->cache != nullptr) {
-    iter = IMB_moviecacheIter_new(image->runtime->cache);
-    while (!IMB_moviecacheIter_done(iter)) {
-      ibuf = IMB_moviecacheIter_getImBuf(iter);
+    iter = IMB_cacheIter_new(image->runtime->cache);
+    while (!IMB_cacheIter_done(iter)) {
+      ibuf = IMB_cacheIter_getImBuf(iter);
       if (ibuf != nullptr && ibuf->userflags & IB_BITMAPDIRTY) {
         if (first_ibuf == nullptr) {
           first_ibuf = ibuf;
         }
         tot++;
       }
-      IMB_moviecacheIter_step(iter);
+      IMB_cacheIter_step(iter);
     }
-    IMB_moviecacheIter_free(iter);
+    IMB_cacheIter_free(iter);
   }
 
   if (tot == 0) {
@@ -2405,9 +2405,9 @@ static wmOperatorStatus image_save_sequence_exec(bContext *C, wmOperator *op)
   BLI_path_split_dir_part(first_ibuf->filepath.c_str(), di, sizeof(di));
   BKE_reportf(op->reports, RPT_INFO, "%d image(s) will be saved in %s", tot, di);
 
-  iter = IMB_moviecacheIter_new(image->runtime->cache);
-  while (!IMB_moviecacheIter_done(iter)) {
-    ibuf = IMB_moviecacheIter_getImBuf(iter);
+  iter = IMB_cacheIter_new(image->runtime->cache);
+  while (!IMB_cacheIter_done(iter)) {
+    ibuf = IMB_cacheIter_getImBuf(iter);
 
     if (ibuf != nullptr && ibuf->userflags & IB_BITMAPDIRTY) {
       if (0 == IMB_save_image(ibuf, ibuf->filepath.c_str(), IB_byte_data)) {
@@ -2419,9 +2419,9 @@ static wmOperatorStatus image_save_sequence_exec(bContext *C, wmOperator *op)
       ibuf->userflags &= ~IB_BITMAPDIRTY;
     }
 
-    IMB_moviecacheIter_step(iter);
+    IMB_cacheIter_step(iter);
   }
-  IMB_moviecacheIter_free(iter);
+  IMB_cacheIter_free(iter);
 
   return OPERATOR_FINISHED;
 }

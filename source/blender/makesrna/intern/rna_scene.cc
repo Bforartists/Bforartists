@@ -45,7 +45,6 @@
 
 namespace blender {
 
-#ifdef WITH_IMAGE_OPENEXR
 const EnumPropertyItem rna_enum_exr_codec_items[] = {
     {R_IMF_EXR_CODEC_NONE, "NONE", 0, "None", "No compression"},
     {R_IMF_EXR_CODEC_ZIP, "ZIP", 0, "ZIP", "Lossless zip compression of 16 row image blocks"},
@@ -93,7 +92,6 @@ const EnumPropertyItem rna_enum_exr_codec_items[] = {
      "Lossy compression for 16 bit float images, at fixed 2.3:1 ratio"},
     {0, nullptr, 0, nullptr, nullptr},
 };
-#endif
 
 const EnumPropertyItem rna_enum_snap_source_items[] = {
     {SCE_SNAP_SOURCE_CLOSEST, "CLOSEST", 0, "Closest", "Snap closest point onto target"},
@@ -329,19 +327,14 @@ static const EnumPropertyItem rna_enum_media_type_image_items[] = {
 #  define R_IMF_ENUM_DPX
 #endif
 
-#ifdef WITH_IMAGE_OPENEXR
-#  define R_IMF_ENUM_EXR_MULTILAYER \
-    {R_IMF_IMTYPE_MULTILAYER, \
-     "OPEN_EXR_MULTILAYER", \
-     0, \
-     "OpenEXR MultiLayer (.exr)", \
-     "Output image in multilayer OpenEXR format"},
-#  define R_IMF_ENUM_EXR \
-    {R_IMF_IMTYPE_OPENEXR, "OPEN_EXR", 0, "OpenEXR (.exr)", "Output image in OpenEXR format"},
-#else
-#  define R_IMF_ENUM_EXR_MULTILAYER
-#  define R_IMF_ENUM_EXR
-#endif
+#define R_IMF_ENUM_EXR_MULTILAYER \
+  {R_IMF_IMTYPE_MULTILAYER, \
+   "OPEN_EXR_MULTILAYER", \
+   0, \
+   "OpenEXR MultiLayer (.exr)", \
+   "Output image in multilayer OpenEXR format"},
+#define R_IMF_ENUM_EXR \
+  {R_IMF_IMTYPE_OPENEXR, "OPEN_EXR", 0, "OpenEXR (.exr)", "Output image in OpenEXR format"},
 
 #define R_IMF_ENUM_HDR \
   {R_IMF_IMTYPE_RADHDR, "HDR", 0, "Radiance HDR (.hdr)", "Output image in Radiance HDR format"},
@@ -1721,7 +1714,6 @@ static const EnumPropertyItem *rna_ImageFormatSettings_views_format_itemf(bConte
   }
 }
 
-#  ifdef WITH_IMAGE_OPENEXR
 /* OpenEXR */
 
 static const EnumPropertyItem *rna_ImageFormatSettings_exr_codec_itemf(bContext * /*C*/,
@@ -1751,8 +1743,6 @@ static const EnumPropertyItem *rna_ImageFormatSettings_exr_codec_itemf(bContext 
 
   return item;
 }
-
-#  endif
 
 static bool rna_ImageFormatSettings_has_linear_colorspace_get(PointerRNA *ptr)
 {
@@ -4332,6 +4322,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "New Keyframe Type", "Type of keyframes to create when inserting keyframes");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_ACTION);
+  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr);
 
   /* Animation */
   prop = RNA_def_property(srna, "anim_mirror_object", PROP_POINTER, PROP_NONE);
@@ -6566,9 +6557,7 @@ static void rna_def_scene_image_format_data(BlenderRNA *brna)
 
   /* format specific */
 
-#  ifdef WITH_IMAGE_OPENEXR
   /* OpenEXR */
-
   prop = RNA_def_property(srna, "exr_codec", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "exr_codec");
   RNA_def_property_enum_items(prop, rna_enum_exr_codec_items);
@@ -6584,7 +6573,6 @@ static void rna_def_scene_image_format_data(BlenderRNA *brna)
       "Use legacy interleaved storage of views, layers and passes for compatibility with "
       "applications that do not support more efficient multi-part OpenEXR files.");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, nullptr);
-#  endif
 
 #  ifdef WITH_IMAGE_OPENJPEG
   /* JPEG 2000 */

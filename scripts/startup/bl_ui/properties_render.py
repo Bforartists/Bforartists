@@ -59,6 +59,7 @@ class RENDER_PT_color_management(RenderButtonsPanel, Panel):
     }
 
     def draw(self, context):
+        import gpu
 
         layout = self.layout
         layout.use_property_split = True
@@ -80,7 +81,11 @@ class RENDER_PT_color_management(RenderButtonsPanel, Panel):
         if view.is_hdr and not context.window.support_hdr_color:
             row = col.split(factor=0.4)
             row.label()
-            row.label(text="HDR display not supported", icon="INFO")
+
+            if gpu.platform.backend_type_get() == 'OPENGL':
+                row.label(text="HDR not supported with OpenGL backend", icon='INFO')
+            else:
+                row.label(text="HDR display not supported", icon='INFO')
 
         col = flow.column()
         col.prop(view, "exposure")

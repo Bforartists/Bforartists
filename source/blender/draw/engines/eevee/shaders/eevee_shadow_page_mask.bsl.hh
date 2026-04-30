@@ -50,11 +50,11 @@ struct PageMask {
 [[compute, local_size(SHADOW_TILEMAP_RES, SHADOW_TILEMAP_RES)]]
 void mask([[resource_table]] PageMask &srt,
           [[resource_table]] TileMaps &tilemaps,
-          [[global_invocation_id]] const uint3 global_invocation_id,
+          [[global_invocation_id]] const uint3 global_id,
           [[local_invocation_index]] const uint local_tile_index)
 {
-  int2 tile_co = int2(global_invocation_id.xy);
-  uint tilemap_index = global_invocation_id.z;
+  int2 tile_co = int2(global_id.xy);
+  uint tilemap_index = global_id.z;
   ShadowTileMapData tilemap = tilemaps.tilemaps_buf[tilemap_index];
 
   /* NOTE: Barriers are ok since this branch is taken by all threads. */

@@ -1004,7 +1004,7 @@ static const float std_node_socket_colors[][4] = {
     {0, 0, 0, 1},            /* SOCK_SCENE */
     {0, 0, 0, 1},            /* SOCK_TEXT_ID */
     {0, 0, 0, 1},            /* SOCK_MASK */
-    {0, 0, 0, 1},            /* SOCK_SOUND */
+    {0.39, 0.34, 0.26, 1},   /* SOCK_SOUND */
     {0.36, 0.47, 0.61, 1.0}, /* SOCK_INT_VECTOR */
 };
 
@@ -1371,8 +1371,7 @@ static void std_node_socket_draw(
     case SOCK_MATERIAL:
     case SOCK_SCENE:
     case SOCK_TEXT_ID:
-    case SOCK_MASK:
-    case SOCK_SOUND: {
+    case SOCK_MASK: {
       if (optional_label) {
         layout->prop(ptr,
                      RNA_struct_find_property(ptr, "default_value"),
@@ -1392,7 +1391,18 @@ static void std_node_socket_draw(
                      label,
                      ICON_NONE);
       }
-
+      break;
+    }
+    case SOCK_SOUND: {
+      if (optional_label) {
+        template_id(layout, C, ptr, "default_value", nullptr, "SOUND_OT_open", nullptr);
+      }
+      else {
+        /* 0.3 is consistent with image sockets. */
+        ui::Layout *row = &layout->split(0.3f, false);
+        row->label(label, ICON_NONE);
+        template_id(row, C, ptr, "default_value", nullptr, "SOUND_OT_open", nullptr);
+      }
       break;
     }
     case SOCK_FONT: {
@@ -1570,7 +1580,7 @@ static void std_node_socket_interface_draw(ID *id,
     sub->active_set(interface_socket->default_input == NODE_DEFAULT_INPUT_VALUE);
     sub->use_property_split_set(false); /* bfa - use_property_split = False */
     sub->prop(&ptr, "hide_value", DEFAULT_FLAGS, std::nullopt, ICON_NONE);
-    sub->prop(&ptr, "hide_in_modifier", DEFAULT_FLAGS, std::nullopt, ICON_NONE); /* BFA - reorder sockets*/
+    sub->prop(&ptr, "hide_in_modifier", DEFAULT_FLAGS, std::nullopt, ICON_NONE);  /* BFA - reorder sockets for better grouping*/
     sub->use_property_split_set(true); /* bfa - split non-boolean props */
   }
 
@@ -1581,12 +1591,13 @@ static void std_node_socket_interface_draw(ID *id,
       col->use_property_split_set(true); /* bfa - split non-boolean props */
     }
     ui::Layout *sub = &col->column(false);
+    sub->active_set(!is_layer_selection_field(*interface_socket));
     sub->use_property_split_set(false); /* bfa - use_property_split = False */
-    if (!is_layer_selection_field(*interface_socket)){
-      sub->use_property_split_set(true); /* bfa - split non-boolean props */
-      if (nodes::socket_type_supports_fields(type) || nodes::socket_type_supports_grids(type)) {
-        sub->prop(&ptr, "structure_type", DEFAULT_FLAGS, IFACE_("Shape"), ICON_NONE);
-      }
+    if (U.experimental.use_geometry_nodes_lists) {
+      sub->prop(&ptr, "structure_type", DEFAULT_FLAGS, IFACE_("Shape"), ICON_NONE);
+    }
+    else if (nodes::socket_type_supports_fields(type) || nodes::socket_type_supports_grids(type)) {
+      sub->prop(&ptr, "structure_type", DEFAULT_FLAGS, IFACE_("Shape"), ICON_NONE);
     }
   }
 }

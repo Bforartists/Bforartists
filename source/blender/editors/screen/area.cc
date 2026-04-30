@@ -3273,7 +3273,7 @@ static const char *region_panels_collect_categories(ARegion *region,
     PanelType *pt = static_cast<PanelType *>(pt_link->link);
     if (pt->category[0]) {
       if (!ui::panel_category_find(region, pt->category)) {
-        ui::panel_category_add(region, pt->category);
+        ui::panel_category_add(region, pt->category, pt->icon);
       }
     }
   }

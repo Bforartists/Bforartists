@@ -89,7 +89,7 @@ static bool active_bone_collection_poll(bContext *C)
     return false;
   }
 
-  BoneCollection *bcoll = armature->runtime.active_collection;
+  BoneCollection *bcoll = armature->runtime->active_collection;
   if (bcoll == nullptr) {
     CTX_wm_operator_poll_msg_set(C, "Armature has no active bone collection, select one first");
     return false;
@@ -111,13 +111,13 @@ static wmOperatorStatus bone_collection_add_exec(bContext *C, wmOperator * /*op*
 
   /* If there is an active bone collection, create the new one as a sibling. */
   const int parent_index = armature_bonecoll_find_parent_index(
-      armature, armature->runtime.active_collection_index);
+      armature, armature->runtime->active_collection_index);
 
   BoneCollection *bcoll = ANIM_armature_bonecoll_new(armature, nullptr, parent_index);
 
-  if (armature->runtime.active_collection) {
+  if (armature->runtime->active_collection) {
     const int active_child_index = armature_bonecoll_child_number_find(
-        armature, armature->runtime.active_collection);
+        armature, armature->runtime->active_collection);
     armature_bonecoll_child_number_set(armature, bcoll, active_child_index + 1);
   }
 
@@ -150,7 +150,7 @@ static wmOperatorStatus bone_collection_remove_exec(bContext *C, wmOperator * /*
 {
   /* The poll function ensures armature->active_collection is not NULL. */
   bArmature *armature = ED_armature_context(C);
-  ANIM_armature_bonecoll_remove(armature, armature->runtime.active_collection);
+  ANIM_armature_bonecoll_remove(armature, armature->runtime->active_collection);
 
   /* notifiers for updates */
   WM_event_add_notifier(C, NC_OBJECT | ND_BONE_COLLECTION, nullptr);
@@ -182,7 +182,7 @@ static wmOperatorStatus bone_collection_move_exec(bContext *C, wmOperator *op)
   bArmature *armature = ED_armature_context(C);
 
   const bool ok = ANIM_armature_bonecoll_move(
-      armature, armature->runtime.active_collection, direction);
+      armature, armature->runtime->active_collection, direction);
   if (!ok) {
     return OPERATOR_CANCELLED;
   }
@@ -229,7 +229,7 @@ static BoneCollection *get_bonecoll_named_or_active(bContext * /*C*/, wmOperator
   RNA_string_get(op->ptr, "name", bcoll_name);
 
   if (bcoll_name[0] == '\0') {
-    return armature->runtime.active_collection;
+    return armature->runtime->active_collection;
   }
 
   BoneCollection *bcoll = ANIM_armature_bonecoll_get_by_name(armature, bcoll_name);
@@ -769,7 +769,7 @@ static bool armature_bone_select_poll(bContext *C)
     }
   }
 
-  if (armature->runtime.active_collection == nullptr) {
+  if (armature->runtime->active_collection == nullptr) {
     CTX_wm_operator_poll_msg_set(C, "No active bone collection");
     return false;
   }
@@ -842,7 +842,7 @@ static wmOperatorStatus bone_collection_select_exec(bContext *C, wmOperator * /*
     return OPERATOR_CANCELLED;
   }
 
-  BoneCollection *bcoll = armature->runtime.active_collection;
+  BoneCollection *bcoll = armature->runtime->active_collection;
   if (bcoll == nullptr) {
     return OPERATOR_CANCELLED;
   }
@@ -873,7 +873,7 @@ static wmOperatorStatus bone_collection_deselect_exec(bContext *C, wmOperator * 
     return OPERATOR_CANCELLED;
   }
 
-  BoneCollection *bcoll = armature->runtime.active_collection;
+  BoneCollection *bcoll = armature->runtime->active_collection;
   if (bcoll == nullptr) {
     return OPERATOR_CANCELLED;
   }
