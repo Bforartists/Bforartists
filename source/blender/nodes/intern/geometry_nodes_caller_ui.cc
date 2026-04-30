@@ -669,7 +669,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
             row.prop(socket_props_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
             /* BFA - Add decorator manually even with property split to ensure animation indicators
              */
-            row.decorator(ctx.properties_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
+            row.decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
             break;
           }
           default: {
