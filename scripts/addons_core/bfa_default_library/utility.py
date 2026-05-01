@@ -106,10 +106,10 @@ def get_child_addon_path(child_addon_name="modular_child_addons"):
 def get_central_library_path():
     """Get the central library base path - use Bforartists user preferences folder."""
     user_prefs_dir = get_bforartists_user_preferences_folder()
-    
+
     # Create the directory if it doesn't exist
     os.makedirs(user_prefs_dir, exist_ok=True)
-    
+
     return user_prefs_dir
 
 
@@ -140,7 +140,7 @@ def write_addon_tracking(central_lib_base, tracking_data):
 
 def add_addon_to_central_library(addon_info, library_folders, addon_path, central_lib_base=None, force_copy=False):
     """Add an addon's assets to the central library and update tracking.
-    
+
     Args:
         addon_info: Dict with 'name', 'version', 'unique_id'
         library_folders: List of library subfolder names
@@ -231,11 +231,11 @@ def update_addon_in_central_library(parent_addon_info, libraries, central_base, 
     """Update existing addon entry in central library tracking without changing activation status"""
     addon_id = get_addon_identifier(parent_addon_info)
     tracking_data = read_addon_tracking(central_base)
-    
+
     if addon_id in tracking_data:
-        # Update existing entry
+        # Update existing entry — store version as list for JSON consistency
         tracking_data[addon_id]["libraries"] = libraries
-        tracking_data[addon_id]["version"] = parent_addon_info['version']
+        tracking_data[addon_id]["version"] = list(parent_addon_info['version'])
         tracking_data[addon_id]["timestamp"] = time.time()
         write_addon_tracking(central_base, tracking_data)
         return True
@@ -245,7 +245,7 @@ def update_addon_in_central_library(parent_addon_info, libraries, central_base, 
 def remove_addon_from_central_library(addon_info, central_lib_base=None, cleanup_mode='normal'):
     """
     Remove an addon's tracking entry and clean up its files if not used by others.
-    
+
     Args:
         addon_info: Dictionary with addon identification info
         central_lib_base: Path to central library (optional)
@@ -304,7 +304,7 @@ def cleanup_central_library(central_lib_base, tracking_data=None):
                         # Check if directory is empty (or only contains catalog files)
                         dir_contents = os.listdir(item_path)
                         has_content = False
-                        
+
                         for content in dir_contents:
                             content_path = p.join(item_path, content)
                             # Check if it's a file (not a catalog file) or a non-empty directory
@@ -318,7 +318,7 @@ def cleanup_central_library(central_lib_base, tracking_data=None):
                                 if any(not sc.endswith('blender_assets.cats.txt') for sc in sub_contents):
                                     has_content = True
                                     break
-                        
+
                         # If directory has no content, remove it
                         if not has_content:
                             try:
@@ -326,7 +326,7 @@ def cleanup_central_library(central_lib_base, tracking_data=None):
                                 for catalog_file in [f for f in dir_contents if f.endswith('blender_assets.cats.txt')]:
                                     catalog_path = p.join(item_path, catalog_file)
                                     os.remove(catalog_path)
-                                
+
                                 # Remove the directory
                                 shutil.rmtree(item_path)
                                 # print(f"🗑️ Removed empty library folder: {item}")
@@ -370,7 +370,7 @@ def remove_orphaned_files(central_lib_base, tracking_data, files_to_check):
 
         # Check if this file is used by any remaining addons
         is_used_by_other_addons = file_path in file_usage_map and len(file_usage_map[file_path]) > 0
-        
+
         if not is_used_by_other_addons and p.exists(full_file_path):
             try:
                 os.remove(full_file_path)
@@ -410,19 +410,19 @@ def remove_orphaned_files(central_lib_base, tracking_data, files_to_check):
 def get_child_addon_status(child_addon_name="modular_child_addons"):
     """
     Get the installation and activation status of a child addon.
-    
+
     Returns:
         tuple: (is_installed, is_active, addon_path)
     """
     import bpy
-    
+
     # Get the Bforartists extensions path
     child_addon_dir = get_child_addon_path(child_addon_name)
     child_init_file = os.path.join(child_addon_dir, "__init__.py")
-    
+
     # Check if installed
     is_installed = os.path.exists(child_init_file)
-    
+
     # Check if active - try multiple possible module names
     is_active = False
     # Try the exact name first
@@ -433,16 +433,16 @@ def get_child_addon_status(child_addon_name="modular_child_addons"):
         module_name = child_addon_name
         if module_name in bpy.context.preferences.addons:
             is_active = True
-    
+
     return is_installed, is_active, child_addon_dir
 
 
 # Dummy register/unregister functions to prevent errors if accidentally called as submodule
 def register():
-    """Dummy register function - utility is not a Blender submodule."""
+    """Dummy register function - utility is not a submodule."""
     pass
 
 
 def unregister():
-    """Dummy unregister function - utility is not a Blender submodule."""
+    """Dummy unregister function - utility is not a submodule."""
     pass
