@@ -728,7 +728,7 @@ bool WM_gizmo_context_check_drawstep(const bContext *C, eWM_GizmoFlagMapDrawStep
     case WM_GIZMOMAP_DRAWSTEP_2D_UI: {
       break;
     }
-    case WM_GIZMOMAP_DRAWSTEP_2D: {
+    case WM_GIZMOMAP_DRAWSTEP_2D_TOOLS: {
       break;
     }
     case WM_GIZMOMAP_DRAWSTEP_3D: {

@@ -289,7 +289,8 @@ static void action_main_region_draw(const bContext *C, ARegion *region)
   ui::view2d_view_restore(C);
 
   /* gizmos */
-  WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
+  WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS);
+  WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_UI); // bfa node minimap rename with _UI
 
   /* scrubbing region */
   const int fps = round_db_to_int(scene->frames_per_second());

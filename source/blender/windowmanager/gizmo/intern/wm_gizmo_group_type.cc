@@ -100,13 +100,13 @@ wmGizmoGroupType *WM_gizmogrouptype_append(void (*wtfunc)(wmGizmoGroupType *))
   wmGizmoGroupType *gzgt = wm_gizmogrouptype_append__begin();
   
   BLI_assert_msg(
-      !(((gzgt->flag & WM_GIZMOGROUPTYPE_2D) && (gzgt->flag & WM_GIZMOGROUPTYPE_3D)) ||
+      !(((gzgt->flag & WM_GIZMOGROUPTYPE_2D_TOOL) && (gzgt->flag & WM_GIZMOGROUPTYPE_3D)) || // bfa node minimap rename with _TOOL and _UI
         ((gzgt->flag & WM_GIZMOGROUPTYPE_2D_UI) &&
          (gzgt->flag & WM_GIZMOGROUPTYPE_3D))),
       "Gizmos cannot be marked 2D and 3D at the same time.");
 
-  BLI_assert_msg(!((gzgt->flag & WM_GIZMOGROUPTYPE_2D) &&
-                   (gzgt->flag & WM_GIZMOGROUPTYPE_2D_UI)),
+  BLI_assert_msg(!((gzgt->flag & WM_GIZMOGROUPTYPE_2D_TOOL) && // bfa node minimap rename with _TOOL and _UI
+                   (gzgt->flag & WM_GIZMOGROUPTYPE_2D_UI)), 
                  "Gizmos cannot be marked 2D and 3D or Tools and View Controls at the same time.");
 
   wtfunc(gzgt);

@@ -159,8 +159,8 @@ enum eWM_GizmoFlagGroupTypeFlag {
    * however for VR it's sometimes needed.
    */
   WM_GIZMOGROUPTYPE_VR_REDRAWS = (1 << 10),
-  WM_GIZMOGROUPTYPE_2D_UI = (1 << 11),
-  WM_GIZMOGROUPTYPE_2D= (1 << 12),
+  WM_GIZMOGROUPTYPE_2D_UI = (1 << 11),  // bfa node minimap rename _UI
+  WM_GIZMOGROUPTYPE_2D_TOOL = (1 << 12), // bfa node minimap added _TOOL
 };
 
 ENUM_OPERATORS(eWM_GizmoFlagGroupTypeFlag);
@@ -527,12 +527,12 @@ struct wmGizmoGroup {
  * Pass a value of this enum to #WM_gizmomap_draw to tell it what to draw.
  */
 enum eWM_GizmoFlagMapDrawStep {
-  WM_GIZMOMAP_DRAWSTEP_2D_UI = 0,
+  WM_GIZMOMAP_DRAWSTEP_2D_UI = 0, // bfa node minimap rename _UI
   /** Draw 2D gizmo-groups (#WM_GIZMOGROUPTYPE_3D not set). */
-  WM_GIZMOMAP_DRAWSTEP_2D,
+  WM_GIZMOMAP_DRAWSTEP_2D_TOOLS,
   /** Draw 3D gizmo-groups (#WM_GIZMOGROUPTYPE_3D set). */
   WM_GIZMOMAP_DRAWSTEP_3D,
 };
-#define WM_GIZMOMAP_DRAWSTEP_MAX 2
+#define WM_GIZMOMAP_DRAWSTEP_MAX 3 // bfa node minimap
 
 }  // namespace blender

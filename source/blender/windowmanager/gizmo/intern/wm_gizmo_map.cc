@@ -307,11 +307,12 @@ eWM_GizmoFlagMapDrawStep WM_gizmomap_drawstep_from_gizmo_group(const wmGizmoGrou
   if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) {
     step = WM_GIZMOMAP_DRAWSTEP_3D;
   }
+   // bfa node minimap add, rename with _TOOL and _UI
   else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) {
     step = WM_GIZMOMAP_DRAWSTEP_2D_UI;
   }
-  else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D) {
-    step = WM_GIZMOMAP_DRAWSTEP_2D;
+  else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) {
+    step = WM_GIZMOMAP_DRAWSTEP_2D_TOOLS;
   }
   return step;
 }
@@ -827,7 +828,7 @@ wmGizmo *wm_gizmomap_highlight_find(wmGizmoMap *gzmap,
           wm_gizmogroup_intersectable_gizmos_to_list(
               wm, &gzgroup, event->modifier, &visible_3d_gizmos);
         }
-        else if (ELEM(step, WM_GIZMOMAP_DRAWSTEP_2D_UI, WM_GIZMOMAP_DRAWSTEP_2D)) {
+        else if (ELEM(step, WM_GIZMOMAP_DRAWSTEP_2D_UI, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS)) {
           if ((gz = wm_gizmogroup_find_intersected_gizmo(
                    wm, &gzgroup, C, event->modifier, mval, r_part)))
           {
@@ -848,7 +849,7 @@ wmGizmo *wm_gizmomap_highlight_find(wmGizmoMap *gzmap,
 
   gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_3D] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
   gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D_UI] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
-  gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
+  gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D_TOOLS] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
 
   return gz;
 }

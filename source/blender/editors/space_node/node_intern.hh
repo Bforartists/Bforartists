@@ -604,6 +604,8 @@ void NODE_GGT_backdrop_corner_pin(wmGizmoGroupType *gzgt);
 void NODE_GGT_backdrop_box_mask(wmGizmoGroupType *gzgt);
 void NODE_GGT_backdrop_ellipse_mask(wmGizmoGroupType *gzgt);
 void NODE_GGT_backdrop_split(wmGizmoGroupType *gzgt);
+void NODE_GGT_minimap(wmGizmoGroupType *gzgt);
+void NODE_GT_minimap(wmGizmoType *gzt);
 
 /* `node_geometry_attribute_search.cc` */
 
