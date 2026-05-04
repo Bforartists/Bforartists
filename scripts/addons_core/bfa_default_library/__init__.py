@@ -44,7 +44,7 @@ from . import utility
 bl_info = {
     "name": "Default Asset Library",
     "author": "Andres (Draise) Stephens, Ereaser45-Studios, Iyad Ahmed, Juan Carlos Aragon",
-    "version": (1, 3, 1),
+    "version": (1, 3, 2),
     "blender": (5, 0, 1),
     "location": "Asset Browser>Default Library",
     "description": "Adds a modular default asset library and addon with wizards and complementary operators",
@@ -57,9 +57,9 @@ bl_info = {
 
 # Addon identification - MUST BE UNIQUE for each compiled parent addon
 # TO DO: Update hte version in the bl_info above as well for consistency
-PARENT_ADDON_UNIQUE_ID = "default_asset_library_1_3_0"
+PARENT_ADDON_UNIQUE_ID = "default_asset_library_1_3_2"
 PARENT_ADDON_DISPLAY_NAME = "Default Asset Library"
-PARENT_ADDON_VERSION = (1, 3, 1)
+PARENT_ADDON_VERSION = (1, 3, 2)
 
 # Child addon info - this is the functional addon
 # TO DO: Update the child_addon/blender_manifest.toml to reflect this version as well for consistency
@@ -951,11 +951,25 @@ def register_library(force_reregister=False):
     tracking_data = utility.read_addon_tracking(central_base)
     already_tracked = addon_id in tracking_data
 
+    # Determine if we need to force-copy assets (version upgrade)
+    needs_asset_update = False
+    if already_tracked:
+        tracked_version = tracking_data[addon_id].get('version', None)
+        if tracked_version is not None:
+            tracked_version_tuple = tuple(tracked_version)
+            if is_version_older(tracked_version_tuple, PARENT_ADDON_VERSION):
+                #print(f"🔄 Parent addon version upgraded from {tracked_version_tuple} to {PARENT_ADDON_VERSION} - updating assets...")
+                needs_asset_update = True
+        else:
+            # No version tracked, assume update needed
+            needs_asset_update = True
+
     if force_reregister and already_tracked:
         #print(f"🔄 Forcing re-registration of tracked parent addon: {addon_id}")
         del tracking_data[addon_id]
         utility.write_addon_tracking(central_base, tracking_data)
         already_tracked = False
+        needs_asset_update = True
 
     # Smart cleanup - update existing libraries to correct paths
     libraries_to_create = cleanup_existing_libraries(prefs, central_base)
@@ -968,7 +982,11 @@ def register_library(force_reregister=False):
             existing_libraries.append(lib_name)
 
     # Add this parent addon to central library and copy assets
-    utility.add_addon_to_central_library(parent_addon_info, existing_libraries, p.dirname(__file__), central_base)
+    # Use force_copy=True when version has changed to overwrite existing blend files
+    utility.add_addon_to_central_library(
+        parent_addon_info, existing_libraries, p.dirname(__file__), central_base,
+        force_copy=needs_asset_update
+    )
 
     # Create libraries that don't exist yet
     registered_count = 0
