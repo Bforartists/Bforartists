@@ -394,7 +394,7 @@ static std::optional<rctf> get_minimap_rect(const SpaceNode &snode, ARegion &reg
 
   // Using your preferred loop style
   // Note: ensure node_tree is accessible (e.g., bNodeTree *node_tree = snode.nodetree;)
-  bNodeTree *node_tree = snode.nodetree;
+  bNodeTree *node_tree = snode.edittree;
   if (!node_tree) {
     return std::nullopt;
   }
@@ -426,31 +426,6 @@ static std::optional<rctf> get_minimap_rect(const SpaceNode &snode, ARegion &reg
                 padding_top + minimap_height + tile_height);
 
   return minimap_rect;
-}
-
-static bool view_rect_intersects_minimap(const SpaceNode &snode,
-                                         ARegion &region,
-                                         const float view_xmin,
-                                         const float view_ymax,
-                                         const float view_xmax,
-                                         const float view_ymin,
-                                         const float padding = 0.1f)
-{
-  const std::optional<rctf> minimap_opt = get_minimap_rect(snode, region);
-  if (!minimap_opt.has_value()) {
-    return false;
-  }
-  rctf minimap = minimap_opt.value();
-  BLI_rctf_pad(&minimap, padding, padding);
-
-  float screen_xmin, screen_ymin, screen_xmax, screen_ymax;
-  ui::view2d_view_to_region_fl(&region.v2d, view_xmin, view_ymin, &screen_xmin, &screen_ymin);
-  ui::view2d_view_to_region_fl(&region.v2d, view_xmax, view_ymax, &screen_xmax, &screen_ymax);
-
-  rctf button_rect;
-  BLI_rctf_init(&button_rect, screen_xmin, screen_xmax, screen_ymin, screen_ymax);
-
-  return BLI_rctf_isect(&minimap, &button_rect, nullptr);
 }
 // end bfa node minimap
 
@@ -5065,6 +5040,9 @@ static void draw_node_minimap(const bContext &C,
   View2D &v2d = region.v2d;
 
   bNodeTree *node_tree = snode->edittree;
+  if (!node_tree) {
+    return;
+  }
 
   float viewport[4];
   GPU_viewport_size_get_f(viewport);
