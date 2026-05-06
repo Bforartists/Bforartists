@@ -562,6 +562,8 @@ static void init_particle_texture(ParticleSimulationData *sim, ParticleData *pa,
       }
       pa->time = 0.0f;
       break;
+    default:
+      break;
   }
 }
 
@@ -1199,7 +1201,7 @@ static void set_keyed_keys(ParticleSimulationData *sim)
   PARTICLE_P;
   ParticleKey *key;
   int totpart = psys->totpart, k, totkeys = psys->totkeyed;
-  int keyed_flag = 0;
+  eParticleSystem_Flag keyed_flag = eParticleSystem_Flag{};
 
   ksim.depsgraph = sim->depsgraph;
   ksim.scene = sim->scene;
@@ -3884,6 +3886,10 @@ static void dynamics_step(ParticleSimulationData *sim, float cfra)
       }
       break;
     }
+    case PART_PHYS_NEWTON:
+    case PART_PHYS_KEYED:
+    case PART_PHYS_NO:
+      break;
   }
   /* initialize all particles for dynamics */
   LOOP_SHOWN_PARTICLES
@@ -4052,6 +4058,9 @@ static void dynamics_step(ParticleSimulationData *sim, float cfra)
       psys_sph_finalize(&sphdata);
       break;
     }
+    case PART_PHYS_NO:
+    case PART_PHYS_KEYED:
+      break;
   }
 
   /* finalize particle state and time after dynamics */

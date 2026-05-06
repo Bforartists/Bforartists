@@ -133,8 +133,8 @@ static void strip_convert_transform_animation(const Strip *strip,
   }
 
   /* Hardcoded legacy bit-flags which has been removed. */
-  const uint32_t use_transform_flag = (1 << 16);
-  const uint32_t use_crop_flag = (1 << 17);
+  const eStripFlag use_transform_flag = eStripFlag(1 << 16);
+  const eStripFlag use_crop_flag = eStripFlag(1 << 17);
 
   /* Convert offset animation, but only if crop is not used. */
   if ((strip->flag & use_transform_flag) != 0 && (strip->flag & use_crop_flag) == 0) {
@@ -715,10 +715,8 @@ static void panels_remove_x_closed_flag_recursive(Panel *panel)
 static void do_versions_point_attributes(CustomData *pdata)
 {
   /* Change to generic named float/float3 attributes. */
-  enum {
-    CD_LOCATION = 43,
-    CD_RADIUS = 44,
-  };
+  constexpr eCustomDataType CD_LOCATION = eCustomDataType(43);
+  constexpr eCustomDataType CD_RADIUS = eCustomDataType(44);
 
   for (int i = 0; i < pdata->totlayer; i++) {
     CustomDataLayer *layer = &pdata->layers[i];
@@ -1298,7 +1296,8 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
       for (Mesh &mesh : bmain->meshes) {
         /* The previous flags used to store mesh symmetry in edit-mode match the new ones that are
          * used in #Mesh.symmetry. */
-        mesh.symmetry = mesh.editflag & (ME_SYMMETRY_X | ME_SYMMETRY_Y | ME_SYMMETRY_Z);
+        mesh.symmetry = eMeshSymmetryType(int(mesh.editflag) &
+                                          (ME_SYMMETRY_X | ME_SYMMETRY_Y | ME_SYMMETRY_Z));
       }
     }
 
@@ -1895,7 +1894,7 @@ void blo_do_versions_290(FileData *fd, Library * /*lib*/, Main *bmain)
 
       for (Nurb &nu : *nurbs) {
         if (nu.flag & CU_2D) {
-          nu.flag &= ~CU_2D;
+          nu.flag &= ~eNurbFlag(CU_2D);
         }
         else {
           is_2d = false;

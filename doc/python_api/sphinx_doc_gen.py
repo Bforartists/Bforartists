@@ -1657,7 +1657,6 @@ def pyrna2sphinx(basepath):
             if not base_ids:
                 if struct_id in _collection_wrapper_ids:
                     base_ids.append(_BPY_PROP_COLLECTION_PYCAPI)
-                    base_ids.append(_BPY_PROP_PYCAPI)
                 else:
                     base_ids.append(_BPY_STRUCT_PYCAPI)
             else:

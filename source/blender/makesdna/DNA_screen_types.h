@@ -42,30 +42,15 @@ struct Layout;
 }  // namespace ui
 
 /** #bScreen.flag */
-enum {
+enum eScreen_Flag : short {
   SCREEN_DEPRECATED = 1,
   SCREEN_COLLAPSE_STATUSBAR = 2,
   SCREEN_BFA_TOP_BAR = 4, /* BFA Top Toolbar */
-  // bfa - show hide the File topbar
-  HEADER_TOPBAR_FILE = (1 << 5),
-  // bfa - show hide the View topbar
-  HEADER_TOPBAR_MESHEDIT = (1 << 6),
-  // bfa - show hide the Primitives topbar
-  HEADER_TOPBAR_PRIMITIVES = (1 << 7),
-  // bfa - show hide the Image topbar
-  HEADER_TOPBAR_IMAGE = (1 << 8),
-  // bfa - show hide the Tools topbar
-  HEADER_TOPBAR_TOOLS = (1 << 9),
-  // bfa - show hide the Animation topbar
-  HEADER_TOPBAR_ANIMATION = (1 << 10),
-  // bfa - show hide the Edit topbar
-  HEADER_TOPBAR_EDIT = (1 << 11),
-  // bfa - show hide the Misc topbar
-  HEADER_TOPBAR_MISC = (1 << 12),
 };
+ENUM_OPERATORS(eScreen_Flag)
 
 /** #bScreen.state */
-enum {
+enum eScreen_State : char {
   SCREENNORMAL = 0,
   /** One editor taking over the screen. */
   SCREENMAXIMIZED = 1,
@@ -79,14 +64,15 @@ enum {
 };
 
 /** #bScreen.fullscreen_flag */
-enum eScreen_Fullscreen_Flag {
+enum eScreen_Fullscreen_Flag : short {
   FULLSCREEN_RESTORE_GIZMO_NAVIGATE = (1 << 0),
   FULLSCREEN_RESTORE_TEXT = (1 << 1),
   FULLSCREEN_RESTORE_STATS = (1 << 2),
 };
+ENUM_OPERATORS(eScreen_Fullscreen_Flag)
 
 /** #bScreen.redraws_flag */
-enum eScreen_Redraws_Flag {
+enum eScreen_Redraws_Flag : short {
   TIME_REGION = (1 << 0),
   TIME_ALL_3D_WIN = (1 << 1),
   TIME_ALL_ANIM_WIN = (1 << 2),
@@ -99,8 +85,9 @@ enum eScreen_Redraws_Flag {
   TIME_CLIPS = (1 << 9),
   TIME_SPREADSHEETS = (1 << 10),
 
-  TIME_FOLLOW = (1 << 15),
+  TIME_FOLLOW = static_cast<short>(1 << 15),
 };
+ENUM_OPERATORS(eScreen_Redraws_Flag)
 
 /* TODO: Doing this is quite ugly :)
  * Once the top-bar is merged bScreen should be refactored to use ScrAreaMap. */
@@ -128,18 +115,16 @@ struct bScreen {
   DNA_DEPRECATED struct Scene *scene = nullptr;
 
   /** General flags. */
-  int flag = 0;   // BFA - MUST be int (not short) to accommodate toolbar flags beyond bit 15
-                  // (Animation/Edit/Misc toolbars use bits 16-18)
-  char flag_pad[6] = {};
+  eScreen_Flag flag = {};
   /** Window-ID from WM, starts with 1. */
   short winid = 0;
   /** User-setting for which editors get redrawn during animation playback. */
-  short redraws_flag = 0;
+  eScreen_Redraws_Flag redraws_flag = {};
 
   /** Temp screen in a temp window, don't save (like user-preferences). */
   char temp = 0;
   /** Temp screen for image render display or file-select. */
-  char state = 0;
+  eScreen_State state = SCREENNORMAL;
   /** Notifier for drawing edges. */
   char do_draw = 0;
   /** Notifier for scale screen, changed screen, etc. */
@@ -165,7 +150,7 @@ struct bScreen {
   void /*bContextDataCallback*/ *context = nullptr;
 
   /* Used to restore after SCREENFULL state. */
-  short fullscreen_flag = 0;
+  eScreen_Fullscreen_Flag fullscreen_flag = {};
   char _pad2[6] = {};
 
   /** Runtime. */
@@ -199,10 +184,11 @@ struct ScrAreaMap {
   ListBaseT<ScrArea> areabase = {nullptr, nullptr};
 };
 
-enum LayoutPanelStateFlag {
+enum LayoutPanelStateFlag : uchar {
   /** If set, the panel is currently open. Otherwise it is collapsed. */
   LAYOUT_PANEL_STATE_FLAG_OPEN = (1 << 0),
 };
+ENUM_OPERATORS(LayoutPanelStateFlag)
 
 /**
  * Used for passing expansion between instanced panel data and the panels themselves.
@@ -212,7 +198,7 @@ enum LayoutPanelStateFlag {
  * UI_SUBPANEL_DATA_EXPAND_2 correspond to mean the expansion of the second sub-panel or the first
  * sub-panel's first sub-panel.
  */
-enum uiPanelDataExpansion {
+enum uiPanelDataExpansion : ushort {
   UI_PANEL_DATA_EXPAND_ROOT = (1 << 0),
   UI_SUBPANEL_DATA_EXPAND_1 = (1 << 1),
   UI_SUBPANEL_DATA_EXPAND_2 = (1 << 2),
@@ -230,9 +216,10 @@ enum uiPanelDataExpansion {
   UI_SUBPANEL_DATA_EXPAND_14 = (1 << 14),
   UI_SUBPANEL_DATA_EXPAND_15 = (1 << 15),
 };
+ENUM_OPERATORS(uiPanelDataExpansion)
 
 /** #Panel.flag */
-enum {
+enum ePanel_Flag : short {
   PNL_SELECT = (1 << 0),
   PNL_UNUSED_1 = (1 << 1), /* Cleared */
   PNL_CLOSED = (1 << 2),
@@ -243,6 +230,7 @@ enum {
   /** The panel has been drag-drop reordered and the instanced panel list needs to be rebuilt. */
   PNL_INSTANCED_LIST_ORDER_CHANGED = (1 << 7),
 };
+ENUM_OPERATORS(ePanel_Flag)
 
 /** Fallback panel category (only for old scripts which need updating). */
 #define PNL_CATEGORY_FALLBACK "Misc"
@@ -251,7 +239,7 @@ struct LayoutPanelState {
   struct LayoutPanelState *next = nullptr, *prev = nullptr;
   /** Identifier of the panel. */
   char *idname = nullptr;
-  uint8_t flag = 0;
+  LayoutPanelStateFlag flag = {};
   char _pad[3] = {};
   /**
    * A logical time set from #layout_panel_states_clock when the panel is used by the UI. This is
@@ -278,7 +266,8 @@ struct Panel {
   /** Panel size excluding children. */
   int blocksizex = 0, blocksizey = 0;
   short labelofs = 0;
-  short flag = 0, runtime_flag = 0;
+  ePanel_Flag flag = {};
+  short runtime_flag = 0;
   char _pad[6] = {};
   /** Panels are aligned according to increasing sort-order. */
   int sortorder = 0;
@@ -337,16 +326,17 @@ struct PanelCategoryStack {
 };
 
 /** #uiList.layout_type */
-enum {
+enum euiList_LayoutType : int {
   UILST_LAYOUT_DEFAULT = 0,
   UILST_LAYOUT_COMPACT = 1,
 };
 
 /** #uiList.flag */
-enum {
+enum euiList_Flag : int {
   /** Scroll list to make active item visible. */
   UILST_SCROLL_TO_ACTIVE_ITEM = 1 << 0,
 };
+ENUM_OPERATORS(euiList_Flag)
 
 /** Value (in number of items) we have to go below minimum shown items to enable auto size. */
 #define UI_LIST_AUTO_SIZE_THRESHOLD 1
@@ -358,22 +348,24 @@ enum {
  * \warning Those values are used by integer RNA too, which does not handle well values > INT_MAX.
  *          So please do not use 32nd bit here.
  */
-enum {
+enum euiList_Filter : int {
   /* Don't use (1 << 0) to (1 << 15) here! See warning above. */
 
   /* Filtering returned #UI_LIST_ITEM_NEVER_SHOW. */
   UILST_FLT_ITEM_NEVER_SHOW = (1 << 16),
   UILST_FLT_ITEM = 1 << 30, /* This item has passed the filter process successfully. */
 };
+ENUM_OPERATORS(euiList_Filter)
 
 /** #uiList.filter_flag */
-enum {
+enum euiList_FilterFlag : int {
   UILST_FLT_SHOW = 1 << 0,            /* Show filtering UI. */
   UILST_FLT_EXCLUDE = UILST_FLT_ITEM, /* Exclude filtered items, *must* use this same value. */
 };
+ENUM_OPERATORS(euiList_FilterFlag)
 
 /** #uiList.filter_sort_flag */
-enum {
+enum euiList_FilterSortFlag : int {
   /* Plain values (only one is valid at a time, once masked with UILST_FLT_SORT_MASK. */
   /** Just for sake of consistency. */
   /* UILST_FLT_SORT_INDEX = 0, */ /* UNUSED */
@@ -381,10 +373,11 @@ enum {
 
   /* Bitflags affecting behavior of any kind of sorting. */
   /** Special flag to indicate that order is locked (not user-changeable). */
-  UILST_FLT_SORT_LOCK = 1u << 30,
+  UILST_FLT_SORT_LOCK = int(1u << 30),
   /** Special value, bit-flag used to reverse order! */
-  UILST_FLT_SORT_REVERSE = 1u << 31,
+  UILST_FLT_SORT_REVERSE = int(1u << 31),
 };
+ENUM_OPERATORS(euiList_FilterSortFlag)
 
 #define UILST_FLT_SORT_MASK (((unsigned int)(UILST_FLT_SORT_REVERSE | UILST_FLT_SORT_LOCK)) - 1)
 
@@ -440,8 +433,8 @@ struct uiList { /* some list UI data need to be saved in file */
   char list_id[/*UI_MAX_NAME_STR*/ 256] = "";
 
   /** How items are laid out in the list. */
-  int layout_type = 0;
-  int flag = 0;
+  euiList_LayoutType layout_type = UILST_LAYOUT_DEFAULT;
+  euiList_Flag flag = {};
 
   int list_scroll = 0;
   int list_grip = 0;
@@ -451,8 +444,8 @@ struct uiList { /* some list UI data need to be saved in file */
   /* Filtering data. */
   /** Defined as . */
   char filter_byname[/*UI_MAX_NAME_STR*/ 256] = "";
-  int filter_flag = 0;
-  int filter_sort_flag = 0;
+  euiList_FilterFlag filter_flag = {};
+  euiList_FilterSortFlag filter_sort_flag = {};
 
   /** Custom sub-classes properties. */
   IDProperty *properties = nullptr;
@@ -461,11 +454,12 @@ struct uiList { /* some list UI data need to be saved in file */
   uiListDyn *dyn_data = nullptr;
 };
 
-enum uiViewStateFlag {
+enum uiViewStateFlag : uint16_t {
   UI_VIEW_SHOW_FILTER_OPTIONS = (1 << 0),
   UI_VIEW_SORT_ALPHA = (1 << 1),
   UI_VIEW_FILTER_INVERT = (1 << 2),
 };
+ENUM_OPERATORS(uiViewStateFlag)
 
 /** See #uiViewStateLink. */
 struct uiViewState {
@@ -480,7 +474,7 @@ struct uiViewState {
    *   scrolled out of view).
    */
   int scroll_offset = 0;
-  uint16_t flag = 0; /* #uiViewStateFlag */
+  uiViewStateFlag flag = {};
   char _pad[5] = {};
   uint8_t invert_sort_type = 0;
   char search_string[/*UI_MAX_NAME_STR*/ 256] = "";
@@ -508,10 +502,11 @@ struct TransformOrientation {
   char _pad[4] = {};
 };
 
-enum uiPreviewTag {
+enum uiPreviewTag : short {
   /** Preview needs re-rendering, handled in #ED_preview_draw(). */
   UI_PREVIEW_TAG_DIRTY = (1 << 0),
 };
+ENUM_OPERATORS(uiPreviewTag)
 
 /** Some preview UI data need to be saved in file. */
 struct uiPreview {
@@ -521,7 +516,7 @@ struct uiPreview {
   short height = 0;
 
   /* Unset on file read. */
-  short tag = 0; /* #uiPreviewTag */
+  uiPreviewTag tag = {};
 
   /** #ID.session_uid of the ID this preview is made for. Unset on file read. */
   unsigned int id_session_uid = 0;
@@ -548,11 +543,12 @@ struct uiTextboxStateLink {
   TextboxState state = {};
 };
 
-enum GlobalAreaFlag {
+enum GlobalAreaFlag : short {
   GLOBAL_AREA_IS_HIDDEN = (1 << 0),
 };
+ENUM_OPERATORS(GlobalAreaFlag)
 
-enum GlobalAreaAlign {
+enum GlobalAreaAlign : short {
   GLOBAL_AREA_ALIGN_TOP = 0,
   GLOBAL_AREA_ALIGN_BOTTOM = 1,
 };
@@ -569,16 +565,14 @@ struct ScrGlobalAreaData {
    * if they are 'collapsed' or not.
    */
   short size_min = 0, size_max = 0;
-  /** GlobalAreaAlign. */
-  short align = 0;
+  GlobalAreaAlign align = GLOBAL_AREA_ALIGN_TOP;
 
-  /** GlobalAreaFlag. */
-  short flag = 0;
+  GlobalAreaFlag flag = {};
   char _pad[2] = {};
 };
 
 /** #ScrArea.flag */
-enum {
+enum eScrArea_Flag : int {
   HEADER_NO_PULLDOWN = (1 << 0),
 //  AREA_FLAG_UNUSED_1           = (1 << 1),
 //  AREA_FLAG_UNUSED_2           = (1 << 2),
@@ -603,7 +597,24 @@ enum {
   AREA_FLAG_OFFSCREEN = (1 << 9),
   /* bfa - show hide the editorsmenu */
   HEADER_NO_EDITORTYPEMENU = (1 << 10),
+  /* bfa - show hide the File topbar */
+  HEADER_TOPBAR_FILE = (1 << 11),
+  /* bfa - show hide the View topbar */
+  HEADER_TOPBAR_MESHEDIT = (1 << 12),
+  /* bfa - show hide the Primitives topbar */
+  HEADER_TOPBAR_PRIMITIVES = (1 << 13),
+  /* bfa - show hide the Image topbar */
+  HEADER_TOPBAR_IMAGE = (1 << 14),
+  /* bfa - show hide the Tools topbar */
+  HEADER_TOPBAR_TOOLS = (1 << 15),
+  /* bfa - show hide the Animation topbar */
+  HEADER_TOPBAR_ANIMATION = (1 << 16),
+  /* bfa - show hide the Edit topbar */
+  HEADER_TOPBAR_EDIT = (1 << 17),
+  /* bfa - show hide the Misc topbar */
+  HEADER_TOPBAR_MISC = (1 << 18),
 };
+ENUM_OPERATORS(eScrArea_Flag)
 
 /** #ScrArea.toolbar_flag - dedicated toolbar flags to avoid 16-bit limitations */
 enum {
@@ -668,22 +679,21 @@ struct ScrArea {
   DNA_DEPRECATED char headertype = 0;
   /** Private, for spacetype refresh callback. */
   char do_refresh = 0;
+  char _pad2[2] = {};  // bfa - padding because eScrArea_Flag is now int (4 bytes)
+  eScrArea_Flag flag = {};
   
   /** bfa - our own toolbar flag */
   char toolbar_flag = 0;
-  char _pad0[5] = {};  // bfa
-  
-  short flag = 0;
+  char _pad0[1] = {};  // bfa - padding to align region_active_win
+
   /**
    * Index of last used region of 'RGN_TYPE_WINDOW'
    * runtime variable, updated by executing operators.
    */
   short region_active_win = 0;
-  char _pad[4] = {};  // bfa - because of toolbar flag
-
+  char _pad[4] = {};  // bfa - padding to align *type to 8 bytes
   /** Callbacks for this space type. */
   struct SpaceType *type = nullptr;
-
   /** Non-NULL if this area is global. */
   ScrGlobalAreaData *global = nullptr;
 
@@ -711,7 +721,7 @@ struct ScrArea {
  * regiontype, first two are the default set.
  * \warning Do NOT change order, append on end. Types are hard-coded needed.
  */
-enum eRegion_Type {
+enum eRegion_Type : short {
   RGN_TYPE_WINDOW = 0,
   RGN_TYPE_HEADER = 1,
   RGN_TYPE_CHANNELS = 2,
@@ -749,7 +759,7 @@ enum eRegion_Type {
                            (1 << RGN_TYPE_FOOTER) | (1 << RGN_TYPE_ASSET_SHELF_HEADER))) != 0)
 
 /** #ARegion.alignment */
-enum {
+enum eRegion_Alignment : short {
   RGN_ALIGN_NONE = 0,
   RGN_ALIGN_TOP = 1,
   RGN_ALIGN_BOTTOM = 2,
@@ -773,13 +783,14 @@ enum {
    * flag can be queried via #ARegion.visible */
   RGN_ALIGN_HIDE_WITH_PREV = 1 << 7,
 };
+ENUM_OPERATORS(eRegion_Alignment)
 
 /** Mask out flags so we can check the alignment. */
-#define RGN_ALIGN_ENUM_FROM_MASK(align) ((align) & ((1 << 4) - 1))
-#define RGN_ALIGN_FLAG_FROM_MASK(align) ((align) & ~((1 << 4) - 1))
+#define RGN_ALIGN_ENUM_FROM_MASK(align) ((align) & eRegion_Alignment((1 << 4) - 1))
+#define RGN_ALIGN_FLAG_FROM_MASK(align) ((align) & ~eRegion_Alignment((1 << 4) - 1))
 
 /** #ARegion.flag */
-enum {
+enum eRegion_Flag : short {
   RGN_FLAG_HIDDEN = (1 << 0),
   RGN_FLAG_TOO_SMALL = (1 << 1),
   /** Enable dynamically changing the region size in the #ARegionType::layout() callback. */
@@ -809,9 +820,10 @@ enum {
   RGN_FLAG_RESIZE_RESPECT_BUTTON_SECTIONS = (1 << 11),
   RGN_FLAG_INDICATE_OVERFLOW = (1 << 12),
 };
+ENUM_OPERATORS(eRegion_Flag)
 
 /** #ARegion.do_draw */
-enum {
+enum eRegion_DrawFlag : int {
   /** Region must be fully redrawn. */
   RGN_DRAW = 1,
   /**
@@ -834,6 +846,7 @@ enum {
   /** Only editor overlays (currently gizmos only!) should be redrawn. */
   RGN_DRAW_EDITOR_OVERLAYS = 32,
 };
+ENUM_OPERATORS(eRegion_DrawFlag)
 
 struct ARegion {
   struct ARegion *next = nullptr, *prev = nullptr;
@@ -851,11 +864,11 @@ struct ARegion {
   int category_scroll = 0;
 
   /** Window, header, etc. identifier for drawing. */
-  short regiontype = 0;
+  eRegion_Type regiontype = RGN_TYPE_WINDOW;
   /** How it should split. */
-  short alignment = 0;
+  eRegion_Alignment alignment = RGN_ALIGN_NONE;
   /** Hide, .... */
-  short flag = 0;
+  eRegion_Flag flag = {};
 
   /** Current split size in unscaled pixels (if zero it uses regiontype).
    * To convert to pixels use: `UI_SCALE_FAC * region->sizex + 0.5f`.
@@ -893,13 +906,13 @@ struct ARegion {
 };
 
 /* #AssetShelfSettings.display_flag */
-enum AssetShelfSettings_DisplayFlag {
+enum AssetShelfSettings_DisplayFlag : short {
   ASSETSHELF_SHOW_NAMES = (1 << 0),
 };
-ENUM_OPERATORS(AssetShelfSettings_DisplayFlag);
+ENUM_OPERATORS(AssetShelfSettings_DisplayFlag)
 
 /* #AssetShelfSettings.instance_flag */
-enum AssetShelf_InstanceFlag {
+enum AssetShelf_InstanceFlag : short {
   /**
    * Remember the last known region visibility state or this shelf, so it can be restored if the
    * shelf is reactivated. Practically this makes the shelf visibility be remembered per mode.
@@ -948,7 +961,7 @@ struct AssetShelfSettings {
   char search_string[64] = "";
 
   short preview_size = 0;
-  short display_flag = 0; /* #AssetShelfSettings_DisplayFlag */
+  AssetShelfSettings_DisplayFlag display_flag = {};
   short import_method = SHELF_ASSET_IMPORT_APPEND;    /* #AssetShelfImportMethod */  // bfa
   short import_flags = 0;                             /* AssetShelfImportFlags */    // bfa
   // char _pad1[4] = {}; // uses all 4
@@ -978,7 +991,7 @@ struct AssetShelf {
 
   /** Only for the permanent asset shelf regions, not asset shelves in temporary popups. */
   short preferred_row_count = 0;
-  short instance_flag = 0;
+  AssetShelf_InstanceFlag instance_flag = {};
   char _pad[4] = {};
 };
 

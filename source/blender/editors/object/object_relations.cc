@@ -466,7 +466,7 @@ void OBJECT_OT_parent_clear(wmOperatorType *ot)
 /** \name Make Parent Operator
  * \{ */
 
-void parent_set(Object *ob, Object *par, const int type, const char *substr)
+void parent_set(Object *ob, Object *par, const eObject_Partype type, const char *substr)
 {
   /* Always clear parentinv matrix for sake of consistency, see #41950. */
   unit_m4(ob->parentinv);
@@ -688,16 +688,16 @@ static bool parent_set_with_depsgraph(ReportList *reports,
       break;
     case PAR_BONE:
       ob->partype = PARBONE; /* NOTE: DNA define, not operator property. */
-      if (pchan->bone) {
-        pchan->bone->flag &= ~BONE_RELATIVE_PARENTING;
-        pchan_eval->bone->flag &= ~BONE_RELATIVE_PARENTING;
+      if (Bone *bone = pchan->bone_get(*par)) {
+        bone->flag &= ~BONE_RELATIVE_PARENTING;
+        pchan_eval->bone_get(*parent_eval)->flag &= ~BONE_RELATIVE_PARENTING;
       }
       break;
     case PAR_BONE_RELATIVE:
       ob->partype = PARBONE; /* NOTE: DNA define, not operator property. */
-      if (pchan->bone) {
-        pchan->bone->flag |= BONE_RELATIVE_PARENTING;
-        pchan_eval->bone->flag |= BONE_RELATIVE_PARENTING;
+      if (Bone *bone = pchan->bone_get(*par)) {
+        bone->flag |= BONE_RELATIVE_PARENTING;
+        pchan_eval->bone_get(*parent_eval)->flag |= BONE_RELATIVE_PARENTING;
       }
       break;
     case PAR_VERTEX:

@@ -1209,7 +1209,9 @@ void NODE_OT_render_changed(wmOperatorType *ot)
  * If the flag is not set on all nodes, it is set. If tag_update is true, the nodes will be tagged
  * for a property change update.
  */
-static void node_flag_toggle_exec(SpaceNode *snode, int toggle_flag, const bool tag_update = false)
+static void node_flag_toggle_exec(SpaceNode *snode,
+                                  eNode_Flag toggle_flag,
+                                  const bool tag_update = false)
 {
   int tot_eq = 0, tot_neq = 0;
 

@@ -150,7 +150,7 @@ static void object_force_modifier_bind_simple_options(Depsgraph *depsgraph,
                                                       ModifierData *md)
 {
   ModifierData *md_eval = BKE_modifier_get_evaluated(depsgraph, object, md);
-  const int mode = md_eval->mode;
+  const ModifierMode mode = md_eval->mode;
   md_eval->mode |= eModifierMode_Realtime;
   object_force_modifier_update_for_bind(depsgraph, object);
   md_eval->mode = mode;
@@ -204,7 +204,7 @@ ModifierData *modifier_add(
     }
     else if (type == eModifierType_Collision) {
       if (!ob->pd) {
-        ob->pd = BKE_partdeflect_new(0);
+        ob->pd = BKE_partdeflect_new(PFIELD_NULL);
       }
 
       ob->pd->deflect = 1;

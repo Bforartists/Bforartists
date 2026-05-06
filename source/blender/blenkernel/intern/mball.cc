@@ -581,7 +581,7 @@ bool BKE_mball_select_all(MetaBall *mb)
   bool changed = false;
   for (MetaElem &ml : *mb->editelems) {
     if ((ml.flag & SELECT) == 0) {
-      ml.flag |= SELECT;
+      ml.flag |= MB_SELECT;
       changed = true;
     }
   }
@@ -604,7 +604,7 @@ bool BKE_mball_deselect_all(MetaBall *mb)
   bool changed = false;
   for (MetaElem &ml : *mb->editelems) {
     if ((ml.flag & SELECT) != 0) {
-      ml.flag &= ~SELECT;
+      ml.flag &= ~MB_SELECT;
       changed = true;
     }
   }
@@ -627,7 +627,7 @@ bool BKE_mball_select_swap(MetaBall *mb)
 {
   bool changed = false;
   for (MetaElem &ml : *mb->editelems) {
-    ml.flag ^= SELECT;
+    ml.flag ^= MB_SELECT;
     changed = true;
   }
   return changed;

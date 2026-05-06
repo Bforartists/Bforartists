@@ -804,7 +804,7 @@ int VolumeGridDataSource::tot_rows() const
 
 #endif
 
-ListDataSource::ListDataSource(nodes::ListPtr list) : list_(std::move(list)) {}
+ListDataSource::ListDataSource(nodes::GListPtr list) : list_(std::move(list)) {}
 
 void ListDataSource::foreach_default_column_ids(
     FunctionRef<void(const SpreadsheetColumnID &, bool is_extra)> fn) const
@@ -1245,7 +1245,7 @@ static std::unique_ptr<DataSource> data_source_from_socket_value(
 #endif
   }
   if (value.is_list()) {
-    return std::make_unique<ListDataSource>(value.get<nodes::ListPtr>());
+    return std::make_unique<ListDataSource>(value.get<nodes::GListPtr>());
   }
   if (value.is_single()) {
     const GPointer ptr = value.get_single_ptr();

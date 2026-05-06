@@ -361,7 +361,7 @@ void BKE_curve_editNurb_free(Curve *cu)
   }
 }
 
-void BKE_curve_init(Curve *cu, const short curve_type)
+void BKE_curve_init(Curve *cu, const ObjectType curve_type)
 {
   curve_init_data(&cu->id);
 
@@ -402,7 +402,7 @@ void BKE_curve_init(Curve *cu, const short curve_type)
   cu->offset = 1.0f;
 }
 
-Curve *BKE_curve_add(Main *bmain, const char *name, int type)
+Curve *BKE_curve_add(Main *bmain, const char *name, ObjectType type)
 {
   Curve *cu;
 
@@ -3946,7 +3946,7 @@ void BKE_nurb_handle_smooth_fcurve(BezTriple *bezt, int total, bool cyclic)
 void BKE_nurb_handle_calc(
     BezTriple *bezt, BezTriple *prev, BezTriple *next, const bool is_fcurve, const char smoothing)
 {
-  calchandleNurb_intern(bezt, prev, next, eBezTriple_Flag(SELECT), is_fcurve, false, smoothing);
+  calchandleNurb_intern(bezt, prev, next, BEZT_FLAG_SELECT, is_fcurve, false, smoothing);
 }
 
 void BKE_nurb_handle_calc_ex(BezTriple *bezt,
@@ -3962,7 +3962,7 @@ void BKE_nurb_handle_calc_ex(BezTriple *bezt,
 
 void BKE_nurb_handles_calc(Nurb *nu) /* first, if needed, set handle flags */
 {
-  calchandlesNurb_intern(nu, eBezTriple_Flag(SELECT), false);
+  calchandlesNurb_intern(nu, BEZT_FLAG_SELECT, false);
 }
 
 /**
@@ -3976,8 +3976,8 @@ static void nurbList_handles_swap_select(Nurb *nu)
 
   for (i = nu->pntsu, bezt = nu->bezt; i--; bezt++) {
     if ((bezt->f1 & SELECT) != (bezt->f3 & SELECT)) {
-      bezt->f1 ^= SELECT;
-      bezt->f3 ^= SELECT;
+      bezt->f1 ^= BEZT_FLAG_SELECT;
+      bezt->f3 ^= BEZT_FLAG_SELECT;
     }
   }
 }
@@ -4002,7 +4002,7 @@ void BKE_nurb_handle_calc_simple(Nurb *nu, BezTriple *bezt)
 void BKE_nurb_handle_calc_simple_auto(Nurb *nu, BezTriple *bezt)
 {
   if (nu->pntsu > 1) {
-    const char h1_back = bezt->h1, h2_back = bezt->h2;
+    const eBezTriple_Handle h1_back = bezt->h1, h2_back = bezt->h2;
 
     bezt->h1 = bezt->h2 = HD_AUTO;
 
@@ -4108,7 +4108,7 @@ void BKE_nurb_handles_test(Nurb *nu,
   BKE_nurb_handles_calc(nu);
 }
 
-void BKE_nurb_handles_autocalc(Nurb *nu, uint8_t flag)
+void BKE_nurb_handles_autocalc(Nurb *nu, eBezTriple_Flag flag)
 {
   /* checks handle coordinates and calculates type */
   const float eps = 0.0001f;
@@ -4189,7 +4189,7 @@ void BKE_nurb_handles_autocalc(Nurb *nu, uint8_t flag)
   BKE_nurb_handles_calc(nu);
 }
 
-void BKE_nurbList_handles_autocalc(ListBaseT<Nurb> *editnurb, uint8_t flag)
+void BKE_nurbList_handles_autocalc(ListBaseT<Nurb> *editnurb, eBezTriple_Flag flag)
 {
   for (Nurb &nu : *editnurb) {
     BKE_nurb_handles_autocalc(&nu, flag);
@@ -4198,7 +4198,7 @@ void BKE_nurbList_handles_autocalc(ListBaseT<Nurb> *editnurb, uint8_t flag)
 
 void BKE_nurbList_handles_set(ListBaseT<Nurb> *editnurb,
                               eNurbHandleTest_Mode handle_mode,
-                              const char code)
+                              eBezTriple_Handle code)
 {
   BezTriple *bezt;
   int a;
@@ -4235,7 +4235,7 @@ void BKE_nurbList_handles_set(ListBaseT<Nurb> *editnurb,
     }
   }
   else {
-    char h_new = HD_FREE;
+    eBezTriple_Handle h_new = HD_FREE;
 
     /* There is 1 handle not FREE: FREE it all, else make ALIGNED. */
     if (code == 5) {
@@ -4289,7 +4289,7 @@ void BKE_nurbList_handles_set(ListBaseT<Nurb> *editnurb,
 
 void BKE_nurbList_handles_recalculate(ListBaseT<Nurb> *editnurb,
                                       const bool calc_length,
-                                      const uint8_t flag)
+                                      const eBezTriple_Flag flag)
 {
   BezTriple *bezt;
   int a;
@@ -4344,7 +4344,7 @@ void BKE_nurbList_handles_recalculate(ListBaseT<Nurb> *editnurb,
   }
 }
 
-void BKE_nurbList_flag_set(ListBaseT<Nurb> *editnurb, uint8_t flag, bool set)
+void BKE_nurbList_flag_set(ListBaseT<Nurb> *editnurb, eBezTriple_Flag flag, bool set)
 {
   BezTriple *bezt;
   BPoint *bp;
@@ -4356,9 +4356,9 @@ void BKE_nurbList_flag_set(ListBaseT<Nurb> *editnurb, uint8_t flag, bool set)
       bezt = nu.bezt;
       while (a--) {
         if (set) {
-          bezt->f1 |= flag;
-          bezt->f2 |= flag;
-          bezt->f3 |= flag;
+          bezt->f1 = eBezTriple_Flag(bezt->f1 | flag);
+          bezt->f2 = eBezTriple_Flag(bezt->f2 | flag);
+          bezt->f3 = eBezTriple_Flag(bezt->f3 | flag);
         }
         else {
           bezt->f1 &= ~flag;
@@ -4379,7 +4379,9 @@ void BKE_nurbList_flag_set(ListBaseT<Nurb> *editnurb, uint8_t flag, bool set)
   }
 }
 
-bool BKE_nurbList_flag_set_from_flag(ListBaseT<Nurb> *editnurb, uint8_t from_flag, uint8_t flag)
+bool BKE_nurbList_flag_set_from_flag(ListBaseT<Nurb> *editnurb,
+                                     eBezTriple_Flag from_flag,
+                                     eBezTriple_Flag flag)
 {
   bool changed = false;
 
@@ -4387,7 +4389,7 @@ bool BKE_nurbList_flag_set_from_flag(ListBaseT<Nurb> *editnurb, uint8_t from_fla
     if (nu.type == CU_BEZIER) {
       for (int i = 0; i < nu.pntsu; i++) {
         BezTriple *bezt = &nu.bezt[i];
-        uint8_t old_f1 = bezt->f1, old_f2 = bezt->f2, old_f3 = bezt->f3;
+        eBezTriple_Flag old_f1 = bezt->f1, old_f2 = bezt->f2, old_f3 = bezt->f3;
 
         SET_FLAG_FROM_TEST(bezt->f1, bezt->f1 & from_flag, flag);
         SET_FLAG_FROM_TEST(bezt->f2, bezt->f2 & from_flag, flag);
@@ -4597,7 +4599,7 @@ void BKE_curve_nurbs_vert_coords_apply_with_mat4(ListBaseT<Nurb> *lb,
       BKE_nurb_project_2d(&nu);
     }
 
-    calchandlesNurb_intern(&nu, eBezTriple_Flag(SELECT), true);
+    calchandlesNurb_intern(&nu, BEZT_FLAG_SELECT, true);
   }
 }
 
@@ -4632,7 +4634,7 @@ void BKE_curve_nurbs_vert_coords_apply(ListBaseT<Nurb> *lb,
       BKE_nurb_project_2d(&nu);
     }
 
-    calchandlesNurb_intern(&nu, eBezTriple_Flag(SELECT), true);
+    calchandlesNurb_intern(&nu, BEZT_FLAG_SELECT, true);
   }
 }
 
@@ -4643,9 +4645,8 @@ Array<float3> BKE_curve_nurbs_key_vert_coords_alloc(const ListBaseT<Nurb> *lb, c
   int index = 0;
   for (const Nurb &nu : *lb) {
     if (nu.type == CU_BEZIER) {
-      const BezTriple *bezt = nu.bezt;
 
-      for (int i = 0; i < nu.pntsu; i++, bezt++) {
+      for (int i = 0; i < nu.pntsu; i++) {
         vert_coords[index] = &key[0];
         index++;
         vert_coords[index] = &key[3];
@@ -4656,9 +4657,7 @@ Array<float3> BKE_curve_nurbs_key_vert_coords_alloc(const ListBaseT<Nurb> *lb, c
       }
     }
     else {
-      const BPoint *bp = nu.bp;
-
-      for (int i = 0; i < nu.pntsu * nu.pntsv; i++, bp++) {
+      for (int i = 0; i < nu.pntsu * nu.pntsv; i++) {
         vert_coords[index] = key;
         index++;
         key += KEYELEM_FLOAT_LEN_BPOINT;
@@ -4818,7 +4817,7 @@ bool BKE_nurb_order_clamp_v(Nurb *nu)
 }
 
 bool BKE_nurb_type_convert(Nurb *nu,
-                           const short type,
+                           const eNurbType type,
                            const bool use_handles,
                            const char **r_err_msg)
 {
@@ -4835,7 +4834,7 @@ bool BKE_nurb_type_convert(Nurb *nu,
       bp = nu->bp;
       while (a--) {
         copy_v3_v3(bezt->vec[1], bp->vec);
-        bezt->f1 = bezt->f2 = bezt->f3 = bp->f1;
+        bezt->f1 = bezt->f2 = bezt->f3 = eBezTriple_Flag(bp->f1);
         bezt->h1 = bezt->h2 = HD_VECT;
         bezt->weight = bp->weight;
         bezt->radius = bp->radius;
@@ -4885,7 +4884,7 @@ bool BKE_nurb_type_convert(Nurb *nu,
           bp++;
         }
         else {
-          const uint8_t *f = &bezt->f1;
+          const eBezTriple_Flag *f = &bezt->f1;
           for (c = 0; c < 3; c++, f++) {
             copy_v3_v3(bp->vec, bezt->vec[c]);
             bp->vec[3] = 1.0;
@@ -4937,13 +4936,13 @@ bool BKE_nurb_type_convert(Nurb *nu,
       bp = nu->bp;
       while (a--) {
         copy_v3_v3(bezt->vec[0], bp->vec);
-        bezt->f1 = bp->f1;
+        bezt->f1 = eBezTriple_Flag(bp->f1);
         bp++;
         copy_v3_v3(bezt->vec[1], bp->vec);
-        bezt->f2 = bp->f1;
+        bezt->f2 = eBezTriple_Flag(bp->f1);
         bp++;
         copy_v3_v3(bezt->vec[2], bp->vec);
-        bezt->f3 = bp->f1;
+        bezt->f3 = eBezTriple_Flag(bp->f1);
         bezt->radius = bp->radius;
         bezt->weight = bp->weight;
         bp++;

@@ -1406,6 +1406,8 @@ void boid_body(BoidBrainData *bbd, ParticleData *pa)
 
   /* change modes, constrain movement & keep track of down vector */
   switch (bpa->data.mode) {
+    case eBoidMode_Liftoff:
+      break;
     case eBoidMode_InAir: {
       float grav[3];
 
@@ -1585,10 +1587,10 @@ void boid_body(BoidBrainData *bbd, ParticleData *pa)
   copy_qt_qt(pa->state.rot, q);
 }
 
-BoidRule *boid_new_rule(int type)
+BoidRule *boid_new_rule(eBoidRuleType type)
 {
   BoidRule *rule = nullptr;
-  if (type <= 0) {
+  if (type <= eBoidRuleType_None) {
     return nullptr;
   }
 
@@ -1632,7 +1634,7 @@ BoidRule *boid_new_rule(int type)
 
   rule->type = type;
   rule->flag |= BOIDRULE_IN_AIR | BOIDRULE_ON_LAND;
-  STRNCPY_UTF8(rule->name, DATA_(rna_enum_boidrule_type_items[type - 1].name));
+  STRNCPY_UTF8(rule->name, DATA_(rna_enum_boidrule_type_items[int(type) - 1].name));
 
   return rule;
 }

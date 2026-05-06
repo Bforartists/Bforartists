@@ -75,9 +75,6 @@ static void node_layout_ex(ui::Layout &layout, bContext *C, PointerRNA *ptr)
 
 static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
 {
-  if (!U.experimental.use_geometry_nodes_lists) {
-    return;
-  }
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(params.other_socket().type);
   if (params.in_out() == SOCK_IN) {
     if (params.node_tree().typeinfo->validate_link(data_type, SOCK_INT)) {
@@ -135,18 +132,18 @@ static void node_geo_exec(GeoNodeExecParams params)
     fields.append(params.extract_input<fn::GField>(UString(identifier)));
   }
 
-  Vector<ListPtr> lists(required_items.size());
+  Vector<GListPtr> lists(required_items.size());
   for (const int i : required_items.index_range()) {
     const int item_i = required_items[i];
     const auto type = eNodeSocketDatatype(items[item_i].socket_type);
     const CPPType &cpp_type = *bke::socket_type_to_geo_nodes_base_cpp_type(type);
-    lists[i] = List::create(cpp_type, List::ArrayData::ForUninitialized(cpp_type, count), count);
+    lists[i] = GList::create(cpp_type, GList::ArrayData::ForUninitialized(cpp_type, count), count);
   }
 
   Array<GMutableSpan> list_values(lists.size());
   for (const int i : lists.index_range()) {
     list_values[i] = {lists[i]->cpp_type(),
-                      const_cast<void *>(std::get<List::ArrayData>(lists[i]->data()).data),
+                      const_cast<void *>(std::get<GList::ArrayData>(lists[i]->data()).data),
                       count};
   }
 
@@ -154,7 +151,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   fn::FieldEvaluator evaluator{context, count};
   for (const int i : fields.index_range()) {
     GMutableSpan values(lists[i]->cpp_type(),
-                        const_cast<void *>(std::get<List::ArrayData>(lists[i]->data()).data),
+                        const_cast<void *>(std::get<GList::ArrayData>(lists[i]->data()).data),
                         count);
     evaluator.add_with_destination(std::move(fields[i]), values);
   }

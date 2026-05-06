@@ -44,7 +44,7 @@ void set_fcurve_sample(FCurve *fcu, int64_t sample_index, const float frame, con
   bez.vec[1][0] = frame;
   bez.vec[1][1] = value;
   bez.ipo = BEZT_IPO_LIN;
-  bez.f1 = bez.f2 = bez.f3 = SELECT;
+  bez.f1 = bez.f2 = bez.f3 = BEZT_FLAG_SELECT;
   bez.h1 = bez.h2 = HD_AUTO;
 }
 

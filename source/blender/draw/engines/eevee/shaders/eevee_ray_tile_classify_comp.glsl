@@ -71,7 +71,7 @@ void main()
 
   if (gl_LocalInvocationIndex == 0u) {
     int2 denoise_tile_co = int2(gl_WorkGroupID.xy);
-    int2 tracing_tile_co = denoise_tile_co / uniform_buf.raytrace.resolution_scale;
+    int2 tracing_tile_co = denoise_tile_co / uniform_buf.raytrace.trace_pixel_scale;
 
     for (int i = 0; i < GBUFFER_LAYER_MAX; i++) {
       if (tile_contains_ray_tracing[i] > 0) {

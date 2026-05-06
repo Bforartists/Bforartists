@@ -1708,7 +1708,7 @@ static bool rna_StripModifier_otherStrip_poll(PointerRNA *ptr, PointerRNA value)
 }
 
 static StripModifierData *rna_Strip_modifier_new(
-    Strip *strip, bContext *C, ReportList *reports, const char *name, int type)
+    ID *scene_id, Strip *strip, ReportList *reports, const char *name, int type)
 {
   if (!seq::strip_supports_modifiers(strip)) {
     BKE_report(reports, RPT_ERROR, "Strip type does not support modifiers");
@@ -1716,7 +1716,7 @@ static StripModifierData *rna_Strip_modifier_new(
     return nullptr;
   }
   else {
-    Scene *scene = CTX_data_sequencer_scene(C);
+    Scene *scene = id_cast<Scene *>(scene_id);
     StripModifierData *smd;
 
     smd = seq::modifier_new(strip, name, eStripModifierType(type));
@@ -1730,13 +1730,13 @@ static StripModifierData *rna_Strip_modifier_new(
   }
 }
 
-static void rna_Strip_modifier_remove(Strip *strip,
-                                      bContext *C,
+static void rna_Strip_modifier_remove(ID *scene_id,
+                                      Strip *strip,
                                       ReportList *reports,
                                       PointerRNA *smd_ptr)
 {
   StripModifierData *smd = static_cast<StripModifierData *>(smd_ptr->data);
-  Scene *scene = CTX_data_sequencer_scene(C);
+  Scene *scene = id_cast<Scene *>(scene_id);
 
   if (seq::modifier_remove(strip, smd) == false) {
     BKE_report(reports, RPT_ERROR, "Modifier was not found in the stack");
@@ -1749,9 +1749,9 @@ static void rna_Strip_modifier_remove(Strip *strip,
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, nullptr);
 }
 
-static void rna_Strip_modifier_clear(Strip *strip, bContext *C)
+static void rna_Strip_modifier_clear(ID *scene_id, Strip *strip)
 {
-  Scene *scene = CTX_data_sequencer_scene(C);
+  Scene *scene = id_cast<Scene *>(scene_id);
 
   seq::modifier_clear(strip);
 
@@ -2425,7 +2425,7 @@ static void rna_def_strip_modifiers(BlenderRNA *brna, PropertyRNA *cprop)
 
   /* add modifier */
   func = RNA_def_function(srna, "new", "rna_Strip_modifier_new");
-  RNA_def_function_flag(func, FUNC_USE_CONTEXT | FUNC_USE_REPORTS);
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_REPORTS);
   RNA_def_function_ui_description(func, "Add a new modifier");
   parm = RNA_def_string(func, "name", "Name", 0, "", "New name for the modifier");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
@@ -2444,7 +2444,7 @@ static void rna_def_strip_modifiers(BlenderRNA *brna, PropertyRNA *cprop)
 
   /* remove modifier */
   func = RNA_def_function(srna, "remove", "rna_Strip_modifier_remove");
-  RNA_def_function_flag(func, FUNC_USE_CONTEXT | FUNC_USE_REPORTS);
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_REPORTS);
   RNA_def_function_ui_description(func, "Remove an existing modifier from the strip");
   /* modifier to remove */
   parm = RNA_def_pointer(func, "modifier", "StripModifier", "", "Modifier to remove");
@@ -2453,7 +2453,7 @@ static void rna_def_strip_modifiers(BlenderRNA *brna, PropertyRNA *cprop)
 
   /* clear all modifiers */
   func = RNA_def_function(srna, "clear", "rna_Strip_modifier_clear");
-  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID);
   RNA_def_function_ui_description(func, "Remove all modifiers from the strip");
 
   /* Active modifier. */
@@ -4173,8 +4173,14 @@ static void rna_def_modifier(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "enable", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", STRIP_MODIFIER_FLAG_MUTE);
-  RNA_def_property_ui_text(prop, "Enable", "Enable this modifier");
+  RNA_def_property_ui_text(prop, "Render", "Use modifier during render");
   RNA_def_property_ui_icon(prop, ICON_RESTRICT_RENDER_ON, 1);
+  RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_StripModifier_update");
+
+  prop = RNA_def_property(srna, "show_preview", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", STRIP_MODIFIER_FLAG_SHOW_PREVIEW);
+  RNA_def_property_ui_text(prop, "Preview", "Display modifier in preview");
+  RNA_def_property_ui_icon(prop, ICON_RESTRICT_VIEW_ON, 1);
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_StripModifier_update");
 
   prop = RNA_def_property(srna, "show_expanded", PROP_BOOLEAN, PROP_NONE);

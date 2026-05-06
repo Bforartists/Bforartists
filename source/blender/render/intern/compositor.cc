@@ -100,6 +100,9 @@ class Context : public compositor::Context {
   Vector<gpu::Texture *> cached_gpu_passes_;
   Vector<ImBuf *> cached_cpu_passes_;
 
+  /* True if GPU compute is supported and can be used, if false, we fallback to CPU. */
+  bool gpu_supported_ = true;
+
  public:
   Context(compositor::StaticCacheManager &cache_manager, const ContextInputData &input_data)
       : compositor::Context(cache_manager), input_data_(input_data)
@@ -121,9 +124,15 @@ class Context : public compositor::Context {
     return *input_data_.scene;
   }
 
+  void set_gpu_supported(const bool supported)
+  {
+    gpu_supported_ = supported;
+  }
+
   bool use_gpu() const override
   {
-    return this->get_render_data().compositor_device == SCE_COMPOSITOR_DEVICE_GPU;
+    return gpu_supported_ &&
+           this->get_render_data().compositor_device == SCE_COMPOSITOR_DEVICE_GPU;
   }
 
   compositor::NodeGroupOutputTypes needed_outputs() const
@@ -440,14 +449,14 @@ class Context : public compositor::Context {
       gpu::Texture *pass_texture = RE_pass_ensure_gpu_texture_cache(render, render_pass);
       /* Don't assume render will keep pass data stored, add our own reference. */
       GPU_texture_ref(pass_texture);
-      pass_data.wrap_external(pass_texture);
+      pass_data.share_data(pass_texture);
       cached_gpu_passes_.append(pass_texture);
     }
     else {
       /* Don't assume render will keep pass data stored, add our own reference. */
       IMB_refImBuf(render_pass->ibuf);
-      pass_data.wrap_external(render_pass->ibuf->float_data_for_write(),
-                              int2(render_pass->ibuf->x, render_pass->ibuf->y));
+      pass_data.share_data(render_pass->ibuf->float_data_for_write(),
+                           int2(render_pass->ibuf->x, render_pass->ibuf->y));
       cached_cpu_passes_.append(render_pass->ibuf);
     }
 
@@ -710,15 +719,18 @@ class Compositor {
       GHOST_IContext *re_system_gpu_context = RE_system_gpu_context_get(&render_);
       if (BLI_thread_is_main() || re_system_gpu_context == nullptr) {
         DRW_gpu_context_enable();
+        context.set_gpu_supported(DRW_gpu_context_is_enabled());
       }
-      else {
-        GHOST_IContext *re_system_gpu_context = RE_system_gpu_context_get(&render_);
+      else if (re_system_gpu_context) {
         WM_system_gpu_context_activate(re_system_gpu_context);
 
         void *re_blender_gpu_context = RE_blender_gpu_context_ensure(&render_);
 
         GPU_render_begin();
         GPU_context_active_set(static_cast<GPUContext *>(re_blender_gpu_context));
+      }
+      else {
+        context.set_gpu_supported(false);
       }
     }
 

@@ -189,6 +189,13 @@ class GaborNoiseFunction : public mf::MultiFunction {
     }
   }
 
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(type_);
+  }
+
   ExecutionHints get_execution_hints() const override
   {
     ExecutionHints hints;

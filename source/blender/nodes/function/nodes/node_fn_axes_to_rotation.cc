@@ -125,6 +125,15 @@ class AxesToRotationFunction : public mf::MultiFunction {
       r_rotations[i] = math::to_quaternion(mat);
     });
   };
+
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(primary_axis_);
+    hash.add(secondary_axis_);
+    hash.add(tertiary_axis_);
+  }
 };
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

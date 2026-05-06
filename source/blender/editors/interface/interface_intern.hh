@@ -382,6 +382,10 @@ struct ButtonTextBox : public Button {
 
   /** Wrap cache from last redraw/event handling. */
   std::unique_ptr<TextWrapCache> wrap_cache;
+
+  /** Placeholder wrap cache from last draw. */
+  std::unique_ptr<TextWrapCache> placeholder_wrap_cache;
+
   void line_scroll_set(int line_scroll);
   int line_scroll() const;
   int visible_lines() const;
@@ -1605,7 +1609,7 @@ Button *listrow_find_index(const ARegion *region,
                            int index,
                            Button *listbox) ATTR_WARN_UNUSED_RESULT;
 Button *view_item_find_mouse_over(const ARegion *region, const int xy[2]) ATTR_NONNULL(1, 2);
-Button *view_item_find_active(const ARegion *region);
+Button *view_item_find_active(const ARegion *region, const AbstractView *view = nullptr);
 Button *view_item_find_search_highlight(const ARegion *region);
 
 using ButtonFindPollFn = bool (*)(const Button *but, const void *customdata);

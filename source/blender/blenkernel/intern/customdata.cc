@@ -1110,7 +1110,7 @@ static void layerDefault_mvert_skin(void *data, const int count)
 
   for (int i = 0; i < count; i++) {
     copy_v3_fl(vs[i].radius, 0.25f);
-    vs[i].flag = 0;
+    vs[i].flag = eMVertSkinFlag{};
   }
 }
 
@@ -2255,7 +2255,7 @@ static bool customdata_merge_internal(const CustomData *source,
   for (int i = 0; i < source->totlayer; i++) {
     const CustomDataLayer &src_layer = source->layers[i];
     const eCustomDataType type = eCustomDataType(src_layer.type);
-    const int src_layer_flag = src_layer.flag;
+    const eCustomDataLayer_Flag src_layer_flag = src_layer.flag;
 
     if (type != last_type) {
       /* Don't exceed layer count on destination. */
@@ -2752,7 +2752,9 @@ void CustomData_set_layer_render_index(CustomData *data, const eCustomDataType t
   }
 }
 
-void CustomData_set_layer_flag(CustomData *data, const eCustomDataType type, const int flag)
+void CustomData_set_layer_flag(CustomData *data,
+                               const eCustomDataType type,
+                               const eCustomDataLayer_Flag flag)
 {
   for (int i = 0; i < data->totlayer; i++) {
     if (data->layers[i].type == type) {
@@ -2778,7 +2780,7 @@ static CustomDataLayer *customData_add_layer__internal(
     StringRef name)
 {
   const LayerTypeInfo &type_info = *layerType_getInfo(type);
-  int flag = 0;
+  eCustomDataLayer_Flag flag = {};
 
   /* Some layer types only support a single layer. */
   if (!type_info.defaultname && CustomData_has_layer(data, type)) {
@@ -5033,7 +5035,7 @@ void CustomData_blend_read(BlendDataReader *reader, CustomData *data, const int 
 
 void CustomData_debug_info_from_layers(const CustomData *data, const char *indent, DynStr *dynstr)
 {
-  for (eCustomDataType type = eCustomDataType(0); type < CD_NUMTYPES;
+  for (eCustomDataType type = eCustomDataType{}; type < CD_NUMTYPES;
        type = eCustomDataType(type + 1))
   {
     if (CustomData_has_layer(data, type)) {

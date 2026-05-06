@@ -1117,7 +1117,7 @@ void ANIM_armature_bonecoll_show_from_ebone(bArmature *armature, const EditBone 
 
 void ANIM_armature_bonecoll_show_from_pchan(bArmature *armature, const bPoseChannel *pchan)
 {
-  ANIM_armature_bonecoll_show_from_bone(armature, pchan->bone);
+  ANIM_armature_bonecoll_show_from_bone(armature, pchan->bone_get(*armature));
 }
 
 /* ********* */

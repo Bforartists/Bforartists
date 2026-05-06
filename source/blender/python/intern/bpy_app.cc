@@ -460,20 +460,15 @@ PyDoc_STRVAR(
     bpy_app_cachedir_doc,
     "String, the cache directory used by blender (read-only).\n"
     "\n"
-    "If the parent of the cache folder (i.e. the part of the path that is not Blender-specific) "
-    "does not exist, returns None.\n"
+    "In rare cases the default cache directory may not be available;\n"
+    "in this case a temporary directory is used.\n"
     "\n"
-    ":type: str | None\n");
+    ":type: str\n");
 static PyObject *bpy_app_cachedir_get(PyObject * /*self*/, void * /*closure*/)
 {
   char cache_path[FILE_MAX];
-  if (!BKE_appdir_folder_caches(cache_path, sizeof(cache_path))) {
-    /* Avoid returning an empty path, as it could cause cache data to be stored in the user's home
-     * directory, or in the current working directory. Or worse, the caller could decide to erase
-     * the cache, which might have less subtle effects. */
-    Py_RETURN_NONE;
-  }
-  BLI_assert_msg(cache_path[0], "if BKE_appdir_folder_caches returns true, it should set a path");
+  BKE_appdir_folder_caches(cache_path, sizeof(cache_path));
+  BLI_assert_msg(cache_path[0], "BKE_appdir_folder_caches must never return an empty path");
   return PyC_UnicodeFromBytes(cache_path);
 }
 

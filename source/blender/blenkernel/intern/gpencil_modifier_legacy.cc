@@ -403,7 +403,7 @@ void BKE_gpencil_modifier_blend_read_data(BlendDataReader *reader,
 
     /* if modifiers disappear, or for upward compatibility */
     if (!gpencil_modifier_type_valid(md.type)) {
-      md.type = eModifierType_None;
+      md.type = eGpencilModifierType_None;
     }
 
     /* If linking from a library, clear 'local' library override flag. */

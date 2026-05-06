@@ -140,15 +140,14 @@ static ImBuf *do_compositor_effect(const RenderData *context,
     CompositorEffectContext com_context(
         com_cache.get_cache_manager(), *context, data->node_group, src1, src2, out, fac, *strip);
 
-    const bool use_gpu = com_context.use_gpu();
-    if (use_gpu) {
-      render_begin_gpu(*context);
+    if (com_context.use_gpu()) {
+      com_context.set_gpu_supported(render_begin_gpu(*context));
     }
     com_cache.recreate_if_needed(
         com_context.use_gpu(), com_context.get_precision(), context->gpu_context);
     com_context.evaluate();
     com_context.cache_manager().reset();
-    if (use_gpu) {
+    if (com_context.use_gpu()) {
       render_end_gpu(*context);
     }
   }

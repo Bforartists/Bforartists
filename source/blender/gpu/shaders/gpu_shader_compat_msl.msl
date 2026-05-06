@@ -86,6 +86,11 @@ float4 texelFetchExtend(sampler2D samp, int2 texel, int lvl)
   texel = clamp(texel, int2(0), textureSize(samp, lvl).xy - 1);
   return texelFetch(samp, texel, lvl);
 }
+float4 texelFetchExtend(sampler2DDepth samp, int2 texel, int lvl)
+{
+  texel = clamp(texel, int2(0), textureSize(samp, lvl).xy - 1);
+  return texelFetch(samp, texel, lvl);
+}
 
 /* Resource accessor. */
 #define specialization_constant_get(create_info, _res) _res

@@ -4877,7 +4877,7 @@ static void asset_browser_add_list_view(Main *bmain)
           if (sfile->asset_params->base_params.list_column_size == 0) {
             sfile->asset_params->base_params.list_column_size = 220;
           }
-          sfile->asset_params->base_params.details_flags = 0;
+          sfile->asset_params->base_params.details_flags = eFileDetails{};
         }
       }
     }
@@ -4986,10 +4986,10 @@ static void node_interface_single_value_to_structure_type(bNodeTreeInterfaceItem
   if (item.item_type == eNodeTreeInterfaceItemType::NODE_INTERFACE_SOCKET) {
     auto &socket = reinterpret_cast<bNodeTreeInterfaceSocket &>(item);
     if (socket.flag & NODE_INTERFACE_SOCKET_SINGLE_VALUE_ONLY_LEGACY) {
-      socket.structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE;
+      socket.structure_type = NodeSocketInterfaceStructureType::Single;
     }
     else {
-      socket.structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+      socket.structure_type = NodeSocketInterfaceStructureType::Auto;
     }
   }
   else {
@@ -5821,7 +5821,7 @@ void blo_do_versions_450(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       if (ELEM(cu.ob_type, OB_CURVES_LEGACY, OB_FONT, OB_SURF)) {
         continue;
       }
-      short ob_type = OB_CURVES_LEGACY;
+      ObjectType ob_type = OB_CURVES_LEGACY;
       if (cu.vfont) {
         ob_type = OB_FONT;
       }

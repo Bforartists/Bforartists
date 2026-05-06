@@ -1039,6 +1039,10 @@ static void real_ibuf_size(
         *width = float(*width) * 4.0f / 3.0f;
         *height = float(*height) * 4.0f / 3.0f;
         break;
+
+      case MCLIP_PROXY_RENDER_SIZE_100:
+      case MCLIP_PROXY_RENDER_SIZE_FULL:
+        break;
     }
   }
 }
@@ -1834,7 +1838,7 @@ void BKE_movieclip_build_proxy_frame(MovieClip *clip,
   }
 
   user.framenr = cfra;
-  user.render_flag = 0;
+  user.render_flag = {};
   user.render_size = MCLIP_PROXY_RENDER_SIZE_FULL;
 
   ibuf = BKE_movieclip_get_ibuf_flag(clip, &user, clip_flag, MovieClipCacheFlag::SkipCache);

@@ -144,8 +144,9 @@ static void blo_update_defaults_screen(bScreen *screen,
       }
       else if (STR_ELEM(workspace_name, "Texture Paint", "Shading")) {
         SpaceImage *sima = static_cast<SpaceImage *>(area.spacedata.first);
+        /* Face opacity is set to 0 to not interfere with visualization while painting */
         sima->uv_face_opacity = 0.0f;
-        sima->uv_edge_opacity = 0.0f;
+        sima->uv_edge_opacity = 1.0f;
       }
       else if (BLI_str_startswith(workspace_name, "Compositing")) {
         SpaceImage *sima = static_cast<SpaceImage *>(area.spacedata.first);
@@ -470,6 +471,7 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   scene->eevee.motion_blur_shutter_deprecated = 0.5f;
   scene->eevee.flag &= ~SCE_EEVEE_VOLUME_CUSTOM_RANGE;
   scene->eevee.clamp_volume_indirect = 0.0f; /* Default from versioning is not 0. */
+  scene->eevee.ray_tracing_options = {};
 
   copy_v3_v3(scene->display.light_direction, float3(M_SQRT1_3));
   copy_v2_fl2(scene->safe_areas.title, 0.1f, 0.05f);

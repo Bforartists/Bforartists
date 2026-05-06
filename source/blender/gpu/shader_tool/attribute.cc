@@ -74,8 +74,8 @@ void SourceProcessor::lint_attributes(Parser &parser)
       }
       else if (attr_str == "attribute" || attr_str == "index" || attr_str == "frag_color" ||
                attr_str == "frag_depth" || attr_str == "uniform" || attr_str == "condition" ||
-               attr_str == "frequency" || attr_str == "sampler" ||
-               attr_str == "specialization_constant")
+               attr_str == "raster_order_group" || attr_str == "frequency" ||
+               attr_str == "sampler" || attr_str == "specialization_constant")
       {
         if (attr_scope.is_invalid()) {
           report_error(attr, "This attribute requires 1 argument");

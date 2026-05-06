@@ -252,7 +252,7 @@ static void select_linked_time_strip(const Scene *scene,
       if (left_match && right_match) {
         /* Direct match, copy all selection settings. */
         strip_dest.flag &= ~STRIP_ALLSEL;
-        strip_dest.flag |= strip_source->flag & (STRIP_ALLSEL);
+        strip_dest.flag |= strip_source->flag & STRIP_ALLSEL;
         recurs_sel_strip(&strip_dest);
       }
       else if (left_match && handle_clicked == STRIP_HANDLE_LEFT) {
@@ -853,7 +853,7 @@ static void sequencer_select_connected_strips(const StripSelection &selection)
     for (Strip *connection : connections) {
       /* Copy selection settings exactly for connected strips. */
       connection->flag &= ~STRIP_ALLSEL;
-      connection->flag |= source->flag & (STRIP_ALLSEL);
+      connection->flag |= source->flag & STRIP_ALLSEL;
     }
   }
 }

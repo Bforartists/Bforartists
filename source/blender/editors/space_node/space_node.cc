@@ -653,7 +653,7 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 
   region->v2d.scroll = (V2D_SCROLL_RIGHT | V2D_SCROLL_BOTTOM);
   region->v2d.keepzoom = V2D_LIMITZOOM | V2D_KEEPASPECT;
-  region->v2d.keeptot = 0;
+  region->v2d.keeptot = eView2D_KeepTot{};
 
   return reinterpret_cast<SpaceLink *>(snode);
 }
@@ -690,17 +690,11 @@ static bool any_node_uses_id(const bNodeTree *ntree, const ID *id)
 /**
  * Tag the space to recalculate the current tree.
  *
- * For all node trees this will do `snode_set_context()` which takes care of setting an active
- * tree. This will be done in the area refresh callback.
- *
- * For compositor tree this will additionally start of the compositor job.
+ * This will do `snode_set_context()` which takes care of setting an active tree. This will be done
+ * in the area refresh callback.
  */
-static void node_area_tag_tree_recalc(SpaceNode *snode, ScrArea *area)
+static void node_area_tag_tree_recalc(SpaceNode * /*snode*/, ScrArea *area)
 {
-  if (ED_node_is_compositor(snode)) {
-    snode->runtime->recalc_regular_compositing = true;
-  }
-
   ED_area_tag_refresh(area);
 }
 
@@ -853,21 +847,9 @@ static void node_area_listener(const wmSpaceTypeListenerParams *params)
   }
 }
 
-static void node_area_refresh(const bContext *C, ScrArea *area)
+static void node_area_refresh(const bContext *C, ScrArea * /*area*/)
 {
-  /* default now: refresh node is starting preview */
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
-
   snode_set_context(*C);
-
-  Scene *scene = CTX_data_scene(C);
-  if (snode->nodetree && snode->nodetree == scene->compositing_node_group) {
-    if (snode->runtime->recalc_regular_compositing) {
-      snode->runtime->recalc_regular_compositing = false;
-      ED_node_compositor_job(
-          CTX_data_main(C), CTX_wm_window(C), CTX_data_scene(C), CTX_data_view_layer(C));
-    }
-  }
 }
 
 static SpaceLink *node_duplicate(SpaceLink *sl)
@@ -1066,7 +1048,9 @@ static bool node_import_file_drop_poll(bContext *C, wmDrag *drag, const wmEvent 
   return false;
 }
 
-static bool node_socket_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
+static bool node_interface_item_drop_poll_base(bContext *C,
+                                               wmDrag *drag,
+                                               const wmEvent * /*event*/)
 {
   if (drag->type != WM_DRAG_NODE_TREE_INTERFACE) {
     return false;
@@ -1086,62 +1070,17 @@ static bool node_socket_drop_poll(bContext *C, wmDrag *drag, const wmEvent *even
     return false;
   }
 
-  /* Accept only socket items. */
-  const bNodeTreeInterfaceSocket *socket =
-      bke::node_interface::get_item_as<bNodeTreeInterfaceSocket>(drag_data->item);
-  if (socket) {
-    /* The check to avoid dragging output sockets is deferred to the
-     * operator's poll in order to display a hint tooltip. */
-    return true;
-  }
-
-  /* Unless Ctrl is held, prefer dragging the toggle socket alone from a panel with toggle. */
-  if (!(event->modifier & KM_CTRL)) {
-    const bNodeTreeInterfacePanel *panel =
-        bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(drag_data->item);
-    if (panel && panel->header_toggle_socket()) {
-      return true;
-    }
-  }
-  return false;
+  return true;
 }
 
-static bool node_panel_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
+static bool node_interface_item_drop_poll_single(bContext *C, wmDrag *drag, const wmEvent *event)
 {
-  if (drag->type != WM_DRAG_NODE_TREE_INTERFACE) {
-    return false;
-  }
-  SpaceNode *snode = CTX_wm_space_node(C);
-  if (!snode || !snode->edittree) {
-    return false;
-  }
-  const bNodeTree *target_ntree = snode->edittree;
+  return !(event->modifier & KM_CTRL) && node_interface_item_drop_poll_base(C, drag, event);
+}
 
-  auto *drag_data = static_cast<bke::node_interface::bNodeTreeInterfaceItemReference *>(
-      drag->poin);
-
-  /* Drag only onto node editors of the same node. */
-  const bNodeTree *source_ntree = drag_data->tree;
-  if (target_ntree != source_ntree) {
-    return false;
-  }
-
-  /* Accept only panel items. */
-  const bNodeTreeInterfacePanel *panel = bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(
-      drag_data->item);
-  if (panel) {
-    /* Unless Ctrl is held, prefer dragging only the toggle socket of a panel with toggle. */
-    if (!(event->modifier & KM_CTRL)) {
-      if (panel->header_toggle_socket()) {
-        return false;
-      }
-    }
-
-    /* The check for whether the panel contains at least one input socket is
-     * deferred to the operator's poll in order to display a hint tooltip. */
-    return true;
-  }
-  return false;
+static bool node_interface_item_drop_poll_all(bContext *C, wmDrag *drag, const wmEvent *event)
+{
+  return event->modifier & KM_CTRL && node_interface_item_drop_poll_base(C, drag, event);
 }
 
 static void node_group_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
@@ -1222,84 +1161,51 @@ static void node_import_file_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox
   io::paths_to_operator_properties(drop->ptr, WM_drag_get_paths(drag));
 }
 
-static void node_socket_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox *drop)
+static void node_interface_item_drop_copy_single(bContext * /*C*/,
+                                                 wmDrag * /*drag*/,
+                                                 wmDropBox *drop)
 {
-  if (drag->type != WM_DRAG_NODE_TREE_INTERFACE) {
-    return;
-  }
-
-  auto *drag_data = static_cast<bke::node_interface::bNodeTreeInterfaceItemReference *>(
-      drag->poin);
-  const bNodeTreeInterfaceSocket *socket =
-      bke::node_interface::get_item_as<bNodeTreeInterfaceSocket>(drag_data->item);
-  if (!socket) {
-    const bNodeTreeInterfacePanel *panel =
-        bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(drag_data->item);
-    socket = panel->header_toggle_socket();
-  }
-
-  BLI_assert(socket);
-  PropertyRNA *prop = RNA_struct_find_property(drop->ptr, "panel_identifier");
-  RNA_property_unset(drop->ptr, prop);
-  RNA_string_set(drop->ptr, "socket_identifier", socket->identifier);
+  RNA_boolean_set(drop->ptr, "only_selected_sockets", true);
+  RNA_boolean_set(drop->ptr, "all_panel_contents", false);
 }
 
-static void node_panel_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox *drop)
+static void node_interface_item_drop_copy_all(bContext * /*C*/, wmDrag * /*drag*/, wmDropBox *drop)
 {
-  if (drag->type != WM_DRAG_NODE_TREE_INTERFACE) {
-    return;
-  }
-
-  auto *drag_data = static_cast<bke::node_interface::bNodeTreeInterfaceItemReference *>(
-      drag->poin);
-  const bNodeTreeInterfacePanel *panel = bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(
-      drag_data->item);
-
-  BLI_assert(panel);
-  PropertyRNA *prop = RNA_struct_find_property(drop->ptr, "socket_identifier");
-  RNA_property_unset(drop->ptr, prop);
-  RNA_int_set(drop->ptr, "panel_identifier", panel->identifier);
+  RNA_boolean_set(drop->ptr, "only_selected_sockets", true);
+  RNA_boolean_set(drop->ptr, "all_panel_contents", true);
 }
 
-static std::string node_socket_drop_tooltip(bContext * /*C*/,
-                                            wmDrag *drag,
-                                            const int /*xy*/[2],
-                                            wmDropBox * /*drop*/)
+static std::string node_interface_item_drop_tooltip_single(bContext * /*C*/,
+                                                           wmDrag *drag,
+                                                           const int /*xy*/[2],
+                                                           wmDropBox * /*drop*/)
 {
   auto *drag_data = static_cast<bke::node_interface::bNodeTreeInterfaceItemReference *>(
       drag->poin);
-  const bNodeTreeInterfaceSocket *socket =
-      bke::node_interface::get_item_as<bNodeTreeInterfaceSocket>(drag_data->item);
+  bool has_selected_header_toggle = false;
 
-  if (socket) {
-    return fmt::format(fmt::runtime(TIP_("Add \"{}\" Input")), socket->name);
-  }
-  else {
-    const bNodeTreeInterfacePanel *panel =
-        bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(drag_data->item);
-    socket = panel->header_toggle_socket();
-
-    /* Dragging a panel with toggle defaults to dragging the toggle socket.
-     * Display a hint with the modifier required to drag the panel. */
-    if (socket) {
-      return fmt::format(fmt::runtime(TIP_("Add \"{}\" Input (Ctrl to add panel)")), socket->name);
+  for (int i = 0; i < drag_data->items_count; i++) {
+    const bNodeTreeInterfaceItem *item = drag_data->items[i];
+    if (const auto *panel = bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(item)) {
+      if (panel->header_toggle_socket()) {
+        has_selected_header_toggle = true;
+        break;
+      }
     }
   }
-  BLI_assert_unreachable();
-  return "Error: Unsupported socket.";
+
+  if (has_selected_header_toggle) {
+    return TIP_("Add Group Input (hold Ctrl to include sockets under panel toggle)");
+  }
+  return TIP_("Add Group Input");
 }
 
-static std::string node_panel_drop_tooltip(bContext * /*C*/,
-                                           wmDrag *drag,
-                                           const int /*xy*/[2],
-                                           wmDropBox * /*drop*/)
+static std::string node_interface_item_drop_tooltip_all(bContext * /*C*/,
+                                                        wmDrag * /*drag*/,
+                                                        const int /*xy*/[2],
+                                                        wmDropBox * /*drop*/)
 {
-  auto *drag_data = static_cast<bke::node_interface::bNodeTreeInterfaceItemReference *>(
-      drag->poin);
-  const bNodeTreeInterfacePanel *panel = bke::node_interface::get_item_as<bNodeTreeInterfacePanel>(
-      drag_data->item);
-  BLI_assert(panel);
-  return fmt::format(fmt::runtime(TIP_("Add \"{}\" Panel")), panel->name);
+  return TIP_("Add Group Input");
 }
 
 /* this region dropbox definition */
@@ -1353,16 +1259,16 @@ static void node_dropboxes()
                  nullptr);
   WM_dropbox_add(lb,
                  "NODE_OT_add_group_input_node",
-                 node_socket_drop_poll,
-                 node_socket_drop_copy,
+                 node_interface_item_drop_poll_single,
+                 node_interface_item_drop_copy_single,
                  nullptr,
-                 node_socket_drop_tooltip);
+                 node_interface_item_drop_tooltip_single);
   WM_dropbox_add(lb,
                  "NODE_OT_add_group_input_node",
-                 node_panel_drop_poll,
-                 node_panel_drop_copy,
+                 node_interface_item_drop_poll_all,
+                 node_interface_item_drop_copy_all,
                  nullptr,
-                 node_panel_drop_tooltip);
+                 node_interface_item_drop_tooltip_all);
 }
 
 /* ************* end drop *********** */

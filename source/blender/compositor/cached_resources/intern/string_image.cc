@@ -179,6 +179,7 @@ StringImage::StringImage(Context &context,
   BLI_SCOPED_DEFER([&]() { BLF_unload_id(font_identifier); });
 
   BLF_size(font_identifier, size);
+  BLF_enable(font_identifier, BLF_NO_FALLBACK);
 
   Vector<StringRef> lines = BLF_string_wrap(
       font_identifier, string, wrap_width.value_or(-1), BLFWrapMode::Typographical);

@@ -731,6 +731,8 @@ static void version_group_input_socket_data_block_reference(bNodeTree &ntree)
         case SOCK_MATERIAL:
           socket.default_value_typed<bNodeSocketValueMaterial>()->value = nullptr;
           break;
+        default:
+          break;
       }
     }
   }

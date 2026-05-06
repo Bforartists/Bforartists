@@ -8,6 +8,7 @@ set(INC
   cached_resources
   derived_resources
   utilities
+  ../nodes/geometry/include
   ../gpu/intern
   ../makesrna
   ../render/intern

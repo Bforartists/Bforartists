@@ -59,17 +59,10 @@ NodeGroupOperation::NodeGroupOperation(Context &context,
 
 void NodeGroupOperation::execute()
 {
-  Set<StringRef> needed_outputs;
-  for (const bNodeTreeInterfaceSocket *output : node_group_.interface_outputs()) {
-    if (this->get_result(output->identifier).should_compute()) {
-      needed_outputs.add_new(output->identifier);
-    }
-  }
-
   const Schedule schedule = compute_schedule(this->context(),
                                              node_group_,
+                                             *this,
                                              needed_output_types_,
-                                             needed_outputs,
                                              instance_key_,
                                              active_node_group_instance_key_);
   CompileState compile_state(this->context(), schedule);

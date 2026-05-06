@@ -815,7 +815,7 @@ static KS_Path *rna_KeyingSet_paths_add(KeyingSet *keyingset,
                                         const char group_name[])
 {
   KS_Path *ksp = nullptr;
-  short flag = 0;
+  eKSP_Settings flag{};
 
   /* Special case when index = -1, we key the whole array
    * (as with other places where index is used). */
@@ -826,7 +826,8 @@ static KS_Path *rna_KeyingSet_paths_add(KeyingSet *keyingset,
 
   /* if data is valid, call the API function for this */
   if (keyingset) {
-    ksp = BKE_keyingset_add_path(keyingset, id, group_name, rna_path, index, flag, group_method);
+    ksp = BKE_keyingset_add_path(
+        keyingset, id, group_name, rna_path, index, flag, eKSP_Grouping(group_method));
     keyingset->active_path = BLI_listbase_count(&keyingset->paths);
   }
   else {

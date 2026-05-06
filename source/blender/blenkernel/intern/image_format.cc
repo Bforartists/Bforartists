@@ -152,7 +152,7 @@ void BKE_image_format_set(ImageFormatData *imf, ID *owner_id, const char imtype)
   {
     const int depth_ok = BKE_imtype_valid_depths(imf->imtype);
     if ((imf->depth & depth_ok) == 0) {
-      imf->depth = BKE_imtype_first_valid_depth(depth_ok);
+      imf->depth = eImageFormatDepth(BKE_imtype_first_valid_depth(depth_ok));
     }
   }
 
@@ -385,7 +385,7 @@ char BKE_imtype_valid_channels(const char imtype)
   return chan_flag;
 }
 
-char BKE_imtype_valid_depths(const char imtype)
+eImageFormatDepth BKE_imtype_valid_depths(const char imtype)
 {
   switch (imtype) {
     case R_IMF_IMTYPE_RADHDR:
@@ -413,11 +413,11 @@ char BKE_imtype_valid_depths(const char imtype)
   }
 }
 
-char BKE_imtype_valid_depths_with_video(char imtype, const ID *owner_id)
+eImageFormatDepth BKE_imtype_valid_depths_with_video(char imtype, const ID *owner_id)
 {
   UNUSED_VARS(owner_id); /* Might be unused depending on build options. */
 
-  int depths = BKE_imtype_valid_depths(imtype);
+  eImageFormatDepth depths = BKE_imtype_valid_depths(imtype);
   /* Depending on video codec selected, valid color bit depths might vary. */
   if (imtype == R_IMF_IMTYPE_FFMPEG) {
     const bool is_render_out = (owner_id && GS(owner_id->name) == ID_SCE);
@@ -429,10 +429,10 @@ char BKE_imtype_valid_depths_with_video(char imtype, const ID *owner_id)
   return depths;
 }
 
-char BKE_imtype_first_valid_depth(const char valid_depths)
+eImageFormatDepth BKE_imtype_first_valid_depth(const char valid_depths)
 {
   /* set first available depth */
-  const char depth_ls[] = {
+  const eImageFormatDepth depth_ls[] = {
       R_IMF_CHAN_DEPTH_32,
       R_IMF_CHAN_DEPTH_24,
       R_IMF_CHAN_DEPTH_16,
@@ -440,9 +440,9 @@ char BKE_imtype_first_valid_depth(const char valid_depths)
       R_IMF_CHAN_DEPTH_10,
       R_IMF_CHAN_DEPTH_8,
       R_IMF_CHAN_DEPTH_1,
-      0,
+      eImageFormatDepth(0),
   };
-  for (int i = 0; depth_ls[i]; i++) {
+  for (int i = 0; depth_ls[i] != eImageFormatDepth(0); i++) {
     if (valid_depths & depth_ls[i]) {
       return depth_ls[i];
     }
@@ -910,7 +910,7 @@ void BKE_image_format_to_imbuf(ImBuf *ibuf, const ImageFormatData *imf)
   }
 }
 
-static char imtype_best_depth(const ImBuf *ibuf, const char imtype)
+static eImageFormatDepth imtype_best_depth(const ImBuf *ibuf, const char imtype)
 {
   const char depth_ok = BKE_imtype_valid_depths(imtype);
 

@@ -822,29 +822,28 @@ static char *rna_def_property_get_func(
         }
         else {
           rna_print_data_get(f, dp);
+          fprintf(f, "    uint64_t i;\n");
 
           if (prop->flag & PROP_DYNAMIC) {
             char *lenfunc = rna_alloc_function_name(
                 srna->identifier, rna_safe_id(prop->identifier), "get_length");
             fprintf(f, "    unsigned int arraylen[RNA_MAX_ARRAY_DIMENSION];\n");
-            fprintf(f, "    unsigned int i;\n");
             fprintf(f, "    unsigned int len = %s(ptr, arraylen);\n\n", lenfunc);
             fprintf(f, "    for (i = 0; i < len; i++) {\n");
             MEM_delete(lenfunc);
           }
           else {
-            fprintf(f, "    unsigned int i;\n\n");
             fprintf(f, "    for (i = 0; i < %u; i++) {\n", prop->totarraylength);
           }
 
           if (dp->dnaarraylength == 1) {
             if (prop->type == PROP_BOOLEAN && dp->booleanbit) {
               fprintf(f,
-                      "        values[i] = %s((data->%s & (",
+                      "        values[i] = %s((data->%s & (uint64_t(",
                       (dp->booleannegative) ? "!" : "",
                       dp->dnaname);
               rna_int_print(f, dp->booleanbit);
-              fprintf(f, " << i)) != 0);\n");
+              fprintf(f, ") << i)) != 0);\n");
             }
             else {
               fprintf(f,
@@ -1256,18 +1255,18 @@ static char *rna_def_property_set_func(
         }
         else {
           rna_print_data_get(f, dp);
+          fprintf(f, "    uint64_t i;\n");
 
           if (prop->flag & PROP_DYNAMIC) {
             char *lenfunc = rna_alloc_function_name(
                 srna->identifier, rna_safe_id(prop->identifier), "set_length");
-            fprintf(f, "    unsigned int i, arraylen[RNA_MAX_ARRAY_DIMENSION];\n");
+            fprintf(f, "    unsigned int arraylen[RNA_MAX_ARRAY_DIMENSION];\n");
             fprintf(f, "    unsigned int len = %s(ptr, arraylen);\n\n", lenfunc);
             rna_clamp_value_range(f, prop);
             fprintf(f, "    for (i = 0; i < len; i++) {\n");
             MEM_delete(lenfunc);
           }
           else {
-            fprintf(f, "    unsigned int i;\n\n");
             rna_clamp_value_range(f, prop);
             fprintf(f, "    for (i = 0; i < %u; i++) {\n", prop->totarraylength);
           }
@@ -1278,22 +1277,22 @@ static char *rna_def_property_set_func(
               fprintf(f,
                       "        if (%svalues[i]) { data->%s = "
                       "std::remove_reference_t<decltype(data->%s)>"
-                      "(uint64_t(data->%s) | (",
+                      "(uint64_t(data->%s) | (uint64_t(",
                       (dp->booleannegative) ? "!" : "",
                       dp->dnaname,
                       dp->dnaname,
                       dp->dnaname);
               rna_int_print(f, dp->booleanbit);
-              fprintf(f, " << i)); }\n");
+              fprintf(f, ") << i)); }\n");
               fprintf(f,
                       "        else { data->%s = "
                       "std::remove_reference_t<decltype(data->%s)>"
-                      "(uint64_t(data->%s) & ~uint64_t(",
+                      "(uint64_t(data->%s) & ~(uint64_t(",
                       dp->dnaname,
                       dp->dnaname,
                       dp->dnaname);
               rna_int_print(f, dp->booleanbit);
-              fprintf(f, " << i)); }\n");
+              fprintf(f, ") << i)); }\n");
             }
             else {
               fprintf(

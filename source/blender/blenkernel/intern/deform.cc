@@ -513,6 +513,8 @@ static const int *object_defgroup_active_index_get_p(const Object *ob)
       const GreasePencil *grease_pencil = id_cast<const GreasePencil *>(ob->data);
       return &grease_pencil->vertex_group_active_index;
     }
+    default:
+      break;
   }
   return nullptr;
 }

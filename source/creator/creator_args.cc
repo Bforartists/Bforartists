@@ -3200,7 +3200,7 @@ void main_args_setup(bContext *C, bArgs *ba, bool all)
   BLI_args_add(ba, nullptr, "--verbose", CB(arg_handle_verbosity_set), nullptr);
 
   BLI_args_add(ba, nullptr, "--app-template", CB(arg_handle_app_template), nullptr);
-  BLI_args_add(ba, nullptr, "--factory-startup", CB(arg_handle_factory_startup_set), nullptr);
+  BLI_args_add(ba, "-X", "--factory-startup", CB(arg_handle_factory_startup_set), nullptr);
   BLI_args_add(
       ba, nullptr, "--enable-event-simulate", CB(arg_handle_enable_event_simulate), nullptr);
 

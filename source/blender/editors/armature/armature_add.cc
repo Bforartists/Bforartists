@@ -603,7 +603,7 @@ static void update_duplicate_loc_rot_constraint_settings(Object *ob,
 {
   /* This code assumes that bRotLimitConstraint and bLocLimitConstraint have the same fields in
    * the same memory locations. */
-  bRotLimitConstraint *limit = static_cast<bRotLimitConstraint *>(curcon->data);
+  bLocLimitConstraint *limit = static_cast<bLocLimitConstraint *>(curcon->data);
   float local_mat[4][4], imat[4][4];
 
   float min_vec[3], max_vec[3];
@@ -656,12 +656,9 @@ static void update_duplicate_loc_rot_constraint_settings(Object *ob,
     max_vec[0] = min_x_copy * -1;
 
     /* Also flip the enabled axis check-boxes accordingly. */
-    const bool use_max_x = (limit->flag & LIMIT_XMAX);
-    const bool use_min_x = (limit->flag & LIMIT_XMIN);
-    limit->flag |= use_max_x ? LIMIT_XMIN : 0;
-    limit->flag &= (use_max_x && !use_min_x) ? ~LIMIT_XMAX : limit->flag;
-    limit->flag |= use_min_x ? LIMIT_XMAX : 0;
-    limit->flag &= (use_min_x && !use_max_x) ? ~LIMIT_XMIN : limit->flag;
+    if (bool(limit->flag & LIMIT_XMIN) != bool(limit->flag & LIMIT_XMAX)) {
+      limit->flag ^= (LIMIT_XMIN | LIMIT_XMAX);
+    }
   }
 
   /* convert back to the settings space */
@@ -856,7 +853,7 @@ static void update_duplicate_transform_constraint_settings(Object *ob,
   mul_m4_v3(imat, trans->to_max_scale);
 }
 
-static void track_axis_x_swap(int &value)
+static void track_axis_x_swap(eTrackToAxis_Modes &value)
 {
   /* Swap track axis X <> -X. */
   if (value == TRACK_X) {
@@ -944,6 +941,8 @@ static void update_duplicate_constraint_settings(EditBone *dup_bone,
         break;
       case CONSTRAINT_TYPE_SHRINKWRAP:
         update_duplicate_constraint_shrinkwrap_settings(&curcon);
+        break;
+      default:
         break;
     }
   }
@@ -1416,7 +1415,8 @@ static wmOperatorStatus armature_symmetrize_exec(bContext *C, wmOperator *op)
     {
       if (ebone_iter->temp.ebone) {
         /* copy all flags except for ... */
-        const int flag_copy = (~0) & ~(BONE_SELECTED | BONE_ROOTSEL | BONE_TIPSEL);
+        const eBone_Flag flag_copy = eBone_Flag(~0) &
+                                     ~(BONE_SELECTED | BONE_ROOTSEL | BONE_TIPSEL);
 
         EditBone *ebone = ebone_iter->temp.ebone;
 

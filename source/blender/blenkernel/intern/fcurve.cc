@@ -1003,7 +1003,7 @@ void fcurve_store_samples(FCurve *fcu, void *data, int start, int end, FcuSample
 
 static void init_unbaked_bezt_data(BezTriple *bezt)
 {
-  bezt->f1 = bezt->f2 = bezt->f3 = SELECT;
+  bezt->f1 = bezt->f2 = bezt->f3 = BEZT_FLAG_SELECT;
   /* Baked FCurve points always use linear interpolation. */
   bezt->ipo = BEZT_IPO_LIN;
   bezt->h1 = bezt->h2 = HD_AUTO_ANIM;
@@ -1233,7 +1233,7 @@ void BKE_fcurve_handles_recalc_ex(FCurve &fcu, const eBezTriple_Flag handle_sel_
 void BKE_fcurve_update_handle_flag_from_opposite(BezTriple &key, const HandleSide source_side)
 {
   eBezTriple_Handle source;
-  uint8_t *target;
+  eBezTriple_Handle *target;
   switch (source_side) {
     case HandleSide::LEFT: {
       source = eBezTriple_Handle(key.h1);
@@ -1268,7 +1268,7 @@ void BKE_fcurve_update_handle_flag_from_opposite(BezTriple &key, const HandleSid
 
 void BKE_fcurve_handles_recalc(FCurve &fcu)
 {
-  BKE_fcurve_handles_recalc_ex(fcu, eBezTriple_Flag(SELECT));
+  BKE_fcurve_handles_recalc_ex(fcu, BEZT_FLAG_SELECT);
 }
 
 void testhandles_fcurve(FCurve *fcu, eBezTriple_Flag sel_flag, const bool use_handle)
@@ -2528,6 +2528,8 @@ void BKE_fmodifiers_blend_write(BlendWriter *writer, ListBaseT<FModifier> *fmodi
 
           break;
         }
+        default:
+          break;
       }
     }
   }
@@ -2570,6 +2572,8 @@ void BKE_fmodifiers_blend_read_data(BlendDataReader *reader,
 
         break;
       }
+      default:
+        break;
     }
   }
 }

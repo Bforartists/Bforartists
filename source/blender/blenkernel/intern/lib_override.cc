@@ -4404,7 +4404,7 @@ IDOverrideLibraryPropertyOperation *BKE_lib_override_library_property_operation_
 
 IDOverrideLibraryPropertyOperation *BKE_lib_override_library_property_operation_get(
     IDOverrideLibraryProperty *liboverride_property,
-    const short operation,
+    const eID_OverrideLib_Op operation,
     const char *subitem_refname,
     const char *subitem_locname,
     const std::optional<ID *> &subitem_refid,
@@ -5160,7 +5160,7 @@ void BKE_lib_override_library_id_hierarchy_reset(Main *bmain,
 }
 
 void BKE_lib_override_library_operations_tag(IDOverrideLibraryProperty *liboverride_property,
-                                             const short tag,
+                                             const eID_OverrideLib_PropTag tag,
                                              const bool do_set)
 {
   if (liboverride_property != nullptr) {
@@ -5183,7 +5183,7 @@ void BKE_lib_override_library_operations_tag(IDOverrideLibraryProperty *liboverr
 }
 
 void BKE_lib_override_library_properties_tag(IDOverrideLibrary *liboverride,
-                                             const short tag,
+                                             const eID_OverrideLib_PropTag tag,
                                              const bool do_set)
 {
   if (liboverride != nullptr) {
@@ -5193,7 +5193,9 @@ void BKE_lib_override_library_properties_tag(IDOverrideLibrary *liboverride,
   }
 }
 
-void BKE_lib_override_library_main_tag(Main *bmain, const short tag, const bool do_set)
+void BKE_lib_override_library_main_tag(Main *bmain,
+                                       const eID_OverrideLib_PropTag tag,
+                                       const bool do_set)
 {
   ID *id;
 

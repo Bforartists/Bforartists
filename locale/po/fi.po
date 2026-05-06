@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-04-06 09:16+0000\n"
 "Last-Translator: Leevi Oksanen <laavi.oksanen@gmail.com>\n"
 "Language-Team: Finnish <https://translate.blender.org/projects/blender-ui/ui/fi/>\n"
@@ -7232,20 +7232,24 @@ msgid "ID Type"
 msgstr "ID-tyyppi"
 
 
-msgid "Math"
-msgstr "Matematiikka"
-
-
-msgid "Utilities"
-msgstr "Työkalut"
-
-
 msgid "Show/Hide"
 msgstr "Näytä/Piilota"
 
 
 msgid "Metaball"
 msgstr "Metapallo"
+
+
+msgid "Names"
+msgstr "Nimet"
+
+
+msgid "Math"
+msgstr "Matematiikka"
+
+
+msgid "Utilities"
+msgstr "Työkalut"
 
 
 msgid "Read"
@@ -7256,10 +7260,6 @@ msgid "Write"
 msgstr "Kirjoita"
 
 
-msgid "Names"
-msgstr "Nimet"
-
-
 msgid "Instances"
 msgstr "Instanssit"
 
@@ -7268,16 +7268,16 @@ msgid "Import"
 msgstr "Tuo"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "UV Mapping"
 msgstr "UV-kartoittaminen"
 
 
 msgid "Select More/Less"
 msgstr "Valitse enemmän/vähemmän"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"

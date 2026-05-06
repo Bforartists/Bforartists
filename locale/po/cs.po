@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-12-01 09:17+0000\n"
 "Last-Translator: Matt Mitacek <mattmitacek@gmail.com>\n"
 "Language-Team: Czech <https://translate.blender.org/projects/blender-ui/ui/cs/>\n"
@@ -13839,24 +13839,8 @@ msgid "Material slot name"
 msgstr "Název okénka materiálu"
 
 
-msgid "Face Data"
-msgstr "Data Ploch"
-
-
-msgid "Math"
-msgstr "Matematika"
-
-
-msgid "Utilities"
-msgstr "Nástroje"
-
-
 msgid "Clean Up"
 msgstr "Vyčistit"
-
-
-msgid "Merge"
-msgstr "Sloučit"
 
 
 msgid "Show/Hide"
@@ -13875,12 +13859,16 @@ msgid "Names"
 msgstr "Názvy"
 
 
+msgid "Math"
+msgstr "Matematika"
+
+
 msgid "Bone Roll"
 msgstr "Kost"
 
 
-msgid "Instances"
-msgstr "Instance"
+msgid "Utilities"
+msgstr "Nástroje"
 
 
 msgid "Pivot Point"
@@ -13891,12 +13879,16 @@ msgid "Snap"
 msgstr "Přichytit"
 
 
-msgid "Import"
-msgstr "Importovat"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "Způsob útlumu"
+
+
+msgid "Instances"
+msgstr "Instance"
+
+
+msgid "Import"
+msgstr "Importovat"
 
 
 msgid "Mirror"
@@ -13935,10 +13927,6 @@ msgid "Relations"
 msgstr "Vztahy"
 
 
-msgid "Layout"
-msgstr "Rozložení"
-
-
 msgid "Rigid Body"
 msgstr "Tuhé Těleso"
 
@@ -13959,28 +13947,40 @@ msgid "Make Single User"
 msgstr "Přivlastnit"
 
 
-msgid "Keying"
-msgstr "Klíčovací sestava"
-
-
 msgid "Hooks"
 msgstr "Háky"
 
 
-msgid "Tracking"
-msgstr "Sledování"
+msgid "Layout"
+msgstr "Rozložení"
 
 
 msgid "Clear Transform"
 msgstr "Vyčistit transformaci"
 
 
+msgid "Keying"
+msgstr "Klíčovací sestava"
+
+
 msgid "Propagate"
 msgstr "Vložit"
 
 
+msgid "Tracking"
+msgstr "Sledování"
+
+
 msgid "Mesh Select Mode"
 msgstr "Síťový mód výběru"
+
+
+msgid "Face Data"
+msgstr "Data Ploch"
+
+
+msgid "Merge"
+msgstr "Sloučit"
 
 
 msgid "Basic"
@@ -17949,11 +17949,6 @@ msgstr "Skrýt skryté soubory"
 
 
 msgctxt "Operator"
-msgid "Import SVG"
-msgstr "Importovat"
-
-
-msgctxt "Operator"
 msgid "Import FBX"
 msgstr "Importovat FBX"
 
@@ -18794,6 +18789,11 @@ msgstr "Y Max"
 
 msgid "Y Min"
 msgstr "Y Min"
+
+
+msgctxt "Operator"
+msgid "Select by Type"
+msgstr "Vybrat podle Typu"
 
 
 msgctxt "Operator"
@@ -25392,11 +25392,6 @@ msgid "Change selection of all visible objects in scene"
 msgstr "Změní výběr všech viditelných objektů ve scéně"
 
 
-msgctxt "Operator"
-msgid "Select by Type"
-msgstr "Vybrat podle Typu"
-
-
 msgid "Select all visible objects that are of a type"
 msgstr "Vybere všechny viditelné objekty, které jsou typu"
 
@@ -27276,11 +27271,6 @@ msgstr "Přichytávání"
 
 
 msgctxt "Operator"
-msgid "Area Options"
-msgstr "Nastavení oblasti"
-
-
-msgctxt "Operator"
 msgid "Split Area"
 msgstr "Rozdělit oblast"
 
@@ -28787,10 +28777,6 @@ msgstr "Průměrná hodnota"
 msgctxt "Operator"
 msgid "Copy Mirrored UV Coords"
 msgstr "Kopírovat Zrcadlené UV Souřadnice"
-
-
-msgid "Axis Direction"
-msgstr "Odznačit spojené"
 
 
 msgctxt "Operator"
@@ -32395,14 +32381,6 @@ msgstr "GL Omezení Textury"
 
 msgid "Device"
 msgstr "Zařízení"
-
-
-msgid "Image Display Method"
-msgstr "Metoda zobrazení obrázku"
-
-
-msgid "2D Texture"
-msgstr "2D Textura"
 
 
 msgid "Ambient Color"
@@ -40547,10 +40525,6 @@ msgstr "Nelze najít vrstvu, která by se přidala"
 
 msgid "Failed to set value"
 msgstr "Nastavení hodnoty se nezdařilo"
-
-
-msgid "Pin"
-msgstr "Připnout"
 
 
 msgctxt "Operator"

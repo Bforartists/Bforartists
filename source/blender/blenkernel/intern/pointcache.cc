@@ -157,7 +157,10 @@ static int ptcache_basic_header_write(PTCacheFile *pf)
 
   return 1;
 }
-static void ptcache_add_extra_data(PTCacheMem *pm, uint type, uint count, void *data)
+static void ptcache_add_extra_data(PTCacheMem *pm,
+                                   ePointCache_ExtraDataType type,
+                                   uint count,
+                                   void *data)
 {
   PTCacheExtra *extra = MEM_new<PTCacheExtra>("Point cache: extra data descriptor");
 
@@ -531,6 +534,8 @@ static void ptcache_particle_extra_read(void *psys_v, PTCacheMem *pm, float /*cf
         psys->tot_fluidsprings = psys->alloc_fluidsprings = extra->totdata;
         break;
       }
+      case BPHYS_EXTRA_CLOTH_ACCELERATION:
+        break;
     }
   }
 }
@@ -633,6 +638,8 @@ static void ptcache_cloth_extra_read(void *cloth_v, PTCacheMem *pm, float /*cfra
         copy_v3_v3(cloth->average_acceleration, static_cast<const float *>(extra->data));
         break;
       }
+      case BPHYS_EXTRA_FLUID_SPRINGS:
+        break;
     }
   }
 }
@@ -1931,7 +1938,7 @@ static PTCacheMem *ptcache_disk_frame_to_mem(PTCacheID *pid, int cfra)
   }
 
   if (!error && pf->flag & PTCACHE_TYPEFLAG_EXTRADATA) {
-    uint extratype = 0;
+    ePointCache_ExtraDataType extratype = ePointCache_ExtraDataType{};
 
     while (!error && ptcache_file_read(pf, &extratype, 1, sizeof(uint))) {
       PTCacheExtra *extra = MEM_new<PTCacheExtra>("Pointcache extradata");
@@ -3353,7 +3360,7 @@ void BKE_ptcache_disk_to_mem(PTCacheID *pid)
 {
   PointCache *cache = pid->cache;
   PTCacheMem *pm = nullptr;
-  int baked = cache->flag & PTCACHE_BAKED;
+  ePointCache_Flag baked = cache->flag & PTCACHE_BAKED;
   int cfra, sfra = cache->startframe, efra = cache->endframe;
 
   /* Remove possible bake flag to allow clear */
@@ -3377,7 +3384,7 @@ void BKE_ptcache_mem_to_disk(PTCacheID *pid)
 {
   PointCache *cache = pid->cache;
   PTCacheMem *pm = static_cast<PTCacheMem *>(cache->mem_cache.first);
-  int baked = cache->flag & PTCACHE_BAKED;
+  ePointCache_Flag baked = cache->flag & PTCACHE_BAKED;
 
   /* Remove possible bake flag to allow clear */
   cache->flag &= ~PTCACHE_BAKED;

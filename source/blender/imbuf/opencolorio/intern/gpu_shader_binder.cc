@@ -316,6 +316,10 @@ static void gpu_display_shader_parameters_update(internal::GPUDisplayShader &dis
     data.dither = display_parameters.dither;
     do_update = true;
   }
+  if (data.opacity != display_parameters.opacity) {
+    data.opacity = display_parameters.opacity;
+    do_update = true;
+  }
   if (bool(data.use_predivide) != display_parameters.use_predivide) {
     data.use_predivide = display_parameters.use_predivide;
     do_update = true;

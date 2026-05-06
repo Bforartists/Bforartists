@@ -3092,7 +3092,7 @@ SoftBody *sbNew()
   sb->colball = 0.49f;
   sb->balldamp = 0.50f;
   sb->ballstiff = 1.0f;
-  sb->sbc_mode = 1;
+  sb->sbc_mode = SBC_MODE_AVG;
 
   sb->minloops = 10;
   sb->maxloops = 300;

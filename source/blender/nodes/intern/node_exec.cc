@@ -140,6 +140,8 @@ static bNodeStack *setup_stack(bNodeStack *stack, bNodeTree *ntree, bNode *node,
     case SOCK_RGBA:
       node_socket_get_color(ntree, node, sock, ns->vec);
       break;
+    default:
+      break;
   }
 
   return ns;

@@ -50,4 +50,17 @@ StringRefNull essentials_directory_path()
   }();
   return path;
 }
+
+bool skip_experimental_asset_catalog(const UUID & /*catalog_id*/)
+{
+  /* Return false when the catalog_id should be rejected based on experimental features:
+   *
+   * const UUID UUID_my_feature_catalog_id("11111111-2222-3333-4444-555555555555");
+   * if (!U.experimental.use_my_feature && catalog_id == UUID_my_feature_catalog_id) {
+   *   return true;
+   * }
+   */
+  return false;
+}
+
 }  // namespace blender::asset_system

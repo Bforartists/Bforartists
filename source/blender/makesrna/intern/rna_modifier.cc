@@ -1298,7 +1298,6 @@ static void rna_fluid_set_type(Main *bmain, Scene *scene, PointerRNA *ptr)
       break;
     case MOD_FLUID_TYPE_FLOW:
     case MOD_FLUID_TYPE_EFFEC:
-    case 0:
     default:
       break;
   }
@@ -2343,7 +2342,7 @@ const EnumPropertyItem *grease_pencil_build_time_mode_filter(bContext * /*C*/,
 
   auto *md = static_cast<ModifierData *>(ptr->data);
   auto *mmd = reinterpret_cast<BuildGpencilModifierData *>(md);
-  const bool is_concurrent = (mmd->mode == MOD_GREASE_PENCIL_BUILD_MODE_CONCURRENT);
+  const bool is_concurrent = (mmd->mode == GP_BUILD_MODE_CONCURRENT);
 
   EnumPropertyItem *item_list = nullptr;
   int totitem = 0;
@@ -2442,7 +2441,7 @@ static void rna_GreasePencilTimeModifier_segments_begin(CollectionPropertyIterat
 static void rna_GreasePencilTimeModifier_start_frame_set(PointerRNA *ptr, int value)
 {
   auto *tmd = static_cast<GreasePencilTimeModifierData *>(ptr->data);
-  CLAMP(value, MINFRAME, MAXFRAME);
+  CLAMP(value, MINAFRAME, MAXFRAME);
   tmd->sfra = value;
 
   if (tmd->sfra >= tmd->efra) {
@@ -2453,7 +2452,7 @@ static void rna_GreasePencilTimeModifier_start_frame_set(PointerRNA *ptr, int va
 static void rna_GreasePencilTimeModifier_end_frame_set(PointerRNA *ptr, int value)
 {
   auto *tmd = static_cast<GreasePencilTimeModifierData *>(ptr->data);
-  CLAMP(value, MINFRAME, MAXFRAME);
+  CLAMP(value, MINAFRAME, MAXFRAME);
   tmd->efra = value;
 
   if (tmd->sfra >= tmd->efra) {
@@ -10690,7 +10689,8 @@ static void rna_def_modifier_grease_pencil_time(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, nullptr, "sfra");
   RNA_def_property_int_funcs(
       prop, nullptr, "rna_GreasePencilTimeModifier_start_frame_set", nullptr);
-  RNA_def_property_range(prop, MINFRAME, MAXFRAME);
+  RNA_def_property_range(prop, MINAFRAME, MAXFRAME);
+  RNA_def_property_ui_range(prop, MINFRAME, MAXFRAME, 1, 1);
   RNA_def_property_ui_text(prop, "Start Frame", "First frame of the range");
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
@@ -10698,7 +10698,8 @@ static void rna_def_modifier_grease_pencil_time(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_int_sdna(prop, nullptr, "efra");
   RNA_def_property_int_funcs(prop, nullptr, "rna_GreasePencilTimeModifier_end_frame_set", nullptr);
-  RNA_def_property_range(prop, MINFRAME, MAXFRAME);
+  RNA_def_property_range(prop, MINAFRAME, MAXFRAME);
+  RNA_def_property_ui_range(prop, MINFRAME, MAXFRAME, 1, 1);
   RNA_def_property_ui_text(prop, "End Frame", "Final frame of the range");
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 

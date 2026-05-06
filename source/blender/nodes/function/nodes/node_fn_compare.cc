@@ -29,34 +29,39 @@ NODE_STORAGE_FUNCS(NodeFunctionCompare)
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.is_function_node();
-  b.add_input<decl::Float>("A"_ustr).min(-10000.0f).max(10000.0f).translation_context(
-      BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Float>("B"_ustr).min(-10000.0f).max(10000.0f).translation_context(
-      BLT_I18NCONTEXT_ID_NODETREE);
 
-  b.add_input<decl::Int>("A"_ustr, "A_INT"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Int>("B"_ustr, "B_INT"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+  const bNode *node = b.node_or_null();
+  if (node != nullptr) {
+    const NodeFunctionCompare &storage = node_storage(*node);
+    const NodeCompareOperation operation = NodeCompareOperation(storage.operation);
+    const eNodeSocketDatatype data_type = eNodeSocketDatatype(storage.data_type);
+    const NodeCompareMode mode = NodeCompareMode(storage.mode);
 
-  b.add_input<decl::Vector>("A"_ustr, "A_VEC3"_ustr)
-      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Vector>("B"_ustr, "B_VEC3"_ustr)
-      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+    const bool type_is_float = ELEM(data_type, SOCK_FLOAT, SOCK_VECTOR, SOCK_RGBA);
+    const bool is_vector = data_type == SOCK_VECTOR;
 
-  b.add_input<decl::Color>("A"_ustr, "A_COL"_ustr)
-      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
-  b.add_input<decl::Color>("B"_ustr, "B_COL"_ustr)
-      .translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+    auto &a_input =
+        b.add_input(data_type, "A"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
+    auto &b_input =
+        b.add_input(data_type, "B"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
 
-  b.add_input<decl::String>("A"_ustr, "A_STR"_ustr)
-      .translation_context(BLT_I18NCONTEXT_ID_NODETREE)
-      .optional_label();
-  b.add_input<decl::String>("B"_ustr, "B_STR"_ustr)
-      .translation_context(BLT_I18NCONTEXT_ID_NODETREE)
-      .optional_label();
+    if (data_type == SOCK_STRING) {
+      a_input.optional_label();
+      b_input.optional_label();
+    }
 
-  b.add_input<decl::Float>("C"_ustr).default_value(0.9f);
-  b.add_input<decl::Float>("Angle"_ustr).default_value(0.0872665f).subtype(PROP_ANGLE);
-  b.add_input<decl::Float>("Epsilon"_ustr).default_value(0.001).min(-10000.0f).max(10000.0f);
+    if (is_vector && mode == NODE_COMPARE_MODE_DOT_PRODUCT) {
+      b.add_input<decl::Float>("C"_ustr).default_value(0.9f);
+    }
+
+    if (is_vector && mode == NODE_COMPARE_MODE_DIRECTION) {
+      b.add_input<decl::Float>("Angle"_ustr).default_value(0.0872665f).subtype(PROP_ANGLE);
+    }
+
+    if (type_is_float && ELEM(operation, NODE_COMPARE_EQUAL, NODE_COMPARE_NOT_EQUAL)) {
+      b.add_input<decl::Float>("Epsilon"_ustr).default_value(0.001);
+    }
+  }
 
   b.add_output<decl::Bool>("Result"_ustr);
 }
@@ -69,36 +74,6 @@ static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
     layout.prop(ptr, "mode", UI_ITEM_NONE, "", ICON_NONE);
   }
   layout.prop(ptr, "operation", UI_ITEM_NONE, "", ICON_NONE);
-}
-
-static void node_update(bNodeTree *ntree, bNode *node)
-{
-  NodeFunctionCompare *data = (NodeFunctionCompare *)node->storage;
-
-  bNodeSocket *sock_comp = static_cast<bNodeSocket *>(BLI_findlink(&node->inputs, 10));
-  bNodeSocket *sock_angle = static_cast<bNodeSocket *>(BLI_findlink(&node->inputs, 11));
-  bNodeSocket *sock_epsilon = static_cast<bNodeSocket *>(BLI_findlink(&node->inputs, 12));
-
-  for (bNodeSocket &socket : node->inputs) {
-    bke::node_set_socket_availability(
-        *ntree, socket, socket.type == eNodeSocketDatatype(data->data_type));
-  }
-
-  bke::node_set_socket_availability(
-      *ntree,
-      *sock_epsilon,
-      ELEM(data->operation, NODE_COMPARE_EQUAL, NODE_COMPARE_NOT_EQUAL) &&
-          !ELEM(data->data_type, SOCK_INT, SOCK_STRING));
-
-  bke::node_set_socket_availability(*ntree,
-                                    *sock_comp,
-                                    ELEM(data->mode, NODE_COMPARE_MODE_DOT_PRODUCT) &&
-                                        data->data_type == SOCK_VECTOR);
-
-  bke::node_set_socket_availability(*ntree,
-                                    *sock_angle,
-                                    ELEM(data->mode, NODE_COMPARE_MODE_DIRECTION) &&
-                                        data->data_type == SOCK_VECTOR);
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -248,12 +223,16 @@ static const mf::MultiFunction *get_multi_function(const bNode &node)
               exec_preset_first_two);
           return &fn;
         }
-        case NODE_COMPARE_NOT_EQUAL:
+        case NODE_COMPARE_NOT_EQUAL: {
           static auto fn = mf::build::SI3_SO<float, float, float, bool>(
               "Not Equal",
               [](float a, float b, float epsilon) { return std::abs(a - b) > epsilon; },
               exec_preset_first_two);
           return &fn;
+        }
+        case NODE_COMPARE_COLOR_BRIGHTER:
+        case NODE_COMPARE_COLOR_DARKER:
+          break;
       }
       break;
     case SOCK_INT:
@@ -288,6 +267,9 @@ static const mf::MultiFunction *get_multi_function(const bNode &node)
               "Not Equal", [](int a, int b) { return a != b; }, exec_preset_all);
           return &fn;
         }
+        case NODE_COMPARE_COLOR_BRIGHTER:
+        case NODE_COMPARE_COLOR_DARKER:
+          break;
       }
       break;
     case SOCK_VECTOR:
@@ -548,6 +530,9 @@ static const mf::MultiFunction *get_multi_function(const bNode &node)
             }
           }
           break;
+        case NODE_COMPARE_COLOR_BRIGHTER:
+        case NODE_COMPARE_COLOR_DARKER:
+          break;
       }
       break;
     case SOCK_RGBA:
@@ -590,6 +575,11 @@ static const mf::MultiFunction *get_multi_function(const bNode &node)
               exec_preset_all);
           return &fn;
         }
+        case NODE_COMPARE_LESS_THAN:
+        case NODE_COMPARE_LESS_EQUAL:
+        case NODE_COMPARE_GREATER_THAN:
+        case NODE_COMPARE_GREATER_EQUAL:
+          break;
       }
       break;
     case SOCK_STRING:
@@ -604,6 +594,13 @@ static const mf::MultiFunction *get_multi_function(const bNode &node)
               "Not Equal", [](std::string a, std::string b) { return a != b; });
           return &fn;
         }
+        case NODE_COMPARE_LESS_THAN:
+        case NODE_COMPARE_LESS_EQUAL:
+        case NODE_COMPARE_GREATER_THAN:
+        case NODE_COMPARE_GREATER_EQUAL:
+        case NODE_COMPARE_COLOR_BRIGHTER:
+        case NODE_COMPARE_COLOR_DARKER:
+          break;
       }
       break;
   }
@@ -747,7 +744,6 @@ static void node_register()
   ntype.nclass = NODE_CLASS_CONVERTER;
   ntype.declare = node_declare;
   ntype.labelfunc = node_label;
-  ntype.updatefunc = node_update;
   ntype.initfunc = node_init;
   bke::node_type_storage(
       ntype, "NodeFunctionCompare", node_free_standard_storage, node_copy_standard_storage);

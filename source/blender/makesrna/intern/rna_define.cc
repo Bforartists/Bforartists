@@ -89,12 +89,7 @@ BlenderDefRNA DefRNA = {
 };
 
 #ifndef RNA_RUNTIME
-static struct {
-  GHash *type_map_static_from_alias;
-} g_version_data;
-#endif
 
-#ifndef RNA_RUNTIME
 /**
  * When set, report details about which defaults are used.
  * Noisy but handy when investigating default extraction.
@@ -210,8 +205,8 @@ static int DNA_struct_find_index_wrapper(const SDNA *sdna, const char *type_name
   /* We may support this at some point but for now we don't. */
   BLI_assert_unreachable();
 #else
-  type_name = static_cast<const char *>(BLI_ghash_lookup_default(
-      g_version_data.type_map_static_from_alias, type_name, (void *)type_name));
+  static DnaRenameMaps rename_maps = DNA_rename_maps_alias_to_static();
+  type_name = rename_maps.types.lookup_default_as(type_name, type_name).c_str();
 #endif
   return DNA_struct_find_index_without_alias(sdna, type_name);
 }
@@ -697,7 +692,7 @@ static bool rna_range_from_int_type(const char *dnatype, int r_range[2])
     r_range[1] = SHRT_MAX;
     return true;
   }
-  if (STR_ELEM(dnatype, "ushort")) {
+  if (STREQ(dnatype, "ushort")) {
     r_range[0] = 0;
     r_range[1] = USHRT_MAX;
     return true;
@@ -710,6 +705,11 @@ static bool rna_range_from_int_type(const char *dnatype, int r_range[2])
   if (STREQ(dnatype, "int8_t")) {
     r_range[0] = INT8_MIN;
     r_range[1] = INT8_MAX;
+    return true;
+  }
+  if (STREQ(dnatype, "uint8_t")) {
+    r_range[0] = 0;
+    r_range[1] = UINT8_MAX;
     return true;
   }
   return false;
@@ -743,11 +743,6 @@ BlenderRNA *RNA_create()
     CLOG_ERROR(&LOG, "Failed to decode SDNA: %s.", error_message);
     DefRNA.error = true;
   }
-
-#ifndef RNA_RUNTIME
-  DNA_alias_maps(
-      DNA_RENAME_STATIC_FROM_ALIAS, &g_version_data.type_map_static_from_alias, nullptr);
-#endif
 
   return brna;
 }
@@ -916,11 +911,6 @@ void RNA_free(BlenderRNA *brna)
       MEM_delete(brna);
     }
   }
-
-#ifndef RNA_RUNTIME
-  BLI_ghash_free(g_version_data.type_map_static_from_alias, nullptr, nullptr);
-  g_version_data.type_map_static_from_alias = nullptr;
-#endif
 }
 
 static size_t rna_property_type_sizeof(PropertyType type)

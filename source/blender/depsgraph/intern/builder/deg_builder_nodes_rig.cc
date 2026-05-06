@@ -145,7 +145,7 @@ void DepsgraphNodeBuilder::build_rig(Object *object)
   if (object->pose != nullptr) {
     BKE_pose_channels_hash_ensure(object->pose);
     if (object->pose->flag & POSE_CONSTRAINTS_NEED_UPDATE_FLAGS) {
-      BKE_pose_update_constraint_flags(object->pose);
+      BKE_pose_update_constraint_flags(*object);
     }
   }
   /**

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2026-04-13 10:12+0000\n"
 "Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -12079,10 +12079,6 @@ msgid "When this is disabled, lock alpha while painting"
 msgstr "Caso esta opção esteja desabilitada, impede modificações do alfa durante a pintura."
 
 
-msgid "Cavity Mask"
-msgstr "Máscara de cavidade"
-
-
 msgid "Use Cursor Overlay"
 msgstr "Usar sobreposição de cursor"
 
@@ -21200,20 +21196,8 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Math"
-msgstr "Matemática"
-
-
 msgid "Clean Up"
 msgstr "Limpeza"
-
-
-msgid "Merge"
-msgstr "Fundir"
 
 
 msgid "Show/Hide"
@@ -21232,12 +21216,12 @@ msgid "Names"
 msgstr "Nomes"
 
 
+msgid "Math"
+msgstr "Matemática"
+
+
 msgid "Bone Roll"
 msgstr "Rolagem dos ossos"
-
-
-msgid "Instances"
-msgstr "Instâncias"
 
 
 msgid "Pivot Point"
@@ -21248,16 +21232,16 @@ msgid "Snap"
 msgstr "Atrair"
 
 
-msgid "Import"
-msgstr "Importar"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "Tipo de decaimento para edição proporcional"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Import"
+msgstr "Importar"
 
 
 msgid "Mirror"
@@ -21296,6 +21280,10 @@ msgid "Select More/Less"
 msgstr "Selecionar mais ou menos"
 
 
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Select Similar"
 msgstr "Selecionar por similaridades"
 
@@ -21328,10 +21316,6 @@ msgid "Relations"
 msgstr "Relações"
 
 
-msgid "Layout"
-msgstr "Organizar"
-
-
 msgid "Rigid Body"
 msgstr "Corpo rígido"
 
@@ -21356,16 +21340,12 @@ msgid "Convert"
 msgstr "Converter"
 
 
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
 msgid "Hooks"
 msgstr "Ganchos"
 
 
-msgid "Tracking"
-msgstr "Rastreamento"
+msgid "Layout"
+msgstr "Organizar"
 
 
 msgid "Random Mask"
@@ -21380,8 +21360,16 @@ msgid "In-Betweens"
 msgstr "Entre as continuidades"
 
 
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
 msgid "Propagate"
 msgstr "Propagar"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
 
 
 msgid "Toggle Bone Options"
@@ -21398,6 +21386,14 @@ msgstr "Desabilitar as opções de ossos"
 
 msgid "Mesh Select Mode"
 msgstr "Modo de seleção de malhas"
+
+
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Merge"
+msgstr "Fundir"
 
 
 msgid "Basic"
@@ -21647,6 +21643,10 @@ msgstr "Sobre"
 
 msgid "Quick Setup"
 msgstr "Configuração Rápida"
+
+
+msgid "Cavity Mask"
+msgstr "Máscara de cavidade"
 
 
 msgid "Mesh Edge"
@@ -28641,11 +28641,6 @@ msgstr "Importar BVH"
 
 msgid "Load a SVG file"
 msgstr "Carrega um arquivo de gráficos vetoriais escalonáveis (.svg)."
-
-
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "Importar SVG"
 
 
 msgid "Load a FBX file"
@@ -43361,11 +43356,6 @@ msgid "Move selected area edges"
 msgstr "Move as arestas da área selecionada."
 
 
-msgctxt "Operator"
-msgid "Area Options"
-msgstr "Opções para as áreas"
-
-
 msgid "Operations for splitting and merging"
 msgstr "Mostra as operações disponíveis para divisão e fusão das áreas dos editores."
 
@@ -45532,14 +45522,6 @@ msgstr "Escalonar as ilhas por uma média"
 
 msgid "Average the size of separate UV islands, based on their area in 3D space"
 msgstr "Escalona as ilhas para uma média das faces UV separadas, com base em sua área no espaço 3D."
-
-
-msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
-msgstr "Copia as coordenadas de espelhamento de UV no eixo X com base em uma malha espelhada."
-
-
-msgid "Axis Direction"
-msgstr "Direção do eixo"
 
 
 msgid "Tolerance for finding vertex duplicates"
@@ -50739,14 +50721,6 @@ msgstr "Limita o tamanho de textura para poupar memória gráfica."
 
 msgid "Device"
 msgstr "Dispositivo"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Método usado para mostrar imagens na tela."
-
-
-msgid "2D Texture"
-msgstr "Textura 2D"
 
 
 msgid "Legacy Compute Device Type"
@@ -63179,10 +63153,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Atalhos não relacionados ao teclado"
 
 
-msgid "Pin"
-msgstr "Afixar"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Somente atalhos relacionados ao teclado podem ser editados desta maneira. Em caso contrário, por favor, utilize as \"Preferências de usuário\"."
 
@@ -67346,10 +67316,6 @@ msgstr "Nenhuma visualização ativa encontrada na cena \"%s\""
 
 msgid "%s: no Combined pass found in the render layer '%s'"
 msgstr "%s: Nenhum passo combinado foi encontrado dentro da camada de renderização '%s'"
-
-
-msgid "%s: failed to allocate clip buffer '%s'"
-msgstr "%s: falha ao alocar o buffer de corte '%s'"
 
 
 msgid "%s: incorrect dimensions for partial copy '%s'"

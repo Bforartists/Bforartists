@@ -282,14 +282,14 @@ static void initialize_closure_input_structure_types(bNodeTree &ntree)
       }
       for (const int i : IndexRange(storage->input_items.items_num)) {
         NodeEvaluateClosureInputItem &item = storage->input_items.items[i];
-        if (item.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
-          item.structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC;
+        if (item.structure_type == NodeSocketInterfaceStructureType::Auto) {
+          item.structure_type = NodeSocketInterfaceStructureType::Dynamic;
         }
       }
       for (const int i : IndexRange(storage->output_items.items_num)) {
         NodeEvaluateClosureOutputItem &item = storage->output_items.items[i];
-        if (item.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO) {
-          item.structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC;
+        if (item.structure_type == NodeSocketInterfaceStructureType::Auto) {
+          item.structure_type = NodeSocketInterfaceStructureType::Dynamic;
         }
       }
     }
@@ -2825,7 +2825,7 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
       }
       BKE_pose_rebuild(nullptr, &object, id_cast<bArmature *>(object.data), false);
       for (bPoseChannel &pose_bone : object.pose->chanbase) {
-        if (pose_bone.bone->flag & BONE_HIDDEN_P) {
+        if (pose_bone.bone_get(object)->flag & BONE_HIDDEN_P) {
           pose_bone.drawflag |= PCHAN_DRAW_HIDDEN;
         }
         else {
@@ -3905,9 +3905,9 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 63)) {
     for (Scene &scene : bmain->scenes) {
       if (scene.r.bake_flag & R_BAKE_MULTIRES) {
-        scene.r.bake.type = scene.r.bake_mode;
+        scene.r.bake.type = eBakeType(scene.r.bake_mode);
         scene.r.bake.flag |= (scene.r.bake_flag & (R_BAKE_MULTIRES | R_BAKE_LORES_MESH));
-        scene.r.bake.margin_type = scene.r.bake_margin_type;
+        scene.r.bake.margin_type = eBakeMarginType(scene.r.bake_margin_type);
         scene.r.bake.margin = scene.r.bake_margin;
       }
       else {

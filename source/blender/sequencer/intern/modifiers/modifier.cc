@@ -174,6 +174,12 @@ static void modifier_panel_header(const bContext * /*C*/, Panel *panel)
   int buttons_number = 0;
   ui::Layout &name_row = row.row(true);
 
+  if (!smd->is_type_sound()) {
+    sub = &row.row(true);
+    sub->prop(ptr, "show_preview", UI_ITEM_NONE, "", ICON_NONE);
+    buttons_number++;
+  }
+
   sub = &row.row(true);
   sub->prop(ptr, "enable", UI_ITEM_NONE, "", ICON_NONE);
   buttons_number++;
@@ -420,7 +426,7 @@ StripModifierData *modifier_new(Strip *strip, const char *name, eStripModifierTy
   smd = static_cast<StripModifierData *>(MEM_new_zeroed(smti->struct_size, "sequence modifier"));
 
   smd->type = type;
-  smd->flag |= STRIP_MODIFIER_FLAG_EXPANDED;
+  smd->flag |= STRIP_MODIFIER_FLAG_EXPANDED | STRIP_MODIFIER_FLAG_SHOW_PREVIEW;
   smd->ui_expand_flag |= UI_PANEL_DATA_EXPAND_ROOT;
   smd->runtime = MEM_new<StripModifierDataRuntime>(__func__);
 
@@ -452,6 +458,16 @@ bool modifier_remove(Strip *strip, StripModifierData *smd)
 {
   if (BLI_findindex(&strip->modifiers, smd) == -1) {
     return false;
+  }
+
+  if (smd->flag & STRIP_MODIFIER_FLAG_ACTIVE) {
+    /* Prefer the next modifier but use the previous if this modifier is the last in the list. */
+    if (smd->next != nullptr) {
+      modifier_set_active(strip, smd->next);
+    }
+    else if (smd->prev != nullptr) {
+      modifier_set_active(strip, smd->prev);
+    }
   }
 
   BLI_remlink(&strip->modifiers, smd);
@@ -538,8 +554,14 @@ void modifier_apply_stack(ModifierApplyContext &context)
       continue;
     }
 
-    /* modifier is muted, do nothing */
-    if (smd.flag & STRIP_MODIFIER_FLAG_MUTE) {
+    const bool show_preview = (smd.flag & STRIP_MODIFIER_FLAG_SHOW_PREVIEW) != 0;
+    const bool show_render = (smd.flag & STRIP_MODIFIER_FLAG_MUTE) == 0;
+
+    if (context.render_data.render && !show_render) {
+      continue;
+    }
+
+    if (!context.render_data.render && !show_preview) {
       continue;
     }
 

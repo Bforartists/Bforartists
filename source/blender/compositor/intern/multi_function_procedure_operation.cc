@@ -152,6 +152,7 @@ void MultiFunctionProcedureOperation::build_procedure()
   }
 
   mf::ReturnInstruction &return_instruction = procedure_builder_.add_return();
+  procedure_.prepare_for_execution();
   mf::procedure_optimization::move_destructs_up(procedure_, return_instruction);
   BLI_assert(procedure_.validate());
 }

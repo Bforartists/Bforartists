@@ -183,7 +183,7 @@ struct USDImportParams {
   float light_intensity_scale;
   bool apply_unit_conversion_scale;
 
-  char mesh_read_flag;
+  MeshSeqCacheModifierReadFlag mesh_read_flag;
   bool set_frame_range;
   bool is_sequence;
   int sequence_len;
