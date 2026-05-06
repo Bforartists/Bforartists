@@ -675,7 +675,9 @@ MovieTrackingTrack **BKE_tracking_selected_tracks_in_active_object(MovieTracking
   return source_tracks;
 }
 
-void BKE_tracking_track_flag_set(MovieTrackingTrack *track, eTrackArea area, int flag)
+void BKE_tracking_track_flag_set(MovieTrackingTrack *track,
+                                 eTrackArea area,
+                                 TrackingTrackFlag flag)
 {
   if (area == TRACK_AREA_NONE) {
     return;
@@ -692,7 +694,9 @@ void BKE_tracking_track_flag_set(MovieTrackingTrack *track, eTrackArea area, int
   }
 }
 
-void BKE_tracking_track_flag_clear(MovieTrackingTrack *track, eTrackArea area, int flag)
+void BKE_tracking_track_flag_clear(MovieTrackingTrack *track,
+                                   eTrackArea area,
+                                   TrackingTrackFlag flag)
 {
   if (area == TRACK_AREA_NONE) {
     return;
@@ -1195,7 +1199,7 @@ void BKE_tracking_track_select(ListBaseT<MovieTrackingTrack> *tracksbase,
                                bool extend)
 {
   if (extend) {
-    BKE_tracking_track_flag_set(track, area, SELECT);
+    BKE_tracking_track_flag_set(track, area, TRACK_SELECT);
   }
   else {
     MovieTrackingTrack *cur = static_cast<MovieTrackingTrack *>(tracksbase->first);
@@ -1203,11 +1207,11 @@ void BKE_tracking_track_select(ListBaseT<MovieTrackingTrack> *tracksbase,
     while (cur) {
       if ((cur->flag & TRACK_HIDDEN) == 0) {
         if (cur == track) {
-          BKE_tracking_track_flag_clear(cur, TRACK_AREA_ALL, SELECT);
-          BKE_tracking_track_flag_set(cur, area, SELECT);
+          BKE_tracking_track_flag_clear(cur, TRACK_AREA_ALL, TRACK_SELECT);
+          BKE_tracking_track_flag_set(cur, area, TRACK_SELECT);
         }
         else {
-          BKE_tracking_track_flag_clear(cur, TRACK_AREA_ALL, SELECT);
+          BKE_tracking_track_flag_clear(cur, TRACK_AREA_ALL, TRACK_SELECT);
         }
       }
 
@@ -1218,14 +1222,14 @@ void BKE_tracking_track_select(ListBaseT<MovieTrackingTrack> *tracksbase,
 
 void BKE_tracking_track_deselect(MovieTrackingTrack *track, eTrackArea area)
 {
-  BKE_tracking_track_flag_clear(track, area, SELECT);
+  BKE_tracking_track_flag_clear(track, area, TRACK_SELECT);
 }
 
 void BKE_tracking_tracks_deselect_all(ListBaseT<MovieTrackingTrack> *tracksbase)
 {
   for (MovieTrackingTrack &track : *tracksbase) {
     if ((track.flag & TRACK_HIDDEN) == 0) {
-      BKE_tracking_track_flag_clear(&track, TRACK_AREA_ALL, SELECT);
+      BKE_tracking_track_flag_clear(&track, TRACK_AREA_ALL, TRACK_SELECT);
     }
   }
 }
@@ -1482,7 +1486,7 @@ bool BKE_tracking_marker_get_interpolated(MovieTrackingTrack *track,
   interp_v2_v2v2(r_marker->search_max, left_marker->search_max, right_marker->search_max, factor);
 
   r_marker->framenr = framenr;
-  r_marker->flag = 0;
+  r_marker->flag = TrackingMarkerFlag{};
 
   if (framenr == left_marker->framenr) {
     r_marker->flag = left_marker->flag;
@@ -1595,7 +1599,7 @@ MovieTrackingPlaneTrack *BKE_tracking_plane_track_add(
 
   /* Setup new plane marker and add it to the track. */
   plane_marker.framenr = framenr;
-  plane_marker.flag = 0;
+  plane_marker.flag = TrackingPlaneMarkerFlag{};
 
   copy_v2_v2(plane_marker.corners[0], tracks_min);
   copy_v2_v2(plane_marker.corners[2], tracks_max);
@@ -1637,7 +1641,7 @@ void BKE_tracking_plane_track_free(MovieTrackingPlaneTrack *plane_track)
 void BKE_tracking_plane_tracks_deselect_all(ListBaseT<MovieTrackingPlaneTrack> *plane_tracks_base)
 {
   for (MovieTrackingPlaneTrack &plane_track : *plane_tracks_base) {
-    plane_track.flag &= ~SELECT;
+    plane_track.flag &= ~PLANE_TRACK_SELECT;
   }
 }
 

@@ -184,7 +184,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
       }
 
       /* Insert keyframe directly into the F-Curve. */
-      insert_vert_fcurve(fcu, {x, y}, settings, eInsertKeyFlags(0));
+      insert_vert_fcurve(fcu, {x, y}, settings, eInsertKeyFlags{});
 
       ale.update |= ANIM_UPDATE_DEFAULT;
     }
@@ -234,7 +234,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
         }
 
         const float curval = evaluate_fcurve_only_curve(fcu, cfra);
-        insert_vert_fcurve(fcu, {cfra, curval}, settings, eInsertKeyFlags(0));
+        insert_vert_fcurve(fcu, {cfra, curval}, settings, eInsertKeyFlags{});
       }
 
       ale.update |= ANIM_UPDATE_DEFAULT;
@@ -355,7 +355,7 @@ static wmOperatorStatus graphkeys_click_insert_exec(bContext *C, wmOperator *op)
     settings.keyframe_type = eBezTriple_KeyframeType(ts->keyframe_type);
 
     /* Insert keyframe on the specified frame + value. */
-    insert_vert_fcurve(fcu, {frame, val}, settings, eInsertKeyFlags(0));
+    insert_vert_fcurve(fcu, {frame, val}, settings, eInsertKeyFlags{});
 
     ale->update |= ANIM_UPDATE_DEPS;
 
@@ -1460,7 +1460,7 @@ static void setexpo_graph_keys(bAnimContext *ac, short mode)
 
     if (mode >= 0) {
       /* Just set mode setting. */
-      fcu->extend = mode;
+      fcu->extend = eFCurve_Extend(mode);
 
       ale.update |= ANIM_UPDATE_HANDLES;
     }

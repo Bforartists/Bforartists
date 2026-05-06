@@ -152,12 +152,6 @@ void imapaint_image_update(
     return;
   }
 
-  IMB_partial_display_buffer_update_delayed(ibuf,
-                                            imapaintpartial.dirty_region.xmin,
-                                            imapaintpartial.dirty_region.ymin,
-                                            imapaintpartial.dirty_region.xmax,
-                                            imapaintpartial.dirty_region.ymax);
-
   /* When buffer is partial updated the planes should be set to a larger value than 8. This will
    * make sure that partial updating is working but uses more GPU memory as the gpu texture will
    * have 4 channels. When so the whole texture needs to be re-uploaded to the GPU using the new

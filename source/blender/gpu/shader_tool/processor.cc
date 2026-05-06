@@ -206,6 +206,7 @@ SourceProcessor::Result SourceProcessor::convert_bsl(metadata::Source external_s
   /* GLSL syntax compatibility.
    * TODO(fclem): Remove. */
   lower_argument_qualifiers(parser);
+  lower_gather_component(parser);
 
   /* Cleanup to make output more human readable and smaller for runtime. */
   cleanup_whitespace(parser);
@@ -1745,6 +1746,23 @@ void SourceProcessor::lower_argument_qualifiers(Parser &parser)
       parser.replace(toks[0], "_ref(");
       parser.insert_after(toks[1], ",");
       parser.insert_after(toks[2], ")");
+    }
+  });
+  parser.apply_mutations();
+}
+
+void SourceProcessor::lower_gather_component(Parser &parser)
+{
+  parser().foreach_match("A(..)", [&](const Tokens &toks) {
+    if (toks[0].scope().type() == ScopeType::Preprocessor) {
+      /* Don't mutate the actual implementation. */
+      return;
+    }
+    Token component = toks.back().prev();
+    /* Assume that if there is a number at the end of argument list, it is the component id. */
+    if (toks[0].str() == "textureGather" && component == Number && component.prev() == Comma) {
+      parser.insert_after(toks[0], string(component.str()));
+      parser.erase(component.prev(), component);
     }
   });
   parser.apply_mutations();

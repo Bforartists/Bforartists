@@ -70,6 +70,7 @@ set(INC_SYS
 )
 
 set(SRC
+  intern/bundle_type.cc
   intern/compositor_gizmos.cc
   intern/compositor_nodes_caller_ui.cc
   intern/compositor_nodes_srna.cc
@@ -112,6 +113,7 @@ set(SRC
   intern/value_elem.cc
   intern/volume_grid_function_eval.cc
 
+  NOD_bundle_type.hh
   NOD_caller_ui.hh
   NOD_common.hh
   NOD_composite.hh

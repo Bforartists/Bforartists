@@ -46,7 +46,7 @@
 #include "BKE_volume_grid_fwd.hh"
 
 #include "NOD_geometry_nodes_closure_location.hh"
-#include "NOD_geometry_nodes_list.hh"
+#include "NOD_geometry_nodes_list_fwd.hh"
 #include "NOD_geometry_nodes_warning.hh"
 
 #include "FN_field.hh"
@@ -242,7 +242,7 @@ class ListInfoLog : public ValueLog {
  public:
   int64_t size;
 
-  ListInfoLog(const List *list);
+  ListInfoLog(const GListPtr &list);
 };
 
 /**

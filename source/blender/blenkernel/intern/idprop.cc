@@ -395,7 +395,7 @@ IDProperty *IDP_NewStringMaxSize(const char *st,
 
   prop->type = IDP_STRING;
   name.copy_utf8_truncated(prop->name);
-  prop->flag = short(flags);
+  prop->flag = flags;
 
   return prop;
 }
@@ -1165,9 +1165,9 @@ IDProperty *IDP_New(const char type,
     }
   }
 
-  prop->type = type;
+  prop->type = eIDPropertyType(type);
   name.copy_utf8_truncated(prop->name);
-  prop->flag = short(flags);
+  prop->flag = flags;
 
   return prop;
 }
@@ -1281,6 +1281,11 @@ void IDP_ui_data_free(IDProperty *prop)
 void IDP_FreePropertyContent_ex(IDProperty *prop, const bool do_id_user)
 {
   switch (prop->type) {
+    case IDP_INT:
+    case IDP_FLOAT:
+    case IDP_DOUBLE:
+    case IDP_BOOLEAN:
+      break;
     case IDP_ARRAY:
       IDP_FreeArray(prop);
       break;
@@ -1503,6 +1508,12 @@ static void IDP_WriteGroup(const IDProperty *prop, BlendWriter *writer)
 void IDP_WriteProperty_OnlyData(const IDProperty *prop, BlendWriter *writer)
 {
   switch (prop->type) {
+    case IDP_INT:
+    case IDP_FLOAT:
+    case IDP_DOUBLE:
+    case IDP_BOOLEAN:
+    case IDP_ID:
+      break;
     case IDP_GROUP:
       IDP_WriteGroup(prop, writer);
       break;

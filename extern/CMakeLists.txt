@@ -106,3 +106,7 @@ endif()
 if(WITH_VULKAN_BACKEND)
   add_subdirectory(vulkan_memory_allocator)
 endif()
+
+if(WITH_TRACY)
+  add_subdirectory(tracy_profiler)
+endif()

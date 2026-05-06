@@ -1018,7 +1018,7 @@ static void v3d_editvertex_buts(
     blender::ui::block_layout_set_current(subblock, col);
 
     /* Should be no need to translate these. */
-    but = uiDefButF(subblock,
+    but = uiDefButV(block,
                     ui::ButtonType::Num,
                     "", /* bfa - use high level UI when possible */
                     0,
@@ -1033,8 +1033,7 @@ static void v3d_editvertex_buts(
     button_number_step_size_set(but, 10);
     button_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
     button_unit_type_set(but, PROP_UNIT_LENGTH);
-    /* bfa */
-    but = uiDefButF(subblock,
+    but = uiDefButV(block,
                     ui::ButtonType::Num,
                     "", /* bfa - use high level UI when possible */
                     0,
@@ -1049,8 +1048,7 @@ static void v3d_editvertex_buts(
     button_number_step_size_set(but, 10);
     button_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
     button_unit_type_set(but, PROP_UNIT_LENGTH);
-    /* bfa */
-    but = uiDefButF(subblock,
+    but = uiDefButV(block,
                     ui::ButtonType::Num,
                     "", /* bfa - use high level UI when possible */
                     0,
@@ -1070,8 +1068,7 @@ static void v3d_editvertex_buts(
       float &weight = ELEM(ob->type, OB_CURVES, OB_GREASE_PENCIL) ?
                           tfp->ve_median.curves.nurbs_weight :
                           tfp->ve_median.curve.b_weight;
-      /* bfa */
-      but = uiDefButF(subblock,
+      but = uiDefButV(block,
                       ui::ButtonType::Num,
                       "", /* bfa - removed label */
                       0,
@@ -1093,32 +1090,32 @@ static void v3d_editvertex_buts(
     subblock = row->block();
     ui::block_layout_set_current(subblock, row);
 
-    but = uiDefButBitS(subblock,
-                       ui::ButtonType::Toggle,
-                       V3D_GLOBAL_STATS,
-                       IFACE_("Global"),
-                       0,
-                       yi -= buth + but_margin,
-                       100,
-                       buth,
-                       &v3d->flag,
-                       0,
-                       0,
-                       TIP_("Displays global values"));
+    but = uiDefButBit(block,
+                      ui::ButtonType::Toggle,
+                      V3D_GLOBAL_STATS,
+                      IFACE_("Global"),
+                      0,
+                      yi -= buth + but_margin,
+                      100,
+                      buth,
+                      &v3d->flag,
+                      0,
+                      0,
+                      TIP_("Displays global values"));
     button_retval_set(but, B_REDR);
 
-    but = uiDefButBitS(subblock,
-                       ui::ButtonType::ToggleN,
-                       V3D_GLOBAL_STATS,
-                       IFACE_("Local"),
-                       100,
-                       yi,
-                       100,
-                       buth,
-                       &v3d->flag,
-                       0,
-                       0,
-                       TIP_("Displays local values"));
+    but = uiDefButBit(block,
+                      ui::ButtonType::ToggleN,
+                      V3D_GLOBAL_STATS,
+                      IFACE_("Local"),
+                      100,
+                      yi,
+                      100,
+                      buth,
+                      &v3d->flag,
+                      0,
+                      0,
+                      TIP_("Displays local values"));
     blender::ui::button_retval_set(but, B_REDR);
 
     /* bfa - restore layout, otherwise following UI elements will be messed up */
@@ -1144,7 +1141,7 @@ static void v3d_editvertex_buts(
         ui::block_layout_set_current(subblock, col);
 
         /* bfa */
-        but = uiDefButF(block,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1159,8 +1156,7 @@ static void v3d_editvertex_buts(
         button_number_step_size_set(but, 1);
         button_number_precision_set(but, 2);
         /* customdata layer added on demand */
-        /* bfa */
-        but = uiDefButF(block,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1188,7 +1184,7 @@ static void v3d_editvertex_buts(
         subblock = col->block();
 
         /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(subblock,
                         ui::ButtonType::Num,
                         "", /* bfa - removed label */
                         0,
@@ -1202,8 +1198,7 @@ static void v3d_editvertex_buts(
         button_retval_set(but, B_TRANSFORM_PANEL_MEDIAN);
         button_number_step_size_set(but, 1);
         button_number_precision_set(but, 3);
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* bfa - removed label */
                         0,
@@ -1237,8 +1232,7 @@ static void v3d_editvertex_buts(
         ui::block_layout_set_current(subblock, col);
 
         /* customdata layer added on demand */
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1253,8 +1247,7 @@ static void v3d_editvertex_buts(
         button_number_step_size_set(but, 1);
         button_number_precision_set(but, 2);
         /* customdata layer added on demand */
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa removed text from slider */
                         0,
@@ -1276,7 +1269,7 @@ static void v3d_editvertex_buts(
       const bool is_single = total_curve_points_data == 1;
       TransformMedian_Curves *ve_median = &tfp->ve_median.curves;
 
-      but = uiDefButF(block,
+      but = uiDefButV(block,
                       ui::ButtonType::Num,
                       is_single ? IFACE_("Radius:") : IFACE_("Mean Radius:"),
                       0,
@@ -1292,7 +1285,7 @@ static void v3d_editvertex_buts(
       button_retval_set(but, B_TRANSFORM_PANEL_MEDIAN);
       button_number_step_size_set(but, 1);
       button_number_precision_set(but, 3);
-      but = uiDefButF(block,
+      but = uiDefButV(block,
                       ui::ButtonType::Num,
                       is_single ? IFACE_("Tilt:") : IFACE_("Mean Tilt:"),
                       0,
@@ -1375,8 +1368,7 @@ static void v3d_editvertex_buts(
         blender::ui::button_number_precision_set(but, 3);
       }
       else if (totcurvedata > 1) {
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa removed text from slider */
                         0,
@@ -1387,11 +1379,11 @@ static void v3d_editvertex_buts(
                         0.0,
                         1.0,
                         TIP_("Weight used for Soft Body Goal"));
-        ui::button_retval_set(but, B_TRANSFORM_PANEL_MEDIAN);
-        ui::button_number_step_size_set(but, 1);
-        ui::button_number_precision_set(but, 3);
+        button_retval_set(but, B_TRANSFORM_PANEL_MEDIAN);
+        button_number_step_size_set(but, 1);
+        button_number_precision_set(but, 3);
         /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1402,11 +1394,11 @@ static void v3d_editvertex_buts(
                         0.0,
                         100.0,
                         TIP_("Radius of curve control points"));
-        ui::button_retval_set(but, B_TRANSFORM_PANEL_MEDIAN);
-        ui::button_number_step_size_set(but, 1);
-        ui::button_number_precision_set(but, 3);
+        button_retval_set(but, B_TRANSFORM_PANEL_MEDIAN);
+        button_number_step_size_set(but, 1);
+        button_number_precision_set(but, 3);
         /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa remove text from slider */
                         0,
@@ -1440,25 +1432,24 @@ static void v3d_editvertex_buts(
       blender::ui::block_layout_set_current(subblock, col);
 
       if (totlattdata == 1) {
-        uiDefButR(block,
-                  ui::ButtonType::Num,
-                  "", /* -bfa removed text from slider */
-                  0,
-                  yi -= buth + but_margin,
-                  butw,
-                  buth,
-                  &data_ptr,
-                  "weight_softbody",
-                  0,
-                  0.0,
-                  1.0,
-                  std::nullopt);
+        but = uiDefButR(block,
+                        ui::ButtonType::Num,
+                        "", /* -bfa removed text from slider */
+                        0,
+                        yi -= buth + but_margin,
+                        butw,
+                        buth,
+                        &data_ptr,
+                        "weight_softbody",
+                        0,
+                        0.0,
+                        1.0,
+                        std::nullopt);
         button_number_step_size_set(but, 1);
         button_number_precision_set(but, 3);
       }
       else if (totlattdata > 1) {
-        /* bfa */
-        but = uiDefButF(subblock,
+        but = uiDefButV(block,
                         ui::ButtonType::Num,
                         "", /* -bfa removed text from slider */
                         0,
@@ -1835,7 +1826,8 @@ static void v3d_object_dimension_buts(bContext *C, ui::Layout *layout, View3D *v
     for (int i = 0; i < 3; i++) {
       ui::Button *but;
       /* BFA - Remove axis labels */
-      but = uiDefButF(block,
+      //const char text[3] = {char('X' + i), ':', '\0'};
+      but = uiDefButV(block,
                       ui::ButtonType::Num,
                       nullptr, /* BFA - Move axis labels outside of number slider */
                       0,
@@ -2009,7 +2001,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
           /* To be reworked still */
           float &vertex_weight = tfp->vertex_weights[i];
           vertex_weight = dw->weight;
-          but = uiDefButF(block,
+          but = uiDefButV(block,
                           ui::ButtonType::Num,
                           "",
                           xco,
@@ -2807,7 +2799,7 @@ static void knot_modes_menu(bContext * /*C*/, ui::Layout *layout, void *knot_mod
   layout->column(false);
 
   for (const EnumPropertyItem &item : enum_curve_knot_mode_items) {
-    uiDefButI(block,
+    uiDefButV(block,
               ui::ButtonType::ButMenu,
               CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
               0,
@@ -2833,7 +2825,7 @@ static void grease_pencil_cap_menu(bContext * /*C*/, ui::Layout *layout, void *c
   layout->column(false);
 
   for (const EnumPropertyItem &item : enum_grease_pencil_cap_items) {
-    uiDefButI(block,
+    uiDefButV(block,
               ui::ButtonType::ButMenu,
               CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
               0,
@@ -2954,7 +2946,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
       IFACE_("Cyclic"),
       status.cyclic_count == 0 || status.cyclic_count == status.curve_count,
       [&]() {
-        ui::Button *but = uiDefButC(
+        ui::Button *but = uiDefButV(
             block, ui::ButtonType::Checkbox, "", 0, 0, butw, buth, &modified.cyclic, 0, 1, "");
         button_func_set(but, handle_curves_cyclic, nullptr, nullptr);
         return but;
@@ -2983,7 +2975,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
 
     add_labeled_field(
         IFACE_("Order"), status.order_max * status.nurbs_count == status.order_sum, [&]() {
-          ui::Button *but = uiDefButI(
+          ui::Button *but = uiDefButV(
               block, ui::ButtonType::Num, "", 0, 0, butw, buth, &modified.order, 2, 6, "");
           button_number_step_size_set(but, 1);
           button_number_precision_set(but, -1);
@@ -2997,7 +2989,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
         IFACE_("Resolution"),
         status.resolution_max * status.curve_count == status.resolution_sum,
         [&]() {
-          ui::Button *but = uiDefButI(
+          ui::Button *but = uiDefButV(
               block, ui::ButtonType::Num, "", 0, 0, butw, buth, &modified.resolution, 1, 64, "");
           button_number_step_size_set(but, 1);
           button_number_precision_set(but, -1);
@@ -3011,7 +3003,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
                       is_equal(status.fill_opacity.value_max * status.curve_count,
                                status.fill_opacity.value_sum),
                       [&]() {
-                        ui::Button *but = uiDefButF(block,
+                        ui::Button *but = uiDefButV(block,
                                                     ui::ButtonType::Num,
                                                     "",
                                                     0,
@@ -3071,7 +3063,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
         IFACE_("Softness"),
         is_equal(status.softness.value_max * status.curve_count, status.softness.value_sum),
         [&]() {
-          ui::Button *but = uiDefButF(block,
+          ui::Button *but = uiDefButV(block,
                                       ui::ButtonType::Num,
                                       "",
                                       0,
@@ -3092,7 +3084,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
         IFACE_("U Scale"),
         is_equal(status.u_scale.value_max * status.curve_count, status.u_scale.value_sum),
         [&]() {
-          ui::Button *but = uiDefButF(block,
+          ui::Button *but = uiDefButV(block,
                                       ui::ButtonType::Num,
                                       "",
                                       0,
@@ -3113,7 +3105,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
                       is_equal(status.aspect_ratio.value_max * status.curve_count,
                                status.aspect_ratio.value_sum),
                       [&]() {
-                        ui::Button *but = uiDefButF(block,
+                        ui::Button *but = uiDefButV(block,
                                                     ui::ButtonType::Num,
                                                     "",
                                                     0,

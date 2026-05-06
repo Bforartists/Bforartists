@@ -1627,7 +1627,7 @@ static void node_draw_preview_background(rctf *rect)
 }
 
 /* Not a callback. */
-static void node_draw_preview(const Scene *scene, ImBuf *preview, const rctf *prv)
+static void node_draw_preview(const Scene *scene, const ImBuf *preview, const rctf *prv)
 {
   float xrect = BLI_rctf_size_x(prv);
   float yrect = BLI_rctf_size_y(prv);
@@ -2784,7 +2784,7 @@ static void node_draw_extra_info_panel(const bContext &C,
                                        TreeDrawContext &tree_draw_ctx,
                                        const SpaceNode &snode,
                                        const bNode &node,
-                                       ImBuf *preview,
+                                       const ImBuf *preview,
                                        ui::Block &block)
 {
   const Scene *scene = CTX_data_scene(&C);

@@ -216,7 +216,7 @@ void BKE_modifier_remove_from_list(Object *ob, ModifierData *md)
   BLI_assert(BLI_findindex(&ob->modifiers, md) != -1);
 
   if (md->flag & eModifierFlag_Active) {
-    /* Prefer the previous modifier but use the next if this modifier is the first in the list. */
+    /* Prefer the next modifier but use the previous if this modifier is the last in the list. */
     if (md->next != nullptr) {
       BKE_object_modifier_set_active(ob, md->next);
     }
@@ -634,7 +634,7 @@ ModifierData *BKE_modifiers_get_virtual_modifierlist(const Object *ob,
     }
     else if (ob->parent->type == OB_CURVES_LEGACY && ob->partype == PARSKEL) {
       virtual_modifier_data->cmd.object = ob->parent;
-      virtual_modifier_data->cmd.defaxis = ob->trackflag + 1;
+      virtual_modifier_data->cmd.defaxis = CurveModifierDefaultAxis(ob->trackflag + 1);
       virtual_modifier_data->cmd.modifier.next = md;
       md = &virtual_modifier_data->cmd.modifier;
     }
@@ -651,7 +651,7 @@ ModifierData *BKE_modifiers_get_virtual_modifierlist(const Object *ob,
       virtual_modifier_data->smd.modifier.mode |= eModifierMode_Editmode | eModifierMode_OnCage;
     }
     else {
-      virtual_modifier_data->smd.modifier.mode &= ~eModifierMode_Editmode | eModifierMode_OnCage;
+      virtual_modifier_data->smd.modifier.mode &= ~eModifierMode_Editmode;
     }
 
     virtual_modifier_data->smd.modifier.next = md;
@@ -1241,7 +1241,7 @@ void BKE_modifier_blend_write(BlendWriter *writer,
  */
 
 /* Domain, inflow, ... */
-static void modifier_ensure_type(FluidModifierData *fluid_modifier_data, int type)
+static void modifier_ensure_type(FluidModifierData *fluid_modifier_data, FluidModifierType type)
 {
   fluid_modifier_data->type = type;
   BKE_fluid_modifier_free(fluid_modifier_data);
@@ -1272,7 +1272,7 @@ static ModifierData *modifier_replace_with_fluid(BlendDataReader *reader,
             reader, old_fluidsim_modifier_data->fss, sizeof(FluidsimSettings)));
     switch (old_fluidsim_settings->type) {
       case OB_FLUIDSIM_ENABLE:
-        modifier_ensure_type(fluid_modifier_data, 0);
+        modifier_ensure_type(fluid_modifier_data, FluidModifierType{});
         break;
       case OB_FLUIDSIM_DOMAIN:
         modifier_ensure_type(fluid_modifier_data, MOD_FLUID_TYPE_DOMAIN);
@@ -1318,7 +1318,7 @@ static ModifierData *modifier_replace_with_fluid(BlendDataReader *reader,
   else if (old_modifier_data->type == eModifierType_Smoke) {
     SmokeModifierData *old_smoke_modifier_data = reinterpret_cast<SmokeModifierData *>(
         old_modifier_data);
-    modifier_ensure_type(fluid_modifier_data, old_smoke_modifier_data->type);
+    modifier_ensure_type(fluid_modifier_data, FluidModifierType(old_smoke_modifier_data->type));
     if (fluid_modifier_data->type == MOD_FLUID_TYPE_DOMAIN) {
       BKE_fluid_domain_type_set(object, fluid_modifier_data->domain, FLUID_DOMAIN_TYPE_GAS);
     }
@@ -1511,7 +1511,7 @@ void BKE_modifier_blend_read_data(BlendDataReader *reader, ListBaseT<ModifierDat
           fmd->effector->flags &= ~FLUID_EFFECTOR_NEEDS_UPDATE;
         }
         else {
-          fmd->type = 0;
+          fmd->type = FluidModifierType{};
           fmd->flow = nullptr;
           fmd->domain = nullptr;
           fmd->effector = nullptr;

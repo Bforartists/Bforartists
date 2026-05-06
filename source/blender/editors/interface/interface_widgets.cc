@@ -1876,6 +1876,8 @@ static void text_clip_right_label(const uiFontStyle *fstyle, Button *but, const 
   /* need to set this first */
   fontstyle_set(fstyle);
 
+  /* Clear stale edit scroll offset so numeric text is not scrolled. See #157999. */
+  but->ofs = 0;
   but->strwidth = BLF_width(fstyle->uifont_id, new_drawstr, drawstr_len);
 
   /* The string already fits, so do nothing. */
@@ -1889,8 +1891,6 @@ static void text_clip_right_label(const uiFontStyle *fstyle, Button *but, const 
 
   /* Assume the string will have an ellipsis for initial tests. */
   but->strwidth += sep_strwidth;
-
-  but->ofs = 0;
 
   /* First shorten number-buttons eg,
    *   Translucency: 0.000
@@ -2282,7 +2282,17 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
   params.align = align;
   params.word_clip = false;
   float ymax = rect.ymax;
-  for (const StringRef line : lines.as_span().slice_safe(scroll, visible_lines)) {
+
+  uchar col[4];
+  copy_v4_v4_uchar(col, wcol->text);
+  uiFontStyle style = *fstyle;
+  Vector<blender::StringRef> draw_lines = lines;
+  if (textbox->wrap_cache->text.empty() && textbox->placeholder) {
+    draw_lines = textbox_wrap_placeholder(textbox);
+    style.shadow = 0;
+    col[3] *= 0.33f;
+  }
+  for (const StringRef line : draw_lines.as_span().slice_safe(scroll, visible_lines)) {
     if (rect.xmin > button_rect->xmax - scrollbar_pad - text_padding) {
       break;
     }
@@ -2290,7 +2300,7 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
     ymax -= line_height;
     rect.ymin = ymax;
     fontstyle_draw_ex(
-        fstyle, &rect, line.begin(), line.size(), wcol->text, &params, nullptr, nullptr, nullptr);
+        &style, &rect, line.begin(), line.size(), col, &params, nullptr, nullptr, nullptr);
   }
 
   BLF_batch_draw_flush();
@@ -2305,7 +2315,7 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
                     .ymax = button_rect->ymin +
                             int(std::round(textbox_grip_height() / textbox->block->aspect))};
   widget_draw_icon_centered(ICON_GRIP, textbox->block->aspect, 1.0f, &grip_rect, wcol->text);
-  if (lines.size() <= visible_lines) {
+  if (textbox->last_total_lines <= visible_lines) {
     return;
   }
   /* Draw scrollbar. */
@@ -2633,8 +2643,8 @@ static void widget_draw_text(const uiFontStyle *fstyle,
     }
   }
 
-  /* Show placeholder text if the input is empty and not being edited. */
-  if (!drawstr[0] && !but->editstr && ELEM(but->type, ButtonType::Text, ButtonType::SearchMenu)) {
+  /* Show placeholder text if the input is empty. */
+  if (!drawstr[0] && ELEM(but->type, ButtonType::Text, ButtonType::SearchMenu)) {
     const char *placeholder = button_placeholder_get(but);
     if (placeholder && placeholder[0]) {
       FontStyleDrawParams params{};

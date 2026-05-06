@@ -8353,14 +8353,14 @@ static bool point_draw_handles(CurveProfilePoint *point)
          point->flag & PROF_H1_SELECT || point->flag & PROF_H2_SELECT;
 }
 
-static short profile_select_to_active(short selection_type)
+static eCurveProfilePoint_Flag profile_select_to_active(eCurveProfilePoint_Flag selection_type)
 {
   /* Active flags are the select flags multiplied by #PROF_ACTIVE.
    * Static asserts ensure this relationship holds if flag values change. */
   static_assert(PROF_ACTIVE == PROF_SELECT * 8);
   static_assert(PROF_H1_ACTIVE == PROF_H1_SELECT * 8);
   static_assert(PROF_H2_ACTIVE == PROF_H2_SELECT * 8);
-  return selection_type * PROF_ACTIVE;
+  return eCurveProfilePoint_Flag(int(selection_type) * int(PROF_ACTIVE));
 }
 
 /**
@@ -8412,7 +8412,7 @@ static int do_but_CURVEPROFILE(
       /* 14 pixels radius for selecting points. */
       float dist_min_sq = square_f(UI_SCALE_FAC * 14.0f);
       int i_selected = -1;
-      short selection_type = 0; /* For handle selection. */
+      eCurveProfilePoint_Flag selection_type = {}; /* For handle selection. */
       for (int i = 0; i < profile->path_len; i++) {
         float f_xy[2];
         BLI_rctf_transform_pt_v(&but->rect, &profile->view_rect, f_xy, &pts[i].x);
@@ -8477,7 +8477,7 @@ static int do_but_CURVEPROFILE(
 
       /* Change the flag for the point(s) if one was selected or added. */
       /* Offset the selection type to get the active type. */
-      const short active_type = profile_select_to_active(selection_type);
+      const eCurveProfilePoint_Flag active_type = profile_select_to_active(selection_type);
       pts = profile->path;
       if (i_selected != -1) {
         /* Deselect all if this one is deselected, except if we hold shift. */

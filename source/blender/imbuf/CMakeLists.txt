@@ -60,7 +60,6 @@ set(SRC
   IMB_metadata.hh
   IMB_openexr.hh
   IMB_thumbs.hh
-  intern/IMB_allocimbuf.hh
   intern/IMB_colormanagement_intern.hh
   intern/IMB_filetype.hh
   intern/IMB_filter.hh

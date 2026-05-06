@@ -64,6 +64,7 @@ set(SRC
   bpy_rna_text.cc
   bpy_rna_types_capi.cc
   bpy_rna_ui.cc
+  bpy_rna_wm.cc
   bpy_traceback.cc
   bpy_utils_previews.cc
   bpy_utils_units.cc
@@ -111,6 +112,7 @@ set(SRC
   bpy_rna_text.hh
   bpy_rna_types_capi.hh
   bpy_rna_ui.hh
+  bpy_rna_wm.hh
   bpy_traceback.hh
   bpy_utils_previews.hh
   bpy_utils_units.hh

@@ -252,7 +252,7 @@ IDTypeInfo IDType_ID_PC = {
     .lib_override_apply_post = nullptr,
 };
 
-static ePaintOverlayControlFlags overlay_flags = ePaintOverlayControlFlags(0);
+static ePaintOverlayControlFlags overlay_flags = ePaintOverlayControlFlags{};
 
 void BKE_paint_invalidate_overlay_tex(const Main &bmain,
                                       Scene *scene,
@@ -1392,7 +1392,7 @@ void BKE_paint_cavity_curve_preset(Paint *paint, int preset)
   }
   cumap = paint->cavity_curve;
   cumap->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
-  cumap->preset = preset;
+  cumap->preset = eCurveMappingPreset(preset);
 
   cuma = cumap->cm;
   BKE_curvemap_reset(cuma, &cumap->clipr, cumap->preset, CurveMapSlopeType::Positive);

@@ -645,6 +645,18 @@ void mesh_ensure_active_uv_map(Mesh &mesh)
   }
 }
 
+void mesh_ensure_default_uv_map(Mesh &mesh)
+{
+  const StringRefNull default_name = mesh.default_uv_map_name();
+  if (!default_name.is_empty()) {
+    return;
+  }
+  const StringRefNull found = get_first_uv_map_name(mesh);
+  if (!found.is_empty()) {
+    mesh.uv_maps_default_set(found);
+  }
+}
+
 void mesh_remove_invalid_attribute_strings(Mesh &mesh)
 {
   bke::AttributeAccessor attributes = mesh.attributes();
@@ -2138,7 +2150,7 @@ void BKE_mesh_mselect_validate(Mesh *mesh)
   mesh->mselect = mselect_dst;
 }
 
-int BKE_mesh_mselect_find(const Mesh *mesh, int index, int type)
+int BKE_mesh_mselect_find(const Mesh *mesh, int index, eMSelect_Type type)
 {
   BLI_assert(ELEM(type, ME_VSEL, ME_ESEL, ME_FSEL));
 
@@ -2151,7 +2163,7 @@ int BKE_mesh_mselect_find(const Mesh *mesh, int index, int type)
   return -1;
 }
 
-int BKE_mesh_mselect_active_get(const Mesh *mesh, int type)
+int BKE_mesh_mselect_active_get(const Mesh *mesh, eMSelect_Type type)
 {
   BLI_assert(ELEM(type, ME_VSEL, ME_ESEL, ME_FSEL));
 
@@ -2163,7 +2175,7 @@ int BKE_mesh_mselect_active_get(const Mesh *mesh, int type)
   return -1;
 }
 
-void BKE_mesh_mselect_active_set(Mesh *mesh, int index, int type)
+void BKE_mesh_mselect_active_set(Mesh *mesh, int index, eMSelect_Type type)
 {
   const int msel_index = BKE_mesh_mselect_find(mesh, index, type);
 
@@ -2172,7 +2184,7 @@ void BKE_mesh_mselect_active_set(Mesh *mesh, int index, int type)
     mesh->mselect = static_cast<MSelect *>(
         MEM_realloc_uninitialized(mesh->mselect, sizeof(MSelect) * (mesh->totselect + 1)));
     mesh->mselect[mesh->totselect].index = index;
-    mesh->mselect[mesh->totselect].type = type;
+    mesh->mselect[mesh->totselect].type = eMSelect_Type(type);
     mesh->totselect++;
   }
   else if (msel_index != mesh->totselect - 1) {

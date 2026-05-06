@@ -201,7 +201,7 @@ static void get_element_operation_type(
 
 static TreeElement *get_target_element(const SpaceOutliner *space_outliner)
 {
-  TreeElement *te = outliner_find_element_with_flag(&space_outliner->tree, TSE_ACTIVE);
+  TreeElement *te = outliner_find_element_with_flag(&space_outliner->runtime->tree, TSE_ACTIVE);
 
   return te;
 }
@@ -660,7 +660,7 @@ static void outliner_do_libdata_operation_selection_set(bContext *C,
                                                         const bool do_active_element_first)
 {
   if (do_active_element_first) {
-    TreeElement *active_element = outliner_find_element_with_flag(&space_outliner->tree,
+    TreeElement *active_element = outliner_find_element_with_flag(&space_outliner->runtime->tree,
                                                                   TSE_ACTIVE);
     if (active_element != nullptr) {
       TreeStoreElem *tselem = TREESTORE(active_element);
@@ -676,8 +676,14 @@ static void outliner_do_libdata_operation_selection_set(bContext *C,
     }
   }
 
-  outliner_do_libdata_operation_selection_set(
-      C, reports, scene, space_outliner, space_outliner->tree, false, operation_fn, selection_set);
+  outliner_do_libdata_operation_selection_set(C,
+                                              reports,
+                                              scene,
+                                              space_outliner,
+                                              space_outliner->runtime->tree,
+                                              false,
+                                              operation_fn,
+                                              selection_set);
 }
 
 /** \} */
@@ -879,6 +885,12 @@ static void merged_element_search_fn_recursive(const ListBaseT<TreeElement> *tre
         STRNCPY(name, te.name);
 
         iconid = tree_element_get_icon(tselem, &te).icon;
+        if (outliner_is_collection_tree_element(&te)) {
+          const Collection &collection = *outliner_collection_from_tree_element(&te);
+          if (collection.color_tag != COLLECTION_COLOR_NONE) {
+            iconid = int(ICON_COLLECTION_COLOR_01) + int(collection.color_tag);
+          }
+        }
 
         /* Don't allow duplicate named items */
         if (search_items_find_index(items, name) == -1) {
@@ -2247,7 +2259,7 @@ static void ebone_fn(int event, TreeElement *te, TreeStoreElem * /*tselem*/, voi
   }
   else if (event == OL_DOP_HIDE) {
     ebone->flag |= BONE_HIDDEN_A;
-    ebone->flag &= ~BONE_SELECTED | BONE_TIPSEL | BONE_ROOTSEL;
+    ebone->flag &= ~(BONE_SELECTED | BONE_TIPSEL | BONE_ROOTSEL);
   }
   else if (event == OL_DOP_UNHIDE) {
     ebone->flag &= ~BONE_HIDDEN_A;
@@ -2616,7 +2628,7 @@ static wmOperatorStatus outliner_object_operation_exec(bContext *C, wmOperator *
     case OL_OP_SELECT: {
       Scene *sce = scene; /* To be able to delete, scenes are set... */
       outliner_do_object_operation(
-          C, op->reports, scene, space_outliner, &space_outliner->tree, object_select_fn);
+          C, op->reports, scene, space_outliner, &space_outliner->runtime->tree, object_select_fn);
       /* FIXME: This is most certainly broken, maybe check should rather be
        * `if (CTX_data_scene(C) != scene)` ? */
       if (scene != sce) {
@@ -2633,7 +2645,7 @@ static wmOperatorStatus outliner_object_operation_exec(bContext *C, wmOperator *
                                       op->reports,
                                       scene,
                                       space_outliner,
-                                      &space_outliner->tree,
+                                      &space_outliner->runtime->tree,
                                       object_select_hierarchy_fn,
                                       false);
       /* FIXME: This is most certainly broken, maybe check should rather be
@@ -2646,8 +2658,12 @@ static wmOperatorStatus outliner_object_operation_exec(bContext *C, wmOperator *
       break;
     }
     case OL_OP_DESELECT:
-      outliner_do_object_operation(
-          C, op->reports, scene, space_outliner, &space_outliner->tree, object_deselect_fn);
+      outliner_do_object_operation(C,
+                                   op->reports,
+                                   scene,
+                                   space_outliner,
+                                   &space_outliner->runtime->tree,
+                                   object_deselect_fn);
       str = CTX_N_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Deselect Objects");
       selection_changed = true;
       break;
@@ -2662,7 +2678,7 @@ static wmOperatorStatus outliner_object_operation_exec(bContext *C, wmOperator *
     }
     case OL_OP_RENAME:
       outliner_do_object_operation(
-          C, op->reports, scene, space_outliner, &space_outliner->tree, item_rename_fn);
+          C, op->reports, scene, space_outliner, &space_outliner->runtime->tree, item_rename_fn);
       str = CTX_N_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Rename Object");
       break;
     default:
@@ -2790,7 +2806,7 @@ static wmOperatorStatus outliner_delete_exec(bContext *C, wmOperator *op)
   object_delete_data.is_liboverride_allowed = false;
   object_delete_data.is_liboverride_hierarchy_root_allowed = delete_hierarchy;
   outliner_tree_traverse(space_outliner,
-                         &space_outliner->tree,
+                         &space_outliner->runtime->tree,
                          0,
                          TSE_SELECTED,
                          outliner_collect_objects_to_delete,
@@ -3849,7 +3865,7 @@ static wmOperatorStatus outliner_operation_invoke(bContext *C,
       &region->v2d, event->mval[0], event->mval[1], &view_mval[0], &view_mval[1]);
 
   TreeElement *hovered_te = outliner_find_item_at_y(
-      space_outliner, &space_outliner->tree, view_mval[1]);
+      space_outliner, &space_outliner->runtime->tree, view_mval[1]);
   if (!hovered_te) {
     /* Let this fall through to 'OUTLINER_MT_context_menu'. */
     return OPERATOR_PASS_THROUGH;

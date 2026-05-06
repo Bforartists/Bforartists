@@ -284,6 +284,8 @@ static void ntree_free_data(ID *id)
         ntreeTexEndExecTree(ntree->runtime->execdata);
         ntree->runtime->execdata = nullptr;
         break;
+      default:
+        break;
     }
   }
 
@@ -609,7 +611,8 @@ static void write_legacy_properties(bNodeTree &ntree, Map<ID **, ID *> &r_ids_to
         else if (node->type_legacy == GEO_NODE_POINTS_TO_VOLUME) {
           auto &storage = *static_cast<NodeGeometryPointsToVolume *>(node->storage);
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Resolution Mode");
-          storage.resolution_mode = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          storage.resolution_mode = GeometryNodePointsToVolumeResolutionMode(
+              socket->default_value_typed<bNodeSocketValueMenu>()->value);
         }
         else if (node->type_legacy == GEO_NODE_TRIANGULATE) {
           const bNodeSocket *quad_method_socket = node_find_socket(*node, SOCK_IN, "Quad Method");
@@ -625,17 +628,20 @@ static void write_legacy_properties(bNodeTree &ntree, Map<ID **, ID *> &r_ids_to
         else if (node->type_legacy == GEO_NODE_FILL_CURVE) {
           auto &storage = *static_cast<NodeGeometryCurveFill *>(node->storage);
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Mode");
-          storage.mode = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          storage.mode = GeometryNodeCurveFillMode(
+              socket->default_value_typed<bNodeSocketValueMenu>()->value);
         }
         else if (node->type_legacy == GEO_NODE_FILLET_CURVE) {
           auto &storage = *static_cast<NodeGeometryCurveFillet *>(node->storage);
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Mode");
-          storage.mode = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          storage.mode = GeometryNodeCurveFilletMode(
+              socket->default_value_typed<bNodeSocketValueMenu>()->value);
         }
         else if (node->type_legacy == GEO_NODE_RESAMPLE_CURVE) {
           auto &storage = *static_cast<NodeGeometryCurveResample *>(node->storage);
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Mode");
-          storage.mode = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          storage.mode = GeometryNodeCurveResampleMode(
+              socket->default_value_typed<bNodeSocketValueMenu>()->value);
         }
         else if (node->type_legacy == GEO_NODE_DISTRIBUTE_POINTS_IN_VOLUME) {
           auto &storage = *static_cast<NodeGeometryDistributePointsInVolume *>(node->storage);
@@ -645,7 +651,8 @@ static void write_legacy_properties(bNodeTree &ntree, Map<ID **, ID *> &r_ids_to
         else if (node->type_legacy == GEO_NODE_MERGE_BY_DISTANCE) {
           auto &storage = *static_cast<NodeGeometryMergeByDistance *>(node->storage);
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Mode");
-          storage.mode = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          storage.mode = GeometryNodeMergeByDistanceMode(
+              socket->default_value_typed<bNodeSocketValueMenu>()->value);
         }
         else if (node->type_legacy == GEO_NODE_MESH_TO_VOLUME) {
           auto &storage = *static_cast<NodeGeometryMeshToVolume *>(node->storage);
@@ -655,7 +662,8 @@ static void write_legacy_properties(bNodeTree &ntree, Map<ID **, ID *> &r_ids_to
         else if (node->type_legacy == GEO_NODE_RAYCAST) {
           auto &storage = *static_cast<NodeGeometryRaycast *>(node->storage);
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Interpolation");
-          storage.mapping = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          storage.mapping = GeometryNodeRaycastMapMode(
+              socket->default_value_typed<bNodeSocketValueMenu>()->value);
         }
         else if (node->type_legacy == GEO_NODE_REMOVE_ATTRIBUTE) {
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Pattern Mode");
@@ -689,7 +697,8 @@ static void write_legacy_properties(bNodeTree &ntree, Map<ID **, ID *> &r_ids_to
         else if (node->type_legacy == GEO_NODE_UV_UNWRAP) {
           auto &storage = *static_cast<NodeGeometryUVUnwrap *>(node->storage);
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Method");
-          storage.method = socket->default_value_typed<bNodeSocketValueMenu>()->value;
+          storage.method = GeometryNodeUVUnwrapMethod(
+              socket->default_value_typed<bNodeSocketValueMenu>()->value);
         }
         else if (node->is_type("FunctionNodeMatchString"_ustr)) {
           const bNodeSocket *socket = node_find_socket(*node, SOCK_IN, "Operation");
@@ -697,18 +706,22 @@ static void write_legacy_properties(bNodeTree &ntree, Map<ID **, ID *> &r_ids_to
         }
         else if (node->type_legacy == GEO_NODE_STRING_TO_CURVES) {
           auto &storage = *static_cast<NodeGeometryStringToCurves *>(node->storage);
-          storage.overflow = node_find_socket(*node, SOCK_IN, "Overflow")
-                                 ->default_value_typed<bNodeSocketValueMenu>()
-                                 ->value;
-          storage.align_x = node_find_socket(*node, SOCK_IN, "Align X")
-                                ->default_value_typed<bNodeSocketValueMenu>()
-                                ->value;
-          storage.align_y = node_find_socket(*node, SOCK_IN, "Align Y")
-                                ->default_value_typed<bNodeSocketValueMenu>()
-                                ->value;
-          storage.pivot_mode = node_find_socket(*node, SOCK_IN, "Pivot Point")
-                                   ->default_value_typed<bNodeSocketValueMenu>()
-                                   ->value;
+          storage.overflow = GeometryNodeStringToCurvesOverflowMode(
+              node_find_socket(*node, SOCK_IN, "Overflow")
+                  ->default_value_typed<bNodeSocketValueMenu>()
+                  ->value);
+          storage.align_x = GeometryNodeStringToCurvesAlignXMode(
+              node_find_socket(*node, SOCK_IN, "Align X")
+                  ->default_value_typed<bNodeSocketValueMenu>()
+                  ->value);
+          storage.align_y = GeometryNodeStringToCurvesAlignYMode(
+              node_find_socket(*node, SOCK_IN, "Align Y")
+                  ->default_value_typed<bNodeSocketValueMenu>()
+                  ->value);
+          storage.pivot_mode = GeometryNodeStringToCurvesPivotMode(
+              node_find_socket(*node, SOCK_IN, "Pivot Point")
+                  ->default_value_typed<bNodeSocketValueMenu>()
+                  ->value);
           r_ids_to_restore.add(&node->id, node->id);
           node->id = id_cast<ID *>(node_find_socket(*node, SOCK_IN, "Font")
                                        ->default_value_typed<bNodeSocketValueFont>()
@@ -2201,14 +2214,16 @@ IDProperty *node_create_asset_meta_data_properties(const bNodeTree &node_tree)
       case SOCK_MENU: {
         const auto &value = node_interface::get_socket_data_as<bNodeSocketValueMenu>(*socket);
         IDP_AddToGroup(input.get(), idprop::create("default_value", value.value).release());
-        auto items = idprop::create_group("items");
-        for (const RuntimeNodeEnumItem &enum_item : value.enum_items->items) {
-          auto item = idprop::create_group(std::to_string(enum_item.identifier));
-          IDP_AddToGroup(item.get(), idprop::create("name", enum_item.name).release());
-          IDP_AddToGroup(item.get(),
-                         idprop::create("description", enum_item.description).release());
+        if (value.enum_items) {
+          auto items = idprop::create_group("items");
+          for (const RuntimeNodeEnumItem &enum_item : value.enum_items->items) {
+            auto item = idprop::create_group(std::to_string(enum_item.identifier));
+            IDP_AddToGroup(item.get(), idprop::create("name", enum_item.name).release());
+            IDP_AddToGroup(item.get(),
+                           idprop::create("description", enum_item.description).release());
+          }
+          IDP_AddToGroup(input.get(), items.release());
         }
-        IDP_AddToGroup(input.get(), items.release());
         break;
       }
       case SOCK_SHADER:
@@ -2879,7 +2894,7 @@ bNodeSocket *node_find_enabled_output_socket(bNode &node, const StringRef name)
 
 static bNodeSocket *make_socket(bNodeTree *ntree,
                                 bNode * /*node*/,
-                                const int in_out,
+                                const eNodeSocketInOut in_out,
                                 ListBaseT<bNodeSocket> *lb,
                                 const StringRefNull idname,
                                 const StringRefNull identifier,
@@ -3783,7 +3798,7 @@ bNodeSocket *node_add_static_socket(bNodeTree &ntree,
   }
 
   bNodeSocket *sock = node_add_socket(ntree, node, in_out, *idname, identifier, name);
-  sock->type = type;
+  sock->type = eNodeSocketDatatype(type);
   return sock;
 }
 
@@ -5163,7 +5178,7 @@ bNodeTree *node_tree_from_id(ID *id)
   return (nodetree != nullptr) ? *nodetree : nullptr;
 }
 
-void node_tree_node_flag_set(bNodeTree &ntree, const int flag, const bool enable)
+void node_tree_node_flag_set(bNodeTree &ntree, const eNode_Flag flag, const bool enable)
 {
   for (bNode *node : ntree.all_nodes()) {
     if (enable) {
@@ -5287,12 +5302,12 @@ bool node_set_selected(bNode &node, const bool select)
   }
   /* Deselect sockets too. */
   for (bNodeSocket &sock : node.inputs) {
-    changed |= (sock.flag & NODE_SELECT) != 0;
-    sock.flag &= ~NODE_SELECT;
+    changed |= (sock.flag & SOCK_SELECT) != 0;
+    sock.flag &= ~SOCK_SELECT;
   }
   for (bNodeSocket &sock : node.outputs) {
-    changed |= (sock.flag & NODE_SELECT) != 0;
-    sock.flag &= ~NODE_SELECT;
+    changed |= (sock.flag & SOCK_SELECT) != 0;
+    sock.flag &= ~SOCK_SELECT;
   }
   return changed;
 }
@@ -5308,7 +5323,7 @@ void node_set_active(bNodeTree &ntree, bNode &node)
 {
   const bool is_paint_canvas = node_supports_active_flag(node, NODE_ACTIVE_PAINT_CANVAS);
   const bool is_texture_class = node_supports_active_flag(node, NODE_ACTIVE_TEXTURE);
-  int flags_to_set = NODE_ACTIVE;
+  eNode_Flag flags_to_set = NODE_ACTIVE;
   SET_FLAG_FROM_TEST(flags_to_set, is_paint_canvas, NODE_ACTIVE_PAINT_CANVAS);
   SET_FLAG_FROM_TEST(flags_to_set, is_texture_class, NODE_ACTIVE_TEXTURE);
 

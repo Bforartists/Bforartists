@@ -56,6 +56,7 @@ set(LIB
   PRIVATE bf::dna
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::intern::clog
+  PRIVATE bf::extern::xxhash
 )
 
 blender_add_lib(bf_functions "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

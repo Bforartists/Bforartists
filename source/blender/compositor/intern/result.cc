@@ -7,15 +7,13 @@
 #include <string>
 #include <variant>
 
-#include "MEM_guardedalloc.h"
-
 #include "BLI_assert.h"
 #include "BLI_cpp_type.hh"
+#include "BLI_generic_array.hh"
 #include "BLI_generic_pointer.hh"
 #include "BLI_generic_span.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
-#include "BLI_utildefines.h"
 
 #include "GPU_shader.hh"
 #include "GPU_state.hh"
@@ -786,7 +784,12 @@ void Result::share_data(const Result &source)
   *this = source;
   reference_count_ = reference_count;
 
-  (*data_reference_count_)++;
+  if (sharing_info_) {
+    sharing_info_->add_user();
+  }
+
+  /* Derived resources can't be shared, so reset them. */
+  derived_resources_ = nullptr;
 }
 
 /* Returns true if the given GPU texture is compatible with the type and precision of the given
@@ -814,29 +817,33 @@ void Result::share_data(const Result &source)
   return GPU_texture_format(texture) == result.get_gpu_texture_format();
 }
 
-void Result::wrap_external(gpu::Texture *texture)
+void Result::share_data(gpu::Texture *texture, ImplicitSharingInfo *sharing_info)
 {
   BLI_assert(is_compatible_texture(texture, *this));
   BLI_assert(!this->is_allocated());
 
   gpu_texture_ = texture;
   storage_type_ = ResultStorageType::GPU;
-  is_external_ = true;
   is_single_value_ = false;
   domain_ = Domain(int2(GPU_texture_width(texture), GPU_texture_height(texture)));
-  data_reference_count_ = new int(1);
+  sharing_info_ = sharing_info;
+  if (sharing_info) {
+    sharing_info_->add_user();
+  }
 }
 
-void Result::wrap_external(void *data, int2 size)
+void Result::share_data(const void *data, const int2 size, ImplicitSharingInfo *sharing_info)
 {
   BLI_assert(!this->is_allocated());
 
   const int64_t array_size = int64_t(size.x) * int64_t(size.y);
-  cpu_data_ = GMutableSpan(this->get_cpp_type(), data, array_size);
+  cpu_data_ = GSpan(this->get_cpp_type(), data, array_size);
   storage_type_ = ResultStorageType::CPU;
-  is_external_ = true;
   domain_ = Domain(size);
-  data_reference_count_ = new int(1);
+  sharing_info_ = sharing_info;
+  if (sharing_info) {
+    sharing_info_->add_user();
+  }
 }
 
 void Result::set_transformation(const float3x3 &transformation)
@@ -892,60 +899,19 @@ void Result::free()
     return;
   }
 
-  /* Data is still shared with some other result, so decrement data reference count and reset data
-   * members without actually freeing the data itself. */
-  BLI_assert(*data_reference_count_ >= 1);
-  if (*data_reference_count_ != 1) {
-    (*data_reference_count_)--;
-
-    switch (storage_type_) {
-      case ResultStorageType::GPU:
-        gpu_texture_ = nullptr;
-        break;
-      case ResultStorageType::CPU:
-        cpu_data_ = GMutableSpan();
-        break;
-    }
-
-    data_reference_count_ = nullptr;
-    derived_resources_ = nullptr;
-
-    return;
-  }
-
-  delete data_reference_count_;
-  data_reference_count_ = nullptr;
-
   delete derived_resources_;
   derived_resources_ = nullptr;
 
-  if (is_external_) {
-    switch (storage_type_) {
-      case ResultStorageType::GPU:
-        gpu_texture_ = nullptr;
-        break;
-      case ResultStorageType::CPU:
-        cpu_data_ = GMutableSpan();
-        break;
-    }
-    return;
+  if (sharing_info_) {
+    sharing_info_->remove_user_and_delete_if_last();
   }
-
+  sharing_info_ = nullptr;
   switch (storage_type_) {
     case ResultStorageType::GPU:
-      if (is_from_pool_) {
-        gpu::TexturePool::get().release_texture(this->gpu_texture());
-      }
-      else {
-        GPU_texture_free(this->gpu_texture());
-      }
       gpu_texture_ = nullptr;
       break;
     case ResultStorageType::CPU:
-      this->cpu_data_for_write().type().destruct_n(this->cpu_data_for_write().data(),
-                                                   this->cpu_data_for_write().size());
-      MEM_delete_void(this->cpu_data_for_write().data());
-      cpu_data_ = GMutableSpan();
+      cpu_data_ = GSpan();
       break;
   }
 }
@@ -1130,6 +1096,50 @@ void Result::update_single_value_data()
   }
 }
 
+/* A RAII structure that makes it easier to manage the different ways of allocating and freeing
+ * GPU textures. */
+class GPUData {
+ public:
+  /* The allocated texture. */
+  gpu::Texture *texture;
+
+ private:
+  /* If true, the GPU texture was allocated from the texture pool of the context and should be
+   * released back into the pool instead of being freed. */
+  const bool is_from_pool_;
+
+ public:
+  GPUData(const int2 size,
+          const ResultType type,
+          const ResultPrecision precision,
+          const bool is_from_pool)
+      : is_from_pool_(type == ResultType::Float4x4 ? false : is_from_pool)
+  {
+    const gpu::TextureFormat format = Result::gpu_texture_format(type, precision);
+    const eGPUTextureUsage usage = GPU_TEXTURE_USAGE_GENERAL;
+    if (type == ResultType::Float4x4) {
+      this->texture = GPU_texture_create_2d_array(
+          __func__, size.x, size.y, 4, 1, format, usage, nullptr);
+    }
+    else if (is_from_pool) {
+      this->texture = gpu::TexturePool::get().acquire_texture(size, format, usage);
+    }
+    else {
+      this->texture = GPU_texture_create_2d(__func__, size.x, size.y, 1, format, usage, nullptr);
+    }
+  }
+
+  ~GPUData()
+  {
+    if (is_from_pool_) {
+      gpu::TexturePool::get().release_texture(this->texture);
+    }
+    else {
+      GPU_texture_free(this->texture);
+    }
+  }
+};
+
 void Result::allocate_data(const int2 size,
                            const bool from_pool,
                            const std::optional<ResultStorageType> storage_type)
@@ -1140,39 +1150,18 @@ void Result::allocate_data(const int2 size,
                                                   context_->use_gpu();
   if (use_gpu) {
     storage_type_ = ResultStorageType::GPU;
-
-    const gpu::TextureFormat format = this->get_gpu_texture_format();
-    const eGPUTextureUsage usage = GPU_TEXTURE_USAGE_GENERAL;
-    if (this->type() == ResultType::Float4x4) {
-      is_from_pool_ = false;
-      gpu_texture_ = GPU_texture_create_2d_array(
-          __func__, size.x, size.y, 4, 1, format, usage, nullptr);
-    }
-    else if (from_pool) {
-      is_from_pool_ = true;
-      gpu_texture_ = gpu::TexturePool::get().acquire_texture(size, format, usage);
-    }
-    else {
-      is_from_pool_ = false;
-      gpu_texture_ = GPU_texture_create_2d(__func__, size.x, size.y, 1, format, usage, nullptr);
-    }
+    auto *new_texture = new ImplicitSharedValue<GPUData>(
+        size, this->type(), this->precision(), from_pool);
+    sharing_info_ = new_texture;
+    gpu_texture_ = new_texture->data.texture;
   }
   else {
     storage_type_ = ResultStorageType::CPU;
-
-    const CPPType &cpp_type = this->get_cpp_type();
-    const int64_t item_size = cpp_type.size;
-    const int64_t alignment = cpp_type.alignment;
     const int64_t array_size = int64_t(size.x) * int64_t(size.y);
-    const int64_t memory_size = array_size * item_size;
-
-    void *data = MEM_new_uninitialized_aligned(memory_size, alignment, AT);
-    cpp_type.default_construct_n(data, array_size);
-
-    cpu_data_ = GMutableSpan(cpp_type, data, array_size);
+    auto *new_array = new ImplicitSharedValue<GArray<>>(this->get_cpp_type(), array_size);
+    sharing_info_ = new_array;
+    cpu_data_ = new_array->data.as_span();
   }
-
-  data_reference_count_ = new int(1);
 }
 
 }  // namespace blender::compositor

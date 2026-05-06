@@ -450,16 +450,15 @@ static void compositor_modifier_apply(ModifierApplyContext &context,
   CompositorCache &com_cache = context.render_data.scene->ed->runtime->ensure_compositor_cache();
   CompositorModifierContext com_mod_context(context, com_cache.get_cache_manager(), modifier_data);
 
-  const bool use_gpu = com_mod_context.use_gpu();
-  if (use_gpu) {
-    render_begin_gpu(context.render_data);
+  if (com_mod_context.use_gpu()) {
+    com_mod_context.set_gpu_supported(render_begin_gpu(context.render_data));
   }
 
   com_cache.recreate_if_needed(
       com_mod_context.use_gpu(), com_mod_context.get_precision(), context.render_data.gpu_context);
   com_mod_context.evaluate();
   com_mod_context.cache_manager().reset();
-  if (use_gpu) {
+  if (com_mod_context.use_gpu()) {
     render_end_gpu(context.render_data);
   }
 

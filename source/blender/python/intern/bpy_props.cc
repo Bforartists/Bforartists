@@ -2447,10 +2447,9 @@ static size_t strswapbufcpy(char *buf, const char **orig)
 static int icon_id_from_name(const char *name)
 {
   const EnumPropertyItem *item;
-  int id;
 
   if (name[0]) {
-    for (item = rna_enum_icon_items, id = 0; item->identifier; item++, id++) {
+    for (item = rna_enum_icon_items; item->identifier; item++) {
       if (STREQ(item->name, name)) {
         return item->value;
       }

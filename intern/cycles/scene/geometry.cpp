@@ -806,6 +806,8 @@ void GeometryManager::device_update(Device *device,
     }
 
     Mesh *mesh = static_cast<Mesh *>(geom);
+    /* Apply generated attribute if needed or remove if not needed */
+    mesh->update_generated(scene);
 
     if (num_tessellation && mesh->need_tesselation()) {
       {
@@ -834,8 +836,6 @@ void GeometryManager::device_update(Device *device,
       mesh->tessellate(subd_params);
     }
 
-    /* Apply generated attribute if needed or remove if not needed */
-    mesh->update_generated(scene);
     /* Apply tangents for generated and UVs (if any need them) or remove if not needed */
     mesh->update_tangents(scene, true);
     if (!mesh->has_true_displacement()) {

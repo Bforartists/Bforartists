@@ -17,7 +17,23 @@
 #include "eevee_shadow_shared.hh"
 #include "gpu_shader_utildefines_lib.glsl"
 
-namespace eevee {
+namespace eevee::shadow {
+
+struct TilemapBoundsInit {
+  [[storage(0, write)]] ShadowTileMapClip (&tilemaps_clip_buf)[];
+  [[push_constant]] const int tilemaps_clip_buf_len;
+};
+
+[[compute, local_size(SHADOW_CLIPMAP_GROUP_SIZE)]]
+void tilemap_bounds_clear([[resource_table]] TilemapBoundsInit &srt,
+                          [[global_invocation_id]] const uint3 global_id)
+{
+  int index = int(global_id.x);
+  if (index < srt.tilemaps_clip_buf_len) {
+    srt.tilemaps_clip_buf[index].clip_far = floatBitsToOrderedInt(-FLT_MAX);
+    srt.tilemaps_clip_buf[index].clip_near = floatBitsToOrderedInt(FLT_MAX);
+  }
+}
 
 struct TilemapBounds {
   [[storage(LIGHT_CULL_BUF_SLOT, read)]] const LightCullingData &light_cull_buf;
@@ -34,7 +50,7 @@ struct TilemapBounds {
 };
 
 [[compute, local_size(SHADOW_BOUNDS_GROUP_SIZE)]]
-void tilemap_bounds_compute([[resource_table]] TilemapBounds &srt,
+void tilemap_bounds_min_max([[resource_table]] TilemapBounds &srt,
                             [[global_invocation_id]] const uint3 global_id,
                             [[local_invocation_index]] const uint local_index)
 {
@@ -116,6 +132,7 @@ void tilemap_bounds_compute([[resource_table]] TilemapBounds &srt,
   LIGHT_FOREACH_END
 }
 
-PipelineCompute shadow_tilemap_bounds(tilemap_bounds_compute);
+PipelineCompute tilemap_bounds_init(tilemap_bounds_clear);
+PipelineCompute tilemap_bounds(tilemap_bounds_min_max);
 
-}  // namespace eevee
+}  // namespace eevee::shadow

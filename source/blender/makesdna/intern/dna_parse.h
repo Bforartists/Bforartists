@@ -17,12 +17,16 @@ struct ParsedMember {
   std::string type_name;
   /** Canonical full member name, e.g. `*var`, `arr[4]`, `(*func)()`. */
   std::string member_name;
+  /** Original C++ code full member name, before renames. */
+  std::string alias_member_name;
   /** Required alignment in bytes. */
   int alignment = 0;
 };
 
 struct ParsedStruct {
   std::string type_name;
+  /** Original C++ code full member name, before renames. */
+  std::string alias_type_name;
   Vector<ParsedMember> members;
 };
 

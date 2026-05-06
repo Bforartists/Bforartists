@@ -195,7 +195,7 @@ static Scene *preview_prepare_scene(const Main *bmain,
 
   /* Only enable the combined render-pass. */
   view_layer->passflag = SCE_PASS_COMBINED;
-  view_layer->eevee.render_passes = 0;
+  view_layer->eevee.render_passes = eViewLayerEEVEEPassType{};
 
   /* This flag tells render to not execute depsgraph or F-Curves etc. */
   scene_preview->r.scemode |= R_BUTS_PREVIEW;
@@ -482,6 +482,8 @@ static void connect_nodes_to_aovs(const Span<bNodeTreePath *> treepath,
             ptr = RNA_pointer_create_discrete(
                 id_cast<ID *>(active_nt), RNA_NodeSocket, socket_preview);
             RNA_float_get_array(&ptr, "default_value", vec);
+            break;
+          default:
             break;
         }
         ptr = RNA_pointer_create_discrete(id_cast<ID *>(active_nt), RNA_NodeSocket, aov_socket);

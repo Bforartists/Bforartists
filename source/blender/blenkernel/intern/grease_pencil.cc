@@ -386,7 +386,7 @@ constexpr StringRef ATTR_FILL_COLOR = "fill_color";
 Drawing::Drawing()
 {
   this->base.type = GP_DRAWING;
-  this->base.flag = 0;
+  this->base.flag = GreasePencilDrawingBaseFlag{};
 
   new (&this->geometry) bke::CurvesGeometry();
   /* Initialize runtime data. */
@@ -413,7 +413,7 @@ Drawing::Drawing(Drawing &&other)
   this->base.type = GP_DRAWING;
   other.base.type = GP_DRAWING;
   this->base.flag = other.base.flag;
-  other.base.flag = 0;
+  other.base.flag = GreasePencilDrawingBaseFlag{};
 
   new (&this->geometry) bke::CurvesGeometry(std::move(other.geometry.wrap()));
 
@@ -1243,7 +1243,7 @@ void Drawing::tag_topology_changed(const IndexMask &changed_curves)
 DrawingReference::DrawingReference()
 {
   this->base.type = GP_DRAWING_REFERENCE;
-  this->base.flag = 0;
+  this->base.flag = GreasePencilDrawingBaseFlag{};
 
   this->id_reference = nullptr;
 }
@@ -1289,7 +1289,7 @@ TreeNode::TreeNode()
   this->parent = nullptr;
 
   this->GreasePencilLayerTreeNode::name = nullptr;
-  this->flag = 0;
+  this->flag = GreasePencilLayerTreeNodeFlag{};
   this->color[0] = this->color[1] = this->color[2] = 0;
 }
 
@@ -1372,7 +1372,7 @@ int64_t TreeNode::depth() const
 LayerMask::LayerMask()
 {
   this->layer_name = nullptr;
-  this->flag = 0;
+  this->flag = GreasePencilLayerMaskFlag{};
 }
 
 LayerMask::LayerMask(const StringRef name) : LayerMask()
@@ -1408,7 +1408,7 @@ Layer::Layer()
   this->frames_storage.num = 0;
   this->frames_storage.keys = nullptr;
   this->frames_storage.values = nullptr;
-  this->frames_storage.flag = 0;
+  this->frames_storage.flag = GreasePencilLayerFramesMapStorageFlag{};
 
   this->blend_mode = GP_LAYER_BLEND_NONE;
   this->opacity = 1.0f;

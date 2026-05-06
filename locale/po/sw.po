@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-11-14 10:59+0000\n"
 "Last-Translator: Isaac Gicheha <shwaky3@gmail.com>\n"
 "Language-Team: Swahili <https://translate.blender.org/projects/blender-ui/ui/sw/>\n"
@@ -6207,10 +6207,6 @@ msgid "Linear AP0 with ACES white point"
 msgstr "Linear AP0 yenye nukta nyeupe ya ACES"
 
 
-msgid "AgX Base Image Encoding for sRGB Display"
-msgstr "Usimbaji wa Picha wa Msingi wa AgX kwa Onyesho la sRGB"
-
-
 msgid "AgX Log"
 msgstr "Kumbukumbu ya AgX"
 
@@ -6233,10 +6229,6 @@ msgstr "Kiunda cha uundaji wa filamu chenye logi chenye vituo 16.5 vya latitudo,
 
 msgid "Filmic sRGB"
 msgstr "Filamu sRGB"
-
-
-msgid "sRGB display space with Filmic view transform"
-msgstr "nafasi ya kuonyesha ya sRGB yenye mabadiliko ya mwonekano wa Filamu"
 
 
 msgid "1931 CIE XYZ with adapted illuminant D65 white point"
@@ -15539,54 +15531,6 @@ msgid "Amount of smoothing to automatically apply to each stroke"
 msgstr "Kiasi cha kulainisha kutumika kiotomatiki kwa kila kiharusi"
 
 
-msgid "Propagation Steps"
-msgstr "Hatua za Uenezi"
-
-
-msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
-msgstr "Umbali ambapo kuweka kiotomatiki kwenye ukingo wa mpaka kutalinda wima kutoka kwa ukingo uliofunikwa kikamilifu."
-
-
-msgid "Blur Steps"
-msgstr "Hatua za Waa"
-
-
-msgid "The number of times the cavity mask is blurred"
-msgstr "Idadi ya mara ambazo kinyago cha uso hutiwa ukungu"
-
-
-msgid "Cavity Curve"
-msgstr "Mviringo wa Cavity"
-
-
-msgid "Cavity Factor"
-msgstr "Sababu ya Cavity"
-
-
-msgid "The contrast of the cavity mask"
-msgstr "Tofauti ya mask ya cavity"
-
-
-msgid "Extend the angular range with a falloff gradient"
-msgstr "Panua masafa ya angular na upinde wa mvua unaoanguka"
-
-
-msgid "Area Normal Limit"
-msgstr "Kikomo cha Kawaida cha Eneo"
-
-
-msgid "The range of angles that will be affected"
-msgstr "Msururu wa pembe ambazo zitaathirika"
-
-
-msgid "View Normal Falloff"
-msgstr "Tazama Falloff ya Kawaida"
-
-
-msgid "View Normal Limit"
-msgstr "Tazama Kikomo cha Kawaida"
-
-
 msgid "Brush blending mode"
 msgstr "Modi ya kuchanganya brashi"
 
@@ -16848,58 +16792,6 @@ msgstr "Kuathiri Alfa"
 
 msgid "When this is disabled, lock alpha while painting"
 msgstr "Hii inapozimwa, funga alfa unapopaka rangi"
-
-
-msgid "Do not affect non manifold boundary edges"
-msgstr "Usiathiri kingo za mipaka zisizo nyingi"
-
-
-msgid "Face Sets Boundary Automasking"
-msgstr "Uso Unaweka Mipaka ya Kuweka Mipaka Kiotomatiki"
-
-
-msgid "Cavity Mask"
-msgstr "Mask ya Cavity"
-
-
-msgid "Do not affect vertices on peaks, based on the surface curvature"
-msgstr "Usiathiri wima kwenye vilele, kulingana na mkunjo wa uso"
-
-
-msgid "Inverted Cavity Mask"
-msgstr "Mask ya Cavity Iliyogeuzwa"
-
-
-msgid "Do not affect vertices within crevices, based on the surface curvature"
-msgstr "Usiathiri wima ndani ya mipasuko, kulingana na mkunjo wa uso"
-
-
-msgid "Custom Cavity Curve"
-msgstr "Njia Maalum ya Cavity"
-
-
-msgid "Use custom curve"
-msgstr "Tumia curve maalum"
-
-
-msgid "Area Normal"
-msgstr "Eneo la Kawaida"
-
-
-msgid "Affect only vertices with a similar normal to where the stroke starts"
-msgstr "Huathiri tu wima zilizo na kawaida sawa na mahali kiharusi kinapoanzia"
-
-
-msgid "Affect only vertices connected to the active vertex under the brush"
-msgstr "Huathiri tu vipeo vilivyounganishwa kwenye kipeo amilifu chini ya brashi"
-
-
-msgid "Affect only vertices with a normal that faces the viewer"
-msgstr "Huathiri tu wima zilizo na kawaida inayoelekea mtazamaji"
-
-
-msgid "Occlusion"
-msgstr "Kuziba"
 
 
 msgid "Collide with objects during the simulation"
@@ -28273,6 +28165,10 @@ msgid "Placement"
 msgstr "Kuweka"
 
 
+msgid "Scale the noise frequency"
+msgstr "Pima mzunguko wa kelele"
+
+
 msgid "Show stroke fills of this material"
 msgstr "Onyesha mijazo ya kiharusi ya nyenzo hii"
 
@@ -28374,20 +28270,8 @@ msgid "Editor menu containing buttons"
 msgstr "Menyu ya mhariri iliyo na vitufe"
 
 
-msgid "Math"
-msgstr "Hisabati"
-
-
-msgid "Utilities"
-msgstr "Huduma"
-
-
 msgid "Clean Up"
 msgstr "Safisha"
-
-
-msgid "Merge"
-msgstr "Unganisha"
 
 
 msgid "Show/Hide"
@@ -28398,8 +28282,24 @@ msgid "Metaball"
 msgstr "Mpira wa miguu"
 
 
+msgid "Math"
+msgstr "Hisabati"
+
+
+msgid "Utilities"
+msgstr "Huduma"
+
+
+msgid "Pivot Point"
+msgstr "Egemeo"
+
+
 msgid "Read"
 msgstr "Soma"
+
+
+msgid "Snap"
+msgstr "Picha"
 
 
 msgid "Sample"
@@ -28418,24 +28318,16 @@ msgid "Instances"
 msgstr "Matukio"
 
 
-msgid "Pivot Point"
-msgstr "Egemeo"
-
-
-msgid "Snap"
-msgstr "Picha"
-
-
 msgid "Import"
 msgstr "Ingiza"
 
 
-msgid "Deprecated"
-msgstr "Imeacha kutumika"
-
-
 msgid "Mirror"
 msgstr "Kioo"
+
+
+msgid "Deprecated"
+msgstr "Imeacha kutumika"
 
 
 msgid "Navigation"
@@ -28454,16 +28346,16 @@ msgid "Light Probe"
 msgstr "Uchunguzi wa Mwanga"
 
 
-msgid "Layout"
-msgstr "Mpangilio"
-
-
 msgid "Apply"
 msgstr "Tumia"
 
 
 msgid "Asset"
 msgstr "Mali"
+
+
+msgid "Layout"
+msgstr "Mpangilio"
 
 
 msgid "Adjust"
@@ -28480,6 +28372,10 @@ msgstr "Kufuatilia"
 
 msgid "Bone Collections"
 msgstr "Mikusanyo ya Mifupa"
+
+
+msgid "Merge"
+msgstr "Unganisha"
 
 
 msgid "Keyframe Insert Pie"
@@ -28879,6 +28775,106 @@ msgstr "Kuhusu"
 
 msgid "Quick Setup"
 msgstr "Usanidi wa Haraka"
+
+
+msgid "Propagation Steps"
+msgstr "Hatua za Uenezi"
+
+
+msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
+msgstr "Umbali ambapo kuweka kiotomatiki kwenye ukingo wa mpaka kutalinda wima kutoka kwa ukingo uliofunikwa kikamilifu."
+
+
+msgid "Blur Steps"
+msgstr "Hatua za Waa"
+
+
+msgid "The number of times the cavity mask is blurred"
+msgstr "Idadi ya mara ambazo kinyago cha uso hutiwa ukungu"
+
+
+msgid "Cavity Curve"
+msgstr "Mviringo wa Cavity"
+
+
+msgid "Cavity Factor"
+msgstr "Sababu ya Cavity"
+
+
+msgid "The contrast of the cavity mask"
+msgstr "Tofauti ya mask ya cavity"
+
+
+msgid "Extend the angular range with a falloff gradient"
+msgstr "Panua masafa ya angular na upinde wa mvua unaoanguka"
+
+
+msgid "Area Normal Limit"
+msgstr "Kikomo cha Kawaida cha Eneo"
+
+
+msgid "The range of angles that will be affected"
+msgstr "Msururu wa pembe ambazo zitaathirika"
+
+
+msgid "Do not affect non manifold boundary edges"
+msgstr "Usiathiri kingo za mipaka zisizo nyingi"
+
+
+msgid "Face Sets Boundary Automasking"
+msgstr "Uso Unaweka Mipaka ya Kuweka Mipaka Kiotomatiki"
+
+
+msgid "Cavity Mask"
+msgstr "Mask ya Cavity"
+
+
+msgid "Do not affect vertices on peaks, based on the surface curvature"
+msgstr "Usiathiri wima kwenye vilele, kulingana na mkunjo wa uso"
+
+
+msgid "Inverted Cavity Mask"
+msgstr "Mask ya Cavity Iliyogeuzwa"
+
+
+msgid "Do not affect vertices within crevices, based on the surface curvature"
+msgstr "Usiathiri wima ndani ya mipasuko, kulingana na mkunjo wa uso"
+
+
+msgid "Custom Cavity Curve"
+msgstr "Njia Maalum ya Cavity"
+
+
+msgid "Use custom curve"
+msgstr "Tumia curve maalum"
+
+
+msgid "Area Normal"
+msgstr "Eneo la Kawaida"
+
+
+msgid "Affect only vertices with a similar normal to where the stroke starts"
+msgstr "Huathiri tu wima zilizo na kawaida sawa na mahali kiharusi kinapoanzia"
+
+
+msgid "Affect only vertices connected to the active vertex under the brush"
+msgstr "Huathiri tu vipeo vilivyounganishwa kwenye kipeo amilifu chini ya brashi"
+
+
+msgid "Affect only vertices with a normal that faces the viewer"
+msgstr "Huathiri tu wima zilizo na kawaida inayoelekea mtazamaji"
+
+
+msgid "Occlusion"
+msgstr "Kuziba"
+
+
+msgid "View Normal Falloff"
+msgstr "Tazama Falloff ya Kawaida"
+
+
+msgid "View Normal Limit"
+msgstr "Tazama Kikomo cha Kawaida"
 
 
 msgid "Edge in a Mesh data-block"
@@ -32561,10 +32557,6 @@ msgstr "Kupunguza Kelele"
 
 msgid "Offset the noise along the strokes"
 msgstr "Zima kelele kando ya viboko"
-
-
-msgid "Scale the noise frequency"
-msgstr "Pima mzunguko wa kelele"
 
 
 msgid "Where to perform randomization"
@@ -42708,11 +42700,6 @@ msgstr "Ingiza BVH"
 
 msgid "Load a SVG file"
 msgstr "Pakia faili ya SVG"
-
-
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "Leta SVG"
 
 
 msgid "Load a FBX file"
@@ -64677,11 +64664,6 @@ msgid "Snapping"
 msgstr "Kupiga"
 
 
-msgctxt "Operator"
-msgid "Area Options"
-msgstr "Chaguo za Eneo"
-
-
 msgid "Operations for splitting and merging"
 msgstr "Uendeshaji wa kugawanyika na kuunganisha"
 
@@ -68334,14 +68316,6 @@ msgid "Copy Mirrored UV Coords"
 msgstr "Nakili Misimbo ya UV Iliyoakisiwa"
 
 
-msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
-msgstr "Nakili viwianishi vya UV vya kioo kwenye mhimili wa X kulingana na wavu unaoakisiwa"
-
-
-msgid "Axis Direction"
-msgstr "Mwelekeo wa Mhimili"
-
-
 msgid "Tolerance for finding vertex duplicates"
 msgstr "Uvumilivu wa kutafuta nakala za kipeo"
 
@@ -68867,26 +68841,12 @@ msgid "Reveal all hidden UV vertices"
 msgstr "Onyesha wima zote za UV zilizofichwa"
 
 
-msgctxt "Operator"
-msgid "UV Rip"
-msgstr "Mpasuko wa UV"
-
-
 msgid "Rip selected vertices or a selected region"
 msgstr "Pasua wima zilizochaguliwa au eneo lililochaguliwa"
 
 
-msgctxt "Operator"
-msgid "UV Rip Move"
-msgstr "UV Rip Hoja"
-
-
 msgid "Unstitch UVs and move the result"
 msgstr "Ondoa UV na usogeze matokeo"
-
-
-msgid "UV Rip"
-msgstr "Mpasuko wa UV"
 
 
 msgctxt "Operator"
@@ -75783,30 +75743,6 @@ msgstr "Tumia mazingira ya nyuma ya Vulkan"
 
 msgid "Device"
 msgstr "Kifaa"
-
-
-msgid "Image Display Method"
-msgstr "Njia ya Kuonyesha Picha"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Njia inayotumika kuonyesha picha kwenye skrini"
-
-
-msgid "Automatically choose method based on GPU and image"
-msgstr "Chagua kiotomatiki mbinu kulingana na GPU na picha"
-
-
-msgid "2D Texture"
-msgstr "2D Muundo"
-
-
-msgid "Use CPU for display transform and display image with 2D texture"
-msgstr "Tumia CPU kwa kubadilisha onyesho na kuonyesha taswira yenye muundo wa 2D"
-
-
-msgid "Use GLSL shaders for display transform and display image with 2D texture"
-msgstr "Tumia vivuli vya GLSL kwa kubadilisha onyesho na kuonyesha picha yenye muundo wa 2D"
 
 
 msgid "Is Microsoft Store Install"
@@ -92097,10 +92033,6 @@ msgid "Distribution Type"
 msgstr "Aina ya Usambazaji"
 
 
-msgid "Multiplier"
-msgstr "Kuzidisha"
-
-
 msgid "Dicing Rate Render"
 msgstr "Kutoa Kiwango cha Dicing"
 
@@ -92203,6 +92135,10 @@ msgstr "Kichujio awali"
 
 msgid "Use GPU"
 msgstr "Tumia GPU"
+
+
+msgid "Multiplier"
+msgstr "Kuzidisha"
 
 
 msgid "Curve Subdivisions"
@@ -95438,6 +95374,11 @@ msgstr "Picha"
 
 
 msgctxt "Operator"
+msgid "Jump to Selected"
+msgstr "Rukia Iliyochaguliwa"
+
+
+msgctxt "Operator"
 msgid "Keyframe Type"
 msgstr "Aina ya Muhimu"
 
@@ -95761,11 +95702,6 @@ msgstr "Laini (Gaussian)"
 msgctxt "Operator"
 msgid "Smooth (Legacy)"
 msgstr "Laini (Urithi)"
-
-
-msgctxt "Operator"
-msgid "Jump to Selected"
-msgstr "Rukia Iliyochaguliwa"
 
 
 msgctxt "Operator"
@@ -101127,10 +101063,6 @@ msgstr "Tafuta"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "Njia ya Mkato Isiyo ya Kibodi"
-
-
-msgid "Pin"
-msgstr "Pini"
 
 
 msgid "Shift Left Mouse"
@@ -106605,10 +106537,6 @@ msgid "Skipped %d of %d island(s), geometry was too complicated to detect a matc
 msgstr "Imerukwa %d ya kisiwa/visiwa %d), jiometri ilikuwa ngumu sana kutambua inayolingana."
 
 
-msgid "Rip failed"
-msgstr "Rip imeshindwa"
-
-
 msgid "Pinned vertices can be selected in Vertex Mode only"
 msgstr "Vipeo vilivyobandikwa vinaweza kuchaguliwa katika Hali ya Kipeo pekee"
 
@@ -111237,10 +111165,6 @@ msgstr "Hakuna mwonekano amilifu uliopatikana katika tukio \"%s\""
 
 msgid "%s: no Combined pass found in the render layer '%s'"
 msgstr "%s: hakuna pasi iliyojumuishwa iliyopatikana katika safu ya utoaji '%s'"
-
-
-msgid "%s: failed to allocate clip buffer '%s'"
-msgstr "%s: imeshindwa kutenga bafa ya klipu '%s'"
 
 
 msgid "%s: incorrect dimensions for partial copy '%s'"

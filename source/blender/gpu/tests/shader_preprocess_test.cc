@@ -696,11 +696,27 @@ void funcTA() { A_fn(); }
 template<typename T>
 void func(T a) {a;}
 template void func<float>(float a);
+template<typename T>
+void foo(T &a) {a;}
+template void foo<float>(float &a);
+
+void f(float a)
+{
+  func(a);
+  foo(a);
+}
 )";
     string expect = R"(
 #line 3
 void func(float a) {a;}
-#line 5
+#line 6
+void foo(_ref(float ,a)) {a;}
+#line 9
+void f(float a)
+{
+  func(a);
+  foo(a);
+}
 )";
     string error;
     string output = process_test_string(input, error);

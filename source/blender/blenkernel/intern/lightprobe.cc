@@ -79,7 +79,7 @@ IDTypeInfo IDType_ID_LP = {
     .lib_override_apply_post = nullptr,
 };
 
-void BKE_lightprobe_type_set(LightProbe *probe, const short lightprobe_type)
+void BKE_lightprobe_type_set(LightProbe *probe, const eLightProbeType lightprobe_type)
 {
   probe->type = lightprobe_type;
 

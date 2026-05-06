@@ -787,7 +787,7 @@ void item_write_struct(BlendWriter *writer, bNodeTreeInterfaceItem &item)
       /* Forward compatible writing of older single value only flag. To be removed in 5.0. */
       bNodeTreeInterfaceSocket &socket = get_item_as<bNodeTreeInterfaceSocket>(item);
       SET_FLAG_FROM_TEST(socket.flag,
-                         socket.structure_type == NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_SINGLE,
+                         socket.structure_type == NodeSocketInterfaceStructureType::Single,
                          NODE_INTERFACE_SOCKET_SINGLE_VALUE_ONLY_LEGACY);
 
       writer->write_struct_cast<bNodeTreeInterfaceSocket>(&item);
@@ -942,24 +942,27 @@ bool bNodeTreeInterfaceSocket::set_socket_type(const StringRef new_socket_type)
   const bool supports_dynamic = supports_fields || supports_grids;
   const bool supports_lists = true;
   switch (this->structure_type) {
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_FIELD:
+    case NodeSocketInterfaceStructureType::Auto:
+    case NodeSocketInterfaceStructureType::Single:
+      break;
+    case NodeSocketInterfaceStructureType::Field:
       if (!supports_fields) {
-        this->structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+        this->structure_type = NodeSocketInterfaceStructureType::Auto;
       }
       break;
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_GRID:
+    case NodeSocketInterfaceStructureType::Grid:
       if (!supports_grids) {
-        this->structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+        this->structure_type = NodeSocketInterfaceStructureType::Auto;
       }
       break;
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_DYNAMIC:
+    case NodeSocketInterfaceStructureType::Dynamic:
       if (!supports_dynamic) {
-        this->structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+        this->structure_type = NodeSocketInterfaceStructureType::Auto;
       }
       break;
-    case NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_LIST:
+    case NodeSocketInterfaceStructureType::List:
       if (!supports_lists) {
-        this->structure_type = NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO;
+        this->structure_type = NodeSocketInterfaceStructureType::Auto;
       }
       break;
   }
@@ -1568,6 +1571,10 @@ bNode *create_proxy_const_input_node(const eNodeSocketDatatype socket_type,
               {src_property_path, get_node_property_path(dst_tree, *node, "value")});
           return node;
         }
+        case NTREE_TEXTURE:
+        case NTREE_UNDEFINED:
+        case NTREE_CUSTOM:
+          break;
       }
       return nullptr;
     }

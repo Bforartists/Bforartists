@@ -177,7 +177,7 @@ static void scene_init_data(ID *id)
 
   scene->toolsettings = MEM_new<ToolSettings>(__func__);
 
-  scene->toolsettings->autokey_mode = uchar(U.autokey_mode);
+  scene->toolsettings->autokey_mode = U.autokey_mode;
 
   scene->toolsettings->unified_paint_settings.curve_rand_hue = BKE_paint_default_curve();
   scene->toolsettings->unified_paint_settings.curve_rand_saturation = BKE_paint_default_curve();
@@ -2160,7 +2160,7 @@ void BKE_scene_set_background(Main *bmain, Scene *scene)
 
   /* Deselect objects (for data select). */
   for (Object &ob : bmain->objects) {
-    ob.flag &= ~SELECT;
+    ob.flag &= ~OB_SELECT;
   }
 
   /* copy layers and flags from bases to objects */

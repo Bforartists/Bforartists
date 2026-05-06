@@ -117,7 +117,7 @@ struct ImBuf *render_result_rect_to_ibuf(struct RenderResult *rr,
 
 void render_result_rect_fill_zero(struct RenderResult *rr, int view_id);
 void render_result_rect_get_pixels(struct RenderResult *rr,
-                                   unsigned int *rect,
+                                   uint8_t *rect,
                                    int rectx,
                                    int recty,
                                    const struct ColorManagedViewSettings *view_settings,

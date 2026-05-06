@@ -324,9 +324,7 @@ static bool is_valid_type_name(const StringRefNull type_name, const StringRefNul
 static bool is_valid_member_name(const StringRefNull name, const StringRefNull filepath)
 {
   /* Strip pointer/array decorators: e.g. `*var[3]` -> `var`. */
-  const uint strip_start = DNA_member_id_offset_start(name.c_str());
-  const uint strip_len = DNA_member_id_offset_end(name.c_str() + strip_start);
-  const StringRef name_strip(name.substr(strip_start, strip_len));
+  const StringRef name_strip = DNA_member_id_string_ref(name);
 
   /* Enforce '_pad123' naming convention, disallow 'pad123' or 'pad_123',
    * special exception for [a-z] after since there is a 'pad_rot_angle' preference. */

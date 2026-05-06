@@ -431,6 +431,12 @@ add_blender_test(
   --output-dir ${TEST_OUT_DIR}/blendfile_io/
 )
 
+add_blender_test(
+  blendfile_autosave
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_blendfile_autosave.py --
+  --output-dir ${TEST_OUT_DIR}/blendfile_autosave/
+)
+
 # This test can be extremely long, especially in debug builds.
 # Generate BLENDFILE_VERSIONING_SPLIT_RANGE instances of the test,
 # each processing their own subset of the whole set of blendfiles.
@@ -756,6 +762,13 @@ if(TEST_SRC_DIR_EXISTS)
   add_blender_test(
     bl_animation_keyframing
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_keyframing.py
+    --
+    --testdir "${TEST_SRC_DIR}/animation"
+  )
+
+  add_blender_test(
+    bl_animation_motion_path
+    --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_motion_path.py
     --
     --testdir "${TEST_SRC_DIR}/animation"
   )

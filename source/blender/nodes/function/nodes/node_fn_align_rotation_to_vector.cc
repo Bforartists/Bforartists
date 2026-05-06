@@ -174,6 +174,14 @@ class AlignRotationToVectorFunction : public mf::MultiFunction {
     hints.min_grain_size = 512;
     return hints;
   }
+
+  void hash_unique(UniqueHashBytes &hash) const override
+  {
+    static constexpr int8_t id = 0;
+    hash.add(&id);
+    hash.add(main_axis_mode_);
+    hash.add(pivot_axis_mode_);
+  }
 };
 
 static void node_build_multi_function(NodeMultiFunctionBuilder &builder)

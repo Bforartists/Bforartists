@@ -68,10 +68,6 @@ static Object *make_prim_init(bContext *C,
   r_creation_data->original_mode = original_mode;
 
   switch (original_mode) {
-    case CTX_MODE_OBJECT:
-      obedit = ed::object::add_type(C, OB_MESH, idname, loc, rot, false, local_view_bits);
-      ed::object::editmode_enter_ex(bmain, scene, obedit, 0);
-      break;
     case CTX_MODE_SCULPT:
       obedit = CTX_data_active_object(C);
       ed::sculpt_paint::undo::geometry_begin(*scene, *obedit, op);
@@ -84,8 +80,11 @@ static Object *make_prim_init(bContext *C,
       }
       break;
     default:
-      obedit = CTX_data_active_object(C);
-      BLI_assert_unreachable();
+      /* Permit adding objects in a variety of modes, even those which are not typically associated
+       * with mesh-editing actions (e.g. Vertex & Texture Paint). This has been the case since 2.7x
+       * and as a result, the operators are often used in user created scripts. */
+      obedit = ed::object::add_type(C, OB_MESH, idname, loc, rot, false, local_view_bits);
+      ed::object::editmode_enter_ex(bmain, scene, obedit, 0);
       break;
   }
 
@@ -159,9 +158,6 @@ static void make_prim_finish(bContext *C,
 {
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
-  BLI_assert(
-      ELEM(creation_data->original_mode, CTX_MODE_OBJECT, CTX_MODE_SCULPT, CTX_MODE_EDIT_MESH));
-
   if (creation_data->original_mode == CTX_MODE_SCULPT) {
     ed::sculpt_paint::undo::geometry_end(*obedit);
   }
@@ -177,7 +173,7 @@ static void make_prim_finish(bContext *C,
     params.is_destructive = true;
     EDBM_update(id_cast<Mesh *>(obedit->data), &params);
 
-    if (creation_data->original_mode == CTX_MODE_OBJECT && !enter_editmode) {
+    if (!(creation_data->original_mode == CTX_MODE_EDIT_MESH || enter_editmode)) {
       ed::object::editmode_exit_ex(
           CTX_data_main(C), CTX_data_scene(C), obedit, ed::object::EM_FREEDATA);
     }

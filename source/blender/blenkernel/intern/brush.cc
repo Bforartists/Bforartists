@@ -678,7 +678,7 @@ void BKE_brush_init_gpencil_settings(Brush *brush)
   }
 
   brush->gpencil_settings->draw_smoothlvl = 1;
-  brush->gpencil_settings->flag = 0;
+  brush->gpencil_settings->flag = eGPDbrush_Flag{};
   brush->gpencil_settings->flag |= GP_BRUSH_USE_PRESSURE;
   brush->gpencil_settings->draw_strength = 1.0f;
   brush->gpencil_settings->draw_jitter = 0.0f;

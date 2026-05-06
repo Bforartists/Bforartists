@@ -1195,6 +1195,11 @@ if(WITH_CYCLES AND (WITH_CYCLES_DEVICE_ONEAPI OR (WITH_CYCLES_EMBREE AND EMBREE_
   )
 endif()
 
+if(WITH_TRACY)
+  set(Tracy_ROOT_DIR ${LIBDIR}/tracy)
+  find_package(Tracy REQUIRED CONFIG)
+endif()
+
 # Add the MSVC directory to the path so when building with ASAN enabled tools such as
 # `msgfmt` which run before the install phase can find the asan shared libraries.
 get_filename_component(_msvc_path ${CMAKE_C_COMPILER} DIRECTORY)

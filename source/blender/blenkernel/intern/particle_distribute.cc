@@ -809,6 +809,8 @@ static void exec_distribute_parent(TaskPool *__restrict /*pool*/, void *taskdata
         distribute_from_verts_exec(task, pa, p);
       }
       break;
+    case PART_FROM_CHILD:
+      break;
   }
 }
 

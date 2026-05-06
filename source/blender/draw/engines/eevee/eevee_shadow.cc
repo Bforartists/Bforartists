@@ -21,8 +21,6 @@
 
 namespace blender::eevee {
 
-ShadowTechnique ShadowModule::shadow_technique = ShadowTechnique::ATOMIC_RASTER;
-
 /* -------------------------------------------------------------------- */
 /** \name Tile map
  *
@@ -571,22 +569,6 @@ ShadowModule::ShadowModule(Instance &inst, ShadowSceneData &data) : inst_(inst),
 
 void ShadowModule::init()
 {
-  /* Temp: Disable TILE_COPY path while efficient solution for parameter buffer overflow is
-   * identified. This path can be re-enabled in future. */
-#if 0
-  /* Determine shadow update technique and atlas format.
-   * NOTE(Metal): Metal utilizes a tile-optimized approach for Apple Silicon's architecture. */
-  const bool is_metal_backend = (GPU_backend_get_type() == GPU_BACKEND_METAL);
-  const bool is_tile_based_arch = (GPU_platform_architecture() == GPU_ARCHITECTURE_TBDR);
-  if (is_metal_backend && is_tile_based_arch) {
-    ShadowModule::shadow_technique = ShadowTechnique::TILE_COPY;
-  }
-  else
-#endif
-  {
-    ShadowModule::shadow_technique = ShadowTechnique::ATOMIC_RASTER;
-  }
-
   blender::Scene &scene = *inst_.scene;
 
   global_lod_bias_ = (1.0f - scene.eevee.shadow_resolution_scale) * SHADOW_TILEMAP_LOD;
@@ -618,10 +600,8 @@ void ShadowModule::init()
   const int2 atlas_extent = shadow_page_size_ * int2(SHADOW_PAGE_PER_ROW);
   const int atlas_layers = divide_ceil_u(shadow_page_len_, SHADOW_PAGE_PER_LAYER);
 
-  eGPUTextureUsage tex_usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE;
-  if (ShadowModule::shadow_technique == ShadowTechnique::ATOMIC_RASTER) {
-    tex_usage |= GPU_TEXTURE_USAGE_ATOMIC;
-  }
+  eGPUTextureUsage tex_usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE |
+                               GPU_TEXTURE_USAGE_ATOMIC;
   if (atlas_tx_.ensure_2d_array(atlas_type, atlas_extent, atlas_layers, tex_usage)) {
     /* Global update. */
     do_full_update_ = true;
@@ -1104,9 +1084,7 @@ void ShadowModule::end_sync()
         sub.barrier(GPU_BARRIER_TEXTURE_FETCH);
       }
 
-      /* NOTE: We do not need to run the clear pass when using the TBDR update variant, as tiles
-       * will be fully cleared as part of the shadow raster step. */
-      if (ShadowModule::shadow_technique != ShadowTechnique::TILE_COPY) {
+      {
         /** Clear pages that need to be rendered. */
         PassSimple::Sub &sub = pass.sub("RenderClear");
         sub.framebuffer_set(&render_fb_);
@@ -1316,28 +1294,8 @@ void ShadowModule::set_view(View &view, int2 extent)
   usage_tag_fb_resolution_ = math::divide_ceil(extent, int2(std::exp2(usage_tag_fb_lod_)));
   usage_tag_fb.ensure(usage_tag_fb_resolution_);
 
-  eGPUTextureUsage usage = GPU_TEXTURE_USAGE_ATTACHMENT | GPU_TEXTURE_USAGE_MEMORYLESS;
-  int2 fb_size = int2(SHADOW_TILEMAP_RES * shadow_page_size_);
-  int fb_layers = SHADOW_VIEW_MAX;
-
-  if (shadow_technique == ShadowTechnique::ATOMIC_RASTER) {
-    /* Create attachment-less framebuffer. */
-    shadow_depth_fb_tx_.free();
-    shadow_depth_accum_tx_.free();
-    render_fb_.ensure(fb_size);
-  }
-  else if (shadow_technique == ShadowTechnique::TILE_COPY) {
-    /* Create memoryless depth attachment for on-tile surface depth accumulation. */
-    shadow_depth_fb_tx_.ensure_2d_array(
-        gpu::TextureFormat::SFLOAT_32_DEPTH, fb_size, fb_layers, usage);
-    shadow_depth_accum_tx_.ensure_2d_array(
-        gpu::TextureFormat::SFLOAT_32, fb_size, fb_layers, usage);
-    render_fb_.ensure(GPU_ATTACHMENT_TEXTURE(shadow_depth_fb_tx_),
-                      GPU_ATTACHMENT_TEXTURE(shadow_depth_accum_tx_));
-  }
-  else {
-    BLI_assert_unreachable();
-  }
+  /* Create attachment-less framebuffer. */
+  render_fb_.ensure(int2(SHADOW_TILEMAP_RES * shadow_page_size_));
 
   update_tag_fb_.ensure(int2(SHADOW_TILEMAP_RES));
 
@@ -1367,41 +1325,14 @@ void ShadowModule::set_view(View &view, int2 extent)
 
       statistics_buf_.current().async_flush_to_host();
 
-      /* Isolate shadow update into its own command buffer.
-       * If parameter buffer exceeds limits, then other work will not be impacted. */
-      bool use_flush = (shadow_technique == ShadowTechnique::TILE_COPY) &&
-                       (GPU_backend_get_type() == GPU_BACKEND_METAL);
       /* Flush every loop as these passes are very heavy. */
-      use_flush |= loop_count != 0;
+      bool use_flush = loop_count != 0;
 
       if (use_flush) {
         GPU_flush();
       }
 
-      /* TODO(fclem): Move all of this to the draw::PassMain. */
-      if (shadow_depth_fb_tx_.is_valid() && shadow_depth_accum_tx_.is_valid()) {
-        GPU_framebuffer_bind_ex(
-            render_fb_,
-            {
-                /* Depth is cleared to 0 for TBDR optimization. */
-                {GPU_LOADACTION_CLEAR, GPU_STOREACTION_DONT_CARE, {0.0f, 0.0f, 0.0f, 0.0f}},
-                {GPU_LOADACTION_CLEAR,
-                 GPU_STOREACTION_DONT_CARE,
-                 {FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX}},
-            });
-      }
-      else if (shadow_depth_fb_tx_.is_valid()) {
-        GPU_framebuffer_bind_ex(render_fb_,
-                                {
-                                    {GPU_LOADACTION_CLEAR,
-                                     GPU_STOREACTION_DONT_CARE,
-                                     {FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX}},
-                                });
-      }
-      else {
-        GPU_framebuffer_bind(render_fb_);
-      }
-
+      GPU_framebuffer_bind(render_fb_);
       GPU_framebuffer_multi_viewports_set(render_fb_,
                                           reinterpret_cast<int (*)[4]>(multi_viewports_.data()));
 

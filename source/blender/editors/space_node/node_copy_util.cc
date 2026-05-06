@@ -939,7 +939,7 @@ static bNode *create_proxy_input_node(const bNodeTreeInterfaceSocket &io_socket,
   // const nodes::StructureType structure_type = nodes::StructureType(
   //     src_socket.runtime->inferred_structure_type);
   const nodes::StructureType structure_type = io_socket.structure_type ==
-                                                      NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO ?
+                                                      NodeSocketInterfaceStructureType::Auto ?
                                                   nodes::StructureType::Dynamic :
                                                   nodes::StructureType(io_socket.structure_type);
 

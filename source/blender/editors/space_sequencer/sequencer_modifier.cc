@@ -118,8 +118,7 @@ static wmOperatorStatus strip_modifier_remove_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  BLI_remlink(&strip->modifiers, smd);
-  seq::modifier_free(smd);
+  seq::modifier_remove(strip, smd);
 
   if (ELEM(strip->type, STRIP_TYPE_SOUND)) {
     DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS | ID_RECALC_AUDIO);

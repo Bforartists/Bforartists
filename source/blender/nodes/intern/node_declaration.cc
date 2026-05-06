@@ -930,7 +930,7 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::structure_type(
     const StructureType structure_type)
 {
   BLI_assert(NodeSocketInterfaceStructureType(structure_type) !=
-             NODE_INTERFACE_SOCKET_STRUCTURE_TYPE_AUTO);
+             NodeSocketInterfaceStructureType::Auto);
   decl_base_->structure_type = structure_type;
   return *this;
 }
@@ -970,6 +970,13 @@ BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::is_layer_name(const 
 BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::is_volume_grid_name(const bool value)
 {
   decl_base_->is_volume_grid_name = value;
+  return *this;
+}
+
+BaseSocketDeclarationBuilder &BaseSocketDeclarationBuilder::try_copy_ui_data(
+    const SocketDeclaration & /*other_decl*/)
+{
+  /* Can't copy any value by default. */
   return *this;
 }
 

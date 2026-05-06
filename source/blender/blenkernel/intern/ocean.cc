@@ -1388,7 +1388,7 @@ void BKE_ocean_bake(Ocean *o,
    * are enabled, take care that #BKE_ocean_eval_ij() initializes a member before use. */
   OceanResult ocr;
 
-  ImageFormatData imf = {0};
+  ImageFormatData imf = {};
 
   int f, i = 0, x, y, cancel = 0;
   float progress;

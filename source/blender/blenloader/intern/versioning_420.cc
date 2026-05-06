@@ -812,8 +812,8 @@ void blo_do_versions_420(FileData *fd, Library * /*lib*/, Main *bmain)
     constexpr int NTREE_EXECUTION_MODE_CPU = 0;
     constexpr int NTREE_EXECUTION_MODE_FULL_FRAME = 1;
 
-    constexpr int NTREE_COM_GROUPNODE_BUFFER = 1 << 3;
-    constexpr int NTREE_COM_OPENCL = 1 << 1;
+    constexpr eNodeTree_Flag NTREE_COM_GROUPNODE_BUFFER = eNodeTree_Flag(1 << 3);
+    constexpr eNodeTree_Flag NTREE_COM_OPENCL = eNodeTree_Flag(1 << 1);
 
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       if (ntree->type != NTREE_COMPOSIT) {
@@ -1122,7 +1122,7 @@ void blo_do_versions_420(FileData *fd, Library * /*lib*/, Main *bmain)
         if (scene.nodetree->execution_mode == NTREE_EXECUTION_MODE_GPU) {
           scene.r.compositor_device = SCE_COMPOSITOR_DEVICE_GPU;
         }
-        scene.r.compositor_precision = scene.nodetree->precision;
+        scene.r.compositor_precision = eCompositorPrecision(scene.nodetree->precision);
       }
     }
   }

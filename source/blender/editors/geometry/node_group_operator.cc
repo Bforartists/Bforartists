@@ -100,8 +100,9 @@ using asset_system::AssetRepresentation;
 struct ErrorsForType {
   int duplicate_count = 0;
   bool is_builtin_operator = false;
+  bool invalid_metadata = false;
   Vector<std::string> idname_validation_errors;
-  Vector<std::string> invalid_metadata_errors;
+  Vector<std::string> invalid_input_metadata_errors;
 
   friend bool operator==(const ErrorsForType &a, const ErrorsForType &b) = default;
 };
@@ -241,6 +242,8 @@ std::optional<OperatorTypeData> OperatorTypeData::from_asset(
   const IDProperty *traits_flag = BKE_asset_metadata_idprop_find(
       &metadata, "geometry_node_asset_traits_flag");
   if (!traits_flag || traits_flag->type != IDP_INT) {
+    ErrorsForType &errors_for_type = errors.lookup_or_add_default_as(*custom_idname);
+    errors_for_type.invalid_metadata = true;
     return std::nullopt;
   }
   type_data.flag = GeometryNodeAssetTraitFlag(IDP_int_get(traits_flag));
@@ -248,10 +251,14 @@ std::optional<OperatorTypeData> OperatorTypeData::from_asset(
 
   const IDProperty *properties = BKE_asset_metadata_idprop_find(&metadata, "properties");
   if (!properties || properties->type != IDP_GROUP) {
+    ErrorsForType &errors_for_type = errors.lookup_or_add_default_as(*custom_idname);
+    errors_for_type.invalid_metadata = true;
     return std::nullopt;
   }
   const IDProperty *inputs = IDP_GetPropertyFromGroup(properties, "inputs");
   if (!inputs || inputs->type != IDP_GROUP) {
+    ErrorsForType &errors_for_type = errors.lookup_or_add_default_as(*custom_idname);
+    errors_for_type.invalid_metadata = true;
     return std::nullopt;
   }
   for (const IDProperty &input_prop : inputs->data.group) {
@@ -259,7 +266,7 @@ std::optional<OperatorTypeData> OperatorTypeData::from_asset(
         !IDP_GetPropertyTypeFromGroup(&input_prop, "type", IDP_INT))
     {
       ErrorsForType &errors_for_type = errors.lookup_or_add_default_as(*custom_idname);
-      errors_for_type.invalid_metadata_errors.append(input_prop.name);
+      errors_for_type.invalid_input_metadata_errors.append(input_prop.name);
       return std::nullopt;
     }
   }
@@ -720,7 +727,10 @@ static void store_result_geometry(const bContext &C,
       if (inserted_new_keyframe) {
         WM_event_add_notifier(&C, NC_GPENCIL | NA_EDITED, nullptr);
       }
+      break;
     }
+    default:
+      break;
   }
 }
 
@@ -1282,13 +1292,15 @@ static StructRNA *get_input_socket_struct_rna(IDProperty &input_idprop,
       break;
     }
     case SOCK_STRING: {
-      PropertyRNA *prop = RNA_def_string(
-          srna,
-          "value",
-          IDP_group_lookup_string(input_idprop, "default_value").value_or("").c_str(),
-          0,
-          name.c_str(),
-          description.c_str());
+      const StringRefNull default_value =
+          IDP_group_lookup_string(input_idprop, "default_value").value_or("");
+      PropertyRNA *prop = RNA_def_string(srna,
+                                         "value",
+                                         default_value.is_empty() ? nullptr :
+                                                                    default_value.c_str(),
+                                         0,
+                                         name.c_str(),
+                                         description.c_str());
       RNA_def_property_subtype(
           prop,
           PropertySubType(IDP_group_lookup_int(input_idprop, "subtype").value_or(PROP_NONE)));
@@ -1641,6 +1653,13 @@ void register_node_group_operators(const bContext &C)
                     item.key.c_str(),
                     item.value.duplicate_count);
       }
+      if (item.value.invalid_metadata) {
+        BKE_reportf(
+            reports,
+            RPT_ERROR,
+            "Node tool \"%s\" asset has invalid metadata. Asset meta-data may be out of date",
+            item.key.c_str());
+      }
       for (const std::string &error : item.value.idname_validation_errors) {
         BKE_reportf(reports,
                     RPT_ERROR,
@@ -1648,7 +1667,7 @@ void register_node_group_operators(const bContext &C)
                     item.key.c_str(),
                     error.c_str());
       }
-      for (const std::string &error : item.value.invalid_metadata_errors) {
+      for (const std::string &error : item.value.invalid_input_metadata_errors) {
         BKE_reportf(reports,
                     RPT_ERROR,
                     "Error registering node tool \"%s\". Invalid metadata for input \"%s\". "

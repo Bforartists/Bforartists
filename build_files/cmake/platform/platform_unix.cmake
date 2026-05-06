@@ -598,6 +598,11 @@ if(WITH_CYCLES AND WITH_CYCLES_PATH_GUIDING)
   endif()
 endif()
 
+if(WITH_TRACY)
+  set(Tracy_ROOT_DIR ${LIBDIR}/tracy)
+  find_package_wrapper(Tracy REQUIRED)
+endif()
+
 if(DEFINED LIBDIR)
   without_system_libs_end()
 endif()

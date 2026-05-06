@@ -41,6 +41,8 @@ struct ScreenTraceHitData {
   float time;
   /* True if there was a valid intersection. False if went out of screen without intersection. */
   bool valid;
+  /* True if ray was under a surface. */
+  bool hit_backface;
 };
 
 /**
@@ -62,7 +64,6 @@ ScreenTraceHitData raytrace_screen(RayTraceData rt_data,
                                    sampler2D hiz_tx,
                                    float stride_rand,
                                    float roughness,
-                                   const bool discard_backface,
                                    const bool allow_self_intersection,
                                    Ray ray)
 {
@@ -119,8 +120,6 @@ ScreenTraceHitData raytrace_screen(RayTraceData rt_data,
     /* ... and above it with the added thickness. */
     hit = hit && (delta > ss_p.z - ss_p.w || abs(delta) < abs(ssray.direction.z * stride * 2.0f));
   }
-  /* Discard back-face hits. */
-  hit = hit && !(discard_backface && prev_delta < 0.0f);
   /* Reject hit if background. */
   hit = hit && (depth_sample != 1.0f);
   /* Refine hit using intersection between the sampled height-field and the ray.
@@ -128,6 +127,7 @@ ScreenTraceHitData raytrace_screen(RayTraceData rt_data,
   time = mix(prev_time, time, saturate(prev_delta / (prev_delta - delta)));
 
   ScreenTraceHitData result;
+  result.hit_backface = prev_delta < 0.0f && ssray.direction.z < 0.0f;
   result.ss_hit_P = ssray.origin.xyz + ssray.direction.xyz * time;
   result.v_hit_P = drw_point_screen_to_view(result.ss_hit_P);
   /* Convert to world space ray time. */
@@ -366,4 +366,85 @@ float raytrace_screen_2(const float3 vs_origin,
 
   /* No hit was found. Return -1 to signal the failure. */
   return -1.0f;
+}
+
+/**
+ * Sample the given fullscreen framebuffer at the given hit location.
+ * Does a small contact aware blur on incomming radiance.
+ */
+float3 raytrace_sample_screen(sampler2D radiance_tx,
+                              RayTraceData raytrace,
+                              ScreenTraceHitData hit,
+                              float roughness,
+                              float2 ss_hit_P)
+{
+  /* We do not need a plausible cone value here.
+   * Just compute some factor to avoid blurring contact points. */
+  float shading_cone_tangent = saturate(roughness * 0.05);
+  float vs_footprint = shading_cone_tangent * hit.time;
+  /* Convert from view space cone to screen space. */
+  float4 hs_hit_P = drw_view().winmat * float4(hit.v_hit_P, 1.0f);
+  float ndc_footprint = (vs_footprint * drw_view().winmat[0][0]) / hs_hit_P.w;
+  float pixel_footprint = ndc_footprint * raytrace.full_resolution.x;
+
+  float3 radiance;
+  /* Fetch radiance at hit-point. */
+  if (pixel_footprint < 1.0f) {
+    radiance = textureLod(radiance_tx, ss_hit_P, 0.0f).rgb;
+  }
+  else {
+    float kernel_radius = saturate(pixel_footprint - 1.0f);
+    float4 ofs = float2(kernel_radius, -kernel_radius).xxyy * raytrace.full_resolution_inv.xyxy;
+    /* 4x4 box filter kernel for rough rays at the hit point.
+     * Reduces variance of noisy reflected objects.
+     * Use squared space to reduce fireflies at the cost of losing energy. */
+    radiance = log2(1.0f + textureLod(radiance_tx, ss_hit_P + ofs.xy, 0.0f).rgb);
+    radiance += log2(1.0f + textureLod(radiance_tx, ss_hit_P + ofs.xw, 0.0f).rgb);
+    radiance += log2(1.0f + textureLod(radiance_tx, ss_hit_P + ofs.zy, 0.0f).rgb);
+    radiance += log2(1.0f + textureLod(radiance_tx, ss_hit_P + ofs.zw, 0.0f).rgb);
+    radiance *= 0.25f;
+    radiance = exp2(radiance) - 1.0f;
+  }
+  return radiance;
+}
+
+/**
+ * Sample the given fullscreen framebuffer at the given hit location.
+ * Does a small contact aware blur on incomming radiance.
+ */
+float3 raytrace_sample_screen(sampler2DArray radiance_tx,
+                              RayTraceData raytrace,
+                              ScreenTraceHitData hit,
+                              float roughness,
+                              float2 ss_hit_P,
+                              int layer)
+{
+  /* We do not need a plausible cone value here.
+   * Just compute some factor to avoid blurring contact points. */
+  float shading_cone_tangent = saturate(roughness * 0.05);
+  float vs_footprint = shading_cone_tangent * hit.time;
+  /* Convert from view space cone to screen space. */
+  float4 hs_hit_P = drw_view().winmat * float4(hit.v_hit_P, 1.0f);
+  float ndc_footprint = (vs_footprint * drw_view().winmat[0][0]) / hs_hit_P.w;
+  float pixel_footprint = ndc_footprint * raytrace.full_resolution.x;
+
+  float3 radiance;
+  /* Fetch radiance at hit-point. */
+  if (pixel_footprint < 1.0f) {
+    radiance = textureLod(radiance_tx, float3(ss_hit_P, layer), 0.0f).rgb;
+  }
+  else {
+    float kernel_radius = saturate(pixel_footprint - 1.0f);
+    float4 ofs = float2(kernel_radius, -kernel_radius).xxyy * raytrace.full_resolution_inv.xyxy;
+    /* 4x4 box filter kernel for rough rays at the hit point.
+     * Reduces variance of noisy reflected objects.
+     * Use squared space to reduce fireflies at the cost of losing energy. */
+    radiance = log2(1.0f + textureLod(radiance_tx, float3(ss_hit_P + ofs.xy, layer), 0.0f).rgb);
+    radiance += log2(1.0f + textureLod(radiance_tx, float3(ss_hit_P + ofs.xw, layer), 0.0f).rgb);
+    radiance += log2(1.0f + textureLod(radiance_tx, float3(ss_hit_P + ofs.zy, layer), 0.0f).rgb);
+    radiance += log2(1.0f + textureLod(radiance_tx, float3(ss_hit_P + ofs.zw, layer), 0.0f).rgb);
+    radiance *= 0.25f;
+    radiance = exp2(radiance) - 1.0f;
+  }
+  return radiance;
 }

@@ -372,7 +372,7 @@ class BKE_armature_find_selected_bones_test : public testing::Test {
 TEST_F(BKE_armature_find_selected_bones_test, some_bones_selected)
 {
   bone1.flag = BONE_SELECTED;
-  bone2.flag = 0;
+  bone2.flag = eBone_Flag{};
   bone3.flag = BONE_SELECTED;
 
   std::vector<Bone *> seen_bones;
@@ -390,7 +390,7 @@ TEST_F(BKE_armature_find_selected_bones_test, some_bones_selected)
 
 TEST_F(BKE_armature_find_selected_bones_test, no_bones_selected)
 {
-  bone1.flag = bone2.flag = bone3.flag = 0;
+  bone1.flag = bone2.flag = bone3.flag = eBone_Flag{};
 
   std::vector<Bone *> seen_bones;
   auto callback = [&](Bone *bone) { seen_bones.push_back(bone); };

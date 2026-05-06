@@ -461,6 +461,7 @@ static void execute_multi_function_on_value_variant__single(
     void *value = output_variant.allocate_single(socket_type);
     params.add_uninitialized_single_output(GMutableSpan{cpp_type, value, 1});
   }
+  fn.prepare_for_execution();
   fn.call(mask, params, context);
 }
 

@@ -189,17 +189,17 @@ static bool is_event_over_node_or_socket(const bContext &C, const wmEvent &event
 
 void node_socket_select(bNode *node, bNodeSocket &sock)
 {
-  sock.flag |= SELECT;
+  sock.flag |= SOCK_SELECT;
 
   /* select node too */
   if (node) {
-    node->flag |= SELECT;
+    node->flag |= NODE_SELECT;
   }
 }
 
 void node_socket_deselect(bNode *node, bNodeSocket &sock, const bool deselect_node)
 {
-  sock.flag &= ~SELECT;
+  sock.flag &= ~SOCK_SELECT;
 
   if (node && deselect_node) {
     bool sel = false;
@@ -219,7 +219,7 @@ void node_socket_deselect(bNode *node, bNodeSocket &sock, const bool deselect_no
     }
 
     if (!sel) {
-      node->flag &= ~SELECT;
+      node->flag &= ~NODE_SELECT;
     }
   }
 }
@@ -254,7 +254,7 @@ void node_deselect_all_input_sockets(bNodeTree &node_tree, const bool deselect_n
     bool sel = false;
 
     for (bNodeSocket &socket : node->inputs) {
-      socket.flag &= ~SELECT;
+      socket.flag &= ~SOCK_SELECT;
     }
 
     /* If no selected sockets remain, also deselect the node. */
@@ -267,7 +267,7 @@ void node_deselect_all_input_sockets(bNodeTree &node_tree, const bool deselect_n
       }
 
       if (!sel) {
-        node->flag &= ~SELECT;
+        node->flag &= ~NODE_SELECT;
       }
     }
   }
@@ -284,7 +284,7 @@ void node_deselect_all_output_sockets(bNodeTree &node_tree, const bool deselect_
     bool sel = false;
 
     for (bNodeSocket &socket : node->outputs) {
-      socket.flag &= ~SELECT;
+      socket.flag &= ~SOCK_SELECT;
     }
 
     /* if no selected sockets remain, also deselect the node */
@@ -297,7 +297,7 @@ void node_deselect_all_output_sockets(bNodeTree &node_tree, const bool deselect_
       }
 
       if (!sel) {
-        node->flag &= ~SELECT;
+        node->flag &= ~NODE_SELECT;
       }
     }
   }
@@ -1603,6 +1603,8 @@ static void node_find_update_fn(const bContext *C,
               *node, id_cast<ID *>(socket->default_value_typed<bNodeSocketValueSound>()->value));
           break;
         }
+        default:
+          break;
       }
     }
   }

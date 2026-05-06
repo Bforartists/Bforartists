@@ -7423,7 +7423,7 @@ static wmOperatorStatus uv_select_mode_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   ToolSettings *ts = scene->toolsettings;
-  const char new_uv_selectmode = RNA_enum_get(op->ptr, "type");
+  const eTool_UvSelectMode new_uv_selectmode = eTool_UvSelectMode(RNA_enum_get(op->ptr, "type"));
 
   /* Early exit if no change in current selection mode */
   if (new_uv_selectmode == ts->uv_selectmode) {

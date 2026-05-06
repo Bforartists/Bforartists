@@ -621,6 +621,8 @@ static TypeDesc find_type_from_geometry_std(Geometry *geometry, AttributeStandar
         return TypeColor;
       case ATTR_STD_VOLUME_VELOCITY:
         return TypeVector;
+      case ATTR_STD_GENERATED_TRANSFORM:
+        return TypeMatrix;
       default:
         assert(0);
         break;
@@ -741,6 +743,8 @@ static AttributeElement find_element_from_geometry_std(Geometry *geometry, Attri
         return ATTR_ELEMENT_VOXEL;
       case ATTR_STD_VOLUME_VELOCITY:
         return ATTR_ELEMENT_VOXEL;
+      case ATTR_STD_GENERATED_TRANSFORM:
+        return ATTR_ELEMENT_MESH;
       default:
         assert(0);
         break;

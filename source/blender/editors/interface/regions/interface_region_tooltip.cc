@@ -1893,10 +1893,10 @@ static void tooltip_from_clip(MovieClip &clip, TooltipData &data)
 
   std::string image_type;
   switch (clip.source) {
-    case IMA_SRC_SEQUENCE:
+    case MCLIP_SRC_SEQUENCE:
       image_type = TIP_("Image Sequence");
       break;
-    case IMA_SRC_MOVIE:
+    case MCLIP_SRC_MOVIE:
       image_type = TIP_("Movie");
       break;
   }

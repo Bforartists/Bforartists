@@ -399,7 +399,7 @@ static SpaceLink *outliner_create(const ScrArea * /*area*/, const Scene * /*scen
   space_outliner->show_restrict_flags = SO_RESTRICT_ENABLE | SO_RESTRICT_HIDE | SO_RESTRICT_RENDER;
   space_outliner->outlinevis = SO_VIEW_LAYER;
   space_outliner->sync_select_dirty |= WM_OUTLINER_SYNC_SELECT_FROM_ALL;
-  space_outliner->flag = SO_SYNC_SELECT | SO_MODE_COLUMN;
+  space_outliner->flag = SO_SYNC_SELECT | SO_MODE_COLUMN | SO_SCROLL_TO_ACTIVE;
   space_outliner->filter = SO_FILTER_NO_VIEW_LAYERS;
 
   /* header */
@@ -423,7 +423,7 @@ static void outliner_free(SpaceLink *sl)
 {
   SpaceOutliner *space_outliner = reinterpret_cast<SpaceOutliner *>(sl);
 
-  outliner_free_tree(&space_outliner->tree);
+  outliner_free_tree(&space_outliner->runtime->tree);
   if (space_outliner->treestore) {
     BLI_mempool_destroy(space_outliner->treestore);
   }
@@ -440,7 +440,7 @@ static SpaceLink *outliner_duplicate(SpaceLink *sl)
   SpaceOutliner *space_outliner_new = MEM_new<SpaceOutliner>(__func__, *space_outliner);
   space_outliner_new->runtime = MEM_new<SpaceOutliner_Runtime>(__func__, *space_outliner->runtime);
 
-  BLI_listbase_clear(&space_outliner_new->tree);
+  BLI_listbase_clear(&space_outliner_new->runtime->tree);
   space_outliner_new->treestore = nullptr;
 
   space_outliner_new->sync_select_dirty = WM_OUTLINER_SYNC_SELECT_FROM_ALL;
@@ -564,7 +564,7 @@ static void outliner_space_blend_read_data(BlendDataReader *reader, SpaceLink *s
     /* we only saved what was used */
     space_outliner->storeflag |= SO_TREESTORE_CLEANUP; /* at first draw */
   }
-  BLI_listbase_clear(&space_outliner->tree);
+  BLI_listbase_clear(&space_outliner->runtime->tree);
 }
 
 static void outliner_space_blend_read_after_liblink(BlendLibReader * /*reader*/,

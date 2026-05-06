@@ -26,14 +26,17 @@ void main()
   uint2 tile_coord = unpackUvec2x16(tiles_coord_buf[gl_WorkGroupID.x]);
   int2 texel = int2(gl_LocalInvocationID.xy + tile_coord * tile_size);
 
-  int2 texel_fullres = texel * uniform_buf.raytrace.resolution_scale +
-                       uniform_buf.raytrace.resolution_bias;
+  int2 texel_fullres = texel * uniform_buf.raytrace.trace_pixel_scale +
+                       uniform_buf.raytrace.trace_pixel_offset;
 
   /* Check if texel is out of bounds,
    * so we can utilize fast texture functions and early-out if not. */
   if (any(greaterThanEqual(texel, imageSize(ray_time_img).xy))) {
     return;
   }
+
+  ClosureUndetermined cl = gbuffer::read_bin(texel_fullres, closure_index);
+  float roughness = closure_apparent_roughness_get(cl);
 
   float depth = reverse_z::read(texelFetch(depth_tx, texel_fullres, 0).r);
   float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
@@ -75,7 +78,7 @@ void main()
   samp.volume_irradiance = spherical_harmonics::clamp_energy(samp.volume_irradiance,
                                                              clamp_indirect);
 
-  float3 radiance = lightprobe_eval_direction(samp, ray.origin, ray.direction, ray_pdf_inv);
+  float3 radiance = lightprobe_eval_direction(samp, ray.origin, ray.direction, roughness);
   /* Set point really far for correct reprojection of background. */
   float hit_time = 1000.0f;
 

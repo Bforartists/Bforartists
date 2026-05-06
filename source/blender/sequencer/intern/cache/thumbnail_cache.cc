@@ -231,6 +231,15 @@ static void scale_to_thumbnail_size(ImBuf *ibuf)
   if (ibuf == nullptr) {
     return;
   }
+
+  /* We only need byte thumbnails. */
+  if (ibuf->float_data()) {
+    if (ibuf->byte_data() == nullptr) {
+      IMB_byte_from_float(ibuf);
+    }
+    IMB_free_float_pixels(ibuf);
+  }
+
   int width = ibuf->x;
   int height = ibuf->y;
   image_size_to_thumb_size(width, height);

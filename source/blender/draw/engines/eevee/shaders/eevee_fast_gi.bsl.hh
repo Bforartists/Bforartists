@@ -130,11 +130,13 @@ void projected_normal_to_plane_angle_and_length(
 /** \name Buffer Sampling implementation
  * \{ */
 
-template<typename T> float3 sample_radiance(sampler2D /*screen_radiance_tx*/, float2 /*uv*/)
+template<typename T>
+float3 sample_radiance(sampler2D /*screen_radiance_tx*/, float2 /*uv*/, float /*lod*/)
 {
   return float3(0.0f);
 }
-template<typename T> float3 sample_normal(sampler2D /*screen_normal_tx*/, float2 /*uv*/)
+template<typename T>
+float3 sample_normal(sampler2D /*screen_normal_tx*/, float2 /*uv*/, float /*lod*/)
 {
   return float3(0.0f);
 }
@@ -144,8 +146,8 @@ template<typename T> T select_result(float /*occlusion*/, SphericalHarmonicL1<fl
 }
 
 /* AO only implementation. */
-template float3 sample_radiance<float>(sampler2D screen_radiance_tx, float2 uv);
-template float3 sample_normal<float>(sampler2D screen_normal_tx, float2 uv);
+template float3 sample_radiance<float>(sampler2D screen_radiance_tx, float2 uv, float lod);
+template float3 sample_normal<float>(sampler2D screen_normal_tx, float2 uv, float lod);
 template<> float select_result<float>(float occlusion, SphericalHarmonicL1<float4> /*sh*/)
 {
   return occlusion;
@@ -153,13 +155,16 @@ template<> float select_result<float>(float occlusion, SphericalHarmonicL1<float
 
 /* GI implementation. */
 template<>
-float3 sample_radiance<SphericalHarmonicL1<float4>>(sampler2D screen_radiance_tx, float2 uv)
+float3 sample_radiance<SphericalHarmonicL1<float4>>(sampler2D screen_radiance_tx,
+                                                    float2 uv,
+                                                    float lod)
 {
-  return texture(screen_radiance_tx, uv).rgb;
+  return textureLod(screen_radiance_tx, uv, lod).rgb;
 }
-template<> float3 sample_normal<SphericalHarmonicL1<float4>>(sampler2D screen_normal_tx, float2 uv)
+template<>
+float3 sample_normal<SphericalHarmonicL1<float4>>(sampler2D screen_normal_tx, float2 uv, float lod)
 {
-  return texture(screen_normal_tx, uv).rgb * 2.0f - 1.0f;
+  return textureLod(screen_normal_tx, uv, lod).rgb * 2.0f - 1.0f;
 }
 template<>
 SphericalHarmonicL1<float4> select_result<SphericalHarmonicL1<float4>>(
@@ -264,11 +269,11 @@ ResultT eval(sampler2D hiz_tx,
           time += 1.0f;
         }
 
-        float lod = (float(j) - noise.w) * uniform_buf.ao.lod_factor;
+        const float lod = log2(time * uniform_buf.ao.lod_factor);
 
-        float2 sample_uv = ssray.origin.xy + ssray.direction.xy * time;
+        const float2 sample_uv = ssray.origin.xy + ssray.direction.xy * time;
         float sample_depth =
-            textureLod(hiz_tx, sample_uv * uniform_buf.hiz.uv_scale, floor(lod)).r;
+            textureLod(hiz_tx, sample_uv * uniform_buf.hiz.uv_scale, floor(noise.w + lod)).r;
 
         if (sample_depth == 1.0f && !reversed) {
           /* Skip background. Avoids making shadow on the geometry near the far plane. */
@@ -282,15 +287,22 @@ ResultT eval(sampler2D hiz_tx,
         float3 vP_sample_front = drw_point_screen_to_view(float3(sample_uv, sample_depth));
         float3 vP_sample_back = vP_sample_front - vV * thickness_near;
 
-        /* This should be a sphere intersection check + clipping of the intersecting ray.
-         * However, that would be way too costly. So instead we only check if front position is
-         * inside the search radius. */
-        float sample_distance;
-        float3 vL_front = normalize_and_get_length(vP_sample_front - vP, sample_distance);
-        float3 vL_back = normalize(vP_sample_back - vP);
-        if (sample_distance > search_distance) {
+        /* Mimic a sphere intersection check + clipping of the intersecting ray.
+         * Assumes the ray is aligned with the view Z axis.
+         * While this is exact for orthographic cameras it can distort the AO look with high FOV
+         * angle. However it is cheaper than a full sphere clipping. */
+        float3 ls_P_front = (vP_sample_front - vP) / search_distance;
+        float3 ls_P_back = (vP_sample_back - vP) / search_distance;
+        /* Simplification of `sin_from_cos(length(ls_P_front.xy))`. */
+        float max_dist = sqrt_fast(saturate(1.0f - length_squared(ls_P_front.xy)));
+        ls_P_front.z = clamp(ls_P_front.z, -max_dist, max_dist);
+        ls_P_back.z = clamp(ls_P_back.z, -max_dist, max_dist);
+        if (ls_P_front.z == ls_P_back.z) {
           continue;
         }
+
+        float3 vL_front = normalize(ls_P_front);
+        float3 vL_back = normalize(ls_P_back);
 
         /* Ordered pair of angle. Minimum in X, Maximum in Y.
          * Front will always have the smallest angle here since it is the closest to the view. */
@@ -299,14 +311,22 @@ ResultT eval(sampler2D hiz_tx,
         /* If we are tracing backward, the angles are negative. Swizzle to keep correct order. */
         theta = (side == 0) ? theta.xy : -theta.yx;
 
-        float3 radiance = sample_radiance<ResultT>(screen_radiance_tx, sample_uv);
+        const float2 sample_uv_data = sample_uv * uniform_buf.raytrace.fast_gi_uv_scale;
+        /* Need to account for LOD0 of radiance texture being the tracing resolution. */
+        float lod_data = lod - uniform_buf.raytrace.fast_gi_lod_bias;
+
+        float3 radiance = sample_radiance<ResultT>(screen_radiance_tx, sample_uv_data, lod_data);
         /* Take emitter surface normal into consideration. */
-        float3 normal = sample_normal<ResultT>(screen_normal_tx, sample_uv);
+        float3 normal = sample_normal<ResultT>(screen_normal_tx, sample_uv_data, lod_data);
         if (ao_only) {
           radiance = float3(0);
         }
         /* Discard back-facing samples. */
-        float facing_weight = saturate(-dot(normal, vL_front));
+        float facing = dot(normal, -vL_front);
+        if (facing < 0.0f) {
+          radiance *= uniform_buf.raytrace.backface_hit_scale;
+        }
+        float facing_weight = abs(facing);
 
         /* Angular bias shrinks the visibility bitmask around the projected normal. */
         float2 biased_theta = (theta - vN_angle) * angle_bias;
@@ -531,21 +551,27 @@ struct Setup {
   [[sampler(0)]] const sampler2DDepth depth_tx;
   [[sampler(1)]] const sampler2D in_radiance_tx;
 
-  [[image(0, write, RAYTRACE_RADIANCE_FORMAT)]] image2D out_radiance_img;
-  [[image(1, write, UNORM_10_10_10_2)]] image2D out_normal_img;
+  [[shared]] float3 neigbhor_data[RAYTRACE_GROUP_SIZE][RAYTRACE_GROUP_SIZE];
+
+  [[image(0, write, RAYTRACE_RADIANCE_FORMAT)]] image2D out_radiance_mip0;
+  [[image(1, write, RAYTRACE_RADIANCE_FORMAT)]] image2D out_radiance_mip1;
+  [[image(2, write, RAYTRACE_RADIANCE_FORMAT)]] image2D out_radiance_mip2;
+  [[image(3, write, RAYTRACE_RADIANCE_FORMAT)]] image2D out_radiance_mip3;
+  [[image(4, write, UNORM_10_10_10_2)]] image2D out_normal_mip0;
+  [[image(5, write, UNORM_10_10_10_2)]] image2D out_normal_mip1;
+  [[image(6, write, UNORM_10_10_10_2)]] image2D out_normal_mip2;
+  [[image(7, write, UNORM_10_10_10_2)]] image2D out_normal_mip3;
 };
 
 [[compute, local_size(RAYTRACE_GROUP_SIZE, RAYTRACE_GROUP_SIZE)]]
-void setup([[global_invocation_id]] const uint3 global_id, [[resource_table]] Setup &srt)
+void setup([[global_invocation_id]] const uint3 global_id,
+           [[local_invocation_id]] const uint3 local_id,
+           [[local_invocation_index]] const uint local_index,
+           [[resource_table]] Setup &srt)
 {
   int2 texel = int2(global_id.xy);
   int2 texel_fullres = texel * uniform_buf.raytrace.fast_gi_resolution_scale +
                        uniform_buf.raytrace.fast_gi_resolution_bias;
-
-  /* Return early for padding threads so we can use imageStoreFast. */
-  if (any(greaterThanEqual(texel, imageSize(srt.out_radiance_img).xy))) {
-    return;
-  }
 
   /* Avoid loading texels outside texture range. */
   int2 extent = textureSize(gbuf_header_tx, 0).xy;
@@ -554,18 +580,70 @@ void setup([[global_invocation_id]] const uint3 global_id, [[resource_table]] Se
   /* Load Gbuffer. */
   const gbuffer::Layers gbuf = gbuffer::read_layers(texel_fullres);
 
-  /* Export normal. */
-  float3 N = gbuf.surface_N();
-  /* Background has invalid data. */
-  /* FIXME: This is zero for opaque layer when we are processing the refraction layer. */
-  if (is_zero(N)) {
-    /* Avoid NaN. But should be fixed in any case. */
-    N = float3(1.0f, 0.0f, 0.0f);
-  }
-  float3 vN = drw_normal_world_to_view(N);
   /* Tag processed pixel in the normal buffer for denoising speed. */
   bool is_processed = !gbuf.header.is_empty();
-  imageStore(srt.out_normal_img, texel, float4(vN * 0.5f + 0.5f, float(is_processed)));
+
+  /* Export normal. */
+  /* FIXME: This is zero for opaque layer when we are processing the refraction layer.
+   * This is because the GBuffer header was cleared in between the layers. The refraction layer
+   * currently have incorrect fast GI comming from opaque layer. */
+  float3 vN = drw_normal_world_to_view(gbuf.surface_N());
+
+  if (!is_processed) {
+    vN = float3(0.0f, 0.0f, 1.0f);
+  }
+
+  /* Compress as the format is unsigned. */
+  float3 vN_unit = vN * 0.5f + 0.5f;
+  imageStoreFast(srt.out_normal_mip0, texel, float4(vN_unit, float(is_processed)));
+
+  srt.neigbhor_data[local_id.y][local_id.x] = vN_unit;
+  barrier();
+
+  /* Downsample mip0 to the 3 other mips. */
+  /* Note we have to manually unroll the loop because of lack of image array.
+   * Using a macro isn't compatible with BSL processing. */
+  {
+    constexpr uint lod = 1;
+    if (all(equal(local_id.xy & ((1u << lod) - 1u), uint2(0)))) {
+      uint stride = (1u << (lod - 1u));
+      float3 normal_avg = (srt.neigbhor_data[local_id.y][local_id.x] +
+                           srt.neigbhor_data[local_id.y + stride][local_id.x] +
+                           srt.neigbhor_data[local_id.y][local_id.x + stride] +
+                           srt.neigbhor_data[local_id.y + stride][local_id.x + stride]) *
+                          0.25f;
+      imageStoreFast(srt.out_normal_mip1, texel >> lod, float4(normal_avg, 0.0));
+      srt.neigbhor_data[local_id.y][local_id.x] = normal_avg;
+    }
+  }
+  barrier();
+  {
+    constexpr uint lod = 2;
+    if (all(equal(local_id.xy & ((1u << lod) - 1u), uint2(0)))) {
+      uint stride = (1u << (lod - 1u));
+      float3 normal_avg = (srt.neigbhor_data[local_id.y][local_id.x] +
+                           srt.neigbhor_data[local_id.y + stride][local_id.x] +
+                           srt.neigbhor_data[local_id.y][local_id.x + stride] +
+                           srt.neigbhor_data[local_id.y + stride][local_id.x + stride]) *
+                          0.25f;
+      imageStoreFast(srt.out_normal_mip2, texel >> lod, float4(normal_avg, 0.0));
+      srt.neigbhor_data[local_id.y][local_id.x] = normal_avg;
+    }
+  }
+  barrier();
+  {
+    constexpr uint lod = 3;
+    if (all(equal(local_id.xy & ((1u << lod) - 1u), uint2(0)))) {
+      uint stride = (1u << (lod - 1u));
+      float3 normal_avg = (srt.neigbhor_data[local_id.y][local_id.x] +
+                           srt.neigbhor_data[local_id.y + stride][local_id.x] +
+                           srt.neigbhor_data[local_id.y][local_id.x + stride] +
+                           srt.neigbhor_data[local_id.y + stride][local_id.x + stride]) *
+                          0.25f;
+      imageStoreFast(srt.out_normal_mip3, texel >> lod, float4(normal_avg, 0.0));
+    }
+  }
+  barrier();
 
   /* Re-project radiance. */
   float2 uv = (float2(texel_fullres) + 0.5f) / float2(textureSize(srt.depth_tx, 0).xy);
@@ -576,8 +654,52 @@ void setup([[global_invocation_id]] const uint3 global_id, [[resource_table]] Se
 
   float4 radiance = textureLod(srt.in_radiance_tx, ssP_prev.xy, 0.0f);
   radiance = colorspace::brightness_clamp_max(radiance, uniform_buf.clamp.surface_indirect);
+  imageStoreFast(srt.out_radiance_mip0, texel, radiance);
 
-  imageStore(srt.out_radiance_img, texel, radiance);
+  srt.neigbhor_data[local_id.y][local_id.x] = radiance.rgb;
+  barrier();
+
+  /* Downsample mip0 to the 3 other mips. */
+  {
+    constexpr uint lod = 1;
+    if (all(equal(local_id.xy & ((1u << lod) - 1u), uint2(0)))) {
+      uint stride = (1u << (lod - 1u));
+      float3 radiance_avg = (srt.neigbhor_data[local_id.y][local_id.x] +
+                             srt.neigbhor_data[local_id.y + stride][local_id.x] +
+                             srt.neigbhor_data[local_id.y][local_id.x + stride] +
+                             srt.neigbhor_data[local_id.y + stride][local_id.x + stride]) *
+                            0.25f;
+      imageStoreFast(srt.out_radiance_mip1, texel >> lod, float4(radiance_avg, 0.0));
+      srt.neigbhor_data[local_id.y][local_id.x] = radiance_avg;
+    }
+  }
+  barrier();
+  {
+    constexpr uint lod = 2;
+    if (all(equal(local_id.xy & ((1u << lod) - 1u), uint2(0)))) {
+      uint stride = (1u << (lod - 1u));
+      float3 radiance_avg = (srt.neigbhor_data[local_id.y][local_id.x] +
+                             srt.neigbhor_data[local_id.y + stride][local_id.x] +
+                             srt.neigbhor_data[local_id.y][local_id.x + stride] +
+                             srt.neigbhor_data[local_id.y + stride][local_id.x + stride]) *
+                            0.25f;
+      imageStoreFast(srt.out_radiance_mip2, texel >> lod, float4(radiance_avg, 0.0));
+      srt.neigbhor_data[local_id.y][local_id.x] = radiance_avg;
+    }
+  }
+  barrier();
+  {
+    constexpr uint lod = 3;
+    if (all(equal(local_id.xy & ((1u << lod) - 1u), uint2(0)))) {
+      uint stride = (1u << (lod - 1u));
+      float3 radiance_avg = (srt.neigbhor_data[local_id.y][local_id.x] +
+                             srt.neigbhor_data[local_id.y + stride][local_id.x] +
+                             srt.neigbhor_data[local_id.y][local_id.x + stride] +
+                             srt.neigbhor_data[local_id.y + stride][local_id.x + stride]) *
+                            0.25f;
+      imageStoreFast(srt.out_radiance_mip3, texel >> lod, float4(radiance_avg, 0.0));
+    }
+  }
 }
 
 /** \} */
@@ -622,9 +744,6 @@ void scan([[work_group_id]] const uint3 group_id,
 
   /* Avoid tracing the outside border if dispatch is too big. */
   int2 extent = textureSize(gbuf_header_tx, 0).xy;
-  if (any(greaterThanEqual(texel * uniform_buf.raytrace.fast_gi_resolution_scale, extent))) {
-    return;
-  }
 
   /* Avoid loading texels outside texture range.
    * This can happen even after the check above in non-power-of-2 textures. */

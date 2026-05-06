@@ -332,6 +332,8 @@ class SourceProcessor {
   void lower_reference_arguments(Parser &parser);
   /* Example: `out float var[2]` > `_ref(float, var)[2]` */
   void lower_argument_qualifiers(Parser &parser);
+  /* Example: `textureGather(t,c,1)` > `textureGather1(t,c)` */
+  void lower_gather_component(Parser &parser);
 
   /* --- Legacy passes for GLSL --- */
 

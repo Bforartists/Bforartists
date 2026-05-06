@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-07-23 15:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -8498,14 +8498,6 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
-msgid "Math"
-msgstr "Математика"
-
-
-msgid "Merge"
-msgstr "Сједини"
-
-
 msgid "Show/Hide"
 msgstr "Прикажи/сакриј"
 
@@ -8522,6 +8514,10 @@ msgid "Names"
 msgstr "Имена"
 
 
+msgid "Math"
+msgstr "Математика"
+
+
 msgid "Bone Roll"
 msgstr "Ролна костију"
 
@@ -8532,10 +8528,6 @@ msgstr "Лепљење"
 
 msgid "Import"
 msgstr "Увоз"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Mirror"
@@ -8556,6 +8548,10 @@ msgstr "Навигација"
 
 msgid "Align View"
 msgstr "Поравнај поглед"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Linked"
@@ -8586,16 +8582,8 @@ msgid "Quick Effects"
 msgstr "Брзи ефекти"
 
 
-msgid "Keying"
-msgstr "Збирка тастера"
-
-
 msgid "Hooks"
 msgstr "Удице"
-
-
-msgid "Tracking"
-msgstr "Праћење"
 
 
 msgid "Clear Transform"
@@ -8606,8 +8594,16 @@ msgid "In-Betweens"
 msgstr "У међувремену"
 
 
+msgid "Keying"
+msgstr "Збирка тастера"
+
+
 msgid "Propagate"
 msgstr "Пренеси"
+
+
+msgid "Tracking"
+msgstr "Праћење"
 
 
 msgid "Toggle Bone Options"
@@ -8624,6 +8620,10 @@ msgstr "Онемогући опције костију"
 
 msgid "Mesh Select Mode"
 msgstr "Мод избора мреже"
+
+
+msgid "Merge"
+msgstr "Сједини"
 
 
 msgid "Basic"
@@ -11244,11 +11244,6 @@ msgstr "Учитај BVH датотеку скидања покрета"
 msgctxt "Operator"
 msgid "Import BVH"
 msgstr "Увоз BVH"
-
-
-msgctxt "Operator"
-msgid "Import SVG"
-msgstr "Увоз SVG"
 
 
 msgctxt "Operator"
@@ -18189,10 +18184,6 @@ msgid "Average Islands Scale"
 msgstr "Просечна величина острва"
 
 
-msgid "Axis Direction"
-msgstr "Смер оса"
-
-
 msgctxt "Operator"
 msgid "Cube Projection"
 msgstr "Кубична пројекција"
@@ -20164,10 +20155,6 @@ msgstr "Ограничи величину текстуре ради уштеде
 
 msgid "Device"
 msgstr "Уређај"
-
-
-msgid "2D Texture"
-msgstr "2D текстура"
 
 
 msgid "Ambient Color"
@@ -23996,10 +23983,6 @@ msgstr "Модификатор вредности F-криве"
 
 msgid "Nothing selected"
 msgstr "Ништа није изабрано"
-
-
-msgid "Pin"
-msgstr "Закачи"
 
 
 msgctxt "Operator"

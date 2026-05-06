@@ -89,6 +89,8 @@
 #  define frag_stencil_ref maybe_unused
 /* Fragment shader color output index for dual source blending. */
 #  define index(i) maybe_unused
+/* Fragment shader color output index for raster order group on Metal. */
+#  define raster_order_group(i) maybe_unused
 
 /* Graphic pipeline stage in/out. */
 #  define in maybe_unused

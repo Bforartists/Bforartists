@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 Alpha (b'b1f67602e773')\n"
+"Project-Id-Version: Blender 5.2.0 Alpha (b'396b6a98e9f6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 10:20+0000\n"
+"POT-Creation-Date: 2026-05-04 07:43+0000\n"
 "PO-Revision-Date: 2025-07-23 14:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Arabic <https://translate.blender.org/projects/blender-ui/ui/ar/>\n"
@@ -8937,10 +8937,6 @@ msgid "When this is disabled, lock alpha while painting"
 msgstr " ﻢﺳﺮﻟﺍ ﺪﻨﻋ ﺎﻔﻟﻻ﻿ﺍ ﻞﻔﻗﺍ ,ﻞﻴﻄﻌﺘﻟﺍ ﺪﻨﻋ"
 
 
-msgid "Cavity Mask"
-msgstr "ﻒﻳﻮﺠﺘﻟﺍ ﻉﺎﻨﻗ"
-
-
 msgid "Use Cursor Overlay"
 msgstr "ﺮﺷﺆﻤﻟﺍ ءﺎﻄﻏ ﻡﺪﺨﺘﺳﺇ"
 
@@ -15664,18 +15660,6 @@ msgid "Material slot name"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺔﺤﺘﻓ ﻢﺳﺇ"
 
 
-msgid "Face Data"
-msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
-
-
-msgid "Math"
-msgstr "ﺏﺎﺴﺣ"
-
-
-msgid "Merge"
-msgstr "ﺞﻣﺩﺇ"
-
-
 msgid "Special Characters"
 msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
 
@@ -15688,6 +15672,10 @@ msgid "Names"
 msgstr "ءﺎﻤﺳﺃ"
 
 
+msgid "Math"
+msgstr "ﺏﺎﺴﺣ"
+
+
 msgid "Bone Roll"
 msgstr "ﺔﻤﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
 
@@ -15696,16 +15684,12 @@ msgid "Snap"
 msgstr "ﻱﺫﺎﺣ"
 
 
-msgid "Import"
-msgstr "ﺩﺭﻮﺘﺳﺇ"
-
-
 msgid "Proportional Editing Falloff"
 msgstr "ﻲﺒﺴﻨﻟﺍ ﺮﻳﺮﺤﺘﻟﺍ ﻲﺷﻼ﻿ﺗ"
 
 
-msgid "UV"
-msgstr "ﺭﻭﺎﺤﻣ"
+msgid "Import"
+msgstr "ﺩﺭﻮﺘﺳﺇ"
 
 
 msgid "Mirror"
@@ -15732,6 +15716,10 @@ msgid "Select More/Less"
 msgstr "ﻞﻗﺍ/ﺮﺜﻛﺍ ﺭﺎﻴﺘﺧﺍ"
 
 
+msgid "UV"
+msgstr "ﺭﻭﺎﺤﻣ"
+
+
 msgid "Select Similar"
 msgstr "ﻞﺛﺎﻤﻤﻟﺍ ﺮﺘﺧﺇ"
 
@@ -15750,10 +15738,6 @@ msgstr "ءﻮﺿ"
 
 msgid "Relations"
 msgstr "ﺕﺎﻗﻼ﻿ﻌﻟﺍ"
-
-
-msgid "Layout"
-msgstr "ﻖﻴﺴﻨﺗ"
 
 
 msgid "Rigid Body"
@@ -15776,24 +15760,36 @@ msgid "Make Single User"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺪﻴﺣﻭ ﻪﻠﻌﺟﺍ"
 
 
-msgid "Keying"
-msgstr "ﺺﺤﻔﻟﺍ"
-
-
 msgid "Hooks"
 msgstr "ﺕﺎﻓﺎﻄﺧ"
 
 
-msgid "Tracking"
-msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ"
+msgid "Layout"
+msgstr "ﻖﻴﺴﻨﺗ"
 
 
 msgid "In-Betweens"
 msgstr "ﻦﻴﺑ ﺎﻣ"
 
 
+msgid "Keying"
+msgstr "ﺺﺤﻔﻟﺍ"
+
+
 msgid "Propagate"
 msgstr "ﻢﻤﻋ"
+
+
+msgid "Tracking"
+msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ"
+
+
+msgid "Face Data"
+msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
+
+
+msgid "Merge"
+msgstr "ﺞﻣﺩﺇ"
 
 
 msgctxt "MovieClip"
@@ -15971,6 +15967,10 @@ msgstr "ﺔﻜﺒﺷ"
 
 msgid "Operator Presets"
 msgstr "ﻞﻣﺎﻌﻠﻟ ﺔﻘﺒﺴﻣ ﺕﺍﺩﺍﺪﻋﺇ"
+
+
+msgid "Cavity Mask"
+msgstr "ﻒﻳﻮﺠﺘﻟﺍ ﻉﺎﻨﻗ"
 
 
 msgid "Mesh Edge"
@@ -25892,11 +25892,6 @@ msgstr "ﺔﻘﻄﻨﻤﻟﺍ ﻑﺍﻮﺣ ﻙﺮّﺣ"
 
 
 msgctxt "Operator"
-msgid "Area Options"
-msgstr "ﺔﻘﻄﻨﻤﻟﺍ ﺕﺍﺭﺎﻴﺧ"
-
-
-msgctxt "Operator"
 msgid "Split Area"
 msgstr "ﺔﻘﻄﻨﻤﻟﺍ ﻞﺼﻓﺍ"
 
@@ -29644,10 +29639,6 @@ msgstr "GL ﺞﻴﺴﻧ ﺩﻭﺪﺣ"
 
 msgid "Limit the texture size to save graphics memory"
 msgstr " ﺔﻳﺭﻮﺼﻟﺍ ﺓﺮﻛﺍﺬﻟﺍ ﻆﻔﺤﻟ ﺞﻴﺴﻨﻟﺍ ﻢﺠﺣ ﺩﺪﺣ"
-
-
-msgid "2D Texture"
-msgstr "ﻲﺋﺎﻨﺛ ﺞﻴﺴﻧ"
 
 
 msgid "Ambient Color"
@@ -35223,10 +35214,6 @@ msgstr "ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ ﻰﻠﻋ ﻝﺎﻌﻓ ﺭ�
 
 msgid "Nothing selected"
 msgstr "ﺭﺎﺘﺨﻣ ءﻲﺷ ﻻ﻿"
-
-
-msgid "Pin"
-msgstr "ﺖﺒّﺛ"
 
 
 msgctxt "Operator"

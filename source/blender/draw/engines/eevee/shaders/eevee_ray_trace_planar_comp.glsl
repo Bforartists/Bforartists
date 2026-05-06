@@ -13,12 +13,10 @@
 
 COMPUTE_SHADER_CREATE_INFO(eevee_ray_trace_planar)
 
-#include "eevee_bxdf_sampling_lib.glsl"
 #include "eevee_colorspace_lib.bsl.hh"
 #include "eevee_gbuffer_read_lib.glsl"
 #include "eevee_lightprobe_eval_lib.glsl"
 #include "eevee_ray_trace_screen_lib.glsl"
-#include "eevee_ray_types_lib.bsl.hh"
 #include "eevee_reverse_z_lib.bsl.hh"
 #include "eevee_sampling_lib.glsl"
 
@@ -44,8 +42,8 @@ void main()
     return;
   }
 
-  int2 texel_fullres = texel * uniform_buf.raytrace.resolution_scale +
-                       uniform_buf.raytrace.resolution_bias;
+  int2 texel_fullres = texel * uniform_buf.raytrace.trace_pixel_scale +
+                       uniform_buf.raytrace.trace_pixel_offset;
 
   gbuffer::Header gbuf_header = gbuffer::read_header(texel_fullres);
   ClosureType closure_type = gbuffer::mode_to_closure_type(gbuf_header.bin_type(closure_index));
@@ -54,6 +52,9 @@ void main()
     /* Planar light-probes cannot trace refraction yet. */
     return;
   }
+
+  ClosureUndetermined cl = gbuffer::read_bin(texel_fullres, closure_index);
+  float roughness = closure_apparent_roughness_get(cl);
 
   float depth = reverse_z::read(texelFetch(depth_tx, texel_fullres, 0).r);
   float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
@@ -95,7 +96,8 @@ void main()
 
   if (hit.valid) {
     /* Evaluate radiance at hit-point. */
-    radiance = textureLod(planar_radiance_tx, float3(hit.ss_hit_P.xy, planar_id), 0.0f).rgb;
+    radiance = raytrace_sample_screen(
+        planar_radiance_tx, uniform_buf.raytrace, hit, roughness, hit.ss_hit_P.xy, planar_id);
   }
   else {
     /* Using ray direction as geometric normal to bias the sampling position.
@@ -104,7 +106,7 @@ void main()
     float3 Ng = ray.direction;
     /* Fall back to nearest light-probe. */
     LightProbeSample samp = lightprobe_load(float2(texel), P, Ng, V);
-    radiance = lightprobe_eval_direction(samp, P, ray.direction, ray_pdf_inv);
+    radiance = lightprobe_eval_direction(samp, P, ray.direction, roughness);
     /* Set point really far for correct reprojection of background. */
     hit.time = 10000.0f;
   }
