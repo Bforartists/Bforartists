@@ -149,6 +149,7 @@ static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gz
       }
       break;
     }
+    // bfa node minimap
     case SPACE_NODE: {
       const SpaceNode *snode = static_cast<const SpaceNode *>(area->spacedata.first);
       if (snode->gizmo_flag & (SNODE_GIZMO_HIDE)) // bfa node minimap TODO: maybe add hide navigate?

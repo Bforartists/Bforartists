@@ -392,8 +392,6 @@ static std::optional<rctf> get_minimap_rect(const SpaceNode &snode, ARegion &reg
   float min[2], max[2];
   INIT_MINMAX2(min, max);
 
-  // Using your preferred loop style
-  // Note: ensure node_tree is accessible (e.g., bNodeTree *node_tree = snode.nodetree;)
   bNodeTree *node_tree = snode.edittree;
   if (!node_tree) {
     return std::nullopt;
@@ -5588,13 +5586,13 @@ void node_draw_space(const bContext &C, ARegion &region)
 
         wmOrtho2_pixelspace(region.winx, region.winy);
 
-        WM_gizmomap_draw(region.runtime->gizmo_map, &C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS);
+        WM_gizmomap_draw(region.runtime->gizmo_map, &C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS); // bfa node minimap
 
         GPU_matrix_pop();
         GPU_matrix_projection_set(original_proj);
       }
 
-      draw_node_gizmos(C, region, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS);
+      draw_node_gizmos(C, region, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS); // bfa node minimap
       draw_nodetree(C, region, *ntree, tree_draw_ctx, path->parent_key);
       draw_node_gizmos(C, region, WM_GIZMOMAP_DRAWSTEP_2D_UI);
     }

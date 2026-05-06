@@ -289,7 +289,7 @@ static void action_main_region_draw(const bContext *C, ARegion *region)
   ui::view2d_view_restore(C);
 
   /* gizmos */
-  WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS);
+  WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS); // bfa node minimap
   WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_UI); // bfa node minimap rename with _UI
 
   /* scrubbing region */
