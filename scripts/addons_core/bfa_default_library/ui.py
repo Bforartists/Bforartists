@@ -22,18 +22,20 @@ Contains the addon preferences panel and related operators.
 """
 
 import bpy
+from os import path as p
 from bpy.types import AddonPreferences
 
 # Import configuration and functions from parent module
 from . import (
     PARENT_ADDON_DISPLAY_NAME,
     PARENT_ADDON_VERSION,
+    PARENT_ADDON_UNIQUE_ID,
+    CENTRAL_LIB_SUBFOLDERS,
     is_child_addon_active,
-    register_library,
-    unregister_library,
+    get_lib_path_index,
     get_central_library_base,
 )
-from .utility import add_addon_to_central_library
+from . import utility
 
 
 # -----------------------------------------------------------------------------
@@ -44,33 +46,104 @@ class LIBADDON_OT_cleanup_libraries(bpy.types.Operator):
     """Remove all Default Library asset libraries from preferences (manual cleanup)"""
     bl_idname = "preferences.libaddon_cleanup_libraries"
     bl_label = "Remove Libraries"
-    bl_description = "Remove all Default Library asset libraries from Blender preferences"
+    bl_description = "Remove all Default Library asset libraries from preferences"
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        # Manual cleanup without affecting tracking
-        unregister_library(full_cleanup=False)
-        self.report({'INFO'}, "Libraries removed but tracking maintained")
+        prefs = context.preferences
+        central_base = get_central_library_base()
+
+        # Simply remove the libraries from prefs by path/name
+        removed = 0
+        for lib_name in CENTRAL_LIB_SUBFOLDERS:
+            lib_path = p.join(central_base, lib_name)
+            lib_index = get_lib_path_index(prefs, lib_name, lib_path)
+            if lib_index != -1:
+                try:
+                    bpy.ops.preferences.asset_library_remove(index=lib_index)
+                    removed += 1
+                except Exception as e:
+                    print(f"⚠ Could not remove library '{lib_name}': {e}")
+
+        self.report({'INFO'}, f"Removed {removed} libraries from preferences")
         return {'FINISHED'}
 
 
 class LIBADDON_OT_readd_libraries(bpy.types.Operator):
-    """Re-add all Default Library asset libraries to preferences"""
+    """Re-add / update all Default Library asset libraries to preferences"""
     bl_idname = "preferences.libaddon_readd_libraries"
-    bl_label = "Re-add Libraries"
-    bl_description = "Re-add all Default Library asset libraries to Blender preferences"
+    bl_label = "Re-add / Update Libraries"
+    bl_description = "Re-add all Default Library asset libraries to preferences and update assets"
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        # Force re-register with tracking update
-        register_library(force_reregister=True)
-        
+        prefs = context.preferences
+        central_base = get_central_library_base()
+        parent_addon_dir = p.dirname(__file__)
+
+        parent_addon_info = {
+            'name': PARENT_ADDON_DISPLAY_NAME,
+            'version': PARENT_ADDON_VERSION,
+            'unique_id': PARENT_ADDON_UNIQUE_ID
+        }
+
+        # Step 1: Remove all existing libraries from prefs (clean slate)
+        for lib_name in CENTRAL_LIB_SUBFOLDERS:
+            lib_path = p.join(central_base, lib_name)
+            lib_index = get_lib_path_index(prefs, lib_name, lib_path)
+            if lib_index != -1:
+                try:
+                    bpy.ops.preferences.asset_library_remove(index=lib_index)
+                except Exception:
+                    pass
+
+        # Step 2: Clean tracking for this addon so add_addon_to_central_library creates fresh
+        addon_id = utility.get_addon_identifier(parent_addon_info)
+        tracking_data = utility.read_addon_tracking(central_base)
+        if addon_id in tracking_data:
+            del tracking_data[addon_id]
+            utility.write_addon_tracking(central_base, tracking_data)
+
+        # Step 3: Check which source libraries exist
+        existing_libraries = []
+        for lib_name in CENTRAL_LIB_SUBFOLDERS:
+            source_dir = p.join(parent_addon_dir, lib_name)
+            if p.exists(source_dir):
+                existing_libraries.append(lib_name)
+
+        # Step 4: Force-copy assets and update tracking
+        utility.add_addon_to_central_library(
+            parent_addon_info, existing_libraries, parent_addon_dir, central_base,
+            force_copy=True
+        )
+
+        # Step 5: Create all libraries in prefs
+        registered_count = 0
+        for lib_name in existing_libraries:
+            library_path = p.join(central_base, lib_name)
+            try:
+                if bpy.app.version >= (5, 1, 0):
+                    bpy.ops.preferences.asset_library_add(directory=library_path, type='LOCAL')
+                else:
+                    bpy.ops.preferences.asset_library_add(directory=library_path)
+
+                # Find the newly created library and configure it
+                for lib in prefs.filepaths.asset_libraries:
+                    if lib.path == library_path:
+                        lib.name = lib_name
+                        lib.import_method = 'APPEND'
+                        registered_count += 1
+                        break
+            except Exception as e:
+                print(f"⚠ Could not create library '{lib_name}': {e}")
+
+        # Step 6: Refresh asset browser
         try:
             bpy.ops.asset.library_refresh()
-        except:
+        except Exception:
             pass
 
-        self.report({'INFO'}, "Default Library asset libraries re-added to preferences")
+        self.report({'INFO'}, f"{registered_count} libraries re-added and assets updated")
         return {'FINISHED'}
 
 
