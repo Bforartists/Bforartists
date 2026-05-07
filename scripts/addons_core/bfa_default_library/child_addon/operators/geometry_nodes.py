@@ -28,6 +28,82 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def set_geometry_nodes_input_value(modifier, input_key, value):
+    """Set a geometry nodes modifier input value by key or fallback by input name."""
+    # print(f"[GN DEBUG] set_geometry_nodes_input_value: modifier={getattr(modifier, 'name', repr(modifier))}, input_key={input_key}, value={value}")
+    if not hasattr(modifier, 'properties'):
+        # print("[GN DEBUG] modifier has no properties")
+        return False
+
+    if hasattr(modifier.properties, 'inputs'):
+        inputs = modifier.properties.inputs
+    else:
+        # print("[GN DEBUG] modifier.properties has no inputs")
+        return False
+
+    # Try direct attribute access first (this is how Blender's own code works)
+    try:
+        input_obj = getattr(inputs, input_key)
+        input_obj.value = value
+        # print(f"[GN DEBUG] direct input assignment succeeded for {input_key}")
+        return True
+    except Exception as exc:
+        # print(f"[GN DEBUG] direct input assignment failed for {input_key}: {exc}")
+        pass
+
+    # Fallback: try to find the input by iterating over available inputs
+    try:
+        # Get all available input identifiers/names
+        input_names = []
+        if hasattr(inputs, '__dict__'):
+            input_names = [name for name in dir(inputs) if not name.startswith('_')]
+        elif hasattr(inputs, 'keys'):
+            input_names = list(inputs.keys())
+        else:
+            # print("[GN DEBUG] cannot determine available inputs")
+            return False
+
+        # print(f"[GN DEBUG] available inputs: {input_names}")
+
+        for name in input_names:
+            try:
+                inp = getattr(inputs, name)
+                if getattr(inp, 'identifier', None) == input_key or getattr(inp, 'name', None) == input_key:
+                    inp.value = value
+                    # print(f"[GN DEBUG] assignment succeeded by identifier/name match for {input_key} -> {name}")
+                    return True
+            except Exception as exc:
+                # print(f"[GN DEBUG] assignment fallback failed for {input_key} on input {name}: {exc}")
+                continue
+    except Exception as exc:
+        # print(f"[GN DEBUG] failed to iterate over inputs: {exc}")
+        pass
+
+    # Additional fallback: case-insensitive name match
+    try:
+        if hasattr(inputs, '__dict__'):
+            for name in dir(inputs):
+                if name.startswith('_'):
+                    continue
+                try:
+                    inp = getattr(inputs, name)
+                    if getattr(inp, 'name', '').lower() == str(input_key).lower():
+                        inp.value = value
+                        # print(f"[GN DEBUG] assignment succeeded by case-insensitive name match for {input_key} -> {name}")
+                        return True
+                except Exception as exc:
+                    # print(f"[GN DEBUG] assignment name-match failed for {input_key} on input {name}: {exc}")
+                    continue
+    except Exception as exc:
+        # print(f"[GN DEBUG] failed case-insensitive iteration: {exc}")
+        pass
+
+    # print(f"[GN DEBUG] no matching input found for {input_key}")
+    return False
+
+
+
+
 # Constants for assets with operators names
 GN_ASSET_NAMES = [
     "Smart Capsule",
@@ -157,8 +233,10 @@ def get_all_objects_from_collection(collection, include_children=True):
 # Intersection Nodegroup injection functions
 def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersections"):
     """Inject a node group into all materials of objects in the target collection, including nested collections"""
+    # print(f"[INJECT DEBUG] Starting injection for collection '{collection_name}', nodegroup '{nodegroup_name}'")
     target_collection = bpy.data.collections.get(collection_name)
     if not target_collection:
+        # print(f"[INJECT DEBUG] Collection '{collection_name}' not found!")
         logger.error(f"Collection '{collection_name}' not found!")
         return False
 
@@ -167,8 +245,11 @@ def inject_nodegroup_to_collection(collection_name, nodegroup_name="S_Intersecti
     # Check if node group exists
     node_group = bpy.data.node_groups.get(nodegroup_name)
     if not node_group:
+        # print(f"[INJECT DEBUG] Node group '{nodegroup_name}' not found!")
         logger.error(f"Node group '{nodegroup_name}' not found!")
         return False
+
+    # print(f"[INJECT DEBUG] Found node group '{nodegroup_name}', processing {len(get_all_objects_from_collection(target_collection, include_children=True))} objects")
 
     processed_objects = 0
     objects_with_materials = 0
@@ -596,6 +677,9 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
     bl_description = "Configure the Mesh Blend by Proximity geometry nodes setup with target collection"
     bl_options = {'REGISTER', 'UNDO'}
 
+    # Note: Cannot use PointerProperty for collections on operators
+    # Using scene properties instead
+
     @classmethod
     def poll(cls, context):
         """Available when there's an active object with Blend Normals by Proximity modifier"""
@@ -612,29 +696,33 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
 
     def execute(self, context):
         obj = context.object
+        # Use scene properties directly (operator properties don't support data-block types)
+        target_collection = context.scene.target_collection
+        use_wireframe_on_collection = context.scene.use_wireframe_on_collection
+        use_relative_position = context.scene.use_relative_position
+        inject_intersection_nodegroup = context.scene.inject_intersection_nodegroup
 
         # Validate target collection exists
-        if not context.scene.target_collection:
+        if not target_collection:
             self.report({'ERROR'}, "No target collection selected. Please select a target collection first.")
             return {'CANCELLED'}
 
         # Set viewport settings to bounds for all children objects if enabled
-        if context.scene.use_wireframe_on_collection:
-            for collection_obj in context.scene.target_collection.objects:
-                #if collection_obj.type == 'MESH':
+        if use_wireframe_on_collection:
+            for collection_obj in target_collection.objects:
                 if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
                     collection_obj.show_bounds = True
                     collection_obj.display_type = 'BOUNDS'
         else:
             # Disable bounds
-            for collection_obj in context.scene.target_collection.objects:
-                #if collection_obj.type == 'MESH':
+            for collection_obj in target_collection.objects:
                 if collection_obj.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}:
                     collection_obj.show_bounds = False
                     collection_obj.display_type = 'TEXTURED'
 
         # Apply geometry nodes configuration
-        obj = context.active_object
+        # Use the object from the beginning of execute(), not a possibly different active object
+        # that may change during modal/UI context handling.
 
         # Find the Blend Normals by Proximity modifier
         geom_nodes = None
@@ -646,47 +734,51 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
                 break
 
         if geom_nodes and geom_nodes.node_group:
-            # Find collection socket in the node group
+            # print(f"[GN DEBUG] applying settings to Geometry Nodes modifier: {geom_nodes.name}")
+            # print(f"[GN DEBUG] using scene properties: target_collection={target_collection}, use_relative_position={use_relative_position}, use_wireframe_on_collection={use_wireframe_on_collection}, inject_intersection_nodegroup={inject_intersection_nodegroup}")
+            # Find collection socket in the node group interface and set its modifier input value
             collection_socket_found = False
 
-            for node in geom_nodes.node_group.nodes:
-                if node.type == 'GROUP_INPUT':
-                    for output in node.outputs:
-                        if output.type == 'COLLECTION':
-                            # Set the collection in the modifier if target collection exists
-                            if context.scene.target_collection:
-                                geom_nodes[output.identifier] = context.scene.target_collection
-                                output.default_value = context.scene.target_collection
-                                collection_socket_found = True
-                            break
-                    if collection_socket_found:
-                        break
+            for item in geom_nodes.node_group.interface.items_tree:
+                if item.item_type == 'SOCKET' and item.socket_type == 'NodeSocketCollection':
+                    # print(f"[GN DEBUG] found collection socket item name={item.name}, identifier={item.identifier}")
+                    if target_collection:
+                        input_key = item.identifier or item.name
+                        success = set_geometry_nodes_input_value(geom_nodes, input_key, target_collection)
+                        # print(f"[GN DEBUG] set collection input {input_key} success={success}")
+                        try:
+                            item.default_value = target_collection
+                        except Exception as exc:
+                            # print(f"[GN DEBUG] failed to write item.default_value for collection socket: {exc}")
+                            pass
+                        collection_socket_found = True
+                    break
 
             # Set relative position if enabled
-            if context.scene.use_relative_position:
-                # Try to find and set the relative position socket
-                for socket_key in geom_nodes.keys():
-                    if socket_key.lower().startswith(('socket_12', 'relative', 'position')):
+            for item in geom_nodes.node_group.interface.items_tree:
+                if item.item_type == 'SOCKET' and item.socket_type == 'NodeSocketBool':
+                    if item.name.lower().startswith(('socket_12', 'relative', 'position')):
+                        # print(f"[GN DEBUG] found bool socket item name={item.name}, identifier={item.identifier}")
+                        input_key = item.identifier or item.name
+                        success = set_geometry_nodes_input_value(geom_nodes, input_key, use_relative_position)
+                        # print(f"[GN DEBUG] set bool input {input_key} success={success}")
                         try:
-                            geom_nodes[socket_key] = True
-                        except (TypeError, AttributeError):
-                            # Skip setting if socket type doesn't support boolean values
+                            item.default_value = use_relative_position
+                        except Exception as exc:
+                            # print(f"[GN DEBUG] failed to write item.default_value for bool socket: {exc}")
                             pass
-            else:
-                for socket_key in geom_nodes.keys():
-                    if socket_key.lower().startswith(('socket_12', 'relative', 'position')):
-                        try:
-                            geom_nodes[socket_key] = False
-                        except (TypeError, AttributeError):
-                            # Skip setting if socket type doesn't support boolean values
-                            pass
+                        break
 
             # Inject intersection nodegroup if enabled
-            if context.scene.target_collection:
-                if context.scene.inject_intersection_nodegroup:
-                    success = inject_nodegroup_to_collection(context.scene.target_collection.name)
+            if target_collection:
+                if inject_intersection_nodegroup:
+                    # print(f"[GN DEBUG] injecting intersection nodegroup to collection {target_collection.name}")
+                    success = inject_nodegroup_to_collection(target_collection.name)
+                    # print(f"[GN DEBUG] injection success: {success}")
                 else:
-                    success = remove_nodegroup_from_collection(context.scene.target_collection.name)
+                    # print(f"[GN DEBUG] removing intersection nodegroup from collection {target_collection.name}")
+                    success = remove_nodegroup_from_collection(target_collection.name)
+                    # print(f"[GN DEBUG] removal success: {success}")
                     # DEBUG
                     #if success:
                     #    self.report({'INFO'}, "Intersection node group injected into materials to blend them")

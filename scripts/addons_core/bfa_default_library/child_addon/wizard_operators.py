@@ -127,6 +127,7 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
                 # Continue anyway - the operator might handle empty collections
 
             # RUN SCRIPTS: Import the geometry nodes operator and call it
+            # print(f"[WIZARD DEBUG] invoking meshblendbyproximity with target_collection={context.scene.target_collection}, use_relative_position={context.scene.use_relative_position}, use_wireframe_on_collection={context.scene.use_wireframe_on_collection}, inject_intersection_nodegroup={context.scene.inject_intersection_nodegroup}")
             success = bpy.ops.object.meshblendbyproximity('EXEC_DEFAULT')
 
             if 'FINISHED' not in success:

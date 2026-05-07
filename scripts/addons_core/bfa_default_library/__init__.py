@@ -63,9 +63,9 @@ PARENT_ADDON_VERSION = (1, 3, 2)
 
 # Child addon info - this is the functional addon
 # TO DO: Update the child_addon/blender_manifest.toml to reflect this version as well for consistency
-CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_0_2"
+CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_0_3"
 CHILD_ADDON_DISPLAY_NAME = "Default Asset Library Functions"
-CHILD_ADDON_VERSION = (1, 0, 2)
+CHILD_ADDON_VERSION = (1, 0, 3)
 
 # Note: The version in blender_manifest.toml should match or be newer than this
 

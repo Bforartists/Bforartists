@@ -190,11 +190,26 @@ If registration fails completely:
 
 
 
-## Technical Notes
+## Recent Fixes and Improvements
 
-- Central library location: `../bfa_central_asset_library/` relative to addons folder
-- File tracking: JSON-based with detailed file-level tracking
-- Supported files: `.blend`, `.blend?`, `blender_assets.cats.txt`
-- Catalog files are preserved to maintain category structure
-- Empty directories are automatically cleaned up
+**Fixed Issues:**
+- **TypeError with Geometry Nodes inputs**: Fixed `TypeError: 'GeometryNodesInterfaceInputs' object is not iterable` by using proper Blender API (`getattr(inputs, input_key)`) instead of dictionary-style access
+- **Operator property registration error**: Removed invalid `PointerProperty` types from operators (Blender operators cannot have data-block properties)
+- **Wizard-to-modifier data flow**: Streamlined wizard execution to use scene properties directly instead of operator parameters
+
+**Technical Details:**
+- **Input Assignment**: Geometry Nodes modifier inputs are now set using `modifier.properties.inputs.Socket_3.value = collection` pattern (matching Blender's internal code)
+- **Scene Property Usage**: Wizards set `context.scene.target_collection`, `use_relative_position`, etc., and operators read these directly
+- **Material Injection**: S_Intersections nodegroup injection/removal now works correctly for target collections
+- **Wireframe Display**: Bounds display toggle properly applies to all objects in target collection
+
+**Socket Mapping:**
+- Target Collection → `Socket_3` (NodeSocketCollection)
+- Relative Position → `Socket_42` (NodeSocketBool)
+- Material injection → S_Intersections nodegroup
+
+**Files Modified:**
+- `child_addon/operators/geometry_nodes.py`: Fixed input assignment API and scene property usage
+- `child_addon/wizard_operators.py`: Simplified operator invocation
+- `child_addon/wizard_handlers.py`: Scene property registration (unchanged)
 
