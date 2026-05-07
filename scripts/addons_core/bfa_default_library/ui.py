@@ -47,29 +47,24 @@ from . import utility
 # -----------------------------------------------------------------------------
 
 class LIBADDON_OT_cleanup_libraries(bpy.types.Operator):
-    """Remove asset libraries from preferences (manual cleanup)"""
+    """Remove this addon's files from the central library repository."""
     bl_idname = "preferences.libaddon_cleanup_libraries"
-    bl_label = "Remove Libraries"
-    bl_description = "Remove all Library asset libraries from preferences. Keep in mind the activated addon will register them again. \nIf you want to permenantly remove, deactivate the addon after cleanup."
+    bl_label = "Remove Addon Files"
+    bl_description = "Remove this addon's files from the central library repository. The addon can re-add them later without deactivating."
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        prefs = context.preferences
         central_base = get_central_library_base()
 
-        # Simply remove the libraries from prefs by path/name
-        removed = 0
-        for lib_name in CENTRAL_LIB_SUBFOLDERS:
-            lib_path = p.join(central_base, lib_name)
-            lib_index = get_lib_path_index(prefs, lib_name, lib_path)
-            if lib_index != -1:
-                try:
-                    bpy.ops.preferences.asset_library_remove(index=lib_index)
-                    removed += 1
-                except Exception as e:
-                    print(f"⚠ Could not remove library '{lib_name}': {e}")
+        parent_addon_info = {
+            'name': PARENT_ADDON_DISPLAY_NAME,
+            'version': PARENT_ADDON_VERSION,
+            'unique_id': PARENT_ADDON_UNIQUE_ID
+        }
 
-        self.report({'INFO'}, f"Removed {removed} libraries from preferences")
+        removed = utility.remove_addon_files_from_central_library(parent_addon_info, central_base)
+
+        self.report({'INFO'}, f"Removed {removed} files from central library")
         return {'FINISHED'}
 
 
@@ -91,40 +86,21 @@ class LIBADDON_OT_readd_libraries(bpy.types.Operator):
             'unique_id': PARENT_ADDON_UNIQUE_ID
         }
 
-        # Step 1: Remove all existing libraries from prefs (clean slate)
-        for lib_name in CENTRAL_LIB_SUBFOLDERS:
-            lib_path = p.join(central_base, lib_name)
-            lib_index = get_lib_path_index(prefs, lib_name, lib_path)
-            if lib_index != -1:
-                try:
-                    bpy.ops.preferences.asset_library_remove(index=lib_index)
-                except Exception:
-                    pass
-
-        # Step 2: Clean tracking for this addon so add_addon_to_central_library creates fresh
-        addon_id = utility.get_addon_identifier(parent_addon_info)
-        tracking_data = utility.read_addon_tracking(central_base)
-        if addon_id in tracking_data:
-            del tracking_data[addon_id]
-            utility.write_addon_tracking(central_base, tracking_data)
-
-        # Step 3: Check which source libraries exist
+        # Step 1: Refresh central library contents from source
         existing_libraries = []
         for lib_name in CENTRAL_LIB_SUBFOLDERS:
             source_dir = p.join(parent_addon_dir, lib_name)
             if p.exists(source_dir):
                 existing_libraries.append(lib_name)
 
-        # Step 4: Force-copy assets and update tracking
         utility.add_addon_to_central_library(
             parent_addon_info, existing_libraries, parent_addon_dir, central_base,
             force_copy=True
         )
 
-        # Step 5: Create all libraries in prefs with version-aware registration
+        # Step 2: Re-register missing libraries in preferences only if needed
         registered_count = 0
         version_info = get_blender_version_info()
-        
         for lib_name in existing_libraries:
             library_path = p.join(central_base, lib_name)
             lib_index = create_asset_library_in_preferences(prefs, lib_name, library_path, version_info)
@@ -134,7 +110,7 @@ class LIBADDON_OT_readd_libraries(bpy.types.Operator):
                 print(f"⚠ Could not create library '{lib_name}' after fallback")
                 print(f"   Debug: Blender version {version_info['version_string']} ({version_info['version_category']})")
 
-        # Step 6: Refresh asset browser
+        # Step 3: Refresh asset browser
         try:
             bpy.ops.asset.library_refresh()
         except Exception:
@@ -166,22 +142,22 @@ class LIBADDON_APT_preferences(AddonPreferences):
         box.label(text=f"{PARENT_ADDON_DISPLAY_NAME}", icon='ASSET_MANAGER')
         box.label(text=f"Version: {PARENT_ADDON_VERSION[0]}.{PARENT_ADDON_VERSION[1]}.{PARENT_ADDON_VERSION[2]}")
 
-        # VERSION NOTICE - Add this section
-        version_info = get_blender_version_info()
-        warnings = get_version_compatibility_warnings()
+        # DEBUG:VERSION NOTICE - Add this section
+        #version_info = get_blender_version_info()
+        #warnings = get_version_compatibility_warnings()
         
-        box.separator()
-        version_box = box.box()
-        version_box.label(text="Blender Version Info", icon='INFO')
-        version_box.label(text=f"Detected: {version_info['version_category']}")
-        version_box.label(text=f"Version: {version_info['version_string']}")
+        #box.separator()
+        #version_box = box.box()
+        #version_box.label(text="Blender Version Info", icon='INFO')
+        #version_box.label(text=f"Detected: {version_info['version_category']}")
+        #version_box.label(text=f"Version: {version_info['version_string']}")
         
-        # Show compatibility warnings if any
-        if warnings:
-            version_box.separator()
-            version_box.label(text="Compatibility Notes:", icon='ERROR')
-            for warning in warnings:
-                version_box.label(text=f"• {warning}", icon='DOT')
+        # DEBUG: Show compatibility warnings if any
+        #if warnings:
+        #    version_box.separator()
+        #    version_box.label(text="Compatibility Notes:", icon='ERROR')
+        #    for warning in warnings:
+        #        version_box.label(text=f"• {warning}", icon='DOT')
 
         # Status
         box.separator()
@@ -204,7 +180,7 @@ class LIBADDON_APT_preferences(AddonPreferences):
                     icon='FILE_REFRESH')
 
         row.operator("preferences.libaddon_cleanup_libraries",
-                    text="Remove Libraries",
+                    text="Remove Files",
                     icon='TRASH')
 
 
