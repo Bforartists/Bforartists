@@ -63,9 +63,9 @@ PARENT_ADDON_VERSION = (1, 3, 2)
 
 # Child addon info - this is the functional addon
 # TO DO: Update the child_addon/blender_manifest.toml to reflect this version as well for consistency
-CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_0_3"
+CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_0_4"
 CHILD_ADDON_DISPLAY_NAME = "Default Asset Library Functions"
-CHILD_ADDON_VERSION = (1, 0, 3)
+CHILD_ADDON_VERSION = (1, 0, 4)
 
 # Note: The version in blender_manifest.toml should match or be newer than this
 
@@ -177,6 +177,171 @@ def get_installed_child_addon_version():
         print(f"⚠ Error reading child addon manifest: {e}")
         
     return None
+
+
+# -----------------------------------------------------------------------------
+# Blender Version Detection and Compatibility
+# -----------------------------------------------------------------------------
+
+def get_blender_version_info():
+    """
+    Get comprehensive Blender version information with human-readable labels.
+    
+    Returns:
+        dict: Version information including:
+            - version_tuple: (major, minor, patch) tuple
+            - version_string: "X.Y.Z" format
+            - version_category: Human-readable category name
+            - compatibility_level: Internal compatibility level
+            - features: Dict of supported features
+    """
+    try:
+        version = bpy.app.version
+        version_tuple = (version[0], version[1], version[2] if len(version) > 2 else 0)
+        version_string = f"{version[0]}.{version[1]}.{version[2] if len(version) > 2 else 0}"
+        
+        # Determine version category and compatibility level
+        if version_tuple >= (5, 2, 0):
+            category = "Blender 5.2+ Modern"
+            compatibility_level = "modern"
+            features = {
+                "asset_library_type_param": True,
+                "geometry_nodes_interface_panels": True,
+                "modifier_property_access": "interface_based",
+                "remote_asset_libraries": True
+            }
+        elif version_tuple >= (5, 1, 0):
+            category = "Blender 5.1+ Enhanced"
+            compatibility_level = "enhanced"
+            features = {
+                "asset_library_type_param": False,  # 5.1.x operator doesn't actually accept 'type' parameter
+                "geometry_nodes_interface_panels": True,
+                "modifier_property_access": "interface_based",
+                "remote_asset_libraries": False
+            }
+        elif version_tuple >= (5, 0, 0):
+            category = "Blender 5.0 Legacy"
+            compatibility_level = "legacy"
+            features = {
+                "asset_library_type_param": False,
+                "geometry_nodes_interface_panels": False,
+                "modifier_property_access": "direct_access",
+                "remote_asset_libraries": False
+            }
+        else:
+            category = "Blender 4.x or Earlier (Unsupported)"
+            compatibility_level = "unsupported"
+            features = {
+                "asset_library_type_param": False,
+                "geometry_nodes_interface_panels": False,
+                "modifier_property_access": "unknown",
+                "remote_asset_libraries": False
+            }
+        
+        return {
+            "version_tuple": version_tuple,
+            "version_string": version_string,
+            "version_category": category,
+            "compatibility_level": compatibility_level,
+            "features": features
+        }
+    except Exception as e:
+        # Fallback if version detection fails
+        return {
+            "version_tuple": (0, 0, 0),
+            "version_string": "Unknown",
+            "version_category": "Unknown Version",
+            "compatibility_level": "unknown",
+            "features": {
+                "asset_library_type_param": False,
+                "geometry_nodes_interface_panels": False,
+                "modifier_property_access": "unknown",
+                "remote_asset_libraries": False
+            },
+            "error": str(e)
+        }
+
+
+def is_blender_version_supported():
+    """
+    Check if the current Blender version is supported by this addon.
+    
+    Returns:
+        tuple: (is_supported: bool, reason: str)
+    """
+    version_info = get_blender_version_info()
+    
+    if version_info["compatibility_level"] == "unsupported":
+        return False, f"Unsupported Blender version: {version_info['version_string']}. This addon requires Blender 5.0 or later."
+    
+    return True, f"Supported: {version_info['version_category']} ({version_info['version_string']})"
+
+
+def get_version_compatibility_warnings():
+    """
+    Get list of compatibility warnings for the current Blender version.
+    
+    Returns:
+        list: List of warning strings, empty if no warnings
+    """
+    version_info = get_blender_version_info()
+    warnings = []
+    
+    if version_info["compatibility_level"] == "legacy":
+        warnings.append("Running on Blender 5.0 - some advanced features may not work correctly")
+    
+    if not version_info["features"]["asset_library_type_param"]:
+        warnings.append("Asset library registration may require manual configuration")
+    
+    if version_info["features"]["modifier_property_access"] == "unknown":
+        warnings.append("Modifier property access patterns may be unreliable")
+    
+    return warnings
+
+
+def get_addon_module_name():
+    """Return the addon module name used in Blender preferences."""
+    return p.basename(p.dirname(__file__))
+
+
+def is_debug_asset_library_registration_enabled():
+    """Return whether the addon preferences debug toggle is enabled."""
+    try:
+        addon = bpy.context.preferences.addons.get(get_addon_module_name())
+        if addon and hasattr(addon, "preferences"):
+            return getattr(addon.preferences, "debug_asset_registration", False)
+    except Exception:
+        pass
+    return False
+
+
+def debug_log(message: str):
+    """Print debug messages only when the debug preference is enabled."""
+    if is_debug_asset_library_registration_enabled():
+        print(message)
+
+
+def log_version_info():
+    """Log comprehensive version information for debugging."""
+    version_info = get_blender_version_info()
+    
+    print("=== Blender Version Detection ===")
+    print(f"Version: {version_info['version_string']}")
+    print(f"Category: {version_info['version_category']}")
+    print(f"Compatibility Level: {version_info['compatibility_level']}")
+    print(f"Features: {version_info['features']}")
+    
+    supported, reason = is_blender_version_supported()
+    print(f"Supported: {supported} - {reason}")
+    
+    warnings = get_version_compatibility_warnings()
+    if warnings:
+        print("Warnings:")
+        for warning in warnings:
+            print(f"  ⚠ {warning}")
+    else:
+        print("No compatibility warnings")
+    print("==================================")
 
 
 # Library configuration - Only include libraries that exist in your packaged addon
@@ -896,11 +1061,81 @@ def unload_child_addon_functionality(force=False):
 # Library Management Functions (Similar to original but simplified)
 # -----------------------------------------------------------------------------
 
+def normalize_library_path(library_path: str):
+    """Normalize an asset library path for reliable comparison across OS and Blender versions."""
+    try:
+        return p.normcase(p.normpath(library_path))
+    except Exception:
+        return library_path
+
+
 def get_lib_path_index(prefs: Preferences, library_name: str, library_path: str):
     """Get the index of the library name or path for configuring them in the operator."""
+    normalized_target = normalize_library_path(library_path)
     for index, lib in enumerate(prefs.filepaths.asset_libraries):
-        if lib.path == library_path or lib.name == library_name:
+        if lib.name == library_name:
             return index
+        if normalize_library_path(getattr(lib, 'path', '')) == normalized_target:
+            return index
+    return -1
+
+
+def create_asset_library_in_preferences(prefs: Preferences, library_name: str, library_path: str, version_info: dict):
+    """Create or re-add an asset library in preferences with Blender version fallbacks."""
+    library_path = p.abspath(library_path)
+    lib_index = get_lib_path_index(prefs, library_name, library_path)
+    if lib_index != -1:
+        return lib_index
+
+    # Attempt direct collection creation first, which is more reliable in 5.1.x.
+    try:
+        asset_libraries = prefs.filepaths.asset_libraries
+        if hasattr(asset_libraries, "add"):
+            lib = asset_libraries.add()
+            lib.name = library_name
+        elif hasattr(asset_libraries, "new"):
+            lib = asset_libraries.new(name=library_name)  # name must be keyword argument in 5.1.x
+        else:
+            raise AttributeError("User asset library collection has no add/new method")
+
+        lib.path = library_path
+        lib.import_method = 'APPEND'
+        debug_log(f"✓ Directly created asset library '{library_name}'")
+
+        lib_index = get_lib_path_index(prefs, library_name, library_path)
+        if lib_index != -1:
+            return lib_index
+
+        debug_log(f"⚠ Direct creation created library but lookup failed for '{library_name}'")
+        for index, current_lib in enumerate(prefs.filepaths.asset_libraries):
+            debug_log(f"   Asset library {index}: name='{getattr(current_lib, 'name', '')}', path='{getattr(current_lib, 'path', '')}'")
+    except Exception as e:
+        print(f"⚠ Direct asset library creation failed for '{library_name}': {e}")
+
+    # Fallback: try the Blender operator with EXEC_DEFAULT to avoid the popup confirm.
+    # For 5.1.x, the operator might not accept 'type' parameter despite version detection
+    try:
+        # Check if we should use type parameter - but 5.1.x might not support it
+        if version_info["features"]["asset_library_type_param"] and version_info["version_tuple"] >= (5, 2, 0):
+            bpy.ops.preferences.asset_library_add('EXEC_DEFAULT', directory=library_path, type='LOCAL')
+            debug_log(f"✓ Asset library operator executed '{library_name}' with type='LOCAL'")
+        else:
+            bpy.ops.preferences.asset_library_add('EXEC_DEFAULT', directory=library_path)
+            debug_log(f"✓ Asset library operator executed '{library_name}'")
+    except Exception as e:
+        print(f"⚠ Operator asset library creation failed for '{library_name}' with EXEC_DEFAULT: {e}")
+
+    lib_index = get_lib_path_index(prefs, library_name, library_path)
+    if lib_index != -1:
+        lib = prefs.filepaths.asset_libraries[lib_index]
+        lib.name = library_name
+        lib.import_method = 'APPEND'
+        return lib_index
+
+    print(f"❌ Could not create asset library '{library_name}' after direct and operator fallback")
+    print(f"   Preferences asset_libraries count: {len(prefs.filepaths.asset_libraries)}")
+    for index, current_lib in enumerate(prefs.filepaths.asset_libraries):
+        print(f"   Asset library {index}: name='{getattr(current_lib, 'name', '')}', path='{getattr(current_lib, 'path', '')}'")
     return -1
 
 
@@ -995,23 +1230,14 @@ def register_library(force_reregister=False):
 
         if lib_name in libraries_to_create:
             # Library doesn't exist, create it
-            try:
-                # Check Blender version for compatibility with online assets
-                # Blender 5.1+ requires 'type' parameter, earlier versions don't support it
-                if bpy.app.version >= (5, 1, 0):
-                    bpy.ops.preferences.asset_library_add(directory=library_path, type='LOCAL')
-                else:
-                    bpy.ops.preferences.asset_library_add(directory=library_path)
-
-                # Find the newly created library and set its name
-                for i, lib in enumerate(prefs.filepaths.asset_libraries):
-                    if lib.path == library_path:
-                        lib.name = lib_name
-                        lib.import_method = 'APPEND'
-                        registered_count += 1
-                        break
-            except Exception as e:
-                print(f"❌ Could not create library {lib_name}: {e}")
+            version_info = get_blender_version_info()
+            lib_index = create_asset_library_in_preferences(prefs, lib_name, library_path, version_info)
+            if lib_index != -1:
+                registered_count += 1
+            else:
+                print(f"❌ Could not create library {lib_name} after fallback")
+                print(f"   Debug: Blender version {version_info['version_string']} ({version_info['version_category']})")
+                print(f"   Debug: Asset library type param supported: {version_info['features']['asset_library_type_param']}")
         else:
             # Library already exists - ensure correct settings
             lib_index = get_lib_path_index(prefs, lib_name, library_path)
@@ -1254,6 +1480,22 @@ def register():
     """Register the parent addon."""
     global _library_refresh_done
     _library_refresh_done = False
+
+    # Log version information for debugging and compatibility
+    log_version_info()
+    
+    # Check version compatibility
+    supported, reason = is_blender_version_supported()
+    if not supported:
+        print(f"⚠ {reason}")
+        # Continue anyway but log the issue
+    
+    # Log any compatibility warnings
+    warnings = get_version_compatibility_warnings()
+    if warnings:
+        print("Compatibility Warnings:")
+        for warning in warnings:
+            print(f"  ⚠ {warning}")
 
     # First reconcile tracking data with actual state
     reconcile_tracking_with_actual_state()

@@ -102,6 +102,70 @@ def set_geometry_nodes_input_value(modifier, input_key, value):
     return False
 
 
+def set_geometry_nodes_input_value_version_aware(modifier, input_key, value):
+    """
+    Set a geometry nodes modifier input value with version-aware access patterns.
+    
+    This function adapts to different Blender versions:
+    - Blender 5.0: Direct property access
+    - Blender 5.1+: Interface-based access with panels support
+    
+    Args:
+        modifier: The geometry nodes modifier
+        input_key: The input identifier or name to set
+        value: The value to set
+    
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    import bpy
+    
+    # Get version information
+    try:
+        version_info = bpy.app.version
+        version_tuple = (version_info[0], version_info[1], version_info[2] if len(version_info) > 2 else 0)
+    except:
+        version_tuple = (5, 0, 0)  # Fallback
+    
+    # For Blender 5.1+ with interface panels support
+    if version_tuple >= (5, 1, 0) and hasattr(modifier, 'node_group') and modifier.node_group:
+        try:
+            # Use interface inspection for modern Blender versions
+            interface_items = modifier.node_group.interface.items_tree
+            
+            for item in interface_items:
+                if item.item_type == 'SOCKET':
+                    # Check if this socket matches our input_key
+                    socket_identifier = getattr(item, 'identifier', None) or getattr(item, 'name', None)
+                    
+                    if socket_identifier == input_key or getattr(item, 'name', None) == input_key:
+                        # Try to set via modifier properties
+                        if hasattr(modifier, 'properties') and hasattr(modifier.properties, 'inputs'):
+                            try:
+                                # Direct access by identifier
+                                input_obj = getattr(modifier.properties.inputs, socket_identifier, None)
+                                if input_obj:
+                                    input_obj.value = value
+                                    # print(f"[GN DEBUG] Interface-based assignment succeeded for {input_key}")
+                                    return True
+                            except Exception as exc:
+                                # print(f"[GN DEBUG] Interface-based assignment failed: {exc}")
+                                pass
+                        
+                        # Fallback: try setting via item.default_value
+                        try:
+                            item.default_value = value
+                            # print(f"[GN DEBUG] Item default_value assignment succeeded for {input_key}")
+                            return True
+                        except Exception as exc:
+                            # print(f"[GN DEBUG] Item default_value assignment failed: {exc}")
+                            pass
+        except Exception as exc:
+            # print(f"[GN DEBUG] Interface inspection failed: {exc}")
+            pass
+    
+    # Fallback to the original method for all versions
+    return set_geometry_nodes_input_value(modifier, input_key, value)
 
 
 # Constants for assets with operators names
@@ -744,7 +808,7 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
                     # print(f"[GN DEBUG] found collection socket item name={item.name}, identifier={item.identifier}")
                     if target_collection:
                         input_key = item.identifier or item.name
-                        success = set_geometry_nodes_input_value(geom_nodes, input_key, target_collection)
+                        success = set_geometry_nodes_input_value_version_aware(geom_nodes, input_key, target_collection)
                         # print(f"[GN DEBUG] set collection input {input_key} success={success}")
                         try:
                             item.default_value = target_collection
@@ -760,7 +824,7 @@ class OBJECT_OT_MeshBlendbyProximity(Operator):
                     if item.name.lower().startswith(('socket_12', 'relative', 'position')):
                         # print(f"[GN DEBUG] found bool socket item name={item.name}, identifier={item.identifier}")
                         input_key = item.identifier or item.name
-                        success = set_geometry_nodes_input_value(geom_nodes, input_key, use_relative_position)
+                        success = set_geometry_nodes_input_value_version_aware(geom_nodes, input_key, use_relative_position)
                         # print(f"[GN DEBUG] set bool input {input_key} success={success}")
                         try:
                             item.default_value = use_relative_position
