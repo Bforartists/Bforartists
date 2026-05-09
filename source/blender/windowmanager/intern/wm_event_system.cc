@@ -936,22 +936,23 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
     CTX_wm_region_popup_set(C, handler->context.region_popup);
   }
 
+  // bfa node minimap
   /* Check for navigation gizmos first in case other UI elements are present in the same region,
    * e.g. buttons on nodes in node editors. */
-  ARegion *region_check = handler->context.region ? handler->context.region : region;
-  if (region_check && region_check->runtime->gizmo_map) {
-    wmGizmoMap *gzmap = region_check->runtime->gizmo_map;
-    int part = -1;
-    wmGizmo *gz = wm_gizmomap_highlight_find(gzmap, C, event, &part);
+  // ARegion *region_check = handler->context.region ? handler->context.region : region;
+  // if (region_check && region_check->runtime->gizmo_map) {
+  //   wmGizmoMap *gzmap = region_check->runtime->gizmo_map;
+  //   int part = -1;
+  //   wmGizmo *gz = wm_gizmomap_highlight_find(gzmap, C, event, &part);
                        
-    if (gz != nullptr) {
-      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
-        gz->parent_gzgroup);
-      if (step == WM_GIZMOMAP_DRAWSTEP_2D_UI) {
-        return WM_HANDLER_CONTINUE;
-      }
-    }
-  }
+  //   if (gz != nullptr) {
+  //     const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
+  //       gz->parent_gzgroup);
+  //     if (step == WM_GIZMOMAP_DRAWSTEP_2D_UI) {
+  //       return WM_HANDLER_CONTINUE;
+  //     }
+  //   }
+  // }
 
   int retval = handler->handle_fn(C, event, handler->user_data);
 
@@ -3305,22 +3306,29 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
     WM_tooltip_clear(C, CTX_wm_window(C));
   }
 
-  /* Needed so UI blocks over gizmos don't let events fall through to the gizmos,
+  /* Needed so UI blocks over gizmos don't let events fall through to the gizmos,s
    * noticeable for the node editor - where dragging on a node should move it, see: #73212.
    * note we still allow for starting the gizmo drag outside, then travel 'inside' the node. */
   // bfa node minimap
-  // if (region->runtime->type->clip_gizmo_events_by_ui) {
-  //   if (ui::region_block_find_mouse_over(region, event->xy, true)) {
-  //     if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
-  //       if (restore_highlight_unless_activated == false) {
-  //         WM_tooltip_clear(C, CTX_wm_window(C));
-  //         wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
-  //       }
-  //     }
-  //     return action;
-  //   }
-  // }
-
+  if (region->runtime->type->clip_gizmo_events_by_ui) {
+    if (ui::region_block_find_mouse_over(region, event->xy, true)) {
+      if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
+        /* Only block tool gizmos, let UI-step gizmos (minimap) through. */
+        const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
+            gz->parent_gzgroup);
+        if (step != WM_GIZMOMAP_DRAWSTEP_2D_UI) {
+          if (restore_highlight_unless_activated == false) {
+            WM_tooltip_clear(C, CTX_wm_window(C));
+            wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
+          }
+          return action;
+        }
+      }
+      else {
+        return action;  /* No gizmo active, block normally. */
+      }
+    }
+  }
   struct PrevGizmoData {
     wmGizmo *gz_modal;
     wmGizmo *gz;

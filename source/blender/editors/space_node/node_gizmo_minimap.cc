@@ -113,6 +113,11 @@ static wmOperatorStatus gizmo_minimap_modal(bContext *C,
                                             const wmEvent *event,
                                             eWM_GizmoFlagTweak /*tweak_flag*/)
 {
+  SpaceNode *snode = CTX_wm_space_node(C);
+  if (!snode || !snode->edittree) {
+    return OPERATOR_CANCELLED;
+  }
+  
   if (event->type != MOUSEMOVE) {
     return OPERATOR_RUNNING_MODAL;
   }
@@ -154,7 +159,7 @@ static wmOperatorStatus gizmo_minimap_invoke(bContext *C, wmGizmo *gz, const wmE
   View2D v2d = region->v2d;
   SpaceNode *snode = CTX_wm_space_node(C);
 
-  if (!snode->edittree) {
+  if (!snode || !snode->edittree) {
     return OPERATOR_CANCELLED;
   }
 
