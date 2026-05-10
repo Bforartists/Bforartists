@@ -939,20 +939,18 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
   // bfa node minimap
   /* Check for navigation gizmos first in case other UI elements are present in the same region,
    * e.g. buttons on nodes in node editors. */
-  // ARegion *region_check = handler->context.region ? handler->context.region : region;
-  // if (region_check && region_check->runtime->gizmo_map) {
-  //   wmGizmoMap *gzmap = region_check->runtime->gizmo_map;
-  //   int part = -1;
-  //   wmGizmo *gz = wm_gizmomap_highlight_find(gzmap, C, event, &part);
-                       
-  //   if (gz != nullptr) {
-  //     const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
-  //       gz->parent_gzgroup);
-  //     if (step == WM_GIZMOMAP_DRAWSTEP_2D_UI) {
-  //       return WM_HANDLER_CONTINUE;
-  //     }
-  //   }
-  // }
+  ARegion *region_check = handler->context.region ? handler->context.region : region;
+  if (region_check && region_check->runtime && region_check->runtime->gizmo_map) {
+    wmGizmoMap *gzmap = region_check->runtime->gizmo_map;
+    wmGizmo *gz = wm_gizmomap_highlight_get(gzmap);
+    if (gz != nullptr && gz->parent_gzgroup != nullptr) {
+      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
+          gz->parent_gzgroup);
+      if (step == WM_GIZMOMAP_DRAWSTEP_2D_UI) {
+        return WM_HANDLER_CONTINUE;
+      }
+    }
+  }
 
   int retval = handler->handle_fn(C, event, handler->user_data);
 
