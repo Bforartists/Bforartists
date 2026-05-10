@@ -8859,7 +8859,7 @@ static void rna_def_space_node(BlenderRNA *brna)
   RNA_def_property_update(
       prop, NC_SPACE | ND_SPACE_NODE, "rna_SpaceNodeEditor_show_toolshelf_tabs_update");
  
-  /* Gizmo Node Minimap. */
+  /* bfa node minimap gizmo. */
   prop = RNA_def_property(srna, "minimap_aspect_ratio", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "minimap_aspect_ratio");
   RNA_def_property_float_default(prop, 1.5f);

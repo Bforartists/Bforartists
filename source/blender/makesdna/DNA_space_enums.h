@@ -886,6 +886,7 @@ enum {
   /** All gizmos. */
   SNODE_GIZMO_HIDE = (1 << 0),
   SNODE_GIZMO_HIDE_ACTIVE_NODE = (1 << 1),
+  /** bfa node minimap */
   SNODE_GIZMO_SHOW_MINIMAP = (1 << 2),
   SNODE_GIZMO_MINIMAP_USE_NODE_COLORS = (1 << 3),
   SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS = (1 << 4),

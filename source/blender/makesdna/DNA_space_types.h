@@ -897,7 +897,7 @@ struct SpaceNode {
   char gizmo_flag = 0;
   char _pad2[7] = {};
 
-  /* Gizmo Minimap */
+  /* bfa node minimap */
   float minimap_aspect_ratio = 0;
   float minimap_scale = 0;
 

@@ -3309,26 +3309,19 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
   /* Needed so UI blocks over gizmos don't let events fall through to the gizmos,s
    * noticeable for the node editor - where dragging on a node should move it, see: #73212.
    * note we still allow for starting the gizmo drag outside, then travel 'inside' the node. */
-  // bfa node minimap
+  // bfa node minimap move to below
   if (region->runtime->type->clip_gizmo_events_by_ui) {
     if (ui::region_block_find_mouse_over(region, event->xy, true)) {
       if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
-        /* Only block tool gizmos, let UI-step gizmos (minimap) through. */
-        const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
-            gz->parent_gzgroup);
-        if (step != WM_GIZMOMAP_DRAWSTEP_2D_UI) {
-          if (restore_highlight_unless_activated == false) {
-            WM_tooltip_clear(C, CTX_wm_window(C));
-            wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
+        if (restore_highlight_unless_activated == false) {
+          WM_tooltip_clear(C, CTX_wm_window(C));
+          wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
           }
-          return action;
-        }
       }
-      else {
-        return action;  /* No gizmo active, block normally. */
-      }
+      return action;
     }
   }
+
   struct PrevGizmoData {
     wmGizmo *gz_modal;
     wmGizmo *gz;
@@ -3394,6 +3387,7 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
   /* Needed so UI blocks over gizmos don't let events fall through to tools gizmos,
    * noticeable for the node editor - where dragging on a node should move it, see: #73212.
    * note we still allow for starting the gizmo drag outside, then travel 'inside' the node. */
+  // bfa node minimap
   if (region->runtime->type->clip_gizmo_events_by_ui && !is_view_controls_gizmo) {
     if (ui::region_block_find_mouse_over(region, event->xy, true)) {
       if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
@@ -3408,9 +3402,10 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
 
   if (handle_highlight) {
     /* Reuse the same gizmo found above. */
-    gz = gz_test;
+    // bfa node minimap gz and part changed 
     int part = part_test;
-
+    gz = gz_test;
+    
     /* If no gizmos are/were active, don't clear tool-tips. */
     if (gz || prev.gz) {
       if ((prev.gz != gz) || (prev.part != part)) {

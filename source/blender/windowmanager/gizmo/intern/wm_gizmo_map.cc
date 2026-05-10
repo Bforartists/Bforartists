@@ -307,7 +307,7 @@ eWM_GizmoFlagMapDrawStep WM_gizmomap_drawstep_from_gizmo_group(const wmGizmoGrou
   if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) {
     step = WM_GIZMOMAP_DRAWSTEP_3D;
   }
-   // bfa node minimap add, rename with _TOOL and _UI
+  // bfa node minimap add, rename with _TOOL and _UI
   else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) {
     step = WM_GIZMOMAP_DRAWSTEP_2D_UI;
   }
@@ -828,6 +828,7 @@ wmGizmo *wm_gizmomap_highlight_find(wmGizmoMap *gzmap,
           wm_gizmogroup_intersectable_gizmos_to_list(
               wm, &gzgroup, event->modifier, &visible_3d_gizmos);
         }
+        // bfa node minimap add, rename with _TOOL and _UI
         else if (ELEM(step, WM_GIZMOMAP_DRAWSTEP_2D_UI, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS)) {
           if ((gz = wm_gizmogroup_find_intersected_gizmo(
                    wm, &gzgroup, C, event->modifier, mval, r_part)))
