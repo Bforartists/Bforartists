@@ -849,8 +849,8 @@ wmGizmo *wm_gizmomap_highlight_find(wmGizmoMap *gzmap,
   }
 
   gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_3D] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
-  gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D_UI] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
-  gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D_TOOLS] &= ~GIZMOMAP_IS_REFRESH_CALLBACK;
+  gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D_UI] &= ~GIZMOMAP_IS_REFRESH_CALLBACK; // bfa node minimap
+  gzmap->update_flag[WM_GIZMOMAP_DRAWSTEP_2D_TOOLS] &= ~GIZMOMAP_IS_REFRESH_CALLBACK; // bfa node minimap
 
   return gz;
 }

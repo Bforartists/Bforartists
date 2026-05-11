@@ -529,7 +529,7 @@ struct wmGizmoGroup {
 enum eWM_GizmoFlagMapDrawStep {
   WM_GIZMOMAP_DRAWSTEP_2D_UI = 0, // bfa node minimap rename _UI
   /** Draw 2D gizmo-groups (#WM_GIZMOGROUPTYPE_3D not set). */
-  WM_GIZMOMAP_DRAWSTEP_2D_TOOLS,
+  WM_GIZMOMAP_DRAWSTEP_2D_TOOLS, // bfa node minimap
   /** Draw 3D gizmo-groups (#WM_GIZMOGROUPTYPE_3D set). */
   WM_GIZMOMAP_DRAWSTEP_3D,
 };

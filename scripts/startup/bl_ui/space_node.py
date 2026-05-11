@@ -386,6 +386,7 @@ class NODE_HT_header(Header):
                 sub.prop(snode, "backdrop_channels", icon_only=True, text="", expand=True)
 
         # Gizmo toggle and popover.
+        # bfa node minimap dedent out of is_compositor
         row = layout.row(align=True)
         row.prop(snode, "show_gizmo", icon='GIZMO', text="")
         row.active = snode.node_tree is not None
@@ -423,6 +424,7 @@ class NODE_PT_gizmo_display(Panel):
         col.separator()
 
         col.active = snode.show_gizmo
+        # bfa node minimap add is_compositor condition layout
         if is_compositor:
             colsub = col.column()
             colsub.active = snode.node_tree is not None and col.active
