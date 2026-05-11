@@ -527,7 +527,7 @@ static void version_mesh_crease_generic(Main &bmain)
         if (STR_ELEM(
                 node.idname, "GeometryNodeStoreNamedAttribute", "GeometryNodeInputNamedAttribute"))
         {
-          bNodeSocket *socket = bke::node_find_socket(node, SOCK_IN, "Name");
+          bNodeSocket *socket = bke::node_find_socket(node, SOCK_IN, "Name"_ustr);
           if (STREQ(socket->default_value_typed<bNodeSocketValueString>()->value, "crease")) {
             STRNCPY_UTF8(socket->default_value_typed<bNodeSocketValueString>()->value,
                          "crease_edge");
@@ -573,11 +573,11 @@ static void version_replace_texcoord_normal_socket(bNodeTree *ntree)
     {
       if (geometry_node == nullptr) {
         geometry_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_NEW_GEOMETRY);
-        incoming_socket = bke::node_find_socket(*geometry_node, SOCK_OUT, "Incoming");
+        incoming_socket = bke::node_find_socket(*geometry_node, SOCK_OUT, "Incoming"_ustr);
 
         transform_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_VECT_TRANSFORM);
-        vec_in_socket = bke::node_find_socket(*transform_node, SOCK_IN, "Vector");
-        vec_out_socket = bke::node_find_socket(*transform_node, SOCK_OUT, "Vector");
+        vec_in_socket = bke::node_find_socket(*transform_node, SOCK_IN, "Vector"_ustr);
+        vec_out_socket = bke::node_find_socket(*transform_node, SOCK_OUT, "Vector"_ustr);
 
         NodeShaderVectTransform *nodeprop = static_cast<NodeShaderVectTransform *>(
             transform_node->storage);
@@ -616,7 +616,7 @@ static void version_principled_transmission_roughness(bNodeTree *ntree)
     if (node.type_legacy != SH_NODE_BSDF_PRINCIPLED) {
       continue;
     }
-    bNodeSocket *sock = bke::node_find_socket(node, SOCK_IN, "Transmission Roughness");
+    bNodeSocket *sock = bke::node_find_socket(node, SOCK_IN, "Transmission Roughness"_ustr);
     if (sock != nullptr) {
       bke::node_remove_socket(*ntree, node, *sock);
     }
@@ -630,7 +630,7 @@ static void version_replace_velvet_sheen_node(bNodeTree *ntree)
     if (node.type_legacy == SH_NODE_BSDF_SHEEN) {
       STRNCPY_UTF8(node.idname, "ShaderNodeBsdfSheen");
 
-      bNodeSocket *sigmaInput = bke::node_find_socket(node, SOCK_IN, "Sigma");
+      bNodeSocket *sigmaInput = bke::node_find_socket(node, SOCK_IN, "Sigma"_ustr);
       if (sigmaInput != nullptr) {
         node.custom1 = SHD_SHEEN_ASHIKHMIN;
         version_node_socket_identifier_set(*sigmaInput, "Roughness");
@@ -645,7 +645,7 @@ static void version_principled_bsdf_sheen(bNodeTree *ntree)
 {
   auto check_node = [](const bNode *node) {
     return (node->type_legacy == SH_NODE_BSDF_PRINCIPLED) &&
-           (bke::node_find_socket(*node, SOCK_IN, "Sheen Roughness") == nullptr);
+           (bke::node_find_socket(*node, SOCK_IN, "Sheen Roughness"_ustr) == nullptr);
   };
   auto update_input = [ntree](bNode *node, bNodeSocket *input) {
     /* Change socket type to Color. */
@@ -654,7 +654,7 @@ static void version_principled_bsdf_sheen(bNodeTree *ntree)
     /* Account for the change in intensity between the old and new model.
      * If the Sheen input is set to a fixed value, adjust it and set the tint to white.
      * Otherwise, if it's connected, keep it as-is but set the tint to 0.2 instead. */
-    bNodeSocket *sheen = bke::node_find_socket(*node, SOCK_IN, "Sheen");
+    bNodeSocket *sheen = bke::node_find_socket(*node, SOCK_IN, "Sheen"_ustr);
     if (sheen != nullptr && sheen->link == nullptr) {
       *version_cycles_node_socket_float_value(sheen) *= 0.2f;
 
@@ -757,14 +757,14 @@ static void version_principled_bsdf_coat(bNodeTree *ntree)
     if (node.type_legacy != SH_NODE_BSDF_PRINCIPLED) {
       continue;
     }
-    if (bke::node_find_socket(node, SOCK_IN, "Coat IOR") != nullptr) {
+    if (bke::node_find_socket(node, SOCK_IN, "Coat IOR"_ustr) != nullptr) {
       continue;
     }
     bNodeSocket *coat_ior_input = bke::node_add_static_socket(
         *ntree, node, SOCK_IN, SOCK_FLOAT, PROP_NONE, "Coat IOR", "Coat IOR");
 
     /* Adjust for 4x change in intensity. */
-    bNodeSocket *coat_input = bke::node_find_socket(node, SOCK_IN, "Clearcoat");
+    bNodeSocket *coat_input = bke::node_find_socket(node, SOCK_IN, "Clearcoat"_ustr);
     *version_cycles_node_socket_float_value(coat_input) *= 0.25f;
     /* When the coat input is dynamic, instead of inserting a *0.25 math node, set the Coat IOR
      * to 1.2 instead - this also roughly quarters reflectivity compared to the 1.5 default. */
@@ -794,7 +794,7 @@ static void version_principled_bsdf_subsurface(bNodeTree *ntree)
     if (node.type_legacy != SH_NODE_BSDF_PRINCIPLED) {
       continue;
     }
-    if (bke::node_find_socket(node, SOCK_IN, "Subsurface Scale")) {
+    if (bke::node_find_socket(node, SOCK_IN, "Subsurface Scale"_ustr)) {
       /* Node is already updated. */
       continue;
     }
@@ -803,7 +803,7 @@ static void version_principled_bsdf_subsurface(bNodeTree *ntree)
     bNodeSocket *scale_in = bke::node_add_static_socket(
         *ntree, node, SOCK_IN, SOCK_FLOAT, PROP_DISTANCE, "Subsurface Scale", "Subsurface Scale");
 
-    bNodeSocket *subsurf = bke::node_find_socket(node, SOCK_IN, "Subsurface");
+    bNodeSocket *subsurf = bke::node_find_socket(node, SOCK_IN, "Subsurface"_ustr);
     float *subsurf_val = version_cycles_node_socket_float_value(subsurf);
 
     if (!subsurf->link && *subsurf_val == 0.0f) {
@@ -819,8 +819,8 @@ static void version_principled_bsdf_subsurface(bNodeTree *ntree)
     }
 
     /* Fix up Subsurface Color input */
-    bNodeSocket *base_col = bke::node_find_socket(node, SOCK_IN, "Base Color");
-    bNodeSocket *subsurf_col = bke::node_find_socket(node, SOCK_IN, "Subsurface Color");
+    bNodeSocket *base_col = bke::node_find_socket(node, SOCK_IN, "Base Color"_ustr);
+    bNodeSocket *subsurf_col = bke::node_find_socket(node, SOCK_IN, "Subsurface Color"_ustr);
     float *base_col_val = version_cycles_node_socket_rgba_value(base_col);
     float *subsurf_col_val = version_cycles_node_socket_rgba_value(subsurf_col);
     /* If any of the three inputs is dynamic, we need a Mix node. */
@@ -830,10 +830,10 @@ static void version_principled_bsdf_subsurface(bNodeTree *ntree)
       mix->locx_legacy = node.locx_legacy - 170;
       mix->locy_legacy = node.locy_legacy - 120;
 
-      bNodeSocket *a_in = bke::node_find_socket(*mix, SOCK_IN, "A_Color");
-      bNodeSocket *b_in = bke::node_find_socket(*mix, SOCK_IN, "B_Color");
-      bNodeSocket *fac_in = bke::node_find_socket(*mix, SOCK_IN, "Factor_Float");
-      bNodeSocket *result_out = bke::node_find_socket(*mix, SOCK_OUT, "Result_Color");
+      bNodeSocket *a_in = bke::node_find_socket(*mix, SOCK_IN, "A_Color"_ustr);
+      bNodeSocket *b_in = bke::node_find_socket(*mix, SOCK_IN, "B_Color"_ustr);
+      bNodeSocket *fac_in = bke::node_find_socket(*mix, SOCK_IN, "Factor_Float"_ustr);
+      bNodeSocket *result_out = bke::node_find_socket(*mix, SOCK_OUT, "Result_Color"_ustr);
 
       copy_v4_v4(version_cycles_node_socket_rgba_value(a_in), base_col_val);
       copy_v4_v4(version_cycles_node_socket_rgba_value(b_in), subsurf_col_val);
@@ -882,11 +882,11 @@ static void version_principled_bsdf_emission(bNodeTree *ntree)
     if (node.type_legacy != SH_NODE_BSDF_PRINCIPLED) {
       continue;
     }
-    if (!bke::node_find_socket(node, SOCK_IN, "Emission")) {
+    if (!bke::node_find_socket(node, SOCK_IN, "Emission"_ustr)) {
       /* Old enough to have neither, new defaults are fine. */
       continue;
     }
-    if (bke::node_find_socket(node, SOCK_IN, "Emission Strength")) {
+    if (bke::node_find_socket(node, SOCK_IN, "Emission Strength"_ustr)) {
       /* New enough to have both, no need to do anything. */
       continue;
     }
@@ -1046,14 +1046,14 @@ static void version_principled_bsdf_specular_tint(bNodeTree *ntree)
     if (node.type_legacy != SH_NODE_BSDF_PRINCIPLED) {
       continue;
     }
-    bNodeSocket *specular_tint_sock = bke::node_find_socket(node, SOCK_IN, "Specular Tint");
+    bNodeSocket *specular_tint_sock = bke::node_find_socket(node, SOCK_IN, "Specular Tint"_ustr);
     if (specular_tint_sock->type == SOCK_RGBA) {
       /* Node is already updated. */
       continue;
     }
 
-    bNodeSocket *base_color_sock = bke::node_find_socket(node, SOCK_IN, "Base Color");
-    bNodeSocket *metallic_sock = bke::node_find_socket(node, SOCK_IN, "Metallic");
+    bNodeSocket *base_color_sock = bke::node_find_socket(node, SOCK_IN, "Base Color"_ustr);
+    bNodeSocket *metallic_sock = bke::node_find_socket(node, SOCK_IN, "Metallic"_ustr);
     float specular_tint_old = *version_cycles_node_socket_float_value(specular_tint_sock);
     float *base_color = version_cycles_node_socket_rgba_value(base_color_sock);
     float metallic = *version_cycles_node_socket_float_value(metallic_sock);
@@ -1092,10 +1092,10 @@ static void version_principled_bsdf_specular_tint(bNodeTree *ntree)
       mix->locx_legacy = node.locx_legacy - 270;
       mix->locy_legacy = node.locy_legacy - 120;
 
-      bNodeSocket *a_in = bke::node_find_socket(*mix, SOCK_IN, "A_Color");
-      bNodeSocket *b_in = bke::node_find_socket(*mix, SOCK_IN, "B_Color");
-      bNodeSocket *fac_in = bke::node_find_socket(*mix, SOCK_IN, "Factor_Float");
-      metallic_mix_out = bke::node_find_socket(*mix, SOCK_OUT, "Result_Color");
+      bNodeSocket *a_in = bke::node_find_socket(*mix, SOCK_IN, "A_Color"_ustr);
+      bNodeSocket *b_in = bke::node_find_socket(*mix, SOCK_IN, "B_Color"_ustr);
+      bNodeSocket *fac_in = bke::node_find_socket(*mix, SOCK_IN, "Factor_Float"_ustr);
+      metallic_mix_out = bke::node_find_socket(*mix, SOCK_OUT, "Result_Color"_ustr);
       metallic_mix_node = mix;
 
       copy_v4_v4(version_cycles_node_socket_rgba_value(a_in), base_color);
@@ -1127,10 +1127,10 @@ static void version_principled_bsdf_specular_tint(bNodeTree *ntree)
       mix->locx_legacy = node.locx_legacy - 170;
       mix->locy_legacy = node.locy_legacy - 120;
 
-      bNodeSocket *a_in = bke::node_find_socket(*mix, SOCK_IN, "A_Color");
-      bNodeSocket *b_in = bke::node_find_socket(*mix, SOCK_IN, "B_Color");
-      bNodeSocket *fac_in = bke::node_find_socket(*mix, SOCK_IN, "Factor_Float");
-      bNodeSocket *result_out = bke::node_find_socket(*mix, SOCK_OUT, "Result_Color");
+      bNodeSocket *a_in = bke::node_find_socket(*mix, SOCK_IN, "A_Color"_ustr);
+      bNodeSocket *b_in = bke::node_find_socket(*mix, SOCK_IN, "B_Color"_ustr);
+      bNodeSocket *fac_in = bke::node_find_socket(*mix, SOCK_IN, "Factor_Float"_ustr);
+      bNodeSocket *result_out = bke::node_find_socket(*mix, SOCK_OUT, "Result_Color"_ustr);
 
       copy_v4_v4(version_cycles_node_socket_rgba_value(a_in), one);
       copy_v4_v4(version_cycles_node_socket_rgba_value(b_in), metallic_mix);

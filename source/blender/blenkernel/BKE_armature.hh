@@ -14,6 +14,7 @@
 #include "BLI_function_ref.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_types.hh"
+#include "BLI_mutex.hh"
 #include "BLI_set.hh"
 
 #include "DNA_armature_types.h"
@@ -256,7 +257,6 @@ void BKE_armature_where_is_bone(Bone *bone, const Bone *bone_parent, bool use_re
  * (needed in remap case, since we cannot always wait for a complete pose rebuild).
  */
 void BKE_pose_clear_pointers(bPose *pose);
-void BKE_pose_remap_bone_pointers(bArmature *armature, bPose *pose);
 /**
  * Update the links for the B-Bone handles from Bone data.
  */
@@ -276,6 +276,23 @@ void BKE_pose_rebuild(Main *bmain, Object *ob, bArmature *arm, bool do_id_user);
  * \param bmain: May be NULL, only used to tag depsgraph as being dirty.
  */
 void BKE_pose_ensure(Main *bmain, Object *ob, bArmature *arm, bool do_id_user);
+
+/**
+ * Ensure the object's pose bone indices are up to date.
+ *
+ * This is only necessary when calling `pchan->bone_get(armature)`, as that cannot verify the
+ * up-to-dateness of the pose bone indices.
+ *
+ * When calling `pchan->bone_get(object)` the check is performed automatically. However, calling
+ * that in a hot loop will cost some performance; passing the armature is preferred in that case.
+ *
+ * This takes a const Object, because it does not modify anything except its pose channels' runtime
+ * field `bone_index`. There is no conceptual change to the object, it's just the bone lookup info
+ * that's being refreshed. Ideally the field would be marked `mutable`, but currently the
+ * bPoseChannel_runtime struct is part of DNA, which doesn't support that keyword.
+ */
+void BKE_pose_ensure_bone_indices(const Object &pose_object);
+
 /**
  * \note This is the only function adding poses.
  * \note This only reads anim data from channels, and writes to channels.
@@ -719,6 +736,34 @@ struct bArmature_Runtime {
    */
   int active_collection_index = 0;
   BoneCollection *active_collection = nullptr;
+
+  /**
+   * Indexable storage for bones. The bone hierarchy is stored depth-first, so a bone is followed
+   * by its children.
+   *
+   * Used by bPoseChan::bone_get() to obtain a bone pointer by index.
+   */
+  Array<Bone *> bones;
+  uint64_t bones_generation_count = 0;
+  /**
+   * Mutex to protect the `bones` and `bones_generation_count` fields.
+   *
+   * This is used when regenerating the bones array, to ensure only a single thread does this. Read
+   * access to the bones array is not protected. So far this has worked well; it's not guaranteed
+   * that there won't be a race condition, though. */
+  Mutex bones_mutex;
+
+  /** Clear the `bones` array, ensuring it is rebuilt on its next use. */
+  void bones_tag_rebuild();
+
+  /**
+   * Return whether the `bones` array has bones (true), or whether it needs rebuilding (false).
+   *
+   * Note that this returns 'invalid' when the Armature has no bones. This is because the bones
+   * array is only used to obtain a bone pointer by index, which means it's only valid to be used
+   * when there actually are bones.
+   */
+  bool is_bones_array_valid() const;
 };
 
 struct SelectedBonesResult {

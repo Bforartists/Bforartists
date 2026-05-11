@@ -469,12 +469,17 @@ static bool init_structDNA(SDNA *sdna, const char **r_error_message)
   }
 
   {
-    /* second part of gravity problem, setting "gravity" type to void */
+    /* second part of gravity problem, setting "gravity" type to void.
+     *
+     * NOTE: The gravity fix only applies to pre-2011 blend-files, which had `void` at
+     * type index 9 in their SDNA (`int64_t` was inserted before `void` in the `types`
+     * array later, shifting `void` to a later index in current Blender's SDNA, but the
+     * file's SDNA loaded here still has `void` at 9). */
     if (member_index_gravity_fix > -1) {
       for (int struct_index = 0; struct_index < sdna->structs_num; struct_index++) {
         sp = reinterpret_cast<short *>(sdna->structs[struct_index]);
         if (STREQ(sdna->types[sp[0]], "ClothSimSettings")) {
-          sp[10] = SDNA_TYPE_VOID;
+          sp[10] = 9;
         }
       }
     }
@@ -845,8 +850,10 @@ static void cast_primitive_type(const eSDNA_Type old_type,
         old_value_f = double(value);
         break;
       }
+      case SDNA_TYPE_VOID:
       case SDNA_TYPE_RAW_DATA:
-        BLI_assert_msg(false, "Conversion from SDNA_TYPE_RAW_DATA is not supported");
+        BLI_assert_msg(false,
+                       "Conversion from SDNA_TYPE_VOID/SDNA_TYPE_RAW_DATA is not supported");
         break;
     }
 
@@ -887,8 +894,9 @@ static void cast_primitive_type(const eSDNA_Type old_type,
       case SDNA_TYPE_INT8:
         *reinterpret_cast<int8_t *>(new_data) = int8_t(old_value_i);
         break;
+      case SDNA_TYPE_VOID:
       case SDNA_TYPE_RAW_DATA:
-        BLI_assert_msg(false, "Conversion to SDNA_TYPE_RAW_DATA is not supported");
+        BLI_assert_msg(false, "Conversion to SDNA_TYPE_VOID/SDNA_TYPE_RAW_DATA is not supported");
         break;
     }
 
@@ -1687,6 +1695,8 @@ int DNA_elem_type_size(const eSDNA_Type elem_nr)
     case SDNA_TYPE_INT64:
     case SDNA_TYPE_UINT64:
       return 8;
+    case SDNA_TYPE_VOID:
+      return 0;
     case SDNA_TYPE_RAW_DATA:
       BLI_assert_msg(false, "Operations on the size of SDNA_TYPE_RAW_DATA is not supported");
       return 0;
@@ -2171,6 +2181,7 @@ static void print_single_struct_recursive(const SDNA &sdna,
                 fmt::format_to(dst, "{}", *reinterpret_cast<const uint64_t *>(current_data));
                 break;
               }
+              case SDNA_TYPE_VOID:
               case SDNA_TYPE_RAW_DATA: {
                 BLI_assert_unreachable();
                 break;

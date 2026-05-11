@@ -41,28 +41,17 @@
 #include "BLI_vector.hh"
 #include "BLI_vector_set.hh"
 
+#include "DNA_genfile.h"
 #include "DNA_sdna_types.h"
 #include "dna_parse.h"
 #include "dna_utils.h"
 
 namespace blender {
 
-/* The include files that are needed to generate full Blender DNA.
- *
- * The include file below is automatically generated from the `SRC_DNA_INC`
- * variable in `source/blender/CMakeLists.txt`. */
-
-static const char *blender_includefiles[] = {
-#include "dna_includes_as_strings.h"
-
-    /* Empty string to indicate end of include files. */
-    "",
-};
-
 /* Include files that will be used to generate makesdna output.
  * By default, they match the blender_includefiles, but could be overridden via a command line
  * argument for the purposes of regression testing. */
-static const char **includefiles = blender_includefiles;
+static Span<const char *> includefiles = dna::default_dna_header_filenames();
 
 /* -------------------------------------------------------------------- */
 /** \name Debugging
@@ -76,7 +65,7 @@ static const char **includefiles = blender_includefiles;
  * - 2 = full trace, tell which names and types were found
  * - 4 = full trace, plus all gritty details
  */
-int debugSDNA = 0;
+extern int debugSDNA; /* Defined in `dna_parse.cc`. */
 
 #define DEBUG_PRINTF(debug_level, ...) \
   { \
@@ -128,8 +117,10 @@ struct TypeTable {
   };
   CustomIDVectorSet<TypeInfo, GetIDFn> types;
 
-  void add_builtin(StringRefNull name, short size)
+  void add_builtin(const StringRef name, const short size, const int expected_type_index)
   {
+    BLI_assert(this->types.size() == expected_type_index);
+    UNUSED_VARS_NDEBUG(expected_type_index);
     this->types.add_new({.name = name,
                          .size_native = size,
                          .size_32 = size,
@@ -179,22 +170,22 @@ static TypeTable build_type_table(const Span<dna::ParsedStruct> parsed_structs)
    * \warning uint is not allowed! use in structs an unsigned int.
    * \warning sizes must match #DNA_elem_type_size().
    */
-  table.add_builtin("char", 1);   /* SDNA_TYPE_CHAR */
-  table.add_builtin("uchar", 1);  /* SDNA_TYPE_UCHAR */
-  table.add_builtin("short", 2);  /* SDNA_TYPE_SHORT */
-  table.add_builtin("ushort", 2); /* SDNA_TYPE_USHORT */
-  table.add_builtin("int", 4);    /* SDNA_TYPE_INT */
+  table.add_builtin("char", 1, SDNA_TYPE_CHAR);
+  table.add_builtin("uchar", 1, SDNA_TYPE_UCHAR);
+  table.add_builtin("short", 2, SDNA_TYPE_SHORT);
+  table.add_builtin("ushort", 2, SDNA_TYPE_USHORT);
+  table.add_builtin("int", 4, SDNA_TYPE_INT);
 
   /* NOTE: long isn't supported, these are place-holders to maintain alignment with #eSDNA_Type. */
-  table.add_builtin("long", 4);  /* SDNA_TYPE_LONG */
-  table.add_builtin("ulong", 4); /* SDNA_TYPE_ULONG */
+  table.add_builtin("long", 4, 5 /* SDNA_TYPE_LONG */);
+  table.add_builtin("ulong", 4, 6 /* SDNA_TYPE_ULONG */);
 
-  table.add_builtin("float", 4);    /* SDNA_TYPE_FLOAT */
-  table.add_builtin("double", 8);   /* SDNA_TYPE_DOUBLE */
-  table.add_builtin("int64_t", 8);  /* SDNA_TYPE_INT64 */
-  table.add_builtin("uint64_t", 8); /* SDNA_TYPE_UINT64 */
-  table.add_builtin("void", 0);     /* SDNA_TYPE_VOID */
-  table.add_builtin("int8_t", 1);   /* SDNA_TYPE_INT8 */
+  table.add_builtin("float", 4, SDNA_TYPE_FLOAT);
+  table.add_builtin("double", 8, SDNA_TYPE_DOUBLE);
+  table.add_builtin("int64_t", 8, SDNA_TYPE_INT64);
+  table.add_builtin("uint64_t", 8, SDNA_TYPE_UINT64);
+  table.add_builtin("void", 0, SDNA_TYPE_VOID);
+  table.add_builtin("int8_t", 1, SDNA_TYPE_INT8);
 
   /* Fake place-holder struct definition used to get an identifier for raw, untyped bytes buffers
    * in blend-files.
@@ -698,10 +689,9 @@ static void write_sdna_type_offsets(FILE *file, const Span<dna::ParsedStruct> pa
 /** Write the `dna_struct_ids.cc` file for `sdna_struct_id_get<T>()`. */
 static void write_sdna_struct_ids(FILE *file, const Span<dna::ParsedStruct> parsed_structs)
 {
+  fprintf(file, "#include \"DNA_sdna_type_ids.hh\"\n\n");
   fprintf(file, "namespace blender {\n");
   fprintf(file, "namespace dna {\n\n");
-  fprintf(file, "template<typename T> int sdna_struct_id_get();\n\n");
-  fprintf(file, "int sdna_struct_id_get_max();\n");
   fprintf(file, "int sdna_struct_id_get_max() { return %d; }\n", int(parsed_structs.size()));
   fprintf(file, "\n}\n");
 
@@ -717,41 +707,53 @@ static void write_sdna_struct_ids(FILE *file, const Span<dna::ParsedStruct> pars
 }
 
 /** Write the `dna_defaults.cc` for RNA to automatically set property defaults. */
-static void write_sdna_defaults(FILE *file,
-                                const StringRefNull base_directory,
-                                const Span<dna::ParsedStruct> parsed_structs)
+static void write_rna_defaults(FILE *file,
+                               const StringRefNull base_directory,
+                               const Span<dna::ParsedStruct> parsed_structs)
 {
   fprintf(file, "/* Default struct member values for RNA. */\n");
   fprintf(file, "#define DNA_DEPRECATED_ALLOW\n");
   fprintf(file, "#define DNA_NO_EXTERNAL_CONSTRUCTORS\n");
-  for (int i = 0; *(includefiles[i]) != '\0'; i++) {
-    fprintf(file, "#include \"%s%s\"\n", base_directory.c_str(), includefiles[i]);
-  }
-  fprintf(file, "using namespace blender;\n");
-  for (const dna::ParsedStruct &parsed_struct : parsed_structs) {
-    const char *name = parsed_struct.alias_type_name.c_str();
-    if (STREQ(name, "bTheme")) {
-      /* Exception for bTheme which is auto-generated. */
-      fprintf(file, "extern \"C\" const bTheme U_theme_default;\n");
-    }
-    else {
-      fprintf(file, "static const %s DNA_DEFAULT_%s = {};\n", name, name);
-    }
+  fprintf(file, "#include \"DNA_sdna_type_ids.hh\"\n\n");
+
+  for (const char *filename : includefiles) {
+    fprintf(file, "#include \"%s%s\"\n", base_directory.c_str(), filename);
   }
 
-  fprintf(file, "const void *DNA_default_table[%d] = {\n", 1 + int(parsed_structs.size()));
-  fprintf(file, "  nullptr,\n");
+  fprintf(file, "namespace blender {\n\n");
+
+  /* Define an instance of each struct. */
   for (const dna::ParsedStruct &parsed_struct : parsed_structs) {
-    const char *name = parsed_struct.alias_type_name.c_str();
-    if (STREQ(name, "bTheme")) {
-      fprintf(file, "  &U_theme_default,\n");
+    const StringRefNull name = parsed_struct.type_name.c_str();
+    std::string default_var;
+
+    if (name == "bTheme") {
+      /* Exception for bTheme which is auto-generated. */
+      fprintf(file, "extern \"C\" const bTheme U_theme_default;\n");
+      default_var = "U_theme_default";
     }
     else {
-      fprintf(file, "  &DNA_DEFAULT_%s,\n", name);
+      fprintf(file, "static const %s DNA_DEFAULT_%s = {};\n", name.c_str(), name.c_str());
+      default_var = "DNA_DEFAULT_" + name;
     }
+
+    /* Table with pointer to each member. */
+    fprintf(file, "static const void *const member_defaults_%s[] = {\n", name.c_str());
+    for (const dna::ParsedMember &pm : parsed_struct.members) {
+      const StringRef bare_id = DNA_member_id_string_ref(pm.member_name);
+      fprintf(file, "  &%s.%.*s,\n", default_var.c_str(), int(bare_id.size()), bare_id.data());
+    }
+    fprintf(file, "};\n");
   }
-  fprintf(file, "};\n");
-  fprintf(file, "\n");
+
+  /* Table with all structs. */
+  fprintf(file, "\nextern const void *const *const DNA_member_default_table[] = {\n");
+  for (const dna::ParsedStruct &parsed_struct : parsed_structs) {
+    fprintf(file, "  member_defaults_%s,\n", parsed_struct.type_name.c_str());
+  }
+  fprintf(file, "};\n\n");
+
+  fprintf(file, "}  // namespace blender\n");
 }
 
 /** Write `dna_verify.cc` file to verify `sizeof` and `offsetof` match what we computed. */
@@ -767,8 +769,8 @@ static void write_sdna_verify(FILE *file,
   /* Workaround enum naming collision in static asserts
    * (ideally this included a unique name/id per file). */
   fprintf(file, "#define assert_line_ assert_line_DNA_\n");
-  for (int i = 0; *(includefiles[i]) != '\0'; i++) {
-    fprintf(file, "#include \"%s%s\"\n", base_directory.c_str(), includefiles[i]);
+  for (const char *filename : includefiles) {
+    fprintf(file, "#include \"%s%s\"\n", base_directory.c_str(), filename);
   }
   fprintf(file, "#undef assert_line_\n");
   fprintf(file, "\n");
@@ -875,18 +877,17 @@ static bool make_structDNA(const StringRefNull base_directory,
   Vector<dna::ParsedEnum> parsed_enums;
 
   DEBUG_PRINTF(0, "\tStart of header scan:\n");
-  int header_count = 0;
-  for (int i = 0; *(includefiles[i]) != '\0'; i++, header_count++) {
-    const std::string path = base_directory + includefiles[i];
-    DEBUG_PRINTF(0, "\t|-- Converting %s\n", path.c_str());
-    if (!dna::parse_dna_header(path, parsed_structs, parsed_enums)) {
-      return false;
-    }
+  if (!dna::parse_dna_headers(base_directory, parsed_structs, parsed_enums, includefiles)) {
+    return false;
   }
-  DEBUG_PRINTF(0, "\tFinished scanning %d headers.\n", header_count);
+  DEBUG_PRINTF(0, "\tFinished scanning headers.\n");
+
+  /* Write default values for RNA before any substitution or renaming, as RNA binds
+   * to the actual C++ data structures rather than SDNA. */
+  write_rna_defaults(file_defaults, base_directory, parsed_structs);
 
   /* Substitute C++ types with C types known to SDNA. */
-  if (!dna::substitute_cpp_types(parsed_structs, parsed_enums)) {
+  if (!dna::substitute_cpp_types(parsed_structs, parsed_enums, false)) {
     return false;
   }
 
@@ -910,7 +911,6 @@ static bool make_structDNA(const StringRefNull base_directory,
   /* Write auxiliary files. */
   write_sdna_type_offsets(file_offsets, parsed_structs);
   write_sdna_struct_ids(file_ids, parsed_structs);
-  write_sdna_defaults(file_defaults, base_directory, parsed_structs);
   write_sdna_verify(file_verify, table, parsed_structs, base_directory);
 
   DEBUG_PRINTF(0, "done.\n");
@@ -978,10 +978,7 @@ int main(int argc, char **argv)
   }
 
   if (!cli_include_files.is_empty()) {
-    /* Append end sentinel. */
-    cli_include_files.append("");
-
-    includefiles = cli_include_files.data();
+    includefiles = Span<const char *>(cli_include_files.data(), cli_include_files.size());
   }
 
   /* Check the number of non-optional positional arguments. */

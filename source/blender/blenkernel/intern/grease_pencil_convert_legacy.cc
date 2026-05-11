@@ -1218,51 +1218,51 @@ static bNodeTree *offset_radius_node_tree_add(ConversionData &conversion_data, L
   bNode *clamp_radius = bke::node_add_node(nullptr, *group, "ShaderNodeClamp"_ustr);
   clamp_radius->location[0] = 400;
   clamp_radius->location[1] = 0;
-  bNodeSocket *sock_max = bke::node_find_socket(*clamp_radius, SOCK_IN, "Max");
+  bNodeSocket *sock_max = bke::node_find_socket(*clamp_radius, SOCK_IN, "Max"_ustr);
   static_cast<bNodeSocketValueFloat *>(sock_max->default_value)->value = FLT_MAX;
 
   bke::node_add_link(*group,
                      *group_input,
-                     *bke::node_find_socket(*group_input, SOCK_OUT, "Socket_0"),
+                     *bke::node_find_socket(*group_input, SOCK_OUT, "Socket_0"_ustr),
                      *set_curve_radius,
-                     *bke::node_find_socket(*set_curve_radius, SOCK_IN, "Curve"));
+                     *bke::node_find_socket(*set_curve_radius, SOCK_IN, "Curve"_ustr));
   bke::node_add_link(*group,
                      *set_curve_radius,
-                     *bke::node_find_socket(*set_curve_radius, SOCK_OUT, "Curve"),
+                     *bke::node_find_socket(*set_curve_radius, SOCK_OUT, "Curve"_ustr),
                      *group_output,
-                     *bke::node_find_socket(*group_output, SOCK_IN, "Socket_1"));
+                     *bke::node_find_socket(*group_output, SOCK_IN, "Socket_1"_ustr));
 
   bke::node_add_link(*group,
                      *group_input,
-                     *bke::node_find_socket(*group_input, SOCK_OUT, "Socket_3"),
+                     *bke::node_find_socket(*group_input, SOCK_OUT, "Socket_3"_ustr),
                      *named_layer_selection,
-                     *bke::node_find_socket(*named_layer_selection, SOCK_IN, "Name"));
+                     *bke::node_find_socket(*named_layer_selection, SOCK_IN, "Name"_ustr));
   bke::node_add_link(*group,
                      *named_layer_selection,
-                     *bke::node_find_socket(*named_layer_selection, SOCK_OUT, "Selection"),
+                     *bke::node_find_socket(*named_layer_selection, SOCK_OUT, "Selection"_ustr),
                      *set_curve_radius,
-                     *bke::node_find_socket(*set_curve_radius, SOCK_IN, "Selection"));
+                     *bke::node_find_socket(*set_curve_radius, SOCK_IN, "Selection"_ustr));
 
   bke::node_add_link(*group,
                      *group_input,
-                     *bke::node_find_socket(*group_input, SOCK_OUT, "Socket_2"),
+                     *bke::node_find_socket(*group_input, SOCK_OUT, "Socket_2"_ustr),
                      *add,
-                     *bke::node_find_socket(*add, SOCK_IN, "Value"));
+                     *bke::node_find_socket(*add, SOCK_IN, "Value"_ustr));
   bke::node_add_link(*group,
                      *input_radius,
-                     *bke::node_find_socket(*input_radius, SOCK_OUT, "Radius"),
+                     *bke::node_find_socket(*input_radius, SOCK_OUT, "Radius"_ustr),
                      *add,
-                     *bke::node_find_socket(*add, SOCK_IN, "Value_001"));
+                     *bke::node_find_socket(*add, SOCK_IN, "Value_001"_ustr));
   bke::node_add_link(*group,
                      *add,
-                     *bke::node_find_socket(*add, SOCK_OUT, "Value"),
+                     *bke::node_find_socket(*add, SOCK_OUT, "Value"_ustr),
                      *clamp_radius,
-                     *bke::node_find_socket(*clamp_radius, SOCK_IN, "Value"));
+                     *bke::node_find_socket(*clamp_radius, SOCK_IN, "Value"_ustr));
   bke::node_add_link(*group,
                      *clamp_radius,
-                     *bke::node_find_socket(*clamp_radius, SOCK_OUT, "Result"),
+                     *bke::node_find_socket(*clamp_radius, SOCK_OUT, "Result"_ustr),
                      *set_curve_radius,
-                     *bke::node_find_socket(*set_curve_radius, SOCK_IN, "Radius"));
+                     *bke::node_find_socket(*set_curve_radius, SOCK_IN, "Radius"_ustr));
 
   for (bNode &node : group->nodes) {
     bke::node_set_selected(node, false);

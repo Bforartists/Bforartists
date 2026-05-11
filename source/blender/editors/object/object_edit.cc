@@ -356,6 +356,7 @@ static wmOperatorStatus object_hide_view_set_exec(bContext *C, wmOperator *op)
   const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
+  const View3D *v3d = CTX_wm_view3d(C);
   const bool unselected = RNA_boolean_get(op->ptr, "unselected");
   bool changed = false;
   const bool confirm = op->flag & OP_IS_INVOKE;
@@ -364,7 +365,7 @@ static wmOperatorStatus object_hide_view_set_exec(bContext *C, wmOperator *op)
   /* Hide selected or unselected objects. */
   BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   for (Base &base : *BKE_view_layer_object_bases_get(view_layer)) {
-    if (!(base.flag & BASE_ENABLED_AND_VISIBLE_IN_DEFAULT_VIEWPORT)) {
+    if (!BKE_base_is_visible(v3d, &base)) {
       continue;
     }
 

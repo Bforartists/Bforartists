@@ -151,16 +151,19 @@ void create_pose_joints(pxr::UsdSkelAnimation &skel_anim,
   pxr::VtTokenArray joints;
 
   const bPose *pose = obj.pose;
+  const bArmature &arm = *id_cast<bArmature *>(obj.data);
+  BKE_pose_ensure_bone_indices(obj);
 
   for (const bPoseChannel &pchan : pose->chanbase) {
-    if (pchan.bone) {
-      if (deform_map && !deform_map->contains(pchan.bone->name)) {
+    const Bone *pchan_bone = pchan.bone_get(arm);
+    if (pchan_bone) {
+      if (deform_map && !deform_map->contains(pchan.name)) {
         /* If deform_map is passed in, assume we're going deform-only.
          * Bones not found in the map should be skipped. */
         continue;
       }
 
-      joints.push_back(build_usd_joint_path(pchan.bone, allow_unicode));
+      joints.push_back(build_usd_joint_path(pchan_bone, allow_unicode));
     }
   }
 

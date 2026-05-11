@@ -35,6 +35,12 @@ class VIEWLAYER_PT_context(Panel):
 class VIEWLAYER_UL_aov(UIList):
     @staticmethod
     def aov_icon(item):
+        """
+        :param item: AOV item to pick an icon for.
+        :type item: :class:`bpy.types.AOV`
+        :return: Icon identifier for *item*'s AOV type.
+        :rtype: str
+        """
         if not item.is_valid:
             return 'ERROR'
 

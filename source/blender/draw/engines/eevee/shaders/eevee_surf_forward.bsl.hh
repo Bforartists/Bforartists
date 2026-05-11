@@ -131,7 +131,7 @@ void surf_forward([[resource_table]] SurfaceForward & /*srt*/,
   /* There can be 2 frame-buffer layout for forward transparency:
    * - Combined RGB radiance with Monochromatic transmittance.
    * - Channel split RGB radiance & RGB transmittance + Dedicated average alpha with holdout. */
-  if (uniform_buf.pipeline.use_monochromatic_transmittance) {
+  if (pipeline_buf.use_monochromatic_transmittance) {
     frag_out.combined_r = float4(radiance.rgb, transmittance.r);
   }
   else {

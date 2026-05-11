@@ -227,7 +227,7 @@ void surf_hybrid([[resource_table]] SurfaceHybrid &srt,
     defined(GBUFFER_HAS_TRANSLUCENT)
   if (flag_test(gbuf.used_layers, ADDITIONAL_DATA)) {
     srt.write_normal_data(
-        out_texel, uniform_buf.pipeline.gbuffer_additional_data_layer_id, gbuf.additional_info);
+        out_texel, pipeline_buf.gbuffer_additional_data_layer_id, gbuf.additional_info);
   }
 #endif
 

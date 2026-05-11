@@ -836,7 +836,6 @@ static char *rna_idp_path(PointerRNA *ptr,
   IDP_Chain link;
 
   const IDProperty *iter;
-  int i;
 
   BLI_assert(haystack->type == IDP_GROUP);
 
@@ -845,9 +844,7 @@ static char *rna_idp_path(PointerRNA *ptr,
   link.name = nullptr;
   link.index = -1;
 
-  for (i = 0, iter = static_cast<IDProperty *>(haystack->data.group.first); iter;
-       iter = iter->next, i++)
-  {
+  for (iter = static_cast<IDProperty *>(haystack->data.group.first); iter; iter = iter->next) {
     if (needle == iter) { /* found! */
       link.name = iter->name;
       link.index = -1;

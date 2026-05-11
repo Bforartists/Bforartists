@@ -725,8 +725,8 @@ static void spreadsheet_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
     BLO_read_string(reader, &row_filter.value_string);
   }
 
-  BLO_read_pointer_array(
-      reader, sspreadsheet->num_tables, reinterpret_cast<void **>(&sspreadsheet->tables));
+  BLO_read_pointer_array_and_validate_size(
+      reader, &sspreadsheet->tables, &sspreadsheet->num_tables);
   for (const int i : IndexRange(sspreadsheet->num_tables)) {
     BLO_read_struct(reader, SpreadsheetTable, &sspreadsheet->tables[i]);
     spreadsheet_table_blend_read(reader, sspreadsheet->tables[i]);

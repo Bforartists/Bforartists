@@ -1524,7 +1524,7 @@ void BKE_curvemapping_blend_read(BlendDataReader *reader, CurveMapping *cumap)
   cumap->flag &= ~CUMA_PREMULLED;
 
   for (int a = 0; a < CM_TOT; a++) {
-    BLO_read_struct_array(reader, CurveMapPoint, cumap->cm[a].totpoint, &cumap->cm[a].curve);
+    BLO_read_array_and_validate_size(reader, &cumap->cm[a].curve, &cumap->cm[a].totpoint);
     cumap->cm[a].table = nullptr;
     cumap->cm[a].premultable = nullptr;
   }

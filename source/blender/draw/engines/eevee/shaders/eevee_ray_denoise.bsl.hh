@@ -93,12 +93,12 @@ struct DenoiseSpatial {
   /* Used for bilateral sampling. */
   float sample_weight_get(float3 center_N, float3 center_P, int2 sample_texel) const
   {
-    int2 sample_texel_fullres = sample_texel * uniform_buf.raytrace.trace_pixel_scale +
-                                uniform_buf.raytrace.trace_pixel_offset;
+    int2 sample_texel_fullres = sample_texel * raytrace_buf.trace_pixel_scale +
+                                raytrace_buf.trace_pixel_offset;
 
     float sample_depth = texelFetch(depth_tx, sample_texel_fullres, 0).r;
 
-    float2 sample_uv = float2(sample_texel_fullres) * uniform_buf.raytrace.full_resolution_inv;
+    float2 sample_uv = float2(sample_texel_fullres) * raytrace_buf.full_resolution_inv;
     float3 sample_N = gbuffer::read_bin(sample_texel_fullres, closure_index).N;
     float3 sample_P = drw_point_screen_to_world(float3(sample_uv, sample_depth));
 
@@ -152,7 +152,7 @@ void spatial_main([[resource_table]] DenoiseSpatial &srt,
   int2 texel_fullres = int2(local_id.xy + tile_coord * tile_size);
 
   /* Tracing resolution texel. */
-  int2 texel_shifted = max(int2(0), texel_fullres - uniform_buf.raytrace.trace_pixel_offset);
+  int2 texel_shifted = max(int2(0), texel_fullres - raytrace_buf.trace_pixel_offset);
   int2 texel_nearest = texel_shifted / srt.raytrace_resolution_scale;
   float2 bilinear_co = fract(float2(texel_shifted) / float2(srt.raytrace_resolution_scale));
 
@@ -166,7 +166,7 @@ void spatial_main([[resource_table]] DenoiseSpatial &srt,
 
     /* Simple bilateral upsampling without any denoising. */
     float center_depth = texelFetch(srt.depth_tx, texel_fullres, 0).r;
-    float2 center_uv = float2(texel_fullres) * uniform_buf.raytrace.full_resolution_inv;
+    float2 center_uv = float2(texel_fullres) * raytrace_buf.full_resolution_inv;
     float3 center_N = gbuffer::read_bin(texel_fullres, srt.closure_index).N;
     float3 center_P = drw_point_screen_to_world(float3(center_uv, center_depth));
 
@@ -252,7 +252,7 @@ void spatial_main([[resource_table]] DenoiseSpatial &srt,
    * kernel. If the center sample is always valid (yielding a nearest interpolation upsampling for
    * mirror reflection), we can then use the above jittering to recover the bilinear filtering at
    * lower tracing resolution. */
-  float2 uv = (float2(center_sample_texel) + 0.5f) * uniform_buf.raytrace.full_resolution_inv *
+  float2 uv = (float2(center_sample_texel) + 0.5f) * raytrace_buf.full_resolution_inv *
               float(srt.raytrace_resolution_scale);
 
   float depth = reverse_z::read(texelFetch(srt.depth_tx, texel_fullres, 0).r);
@@ -287,11 +287,10 @@ void spatial_main([[resource_table]] DenoiseSpatial &srt,
   float weight_accum = 0.0f;
   float closest_hit_time = 1.0e10f;
 
-  /* In order to avoid costly texture fetchs, we assume the neighbors to be on the same plane as
+  /* In order to avoid costly texture fetches, we assume the neighbors to be on the same plane as
    * the shading point. We compute the fake surface derivatives form the normal. */
   float3 vs_N = drw_normal_world_to_view(closure.N);
-  float2 pixel_uv_size = uniform_buf.raytrace.full_resolution_inv *
-                         float(srt.raytrace_resolution_scale);
+  float2 pixel_uv_size = raytrace_buf.full_resolution_inv * float(srt.raytrace_resolution_scale);
   float3 vs_Pdx = drw_point_screen_to_view(float3(uv + float2(pixel_uv_size.x, 0.0), depth));
   float3 vs_Pdy = drw_point_screen_to_view(float3(uv + float2(0.0, pixel_uv_size.y), depth));
   float2x3 dPdxy;
@@ -351,7 +350,8 @@ void spatial_main([[resource_table]] DenoiseSpatial &srt,
     /* The reference is wrong.
      * The ratio estimator is `pdf_local / pdf_ray` instead of `bsdf_local / pdf_ray`. */
     float pdf = closure_evaluate_pdf(closure, ray_direction, V, thickness);
-    float weight = pdf * ray_pdf_inv;
+    /* Avoid the weight exploding and summing to infinity. */
+    float weight = min(1e30f, pdf * ray_pdf_inv);
 
     float3 log_radiance = colorspace::log_from_scene_linear(ray_radiance.rgb);
 
@@ -484,7 +484,7 @@ struct DenoiseTemporal {
 
   float4 radiance_history_sample(float3 P, LocalStatistics local)
   {
-    float2 uv = project_point(uniform_buf.raytrace.denoise_history_persmat, P).xy * 0.5f + 0.5f;
+    float2 uv = project_point(raytrace_buf.denoise_history_persmat, P).xy * 0.5f + 0.5f;
 
     float2 tex_size = float2(textureSize(radiance_history_tx, 0).xy);
     float2 texel_co = uv * tex_size - 0.5f;
@@ -521,7 +521,7 @@ struct DenoiseTemporal {
 
   float2 variance_history_sample(float3 P)
   {
-    float2 uv = project_point(uniform_buf.raytrace.denoise_history_persmat, P).xy * 0.5f + 0.5f;
+    float2 uv = project_point(raytrace_buf.denoise_history_persmat, P).xy * 0.5f + 0.5f;
 
     if (!in_range_exclusive(uv, float2(0.0f), float2(1.0f))) {
       /* Out of history view. Return sample without weight. */
@@ -568,7 +568,7 @@ void temporal_main([[resource_table]] DenoiseTemporal &srt,
 
   constexpr uint tile_size = RAYTRACE_GROUP_SIZE;
   int2 texel_fullres = int2(local_id.xy + tile_coord * tile_size);
-  float2 uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+  float2 uv = (float2(texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
 
   /* Clear neighbor tiles that will not be processed. */
   /* TODO(fclem): Optimize this. We don't need to clear the whole ring. */
@@ -691,7 +691,7 @@ void bilateral_main([[resource_table]] DenoiseBilateral &srt,
 
   constexpr uint tile_size = RAYTRACE_GROUP_SIZE;
   int2 texel_fullres = int2(local_id.xy + tile_coord * tile_size);
-  float2 center_uv = (float2(texel_fullres) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+  float2 center_uv = (float2(texel_fullres) + 0.5f) * raytrace_buf.full_resolution_inv;
 
   float center_depth = reverse_z::read(texelFetch(srt.depth_tx, texel_fullres, 0).r);
   float3 center_P = drw_point_screen_to_world(float3(center_uv, center_depth));
@@ -744,7 +744,7 @@ void bilateral_main([[resource_table]] DenoiseBilateral &srt,
     }
 
     float sample_depth = reverse_z::read(texelFetch(srt.depth_tx, sample_texel, 0).r);
-    float2 sample_uv = (float2(sample_texel) + 0.5f) * uniform_buf.raytrace.full_resolution_inv;
+    float2 sample_uv = (float2(sample_texel) + 0.5f) * raytrace_buf.full_resolution_inv;
     float3 sample_P = drw_point_screen_to_world(float3(sample_uv, sample_depth));
 
     /* Background case. */

@@ -1477,7 +1477,7 @@ static void update_obstacles(Depsgraph *depsgraph,
 
 struct EmitFromParticlesData {
   FluidFlowSettings *ffs;
-  KDTree_3d *tree;
+  KDTree<float3> *tree;
 
   FluidObjectBB *bb;
   float *particle_vel;
@@ -1502,9 +1502,9 @@ static void emit_from_particles_task_cb(void *__restrict userdata,
       const float ray_start[3] = {float(x) + 0.5f, float(y) + 0.5f, float(z) + 0.5f};
 
       /* Find particle distance from the kdtree. */
-      KDTreeNearest_3d nearest;
+      KDTreeNearest<float3> nearest;
       const float range = data->solid + data->smooth;
-      kdtree_3d_find_nearest(data->tree, ray_start, &nearest);
+      kdtree_find_nearest<float3>(data->tree, ray_start, &nearest);
 
       if (nearest.dist < range) {
         bb->influence[index] = (nearest.dist < data->solid) ?
@@ -1543,7 +1543,7 @@ static void emit_from_particles(Object *flow_ob,
     /* radius based flow */
     const float solid = ffs->particle_size * 0.5f;
     const float smooth = 0.5f; /* add 0.5 cells of linear falloff to reduce aliasing */
-    KDTree_3d *tree = nullptr;
+    KDTree<float3> *tree = nullptr;
 
     sim.depsgraph = depsgraph;
     sim.scene = scene;
@@ -1568,7 +1568,7 @@ static void emit_from_particles(Object *flow_ob,
 
     /* setup particle radius emission if enabled */
     if (ffs->flags & FLUID_FLOW_USE_PART_SIZE) {
-      tree = kdtree_3d_new(psys->totpart + psys->totchild);
+      tree = kdtree_new<float3>(psys->totpart + psys->totchild);
       bounds_margin = int(ceil(solid + smooth));
     }
 
@@ -1607,7 +1607,7 @@ static void emit_from_particles(Object *flow_ob,
       mul_mat3_m4_v3(fds->imat, &particle_vel[valid_particles * 3]);
 
       if (ffs->flags & FLUID_FLOW_USE_PART_SIZE) {
-        kdtree_3d_insert(tree, valid_particles, pos);
+        kdtree_insert<float3>(tree, valid_particles, pos);
       }
 
       /* calculate emission map bounds */
@@ -1660,7 +1660,7 @@ static void emit_from_particles(Object *flow_ob,
         res[i] = bb->res[i];
       }
 
-      kdtree_3d_balance(tree);
+      kdtree_balance<float3>(tree);
 
       EmitFromParticlesData data{};
       data.ffs = ffs;
@@ -1680,7 +1680,7 @@ static void emit_from_particles(Object *flow_ob,
     }
 
     if (ffs->flags & FLUID_FLOW_USE_PART_SIZE) {
-      kdtree_3d_free(tree);
+      kdtree_free<float3>(tree);
     }
 
     /* free data */

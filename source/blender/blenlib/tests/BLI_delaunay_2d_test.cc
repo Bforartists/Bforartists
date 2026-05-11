@@ -915,6 +915,104 @@ template<typename T> void even_odd_boundary_disagreement_test()
   }
 }
 
+/* Outer 4x4 rect plus a 2x2 inner rect listed twice.
+ *
+ * Ensure fixed:
+ *
+ * - Outer edges count 1 (flip 1), inner edges count 2 (flip 0): outer ring reaches
+ *   parity 1 from `outer_face`, "inside inner" inherits via flip 0. All 10 triangles
+ *   filled.
+ * - Even-odd is independent of `need_ids`: the detector reads `polygon_boundary_count_map`,
+ *   not `CDTEdge::input_ids` (which collapses when `need_ids = false`). */
+template<typename T> void even_odd_coincident_polygons_need_ids_stable_test()
+{
+  const char *spec = R"(8 0 3
+  0.0 0.0
+  4.0 0.0
+  4.0 4.0
+  0.0 4.0
+  1.0 1.0
+  3.0 1.0
+  3.0 3.0
+  1.0 3.0
+  0 1 2 3
+  4 5 6 7
+  4 5 6 7
+  )";
+
+  CDT_input<T> in_with_ids = fill_input_from_string<T>(spec);
+  in_with_ids.need_ids = true;
+  CDT_result<T> out_with_ids = delaunay_2d_calc(in_with_ids, CDT_INSIDE_WITH_HOLES);
+
+  CDT_input<T> in_no_ids = fill_input_from_string<T>(spec);
+  in_no_ids.need_ids = false;
+  CDT_result<T> out_no_ids = delaunay_2d_calc(in_no_ids, CDT_INSIDE_WITH_HOLES);
+
+  /* V=8, H=4 hull -> 2V - H - 2 = 10 triangles. */
+  EXPECT_EQ(out_with_ids.vert.size(), 8);
+  EXPECT_EQ(out_with_ids.face.size(), 10);
+
+  EXPECT_EQ(out_no_ids.vert.size(), out_with_ids.vert.size());
+  EXPECT_EQ(out_no_ids.edge.size(), out_with_ids.edge.size());
+  EXPECT_EQ(out_no_ids.face.size(), out_with_ids.face.size());
+
+  /* Non-zero fills everywhere too (outer ring winding +1, inside inner +3). */
+  CDT_result<T> out_nonzero = delaunay_2d_calc(in_with_ids, CDT_INSIDE_WITH_HOLES_NONZERO);
+  EXPECT_EQ(out_nonzero.vert.size(), 8);
+  EXPECT_EQ(out_nonzero.face.size(), 10);
+
+  if (DO_DRAW) {
+    graph_draw<T>("EvenOddCoincidentPolygonsNeedIdsStable - even-odd",
+                  out_with_ids.vert,
+                  out_with_ids.edge,
+                  out_with_ids.face);
+    graph_draw<T>("EvenOddCoincidentPolygonsNeedIdsStable - non-zero",
+                  out_nonzero.vert,
+                  out_nonzero.edge,
+                  out_nonzero.face);
+  }
+}
+
+/**
+ * Single face whose vertex list traces an outer ring and an inner ring, then repeats the
+ * whole sequence. Each unique boundary edge is walked twice within one face. Without
+ * per-face dedup of polygon-boundary counts, the face is dropped entirely.
+ */
+template<typename T> void even_odd_self_doubled_polygon_with_hole_test()
+{
+  const char *spec = R"(16 0 1
+  0.0 0.0
+  0.0 4.0
+  4.0 4.0
+  4.0 0.0
+  1.0 1.0
+  1.0 3.0
+  3.0 3.0
+  3.0 1.0
+  0.0 0.0
+  0.0 4.0
+  4.0 4.0
+  4.0 0.0
+  1.0 1.0
+  1.0 3.0
+  3.0 3.0
+  3.0 1.0
+  0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+  )";
+
+  CDT_input<T> in = fill_input_from_string<T>(spec);
+  in.need_ids = true;
+
+  CDT_result<T> out = delaunay_2d_calc(in, CDT_CONSTRAINTS_VALID_BMESH_WITH_HOLES);
+  if (DO_DRAW) {
+    graph_draw<T>("EvenOddSelfDoubledPolygonWithHole", out.vert, out.edge, out.face);
+  }
+
+  EXPECT_EQ(out.vert.size(), 9);
+  EXPECT_EQ(out.edge.size(), 11);
+  EXPECT_EQ(out.face.size(), 2);
+}
+
 template<typename T> void disjoint_polys_in_large_hull_test()
 {
   const char *spec = R"(6 0 2
@@ -1645,11 +1743,9 @@ template<typename T> void nonzero_winding_fan_test()
   EXPECT_EQ(out_evenodd.vert.size(), 5);
   EXPECT_EQ(out_nonzero.vert.size(), 5);
 
-  /* The adjacent triangles share edges with opposite traversal directions,
-   * creating zero-winding edges at the center. This results in different
-   * behavior between even-odd and non-zero rules.
-   * Non-zero correctly fills all 4 triangular regions. */
-  EXPECT_LT(out_evenodd.face.size(), out_nonzero.face.size());
+  /* Spokes count 2 (flip 0), rims count 1 (flip 1). All four wedges reach parity 1 from
+   * `outer_face` and are filled, matching non-zero. */
+  EXPECT_EQ(out_evenodd.face.size(), 4);
   EXPECT_EQ(out_nonzero.face.size(), 4);
 }
 
@@ -2125,10 +2221,9 @@ template<typename T> void nonzero_winding_coincident_verts_test()
   EXPECT_EQ(out_evenodd.vert.size(), 4);
   EXPECT_EQ(out_nonzero.vert.size(), 4);
 
-  /* The shared edge has winding 0 (CCW + CW cancel). Non-zero fills both
-   * triangles because their outer edges have non-zero winding.
-   * Even-odd treats the shared edge differently. */
-  EXPECT_LT(out_evenodd.face.size(), out_nonzero.face.size());
+  /* Merged base edge has count 2 (flip 0); both triangles reach parity 1 via their rims
+   * and are filled, matching non-zero. */
+  EXPECT_EQ(out_evenodd.face.size(), 2);
   EXPECT_EQ(out_nonzero.face.size(), 2);
 }
 
@@ -3288,6 +3383,16 @@ TEST(delaunay_d, EvenOddBoundaryDisagreement)
   even_odd_boundary_disagreement_test<double>();
 }
 
+TEST(delaunay_d, EvenOddCoincidentPolygonsNeedIdsStable)
+{
+  even_odd_coincident_polygons_need_ids_stable_test<double>();
+}
+
+TEST(delaunay_d, EvenOddSelfDoubledPolygonWithHole)
+{
+  even_odd_self_doubled_polygon_with_hole_test<double>();
+}
+
 TEST(delaunay_d, NonZeroWinding)
 {
   nonzero_winding_test<double>();
@@ -3551,6 +3656,16 @@ TEST(delaunay_m, EvenOddNestedHolesDeep)
 TEST(delaunay_m, EvenOddBoundaryDisagreement)
 {
   even_odd_boundary_disagreement_test<mpq_class>();
+}
+
+TEST(delaunay_m, EvenOddCoincidentPolygonsNeedIdsStable)
+{
+  even_odd_coincident_polygons_need_ids_stable_test<mpq_class>();
+}
+
+TEST(delaunay_m, EvenOddSelfDoubledPolygonWithHole)
+{
+  even_odd_self_doubled_polygon_with_hole_test<mpq_class>();
 }
 
 TEST(delaunay_m, NonZeroWinding)

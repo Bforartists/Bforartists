@@ -75,6 +75,36 @@ static IDProperty *shortcut_property_from_rna(bContext *C, Button *but)
   return prop;
 }
 
+static IDProperty *shortcut_property_from_rna_for_enum(bContext *C,
+                                                       Button *but_parent,
+                                                       Button *but)
+{
+  /* This is basically same as #shortcut_property_from_rna but with "value" in IDProperty in group.
+   * It's required for creating keyitem for enum values. */
+
+  /* If this returns null, we won't be able to bind shortcuts to these RNA properties.
+   * Support can be added at #wm_context_member_from_ptr. */
+  std::optional<std::string> final_data_path = WM_context_path_resolve_property_full(
+      C, &but_parent->rnapoin, but_parent->rnaprop, but_parent->rnaindex);
+  if (!final_data_path.has_value()) {
+    return nullptr;
+  }
+
+  const char *identifier = nullptr;
+  RNA_property_enum_identifier(
+      C, &but_parent->rnapoin, but_parent->rnaprop, int(but->hardmin), &identifier);
+
+  if (identifier == nullptr) {
+    /* Return early when valid identifier is not found for the button representing enum value. */
+    return nullptr;
+  }
+  /* Create ID property of data path and value, to pass to the operator. */
+  IDProperty *prop = bke::idprop::create_group(__func__).release();
+  IDP_AddToGroup(prop, bke::idprop::create("data_path", final_data_path.value()).release());
+  IDP_AddToGroup(prop, bke::idprop::create("value", identifier).release());
+  return prop;
+}
+
 static const char *shortcut_get_operator_property(bContext *C, Button *but, IDProperty **r_prop)
 {
   if (but->optype) {
@@ -103,6 +133,21 @@ static const char *shortcut_get_operator_property(bContext *C, Button *but, IDPr
         return nullptr;
       }
       return "WM_OT_context_menu_enum";
+    }
+  }
+
+  if (but->type == ButtonType::ButMenu) {
+    if ((but->block->handle != nullptr)) {
+      Button *but_parent = but->block->handle->popup_create_vars.but;
+      if (but_parent && but_parent->rnaprop &&
+          (RNA_property_type(but_parent->rnaprop) == PROP_ENUM))
+      {
+        *r_prop = shortcut_property_from_rna_for_enum(C, but_parent, but);
+        if (*r_prop == nullptr) {
+          return nullptr;
+        }
+        return "WM_OT_context_set_enum";
+      }
     }
   }
 

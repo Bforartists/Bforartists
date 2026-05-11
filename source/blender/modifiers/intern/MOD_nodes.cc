@@ -2034,7 +2034,7 @@ static void blend_read(BlendDataReader *reader, ModifierData *md)
     IDP_BlendDataRead(reader, &nmd->settings_legacy.properties);
   }
 
-  BLO_read_struct_array(reader, NodesModifierBake, nmd->bakes_num, &nmd->bakes);
+  BLO_read_array_and_validate_size(reader, &nmd->bakes, &nmd->bakes_num);
 
   if (nmd->bakes_num > 0 && nmd->bakes == nullptr) {
     /* This case generally shouldn't be allowed to happen. However, there is a bug report with a
@@ -2048,7 +2048,7 @@ static void blend_read(BlendDataReader *reader, ModifierData *md)
   for (NodesModifierBake &bake : MutableSpan(nmd->bakes, nmd->bakes_num)) {
     BLO_read_string(reader, &bake.directory);
 
-    BLO_read_struct_array(reader, NodesModifierDataBlock, bake.data_blocks_num, &bake.data_blocks);
+    BLO_read_array_and_validate_size(reader, &bake.data_blocks, &bake.data_blocks_num);
     for (NodesModifierDataBlock &data_block : MutableSpan(bake.data_blocks, bake.data_blocks_num))
     {
       BLO_read_string(reader, &data_block.id_name);
@@ -2057,10 +2057,10 @@ static void blend_read(BlendDataReader *reader, ModifierData *md)
 
     BLO_read_struct(reader, NodesModifierPackedBake, &bake.packed);
     if (bake.packed) {
-      BLO_read_struct_array(
-          reader, NodesModifierBakeFile, bake.packed->meta_files_num, &bake.packed->meta_files);
-      BLO_read_struct_array(
-          reader, NodesModifierBakeFile, bake.packed->blob_files_num, &bake.packed->blob_files);
+      BLO_read_array_and_validate_size(
+          reader, &bake.packed->meta_files, &bake.packed->meta_files_num);
+      BLO_read_array_and_validate_size(
+          reader, &bake.packed->blob_files, &bake.packed->blob_files_num);
       const auto read_bake_file = [&](NodesModifierBakeFile &bake_file) {
         BLO_read_string(reader, &bake_file.name);
         if (bake_file.packed_file) {
@@ -2079,7 +2079,7 @@ static void blend_read(BlendDataReader *reader, ModifierData *md)
       }
     }
   }
-  BLO_read_struct_array(reader, NodesModifierPanel, nmd->panels_num, &nmd->panels);
+  BLO_read_array_and_validate_size(reader, &nmd->panels, &nmd->panels_num);
 
   nmd->runtime = MEM_new<NodesModifierRuntime>(__func__);
   nmd->runtime->cache = std::make_shared<bake::ModifierCache>();

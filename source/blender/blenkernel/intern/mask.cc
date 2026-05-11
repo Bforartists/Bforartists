@@ -151,13 +151,13 @@ static void mask_blend_read_data(BlendDataReader *reader, ID *id)
     for (MaskSpline &spline : masklay.splines) {
       MaskSplinePoint *points_old = spline.points;
 
-      BLO_read_struct_array(reader, MaskSplinePoint, spline.tot_point, &spline.points);
+      BLO_read_array_and_validate_size(reader, &spline.points, &spline.tot_point);
 
       for (int i = 0; i < spline.tot_point; i++) {
         MaskSplinePoint *point = &spline.points[i];
 
         if (point->tot_uw) {
-          BLO_read_struct_array(reader, MaskSplinePointUW, point->tot_uw, &point->uw);
+          BLO_read_array_and_validate_size(reader, &point->uw, &point->tot_uw);
         }
       }
 
@@ -172,9 +172,13 @@ static void mask_blend_read_data(BlendDataReader *reader, ID *id)
     BLO_read_struct_list(reader, MaskLayerShape, &masklay.splines_shapes);
 
     for (MaskLayerShape &masklay_shape : masklay.splines_shapes) {
-      BLO_read_float_array(reader,
-                           masklay_shape.tot_vert * (sizeof(MaskLayerShapeElem) / sizeof(float)),
-                           &masklay_shape.data);
+      if (!BLO_read_array(reader,
+                          &masklay_shape.data,
+                          masklay_shape.tot_vert,
+                          sizeof(MaskLayerShapeElem) / sizeof(float)))
+      {
+        masklay_shape.tot_vert = 0;
+      }
     }
 
     BLO_read_struct(reader, MaskSpline, &masklay.act_spline);

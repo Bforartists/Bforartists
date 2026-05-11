@@ -573,6 +573,9 @@ void ShadowModule::init()
 
   global_lod_bias_ = (1.0f - scene.eevee.shadow_resolution_scale) * SHADOW_TILEMAP_LOD;
 
+  do_full_update_ |= assign_if_different(
+      data_.use_debug_cost, bool32_t(inst_.debug_mode == eDebugMode::DEBUG_SHADOW_ATOMIC_COST));
+
   bool update_lights = false;
   bool enable_shadow = (scene.eevee.flag & SCE_EEVEE_SHADOW_ENABLED) != 0;
   bool use_jitter = enable_shadow &&
@@ -588,8 +591,14 @@ void ShadowModule::init()
     }
   }
 
-  data_.ray_count = clamp_i(scene.eevee.shadow_ray_count, 1, SHADOW_MAX_RAY);
-  data_.step_count = clamp_i(scene.eevee.shadow_step_count, 1, SHADOW_MAX_STEP);
+  if (enabled_) {
+    data_.ray_count = clamp_i(scene.eevee.shadow_ray_count, 1, SHADOW_MAX_RAY);
+    data_.step_count = clamp_i(scene.eevee.shadow_step_count, 1, SHADOW_MAX_STEP);
+  }
+  else {
+    data_.ray_count = 1;
+    data_.step_count = 1;
+  }
 
   /* Pool size is in MBytes. */
   const size_t pool_byte_size = enabled_ ? scene.eevee.shadow_pool_size * square_i(1024) : 1;
@@ -1108,7 +1117,8 @@ void ShadowModule::debug_end_sync()
             eDebugMode::DEBUG_SHADOW_TILEMAPS,
             eDebugMode::DEBUG_SHADOW_VALUES,
             eDebugMode::DEBUG_SHADOW_TILE_RANDOM_COLOR,
-            eDebugMode::DEBUG_SHADOW_TILEMAP_RANDOM_COLOR))
+            eDebugMode::DEBUG_SHADOW_TILEMAP_RANDOM_COLOR,
+            eDebugMode::DEBUG_SHADOW_ATOMIC_COST))
   {
     return;
   }
@@ -1116,20 +1126,19 @@ void ShadowModule::debug_end_sync()
   /* Init but not filled if no active object. */
   debug_draw_ps_.init();
 
+  int tilemap_index = 0;
   Object *object_active = inst_.draw_ctx->obact;
-  if (object_active == nullptr) {
-    return;
+  if (object_active != nullptr) {
+    ObjectKey object_key(ObjectRef(DEG_get_original(object_active)));
+    if (inst_.lights.light_map_.contains(object_key)) {
+      Light &light = inst_.lights.light_map_.lookup(object_key);
+      if (light.tilemap_index < SHADOW_MAX_TILEMAP) {
+        tilemap_index = light.tilemap_index;
+      }
+    }
   }
 
-  ObjectKey object_key(ObjectRef(DEG_get_original(object_active)));
-
-  if (inst_.lights.light_map_.contains(object_key) == false) {
-    return;
-  }
-
-  Light &light = inst_.lights.light_map_.lookup(object_key);
-
-  if (light.tilemap_index >= SHADOW_MAX_TILEMAP) {
+  if (tilemap_index == 0 && inst_.debug_mode != eDebugMode::DEBUG_SHADOW_ATOMIC_COST) {
     return;
   }
 
@@ -1139,7 +1148,7 @@ void ShadowModule::debug_end_sync()
   debug_draw_ps_.state_set(state);
   debug_draw_ps_.shader_set(inst_.shaders.static_shader_get(SHADOW_DEBUG));
   debug_draw_ps_.push_constant("debug_mode", int(inst_.debug_mode));
-  debug_draw_ps_.push_constant("debug_tilemap_index", light.tilemap_index);
+  debug_draw_ps_.push_constant("debug_tilemap_index", tilemap_index);
   debug_draw_ps_.bind_ssbo("tilemaps_buf", &tilemap_pool.tilemaps_data);
   debug_draw_ps_.bind_ssbo("tiles_buf", &tilemap_pool.tiles_data);
   debug_draw_ps_.bind_resources(inst_.uniform_data);
@@ -1275,6 +1284,11 @@ void ShadowModule::ShadowView::compute_visibility(ObjectBoundsBuf &bounds,
 
 void ShadowModule::set_view(View &view, int2 extent)
 {
+  data_.film_pixel_radius = screen_pixel_radius(view.wininv(), view.is_persp(), extent);
+}
+
+void ShadowModule::render(View &view, int2 extent)
+{
   if (enabled_ == false) {
     /* All lights have been tagged to have no shadow. */
     return;
@@ -1287,9 +1301,6 @@ void ShadowModule::set_view(View &view, int2 extent)
   dispatch_depth_scan_size_ = int3(math::divide_ceil(extent, int2(SHADOW_DEPTH_SCAN_GROUP_SIZE)),
                                    1);
   max_view_per_tilemap_ = max_view_per_tilemap();
-
-  data_.film_pixel_radius = screen_pixel_radius(view.wininv(), view.is_persp(), extent);
-  inst_.uniform_data.push_update();
 
   usage_tag_fb_resolution_ = math::divide_ceil(extent, int2(std::exp2(usage_tag_fb_lod_)));
   usage_tag_fb.ensure(usage_tag_fb_resolution_);
@@ -1357,30 +1368,33 @@ void ShadowModule::set_view(View &view, int2 extent)
 
 void ShadowModule::debug_draw(View &view, gpu::FrameBuffer *view_fb)
 {
-  if (!ELEM(inst_.debug_mode,
-            eDebugMode::DEBUG_SHADOW_TILEMAPS,
-            eDebugMode::DEBUG_SHADOW_VALUES,
-            eDebugMode::DEBUG_SHADOW_TILE_RANDOM_COLOR,
-            eDebugMode::DEBUG_SHADOW_TILEMAP_RANDOM_COLOR))
-  {
-    return;
-  }
 
   switch (inst_.debug_mode) {
     case DEBUG_SHADOW_TILEMAPS:
-      inst_.info_append("Debug Mode: Shadow Tilemap");
+      inst_.info_append(
+          "Debug Mode: Shadow Tilemap (active light)\n"
+          " - Green: Used\n"
+          " - Yellow: Used & Updated\n"
+          " - Purple: Cached\n");
       break;
     case DEBUG_SHADOW_VALUES:
-      inst_.info_append("Debug Mode: Shadow Values");
+      inst_.info_append("Debug Mode: Shadow Values (active light)");
       break;
     case DEBUG_SHADOW_TILE_RANDOM_COLOR:
-      inst_.info_append("Debug Mode: Shadow Tile Random Color");
+      inst_.info_append("Debug Mode: Shadow Tile Random Color (active light)");
       break;
     case DEBUG_SHADOW_TILEMAP_RANDOM_COLOR:
-      inst_.info_append("Debug Mode: Shadow Tilemap Random Color");
+      inst_.info_append("Debug Mode: Shadow Tilemap Random Color (active light)");
+      break;
+    case DEBUG_SHADOW_ATOMIC_COST:
+      inst_.info_append(
+          "Debug Mode: Shadow Atomic Cost\n"
+          " - Blue: Low\n"
+          " - Red: Medium\n"
+          " - White: High");
       break;
     default:
-      break;
+      return;
   }
 
   inst_.hiz_buffer.update();

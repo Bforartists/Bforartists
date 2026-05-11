@@ -44,7 +44,7 @@ void main()
 
   float noise_offset = sampling_rng_1D_get(SAMPLING_TRANSPARENCY);
   float threshold = transparency_hashed_alpha_threshold(
-      uniform_buf.pipeline.alpha_hash_scale, noise_offset, g_data.P);
+      pipeline_buf.alpha_hash_scale, noise_offset, g_data.P);
 
   float transparency = average(g_transmittance);
   if (transparency > threshold) {

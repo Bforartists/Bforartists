@@ -338,6 +338,7 @@ static ArmatureDeformParams get_armature_deform_params(
      * - Check whether keeping this consistent across frames gives speedup.
      */
 
+    BKE_pose_ensure_bone_indices(ob_arm);
     for (const auto [i, dg] : (defbase)->enumerate()) {
       bPoseChannel *pchan = BKE_pose_channel_find_name(ob_arm.pose, dg.name);
       /* Exclude non-deforming bones. */

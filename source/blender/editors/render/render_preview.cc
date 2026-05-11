@@ -377,9 +377,9 @@ World *ED_preview_prepare_world_simple(Main *pr_main)
   bNode *output = node_add_node(nullptr, *ntree, "ShaderNodeOutputWorld"_ustr);
   node_add_link(*world->nodetree,
                 *background,
-                *node_find_socket(*background, SOCK_OUT, "Background"),
+                *node_find_socket(*background, SOCK_OUT, "Background"_ustr),
                 *output,
-                *node_find_socket(*output, SOCK_IN, "Surface"));
+                *node_find_socket(*output, SOCK_IN, "Surface"_ustr));
   node_set_active(*ntree, *output);
 
   world->nodetree = ntree;
@@ -394,7 +394,7 @@ void ED_preview_world_simple_set_rgb(World *world, const float color[4])
   BLI_assert(background != nullptr);
 
   auto *color_socket = static_cast<bNodeSocketValueRGBA *>(
-      bke::node_find_socket(*background, SOCK_IN, "Color")->default_value);
+      bke::node_find_socket(*background, SOCK_IN, "Color"_ustr)->default_value);
   copy_v4_v4(color_socket->value, color);
 }
 

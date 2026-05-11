@@ -11,8 +11,6 @@
 
 #include "DEG_depsgraph.hh"
 
-#include "ED_sequencer.hh"
-
 #include "WM_api.hh"
 
 #include "view3d_intern.hh"
@@ -112,16 +110,6 @@ static wmOperatorStatus view_camera_exec(bContext *C, wmOperator *op)
                     rv3d->lpersp,
                     nullptr,
                     smooth_viewtx);
-    }
-  }
-
-  if (v3d) {
-    const WorkSpace *workspace = CTX_wm_workspace(C);
-    const wmWindow *win = CTX_wm_window(C);
-    const Scene *active_scene = WM_window_get_active_scene(win);
-
-    if (workspace && active_scene) {
-      blender::ed::vse::sync_vse_camera_for_view3d(workspace, active_scene, v3d);
     }
   }
 

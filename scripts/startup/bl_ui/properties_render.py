@@ -505,8 +505,7 @@ class RENDER_PT_eevee_gi_approximation(RenderButtonsPanel, Panel):
 
         sub = col.column(align=True)
         sub.prop(props, "fast_gi_distance")
-        sub.prop(props, "fast_gi_thickness_near", text="Thickness Near")
-        sub.prop(props, "fast_gi_thickness_far", text="Far")
+        sub.prop(props, "fast_gi_thickness_near")
 
         col.prop(props, "fast_gi_bias", text="Bias")
 

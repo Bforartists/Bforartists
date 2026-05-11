@@ -67,8 +67,8 @@ static int gpu_shader_tex_white_noise(GPUMaterial *mat,
 
 static void node_shader_update_tex_white_noise(bNodeTree *ntree, bNode *node)
 {
-  bNodeSocket *sockVector = bke::node_find_socket(*node, SOCK_IN, "Vector");
-  bNodeSocket *sockW = bke::node_find_socket(*node, SOCK_IN, "W");
+  bNodeSocket *sockVector = bke::node_find_socket(*node, SOCK_IN, "Vector"_ustr);
+  bNodeSocket *sockW = bke::node_find_socket(*node, SOCK_IN, "W"_ustr);
 
   bke::node_set_socket_availability(*ntree, *sockVector, node->custom1 != 1);
   bke::node_set_socket_availability(*ntree, *sockW, node->custom1 == 1 || node->custom1 == 4);

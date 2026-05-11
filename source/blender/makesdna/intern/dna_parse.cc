@@ -30,7 +30,7 @@
 
 namespace blender {
 
-extern int debugSDNA;
+int debugSDNA = 0;
 
 namespace dna {
 
@@ -45,6 +45,14 @@ namespace dna {
 /* -------------------------------------------------------------------- */
 /** \name File I/O
  * \{ */
+
+Span<const char *> default_dna_header_filenames()
+{
+  static const char *files[] = {
+#include "dna_includes_as_strings.h"
+  };
+  return Span<const char *>(files, sizeof(files) / sizeof(files[0]));
+}
 
 [[nodiscard]] static bool read_file_data(const StringRefNull filepath, Vector<char> &data)
 {
@@ -623,9 +631,9 @@ static void skip_struct_body(TokenStream &stream)
   return true;
 }
 
-bool parse_dna_header(const StringRefNull filepath,
-                      Vector<ParsedStruct> &r_structs,
-                      Vector<ParsedEnum> &r_enums)
+static bool parse_dna_header(const StringRefNull filepath,
+                             Vector<ParsedStruct> &r_structs,
+                             Vector<ParsedEnum> &r_enums)
 {
   Vector<char> buffer;
   if (!read_file_data(filepath, buffer)) {
@@ -688,6 +696,20 @@ bool parse_dna_header(const StringRefNull filepath,
     r_structs.append(std::move(parsed_struct));
   }
 
+  return true;
+}
+
+bool parse_dna_headers(const StringRefNull base_directory,
+                       Vector<ParsedStruct> &r_structs,
+                       Vector<ParsedEnum> &r_enums,
+                       Span<const char *> include_files)
+{
+  for (const char *filename : include_files) {
+    const std::string path = std::string(base_directory) + filename;
+    if (!parse_dna_header(path, r_structs, r_enums)) {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -787,7 +809,28 @@ static void substitute_vector_or_matrix(ParsedMember &member)
   return true;
 }
 
-bool substitute_cpp_types(Vector<ParsedStruct> &structs, const Span<ParsedEnum> enums)
+/** Map modern C integer type names to old SDNA names. */
+static void substitute_sdna_integer_type(ParsedMember &member)
+{
+  static const std::pair<const char *, const char *> integer_type_aliases[] = {
+      {"uint8_t", "uchar"},
+      {"int16_t", "short"},
+      {"uint16_t", "ushort"},
+      {"int32_t", "int"},
+      {"uint32_t", "int"},
+  };
+
+  for (const auto &[alias, sdna_name] : integer_type_aliases) {
+    if (member.type_name == alias) {
+      member.type_name = sdna_name;
+      break;
+    }
+  }
+}
+
+bool substitute_cpp_types(Vector<ParsedStruct> &structs,
+                          const Span<ParsedEnum> enums,
+                          bool /*for_rna*/)
 {
   Map<StringRef, const ParsedEnum *> enum_map;
   enum_map.reserve(enums.size());
@@ -802,6 +845,7 @@ bool substitute_cpp_types(Vector<ParsedStruct> &structs, const Span<ParsedEnum> 
       if (!substitute_enum(parsed_struct, member, enum_map)) {
         return false;
       }
+      substitute_sdna_integer_type(member);
     }
   }
   return true;

@@ -677,13 +677,13 @@ static void do_versions_material_convert_legacy_blend_mode(bNodeTree *ntree, cha
 
       bNodeSocket *shader1_socket = static_cast<bNodeSocket *>(add_node->inputs.first);
       bNodeSocket *shader2_socket = static_cast<bNodeSocket *>(add_node->inputs.last);
-      bNodeSocket *add_socket = bke::node_find_socket(*add_node, SOCK_OUT, "Shader");
+      bNodeSocket *add_socket = bke::node_find_socket(*add_node, SOCK_OUT, "Shader"_ustr);
 
       bNode *transp_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_BSDF_TRANSPARENT);
       transp_node->locx_legacy = add_node->locx_legacy;
       transp_node->locy_legacy = add_node->locy_legacy - 110.0f;
 
-      bNodeSocket *transp_socket = bke::node_find_socket(*transp_node, SOCK_OUT, "BSDF");
+      bNodeSocket *transp_socket = bke::node_find_socket(*transp_node, SOCK_OUT, "BSDF"_ustr);
 
       /* Link to input and material output node. */
       bke::node_add_link(*ntree, *fromnode, *fromsock, *add_node, *shader1_socket);
@@ -697,8 +697,8 @@ static void do_versions_material_convert_legacy_blend_mode(bNodeTree *ntree, cha
 
       bNode *transp_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_BSDF_TRANSPARENT);
 
-      bNodeSocket *color_socket = bke::node_find_socket(*transp_node, SOCK_IN, "Color");
-      bNodeSocket *transp_socket = bke::node_find_socket(*transp_node, SOCK_OUT, "BSDF");
+      bNodeSocket *color_socket = bke::node_find_socket(*transp_node, SOCK_IN, "Color"_ustr);
+      bNodeSocket *transp_socket = bke::node_find_socket(*transp_node, SOCK_OUT, "BSDF"_ustr);
 
       /* If incoming link is from a closure socket, we need to convert it. */
       if (fromsock->type == SOCK_SHADER) {
@@ -709,8 +709,8 @@ static void do_versions_material_convert_legacy_blend_mode(bNodeTree *ntree, cha
         shtorgb_node->locx_legacy = 0.66f * fromnode->locx_legacy + 0.33f * tonode->locx_legacy;
         shtorgb_node->locy_legacy = 0.66f * fromnode->locy_legacy + 0.33f * tonode->locy_legacy;
 
-        bNodeSocket *shader_socket = bke::node_find_socket(*shtorgb_node, SOCK_IN, "Shader");
-        bNodeSocket *rgba_socket = bke::node_find_socket(*shtorgb_node, SOCK_OUT, "Color");
+        bNodeSocket *shader_socket = bke::node_find_socket(*shtorgb_node, SOCK_IN, "Shader"_ustr);
+        bNodeSocket *rgba_socket = bke::node_find_socket(*shtorgb_node, SOCK_OUT, "Color"_ustr);
 
         bke::node_add_link(*ntree, *fromnode, *fromsock, *shtorgb_node, *shader_socket);
         bke::node_add_link(*ntree, *shtorgb_node, *rgba_socket, *transp_node, *color_socket);
@@ -1035,10 +1035,10 @@ static void displacement_node_insert(bNodeTree *ntree)
     node->locx_legacy = 0.5f * (fromnode->locx_legacy + tonode->locx_legacy);
     node->locy_legacy = 0.5f * (fromnode->locy_legacy + tonode->locy_legacy);
 
-    bNodeSocket *scale_socket = bke::node_find_socket(*node, SOCK_IN, "Scale");
-    bNodeSocket *midlevel_socket = bke::node_find_socket(*node, SOCK_IN, "Midlevel");
-    bNodeSocket *height_socket = bke::node_find_socket(*node, SOCK_IN, "Height");
-    bNodeSocket *displacement_socket = bke::node_find_socket(*node, SOCK_OUT, "Displacement");
+    bNodeSocket *scale_socket = bke::node_find_socket(*node, SOCK_IN, "Scale"_ustr);
+    bNodeSocket *midlevel_socket = bke::node_find_socket(*node, SOCK_IN, "Midlevel"_ustr);
+    bNodeSocket *height_socket = bke::node_find_socket(*node, SOCK_IN, "Height"_ustr);
+    bNodeSocket *displacement_socket = bke::node_find_socket(*node, SOCK_OUT, "Displacement"_ustr);
 
     /* Set default values for compatibility. */
     *version_cycles_node_socket_float_value(scale_socket) = 0.1f;
@@ -1147,7 +1147,7 @@ static void ambient_occlusion_node_relink(bNodeTree *ntree)
       node.custom1 = 1; /* samples */
       node.custom2 &= ~SHD_AO_LOCAL;
 
-      bNodeSocket *distance_socket = bke::node_find_socket(node, SOCK_IN, "Distance");
+      bNodeSocket *distance_socket = bke::node_find_socket(node, SOCK_IN, "Distance"_ustr);
       *version_cycles_node_socket_float_value(distance_socket) = 0.0f;
     }
   }
@@ -1165,7 +1165,7 @@ static void ambient_occlusion_node_relink(bNodeTree *ntree)
 
     /* Replace links with color socket. */
     bke::node_remove_link(ntree, link);
-    bNodeSocket *color_socket = bke::node_find_socket(*fromnode, SOCK_OUT, "Color");
+    bNodeSocket *color_socket = bke::node_find_socket(*fromnode, SOCK_OUT, "Color"_ustr);
     bke::node_add_link(*ntree, *fromnode, *color_socket, *tonode, *tosock);
 
     need_update = true;
@@ -1233,8 +1233,8 @@ static void light_emission_node_to_energy(Light *light, float *energy, float col
   }
 
   /* Don't convert if anything is linked */
-  bNodeSocket *strength_socket = bke::node_find_socket(*emission_node, SOCK_IN, "Strength");
-  bNodeSocket *color_socket = bke::node_find_socket(*emission_node, SOCK_IN, "Color");
+  bNodeSocket *strength_socket = bke::node_find_socket(*emission_node, SOCK_IN, "Strength"_ustr);
+  bNodeSocket *color_socket = bke::node_find_socket(*emission_node, SOCK_IN, "Color"_ustr);
 
   if ((strength_socket->flag & SOCK_IS_LINKED) || (color_socket->flag & SOCK_IS_LINKED)) {
     return;
@@ -1345,7 +1345,7 @@ static void update_vector_math_node_add_and_subtract_operators(bNodeTree *ntree)
 
   for (bNode &node : ntree->nodes) {
     if (node.type_legacy == SH_NODE_VECTOR_MATH) {
-      bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value");
+      bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value"_ustr);
       if (version_node_socket_is_used(sockOutValue) &&
           ELEM(node.custom1, NODE_VECTOR_MATH_ADD, NODE_VECTOR_MATH_SUBTRACT))
       {
@@ -1360,7 +1360,7 @@ static void update_vector_math_node_add_and_subtract_operators(bNodeTree *ntree)
         dotNode->locx_legacy = absNode->locx_legacy + absNode->width + 20.0f;
         dotNode->locy_legacy = absNode->locy_legacy;
         bNodeSocket *sockDotB = static_cast<bNodeSocket *>(BLI_findlink(&dotNode->inputs, 1));
-        bNodeSocket *sockDotOutValue = bke::node_find_socket(*dotNode, SOCK_OUT, "Value");
+        bNodeSocket *sockDotOutValue = bke::node_find_socket(*dotNode, SOCK_OUT, "Value"_ustr);
         copy_v3_fl(version_cycles_node_socket_vector_value(sockDotB), 1 / 3.0f);
 
         for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
@@ -1372,8 +1372,8 @@ static void update_vector_math_node_add_and_subtract_operators(bNodeTree *ntree)
 
         bNodeSocket *sockAbsA = static_cast<bNodeSocket *>(BLI_findlink(&absNode->inputs, 0));
         bNodeSocket *sockDotA = static_cast<bNodeSocket *>(BLI_findlink(&dotNode->inputs, 0));
-        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector");
-        bNodeSocket *sockAbsOutVector = bke::node_find_socket(*absNode, SOCK_OUT, "Vector");
+        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector"_ustr);
+        bNodeSocket *sockAbsOutVector = bke::node_find_socket(*absNode, SOCK_OUT, "Vector"_ustr);
 
         bke::node_add_link(*ntree, node, *sockOutVector, *absNode, *sockAbsA);
         bke::node_add_link(*ntree, *absNode, *sockAbsOutVector, *dotNode, *sockDotA);
@@ -1398,7 +1398,7 @@ static void update_vector_math_node_dot_product_operator(bNodeTree *ntree)
 
   for (bNode &node : ntree->nodes) {
     if (node.type_legacy == SH_NODE_VECTOR_MATH) {
-      bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector");
+      bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector"_ustr);
       if (version_node_socket_is_used(sockOutVector) &&
           node.custom1 == NODE_VECTOR_MATH_DOT_PRODUCT)
       {
@@ -1442,14 +1442,14 @@ static void update_vector_math_node_cross_product_operator(bNodeTree *ntree)
   for (bNode &node : ntree->nodes) {
     if (node.type_legacy == SH_NODE_VECTOR_MATH) {
       if (node.custom1 == NODE_VECTOR_MATH_CROSS_PRODUCT) {
-        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector");
+        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector"_ustr);
         if (version_node_socket_is_used(sockOutVector)) {
           bNode *normalizeNode = bke::node_add_static_node(nullptr, *ntree, SH_NODE_VECTOR_MATH);
           normalizeNode->custom1 = NODE_VECTOR_MATH_NORMALIZE;
           normalizeNode->locx_legacy = node.locx_legacy + node.width + 20.0f;
           normalizeNode->locy_legacy = node.locy_legacy;
           bNodeSocket *sockNormalizeOut = bke::node_find_socket(
-              *normalizeNode, SOCK_OUT, "Vector");
+              *normalizeNode, SOCK_OUT, "Vector"_ustr);
 
           for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
             if (link.fromsock == sockOutVector) {
@@ -1465,7 +1465,7 @@ static void update_vector_math_node_cross_product_operator(bNodeTree *ntree)
           need_update = true;
         }
 
-        bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value");
+        bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value"_ustr);
         if (version_node_socket_is_used(sockOutValue)) {
           bNode *lengthNode = bke::node_add_static_node(nullptr, *ntree, SH_NODE_VECTOR_MATH);
           lengthNode->custom1 = NODE_VECTOR_MATH_LENGTH;
@@ -1476,7 +1476,7 @@ static void update_vector_math_node_cross_product_operator(bNodeTree *ntree)
           else {
             lengthNode->locy_legacy = node.locy_legacy;
           }
-          bNodeSocket *sockLengthOut = bke::node_find_socket(*lengthNode, SOCK_OUT, "Value");
+          bNodeSocket *sockLengthOut = bke::node_find_socket(*lengthNode, SOCK_OUT, "Value"_ustr);
 
           for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
             if (link.fromsock == sockOutValue) {
@@ -1511,16 +1511,17 @@ static void update_vector_math_node_normalize_operator(bNodeTree *ntree)
 
   for (bNode &node : ntree->nodes) {
     if (node.type_legacy == SH_NODE_VECTOR_MATH) {
-      bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value");
+      bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value"_ustr);
       if (node.custom1 == NODE_VECTOR_MATH_NORMALIZE && version_node_socket_is_used(sockOutValue))
       {
-        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector");
+        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector"_ustr);
         if (version_node_socket_is_used(sockOutVector)) {
           bNode *lengthNode = bke::node_add_static_node(nullptr, *ntree, SH_NODE_VECTOR_MATH);
           lengthNode->custom1 = NODE_VECTOR_MATH_LENGTH;
           lengthNode->locx_legacy = node.locx_legacy + node.width + 20.0f;
           lengthNode->locy_legacy = node.locy_legacy;
-          bNodeSocket *sockLengthValue = bke::node_find_socket(*lengthNode, SOCK_OUT, "Value");
+          bNodeSocket *sockLengthValue = bke::node_find_socket(
+              *lengthNode, SOCK_OUT, "Value"_ustr);
 
           for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
             if (link.fromsock == sockOutValue) {
@@ -1603,14 +1604,14 @@ static void update_vector_math_node_average_operator(bNodeTree *ntree)
       /* See update_vector_math_node_operators_enum_mapping. */
       if (node.custom1 == -1) {
         node.custom1 = NODE_VECTOR_MATH_ADD;
-        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector");
+        bNodeSocket *sockOutVector = bke::node_find_socket(node, SOCK_OUT, "Vector"_ustr);
         if (version_node_socket_is_used(sockOutVector)) {
           bNode *normalizeNode = bke::node_add_static_node(nullptr, *ntree, SH_NODE_VECTOR_MATH);
           normalizeNode->custom1 = NODE_VECTOR_MATH_NORMALIZE;
           normalizeNode->locx_legacy = node.locx_legacy + node.width + 20.0f;
           normalizeNode->locy_legacy = node.locy_legacy;
           bNodeSocket *sockNormalizeOut = bke::node_find_socket(
-              *normalizeNode, SOCK_OUT, "Vector");
+              *normalizeNode, SOCK_OUT, "Vector"_ustr);
 
           for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
             if (link.fromsock == sockOutVector) {
@@ -1626,7 +1627,7 @@ static void update_vector_math_node_average_operator(bNodeTree *ntree)
           need_update = true;
         }
 
-        bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value");
+        bNodeSocket *sockOutValue = bke::node_find_socket(node, SOCK_OUT, "Value"_ustr);
         if (version_node_socket_is_used(sockOutValue)) {
           bNode *lengthNode = bke::node_add_static_node(nullptr, *ntree, SH_NODE_VECTOR_MATH);
           lengthNode->custom1 = NODE_VECTOR_MATH_LENGTH;
@@ -1637,7 +1638,7 @@ static void update_vector_math_node_average_operator(bNodeTree *ntree)
           else {
             lengthNode->locy_legacy = node.locy_legacy;
           }
-          bNodeSocket *sockLengthOut = bke::node_find_socket(*lengthNode, SOCK_OUT, "Value");
+          bNodeSocket *sockLengthOut = bke::node_find_socket(*lengthNode, SOCK_OUT, "Value"_ustr);
 
           for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
             if (link.fromsock == sockOutValue) {
@@ -1755,11 +1756,11 @@ static void update_mapping_node_inputs_and_properties(bNodeTree *ntree)
       node.custom1 = mapping->type;
       node.width = 140.0f;
 
-      bNodeSocket *sockLocation = bke::node_find_socket(node, SOCK_IN, "Location");
+      bNodeSocket *sockLocation = bke::node_find_socket(node, SOCK_IN, "Location"_ustr);
       copy_v3_v3(version_cycles_node_socket_vector_value(sockLocation), mapping->loc);
-      bNodeSocket *sockRotation = bke::node_find_socket(node, SOCK_IN, "Rotation");
+      bNodeSocket *sockRotation = bke::node_find_socket(node, SOCK_IN, "Rotation"_ustr);
       copy_v3_v3(version_cycles_node_socket_vector_value(sockRotation), mapping->rot);
-      bNodeSocket *sockScale = bke::node_find_socket(node, SOCK_IN, "Scale");
+      bNodeSocket *sockScale = bke::node_find_socket(node, SOCK_IN, "Scale"_ustr);
       copy_v3_v3(version_cycles_node_socket_vector_value(sockScale), mapping->size);
 
       bNode *maximumNode = nullptr;
@@ -1776,12 +1777,12 @@ static void update_mapping_node_inputs_and_properties(bNodeTree *ntree)
         bNodeSocket *sockMaximumB = static_cast<bNodeSocket *>(
             BLI_findlink(&maximumNode->inputs, 1));
         copy_v3_v3(version_cycles_node_socket_vector_value(sockMaximumB), mapping->min);
-        bNodeSocket *sockMappingResult = bke::node_find_socket(node, SOCK_OUT, "Vector");
+        bNodeSocket *sockMappingResult = bke::node_find_socket(node, SOCK_OUT, "Vector"_ustr);
 
         for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
           if (link.fromsock == sockMappingResult) {
             bNodeSocket *sockMaximumResult = bke::node_find_socket(
-                *maximumNode, SOCK_OUT, "Vector");
+                *maximumNode, SOCK_OUT, "Vector"_ustr);
             bke::node_add_link(
                 *ntree, *maximumNode, *sockMaximumResult, *link.tonode, *link.tosock);
             bke::node_remove_link(ntree, link);
@@ -1806,8 +1807,9 @@ static void update_mapping_node_inputs_and_properties(bNodeTree *ntree)
             BLI_findlink(&minimumNode->inputs, 1));
         copy_v3_v3(version_cycles_node_socket_vector_value(sockMinimumB), mapping->max);
 
-        bNodeSocket *sockMinimumResult = bke::node_find_socket(*minimumNode, SOCK_OUT, "Vector");
-        bNodeSocket *sockMappingResult = bke::node_find_socket(node, SOCK_OUT, "Vector");
+        bNodeSocket *sockMinimumResult = bke::node_find_socket(
+            *minimumNode, SOCK_OUT, "Vector"_ustr);
+        bNodeSocket *sockMappingResult = bke::node_find_socket(node, SOCK_OUT, "Vector"_ustr);
 
         if (maximumNode) {
           bNodeSocket *sockMaximumA = static_cast<bNodeSocket *>(
@@ -1948,8 +1950,8 @@ static void update_voronoi_node_crackle(bNodeTree *ntree)
   for (bNode &node : ntree->nodes) {
     if (node.type_legacy == SH_NODE_TEX_VORONOI && node.storage) {
       NodeTexVoronoi *tex = static_cast<NodeTexVoronoi *>(node.storage);
-      bNodeSocket *sockDistance = bke::node_find_socket(node, SOCK_OUT, "Distance");
-      bNodeSocket *sockColor = bke::node_find_socket(node, SOCK_OUT, "Color");
+      bNodeSocket *sockDistance = bke::node_find_socket(node, SOCK_OUT, "Distance"_ustr);
+      bNodeSocket *sockColor = bke::node_find_socket(node, SOCK_OUT, "Color"_ustr);
       if (tex->feature == 4 &&
           (version_node_socket_is_used(sockDistance) || version_node_socket_is_used(sockColor)))
       {
@@ -1963,13 +1965,14 @@ static void update_voronoi_node_crackle(bNodeTree *ntree)
         voronoiNode->locx_legacy = node.locx_legacy + node.width + 20.0f;
         voronoiNode->locy_legacy = node.locy_legacy;
 
-        bNodeSocket *sockVector = bke::node_find_socket(node, SOCK_IN, "Vector");
-        bNodeSocket *sockScale = bke::node_find_socket(node, SOCK_IN, "Scale");
-        bNodeSocket *sockExponent = bke::node_find_socket(node, SOCK_IN, "Exponent");
-        bNodeSocket *sockVoronoiVector = bke::node_find_socket(*voronoiNode, SOCK_IN, "Vector");
-        bNodeSocket *sockVoronoiScale = bke::node_find_socket(*voronoiNode, SOCK_IN, "Scale");
+        bNodeSocket *sockVector = bke::node_find_socket(node, SOCK_IN, "Vector"_ustr);
+        bNodeSocket *sockScale = bke::node_find_socket(node, SOCK_IN, "Scale"_ustr);
+        bNodeSocket *sockExponent = bke::node_find_socket(node, SOCK_IN, "Exponent"_ustr);
+        bNodeSocket *sockVoronoiVector = bke::node_find_socket(
+            *voronoiNode, SOCK_IN, "Vector"_ustr);
+        bNodeSocket *sockVoronoiScale = bke::node_find_socket(*voronoiNode, SOCK_IN, "Scale"_ustr);
         bNodeSocket *sockVoronoiExponent = bke::node_find_socket(
-            *voronoiNode, SOCK_IN, "Exponent");
+            *voronoiNode, SOCK_IN, "Exponent"_ustr);
         if (sockVector->link) {
           bke::node_add_link(*ntree,
                              *sockVector->link->fromnode,
@@ -2001,7 +2004,7 @@ static void update_voronoi_node_crackle(bNodeTree *ntree)
         subtractNode->locx_legacy = voronoiNode->locx_legacy + voronoiNode->width + 20.0f;
         subtractNode->locy_legacy = voronoiNode->locy_legacy;
         bNodeSocket *sockSubtractOutValue = bke::node_find_socket(
-            *subtractNode, SOCK_OUT, "Value");
+            *subtractNode, SOCK_OUT, "Value"_ustr);
 
         for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
           if (link.fromnode == &node) {
@@ -2011,8 +2014,9 @@ static void update_voronoi_node_crackle(bNodeTree *ntree)
           }
         }
 
-        bNodeSocket *sockDistanceF1 = bke::node_find_socket(node, SOCK_OUT, "Distance");
-        bNodeSocket *sockDistanceF2 = bke::node_find_socket(*voronoiNode, SOCK_OUT, "Distance");
+        bNodeSocket *sockDistanceF1 = bke::node_find_socket(node, SOCK_OUT, "Distance"_ustr);
+        bNodeSocket *sockDistanceF2 = bke::node_find_socket(
+            *voronoiNode, SOCK_OUT, "Distance"_ustr);
         bNodeSocket *sockSubtractA = static_cast<bNodeSocket *>(
             BLI_findlink(&subtractNode->inputs, 0));
         bNodeSocket *sockSubtractB = static_cast<bNodeSocket *>(
@@ -2048,18 +2052,18 @@ static void update_voronoi_node_coloring(bNodeTree *ntree)
     if (node && node->type_legacy == SH_NODE_TEX_VORONOI && node->storage) {
       NodeTexVoronoi *tex = static_cast<NodeTexVoronoi *>(node->storage);
       if (tex->coloring == 0) {
-        bNodeSocket *sockColor = bke::node_find_socket(*node, SOCK_OUT, "Color");
+        bNodeSocket *sockColor = bke::node_find_socket(*node, SOCK_OUT, "Color"_ustr);
         if (link.fromsock == sockColor) {
-          bNodeSocket *sockDistance = bke::node_find_socket(*node, SOCK_OUT, "Distance");
+          bNodeSocket *sockDistance = bke::node_find_socket(*node, SOCK_OUT, "Distance"_ustr);
           bke::node_add_link(*ntree, *node, *sockDistance, *link.tonode, *link.tosock);
           bke::node_remove_link(ntree, link);
           need_update = true;
         }
       }
       else {
-        bNodeSocket *sockDistance = bke::node_find_socket(*node, SOCK_OUT, "Distance");
+        bNodeSocket *sockDistance = bke::node_find_socket(*node, SOCK_OUT, "Distance"_ustr);
         if (link.fromsock == sockDistance) {
-          bNodeSocket *sockColor = bke::node_find_socket(*node, SOCK_OUT, "Color");
+          bNodeSocket *sockColor = bke::node_find_socket(*node, SOCK_OUT, "Color"_ustr);
           bke::node_add_link(*ntree, *node, *sockColor, *link.tonode, *link.tosock);
           bke::node_remove_link(ntree, link);
           need_update = true;
@@ -2084,7 +2088,7 @@ static void update_voronoi_node_square_distance(bNodeTree *ntree)
   for (bNode &node : ntree->nodes) {
     if (node.type_legacy == SH_NODE_TEX_VORONOI && node.storage) {
       NodeTexVoronoi *tex = static_cast<NodeTexVoronoi *>(node.storage);
-      bNodeSocket *sockDistance = bke::node_find_socket(node, SOCK_OUT, "Distance");
+      bNodeSocket *sockDistance = bke::node_find_socket(node, SOCK_OUT, "Distance"_ustr);
       if (tex->distance == SHD_VORONOI_EUCLIDEAN &&
           ELEM(tex->feature, SHD_VORONOI_F1, SHD_VORONOI_F2) &&
           version_node_socket_is_used(sockDistance))
@@ -2094,7 +2098,7 @@ static void update_voronoi_node_square_distance(bNodeTree *ntree)
         multiplyNode->locx_legacy = node.locx_legacy + node.width + 20.0f;
         multiplyNode->locy_legacy = node.locy_legacy;
 
-        bNodeSocket *sockValue = bke::node_find_socket(*multiplyNode, SOCK_OUT, "Value");
+        bNodeSocket *sockValue = bke::node_find_socket(*multiplyNode, SOCK_OUT, "Value"_ustr);
         for (bNodeLink &link : ntree->links.items_reversed_mutable()) {
           if (link.fromsock == sockDistance) {
             bke::node_add_link(*ntree, *multiplyNode, *sockValue, *link.tonode, *link.tosock);
@@ -2132,7 +2136,7 @@ static void update_noise_and_wave_distortion(bNodeTree *ntree)
   for (bNode &node : ntree->nodes) {
     if (ELEM(node.type_legacy, SH_NODE_TEX_NOISE, SH_NODE_TEX_WAVE)) {
 
-      bNodeSocket *sockDistortion = bke::node_find_socket(node, SOCK_IN, "Distortion");
+      bNodeSocket *sockDistortion = bke::node_find_socket(node, SOCK_IN, "Distortion"_ustr);
       float *distortion = version_cycles_node_socket_float_value(sockDistortion);
 
       if (version_node_socket_is_used(sockDistortion) && sockDistortion->link != nullptr) {
@@ -2147,7 +2151,7 @@ static void update_noise_and_wave_distortion(bNodeTree *ntree)
         bNodeSocket *mulSockA = static_cast<bNodeSocket *>(BLI_findlink(&mulNode->inputs, 0));
         bNodeSocket *mulSockB = static_cast<bNodeSocket *>(BLI_findlink(&mulNode->inputs, 1));
         *version_cycles_node_socket_float_value(mulSockB) = 0.5f;
-        bNodeSocket *mulSockOut = bke::node_find_socket(*mulNode, SOCK_OUT, "Value");
+        bNodeSocket *mulSockOut = bke::node_find_socket(*mulNode, SOCK_OUT, "Value"_ustr);
 
         bke::node_remove_link(ntree, *sockDistortion->link);
         bke::node_add_link(
@@ -2187,7 +2191,7 @@ static void update_wave_node_directions_and_offset(bNodeTree *ntree)
         tex->rings_direction = SHD_WAVE_RINGS_DIRECTION_SPHERICAL;
 
         if (tex->wave_profile == SHD_WAVE_PROFILE_SIN) {
-          bNodeSocket *sockPhaseOffset = bke::node_find_socket(node, SOCK_IN, "Phase Offset");
+          bNodeSocket *sockPhaseOffset = bke::node_find_socket(node, SOCK_IN, "Phase Offset"_ustr);
           *version_cycles_node_socket_float_value(sockPhaseOffset) = M_PI_2;
         }
       }

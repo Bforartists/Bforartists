@@ -17,14 +17,28 @@
 
 #include "RNA_enum_types.hh"
 
+#include "DEG_depsgraph_query.hh"
+
 #include "node_function_util.hh"
 
 #include "NOD_rna_define.hh"
 #include "NOD_socket_search_link.hh"
 
+#include "DNA_collection_types.h"
+#include "DNA_image_types.h"
+#include "DNA_material_types.h"
+#include "DNA_object_types.h"
+#include "DNA_sound_types.h"
+#include "DNA_vfont_types.h"
+
 namespace blender::nodes::node_fn_compare_cc {
 
 NODE_STORAGE_FUNCS(NodeFunctionCompare)
+
+static bool is_supported_data_block_type(const eNodeSocketDatatype data_type)
+{
+  return ELEM(data_type, SOCK_OBJECT, SOCK_IMAGE, SOCK_COLLECTION, SOCK_FONT, SOCK_SOUND);
+}
 
 static void node_declare(NodeDeclarationBuilder &b)
 {
@@ -39,13 +53,14 @@ static void node_declare(NodeDeclarationBuilder &b)
 
     const bool type_is_float = ELEM(data_type, SOCK_FLOAT, SOCK_VECTOR, SOCK_RGBA);
     const bool is_vector = data_type == SOCK_VECTOR;
+    const bool is_data_block = is_supported_data_block_type(data_type);
 
     auto &a_input =
         b.add_input(data_type, "A"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
     auto &b_input =
         b.add_input(data_type, "B"_ustr).translation_context(BLT_I18NCONTEXT_ID_NODETREE);
 
-    if (data_type == SOCK_STRING) {
+    if (data_type == SOCK_STRING || is_data_block) {
       a_input.optional_label();
       b_input.optional_label();
     }
@@ -133,7 +148,12 @@ static std::optional<eNodeSocketDatatype> get_compare_type_for_operation(
       }
       return type;
     default:
-      BLI_assert_unreachable();
+      if (is_supported_data_block_type(type)) {
+        if (!ELEM(operation, NODE_COMPARE_EQUAL, NODE_COMPARE_NOT_EQUAL)) {
+          return std::nullopt;
+        }
+        return type;
+      }
       return std::nullopt;
   }
 }
@@ -141,7 +161,9 @@ static std::optional<eNodeSocketDatatype> get_compare_type_for_operation(
 static void node_gather_link_searches(GatherLinkSearchOpParams &params)
 {
   const eNodeSocketDatatype type = eNodeSocketDatatype(params.other_socket().type);
-  if (!ELEM(type, SOCK_INT, SOCK_BOOLEAN, SOCK_FLOAT, SOCK_VECTOR, SOCK_RGBA, SOCK_STRING)) {
+  if (!ELEM(type, SOCK_INT, SOCK_BOOLEAN, SOCK_FLOAT, SOCK_VECTOR, SOCK_RGBA, SOCK_STRING) &&
+      !is_supported_data_block_type(type))
+  {
     return;
   }
   const UString socket_name = params.in_out() == SOCK_IN ? "A"_ustr : "Result"_ustr;
@@ -159,7 +181,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
     }
   }
 
-  if (params.in_out() == SOCK_IN && type != SOCK_STRING) {
+  if (params.in_out() == SOCK_IN && (type != SOCK_STRING || is_supported_data_block_type(type))) {
     params.add_item(
         IFACE_("Angle"),
         SocketSearchOp{
@@ -186,14 +208,40 @@ static float component_average(float3 a)
   return (a.x + a.y + a.z) / 3.0f;
 }
 
+template<typename Fn>
+static auto to_static_data_block_type(const eNodeSocketDatatype socket_type, Fn &&fn)
+{
+  switch (socket_type) {
+    case SOCK_OBJECT:
+      return fn.template operator()<Object>();
+    case SOCK_IMAGE:
+      return fn.template operator()<Image>();
+    case SOCK_COLLECTION:
+      return fn.template operator()<Collection>();
+    case SOCK_FONT:
+      return fn.template operator()<VFont>();
+    case SOCK_SOUND:
+      return fn.template operator()<bSound>();
+    default:
+      BLI_assert_unreachable();
+      return fn.template operator()<Object>();
+  }
+}
+
+static bool data_blocks_are_equal(const ID *a, const ID *b)
+{
+  return DEG_get_original(a) == DEG_get_original(b);
+}
+
 static const mf::MultiFunction *get_multi_function(const bNode &node)
 {
   const NodeFunctionCompare *data = (NodeFunctionCompare *)node.storage;
+  const eNodeSocketDatatype data_type = eNodeSocketDatatype(data->data_type);
 
   static auto exec_preset_all = mf::build::exec_presets::AllSpanOrSingle();
   static auto exec_preset_first_two = mf::build::exec_presets::SomeSpanOrSingle<0, 1>();
 
-  switch (data->data_type) {
+  switch (data_type) {
     case SOCK_FLOAT:
       switch (data->operation) {
         case NODE_COMPARE_LESS_THAN: {
@@ -603,6 +651,38 @@ static const mf::MultiFunction *get_multi_function(const bNode &node)
           break;
       }
       break;
+    default: {
+      if (is_supported_data_block_type(data_type)) {
+        return to_static_data_block_type(
+            data_type, [&]<typename T>() -> const mf::MultiFunction * {
+              switch (data->operation) {
+                case NODE_COMPARE_EQUAL: {
+                  static auto fn = mf::build::SI2_SO<T *, T *, bool>(
+                      "Equal",
+                      [](const T *a, const T *b) {
+                        return data_blocks_are_equal(id_cast<const ID *>(a),
+                                                     id_cast<const ID *>(b));
+                      },
+                      mf::build::exec_presets::Simple{});
+                  return &fn;
+                }
+                case NODE_COMPARE_NOT_EQUAL: {
+                  static auto fn = mf::build::SI2_SO<T *, T *, bool>(
+                      "Not Equal",
+                      [](const T *a, const T *b) {
+                        return !data_blocks_are_equal(id_cast<const ID *>(a),
+                                                      id_cast<const ID *>(b));
+                      },
+                      mf::build::exec_presets::Simple{});
+                  return &fn;
+                }
+                default: {
+                  return nullptr;
+                }
+              }
+            });
+      }
+    }
   }
   return nullptr;
 }
@@ -626,7 +706,8 @@ static void data_type_update(Main *bmain, Scene *scene, PointerRNA *ptr)
   {
     node_storage->operation = NODE_COMPARE_EQUAL;
   }
-  else if (node_storage->data_type == SOCK_STRING &&
+  else if ((node_storage->data_type == SOCK_STRING ||
+            is_supported_data_block_type(eNodeSocketDatatype(node_storage->data_type))) &&
            !ELEM(node_storage->operation, NODE_COMPARE_EQUAL, NODE_COMPARE_NOT_EQUAL))
   {
     node_storage->operation = NODE_COMPARE_EQUAL;
@@ -704,6 +785,12 @@ static void node_rna(StructRNA *srna)
                                                  NODE_COMPARE_COLOR_DARKER);
                                    });
         }
+        if (is_supported_data_block_type(eNodeSocketDatatype(data->data_type))) {
+          return enum_items_filter(
+              rna_enum_node_compare_operation_items, [](const EnumPropertyItem &item) {
+                return ELEM(item.value, NODE_COMPARE_EQUAL, NODE_COMPARE_NOT_EQUAL);
+              });
+        }
         return enum_items_filter(rna_enum_node_compare_operation_items,
                                  [](const EnumPropertyItem & /*item*/) { return false; });
       });
@@ -720,7 +807,8 @@ static void node_rna(StructRNA *srna)
         *r_free = true;
         return enum_items_filter(
             rna_enum_node_socket_data_type_items, [](const EnumPropertyItem &item) {
-              return ELEM(item.value, SOCK_FLOAT, SOCK_INT, SOCK_VECTOR, SOCK_STRING, SOCK_RGBA);
+              return ELEM(item.value, SOCK_FLOAT, SOCK_INT, SOCK_VECTOR, SOCK_STRING, SOCK_RGBA) ||
+                     is_supported_data_block_type(eNodeSocketDatatype(item.value));
             });
       });
   RNA_def_property_update_runtime(prop, data_type_update);

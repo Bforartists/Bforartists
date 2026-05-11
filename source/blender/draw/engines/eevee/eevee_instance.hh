@@ -57,19 +57,27 @@
 namespace blender::eevee {
 
 using UniformDataBuf = draw::UniformBuffer<UniformData>;
+using PipelineInfoBuf = draw::UniformBuffer<PipelineInfoData>;
+using RaytraceDataBuf = draw::UniformBuffer<RayTraceData>;
 
 /* Combines data from several modules to avoid wasting binding slots. */
 struct UniformDataModule {
-  UniformDataBuf data = {"UniformDataBuf"};
+  UniformDataBuf data{"UniformDataBuf"};
+  PipelineInfoBuf pipeline{"PipelineInfoBuf"};
+  RaytraceDataBuf raytrace{"RaytraceDataBuf"};
 
   void push_update()
   {
     data.push_update();
+    pipeline.push_update();
+    raytrace.push_update();
   }
 
   template<typename PassType> void bind_resources(PassType &pass)
   {
     pass.bind_ubo(UNIFORM_BUF_SLOT, &data);
+    pass.bind_ubo(PIPELINE_BUF_SLOT, &pipeline);
+    pass.bind_ubo(RAYTRACE_BUF_SLOT, &raytrace);
   }
 };
 
@@ -184,12 +192,12 @@ class Instance : public DrawEngine {
       : shaders(*ShaderModule::module_get()),
         sync(*this),
         materials(*this),
-        subsurface(*this, uniform_data.data.subsurface),
-        pipelines(*this, uniform_data.data.pipeline),
+        subsurface(*this),
+        pipelines(*this, uniform_data.pipeline),
         shadows(*this, uniform_data.data.shadow),
         lights(*this),
         ambient_occlusion(*this, uniform_data.data.ao),
-        raytracing(*this, uniform_data.data.raytrace),
+        raytracing(*this, uniform_data.raytrace),
         velocity(*this),
         motion_blur(*this),
         depth_of_field(*this),

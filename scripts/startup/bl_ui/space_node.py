@@ -1004,6 +1004,7 @@ class NODE_MT_context_menu(Menu):
     def draw(self, context):
         snode = context.space_data
         is_nested = (len(snode.path) > 1)
+        parent_tree_index = len(snode.path) - 2
         is_geometrynodes = snode.tree_type == 'GeometryNodeTree'
         group = snode.edit_tree
 
@@ -1033,8 +1034,10 @@ class NODE_MT_context_menu(Menu):
 
             if is_nested:
                 layout.separator()
-
-                layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
+                layout.operator(
+                    "node.tree_path_parent",
+                    text="Exit Group",
+                    icon='FILE_PARENT').parent_tree_index = parent_tree_index
 
             return
 
@@ -1074,8 +1077,12 @@ class NODE_MT_context_menu(Menu):
                 layout.operator("node.group_edit", text="Toggle Edit Group", icon="NODE_EDITGROUP").exit = False
                 layout.operator("node.group_ungroup", text="Ungroup", icon="NODE_UNGROUP")
 
+                #BFA - only show if you are actually in a nodegroup
                 if is_nested:
-                    layout.operator("node.tree_path_parent", text="Exit Group", icon='FILE_PARENT')
+                    layout.operator(
+                        "node.tree_path_parent",
+                        text="Exit Group",
+                        icon='FILE_PARENT').parent_tree_index = parent_tree_index
 
                 layout.separator()
 

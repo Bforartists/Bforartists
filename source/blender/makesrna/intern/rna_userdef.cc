@@ -112,7 +112,7 @@ static const EnumPropertyItem rna_enum_date_format_items[] = {
      "DEFAULT",
      0,
      "Default",
-     "Default date formating based on output language"},
+     "Default date formatting based on output language"},
     {int(date_string::DateFormat::LE_Slash),
      "LE_SLASH",
      0,

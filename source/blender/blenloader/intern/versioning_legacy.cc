@@ -1390,7 +1390,6 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 
       if (ob->pose) {
         for (bPoseChannel &pchan : ob->pose->chanbase) {
-          /* NOTE: pchan->bone is also lib-link stuff. */
           if (pchan.limitmin[0] == 0.0f && pchan.limitmax[0] == 0.0f) {
             pchan.limitmin[0] = pchan.limitmin[1] = pchan.limitmin[2] = -180.0f;
             pchan.limitmax[0] = pchan.limitmax[1] = pchan.limitmax[2] = 180.0f;

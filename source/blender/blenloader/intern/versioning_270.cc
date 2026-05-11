@@ -284,9 +284,9 @@ static void do_version_hue_sat_node(bNodeTree *ntree, bNode *node)
 
   /* Convert value from old storage to new sockets. */
   NodeHueSat *nhs = static_cast<NodeHueSat *>(node->storage);
-  bNodeSocket *hue = bke::node_find_socket(*node, SOCK_IN, "Hue");
-  bNodeSocket *saturation = bke::node_find_socket(*node, SOCK_IN, "Saturation");
-  bNodeSocket *value = bke::node_find_socket(*node, SOCK_IN, "Value");
+  bNodeSocket *hue = bke::node_find_socket(*node, SOCK_IN, "Hue"_ustr);
+  bNodeSocket *saturation = bke::node_find_socket(*node, SOCK_IN, "Saturation"_ustr);
+  bNodeSocket *value = bke::node_find_socket(*node, SOCK_IN, "Value"_ustr);
   if (hue == nullptr) {
     hue = bke::node_add_static_socket(
         *ntree, *node, SOCK_IN, SOCK_FLOAT, PROP_FACTOR, "Hue", "Hue");
