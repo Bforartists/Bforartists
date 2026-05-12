@@ -56,6 +56,15 @@ class OperatorEntry:
                 setattr(props, key, value)
 
 
+def draw_entries(layout, context, entries):
+    column_count = toolsystem_column_count(context.region)
+
+    if column_count == 4:
+        draw_text_buttons(layout, entries)
+    else:
+        draw_icon_buttons(layout, entries, column_count)
+
+
 def draw_text_buttons(layout, entries):
     col = layout.column(align=True)
     col.scale_y = 2
@@ -146,7 +155,6 @@ class VIEW3D_PT_object_tab_transform(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         obj = context.object
@@ -538,7 +546,6 @@ class VIEW3D_PT_object_tab_mirror(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
 
         #text buttons
         if column_count == 4:
@@ -658,7 +665,6 @@ class VIEW3D_PT_object_tab_mirror_local(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -905,7 +911,6 @@ class VIEW3D_PT_utility_tab_objectdata(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -1097,7 +1102,6 @@ class VIEW3D_PT_utility_tab_convert(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -1221,7 +1225,6 @@ class VIEW3D_PT_mesh_tab_merge(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
         obedit = bpy.context.edit_object
 
@@ -1558,7 +1561,6 @@ class VIEW3D_PT_vertex_tab_vertex(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -1677,7 +1679,6 @@ class VIEW3D_PT_edge_tab_Edge(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         with_freestyle = bpy.app.build_options.freestyle
@@ -1859,7 +1860,6 @@ class VIEW3D_PT_face_tab_face(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -1996,7 +1996,6 @@ class VIEW3D_PT_uv_tab_uv(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -3292,7 +3291,7 @@ class VIEW3D_PT_gp_paint_tab_paint(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_armature_tab_armature(Panel):
+class VIEW3D_PT_armature_tab_armature(Panel):
     bl_label = "Armature"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3469,7 +3468,7 @@ class VIEW3D_PT_gp_armature_tab_armature(Panel):
                 col.operator("armature.parent_clear", text="", icon="PARENT_CLEAR")
 
 
-class VIEW3D_PT_gp_armature_tab_recalcboneroll(Panel):
+class VIEW3D_PT_armature_tab_recalcboneroll(Panel):
     bl_label = "Recalculate Bone Roll"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3632,7 +3631,7 @@ class VIEW3D_PT_gp_armature_tab_recalcboneroll(Panel):
                 col.operator("armature.calculate_roll", text= "", icon="CURSOR").type = 'CURSOR'
 
 
-class VIEW3D_PT_gp_armature_tab_names(Panel):
+class VIEW3D_PT_armature_tab_names(Panel):
     bl_label = "Names"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3648,7 +3647,6 @@ class VIEW3D_PT_gp_armature_tab_names(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -3703,7 +3701,7 @@ class VIEW3D_PT_gp_armature_tab_names(Panel):
                 col.operator("armature.flip_names", text="", icon="FLIP")
 
 
-class VIEW3D_PT_gp_pose_tab_pose(Panel):
+class VIEW3D_PT_pose_tab_pose(Panel):
     bl_label = "Pose"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3719,7 +3717,6 @@ class VIEW3D_PT_gp_pose_tab_pose(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -3774,7 +3771,7 @@ class VIEW3D_PT_gp_pose_tab_pose(Panel):
                 col.operator("poselib.create_pose_asset", text="", icon="ASSET_MANAGER")
 
 
-class VIEW3D_PT_gp_pose_tab_cleartransform(Panel):
+class VIEW3D_PT_pose_tab_cleartransform(Panel):
     bl_label = "Clear Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3805,7 +3802,7 @@ class VIEW3D_PT_gp_pose_tab_cleartransform(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_pose_tab_apply(Panel):
+class VIEW3D_PT_pose_tab_apply(Panel):
     bl_label = "Apply"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3833,7 +3830,7 @@ class VIEW3D_PT_gp_pose_tab_apply(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
+class VIEW3D_PT_pose_tab_inbetweens(Panel):
     bl_label = "In-Betweens"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3861,7 +3858,7 @@ class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_pose_tab_propagate(Panel):
+class VIEW3D_PT_pose_tab_propagate(Panel):
     bl_label = "Propagate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3890,7 +3887,7 @@ class VIEW3D_PT_gp_pose_tab_propagate(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
+class VIEW3D_PT_pose_tab_motionpaths(Panel):
     bl_label = "Motion Paths"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3917,7 +3914,7 @@ class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_pose_tab_ik(Panel):
+class VIEW3D_PT_pose_tab_ik(Panel):
     bl_label = "IK"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3942,7 +3939,7 @@ class VIEW3D_PT_gp_pose_tab_ik(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_pose_tab_constraints(Panel):
+class VIEW3D_PT_pose_tab_constraints(Panel):
     bl_label = "Constraints"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3969,7 +3966,7 @@ class VIEW3D_PT_gp_pose_tab_constraints(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_pose_tab_names(Panel):
+class VIEW3D_PT_pose_tab_names(Panel):
     bl_label = "Names"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4132,20 +4129,20 @@ classes = (
     VIEW3D_PT_gp_paint_tab_paint,
 
     # armature edit mode
-    VIEW3D_PT_gp_armature_tab_armature,
-    VIEW3D_PT_gp_armature_tab_recalcboneroll,
-    VIEW3D_PT_gp_armature_tab_names,
+    VIEW3D_PT_armature_tab_armature,
+    VIEW3D_PT_armature_tab_recalcboneroll,
+    VIEW3D_PT_armature_tab_names,
 
     #armature pose mode
-    VIEW3D_PT_gp_pose_tab_pose,
-    VIEW3D_PT_gp_pose_tab_cleartransform,
-    VIEW3D_PT_gp_pose_tab_apply,
-    VIEW3D_PT_gp_pose_tab_inbetweens,
-    VIEW3D_PT_gp_pose_tab_propagate,
-    VIEW3D_PT_gp_pose_tab_motionpaths,
-    VIEW3D_PT_gp_pose_tab_ik,
-    VIEW3D_PT_gp_pose_tab_constraints,
-    VIEW3D_PT_gp_pose_tab_names,
+    VIEW3D_PT_pose_tab_pose,
+    VIEW3D_PT_pose_tab_cleartransform,
+    VIEW3D_PT_pose_tab_apply,
+    VIEW3D_PT_pose_tab_inbetweens,
+    VIEW3D_PT_pose_tab_propagate,
+    VIEW3D_PT_pose_tab_motionpaths,
+    VIEW3D_PT_pose_tab_ik,
+    VIEW3D_PT_pose_tab_constraints,
+    VIEW3D_PT_pose_tab_names,
 
     # bfa - separated tooltips
     MASK_MT_flood_fill_invert,
