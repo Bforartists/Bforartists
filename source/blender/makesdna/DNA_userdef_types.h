@@ -625,30 +625,43 @@ struct bUserMenu {
 struct bUserMenuItem {
   struct bUserMenuItem *next = nullptr, *prev = nullptr;
   char ui_name[64] = "";
-  eUserMenu_Type type = {};
-  char _pad0[7] = {};
+  char type = 0;
+  char _pad0[3] = {};
+  /* BFA: Quick Favorites context-aware filtering - Original space type where this item was added */
+  char space_type = 0;
+  /* BFA: Quick Favorites context-aware filtering - Original context where this item was added */
+  char context[32] = "";
+  /* BFA: Quick Favorites context-aware filtering - Original mode where this item was added */
+  char mode = 0;
+  char _pad1[2] = {};  /* BFA: Adjusted padding for new mode field */
 };
 
+/* BFA: Quick Favorites - Operator menu item with context-aware filtering */
 struct bUserMenuItem_Op {
   bUserMenuItem item;
   char op_idname[64] = "";
   struct IDProperty *prop = nullptr;
   char op_prop_enum[64] = "";
   char opcontext = 0; /* #wm::OpCallContext */
-  char _pad0[7] = {};
+  char _pad0[3] = {};
+  int icon = 0; /* icon ID for the operator button */
 };
 
+/* BFA: Quick Favorites - Menu menu item with context-aware filtering */
 struct bUserMenuItem_Menu {
   bUserMenuItem item;
   char mt_idname[64] = "";
+  int icon = 0; /* icon ID for the menu button */
+  char _pad[4] = {}; /* padding for 64-bit alignment */
 };
 
+/* BFA: Quick Favorites - Property menu item with context-aware filtering */
 struct bUserMenuItem_Prop {
   bUserMenuItem item;
   char context_data_path[256] = "";
   char prop_id[64] = "";
   int prop_index = 0;
-  char _pad0[4] = {};
+  int icon = 0; /* icon ID for the property button */
 };
 
 struct bUserAssetLibrary {
