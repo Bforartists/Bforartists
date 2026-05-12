@@ -720,7 +720,6 @@ class VIEW3D_PT_object_tab_clear(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("object.location_clear", text="Location", icon="CLEARMOVE", props={"clear_delta": False}),
@@ -730,10 +729,7 @@ class VIEW3D_PT_object_tab_clear(Panel):
             OperatorEntry("object.origin_clear", text="Origin", icon="CLEARORIGIN"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_object_tab_apply(Panel):
@@ -752,7 +748,6 @@ class VIEW3D_PT_object_tab_apply(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = [
             OperatorEntry("view3d.tb_apply_location", text="Location", icon="APPLYMOVE"),
@@ -778,10 +773,7 @@ class VIEW3D_PT_object_tab_apply(Panel):
                     props={"join_on_apply": False, "boolean_on_apply": False, "remesh_on_apply": True}),
             ))
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_object_tab_apply_delta(Panel):
@@ -800,7 +792,6 @@ class VIEW3D_PT_object_tab_apply_delta(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("object.transforms_to_deltas", text="Location to Deltas", icon="APPLYMOVEDELTA", 
@@ -815,10 +806,7 @@ class VIEW3D_PT_object_tab_apply_delta(Panel):
             OperatorEntry("object.anim_transforms_to_deltas", icon="APPLYANIDELTA"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_object_tab_snap(Panel):
@@ -836,7 +824,6 @@ class VIEW3D_PT_object_tab_snap(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon="SELECTIONTOCURSOR", props={"use_offset": False}),
@@ -850,10 +837,7 @@ class VIEW3D_PT_object_tab_snap(Panel):
             OperatorEntry("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon="CURSORTOGRID"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_object_tab_shading(Panel):
@@ -871,7 +855,6 @@ class VIEW3D_PT_object_tab_shading(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("object.shade_smooth", icon="SHADING_SMOOTH"),
@@ -879,10 +862,7 @@ class VIEW3D_PT_object_tab_shading(Panel):
             OperatorEntry("object.shade_smooth_by_angle", text="Shade Smooth by Angle", icon="NORMAL_SMOOTH"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 # ------------------------ Utility
 
@@ -901,17 +881,13 @@ class VIEW3D_PT_utility_tab_parent(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("object.parent_set", icon="PARENT_SET"),
             OperatorEntry("object.parent_clear", icon="PARENT_CLEAR"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_utility_tab_objectdata(Panel):
@@ -1073,7 +1049,6 @@ class VIEW3D_PT_utility_tab_constraints(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("object.constraint_add_with_targets", icon="CONSTRAINT_DATA"),
@@ -1081,10 +1056,7 @@ class VIEW3D_PT_utility_tab_constraints(Panel):
             OperatorEntry("object.constraints_clear", icon="CLEAR_CONSTRAINT"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_utility_tab_collection(Panel):
@@ -1102,16 +1074,12 @@ class VIEW3D_PT_utility_tab_collection(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("object.move_to_collection", icon="GROUP"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_utility_tab_convert(Panel):
@@ -1383,7 +1351,6 @@ class VIEW3D_PT_mesh_tab_split(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mesh.split", text="Selection", icon="SPLIT"),
@@ -1391,10 +1358,7 @@ class VIEW3D_PT_mesh_tab_split(Panel):
             OperatorEntry("mesh.edge_split", text="Faces/Edges by Vertices", icon="SPLIT_BYVERTICES", props={"type":'VERT'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mesh_tab_separate(Panel):
@@ -1413,7 +1377,6 @@ class VIEW3D_PT_mesh_tab_separate(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mesh.separate", text="Selection", icon="SEPARATE", props={"type": 'SELECTED'}),
@@ -1421,10 +1384,7 @@ class VIEW3D_PT_mesh_tab_separate(Panel):
             OperatorEntry("mesh.separate", text="By Loose Parts", icon="SEPARATE_LOOSE", props={"type": 'LOOSE'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mesh_tab_tools(Panel):
@@ -1446,7 +1406,6 @@ class VIEW3D_PT_mesh_tab_tools(Panel):
         from math import pi
         with_bullet = bpy.app.build_options.bullet
 
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mesh.extrude_repeat", icon="REPEAT"),
@@ -1459,10 +1418,7 @@ class VIEW3D_PT_mesh_tab_tools(Panel):
             OperatorEntry("mesh.symmetry_snap", icon="SNAP_SYMMETRY"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mesh_tab_normals(Panel):
@@ -1481,7 +1437,6 @@ class VIEW3D_PT_mesh_tab_normals(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mesh.normals_make_consistent", text="Recalculate Outside", icon="RECALC_NORMALS", props={"inside": False}),
@@ -1489,10 +1444,7 @@ class VIEW3D_PT_mesh_tab_normals(Panel):
             OperatorEntry("mesh.flip_normals", text="Flip", icon="FLIP_NORMALS"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mesh_tab_shading(Panel):
@@ -1511,7 +1463,6 @@ class VIEW3D_PT_mesh_tab_shading(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mesh.faces_shade_smooth", icon="SHADING_SMOOTH"),
@@ -1524,10 +1475,7 @@ class VIEW3D_PT_mesh_tab_shading(Panel):
             OperatorEntry("mesh.mark_sharp", text="Sharp Vertices", icon="SHADING_VERT_SHARP", props={"use_verts": True}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mesh_tab_cleanup(Panel):
@@ -1546,7 +1494,6 @@ class VIEW3D_PT_mesh_tab_cleanup(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mesh.delete_loose", icon="DELETE"),
@@ -1561,10 +1508,7 @@ class VIEW3D_PT_mesh_tab_cleanup(Panel):
             OperatorEntry("mesh.fill_holes", icon="FILL_HOLE"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mesh_tab_dissolve(Panel):
@@ -1583,7 +1527,6 @@ class VIEW3D_PT_mesh_tab_dissolve(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mesh.dissolve_verts", icon="DISSOLVE_VERTS"),
@@ -1596,10 +1539,7 @@ class VIEW3D_PT_mesh_tab_dissolve(Panel):
             OperatorEntry("mesh.edge_collapse", icon="EDGE_COLLAPSE"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_vertex_tab_vertex(Panel):
@@ -2255,16 +2195,12 @@ class VIEW3D_PT_sculpt_tab_transform(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("sculpt.mesh_filter", text="Sphere", icon="SPHERE", props={"type": 'SPHERE'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_sculpt_tab_sculpt(Panel):
@@ -2283,7 +2219,6 @@ class VIEW3D_PT_sculpt_tab_sculpt(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("paint.hide_show", text="Box Hide", icon="BOX_HIDE", props={"action": 'HIDE'}),
@@ -2302,10 +2237,7 @@ class VIEW3D_PT_sculpt_tab_sculpt(Panel):
             OperatorEntry("sculpt.sample_color", text="Sample Color", icon="EYEDROPPER"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_sculpt_tab_filters(Panel):
@@ -2324,7 +2256,6 @@ class VIEW3D_PT_sculpt_tab_filters(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("sculpt.mesh_filter", text="Smooth", icon="PARTICLEBRUSH_SMOOTH", props={"type": 'SMOOTH'}),
@@ -2338,10 +2269,7 @@ class VIEW3D_PT_sculpt_tab_filters(Panel):
             OperatorEntry("sculpt.mesh_filter", text="Randomize", icon="RANDOMIZE", props={"type": 'RANDOM'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
@@ -2360,7 +2288,6 @@ class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("sculpt.set_pivot_position", text="Pivot to Origin", icon="PIVOT_TO_ORIGIN", props={"mode": 'ORIGIN'}),
@@ -2370,10 +2297,7 @@ class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
             OperatorEntry("sculpt.set_pivot_position", text="Pivot to Surface Under Cursor", icon="PIVOT_TO_SURFACE", props={"mode": 'SURFACE'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mask_tab_mask(Panel):
@@ -2392,7 +2316,6 @@ class VIEW3D_PT_mask_tab_mask(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("mask.flood_fill_invert", text="Invert Mask", icon="INVERT_MASK"),
@@ -2420,10 +2343,7 @@ class VIEW3D_PT_mask_tab_mask(Panel):
             OperatorEntry("sculpt.mask_from_boundary", text="Mask from Face Sets Boundary", icon="MASK_FACE_SETS_BOUNDARY", props={"settings_source": 'OPERATOR',"boundary_mode": "FACE_SETS"}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mask_tab_random_mask(Panel):
@@ -2442,7 +2362,6 @@ class VIEW3D_PT_mask_tab_random_mask(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("sculpt.mask_init", text='Per Vertex', icon="SELECT_UNGROUPED_VERTS", props={"mode": 'RANDOM_PER_VERTEX'}),
@@ -2450,10 +2369,7 @@ class VIEW3D_PT_mask_tab_random_mask(Panel):
             OperatorEntry("sculpt.mask_init", text='Per Loose Part', icon="SELECT_LOOSE", props={"mode": 'RANDOM_PER_LOOSE_PART'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_facesets_tab_facesets(Panel):
@@ -2472,7 +2388,6 @@ class VIEW3D_PT_facesets_tab_facesets(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("sculpt.face_sets_create", text='Face Set from Masked', icon="MASK_FACE_SETS", props={"mode": 'MASKED'}),
@@ -2497,10 +2412,7 @@ class VIEW3D_PT_facesets_tab_facesets(Panel):
             OperatorEntry("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon="COLOR"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_facesets_tab_init_facesets(Panel):
@@ -2519,7 +2431,6 @@ class VIEW3D_PT_facesets_tab_init_facesets(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("sculpt.face_sets_init", text='By Loose Parts', icon="SELECT_LOOSE", props={"mode": 'LOOSE_PARTS'}),
@@ -2532,10 +2443,7 @@ class VIEW3D_PT_facesets_tab_init_facesets(Panel):
             OperatorEntry("sculpt.face_sets_init", text='By Sharp Edges', icon="SELECT_SHARPEDGES", props={"mode": 'SHARP_EDGES'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_paint_tab_paint(Panel):
@@ -2554,7 +2462,6 @@ class VIEW3D_PT_paint_tab_paint(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("paint.vertex_color_set", icon="COLOR"),
@@ -2568,10 +2475,7 @@ class VIEW3D_PT_paint_tab_paint(Panel):
             OperatorEntry("paint.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_paint_tab_colorpicker(Panel):
@@ -2589,16 +2493,12 @@ class VIEW3D_PT_paint_tab_colorpicker(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("paint.sample_color", text="Color Picker", icon="EYEDROPPER"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_weights_tab_weights(Panel):
@@ -2616,7 +2516,6 @@ class VIEW3D_PT_weights_tab_weights(Panel):
         return view.show_toolshelf_tabs == True
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("paint.weight_from_bones", text="Assign Automatic from Bones", icon="BONE_DATA", props={"type": 'AUTOMATIC'}),
@@ -2638,10 +2537,7 @@ class VIEW3D_PT_weights_tab_weights(Panel):
             OperatorEntry("paint.weight_set", icon="MOD_VERTEX_WEIGHT"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 # ------------------------ Curve Edit Mode
@@ -2661,7 +2557,6 @@ class VIEW3D_PT_curve_tab_curve(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curve.split", icon="SPLIT"),
@@ -2678,10 +2573,7 @@ class VIEW3D_PT_curve_tab_curve(Panel):
             OperatorEntry("curve.dissolve_verts", icon="DISSOLVE_VERTS"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_curve_tab_controlpoints(Panel):
@@ -2700,7 +2592,6 @@ class VIEW3D_PT_curve_tab_controlpoints(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
@@ -2720,10 +2611,7 @@ class VIEW3D_PT_curve_tab_controlpoints(Panel):
             OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_curve_tab_controlpoints_surface(Panel):
@@ -2742,7 +2630,6 @@ class VIEW3D_PT_curve_tab_controlpoints_surface(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
@@ -2754,10 +2641,7 @@ class VIEW3D_PT_curve_tab_controlpoints_surface(Panel):
             OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 # ------------------------ Curves (Hair/Fur) Edit Mode
@@ -2777,7 +2661,6 @@ class VIEW3D_PT_curves_tab_edit_curves(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curves.duplicate_move", icon="DUPLICATE"),
@@ -2789,10 +2672,7 @@ class VIEW3D_PT_curves_tab_edit_curves(Panel):
             OperatorEntry("curves.delete", icon="DELETE"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_curves_tab_edit_controlpoints(Panel):
@@ -2811,16 +2691,12 @@ class VIEW3D_PT_curves_tab_edit_controlpoints(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curves.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_curves_tab_edit_segments(Panel):
@@ -2839,17 +2715,13 @@ class VIEW3D_PT_curves_tab_edit_segments(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curves.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
             OperatorEntry("curves.switch_direction", text="Switch Direction", icon="SWITCH_DIRECTION"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
@@ -2870,7 +2742,6 @@ class VIEW3D_PT_curves_tab_sculpt_curves(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curves.snap_curves_to_surface", text="Snap to Deformed Surface", icon="SNAP_SURFACE", props={"attach_mode": "DEFORM"}),
@@ -2879,10 +2750,7 @@ class VIEW3D_PT_curves_tab_sculpt_curves(Panel):
             OperatorEntry("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 # ------------------------ Surface
@@ -2902,7 +2770,6 @@ class VIEW3D_PT_surface_tab_surface(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curve.spin", icon="SPIN"),
@@ -2913,10 +2780,7 @@ class VIEW3D_PT_surface_tab_surface(Panel):
             OperatorEntry("curve.cyclic_toggle", icon="TOGGLE_CYCLIC"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_segments_tab_segments(Panel):
@@ -2935,17 +2799,13 @@ class VIEW3D_PT_segments_tab_segments(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("curve.subdivide", icon="SUBDIVIDE_EDGES"),
             OperatorEntry("curve.switch_direction", icon="SWITCH_DIRECTION"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 # ------------------------ Grease Pencil
@@ -2965,7 +2825,6 @@ class VIEW3D_PT_gp_gpencil_tab_dissolve(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("grease_pencil.dissolve", text="Dissolve", icon="DISSOLVE_VERTS", props={"type": 'POINTS'}),
@@ -2973,10 +2832,7 @@ class VIEW3D_PT_gp_gpencil_tab_dissolve(Panel):
             OperatorEntry("grease_pencil.dissolve", text="Dissolve Unselected", icon="DISSOLVE_UNSELECTED", props={"type": 'UNSELECT'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
@@ -2995,7 +2851,6 @@ class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("grease_pencil.clean_loose", text="Clean Loose Points", icon="DELETE_LOOSE"),
@@ -3006,10 +2861,7 @@ class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
             OperatorEntry("grease_pencil.remove_fill_guides", icon="REMOVE_GUIDES"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
@@ -3028,7 +2880,6 @@ class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("grease_pencil.separate", text="Separate Selected", icon="SEPARATE", props={"mode": 'SELECTED'}),
@@ -3038,10 +2889,7 @@ class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
             OperatorEntry("grease_pencil.stroke_split", text="Stroke Split", icon="SPLIT"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
@@ -3060,7 +2908,6 @@ class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
@@ -3084,10 +2931,7 @@ class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
             OperatorEntry("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon="SPLINE_RESOLUTION"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 # BFA - Legacy
@@ -3165,7 +3009,6 @@ class VIEW3D_PT_gp_stroke_tab_togglecaps(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("grease_pencil.caps_set", text="Rounded", icon="TOGGLECAPS_DEFAULT", props={"type": 'ROUND'}),
@@ -3174,10 +3017,7 @@ class VIEW3D_PT_gp_stroke_tab_togglecaps(Panel):
             OperatorEntry("grease_pencil.caps_set", text="Default", icon="TOGGLECAPS_END", props={"type": 'END'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 # BFA - legacy
@@ -3271,17 +3111,13 @@ class VIEW3D_PT_gp_point_tab_point(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION"),
             OperatorEntry("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_draw_tab_draw(Panel):
@@ -3300,17 +3136,13 @@ class VIEW3D_PT_gp_draw_tab_draw(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE"),
             OperatorEntry("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_draw_tab_animation(Panel):
@@ -3328,7 +3160,6 @@ class VIEW3D_PT_gp_draw_tab_animation(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon="ADD"),
@@ -3343,10 +3174,7 @@ class VIEW3D_PT_gp_draw_tab_animation(Panel):
             OperatorEntry("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE", props={"use_selection": True}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
@@ -3367,7 +3195,6 @@ class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
         layout = self.layout
 
         ob = context.active_object
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("gpencil.frame_clean_fill", text="Boundary Strokes", icon="CLEAN_CHANNELS", props={"mode": 'ACTIVE'}),
@@ -3377,10 +3204,7 @@ class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
             OperatorEntry("gpencil.recalc_geometry", text="Recalculate Geometry", icon="FILE_REFRESH"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_weights_tab_weights(Panel):
@@ -3399,7 +3223,6 @@ class VIEW3D_PT_gp_weights_tab_weights(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("gpencil.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL"),
@@ -3411,10 +3234,7 @@ class VIEW3D_PT_gp_weights_tab_weights(Panel):
             OperatorEntry("gpencil.weight_sample", text="Sample Weight", icon="EYEDROPPER"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_weights_tab_generate_weights(Panel):
@@ -3433,17 +3253,13 @@ class VIEW3D_PT_gp_weights_tab_generate_weights(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("gpencil.generate_weights", text="With Empty Groups", icon="PARTICLEBRUSH_WEIGHT", props={"mode": 'NAME'}),
             OperatorEntry("gpencil.generate_weights", text="With Automatic Weights", icon="PARTICLEBRUSH_WEIGHT", props={"mode": 'AUTO'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_paint_tab_paint(Panel):
@@ -3462,7 +3278,6 @@ class VIEW3D_PT_gp_paint_tab_paint(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("gpencil.vertex_color_set", text="Set Vertex Color", icon="NODE_VERTEX_COLOR"),
@@ -3474,10 +3289,7 @@ class VIEW3D_PT_gp_paint_tab_paint(Panel):
             OperatorEntry("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_armature_tab_armature(Panel):
@@ -3978,7 +3790,6 @@ class VIEW3D_PT_gp_pose_tab_cleartransform(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("pose.transforms_clear", text="All", icon="CLEAR"),
@@ -3991,10 +3802,7 @@ class VIEW3D_PT_gp_pose_tab_cleartransform(Panel):
             OperatorEntry("pose.user_transforms_clear", text="Reset Unkeyed", icon="RESET"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_pose_tab_apply(Panel):
@@ -4013,7 +3821,6 @@ class VIEW3D_PT_gp_pose_tab_apply(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("pose.armature_apply", icon="MOD_ARMATURE"),
@@ -4023,10 +3830,7 @@ class VIEW3D_PT_gp_pose_tab_apply(Panel):
             OperatorEntry("object.assign_property_defaults", icon="ASSIGN", props={"process_bones": True}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
@@ -4045,7 +3849,6 @@ class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("pose.blend_with_rest", icon="PUSH_POSE"),
@@ -4055,10 +3858,7 @@ class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
             OperatorEntry("pose.blend_to_neighbor", icon="BLEND_TO_NEIGHBOUR"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_pose_tab_propagate(Panel):
@@ -4077,7 +3877,6 @@ class VIEW3D_PT_gp_pose_tab_propagate(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("pose.propagate", text="To Next Keyframe", icon="PROPAGATE_NEXT", props={"mode": 'NEXT_KEY'}),
@@ -4088,10 +3887,7 @@ class VIEW3D_PT_gp_pose_tab_propagate(Panel):
             OperatorEntry("pose.propagate", text="On Selected Markers", icon="PROPAGATE_MARKER", props={"mode": 'SELECTED_MARKERS'}),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
@@ -4110,7 +3906,6 @@ class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("pose.paths_calculate", text="Calculate", icon="MOTIONPATHS_CALCULATE"),
@@ -4119,10 +3914,7 @@ class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
             OperatorEntry("object.paths_update_visible", text="Update All Motion Paths", icon="MOTIONPATHS_UPDATE_ALL"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_pose_tab_ik(Panel):
@@ -4141,17 +3933,13 @@ class VIEW3D_PT_gp_pose_tab_ik(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("pose.ik_add", icon="ADD_IK"),
             OperatorEntry("pose.ik_clear", icon="CLEAR_IK"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_pose_tab_constraints(Panel):
@@ -4170,7 +3958,6 @@ class VIEW3D_PT_gp_pose_tab_constraints(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("pose.constraint_add_with_targets", icon="CONSTRAINT_DATA"),
@@ -4179,10 +3966,7 @@ class VIEW3D_PT_gp_pose_tab_constraints(Panel):
             OperatorEntry("pose.constraints_clear", icon="CLEAR_CONSTRAINT"),
         )
 
-        if column_count == 4:
-            draw_text_buttons(layout, entries)
-        else:
-            draw_icon_buttons(layout, entries, column_count)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_pose_tab_names(Panel):
