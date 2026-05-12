@@ -4038,8 +4038,7 @@ class VIEW3D_PT_pose_tab_names(Panel):
 
 
 classes = (
-
-    #object menu
+    # Object
     VIEW3D_PT_object_tab_transform,
     VIEW3D_PT_object_tab_set_origin,
     VIEW3D_PT_object_tab_mirror,
@@ -4050,7 +4049,7 @@ classes = (
     VIEW3D_PT_object_tab_snap,
     VIEW3D_PT_object_tab_shading,
 
-    #Utility menu
+    # Utility
     VIEW3D_PT_utility_tab_parent,
     VIEW3D_PT_utility_tab_objectdata,
     VIEW3D_PT_utility_tab_assets,
@@ -4058,7 +4057,7 @@ classes = (
     VIEW3D_PT_utility_tab_collection,
     VIEW3D_PT_utility_tab_convert,
 
-    #mesh menu
+    # Mesh (Edit Mode)
     VIEW3D_PT_mesh_tab_merge,
     VIEW3D_PT_mesh_tab_split,
     VIEW3D_PT_mesh_tab_separate,
@@ -4067,14 +4066,12 @@ classes = (
     VIEW3D_PT_mesh_tab_shading,
     VIEW3D_PT_mesh_tab_cleanup,
     VIEW3D_PT_mesh_tab_dissolve,
-
-    #mesh edit mode
     VIEW3D_PT_vertex_tab_vertex,
     VIEW3D_PT_edge_tab_Edge,
     VIEW3D_PT_face_tab_face,
     VIEW3D_PT_uv_tab_uv,
 
-    #mesh sculpt mode
+    # Mesh (Sculpt Mode)
     VIEW3D_PT_sculpt_tab_transform,
     VIEW3D_PT_sculpt_tab_sculpt,
     VIEW3D_PT_sculpt_tab_filters,
@@ -4084,29 +4081,29 @@ classes = (
     VIEW3D_PT_facesets_tab_facesets,
     VIEW3D_PT_facesets_tab_init_facesets,
 
-    #mesh vertex paint mode
+    # Mesh (Vertex Paint Mode)
     VIEW3D_PT_paint_tab_paint,
     VIEW3D_PT_paint_tab_colorpicker,
 
-    #mesh weight paint mode
+    # Mesh (Weight Paint Mode)
     VIEW3D_PT_weights_tab_weights,
 
-    #curve edit mode
+    # Curve (Edit Mode)
     VIEW3D_PT_curve_tab_curve,
     VIEW3D_PT_curve_tab_controlpoints,
     VIEW3D_PT_surface_tab_surface,
     VIEW3D_PT_curve_tab_controlpoints_surface,
     VIEW3D_PT_segments_tab_segments,
 
-    # Curves (Hair/Fur) Edit Mode
+    # Curves [Hair/Fur] (Edit Mode)
     VIEW3D_PT_curves_tab_edit_curves,
     VIEW3D_PT_curves_tab_edit_controlpoints,
     VIEW3D_PT_curves_tab_edit_segments,
 
-    # Curves (Hair/Fur) Sculpt Mode
+    # Curves [Hair/Fur] (Sculpt Mode)
     VIEW3D_PT_curves_tab_sculpt_curves,
 
-    # grease pencil edit mode
+    # Grease Pencil (Edit Mode)
     VIEW3D_PT_gp_gpencil_tab_dissolve,
     VIEW3D_PT_gp_gpencil_tab_cleanup,
     VIEW3D_PT_gp_gpencil_tab_separate,
@@ -4116,24 +4113,24 @@ classes = (
     #VIEW3D_PT_gp_stroke_tab_reproject, # BFA - Legacy
     VIEW3D_PT_gp_point_tab_point,
 
-    # grease pencil draw mode
+    # Grease Pencil (Draw Mode)
     VIEW3D_PT_gp_draw_tab_draw,
     VIEW3D_PT_gp_draw_tab_animation,
     VIEW3D_PT_gp_draw_tab_cleanup,
 
-    # grease pencil weights mode
+    # Grease Pencil (Weight Paint Mode)
     VIEW3D_PT_gp_weights_tab_weights,
     VIEW3D_PT_gp_weights_tab_generate_weights,
 
-    # grease pencil vertex paint
+    # Grease Pencil (Vertex Paint Mode)
     VIEW3D_PT_gp_paint_tab_paint,
 
-    # armature edit mode
+    # Armature (Edit Mode)
     VIEW3D_PT_armature_tab_armature,
     VIEW3D_PT_armature_tab_recalcboneroll,
     VIEW3D_PT_armature_tab_names,
 
-    #armature pose mode
+    # Armature (Pose Mode)
     VIEW3D_PT_pose_tab_pose,
     VIEW3D_PT_pose_tab_cleartransform,
     VIEW3D_PT_pose_tab_apply,
@@ -4144,7 +4141,7 @@ classes = (
     VIEW3D_PT_pose_tab_constraints,
     VIEW3D_PT_pose_tab_names,
 
-    # bfa - separated tooltips
+    # Operators - separated tooltips
     MASK_MT_flood_fill_invert,
     MASK_MT_flood_fill_fill,
     MASK_MT_flood_fill_clear,
