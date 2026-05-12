@@ -348,12 +348,13 @@ class ShadowModule {
 
   void set_lights_data();
 
+  void set_view(View &view, int2 extent);
+
   /* Update all shadow regions visible inside the view.
    * If called multiple time for the same view, it will only do the depth buffer scanning
    * to check any new opaque surfaces.
-   * Expect the HiZ buffer to be up to date.
-   * Needs to be called after `LightModule::set_view();`. */
-  void set_view(View &view, int2 extent);
+   * Needs to be called after `LightModule::set_view();` and after `ShadowModule::set_view();`. */
+  void render(View &view, int2 extent);
 
   void debug_end_sync();
   void debug_draw(View &view, gpu::FrameBuffer *view_fb);

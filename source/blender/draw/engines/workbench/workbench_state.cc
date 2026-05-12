@@ -254,8 +254,8 @@ void SceneState::init(const DRWContext *context,
   draw_object_id = (draw_outline || draw_curvature);
 
   show_paint_bvh_debug = scene->toolsettings->sculpt ?
-                             scene->toolsettings->sculpt->paint.debug_flags &
-                                 PAINT_DEBUG_SHOW_BVH_NODES :
+                             (scene->toolsettings->sculpt->paint.debug_flags &
+                              PAINT_DEBUG_SHOW_BVH_NODES) != 0 :
                              false;
 };
 

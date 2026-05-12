@@ -511,6 +511,7 @@ class GRAPH_MT_channel(Menu):
         layout.operator_context = operator_context
         layout.operator_menu_enum("graph.fmodifier_add", "type", text="Add F-Curve Modifier").only_active = False
         layout.operator_context = "INVOKE_REGION_CHANNELS"
+        layout.operator("graph.fmodifier_delete", text="Delete F-Curve Modifiers") # BFA - WIP
 
         # BFA - Redundant operators now located in GRAPH_MT_channel_settings_toggle
         """

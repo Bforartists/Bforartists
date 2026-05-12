@@ -528,7 +528,7 @@ void psys_thread_context_free(ParticleThreadContext *ctx)
     MEM_delete(ctx->seams);
   }
   // if (ctx->vertpart) MEM_delete(ctx->vertpart);
-  kdtree_3d_free(ctx->tree);
+  kdtree_free<float3>(ctx->tree);
 
   if (ctx->clumpcurve != nullptr) {
     BKE_curvemapping_free(ctx->clumpcurve);
@@ -1370,17 +1370,17 @@ void psys_update_particle_tree(ParticleSystem *psys, float cfra)
         }
       }
 
-      kdtree_3d_free(psys->tree);
-      psys->tree = kdtree_3d_new(totpart);
+      kdtree_free<float3>(psys->tree);
+      psys->tree = kdtree_new<float3>(totpart);
 
       LOOP_SHOWN_PARTICLES
       {
         if (pa->alive == PARS_ALIVE) {
           const float *co = (pa->state.time == cfra) ? pa->prev_state.co : pa->state.co;
-          kdtree_3d_insert(psys->tree, p, co);
+          kdtree_insert<float3>(psys->tree, p, co);
         }
       }
-      kdtree_3d_balance(psys->tree);
+      kdtree_balance<float3>(psys->tree);
 
       psys->tree_frame = cfra;
     }

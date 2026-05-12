@@ -11,6 +11,7 @@
 #include "NOD_rna_define.hh"
 
 #include "node_function_util.hh"
+#include "node_shader_util.hh"
 
 namespace blender::nodes::node_fn_axes_to_rotation_cc {
 
@@ -150,6 +151,38 @@ static void node_build_multi_function(NodeMultiFunctionBuilder &builder)
       math::Axis::from_int(node.custom1), math::Axis::from_int(node.custom2));
 }
 
+static int node_gpu_material(GPUMaterial *mat,
+                             bNode *node,
+                             bNodeExecData * /*execdata*/,
+                             GPUNodeStack *in,
+                             GPUNodeStack *out)
+{
+  if (node->custom1 == node->custom2) {
+    return GPU_stack_link(mat, node, "axes_to_rotation_identity", in, out);
+  }
+
+  const float primary = float(node->custom1);
+  const float secondary = float(node->custom2);
+  /* Through cancellation this will set the last axis to be the one that's neither the primary
+   * nor secondary axis. */
+  const int tertiary_axis = (0 + 1 + 2) - node->custom1 - node->custom2;
+  const float tertiary = float(tertiary_axis);
+
+  /* Might have to invert the axis to make sure that the created matrix has determinant 1. */
+  const bool invert_tertiary = (node->custom2 + 1) % 3 == node->custom1;
+  const float tertiary_factor = invert_tertiary ? -1.0f : 1.0f;
+
+  return GPU_stack_link(mat,
+                        node,
+                        "axes_to_rotation",
+                        in,
+                        out,
+                        GPU_constant(&primary),
+                        GPU_constant(&secondary),
+                        GPU_constant(&tertiary),
+                        GPU_constant(&tertiary_factor));
+}
+
 static void node_extra_info(NodeExtraInfoParams &params)
 {
   if (params.node.custom1 == params.node.custom2) {
@@ -188,7 +221,7 @@ static void node_rna(StructRNA *srna)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  fn_node_type_base(&ntype, "FunctionNodeAxesToRotation"_ustr, FN_NODE_AXES_TO_ROTATION);
+  fn_cmp_node_type_base(&ntype, "FunctionNodeAxesToRotation"_ustr, FN_NODE_AXES_TO_ROTATION);
   ntype.ui_name = "Axes to Rotation";
   ntype.ui_description =
       "Create a rotation from a primary and (ideally orthogonal) secondary axis";
@@ -199,6 +232,7 @@ static void node_register()
   ntype.build_multi_function = node_build_multi_function;
   ntype.draw_buttons = node_layout;
   ntype.get_extra_info = node_extra_info;
+  ntype.gpu_fn = node_gpu_material;
   node_rna(ntype.rna_ext.srna);
   bke::node_register_type(ntype);
 }

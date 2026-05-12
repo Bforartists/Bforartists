@@ -325,14 +325,15 @@ def log_version_info():
     """Log comprehensive version information for debugging."""
     version_info = get_blender_version_info()
     
-    print("=== Blender Version Detection ===")
-    print(f"Version: {version_info['version_string']}")
-    print(f"Category: {version_info['version_category']}")
-    print(f"Compatibility Level: {version_info['compatibility_level']}")
-    print(f"Features: {version_info['features']}")
+    # DEBUG: Print detailed version info for troubleshooting
+    #print("=== Blender Version Detection ===")
+    #print(f"Version: {version_info['version_string']}")
+    #print(f"Category: {version_info['version_category']}")
+    #print(f"Compatibility Level: {version_info['compatibility_level']}")
+    #print(f"Features: {version_info['features']}")
     
     supported, reason = is_blender_version_supported()
-    print(f"Supported: {supported} - {reason}")
+    #print(f"Supported: {supported} - {reason}")
     
     warnings = get_version_compatibility_warnings()
     if warnings:
@@ -340,8 +341,9 @@ def log_version_info():
         for warning in warnings:
             print(f"  ⚠ {warning}")
     else:
-        print("No compatibility warnings")
-    print("==================================")
+        #print("No compatibility warnings")
+        pass
+    #print("==================================")
 
 
 # Library configuration - Only include libraries that exist in your packaged addon

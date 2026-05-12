@@ -212,10 +212,12 @@ static void curve_blend_read_data(BlendDataReader *reader, ID *id)
   /* Protect against integer overflow vulnerability. */
   CLAMP(cu->len_char32, 0, INT_MAX - 4);
 
-  BLO_read_pointer_array(reader, cu->totcol, reinterpret_cast<void **>(&cu->mat));
+  BLO_read_pointer_array_and_validate_size(reader, &cu->mat, &cu->totcol);
 
-  BLO_read_struct_array(reader, CharInfo, cu->len_char32 + 1, &cu->strinfo);
-  BLO_read_struct_array(reader, TextBox, cu->totbox, &cu->tb);
+  if (!BLO_read_array(reader, &cu->strinfo, cu->len_char32 + 1)) {
+    cu->len_char32 = 0;
+  }
+  BLO_read_array_and_validate_size(reader, &cu->tb, &cu->totbox);
 
   /* WARNING: for old files `cu->ob_type` won't be initialized,
    * versioning detects fonts based on `cu->vfont` (which won't have run yet)
@@ -258,10 +260,26 @@ static void curve_blend_read_data(BlendDataReader *reader, ID *id)
   cu->batch_cache = nullptr;
 
   for (Nurb &nu : cu->nurb) {
-    BLO_read_struct_array(reader, BezTriple, nu.pntsu, &nu.bezt);
-    BLO_read_struct_array(reader, BPoint, nu.pntsu * nu.pntsv, &nu.bp);
-    BLO_read_float_array(reader, KNOTSU(&nu), &nu.knotsu);
-    BLO_read_float_array(reader, KNOTSV(&nu), &nu.knotsv);
+    /* Only read the arrays that were written, so we don't get errors due
+     * to mismatched size. Checking nu.type to find the right arrays to read
+     * here is tricky as it is affected by versioning. */
+    bool ok = true;
+    if (nu.bezt) {
+      ok &= BLO_read_array(reader, &nu.bezt, nu.pntsu);
+    }
+    if (nu.bp) {
+      ok &= BLO_read_array(reader, &nu.bp, nu.pntsu, nu.pntsv);
+    }
+    if (nu.knotsu) {
+      ok &= BLO_read_array(reader, &nu.knotsu, KNOTSU(&nu));
+    }
+    if (nu.knotsv) {
+      ok &= BLO_read_array(reader, &nu.knotsv, KNOTSV(&nu));
+    }
+    if (!ok) {
+      nu.pntsu = 0;
+      nu.pntsv = 0;
+    }
     if (is_font == false) {
       nu.charidx = 0;
     }

@@ -672,10 +672,10 @@ std::optional<StringRefNull> node_static_socket_label(int type, int subtype);
 
 Span<bNodeSocketType *> node_socket_types_get();
 
-bNodeSocket *node_find_socket(bNode &node, eNodeSocketInOut in_out, StringRef identifier);
+bNodeSocket *node_find_socket(bNode &node, eNodeSocketInOut in_out, UString identifier);
 const bNodeSocket *node_find_socket(const bNode &node,
                                     eNodeSocketInOut in_out,
-                                    StringRef identifier);
+                                    UString identifier);
 bNodeSocket *node_add_socket(bNodeTree &ntree,
                              bNode &node,
                              eNodeSocketInOut in_out,

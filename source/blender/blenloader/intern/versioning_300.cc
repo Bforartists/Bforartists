@@ -698,7 +698,7 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
     if (!version_node_ensure_storage_or_invalidate(node)) {
       continue;
     }
-    bNodeSocket *old_geometry_socket = bke::node_find_socket(node, SOCK_IN, "Source");
+    bNodeSocket *old_geometry_socket = bke::node_find_socket(node, SOCK_IN, "Source"_ustr);
     const NodeGeometryTransferAttribute *storage =
         static_cast<const NodeGeometryTransferAttribute *>(node.storage);
     switch (storage->mode) {
@@ -745,7 +745,7 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
                              *old_geometry_socket->link->fromnode,
                              *old_geometry_socket->link->fromsock,
                              *sample_index,
-                             *bke::node_find_socket(*sample_index, SOCK_IN, "Geometry"));
+                             *bke::node_find_socket(*sample_index, SOCK_IN, "Geometry"_ustr));
         }
 
         bNode *sample_nearest = bke::node_add_static_node(
@@ -760,7 +760,7 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
                              *old_geometry_socket->link->fromnode,
                              *old_geometry_socket->link->fromsock,
                              *sample_nearest,
-                             *bke::node_find_socket(*sample_nearest, SOCK_IN, "Geometry"));
+                             *bke::node_find_socket(*sample_nearest, SOCK_IN, "Geometry"_ustr));
         }
         static auto sample_nearest_remap = []() {
           Map<std::string, std::string> map;
@@ -783,9 +783,9 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
 
         bke::node_add_link(*ntree,
                            *sample_nearest,
-                           *bke::node_find_socket(*sample_nearest, SOCK_OUT, "Index"),
+                           *bke::node_find_socket(*sample_nearest, SOCK_OUT, "Index"_ustr),
                            *sample_index,
-                           *bke::node_find_socket(*sample_index, SOCK_IN, "Index"));
+                           *bke::node_find_socket(*sample_index, SOCK_IN, "Index"_ustr));
         break;
       }
       case GEO_NODE_ATTRIBUTE_TRANSFER_INDEX: {
@@ -798,7 +798,7 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
         sample_index->parent = node.parent;
         sample_index->locx_legacy = node.locx_legacy;
         sample_index->locy_legacy = node.locy_legacy;
-        const bool index_was_linked = bke::node_find_socket(node, SOCK_IN, "Index")->link !=
+        const bool index_was_linked = bke::node_find_socket(node, SOCK_IN, "Index"_ustr)->link !=
                                       nullptr;
         static auto socket_remap = []() {
           Map<std::string, std::string> map;
@@ -821,9 +821,9 @@ static void version_geometry_nodes_replace_transfer_attribute_node(bNodeTree *nt
           index->locy_legacy = node.locy_legacy - 25.0f;
           bke::node_add_link(*ntree,
                              *index,
-                             *bke::node_find_socket(*index, SOCK_OUT, "Index"),
+                             *bke::node_find_socket(*index, SOCK_OUT, "Index"_ustr),
                              *sample_index,
-                             *bke::node_find_socket(*sample_index, SOCK_IN, "Index"));
+                             *bke::node_find_socket(*sample_index, SOCK_IN, "Index"_ustr));
         }
         break;
       }
@@ -942,8 +942,8 @@ static void version_geometry_nodes_extrude_smooth_propagation(bNodeTree &ntree)
     {
       continue;
     }
-    bNodeSocket *geometry_in_socket = bke::node_find_socket(node, SOCK_IN, "Mesh");
-    bNodeSocket *geometry_out_socket = bke::node_find_socket(node, SOCK_OUT, "Mesh");
+    bNodeSocket *geometry_in_socket = bke::node_find_socket(node, SOCK_IN, "Mesh"_ustr);
+    bNodeSocket *geometry_out_socket = bke::node_find_socket(node, SOCK_OUT, "Mesh"_ustr);
 
     Map<bNodeSocket *, bNodeLink *> in_links_per_socket;
     MultiValueMap<bNodeSocket *, bNodeLink *> out_links_per_socket;
@@ -973,7 +973,8 @@ static void version_geometry_nodes_extrude_smooth_propagation(bNodeTree &ntree)
       {
         return false;
       }
-      bNodeSocket *capture_in_socket = bke::node_find_socket(*capture_node, SOCK_IN, "Value_003");
+      bNodeSocket *capture_in_socket = bke::node_find_socket(
+          *capture_node, SOCK_IN, "Value_003"_ustr);
       bNodeLink *capture_in_link = in_links_per_socket.lookup_default(capture_in_socket, nullptr);
       if (!capture_in_link) {
         return false;
@@ -990,7 +991,7 @@ static void version_geometry_nodes_extrude_smooth_propagation(bNodeTree &ntree)
       }
       bNode *set_smooth_node = geometry_out_link->tonode;
       bNodeSocket *smooth_in_socket = bke::node_find_socket(
-          *set_smooth_node, SOCK_IN, "Shade Smooth");
+          *set_smooth_node, SOCK_IN, "Shade Smooth"_ustr);
       bNodeLink *connecting_link = in_links_per_socket.lookup_default(smooth_in_socket, nullptr);
       if (!connecting_link) {
         return false;
@@ -3904,7 +3905,7 @@ void blo_do_versions_300(FileData *fd, Library * /*lib*/, Main *bmain)
         if (version_node_ensure_storage_or_invalidate(node)) {
           static_cast<NodeGeometryCurveSample *>(node.storage)->use_all_curves = true;
           static_cast<NodeGeometryCurveSample *>(node.storage)->data_type = CD_PROP_FLOAT;
-          bNodeSocket *curve_socket = bke::node_find_socket(node, SOCK_IN, "Curve");
+          bNodeSocket *curve_socket = bke::node_find_socket(node, SOCK_IN, "Curve"_ustr);
           BLI_assert(curve_socket != nullptr);
           STRNCPY_UTF8(curve_socket->name, "Curves");
           version_node_socket_identifier_set(*curve_socket, "Curves");

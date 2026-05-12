@@ -68,8 +68,8 @@ static void do_version_mix_node_mix_mode_compositor(bNodeTree &node_tree, bNode 
     return;
   }
 
-  bNodeSocket *first_input = bke::node_find_socket(node, SOCK_IN, "A_Color");
-  bNodeSocket *output = bke::node_find_socket(node, SOCK_OUT, "Result_Color");
+  bNodeSocket *first_input = bke::node_find_socket(node, SOCK_IN, "A_Color"_ustr);
+  bNodeSocket *output = bke::node_find_socket(node, SOCK_OUT, "Result_Color"_ustr);
 
   /* Find the link going into the inputs of the node. */
   bNodeLink *first_link = nullptr;
@@ -149,8 +149,8 @@ static void do_version_mix_node_mix_mode_geometry(bNodeTree &node_tree, bNode &n
     return;
   }
 
-  bNodeSocket *first_input = bke::node_find_socket(node, SOCK_IN, "A_Color");
-  bNodeSocket *output = bke::node_find_socket(node, SOCK_OUT, "Result_Color");
+  bNodeSocket *first_input = bke::node_find_socket(node, SOCK_IN, "A_Color"_ustr);
+  bNodeSocket *output = bke::node_find_socket(node, SOCK_OUT, "Result_Color"_ustr);
 
   /* Find the link going into the inputs of the node. */
   bNodeLink *first_link = nullptr;
@@ -344,27 +344,27 @@ static void version_string_to_curves_node_inputs(bNodeTree &tree, bNode &node)
     return;
   }
   auto &storage = *reinterpret_cast<NodeGeometryStringToCurves *>(node.storage);
-  if (!blender::bke::node_find_socket(node, SOCK_IN, "Font")) {
+  if (!blender::bke::node_find_socket(node, SOCK_IN, "Font"_ustr)) {
     bNodeSocket &socket = version_node_add_socket(tree, node, SOCK_IN, "NodeSocketFont", "Font");
     socket.default_value_typed<bNodeSocketValueFont>()->value = reinterpret_cast<VFont *>(node.id);
     node.id = nullptr;
   }
-  if (!blender::bke::node_find_socket(node, SOCK_IN, "Overflow")) {
+  if (!blender::bke::node_find_socket(node, SOCK_IN, "Overflow"_ustr)) {
     bNodeSocket &socket = version_node_add_socket(
         tree, node, SOCK_IN, "NodeSocketMenu", "Overflow");
     socket.default_value_typed<bNodeSocketValueMenu>()->value = storage.overflow;
   }
-  if (!blender::bke::node_find_socket(node, SOCK_IN, "Align X")) {
+  if (!blender::bke::node_find_socket(node, SOCK_IN, "Align X"_ustr)) {
     bNodeSocket &socket = version_node_add_socket(
         tree, node, SOCK_IN, "NodeSocketMenu", "Align X");
     socket.default_value_typed<bNodeSocketValueMenu>()->value = storage.align_x;
   }
-  if (!blender::bke::node_find_socket(node, SOCK_IN, "Align Y")) {
+  if (!blender::bke::node_find_socket(node, SOCK_IN, "Align Y"_ustr)) {
     bNodeSocket &socket = version_node_add_socket(
         tree, node, SOCK_IN, "NodeSocketMenu", "Align Y");
     socket.default_value_typed<bNodeSocketValueMenu>()->value = storage.align_y;
   }
-  if (!blender::bke::node_find_socket(node, SOCK_IN, "Pivot Point")) {
+  if (!blender::bke::node_find_socket(node, SOCK_IN, "Pivot Point"_ustr)) {
     bNodeSocket &socket = version_node_add_socket(
         tree, node, SOCK_IN, "NodeSocketMenu", "Pivot Point");
     socket.default_value_typed<bNodeSocketValueMenu>()->value = storage.pivot_mode;

@@ -298,8 +298,7 @@ static PointerRNA rna_PoseChannel_bone_get(PointerRNA *ptr)
   /* Replace the id_data pointer with the Armature ID. */
   tmp_ptr.owner_id = ob->data;
 
-  bArmature *arm = id_cast<bArmature *>(ob->data);
-  return RNA_pointer_create_with_parent(tmp_ptr, RNA_Bone, pchan->bone_get(*arm));
+  return RNA_pointer_create_with_parent(tmp_ptr, RNA_Bone, pchan->bone_get(*ob));
 }
 
 static bool rna_PoseChannel_has_ik_get(PointerRNA *ptr)

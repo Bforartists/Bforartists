@@ -288,6 +288,13 @@ class RayTraceModule {
     return use_raytracing() && ray_tracing_options_.trace_max_roughness < 1.0f;
   }
 
+  /**
+   * Update screen space thickness parameters.
+   * Needs to be called early in the frame to allow raycast node usage.
+   * Needs uniform_data.push_update() to be called afterward to take effect.
+   */
+  void thickness_parameters_setup(const float4x4 &winmat, const int2 extent);
+
  private:
   RayTraceResultTexture trace(int closure_index,
                               bool active_layer,

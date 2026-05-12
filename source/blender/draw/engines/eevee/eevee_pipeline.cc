@@ -537,7 +537,7 @@ void ForwardPipeline::render(View &view,
   inst_.hiz_buffer.set_dirty();
   inst_.hiz_buffer.update();
 
-  inst_.shadows.set_view(view, extent);
+  inst_.shadows.render(view, extent);
   inst_.volume_probes.set_view(view);
   inst_.sphere_probes.set_view(view);
 
@@ -617,15 +617,7 @@ void DeferredLayerBase::gbuffer_pass_sync(Instance &inst)
   gbuffer_ps_.bind_resources(inst.uniform_data);
   gbuffer_ps_.bind_resources(inst.sampling);
   gbuffer_ps_.bind_resources(inst.hiz_buffer.front);
-  gbuffer_ps_.bind_resources(inst.hiz_buffer.front);
   gbuffer_ps_.bind_resources(inst.cryptomatte);
-
-  /* Bind light resources for the NPR materials that gets rendered first.
-   * Non-NPR shaders will override these resource bindings. */
-  gbuffer_ps_.bind_resources(inst.lights);
-  gbuffer_ps_.bind_resources(inst.shadows);
-  gbuffer_ps_.bind_resources(inst.sphere_probes);
-  gbuffer_ps_.bind_resources(inst.volume_probes);
 
   DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_WRITE_STENCIL |
                    DRW_STATE_CLIP_CONTROL_UNIT_RANGE | DRW_STATE_STENCIL_ALWAYS;
@@ -643,6 +635,10 @@ void DeferredLayerBase::gbuffer_pass_sync(Instance &inst)
         pass = &gbuffer_ps_.sub(subpass_names[hybrid][raycast][double_sided]);
         pass->state_set(double_sided ? state : (state | DRW_STATE_CULL_BACK));
         if (hybrid) {
+          pass->bind_resources(inst.lights);
+          pass->bind_resources(inst.shadows);
+          pass->bind_resources(inst.sphere_probes);
+          pass->bind_resources(inst.volume_probes);
           pass->bind_texture(HIZ_PREVIOUS_LAYER_TEX_SLOT, &inst.hiz_buffer.back.ref_tx_);
           pass->bind_texture(RADIANCE_PREVIOUS_LAYER_TEX_SLOT, &radiance_behind_tx_);
         }
@@ -983,7 +979,7 @@ gpu::Texture *DeferredLayer::render(View &render_view,
 
   inst_.volume_probes.set_view(render_view);
   inst_.sphere_probes.set_view(render_view);
-  inst_.shadows.set_view(render_view, extent);
+  inst_.shadows.render(render_view, extent);
 
   inst_.gbuffer.bind(gbuffer_fb);
   inst_.manager->submit(gbuffer_ps_, render_view);
@@ -1467,7 +1463,7 @@ void DeferredProbePipeline::render(View &view,
   inst_.hiz_buffer.update();
 
   inst_.lights.set_view(view, extent);
-  inst_.shadows.set_view(view, extent);
+  inst_.shadows.render(view, extent);
   inst_.volume_probes.set_view(view);
   inst_.sphere_probes.set_view(view);
 
@@ -1564,7 +1560,7 @@ void PlanarProbePipeline::render(View &view,
   radiance_behind_tx_ = dummy_black_;
 
   inst_.pipelines.data.ray_type = RAY_TYPE_GLOSSY;
-  inst_.uniform_data.push_update();
+  inst_.uniform_data.pipeline.push_update();
 
   GPU_framebuffer_bind(prepass_fb);
   GPU_framebuffer_clear_depth(prepass_fb, inst_.film.depth.clear_value);
@@ -1576,18 +1572,18 @@ void PlanarProbePipeline::render(View &view,
   inst_.hiz_buffer.update();
 
   inst_.lights.set_view(view, extent);
-  inst_.shadows.set_view(view, extent);
+  inst_.shadows.render(view, extent);
   inst_.volume_probes.set_view(view);
   inst_.sphere_probes.set_view(view);
 
-  inst_.gbuffer.bind(gbuffer_fb);
+  inst_.gbuffer.bind(gbuffer_fb, true);
   inst_.manager->submit(gbuffer_ps_, view);
 
   GPU_framebuffer_bind(combined_fb);
   inst_.manager->submit(eval_light_ps_, view);
 
   inst_.pipelines.data.ray_type = RAY_TYPE_CAMERA;
-  inst_.uniform_data.push_update();
+  inst_.uniform_data.pipeline.push_update();
 
   GPU_debug_group_end();
 }

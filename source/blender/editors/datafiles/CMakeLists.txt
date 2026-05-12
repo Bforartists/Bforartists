@@ -818,6 +818,7 @@ if(WITH_BLENDER)
       gridfill
       grip
       grip_v
+      grip_corner_bottom_right
       groundgrid
       group
       group_bone

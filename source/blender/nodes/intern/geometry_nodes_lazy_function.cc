@@ -4330,6 +4330,9 @@ static const ID *get_only_evaluated_id(const Depsgraph &depsgraph, const ID &id_
 
 const ID *GeoNodesOperatorDepsgraphs::get_evaluated_id(const ID &id_orig) const
 {
+  if (!ID_TYPE_USE_COPY_ON_EVAL(GS(id_orig.name))) {
+    return &id_orig;
+  }
   if (const Depsgraph *graph = this->active) {
     if (const ID *id = get_only_evaluated_id(*graph, id_orig)) {
       return id;

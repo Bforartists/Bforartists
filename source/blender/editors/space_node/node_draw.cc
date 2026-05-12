@@ -493,7 +493,8 @@ static bool node_update_basis_socket(TreeDrawContext &tree_draw_ctx,
 
   /* Add the half the height of a multi-input socket to cursor Y
    * to account for the increased height of the taller sockets. */
-  const bool is_multi_input = (input_socket ? input_socket->flag & SOCK_MULTI_INPUT : false);
+  const bool is_multi_input = (input_socket ? (input_socket->flag & SOCK_MULTI_INPUT) != 0 :
+                                              false);
   const float multi_input_socket_offset = is_multi_input ?
                                               std::max(input_socket->runtime->total_inputs - 2,
                                                        0) *

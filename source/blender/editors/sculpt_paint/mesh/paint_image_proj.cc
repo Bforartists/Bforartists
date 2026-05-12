@@ -6785,7 +6785,7 @@ static void default_paint_slot_color_get(int layer_type, Material *ma, float col
         in_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_BSDF_PRINCIPLED);
       }
       bNodeSocket *in_sock = bke::node_find_socket(
-          *in_node, SOCK_IN, layer_type_items[layer_type].name);
+          *in_node, SOCK_IN, UString(layer_type_items[layer_type].name));
       switch (in_sock->type) {
         case SOCK_FLOAT: {
           bNodeSocketValueFloat *socket_data = static_cast<bNodeSocketValueFloat *>(
@@ -6886,21 +6886,21 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
     bNode *out_node = new_node;
 
     if (in_node != nullptr) {
-      bNodeSocket *out_sock = bke::node_find_socket(*out_node, SOCK_OUT, "Color");
+      bNodeSocket *out_sock = bke::node_find_socket(*out_node, SOCK_OUT, "Color"_ustr);
       bNodeSocket *in_sock = nullptr;
 
       if (type >= LAYER_BASE_COLOR && type < LAYER_NORMAL) {
-        in_sock = bke::node_find_socket(*in_node, SOCK_IN, layer_type_items[type].name);
+        in_sock = bke::node_find_socket(*in_node, SOCK_IN, UString(layer_type_items[type].name));
       }
       else if (type == LAYER_NORMAL) {
         bNode *nor_node;
         nor_node = bke::node_add_static_node(C, *ntree, SH_NODE_NORMAL_MAP);
 
-        in_sock = bke::node_find_socket(*nor_node, SOCK_IN, "Color");
+        in_sock = bke::node_find_socket(*nor_node, SOCK_IN, "Color"_ustr);
         bke::node_add_link(*ntree, *out_node, *out_sock, *nor_node, *in_sock);
 
-        in_sock = bke::node_find_socket(*in_node, SOCK_IN, "Normal");
-        out_sock = bke::node_find_socket(*nor_node, SOCK_OUT, "Normal");
+        in_sock = bke::node_find_socket(*in_node, SOCK_IN, "Normal"_ustr);
+        out_sock = bke::node_find_socket(*nor_node, SOCK_OUT, "Normal"_ustr);
 
         out_node = nor_node;
       }
@@ -6908,11 +6908,11 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
         bNode *bump_node;
         bump_node = bke::node_add_static_node(C, *ntree, SH_NODE_BUMP);
 
-        in_sock = bke::node_find_socket(*bump_node, SOCK_IN, "Height");
+        in_sock = bke::node_find_socket(*bump_node, SOCK_IN, "Height"_ustr);
         bke::node_add_link(*ntree, *out_node, *out_sock, *bump_node, *in_sock);
 
-        in_sock = bke::node_find_socket(*in_node, SOCK_IN, "Normal");
-        out_sock = bke::node_find_socket(*bump_node, SOCK_OUT, "Normal");
+        in_sock = bke::node_find_socket(*in_node, SOCK_IN, "Normal"_ustr);
+        out_sock = bke::node_find_socket(*bump_node, SOCK_OUT, "Normal"_ustr);
 
         out_node = bump_node;
       }
@@ -6922,7 +6922,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
         in_node = output_nodes.is_empty() ? nullptr : output_nodes.first();
 
         if (in_node != nullptr) {
-          in_sock = bke::node_find_socket(*in_node, SOCK_IN, layer_type_items[type].name);
+          in_sock = bke::node_find_socket(*in_node, SOCK_IN, UString(layer_type_items[type].name));
         }
         else {
           in_sock = nullptr;

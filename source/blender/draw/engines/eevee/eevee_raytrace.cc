@@ -449,6 +449,30 @@ void RayTraceModule::debug_pass_sync() {}
 
 void RayTraceModule::debug_draw(View & /*view*/, gpu::FrameBuffer * /*view_fb*/) {}
 
+void RayTraceModule::thickness_parameters_setup(const float4x4 &winmat, const int2 extent)
+{
+  bool is_persp = winmat[3][3] == 0.0f;
+
+  float left, right, bottom, top, near, far;
+  projmat_dimensions(winmat.ptr(), &left, &right, &bottom, &top, &near, &far);
+
+  float avg_pixel_radius_far = length(abs(float2(left - right, bottom - top)) / float2(extent));
+
+  /* Average pixel radius at unit Z plane from the camera. */
+  const float avg_pixel_radius_unit = is_persp ? avg_pixel_radius_far / near :
+                                                 avg_pixel_radius_far;
+
+  data_.ray_thickness = ScreenThicknessParameters::build(
+      winmat, avg_pixel_radius_unit, 3.0f, data_.thickness);
+
+  data_.fast_gi_thickness = ScreenThicknessParameters::build(
+      winmat,
+      avg_pixel_radius_unit,
+      /* Eyeballed for 64 samples and scaled for lower step count. */
+      4.0f * sqrtf(64.0f / float(fast_gi_step_count_)),
+      inst_.uniform_data.data.ao.thickness_near);
+}
+
 RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
                                       gpu::Texture *screen_radiance_back_tx,
                                       eClosureBits active_closures,
@@ -531,9 +555,10 @@ RayTraceResult RayTraceModule::render(RayTraceBuffer &rt_buffer,
   data_.fast_gi_resolution_scale = fast_gi_resolution_scale;
   data_.fast_gi_resolution_bias = int2(
       random_in_tile(inst_.sampling.sample_index(), fast_gi_resolution_scale));
+
   /* TODO(fclem): Eventually all uniform data is setup here. */
 
-  inst_.uniform_data.push_update();
+  inst_.uniform_data.raytrace.push_update();
 
   RayTraceResult result;
 
@@ -659,7 +684,7 @@ RayTraceResultTexture RayTraceModule::trace(int closure_index,
   data_.full_resolution_inv = 1.0f / float2(extent);
   data_.skip_denoise = !use_spatial_denoise;
   data_.closure_index = closure_index;
-  inst_.uniform_data.push_update();
+  inst_.uniform_data.raytrace.push_update();
 
   /* Ray setup. */
   raytrace_tracing_dispatch_buf_.clear_to_zero();

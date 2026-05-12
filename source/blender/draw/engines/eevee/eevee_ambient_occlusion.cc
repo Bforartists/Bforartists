@@ -44,7 +44,6 @@ void AmbientOcclusion::init()
   data_.lod_factor = (1.0f - sce_eevee.fast_gi_quality) * 0.2f;
   data_.angle_bias = 1.0 / max_ff(1e-8f, 1.0 - sce_eevee.fast_gi_bias);
   data_.thickness_near = sce_eevee.fast_gi_thickness_near;
-  data_.thickness_far = sce_eevee.fast_gi_thickness_far;
   /* Size is multiplied by 2 because it is applied in NDC [-1..1] range. */
   data_.pixel_size = float2(2.0f) / float2(inst_.film.render_extent_get());
 

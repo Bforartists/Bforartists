@@ -1015,15 +1015,17 @@ static void datastack_drop_copy(bContext *C, StackDropData *drop_data)
   Object *ob_dst = id_cast<Object *>(tselem->id);
 
   switch (drop_data->drag_tselem->type) {
-    case TSE_MODIFIER:
-      object::modifier_copy_to_object(
+    case TSE_MODIFIER: {
+      ModifierData *md_dst = object::modifier_copy_to_object(
           bmain,
           CTX_data_scene(C),
           drop_data->ob_parent,
           static_cast<const ModifierData *>(drop_data->drag_directdata),
           ob_dst,
           CTX_wm_reports(C));
+      BKE_object_modifier_set_active(ob_dst, md_dst);
       break;
+    }
     case TSE_CONSTRAINT:
       if (tselem->type == TSE_POSE_CHANNEL) {
         object::constraint_copy_for_pose(

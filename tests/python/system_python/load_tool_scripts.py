@@ -30,6 +30,10 @@ EXCLUDED_FILE_PATHS = {
     # Require `bpy` module.
     "doc/python_api/sphinx_doc_gen.py",
 
+    # Use newer Python features.
+    "doc/python_api/sphinx_stub_gen.py",
+    "doc/python_api/sphinx_stub_validate.py",
+
     # XXX These scripts execute on import! bad, need to be fixed or removed.
     # FIXME: Should be reasonably trivial to fix/cleanup for most of them.
     "doc/python_api/conf.py",

@@ -742,6 +742,7 @@ static bool get_known_pass_type(blender::RenderPass &b_pass, PassType &type, Pas
   MAP_PASS("Denoising Normal", PASS_DENOISING_NORMAL, true);
   MAP_PASS("Denoising Roughness", PASS_DENOISING_ROUGHNESS, true);
   MAP_PASS("Denoising Depth", PASS_DENOISING_DEPTH, true);
+  MAP_PASS("Denoising Backward Motion", PASS_DENOISING_BACKWARD_MOTION, true);
 
   MAP_PASS("Shadow Catcher", PASS_SHADOW_CATCHER, false);
   MAP_PASS("Noisy Shadow Catcher", PASS_SHADOW_CATCHER, true);
@@ -947,17 +948,22 @@ SceneParams BlenderSync::get_scene_params(blender::UserDef &b_preferences,
       csscene, "shape", CURVE_NUM_SHAPE_TYPES, CURVE_THICK);
 
   float texture_resolution;
+  int texture_limit;
   if (background) {
     texture_resolution = RNA_float_get(&cscene, "texture_resolution_render");
+    texture_limit = RNA_enum_get(&cscene, "texture_limit_render");
   }
   else {
     texture_resolution = RNA_float_get(&cscene, "texture_resolution");
+    texture_limit = RNA_enum_get(&cscene, "texture_limit");
   }
-  if (texture_resolution < 1.0f && (b_scene.r.mode & blender::R_SIMPLIFY) != 0) {
-    params.texture_resolution = texture_resolution;
+  if ((b_scene.r.mode & blender::R_SIMPLIFY) != 0) {
+    params.texture_resolution = (texture_resolution < 1.0f) ? texture_resolution : 1.0f;
+    params.texture_limit = (texture_limit > 0) ? (1 << (texture_limit + 6)) : 0;
   }
   else {
     params.texture_resolution = 1.0f;
+    params.texture_limit = 0;
   }
 
   params.bvh_layout = DebugFlags().cpu.bvh_layout;

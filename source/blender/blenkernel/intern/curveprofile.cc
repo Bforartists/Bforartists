@@ -91,7 +91,7 @@ void BKE_curveprofile_blend_write(BlendWriter *writer, const CurveProfile *profi
 
 void BKE_curveprofile_blend_read(BlendDataReader *reader, CurveProfile *profile)
 {
-  BLO_read_struct_array(reader, CurveProfilePoint, profile->path_len, &profile->path);
+  BLO_read_array_and_validate_size(reader, &profile->path, &profile->path_len);
   profile->table = nullptr;
   profile->segments = nullptr;
 

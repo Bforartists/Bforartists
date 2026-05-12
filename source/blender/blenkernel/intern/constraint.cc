@@ -22,6 +22,7 @@
 #include "BLI_kdopbvh.hh"
 #include "BLI_listbase.h"
 #include "BLI_math_matrix.h"
+#include "BLI_math_quaternion.hh"
 #include "BLI_math_rotation.h"
 #include "BLI_math_vector.h"
 #include "BLI_math_vector.hh"
@@ -29,6 +30,7 @@
 #include "BLI_string_utf8.h"
 #include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
+
 #include "BLT_translation.hh"
 
 #include "DNA_action_types.h"
@@ -5591,7 +5593,7 @@ static void value_attribute_to_matrix(float r_matrix[4][4],
       copy_v3_v3(r_matrix[3], *value.get<float3>());
       return;
     case CON_ATTRIBUTE_QUATERNION:
-      quat_to_mat4(r_matrix, *value.get<float4>());
+      quat_to_mat4(r_matrix, float4(math::normalize(*value.get<math::Quaternion>())));
       return;
     case CON_ATTRIBUTE_4X4MATRIX:
       copy_m4_m4(r_matrix, value.get<float4x4>()->ptr());
@@ -6919,7 +6921,7 @@ void BKE_constraint_blend_read_data(BlendDataReader *reader,
       case CONSTRAINT_TYPE_SPLINEIK: {
         bSplineIKConstraint *data = static_cast<bSplineIKConstraint *>(con.data);
 
-        BLO_read_float_array(reader, data->numpoints, &data->points);
+        BLO_read_array_and_validate_size(reader, &data->points, &data->numpoints);
         break;
       }
       case CONSTRAINT_TYPE_KINEMATIC: {

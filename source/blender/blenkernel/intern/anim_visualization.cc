@@ -234,7 +234,7 @@ void animviz_motionpath_blend_read_data(BlendDataReader *reader, bMotionPath *mp
   }
 
   /* relink points cache */
-  BLO_read_struct_array(reader, bMotionPathVert, mpath->length, &mpath->points);
+  BLO_read_array_and_validate_size(reader, &mpath->points, &mpath->length);
 
   mpath->points_vbo = nullptr;
   mpath->batch_line = nullptr;

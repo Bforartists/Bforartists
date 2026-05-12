@@ -337,9 +337,8 @@ static void grease_pencil_blend_read_data(BlendDataReader *reader, ID *id)
   grease_pencil->attribute_storage.wrap().blend_read(*reader);
 
   /* Read materials. */
-  BLO_read_pointer_array(reader,
-                         grease_pencil->material_array_num,
-                         reinterpret_cast<void **>(&grease_pencil->material_array));
+  BLO_read_pointer_array_and_validate_size(
+      reader, &grease_pencil->material_array, &grease_pencil->material_array_num);
   /* Read vertex group names. */
   BLO_read_struct_list(reader, bDeformGroup, &grease_pencil->vertex_group_names);
 
@@ -4577,9 +4576,8 @@ bke::MutableAttributeAccessor GreasePencil::attributes_for_write()
 
 static void read_drawing_array(GreasePencil &grease_pencil, BlendDataReader *reader)
 {
-  BLO_read_pointer_array(reader,
-                         grease_pencil.drawing_array_num,
-                         reinterpret_cast<void **>(&grease_pencil.drawing_array));
+  BLO_read_pointer_array_and_validate_size(
+      reader, &grease_pencil.drawing_array, &grease_pencil.drawing_array_num);
   for (int i = 0; i < grease_pencil.drawing_array_num; i++) {
     BLO_read_struct(reader, GreasePencilDrawingBase, &grease_pencil.drawing_array[i]);
     GreasePencilDrawingBase *drawing_base = grease_pencil.drawing_array[i];
@@ -4650,9 +4648,14 @@ static void read_layer(BlendDataReader *reader,
   BLO_read_string(reader, &node->viewlayername);
 
   /* Read frames storage. */
-  BLO_read_int32_array(reader, node->frames_storage.num, &node->frames_storage.keys);
-  BLO_read_struct_array(
-      reader, GreasePencilFrame, node->frames_storage.num, &node->frames_storage.values);
+  {
+    bool ok = true;
+    ok &= BLO_read_array(reader, &node->frames_storage.keys, node->frames_storage.num);
+    ok &= BLO_read_array(reader, &node->frames_storage.values, node->frames_storage.num);
+    if (!ok) {
+      node->frames_storage.num = 0;
+    }
+  }
 
   /* Read layer masks. */
   BLO_read_struct_list(reader, GreasePencilLayerMask, &node->masks);

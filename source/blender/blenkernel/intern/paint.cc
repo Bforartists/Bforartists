@@ -218,7 +218,7 @@ static void paint_curve_blend_write(BlendWriter *writer, ID *id, const void *id_
 static void paint_curve_blend_read_data(BlendDataReader *reader, ID *id)
 {
   PaintCurve *pc = id_cast<PaintCurve *>(id);
-  BLO_read_struct_array(reader, PaintCurvePoint, pc->tot_points, &pc->points);
+  BLO_read_array_and_validate_size(reader, &pc->points, &pc->tot_points);
 }
 
 IDTypeInfo IDType_ID_PC = {

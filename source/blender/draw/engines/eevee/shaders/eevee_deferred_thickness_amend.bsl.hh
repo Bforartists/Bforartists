@@ -134,7 +134,7 @@ void amend_frag([[resource_table]] ThicknessAmend &srt,
 
   const float3 Ng = gbuffer::normal_unpack(imageLoad(srt.gbuf_normal_img, int3(texel, 0)).rg);
 
-  uchar data_layer = uniform_buf.pipeline.gbuffer_additional_data_layer_id;
+  uchar data_layer = pipeline_buf.gbuffer_additional_data_layer_id;
   float2 data_packed = imageLoad(srt.gbuf_normal_img, int3(texel, int(data_layer))).rg;
   Thickness gbuffer_thickness = gbuffer::thickness_unpack(data_packed.x);
   if (gbuffer_thickness.value() == 0.0f) {

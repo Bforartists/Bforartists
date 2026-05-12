@@ -212,12 +212,6 @@ DnaRenameMaps DNA_rename_maps_alias_to_static()
   for (const StructRename &r : struct_renames) {
     data.types.add_new(r.new_name, r.old_name);
   }
-  /* Map modern integer types to old SDNA names. */
-  data.types.add_new("uint8_t", "uchar");
-  data.types.add_new("int16_t", "short");
-  data.types.add_new("uint16_t", "ushort");
-  data.types.add_new("int32_t", "int");
-  data.types.add_new("uint32_t", "int");
   for (const MemberRename &r : member_renames) {
     const StringRefNull struct_static = data.types.lookup_default(r.new_struct_name,
                                                                   r.new_struct_name);

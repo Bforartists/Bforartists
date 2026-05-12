@@ -407,7 +407,7 @@ static void version_node_socket_duplicate(bNodeTree *ntree,
   for (bNodeLink &link : ntree->links.items_mutable()) {
     if (link.tonode->type_legacy == node_type) {
       bNode *node = link.tonode;
-      bNodeSocket *dest_socket = bke::node_find_socket(*node, SOCK_IN, new_name);
+      bNodeSocket *dest_socket = bke::node_find_socket(*node, SOCK_IN, UString(new_name));
       BLI_assert(dest_socket);
       if (STREQ(link.tosock->name, old_name)) {
         bke::node_add_link(*ntree, *link.fromnode, *link.fromsock, *node, *dest_socket);
@@ -418,8 +418,8 @@ static void version_node_socket_duplicate(bNodeTree *ntree,
   /* Duplicate the default value from the old socket and assign it to the new socket. */
   for (bNode &node : ntree->nodes) {
     if (node.type_legacy == node_type) {
-      bNodeSocket *source_socket = bke::node_find_socket(node, SOCK_IN, old_name);
-      bNodeSocket *dest_socket = bke::node_find_socket(node, SOCK_IN, new_name);
+      bNodeSocket *source_socket = bke::node_find_socket(node, SOCK_IN, UString(old_name));
+      bNodeSocket *dest_socket = bke::node_find_socket(node, SOCK_IN, UString(new_name));
       BLI_assert(source_socket && dest_socket);
       if (dest_socket->default_value) {
         MEM_delete_void(dest_socket->default_value);

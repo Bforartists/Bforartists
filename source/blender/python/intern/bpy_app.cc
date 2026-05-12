@@ -718,7 +718,7 @@ static PyGetSetDef bpy_app_getsets[] = {
 PyDoc_STRVAR(
     /* Wrap. */
     bpy_app_is_job_running_doc,
-    ".. staticmethod:: is_job_running(job_type)\n"
+    ".. function:: is_job_running(job_type)\n"
     "\n"
     "   Check whether a job of the given type is running.\n"
     "\n"
@@ -758,7 +758,7 @@ char *(*BPY_python_app_help_text_fn)(bool all) = nullptr;
 PyDoc_STRVAR(
     /* Wrap. */
     bpy_app_help_text_doc,
-    ".. staticmethod:: help_text(*, all=False)\n"
+    ".. function:: help_text(*, all=False)\n"
     "\n"
     "   Return the help text as a string.\n"
     "\n"
@@ -800,7 +800,7 @@ static PyObject *bpy_app_help_text(PyObject * /*self*/, PyObject *args, PyObject
 PyDoc_STRVAR(
     /* Wrap. */
     bpy_app_memory_usage_undo_doc,
-    ".. staticmethod:: memory_usage_undo()\n"
+    ".. function:: memory_usage_undo()\n"
     "\n"
     "   Get undo memory usage information.\n"
     "\n"

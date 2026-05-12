@@ -436,7 +436,9 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
         if (view3d->camera == camera) {
           continue;
         }
+        /* HACK: This should not hijack the local camera of 3d viewports. */
         PointerRNA view3d_ptr = RNA_pointer_create_discrete(&screen->id, RNA_SpaceView3D, view3d);
+        RNA_boolean_set(&view3d_ptr, "use_local_camera", true);
         RNA_pointer_set(&view3d_ptr, "camera", camera_ptr);
       }
     }
@@ -467,41 +469,6 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
   DEG_id_tag_update(&active_scene->id, ID_RECALC_FRAME_CHANGE);
   WM_event_add_notifier(&C, NC_WINDOW, nullptr);
   WM_event_add_notifier(&C, NC_SCENE | ND_FRAME, nullptr);
-}
-
-void sync_vse_camera_for_view3d(const WorkSpace *workspace, const Scene *active_scene, View3D *v3d)
-{
-  /* Parameters must not be nullptr. */
-  BLI_assert(workspace != nullptr);
-  BLI_assert(active_scene != nullptr);
-  BLI_assert(v3d != nullptr);
-
-  /* Check if VSE sync mode is enabled. */
-  if (!workspace->sequencer_scene) {
-    return;
-  }
-  if ((workspace->flags & WORKSPACE_SYNC_SCENE_TIME) == 0) {
-    return;
-  }
-
-  const Scene *sequencer_scene = workspace->sequencer_scene;
-  const Strip *scene_strip = get_scene_strip_for_time_sync(sequencer_scene);
-  if (!scene_strip || !scene_strip->scene) {
-    return;
-  }
-
-  if (active_scene != scene_strip->scene) {
-    return;
-  }
-
-  /* Determine which camera to use. */
-  const Object *camera = scene_strip->scene_camera ? scene_strip->scene_camera :
-                                                     scene_strip->scene->camera;
-
-  /* Sync camera for this specific View3D. */
-  if (camera && v3d->camera != camera) {
-    v3d->camera = const_cast<Object *>(camera);
-  }
 }
 
 /** \} */

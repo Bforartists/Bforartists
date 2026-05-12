@@ -810,14 +810,14 @@ bool parent_set(ReportList *reports,
                                    vert_par);
 }
 
-static void parent_set_vert_find(KDTree_3d *tree, Object *child, int vert_par[3], bool is_tri)
+static void parent_set_vert_find(KDTree<float3> *tree, Object *child, int vert_par[3], bool is_tri)
 {
   const float *co_find = child->object_to_world().location();
   if (is_tri) {
-    KDTreeNearest_3d nearest[3];
+    KDTreeNearest<float3> nearest[3];
     int tot;
 
-    tot = kdtree_3d_find_nearest_n(tree, co_find, nearest, 3);
+    tot = kdtree_find_nearest_n<float3>(tree, co_find, nearest, 3);
     BLI_assert(tot == 3);
     UNUSED_VARS(tot);
 
@@ -828,7 +828,7 @@ static void parent_set_vert_find(KDTree_3d *tree, Object *child, int vert_par[3]
     BLI_assert(min_iii(UNPACK3(vert_par)) >= 0);
   }
   else {
-    vert_par[0] = kdtree_3d_find_nearest(tree, co_find, nullptr);
+    vert_par[0] = kdtree_find_nearest<float3>(tree, co_find, nullptr);
     BLI_assert(vert_par[0] >= 0);
     vert_par[1] = 0;
     vert_par[2] = 0;
@@ -879,7 +879,7 @@ static bool parent_set_nonvertex_parent(bContext *C, ParentingContext *parenting
 
 static bool parent_set_vertex_parent_with_kdtree(bContext *C,
                                                  ParentingContext *parenting_context,
-                                                 KDTree_3d *tree)
+                                                 KDTree<float3> *tree)
 {
   int vert_par[3] = {0, 0, 0};
 
@@ -910,7 +910,7 @@ static bool parent_set_vertex_parent_with_kdtree(bContext *C,
 
 static bool parent_set_vertex_parent(bContext *C, ParentingContext *parenting_context)
 {
-  KDTree_3d *tree = nullptr;
+  KDTree<float3> *tree = nullptr;
   int tree_tot;
 
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
@@ -921,12 +921,12 @@ static bool parent_set_vertex_parent(bContext *C, ParentingContext *parenting_co
 
   if (tree_tot < (parenting_context->is_vertex_tri ? 3 : 1)) {
     BKE_report(parenting_context->reports, RPT_ERROR, "Not enough vertices for vertex-parent");
-    kdtree_3d_free(tree);
+    kdtree_free<float3>(tree);
     return false;
   }
 
   const bool ok = parent_set_vertex_parent_with_kdtree(C, parenting_context, tree);
-  kdtree_3d_free(tree);
+  kdtree_free<float3>(tree);
   return ok;
 }
 

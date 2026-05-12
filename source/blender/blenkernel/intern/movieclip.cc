@@ -224,8 +224,7 @@ static void movieclip_blend_write(BlendWriter *writer, ID *id, const void *id_ad
 static void direct_link_movieReconstruction(BlendDataReader *reader,
                                             MovieTrackingReconstruction *reconstruction)
 {
-  BLO_read_struct_array(
-      reader, MovieReconstructedCamera, reconstruction->camnr, &reconstruction->cameras);
+  BLO_read_array_and_validate_size(reader, &reconstruction->cameras, &reconstruction->camnr);
 }
 
 static void direct_link_movieTracks(BlendDataReader *reader,
@@ -234,7 +233,7 @@ static void direct_link_movieTracks(BlendDataReader *reader,
   BLO_read_struct_list(reader, MovieTrackingTrack, tracksbase);
 
   for (MovieTrackingTrack &track : *tracksbase) {
-    BLO_read_struct_array(reader, MovieTrackingMarker, track.markersnr, &track.markers);
+    BLO_read_array_and_validate_size(reader, &track.markers, &track.markersnr);
   }
 }
 
@@ -244,14 +243,13 @@ static void direct_link_moviePlaneTracks(BlendDataReader *reader,
   BLO_read_struct_list(reader, MovieTrackingPlaneTrack, plane_tracks_base);
 
   for (MovieTrackingPlaneTrack &plane_track : *plane_tracks_base) {
-    BLO_read_pointer_array(
-        reader, plane_track.point_tracksnr, reinterpret_cast<void **>(&plane_track.point_tracks));
+    BLO_read_pointer_array_and_validate_size(
+        reader, &plane_track.point_tracks, &plane_track.point_tracksnr);
     for (int i = 0; i < plane_track.point_tracksnr; i++) {
       BLO_read_struct(reader, MovieTrackingTrack, &plane_track.point_tracks[i]);
     }
 
-    BLO_read_struct_array(
-        reader, MovieTrackingPlaneMarker, plane_track.markersnr, &plane_track.markers);
+    BLO_read_array_and_validate_size(reader, &plane_track.markers, &plane_track.markersnr);
   }
 }
 

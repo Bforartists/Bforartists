@@ -241,7 +241,7 @@ static const EnumPropertyItem prop_similar_types[] = {
 };
 
 static void mball_select_similar_type_get(
-    Object *obedit, MetaBall *mb, int type, KDTree_1d *tree_1d, KDTree_3d *tree_3d)
+    Object *obedit, MetaBall *mb, int type, KDTree<float> *tree_1d, KDTree<float3> *tree_3d)
 {
   float tree_entry[3] = {0.0f, 0.0f, 0.0f};
   int tree_index = 0;
@@ -274,10 +274,10 @@ static void mball_select_similar_type_get(
         }
       }
       if (tree_1d) {
-        kdtree_1d_insert(tree_1d, tree_index++, tree_entry);
+        kdtree_insert<float>(tree_1d, tree_index++, tree_entry[0]);
       }
       else {
-        kdtree_3d_insert(tree_3d, tree_index++, tree_entry);
+        kdtree_insert<float3>(tree_3d, tree_index++, tree_entry);
       }
     }
   }
@@ -286,8 +286,8 @@ static void mball_select_similar_type_get(
 static bool mball_select_similar_type(Object *obedit,
                                       MetaBall *mb,
                                       int type,
-                                      const KDTree_1d *tree_1d,
-                                      const KDTree_3d *tree_3d,
+                                      const KDTree<float> *tree_1d,
+                                      const KDTree<float3> *tree_3d,
                                       const float thresh)
 {
   bool changed = false;
@@ -325,8 +325,8 @@ static bool mball_select_similar_type(Object *obedit,
 
         float thresh_cos = cosf(thresh * float(M_PI_2));
 
-        KDTreeNearest_3d nearest;
-        if (kdtree_3d_find_nearest(tree_3d, dir, &nearest) != -1) {
+        KDTreeNearest<float3> nearest;
+        if (kdtree_find_nearest<float3>(tree_3d, dir, &nearest) != -1) {
           float orient = angle_normalized_v3v3(dir, nearest.co);
           /* Map to 0-1 to compare orientation. */
           float delta = thresh_cos - fabsf(cosf(orient));
@@ -361,16 +361,16 @@ static wmOperatorStatus mball_select_similar_exec(bContext *C, wmOperator *op)
   tot_mball_selected_all = BKE_mball_select_count_multi(bases);
 
   short type_ref = 0;
-  KDTree_1d *tree_1d = nullptr;
-  KDTree_3d *tree_3d = nullptr;
+  KDTree<float> *tree_1d = nullptr;
+  KDTree<float3> *tree_3d = nullptr;
 
   switch (type) {
     case SIMMBALL_RADIUS:
     case SIMMBALL_STIFFNESS:
-      tree_1d = kdtree_1d_new(tot_mball_selected_all);
+      tree_1d = kdtree_new<float>(tot_mball_selected_all);
       break;
     case SIMMBALL_ROTATION:
-      tree_3d = kdtree_3d_new(tot_mball_selected_all);
+      tree_3d = kdtree_new<float3>(tot_mball_selected_all);
       break;
   }
 
@@ -401,12 +401,12 @@ static wmOperatorStatus mball_select_similar_exec(bContext *C, wmOperator *op)
   }
 
   if (tree_1d != nullptr) {
-    kdtree_1d_deduplicate(tree_1d);
-    kdtree_1d_balance(tree_1d);
+    kdtree_deduplicate<float>(tree_1d);
+    kdtree_balance<float>(tree_1d);
   }
   if (tree_3d != nullptr) {
-    kdtree_3d_deduplicate(tree_3d);
-    kdtree_3d_balance(tree_3d);
+    kdtree_deduplicate<float3>(tree_3d);
+    kdtree_balance<float3>(tree_3d);
   }
   /* Select MetaBalls with desired type. */
   for (Base *base : bases) {
@@ -442,10 +442,10 @@ static wmOperatorStatus mball_select_similar_exec(bContext *C, wmOperator *op)
   }
 
   if (tree_1d != nullptr) {
-    kdtree_1d_free(tree_1d);
+    kdtree_free<float>(tree_1d);
   }
   if (tree_3d != nullptr) {
-    kdtree_3d_free(tree_3d);
+    kdtree_free<float3>(tree_3d);
   }
   return OPERATOR_FINISHED;
 }

@@ -4900,7 +4900,7 @@ bool ED_curve_editnurb_select_pick(bContext *C,
 
   if (params.sel_op == SEL_OP_SET) {
     if ((found && params.select_passthrough) &&
-        (((bezt ? (&bezt->f1)[hand] : bp->f1) & SELECT) != 0))
+        (((bezt ? uint8_t((&bezt->f1)[hand]) : bp->f1) & SELECT) != 0))
     {
       found = false;
     }

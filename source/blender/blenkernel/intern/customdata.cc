@@ -10,6 +10,7 @@
  */
 
 #include <algorithm>
+#include <cstddef>
 
 #include "MEM_guardedalloc.h"
 
@@ -4888,10 +4889,18 @@ static void blend_read_mdisps(BlendDataReader *reader,
     for (int i = 0; i < count; i++) {
       MDisps &md = mdisps[i];
 
-      BLO_read_float3_array(reader, md.totdisp, reinterpret_cast<float **>(&md.disps));
-      BLO_read_int8_array(reader,
-                          BLI_BITMAP_SIZE(md.totdisp) * sizeof(BLI_bitmap),
-                          reinterpret_cast<int8_t **>(&md.hidden));
+      bool ok = true;
+      if (md.disps) {
+        ok &= BLO_read_array(reader, reinterpret_cast<float **>(&md.disps), md.totdisp, 3);
+      }
+      if (md.hidden) {
+        ok &= BLO_read_array(reader,
+                             reinterpret_cast<int8_t **>(&md.hidden),
+                             BLI_BITMAP_SIZE(md.totdisp) * sizeof(BLI_bitmap));
+      }
+      if (!ok) {
+        md.totdisp = 0;
+      }
 
       if (md.totdisp && !md.level) {
         /* this calculation is only correct for loop mdisps;
@@ -4918,7 +4927,7 @@ static void blend_read_paint_mask(BlendDataReader *reader,
       GridPaintMask *gpm = &grid_paint_mask[i];
       if (gpm->data) {
         const int gridsize = CCG_grid_size(gpm->level);
-        BLO_read_float_array(reader, gridsize * gridsize, &gpm->data);
+        (void)BLO_read_array(reader, &gpm->data, int64_t(gridsize) * gridsize);
       }
     }
   }
@@ -4926,27 +4935,32 @@ static void blend_read_paint_mask(BlendDataReader *reader,
 
 static void blend_read_layer_data(BlendDataReader *reader, CustomDataLayer &layer, const int count)
 {
+  /* Note: result of #BLO_read_array can be discarded because
+   * #CustomData_layer_ensure_data_exists allocates the array if missing. */
   switch (layer.type) {
     case CD_MDEFORMVERT:
-      BLO_read_struct_array(reader, MDeformVert, count, &layer.data);
-      BKE_defvert_blend_read(reader, count, static_cast<MDeformVert *>(layer.data));
+      if (BLO_read_array(reader, reinterpret_cast<MDeformVert **>(&layer.data), count)) {
+        BKE_defvert_blend_read(reader, count, static_cast<MDeformVert *>(layer.data));
+      }
       break;
     case CD_MDISPS:
-      BLO_read_struct_array(reader, MDisps, count, &layer.data);
-      blend_read_mdisps(
-          reader, count, static_cast<MDisps *>(layer.data), layer.flag & CD_FLAG_EXTERNAL);
+      if (BLO_read_array(reader, reinterpret_cast<MDisps **>(&layer.data), count)) {
+        blend_read_mdisps(
+            reader, count, static_cast<MDisps *>(layer.data), layer.flag & CD_FLAG_EXTERNAL);
+      }
       break;
     case CD_PAINT_MASK:
-      BLO_read_float_array(reader, count, reinterpret_cast<float **>(&layer.data));
+      (void)BLO_read_array(reader, reinterpret_cast<float **>(&layer.data), count);
       break;
     case CD_GRID_PAINT_MASK:
-      BLO_read_struct_array(reader, GridPaintMask, count, &layer.data);
-      blend_read_paint_mask(reader, count, static_cast<GridPaintMask *>(layer.data));
+      if (BLO_read_array(reader, reinterpret_cast<GridPaintMask **>(&layer.data), count)) {
+        blend_read_paint_mask(reader, count, static_cast<GridPaintMask *>(layer.data));
+      }
       break;
     case CD_PROP_BOOL:
       BLI_STATIC_ASSERT(sizeof(bool) == sizeof(uint8_t),
                         "bool type is expected to have the same size as uint8_t")
-      BLO_read_uint8_array(reader, count, reinterpret_cast<uint8_t **>(&layer.data));
+      (void)BLO_read_array(reader, reinterpret_cast<uint8_t **>(&layer.data), count);
       break;
     default: {
       const char *structname;
@@ -4959,7 +4973,8 @@ static void blend_read_layer_data(BlendDataReader *reader, CustomDataLayer &laye
       else {
         /* Can happen with deprecated types of customdata. */
         const size_t elem_size = CustomData_sizeof(eCustomDataType(layer.type));
-        BLO_read_struct_array(reader, char, elem_size *count, &layer.data);
+        (void)BLO_read_array(
+            reader, reinterpret_cast<std::byte **>(&layer.data), count, elem_size);
       }
     }
   }
@@ -4976,7 +4991,7 @@ static void blend_read_layer_data(BlendDataReader *reader, CustomDataLayer &laye
 
 void CustomData_blend_read(BlendDataReader *reader, CustomData *data, const int count)
 {
-  BLO_read_struct_array(reader, CustomDataLayer, data->totlayer, &data->layers);
+  BLO_read_array_and_validate_size(reader, &data->layers, &data->totlayer);
 
   /* Annoying workaround for bug #31079 loading legacy files with
    * no polygons _but_ have stale custom-data. */

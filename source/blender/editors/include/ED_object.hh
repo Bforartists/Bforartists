@@ -535,12 +535,12 @@ bool modifier_apply(Main *bmain,
                     bool do_all_keyframes);
 bool modifier_copy(ReportList *reports, Main *bmain, Scene *scene, Object *ob, ModifierData *md);
 void modifier_link(bContext *C, Object *ob_dst, Object *ob_src);
-bool modifier_copy_to_object(Main *bmain,
-                             const Scene *scene,
-                             const Object *ob_src,
-                             const ModifierData *md,
-                             Object *ob_dst,
-                             ReportList *reports);
+ModifierData *modifier_copy_to_object(Main *bmain,
+                                      const Scene *scene,
+                                      const Object *ob_src,
+                                      const ModifierData *md,
+                                      Object *ob_dst,
+                                      ReportList *reports);
 /**
  * If the object data of 'orig_ob' has other users, run 'callback' on
  * each of them.

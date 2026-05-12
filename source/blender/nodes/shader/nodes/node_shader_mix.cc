@@ -358,7 +358,7 @@ static const char *gpu_shader_get_name(eNodeSocketDatatype data_type,
           return nullptr;
       }
     case SOCK_ROTATION:
-      return nullptr;
+      return "node_mix_rotation";
     default:
       BLI_assert_unreachable();
       return nullptr;

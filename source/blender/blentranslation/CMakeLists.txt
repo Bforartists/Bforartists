@@ -11,9 +11,9 @@ set(INC_SYS
 )
 
 set(SRC
-  intern/date_string.cc
   intern/blt_lang.cc
   intern/blt_translation.cc
+  intern/date_string.cc
 
   BLT_date_string.hh
   BLT_lang.hh

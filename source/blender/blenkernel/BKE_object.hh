@@ -110,7 +110,7 @@ ModifierData *BKE_object_active_modifier(const Object *ob);
  * which particle system to use or add in `ob_dst`, and it's placement in the stack, etc. If used
  * more than once, this function should preferably be called in stack order.
  */
-bool BKE_object_copy_modifier(
+ModifierData *BKE_object_copy_modifier(
     Main *bmain, const Scene *scene, Object *ob_dst, const Object *ob_src, const ModifierData *md);
 /**
  * Copy the whole stack of modifiers from one object into another.

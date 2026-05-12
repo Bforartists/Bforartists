@@ -842,7 +842,7 @@ static DriverVarTypeInfo dvar_types[MAX_DVAR_TYPES] = {
 static const DriverVarTypeInfo *get_dvar_typeinfo(eDriverVar_Types type)
 {
   /* Check if valid type. */
-  if ((int(type) >= 0) && (type < MAX_DVAR_TYPES)) {
+  if (uint32_t(type) < MAX_DVAR_TYPES) {
     return &dvar_types[type];
   }
 

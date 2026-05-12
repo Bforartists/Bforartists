@@ -228,6 +228,7 @@ set(SRC
   ${DEFSRC}
   ${APISRC}
   ../../../../intern/clog/clog.cc
+  ../../makesdna/intern/dna_parse.cc
 
   makesrna_utils.hh
 )
@@ -251,6 +252,7 @@ set(INC
   ../../imbuf
   ../../imbuf/movie
   ../../io/usd
+  ../../makesdna/intern
   ../../modifiers
   ../../nodes
   ../../nodes/composite/include
@@ -267,9 +269,10 @@ set(INC
   ../../../../intern/memutil
   ../../../../intern/mantaflow/extern
 
-
   # RNA_prototypes.hh
   ${CMAKE_CURRENT_BINARY_DIR}/../../makesrna/
+  # dna_includes_as_strings.h
+  ${CMAKE_BINARY_DIR}/source/blender/makesdna
 )
 
 set(INC_SYS
@@ -419,7 +422,7 @@ add_custom_command(
   OUTPUT ${GENSRC}
   COMMAND
     ${CMAKE_COMMAND} -E env ${PLATFORM_ENV_BUILD}
-    "$<TARGET_FILE:makesrna>" ${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/../
+    "$<TARGET_FILE:makesrna>" ${CMAKE_SOURCE_DIR}/source/blender/makesdna/ ${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/../
   DEPENDS makesrna
 )
 

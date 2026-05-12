@@ -1710,9 +1710,7 @@ static GHOST_IWindow *playanim_window_open(
   GHOST_GPUSettings gpu_settings = {0};
   const GPUBackendType gpu_backend = GPU_backend_type_selection_get();
   gpu_settings.context_type = wm_ghost_drawing_context_type(gpu_backend);
-  gpu_settings.preferred_device.index = U.gpu_preferred_index;
-  gpu_settings.preferred_device.vendor_id = U.gpu_preferred_vendor_id;
-  gpu_settings.preferred_device.device_id = U.gpu_preferred_device_id;
+  gpu_settings.preferred_device = GPU_backend_preferred_device_get();
   if (GPU_backend_vsync_is_overridden()) {
     gpu_settings.flags |= GHOST_gpuVSyncIsOverridden;
     gpu_settings.vsync = GHOST_TVSyncModes(GPU_backend_vsync_get());

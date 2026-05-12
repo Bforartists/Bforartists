@@ -2562,13 +2562,13 @@ void BKE_fmodifiers_blend_read_data(BlendDataReader *reader,
     switch (fcm.type) {
       case FMODIFIER_TYPE_GENERATOR: {
         FMod_Generator *data = static_cast<FMod_Generator *>(fcm.data);
-        BLO_read_float_array(reader, data->arraysize, &data->coefficients);
+        BLO_read_array_and_validate_size(reader, &data->coefficients, &data->arraysize);
         break;
       }
       case FMODIFIER_TYPE_ENVELOPE: {
         FMod_Envelope *data = static_cast<FMod_Envelope *>(fcm.data);
 
-        BLO_read_struct_array(reader, FCM_EnvelopeData, data->totvert, &data->data);
+        BLO_read_array_and_validate_size(reader, &data->data, &data->totvert);
 
         break;
       }
@@ -2624,9 +2624,14 @@ void BKE_fcurve_blend_write_listbase(BlendWriter *writer, ListBaseT<FCurve> *fcu
 
 void BKE_fcurve_blend_read_data(BlendDataReader *reader, FCurve *fcu)
 {
-  /* curve data */
-  BLO_read_struct_array(reader, BezTriple, fcu->totvert, &fcu->bezt);
-  BLO_read_struct_array(reader, FPoint, fcu->totvert, &fcu->fpt);
+  /* Curve data: only one of `bezt`/`fpt` is set, so guard validation to avoid clobbering
+   * `totvert` when reading the unset pointer. */
+  if (fcu->bezt) {
+    BLO_read_array_and_validate_size(reader, &fcu->bezt, &fcu->totvert);
+  }
+  if (fcu->fpt) {
+    BLO_read_array_and_validate_size(reader, &fcu->fpt, &fcu->totvert);
+  }
 
   /* rna path */
   BLO_read_string(reader, &fcu->rna_path);

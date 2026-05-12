@@ -14,6 +14,52 @@
 namespace blender::eevee {
 #endif
 
+struct [[host_shared]] ScreenThicknessParameters {
+  float thickness_ndc_scale;
+  float thickness_ndc_bias;
+  float thickness_vs_scale;
+  float thickness_vs_bias;
+
+  /* Return the depth buffer Z thickness of a pixel at a given view space Z depth. */
+  static ScreenThicknessParameters build(float4x4 winmat,
+                                         float avg_pixel_radius_unit,
+                                         float min_pixel_thickness,
+                                         float min_constant_thickness)
+  {
+    ScreenThicknessParameters params;
+    avg_pixel_radius_unit *= min_pixel_thickness;
+    if (winmat[3][3] == 0.0f) {
+      /* Perspective pixels increase footprint with the distance. */
+      params.thickness_vs_scale = avg_pixel_radius_unit;
+      params.thickness_vs_bias = -min_constant_thickness;
+      params.thickness_ndc_scale = winmat[3][2];
+      params.thickness_ndc_bias = 0.0f;
+      /* Convert from NDC to screen range. */
+      params.thickness_ndc_scale *= 0.5f;
+    }
+    else {
+      /* Orthographic pixels have fixed footprint. */
+      params.thickness_vs_scale = 0.0f;
+      params.thickness_vs_bias = 1.0f; /* Avoid NaN. */
+      params.thickness_ndc_scale = 0.0f;
+      params.thickness_ndc_bias = -(avg_pixel_radius_unit + min_constant_thickness) * winmat[2][2];
+      /* Convert from NDC to screen range. */
+      params.thickness_ndc_bias *= 0.5f;
+    }
+    return params;
+  }
+
+  /* Return the depth buffer Z thickness of a pixel at a given view space Z depth. */
+  float pixel_depth_thickness_at(float vs_z) const
+  {
+    float vs_thickness = vs_z * thickness_vs_scale + thickness_vs_bias;
+    /* NDC offset from view space offset.
+     * From http://terathon.com/gdc07_lengyel.pdf (slide 24) */
+    float ndc_thickness = vs_thickness / (vs_z * (vs_z + vs_thickness));
+    return ndc_thickness * thickness_ndc_scale + thickness_ndc_bias;
+  }
+};
+
 struct [[host_shared]] RayTraceData {
   /** ViewProjection matrix used to render the previous frame. */
   float4x4 history_persmat;
@@ -31,9 +77,9 @@ struct [[host_shared]] RayTraceData {
   /** Scale and bias to go from fast GI resolution to input resolution. */
   int2 fast_gi_resolution_bias;
   int fast_gi_resolution_scale;
-  /** Bias to the fullscreen buffer LOD to account for radiance buffer top downscaling factor. */
+  /** Bias to the full-screen buffer LOD to account for radiance buffer top down-scaling factor. */
   float fast_gi_lod_bias;
-  /** Scale to apply to fullscreen UVs to remove padding. */
+  /** Scale to apply to full-screen UVs to remove padding. */
   float2 fast_gi_uv_scale;
   /** Determine how fast the sample steps are getting bigger. */
   float quality;
@@ -50,8 +96,11 @@ struct [[host_shared]] RayTraceData {
   bool32_t use_backface_hit;
   /** Amount of frontface lighting to use for backface hits. */
   float backface_hit_scale;
-  int _pad1;
-  int _pad2;
+  uint _pad0;
+  uint _pad1;
+
+  struct ScreenThicknessParameters fast_gi_thickness;
+  struct ScreenThicknessParameters ray_thickness;
 };
 
 struct [[host_shared]] AOData {

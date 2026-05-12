@@ -581,7 +581,10 @@ void BKE_previewimg_blend_read(BlendDataReader *reader, PreviewImage *prv)
 
   for (int i = 0; i < NUM_ICON_SIZES; i++) {
     if (prv->rect[i]) {
-      BLO_read_uint32_array(reader, prv->w[i] * prv->h[i], &prv->rect[i]);
+      if (!BLO_read_array(reader, &prv->rect[i], int64_t(prv->w[i]) * prv->h[i])) {
+        prv->w[i] = 0;
+        prv->h[i] = 0;
+      }
     }
 
     /* PRV_RENDERING is a runtime only flag currently, but for undo indicates that we need

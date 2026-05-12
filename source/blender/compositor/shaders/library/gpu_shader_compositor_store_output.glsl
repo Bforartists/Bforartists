@@ -102,3 +102,10 @@ void node_compositor_store_output_menu(const float id, float value, float &out_v
   store_menu(floatBitsToUint(id), value);
   out_value = value;
 }
+
+[[node]]
+void node_compositor_store_output_quaternion(const float id, float4 value, float4 &out_value)
+{
+  store_quaternion(floatBitsToUint(id), value);
+  out_value = value;
+}
