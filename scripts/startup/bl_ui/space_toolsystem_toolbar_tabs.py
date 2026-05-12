@@ -475,55 +475,15 @@ class VIEW3D_PT_object_tab_set_origin(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("object.origin_set", text="Geometry to Origin", icon="GEOMETRY_TO_ORIGIN", props={"type": 'GEOMETRY_ORIGIN'}),
+            OperatorEntry("object.origin_set", text="Origin to Geometry", icon="ORIGIN_TO_GEOMETRY", props={"type": 'ORIGIN_GEOMETRY'}),
+            OperatorEntry("object.origin_set", text="Origin to 3D Cursor", icon="ORIGIN_TO_CURSOR", props={"type": 'ORIGIN_CURSOR'}),
+            OperatorEntry("object.origin_set", text="Origin to Center of Mass (Surface)", icon="ORIGIN_TO_CENTEROFMASS", props={"type": 'ORIGIN_CENTER_OF_MASS'}),
+            OperatorEntry("object.origin_set", text="Origin to Center of Mass (Volume)", icon="ORIGIN_TO_VOLUME", props={"type": 'ORIGIN_CENTER_OF_VOLUME'}),
+        )
 
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("object.origin_set", text="Geometry to Origin", icon="GEOMETRY_TO_ORIGIN").type='GEOMETRY_ORIGIN'
-            col.operator("object.origin_set", text="Origin to Geometry", icon="ORIGIN_TO_GEOMETRY").type='ORIGIN_GEOMETRY'
-            col.operator("object.origin_set", text="Origin to 3D Cursor", icon="ORIGIN_TO_CURSOR").type='ORIGIN_CURSOR'
-            col.operator("object.origin_set", text="Origin to Center of Mass (Surface)", icon="ORIGIN_TO_CENTEROFMASS").type='ORIGIN_CENTER_OF_MASS'
-            col.operator("object.origin_set", text="Origin to Center of Mass (Volume)", icon="ORIGIN_TO_VOLUME").type='ORIGIN_CENTER_OF_VOLUME'
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("object.origin_set", text="", icon="GEOMETRY_TO_ORIGIN").type='GEOMETRY_ORIGIN'
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_GEOMETRY").type='ORIGIN_GEOMETRY'
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_CURSOR").type='ORIGIN_CURSOR'
-                row = col.row(align=True)
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_CENTEROFMASS").type='ORIGIN_CENTER_OF_MASS'
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_VOLUME").type='ORIGIN_CENTER_OF_VOLUME'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("object.origin_set", text="", icon="GEOMETRY_TO_ORIGIN").type='GEOMETRY_ORIGIN'
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_GEOMETRY").type='ORIGIN_GEOMETRY'
-                row = col.row(align=True)
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_CURSOR").type='ORIGIN_CURSOR'
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_CENTEROFMASS").type='ORIGIN_CENTER_OF_MASS'
-                row = col.row(align=True)
-                row.operator("object.origin_set", text="", icon="ORIGIN_TO_VOLUME").type='ORIGIN_CENTER_OF_VOLUME'
-
-            elif column_count == 1:
-
-                col.operator("object.origin_set", text="", icon="GEOMETRY_TO_ORIGIN").type='GEOMETRY_ORIGIN'
-                col.operator("object.origin_set", text="", icon="ORIGIN_TO_GEOMETRY").type='ORIGIN_GEOMETRY'
-                col.operator("object.origin_set", text="", icon="ORIGIN_TO_CURSOR").type='ORIGIN_CURSOR'
-                col.operator("object.origin_set", text="", icon="ORIGIN_TO_CENTEROFMASS").type='ORIGIN_CENTER_OF_MASS'
-                col.operator("object.origin_set", text="", icon="ORIGIN_TO_VOLUME").type='ORIGIN_CENTER_OF_VOLUME'
+        draw_entries(layout, context, entries)
 
 
 # Workaround to separate the tooltips
@@ -760,59 +720,20 @@ class VIEW3D_PT_object_tab_clear(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("object.location_clear", text="Location", icon="CLEARMOVE", props={"clear_delta": False}),
+            OperatorEntry("object.rotation_clear", text="Rotation", icon="CLEARROTATE", props={"clear_delta": False}),
+            OperatorEntry("object.scale_clear", text="Scale", icon="CLEARSCALE", props={"clear_delta": False}),
+            Separator,
+            OperatorEntry("object.origin_clear", text="Origin", icon="CLEARORIGIN"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("object.location_clear", text="Location", icon="CLEARMOVE").clear_delta = False
-            col.operator("object.rotation_clear", text="Rotation", icon="CLEARROTATE").clear_delta = False
-            col.operator("object.scale_clear", text="Scale", icon="CLEARSCALE").clear_delta = False
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.origin_clear", text="Origin", icon="CLEARORIGIN")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("object.location_clear", text="", icon="CLEARMOVE").clear_delta = False
-                row.operator("object.rotation_clear", text="", icon="CLEARROTATE").clear_delta = False
-                row.operator("object.scale_clear", text="", icon="CLEARSCALE").clear_delta = False
-
-                row = col.row(align=True)
-                row.operator("object.origin_clear", text="", icon="CLEARORIGIN")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("object.location_clear", text="", icon="CLEARMOVE").clear_delta = False
-                row.operator("object.rotation_clear", text="", icon="CLEARROTATE").clear_delta = False
-
-                row = col.row(align=True)
-                row.operator("object.scale_clear", text="", icon="CLEARSCALE").clear_delta = False
-                row.operator("object.origin_clear", text="", icon="CLEARORIGIN")
-
-            elif column_count == 1:
-
-                col.operator("object.location_clear", text="", icon="CLEARMOVE").clear_delta = False
-                col.operator("object.rotation_clear", text="", icon="CLEARROTATE").clear_delta = False
-                col.operator("object.scale_clear", text="", icon="CLEARSCALE").clear_delta = False
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.origin_clear", text="", icon="CLEARORIGIN")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_object_tab_apply(Panel):
@@ -831,189 +752,37 @@ class VIEW3D_PT_object_tab_apply(Panel):
 
     def draw(self, context):
         layout = self.layout
-        context=bpy.context
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = [
+            OperatorEntry("view3d.tb_apply_location", text="Location", icon="APPLYMOVE"),
+            OperatorEntry("view3d.tb_apply_rotate", text="Rotation", icon="APPLYROTATE"),
+            OperatorEntry("view3d.tb_apply_scale", text="Scale", icon="APPLYSCALE"),
+            OperatorEntry("view3d.tb_apply_all", text="All Transforms", icon="APPLYALL"),
+            OperatorEntry("view3d.tb_apply_rotscale", text="Rotation & Scale", icon="APPLY_ROTSCALE"),
+            Separator,
+            OperatorEntry("object.visual_transform_apply", text="Visual Transform", icon="VISUALTRANSFORM", text_ctxt=i18n_contexts.default),
+            OperatorEntry("object.duplicates_make_real", icon="MAKEDUPLIREAL"),
+            OperatorEntry("object.parent_inverse_apply", text="Parent Inverse", icon="APPLY_PARENT_INVERSE", text_ctxt=i18n_contexts.default),
+            OperatorEntry("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS"),
+        ]
+
+        if context.preferences.addons.get("bfa_default_library"):
+            entries.extend((
+                Separator,
+                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Join", icon="JOIN", 
+                    props={"join_on_apply": True, "boolean_on_apply": False, "remesh_on_apply": False}),
+                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Boolean", icon="MOD_BOOLEAN", 
+                    props={"join_on_apply": False, "boolean_on_apply": True, "remesh_on_apply": False}),
+                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Remesh", icon="MOD_REMESH", 
+                    props={"join_on_apply": False, "boolean_on_apply": False, "remesh_on_apply": True}),
+            ))
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-
-            #bfa - separated tooltips. classes are in space_toolbar.py
-            col.operator("view3d.tb_apply_location", text="Location", icon="APPLYMOVE")
-            col.operator("view3d.tb_apply_rotate", text="Rotation", icon="APPLYROTATE")
-            col.operator("view3d.tb_apply_scale", text="Scale", icon="APPLYSCALE")
-            col.operator("view3d.tb_apply_all", text="All Transforms", icon="APPLYALL")
-            col.operator("view3d.tb_apply_rotscale", text="Rotation & Scale", icon="APPLY_ROTSCALE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon="VISUALTRANSFORM")
-            col.operator("object.duplicates_make_real", icon="MAKEDUPLIREAL")
-            col.operator("object.parent_inverse_apply", text="Parent Inverse", text_ctxt=i18n_contexts.default, icon="APPLY_PARENT_INVERSE")
-            col.operator("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS")
-
-            if context.preferences.addons.get("bfa_default_library"):
-
-                col.separator(factor = 0.5)
-                op = col.operator("object.apply_selected_objects",
-                                    text="Visual Geometry and Join",
-                                    icon="JOIN")
-                op.join_on_apply = True
-                op.boolean_on_apply = False
-                op.remesh_on_apply = False
-
-                op = col.operator("object.apply_selected_objects",
-                                text="Visual Geometry and Boolean",
-                                icon="MOD_BOOLEAN")
-                op.join_on_apply = False
-                op.boolean_on_apply = True
-                op.remesh_on_apply = False
-
-                op = col.operator("object.apply_selected_objects",
-                                text="Visual Geometry and Remesh",
-                                icon="MOD_REMESH")
-                op.join_on_apply = False
-                op.boolean_on_apply = False
-                op.remesh_on_apply = True
-
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
+            draw_icon_buttons(layout, entries, column_count)
 
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("view3d.tb_apply_location", text="", icon="APPLYMOVE")
-                row.operator("view3d.tb_apply_rotate", text="", icon="APPLYROTATE")
-                row.operator("view3d.tb_apply_scale", text="", icon="APPLYSCALE")
-
-                row = col.row(align=True)
-                row.operator("view3d.tb_apply_all", text="", icon="APPLYALL")
-                row.operator("view3d.tb_apply_rotscale", text="", icon="APPLY_ROTSCALE")
-
-                row = col.row(align=True)
-                row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon="VISUALTRANSFORM")
-                row.operator("object.duplicates_make_real", text="", icon="MAKEDUPLIREAL")
-                row.operator("object.parent_inverse_apply", text="", icon="APPLY_PARENT_INVERSE")
-
-                row = col.row(align=True)
-                row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
-
-                if context.preferences.addons.get("bfa_default_library"):
-                    row = col.row(align=True)
-                    op = row.operator("object.apply_selected_objects",
-                                        text="",
-                                        icon="JOIN")
-                    op.join_on_apply = True
-                    op.boolean_on_apply = False
-                    op.remesh_on_apply = False
-
-                    op = row.operator("object.apply_selected_objects",
-                                    text="",
-                                    icon="MOD_BOOLEAN")
-                    op.join_on_apply = False
-                    op.boolean_on_apply = True
-                    op.remesh_on_apply = False
-
-                    op = row.operator("object.apply_selected_objects",
-                                    text="",
-                                    icon="MOD_REMESH")
-                    op.join_on_apply = False
-                    op.boolean_on_apply = False
-                    op.remesh_on_apply = True
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("view3d.tb_apply_location", text="", icon="APPLYMOVE")
-                row.operator("view3d.tb_apply_rotate", text="", icon="APPLYROTATE")
-
-                row = col.row(align=True)
-                row.operator("view3d.tb_apply_scale", text="", icon="APPLYSCALE")
-                row.operator("view3d.tb_apply_all", text="", icon="APPLYALL")
-
-                row = col.row(align=True)
-                row.operator("view3d.tb_apply_rotscale", text="", icon="APPLY_ROTSCALE")
-
-                row = col.row(align=True)
-                row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon="VISUALTRANSFORM")
-                row.operator("object.duplicates_make_real", text="", icon="MAKEDUPLIREAL")
-
-                row = col.row(align=True)
-                row.operator("object.parent_inverse_apply", text="", icon="APPLY_PARENT_INVERSE")
-                row.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
-
-                if context.preferences.addons.get("bfa_default_library"):
-                    row = col.row(align=True)
-                    op = row.operator("object.apply_selected_objects",
-                                        text="",
-                                        icon="JOIN")
-                    op.join_on_apply = True
-                    op.boolean_on_apply = False
-                    op.remesh_on_apply = False
-
-                    op = row.operator("object.apply_selected_objects",
-                                    text="",
-                                    icon="MOD_BOOLEAN")
-                    op.join_on_apply = False
-                    op.boolean_on_apply = True
-                    op.remesh_on_apply = False
-
-                    row = col.row(align=True)
-                    op = row.operator("object.apply_selected_objects",
-                                    text="",
-                                    icon="MOD_REMESH")
-                    op.join_on_apply = False
-                    op.boolean_on_apply = False
-                    op.remesh_on_apply = True
-
-            elif column_count == 1:
-
-                col.operator("view3d.tb_apply_location", text="", icon="APPLYMOVE")
-                col.operator("view3d.tb_apply_rotate", text="", icon="APPLYROTATE")
-                col.operator("view3d.tb_apply_scale", text="", icon="APPLYSCALE")
-                col.operator("view3d.tb_apply_all", text="", icon="APPLYALL")
-                col.operator("view3d.tb_apply_rotscale", text="", icon="APPLY_ROTSCALE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon="VISUALTRANSFORM")
-                col.operator("object.duplicates_make_real", text="", icon="MAKEDUPLIREAL")
-                col.operator("object.parent_inverse_apply", text="", icon="APPLY_PARENT_INVERSE")
-                col.operator("object.visual_geometry_to_objects", text="", icon="VISUAL_GEOMETRY_TO_OBJECTS")
-
-                if context.preferences.addons.get("bfa_default_library"):
-                    col.separator(factor = 0.5)
-                    op = col.operator("object.apply_selected_objects",
-                                        text="",
-                                        icon="JOIN")
-                    op.join_on_apply = True
-                    op.boolean_on_apply = False
-                    op.remesh_on_apply = False
-
-                    op = col.operator("object.apply_selected_objects",
-                                    text="",
-                                    icon="MOD_BOOLEAN")
-                    op.join_on_apply = False
-                    op.boolean_on_apply = True
-                    op.remesh_on_apply = False
-
-                    op = col.operator("object.apply_selected_objects",
-                                    text="",
-                                    icon="MOD_REMESH")
-                    op.join_on_apply = False
-                    op.boolean_on_apply = False
-                    op.remesh_on_apply = True
 
 class VIEW3D_PT_object_tab_apply_delta(Panel):
     bl_label = "Apply Deltas"
@@ -1031,96 +800,25 @@ class VIEW3D_PT_object_tab_apply_delta(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        # bfa - the desctription in myvar.arg comes from release\scripts\startup\bl_operators\object.py
-        # defined in class TransformsToDeltas(Operator): by a string property
+        entries = (
+            OperatorEntry("object.transforms_to_deltas", text="Location to Deltas", icon="APPLYMOVEDELTA", 
+                props={"mode": 'LOC'}, text_ctxt=i18n_contexts.default),
+            OperatorEntry("object.transforms_to_deltas", text="Rotation to Deltas", icon="APPLYROTATEDELTA", 
+                props={"mode": 'ROT'}, text_ctxt=i18n_contexts.default),
+            OperatorEntry("object.transforms_to_deltas", text="Scale to Deltas", icon="APPLYSCALEDELTA", 
+                props={"mode": 'SCALE'}, text_ctxt=i18n_contexts.default),
+            OperatorEntry("object.transforms_to_deltas", text="All Transforms to Deltas", icon="APPLYALLDELTA", 
+                props={"mode": 'ALL'}, text_ctxt=i18n_contexts.default),
+            Separator,
+            OperatorEntry("object.anim_transforms_to_deltas", icon="APPLYANIDELTA"),
+        )
 
-        #text buttons
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            myvar = col.operator("object.transforms_to_deltas", text="Location to Deltas", text_ctxt=i18n_contexts.default, icon="APPLYMOVEDELTA")
-            myvar.mode = 'LOC'
-
-            myvar = col.operator("object.transforms_to_deltas", text="Rotation to Deltas", text_ctxt=i18n_contexts.default, icon="APPLYROTATEDELTA")
-            myvar.mode = 'ROT'
-
-            myvar = col.operator("object.transforms_to_deltas", text="Scale to Deltas", text_ctxt=i18n_contexts.default, icon="APPLYSCALEDELTA")
-            myvar.mode = 'SCALE'
-
-            myvar = col.operator("object.transforms_to_deltas", text="All Transforms to Deltas", text_ctxt=i18n_contexts.default, icon="APPLYALLDELTA")
-            myvar.mode = 'ALL'
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.anim_transforms_to_deltas", icon="APPLYANIDELTA")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYMOVEDELTA")
-                myvar.mode = 'LOC'
-
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYROTATEDELTA")
-                myvar.mode = 'ROT'
-
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYALLDELTA")
-                myvar.mode = 'SCALE'
-
-                row = col.row(align=True)
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYALLDELTA")
-                myvar.mode = 'ALL'
-
-                row.operator("object.anim_transforms_to_deltas", text="", icon="APPLYANIDELTA")
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYMOVEDELTA")
-                myvar.mode = 'LOC'
-
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYROTATEDELTA")
-                myvar.mode = 'ROT'
-
-                row = col.row(align=True)
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYSCALEDELTA")
-                myvar.mode = 'SCALE'
-
-                myvar = row.operator("object.transforms_to_deltas", text="", icon="APPLYALLDELTA")
-                myvar.mode = 'ALL'
-
-                row = col.row(align=True)
-                row.operator("object.anim_transforms_to_deltas", text="", icon="APPLYANIDELTA")
-
-            elif column_count == 1:
-
-                myvar = col.operator("object.transforms_to_deltas", text="", icon="APPLYMOVEDELTA")
-                myvar.mode = 'LOC'
-
-                myvar = col.operator("object.transforms_to_deltas", text="", icon="APPLYROTATEDELTA")
-                myvar.mode = 'ROT'
-
-                myvar = col.operator("object.transforms_to_deltas", text="", icon="APPLYSCALEDELTA")
-                myvar.mode = 'SCALE'
-
-                myvar = col.operator("object.transforms_to_deltas", text="", icon="APPLYALLDELTA")
-                myvar.mode = 'ALL'
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.anim_transforms_to_deltas", text="", icon="APPLYANIDELTA")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_object_tab_snap(Panel):
@@ -1138,83 +836,24 @@ class VIEW3D_PT_object_tab_snap(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon="SELECTIONTOCURSOR", props={"use_offset": False}),
+            OperatorEntry("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon="SELECTIONTOCURSOROFFSET", props={"use_offset": True}),
+            OperatorEntry("view3d.snap_selected_to_active", text="Selection to Active", icon="SELECTIONTOACTIVE"),
+            OperatorEntry("view3d.snap_selected_to_grid", text="Selection to Grid", icon="SELECTIONTOGRID"),
+            Separator,
+            OperatorEntry("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon="CURSORTOSELECTION"),
+            OperatorEntry("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon="CURSORTOCENTER"),
+            OperatorEntry("view3d.snap_cursor_to_active", text="Cursor to Active", icon="CURSORTOACTIVE"),
+            OperatorEntry("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon="CURSORTOGRID"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon="SELECTIONTOCURSOR").use_offset = False
-            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon="SELECTIONTOCURSOROFFSET").use_offset = True
-            col.operator("view3d.snap_selected_to_active", text="Selection to Active", icon="SELECTIONTOACTIVE")
-            col.operator("view3d.snap_selected_to_grid", text="Selection to Grid", icon="SELECTIONTOGRID")
-
-            col.separator()
-
-            col.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon="CURSORTOSELECTION")
-            col.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon="CURSORTOCENTER")
-            col.operator("view3d.snap_cursor_to_active", text="Cursor to Active", icon="CURSORTOACTIVE")
-            col.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon="CURSORTOGRID")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("view3d.snap_selected_to_cursor", text="", icon="SELECTIONTOCURSOR").use_offset = False
-                row.operator("view3d.snap_selected_to_cursor", text="", icon="SELECTIONTOCURSOROFFSET").use_offset = True
-                row.operator("view3d.snap_selected_to_active", text="", icon="SELECTIONTOACTIVE")
-
-                row = col.row(align=True)
-                row.operator("view3d.snap_selected_to_grid", text="", icon="SELECTIONTOGRID")
-                row.operator("view3d.snap_cursor_to_selected", text="", icon="CURSORTOSELECTION")
-                row.operator("view3d.snap_cursor_to_center", text="", icon="CURSORTOCENTER")
-
-                row = col.row(align=True)
-                row.operator("view3d.snap_cursor_to_active", text="", icon="CURSORTOACTIVE")
-                row.operator("view3d.snap_cursor_to_grid", text="", icon="CURSORTOGRID")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-
-                row.operator("view3d.snap_selected_to_cursor", text="", icon="SELECTIONTOCURSOR").use_offset = False
-                row.operator("view3d.snap_selected_to_cursor", text="", icon="SELECTIONTOCURSOROFFSET").use_offset = True
-
-                row = col.row(align=True)
-
-                row.operator("view3d.snap_selected_to_active", text="", icon="SELECTIONTOACTIVE")
-                row.operator("view3d.snap_selected_to_grid", text="", icon="SELECTIONTOGRID")
-
-                row = col.row(align=True)
-                row.operator("view3d.snap_cursor_to_selected", text="", icon="CURSORTOSELECTION")
-                row.operator("view3d.snap_cursor_to_center", text="", icon="CURSORTOCENTER")
-
-                row = col.row(align=True)
-                row.operator("view3d.snap_cursor_to_active", text="", icon="CURSORTOACTIVE")
-                row.operator("view3d.snap_cursor_to_grid", text="", icon="CURSORTOGRID")
-
-            elif column_count == 1:
-
-                col.operator("view3d.snap_selected_to_cursor", text="", icon="SELECTIONTOCURSOR").use_offset = False
-                col.operator("view3d.snap_selected_to_cursor", text="", icon="SELECTIONTOCURSOROFFSET").use_offset = True
-                col.operator("view3d.snap_selected_to_active", text="", icon="SELECTIONTOACTIVE")
-                col.operator("view3d.snap_selected_to_grid", text="", icon="SELECTIONTOGRID")
-
-                col.separator(factor = 0.5)
-
-                col.operator("view3d.snap_cursor_to_selected", text="", icon="CURSORTOSELECTION")
-                col.operator("view3d.snap_cursor_to_center", text="", icon="CURSORTOCENTER")
-                col.operator("view3d.snap_cursor_to_active", text="", icon="CURSORTOACTIVE")
-                col.operator("view3d.snap_cursor_to_grid", text="", icon="CURSORTOGRID")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_object_tab_shading(Panel):
@@ -1232,47 +871,18 @@ class VIEW3D_PT_object_tab_shading(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("object.shade_smooth", icon="SHADING_SMOOTH"),
+            OperatorEntry("object.shade_flat", icon="SHADING_FLAT"),
+            OperatorEntry("object.shade_smooth_by_angle", text="Shade Smooth by Angle", icon="NORMAL_SMOOTH"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("object.shade_smooth", icon="SHADING_SMOOTH")
-            col.operator("object.shade_flat", icon="SHADING_FLAT")
-            col.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH", text="Shade Smooth by Angle")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("object.shade_smooth", text="", icon="SHADING_SMOOTH")
-                row.operator("object.shade_flat", text="", icon="SHADING_FLAT")
-                row.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH", text="")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("object.shade_smooth", text="", icon="SHADING_SMOOTH")
-                row.operator("object.shade_flat", text="", icon="SHADING_FLAT")
-
-                row = col.row()
-                row.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH", text="")
-
-            elif column_count == 1:
-
-                col.operator("object.shade_smooth", text="", icon="SHADING_SMOOTH")
-                col.operator("object.shade_flat", text="", icon="SHADING_FLAT")
-                col.operator("object.shade_smooth_by_angle", icon="NORMAL_SMOOTH", text="")
+            draw_icon_buttons(layout, entries, column_count)
 
 # ------------------------ Utility
 
@@ -1291,41 +901,17 @@ class VIEW3D_PT_utility_tab_parent(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("object.parent_set", icon="PARENT_SET"),
+            OperatorEntry("object.parent_clear", icon="PARENT_CLEAR"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("object.parent_set", icon="PARENT_SET")
-            col.operator("object.parent_clear", icon="PARENT_CLEAR")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("object.parent_set", text="", icon="PARENT_SET")
-                row.operator("object.parent_clear", text="", icon="PARENT_CLEAR")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("object.parent_set", text="", icon="PARENT_SET")
-                row.operator("object.parent_clear", text="", icon="PARENT_CLEAR")
-
-            elif column_count == 1:
-
-                col.operator("object.parent_set", text="", icon="PARENT_SET")
-                col.operator("object.parent_clear", text="", icon="PARENT_CLEAR")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_utility_tab_objectdata(Panel):
@@ -1487,47 +1073,18 @@ class VIEW3D_PT_utility_tab_constraints(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("object.constraint_add_with_targets", icon="CONSTRAINT_DATA"),
+            OperatorEntry("object.constraints_copy", icon="COPYDOWN"),
+            OperatorEntry("object.constraints_clear", icon="CLEAR_CONSTRAINT"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("object.constraint_add_with_targets", icon="CONSTRAINT_DATA")
-            col.operator("object.constraints_copy", icon="COPYDOWN")
-            col.operator("object.constraints_clear", icon="CLEAR_CONSTRAINT")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("object.constraint_add_with_targets", text="", icon="CONSTRAINT_DATA")
-                row.operator("object.constraints_copy", text="", icon="COPYDOWN")
-                row.operator("object.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                col.operator("object.constraint_add_with_targets", text="", icon="CONSTRAINT_DATA")
-
-                row = col.row(align=True)
-                row.operator("object.constraints_copy", text="", icon="COPYDOWN")
-                row.operator("object.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
-
-            elif column_count == 1:
-
-                col.operator("object.constraint_add_with_targets", text="", icon="CONSTRAINT_DATA")
-                col.operator("object.constraints_copy", text="", icon="COPYDOWN")
-                col.operator("object.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_utility_tab_collection(Panel):
@@ -1545,40 +1102,16 @@ class VIEW3D_PT_utility_tab_collection(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("object.move_to_collection", icon="GROUP"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("object.move_to_collection", icon="GROUP")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                layout.operator_context='INVOKE_REGION_WIN'
-                col.operator("object.move_to_collection", text="", icon="GROUP")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                layout.operator_context='INVOKE_REGION_WIN'
-                col.operator("object.move_to_collection", text="", icon="GROUP")
-
-            elif column_count == 1:
-
-                layout.operator_context='INVOKE_REGION_WIN'
-                col.operator("object.move_to_collection", text="", icon="GROUP")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_utility_tab_convert(Panel):
@@ -1850,46 +1383,18 @@ class VIEW3D_PT_mesh_tab_split(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mesh.split", text="Selection", icon="SPLIT"),
+            OperatorEntry("mesh.edge_split", text="Faces by Edges", icon="SPLITEDGE", props={"type":'EDGE'}),
+            OperatorEntry("mesh.edge_split", text="Faces/Edges by Vertices", icon="SPLIT_BYVERTICES", props={"type":'VERT'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.split", text="Selection", icon="SPLIT")
-            col.operator("mesh.edge_split", text="Faces by Edges", icon="SPLITEDGE").type = 'EDGE'
-            col.operator("mesh.edge_split", text="Faces/Edges by Vertices", icon="SPLIT_BYVERTICES").type = 'VERT'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.split", text="", icon="SPLIT")
-                row.operator("mesh.edge_split", text="", icon="SPLITEDGE").type = 'EDGE'
-                row.operator("mesh.edge_split", text="", icon="SPLIT_BYVERTICES").type = 'VERT'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.split", text="", icon="SPLIT")
-                row = col.row(align=True)
-                row.operator("mesh.edge_split", text="", icon="SPLITEDGE").type = 'EDGE'
-                row.operator("mesh.edge_split", text="", icon="SPLIT_BYVERTICES").type = 'VERT'
-
-            elif column_count == 1:
-
-                col.operator("mesh.split", text="", icon="SPLIT")
-                col.operator("mesh.edge_split", text="", icon="SPLITEDGE").type = 'EDGE'
-                col.operator("mesh.edge_split", text="", icon="SPLIT_BYVERTICES").type = 'VERT'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mesh_tab_separate(Panel):
@@ -1908,46 +1413,18 @@ class VIEW3D_PT_mesh_tab_separate(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mesh.separate", text="Selection", icon="SEPARATE", props={"type": 'SELECTED'}),
+            OperatorEntry("mesh.separate", text="By Material", icon="SEPARATE_BYMATERIAL", props={"type": 'MATERIAL'}),
+            OperatorEntry("mesh.separate", text="By Loose Parts", icon="SEPARATE_LOOSE", props={"type": 'LOOSE'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.separate", text="Selection", icon="SEPARATE").type = 'SELECTED'
-            col.operator("mesh.separate", text="By Material", icon="SEPARATE_BYMATERIAL").type = 'MATERIAL'
-            col.operator("mesh.separate", text="By Loose Parts", icon="SEPARATE_LOOSE").type = 'LOOSE'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.separate", text="", icon="SEPARATE").type = 'SELECTED'
-                row.operator("mesh.separate", text="", icon="SEPARATE_BYMATERIAL").type = 'MATERIAL'
-                row.operator("mesh.separate", text="", icon="SEPARATE_LOOSE").type = 'LOOSE'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.separate", text="", icon="SEPARATE").type = 'SELECTED'
-                row = col.row(align=True)
-                row.operator("mesh.separate", text="", icon="SEPARATE_BYMATERIAL").type = 'MATERIAL'
-                row.operator("mesh.separate", text="", icon="SEPARATE_LOOSE").type = 'LOOSE'
-
-            elif column_count == 1:
-
-                col.operator("mesh.separate", text="", icon="SEPARATE").type = 'SELECTED'
-                col.operator("mesh.separate", text="", icon="SEPARATE_BYMATERIAL").type = 'MATERIAL'
-                col.operator("mesh.separate", text="", icon="SEPARATE_LOOSE").type = 'LOOSE'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mesh_tab_tools(Panel):
@@ -1971,79 +1448,21 @@ class VIEW3D_PT_mesh_tab_tools(Panel):
 
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mesh.extrude_repeat", icon="REPEAT"),
+            OperatorEntry("mesh.spin", icon="SPIN", props={"angle": pi * 2}),
+            Separator,
+            OperatorEntry("mesh.knife_project", icon="KNIFE_PROJECT"),
+            OperatorEntry("mesh.convex_hull", icon="CONVEXHULL", poll=with_bullet),
+            Separator,
+            OperatorEntry("mesh.symmetrize", icon="SYMMETRIZE", text="Symmetrize"),
+            OperatorEntry("mesh.symmetry_snap", icon="SNAP_SYMMETRY"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.extrude_repeat", icon="REPEAT")
-            col.operator("mesh.spin", icon="SPIN").angle = pi * 2
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.knife_project", icon="KNIFE_PROJECT")
-
-            if with_bullet:
-                col.operator("mesh.convex_hull", icon="CONVEXHULL")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.symmetrize", icon="SYMMETRIZE", text="Symmetrize")
-            col.operator("mesh.symmetry_snap", icon="SNAP_SYMMETRY")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.extrude_repeat", text="", icon="REPEAT")
-                row.operator("mesh.spin", text="", icon="SPIN").angle = pi * 2
-                row.operator("mesh.knife_project", text="", icon="KNIFE_PROJECT")
-
-                row = col.row(align=True)
-                if with_bullet:
-                    row.operator("mesh.convex_hull", text="", icon="CONVEXHULL")
-                row.operator("mesh.symmetrize", text="", icon="SYMMETRIZE")
-                row.operator("mesh.symmetry_snap", text="", icon="SNAP_SYMMETRY")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.extrude_repeat", text="", icon="REPEAT")
-                row.operator("mesh.spin", text="", icon="SPIN").angle = pi * 2
-
-                row = col.row(align=True)
-                row.operator("mesh.knife_project", text="", icon="KNIFE_PROJECT")
-
-                if with_bullet:
-                    row.operator("mesh.convex_hull", text="", icon="CONVEXHULL")
-
-                row = col.row(align=True)
-                row.operator("mesh.symmetrize", text="", icon="SYMMETRIZE")
-                row.operator("mesh.symmetry_snap", text="", icon="SNAP_SYMMETRY")
-
-            elif column_count == 1:
-
-                col.operator("mesh.extrude_repeat", text="", icon="REPEAT")
-                col.operator("mesh.spin", text="", icon="SPIN").angle = pi * 2
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.knife_project", text="", icon="KNIFE_PROJECT")
-
-                if with_bullet:
-                    col.operator("mesh.convex_hull", text="", icon="CONVEXHULL")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.symmetrize", text="", icon="SYMMETRIZE")
-                col.operator("mesh.symmetry_snap", text="", icon="SNAP_SYMMETRY")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mesh_tab_normals(Panel):
@@ -2062,46 +1481,18 @@ class VIEW3D_PT_mesh_tab_normals(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mesh.normals_make_consistent", text="Recalculate Outside", icon="RECALC_NORMALS", props={"inside": False}),
+            OperatorEntry("mesh.normals_make_consistent", text="Recalculate Inside", icon="RECALC_NORMALS_INSIDE", props={"inside": True}),
+            OperatorEntry("mesh.flip_normals", text="Flip", icon="FLIP_NORMALS"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon="RECALC_NORMALS").inside = False
-            col.operator("mesh.normals_make_consistent", text="Recalculate Inside", icon="RECALC_NORMALS_INSIDE").inside = True
-            col.operator("mesh.flip_normals", text="Flip", icon="FLIP_NORMALS")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.normals_make_consistent", text="", icon="RECALC_NORMALS").inside = False
-                row.operator("mesh.normals_make_consistent", text="", icon="RECALC_NORMALS_INSIDE").inside = True
-                row.operator("mesh.flip_normals", text="", icon="FLIP_NORMALS")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.normals_make_consistent", text="", icon="RECALC_NORMALS").inside = False
-                row.operator("mesh.normals_make_consistent", text="", icon="RECALC_NORMALS_INSIDE").inside = True
-                row = col.row(align=True)
-                row.operator("mesh.flip_normals", text="", icon="FLIP_NORMALS")
-
-            elif column_count == 1:
-
-                col.operator("mesh.normals_make_consistent", text="", icon="RECALC_NORMALS").inside = False
-                col.operator("mesh.normals_make_consistent", text="", icon="RECALC_NORMALS_INSIDE").inside = True
-                col.operator("mesh.flip_normals", text="", icon="FLIP_NORMALS")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mesh_tab_shading(Panel):
@@ -2120,83 +1511,23 @@ class VIEW3D_PT_mesh_tab_shading(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mesh.faces_shade_smooth", icon="SHADING_SMOOTH"),
+            OperatorEntry("mesh.faces_shade_flat", icon="SHADING_FLAT"),
+            Separator,
+            OperatorEntry("mesh.mark_sharp", text="Smooth Edges", icon="SHADING_EDGE_SMOOTH", props={"clear": True}),
+            OperatorEntry("mesh.mark_sharp", text="Sharp Edges", icon="SHADING_EDGE_SHARP"),
+            Separator,
+            OperatorEntry("mesh.mark_sharp", text="Smooth Vertices", icon="SHADING_VERT_SMOOTH", props={"use_verts": True, "clear": True}),
+            OperatorEntry("mesh.mark_sharp", text="Sharp Vertices", icon="SHADING_VERT_SHARP", props={"use_verts": True}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.faces_shade_smooth", icon="SHADING_SMOOTH")
-            col.operator("mesh.faces_shade_flat", icon="SHADING_FLAT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.mark_sharp", text="Smooth Edges", icon="SHADING_EDGE_SMOOTH").clear = True
-            col.operator("mesh.mark_sharp", text="Sharp Edges", icon="SHADING_EDGE_SHARP")
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("mesh.mark_sharp", text="Smooth Vertices", icon="SHADING_VERT_SMOOTH")
-            props.use_verts = True
-            props.clear = True
-            col.operator("mesh.mark_sharp", text="Sharp Vertices", icon="SHADING_VERT_SHARP").use_verts = True
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.faces_shade_smooth", text="", icon="SHADING_SMOOTH")
-                row.operator("mesh.faces_shade_flat", text="", icon="SHADING_FLAT")
-                row.operator("mesh.mark_sharp", text="", icon="SHADING_EDGE_SMOOTH").clear = True
-
-                row = col.row(align=True)
-                row.operator("mesh.mark_sharp", text="", icon="SHADING_EDGE_SHARP")
-                props = row.operator("mesh.mark_sharp", text="", icon="SHADING_VERT_SMOOTH")
-                props.use_verts = True
-                props.clear = True
-                row.operator("mesh.mark_sharp", text="", icon="SHADING_VERT_SHARP").use_verts = True
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.faces_shade_smooth", text="", icon="SHADING_SMOOTH")
-                row.operator("mesh.faces_shade_flat", text="", icon="SHADING_FLAT")
-
-                row = col.row(align=True)
-                row.operator("mesh.mark_sharp", text="", icon="SHADING_EDGE_SMOOTH").clear = True
-                row.operator("mesh.mark_sharp", text="", icon="SHADING_EDGE_SHARP")
-
-                row = col.row(align=True)
-                props = row.operator("mesh.mark_sharp", text="", icon="SHADING_VERT_SMOOTH")
-                props.use_verts = True
-                props.clear = True
-                row.operator("mesh.mark_sharp", text="", icon="SHADING_VERT_SHARP").use_verts = True
-
-            elif column_count == 1:
-
-                col.operator("mesh.faces_shade_smooth", text="", icon="SHADING_SMOOTH")
-                col.operator("mesh.faces_shade_flat", text="", icon="SHADING_FLAT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.mark_sharp", text="", icon="SHADING_EDGE_SMOOTH").clear = True
-                col.operator("mesh.mark_sharp", text="", icon="SHADING_EDGE_SHARP")
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("mesh.mark_sharp", text="", icon="SHADING_VERT_SMOOTH")
-                props.use_verts = True
-                props.clear = True
-                col.operator("mesh.mark_sharp", text="", icon="SHADING_VERT_SHARP").use_verts = True
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mesh_tab_cleanup(Panel):
@@ -2215,87 +1546,25 @@ class VIEW3D_PT_mesh_tab_cleanup(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mesh.delete_loose", icon="DELETE"),
+            Separator,
+            OperatorEntry("mesh.decimate", icon="DECIMATE"),
+            OperatorEntry("mesh.dissolve_degenerate", icon="DEGENERATE_DISSOLVE"),
+            OperatorEntry("mesh.dissolve_limited", icon="DISSOLVE_LIMITED"),
+            OperatorEntry("mesh.face_make_planar", icon="MAKE_PLANAR"),
+            Separator,
+            OperatorEntry("mesh.vert_connect_nonplanar", icon="SPLIT_NONPLANAR"),
+            OperatorEntry("mesh.vert_connect_concave", icon="SPLIT_CONCAVE"),
+            OperatorEntry("mesh.fill_holes", icon="FILL_HOLE"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.delete_loose", icon="DELETE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.decimate", icon="DECIMATE")
-            col.operator("mesh.dissolve_degenerate", icon="DEGENERATE_DISSOLVE")
-            col.operator("mesh.dissolve_limited", icon="DISSOLVE_LIMITED")
-            col.operator("mesh.face_make_planar", icon="MAKE_PLANAR")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.vert_connect_nonplanar", icon="SPLIT_NONPLANAR")
-            col.operator("mesh.vert_connect_concave", icon="SPLIT_CONCAVE")
-            col.operator("mesh.fill_holes", icon="FILL_HOLE")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.delete_loose", text="", icon="DELETE")
-                row.operator("mesh.decimate", text="", icon="DECIMATE")
-                row.operator("mesh.dissolve_degenerate", text="", icon="DEGENERATE_DISSOLVE")
-
-                row = col.row(align=True)
-                row.operator("mesh.dissolve_limited", text="", icon="DISSOLVE_LIMITED")
-                row.operator("mesh.face_make_planar", text="", icon="MAKE_PLANAR")
-                row.operator("mesh.vert_connect_nonplanar", text="", icon="SPLIT_NONPLANAR")
-
-                row = col.row(align=True)
-                row.operator("mesh.vert_connect_concave", text="", icon="SPLIT_CONCAVE")
-                row.operator("mesh.fill_holes", text="", icon="FILL_HOLE")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.delete_loose", text="", icon="DELETE")
-                row.operator("mesh.decimate", text="", icon="DECIMATE")
-
-                row = col.row(align=True)
-                row.operator("mesh.dissolve_degenerate", text="", icon="DEGENERATE_DISSOLVE")
-                row.operator("mesh.dissolve_limited", text="", icon="DISSOLVE_LIMITED")
-
-                row = col.row(align=True)
-                row.operator("mesh.face_make_planar", text="", icon="MAKE_PLANAR")
-                row.operator("mesh.vert_connect_nonplanar", text="", icon="SPLIT_NONPLANAR")
-
-                row = col.row(align=True)
-                row.operator("mesh.vert_connect_concave", text="", icon="SPLIT_CONCAVE")
-                row.operator("mesh.fill_holes", text="", icon="FILL_HOLE")
-
-            elif column_count == 1:
-
-                col.operator("mesh.delete_loose", text="", icon="DELETE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.decimate", text="", icon="DECIMATE")
-                col.operator("mesh.dissolve_degenerate", text="", icon="DEGENERATE_DISSOLVE")
-                col.operator("mesh.dissolve_limited", text="", icon="DISSOLVE_LIMITED")
-                col.operator("mesh.face_make_planar", text="", icon="MAKE_PLANAR")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.vert_connect_nonplanar", text="", icon="SPLIT_NONPLANAR")
-                col.operator("mesh.vert_connect_concave", text="", icon="SPLIT_CONCAVE")
-                col.operator("mesh.fill_holes", text="", icon="FILL_HOLE")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mesh_tab_dissolve(Panel):
@@ -2314,75 +1583,23 @@ class VIEW3D_PT_mesh_tab_dissolve(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mesh.dissolve_verts", icon="DISSOLVE_VERTS"),
+            OperatorEntry("mesh.dissolve_edges", icon="DISSOLVE_EDGES"),
+            OperatorEntry("mesh.dissolve_faces", icon="DISSOLVE_FACES"),
+            Separator,
+            OperatorEntry("mesh.dissolve_limited", icon="DISSOLVE_LIMITED"),
+            OperatorEntry("mesh.dissolve_mode", icon="DISSOLVE_SELECTION"),
+            Separator,
+            OperatorEntry("mesh.edge_collapse", icon="EDGE_COLLAPSE"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.dissolve_verts", icon="DISSOLVE_VERTS")
-            col.operator("mesh.dissolve_edges", icon="DISSOLVE_EDGES")
-            col.operator("mesh.dissolve_faces", icon="DISSOLVE_FACES")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.dissolve_limited", icon="DISSOLVE_LIMITED")
-            col.operator("mesh.dissolve_mode", icon="DISSOLVE_SELECTION")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.edge_collapse", icon="EDGE_COLLAPSE")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.dissolve_verts", text="", icon="DISSOLVE_VERTS")
-                row.operator("mesh.dissolve_edges", text="", icon="DISSOLVE_EDGES")
-                row.operator("mesh.dissolve_faces", text="", icon="DISSOLVE_FACES")
-
-                row = col.row(align=True)
-                row.operator("mesh.dissolve_limited", text="", icon="DISSOLVE_LIMITED")
-                row.operator("mesh.dissolve_mode", text="", icon="DISSOLVE_SELECTION")
-                row.operator("mesh.edge_collapse", text="", icon="EDGE_COLLAPSE")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.dissolve_verts", text="", icon="DISSOLVE_VERTS")
-                row.operator("mesh.dissolve_edges", text="", icon="DISSOLVE_EDGES")
-
-                row = col.row(align=True)
-                row.operator("mesh.dissolve_faces", text="", icon="DISSOLVE_FACES")
-                row.operator("mesh.dissolve_limited", text="", icon="DISSOLVE_LIMITED")
-
-                row = col.row(align=True)
-                row.operator("mesh.dissolve_mode", text="", icon="DISSOLVE_SELECTION")
-                row.operator("mesh.edge_collapse", text="", icon="EDGE_COLLAPSE")
-
-            elif column_count == 1:
-
-                col.operator("mesh.dissolve_verts", text="", icon="DISSOLVE_VERTS")
-                col.operator("mesh.dissolve_edges", text="", icon="DISSOLVE_EDGES")
-                col.operator("mesh.dissolve_faces", text="", icon="DISSOLVE_FACES")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.dissolve_limited", text="", icon="DISSOLVE_LIMITED")
-                col.operator("mesh.dissolve_mode", text="", icon="DISSOLVE_SELECTION")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.edge_collapse", text="", icon="EDGE_COLLAPSE")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_vertex_tab_vertex(Panel):
@@ -3038,41 +2255,16 @@ class VIEW3D_PT_sculpt_tab_transform(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("sculpt.mesh_filter", text="Sphere", icon="SPHERE", props={"type": 'SPHERE'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            props = col.operator("sculpt.mesh_filter", text=" Sphere        ", icon="SPHERE")
-            props.type = 'SPHERE'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                props = col.operator("sculpt.mesh_filter", text="", icon="SPHERE")
-                props.type = 'SPHERE'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                props = col.operator("sculpt.mesh_filter", text="", icon="SPHERE")
-                props.type = 'SPHERE'
-
-            elif column_count == 1:
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="SPHERE")
-                props.type = 'SPHERE'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_sculpt_tab_sculpt(Panel):
@@ -3091,203 +2283,29 @@ class VIEW3D_PT_sculpt_tab_sculpt(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("paint.hide_show", text="Box Hide", icon="BOX_HIDE", props={"action": 'HIDE'}),
+            OperatorEntry("paint.hide_show", text="Box Show", icon="BOX_SHOW", props={"action": 'SHOW'}),
+            OperatorEntry("paint.hide_show_lasso_gesture", text="Lasso Hide", icon="LASSO_HIDE", props={"action": 'HIDE'}),
+            OperatorEntry("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW", props={"action": 'SHOW'}),
+            OperatorEntry("sculpt.trim_box_gesture", text="Box Trim", icon="BOX_TRIM", props={"trim_mode": 'DIFFERENCE'}),
+            OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Trim", icon="LASSO_TRIM", props={"trim_mode": 'DIFFERENCE'}),
+            OperatorEntry("sculpt.trim_box_gesture", text="Box Add", icon="BOX_ADD", props={"trim_mode": 'JOIN'}),
+            OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD", props={"trim_mode": 'JOIN'}),
+            Separator,
+            OperatorEntry("sculpt.project_line_gesture", text="Line Project", icon="LINE_PROJECT"),
+            OperatorEntry("sculpt.face_set_edit", text="Fair Positions", icon="POSITION", props={"mode": 'FAIR_POSITIONS'}),
+            OperatorEntry("sculpt.face_set_edit", text="Fair Tangency", icon="NODE_TANGENT", props={"mode": 'FAIR_TANGENCY'}),
+            Separator,
+            OperatorEntry("sculpt.sample_color", text="Sample Color", icon="EYEDROPPER"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            props = col.operator("paint.hide_show", text=" Box Hide    ", icon="BOX_HIDE")
-            props.action = 'HIDE'
-
-            props = col.operator("paint.hide_show", text=" Box Show   ", icon="BOX_SHOW")
-            props.action = 'SHOW'
-
-            props = col.operator("paint.hide_show_lasso_gesture", text=" Lasso Hide", icon="LASSO_HIDE")
-            props.action = 'HIDE'
-
-            props = col.operator("paint.hide_show_lasso_gesture", text=" Lasso Show", icon="LASSO_SHOW")
-            props.action = 'SHOW'
-
-            props = col.operator("sculpt.trim_box_gesture", text=" Box Trim    ", icon="BOX_TRIM")
-            props.trim_mode = 'DIFFERENCE'
-
-            props = col.operator("sculpt.trim_lasso_gesture", text=" Lasso Trim  ", icon="LASSO_TRIM")
-            props.trim_mode = 'DIFFERENCE'
-
-            props = col.operator("sculpt.trim_box_gesture", text=" Box Add      ", icon="BOX_ADD")
-            props.trim_mode = 'JOIN'
-
-            props = col.operator("sculpt.trim_lasso_gesture", text=" Lasso Add   ", icon="LASSO_ADD")
-            props.trim_mode = 'JOIN'
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sculpt.project_line_gesture", text=" Line Project  ", icon="LINE_PROJECT")
-
-            # Fair Positions
-            props = col.operator("sculpt.face_set_edit", text=" Fair Positions", icon="POSITION")
-            props.mode = 'FAIR_POSITIONS'
-
-            # Fair Tangency
-            props = col.operator("sculpt.face_set_edit", text=" Fair Tangency", icon="NODE_TANGENT")
-            props.mode = 'FAIR_TANGENCY'
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sculpt.sample_color", text="  Sample Color", icon="EYEDROPPER")
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                props = row.operator("paint.hide_show", text="", icon="BOX_HIDE")
-                props.action = 'HIDE'
-
-                props = row.operator("paint.hide_show", text="", icon="BOX_SHOW")
-                props.action = 'SHOW'
-
-                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_HIDE")
-                props.action = 'HIDE'
-
-                row = col.row(align=True)
-                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_SHOW")
-                props.action = 'SHOW'
-
-                props = row.operator("sculpt.trim_box_gesture", text="", icon="BOX_TRIM")
-                props.trim_mode = 'DIFFERENCE'
-
-                props = row.operator("sculpt.trim_lasso_gesture", text="", icon="LASSO_TRIM")
-                props.trim_mode = 'DIFFERENCE'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.trim_box_gesture", text="", icon="BOX_ADD")
-                props.trim_mode = 'JOIN'
-
-                props = row.operator("sculpt.trim_lasso_gesture", text="", icon="LASSO_ADD")
-                props.trim_mode = 'JOIN'
-
-                col.separator()
-
-                row = col.row(align=True)
-                row.operator("sculpt.project_line_gesture", text="", icon="LINE_PROJECT")
-
-                # Fair Positions
-                props = row.operator("sculpt.face_set_edit", text="", icon="POSITION")
-                props.mode = 'FAIR_POSITIONS'
-
-                # Fair Tangency
-                props = row.operator("sculpt.face_set_edit", text="", icon="NODE_TANGENT")
-                props.mode = 'FAIR_TANGENCY'
-
-                col.separator()
-
-                row = col.row(align=True)
-                row.operator("sculpt.sample_color", text="", icon="EYEDROPPER")
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                props = row.operator("paint.hide_show", text="", icon="BOX_HIDE")
-                props.action = 'HIDE'
-
-                props = row.operator("paint.hide_show", text="", icon="BOX_SHOW")
-                props.action = 'SHOW'
-
-                row = col.row(align=True)
-                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_HIDE")
-                props.action = 'HIDE'
-
-                props = row.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_SHOW")
-                props.action = 'SHOW'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.trim_box_gesture", text="", icon="BOX_TRIM")
-                props.trim_mode = 'DIFFERENCE'
-
-                props = row.operator("sculpt.trim_lasso_gesture", text="", icon="LASSO_TRIM")
-                props.trim_mode = 'DIFFERENCE'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.trim_box_gesture", text="", icon="BOX_ADD")
-                props.trim_mode = 'JOIN'
-
-                props = row.operator("sculpt.trim_lasso_gesture", text="", icon="LASSO_ADD")
-                props.trim_mode = 'JOIN'
-
-                col.separator()
-
-                row = col.row(align=True)
-                row.operator("sculpt.project_line_gesture", text="", icon="LINE_PROJECT")
-
-                # Fair Positions
-                props = row.operator("sculpt.face_set_edit", text="", icon="POSITION")
-                props.mode = 'FAIR_POSITIONS'
-
-                row = col.row(align=True)
-                # Fair Tangency
-                props = row.operator("sculpt.face_set_edit", text="", icon="NODE_TANGENT")
-                props.mode = 'FAIR_TANGENCY'
-
-                col.separator()
-
-                row = col.row(align=True)
-                row.operator("sculpt.sample_color", text="", icon="EYEDROPPER")
-
-            elif column_count == 1:
-
-                props = col.operator("paint.hide_show", text="", icon="BOX_HIDE")
-                props.action = 'HIDE'
-
-                props = col.operator("paint.hide_show", text="", icon="BOX_SHOW")
-                props.action = 'SHOW'
-
-                props = col.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_HIDE")
-                props.action = 'HIDE'
-
-                props = col.operator("paint.hide_show_lasso_gesture", text="", icon="LASSO_SHOW")
-                props.action = 'SHOW'
-
-                props = col.operator("sculpt.trim_box_gesture", text="", icon="BOX_TRIM")
-                props.trim_mode = 'DIFFERENCE'
-
-                props = col.operator("sculpt.trim_lasso_gesture", text="", icon="LASSO_TRIM")
-                props.trim_mode = 'DIFFERENCE'
-
-                props = col.operator("sculpt.trim_box_gesture", text="", icon="BOX_ADD")
-                props.trim_mode = 'JOIN'
-
-                props = col.operator("sculpt.trim_lasso_gesture", text="", icon="LASSO_ADD")
-                props.trim_mode = 'JOIN'
-
-                col.separator()
-
-                col.operator("sculpt.project_line_gesture", text="", icon="LINE_PROJECT")
-
-                # Fair Positions
-                props = col.operator("sculpt.face_set_edit", text="", icon="POSITION")
-                props.mode = 'FAIR_POSITIONS'
-
-                # Fair Tangency
-                props = col.operator("sculpt.face_set_edit", text="", icon="NODE_TANGENT")
-                props.mode = 'FAIR_TANGENCY'
-
-                col.separator()
-
-                col.operator("sculpt.sample_color", text="", icon="EYEDROPPER")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_sculpt_tab_filters(Panel):
@@ -3306,143 +2324,24 @@ class VIEW3D_PT_sculpt_tab_filters(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("sculpt.mesh_filter", text="Smooth", icon="PARTICLEBRUSH_SMOOTH", props={"type": 'SMOOTH'}),
+            OperatorEntry("sculpt.mesh_filter", text="Surface Smooth", icon="SURFACE_SMOOTH", props={"type": 'SURFACE_SMOOTH'}),
+            OperatorEntry("sculpt.mesh_filter", text="Inflate", icon="INFLATE", props={"type": 'INFLATE'}),
+            OperatorEntry("sculpt.mesh_filter", text="Relax Topology", icon="RELAX_TOPOLOGY", props={"type": 'RELAX'}),
+            OperatorEntry("sculpt.mesh_filter", text="Relax Face Sets", icon="RELAX_FACE_SETS", props={"type": 'RELAX_FACE_SETS'}),
+            OperatorEntry("sculpt.mesh_filter", text="Sharpen", icon="SHARPEN", props={"type": 'SHARPEN'}),
+            OperatorEntry("sculpt.mesh_filter", text="Enhance Details", icon="ENHANCE", props={"type": 'ENHANCE_DETAILS'}),
+            OperatorEntry("sculpt.mesh_filter", text="Erase Multires Displacement", icon="DELETE", props={"type": 'ERASE_DISPLACEMENT'}),
+            OperatorEntry("sculpt.mesh_filter", text="Randomize", icon="RANDOMIZE", props={"type": 'RANDOM'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            props = col.operator("sculpt.mesh_filter", text=" Smooth           ", icon="PARTICLEBRUSH_SMOOTH")
-            props.type = 'SMOOTH'
-
-            props = col.operator("sculpt.mesh_filter", text=" Surface Smooth", icon="SURFACE_SMOOTH")
-            props.type = 'SURFACE_SMOOTH'
-
-            props = col.operator("sculpt.mesh_filter", text=" Inflate              ", icon="INFLATE")
-            props.type = 'INFLATE'
-
-            props = col.operator("sculpt.mesh_filter", text=" Relax Topology", icon="RELAX_TOPOLOGY")
-            props.type = 'RELAX'
-
-            props = col.operator("sculpt.mesh_filter", text=" Relax Face Sets", icon="RELAX_FACE_SETS")
-            props.type = 'RELAX_FACE_SETS'
-
-            props = col.operator("sculpt.mesh_filter", text=" Sharpen            ", icon="SHARPEN")
-            props.type = 'SHARPEN'
-
-            props = col.operator("sculpt.mesh_filter", text=" Enhance Details", icon="ENHANCE")
-            props.type = 'ENHANCE_DETAILS'
-
-            props = col.operator("sculpt.mesh_filter", text=" Erase Multires Displacement", icon="DELETE")
-            props.type = 'ERASE_DISPLACEMENT'
-
-            props = col.operator("sculpt.mesh_filter", text=" Randomize          ", icon="RANDOMIZE")
-            props.type = 'RANDOM'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="PARTICLEBRUSH_SMOOTH")
-                props.type = 'SMOOTH'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="SURFACE_SMOOTH")
-                props.type = 'SURFACE_SMOOTH'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="INFLATE")
-                props.type = 'INFLATE'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="RELAX_TOPOLOGY")
-                props.type = 'RELAX'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="RELAX_FACE_SETS")
-                props.type = 'RELAX_FACE_SETS'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="SHARPEN")
-                props.type = 'SHARPEN'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="ENHANCE")
-                props.type = 'ENHANCE_DETAILS'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="DELETE")
-                props.type = 'ERASE_DISPLACEMENT'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="RANDOMIZE")
-                props.type = 'RANDOM'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="PARTICLEBRUSH_SMOOTH")
-                props.type = 'SMOOTH'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="SURFACE_SMOOTH")
-                props.type = 'SURFACE_SMOOTH'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="INFLATE")
-                props.type = 'INFLATE'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="RELAX_TOPOLOGY")
-                props.type = 'RELAX'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="RELAX_FACE_SETS")
-                props.type = 'RELAX_FACE_SETS'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="SHARPEN")
-                props.type = 'SHARPEN'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="ENHANCE")
-                props.type = 'ENHANCE_DETAILS'
-
-                props = row.operator("sculpt.mesh_filter", text="", icon="DELETE")
-                props.type = 'ERASE_DISPLACEMENT'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mesh_filter", text="", icon="RANDOMIZE")
-                props.type = 'RANDOM'
-
-            elif column_count == 1:
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="PARTICLEBRUSH_SMOOTH")
-                props.type = 'SMOOTH'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="SURFACE_SMOOTH")
-                props.type = 'SURFACE_SMOOTH'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="INFLATE")
-                props.type = 'INFLATE'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="RELAX_TOPOLOGY")
-                props.type = 'RELAX'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="RELAX_FACE_SETS")
-                props.type = 'RELAX_FACE_SETS'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="SHARPEN")
-                props.type = 'SHARPEN'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="ENHANCE")
-                props.type = 'ENHANCE_DETAILS'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="DELETE")
-                props.type = 'ERASE_DISPLACEMENT'
-
-                props = col.operator("sculpt.mesh_filter", text="", icon="RANDOMIZE")
-                props.type = 'RANDOM'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
@@ -3461,92 +2360,20 @@ class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Origin", icon="PIVOT_TO_ORIGIN", props={"mode": 'ORIGIN'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Unmasked", icon="PIVOT_TO_UNMASKED", props={"mode": 'UNMASKED'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Mask Border", icon="PIVOT_TO_MASKBORDER", props={"mode": 'BORDER'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Active Vertex", icon="PIVOT_TO_ACTIVE_VERT", props={"mode": 'ACTIVE'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Surface Under Cursor", icon="PIVOT_TO_SURFACE", props={"mode": 'SURFACE'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Origin        ", icon="PIVOT_TO_ORIGIN")
-            props.mode = 'ORIGIN'
-
-            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Unmasked  ", icon="PIVOT_TO_UNMASKED")
-            props.mode = 'UNMASKED'
-
-            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Mask Border", icon="PIVOT_TO_MASKBORDER")
-            props.mode = 'BORDER'
-
-            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Active Vertex", icon="PIVOT_TO_ACTIVE_VERT")
-            props.mode = 'ACTIVE'
-
-            props = col.operator("sculpt.set_pivot_position", text=" Pivot to Surface Under Cursor", icon="PIVOT_TO_SURFACE")
-            props.mode = 'SURFACE'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ORIGIN")
-                props.mode = 'ORIGIN'
-
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_UNMASKED")
-                props.mode = 'UNMASKED'
-
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_MASKBORDER")
-                props.mode = 'BORDER'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ACTIVE_VERT")
-                props.mode = 'ACTIVE'
-
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_SURFACE")
-                props.mode = 'SURFACE'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ORIGIN")
-                props.mode = 'ORIGIN'
-
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_UNMASKED")
-                props.mode = 'UNMASKED'
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_MASKBORDER")
-                props.mode = 'BORDER'
-
-                props = row.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ACTIVE_VERT")
-                props.mode = 'ACTIVE'
-
-                row = col.row(align=True)
-                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_SURFACE")
-                props.mode = 'SURFACE'
-
-            elif column_count == 1:
-
-                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ORIGIN")
-                props.mode = 'ORIGIN'
-
-                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_UNMASKED")
-                props.mode = 'UNMASKED'
-
-                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_MASKBORDER")
-                props.mode = 'BORDER'
-
-                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_ACTIVE_VERT")
-                props.mode = 'ACTIVE'
-
-                props = col.operator("sculpt.set_pivot_position", text="", icon="PIVOT_TO_SURFACE")
-                props.mode = 'SURFACE'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mask_tab_mask(Panel):
@@ -3565,290 +2392,38 @@ class VIEW3D_PT_mask_tab_mask(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("mask.flood_fill_invert", text="Invert Mask", icon="INVERT_MASK"),
+            OperatorEntry("mask.flood_fill_fill", text="Fill Mask", icon="FILL_MASK"),
+            OperatorEntry("mask.flood_fill_clear", text="Clear Mask", icon="CLEAR_MASK"),
+            Separator,
+            OperatorEntry("sculpt.mask_filter", text='Smooth Mask', icon="PARTICLEBRUSH_SMOOTH", props={"filter_type": 'SMOOTH', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Sharpen Mask', icon="SHARPEN", props={"filter_type": 'SHARPEN', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Grow Mask', icon="SELECTMORE", props={"filter_type": 'GROW', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Shrink Mask', icon="SELECTLESS", props={"filter_type": 'SHRINK', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Increase Contrast', icon="INC_CONTRAST", props={"filter_type": 'CONTRAST_INCREASE', "auto_iteration_count": False}),
+            OperatorEntry("sculpt.mask_filter", text='Decrease Contrast', icon="DEC_CONTRAST", props={"filter_type": 'CONTRAST_DECREASE', "auto_iteration_count": False}),
+            Separator,
+            OperatorEntry("sculpt.expand", text="Expand Mask by Topology", icon="MESH_DATA", props={"target": 'MASK', "falloff_type": 'GEODESIC', "invert": True}),
+            OperatorEntry("sculpt.expand", text="Expand Mask by Curvature", icon="CURVE_DATA", props={"target": 'MASK', "falloff_type": 'NORMALS', "invert": False}),
+            Separator,
+            OperatorEntry("sculpt.paint_mask_extract", text="Mask Extract", icon="PACKAGE"),
+            Separator,
+            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice", icon="MASK_SLICE", props={"new_object": False}),
+            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice and Fill Holes", icon="MASK_SLICE_FILL", props={"new_object": False}),
+            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice to New Object", icon="MASK_SLICE_NEW"),
+            Separator,
+            OperatorEntry("sculpt.mask_from_cavity", text='Mask from Cavity', icon="DIRTY_VERTEX"),
+            OperatorEntry("sculpt.mask_from_boundary", text="Mask from Mesh Boundary", icon="MASK_MESH_BOUNDARY", props={"settings_source": 'OPERATOR',"boundary_mode": 'MESH'}),
+            OperatorEntry("sculpt.mask_from_boundary", text="Mask from Face Sets Boundary", icon="MASK_FACE_SETS_BOUNDARY", props={"settings_source": 'OPERATOR',"boundary_mode": "FACE_SETS"}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mask.flood_fill_invert", text="Invert Mask", icon="INVERT_MASK")
-            col.operator("mask.flood_fill_fill", text="Fill Mask", icon="FILL_MASK")
-            col.operator("mask.flood_fill_clear", text="Clear Mask", icon="CLEAR_MASK")
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("sculpt.mask_filter", text='Smooth Mask', icon="PARTICLEBRUSH_SMOOTH")
-            props.filter_type = 'SMOOTH'
-            props.auto_iteration_count = True
-
-            props = col.operator("sculpt.mask_filter", text='Sharpen Mask', icon="SHARPEN")
-            props.filter_type = 'SHARPEN'
-            props.auto_iteration_count = True
-
-            props = col.operator("sculpt.mask_filter", text='Grow Mask', icon="SELECTMORE")
-            props.filter_type = 'GROW'
-            props.auto_iteration_count = True
-
-            props = col.operator("sculpt.mask_filter", text='Shrink Mask', icon="SELECTLESS")
-            props.filter_type = 'SHRINK'
-            props.auto_iteration_count = True
-
-            props = col.operator("sculpt.mask_filter", text='Increase Contrast', icon="INC_CONTRAST")
-            props.filter_type = 'CONTRAST_INCREASE'
-            props.auto_iteration_count = False
-
-            props = col.operator("sculpt.mask_filter", text='Decrease Contrast', icon="DEC_CONTRAST")
-            props.filter_type = 'CONTRAST_DECREASE'
-            props.auto_iteration_count = False
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("sculpt.expand", text="Expand Mask by Topology", icon="MESH_DATA")
-            props.target = 'MASK'
-            props.falloff_type = 'GEODESIC'
-            props.invert = True
-
-            props = col.operator("sculpt.expand", text="Expand Mask by Curvature", icon="CURVE_DATA")
-            props.target = 'MASK'
-            props.falloff_type = 'NORMALS'
-            props.invert = False
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("sculpt.paint_mask_extract", text="Mask Extract", icon="PACKAGE")
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("sculpt.paint_mask_slice", text="Mask Slice", icon="MASK_SLICE")
-            props.new_object = False
-            props = col.operator("sculpt.paint_mask_slice", text="Mask Slice and Fill Holes", icon="MASK_SLICE_FILL")
-            props.new_object = False
-            props = col.operator("sculpt.paint_mask_slice", text="Mask Slice to New Object", icon="MASK_SLICE_NEW")
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("sculpt.mask_from_cavity", text='Mask from Cavity', icon="DIRTY_VERTEX")
-            props = col.operator("sculpt.mask_from_boundary", text="Mask from Mesh Boundary", icon="MASK_MESH_BOUNDARY")
-            props.settings_source = 'OPERATOR'
-            props.boundary_mode = 'MESH'
-            props = col.operator("sculpt.mask_from_boundary", text="Mask from Face Sets Boundary", icon="MASK_FACE_SETS_BOUNDARY")
-            props.settings_source = 'OPERATOR'
-            props.boundary_mode = "FACE_SETS"
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mask.flood_fill_invert", text="", icon="INVERT_MASK")
-                row.operator("mask.flood_fill_fill", text="", icon="FILL_MASK")
-                row.operator("mask.flood_fill_clear", text="", icon="CLEAR_MASK")
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_filter", text='', icon="PARTICLEBRUSH_SMOOTH")
-                props.filter_type = 'SMOOTH'
-                props.auto_iteration_count = True
-
-                props = row.operator("sculpt.mask_filter", text='', icon="SHARPEN")
-                props.filter_type = 'SHARPEN'
-                props.auto_iteration_count = True
-
-                props = row.operator("sculpt.mask_filter", text='', icon="SELECTMORE")
-                props.filter_type = 'GROW'
-                props.auto_iteration_count = True
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_filter", text='', icon="SELECTLESS")
-                props.filter_type = 'SHRINK'
-                props.auto_iteration_count = True
-
-                props = row.operator("sculpt.mask_filter", text='', icon="INC_CONTRAST")
-                props.filter_type = 'CONTRAST_INCREASE'
-                props.auto_iteration_count = False
-
-                props = row.operator("sculpt.mask_filter", text='', icon="DEC_CONTRAST")
-                props.filter_type = 'CONTRAST_DECREASE'
-                props.auto_iteration_count = False
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.expand", text="", icon="MESH_DATA")
-                props.target = 'MASK'
-                props.falloff_type = 'GEODESIC'
-                props.invert = True
-
-                props = row.operator("sculpt.expand", text="", icon="CURVE_DATA")
-                props.target = 'MASK'
-                props.falloff_type = 'NORMALS'
-                props.invert = False
-
-                props = row.operator("sculpt.paint_mask_extract", text="", icon="PACKAGE")
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE")
-                props.new_object = False
-                props = row.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE_FILL")
-                props.new_object = False
-                props = row.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE_NEW")
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_from_cavity", text="", icon="DIRTY_VERTEX")
-                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_MESH_BOUNDARY")
-                props.settings_source = 'OPERATOR'
-                props.boundary_mode = 'MESH'
-                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_FACE_SETS_BOUNDARY")
-                props.settings_source = 'OPERATOR'
-                props.boundary_mode = "FACE_SETS"
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mask.flood_fill_invert", text="", icon="INVERT_MASK")
-                row.operator("mask.flood_fill_fill", text="", icon="FILL_MASK")
-
-                row = col.row(align=True)
-                row.operator("mask.flood_fill_clear", text="", icon="CLEAR_MASK")
-
-                props = row.operator("sculpt.mask_filter", text='', icon="PARTICLEBRUSH_SMOOTH")
-                props.filter_type = 'SMOOTH'
-                props.auto_iteration_count = True
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_filter", text='', icon="SHARPEN")
-                props.filter_type = 'SHARPEN'
-                props.auto_iteration_count = True
-
-                props = row.operator("sculpt.mask_filter", text='', icon="SELECTMORE")
-                props.filter_type = 'GROW'
-                props.auto_iteration_count = True
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_filter", text='', icon="SELECTLESS")
-                props.filter_type = 'SHRINK'
-                props.auto_iteration_count = True
-
-                props = row.operator("sculpt.mask_filter", text='', icon="INC_CONTRAST")
-                props.filter_type = 'CONTRAST_INCREASE'
-                props.auto_iteration_count = False
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_filter", text='', icon="DEC_CONTRAST")
-                props.filter_type = 'CONTRAST_DECREASE'
-                props.auto_iteration_count = False
-
-                props = row.operator("sculpt.expand", text="", icon="MESH_DATA")
-                props.target = 'MASK'
-                props.falloff_type = 'GEODESIC'
-                props.invert = True
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.expand", text="", icon="CURVE_DATA")
-                props.target = 'MASK'
-                props.falloff_type = 'NORMALS'
-                props.invert = False
-
-                props = row.operator("sculpt.paint_mask_extract", text="", icon="PACKAGE")
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE")
-
-                props.new_object = False
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE_FILL")
-                props.new_object = False
-                props = row.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE_NEW")
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_from_cavity", text='', icon="DIRTY_VERTEX")
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_MESH_BOUNDARY")
-                props.settings_source = 'OPERATOR'
-                props.boundary_mode = 'MESH'
-                props = row.operator("sculpt.mask_from_boundary", text="", icon="MASK_FACE_SETS_BOUNDARY")
-                props.settings_source = 'OPERATOR'
-                props.boundary_mode = "FACE_SETS"
-
-            elif column_count == 1:
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-
-                col.operator("mask.flood_fill_invert", text="", icon="INVERT_MASK")
-                col.operator("mask.flood_fill_fill", text="", icon="FILL_MASK")
-                col.operator("mask.flood_fill_clear", text="", icon="CLEAR_MASK")
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("sculpt.mask_filter", text='', icon="PARTICLEBRUSH_SMOOTH")
-                props.filter_type = 'SMOOTH'
-                props.auto_iteration_count = True
-
-                props = col.operator("sculpt.mask_filter", text='', icon="SHARPEN")
-                props.filter_type = 'SHARPEN'
-                props.auto_iteration_count = True
-
-                props = col.operator("sculpt.mask_filter", text='', icon="SELECTMORE")
-                props.filter_type = 'GROW'
-                props.auto_iteration_count = True
-
-                props = col.operator("sculpt.mask_filter", text='', icon="SELECTLESS")
-                props.filter_type = 'SHRINK'
-                props.auto_iteration_count = True
-
-                props = col.operator("sculpt.mask_filter", text='', icon="INC_CONTRAST")
-                props.filter_type = 'CONTRAST_INCREASE'
-                props.auto_iteration_count = False
-
-                props = col.operator("sculpt.mask_filter", text='', icon="DEC_CONTRAST")
-                props.filter_type = 'CONTRAST_DECREASE'
-                props.auto_iteration_count = False
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("sculpt.expand", text="", icon="MESH_DATA")
-                props.target = 'MASK'
-                props.falloff_type = 'GEODESIC'
-                props.invert = True
-
-                props = col.operator("sculpt.expand", text="", icon="CURVE_DATA")
-                props.target = 'MASK'
-                props.falloff_type = 'NORMALS'
-                props.invert = False
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("sculpt.paint_mask_extract", text="", icon="PACKAGE")
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE")
-                props.new_object = False
-                props = col.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE_FILL")
-                props.new_object = False
-                props = col.operator("sculpt.paint_mask_slice", text="", icon="MASK_SLICE_NEW")
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("sculpt.mask_from_cavity", text='', icon="DIRTY_VERTEX")
-
-                col.separator(factor = 0.5)
-                props = col.operator("sculpt.mask_from_boundary", text="", icon="MASK_MESH_BOUNDARY")
-                props.settings_source = 'OPERATOR'
-                props.boundary_mode = 'MESH'
-                props = col.operator("sculpt.mask_from_boundary", text="", icon="MASK_FACE_SETS_BOUNDARY")
-                props.settings_source = 'OPERATOR'
-                props.boundary_mode = "FACE_SETS"
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_mask_tab_random_mask(Panel):
@@ -3867,51 +2442,18 @@ class VIEW3D_PT_mask_tab_random_mask(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("sculpt.mask_init", text='Per Vertex', icon="SELECT_UNGROUPED_VERTS", props={"mode": 'RANDOM_PER_VERTEX'}),
+            OperatorEntry("sculpt.mask_init", text='Per Face Set', icon="FACESEL", props={"mode": 'RANDOM_PER_FACE_SET'}),
+            OperatorEntry("sculpt.mask_init", text='Per Loose Part', icon="SELECT_LOOSE", props={"mode": 'RANDOM_PER_LOOSE_PART'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sculpt.mask_init", text='Per Vertex', icon="SELECT_UNGROUPED_VERTS").mode = 'RANDOM_PER_VERTEX'
-            col.operator("sculpt.mask_init", text='Per Face Set', icon="FACESEL").mode = 'RANDOM_PER_FACE_SET'
-            col.operator("sculpt.mask_init", text='Per Loose Part', icon="SELECT_LOOSE").mode = 'RANDOM_PER_LOOSE_PART'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("sculpt.mask_init", text='', icon="SELECT_UNGROUPED_VERTS").mode = 'RANDOM_PER_VERTEX'
-                row.operator("sculpt.mask_init", text='', icon="FACESEL").mode = 'RANDOM_PER_FACE_SET'
-                row.operator("sculpt.mask_init", text='', icon="SELECT_LOOSE").mode = 'RANDOM_PER_LOOSE_PART'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("sculpt.mask_init", text='', icon="SELECT_UNGROUPED_VERTS").mode = 'RANDOM_PER_VERTEX'
-                row.operator("sculpt.mask_init", text='', icon="FACESEL").mode = 'RANDOM_PER_FACE_SET'
-
-                row = col.row(align=True)
-                row.operator("sculpt.mask_init", text='', icon="SELECT_LOOSE").mode = 'RANDOM_PER_LOOSE_PART'
-
-
-            elif column_count == 1:
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-
-                col.operator("sculpt.mask_init", text='', icon="SELECT_UNGROUPED_VERTS").mode = 'RANDOM_PER_VERTEX'
-                col.operator("sculpt.mask_init", text='', icon="FACESEL").mode = 'RANDOM_PER_FACE_SET'
-                col.operator("sculpt.mask_init", text='', icon="SELECT_LOOSE").mode = 'RANDOM_PER_LOOSE_PART'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_facesets_tab_facesets(Panel):
@@ -3930,161 +2472,35 @@ class VIEW3D_PT_facesets_tab_facesets(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("sculpt.face_sets_create", text='Face Set from Masked', icon="MASK_FACE_SETS", props={"mode": 'MASKED'}),
+            OperatorEntry("sculpt.face_sets_create", text='Face Set from Visible', icon="MASK_FACE_SETS_VISIBLE", props={"mode": 'VISIBLE'}),
+            OperatorEntry("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon="EDITMODE_HLT", props={"mode": 'SELECTION'}),
+            Separator,
+            OperatorEntry("sculpt.face_set_edit", text='Grow Face Set', icon="SELECTMORE", props={"mode": 'GROW'}),
+            OperatorEntry("sculpt.face_set_edit", text='Shrink Face Set', icon="SELECTLESS", props={"mode": 'SHRINK'}),
+            Separator,
+            OperatorEntry("sculpt.expand", text="Expand Face Set by Topology", icon="FACE_MAPS", 
+                props={"target": 'FACE_SETS', "falloff_type": 'GEODESIC', "invert": False, "use_mask_preserve": False, "use_modify_active": False}
+            ),
+            OperatorEntry("sculpt.expand", text="Expand Active Face Set", icon="FACE_MAPS_ACTIVE", 
+                props={"target": 'FACE_SETS', "falloff_type": 'BOUNDARY_FACE_SET', "invert": False, "use_mask_preserve": False, "use_modify_active": True}
+            ),
+            Separator,
+            OperatorEntry("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon="INVERT_MASK", props={"mode": 'TOGGLE'}),
+            OperatorEntry("paint.hide_show_all", text='Show Active Face Set', icon="HIDE_OFF", props={"action": 'SHOW'}),
+            Separator,
+            OperatorEntry("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE"),
+            Separator,
+            OperatorEntry("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon="COLOR"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sculpt.face_sets_create", text='Face Set from Masked', icon="MASK_FACE_SETS").mode = 'MASKED'
-            col.operator("sculpt.face_sets_create", text='Face Set from Visible', icon="MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
-            col.operator("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon="EDITMODE_HLT").mode = 'SELECTION'
-
-            col.separator(factor = 0.5)
-
-            col.operator("sculpt.face_set_edit", text='Grow Face Set', icon="SELECTMORE").mode = 'GROW'
-            col.operator("sculpt.face_set_edit", text='Shrink Face Set', icon="SELECTLESS").mode = 'SHRINK'
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("sculpt.expand", text="Expand Face Set by Topology", icon="FACE_MAPS")
-            props.target = 'FACE_SETS'
-            props.falloff_type = 'GEODESIC'
-            props.invert = False
-            props.use_mask_preserve = False
-            props.use_modify_active = False
-
-            props = col.operator("sculpt.expand", text="Expand Active Face Set", icon="FACE_MAPS_ACTIVE")
-            props.target = 'FACE_SETS'
-            props.falloff_type = 'BOUNDARY_FACE_SET'
-            props.invert = False
-            props.use_mask_preserve = False
-            props.use_modify_active = True
-
-            col.separator(factor = 0.5)
-
-            col.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon="INVERT_MASK").mode = 'TOGGLE'
-            col.operator("paint.hide_show_all", text='Show Active Face Set', icon="HIDE_OFF").action='SHOW'
-
-            col.separator(factor = 0.5)
-            col.operator("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon="COLOR")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_create", text='', icon="MASK_FACE_SETS").mode = 'MASKED'
-                row.operator("sculpt.face_sets_create", text='', icon="MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
-                row.operator("sculpt.face_sets_create", text='', icon="EDITMODE_HLT").mode = 'SELECTION'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_set_edit", text='', icon="SELECTMORE").mode = 'GROW'
-                row.operator("sculpt.face_set_edit", text='', icon="SELECTLESS").mode = 'SHRINK'
-                props = row.operator("sculpt.expand", text="", icon="FACE_MAPS")
-                props.target = 'FACE_SETS'
-                props.falloff_type = 'GEODESIC'
-                props.invert = False
-                props.use_mask_preserve = False
-                props.use_modify_active = False
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.expand", text="", icon="FACE_MAPS_ACTIVE")
-                props.target = 'FACE_SETS'
-                props.falloff_type = 'BOUNDARY_FACE_SET'
-                props.invert = False
-                props.use_mask_preserve = False
-                props.use_modify_active = True
-                row.operator("sculpt.face_set_change_visibility", text='', icon="INVERT_MASK").mode = 'TOGGLE'
-
-                row = col.row(align=True)
-                row.operator("paint.hide_show_all", text ="", icon="HIDE_OFF").action='SHOW'
-                row = col.row(align=True)
-                row.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
-                row.operator("sculpt.face_sets_randomize_colors", text='', icon="COLOR")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_create", text='', icon="MASK_FACE_SETS").mode = 'MASKED'
-                row.operator("sculpt.face_sets_create", text='', icon="MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_create", text='', icon="EDITMODE_HLT").mode = 'SELECTION'
-                row.operator("sculpt.face_set_edit", text='', icon="SELECTMORE").mode = 'GROW'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_set_edit", text='', icon="SELECTLESS").mode = 'SHRINK'
-                props = row.operator("sculpt.expand", text="", icon="FACE_MAPS")
-                props.target = 'FACE_SETS'
-                props.falloff_type = 'GEODESIC'
-                props.invert = False
-                props.use_mask_preserve = False
-                props.use_modify_active = False
-
-                row = col.row(align=True)
-                props = row.operator("sculpt.expand", text="", icon="FACE_MAPS_ACTIVE")
-                props.target = 'FACE_SETS'
-                props.falloff_type = 'BOUNDARY_FACE_SET'
-                props.invert = False
-                props.use_mask_preserve = False
-                props.use_modify_active = True
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_set_change_visibility", text='', icon="INVERT_MASK").mode = 'TOGGLE'
-                row.operator("paint.hide_show_all", text='', icon="HIDE_OFF").action='SHOW'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
-                row.operator("sculpt.face_sets_randomize_colors", text='', icon="COLOR")
-
-            elif column_count == 1:
-
-                col.operator("sculpt.face_sets_create", text='', icon="MASK_FACE_SETS").mode = 'MASKED'
-                col.operator("sculpt.face_sets_create", text='', icon="MASK_FACE_SETS_VISIBLE").mode = 'VISIBLE'
-                col.operator("sculpt.face_sets_create", text='', icon="EDITMODE_HLT").mode = 'SELECTION'
-
-                col.separator(factor = 0.5)
-
-                col.operator("sculpt.face_set_edit", text='', icon="SELECTMORE").mode = 'GROW'
-                col.operator("sculpt.face_set_edit", text='', icon="SELECTLESS").mode = 'SHRINK'
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("sculpt.expand", text="", icon="FACE_MAPS")
-                props.target = 'FACE_SETS'
-                props.falloff_type = 'GEODESIC'
-                props.invert = False
-                props.use_mask_preserve = False
-                props.use_modify_active = False
-
-                props = col.operator("sculpt.expand", text="", icon="FACE_MAPS_ACTIVE")
-                props.target = 'FACE_SETS'
-                props.falloff_type = 'BOUNDARY_FACE_SET'
-                props.invert = False
-                props.use_mask_preserve = False
-                props.use_modify_active = True
-
-                col.separator(factor = 0.5)
-
-                col.operator("sculpt.face_set_change_visibility", text='', icon="INVERT_MASK").mode = 'TOGGLE'
-                col.operator("paint.hide_show_all", text='', icon="HIDE_OFF").action='SHOW'
-
-                col.separator(factor = 0.5)
-                col.operator("sculpt.face_set_extract", text="", icon="SEPARATE")
-                col.operator("sculpt.face_sets_randomize_colors", text='', icon="COLOR")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_facesets_tab_init_facesets(Panel):
@@ -4103,75 +2519,23 @@ class VIEW3D_PT_facesets_tab_init_facesets(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("sculpt.face_sets_init", text='By Loose Parts', icon="SELECT_LOOSE", props={"mode": 'LOOSE_PARTS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Face Set Boundaries', icon="SELECT_BOUNDARY", props={"mode": 'FACE_SET_BOUNDARIES'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Materials', icon="MATERIAL_DATA", props={"mode": 'MATERIALS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Normals', icon="RECALC_NORMALS", props={"mode": 'NORMALS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By UV Seams', icon="MARK_SEAM", props={"mode": 'UV_SEAMS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Edge Creases', icon="CREASE", props={"mode": 'CREASES'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Edge Bevel Weight', icon="BEVEL", props={"mode": 'BEVEL_WEIGHT'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Sharp Edges', icon="SELECT_SHARPEDGES", props={"mode": 'SHARP_EDGES'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sculpt.face_sets_init", text='By Loose Parts', icon="SELECT_LOOSE").mode = 'LOOSE_PARTS'
-            col.operator("sculpt.face_sets_init", text='By Face Set Boundaries', icon="SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
-            col.operator("sculpt.face_sets_init", text='By Materials', icon="MATERIAL_DATA").mode = 'MATERIALS'
-            col.operator("sculpt.face_sets_init", text='By Normals', icon="RECALC_NORMALS").mode = 'NORMALS'
-            col.operator("sculpt.face_sets_init", text='By UV Seams', icon="MARK_SEAM").mode = 'UV_SEAMS'
-            col.operator("sculpt.face_sets_init", text='By Edge Creases', icon="CREASE").mode = 'CREASES'
-            col.operator("sculpt.face_sets_init", text='By Edge Bevel Weight', icon="BEVEL").mode = 'BEVEL_WEIGHT'
-            col.operator("sculpt.face_sets_init", text='By Sharp Edges', icon="SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon="SELECT_LOOSE").mode = 'LOOSE_PARTS'
-                row.operator("sculpt.face_sets_init", text='', icon="SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
-                row.operator("sculpt.face_sets_init", text='', icon="MATERIAL_DATA").mode = 'MATERIALS'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon="RECALC_NORMALS").mode = 'NORMALS'
-                row.operator("sculpt.face_sets_init", text='', icon="MARK_SEAM").mode = 'UV_SEAMS'
-                row.operator("sculpt.face_sets_init", text='', icon="CREASE").mode = 'CREASES'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon="BEVEL").mode = 'BEVEL_WEIGHT'
-                row.operator("sculpt.face_sets_init", text='', icon="SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon="SELECT_LOOSE").mode = 'LOOSE_PARTS'
-                row.operator("sculpt.face_sets_init", text='', icon="SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon="MATERIAL_DATA").mode = 'MATERIALS'
-                row.operator("sculpt.face_sets_init", text='', icon="RECALC_NORMALS").mode = 'NORMALS'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon="MARK_SEAM").mode = 'UV_SEAMS'
-                row.operator("sculpt.face_sets_init", text='', icon="CREASE").mode = 'CREASES'
-
-                row = col.row(align=True)
-                row.operator("sculpt.face_sets_init", text='', icon="BEVEL").mode = 'BEVEL_WEIGHT'
-                row.operator("sculpt.face_sets_init", text='', icon="SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
-
-            elif column_count == 1:
-
-                col.operator("sculpt.face_sets_init", text='', icon="SELECT_LOOSE").mode = 'LOOSE_PARTS'
-                col.operator("sculpt.face_sets_init", text='', icon="SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
-                col.operator("sculpt.face_sets_init", text='', icon="MATERIAL_DATA").mode = 'MATERIALS'
-                col.operator("sculpt.face_sets_init", text='', icon="RECALC_NORMALS").mode = 'NORMALS'
-                col.operator("sculpt.face_sets_init", text='', icon="MARK_SEAM").mode = 'UV_SEAMS'
-                col.operator("sculpt.face_sets_init", text='', icon="CREASE").mode = 'CREASES'
-                col.operator("sculpt.face_sets_init", text='', icon="BEVEL").mode = 'BEVEL_WEIGHT'
-                col.operator("sculpt.face_sets_init", text='', icon="SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_paint_tab_paint(Panel):
@@ -4190,81 +2554,24 @@ class VIEW3D_PT_paint_tab_paint(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("paint.vertex_color_set", icon="COLOR"),
+            OperatorEntry("paint.vertex_color_smooth", icon="PARTICLEBRUSH_SMOOTH"),
+            OperatorEntry("paint.vertex_color_dirt", icon="DIRTY_VERTEX"),
+            OperatorEntry("paint.vertex_color_from_weight", icon="VERTCOLFROMWEIGHT"),
+            Separator,
+            OperatorEntry("paint.vertex_color_invert", text="Invert", icon="REVERSE_COLORS"),
+            OperatorEntry("paint.vertex_color_levels", text="Levels", icon="LEVELS"),
+            OperatorEntry("paint.vertex_color_hsv", text="Hue Saturation Value", icon="HUESATVAL"),
+            OperatorEntry("paint.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("paint.vertex_color_set", icon="COLOR")
-            col.operator("paint.vertex_color_smooth", icon="PARTICLEBRUSH_SMOOTH")
-            col.operator("paint.vertex_color_dirt", icon="DIRTY_VERTEX")
-            col.operator("paint.vertex_color_from_weight", icon="VERTCOLFROMWEIGHT")
-
-            col.separator( factor = 0.5)
-
-            col.operator("paint.vertex_color_invert", text="Invert", icon="REVERSE_COLORS")
-            col.operator("paint.vertex_color_levels", text="Levels", icon="LEVELS")
-            col.operator("paint.vertex_color_hsv", text="Hue Saturation Value", icon="HUESATVAL")
-            col.operator("paint.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("paint.vertex_color_set", text="", icon="COLOR")
-                row.operator("paint.vertex_color_smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-                row.operator("paint.vertex_color_dirt", text="", icon="DIRTY_VERTEX")
-
-                row = col.row(align=True)
-                row.operator("paint.vertex_color_from_weight", text="", icon="VERTCOLFROMWEIGHT")
-                row.operator("paint.vertex_color_invert", text="", icon="REVERSE_COLORS")
-                row.operator("paint.vertex_color_levels", text="", icon="LEVELS")
-
-                row = col.row(align=True)
-                row.operator("paint.vertex_color_hsv", text="", icon="HUESATVAL")
-                row.operator("paint.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("paint.vertex_color_set", text="", icon="COLOR")
-                row.operator("paint.vertex_color_smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-
-                row = col.row(align=True)
-                row.operator("paint.vertex_color_dirt", text="", icon="DIRTY_VERTEX")
-                row.operator("paint.vertex_color_from_weight", text="", icon="VERTCOLFROMWEIGHT")
-
-                row = col.row(align=True)
-                row.operator("paint.vertex_color_invert", text="", icon="REVERSE_COLORS")
-                row.operator("paint.vertex_color_levels", text="", icon="LEVELS")
-
-                row = col.row(align=True)
-                row.operator("paint.vertex_color_hsv", text="", icon="HUESATVAL")
-                row.operator("paint.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
-
-            elif column_count == 1:
-
-                col.operator("paint.vertex_color_set", text="", icon="COLOR")
-                col.operator("paint.vertex_color_smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-                col.operator("paint.vertex_color_dirt", text="", icon="DIRTY_VERTEX")
-                col.operator("paint.vertex_color_from_weight", text="", icon="VERTCOLFROMWEIGHT")
-
-                col.separator( factor = 0.5)
-
-                col.operator("paint.vertex_color_invert", text="", icon="REVERSE_COLORS")
-                col.operator("paint.vertex_color_levels", text="", icon="LEVELS")
-                col.operator("paint.vertex_color_hsv", text="", icon="HUESATVAL")
-                col.operator("paint.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_paint_tab_colorpicker(Panel):
@@ -4282,37 +2589,16 @@ class VIEW3D_PT_paint_tab_colorpicker(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("paint.sample_color", text="Color Picker", icon="EYEDROPPER"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("paint.sample_color", text="Color Picker", icon="EYEDROPPER")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("paint.sample_color", text="", icon="EYEDROPPER")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("paint.sample_color", text="", icon="EYEDROPPER")
-
-            elif column_count == 1:
-
-                col.operator("paint.sample_color", text="", icon="EYEDROPPER")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_weights_tab_weights(Panel):
@@ -4330,141 +2616,32 @@ class VIEW3D_PT_weights_tab_weights(Panel):
         return view.show_toolshelf_tabs == True
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("paint.weight_from_bones", text="Assign Automatic from Bones", icon="BONE_DATA", props={"type": 'AUTOMATIC'}),
+            OperatorEntry("paint.weight_from_bones", text="Assign from Bone Envelopes", icon="MOD_ENVELOPE", props={"type": 'ENVELOPES'}),
+            Separator,
+            OperatorEntry("object.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL"),
+            OperatorEntry("object.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE"),
+            Separator,
+            OperatorEntry("object.vertex_group_mirror", text="Mirror", icon="WEIGHT_MIRROR"),
+            OperatorEntry("object.vertex_group_invert", text="Invert", icon="WEIGHT_INVERT"),
+            OperatorEntry("object.vertex_group_clean", text="Clean", icon="WEIGHT_CLEAN"),
+            Separator,
+            OperatorEntry("object.vertex_group_quantize", text="Quantize", icon="WEIGHT_QUANTIZE"),
+            OperatorEntry("object.vertex_group_levels", text="Levels", icon="WEIGHT_LEVELS"),
+            OperatorEntry("object.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH"),
+            OperatorEntry("object.data_transfer", text="Transfer Weights", icon="WEIGHT_TRANSFER_WEIGHTS", props={"use_reverse_transfer": True, "data_type": 'VGROUP_WEIGHTS'}),
+            OperatorEntry("object.vertex_group_limit_total", text="Limit Total", icon="WEIGHT_LIMIT_TOTAL"),
+            Separator,
+            OperatorEntry("paint.weight_set", icon="MOD_VERTEX_WEIGHT"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("paint.weight_from_bones", text="Assign Automatic from Bones", icon="BONE_DATA").type = 'AUTOMATIC'
-            col.operator("paint.weight_from_bones", text="Assign from Bone Envelopes", icon="MOD_ENVELOPE").type = 'ENVELOPES'
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL")
-            col.operator("object.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.vertex_group_mirror", text="Mirror", icon="WEIGHT_MIRROR")
-            col.operator("object.vertex_group_invert", text="Invert", icon="WEIGHT_INVERT")
-            col.operator("object.vertex_group_clean", text="Clean", icon="WEIGHT_CLEAN")
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.vertex_group_quantize", text="Quantize", icon="WEIGHT_QUANTIZE")
-            col.operator("object.vertex_group_levels", text="Levels", icon="WEIGHT_LEVELS")
-            col.operator("object.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH")
-
-            props = col.operator("object.data_transfer", text="Transfer Weights", icon="WEIGHT_TRANSFER_WEIGHTS")
-            props.use_reverse_transfer = True
-            props.data_type = 'VGROUP_WEIGHTS'
-
-            col.operator("object.vertex_group_limit_total", text="Limit Total", icon="WEIGHT_LIMIT_TOTAL")
-
-            col.separator(factor = 0.5)
-
-            col.operator("paint.weight_set", icon="MOD_VERTEX_WEIGHT")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("paint.weight_from_bones", text="", icon="BONE_DATA").type = 'AUTOMATIC'
-                row.operator("paint.weight_from_bones", text="", icon="MOD_ENVELOPE").type = 'ENVELOPES'
-                row.operator("object.vertex_group_normalize_all", text="", icon="WEIGHT_NORMALIZE_ALL")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_group_normalize", text="", icon="WEIGHT_NORMALIZE")
-                row.operator("object.vertex_group_mirror", text="", icon="WEIGHT_MIRROR")
-                row.operator("object.vertex_group_invert", text="", icon="WEIGHT_INVERT")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_group_clean", text="", icon="WEIGHT_CLEAN")
-                row.operator("object.vertex_group_quantize", text="", icon="WEIGHT_QUANTIZE")
-                row.operator("object.vertex_group_levels", text="", icon="WEIGHT_LEVELS")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_group_smooth", text="", icon="WEIGHT_SMOOTH")
-                props = row.operator("object.data_transfer", text="", icon="WEIGHT_TRANSFER_WEIGHTS")
-                props.use_reverse_transfer = True
-                props.data_type = 'VGROUP_WEIGHTS'
-                row.operator("object.vertex_group_limit_total", text="", icon="WEIGHT_LIMIT_TOTAL")
-
-                row = col.row(align=True)
-                row.operator("paint.weight_set", text="", icon="MOD_VERTEX_WEIGHT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("paint.weight_from_bones", text="", icon="BONE_DATA").type = 'AUTOMATIC'
-                row.operator("paint.weight_from_bones", text="", icon="MOD_ENVELOPE").type = 'ENVELOPES'
-
-                row = col.row(align=True)
-                row.operator("object.vertex_group_normalize_all", text="", icon="WEIGHT_NORMALIZE_ALL")
-                row.operator("object.vertex_group_normalize", text="", icon="WEIGHT_NORMALIZE")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_group_mirror", text="", icon="WEIGHT_MIRROR")
-                row.operator("object.vertex_group_invert", text="", icon="WEIGHT_INVERT")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_group_clean", text="", icon="WEIGHT_CLEAN")
-                row.operator("object.vertex_group_quantize", text="", icon="WEIGHT_QUANTIZE")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_group_levels", text="", icon="WEIGHT_LEVELS")
-                row.operator("object.vertex_group_smooth", text="", icon="WEIGHT_SMOOTH")
-
-                row = col.row(align=True)
-                props = row.operator("object.data_transfer", text="", icon="WEIGHT_TRANSFER_WEIGHTS")
-                props.use_reverse_transfer = True
-                props.data_type = 'VGROUP_WEIGHTS'
-                row.operator("object.vertex_group_limit_total", text="", icon="WEIGHT_LIMIT_TOTAL")
-
-                row = col.row(align=True)
-                row.operator("paint.weight_set", text="", icon="MOD_VERTEX_WEIGHT")
-
-            elif column_count == 1:
-
-                col.operator("paint.weight_from_bones", text="", icon="BONE_DATA").type = 'AUTOMATIC'
-                col.operator("paint.weight_from_bones", text="", icon="MOD_ENVELOPE").type = 'ENVELOPES'
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.vertex_group_normalize_all", text="", icon="WEIGHT_NORMALIZE_ALL")
-                col.operator("object.vertex_group_normalize", text="", icon="WEIGHT_NORMALIZE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.vertex_group_mirror", text="", icon="WEIGHT_MIRROR")
-                col.operator("object.vertex_group_invert", text="", icon="WEIGHT_INVERT")
-                col.operator("object.vertex_group_clean", text="", icon="WEIGHT_CLEAN")
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.vertex_group_quantize", text="", icon="WEIGHT_QUANTIZE")
-                col.operator("object.vertex_group_levels", text="", icon="WEIGHT_LEVELS")
-                col.operator("object.vertex_group_smooth", text="", icon="WEIGHT_SMOOTH")
-
-                props = col.operator("object.data_transfer", text="", icon="WEIGHT_TRANSFER_WEIGHTS")
-                props.use_reverse_transfer = True
-                props.data_type = 'VGROUP_WEIGHTS'
-
-                col.operator("object.vertex_group_limit_total", text="", icon="WEIGHT_LIMIT_TOTAL")
-
-                col.separator(factor = 0.5)
-
-                col.operator("paint.weight_set", text="", icon="MOD_VERTEX_WEIGHT")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 # ------------------------ Curve Edit Mode
@@ -4484,99 +2661,27 @@ class VIEW3D_PT_curve_tab_curve(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curve.split", icon="SPLIT"),
+            OperatorEntry("curve.separate", icon="SEPARATE"),
+            Separator,
+            OperatorEntry("curve.cyclic_toggle", icon="TOGGLE_CYCLIC"),
+            OperatorEntry("curve.decimate", icon="DECIMATE"),
+            Separator,
+            OperatorEntry("transform.tilt", icon="TILT"),
+            OperatorEntry("curve.tilt_clear", icon="CLEAR_TILT"),
+            Separator,
+            OperatorEntry("curve.normals_make_consistent", icon="RECALC_NORMALS"),
+            Separator,
+            OperatorEntry("curve.dissolve_verts", icon="DISSOLVE_VERTS"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curve.split", icon="SPLIT")
-            col.operator("curve.separate", icon="SEPARATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.cyclic_toggle", icon="TOGGLE_CYCLIC")
-            col.operator("curve.decimate", icon="DECIMATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("transform.tilt", icon="TILT")
-            col.operator("curve.tilt_clear", icon="CLEAR_TILT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.normals_make_consistent", icon="RECALC_NORMALS")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.dissolve_verts", icon="DISSOLVE_VERTS")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curve.split", text="", icon="SPLIT")
-                row.operator("curve.separate", text="", icon="SEPARATE")
-                row.operator("curve.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-
-                row = col.row(align=True)
-                row.operator("curve.decimate", text="", icon="DECIMATE")
-                row.operator("transform.tilt", text="", icon="TILT")
-                row.operator("curve.tilt_clear", text="", icon="CLEAR_TILT")
-
-                row = col.row(align=True)
-                row.operator("curve.normals_make_consistent", text="", icon="RECALC_NORMALS")
-                row.operator("curve.dissolve_verts", text="", icon="DISSOLVE_VERTS")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curve.split", text="", icon="SPLIT")
-                row.operator("curve.separate", text="", icon="SEPARATE")
-
-                row = col.row(align=True)
-                row.operator("curve.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-                row.operator("curve.decimate", text="", icon="DECIMATE")
-
-                row = col.row(align=True)
-                row.operator("transform.tilt", text="", icon="TILT")
-                row.operator("curve.tilt_clear", text="", icon="CLEAR_TILT")
-
-                row = col.row(align=True)
-                row.operator("curve.normals_make_consistent", text="", icon="RECALC_NORMALS")
-                row.operator("curve.dissolve_verts", text="", icon="DISSOLVE_VERTS")
-
-            elif column_count == 1:
-
-                col.operator("curve.split", text="", icon="SPLIT")
-                col.operator("curve.separate", text="", icon="SEPARATE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-                col.operator("curve.decimate", text="", icon="DECIMATE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("transform.tilt", text="", icon="TILT")
-                col.operator("curve.tilt_clear", text="", icon="CLEAR_TILT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.normals_make_consistent", text="", icon="RECALC_NORMALS")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.dissolve_verts", text="", icon="DISSOLVE_VERTS")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_curve_tab_controlpoints(Panel):
@@ -4595,117 +2700,30 @@ class VIEW3D_PT_curve_tab_controlpoints(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
+            Separator,
+            OperatorEntry("curve.make_segment", icon="MAKE_CURVESEGMENT"),
+            Separator,
+            OperatorEntry("transform.tilt", icon="TILT"),
+            OperatorEntry("curve.tilt_clear",icon="CLEAR_TILT"),
+            Separator,
+            OperatorEntry("curve.normals_make_consistent", icon="RECALC_NORMALS"),
+            Separator,
+            OperatorEntry("curve.smooth", icon="PARTICLEBRUSH_SMOOTH"),
+            OperatorEntry("curve.smooth_weight", icon="SMOOTH_WEIGHT"),
+            OperatorEntry("curve.smooth_radius", icon="SMOOTH_RADIUS"),
+            OperatorEntry("curve.smooth_tilt", icon="SMOOTH_TILT"),
+            Separator,
+            OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.make_segment", icon="MAKE_CURVESEGMENT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("transform.tilt", icon="TILT")
-            col.operator("curve.tilt_clear",icon="CLEAR_TILT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.normals_make_consistent", icon="RECALC_NORMALS")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.smooth", icon="PARTICLEBRUSH_SMOOTH")
-            col.operator("curve.smooth_weight", icon="SMOOTH_WEIGHT")
-            col.operator("curve.smooth_radius", icon="SMOOTH_RADIUS")
-            col.operator("curve.smooth_tilt", icon="SMOOTH_TILT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curve.extrude_move", text="", icon="EXTRUDE_REGION")
-                row.operator("curve.make_segment", text="", icon="MAKE_CURVESEGMENT")
-                row.operator("transform.tilt", text="", icon="TILT")
-
-                row = col.row(align=True)
-                row.operator("curve.tilt_clear", text="",icon="CLEAR_TILT")
-                row.operator("curve.normals_make_consistent", text="", icon="RECALC_NORMALS")
-                row.operator("curve.smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-
-                row = col.row(align=True)
-                row.operator("curve.smooth_weight", text="", icon="SMOOTH_WEIGHT")
-                row.operator("curve.smooth_radius", text="", icon="SMOOTH_RADIUS")
-                row.operator("curve.smooth_tilt", text="", icon="SMOOTH_TILT")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curve.extrude_move", text="", icon="EXTRUDE_REGION")
-                row.operator("curve.make_segment", text="", icon="MAKE_CURVESEGMENT")
-
-                row = col.row(align=True)
-                row.operator("transform.tilt", text="", icon="TILT")
-                row.operator("curve.tilt_clear", text="",icon="CLEAR_TILT")
-
-                row = col.row(align=True)
-                row.operator("curve.normals_make_consistent", text="", icon="RECALC_NORMALS")
-                row.operator("curve.smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-
-                row = col.row(align=True)
-                row.operator("curve.smooth_weight", text="", icon="SMOOTH_WEIGHT")
-                row.operator("curve.smooth_radius", text="", icon="SMOOTH_RADIUS")
-
-                row = col.row(align=True)
-                row.operator("curve.smooth_tilt", text="", icon="SMOOTH_TILT")
-                row.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
-
-            elif column_count == 1:
-
-                col.operator("curve.extrude_move", text="", icon="EXTRUDE_REGION")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.make_segment", text="", icon="MAKE_CURVESEGMENT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("transform.tilt", text="", icon="TILT")
-                col.operator("curve.tilt_clear", text="",icon="CLEAR_TILT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.normals_make_consistent", text="", icon="RECALC_NORMALS")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-                col.operator("curve.smooth_weight", text="", icon="SMOOTH_WEIGHT")
-                col.operator("curve.smooth_radius", text="", icon="SMOOTH_RADIUS")
-                col.operator("curve.smooth_tilt", text="", icon="SMOOTH_TILT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_curve_tab_controlpoints_surface(Panel):
@@ -4724,71 +2742,22 @@ class VIEW3D_PT_curve_tab_controlpoints_surface(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
+            Separator,
+            OperatorEntry("curve.make_segment", icon="MAKE_CURVESEGMENT"),
+            Separator,
+            OperatorEntry("curve.smooth", icon="PARTICLEBRUSH_SMOOTH"),
+            Separator,
+            OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.make_segment", icon="MAKE_CURVESEGMENT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.smooth", icon="PARTICLEBRUSH_SMOOTH")
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curve.extrude_move", text="", icon="EXTRUDE_REGION")
-                row.operator("curve.make_segment", text="", icon="MAKE_CURVESEGMENT")
-                row.operator("curve.smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-
-                row = col.row(align=True)
-                row.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curve.extrude_move", text="", icon="EXTRUDE_REGION")
-                row.operator("curve.make_segment", text="", icon="MAKE_CURVESEGMENT")
-
-                row = col.row(align=True)
-                row.operator("curve.smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-                row.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
-
-            elif column_count == 1:
-
-                col.operator("curve.extrude_move", text="", icon="EXTRUDE_REGION")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.make_segment", text="", icon="MAKE_CURVESEGMENT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 # ------------------------ Curves (Hair/Fur) Edit Mode
@@ -4808,71 +2777,22 @@ class VIEW3D_PT_curves_tab_edit_curves(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curves.duplicate_move", icon="DUPLICATE"),
+            Separator,
+            OperatorEntry("curves.attribute_set", icon="NODE_ATTRIBUTE"),
+            OperatorEntry("curves.cyclic_toggle", icon="TOGGLE_CYCLIC"),
+            Separator,
+            OperatorEntry("curves.separate", icon="SEPARATE"),
+            OperatorEntry("curves.delete", icon="DELETE"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curves.duplicate_move", icon="DUPLICATE")
-
-            col.separator(factor=0.5)
-
-            col.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
-            col.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
-
-            col.separator(factor=0.5)
-
-            col.operator("curves.separate", icon="SEPARATE")
-            col.operator("curves.delete", icon="DELETE")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curves.duplicate_move", text="", icon="DUPLICATE")
-                row.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
-                row.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-
-                row = col.row(align=True)
-                row.operator("curves.separate", text="", icon="SEPARATE")
-                row.operator("curves.delete", text="", icon="DELETE")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curves.duplicate_move", text="", icon="DUPLICATE")
-                row.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
-
-                row = col.row(align=True)
-                row.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-                row.operator("curves.separate", text="", icon="SEPARATE")
-
-                row = col.row(align=True)
-                row.operator("curves.delete", text="", icon="DELETE")
-
-            elif column_count == 1:
-
-                col.operator("curves.duplicate_move", text="", icon="DUPLICATE")
-
-                col.separator(factor=0.5)
-
-                col.operator("curves.attribute_set", text="", icon="NODE_ATTRIBUTE")
-                col.operator("curves.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-
-                col.separator(factor=0.5)
-
-                col.operator("curves.separate", text="", icon="SEPARATE")
-                col.operator("curves.delete", text="", icon="DELETE")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_curves_tab_edit_controlpoints(Panel):
@@ -4891,40 +2811,16 @@ class VIEW3D_PT_curves_tab_edit_controlpoints(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curves.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curves.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION")
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curves.extrude_move", text="", icon="EXTRUDE_REGION")
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curves.extrude_move", text="", icon="EXTRUDE_REGION")
-
-
-            elif column_count == 1:
-
-                col.operator("curvs.extrude_move", text="", icon="EXTRUDE_REGION")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_curves_tab_edit_segments(Panel):
@@ -4943,47 +2839,18 @@ class VIEW3D_PT_curves_tab_edit_segments(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curves.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
+            OperatorEntry("curves.switch_direction", text="Switch Direction", icon="SWITCH_DIRECTION"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curves.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curves.switch0_direction", text="Switch Direction", icon="SWITCH_DIRECTION")
-
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
+            draw_icon_buttons(layout, entries, column_count)
 
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curves.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("curves.switch_direction", text="", icon="SWITCH_DIRECTION")
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curves.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("curves.switch_direction", text="", icon="SWITCH_DIRECTION")
-
-            elif column_count == 1:
-
-                col.operator("curves.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                col.operator("curves.switch_direction", text="", icon="SWITCH_DIRECTION")
 
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
 
@@ -5003,57 +2870,19 @@ class VIEW3D_PT_curves_tab_sculpt_curves(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curves.snap_curves_to_surface", text="Snap to Deformed Surface", icon="SNAP_SURFACE", props={"attach_mode": "DEFORM"}),
+            OperatorEntry("curves.snap_curves_to_surface",text="Snap to Nearest Surface", icon="SNAP_TO_ADJACENT", props={"attach_mode": "NEAREST"}),
+            Separator,
+            OperatorEntry("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curves.snap_curves_to_surface", text="Snap to Deformed Surface", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
-            col.operator("curves.snap_curves_to_surface",text="Snap to Nearest Surface", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
-
-            col.separator(factor = 0.5)
-            layout.operator("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES",)
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
-                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
-
-                row = col.row(align=True)
-                row.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
-                row.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
-
-                row = col.row(align=True)
-                row.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
-
-            elif column_count == 1:
-
-                col.operator("curves.snap_curves_to_surface", text="", icon="SNAP_SURFACE",).attach_mode = "DEFORM"
-
-                col.separator(factor = 0.5)
-
-                col.operator("curves.snap_curves_to_surface",text="", icon="SNAP_TO_ADJACENT",).attach_mode = "NEAREST"
-
-                col.separator(factor = 0.5)
-
-                col.operator("curves.convert_to_particle_system", text="", icon="PARTICLES",)
+            draw_icon_buttons(layout, entries, column_count)
 
 
 # ------------------------ Surface
@@ -5073,68 +2902,23 @@ class VIEW3D_PT_surface_tab_surface(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curve.spin", icon="SPIN"),
+            Separator,
+            OperatorEntry("curve.split", icon="SPLIT"),
+            OperatorEntry("curve.separate", icon="SEPARATE"),
+            Separator,
+            OperatorEntry("curve.cyclic_toggle", icon="TOGGLE_CYCLIC"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curve.spin", icon="SPIN")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.split", icon="SPLIT")
-            col.operator("curve.separate", icon="SEPARATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.cyclic_toggle", icon="TOGGLE_CYCLIC")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curve.spin", text="", icon="SPIN")
-                row.operator("curve.split", text="", icon="SPLIT")
-                row.operator("curve.separate", text="", icon="SEPARATE")
-
-                row = col.row(align=True)
-                row.operator("curve.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curve.spin", text="", icon="SPIN")
-                row.operator("curve.split", text="", icon="SPLIT")
-
-                row = col.row(align=True)
-                row.operator("curve.separate", text="", icon="SEPARATE")
-                row.operator("curve.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
-
-            elif column_count == 1:
-
-                col.operator("curve.spin", text="", icon="SPIN")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.split", text="", icon="SPLIT")
-                col.operator("curve.separate", text="", icon="SEPARATE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.cyclic_toggle", text="", icon="TOGGLE_CYCLIC")
+            draw_icon_buttons(layout, entries, column_count)
 
 
-# ------------------------ Grease Pencil
 class VIEW3D_PT_segments_tab_segments(Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
@@ -5151,43 +2935,20 @@ class VIEW3D_PT_segments_tab_segments(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("curve.subdivide", icon="SUBDIVIDE_EDGES"),
+            OperatorEntry("curve.switch_direction", icon="SWITCH_DIRECTION"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("curve.subdivide", icon="SUBDIVIDE_EDGES")
-            col.operator("curve.switch_direction", icon="SWITCH_DIRECTION")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("curve.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("curve.switch_direction", text="", icon="SWITCH_DIRECTION")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("curve.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("curve.switch_direction", text="", icon="SWITCH_DIRECTION")
-
-            elif column_count == 1:
-
-                col.operator("curve.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                col.operator("curve.switch_direction", text="", icon="SWITCH_DIRECTION")
+            draw_icon_buttons(layout, entries, column_count)
 
 
+# ------------------------ Grease Pencil
 class VIEW3D_PT_gp_gpencil_tab_dissolve(Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
@@ -5204,47 +2965,18 @@ class VIEW3D_PT_gp_gpencil_tab_dissolve(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("grease_pencil.dissolve", text="Dissolve", icon="DISSOLVE_VERTS", props={"type": 'POINTS'}),
+            OperatorEntry("grease_pencil.dissolve", text="Dissolve Between", icon="DISSOLVE_BETWEEN", props={"type": 'BETWEEN'}),
+            OperatorEntry("grease_pencil.dissolve", text="Dissolve Unselected", icon="DISSOLVE_UNSELECTED", props={"type": 'UNSELECT'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.dissolve", text="Dissolve", icon="DISSOLVE_VERTS").type = 'POINTS'
-            col.operator("grease_pencil.dissolve", text="Dissolve Between", icon="DISSOLVE_BETWEEN").type = 'BETWEEN'
-            col.operator("grease_pencil.dissolve", text="Dissolve Unselected", icon="DISSOLVE_UNSELECTED").type = 'UNSELECT'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_VERTS").type = 'POINTS'
-                row.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_BETWEEN").type = 'BETWEEN'
-                row.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_UNSELECTED").type = 'UNSELECT'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_VERTS").type = 'POINTS'
-                row.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_BETWEEN").type = 'BETWEEN'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_UNSELECTED").type = 'UNSELECT'
-
-            elif column_count == 1:
-
-                col.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_VERTS").type = 'POINTS'
-                col.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_BETWEEN").type = 'BETWEEN'
-                col.operator("grease_pencil.dissolve", text="", icon="DISSOLVE_UNSELECTED").type = 'UNSELECT'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
@@ -5263,65 +2995,21 @@ class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("grease_pencil.clean_loose", text="Clean Loose Points", icon="DELETE_LOOSE"),
+            OperatorEntry("grease_pencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon="DELETE_DUPLICATE"),
+            Separator,
+            OperatorEntry("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES"),
+            OperatorEntry("grease_pencil.reproject", text="Reproject Strokes", icon="REPROJECT"),
+            OperatorEntry("grease_pencil.remove_fill_guides", icon="REMOVE_GUIDES"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.clean_loose", text="Clean Loose Points", icon="DELETE_LOOSE")
-            col.operator("grease_pencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon="DELETE_DUPLICATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES")
-            col.operator("grease_pencil.reproject", text="Reproject Strokes", icon="REPROJECT")
-            col.operator("grease_pencil.remove_fill_guides", icon="REMOVE_GUIDES")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
-                row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
-                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon="REMOVE_DOUBLES")
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.reproject", text="", icon="REPROJECT")
-                row.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
-                row.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.stroke_merge_by_distance", text="", icon="REMOVE_DOUBLES")
-                row.operator("grease_pencil.reproject", text="", icon="REPROJECT")
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
-
-            elif column_count == 1:
-
-                col.operator("grease_pencil.clean_loose", text="", icon="DELETE_LOOSE")
-                col.operator("grease_pencil.frame_clean_duplicate", text="", icon="DELETE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("grease_pencil.stroke_merge_by_distance", text="", icon="REMOVE_DOUBLES")
-                col.operator("grease_pencil.reproject", text="", icon="REPROJECT")
-                col.operator("grease_pencil.remove_fill_guides", text="", icon="REMOVE_GUIDES")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
@@ -5340,60 +3028,20 @@ class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("grease_pencil.separate", text="Separate Selected", icon="SEPARATE", props={"mode": 'SELECTED'}),
+            OperatorEntry("grease_pencil.separate", text="Separate Selected Strokes", icon="SEPARATE_BYMATERIAL", props={"mode": 'MATERIAL'}),
+            OperatorEntry("grease_pencil.separate", text="Separate Active Layer", icon="SEPARATE_GP_STROKES", props={"mode": 'LAYER'}),
+            Separator,
+            OperatorEntry("grease_pencil.stroke_split", text="Stroke Split", icon="SPLIT"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.separate", text="Separate Selected", icon="SEPARATE").mode = 'SELECTED'
-            col.operator("grease_pencil.separate", text="Separate Selected Strokes", icon="SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-            col.operator("grease_pencil.separate", text="Separate Active Layer", icon="SEPARATE_GP_STROKES").mode = 'LAYER'
-
-            col.separator(factor = 0.5)
-
-            col.operator("grease_pencil.stroke_split", text="Stroke Split", icon="SPLIT")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.separate", text="", icon="SEPARATE").mode = 'SELECTED'
-                row.operator("grease_pencil.separate", text="", icon="SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-                row.operator("grease_pencil.separate", text="", icon="SEPARATE_GP_LAYER").mode = 'LAYER'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.stroke_split", text="", icon="SPLIT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.separate", text="", icon="SEPARATE").mode = 'SELECTED'
-                row.operator("grease_pencil.separate", text="", icon="SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.separate", text="", icon="SEPARATE_GP_LAYER").mode = 'LAYER'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.stroke_split", text="", icon="SPLIT")
-
-            elif column_count == 1:
-
-                col.operator("grease_pencil.separate", text="", icon="SEPARATE").mode = 'SELECTED'
-                col.operator("grease_pencil.separate", text="", icon="SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-                col.operator("grease_pencil.separate", text="", icon="SEPARATE_GP_LAYER").mode = 'LAYER'
-
-                col.separator(factor = 0.5)
-                col.operator("grease_pencil.stroke_split", text="", icon="SPLIT")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
@@ -5412,166 +3060,34 @@ class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
+            OperatorEntry("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES"),
+            Separator,
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Fixed)", icon="MOD_SIMPLIFY", props={"mode": 'FIXED'}),
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Adaptive)", icon="SIMPLIFY_ADAPTIVE", props={"mode": 'ADAPTIVE'}),
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Sample)", icon="SIMPLIFY_SAMPLE", props={"mode": 'SAMPLE'}),
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Merge)", icon="MERGE", props={"mode": 'MERGE'}),
+            Separator,
+            OperatorEntry("grease_pencil.set_active_material", text="Set as Active Material", icon="MATERIAL"),
+            Separator,
+            OperatorEntry("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE", props={"type": 'CLOSE'}),
+            OperatorEntry("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC", props={"type": 'TOGGLE'}),
+            OperatorEntry("grease_pencil.stroke_switch_direction", text="Switch Direction", icon="FLIP"),
+            Separator,
+            OperatorEntry("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT"),
+            OperatorEntry("grease_pencil.set_uniform_thickness", text="Normalize Thickness", icon="MOD_THICKNESS"),
+            OperatorEntry("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon="MOD_OPACITY"),
+            Separator,
+            OperatorEntry("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon="SPLINE_RESOLUTION"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
-            col.operator("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES")
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Fixed)", icon="MOD_SIMPLIFY")
-            props.mode = 'FIXED'
-            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Adaptive)", icon="SIMPLIFY_ADAPTIVE")
-            props.mode = 'ADAPTIVE'
-            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Sample)", icon="SIMPLIFY_SAMPLE")
-            props.mode = 'SAMPLE'
-            props = col.operator("grease_pencil.stroke_simplify", text="Simplify (Merge)", icon="MERGE")
-            props.mode = 'MERGE'
-
-            col.separator(factor = 0.5)
-
-            col.operator("grease_pencil.set_active_material", text="Set as Active Material", icon="MATERIAL")
-
-            col.separator(factor = 0.5)
-
-            # Convert
-            col.operator("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE").type = 'CLOSE'
-            col.operator("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
-            col.operator("grease_pencil.stroke_switch_direction", text="Switch Direction", icon="FLIP")
-
-            col.separator(factor = 0.5)
-
-            col.operator("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT")
-            col.operator("grease_pencil.set_uniform_thickness", text="Normalize Thickness", icon="MOD_THICKNESS")
-            col.operator("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon="MOD_OPACITY")
-
-            col.separator(factor = 0.5)
-            col.operator("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon="SPLINE_RESOLUTION")
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
-                row.label(text="") # Padding to keep items grid-aligned
-
-                col.separator()
-                row = col.row(align=True)
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
-                props.mode = 'FIXED'
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
-                props.mode = 'SAMPLE'
-                row = col.row(align=True)
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
-                props.mode = 'MERGE'
-                col.separator()
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.set_active_material", text="", icon="MATERIAL")
-                # Convert
-                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
-                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.stroke_switch_direction", text="", icon="FLIP")
-                row.operator("grease_pencil.set_start_point", text="", icon="STARTPOINT")
-                row.operator("grease_pencil.set_uniform_thickness", text="", icon="MOD_THICKNESS")
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.set_uniform_opacity", text="", icon="MOD_OPACITY")
-                row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
-
-                col.separator()
-                row = col.row(align=True)
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
-                props.mode = 'FIXED'
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'
-                row = col.row(align=True)
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
-                props.mode = 'SAMPLE'
-                props = row.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
-                props.mode = 'MERGE'
-                col.separator()
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.set_active_material", text="", icon="MATERIAL")
-
-                row = col.row(align=True)
-                # Convert
-                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
-                row.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.stroke_switch_direction", text="", icon="FLIP")
-                row.operator("grease_pencil.set_start_point", text="", icon="STARTPOINT")
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.set_uniform_thickness", text="", icon="MOD_THICKNESS")
-                row.operator("grease_pencil.set_uniform_opacity", text="", icon="MOD_OPACITY")
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
-
-
-            elif column_count == 1:
-
-                col.operator("grease_pencil.stroke_subdivide", text="", icon="SUBDIVIDE_EDGES")
-                col.operator("grease_pencil.stroke_subdivide_smooth", text="", icon="SUBDIVIDE_EDGES")
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("grease_pencil.stroke_simplify", text="", icon="MOD_SIMPLIFY")
-                props.mode = 'FIXED'
-                props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                props.mode = 'ADAPTIVE'
-                props = col.operator("grease_pencil.stroke_simplify", text="", icon="SIMPLIFY_SAMPLE")
-                props.mode = 'SAMPLE'
-                props = col.operator("grease_pencil.stroke_simplify", text="", icon="MERGE")
-                props.mode = 'MERGE'
-
-                col.separator(factor = 0.5)
-
-                col.operator("grease_pencil.set_active_material", text="", icon="MATERIAL")
-
-                col.separator(factor = 0.5)
-
-                # Convert
-                col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CLOSE").type = 'CLOSE'
-                col.operator("grease_pencil.cyclical_set", text="", icon="TOGGLE_CYCLIC").type = 'TOGGLE'
-
-                col.separator(factor = 0.5)
-                col.operator("grease_pencil.stroke_switch_direction", text="", icon="FLIP")
-                col.operator("grease_pencil.set_start_point", text="", icon="STARTPOINT")
-                col.operator("grease_pencil.set_uniform_thickness", text="", icon="MOD_THICKNESS")
-                col.operator("grease_pencil.set_uniform_opacity", text="", icon="MOD_OPACITY")
-
-                col.separator(factor = 0.5)
-                col.operator("grease_pencil.set_curve_resolution", text="", icon="SPLINE_RESOLUTION")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 # BFA - Legacy
@@ -5591,7 +3107,6 @@ class VIEW3D_PT_gp_stroke_tab_simplify(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -5650,53 +3165,20 @@ class VIEW3D_PT_gp_stroke_tab_togglecaps(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("grease_pencil.caps_set", text="Rounded", icon="TOGGLECAPS_DEFAULT", props={"type": 'ROUND'}),
+            OperatorEntry("grease_pencil.caps_set", text="Start", icon="TOGGLECAPS_BOTH", props={"type": 'FLAT'}),
+            OperatorEntry("grease_pencil.caps_set", text="End", icon="TOGGLECAPS_START", props={"type": 'START'}),
+            OperatorEntry("grease_pencil.caps_set", text="Default", icon="TOGGLECAPS_END", props={"type": 'END'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.caps_set", text="Rounded", icon="TOGGLECAPS_DEFAULT").type = 'ROUND'
-            col.operator("grease_pencil.caps_set", text="Start", icon="TOGGLECAPS_BOTH").type = 'FLAT'
-            col.operator("grease_pencil.caps_set", text="End", icon="TOGGLECAPS_START").type = 'START'
-            col.operator("grease_pencil.caps_set", text="Default", icon="TOGGLECAPS_END").type = 'END'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
+            draw_icon_buttons(layout, entries, column_count)
 
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_DEFAULT").type = 'ROUND'
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_BOTH").type = 'FLAT'
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_START").type = 'START'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_END").type = 'END'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_DEFAULT").type = 'ROUND'
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_BOTH").type = 'FLAT'
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_START").type = 'START'
-                row.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_END").type = 'END'
-
-            elif column_count == 1:
-
-                col.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_DEFAULT").type = 'ROUND'
-                col.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_BOTH").type = 'FLAT'
-                col.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_START").type = 'START'
-                col.operator("grease_pencil.caps_set", text="", icon="TOGGLECAPS_END").type = 'END'
 
 # BFA - legacy
 class VIEW3D_PT_gp_stroke_tab_reproject(Panel):
@@ -5715,7 +3197,6 @@ class VIEW3D_PT_gp_stroke_tab_reproject(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -5790,41 +3271,17 @@ class VIEW3D_PT_gp_point_tab_point(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION"),
+            OperatorEntry("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION")
-            col.operator("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.extrude_move", text="", icon="EXTRUDE_REGION")
-                row.operator("grease_pencil.stroke_smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.extrude_move", text="", icon="EXTRUDE_REGION")
-                row.operator("grease_pencil.stroke_smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
-
-            elif column_count == 1:
-
-                col.operator("grease_pencil.extrude_move", text="", icon="EXTRUDE_REGION")
-                col.operator("grease_pencil.stroke_smooth", text="", icon="PARTICLEBRUSH_SMOOTH")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_draw_tab_draw(Panel):
@@ -5843,41 +3300,17 @@ class VIEW3D_PT_gp_draw_tab_draw(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE"),
+            OperatorEntry("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE")
-            col.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("gpencil.interpolate", text="", icon="EXTRUDE_REGION")
-                row.operator("gpencil.interpolate_sequence", text="", icon="SEQUENCE")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("gpencil.interpolate", text="", icon="INTERPOLATE")
-                row.operator("gpencil.interpolate_sequence", text="", icon="SEQUENCE")
-
-            elif column_count == 1:
-
-                col.operator("gpencil.interpolate", text="", icon="INTERPOLATE")
-                col.operator("gpencil.interpolate_sequence", text="", icon="SEQUENCE")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_draw_tab_animation(Panel):
@@ -5895,81 +3328,25 @@ class VIEW3D_PT_gp_draw_tab_animation(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon="ADD"),
+            OperatorEntry("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)", icon="ADD_ALL", props={"all_layers": True}),
+            Separator,
+            OperatorEntry("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon="DUPLICATE", props={"all": False}),
+            OperatorEntry("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon="DUPLICATE_ALL", props={"all": True}),
+            Separator,
+            OperatorEntry("grease_pencil.active_frame_delete", text="Delete Active Keyframe (Active Layer)", icon="DELETE", props={"all": False}),
+            OperatorEntry("grease_pencil.active_frame_delete", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL", props={"all": True}),
+            Separator,
+            OperatorEntry("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE", props={"use_selection": True}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon="ADD")
-            col.operator("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)", icon="ADD_ALL").all_layers = True
-
-            col.operator("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon="DUPLICATE").all = False
-            col.operator("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon="DUPLICATE_ALL").all = True
-
-            col.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframe (Active Layer)", icon="DELETE").all = False
-            col.operator("grease_pencil.active_frame_delete", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL").all = True
-
-            col.separator(factor = 0.5)
-            col.operator("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE").use_selection = True
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.insert_blank_frame", text="", icon="ADD")
-                row.operator("grease_pencil.insert_blank_frame", text="", icon="ADD_ALL").all_layers = True
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.frame_duplicate", text="", icon="DUPLICATE").all = False
-                row.operator("grease_pencil.frame_duplicate", text="", icon="DUPLICATE_ALL").all = True
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.active_frame_delete", text="", icon="DELETE").all = False
-                row.operator("grease_pencil.active_frame_delete", text="", icon="DELETE_ALL").all = True
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.interpolate_sequence", text="", icon="SEQUENCE").use_selection = True
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.insert_blank_frame", text="", icon="ADD")
-                row.operator("grease_pencil.insert_blank_frame", text="", icon="ADD_ALL").all_layers = True
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.frame_duplicate", text="", icon="DUPLICATE").all = False
-                row.operator("grease_pencil.frame_duplicate", text="", icon="DUPLICATE_ALL").all = True
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.active_frame_delete", text="", icon="DELETE").all = False
-                row.operator("grease_pencil.active_frame_delete", text="", icon="DELETE_ALL").all = True
-
-                row = col.row(align=True)
-                row.operator("grease_pencil.interpolate_sequence", text="", icon="SEQUENCE").use_selection = True
-
-            elif column_count == 1:
-
-                col.operator("grease_pencil.insert_blank_frame", text="", icon="ADD")
-                col.operator("grease_pencil.insert_blank_frame", text="", icon="ADD_ALL").all_layers = True
-
-                col.operator("grease_pencil.frame_duplicate", text="", icon="DUPLICATE").all = False
-                col.operator("grease_pencil.frame_duplicate", text="", icon="DUPLICATE_ALL").all = True
-
-                col.operator("grease_pencil.active_frame_delete", text="", icon="DELETE").all = False
-                col.operator("grease_pencil.active_frame_delete", text="", icon="DELETE_ALL").all = True
-
-                col.separator(factor = 0.5)
-                col.operator("grease_pencil.interpolate_sequence", text="", icon="SEQUENCE").use_selection = True
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
@@ -5992,56 +3369,18 @@ class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
         ob = context.active_object
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("gpencil.frame_clean_fill", text="Boundary Strokes", icon="CLEAN_CHANNELS", props={"mode": 'ACTIVE'}),
+            OperatorEntry("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon="CLEAN_CHANNELS_FRAMES", props={"mode": 'ALL'}),
+            OperatorEntry("gpencil.frame_clean_loose", text="Delete Loose Points", icon="DELETE_LOOSE"),
+            OperatorEntry("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon="DELETE_DUPLICATE"),
+            OperatorEntry("gpencil.recalc_geometry", text="Recalculate Geometry", icon="FILE_REFRESH"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon="CLEAN_CHANNELS").mode = 'ACTIVE'
-            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon="CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-            col.operator("gpencil.frame_clean_loose", text="Delete Loose Points", icon="DELETE_LOOSE")
-            col.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon="DELETE_DUPLICATE")
-            col.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon="FILE_REFRESH")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("gpencil.frame_clean_fill", text="", icon="CLEAN_CHANNELS").mode = 'ACTIVE'
-                row.operator("gpencil.frame_clean_fill", text="", icon="CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-                row.operator("gpencil.frame_clean_loose", text="", icon="DELETE_LOOSE")
-
-                row = col.row(align=True)
-                row.operator("gpencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
-                row.operator("gpencil.recalc_geometry", text="", icon="FILE_REFRESH")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("gpencil.frame_clean_fill", text="", icon="CLEAN_CHANNELS").mode = 'ACTIVE'
-                row.operator("gpencil.frame_clean_fill", text="", icon="CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-
-                row = col.row(align=True)
-                row.operator("gpencil.frame_clean_loose", text="", icon="DELETE_LOOSE")
-                row.operator("gpencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
-
-                row = col.row(align=True)
-                row.operator("gpencil.recalc_geometry", text="", icon="FILE_REFRESH")
-
-            elif column_count == 1:
-
-                col.operator("gpencil.frame_clean_fill", text="", icon="CLEAN_CHANNELS").mode = 'ACTIVE'
-                col.operator("gpencil.frame_clean_fill", text="", icon="CLEAN_CHANNELS_FRAMES").mode = 'ALL'
-                col.operator("gpencil.frame_clean_loose", text="", icon="DELETE_LOOSE")
-                col.operator("gpencil.frame_clean_duplicate", text="", icon="DELETE_DUPLICATE")
-                col.operator("gpencil.recalc_geometry", text="", icon="FILE_REFRESH")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_weights_tab_weights(Panel):
@@ -6060,71 +3399,22 @@ class VIEW3D_PT_gp_weights_tab_weights(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        # text buttons
+        entries = (
+            OperatorEntry("gpencil.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL"),
+            OperatorEntry("gpencil.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE"),
+            Separator,
+            OperatorEntry("gpencil.vertex_group_invert", text="Invert", icon="WEIGHT_INVERT"),
+            OperatorEntry("gpencil.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH"),
+            Separator,
+            OperatorEntry("gpencil.weight_sample", text="Sample Weight", icon="EYEDROPPER"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("gpencil.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL")
-            col.operator("gpencil.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("gpencil.vertex_group_invert", text="Invert", icon="WEIGHT_INVERT")
-            col.operator("gpencil.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH")
-
-            col.separator(factor = 0.5)
-
-            col.operator("gpencil.weight_sample", text="Sample Weight", icon="EYEDROPPER")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_group_normalize_all", text="", icon="WEIGHT_NORMALIZE_ALL")
-                row.operator("gpencil.vertex_group_normalize", text="", icon="WEIGHT_NORMALIZE")
-                row.operator("gpencil.vertex_group_invert", text="", icon="WEIGHT_INVERT")
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_group_smooth", text="", icon="WEIGHT_SMOOTH")
-                row.operator("gpencil.weight_sample", text="", icon="EYEDROPPER")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_group_normalize_all", text="", icon="WEIGHT_NORMALIZE_ALL")
-                row.operator("gpencil.vertex_group_normalize", text="", icon="WEIGHT_NORMALIZE")
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_group_invert", text="", icon="WEIGHT_INVERT")
-                row.operator("gpencil.vertex_group_smooth", text="", icon="WEIGHT_SMOOTH")
-
-                row = col.row(align=True)
-                row.operator("gpencil.weight_sample", text="", icon="EYEDROPPER")
-
-            elif column_count == 1:
-
-                col.operator("gpencil.vertex_group_normalize_all", text="", icon="WEIGHT_NORMALIZE_ALL")
-                col.operator("gpencil.vertex_group_normalize", text="", icon="WEIGHT_NORMALIZE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("gpencil.vertex_group_invert", text="", icon="WEIGHT_INVERT")
-                col.operator("gpencil.vertex_group_smooth", text="", icon="WEIGHT_SMOOTH")
-
-                col.separator(factor = 0.5)
-
-                col.operator("gpencil.weight_sample", text="", icon="EYEDROPPER")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_weights_tab_generate_weights(Panel):
@@ -6143,42 +3433,17 @@ class VIEW3D_PT_gp_weights_tab_generate_weights(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("gpencil.generate_weights", text="With Empty Groups", icon="PARTICLEBRUSH_WEIGHT", props={"mode": 'NAME'}),
+            OperatorEntry("gpencil.generate_weights", text="With Automatic Weights", icon="PARTICLEBRUSH_WEIGHT", props={"mode": 'AUTO'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("gpencil.generate_weights", text="With Empty Groups", icon="PARTICLEBRUSH_WEIGHT").mode = 'NAME'
-            col.operator("gpencil.generate_weights", text="With Automatic Weights", icon="PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("gpencil.generate_weights", text="", icon="PARTICLEBRUSH_WEIGHT").mode = 'NAME'
-                row.operator("gpencil.generate_weights", text="", icon="PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("gpencil.generate_weights", text="", icon="PARTICLEBRUSH_WEIGHT").mode = 'NAME'
-                row.operator("gpencil.generate_weights", text="", icon="PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
-
-            elif column_count == 1:
-
-                col.operator("gpencil.generate_weights", text="", icon="PARTICLEBRUSH_WEIGHT").mode = 'NAME'
-                col.operator("gpencil.generate_weights", text="", icon="PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_paint_tab_paint(Panel):
@@ -6197,70 +3462,22 @@ class VIEW3D_PT_gp_paint_tab_paint(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("gpencil.vertex_color_set", text="Set Vertex Color", icon="NODE_VERTEX_COLOR"),
+            OperatorEntry("gpencil.stroke_reset_vertex_color", icon="RESET"),
+            Separator,
+            OperatorEntry("gpencil.vertex_color_invert", text="Invert", icon="NODE_INVERT"),
+            OperatorEntry("gpencil.vertex_color_levels", text="Levels", icon="LEVELS"),
+            OperatorEntry("gpencil.vertex_color_hsv", text="Hue Saturation Value", icon="HUESATVAL"),
+            OperatorEntry("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("gpencil.vertex_color_set", text="Set Vertex Color", icon="NODE_VERTEX_COLOR")
-            col.operator("gpencil.stroke_reset_vertex_color", icon="RESET")
-
-            col.separator(factor = 0.5)
-
-            col.operator("gpencil.vertex_color_invert", text="Invert", icon="NODE_INVERT")
-            col.operator("gpencil.vertex_color_levels", text="Levels", icon="LEVELS")
-            col.operator("gpencil.vertex_color_hsv", text="Hue Saturation Value", icon="HUESATVAL")
-            col.operator("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST")
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_color_set", text="", icon="NODE_VERTEX_COLOR")
-                row.operator("gpencil.stroke_reset_vertex_color", text="", icon="RESET")
-                row.operator("gpencil.vertex_color_invert", text="", icon="NODE_INVERT")
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_color_levels", text="", icon="LEVELS")
-                row.operator("gpencil.vertex_color_hsv", text="", icon="HUESATVAL")
-                row.operator("gpencil.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_color_set", text="", icon="NODE_VERTEX_COLOR")
-                row.operator("gpencil.stroke_reset_vertex_color", text="", icon="RESET")
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_color_invert", text="", icon="NODE_INVERT")
-                row.operator("gpencil.vertex_color_levels", text="", icon="LEVELS")
-
-                row = col.row(align=True)
-                row.operator("gpencil.vertex_color_hsv", text="", icon="HUESATVAL")
-                row.operator("gpencil.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
-
-            elif column_count == 1:
-
-                col.operator("gpencil.vertex_color_set", text="", icon="NODE_VERTEX_COLOR")
-                col.operator("gpencil.stroke_reset_vertex_color", text="", icon="RESET")
-
-                col.separator(factor = 0.5)
-
-                col.operator("gpencil.vertex_color_invert", text="", icon="NODE_INVERT")
-                col.operator("gpencil.vertex_color_levels", text="", icon="LEVELS")
-                col.operator("gpencil.vertex_color_hsv", text="", icon="HUESATVAL")
-                col.operator("gpencil.vertex_color_brightness_contrast", text="", icon="BRIGHTNESS_CONTRAST")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_armature_tab_armature(Panel):
@@ -6761,75 +3978,23 @@ class VIEW3D_PT_gp_pose_tab_cleartransform(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("pose.transforms_clear", text="All", icon="CLEAR"),
+            OperatorEntry("pose.user_transforms_clear", icon="NODE_TRANSFORM_CLEAR"),
+            Separator,
+            OperatorEntry("pose.loc_clear", text="Location", icon="CLEARMOVE"),
+            OperatorEntry("pose.rot_clear", text="Rotation", icon="CLEARROTATE"),
+            OperatorEntry("pose.scale_clear", text="Scale", icon="CLEARSCALE"),
+            Separator,
+            OperatorEntry("pose.user_transforms_clear", text="Reset Unkeyed", icon="RESET"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.transforms_clear", text="All", icon="CLEAR")
-            col.operator("pose.user_transforms_clear", icon="NODE_TRANSFORM_CLEAR")
-
-            col.separator(factor = 0.5)
-
-            col.operator("pose.loc_clear", text="Location", icon="CLEARMOVE")
-            col.operator("pose.rot_clear", text="Rotation", icon="CLEARROTATE")
-            col.operator("pose.scale_clear", text="Scale", icon="CLEARSCALE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("pose.user_transforms_clear", text="Reset Unkeyed", icon="RESET")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.transforms_clear", text="", icon="CLEAR")
-                row.operator("pose.user_transforms_clear", text="", icon="NODE_TRANSFORM_CLEAR")
-                row.operator("pose.loc_clear", text="", icon="CLEARMOVE")
-
-                row = col.row(align=True)
-                row.operator("pose.rot_clear", text="", icon="CLEARROTATE")
-                row.operator("pose.scale_clear", text="", icon="CLEARSCALE")
-                row.operator("pose.user_transforms_clear", text="", icon="RESET")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.transforms_clear", text="", icon="CLEAR")
-                row.operator("pose.user_transforms_clear", text="", icon="NODE_TRANSFORM_CLEAR")
-
-                row = col.row(align=True)
-                row.operator("pose.loc_clear", text="", icon="CLEARMOVE")
-                row.operator("pose.rot_clear", text="", icon="CLEARROTATE")
-
-                row = col.row(align=True)
-                row.operator("pose.scale_clear", text="", icon="CLEARSCALE")
-                row.operator("pose.user_transforms_clear", text="", icon="RESET")
-
-            elif column_count == 1:
-
-                col.operator("pose.transforms_clear", text="", icon="CLEAR")
-                col.operator("pose.user_transforms_clear", text="", icon="NODE_TRANSFORM_CLEAR")
-
-                col.separator(factor = 0.5)
-
-                col.operator("pose.loc_clear", text="", icon="CLEARMOVE")
-                col.operator("pose.rot_clear", text="", icon="CLEARROTATE")
-                col.operator("pose.scale_clear", text="", icon="CLEARSCALE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("pose.user_transforms_clear", text="", icon="RESET")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_pose_tab_apply(Panel):
@@ -6848,61 +4013,20 @@ class VIEW3D_PT_gp_pose_tab_apply(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("pose.armature_apply", icon="MOD_ARMATURE"),
+            OperatorEntry("pose.armature_apply", text="Apply Selected as Rest Pose", icon="MOD_ARMATURE_SELECTED", props={"selected": True}),
+            OperatorEntry("pose.visual_transform_apply", icon="APPLYMOVE"),
+            Separator,
+            OperatorEntry("object.assign_property_defaults", icon="ASSIGN", props={"process_bones": True}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.armature_apply", icon="MOD_ARMATURE")
-            col.operator("pose.armature_apply", text="Apply Selected as Rest Pose", icon="MOD_ARMATURE_SELECTED").selected = True
-            col.operator("pose.visual_transform_apply", icon="APPLYMOVE")
-
-            col.separator( factor = 0.5)
-
-            props = col.operator("object.assign_property_defaults", icon="ASSIGN")
-            props.process_bones = True
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.armature_apply", text="", icon="MOD_ARMATURE")
-                row.operator("pose.armature_apply", text="", icon="MOD_ARMATURE_SELECTED").selected = True
-                row.operator("pose.visual_transform_apply", text="", icon="APPLYMOVE")
-                props = row.operator("object.assign_property_defaults", text="", icon="ASSIGN")
-                props.process_bones = True
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.armature_apply", text="", icon="MOD_ARMATURE")
-                row.operator("pose.armature_apply", text="", icon="MOD_ARMATURE_SELECTED").selected = True
-
-                row = col.row(align=True)
-                row.operator("pose.visual_transform_apply", text="", icon="APPLYMOVE")
-                props = row.operator("object.assign_property_defaults", text="", icon="ASSIGN")
-                props.process_bones = True
-
-            elif column_count == 1:
-
-                col.operator("pose.armature_apply", text="", icon="MOD_ARMATURE")
-                col.operator("pose.armature_apply", text="", icon="MOD_ARMATURE_SELECTED").selected = True
-                col.operator("pose.visual_transform_apply", text="", icon="APPLYMOVE")
-
-                col.separator( factor = 0.5)
-
-                props = col.operator("object.assign_property_defaults", text="", icon="ASSIGN")
-                props.process_bones = True
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
@@ -6921,60 +4045,20 @@ class VIEW3D_PT_gp_pose_tab_inbetweens(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("pose.blend_with_rest", icon="PUSH_POSE"),
+            OperatorEntry("pose.push", icon="POSE_FROM_BREAKDOWN"),
+            OperatorEntry("pose.relax", icon="POSE_RELAX_TO_BREAKDOWN"),
+            OperatorEntry("pose.breakdown", icon="BREAKDOWNER_POSE"),
+            OperatorEntry("pose.blend_to_neighbor", icon="BLEND_TO_NEIGHBOUR"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.blend_with_rest", icon="PUSH_POSE")
-            col.operator("pose.push", icon="POSE_FROM_BREAKDOWN")
-            col.operator("pose.relax", icon="POSE_RELAX_TO_BREAKDOWN")
-            col.operator("pose.breakdown", icon="BREAKDOWNER_POSE")
-            col.operator("pose.blend_to_neighbor", icon="BLEND_TO_NEIGHBOUR")
-
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.blend_with_rest", text="", icon="PUSH_POSE")
-                row.operator("pose.push", text="", icon="POSE_FROM_BREAKDOWN")
-
-                row = col.row(align=True)
-                row.operator("pose.relax", text="", icon="POSE_RELAX_TO_BREAKDOWN")
-                row.operator("pose.breakdown", text="", icon="BREAKDOWNER_POSE")
-                row.operator("pose.blend_to_neighbor", text="", icon="BLEND_TO_NEIGHBOUR")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.blend_with_rest", text="", icon="PUSH_POSE")              
-                row.operator("pose.push", text="", icon="POSE_FROM_BREAKDOWN")
-                
-                row = col.row(align=True)
-                row.operator("pose.relax", text="", icon="POSE_RELAX_TO_BREAKDOWN")
-                row.operator("pose.breakdown", text="", icon="BREAKDOWNER_POSE")
-                
-                row = col.row(align=True)
-                row.operator("pose.blend_to_neighbor", text="", icon="BLEND_TO_NEIGHBOUR")
-
-            elif column_count == 1:
-
-                col.operator("pose.blend_with_rest", text="", icon="PUSH_POSE")
-                col.operator("pose.push", text="", icon="POSE_FROM_BREAKDOWN")
-                col.operator("pose.relax", text="", icon="POSE_RELAX_TO_BREAKDOWN")
-                col.operator("pose.breakdown", text="", icon="BREAKDOWNER_POSE")
-                col.operator("pose.blend_to_neighbor", text="", icon="BLEND_TO_NEIGHBOUR")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_pose_tab_propagate(Panel):
@@ -6993,65 +4077,21 @@ class VIEW3D_PT_gp_pose_tab_propagate(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("pose.propagate", text="To Next Keyframe", icon="PROPAGATE_NEXT", props={"mode": 'NEXT_KEY'}),
+            OperatorEntry("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon="PROPAGATE_PREVIOUS", props={"mode": 'LAST_KEY'}),
+            Separator,
+            OperatorEntry("pose.propagate", text="On Selected Keyframes", icon="PROPAGATE_SELECTED", props={"mode": 'SELECTED_KEYS'}),
+            Separator,
+            OperatorEntry("pose.propagate", text="On Selected Markers", icon="PROPAGATE_MARKER", props={"mode": 'SELECTED_MARKERS'}),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.propagate", text="To Next Keyframe", icon="PROPAGATE_NEXT").mode = 'NEXT_KEY'
-            col.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon="PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
-
-            col.separator(factor = 0.5)
-
-            col.operator("pose.propagate", text="On Selected Keyframes", icon="PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
-
-            col.separator(factor = 0.5)
-
-            col.operator("pose.propagate", text="On Selected Markers", icon="PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon="PROPAGATE_NEXT").mode = 'NEXT_KEY'
-                row.operator("pose.propagate", text="", icon="PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
-
-                row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon="PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
-                row.operator("pose.propagate", text="", icon="PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon="PROPAGATE_NEXT").mode = 'NEXT_KEY'
-                row.operator("pose.propagate", text="", icon="PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
-
-                row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon="PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
-                row.operator("pose.propagate", text="", icon="PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
-
-            elif column_count == 1:
-
-                col.operator("pose.propagate", text="", icon="PROPAGATE_NEXT").mode = 'NEXT_KEY'
-                col.operator("pose.propagate", text="", icon="PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
-
-                col.separator(factor = 0.5)
-
-                col.operator("pose.propagate", text="", icon="PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
-
-                col.separator(factor = 0.5)
-
-                col.operator("pose.propagate", text="", icon="PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
@@ -7070,52 +4110,19 @@ class VIEW3D_PT_gp_pose_tab_motionpaths(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("pose.paths_calculate", text="Calculate", icon="MOTIONPATHS_CALCULATE"),
+            OperatorEntry("pose.paths_clear", text="Clear", icon="MOTIONPATHS_CLEAR"),
+            OperatorEntry("pose.paths_update", text="Update Armature Motion Paths", icon="MOTIONPATHS_UPDATE"),
+            OperatorEntry("object.paths_update_visible", text="Update All Motion Paths", icon="MOTIONPATHS_UPDATE_ALL"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.paths_calculate", text="Calculate", icon="MOTIONPATHS_CALCULATE")
-            col.operator("pose.paths_clear", text="Clear", icon="MOTIONPATHS_CLEAR")
-            col.operator("pose.paths_update", text="Update Armature Motion Paths", icon="MOTIONPATHS_UPDATE")
-            col.operator("object.paths_update_visible", text="Update All Motion Paths", icon="MOTIONPATHS_UPDATE_ALL")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.paths_calculate", text="", icon="MOTIONPATHS_CALCULATE")
-                row.operator("pose.paths_clear", text="", icon="MOTIONPATHS_CLEAR")
-
-                row = col.row(align=True)
-                row.operator("pose.paths_update", text="", icon="MOTIONPATHS_UPDATE")
-                row.operator("object.paths_update_visible", text="", icon="MOTIONPATHS_UPDATE_ALL")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.paths_calculate", text="", icon="MOTIONPATHS_CALCULATE")
-                row.operator("pose.paths_clear", text="", icon="MOTIONPATHS_CLEAR")
-                row = col.row(align=True)
-                row.operator("pose.paths_update", text="", icon="MOTIONPATHS_UPDATE")
-                row.operator("object.paths_update_visible", text="", icon="MOTIONPATHS_UPDATE_ALL")
-
-            elif column_count == 1:
-
-                col.operator("pose.paths_calculate", text="", icon="MOTIONPATHS_CALCULATE")
-                col.operator("pose.paths_clear", text="", icon="MOTIONPATHS_CLEAR")
-                col.operator("pose.paths_update", text="", icon="MOTIONPATHS_UPDATE")
-                col.operator("object.paths_update_visible", text="", icon="MOTIONPATHS_UPDATE_ALL")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_pose_tab_ik(Panel):
@@ -7134,41 +4141,17 @@ class VIEW3D_PT_gp_pose_tab_ik(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("pose.ik_add", icon="ADD_IK"),
+            OperatorEntry("pose.ik_clear", icon="CLEAR_IK"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.ik_add", icon="ADD_IK")
-            col.operator("pose.ik_clear", icon="CLEAR_IK")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.ik_add", text="", icon="ADD_IK")
-                row.operator("pose.ik_clear", text="", icon="CLEAR_IK")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.ik_add", text="", icon="ADD_IK")
-                row.operator("pose.ik_clear", text="", icon="CLEAR_IK")
-
-            elif column_count == 1:
-
-                col.operator("pose.ik_add", text="", icon="ADD_IK")
-                col.operator("pose.ik_clear", text="", icon="CLEAR_IK")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_pose_tab_constraints(Panel):
@@ -7187,54 +4170,19 @@ class VIEW3D_PT_gp_pose_tab_constraints(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        entries = (
+            OperatorEntry("pose.constraint_add_with_targets", icon="CONSTRAINT_DATA"),
+            OperatorEntry("pose.constraints_copy", icon="COPYDOWN"),
+            Separator,
+            OperatorEntry("pose.constraints_clear", icon="CLEAR_CONSTRAINT"),
+        )
+
         if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.constraint_add_with_targets", icon="CONSTRAINT_DATA")
-            col.operator("pose.constraints_copy", icon="COPYDOWN")
-
-            col.separator(factor = 0.5)
-
-            col.operator("pose.constraints_clear", icon="CLEAR_CONSTRAINT")
-
-        # icon buttons
+            draw_text_buttons(layout, entries)
         else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.constraint_add_with_targets", text="", icon="CONSTRAINT_DATA")
-                row.operator("pose.constraints_copy", text="", icon="COPYDOWN")
-                row.operator("pose.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.constraint_add_with_targets", text="", icon="CONSTRAINT_DATA")
-                row.operator("pose.constraints_copy", text="", icon="COPYDOWN")
-
-                row = col.row(align=True)
-                row.operator("pose.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
-
-
-            elif column_count == 1:
-
-                col.operator("pose.constraint_add_with_targets", text="", icon="CONSTRAINT_DATA")
-                col.operator("pose.constraints_copy", text="", icon="COPYDOWN")
-
-                col.separator(factor = 0.5)
-
-                col.operator("pose.constraints_clear", text="", icon="CLEAR_CONSTRAINT")
+            draw_icon_buttons(layout, entries, column_count)
 
 
 class VIEW3D_PT_gp_pose_tab_names(Panel):
