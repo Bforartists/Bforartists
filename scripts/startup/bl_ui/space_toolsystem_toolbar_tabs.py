@@ -114,6 +114,18 @@ def draw_icon_buttons(layout, entries, column_count):
             index = (index + 1) % column_count
 
 
+class ToolsystemPanel(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        print(cls)
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+
 # BFA - Import the default library wizard functions
 def draw_wizard_button(layout, obj, text, icon, scale):
     """Debug version to check what's in wizard_handlers"""
@@ -152,10 +164,8 @@ def draw_wizard_button(layout, obj, text, icon, scale):
 
 # ------------------------ Object
 
-class VIEW3D_PT_object_tab_transform(Panel):
+class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
     bl_label = "Transform"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -478,19 +488,11 @@ class VIEW3D_PT_object_tab_transform(Panel):
                     col.operator("armature.align", text="", icon="ALIGN")
 
 
-class VIEW3D_PT_object_tab_set_origin(Panel):
+class VIEW3D_PT_object_tab_set_origin(ToolsystemPanel):
     bl_label = "Set Origin"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context="objectmode"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -542,10 +544,8 @@ class VIEW3D_MT_object_mirror_global_z(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_object_tab_mirror(Panel):
+class VIEW3D_PT_object_tab_mirror(ToolsystemPanel):
     bl_label = "Mirror"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -607,10 +607,8 @@ class VIEW3D_MT_object_mirror_local_z(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_object_tab_mirror_local(Panel):
+class VIEW3D_PT_object_tab_mirror_local(ToolsystemPanel):
     bl_label = "Mirror Local"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -633,19 +631,11 @@ class VIEW3D_PT_object_tab_mirror_local(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_object_tab_clear(Panel):
+class VIEW3D_PT_object_tab_clear(ToolsystemPanel):
     bl_label = "Clear"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context="objectmode"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -661,19 +651,11 @@ class VIEW3D_PT_object_tab_clear(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_object_tab_apply(Panel):
+class VIEW3D_PT_object_tab_apply(ToolsystemPanel):
     bl_label = "Apply"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context="objectmode"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -705,19 +687,11 @@ class VIEW3D_PT_object_tab_apply(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_object_tab_apply_delta(Panel):
+class VIEW3D_PT_object_tab_apply_delta(ToolsystemPanel):
     bl_label = "Apply Deltas"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context="objectmode"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -738,10 +712,8 @@ class VIEW3D_PT_object_tab_apply_delta(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_object_tab_snap(Panel):
+class VIEW3D_PT_object_tab_snap(ToolsystemPanel):
     bl_label = "Snap"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_options = {'HIDE_BG'}
 
@@ -769,10 +741,8 @@ class VIEW3D_PT_object_tab_snap(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_object_tab_shading(Panel):
+class VIEW3D_PT_object_tab_shading(ToolsystemPanel):
     bl_label = "Shading"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -795,10 +765,8 @@ class VIEW3D_PT_object_tab_shading(Panel):
 
 # ------------------------ Utility
 
-class VIEW3D_PT_utility_tab_parent(Panel):
+class VIEW3D_PT_utility_tab_parent(ToolsystemPanel):
     bl_label = "Parents"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Utility"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -819,10 +787,8 @@ class VIEW3D_PT_utility_tab_parent(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_utility_tab_object_data(Panel):
+class VIEW3D_PT_utility_tab_object_data(ToolsystemPanel):
     bl_label = "Object Data"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Utility"
     bl_options = {'HIDE_BG'}
 
@@ -893,10 +859,8 @@ class VIEW3D_PT_utility_tab_object_data(Panel):
                 col.operator("object.make_override_library", text="", icon="LIBRARY_DATA_OVERRIDE")
 
 
-class VIEW3D_PT_utility_tab_assets(Panel):
+class VIEW3D_PT_utility_tab_assets(ToolsystemPanel):
     bl_label = "Assets"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Utility"
     bl_options = {'HIDE_BG'}
 
@@ -962,10 +926,8 @@ class VIEW3D_PT_utility_tab_assets(Panel):
                     draw_wizard_button(col, obj, "", 'WIZARD', 1)
 
 
-class VIEW3D_PT_utility_tab_constraints(Panel):
+class VIEW3D_PT_utility_tab_constraints(ToolsystemPanel):
     bl_label = "Constraints"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Utility"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
@@ -987,10 +949,8 @@ class VIEW3D_PT_utility_tab_constraints(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_utility_tab_collection(Panel):
+class VIEW3D_PT_utility_tab_collection(ToolsystemPanel):
     bl_label = "Collection"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Utility"
     bl_options = {'HIDE_BG'}
 
@@ -1010,10 +970,8 @@ class VIEW3D_PT_utility_tab_collection(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_utility_tab_convert(Panel):
+class VIEW3D_PT_utility_tab_convert(ToolsystemPanel):
     bl_label = "Convert"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Utility"
     bl_options = {'HIDE_BG'}
 
@@ -1132,19 +1090,11 @@ class VIEW3D_PT_utility_tab_convert(Panel):
 
 # -------------------------------------- Mesh
 
-class VIEW3D_PT_mesh_tab_merge(Panel):
+class VIEW3D_PT_mesh_tab_merge(ToolsystemPanel):
     bl_label = "Merge"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1261,19 +1211,11 @@ class VIEW3D_PT_mesh_tab_merge(Panel):
                 col.operator("mesh.remove_doubles", text="", icon="REMOVE_DOUBLES")
 
 
-class VIEW3D_PT_mesh_tab_split(Panel):
+class VIEW3D_PT_mesh_tab_split(ToolsystemPanel):
     bl_label = "Split"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1287,19 +1229,11 @@ class VIEW3D_PT_mesh_tab_split(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mesh_tab_separate(Panel):
+class VIEW3D_PT_mesh_tab_separate(ToolsystemPanel):
     bl_label = "Separate"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1313,19 +1247,11 @@ class VIEW3D_PT_mesh_tab_separate(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mesh_tab_tools(Panel):
+class VIEW3D_PT_mesh_tab_tools(ToolsystemPanel):
     bl_label = "Tools"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1347,19 +1273,11 @@ class VIEW3D_PT_mesh_tab_tools(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mesh_tab_normals(Panel):
+class VIEW3D_PT_mesh_tab_normals(ToolsystemPanel):
     bl_label = "Normals"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1373,19 +1291,11 @@ class VIEW3D_PT_mesh_tab_normals(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mesh_tab_shading(Panel):
+class VIEW3D_PT_mesh_tab_shading(ToolsystemPanel):
     bl_label = "Shading"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1404,19 +1314,11 @@ class VIEW3D_PT_mesh_tab_shading(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mesh_tab_cleanup(Panel):
+class VIEW3D_PT_mesh_tab_cleanup(ToolsystemPanel):
     bl_label = "Clean Up"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1437,19 +1339,11 @@ class VIEW3D_PT_mesh_tab_cleanup(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mesh_tab_dissolve(Panel):
+class VIEW3D_PT_mesh_tab_dissolve(ToolsystemPanel):
     bl_label = "Dissolve"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1468,19 +1362,11 @@ class VIEW3D_PT_mesh_tab_dissolve(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_vertex_tab_vertex(Panel):
+class VIEW3D_PT_vertex_tab_vertex(ToolsystemPanel):
     bl_label = "Vertex"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Vertex"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1505,19 +1391,11 @@ class VIEW3D_PT_vertex_tab_vertex(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_edge_tab_edge(Panel):
+class VIEW3D_PT_edge_tab_edge(ToolsystemPanel):
     bl_label = "Edge"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Edge"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1686,19 +1564,11 @@ class VIEW3D_PT_edge_tab_edge(Panel):
                     col.operator("mesh.mark_freestyle_edge", text="", icon="CLEAR_FS_EDGE").clear = True
 
 
-class VIEW3D_PT_face_tab_face(Panel):
+class VIEW3D_PT_face_tab_face(ToolsystemPanel):
     bl_label = "Face"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Face"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1725,19 +1595,11 @@ class VIEW3D_PT_face_tab_face(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_uv_tab_uv(Panel):
+class VIEW3D_PT_uv_tab_uv(ToolsystemPanel):
     bl_label = "UV"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "UV"
     bl_context="mesh_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1806,19 +1668,11 @@ class MASK_MT_flood_fill_clear(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_PT_sculpt_tab_transform(Panel):
+class VIEW3D_PT_sculpt_tab_transform(ToolsystemPanel):
     bl_label = "Transform"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Sculpt"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1830,19 +1684,11 @@ class VIEW3D_PT_sculpt_tab_transform(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_sculpt_tab_sculpt(Panel):
+class VIEW3D_PT_sculpt_tab_sculpt(ToolsystemPanel):
     bl_label = "Sculpt"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Sculpt"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1867,19 +1713,11 @@ class VIEW3D_PT_sculpt_tab_sculpt(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_sculpt_tab_filters(Panel):
+class VIEW3D_PT_sculpt_tab_filters(ToolsystemPanel):
     bl_label = "Meshfilter"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Sculpt"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1899,19 +1737,13 @@ class VIEW3D_PT_sculpt_tab_filters(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
+class VIEW3D_PT_sculpt_tab_set_pivot(ToolsystemPanel):
     bl_label = "Set Pivot"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Sculpt"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
 
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
+
 
     def draw(self, context):
         layout = self.layout
@@ -1927,19 +1759,11 @@ class VIEW3D_PT_sculpt_tab_set_pivot(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mask_tab_mask(Panel):
+class VIEW3D_PT_mask_tab_mask(ToolsystemPanel):
     bl_label = "Mask"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mask"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1973,19 +1797,11 @@ class VIEW3D_PT_mask_tab_mask(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_mask_tab_random_mask(Panel):
+class VIEW3D_PT_mask_tab_random_mask(ToolsystemPanel):
     bl_label = "Random Mask"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Mask"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -1999,19 +1815,11 @@ class VIEW3D_PT_mask_tab_random_mask(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_facesets_tab_facesets(Panel):
+class VIEW3D_PT_facesets_tab_facesets(ToolsystemPanel):
     bl_label = "Face Sets"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Face Sets"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2042,19 +1850,11 @@ class VIEW3D_PT_facesets_tab_facesets(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_facesets_tab_init_facesets(Panel):
+class VIEW3D_PT_facesets_tab_init_facesets(ToolsystemPanel):
     bl_label = "Initialize Face Sets"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Face Sets"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2073,19 +1873,11 @@ class VIEW3D_PT_facesets_tab_init_facesets(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_paint_tab_paint(Panel):
+class VIEW3D_PT_paint_tab_paint(ToolsystemPanel):
     bl_label = "Paint"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Paint"
     bl_context="vertexpaint"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2105,10 +1897,8 @@ class VIEW3D_PT_paint_tab_paint(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_paint_tab_color_picker(Panel):
+class VIEW3D_PT_paint_tab_color_picker(ToolsystemPanel):
     bl_label = "Color Picker"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Paint"
     bl_options = {'HIDE_BG'}
 
@@ -2128,19 +1918,11 @@ class VIEW3D_PT_paint_tab_color_picker(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_weights_tab_weights(Panel):
+class VIEW3D_PT_weights_tab_weights(ToolsystemPanel):
     bl_label = "Weights"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Weights"
     bl_context="weightpaint"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
     def draw(self, context):
         layout = self.layout
 
@@ -2168,19 +1950,11 @@ class VIEW3D_PT_weights_tab_weights(Panel):
 
 
 # ------------------------ Curve Edit Mode
-class VIEW3D_PT_curve_tab_curve(Panel):
+class VIEW3D_PT_curve_tab_curve(ToolsystemPanel):
     bl_label = "Curve"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Curve"
     bl_context="curve_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2203,19 +1977,11 @@ class VIEW3D_PT_curve_tab_curve(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_curve_tab_control_points(Panel):
+class VIEW3D_PT_curve_tab_control_points(ToolsystemPanel):
     bl_label = "Control Points"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Control Points"
     bl_context="curve_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2241,19 +2007,11 @@ class VIEW3D_PT_curve_tab_control_points(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_curve_tab_control_points_surface(Panel):
+class VIEW3D_PT_curve_tab_control_points_surface(ToolsystemPanel):
     bl_label = "Control Points"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Control Points"
     bl_context="surface_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2272,10 +2030,8 @@ class VIEW3D_PT_curve_tab_control_points_surface(Panel):
 
 
 # ------------------------ Curves (Hair/Fur) Edit Mode
-class VIEW3D_PT_curves_tab_edit_curves(Panel):
+class VIEW3D_PT_curves_tab_edit_curves(ToolsystemPanel):
     bl_label = "Curves"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Curves"
     bl_context="curves_edit"
     bl_options = {'HIDE_BG'}
@@ -2302,10 +2058,8 @@ class VIEW3D_PT_curves_tab_edit_curves(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_curves_tab_edit_control_points(Panel):
+class VIEW3D_PT_curves_tab_edit_control_points(ToolsystemPanel):
     bl_label = "Control Points"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Control Points"
     bl_context="curves_edit"
     bl_options = {'HIDE_BG'}
@@ -2326,10 +2080,8 @@ class VIEW3D_PT_curves_tab_edit_control_points(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_curves_tab_edit_segments(Panel):
+class VIEW3D_PT_curves_tab_edit_segments(ToolsystemPanel):
     bl_label = "Segments"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Segments"
     bl_context="curves_edit"
     bl_options = {'HIDE_BG'}
@@ -2353,10 +2105,8 @@ class VIEW3D_PT_curves_tab_edit_segments(Panel):
 
 # ------------------------ Curves (Hair/Fur) Sculpt Mode
 
-class VIEW3D_PT_curves_tab_sculpt_curves(Panel):
+class VIEW3D_PT_curves_tab_sculpt_curves(ToolsystemPanel):
     bl_label = "Curves"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Curves"
     bl_context="curves_sculpt"
     bl_options = {'HIDE_BG'}
@@ -2381,19 +2131,11 @@ class VIEW3D_PT_curves_tab_sculpt_curves(Panel):
 
 
 # ------------------------ Surface
-class VIEW3D_PT_surface_tab_surface(Panel):
+class VIEW3D_PT_surface_tab_surface(ToolsystemPanel):
     bl_label = "Surface"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Surface"
     bl_context="surface_edit"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2410,10 +2152,8 @@ class VIEW3D_PT_surface_tab_surface(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_segments_tab_segments(Panel):
+class VIEW3D_PT_segments_tab_segments(ToolsystemPanel):
     bl_label = "Segments"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Segments"
     bl_options = {'HIDE_BG'}
 
@@ -2436,19 +2176,11 @@ class VIEW3D_PT_segments_tab_segments(Panel):
 
 
 # ------------------------ Grease Pencil
-class VIEW3D_PT_gp_gpencil_tab_dissolve(Panel):
+class VIEW3D_PT_gp_gpencil_tab_dissolve(ToolsystemPanel):
     bl_label = "Dissolve"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Grease Pencil"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2462,19 +2194,11 @@ class VIEW3D_PT_gp_gpencil_tab_dissolve(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
+class VIEW3D_PT_gp_gpencil_tab_cleanup(ToolsystemPanel):
     bl_label = "Clean Up"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Grease Pencil"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2491,19 +2215,11 @@ class VIEW3D_PT_gp_gpencil_tab_cleanup(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
+class VIEW3D_PT_gp_gpencil_tab_separate(ToolsystemPanel):
     bl_label = "Separate"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Grease Pencil"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2519,19 +2235,11 @@ class VIEW3D_PT_gp_gpencil_tab_separate(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
+class VIEW3D_PT_gp_stroke_tab_stroke(ToolsystemPanel):
     bl_label = "Stroke"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2562,19 +2270,11 @@ class VIEW3D_PT_gp_stroke_tab_stroke(Panel):
 
 
 # BFA - Legacy
-class VIEW3D_PT_gp_stroke_tab_simplify(Panel):
+class VIEW3D_PT_gp_stroke_tab_simplify(ToolsystemPanel):
     bl_label = "Simplify"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2620,19 +2320,11 @@ class VIEW3D_PT_gp_stroke_tab_simplify(Panel):
                 col.operator("gpencil.stroke_sample", text="", icon="SIMPLIFY_SAMPLE")
 
 
-class VIEW3D_PT_gp_stroke_tab_toggle_caps(Panel):
+class VIEW3D_PT_gp_stroke_tab_toggle_caps(ToolsystemPanel):
     bl_label = "Toggle Caps"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2648,19 +2340,11 @@ class VIEW3D_PT_gp_stroke_tab_toggle_caps(Panel):
 
 
 # BFA - legacy
-class VIEW3D_PT_gp_stroke_tab_reproject(Panel):
+class VIEW3D_PT_gp_stroke_tab_reproject(ToolsystemPanel):
     bl_label = "Reproject Strokes"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2722,19 +2406,11 @@ class VIEW3D_PT_gp_stroke_tab_reproject(Panel):
                 col.operator("gpencil.reproject", text="", icon="CURSOR").type = 'CURSOR'
 
 
-class VIEW3D_PT_gp_point_tab_point(Panel):
+class VIEW3D_PT_gp_point_tab_point(ToolsystemPanel):
     bl_label = "Point"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="grease_pencil_edit"
     bl_category = "Point"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2747,19 +2423,11 @@ class VIEW3D_PT_gp_point_tab_point(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_draw_tab_draw(Panel):
+class VIEW3D_PT_gp_draw_tab_draw(ToolsystemPanel):
     bl_label = "Draw"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="greasepencil_paint"
     bl_category = "Draw"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2772,10 +2440,8 @@ class VIEW3D_PT_gp_draw_tab_draw(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_draw_tab_animation(Panel):
+class VIEW3D_PT_gp_draw_tab_animation(ToolsystemPanel):
     bl_label = "Animation"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_category = "Animation"
     bl_options = {'HIDE_BG'}
 
@@ -2804,19 +2470,11 @@ class VIEW3D_PT_gp_draw_tab_animation(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
+class VIEW3D_PT_gp_draw_tab_cleanup(ToolsystemPanel):
     bl_label = "Clean Up"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="greasepencil_paint"
     bl_category = "Clean Up"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2834,19 +2492,11 @@ class VIEW3D_PT_gp_draw_tab_cleanup(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_weights_tab_weights(Panel):
+class VIEW3D_PT_gp_weights_tab_weights(ToolsystemPanel):
     bl_label = "Weights"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="greasepencil_weight"
     bl_category = "Weights"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2864,19 +2514,11 @@ class VIEW3D_PT_gp_weights_tab_weights(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_weights_tab_generate_weights(Panel):
+class VIEW3D_PT_gp_weights_tab_generate_weights(ToolsystemPanel):
     bl_label = "Generate Weights"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="greasepencil_weight"
     bl_category = "Weights"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2889,19 +2531,11 @@ class VIEW3D_PT_gp_weights_tab_generate_weights(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_gp_paint_tab_paint(Panel):
+class VIEW3D_PT_gp_paint_tab_paint(ToolsystemPanel):
     bl_label = "Paint"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="greasepencil_vertex"
     bl_category = "Paint"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2919,19 +2553,11 @@ class VIEW3D_PT_gp_paint_tab_paint(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_armature_tab_armature(Panel):
+class VIEW3D_PT_armature_tab_armature(ToolsystemPanel):
     bl_label = "Armature"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="armature_edit"
     bl_category = "Armature"
     bl_options = {'HIDE_BG'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -2965,19 +2591,11 @@ class VIEW3D_PT_armature_tab_armature(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_armature_tab_recalcboneroll(Panel):
+class VIEW3D_PT_armature_tab_recalcboneroll(ToolsystemPanel):
     bl_label = "Recalculate Bone Roll"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="armature_edit"
     bl_category = "Armature"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3128,19 +2746,11 @@ class VIEW3D_PT_armature_tab_recalcboneroll(Panel):
                 col.operator("armature.calculate_roll", text= "", icon="CURSOR").type = 'CURSOR'
 
 
-class VIEW3D_PT_armature_tab_names(Panel):
+class VIEW3D_PT_armature_tab_names(ToolsystemPanel):
     bl_label = "Names"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="armature_edit"
     bl_category = "Armature"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3156,19 +2766,11 @@ class VIEW3D_PT_armature_tab_names(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_pose(Panel):
+class VIEW3D_PT_pose_tab_pose(ToolsystemPanel):
     bl_label = "Pose"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3185,19 +2787,11 @@ class VIEW3D_PT_pose_tab_pose(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_clear_transform(Panel):
+class VIEW3D_PT_pose_tab_clear_transform(ToolsystemPanel):
     bl_label = "Clear Transform"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3216,19 +2810,11 @@ class VIEW3D_PT_pose_tab_clear_transform(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_apply(Panel):
+class VIEW3D_PT_pose_tab_apply(ToolsystemPanel):
     bl_label = "Apply"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3244,19 +2830,11 @@ class VIEW3D_PT_pose_tab_apply(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_inbetweens(Panel):
+class VIEW3D_PT_pose_tab_inbetweens(ToolsystemPanel):
     bl_label = "In-Betweens"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3272,19 +2850,11 @@ class VIEW3D_PT_pose_tab_inbetweens(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_propagate(Panel):
+class VIEW3D_PT_pose_tab_propagate(ToolsystemPanel):
     bl_label = "Propagate"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3301,19 +2871,11 @@ class VIEW3D_PT_pose_tab_propagate(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_motion_paths(Panel):
+class VIEW3D_PT_pose_tab_motion_paths(ToolsystemPanel):
     bl_label = "Motion Paths"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3328,19 +2890,11 @@ class VIEW3D_PT_pose_tab_motion_paths(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_ik(Panel):
+class VIEW3D_PT_pose_tab_ik(ToolsystemPanel):
     bl_label = "IK"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3353,19 +2907,11 @@ class VIEW3D_PT_pose_tab_ik(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_constraints(Panel):
+class VIEW3D_PT_pose_tab_constraints(ToolsystemPanel):
     bl_label = "Constraints"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
@@ -3380,19 +2926,11 @@ class VIEW3D_PT_pose_tab_constraints(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_names(Panel):
+class VIEW3D_PT_pose_tab_names(ToolsystemPanel):
     bl_label = "Names"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
     bl_context="posemode"
     bl_category = "Pose"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
 
     def draw(self, context):
         layout = self.layout
