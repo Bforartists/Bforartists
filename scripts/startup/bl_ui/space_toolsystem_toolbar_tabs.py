@@ -56,6 +56,14 @@ class OperatorEntry:
                 setattr(props, key, value)
 
 
+@dataclasses.dataclass(slots=True)
+class SetOperatorContext:
+    context_value : str
+
+    def draw(self, layout):
+        layout.operator_context = self.context_value
+
+
 def draw_entries(layout, context, entries):
     column_count = toolsystem_column_count(context.region)
 
@@ -72,6 +80,8 @@ def draw_text_buttons(layout, entries):
     for entry in entries:
         if entry is Separator:
             col.separator(factor=0.5)
+        elif isinstance(entry, SetOperatorContext):
+            entry.draw(col)
         else:
             entry.draw_text_button(col)
         
@@ -90,6 +100,8 @@ def draw_icon_buttons(layout, entries, column_count):
             row.alignment = 'LEFT'
             
             index = 0
+        elif isinstance(entry, SetOperatorContext):
+            entry.draw(col)
         else:
             if index == 0:
                 row = col.row(align=True)
@@ -546,72 +558,17 @@ class VIEW3D_PT_object_tab_mirror(Panel):
     def draw(self, context):
         layout = self.layout
 
+        can_mirror_vgroup = context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("mirror.global_x", text="X Global", icon="MIRROR_X"),
+            OperatorEntry("mirror.global_y", text="Y Global", icon="MIRROR_Y"),
+            OperatorEntry("mirror.global_z", text="Z Global", icon="MIRROR_Z"),
+            OperatorEntry("object.vertex_group_mirror", icon="MIRROR_VERTEXGROUP", poll=can_mirror_vgroup),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("transform.mirror", text="Interactive Mirror", icon="TRANSFORM_MIRROR")
-
-            col.operator_context='EXEC_REGION_WIN'
-            col.operator("mirror.global_x", text="X Global", icon="MIRROR_X")
-            col.operator("mirror.global_y", text="Y Global", icon="MIRROR_Y")
-            col.operator("mirror.global_z", text="Z Global", icon="MIRROR_Z")
-
-            if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
-                col.operator("object.vertex_group_mirror", icon="MIRROR_VERTEXGROUP")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("transform.mirror", text="", icon="TRANSFORM_MIRROR")
-
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("mirror.global_x", text="", icon="MIRROR_X")
-                row.operator("mirror.global_y", text="", icon="MIRROR_Y")
-
-                row = col.row(align=True)
-                row.operator("mirror.global_z", text="", icon="MIRROR_Z")
-
-                if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
-                    row.operator("object.vertex_group_mirror", text="", icon="MIRROR_VERTEXGROUP")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("transform.mirror", text="", icon="TRANSFORM_MIRROR")
-
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("mirror.global_x", text="", icon="MIRROR_X")
-
-                row = col.row(align=True)
-                row.operator("mirror.global_y", text="", icon="MIRROR_Y")
-                row.operator("mirror.global_z", text="", icon="MIRROR_Z")
-
-                if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
-                    row = col.row(align=True)
-                    row.operator("object.vertex_group_mirror", text="", icon="MIRROR_VERTEXGROUP")
-
-            elif column_count == 1:
-
-                col.operator("transform.mirror", text="", icon="TRANSFORM_MIRROR")
-
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("mirror.global_x", text="", icon="MIRROR_X")
-                col.operator("mirror.global_y", text="", icon="MIRROR_Y")
-                col.operator("mirror.global_z", text="", icon="MIRROR_Z")
-
-                if context.edit_object and context.edit_object.type in {'MESH', 'SURFACE'}:
-                    col.operator("object.vertex_group_mirror", text="", icon="MIRROR_VERTEXGROUP")
+        draw_entries(layout, context, entries)
 
 
 # Workaround to separate the tooltips
@@ -665,49 +622,15 @@ class VIEW3D_PT_object_tab_mirror_local(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("mirror.local_x", text="X Local", icon="MIRROR_X"),
+            OperatorEntry("mirror.local_y", text="Y Local", icon="MIRROR_Y"),
+            OperatorEntry("mirror.local_z", text="Z Local", icon="MIRROR_Z"),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator_context='EXEC_REGION_WIN'
-            col.operator("mirror.local_x", text="X Local", icon="MIRROR_X")
-            col.operator("mirror.local_y", text="Y Local", icon="MIRROR_Y")
-            col.operator("mirror.local_z", text="Z Local", icon="MIRROR_Z")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("mirror.local_x", text="", icon="MIRROR_X")
-                row.operator("mirror.local_y", text="", icon="MIRROR_Y")
-                row.operator("mirror.local_z", text="", icon="MIRROR_Z")
-
-            elif column_count == 2:
-                row = col.row(align=True)
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("mirror.local_x", text="", icon="MIRROR_X")
-                row.operator("mirror.local_y", text="", icon="MIRROR_Y")
-
-                row = col.row(align=True)
-                row.operator("mirror.local_z", text="", icon="MIRROR_Z")
-
-            elif column_count == 1:
-
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("mirror.local_x", text="", icon="MIRROR_X")
-                col.operator("mirror.local_y", text="", icon="MIRROR_Y")
-                col.operator("mirror.local_z", text="", icon="MIRROR_Z")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_object_tab_clear(Panel):
@@ -1561,106 +1484,25 @@ class VIEW3D_PT_vertex_tab_vertex(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            OperatorEntry("mesh.edge_face_add", text="Make Edge/Face", icon="MAKE_EDGEFACE"),
+            OperatorEntry("mesh.vert_connect_path", text="Connect Vertex Path", icon="VERTEXCONNECTPATH"),
+            OperatorEntry("mesh.vert_connect", text="Connect Vertex Pairs", icon="VERTEXCONNECT"),
+            Separator,
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon="SMOOTH_LAPLACIAN"),
+            SetOperatorContext('INVOKE_REGION_WIN'),
+            Separator,
+            OperatorEntry("transform.vert_crease", icon="VERTEX_CREASE"),
+            Separator,
+            OperatorEntry("mesh.blend_from_shape", icon="BLENDFROMSHAPE"),
+            OperatorEntry("mesh.shape_propagate_to_all", text="Propagate to Shapes", icon="SHAPEPROPAGATE"),
+            Separator,
+            OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mesh.edge_face_add", text="Make Edge/Face", icon="MAKE_EDGEFACE")
-            col.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon="VERTEXCONNECTPATH")
-            col.operator("mesh.vert_connect", text="Connect Vertex Pairs", icon="VERTEXCONNECT")
-
-            col.separator(factor = 0.5)
-
-            col.operator_context='EXEC_REGION_WIN'
-            col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon="SMOOTH_LAPLACIAN")
-            col.operator_context='INVOKE_REGION_WIN'
-
-            col.separator(factor = 0.5)
-
-            col.operator("transform.vert_crease", icon="VERTEX_CREASE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.blend_from_shape", icon="BLENDFROMSHAPE")
-            col.operator("mesh.shape_propagate_to_all", text="Propagate to Shapes", icon="SHAPEPROPAGATE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.vertex_parent_set", icon="VERTEX_PARENT")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.edge_face_add", text="", icon="MAKE_EDGEFACE")
-                row.operator("mesh.vert_connect_path", text="", icon="VERTEXCONNECTPATH")
-                row.operator("mesh.vert_connect", text="", icon="VERTEXCONNECT")
-
-                row = col.row(align=True)
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("mesh.vertices_smooth_laplacian", text="", icon="SMOOTH_LAPLACIAN")
-                row.operator_context='INVOKE_REGION_WIN'
-                row.operator("transform.vert_crease", text="", icon="VERTEX_CREASE")
-
-                row.operator("mesh.blend_from_shape", text="", icon="BLENDFROMSHAPE")
-
-                row = col.row(align=True)
-                row.operator("mesh.shape_propagate_to_all", text="", icon="SHAPEPROPAGATE")
-                row.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.edge_face_add", text="", icon="MAKE_EDGEFACE")
-                row.operator("mesh.vert_connect_path", text="", icon="VERTEXCONNECTPATH")
-
-                row = col.row(align=True)
-                row.operator("mesh.vert_connect", text="", icon="VERTEXCONNECT")
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("mesh.vertices_smooth_laplacian", text="", icon="SMOOTH_LAPLACIAN")
-                row.operator_context='INVOKE_REGION_WIN'
-
-                row = col.row(align=True)
-                row.operator("transform.vert_crease", text="", icon="VERTEX_CREASE")
-                row.operator("mesh.blend_from_shape", text="", icon="BLENDFROMSHAPE")
-
-                row = col.row(align=True)
-                row.operator("mesh.shape_propagate_to_all", text="", icon="SHAPEPROPAGATE")
-                row.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
-
-            elif column_count == 1:
-
-                col.operator("mesh.edge_face_add", text="", icon="MAKE_EDGEFACE")
-                col.operator("mesh.vert_connect_path", text="", icon="VERTEXCONNECTPATH")
-                col.operator("mesh.vert_connect", text="", icon="VERTEXCONNECT")
-
-                col.separator(factor = 0.5)
-
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("mesh.vertices_smooth_laplacian", text="", icon="SMOOTH_LAPLACIAN")
-                col.operator_context='INVOKE_REGION_WIN'
-
-                col.separator(factor = 0.5)
-                col.operator("transform.vert_crease", text="", icon="VERTEX_CREASE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.blend_from_shape", text="", icon="BLENDFROMSHAPE")
-                col.operator("mesh.shape_propagate_to_all", text="", icon="SHAPEPROPAGATE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("object.vertex_parent_set", text="", icon="VERTEX_PARENT")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_edge_tab_Edge(Panel):
@@ -1860,124 +1702,27 @@ class VIEW3D_PT_face_tab_face(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            SetOperatorContext('INVOKE_REGION_WIN'),
+            OperatorEntry("mesh.poke", icon="POKEFACES"),
+            Separator,
+            OperatorEntry("mesh.quads_convert_to_tris", icon="TRIANGULATE", props={"quad_method": 'BEAUTY', "ngon_method": 'BEAUTY'}),
+            OperatorEntry("mesh.tris_convert_to_quads", icon="TRISTOQUADS"),
+            OperatorEntry("mesh.solidify", text="Solidify Faces", icon="SOLIDIFY"),
+            OperatorEntry("mesh.wireframe", icon="WIREFRAME"),
+            Separator,
+            OperatorEntry("mesh.fill", icon="FILL"),
+            OperatorEntry("mesh.fill_grid", icon="GRIDFILL"),
+            OperatorEntry("mesh.beautify_fill", icon="BEAUTIFY"),
+            Separator,
+            OperatorEntry("mesh.intersect", icon="INTERSECT"),
+            OperatorEntry("mesh.intersect_boolean", icon="BOOLEAN_INTERSECT"),
+            Separator,
+            OperatorEntry("mesh.face_split_by_edges", icon="SPLITBYEDGES"),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator_context='INVOKE_REGION_WIN'
-
-            col.operator("mesh.poke", icon="POKEFACES")
-
-            col.separator(factor = 0.5)
-
-            props = col.operator("mesh.quads_convert_to_tris", icon="TRIANGULATE")
-            props.quad_method = props.ngon_method = 'BEAUTY'
-            col.operator("mesh.tris_convert_to_quads", icon="TRISTOQUADS")
-            col.operator("mesh.solidify", text="Solidify Faces", icon="SOLIDIFY")
-            col.operator("mesh.wireframe", icon="WIREFRAME")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.fill", icon="FILL")
-            col.operator("mesh.fill_grid", icon="GRIDFILL")
-            col.operator("mesh.beautify_fill", icon="BEAUTIFY")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.intersect", icon="INTERSECT")
-            col.operator("mesh.intersect_boolean", icon="BOOLEAN_INTERSECT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.face_split_by_edges", icon="SPLITBYEDGES")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.operator_context='INVOKE_REGION_WIN'
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.poke", text="", icon="POKEFACES")
-                props = row.operator("mesh.quads_convert_to_tris", text="", icon="TRIANGULATE")
-                props.quad_method = props.ngon_method = 'BEAUTY'
-                row.operator("mesh.tris_convert_to_quads", text="", icon="TRISTOQUADS")
-
-                row = col.row(align=True)
-                row.operator("mesh.solidify", text="", icon="SOLIDIFY")
-                row.operator("mesh.wireframe", text="", icon="WIREFRAME")
-                row.operator("mesh.fill", text="", icon="FILL")
-
-                row = col.row(align=True)
-                row.operator("mesh.fill_grid", text="", icon="GRIDFILL")
-                row.operator("mesh.beautify_fill", text="", icon="BEAUTIFY")
-
-                row.operator("mesh.intersect", text="", icon="INTERSECT")
-
-                row = col.row(align=True)
-                row.operator("mesh.intersect_boolean", text="", icon="BOOLEAN_INTERSECT")
-                row.operator("mesh.face_split_by_edges", text="", icon="SPLITBYEDGES")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.poke", text="", icon="POKEFACES")
-                props = row.operator("mesh.quads_convert_to_tris", text="", icon="TRIANGULATE")
-                props.quad_method = props.ngon_method = 'BEAUTY'
-
-                row = col.row(align=True)
-                row.operator("mesh.tris_convert_to_quads", text="", icon="TRISTOQUADS")
-                row.operator("mesh.solidify", text="", icon="SOLIDIFY")
-
-                row = col.row(align=True)
-                row.operator("mesh.wireframe", text="", icon="WIREFRAME")
-                row.operator("mesh.fill", text="", icon="FILL")
-
-                row = col.row(align=True)
-                row.operator("mesh.fill_grid", text="", icon="GRIDFILL")
-                row.operator("mesh.beautify_fill", text="", icon="BEAUTIFY")
-
-                row = col.row(align=True)
-                row.operator("mesh.intersect", text="", icon="INTERSECT")
-
-                row = col.row(align=True)
-                row.operator("mesh.intersect_boolean", text="", icon="BOOLEAN_INTERSECT")
-                row.operator("mesh.face_split_by_edges", text="", icon="SPLITBYEDGES")
-
-            elif column_count == 1:
-
-                col.operator("mesh.poke", text="", icon="POKEFACES")
-
-                col.separator(factor = 0.5)
-
-                props = col.operator("mesh.quads_convert_to_tris", text="", icon="TRIANGULATE")
-                props.quad_method = props.ngon_method = 'BEAUTY'
-                col.operator("mesh.tris_convert_to_quads", text="", icon="TRISTOQUADS")
-                col.operator("mesh.solidify", text="", icon="SOLIDIFY")
-                col.operator("mesh.wireframe", text="", icon="WIREFRAME")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.fill", text="", icon="FILL")
-                col.operator("mesh.fill_grid", text="", icon="GRIDFILL")
-                col.operator("mesh.beautify_fill", text="", icon="BEAUTIFY")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.intersect", text="", icon="INTERSECT")
-                col.operator("mesh.intersect_boolean", text="", icon="BOOLEAN_INTERSECT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.face_split_by_edges", text="", icon="SPLITBYEDGES")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_uv_tab_uv(Panel):
@@ -1996,150 +1741,33 @@ class VIEW3D_PT_uv_tab_uv(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            OperatorEntry("uv.unwrap", text="Unwrap ABF", icon="UNWRAP_ABF", props={"method": 'ANGLE_BASED'}),
+            OperatorEntry("uv.unwrap", text="Unwrap Conformal", icon="UNWRAP_LSCM", props={"method": 'CONFORMAL'}),
+            OperatorEntry("uv.unwrap", text="Unwrap Minimum Stretch", icon="UNWRAP_MINSTRETCH", props={"method": 'MINIMUM_STRETCH'}),
+            Separator,
+            SetOperatorContext('INVOKE_DEFAULT'),
+            OperatorEntry("uv.smart_project", icon="MOD_UVPROJECT"),
+            OperatorEntry("uv.lightmap_pack", icon="LIGHTMAPPACK"),
+            OperatorEntry("uv.follow_active_quads", icon="FOLLOWQUADS"),
+            Separator,
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("uv.cube_project", icon="CUBEPROJECT"),
+            OperatorEntry("uv.cylinder_project", icon="CYLINDERPROJECT"),
+            OperatorEntry("uv.sphere_project", icon="SPHEREPROJECT"),
+            Separator,
+            SetOperatorContext('INVOKE_REGION_WIN'),
+            OperatorEntry("uv.project_from_view", icon="PROJECTFROMVIEW", props={"scale_to_bounds": False}),
+            OperatorEntry("uv.project_from_view", text="Project from View (Bounds)", icon="PROJECTFROMVIEW_BOUNDS", props={"scale_to_bounds": True}),
+            Separator,
+            OperatorEntry("mesh.mark_seam", icon="MARK_SEAM", props={"clear": False}),
+            OperatorEntry("mesh.clear_seam", text="Clear Seam", icon="CLEAR_SEAM"),
+            Separator,
+            OperatorEntry("uv.reset", icon="RESET"),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("uv.unwrap", text="Unwrap ABF", icon="UNWRAP_ABF").method = 'ANGLE_BASED'
-            col.operator("uv.unwrap", text="Unwrap Conformal", icon="UNWRAP_LSCM").method = 'CONFORMAL'
-            col.operator("uv.unwrap", text="Unwrap Minimum Stretch", icon="UNWRAP_MINSTRETCH").method = 'MINIMUM_STRETCH'
-
-            col.separator(factor = 0.5)
-
-            col.operator_context='INVOKE_DEFAULT'
-            col.operator("uv.smart_project", icon="MOD_UVPROJECT")
-            col.operator("uv.lightmap_pack", icon="LIGHTMAPPACK")
-            col.operator("uv.follow_active_quads", icon="FOLLOWQUADS")
-
-            col.separator(factor = 0.5)
-
-            col.operator_context='EXEC_REGION_WIN'
-            col.operator("uv.cube_project", icon="CUBEPROJECT")
-            col.operator("uv.cylinder_project", icon="CYLINDERPROJECT")
-            col.operator("uv.sphere_project", icon="SPHEREPROJECT")
-
-            col.separator(factor = 0.5)
-
-            col.operator_context='INVOKE_REGION_WIN'
-            col.operator("uv.project_from_view", icon="PROJECTFROMVIEW").scale_to_bounds = False
-            col.operator("uv.project_from_view", text="Project from View (Bounds)", icon="PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.mark_seam", icon="MARK_SEAM").clear = False
-            col.operator("mesh.clear_seam", text="Clear Seam", icon="CLEAR_SEAM")
-
-            col.separator(factor = 0.5)
-
-            col.operator("uv.reset", icon="RESET")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("uv.unwrap", text="", icon="UNWRAP_ABF").method = 'ANGLE_BASED'
-                row.operator("uv.unwrap", text="", icon="UNWRAP_LSCM").method = 'CONFORMAL'
-                row.operator("uv.unwrap", text="", icon="UNWRAP_MINSTRETCH").method = 'MINIMUM_STRETCH'
-
-                row = col.row(align=True)
-                row.operator_context='INVOKE_DEFAULT'
-                row.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
-                row.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
-                row.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
-
-                row = col.row(align=True)
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("uv.cube_project", text="", icon="CUBEPROJECT")
-                row.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
-                row.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
-
-                row = col.row(align=True)
-                row.operator_context='INVOKE_REGION_WIN'
-                row.operator("uv.project_from_view", text="", icon="PROJECTFROMVIEW").scale_to_bounds = False
-                row.operator("uv.project_from_view", text="", icon="PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
-
-                row = col.row(align=True)
-                row.operator("mesh.mark_seam", text="", icon="MARK_SEAM").clear = False
-                row.operator("mesh.clear_seam", text="", icon="CLEAR_SEAM")
-                row.operator("uv.reset", text="", icon="RESET")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("uv.unwrap", text="", icon="UNWRAP_ABF").method = 'ANGLE_BASED'
-                row.operator("uv.unwrap", text="", icon="UNWRAP_LSCM").method = 'CONFORMAL'
-
-                row = col.row(align=True)
-                row.operator("uv.unwrap", text="", icon="UNWRAP_MINSTRETCH").method = 'MINIMUM_STRETCH'
-                row.operator_context='INVOKE_DEFAULT'
-                row.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
-
-                row = col.row(align=True)
-                row.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
-                row.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
-                row.operator_context='EXEC_REGION_WIN'
-
-                row = col.row(align=True)
-                row.operator("uv.cube_project", text="", icon="CUBEPROJECT")
-                row.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
-
-                row = col.row(align=True)
-                row.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
-                row.operator_context='INVOKE_REGION_WIN'
-                row.operator("uv.project_from_view", text="", icon="PROJECTFROMVIEW").scale_to_bounds = False
-
-                row = col.row(align=True)
-                row.operator("uv.project_from_view", text="", icon="PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
-                row.operator("mesh.mark_seam", text="", icon="MARK_SEAM").clear = False
-
-                row = col.row(align=True)
-                row.operator("mesh.clear_seam", text="", icon="CLEAR_SEAM")
-                row.operator("uv.reset", text="", icon="RESET")
-
-            elif column_count == 1:
-
-                col.operator("uv.unwrap", text="", icon="UNWRAP_ABF").method = 'ANGLE_BASED'
-                col.operator("uv.unwrap", text="", icon="UNWRAP_LSCM").method = 'CONFORMAL'
-                col.operator("uv.unwrap", text="", icon="UNWRAP_MINSTRETCH").method = 'MINIMUM_STRETCH'
-
-                col.separator(factor = 0.5)
-
-                col.operator_context='INVOKE_DEFAULT'
-                col.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
-                col.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
-                col.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
-
-                col.separator(factor = 0.5)
-
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("uv.cube_project", text="", icon="CUBEPROJECT")
-                col.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
-                col.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
-
-                col.separator(factor = 0.5)
-
-                col.operator_context='INVOKE_REGION_WIN'
-                col.operator("uv.project_from_view", text="", icon="PROJECTFROMVIEW").scale_to_bounds = False
-                col.operator("uv.project_from_view", text="", icon="PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.mark_seam", text="", icon="MARK_SEAM").clear = False
-                col.operator("mesh.clear_seam", text="", icon="CLEAR_SEAM")
-
-                col.separator(factor = 0.5)
-
-                col.operator("uv.reset", text="", icon="RESET")
+        draw_entries(layout, context, entries)
 
 
 # Workaround to separate the tooltips
@@ -3307,165 +2935,34 @@ class VIEW3D_PT_armature_tab_armature(Panel):
 
     def draw(self, context):
         layout = self.layout
+        armature = context.edit_object.data
 
-        edit_object = context.edit_object
-        arm = edit_object.data
+        entries = (
+            OperatorEntry("transform.transform", text="Set Bone Roll", icon="SET_ROLL", props={"mode": 'BONE_ROLL'}),
+            OperatorEntry("armature.roll_clear", text="Clear Bone Roll", icon="CLEAR_ROLL"),
+            Separator,
+            OperatorEntry("armature.extrude_move", icon="EXTRUDE_REGION"),
+            OperatorEntry("armature.extrude_forked", icon="EXTRUDE_REGION", poll=armature.use_mirror_x),
+            OperatorEntry("armature.duplicate_move", icon="DUPLICATE"),
+            OperatorEntry("armature.fill", icon="FILLBETWEEN"),
+            Separator,
+            OperatorEntry("armature.split", icon="SPLIT"),
+            OperatorEntry("armature.separate", icon="SEPARATE"),
+            OperatorEntry("armature.symmetrize", icon="SYMMETRIZE"),
+            Separator,
+            OperatorEntry("armature.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
+            OperatorEntry("armature.switch_direction", text="Switch Direction", icon="SWITCH_DIRECTION"),
+            Separator,
+            SetOperatorContext('INVOKE_REGION_WIN'),
+            OperatorEntry("armature.armature_layers", icon="LAYER"), # TODO - Fix unknown operator error
+            OperatorEntry("armature.bone_layers", icon="BONE_LAYER"), # TODO - Fix unknown operator error
+            Separator,
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("armature.parent_set", text="Make Parent", icon="PARENT_SET"),
+            OperatorEntry("armature.parent_clear", text="Clear Parent", icon="PARENT_CLEAR"),
+        )
 
-        column_count = toolsystem_column_count(context.region)
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("transform.transform", text="Set Bone Roll", icon="SET_ROLL").mode = 'BONE_ROLL'
-            col.operator("armature.roll_clear", text="Clear Bone Roll", icon="CLEAR_ROLL")
-
-            col.separator(factor = 0.5)
-
-            col.operator("armature.extrude_move", icon="EXTRUDE_REGION")
-
-            if arm.use_mirror_x:
-                col.operator("armature.extrude_forked", icon="EXTRUDE_REGION")
-
-            col.operator("armature.duplicate_move", icon="DUPLICATE")
-            col.operator("armature.fill", icon="FILLBETWEEN")
-
-            col.separator(factor = 0.5)
-
-            col.operator("armature.split", icon="SPLIT")
-            col.operator("armature.separate", icon="SEPARATE")
-            col.operator("armature.symmetrize", icon="SYMMETRIZE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("armature.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
-            col.operator("armature.switch_direction", text="Switch Direction", icon="SWITCH_DIRECTION")
-
-            col.separator(factor = 0.5)
-
-            col.operator_context='INVOKE_REGION_WIN'
-            col.operator("armature.armature_layers", icon="LAYER")
-            col.operator("armature.bone_layers", icon="BONE_LAYER")
-
-            col.separator(factor = 0.5)
-
-            col.operator_context='EXEC_REGION_WIN'
-            col.operator("armature.parent_set", text="Make Parent", icon="PARENT_SET")
-            col.operator("armature.parent_clear", text="Clear Parent", icon="PARENT_CLEAR")
-
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("transform.transform", text="", icon="SET_ROLL").mode = 'BONE_ROLL'
-                row.operator("armature.roll_clear", text="", icon="CLEAR_ROLL")
-                row.operator("armature.extrude_move", text="", icon="EXTRUDE_REGION")
-
-                row = col.row(align=True)
-                if arm.use_mirror_x:
-                    row.operator("armature.extrude_forked", text="", icon="EXTRUDE_REGION")
-                row.operator("armature.duplicate_move", text="", icon="DUPLICATE")
-                row.operator("armature.fill", text="", icon="FILLBETWEEN")
-
-                row = col.row(align=True)
-                row.operator("armature.split", text="", icon="SPLIT")
-                row.operator("armature.separate", text="", icon="SEPARATE")
-                row.operator("armature.symmetrize", text="", icon="SYMMETRIZE")
-
-                row = col.row(align=True)
-                row.operator("armature.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("armature.switch_direction", text="", icon="SWITCH_DIRECTION")
-                row.operator_context='INVOKE_REGION_WIN'
-                row.operator("armature.armature_layers", text="", icon="LAYER")
-
-                row = col.row(align=True)
-                row.operator("armature.bone_layers", text="", icon="BONE_LAYER")
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("armature.parent_set", text="", icon="PARENT_SET")
-                row.operator("armature.parent_clear", text="", icon="PARENT_CLEAR")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("transform.transform", text="", icon="SET_ROLL").mode = 'BONE_ROLL'
-                row.operator("armature.roll_clear", text="", icon="CLEAR_ROLL")
-
-                row = col.row(align=True)
-                row.operator("armature.extrude_move", text="", icon="EXTRUDE_REGION")
-                if arm.use_mirror_x:
-                    row.operator("armature.extrude_forked", text="", icon="EXTRUDE_REGION")
-
-                row = col.row(align=True)
-                row.operator("armature.duplicate_move", text="", icon="DUPLICATE")
-                row.operator("armature.fill", text="", icon="FILLBETWEEN")
-
-                row = col.row(align=True)
-                row.operator("armature.split", text="", icon="SPLIT")
-                row.operator("armature.separate", text="", icon="SEPARATE")
-
-                row = col.row(align=True)
-                row.operator("armature.symmetrize", text="", icon="SYMMETRIZE")
-                row.operator("armature.subdivide", text="", icon="SUBDIVIDE_EDGES")
-
-                row = col.row(align=True)
-                row.operator("armature.switch_direction", text="", icon="SWITCH_DIRECTION")
-                row.operator_context='INVOKE_REGION_WIN'
-                row.operator("armature.armature_layers", text="", icon="LAYER")
-
-                row = col.row(align=True)
-                row.operator("armature.bone_layers", text="", icon="BONE_LAYER")
-                row.operator_context='EXEC_REGION_WIN'
-                row.operator("armature.parent_set", text="", icon="PARENT_SET")
-
-                row = col.row(align=True)
-                row.operator("armature.parent_clear", text="", icon="PARENT_CLEAR")
-
-            elif column_count == 1:
-
-                col.operator("transform.transform", text="", icon="SET_ROLL").mode = 'BONE_ROLL'
-                col.operator("armature.roll_clear", text="", icon="CLEAR_ROLL")
-
-                col.separator(factor = 0.5)
-
-                col.operator("armature.extrude_move", text="", icon="EXTRUDE_REGION")
-
-                if arm.use_mirror_x:
-                    col.operator("armature.extrude_forked", text="", icon="EXTRUDE_REGION")
-
-                col.operator("armature.duplicate_move", text="", icon="DUPLICATE")
-                col.operator("armature.fill", text="", icon="FILLBETWEEN")
-
-                col.separator(factor = 0.5)
-
-                col.operator("armature.split", text="", icon="SPLIT")
-                col.operator("armature.separate", text="", icon="SEPARATE")
-                col.operator("armature.symmetrize", text="", icon="SYMMETRIZE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("armature.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                col.operator("armature.switch_direction", text="", icon="SWITCH_DIRECTION")
-
-                col.separator(factor = 0.5)
-
-                col.operator_context='INVOKE_REGION_WIN'
-                col.operator("armature.armature_layers", text="", icon="LAYER")
-                col.operator("armature.bone_layers", text="", icon="BONE_LAYER")
-
-                col.separator(factor = 0.5)
-
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("armature.parent_set", text="", icon="PARENT_SET")
-                col.operator("armature.parent_clear", text="", icon="PARENT_CLEAR")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_armature_tab_recalcboneroll(Panel):
@@ -3647,58 +3144,16 @@ class VIEW3D_PT_armature_tab_names(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("armature.autoside_names", text="Auto-Name Left/Right", icon="RENAME_X", props={"type": 'XAXIS'}),
+            OperatorEntry("armature.autoside_names", text="Auto-Name Front/Back", icon="RENAME_Y", props={"type": 'YAXIS'}),
+            OperatorEntry("armature.autoside_names", text="Auto-Name Top/Bottom", icon="RENAME_Z", props={"type": 'ZAXIS'}),
+            OperatorEntry("armature.flip_names", icon="FLIP"),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator_context='EXEC_REGION_WIN'
-            col.operator("armature.autoside_names", text="Auto-Name Left/Right", icon="RENAME_X").type = 'XAXIS'
-            col.operator("armature.autoside_names", text="Auto-Name Front/Back", icon="RENAME_Y").type = 'YAXIS'
-            col.operator("armature.autoside_names", text="Auto-Name Top/Bottom", icon="RENAME_Z").type = 'ZAXIS'
-            col.operator("armature.flip_names", icon="FLIP")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                col.operator_context='EXEC_REGION_WIN'
-
-                row = col.row(align=True)
-                row.operator("armature.autoside_names", text="", icon="RENAME_X").type = 'XAXIS'
-                row.operator("armature.autoside_names", text="", icon="RENAME_Y").type = 'YAXIS'
-                row.operator("armature.autoside_names", text="", icon="RENAME_Z").type = 'ZAXIS'
-
-                row = col.row(align=True)
-                row.operator("armature.flip_names", text="", icon="FLIP")
-
-            elif column_count == 2:
-
-                col.operator_context='EXEC_REGION_WIN'
-
-                row = col.row(align=True)
-                row.operator("armature.autoside_names", text="", icon="RENAME_X").type = 'XAXIS'
-                row.operator("armature.autoside_names", text="", icon="RENAME_Y").type = 'YAXIS'
-
-                row = col.row(align=True)
-                row.operator("armature.autoside_names", text="", icon="RENAME_Z").type = 'ZAXIS'
-                row.operator("armature.flip_names", text="", icon="FLIP")
-
-            elif column_count == 1:
-
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("armature.autoside_names", text="", icon="RENAME_X").type = 'XAXIS'
-                col.operator("armature.autoside_names", text="", icon="RENAME_Y").type = 'YAXIS'
-                col.operator("armature.autoside_names", text="", icon="RENAME_Z").type = 'ZAXIS'
-                col.operator("armature.flip_names", text="", icon="FLIP")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_pose_tab_pose(Panel):
@@ -3717,58 +3172,17 @@ class VIEW3D_PT_pose_tab_pose(Panel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            OperatorEntry("pose.quaternions_flip", icon="FLIP"),
+            Separator,
+            SetOperatorContext('INVOKE_AREA'),
+            OperatorEntry("armature.move_to_collection", text="Change Bone Layers", icon="GROUP_BONE"),
+            Separator,
+            OperatorEntry("poselib.create_pose_asset", text="Create Pose Asset", icon="ASSET_MANAGER"),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("pose.quaternions_flip", icon="FLIP")
-
-            col.separator( factor = 0.5)
-
-            col.operator_context='INVOKE_AREA'
-            col.operator("armature.move_to_collection", text="Change Bone Layers", icon="GROUP_BONE")
-
-            col.separator( factor = 0.5)
-            col.operator("poselib.create_pose_asset", text="Create Pose Asset", icon="ASSET_MANAGER")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("pose.quaternions_flip", text="", icon="FLIP")
-                row.operator("armature.move_to_collection", text="", icon="GROUP_BONE")
-                row.operator("poselib.create_pose_asset", text="", icon="ASSET_MANAGER")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("pose.quaternions_flip", text="", icon="FLIP")
-                row.operator("armature.move_to_collection", text="", icon="GROUP_BONE")
-
-                row = col.row(align=True)
-                row.operator("poselib.create_pose_asset", text="", icon="ASSET_MANAGER")
-
-            elif column_count == 1:
-
-                col.operator("pose.quaternions_flip", text="", icon="FLIP")
-
-                col.separator( factor = 0.5)
-
-                col.operator_context='INVOKE_AREA'
-                col.operator("armature.move_to_collection", text="", icon="GROUP_BONE")
-
-                col.separator( factor = 0.5)
-                col.operator("poselib.create_pose_asset", text="", icon="ASSET_MANAGER")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_pose_tab_cleartransform(Panel):
@@ -3983,58 +3397,15 @@ class VIEW3D_PT_pose_tab_names(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("pose.autoside_names", text="Auto-Name Left/Right", icon="RENAME_X", props={"axis": 'XAXIS'}),
+            OperatorEntry("pose.autoside_names", text="Auto-Name Front/Back", icon="RENAME_Y", props={"axis": 'YAXIS'}),
+            OperatorEntry("pose.autoside_names", text="Auto-Name Top/Bottom", icon="STRING", props={"axis": 'ZAXIS'}),
+            OperatorEntry("pose.flip_names", icon="FLIP"),
+        )
 
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator_context='EXEC_REGION_WIN'
-            col.operator("pose.autoside_names", text="Auto-Name Left/Right", icon="RENAME_X").axis = 'XAXIS'
-            col.operator("pose.autoside_names", text="Auto-Name Front/Back", icon="RENAME_Y").axis = 'YAXIS'
-            col.operator("pose.autoside_names", text="Auto-Name Top/Bottom", icon="STRING").axis = 'ZAXIS'
-            col.operator("pose.flip_names", icon="FLIP")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                col.operator_context='EXEC_REGION_WIN'
-
-                row = col.row(align=True)
-                row.operator("pose.autoside_names", text="", icon="RENAME_X").axis = 'XAXIS'
-                row.operator("pose.autoside_names", text="", icon="RENAME_Y").axis = 'YAXIS'
-                row.operator("pose.autoside_names", text="", icon="RENAME_Z").axis = 'ZAXIS'
-
-                row = col.row(align=True)
-                row.operator("pose.flip_names", text="", icon="FLIP")
-
-            elif column_count == 2:
-
-                col.operator_context='EXEC_REGION_WIN'
-
-                row = col.row(align=True)
-                row.operator("pose.autoside_names", text="", icon="RENAME_X").axis = 'XAXIS'
-                row.operator("pose.autoside_names", text="", icon="RENAME_Y").axis = 'YAXIS'
-
-                row = col.row(align=True)
-                row.operator("pose.autoside_names", text="", icon="RENAME_Z").axis = 'ZAXIS'
-                row.operator("pose.flip_names", text="", icon="FLIP")
-
-            elif column_count == 1:
-
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("pose.autoside_names", text="", icon="RENAME_X").axis = 'XAXIS'
-                col.operator("pose.autoside_names", text="", icon="RENAME_Y").axis = 'YAXIS'
-                col.operator("pose.autoside_names", text="", icon="RENAME_Z").axis = 'ZAXIS'
-                col.operator("pose.flip_names", text="", icon="FLIP")
+        draw_entries(layout, context, entries)
 
 
 classes = (
