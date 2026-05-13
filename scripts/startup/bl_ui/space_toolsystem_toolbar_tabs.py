@@ -819,7 +819,7 @@ class VIEW3D_PT_utility_tab_parent(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_utility_tab_objectdata(Panel):
+class VIEW3D_PT_utility_tab_object_data(Panel):
     bl_label = "Object Data"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -1505,7 +1505,7 @@ class VIEW3D_PT_vertex_tab_vertex(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_edge_tab_Edge(Panel):
+class VIEW3D_PT_edge_tab_edge(Panel):
     bl_label = "Edge"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2105,7 +2105,7 @@ class VIEW3D_PT_paint_tab_paint(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_paint_tab_colorpicker(Panel):
+class VIEW3D_PT_paint_tab_color_picker(Panel):
     bl_label = "Color Picker"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2203,7 +2203,7 @@ class VIEW3D_PT_curve_tab_curve(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_curve_tab_controlpoints(Panel):
+class VIEW3D_PT_curve_tab_control_points(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2241,7 +2241,7 @@ class VIEW3D_PT_curve_tab_controlpoints(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_curve_tab_controlpoints_surface(Panel):
+class VIEW3D_PT_curve_tab_control_points_surface(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2302,7 +2302,7 @@ class VIEW3D_PT_curves_tab_edit_curves(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_curves_tab_edit_controlpoints(Panel):
+class VIEW3D_PT_curves_tab_edit_control_points(Panel):
     bl_label = "Control Points"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -2620,7 +2620,7 @@ class VIEW3D_PT_gp_stroke_tab_simplify(Panel):
                 col.operator("gpencil.stroke_sample", text="", icon="SIMPLIFY_SAMPLE")
 
 
-class VIEW3D_PT_gp_stroke_tab_togglecaps(Panel):
+class VIEW3D_PT_gp_stroke_tab_toggle_caps(Panel):
     bl_label = "Toggle Caps"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3185,7 +3185,7 @@ class VIEW3D_PT_pose_tab_pose(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_cleartransform(Panel):
+class VIEW3D_PT_pose_tab_clear_transform(Panel):
     bl_label = "Clear Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3301,7 +3301,7 @@ class VIEW3D_PT_pose_tab_propagate(Panel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_pose_tab_motionpaths(Panel):
+class VIEW3D_PT_pose_tab_motion_paths(Panel):
     bl_label = "Motion Paths"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3422,7 +3422,7 @@ classes = (
 
     # Utility
     VIEW3D_PT_utility_tab_parent,
-    VIEW3D_PT_utility_tab_objectdata,
+    VIEW3D_PT_utility_tab_object_data,
     VIEW3D_PT_utility_tab_assets,
     VIEW3D_PT_utility_tab_constraints,
     VIEW3D_PT_utility_tab_collection,
@@ -3438,7 +3438,7 @@ classes = (
     VIEW3D_PT_mesh_tab_cleanup,
     VIEW3D_PT_mesh_tab_dissolve,
     VIEW3D_PT_vertex_tab_vertex,
-    VIEW3D_PT_edge_tab_Edge,
+    VIEW3D_PT_edge_tab_edge,
     VIEW3D_PT_face_tab_face,
     VIEW3D_PT_uv_tab_uv,
 
@@ -3454,21 +3454,21 @@ classes = (
 
     # Mesh (Vertex Paint Mode)
     VIEW3D_PT_paint_tab_paint,
-    VIEW3D_PT_paint_tab_colorpicker,
+    VIEW3D_PT_paint_tab_color_picker,
 
     # Mesh (Weight Paint Mode)
     VIEW3D_PT_weights_tab_weights,
 
     # Curve (Edit Mode)
     VIEW3D_PT_curve_tab_curve,
-    VIEW3D_PT_curve_tab_controlpoints,
+    VIEW3D_PT_curve_tab_control_points,
+    VIEW3D_PT_curve_tab_control_points_surface,
     VIEW3D_PT_surface_tab_surface,
-    VIEW3D_PT_curve_tab_controlpoints_surface,
     VIEW3D_PT_segments_tab_segments,
 
     # Curves [Hair/Fur] (Edit Mode)
     VIEW3D_PT_curves_tab_edit_curves,
-    VIEW3D_PT_curves_tab_edit_controlpoints,
+    VIEW3D_PT_curves_tab_edit_control_points,
     VIEW3D_PT_curves_tab_edit_segments,
 
     # Curves [Hair/Fur] (Sculpt Mode)
@@ -3480,7 +3480,7 @@ classes = (
     VIEW3D_PT_gp_gpencil_tab_separate,
     VIEW3D_PT_gp_stroke_tab_stroke,
     #VIEW3D_PT_gp_stroke_tab_simplify, # BFA - Legacy
-    VIEW3D_PT_gp_stroke_tab_togglecaps,
+    VIEW3D_PT_gp_stroke_tab_toggle_caps,
     #VIEW3D_PT_gp_stroke_tab_reproject, # BFA - Legacy
     VIEW3D_PT_gp_point_tab_point,
 
@@ -3503,11 +3503,11 @@ classes = (
 
     # Armature (Pose Mode)
     VIEW3D_PT_pose_tab_pose,
-    VIEW3D_PT_pose_tab_cleartransform,
+    VIEW3D_PT_pose_tab_clear_transform,
     VIEW3D_PT_pose_tab_apply,
     VIEW3D_PT_pose_tab_inbetweens,
     VIEW3D_PT_pose_tab_propagate,
-    VIEW3D_PT_pose_tab_motionpaths,
+    VIEW3D_PT_pose_tab_motion_paths,
     VIEW3D_PT_pose_tab_ik,
     VIEW3D_PT_pose_tab_constraints,
     VIEW3D_PT_pose_tab_names,
