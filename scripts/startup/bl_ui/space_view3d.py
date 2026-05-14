@@ -8333,9 +8333,9 @@ class VIEW3D_MT_view_pie(Menu):
         # 8 - TOP
         pie.operator("view3d.view_axis", text="Top", icon="VIEW_TOP").type = "TOP"  # BFA - Icon changed
         # 7 - TOP - LEFT
-        pie.operator("view3d.view_axis", text="Back", icon="VIEW_BACK").type = "BACK"  # BFA - Icon Added
+        pie.operator("view3d.view_axis", text="Front", icon="VIEW_FRONT").type = "FRONT"  # BFA - Icon changed
         # 9 - TOP - RIGHT
-        pie.operator("view3d.view_axis", text="Front", icon="VIEW_FRONT").type = "FRONT"  # BFA - Icon Added
+        pie.operator("view3d.view_axis", text="Back", icon="VIEW_BACK").type = "BACK"  # BFA - Icon Added
 
         # 1 - BOTTOM - LEFT
         pie.operator("view3d.view_camera", text="View Camera", icon="CAMERA_DATA")
