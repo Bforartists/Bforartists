@@ -448,9 +448,9 @@ static bool node_update_basis_buttons(const bContext &C,
 
   dy -= NODE_DYS / 4;
 
-  /* WIP - Maybe Unused*/
-  SpaceNode &snode = *CTX_wm_space_node(&C);
-  ARegion &region = *CTX_wm_region(&C);
+  /* BFA - WIP - Maybe Unused*/
+  [[maybe_unused]] SpaceNode &snode = *CTX_wm_space_node(&C);
+  [[maybe_unused]] ARegion &region = *CTX_wm_region(&C);
 
   ui::Layout &layout = ui::block_layout(&block,
                                         ui::LayoutDirection::Vertical,
@@ -571,8 +571,8 @@ static bool node_update_basis_socket(TreeDrawContext &tree_draw_ctx,
     return false;
   }
 
-  SpaceNode &snode = *CTX_wm_space_node(&C);
-  ARegion &region = *CTX_wm_region(&C);
+  [[maybe_unused]] SpaceNode &snode = *CTX_wm_space_node(&C);
+  [[maybe_unused]] ARegion &region = *CTX_wm_region(&C);
 
   const int topy = locy;
 

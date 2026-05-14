@@ -235,16 +235,17 @@ static void WIDGETGROUP_node_minimap_draw_prepare(const bContext * /*C*/, wmGizm
   gz->scale_basis = 2.0f;
 }
 
+/* BFA - Minimap*/
 void NODE_GGT_minimap(wmGizmoGroupType *gzgt)
 {
   gzgt->name = "Minimap Widget";
   gzgt->idname = "NODE_GGT_minimap";
 
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic;
   gzgt->flag |= (WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_2D_UI);
 
   gzgt->poll = WIDGETGROUP_node_minimap_poll;
   gzgt->setup = WIDGETGROUP_node_minimap_setup;
-  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
   gzgt->draw_prepare = WIDGETGROUP_node_minimap_draw_prepare;
 }
 
