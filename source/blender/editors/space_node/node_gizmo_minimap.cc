@@ -245,16 +245,15 @@ void NODE_GT_minimap(wmGizmoType *gzt)
                        "",
                        -FLT_MAX,
                        FLT_MAX);
-  RNA_def_float_vector(gzt->srna,
-                       "delta_factor",
-                       1,
-                       nullptr,
-                       0,
-                       FLT_MAX,
-                       "Delta factor depending on node space and zoom",
-                       "",
-                       0,
-                       FLT_MAX);
+  RNA_def_float(gzt->srna,
+                "delta_factor",
+                0.0f,
+                0.0f,
+                FLT_MAX,
+                "Delta factor depending on node space and zoom",
+                "",
+                0.0f,
+                FLT_MAX);
 }
 
 }  // namespace blender::ed::space_node
