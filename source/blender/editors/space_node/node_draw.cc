@@ -448,6 +448,7 @@ static bool node_update_basis_buttons(const bContext &C,
 
   dy -= NODE_DYS / 4;
 
+  /* WIP - Maybe Unused*/
   SpaceNode &snode = *CTX_wm_space_node(&C);
   ARegion &region = *CTX_wm_region(&C);
 
@@ -5047,9 +5048,10 @@ static void draw_node_minimap(const bContext &C,
 
   const float minimap_overlay_scale = snode->minimap_scale;
 
+  /* The minimap_border_radius changes all bevels*/
   const float minimap_size = 150.0f * minimap_overlay_scale * UI_SCALE_FAC;
-  const float minimap_border_radius = BASIS_RAD + 0.5f;
-  const float inner_padding = 10.0f * UI_SCALE_FAC;
+  const float minimap_border_radius = BASIS_RAD - 0.5f;
+  const float inner_padding = 5.0f * UI_SCALE_FAC;
 
   const float minimap_aspect_ratio = snode->minimap_aspect_ratio;
   float minimap_width = minimap_size * minimap_aspect_ratio;
@@ -5104,17 +5106,23 @@ static void draw_node_minimap(const bContext &C,
   ui::theme::get_color_shade_alpha_4fv(TH_BACK, 20, 0, backdrop_color_outline);
   ui::theme::get_color_shade_alpha_4fv(TH_BACK, -7, -10, backdrop_color);
   ui::draw_roundbox_corner_set(ui::CNR_ALL);
+  /* STYLING: Background box with outline
+   * - backdrop_color: inner fill color (darker background)
+   * - backdrop_color_outline: border color (lighter outline)
+   * - 2.0f: outline width (change this to make border thinner/thicker)
+   * - minimap_border_radius: corner radius */
   ui::draw_roundbox_4fv_ex(&minimap_rect,
                            backdrop_color,
                            nullptr,
                            1.0f,
                            backdrop_color_outline,
-                           4.0f,
+                           2.0f,
                            minimap_border_radius);
   GPU_blend(GPU_BLEND_NONE);
 
   /* Colors. */
-  const float node_border_radius = 3.0f;
+  /* STYLING: Node corner radius in minimap. Lower = more square. */
+  const float node_border_radius = 1.0f;
   float node_color[4];
   float node_color_outline_selected[4];
   float node_color_outline_active[4];
@@ -5165,24 +5173,33 @@ static void draw_node_minimap(const bContext &C,
     rctf node_rect;
     BLI_rctf_init(&node_rect, pos[0], pos[0] + size[0], pos[1], pos[1] + size[1]);
     if (node.flag & NODE_ACTIVE) {
+      /* STYLING: Active node outline
+       * - node_color_outline_active: outline color for active nodes
+       * - 2.0f: outline width (change this to make border thinner/thicker) */
       ui::draw_roundbox_4fv_ex(&node_rect,
                                node_color,
                                nullptr,
                                1.0f,
                                node_color_outline_active,
-                               3.0f,
+                               2.0f,
                                node_border_radius);
     }
     else if (node.flag & NODE_SELECT) {
+      /* STYLING: Selected node outline
+       * - node_color_outline_selected: outline color for selected nodes
+       * - 2.0f: outline width (change this to make border thinner/thicker) */
       ui::draw_roundbox_4fv_ex(&node_rect,
                                node_color,
                                nullptr,
                                1.0f,
                                node_color_outline_selected,
-                               3.0f,
+                               2.0f,
                                node_border_radius);
     }
     else if (const bke::bNodeZoneType *zone_type = bke::zone_type_by_node_type(node.type_legacy)) {
+      /* STYLING: Zone nodes (repeat, simulation zones)
+       * - zone_type->theme_id: gets theme color for zone type
+       * - 2.0f: outline width */
       ui::theme::get_color_4fv(zone_type->theme_id, node_color_outline_group_input_output);
       node_color_outline_group_input_output[3] = 1.0f;
       ui::draw_roundbox_4fv_ex(&node_rect,
@@ -5190,10 +5207,16 @@ static void draw_node_minimap(const bContext &C,
                                nullptr,
                                1.0f,
                                node_color_outline_group_input_output,
-                               3.0f,
+                               2.0f,
                                node_border_radius);
     }
     else if (ELEM(node.type_legacy, NODE_GROUP_INPUT, NODE_GROUP_OUTPUT)) {
+      /* STYLING: Group input/output nodes
+       * - TH_BACK base color with modifications:
+       *   - NODE_GROUP_INPUT: adds green (+0.3f to G channel)
+       *   - NODE_GROUP_OUTPUT: adds red (+0.3f to R channel)
+       * - 0.8f: alpha/transparency
+       * - 3.0f: outline width */
       ui::theme::get_color_shade_alpha_4fv(TH_BACK, 30, 0, node_color_outline_group_input_output);
       if (ELEM(node.type_legacy, NODE_GROUP_INPUT)) {
         node_color_outline_group_input_output[1] += 0.3f;
@@ -5212,6 +5235,10 @@ static void draw_node_minimap(const bContext &C,
                                node_border_radius);
     }
     else {
+      /* STYLING: Regular nodes (no outline, filled only)
+       * - true: filled=true
+       * - node_border_radius: corner radius
+       * - node_color: fill color */
       ui::draw_roundbox_4fv(&node_rect, true, node_border_radius, node_color);
     }
   }
@@ -5233,18 +5260,28 @@ static void draw_node_minimap(const bContext &C,
   float viewport_rect_outline[4];
   ui::theme::get_color_shade_alpha_4fv(TH_BACK, 100, 0, viewport_rect_outline);
   ui::draw_roundbox_corner_set(ui::CNR_ALL);
+  /* STYLING: Viewport rectangle (visible area indicator)
+   * - viewport_rect_outline: outline color for viewport rectangle
+   * - false: filled=false (outline only)
+   * - 2.0f: corner radius
+   * Note: This draws the rectangle showing current view area in minimap */
   ui::draw_roundbox_4fv(&viewport_rect, false, 2.0f, viewport_rect_outline);
 
   /* Draw outline of the minimap and another outline in background color to hide mask corners. */
   float space_node_background_color[4];
   ui::theme::get_color_shade_alpha_4fv(TH_BACK, 0, 0, space_node_background_color);
   rctf minimap_outer_rect;
-  float minimap_outer_rect_offset = 6.0f;
+  float minimap_outer_rect_offset = 2.0f;
   BLI_rctf_init(&minimap_outer_rect,
                 minimap_rect.xmin - minimap_outer_rect_offset,
                 minimap_rect.xmax + minimap_outer_rect_offset,
                 minimap_rect.ymin - minimap_outer_rect_offset,
                 minimap_rect.ymax + minimap_outer_rect_offset);
+  /* STYLING: Outer background outline (hides mask corners)
+   * - space_node_background_color: color matching workspace background
+   * - minimap_outer_rect_offset: 2.0f - width of outer border
+   * - nullptr, nullptr: no fill color (transparent)
+   * Change minimap_outer_rect_offset to make outer border thinner/thicker */
   ui::draw_roundbox_4fv_ex(&minimap_outer_rect,
                            nullptr,
                            nullptr,
@@ -5253,6 +5290,11 @@ static void draw_node_minimap(const bContext &C,
                            minimap_outer_rect_offset,
                            minimap_border_radius + minimap_outer_rect_offset);
 
+  /* STYLING: Main minimap border outline
+   * - backdrop_color_outline: border color
+   * - false: filled=false (outline only)
+   * - minimap_border_radius: corner radius
+   * This is the visible border around the minimap */
   ui::draw_roundbox_4fv(&minimap_rect, false, minimap_border_radius, backdrop_color_outline);
 }
 
