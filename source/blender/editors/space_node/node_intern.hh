@@ -283,6 +283,9 @@ struct SpaceNode_Runtime {
   /** Temporary data for modal linking operator. */
   std::unique_ptr<bNodeLinkDrag> linkdrag;
 
+  /* BFA minimap highlight state, set by gizmo draw_prepare, read by draw_node_minimap. */
+  bool minimap_highlight = false;
+
   /* XXX hack for translate_attach op-macros to pass data from transform op to insert_offset op */
   /** Temporary data for node insert offset (in UI called Auto-offset). */
   NodeInsertOfsData *iofsd;

@@ -216,6 +216,7 @@ static bool WIDGETGROUP_node_minimap_poll(const bContext *C, wmGizmoGroupType * 
   return false;
 }
 
+/* BFA - Minimap*/
 static void WIDGETGROUP_node_minimap_setup(const bContext * /*C*/, wmGizmoGroup *gzgroup)
 {
   NodeMinimapWidgetGroup *minimap_group = MEM_new<NodeMinimapWidgetGroup>(__func__);
@@ -228,11 +229,17 @@ static void WIDGETGROUP_node_minimap_setup(const bContext * /*C*/, wmGizmoGroup 
   };
 }
 
-static void WIDGETGROUP_node_minimap_draw_prepare(const bContext * /*C*/, wmGizmoGroup *gzgroup)
+static void WIDGETGROUP_node_minimap_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
 {
   NodeMinimapWidgetGroup *minimap_group = (NodeMinimapWidgetGroup *)gzgroup->customdata;
   wmGizmo *gz = minimap_group->gizmo;
   gz->scale_basis = 2.0f;
+
+  /* Pass highlight state to draw_node_minimap(). */
+  SpaceNode *snode = CTX_wm_space_node(C);
+  if (snode) {
+    snode->runtime->minimap_highlight = (gz->state & WM_GIZMO_STATE_HIGHLIGHT) != 0;
+  }
 }
 
 /* BFA - Minimap*/

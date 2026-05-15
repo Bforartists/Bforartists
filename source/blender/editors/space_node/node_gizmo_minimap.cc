@@ -20,10 +20,6 @@
 
 #include "DNA_screen_types.h"
 
-#include "GPU_batch.hh"
-#include "GPU_select.hh"
-#include "GPU_state.hh"
-
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
@@ -47,9 +43,10 @@ struct NodeGizmoMinimap {
 
 /* -------------------------------------------------------------------- */
 
+/* BFA - Minimap gizmo */
 static void gizmo_minimap_draw(const bContext * /*C*/, wmGizmo * /*gz*/)
 {
-  /* pass */
+  /* Drawing is handled by draw_node_minimap() in node_draw.cc. */
 }
 
 static int gizmo_minimap_test_select(bContext *C, wmGizmo * /*gz*/, const int mval[2])

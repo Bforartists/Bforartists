@@ -5105,6 +5105,15 @@ static void draw_node_minimap(const bContext &C,
   float backdrop_color_outline[4];
   ui::theme::get_color_shade_alpha_4fv(TH_BACK, 20, 0, backdrop_color_outline);
   ui::theme::get_color_shade_alpha_4fv(TH_BACK, -7, -10, backdrop_color);
+
+  /* BFA: Brighten border when gizmo is hovered. */
+  if (snode->runtime->minimap_highlight) {
+    backdrop_color_outline[0] = 0.7f;
+    backdrop_color_outline[1] = 0.7f;
+    backdrop_color_outline[2] = 0.7f;
+    backdrop_color_outline[3] = 0.4f;
+  }
+
   ui::draw_roundbox_corner_set(ui::CNR_ALL);
   /* STYLING: Background box with outline
    * - backdrop_color: inner fill color (darker background)
