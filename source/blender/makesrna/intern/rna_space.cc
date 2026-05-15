@@ -8870,7 +8870,7 @@ static void rna_def_space_node(BlenderRNA *brna)
   prop = RNA_def_property(srna, "minimap_aspect_ratio", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "minimap_aspect_ratio");
   RNA_def_property_float_default(prop, 1.5f);
-  RNA_def_property_range(prop, 0.5f, 2.0f);
+  RNA_def_property_range(prop, 0.5f, 3.0f);
   RNA_def_property_ui_text(prop, "Aspect Ratio", "Sets the aspect ratio of the minimap");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
