@@ -17,6 +17,7 @@
 #include "DNA_color_types.h"
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
+#include "DNA_scene_enums.h"
 #include "DNA_screen_types.h" /* for #TextboxState. */
 #include "DNA_vec_types.h"    /* for #rctf */
 
@@ -454,7 +455,7 @@ struct Strip {
   int sfra = 0;
 
   /* Multiview */
-  char views_format = 0;
+  eImageFormat_ViewsFormat views_format = {};
   char _pad3[3] = {};
   struct Stereo3dFormat *stereo3d_format = nullptr;
 
@@ -880,6 +881,7 @@ enum eStripModifierFlag : uint32_t {
   STRIP_MODIFIER_FLAG_MUTE = (1 << 0),
   STRIP_MODIFIER_FLAG_EXPANDED = (1 << 1),
   STRIP_MODIFIER_FLAG_ACTIVE = (1 << 2),
+  STRIP_MODIFIER_FLAG_SHOW_PREVIEW = (1 << 3),
 };
 ENUM_OPERATORS(eStripModifierFlag);
 
@@ -924,6 +926,10 @@ struct StripModifierData {
   struct IDProperty *system_properties = nullptr;
 
   blender::seq::StripModifierDataRuntime *runtime = nullptr;
+
+#ifdef __cplusplus
+  bool is_type_sound() const;
+#endif
 };
 
 struct ColorBalanceModifierData {

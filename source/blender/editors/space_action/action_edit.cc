@@ -905,7 +905,7 @@ static void insert_fcurve_key(bAnimContext *ac,
     const float curval = evaluate_fcurve(fcu, cfra);
     KeyframeSettings settings = get_keyframe_settings(true);
     settings.keyframe_type = eBezTriple_KeyframeType(ts->keyframe_type);
-    insert_vert_fcurve(fcu, {cfra, curval}, settings, eInsertKeyFlags(0));
+    insert_vert_fcurve(fcu, {cfra, curval}, settings, eInsertKeyFlags{});
   }
 
   ale->update |= ANIM_UPDATE_DEFAULT;
@@ -1457,7 +1457,7 @@ static void setexpo_action_keys(bAnimContext *ac, short mode)
 
     if (mode >= 0) {
       /* just set mode setting */
-      fcu->extend = mode;
+      fcu->extend = eFCurve_Extend(mode);
     }
     else {
       /* shortcuts for managing Cycles F-Modifiers to make it easier to toggle cyclic animation
@@ -2094,16 +2094,17 @@ static const EnumPropertyItem prop_actkeys_mirror_types[] = {
      ICON_MIRROR_TIME,
      "By Times Over Current Frame",
      "Flip times of selected keyframes using the current frame as the mirror line"},
-    {ACTKEYS_MIRROR_XAXIS,
-     "XAXIS",
-     ICON_MIRROR_CURSORVALUE,
-     "By Values Over Zero Value",
-     "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
     {ACTKEYS_MIRROR_MARKER,
      "MARKER",
      ICON_MIRROR_MARKER,
      "By Times Over First Selected Marker",
      "Flip times of selected keyframes using the first selected marker as the reference point"},
+    RNA_ENUM_ITEM_SEPR,
+    {ACTKEYS_MIRROR_XAXIS,
+     "XAXIS",
+     ICON_MIRROR_CURSORVALUE,
+     "By Values Over Zero Value",
+     "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 

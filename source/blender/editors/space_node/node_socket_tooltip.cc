@@ -24,6 +24,7 @@
 #include "NOD_menu_value.hh"
 #include "NOD_node_declaration.hh"
 #include "NOD_socket.hh"
+#include "NOD_socket_declarations.hh"
 
 #include "ED_node.hh"
 
@@ -49,6 +50,7 @@ class SocketTooltipBuilder {
     Label,
     Description,
     Value,
+    BundleType,
     Python,
   };
 
@@ -85,6 +87,7 @@ class SocketTooltipBuilder {
     }
     this->build_tooltip_description();
     this->build_tooltip_value();
+    this->build_tooltip_expected_bundle_type();
     this->build_python();
 
     /* Extra padding at the bottom. */
@@ -830,6 +833,51 @@ class SocketTooltipBuilder {
       return false;
     }
     return true;
+  }
+
+  void build_tooltip_expected_bundle_type()
+  {
+    if (socket_.type != SOCK_BUNDLE) {
+      return;
+    }
+    if (socket_.is_output()) {
+      return;
+    }
+    const auto *socket_decl = dynamic_cast<const nodes::decl::Bundle *>(
+        socket_.runtime->declaration);
+    if (!socket_decl) {
+      return;
+    }
+    if (!socket_decl->bundle_type) {
+      return;
+    }
+    const nodes::BundleType &bundle_type = *socket_decl->bundle_type;
+
+    if (const auto *nested_bundle_type = std::get_if<nodes::NestedBundleTypePtr>(
+            &bundle_type.type))
+    {
+      this->start_block(TooltipBlockType::BundleType);
+      this->add_text_field_mono(TIP_("Nested Bundle Types:"));
+      for (const nodes::FlatBundleTypePtr &flat_type : (*nested_bundle_type)->items()) {
+        this->add_space();
+        this->add_text_field_mono(fmt::format(" \u2022 {}", flat_type->name()));
+        indentation_++;
+        BLI_SCOPED_DEFER([&]() { indentation_--; });
+
+        for (const nodes::FlatBundleType::Item &item : flat_type->items()) {
+          this->add_text_field_mono(fmt::format(" \u2022 {}", item.name()));
+        }
+      }
+    }
+    else if (const auto *flat_bundle_type = std::get_if<nodes::FlatBundleTypePtr>(
+                 &bundle_type.type))
+    {
+      this->start_block(TooltipBlockType::BundleType);
+      this->add_text_field_mono(TIP_("Bundle Type:"));
+      for (const nodes::FlatBundleType::Item &item : (*flat_bundle_type)->items()) {
+        this->add_text_field_mono(fmt::format(" \u2022 {}", item.name()));
+      }
+    }
   }
 
   StringRef get_structure_type_tooltip(const nodes::StructureType &structure_type)

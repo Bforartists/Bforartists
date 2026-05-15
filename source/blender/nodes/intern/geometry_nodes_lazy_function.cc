@@ -461,6 +461,7 @@ static void execute_multi_function_on_value_variant__single(
     void *value = output_variant.allocate_single(socket_type);
     params.add_uninitialized_single_output(GMutableSpan{cpp_type, value, 1});
   }
+  fn.prepare_for_execution();
   fn.call(mask, params, context);
 }
 
@@ -4329,6 +4330,9 @@ static const ID *get_only_evaluated_id(const Depsgraph &depsgraph, const ID &id_
 
 const ID *GeoNodesOperatorDepsgraphs::get_evaluated_id(const ID &id_orig) const
 {
+  if (!ID_TYPE_USE_COPY_ON_EVAL(GS(id_orig.name))) {
+    return &id_orig;
+  }
   if (const Depsgraph *graph = this->active) {
     if (const ID *id = get_only_evaluated_id(*graph, id_orig)) {
       return id;

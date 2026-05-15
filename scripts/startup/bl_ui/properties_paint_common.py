@@ -34,6 +34,16 @@ class BrushAssetShelf:
 
     @classmethod
     def has_tool_with_brush_type(cls, context, brush_type):
+        """
+        Test if any tool active in the current space matches *brush_type*.
+
+        :param context: The context.
+        :type context: :class:`bpy.types.Context`
+        :param brush_type: Brush type identifier to match against tool brush types.
+        :type brush_type: int
+        :return: True when a registered tool uses this brush type.
+        :rtype: bool
+        """
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
         space_type = context.space_data.type
 
@@ -64,6 +74,16 @@ class BrushAssetShelf:
 
     @classmethod
     def brush_type_poll(cls, context, asset):
+        """
+        Test if *asset* is compatible with the active tool's brush type.
+
+        :param context: The context.
+        :type context: :class:`bpy.types.Context`
+        :param asset: Brush asset to test.
+        :type asset: :class:`bpy.types.AssetRepresentation`
+        :return: True when the asset's brush type matches the active tool.
+        :rtype: bool
+        """
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
         tool = ToolSelectPanelHelper.tool_active_from_context(context)
 
@@ -125,6 +145,14 @@ class BrushAssetShelf:
 
     @staticmethod
     def get_shelf_name_from_context(context):
+        """
+        Look up the brush asset-shelf identifier for the current paint mode.
+
+        :param context: The context.
+        :type context: :class:`bpy.types.Context`
+        :return: The asset-shelf ``bl_idname``, or ``None`` when no paint mode is active.
+        :rtype: str | None
+        """
         mode_map = {
             'SCULPT': "VIEW3D_AST_brush_sculpt",
             'PAINT_VERTEX': "VIEW3D_AST_brush_vertex_paint",
@@ -145,6 +173,18 @@ class BrushAssetShelf:
 
     @staticmethod
     def draw_popup_selector(layout, context, brush, show_name=True):
+        """
+        Draw a brush asset-shelf popover into *layout* for the active paint mode.
+
+        :param layout: Layout to draw into.
+        :type layout: :class:`bpy.types.UILayout`
+        :param context: The context.
+        :type context: :class:`bpy.types.Context`
+        :param brush: Brush whose preview/name is shown on the button.
+        :type brush: :class:`bpy.types.Brush` | None
+        :param show_name: Display the brush name next to the preview.
+        :type show_name: bool
+        """
         preview_icon_id = brush.preview.icon_id if brush and brush.preview else 0
 
         shelf_name = BrushAssetShelf.get_shelf_name_from_context(context)
@@ -1857,7 +1897,7 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
     if context.space_data.type in {"VIEW_3D", "IMAGE_EDITOR"}:
         color_jitter_panel(layout, context, brush)
 
-    # Brush modes
+    # BFA - Brush modes
     header, panel = layout.panel("modes", default_closed=True)
     header.label(text="Modes")
     if panel:

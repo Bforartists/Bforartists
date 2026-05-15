@@ -969,7 +969,7 @@ static const EnumPropertyItem style_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static wmOperatorStatus set_style(bContext *C, const int style, const bool clear)
+static wmOperatorStatus set_style(bContext *C, const eCharInfoFlag style, const bool clear)
 {
   Object *obedit = CTX_data_edit_object(C);
   Curve *cu = id_cast<Curve *>(obedit->data);
@@ -997,7 +997,7 @@ static wmOperatorStatus set_style(bContext *C, const int style, const bool clear
 
 static wmOperatorStatus set_style_exec(bContext *C, wmOperator *op)
 {
-  const int style = RNA_enum_get(op->ptr, "style");
+  const eCharInfoFlag style = eCharInfoFlag(RNA_enum_get(op->ptr, "style"));
   const bool clear = RNA_boolean_get(op->ptr, "clear");
 
   return set_style(C, style, clear);
@@ -1033,12 +1033,12 @@ static wmOperatorStatus toggle_style_exec(bContext *C, wmOperator *op)
 {
   Object *obedit = CTX_data_edit_object(C);
   Curve *cu = id_cast<Curve *>(obedit->data);
-  int style, clear, selstart, selend;
+  int clear, selstart, selend;
 
-  style = RNA_enum_get(op->ptr, "style");
+  const eCharInfoFlag style = eCharInfoFlag(RNA_enum_get(op->ptr, "style"));
   cu->curinfo.flag ^= style;
   if (BKE_vfont_select_get(cu, &selstart, &selend)) {
-    clear = (cu->curinfo.flag & style) == 0;
+    clear = (cu->curinfo.flag & style) == eCharInfoFlag{};
     return set_style(C, style, clear);
   }
   return OPERATOR_CANCELLED;

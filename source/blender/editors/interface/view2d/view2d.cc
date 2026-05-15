@@ -315,7 +315,7 @@ void view2d_region_reinit(View2D *v2d, short type, int winx, int winy)
       v2d->keepofs = V2D_LOCKOFS_Y;
 
       /* absolutely no scrollers allowed */
-      v2d->scroll = 0;
+      v2d->scroll = eView2D_Scroll{};
       break;
     }
     /* panels view, with horizontal/vertical align */

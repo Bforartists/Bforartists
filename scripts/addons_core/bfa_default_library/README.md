@@ -18,6 +18,46 @@ This addon implements a central asset library system that allows multiple Bforar
 - **Comprehensive Tracking**: Detailed tracking of which addons contribute which files
 - **Version Management**: Intelligent version checking and automatic updates for child addons
 
+## Blender Version Compatibility
+
+This addon supports Blender/Bforartists versions 5.0 and later with automatic compatibility handling:
+
+### Version Categories
+
+- **Blender 5.0 Legacy**: Basic functionality with direct property access patterns
+- **Blender 5.1+ Enhanced**: Full feature support with interface-based property access and remote asset libraries
+- **Blender 5.2+ Modern**: Latest features including advanced geometry nodes interface panels
+
+### Compatibility Matrix
+
+| Feature                          | Blender 5.0        | Blender 5.1+            | Blender 5.2+ |
+|----------------------------------|--------------------|-------------------------|--------------|
+| Asset Library Registration       | ✅                 | ⚠️ (Direct collection) | ✅           |
+| Geometry Nodes Property Access   | ⚠️ (Direct access) | ⚠️ (Interface-based)   | ✅           |
+| Wizard Dialogues                 | ✅                 | ✅                     | ✅           |
+| Remote Asset Libraries           | ❌                 | ❌                     | ✅           |
+| Interface Panels                 | ✅                 | ✅                     | ✅           |
+
+
+### Automatic Version Detection
+
+The addon automatically detects your Blender version and applies appropriate compatibility workarounds:
+
+```python
+# Example of automatic version detection
+version_info = get_blender_version_info()
+print(f"Detected: {version_info['version_category']} ({version_info['version_string']})")
+
+if version_info["features"]["asset_library_type_param"]:
+    bpy.ops.preferences.asset_library_add(directory=path, type='LOCAL')
+else:
+    # For 5.0.x and 5.1.x, use direct collection creation
+    lib = bpy.context.preferences.filepaths.asset_libraries.add()
+    lib.name = "My Library"
+    lib.path = path
+    lib.import_method = 'APPEND'
+```
+
 ## File Structure
 
 ```
@@ -122,6 +162,25 @@ CHILD_ADDON_VERSION = (1, 0, 0)  # Must match version in child_addon/blender_man
 
 **Important**: The `CHILD_ADDON_VERSION` must match the `version` field in `child_addon/blender_manifest.toml` for proper version checking.
 
+### Version Compatibility Configuration
+
+The addon automatically handles version compatibility, but you can customize behavior:
+
+```python
+# Version detection is automatic - these functions are available:
+version_info = get_blender_version_info()
+supported, reason = is_blender_version_supported()
+warnings = get_version_compatibility_warnings()
+
+# Features available based on version:
+if version_info["features"]["asset_library_type_param"]:
+    # Use type='LOCAL' for Blender 5.1+
+    bpy.ops.preferences.asset_library_add(directory=path, type='LOCAL')
+else:
+    # Blender 5.0 style
+    bpy.ops.preferences.asset_library_add(directory=path)
+```
+
 ## Usage for Other Addons
 
 To integrate another addon with the central system:
@@ -190,11 +249,26 @@ If registration fails completely:
 
 
 
-## Technical Notes
+## Recent Fixes and Improvements
 
-- Central library location: `../bfa_central_asset_library/` relative to addons folder
-- File tracking: JSON-based with detailed file-level tracking
-- Supported files: `.blend`, `.blend?`, `blender_assets.cats.txt`
-- Catalog files are preserved to maintain category structure
-- Empty directories are automatically cleaned up
+**Fixed Issues:**
+- **TypeError with Geometry Nodes inputs**: Fixed `TypeError: 'GeometryNodesInterfaceInputs' object is not iterable` by using proper Blender API (`getattr(inputs, input_key)`) instead of dictionary-style access
+- **Operator property registration error**: Removed invalid `PointerProperty` types from operators (Blender operators cannot have data-block properties)
+- **Wizard-to-modifier data flow**: Streamlined wizard execution to use scene properties directly instead of operator parameters
+
+**Technical Details:**
+- **Input Assignment**: Geometry Nodes modifier inputs are now set using `modifier.properties.inputs.Socket_3.value = collection` pattern (matching Blender's internal code)
+- **Scene Property Usage**: Wizards set `context.scene.target_collection`, `use_relative_position`, etc., and operators read these directly
+- **Material Injection**: S_Intersections nodegroup injection/removal now works correctly for target collections
+- **Wireframe Display**: Bounds display toggle properly applies to all objects in target collection
+
+**Socket Mapping:**
+- Target Collection → `Socket_3` (NodeSocketCollection)
+- Relative Position → `Socket_42` (NodeSocketBool)
+- Material injection → S_Intersections nodegroup
+
+**Files Modified:**
+- `child_addon/operators/geometry_nodes.py`: Fixed input assignment API and scene property usage
+- `child_addon/wizard_operators.py`: Simplified operator invocation
+- `child_addon/wizard_handlers.py`: Scene property registration (unchanged)
 

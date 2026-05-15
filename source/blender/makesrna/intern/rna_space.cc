@@ -859,7 +859,7 @@ static void rna_space_active_tool_reset(const PointerRNA *ptr)
 
 static bool rna_Space_bool_from_region_flag_get_by_type(PointerRNA *ptr,
                                                         const int region_type,
-                                                        const int region_flag)
+                                                        const eRegion_Flag region_flag)
 {
   ScrArea *area = rna_area_from_space(ptr);
   ARegion *region = BKE_area_find_region_type(area, region_type);
@@ -871,7 +871,7 @@ static bool rna_Space_bool_from_region_flag_get_by_type(PointerRNA *ptr,
 
 static void rna_Space_bool_from_region_flag_set_by_type(PointerRNA *ptr,
                                                         const int region_type,
-                                                        const int region_flag,
+                                                        const eRegion_Flag region_flag,
                                                         bool value)
 {
   ScrArea *area = rna_area_from_space(ptr);
@@ -885,7 +885,7 @@ static void rna_Space_bool_from_region_flag_set_by_type(PointerRNA *ptr,
 static void rna_Space_bool_from_region_flag_update_by_type(bContext *C,
                                                            PointerRNA *ptr,
                                                            const int region_type,
-                                                           const int region_flag)
+                                                           const eRegion_Flag region_flag)
 {
   ScrArea *area = rna_area_from_space(ptr);
   ARegion *region = BKE_area_find_region_type(area, region_type);
@@ -1525,7 +1525,7 @@ static void rna_3DViewShading_type_set(PointerRNA *ptr, int value)
   if (value != shading->type && value == OB_RENDER) {
     shading->prev_type = shading->type;
   }
-  shading->type = value;
+  shading->type = eDrawType(value);
 }
 
 static const EnumPropertyItem *rna_3DViewShading_type_itemf(bContext * /*C*/,
@@ -1675,6 +1675,10 @@ static const EnumPropertyItem *rna_View3DShading_studio_light_itemf(bContext * /
           case OB_RENDER:
             show_studiolight = ((sl.flag & STUDIOLIGHT_TYPE_WORLD) != 0);
             icon_id = sl.icon_id_radiance;
+            break;
+
+          case OB_BOUNDBOX:
+          case OB_WIRE:
             break;
         }
       }
@@ -2473,8 +2477,8 @@ static void rna_SpaceProperties_context_set(PointerRNA *ptr, int value)
 {
   SpaceProperties *sbuts = static_cast<SpaceProperties *>(ptr->data);
 
-  sbuts->mainb = value;
-  sbuts->mainbuser = value;
+  sbuts->mainb = eSpaceButtons_Context(value);
+  sbuts->mainbuser = eSpaceButtons_Context(value);
 }
 
 static const EnumPropertyItem *rna_SpaceProperties_context_itemf(bContext * /*C*/,
@@ -3185,9 +3189,12 @@ static void rna_SpaceNodeEditor_path_pop(SpaceNode *snode, bContext *C)
 }
 
 static void rna_SpaceNodeEditor_show_backdrop_update(Main * /*bmain*/,
-                                                     Scene * /*scene*/,
+                                                     Scene *scene,
                                                      PointerRNA * /*ptr*/)
 {
+  if (scene->compositing_node_group) {
+    DEG_id_tag_update(&scene->compositing_node_group->id, ID_RECALC_NTREE_OUTPUT);
+  }
   WM_main_add_notifier(NC_NODE | NA_EDITED, nullptr);
   WM_main_add_notifier(NC_SCENE | ND_NODES, nullptr);
 }

@@ -34,6 +34,105 @@ _scene_props_registered = False
 # Object that will store the handle to the msgbus subscription
 subscription_owner = object()
 
+# -----------------------------------------------------------------------------
+# Version-Aware Modifier Property Access
+# -----------------------------------------------------------------------------
+
+def set_modifier_property_version_aware(obj, modifier_name, property_path, value):
+    """
+    Set a modifier property using version-aware access patterns.
+    
+    Supports both direct dictionary access (Blender 5.0) and 
+    interface-based access (Blender 5.1+).
+    
+    Args:
+        obj: The object containing the modifier
+        modifier_name: Name of the modifier
+        property_path: Property path like "Socket_3" or ["Socket_3"]
+        value: Value to set
+    
+    Returns:
+        bool: True if successful
+    """
+    try:
+        # Get version info
+        version_info = bpy.app.version
+        version_tuple = (version_info[0], version_info[1], version_info[2] if len(version_info) > 2 else 0)
+        
+        # Find the modifier
+        modifier = None
+        for mod in obj.modifiers:
+            if mod.name == modifier_name:
+                modifier = mod
+                break
+        
+        if not modifier:
+            print(f"[MODIFIER DEBUG] Modifier '{modifier_name}' not found on object '{obj.name}'")
+            return False
+        
+        # Handle property_path as string or list
+        if isinstance(property_path, str):
+            socket_key = property_path
+        elif isinstance(property_path, list):
+            socket_key = property_path[0] if property_path else None
+        else:
+            socket_key = str(property_path)
+        
+        if not socket_key:
+            return False
+        
+        # Try direct dictionary access first (works in Blender 5.0)
+        try:
+            modifier[socket_key] = value
+            print(f"[MODIFIER DEBUG] Direct dictionary access succeeded for {socket_key} = {value}")
+            return True
+        except (KeyError, TypeError) as e:
+            print(f"[MODIFIER DEBUG] Direct dictionary access failed for {socket_key}: {e}")
+            pass
+        
+        # For Blender 5.1+, try interface-based access
+        if version_tuple >= (5, 1, 0) and hasattr(modifier, 'node_group') and modifier.node_group:
+            try:
+                # Use interface inspection
+                interface_items = modifier.node_group.interface.items_tree
+                
+                for item in interface_items:
+                    if item.item_type == 'SOCKET':
+                        socket_identifier = getattr(item, 'identifier', None) or getattr(item, 'name', None)
+                        
+                        if socket_identifier == socket_key or getattr(item, 'name', None) == socket_key:
+                            # Try setting via modifier properties
+                            if hasattr(modifier, 'properties') and hasattr(modifier.properties, 'inputs'):
+                                try:
+                                    input_obj = getattr(modifier.properties.inputs, socket_identifier, None)
+                                    if input_obj:
+                                        input_obj.value = value
+                                        print(f"[MODIFIER DEBUG] Interface-based access succeeded for {socket_key}")
+                                        return True
+                                except Exception as e:
+                                    print(f"[MODIFIER DEBUG] Interface-based access failed: {e}")
+                                    pass
+                            
+                            # Fallback: try setting via item.default_value
+                            try:
+                                item.default_value = value
+                                print(f"[MODIFIER DEBUG] Item default_value access succeeded for {socket_key}")
+                                return True
+                            except Exception as e:
+                                print(f"[MODIFIER DEBUG] Item default_value access failed: {e}")
+                                pass
+            except Exception as e:
+                print(f"[MODIFIER DEBUG] Interface inspection failed: {e}")
+                pass
+        
+        print(f"[MODIFIER DEBUG] All access methods failed for {socket_key}")
+        return False
+        
+    except Exception as e:
+        print(f"[MODIFIER DEBUG] Error setting modifier property: {e}")
+        return False
+
+
 # -----------------------------------------------------------------------------#
 # Handler Mapping System                                                       #
 # -----------------------------------------------------------------------------#

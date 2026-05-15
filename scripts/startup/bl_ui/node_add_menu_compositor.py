@@ -49,6 +49,7 @@ class NODE_MT_compositor_node_input_constant_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "FunctionNodeInputMenu")
         self.node_operator(layout, "CompositorNodeNormal")
         self.node_operator(layout, "GeometryNodeInputObject")
+        self.node_operator(layout, "FunctionNodeInputRotation")
         self.node_operator(layout, "FunctionNodeInputString")
         self.node_operator(layout, "ShaderNodeValue")
         self.node_operator(layout, "FunctionNodeInputVector")
@@ -290,6 +291,7 @@ class NODE_MT_compositor_node_utilities_base(node_add_menu.NodeMenu):
         layout = self.layout
         self.draw_menu(layout, path="Utilities/Math")
         self.draw_menu(layout, path="Utilities/Matrix") # BFA - Arrange in alphabetical order
+        self.draw_menu(layout, path="Utilities/Rotation")  # BFA - Arrange in alphabetical order
         self.draw_menu(layout, path="Utilities/Vector") # BFA - Arrange in alphabetical order
         self.draw_menu(layout, path="Utilities/Text")
         layout.separator()
@@ -402,6 +404,31 @@ class NODE_MT_compositor_utilities_matrix_base(node_add_menu.NodeMenu):
         self.draw_assets_for_catalog(layout, self.menu_path)
 
 
+class NODE_MT_compositor_node_rotation_base(node_add_menu.NodeMenu):
+    bl_label = "Rotation"
+    menu_path = "Utilities/Rotation"
+
+    def draw(self, _context):
+        layout = self.layout
+        self.node_operator(layout, "FunctionNodeAlignRotationToVector")
+        self.node_operator(layout, "FunctionNodeAxesToRotation")
+        self.node_operator(layout, "FunctionNodeAxisAngleToRotation")
+        self.node_operator(layout, "FunctionNodeEulerToRotation")
+        self.node_operator(layout, "FunctionNodeInvertRotation")
+        props = self.node_operator(layout, "ShaderNodeMix", label="Mix Rotation")
+        ops = props.settings.add()
+        ops.name = "data_type"
+        ops.value = "'ROTATION'"
+        self.node_operator(layout, "FunctionNodeRotateRotation")
+        self.node_operator(layout, "FunctionNodeRotateVector")
+        self.node_operator(layout, "FunctionNodeRotationToAxisAngle")
+        self.node_operator(layout, "FunctionNodeRotationToEuler")
+        self.node_operator(layout, "FunctionNodeRotationToQuaternion")
+        self.node_operator(layout, "FunctionNodeQuaternionToRotation")
+
+        self.draw_assets_for_catalog(layout, self.menu_path)
+
+
 class NODE_MT_compositor_node_creative_base(node_add_menu.NodeMenu):
     bl_label = "Creative"
 
@@ -480,6 +507,7 @@ add_menus = {
     "NODE_MT_category_compositor_math": NODE_MT_compositor_node_math_base,
     "NODE_MT_category_compositor_text": NODE_MT_compositor_node_text_base,
     "NODE_MT_category_compositor_matrix": NODE_MT_compositor_utilities_matrix_base,
+    "NODE_MT_category_compositor_rotation": NODE_MT_compositor_node_rotation_base,
     "NODE_MT_compositor_node_add_all": NODE_MT_compositor_node_all_base,
 }
 add_menus = node_add_menu.generate_menus(
@@ -510,6 +538,7 @@ swap_menus = {
     "NODE_MT_compositor_node_math_swap": NODE_MT_compositor_node_math_base,
     "NODE_MT_compositor_node_text_swap": NODE_MT_compositor_node_text_base,
     "NODE_MT_compositor_node_matrix_swap": NODE_MT_compositor_utilities_matrix_base,
+    "NODE_MT_compositor_node_rotation_swap": NODE_MT_compositor_node_rotation_base,
     "NODE_MT_compositor_node_swap_all": NODE_MT_compositor_node_all_base,
 }
 swap_menus = node_add_menu.generate_menus(

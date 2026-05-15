@@ -608,7 +608,7 @@ static ImBuf *accessor_get_preprocessed_ibuf(TrackingImageAccessor *accessor,
   scene_frame = BKE_movieclip_remap_clip_to_scene_frame(clip, frame);
   BKE_movieclip_user_set_frame(&user, scene_frame);
   user.render_size = MCLIP_PROXY_RENDER_SIZE_FULL;
-  user.render_flag = 0;
+  user.render_flag = eMovieClipProxy_RenderFlag{};
   ibuf = BKE_movieclip_get_ibuf(clip, &user);
 
   return ibuf;
@@ -852,7 +852,7 @@ static libmv_CacheKey accessor_get_mask_for_track_callback(libmv_FrameAccessorUs
   int scene_frame = BKE_movieclip_remap_clip_to_scene_frame(clip, frame);
   BKE_movieclip_user_set_frame(&user, scene_frame);
   user.render_size = MCLIP_PROXY_RENDER_SIZE_FULL;
-  user.render_flag = 0;
+  user.render_flag = eMovieClipProxy_RenderFlag{};
   /* Get frame width and height so we can convert stroke coordinates
    * and other things from normalized to pixel space.
    */

@@ -1002,6 +1002,8 @@ static eSnapMode snap_obj_fn(SnapObjectContext *sctx,
     case OB_CAMERA:
       retval = snapCamera(sctx, ob_eval, obmat, sctx->runtime.snap_to_flag);
       break;
+    default:
+      break;
   }
 
   return retval;

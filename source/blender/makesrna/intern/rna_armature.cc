@@ -955,8 +955,8 @@ static void rna_Bone_bbone_handle_update(Main *bmain, Scene *scene, PointerRNA *
     if (obt->data == id_cast<ID *>(arm) && obt->pose) {
       bPoseChannel *pchan = BKE_pose_channel_find_name(obt->pose, bone->name);
 
-      if (pchan && pchan->bone == bone) {
-        BKE_pchan_rebuild_bbone_handles(obt->pose, pchan);
+      if (pchan && pchan->bone_get(*arm) == bone) {
+        BKE_pchan_rebuild_bbone_handles(obt->pose, {pchan, bone});
         DEG_id_tag_update(&obt->id, ID_RECALC_SYNC_TO_EVAL);
       }
     }

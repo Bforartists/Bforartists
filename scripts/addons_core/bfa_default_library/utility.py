@@ -204,27 +204,54 @@ def add_addon_to_central_library(addon_info, library_folders, addon_path, centra
     # print(f"      Total files copied: {files_copied}")
     # print(f"      Files tracked for this addon: {len(files_copied_by_addon)}")
 
+    # Determine which files were previously tracked by this addon
+    previous_files = set()
+    if addon_id in tracking_data:
+        previous_files = set(tracking_data[addon_id].get('files', []))
+
     # Update tracking
-    if addon_id not in tracking_data:
-        tracking_data[addon_id] = {
-            'name': addon_info['name'],
-            'version': list(addon_info['version']),
-            'path': addon_path,
-            'libraries': library_folders.copy(),
-            'files': files_copied_by_addon  # Track which files this addon is responsible for
-        }
-        write_addon_tracking(central_lib_base, tracking_data)
-        # print(f"      ✅ Added to tracking: {addon_id}")
-    else:
-        # Update existing entry with current file list and version
-        tracking_data[addon_id]['files'] = files_copied_by_addon
-        tracking_data[addon_id]['libraries'] = library_folders.copy()
-        tracking_data[addon_id]['version'] = list(addon_info['version'])
-        tracking_data[addon_id]['path'] = addon_path
-        write_addon_tracking(central_lib_base, tracking_data)
-        # print(f"      ⏩ Updated tracking: {addon_id}")
+    tracking_data[addon_id] = {
+        'name': addon_info['name'],
+        'version': list(addon_info['version']),
+        'path': addon_path,
+        'libraries': library_folders.copy(),
+        'files': files_copied_by_addon  # Track which files this addon is responsible for
+    }
+    write_addon_tracking(central_lib_base, tracking_data)
+
+    # Remove stale files that were previously tracked and are no longer present in source.
+    stale_files = list(previous_files - set(files_copied_by_addon))
+    if stale_files:
+        remove_orphaned_files(central_lib_base, tracking_data, stale_files)
 
     return central_lib_base
+
+
+def remove_addon_files_from_central_library(addon_info, central_lib_base=None):
+    """Remove all central library files tracked for this addon."""
+    if central_lib_base is None:
+        central_lib_base = get_central_library_path()
+
+    tracking_data = read_addon_tracking(central_lib_base)
+    addon_id = get_addon_identifier(addon_info)
+
+    if addon_id not in tracking_data:
+        return 0
+
+    addon_files = tracking_data[addon_id].get('files', [])
+
+    # Remove this addon from tracking so its files become orphaned.
+    del tracking_data[addon_id]
+    write_addon_tracking(central_lib_base, tracking_data)
+
+    removed_count = remove_orphaned_files(central_lib_base, tracking_data, addon_files)
+    cleanup_central_library(central_lib_base, tracking_data)
+    return removed_count
+
+
+def cleanup_addon_files_in_central_library(addon_info, central_lib_base=None):
+    """Legacy alias for remove_addon_files_from_central_library."""
+    return remove_addon_files_from_central_library(addon_info, central_lib_base)
 
 
 def update_addon_in_central_library(parent_addon_info, libraries, central_base, source_dir):

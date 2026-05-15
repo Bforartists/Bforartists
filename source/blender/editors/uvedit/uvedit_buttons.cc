@@ -174,7 +174,7 @@ static void uvedit_vertex_buttons(const bContext *C, ui::Block *block, ui::Layou
                    "");
 
     /* BFA - Split prop slider from label */
-    but = uiDefButF(block,
+    but = uiDefButV(block,
                     ui::ButtonType::Num,
                     nullptr,              /* BFA */
                     UI_UNIT_X * 75 / 100, /* BFA */
@@ -201,7 +201,7 @@ static void uvedit_vertex_buttons(const bContext *C, ui::Block *block, ui::Layou
                    0.0f,
                    "");
     /* BFA - Split prop slider from label */
-    but = uiDefButF(block,
+    but = uiDefButV(block,
                     ui::ButtonType::Num,
                     nullptr,              /* BFA */
                     UI_UNIT_X * 75 / 100, /* BFA */

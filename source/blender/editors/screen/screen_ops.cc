@@ -5603,8 +5603,11 @@ static void view3d_localview_update_rv3d(RegionView3D *rv3d)
   }
 }
 
-static void region_quadview_init_rv3d(
-    ScrArea *area, ARegion *region, const char viewlock, const char view, const char persp)
+static void region_quadview_init_rv3d(ScrArea *area,
+                                      ARegion *region,
+                                      const eRegionView3D_ViewLock viewlock,
+                                      const eRegionView3D_View view,
+                                      const eRegionView3D_Persp persp)
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
   rv3d->rflag &= ~RV3D_WAS_CAMOB;
@@ -5614,7 +5617,7 @@ static void region_quadview_init_rv3d(
   }
 
   rv3d->viewlock = viewlock;
-  rv3d->runtime_viewlock = 0;
+  rv3d->runtime_viewlock = eRegionView3D_ViewLock{};
   rv3d->view = view;
   rv3d->view_axis_roll = RV3D_VIEW_AXIS_ROLL_0;
   rv3d->persp = persp;
@@ -5641,7 +5644,7 @@ static wmOperatorStatus region_quadview_exec(bContext *C, wmOperator *op)
     ScrArea *area = CTX_wm_area(C);
 
     /* keep current region */
-    region->alignment = 0;
+    region->alignment = eRegion_Alignment{};
 
     if (area->spacetype == SPACE_VIEW3D) {
       RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
@@ -5660,7 +5663,7 @@ static wmOperatorStatus region_quadview_exec(bContext *C, wmOperator *op)
       }
 
       rv3d->viewlock_quad = RV3D_VIEWLOCK_INIT;
-      rv3d->viewlock = 0;
+      rv3d->viewlock = eRegionView3D_ViewLock{};
 
       /* FIXME: This fixes missing update to workbench TAA. (see #76216)
        * However, it would be nice if the tagging should be done in a more conventional way. */
@@ -5670,7 +5673,7 @@ static wmOperatorStatus region_quadview_exec(bContext *C, wmOperator *op)
       for (ARegion &region_iter : area->regionbase) {
         if (region_iter.regiontype == RGN_TYPE_WINDOW) {
           RegionView3D *rv3d_iter = static_cast<RegionView3D *>(region_iter.regiondata);
-          rv3d->viewlock_quad |= rv3d_iter->viewlock;
+          rv3d->viewlock_quad |= eRegionView3D_ViewLockQuad(int(rv3d_iter->viewlock));
         }
       }
     }
@@ -5712,9 +5715,10 @@ static wmOperatorStatus region_quadview_exec(bContext *C, wmOperator *op)
        * We could avoid manipulating rv3d->localvd here if exiting
        * localview with a 4-split would assign these view locks */
       RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-      const char viewlock = (rv3d->viewlock_quad & RV3D_VIEWLOCK_INIT) ?
-                                (rv3d->viewlock_quad & ~RV3D_VIEWLOCK_INIT) :
-                                RV3D_LOCK_ROTATION;
+      const eRegionView3D_ViewLock viewlock = (rv3d->viewlock_quad & RV3D_VIEWLOCK_INIT) ?
+                                                  eRegionView3D_ViewLock(int(
+                                                      rv3d->viewlock_quad & ~RV3D_VIEWLOCK_INIT)) :
+                                                  RV3D_LOCK_ROTATION;
 
       region_quadview_init_rv3d(
           area, region, viewlock, ED_view3d_lock_view_from_index(index_qsplit++), RV3D_ORTHO);
@@ -5891,7 +5895,7 @@ static wmOperatorStatus header_toggle_menus_exec(bContext *C, wmOperator * /*op*
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_NO_PULLDOWN;
+  area->flag ^= HEADER_NO_PULLDOWN;
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -5959,7 +5963,7 @@ static wmOperatorStatus header_toggle_editortypemenu_exec(bContext *C, wmOperato
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_NO_EDITORTYPEMENU;
+  area->flag ^= HEADER_NO_EDITORTYPEMENU;
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6185,7 +6189,7 @@ static wmOperatorStatus header_topbar_file_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_FILE;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_FILE);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6210,7 +6214,7 @@ static wmOperatorStatus header_topbar_meshedit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_MESHEDIT;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_MESHEDIT);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6235,7 +6239,7 @@ static wmOperatorStatus header_topbar_primitives_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_PRIMITIVES;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_PRIMITIVES);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6260,7 +6264,7 @@ static wmOperatorStatus header_topbar_image_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_IMAGE;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_IMAGE);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6285,7 +6289,7 @@ static wmOperatorStatus header_topbar_tools_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_TOOLS;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_TOOLS);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6310,7 +6314,7 @@ static wmOperatorStatus header_topbar_animation_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_ANIMATION;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_ANIMATION);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6335,7 +6339,7 @@ static wmOperatorStatus header_topbar_edit_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_EDIT;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_EDIT);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -6360,7 +6364,7 @@ static wmOperatorStatus header_topbar_misc_exec(bContext *C, wmOperator *)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  area->flag = area->flag ^ HEADER_TOPBAR_MISC;
+  area->flag = static_cast<blender::eScrArea_Flag>(area->flag ^ HEADER_TOPBAR_MISC);
 
   ED_area_tag_redraw(area);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
@@ -7746,7 +7750,7 @@ static void SCREEN_OT_delete(wmOperatorType *ot)
 struct RegionAlphaInfo {
   ScrArea *area;
   ARegion *region, *child_region; /* other region */
-  int hidden;
+  eRegion_Flag hidden;
 };
 
 #define TIMEOUT 0.22f

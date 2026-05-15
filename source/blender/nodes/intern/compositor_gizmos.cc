@@ -270,17 +270,17 @@ static void gizmo_node_box_mask_prop_matrix_get(const wmGizmo *gz,
   float loc[3], rot[3][3], size[3];
   mat4_to_loc_rot_size(loc, rot, size, matrix);
 
-  const bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation");
+  const bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation"_ustr);
   const float rotation = rotation_input->default_value_typed<bNodeSocketValueFloat>()->value;
   axis_angle_to_mat3_single(rot, 'Z', rotation);
 
-  const bNodeSocket *position_input = bke::node_find_socket(*node, SOCK_IN, "Position");
+  const bNodeSocket *position_input = bke::node_find_socket(*node, SOCK_IN, "Position"_ustr);
   const float2 position = position_input->default_value_typed<bNodeSocketValueVector>()->value;
   loc[0] = (position.x - 0.5) * dims.x + offset.x;
   loc[1] = (position.y - 0.5) * dims.y + offset.y;
   loc[2] = 0;
 
-  const bNodeSocket *size_input = bke::node_find_socket(*node, SOCK_IN, "Size");
+  const bNodeSocket *size_input = bke::node_find_socket(*node, SOCK_IN, "Size"_ustr);
   const float2 size_value = size_input->default_value_typed<bNodeSocketValueVector>()->value;
   size[0] = size_value.x;
   size[1] = size_value.y * aspect;
@@ -307,10 +307,10 @@ static void gizmo_node_box_mask_prop_matrix_set(const wmGizmo *gz,
   const float2 offset = mask_group->state.offset;
   bNode *node = static_cast<bNode *>(gz_prop->custom_func.user_data);
 
-  bNodeSocket *position_input = bke::node_find_socket(*node, SOCK_IN, "Position");
+  bNodeSocket *position_input = bke::node_find_socket(*node, SOCK_IN, "Position"_ustr);
   const float2 position = position_input->default_value_typed<bNodeSocketValueVector>()->value;
 
-  bNodeSocket *size_input = bke::node_find_socket(*node, SOCK_IN, "Size");
+  bNodeSocket *size_input = bke::node_find_socket(*node, SOCK_IN, "Size"_ustr);
   const float2 size_value = size_input->default_value_typed<bNodeSocketValueVector>()->value;
 
   const float aspect = dims.x / dims.y;
@@ -330,7 +330,7 @@ static void gizmo_node_box_mask_prop_matrix_set(const wmGizmo *gz,
   /* Rotation can't be extracted from matrix when the gizmo width or height is zero. */
   if (size[0] != 0 and size[1] != 0) {
     mat4_to_eul(eul, matrix);
-    bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation");
+    bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation"_ustr);
     rotation_input->default_value_typed<bNodeSocketValueFloat>()->value = eul[2];
   }
 
@@ -353,17 +353,17 @@ static void gizmo_node_box_mask_foreach_rna_prop(
 {
   bNode *node = static_cast<bNode *>(gz_prop->custom_func.user_data);
 
-  bNodeSocket *position_socket = bke::node_find_socket(*node, SOCK_IN, "Position");
+  bNodeSocket *position_socket = bke::node_find_socket(*node, SOCK_IN, "Position"_ustr);
   bNodeTree &node_tree = node->owner_tree();
   PointerRNA position_ptr = RNA_pointer_create_discrete(
       &node_tree.id, RNA_NodeSocket, position_socket);
   PropertyRNA *position_prop = RNA_struct_find_property(&position_ptr, "default_value");
 
-  bNodeSocket *size_socket = bke::node_find_socket(*node, SOCK_IN, "Size");
+  bNodeSocket *size_socket = bke::node_find_socket(*node, SOCK_IN, "Size"_ustr);
   PointerRNA size_ptr = RNA_pointer_create_discrete(&node_tree.id, RNA_NodeSocket, size_socket);
   PropertyRNA *size_prop = RNA_struct_find_property(&size_ptr, "default_value");
 
-  bNodeSocket *rotation_socket = bke::node_find_socket(*node, SOCK_IN, "Rotation");
+  bNodeSocket *rotation_socket = bke::node_find_socket(*node, SOCK_IN, "Rotation"_ustr);
   PointerRNA rotation_ptr = RNA_pointer_create_discrete(
       &node_tree.id, RNA_NodeSocket, rotation_socket);
   PropertyRNA *rotation_prop = RNA_struct_find_property(&rotation_ptr, "default_value");
@@ -402,7 +402,7 @@ void box_mask_refresh(const bContext *C, wmGizmoGroup *gzgroup)
   bNode *node = bke::node_get_active(*snode->edittree);
 
   mask_group->update_data.context = const_cast<bContext *>(C);
-  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Mask");
+  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Mask"_ustr);
   mask_group->update_data.ptr = RNA_pointer_create_discrete(
       reinterpret_cast<ID *>(snode->edittree), RNA_NodeSocket, source_input);
   mask_group->update_data.prop = RNA_struct_find_property(&mask_group->update_data.ptr, "enabled");
@@ -425,22 +425,22 @@ static void node_input_to_rect(const bNode *node,
                                rctf *r_rect)
 {
 
-  const bNodeSocket *x_input = bke::node_find_socket(*node, SOCK_IN, "X");
+  const bNodeSocket *x_input = bke::node_find_socket(*node, SOCK_IN, "X"_ustr);
   PointerRNA x_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(x_input));
   const float xmin = float(RNA_int_get(&x_input_rna_pointer, "default_value"));
 
-  const bNodeSocket *y_input = bke::node_find_socket(*node, SOCK_IN, "Y");
+  const bNodeSocket *y_input = bke::node_find_socket(*node, SOCK_IN, "Y"_ustr);
   PointerRNA y_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(y_input));
   const float ymin = float(RNA_int_get(&y_input_rna_pointer, "default_value"));
 
-  const bNodeSocket *width_input = bke::node_find_socket(*node, SOCK_IN, "Width");
+  const bNodeSocket *width_input = bke::node_find_socket(*node, SOCK_IN, "Width"_ustr);
   PointerRNA width_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(width_input));
   const float width = float(RNA_int_get(&width_input_rna_pointer, "default_value"));
 
-  const bNodeSocket *height_input = bke::node_find_socket(*node, SOCK_IN, "Height");
+  const bNodeSocket *height_input = bke::node_find_socket(*node, SOCK_IN, "Height"_ustr);
   PointerRNA height_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(height_input));
   const float height = float(RNA_int_get(&height_input_rna_pointer, "default_value"));
@@ -456,19 +456,19 @@ static void node_input_from_rect(bNode *node,
                                  const float2 &dims,
                                  const float2 &offset)
 {
-  bNodeSocket *x_input = bke::node_find_socket(*node, SOCK_IN, "X");
+  bNodeSocket *x_input = bke::node_find_socket(*node, SOCK_IN, "X"_ustr);
   PointerRNA x_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(x_input));
 
-  bNodeSocket *y_input = bke::node_find_socket(*node, SOCK_IN, "Y");
+  bNodeSocket *y_input = bke::node_find_socket(*node, SOCK_IN, "Y"_ustr);
   PointerRNA y_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(y_input));
 
-  bNodeSocket *width_input = bke::node_find_socket(*node, SOCK_IN, "Width");
+  bNodeSocket *width_input = bke::node_find_socket(*node, SOCK_IN, "Width"_ustr);
   PointerRNA width_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(width_input));
 
-  bNodeSocket *height_input = bke::node_find_socket(*node, SOCK_IN, "Height");
+  bNodeSocket *height_input = bke::node_find_socket(*node, SOCK_IN, "Height"_ustr);
   PointerRNA height_input_rna_pointer = RNA_pointer_create_discrete(
       nullptr, RNA_NodeSocket, const_cast<bNodeSocket *>(height_input));
 
@@ -610,19 +610,19 @@ static void gizmo_node_crop_foreach_rna_prop(
   bNode *node = static_cast<bNode *>(gz_prop->custom_func.user_data);
   bNodeTree &node_tree = node->owner_tree();
 
-  bNodeSocket *x_socket = bke::node_find_socket(*node, SOCK_IN, "X");
+  bNodeSocket *x_socket = bke::node_find_socket(*node, SOCK_IN, "X"_ustr);
   PointerRNA x_ptr = RNA_pointer_create_discrete(&node_tree.id, RNA_NodeSocket, x_socket);
   PropertyRNA *x_prop = RNA_struct_find_property(&x_ptr, "default_value");
 
-  bNodeSocket *y_socket = bke::node_find_socket(*node, SOCK_IN, "Y");
+  bNodeSocket *y_socket = bke::node_find_socket(*node, SOCK_IN, "Y"_ustr);
   PointerRNA y_ptr = RNA_pointer_create_discrete(&node_tree.id, RNA_NodeSocket, y_socket);
   PropertyRNA *y_prop = RNA_struct_find_property(&y_ptr, "default_value");
 
-  bNodeSocket *width_socket = bke::node_find_socket(*node, SOCK_IN, "Width");
+  bNodeSocket *width_socket = bke::node_find_socket(*node, SOCK_IN, "Width"_ustr);
   PointerRNA width_ptr = RNA_pointer_create_discrete(&node_tree.id, RNA_NodeSocket, width_socket);
   PropertyRNA *width_prop = RNA_struct_find_property(&width_ptr, "default_value");
 
-  bNodeSocket *height_socket = bke::node_find_socket(*node, SOCK_IN, "Height");
+  bNodeSocket *height_socket = bke::node_find_socket(*node, SOCK_IN, "Height"_ustr);
   PointerRNA height_ptr = RNA_pointer_create_discrete(
       &node_tree.id, RNA_NodeSocket, height_socket);
   PropertyRNA *height_prop = RNA_struct_find_property(&height_ptr, "default_value");
@@ -662,7 +662,7 @@ void crop_refresh(const bContext *C, wmGizmoGroup *gzgroup)
   bNode *node = bke::node_get_active(*snode->edittree);
 
   crop_group->update_data.context = const_cast<bContext *>(C);
-  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Alpha Crop");
+  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Alpha Crop"_ustr);
   crop_group->update_data.ptr = RNA_pointer_create_discrete(
       reinterpret_cast<ID *>(snode->edittree), RNA_NodeSocket, source_input);
   crop_group->update_data.prop = RNA_struct_find_property(&crop_group->update_data.ptr, "enabled");
@@ -718,7 +718,7 @@ static bool show_glare_gizmo(const SpaceNode &snode)
     return false;
   }
 
-  bNodeSocket &type_socket = *bke::node_find_socket(*node, SOCK_IN, "Type");
+  bNodeSocket &type_socket = *bke::node_find_socket(*node, SOCK_IN, "Type"_ustr);
   node_tree->ensure_topology_cache();
   if (type_socket.is_directly_linked()) {
     return false;
@@ -843,7 +843,7 @@ void glare_refresh(const bContext *C, wmGizmoGroup *gzgroup)
   bNode *node = bke::node_get_active(*snode->edittree);
 
   /* Need to set property here for undo. TODO: would prefer to do this in _init. */
-  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Sun Position");
+  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Sun Position"_ustr);
   PointerRNA socket_pointer = RNA_pointer_create_discrete(
       reinterpret_cast<ID *>(snode->edittree), RNA_NodeSocket, source_input);
   WM_gizmo_target_property_def_rna(gz, "offset", &socket_pointer, "default_value", -1);
@@ -1088,13 +1088,13 @@ static void gizmo_node_split_foreach_rna_prop(
 {
   bNode *node = static_cast<bNode *>(gz_prop->custom_func.user_data);
 
-  bNodeSocket *position_socket = bke::node_find_socket(*node, SOCK_IN, "Position");
+  bNodeSocket *position_socket = bke::node_find_socket(*node, SOCK_IN, "Position"_ustr);
   bNodeTree &node_tree = node->owner_tree();
   PointerRNA position_ptr = RNA_pointer_create_discrete(
       &node_tree.id, RNA_NodeSocket, position_socket);
   PropertyRNA *position_prop = RNA_struct_find_property(&position_ptr, "default_value");
 
-  bNodeSocket *rotation_socket = bke::node_find_socket(*node, SOCK_IN, "Rotation");
+  bNodeSocket *rotation_socket = bke::node_find_socket(*node, SOCK_IN, "Rotation"_ustr);
   PointerRNA rotation_ptr = RNA_pointer_create_discrete(
       &node_tree.id, RNA_NodeSocket, rotation_socket);
   PropertyRNA *rotation_prop = RNA_struct_find_property(&rotation_ptr, "default_value");
@@ -1118,10 +1118,10 @@ static void gizmo_node_split_prop_matrix_get(const wmGizmo *gz,
   float loc[3], rot[3][3], size[3];
   mat4_to_loc_rot_size(loc, rot, size, matrix);
 
-  const bNodeSocket *pos_input = bke::node_find_socket(*node, SOCK_IN, "Position");
+  const bNodeSocket *pos_input = bke::node_find_socket(*node, SOCK_IN, "Position"_ustr);
   const float2 pos = pos_input->default_value_typed<bNodeSocketValueVector>()->value;
 
-  const bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation");
+  const bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation"_ustr);
   const float rotation = rotation_input->default_value_typed<bNodeSocketValueFloat>()->value;
 
   const float gizmo_width = 0.1f;
@@ -1145,8 +1145,8 @@ static void gizmo_node_split_prop_matrix_set(const wmGizmo *gz,
   const float2 offset = split_group->state.offset;
   bNode *node = reinterpret_cast<bNode *>(gz_prop->custom_func.user_data);
 
-  bNodeSocket *position_input = bke::node_find_socket(*node, SOCK_IN, "Position");
-  bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation");
+  bNodeSocket *position_input = bke::node_find_socket(*node, SOCK_IN, "Position"_ustr);
+  bNodeSocket *rotation_input = bke::node_find_socket(*node, SOCK_IN, "Rotation"_ustr);
 
   float pos_x = (matrix[3][0] - offset.x) + dims.x * 0.5;
   float pos_y = (matrix[3][1] - offset.y) + dims.y * 0.5;
@@ -1213,7 +1213,7 @@ void split_refresh(const bContext *C, wmGizmoGroup *gzgroup)
   bNode *node = bke::node_get_active(*snode->edittree);
 
   split_group->update_data.context = const_cast<bContext *>(C);
-  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Position");
+  bNodeSocket *source_input = bke::node_find_socket(*node, SOCK_IN, "Position"_ustr);
   split_group->update_data.ptr = RNA_pointer_create_discrete(
       reinterpret_cast<ID *>(snode->edittree), RNA_NodeSocket, source_input);
   split_group->update_data.prop = RNA_struct_find_property(&split_group->update_data.ptr,

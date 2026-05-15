@@ -256,7 +256,7 @@ static void bone_collection_assign_pchans(bContext *C,
 {
   /* TODO: support multi-object pose mode. */
   FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (ob, pchan) {
-    *made_any_changes |= assign_func(bcoll, pchan->bone);
+    *made_any_changes |= assign_func(bcoll, pchan->bone_get(*ob));
     *had_bones_to_assign = true;
   }
   FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
@@ -347,7 +347,7 @@ static bool bone_collection_assign_named_mode_specific(bContext *C,
       }
 
       *had_bones_to_assign = true;
-      *made_any_changes |= assign_bone_func(bcoll, pchan->bone);
+      *made_any_changes |= assign_bone_func(bcoll, pchan->bone_get(*ob));
 
       WM_event_add_notifier(C, NC_OBJECT | ND_BONE_COLLECTION, ob);
       DEG_id_tag_update(&arm->id, ID_RECALC_SELECT); /* Recreate the draw buffers. */

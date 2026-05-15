@@ -240,9 +240,9 @@ static void tonemap_calc_chunk_luminance(const int width,
   }
 }
 
-static AreaLuminance tonemap_calc_input_luminance(const ImBuf *ibuf)
+static AreaLuminance tonemap_calc_input_luminance(ImBuf *ibuf)
 {
-  float *float_data = ibuf->float_buffer.data;
+  float *float_data = ibuf->float_data_for_write();
   AreaLuminance lum;
   lum = threading::parallel_reduce(
       IndexRange(ibuf->y),

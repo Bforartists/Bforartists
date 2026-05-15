@@ -322,8 +322,8 @@ bool AssetLibrary::remove_asset(AssetRepresentation &asset)
     return asset.owner_asset_library_.remove_asset(asset);
   }
 
-  std::scoped_lock lock_externs{asset_storage_.external_assets_mutex};
-  std::scoped_lock lock_locals{asset_storage_.local_id_assets_mutex};
+  std::scoped_lock lock{asset_storage_.external_assets_mutex,
+                        asset_storage_.local_id_assets_mutex};
 
   BLI_assert(asset_storage_.local_id_assets.contains_as(&asset) ||
              asset_storage_.external_assets.contains_as(&asset));
@@ -338,18 +338,20 @@ void AssetLibrary::remap_ids_and_remove_invalid(const bke::id::IDRemapper &mappi
 {
   Set<AssetRepresentation *> removed_assets;
 
-  std::scoped_lock lock{asset_storage_.local_id_assets_mutex};
+  {
+    std::scoped_lock lock{asset_storage_.local_id_assets_mutex};
 
-  for (const auto &asset_ptr : asset_storage_.local_id_assets) {
-    AssetRepresentation &asset = *asset_ptr;
-    BLI_assert(asset.is_local_id());
+    for (const auto &asset_ptr : asset_storage_.local_id_assets) {
+      AssetRepresentation &asset = *asset_ptr;
+      BLI_assert(asset.is_local_id());
 
-    const IDRemapperApplyResult result = mappings.apply(&std::get<ID *>(asset.asset_),
-                                                        ID_REMAP_APPLY_DEFAULT);
+      const IDRemapperApplyResult result = mappings.apply(&std::get<ID *>(asset.asset_),
+                                                          ID_REMAP_APPLY_DEFAULT);
 
-    /* Entirely remove assets whose ID is unset. We don't want assets with a null ID pointer. */
-    if (result == ID_REMAP_RESULT_SOURCE_UNASSIGNED) {
-      removed_assets.add(&asset);
+      /* Entirely remove assets whose ID is unset. We don't want assets with a null ID pointer. */
+      if (result == ID_REMAP_RESULT_SOURCE_UNASSIGNED) {
+        removed_assets.add(&asset);
+      }
     }
   }
 
@@ -492,6 +494,14 @@ AssetLibraryReference all_library_reference()
   return all_library_ref;
 }
 
+AssetLibraryReference essentials_library_reference()
+{
+  AssetLibraryReference all_library_ref{};
+  all_library_ref.custom_library_index = -1;
+  all_library_ref.type = ASSET_LIBRARY_ESSENTIALS;
+  return all_library_ref;
+}
+
 AssetLibraryReference current_file_library_reference()
 {
   AssetLibraryReference library_ref{};
@@ -526,6 +536,9 @@ bool is_or_contains_remote_libraries(const AssetLibraryReference &reference)
       }
       break;
     }
+    case ASSET_LIBRARY_LOCAL:
+    case ASSET_LIBRARY_ESSENTIALS:
+      return false;
   }
 
   return false;

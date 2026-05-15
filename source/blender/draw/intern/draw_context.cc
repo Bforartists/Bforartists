@@ -313,6 +313,8 @@ bool DRW_object_use_hide_faces(const Object *ob)
       case OB_MODE_VERTEX_PAINT:
       case OB_MODE_WEIGHT_PAINT:
         return true;
+      default:
+        break;
     }
   }
 
@@ -673,7 +675,7 @@ static bool supports_handle_ranges(DupliObject *dupli, Object *parent, const DRW
   }
 
   Object *ob = dupli->ob;
-  if (min(ob->dt, parent->dt) == OB_BOUNDBOX) {
+  if (eDrawType(min(int(ob->dt), int(parent->dt))) == OB_BOUNDBOX) {
     return false;
   }
 
@@ -1981,7 +1983,6 @@ static void draw_select_framebuffer_depth_only_setup(const int size[2])
 void DRW_draw_select_loop(Depsgraph *depsgraph,
                           ARegion *region,
                           View3D *v3d,
-                          bool use_obedit_skip,
                           bool draw_surface,
                           bool /*use_nearest*/,
                           const bool do_material_sub_selection,
@@ -1992,62 +1993,9 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
                           void *object_filter_user_data)
 {
   using namespace blender::draw;
-  Scene *scene = DEG_get_evaluated_scene(depsgraph);
-  ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
   const int viewport_size[2] = {BLI_rcti_size_x(rect), BLI_rcti_size_y(rect)};
 
-  Object *obact = BKE_view_layer_active_object_get(view_layer);
-  Object *obedit = use_obedit_skip ? nullptr : OBEDIT_FROM_OBACT(obact);
-
-  bool use_obedit = false;
-  const ToolSettings *ts = scene->toolsettings;
-
-  /* obedit_ctx_mode is used for selecting the right draw engines */
-  // eContextObjectMode obedit_ctx_mode;
-  /* object_mode is used for filtering objects in the depsgraph */
-  eObjectMode object_mode = eObjectMode::OB_MODE_EDIT;
-  int object_type = 0;
-  if (obedit != nullptr) {
-    object_type = obedit->type;
-    object_mode = eObjectMode(obedit->mode);
-    if (obedit->type == OB_ARMATURE) {
-      use_obedit = true;
-      // obedit_ctx_mode = CTX_MODE_EDIT_ARMATURE;
-    }
-  }
-
-  if ((v3d->overlay.flag & V3D_OVERLAY_BONE_SELECT) &&
-      /* Only restrict selection to bones when the user turns on "Lock Object Modes".
-       * If the lock is off, skip this so other objects can still be selected.
-       * See #66950 & #125822. */
-      (ts->object_flag & SCE_OBJECT_MODE_LOCK))
-  {
-    if (!(v3d->flag2 & V3D_HIDE_OVERLAYS)) {
-      /* NOTE: don't use #BKE_object_pose_armature_get it doesn't check for weight-paint mode when
-       * dealing using the deforming armature (breaking selection outside weight paint mode). */
-      Object *obpose = OBPOSE_FROM_OBACT(obact);
-      if (obpose == nullptr) {
-        Object *obweight = OBWEIGHTPAINT_FROM_OBACT(obact);
-        if (obweight) {
-          /* Only use Armature pose selection, when connected armature is in pose mode. */
-          Object *ob_armature = BKE_modifiers_is_deformed_by_armature(obweight);
-          if (ob_armature && ob_armature->mode == OB_MODE_POSE) {
-            obpose = ob_armature;
-          }
-        }
-      }
-
-      if (obpose) {
-        use_obedit = true;
-        object_type = obpose->type;
-        object_mode = eObjectMode(obpose->mode);
-        // obedit_ctx_mode = CTX_MODE_POSE;
-      }
-    }
-  }
-
-  bool use_gpencil = !use_obedit && !draw_surface &&
-                     DRW_render_check_grease_pencil(depsgraph, v3d);
+  const bool use_gpencil = !draw_surface && DRW_render_check_grease_pencil(depsgraph, v3d);
 
   DRWContext::Mode mode = do_material_sub_selection ? DRWContext::SELECT_OBJECT_MATERIAL :
                                                       DRWContext::SELECT_OBJECT;
@@ -2057,69 +2005,54 @@ void DRW_draw_select_loop(Depsgraph *depsgraph,
   draw_ctx.enable_engines(use_gpencil);
   draw_ctx.engines_data_validate();
   draw_ctx.engines_init_and_sync([&](DupliCacheManager &duplis, ExtractionGraph &extraction) {
-    if (use_obedit) {
-      FOREACH_OBJECT_IN_MODE_BEGIN (
-          DEG_get_bmain(depsgraph), scene, view_layer, v3d, object_type, object_mode, ob_iter)
-      {
-        /* Depsgraph usually does this, but we use a different iterator.
-         * So we have to do it manually. */
-        ob_iter->runtime->select_id = DEG_get_original(ob_iter)->runtime->select_id;
+    /* When selecting pose-bones in pose mode, check for visibility not select-ability
+     * as pose-bones have their own selection restriction flag. */
+    const bool use_pose_exception = (draw_ctx.object_pose != nullptr);
 
-        draw::ObjectRef ob_ref(ob_iter);
-        drw_engines_cache_populate(ob_ref, duplis, extraction);
+    const int object_type_exclude_select = v3d->object_type_exclude_select;
+
+    auto should_draw_object = [&](Object &ob, const bool has_duplis) -> DrawFilter {
+      const bool is_dupli = (ob.base_flag & BASE_FROM_DUPLI) != 0;
+      const bool is_instancer = !is_dupli && is_object_instancer(ob);
+      /* Duplis reach this predicate only to check draw-ability;
+       * the filter was already checked on their instancer during the top-level iteration. */
+      const bool use_object_filter = !is_dupli && object_filter_fn != nullptr &&
+                                     (object_type_exclude_select & (1 << ob.type)) == 0;
+      /* For an instancer that may spawn duplis the filter controls instance generation,
+       * so check it before the visibility / selectable checks.
+       * Otherwise it only affects self-draw and runs after those checks. */
+      const bool filter_can_exclude_duplis = is_instancer && has_duplis;
+
+      if (use_object_filter && filter_can_exclude_duplis) {
+        if (object_filter_fn(&ob, object_filter_user_data) == false) {
+          return DrawFilter::SkipRecursive;
+        }
       }
-      FOREACH_OBJECT_IN_MODE_END;
-    }
-    else {
-      /* When selecting pose-bones in pose mode, check for visibility not select-ability
-       * as pose-bones have their own selection restriction flag. */
-      const bool use_pose_exception = (draw_ctx.object_pose != nullptr);
 
-      const int object_type_exclude_select = v3d->object_type_exclude_select;
-
-      auto should_draw_object = [&](Object &ob, const bool has_duplis) -> DrawFilter {
-        const bool is_dupli = (ob.base_flag & BASE_FROM_DUPLI) != 0;
-        const bool is_instancer = !is_dupli && is_object_instancer(ob);
-        /* Duplis reach this predicate only to check draw-ability;
-         * the filter was already checked on their instancer during the top-level iteration. */
-        const bool use_object_filter = !is_dupli && object_filter_fn != nullptr &&
-                                       (object_type_exclude_select & (1 << ob.type)) == 0;
-        /* For an instancer that may spawn duplis the filter controls instance generation,
-         * so check it before the visibility / selectable checks.
-         * Otherwise it only affects self-draw and runs after those checks. */
-        const bool filter_can_exclude_duplis = is_instancer && has_duplis;
-
-        if (use_object_filter && filter_can_exclude_duplis) {
-          if (object_filter_fn(&ob, object_filter_user_data) == false) {
-            return DrawFilter::SkipRecursive;
-          }
-        }
-
-        if (!BKE_object_is_visible_in_viewport(v3d, &ob)) {
+      if (!BKE_object_is_visible_in_viewport(v3d, &ob)) {
+        return DrawFilter::Skip;
+      }
+      if (use_pose_exception && (ob.mode & OB_MODE_POSE)) {
+        if ((ob.base_flag & BASE_ENABLED_AND_VISIBLE_IN_DEFAULT_VIEWPORT) == 0) {
           return DrawFilter::Skip;
         }
-        if (use_pose_exception && (ob.mode & OB_MODE_POSE)) {
-          if ((ob.base_flag & BASE_ENABLED_AND_VISIBLE_IN_DEFAULT_VIEWPORT) == 0) {
-            return DrawFilter::Skip;
-          }
-        }
-        else if ((ob.base_flag & BASE_SELECTABLE) == 0) {
+      }
+      else if ((ob.base_flag & BASE_SELECTABLE) == 0) {
+        return DrawFilter::Skip;
+      }
+
+      if (use_object_filter && !filter_can_exclude_duplis) {
+        if (object_filter_fn(&ob, object_filter_user_data) == false) {
           return DrawFilter::Skip;
         }
+      }
 
-        if (use_object_filter && !filter_can_exclude_duplis) {
-          if (object_filter_fn(&ob, object_filter_user_data) == false) {
-            return DrawFilter::Skip;
-          }
-        }
+      return DrawFilter::Draw;
+    };
 
-        return DrawFilter::Draw;
-      };
-
-      foreach_obref_in_scene(draw_ctx, should_draw_object, [&](ObjectRef &ob_ref) {
-        drw_engines_cache_populate(ob_ref, duplis, extraction);
-      });
-    }
+    foreach_obref_in_scene(draw_ctx, should_draw_object, [&](ObjectRef &ob_ref) {
+      drw_engines_cache_populate(ob_ref, duplis, extraction);
+    });
   });
 
   /* Setup frame-buffer. */

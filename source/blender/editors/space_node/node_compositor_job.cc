@@ -201,6 +201,10 @@ static bool is_compositing_possible(const Scene *scene)
 static compositor::NodeGroupOutputTypes get_compositor_needed_outputs(
     const wmWindowManager *window_manager, Scene *scene)
 {
+  if (G.background) {
+    return compositor::NodeGroupOutputTypes::None;
+  }
+
   compositor::NodeGroupOutputTypes needed_outputs = compositor::NodeGroupOutputTypes::None;
 
   for (wmWindow &window : window_manager->windows) {
@@ -236,12 +240,6 @@ static compositor::NodeGroupOutputTypes get_compositor_needed_outputs(
           needed_outputs |= compositor::NodeGroupOutputTypes::ViewerNode;
         }
       }
-      else if (space_link->spacetype == SPACE_SEQ) {
-        const SpaceSeq *space_sequencer = reinterpret_cast<const SpaceSeq *>(space_link);
-        if (ELEM(space_sequencer->view, SEQ_VIEW_PREVIEW, SEQ_VIEW_SEQUENCE_PREVIEW)) {
-          needed_outputs |= compositor::NodeGroupOutputTypes::ViewerNode;
-        }
-      }
 
       /* All outputs are already needed, return early. */
       if (needed_outputs == (compositor::NodeGroupOutputTypes::GroupOutputNode |
@@ -262,7 +260,7 @@ static compositor::NodeGroupOutputTypes get_compositor_needed_outputs(
   return needed_outputs;
 }
 
-void ED_node_compositor_job(Main *bmain, wmWindow *window, Scene *scene, ViewLayer *view_layer)
+void ED_node_compositor_job(Main *bmain, Scene *scene, ViewLayer *view_layer)
 {
   if (!is_compositing_possible(scene)) {
     return;
@@ -278,6 +276,9 @@ void ED_node_compositor_job(Main *bmain, wmWindow *window, Scene *scene, ViewLay
   Image *render_result_image = BKE_image_ensure_viewer(bmain, IMA_TYPE_R_RESULT, "Render Result");
   BKE_image_backup_render(scene, render_result_image, false);
 
+  wmWindow *window = window_manager->runtime->winactive ?
+                         window_manager->runtime->winactive :
+                         static_cast<wmWindow *>(window_manager->windows.first);
   wmJob *job = WM_jobs_get(window_manager,
                            window,
                            scene,

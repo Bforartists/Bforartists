@@ -16,6 +16,7 @@
 #include "blender/sync.h"
 #include "blender/util.h"
 
+#include "util/log.h"
 #include "util/set.h"
 #include "util/string.h"
 #include "util/task.h"
@@ -28,6 +29,7 @@
 
 #include "NOD_shader.h"
 #include "NOD_shader_nodes_inline.hh"
+#include "NOD_shader_raycast.hh"
 
 #include "DEG_depsgraph_query.hh"
 
@@ -164,6 +166,14 @@ int blender_attribute_name_split_type(ustring name, string *r_real_name)
 
 /* Graph */
 
+static ustring get_node_input_string(const blender::bNode &b_node, const string &name)
+{
+  const blender::bNodeSocket *b_sock = b_node.input_by_identifier(blender::UString(name));
+  BLI_assert(b_sock->type == blender::SOCK_STRING);
+  const auto &default_value = *b_sock->default_value_typed<blender::bNodeSocketValueString>();
+  return ustring(default_value.value);
+}
+
 static float3 get_node_output_rgba(blender::bNode &b_node, const string &name)
 {
   blender::bNodeSocket *b_sock = b_node.output_by_identifier(blender::UString(name));
@@ -188,7 +198,7 @@ static float3 get_node_output_vector(blender::bNode &b_node, const string &name)
   return make_float3(default_value.value[0], default_value.value[1], default_value.value[2]);
 }
 
-static SocketType::Type convert_socket_type(blender::bNodeSocket &b_socket)
+static SocketType::Type convert_socket_type(const blender::bNodeSocket &b_socket)
 {
   switch (blender::eNodeSocketDatatype(b_socket.type)) {
     case blender::SOCK_FLOAT:
@@ -289,6 +299,58 @@ static bool is_image_animated(blender::eImageSource b_image_source,
   return (b_image_source == blender::IMA_SRC_MOVIE ||
           b_image_source == blender::IMA_SRC_SEQUENCE) &&
          (b_image_user.flag & blender::IMA_ANIM_ALWAYS) != 0;
+}
+
+static std::optional<RaycastNode::AttributeOutputType> raycast_get_attribute_output_type(
+    const blender::eCustomDataType data_type)
+{
+  switch (data_type) {
+    case blender::CD_PROP_FLOAT:
+      return RaycastNode::ATTR_OUTPUT_FLOAT;
+    case blender::CD_PROP_FLOAT3:
+    case blender::CD_PROP_COLOR:
+      return RaycastNode::ATTR_OUTPUT_FLOAT3;
+    default:
+      break;
+  }
+  LOG_DFATAL << "Unhandled data type " << int(data_type);
+  return std::nullopt;
+}
+
+static void raycast_add_output_attribute_sockets(RaycastNode *raycast,
+                                                 const blender::bNode &b_node)
+{
+  auto *storage = static_cast<blender::NodeShaderRaycast *>(b_node.storage);
+  for (const blender::NodeRaycastSampleAttributeItem &item :
+       blender::Span(storage->sample_attribute_items, storage->sample_attribute_items_num))
+  {
+    using blender::nodes::RaycastSampleAttributeItemsAccessor;
+
+    const std::optional<RaycastNode::AttributeOutputType> attribute_output_type =
+        raycast_get_attribute_output_type(blender::eCustomDataType(item.data_type));
+    if (!attribute_output_type) {
+      continue;
+    }
+
+    const string input_identifier(
+        RaycastSampleAttributeItemsAccessor::input_socket_identifier_for_item(item));
+    const ustring output_identifier(
+        RaycastSampleAttributeItemsAccessor::output_socket_identifier_for_item(item));
+
+    const ustring attribute_name = get_node_input_string(b_node, input_identifier);
+
+    raycast->add_output_attribute_socket(
+        attribute_name, *attribute_output_type, output_identifier);
+
+    /* For color attributes additionally add the corresponding Alpha socket.
+     * This is because colors are RGB, access to Alpha needs special handling. */
+    if (item.data_type == blender::CD_PROP_COLOR) {
+      const ustring alpha_output_identifier(
+          RaycastSampleAttributeItemsAccessor::output_socket_identifier_for_item_alpha(item));
+      raycast->add_output_attribute_socket(
+          attribute_name, RaycastNode::ATTR_OUTPUT_FLOAT_ALPHA, alpha_output_identifier);
+    }
+  }
 }
 
 static ShaderNode *add_node(Scene *scene,
@@ -1124,6 +1186,7 @@ static ShaderNode *add_node(Scene *scene,
   else if (b_node.is_type("ShaderNodeRaycast"_ustr)) {
     RaycastNode *raycast = graph->create_node<RaycastNode>();
     raycast->set_only_local(b_node.custom1);
+    raycast_add_output_attribute_sockets(raycast, b_node);
     node = raycast;
   }
 

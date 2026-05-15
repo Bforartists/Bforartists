@@ -335,12 +335,12 @@ TEST_F(FCurveActiveKeyframeTest, ActiveKeyframe)
   EXPECT_EQ(BKE_fcurve_active_keyframe_index(fcu), FCURVE_ACTIVE_KEYFRAME_NONE);
 
   /* Check a "normal" action. */
-  fcu->bezt[2].f2 |= SELECT;
+  fcu->bezt[2].f2 |= BEZT_FLAG_SELECT;
   BKE_fcurve_active_keyframe_set(fcu, &fcu->bezt[2]);
   EXPECT_EQ(BKE_fcurve_active_keyframe_index(fcu), 2);
 
   /* Check setting an unselected keyframe as active. */
-  fcu->bezt[2].f1 = fcu->bezt[2].f2 = fcu->bezt[2].f3 = 0;
+  fcu->bezt[2].f1 = fcu->bezt[2].f2 = fcu->bezt[2].f3 = eBezTriple_Flag{};
   EXPECT_BLI_ASSERT(BKE_fcurve_active_keyframe_set(fcu, &fcu->bezt[2]),
                     "active keyframe must be selected");
   EXPECT_EQ(BKE_fcurve_active_keyframe_index(fcu), FCURVE_ACTIVE_KEYFRAME_NONE);
@@ -448,9 +448,9 @@ TEST_F(BKE_FCurveTest, BKE_fcurve_calc_range)
   insert_vert_fcurve(fcu, {18.2f, -20.0f}, settings, INSERTKEY_NOFLAGS);
 
   for (int i = 0; i < fcu->totvert; i++) {
-    fcu->bezt[i].f1 &= ~SELECT;
-    fcu->bezt[i].f2 &= ~SELECT;
-    fcu->bezt[i].f3 &= ~SELECT;
+    fcu->bezt[i].f1 &= ~BEZT_FLAG_SELECT;
+    fcu->bezt[i].f2 &= ~BEZT_FLAG_SELECT;
+    fcu->bezt[i].f3 &= ~BEZT_FLAG_SELECT;
   }
 
   float min, max;
@@ -467,8 +467,8 @@ TEST_F(BKE_FCurveTest, BKE_fcurve_calc_range)
   EXPECT_FALSE(success)
       << "Using selected keyframes only should not find a range if nothing is selected.";
 
-  fcu->bezt[1].f2 |= SELECT;
-  fcu->bezt[3].f2 |= SELECT;
+  fcu->bezt[1].f2 |= BEZT_FLAG_SELECT;
+  fcu->bezt[3].f2 |= BEZT_FLAG_SELECT;
 
   success = BKE_fcurve_calc_range(fcu, &min, &max, true);
   EXPECT_TRUE(success) << "Range of selected keyframes should have been found.";
@@ -501,9 +501,9 @@ TEST_F(BKE_FCurveTest, BKE_fcurve_calc_bounds)
   insert_vert_fcurve(fcu, {18.2f, -20.0f}, settings, INSERTKEY_NOFLAGS);
 
   for (int i = 0; i < fcu->totvert; i++) {
-    fcu->bezt[i].f1 &= ~SELECT;
-    fcu->bezt[i].f2 &= ~SELECT;
-    fcu->bezt[i].f3 &= ~SELECT;
+    fcu->bezt[i].f1 &= ~BEZT_FLAG_SELECT;
+    fcu->bezt[i].f2 &= ~BEZT_FLAG_SELECT;
+    fcu->bezt[i].f3 &= ~BEZT_FLAG_SELECT;
   }
 
   fcu->bezt[0].vec[0][0] = -5.0f;
@@ -533,8 +533,8 @@ TEST_F(BKE_FCurveTest, BKE_fcurve_calc_bounds)
   EXPECT_FALSE(success)
       << "Using selected keyframes only should not find bounds if nothing is selected.";
 
-  fcu->bezt[1].f2 |= SELECT;
-  fcu->bezt[3].f2 |= SELECT;
+  fcu->bezt[1].f2 |= BEZT_FLAG_SELECT;
+  fcu->bezt[3].f2 |= BEZT_FLAG_SELECT;
 
   success = BKE_fcurve_calc_bounds(fcu,
                                    true /* select only */,

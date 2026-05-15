@@ -6504,7 +6504,7 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
   }
 
   int tree_index = 0;
-  KDTree_1d *tree_1d = kdtree_1d_new(max_verts_selected_all);
+  KDTree<float> *tree_1d = kdtree_new<float>(max_verts_selected_all);
 
   for (Object *ob : objects) {
     BMesh *bm = BKE_editmesh_from_object(ob)->bm;
@@ -6529,14 +6529,14 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
           continue;
         }
         float needle = get_uv_vert_needle(type, l->v, ob_m3, l, offsets);
-        kdtree_1d_insert(tree_1d, tree_index++, &needle);
+        kdtree_insert<float>(tree_1d, tree_index++, needle);
       }
     }
   }
 
   if (tree_1d != nullptr) {
-    kdtree_1d_deduplicate(tree_1d);
-    kdtree_1d_balance(tree_1d);
+    kdtree_deduplicate<float>(tree_1d);
+    kdtree_balance<float>(tree_1d);
   }
 
   for (Object *ob : objects) {
@@ -6595,7 +6595,7 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
     }
   }
 
-  kdtree_1d_free(tree_1d);
+  kdtree_free<float>(tree_1d);
   return OPERATOR_FINISHED;
 }
 
@@ -6629,7 +6629,7 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
   }
 
   int tree_index = 0;
-  KDTree_1d *tree_1d = kdtree_1d_new(max_edges_selected_all);
+  KDTree<float> *tree_1d = kdtree_new<float>(max_edges_selected_all);
 
   for (Object *ob : objects) {
     BMesh *bm = BKE_editmesh_from_object(ob)->bm;
@@ -6656,15 +6656,15 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
 
         float needle = get_uv_edge_needle(type, l->e, ob_m3, l, l->next, offsets);
         if (tree_1d) {
-          kdtree_1d_insert(tree_1d, tree_index++, &needle);
+          kdtree_insert<float>(tree_1d, tree_index++, needle);
         }
       }
     }
   }
 
   if (tree_1d != nullptr) {
-    kdtree_1d_deduplicate(tree_1d);
-    kdtree_1d_balance(tree_1d);
+    kdtree_deduplicate<float>(tree_1d);
+    kdtree_balance<float>(tree_1d);
   }
 
   for (Object *ob : objects) {
@@ -6723,7 +6723,7 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
     }
   }
 
-  kdtree_1d_free(tree_1d);
+  kdtree_free<float>(tree_1d);
   return OPERATOR_FINISHED;
 }
 
@@ -6767,7 +6767,7 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
   }
 
   int tree_index = 0;
-  KDTree_1d *tree_1d = kdtree_1d_new(max_faces_selected_all);
+  KDTree<float> *tree_1d = kdtree_new<float>(max_faces_selected_all);
 
   for (const int ob_index : objects.index_range()) {
     Object *ob = objects[ob_index];
@@ -6796,14 +6796,14 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
 
       float needle = get_uv_face_needle(type, face, ob_index, ob_m3, offsets, material_remap);
       if (tree_1d) {
-        kdtree_1d_insert(tree_1d, tree_index++, &needle);
+        kdtree_insert<float>(tree_1d, tree_index++, needle);
       }
     }
   }
 
   if (tree_1d != nullptr) {
-    kdtree_1d_deduplicate(tree_1d);
-    kdtree_1d_balance(tree_1d);
+    kdtree_deduplicate<float>(tree_1d);
+    kdtree_balance<float>(tree_1d);
   }
 
   for (const int ob_index : objects.index_range()) {
@@ -6865,7 +6865,7 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
     }
   }
 
-  kdtree_1d_free(tree_1d);
+  kdtree_free<float>(tree_1d);
   return OPERATOR_FINISHED;
 }
 
@@ -6908,7 +6908,7 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
   FaceIsland **island_array = MEM_new_array_zeroed<FaceIsland *>(island_list_len, __func__);
 
   int tree_index = 0;
-  KDTree_1d *tree_1d = kdtree_1d_new(island_list_len);
+  KDTree<float> *tree_1d = kdtree_new<float>(island_list_len);
 
   for (const int ob_index : objects.index_range()) {
     Object *obedit = objects[ob_index];
@@ -6924,14 +6924,14 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
       }
       float needle = get_uv_island_needle(type, &island, ob_m3, island.offsets);
       if (tree_1d) {
-        kdtree_1d_insert(tree_1d, tree_index++, &needle);
+        kdtree_insert<float>(tree_1d, tree_index++, needle);
       }
     }
   }
 
   if (tree_1d != nullptr) {
-    kdtree_1d_deduplicate(tree_1d);
-    kdtree_1d_balance(tree_1d);
+    kdtree_deduplicate<float>(tree_1d);
+    kdtree_balance<float>(tree_1d);
   }
 
   int tot_island_index = 0;
@@ -6989,7 +6989,7 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
 
   MEM_SAFE_DELETE(island_array);
   MEM_SAFE_DELETE(island_list_ptr);
-  kdtree_1d_free(tree_1d);
+  kdtree_free<float>(tree_1d);
 
   return OPERATOR_FINISHED;
 }
@@ -7008,7 +7008,8 @@ static wmOperatorStatus uv_select_similar_exec(bContext *C, wmOperator *op)
     ts->select_thresh = RNA_property_float_get(op->ptr, prop);
   }
 
-  const int selectmode = (ts->uv_flag & UV_FLAG_SELECT_SYNC) ? ts->selectmode : ts->uv_selectmode;
+  const int selectmode = (ts->uv_flag & UV_FLAG_SELECT_SYNC) ? ts->selectmode :
+                                                               int(ts->uv_selectmode);
   if (use_select_linked) {
     return uv_select_similar_island_exec(C, op);
   }
@@ -7056,7 +7057,7 @@ static const EnumPropertyItem *uv_select_similar_type_itemf(bContext *C,
   if (ts) {
     const bool use_select_linked = ED_uvedit_select_island_check(ts);
     const int selectmode = (ts->uv_flag & UV_FLAG_SELECT_SYNC) ? ts->selectmode :
-                                                                 ts->uv_selectmode;
+                                                                 int(ts->uv_selectmode);
     /* TODO: co-exist with selection modes. */
     if (use_select_linked) {
       RNA_enum_items_add_value(&item, &totitem, uv_select_similar_type_items, UV_SSIM_AREA_UV);
@@ -7423,7 +7424,7 @@ static wmOperatorStatus uv_select_mode_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   ToolSettings *ts = scene->toolsettings;
-  const char new_uv_selectmode = RNA_enum_get(op->ptr, "type");
+  const eTool_UvSelectMode new_uv_selectmode = eTool_UvSelectMode(RNA_enum_get(op->ptr, "type"));
 
   /* Early exit if no change in current selection mode */
   if (new_uv_selectmode == ts->uv_selectmode) {

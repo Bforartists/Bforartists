@@ -126,7 +126,49 @@ class WIZARD_OT_BlendNormalsByProximity(Operator):
                 self.report({'WARNING'}, "Target collection is empty, add Mesh Objects to blend")
                 # Continue anyway - the operator might handle empty collections
 
+            # DIRECT PROPERTY SETTING: Set modifier properties directly using version-aware access
+            # Find the object with the Blend Normals by Proximity modifier
+            target_obj = None
+            target_modifier = None
+            for obj in bpy.data.objects:
+                for mod in obj.modifiers:
+                    if (mod.type == 'NODES' and 
+                        mod.node_group and 
+                        "Blend Normals by Proximity" in mod.node_group.name):
+                        target_obj = obj
+                        target_modifier = mod
+                        break
+                if target_obj:
+                    break
+            
+            if target_obj and target_modifier:
+                # Import the version-aware property setter
+                from .wizard_handlers import set_modifier_property_version_aware
+                
+                # Set target_collection (Socket_3)
+                success1 = set_modifier_property_version_aware(
+                    target_obj, 
+                    target_modifier.name, 
+                    "Socket_3", 
+                    context.scene.target_collection
+                )
+                
+                # Set use_relative_position (Socket_42)  
+                success2 = set_modifier_property_version_aware(
+                    target_obj,
+                    target_modifier.name,
+                    "Socket_42",
+                    context.scene.use_relative_position
+                )
+                
+                if success1 and success2:
+                    print(f"✓ Wizard set properties successfully on {target_obj.name}")
+                else:
+                    print(f"⚠ Wizard property setting may have failed on {target_obj.name}")
+                    self.report({'WARNING'}, "Some properties may not have been set correctly - check console for details")
+            
             # RUN SCRIPTS: Import the geometry nodes operator and call it
+            # print(f"[WIZARD DEBUG] invoking meshblendbyproximity with target_collection={context.scene.target_collection}, use_relative_position={context.scene.use_relative_position}, use_wireframe_on_collection={context.scene.use_wireframe_on_collection}, inject_intersection_nodegroup={context.scene.inject_intersection_nodegroup}")
             success = bpy.ops.object.meshblendbyproximity('EXEC_DEFAULT')
 
             if 'FINISHED' not in success:

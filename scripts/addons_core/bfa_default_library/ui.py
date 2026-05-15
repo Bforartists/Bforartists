@@ -23,6 +23,7 @@ Contains the addon preferences panel and related operators.
 
 import bpy
 from os import path as p
+from bpy.props import BoolProperty
 from bpy.types import AddonPreferences
 
 # Import configuration and functions from parent module
@@ -34,6 +35,9 @@ from . import (
     is_child_addon_active,
     get_lib_path_index,
     get_central_library_base,
+    get_blender_version_info,  # Add version detection
+    get_version_compatibility_warnings,  # Add compatibility warnings
+    create_asset_library_in_preferences,
 )
 from . import utility
 
@@ -43,29 +47,24 @@ from . import utility
 # -----------------------------------------------------------------------------
 
 class LIBADDON_OT_cleanup_libraries(bpy.types.Operator):
-    """Remove all Default Library asset libraries from preferences (manual cleanup)"""
+    """Remove this addon's files from the central library repository."""
     bl_idname = "preferences.libaddon_cleanup_libraries"
-    bl_label = "Remove Libraries"
-    bl_description = "Remove all Default Library asset libraries from preferences"
+    bl_label = "Remove Addon Files"
+    bl_description = "Remove this addon's files from the central library repository. The addon can re-add them later without deactivating."
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        prefs = context.preferences
         central_base = get_central_library_base()
 
-        # Simply remove the libraries from prefs by path/name
-        removed = 0
-        for lib_name in CENTRAL_LIB_SUBFOLDERS:
-            lib_path = p.join(central_base, lib_name)
-            lib_index = get_lib_path_index(prefs, lib_name, lib_path)
-            if lib_index != -1:
-                try:
-                    bpy.ops.preferences.asset_library_remove(index=lib_index)
-                    removed += 1
-                except Exception as e:
-                    print(f"⚠ Could not remove library '{lib_name}': {e}")
+        parent_addon_info = {
+            'name': PARENT_ADDON_DISPLAY_NAME,
+            'version': PARENT_ADDON_VERSION,
+            'unique_id': PARENT_ADDON_UNIQUE_ID
+        }
 
-        self.report({'INFO'}, f"Removed {removed} libraries from preferences")
+        removed = utility.remove_addon_files_from_central_library(parent_addon_info, central_base)
+
+        self.report({'INFO'}, f"Removed {removed} files from central library")
         return {'FINISHED'}
 
 
@@ -73,7 +72,7 @@ class LIBADDON_OT_readd_libraries(bpy.types.Operator):
     """Re-add / update all Default Library asset libraries to preferences"""
     bl_idname = "preferences.libaddon_readd_libraries"
     bl_label = "Re-add / Update Libraries"
-    bl_description = "Re-add all Default Library asset libraries to preferences and update assets"
+    bl_description = "Re-add all Default Library asset libraries to preferences and update assets. If the addon is activated, this is automatic every session."
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
@@ -87,57 +86,31 @@ class LIBADDON_OT_readd_libraries(bpy.types.Operator):
             'unique_id': PARENT_ADDON_UNIQUE_ID
         }
 
-        # Step 1: Remove all existing libraries from prefs (clean slate)
-        for lib_name in CENTRAL_LIB_SUBFOLDERS:
-            lib_path = p.join(central_base, lib_name)
-            lib_index = get_lib_path_index(prefs, lib_name, lib_path)
-            if lib_index != -1:
-                try:
-                    bpy.ops.preferences.asset_library_remove(index=lib_index)
-                except Exception:
-                    pass
-
-        # Step 2: Clean tracking for this addon so add_addon_to_central_library creates fresh
-        addon_id = utility.get_addon_identifier(parent_addon_info)
-        tracking_data = utility.read_addon_tracking(central_base)
-        if addon_id in tracking_data:
-            del tracking_data[addon_id]
-            utility.write_addon_tracking(central_base, tracking_data)
-
-        # Step 3: Check which source libraries exist
+        # Step 1: Refresh central library contents from source
         existing_libraries = []
         for lib_name in CENTRAL_LIB_SUBFOLDERS:
             source_dir = p.join(parent_addon_dir, lib_name)
             if p.exists(source_dir):
                 existing_libraries.append(lib_name)
 
-        # Step 4: Force-copy assets and update tracking
         utility.add_addon_to_central_library(
             parent_addon_info, existing_libraries, parent_addon_dir, central_base,
             force_copy=True
         )
 
-        # Step 5: Create all libraries in prefs
+        # Step 2: Re-register missing libraries in preferences only if needed
         registered_count = 0
+        version_info = get_blender_version_info()
         for lib_name in existing_libraries:
             library_path = p.join(central_base, lib_name)
-            try:
-                if bpy.app.version >= (5, 1, 0):
-                    bpy.ops.preferences.asset_library_add(directory=library_path, type='LOCAL')
-                else:
-                    bpy.ops.preferences.asset_library_add(directory=library_path)
+            lib_index = create_asset_library_in_preferences(prefs, lib_name, library_path, version_info)
+            if lib_index != -1:
+                registered_count += 1
+            else:
+                print(f"⚠ Could not create library '{lib_name}' after fallback")
+                print(f"   Debug: Blender version {version_info['version_string']} ({version_info['version_category']})")
 
-                # Find the newly created library and configure it
-                for lib in prefs.filepaths.asset_libraries:
-                    if lib.path == library_path:
-                        lib.name = lib_name
-                        lib.import_method = 'APPEND'
-                        registered_count += 1
-                        break
-            except Exception as e:
-                print(f"⚠ Could not create library '{lib_name}': {e}")
-
-        # Step 6: Refresh asset browser
+        # Step 3: Refresh asset browser
         try:
             bpy.ops.asset.library_refresh()
         except Exception:
@@ -155,6 +128,12 @@ class LIBADDON_APT_preferences(AddonPreferences):
     """Parent addon preferences panel in user preferences"""
     bl_idname = __package__  # Uses the package name (bfa_default_library)
 
+    debug_asset_registration: BoolProperty(
+        name="Debug Asset Library Registration",
+        description="Print detailed asset library registration logs during addon registration and refresh actions",
+        default=False,
+    )
+
     def draw(self, context):
         layout = self.layout
 
@@ -163,6 +142,23 @@ class LIBADDON_APT_preferences(AddonPreferences):
         box.label(text=f"{PARENT_ADDON_DISPLAY_NAME}", icon='ASSET_MANAGER')
         box.label(text=f"Version: {PARENT_ADDON_VERSION[0]}.{PARENT_ADDON_VERSION[1]}.{PARENT_ADDON_VERSION[2]}")
 
+        # DEBUG:VERSION NOTICE - Add this section
+        #version_info = get_blender_version_info()
+        #warnings = get_version_compatibility_warnings()
+        
+        #box.separator()
+        #version_box = box.box()
+        #version_box.label(text="Blender Version Info", icon='INFO')
+        #version_box.label(text=f"Detected: {version_info['version_category']}")
+        #version_box.label(text=f"Version: {version_info['version_string']}")
+        
+        # DEBUG: Show compatibility warnings if any
+        #if warnings:
+        #    version_box.separator()
+        #    version_box.label(text="Compatibility Notes:", icon='ERROR')
+        #    for warning in warnings:
+        #        version_box.label(text=f"• {warning}", icon='DOT')
+
         # Status
         box.separator()
         row = box.row()
@@ -170,6 +166,9 @@ class LIBADDON_APT_preferences(AddonPreferences):
             row.label(text="Status: Active", icon='CHECKMARK')
         else:
             row.label(text="Status: Inactive", icon='X')
+
+        box.separator()
+        box.prop(self, "debug_asset_registration")
 
         # Library management
         box.separator()
@@ -181,7 +180,7 @@ class LIBADDON_APT_preferences(AddonPreferences):
                     icon='FILE_REFRESH')
 
         row.operator("preferences.libaddon_cleanup_libraries",
-                    text="Remove Libraries",
+                    text="Remove Files",
                     icon='TRASH')
 
 

@@ -338,7 +338,7 @@ static void colorband_buttons_layout(Layout &layout,
       split = &layout.split(0.3f, false);
 
       row = &split->row(false);
-      bt = uiDefButS(block,
+      bt = uiDefButV(block,
                      ButtonType::Num,
                      "",
                      0,
@@ -362,7 +362,7 @@ static void colorband_buttons_layout(Layout &layout,
       Layout &subsplit = split->split(0.35f, false);
 
       row = &subsplit.row(false);
-      bt = uiDefButS(block,
+      bt = uiDefButV(block,
                      ButtonType::Num,
                      "",
                      0,

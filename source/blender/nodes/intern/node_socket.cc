@@ -353,17 +353,8 @@ static const char *get_current_socket_identifier_for_future_socket(
     const Span<const SocketDeclaration *> socket_decls)
 {
   switch (node.type_legacy) {
-    case FN_NODE_RANDOM_VALUE: {
-      return get_identifier_from_decl({"Min", "Max", "Value"}, socket, socket_decls);
-    }
     case SH_NODE_MIX: {
       return get_identifier_from_decl({"A", "B", "Result"}, socket, socket_decls);
-    }
-    case FN_NODE_COMPARE: {
-      if (STREQ(socket.identifier, "Angle")) {
-        return nullptr;
-      }
-      return get_identifier_from_decl({"A", "B"}, socket, socket_decls);
     }
     case SH_NODE_MAP_RANGE: {
       if (socket.type == SOCK_VECTOR) {

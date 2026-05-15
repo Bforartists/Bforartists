@@ -119,7 +119,7 @@ namespace blender {
 
 static CLG_LogRef LOG = {"image"};
 
-static void image_init(Image *ima, short source, short type);
+static void image_init(Image *ima, eImageSource source, eImageType type);
 static void image_free_packedfiles(Image *ima);
 static void copy_image_packedfiles(ListBaseT<ImagePackedFile> *lb_dst,
                                    const ListBaseT<ImagePackedFile> *lb_src);
@@ -638,7 +638,7 @@ static ImageTile *imagetile_alloc(int tile_number)
 }
 
 /* only image block itself */
-static void image_init(Image *ima, short source, short type)
+static void image_init(Image *ima, eImageSource source, eImageType type)
 {
   INIT_DEFAULT_STRUCT_AFTER(ima, id);
 
@@ -667,8 +667,8 @@ static void image_init(Image *ima, short source, short type)
 static Image *image_alloc(Main *bmain,
                           std::optional<Library *> owner_library,
                           const char *name,
-                          short source,
-                          short type)
+                          eImageSource source,
+                          eImageType type)
 {
   Image *ima;
 
@@ -1005,7 +1005,7 @@ char BKE_image_alpha_mode_from_extension_ex(const char *filepath)
 
 void BKE_image_alpha_mode_from_extension(Image *image)
 {
-  image->alpha_mode = BKE_image_alpha_mode_from_extension_ex(image->filepath);
+  image->alpha_mode = eImageAlphaMode(BKE_image_alpha_mode_from_extension_ex(image->filepath));
 }
 
 static void image_abs_path(Main *bmain,
@@ -1260,8 +1260,8 @@ Image *BKE_image_add_generated(Main *bmain,
   ImageTile *tile = static_cast<ImageTile *>(ima->tiles.first);
   tile->gen_x = width;
   tile->gen_y = height;
-  tile->gen_type = gen_type;
-  tile->gen_flag |= (floatbuf ? IMA_GEN_FLOAT : 0);
+  tile->gen_type = eImageGenType(gen_type);
+  tile->gen_flag |= eImage_GenFlag(floatbuf ? IMA_GEN_FLOAT : 0);
   tile->gen_depth = depth;
   copy_v4_v4(tile->gen_color, color);
 
@@ -1363,19 +1363,18 @@ static bool image_memorypack_imbuf(
 {
   ibuf->ftype = ibuf->float_data() ? IMB_FTYPE_OPENEXR : IMB_FTYPE_PNG;
 
-  IMB_save_image(ibuf, filepath, IB_byte_data | IB_mem);
-
-  if (ibuf->encoded_buffer.data == nullptr) {
+  Vector<uint8_t> encoded = IMB_save_image_to_buffer(ibuf, IB_byte_data);
+  if (encoded.is_empty()) {
     CLOG_STR_ERROR(&LOG, "memory save for pack error");
     image_free_packedfiles(ima);
     return false;
   }
 
-  ImagePackedFile *imapf;
-  const int encoded_size = ibuf->encoded_size;
-  PackedFile *pf = BKE_packedfile_new_from_memory(IMB_steal_encoded_buffer(ibuf), encoded_size);
+  auto *shared_data = new ImplicitSharedValue<Vector<uint8_t>>(std::move(encoded));
+  PackedFile *pf = BKE_packedfile_new_from_memory(
+      shared_data->data.data(), int(shared_data->data.size()), shared_data);
 
-  imapf = MEM_new<ImagePackedFile>("Image PackedFile");
+  ImagePackedFile *imapf = MEM_new<ImagePackedFile>("Image PackedFile");
   STRNCPY(imapf->filepath, filepath);
   imapf->packedfile = pf;
   imapf->view = view;
@@ -2704,7 +2703,7 @@ Image *BKE_image_ensure_viewer(Main *bmain, int type, const char *name)
   }
 
   if (ima == nullptr) {
-    ima = image_alloc(bmain, std::nullopt, name, IMA_SRC_VIEWER, type);
+    ima = image_alloc(bmain, std::nullopt, name, IMA_SRC_VIEWER, eImageType(type));
   }
 
   /* Happens on reload, image-window cannot be image user when hidden. */
@@ -2842,6 +2841,10 @@ static void image_walk_ntree_all_users(
           }
         }
       }
+      break;
+    case NTREE_GEOMETRY:
+    case NTREE_CUSTOM:
+    case NTREE_UNDEFINED:
       break;
   }
 }

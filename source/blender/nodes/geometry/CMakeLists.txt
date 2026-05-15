@@ -39,6 +39,8 @@ set(SRC
   nodes/node_geo_bounding_box.cc
   nodes/node_geo_camera_info.cc
   nodes/node_geo_closure.cc
+  nodes/node_geo_cluster_by_connected.cc
+  nodes/node_geo_cluster_by_distance.cc
   nodes/node_geo_collection_children.cc
   nodes/node_geo_collection_info.cc
   nodes/node_geo_combine_bundle.cc
@@ -98,6 +100,7 @@ set(SRC
   nodes/node_geo_get_bundle_item.cc
   nodes/node_geo_get_geometry_bundle.cc
   nodes/node_geo_get_named_grid.cc
+  nodes/node_geo_get_nested_bundle_paths.cc
   nodes/node_geo_gizmo_dial.cc
   nodes/node_geo_gizmo_linear.cc
   nodes/node_geo_gizmo_transform.cc
@@ -177,6 +180,7 @@ set(SRC
   nodes/node_geo_menu_switch.cc
   nodes/node_geo_merge_by_distance.cc
   nodes/node_geo_merge_layers.cc
+  nodes/node_geo_merge_points.cc
   nodes/node_geo_mesh_face_group_boundaries.cc
   nodes/node_geo_mesh_primitive_circle.cc
   nodes/node_geo_mesh_primitive_cone.cc
