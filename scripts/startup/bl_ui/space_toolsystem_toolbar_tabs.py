@@ -959,110 +959,31 @@ class VIEW3D_PT_utility_tab_convert(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        obj = context.active_object
+        is_old_gpencil = obj and obj.type == 'GPENCIL' and context.gpencil_data
+        is_hair = obj and obj.type == 'CURVES'
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            context=bpy.context
-            layout = self.layout
-            ob = context.active_object
-
-            if ob and ob.type == 'GPENCIL' and context.gpencil_data:
-                col.operator_enum("gpencil.convert", "type")
-
-            else:
-                col.operator_enum("object.convert", "target")
-
-            if ob and ob.type == 'CURVES':
-                col.operator("curves.convert_to_particle_system", text="Particle System", icon="PARTICLE_DATA")
-
-
-        # icon buttons
+        if is_old_gpencil:
+            entries = (
+                # TODO - Remove legacy operators
+                OperatorEntry("gpencil.convert", text="Path", icon="CURVE_PATH", props={"type": 'PATH'}),
+                OperatorEntry("gpencil.convert", text="Bézier Curve", icon="OUTLINER_OB_CURVE", props={"type": 'CURVE'}),
+                OperatorEntry("gpencil.convert", text="Polygon Curve", icon="MESH_DATA", props={"type": 'POLY'}),
+                OperatorEntry("curves.convert_to_particle_system", text="Particle System", icon="PARTICLE_DATA", poll=is_hair),
+            )
         else:
+            entries = (
+                OperatorEntry("object.convert", text="Mesh", icon="OUTLINER_OB_MESH", props={"target": 'MESH'}),
+                OperatorEntry("object.convert", text="Curve", icon="OUTLINER_OB_CURVE", props={"target": 'CURVE'}),
+                OperatorEntry("object.convert", text="Curves", icon="OUTLINER_OB_CURVES", props={"target": 'CURVES'}),
+                OperatorEntry("object.convert", text="Point Cloud", icon="OUTLINER_OB_POINTCLOUD", props={"target": 'POINTCLOUD'}),
+                OperatorEntry("object.convert", text="Grease Pencil", icon="OUTLINER_OB_GREASEPENCIL", props={"target": 'GREASEPENCIL'}),
+                OperatorEntry("curves.convert_to_particle_system", text="Particle System", icon="PARTICLE_DATA", poll=is_hair),
+            )
 
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
+        draw_entries(layout, context, entries)
 
-            if column_count == 3:
-
-                row = col.row(align=True)
-                context=bpy.context
-                layout = self.layout
-                ob = context.active_object
-
-                if ob and ob.type == 'GPENCIL' and context.gpencil_data:
-                    row.operator("gpencil.convert", text="", icon="CURVE_PATH").type = 'PATH'
-                    row.operator("gpencil.convert", text="", icon="OUTLINER_OB_CURVE").type = 'CURVE'
-                    row.operator("gpencil.convert", text="", icon="MESH_DATA").type = 'POLY'
-                    #row.operator_enum("gpencil.convert", "type")
-
-                else:
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_CURVE").target = 'CURVE'
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_MESH").target = 'MESH'
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_GREASEPENCIL").target = 'GREASEPENCIL'
-
-                    row = col.row(align=True)
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_POINTCLOUD").target = 'POINTCLOUD'
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_CURVES").target = 'CURVES'
-                    #row.operator_enum("object.convert", "target")
-
-                if ob and ob.type == 'CURVES':
-                    col.operator("curves.convert_to_particle_system", text="", icon="PARTICLE_DATA")
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                context=bpy.context
-                layout = self.layout
-                ob = context.active_object
-
-                if ob and ob.type == 'GPENCIL' and context.gpencil_data:
-                    row.operator("gpencil.convert", text="", icon="CURVE_PATH").type = 'PATH'
-                    row.operator("gpencil.convert", text="", icon="OUTLINER_OB_CURVE").type = 'CURVE'
-                    #row.operator_enum("gpencil.convert", "type")
-
-                else:
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_CURVE").target = 'CURVE'
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_MESH").target = 'MESH'
-                    row = col.row(align=True)
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_GREASEPENCIL").target = 'GREASEPENCIL'
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_POINTCLOUD").target = 'POINTCLOUD'
-                    row = col.row(align=True)
-                    row.operator("object.convert", text="", icon="OUTLINER_OB_CURVES").target = 'CURVES'
-                    #row.operator_enum("object.convert", "target")
-
-                if ob and ob.type == 'CURVES':
-                    col.operator("curves.convert_to_particle_system", text="", icon="PARTICLE_DATA")
-
-            elif column_count == 1:
-
-                row = col.row(align=True)
-                context=bpy.context
-                layout = self.layout
-                ob = context.active_object
-
-                if ob and ob.type == 'GPENCIL' and context.gpencil_data:
-                    col.operator("gpencil.convert", text="", icon="CURVE_PATH").type = 'PATH'
-                    col.operator("gpencil.convert", text="", icon="OUTLINER_OB_CURVE").type = 'CURVE'
-                    col.operator("gpencil.convert", text="", icon="MESH_DATA").type = 'POLY'
-                    #row.operator_enum("gpencil.convert", "type")
-
-                else:
-                    col.operator("object.convert", text="", icon="OUTLINER_OB_CURVE").target = 'CURVE'
-                    col.operator("object.convert", text="", icon="OUTLINER_OB_MESH").target = 'MESH'
-                    col.operator("object.convert", text="", icon="OUTLINER_OB_GREASEPENCIL").target = 'GREASEPENCIL'
-                    col.operator("object.convert", text="", icon="OUTLINER_OB_POINTCLOUD").target = 'POINTCLOUD'
-                    col.operator("object.convert", text="", icon="OUTLINER_OB_CURVES").target = 'CURVES'
-                    #row.operator_enum("object.convert", "target")
-
-                if ob and ob.type == 'CURVES':
-                    col.operator("curves.convert_to_particle_system", text="", icon="PARTICLE_DATA")
 
 # -------------------------------------- Mesh
 
@@ -1074,117 +995,30 @@ class VIEW3D_PT_mesh_tab_merge(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
-        obedit = bpy.context.edit_object
 
-        #text buttons
-        if column_count == 4:
+        edit_obj = context.edit_object
 
-            col = layout.column(align=True)
-            col.scale_y = 2
+        if edit_obj and edit_obj.type == "MESH":
+            mesh = bmesh.from_edit_mesh(edit_obj.data)
+            if "VERT" in mesh.select_mode:
+                first_sel_is_vert = False
+                last_sel_is_vert = False
 
-            col.operator_enum("mesh.merge", "type")
+                if len(mesh.select_history) >= 1:
+                    first_sel_is_vert = isinstance(mesh.select_history[0], bmesh.types.BMVert)
+                    last_sel_is_vert = isinstance(mesh.select_history[-1], bmesh.types.BMVert)
 
-            col.operator("mesh.remove_doubles", text="By Distance", icon="REMOVE_DOUBLES")
+        entries = (
+            OperatorEntry("mesh.merge", text="At Center", icon="MERGE_CENTER", props={"type": 'CENTER'}),
+            OperatorEntry("mesh.merge", text="At Cursor", icon="MERGE_CURSOR", props={"type": 'CURSOR'}),
+            OperatorEntry("mesh.merge", text="At First", icon="MERGE_AT_FIRST", props={"type": 'FIRST'}, poll=first_sel_is_vert),
+            OperatorEntry("mesh.merge", text="At Last", icon="MERGE_AT_LAST", props={"type": 'LAST'}, poll=last_sel_is_vert),
+            OperatorEntry("mesh.merge", text="Collapse", icon="MERGE", props={"type": 'COLLAPSE'}),
+            Separator,
+            OperatorEntry("mesh.remove_doubles", text="By Distance", icon="REMOVE_DOUBLES"),
+        )
 
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.merge", text="", icon="MERGE_CENTER").type = 'CENTER'
-                row.operator("mesh.merge", text="", icon="MERGE_CURSOR").type = 'CURSOR'
-
-                if obedit and obedit.type == "MESH":
-                    row = col.row(align=True)
-                    em = bmesh.from_edit_mesh(obedit.data)
-                    if "VERT" in em.select_mode:
-                        first_sel_is_vert = False
-                        last_sel_is_vert = False
-                        if len(em.select_history) >= 1:
-                            first_sel_is_vert = isinstance(em.select_history[0], bmesh.types.BMVert)
-                            last_sel_is_vert = isinstance(em.select_history[-1], bmesh.types.BMVert)
-
-                            if first_sel_is_vert:
-                                # show merge first
-                                #pass # delete this
-                                row.operator("mesh.merge", text="", icon="MERGE_AT_FIRST").type = 'FIRST'
-
-                            if last_sel_is_vert:
-                                # show merge last
-                                #pass # delete this
-                                row.operator("mesh.merge", text="", icon="MERGE_AT_LAST").type = 'LAST'
-
-                row = col.row(align=True)
-
-                row.operator("mesh.merge", text="", icon="MERGE").type = 'COLLAPSE'
-                row.operator("mesh.remove_doubles", text="", icon="REMOVE_DOUBLES")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.merge", text="", icon="MERGE_CENTER").type = 'CENTER'
-                row.operator("mesh.merge", text="", icon="MERGE_CURSOR").type = 'CURSOR'
-
-                if obedit and obedit.type == "MESH":
-                    row = col.row(align=True)
-                    em = bmesh.from_edit_mesh(obedit.data)
-                    if "VERT" in em.select_mode:
-                        first_sel_is_vert = False
-                        last_sel_is_vert = False
-                        if len(em.select_history) >= 1:
-                            first_sel_is_vert = isinstance(em.select_history[0], bmesh.types.BMVert)
-                            last_sel_is_vert = isinstance(em.select_history[-1], bmesh.types.BMVert)
-
-                            if first_sel_is_vert:
-                                # show merge first
-                                #pass # delete this
-                                row.operator("mesh.merge", text="", icon="MERGE_AT_FIRST").type = 'FIRST'
-
-                            if last_sel_is_vert:
-                                # show merge last
-                                #pass # delete this
-                                row.operator("mesh.merge", text="", icon="MERGE_AT_LAST").type = 'LAST'
-
-
-                row = col.row(align=True)
-                row.operator("mesh.merge", text="", icon="MERGE").type = 'COLLAPSE'
-                row.operator("mesh.remove_doubles", text="", icon="REMOVE_DOUBLES")
-
-            elif column_count == 1:
-
-                col.operator("mesh.merge", text="", icon="MERGE_CENTER").type = 'CENTER'
-                col.operator("mesh.merge", text="", icon="MERGE_CURSOR").type = 'CURSOR'
-
-                if obedit and obedit.type == "MESH":
-                    em = bmesh.from_edit_mesh(obedit.data)
-                    if "VERT" in em.select_mode:
-                        first_sel_is_vert = False
-                        last_sel_is_vert = False
-                        if len(em.select_history) >= 1:
-                            first_sel_is_vert = isinstance(em.select_history[0], bmesh.types.BMVert)
-                            last_sel_is_vert = isinstance(em.select_history[-1], bmesh.types.BMVert)
-
-                            if first_sel_is_vert:
-                                # show merge first
-                                #pass # delete this
-                                col.operator("mesh.merge", text="", icon="MERGE_AT_FIRST").type = 'FIRST'
-
-                            if last_sel_is_vert:
-                                # show merge last
-                                #pass # delete this
-                                col.operator("mesh.merge", text="", icon="MERGE_AT_LAST").type = 'LAST'
-
-                col.operator("mesh.merge", text="", icon="MERGE").type = 'COLLAPSE'
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.remove_doubles", text="", icon="REMOVE_DOUBLES")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_mesh_tab_split(ToolsystemPanel):
@@ -2254,46 +2088,14 @@ class VIEW3D_PT_gp_stroke_tab_simplify(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            OperatorEntry("grease_pencil.stroke_simplify", text="Fixed", icon="MOD_SIMPLIFY"),
+            OperatorEntry("gpencil.stroke_simplify", text="Adaptative", icon="SIMPLIFY_ADAPTIVE"), # BFA - Legacy
+            OperatorEntry("gpencil.stroke_sample", text="Sample", icon="SIMPLIFY_SAMPLE"), # BFA - Legacy
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("grease_pencil.stroke_simplify", text="Fixed", icon="MOD_SIMPLIFY")
-            col.operator("gpencil.stroke_simplify", text="Adaptative", icon="SIMPLIFY_ADAPTIVE") # BFA - Legacy
-            col.operator("gpencil.stroke_sample", text="Sample", icon="SIMPLIFY_SAMPLE") # BFA - Legacy
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_simplify_fixed", text="", icon="MOD_SIMPLIFY")
-                row.operator("gpencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                row.operator("gpencil.stroke_sample", text="", icon="SIMPLIFY_SAMPLE")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_simplify_fixed", text="", icon="MOD_SIMPLIFY")
-                row.operator("gpencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-
-                row = col.row(align=True)
-                row.operator("gpencil.stroke_sample", text="", icon="SIMPLIFY_SAMPLE")
-
-            elif column_count == 1:
-
-                col.operator("gpencil.stroke_simplify_fixed", text="", icon="MOD_SIMPLIFY")
-                col.operator("gpencil.stroke_simplify", text="", icon="SIMPLIFY_ADAPTIVE")
-                col.operator("gpencil.stroke_sample", text="", icon="SIMPLIFY_SAMPLE")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_stroke_tab_toggle_caps(ToolsystemPanel):
@@ -2324,62 +2126,17 @@ class VIEW3D_PT_gp_stroke_tab_reproject(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            OperatorEntry("gpencil.reproject", text="Front", icon="VIEW_FRONT", props={"type": 'FRONT'}),
+            OperatorEntry("gpencil.reproject", text="Side", icon="VIEW_LEFT", props={"type": 'SIDE'}),
+            OperatorEntry("gpencil.reproject", text="Top", icon="VIEW_TOP", props={"type": 'TOP'}),
+            OperatorEntry("gpencil.reproject", text="View", icon="VIEW", props={"type": 'VIEW'}),
+            OperatorEntry("gpencil.reproject", text="Surface", icon="REPROJECT", props={"type": 'SURFACE'}),
+            OperatorEntry("gpencil.reproject", text="Cursor", icon="CURSOR", props={"type": 'CURSOR'}),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("gpencil.reproject", text="Front", icon="VIEW_FRONT").type = 'FRONT'
-            col.operator("gpencil.reproject", text="Side", icon="VIEW_LEFT").type = 'SIDE'
-            col.operator("gpencil.reproject", text="Top", icon="VIEW_TOP").type = 'TOP'
-            col.operator("gpencil.reproject", text="View", icon="VIEW").type = 'VIEW'
-            col.operator("gpencil.reproject", text="Surface", icon="REPROJECT").type = 'SURFACE'
-            col.operator("gpencil.reproject", text="Cursor", icon="CURSOR").type = 'CURSOR'
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("gpencil.reproject", text="", icon="VIEW_FRONT").type = 'FRONT'
-                row.operator("gpencil.reproject", text="", icon="VIEW_LEFT").type = 'SIDE'
-                row.operator("gpencil.reproject", text="", icon="VIEW_TOP").type = 'TOP'
-
-                row = col.row(align=True)
-                row.operator("gpencil.reproject", text="", icon="VIEW").type = 'VIEW'
-                row.operator("gpencil.reproject", text="", icon="REPROJECT").type = 'SURFACE'
-                row.operator("gpencil.reproject", text="", icon="CURSOR").type = 'CURSOR'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("gpencil.reproject", text="", icon="VIEW_FRONT").type = 'FRONT'
-                row.operator("gpencil.reproject", text="", icon="VIEW_LEFT").type = 'SIDE'
-
-                row = col.row(align=True)
-                row.operator("gpencil.reproject", text="", icon="VIEW_TOP").type = 'TOP'
-                row.operator("gpencil.reproject", text="", icon="VIEW").type = 'VIEW'
-
-                row = col.row(align=True)
-                row.operator("gpencil.reproject", text="", icon="REPROJECT").type = 'SURFACE'
-                row.operator("gpencil.reproject", text="", icon="CURSOR").type = 'CURSOR'
-
-            elif column_count == 1:
-
-                col.operator("gpencil.reproject", text="", icon="VIEW_FRONT").type = 'FRONT'
-                col.operator("gpencil.reproject", text="", icon="VIEW_LEFT").type = 'SIDE'
-                col.operator("gpencil.reproject", text="", icon="VIEW_TOP").type = 'TOP'
-                col.operator("gpencil.reproject", text="", icon="VIEW").type = 'VIEW'
-                col.operator("gpencil.reproject", text="", icon="REPROJECT").type = 'SURFACE'
-                col.operator("gpencil.reproject", text="", icon="CURSOR").type = 'CURSOR'
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_gp_point_tab_point(ToolsystemPanel):
