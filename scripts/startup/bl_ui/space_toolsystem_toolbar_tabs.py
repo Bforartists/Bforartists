@@ -50,6 +50,31 @@ class OperatorEntry:
 
 
 @dataclasses.dataclass(slots=True)
+class MenuEntry:
+    menu : str
+    text : str = None
+    text_ctxt : str = None
+    icon : str = 'ICON_NONE'
+    poll : bool = True
+
+    as_dict = dataclasses.asdict
+
+    @property
+    def menu_params(self):
+        params = ("text", "text_ctxt", "icon")
+        return {key: getattr(self, key) for key in params}
+    
+    def draw(self, layout, *, as_icon):
+        if not self.poll:
+            return
+        
+        if as_icon:
+            layout.menu(self.menu, text="", icon=self.icon)
+        else:
+            layout.menu(self.menu, **self.menu_params)
+
+
+@dataclasses.dataclass(slots=True)
 class SetOperatorContext:
     context_value : str
 
@@ -795,61 +820,15 @@ class VIEW3D_PT_utility_tab_object_data(ToolsystemPanel):
         layout = self.layout
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            OperatorEntry("object.make_single_user", icon="MAKE_SINGLE_USER"),
+            MenuEntry("VIEW3D_MT_make_links", icon="LINK_DATA"),
+            Separator,
+            OperatorEntry("object.make_local", icon="MAKE_LOCAL"),
+            OperatorEntry("object.make_override_library", icon="LIBRARY_DATA_OVERRIDE"),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("object.make_single_user", icon="MAKE_SINGLE_USER")
-            col.menu("VIEW3D_MT_make_links", icon="LINK_DATA" )
-
-            col.separator(factor = 0.5)
-
-            col.operator("object.make_local", icon="MAKE_LOCAL")
-            col.operator("object.make_override_library", icon="LIBRARY_DATA_OVERRIDE")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("object.make_single_user", text="", icon="MAKE_SINGLE_USER")
-                row.menu("VIEW3D_MT_make_links", text="", icon="LINK_DATA" )
-
-                col.separator(factor = 0.5)
-
-                row = col.row(align=True)
-                row.operator("object.make_local", text="", icon="MAKE_LOCAL")
-                row.operator("object.make_override_library", text="", icon="LIBRARY_DATA_OVERRIDE")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("object.make_single_user", text="", icon="MAKE_SINGLE_USER")
-                row.menu("VIEW3D_MT_make_links", text="", icon="LINK_DATA" )
-
-                col.separator(factor = 0.5)
-
-                row = col.row(align=True)
-                row.operator("object.make_local", text="", icon="MAKE_LOCAL")
-                row.operator("object.make_override_library", text="", icon="LIBRARY_DATA_OVERRIDE")
-
-            elif column_count == 1:
-
-                col.operator("object.make_single_user", text="", icon="MAKE_SINGLE_USER")
-                col.menu("VIEW3D_MT_make_links", text="", icon="LINK_DATA" )
-
-                col.separator(factor = 0.5)
-
-                row = col.row(align=True)
-                col.operator("object.make_local", text="", icon="MAKE_LOCAL")
-                col.operator("object.make_override_library", text="", icon="LIBRARY_DATA_OVERRIDE")
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_utility_tab_assets(ToolsystemPanel):
