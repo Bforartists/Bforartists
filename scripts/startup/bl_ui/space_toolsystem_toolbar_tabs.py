@@ -53,7 +53,7 @@ class OperatorEntry:
 class SetOperatorContext:
     context_value : str
 
-    def draw(self, layout):
+    def set_context(self, layout):
         layout.operator_context = self.context_value
 
 
@@ -74,7 +74,7 @@ def draw_text_buttons(layout, entries):
         if entry is Separator:
             col.separator(factor=0.5)
         elif isinstance(entry, SetOperatorContext):
-            entry.draw(col)
+            entry.set_context(col)
         else:
             entry.draw(col, as_icon=False)
         
@@ -94,7 +94,7 @@ def draw_icon_buttons(layout, entries, column_count):
             
             index = 0
         elif isinstance(entry, SetOperatorContext):
-            entry.draw(col)
+            entry.set_context(col)
         else:
             if index == 0:
                 row = col.row(align=True)
