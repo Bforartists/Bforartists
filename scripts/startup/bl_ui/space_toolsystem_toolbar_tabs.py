@@ -143,7 +143,6 @@ class ToolsystemPanel(Panel):
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
-        print(cls)
         view = context.space_data
         return view.show_toolshelf_tabs == True
 
@@ -587,7 +586,6 @@ class VIEW3D_PT_utility_tab_object_data(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
         entries = (
             OperatorEntry("object.make_single_user", icon="MAKE_SINGLE_USER"),
@@ -786,9 +784,9 @@ class VIEW3D_PT_mesh_tab_tools(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
+        
         from math import pi
         with_bullet = bpy.app.build_options.bullet
-
 
         entries = (
             OperatorEntry("mesh.extrude_repeat", icon="REPEAT"),
