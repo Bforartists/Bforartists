@@ -35,22 +35,15 @@ class OperatorEntry:
         params = ("text", "text_ctxt", "icon")
         return {key: getattr(self, key) for key in params}
     
-    def draw_text_button(self, layout):
+    def draw(self, layout, *, as_icon):
         if not self.poll:
             return
         
-        props = layout.operator(self.operator, **self.op_params)
+        if as_icon:
+            props = layout.operator(self.operator, text="", icon=self.icon)
+        else:
+            props = layout.operator(self.operator, **self.op_params)
             
-        if self.props:
-            for key, value in self.props.items():
-                setattr(props, key, value)
-        
-    def draw_icon_button(self, layout):
-        if not self.poll:
-            return
-
-        props = layout.operator(self.operator, text="", icon=self.icon)
-
         if self.props:
             for key, value in self.props.items():
                 setattr(props, key, value)
@@ -83,7 +76,7 @@ def draw_text_buttons(layout, entries):
         elif isinstance(entry, SetOperatorContext):
             entry.draw(col)
         else:
-            entry.draw_text_button(col)
+            entry.draw(col, as_icon=False)
         
 
 def draw_icon_buttons(layout, entries, column_count):
@@ -109,7 +102,7 @@ def draw_icon_buttons(layout, entries, column_count):
                 row.scale_y = 2
                 row.alignment = 'LEFT'
             
-            entry.draw_icon_button(row)
+            entry.draw(row, as_icon=True)
                     
             index = (index + 1) % column_count
 
