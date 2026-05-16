@@ -199,45 +199,45 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
         obj = context.object
 
         entries = [
-            OperatorEntry("transform.tosphere", text="To Sphere", icon="TOSPHERE"),
-            OperatorEntry("mesh.circularize", text="To Circle", icon="TOCIRCLE", poll=context.mode in {'EDIT_MESH'}),
-            OperatorEntry("transform.shear", text="Shear", icon="SHEAR"),
-            OperatorEntry("transform.bend", text="Bend", icon="BEND"),
-            OperatorEntry("transform.push_pull", text="Push/Pull", icon="PUSH_PULL"),
+            OperatorEntry("transform.tosphere", text="To Sphere", icon='TOSPHERE'),
+            OperatorEntry("mesh.circularize", text="To Circle", icon='TOCIRCLE', poll=context.mode in {'EDIT_MESH'}),
+            OperatorEntry("transform.shear", text="Shear", icon='SHEAR'),
+            OperatorEntry("transform.bend", text="Bend", icon='BEND'),
+            OperatorEntry("transform.push_pull", text="Push/Pull", icon='PUSH_PULL'),
         ]
 
         if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}:
             entries.extend([
                 Separator,
-                OperatorEntry("transform.vertex_warp", text="Warp", icon="MOD_WARP"),
+                OperatorEntry("transform.vertex_warp", text="Warp", icon='MOD_WARP'),
                 SetOperatorContext('EXEC_REGION_WIN'),
-                OperatorEntry("transform.vertex_random", text="Randomize", icon="RANDOMIZE", props={"offset": 0.1}),
+                OperatorEntry("transform.vertex_random", text="Randomize", icon='RANDOMIZE', props={"offset": 0.1}),
                 SetOperatorContext('INVOKE_REGION_WIN'),
             ])
 
         if context.mode == 'EDIT_MESH':
             entries.extend([
                 Separator,
-                OperatorEntry("transform.shrink_fatten", text="Shrink Fatten", icon="SHRINK_FATTEN"),
-                OperatorEntry("transform.skin_resize", icon="MOD_SKIN"),
+                OperatorEntry("transform.shrink_fatten", text="Shrink Fatten", icon='SHRINK_FATTEN'),
+                OperatorEntry("transform.skin_resize", icon='MOD_SKIN'),
             ])
         elif context.mode == 'EDIT_CURVE':
             entries.extend([
                 Separator,
-                OperatorEntry("transform.transform", text="Radius", icon="SHRINK_FATTEN", props={"mode": 'CURVE_SHRINKFATTEN'}),
+                OperatorEntry("transform.transform", text="Radius", icon='SHRINK_FATTEN', props={"mode": 'CURVE_SHRINKFATTEN'}),
             ])
 
         if context.active_object is not None and obj.type != 'ARMATURE':
             entries.extend([
                 Separator,
-                OperatorEntry("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE", props={"texture_space": True}),
-                OperatorEntry("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE", props={"texture_space": True}),
+                OperatorEntry("transform.translate", text="Move Texture Space", icon='MOVE_TEXTURESPACE', props={"texture_space": True}),
+                OperatorEntry("transform.resize", text="Scale Texture Space", icon='SCALE_TEXTURESPACE', props={"texture_space": True}),
             ])
         elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
             entries.extend([
                 Separator,
-                OperatorEntry("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE", props={"texture_space": True}),
-                OperatorEntry("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE", props={"texture_space": True}),
+                OperatorEntry("transform.translate", text="Move Texture Space", icon='MOVE_TEXTURESPACE', props={"texture_space": True}),
+                OperatorEntry("transform.resize", text="Scale Texture Space", icon='SCALE_TEXTURESPACE', props={"texture_space": True}),
             ])
 
         if context.mode == 'OBJECT':
@@ -245,9 +245,9 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
                 Separator,
                 SetOperatorContext('EXEC_REGION_WIN'),
                 # XXX see alignmenu() in edit.c of b2.4x to get this working
-                OperatorEntry("transform.transform", text="Align to Transform Orientation", icon="ALIGN_TRANSFORM", props={"mode": 'ALIGN'}),
-                OperatorEntry("object.randomize_transform", icon="RANDOMIZE_TRANSFORM"),
-                OperatorEntry("object.align", icon="ALIGN"),
+                OperatorEntry("transform.transform", text="Align to Transform Orientation", icon='ALIGN_TRANSFORM', props={"mode": 'ALIGN'}),
+                OperatorEntry("object.randomize_transform", icon='RANDOMIZE_TRANSFORM'),
+                OperatorEntry("object.align", icon='ALIGN'),
                 SetOperatorContext('INVOKE_REGION_WIN'),
             ])
 
@@ -256,19 +256,19 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
             if obj.data.display_type == 'BBONE':
                 entries.extend([
                     Separator,
-                    OperatorEntry("transform.transform", text="Scale BBone", icon="TRANSFORM_SCALE", props={"mode": 'BONE_SIZE'}),
+                    OperatorEntry("transform.transform", text="Scale BBone", icon='TRANSFORM_SCALE', props={"mode": 'BONE_SIZE'}),
                 ])
             elif obj.data.display_type == 'ENVELOPE':
                 entries.extend([
                     Separator,
-                    OperatorEntry("transform.transform", text="Scale Envelope Distance", icon="TRANSFORM_SCALE", props={"mode": 'BONE_SIZE'}),
-                    OperatorEntry("transform.transform", text="Scale Radius", icon="TRANSFORM_SCALE", props={"mode": 'BONE_ENVELOPE'}),
+                    OperatorEntry("transform.transform", text="Scale Envelope Distance", icon='TRANSFORM_SCALE', props={"mode": 'BONE_SIZE'}),
+                    OperatorEntry("transform.transform", text="Scale Radius", icon='TRANSFORM_SCALE', props={"mode": 'BONE_ENVELOPE'}),
                 ])
 
         if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
             entries.extend([
                 Separator,
-                OperatorEntry("armature.align", icon="ALIGN"),
+                OperatorEntry("armature.align", icon='ALIGN'),
             ])
 
         draw_entries(layout, context, entries)
@@ -284,11 +284,11 @@ class VIEW3D_PT_object_tab_set_origin(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.origin_set", text="Geometry to Origin", icon="GEOMETRY_TO_ORIGIN", props={"type": 'GEOMETRY_ORIGIN'}),
-            OperatorEntry("object.origin_set", text="Origin to Geometry", icon="ORIGIN_TO_GEOMETRY", props={"type": 'ORIGIN_GEOMETRY'}),
-            OperatorEntry("object.origin_set", text="Origin to 3D Cursor", icon="ORIGIN_TO_CURSOR", props={"type": 'ORIGIN_CURSOR'}),
-            OperatorEntry("object.origin_set", text="Origin to Center of Mass (Surface)", icon="ORIGIN_TO_CENTEROFMASS", props={"type": 'ORIGIN_CENTER_OF_MASS'}),
-            OperatorEntry("object.origin_set", text="Origin to Center of Mass (Volume)", icon="ORIGIN_TO_VOLUME", props={"type": 'ORIGIN_CENTER_OF_VOLUME'}),
+            OperatorEntry("object.origin_set", text="Geometry to Origin", icon='GEOMETRY_TO_ORIGIN', props={"type": 'GEOMETRY_ORIGIN'}),
+            OperatorEntry("object.origin_set", text="Origin to Geometry", icon='ORIGIN_TO_GEOMETRY', props={"type": 'ORIGIN_GEOMETRY'}),
+            OperatorEntry("object.origin_set", text="Origin to 3D Cursor", icon='ORIGIN_TO_CURSOR', props={"type": 'ORIGIN_CURSOR'}),
+            OperatorEntry("object.origin_set", text="Origin to Center of Mass (Surface)", icon='ORIGIN_TO_CENTEROFMASS', props={"type": 'ORIGIN_CENTER_OF_MASS'}),
+            OperatorEntry("object.origin_set", text="Origin to Center of Mass (Volume)", icon='ORIGIN_TO_VOLUME', props={"type": 'ORIGIN_CENTER_OF_VOLUME'}),
         )
 
         draw_entries(layout, context, entries)
@@ -348,10 +348,10 @@ class VIEW3D_PT_object_tab_mirror(ToolsystemPanel):
 
         entries = (
             SetOperatorContext('EXEC_REGION_WIN'),
-            OperatorEntry("mirror.global_x", text="X Global", icon="MIRROR_X"),
-            OperatorEntry("mirror.global_y", text="Y Global", icon="MIRROR_Y"),
-            OperatorEntry("mirror.global_z", text="Z Global", icon="MIRROR_Z"),
-            OperatorEntry("object.vertex_group_mirror", icon="MIRROR_VERTEXGROUP", poll=can_mirror_vgroup),
+            OperatorEntry("mirror.global_x", text="X Global", icon='MIRROR_X'),
+            OperatorEntry("mirror.global_y", text="Y Global", icon='MIRROR_Y'),
+            OperatorEntry("mirror.global_z", text="Z Global", icon='MIRROR_Z'),
+            OperatorEntry("object.vertex_group_mirror", icon='MIRROR_VERTEXGROUP', poll=can_mirror_vgroup),
         )
 
         draw_entries(layout, context, entries)
@@ -409,9 +409,9 @@ class VIEW3D_PT_object_tab_mirror_local(ToolsystemPanel):
 
         entries = (
             SetOperatorContext('EXEC_REGION_WIN'),
-            OperatorEntry("mirror.local_x", text="X Local", icon="MIRROR_X"),
-            OperatorEntry("mirror.local_y", text="Y Local", icon="MIRROR_Y"),
-            OperatorEntry("mirror.local_z", text="Z Local", icon="MIRROR_Z"),
+            OperatorEntry("mirror.local_x", text="X Local", icon='MIRROR_X'),
+            OperatorEntry("mirror.local_y", text="Y Local", icon='MIRROR_Y'),
+            OperatorEntry("mirror.local_z", text="Z Local", icon='MIRROR_Z'),
         )
 
         draw_entries(layout, context, entries)
@@ -427,11 +427,11 @@ class VIEW3D_PT_object_tab_clear(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.location_clear", text="Location", icon="CLEARMOVE", props={"clear_delta": False}),
-            OperatorEntry("object.rotation_clear", text="Rotation", icon="CLEARROTATE", props={"clear_delta": False}),
-            OperatorEntry("object.scale_clear", text="Scale", icon="CLEARSCALE", props={"clear_delta": False}),
+            OperatorEntry("object.location_clear", text="Location", icon='CLEARMOVE', props={"clear_delta": False}),
+            OperatorEntry("object.rotation_clear", text="Rotation", icon='CLEARROTATE', props={"clear_delta": False}),
+            OperatorEntry("object.scale_clear", text="Scale", icon='CLEARSCALE', props={"clear_delta": False}),
             Separator,
-            OperatorEntry("object.origin_clear", text="Origin", icon="CLEARORIGIN"),
+            OperatorEntry("object.origin_clear", text="Origin", icon='CLEARORIGIN'),
         )
 
         draw_entries(layout, context, entries)
@@ -447,26 +447,26 @@ class VIEW3D_PT_object_tab_apply(ToolsystemPanel):
         layout = self.layout
 
         entries = [
-            OperatorEntry("view3d.tb_apply_location", text="Location", icon="APPLYMOVE"),
-            OperatorEntry("view3d.tb_apply_rotate", text="Rotation", icon="APPLYROTATE"),
-            OperatorEntry("view3d.tb_apply_scale", text="Scale", icon="APPLYSCALE"),
-            OperatorEntry("view3d.tb_apply_all", text="All Transforms", icon="APPLYALL"),
-            OperatorEntry("view3d.tb_apply_rotscale", text="Rotation & Scale", icon="APPLY_ROTSCALE"),
+            OperatorEntry("view3d.tb_apply_location", text="Location", icon='APPLYMOVE'),
+            OperatorEntry("view3d.tb_apply_rotate", text="Rotation", icon='APPLYROTATE'),
+            OperatorEntry("view3d.tb_apply_scale", text="Scale", icon='APPLYSCALE'),
+            OperatorEntry("view3d.tb_apply_all", text="All Transforms", icon='APPLYALL'),
+            OperatorEntry("view3d.tb_apply_rotscale", text="Rotation & Scale", icon='APPLY_ROTSCALE'),
             Separator,
-            OperatorEntry("object.visual_transform_apply", text="Visual Transform", icon="VISUALTRANSFORM", text_ctxt=i18n_contexts.default),
-            OperatorEntry("object.duplicates_make_real", icon="MAKEDUPLIREAL"),
-            OperatorEntry("object.parent_inverse_apply", text="Parent Inverse", icon="APPLY_PARENT_INVERSE", text_ctxt=i18n_contexts.default),
-            OperatorEntry("object.visual_geometry_to_objects", icon="VISUAL_GEOMETRY_TO_OBJECTS"),
+            OperatorEntry("object.visual_transform_apply", text="Visual Transform", icon='VISUALTRANSFORM', text_ctxt=i18n_contexts.default),
+            OperatorEntry("object.duplicates_make_real", icon='MAKEDUPLIREAL'),
+            OperatorEntry("object.parent_inverse_apply", text="Parent Inverse", icon='APPLY_PARENT_INVERSE', text_ctxt=i18n_contexts.default),
+            OperatorEntry("object.visual_geometry_to_objects", icon='VISUAL_GEOMETRY_TO_OBJECTS'),
         ]
 
         if context.preferences.addons.get("bfa_default_library"):
             entries.extend((
                 Separator,
-                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Join", icon="JOIN", 
+                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Join", icon='JOIN', 
                     props={"join_on_apply": True, "boolean_on_apply": False, "remesh_on_apply": False}),
-                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Boolean", icon="MOD_BOOLEAN", 
+                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Boolean", icon='MOD_BOOLEAN', 
                     props={"join_on_apply": False, "boolean_on_apply": True, "remesh_on_apply": False}),
-                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Remesh", icon="MOD_REMESH", 
+                OperatorEntry("object.apply_selected_objects", text="Visual Geometry and Remesh", icon='MOD_REMESH', 
                     props={"join_on_apply": False, "boolean_on_apply": False, "remesh_on_apply": True}),
             ))
 
@@ -483,16 +483,16 @@ class VIEW3D_PT_object_tab_apply_delta(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.transforms_to_deltas", text="Location to Deltas", icon="APPLYMOVEDELTA", 
+            OperatorEntry("object.transforms_to_deltas", text="Location to Deltas", icon='APPLYMOVEDELTA', 
                 props={"mode": 'LOC'}, text_ctxt=i18n_contexts.default),
-            OperatorEntry("object.transforms_to_deltas", text="Rotation to Deltas", icon="APPLYROTATEDELTA", 
+            OperatorEntry("object.transforms_to_deltas", text="Rotation to Deltas", icon='APPLYROTATEDELTA', 
                 props={"mode": 'ROT'}, text_ctxt=i18n_contexts.default),
-            OperatorEntry("object.transforms_to_deltas", text="Scale to Deltas", icon="APPLYSCALEDELTA", 
+            OperatorEntry("object.transforms_to_deltas", text="Scale to Deltas", icon='APPLYSCALEDELTA', 
                 props={"mode": 'SCALE'}, text_ctxt=i18n_contexts.default),
-            OperatorEntry("object.transforms_to_deltas", text="All Transforms to Deltas", icon="APPLYALLDELTA", 
+            OperatorEntry("object.transforms_to_deltas", text="All Transforms to Deltas", icon='APPLYALLDELTA', 
                 props={"mode": 'ALL'}, text_ctxt=i18n_contexts.default),
             Separator,
-            OperatorEntry("object.anim_transforms_to_deltas", icon="APPLYANIDELTA"),
+            OperatorEntry("object.anim_transforms_to_deltas", icon='APPLYANIDELTA'),
         )
 
         draw_entries(layout, context, entries)
@@ -513,15 +513,15 @@ class VIEW3D_PT_object_tab_snap(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon="SELECTIONTOCURSOR", props={"use_offset": False}),
-            OperatorEntry("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon="SELECTIONTOCURSOROFFSET", props={"use_offset": True}),
-            OperatorEntry("view3d.snap_selected_to_active", text="Selection to Active", icon="SELECTIONTOACTIVE"),
-            OperatorEntry("view3d.snap_selected_to_grid", text="Selection to Grid", icon="SELECTIONTOGRID"),
+            OperatorEntry("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon='SELECTIONTOCURSOR', props={"use_offset": False}),
+            OperatorEntry("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon='SELECTIONTOCURSOROFFSET', props={"use_offset": True}),
+            OperatorEntry("view3d.snap_selected_to_active", text="Selection to Active", icon='SELECTIONTOACTIVE'),
+            OperatorEntry("view3d.snap_selected_to_grid", text="Selection to Grid", icon='SELECTIONTOGRID'),
             Separator,
-            OperatorEntry("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon="CURSORTOSELECTION"),
-            OperatorEntry("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon="CURSORTOCENTER"),
-            OperatorEntry("view3d.snap_cursor_to_active", text="Cursor to Active", icon="CURSORTOACTIVE"),
-            OperatorEntry("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon="CURSORTOGRID"),
+            OperatorEntry("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon='CURSORTOSELECTION'),
+            OperatorEntry("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon='CURSORTOCENTER'),
+            OperatorEntry("view3d.snap_cursor_to_active", text="Cursor to Active", icon='CURSORTOACTIVE'),
+            OperatorEntry("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon='CURSORTOGRID'),
         )
 
         draw_entries(layout, context, entries)
@@ -542,9 +542,9 @@ class VIEW3D_PT_object_tab_shading(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.shade_smooth", icon="SHADING_SMOOTH"),
-            OperatorEntry("object.shade_flat", icon="SHADING_FLAT"),
-            OperatorEntry("object.shade_smooth_by_angle", text="Shade Smooth by Angle", icon="NORMAL_SMOOTH"),
+            OperatorEntry("object.shade_smooth", icon='SHADING_SMOOTH'),
+            OperatorEntry("object.shade_flat", icon='SHADING_FLAT'),
+            OperatorEntry("object.shade_smooth_by_angle", text="Shade Smooth by Angle", icon='NORMAL_SMOOTH'),
         )
 
         draw_entries(layout, context, entries)
@@ -566,8 +566,8 @@ class VIEW3D_PT_utility_tab_parent(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.parent_set", icon="PARENT_SET"),
-            OperatorEntry("object.parent_clear", icon="PARENT_CLEAR"),
+            OperatorEntry("object.parent_set", icon='PARENT_SET'),
+            OperatorEntry("object.parent_clear", icon='PARENT_CLEAR'),
         )
 
         draw_entries(layout, context, entries)
@@ -588,11 +588,11 @@ class VIEW3D_PT_utility_tab_object_data(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.make_single_user", icon="MAKE_SINGLE_USER"),
-            MenuEntry("VIEW3D_MT_make_links", icon="LINK_DATA"),
+            OperatorEntry("object.make_single_user", icon='MAKE_SINGLE_USER'),
+            MenuEntry("VIEW3D_MT_make_links", icon='LINK_DATA'),
             Separator,
-            OperatorEntry("object.make_local", icon="MAKE_LOCAL"),
-            OperatorEntry("object.make_override_library", icon="LIBRARY_DATA_OVERRIDE"),
+            OperatorEntry("object.make_local", icon='MAKE_LOCAL'),
+            OperatorEntry("object.make_override_library", icon='LIBRARY_DATA_OVERRIDE'),
         )
 
         draw_entries(layout, context, entries)
@@ -613,8 +613,8 @@ class VIEW3D_PT_utility_tab_assets(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("asset.mark", icon="ASSET_MANAGER"),
-            OperatorEntry("asset.clear", icon="CLEAR", props={"set_fake_user": False}),
+            OperatorEntry("asset.mark", icon='ASSET_MANAGER'),
+            OperatorEntry("asset.clear", icon='CLEAR', props={"set_fake_user": False}),
             create_wizard_entry(context.object, "Open Asset Wizard", 'WIZARD'),
         )
 
@@ -636,9 +636,9 @@ class VIEW3D_PT_utility_tab_constraints(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.constraint_add_with_targets", icon="CONSTRAINT_DATA"),
-            OperatorEntry("object.constraints_copy", icon="COPYDOWN"),
-            OperatorEntry("object.constraints_clear", icon="CLEAR_CONSTRAINT"),
+            OperatorEntry("object.constraint_add_with_targets", icon='CONSTRAINT_DATA'),
+            OperatorEntry("object.constraints_copy", icon='COPYDOWN'),
+            OperatorEntry("object.constraints_clear", icon='CLEAR_CONSTRAINT'),
         )
 
         draw_entries(layout, context, entries)
@@ -659,7 +659,7 @@ class VIEW3D_PT_utility_tab_collection(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("object.move_to_collection", icon="GROUP"),
+            OperatorEntry("object.move_to_collection", icon='GROUP'),
         )
 
         draw_entries(layout, context, entries)
@@ -686,19 +686,19 @@ class VIEW3D_PT_utility_tab_convert(ToolsystemPanel):
         if is_old_gpencil:
             entries = (
                 # TODO - Remove legacy operators
-                OperatorEntry("gpencil.convert", text="Path", icon="CURVE_PATH", props={"type": 'PATH'}),
-                OperatorEntry("gpencil.convert", text="Bézier Curve", icon="OUTLINER_OB_CURVE", props={"type": 'CURVE'}),
-                OperatorEntry("gpencil.convert", text="Polygon Curve", icon="MESH_DATA", props={"type": 'POLY'}),
-                OperatorEntry("curves.convert_to_particle_system", text="Particle System", icon="PARTICLE_DATA", poll=is_hair),
+                OperatorEntry("gpencil.convert", text="Path", icon='CURVE_PATH', props={"type": 'PATH'}),
+                OperatorEntry("gpencil.convert", text="Bézier Curve", icon='OUTLINER_OB_CURVE', props={"type": 'CURVE'}),
+                OperatorEntry("gpencil.convert", text="Polygon Curve", icon='MESH_DATA', props={"type": 'POLY'}),
+                OperatorEntry("curves.convert_to_particle_system", text="Particle System", icon='PARTICLE_DATA', poll=is_hair),
             )
         else:
             entries = (
-                OperatorEntry("object.convert", text="Mesh", icon="OUTLINER_OB_MESH", props={"target": 'MESH'}),
-                OperatorEntry("object.convert", text="Curve", icon="OUTLINER_OB_CURVE", props={"target": 'CURVE'}),
-                OperatorEntry("object.convert", text="Curves", icon="OUTLINER_OB_CURVES", props={"target": 'CURVES'}),
-                OperatorEntry("object.convert", text="Point Cloud", icon="OUTLINER_OB_POINTCLOUD", props={"target": 'POINTCLOUD'}),
-                OperatorEntry("object.convert", text="Grease Pencil", icon="OUTLINER_OB_GREASEPENCIL", props={"target": 'GREASEPENCIL'}),
-                OperatorEntry("curves.convert_to_particle_system", text="Particle System", icon="PARTICLE_DATA", poll=is_hair),
+                OperatorEntry("object.convert", text="Mesh", icon='OUTLINER_OB_MESH', props={"target": 'MESH'}),
+                OperatorEntry("object.convert", text="Curve", icon='OUTLINER_OB_CURVE', props={"target": 'CURVE'}),
+                OperatorEntry("object.convert", text="Curves", icon='OUTLINER_OB_CURVES', props={"target": 'CURVES'}),
+                OperatorEntry("object.convert", text="Point Cloud", icon='OUTLINER_OB_POINTCLOUD', props={"target": 'POINTCLOUD'}),
+                OperatorEntry("object.convert", text="Grease Pencil", icon='OUTLINER_OB_GREASEPENCIL', props={"target": 'GREASEPENCIL'}),
+                OperatorEntry("curves.convert_to_particle_system", text="Particle System", icon='PARTICLE_DATA', poll=is_hair),
             )
 
         draw_entries(layout, context, entries)
@@ -728,13 +728,13 @@ class VIEW3D_PT_mesh_tab_merge(ToolsystemPanel):
                     last_sel_is_vert = isinstance(mesh.select_history[-1], bmesh.types.BMVert)
 
         entries = (
-            OperatorEntry("mesh.merge", text="At Center", icon="MERGE_CENTER", props={"type": 'CENTER'}),
-            OperatorEntry("mesh.merge", text="At Cursor", icon="MERGE_CURSOR", props={"type": 'CURSOR'}),
-            OperatorEntry("mesh.merge", text="At First", icon="MERGE_AT_FIRST", props={"type": 'FIRST'}, poll=first_sel_is_vert),
-            OperatorEntry("mesh.merge", text="At Last", icon="MERGE_AT_LAST", props={"type": 'LAST'}, poll=last_sel_is_vert),
-            OperatorEntry("mesh.merge", text="Collapse", icon="MERGE", props={"type": 'COLLAPSE'}),
+            OperatorEntry("mesh.merge", text="At Center", icon='MERGE_CENTER', props={"type": 'CENTER'}),
+            OperatorEntry("mesh.merge", text="At Cursor", icon='MERGE_CURSOR', props={"type": 'CURSOR'}),
+            OperatorEntry("mesh.merge", text="At First", icon='MERGE_AT_FIRST', props={"type": 'FIRST'}, poll=first_sel_is_vert),
+            OperatorEntry("mesh.merge", text="At Last", icon='MERGE_AT_LAST', props={"type": 'LAST'}, poll=last_sel_is_vert),
+            OperatorEntry("mesh.merge", text="Collapse", icon='MERGE', props={"type": 'COLLAPSE'}),
             Separator,
-            OperatorEntry("mesh.remove_doubles", text="By Distance", icon="REMOVE_DOUBLES"),
+            OperatorEntry("mesh.remove_doubles", text="By Distance", icon='REMOVE_DOUBLES'),
         )
 
         draw_entries(layout, context, entries)
@@ -750,9 +750,9 @@ class VIEW3D_PT_mesh_tab_split(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mesh.split", text="Selection", icon="SPLIT"),
-            OperatorEntry("mesh.edge_split", text="Faces by Edges", icon="SPLITEDGE", props={"type":'EDGE'}),
-            OperatorEntry("mesh.edge_split", text="Faces/Edges by Vertices", icon="SPLIT_BYVERTICES", props={"type":'VERT'}),
+            OperatorEntry("mesh.split", text="Selection", icon='SPLIT'),
+            OperatorEntry("mesh.edge_split", text="Faces by Edges", icon='SPLITEDGE', props={"type":'EDGE'}),
+            OperatorEntry("mesh.edge_split", text="Faces/Edges by Vertices", icon='SPLIT_BYVERTICES', props={"type":'VERT'}),
         )
 
         draw_entries(layout, context, entries)
@@ -768,9 +768,9 @@ class VIEW3D_PT_mesh_tab_separate(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mesh.separate", text="Selection", icon="SEPARATE", props={"type": 'SELECTED'}),
-            OperatorEntry("mesh.separate", text="By Material", icon="SEPARATE_BYMATERIAL", props={"type": 'MATERIAL'}),
-            OperatorEntry("mesh.separate", text="By Loose Parts", icon="SEPARATE_LOOSE", props={"type": 'LOOSE'}),
+            OperatorEntry("mesh.separate", text="Selection", icon='SEPARATE', props={"type": 'SELECTED'}),
+            OperatorEntry("mesh.separate", text="By Material", icon='SEPARATE_BYMATERIAL', props={"type": 'MATERIAL'}),
+            OperatorEntry("mesh.separate", text="By Loose Parts", icon='SEPARATE_LOOSE', props={"type": 'LOOSE'}),
         )
 
         draw_entries(layout, context, entries)
@@ -789,14 +789,14 @@ class VIEW3D_PT_mesh_tab_tools(ToolsystemPanel):
         with_bullet = bpy.app.build_options.bullet
 
         entries = (
-            OperatorEntry("mesh.extrude_repeat", icon="REPEAT"),
-            OperatorEntry("mesh.spin", icon="SPIN", props={"angle": pi * 2}),
+            OperatorEntry("mesh.extrude_repeat", icon='REPEAT'),
+            OperatorEntry("mesh.spin", icon='SPIN', props={"angle": pi * 2}),
             Separator,
-            OperatorEntry("mesh.knife_project", icon="KNIFE_PROJECT"),
-            OperatorEntry("mesh.convex_hull", icon="CONVEXHULL", poll=with_bullet),
+            OperatorEntry("mesh.knife_project", icon='KNIFE_PROJECT'),
+            OperatorEntry("mesh.convex_hull", icon='CONVEXHULL', poll=with_bullet),
             Separator,
-            OperatorEntry("mesh.symmetrize", icon="SYMMETRIZE", text="Symmetrize"),
-            OperatorEntry("mesh.symmetry_snap", icon="SNAP_SYMMETRY"),
+            OperatorEntry("mesh.symmetrize", icon='SYMMETRIZE', text="Symmetrize"),
+            OperatorEntry("mesh.symmetry_snap", icon='SNAP_SYMMETRY'),
         )
 
         draw_entries(layout, context, entries)
@@ -812,9 +812,9 @@ class VIEW3D_PT_mesh_tab_normals(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mesh.normals_make_consistent", text="Recalculate Outside", icon="RECALC_NORMALS", props={"inside": False}),
-            OperatorEntry("mesh.normals_make_consistent", text="Recalculate Inside", icon="RECALC_NORMALS_INSIDE", props={"inside": True}),
-            OperatorEntry("mesh.flip_normals", text="Flip", icon="FLIP_NORMALS"),
+            OperatorEntry("mesh.normals_make_consistent", text="Recalculate Outside", icon='RECALC_NORMALS', props={"inside": False}),
+            OperatorEntry("mesh.normals_make_consistent", text="Recalculate Inside", icon='RECALC_NORMALS_INSIDE', props={"inside": True}),
+            OperatorEntry("mesh.flip_normals", text="Flip", icon='FLIP_NORMALS'),
         )
 
         draw_entries(layout, context, entries)
@@ -830,14 +830,14 @@ class VIEW3D_PT_mesh_tab_shading(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mesh.faces_shade_smooth", icon="SHADING_SMOOTH"),
-            OperatorEntry("mesh.faces_shade_flat", icon="SHADING_FLAT"),
+            OperatorEntry("mesh.faces_shade_smooth", icon='SHADING_SMOOTH'),
+            OperatorEntry("mesh.faces_shade_flat", icon='SHADING_FLAT'),
             Separator,
-            OperatorEntry("mesh.mark_sharp", text="Smooth Edges", icon="SHADING_EDGE_SMOOTH", props={"clear": True}),
-            OperatorEntry("mesh.mark_sharp", text="Sharp Edges", icon="SHADING_EDGE_SHARP"),
+            OperatorEntry("mesh.mark_sharp", text="Smooth Edges", icon='SHADING_EDGE_SMOOTH', props={"clear": True}),
+            OperatorEntry("mesh.mark_sharp", text="Sharp Edges", icon='SHADING_EDGE_SHARP'),
             Separator,
-            OperatorEntry("mesh.mark_sharp", text="Smooth Vertices", icon="SHADING_VERT_SMOOTH", props={"use_verts": True, "clear": True}),
-            OperatorEntry("mesh.mark_sharp", text="Sharp Vertices", icon="SHADING_VERT_SHARP", props={"use_verts": True}),
+            OperatorEntry("mesh.mark_sharp", text="Smooth Vertices", icon='SHADING_VERT_SMOOTH', props={"use_verts": True, "clear": True}),
+            OperatorEntry("mesh.mark_sharp", text="Sharp Vertices", icon='SHADING_VERT_SHARP', props={"use_verts": True}),
         )
 
         draw_entries(layout, context, entries)
@@ -853,16 +853,16 @@ class VIEW3D_PT_mesh_tab_cleanup(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mesh.delete_loose", icon="DELETE"),
+            OperatorEntry("mesh.delete_loose", icon='DELETE'),
             Separator,
-            OperatorEntry("mesh.decimate", icon="DECIMATE"),
-            OperatorEntry("mesh.dissolve_degenerate", icon="DEGENERATE_DISSOLVE"),
-            OperatorEntry("mesh.dissolve_limited", icon="DISSOLVE_LIMITED"),
-            OperatorEntry("mesh.face_make_planar", icon="MAKE_PLANAR"),
+            OperatorEntry("mesh.decimate", icon='DECIMATE'),
+            OperatorEntry("mesh.dissolve_degenerate", icon='DEGENERATE_DISSOLVE'),
+            OperatorEntry("mesh.dissolve_limited", icon='DISSOLVE_LIMITED'),
+            OperatorEntry("mesh.face_make_planar", icon='MAKE_PLANAR'),
             Separator,
-            OperatorEntry("mesh.vert_connect_nonplanar", icon="SPLIT_NONPLANAR"),
-            OperatorEntry("mesh.vert_connect_concave", icon="SPLIT_CONCAVE"),
-            OperatorEntry("mesh.fill_holes", icon="FILL_HOLE"),
+            OperatorEntry("mesh.vert_connect_nonplanar", icon='SPLIT_NONPLANAR'),
+            OperatorEntry("mesh.vert_connect_concave", icon='SPLIT_CONCAVE'),
+            OperatorEntry("mesh.fill_holes", icon='FILL_HOLE'),
         )
 
         draw_entries(layout, context, entries)
@@ -878,14 +878,14 @@ class VIEW3D_PT_mesh_tab_dissolve(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mesh.dissolve_verts", icon="DISSOLVE_VERTS"),
-            OperatorEntry("mesh.dissolve_edges", icon="DISSOLVE_EDGES"),
-            OperatorEntry("mesh.dissolve_faces", icon="DISSOLVE_FACES"),
+            OperatorEntry("mesh.dissolve_verts", icon='DISSOLVE_VERTS'),
+            OperatorEntry("mesh.dissolve_edges", icon='DISSOLVE_EDGES'),
+            OperatorEntry("mesh.dissolve_faces", icon='DISSOLVE_FACES'),
             Separator,
-            OperatorEntry("mesh.dissolve_limited", icon="DISSOLVE_LIMITED"),
-            OperatorEntry("mesh.dissolve_mode", icon="DISSOLVE_SELECTION"),
+            OperatorEntry("mesh.dissolve_limited", icon='DISSOLVE_LIMITED'),
+            OperatorEntry("mesh.dissolve_mode", icon='DISSOLVE_SELECTION'),
             Separator,
-            OperatorEntry("mesh.edge_collapse", icon="EDGE_COLLAPSE"),
+            OperatorEntry("mesh.edge_collapse", icon='EDGE_COLLAPSE'),
         )
 
         draw_entries(layout, context, entries)
@@ -901,20 +901,20 @@ class VIEW3D_PT_vertex_tab_vertex(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mesh.edge_face_add", text="Make Edge/Face", icon="MAKE_EDGEFACE"),
-            OperatorEntry("mesh.vert_connect_path", text="Connect Vertex Path", icon="VERTEXCONNECTPATH"),
-            OperatorEntry("mesh.vert_connect", text="Connect Vertex Pairs", icon="VERTEXCONNECT"),
+            OperatorEntry("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE'),
+            OperatorEntry("mesh.vert_connect_path", text="Connect Vertex Path", icon='VERTEXCONNECTPATH'),
+            OperatorEntry("mesh.vert_connect", text="Connect Vertex Pairs", icon='VERTEXCONNECT'),
             Separator,
             SetOperatorContext('EXEC_REGION_WIN'),
-            OperatorEntry("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon="SMOOTH_LAPLACIAN"),
+            OperatorEntry("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon='SMOOTH_LAPLACIAN'),
             SetOperatorContext('INVOKE_REGION_WIN'),
             Separator,
-            OperatorEntry("transform.vert_crease", icon="VERTEX_CREASE"),
+            OperatorEntry("transform.vert_crease", icon='VERTEX_CREASE'),
             Separator,
-            OperatorEntry("mesh.blend_from_shape", icon="BLENDFROMSHAPE"),
-            OperatorEntry("mesh.shape_propagate_to_all", text="Propagate to Shapes", icon="SHAPEPROPAGATE"),
+            OperatorEntry("mesh.blend_from_shape", icon='BLENDFROMSHAPE'),
+            OperatorEntry("mesh.shape_propagate_to_all", text="Propagate to Shapes", icon='SHAPEPROPAGATE'),
             Separator,
-            OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
+            OperatorEntry("object.vertex_parent_set", icon='VERTEX_PARENT'),
         )
 
         draw_entries(layout, context, entries)
@@ -931,30 +931,30 @@ class VIEW3D_PT_edge_tab_edge(ToolsystemPanel):
 
         entries = [
             SetOperatorContext('INVOKE_REGION_WIN'),
-            OperatorEntry("mesh.bridge_edge_loops", icon="BRIDGE_EDGELOOPS"),
-            OperatorEntry("mesh.screw", icon="MOD_SCREW"),
+            OperatorEntry("mesh.bridge_edge_loops", icon='BRIDGE_EDGELOOPS'),
+            OperatorEntry("mesh.screw", icon='MOD_SCREW'),
             Separator,
-            OperatorEntry("mesh.subdivide", icon="SUBDIVIDE_EDGES"),
-            OperatorEntry("mesh.subdivide_edgering", icon="SUBDIV_EDGERING"),
-            OperatorEntry("mesh.unsubdivide", icon="UNSUBDIVIDE"),
+            OperatorEntry("mesh.subdivide", icon='SUBDIVIDE_EDGES'),
+            OperatorEntry("mesh.subdivide_edgering", icon='SUBDIV_EDGERING'),
+            OperatorEntry("mesh.unsubdivide", icon='UNSUBDIVIDE'),
             Separator,
-            OperatorEntry("mesh.edge_rotate", text="Rotate Edge CW", icon="ROTATECW", props={"use_ccw": False}),
-            OperatorEntry("mesh.edge_rotate", text="Rotate Edge CCW", icon="ROTATECCW", props={"use_ccw": True}),
+            OperatorEntry("mesh.edge_rotate", text="Rotate Edge CW", icon='ROTATECW', props={"use_ccw": False}),
+            OperatorEntry("mesh.edge_rotate", text="Rotate Edge CCW", icon='ROTATECCW', props={"use_ccw": True}),
             Separator,
-            OperatorEntry("transform.edge_crease", icon="CREASE"),
-            OperatorEntry("transform.edge_bevelweight", icon="BEVEL"),
+            OperatorEntry("transform.edge_crease", icon='CREASE'),
+            OperatorEntry("transform.edge_bevelweight", icon='BEVEL'),
             Separator,
-            OperatorEntry("mesh.mark_sharp", icon="MARKSHARPEDGES"),
-            OperatorEntry("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES", props={"clear": True}),
-            OperatorEntry("mesh.mark_sharp", text="Mark Sharp from Vertices", icon="MARKSHARPVERTS", props={"use_verts": True}),
-            OperatorEntry("mesh.mark_sharp", text="Clear Sharp from Vertices", icon="CLEARSHARPVERTS", props={"use_verts": True, "clear": True}),
+            OperatorEntry("mesh.mark_sharp", icon='MARKSHARPEDGES'),
+            OperatorEntry("mesh.mark_sharp", text="Clear Sharp", icon='CLEARSHARPEDGES', props={"clear": True}),
+            OperatorEntry("mesh.mark_sharp", text="Mark Sharp from Vertices", icon='MARKSHARPVERTS', props={"use_verts": True}),
+            OperatorEntry("mesh.mark_sharp", text="Clear Sharp from Vertices", icon='CLEARSHARPVERTS', props={"use_verts": True, "clear": True}),
         ]
 
         if bpy.app.build_options.freestyle:
             entries.extend((
                 Separator,
-                OperatorEntry("mesh.mark_freestyle_edge", icon="MARK_FS_EDGE", props={"clear": False}),
-                OperatorEntry("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon="CLEAR_FS_EDGE", props={"clear": True}),
+                OperatorEntry("mesh.mark_freestyle_edge", icon='MARK_FS_EDGE', props={"clear": False}),
+                OperatorEntry("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon='CLEAR_FS_EDGE', props={"clear": True}),
             ))
 
         draw_entries(layout, context, entries)
@@ -971,21 +971,21 @@ class VIEW3D_PT_face_tab_face(ToolsystemPanel):
 
         entries = (
             SetOperatorContext('INVOKE_REGION_WIN'),
-            OperatorEntry("mesh.poke", icon="POKEFACES"),
+            OperatorEntry("mesh.poke", icon='POKEFACES'),
             Separator,
-            OperatorEntry("mesh.quads_convert_to_tris", icon="TRIANGULATE", props={"quad_method": 'BEAUTY', "ngon_method": 'BEAUTY'}),
-            OperatorEntry("mesh.tris_convert_to_quads", icon="TRISTOQUADS"),
-            OperatorEntry("mesh.solidify", text="Solidify Faces", icon="SOLIDIFY"),
-            OperatorEntry("mesh.wireframe", icon="WIREFRAME"),
+            OperatorEntry("mesh.quads_convert_to_tris", icon='TRIANGULATE', props={"quad_method": 'BEAUTY', "ngon_method": 'BEAUTY'}),
+            OperatorEntry("mesh.tris_convert_to_quads", icon='TRISTOQUADS'),
+            OperatorEntry("mesh.solidify", text="Solidify Faces", icon='SOLIDIFY'),
+            OperatorEntry("mesh.wireframe", icon='WIREFRAME'),
             Separator,
-            OperatorEntry("mesh.fill", icon="FILL"),
-            OperatorEntry("mesh.fill_grid", icon="GRIDFILL"),
-            OperatorEntry("mesh.beautify_fill", icon="BEAUTIFY"),
+            OperatorEntry("mesh.fill", icon='FILL'),
+            OperatorEntry("mesh.fill_grid", icon='GRIDFILL'),
+            OperatorEntry("mesh.beautify_fill", icon='BEAUTIFY'),
             Separator,
-            OperatorEntry("mesh.intersect", icon="INTERSECT"),
-            OperatorEntry("mesh.intersect_boolean", icon="BOOLEAN_INTERSECT"),
+            OperatorEntry("mesh.intersect", icon='INTERSECT'),
+            OperatorEntry("mesh.intersect_boolean", icon='BOOLEAN_INTERSECT'),
             Separator,
-            OperatorEntry("mesh.face_split_by_edges", icon="SPLITBYEDGES"),
+            OperatorEntry("mesh.face_split_by_edges", icon='SPLITBYEDGES'),
         )
 
         draw_entries(layout, context, entries)
@@ -1001,28 +1001,28 @@ class VIEW3D_PT_uv_tab_uv(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("uv.unwrap", text="Unwrap ABF", icon="UNWRAP_ABF", props={"method": 'ANGLE_BASED'}),
-            OperatorEntry("uv.unwrap", text="Unwrap Conformal", icon="UNWRAP_LSCM", props={"method": 'CONFORMAL'}),
-            OperatorEntry("uv.unwrap", text="Unwrap Minimum Stretch", icon="UNWRAP_MINSTRETCH", props={"method": 'MINIMUM_STRETCH'}),
+            OperatorEntry("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF', props={"method": 'ANGLE_BASED'}),
+            OperatorEntry("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM', props={"method": 'CONFORMAL'}),
+            OperatorEntry("uv.unwrap", text="Unwrap Minimum Stretch", icon='UNWRAP_MINSTRETCH', props={"method": 'MINIMUM_STRETCH'}),
             Separator,
             SetOperatorContext('INVOKE_DEFAULT'),
-            OperatorEntry("uv.smart_project", icon="MOD_UVPROJECT"),
-            OperatorEntry("uv.lightmap_pack", icon="LIGHTMAPPACK"),
-            OperatorEntry("uv.follow_active_quads", icon="FOLLOWQUADS"),
+            OperatorEntry("uv.smart_project", icon='MOD_UVPROJECT'),
+            OperatorEntry("uv.lightmap_pack", icon='LIGHTMAPPACK'),
+            OperatorEntry("uv.follow_active_quads", icon='FOLLOWQUADS'),
             Separator,
             SetOperatorContext('EXEC_REGION_WIN'),
-            OperatorEntry("uv.cube_project", icon="CUBEPROJECT"),
-            OperatorEntry("uv.cylinder_project", icon="CYLINDERPROJECT"),
-            OperatorEntry("uv.sphere_project", icon="SPHEREPROJECT"),
+            OperatorEntry("uv.cube_project", icon='CUBEPROJECT'),
+            OperatorEntry("uv.cylinder_project", icon='CYLINDERPROJECT'),
+            OperatorEntry("uv.sphere_project", icon='SPHEREPROJECT'),
             Separator,
             SetOperatorContext('INVOKE_REGION_WIN'),
-            OperatorEntry("uv.project_from_view", icon="PROJECTFROMVIEW", props={"scale_to_bounds": False}),
-            OperatorEntry("uv.project_from_view", text="Project from View (Bounds)", icon="PROJECTFROMVIEW_BOUNDS", props={"scale_to_bounds": True}),
+            OperatorEntry("uv.project_from_view", icon='PROJECTFROMVIEW', props={"scale_to_bounds": False}),
+            OperatorEntry("uv.project_from_view", text="Project from View (Bounds)", icon='PROJECTFROMVIEW_BOUNDS', props={"scale_to_bounds": True}),
             Separator,
-            OperatorEntry("mesh.mark_seam", icon="MARK_SEAM", props={"clear": False}),
-            OperatorEntry("mesh.clear_seam", text="Clear Seam", icon="CLEAR_SEAM"),
+            OperatorEntry("mesh.mark_seam", icon='MARK_SEAM', props={"clear": False}),
+            OperatorEntry("mesh.clear_seam", text="Clear Seam", icon='CLEAR_SEAM'),
             Separator,
-            OperatorEntry("uv.reset", icon="RESET"),
+            OperatorEntry("uv.reset", icon='RESET'),
         )
 
         draw_entries(layout, context, entries)
@@ -1074,7 +1074,7 @@ class VIEW3D_PT_sculpt_tab_transform(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("sculpt.mesh_filter", text="Sphere", icon="SPHERE", props={"type": 'SPHERE'}),
+            OperatorEntry("sculpt.mesh_filter", text="Sphere", icon='SPHERE', props={"type": 'SPHERE'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1090,20 +1090,20 @@ class VIEW3D_PT_sculpt_tab_sculpt(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("paint.hide_show", text="Box Hide", icon="BOX_HIDE", props={"action": 'HIDE'}),
-            OperatorEntry("paint.hide_show", text="Box Show", icon="BOX_SHOW", props={"action": 'SHOW'}),
-            OperatorEntry("paint.hide_show_lasso_gesture", text="Lasso Hide", icon="LASSO_HIDE", props={"action": 'HIDE'}),
-            OperatorEntry("paint.hide_show_lasso_gesture", text="Lasso Show", icon="LASSO_SHOW", props={"action": 'SHOW'}),
-            OperatorEntry("sculpt.trim_box_gesture", text="Box Trim", icon="BOX_TRIM", props={"trim_mode": 'DIFFERENCE'}),
-            OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Trim", icon="LASSO_TRIM", props={"trim_mode": 'DIFFERENCE'}),
-            OperatorEntry("sculpt.trim_box_gesture", text="Box Add", icon="BOX_ADD", props={"trim_mode": 'JOIN'}),
-            OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD", props={"trim_mode": 'JOIN'}),
+            OperatorEntry("paint.hide_show", text="Box Hide", icon='BOX_HIDE', props={"action": 'HIDE'}),
+            OperatorEntry("paint.hide_show", text="Box Show", icon='BOX_SHOW', props={"action": 'SHOW'}),
+            OperatorEntry("paint.hide_show_lasso_gesture", text="Lasso Hide", icon='LASSO_HIDE', props={"action": 'HIDE'}),
+            OperatorEntry("paint.hide_show_lasso_gesture", text="Lasso Show", icon='LASSO_SHOW', props={"action": 'SHOW'}),
+            OperatorEntry("sculpt.trim_box_gesture", text="Box Trim", icon='BOX_TRIM', props={"trim_mode": 'DIFFERENCE'}),
+            OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Trim", icon='LASSO_TRIM', props={"trim_mode": 'DIFFERENCE'}),
+            OperatorEntry("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD', props={"trim_mode": 'JOIN'}),
+            OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD', props={"trim_mode": 'JOIN'}),
             Separator,
-            OperatorEntry("sculpt.project_line_gesture", text="Line Project", icon="LINE_PROJECT"),
-            OperatorEntry("sculpt.face_set_edit", text="Fair Positions", icon="POSITION", props={"mode": 'FAIR_POSITIONS'}),
-            OperatorEntry("sculpt.face_set_edit", text="Fair Tangency", icon="NODE_TANGENT", props={"mode": 'FAIR_TANGENCY'}),
+            OperatorEntry("sculpt.project_line_gesture", text="Line Project", icon='LINE_PROJECT'),
+            OperatorEntry("sculpt.face_set_edit", text="Fair Positions", icon='POSITION', props={"mode": 'FAIR_POSITIONS'}),
+            OperatorEntry("sculpt.face_set_edit", text="Fair Tangency", icon='NODE_TANGENT', props={"mode": 'FAIR_TANGENCY'}),
             Separator,
-            OperatorEntry("sculpt.sample_color", text="Sample Color", icon="EYEDROPPER"),
+            OperatorEntry("sculpt.sample_color", text="Sample Color", icon='EYEDROPPER'),
         )
 
         draw_entries(layout, context, entries)
@@ -1119,15 +1119,15 @@ class VIEW3D_PT_sculpt_tab_filters(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("sculpt.mesh_filter", text="Smooth", icon="PARTICLEBRUSH_SMOOTH", props={"type": 'SMOOTH'}),
-            OperatorEntry("sculpt.mesh_filter", text="Surface Smooth", icon="SURFACE_SMOOTH", props={"type": 'SURFACE_SMOOTH'}),
-            OperatorEntry("sculpt.mesh_filter", text="Inflate", icon="INFLATE", props={"type": 'INFLATE'}),
-            OperatorEntry("sculpt.mesh_filter", text="Relax Topology", icon="RELAX_TOPOLOGY", props={"type": 'RELAX'}),
-            OperatorEntry("sculpt.mesh_filter", text="Relax Face Sets", icon="RELAX_FACE_SETS", props={"type": 'RELAX_FACE_SETS'}),
-            OperatorEntry("sculpt.mesh_filter", text="Sharpen", icon="SHARPEN", props={"type": 'SHARPEN'}),
-            OperatorEntry("sculpt.mesh_filter", text="Enhance Details", icon="ENHANCE", props={"type": 'ENHANCE_DETAILS'}),
-            OperatorEntry("sculpt.mesh_filter", text="Erase Multires Displacement", icon="DELETE", props={"type": 'ERASE_DISPLACEMENT'}),
-            OperatorEntry("sculpt.mesh_filter", text="Randomize", icon="RANDOMIZE", props={"type": 'RANDOM'}),
+            OperatorEntry("sculpt.mesh_filter", text="Smooth", icon='PARTICLEBRUSH_SMOOTH', props={"type": 'SMOOTH'}),
+            OperatorEntry("sculpt.mesh_filter", text="Surface Smooth", icon='SURFACE_SMOOTH', props={"type": 'SURFACE_SMOOTH'}),
+            OperatorEntry("sculpt.mesh_filter", text="Inflate", icon='INFLATE', props={"type": 'INFLATE'}),
+            OperatorEntry("sculpt.mesh_filter", text="Relax Topology", icon='RELAX_TOPOLOGY', props={"type": 'RELAX'}),
+            OperatorEntry("sculpt.mesh_filter", text="Relax Face Sets", icon='RELAX_FACE_SETS', props={"type": 'RELAX_FACE_SETS'}),
+            OperatorEntry("sculpt.mesh_filter", text="Sharpen", icon='SHARPEN', props={"type": 'SHARPEN'}),
+            OperatorEntry("sculpt.mesh_filter", text="Enhance Details", icon='ENHANCE', props={"type": 'ENHANCE_DETAILS'}),
+            OperatorEntry("sculpt.mesh_filter", text="Erase Multires Displacement", icon='DELETE', props={"type": 'ERASE_DISPLACEMENT'}),
+            OperatorEntry("sculpt.mesh_filter", text="Randomize", icon='RANDOMIZE', props={"type": 'RANDOM'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1145,11 +1145,11 @@ class VIEW3D_PT_sculpt_tab_set_pivot(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Origin", icon="PIVOT_TO_ORIGIN", props={"mode": 'ORIGIN'}),
-            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Unmasked", icon="PIVOT_TO_UNMASKED", props={"mode": 'UNMASKED'}),
-            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Mask Border", icon="PIVOT_TO_MASKBORDER", props={"mode": 'BORDER'}),
-            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Active Vertex", icon="PIVOT_TO_ACTIVE_VERT", props={"mode": 'ACTIVE'}),
-            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Surface Under Cursor", icon="PIVOT_TO_SURFACE", props={"mode": 'SURFACE'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Origin", icon='PIVOT_TO_ORIGIN', props={"mode": 'ORIGIN'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Unmasked", icon='PIVOT_TO_UNMASKED', props={"mode": 'UNMASKED'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Mask Border", icon='PIVOT_TO_MASKBORDER', props={"mode": 'BORDER'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Active Vertex", icon='PIVOT_TO_ACTIVE_VERT', props={"mode": 'ACTIVE'}),
+            OperatorEntry("sculpt.set_pivot_position", text="Pivot to Surface Under Cursor", icon='PIVOT_TO_SURFACE', props={"mode": 'SURFACE'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1165,29 +1165,29 @@ class VIEW3D_PT_mask_tab_mask(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("mask.flood_fill_invert", text="Invert Mask", icon="INVERT_MASK"),
-            OperatorEntry("mask.flood_fill_fill", text="Fill Mask", icon="FILL_MASK"),
-            OperatorEntry("mask.flood_fill_clear", text="Clear Mask", icon="CLEAR_MASK"),
+            OperatorEntry("mask.flood_fill_invert", text="Invert Mask", icon='INVERT_MASK'),
+            OperatorEntry("mask.flood_fill_fill", text="Fill Mask", icon='FILL_MASK'),
+            OperatorEntry("mask.flood_fill_clear", text="Clear Mask", icon='CLEAR_MASK'),
             Separator,
-            OperatorEntry("sculpt.mask_filter", text='Smooth Mask', icon="PARTICLEBRUSH_SMOOTH", props={"filter_type": 'SMOOTH', "auto_iteration_count": True}),
-            OperatorEntry("sculpt.mask_filter", text='Sharpen Mask', icon="SHARPEN", props={"filter_type": 'SHARPEN', "auto_iteration_count": True}),
-            OperatorEntry("sculpt.mask_filter", text='Grow Mask', icon="SELECTMORE", props={"filter_type": 'GROW', "auto_iteration_count": True}),
-            OperatorEntry("sculpt.mask_filter", text='Shrink Mask', icon="SELECTLESS", props={"filter_type": 'SHRINK', "auto_iteration_count": True}),
-            OperatorEntry("sculpt.mask_filter", text='Increase Contrast', icon="INC_CONTRAST", props={"filter_type": 'CONTRAST_INCREASE', "auto_iteration_count": False}),
-            OperatorEntry("sculpt.mask_filter", text='Decrease Contrast', icon="DEC_CONTRAST", props={"filter_type": 'CONTRAST_DECREASE', "auto_iteration_count": False}),
+            OperatorEntry("sculpt.mask_filter", text='Smooth Mask', icon='PARTICLEBRUSH_SMOOTH', props={"filter_type": 'SMOOTH', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Sharpen Mask', icon='SHARPEN', props={"filter_type": 'SHARPEN', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Grow Mask', icon='SELECTMORE', props={"filter_type": 'GROW', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Shrink Mask', icon='SELECTLESS', props={"filter_type": 'SHRINK', "auto_iteration_count": True}),
+            OperatorEntry("sculpt.mask_filter", text='Increase Contrast', icon='INC_CONTRAST', props={"filter_type": 'CONTRAST_INCREASE', "auto_iteration_count": False}),
+            OperatorEntry("sculpt.mask_filter", text='Decrease Contrast', icon='DEC_CONTRAST', props={"filter_type": 'CONTRAST_DECREASE', "auto_iteration_count": False}),
             Separator,
-            OperatorEntry("sculpt.expand", text="Expand Mask by Topology", icon="MESH_DATA", props={"target": 'MASK', "falloff_type": 'GEODESIC', "invert": True}),
-            OperatorEntry("sculpt.expand", text="Expand Mask by Curvature", icon="CURVE_DATA", props={"target": 'MASK', "falloff_type": 'NORMALS', "invert": False}),
+            OperatorEntry("sculpt.expand", text="Expand Mask by Topology", icon='MESH_DATA', props={"target": 'MASK', "falloff_type": 'GEODESIC', "invert": True}),
+            OperatorEntry("sculpt.expand", text="Expand Mask by Curvature", icon='CURVE_DATA', props={"target": 'MASK', "falloff_type": 'NORMALS', "invert": False}),
             Separator,
-            OperatorEntry("sculpt.paint_mask_extract", text="Mask Extract", icon="PACKAGE"),
+            OperatorEntry("sculpt.paint_mask_extract", text="Mask Extract", icon='PACKAGE'),
             Separator,
-            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice", icon="MASK_SLICE", props={"new_object": False}),
-            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice and Fill Holes", icon="MASK_SLICE_FILL", props={"new_object": False}),
-            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice to New Object", icon="MASK_SLICE_NEW"),
+            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice", icon='MASK_SLICE', props={"new_object": False}),
+            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice and Fill Holes", icon='MASK_SLICE_FILL', props={"new_object": False}),
+            OperatorEntry("sculpt.paint_mask_slice", text="Mask Slice to New Object", icon='MASK_SLICE_NEW'),
             Separator,
-            OperatorEntry("sculpt.mask_from_cavity", text='Mask from Cavity', icon="DIRTY_VERTEX"),
-            OperatorEntry("sculpt.mask_from_boundary", text="Mask from Mesh Boundary", icon="MASK_MESH_BOUNDARY", props={"settings_source": 'OPERATOR',"boundary_mode": 'MESH'}),
-            OperatorEntry("sculpt.mask_from_boundary", text="Mask from Face Sets Boundary", icon="MASK_FACE_SETS_BOUNDARY", props={"settings_source": 'OPERATOR',"boundary_mode": "FACE_SETS"}),
+            OperatorEntry("sculpt.mask_from_cavity", text='Mask from Cavity', icon='DIRTY_VERTEX'),
+            OperatorEntry("sculpt.mask_from_boundary", text="Mask from Mesh Boundary", icon='MASK_MESH_BOUNDARY', props={"settings_source": 'OPERATOR',"boundary_mode": 'MESH'}),
+            OperatorEntry("sculpt.mask_from_boundary", text="Mask from Face Sets Boundary", icon='MASK_FACE_SETS_BOUNDARY', props={"settings_source": 'OPERATOR',"boundary_mode": "FACE_SETS"}),
         )
 
         draw_entries(layout, context, entries)
@@ -1203,9 +1203,9 @@ class VIEW3D_PT_mask_tab_random_mask(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("sculpt.mask_init", text='Per Vertex', icon="SELECT_UNGROUPED_VERTS", props={"mode": 'RANDOM_PER_VERTEX'}),
-            OperatorEntry("sculpt.mask_init", text='Per Face Set', icon="FACESEL", props={"mode": 'RANDOM_PER_FACE_SET'}),
-            OperatorEntry("sculpt.mask_init", text='Per Loose Part', icon="SELECT_LOOSE", props={"mode": 'RANDOM_PER_LOOSE_PART'}),
+            OperatorEntry("sculpt.mask_init", text='Per Vertex', icon='SELECT_UNGROUPED_VERTS', props={"mode": 'RANDOM_PER_VERTEX'}),
+            OperatorEntry("sculpt.mask_init", text='Per Face Set', icon='FACESEL', props={"mode": 'RANDOM_PER_FACE_SET'}),
+            OperatorEntry("sculpt.mask_init", text='Per Loose Part', icon='SELECT_LOOSE', props={"mode": 'RANDOM_PER_LOOSE_PART'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1221,26 +1221,26 @@ class VIEW3D_PT_facesets_tab_facesets(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("sculpt.face_sets_create", text='Face Set from Masked', icon="MASK_FACE_SETS", props={"mode": 'MASKED'}),
-            OperatorEntry("sculpt.face_sets_create", text='Face Set from Visible', icon="MASK_FACE_SETS_VISIBLE", props={"mode": 'VISIBLE'}),
-            OperatorEntry("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon="EDITMODE_HLT", props={"mode": 'SELECTION'}),
+            OperatorEntry("sculpt.face_sets_create", text='Face Set from Masked', icon='MASK_FACE_SETS', props={"mode": 'MASKED'}),
+            OperatorEntry("sculpt.face_sets_create", text='Face Set from Visible', icon='MASK_FACE_SETS_VISIBLE', props={"mode": 'VISIBLE'}),
+            OperatorEntry("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon='EDITMODE_HLT', props={"mode": 'SELECTION'}),
             Separator,
-            OperatorEntry("sculpt.face_set_edit", text='Grow Face Set', icon="SELECTMORE", props={"mode": 'GROW'}),
-            OperatorEntry("sculpt.face_set_edit", text='Shrink Face Set', icon="SELECTLESS", props={"mode": 'SHRINK'}),
+            OperatorEntry("sculpt.face_set_edit", text='Grow Face Set', icon='SELECTMORE', props={"mode": 'GROW'}),
+            OperatorEntry("sculpt.face_set_edit", text='Shrink Face Set', icon='SELECTLESS', props={"mode": 'SHRINK'}),
             Separator,
-            OperatorEntry("sculpt.expand", text="Expand Face Set by Topology", icon="FACE_MAPS", 
+            OperatorEntry("sculpt.expand", text="Expand Face Set by Topology", icon='FACE_MAPS', 
                 props={"target": 'FACE_SETS', "falloff_type": 'GEODESIC', "invert": False, "use_mask_preserve": False, "use_modify_active": False}
             ),
-            OperatorEntry("sculpt.expand", text="Expand Active Face Set", icon="FACE_MAPS_ACTIVE", 
+            OperatorEntry("sculpt.expand", text="Expand Active Face Set", icon='FACE_MAPS_ACTIVE', 
                 props={"target": 'FACE_SETS', "falloff_type": 'BOUNDARY_FACE_SET', "invert": False, "use_mask_preserve": False, "use_modify_active": True}
             ),
             Separator,
-            OperatorEntry("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon="INVERT_MASK", props={"mode": 'TOGGLE'}),
-            OperatorEntry("paint.hide_show_all", text='Show Active Face Set', icon="HIDE_OFF", props={"action": 'SHOW'}),
+            OperatorEntry("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon='INVERT_MASK', props={"mode": 'TOGGLE'}),
+            OperatorEntry("paint.hide_show_all", text='Show Active Face Set', icon='HIDE_OFF', props={"action": 'SHOW'}),
             Separator,
-            OperatorEntry("sculpt.face_set_extract", text="Extract Face Set", icon="SEPARATE"),
+            OperatorEntry("sculpt.face_set_extract", text="Extract Face Set", icon='SEPARATE'),
             Separator,
-            OperatorEntry("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon="COLOR"),
+            OperatorEntry("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon='COLOR'),
         )
 
         draw_entries(layout, context, entries)
@@ -1256,14 +1256,14 @@ class VIEW3D_PT_facesets_tab_init_facesets(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("sculpt.face_sets_init", text='By Loose Parts', icon="SELECT_LOOSE", props={"mode": 'LOOSE_PARTS'}),
-            OperatorEntry("sculpt.face_sets_init", text='By Face Set Boundaries', icon="SELECT_BOUNDARY", props={"mode": 'FACE_SET_BOUNDARIES'}),
-            OperatorEntry("sculpt.face_sets_init", text='By Materials', icon="MATERIAL_DATA", props={"mode": 'MATERIALS'}),
-            OperatorEntry("sculpt.face_sets_init", text='By Normals', icon="RECALC_NORMALS", props={"mode": 'NORMALS'}),
-            OperatorEntry("sculpt.face_sets_init", text='By UV Seams', icon="MARK_SEAM", props={"mode": 'UV_SEAMS'}),
-            OperatorEntry("sculpt.face_sets_init", text='By Edge Creases', icon="CREASE", props={"mode": 'CREASES'}),
-            OperatorEntry("sculpt.face_sets_init", text='By Edge Bevel Weight', icon="BEVEL", props={"mode": 'BEVEL_WEIGHT'}),
-            OperatorEntry("sculpt.face_sets_init", text='By Sharp Edges', icon="SELECT_SHARPEDGES", props={"mode": 'SHARP_EDGES'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Loose Parts', icon='SELECT_LOOSE', props={"mode": 'LOOSE_PARTS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Face Set Boundaries', icon='SELECT_BOUNDARY', props={"mode": 'FACE_SET_BOUNDARIES'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Materials', icon='MATERIAL_DATA', props={"mode": 'MATERIALS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Normals', icon='RECALC_NORMALS', props={"mode": 'NORMALS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By UV Seams', icon='MARK_SEAM', props={"mode": 'UV_SEAMS'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Edge Creases', icon='CREASE', props={"mode": 'CREASES'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Edge Bevel Weight', icon='BEVEL', props={"mode": 'BEVEL_WEIGHT'}),
+            OperatorEntry("sculpt.face_sets_init", text='By Sharp Edges', icon='SELECT_SHARPEDGES', props={"mode": 'SHARP_EDGES'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1279,15 +1279,15 @@ class VIEW3D_PT_paint_tab_paint(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("paint.vertex_color_set", icon="COLOR"),
-            OperatorEntry("paint.vertex_color_smooth", icon="PARTICLEBRUSH_SMOOTH"),
-            OperatorEntry("paint.vertex_color_dirt", icon="DIRTY_VERTEX"),
-            OperatorEntry("paint.vertex_color_from_weight", icon="VERTCOLFROMWEIGHT"),
+            OperatorEntry("paint.vertex_color_set", icon='COLOR'),
+            OperatorEntry("paint.vertex_color_smooth", icon='PARTICLEBRUSH_SMOOTH'),
+            OperatorEntry("paint.vertex_color_dirt", icon='DIRTY_VERTEX'),
+            OperatorEntry("paint.vertex_color_from_weight", icon='VERTCOLFROMWEIGHT'),
             Separator,
-            OperatorEntry("paint.vertex_color_invert", text="Invert", icon="REVERSE_COLORS"),
-            OperatorEntry("paint.vertex_color_levels", text="Levels", icon="LEVELS"),
-            OperatorEntry("paint.vertex_color_hsv", text="Hue Saturation Value", icon="HUESATVAL"),
-            OperatorEntry("paint.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST"),
+            OperatorEntry("paint.vertex_color_invert", text="Invert", icon='REVERSE_COLORS'),
+            OperatorEntry("paint.vertex_color_levels", text="Levels", icon='LEVELS'),
+            OperatorEntry("paint.vertex_color_hsv", text="Hue Saturation Value", icon='HUESATVAL'),
+            OperatorEntry("paint.vertex_color_brightness_contrast", text="Bright/Contrast", icon='BRIGHTNESS_CONTRAST'),
         )
 
         draw_entries(layout, context, entries)
@@ -1308,7 +1308,7 @@ class VIEW3D_PT_paint_tab_color_picker(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("paint.sample_color", text="Color Picker", icon="EYEDROPPER"),
+            OperatorEntry("paint.sample_color", text="Color Picker", icon='EYEDROPPER'),
         )
 
         draw_entries(layout, context, entries)
@@ -1323,23 +1323,23 @@ class VIEW3D_PT_weights_tab_weights(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("paint.weight_from_bones", text="Assign Automatic from Bones", icon="BONE_DATA", props={"type": 'AUTOMATIC'}),
-            OperatorEntry("paint.weight_from_bones", text="Assign from Bone Envelopes", icon="MOD_ENVELOPE", props={"type": 'ENVELOPES'}),
+            OperatorEntry("paint.weight_from_bones", text="Assign Automatic from Bones", icon='BONE_DATA', props={"type": 'AUTOMATIC'}),
+            OperatorEntry("paint.weight_from_bones", text="Assign from Bone Envelopes", icon='MOD_ENVELOPE', props={"type": 'ENVELOPES'}),
             Separator,
-            OperatorEntry("object.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL"),
-            OperatorEntry("object.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE"),
+            OperatorEntry("object.vertex_group_normalize_all", text="Normalize All", icon='WEIGHT_NORMALIZE_ALL'),
+            OperatorEntry("object.vertex_group_normalize", text="Normalize", icon='WEIGHT_NORMALIZE'),
             Separator,
-            OperatorEntry("object.vertex_group_mirror", text="Mirror", icon="WEIGHT_MIRROR"),
-            OperatorEntry("object.vertex_group_invert", text="Invert", icon="WEIGHT_INVERT"),
-            OperatorEntry("object.vertex_group_clean", text="Clean", icon="WEIGHT_CLEAN"),
+            OperatorEntry("object.vertex_group_mirror", text="Mirror", icon='WEIGHT_MIRROR'),
+            OperatorEntry("object.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT'),
+            OperatorEntry("object.vertex_group_clean", text="Clean", icon='WEIGHT_CLEAN'),
             Separator,
-            OperatorEntry("object.vertex_group_quantize", text="Quantize", icon="WEIGHT_QUANTIZE"),
-            OperatorEntry("object.vertex_group_levels", text="Levels", icon="WEIGHT_LEVELS"),
-            OperatorEntry("object.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH"),
-            OperatorEntry("object.data_transfer", text="Transfer Weights", icon="WEIGHT_TRANSFER_WEIGHTS", props={"use_reverse_transfer": True, "data_type": 'VGROUP_WEIGHTS'}),
-            OperatorEntry("object.vertex_group_limit_total", text="Limit Total", icon="WEIGHT_LIMIT_TOTAL"),
+            OperatorEntry("object.vertex_group_quantize", text="Quantize", icon='WEIGHT_QUANTIZE'),
+            OperatorEntry("object.vertex_group_levels", text="Levels", icon='WEIGHT_LEVELS'),
+            OperatorEntry("object.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH'),
+            OperatorEntry("object.data_transfer", text="Transfer Weights", icon='WEIGHT_TRANSFER_WEIGHTS', props={"use_reverse_transfer": True, "data_type": 'VGROUP_WEIGHTS'}),
+            OperatorEntry("object.vertex_group_limit_total", text="Limit Total", icon='WEIGHT_LIMIT_TOTAL'),
             Separator,
-            OperatorEntry("paint.weight_set", icon="MOD_VERTEX_WEIGHT"),
+            OperatorEntry("paint.weight_set", icon='MOD_VERTEX_WEIGHT'),
         )
 
         draw_entries(layout, context, entries)
@@ -1356,18 +1356,18 @@ class VIEW3D_PT_curve_tab_curve(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curve.split", icon="SPLIT"),
-            OperatorEntry("curve.separate", icon="SEPARATE"),
+            OperatorEntry("curve.split", icon='SPLIT'),
+            OperatorEntry("curve.separate", icon='SEPARATE'),
             Separator,
-            OperatorEntry("curve.cyclic_toggle", icon="TOGGLE_CYCLIC"),
-            OperatorEntry("curve.decimate", icon="DECIMATE"),
+            OperatorEntry("curve.cyclic_toggle", icon='TOGGLE_CYCLIC'),
+            OperatorEntry("curve.decimate", icon='DECIMATE'),
             Separator,
-            OperatorEntry("transform.tilt", icon="TILT"),
-            OperatorEntry("curve.tilt_clear", icon="CLEAR_TILT"),
+            OperatorEntry("transform.tilt", icon='TILT'),
+            OperatorEntry("curve.tilt_clear", icon='CLEAR_TILT'),
             Separator,
-            OperatorEntry("curve.normals_make_consistent", icon="RECALC_NORMALS"),
+            OperatorEntry("curve.normals_make_consistent", icon='RECALC_NORMALS'),
             Separator,
-            OperatorEntry("curve.dissolve_verts", icon="DISSOLVE_VERTS"),
+            OperatorEntry("curve.dissolve_verts", icon='DISSOLVE_VERTS'),
         )
 
         draw_entries(layout, context, entries)
@@ -1383,21 +1383,21 @@ class VIEW3D_PT_curve_tab_control_points(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
+            OperatorEntry("curve.extrude_move", text="Extrude Curve", icon='EXTRUDE_REGION'),
             Separator,
-            OperatorEntry("curve.make_segment", icon="MAKE_CURVESEGMENT"),
+            OperatorEntry("curve.make_segment", icon='MAKE_CURVESEGMENT'),
             Separator,
-            OperatorEntry("transform.tilt", icon="TILT"),
-            OperatorEntry("curve.tilt_clear",icon="CLEAR_TILT"),
+            OperatorEntry("transform.tilt", icon='TILT'),
+            OperatorEntry("curve.tilt_clear",icon='CLEAR_TILT'),
             Separator,
-            OperatorEntry("curve.normals_make_consistent", icon="RECALC_NORMALS"),
+            OperatorEntry("curve.normals_make_consistent", icon='RECALC_NORMALS'),
             Separator,
-            OperatorEntry("curve.smooth", icon="PARTICLEBRUSH_SMOOTH"),
-            OperatorEntry("curve.smooth_weight", icon="SMOOTH_WEIGHT"),
-            OperatorEntry("curve.smooth_radius", icon="SMOOTH_RADIUS"),
-            OperatorEntry("curve.smooth_tilt", icon="SMOOTH_TILT"),
+            OperatorEntry("curve.smooth", icon='PARTICLEBRUSH_SMOOTH'),
+            OperatorEntry("curve.smooth_weight", icon='SMOOTH_WEIGHT'),
+            OperatorEntry("curve.smooth_radius", icon='SMOOTH_RADIUS'),
+            OperatorEntry("curve.smooth_tilt", icon='SMOOTH_TILT'),
             Separator,
-            OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
+            OperatorEntry("object.vertex_parent_set", icon='VERTEX_PARENT'),
         )
 
         draw_entries(layout, context, entries)
@@ -1413,13 +1413,13 @@ class VIEW3D_PT_curve_tab_control_points_surface(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
+            OperatorEntry("curve.extrude_move", text="Extrude Curve", icon='EXTRUDE_REGION'),
             Separator,
-            OperatorEntry("curve.make_segment", icon="MAKE_CURVESEGMENT"),
+            OperatorEntry("curve.make_segment", icon='MAKE_CURVESEGMENT'),
             Separator,
-            OperatorEntry("curve.smooth", icon="PARTICLEBRUSH_SMOOTH"),
+            OperatorEntry("curve.smooth", icon='PARTICLEBRUSH_SMOOTH'),
             Separator,
-            OperatorEntry("object.vertex_parent_set", icon="VERTEX_PARENT"),
+            OperatorEntry("object.vertex_parent_set", icon='VERTEX_PARENT'),
         )
 
         draw_entries(layout, context, entries)
@@ -1442,13 +1442,13 @@ class VIEW3D_PT_curves_tab_edit_curves(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curves.duplicate_move", icon="DUPLICATE"),
+            OperatorEntry("curves.duplicate_move", icon='DUPLICATE'),
             Separator,
-            OperatorEntry("curves.attribute_set", icon="NODE_ATTRIBUTE"),
-            OperatorEntry("curves.cyclic_toggle", icon="TOGGLE_CYCLIC"),
+            OperatorEntry("curves.attribute_set", icon='NODE_ATTRIBUTE'),
+            OperatorEntry("curves.cyclic_toggle", icon='TOGGLE_CYCLIC'),
             Separator,
-            OperatorEntry("curves.separate", icon="SEPARATE"),
-            OperatorEntry("curves.delete", icon="DELETE"),
+            OperatorEntry("curves.separate", icon='SEPARATE'),
+            OperatorEntry("curves.delete", icon='DELETE'),
         )
 
         draw_entries(layout, context, entries)
@@ -1470,7 +1470,7 @@ class VIEW3D_PT_curves_tab_edit_control_points(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curves.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION"),
+            OperatorEntry("curves.extrude_move", text="Extrude Curve", icon='EXTRUDE_REGION'),
         )
 
         draw_entries(layout, context, entries)
@@ -1492,8 +1492,8 @@ class VIEW3D_PT_curves_tab_edit_segments(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curves.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
-            OperatorEntry("curves.switch_direction", text="Switch Direction", icon="SWITCH_DIRECTION"),
+            OperatorEntry("curves.subdivide", text="Subdivide", icon='SUBDIVIDE_EDGES'),
+            OperatorEntry("curves.switch_direction", text="Switch Direction", icon='SWITCH_DIRECTION'),
         )
 
         draw_entries(layout, context, entries)
@@ -1517,10 +1517,10 @@ class VIEW3D_PT_curves_tab_sculpt_curves(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curves.snap_curves_to_surface", text="Snap to Deformed Surface", icon="SNAP_SURFACE", props={"attach_mode": "DEFORM"}),
-            OperatorEntry("curves.snap_curves_to_surface",text="Snap to Nearest Surface", icon="SNAP_TO_ADJACENT", props={"attach_mode": "NEAREST"}),
+            OperatorEntry("curves.snap_curves_to_surface", text="Snap to Deformed Surface", icon='SNAP_SURFACE', props={"attach_mode": "DEFORM"}),
+            OperatorEntry("curves.snap_curves_to_surface",text="Snap to Nearest Surface", icon='SNAP_TO_ADJACENT', props={"attach_mode": "NEAREST"}),
             Separator,
-            OperatorEntry("curves.convert_to_particle_system", text="Convert to Particle System", icon="PARTICLES"),
+            OperatorEntry("curves.convert_to_particle_system", text="Convert to Particle System", icon='PARTICLES'),
         )
 
         draw_entries(layout, context, entries)
@@ -1537,12 +1537,12 @@ class VIEW3D_PT_surface_tab_surface(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curve.spin", icon="SPIN"),
+            OperatorEntry("curve.spin", icon='SPIN'),
             Separator,
-            OperatorEntry("curve.split", icon="SPLIT"),
-            OperatorEntry("curve.separate", icon="SEPARATE"),
+            OperatorEntry("curve.split", icon='SPLIT'),
+            OperatorEntry("curve.separate", icon='SEPARATE'),
             Separator,
-            OperatorEntry("curve.cyclic_toggle", icon="TOGGLE_CYCLIC"),
+            OperatorEntry("curve.cyclic_toggle", icon='TOGGLE_CYCLIC'),
         )
 
         draw_entries(layout, context, entries)
@@ -1564,8 +1564,8 @@ class VIEW3D_PT_segments_tab_segments(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("curve.subdivide", icon="SUBDIVIDE_EDGES"),
-            OperatorEntry("curve.switch_direction", icon="SWITCH_DIRECTION"),
+            OperatorEntry("curve.subdivide", icon='SUBDIVIDE_EDGES'),
+            OperatorEntry("curve.switch_direction", icon='SWITCH_DIRECTION'),
         )
 
         draw_entries(layout, context, entries)
@@ -1582,9 +1582,9 @@ class VIEW3D_PT_gp_gpencil_tab_dissolve(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.dissolve", text="Dissolve", icon="DISSOLVE_VERTS", props={"type": 'POINTS'}),
-            OperatorEntry("grease_pencil.dissolve", text="Dissolve Between", icon="DISSOLVE_BETWEEN", props={"type": 'BETWEEN'}),
-            OperatorEntry("grease_pencil.dissolve", text="Dissolve Unselected", icon="DISSOLVE_UNSELECTED", props={"type": 'UNSELECT'}),
+            OperatorEntry("grease_pencil.dissolve", text="Dissolve", icon='DISSOLVE_VERTS', props={"type": 'POINTS'}),
+            OperatorEntry("grease_pencil.dissolve", text="Dissolve Between", icon='DISSOLVE_BETWEEN', props={"type": 'BETWEEN'}),
+            OperatorEntry("grease_pencil.dissolve", text="Dissolve Unselected", icon='DISSOLVE_UNSELECTED', props={"type": 'UNSELECT'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1600,12 +1600,12 @@ class VIEW3D_PT_gp_gpencil_tab_cleanup(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.clean_loose", text="Clean Loose Points", icon="DELETE_LOOSE"),
-            OperatorEntry("grease_pencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon="DELETE_DUPLICATE"),
+            OperatorEntry("grease_pencil.clean_loose", text="Clean Loose Points", icon='DELETE_LOOSE'),
+            OperatorEntry("grease_pencil.frame_clean_duplicate", text="Delete Duplicate Frames", icon='DELETE_DUPLICATE'),
             Separator,
-            OperatorEntry("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon="REMOVE_DOUBLES"),
-            OperatorEntry("grease_pencil.reproject", text="Reproject Strokes", icon="REPROJECT"),
-            OperatorEntry("grease_pencil.remove_fill_guides", icon="REMOVE_GUIDES"),
+            OperatorEntry("grease_pencil.stroke_merge_by_distance", text="Merge by Distance", icon='REMOVE_DOUBLES'),
+            OperatorEntry("grease_pencil.reproject", text="Reproject Strokes", icon='REPROJECT'),
+            OperatorEntry("grease_pencil.remove_fill_guides", icon='REMOVE_GUIDES'),
         )
 
         draw_entries(layout, context, entries)
@@ -1621,11 +1621,11 @@ class VIEW3D_PT_gp_gpencil_tab_separate(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.separate", text="Separate Selected", icon="SEPARATE", props={"mode": 'SELECTED'}),
-            OperatorEntry("grease_pencil.separate", text="Separate Selected Strokes", icon="SEPARATE_BYMATERIAL", props={"mode": 'MATERIAL'}),
-            OperatorEntry("grease_pencil.separate", text="Separate Active Layer", icon="SEPARATE_GP_STROKES", props={"mode": 'LAYER'}),
+            OperatorEntry("grease_pencil.separate", text="Separate Selected", icon='SEPARATE', props={"mode": 'SELECTED'}),
+            OperatorEntry("grease_pencil.separate", text="Separate Selected Strokes", icon='SEPARATE_BYMATERIAL', props={"mode": 'MATERIAL'}),
+            OperatorEntry("grease_pencil.separate", text="Separate Active Layer", icon='SEPARATE_GP_STROKES', props={"mode": 'LAYER'}),
             Separator,
-            OperatorEntry("grease_pencil.stroke_split", text="Stroke Split", icon="SPLIT"),
+            OperatorEntry("grease_pencil.stroke_split", text="Stroke Split", icon='SPLIT'),
         )
 
         draw_entries(layout, context, entries)
@@ -1641,25 +1641,25 @@ class VIEW3D_PT_gp_stroke_tab_stroke(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.stroke_subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
-            OperatorEntry("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon="SUBDIVIDE_EDGES"),
+            OperatorEntry("grease_pencil.stroke_subdivide", text="Subdivide", icon='SUBDIVIDE_EDGES'),
+            OperatorEntry("grease_pencil.stroke_subdivide_smooth", text="Subdivide and Smooth", icon='SUBDIVIDE_EDGES'),
             Separator,
-            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Fixed)", icon="MOD_SIMPLIFY", props={"mode": 'FIXED'}),
-            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Adaptive)", icon="SIMPLIFY_ADAPTIVE", props={"mode": 'ADAPTIVE'}),
-            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Sample)", icon="SIMPLIFY_SAMPLE", props={"mode": 'SAMPLE'}),
-            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Merge)", icon="MERGE", props={"mode": 'MERGE'}),
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Fixed)", icon='MOD_SIMPLIFY', props={"mode": 'FIXED'}),
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Adaptive)", icon='SIMPLIFY_ADAPTIVE', props={"mode": 'ADAPTIVE'}),
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Sample)", icon='SIMPLIFY_SAMPLE', props={"mode": 'SAMPLE'}),
+            OperatorEntry("grease_pencil.stroke_simplify", text="Simplify (Merge)", icon='MERGE', props={"mode": 'MERGE'}),
             Separator,
-            OperatorEntry("grease_pencil.set_active_material", text="Set as Active Material", icon="MATERIAL"),
+            OperatorEntry("grease_pencil.set_active_material", text="Set as Active Material", icon='MATERIAL'),
             Separator,
-            OperatorEntry("grease_pencil.cyclical_set", text="Close", icon="TOGGLE_CLOSE", props={"type": 'CLOSE'}),
-            OperatorEntry("grease_pencil.cyclical_set", text="Toggle Cyclic", icon="TOGGLE_CYCLIC", props={"type": 'TOGGLE'}),
-            OperatorEntry("grease_pencil.stroke_switch_direction", text="Switch Direction", icon="FLIP"),
+            OperatorEntry("grease_pencil.cyclical_set", text="Close", icon='TOGGLE_CLOSE', props={"type": 'CLOSE'}),
+            OperatorEntry("grease_pencil.cyclical_set", text="Toggle Cyclic", icon='TOGGLE_CYCLIC', props={"type": 'TOGGLE'}),
+            OperatorEntry("grease_pencil.stroke_switch_direction", text="Switch Direction", icon='FLIP'),
             Separator,
-            OperatorEntry("grease_pencil.set_start_point", text="Set Start Point", icon="STARTPOINT"),
-            OperatorEntry("grease_pencil.set_uniform_thickness", text="Normalize Thickness", icon="MOD_THICKNESS"),
-            OperatorEntry("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon="MOD_OPACITY"),
+            OperatorEntry("grease_pencil.set_start_point", text="Set Start Point", icon='STARTPOINT'),
+            OperatorEntry("grease_pencil.set_uniform_thickness", text="Normalize Thickness", icon='MOD_THICKNESS'),
+            OperatorEntry("grease_pencil.set_uniform_opacity", text="Normalize Opacity", icon='MOD_OPACITY'),
             Separator,
-            OperatorEntry("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon="SPLINE_RESOLUTION"),
+            OperatorEntry("grease_pencil.set_curve_resolution", text="Set Curve Resolution", icon='SPLINE_RESOLUTION'),
         )
 
         draw_entries(layout, context, entries)
@@ -1676,9 +1676,9 @@ class VIEW3D_PT_gp_stroke_tab_simplify(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.stroke_simplify", text="Fixed", icon="MOD_SIMPLIFY"),
-            OperatorEntry("gpencil.stroke_simplify", text="Adaptative", icon="SIMPLIFY_ADAPTIVE"), # BFA - Legacy
-            OperatorEntry("gpencil.stroke_sample", text="Sample", icon="SIMPLIFY_SAMPLE"), # BFA - Legacy
+            OperatorEntry("grease_pencil.stroke_simplify", text="Fixed", icon='MOD_SIMPLIFY'),
+            OperatorEntry("gpencil.stroke_simplify", text="Adaptative", icon='SIMPLIFY_ADAPTIVE'), # BFA - Legacy
+            OperatorEntry("gpencil.stroke_sample", text="Sample", icon='SIMPLIFY_SAMPLE'), # BFA - Legacy
         )
 
         draw_entries(layout, context, entries)
@@ -1694,10 +1694,10 @@ class VIEW3D_PT_gp_stroke_tab_toggle_caps(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.caps_set", text="Rounded", icon="TOGGLECAPS_DEFAULT", props={"type": 'ROUND'}),
-            OperatorEntry("grease_pencil.caps_set", text="Start", icon="TOGGLECAPS_BOTH", props={"type": 'FLAT'}),
-            OperatorEntry("grease_pencil.caps_set", text="End", icon="TOGGLECAPS_START", props={"type": 'START'}),
-            OperatorEntry("grease_pencil.caps_set", text="Default", icon="TOGGLECAPS_END", props={"type": 'END'}),
+            OperatorEntry("grease_pencil.caps_set", text="Rounded", icon='TOGGLECAPS_DEFAULT', props={"type": 'ROUND'}),
+            OperatorEntry("grease_pencil.caps_set", text="Start", icon='TOGGLECAPS_BOTH', props={"type": 'FLAT'}),
+            OperatorEntry("grease_pencil.caps_set", text="End", icon='TOGGLECAPS_START', props={"type": 'START'}),
+            OperatorEntry("grease_pencil.caps_set", text="Default", icon='TOGGLECAPS_END', props={"type": 'END'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1714,12 +1714,12 @@ class VIEW3D_PT_gp_stroke_tab_reproject(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("gpencil.reproject", text="Front", icon="VIEW_FRONT", props={"type": 'FRONT'}),
-            OperatorEntry("gpencil.reproject", text="Side", icon="VIEW_LEFT", props={"type": 'SIDE'}),
-            OperatorEntry("gpencil.reproject", text="Top", icon="VIEW_TOP", props={"type": 'TOP'}),
-            OperatorEntry("gpencil.reproject", text="View", icon="VIEW", props={"type": 'VIEW'}),
-            OperatorEntry("gpencil.reproject", text="Surface", icon="REPROJECT", props={"type": 'SURFACE'}),
-            OperatorEntry("gpencil.reproject", text="Cursor", icon="CURSOR", props={"type": 'CURSOR'}),
+            OperatorEntry("gpencil.reproject", text="Front", icon='VIEW_FRONT', props={"type": 'FRONT'}),
+            OperatorEntry("gpencil.reproject", text="Side", icon='VIEW_LEFT', props={"type": 'SIDE'}),
+            OperatorEntry("gpencil.reproject", text="Top", icon='VIEW_TOP', props={"type": 'TOP'}),
+            OperatorEntry("gpencil.reproject", text="View", icon='VIEW', props={"type": 'VIEW'}),
+            OperatorEntry("gpencil.reproject", text="Surface", icon='REPROJECT', props={"type": 'SURFACE'}),
+            OperatorEntry("gpencil.reproject", text="Cursor", icon='CURSOR', props={"type": 'CURSOR'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1735,8 +1735,8 @@ class VIEW3D_PT_gp_point_tab_point(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.extrude_move", text="Extrude", icon="EXTRUDE_REGION"),
-            OperatorEntry("grease_pencil.stroke_smooth", text="Smooth", icon="PARTICLEBRUSH_SMOOTH"),
+            OperatorEntry("grease_pencil.extrude_move", text="Extrude", icon='EXTRUDE_REGION'),
+            OperatorEntry("grease_pencil.stroke_smooth", text="Smooth", icon='PARTICLEBRUSH_SMOOTH'),
         )
 
         draw_entries(layout, context, entries)
@@ -1752,8 +1752,8 @@ class VIEW3D_PT_gp_draw_tab_draw(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("gpencil.interpolate", text="Interpolate", icon="INTERPOLATE"),
-            OperatorEntry("gpencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE"),
+            OperatorEntry("gpencil.interpolate", text="Interpolate", icon='INTERPOLATE'),
+            OperatorEntry("gpencil.interpolate_sequence", text="Interpolate Sequence", icon='SEQUENCE'),
         )
 
         draw_entries(layout, context, entries)
@@ -1774,16 +1774,16 @@ class VIEW3D_PT_gp_draw_tab_animation(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon="ADD"),
-            OperatorEntry("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)", icon="ADD_ALL", props={"all_layers": True}),
+            OperatorEntry("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (Active Layer)", icon='ADD'),
+            OperatorEntry("grease_pencil.insert_blank_frame", text="Insert Blank Keyframe (All Layers)", icon='ADD_ALL', props={"all_layers": True}),
             Separator,
-            OperatorEntry("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon="DUPLICATE", props={"all": False}),
-            OperatorEntry("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon="DUPLICATE_ALL", props={"all": True}),
+            OperatorEntry("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon='DUPLICATE', props={"all": False}),
+            OperatorEntry("grease_pencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon='DUPLICATE_ALL', props={"all": True}),
             Separator,
-            OperatorEntry("grease_pencil.active_frame_delete", text="Delete Active Keyframe (Active Layer)", icon="DELETE", props={"all": False}),
-            OperatorEntry("grease_pencil.active_frame_delete", text="Delete Active Keyframes (All Layers)", icon="DELETE_ALL", props={"all": True}),
+            OperatorEntry("grease_pencil.active_frame_delete", text="Delete Active Keyframe (Active Layer)", icon='DELETE', props={"all": False}),
+            OperatorEntry("grease_pencil.active_frame_delete", text="Delete Active Keyframes (All Layers)", icon='DELETE_ALL', props={"all": True}),
             Separator,
-            OperatorEntry("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon="SEQUENCE", props={"use_selection": True}),
+            OperatorEntry("grease_pencil.interpolate_sequence", text="Interpolate Sequence", icon='SEQUENCE', props={"use_selection": True}),
         )
 
         draw_entries(layout, context, entries)
@@ -1801,11 +1801,11 @@ class VIEW3D_PT_gp_draw_tab_cleanup(ToolsystemPanel):
         ob = context.active_object
 
         entries = (
-            OperatorEntry("gpencil.frame_clean_fill", text="Boundary Strokes", icon="CLEAN_CHANNELS", props={"mode": 'ACTIVE'}),
-            OperatorEntry("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon="CLEAN_CHANNELS_FRAMES", props={"mode": 'ALL'}),
-            OperatorEntry("gpencil.frame_clean_loose", text="Delete Loose Points", icon="DELETE_LOOSE"),
-            OperatorEntry("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon="DELETE_DUPLICATE"),
-            OperatorEntry("gpencil.recalc_geometry", text="Recalculate Geometry", icon="FILE_REFRESH"),
+            OperatorEntry("gpencil.frame_clean_fill", text="Boundary Strokes", icon='CLEAN_CHANNELS', props={"mode": 'ACTIVE'}),
+            OperatorEntry("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon='CLEAN_CHANNELS_FRAMES', props={"mode": 'ALL'}),
+            OperatorEntry("gpencil.frame_clean_loose", text="Delete Loose Points", icon='DELETE_LOOSE'),
+            OperatorEntry("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon='DELETE_DUPLICATE'),
+            OperatorEntry("gpencil.recalc_geometry", text="Recalculate Geometry", icon='FILE_REFRESH'),
         )
 
         draw_entries(layout, context, entries)
@@ -1821,13 +1821,13 @@ class VIEW3D_PT_gp_weights_tab_weights(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("gpencil.vertex_group_normalize_all", text="Normalize All", icon="WEIGHT_NORMALIZE_ALL"),
-            OperatorEntry("gpencil.vertex_group_normalize", text="Normalize", icon="WEIGHT_NORMALIZE"),
+            OperatorEntry("gpencil.vertex_group_normalize_all", text="Normalize All", icon='WEIGHT_NORMALIZE_ALL'),
+            OperatorEntry("gpencil.vertex_group_normalize", text="Normalize", icon='WEIGHT_NORMALIZE'),
             Separator,
-            OperatorEntry("gpencil.vertex_group_invert", text="Invert", icon="WEIGHT_INVERT"),
-            OperatorEntry("gpencil.vertex_group_smooth", text="Smooth", icon="WEIGHT_SMOOTH"),
+            OperatorEntry("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT'),
+            OperatorEntry("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH'),
             Separator,
-            OperatorEntry("gpencil.weight_sample", text="Sample Weight", icon="EYEDROPPER"),
+            OperatorEntry("gpencil.weight_sample", text="Sample Weight", icon='EYEDROPPER'),
         )
 
         draw_entries(layout, context, entries)
@@ -1843,8 +1843,8 @@ class VIEW3D_PT_gp_weights_tab_generate_weights(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("gpencil.generate_weights", text="With Empty Groups", icon="PARTICLEBRUSH_WEIGHT", props={"mode": 'NAME'}),
-            OperatorEntry("gpencil.generate_weights", text="With Automatic Weights", icon="PARTICLEBRUSH_WEIGHT", props={"mode": 'AUTO'}),
+            OperatorEntry("gpencil.generate_weights", text="With Empty Groups", icon='PARTICLEBRUSH_WEIGHT', props={"mode": 'NAME'}),
+            OperatorEntry("gpencil.generate_weights", text="With Automatic Weights", icon='PARTICLEBRUSH_WEIGHT', props={"mode": 'AUTO'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1860,13 +1860,13 @@ class VIEW3D_PT_gp_paint_tab_paint(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("gpencil.vertex_color_set", text="Set Vertex Color", icon="NODE_VERTEX_COLOR"),
-            OperatorEntry("gpencil.stroke_reset_vertex_color", icon="RESET"),
+            OperatorEntry("gpencil.vertex_color_set", text="Set Vertex Color", icon='NODE_VERTEX_COLOR'),
+            OperatorEntry("gpencil.stroke_reset_vertex_color", icon='RESET'),
             Separator,
-            OperatorEntry("gpencil.vertex_color_invert", text="Invert", icon="NODE_INVERT"),
-            OperatorEntry("gpencil.vertex_color_levels", text="Levels", icon="LEVELS"),
-            OperatorEntry("gpencil.vertex_color_hsv", text="Hue Saturation Value", icon="HUESATVAL"),
-            OperatorEntry("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast", icon="BRIGHTNESS_CONTRAST"),
+            OperatorEntry("gpencil.vertex_color_invert", text="Invert", icon='NODE_INVERT'),
+            OperatorEntry("gpencil.vertex_color_levels", text="Levels", icon='LEVELS'),
+            OperatorEntry("gpencil.vertex_color_hsv", text="Hue Saturation Value", icon='HUESATVAL'),
+            OperatorEntry("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast", icon='BRIGHTNESS_CONTRAST'),
         )
 
         draw_entries(layout, context, entries)
@@ -1883,28 +1883,28 @@ class VIEW3D_PT_armature_tab_armature(ToolsystemPanel):
         armature = context.edit_object.data
 
         entries = (
-            OperatorEntry("transform.transform", text="Set Bone Roll", icon="SET_ROLL", props={"mode": 'BONE_ROLL'}),
-            OperatorEntry("armature.roll_clear", text="Clear Bone Roll", icon="CLEAR_ROLL"),
+            OperatorEntry("transform.transform", text="Set Bone Roll", icon='SET_ROLL', props={"mode": 'BONE_ROLL'}),
+            OperatorEntry("armature.roll_clear", text="Clear Bone Roll", icon='CLEAR_ROLL'),
             Separator,
-            OperatorEntry("armature.extrude_move", icon="EXTRUDE_REGION"),
-            OperatorEntry("armature.extrude_forked", icon="EXTRUDE_REGION", poll=armature.use_mirror_x),
-            OperatorEntry("armature.duplicate_move", icon="DUPLICATE"),
-            OperatorEntry("armature.fill", icon="FILLBETWEEN"),
+            OperatorEntry("armature.extrude_move", icon='EXTRUDE_REGION'),
+            OperatorEntry("armature.extrude_forked", icon='EXTRUDE_REGION', poll=armature.use_mirror_x),
+            OperatorEntry("armature.duplicate_move", icon='DUPLICATE'),
+            OperatorEntry("armature.fill", icon='FILLBETWEEN'),
             Separator,
-            OperatorEntry("armature.split", icon="SPLIT"),
-            OperatorEntry("armature.separate", icon="SEPARATE"),
-            OperatorEntry("armature.symmetrize", icon="SYMMETRIZE"),
+            OperatorEntry("armature.split", icon='SPLIT'),
+            OperatorEntry("armature.separate", icon='SEPARATE'),
+            OperatorEntry("armature.symmetrize", icon='SYMMETRIZE'),
             Separator,
-            OperatorEntry("armature.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES"),
-            OperatorEntry("armature.switch_direction", text="Switch Direction", icon="SWITCH_DIRECTION"),
+            OperatorEntry("armature.subdivide", text="Subdivide", icon='SUBDIVIDE_EDGES'),
+            OperatorEntry("armature.switch_direction", text="Switch Direction", icon='SWITCH_DIRECTION'),
             Separator,
             SetOperatorContext('INVOKE_REGION_WIN'),
-            OperatorEntry("armature.armature_layers", icon="LAYER"), # TODO - Fix unknown operator error
-            OperatorEntry("armature.bone_layers", icon="BONE_LAYER"), # TODO - Fix unknown operator error
+            OperatorEntry("armature.armature_layers", icon='LAYER'), # TODO - Fix unknown operator error
+            OperatorEntry("armature.bone_layers", icon='BONE_LAYER'), # TODO - Fix unknown operator error
             Separator,
             SetOperatorContext('EXEC_REGION_WIN'),
-            OperatorEntry("armature.parent_set", text="Make Parent", icon="PARENT_SET"),
-            OperatorEntry("armature.parent_clear", text="Clear Parent", icon="PARENT_CLEAR"),
+            OperatorEntry("armature.parent_set", text="Make Parent", icon='PARENT_SET'),
+            OperatorEntry("armature.parent_clear", text="Clear Parent", icon='PARENT_CLEAR'),
         )
 
         draw_entries(layout, context, entries)
@@ -1921,23 +1921,23 @@ class VIEW3D_PT_armature_tab_recalcboneroll(ToolsystemPanel):
 
         entries = (
             #col.label(text="- Positive: -") # TODO - Implement this as a subpanel
-            OperatorEntry("armature.calculate_roll", text= "Local + X Tangent", icon="ROLL_X_TANG_POS", props={"type": 'POS_X'}),
-            OperatorEntry("armature.calculate_roll", text= "Local + Z Tangent", icon="ROLL_Z_TANG_POS", props={"type": 'POS_Z'}),
-            OperatorEntry("armature.calculate_roll", text= "Global + X Axis", icon="ROLL_X_POS", props={"type": 'GLOBAL_POS_X'}),
-            OperatorEntry("armature.calculate_roll", text= "Global + Y Axis", icon="ROLL_Y_POS", props={"type": 'GLOBAL_POS_Y'}),
-            OperatorEntry("armature.calculate_roll", text= "Global + Z Axis", icon="ROLL_Z_POS", props={"type": 'GLOBAL_POS_Z'}),
+            OperatorEntry("armature.calculate_roll", text= "Local + X Tangent", icon='ROLL_X_TANG_POS', props={"type": 'POS_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Local + Z Tangent", icon='ROLL_Z_TANG_POS', props={"type": 'POS_Z'}),
+            OperatorEntry("armature.calculate_roll", text= "Global + X Axis", icon='ROLL_X_POS', props={"type": 'GLOBAL_POS_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Global + Y Axis", icon='ROLL_Y_POS', props={"type": 'GLOBAL_POS_Y'}),
+            OperatorEntry("armature.calculate_roll", text= "Global + Z Axis", icon='ROLL_Z_POS', props={"type": 'GLOBAL_POS_Z'}),
             Separator,
             #col.label(text="- Negative: -") # TODO - Implement this as a subpanel
-            OperatorEntry("armature.calculate_roll", text= "Local - X Tangent", icon="ROLL_X_TANG_NEG", props={"type": 'NEG_X'}),
-            OperatorEntry("armature.calculate_roll", text= "Local - Z Tangent", icon="ROLL_Z_TANG_NEG", props={"type": 'NEG_Z'}),
-            OperatorEntry("armature.calculate_roll", text= "Global - X Axis", icon="ROLL_X_NEG", props={"type": 'GLOBAL_NEG_X'}),
-            OperatorEntry("armature.calculate_roll", text= "Global - Y Axis", icon="ROLL_Y_NEG", props={"type": 'GLOBAL_NEG_Y'}),
-            OperatorEntry("armature.calculate_roll", text= "Global - Z Axis", icon="ROLL_Z_NEG", props={"type": 'GLOBAL_NEG_Z'}),
+            OperatorEntry("armature.calculate_roll", text= "Local - X Tangent", icon='ROLL_X_TANG_NEG', props={"type": 'NEG_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Local - Z Tangent", icon='ROLL_Z_TANG_NEG', props={"type": 'NEG_Z'}),
+            OperatorEntry("armature.calculate_roll", text= "Global - X Axis", icon='ROLL_X_NEG', props={"type": 'GLOBAL_NEG_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Global - Y Axis", icon='ROLL_Y_NEG', props={"type": 'GLOBAL_NEG_Y'}),
+            OperatorEntry("armature.calculate_roll", text= "Global - Z Axis", icon='ROLL_Z_NEG', props={"type": 'GLOBAL_NEG_Z'}),
             Separator,
             #col.label(text="- Other: -") # TODO - Implement this as a subpanel
-            OperatorEntry("armature.calculate_roll", text= "Active Bone", icon="BONE_DATA", props={"type": 'ACTIVE'}),
-            OperatorEntry("armature.calculate_roll", text= "View Axis", icon="MANIPUL", props={"type": 'VIEW'}),
-            OperatorEntry("armature.calculate_roll", text= "Cursor", icon="CURSOR", props={"type": 'CURSOR'}),
+            OperatorEntry("armature.calculate_roll", text= "Active Bone", icon='BONE_DATA', props={"type": 'ACTIVE'}),
+            OperatorEntry("armature.calculate_roll", text= "View Axis", icon='MANIPUL', props={"type": 'VIEW'}),
+            OperatorEntry("armature.calculate_roll", text= "Cursor", icon='CURSOR', props={"type": 'CURSOR'}),
         )
 
         draw_entries(layout, context, entries)
@@ -1954,10 +1954,10 @@ class VIEW3D_PT_armature_tab_names(ToolsystemPanel):
 
         entries = (
             SetOperatorContext('EXEC_REGION_WIN'),
-            OperatorEntry("armature.autoside_names", text="Auto-Name Left/Right", icon="RENAME_X", props={"type": 'XAXIS'}),
-            OperatorEntry("armature.autoside_names", text="Auto-Name Front/Back", icon="RENAME_Y", props={"type": 'YAXIS'}),
-            OperatorEntry("armature.autoside_names", text="Auto-Name Top/Bottom", icon="RENAME_Z", props={"type": 'ZAXIS'}),
-            OperatorEntry("armature.flip_names", icon="FLIP"),
+            OperatorEntry("armature.autoside_names", text="Auto-Name Left/Right", icon='RENAME_X', props={"type": 'XAXIS'}),
+            OperatorEntry("armature.autoside_names", text="Auto-Name Front/Back", icon='RENAME_Y', props={"type": 'YAXIS'}),
+            OperatorEntry("armature.autoside_names", text="Auto-Name Top/Bottom", icon='RENAME_Z', props={"type": 'ZAXIS'}),
+            OperatorEntry("armature.flip_names", icon='FLIP'),
         )
 
         draw_entries(layout, context, entries)
@@ -1973,12 +1973,12 @@ class VIEW3D_PT_pose_tab_pose(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.quaternions_flip", icon="FLIP"),
+            OperatorEntry("pose.quaternions_flip", icon='FLIP'),
             Separator,
             SetOperatorContext('INVOKE_AREA'),
-            OperatorEntry("armature.move_to_collection", text="Change Bone Layers", icon="GROUP_BONE"),
+            OperatorEntry("armature.move_to_collection", text="Change Bone Layers", icon='GROUP_BONE'),
             Separator,
-            OperatorEntry("poselib.create_pose_asset", text="Create Pose Asset", icon="ASSET_MANAGER"),
+            OperatorEntry("poselib.create_pose_asset", text="Create Pose Asset", icon='ASSET_MANAGER'),
         )
 
         draw_entries(layout, context, entries)
@@ -1994,14 +1994,14 @@ class VIEW3D_PT_pose_tab_clear_transform(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.transforms_clear", text="All", icon="CLEAR"),
-            OperatorEntry("pose.user_transforms_clear", icon="NODE_TRANSFORM_CLEAR"),
+            OperatorEntry("pose.transforms_clear", text="All", icon='CLEAR'),
+            OperatorEntry("pose.user_transforms_clear", icon='NODE_TRANSFORM_CLEAR'),
             Separator,
-            OperatorEntry("pose.loc_clear", text="Location", icon="CLEARMOVE"),
-            OperatorEntry("pose.rot_clear", text="Rotation", icon="CLEARROTATE"),
-            OperatorEntry("pose.scale_clear", text="Scale", icon="CLEARSCALE"),
+            OperatorEntry("pose.loc_clear", text="Location", icon='CLEARMOVE'),
+            OperatorEntry("pose.rot_clear", text="Rotation", icon='CLEARROTATE'),
+            OperatorEntry("pose.scale_clear", text="Scale", icon='CLEARSCALE'),
             Separator,
-            OperatorEntry("pose.user_transforms_clear", text="Reset Unkeyed", icon="RESET"),
+            OperatorEntry("pose.user_transforms_clear", text="Reset Unkeyed", icon='RESET'),
         )
 
         draw_entries(layout, context, entries)
@@ -2017,11 +2017,11 @@ class VIEW3D_PT_pose_tab_apply(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.armature_apply", icon="MOD_ARMATURE"),
-            OperatorEntry("pose.armature_apply", text="Apply Selected as Rest Pose", icon="MOD_ARMATURE_SELECTED", props={"selected": True}),
-            OperatorEntry("pose.visual_transform_apply", icon="APPLYMOVE"),
+            OperatorEntry("pose.armature_apply", icon='MOD_ARMATURE'),
+            OperatorEntry("pose.armature_apply", text="Apply Selected as Rest Pose", icon='MOD_ARMATURE_SELECTED', props={"selected": True}),
+            OperatorEntry("pose.visual_transform_apply", icon='APPLYMOVE'),
             Separator,
-            OperatorEntry("object.assign_property_defaults", icon="ASSIGN", props={"process_bones": True}),
+            OperatorEntry("object.assign_property_defaults", icon='ASSIGN', props={"process_bones": True}),
         )
 
         draw_entries(layout, context, entries)
@@ -2037,11 +2037,11 @@ class VIEW3D_PT_pose_tab_inbetweens(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.blend_with_rest", icon="PUSH_POSE"),
-            OperatorEntry("pose.push", icon="POSE_FROM_BREAKDOWN"),
-            OperatorEntry("pose.relax", icon="POSE_RELAX_TO_BREAKDOWN"),
-            OperatorEntry("pose.breakdown", icon="BREAKDOWNER_POSE"),
-            OperatorEntry("pose.blend_to_neighbor", icon="BLEND_TO_NEIGHBOUR"),
+            OperatorEntry("pose.blend_with_rest", icon='PUSH_POSE'),
+            OperatorEntry("pose.push", icon='POSE_FROM_BREAKDOWN'),
+            OperatorEntry("pose.relax", icon='POSE_RELAX_TO_BREAKDOWN'),
+            OperatorEntry("pose.breakdown", icon='BREAKDOWNER_POSE'),
+            OperatorEntry("pose.blend_to_neighbor", icon='BLEND_TO_NEIGHBOUR'),
         )
 
         draw_entries(layout, context, entries)
@@ -2057,12 +2057,12 @@ class VIEW3D_PT_pose_tab_propagate(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.propagate", text="To Next Keyframe", icon="PROPAGATE_NEXT", props={"mode": 'NEXT_KEY'}),
-            OperatorEntry("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon="PROPAGATE_PREVIOUS", props={"mode": 'LAST_KEY'}),
+            OperatorEntry("pose.propagate", text="To Next Keyframe", icon='PROPAGATE_NEXT', props={"mode": 'NEXT_KEY'}),
+            OperatorEntry("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon='PROPAGATE_PREVIOUS', props={"mode": 'LAST_KEY'}),
             Separator,
-            OperatorEntry("pose.propagate", text="On Selected Keyframes", icon="PROPAGATE_SELECTED", props={"mode": 'SELECTED_KEYS'}),
+            OperatorEntry("pose.propagate", text="On Selected Keyframes", icon='PROPAGATE_SELECTED', props={"mode": 'SELECTED_KEYS'}),
             Separator,
-            OperatorEntry("pose.propagate", text="On Selected Markers", icon="PROPAGATE_MARKER", props={"mode": 'SELECTED_MARKERS'}),
+            OperatorEntry("pose.propagate", text="On Selected Markers", icon='PROPAGATE_MARKER', props={"mode": 'SELECTED_MARKERS'}),
         )
 
         draw_entries(layout, context, entries)
@@ -2078,10 +2078,10 @@ class VIEW3D_PT_pose_tab_motion_paths(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.paths_calculate", text="Calculate", icon="MOTIONPATHS_CALCULATE"),
-            OperatorEntry("pose.paths_clear", text="Clear", icon="MOTIONPATHS_CLEAR"),
-            OperatorEntry("pose.paths_update", text="Update Armature Motion Paths", icon="MOTIONPATHS_UPDATE"),
-            OperatorEntry("object.paths_update_visible", text="Update All Motion Paths", icon="MOTIONPATHS_UPDATE_ALL"),
+            OperatorEntry("pose.paths_calculate", text="Calculate", icon='MOTIONPATHS_CALCULATE'),
+            OperatorEntry("pose.paths_clear", text="Clear", icon='MOTIONPATHS_CLEAR'),
+            OperatorEntry("pose.paths_update", text="Update Armature Motion Paths", icon='MOTIONPATHS_UPDATE'),
+            OperatorEntry("object.paths_update_visible", text="Update All Motion Paths", icon='MOTIONPATHS_UPDATE_ALL'),
         )
 
         draw_entries(layout, context, entries)
@@ -2097,8 +2097,8 @@ class VIEW3D_PT_pose_tab_ik(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.ik_add", icon="ADD_IK"),
-            OperatorEntry("pose.ik_clear", icon="CLEAR_IK"),
+            OperatorEntry("pose.ik_add", icon='ADD_IK'),
+            OperatorEntry("pose.ik_clear", icon='CLEAR_IK'),
         )
 
         draw_entries(layout, context, entries)
@@ -2114,10 +2114,10 @@ class VIEW3D_PT_pose_tab_constraints(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("pose.constraint_add_with_targets", icon="CONSTRAINT_DATA"),
-            OperatorEntry("pose.constraints_copy", icon="COPYDOWN"),
+            OperatorEntry("pose.constraint_add_with_targets", icon='CONSTRAINT_DATA'),
+            OperatorEntry("pose.constraints_copy", icon='COPYDOWN'),
             Separator,
-            OperatorEntry("pose.constraints_clear", icon="CLEAR_CONSTRAINT"),
+            OperatorEntry("pose.constraints_clear", icon='CLEAR_CONSTRAINT'),
         )
 
         draw_entries(layout, context, entries)
@@ -2134,10 +2134,10 @@ class VIEW3D_PT_pose_tab_names(ToolsystemPanel):
 
         entries = (
             SetOperatorContext('EXEC_REGION_WIN'),
-            OperatorEntry("pose.autoside_names", text="Auto-Name Left/Right", icon="RENAME_X", props={"axis": 'XAXIS'}),
-            OperatorEntry("pose.autoside_names", text="Auto-Name Front/Back", icon="RENAME_Y", props={"axis": 'YAXIS'}),
-            OperatorEntry("pose.autoside_names", text="Auto-Name Top/Bottom", icon="STRING", props={"axis": 'ZAXIS'}),
-            OperatorEntry("pose.flip_names", icon="FLIP"),
+            OperatorEntry("pose.autoside_names", text="Auto-Name Left/Right", icon='RENAME_X', props={"axis": 'XAXIS'}),
+            OperatorEntry("pose.autoside_names", text="Auto-Name Front/Back", icon='RENAME_Y', props={"axis": 'YAXIS'}),
+            OperatorEntry("pose.autoside_names", text="Auto-Name Top/Bottom", icon='STRING', props={"axis": 'ZAXIS'}),
+            OperatorEntry("pose.flip_names", icon='FLIP'),
         )
 
         draw_entries(layout, context, entries)
