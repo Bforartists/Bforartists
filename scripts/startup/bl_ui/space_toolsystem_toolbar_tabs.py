@@ -161,10 +161,10 @@ def create_wizard_entry(obj, text, icon):
 
         # Check if the functions exist
         has_detect = hasattr(wizard_handlers, "detect_wizard_for_object")
-        has_draw = hasattr(wizard_handlers, "create_wizard_entry")
+        has_draw = hasattr(wizard_handlers, "draw_wizard_button")
 
         #print(f"DEBUG: detect_wizard_for_object exists: {has_detect}")
-        #print(f"DEBUG: create_wizard_entry exists: {has_draw}")
+        #print(f"DEBUG: draw_wizard_button exists: {has_draw}")
 
         if has_detect:
             has_wizard, wizard_bl_idname, _ = wizard_handlers.detect_wizard_for_object(obj)
