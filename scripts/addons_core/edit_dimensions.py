@@ -153,7 +153,7 @@ def register():
     for cls in classes:
        register_class(cls)
     bpy.types.VIEW3D_MT_transform.append(add_button_to_menu)
-    bpy.types.VIEW3D_PT_objecttab_transform.append(add_button_to_panel)
+    bpy.types.VIEW3D_PT_object_tab_transform.append(add_button_to_panel)
 
 
 def unregister():
@@ -161,7 +161,7 @@ def unregister():
     for cls in classes:
        unregister_class(cls)
     bpy.types.VIEW3D_MT_transform.remove(add_button_to_menu)
-    bpy.types.VIEW3D_PT_objecttab_transform.remove(add_button_to_panel)
+    bpy.types.VIEW3D_PT_object_tab_transform.remove(add_button_to_panel)
 
 
 if __name__ == "__main__":
