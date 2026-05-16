@@ -101,7 +101,8 @@ def draw_text_buttons(layout, entries):
         elif isinstance(entry, SetOperatorContext):
             entry.set_context(col)
         else:
-            entry.draw(col, as_icon=False)
+            if entry.poll:
+                entry.draw(col, as_icon=False)
         
 
 def draw_icon_buttons(layout, entries, column_count):
@@ -121,6 +122,9 @@ def draw_icon_buttons(layout, entries, column_count):
         elif isinstance(entry, SetOperatorContext):
             entry.set_context(col)
         else:
+            if not entry.poll:
+                continue
+
             if index == 0:
                 row = col.row(align=True)
                 row.scale_x = 2
