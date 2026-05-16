@@ -105,6 +105,8 @@ def draw_text_buttons(layout, entries):
                 entry.draw(col, as_icon=False)
         
 
+# NOTE: There is no OperatorEnumEntry because `layout.operator_enum` is not compatible with this.
+# Each option in an operator_enum must be defined as individual instances of OperatorEntry.
 def draw_icon_buttons(layout, entries, column_count):
     index = 0
     
