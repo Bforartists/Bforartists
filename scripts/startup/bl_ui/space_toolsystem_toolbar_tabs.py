@@ -149,7 +149,7 @@ class ToolsystemPanel(Panel):
 
 
 # BFA - Import the default library wizard functions
-def draw_wizard_button(layout, obj, text, icon, scale):
+def create_wizard_entry(obj, text, icon):
     """Debug version to check what's in wizard_handlers"""
     if not bpy.context.preferences.addons.get("bfa_default_library"):
         return False
@@ -162,27 +162,24 @@ def draw_wizard_button(layout, obj, text, icon, scale):
 
         # Check if the functions exist
         has_detect = hasattr(wizard_handlers, "detect_wizard_for_object")
-        has_draw = hasattr(wizard_handlers, "draw_wizard_button")
+        has_draw = hasattr(wizard_handlers, "create_wizard_entry")
 
         #print(f"DEBUG: detect_wizard_for_object exists: {has_detect}")
-        #print(f"DEBUG: draw_wizard_button exists: {has_draw}")
+        #print(f"DEBUG: create_wizard_entry exists: {has_draw}")
 
         if has_detect:
             has_wizard, wizard_bl_idname, _ = wizard_handlers.detect_wizard_for_object(obj)
             #print(f"DEBUG: Wizard detection result: {has_wizard}, {wizard_bl_idname}")
 
             if has_wizard and wizard_bl_idname:
-                row = layout.row()
-                row.scale_y = scale
-                row.operator(wizard_bl_idname, text=text, icon=icon)
-                return True
+                return OperatorEntry(wizard_bl_idname, text=text, icon=icon)
 
     except Exception as e:
         #print(f"DEBUG: Wizard button error: {e}")
         import traceback
         traceback.print_exc()
 
-    return False
+    return OperatorEntry(wizard_bl_idname, poll=False)
 
 # ------------------------ Object
 
@@ -197,317 +194,85 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
         view = context.space_data
         return view.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GREASE_PENCIL', 'POSE', 'EDIT_CURVES'}
 
+    # TODO - Simplify this
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
-
         obj = context.object
 
-        #text buttons
-        if column_count == 4:
+        entries = [
+            OperatorEntry("transform.tosphere", text="To Sphere", icon="TOSPHERE"),
+            OperatorEntry("mesh.circularize", text="To Circle", icon="TOCIRCLE", poll=context.mode in {'EDIT_MESH'}),
+            OperatorEntry("transform.shear", text="Shear", icon="SHEAR"),
+            OperatorEntry("transform.bend", text="Bend", icon="BEND"),
+            OperatorEntry("transform.push_pull", text="Push/Pull", icon="PUSH_PULL"),
+        ]
 
-            col = layout.column(align=True)
-            col.scale_y = 2
+        if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}:
+            entries.extend([
+                Separator,
+                OperatorEntry("transform.vertex_warp", text="Warp", icon="MOD_WARP"),
+                SetOperatorContext('EXEC_REGION_WIN'),
+                OperatorEntry("transform.vertex_random", text="Randomize", icon="RANDOMIZE", props={"offset": 0.1}),
+                SetOperatorContext('INVOKE_REGION_WIN'),
+            ])
 
-            col.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
-            if context.mode in {'EDIT_MESH',}:
-                col.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
-            col.operator("transform.shear", text="Shear", icon="SHEAR")
-            col.operator("transform.bend", text="Bend", icon="BEND")
-            col.operator("transform.push_pull", text="Push/Pull", icon="PUSH_PULL")
+        if context.mode == 'EDIT_MESH':
+            entries.extend([
+                Separator,
+                OperatorEntry("transform.shrink_fatten", text="Shrink Fatten", icon="SHRINK_FATTEN"),
+                OperatorEntry("transform.skin_resize", icon="MOD_SKIN"),
+            ])
+        elif context.mode == 'EDIT_CURVE':
+            entries.extend([
+                Separator,
+                OperatorEntry("transform.transform", text="Radius", icon="SHRINK_FATTEN", props={"mode": 'CURVE_SHRINKFATTEN'}),
+            ])
 
-            if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                'EDIT_LATTICE', 'EDIT_METABALL'}:
+        if context.active_object is not None and obj.type != 'ARMATURE':
+            entries.extend([
+                Separator,
+                OperatorEntry("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE", props={"texture_space": True}),
+                OperatorEntry("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE", props={"texture_space": True}),
+            ])
+        elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+            entries.extend([
+                Separator,
+                OperatorEntry("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE", props={"texture_space": True}),
+                OperatorEntry("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE", props={"texture_space": True}),
+            ])
 
-                col = layout.column(align=True)
-                col.scale_y = 2
-
-                col.operator("transform.vertex_warp", text="Warp", icon="MOD_WARP")
-                col.operator_context='EXEC_REGION_WIN'
-                col.operator("transform.vertex_random", text="Randomize", icon="RANDOMIZE").offset = 0.1
-                col.operator_context='INVOKE_REGION_WIN'
-
-            if context.mode == 'EDIT_MESH':
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-                col.operator("transform.shrink_fatten", text="Shrink Fatten", icon="SHRINK_FATTEN")
-                col.operator("transform.skin_resize", icon="MOD_SKIN")
-
-            if context.mode == 'EDIT_CURVE':
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-                col.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
-
-            if context.active_object is not None and obj.type != 'ARMATURE':
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-                col.operator("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE").texture_space = True
-                col.operator("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE").texture_space = True
-
-            elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-                col.operator("transform.translate", text="Move Texture Space", icon="MOVE_TEXTURESPACE").texture_space = True
-                col.operator("transform.resize", text="Scale Texture Space", icon="SCALE_TEXTURESPACE").texture_space = True
-
-            if context.mode == 'OBJECT':
-                col = layout.column(align=True)
-                col.scale_y = 2
-
-                col.operator_context='EXEC_REGION_WIN'
+        if context.mode == 'OBJECT':
+            entries.extend([
+                Separator,
+                SetOperatorContext('EXEC_REGION_WIN'),
                 # XXX see alignmenu() in edit.c of b2.4x to get this working
-                col.operator("transform.transform", text="Align to Transform Orientation", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
-                col.operator("object.randomize_transform", icon="RANDOMIZE_TRANSFORM")
-                col.operator("object.align", icon="ALIGN")
-
-            # armature specific extensions follow
-
-            if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-                if obj.data.display_type == 'BBONE':
-                    col.operator("transform.transform", text="Scale BBone", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-
-                elif obj.data.display_type == 'ENVELOPE':
-                    col.operator("transform.transform", text="Scale Envelope Distance", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-                    col.operator("transform.transform", text="Scale Radius", icon="TRANSFORM_SCALE").mode = 'BONE_ENVELOPE'
-
-            if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
-
-                col.operator("armature.align", icon="ALIGN")
-
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("transform.tosphere", text="", icon="TOSPHERE")
-                if context.mode in {'EDIT_MESH',}:
-                    row.operator("mesh.circularize", text="", icon="TOCIRCLE")
-                row.operator("transform.shear", text="", icon="SHEAR")
-
-                row = col.row(align=True)
-                row.operator("transform.bend", text="", icon="BEND")
-                row.operator("transform.push_pull", text="", icon="PUSH_PULL")
-
-                row = col.row(align=True)
-                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                    'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
-
-                    row.operator("transform.vertex_warp", text="", icon="MOD_WARP")
-                    row.operator_context='EXEC_REGION_WIN'
-                    row.operator("transform.vertex_random", text="", icon="RANDOMIZE").offset = 0.1
-                    row.operator_context='INVOKE_REGION_WIN'
-
-                if context.mode == 'EDIT_MESH':
-
-                    col.separator( factor = 0.5)
-                    row = col.row(align=True)
-                    row.operator("transform.shrink_fatten", text="", icon="SHRINK_FATTEN")
-                    row.operator("transform.skin_resize", text="", icon="MOD_SKIN")
-
-                if context.mode == 'EDIT_CURVE':
-
-                    col.separator( factor = 0.5)
-                    row = col.row(align=True)
-                    row.operator("transform.transform", text="", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
-
-                if context.active_object is not None and obj.type != 'ARMATURE':
-
-                    col.separator( factor = 0.5)
-                    row = col.row(align=True)
-                    row.operator("transform.translate", text="", icon="MOVE_TEXTURESPACE").texture_space = True
-                    row.operator("transform.resize", text="", icon="SCALE_TEXTURESPACE").texture_space = True
-
-                elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
-
-                    col.separator( factor = 0.5)
-
-                    row = col.row(align=True)
-                    row.operator("transform.translate", text="", icon="MOVE_TEXTURESPACE").texture_space = True
-                    row.operator("transform.resize", text="", icon="SCALE_TEXTURESPACE").texture_space = True
-
-
-                if context.mode == 'OBJECT':
-
-                    col.separator( factor = 0.5)
-
-                    row = col.row(align=True)
-                    row.operator_context='EXEC_REGION_WIN'
-                    # XXX see alignmenu() in edit.c of b2.4x to get this working
-                    row.operator("transform.transform", text="", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
-                    row.operator("object.randomize_transform", text="", icon="RANDOMIZE_TRANSFORM")
-                    row.operator("object.align", text="", icon="ALIGN")
-
-                if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
-
-                    col.separator( factor = 0.5)
-
-                    row = col.row(align=True)
-                    if obj.data.display_type == 'BBONE':
-                        row.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-
-                    elif obj.data.display_type == 'ENVELOPE':
-                        row.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-                        row.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_ENVELOPE'
-
-                if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
-
-                    row.operator("armature.align", text="", icon="ALIGN")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("transform.tosphere", text="", icon="TOSPHERE")
-                if context.mode in {'EDIT_MESH',}:
-                    row.operator("mesh.circularize", text="", icon="TOCIRCLE")
-
-                row = col.row(align=True)
-                row.operator("transform.shear", text="", icon="SHEAR")
-
-                row = col.row(align=True)
-                row.operator("transform.bend", text="", icon="BEND")
-                row.operator("transform.push_pull", text="", icon="PUSH_PULL")
-
-                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                    'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
-                    row = col.row(align=True)
-                    row.operator("transform.vertex_warp", text="", icon="MOD_WARP")
-                    row.operator_context='EXEC_REGION_WIN'
-                    row.operator("transform.vertex_random", text="", icon="RANDOMIZE").offset = 0.1
-                    row.operator_context='INVOKE_REGION_WIN'
-
-                if context.mode == 'EDIT_MESH':
-
-                    col.separator( factor = 0.5)
-                    row = col.row(align=True)
-                    row.operator("transform.shrink_fatten", text="", icon="SHRINK_FATTEN")
-                    row.operator("transform.skin_resize", text="", icon="MOD_SKIN")
-
-                if context.mode == 'EDIT_CURVE':
-
-                    col.separator( factor = 0.5)
-                    row = col.row(align=True)
-                    row.operator("transform.transform", text="", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
-
-                if context.active_object is not None and obj.type != 'ARMATURE':
-
-                    col.separator( factor = 0.5)
-
-                    row = col.row(align=True)
-                    row.operator("transform.translate", text="", icon="MOVE_TEXTURESPACE").texture_space = True
-                    row.operator("transform.resize", text="", icon="SCALE_TEXTURESPACE").texture_space = True
-
-                elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
-
-                    col.separator( factor = 0.5)
-
-                    row = col.row(align=True)
-                    row.operator("transform.translate", text="", icon="MOVE_TEXTURESPACE").texture_space = True
-                    row.operator("transform.resize", text="", icon="SCALE_TEXTURESPACE").texture_space = True
-
-                if context.mode == 'OBJECT':
-
-                    col.separator( factor = 0.5)
-
-                    row = col.row(align=True)
-                    row.operator_context='EXEC_REGION_WIN'
-                    # XXX see alignmenu() in edit.c of b2.4x to get this working
-                    row.operator("transform.transform", text="", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
-                    row.operator("object.randomize_transform", text="", icon="RANDOMIZE_TRANSFORM")
-                    row = col.row(align=True)
-                    row.operator("object.align", text="", icon="ALIGN")
-
-                if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
-
-                    col.separator( factor = 0.5)
-
-                    row = col.row(align=True)
-                    if obj.data.display_type == 'BBONE':
-                        row.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-
-                    elif obj.data.display_type == 'ENVELOPE':
-                        row.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-                        row.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_ENVELOPE'
-                        row = col.row(align=True)
-
-                if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
-
-                    row.operator("armature.align", text="", icon="ALIGN")
-
-            elif column_count == 1:
-
-                col.operator("transform.tosphere", text="", icon="TOSPHERE")
-                if context.mode in {'EDIT_MESH',}:
-                    col.operator("mesh.circularize", text="", icon="TOCIRCLE")
-                col.operator("transform.shear", text="", icon="SHEAR")
-                col.operator("transform.bend", text="", icon="BEND")
-                col.operator("transform.push_pull", text="", icon="PUSH_PULL")
-
-                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_CURVES'}:
-                    col.separator( factor = 0.5)
-                    col.operator("transform.vertex_warp", text="", icon="MOD_WARP")
-                    col.operator_context='EXEC_REGION_WIN'
-                    col.operator("transform.vertex_random", text="", icon="RANDOMIZE").offset = 0.1
-                    col.operator_context='INVOKE_REGION_WIN'
-
-                if context.mode == 'EDIT_MESH':
-
-                    col.separator( factor = 0.5)
-                    col.operator("transform.shrink_fatten", text="", icon="SHRINK_FATTEN")
-                    col.operator("transform.skin_resize", text="", icon="MOD_SKIN")
-
-                if context.mode == 'EDIT_CURVE':
-
-                    col.separator( factor = 0.5)
-                    col.operator("transform.transform", text="", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
-
-                if context.active_object is not None and obj.type != 'ARMATURE':
-
-                    col.separator( factor = 0.5)
-                    col.operator("transform.translate", text="", icon="MOVE_TEXTURESPACE").texture_space = True
-                    col.operator("transform.resize", text="", icon="SCALE_TEXTURESPACE").texture_space = True
-
-                elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
-
-                    col.separator( factor = 0.5)
-                    col.operator("transform.translate", text="", icon="MOVE_TEXTURESPACE").texture_space = True
-                    col.operator("transform.resize", text="", icon="SCALE_TEXTURESPACE").texture_space = True
-
-                if context.mode == 'OBJECT':
-
-                    col.separator( factor = 0.5)
-                    col.operator_context='EXEC_REGION_WIN'
-                    # XXX see alignmenu() in edit.c of b2.4x to get this working
-                    col.operator("transform.transform", text="", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
-                    col.operator("object.randomize_transform", text="", icon="RANDOMIZE_TRANSFORM")
-                    col.operator("object.align", text="", icon="ALIGN")
-
-                if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
-
-                    col.separator( factor = 0.5)
-
-                    if obj.data.display_type == 'BBONE':
-                        col.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-
-                    elif obj.data.display_type == 'ENVELOPE':
-                        col.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
-                        col.operator("transform.transform", text="", icon="TRANSFORM_SCALE").mode = 'BONE_ENVELOPE'
-
-                if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
-
-                    col.operator("armature.align", text="", icon="ALIGN")
+                OperatorEntry("transform.transform", text="Align to Transform Orientation", icon="ALIGN_TRANSFORM", props={"mode": 'ALIGN'}),
+                OperatorEntry("object.randomize_transform", icon="RANDOMIZE_TRANSFORM"),
+                OperatorEntry("object.align", icon="ALIGN"),
+                SetOperatorContext('INVOKE_REGION_WIN'),
+            ])
+
+        # armature specific extensions follow
+        if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+            if obj.data.display_type == 'BBONE':
+                entries.extend([
+                    Separator,
+                    OperatorEntry("transform.transform", text="Scale BBone", icon="TRANSFORM_SCALE", props={"mode": 'BONE_SIZE'}),
+                ])
+            elif obj.data.display_type == 'ENVELOPE':
+                entries.extend([
+                    Separator,
+                    OperatorEntry("transform.transform", text="Scale Envelope Distance", icon="TRANSFORM_SCALE", props={"mode": 'BONE_SIZE'}),
+                    OperatorEntry("transform.transform", text="Scale Radius", icon="TRANSFORM_SCALE", props={"mode": 'BONE_ENVELOPE'}),
+                ])
+
+        if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
+            entries.extend([
+                Separator,
+                OperatorEntry("armature.align", icon="ALIGN"),
+            ])
+
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_object_tab_set_origin(ToolsystemPanel):
@@ -848,58 +613,14 @@ class VIEW3D_PT_utility_tab_assets(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
-        
-        context=bpy.context
-        obj = context.object
-        
-        column_count = toolsystem_column_count(context.region)
 
-        #text buttons
-        if column_count == 4:
+        entries = (
+            OperatorEntry("asset.mark", icon="ASSET_MANAGER"),
+            OperatorEntry("asset.clear", icon="CLEAR", props={"set_fake_user": False}),
+            create_wizard_entry(context.object, "Open Asset Wizard", 'WIZARD'),
+        )
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("asset.mark", icon="ASSET_MANAGER")
-            col.operator("asset.clear", icon="CLEAR").set_fake_user = False
-
-            if context.preferences.addons.get("bfa_default_library"):
-                draw_wizard_button(col, obj, "Open Asset Wizard", 'WIZARD', 1)
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("asset.mark", text="", icon="ASSET_MANAGER")
-                row.operator("asset.clear", text="", icon="CLEAR").set_fake_user = False
-
-                if context.preferences.addons.get("bfa_default_library"):
-                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("asset.mark", text="", icon="ASSET_MANAGER")
-                row.operator("asset.clear", text="", icon="CLEAR").set_fake_user = False
-
-
-                if context.preferences.addons.get("bfa_default_library"):
-                    row = col.row(align=True)
-                    draw_wizard_button(row, obj, "", 'WIZARD', 1)
-
-            elif column_count == 1:
-
-                col.operator("asset.mark", text="", icon="ASSET_MANAGER")
-                col.operator("asset.clear", text="", icon="CLEAR").set_fake_user = False
-
-                if context.preferences.addons.get("bfa_default_library"):
-                    draw_wizard_button(col, obj, "", 'WIZARD', 1)
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_utility_tab_constraints(ToolsystemPanel):
@@ -1209,169 +930,36 @@ class VIEW3D_PT_edge_tab_edge(ToolsystemPanel):
 
     def draw(self, context):
         layout = self.layout
-        column_count = toolsystem_column_count(context.region)
 
-        with_freestyle = bpy.app.build_options.freestyle
+        entries = [
+            SetOperatorContext('INVOKE_REGION_WIN'),
+            OperatorEntry("mesh.bridge_edge_loops", icon="BRIDGE_EDGELOOPS"),
+            OperatorEntry("mesh.screw", icon="MOD_SCREW"),
+            Separator,
+            OperatorEntry("mesh.subdivide", icon="SUBDIVIDE_EDGES"),
+            OperatorEntry("mesh.subdivide_edgering", icon="SUBDIV_EDGERING"),
+            OperatorEntry("mesh.unsubdivide", icon="UNSUBDIVIDE"),
+            Separator,
+            OperatorEntry("mesh.edge_rotate", text="Rotate Edge CW", icon="ROTATECW", props={"use_ccw": False}),
+            OperatorEntry("mesh.edge_rotate", text="Rotate Edge CCW", icon="ROTATECCW", props={"use_ccw": True}),
+            Separator,
+            OperatorEntry("transform.edge_crease", icon="CREASE"),
+            OperatorEntry("transform.edge_bevelweight", icon="BEVEL"),
+            Separator,
+            OperatorEntry("mesh.mark_sharp", icon="MARKSHARPEDGES"),
+            OperatorEntry("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES", props={"clear": True}),
+            OperatorEntry("mesh.mark_sharp", text="Mark Sharp from Vertices", icon="MARKSHARPVERTS", props={"use_verts": True}),
+            OperatorEntry("mesh.mark_sharp", text="Clear Sharp from Vertices", icon="CLEARSHARPVERTS", props={"use_verts": True, "clear": True}),
+        ]
 
-        #text buttons
-        if column_count == 4:
+        if bpy.app.build_options.freestyle:
+            entries.extend((
+                Separator,
+                OperatorEntry("mesh.mark_freestyle_edge", icon="MARK_FS_EDGE", props={"clear": False}),
+                OperatorEntry("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon="CLEAR_FS_EDGE", props={"clear": True}),
+            ))
 
-            col = layout.column(align=True)
-            col.operator_context='INVOKE_REGION_WIN'
-
-            col.scale_y = 2
-
-            col.operator("mesh.bridge_edge_loops", icon="BRIDGE_EDGELOOPS")
-            col.operator("mesh.screw", icon="MOD_SCREW")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.subdivide", icon="SUBDIVIDE_EDGES")
-            col.operator("mesh.subdivide_edgering", icon="SUBDIV_EDGERING")
-            col.operator("mesh.unsubdivide", icon="UNSUBDIVIDE")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.edge_rotate", text="Rotate Edge CW", icon="ROTATECW").use_ccw = False
-            col.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon="ROTATECCW").use_ccw = True
-
-            col.separator(factor = 0.5)
-
-            col.operator("transform.edge_crease", icon="CREASE")
-            col.operator("transform.edge_bevelweight", icon="BEVEL")
-
-            col.separator(factor = 0.5)
-
-            col.operator("mesh.mark_sharp", icon="MARKSHARPEDGES")
-            col.operator("mesh.mark_sharp", text="Clear Sharp", icon="CLEARSHARPEDGES").clear = True
-
-            col.operator("mesh.mark_sharp", text="Mark Sharp from Vertices", icon="MARKSHARPVERTS").use_verts = True
-            props = col.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon="CLEARSHARPVERTS")
-            props.use_verts = True
-            props.clear = True
-
-            if with_freestyle:
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.mark_freestyle_edge", icon="MARK_FS_EDGE").clear = False
-                col.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon="CLEAR_FS_EDGE").clear = True
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.operator_context='INVOKE_REGION_WIN'
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mesh.bridge_edge_loops", text="", icon="BRIDGE_EDGELOOPS")
-                row.operator("mesh.screw", text="", icon="MOD_SCREW")
-                row.operator("mesh.subdivide", text="", icon="SUBDIVIDE_EDGES")
-
-                row = col.row(align=True)
-                row.operator("mesh.subdivide_edgering", text="", icon="SUBDIV_EDGERING")
-                row.operator("mesh.unsubdivide", text="", icon="UNSUBDIVIDE")
-                row.operator("mesh.edge_rotate", text="", icon="ROTATECW").use_ccw = False
-
-                row = col.row(align=True)
-                row.operator("mesh.edge_rotate", text="", icon="ROTATECCW").use_ccw = True
-                row.operator("transform.edge_crease", text="", icon="CREASE")
-                row.operator("transform.edge_bevelweight", text="", icon="BEVEL")
-
-                row = col.row(align=True)
-                row.operator("mesh.mark_sharp", text="", icon="MARKSHARPEDGES")
-                row.operator("mesh.mark_sharp", text="", icon="CLEARSHARPEDGES").clear = True
-                row.operator("mesh.mark_sharp", text="", icon="MARKSHARPVERTS").use_verts = True
-                row = col.row(align=True)
-                props = row.operator("mesh.mark_sharp", text="", icon="CLEARSHARPVERTS")
-                props.use_verts = True
-                props.clear = True
-
-                if with_freestyle:
-
-                    row.operator("mesh.mark_freestyle_edge", text="", icon="MARK_FS_EDGE").clear = False
-                    row.operator("mesh.mark_freestyle_edge", text="", icon="CLEAR_FS_EDGE").clear = True
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mesh.bridge_edge_loops", text="", icon="BRIDGE_EDGELOOPS")
-                row.operator("mesh.screw", text="", icon="MOD_SCREW")
-
-                row = col.row(align=True)
-                row.operator("mesh.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                row.operator("mesh.subdivide_edgering", text="", icon="SUBDIV_EDGERING")
-                row = col.row(align=True)
-                row.operator("mesh.unsubdivide", text="", icon="UNSUBDIVIDE")
-
-                row = col.row(align=True)
-                row.operator("mesh.edge_rotate", text="", icon="ROTATECW").use_ccw = False
-                row.operator("mesh.edge_rotate", text="", icon="ROTATECCW").use_ccw = True
-
-                row = col.row(align=True)
-                row.operator("transform.edge_crease", text="", icon="CREASE")
-                row.operator("transform.edge_bevelweight", text="", icon="BEVEL")
-
-                row = col.row(align=True)
-                row.operator("mesh.mark_sharp", text="", icon="MARKSHARPEDGES")
-                row.operator("mesh.mark_sharp", text="", icon="CLEARSHARPEDGES").clear = True
-
-                row = col.row(align=True)
-                row.operator("mesh.mark_sharp", text="", icon="MARKSHARPVERTS").use_verts = True
-                props = row.operator("mesh.mark_sharp", text="", icon="CLEARSHARPVERTS")
-                props.use_verts = True
-                props.clear = True
-
-                if with_freestyle:
-
-                    row = col.row(align=True)
-                    row.operator("mesh.mark_freestyle_edge", text="", icon="MARK_FS_EDGE").clear = False
-                    row.operator("mesh.mark_freestyle_edge", text="", icon="CLEAR_FS_EDGE").clear = True
-
-            elif column_count == 1:
-
-                col = layout.column(align=True)
-                col.scale_y = 2
-
-                col.operator("mesh.bridge_edge_loops", text="", icon="BRIDGE_EDGELOOPS")
-                col.operator("mesh.screw", text="", icon="MOD_SCREW")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.subdivide", text="", icon="SUBDIVIDE_EDGES")
-                col.operator("mesh.subdivide_edgering", text="", icon="SUBDIV_EDGERING")
-                col.operator("mesh.unsubdivide", text="", icon="UNSUBDIVIDE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.edge_rotate", text="", icon="ROTATECW").use_ccw = False
-                col.operator("mesh.edge_rotate", text="", icon="ROTATECCW").use_ccw = True
-
-                col.separator(factor = 0.5)
-
-                col.operator("transform.edge_crease", text="", icon="CREASE")
-                col.operator("transform.edge_bevelweight", text="", icon="BEVEL")
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.mark_sharp", text="", icon="MARKSHARPEDGES")
-                col.operator("mesh.mark_sharp", text="", icon="CLEARSHARPEDGES").clear = True
-
-                col.separator(factor = 0.5)
-
-                col.operator("mesh.mark_sharp", text="", icon="MARKSHARPVERTS").use_verts = True
-                props = col.operator("mesh.mark_sharp", text="", icon="CLEARSHARPVERTS")
-                props.use_verts = True
-                props.clear = True
-
-                if with_freestyle:
-
-                    col.separator(factor = 0.5)
-                    col.operator("mesh.mark_freestyle_edge", text="", icon="MARK_FS_EDGE").clear = False
-                    col.operator("mesh.mark_freestyle_edge", text="", icon="CLEAR_FS_EDGE").clear = True
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_face_tab_face(ToolsystemPanel):
@@ -2333,150 +1921,28 @@ class VIEW3D_PT_armature_tab_recalcboneroll(ToolsystemPanel):
     def draw(self, context):
         layout = self.layout
 
-        edit_object = context.edit_object
-        arm = edit_object.data
+        entries = (
+            #col.label(text="- Positive: -") # TODO - Implement this as a subpanel
+            OperatorEntry("armature.calculate_roll", text= "Local + X Tangent", icon="ROLL_X_TANG_POS", props={"type": 'POS_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Local + Z Tangent", icon="ROLL_Z_TANG_POS", props={"type": 'POS_Z'}),
+            OperatorEntry("armature.calculate_roll", text= "Global + X Axis", icon="ROLL_X_POS", props={"type": 'GLOBAL_POS_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Global + Y Axis", icon="ROLL_Y_POS", props={"type": 'GLOBAL_POS_Y'}),
+            OperatorEntry("armature.calculate_roll", text= "Global + Z Axis", icon="ROLL_Z_POS", props={"type": 'GLOBAL_POS_Z'}),
+            Separator,
+            #col.label(text="- Negative: -") # TODO - Implement this as a subpanel
+            OperatorEntry("armature.calculate_roll", text= "Local - X Tangent", icon="ROLL_X_TANG_NEG", props={"type": 'NEG_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Local - Z Tangent", icon="ROLL_Z_TANG_NEG", props={"type": 'NEG_Z'}),
+            OperatorEntry("armature.calculate_roll", text= "Global - X Axis", icon="ROLL_X_NEG", props={"type": 'GLOBAL_NEG_X'}),
+            OperatorEntry("armature.calculate_roll", text= "Global - Y Axis", icon="ROLL_Y_NEG", props={"type": 'GLOBAL_NEG_Y'}),
+            OperatorEntry("armature.calculate_roll", text= "Global - Z Axis", icon="ROLL_Z_NEG", props={"type": 'GLOBAL_NEG_Z'}),
+            Separator,
+            #col.label(text="- Other: -") # TODO - Implement this as a subpanel
+            OperatorEntry("armature.calculate_roll", text= "Active Bone", icon="BONE_DATA", props={"type": 'ACTIVE'}),
+            OperatorEntry("armature.calculate_roll", text= "View Axis", icon="MANIPUL", props={"type": 'VIEW'}),
+            OperatorEntry("armature.calculate_roll", text= "Cursor", icon="CURSOR", props={"type": 'CURSOR'}),
+        )
 
-        column_count = toolsystem_column_count(context.region)
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.label(text="- Positive: -")
-            col.operator("armature.calculate_roll", text= "Local + X Tangent", icon="ROLL_X_TANG_POS").type = 'POS_X'
-            col.operator("armature.calculate_roll", text= "Local + Z Tangent", icon="ROLL_Z_TANG_POS").type = 'POS_Z'
-            col.operator("armature.calculate_roll", text= "Global + X Axis", icon="ROLL_X_POS").type = 'GLOBAL_POS_X'
-            col.operator("armature.calculate_roll", text= "Global + Y Axis", icon="ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-            col.operator("armature.calculate_roll", text= "Global + Z Axis", icon="ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-
-            col.separator(factor = 0.5)
-
-            col.label(text="- Negative: -")
-            col.operator("armature.calculate_roll", text= "Local - X Tangent", icon="ROLL_X_TANG_NEG").type = 'NEG_X'
-            col.operator("armature.calculate_roll", text= "Local - Z Tangent", icon="ROLL_Z_TANG_NEG").type = 'NEG_Z'
-            col.operator("armature.calculate_roll", text= "Global - X Axis", icon="ROLL_X_NEG").type = 'GLOBAL_NEG_X'
-            col.operator("armature.calculate_roll", text= "Global - Y Axis", icon="ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
-            col.operator("armature.calculate_roll", text= "Global - Z Axis", icon="ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
-
-            col.separator(factor = 0.5)
-
-            col.label(text="- Other: -")
-            col.operator("armature.calculate_roll", text= "Active Bone", icon="BONE_DATA").type = 'ACTIVE'
-            col.operator("armature.calculate_roll", text= "View Axis", icon="MANIPUL").type = 'VIEW'
-            col.operator("armature.calculate_roll", text= "Cursor", icon="CURSOR").type = 'CURSOR'
-
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                col.label(text="- Positive: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_TANG_POS").type = 'POS_X'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_TANG_POS").type = 'POS_Z'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_POS").type = 'GLOBAL_POS_X'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                col.label(text="- Negative: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_TANG_NEG").type = 'NEG_X'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_TANG_NEG").type = 'NEG_Z'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_NEG").type = 'GLOBAL_NEG_X'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
-
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                col.label(text="- Other: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="BONE_DATA").type = 'ACTIVE'
-                row.operator("armature.calculate_roll", text= "", icon="MANIPUL").type = 'VIEW'
-                row.operator("armature.calculate_roll", text= "", icon="CURSOR").type = 'CURSOR'
-
-            elif column_count == 2:
-
-                col.label(text="- Positive: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_TANG_POS").type = 'POS_X'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_TANG_POS").type = 'POS_Z'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_POS").type = 'GLOBAL_POS_X'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                col.label(text="- Negative: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_TANG_NEG").type = 'NEG_X'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_TANG_NEG").type = 'NEG_Z'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_X_NEG").type = 'GLOBAL_NEG_X'
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
-
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                col.label(text="- Other: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="BONE_DATA").type = 'ACTIVE'
-                row.operator("armature.calculate_roll", text= "", icon="MANIPUL").type = 'VIEW'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon="CURSOR").type = 'CURSOR'
-
-            elif column_count == 1:
-
-                col.label(text="- Positive: -")
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_X_TANG_POS").type = 'POS_X'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_Z_TANG_POS").type = 'POS_Z'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_X_POS").type = 'GLOBAL_POS_X'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-
-                col.separator(factor = 0.5)
-
-                col.label(text="- Negative: -")
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_X_TANG_NEG").type = 'NEG_X'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_Z_TANG_NEG").type = 'NEG_Z'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_X_NEG").type = 'GLOBAL_NEG_X'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
-                col.operator("armature.calculate_roll", text= "", icon="ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
-
-                col.separator(factor = 0.5)
-
-                col.label(text="- Other: -")
-                col.operator("armature.calculate_roll", text= "", icon="BONE_DATA").type = 'ACTIVE'
-                col.operator("armature.calculate_roll", text= "", icon="MANIPUL").type = 'VIEW'
-                col.operator("armature.calculate_roll", text= "", icon="CURSOR").type = 'CURSOR'
+        draw_entries(layout, context, entries)
 
 
 class VIEW3D_PT_armature_tab_names(ToolsystemPanel):
