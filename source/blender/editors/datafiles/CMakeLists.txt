@@ -2015,6 +2015,7 @@ if(WITH_BLENDER)
       split_concave
       split_horizontal
       split_nonplanar
+      split_string
       split_to_instances
       split_vertical
       splitbyedges

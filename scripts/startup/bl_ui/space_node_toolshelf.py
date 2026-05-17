@@ -1363,6 +1363,7 @@ class NODES_PT_toolshelf_compositor_add_utilities_text(bpy.types.Panel, NodePane
             OperatorEntry("FunctionNodeMatchString", pad=14),
             OperatorEntry("FunctionNodeReplaceString", pad=10),
             OperatorEntry("FunctionNodeSliceString", pad=14),
+            OperatorEntry("FunctionNodeSplitString", pad=14),
             OperatorEntry("FunctionNodeTrimString", pad=14),
             Separator,
             OperatorEntry("FunctionNodeFindInString", pad=10),
