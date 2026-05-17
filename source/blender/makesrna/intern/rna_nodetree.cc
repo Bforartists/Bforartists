@@ -10621,7 +10621,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMenuSwitch", def_geo_menu_switch, ICON_MENU_SWITCH);
   define(brna, "GeometryNode", "GeometryNodeMergeByDistance", nullptr, ICON_REMOVE_DOUBLES);
   define(brna, "GeometryNode", "GeometryNodeMergeLayers", nullptr, ICON_MERGE);
-  define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_NONE); /*BFA - WIP*/ /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeMeshBoolean", nullptr, ICON_MOD_BOOLEAN);
   define(brna, "GeometryNode", "GeometryNodeMeshCircle", nullptr, ICON_MESH_CIRCLE);
   define(brna, "GeometryNode", "GeometryNodeMeshCone", nullptr, ICON_MESH_CONE);
@@ -10663,7 +10663,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSampleIndex", def_geo_sample_index, ICON_SAMPLE_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSampleNearest", nullptr, ICON_SAMPLE_NEAREST);
   define(brna, "GeometryNode", "GeometryNodeSampleNearestSurface", nullptr, ICON_SAMPLE_NEAREST_SURFACE);
-  define(brna, "GeometryNode", "GeometryNodeSampleSoundFrequencies", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeSampleSoundFrequencies", nullptr, ICON_PLAY_SOUND);
   define(brna, "GeometryNode", "GeometryNodeSampleUVSurface", nullptr, ICON_SAMPLE_UV_SURFACE);
   define(brna, "GeometryNode", "GeometryNodeScaleElements", nullptr, ICON_TRANSFORM_SCALE);
   define(brna, "GeometryNode", "GeometryNodeScaleInstances", nullptr, ICON_SCALE_INSTANCE);
@@ -10699,7 +10699,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_DEPTH);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_FALLOFFSTROKE);
   define(brna, "GeometryNode", "GeometryNodeSetGridBackground", nullptr, ICON_NODE_SETGRIDBACKGROUND);
-  define(brna,"GeometryNode", "GeometryNodeSetGridTransform", nullptr, ICON_NODE_SETGRIDTRANSFORM);
+  define(brna, "GeometryNode", "GeometryNodeSetGridTransform", nullptr, ICON_NODE_SETGRIDTRANSFORM);
   define(brna, "GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSortElements", nullptr, ICON_SORTSIZE);
