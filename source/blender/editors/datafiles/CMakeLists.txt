@@ -692,7 +692,6 @@ if(WITH_BLENDER)
       fcurve
       fcurve_snapshot
       ff
-      field_at_index
       field_domain
       fight
       file
@@ -783,6 +782,7 @@ if(WITH_BLENDER)
       gesture_rotate
       gesture_zoom
       get_id
+      get_list_item
       ghost
       ghost_disabled
       ghost_enabled
@@ -1307,7 +1307,9 @@ if(WITH_BLENDER)
       node_environment
       node_erode
       node_fileoutput
+      node_fieldatindex
       node_fieldtogrid
+      node_fieldtolist
       node_frame
       node_framejoin
       node_frameparent
@@ -1348,6 +1350,7 @@ if(WITH_BLENDER)
       node_lightfalloff
       node_lightpath
       node_linestyle_output
+      node_listlength
       node_luminance
       node_makegroup
       node_map_range
