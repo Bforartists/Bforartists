@@ -10470,7 +10470,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeSeparateMatrix", nullptr, ICON_SEPARATE_MATRIX);
   define(brna, "FunctionNode", "FunctionNodeSeparateTransform", nullptr, ICON_SEPARATE_TRANSFORM);
   define(brna, "FunctionNode", "FunctionNodeSliceString", nullptr, ICON_STRING_SUBSTRING);
-  define(brna, "FunctionNode", "FunctionNodeSplitString", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "FunctionNode", "FunctionNodeSplitString", nullptr, ICON_SPLIT_STRING);
   define(brna, "FunctionNode", "FunctionNodeStringLength", nullptr, ICON_STRING_LENGTH);
   define(brna, "FunctionNode", "FunctionNodeStringToValue", nullptr, ICON_STRING_TO_VALUE);
   define(brna, "FunctionNode", "FunctionNodeTransformDirection", nullptr, ICON_TRANSFORM_DIRECTION);
@@ -10490,7 +10490,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute, ICON_ATTRIBUTE_CAPTURE);
   define(brna, "GeometryNode", "GeometryNodeClusterByConnected", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_OUTLINER_COLLECTION);
+  define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_COLLECTION_CHILDREN);
   define(brna, "GeometryNode", "GeometryNodeCollectionInfo", nullptr, ICON_COLLECTION_INFO);
   define(brna, "GeometryNode", "GeometryNodeConvexHull", nullptr, ICON_CONVEXHULL);
   define(brna, "GeometryNode", "GeometryNodeCornersOfEdge", nullptr, ICON_CORNERS_OF_EDGE);
@@ -10528,12 +10528,12 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeEdgesToFaceGroups", nullptr, ICON_FACEGROUP);
   define(brna, "GeometryNode", "GeometryNodeExtrudeMesh", nullptr, ICON_EXTRUDE_REGION);
   define(brna, "GeometryNode", "GeometryNodeFaceOfCorner", nullptr, ICON_FACE_OF_CORNER);
-  define(brna, "GeometryNode", "GeometryNodeFieldAtIndex", nullptr, ICON_FIELD_AT_INDEX);
+  define(brna, "GeometryNode", "GeometryNodeFieldAtIndex", nullptr, ICON_NODE_FIELDATINDEX);
   define(brna, "GeometryNode", "GeometryNodeFieldAverage", nullptr, ICON_AVERAGE);
   define(brna, "GeometryNode", "GeometryNodeFieldMinAndMax", nullptr, ICON_MINMAX);
   define(brna, "GeometryNode", "GeometryNodeFieldOnDomain", nullptr, ICON_FIELD_DOMAIN);
   define(brna, "GeometryNode", "GeometryNodeFieldToGrid", def_geo_field_to_grid, ICON_NODE_FIELDTOGRID);
-  define(brna, "GeometryNode", "GeometryNodeFieldToList", def_geo_field_to_list, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeFieldToList", def_geo_field_to_list, ICON_NODE_FIELDTOLIST);
   define(brna, "GeometryNode", "GeometryNodeFieldVariance", nullptr, ICON_VARIANCE);
   define(brna, "GeometryNode", "GeometryNodeFillCurve", nullptr, ICON_CURVE_FILL);
   define(brna, "GeometryNode", "GeometryNodeFilletCurve", nullptr, ICON_CURVE_FILLET);
@@ -10615,13 +10615,13 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeIsViewport", nullptr, ICON_VIEW);
   define(brna, "GeometryNode", "GeometryNodeJoinGeometry", nullptr, ICON_JOIN);
   define(brna, "GeometryNode", "GeometryNodeList", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeListGetItem", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeListLength", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeListGetItem", nullptr, ICON_GET_LIST_ITEM);
+  define(brna, "GeometryNode", "GeometryNodeListLength", nullptr, ICON_NODE_LISTLENGTH);
   define(brna, "GeometryNode", "GeometryNodeMaterialSelection", nullptr, ICON_SELECT_BY_MATERIAL);
   define(brna, "GeometryNode", "GeometryNodeMenuSwitch", def_geo_menu_switch, ICON_MENU_SWITCH);
   define(brna, "GeometryNode", "GeometryNodeMergeByDistance", nullptr, ICON_REMOVE_DOUBLES);
   define(brna, "GeometryNode", "GeometryNodeMergeLayers", nullptr, ICON_MERGE);
-  define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_NONE); /*BFA - WIP*/ /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeMeshBoolean", nullptr, ICON_MOD_BOOLEAN);
   define(brna, "GeometryNode", "GeometryNodeMeshCircle", nullptr, ICON_MESH_CIRCLE);
   define(brna, "GeometryNode", "GeometryNodeMeshCone", nullptr, ICON_MESH_CONE);
@@ -10663,7 +10663,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSampleIndex", def_geo_sample_index, ICON_SAMPLE_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSampleNearest", nullptr, ICON_SAMPLE_NEAREST);
   define(brna, "GeometryNode", "GeometryNodeSampleNearestSurface", nullptr, ICON_SAMPLE_NEAREST_SURFACE);
-  define(brna, "GeometryNode", "GeometryNodeSampleSoundFrequencies", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeSampleSoundFrequencies", nullptr, ICON_PLAY_SOUND);
   define(brna, "GeometryNode", "GeometryNodeSampleUVSurface", nullptr, ICON_SAMPLE_UV_SURFACE);
   define(brna, "GeometryNode", "GeometryNodeScaleElements", nullptr, ICON_TRANSFORM_SCALE);
   define(brna, "GeometryNode", "GeometryNodeScaleInstances", nullptr, ICON_SCALE_INSTANCE);
@@ -10699,7 +10699,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_DEPTH);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_FALLOFFSTROKE);
   define(brna, "GeometryNode", "GeometryNodeSetGridBackground", nullptr, ICON_NODE_SETGRIDBACKGROUND);
-  define(brna,"GeometryNode", "GeometryNodeSetGridTransform", nullptr, ICON_NODE_SETGRIDTRANSFORM);
+  define(brna, "GeometryNode", "GeometryNodeSetGridTransform", nullptr, ICON_NODE_SETGRIDTRANSFORM);
   define(brna, "GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSortElements", nullptr, ICON_SORTSIZE);

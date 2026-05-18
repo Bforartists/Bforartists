@@ -326,7 +326,7 @@ if(WITH_BLENDER)
       autocomplete
       automerge_off
       automerge_on
-	  average
+	    average
       averageislandscale
       avoid
       axes_to_rotation
@@ -442,6 +442,7 @@ if(WITH_BLENDER)
       collection_bone_add
       collection_bone_new
       collection_bone_remove
+      collection_children
       collection_color_01
       collection_color_02
       collection_color_03
@@ -692,7 +693,6 @@ if(WITH_BLENDER)
       fcurve
       fcurve_snapshot
       ff
-      field_at_index
       field_domain
       fight
       file
@@ -783,6 +783,7 @@ if(WITH_BLENDER)
       gesture_rotate
       gesture_zoom
       get_id
+      get_list_item
       ghost
       ghost_disabled
       ghost_enabled
@@ -1307,7 +1308,9 @@ if(WITH_BLENDER)
       node_environment
       node_erode
       node_fileoutput
+      node_fieldatindex
       node_fieldtogrid
+      node_fieldtolist
       node_frame
       node_framejoin
       node_frameparent
@@ -1348,6 +1351,7 @@ if(WITH_BLENDER)
       node_lightfalloff
       node_lightpath
       node_linestyle_output
+      node_listlength
       node_luminance
       node_makegroup
       node_map_range
@@ -2015,6 +2019,7 @@ if(WITH_BLENDER)
       split_concave
       split_horizontal
       split_nonplanar
+      split_string
       split_to_instances
       split_vertical
       splitbyedges
