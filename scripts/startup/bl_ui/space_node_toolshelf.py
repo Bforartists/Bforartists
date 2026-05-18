@@ -3107,6 +3107,29 @@ class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
+class NODES_PT_toolshelf_gn_add_utilities_sound(bpy.types.Panel, NodePanel):
+    bl_label = "Sound"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeSampleSoundFrequencies", pad=0),
+        )
+
+        self.draw_entries(context, layout, entries)
 
 class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel):
     bl_label = "Deprecated"
@@ -3263,6 +3286,7 @@ classes = (
     NODES_PT_toolshelf_gn_add_utilities_field,
     NODES_PT_toolshelf_gn_add_utilities_matrix,
     NODES_PT_toolshelf_gn_add_utilities_rotation,
+    NODES_PT_toolshelf_gn_add_utilities_sound,
     NODES_PT_toolshelf_gn_add_utilities_deprecated,
     #-----------------------
 )
