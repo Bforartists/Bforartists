@@ -326,7 +326,7 @@ if(WITH_BLENDER)
       autocomplete
       automerge_off
       automerge_on
-	  average
+	    average
       averageislandscale
       avoid
       axes_to_rotation
@@ -442,6 +442,7 @@ if(WITH_BLENDER)
       collection_bone_add
       collection_bone_new
       collection_bone_remove
+      collection_children
       collection_color_01
       collection_color_02
       collection_color_03
