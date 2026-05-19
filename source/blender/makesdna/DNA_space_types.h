@@ -896,8 +896,8 @@ struct SpaceNode {
   char _pad2[7] = {};
 
   /* bfa node minimap */
-  float minimap_aspect_ratio = 0;
-  float minimap_scale = 0;
+  float minimap_aspect_ratio = 3.0f;
+  float minimap_scale = 2.0f;
 
   SpaceNodeOverlay overlay;
 

@@ -4137,7 +4137,9 @@ static void frame_node_draw_background(const ARegion &region,
     node_draw_shadow(snode, node, BASIS_RAD, alpha);
   }
   draw_roundbox_corner_set(ui::CNR_ALL);
-  ui::draw_roundbox_4fv(&rct, true, BASIS_RAD, color);
+  /* bfa node minimap - Use smaller corner radius for frame nodes in minimap. */
+  const float frame_corner_radius = (minimap_data != nullptr) ? 1.0f : BASIS_RAD;
+  ui::draw_roundbox_4fv(&rct, true, frame_corner_radius, color);
 }
 
 static void frame_node_draw_outline(const ARegion &region,
@@ -5191,7 +5193,7 @@ static void draw_node_minimap(const bContext &C,
                                nullptr,
                                1.0f,
                                node_color_outline_active,
-                               2.0f,
+                               1.0f,
                                node_border_radius);
     }
     else if (node.flag & NODE_SELECT) {
@@ -5203,7 +5205,7 @@ static void draw_node_minimap(const bContext &C,
                                nullptr,
                                1.0f,
                                node_color_outline_selected,
-                               2.0f,
+                               1.0f,
                                node_border_radius);
     }
     else if (const bke::bNodeZoneType *zone_type = bke::zone_type_by_node_type(node.type_legacy)) {
@@ -5217,7 +5219,7 @@ static void draw_node_minimap(const bContext &C,
                                nullptr,
                                1.0f,
                                node_color_outline_group_input_output,
-                               2.0f,
+                               1.0f,
                                node_border_radius);
     }
     else if (ELEM(node.type_legacy, NODE_GROUP_INPUT, NODE_GROUP_OUTPUT)) {
@@ -5241,7 +5243,7 @@ static void draw_node_minimap(const bContext &C,
                                nullptr,
                                1.0f,
                                node_color_outline_group_input_output,
-                               3.0f,
+                               1.0f,
                                node_border_radius);
     }
     else {
