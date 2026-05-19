@@ -589,8 +589,8 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
                       SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS |
                       SNODE_GIZMO_MINIMAP_SHOW_NODES_IN_FRAME | SNODE_GIZMO_MINIMAP_MOVE_TO_TOP |
                       SNODE_GIZMO_MINIMAP_AUTO_HIDE;
-  snode->minimap_aspect_ratio = 1.5f;
-  snode->minimap_scale = 1.5f;
+  snode->minimap_aspect_ratio = 2.0f;
+  snode->minimap_scale = 2.0f;
 
   /* select the first tree type for valid type */
   for (const bke::bNodeTreeType *treetype : bke::node_tree_types_get()) {
