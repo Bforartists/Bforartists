@@ -21,7 +21,7 @@ set(INC
 
 set(INC_SYS
 )
-
+# BFA - the node_gizmo_minimap.cc is a BFA addition
 set(SRC
   add_menu_assets.cc
   clipboard.cc
