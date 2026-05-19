@@ -580,6 +580,27 @@ void blo_do_versions_520(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     FOREACH_NODETREE_END;
   }
 
+  /* bfa node minimap */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 21)) {
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype == SPACE_NODE) {
+            SpaceNode *space_node = reinterpret_cast<SpaceNode *>(&space);
+            space_node->minimap_aspect_ratio = 2.0f;
+            space_node->minimap_scale = 2.0f;
+            space_node->gizmo_flag |= SNODE_GIZMO_SHOW_MINIMAP |
+                                      SNODE_GIZMO_MINIMAP_SHOW_NODES_IN_FRAME |
+                                      SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS |
+                                      SNODE_GIZMO_MINIMAP_USE_NODE_COLORS |
+                                      SNODE_GIZMO_MINIMAP_MOVE_TO_TOP |
+                                      SNODE_GIZMO_MINIMAP_AUTO_HIDE;
+          }
+        }
+      }
+    }
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a MAIN_VERSION_FILE_ATLEAST check.
