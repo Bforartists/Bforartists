@@ -1277,6 +1277,8 @@ if(WITH_BLENDER)
       node_checker
       node_chroma
       node_clamp
+      node_clusterbyconnected
+      node_clusterbydistance
       node_clouds
       node_closure
       node_closure_evaluate
