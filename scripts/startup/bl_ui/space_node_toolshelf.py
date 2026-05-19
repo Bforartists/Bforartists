@@ -1932,7 +1932,7 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeConvexHull", pad=19),
             OperatorEntry("GeometryNodeDeleteGeometry", pad=11),
             OperatorEntry("GeometryNodeDuplicateElements", pad=7),
-            OperatorEntry("GeometryNodeMergePoints", pad=14),
+            OperatorEntry("GeometryNodeMergePoints", pad=16),
             OperatorEntry("GeometryNodeSortElements", pad=16),
             OperatorEntry("GeometryNodeTransform", pad=4),
             Separator,
@@ -2309,7 +2309,7 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeClusterByConnected", pad=6),
+            OperatorEntry("GeometryNodeClusterByConnected", pad=5),
             OperatorEntry("GeometryNodeInputMeshEdgeAngle", pad=21),
             OperatorEntry("GeometryNodeInputMeshEdgeNeighbors", pad=13),
             OperatorEntry("GeometryNodeInputMeshEdgeVertices", pad=17),
