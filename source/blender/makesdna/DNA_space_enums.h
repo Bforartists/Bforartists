@@ -915,6 +915,13 @@ enum eSpaceNode_Gizmo_Flag : char {
   /** All gizmos. */
   SNODE_GIZMO_HIDE = (1 << 0),
   SNODE_GIZMO_HIDE_ACTIVE_NODE = (1 << 1),
+  /** bfa node minimap */
+  SNODE_GIZMO_SHOW_MINIMAP = (1 << 2),
+  SNODE_GIZMO_MINIMAP_USE_NODE_COLORS = (1 << 3),
+  SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS = (1 << 4),
+  SNODE_GIZMO_MINIMAP_SHOW_NODES_IN_FRAME = (1 << 5),
+  SNODE_GIZMO_MINIMAP_MOVE_TO_TOP = (1 << 6),
+  SNODE_GIZMO_MINIMAP_AUTO_HIDE = (1 << 7),
 };
 ENUM_OPERATORS(eSpaceNode_Gizmo_Flag)
 

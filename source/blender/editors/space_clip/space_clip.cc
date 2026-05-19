@@ -786,7 +786,8 @@ static void clip_main_region_draw(const bContext *C, ARegion *region)
     clip_draw_grease_pencil(const_cast<bContext *>(C), false);
   }
   if ((sc->gizmo_flag & SCLIP_GIZMO_HIDE) == 0) {
-    WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
+    WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS);
+    WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_UI); // bfa node minimap rename with _UI
   }
 }
 

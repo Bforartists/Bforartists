@@ -149,6 +149,12 @@ static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gz
       }
       break;
     }
+    // bfa node minimap
+    case SPACE_NODE: {
+      const SpaceNode *snode = static_cast<const SpaceNode *>(area->spacedata.first);
+      if (snode->gizmo_flag & (SNODE_GIZMO_HIDE)) // bfa node minimap TODO: maybe add hide navigate?
+        return false;
+    } break;
   }
   return true;
 }
@@ -258,7 +264,7 @@ void VIEW2D_GGT_navigate_impl(wmGizmoGroupType *gzgt, const char *idname)
   gzgt->idname = idname;
 
   gzgt->flag |= (WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_SCALE |
-                 WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL);
+                 WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_UI);
 
   gzgt->poll = WIDGETGROUP_navigate_poll;
   gzgt->setup = WIDGETGROUP_navigate_setup;

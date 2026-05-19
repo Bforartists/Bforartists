@@ -892,8 +892,16 @@ struct SpaceNode {
   /** Grease-pencil data. */
   struct bGPdata *gpd = nullptr;
 
-  eSpaceNode_Gizmo_Flag gizmo_flag = {};
+  /* bfa node minimap - default all minimap features on */
+  eSpaceNode_Gizmo_Flag gizmo_flag = eSpaceNode_Gizmo_Flag(
+      SNODE_GIZMO_SHOW_MINIMAP | SNODE_GIZMO_MINIMAP_USE_NODE_COLORS |
+      SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS | SNODE_GIZMO_MINIMAP_SHOW_NODES_IN_FRAME |
+      SNODE_GIZMO_MINIMAP_MOVE_TO_TOP | SNODE_GIZMO_MINIMAP_AUTO_HIDE);
   char _pad2[7] = {};
+
+  /* bfa node minimap */
+  float minimap_aspect_ratio = 2.0f;
+  float minimap_scale = 2.0f;
 
   SpaceNodeOverlay overlay;
 
