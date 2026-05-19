@@ -10488,8 +10488,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeBoundBox", nullptr, ICON_PIVOT_BOUNDBOX);
   define(brna, "GeometryNode", "GeometryNodeCameraInfo", nullptr, ICON_CAMERA_DATA);
   define(brna, "GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute, ICON_ATTRIBUTE_CAPTURE);
-  define(brna, "GeometryNode", "GeometryNodeClusterByConnected", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeClusterByConnected", nullptr, ICON_NODE_CLUSTERBYCONNECTED);
+  define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NODE_CLUSTERBYDISTANCE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_COLLECTION_CHILDREN);
   define(brna, "GeometryNode", "GeometryNodeCollectionInfo", nullptr, ICON_COLLECTION_INFO);
   define(brna, "GeometryNode", "GeometryNodeConvexHull", nullptr, ICON_CONVEXHULL);
@@ -10621,7 +10621,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMenuSwitch", def_geo_menu_switch, ICON_MENU_SWITCH);
   define(brna, "GeometryNode", "GeometryNodeMergeByDistance", nullptr, ICON_REMOVE_DOUBLES);
   define(brna, "GeometryNode", "GeometryNodeMergeLayers", nullptr, ICON_MERGE);
-  define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_MERGE_CENTER);
   define(brna, "GeometryNode", "GeometryNodeMeshBoolean", nullptr, ICON_MOD_BOOLEAN);
   define(brna, "GeometryNode", "GeometryNodeMeshCircle", nullptr, ICON_MESH_CIRCLE);
   define(brna, "GeometryNode", "GeometryNodeMeshCone", nullptr, ICON_MESH_CONE);
