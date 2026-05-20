@@ -680,7 +680,7 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_transform", text="Transform")
 
         layout.menu("GRAPH_MT_key_snap")
-        layout.menu("GRAPH_MT_key_mirror")
+        layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
 
         layout.separator()
         layout.operator_menu_enum("graph.keyframe_insert", "type", text="Insert")
@@ -715,27 +715,6 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_density")
         layout.menu("GRAPH_MT_key_blending")
         layout.menu("GRAPH_MT_key_smoothing")
-
-
-class GRAPH_MT_key_mirror(Menu):
-    bl_label = "Mirror"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("graph.mirror", text="By Times over Current Frame", icon="MIRROR_TIME").type = "CFRA"
-        layout.operator(
-            "graph.mirror",
-            text="By Values over Cursor Value",
-            icon="MIRROR_CURSORVALUE",
-        ).type = "VALUE"
-        layout.operator("graph.mirror", text="By Times over Time=0", icon="MIRROR_TIME").type = "YAXIS"
-        layout.operator("graph.mirror", text="By Values over Value=0", icon="MIRROR_CURSORVALUE").type = "XAXIS"
-        layout.operator(
-            "graph.mirror",
-            text="By Times over First Selected Marker",
-            icon="MIRROR_MARKER",
-        ).type = "MARKER"
 
 
 class GRAPH_MT_key_snap(Menu):
@@ -880,7 +859,6 @@ classes = (
     GRAPH_MT_channel_extrapolation,  # BFA - menu
     GRAPH_MT_channel_move,  # BFA - menu
     GRAPH_MT_key,
-    GRAPH_MT_key_mirror,  # BFA - menu
     GRAPH_MT_key_density,
     GRAPH_MT_key_transform,
     GRAPH_MT_key_snap,
