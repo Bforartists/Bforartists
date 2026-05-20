@@ -1265,13 +1265,15 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
   const float hide_bg = panel->type->flag & PANEL_HIDE_BG;
   const bool is_dragging = panel_is_dragging(panel);
 
-  if (is_subpanel && !is_open) {
+  /* BFA: Allow header drawing for collapsed sub-panels when HIDE_BG is active in RGN_TYPE_TOOLS */
+  if (is_subpanel && !is_open && !(hide_bg && region->regiontype == RGN_TYPE_TOOLS)) {
     return;
   }
 
   const bTheme *btheme = theme::theme_get();
   const float aspect = panel->runtime->block->aspect;
-  const float radius = btheme->tui.panel_roundness * U.widget_unit * 0.5f / aspect;
+  /* BFA: Remove roundness for sub-panels to always have sharp corners */
+  const float radius = (is_subpanel ? 0.0f : (btheme->tui.panel_roundness * U.widget_unit * 0.5f / aspect));
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   GPU_blend(GPU_BLEND_ALPHA);
@@ -1293,7 +1295,8 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
   }
 
   /* Panel backdrop. */
-  if (is_open || !has_header) {
+  /* BFA: Allow backdrop drawing for collapsed sub-panels when HIDE_BG is active in RGN_TYPE_TOOLS */
+  if (is_open || !has_header || (is_subpanel && hide_bg && region->regiontype == RGN_TYPE_TOOLS)) {
     float panel_backcolor[4];
     draw_roundbox_corner_set(is_open ? CNR_BOTTOM_RIGHT | CNR_BOTTOM_LEFT : CNR_ALL);
     if (!has_header) {
@@ -1323,6 +1326,23 @@ static void panel_draw_aligned_backdrop(const ARegion *region,
 
   /* Panel header backdrops for non sub-panels. */
   if (!is_subpanel && has_header) {
+    float panel_headercolor[4];
+    theme::get_color_4fv(panel_matches_search_filter(panel) ? TH_MATCH : TH_PANEL_HEADER,
+                         panel_headercolor);
+    draw_roundbox_corner_set(is_open ? CNR_TOP_RIGHT | CNR_TOP_LEFT : CNR_ALL);
+
+    /* Change the width a little bit to line up with the sides. */
+    rctf box_rect;
+    box_rect.xmin = rect->xmin;
+    box_rect.xmax = rect->xmax;
+    box_rect.ymin = header_rect->ymin;
+    box_rect.ymax = header_rect->ymax;
+    draw_roundbox_4fv(&box_rect, true, radius, panel_headercolor);
+  }
+
+  /* BFA: Sub-panel header backdrops for RGN_TYPE_TOOLS region when HIDE_BG is used.
+   * We want to preserve sub-panel headers even when main panel background is hidden. */
+  if (is_subpanel && has_header && hide_bg && region->regiontype == RGN_TYPE_TOOLS) {
     float panel_headercolor[4];
     theme::get_color_4fv(panel_matches_search_filter(panel) ? TH_MATCH : TH_PANEL_HEADER,
                          panel_headercolor);
