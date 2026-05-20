@@ -1897,35 +1897,6 @@ def brush_settings_advanced(layout, context, settings, brush, popover=False):
     if context.space_data.type in {"VIEW_3D", "IMAGE_EDITOR"}:
         color_jitter_panel(layout, context, brush)
 
-    # BFA - Brush modes
-    header, panel = layout.panel("modes", default_closed=True)
-    header.label(text="Modes")
-    if panel:
-        panel.use_property_split = False  # BFA - float column left in panel
-        panel.use_property_decorate = False
-
-        col = panel.column()  # BFA - float column left
-        col.use_property_split = False
-
-        row = col.row()  # BFA - make prop a new row
-        row.separator()
-        row.prop(brush, "use_paint_sculpt", text="Sculpt")
-        row = col.row()  # BFA - make prop a new row
-        row.separator()
-        row.prop(brush, "use_paint_uv_sculpt", text="UV Sculpt")
-        row = col.row()  # BFA - make prop a new row
-        row.separator()
-        row.prop(brush, "use_paint_vertex", text="Vertex Paint")
-        row = col.row()  # BFA - make prop a new row
-        row.separator()
-        row.prop(brush, "use_paint_weight", text="Weight Paint")
-        row = col.row()  # BFA - make prop a new row
-        row.separator()
-        row.prop(brush, "use_paint_image", text="Texture Paint")
-        row = col.row()  # BFA - make prop a new row
-        row.separator()
-        row.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
-
 
 def draw_color_settings(context, layout, brush, color_type=False):
     """Draw color wheel and gradient settings."""
