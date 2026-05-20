@@ -642,17 +642,17 @@ class TOPBAR_MT_render(Menu):
 
             layout.separator()
 
-        layout.operator("sound.mixdown", text="Mixdown Audio", icon="PLAY_AUDIO")
+        layout.operator("sound.mixdown", text="Render Audio", icon="PLAY_AUDIO")
 
         layout.separator()
         # BFA - Exposed hidden operators
-        layout.operator("render.opengl", text="OpenGL Render Image", icon="RENDER_STILL_VIEW")
-        layout.operator("render.opengl", text="OpenGL Render Animation", icon="RENDER_ANI_VIEW").animation = True
+        layout.operator("render.opengl", text="Render Viewport", icon="RENDER_STILL_VIEW")
+        layout.operator("render.opengl", text="Render Viewport Animation", icon="RENDER_ANI_VIEW").animation = True
 
         layout.separator()
 
         layout.operator("render.view_show", text="Show/Hide Render", icon="HIDE_RENDERVIEW")
-        layout.operator("render.play_rendered_anim", text="Play rendered Animation", icon="PLAY")
+        layout.operator("render.play_rendered_anim", icon="PLAY")
 
         layout.separator()
 
