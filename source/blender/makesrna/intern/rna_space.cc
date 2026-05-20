@@ -8869,14 +8869,12 @@ static void rna_def_space_node(BlenderRNA *brna)
   /* bfa node minimap gizmo. */
   prop = RNA_def_property(srna, "minimap_aspect_ratio", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "minimap_aspect_ratio");
-  RNA_def_property_float_default(prop, 2.0f);
   RNA_def_property_range(prop, 0.5f, 3.0f);
   RNA_def_property_ui_text(prop, "Aspect Ratio", "Sets the aspect ratio of the minimap. The higher the number, the wider the ratio.");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
   prop = RNA_def_property(srna, "minimap_scale", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "minimap_scale");
-  RNA_def_property_float_default(prop, 2.0f);
   RNA_def_property_range(prop, 1.0f, 4.0f);
   RNA_def_property_ui_text(prop, "Minimap scale", "Sets the scale of the minimap");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
@@ -8906,12 +8904,12 @@ static void rna_def_space_node(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "minimap_top", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gizmo_flag", SNODE_GIZMO_MINIMAP_MOVE_TO_TOP);
-  RNA_def_property_ui_text(prop, "Minimap top", "Move the minimap to top right, otherwise it will be in the bottom right");
+  RNA_def_property_ui_text(prop, "Minimap Top", "Move the minimap to top right, otherwise it will be in the bottom right");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
   prop = RNA_def_property(srna, "minimap_auto_hide", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gizmo_flag", SNODE_GIZMO_MINIMAP_AUTO_HIDE);
-  RNA_def_property_ui_text(prop, "Minimap auto hide", "Auto hide the minimap when zoomed out fully");
+  RNA_def_property_ui_text(prop, "Minimap Auto Hide", "Auto hide the minimap when zoomed out fully");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
   /* Overlays */
