@@ -916,12 +916,6 @@ class STRIP_PT_time(StripButtonsPanel, Panel):
                 split.alignment = 'LEFT'
                 split.label(text="{:d}-{:d} ({:d})".format(sta, end, end - sta + 1), translate=False)
 
-        sub = layout.row(align=True)
-        split = sub.split(factor=factor + max_factor)
-        split.alignment = 'RIGHT'
-        split.label(text="")
-        split.prop(strip, "show_retiming_keys")
-
 
 class STRIP_PT_adjust_sound(StripButtonsPanel, Panel):
     bl_label = "Sound"
