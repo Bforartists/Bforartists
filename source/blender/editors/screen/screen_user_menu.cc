@@ -911,7 +911,7 @@ static void screen_user_menu_draw(const bContext *C, Menu *menu)
     menu->layout->separator();
     menu->layout->op("SCREEN_OT_user_menu_edit",
                      IFACE_("Edit Quick Favorites..."),
-                     ICON_PREFERENCES,
+                     ICON_LASTOPERATOR,
                      wm::OpCallContext::InvokeDefault,
                      UI_ITEM_NONE);
   }
