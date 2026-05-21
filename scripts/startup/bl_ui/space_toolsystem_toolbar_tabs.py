@@ -1337,10 +1337,10 @@ class VIEW3D_PT_utilitytab_assets(Panel):
 
     def draw(self, context):
         layout = self.layout
-        
+
         context = bpy.context
         obj = context.object
-        
+
         column_count = toolsystem_column_count(context.region)
 
         #text buttons
@@ -6236,10 +6236,6 @@ class VIEW3D_PT_gp_armaturetab_armature(Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator_context = 'INVOKE_REGION_WIN'
-            col.operator("armature.armature_layers", icon = "LAYER")
-            col.operator("armature.bone_layers", icon = "BONE_LAYER")
-
             col.separator(factor = 0.5)
 
             col.operator_context = 'EXEC_REGION_WIN'
@@ -6275,11 +6271,8 @@ class VIEW3D_PT_gp_armaturetab_armature(Panel):
                 row = col.row(align=True)
                 row.operator("armature.subdivide", text="", icon = 'SUBDIVIDE_EDGES')
                 row.operator("armature.switch_direction", text="", icon = "SWITCH_DIRECTION")
-                row.operator_context = 'INVOKE_REGION_WIN'
-                row.operator("armature.armature_layers", text="", icon = "LAYER")
 
                 row = col.row(align=True)
-                row.operator("armature.bone_layers", text="", icon = "BONE_LAYER")
                 row.operator_context = 'EXEC_REGION_WIN'
                 row.operator("armature.parent_set", text="", icon='PARENT_SET')
                 row.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
@@ -6309,11 +6302,6 @@ class VIEW3D_PT_gp_armaturetab_armature(Panel):
 
                 row = col.row(align=True)
                 row.operator("armature.switch_direction", text="", icon = "SWITCH_DIRECTION")
-                row.operator_context = 'INVOKE_REGION_WIN'
-                row.operator("armature.armature_layers", text="", icon = "LAYER")
-
-                row = col.row(align=True)
-                row.operator("armature.bone_layers", text="", icon = "BONE_LAYER")
                 row.operator_context = 'EXEC_REGION_WIN'
                 row.operator("armature.parent_set", text="", icon='PARENT_SET')
 
@@ -6348,18 +6336,12 @@ class VIEW3D_PT_gp_armaturetab_armature(Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator_context = 'INVOKE_REGION_WIN'
-                col.operator("armature.armature_layers", text="", icon = "LAYER")
-                col.operator("armature.bone_layers", text="", icon = "BONE_LAYER")
-
-                col.separator(factor = 0.5)
-
                 col.operator_context = 'EXEC_REGION_WIN'
                 col.operator("armature.parent_set", text="", icon='PARENT_SET')
                 col.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
 
 
-class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
+class VIEW3D_PT_gp_armature_tab_recalc_bone_roll(Panel):
     bl_label = "Recalculate Bone Roll"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -6374,67 +6356,112 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
         return view.show_toolshelf_tabs == True
 
     def draw(self, context):
-        layout = self.layout
+        pass
 
-        edit_object = context.edit_object
-        arm = edit_object.data
+
+class VIEW3D_PT_gp_armature_tab_recalc_bone_roll_positive(Panel):
+    bl_label = "Positive"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_parent_id = "VIEW3D_PT_gp_armature_tab_recalc_bone_roll"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, context):
+        layout = self.layout
 
         column_count = toolsystem_column_count(context.region)
 
-        #text buttons
+        # text buttons
         if column_count == 4:
-
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.label(text="- Positive: -")
             col.operator("armature.calculate_roll", text= "Local + X Tangent", icon = "ROLL_X_TANG_POS").type = 'POS_X'
             col.operator("armature.calculate_roll", text= "Local + Z Tangent", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
             col.operator("armature.calculate_roll", text= "Global + X Axis", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
             col.operator("armature.calculate_roll", text= "Global + Y Axis", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
             col.operator("armature.calculate_roll", text= "Global + Z Axis", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
 
-            col.separator(factor = 0.5)
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
 
-            col.label(text="- Negative: -")
+            if column_count == 3:
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_POS").type = 'POS_X'
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
+
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
+
+            elif column_count == 2:
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_POS").type = 'POS_X'
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
+
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
+
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
+
+            elif column_count == 1:
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_POS").type = 'POS_X'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
+
+
+class VIEW3D_PT_gp_armature_tab_recalc_bone_roll_negative(Panel):
+    bl_label = "Negative"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_parent_id = "VIEW3D_PT_gp_armature_tab_recalc_bone_roll"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = toolsystem_column_count(context.region)
+
+        # text buttons
+        if column_count == 4:
+            col = layout.column(align=True)
+            col.scale_y = 2
+
             col.operator("armature.calculate_roll", text= "Local - X Tangent", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
             col.operator("armature.calculate_roll", text= "Local - Z Tangent", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
             col.operator("armature.calculate_roll", text= "Global - X Axis", icon = "ROLL_X_NEG").type = 'GLOBAL_NEG_X'
             col.operator("armature.calculate_roll", text= "Global - Y Axis", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
             col.operator("armature.calculate_roll", text= "Global - Z Axis", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
 
-            col.separator(factor = 0.5)
-
-            col.label(text="- Other: -")
-            col.operator("armature.calculate_roll", text= "Active Bone", icon = "BONE_DATA").type = 'ACTIVE'
-            col.operator("armature.calculate_roll", text= "View Axis", icon = "MANIPUL").type = 'VIEW'
-            col.operator("armature.calculate_roll", text= "Cursor", icon = "CURSOR").type = 'CURSOR'
-
-
         # icon buttons
         else:
-
             col = layout.column(align=True)
             col.scale_x = 2
             col.scale_y = 2
 
             if column_count == 3:
-
-                col.label(text="- Positive: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_POS").type = 'POS_X'
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                col.label(text="- Negative: -")
                 row = col.row(align=True)
                 row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
                 row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
@@ -6444,51 +6471,67 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
                 row.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
                 row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
 
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
+            elif column_count == 2:
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
 
-                col.label(text="- Other: -")
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_NEG").type = 'GLOBAL_NEG_X'
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
+
+                row = col.row(align=True)
+                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
+
+            elif column_count == 1:
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_NEG").type = 'GLOBAL_NEG_X'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
+                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
+
+
+class VIEW3D_PT_gp_armature_tab_recalc_bone_roll_other(Panel):
+    bl_label = "Other"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_parent_id = "VIEW3D_PT_gp_armature_tab_recalc_bone_roll"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = toolsystem_column_count(context.region)
+
+        # text buttons
+        if column_count == 4:
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("armature.calculate_roll", text= "Active Bone", icon = "BONE_DATA").type = 'ACTIVE'
+            col.operator("armature.calculate_roll", text= "View Axis", icon = "MANIPUL").type = 'VIEW'
+            col.operator("armature.calculate_roll", text= "Cursor", icon = "CURSOR").type = 'CURSOR'
+
+        # icon buttons
+        else:
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
                 row = col.row(align=True)
                 row.operator("armature.calculate_roll", text= "", icon = "BONE_DATA").type = 'ACTIVE'
                 row.operator("armature.calculate_roll", text= "", icon = "MANIPUL").type = 'VIEW'
                 row.operator("armature.calculate_roll", text= "", icon = "CURSOR").type = 'CURSOR'
 
             elif column_count == 2:
-
-                col.label(text="- Positive: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_POS").type = 'POS_X'
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                col.label(text="- Negative: -")
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_X_NEG").type = 'GLOBAL_NEG_X'
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
-
-                row = col.row(align=True)
-                row.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
-
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                col.label(text="- Other: -")
                 row = col.row(align=True)
                 row.operator("armature.calculate_roll", text= "", icon = "BONE_DATA").type = 'ACTIVE'
                 row.operator("armature.calculate_roll", text= "", icon = "MANIPUL").type = 'VIEW'
@@ -6497,26 +6540,6 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(Panel):
                 row.operator("armature.calculate_roll", text= "", icon = "CURSOR").type = 'CURSOR'
 
             elif column_count == 1:
-
-                col.label(text="- Positive: -")
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_POS").type = 'POS_X'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-
-                col.separator(factor = 0.5)
-
-                col.label(text="- Negative: -")
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_X_NEG").type = 'GLOBAL_NEG_X'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
-                col.operator("armature.calculate_roll", text= "", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
-
-                col.separator(factor = 0.5)
-
-                col.label(text="- Other: -")
                 col.operator("armature.calculate_roll", text= "", icon = "BONE_DATA").type = 'ACTIVE'
                 col.operator("armature.calculate_roll", text= "", icon = "MANIPUL").type = 'VIEW'
                 col.operator("armature.calculate_roll", text= "", icon = "CURSOR").type = 'CURSOR'
@@ -6877,13 +6900,13 @@ class VIEW3D_PT_gp_posetab_inbetweens(Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')              
+                row.operator("pose.blend_with_rest", text = "", icon = 'PUSH_POSE')
                 row.operator("pose.push", text = "", icon = 'POSE_FROM_BREAKDOWN')
-                
+
                 row = col.row(align=True)
                 row.operator("pose.relax", text = "", icon = 'POSE_RELAX_TO_BREAKDOWN')
                 row.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
-                
+
                 row = col.row(align=True)
                 row.operator("pose.blend_to_neighbor", text = "", icon = 'BLEND_TO_NEIGHBOUR')
 
@@ -7320,7 +7343,10 @@ classes = (
 
     # armature edit mode
     VIEW3D_PT_gp_armaturetab_armature,
-    VIEW3D_PT_gp_armaturetab_recalcboneroll,
+    VIEW3D_PT_gp_armature_tab_recalc_bone_roll,
+    VIEW3D_PT_gp_armature_tab_recalc_bone_roll_positive,
+    VIEW3D_PT_gp_armature_tab_recalc_bone_roll_negative,
+    VIEW3D_PT_gp_armature_tab_recalc_bone_roll_other,
     VIEW3D_PT_gp_armaturetab_names,
 
     #armature pose mode
