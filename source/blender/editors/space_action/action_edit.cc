@@ -2103,7 +2103,7 @@ static const EnumPropertyItem prop_actkeys_mirror_types[] = {
     {ACTKEYS_MIRROR_XAXIS,
      "XAXIS",
      ICON_MIRROR_CURSORVALUE,
-     "By Values Over Zero Value",
+     "By Values Over Value=0", /* BFA - Change label */
      "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
     {0, nullptr, 0, nullptr, nullptr},
 };
