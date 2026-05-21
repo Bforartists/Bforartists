@@ -1721,7 +1721,8 @@ static void icon_draw_size(float x,
                            const uchar mono_rgba[4],
                            const bool mono_border,
                            const IconTextOverlay *text_overlay,
-                           const bool inverted = false)
+                           const bool inverted = false, /* BFA */
+                           const bool is_menu_icon_size = false) /* BFA */
 {
   if (icon_id == ICON_NONE) {
     return;
@@ -1770,13 +1771,18 @@ static void icon_draw_size(float x,
   else if (di->type == ICON_TYPE_GEOM) {
 #ifdef USE_UI_TOOLBAR_HACK
     /* TODO(@ideasman42): scale icons up for toolbar,
-     * we need a way to detect larger buttons and do this automatic. */
-    {
+     * we need a way to detect larger buttons and do this automatic.
+     * BFA: Only scale icons up for toolbar buttons, not menu items.
+     * is_menu_icon_size is set when drawing icons in menus/dialogs. */
+    if (!is_menu_icon_size) {
       float scale = float(ICON_DEFAULT_HEIGHT_TOOLBAR) / float(ICON_DEFAULT_HEIGHT);
       y = (y + (h / 2)) - ((h * scale) / 2);
       w *= scale;
       h *= scale;
     }
+    /* Note: When is_menu_icon_size is true, we don't adjust y here because
+     * the widget drawing code in widget_draw_icon already centers the icon
+     * based on the button's icon drawing area. */
 #endif
 
     /* If the theme is light, we will adjust the icon colors. */
@@ -2344,7 +2350,8 @@ void icon_draw_ex(float x,
                   const uchar mono_color[4],
                   const bool mono_border,
                   const IconTextOverlay *text_overlay,
-                  const bool inverted)
+                  const bool inverted, /* BFA */
+                  const bool is_menu_icon_size) /* BFA */
 {
   const int draw_size = get_draw_size(ICON_SIZE_ICON);
   icon_draw_size(x,
@@ -2358,7 +2365,8 @@ void icon_draw_ex(float x,
                  mono_color,
                  mono_border,
                  text_overlay,
-                 inverted);
+                 inverted, /* BFA */
+                 is_menu_icon_size); /* BFA */
 }
 
 ImBuf *svg_icon_bitmap(uint icon_id, float size, bool multicolor)

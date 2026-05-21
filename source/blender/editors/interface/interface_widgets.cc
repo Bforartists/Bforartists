@@ -1335,6 +1335,18 @@ static int but_draw_menu_icon(const Button *but)
 static void widget_draw_icon(
     const Button *but, BIFIconID icon, float alpha, const rcti *rect, const uchar mono_color[4])
 {
+  /* BFA: Detect toolbar tool buttons for correct icon sizing.
+   * Toolbar tools (left sidebar + wm.toolbar popup + pie menus) need large icons (32px).
+   * Menu tools (Quick Favorites) need small icons (16px) like other menu items.
+   * Detection: static toolbar has block_flags=0 & no handle; popovers/pie menus have their flags. */
+  const bool is_tool = but_is_tool(but);
+  const bool is_static_toolbar = (but->block->flag == 0) && (but->block->handle == nullptr);
+  const bool is_popover = (but->block->flag & BLOCK_POPOVER) != 0;
+  const bool is_pie = (but->block->flag & BLOCK_PIE_MENU) != 0;
+  /* Toolbar tools: static toolbar (left sidebar), popovers (wm.toolbar), or pie menus (fallback) */
+  const bool is_toolbar_tool = is_tool && (is_static_toolbar || is_popover || is_pie);
+  const bool is_menu_icon_size = !is_toolbar_tool;
+
   if (but->flag & BUT_ICON_PREVIEW) {
     GPU_blend(GPU_BLEND_ALPHA);
     widget_draw_preview_icon(icon,
@@ -1406,6 +1418,11 @@ static void widget_draw_icon(
       {
         xs = rect->xmin + 2.0f * ofs;
       }
+      /* BFA: For menus (not pie menus), use consistent icon alignment.
+       * This ensures all menu icons align vertically regardless of emboss type or tool status. */
+      else if (block_is_menu(but->block) || block_is_popover(but->block)) {
+        xs = rect->xmin + 2.5f * ofs;
+      }
       else if (but->emboss == EmbossType::None || but->type == ButtonType::Label) {
         xs = rect->xmin + 2.0f * ofs;
       }
@@ -1433,10 +1450,10 @@ static void widget_draw_icon(
 
     /* to indicate draggable */
     if (button_drag_is_draggable(but) && (but->flag & UI_HOVER)) {
-      icon_draw_ex(xs, ys, icon, aspect, 1.25f, 0.0f, color, outline, &but->icon_overlay_text);
+      icon_draw_ex(xs, ys, icon, aspect, 1.25f, 0.0f, color, outline, &but->icon_overlay_text, false, is_menu_icon_size); /* BFA */
     }
     else if (but->flag & (UI_HOVER | UI_SELECT | UI_SELECT_DRAW)) {
-      icon_draw_ex(xs, ys, icon, aspect, alpha, 0.0f, color, outline, &but->icon_overlay_text);
+      icon_draw_ex(xs, ys, icon, aspect, alpha, 0.0f, color, outline, &but->icon_overlay_text, false, is_menu_icon_size); /* BFA */
     }
     else if (!((but->icon != ICON_NONE) && but_is_tool(but))) {
       if (has_theme) {
@@ -1451,12 +1468,12 @@ static void widget_draw_icon(
                    color,
                    outline,
                    &but->icon_overlay_text,
-                   but->drawflag & BUT_ICON_INVERT);
+                   but->drawflag & BUT_ICON_INVERT, /* BFA */
+                   is_menu_icon_size); /* BFA */
     }
     else {
       const float desaturate = 1.0 - btheme->tui.icon_saturation;
-      icon_draw_ex(
-          xs, ys, icon, aspect, alpha, desaturate, color, outline, &but->icon_overlay_text);
+      icon_draw_ex(xs, ys, icon, aspect, alpha, desaturate, color, outline, &but->icon_overlay_text, false, is_menu_icon_size); /* BFA */
     }
   }
 
@@ -2819,7 +2836,14 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
 #endif
 
     const BIFIconID icon = button_icon(but);
-    const int icon_size_init = is_tool ? ICON_DEFAULT_HEIGHT_TOOLBAR : ICON_DEFAULT_HEIGHT;
+    /* BFA: Toolbar tools get large icons (32px), menu tools get small icons (16px).
+     * Left sidebar toolbar (block_flags=0), popovers (wm.toolbar), and pie menus get large icons.
+     * Regular menus (Quick Favorites) get small icons. */
+    const bool is_static_toolbar = (but->block->flag == 0) && (but->block->handle == nullptr);
+    const bool is_popover = (but->block->flag & BLOCK_POPOVER) != 0;
+    const bool is_pie = (but->block->flag & BLOCK_PIE_MENU) != 0;
+    const bool is_toolbar_tool = is_tool && (is_static_toolbar || is_popover || is_pie);
+    const int icon_size_init = is_toolbar_tool ? ICON_DEFAULT_HEIGHT_TOOLBAR : ICON_DEFAULT_HEIGHT;
     const float icon_size = icon_size_init / (but->block->aspect * UI_INV_SCALE_FAC);
     const float icon_padding = 2 * UI_SCALE_FAC;
 
@@ -2833,16 +2857,13 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
 
     /* menu item - add some more padding so menus don't feel cramped. it must
      * be part of the button so that this area is still clickable */
-    if (is_tool) {
-      /* pass (even if its a menu toolbar) */
-    }
-    else if (block_is_pie_menu(but->block)) {
+    if (block_is_pie_menu(but->block)) {
       if (but->emboss == EmbossType::PieMenu) {
         rect->xmin += 0.3f * U.widget_unit;
       }
     }
-    /* Menu items, but only if they are not icon-only (rare). */
-    else if (block_is_menu(but->block) && but->drawstr[0]) {
+    /* Menu items (including tools in menus), but only if they are not icon-only (rare). */
+    else if ((block_is_menu(but->block) || block_is_popover(but->block)) && but->drawstr[0]) {
       rect->xmin += 0.2f * U.widget_unit;
     }
 

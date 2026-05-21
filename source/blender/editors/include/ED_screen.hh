@@ -674,7 +674,7 @@ bUserMenu **ED_screen_user_menus_find(const bContext *C, uint *r_len);
 bUserMenu *ED_screen_user_menu_ensure(bContext *C);
 
 /**
- * Finds a menu item associated with an operator in user menus (aka Quick Favorites)
+ * BFA: Quick Favorites - Finds a menu item associated with an operator in user menus (aka Quick Favorites)
  *
  * \param op_prop_enum: name of an operator property when the operator is called with an enum (to
  * be an empty string otherwise)
@@ -691,22 +691,31 @@ bUserMenuItem_Prop *ED_screen_user_menu_item_find_prop(ListBaseT<bUserMenuItem> 
                                                        const char *prop_id,
                                                        int prop_index);
 
-void ED_screen_user_menu_item_add_operator(ListBaseT<bUserMenuItem> *lb,
+/* BFA: Quick Favorites - Add menu items with context-aware filtering */
+void ED_screen_user_menu_item_add_operator(const bContext *C,
+                                           ListBaseT<bUserMenuItem> *lb,
                                            const char *ui_name,
                                            const wmOperatorType *ot,
                                            const IDProperty *prop,
                                            const char *op_prop_enum,
-                                           wm::OpCallContext opcontext);
-void ED_screen_user_menu_item_add_menu(ListBaseT<bUserMenuItem> *lb,
+                                           wm::OpCallContext opcontext,
+                                           int icon);
+void ED_screen_user_menu_item_add_menu(const bContext *C,
+                                       ListBaseT<bUserMenuItem> *lb,
                                        const char *ui_name,
-                                       const MenuType *mt);
-void ED_screen_user_menu_item_add_prop(ListBaseT<bUserMenuItem> *lb,
+                                       const MenuType *mt,
+                                       int icon);
+void ED_screen_user_menu_item_add_prop(const bContext *C,
+                                       ListBaseT<bUserMenuItem> *lb,
                                        const char *ui_name,
                                        const char *context_data_path,
                                        const char *prop_id,
-                                       int prop_index);
+                                       int prop_index,
+                                       int icon);
 
 void ED_screen_user_menu_item_remove(ListBaseT<bUserMenuItem> *lb, bUserMenuItem *umi);
+void ED_screen_user_menu_item_move_up(ListBaseT<bUserMenuItem> *lb, bUserMenuItem *umi);
+void ED_screen_user_menu_item_move_down(ListBaseT<bUserMenuItem> *lb, bUserMenuItem *umi);
 void ED_screen_user_menu_register();
 
 /* Cache display helpers */
