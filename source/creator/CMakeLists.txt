@@ -496,6 +496,13 @@ if(WITH_PYTHON)
     )
   endif()
 
+  if(WITH_MESHOPTIMIZER)
+    install(
+      PROGRAMS $<TARGET_FILE:bf_intern_meshopt_bridge>
+      DESTINATION ${TARGETDIR_VER}/scripts/addons_core/io_scene_gltf2
+    )
+  endif()
+
 endif()
 
 # fonts
@@ -1568,6 +1575,24 @@ elseif(WIN32)
   )
 
   windows_install_shared_manifest(
+    FILES ${LIBDIR}/meshoptimizer/bin/meshoptimizer.dll
+    RELEASE
+  )
+  windows_install_shared_manifest(
+    FILES ${LIBDIR}/meshoptimizer/bin/meshoptimizer_d.dll
+    DEBUG
+  )
+
+  windows_install_shared_manifest(
+    FILES ${LIBDIR}/draco/bin/draco.dll
+    RELEASE
+  )
+  windows_install_shared_manifest(
+    FILES ${LIBDIR}/draco/bin/draco_d.dll
+    DEBUG
+  )
+
+  windows_install_shared_manifest(
     FILES
       ${LIBDIR}/openal/lib/OpenAL32.dll
     ALL
@@ -1953,33 +1978,19 @@ if((DEFINED LIBDIR) AND TARGETDIR_LIB)
         ${USD_LIBRARY_DIR}/usd
         DESTINATION ${TARGETDIR_LIB}
       )
-      install(DIRECTORY
-        ${LIBDIR}/usd/plugin/usd/hdStorm
-        ${LIBDIR}/usd/plugin/usd/usdShaders
-        ${LIBDIR}/usd/plugin/usd/hioOiio
-        ${LIBDIR}/usd/plugin/usd/hioOpenEXR
-        DESTINATION "bforartists.shared/usd"
-      )
+      install(DIRECTORY ${LIBDIR}/usd/plugin/usd/ DESTINATION "bforartists.shared/usd")
     elseif(USD_PYTHON_SUPPORT)
       install(DIRECTORY
         ${USD_LIBRARY_DIR}/usd
         DESTINATION ${TARGETDIR_LIB}
       )
-      install(DIRECTORY
-        ${LIBDIR}/usd/plugin/usd/hdStorm
-        ${LIBDIR}/usd/plugin/usd/usdShaders
-        DESTINATION ${TARGETDIR_LIB}/usd
-      )
+      install(DIRECTORY ${LIBDIR}/usd/plugin/usd/ DESTINATION ${TARGETDIR_LIB}/usd)
     else()
       install(DIRECTORY
         ${USD_LIBRARY_DIR}/usd
         DESTINATION "${TARGETDIR_VER}/datafiles"
       )
-      install(DIRECTORY
-        ${LIBDIR}/usd/plugin/usd/hdStorm
-        ${LIBDIR}/usd/plugin/usd/usdShaders
-        DESTINATION "${TARGETDIR_VER}/datafiles/usd"
-      )
+      install(DIRECTORY ${LIBDIR}/usd/plugin/usd/ DESTINATION "${TARGETDIR_VER}/datafiles/usd")
     endif()
   endif()
   if(WIN32)

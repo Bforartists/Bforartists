@@ -77,6 +77,11 @@ const EnumPropertyItem rna_enum_geometry_component_type_items[] = {
      ICON_GREASEPENCIL,
      "Grease Pencil",
      "Grease Pencil component containing layers and curves data"},
+    {int(bke::GeometryComponent::Type::Volume),
+     "VOLUME",
+     ICON_VOLUME_DATA,
+     "Volume",
+     "Volume component containing volume grids"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -398,11 +403,11 @@ const EnumPropertyItem rna_enum_fileselect_params_sort_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static const EnumPropertyItem rna_enum_asset_import_method_items[] = {
+static const EnumPropertyItem rna_enum_fileselect_params_asset_import_method_items[] = {
     {FILE_ASSET_IMPORT_FOLLOW_PREFS,
      "FOLLOW_PREFS",
      ICON_PREFERENCES,
-     "Follow Preferences",
+     "Follow Asset or Preferences",
      "Use the import method set in the Preferences for this asset library, don't override it "
      "for this Asset Browser"},
     {FILE_ASSET_IMPORT_LINK,
@@ -436,6 +441,25 @@ static const EnumPropertyItem rna_enum_asset_import_method_items[] = {
      "Link (Override)",
      "Import the assets as linked library overrided data.\nThis will only override the active "
      "hierarchy.\nTo override all selected contents, use the Outliner Editor"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+const EnumPropertyItem rna_enum_asset_access_items[] = {
+    {int(AssetAccess::OnlineAndOffline),
+     "ALL",
+     0,
+     "Online and Offline",
+     "Show assets that are both hosted online (need downloading) and available on disk already"},
+    {int(AssetAccess::OnlyOnline),
+     "ONLY_ONLINE",
+     0,
+     "Online Only",
+     "Show only assets that need downloading (requires internet access)"},
+    {int(AssetAccess::OnlyOffline),
+     "ONLY_OFFLINE",
+     0,
+     "Offline Only",
+     "Show only assets that are available on disk already (no internet access needed)"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -2740,6 +2764,22 @@ static void rna_SpaceGraphEditor_normalize_update(bContext *C, PointerRNA * /*pt
     return;
   }
 
+  ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
+  /* This has to use the same filters as the graph editor uses to get its FCurves. */
+  const eAnimFilter_Flags filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE |
+                                    ANIMFILTER_NODUPLIS | ANIMFILTER_FCURVESONLY |
+                                    ANIMFILTER_CURVE_VISIBLE);
+  ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, eAnimCont_Types(ac.datatype));
+  for (bAnimListElem &ale : anim_data) {
+    FCurve *fcu = static_cast<FCurve *>(ale.key_data);
+    float offset;
+    /* Calling this function updates the cached values in the `FCurve`. Doing so makes it so that
+     * the normalization will be correct after enabling the normalization, even with auto normalize
+     * disabled. */
+    ANIM_unit_mapping_get_factor(ac.scene, ale.id, fcu, ANIM_UNITCONV_NORMALIZE, &offset);
+  }
+  ANIM_animdata_freelist(&anim_data);
+
   ANIM_frame_channel_y_extents(C, &ac);
   ED_area_tag_refresh(ac.area);
 }
@@ -4092,7 +4132,9 @@ static const EnumPropertyItem *rna_FileAssetSelectParams_import_method_itemf(
 
   EnumPropertyItem *items = nullptr;
   int items_num = 0;
-  for (const EnumPropertyItem *item = rna_enum_asset_import_method_items; item->identifier; item++)
+  for (const EnumPropertyItem *item = rna_enum_fileselect_params_asset_import_method_items;
+       item->identifier;
+       item++)
   {
     if ((item->value == FILE_ASSET_IMPORT_LINK) &&
         (params->asset_library_ref.type == ASSET_LIBRARY_CUSTOM))
@@ -7057,6 +7099,13 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
       prop, "Limit View to Contents", "Limit timeline height to maximum used channel slot");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
+  prop = RNA_def_property(srna, "show_scrubbing_region", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_SHOW_SCRUBBING_REGION);
+  RNA_def_property_ui_text(prop,
+                           "Show Scrubbing Region",
+                           "Region with full playback range for scrubbing in the sequencer");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
   /* Annotations */
   prop = RNA_def_property(srna, "annotation", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "gpd");
@@ -8129,9 +8178,9 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Asset Select Parameters", "Settings for the file selection in Asset Browser mode");
 
-  prop = rna_def_asset_library_reference_common(srna,
-                                                "rna_FileAssetSelectParams_asset_library_get",
-                                                "rna_FileAssetSelectParams_asset_library_set");
+  prop = rna_def_asset_library_ui_reference_common(srna,
+                                                   "rna_FileAssetSelectParams_asset_library_get",
+                                                   "rna_FileAssetSelectParams_asset_library_set");
   RNA_def_property_ui_text(prop, "Asset Library", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 
@@ -8153,7 +8202,7 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
                            "Which asset types to show/hide, when browsing an asset library");
 
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, rna_enum_asset_import_method_items);
+  RNA_def_property_enum_items(prop, rna_enum_fileselect_params_asset_import_method_items);
   RNA_def_property_enum_funcs(
       prop, nullptr, nullptr, "rna_FileAssetSelectParams_import_method_itemf");
   RNA_def_property_ui_text(prop, "Import Method", "Determine how the asset will be imported");
@@ -8170,11 +8219,10 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
                            "them directly to the scene");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 
-  prop = RNA_def_property(srna, "show_online_assets", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "asset_flags", FILE_ASSETS_HIDE_ONLINE);
-  RNA_def_property_ui_text(prop,
-                           "Show Online Assets",
-                           "When internet access is enabled, load and display online assets");
+  prop = RNA_def_property(srna, "asset_access", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_asset_access_items);
+  RNA_def_property_ui_text(
+      prop, "Asset Access", "Choose the visibility of online and offline assets");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 
   prop = RNA_def_property(srna, "instance_collections_on_append", PROP_BOOLEAN, PROP_NONE);

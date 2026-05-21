@@ -56,10 +56,9 @@ set(SRC
   intern/bake_data_block_map.cc
   intern/bake_geometry_nodes_modifier.cc
   intern/bake_geometry_nodes_modifier_pack.cc
-  intern/bake_items.cc
   intern/bake_items_paths.cc
   intern/bake_items_serialize.cc
-  intern/bake_items_socket.cc
+  intern/bake_values.cc
   intern/blender.cc
   intern/blender_cli_command.cc
   intern/blender_copybuffer.cc
@@ -229,7 +228,6 @@ set(SRC
   intern/node_runtime.cc
   intern/node_socket_value.cc
   intern/node_tree_dot_export.cc
-  intern/node_tree_field_inferencing.cc
   intern/node_tree_interface.cc
   intern/node_tree_reference_lifetimes.cc
   intern/node_tree_structure_type_inferencing.cc
@@ -331,6 +329,7 @@ set(SRC
   BKE_asset_edit.hh
   BKE_attribute.h
   BKE_attribute.hh
+  BKE_attribute_enums.hh
   BKE_attribute_filter.hh
   BKE_attribute_filters.hh
   BKE_attribute_legacy_convert.hh
@@ -342,10 +341,9 @@ set(SRC
   BKE_bake_data_block_map.hh
   BKE_bake_geometry_nodes_modifier.hh
   BKE_bake_geometry_nodes_modifier_pack.hh
-  BKE_bake_items.hh
   BKE_bake_items_paths.hh
   BKE_bake_items_serialize.hh
-  BKE_bake_items_socket.hh
+  BKE_bake_values.hh
   BKE_blender.hh
   BKE_blender_cli_command.hh
   BKE_blender_copybuffer.hh

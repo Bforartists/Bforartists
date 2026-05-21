@@ -41,7 +41,7 @@ struct MaskApplyOp {
           image[3] = uchar(image[3] * m);
         }
         else if constexpr (std::is_same_v<ImageT, float>) {
-          /* Float buffers are premultiplied, so need to premul color as well to make it
+          /* Float buffers are pre-multiplied, so need to pre-multiply color as well to make it
            * easy to alpha-over masked strip. */
           float4 pix(image);
           pix *= m;
@@ -63,7 +63,7 @@ static void maskmodifier_apply(ModifierApplyContext &context, StripModifierData 
     apply_modifier_op(op, context.image, mask, context.transform);
 
     /* Image has gained transparency. */
-    context.image->planes = R_IMF_PLANES_RGBA;
+    context.image->color_mode = ImColorMode::RGBA;
   }
 
   if (mask != nullptr) {

@@ -110,6 +110,10 @@ static CLG_LogRef LOG = {"sculpt"};
 
 namespace ed::sculpt_paint {
 
+/* -------------------------------------------------------------------- */
+/** \name Sculpt Brush Utilities
+ * \{ */
+
 /* TODO: This should be moved to either BKE_paint.hh or BKE_brush.hh */
 float object_space_radius_get(const ViewContext &vc,
                               const Paint &paint,
@@ -7556,11 +7560,11 @@ void calc_brush_texture_factors(const SculptSession &ss,
 {
   BLI_assert(verts.size() == factors.size());
 
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
   const MTex *mtex = BKE_brush_mask_texture_get(&brush, OB_MODE_SCULPT);
   if (!mtex->tex) {
     return;
   }
+  const int thread_id = BLI_task_parallel_thread_id(nullptr);
 
   for (const int i : verts.index_range()) {
     if (factors[i] == 0.0f) {
@@ -7583,11 +7587,11 @@ void calc_brush_texture_factors(const SculptSession &ss,
 {
   BLI_assert(positions.size() == factors.size());
 
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
   const MTex *mtex = BKE_brush_mask_texture_get(&brush, OB_MODE_SCULPT);
   if (!mtex->tex) {
     return;
   }
+  const int thread_id = BLI_task_parallel_thread_id(nullptr);
 
   for (const int i : positions.index_range()) {
     if (factors[i] == 0.0f) {

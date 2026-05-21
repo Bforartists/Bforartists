@@ -301,7 +301,7 @@ static void node_group_ungroup(bContext &C, bNodeTree &ntree, bNode &group_node)
   /* Delete the original group instance. */
   bke::node_remove_node(&bmain, ntree, group_node, true);
 
-  /* Select ungrouped nodes*/
+  /* Select ungrouped nodes. */
   for (bNode *node : copied_nodes.node_map().values()) {
     bke::node_set_selected(*node, true);
   }
@@ -721,7 +721,7 @@ static bNode *node_group_make_from_node_declaration(bContext &C,
 
   /* Position node exactly where the old node was. */
   gnode->parent = src_node.parent;
-  gnode->width = std::max<float>(src_node.width, GROUP_NODE_MIN_WIDTH);
+  gnode->width = std::max<float>(src_node.width, bke::NodeWidth::GroupMin);
   copy_v2_v2(gnode->location, src_node.location);
 
   BKE_main_ensure_invariants(bmain);

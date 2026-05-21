@@ -129,8 +129,8 @@ bool BKE_image_save_options_init(ImageSaveOptions *opts,
     /* sanitize all settings */
 
     /* unlikely but just in case */
-    if (ELEM(opts->im_format.planes, R_IMF_PLANES_BW, R_IMF_PLANES_RGB, R_IMF_PLANES_RGBA) == 0) {
-      opts->im_format.planes = R_IMF_PLANES_RGBA;
+    if (!ELEM(opts->im_format.color_mode, ImColorMode::BW, ImColorMode::RGB, ImColorMode::RGBA)) {
+      opts->im_format.color_mode = ImColorMode::RGBA;
     }
 
     /* some formats don't use quality so fallback to scenes quality */
@@ -322,7 +322,7 @@ static void imbuf_save_post(ImBuf *ibuf, ImBuf *colormanaged_ibuf)
      */
     ibuf->ftype = colormanaged_ibuf->ftype;
     ibuf->foptions = colormanaged_ibuf->foptions;
-    ibuf->planes = colormanaged_ibuf->planes;
+    ibuf->color_mode = colormanaged_ibuf->color_mode;
 
     IMB_freeImBuf(colormanaged_ibuf);
   }
@@ -357,21 +357,21 @@ static bool image_save_single(ReportList *reports,
 
   if (ima->type == IMA_TYPE_R_RESULT) {
     /* enforce user setting for RGB or RGBA, but skip BW */
-    if (opts->im_format.planes == R_IMF_PLANES_RGBA) {
-      ibuf->planes = R_IMF_PLANES_RGBA;
+    if (opts->im_format.color_mode == ImColorMode::RGBA) {
+      ibuf->color_mode = ImColorMode::RGBA;
     }
-    else if (opts->im_format.planes == R_IMF_PLANES_RGB) {
-      ibuf->planes = R_IMF_PLANES_RGB;
+    else if (opts->im_format.color_mode == ImColorMode::RGB) {
+      ibuf->color_mode = ImColorMode::RGB;
     }
   }
   else {
     /* TODO: better solution, if a 24bit image is painted onto it may contain alpha. */
-    if ((opts->im_format.planes == R_IMF_PLANES_RGBA) &&
+    if ((opts->im_format.color_mode == ImColorMode::RGBA) &&
         /* it has been painted onto */
         (ibuf->userflags & IB_BITMAPDIRTY))
     {
       /* checks each pixel, not ideal */
-      ibuf->planes = BKE_imbuf_alpha_test(ibuf) ? R_IMF_PLANES_RGBA : R_IMF_PLANES_RGB;
+      ibuf->color_mode = BKE_imbuf_alpha_test(ibuf) ? ImColorMode::RGBA : ImColorMode::RGB;
     }
   }
 
@@ -481,7 +481,7 @@ static bool image_save_single(ReportList *reports,
   }
   /* individual multiview images */
   else if (imf->views_format == R_IMF_VIEWS_INDIVIDUAL) {
-    uchar planes = ibuf->planes;
+    ImColorMode color_mode = ibuf->color_mode;
     const int totviews = (rr ? BLI_listbase_count(&rr->views) : BLI_listbase_count(&ima->views));
 
     if (!is_exr_rr) {
@@ -523,7 +523,7 @@ static bool image_save_single(ReportList *reports,
         }
 
         ibuf = BKE_image_acquire_ibuf(ima, &view_iuser, &lock);
-        ibuf->planes = planes;
+        ibuf->color_mode = color_mode;
 
         BKE_scene_multiview_view_filepath_get(&opts->scene->r, opts->filepath, view, filepath);
 
@@ -557,7 +557,7 @@ static bool image_save_single(ReportList *reports,
     else {
       ImBuf *ibuf_stereo[2] = {nullptr};
 
-      uchar planes = ibuf->planes;
+      ImColorMode color_mode = ibuf->color_mode;
       const char *names[2] = {STEREO_LEFT_NAME, STEREO_RIGHT_NAME};
 
       /* we need to get the specific per-view buffers */
@@ -596,7 +596,7 @@ static bool image_save_single(ReportList *reports,
           break;
         }
 
-        ibuf->planes = planes;
+        ibuf->color_mode = color_mode;
 
         /* color manage the ImBuf leaving it ready for saving */
         colormanaged_ibuf = IMB_colormanagement_imbuf_for_write(ibuf, save_as_render, true, imf);
@@ -706,13 +706,13 @@ bool BKE_image_save(
 
 /* OpenEXR saving, single and multilayer. */
 
-static float *image_exr_from_scene_linear_to_output(float *rect,
-                                                    const int width,
-                                                    const int height,
-                                                    const int channels,
-                                                    const ImageFormatData *imf,
-                                                    Vector<float *> &tmp_output_rects,
-                                                    StringRefNull &r_colorspace)
+static const float *image_exr_from_scene_linear_to_output(const float *rect,
+                                                          const int width,
+                                                          const int height,
+                                                          const int channels,
+                                                          const ImageFormatData *imf,
+                                                          Vector<float *> &tmp_output_rects,
+                                                          StringRefNull &r_colorspace)
 {
   if (imf == nullptr) {
     return rect;
@@ -723,7 +723,9 @@ static float *image_exr_from_scene_linear_to_output(float *rect,
     return rect;
   }
 
-  float *output_rect = MEM_dupalloc(rect);
+  const size_t size = size_t(width) * size_t(height) * size_t(channels);
+  float *output_rect = MEM_new_array_uninitialized<float>(size, __func__);
+  std::copy_n(rect, size, output_rect);
   tmp_output_rects.append(output_rect);
 
   const char *from_colorspace = IMB_colormanagement_role_colorspace_name_get(
@@ -736,8 +738,11 @@ static float *image_exr_from_scene_linear_to_output(float *rect,
   return output_rect;
 }
 
-static float *image_exr_from_rgb_to_bw(
-    float *input_buffer, int width, int height, int channels, Vector<float *> &temporary_buffers)
+static const float *image_exr_from_rgb_to_bw(const float *input_buffer,
+                                             int width,
+                                             int height,
+                                             int channels,
+                                             Vector<float *> &temporary_buffers)
 {
   float *gray_scale_output = MEM_new_array_uninitialized<float>(size_t(width) * size_t(height),
                                                                 "Gray Scale Buffer For EXR");
@@ -814,7 +819,7 @@ static void add_exr_compositing_result(ExrHandle *exr_handle,
 
     /* Compositing results is always a 4-channel RGBA. */
     const int channels_count_in_buffer = 4;
-    float *output_buffer = render_view.ibuf->float_data_for_write();
+    const float *output_buffer = render_view.ibuf->float_data();
     StringRefNull colorspace = IMB_colormanagement_role_colorspace_name_get(
         COLOR_ROLE_SCENE_LINEAR);
 
@@ -847,13 +852,14 @@ static void add_exr_compositing_result(ExrHandle *exr_handle,
      * needed color format conversion.
      *
      * In case of a single required channel, we need to do RGBA to BW conversion. */
-    const int required_channels = imf ? imf->planes / 8 : 4;
-    if (required_channels == 1) {
-      float *gray_scale_output = image_exr_from_rgb_to_bw(output_buffer,
-                                                          render_result->rectx,
-                                                          render_result->recty,
-                                                          channels_count_in_buffer,
-                                                          temporary_buffers);
+
+    const ImColorMode color_mode = imf ? imf->color_mode : ImColorMode::RGBA;
+    if (color_mode == ImColorMode::BW) {
+      const float *gray_scale_output = image_exr_from_rgb_to_bw(output_buffer,
+                                                                render_result->rectx,
+                                                                render_result->recty,
+                                                                channels_count_in_buffer,
+                                                                temporary_buffers);
       IMB_exr_add_channels(exr_handle,
                            "",
                            "V",
@@ -868,7 +874,7 @@ static void add_exr_compositing_result(ExrHandle *exr_handle,
 
     /* Add RGB[A] channels. This will essentially skip the alpha channel if only three channels
      * were required. */
-    std::string channelnames = StringRef("RGBA").substr(0, required_channels);
+    StringRefNull channelnames = color_mode == ImColorMode::RGBA ? "RGBA" : "RGB";
     IMB_exr_add_channels(exr_handle,
                          "",
                          channelnames,
@@ -945,7 +951,7 @@ bool BKE_image_render_write_exr(ReportList *reports,
       const bool pass_half_float = half_float && pass_RGBA;
 
       /* Color-space conversion only happens on RGBA passes. */
-      float *output_rect = render_pass.ibuf->float_data_for_write();
+      const float *output_rect = render_pass.ibuf->float_data();
       StringRefNull colorspace = IMB_colormanagement_role_colorspace_name_get(
           (pass_RGBA) ? COLOR_ROLE_SCENE_LINEAR : COLOR_ROLE_DATA);
 
@@ -987,7 +993,7 @@ bool BKE_image_render_write_exr(ReportList *reports,
        * First, if the required channels equal the pass channels, we add the channels as is. Or,
        * we add the RGB[A] channels if the pass is RGB[A] and we require RGB[A]. If the alpha
        * channel is required but does not exist in the pass, it will be added below. */
-      const int required_channels = imf ? imf->planes / 8 : 4;
+      const int required_channels = imf ? int(imf->color_mode) / 8 : 4;
       if (required_channels == render_pass.channels ||
           (required_channels != 1 && render_pass.channels != 1))
       {
@@ -1006,7 +1012,7 @@ bool BKE_image_render_write_exr(ReportList *reports,
       else if (required_channels == 1) {
         /* In case of a single required channel, we need to do RGB[A] to BW conversion. We know
          * the input is RGB[A] and not single channel because it filed the condition above. */
-        float *gray_scale_output = image_exr_from_rgb_to_bw(
+        const float *gray_scale_output = image_exr_from_rgb_to_bw(
             output_rect, rr->rectx, rr->recty, render_pass.channels, tmp_output_rects);
         IMB_exr_add_channels(exrhandle,
                              "",
@@ -1176,7 +1182,7 @@ bool BKE_image_render_write(ReportList *reports,
           BKE_image_path_ext_from_imformat_ensure(filepath, sizeof(filepath), &image_format);
 
           ImBuf *ibuf = RE_render_result_rect_to_ibuf(rr, &image_format, dither, view_id);
-          ibuf->planes = 24;
+          ibuf->color_mode = ImColorMode::RGB;
           IMB_colormanagement_imbuf_for_write(ibuf, save_as_render, false, &image_format);
 
           ok = image_render_write_stamp_test(
@@ -1234,7 +1240,7 @@ bool BKE_image_render_write(ReportList *reports,
           }
 
           BKE_image_path_ext_from_imformat_ensure(filepath, sizeof(filepath), &image_format);
-          ibuf_arr[2]->planes = 24;
+          ibuf_arr[2]->color_mode = ImColorMode::RGB;
 
           ok = image_render_write_stamp_test(
               reports, scene, rr, ibuf_arr[2], filepath, &image_format, stamp);

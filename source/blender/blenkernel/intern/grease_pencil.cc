@@ -575,7 +575,7 @@ static void update_triangle_and_offsets_cache(const Span<float3> positions,
                 array_utils::fill_index_range<int>(face, fill_points.first());
                 const Span<float2> projpoints = projverts_span.slice(fill_points);
 
-                /* Curve have to be in a counterclockwise order, so check if a flip is need.*/
+                /* Curve have to be in a counterclockwise order, so check if a flip is need. */
                 if (cross_poly_v2(reinterpret_cast<const float (*)[2]>(projpoints.data()),
                                   projpoints.size()) < 0.0)
                 {
@@ -4756,5 +4756,7 @@ static void write_layer_tree(GreasePencil &grease_pencil, BlendWriter *writer)
   grease_pencil.root_group_ptr->wrap().prepare_for_dna_write();
   write_layer_tree_group(writer, grease_pencil.root_group_ptr);
 }
+
+/** \} */
 
 }  // namespace blender

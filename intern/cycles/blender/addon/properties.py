@@ -239,6 +239,8 @@ enum_view3d_shading_render_pass = (
 )
 
 enum_view3d_debug_render_pass = (
+    ('MOTION', "Vector", "Show motion vectors"),
+
     ('VOLUME_SCATTER', "Volume Scatter", "Show the contribution of scattered ray in volume"),
     ('VOLUME_TRANSMIT', "Volume Transmit", "Show the contribution of transmitted ray in volume"),
     ('VOLUME_MAJORANT', "Volume Majorant", "Show the majorant transmittance of the volume")
@@ -1583,6 +1585,18 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
         default=False,
         update=update_render_passes,
     )
+    denoising_pass_follow_reflections: BoolProperty(
+        name="Denoising Pass Reflections",
+        description="Follow reflections for the denoising feature passes",
+        default=True,
+        update=update_render_passes,
+    )
+    denoising_pass_use_albedo_roughness_weighting: BoolProperty(
+        name="Denoising Pass Albedo Roughness Weighting",
+        description="Use roughness-based weighting of the albedo for the denoising feature passes",
+        default=True,
+        update=update_render_passes,
+    )
 
     @classmethod
     def register(cls):
@@ -1876,8 +1890,8 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                     col.label(text=rpt_("or AMD Radeon Pro %s driver or newer") %
                               pro_driver_version, icon='BLANK1', translate=False)
                 elif sys.platform.startswith("linux"):
-                    rocm_version = "6.0"
-                    driver_version = "23.40"
+                    rocm_version = "6.3"
+                    driver_version = "24.30"
                     col.label(
                         text=rpt_("Requires AMD GPU with RDNA architecture"),
                         icon='BLANK1',

@@ -389,6 +389,9 @@ class STRIP_PT_effect_text_style(StripButtonsPanel, Panel):
         
         col1.label(text="Size")
         col2.prop(strip, "font_size", text="")
+
+        col1.label(text="Line")
+        col2.prop(strip, "space_line")
         
         col1.label(text="Color")
         col2.prop(strip, "color", text="")
@@ -685,6 +688,12 @@ class STRIP_PT_scene(StripButtonsPanel, Panel):
         layout.active = not strip.mute
 
         layout.template_ID(strip, "scene", text="Scene", new="scene.new_sequencer")
+
+        if scene:
+            row = layout.row()
+            row.enabled = (strip.scene_input == 'CAMERA')
+            row.template_search(strip, "view_layer", scene, "view_layers", text="View Layer")
+
         layout.prop(strip, "scene_input", text="Input")
 
         if strip.scene_input == 'CAMERA':

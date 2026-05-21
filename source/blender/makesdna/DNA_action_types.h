@@ -161,8 +161,9 @@ ENUM_OPERATORS(bPoseChannelRuntimeFlag);
 
 /* PoseChannel (transform) flags. */
 enum ePchan_Flag : short {
-  /* (1 << 0) to (1 << 3) used to be flags to determine if a type of channel should be modified by
-     pose sliding. This has been moved to the `SlideSubject` struct in Blender 5.2.  */
+  /* (1 << 0) to (1 << 3) used to be flags to determine if a type of channel
+   * should be modified by pose sliding.
+   * This has been moved to the `SlideSubject` struct in Blender 5.2. */
 
   /* old IK/cache stuff
    * - used to be here from (1 << 3) to (1 << 8)
@@ -893,6 +894,9 @@ struct bPoseChannel {
    * Get the armature bone that corresponds to this bPoseChannel.
    *
    * Prefer bone_get(object) over this function, as that performs more checks at runtime.
+   *
+   * \warning only use when you are sure bone indices are up to date.
+   * Call `BKE_pose_ensure_bone_indices` to ensure bone indices are correct.
    */
   const Bone *bone_get(const bArmature &armature) const;
   Bone *bone_get(bArmature &armature);
@@ -936,7 +940,7 @@ struct bPose {
   ePose_IKSolverType iksolver = {};
   /** Temporary IK data, depends on the IK solver. Not saved in file. */
   void *ikdata = nullptr;
-  /** IK solver parameter for ItaSC .*/
+  /** IK solver parameter for ItaSC. */
   bItasc *ikparam = nullptr;
 
   /** Settings for visualization of bone animation. */

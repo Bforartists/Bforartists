@@ -806,7 +806,7 @@ static wmOperatorStatus pose_copy_exec(bContext *C, wmOperator *op)
   /* Taking off the selection flag in case bones are hidden so they are not
    * applied when pasting.  */
   for (bPoseChannel &pose_bone : ob->pose->chanbase) {
-    if (!animrig::bone_is_visible(armature, &pose_bone)) {
+    if (!animrig::bone_is_visible(armature, {&pose_bone, pose_bone.bone_get(*ob)})) {
       animrig::bone_deselect(&pose_bone);
     }
   }
@@ -830,7 +830,7 @@ static wmOperatorStatus pose_copy_exec(bContext *C, wmOperator *op)
 
   char filepath[FILE_MAX];
   pose_copybuffer_filepath_get(filepath, sizeof(filepath));
-  copybuffer.write(filepath, *op->reports);
+  copybuffer.write_as_copypaste_buffer(filepath, *op->reports);
 
   /* We are all done! */
   BKE_report(op->reports, RPT_INFO, "Copied pose to internal clipboard");

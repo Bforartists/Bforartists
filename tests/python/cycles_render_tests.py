@@ -28,7 +28,8 @@ BLOCKLIST_ALL = [
     "shadow_min_pool_size.blend",
     "shadow_resolution_scale.blend",
     "shader_to_rgb_transparent.blend",
-    "subsurface_shader_to_rgb.blend"
+    "subsurface_shader_to_rgb.blend",
+    "lightprobe_planar.blend"
 ]
 
 # Blocklist for device + build configuration that does not support OSL at all.
@@ -223,7 +224,7 @@ def get_arguments(filepath, output_filepath, use_hwrt, osl, extra_args):
 
     args.extend(extra_args)
 
-    if subject == 'bake':
+    if subject.startswith('bake'):
         args.extend(['--python', os.path.join(basedir, "util", "render_bake.py")])
     elif subject == 'denoise_animation':
         args.extend(['--python', os.path.join(basedir, "util", "render_denoise.py")])

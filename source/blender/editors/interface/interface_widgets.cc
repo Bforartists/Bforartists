@@ -1825,42 +1825,53 @@ Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
  */
 static void text_clip_cursor(const uiFontStyle *fstyle, Button *but, const rcti *rect)
 {
-  const int border = int(UI_TEXT_CLIP_MARGIN + 0.5f);
-  const int okwidth = max_ii(BLI_rcti_size_x(rect) - border, 0);
+  /* Rect already includes text padding, no need for extra margin. */
+  const int okwidth = BLI_rcti_size_x(rect);
 
   BLI_assert(but->editstr && but->pos >= 0);
 
   /* need to set this first */
   fontstyle_set(fstyle);
 
-  /* define ofs dynamically */
+  /* Shift text left until caret is visible. */
   but->ofs = std::min(but->ofs, but->pos);
 
+  /* String is small enough to not require clipping. */
   if (BLF_width(fstyle->uifont_id, but->editstr, INT_MAX) <= okwidth) {
     but->ofs = 0;
+    return;
   }
 
+  /* Pixel width of visible string fragment. */
   but->strwidth = BLF_width(fstyle->uifont_id, but->editstr + but->ofs, INT_MAX);
 
+  const int editstr_len = strlen(but->editstr);
+  int len = editstr_len;
+
+  /* Shift text right to fill available space. */
+  while (but->strwidth < okwidth && but->ofs > 0) {
+    text_clip_give_prev_off(but, but->editstr);
+    but->strwidth = BLF_width(fstyle->uifont_id, but->editstr + but->ofs, len - but->ofs);
+  }
+
+  /* Shift text left until caret is visible. */
   if (but->strwidth > okwidth) {
-    const int editstr_len = strlen(but->editstr);
-    int len = editstr_len;
-
     while (but->strwidth > okwidth) {
-      float width;
+      float caret_x;
 
-      /* string position of cursor */
-      width = BLF_width(fstyle->uifont_id, but->editstr + but->ofs, (but->pos - but->ofs));
+      /* Cursor position relative to text start. */
+      caret_x = BLF_width(fstyle->uifont_id, but->editstr + but->ofs, (but->pos - but->ofs));
 
-      /* if cursor is at 20 pixels of right side button we clip left */
-      if (width > okwidth - 20) {
+      /* Caret is too far right, shift text left. */
+      if (caret_x > okwidth - 20) {
         text_clip_give_next_off(but, but->editstr, but->editstr + editstr_len);
       }
       else {
-        /* shift string to the left */
-        if (width < 20 && but->ofs > 0) {
+        /* Caret is too far left, shift text right. */
+        if (caret_x < 20 && but->ofs > 0) {
           text_clip_give_prev_off(but, but->editstr);
         }
+        /* String fragment is too wide, trim end. */
         len -= BLI_str_utf8_size_safe(
             BLI_str_find_prev_char_utf8(but->editstr + len, but->editstr));
       }
@@ -2116,7 +2127,7 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
     align = UI_STYLE_TEXT_LEFT;
   }
   else if (but->drawflag & BUT_TEXT_RIGHT) {
-    align = UI_STYLE_TEXT_RIGHT;
+    align = UI_STYLE_TEXT_LEFT; /* bfa align text in split props left */
   }
   else {
     align = UI_STYLE_TEXT_CENTER;
@@ -2329,8 +2340,11 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
   rcti grip_rect = *button_rect;
   grip_rect.ymax = grip_rect.ymin + std::floor(textbox_grip_height() / but->block->aspect);
   grip_rect.xmin = grip_rect.xmax - text_padding - scrollbar_pad;
-  widget_draw_icon_centered(
-      ICON_GRIP_CORNER_BOTTOM_RIGHT, textbox->block->aspect, 1.0f, &grip_rect, wcol->text);
+  /* Draw grip button if there is space enough. */
+  if (BLI_rcti_isect(&grip_rect, button_rect, nullptr)) {
+    widget_draw_icon_centered(
+        ICON_GRIP_CORNER_BOTTOM_RIGHT, textbox->block->aspect, 1.0f, &grip_rect, wcol->text);
+  }
 
   if (textbox->last_total_lines <= visible_lines) {
     return;
@@ -2356,6 +2370,8 @@ static void widget_draw_textbox(const uiFontStyle *fstyle,
                   slider_rect.ymin < scroll_rect.ymin ? (scroll_rect.ymin - slider_rect.ymin) :
                                                         0;
   BLI_rcti_translate(&slider_rect, 0, pad);
+  slider_rect.ymin = std::max(slider_rect.ymin, scroll_rect.ymin);
+  slider_rect.ymax = std::min(slider_rect.ymax, scroll_rect.ymax);
   uiWidgetColors wscroll = theme::theme_get()->tui.wcol_scroll;
   if (BLI_rcti_isect(&scroll_rect, button_rect, nullptr)) {
     draw_widget_scroll(&wscroll, &scroll_rect, &slider_rect, 0);
@@ -2447,6 +2463,12 @@ static void widget_draw_text(const uiFontStyle *fstyle,
 
   /* text button selection, cursor, composite underline */
   if (but->editstr && but->pos != -1) {
+    int align_x_ofs = 0;
+    if (align == UI_STYLE_TEXT_RIGHT) {
+      int width = BLF_width(fstyle->uifont_id, drawstr + but->ofs, drawstr_left_len - but->ofs);
+      const int rect_width = BLI_rcti_size_x(rect);
+      align_x_ofs = max_ii(0, rect_width - width);
+    }
     int but_pos_ofs;
 
 #ifdef WITH_INPUT_IME
@@ -2471,9 +2493,9 @@ static void widget_draw_text(const uiFontStyle *fstyle,
           but->selend - std::max(but->ofs, but->selsta));
       for (auto bounds : boxes) {
         immRectf(pos,
-                 rect->xmin + bounds.min,
+                 rect->xmin + bounds.min + align_x_ofs,
                  rect->ymin + U.pixelsize,
-                 std::min(rect->xmin + bounds.max, rect->xmax - 2),
+                 std::min(rect->xmin + bounds.max + align_x_ofs, rect->xmax - 2),
                  rect->ymax - U.pixelsize);
       }
       immUnbindProgram();
@@ -2521,9 +2543,9 @@ static void widget_draw_text(const uiFontStyle *fstyle,
 
       /* draw cursor */
       immRectf(pos,
-               rect->xmin + t,
+               rect->xmin + t + align_x_ofs,
                rect->ymin + U.pixelsize,
-               rect->xmin + t + int(2.0f * U.pixelsize),
+               rect->xmin + t + align_x_ofs + int(2.0f * U.pixelsize),
                rect->ymax - U.pixelsize);
 
       immUnbindProgram();
@@ -2763,7 +2785,8 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
   const bool show_menu_icon = but_draw_menu_icon(but);
   const float alpha = float(wcol->text[3]) / 255.0f;
   std::string password_str;
-  bool no_text_padding = but->drawflag & BUT_NO_TEXT_PADDING;
+  bool no_left_padding = but->drawflag & BUT_NO_TEXT_PADDING;
+  bool no_right_padding = no_left_padding;
 
   button_text_password_hide(password_str, but, false);
 
@@ -2776,11 +2799,12 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
       temp.xmax = rect->xmin + size;
       rect->xmin = temp.xmax;
       /* Further padding looks off. */
-      no_text_padding = true;
+      no_left_padding = true;
     }
     else {
       temp.xmin = rect->xmax - size;
       rect->xmax = temp.xmin;
+      no_right_padding = true;
     }
 
     widget_draw_node_link_socket(wcol, &temp, but, alpha);
@@ -2882,36 +2906,6 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
     rect->xmin += round_fl_to_int(icon_size + icon_padding);
   }
 
-  if (!no_text_padding) {
-    const int text_padding = button_text_padding(but);
-    if (but->editstr) {
-      rect->xmin += text_padding;
-    }
-    else if (but->flag & BUT_DRAG_MULTI) {
-      const bool text_is_edited = button_drag_multi_edit_get(but) != nullptr;
-      if (text_is_edited || (but->drawflag & BUT_TEXT_LEFT)) {
-        rect->xmin += text_padding;
-      }
-    }
-    else if (but->drawflag & BUT_TEXT_LEFT) {
-      rect->xmin += text_padding;
-    }
-    else if (but->drawflag & BUT_TEXT_RIGHT) {
-      rect->xmax -= text_padding;
-    }
-  }
-  else {
-    /* In case a separate text label and some other button are placed under each other,
-     * and the outline of the button does not contrast with the background.
-     * Add an offset (thickness of the outline) so that the text does not stick out visually. */
-    if (but->drawflag & BUT_TEXT_LEFT) {
-      rect->xmin += U.pixelsize;
-    }
-    else if (but->drawflag & BUT_TEXT_RIGHT) {
-      rect->xmax -= U.pixelsize;
-    }
-  }
-
   /* Menu contains sub-menu items with triangle icon on their right. Shortcut
    * strings should be drawn with some padding to the right then. */
   if (block_is_menu(but->block) && (but->block->content_hints & BLOCK_CONTAINS_SUBMENU_BUT)) {
@@ -2920,6 +2914,41 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
 
   /* extra icons, e.g. 'x' icon to clear text or icon for eyedropper */
   widget_draw_extra_icons(wcol, but, rect, alpha);
+
+  /* Text padding, after icon padding. Ideally we would have the same padding
+   * in both sides always (except for icons), but many button types rely on the
+   * current asymmetric padding. */
+  if (but->drawflag & BUT_TEXT_RIGHT) {
+    if (!no_right_padding) {
+      rect->xmax -= button_text_padding(but);
+    }
+    else {
+      rect->xmax -= U.pixelsize;
+    }
+    rect->xmin += U.pixelsize;
+  }
+  else {
+    if (!no_left_padding) {
+      const int text_padding = button_text_padding(but);
+      if (but->editstr || but->drawflag & BUT_TEXT_LEFT) {
+        rect->xmin += text_padding;
+      }
+      else if (but->flag & BUT_DRAG_MULTI) {
+        const bool text_is_edited = button_drag_multi_edit_get(but) != nullptr;
+        if (text_is_edited || (but->drawflag & BUT_TEXT_LEFT)) {
+          rect->xmin += text_padding;
+        }
+      }
+    }
+    else {
+      /* In case a separate text label and some other button are placed under each other,
+       * and the outline of the button does not contrast with the background.
+       * Add an offset (thickness of the outline) so that the text does not stick out visually. */
+      if (but->drawflag & BUT_TEXT_LEFT) {
+        rect->xmin += U.pixelsize;
+      }
+    }
+  }
 
   /* Textbox wraps content in lines, skip clipping text.  */
   if (but->type == ButtonType::TextBox) {

@@ -777,7 +777,6 @@ Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
 struct SearchItems;
 
 using ButtonHandleFunc = void (*)(bContext *C, void *arg1, void *arg2);
-using ButtonHandleRenameFunc = void (*)(bContext *C, void *arg, char *origstr);
 using ButtonHandleNFunc = void (*)(bContext *C, void *argN, void *arg2);
 using ButtonHandleHoldFunc = void (*)(bContext *C, ARegion *butregion, Button *but);
 using ButtonCompleteFunc = int (*)(bContext *C, char *str, void *arg);
@@ -1776,7 +1775,8 @@ enum AutoPropButsReturn {
 ENUM_OPERATORS(AutoPropButsReturn);
 
 /**
- * \param button_type_override \parblock
+ * \param button_type_override:
+ * \parblock
  * Overrides the default button type defined for some properties:
  * - Int/Float properties allows #ButtonType::Num or #ButtonType::NumSlider.
  * - Enum properties allows #ButtonType::Menu or #ButtonType::SearchMenu.
@@ -1939,9 +1939,10 @@ void block_funcN_set(Block *block,
                      ButtonArgNFree func_argN_free_fn = MEM_delete_void,
                      ButtonArgNCopy func_argN_copy_fn = MEM_dupalloc_void);
 
-void button_func_rename_set(Button *but, ButtonHandleRenameFunc func, void *arg1);
-void button_func_rename_full_set(Button *but,
-                                 std::function<void(std::string &new_name)> rename_full_func);
+void text_button_func_rename_set(
+    Button *but, std::function<void(bContext &C, StringRefNull oldname)> rename_func);
+void text_button_func_rename_full_set(
+    Button *but, std::function<void(StringRefNull new_name)> rename_full_func);
 void button_func_set(Button *but, ButtonHandleFunc func, void *arg1, void *arg2);
 void button_funcN_set(Button *but,
                       ButtonHandleNFunc funcN,
@@ -2041,8 +2042,7 @@ void tooltip_text_field_add(TooltipData &data,
                             const bool is_pad = false);
 
 /**
- * \param image: Image buffer (duplicated, ownership is *not* transferred to `data`).
- * \param image_size: Display size for the image (pixels without UI scale applied).
+ * \param image_data: Image buffer (duplicated, ownership is *not* transferred to `data`).
  */
 void tooltip_image_field_add(TooltipData &data, const TooltipImage &image_data);
 
@@ -2568,7 +2568,7 @@ void template_color_picker(Layout *layout,
                            bool lock,
                            bool lock_luminosity,
                            bool cubic);
-void template_palette(Layout *layout, PointerRNA *ptr, StringRefNull propname, bool colors);
+void template_palette(Layout *layout, PointerRNA *ptr, StringRefNull propname);
 void template_crypto_picker(Layout *layout, PointerRNA *ptr, StringRefNull propname, int icon);
 /**
  * TODO: for now, grouping of layers is determined by dividing up the length of

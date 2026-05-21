@@ -1168,7 +1168,7 @@ class NODE_PT_active_node_generic(Panel):
         col.prop(node, "show_options")
         col.prop(node, "mute")
 
-        if tree.type == 'GEOMETRY':
+        if tree.type in ('GEOMETRY', 'COMPOSITING'):
             layout.prop(node, "warning_propagation", text="Propagate")
 
 
@@ -1475,6 +1475,12 @@ class NODE_PT_node_tree_properties(Panel):
                 col.use_property_split = False  # BFA - Align booleans left
                 col.prop(group, "is_modifier")
                 col.prop(group, "is_tool")
+        elif group.bl_idname == "CompositorNodeTree":
+            header, body = col.panel("group_usage")
+            header.label(text="Usage")
+            if body:
+                col = body.column(align=True)
+                col.prop(group, "is_strip_modifier")
 
 
 class NODE_PT_node_tree_animation(Panel):

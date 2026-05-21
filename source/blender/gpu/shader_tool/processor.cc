@@ -346,6 +346,10 @@ void SourceProcessor::parse_defines(Parser &parser)
 {
   parser().foreach_match<true>("#A", [&](const vector<Token> &tokens) {
     if (tokens[1].str() == "define") {
+      if (tokens[1].next().str().starts_with("LIGHT_STACK_SIZE_")) {
+        /* WORKAROUND: Avoid warning caused by EEVEE macro setup. */
+        return;
+      }
       metadata_.create_infos_defines.emplace_back(tokens[1].next().scope().str_with_whitespace());
     }
     if (tokens[1].str() == "undef") {
@@ -474,6 +478,7 @@ static std::string_view str_view_exclusive(Token tok)
 
 void SourceProcessor::parse_includes(Parser &parser)
 {
+  const string filename = filepath_.substr(filepath_.find_last_of('/') + 1);
   parser().foreach_match<true>("#A\"", [&](const vector<Token> &tokens) {
     if (tokens[1].str() != "include") {
       return;
@@ -506,6 +511,9 @@ void SourceProcessor::parse_includes(Parser &parser)
       dependency_name = dependency_name.substr(6);
     }
 
+    if (dependency_name == filename) {
+      report_error(tokens[2], "Recursive include");
+    }
     metadata_.dependencies.emplace_back(dependency_name);
   });
 }

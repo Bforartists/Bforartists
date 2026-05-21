@@ -259,30 +259,6 @@ static const EnumPropertyItem rna_enum_preferences_extension_repo_source_type_it
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static const EnumPropertyItem rna_enum_preferences_asset_import_method_items[] = {
-    {ASSET_IMPORT_LINK, "LINK", ICON_LINK_BLEND, "Link", "Import the assets as linked data-block"},
-    {ASSET_IMPORT_APPEND,
-     "APPEND",
-     ICON_APPEND_BLEND,
-     "Append",
-     "Import the assets as copied data-block, with no link to the original asset data-block"},
-    {ASSET_IMPORT_APPEND_REUSE,
-     "APPEND_REUSE",
-     ICON_APPEND_BLEND,
-     "Append (Reuse Data)",
-     "Import the assets as copied data-block while avoiding multiple copies of nested, "
-     "typically heavy data. For example the textures of a material asset, or the mesh of an "
-     "object asset, don't have to be copied every time this asset is imported. The instances of "
-     "the asset share the data instead."},
-    {ASSET_IMPORT_PACK,
-     "PACK",
-     ICON_PACKAGE,
-     "Pack",
-     "Import the asset as linked data-block, and pack it in the current file (ensures that it "
-     "remains unchanged in case the library data is modified, is not available anymore, etc.)"},
-    {0, nullptr, 0, nullptr, nullptr},
-};
-
 }  // namespace blender
 
 #ifdef RNA_RUNTIME
@@ -505,7 +481,13 @@ static void rna_userdef_asset_libraries_refresh(bContext *C, PointerRNA *ptr)
   rna_userdef_update(CTX_data_main(C), CTX_data_scene(C), ptr);
 }
 
-static void rna_userdef_asset_library_remote_sync_update(bContext *C, PointerRNA *ptr)
+static void rna_userdef_asset_library_remote_url_set(PointerRNA *ptr, const char *value)
+{
+  bUserAssetLibrary *library = (bUserAssetLibrary *)ptr->data;
+  BKE_preferences_remote_asset_library_url_set(library, value);
+}
+
+static void rna_userdef_asset_library_remote_url_update(bContext *C, PointerRNA *ptr)
 {
   bUserAssetLibrary *library = (bUserAssetLibrary *)ptr->data;
   AssetLibraryReference library_ref = blender::ed::asset::user_library_to_library_ref(*library);
@@ -1698,9 +1680,7 @@ static const EnumPropertyItem *rna_preference_asset_libray_import_method_itemf(
 
   EnumPropertyItem *items = nullptr;
   int items_num = 0;
-  for (const EnumPropertyItem *item = rna_enum_preferences_asset_import_method_items;
-       item->identifier;
-       item++)
+  for (const EnumPropertyItem *item = rna_enum_asset_import_method_items; item->identifier; item++)
   {
     if ((library->flag & ASSET_LIBRARY_USE_REMOTE_URL) != 0) {
       if (item->value == ASSET_IMPORT_LINK) {
@@ -3041,6 +3021,13 @@ static void rna_def_userdef_theme_space_view3d(BlenderRNA *brna)
   prop = RNA_def_property(srna, "grid_major", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "Major Grid Lines", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "grid_axis_brightness", PROP_FLOAT, PROP_NONE);
+  RNA_def_property_float_sdna(prop, nullptr, "grid_axis_brightness");
+  RNA_def_property_float_default(prop, 0.46);
+  RNA_def_property_ui_text(prop, "Grid Axis Brightness", "Brightness of the grid axis lines");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "clipping_border_3d", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -5431,12 +5418,10 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_boolean_default(prop, true); /*BFA - default to on*/
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-  prop = RNA_def_property(srna, "show_online_assets", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "uiflag2", USER_UIFLAG2_SHOW_ONLINE_ASSETS);
+  prop = RNA_def_property(srna, "asset_access", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_asset_access_items);
   RNA_def_property_ui_text(
-      prop,
-      "Show Online Assets",
-      "When internet access is enabled, load and display online assets in asset shelves");
+      prop, "Asset Access", "Choose the visibility of online and offline assets");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   static const EnumPropertyItem header_align_items[] = {
@@ -7130,12 +7115,14 @@ static void rna_def_userdef_filepaths_asset_library(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "remote_url", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, nullptr, "remote_url");
+  RNA_def_property_string_funcs(
+      prop, nullptr, nullptr, "rna_userdef_asset_library_remote_url_set");
   RNA_def_property_ui_text(prop, "URL", "Remote URL to the asset library");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-  RNA_def_property_update(prop, 0, "rna_userdef_asset_library_remote_sync_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_asset_library_remote_url_update");
 
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, rna_enum_preferences_asset_import_method_items);
+  RNA_def_property_enum_items(prop, rna_enum_asset_import_method_items);
   RNA_def_property_enum_funcs(
       prop, nullptr, nullptr, "rna_preference_asset_libray_import_method_itemf");
   RNA_def_property_enum_default_func(prop, "rna_preference_asset_libray_import_method_default");
@@ -7842,6 +7829,7 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
                            "Support storing custom bundles in a geometry in Geometry Nodes");
 
   prop = RNA_def_property(srna, "use_remote_asset_libraries", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(
       prop, "Remote Asset Libraries", "Enable asset libraries served over HTTP/HTTPS");
 

@@ -94,9 +94,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
             SOCK_VECTOR,
             SOCK_INT_VECTOR,
             SOCK_RGBA,
+            SOCK_ROTATION,
             SOCK_MATRIX,
             SOCK_MENU,
             SOCK_STRING,
+            SOCK_FONT,
             SOCK_OBJECT))
   {
     return;
@@ -133,6 +135,19 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       else {
         row.prop(socket_props_ptr, "value", UI_ITEM_NONE, name, ICON_NONE);
       }
+      break;
+    }
+    case SOCK_FONT: {
+      template_id(&row,
+                  &ctx.C,
+                  socket_props_ptr,
+                  "value",
+                  nullptr,
+                  "FONT_OT_open",
+                  "FONT_OT_unlink",
+                  ui::TEMPLATE_ID_FILTER_ALL,
+                  false,
+                  name);
       break;
     }
     default: {

@@ -2957,6 +2957,8 @@ void GRAPH_OT_fmodifier_add(wmOperatorType *ot)
       ot->srna, "only_active", false, "Only Active", "Only add F-Modifier to active F-Curve");
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Delete F-Modifiers Operator
  * \{ */

@@ -97,6 +97,8 @@
 #include "DEG_depsgraph_debug.hh"
 #include "DEG_depsgraph_query.hh"
 
+#include "NOD_eval_log.hh"
+
 #include "RE_engine.h"
 
 #include "RNA_access.hh"
@@ -115,6 +117,10 @@
 #include "versioning_common.hh"
 
 namespace blender {
+
+/* -------------------------------------------------------------------- */
+/** \name Scene Data-Block
+ * \{ */
 
 using bke::CompositorRuntime;
 using bke::SceneRuntime;
@@ -1640,7 +1646,7 @@ IDTypeInfo IDType_ID_SCE = {
 
 /* -------------------------------------------------------------------- */
 /** \name Scene member functions
- */
+ * \{ */
 
 double Scene::frames_per_second() const
 {
@@ -2725,7 +2731,12 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
     BKE_callback_exec_id(bmain, &scene->id, BKE_CB_EVT_DEPSGRAPH_UPDATE_PRE);
   }
 
-  BKE_scene_view_layers_synced_ensure(*bmain, scene);
+  /* Cannot limit this to the currently evaluated scene/view layer, as the depsgraph may have
+   * dependencies on others, see e.g. #158225, which pulls in another scene. */
+  /* TODO: If this becomes a performance issue, we'll likely have to find a way in the depsgraph
+   * itself to gather all 'known' scenes, and ensure that their viewlayers / collections
+   * hierarchies are in sync. */
+  BKE_main_view_layers_synced_ensure(bmain);
 
   for (int pass = 0; pass < 2; pass++) {
     /* (Re-)build dependency graph if needed. */
@@ -2801,6 +2812,13 @@ void BKE_scene_graph_update_for_newframe_ex(Depsgraph *depsgraph, const bool cle
 
   /* Keep this first. */
   BKE_callback_exec_id(bmain, &scene->id, BKE_CB_EVT_FRAME_CHANGE_PRE);
+
+  /* Cannot limit this to the currently evaluated scene/view layer, as the depsgraph may have
+   * dependencies on others, see e.g. #158225, which pulls in another scene. */
+  /* TODO: If this becomes a performance issue, we'll likely have to find a way in the depsgraph
+   * itself to gather all 'known' scenes, and ensure that their viewlayers / collections
+   * hierarchies are in sync. */
+  BKE_main_view_layers_synced_ensure(bmain);
 
   for (int pass = 0; pass < 2; pass++) {
     /* Update animated image textures for particles, modifiers, gpu, etc,

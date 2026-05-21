@@ -330,7 +330,6 @@ set(GLSL_SRC
   engines/eevee/shaders/infos/eevee_fullscreen_infos.hh
   engines/eevee/shaders/infos/eevee_geom_infos.hh
   engines/eevee/shaders/infos/eevee_hiz_infos.hh
-  engines/eevee/shaders/infos/eevee_light_infos.hh
   engines/eevee/shaders/infos/eevee_lightprobe_infos.hh
   engines/eevee/shaders/infos/eevee_lightprobe_sphere_infos.hh
   engines/eevee/shaders/infos/eevee_lightprobe_volume_infos.hh
@@ -339,11 +338,6 @@ set(GLSL_SRC
   engines/eevee/shaders/infos/eevee_nodetree_infos.hh
   engines/eevee/shaders/infos/eevee_raycast_infos.hh
   engines/eevee/shaders/infos/eevee_sampling_infos.hh
-  engines/eevee/shaders/infos/eevee_shadow_infos.hh
-  engines/eevee/shaders/infos/eevee_surf_depth_infos.hh
-  engines/eevee/shaders/infos/eevee_surf_shadow_infos.hh
-  engines/eevee/shaders/infos/eevee_surf_volume_infos.hh
-  engines/eevee/shaders/infos/eevee_surf_world_infos.hh
   engines/eevee/shaders/infos/eevee_tests_infos.hh
   engines/eevee/shaders/infos/eevee_tracing_infos.hh
   engines/eevee/shaders/infos/eevee_uniform_infos.hh
@@ -437,19 +431,21 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_gbuffer_lib.glsl
   engines/eevee/shaders/eevee_gbuffer_read_lib.glsl
   engines/eevee/shaders/eevee_gbuffer_write_lib.glsl
-  engines/eevee/shaders/eevee_geom_curves_vert.glsl
-  engines/eevee/shaders/eevee_geom_mesh_vert.glsl
-  engines/eevee/shaders/eevee_geom_pointcloud_vert.glsl
+  engines/eevee/shaders/eevee_geom_curves.bsl.hh
+  engines/eevee/shaders/eevee_geom_mesh.bsl.hh
+  engines/eevee/shaders/eevee_geom_pointcloud.bsl.hh
   engines/eevee/shaders/eevee_geom_types_lib.glsl
-  engines/eevee/shaders/eevee_geom_volume_vert.glsl
-  engines/eevee/shaders/eevee_geom_world_vert.glsl
+  engines/eevee/shaders/eevee_geom_volume.bsl.hh
+  engines/eevee/shaders/eevee_geom_world.bsl.hh
   engines/eevee/shaders/eevee_hiz_debug_frag.glsl
   engines/eevee/shaders/eevee_hiz_update_comp.glsl
   engines/eevee/shaders/eevee_fast_gi.bsl.hh
   engines/eevee/shaders/eevee_light_culling.bsl.hh
+  engines/eevee/shaders/eevee_light_shape_display.bsl.hh
   engines/eevee/shaders/eevee_light_shadow_setup.bsl.hh
-  engines/eevee/shaders/eevee_light_eval_lib.glsl
-  engines/eevee/shaders/eevee_light_iter_lib.glsl
+  engines/eevee/shaders/eevee_light_data.bsl.hh
+  engines/eevee/shaders/eevee_light_eval.bsl.hh
+  engines/eevee/shaders/eevee_light_iter.bsl.hh
   engines/eevee/shaders/eevee_light_lib.glsl
   engines/eevee/shaders/eevee_lightprobe_display.bsl.hh
   engines/eevee/shaders/eevee_lightprobe_eval_lib.glsl
@@ -465,6 +461,7 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_lookdev_display_vert.glsl
   engines/eevee/shaders/eevee_ltc_lib.bsl.hh
   engines/eevee/shaders/eevee_ltc_lut_lib.bsl.hh
+  engines/eevee/shaders/eevee_material_variants.bsl.hh
   engines/eevee/shaders/eevee_motion_blur.bsl.hh
   engines/eevee/shaders/eevee_nodetree_closures_lib.glsl
   engines/eevee/shaders/eevee_nodetree_frag_lib.glsl
@@ -494,8 +491,8 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_renderpass_clear.bsl.hh
   engines/eevee/shaders/eevee_renderpass_lib.glsl
   engines/eevee/shaders/eevee_sampling_lib.glsl
-  engines/eevee/shaders/eevee_shadow_lib.glsl
-  engines/eevee/shaders/eevee_shadow_tracing_lib.glsl
+  engines/eevee/shaders/eevee_shadow.bsl.hh
+  engines/eevee/shaders/eevee_shadow_tracing.bsl.hh
   engines/eevee/shaders/eevee_shadow_page_allocate.bsl.hh
   engines/eevee/shaders/eevee_shadow_page_clear.bsl.hh
   engines/eevee/shaders/eevee_shadow_page_defrag.bsl.hh
@@ -516,14 +513,14 @@ set(GLSL_SRC
   engines/eevee/shaders/eevee_subsurface.bsl.hh
   engines/eevee/shaders/eevee_surf_capture.bsl.hh
   engines/eevee/shaders/eevee_surf_deferred.bsl.hh
-  engines/eevee/shaders/eevee_surf_depth_frag.glsl
+  engines/eevee/shaders/eevee_surf_depth.bsl.hh
   engines/eevee/shaders/eevee_surf_forward.bsl.hh
   engines/eevee/shaders/eevee_surf_hybrid.bsl.hh
-  engines/eevee/shaders/eevee_surf_lib.glsl
-  engines/eevee/shaders/eevee_surf_occupancy_frag.glsl
-  engines/eevee/shaders/eevee_surf_shadow_frag.glsl
-  engines/eevee/shaders/eevee_surf_volume_frag.glsl
-  engines/eevee/shaders/eevee_surf_world_frag.glsl
+  engines/eevee/shaders/eevee_surf_common.bsl.hh
+  engines/eevee/shaders/eevee_surf_occupancy.bsl.hh
+  engines/eevee/shaders/eevee_surf_shadow.bsl.hh
+  engines/eevee/shaders/eevee_surf_volume.bsl.hh
+  engines/eevee/shaders/eevee_surf_world.bsl.hh
   engines/eevee/shaders/eevee_surfel_cluster_build_comp.glsl
   engines/eevee/shaders/eevee_surfel_light.bsl.hh
   engines/eevee/shaders/eevee_surfel_list.bsl.hh

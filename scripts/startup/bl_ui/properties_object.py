@@ -166,22 +166,20 @@ class OBJECT_PT_relations(ObjectButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(ob, "parent")
+        sub = col.column()
+        sub.prop(ob, "parent_type")
         parent = ob.parent
-        if parent:
-            row = col.row()
-            row.separator()
-            sub = row.column()
-            sub.prop(ob, "parent_type")
-            if ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
-                sub.prop_search(ob, "parent_bone", parent.data, "bones")
-            elif ob.parent_type == 'VERTEX':
-                col.prop(ob, "parent_vertices", text="Parent Vertex", index=0)
-                sub.prop(ob, "use_parent_final_indices")
-            elif ob.parent_type == 'VERTEX_3':
-                col.prop(ob, "parent_vertices", text="Parent Vertices")
-                sub.prop(ob, "use_parent_final_indices")
-            sub.use_property_split = False
-            sub.prop(ob, "use_camera_lock_parent")
+        if parent and ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
+            sub.prop_search(ob, "parent_bone", parent.data, "bones")
+            sub.prop(ob, "parent_bone_head_tail_factor", text="Head/Tail")
+        elif ob.parent_type == 'VERTEX':
+            col.prop(ob, "parent_vertices", text="Parent Vertex", index=0)
+            sub.prop(ob, "use_parent_final_indices")
+        elif ob.parent_type == 'VERTEX_3':
+            col.prop(ob, "parent_vertices", text="Parent Vertices")
+            sub.prop(ob, "use_parent_final_indices")
+        sub.active = (parent is not None)
+        sub.prop(ob, "use_camera_lock_parent")
 
         col.separator()
 
@@ -532,6 +530,9 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
             if ob.type in {'LIGHT'}:
                 col.label(text = "Ray Visibility")
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_camera", text="Camera", toggle=False)
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_diffuse", text="Diffuse", toggle=False)

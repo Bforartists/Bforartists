@@ -9,16 +9,25 @@
 #include "BLI_string_ref.hh"
 
 #include "DNA_scene_types.h"
-
 #include "DNA_sequence_types.h"
+
 #include "GPU_shader.hh"
+
+#include "BKE_compute_context_cache.hh"
 
 #include "COM_domain.hh"
 #include "COM_meta_data.hh"
-#include "COM_profiler.hh"
 #include "COM_render_context.hh"
 #include "COM_result.hh"
 #include "COM_static_cache_manager.hh"
+
+namespace blender {
+struct Main;
+}  // namespace blender
+
+namespace blender::nodes::eval_log {
+class NodesEvalLog;
+}  // namespace blender::nodes::eval_log
 
 namespace blender::compositor {
 
@@ -38,6 +47,8 @@ class Context {
 
  public:
   Context(StaticCacheManager &cache_manager);
+
+  virtual const Main &get_main() const = 0;
 
   /* Get the compositing scene. */
   virtual const Scene &get_scene() const = 0;
@@ -89,9 +100,9 @@ class Context {
    * render pipeline. */
   virtual RenderContext *render_context() const;
 
-  /* Get a pointer to the profiler of this context. It might be null if the compositor context does
-   * not support profiling. */
-  virtual Profiler *profiler() const;
+  /* Returns a pointer to a nodes evaluation log of the context, this can be nullptr for context
+   * that does not support logging. */
+  virtual nodes::eval_log::NodesEvalLog *nodes_evaluation_log() const;
 
   /* Gets called after the evaluation of each compositor operation. See overrides for possible
    * uses. */

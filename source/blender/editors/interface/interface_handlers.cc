@@ -527,11 +527,10 @@ struct AfterFunc {
   ButtonArgNFree func_argN_free_fn;
   /* uiButArgNCopy func_argN_copy_fn is not needed currently. */
 
-  ButtonHandleRenameFunc rename_func;
-  void *rename_arg1;
+  std::function<void(bContext &, StringRefNull)> rename_func;
   char *rename_orig;
 
-  std::function<void(std::string &new_name)> rename_full_func = nullptr;
+  std::function<void(StringRefNull)> rename_full_func;
   std::string rename_full_new;
 
   BlockHandleFunc handle_func;
@@ -920,8 +919,11 @@ static void popup_check(bContext *C, wmOperator *op)
  */
 static bool afterfunc_check(const Block *block, const Button *but)
 {
-  return (but->func || but->apply_func || but->funcN || but->rename_func ||
-          but->rename_full_func || but->optype || but->rnaprop || block->handle_func ||
+  auto *text_button = but->type == ButtonType::Text ? static_cast<const ButtonText *>(but) :
+                                                      nullptr;
+  return (but->func || but->apply_func || but->funcN ||
+          (text_button && (text_button->rename_func || text_button->rename_full_func)) ||
+          but->optype || but->rnaprop || block->handle_func ||
           (block->handle && block->handle->popup_op));
 }
 
@@ -957,13 +959,16 @@ static void apply_but_func(bContext *C, Button *but)
   after->func_argN_free_fn = but->func_argN_free_fn;
   /* but->func_argN_copy_fn is not needed for #uiAfterFunc. */
 
-  after->rename_func = but->rename_func;
-  after->rename_arg1 = but->rename_arg1;
-  after->rename_orig = but->rename_orig; /* needs free! */
+  if (but->type == ButtonType::Text) {
+    auto *text_button = static_cast<ButtonText *>(but);
 
-  after->rename_full_func = but->rename_full_func;
-  after->rename_full_new = std::move(but->rename_full_new);
-  but->rename_full_new = "";
+    after->rename_func = std::move(text_button->rename_func);
+    after->rename_orig = text_button->rename_orig; /* needs free! */
+
+    after->rename_full_func = std::move(text_button->rename_full_func);
+    after->rename_full_new = std::move(text_button->rename_full_new);
+    text_button->rename_full_new = "";
+  }
 
   after->handle_func = block->handle_func;
   after->handle_func_arg = block->handle_func_arg;
@@ -1195,7 +1200,7 @@ static void apply_but_funcs_after(bContext *C)
     }
 
     if (after.rename_func) {
-      after.rename_func(C, after.rename_arg1, after.rename_orig);
+      after.rename_func(*C, after.rename_orig);
     }
     if (after.rename_orig) {
       MEM_delete(after.rename_orig);
@@ -1321,18 +1326,20 @@ static void apply_but_TEX(bContext *C, Button *but, HandleButtonData *data)
   button_string_set(C, but, data->text_edit.edit_string);
   button_update_edited(but);
 
+  ButtonText *text_button = but->type == ButtonType::Text ? static_cast<ButtonText *>(but) :
+                                                            nullptr;
   /* only if there are afterfuncs, otherwise 'renam_orig' isn't freed */
-  if (afterfunc_check(but->block, but)) {
+  if (text_button && afterfunc_check(but->block, but)) {
     /* give butfunc a copy of the original text too.
      * feature used for bone renaming, channels, etc.
      * afterfunc frees rename_orig */
     if (data->text_edit.original_string && (but->flag & BUT_TEXTEDIT_UPDATE)) {
       /* In this case, we need to keep `original_string` available,
        * to restore real org string in case we cancel after having typed something already. */
-      but->rename_orig = BLI_strdup(data->text_edit.original_string);
+      text_button->rename_orig = BLI_strdup(data->text_edit.original_string);
     }
     else {
-      but->rename_orig = data->text_edit.original_string;
+      text_button->rename_orig = data->text_edit.original_string;
       data->text_edit.original_string = nullptr;
     }
   }
@@ -3247,7 +3254,7 @@ static bool textedit_delete_selection(Button *but, TextEdit &text_edit)
 }
 
 /**
- * \param x: Screen space cursor location - #wmEvent.x
+ * \param xy: Screen space cursor location - #wmEvent.x
  *
  * \note `but->block->aspect` is used here, so drawing button style is getting scaled too.
  */
@@ -3262,11 +3269,44 @@ static void textedit_set_cursor_pos(Button *but, const ARegion *region, const fl
   const float aspect = but->block->aspect;
 
   float startx = but->rect.xmin;
+  float endx = but->rect.xmax;
   float starty_dummy = 0.0f;
   std::string password_str;
   /* treat 'str_last' as null terminator for str, no need to modify in-place */
   const char *str = but->editstr, *str_last;
 
+  /* Compute padding in block space. */
+  bool right_aligned = !(but->drawflag & BUT_TEXT_LEFT) && but->drawflag & BUT_TEXT_RIGHT;
+
+  if (ELEM(but->type, ButtonType::Text, ButtonType::SearchMenu)) {
+    if (but->flag & UI_HAS_ICON) {
+      startx += UI_ICON_SIZE / aspect;
+    }
+  }
+  if (!(but->drawflag & BUT_NO_TEXT_PADDING)) {
+    if (right_aligned) {
+      startx += U.pixelsize / aspect;
+      endx -= UI_TEXT_MARGIN_X * U.widget_unit / aspect;
+    }
+    else {
+      startx += UI_TEXT_MARGIN_X * U.widget_unit / aspect;
+      endx -= U.pixelsize / aspect;
+    }
+  }
+  else if (right_aligned) {
+    endx -= U.pixelsize / aspect;
+  }
+  else {
+    startx += U.pixelsize / aspect;
+  }
+
+  if (right_aligned) {
+    int width = BLF_width(fstyle.uifont_id, str + but->ofs, strlen(str + but->ofs));
+    const float align_x_ofs = endx - startx - width;
+    startx += max_ff(0.0f, align_x_ofs);
+  }
+
+  /* Transform startx to screen space. */
   block_to_window_fl(region, but->block, &startx, &starty_dummy);
 
   fontscale(&fstyle.points, aspect);
@@ -3274,16 +3314,6 @@ static void textedit_set_cursor_pos(Button *but, const ARegion *region, const fl
   fontstyle_set(&fstyle);
 
   button_text_password_hide(password_str, but, false);
-
-  if (ELEM(but->type, ButtonType::Text, ButtonType::SearchMenu)) {
-    if (but->flag & UI_HAS_ICON) {
-      startx += UI_ICON_SIZE / aspect;
-    }
-  }
-  startx -= U.pixelsize / aspect;
-  if (!(but->drawflag & BUT_NO_TEXT_PADDING)) {
-    startx += UI_TEXT_MARGIN_X * U.widget_unit / aspect;
-  }
 
   /* mouse dragged outside the widget to the left */
   if (xy.x < startx) {
@@ -4036,9 +4066,16 @@ static int do_but_textedit(
        * (selects all text, no cursor pos) */
       if (ELEM(event->val, KM_PRESS, KM_DBL_CLICK)) {
         if (is_press_in_button) {
-          textedit_set_cursor_pos(but, data->region, float2(event->xy));
-          but->selsta = but->selend = but->pos;
-          text_edit.sel_pos_init = but->pos;
+          /* Extend text selection when holding shift. */
+          if (event->modifier & KM_SHIFT) {
+            text_edit.sel_pos_init = but->pos == but->selsta ? but->selend : but->selsta;
+            textedit_set_cursor_select(but, data, float2(event->xy));
+          }
+          else {
+            textedit_set_cursor_pos(but, data->region, float2(event->xy));
+            but->selsta = but->selend = but->pos;
+            text_edit.sel_pos_init = but->pos;
+          }
 
           button_activate_state(C, but, BUTTON_STATE_TEXT_SELECTING);
           retval = WM_UI_HANDLER_BREAK;
@@ -5289,7 +5326,7 @@ static int do_but_TEXTBOX(bContext *C,
       scroll_rect.ymin += textbox_grip_height() / block->aspect;
 
       rctf grip_rect = rect;
-      grip_rect.xmin = grip_rect.xmax - button_text_padding(textbox);
+      grip_rect.xmin = grip_rect.xmax - button_text_padding(textbox) - (2.0f / block->aspect);
       grip_rect.ymax = grip_rect.ymin + textbox_grip_height() / block->aspect;
 
       /* Update mouse cursor on mouse move. */

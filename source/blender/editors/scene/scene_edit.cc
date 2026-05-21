@@ -255,6 +255,9 @@ bool ED_scene_view_layer_delete(Main *bmain, Scene *scene, ViewLayer *layer, Rep
 
   BKE_scene_free_view_layer_depsgraph(scene, layer);
 
+  /* Update any sequencer scene strips referencing this view layer by name. */
+  seq::relations_update_view_layer_scene_strips(bmain, scene, layer->name, nullptr);
+
   BKE_view_layer_free(layer);
 
   DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);

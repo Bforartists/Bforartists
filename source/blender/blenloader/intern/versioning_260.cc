@@ -190,7 +190,7 @@ static void do_versions_image_settings_2_60(Scene *sce)
 
   /* we know no data loss happens here, the old values were in char range */
   imf->imtype = char(rd->imtype);
-  imf->planes = char(rd->planes);
+  imf->color_mode = ImColorMode(rd->color_mode);
   imf->compress = char(rd->quality);
   imf->quality = char(rd->quality);
 
@@ -1290,7 +1290,7 @@ static bNode *version_add_group_in_out_node(bNodeTree *ntree, const int type)
      * These are stubs for links, full typeinfo is defined later. */
     for (bNodeSocket &tree_socket : *ntree_socket_list) {
       bNodeSocket *node_socket = version_make_socket_stub(tree_socket.idname,
-                                                          eNodeSocketDatatype(tree_socket.type),
+                                                          tree_socket.type,
                                                           socket_in_out,
                                                           tree_socket.identifier,
                                                           tree_socket.name,

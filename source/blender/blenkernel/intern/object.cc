@@ -1252,7 +1252,7 @@ static AssetTypeInfo AssetType_OB = {
 IDTypeInfo IDType_ID_OB = {
     .id_code = Object::id_type,
     .id_filter = FILTER_ID_OB,
-    /* Could be more specific, but simpler to just always say 'yes' here.*/
+    /* Could be more specific, but simpler to just always say 'yes' here. */
     .dependencies_id_types = FILTER_ID_ALL,
     .main_listbase_index = INDEX_ID_OB,
     .struct_size = sizeof(Object),
@@ -3228,10 +3228,10 @@ static void ob_parbone(const Object *ob, const Object *par, float r_mat[4][4])
   }
   else {
     copy_m4_m4(r_mat, pchan->pose_mat);
-
-    /* but for backwards compatibility, the child has to move to the tail */
     copy_v3_v3(vec, r_mat[1]);
-    mul_v3_fl(vec, pchan_bone->length);
+    if (ob->parent_bone_head_tail_factor != 0.0f) {
+      mul_v3_fl(vec, pchan_bone->length * ob->parent_bone_head_tail_factor);
+    }
     add_v3_v3(r_mat[3], vec);
   }
 }

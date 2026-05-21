@@ -45,7 +45,6 @@
 #include "BKE_object.hh"
 #include "BKE_scene.hh"
 
-#include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_math_color.h"
 #include "BLI_math_vector.h"
@@ -112,7 +111,7 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(blender::Render *re, int render_cou
   if (blender::G.debug & blender::G_DEBUG_FREESTYLE) {
     cout << "Stroke rendering engine : " << freestyle_scene->r.engine << endl;
   }
-  freestyle_scene->r.im_format.planes = R_IMF_PLANES_RGBA;
+  freestyle_scene->r.im_format.color_mode = ImColorMode::RGBA;
   freestyle_scene->r.im_format.imtype = R_IMF_IMTYPE_PNG;
 
   // Copy ID properties, including Cycles render properties

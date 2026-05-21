@@ -687,14 +687,6 @@ class USERPREF_PT_animation_timeline(AnimationPanel, CenterAlignMixIn, Panel):
     def draw_centered(self, context, layout):
         prefs = context.preferences
         view = prefs.view
-        edit = prefs.edit
-
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        flow.use_property_split = False
-        flow.prop(edit, "use_negative_frames")
-        flow.use_property_split = True
-
-        layout.separator()
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
@@ -760,6 +752,22 @@ class USERPREF_PT_animation_fcurves(AnimationPanel, CenterAlignMixIn, Panel):
         flow.prop(edit, "use_anim_channel_group_colors")
         flow.prop(edit, "show_only_selected_curve_keyframes")
         flow.prop(edit, "use_fcurve_high_quality_drawing")
+
+
+class USERPREF_PT_animation_timeline_advanced(AnimationPanel, CenterAlignMixIn, Panel):
+    bl_label = "Advanced"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = 'USERPREF_PT_animation_timeline'
+
+    def draw_centered(self, context, layout):
+        prefs = context.preferences
+        edit = prefs.edit
+
+        layout.prop(edit, "use_negative_frames")
+        row = layout.row(align=False)
+        row.active = edit.use_negative_frames
+        row.alignment = 'RIGHT'
+        row.label(icon="ERROR", text="Negative frames can cause issues with audio playback and exporters.")
 
 
 # -----------------------------------------------------------------------------
@@ -3257,7 +3265,6 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
                 ({"property": "use_geometry_bundle"}, ("blender/blender/issues/150574", "#150574")),
-                ({"property": "use_remote_asset_libraries"}, ("blender/blender/issues/134495", "#134495")),
                 ({"property": "use_collection_importer"}, ("blender/blender/issues/132171", "#132171")),
                 ({"property": "use_geometry_nodes_hair_dynamics"}, ("blender/blender/issues/141609", "#141609")),
             ),
@@ -3342,6 +3349,7 @@ classes = (
     USERPREF_PT_animation_keyframes,
     USERPREF_PT_animation_autokey,  # BFA - custom menu
     USERPREF_PT_animation_fcurves,
+    USERPREF_PT_animation_timeline_advanced,
 
     USERPREF_PT_system_cycles_devices,
     USERPREF_PT_system_display_graphics,
