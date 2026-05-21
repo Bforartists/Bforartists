@@ -44,7 +44,7 @@ from . import utility
 bl_info = {
     "name": "Default Asset Library",
     "author": "Andres (Draise) Stephens, Ereaser45-Studios, Iyad Ahmed, Juan Carlos Aragon",
-    "version": (1, 3, 2),
+    "version": (1, 3, 3),
     "blender": (5, 0, 1),
     "location": "Asset Browser>Default Library",
     "description": "Adds a modular default asset library and addon with wizards and complementary operators",
@@ -56,18 +56,20 @@ bl_info = {
 }
 
 # Addon identification - MUST BE UNIQUE for each compiled parent addon
-# TO DO: Update hte version in the bl_info above as well for consistency
-PARENT_ADDON_UNIQUE_ID = "default_asset_library_1_3_2"
+# TO DO: Update the version in the bl_info above as well for consistency
+PARENT_ADDON_UNIQUE_ID = "default_asset_library"
 PARENT_ADDON_DISPLAY_NAME = "Default Asset Library"
-PARENT_ADDON_VERSION = (1, 3, 2)
+PARENT_ADDON_VERSION = (1, 3, 3)
 
 # Child addon info - this is the functional addon
-# TO DO: Update the child_addon/blender_manifest.toml to reflect this version as well for consistency
-CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions_1_0_4"
+# The UNIQUE_ID is VERSION-INDEPENDENT (no version baked in) so it stays stable
+CHILD_ADDON_UNIQUE_ID = "default_asset_library_functions"
 CHILD_ADDON_DISPLAY_NAME = "Default Asset Library Functions"
-CHILD_ADDON_VERSION = (1, 0, 4)
 
-# Note: The version in blender_manifest.toml should match or be newer than this
+# SINGLE SOURCE OF TRUTH: Read version from the bundled child_addon manifest.
+# CHILD_ADDON_VERSION is set dynamically by _read_bundled_child_version() below.
+# Fallback if the manifest cannot be read (should never happen in a packaged addon).
+CHILD_ADDON_VERSION = (1, 0, 0)
 
 # -----------------------------------------------------------------------------
 # Version Comparison Utilities
@@ -176,6 +178,30 @@ def get_installed_child_addon_version():
     except Exception as e:
         print(f"⚠ Error reading child addon manifest: {e}")
         
+    return None
+
+
+def _read_bundled_child_version():
+    """Read the child addon version from the BUNDLED manifest (the one we ship).
+
+    This is the single source of truth.  The installed copy's manifest may
+    be stale, so we ALWAYS consult the version that came with *this* parent.
+
+    Returns a tuple like (1, 0, 5) or None on failure.
+    """
+    parent_dir = p.dirname(__file__)
+    bundled_manifest = p.join(parent_dir, "child_addon", "blender_manifest.toml")
+    if not p.exists(bundled_manifest):
+        return None
+    try:
+        with open(bundled_manifest, "r", encoding="utf-8") as f:
+            for line in f:
+                stripped = line.strip()
+                if stripped.startswith("version ="):
+                    version_str = stripped.split("=", 1)[1].strip().strip("\"'")
+                    return parse_version_string(version_str)
+    except Exception:
+        pass
     return None
 
 
@@ -764,9 +790,66 @@ def ensure_child_addon_installed():
             return False
 
 
+def _ensure_child_version_updated():
+    """Guarantee that the installed child addon matches our bundled version.
+
+    1. Compare the installed version vs the bundled (source-of-truth) version.
+    2. If the installed version is OLDER (or missing), force-unload all
+       child modules, copy the new files, clear sys.modules cache, then
+       reload from scratch.
+    3. Returns True if the installed files are now up to date.
+    """
+    bundled_version = CHILD_ADDON_VERSION  # already set by _read_bundled_child_version in register()
+    installed_version = get_installed_child_addon_version()
+
+    # If installed version is same or newer, nothing to do.
+    if installed_version is not None and not is_version_older(installed_version, bundled_version):
+        return True
+
+    # --- VERSION MISMATCH or MISSING: update the files ---
+    # 1. Force-unload any currently loaded child modules (they represent the OLD version)
+    unload_child_addon_functionality(force=True)
+
+    # 2. Copy new files from the bundled child_addon/ directory
+    if not copy_child_addon_to_user_prefs():
+        print("⚠ Failed to copy updated child addon files")
+        return False
+
+    # 3. Wipe stale modules from sys.modules so fresh imports happen
+    _nuke_child_modules_from_sys()
+
+    return True
+
+
+def _nuke_child_modules_from_sys():
+    """Remove ALL modular_child_addons modules from sys.modules.
+
+    After a file update, old .pyc caches and previously-imported modules
+    must be purged so that importlib re-executes the new source files.
+    Also handles legacy underscore-style module names for compatibility.
+    """
+    package_name = "modular_child_addons"
+    to_delete = [name for name in sys.modules
+                 if name == package_name
+                 or name.startswith(package_name + ".")
+                 or name.startswith(package_name + "_")]
+    for name in to_delete:
+        try:
+            del sys.modules[name]
+        except KeyError:
+            pass
+
+
 def load_child_addon_functionality():
-    """Load and register child addon functionality directly."""
+    """Load and register child addon functionality directly.
+
+    Detects version changes: if the installed child addon files are OLDER
+    than the bundled version, the old modules are force-unloaded, new files
+    are copied, and the updated modules are loaded fresh.
+    """
     try:
+        _ensure_child_version_updated()
+
         # First check if functionality is already loaded
         tracking_data = get_child_addon_tracking_data()
         if tracking_data["is_functionality_loaded"]:
@@ -1480,8 +1563,14 @@ def delayed_setup():
 
 def register():
     """Register the parent addon."""
-    global _library_refresh_done
+    global _library_refresh_done, CHILD_ADDON_VERSION
     _library_refresh_done = False
+
+    # --- Single source of truth: read child version from bundled manifest ---
+    bundled_ver = _read_bundled_child_version()
+    if bundled_ver is not None:
+        CHILD_ADDON_VERSION = bundled_ver
+    # -----------------------------------------------------------------------
 
     # Log version information for debugging and compatibility
     log_version_info()
