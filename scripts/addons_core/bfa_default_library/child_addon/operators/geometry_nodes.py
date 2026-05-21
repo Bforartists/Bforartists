@@ -197,67 +197,113 @@ GN_ASSET_NAMES = [
 # Sidebar Panel Function
 # -----------------------------------------------------------------------------
 
+def _socket_exists_in_modifier(modifier, identifier, version):
+    """Version-aware check if a socket identifier exists in a modifier.
+    
+    Blender 5.0-5.1: Direct ID property membership check via 'in' operator.
+    Blender 5.2+: ID property 'in' operator raises TypeError, use properties.inputs instead.
+    """
+    if identifier is None:
+        return False
+
+    if version >= (5, 2, 0):
+        # Blender 5.2+: modifier.__contains__ and modifier[key] dict access are both gone.
+        # Use modifier.properties.inputs as the only reliable path.
+        try:
+            if hasattr(modifier, 'properties') and hasattr(modifier.properties, 'inputs'):
+                _ = getattr(modifier.properties.inputs, identifier)
+                return True
+        except (AttributeError, TypeError):
+            pass
+        return False
+    else:
+        # Blender 5.0-5.1: direct dict membership check works
+        try:
+            return identifier in modifier
+        except TypeError:
+            return False
+
+
 def get_geometry_nodes_inputs(modifier):
     """Returns socket names and types for Geometry Nodes modifier inputs, excluding 'Geometry'.
-    Only works with Geometry Nodes modifiers - returns empty list for other modifier types."""
-    # First check if this is actually a Geometry Nodes modifier
-    if not hasattr(modifier, 'node_group') or modifier.type != 'NODES':
-        return []
 
-    # Then check if it has a node group
+    DEPRECATED: Use get_geometry_nodes_inputs_grouped() for new code.
+    Flat list maintained for backward compatibility.
+    """
+    inputs = []
+    for panel_name, sockets in get_geometry_nodes_inputs_grouped(modifier):
+        for sock_name, sock_id, sock_type in sockets:
+            inputs.append((sock_name, sock_id, sock_type, panel_name))
+    return inputs
+
+
+def get_geometry_nodes_inputs_grouped(modifier):
+    """Return Geometry Nodes inputs organised into (panel_name, sockets) groups.
+
+    Args:
+        modifier: A NodesModifier instance.
+
+    Returns:
+        List of (panel_name_or_None, list_of_socket_tuples).
+
+        Each socket tuple is (socket_name, socket_id, socket_type).
+        panel_name is None for root-level sockets (no parent panel).
+        Panel order mirrors the node-tree interface.
+    """
+    if not (hasattr(modifier, 'node_group') and modifier.type == 'NODES'):
+        return []
     if not modifier.node_group:
         return []
-    
-    inputs = []
-    # Get all interface items including panels
+
+    version = bpy.app.version
     interface_items = modifier.node_group.interface.items_tree
 
-    # Create a mapping of panel names to their child sockets
-    panel_map = {}
+    # --- Build panel map preserving insertion order ---
+    panel_map = {}       # panel.name -> dict with 'children' list
+    panel_order = []     # preserve panel order
     for item in interface_items:
         if item.item_type == 'PANEL':
-            # Use name as key since identifier isn't available
-            panel_map[item.name] = {
-                'name': item.name,
-                'children': []
-            }
+            data = {'name': item.name, 'children': []}
+            panel_map[item.name] = data
+            if item.name not in panel_order:
+                panel_order.append(item.name)
 
-    # Process all items and organize by panels
+    root_sockets = []
+
+    # --- Process sockets ---
     for item in interface_items:
-        if item.item_type == 'SOCKET' and item.name != "Geometry":
-            socket_data = {
-                'name': item.name,
-                'identifier': item.identifier,  # Use actual identifier instead of name
-                'socket_type': item.socket_type,
-                'panel': None
-            }
+        if item.item_type != 'SOCKET':
+            continue
+        if item.name == "Geometry":
+            continue
+        if item.identifier is None:
+            continue
+        if not _socket_exists_in_modifier(modifier, item.identifier, version):
+            continue
 
-            # Some modifier types do not support IDProperty membership checks.
-            # Safely test membership and skip unsupported sockets.
-            if item.identifier is None:
-                continue
-            try:
-                if item.identifier not in modifier:
-                    continue  # Skip this socket if it doesn't exist in the modifier
-            except TypeError:
-                continue
+        tup = (item.name, item.identifier, item.socket_type)
+        parent_panel = item.parent.name if (item.parent and item.parent.name in panel_map) else None
 
-            # If socket is in a panel, add to panel's children
-            if item.parent and item.parent.name in panel_map:
-                panel_map[item.parent.name]['children'].append(socket_data)
-            else:
-                # Add to root if no panel
-                inputs.append((socket_data['name'], socket_data['identifier'],
-                             socket_data['socket_type'], None))
+        if parent_panel:
+            panel_map[parent_panel]['children'].append(tup)
+        else:
+            root_sockets.append(tup)
 
-    # Add panel sockets in correct order
-    for panel_data in panel_map.values():
-        if panel_data['children']:
-            for child in panel_data['children']:
-                inputs.append((child['name'], child['identifier'],
-                             child['socket_type'], panel_data['name']))
+    # --- Assemble ordered result ---
+    result = []
 
-    return inputs
+    # Root sockets first
+    if root_sockets:
+        result.append((None, root_sockets))
+
+    # Panels in tree order
+    for pname in panel_order:
+        children = panel_map[pname]['children']
+        if children:
+            result.append((pname, children))
+
+    return result
+
 
 def is_gn_asset_object(obj):
     """Check if object has any smart primitive geometry nodes modifiers"""
