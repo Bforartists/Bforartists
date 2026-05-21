@@ -197,6 +197,33 @@ GN_ASSET_NAMES = [
 # Sidebar Panel Function
 # -----------------------------------------------------------------------------
 
+def _socket_exists_in_modifier(modifier, identifier, version):
+    """Version-aware check if a socket identifier exists in a modifier.
+    
+    Blender 5.0-5.1: Direct ID property membership check via 'in' operator.
+    Blender 5.2+: ID property 'in' operator raises TypeError, use properties.inputs instead.
+    """
+    if identifier is None:
+        return False
+
+    if version >= (5, 2, 0):
+        # Blender 5.2+: modifier.__contains__ and modifier[key] dict access are both gone.
+        # Use modifier.properties.inputs as the only reliable path.
+        try:
+            if hasattr(modifier, 'properties') and hasattr(modifier.properties, 'inputs'):
+                _ = getattr(modifier.properties.inputs, identifier)
+                return True
+        except (AttributeError, TypeError):
+            pass
+        return False
+    else:
+        # Blender 5.0-5.1: direct dict membership check works
+        try:
+            return identifier in modifier
+        except TypeError:
+            return False
+
+
 def get_geometry_nodes_inputs(modifier):
     """Returns socket names and types for Geometry Nodes modifier inputs, excluding 'Geometry'.
     Only works with Geometry Nodes modifiers - returns empty list for other modifier types."""
@@ -208,6 +235,7 @@ def get_geometry_nodes_inputs(modifier):
     if not modifier.node_group:
         return []
     
+    version = bpy.app.version
     inputs = []
     # Get all interface items including panels
     interface_items = modifier.node_group.interface.items_tree
@@ -236,10 +264,9 @@ def get_geometry_nodes_inputs(modifier):
             # Safely test membership and skip unsupported sockets.
             if item.identifier is None:
                 continue
-            try:
-                if item.identifier not in modifier:
-                    continue  # Skip this socket if it doesn't exist in the modifier
-            except TypeError:
+
+            # Version-aware socket existence check
+            if not _socket_exists_in_modifier(modifier, item.identifier, version):
                 continue
 
             # If socket is in a panel, add to panel's children

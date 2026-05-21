@@ -51,6 +51,76 @@ def get_icon(bfa_icon, blender_fallback):
     return bfa_icon if is_bforartists() else blender_fallback
 
 # -----------------------------------------------------------------------------
+# Version-Aware Socket Drawing Helpers
+# -----------------------------------------------------------------------------
+
+def _draw_socket_prop(layout, modifier, socket_id, socket_name, socket_type):
+    """Draw a socket property, handling version differences.
+
+    Blender 5.0-5.1: ID property dict access modifier['["Socket_3"]'] works for .prop().
+    Blender 5.2+:    ID property dict is gone — each socket under
+                     modifier.properties.inputs is an RNA struct with a .value
+                     property that must be drawn directly.
+    """
+    row = layout.row()
+
+    if bpy.app.version >= (5, 2, 0):
+        # Blender 5.2+: draw the socket's .value property via the RNA pointer
+        try:
+            socket_ptr = getattr(modifier.properties.inputs, socket_id)
+        except AttributeError:
+            # Shouldn't happen, but fall back to dict-style (will likely fail)
+            data = modifier
+            prop = f'["{socket_id}"]'
+        else:
+            # socket_ptr is an RNA struct like SocketFloat, SocketBool etc.
+            # Draw its .value property for editable control.
+            _draw_socket_value(row, socket_ptr, socket_name, socket_type)
+            return
+    else:
+        # Blender 5.0-5.1: direct ID property dict access
+        data = modifier
+        prop = f'["{socket_id}"]'
+
+    # Legacy 5.0-5.1 codepath (or fallback)
+    if socket_type == 'BOOLEAN':
+        row.prop(data, prop, text=socket_name, toggle=True)
+    elif socket_type in ('FLOAT', 'INT'):
+        row.label(text=socket_name)
+        row.prop(data, prop, text="", slider=False)
+    else:
+        row.prop(data, prop, text=socket_name)
+
+
+def _draw_socket_value(row, socket_ptr, socket_name, socket_type):
+    """Draw the .value property of a socket RNA struct (Blender 5.2+).
+
+    The socket_ptr is an RNA struct (e.g., NodesSocketFloat) with a 'value'
+    property that holds the actual editable data. In the modifier context,
+    unconnected inputs store their value in 'value' (not 'default_value').
+    """
+    # Use split layout for label + control (mimics modifier stack style)
+    split = row.split(factor=0.45, align=True)
+
+    if socket_type == 'BOOLEAN':
+        # Checkbox: label in left split, toggle in right split
+        split.label(text=socket_name)
+        split.prop(socket_ptr, "value", text="", toggle=True)
+    elif socket_type in ('FLOAT', 'INT'):
+        # Numeric: label | value input
+        split.label(text=socket_name)
+        split.prop(socket_ptr, "value", text="")
+    elif socket_type in ('RGBA', 'VECTOR'):
+        # Color / Vector: label | value0
+        split.label(text=socket_name)
+        split.prop(socket_ptr, "value", text="")
+    else:
+        # STRING, OBJECT, COLLECTION, MATERIAL, IMAGE, TEXTURE, or other:
+        # Full-width property
+        row.prop(socket_ptr, "value", text=socket_name)
+
+
+# -----------------------------------------------------------------------------
 # Panel Definitions
 # -----------------------------------------------------------------------------
 
@@ -124,18 +194,8 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
                 # If we're in a panel, use the panel_box layout
                 target_layout = panel_box if current_panel else layout
 
-                # Create a row for each input to ensure proper layout
-                row = target_layout.row()
-
-                # Handle different socket types
-                if socket_type == 'BOOLEAN':
-                    row.prop(mod, f'["{socket_id}"]', text=socket_name, toggle=True)
-                elif socket_type == 'VALUE':
-                    # Split row into label and slider
-                    row.label(text=socket_name)
-                    row.prop(mod, f'["{socket_id}"]', text="", slider=False)
-                else:
-                    row.prop(mod, f'["{socket_id}"]', text=socket_name)
+                # Version-aware socket drawing (handles Blender 5.0-5.2+)
+                _draw_socket_prop(target_layout, mod, socket_id, socket_name, socket_type)
 
 
 class OBJECT_PT_AssetsModifierPanel(Panel):
