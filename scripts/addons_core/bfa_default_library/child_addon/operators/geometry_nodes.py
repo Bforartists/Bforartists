@@ -226,65 +226,84 @@ def _socket_exists_in_modifier(modifier, identifier, version):
 
 def get_geometry_nodes_inputs(modifier):
     """Returns socket names and types for Geometry Nodes modifier inputs, excluding 'Geometry'.
-    Only works with Geometry Nodes modifiers - returns empty list for other modifier types."""
-    # First check if this is actually a Geometry Nodes modifier
-    if not hasattr(modifier, 'node_group') or modifier.type != 'NODES':
-        return []
 
-    # Then check if it has a node group
+    DEPRECATED: Use get_geometry_nodes_inputs_grouped() for new code.
+    Flat list maintained for backward compatibility.
+    """
+    inputs = []
+    for panel_name, sockets in get_geometry_nodes_inputs_grouped(modifier):
+        for sock_name, sock_id, sock_type in sockets:
+            inputs.append((sock_name, sock_id, sock_type, panel_name))
+    return inputs
+
+
+def get_geometry_nodes_inputs_grouped(modifier):
+    """Return Geometry Nodes inputs organised into (panel_name, sockets) groups.
+
+    Args:
+        modifier: A NodesModifier instance.
+
+    Returns:
+        List of (panel_name_or_None, list_of_socket_tuples).
+
+        Each socket tuple is (socket_name, socket_id, socket_type).
+        panel_name is None for root-level sockets (no parent panel).
+        Panel order mirrors the node-tree interface.
+    """
+    if not (hasattr(modifier, 'node_group') and modifier.type == 'NODES'):
+        return []
     if not modifier.node_group:
         return []
-    
+
     version = bpy.app.version
-    inputs = []
-    # Get all interface items including panels
     interface_items = modifier.node_group.interface.items_tree
 
-    # Create a mapping of panel names to their child sockets
-    panel_map = {}
+    # --- Build panel map preserving insertion order ---
+    panel_map = {}       # panel.name -> dict with 'children' list
+    panel_order = []     # preserve panel order
     for item in interface_items:
         if item.item_type == 'PANEL':
-            # Use name as key since identifier isn't available
-            panel_map[item.name] = {
-                'name': item.name,
-                'children': []
-            }
+            data = {'name': item.name, 'children': []}
+            panel_map[item.name] = data
+            if item.name not in panel_order:
+                panel_order.append(item.name)
 
-    # Process all items and organize by panels
+    root_sockets = []
+
+    # --- Process sockets ---
     for item in interface_items:
-        if item.item_type == 'SOCKET' and item.name != "Geometry":
-            socket_data = {
-                'name': item.name,
-                'identifier': item.identifier,  # Use actual identifier instead of name
-                'socket_type': item.socket_type,
-                'panel': None
-            }
+        if item.item_type != 'SOCKET':
+            continue
+        if item.name == "Geometry":
+            continue
+        if item.identifier is None:
+            continue
+        if not _socket_exists_in_modifier(modifier, item.identifier, version):
+            continue
 
-            # Some modifier types do not support IDProperty membership checks.
-            # Safely test membership and skip unsupported sockets.
-            if item.identifier is None:
-                continue
+        tup = (item.name, item.identifier, item.socket_type)
+        parent_panel = item.parent.name if (item.parent and item.parent.name in panel_map) else None
 
-            # Version-aware socket existence check
-            if not _socket_exists_in_modifier(modifier, item.identifier, version):
-                continue
+        if parent_panel:
+            panel_map[parent_panel]['children'].append(tup)
+        else:
+            root_sockets.append(tup)
 
-            # If socket is in a panel, add to panel's children
-            if item.parent and item.parent.name in panel_map:
-                panel_map[item.parent.name]['children'].append(socket_data)
-            else:
-                # Add to root if no panel
-                inputs.append((socket_data['name'], socket_data['identifier'],
-                             socket_data['socket_type'], None))
+    # --- Assemble ordered result ---
+    result = []
 
-    # Add panel sockets in correct order
-    for panel_data in panel_map.values():
-        if panel_data['children']:
-            for child in panel_data['children']:
-                inputs.append((child['name'], child['identifier'],
-                             child['socket_type'], panel_data['name']))
+    # Root sockets first
+    if root_sockets:
+        result.append((None, root_sockets))
 
-    return inputs
+    # Panels in tree order
+    for pname in panel_order:
+        children = panel_map[pname]['children']
+        if children:
+            result.append((pname, children))
+
+    return result
+
 
 def is_gn_asset_object(obj):
     """Check if object has any smart primitive geometry nodes modifiers"""
