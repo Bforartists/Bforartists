@@ -1024,6 +1024,9 @@ def clear_properties():
         "important_hotkeys_text_color", # color variables
     )
 
+    for prop in props:
+        delattr(bpy.types.WindowManager, prop)
+
 # -------------------------- Register - Unregister
 
 classes = (
