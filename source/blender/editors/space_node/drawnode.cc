@@ -254,10 +254,10 @@ NodeResizeDirection node_get_resize_direction(const SpaceNode &snode,
 }
 
 /* ****************** BUTTON CALLBACKS FOR COMMON NODES ***************** */
-
+/* BFA - Added the nodegroup buttons to a top level in the nodegroup for usability*/
 static void node_draw_buttons_group(ui::Layout &layout, bContext *C, PointerRNA *ptr)
 {
-  template_id_browse(&layout, C, ptr, "node_tree", nullptr, nullptr, nullptr);
+  ui::template_id(&layout, C, ptr, "node_tree", "node.new_node_tree", nullptr, nullptr);
 }
 
 static void node_buts_frame_ex(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)

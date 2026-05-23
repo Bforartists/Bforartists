@@ -101,7 +101,8 @@ void icon_draw_ex(float x,
                   const uchar mono_color[4],
                   bool mono_border,
                   const IconTextOverlay *text_overlay,
-                  const bool inverted = false);
+                  const bool inverted = false, /* BFA */
+                  const bool is_menu_icon_size = false); /* BFA */
 
 ImBuf *svg_icon_bitmap(uint icon_id, float size, bool multicolor = false);
 

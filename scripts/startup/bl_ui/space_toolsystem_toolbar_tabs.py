@@ -1900,10 +1900,6 @@ class VIEW3D_PT_armature_tab_armature(ToolsystemPanel):
             OperatorEntry("armature.subdivide", text="Subdivide", icon='SUBDIVIDE_EDGES'),
             OperatorEntry("armature.switch_direction", text="Switch Direction", icon='SWITCH_DIRECTION'),
             Separator,
-            SetOperatorContext('INVOKE_REGION_WIN'),
-            OperatorEntry("armature.armature_layers", icon='LAYER'), # TODO - Fix unknown operator error
-            OperatorEntry("armature.bone_layers", icon='BONE_LAYER'), # TODO - Fix unknown operator error
-            Separator,
             SetOperatorContext('EXEC_REGION_WIN'),
             OperatorEntry("armature.parent_set", text="Make Parent", icon='PARENT_SET'),
             OperatorEntry("armature.parent_clear", text="Clear Parent", icon='PARENT_CLEAR'),
@@ -1912,31 +1908,84 @@ class VIEW3D_PT_armature_tab_armature(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class VIEW3D_PT_armature_tab_recalcboneroll(ToolsystemPanel):
+class VIEW3D_PT_armature_tab_recalc_bone_roll(ToolsystemPanel):
     bl_label = "Recalculate Bone Roll"
     bl_context="armature_edit"
     bl_category = "Armature"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     def draw(self, context):
+        pass
+
+
+class VIEW3D_PT_armature_tab_recalc_bone_roll_positive(ToolsystemPanel):
+    bl_label = "Positive"
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_parent_id = "VIEW3D_PT_armature_tab_recalc_bone_roll"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, context):
         layout = self.layout
 
         entries = (
-            #col.label(text="- Positive: -") # TODO - Implement this as a subpanel
             OperatorEntry("armature.calculate_roll", text= "Local + X Tangent", icon='ROLL_X_TANG_POS', props={"type": 'POS_X'}),
             OperatorEntry("armature.calculate_roll", text= "Local + Z Tangent", icon='ROLL_Z_TANG_POS', props={"type": 'POS_Z'}),
             OperatorEntry("armature.calculate_roll", text= "Global + X Axis", icon='ROLL_X_POS', props={"type": 'GLOBAL_POS_X'}),
             OperatorEntry("armature.calculate_roll", text= "Global + Y Axis", icon='ROLL_Y_POS', props={"type": 'GLOBAL_POS_Y'}),
             OperatorEntry("armature.calculate_roll", text= "Global + Z Axis", icon='ROLL_Z_POS', props={"type": 'GLOBAL_POS_Z'}),
-            Separator,
-            #col.label(text="- Negative: -") # TODO - Implement this as a subpanel
+        )
+
+        draw_entries(layout, context, entries)
+
+
+class VIEW3D_PT_armature_tab_recalc_bone_roll_negative(ToolsystemPanel):
+    bl_label = "Negative"
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_parent_id = "VIEW3D_PT_armature_tab_recalc_bone_roll"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
             OperatorEntry("armature.calculate_roll", text= "Local - X Tangent", icon='ROLL_X_TANG_NEG', props={"type": 'NEG_X'}),
             OperatorEntry("armature.calculate_roll", text= "Local - Z Tangent", icon='ROLL_Z_TANG_NEG', props={"type": 'NEG_Z'}),
             OperatorEntry("armature.calculate_roll", text= "Global - X Axis", icon='ROLL_X_NEG', props={"type": 'GLOBAL_NEG_X'}),
             OperatorEntry("armature.calculate_roll", text= "Global - Y Axis", icon='ROLL_Y_NEG', props={"type": 'GLOBAL_NEG_Y'}),
             OperatorEntry("armature.calculate_roll", text= "Global - Z Axis", icon='ROLL_Z_NEG', props={"type": 'GLOBAL_NEG_Z'}),
-            Separator,
-            #col.label(text="- Other: -") # TODO - Implement this as a subpanel
+        )
+
+        draw_entries(layout, context, entries)
+
+
+class VIEW3D_PT_armature_tab_recalc_bone_roll_other(ToolsystemPanel):
+    bl_label = "Other"
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_parent_id = "VIEW3D_PT_armature_tab_recalc_bone_roll"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
             OperatorEntry("armature.calculate_roll", text= "Active Bone", icon='BONE_DATA', props={"type": 'ACTIVE'}),
             OperatorEntry("armature.calculate_roll", text= "View Axis", icon='MANIPUL', props={"type": 'VIEW'}),
             OperatorEntry("armature.calculate_roll", text= "Cursor", icon='CURSOR', props={"type": 'CURSOR'}),
@@ -2235,7 +2284,10 @@ classes = (
 
     # Armature (Edit Mode)
     VIEW3D_PT_armature_tab_armature,
-    VIEW3D_PT_armature_tab_recalcboneroll,
+    VIEW3D_PT_armature_tab_recalc_bone_roll,
+    VIEW3D_PT_armature_tab_recalc_bone_roll_positive,
+    VIEW3D_PT_armature_tab_recalc_bone_roll_negative,
+    VIEW3D_PT_armature_tab_recalc_bone_roll_other,
     VIEW3D_PT_armature_tab_names,
 
     # Armature (Pose Mode)

@@ -538,7 +538,7 @@ static void IMAGE_GGT_gizmo2d(wmGizmoGroupType *gzgt)
   gzgt->idname = "IMAGE_GGT_gizmo2d";
 
   gzgt->flag |= (WM_GIZMOGROUPTYPE_DRAW_MODAL_EXCLUDE | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
-                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK | WM_GIZMOGROUPTYPE_2D_TOOL); // bfa node minimap rename with _TOOL
 
   gzgt->gzmap_params.spaceid = SPACE_IMAGE;
   gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
@@ -552,7 +552,7 @@ static void IMAGE_GGT_gizmo2d_translate(wmGizmoGroupType *gzgt)
   gzgt->idname = "IMAGE_GGT_gizmo2d_translate";
 
   gzgt->flag |= (WM_GIZMOGROUPTYPE_DRAW_MODAL_EXCLUDE | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
-                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK | WM_GIZMOGROUPTYPE_2D_TOOL); // bfa node minimap rename with _TOOL
 
   gzgt->gzmap_params.spaceid = SPACE_IMAGE;
   gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
@@ -566,7 +566,7 @@ static void IMAGE_GGT_gizmo2d_resize(wmGizmoGroupType *gzgt)
   gzgt->idname = "IMAGE_GGT_gizmo2d_resize";
 
   gzgt->flag |= (WM_GIZMOGROUPTYPE_DRAW_MODAL_EXCLUDE | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
-                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK | WM_GIZMOGROUPTYPE_2D_TOOL); // bfa node minimap rename with _TOOL
 
   gzgt->gzmap_params.spaceid = SPACE_IMAGE;
   gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
@@ -580,7 +580,7 @@ static void IMAGE_GGT_gizmo2d_rotate(wmGizmoGroupType *gzgt)
   gzgt->idname = "IMAGE_GGT_gizmo2d_rotate";
 
   gzgt->flag |= (WM_GIZMOGROUPTYPE_DRAW_MODAL_EXCLUDE | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
-                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK | WM_GIZMOGROUPTYPE_2D_TOOL); // bfa node minimap rename with _TOOL
 
   gzgt->gzmap_params.spaceid = SPACE_IMAGE;
   gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
@@ -931,7 +931,8 @@ static void image_main_region_draw(const bContext *C, ARegion *region)
                         C);
   }
   if ((sima->gizmo_flag & SI_GIZMO_HIDE) == 0) {
-    WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
+    WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS);
+    WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_UI);
   }
   draw_image_cache(C, region);
 }

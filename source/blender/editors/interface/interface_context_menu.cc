@@ -471,13 +471,16 @@ static void but_user_menu_add(bContext *C, Button *but, bUserMenu *um)
         drawstr = but->tip_quick_func(but);
       }
     }
+    /* BFA: Quick Favorites - Add operator item with context-aware filtering */
     ED_screen_user_menu_item_add_operator(
+        C,
         &um->items,
         drawstr.c_str(),
         but->optype,
         but->opptr ? static_cast<const IDProperty *>(but->opptr->data) : nullptr,
         "",
-        but->opcontext);
+        but->opcontext,
+        but->icon);
   }
   else if (but->rnaprop) {
     /* NOTE: 'member_id' may be a path. */
@@ -493,20 +496,24 @@ static void but_user_menu_add(bContext *C, Button *but, bUserMenu *um)
                                       RNA_path_property_py(&but->rnapoin, but->rnaprop, -1) :
                                       RNA_property_identifier(but->rnaprop);
       /* NOTE: ignore 'drawstr', use property idname always. */
+      /* BFA: Quick Favorites - Add property item with context-aware filtering */
       ED_screen_user_menu_item_add_prop(
-          &um->items, "", member_id_data_path->c_str(), prop_id.c_str(), but->rnaindex);
+          C, &um->items, "", member_id_data_path->c_str(), prop_id.c_str(), but->rnaindex, but->icon);
     }
   }
   else if ((mt = button_menutype_get(but))) {
-    ED_screen_user_menu_item_add_menu(&um->items, drawstr.c_str(), mt);
+    /* BFA: Quick Favorites - Add menu item with context-aware filtering */
+    ED_screen_user_menu_item_add_menu(C, &um->items, drawstr.c_str(), mt, but->icon);
   }
   else if ((ot = button_operatortype_get_from_enum_menu(but, &prop))) {
-    ED_screen_user_menu_item_add_operator(&um->items,
+    /* BFA: Quick Favorites - Add operator item with context-aware filtering */
+    ED_screen_user_menu_item_add_operator(C, &um->items,
                                           WM_operatortype_name(ot, nullptr).c_str(),
                                           ot,
                                           nullptr,
                                           RNA_property_identifier(prop),
-                                          but->opcontext);
+                                          but->opcontext,
+                                          but->icon);
   }
 }
 

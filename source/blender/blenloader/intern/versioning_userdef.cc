@@ -1861,6 +1861,18 @@ void blo_do_versions_userdef(UserDef *userdef)
     userdef->geometry_nodes_stack_limit = 100;
   }
 
+  if (!USER_VERSION_ATLEAST(502, 15)) {
+    /* BFA: Quick Favorites context-aware filtering - Initialize new context fields in existing Quick Favorites items. */
+    for (bUserMenu &um : userdef->user_menus) {
+      for (bUserMenuItem &umi : um.items) {
+        /* BFA: Initialize new fields with the menu's context info. */
+        umi.space_type = um.space_type;
+        STRNCPY_UTF8(umi.context, um.context);
+        umi.mode = 0;  /* BFA: 0 = any mode (backward compatibility) */
+      }
+    }
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a USER_VERSION_ATLEAST check.

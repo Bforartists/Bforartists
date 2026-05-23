@@ -1363,6 +1363,7 @@ class NODES_PT_toolshelf_compositor_add_utilities_text(bpy.types.Panel, NodePane
             OperatorEntry("FunctionNodeMatchString", pad=14),
             OperatorEntry("FunctionNodeReplaceString", pad=10),
             OperatorEntry("FunctionNodeSliceString", pad=14),
+            OperatorEntry("FunctionNodeSplitString", pad=14),
             OperatorEntry("FunctionNodeTrimString", pad=14),
             Separator,
             OperatorEntry("FunctionNodeFindInString", pad=10),
@@ -1691,6 +1692,7 @@ class NODES_PT_toolshelf_gn_add_input_scene(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeInputActiveCamera", pad=15),
             OperatorEntry("GeometryNodeBoneInfo", pad=22),
             OperatorEntry("GeometryNodeCameraInfo", pad=18),
+            OperatorEntry("GeometryNodeCollectionChildren", pad=6),
             OperatorEntry("GeometryNodeCollectionInfo", pad=14),
             OperatorEntry("GeometryNodeImageInfo", pad=21),
             OperatorEntry("GeometryNodeIsViewport", pad=20),
@@ -1930,7 +1932,7 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeConvexHull", pad=19),
             OperatorEntry("GeometryNodeDeleteGeometry", pad=11),
             OperatorEntry("GeometryNodeDuplicateElements", pad=7),
-            OperatorEntry("GeometryNodeMergeByDistance", pad=8),
+            OperatorEntry("GeometryNodeMergePoints", pad=16),
             OperatorEntry("GeometryNodeSortElements", pad=16),
             OperatorEntry("GeometryNodeTransform", pad=4),
             Separator,
@@ -2307,6 +2309,7 @@ class NODES_PT_toolshelf_gn_add_mesh_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("GeometryNodeClusterByConnected", pad=5),
             OperatorEntry("GeometryNodeInputMeshEdgeAngle", pad=21),
             OperatorEntry("GeometryNodeInputMeshEdgeNeighbors", pad=13),
             OperatorEntry("GeometryNodeInputMeshEdgeVertices", pad=17),
@@ -3026,6 +3029,7 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("GeometryNodeAccumulateField", pad=7),
+            OperatorEntry("GeometryNodeClusterByDistance", pad=4),
             OperatorEntry("GeometryNodeFieldAtIndex", pad=7),
             OperatorEntry("GeometryNodeFieldOnDomain", pad=3),
             OperatorEntry("GeometryNodeFieldAverage", pad=13),
@@ -3035,6 +3039,33 @@ class NODES_PT_toolshelf_gn_add_utilities_field(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
+
+class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
+    bl_label = "Lists"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+
+        entries = (
+            OperatorEntry("GeometryNodeFieldToList", pad=8),
+            OperatorEntry("GeometryNodeListGetItem", pad=8),
+            OperatorEntry("GeometryNodeListLength", pad=10),
+        )
+
+        self.draw_entries(context, layout, entries)
 
 class NODES_PT_toolshelf_gn_add_utilities_matrix(bpy.types.Panel, NodePanel):
     bl_label = "Matrix"
@@ -3107,6 +3138,29 @@ class NODES_PT_toolshelf_gn_add_utilities_rotation(bpy.types.Panel, NodePanel):
 
         self.draw_entries(context, layout, entries)
 
+class NODES_PT_toolshelf_gn_add_utilities_sound(bpy.types.Panel, NodePanel):
+    bl_label = "Sound"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeSampleSoundFrequencies", pad=0),
+        )
+
+        self.draw_entries(context, layout, entries)
 
 class NODES_PT_toolshelf_gn_add_utilities_deprecated(bpy.types.Panel, NodePanel):
     bl_label = "Deprecated"
@@ -3261,8 +3315,10 @@ classes = (
     NODES_PT_toolshelf_gn_add_utilities_bundle,
     NODES_PT_toolshelf_gn_add_utilities_closure,
     NODES_PT_toolshelf_gn_add_utilities_field,
+    NODES_PT_toolshelf_gn_add_utilities_lists,
     NODES_PT_toolshelf_gn_add_utilities_matrix,
     NODES_PT_toolshelf_gn_add_utilities_rotation,
+    NODES_PT_toolshelf_gn_add_utilities_sound,
     NODES_PT_toolshelf_gn_add_utilities_deprecated,
     #-----------------------
 )

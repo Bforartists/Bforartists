@@ -4848,24 +4848,6 @@ class VIEW3D_MT_make_links(Menu):
         layout.operator_menu_enum("object.light_linking_blockers_link", "link_state")
 
 
-# BFA wip menu, removed?
-class VIEW3D_MT_brush_paint_modes(Menu):
-    bl_label = "Enabled Modes"
-
-    def draw(self, context):
-        layout = self.layout
-
-        settings = UnifiedPaintPanel.paint_settings(context)
-        brush = settings.brush
-
-        layout.prop(brush, "use_paint_sculpt", text="Sculpt")
-        layout.prop(brush, "use_paint_uv_sculpt", text="UV Sculpt")
-        layout.prop(brush, "use_paint_vertex", text="Vertex Paint")
-        layout.prop(brush, "use_paint_weight", text="Weight Paint")
-        layout.prop(brush, "use_paint_image", text="Texture Paint")
-        layout.prop(brush, "use_paint_sculpt_curves", text="Sculpt Curves")
-
-
 # bfa menu
 class VIEW3D_MT_brush(Menu):
     bl_label = "Brush"
@@ -12328,7 +12310,6 @@ classes = (
     VIEW3D_MT_object_cleanup,
     VIEW3D_MT_make_single_user,
     VIEW3D_MT_make_links,
-    VIEW3D_MT_brush_paint_modes,  # BFA wip menu, removed?
     VIEW3D_MT_brush,  # BFA - menu
     VIEW3D_MT_facemask_showhide,  # BFA - menu
     VIEW3D_MT_paint_vertex,

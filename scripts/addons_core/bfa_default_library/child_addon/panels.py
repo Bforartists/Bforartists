@@ -27,6 +27,7 @@ from bpy.types import Panel
 # Import operations from submodules
 from .operators.geometry_nodes import (
     get_geometry_nodes_inputs,
+    get_geometry_nodes_inputs_grouped,
     GN_ASSET_NAMES,
 )
 
@@ -49,6 +50,148 @@ def is_bforartists():
 def get_icon(bfa_icon, blender_fallback):
     """Get appropriate icon for Bforartists or Blender."""
     return bfa_icon if is_bforartists() else blender_fallback
+
+# -----------------------------------------------------------------------------
+# Collapsible Sub-Panel State
+# -----------------------------------------------------------------------------
+
+# Module-level dict that tracks which sub-panels are open/closed.
+# Key:  "{modifier.name}::{panel_name}"
+# This persists across redraws for the lifetime of the module (session).
+_panel_open_state = {}
+
+
+def _panel_state_key(modifier, panel_name):
+    """Return a stable key for a panel's open/closed state."""
+    return f"{getattr(modifier, 'name', '?')}::{panel_name}"
+
+
+def _is_panel_open(modifier, panel_name):
+    """Return True if the named sub-panel should be drawn expanded."""
+    key = _panel_state_key(modifier, panel_name)
+    return _panel_open_state.get(key, True)  # default: open
+
+
+def _toggle_panel(modifier, panel_name):
+    """Toggle the open/closed state of a sub-panel."""
+    key = _panel_state_key(modifier, panel_name)
+    _panel_open_state[key] = not _panel_open_state.get(key, True)
+
+
+# -----------------------------------------------------------------------------
+# Version-Aware Socket Drawing Helpers
+# -----------------------------------------------------------------------------
+
+def _draw_socket_prop(layout, modifier, socket_id, socket_name, socket_type):
+    """Draw a socket property, mirroring the modifier-stack style.
+
+    Uses property-split layout so labels appear to the left of the control,
+    exactly like native GN modifier properties.
+    """
+    row = layout.row()
+    row.use_property_split = True
+    row.use_property_decorate = True
+
+    if bpy.app.version >= (5, 2, 0):
+        # Blender 5.2+: socket is an RNA struct — draw its .value property
+        try:
+            socket_ptr = getattr(modifier.properties.inputs, socket_id)
+        except AttributeError:
+            # Fallback to dict-style (will fail in 5.2, but safe for older)
+            _draw_socket_prop_legacy(row, modifier, socket_id, socket_name, socket_type)
+            return
+        else:
+            if socket_type == 'BOOLEAN':
+                # Booleans look better with a simple row (no split needed)
+                row = layout.row()
+                row.prop(socket_ptr, "value", text=socket_name, toggle=True)
+            else:
+                row.prop(socket_ptr, "value", text=socket_name)
+            return
+    else:
+        # Blender 5.0-5.1: ID property dict access
+        _draw_socket_prop_legacy(row, modifier, socket_id, socket_name, socket_type)
+
+
+def _draw_socket_prop_legacy(row, modifier, socket_id, socket_name, socket_type):
+    """Fallback drawing for Blender 5.0-5.1 (ID-property dict style)."""
+    if socket_type == 'BOOLEAN':
+        sub = row.row()
+        sub.prop(modifier, f'["{socket_id}"]', text=socket_name, toggle=True)
+    elif socket_type in ('FLOAT', 'INT'):
+        sub = row.row()
+        sub.prop(modifier, f'["{socket_id}"]', text=socket_name)
+    else:
+        sub = row.row()
+        sub.prop(modifier, f'["{socket_id}"]', text=socket_name)
+
+
+# -----------------------------------------------------------------------------
+# Sub-Panel Drawing Helper
+# -----------------------------------------------------------------------------
+
+def _draw_collapsible_sub_panel(layout, modifier, panel_name, socket_list):
+    """Draw a collapsible sub-panel with an arrow toggle, matching modifier stack style.
+
+    Args:
+        layout:   Parent UILayout.
+        modifier: The GN modifier (used for state key).
+        panel_name: Display name / header text.
+        socket_list: List of (socket_name, socket_id, socket_type) tuples.
+    """
+    is_open = _is_panel_open(modifier, panel_name)
+    icon = 'DISCLOSURE_TRI_DOWN' if is_open else 'DISCLOSURE_TRI_RIGHT'
+
+    # Collapsible header row
+    header = layout.row()
+    header.alignment = 'LEFT'
+    op = header.operator(
+        "object.toggle_gn_subpanel",
+        text=panel_name,
+        icon=icon,
+        emboss=False,
+    )
+    op.panel_name = panel_name
+    op.modifier_name = modifier.name
+
+    if not is_open:
+        return  # Collapsed — body is hidden
+
+    # Body: indented box containing the sockets
+    body = layout.box()
+    body.use_property_split = True
+    body.use_property_decorate = True
+
+    for socket_name, socket_id, socket_type in socket_list:
+        _draw_socket_prop(body, modifier, socket_id, socket_name, socket_type)
+
+
+# -----------------------------------------------------------------------------
+# Toggle Sub-Panel Operator
+# -----------------------------------------------------------------------------
+
+class OBJECT_OT_toggle_gn_subpanel(bpy.types.Operator):
+    """Toggle the visibility of a Geometry Nodes sub-panel in the sidebar."""
+    bl_idname = "object.toggle_gn_subpanel"
+    bl_label = "Toggle GN Sub-Panel"
+    bl_description = "Show or hide this property group"
+    bl_options = {'INTERNAL'}
+
+    panel_name: bpy.props.StringProperty(name="Panel Name")
+    modifier_name: bpy.props.StringProperty(name="Modifier Name")
+
+    def execute(self, context):
+        obj = context.object
+        if obj:
+            mod = obj.modifiers.get(self.modifier_name)
+            if mod:
+                _toggle_panel(mod, self.panel_name)
+        # Force all 3D view areas to redraw
+        for area in context.screen.areas:
+            if area.type == 'VIEW_3D':
+                area.tag_redraw()
+        return {'FINISHED'}
+
 
 # -----------------------------------------------------------------------------
 # Panel Definitions
@@ -81,6 +224,8 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
     def draw(self, context):
         layout = self.layout
         obj = context.object
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # we enable per-row where needed
 
         # Find the first Geometry Nodes modifier that matches our primitive names
         mod = next((m for m in obj.modifiers
@@ -88,54 +233,28 @@ class OBJECT_PT_GeometryNodesPanel(Panel):
                    m.node_group and
                    any(m.node_group.name.startswith(name) for name in GN_ASSET_NAMES)), None)
 
-        if mod and mod.node_group:
-            # Add the asset wizard button using centralized utility
+        if not (mod and mod.node_group):
+            return
 
-            # Check if this is Bforartists
-            if "OUTLINER_MT_view" in dir(bpy.types):
-                icon = "WIZARD"
+        # --- Wizard button ---
+        icon = "WIZARD" if "OUTLINER_MT_view" in dir(bpy.types) else "EXPERIMENTAL"
+        draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
+        layout.separator()
+
+        # --- Node-group header ---
+        layout.label(text=mod.node_group.name, icon='NODETREE')
+
+        # --- Retrieve inputs as nested groups ---
+        groups = get_geometry_nodes_inputs_grouped(mod)
+
+        for panel_name, sockets in groups:
+            if panel_name is None:
+                # Root-level sockets — draw directly
+                for socket_name, socket_id, socket_type in sockets:
+                    _draw_socket_prop(layout, mod, socket_id, socket_name, socket_type)
             else:
-                icon = "EXPERIMENTAL"
-
-            draw_wizard_button(layout, obj, "Open Asset Wizard", icon, 1.5)
-            layout.separator()
-
-            # Main panel header
-
-            layout.label(text=f"{mod.node_group.name}", icon='NODETREE')
-
-            # Get and display all inputs
-            inputs = get_geometry_nodes_inputs(mod)
-
-            # Track current panel to group sockets together
-            current_panel = None
-            panel_box = None
-
-            for socket_name, socket_id, socket_type, parent_panel in inputs:
-                # If we've moved to a new panel, create a new box
-                if parent_panel != current_panel:
-                    if panel_box:  # Close previous panel if it exists
-                        panel_box.separator()
-                    current_panel = parent_panel
-                    if current_panel:
-                        panel_box = layout.box()
-                        panel_box.label(text=current_panel, icon='NODE')
-
-                # If we're in a panel, use the panel_box layout
-                target_layout = panel_box if current_panel else layout
-
-                # Create a row for each input to ensure proper layout
-                row = target_layout.row()
-
-                # Handle different socket types
-                if socket_type == 'BOOLEAN':
-                    row.prop(mod, f'["{socket_id}"]', text=socket_name, toggle=True)
-                elif socket_type == 'VALUE':
-                    # Split row into label and slider
-                    row.label(text=socket_name)
-                    row.prop(mod, f'["{socket_id}"]', text="", slider=False)
-                else:
-                    row.prop(mod, f'["{socket_id}"]', text=socket_name)
+                # Sub-panel with collapsible arrow header
+                _draw_collapsible_sub_panel(layout, mod, panel_name, sockets)
 
 
 class OBJECT_PT_AssetsModifierPanel(Panel):
@@ -200,6 +319,7 @@ object_added_handler.known_objects = set()
 classes = (
     OBJECT_PT_GeometryNodesPanel,
     OBJECT_PT_AssetsModifierPanel,
+    OBJECT_OT_toggle_gn_subpanel,
 )
 
 def register():

@@ -877,7 +877,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
         layout.menu("DOPESHEET_MT_key_snap")
-        layout.menu("DOPESHEET_MT_key_mirror")
+        layout.operator_menu_enum("action.mirror", "type", text="Mirror")
 
         layout.separator()
 
@@ -1012,19 +1012,6 @@ class DOPESHEET_MT_key_transform(Menu):
         layout.operator("transform.transform", text="Extend", icon="SHRINK_FATTEN").mode = "TIME_EXTEND"
         layout.operator("transform.transform", text="Slide", icon="PUSH_PULL").mode = "TIME_SLIDE"
         layout.operator("transform.transform", text="Scale", icon="TRANSFORM_SCALE").mode = "TIME_SCALE"
-
-
-class DOPESHEET_MT_key_mirror(Menu):
-    bl_label = "Mirror"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("action.mirror", text="By Times over Current Frame", icon="MIRROR_TIME").type = "CFRA"
-        layout.operator("action.mirror", text="By Values over Value=0", icon="MIRROR_CURSORVALUE").type = "XAXIS"
-        layout.operator(
-            "action.mirror", text="By Times over First Selected Marker", icon="MIRROR_MARKER"
-        ).type = "MARKER"
 
 
 class DOPESHEET_MT_key_snap(Menu):
@@ -1464,7 +1451,6 @@ classes = (
     DOPESHEET_MT_key,
     DOPESHEET_PT_view_view_options,  # BFA menu
     DOPESHEET_MT_key_transform,
-    DOPESHEET_MT_key_mirror,  # BFA menu
     DOPESHEET_MT_key_snap,  # BFA menu
     DOPESHEET_MT_gpencil_channel,
     DOPESHEET_MT_delete,
