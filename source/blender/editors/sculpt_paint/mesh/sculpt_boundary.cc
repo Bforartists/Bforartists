@@ -2886,6 +2886,8 @@ static void do_smooth_brush(const Depsgraph &depsgraph,
   pbvh.flush_bounds_to_parents();
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Brush Initialization
  * \{ */
@@ -3462,7 +3464,7 @@ std::unique_ptr<SculptBoundary> data_init_mesh(const Depsgraph &depsgraph,
   /* Starting from a vertex that is the limit of a boundary is ambiguous, so return nullptr instead
    * of forcing a random active boundary from a corner. */
   /* TODO: Investigate whether initial_vert should actually be boundary_initial_vert. If
-   * initial_vert is correct, the above comment and the doc-string for the relevant function should
+   * initial_vert is correct, the above comment and the docstring for the relevant function should
    * be fixed. */
   if (!is_vert_in_editable_boundary_mesh(faces,
                                          corner_verts,

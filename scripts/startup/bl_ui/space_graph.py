@@ -346,6 +346,7 @@ class GRAPH_MT_view(Menu):
 
         layout.operator("graph.view_all", icon="VIEWALL")
         layout.operator("graph.view_selected", icon="VIEW_SELECTED")
+        layout.operator("graph.local_view") # BFA - WIP
         layout.operator("graph.view_frame", icon="VIEW_FRAME")
 
         layout.separator()

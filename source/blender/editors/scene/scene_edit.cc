@@ -242,7 +242,7 @@ bool ED_scene_view_layer_delete(Main *bmain, Scene *scene, ViewLayer *layer, Rep
   view_layer_remove_unset_nodetrees(bmain, scene, layer);
 
   BLI_remlink(&scene->view_layers, layer);
-  BLI_assert(BLI_listbase_is_empty(&scene->view_layers) == false);
+  BLI_assert(scene->view_layers.is_empty() == false);
 
   /* Remove from windows. */
   wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
@@ -254,6 +254,9 @@ bool ED_scene_view_layer_delete(Main *bmain, Scene *scene, ViewLayer *layer, Rep
   }
 
   BKE_scene_free_view_layer_depsgraph(scene, layer);
+
+  /* Update any sequencer scene strips referencing this view layer by name. */
+  seq::relations_update_view_layer_scene_strips(bmain, scene, layer->name, nullptr);
 
   BKE_view_layer_free(layer);
 

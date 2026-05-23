@@ -115,9 +115,15 @@ static void filelist_readjob_remote_asset_library_index_read(
       }
 
       /* Atomically test and reset the new pages flag. */
-      if (request.new_pages_available.exchange(false) || !request.is_downloading) {
+      if (request.new_pages_available.exchange(false)) {
         /* New pages available or loading ended. Done waiting. */
         return true;
+      }
+
+      if (!request.is_downloading) {
+        /* Nothing is downloading any more, so it doesn't make sense for the caller to continue
+         * looping. */
+        return false;
       }
 
       /* Busy waiting for new files, with some sleeping to avoid wasting a lot of CPU
@@ -216,7 +222,8 @@ static void filelist_remote_asset_library_update_loading_flags(RemoteLibraryRequ
 }
 
 /* Called when starting the job (from the main thread). */
-void remote_asset_library_request(FileListReadJob *job_params, bUserAssetLibrary &library)
+void remote_asset_library_request(FileListReadJob *job_params,
+                                  const asset_system::RemoteLibraryDefinitionRef &library)
 {
   if (!USER_EXPERIMENTAL_TEST(&U, use_remote_asset_libraries)) {
     return;
@@ -229,12 +236,12 @@ void remote_asset_library_request(FileListReadJob *job_params, bUserAssetLibrary
   }
 
   /* Check if the library's cache directory exists, otherwise, request download. */
-  if (!BLI_is_dir(library.dirpath)) {
+  if (!BLI_is_dir(library.cache_dirpath.c_str())) {
     blender::asset_system::remote_library_request_download(library);
   }
 
   std::unique_ptr<RemoteLibraryRequest> request = std::make_unique<RemoteLibraryRequest>();
-  request->dirpath = library.dirpath;
+  request->dirpath = library.cache_dirpath;
   request->request_time = RemoteLibraryLoadingStatus::loading_start_time(library.remote_url);
 
   filelist_remote_asset_library_update_loading_flags(*request, library.remote_url);
@@ -246,7 +253,7 @@ static bUserAssetLibrary *lookup_remote_library(const FileListReadJob *job_param
 {
   bUserAssetLibrary *library = BKE_preferences_asset_library_find_index(
       &U, job_params->filelist->asset_library_ref->custom_library_index);
-  if (!library && !(library->flag & ASSET_LIBRARY_USE_REMOTE_URL)) {
+  if (!library || !(library->flag & ASSET_LIBRARY_USE_REMOTE_URL)) {
     return nullptr;
   }
 
@@ -267,7 +274,7 @@ static void filelist_readjob_remote_asset_library(FileListReadJob *job_params,
 {
   FileList *filelist = job_params->tmp_filelist; /* Use the thread-safe filelist queue. */
 
-  BLI_assert(BLI_listbase_is_empty(&filelist->filelist.entries) &&
+  BLI_assert(filelist->filelist.entries.is_empty() &&
              (filelist->filelist.entries_num == FILEDIR_NBR_ENTRIES_UNSET));
 
   /* A valid, but empty file-list from now. */

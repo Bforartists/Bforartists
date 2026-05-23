@@ -197,7 +197,7 @@ std::optional<int64_t> AssetRepresentation::online_asset_files_combined_size_in_
   }
   int64_t size = 0;
   for (const OnlineAssetFile &file : online_asset_files()) {
-    size += file.size_in_bytes.value_or(0);
+    size += file.size_in_bytes;
   }
   return size;
 }
@@ -238,6 +238,10 @@ void AssetRepresentation::online_asset_mark_downloaded()
 
 std::optional<eAssetImportMethod> AssetRepresentation::get_import_method() const
 {
+  const AssetMetaData &metadata = this->get_metadata();
+  if (metadata.flag & ASSETDATA_USE_OWN_IMPORT_METHOD) {
+    return metadata.preferred_import_method;
+  }
   return owner_asset_library_.import_method();
 }
 

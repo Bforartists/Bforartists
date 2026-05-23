@@ -35,6 +35,10 @@
 
 namespace gbuffer::detail {
 
+/* -------------------------------------------------------------------- */
+/** \name G-buffer Read
+ * \{ */
+
 uint fetch_object_id(int2 texel)
 {
   return texelFetch(sampler_get(eevee_gbuffer_data, gbuf_header_tx), int3(texel, 1), 0).r;
@@ -89,6 +93,12 @@ ClosureUndetermined unpack_closure(gbuffer::ClosurePacking cl_in)
       break;
     case GBUF_REFRACTION_COLORLESS:
       gbuffer::RefractionColorless::unpack_additional(cl, cl_in.data0);
+      break;
+    case GBUF_THIN_REFRACTION:
+      gbuffer::ThinRefraction::unpack_additional(cl, cl_in.data1);
+      break;
+    case GBUF_THIN_REFRACTION_COLORLESS:
+      gbuffer::ThinRefractionColorless::unpack_additional(cl, cl_in.data0);
       break;
 #endif
 #ifdef GBUFFER_HAS_SUBSURFACE

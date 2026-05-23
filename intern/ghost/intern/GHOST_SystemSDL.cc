@@ -7,6 +7,7 @@
  */
 
 #include <cassert>
+#include <cstring>
 #include <stdexcept>
 
 #include "GHOST_ContextSDL.hh"
@@ -75,6 +76,7 @@ GHOST_IWindow *GHOST_SystemSDL::createWindow(const char *title,
 
     if (window->getValid()) {
       window_manager_->addWindow(window);
+      window_manager_->setActiveWindow(window);
       pushEvent(std::make_unique<GHOST_Event>(getMilliSeconds(), GHOST_kEventWindowSize, window));
     }
     else {
@@ -647,6 +649,19 @@ void GHOST_SystemSDL::processEvent(SDL_Event *sdl_event)
   }
 
   if (g_event) {
+    switch (g_event->getType()) {
+      case GHOST_kEventWindowActivate: {
+        window_manager_->setActiveWindow(g_event->getWindow());
+        break;
+      }
+      case GHOST_kEventWindowDeactivate: {
+        window_manager_->setWindowInactive(g_event->getWindow());
+        break;
+      }
+      default: {
+        break;
+      }
+    }
     pushEvent(std::move(g_event));
   }
 }
@@ -792,8 +807,6 @@ GHOST_TCapabilityFlag GHOST_SystemSDL::getCapabilities() const
       GHOST_CAPABILITY_FLAG_ALL &
       /* NOTE: order the following flags as they they're declared in the source. */
       ~(
-          /* This SDL back-end has not yet implemented primary clipboard. */
-          GHOST_kCapabilityClipboardPrimary |
           /* This SDL back-end has not yet implemented image copy/paste. */
           GHOST_kCapabilityClipboardImage |
           /* This SDL back-end has not yet implemented color sampling the desktop. */
@@ -814,14 +827,26 @@ GHOST_TCapabilityFlag GHOST_SystemSDL::getCapabilities() const
           GHOST_kCapabilityWindowPath));
 }
 
-char *GHOST_SystemSDL::getClipboard(bool /*selection*/) const
+char *GHOST_SystemSDL::getClipboard(bool selection) const
 {
-  return (char *)SDL_GetClipboardText();
+  /* The clipboard must be freed with `SDL_free`, copy for the return value. */
+  char *sdl_text = selection ? SDL_GetPrimarySelectionText() : SDL_GetClipboardText();
+  if (sdl_text == nullptr) {
+    return nullptr;
+  }
+  char *result = strdup(sdl_text);
+  SDL_free(sdl_text);
+  return result;
 }
 
-void GHOST_SystemSDL::putClipboard(const char *buffer, bool /*selection*/) const
+void GHOST_SystemSDL::putClipboard(const char *buffer, bool selection) const
 {
-  SDL_SetClipboardText(buffer);
+  if (selection) {
+    SDL_SetPrimarySelectionText(buffer);
+  }
+  else {
+    SDL_SetClipboardText(buffer);
+  }
 }
 
 uint64_t GHOST_SystemSDL::getMilliSeconds() const

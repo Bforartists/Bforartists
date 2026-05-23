@@ -243,7 +243,7 @@ class PaintOperation : public GreasePencilStrokeOperation {
   /** Set to true when the paint operation is used to draw fill guides. */
   bool do_fill_guides_;
 
-  /* Used when hiding the fill while drawing. (#GP_BRUSH_DISSABLE_LASSO)*/
+  /** Used when hiding the fill while drawing. (#GP_BRUSH_DISSABLE_LASSO). */
   float start_opacity_;
 
   friend struct PaintOperationExecutor;
@@ -465,22 +465,26 @@ struct PaintOperationExecutor {
     }
 
     if ((settings_->flag2 & GP_BRUSH_USE_STROKE) == 0) {
-      bke::SpanAttributeWriter<bool> hide_stroke = attributes.lookup_or_add_for_write_span<bool>(
-          "hide_stroke", bke::AttrDomain::Curve);
-      hide_stroke.span[active_curve] = true;
-      curve_attributes_to_skip.add("hide_stroke");
-      hide_stroke.finish();
+      if (bke::SpanAttributeWriter<bool> hide_stroke =
+              attributes.lookup_or_add_for_write_span<bool>("hide_stroke", bke::AttrDomain::Curve))
+      {
+        hide_stroke.span[active_curve] = true;
+        curve_attributes_to_skip.add("hide_stroke");
+        hide_stroke.finish();
+      }
     }
     if (use_fill) {
-      bke::SpanAttributeWriter<int> fill_id = attributes.lookup_or_add_for_write_span<int>(
-          "fill_id", bke::AttrDomain::Curve);
-      /* Set new fill id to zero, because it will have uninitialized memory otherwise.
-       * Then get the #VArray of all fill ids to compute a new one. */
-      fill_id.span[active_curve] = 0;
-      const int new_fill_id = bke::greasepencil::get_next_available_fill_id(fill_id.span);
-      fill_id.span[active_curve] = new_fill_id;
-      curve_attributes_to_skip.add("fill_id");
-      fill_id.finish();
+      if (bke::SpanAttributeWriter<int> fill_id = attributes.lookup_or_add_for_write_span<int>(
+              "fill_id", bke::AttrDomain::Curve))
+      {
+        /* Set new fill id to zero, because it will have uninitialized memory otherwise.
+         * Then get the #VArray of all fill ids to compute a new one. */
+        fill_id.span[active_curve] = 0;
+        const int new_fill_id = bke::greasepencil::get_next_available_fill_id(fill_id.span);
+        fill_id.span[active_curve] = new_fill_id;
+        curve_attributes_to_skip.add("fill_id");
+        fill_id.finish();
+      }
     }
 
     if (settings_->uv_random > 0.0f || attributes.contains("rotation")) {

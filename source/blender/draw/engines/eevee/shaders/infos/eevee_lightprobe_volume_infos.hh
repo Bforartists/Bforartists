@@ -10,10 +10,8 @@
 #  include "draw_view_infos.hh"
 #  include "eevee_common_infos.hh"
 #  include "eevee_debug_shared.hh"
-#  include "eevee_light_infos.hh"
 #  include "eevee_lightprobe_infos.hh"
 #  include "eevee_lightprobe_shared.hh"
-#  include "eevee_shadow_infos.hh"
 #  include "eevee_uniform_infos.hh"
 #endif
 
@@ -76,31 +74,6 @@ GPU_SHADER_CREATE_END()
 /* -------------------------------------------------------------------- */
 /** \name Baking
  * \{ */
-
-GPU_SHADER_CREATE_INFO(eevee_surfel_cluster_build)
-LOCAL_GROUP_SIZE(SURFEL_GROUP_SIZE)
-BUILTINS(BuiltinBits::TEXTURE_ATOMIC)
-TYPEDEF_SOURCE("eevee_defines.hh")
-TYPEDEF_SOURCE("eevee_lightprobe_shared.hh")
-ADDITIONAL_INFO(eevee_surfel_common)
-ADDITIONAL_INFO(draw_view)
-IMAGE(0, SINT_32, read_write, iimage3DAtomic, cluster_list_img)
-COMPUTE_SOURCE("eevee_surfel_cluster_build_comp.glsl")
-DO_STATIC_COMPILATION()
-GPU_SHADER_CREATE_END()
-
-GPU_SHADER_CREATE_INFO(eevee_surfel_ray)
-LOCAL_GROUP_SIZE(SURFEL_GROUP_SIZE)
-TYPEDEF_SOURCE("eevee_defines.hh")
-TYPEDEF_SOURCE("eevee_lightprobe_shared.hh")
-ADDITIONAL_INFO(eevee_surfel_common)
-ADDITIONAL_INFO(eevee_lightprobe_sphere_data)
-ADDITIONAL_INFO(draw_view)
-PUSH_CONSTANT(int, radiance_src)
-PUSH_CONSTANT(int, radiance_dst)
-COMPUTE_SOURCE("eevee_surfel_ray_comp.glsl")
-DO_STATIC_COMPILATION()
-GPU_SHADER_CREATE_END()
 
 GPU_SHADER_CREATE_INFO(eevee_lightprobe_volume_bounds)
 DO_STATIC_COMPILATION()

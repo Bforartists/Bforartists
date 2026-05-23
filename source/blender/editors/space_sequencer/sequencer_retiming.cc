@@ -38,7 +38,7 @@
 
 namespace blender::ed::vse {
 
-/*-------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
 /** \name Retiming Generic Functions
  * \{ */
 
@@ -65,7 +65,7 @@ static bool retiming_poll(bContext *C)
 
 /** \} */
 
-/*-------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
 /** \name Retiming Data Show
  * \{ */
 
@@ -128,7 +128,7 @@ void SEQUENCER_OT_retiming_show(wmOperatorType *ot)
 
 /** \} */
 
-/*-------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
 /** \name Retiming Reset
  * \{ */
 
@@ -535,7 +535,7 @@ static wmOperatorStatus sequencer_retiming_key_delete_invoke(bContext *C,
   Scene *scene = CTX_data_sequencer_scene(C);
   ListBaseT<TimeMarker> *markers = &scene->markers;
 
-  if (!BLI_listbase_is_empty(markers)) {
+  if (!markers->is_empty()) {
     ARegion *region = CTX_wm_region(C);
     if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
       /* Bounding box of 30 pixels is used for markers shortcuts,

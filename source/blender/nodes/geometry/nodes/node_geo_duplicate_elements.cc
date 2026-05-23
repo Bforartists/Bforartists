@@ -35,19 +35,22 @@ NODE_STORAGE_FUNCS(NodeGeometryDuplicateElements);
 static void node_declare(NodeDeclarationBuilder &b)
 {
   b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to duplicate elements of");
-  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).hide_value().field_on_all();
+  b.add_input<decl::Bool>("Selection"_ustr)
+      .default_value(true)
+      .hide_value()
+      .evaluated_geometry_field();
   b.add_input<decl::Int>("Amount"_ustr)
       .min(0)
       .default_value(1)
-      .field_on_all()
+      .evaluated_geometry_field()
       .description("The number of duplicates to create for each element")
       .translation_context(BLT_I18NCONTEXT_COUNTABLE);
 
   b.add_output<decl::Geometry>("Geometry"_ustr)
-      .propagate_all()
+      .propagate_all_geometry()
       .description("The duplicated geometry, not including the original geometry");
   b.add_output<decl::Int>("Duplicate Index"_ustr)
-      .field_on_all()
+      .anonymous_attribute_output()
       .description("The indices of the duplicates for each element");
 }
 
@@ -124,11 +127,8 @@ static void create_duplicate_index_attribute(bke::MutableAttributeAccessor attri
 {
   SpanAttributeWriter<int> duplicate_indices = attributes.lookup_or_add_for_write_only_span<int>(
       *attribute_outputs.duplicate_index, output_domain);
-  for (const int i : IndexRange(selection.size())) {
-    MutableSpan<int> indices = duplicate_indices.span.slice(offsets[i]);
-    for (const int i : indices.index_range()) {
-      indices[i] = i;
-    }
+  for (const int i : selection.index_range()) {
+    array_utils::fill_index_range(duplicate_indices.span.slice(offsets[i]));
   }
   duplicate_indices.finish();
 }

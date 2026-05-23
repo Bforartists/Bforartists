@@ -345,7 +345,7 @@ void ZstdWriteWrap::write_seekable_frames()
   write_u32_le(0x184D2A5E);
 
   /* The actual frame number might not match num_frames if there was a write error. */
-  const uint32_t num_frames = BLI_listbase_count(&frames);
+  const uint32_t num_frames = frames.count();
   /* Each frame consists of two u32, so 8 bytes each.
    * After the frames, a footer containing two u32 and one byte (9 bytes total) is written. */
   const uint32_t frame_size = num_frames * 8 + 9;
@@ -367,13 +367,13 @@ void ZstdWriteWrap::write_seekable_frames()
 bool ZstdWriteWrap::close()
 {
   BLI_threadpool_end(&threadpool);
-  BLI_freelistN(&tasks);
+  tasks.free_no_destruct();
 
   BLI_mutex_end(&mutex);
   BLI_condition_end(&condition);
 
   write_seekable_frames();
-  BLI_freelistN(&frames);
+  frames.free_no_destruct();
 
   return base_wrap.close() && !write_error;
 }
@@ -892,7 +892,7 @@ static void writestruct_at_address_nr(WriteData *wd,
     }
   }
 
-  /* Get the address identifier that will be written to the file.*/
+  /* Get the address identifier that will be written to the file. */
   const void *address_id = get_address_id(*wd, adr);
 
   const void *data_to_write;
@@ -1911,9 +1911,11 @@ static bool do_history(const char *filepath, ReportList *reports)
   return true;
 }
 
-static void write_file_main_validate_pre(Main *bmain, ReportList *reports)
+static void write_file_main_validate_pre(Main &bmain,
+                                         const BlendFileWriteParams &params,
+                                         ReportList *reports)
 {
-  if (!bmain->lock) {
+  if (!bmain.lock) {
     return;
   }
 
@@ -1922,8 +1924,8 @@ static void write_file_main_validate_pre(Main *bmain, ReportList *reports)
         reports, RPT_DEBUG, "Checking validity of current .blend file *BEFORE* save to disk");
   }
 
-  BLO_main_validate_shapekeys(bmain, reports);
-  if (!BKE_main_namemap_validate_and_fix(*bmain)) {
+  BLO_main_validate_shapekeys(&bmain, reports);
+  if (!BKE_main_namemap_validate_and_fix(bmain)) {
     BKE_report(reports,
                RPT_ERROR,
                "Critical data corruption: Conflicts and/or otherwise invalid data-blocks names "
@@ -1931,7 +1933,27 @@ static void write_file_main_validate_pre(Main *bmain, ReportList *reports)
   }
 
   if (G.debug & G_DEBUG_IO) {
-    BLO_main_validate_libraries(bmain, reports);
+    BLO_main_validate_libraries(&bmain, reports);
+  }
+
+  if (!params.is_copypaste_buffer) {
+    bool has_clipboard_flag = false;
+    for (ID &id_iter : MainAllIDsIterator(bmain)) {
+      if (id_iter.flag & ID_FLAG_CLIPBOARD_MARK) {
+        CLOG_WARN(&LOG,
+                  "Found an ID '%s' flagged as copy/paste clipboard data while writing a regular "
+                  "blendfile, clearing the flag",
+                  id_iter.name);
+        id_iter.flag &= ~ID_FLAG_CLIPBOARD_MARK;
+        has_clipboard_flag = true;
+      }
+    }
+    if (has_clipboard_flag) {
+      BKE_report(reports,
+                 RPT_INFO,
+                 "Found IDs flagged as copy/paste clipboard data while writing a regular "
+                 "blendfile, the flag has been cleared in these IDs");
+    }
   }
 }
 
@@ -1980,7 +2002,7 @@ static bool BLO_write_file_impl(Main *mainvar,
   const eBPathForeachFlag path_list_flag = (BKE_BPATH_FOREACH_PATH_SKIP_LINKED |
                                             BKE_BPATH_FOREACH_PATH_SKIP_MULTIFILE);
 
-  write_file_main_validate_pre(mainvar, reports);
+  write_file_main_validate_pre(*mainvar, *params, reports);
 
   /* Open temporary file, so we preserve the original in case we crash. */
   SNPRINTF(tempname, "%s@", filepath);

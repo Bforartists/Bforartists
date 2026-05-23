@@ -280,7 +280,7 @@ void sound_equalizermodifier_copy_data(StripModifierData *target, StripModifierD
   }
 }
 
-#ifdef WITH_AUDASPACE
+#ifdef WITH_CONVOLUTION
 static uint64_t sound_equalizermodifier_get_params_hash(float *buf)
 {
   return XXH3_64bits(buf, sizeof(float) * SOUND_EQUALIZER_SIZE_DEFINITION);
@@ -298,7 +298,7 @@ AUD_Sound sound_equalizermodifier_recreator(Strip *strip,
   SoundEqualizerModifierData *semd = (SoundEqualizerModifierData *)smd;
 
   /* No equalizer definition. */
-  if (BLI_listbase_is_empty(&semd->graphics)) {
+  if (semd->graphics.is_empty()) {
     return sound_in;
   }
 

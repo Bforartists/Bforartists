@@ -448,7 +448,8 @@ enum eSpaceSeq_Flag : int {
   SPACE_SEQ_FLAG_UNUSED_16 = (1 << 16),
   SEQ_USE_PROXIES = (1 << 17),
   SEQ_SHOW_GRID = (1 << 18),
-  SEQ_SHOW_TOOLSHELF_TABS = (1 << 19), /* BFA - toolshelf tabs toggle flag */
+  SEQ_SHOW_SCRUBBING_REGION = (1 << 19),
+  SEQ_SHOW_TOOLSHELF_TABS = (1 << 20), /* BFA - toolshelf tabs toggle flag */
 };
 ENUM_OPERATORS(eSpaceSeq_Flag)
 
@@ -502,7 +503,8 @@ enum eFileAssetImportMethod : short {
    * heavy data dependencies (e.g. the image data-blocks of a material, the mesh of an object) may
    * be reused from an earlier append. */
   FILE_ASSET_IMPORT_APPEND_REUSE = 2,
-  /** Default: Follow the preference setting for this asset library. */
+  /** Default: Follow the asset if it has a preferred import method, or otherwise, the preference
+   * setting for this asset library. */
   FILE_ASSET_IMPORT_FOLLOW_PREFS = 3,
   /**
    * Link the data-block, but also pack it in the current file to keep it working even if the
@@ -521,9 +523,7 @@ enum eFileAssetImportFlags : short {
 ENUM_OPERATORS(eFileAssetImportFlags)
 
 enum eFileSel_AssetParams_Flag : int {
-  /** Only show files available offline. More than a filter, it prevents downloading asset listings
-   * when enabled. */
-  FILE_ASSETS_HIDE_ONLINE = (1 << 0),
+  // FILE_ASSETS_FLAG_DEPRECATED_1 = (1 << 0), /* Not cleared! */
 };
 ENUM_OPERATORS(eFileSel_AssetParams_Flag)
 
@@ -599,6 +599,7 @@ ENUM_OPERATORS(eFileDetails)
 /** File selector types. */
 enum eFileSelectType : short {
   FILE_LOADLIB = 1,
+
   /** Load assets from #Main. */
   FILE_MAIN_ASSET = 3,
   /** Load assets of an asset library containing external files. */
@@ -606,6 +607,9 @@ enum eFileSelectType : short {
   /** Load all asset libraries. */
   FILE_ASSET_LIBRARY_ALL = 5,
   FILE_ASSET_LIBRARY_REMOTE = 6,
+  /** Load assets from the bundled essentials library *and the online essentials library* (if
+   * online access is enabled). */
+  FILE_ASSET_LIBRARY_ESSENTIALS = 7,
 
   FILE_UNIX = 8,
   FILE_BLENDER = 8, /* don't display relative paths */

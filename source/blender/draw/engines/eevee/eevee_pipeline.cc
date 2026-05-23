@@ -321,6 +321,7 @@ void ForwardPipeline::sync()
       opaque_ps_.bind_resources(inst_.hiz_buffer.front);
       opaque_ps_.bind_resources(inst_.volume_probes);
       opaque_ps_.bind_resources(inst_.sphere_probes);
+      opaque_ps_.bind_resources(inst_.planar_probes);
     }
 
     const DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_CLIP_CONTROL_UNIT_RANGE |
@@ -361,6 +362,7 @@ void ForwardPipeline::sync()
     sub.bind_resources(inst_.hiz_buffer.front);
     sub.bind_resources(inst_.volume_probes);
     sub.bind_resources(inst_.sphere_probes);
+    sub.bind_resources(inst_.planar_probes);
   }
   {
     gpu::Shader *sh = inst_.shaders.static_shader_get(TRANSPARENCY_RESOLVE);
@@ -486,17 +488,17 @@ void ForwardPipeline::TransparencyBuffer::acquire(int2 extent, bool use_colored_
   eGPUTextureUsage usage = GPU_TEXTURE_USAGE_ATTACHMENT | GPU_TEXTURE_USAGE_SHADER_READ;
 
   if (!use_colored_transparency) {
-    r_channel_tx.acquire(extent, gpu::TextureFormat::SFLOAT_16_16_16_16, usage);
+    r_channel_tx.acquire_2d(extent, gpu::TextureFormat::SFLOAT_16_16_16_16, usage);
     /* Dummy texture for validation. Will not be sampled or attached. */
-    g_channel_tx.acquire(int2(1), gpu::TextureFormat::UNORM_8_8_8_8);
-    b_channel_tx.acquire(int2(1), gpu::TextureFormat::UNORM_8_8_8_8);
-    a_channel_tx.acquire(int2(1), gpu::TextureFormat::UNORM_8_8_8_8);
+    g_channel_tx.acquire_2d(int2(1), gpu::TextureFormat::UNORM_8_8_8_8);
+    b_channel_tx.acquire_2d(int2(1), gpu::TextureFormat::UNORM_8_8_8_8);
+    a_channel_tx.acquire_2d(int2(1), gpu::TextureFormat::UNORM_8_8_8_8);
   }
   else {
-    r_channel_tx.acquire(extent, gpu::TextureFormat::SFLOAT_16_16, usage);
-    g_channel_tx.acquire(extent, gpu::TextureFormat::SFLOAT_16_16, usage);
-    b_channel_tx.acquire(extent, gpu::TextureFormat::SFLOAT_16_16, usage);
-    a_channel_tx.acquire(extent, gpu::TextureFormat::UNORM_8_8, usage);
+    r_channel_tx.acquire_2d(extent, gpu::TextureFormat::SFLOAT_16_16, usage);
+    g_channel_tx.acquire_2d(extent, gpu::TextureFormat::SFLOAT_16_16, usage);
+    b_channel_tx.acquire_2d(extent, gpu::TextureFormat::SFLOAT_16_16, usage);
+    a_channel_tx.acquire_2d(extent, gpu::TextureFormat::UNORM_8_8, usage);
   }
 }
 
@@ -639,6 +641,12 @@ void DeferredLayerBase::gbuffer_pass_sync(Instance &inst)
           pass->bind_resources(inst.shadows);
           pass->bind_resources(inst.sphere_probes);
           pass->bind_resources(inst.volume_probes);
+          if (is_probe_) {
+            pass->bind_resources(inst.planar_probes.dummy_resources);
+          }
+          else {
+            pass->bind_resources(inst.planar_probes);
+          }
           pass->bind_texture(HIZ_PREVIOUS_LAYER_TEX_SLOT, &inst.hiz_buffer.back.ref_tx_);
           pass->bind_texture(RADIANCE_PREVIOUS_LAYER_TEX_SLOT, &radiance_behind_tx_);
         }
@@ -985,9 +993,9 @@ gpu::Texture *DeferredLayer::render(View &render_view,
   inst_.manager->submit(gbuffer_ps_, render_view);
 
   for (int i = 0; i < ARRAY_SIZE(direct_radiance_txs_); i++) {
-    direct_radiance_txs_[i].acquire((closure_count_ > i) ? extent : int2(1),
-                                    gpu::TextureFormat::DEFERRED_RADIANCE_FORMAT,
-                                    usage_rw);
+    direct_radiance_txs_[i].acquire_2d((closure_count_ > i) ? extent : int2(1),
+                                       gpu::TextureFormat::DEFERRED_RADIANCE_FORMAT,
+                                       usage_rw);
   }
 
   if (use_raytracing_) {
@@ -1509,7 +1517,7 @@ void PlanarProbePipeline::end_sync()
   if (!prepass_ps_.is_empty()) {
     PassSimple &pass = eval_light_ps_;
     pass.init();
-    pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ADD_FULL);
+    pass.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_GREATER);
     pass.shader_set(inst_.shaders.static_shader_get(DEFERRED_PLANAR_EVAL));
     pass.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
     pass.bind_resources(inst_.uniform_data);

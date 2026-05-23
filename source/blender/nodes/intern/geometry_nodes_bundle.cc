@@ -88,6 +88,12 @@ void Bundle::add_new(const UString key, const BundleItemValue &value)
   items_.add_new_as(key, value);
 }
 
+void Bundle::add_new(UString key, BundleItemValue &&value)
+{
+  BLI_assert(is_valid_key(key.ref()));
+  items_.add_new_as(key, std::move(value));
+}
+
 void Bundle::add_override(const UString key, const BundleItemValue &value)
 {
   this->remove(key);
@@ -100,6 +106,15 @@ bool Bundle::add(const UString key, const BundleItemValue &value)
     return false;
   }
   this->add_new(key, value);
+  return true;
+}
+
+bool Bundle::add(const UString key, BundleItemValue &&value)
+{
+  if (this->contains(key)) {
+    return false;
+  }
+  this->add_new(key, std::move(value));
   return true;
 }
 
@@ -465,18 +480,17 @@ void foreach_nested_bundle_item(
   foreach_nested_bundle_item_recursive(bundle, fn, path);
 }
 
-Vector<std::string> gather_bundle_paths_by_bundle_type(const Bundle &bundle,
-                                                       const StringRef type_filter)
+Vector<std::string> gather_bundle_paths_by_bundle_type(
+    const Bundle &bundle, const FunctionRef<bool(StringRef type)> type_filter_fn)
 {
   Vector<std::string> paths;
-  if (type_filter.is_empty()) {
-    return paths;
-  }
   foreach_nested_bundle_item(bundle, [&](const Span<UString> path, const BundleItemValue &value) {
     if (const BundlePtr *child_bundle_ptr = value.as_pointer<BundlePtr>()) {
       if (*child_bundle_ptr) {
-        if ((*child_bundle_ptr)->type() == type_filter) {
-          paths.append(Bundle::combine_path(path));
+        if (const std::optional<StringRef> type = (*child_bundle_ptr)->type()) {
+          if (type_filter_fn(*type)) {
+            paths.append(Bundle::combine_path(path));
+          }
         }
       }
     }

@@ -90,6 +90,7 @@
 #include "ED_asset.hh"
 #include "ED_gpencil_legacy.hh"
 #include "ED_grease_pencil.hh"
+#include "ED_image.hh"
 #include "ED_keyframes_edit.hh"
 #include "ED_keyframing.hh"
 #include "ED_node.hh"
@@ -297,7 +298,7 @@ void WM_init(bContext *C, int argc, const char **argv)
     if (wm != nullptr) {
       wm_window_ghostwindows_remove_invalid(C, wm);
     }
-    if (wm == nullptr || BLI_listbase_is_empty(&wm->windows)) {
+    if (wm == nullptr || wm->windows.is_empty()) {
       if (params_file_read_post != nullptr) {
         MEM_delete_void(static_cast<void *>(params_file_read_post));
         params_file_read_post = nullptr;
@@ -410,7 +411,7 @@ void WM_init_splash(bContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   /* NOTE(@ideasman42): this should practically never happen. */
-  if (UNLIKELY(BLI_listbase_is_empty(&wm->windows))) {
+  if (UNLIKELY(wm->windows.is_empty())) {
     return;
   }
 
@@ -449,18 +450,30 @@ static int wm_exit_handler(bContext *C, const wmEvent *event, void *userdata)
   return WM_UI_HANDLER_BREAK;
 }
 
+static void wm_exit_schedule_delayed_for_window(const bContext *C, wmWindow &win)
+{
+  /* Use modal UI handler for now.
+   * Could add separate WM handlers or so, but probably not worth it. */
+  WM_event_add_ui_handler(
+      C, &win.runtime->modalhandlers, wm_exit_handler, nullptr, nullptr, eWM_EventHandlerFlag(0));
+  WM_event_add_mousemove(&win); /* Ensure handler actually gets called. */
+}
+
 void wm_exit_schedule_delayed(const bContext *C)
 {
   /* What we do here is a little bit hacky, but quite simple and doesn't require bigger
    * changes: Add a handler wrapping WM_exit() to cause a delayed call of it. */
 
-  wmWindow *win = CTX_wm_window(C);
-
-  /* Use modal UI handler for now.
-   * Could add separate WM handlers or so, but probably not worth it. */
-  WM_event_add_ui_handler(
-      C, &win->runtime->modalhandlers, wm_exit_handler, nullptr, nullptr, eWM_EventHandlerFlag(0));
-  WM_event_add_mousemove(win); /* Ensure handler actually gets called. */
+  if (wmWindow *win = CTX_wm_window(C)) {
+    wm_exit_schedule_delayed_for_window(C, *win);
+  }
+  else {
+    /* Unlikely but possible, in this case just ensure exit runs as it's not interactive. */
+    wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+    for (wmWindow &win : wm->windows) {
+      wm_exit_schedule_delayed_for_window(C, win);
+    }
+  }
 }
 
 void UV_clipboard_free();
@@ -493,6 +506,7 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
       BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_base(), BLENDER_QUIT_FILE);
 
       ED_editors_flush_edits(bmain);
+      ED_image_internal_autosave_flush(bmain);
 
       BlendFileWriteParams blend_file_write_params{};
       if (BLO_write_file(bmain, filepath, fileflags, &blend_file_write_params, nullptr)) {

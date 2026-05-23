@@ -8,6 +8,7 @@
 
 #include <fmt/format.h>
 
+#include "BLI_assert.h"
 #include "BLI_fileops.h"
 #include "BLI_path_utils.hh"
 #include "BLI_serialize.hh"
@@ -16,6 +17,7 @@
 #include "BLI_vector.hh"
 
 #include "BKE_asset.hh"
+#include "BKE_blender_version.h"
 #include "BKE_idtype.hh"
 
 #include "BLT_translation.hh"
@@ -41,30 +43,113 @@ struct AssetLibraryListingPageV1 {
                                             RemoteListingEntryProcessFn process_fn);
 };
 
+/**
+ * Parse the string as "major.minor" version, returning (major*100 + minor).
+ * This can then be compared to BLENDER_VERSION from BKE_blender_version.h.
+ */
+static std::optional<int> blender_version_from_string(const blender::StringRef str)
+{
+  const int64_t dot = str.find('.');
+  if (dot == blender::StringRef::not_found) {
+    return {};
+  }
+  int major, minor;
+  const blender::StringRef major_str = str.substr(0, dot);
+  const blender::StringRef minor_str = str.substr(dot + 1);
+  if (std::from_chars(major_str.begin(), major_str.end(), major).ec != std::errc() ||
+      std::from_chars(minor_str.begin(), minor_str.end(), minor).ec != std::errc())
+  {
+    return {};
+  }
+  if (major < 0 || minor < 0 || minor >= 100) {
+    return {};
+  }
+  return major * 100 + minor;
+}
+
+static ReadingResult<bool> blender_version_matches(const DictionaryValue &asset_dictionary)
+{
+  const DictionaryValue *bl_versions_dict = asset_dictionary.lookup_dict("bl_versions");
+  if (!bl_versions_dict) {
+    return ReadingResult<bool>::Failure(
+        N_("could not read asset Blender versions, 'bl_versions' field not set"));
+  }
+
+  /* Check the 'min' field. */
+  const std::optional<StringRef> min_opt = bl_versions_dict->lookup_str("min");
+  if (!min_opt) {
+    return ReadingResult<bool>::Failure(
+        N_("could not read asset Blender versions, 'bl_versions.min' field not set"));
+  }
+
+  const std::optional<int> bl_version_min = blender_version_from_string(*min_opt);
+  if (!bl_version_min) {
+    return ReadingResult<bool>::Failure(
+        N_("could not read asset Blender versions, 'bl_versions.min' field not in X.Y notation"));
+  }
+  if (BLENDER_VERSION < *bl_version_min) {
+    /* This Blender version is older than what the asset needs, so skip it. */
+    return ReadingResult<bool>::Success(false);
+  }
+
+  /* Check the 'until' field. */
+  const std::optional<StringRef> until_opt = bl_versions_dict->lookup_str("until");
+  if (!until_opt) {
+    /* Fine to be missing, this field is optional. If it is not there, the asset has no maximum
+     * version. */
+    return ReadingResult<bool>::Success(true);
+  }
+
+  const std::optional<int> bl_version_until = blender_version_from_string(*until_opt);
+  if (!bl_version_until) {
+    return ReadingResult<bool>::Failure(
+        N_("could not read asset Blender versions, 'bl_versions.min' field not in X.Y notation"));
+  }
+  return ReadingResult<bool>::Success(BLENDER_VERSION < *bl_version_until);
+}
+
 static ReadingResult<RemoteListingAssetEntry> listing_entry_from_asset_dictionary(
     const DictionaryValue &dictionary,
     const Map<std::string, RemoteListingFileEntry> &file_path_to_entry_map)
 {
   RemoteListingAssetEntry listing_entry{};
 
+  /* Check the min/until Blender versions first. If the current Blender doesn't match, the entire
+   * asset can be ignored. */
+  ReadingResult<bool> version_check = blender_version_matches(dictionary);
+  if (!version_check.is_success()) {
+    return ReadingResult<RemoteListingAssetEntry>::Failure(
+        std::move(version_check.failure_reason));
+  }
+  if (!*version_check) {
+    /* Return an empty entry, to indicate to the caller a successfully parsed entry that didn't
+     * yield an asset. */
+    return ReadingResult<RemoteListingAssetEntry>::Success(RemoteListingAssetEntry{});
+  }
+
   /* 'id': name of the asset. Required string. */
-  const std::optional<StringRef> asset_name_opt = dictionary.lookup_str("name");
+  const std::optional<StringRefNull> asset_name_opt = dictionary.lookup_str("name");
   if (!asset_name_opt) {
     return ReadingResult<RemoteListingAssetEntry>::Failure(
         N_("could not read asset name, 'name' field not set"));
   }
-  const StringRef asset_name = *asset_name_opt;
+  const StringRefNull asset_name = *asset_name_opt;
   asset_name.copy_utf8_truncated(listing_entry.datablock_info.name);
 
   /* 'type': data-block type, must match the #IDTypeInfo.name of the given type. required string.
    */
   if (const std::optional<StringRefNull> idtype_name = dictionary.lookup_str("id_type")) {
-    listing_entry.idcode = BKE_idtype_idcode_from_name_case_insensitive(idtype_name->c_str());
-    if (!BKE_idtype_idcode_is_valid(listing_entry.idcode)) {
-      return ReadingResult<RemoteListingAssetEntry>::Failure(fmt::format(
-          N_("could not read type of asset '{:s}': 'id_type' field is not a valid type"),
-          asset_name));
+    const char *normalized_name = BKE_idtype_name_normalize(idtype_name->c_str());
+    if (!normalized_name) {
+      /* This could actually be a new asset type that's not supported by this Blender. Just
+       * silently ignore it and continue. */
+      CLOG_DEBUG(&LOG,
+                 N_("could not read type of asset '%s': 'id_type' field is not a valid type (%s)"),
+                 asset_name.c_str(),
+                 idtype_name->c_str());
+      return ReadingResult<RemoteListingAssetEntry>::Success(RemoteListingAssetEntry{});
     }
+    listing_entry.idcode = BKE_idtype_idcode_from_name(normalized_name);
   }
   else {
     return ReadingResult<RemoteListingAssetEntry>::Failure(
@@ -152,11 +237,21 @@ static ReadingResult<RemoteListingFileEntry> listing_file_from_asset_dictionary(
         file_entry.local_path.c_str()));
   }
 
+  /* Size is mandatory. */
+  if (const std::optional<int64_t> size_in_bytes = dictionary.lookup_int("size_in_bytes")) {
+    file_entry.size_in_bytes = *size_in_bytes;
+  }
+  else {
+    return ReadingResult<RemoteListingFileEntry>::Failure(fmt::format(
+        N_("Error reading asset listing file entry, skipping. Reason: found a file ({:s}) without "
+           "'size_in_bytes' field"),
+        file_entry.local_path.c_str()));
+  }
+
   /* URL is optional, and defaults to the local path. That's handled in Python
    * (see `download_asset()` in `asset_downloader.py`) so here we can just use
    * an empty string to indicate "no URL". */
   file_entry.download_url.url = dictionary.lookup_str("url").value_or("");
-  file_entry.size_in_bytes = dictionary.lookup_int("size_in_bytes");
 
   return ReadingResult<RemoteListingFileEntry>::Success(std::move(file_entry));
 }
@@ -211,7 +306,11 @@ static ReadingResult<> listing_entries_from_root(const DictionaryValue &value,
       continue;
     }
 
-    RemoteListingAssetEntry &entry = *result.success_value;
+    RemoteListingAssetEntry &entry = *result;
+    if (entry.is_empty()) {
+      continue;
+    }
+
     if (!process_fn(entry)) {
       return ReadingResult<>::Cancelled();
     }

@@ -34,8 +34,11 @@ float bxdf_ggx_smith_G1(float NX, float a2)
   return 2.0f / (1.0f + sqrt(1.0f + a2 * (1.0f / square(NX) - 1.0f)));
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
-/** "Bounded VNDF Sampling for Smith-GGX Reflections."
+/** \name Bounded VNDF Sampling for Smith-GGX Reflections
+ *
  * Eto, Kenta, and Yusuke Tokuyoshi. SIGGRAPH Asia 2023 Technical Communications. 2023. 1-4.
  * https://gpuopen.com/download/publications/Bounded_VNDF_Sampling_for_Smith-GGX_Reflections.pdf
  * \{ */
@@ -165,7 +168,8 @@ BsdfEval bxdf_ggx_eval_reflection(float3 N, float3 L, float3 V, float alpha, boo
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** "Sampling Visible GGX Normals with Spherical Caps."
+/** \name Sampling Visible GGX Normals with Spherical Caps
+ *
  * Jonathan Dupuy and Anis Benyoub, HPG Vol. 42, No. 8, 2023.
  * https://diglib.eg.org/bitstream/handle/10.1111f/cgf14867/v42i8_03_14867.pdf
  * \{ */
@@ -303,6 +307,10 @@ BsdfEval bxdf_ggx_eval_refraction(
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Roughness Mappings & Light Evaluation
+ * \{ */
+
 /**
  * `roughness` is expected to be the linear (from UI) roughness.
  */
@@ -375,6 +383,15 @@ LightProbeRay bxdf_ggx_lightprobe_transmission(ClosureRefraction cl, float3 V, T
   return probe;
 }
 
+LightProbeRay bxdf_ggx_lightprobe_thin_glass_transmission(ClosureThinRefraction cl, float3 V)
+{
+  LightProbeRay probe;
+  probe.perceptual_roughness = cl.roughness;
+  probe.dominant_direction = bxdf_ggx_dominant_direction_reflection(
+      -cl.N, reflect(V, cl.N), probe.perceptual_roughness);
+  return probe;
+}
+
 void bxdf_ggx_context_amend_transmission(ClosureUndetermined &cl, float3 &V, Thickness thickness)
 {
   if (thickness.value() != 0.0f) {
@@ -430,6 +447,17 @@ ClosureLight bxdf_ggx_light_transmission(ClosureRefraction cl, float3 V, Thickne
 
   ClosureLight light;
   light.ltc_mat = eevee::lut::ltc::sample_utility_tx(util_tx, cos_theta, perceptual_roughness);
+  light.N = -cl.N;
+  light.type = LIGHT_TRANSMISSION;
+  return light;
+}
+
+ClosureLight bxdf_ggx_light_thin_glass_transmission(ClosureThinRefraction cl, float3 V)
+{
+  float cos_theta = dot(cl.N, V);
+  ClosureLight light;
+  auto &util_tx = sampler_get(eevee_utility_texture, utility_tx);
+  light.ltc_mat = eevee::lut::ltc::sample_utility_tx(util_tx, cos_theta, cl.roughness);
   light.N = -cl.N;
   light.type = LIGHT_TRANSMISSION;
   return light;

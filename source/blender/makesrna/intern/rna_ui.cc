@@ -274,7 +274,7 @@ static bool rna_Panel_unregister(Main *bmain, StructRNA *type)
     }
   }
 
-  BLI_freelistN(&pt->children);
+  pt->children.free_no_destruct();
   BLI_freelinkN(&art->paneltypes, pt);
 
   /* update while blender is running */
@@ -684,7 +684,7 @@ static void uilist_filter_items(uiList *ui_list,
         items_shown = flt_data->items_shown = shown_idx;
         flt_data->items_filter_neworder = MEM_new_array_uninitialized<int>(size_t(items_shown),
                                                                            __func__);
-        /* And now, bring back new indices into the [0, items_shown[ range!
+        /* And now, bring back new indices into the [0, items_shown) range!
          * XXX This is O(N^2). :/
          */
         for (shown_idx = 0, prev_ni = -1; shown_idx < items_shown; shown_idx++) {
@@ -2552,7 +2552,7 @@ static void rna_def_asset_shelf(BlenderRNA *brna)
   parm = RNA_def_pointer(func, "layout", "UILayout", "", "The layout to draw into");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 
-  prop = rna_def_asset_library_reference_common(
+  prop = rna_def_asset_library_ui_reference_common(
       srna, "rna_AssetShelf_asset_library_get", "rna_AssetShelf_asset_library_set");
   RNA_def_property_ui_text(
       prop, "Asset Library", "Choose the asset library to display assets from");

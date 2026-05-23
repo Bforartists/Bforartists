@@ -10,12 +10,12 @@ namespace blender {
 
 namespace compositor {
 class RenderContext;
-class Profiler;
 enum class NodeGroupOutputTypes : uint8_t;
 }  // namespace compositor
 
 struct bNodeTree;
 struct Render;
+struct Main;
 struct RenderData;
 struct Scene;
 
@@ -32,12 +32,12 @@ class Compositor;
 
 /* Execute compositor. */
 void RE_compositor_execute(Render &render,
+                           const Main &main,
                            const Scene &scene,
                            const RenderData &render_data,
                            const bNodeTree &node_tree,
                            const char *view_name,
                            compositor::RenderContext *render_context,
-                           compositor::Profiler *profiler,
                            compositor::NodeGroupOutputTypes needed_outputs);
 
 /* Free compositor caches. */

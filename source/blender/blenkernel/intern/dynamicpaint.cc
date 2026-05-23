@@ -2484,7 +2484,7 @@ static int dynamic_paint_find_neighbor_pixel(const DynamicPaintCreateUVSurfaceDa
 {
   /* NOTE: Current method only uses face edges to detect neighboring pixels.
    *       -> It doesn't always lead to the optimum pixel but is accurate enough
-   *          and faster/simpler than including possible face tip point links)
+   *          and faster/simpler than including possible face tip point links.
    */
 
   /* shift position by given n_index */
@@ -3341,7 +3341,8 @@ void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
   BLI_file_ensure_parent_dir_exists(output_file);
 
   /* Init image buffer */
-  ibuf = IMB_allocImBuf(surface->image_resolution, surface->image_resolution, 32, IB_float_data);
+  ibuf = IMB_allocImBuf(
+      surface->image_resolution, surface->image_resolution, ImBufFlags::FloatData);
   if (ibuf == nullptr) {
     setError(surface->canvas, N_("Image save failed: not enough free memory"));
     return;
@@ -3436,7 +3437,7 @@ void dynamicPaint_outputSurfaceImage(DynamicPaintSurface *surface,
   }
 
   /* Save image */
-  IMB_save_image(ibuf, output_file, IB_float_data);
+  IMB_save_image(ibuf, output_file, ImBufFlags::FloatData);
   IMB_freeImBuf(ibuf);
 }
 
@@ -3517,7 +3518,7 @@ static void mesh_tris_nearest_point_dp(void *userdata,
  * \param surface: Canvas surface
  * \param index: Surface point index
  * \param paintFlags: paint object flags
- * \param paintColor,paintAlpha,paintWetness: To be mixed paint values
+ * \param paintColor, paintAlpha, paintWetness: To be mixed paint values
  * \param timescale: Value used to adjust time dependent
  * operations when using substeps
  */

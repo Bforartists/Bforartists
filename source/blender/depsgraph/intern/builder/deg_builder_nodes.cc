@@ -924,7 +924,7 @@ void DepsgraphNodeBuilder::build_object_instance_collection(Object *object, bool
 
 void DepsgraphNodeBuilder::build_object_modifiers(Object *object)
 {
-  if (BLI_listbase_is_empty(&object->modifiers)) {
+  if (object->modifiers.is_empty()) {
     return;
   }
 
@@ -1250,7 +1250,7 @@ void DepsgraphNodeBuilder::build_animdata(ID *id)
   /* Make sure ID node exists. */
   (void)add_id_node(id);
   ID *id_cow = get_cow_id(id);
-  if (adt->action != nullptr || !BLI_listbase_is_empty(&adt->nla_tracks)) {
+  if (adt->action != nullptr || !adt->nla_tracks.is_empty()) {
     OperationNode *operation_node;
     /* Explicit entry operation. */
     operation_node = add_operation_node(id, NodeType::ANIMATION, OperationCode::ANIMATION_ENTRY);
@@ -2350,11 +2350,12 @@ static bool strip_node_build_cb(Strip *strip, void *user_data)
     nb->build_scene_parameters(strip->scene);
   }
   if (strip->type == STRIP_TYPE_SCENE && strip->scene != nullptr) {
+    BLI_assert(strip->scene_view_layer_name != nullptr);
     if (strip->flag & SEQ_SCENE_STRIPS) {
       nb->build_scene_sequencer(strip->scene);
     }
-    ViewLayer *sequence_view_layer = BKE_view_layer_default_render(strip->scene);
-    nb->build_scene_speakers(strip->scene, sequence_view_layer);
+    ViewLayer *strip_view_layer = BKE_view_layer_find(strip->scene, strip->scene_view_layer_name);
+    nb->build_scene_speakers(strip->scene, strip_view_layer);
   }
 
   if (strip->type == STRIP_TYPE_COMPOSITOR && strip->effectdata) {

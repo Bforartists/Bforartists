@@ -1959,16 +1959,16 @@ class SEQUENCER_MT_modifier_add(Menu):
             self.operator_modifier_add(layout, 'SOUND_EQUALIZER')
             self.operator_modifier_add(layout, 'PITCH')
             self.operator_modifier_add(layout, 'ECHO')
-
         else:
             self.operator_modifier_add(layout, "BRIGHT_CONTRAST")
             self.operator_modifier_add(layout, "COLOR_BALANCE")
             self.operator_modifier_add(layout, 'COMPOSITOR')
-            self.operator_modifier_add(layout, "CURVES")
-            self.operator_modifier_add(layout, "HUE_CORRECT")
-            self.operator_modifier_add(layout, "MASK")
-            self.operator_modifier_add(layout, "TONEMAP")
-            self.operator_modifier_add(layout, "WHITE_BALANCE")
+            self.operator_modifier_add(layout, 'CURVES')
+            self.operator_modifier_add(layout, 'HUE_CORRECT')
+            self.operator_modifier_add(layout, 'MASK')
+            self.operator_modifier_add(layout, 'TONEMAP')
+            self.operator_modifier_add(layout, 'WHITE_BALANCE')
+            layout.menu_contents("SEQUENCER_MT_modifier_add_root_catalogs")
 
 
 class SequencerButtonsPanel:
@@ -3784,7 +3784,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 col.prop(st, "show_transform_preview", text="Preview During Transform")
 
             col = layout.column(align=True)
-            col.prop(st, "show_seconds")
+
             col.prop(st, "show_locked_time")
 
             # BFA - Cache settings
@@ -3823,6 +3823,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "use_marker_sync")
             col.prop(st, "use_clamp_view")
 
+        layout.separator()
+        layout.prop(st, "show_seconds")
 
 # BFA menu
 class SEQUENCER_MT_fades_add(Menu):

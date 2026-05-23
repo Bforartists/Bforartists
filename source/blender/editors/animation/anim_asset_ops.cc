@@ -62,7 +62,8 @@ static const EnumPropertyItem *rna_asset_library_reference_itemf(bContext * /*C*
   const EnumPropertyItem *items = ed::asset::library_reference_to_rna_enum_itemf(
       /*include_readonly=*/false,
       /*include_current_file=*/true,
-      /*include_remote_libraries=*/false);
+      /*include_remote_libraries=*/false,
+      /*include_separate_online_essentials=*/false);
   *r_free = true;
   BLI_assert(items != nullptr);
   return items;
@@ -141,7 +142,9 @@ static blender::animrig::Action &extract_pose(Main &bmain, const Span<Object *> 
     }
 
     for (bPoseChannel &pose_bone : pose_object->pose->chanbase) {
-      if (!blender::animrig::bone_is_selected(armature, &pose_bone)) {
+      if (!blender::animrig::bone_is_selected(armature,
+                                              {&pose_bone, pose_bone.bone_get(*pose_object)}))
+      {
         continue;
       }
       PointerRNA bone_pointer = RNA_pointer_create_discrete(
@@ -570,7 +573,9 @@ static Vector<PathValue> generate_path_values(Object &pose_object)
   Vector<PathValue> path_values;
   const bArmature *armature = id_cast<bArmature *>(pose_object.data);
   for (bPoseChannel &pose_bone : pose_object.pose->chanbase) {
-    if (!blender::animrig::bone_is_selected(armature, &pose_bone)) {
+    if (!blender::animrig::bone_is_selected(armature,
+                                            {&pose_bone, pose_bone.bone_get(pose_object)}))
+    {
       continue;
     }
     PointerRNA bone_pointer = RNA_pointer_create_discrete(

@@ -11,6 +11,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_bitmap.h"
+#include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_math_vector.h"
 #include "BLI_rand.h"
@@ -514,7 +515,7 @@ static wmOperatorStatus lattice_select_ungrouped_exec(bContext *C, wmOperator *o
     BPoint *bp;
     int a, tot;
 
-    if (BLI_listbase_is_empty(&lt->vertex_group_names) || lt->dvert == nullptr) {
+    if (lt->vertex_group_names.is_empty() || lt->dvert == nullptr) {
       continue;
     }
 

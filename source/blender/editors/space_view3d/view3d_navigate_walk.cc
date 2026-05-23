@@ -469,9 +469,9 @@ static bool walk_floor_distance_get(RegionView3D *rv3d,
 }
 
 /**
- * \param ray_distance: Distance to the hit point
  * \param r_location: Location of the hit point
  * \param r_normal: Normal of the hit surface, transformed to always face the camera
+ * \param r_ray_distance: Distance to the hit point.
  */
 static bool walk_ray_cast(RegionView3D *rv3d,
                           WalkInfo *walk,
@@ -1377,7 +1377,7 @@ static int walkApply(bContext *C, WalkInfo *walk, bool is_confirm)
       }
     }
 
-    /* Falling or jumping). */
+    /* Falling or jumping. */
     if (ELEM(walk->gravity_state, WALK_GRAVITY_STATE_ON, WALK_GRAVITY_STATE_JUMP)) {
       float ray_distance, difference = -100.0f;
       /* Delta time. */

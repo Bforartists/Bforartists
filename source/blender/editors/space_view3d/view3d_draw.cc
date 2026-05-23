@@ -250,13 +250,14 @@ static bool view3d_stereo3d_active(wmWindow *win,
   return true;
 }
 
-/* setup the view and win matrices for the multiview cameras
+/**
+ * Setup the view and win matrices for the multiview cameras.
  *
- * unlike view3d_stereo3d_setup_offscreen, when view3d_stereo3d_setup is called
+ * Unlike #view3d_stereo3d_setup_offscreen, when view3d_stereo3d_setup is called
  * we have no winmatrix (i.e., projection matrix) defined at that time.
- * Since the camera and the camera shift are needed for the winmat calculation
- * we do a small hack to replace it temporarily so we don't need to change the
- * view3d)main_region_setup_view() code to account for that.
+ * Since the camera and the camera shift are needed for the `winmat` calculation
+ * we do a small hack to replace it temporarily so we don't need to change the view3d
+ * #main_region_setup_view() code to account for that.
  */
 static void view3d_stereo3d_setup(
     Depsgraph *depsgraph, Scene *scene, View3D *v3d, ARegion *region, const rcti *rect)
@@ -1503,7 +1504,7 @@ static void draw_selected_name(const Main &bmain,
   }
 
   if (v3d->flag2 & V3D_SHOW_VIEWER) {
-    if (!BLI_listbase_is_empty(&v3d->viewer_path.path)) {
+    if (!v3d->viewer_path.path.is_empty()) {
       info_array[i++] = IFACE_(" (Viewer)");
     }
   }
@@ -1953,7 +1954,7 @@ void ED_view3d_draw_offscreen(Depsgraph *depsgraph,
   region->winrct = orig.region_winrct;
 
   /* Optionally do _not_ restore rv3d matrices (e.g. they are used/stored in the ImBuff for
-   * reprojection, see texture_paint_image_from_view_exec(). */
+   * reprojection, see texture_paint_image_from_view_exec()). */
   if (restore_rv3d_mats) {
     ED_view3d_mats_rv3d_restore(static_cast<RegionView3D *>(region->regiondata), orig.rv3d_mats);
   }
@@ -2091,7 +2092,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
                                       ARegion *region,
                                       int sizex,
                                       int sizey,
-                                      eImBufFlags imbuf_flag,
+                                      ImBufFlags imbuf_flag,
                                       int alpha_mode,
                                       const char *viewname,
                                       const bool restore_rv3d_mats,
@@ -2109,7 +2110,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
   float winmat[4][4];
 
   /* Guess format based on output buffer. */
-  gpu::TextureFormat desired_format = (imbuf_flag & IB_float_data) ?
+  gpu::TextureFormat desired_format = flag_is_set(imbuf_flag, ImBufFlags::FloatData) ?
                                           gpu::TextureFormat::SFLOAT_16_16_16_16 :
                                           gpu::TextureFormat::UNORM_8_8_8_8;
 
@@ -2147,7 +2148,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
   GPU_offscreen_bind(ofs, true);
 
   /* read in pixels & stamp */
-  ImBuf *ibuf = IMB_allocImBuf(sizex, sizey, 32, imbuf_flag);
+  ImBuf *ibuf = IMB_allocImBuf(sizex, sizey, imbuf_flag);
 
   /* render 3d view */
   if (use_camera_view_bounds && rv3d->persp == RV3D_CAMOB && v3d->camera) {
@@ -2257,7 +2258,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
                                              Object *camera,
                                              int width,
                                              int height,
-                                             eImBufFlags imbuf_flag,
+                                             ImBufFlags imbuf_flag,
                                              eV3DOffscreenDrawFlag draw_flags,
                                              int alpha_mode,
                                              const char *viewname,

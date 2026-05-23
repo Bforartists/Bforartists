@@ -246,10 +246,10 @@ void wm_dropbox_free()
     for (wmDropBox &drop : dm.dropboxes) {
       wm_drop_item_free_data(&drop);
     }
-    BLI_freelistN(&dm.dropboxes);
+    dm.dropboxes.free_no_destruct();
   }
 
-  BLI_freelistN(&dropboxes);
+  dropboxes.free_no_destruct();
 }
 
 /* *********************************** */
@@ -482,7 +482,7 @@ void WM_drag_free(wmDrag *drag)
     WM_drag_data_free(drag->type, drag->poin);
   }
   drag->drop_state.ui_context.reset();
-  BLI_freelistN(&drag->ids);
+  drag->ids.free_no_destruct();
   for (wmDragAssetListItem &asset_item : drag->asset_items.items_mutable()) {
     if (asset_item.is_external) {
       wm_drag_free_asset_data(&asset_item.asset_data.external_info);
@@ -749,7 +749,7 @@ void wm_drags_handle_events(bContext *C, const wmEvent *event)
 
   /* Change the cursor to display that dropping isn't possible here. But only if there is something
    * being dragged actually. Cursor will be restored in #wm_drags_exit(). */
-  if (!BLI_listbase_is_empty(&wm->runtime->drags) && ELEM(event->type, MOUSEMOVE, EVT_DROP)) {
+  if (!wm->runtime->drags.is_empty() && ELEM(event->type, MOUSEMOVE, EVT_DROP)) {
     WM_cursor_modal_set(CTX_wm_window(C), any_active ? WM_CURSOR_DEFAULT : WM_CURSOR_STOP);
   }
 }
@@ -1006,7 +1006,7 @@ std::optional<bool> wm_drag_asset_path_exists(const wmDrag *drag)
 
   if (const ListBaseT<wmDragAssetListItem> *asset_drags = WM_drag_asset_list_get(drag)) {
 
-    if (BLI_listbase_is_empty(asset_drags)) {
+    if (asset_drags->is_empty()) {
       /* #button_drag_start() will start a drag of type WM_DRAG_ASSET_LIST for dragging a
        * WM_DRAG_ID button (so we do not early out above in this case). Its #asset_items list will
        * always be empty though, so avoid returning false at the end of this function, treat this
@@ -1165,7 +1165,7 @@ const std::string WM_drag_get_item_name(wmDrag *drag)
   switch (drag->type) {
     case WM_DRAG_ID: {
       ID *id = WM_drag_get_local_ID(drag, 0);
-      const int dragged_ids = BLI_listbase_count(&drag->ids);
+      const int dragged_ids = drag->ids.count();
 
       if (dragged_ids == 1) {
         return id->name + 2;
@@ -1223,27 +1223,24 @@ static void wm_drag_draw_icon(bContext * /*C*/, wmWindow * /*win*/, wmDrag *drag
   else if (drag->imb) {
     /* This could also get the preview image of an ID when dragging one. But the big preview icon
      * may actually not always be wanted, for example when dragging objects in the Outliner it gets
-     * in the way). So make the drag user set an image buffer explicitly (e.g. through
+     * in the way. So make the drag user set an image buffer explicitly (e.g. through
      * #button_drag_attach_image()). */
 
     x = xy[0] - (wm_drag_imbuf_icon_width_get(drag) / 2);
     y = xy[1] - (wm_drag_imbuf_icon_height_get(drag) / 2);
 
     const float col[4] = {1.0f, 1.0f, 1.0f, 0.65f}; /* This blends texture. */
-    IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_3D_IMAGE_COLOR);
-    immDrawPixelsTexTiled_scaling(&state,
-                                  x,
-                                  y,
-                                  drag->imb->x,
-                                  drag->imb->y,
-                                  gpu::TextureFormat::UNORM_8_8_8_8,
-                                  false,
-                                  drag->imb->byte_data(),
-                                  drag->imbuf_scale,
-                                  drag->imbuf_scale,
-                                  1.0f,
-                                  1.0f,
-                                  col);
+    PixelBitmapDrawer drawer(GPU_SHADER_3D_IMAGE_COLOR);
+    drawer.draw(x,
+                y,
+                drag->imb->x,
+                drag->imb->y,
+                gpu::TextureFormat::UNORM_8_8_8_8,
+                false,
+                drag->imb->byte_data(),
+                drag->imbuf_scale,
+                drag->imbuf_scale,
+                col);
   }
   else if (drag->preview_icon_id) {
     const int size = wm_drag_preview_icon_size_get();

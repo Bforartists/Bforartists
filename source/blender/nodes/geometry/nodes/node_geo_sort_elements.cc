@@ -32,10 +32,13 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.allow_any_socket_order();
   b.add_default_layout();
   b.add_input<decl::Geometry>("Geometry"_ustr).description("Geometry to sort the elements of");
-  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all().align_with_previous();
-  b.add_input<decl::Bool>("Selection"_ustr).default_value(true).field_on_all().hide_value();
-  b.add_input<decl::Int>("Group ID"_ustr).field_on_all().hide_value();
-  b.add_input<decl::Float>("Sort Weight"_ustr).field_on_all().hide_value();
+  b.add_output<decl::Geometry>("Geometry"_ustr).propagate_all_geometry().align_with_previous();
+  b.add_input<decl::Bool>("Selection"_ustr)
+      .default_value(true)
+      .evaluated_geometry_field()
+      .hide_value();
+  b.add_input<decl::Int>("Group ID"_ustr).evaluated_geometry_field().hide_value();
+  b.add_input<decl::Float>("Sort Weight"_ustr).evaluated_geometry_field().hide_value();
 }
 
 static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -179,8 +182,7 @@ static std::optional<Array<int>> sorted_indices(const fn::FieldContext &field_co
   Array<int> indices(domain_size);
 
   array_utils::scatter<int>(gathered_indices, mask, indices);
-  unselected.foreach_index_optimized<int>([&](const int index) { indices[index] = index; },
-                                          exec_mode::grain_size(4096));
+  array_utils::fill_index_range<int>(unselected, indices);
 
   if (array_utils::indices_are_range(indices, indices.index_range())) {
     return std::nullopt;

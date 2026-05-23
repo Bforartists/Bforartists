@@ -27,14 +27,14 @@
 
 namespace blender::gpu::tests {
 
-#ifdef WITH_BACKEND_OPENGL
+#ifdef WITH_OPENGL_BACKEND
 
 /* Test operates on a 4x4 texture patch. */
 constexpr uint texture_size_x = 4;
 constexpr uint texture_size_y = 4;
 constexpr uint texture_size = texture_size_x * texture_size_y;
 
-/* Repeat the first `components` components of a float4 `n` times, into a vector.*/
+/* Repeat the first `components` components of a float4 `n` times, into a vector. */
 template<typename T> static Vector<T> repeat_data(VecBase<T, 4> data, size_t n, size_t components)
 {
   Vector<T> out(n * components);

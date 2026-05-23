@@ -70,12 +70,13 @@ void CompositorContext::create_result_from_input(compositor::Result &result, ImB
 
       /* Upload input image into a GPU texture. */
       gpu::TexturePool &pool = gpu::TexturePool::get();
-      gpu::Texture *input_tex = pool.acquire_texture(size,
-                                                     input_is_byte ?
-                                                         gpu::TextureFormat::UNORM_8_8_8_8 :
-                                                         gpu::TextureFormat::SFLOAT_32_32_32_32,
-                                                     GPU_TEXTURE_USAGE_SHADER_READ,
-                                                     "seq_comp_input");
+      gpu::Texture *input_tex = pool.acquire_texture_2d(size,
+                                                        1,
+                                                        input_is_byte ?
+                                                            gpu::TextureFormat::UNORM_8_8_8_8 :
+                                                            gpu::TextureFormat::SFLOAT_32_32_32_32,
+                                                        GPU_TEXTURE_USAGE_SHADER_READ,
+                                                        "seq_comp_input");
       if (input_tex) {
         if (input_is_byte) {
           GPU_texture_update(input_tex, GPU_DATA_UBYTE, input.byte_data());
@@ -141,14 +142,22 @@ void CompositorContext::write_output(const compositor::Result &result, ImBuf &im
     IMB_free_all_data(&image);
     image.x = output_size_x;
     image.y = output_size_y;
-    IMB_alloc_float_pixels(&image, 4, false);
   }
 
   if (this->use_gpu()) {
     GPU_memory_barrier(GPU_BARRIER_TEXTURE_UPDATE);
+    IMB_alloc_float_pixels(&image, 4, false);
     GPU_texture_read(result.gpu_texture(), GPU_DATA_FLOAT, 0, image.float_data_for_write());
   }
-  else {
+  else if (result.sharing_info()) {
+    image.channels = 4;
+    image.float_buffer = ImBufFloatBuffer{
+        .data = static_cast<const float *>(result.cpu_data().data()),
+        .sharing_info = result.sharing_info(),
+        .colorspace = nullptr};
+  }
+  else if (result.cpu_data().data() != image.float_data()) {
+    IMB_alloc_float_pixels(&image, 4, false);
     std::memcpy(image.float_data_for_write(),
                 result.cpu_data().data(),
                 IMB_get_pixel_count(&image) * sizeof(float) * 4);

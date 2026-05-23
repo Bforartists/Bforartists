@@ -1154,7 +1154,8 @@ class IMAGE_HT_header(Header):
                 uvedit = sima.uv_editor
 
                 mesh = context.edit_object.data
-                layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="")
+                layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="", icon='GROUP_UVS')
+
 
     def draw(self, context):
         self.draw_editor_type_menu(context)
@@ -1257,7 +1258,7 @@ class IMAGE_HT_header(Header):
         sub.active = overlay.show_overlays
         sub.popover(panel="IMAGE_PT_overlay", text="")
 
-        # BFA - moved search above to be consistent
+        # BFA - moved Search above to be consistent
         if ima:
             seq_scene = context.sequencer_scene
             scene = context.scene

@@ -123,6 +123,8 @@ template<typename BlendType> struct VPaintAverageAccum {
   BlendType value[3];
 };
 
+/** \} */
+
 namespace ed::sculpt_paint::vwpaint {
 
 /* -------------------------------------------------------------------- */
@@ -564,6 +566,10 @@ void smooth_brush_toggle_on(Main *bmain, Paint *paint, StrokeToggleSettings &tog
 /** \} */
 }  // namespace ed::sculpt_paint::vwpaint
 
+/* -------------------------------------------------------------------- */
+/** \name Vertex Paint Mode Poll & Sampling
+ * \{ */
+
 bool vertex_paint_mode_poll(bContext *C)
 {
   const Object *ob = CTX_data_active_object(C);
@@ -701,7 +707,7 @@ static Color vpaint_blend_stroke(const VPaint &vp,
     }
 
     /* Mix with mesh color under the stroke (a bit easier than trying to premultiply
-     * byte Color types */
+     * byte Color types) */
     if (isZero(stroke_buffer[index])) {
       stroke_buffer[index] = vertex_colors[index];
       stroke_buffer[index].a = 0;

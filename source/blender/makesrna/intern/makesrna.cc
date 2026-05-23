@@ -3970,7 +3970,7 @@ static void rna_generate_struct_register_func(BlenderRNA * /*brna*/, StructRNA *
       rna_generate_property(f, srna, func->identifier, &parm);
     }
     fprintf(f, "\t\tauto func = std::make_unique<FunctionRNA>();\n");
-    if (!BLI_listbase_is_empty(&func->cont.properties)) {
+    if (!func->cont.properties.is_empty()) {
       fprintf(f,
               "\t\tfunc->cont.properties = {&rna_%s_%s_%s, &rna_%s_%s_%s};\n",
               srna->identifier,
@@ -4231,8 +4231,8 @@ static void make_bad_file(const char *file, int line)
 }
 
 /**
- * \param extern_outfile: Directory to put public headers into. Can be nullptr, in which case
- *                        everything is put into \a outfile.
+ * \param public_header_outfile: Directory to put public headers into.
+ * Can be nullptr, in which case everything is put into \a outfile.
  */
 static int rna_preprocess(const char *outfile, const char *public_header_outfile)
 {

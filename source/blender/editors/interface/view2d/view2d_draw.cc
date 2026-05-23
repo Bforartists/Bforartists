@@ -34,8 +34,9 @@
 
 namespace blender::ui {
 
-/* Compute display grid resolution
- ********************************************************/
+/* -------------------------------------------------------------------- */
+/** \name Compute Display Grid Resolution
+ * \{ */
 
 #define MIN_MAJOR_LINE_DISTANCE (U.v2d_min_gridsize * UI_SCALE_FAC)
 
@@ -118,7 +119,7 @@ static int calculate_grid_step(const int base,
   return distance;
 }
 
-/* Mostly the same as `calculate_grid_step, except in can divide into the 0-1 range. */
+/** Mostly the same as `calculate_grid_step`, except in can divide into the 0-1 range. */
 static float calculate_grid_step_fractions(const int base,
                                            const float pixel_width,
                                            const float view_width,
@@ -135,16 +136,19 @@ static float calculate_grid_step_fractions(const int base,
   return distance / subframe_range;
 }
 
-/* Draw parallel lines
- ************************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Draw Parallel Lines
+ * \{ */
 
 /**
  * Calculate the amount of lines to draw and the starting position in view space (frame or value).
  *
- * \param line_distance value distance between lines.
- * \param view_bounds the value bounds visible in the region. x has to be lower than y.
- * \param r_start_value the value on which the first line should be drawn.
- * \param r_steps how many lines should be drawn.
+ * \param line_distance: value distance between lines.
+ * \param view_bounds: the value bounds visible in the region. x has to be lower than y.
+ * \param r_start_value: the value on which the first line should be drawn.
+ * \param r_steps: how many lines should be drawn.
  *
  * \returns an unsigned integer indicating how many lines can be drawn.
  */
@@ -171,8 +175,8 @@ static void get_parallel_lines_draw_steps(const float line_distance,
 }
 
 /**
- * \param rect_mask Region size in pixels.
- * \param line_distance Distance in view space (frame or value) between lines.
+ * \param line_distance: Distance in view space (frame or value) between lines.
+ * \param rect_mask: Region size in pixels.
  */
 static void draw_parallel_lines(const float line_distance,
                                 const rctf *rect,
@@ -290,14 +294,17 @@ static void view2d_draw_lines(const View2D *v2d,
   }
 }
 
-/* Scale indicator text drawing
- **************************************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Scale Indicator Text Drawing
+ * \{ */
 
 using PositionToString =
     void (*)(const Scene *scene, float value, float step, char *r_str, uint str_maxncpy);
 
 /**
- * \param distance is the distance between lines in the data unit of the v2d (frame or value).
+ * \param distance: is the distance between lines in the data unit of the v2d (frame or value).
  */
 static void draw_horizontal_scale_indicators(const ARegion *region,
                                              const View2D *v2d,
@@ -411,8 +418,6 @@ static void draw_vertical_scale_indicators(const ARegion *region,
 /**
  * Generates a timecode string with the time represented by `frame`.
  * The timecode formatting depends on the user preferences.
- *
- * \param user_data has to be a `Scene *` so we can get the frames per second.
  */
 static void frame_to_time_string(
     const Scene *scene, const float frame, const float step, char *r_str, const uint str_maxncpy)
@@ -496,8 +501,11 @@ static float get_min_line_distance_x(const View2D *v2d,
   return max_ff(MIN_MAJOR_LINE_DISTANCE, label_width);
 }
 
-/* Grid Resolution API
- **************************************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Grid Resolution API
+ * \{ */
 
 float view2d_grid_resolution_x(const View2D *v2d, const Scene *scene, const bool display_seconds)
 {
@@ -513,8 +521,11 @@ float view2d_grid_resolution_y__values(const View2D *v2d, const int base)
       base, BLI_rcti_size_y(&v2d->mask) + 1, BLI_rctf_size_y(&v2d->cur), MIN_MAJOR_LINE_DISTANCE);
 }
 
-/* Line Drawing API
- **************************************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Line Drawing API
+ * \{ */
 
 void view2d_draw_lines_x(const View2D *v2d,
                          const Scene *scene,
@@ -568,8 +579,11 @@ void view2d_draw_lines_y(const View2D *v2d, const bool show_fractions, const int
   view2d_draw_lines(v2d, major_line_distance, true, 'h');
 }
 
-/* Scale indicator text drawing API
- **************************************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Scale Indicator Text Drawing API
+ * \{ */
 
 void view2d_draw_scale_y(
     const ARegion *region, const View2D *v2d, const rcti *rect, const int colorid, const int base)
@@ -609,5 +623,7 @@ void view2d_draw_scale_x(const ARegion *region,
     draw_horizontal_scale_indicators(region, v2d, step, rect, frame_to_string, nullptr, colorid);
   }
 }
+
+/** \} */
 
 }  // namespace blender::ui

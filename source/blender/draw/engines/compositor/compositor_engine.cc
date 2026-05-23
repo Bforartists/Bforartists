@@ -43,6 +43,7 @@ namespace blender::draw::compositor_engine {
 
 class Context : public compositor::Context {
  private:
+  const Main *main_;
   const Scene *scene_;
   /* A pointer to the info message of the compositor engine. This is a char array of size
    * GPU_INFO_SIZE. The message is cleared prior to updating or evaluating the compositor. */
@@ -51,10 +52,18 @@ class Context : public compositor::Context {
   bool viewer_was_written_ = false;
 
  public:
-  Context(compositor::StaticCacheManager &cache_manager, const Scene *scene, char *info_message)
-      : compositor::Context(cache_manager), scene_(scene), info_message_(info_message)
+  Context(compositor::StaticCacheManager &cache_manager,
+          const Main *main,
+          const Scene *scene,
+          char *info_message)
+      : compositor::Context(cache_manager), main_(main), scene_(scene), info_message_(info_message)
   {
     this->set_info_message("");
+  }
+
+  const Main &get_main() const override
+  {
+    return *main_;
   }
 
   const Scene &get_scene() const override
@@ -329,12 +338,13 @@ class Context : public compositor::Context {
   {
     using namespace compositor;
     const bNodeTree &node_group = *DRW_context_get()->scene->compositing_node_group;
+    const bke::DataBlockComputeContext compute_context(nullptr, this->get_scene().id);
     NodeGroupOperation node_group_operation(*this,
                                             node_group,
                                             this->needed_outputs(),
-                                            nullptr,
                                             node_group.active_viewer_key,
-                                            bke::NODE_INSTANCE_KEY_BASE);
+                                            bke::NODE_INSTANCE_KEY_BASE,
+                                            compute_context);
 
     /* Set the reference count for the outputs, only the first color output is actually needed,
      * while the rest are ignored. */
@@ -417,7 +427,10 @@ class Instance : public DrawEngine {
 
   void draw(Manager & /*manager*/) final
   {
-    Context context(cache_manager_, DRW_context_get()->scene, this->info);
+    Context context(cache_manager_,
+                    DEG_get_bmain(DRW_context_get()->depsgraph),
+                    DRW_context_get()->scene,
+                    this->info);
     if (context.get_camera_region().is_empty()) {
       return;
     }

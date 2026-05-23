@@ -195,7 +195,7 @@ static void search_link_ops_for_asset_metadata(const bNodeTree &node_tree,
     if (socket_type == nullptr) {
       continue;
     }
-    eNodeSocketDatatype from = eNodeSocketDatatype(socket.type);
+    eNodeSocketDatatype from = socket.type;
     eNodeSocketDatatype to = socket_type->type;
     if (socket.in_out == SOCK_OUT) {
       std::swap(from, to);
@@ -308,7 +308,7 @@ static void gather_socket_link_operations(const bContext &C,
 
     int weight = -1;
     node_tree.tree_interface.foreach_item([&](const bNodeTreeInterfaceItem &item) {
-      if (item.item_type != NODE_INTERFACE_SOCKET) {
+      if (item.item_type != NodeTreeInterfaceItemType::Socket) {
         return true;
       }
       const bNodeTreeInterfaceSocket &interface_socket =

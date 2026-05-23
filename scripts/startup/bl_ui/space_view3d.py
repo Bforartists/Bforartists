@@ -1360,6 +1360,7 @@ class VIEW3D_MT_transform_base:
         if context.mode in {"EDIT_MESH"}:
             layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
             layout.operator("mesh.flatten", text="Flatten") # BFA - WIP
+            layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly") # BFA - WIP
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
         layout.operator("transform.bend", text="Bend", icon="BEND")
         layout.operator("transform.push_pull", text="Push/Pull", icon="PUSH_PULL")
@@ -7711,6 +7712,7 @@ class VIEW3D_MT_edit_armature(Menu):
             layout.operator("armature.extrude_forked", icon="EXTRUDE_REGION")
 
         layout.operator("armature.duplicate_move", icon="DUPLICATE")
+        layout.operator("armature.duplicate_rename")
         layout.operator("armature.fill", icon="FILLBETWEEN")
 
         layout.separator()

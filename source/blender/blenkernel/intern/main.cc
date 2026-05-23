@@ -175,7 +175,7 @@ void BKE_main_clear(Main &bmain)
 
 #endif
     }
-    BLI_listbase_clear(lb);
+    lb->clear_no_delete();
   }
 
   if (bmain.relations) {
@@ -351,7 +351,10 @@ static void main_merge_add_id_to_move(Main *bmain_dst,
   }
 }
 
-void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &reports)
+void BKE_main_merge(Main *bmain_dst,
+                    Set<ID *> *force_merge_src_ids,
+                    Main **r_bmain_src,
+                    MainMergeReport &reports)
 {
   Main *bmain_src = *r_bmain_src;
   /* NOTE: Dedicated mapping type is needed here, to handle properly the library cases. */
@@ -436,25 +439,30 @@ void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &report
       }
 
       bool src_has_match_in_dst = false;
-      for (ID *id_iter_dst : ids_dst) {
-        if (are_ids_from_different_mains_matching(bmain_dst, id_iter_dst, bmain_src, id_iter_src))
-        {
-          /* There should only ever be one potential match, never more. */
-          BLI_assert(!src_has_match_in_dst);
-          if (!src_has_match_in_dst) {
-            if (is_library) {
-              id_remapper_libraries.add(id_iter_src, id_iter_dst);
-              reports.num_remapped_libraries++;
+      /* Never try to find a matching ID in destination Main if the source ID is forced to be
+       * merged. */
+      if (!force_merge_src_ids || !force_merge_src_ids->contains(id_iter_src)) {
+        for (ID *id_iter_dst : ids_dst) {
+          if (are_ids_from_different_mains_matching(
+                  bmain_dst, id_iter_dst, bmain_src, id_iter_src))
+          {
+            /* There should only ever be one potential match, never more. */
+            BLI_assert(!src_has_match_in_dst);
+            if (!src_has_match_in_dst) {
+              if (is_library) {
+                id_remapper_libraries.add(id_iter_src, id_iter_dst);
+                reports.num_remapped_libraries++;
+              }
+              else {
+                id_remapper.add(id_iter_src, id_iter_dst);
+                reports.num_remapped_ids++;
+              }
+              src_has_match_in_dst = true;
             }
-            else {
-              id_remapper.add(id_iter_src, id_iter_dst);
-              reports.num_remapped_ids++;
-            }
-            src_has_match_in_dst = true;
-          }
 #ifdef NDEBUG /* In DEBUG builds, keep looping to ensure there is only one match. */
-          break;
+            break;
 #endif
+          }
         }
       }
       if (!src_has_match_in_dst) {
@@ -549,6 +557,11 @@ void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &report
 
   BKE_main_free(bmain_src);
   *r_bmain_src = nullptr;
+}
+
+void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &reports)
+{
+  BKE_main_merge(bmain_dst, nullptr, r_bmain_src, reports);
 }
 
 bool BKE_main_is_empty(Main *bmain)
@@ -1156,7 +1169,7 @@ MainAllIDsIterator &MainAllIDsIterator::operator++()
     /* Listbase pointers from lbarray_ can be nullptr when no data was provided (default
      * constructor case). */
     ListBaseT<ID> *lb_ids = lbarray_[size_t(curr_lbarray_index_)];
-    if (lb_ids && !BLI_listbase_is_empty(lb_ids)) {
+    if (lb_ids && !lb_ids->is_empty()) {
       curr_id_ = static_cast<ID *>(lb_ids->first);
       return *this;
     }
@@ -1188,7 +1201,7 @@ MainAllIDsIterator &MainAllIDsIterator::operator--()
     /* Listbase pointers from lbarray_ can be nullptr when no data was provided (default
      * constructor case). */
     ListBaseT<ID> *lb_ids = lbarray_[size_t(curr_lbarray_index_)];
-    if (lb_ids && !BLI_listbase_is_empty(lb_ids)) {
+    if (lb_ids && !lb_ids->is_empty()) {
       curr_id_ = static_cast<ID *>(lb_ids->last);
       return *this;
     }
@@ -1206,7 +1219,7 @@ int64_t MainAllIDsIterator::size() const
     if (!lb_ids) {
       continue;
     }
-    size += BLI_listbase_count(lb_ids);
+    size += lb_ids->count();
   }
   return size;
 }

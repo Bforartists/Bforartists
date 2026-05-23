@@ -326,7 +326,7 @@ static void rna_grease_pencil_active_mask_index_range(
 {
   GreasePencilLayer *layer = static_cast<GreasePencilLayer *>(ptr->data);
   *min = 0;
-  *max = max_ii(0, BLI_listbase_count(&layer->masks) - 1);
+  *max = max_ii(0, layer->masks.count() - 1);
 }
 
 static void tree_node_name_get(bke::greasepencil::TreeNode &node, char *dst)
@@ -1615,6 +1615,8 @@ static void rna_def_grease_pencil_data(BlenderRNA *brna)
 
   /* Onion skinning. */
   rna_def_grease_pencil_onion_skinning(srna);
+
+  RNA_api_grease_pencil(srna);
 }
 
 void RNA_def_grease_pencil(BlenderRNA *brna)

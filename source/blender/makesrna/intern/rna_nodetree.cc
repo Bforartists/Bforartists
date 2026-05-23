@@ -1928,8 +1928,7 @@ static void rna_Node_draw_buttons_ext(ui::Layout &layout, bContext *C, PointerRN
   ParameterList list;
   FunctionRNA *func;
 
-  func = rna_Node_draw_buttons_ext_func; /* RNA_struct_find_function(&ptr,
-                                                "draw_buttons_ext"); */
+  func = rna_Node_draw_buttons_ext_func; /* RNA_struct_find_function(&ptr, "draw_buttons_ext"); */
 
   RNA_parameter_list_create(&list, ptr, func);
   RNA_parameter_set_lookup(&list, "context", &C);
@@ -2119,7 +2118,7 @@ static bke::bNodeType *rna_Node_register_base(Main *bmain,
   if (nt->maxheight < nt->minheight) {
     nt->maxheight = nt->minheight;
   }
-  CLAMP(nt->width, nt->minwidth, nt->maxwidth);
+  CLAMP(nt->default_width, nt->minwidth, nt->maxwidth);
   CLAMP(nt->height, nt->minheight, nt->maxheight);
 
   return nt;
@@ -2145,6 +2144,34 @@ static StructRNA *rna_Node_register(Main *bmain,
   WM_main_add_notifier(NC_NODE | NA_EDITED, nullptr);
   BKE_main_ensure_invariants(*bmain);
   return nt->rna_ext.srna;
+}
+
+static bool compositor_node_asset_trait_flag_get(PointerRNA *ptr,
+                                                 const CompositorNodeAssetTraitFlag flag)
+{
+  const bNodeTree *ntree = ptr->data_as<bNodeTree>();
+  if (!ntree->compositor_node_asset_traits) {
+    return false;
+  }
+  return ntree->compositor_node_asset_traits->flag & flag;
+}
+static bool rna_CompositorNodeTree_is_strip_modifier_get(PointerRNA *ptr)
+{
+  return compositor_node_asset_trait_flag_get(ptr, COMPOSIT_NODE_ASSET_STRIP_MODIFIER);
+}
+static void compositor_node_asset_trait_flag_set(PointerRNA *ptr,
+                                                 const CompositorNodeAssetTraitFlag flag,
+                                                 const bool value)
+{
+  bNodeTree *ntree = ptr->data_as<bNodeTree>();
+  if (!ntree->compositor_node_asset_traits) {
+    ntree->compositor_node_asset_traits = MEM_new<CompositorNodeAssetTraits>(__func__);
+  }
+  SET_FLAG_FROM_TEST(ntree->compositor_node_asset_traits->flag, value, flag);
+}
+static void rna_CompositorNodeTree_is_strip_modifier_set(PointerRNA *ptr, bool value)
+{
+  compositor_node_asset_trait_flag_set(ptr, COMPOSIT_NODE_ASSET_STRIP_MODIFIER, value);
 }
 
 static const EnumPropertyItem *itemf_function_check(
@@ -7506,7 +7533,7 @@ static void rna_def_geo_simulation_state_item(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Attribute Domain",
-      "Attribute domain where the attribute is stored in the simulation state");
+      "Domain where the field is captured if it is not already an attribute-field");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(
       prop, NC_NODE | NA_EDITED, "rna_Node_ItemArray_item_update<SimulationItemsAccessor>");
@@ -8190,9 +8217,10 @@ static void rna_def_geo_bake_item(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_attribute_domain_items);
   RNA_def_property_enum_funcs(
       prop, nullptr, nullptr, "rna_GeometryNodeAttributeDomain_attribute_domain_itemf");
-  RNA_def_property_ui_text(prop,
-                           "Attribute Domain",
-                           "Attribute domain where the attribute is stored in the baked data");
+  RNA_def_property_ui_text(
+      prop,
+      "Attribute Domain",
+      "Domain where the field is captured if it is not already an attribute-field");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(
       prop, NC_NODE | NA_EDITED, "rna_Node_ItemArray_item_update<BakeItemsAccessor>");
@@ -9404,7 +9432,7 @@ static void rna_def_node(BlenderRNA *brna)
 
   /* type-based size properties */
   prop = RNA_def_property(srna, "bl_width_default", PROP_FLOAT, PROP_UNSIGNED);
-  RNA_def_property_float_sdna(prop, nullptr, "typeinfo->width");
+  RNA_def_property_float_sdna(prop, nullptr, "typeinfo->default_width");
   RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
   RNA_def_property_ui_text(prop, "Default Width", "Default width of the node when it is created");
 
@@ -9759,8 +9787,8 @@ static void rna_def_nodetree(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_NODE, nullptr);
 
   prop = RNA_def_property(srna, "default_group_node_width", PROP_INT, PROP_NONE);
-  RNA_def_property_int_default(prop, GROUP_NODE_DEFAULT_WIDTH);
-  RNA_def_property_range(prop, GROUP_NODE_MIN_WIDTH, GROUP_NODE_MAX_WIDTH);
+  RNA_def_property_int_default(prop, bke::NodeWidth::Default);
+  RNA_def_property_range(prop, bke::NodeWidth::GroupMin, bke::NodeWidth::DefaultMax);
   RNA_def_property_ui_text(
       prop, "Default Group Node Width", "The width for newly created group nodes");
   RNA_def_property_update(prop, NC_NODE, nullptr);
@@ -9942,6 +9970,15 @@ static void rna_def_composite_nodetree(BlenderRNA *brna)
                            "Unused but kept for compatibility reasons. Use boundaries for viewer "
                            "nodes and composite backdrop");
   RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update");
+
+  prop = RNA_def_property(srna, "is_strip_modifier", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(
+      prop, "Strip Modifier", "The node group is used as a sequencer strip modifier");
+  RNA_def_property_boolean_funcs(prop,
+                                 "rna_CompositorNodeTree_is_strip_modifier_get",
+                                 "rna_CompositorNodeTree_is_strip_modifier_set");
+  RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, "rna_NodeTree_update_asset");
 }
 
 static void rna_def_shader_nodetree(BlenderRNA *brna)
@@ -10146,20 +10183,7 @@ static StructRNA *define_specific_node(BlenderRNA *brna,
   return srna;
 }
 
-static void rna_def_node_instance_hash(BlenderRNA *brna)
-{
-  StructRNA *srna;
-
-  srna = RNA_def_struct(brna, "NodeInstanceHash", nullptr);
-  RNA_def_struct_ui_text(srna, "Node Instance Hash", "Hash table containing node instance data");
-
-  /* XXX This type is a stub for now, only used to store instance hash in the context.
-   * Eventually could use a StructRNA pointer to define a specific data type
-   * and expose lookup functions.
-   */
-}
-
-/* BFA - start */
+/* BFA - override node type icons */
 static void define(BlenderRNA *brna,
                    const char *base_name,
                    const char *struct_name,
@@ -10170,7 +10194,7 @@ static void define(BlenderRNA *brna,
   if (func) {
     func(brna, srna);
   }
-  RNA_def_struct_ui_icon(srna, ui_icon); /* BFA - override icon */
+  RNA_def_struct_ui_icon(srna, ui_icon);
 }
 /* BFA - end */
 
@@ -10460,6 +10484,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeQuaternionToRotation", nullptr, ICON_QUATERNION_TO_ROTATION);
   define(brna, "FunctionNode", "FunctionNodeRandomValue", def_fn_random_value, ICON_RANDOM_FLOAT);
   define(brna, "FunctionNode", "FunctionNodeReplaceString", nullptr, ICON_REPLACE_STRING);
+  define(brna, "FunctionNode", "FunctionNodeReverseString", nullptr, ICON_NONE);
   define(brna, "FunctionNode", "FunctionNodeRotateEuler", def_fn_rotate_euler, ICON_ROTATE_EULER);
   define(brna, "FunctionNode", "FunctionNodeRotateRotation", nullptr, ICON_ROTATE_EULER);
   define(brna, "FunctionNode", "FunctionNodeRotateVector", nullptr, ICON_NODE_VECTORROTATE);
@@ -10489,7 +10514,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeCameraInfo", nullptr, ICON_CAMERA_DATA);
   define(brna, "GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute, ICON_ATTRIBUTE_CAPTURE);
   define(brna, "GeometryNode", "GeometryNodeClusterByConnected", nullptr, ICON_NODE_CLUSTERBYCONNECTED);
-  define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NODE_CLUSTERBYDISTANCE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NODE_CLUSTERBYDISTANCE);
   define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_COLLECTION_CHILDREN);
   define(brna, "GeometryNode", "GeometryNodeCollectionInfo", nullptr, ICON_COLLECTION_INFO);
   define(brna, "GeometryNode", "GeometryNodeConvexHull", nullptr, ICON_CONVEXHULL);
@@ -10537,11 +10562,14 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeFieldVariance", nullptr, ICON_VARIANCE);
   define(brna, "GeometryNode", "GeometryNodeFillCurve", nullptr, ICON_CURVE_FILL);
   define(brna, "GeometryNode", "GeometryNodeFilletCurve", nullptr, ICON_CURVE_FILLET);
+  define(brna, "GeometryNode", "GeometryNodeFilterList", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeFlipFaces", nullptr, ICON_FLIP_NORMALS);
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementInput", def_geo_foreach_geometry_element_input, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementOutput", def_geo_foreach_geometry_element_output, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeGeometryToInstance", nullptr, ICON_GEOMETRY_INSTANCE);
+  define(brna, "GeometryNode", "GeometryNodeGetAttributeNames", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGetGeometryBundle", nullptr, ICON_NODE_BUNDLE_GET);
+  define(brna, "GeometryNode", "GeometryNodeGetGeometryComponent", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NODE_GET_NAMED_GRID);
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
@@ -10715,6 +10743,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSubdivideMesh", nullptr, ICON_SUBDIVIDE_MESH);
   define(brna, "GeometryNode", "GeometryNodeSubdivisionSurface", nullptr, ICON_SUBDIVIDE_EDGES);
   define(brna, "GeometryNode", "GeometryNodeSwitch", nullptr, ICON_SWITCH);
+  define(brna, "GeometryNode", "GeometryNodeTagFilter", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeTool3DCursor", nullptr, ICON_CURSOR);
   define(brna, "GeometryNode", "GeometryNodeToolActiveElement", nullptr, ICON_ACTIVE_ELEMENT);
   define(brna, "GeometryNode", "GeometryNodeToolFaceSet", nullptr, ICON_FACE_SET);
@@ -10724,6 +10753,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeToolSetSelection", nullptr, ICON_SET_SELECTION);
   define(brna, "GeometryNode", "GeometryNodeTransform", nullptr, ICON_NODE_TRANSFORM);
   define(brna, "GeometryNode", "GeometryNodeTranslateInstances", nullptr, ICON_TRANSLATE_INSTANCE);
+  define(brna, "GeometryNode", "GeometryNodeTransferAttributes", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeTriangulate", nullptr, ICON_MOD_TRIANGULATE);
   define(brna, "GeometryNode", "GeometryNodeTrimCurve", nullptr, ICON_CURVE_TRIM);
   define(brna, "GeometryNode", "GeometryNodeUVPackIslands", nullptr, ICON_PACKISLAND);
@@ -10735,6 +10765,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeVolumeCube", nullptr, ICON_VOLUME_CUBE);
   define(brna, "GeometryNode", "GeometryNodeVolumeToMesh", nullptr, ICON_VOLUME_TO_MESH);
   define(brna, "GeometryNode", "GeometryNodeWarning", nullptr, ICON_ERROR);
+  define(brna, "GeometryNode", "GeometryNodeXPBDSolver", nullptr, ICON_NONE); /*BFA - WIP*/
 
   /* Node group types are currently defined for each tree type individually. */
   define(brna, "ShaderNode", "ShaderNodeGroup", def_group, ICON_NONE); /* bfa - don't need 2 nodegroups icons */
@@ -10791,8 +10822,6 @@ void RNA_def_nodetree(BlenderRNA *brna)
                    "Geometry Custom Group",
                    "Custom Geometry Group Node for Python nodes",
                    "rna_GeometryNodeCustomGroup_register");
-
-  rna_def_node_instance_hash(brna);
 }
 
 /* clean up macro definition */

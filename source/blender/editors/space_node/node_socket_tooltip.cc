@@ -12,7 +12,11 @@
 #include "BKE_node_runtime.hh"
 #include "BKE_type_conversions.hh"
 
+#include "BLI_math_angle_types.hh"
+#include "BLI_math_base.hh"
 #include "BLI_math_euler.hh"
+#include "BLI_math_matrix.hh"
+#include "BLI_math_vector_types.hh"
 #include "BLI_string.h"
 
 #include "BLT_translation.hh"
@@ -233,7 +237,6 @@ class SocketTooltipBuilder {
     if (socket_decl &&
         socket_decl->default_input_type != NodeDefaultInputType::NODE_DEFAULT_INPUT_VALUE)
     {
-      BLI_assert(socket_decl->input_field_type == nodes::InputSocketFieldType::Implicit);
       this->start_block(TooltipBlockType::Value);
       build_tooltip_value_implicit_default(socket_decl->default_input_type);
       return;
@@ -352,6 +355,9 @@ class SocketTooltipBuilder {
     else if (const auto *list_log = dynamic_cast<const eval_log::ListInfoLog *>(&value_log)) {
       this->build_tooltip_value_list_log(*list_log);
     }
+    else if (const auto *image_log = dynamic_cast<const eval_log::ImageInfoLog *>(&value_log)) {
+      this->build_tooltip_value_image_log(*image_log);
+    }
   }
 
   void build_tooltip_value_and_type_oneline(const StringRef value, const StringRef type)
@@ -404,6 +410,9 @@ class SocketTooltipBuilder {
   void build_tooltip_value_int(const int value)
   {
     std::string value_str = fmt::format("{}", value);
+    if (this->is_implicit_default_input(NODE_DEFAULT_INPUT_SCENE_FRAME)) {
+      value_str += TIP_(" (Scene Frame)");
+    }
     this->build_tooltip_value_and_type_oneline(value_str, TIP_("Integer"));
   }
 
@@ -419,7 +428,16 @@ class SocketTooltipBuilder {
     else {
       value_str = fmt::format("{}", value);
     }
+    if (this->is_implicit_default_input(NODE_DEFAULT_INPUT_SCENE_FRAME)) {
+      value_str += TIP_(" (Scene Frame)");
+    }
     this->build_tooltip_value_and_type_oneline(value_str, TIP_("Float"));
+  }
+
+  bool is_implicit_default_input(const NodeDefaultInputType type) const
+  {
+    return socket_.is_input() && !socket_.is_logically_linked() && socket_.runtime->declaration &&
+           socket_.runtime->declaration->default_input_type == type;
   }
 
   void build_tooltip_value_float3(const float3 &value)
@@ -773,6 +791,76 @@ class SocketTooltipBuilder {
     this->add_text_field_mono(TIP_("Type: List"));
   }
 
+  void build_tooltip_value_image_log(const eval_log::ImageInfoLog &image_log)
+  {
+    const bool has_display_window = image_log.data_size != image_log.display_size ||
+                                    image_log.data_offset != int2(0);
+    if (has_display_window) {
+      this->add_text_field_mono(TIP_("Display/Data Window:"));
+      this->add_text_field_mono(fmt::format(
+          "\u2022 {}: {}x{}", TIP_("Data Size"), image_log.data_size.x, image_log.data_size.y));
+      this->add_text_field_mono(fmt::format("\u2022 {}: {}x{}",
+                                            TIP_("Display Size"),
+                                            image_log.display_size.x,
+                                            image_log.display_size.y));
+      this->add_text_field_mono(fmt::format("\u2022 {}: ({}, {})",
+                                            TIP_("Data Offset"),
+                                            image_log.data_offset.x,
+                                            image_log.data_offset.y));
+    }
+    else {
+      this->add_text_field_mono(fmt::format(
+          "{}: {}x{}", TIP_("Resolution"), image_log.data_size.x, image_log.data_size.y));
+    }
+
+    this->add_space();
+
+    float2 location;
+    math::AngleRadian rotation;
+    float2 scale;
+    to_loc_rot_scale(image_log.transformation, location, rotation, scale);
+
+    const bool is_translated = !math::is_equal(location, float2(0.0f), 10e-6f);
+    const bool is_rotated = math::abs(rotation.degree()) > 10e-6f;
+    const bool is_scaled = !math::is_equal(scale, float2(1.0f), 10e-6f);
+    if (is_translated || is_rotated || is_scaled) {
+      this->add_text_field_mono(TIP_("Transformation:"));
+      if (is_translated) {
+        this->add_text_field_mono(
+            fmt::format("\u2022 {}: ({}, {})", TIP_("Translation"), location.x, location.y));
+      }
+      if (is_rotated) {
+        this->add_text_field_mono(fmt::format(
+            "\u2022 {}: {}" BLI_STR_UTF8_DEGREE_SIGN, TIP_("Rotation"), rotation.degree()));
+      }
+      if (is_scaled) {
+        this->add_text_field_mono(
+            fmt::format("\u2022 {}: ({}, {})", TIP_("Scale"), scale.x, scale.y));
+      }
+    }
+    else {
+      this->add_text_field_mono(TIP_("Transformation: Identity"));
+    }
+
+    this->add_space();
+
+    this->add_text_field_mono(TIP_("Sampling:"));
+    this->add_text_field_mono(
+        fmt::format("\u2022 {}: {}", TIP_("Interpolation"), TIP_(image_log.interpolation)));
+    this->add_text_field_mono(
+        fmt::format("\u2022 {}: {}", TIP_("Extension X"), TIP_(image_log.extension_x)));
+    this->add_text_field_mono(
+        fmt::format("\u2022 {}: {}", TIP_("Extension Y"), TIP_(image_log.extension_y)));
+
+    this->add_space();
+
+    this->add_text_field_mono(fmt::format("{}: {}", TIP_("Precision"), TIP_(image_log.precision)));
+
+    this->add_space();
+
+    this->add_text_field_mono(TIP_("Type: Image"));
+  }
+
   void build_tooltip_value_implicit_default(const NodeDefaultInputType &type)
   {
     switch (type) {
@@ -814,6 +902,10 @@ class SocketTooltipBuilder {
       case NODE_DEFAULT_INPUT_HANDLE_RIGHT_FIELD:
         this->build_tooltip_value_and_type_oneline(
             TIP_("Right Handle Field"), this->get_field_type_name(CPPType::get<float3>()));
+        break;
+      case NODE_DEFAULT_INPUT_SCENE_FRAME:
+        this->build_tooltip_value_and_type_oneline(
+            TIP_("Scene Frame"), socket_.type == SOCK_FLOAT ? TIP_("Float") : TIP_("Integer"));
         break;
     }
   }

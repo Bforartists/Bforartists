@@ -82,6 +82,7 @@ class NODE_MT_compositor_node_output_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "NodeEnableOutput")
         # self.node_operator(layout, "NodeGroupOutput") # BFA - Remove double entry
         self.node_operator(layout, "CompositorNodeViewer")
+        self.node_operator_with_searchable_enum(context, layout, "GeometryNodeWarning", "warning_type")
         if context.space_data.node_tree_sub_type == 'SCENE':
             layout.separator()
             self.node_operator(layout, "CompositorNodeOutputFile")
@@ -300,7 +301,7 @@ class NODE_MT_compositor_node_utilities_base(node_add_menu.NodeMenu):
         layout.separator()
         self.node_operator(layout, "NodeImplicitConversion")
         self.node_operator(layout, "CompositorNodeSplit")
-        self.node_operator(layout, "CompositorNodeSwitch")
+        self.node_operator(layout, "GeometryNodeSwitch")
         self.node_operator(layout, "GeometryNodeIndexSwitch")
         self.node_operator(layout, "GeometryNodeMenuSwitch")
         self.node_operator(
@@ -372,6 +373,7 @@ class NODE_MT_compositor_node_text_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "FunctionNodeFormatString")
         self.node_operator(layout, "FunctionNodeMatchString")
         self.node_operator(layout, "FunctionNodeReplaceString")
+        self.node_operator(layout, "FunctionNodeReverseString")
         self.node_operator(layout, "FunctionNodeSliceString")
         self.node_operator(layout, "FunctionNodeTrimString")
         layout.separator()

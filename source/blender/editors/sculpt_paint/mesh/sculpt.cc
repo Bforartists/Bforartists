@@ -110,6 +110,10 @@ static CLG_LogRef LOG = {"sculpt"};
 
 namespace ed::sculpt_paint {
 
+/* -------------------------------------------------------------------- */
+/** \name Sculpt Brush Utilities
+ * \{ */
+
 /* TODO: This should be moved to either BKE_paint.hh or BKE_brush.hh */
 float object_space_radius_get(const ViewContext &vc,
                               const Paint &paint,
@@ -3411,7 +3415,7 @@ static void do_brush_action(const Depsgraph &depsgraph,
       if (brush.smooth_deform_type == BRUSH_SMOOTH_DEFORM_LAPLACIAN) {
         /* NOTE: The enhance brush needs to initialize its state on the first brush step. The
          * stroke strength can become 0 during the stroke, but it can not change sign (the sign is
-         * determined in the beginning of the stroke. So here it is important to not switch to
+         * determined in the beginning of the stroke). So here it is important to not switch to
          * enhance brush in the middle of the stroke. */
         if (ss.cache->initial_direction_flipped) {
           /* Invert mode, intensify details. */
@@ -7556,11 +7560,11 @@ void calc_brush_texture_factors(const SculptSession &ss,
 {
   BLI_assert(verts.size() == factors.size());
 
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
   const MTex *mtex = BKE_brush_mask_texture_get(&brush, OB_MODE_SCULPT);
   if (!mtex->tex) {
     return;
   }
+  const int thread_id = BLI_task_parallel_thread_id(nullptr);
 
   for (const int i : verts.index_range()) {
     if (factors[i] == 0.0f) {
@@ -7583,11 +7587,11 @@ void calc_brush_texture_factors(const SculptSession &ss,
 {
   BLI_assert(positions.size() == factors.size());
 
-  const int thread_id = BLI_task_parallel_thread_id(nullptr);
   const MTex *mtex = BKE_brush_mask_texture_get(&brush, OB_MODE_SCULPT);
   if (!mtex->tex) {
     return;
   }
+  const int thread_id = BLI_task_parallel_thread_id(nullptr);
 
   for (const int i : positions.index_range()) {
     if (factors[i] == 0.0f) {

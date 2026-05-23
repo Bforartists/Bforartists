@@ -587,7 +587,7 @@ struct RGBAHalf {
 static void convert_input_to_half_rgba(const ImBuf *ibuf, RGBAHalf *dst)
 {
   const int channels = ibuf->channels;
-  const bool is_alpha = (channels >= 4) && (ibuf->planes == 32);
+  const bool is_alpha = (channels >= 4) && (ibuf->can_contain_alpha());
   const int width = ibuf->x;
   const int height = ibuf->y;
 
@@ -701,13 +701,13 @@ static void save_setup_framebuffer(const ImBuf *ibuf,
   }
 }
 
-bool imb_save_openexr(ImBuf *ibuf, const char *filepath, int /*flags*/)
+bool imb_save_openexr(ImBuf *ibuf, const char *filepath, ImBufFlags /*flags*/)
 {
   /* Use half precision when asked for it, or if source is a
    * byte image (half precision is always enough for that case). */
   const bool half_precision = (ibuf->foptions.flag & OPENEXR_HALF) ||
                               ibuf->float_data() == nullptr;
-  const bool is_alpha = (ibuf->channels >= 4) && (ibuf->planes == 32);
+  const bool is_alpha = (ibuf->channels >= 4) && (ibuf->can_contain_alpha());
   try {
     Header header(ibuf->x, ibuf->y);
     save_setup_header(ibuf, half_precision, is_alpha, header);
@@ -732,14 +732,14 @@ bool imb_save_openexr(ImBuf *ibuf, const char *filepath, int /*flags*/)
   return true;
 }
 
-Vector<uint8_t> imb_save_buffer_openexr(ImBuf *ibuf, int /*flags*/)
+Vector<uint8_t> imb_save_buffer_openexr(ImBuf *ibuf, ImBufFlags /*flags*/)
 {
   /* Use half precision when asked for it, or if source is a
    * byte image (half precision is always enough for that case). */
   const bool half_precision = (ibuf->foptions.flag & OPENEXR_HALF) ||
                               ibuf->float_data() == nullptr;
 
-  const bool is_alpha = (ibuf->channels >= 4) && (ibuf->planes == 32);
+  const bool is_alpha = (ibuf->channels >= 4) && (ibuf->can_contain_alpha());
   try {
     Header header(ibuf->x, ibuf->y);
     save_setup_header(ibuf, half_precision, is_alpha, header);
@@ -920,7 +920,7 @@ void IMB_exr_add_channels(ExrHandle *handle,
                           StringRefNull colorspace,
                           size_t xstride,
                           size_t ystride,
-                          float *rect,
+                          const float *rect,
                           bool use_half_float)
 {
   /* For multipart, part name includes view since part names must be unique. */
@@ -971,7 +971,8 @@ void IMB_exr_add_channels(ExrHandle *handle,
 
     echan.xstride = xstride;
     echan.ystride = ystride;
-    echan.rect = rect + channel;
+    /* This is used for writing, the data should not be modified. ????????? */
+    echan.rect = const_cast<float *>(rect + channel);
     echan.use_half_float = use_half_float;
   }
 
@@ -1205,7 +1206,7 @@ void IMB_exr_write_channels(ExrHandle *handle)
 
       if (echan.use_half_float) {
         const float *src_float = echan.rect;
-        /* Convert & clamp input floats to halfs. */
+        /* Convert & clamp input floats to half-floats. */
         threading::parallel_for(IndexRange(num_pixels), 16 * 1024, [&](IndexRange range) {
           Array<float> gathered_floats(range.size());
           int64_t i = 0;
@@ -2107,7 +2108,10 @@ void IMB_exr_get_display_window(ExrHandle *handle,
   get_exr_display_window(*handle->ifile, display_size, display_offset, data_offset);
 }
 
-ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpace &r_colorspace)
+ImBuf *imb_load_openexr(const uchar *mem,
+                        size_t size,
+                        ImBufFlags flags,
+                        ImFileColorSpace &r_colorspace)
 {
   ImBuf *ibuf = nullptr;
   IMemStream *membuf = nullptr;
@@ -2137,17 +2141,20 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
     is_multi = imb_exr_is_multi(*file);
 
     /* do not make an ibuf when */
-    if (is_multi && !(flags & IB_test) && !(flags & IB_multilayer)) {
+    if (is_multi && !flag_is_set(flags, ImBufFlags::Test) &&
+        !flag_is_set(flags, ImBufFlags::MultiLayer))
+    {
       CLOG_ERROR(&LOG, "Cannot process EXR multilayer file");
     }
     else {
       const bool is_alpha = exr_has_alpha(*file);
 
-      ibuf = IMB_allocImBuf(width, height, is_alpha ? 32 : 24, 0);
+      ibuf = IMB_allocImBuf(width, height, ImBufFlags::Zero);
+      ibuf->color_mode = is_alpha ? ImColorMode::RGBA : ImColorMode::RGB;
       ibuf->foptions.flag |= exr_is_half_float(*file) ? OPENEXR_HALF : 0;
       ibuf->foptions.flag |= openexr_header_get_compression(file_header);
 
-      ibuf->flags |= IB_has_display_window;
+      ibuf->flags |= ImBufFlags::HasDisplayWindow;
       get_exr_display_window(*file, ibuf->display_size, ibuf->display_offset, ibuf->data_offset);
 
       exr_get_ppm(*file, ibuf->ppm);
@@ -2156,9 +2163,9 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
 
       ibuf->ftype = IMB_FTYPE_OPENEXR;
 
-      if (!(flags & IB_test)) {
+      if (!flag_is_set(flags, ImBufFlags::Test)) {
 
-        if (flags & IB_metadata) {
+        if (flag_is_set(flags, ImBufFlags::Metadata)) {
           Header::ConstIterator iter;
 
           IMB_metadata_ensure(&ibuf->metadata);
@@ -2169,13 +2176,13 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
             /* not all attributes are string attributes so we might get some NULLs here */
             if (attr) {
               IMB_metadata_set_field(ibuf->metadata, iter.name(), attr->value().c_str());
-              ibuf->flags |= IB_metadata;
+              ibuf->flags |= ImBufFlags::Metadata;
             }
           }
         }
 
-        /* Only enters with IB_multilayer flag set. */
-        if (is_multi && ((flags & IB_thumbnail) == 0)) {
+        /* Only enters with ImBufFlags::MultiLayer flag set. */
+        if (is_multi && !flag_is_set(flags, ImBufFlags::Thumbnail)) {
           /* constructs channels for reading, allocates memory in channels */
           ExrHandle *handle = imb_exr_begin_read_mem(*membuf, *file, width, height);
           if (handle) {
@@ -2285,8 +2292,8 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
         delete file;
       }
 
-      if (flags & IB_alphamode_detect) {
-        ibuf->flags |= IB_alphamode_premul;
+      if (flag_is_set(flags, ImBufFlags::AlphaDetect)) {
+        ibuf->flags |= ImBufFlags::AlphaPremul;
       }
     }
     return ibuf;
@@ -2314,7 +2321,7 @@ ImBuf *imb_load_openexr(const uchar *mem, size_t size, int flags, ImFileColorSpa
 }
 
 ImBuf *imb_load_filepath_thumbnail_openexr(const char *filepath,
-                                           const int /*flags*/,
+                                           const ImBufFlags /*flags*/,
                                            const size_t max_thumb_size,
                                            ImFileColorSpace &r_colorspace,
                                            size_t *r_width,
@@ -2376,7 +2383,7 @@ ImBuf *imb_load_filepath_thumbnail_openexr(const char *filepath,
     int dest_w = std::max(int(source_w * scale_factor), 1);
     int dest_h = std::max(int(source_h * scale_factor), 1);
 
-    ibuf = IMB_allocImBuf(dest_w, dest_h, 32, IB_float_data);
+    ibuf = IMB_allocImBuf(dest_w, dest_h, ImBufFlags::FloatData);
 
     /* A single row of source pixels. */
     Imf::Array<Imf::Rgba> pixels(source_w);

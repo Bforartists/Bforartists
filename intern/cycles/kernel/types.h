@@ -404,6 +404,13 @@ struct BsdfEval {
   Spectrum sum;
 };
 
+enum DenoisingPassFlag {
+  /* Whether to follow reflections for the denoising passes. */
+  DENOISING_PASS_FOLLOW_REFLECTIONS = (1 << 0),
+  /* Whether to use roughness-based weighting for the albedo or split by the BSDF type. */
+  DENOISING_PASS_USE_ALBEDO_ROUGHNESS_WEIGHTING = (1 << 1),
+};
+
 /* Closure Filter */
 
 enum FilterClosures {
@@ -1309,6 +1316,11 @@ struct KernelLightLinkSet {
   uint light_tree_root;
 };
 
+struct KernelSceneTime {
+  float time;
+  float frame;
+};
+
 struct ccl_align(16) KernelData {
   /* Features and limits. */
   uint kernel_features;
@@ -1321,6 +1333,7 @@ struct ccl_align(16) KernelData {
   KernelBake bake;
   KernelTables tables;
   KernelLightLinkSet light_link_sets[LIGHT_LINK_SET_MAX];
+  KernelSceneTime scene_time;
 
   /* Potentially specialized data members. */
 #define KERNEL_STRUCT_BEGIN(name, parent) name parent;
@@ -1661,7 +1674,6 @@ enum ShaderEvalResult {
   /* Cache miss means shader evaluation can not be used. */
   SHADER_EVAL_CACHE_MISS = 2,
 };
-
 /* Pre-computed sample table sizes for the tabulated Sobol sampler.
  *
  * NOTE: min and max samples *must* be a power of two, and patterns

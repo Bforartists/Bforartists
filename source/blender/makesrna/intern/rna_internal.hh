@@ -298,15 +298,18 @@ void rna_def_view_layer_common(BlenderRNA *brna, StructRNA *srna, bool scene);
 
 int rna_AssetMetaData_editable(const PointerRNA *ptr, const char **r_info);
 /**
+ * Create a enum property for the available asset libraries that should be displayed in the UI.
+ * Does not include the online essentials library, which should be displayed as part of the normal
+ * essentials library to the user.
  * \note the UI text and updating has to be set by the caller.
  */
-PropertyRNA *rna_def_asset_library_reference_common(StructRNA *srna,
-                                                    const char *get,
-                                                    const char *set);
-const EnumPropertyItem *rna_asset_library_reference_itemf(bContext *C,
-                                                          PointerRNA *ptr,
-                                                          PropertyRNA *prop,
-                                                          bool *r_free);
+PropertyRNA *rna_def_asset_library_ui_reference_common(StructRNA *srna,
+                                                       const char *get,
+                                                       const char *set);
+const EnumPropertyItem *rna_asset_library_ui_reference_itemf(bContext *C,
+                                                             PointerRNA *ptr,
+                                                             PropertyRNA *prop,
+                                                             bool *r_free);
 
 /**
  * Common properties for Action/Bone Groups - related to color.
@@ -426,8 +429,10 @@ bool rna_Action_actedit_assign_poll(PointerRNA *ptr, PointerRNA value);
 bool rna_GPencil_datablocks_annotations_poll(PointerRNA *ptr, const PointerRNA value);
 bool rna_GPencil_datablocks_obdata_poll(PointerRNA *ptr, const PointerRNA value);
 
-/* Only the Image Editor and Camera Background images support "Render Result" or Viewer Node"
- * images. */
+/**
+ * Only the Image Editor and Camera Background images support
+ * "Render Result" or "Viewer Node" images.
+ */
 bool rna_Image_no_renderresult_or_viewer_poll(PointerRNA *ptr, const PointerRNA value);
 
 std::optional<std::string> rna_TextureSlot_path(const PointerRNA *ptr);
@@ -484,6 +489,7 @@ void RNA_api_operator(StructRNA *srna);
 void RNA_api_macro(StructRNA *srna);
 void RNA_api_gizmo(StructRNA *srna);
 void RNA_api_gizmogroup(StructRNA *srna);
+void RNA_api_grease_pencil(StructRNA *srna);
 void RNA_api_grease_pencil_drawing(StructRNA *srna);
 void RNA_api_grease_pencil_frames(StructRNA *srna);
 void RNA_api_grease_pencil_layer(StructRNA *srna);
