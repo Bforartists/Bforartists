@@ -412,7 +412,7 @@ static void ping_asset_file_done_impl(const bContext &C,
   ProgressTracker::file_finished(absolute_file_url, outcome);
 
   /* Redraw drags, they may show some "asset being downloaded" info. */
-  if (!BLI_listbase_is_empty(&wm->runtime->drags)) {
+  if (!wm->runtime->drags.is_empty()) {
     WM_event_add_mousemove(CTX_wm_window(&C));
   }
 }
@@ -793,7 +793,7 @@ void remote_library_request_asset_download(const bContext &C,
        *
        * Better to stop here, because if a dependency download couldn't be triggered, the main file
        * should not be downloaded either. Because, if that would work, we have a half-downloaded
-       * asset that Blender's asset browser doesn't know is broken). */
+       * asset that Blender's asset browser doesn't know is broken. */
       break;
     }
 

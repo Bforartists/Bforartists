@@ -76,7 +76,6 @@ class OUTLINER_HT_header(Header):
             row.popover(
                 panel="OUTLINER_PT_filter",
                 text="",
-                icon='FILTER',
             )
 
         if display_mode in {'LIBRARIES', 'ORPHAN_DATA'}:
@@ -556,7 +555,7 @@ class OUTLINER_MT_liboverride(Menu):
 class OUTLINER_PT_filter(Panel):
     bl_space_type = 'OUTLINER'
     bl_region_type = 'HEADER'
-    bl_label = "Filter"
+    bl_label = "Options"
 
     # BFA - Helper method to simplify drawing of properties            
     @staticmethod
@@ -703,6 +702,123 @@ class OUTLINER_PT_filter(Panel):
                 if has_others:
                     self.draw_prop_row(col, space, "use_filter_object_others", text="Others", icon='OBJECT_DATAMODE')
 
+
+# BFA - Not used, consolidated above
+class OUTLINER_PT_options_search(Panel):
+    bl_space_type = 'OUTLINER'
+    bl_region_type = 'HEADER'
+    bl_label = "Search"
+    bl_parent_id = "OUTLINER_PT_filter"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        space = context.space_data
+        display_mode = space.display_mode
+
+        filter_text_supported = True
+        # Same exception for library overrides as in OUTLINER_HT_header.
+        if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'HIERARCHIES':
+            filter_text_supported = False
+
+        return filter_text_supported
+
+    def draw(self, context):
+        layout = self.layout
+        space = context.space_data
+        display_mode = space.display_mode
+
+        col = layout.column(align=True)
+        col.prop(space, "use_filter_complete", text="Exact Match")
+        col.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
+
+
+# BFA - Not used, consolidated above
+class OUTLINER_PT_options_filter(Panel):
+    bl_space_type = 'OUTLINER'
+    bl_region_type = 'HEADER'
+    bl_label = "Filter"
+    bl_parent_id = "OUTLINER_PT_filter"
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        display_mode = space.display_mode
+        return display_mode == 'VIEW_LAYER'
+
+    def draw(self, context):
+        layout = self.layout
+        space = context.space_data
+        display_mode = space.display_mode
+        col = layout.column(align=True)
+
+        row = col.row()
+        row.label(icon='RENDERLAYERS')
+        row.prop(space, "use_filter_view_layers", text="All View Layers")
+
+        row = col.row()
+        row.label(icon='GROUP')
+        row.prop(space, "use_filter_collection", text="Collections")
+
+        row = col.row()
+        row.label(icon='OBJECT_DATAMODE')
+        row.prop(space, "use_filter_object", text="Objects")
+        row = col.row(align=True)
+        row.label(icon='BLANK1')
+        row.prop(space, "filter_state", text="")
+        sub = row.row(align=True)
+        sub.enabled = space.filter_state != 'ALL'
+        sub.prop(space, "filter_invert", text="", icon='ARROW_LEFTRIGHT')
+
+        sub = col.column(align=True)
+        sub.active = space.use_filter_object
+
+        row = sub.row()
+        row.label(icon='BLANK1')
+        row.prop(space, "use_filter_object_content", text="Object Contents")
+        row = sub.row()
+        row.label(icon='BLANK1')
+        row.prop(space, "use_filter_children", text="Object Children")
+
+        if bpy.data.meshes:
+            row = sub.row()
+            row.label(icon='MESH_DATA')
+            row.prop(space, "use_filter_object_mesh", text="Meshes")
+        if bpy.data.armatures:
+            row = sub.row()
+            row.label(icon='ARMATURE_DATA')
+            row.prop(space, "use_filter_object_armature", text="Armatures")
+        if bpy.data.lights:
+            row = sub.row()
+            row.label(icon='LIGHT_DATA')
+            row.prop(space, "use_filter_object_light", text="Lights")
+        if bpy.data.cameras:
+            row = sub.row()
+            row.label(icon='CAMERA_DATA')
+            row.prop(space, "use_filter_object_camera", text="Cameras")
+        if bpy.data.grease_pencils:
+            row = sub.row()
+            row.label(icon='STROKE')
+            row.prop(space, "use_filter_object_grease_pencil", text="Grease Pencil")
+        row = sub.row()
+        row.label(icon='EMPTY_DATA')
+        row.prop(space, "use_filter_object_empty", text="Empties")
+
+        if (
+                bpy.data.curves or
+                bpy.data.metaballs or
+                (hasattr(bpy.data, "hair_curves") and bpy.data.hair_curves) or
+                (hasattr(bpy.data, "pointclouds") and bpy.data.pointclouds) or
+                bpy.data.volumes or
+                bpy.data.lightprobes or
+                bpy.data.lattices or
+                bpy.data.fonts or
+                bpy.data.speakers
+        ):
+            row = sub.row()
+            row.label(icon='BLANK1')
+            row.prop(space, "use_filter_object_others", text="Others")
+
 classes = (
     OUTLINER_HT_header,
     OUTLINER_MT_object_collection, # BFA - menu
@@ -723,6 +839,8 @@ classes = (
     OUTLINER_MT_context_menu_view,#BFA - not used
     OUTLINER_MT_view_pie,
     OUTLINER_PT_filter,
+    OUTLINER_PT_options_search, #BFA - not used
+    OUTLINER_PT_options_filter, #BFA - not used
 )
 
 if __name__ == "__main__":  # only for live edit.

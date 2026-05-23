@@ -218,7 +218,7 @@ static void sanitize_node_tree_interface_socket_identifiers(bNodeTree &node_tree
   node_tree.ensure_interface_cache();
   Set<StringRef> all_identifiers;
   for (bNodeTreeInterfaceItem *item : node_tree.interface_items()) {
-    if (item->item_type == NODE_INTERFACE_PANEL) {
+    if (item->item_type == NodeTreeInterfaceItemType::Panel) {
       continue;
     }
     auto &socket = *bke::node_interface::get_item_as<bNodeTreeInterfaceSocket>(item);
@@ -356,7 +356,7 @@ static void enable_compositor_nodes_is_strip_modifier(Main &bmain)
     bool has_image_input = false;
     bool has_image_output = false;
     group.tree_interface.foreach_item([&](const bNodeTreeInterfaceItem &item) {
-      if (item.item_type != NODE_INTERFACE_SOCKET) {
+      if (item.item_type != NodeTreeInterfaceItemType::Socket) {
         /* Continue. */
         return true;
       }
@@ -427,6 +427,11 @@ void do_versions_after_linking_520(FileData *fd, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 27)) {
     version_scene_strip_view_layer_name(*bmain);
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 502, 36)) {
+    /* Shift animation data to accommodate the new thin wall input. */
+    version_node_socket_index_animdata(bmain, NTREE_SHADER, SH_NODE_BSDF_PRINCIPLED, 5, 1, 31);
   }
 
   /**
