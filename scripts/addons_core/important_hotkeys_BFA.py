@@ -807,10 +807,10 @@ def draw_maintext(self, context):
 
 # ----------------------- Mainclass. Here happens the work.
 
-class IH_OT_ModalDrawOperator(bpy.types.Operator):
+class IH_OT_DrawImportantHotkeysModal(bpy.types.Operator):
     """Shows a list with important hotkeys\nNote that the hotkeys from the tool shelf tools can't be read\nThis is a design mistake in the tool shelf which can't be bypassed by this addon"""
-    bl_idname = "view3d.modal_operator"
-    bl_label = "Simple Modal View3D Operator"
+    bl_idname = "view3d.draw_important_hotkeys"
+    bl_label = "Draw Important Hotkeys"
 
     # We need to limit the check loop so that it only runs once.
     # For that we need the involved variables to be accessible across the functions
@@ -975,11 +975,9 @@ class VIEW3D_PT_ShowtextPanel(bpy.types.Panel):
         wm = context.window_manager
 
         if not wm.showhide_flag:
-            layout.operator("view3d.modal_operator", text="Show text")
+            layout.operator("view3d.draw_important_hotkeys", text="Show Text")
         else:
-            layout.operator("view3d.modal_operator", text="Hide text")
-
-        # --------------------------- color and text variables
+            layout.operator("view3d.draw_important_hotkeys", text="Hide Text", depress=True)
 
         row = layout.row(align=True)
         split = row.split(factor=0.2)
@@ -1030,7 +1028,7 @@ def clear_properties():
 # -------------------------- Register - Unregister
 
 classes = (
-    IH_OT_ModalDrawOperator,
+    IH_OT_DrawImportantHotkeysModal,
     VIEW3D_PT_ShowtextPanel,
 )
 
