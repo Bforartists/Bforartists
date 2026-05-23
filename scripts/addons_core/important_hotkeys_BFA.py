@@ -34,10 +34,12 @@ pos_x = 160 # Initial X position.
 pos_y = 120 # initial Y position. This value gets substracted from the screen height.
 subpos_y = 0 # needed to calculate the position of the array strings below the title.
 
+NOT_FOUND_STRING = "Not Found"
+
 # With this function we retreive the hotkey.
 def handle_keys(km, keystring):
 
-    if keystring == "Not found": # Let's make the string empty when text is "Not Found". We want to fill it with our hotkey now.
+    if keystring == NOT_FOUND_STRING: # Let's make the string empty when text is "Not Found". We want to fill it with our hotkey now.
         keystring = ""
     else:     # if keystring has already a content.
         keystring += ("  |  ") # There might be more than one hotkey. So we separate them by a |
@@ -826,20 +828,20 @@ class IH_OT_DrawImportantHotkeysModal(bpy.types.Operator):
         #print(keymap_name) #debug test
 
         # ------------Fixed strings
-        # 3d view
-        #self.select_with = "Not found"
-        self.add_to_selection = "Not found"
-        self.move_view_string = "Not found"
-        self.rotate_view_string = "Not found"
-        self.zoom_view_string = "Not found"
-        self.resetview_string = "Not found" # plugin reset 3d view
-        self.set_3d_cursor = "Not found" # plugin reset 3d view
+        # 3d View
+        #self.select_with = NOT_FOUND_STRING
+        self.add_to_selection = NOT_FOUND_STRING
+        self.move_view_string = NOT_FOUND_STRING
+        self.rotate_view_string = NOT_FOUND_STRING
+        self.zoom_view_string = NOT_FOUND_STRING
+        self.resetview_string = NOT_FOUND_STRING # plugin reset 3d View
+        self.set_3d_cursor = NOT_FOUND_STRING # plugin reset 3d View
         # Window
-        self.search_menu = "Not found" # plugin reset 3d view
+        self.search_menu = NOT_FOUND_STRING # plugin reset 3d View
         # Screen
-        self.switch_to_camera = "Not found"
-        self.render_image = "Not found"
-        self.render_view_show = "Not found"
+        self.switch_to_camera = NOT_FOUND_STRING
+        self.render_image = NOT_FOUND_STRING
+        self.render_view_show = NOT_FOUND_STRING
 
         # ---------- Modal strings
         # 3D View
@@ -849,86 +851,86 @@ class IH_OT_DrawImportantHotkeysModal(bpy.types.Operator):
             self.rotate_obj_string = "Not readable. Key in default keymap E"
             self.scale_obj_string = "Not readable. Key in default keymap R"
         else :
-            self.move_obj_string = "Not found"
-            self.rotate_obj_string = "Not found"
-            self.scale_obj_string = "Not found"
+            self.move_obj_string = NOT_FOUND_STRING
+            self.rotate_obj_string = NOT_FOUND_STRING
+            self.scale_obj_string = NOT_FOUND_STRING
 
         # Object Mode
-        self.make_parent = "Not found"
-        self.clear_parent = "Not found"
-        self.join_mesh = "Not found"
+        self.make_parent = NOT_FOUND_STRING
+        self.clear_parent = NOT_FOUND_STRING
+        self.join_mesh = NOT_FOUND_STRING
         # Mesh
-        self.mesh_select_verts = "Not found"
-        self.mesh_select_edges = "Not found"
-        self.mesh_select_faces = "Not found"
-        self.mesh_shortest_path = "Not found"
-        self.mesh_extrude = "Not found"
-        self.mesh_separate = "Not found"
-        self.mesh_loop_select = "Not found"
-        self.mesh_loop_select_add = "Not found"
-        self.mesh_edgering_select = "Not found"
-        self.mesh_edgering_select_add = "Not found"
-        self.mesh_mark_seam = "Not found"
-        self.clear_seam = "Not found"
+        self.mesh_select_verts = NOT_FOUND_STRING
+        self.mesh_select_edges = NOT_FOUND_STRING
+        self.mesh_select_faces = NOT_FOUND_STRING
+        self.mesh_shortest_path = NOT_FOUND_STRING
+        self.mesh_extrude = NOT_FOUND_STRING
+        self.mesh_separate = NOT_FOUND_STRING
+        self.mesh_loop_select = NOT_FOUND_STRING
+        self.mesh_loop_select_add = NOT_FOUND_STRING
+        self.mesh_edgering_select = NOT_FOUND_STRING
+        self.mesh_edgering_select_add = NOT_FOUND_STRING
+        self.mesh_mark_seam = NOT_FOUND_STRING
+        self.clear_seam = NOT_FOUND_STRING
         # Pose
-        self.pose_parent_set = "Not found"
+        self.pose_parent_set = NOT_FOUND_STRING
         # Sculpt
-        self.sculpt_brush_size = "Not found"
-        self.sculpt_brush_strength = "Not found"
-        self.sculpt_brush_angle = "Not found"
-        self.stencil_control_translate = "Not found"
-        self.stencil_control_translate_sec = "Not found"
-        self.stencil_control_scale = "Not found"
+        self.sculpt_brush_size = NOT_FOUND_STRING
+        self.sculpt_brush_strength = NOT_FOUND_STRING
+        self.sculpt_brush_angle = NOT_FOUND_STRING
+        self.stencil_control_translate = NOT_FOUND_STRING
+        self.stencil_control_translate_sec = NOT_FOUND_STRING
+        self.stencil_control_scale = NOT_FOUND_STRING
         # Vertexpaint
-        self.vertexpaint_brush_size = "Not found"
-        self.vertexpaint_brush_strength = "Not found"
-        self.vertexpaint_brush_angle = "Not found"
-        self.vertexpaint_stencil_control_translate = "Not found"
-        self.vertexpaint_stencil_control_rotate = "Not found"
-        self.vertexpaint_stencil_control_scale = "Not found"
-        self.vertexpaint_stencil_control_translate_sec = "Not found"
-        self.vertexpaint_stencil_control_rotate_sec = "Not found"
-        self.vertexpaint_stencil_control_scale_sec = "Not found"
+        self.vertexpaint_brush_size = NOT_FOUND_STRING
+        self.vertexpaint_brush_strength = NOT_FOUND_STRING
+        self.vertexpaint_brush_angle = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_translate = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_rotate = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_scale = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_translate_sec = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_rotate_sec = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_scale_sec = NOT_FOUND_STRING
         # Weightpaint
-        self.weightpaint_bone_select = "Not found"
-        self.weightpaint_draw_gradient = "Not found"
-        self.weightpaint_brush_size = "Not found"
-        self.weightpaint_brush_strength = "Not found"
-        self.weightpaint_brush_weight = "Not found"
+        self.weightpaint_bone_select = NOT_FOUND_STRING
+        self.weightpaint_draw_gradient = NOT_FOUND_STRING
+        self.weightpaint_brush_size = NOT_FOUND_STRING
+        self.weightpaint_brush_strength = NOT_FOUND_STRING
+        self.weightpaint_brush_weight = NOT_FOUND_STRING
         # grease pencil Weightpaint
-        self.gp_weightpaint_bone_select = "Not found"
-        self.gp_weightpaint_brush_size = "Not found"
-        self.gp_weightpaint_brush_strength = "Not found"
-        self.gp_weightpaint_brush_weight = "Not found"
+        self.gp_weightpaint_bone_select = NOT_FOUND_STRING
+        self.gp_weightpaint_brush_size = NOT_FOUND_STRING
+        self.gp_weightpaint_brush_strength = NOT_FOUND_STRING
+        self.gp_weightpaint_brush_weight = NOT_FOUND_STRING
         # Texturepaint
-        self.texturepaint_brush_size = "Not found"
-        self.texturepaint_brush_strength = "Not found"
-        self.texturepaint_brush_angle = "Not found"
-        self.texturepaint_mask_angle = "Not found"
-        self.texturepaint_stencil_control_translate = "Not found"
-        self.texturepaint_stencil_control_rotate = "Not found"
-        self.texturepaint_stencil_control_scale = "Not found"
-        self.texturepaint_stencil_control_translate_sec = "Not found"
-        self.texturepaint_stencil_control_rotate_sec = "Not found"
-        self.texturepaint_stencil_control_scale_sec = "Not found"
-        self.texturepaint_strokemethod_curve = "Not found"
+        self.texturepaint_brush_size = NOT_FOUND_STRING
+        self.texturepaint_brush_strength = NOT_FOUND_STRING
+        self.texturepaint_brush_angle = NOT_FOUND_STRING
+        self.texturepaint_mask_angle = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_translate = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_rotate = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_scale = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_translate_sec = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_rotate_sec = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_scale_sec = NOT_FOUND_STRING
+        self.texturepaint_strokemethod_curve = NOT_FOUND_STRING
         # Particle Edit
-        self.particle_brush_size = "Not found"
-        self.particle_brush_strength = "Not found"
+        self.particle_brush_size = NOT_FOUND_STRING
+        self.particle_brush_strength = NOT_FOUND_STRING
         # Curve
-        self.curve_extrude = "Not found"
-        self.curve_vertex_add ="Not found"
+        self.curve_extrude = NOT_FOUND_STRING
+        self.curve_vertex_add =NOT_FOUND_STRING
         # Armature
-        self.armature_extrude = "Not found"
-        self.armature_extrude_forked = "Not found"
-        self.armature_parent_set = "Not found"
-        self.armature_parent_clear = "Not found"
-        self.armature_separate = "Not found"
-        self.armature_sketching_draw = "Not found"
-        self.armature_sketching_draw_snap = "Not found"
-        self.armature_sketching_preview = "Not found"
-        self.armature_sketching_preview_snap = "Not found"
-        self.armature_sketching_finish_stroke = "Not found"
+        self.armature_extrude = NOT_FOUND_STRING
+        self.armature_extrude_forked = NOT_FOUND_STRING
+        self.armature_parent_set = NOT_FOUND_STRING
+        self.armature_parent_clear = NOT_FOUND_STRING
+        self.armature_separate = NOT_FOUND_STRING
+        self.armature_sketching_draw = NOT_FOUND_STRING
+        self.armature_sketching_draw_snap = NOT_FOUND_STRING
+        self.armature_sketching_preview = NOT_FOUND_STRING
+        self.armature_sketching_preview_snap = NOT_FOUND_STRING
+        self.armature_sketching_finish_stroke = NOT_FOUND_STRING
 
 
     # Our modal function. The text will display as long as it is not cancelled.
