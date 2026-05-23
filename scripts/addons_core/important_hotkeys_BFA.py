@@ -677,15 +677,15 @@ def draw_modetext(self, context, obj):
             ]))
 
 
-    self.mod_Y = 8.2 * context.window_manager.important_hotkeys_font_size # our second text block needs a bit offset. Every new line adds 0.55. Plus a bit more because of the + 1 to have a spacing between the lines.
+    self.mod_Y = 8.2 * context.window_manager.important_hotkeys_text_size # our second text block needs a bit offset. Every new line adds 0.55. Plus a bit more because of the + 1 to have a spacing between the lines.
 
     # Draw the text
     for data in texts:
-        subpos_y = context.region.height-pos_y-context.window_manager.important_hotkeys_font_size-self.mod_Y # initial texts position
+        subpos_y = context.region.height-pos_y-context.window_manager.important_hotkeys_text_size-self.mod_Y # initial texts position
         for d in data:
             blf.position(0, pos_x, subpos_y-self.mod_Y, 0)
             blf.draw(0, d)
-            subpos_y -= context.window_manager.important_hotkeys_font_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
+            subpos_y -= context.window_manager.important_hotkeys_text_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
 
 
 # The main text. Always shown. Navigation is the same everywhere.
@@ -770,7 +770,7 @@ def draw_maintext(self, context):
 
     # Calculate the text
     blf.position(0, pos_x, context.region.height-pos_y, 0) #titleposition
-    blf.size(font_id, context.window_manager.important_hotkeys_font_size) # bfa - dpi defaults to 72 when ommited
+    blf.size(font_id, context.window_manager.important_hotkeys_text_size) # bfa - dpi defaults to 72 when ommited
     blf.color(font_id,font_color_r, font_color_g, font_color_b, font_color_alpha * 0.8) # color variables
 
 
@@ -795,11 +795,11 @@ def draw_maintext(self, context):
 
     # Draw the text
     for data in texts:
-        subpos_y = context.region.height-pos_y-context.window_manager.important_hotkeys_font_size # initial texts position
+        subpos_y = context.region.height-pos_y-context.window_manager.important_hotkeys_text_size # initial texts position
         for d in data:
             blf.position(0, pos_x, subpos_y, 0)
             blf.draw(0, d)
-            subpos_y -= context.window_manager.important_hotkeys_font_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
+            subpos_y -= context.window_manager.important_hotkeys_text_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
 
 
     # the second part of the text. When an object is selected ...
@@ -986,7 +986,7 @@ class VIEW3D_PT_ShowtextPanel(bpy.types.Panel):
         left_side.prop(wm, "important_hotkeys_text_color", text="")
         split = split.split()
         right_side = split.column()
-        right_side.prop(wm, "important_hotkeys_font_size", text="Font Size")
+        right_side.prop(wm, "important_hotkeys_text_size")
 
 
 # properties used by the script
@@ -999,7 +999,7 @@ def init_properties():
     wm.showhide_flag = bpy.props.BoolProperty(default=False)
 
     # the font size.
-    wm.important_hotkeys_font_size = bpy.props.IntProperty(
+    wm.important_hotkeys_text_size = bpy.props.IntProperty(
         name="Text Size",
         description="Text size displayed on 3D View",
         default=11, min=8, max=150)
@@ -1019,7 +1019,7 @@ def init_properties():
 def clear_properties():
     props = (
         "showhide_flag",
-        "important_hotkeys_font_size",
+        "important_hotkeys_text_size",
         "important_hotkeys_text_color", # color variables
     )
 
