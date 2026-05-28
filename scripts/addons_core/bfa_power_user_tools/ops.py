@@ -542,7 +542,7 @@ class BFA_OT_gp_select_layer_under_mouse_isolate(bpy.types.Operator):
     """Select all strokes of the layer under the mouse cursor and isolate it"""
     bl_idname = "view3d.gp_select_layer_under_mouse_isolate"
     bl_label = "Layer and Isolate Under Mouse"
-    bl_description = "Detects the strokes and layer under the mouse in all modes, selects them, and isolates that layer"
+    bl_description = "Detects the strokes and layer under the mouse in all modes, selects them, then isolates the layer by locking the other layers"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
