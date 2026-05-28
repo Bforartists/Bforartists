@@ -1159,7 +1159,8 @@ class VIEW3D_HT_header(Header):
         row = layout.row(align=True)
         if context.preferences.addons.get("bfa_power_user_tools"):
             if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_viewport:
-                row.operator("view3d.viewport_silhouette_toggle", text="", icon="IMAGE_ALPHA")
+                from bfa_power_user_tools.ops import previous_viewport_settings
+                row.operator("view3d.viewport_silhouette_toggle", text="", icon="IMAGE_ALPHA", depress=bool(previous_viewport_settings))
 
         row = layout.row(align=True)
         row.prop(shading, "type", text="", expand=True)
@@ -1216,6 +1217,11 @@ class VIEW3D_MT_editor_menus(Menu):
         layout.menu("SCREEN_MT_user_menu", text="Quick")  # BFA
         layout.menu("VIEW3D_MT_view")
         layout.menu("VIEW3D_MT_view_navigation")  # BFA
+
+        if mode_string in {"PAINT_GREASE_PENCIL", "SCULPT_GREASE_PENCIL", "WEIGHT_GREASE_PENCIL"}:
+            if context.preferences.addons.get("bfa_power_user_tools"):
+                if context.window_manager.BFA_UI_addon_props.BFA_PROP_toggle_gplayerselect:
+                    layout.menu("BFA_MT_gp_select", text="Select")
 
         # Select Menu
         if mode_string in {"PAINT_WEIGHT", "PAINT_VERTEX", "PAINT_TEXTURE"}:
