@@ -52,12 +52,15 @@ def playback_controls(layout, context):
     if not scene:
         return
 
+    ### Left
+
     # BFA - moved the playback and keying panels to the right, for consistency
 
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
         layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
 
+    ### Center
     layout.separator_spacer()
     # BFA - moved dropdowns to consistently float right
 
@@ -118,6 +121,7 @@ def playback_controls(layout, context):
             sub.prop(scene, "frame_preview_end", text="End")
         row.operator("anim.end_frame_set", text="", icon="SET_POSITION")
 
+        ### Right
         layout.separator_spacer()
 
         # BFA - Keyframing controls
