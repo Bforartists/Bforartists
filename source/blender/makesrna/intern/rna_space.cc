@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "BLI_math_base.h"
 #include "BLI_math_constants.h"
 #include "BLI_string_ref.hh"
 #include "BLT_translation.hh"
@@ -19,7 +20,6 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_movieclip.hh"
 #include "BKE_object_types.hh"
-#include "BKE_toolshelf_runtime.h" /* BFA */
 
 #include "ED_asset.hh"
 #include "ED_buttons.hh"
@@ -33,6 +33,7 @@
 #include "DNA_layer_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_object_types.h"
+#include "DNA_screen_types.h" /* BFA - RGN_FLAG_HIDE_CATEGORY_TABS */
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 
@@ -1018,6 +1019,61 @@ static void rna_Space_show_region_toolbar_update(bContext *C, PointerRNA *ptr)
   rna_Space_bool_from_region_flag_update_by_type(C, ptr, RGN_TYPE_TOOLS, RGN_FLAG_HIDDEN);
 }
 
+static bool rna_Space_show_toolshelf_tabs_get(PointerRNA *ptr)
+{
+  ScrArea *area = rna_area_from_space(ptr);
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  return region ? !(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS) : false;
+}
+
+static void rna_Space_show_toolshelf_tabs_set(PointerRNA *ptr, bool value)
+{
+  ScrArea *area = rna_area_from_space(ptr);
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  if (region) {
+    /* Check if tabs visibility actually changes */
+    const bool was_visible = !(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS);
+    const bool will_visible = value;
+
+    /* Preserve column count when tab visibility changes.
+     * Read snap[0] in the old state BEFORE changing the flag, then apply
+     * the new state using the shared helper. */
+    const short old_sizex = region->sizex;
+    short old_min_sizex = 0;
+    if (was_visible != will_visible && region->runtime && region->runtime->type &&
+        region->runtime->type->snap_size && old_sizex > 0)
+    {
+      old_min_sizex = region->runtime->type->snap_size(region, 0, 0);
+    }
+
+    if (value) {
+      region->flag &= ~RGN_FLAG_HIDE_CATEGORY_TABS;
+    }
+    else {
+      region->flag |= RGN_FLAG_HIDE_CATEGORY_TABS;
+    }
+
+    /* Apply preserved column count with new state active. */
+    if (was_visible != will_visible && old_sizex > 0 && old_min_sizex > 0) {
+      const short new_sizex = ED_region_toolbar_snap_preserve_columns(
+          region, old_sizex, old_min_sizex);
+      if (new_sizex > 0) {
+        region->sizex = new_sizex;
+      }
+    }
+
+    ED_area_tag_region_size_update(area, region);
+  }
+}
+static void rna_Space_show_toolshelf_tabs_update(bContext * /*C*/, PointerRNA *ptr)
+{
+  ScrArea *area = rna_area_from_space(ptr);
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  if (region) {
+    ED_region_tag_redraw(region);
+  }
+}
+
 static bool rna_Space_show_region_tool_props_get(PointerRNA *ptr)
 {
   return !rna_Space_bool_from_region_flag_get_by_type(ptr, RGN_TYPE_TOOL_PROPS, RGN_FLAG_HIDDEN);
@@ -1865,155 +1921,6 @@ static void rna_SpaceView3D_mirror_xr_session_update(Main *main,
 #  else
   UNUSED_VARS(main, ptr);
 #  endif
-}
-
-/* Structure to hold space-specific information for toolshelf tabs update */
-struct ToolshelfTabsUpdateInfo {
-  eSpace_Type space_type;
-  int notifier_type;
-  bool (*get_tabs_visible)(void *space_data);
-};
-
-/* Helper functions to get tabs visibility for each space type */
-static bool get_view3d_tabs_visible(void *space_data)
-{
-  View3D *v3d = static_cast<View3D *>(space_data);
-  return (v3d->flag2 & V3D_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-static bool get_image_tabs_visible(void *space_data)
-{
-  SpaceImage *sima = static_cast<SpaceImage *>(space_data);
-  return (sima->flag & SI_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-static bool get_sequencer_tabs_visible(void *space_data)
-{
-  SpaceSeq *seq = static_cast<SpaceSeq *>(space_data);
-  return (seq->flag & SEQ_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-static bool get_node_tabs_visible(void *space_data)
-{
-  SpaceNode *snode = static_cast<SpaceNode *>(space_data);
-  return (snode->flag & SNODE_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-/**
- * Generic function to handle toolshelf tabs updates for any space type.
- *
- * This function handles the showing/hiding of toolshelf tabs by:
- * - Storing the current toolbar width when tabs are hidden
- * - Restoring the preferred width when tabs are shown
- * - Always preserving snap sizes (64/84/104 when tabs off, 84/104/124 when tabs on)
- * - Updating region size and triggering redraws
- *
- * \param bmain: Main database
- * \param ptr: RNA pointer to the space data
- * \param info: Space-specific information
- */
-static void rna_space_generic_show_toolshelf_tabs_update(Main *bmain,
-                                                         PointerRNA *ptr,
-                                                         const ToolshelfTabsUpdateInfo *info)
-{
-  if (!bmain || !ptr || !ptr->data || !info) {
-    return;
-  }
-
-  wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
-  if (!wm) {
-    return;
-  }
-
-  void *space_data = ptr->data;
-  bool tabs_being_shown = info->get_tabs_visible(space_data);
-
-#  define LISTBASE_FOREACH(type, var, list) \
-    for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
-
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (!win) {
-      continue;
-    }
-    bScreen *screen = WM_window_get_active_screen(win);
-    if (!screen) {
-      continue;
-    }
-    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
-      if (area->spacetype == info->space_type) {
-        void *space_iter = area->spacedata.first;
-        if (space_iter == space_data) {
-          LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-            if (region->regiontype == RGN_TYPE_TOOLS) {
-              if (tabs_being_shown) {
-                /* Tabs are being shown - restore preferred width if available */
-                float preferred_width = BKE_toolshelf_category_tabs_offset_get(region);
-                if (preferred_width > UI_TOOLBAR_MIN_WIDTH_THRESHOLD) {
-                  region->sizex = preferred_width;
-                }
-                else {
-                  /* No preferred width stored, let snap_size function calculate optimal width */
-                  region->sizex = 0;
-                }
-              }
-              else {
-                /* Tabs are being hidden - store current width as preferred */
-                if (region->sizex > UI_TOOLBAR_MIN_WIDTH_THRESHOLD) {
-                  BKE_toolshelf_category_tabs_offset_set(region, region->sizex);
-                }
-                /* Let snap_size function calculate minimal width for tabs-only view */
-                region->sizex = 0;
-              }
-
-              ED_area_tag_region_size_update(area, region);
-              ED_region_tag_redraw(region);
-            }
-          }
-          break;
-        }
-      }
-    }
-  }
-
-  WM_main_add_notifier(NC_SPACE | info->notifier_type, nullptr);
-}
-
-/**
- * Update function for the show_toolshelf_tabs property in 3D viewport.
- */
-static void rna_SpaceView3D_show_toolshelf_tabs_update(Main *bmain,
-                                                       Scene * /*scene*/,
-                                                       PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {
-      SPACE_VIEW3D, ND_SPACE_VIEW3D, get_view3d_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
-}
-
-static void rna_SpaceImageEditor_show_toolshelf_tabs_update(Main *bmain,
-                                                            Scene * /*scene*/,
-                                                            PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {
-      SPACE_IMAGE, ND_SPACE_IMAGE, get_image_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
-}
-
-static void rna_SpaceSequenceEditor_show_toolshelf_tabs_update(Main *bmain,
-                                                               Scene * /*scene*/,
-                                                               PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {
-      SPACE_SEQ, ND_SPACE_SEQUENCER, get_sequencer_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
-}
-
-static void rna_SpaceNodeEditor_show_toolshelf_tabs_update(Main *bmain,
-                                                           Scene * /*scene*/,
-                                                           PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {SPACE_NODE, ND_SPACE_NODE, get_node_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
 }
 
 static int rna_SpaceView3D_icon_from_show_object_viewport_get(PointerRNA *ptr)
@@ -6085,12 +5992,13 @@ static void rna_def_space_view3d(BlenderRNA *brna)
                            "Use a local camera in this view, rather than scene's active camera");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
-  /*bfa - the toolshelf tabs*/
+  /* Additional toggle for category tabs visibility on the toolbar. */
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag2", V3D_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_SpaceView3D_show_toolshelf_tabs_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
 
   prop = RNA_def_property(srna, "region_3d", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "RegionView3D");
@@ -6746,10 +6654,11 @@ static void rna_def_space_image(BlenderRNA *brna)
 
   /*bfa - the toolshelf tabs*/
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SI_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_IMAGE, "rna_SpaceImageEditor_show_toolshelf_tabs_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
 
   /* Overlays */
   prop = RNA_def_property(srna, "overlay", PROP_POINTER, PROP_NONE);
@@ -7153,10 +7062,11 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
 
   /*bfa - the toolshelf tabs*/
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SEQ_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SpaceSequenceEditor_show_toolshelf_tabs_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
 
   /* Overlay settings. */
   prop = RNA_def_property(srna, "show_overlays", PROP_BOOLEAN, PROP_NONE);
@@ -8909,11 +8819,11 @@ static void rna_def_space_node(BlenderRNA *brna)
 
   /*bfa - the toolshelf tabs*/
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SNODE_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_NODE, "rna_SpaceNodeEditor_show_toolshelf_tabs_update");
- 
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
   /* bfa node minimap gizmo. */
   prop = RNA_def_property(srna, "minimap_aspect_ratio", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "minimap_aspect_ratio");

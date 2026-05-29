@@ -1251,7 +1251,8 @@ void ED_spacetype_sequencer()
   /* Toolbar. */
   art = MEM_new_zeroed<ARegionType>("spacetype sequencer tools region");
   art->regionid = RGN_TYPE_TOOLS;
-  art->prefsizex = int(UI_TOOLBAR_WIDTH);
+  art->flag = ARegionTypeFlag::UsePanelCategoryTabs;
+  art->prefsizex = int(UI_TOOLBAR_WIDTH_SINGLE);
   art->prefsizey = 50; /* XXX */
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
   art->message_subscribe = ED_region_generic_tools_region_message_subscribe;

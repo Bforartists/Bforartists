@@ -566,8 +566,8 @@ class NODE_MT_view(Menu):
 
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
-        layout.prop(snode, "show_toolshelf_tabs")
         layout.prop(snode, "show_region_asset_shelf")  # BFA - we dont need is_compositor since we show here!
+        layout.prop(snode, "show_toolshelf_tabs")
 
         layout.separator()
 

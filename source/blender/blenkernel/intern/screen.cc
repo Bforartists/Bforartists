@@ -43,7 +43,6 @@
 #include "BKE_lib_query.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_screen.hh"
-#include "BKE_toolshelf_runtime.h" /* BFA */
 
 #include "BLO_read_write.hh"
 
@@ -734,9 +733,6 @@ void BKE_area_region_free(SpaceType *st, ARegion *region)
   region->runtime->panels_category.free_no_destruct();
   region->panels_category_active.free_no_destruct();
   region->view_states.free_no_destruct();
-
-  /* BFA - WIP - Free our runtime data if it exists, apparently it will crash a swap in paint mode since it might not exist*/
-  //BKE_toolshelf_region_free(region);/* BFA */
 
   for (uiTextboxStateLink &textbox_state : region->textbox_states.items_mutable()) {
     BLI_remlink(&region->textbox_states, &textbox_state);
