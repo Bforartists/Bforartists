@@ -10562,14 +10562,14 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeFieldVariance", nullptr, ICON_VARIANCE);
   define(brna, "GeometryNode", "GeometryNodeFillCurve", nullptr, ICON_CURVE_FILL);
   define(brna, "GeometryNode", "GeometryNodeFilletCurve", nullptr, ICON_CURVE_FILLET);
-  define(brna, "GeometryNode", "GeometryNodeFilterList", nullptr, ICON_NODE_FILTERLIST); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeFilterList", nullptr, ICON_NODE_FILTERLIST);
   define(brna, "GeometryNode", "GeometryNodeFlipFaces", nullptr, ICON_FLIP_NORMALS);
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementInput", def_geo_foreach_geometry_element_input, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementOutput", def_geo_foreach_geometry_element_output, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeGeometryToInstance", nullptr, ICON_GEOMETRY_INSTANCE);
   define(brna, "GeometryNode", "GeometryNodeGetAttributeNames", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGetGeometryBundle", nullptr, ICON_NODE_BUNDLE_GET);
-  define(brna, "GeometryNode", "GeometryNodeGetGeometryComponent", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGetGeometryComponent", nullptr, ICON_NODE_GETGEOMETRYCOMPONENT);
   define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NODE_GET_NAMED_GRID);
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
