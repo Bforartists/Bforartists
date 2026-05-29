@@ -1927,19 +1927,19 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeBake", pad=36),
-            OperatorEntry("GeometryNodeBoundBox", pad=20),
-            OperatorEntry("GeometryNodeConvexHull", pad=23),
-            OperatorEntry("GeometryNodeDeleteGeometry", pad=15),
-            OperatorEntry("GeometryNodeDuplicateElements", pad=11),
-            OperatorEntry("GeometryNodeMergePoints", pad=21),
-            OperatorEntry("GeometryNodeSortElements", pad=21),
-            OperatorEntry("GeometryNodeTransform", pad=8),
+            OperatorEntry("GeometryNodeBake", pad=37),
+            OperatorEntry("GeometryNodeBoundBox", pad=21),
+            OperatorEntry("GeometryNodeConvexHull", pad=24),
+            OperatorEntry("GeometryNodeDeleteGeometry", pad=16),
+            OperatorEntry("GeometryNodeDuplicateElements", pad=12),
+            OperatorEntry("GeometryNodeMergePoints", pad=22),
+            OperatorEntry("GeometryNodeSortElements", pad=22),
+            OperatorEntry("GeometryNodeTransform", pad=10),
             Separator,
             OperatorEntry("GeometryNodeGetGeometryComponent", pad=0),
-            OperatorEntry("GeometryNodeSeparateComponents", pad=5),
-            OperatorEntry("GeometryNodeSeparateGeometry", pad=10),
-            OperatorEntry("GeometryNodeSplitToInstances", pad=13),
+            OperatorEntry("GeometryNodeSeparateComponents", pad=6),
+            OperatorEntry("GeometryNodeSeparateGeometry", pad=11),
+            OperatorEntry("GeometryNodeSplitToInstances", pad=14),
         )
 
         self.draw_entries(context, layout, entries)
