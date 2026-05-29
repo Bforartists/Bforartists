@@ -1305,6 +1305,40 @@ class NODES_PT_toolshelf_compositor_add_utilities_matrix(bpy.types.Panel, NodePa
 
         self.draw_entries(context, layout, entries)
 
+class NODES_PT_toolshelf_compositor_add_utilities_rotation(bpy.types.Panel, NodePanel):
+    bl_label = "Rotation"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("FunctionNodeAlignRotationToVector", pad=0),
+            OperatorEntry("FunctionNodeAxesToRotation", pad=14),
+            OperatorEntry("FunctionNodeAxisAngleToRotation", pad=6),
+            OperatorEntry("FunctionNodeEulerToRotation", pad=16),
+            OperatorEntry("FunctionNodeInvertRotation", pad=18),
+            OperatorEntry("ShaderNodeMix", pad=23, text=iface_("Mix Rotation"), settings={"data_type": "'ROTATION'"}),
+            OperatorEntry("FunctionNodeRotateRotation", pad=18),
+            OperatorEntry("FunctionNodeRotateVector", pad=22),
+            OperatorEntry("FunctionNodeRotationToAxisAngle", pad=6),
+            OperatorEntry("FunctionNodeRotationToEuler", pad=16),
+            OperatorEntry("FunctionNodeRotationToQuaternion", pad=7),
+            OperatorEntry("FunctionNodeQuaternionToRotation", pad=7),
+        )
+
+        self.draw_entries(context, layout, entries)
 
 class NODES_PT_toolshelf_compositor_add_utilities_vector(bpy.types.Panel, NodePanel):
     bl_label = "Vector"
@@ -3238,6 +3272,7 @@ classes = (
     NODES_PT_toolshelf_compositor_add_utilities,
     NODES_PT_toolshelf_compositor_add_utilities_math,
     NODES_PT_toolshelf_compositor_add_utilities_matrix,
+    NODES_PT_toolshelf_compositor_add_utilities_rotation,
     NODES_PT_toolshelf_compositor_add_utilities_vector,
     NODES_PT_toolshelf_compositor_add_utilities_text,
     #-----------------------
