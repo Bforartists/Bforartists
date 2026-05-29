@@ -1249,16 +1249,18 @@ def toolsystem_column_count(region):
     )
     width_scale = region.width * view2d_scale / system.ui_scale
 
-    # TODO: BFA - Factor if category tabs are visible or not
-    # Currently this is currently not exposed in the API. 
+    # BFA - Check if toolshelf tabs are visible to adjust thresholds.
+    # When tabs are hidden the snap unit is smaller by ~20px (tabs_width).
+    space = bpy.context.space_data
+    show_tabs = getattr(space, 'show_toolshelf_tabs', True)
+    tabs_offset = 0.0 if show_tabs else 20.0
 
-    # Drawn as text buttons.
-    if width_scale > 180.0:
-        column_count = 4  
-    # Drawn as icon buttons.
-    elif width_scale > 140.0:
+    # Standard thresholds for column count
+    if width_scale > (200.0 - tabs_offset):
+        column_count = 4
+    elif width_scale > (160.0 - tabs_offset):
         column_count = 3
-    elif width_scale > 90:
+    elif width_scale > (120.0 - tabs_offset):
         column_count = 2
     else:
         column_count = 1

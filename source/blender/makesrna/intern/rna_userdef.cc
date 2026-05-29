@@ -11,8 +11,11 @@
 
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
+#include "DNA_space_enums.h"
+#include "DNA_windowmanager_types.h"
 #include "DNA_userdef_types.h"
 
+#include "BLI_listbase.h"
 #include "BLI_math_base.h"
 #include "BLI_math_rotation.h"
 #include "BLI_string_utf8_symbols.h"
@@ -25,6 +28,7 @@
 #include "BLT_translation.hh"
 
 #include "BKE_studiolight.h"
+#include "BKE_workspace.hh"
 
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
@@ -405,6 +409,58 @@ static void rna_userdef_screen_update(Main * /*bmain*/, Scene * /*scene*/, Point
   WM_main_add_notifier(NC_WINDOW, nullptr);
   WM_main_add_notifier(NC_SCREEN | NA_EDITED, nullptr); /* refresh region sizes */
   USERDEF_TAG_DIRTY;
+}
+
+/* Dedicated callback for show_panel_tabs_compact: preserves toolbar column count across
+ * all workspaces when the compact tab width changes, then fires the standard screen update. */
+static void rna_userdef_panel_tabs_compact_update(Main *bmain,
+                                                   Scene *scene,
+                                                   PointerRNA *ptr)
+{
+  if (bmain) {
+    for (bScreen *screen = static_cast<bScreen *>(bmain->screens.first); screen;
+         screen = static_cast<bScreen *>(screen->id.next))
+    {
+      bool screen_needs_refresh = false;
+
+      for (ScrArea *area = static_cast<ScrArea *>(screen->areabase.first); area;
+           area = area->next)
+      {
+        if (ELEM(area->spacetype, SPACE_FILE, SPACE_SPREADSHEET)) {
+          continue;
+        }
+        for (ARegion *region = static_cast<ARegion *>(area->regionbase.first); region;
+             region = region->next)
+        {
+          if (region->regiontype == RGN_TYPE_TOOLS && region->runtime &&
+              region->runtime->type && region->runtime->type->snap_size && region->sizex > 0)
+          {
+            /* The compact flag is already updated when this callback fires.
+             * Temporarily revert it to read snap[0] in the old state. */
+            const short old_sizex = region->sizex;
+            U.uiflag2 ^= USER_UIFLAG2_PANEL_TABS_COMPACT; /* revert to old state */
+            const short old_min_sizex = region->runtime->type->snap_size(region, 0, 0);
+            U.uiflag2 ^= USER_UIFLAG2_PANEL_TABS_COMPACT; /* restore new state */
+
+            const short new_sizex = ED_region_toolbar_snap_preserve_columns(
+                region, old_sizex, old_min_sizex);
+            if (new_sizex != old_sizex) {
+              region->sizex = new_sizex;
+              screen_needs_refresh = true;
+            }
+            ED_area_tag_region_size_update(area, region);
+            ED_region_tag_redraw(region);
+          }
+        }
+      }
+
+      if (screen_needs_refresh) {
+        screen->do_refresh = true;
+      }
+    }
+  }
+
+  rna_userdef_screen_update(bmain, scene, ptr);
 }
 
 static void rna_userdef_screen_update_header_default(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -6363,7 +6419,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
       prop,
       "Compact Sidebar Tabs",
       "Display sidebar tabs in a compact size that shows icons when available");
-  RNA_def_property_update(prop, 0, "rna_userdef_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_panel_tabs_compact_update");
 
   prop = RNA_def_property(srna, "viewport_aa", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_enum_userdef_viewport_aa_items);

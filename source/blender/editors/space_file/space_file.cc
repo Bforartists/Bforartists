@@ -1079,6 +1079,7 @@ void ED_spacetype_file()
   /* regions: channels (directories) */
   art = MEM_new_zeroed<ARegionType>("spacetype file region");
   art->regionid = RGN_TYPE_TOOLS;
+  art->flag = ARegionTypeFlag::HideSinglePanelCategories; /* BFA - category tabs not needed here */
   art->prefsizex = 240;
   art->prefsizey = 60;
   art->keymapflag = ED_KEYMAP_UI;

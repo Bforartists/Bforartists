@@ -12,15 +12,19 @@
 
 #include "BKE_screen.hh"
 
+#include "BLI_math_base.h"
 #include "BLI_rect.h"
 #include "BLI_utildefines.h"
 #include "BLI_listbase.h"
+
+#include "DNA_userdef_types.h"
 
 #include "WM_message.hh"
 
 #include "ED_screen.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_c.hh"
 
 namespace blender {
 
@@ -42,25 +46,30 @@ void ED_region_generic_tools_region_message_subscribe(const wmRegionMessageSubsc
 
 int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, int axis)
 {
-  /* bfa - re-add tabs to tool area, take tabs' width into account when snapping */
-  float offset = 0.0;
-  // check if panel has tabs visible
-  if (blender::ui::panel_category_is_visible(region)) {
-    offset = UI_TOOLBAR_TAB_OFFSET;
-  }
-
   if (axis == 0) {
-    /* Using Y axis avoids slight feedback loop when adjusting X. */
-    const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
-                         (BLI_rcti_size_y(&region->v2d.mask) + 1);
+    /* Using Y axis avoids slight feedback loop when adjusting X.
+     * BFA - Check if v2d is initialized before using it.
+     * If not initialized (e.g., during early startup), return size unchanged
+     * to avoid division by zero or invalid calculations. */
+    const float v2d_cur_y = BLI_rctf_size_y(&region->v2d.cur);
+    const int v2d_mask_y = BLI_rcti_size_y(&region->v2d.mask);
+    if (v2d_cur_y <= 0.0f || v2d_mask_y <= 0) {
+      return size;
+    }
+    const float aspect = v2d_cur_y / (v2d_mask_y + 1);
     const float column = UI_TOOLBAR_COLUMN / aspect;
     const float margin = UI_TOOLBAR_MARGIN / aspect;
+    /* BFA - Calculate tabs width accounting for compact mode margin offset. */
+    float tabs_width = 0.0f;
+    if (!(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS)) {
+      const bool compact = (U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) != 0;
+      tabs_width = (compact ? 28.0f : 20.0f) / aspect;
+    }
     const float snap_units[] = {
-        /*BFA - WIP - how this snaps could be relative to the tabbed toggle also*/
-        column + margin + offset, /* need bfa offset for tabs */
-        (2.0f * column) + margin + offset,
-        (3.0f * column) + margin + offset, /* BFA - Three-column icon buttons */
-        (3.7f * column) + margin + offset, /* BFA - Text button width */
+        tabs_width + column + margin,
+        tabs_width + (2.0f * column) + margin,
+        tabs_width + (3.0f * column) + margin,
+        tabs_width + (4.0f * column) + margin,
     };
     int best_diff = std::numeric_limits<int>::max();
     int best_size = size;
@@ -93,6 +102,36 @@ int ED_region_generic_panel_region_snap_size(const ARegion *region, int size, in
     return int(UI_PANEL_CATEGORY_MIN_WIDTH / aspect);
   }
   return size;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name BFA Toolbar Column Preservation Helper
+ * \{ */
+
+/* Compute the snapped toolbar width that preserves column count across a tab width change
+ * (e.g. toggling compact mode or tab visibility). The caller must pass old_min_sizex read
+ * from snap_size(region, 0, 0) in the PREVIOUS flag state, with the NEW state already active. */
+short ED_region_toolbar_snap_preserve_columns(const ARegion *region,
+                                               short old_sizex,
+                                               short old_min_sizex)
+{
+  if (!region->runtime || !region->runtime->type || !region->runtime->type->snap_size) {
+    return old_sizex;
+  }
+  const float v2d_cur_y = BLI_rctf_size_y(&region->v2d.cur);
+  const int v2d_mask_y = BLI_rcti_size_y(&region->v2d.mask);
+  if (v2d_cur_y <= 0.0f || v2d_mask_y <= 0) {
+    return old_sizex;
+  }
+  const float aspect = v2d_cur_y / float(v2d_mask_y + 1);
+  const int col_width = max_ii(1, int(UI_TOOLBAR_COLUMN / aspect));
+  const int cols = max_ii(1, int(roundf(float(old_sizex - old_min_sizex) / float(col_width))) + 1);
+  const short new_min_sizex = region->runtime->type->snap_size(region, 0, 0);
+  const short new_sizex = region->runtime->type->snap_size(
+      region, new_min_sizex + (cols - 1) * col_width, 0);
+  return (new_sizex > 0) ? new_sizex : old_sizex;
 }
 
 /** \} */

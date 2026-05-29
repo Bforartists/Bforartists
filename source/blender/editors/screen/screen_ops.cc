@@ -7875,6 +7875,9 @@ void ED_region_visibility_change_update_animated(bContext *C, ScrArea *area, ARe
 
   /* blend in, reinitialize regions because it got unhidden */
   if (rgi->hidden == 0) {
+    /* BFA - Handle toolbar snapping before ED_area_init for the animated path.
+     * This bypasses the normal snapping logic, so we call it explicitly. */
+    ED_region_visibility_change_update_ex(C, area, region, false, false);
     ED_area_init(C, win, area);
   }
   else {

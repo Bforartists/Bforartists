@@ -266,7 +266,6 @@ set(SRC
   intern/scene.cc
   intern/screen.cc
   intern/shader_fx.cc
-  intern/toolshelf_runtime.cc
   intern/shrinkwrap.cc
   intern/softbody.cc
   intern/sound.cc

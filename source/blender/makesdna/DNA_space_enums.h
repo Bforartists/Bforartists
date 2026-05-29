@@ -910,7 +910,7 @@ enum eSpaceNode_Flag : short {
   SNODE_FLAG_UNUSED_11 = (1 << 11), /* cleared */
   SNODE_PIN = (1 << 12),
   SNODE_FLAG_UNUSED_12 = (1 << 13),
-  SNODE_SHOW_TOOLSHELF_TABS = (1 << 14), /* BFA - toolshelf tabs toggle flag */
+  SNODE_FLAG_UNUSED_14 = (1 << 14), /* cleared */
 };
 ENUM_OPERATORS(eSpaceNode_Flag)
 

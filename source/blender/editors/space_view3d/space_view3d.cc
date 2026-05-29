@@ -1649,7 +1649,8 @@ void ED_spacetype_view3d()
   /* regions: tool(bar) */
   art = MEM_new_zeroed<ARegionType>("spacetype view3d tools region");
   art->regionid = RGN_TYPE_TOOLS;
-  art->prefsizex = int(UI_TOOLBAR_WIDTH);
+  art->flag = ARegionTypeFlag::UsePanelCategoryTabs;
+  art->prefsizex = int(UI_TOOLBAR_WIDTH_DOUBLE);
   art->prefsizey = 50; /* XXX */
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
   art->listener = view3d_buttons_region_listener;

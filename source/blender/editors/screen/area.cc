@@ -1749,10 +1749,21 @@ static void region_rect_recursive(
     else if (width < prefsizex) {
       const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
                            (BLI_rcti_size_y(&region->v2d.mask) + 1);
-      const bool has_tabs = BKE_regiontype_uses_category_tabs(region->runtime->type);
-      const int min = int(UI_SCALE_FAC *
-                          (has_tabs ? UI_PANEL_CATEGORY_MIN_SNAP_WIDTH : UI_TOOLBAR_WIDTH) /
-                          aspect);
+      const bool has_tabs = BKE_regiontype_uses_category_tabs(region->runtime->type) &&
+                            !(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS);
+      int previous_min_width;
+      if (has_tabs) {
+        if (region->regiontype == RGN_TYPE_TOOLS) {
+          previous_min_width = UI_TOOLBAR_WIDTH;
+        }
+        else {
+          previous_min_width = UI_PANEL_CATEGORY_MIN_SNAP_WIDTH;
+        }
+      }
+      else {
+        previous_min_width = UI_TOOLBAR_WIDTH;
+      }
+      const int min = int(UI_SCALE_FAC * previous_min_width / aspect);
       if (width > min) {
         /* Adjust width to fit. */
         region->winrct = *winrct;
@@ -1893,6 +1904,16 @@ static void region_rect_recursive(
   /* Prevent rounding errors for UI_SCALE_FAC multiply and divide. */
   if (region->winx > 1) {
     region->sizex = (region->winx + 0.5f) / UI_SCALE_FAC;
+    /* BFA - Snap toolbar width to valid column counts after layout.
+     * This ensures the toolbar expands back out from tab-only mode
+     * when space becomes available. */
+    if (region->regiontype == RGN_TYPE_TOOLS && region->runtime &&
+        region->runtime->type && region->runtime->type->snap_size &&
+        BLI_rctf_size_y(&region->v2d.cur) > 0.0f &&
+        BLI_rcti_size_y(&region->v2d.mask) > 0)
+    {
+      region->sizex = region->runtime->type->snap_size(region, region->sizex, 0);
+    }
   }
   if (region->winy > 1) {
     region->sizey = (region->winy + 0.5f) / UI_SCALE_FAC;
@@ -2440,6 +2461,20 @@ void ED_region_visibility_change_update_ex(
      * When #ED_area_init frees buttons via #blocklist_free a nullptr context
      * is passed, causing the free not to remove menus or their handlers. */
     ui::UI_region_free_active_but_all(C, region);
+  }
+  else {
+    /* BFA - Initialize uninitialized tools regions when showing them (e.g. toggling via azone).
+     * Snap to the nearest valid unit to the region type's preferred width so each editor
+     * respects its configured default column count and the current compact/tabs state. */
+    if (region->regiontype == RGN_TYPE_TOOLS && region->sizex == 0 &&
+        region->runtime && region->runtime->type && region->runtime->type->snap_size)
+    {
+      if (BLI_rctf_size_y(&region->v2d.cur) > 0.0f && BLI_rcti_size_y(&region->v2d.mask) > 0) {
+        const int pref = region->runtime->type->prefsizex;
+        region->sizex = region->runtime->type->snap_size(region, pref, 0);
+        ED_area_tag_region_size_update(area, region);
+      }
+    }
   }
 
   if (do_init) {
@@ -3352,7 +3387,7 @@ void ED_region_panels_layout_ex(const bContext *C,
       use_category_tabs = false;
     }
   }
-  if (use_category_tabs) {
+  if (use_category_tabs && !(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS)) {
     margin_x = category_tabs_width;
   }
 

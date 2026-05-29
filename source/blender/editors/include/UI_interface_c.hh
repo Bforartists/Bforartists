@@ -9,6 +9,7 @@
 #pragma once
 
 #include <bit>
+#include <cstdio>
 #include <functional>
 #include <optional>
 #include <string>
@@ -435,31 +436,31 @@ enum {
 #define UI_NAVIGATION_REGION_WIDTH UI_COMPACT_PANEL_WIDTH
 #define UI_NARROW_NAVIGATION_REGION_WIDTH 100
 
+/** BFA - Compact tabs */
+#define UI_COMPACT_TABS (U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT)
+/** BFA - Toolbar Width Defaults */
+#define UI_TOOLBAR_WIDTH_SINGLE 90
+#define UI_TOOLBAR_WIDTH_DOUBLE 132
+
 /** The width of one icon column of the Toolbar. */
 #define UI_TOOLBAR_COLUMN (1.25f * ICON_DEFAULT_HEIGHT_TOOLBAR)
 /** The space between the Toolbar and the area's edge. */
-/* bfa - margin changed from 0.5f > 0.75f to fix icons size */
-#define UI_TOOLBAR_MARGIN (0.75f * ICON_DEFAULT_HEIGHT_TOOLBAR)
+/* BFA - We use HIDE_BG for headers, so we need this to be wider */
+#define UI_TOOLBAR_MARGIN (1.0f * ICON_DEFAULT_HEIGHT_TOOLBAR)
 /** Total width of Toolbar showing one icon column. */
-#define UI_TOOLBAR_WIDTH UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN
-
-/** Offset for toolbar when tabs are visible. */
-#define UI_TOOLBAR_TAB_OFFSET 20.f /* BFA */
-
-/* Minimum width threshold for storing preferred toolbar width */
-#define UI_TOOLBAR_MIN_WIDTH_THRESHOLD 1.0f /* BFA */
+#define UI_TOOLBAR_WIDTH (UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN) /* BFA */
 
 #define UI_PANEL_CATEGORY_MARGIN_WIDTH \
-  (((U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 1.4f : 1.0f) * U.widget_unit)
+  ((UI_COMPACT_TABS ? 1.4f : 1.0f) * U.widget_unit)
 
 /* Minimum width for a panel showing only category tabs. */
-#define UI_PANEL_CATEGORY_MIN_WIDTH ((U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 32.0f : 26.0f)
+#define UI_PANEL_CATEGORY_MIN_WIDTH (UI_COMPACT_TABS ? 32.0f : 26.0f) /** BFA - UI_COMPACT_TABS */
 /* Minimum width for a panel showing content and category tabs. */
 #define UI_PANEL_CATEGORY_MIN_SNAP_WIDTH 90.0f
 
 /* Both these margins should be ignored if the panel doesn't show a background (check
  * #panel_should_show_background()). */
-#define UI_PANEL_MARGIN_X (U.widget_unit * 0.2f) /*bfa - margin from 0.4 to 0.2 for now*/
+#define UI_PANEL_MARGIN_X (U.widget_unit * 0.4f) /* BFA - keep 0.4f same has blender */
 #define UI_PANEL_MARGIN_Y (U.widget_unit * 0.1f)
 
 /**

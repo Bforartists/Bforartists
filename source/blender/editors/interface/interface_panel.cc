@@ -2447,6 +2447,9 @@ bool panel_category_is_visible(const ARegion *region)
 
 bool panel_category_tabs_is_visible(const ARegion *region)
 {
+  if (region->flag & RGN_FLAG_HIDE_CATEGORY_TABS) {
+    return false;
+  }
   return panel_category_is_visible(region) &&
          BKE_regiontype_uses_category_tabs(region->runtime->type);
 }

@@ -30,6 +30,7 @@
 #include "BLO_readfile.hh"
 
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 
@@ -209,6 +210,12 @@ bool ED_workspace_change(WorkSpace *workspace_new, bContext *C, wmWindowManager 
    * actual screen change and updates context (including CTX_wm_workspace) */
   screen_change_update(C, win, screen_new);
   workspace_change_update(workspace_new, workspace_old, C, wm);
+
+  /* BFA - Recalculate toolbar widths for the new workspace screen.
+   * When switching workspaces, the new screen's regions may not have
+   * been fully initialized during startup, so we need to recalculate
+   * widths now that runtime->type is available. */
+  ED_screen_toolbar_widths_update(C, nullptr, screen_new, true, true);
 
   BLI_assert(CTX_wm_workspace(C) == workspace_new);
 

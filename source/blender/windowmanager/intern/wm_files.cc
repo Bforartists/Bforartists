@@ -98,6 +98,8 @@
 
 #include "BLO_writefile.hh"
 
+#include "ED_screen.hh"
+
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 
@@ -800,6 +802,15 @@ static void wm_file_read_post(bContext *C,
     }
 
     ED_editors_init(C);
+
+    /* BFA - Recalculate toolbar widths after editors are fully initialized.
+     * At this point v2d is set up so snap_size works correctly. Covers both
+     * startup.blend and regular .blend file loading. */
+    if (!G.background) {
+      /* Create temporary wm for multi-screen processing */
+      wmWindowManager *temp_wm = static_cast<wmWindowManager *>(bmain->wm.first);
+      ED_screen_toolbar_widths_update(nullptr, temp_wm, nullptr, false, true);
+    }
 
     /* Add-ons are disabled when loading the startup file, so the Render Layer node in compositor
      * node trees might be wrong due to missing render engines that are available as add-ons, like

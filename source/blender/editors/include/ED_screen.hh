@@ -333,6 +333,20 @@ void ED_screen_draw_edges(wmWindow *win);
 void ED_screen_refresh(bContext *C, wmWindowManager *wm, wmWindow *win);
 void ED_screen_ensure_updated(bContext *C, wmWindowManager *wm, wmWindow *win);
 void ED_screen_do_listen(bContext *C, const wmNotifier *note);
+
+/* Unified toolbar width management function.
+ * Handles initialization, startup recalculation, and workspace switching scenarios. */
+void ED_screen_toolbar_widths_update(const bContext *C,
+                                      wmWindowManager *wm,
+                                      bScreen *target_screen,
+                                      bool process_uninitialized,
+                                      bool process_existing);
+/* BFA - Snap toolbar width to correct column count after a tab-width state change
+ * (compact mode or tab visibility toggle). Pass old_min_sizex = snap_size(region, 0, 0)
+ * in the PREVIOUS state; call this after the new state is active. */
+short ED_region_toolbar_snap_preserve_columns(const ARegion *region,
+                                               short old_sizex,
+                                               short old_min_sizex);
 /**
  * \brief Change the active screen.
  *
