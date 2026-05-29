@@ -1936,6 +1936,7 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeSortElements", pad=16),
             OperatorEntry("GeometryNodeTransform", pad=4),
             Separator,
+            OperatorEntry("GeometryNodeGetGeometryComponent", pad=0),
             OperatorEntry("GeometryNodeSeparateComponents", pad=1),
             OperatorEntry("GeometryNodeSeparateGeometry", pad=6),
             OperatorEntry("GeometryNodeSplitToInstances", pad=9),
