@@ -3061,6 +3061,7 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry("GeometryNodeFieldToList", pad=8),
+            OperatorEntry("GeometryNodeFilterList", pad=10),
             OperatorEntry("GeometryNodeListGetItem", pad=8),
             OperatorEntry("GeometryNodeListLength", pad=10),
         )

@@ -1313,6 +1313,7 @@ if(WITH_BLENDER)
       node_fieldatindex
       node_fieldtogrid
       node_fieldtolist
+      node_filterlist
       node_frame
       node_framejoin
       node_frameparent
