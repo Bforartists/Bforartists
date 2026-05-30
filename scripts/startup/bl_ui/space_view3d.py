@@ -7256,10 +7256,6 @@ class VIEW3D_MT_edit_greasepencil_delete(Menu):
 
         layout.separator()
 
-        layout.operator_enum("grease_pencil.dissolve", "type")
-
-        layout.separator()
-
         layout.operator(
             "grease_pencil.delete_frame",
             text="Delete Active Keyframe (Active Layer)",
