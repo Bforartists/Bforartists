@@ -297,6 +297,15 @@ void draw_compositor_nodes_modifier_ui(const bContext &C,
     template_id(&layout, &C, modifier_ptr, "node_group", newop, nullptr, nullptr);
   }
 
+  /* BFA - Open Compositor Modifier Editor Operator */
+  if (cmd.node_group != nullptr && !ID_MISSING(cmd.node_group)) {
+    ui::Layout &row = layout.row(true);
+    PointerRNA op_ptr = row.op("SEQUENCER_OT_strip_modifier_compositor_open_editor",
+                                IFACE_("Open Compositor Editor"),
+                                ICON_NODE_COMPOSITING);
+    RNA_string_set(&op_ptr, "modifier", cmd.modifier.name);
+  }
+
   const StripModifierData &smd = cmd.modifier;
   const bool is_mask_used = smd.mask_input_type == STRIP_MASK_INPUT_STRIP ?
                                 smd.mask_strip != nullptr :
