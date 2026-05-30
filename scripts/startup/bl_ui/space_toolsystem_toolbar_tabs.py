@@ -80,6 +80,7 @@ class VIEW3D_PT_objecttab_transform(Panel):
             if context.mode in {'EDIT_MESH',}:
                 col.operator("mesh.circularize", text="To Circle", icon = "TOCIRCLE")
                 col.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
+                col.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
             col.operator("transform.bend", text="Bend", icon = "BEND")
             col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
@@ -165,10 +166,12 @@ class VIEW3D_PT_objecttab_transform(Panel):
                     row.operator("mesh.circularize", text="", icon = "TOCIRCLE")
                     row.operator("mesh.flatten", text="", icon="FLATTEN")
                     row = col.row(align=True)
+                    row.operator("mesh.space_edge_loops_evenly", text="", icon="SPACE_LOOPS_EVENLY")
                 row.operator("transform.shear", text="", icon = "SHEAR")
 
-                row = col.row(align=True)
+
                 row.operator("transform.bend", text="", icon = "BEND")
+                row = col.row(align=True)
                 row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
                 row = col.row(align=True)
@@ -244,6 +247,8 @@ class VIEW3D_PT_objecttab_transform(Panel):
                     row.operator("mesh.circularize", text="", icon = "TOCIRCLE")
                     row = col.row(align=True)
                     row.operator("mesh.flatten", text="", icon="FLATTEN")
+                    row.operator("mesh.space_edge_loops_evenly", text="", icon="SPACE_LOOPS_EVENLY")
+                    row = col.row(align=True)
                 row.operator("transform.shear", text="", icon = "SHEAR")
 
                 row = col.row(align=True)
@@ -322,6 +327,7 @@ class VIEW3D_PT_objecttab_transform(Panel):
                 if context.mode in {'EDIT_MESH',}:
                     col.operator("mesh.circularize", text="", icon = "TOCIRCLE")
                     col.operator("mesh.flatten", text="", icon="FLATTEN")
+                    col.operator("mesh.space_edge_loops_evenly", text="", icon="SPACE_LOOPS_EVENLY")
                 col.operator("transform.shear", text="", icon = "SHEAR")
                 col.operator("transform.bend", text="", icon = "BEND")
                 col.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
