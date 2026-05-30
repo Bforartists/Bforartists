@@ -243,28 +243,30 @@ class IMAGE_MT_select(Menu):
         myop.deselect = False
         layout.operator("uv.shortest_path_select", text="Shortest Path", icon="SELECT_SHORTESTPATH")
         layout.operator("uv.shortest_path_pick", text="Shortest Path Pick", icon="SELECT_SHORTESTPATHPICK")
-        layout.operator("uv.select_tile", icon="SELECT_TILE")
 
         layout.separator()
+        layout.operator("uv.select_tile", text="Tile", icon="SELECT_TILE")
         layout.operator("uv.select_pinned", text="Pinned", icon="PINNED")
         layout.operator("uv.select_split", text="Split", icon="SPLIT")
         layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
         layout.operator("uv.select_similar", text="Similar", icon="SIMILAR")
-        layout.menu("IMAGE_MT_select_all_by_trait")
+        #layout.menu("IMAGE_MT_select_all_by_trait") # BFA - not used, these are exposed to top level
 
         layout.separator()
         layout.menu("IMAGE_MT_select_more_less")
 
 
+# BFA - not used
 class IMAGE_MT_select_all_by_trait(Menu):
     bl_label = "Select All by Trait"
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("uv.select_tile", text="Tile") # BFA - WIP
-        layout.operator("uv.select_pinned", text="Pinned") # BFA - WIP
-        layout.operator("uv.select_overlap", text="Overlap") # BFA - WIP
-        layout.operator("uv.select_by_winding", text="Winding") # BFA - WIP
+        layout.operator("uv.select_tile", text="Tile", icon="SELECT_TILE")
+        layout.operator("uv.select_pinned", text="Pinned", icon="PINNED")
+        layout.operator("uv.select_split", text="Split", icon="SPLIT")
+        layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
+        layout.operator("uv.select_by_winding", text="Winding", icon="WINDING")
 
 # BFA - menu
 class IMAGE_MT_select_more_less(Menu):
@@ -2318,7 +2320,7 @@ classes = (
     IMAGE_MT_select,
     IMAGE_MT_select_legacy,  # BFA menu
     IMAGE_MT_select_linked, # BFA - not used
-    IMAGE_MT_select_all_by_trait,
+    IMAGE_MT_select_all_by_trait, # BFA - not used
     IMAGE_MT_select_more_less,  # BFA menu
     IMAGE_MT_image,
     IMAGE_MT_image_transform,
