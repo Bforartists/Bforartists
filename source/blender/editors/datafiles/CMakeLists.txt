@@ -724,6 +724,7 @@ if(WITH_BLENDER)
       filter
       filter_off
       fixed_size
+      flatten
       flatten_handler
       flip
       flip_normals
