@@ -5587,8 +5587,8 @@ class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
             col.operator("grease_pencil.caps_set", text="Flat", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
 
             col.separator(factor = 0.5)
-            col.operator("grease_pencil.caps_set", text="Toggle Start", icon = "TOGGLECAPS_END").type = 'END'
-            col.operator("grease_pencil.caps_set", text="Toggle End", icon = "TOGGLECAPS_START").type = 'START'
+            col.operator("grease_pencil.caps_set", text="Toggle Start", icon = "TOGGLECAPS_START").type = 'END'
+            col.operator("grease_pencil.caps_set", text="Toggle End", icon = "TOGGLECAPS_END").type = 'START'
 
 
         # icon buttons
