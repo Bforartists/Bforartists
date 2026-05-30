@@ -109,6 +109,12 @@ class VIEW3D_PT_objecttab_transform(Panel):
                 col.scale_y = 2
                 col.operator("transform.transform", text="Radius", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
+            if context.mode == 'EDIT_GREASE_PENCIL':
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+                col.operator("transform.transform", text="Opacity", icon="GP_OPACITY").mode = 'GPENCIL_OPACITY'
+
             if context.active_object is not None and obj.type != 'ARMATURE':
 
                 col = layout.column(align=True)
@@ -196,6 +202,12 @@ class VIEW3D_PT_objecttab_transform(Panel):
                     row = col.row(align=True)
                     row.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
+                if context.mode == 'EDIT_GREASE_PENCIL':
+
+                    col.separator( factor = 0.5)
+                    row = col.row(align=True)
+                    row.operator("transform.transform", text="", icon="GP_OPACITY").mode = 'GPENCIL_OPACITY'
+
                 if context.active_object is not None and obj.type != 'ARMATURE':
 
                     col.separator( factor = 0.5)
@@ -276,6 +288,12 @@ class VIEW3D_PT_objecttab_transform(Panel):
                     row = col.row(align=True)
                     row.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
+                if context.mode == 'EDIT_GREASE_PENCIL':
+
+                    col.separator( factor = 0.5)
+                    row = col.row(align=True)
+                    row.operator("transform.transform", text="", icon="GP_OPACITY").mode = 'GPENCIL_OPACITY'
+
                 if context.active_object is not None and obj.type != 'ARMATURE':
 
                     col.separator( factor = 0.5)
@@ -349,6 +367,11 @@ class VIEW3D_PT_objecttab_transform(Panel):
 
                     col.separator( factor = 0.5)
                     col.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
+
+                if context.mode == 'EDIT_GREASE_PENCIL':
+
+                    col.separator( factor = 0.5)
+                    col.operator("transform.transform", text="", icon="GP_OPACITY").mode = 'GPENCIL_OPACITY'
 
                 if context.active_object is not None and obj.type != 'ARMATURE':
 
@@ -5278,13 +5301,13 @@ class VIEW3D_PT_gp_gpenciltab_separate(Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("grease_pencil.separate", text="Separate Selected", icon = "SEPARATE").mode = 'SELECTED'
-            col.operator("grease_pencil.separate", text="Separate Selected Strokes", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
-            col.operator("grease_pencil.separate", text="Separate Active Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
+            col.operator("grease_pencil.separate", text="Selection", icon = "SEPARATE").mode = 'SELECTED'
+            col.operator("grease_pencil.separate", text="By Material", icon = "SEPARATE_BYMATERIAL").mode = 'MATERIAL'
+            col.operator("grease_pencil.separate", text="By Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
 
             col.separator(factor = 0.5)
 
-            col.operator("grease_pencil.stroke_split", text="Stroke Split", icon = "SPLIT")
+            col.operator("grease_pencil.stroke_split", text="Split", icon = "SPLIT")
 
         # icon buttons
         else:
