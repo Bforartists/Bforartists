@@ -2008,6 +2008,7 @@ if(WITH_BLENDER)
       sound
       space2
       space3
+      space_loops_evenly
       spanish_exclamation
       spanish_question
       speaker
