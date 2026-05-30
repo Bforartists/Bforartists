@@ -727,8 +727,7 @@ class DOPESHEET_MT_select(Menu):
 
             layout.separator()
 
-            layout.operator("action.select_linked") # BFA - WIP
-            layout.operator_menu_enum("action.select_by_type", "type") # BFA - WIP
+            layout.operator_menu_enum("action.select_by_type", "type", text="Type",)
 
         props = layout.operator("action.select_leftright", text="Before Current Frame", icon="BEFORE_CURRENT_FRAME")
         props.extend = False
