@@ -244,7 +244,6 @@ class VIEW3D_PT_objecttab_transform(Panel):
                     row.operator("mesh.circularize", text="", icon = "TOCIRCLE")
                     row = col.row(align=True)
                     row.operator("mesh.flatten", text="", icon="FLATTEN")
-                row = col.row(align=True)
                 row.operator("transform.shear", text="", icon = "SHEAR")
 
                 row = col.row(align=True)
