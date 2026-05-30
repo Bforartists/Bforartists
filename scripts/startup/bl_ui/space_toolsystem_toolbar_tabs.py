@@ -4455,15 +4455,6 @@ class VIEW3D_PT_curvetab_curve(Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("transform.tilt", icon = "TILT")
-            col.operator("curve.tilt_clear", icon = "CLEAR_TILT")
-
-            col.separator(factor = 0.5)
-
-            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
-
-            col.separator(factor = 0.5)
-
             col.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
 
         # icon buttons
@@ -4482,11 +4473,6 @@ class VIEW3D_PT_curvetab_curve(Panel):
 
                 row = col.row(align=True)
                 row.operator("curve.decimate", text = "", icon = "DECIMATE")
-                row.operator("transform.tilt", text = "", icon = "TILT")
-                row.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
-
-                row = col.row(align=True)
-                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
                 row.operator("curve.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
 
             elif column_count == 2:
@@ -4500,11 +4486,6 @@ class VIEW3D_PT_curvetab_curve(Panel):
                 row.operator("curve.decimate", text = "", icon = "DECIMATE")
 
                 row = col.row(align=True)
-                row.operator("transform.tilt", text = "", icon = "TILT")
-                row.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
-
-                row = col.row(align=True)
-                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
                 row.operator("curve.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
 
             elif column_count == 1:
@@ -4516,15 +4497,6 @@ class VIEW3D_PT_curvetab_curve(Panel):
 
                 col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
                 col.operator("curve.decimate", text = "", icon = "DECIMATE")
-
-                col.separator(factor = 0.5)
-
-                col.operator("transform.tilt", text = "", icon = "TILT")
-                col.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
-
-                col.separator(factor = 0.5)
-
-                col.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
 
                 col.separator(factor = 0.5)
 
