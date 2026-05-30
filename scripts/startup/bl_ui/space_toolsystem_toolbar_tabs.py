@@ -5559,7 +5559,7 @@ class VIEW3D_PT_gp_stroketab_simplify(Panel):
 
 
 class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
-    bl_label = "Toggle Caps"
+    bl_label = "Set Caps"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_context = "grease_pencil_edit"
@@ -5584,9 +5584,12 @@ class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
             col.scale_y = 2
 
             col.operator("grease_pencil.caps_set", text="Rounded", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
-            col.operator("grease_pencil.caps_set", text="Start", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
-            col.operator("grease_pencil.caps_set", text="End", icon = "TOGGLECAPS_START").type = 'START'
-            col.operator("grease_pencil.caps_set", text="Default", icon = "TOGGLECAPS_END").type = 'END'
+            col.operator("grease_pencil.caps_set", text="Flat", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+
+            col.separator(factor = 0.5)
+            col.operator("grease_pencil.caps_set", text="Toggle Start", icon = "TOGGLECAPS_END").type = 'END'
+            col.operator("grease_pencil.caps_set", text="Toggle End", icon = "TOGGLECAPS_START").type = 'START'
+
 
         # icon buttons
         else:
@@ -5600,9 +5603,8 @@ class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
                 row = col.row(align=True)
                 row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
                 row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
-                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
-
                 row = col.row(align=True)
+                row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
                 row.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
             elif column_count == 2:
@@ -5619,6 +5621,8 @@ class VIEW3D_PT_gp_stroketab_togglecaps(Panel):
 
                 col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'ROUND'
                 col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_BOTH").type = 'FLAT'
+
+                col.separator(factor = 0.5)
                 col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_START").type = 'START'
                 col.operator("grease_pencil.caps_set", text="", icon = "TOGGLECAPS_END").type = 'END'
 
