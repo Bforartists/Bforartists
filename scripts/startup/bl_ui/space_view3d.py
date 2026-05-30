@@ -1365,7 +1365,7 @@ class VIEW3D_MT_transform_base:
         layout.operator("transform.tosphere", text="To Sphere", icon="TOSPHERE")
         if context.mode in {"EDIT_MESH"}:
             layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
-            layout.operator("mesh.flatten", text="Flatten") # BFA - WIP
+            layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly") # BFA - WIP
         layout.operator("transform.shear", text="Shear", icon="SHEAR")
         layout.operator("transform.bend", text="Bend", icon="BEND")
