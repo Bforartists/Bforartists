@@ -1968,7 +1968,6 @@ class SEQUENCER_MT_modifier_add(Menu):
             self.operator_modifier_add(layout, 'MASK')
             self.operator_modifier_add(layout, 'TONEMAP')
             self.operator_modifier_add(layout, 'WHITE_BALANCE')
-            layout.menu_contents("SEQUENCER_MT_modifier_add_root_catalogs")
 
 
 class SequencerButtonsPanel:
