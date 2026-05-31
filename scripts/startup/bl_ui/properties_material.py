@@ -153,7 +153,13 @@ class EEVEE_MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
                 if ob.type != 'FONT':
                         row.operator("object.material_slot_select", text="Select", icon='RESTRICT_SELECT_OFF') # BFA - icon
                         row.operator("object.material_slot_deselect", text="Deselect", icon='RESTRICT_SELECT_ON') # BFA - icon
-
+            
+            # BFA - Open Shader Editor
+            if mat:
+                col = layout.column(align=True)
+                col.separator()
+                col.operator("material.open_node_editor", icon='NODE_MATERIAL')
+                
         elif mat:
             row.template_ID(space, "pin_id")
 

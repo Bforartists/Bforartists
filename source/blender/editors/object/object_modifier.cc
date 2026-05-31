@@ -72,6 +72,7 @@
 #include "BKE_pointcloud.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
+#include "BKE_screen.hh"
 #include "BKE_softbody.h"
 #include "BKE_volume.hh"
 
@@ -90,6 +91,7 @@
 #include "ED_armature.hh"
 #include "ED_grease_pencil.hh"
 #include "ED_node.hh"
+#include "ED_node_c.hh"
 #include "ED_object.hh"
 #include "ED_object_vgroup.hh"
 #include "ED_screen.hh"
@@ -4061,6 +4063,90 @@ void OBJECT_OT_grease_pencil_time_modifier_segment_move(wmOperatorType *ot)
 
   ot->prop = RNA_def_enum(ot->srna, "type", segment_move, 0, "Type", "");
 }
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - Open Geometry Nodes Editor Operator
+ * \{ */
+
+static wmOperatorStatus geometry_nodes_open_editor_exec(bContext *C, wmOperator *op)
+{
+  Object *ob = CTX_data_active_object(C);
+  if (!ob) {
+    return OPERATOR_CANCELLED;
+  }
+
+  /* BFA - resolve modifier from operator property */
+  std::string modifier_name = RNA_string_get(op->ptr, "modifier");
+  ModifierData *md = BKE_modifiers_findby_name(ob, modifier_name.c_str());
+  if (!md || md->type != eModifierType_Nodes) {
+    return OPERATOR_CANCELLED;
+  }
+
+  NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(md);
+  if (!nmd->node_group || ID_MISSING(nmd->node_group)) {
+    BKE_report(op->reports, RPT_ERROR, "Geometry Nodes modifier has no node group assigned");
+    return OPERATOR_CANCELLED;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Geometry Nodes Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Geometry Nodes Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  /* BFA - configure SpaceNode for geometry nodes editing */
+  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  STRNCPY(snode->tree_idname, "GeometryNodeTree");
+  snode->node_tree_sub_type = SNODE_GEOMETRY_MODIFIER;
+  snode->selected_node_group = nullptr;
+
+  /* BFA - push the modifier's node group into the node editor stack */
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, nmd->node_group, &ob->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  /* BFA - refresh UI after node tree context change */
+  WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static bool geometry_nodes_open_editor_poll(bContext *C)
+{
+  Object *ob = CTX_data_active_object(C);
+  if (!ob) {
+    return false;
+  }
+  for (ModifierData &md : ob->modifiers) {
+    if (md.type == eModifierType_Nodes) {
+      NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(&md);
+      if (nmd->node_group && !ID_MISSING(nmd->node_group)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+void OBJECT_OT_geometry_nodes_open_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Geometry Nodes Editor";
+  ot->idname = "OBJECT_OT_geometry_nodes_open_editor";
+  ot->description = "Open a Geometry Nodes Editor window for this modifier's node group";
+
+  ot->exec = geometry_nodes_open_editor_exec;
+  ot->poll = geometry_nodes_open_editor_poll;
+
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* BFA - hidden property so the UI button knows which modifier to target */
+  ot->prop = RNA_def_string(
+      ot->srna, "modifier", nullptr, MAX_NAME, "Modifier", "Name of the modifier to edit");
+  RNA_def_property_flag(ot->prop, PROP_HIDDEN);
+}
+
+/** \} */
 
 /** \} */
 

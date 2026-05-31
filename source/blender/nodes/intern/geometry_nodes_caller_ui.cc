@@ -1023,6 +1023,15 @@ void draw_geometry_nodes_modifier_ui(const bContext &C,
       draw_manage_panel(&C, *panel_layout, modifier_ptr, nmd);
     }
   }
+
+  /* BFA - Open Geometry Nodes Editor Operator */
+  if (nmd.node_group != nullptr && !ID_MISSING(nmd.node_group)) {
+    layout.separator();
+    PointerRNA op_ptr = layout.op("OBJECT_OT_geometry_nodes_open_editor",
+                                    IFACE_("Open Geometry Nodes Editor"),
+                                    ICON_NODETREE);
+    RNA_string_set(&op_ptr, "modifier", nmd.modifier.name);
+  }
 }
 
 void draw_geometry_nodes_operator_redo_ui(const bContext &C,
