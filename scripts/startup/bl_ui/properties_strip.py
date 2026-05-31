@@ -390,8 +390,8 @@ class STRIP_PT_effect_text_style(StripButtonsPanel, Panel):
         col1.label(text="Size")
         col2.prop(strip, "font_size", text="")
 
-        col1.label(text="Line")
-        col2.prop(strip, "space_line")
+        col1.label(text="Line Spacing")
+        col2.prop(strip, "space_line", text="")
         
         col1.label(text="Color")
         col2.prop(strip, "color", text="")
