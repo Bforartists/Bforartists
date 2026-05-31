@@ -1336,15 +1336,17 @@ static void widget_draw_icon(
     const Button *but, BIFIconID icon, float alpha, const rcti *rect, const uchar mono_color[4])
 {
   /* BFA: Detect toolbar tool buttons for correct icon sizing.
-   * Toolbar tools (left sidebar + wm.toolbar popup + pie menus) need large icons (32px).
+   * Toolbar tools (left sidebar + wm.toolbar popup + pie menus + hold-popups) need large icons (32px).
    * Menu tools (Quick Favorites) need small icons (16px) like other menu items.
-   * Detection: static toolbar has block_flags=0 & no handle; popovers/pie menus have their flags. */
+   * Detection: static toolbar has block_flags=0 & no handle; popovers/pie menus/hold-popups have their flags. */
   const bool is_tool = but_is_tool(but);
   const bool is_static_toolbar = (but->block->flag == 0) && (but->block->handle == nullptr);
   const bool is_popover = (but->block->flag & BLOCK_POPOVER) != 0;
   const bool is_pie = (but->block->flag & BLOCK_PIE_MENU) != 0;
-  /* Toolbar tools: static toolbar (left sidebar), popovers (wm.toolbar), or pie menus (fallback) */
-  const bool is_toolbar_tool = is_tool && (is_static_toolbar || is_popover || is_pie);
+  const bool is_hold_popup = (but->block->flag & BLOCK_POPUP_HOLD) != 0;
+  /* Toolbar tools: static toolbar (left sidebar), popovers (wm.toolbar), pie menus (fallback),
+   * or hold-popups (tool submenu from toolbar buttons). */
+  const bool is_toolbar_tool = is_tool && (is_static_toolbar || is_popover || is_pie || is_hold_popup);
   const bool is_menu_icon_size = !is_toolbar_tool;
 
   if (but->flag & BUT_ICON_PREVIEW) {
@@ -2861,12 +2863,14 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
 
     const BIFIconID icon = button_icon(but);
     /* BFA: Toolbar tools get large icons (32px), menu tools get small icons (16px).
-     * Left sidebar toolbar (block_flags=0), popovers (wm.toolbar), and pie menus get large icons.
+     * Left sidebar toolbar (block_flags=0), popovers (wm.toolbar), pie menus, and
+     * hold-popups (tool submenu from toolbar buttons) get large icons.
      * Regular menus (Quick Favorites) get small icons. */
     const bool is_static_toolbar = (but->block->flag == 0) && (but->block->handle == nullptr);
     const bool is_popover = (but->block->flag & BLOCK_POPOVER) != 0;
     const bool is_pie = (but->block->flag & BLOCK_PIE_MENU) != 0;
-    const bool is_toolbar_tool = is_tool && (is_static_toolbar || is_popover || is_pie);
+    const bool is_hold_popup = (but->block->flag & BLOCK_POPUP_HOLD) != 0;
+    const bool is_toolbar_tool = is_tool && (is_static_toolbar || is_popover || is_pie || is_hold_popup);
     const int icon_size_init = is_toolbar_tool ? ICON_DEFAULT_HEIGHT_TOOLBAR : ICON_DEFAULT_HEIGHT;
     const float icon_size = icon_size_init / (but->block->aspect * UI_INV_SCALE_FAC);
     const float icon_padding = 2 * UI_SCALE_FAC;
