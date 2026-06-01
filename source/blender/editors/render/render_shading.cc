@@ -59,6 +59,7 @@
 #include "BKE_object.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
+#include "BKE_screen.hh" /* BFA */
 #include "BKE_texture.h"
 #include "BKE_vfont.hh"
 #include "BKE_workspace.hh"
@@ -85,6 +86,7 @@
 #include "ED_curve.hh"
 #include "ED_mesh.hh"
 #include "ED_node.hh"
+#include "ED_node_c.hh" /* BFA */
 #include "ED_object.hh"
 #include "ED_paint.hh"
 #include "ED_render.hh"
@@ -3235,6 +3237,127 @@ void TEXTURE_OT_slot_paste(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 }
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - Open Shader Editor Operator
+ * \{ */
+
+static wmOperatorStatus material_open_node_editor_exec(bContext *C, wmOperator *op)
+{
+  Material *ma = static_cast<Material *>(
+      CTX_data_pointer_get_type(C, "material", RNA_Material).data);
+  if (!ma) {
+    BKE_report(op->reports, RPT_ERROR, "No active material");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!ma->nodetree) {
+    BKE_report(op->reports, RPT_ERROR, "Material has no node tree");
+    return OPERATOR_CANCELLED;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Shader Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Shader Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  STRNCPY(snode->tree_idname, "ShaderNodeTree");
+  snode->shaderfrom = SNODE_SHADER_OBJECT;
+  snode->selected_node_group = nullptr;
+
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, ma->nodetree, &ma->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  WM_event_add_notifier(C, NC_MATERIAL | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static bool material_open_node_editor_poll(bContext *C)
+{
+  Material *ma = static_cast<Material *>(
+      CTX_data_pointer_get_type(C, "material", RNA_Material).data);
+  return ma != nullptr && ma->nodetree != nullptr;
+}
+
+void MATERIAL_OT_open_node_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Shader Editor";
+  ot->idname = "MATERIAL_OT_open_node_editor";
+  ot->description = "Open a Shader Editor window for this material";
+  ot->exec = material_open_node_editor_exec;
+  ot->poll = material_open_node_editor_poll;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - Open Texture Node Editor Operator
+ * \{ */
+
+static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *op)
+{
+  Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
+  if (!tex) {
+    BKE_report(op->reports, RPT_ERROR, "No active texture");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!tex->use_nodes) {
+    tex->use_nodes = true;
+    if (tex->nodetree == nullptr) {
+      ED_node_texture_default(C, tex);
+    }
+  }
+
+  if (!tex->nodetree) {
+    BKE_report(op->reports, RPT_ERROR, "Texture has no node tree");
+    return OPERATOR_CANCELLED;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Texture Node Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Texture Node Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  STRNCPY(snode->tree_idname, "TextureNodeTree");
+  snode->texfrom = SNODE_TEX_BRUSH;
+  snode->selected_node_group = nullptr;
+
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, tex->nodetree, &tex->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  WM_event_add_notifier(C, NC_TEXTURE | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static bool texture_open_node_editor_poll(bContext *C)
+{
+  Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
+  return tex != nullptr;
+}
+
+void TEXTURE_OT_open_node_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Texture Node Editor";
+  ot->idname = "TEXTURE_OT_open_node_editor";
+  ot->description = "Open a Texture Node Editor window for this texture";
+  ot->exec = texture_open_node_editor_exec;
+  ot->poll = texture_open_node_editor_poll;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
 
 /** \} */
 
