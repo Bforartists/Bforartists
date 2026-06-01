@@ -16,8 +16,16 @@
 #include "DEG_depsgraph.hh"
 
 #include "BKE_context.hh"
+#include "BKE_report.hh" /* BFA */
+#include "BKE_screen.hh" /* BFA */  
 
+#include "DNA_space_types.h" /* BFA */
+
+#include "ED_node_c.hh" /* BFA */
+#include "ED_screen.hh" /* BFA */
 #include "ED_sequencer.hh"
+
+#include "BLI_string.h" /* BFA */
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -34,6 +42,11 @@
 #include "UI_resources.hh" /* BFA - for icons */
 
 #include "sequencer_intern.hh"
+
+/* BFA - forward declaration for tree_update in compositor operator */
+namespace blender::ed::space_node {
+void tree_update(const bContext *C);
+}
 
 namespace blender::ed::vse {
 
@@ -594,5 +607,85 @@ void SEQUENCER_OT_strip_modifier_set_active(wmOperatorType *ot)
 }
 
 /** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - Open Compositor Modifier Editor Operator
+ * \{ */
+
+static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOperator *op)
+{
+  Scene *scene = CTX_data_sequencer_scene(C);
+  Strip *strip = seq::select_active_get(scene);
+  if (!strip) {
+    return OPERATOR_CANCELLED;
+  }
+
+  /* BFA - resolve modifier from operator property or active state */
+  std::string modifier_name = RNA_string_get(op->ptr, "modifier");
+  StripModifierData *smd = [&]() {
+    if (modifier_name.empty()) {
+      return seq::modifier_get_active(strip);
+    }
+    return seq::modifier_find_by_name(strip, modifier_name.c_str());
+  }();
+
+  if (!smd || smd->type != eSeqModifierType_Compositor) {
+    return OPERATOR_CANCELLED;
+  }
+
+  SequencerCompositorModifierData *cmd = reinterpret_cast<SequencerCompositorModifierData *>(smd);
+  if (!cmd->node_group || ID_MISSING(cmd->node_group)) {
+    BKE_report(op->reports, RPT_ERROR, "Compositor modifier has no node group assigned");
+    return OPERATOR_CANCELLED;
+  }
+
+  /* BFA - mark modifier active so the node editor header context resolves */
+  seq::modifier_set_active(strip, smd);
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Compositor Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Compositor Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  /* BFA - configure SpaceNode for compositor node tree editing */
+  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  STRNCPY(snode->tree_idname, "CompositorNodeTree");
+  /* BFA - set subtype so the header shows the sequencer compositor NODETREE dropdown */
+  snode->node_tree_sub_type = SNODE_COMPOSITOR_SEQUENCER;
+  snode->selected_node_group = nullptr;
+
+  /* BFA - push the modifier's node group into the node editor stack */
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, cmd->node_group, &scene->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  /* BFA - refresh UI after node tree context change */
+  WM_event_add_notifier(C, NC_SCENE | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+/* BFA - operator registration for Open Compositor Modifier Editor */
+void SEQUENCER_OT_strip_modifier_compositor_open_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Compositor Editor";
+  ot->idname = "SEQUENCER_OT_strip_modifier_compositor_open_editor";
+  ot->description = "Open a Compositor Editor window for this modifier's node group";
+
+  ot->exec = compositor_modifier_open_editor_exec;
+  ot->poll = sequencer_strip_editable_poll;
+
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* BFA - hidden property so the UI button knows which modifier to target */
+  ot->prop = RNA_def_string(
+      ot->srna, "modifier", nullptr, MAX_NAME, "Modifier", "Name of the modifier to edit");
+  RNA_def_property_flag(ot->prop, PROP_HIDDEN);
+}
+
+/** \} */
+/* BFA - end Open Compositor Modifier Editor Operator */
 
 }  // namespace blender::ed::vse

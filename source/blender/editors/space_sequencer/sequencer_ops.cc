@@ -128,6 +128,7 @@ void sequencer_operatortypes()
   WM_operatortype_append(SEQUENCER_OT_strip_modifier_move_to_index);
   WM_operatortype_append(SEQUENCER_OT_strip_modifier_set_active);
   WM_operatortype_append(SEQUENCER_OT_strip_modifier_equalizer_redefine);
+  WM_operatortype_append(SEQUENCER_OT_strip_modifier_compositor_open_editor); /* BFA */
 
   /* sequencer_view.h */
   WM_operatortype_append(SEQUENCER_OT_sample);
