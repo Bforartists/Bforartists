@@ -3367,6 +3367,13 @@ keyconfig_data = \
     ],
    },
   ),
+ ("Generic Gizmo Maybe Drag",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": -1, "ctrl": -1, "oskey": -1, "hyper": -1}, None),
+    ],
+   },
+  ),
  ("Generic Tool: Annotate",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
