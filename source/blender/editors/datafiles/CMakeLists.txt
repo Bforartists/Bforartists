@@ -1346,6 +1346,7 @@ if(WITH_BLENDER)
       node_insert_on # bfa - don't change the order of the icons
       node_insert_off # bfa - don't change the order of the icons
 
+      node_instancereference
       node_invert
       node_joingroup
       node_joinframenamed

@@ -2302,6 +2302,7 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeTranslateInstances", pad=8),
             Separator,
             OperatorEntry("GeometryNodeInputInstanceBounds", pad=12),
+            OperatorEntry("GeometryNodeInputInstanceReference", pad=4),
             OperatorEntry("GeometryNodeInstanceTransform", pad=7),
             OperatorEntry("GeometryNodeInputInstanceRotation", pad=11),
             OperatorEntry("GeometryNodeInputInstanceScale", pad=16),
