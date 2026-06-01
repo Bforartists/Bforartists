@@ -747,6 +747,8 @@ class SEQUENCER_MT_select(Menu):
         col.separator()
 
         if has_sequencer:
+            col.operator("sequencer.select", text="Side of Cursor", icon="RESTRICT_SELECT_OFF").side_of_frame = True
+            layout.separator()
             col.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
             col.menu("SEQUENCER_MT_select_handle", text="Handle")
             col.menu("SEQUENCER_MT_select_channel", text="Channel")
@@ -2906,8 +2908,6 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
                 )
 
 # BFA - Legacy
-
-
 class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
     bl_category = "Strip"

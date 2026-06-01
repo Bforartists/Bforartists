@@ -1,4 +1,4 @@
-keyconfig_version = (5, 2, 7)
+keyconfig_version = (5, 2, 36)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -4730,7 +4730,7 @@ keyconfig_data = \
    [("paint.image_paint",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'None'),
+      [("brush_toggle", 'None'),
        ],
       },
      ),
@@ -8282,7 +8282,7 @@ keyconfig_data = \
    [("sculpt.brush_stroke",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'None'),
+      [("brush_toggle", 'None'),
        ],
       },
      ),
@@ -8533,7 +8533,7 @@ keyconfig_data = \
    [("sculpt_curves.brush_stroke",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'None'),
+      [("brush_toggle", 'None'),
        ],
       },
      ),
@@ -9006,6 +9006,13 @@ keyconfig_data = \
      ),
     ("sequencer.retiming_key_delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "oskey": True},
+     {"properties":
+      [("side_of_frame", True),
+       ],
+      },
+     ),
     ],
    },
   ),
