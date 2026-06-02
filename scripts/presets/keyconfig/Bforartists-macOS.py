@@ -2938,6 +2938,20 @@ keyconfig_data = \
        ],
       },
      ),
+    ("file.select_first_last",
+     {"type": 'HOME', "value": 'PRESS'},
+     {"properties":
+      [("direction", 'FIRST'),
+       ],
+      },
+     ),
+    ("file.select_first_last",
+     {"type": 'HOME', "value": 'PRESS', "oskey": True},
+     {"properties":
+      [("direction", 'LAST'),
+       ],
+      },
+     ),
     ("file.select_all",
      {"type": 'A', "value": 'PRESS'},
      {"properties":

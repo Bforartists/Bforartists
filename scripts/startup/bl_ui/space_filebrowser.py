@@ -579,6 +579,7 @@ class FILEBROWSER_MT_editor_menus(FileBrowserMenu, Menu):
         layout = self.layout
 
         layout.menu("FILEBROWSER_MT_view")
+        layout.menu("FILEBROWSER_MT_navigation") # BFA: Add navigation menu
         layout.menu("FILEBROWSER_MT_select")
 
 
@@ -599,6 +600,21 @@ class FILEBROWSER_MT_view(FileBrowserMenu, Menu):
         layout.menu("INFO_MT_area")
 
         layout.menu("FILEBROWSER_MT_view_pie_menus")
+
+
+# BFA: Add navigation menu
+class FILEBROWSER_MT_navigation(FileBrowserMenu, Menu):
+    bl_label = "Navigation"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("file.previous", text="Back", icon="BACK")
+        layout.operator("file.next", text="Forward", icon="FORWARD")
+        layout.operator("file.parent", text="Parent Directory", icon="FILE_PARENT")
+        layout.operator("file.refresh", text="Refresh", icon="FILE_REFRESH")
+        layout.separator()
+        layout.operator("file.select_first_last", text="To Top", icon="TRIA_UP").direction = 'FIRST'
+        layout.operator("file.select_first_last", text="To Bottom", icon="TRIA_DOWN").direction = 'LAST'
 
 
 class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
@@ -1169,6 +1185,7 @@ classes = (
     FILEBROWSER_PT_directory_path,
     FILEBROWSER_MT_editor_menus,
     FILEBROWSER_MT_view,
+    FILEBROWSER_MT_navigation,  # BFA
     FILEBROWSER_MT_view_pie_menus,  # BFA
     FILEBROWSER_MT_select,
     FILEBROWSER_MT_context_menu,

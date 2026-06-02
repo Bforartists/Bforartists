@@ -672,6 +672,7 @@ static void file_operatortypes()
 {
   WM_operatortype_append(FILE_OT_select);
   WM_operatortype_append(FILE_OT_select_walk);
+  WM_operatortype_append(FILE_OT_select_first_last); /* BFA */
   WM_operatortype_append(FILE_OT_select_all);
   WM_operatortype_append(FILE_OT_select_box);
   WM_operatortype_append(FILE_OT_select_bookmark);

@@ -2890,9 +2890,9 @@ static eHandlerActionFlag wm_handler_fileselect_do(bContext *C,
       ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
       BLI_assert(area->spacetype == SPACE_FILE);
 
-      region_header->flag |= RGN_FLAG_HIDDEN;
-      /* Header on bottom, #AZone triangle to toggle header looks misplaced at the top. */
-      region_header->alignment = RGN_ALIGN_BOTTOM;
+      /* BFA - Show header by default at top */
+      region_header->flag &= ~RGN_FLAG_HIDDEN;
+      region_header->alignment = RGN_ALIGN_TOP;
 
       /* Settings for file-browser, #sfile is not operator owner but sends events. */
       SpaceFile *sfile = static_cast<SpaceFile *>(area->spacedata.first);
