@@ -2800,7 +2800,7 @@ class VIEW3D_PT_uvtab_uv(Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+            col.operator("uv.unwrap", text = "Unwrap Angle Based", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
             col.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
             col.operator("uv.unwrap", text = "Unwrap Minimum Stretch", icon='UNWRAP_MINSTRETCH').method = 'MINIMUM_STRETCH'
 
