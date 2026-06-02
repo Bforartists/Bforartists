@@ -3243,7 +3243,7 @@ class VIEW3D_PT_sculpttab_sculpt(Panel):
 
 
 class VIEW3D_PT_sculpttab_filters(Panel):
-    bl_label = "Meshfilter"
+    bl_label = "Filter"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Sculpt"
