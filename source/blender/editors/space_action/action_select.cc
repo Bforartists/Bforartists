@@ -2216,6 +2216,11 @@ static wmOperatorStatus select_by_type_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static bool select_by_type_poll(bContext *C)
+{
+  return ED_operator_graphedit_active(C) || ED_operator_action_active(C);
+}
+
 void ACTION_OT_select_by_type(wmOperatorType *ot)
 {
   ot->name = "Select by Type";
@@ -2223,7 +2228,7 @@ void ACTION_OT_select_by_type(wmOperatorType *ot)
   ot->description = "Select all keyframes of the given type";
 
   ot->exec = select_by_type_exec;
-  ot->poll = ED_operator_action_active;
+  ot->poll = select_by_type_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 

@@ -532,10 +532,10 @@ static bool override_add_button_poll(bContext *C)
 
   context_active_but_prop_get(C, &ptr, &prop, &index);
 
-  const uint override_status = RNA_property_override_library_status(
+  const eRNAOverrideStatus override_status = RNA_property_override_library_status(
       CTX_data_main(C), &ptr, prop, index);
 
-  return (ptr.data && prop && (override_status & RNA_OVERRIDE_STATUS_OVERRIDABLE));
+  return (ptr.data && prop && flag_is_set(override_status, eRNAOverrideStatus::LibOverridable));
 }
 
 static wmOperatorStatus override_add_button_exec(bContext *C, wmOperator *op)
@@ -602,10 +602,11 @@ static bool override_remove_button_poll(bContext *C)
 
   context_active_but_prop_get(C, &ptr, &prop, &index);
 
-  const uint override_status = RNA_property_override_library_status(
+  const eRNAOverrideStatus override_status = RNA_property_override_library_status(
       CTX_data_main(C), &ptr, prop, index);
 
-  return (ptr.data && ptr.owner_id && prop && (override_status & RNA_OVERRIDE_STATUS_OVERRIDDEN));
+  return (ptr.data && ptr.owner_id && prop &&
+          flag_is_set(override_status, eRNAOverrideStatus::LibOverridden));
 }
 
 static wmOperatorStatus override_remove_button_exec(bContext *C, wmOperator *op)
@@ -3000,6 +3001,14 @@ static void UI_OT_view_item_delete(wmOperatorType *ot)
 
   ot->flag = OPTYPE_INTERNAL;
 }
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name UI View Item Navigate Operator
+ *
+ * Operator for navigating in view with arrow keys.
+ *
+ * \{ */
 
 enum class Direction {
   UP,
@@ -3080,6 +3089,32 @@ static void UI_OT_view_item_navigate(wmOperatorType *ot)
                "Navigation Direction",
                "Direction in which to navigate and select next element.");
 }
+
+static wmOperatorStatus ui_view_item_focus_invoke(bContext *C,
+                                                  wmOperator * /*op*/,
+                                                  const wmEvent * /*event*/)
+{
+  ARegion *region = CTX_wm_region(C);
+  AbstractView *view = get_view_focused(C);
+
+  view->scroll_active_into_view(C, true);
+  ED_region_tag_redraw(region);
+
+  return OPERATOR_FINISHED;
+}
+
+static void UI_OT_view_item_focus(wmOperatorType *ot)
+{
+  ot->name = "Focus Active Item";
+  ot->idname = "UI_OT_view_item_focus";
+  ot->description = "Bring active item into focus by scrolling the view";
+
+  ot->invoke = ui_view_item_focus_invoke;
+  ot->poll = view_focused_poll;
+
+  ot->flag = OPTYPE_INTERNAL;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -3185,6 +3220,7 @@ void operatortypes_ui()
   WM_operatortype_append(UI_OT_view_item_select);
   WM_operatortype_append(UI_OT_view_item_delete);
   WM_operatortype_append(UI_OT_view_item_navigate);
+  WM_operatortype_append(UI_OT_view_item_focus);
 
   WM_operatortype_append(UI_OT_override_add_button);
   WM_operatortype_append(UI_OT_override_remove_button);

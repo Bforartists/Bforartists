@@ -166,7 +166,6 @@ const ID *nested_id_hack_get_discarded_pointers(void *storage, const ID *id)
       Scene *scene = static_cast<Scene *>(storage);
       *scene = dna::shallow_copy(*id_cast<Scene *>(const_cast<ID *>(id)));
       scene->toolsettings = nullptr;
-      scene->nodetree = nullptr;
       return &scene->id;
     }
 
@@ -484,6 +483,9 @@ int foreach_libblock_remap_callback(LibraryIDLinkCallbackData *cb_data)
     return IDWALK_RET_NOP;
   }
 
+  BLI_assert(cb_data->owner_id);
+  BLI_assert(cb_data->owner_id->tag & ID_TAG_COPIED_ON_EVAL);
+
   RemapCallbackUserData *user_data = static_cast<RemapCallbackUserData *>(cb_data->user_data);
   const Depsgraph *depsgraph = user_data->depsgraph;
   ID *id_orig = *id_p;
@@ -672,6 +674,10 @@ void update_animation_data_after_copy(const ID *id_orig, ID *id_cow)
   AnimData *anim_data_cow = BKE_animdata_from_id(id_cow);
   BLI_assert(anim_data_cow != nullptr);
   update_nla_tracks_orig_pointers(&anim_data_orig->nla_tracks, &anim_data_cow->nla_tracks);
+  /* If the driver count on the evaluated ID is different, we will get a crash when trying to
+   * evaluate the drivers because it will read an FCurve out of Array bounds. See #158665. */
+  BLI_assert(BLI_listbase_count(&anim_data_orig->drivers) ==
+             BLI_listbase_count(&anim_data_cow->drivers));
 }
 
 /* Do some special treatment of data transfer from original ID to its

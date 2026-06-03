@@ -454,7 +454,7 @@ static void knifetool_draw_visible_distances(const KnifeTool_OpData *kcd)
   }
   else {
     BKE_unit_value_as_string_scaled(
-        numstr, sizeof(numstr), cut_len, distance_precision, B_UNIT_LENGTH, unit, false);
+        numstr, sizeof(numstr), cut_len, distance_precision, B_UNIT_LENGTH, unit, false, true);
   }
 
   BLF_enable(blf_mono_font, BLF_ROTATION);
@@ -535,7 +535,7 @@ static void knifetool_draw_angle(const KnifeTool_OpData *kcd,
     const float px_scale =
         3.0f * inverse_average_scale *
         (ED_view3d_pixel_size_no_ui_scale(rv3d, mid) *
-         min_fff(arc_size, len_v2v2(start_ss, mid_ss) / 2.0f, len_v2v2(end_ss, mid_ss) / 2.0f));
+         std::min({arc_size, len_v2v2(start_ss, mid_ss) / 2.0f, len_v2v2(end_ss, mid_ss) / 2.0f}));
 
     sub_v3_v3v3(dir_a, start, mid);
     sub_v3_v3v3(dir_b, end, mid);
@@ -583,8 +583,14 @@ static void knifetool_draw_angle(const KnifeTool_OpData *kcd,
     SNPRINTF_UTF8(numstr, "%.*f" BLI_STR_UTF8_DEGREE_SIGN, angle_precision, RAD2DEGF(angle));
   }
   else {
-    BKE_unit_value_as_string(
-        numstr, sizeof(numstr), double(angle), angle_precision, B_UNIT_ROTATION, unit, false);
+    BKE_unit_value_as_string(numstr,
+                             sizeof(numstr),
+                             double(angle),
+                             angle_precision,
+                             B_UNIT_ROTATION,
+                             unit,
+                             false,
+                             true);
   }
 
   BLF_enable(blf_mono_font, BLF_ROTATION);
@@ -3432,8 +3438,8 @@ static bool knife_snap_angle_screen(const KnifeTool_OpData *kcd,
                                     float3 &r_cage,
                                     float &r_angle)
 {
-  const float3 &vec_x = kcd->vc.rv3d->viewinv[0];
-  const float3 &vec_z = kcd->vc.rv3d->viewinv[2];
+  const float3 vec_x = kcd->vc.rv3d->viewinv[0];
+  const float3 vec_z = kcd->vc.rv3d->viewinv[2];
   return knife_snap_angle_impl(kcd, vec_x, vec_z, ray_orig, ray_dir, r_cage, r_angle);
 }
 

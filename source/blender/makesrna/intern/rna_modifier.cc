@@ -572,7 +572,7 @@ static const EnumPropertyItem modifier_warp_falloff_items[] = {
     {eWarp_Falloff_Smooth, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", ""},
     {eWarp_Falloff_Sphere, "SPHERE", ICON_SPHERECURVE, "Sphere", ""},
     {eWarp_Falloff_Root, "ROOT", ICON_ROOTCURVE, "Root", ""},
-    {eWarp_Falloff_InvSquare, "INVERSE_SQUARE", ICON_ROOTCURVE, "Inverse Square", ""},
+    {eWarp_Falloff_InvSquare, "INVERSE_SQUARE", ICON_INVERSESQUARECURVE, "Inverse Square", ""},
     {eWarp_Falloff_Sharp, "SHARP", ICON_SHARPCURVE, "Sharp", ""},
     {eWarp_Falloff_Linear, "LINEAR", ICON_LINCURVE, "Linear", ""},
     {eWarp_Falloff_Const, "CONSTANT", ICON_NOCURVE, "Constant", ""},
@@ -902,7 +902,7 @@ static void rna_UVProject_projectors_begin(CollectionPropertyIterator *iter, Poi
 static StructRNA *rna_Modifier_refine(PointerRNA *ptr)
 {
   ModifierData *md = static_cast<ModifierData *>(ptr->data);
-  const ModifierTypeInfo *modifier_type = BKE_modifier_get_info(ModifierType(md->type));
+  const ModifierTypeInfo *modifier_type = BKE_modifier_get_info(md->type);
   if (modifier_type != nullptr) {
     return *modifier_type->srna;
   }
@@ -1934,6 +1934,9 @@ static StructRNA *rna_NodesModifierProperties_refine(PointerRNA *ptr)
 {
   auto *nmd = ptr->data_as<NodesModifierData>();
   if (!nmd->node_group || ID_MISSING(nmd->node_group)) {
+    return RNA_NodesModifierPropertiesEmpty;
+  }
+  if (!nmd->node_group->runtime->geometry_nodes_srna_data) {
     return RNA_NodesModifierPropertiesEmpty;
   }
   return nmd->node_group->runtime->geometry_nodes_srna_data->properties_struct;
@@ -10278,7 +10281,7 @@ static void rna_def_modifier_grease_pencil_hook(BlenderRNA *brna)
       {MOD_GREASE_PENCIL_HOOK_Falloff_Root, "ROOT", ICON_ROOTCURVE, "Root", ""},
       {MOD_GREASE_PENCIL_HOOK_Falloff_InvSquare,
        "INVERSE_SQUARE",
-       ICON_ROOTCURVE,
+       ICON_INVERSESQUARECURVE,
        "Inverse Square",
        ""},
       {MOD_GREASE_PENCIL_HOOK_Falloff_Sharp, "SHARP", ICON_SHARPCURVE, "Sharp", ""},

@@ -83,6 +83,9 @@ void BKE_bpath_foreach_path_id(BPathForeachPathData *bpath_data, ID *id)
   bpath_data->absolute_base_path = absbase;
   bpath_data->owner_id = id;
   bpath_data->is_path_modified = false;
+  bpath_data->is_expanded = false;
+  bpath_data->is_cache = false;
+  bpath_data->is_readonly = false;
 
   if ((flag & BKE_BPATH_FOREACH_PATH_SKIP_LINKED) && ID_IS_LINKED(id)) {
     return;
@@ -153,6 +156,79 @@ bool BKE_bpath_foreach_path_fixed_process(BPathForeachPathData *bpath_data,
   }
 
   return false;
+}
+
+void BKE_bpath_foreach_path_readonly_process(BPathForeachPathData *bpath_data, const char *path)
+{
+  char path_src[FILE_MAX];
+  char path_dst[FILE_MAX];
+
+  STRNCPY(path_src, path);
+  if (bpath_data->absolute_base_path) {
+    BLI_path_abs(path_src, bpath_data->absolute_base_path);
+  }
+  /* Any modification to path_dst will be discarded. */
+  STRNCPY(path_dst, path_src);
+
+  bpath_data->is_readonly = true;
+  const bool changed = bpath_data->callback_function(
+      bpath_data, path_dst, sizeof(path_dst), path_src);
+  bpath_data->is_readonly = false;
+
+  BLI_assert_msg(!changed, "Read-only path edited in bpath foreach");
+}
+
+void BKE_bpath_sequence_filepaths_foreach(const char *abs_filepath,
+                                          FunctionRef<void(StringRef frame_filepath)> callback)
+{
+  char dirname[FILE_MAX], filename[FILE_MAX];
+  BLI_path_split_dir_file(abs_filepath, dirname, sizeof(dirname), filename, sizeof(filename));
+
+  char head[FILE_MAX], tail[FILE_MAX];
+  ushort digits_len = 0;
+  BLI_path_sequence_decode(filename, head, sizeof(head), tail, sizeof(tail), &digits_len);
+
+  if (digits_len == 0) {
+    /* Not a numbered sequence, treat as a single file. */
+    if (BLI_is_file(abs_filepath)) {
+      callback(abs_filepath);
+    }
+    return;
+  }
+
+  const size_t head_len = strlen(head);
+  const size_t tail_len = strlen(tail);
+  const size_t expected_len = head_len + size_t(digits_len) + tail_len;
+
+  direntry *filelist = nullptr;
+  const uint filelist_num = BLI_filelist_dir_contents(dirname, &filelist);
+  for (uint i = 0; i < filelist_num; i++) {
+    const direntry &entry = filelist[i];
+    if (!(entry.type & S_IFREG)) {
+      continue;
+    }
+    const char *name = entry.relname;
+    const size_t name_len = strlen(name);
+
+    /* Match files of the form <head><digits><tail>. */
+    if (name_len != expected_len) {
+      continue;
+    }
+    if (!STRPREFIX(name, head) || !BLI_str_endswith(name, tail)) {
+      continue;
+    }
+    bool all_digits = true;
+    for (size_t c = head_len; c < head_len + digits_len; c++) {
+      if (!(name[c] >= '0' && name[c] <= '9')) {
+        all_digits = false;
+        break;
+      }
+    }
+    if (all_digits) {
+      callback(entry.path);
+    }
+  }
+  BLI_filelist_free(filelist, filelist_num);
 }
 
 bool BKE_bpath_foreach_path_dirfile_fixed_process(BPathForeachPathData *bpath_data,

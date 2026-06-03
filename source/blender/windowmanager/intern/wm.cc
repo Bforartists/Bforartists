@@ -39,6 +39,8 @@
 #include "BKE_screen.hh"
 #include "BKE_workspace.hh"
 
+#include "PRF_profile.hh"
+
 #include "WM_api.hh"
 #include "WM_keymap.hh"
 #include "WM_message.hh"
@@ -595,6 +597,7 @@ void wm_close_and_free(bContext *C, wmWindowManager *wm)
 
 void WM_main(bContext *C)
 {
+  PRF_scope(ProfileCategory::Core);
   /* Single refresh before handling events.
    * This ensures we don't run operators before the depsgraph has been evaluated. */
   wm_event_do_refresh_wm_and_depsgraph(C);
@@ -612,6 +615,8 @@ void WM_main(bContext *C)
 
     /* Execute cached changes draw. */
     wm_draw_update(C);
+
+    PRF_frame_mark;
   }
 }
 
