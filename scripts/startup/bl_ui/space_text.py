@@ -283,6 +283,7 @@ class TEXT_MT_text(Menu):
             layout.column()
             layout.operator("text.save", icon='FILE_TICK')
             layout.operator("text.save_as", icon='SAVE_AS')
+            layout.operator("wm.save_auto_save", icon='FILE_BACKUP') # BFA
 
             if text.filepath:
                 layout.separator()
