@@ -15,6 +15,7 @@
 
 #include "BLI_math_geom.h"
 #include "BLI_stack.hh"
+#include "BLI_string_utf8.h"
 #include "BLI_virtual_array_range_spans.hh"
 
 #include "DNA_curves_types.h"
@@ -86,7 +87,7 @@ static NestedBundleTypePtr make_world_type()
   Vector<std::shared_ptr<const FlatBundleType>> types;
   types.append(XPBDSolverDataBundle::get_bundle_type());
   types.append(DampingBundle::get_bundle_type());
-  types.append(ColliderBundle::get_bundle_type());
+  types.append(MeshColliderBundle::get_bundle_type());
   types.append(CollisionContactsBundle::get_bundle_type());
   types.append(RodStretchShearBundle::get_bundle_type());
   types.append(RodBendTwistBundle::get_bundle_type());
@@ -94,6 +95,11 @@ static NestedBundleTypePtr make_world_type()
   types.append(PinRotationBundle::get_bundle_type());
   types.append(EdgeLengthConstraintBundle::get_bundle_type());
   types.append(CrossEdgeLengthConstraintBundle::get_bundle_type());
+
+  /* Not actually used by the node but only registered here. */
+  ForceBundle::get_bundle_type();
+  CustomGeometryEffector::get_bundle_type();
+  CustomWorldEffector::get_bundle_type();
 
   NestedBundleTypePtr world_type = std::make_shared<const NestedBundleType>(
       "Blender.XPBDSolverWorld", std::move(types));
@@ -275,7 +281,6 @@ struct CrossEdgeLengthConstraintUsage {
   xpbd::ConstraintColoring coloring;
 };
 
-float error_threshold;
 struct StaticMeshInfo {
   const Mesh *mesh;
   bke::BVHTreeFromMesh corner_tris_bvh;
@@ -559,10 +564,9 @@ class XpbdSolverStep {
  private:
   struct TLS {
     ResourceScope scope;
-    IndexMaskMemory &mask_memory;
     LinearAllocator<> &allocator;
 
-    TLS() : mask_memory(scope.construct<IndexMaskMemory>()), allocator(mask_memory) {}
+    TLS() : scope(1024), allocator(scope.allocator()) {}
   };
 
   threading::EnumerableThreadSpecific<TLS> tls_;
@@ -673,7 +677,7 @@ class XpbdSolverStep {
   void gather_nested_bundle_paths()
   {
     foreach_nested_bundle_item(world_,
-                               [&](const Span<UString> path, const BundleItemValue &value) {
+                               [&](const Span<BundleKey> path, const BundleItemValue &value) {
                                  const BundlePtr *bundle_ptr = value.as_pointer<BundlePtr>();
                                  if (!bundle_ptr || !*bundle_ptr) {
                                    return;
@@ -822,7 +826,7 @@ class XpbdSolverStep {
 
   void gather_from_world__mesh_colliders()
   {
-    const Span<std::string> paths = nested_bundle_paths_.lookup_as(ColliderBundle::name);
+    const Span<std::string> paths = nested_bundle_paths_.lookup_as(MeshColliderBundle::name);
     for (const StringRef path : paths) {
       const BundlePtr *bundle_ptr = world_.lookup_path_ptr<BundlePtr>(path);
       if (!bundle_ptr || !*bundle_ptr) {
@@ -830,17 +834,23 @@ class XpbdSolverStep {
       }
       const Bundle &bundle = **bundle_ptr;
       const Bundle *previous_bundle = this->get_previous_bundle(bundle);
-      const bke::GeometrySet *geometry = bundle.lookup_ptr<bke::GeometrySet>("geometry"_ustr);
-      const float margin = bundle.lookup<float>("margin"_ustr).value_or(0.0f);
-      const float friction = bundle.lookup<float>("friction"_ustr).value_or(0.0f);
-      const float compliance = bundle.lookup<float>("compliance"_ustr).value_or(0.0f);
-      const bool deforming = bundle.lookup<bool>("deforming"_ustr).value_or(false);
-      const bool use_edge_contacts = bundle.lookup<bool>("use_edge_contacts"_ustr).value_or(false);
-      const bool is_boundary = bundle.lookup<bool>("is_boundary"_ustr).value_or(false);
-      const float error_threshold = bundle.lookup<float>("error_threshold"_ustr).value_or(1e-3f);
+      const bke::GeometrySet *geometry = bundle.lookup_ptr<bke::GeometrySet>(
+          *BundleKey::from_str("geometry"));
+      const float margin = bundle.lookup<float>(*BundleKey::from_str("margin")).value_or(0.0f);
+      const float friction = bundle.lookup<float>(*BundleKey::from_str("friction")).value_or(0.0f);
+      const float compliance =
+          bundle.lookup<float>(*BundleKey::from_str("compliance")).value_or(0.0f);
+      const bool deforming =
+          bundle.lookup<bool>(*BundleKey::from_str("deforming")).value_or(false);
+      const bool use_edge_contacts =
+          bundle.lookup<bool>(*BundleKey::from_str("use_edge_contacts")).value_or(false);
+      const bool is_boundary =
+          bundle.lookup<bool>(*BundleKey::from_str("is_boundary")).value_or(false);
+      const float error_threshold =
+          bundle.lookup<float>(*BundleKey::from_str("error_threshold")).value_or(1e-3f);
       const bke::GeometrySet *prev_geometry = previous_bundle ?
                                                   previous_bundle->lookup_ptr<bke::GeometrySet>(
-                                                      "geometry"_ustr) :
+                                                      *BundleKey::from_str("geometry")) :
                                                   nullptr;
       if (!geometry) {
         continue;
@@ -1368,11 +1378,12 @@ class XpbdSolverStep {
         if (prev_instances) {
           const Span<float4x4> prev_instance_transforms = prev_instances->transforms();
           const Span<int> prev_instance_ids = prev_instances->unique_ids();
+          const Span<int> prev_handles = prev_instances->reference_handles();
           const Span<bke::InstanceReference> prev_references = prev_instances->references();
           for (const int i : prev_instance_transforms.index_range()) {
             const int prev_instance_id = prev_instance_ids[i];
             const float4x4 &prev_instance_transform = prev_instance_transforms[i];
-            const bke::InstanceReference &prev_reference = prev_references[i];
+            const bke::InstanceReference &prev_reference = prev_references[prev_handles[i]];
             prev_instance_by_id.add(prev_instance_id, {&prev_instance_transform, &prev_reference});
           }
         }
@@ -1603,11 +1614,16 @@ class XpbdSolverStep {
       const Bundle &bundle = **world_.lookup_path_ptr<BundlePtr>(path);
       RodStretchShearConstraint constraint;
       constraint.path = path;
-      constraint.error_threshold = bundle.lookup<float>("error_threshold"_ustr).value_or(1e-3f);
-      constraint.lambda_pos_attr =
-          bundle.lookup<std::string>("lambda_position_attribute"_ustr).value_or("");
-      constraint.lambda_rot_attr =
-          bundle.lookup<std::string>("lambda_rotation_attribute"_ustr).value_or("");
+      constraint.error_threshold =
+          bundle.lookup<float>(*BundleKey::from_str("error_threshold")).value_or(1e-3f);
+      constraint.lambda_pos_attr = bundle
+                                       .lookup<std::string>(
+                                           *BundleKey::from_str("lambda_position_attribute"))
+                                       .value_or("");
+      constraint.lambda_rot_attr = bundle
+                                       .lookup<std::string>(
+                                           *BundleKey::from_str("lambda_rotation_attribute"))
+                                       .value_or("");
 
       const int constraint_i = constraints_.rod_stretch_shear_constraints.append_and_get_index(
           std::move(constraint));
@@ -1729,7 +1745,8 @@ class XpbdSolverStep {
 
       RodBendTwistConstraint constraint;
       constraint.path = path;
-      constraint.error_threshold = bundle.lookup<float>("error_threshold"_ustr).value_or(1e-2f);
+      constraint.error_threshold =
+          bundle.lookup<float>(*BundleKey::from_str("error_threshold")).value_or(1e-2f);
 
       const int constraint_i = constraints_.rod_bend_twist_constraints.append_and_get_index(
           std::move(constraint));
@@ -1805,7 +1822,8 @@ class XpbdSolverStep {
     for (const StringRef path : paths) {
       const Bundle &bundle = **world_.lookup_path_ptr<BundlePtr>(path);
 
-      const float error_threshold = bundle.lookup<float>("error_threshold"_ustr).value_or(1e-3f);
+      const float error_threshold =
+          bundle.lookup<float>(*BundleKey::from_str("error_threshold")).value_or(1e-3f);
       const int constraint_i = constraints_.edge_length_constraints.append_and_get_index(
           {path, error_threshold});
 
@@ -1855,7 +1873,7 @@ class XpbdSolverStep {
             constraint_usage.compliances,
             error_scale_from_threshold(constraint.error_threshold),
             constraint_usage.lambdas);
-        xpbd::ConstraintColoring coloring = constraint_set.color_constraints(tls.mask_memory);
+        xpbd::ConstraintColoring coloring = constraint_set.color_constraints(tls.allocator);
         geo_data.static_constraints.append({&constraint_set, std::move(coloring)});
       }
     }
@@ -1868,7 +1886,8 @@ class XpbdSolverStep {
         CrossEdgeLengthConstraintBundle::name);
     for (const StringRef path : paths) {
       const Bundle &bundle = **world_.lookup_path_ptr<BundlePtr>(path);
-      const float error_threshold = bundle.lookup<float>("error_threshold"_ustr).value_or(1e-3f);
+      const float error_threshold =
+          bundle.lookup<float>(*BundleKey::from_str("error_threshold")).value_or(1e-3f);
       const int constraint_i = constraints_.cross_edge_length_constraints.append_and_get_index(
           {path, error_threshold});
       for (const int data_key_i : geometries_.data.index_range()) {
@@ -1928,7 +1947,7 @@ class XpbdSolverStep {
             cross_edge_compliances,
             error_scale_from_threshold(constraint.error_threshold),
             constraint_usage.lambdas);
-        xpbd::ConstraintColoring coloring = constraint_set.color_constraints(tls.mask_memory);
+        xpbd::ConstraintColoring coloring = constraint_set.color_constraints(tls.allocator);
         geo_data.static_constraints.append({&constraint_set, std::move(coloring)});
       }
     }
@@ -2092,8 +2111,10 @@ class XpbdSolverStep {
       const Bundle &bundle = **world_.lookup_path_ptr<BundlePtr>(path);
       PinPositionConstraint constraint;
       constraint.path = path;
-      constraint.error_threshold = bundle.lookup<float>("error_threshold"_ustr).value_or(1e-3f);
-      constraint.lambda_attr = bundle.lookup<std::string>("lambda_attribute"_ustr).value_or("");
+      constraint.error_threshold =
+          bundle.lookup<float>(*BundleKey::from_str("error_threshold")).value_or(1e-3f);
+      constraint.lambda_attr =
+          bundle.lookup<std::string>(*BundleKey::from_str("lambda_attribute")).value_or("");
       const int constraint_i = constraints_.pin_position_constraints.append_and_get_index(
           std::move(constraint));
 
@@ -2126,10 +2147,16 @@ class XpbdSolverStep {
             this->prop_attr_name(constraint.path, "compliance"),
             geo_data.domain,
             0.0f);
-        const VArray<bool> prev_selection_attr = this->lookup_attribute_optional<bool>(
-            data_key_i, this->prev_prop_attr_name(constraint.path, "selection"), geo_data.domain);
-        const VArray<float3> prev_positions_attr = this->lookup_attribute_optional<float3>(
-            data_key_i, this->prev_prop_attr_name(constraint.path, "position"), geo_data.domain);
+        VArray<bool> prev_selection_attr;
+        VArray<float3> prev_positions_attr;
+        if (sub_delta_time_ > 0.0f) {
+          prev_selection_attr = this->lookup_attribute_optional<bool>(
+              data_key_i,
+              this->prev_prop_attr_name(constraint.path, "selection"),
+              geo_data.domain);
+          prev_positions_attr = this->lookup_attribute_optional<float3>(
+              data_key_i, this->prev_prop_attr_name(constraint.path, "position"), geo_data.domain);
+        }
 
         const int pin_num = pin_selection.size();
         MutableSpan<int> points = tls.allocator.allocate_array<int>(pin_num);
@@ -2248,7 +2275,8 @@ class XpbdSolverStep {
 
       PinRotationConstraint constraint;
       constraint.path = path;
-      constraint.error_threshold = bundle.lookup<float>("error_threshold"_ustr).value_or(1e-2f);
+      constraint.error_threshold =
+          bundle.lookup<float>(*BundleKey::from_str("error_threshold")).value_or(1e-2f);
       const int constraint_i = constraints_.pin_rotation_constraints.append_and_get_index(
           std::move(constraint));
 
@@ -2285,13 +2313,16 @@ class XpbdSolverStep {
             this->prop_attr_name(constraint.path, "compliance"),
             geo_data.domain,
             0.0f);
-        const VArray<bool> prev_selection_attr = this->lookup_attribute_optional<bool>(
-            data_key_i, this->prev_prop_attr_name(constraint.path, "selection"), geo_data.domain);
-        const VArray<math::Quaternion> prev_rotations_attr =
-            this->lookup_attribute_optional<math::Quaternion>(
-                data_key_i,
-                this->prev_prop_attr_name(constraint.path, "rotation"),
-                geo_data.domain);
+        VArray<bool> prev_selection_attr;
+        VArray<math::Quaternion> prev_rotations_attr;
+        if (sub_delta_time_ > 0.0f) {
+          prev_selection_attr = this->lookup_attribute_optional<bool>(
+              data_key_i,
+              this->prev_prop_attr_name(constraint.path, "selection"),
+              geo_data.domain);
+          prev_rotations_attr = this->lookup_attribute_optional<math::Quaternion>(
+              data_key_i, this->prev_prop_attr_name(constraint.path, "rotation"), geo_data.domain);
+        }
 
         const int pin_num = pin_selection.size();
         MutableSpan<int> points = tls.allocator.allocate_array<int>(pin_num);
@@ -2929,35 +2960,23 @@ class XpbdSolverStep {
 
   const Bundle *get_previous_bundle(const Bundle &bundle) const
   {
-    const BundlePtr *previous_bundle_ptr = bundle.lookup_ptr<BundlePtr>("previous"_ustr);
+    const BundlePtr *previous_bundle_ptr = bundle.lookup_ptr<BundlePtr>(
+        *BundleKey::from_str("previous"));
     if (!previous_bundle_ptr || !*previous_bundle_ptr) {
       return nullptr;
     }
     return &**previous_bundle_ptr;
   }
 
-  bool effector_applies_to_geometry(const StringRef effector_path,
+  bool effector_applies_to_geometry([[maybe_unused]] const StringRef effector_path,
                                     const Bundle &effector,
                                     const int data_key_i) const
   {
     const DataKey &data_key = geometries_.data_keys[data_key_i];
     const GeometrySetData &geo_set_data = geometries_.geometry_sets[data_key.geo_bundle_i];
-    const StringRef geo_bundle_path = geo_set_data.path;
 
-    const bool filter_local = effector.lookup<bool>("filter_local"_ustr).value_or(false);
-    if (filter_local) {
-      const int pos = effector_path.rfind('/');
-      if (pos == StringRef::not_found) {
-        /* The effector is at the root level, so a local filter applies to everything. */
-        return true;
-      }
-      const StringRef effector_parent_path = effector_path.substr(0, pos + 1);
-      if (geo_bundle_path.startswith(effector_parent_path)) {
-        return true;
-      }
-      return false;
-    }
-    const std::string filter = effector.lookup<std::string>("filter"_ustr).value_or("");
+    const std::string filter =
+        effector.lookup<std::string>(*BundleKey::from_str("filter")).value_or("");
     const bool match = tag_filter_matches(filter, geo_set_data.tags);
     return match;
   }
@@ -3322,7 +3341,7 @@ static void node_geo_exec(GeoNodeExecParams params)
   if (!solver_path.empty()) {
     BundlePtr solver_data_ptr = Bundle::create();
     Bundle &solver_data = solver_data_ptr.ensure_mutable_inplace();
-    solver_data.add_path(Bundle::type_item_name.string(), std::string(XPBDSolverDataBundle::name));
+    solver_data.add(Bundle::type_item_name, std::string(XPBDSolverDataBundle::name));
     solver_data.add_path("residual_error", step.result().total_residual_error);
     world.add_path_override(solver_path, std::move(solver_data_ptr));
   }
@@ -3331,6 +3350,15 @@ static void node_geo_exec(GeoNodeExecParams params)
   }
 
   params.set_output("World"_ustr, std::move(world_ptr));
+}
+
+static void node_label(const bNodeTree * /*ntree*/,
+                       const bNode * /*node*/,
+                       char *label,
+                       const int label_maxncpy)
+{
+  BLI_strncpy_utf8(
+      label, CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "XPBD Solver (Experimental)"), label_maxncpy);
 }
 
 static void node_register()
@@ -3343,7 +3371,8 @@ static void node_register()
   ntype.nclass = NODE_CLASS_GEOMETRY;
   ntype.geometry_node_execute = node_geo_exec;
   ntype.declare = node_declare;
-  ntype.default_width = bke::NodeWidth::_160;
+  ntype.default_width = bke::NodeWidth::_200;
+  ntype.labelfunc = node_label;
   blender::bke::node_register_type(ntype);
 }
 NOD_REGISTER_NODE(node_register)

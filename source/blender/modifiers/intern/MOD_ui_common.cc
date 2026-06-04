@@ -327,7 +327,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
 
   ui::panel_context_pointer_set(panel, "modifier", ptr);
 
-  const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(md->type));
+  const ModifierTypeInfo *mti = BKE_modifier_get_info(md->type);
   Scene *scene = CTX_data_scene(C);
   int index = BLI_findindex(&ob->modifiers, md);
 
@@ -414,7 +414,7 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   }
   /* Collision and Surface are always enabled, hide buttons. */
   if (!ELEM(md->type, eModifierType_Collision, eModifierType_Surface)) {
-    if (mti->flags & eModifierTypeFlag_SupportsEditmode) {
+    if (ob->type != OB_EMPTY && (mti->flags & eModifierTypeFlag_SupportsEditmode) != 0) {
       sub = &row->row(true);
       sub->active_set(md->mode & eModifierMode_Realtime);
       sub->prop(ptr, "show_in_editmode", UI_ITEM_NONE, "", ICON_NONE);

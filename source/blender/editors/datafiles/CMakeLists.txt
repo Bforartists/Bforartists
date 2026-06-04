@@ -613,6 +613,8 @@ if(WITH_BLENDER)
       double_left
       double_right
       downarrow_hlt
+      download
+      download_done
       drawsize
       driver
       driver_active

@@ -503,7 +503,10 @@ class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
     }
 
     def draw(self, context):
-        layout = self.layout
+        self.draw_panel(self.layout, context.camera)
+
+    @classmethod
+    def draw_panel(cls, layout, camera):
         layout.use_property_split = True
 
         cam = context.camera
@@ -554,7 +557,7 @@ class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
         row.prop_decorator(cam, "show_composition_harmony_tri_b")
 
         col = layout.column()
-        col.prop(cam, "composition_guide_color", text="Color")
+        col.prop(camera, "composition_guide_color", text="Color")
 
 
 class DATA_PT_camera_safe_areas(CameraButtonsPanel, Panel):

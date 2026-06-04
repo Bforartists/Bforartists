@@ -67,6 +67,8 @@
 
 #include "GPU_context.hh"
 
+#include "PRF_profile.hh"
+
 #include "RNA_access.hh"
 
 #include "UI_interface.hh"
@@ -594,6 +596,7 @@ static bool notifier_refreshes_node_group_operators(const wmNotifier &note)
 
 void wm_event_do_notifiers(bContext *C)
 {
+  PRF_scope(ProfileCategory::Core);
   /* Ensure inside render boundary. */
   GPU_render_begin();
 
@@ -645,7 +648,6 @@ void wm_event_do_notifiers(bContext *C)
       }
 
       if (notifier_refreshes_node_group_operators(*note)) {
-        ed::geometry::clear_operator_asset_trees();
         ed::geometry::register_node_group_operators(*C);
       }
 
@@ -1127,6 +1129,8 @@ static intptr_t wm_operator_register_active_id(const wmWindowManager *wm)
 
 bool WM_operator_poll(bContext *C, wmOperatorType *ot)
 {
+  PRF_scope_with_name("Operator Call (poll)", ProfileCategory::Default);
+  PRF_scope_set_dynamic_name("Op: %s", ot->idname);
 
   for (wmOperatorTypeMacro &otmacro : ot->macro) {
     wmOperatorType *ot_macro = WM_operatortype_find(otmacro.idname, false);
@@ -1670,6 +1674,8 @@ static wmOperatorStatus wm_operator_invoke(bContext *C,
   }
 
   if (WM_operator_poll(C, ot)) {
+    PRF_scope_with_name("Operator Call (exec/invoke)", ProfileCategory::Default);
+    PRF_scope_set_dynamic_name("Op: %s", ot->idname);
     wmWindowManager *wm = CTX_wm_manager(C);
     const intptr_t undo_id_prev = wm_operator_undo_active_id(wm);
     const intptr_t register_id_prev = wm_operator_register_active_id(wm);
@@ -2677,6 +2683,8 @@ static eHandlerActionFlag wm_handler_operator_call(bContext *C,
        * nothing to do in this case. */
     }
     else if (ot->modal) {
+      PRF_scope_with_name("Operator Call (modal)", ProfileCategory::Default);
+      PRF_scope_set_dynamic_name("Op: %s", ot->idname);
       /* We set context to where modal handler came from. */
       wmWindowManager *wm = CTX_wm_manager(C);
       wmWindow *win = CTX_wm_window(C);
@@ -3608,7 +3616,7 @@ static eHandlerActionFlag wm_handlers_do_intern(bContext *C,
                 }
 
                 if (wmDragAsset *asset_data = WM_drag_get_asset_data(&drag, 0)) {
-                  if (asset_data->asset->is_online()) {
+                  if (asset_data->asset->is_online_only()) {
                     BKE_reportf(CTX_wm_reports(C),
                                 RPT_ERROR,
                                 "Asset '%s' is still downloading",
@@ -4259,6 +4267,7 @@ static eHandlerActionFlag wm_event_do_handlers_area_regions(bContext *C,
 
 void wm_event_do_handlers(bContext *C)
 {
+  PRF_scope(ProfileCategory::Core);
   wmWindowManager *wm = CTX_wm_manager(C);
   BLI_assert(ED_undo_is_state_valid(C));
 

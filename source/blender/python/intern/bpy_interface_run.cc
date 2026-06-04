@@ -250,6 +250,24 @@ bool BPY_run_text(bContext *C, Text *text, ReportList *reports, const bool do_ju
   return python_script_exec(C, nullptr, text, reports, do_jump);
 }
 
+bool BPY_string_compile_check(const char *expr)
+{
+  if (!expr || expr[0] == '\0') {
+    return true;
+  }
+  PyGILState_STATE gilstate = PyGILState_Ensure();
+  bool success = false;
+  if (PyObject *retval = Py_CompileString(expr, "<expression>", Py_eval_input)) {
+    Py_DECREF(retval);
+    success = true;
+  }
+  else {
+    PyErr_Clear();
+  }
+  PyGILState_Release(gilstate);
+  return success;
+}
+
 /**
  * \param mode: Passed to #PyRun_String, matches Python's `compile` functions mode argument.
  * #Py_eval_input for `eval`, #Py_file_input for `exec`.
