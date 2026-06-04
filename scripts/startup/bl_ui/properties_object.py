@@ -250,9 +250,19 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
 
         obj = context.object
         obj_type = obj.type
-        is_geometry = (obj_type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'VOLUME', 'CURVES', 'POINTCLOUD'})
+        # Empties can have evaluated geometry
+        is_geometry = (
+            obj_type in {
+                'EMPTY',
+                'MESH',
+                'CURVE',
+                'SURFACE',
+                'META',
+                'FONT',
+                'VOLUME',
+                'CURVES',
+                'POINTCLOUD'})
         has_bounds = (is_geometry or obj_type in {'LATTICE', 'ARMATURE'})
-        is_wire = (obj_type in {'CAMERA', 'EMPTY'})
         is_empty_image = (obj_type == 'EMPTY' and obj.empty_display_type == 'IMAGE')
         is_dupli = (obj.instance_type != 'NONE')
         is_gpencil = (obj_type == 'GREASEPENCIL')
@@ -305,9 +315,9 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         #    col.prop(obj, "show_transparent", text="Transparency") #bfa - we have it in the output
 
         sub = layout.column()
-        if is_wire:
-            # wire objects only use the max. display type for duplis
-            sub.active = is_dupli
+        # wire objects only use the max. display type for duplis
+        # and empties with geometry nodes modifier
+        sub.active = obj_type != 'CAMERA'
         sub.prop(obj, "display_type", text="Display As")
 
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
@@ -519,14 +529,10 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         if context.engine == 'BLENDER_EEVEE':
             if ob.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME'}:
                 layout.separator()
-                col.label(text = "Ray Visibility")
-                row = col.row()
-                row.separator()
-                row.prop(ob, "visible_camera", text="Camera", toggle=False)
-                row = col.row()
-                row.separator()
-                row.prop(ob, "visible_shadow", text="Shadow", toggle=False)
-                col.separator()
+                col = layout.column(heading="Ray Visibility")
+                col.prop(ob, "visible_camera", text="Camera", toggle=False)
+                col.prop(ob, "visible_shadow", text="Shadow", toggle=False)
+                col.prop(ob, "visible_raycast", text="Raycast", toggle=False)
 
             if ob.type in {'LIGHT'}:
                 col.label(text = "Ray Visibility")

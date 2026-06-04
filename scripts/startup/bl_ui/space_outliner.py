@@ -586,7 +586,6 @@ class OUTLINER_PT_filter(Panel):
             row.prop(space, "show_restrict_column_holdout", icon_only=True)
             row.prop(space, "show_restrict_column_indirect_only", icon_only=True)
             layout.separator()
-            
         elif display_mode == 'SCENES':
             layout.label(text="Restriction Toggles")
             row = layout.row(align=True)
@@ -597,16 +596,21 @@ class OUTLINER_PT_filter(Panel):
             row.prop(space, "show_restrict_column_render", icon_only=True)
             layout.separator()
 
-        col = layout.column(align=True)
-        
         if display_mode != 'DATA_API':
+            col = layout.column(align=True)
             col.prop(space, "use_sort_alpha")
+
         if display_mode != 'LIBRARY_OVERRIDES':
             col = layout.column(align=True)
+            split = col.split(factor=0.65)
+            split.prop(space, "use_sync_select", text="Sync Selection")
+            if space.use_sync_select:
+                split.label(icon="DISCLOSURE_TRI_DOWN")
+            else:
+                split.label(icon="DISCLOSURE_TRI_RIGHT")
+            if space.use_sync_select:
             row = col.row(align=True)
-            row.prop(space, "use_sync_select", text="Sync Selection")
-            row = col.row(align=True)
-            row.active = space.use_sync_select
+                row.separator(factor=2.5)
             row.prop(space, "scroll_to_active", text="Scroll to Active") # BFA - WIP, float left
 
             row = layout.row(align=True)

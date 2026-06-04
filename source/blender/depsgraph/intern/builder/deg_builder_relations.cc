@@ -960,7 +960,7 @@ void DepsgraphRelationBuilder::build_object_modifiers(Object *object)
     /* Relation for the modifier stack chain. */
     add_relation(previous_key, modifier_key, "Modifier");
 
-    const ModifierTypeInfo *mti = BKE_modifier_get_info(ModifierType(modifier.type));
+    const ModifierTypeInfo *mti = BKE_modifier_get_info(modifier.type);
     if (mti->update_depsgraph) {
       const BuilderStack::ScopedEntry stack_entry = stack_.trace(modifier);
 
@@ -987,6 +987,10 @@ void DepsgraphRelationBuilder::build_object_modifiers(Object *object)
 
 void DepsgraphRelationBuilder::build_object_data(Object *object)
 {
+  if (object->type == OB_EMPTY && !BLI_listbase_is_empty(&object->modifiers)) {
+    build_object_data_empty(object);
+    return;
+  }
   if (object->data == nullptr) {
     return;
   }
@@ -2832,8 +2836,11 @@ void DepsgraphRelationBuilder::build_object_data_geometry_datablock(ID *obdata)
       if (curves_id->surface != nullptr) {
         build_object(curves_id->surface);
 
-        /* The relations between the surface and the curves are handled as part of the modifier
-         * stack building. */
+        ComponentKey surface_geometry_key(&curves_id->surface->id, NodeType::GEOMETRY);
+        add_relation(surface_geometry_key, obdata_geom_eval_key, "Curves Object Surface");
+
+        ComponentKey surface_transform_key(&curves_id->surface->id, NodeType::TRANSFORM);
+        add_relation(surface_transform_key, obdata_geom_eval_key, "Curves Object Surface");
       }
       break;
     }
@@ -2881,6 +2888,27 @@ void DepsgraphRelationBuilder::build_object_data_geometry_datablock(ID *obdata)
       BLI_assert_msg(0, "Should not happen");
       break;
   }
+}
+
+/* Empties can have geometry nodes modifiers which require specific relations to work correctly. */
+void DepsgraphRelationBuilder::build_object_data_empty(Object *object)
+{
+  OperationKey obdata_ubereval_key(&object->id, NodeType::GEOMETRY, OperationCode::GEOMETRY_EVAL);
+  /* Special case: modifiers evaluation queries scene for various things like
+   * data mask to be used. We add relation here to ensure object is never
+   * evaluated prior to Scene's evaluated copy is ready. */
+  ComponentKey scene_key(&scene_->id, NodeType::SCENE);
+  add_relation(scene_key, obdata_ubereval_key, "Copy-on-Eval Relation", RELATION_FLAG_NO_FLUSH);
+  /* Relation to the instance, so that instancer can use geometry of this object. */
+  add_relation(ComponentKey(&object->id, NodeType::GEOMETRY),
+               OperationKey(&object->id, NodeType::INSTANCING, OperationCode::INSTANCE_GEOMETRY),
+               "Transform -> Instance Geometry");
+  /* Synchronization back to original object. This is needed for the modifier errors to be copied
+   * back for example. */
+  ComponentKey final_geometry_key(&object->id, NodeType::GEOMETRY);
+  OperationKey synchronize_key(
+      &object->id, NodeType::SYNCHRONIZATION, OperationCode::SYNCHRONIZE_TO_ORIGINAL);
+  add_relation(final_geometry_key, synchronize_key, "Synchronize to Original");
 }
 
 void DepsgraphRelationBuilder::build_armature(bArmature *armature)

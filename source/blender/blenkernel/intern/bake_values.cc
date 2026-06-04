@@ -109,6 +109,7 @@ class RuntimeToBakeValue {
 
   void convert()
   {
+    PRF_scope_with_name("RuntimeToBakeValue::convert", ProfileCategory::Default);
     for (BakeValues::InputValue &input_value : root_values_) {
       input_value.value.ensure_owns_direct_data();
     }
@@ -370,7 +371,7 @@ class RuntimeToBakeValue {
 
   void runtime_to_bake__Bundle(nodes::Bundle &bundle)
   {
-    Vector<UString> values_to_remove;
+    Vector<nodes::BundleKey> values_to_remove;
     for (const auto &item : bundle.items()) {
       if (auto *socket_value = std::get_if<nodes::BundleItemSocketValue>(&item.value.value)) {
         if (!this->runtime_to_bake__SocketValueVariant(socket_value->value)) {
@@ -378,7 +379,7 @@ class RuntimeToBakeValue {
         }
       }
     }
-    for (const UString &value_to_remove : values_to_remove) {
+    for (const nodes::BundleKey &value_to_remove : values_to_remove) {
       bundle.remove(value_to_remove);
     }
   }
@@ -580,7 +581,7 @@ class BakeToRuntimeValue {
   {
     for (auto &&item : bundle.items()) {
       if (auto *socket_value = std::get_if<nodes::BundleItemSocketValue>(&item.value.value)) {
-        this->bake_to_runtime__SocketValueVariant(socket_value->value, item.key.ref());
+        this->bake_to_runtime__SocketValueVariant(socket_value->value, item.key.ustr().ref());
       }
     }
   }

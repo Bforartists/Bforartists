@@ -4,19 +4,11 @@
 
 #pragma once
 
-#include "infos/eevee_lightprobe_volume_infos.hh"
-
-SHADER_LIBRARY_CREATE_INFO(eevee_surfel_common)
-SHADER_LIBRARY_CREATE_INFO(draw_view)
-
 #include "eevee_surfel_list.bsl.hh"
 
 namespace eevee::surfel {
 
 struct Resources {
-  [[legacy_info]] ShaderCreateInfo eevee_surfel_common;
-  [[legacy_info]] ShaderCreateInfo draw_view;
-
   [[image(0, read_write, SINT_32)]] iimage3DAtomic cluster_list_img;
 };
 
@@ -29,23 +21,24 @@ struct Resources {
  */
 [[compute, local_size(SURFEL_GROUP_SIZE), texture_atomic]]
 void build_cluster([[resource_table]] Resources &srt,
-                   [[global_invocation_id]] const uint3 global_id,
-                   [[local_invocation_id]] const uint3 local_id,
-                   [[local_invocation_index]] const uint local_index)
+                   [[resource_table]] SurfelData &surfels,
+                   [[global_invocation_id]] const uint3 global_id)
 {
-  int surfel_index = int(gl_GlobalInvocationID.x);
-  if (surfel_index >= int(capture_info_buf.surfel_len)) {
+  int surfel_index = int(global_id.x);
+  if (surfel_index >= int(surfels.capture_info_buf.surfel_len)) {
     return;
   }
 
-  int3 cluster = eevee::surfel::cluster_index_get(imageSize(srt.cluster_list_img),
-                                                  capture_info_buf.irradiance_grid_world_to_local,
-                                                  surfel_buf[surfel_index].position);
+  int3 cluster = eevee::surfel::cluster_index_get(
+      imageSize(srt.cluster_list_img),
+      surfels.capture_info_buf.irradiance_grid_world_to_local,
+      surfels.surfel_buf[surfel_index].position);
   /* For debugging. */
-  surfel_buf[surfel_index].cluster_id = cluster.x + cluster.y * 1000 + cluster.z * 1000000;
+  surfels.surfel_buf[surfel_index].cluster_id = cluster.x + cluster.y * 1000 + cluster.z * 1000000;
   /* NOTE: We only need to init the `cluster_list_img` to -1 for the whole list to be valid since
    * every surfel will load its `next` value from the list head. */
-  surfel_buf[surfel_index].next = imageAtomicExchange(srt.cluster_list_img, cluster, surfel_index);
+  surfels.surfel_buf[surfel_index].next = imageAtomicExchange(
+      srt.cluster_list_img, cluster, surfel_index);
 }
 
 }  // namespace eevee::surfel

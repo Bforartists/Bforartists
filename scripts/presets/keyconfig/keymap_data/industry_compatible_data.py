@@ -1272,6 +1272,7 @@ def km_file_browser(params):
         # The two refresh operators have polls excluding each other (so only one is available depending on context).
         ("file.refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
         ("asset.library_refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
+        ("asset.library_reload_listing", {"type": 'R', "value": 'PRESS', "shift": True}, None),
         ("file.previous", {"type": 'BACK_SPACE', "value": 'PRESS'}, None),
         ("file.next", {"type": 'BACK_SPACE', "value": 'PRESS', "shift": True}, None),
         ("wm.context_toggle", {"type": 'H', "value": 'PRESS'},
@@ -1319,6 +1320,7 @@ def km_file_browser_main(params):
         # The two refresh operators have polls excluding each other (so only one is available depending on context).
         ("file.refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
         ("asset.library_refresh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
+        ("asset.library_reload_listing", {"type": 'R', "value": 'PRESS', "shift": True}, None),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'PRESS'},
          {"properties": [("open", False), ("deselect_all", True)]}),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
@@ -1353,6 +1355,10 @@ def km_file_browser_main(params):
          {"properties": [("direction", 'RIGHT'), ("extend", True)]}),
         ("file.select_walk", {"type": 'RIGHT_ARROW', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("direction", 'RIGHT'), ("extend", True), ("fill", True)]}),
+        ("file.select_first_last", {"type": 'HOME', "value": 'PRESS'},
+         {"properties": [("direction", 'FIRST')]}),
+        ("file.select_first_last", {"type": 'HOME', "value": 'PRESS', "ctrl": True},
+         {"properties": [("direction", 'LAST')]}),
         ("file.previous", {"type": 'BUTTON4MOUSE', "value": 'CLICK'}, None),
         ("file.next", {"type": 'BUTTON5MOUSE', "value": 'CLICK'}, None),
         ("file.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True}, None),

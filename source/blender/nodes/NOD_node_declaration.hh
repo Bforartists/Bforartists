@@ -198,6 +198,7 @@ class SocketDeclaration : public ItemDeclaration {
   bool is_panel_toggle = false;
   bool is_layer_name = false;
   bool is_volume_grid_name = false;
+  bool is_anonymous_attribute_output = false;
 
   /** Index in the list of inputs or outputs of the node. */
   int index = -1;
@@ -337,6 +338,13 @@ class BaseSocketDeclarationBuilder {
    */
   BaseSocketDeclarationBuilder &anonymous_attribute_output();
   BaseSocketDeclarationBuilder &anonymous_attribute_output(Span<int> geometry_output_indices);
+
+  /**
+   * The output might reference data (anonymous attributes) on other outputs that does not exist on
+   * the inputs already. Use the more specific #anonymous_attribute_output() if applicable.
+   */
+  BaseSocketDeclarationBuilder &references_other_outputs();
+  BaseSocketDeclarationBuilder &references_other_outputs(Span<int> output_indices);
 
   /** The output has a dynamic structure type which is automatically inferred from inputs. */
   BaseSocketDeclarationBuilder &inferred_structure_type();
@@ -697,6 +705,8 @@ using ImplicitInputValueFn = std::function<void(const bNode &node, void *r_value
 std::optional<ImplicitInputValueFn> get_implicit_input_value_fn(NodeDefaultInputType type);
 bool socket_type_supports_default_input_type(const bke::bNodeSocketType &socket_type,
                                              NodeDefaultInputType input_type);
+bool node_tree_type_supports_default_input_type(eNodeTree_Type node_tree_type,
+                                                NodeDefaultInputType input_type);
 bool default_input_type_is_field(NodeDefaultInputType input_type);
 
 void build_node_declaration(const bke::bNodeType &typeinfo,

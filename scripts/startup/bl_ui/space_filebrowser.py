@@ -579,6 +579,7 @@ class FILEBROWSER_MT_editor_menus(FileBrowserMenu, Menu):
         layout = self.layout
 
         layout.menu("FILEBROWSER_MT_view")
+        layout.menu("FILEBROWSER_MT_navigation") # BFA: Add navigation menu
         layout.menu("FILEBROWSER_MT_select")
 
 
@@ -599,6 +600,21 @@ class FILEBROWSER_MT_view(FileBrowserMenu, Menu):
         layout.menu("INFO_MT_area")
 
         layout.menu("FILEBROWSER_MT_view_pie_menus")
+
+
+# BFA: Add navigation menu
+class FILEBROWSER_MT_navigation(FileBrowserMenu, Menu):
+    bl_label = "Navigation"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("file.previous", text="Back", icon="BACK")
+        layout.operator("file.next", text="Forward", icon="FORWARD")
+        layout.operator("file.parent", text="Parent Directory", icon="FILE_PARENT")
+        layout.operator("file.refresh", text="Refresh", icon="FILE_REFRESH")
+        layout.separator()
+        layout.operator("file.select_first_last", text="To Top", icon="TRIA_UP").direction = 'FIRST'
+        layout.operator("file.select_first_last", text="To Bottom", icon="TRIA_DOWN").direction = 'LAST'
 
 
 class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
@@ -765,6 +781,7 @@ class ASSETBROWSER_MT_editor_menus(AssetBrowserMenu, Menu):
 
         layout.menu("ASSETBROWSER_MT_view")
         layout.menu("ASSETBROWSER_MT_select")
+        layout.menu("ASSETBROWSER_MT_library")
         layout.menu("ASSETBROWSER_MT_catalog")
 
 
@@ -820,6 +837,16 @@ class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.operator("file.select_box", icon="BORDER_RECT")
+
+
+class ASSETBROWSER_MT_library(AssetBrowserMenu, Menu):
+    bl_label = "Library"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("asset.library_refresh", text="Refresh")
+        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing")
 
 
 class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
@@ -1127,10 +1154,11 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         params = st.params
 
         if bpy.ops.asset.assets_download.poll():
-            layout.operator("asset.assets_download")
+            layout.operator("asset.assets_download", icon='DOWNLOAD')
             layout.separator()
 
         layout.operator("asset.library_refresh", icon='FILE_REFRESH')
+        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing")
 
         layout.separator()
 
@@ -1146,6 +1174,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.operator("asset.open_containing_blend_file", icon='FILE_FOLDER')
+        layout.operator("asset.browse_containing_blend_file")
 
         layout.separator()
 
@@ -1169,6 +1198,7 @@ classes = (
     FILEBROWSER_PT_directory_path,
     FILEBROWSER_MT_editor_menus,
     FILEBROWSER_MT_view,
+    FILEBROWSER_MT_navigation,  # BFA
     FILEBROWSER_MT_view_pie_menus,  # BFA
     FILEBROWSER_MT_select,
     FILEBROWSER_MT_context_menu,
@@ -1178,6 +1208,7 @@ classes = (
     ASSETBROWSER_MT_editor_menus,
     ASSETBROWSER_MT_view,
     ASSETBROWSER_MT_select,
+    ASSETBROWSER_MT_library,
     ASSETBROWSER_MT_catalog,
     ASSETBROWSER_PT_import_settings,
     ASSETBROWSER_MT_metadata_preview_menu,

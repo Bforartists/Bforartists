@@ -2188,6 +2188,14 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced(View3DPanel, Panel):
         if brush is None:
             return
 
+        col.prop(gp_settings, "fill_solver")
+        col.separator()
+
+        if gp_settings.fill_solver == 'DELAUNAY':
+            row = col.row(align=True)
+            row.prop(brush, "use_locked_size", expand=True)
+            col.separator()
+
         row = col.row(align=True)
         row.prop(gp_settings, "fill_draw_mode", text="Boundary", text_ctxt=i18n_contexts.id_gpencil)
         row.prop(
@@ -2201,10 +2209,11 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced(View3DPanel, Panel):
         row = col.row(align=True)
         row.prop(gp_settings, "fill_layer_mode", text="Layers")
 
-        col.separator()
-        col.prop(gp_settings, "fill_simplify_level", text="Simplify")
-        if gp_settings.fill_draw_mode != "STROKE":
-            col = layout.column(align=False)  # bfa remove Ignore Transparent heading
+        if gp_settings.fill_solver == 'PIXEL':
+            col.separator()
+            col.prop(gp_settings, "fill_simplify_level", text="Simplify")
+        if gp_settings.fill_draw_mode != 'STROKE':
+            col = layout.column(align=False, heading="Ignore Transparent")
             col.use_property_decorate = False
             row = col.row(align=True)
             split = row.split(factor=0.39)  # add split row show fill
@@ -2219,9 +2228,9 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_fill_advanced(View3DPanel, Panel):
                 sub.label(icon="DISCLOSURE_TRI_RIGHT")
 
         col.separator()
-        row = col.row(align=True)
-        row.use_property_split = False  # bfa add use_property_split
-        row.prop(gp_settings, "use_fill_limit")
+        if gp_settings.fill_solver == 'PIXEL':
+            row = col.row(align=True)
+            row.prop(gp_settings, "use_fill_limit")
         row = col.row(align=True)
         row.use_property_split = False
         row.prop(gp_settings, "use_auto_remove_fill_guides")
@@ -2287,6 +2296,7 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_post_processing(View3DPanel, Panel)
 
         col1 = col.column(align=True)
         col1.prop(gp_settings, "pen_subdivision_steps", text="Subdivisions")
+        col1.active = gp_settings.simplify_pixel_threshold == 0
 
         col1 = col.column(align=True)
         col1.prop(gp_settings, "simplify_pixel_threshold", slider=True)
@@ -2594,17 +2604,20 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_gap_closure(View3DPanel, Panel):
 
         col = layout.column()
 
-        col.prop(gp_settings, "extend_stroke_factor", text="Size")
-        row = col.row(align=True)
-        row.prop(gp_settings, "fill_extend_mode", text="Mode")
-        row = col.row(align=True)
-        row.use_property_split = False
-        row.prop(gp_settings, "show_fill_extend", text="Visual Aids")
-
-        if gp_settings.fill_extend_mode == "EXTEND":
+        if brush.gpencil_settings.fill_solver == 'PIXEL':
+            col.prop(gp_settings, "extend_stroke_factor", text="Size")
             row = col.row(align=True)
-            row.use_property_split = False
-            row.prop(gp_settings, "use_collide_strokes")
+            row.prop(gp_settings, "fill_extend_mode", text="Mode")
+            row = col.row(align=True)
+            row.prop(gp_settings, "show_fill_extend", text="Visual Aids")
+
+            if gp_settings.fill_extend_mode == 'EXTEND':
+                row = col.row(align=True)
+                row.prop(gp_settings, "use_collide_strokes")
+        else:
+            col.prop(gp_settings, "fill_internal_gaps")
+            if gp_settings.fill_internal_gaps:
+                col.prop(gp_settings, "fill_gap_factor", text="Detection Factor")
 
 
 classes = (
@@ -2616,6 +2629,7 @@ classes = (
     VIEW3D_PT_tools_meshedit_options_uvs,
     VIEW3D_PT_tools_armatureedit_options,
     VIEW3D_PT_tools_posemode_options,
+
     VIEW3D_PT_slots_projectpaint,
     VIEW3D_PT_slots_paint_canvas,
     VIEW3D_PT_slots_color_attributes,
@@ -2637,31 +2651,40 @@ classes = (
     VIEW3D_PT_tools_brush_falloff_normal,
     VIEW3D_PT_tools_brush_display,
     VIEW3D_PT_tools_weight_gradient,
+
     VIEW3D_PT_sculpt_dyntopo,
     VIEW3D_PT_sculpt_voxel_remesh,
     VIEW3D_PT_sculpt_symmetry,
     VIEW3D_PT_sculpt_symmetry_for_topbar,
     VIEW3D_PT_sculpt_options,
     VIEW3D_PT_sculpt_options_gravity,
+
     VIEW3D_PT_curves_sculpt_symmetry,
     VIEW3D_PT_curves_sculpt_symmetry_for_topbar,
+
     VIEW3D_PT_tools_weightpaint_symmetry,
     VIEW3D_PT_tools_weightpaint_symmetry_for_topbar,
     VIEW3D_PT_tools_weightpaint_options,
+
     VIEW3D_PT_tools_vertexpaint_symmetry,
     VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar,
     VIEW3D_PT_tools_vertexpaint_options,
+
     VIEW3D_PT_mask,
     VIEW3D_PT_stencil_projectpaint,
     VIEW3D_PT_tools_imagepaint_options_cavity,
+
     VIEW3D_PT_tools_imagepaint_symmetry,
     VIEW3D_PT_tools_imagepaint_options,
+
     VIEW3D_PT_tools_imagepaint_options_external,
     VIEW3D_MT_tools_projectpaint_stencil,
+
     VIEW3D_PT_tools_particlemode,
     VIEW3D_PT_tools_particlemode_options,
     VIEW3D_PT_tools_particlemode_options_shapecut,
     VIEW3D_PT_tools_particlemode_options_display,
+
     VIEW3D_PT_gpencil_brush_presets,
     VIEW3D_PT_tools_grease_pencil_sculpt_brush_popover,
     VIEW3D_PT_tools_grease_pencil_weight_paint_select,
@@ -2671,6 +2694,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_vertex_paint_select,
     VIEW3D_PT_tools_grease_pencil_vertex_paint_settings,
     VIEW3D_PT_tools_grease_pencil_vertex_appearance,
+
     VIEW3D_PT_tools_grease_pencil_v3_brush_select,
     VIEW3D_PT_tools_grease_pencil_v3_brush_settings,
     VIEW3D_PT_tools_grease_pencil_v3_brush_advanced,
@@ -2684,6 +2708,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_v3_brush_gap_closure,
     VIEW3D_PT_tools_grease_pencil_paint_appearance,
     VIEW3D_PT_tools_grease_pencil_sculpt_appearance,
+
     VIEW3D_PT_tools_grease_pencil_brush_weight_falloff,
     VIEW3D_PT_tools_grease_pencil_brush_vertex_color,
     VIEW3D_PT_tools_grease_pencil_brush_vertex_palette,
@@ -2692,6 +2717,5 @@ classes = (
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)

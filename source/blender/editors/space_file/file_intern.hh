@@ -77,6 +77,7 @@ void FILE_OT_highlight(wmOperatorType *ot);
 void FILE_OT_sort_column_ui_context(wmOperatorType *ot);
 void FILE_OT_select(wmOperatorType *ot);
 void FILE_OT_select_walk(wmOperatorType *ot);
+void FILE_OT_select_first_last(wmOperatorType *ot); /* BFA */
 void FILE_OT_select_all(wmOperatorType *ot);
 void FILE_OT_select_box(wmOperatorType *ot);
 void FILE_OT_select_bookmark(wmOperatorType *ot);

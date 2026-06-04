@@ -970,6 +970,94 @@ void FILE_OT_select_walk(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name BFA - Select First/Last Operator
+ * \{ */
+
+static wmOperatorStatus file_select_first_last_exec(bContext *C, wmOperator *op)
+{
+  SpaceFile *sfile = CTX_wm_space_file(C);
+  FileSelectParams *params = ED_fileselect_get_active_params(sfile);
+  ARegion *region = CTX_wm_region(C);
+  FileList *files = sfile->files;
+  const int numfiles = filelist_files_ensure(files);
+  const int direction = RNA_enum_get(op->ptr, "direction");
+  const bool extend = RNA_boolean_get(op->ptr, "extend");
+  const bool fill = RNA_boolean_get(op->ptr, "fill");
+
+  if (numfiles == 0) {
+    return OPERATOR_CANCELLED;
+  }
+
+  const int active_new = (direction == 0) ? 0 : (numfiles - 1);
+  const int active_old = params->active_file;
+
+  if (!extend) {
+    file_select_deselect_all(sfile, FILE_SEL_SELECTED);
+    params->highlight_file = -1;
+    WM_event_add_mousemove(CTX_wm_window(C));
+  }
+  else {
+    params->highlight_file = params->active_file;
+    filelist_entry_parent_select_set(files, FILE_SEL_REMOVE, FILE_SEL_SELECTED, CHECK_ALL);
+  }
+
+  if (fill && active_old >= 0 && active_old < numfiles) {
+    FileSelection sel = {std::min(active_new, active_old), std::max(active_new, active_old)};
+    filelist_entries_select_index_range_set(
+        files, &sel, FILE_SEL_ADD, FILE_SEL_SELECTED, CHECK_ALL);
+  }
+  else {
+    filelist_entry_select_index_set(
+        files, active_new, FILE_SEL_ADD, FILE_SEL_SELECTED, CHECK_ALL);
+  }
+
+  params->active_file = active_new;
+  BLI_assert(IN_RANGE(params->active_file, -1, numfiles));
+  fileselect_file_set(C, sfile, params->active_file);
+  file_ensure_inside_viewbounds(region, sfile, params->active_file);
+
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
+  return OPERATOR_FINISHED;
+}
+
+/* BFA */
+void FILE_OT_select_first_last(wmOperatorType *ot)
+{
+  PropertyRNA *prop;
+  static const EnumPropertyItem direction_items[] = {
+      {0, "FIRST", 0, "First", "Jump to first file"},
+      {1, "LAST", 0, "Last", "Jump to last file"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  /* identifiers */
+  ot->name = "Select First/Last File";
+  ot->description = "Select the first or last file in the file list";
+  ot->idname = "FILE_OT_select_first_last";
+
+  /* API callbacks. */
+  ot->exec = file_select_first_last_exec;
+  /* Operator works for file or asset browsing */
+  ot->poll = ED_operator_file_active;
+
+  /* properties */
+  prop = RNA_def_enum(ot->srna, "direction", direction_items, 0, "Direction", "");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+  prop = RNA_def_boolean(ot->srna,
+                         "extend",
+                         false,
+                         "Extend",
+                         "Extend selection instead of deselecting everything first");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+  prop = RNA_def_boolean(
+      ot->srna, "fill", false, "Fill", "Select everything beginning with the last selection");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_FILEBROWSER);
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Select All Operator
  * \{ */
 

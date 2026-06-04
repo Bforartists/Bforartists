@@ -462,7 +462,7 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
   if (prev_obact) {
     Object *obact = CTX_data_active_object(&C);
     if (obact && prev_obact->type == obact->type) {
-      object::mode_set(&C, eObjectMode(prev_obact->mode));
+      object::mode_set(&C, prev_obact->mode);
     }
   }
 
@@ -3072,7 +3072,9 @@ void SEQUENCER_OT_strip_jump(wmOperatorType *ot)
   /* Identifiers. */
   ot->name = "Jump to Strip";
   ot->idname = "SEQUENCER_OT_strip_jump";
-  ot->description = "Move frame to next or previous edit point";
+  ot->description =
+      "Move playhead to the next or previous edit point, which may be a strip handle or its "
+      "center";
 
   /* API callbacks. */
   ot->exec = sequencer_strip_jump_exec;
@@ -3082,8 +3084,16 @@ void SEQUENCER_OT_strip_jump(wmOperatorType *ot)
   ot->flag = OPTYPE_UNDO;
 
   /* Properties. */
-  RNA_def_boolean(ot->srna, "next", true, "Next Strip", "");
-  RNA_def_boolean(ot->srna, "center", true, "Use Strip Center", "");
+  RNA_def_boolean(ot->srna,
+                  "next",
+                  true,
+                  "Next Strip",
+                  "Jump to the next handle or center, else the previous");
+  RNA_def_boolean(ot->srna,
+                  "center",
+                  true,
+                  "Use Strip Center",
+                  "Jump to the center of the strip rather than its handles");
 }
 
 /** \} */
@@ -3787,7 +3797,8 @@ void SEQUENCER_OT_change_scene(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* Properties. */
-  prop = RNA_def_enum(ot->srna, "scene", rna_enum_dummy_NULL_items, 0, "Scene", "");
+  prop = RNA_def_enum(
+      ot->srna, "scene", rna_enum_dummy_NULL_items, 0, "Scene", "Scene to assign to the strip");
   RNA_def_enum_funcs(prop, RNA_scene_without_sequencer_scene_itemf);
   RNA_def_property_flag(prop, PROP_ENUM_NO_TRANSLATE);
   ot->prop = prop;
@@ -4198,19 +4209,23 @@ static wmOperatorStatus sequencer_strip_transform_fit_exec(bContext *C, wmOperat
 
   for (Strip &strip : *ed->current_strips()) {
     if (strip.flag & SEQ_SELECT && strip.type != STRIP_TYPE_SOUND) {
-      const int timeline_frame = scene->r.cfra;
-      StripElem *strip_elem = seq::render_give_stripelem(scene, &strip, timeline_frame);
-
-      if (strip_elem == nullptr) {
-        continue;
+      int src_w, src_h;
+      if (strip.type == STRIP_TYPE_COLOR) {
+        const SolidColorVars *cv = static_cast<const SolidColorVars *>(strip.effectdata);
+        src_w = cv->width;
+        src_h = cv->height;
+      }
+      else {
+        const int timeline_frame = scene->r.cfra;
+        const StripElem *strip_elem = seq::render_give_stripelem(scene, &strip, timeline_frame);
+        if (strip_elem == nullptr) {
+          continue;
+        }
+        src_w = strip_elem->orig_width;
+        src_h = strip_elem->orig_height;
       }
 
-      seq::set_scale_to_fit(&strip,
-                            strip_elem->orig_width,
-                            strip_elem->orig_height,
-                            scene->r.xsch,
-                            scene->r.ysch,
-                            fit_method);
+      seq::set_scale_to_fit(&strip, src_w, src_h, scene->r.xsch, scene->r.ysch, fit_method);
       seq::relations_invalidate_cache(scene, &strip);
     }
   }
@@ -4288,7 +4303,12 @@ void SEQUENCER_OT_strip_color_tag_set(wmOperatorType *ot)
   /* Flags. */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  RNA_def_enum(ot->srna, "color", rna_enum_strip_color_items, STRIP_COLOR_NONE, "Color Tag", "");
+  RNA_def_enum(ot->srna,
+               "color",
+               rna_enum_strip_color_items,
+               STRIP_COLOR_NONE,
+               "Color Tag",
+               "Color used to tag strips for organizing them in the timeline");
 }
 
 /** \} */
