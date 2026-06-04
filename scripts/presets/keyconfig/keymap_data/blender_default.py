@@ -2571,6 +2571,10 @@ def km_file_browser_main(params):
                 ({"shift": True, "ctrl": True}, (("extend", True), ("fill", True))),
             )
         ],
+        ("file.select_first_last", {"type": 'HOME', "value": 'PRESS'},
+         {"properties": [("direction", 'FIRST')]}),
+        ("file.select_first_last", {"type": 'HOME', "value": 'PRESS', "ctrl": True},
+         {"properties": [("direction", 'LAST')]}),
         ("file.previous", {"type": 'BUTTON4MOUSE', "value": 'CLICK'}, None),
         ("file.next", {"type": 'BUTTON5MOUSE', "value": 'CLICK'}, None),
         *_template_items_select_actions(params, "file.select_all"),
