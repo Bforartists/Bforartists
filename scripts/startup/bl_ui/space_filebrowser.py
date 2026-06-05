@@ -620,8 +620,9 @@ class FILEBROWSER_MT_navigation(FileBrowserMenu, Menu):
 class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
     bl_label = "Select"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+        params = context.space_data.params
 
         layout.operator(
             "file.select_all", text="All", icon="SELECT_ALL"
@@ -636,6 +637,14 @@ class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
         layout.separator()
 
         layout.operator("file.select_box", icon="BORDER_RECT")
+
+        layout.separator()
+
+        layout.operator("file.select_walk", text="Up", icon="TRIA_UP").direction = 'UP'
+        layout.operator("file.select_walk", text="Down", icon="TRIA_DOWN").direction = 'DOWN'
+        if params.display_type != 'LIST_VERTICAL':
+            layout.operator("file.select_walk", text="Left", icon="TRIA_LEFT").direction = 'LEFT'
+            layout.operator("file.select_walk", text="Right", icon="TRIA_RIGHT").direction = 'RIGHT'
 
 
 class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
