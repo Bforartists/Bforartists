@@ -29,39 +29,30 @@ class CONSOLE_MT_editor_menus(Menu):
         layout.menu("CONSOLE_MT_edit")
 
 
-class CONSOLE_MT_console(Menu):
-    bl_label = "Console"
+# BFA - Not Used
+class CONSOLE_MT_view(Menu):
+    bl_label = "View"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("console.execute", icon = "PLAY").interactive = True
+        props = layout.operator("wm.context_cycle_int", text="Zoom In")
+        props.data_path = "space_data.font_size"
+        props.reverse = False
+        props = layout.operator("wm.context_cycle_int", text="Zoom Out")
+        props.data_path = "space_data.font_size"
+        props.reverse = True
 
         layout.separator()
 
-        layout.operator("console.clear", icon = "DELETE")
-        layout.operator("console.clear_line", icon = "DELETE")
-
-        layout.separator()
-
-        layout.operator("console.copy_as_script", text = "Copy as Script", icon = "COPYDOWN")
-        layout.operator("console.copy", text="Cut", icon="COPYDOWN").delete = True
-        layout.operator("console.copy", text ="Copy", icon = "COPYDOWN")
-        layout.operator("console.paste", text = "Paste", icon = "PASTEDOWN")
+        layout.operator("console.move", text="Move to Previous Word").type = 'PREVIOUS_WORD'
+        layout.operator("console.move", text="Move to Next Word").type = 'NEXT_WORD'
+        layout.operator("console.move", text="Move to Line Begin").type = 'LINE_BEGIN'
+        layout.operator("console.move", text="Move to Line End").type = 'LINE_END'
 
         layout.separator()
 
         layout.menu("CONSOLE_MT_language")
-
-        layout.separator()
-
-        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text in", icon = "ZOOM_IN")
-        myvar.data_path = "space_data.font_size"
-        myvar.reverse = False
-
-        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text Out", icon = "ZOOM_OUT")
-        myvar.data_path = "space_data.font_size"
-        myvar.reverse = True
 
         layout.separator()
 
@@ -113,7 +104,8 @@ class CONSOLE_MT_edit_move_cursor(Menu):
         layout.operator("console.move", text ="Cursor to Previous Character", icon = "CARET_PREV_CHAR").type = "PREVIOUS_CHARACTER"
         layout.operator("console.move", text ="Cursor to Next Character", icon = "CARET_NEXT_CHAR").type = "NEXT_CHARACTER"
 
-# BFA - menu
+
+# BFA - menu, replaces View
 class CONSOLE_MT_edit(Menu):
     bl_label = "Edit"
 
@@ -137,6 +129,10 @@ class CONSOLE_MT_edit(Menu):
         layout.operator("console.history_cycle", text = "Forward in History", icon = "HISTORY_CYCLE_FORWARD").reverse = False
         layout.operator("console.history_cycle", text = "Backward in History", icon = "HISTORY_CYCLE_BACK").reverse = True
 
+        layout.separator()
+
+        layout.menu("CONSOLE_MT_language") # BFA - to Document
+
 
 class CONSOLE_MT_language(Menu):
     bl_label = "Languages"
@@ -157,6 +153,46 @@ class CONSOLE_MT_language(Menu):
 
         for language in languages:
             layout.operator("console.language", text=language.title(), translate=False).language = language
+
+
+class CONSOLE_MT_console(Menu):
+    bl_label = "Console"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("console.execute", icon = "PLAY").interactive = True
+
+        layout.separator()
+
+        layout.operator("console.clear", icon = "DELETE")
+        layout.operator("console.clear_line", icon = "DELETE")
+
+        layout.separator()
+
+        layout.operator("console.copy_as_script", text = "Copy as Script", icon = "COPYDOWN")
+        layout.operator("console.copy", text="Cut", icon="COPYDOWN").delete = True
+        layout.operator("console.copy", text ="Copy", icon = "COPYDOWN")
+        layout.operator("console.paste", text = "Paste", icon = "PASTEDOWN")
+
+        layout.separator()
+
+        layout.menu("CONSOLE_MT_language")
+
+        layout.separator()
+
+        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text in", icon = "ZOOM_IN")
+        myvar.data_path = "space_data.font_size"
+        myvar.reverse = False
+
+        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text Out", icon = "ZOOM_OUT")
+        myvar.data_path = "space_data.font_size"
+        myvar.reverse = True
+
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
 
 class CONSOLE_MT_edit_delete(Menu):
     bl_label = "Delete"
@@ -209,8 +245,9 @@ classes = (
     CONSOLE_MT_edit_move_cursor, # bfa menu
     CONSOLE_MT_edit, # BFA - menu
     CONSOLE_MT_editor_menus,
+    CONSOLE_MT_view, #BFa - not used, replaced by the edit menu
+    CONSOLE_MT_language,
     CONSOLE_MT_console,
-    CONSOLE_MT_language, # BFA - menu
     CONSOLE_MT_edit_delete, # BFA - menu
     CONSOLE_MT_context_menu,
 )

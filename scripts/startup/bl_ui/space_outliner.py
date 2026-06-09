@@ -236,9 +236,7 @@ class OUTLINER_MT_context_menu(Menu):
     bl_label = "Outliner"
 
     @staticmethod
-    def draw_common_operators(layout):
-        layout.separator()
-
+    def draw_common_operators(space, layout):
         ## BFA - The original from blender
         # layout.menu("OUTLINER_MT_liboverride", icon='LIBRARY_DATA_OVERRIDE')
 
@@ -273,8 +271,16 @@ class OUTLINER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.menu_contents("OUTLINER_MT_asset")
+        # Mark/clear asset options does not belongs in certain outliner views.
+        if space.display_mode not in {'SEQUENCE', 'LIBRARY_OVERRIDES'}:
+                layout.menu_contents("OUTLINER_MT_asset")
 
+        if space.display_mode in {'LIBRARY_OVERRIDES'}:
+            layout.operator(
+                "outliner.liboverride_property_remove",
+                text="Remove",
+                icon="DELETE",
+            ) # BFA - WIP - To document
 
 
     def draw(self, context):
@@ -286,7 +292,7 @@ class OUTLINER_MT_context_menu(Menu):
             OUTLINER_MT_collection_new.draw_without_context_menu(context, layout)
             layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(space, layout)
 
 
 class OUTLINER_MT_context_menu_view(Menu):
@@ -438,7 +444,7 @@ class OUTLINER_MT_collection(Menu):
 
         layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(space, layout)
 
 
 class OUTLINER_MT_collection_new(Menu):
@@ -458,7 +464,7 @@ class OUTLINER_MT_collection_new(Menu):
 
         layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(context.space_data, layout)
 
 
 class OUTLINER_MT_object(Menu):
@@ -501,7 +507,7 @@ class OUTLINER_MT_object(Menu):
         
         layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(space, layout)
 
 
 class OUTLINER_MT_asset(Menu):

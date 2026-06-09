@@ -1193,8 +1193,9 @@ enum eSpace_Type : char {
   SPACE_CLIP = 20,
   SPACE_TOPBAR = 21,
   SPACE_STATUSBAR = 22,
-  SPACE_SPREADSHEET = 24,
-  SPACE_TOOLBAR = 40 /* BFA - toolbar*/
+  SPACE_SPREADSHEET = 23,
+  SPACE_PROJECT = 24,
+  SPACE_TOOLBAR = 40, /* BFA - toolbar*/
 
 #define SPACE_TYPE_NUM (SPACE_TOOLBAR + 1)
 };

@@ -747,7 +747,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()  # BFA - exposed context menu operator to header
 
-        props = layout.operator("wm.call_panel", text="Rename...", icon="RENAME")
+        props = layout.operator("wm.call_panel", text="Rename Active Node", icon="RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -1114,7 +1114,7 @@ class NODE_MT_context_menu(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename", icon="RENAME")
+        props = layout.operator("wm.call_panel", text="Rename Active Node", icon="RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -1123,7 +1123,11 @@ class NODE_MT_context_menu(Menu):
         layout.menu("NODE_MT_context_menu_select_menu")
         layout.menu("NODE_MT_context_menu_show_hide_menu")
 
-        # BFA - removed blender online manual
+        # BFA - WIP - to be chamged frp, blender online manual to our one
+        if active_node:
+            layout.separator()
+            props = layout.operator("wm.doc_view_manual", text="Online Manual", icon='URL')
+            props.doc_id = active_node.bl_idname
 
 
 class NODE_PT_active_node_generic(Panel):

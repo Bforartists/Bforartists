@@ -483,6 +483,9 @@ static rctf *stored_window_bounds(eSpace_Type space_type)
   if (space_type == SPACE_FILE) {
     return &U.stored_bounds.file;
   }
+  if (space_type == SPACE_PROJECT) {
+    return &U.stored_bounds.project;
+  }
 
   return nullptr;
 }
@@ -2716,7 +2719,7 @@ static char *wm_clipboard_text_get_ex(bool selection,
   }
 
   /* Always convert from `\r\n` to `\n`. */
-  char *newbuf = MEM_new_array_uninitialized<char>(size_t(buf_len + 1), __func__);
+  char *newbuf = MEM_new_array_uninitialized<char>(size_t(buf_len) + 1, __func__);
   char *p2 = newbuf;
 
   if (firstline) {
