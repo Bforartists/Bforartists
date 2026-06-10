@@ -706,7 +706,7 @@ void ACTION_OT_select_box(wmOperatorType *ot)
   ot->modal = WM_gesture_box_modal;
   ot->cancel = WM_gesture_box_cancel;
 
-  ot->poll = ED_operator_action_active;
+  ot->poll = ED_operator_region_action_active;
 
   /* flags */
   ot->flag = OPTYPE_UNDO;
@@ -972,7 +972,7 @@ void ACTION_OT_select_lasso(wmOperatorType *ot)
   ot->invoke = WM_gesture_lasso_invoke;
   ot->modal = WM_gesture_lasso_modal;
   ot->exec = actkeys_lassoselect_exec;
-  ot->poll = ED_operator_action_active;
+  ot->poll = ED_operator_region_action_active;
   ot->cancel = WM_gesture_lasso_cancel;
 
   /* flags */
@@ -1039,7 +1039,7 @@ void ACTION_OT_select_circle(wmOperatorType *ot)
   ot->invoke = WM_gesture_circle_invoke;
   ot->modal = WM_gesture_circle_modal;
   ot->exec = action_circle_select_exec;
-  ot->poll = ED_operator_action_active;
+  ot->poll = ED_operator_region_action_active;
   ot->cancel = WM_gesture_circle_cancel;
   ot->get_name = ED_select_circle_get_name;
 
@@ -2129,7 +2129,7 @@ void ACTION_OT_clickselect(wmOperatorType *ot)
   ot->description = "Select keyframes by clicking on them";
 
   /* callbacks */
-  ot->poll = ED_operator_action_active;
+  ot->poll = ED_operator_region_action_active;
   ot->exec = actkeys_clickselect_exec;
   ot->invoke = WM_generic_select_invoke;
   ot->modal = WM_generic_select_modal;

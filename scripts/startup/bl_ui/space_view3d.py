@@ -1368,8 +1368,6 @@ class VIEW3D_MT_transform_base:
         layout.operator("transform.bend", text="Bend", icon="BEND")
         layout.operator("transform.push_pull", text="Push/Pull", icon="PUSH_PULL")
 
-        layout.separator()
-
 
 # Generic transform menu - geometry types
 class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
@@ -1379,6 +1377,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
 
         # generic...
         layout = self.layout
+        layout.separator()
         if context.mode == 'EDIT_MESH':
             layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
             layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
@@ -1391,14 +1390,13 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             layout.operator("transform.transform", text="Opacity", icon="GP_OPACITY").mode = 'GPENCIL_OPACITY'
 
         if context.mode in {
-            "EDIT_MESH",
-            "EDIT_ARMATURE",
-            "EDIT_SURFACE",
-            "EDIT_CURVE",
-            "EDIT_CURVES",
-            "EDIT_LATTICE",
-            "EDIT_METABALL",
-            "EDIT_POINTCLOUD",
+            'EDIT_MESH',
+            'EDIT_SURFACE',
+            'EDIT_CURVE',
+            'EDIT_CURVES',
+            'EDIT_LATTICE',
+            'EDIT_METABALL',
+            'EDIT_POINTCLOUD',
         }:
             layout.operator("transform.vertex_warp", text="Warp", icon="MOD_WARP")
             layout.operator_context = "EXEC_REGION_WIN"
@@ -1452,8 +1450,16 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base, Menu):
 
         # armature specific extensions follow...
         obj = context.object
-        if obj.type == "ARMATURE" and obj.mode in {"EDIT", "POSE"}:
-            if obj.data.display_type == "BBONE":
+        if obj.type == 'ARMATURE':
+            if obj.mode == 'EDIT':
+                layout.separator()
+
+                layout.operator("transform.vertex_warp", text="Warp") # BFA - WIP
+                layout.operator_context = 'EXEC_REGION_WIN'
+                layout.operator("transform.vertex_random", text="Randomize").offset = 0.1 # BFA - WIP
+                layout.operator_context = 'INVOKE_REGION_WIN'
+
+            if obj.data.display_type == 'BBONE':
                 layout.separator()
 
                 layout.operator("transform.transform", text="Scale BBone", icon="TRANSFORM_SCALE").mode = "BONE_SIZE"
@@ -3651,7 +3657,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.duplicate_move", icon="DUPLICATE")
+        layout.operator("object.duplicate_move", icon='DUPLICATE')
         layout.operator("object.duplicate_move_linked", icon="DUPLICATE")
         layout.operator("object.join", icon="JOIN")
 
@@ -12123,8 +12129,8 @@ class VIEW3D_AST_brush_vertex_paint(View3DAssetShelf, bpy.types.AssetShelf):
     brush_type_prop = "vertex_brush_type"
 
 
-class VIEW3D_AST_brush_weight_paint(AssetShelfHiddenByDefault, View3DAssetShelf, bpy.types.AssetShelf):
-    mode = "WEIGHT_PAINT"
+class VIEW3D_AST_brush_weight_paint(View3DAssetShelf, bpy.types.AssetShelf):
+    mode = 'WEIGHT_PAINT'
     mode_prop = "use_paint_weight"
     brush_type_prop = "weight_brush_type"
 

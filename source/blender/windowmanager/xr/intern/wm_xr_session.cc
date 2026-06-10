@@ -85,11 +85,14 @@ static void wm_xr_session_create_cb()
 
   /* Initialize navigation. */
   WM_xr_session_state_navigation_reset(state);
-  WM_xr_session_state_viewfinder_reset(state);
   if (settings->base_scale < FLT_EPSILON) {
     settings->base_scale = 1.0f;
   }
   state->prev_base_scale = settings->base_scale;
+
+  /* Initialize location scouting viewfinder. */
+  WM_xr_session_state_viewfinder_init(state);
+  WM_xr_session_state_viewfinder_reset(state);
 
   /* Initialize vignette. */
   state->vignette_aperture = 1.0f;
@@ -107,11 +110,18 @@ static void wm_xr_session_controller_data_free(wmXrSessionState *state)
   }
 }
 
+static void wm_xr_session_viewfinder_data_free(wmXrSessionState *state)
+{
+  BKE_id_free(nullptr, id_cast<ID *>(state->viewfinder.render_cam_data_id));
+  GPU_TEXTURE_FREE_SAFE(state->viewfinder.backside_logo_texture);
+  GPU_offscreen_free(state->viewfinder.offscreen);
+  GPU_viewport_free(state->viewfinder.viewport);
+}
+
 void wm_xr_session_data_free(wmXrSessionState *state)
 {
   wm_xr_session_controller_data_free(state);
-  BKE_id_free(nullptr, id_cast<ID *>(state->viewfinder.render_cam_data_id));
-  GPU_TEXTURE_FREE_SAFE(state->viewfinder.backside_logo_texture);
+  wm_xr_session_viewfinder_data_free(state);
 }
 
 static void wm_xr_session_exit_cb(void *customdata)
@@ -875,6 +885,34 @@ void WM_xr_session_state_navigation_reset(wmXrSessionState *state)
   state->swap_hands = false;
 }
 
+void WM_xr_session_state_viewfinder_init(wmXrSessionState *state)
+{
+  /* Create a Camera data ID to override the View3D camera (for setting parameters such as DoF).
+   * This ID is freed in #wm_xr_session_data_free. */
+  state->viewfinder.render_cam_data_id = BKE_id_new_nomain<Camera>("ViewfinderCamera");
+
+  /* Create a Camera logo texture to draw on the backside of the viewfinder. */
+  ImBuf *ibuf = ui::svg_icon_bitmap(ICON_RESTRICT_RENDER_OFF, 256.0f, false);
+  if (ibuf) {
+    const GPUTextureCreateFlags flags = GPUTextureCreateFlags::Premultiplied |
+                                        GPUTextureCreateFlags::EnableMipmaps |
+                                        GPUTextureCreateFlags::LimitSize;
+    state->viewfinder.backside_logo_texture = IMB_create_gpu_texture(
+        "viewfinder_backside_logo", ibuf, flags);
+    IMB_freeImBuf(ibuf);
+  }
+
+  /* Create the offscreen framebuffer and viewport used to draw the Viewfinder view texture. */
+  state->viewfinder.offscreen = GPU_offscreen_create(wmXrViewfinderState::view_resolution,
+                                                     wmXrViewfinderState::view_resolution,
+                                                     true,
+                                                     gpu::TextureFormat::UNORM_8_8_8_8,
+                                                     GPU_TEXTURE_USAGE_SHADER_READ,
+                                                     false,
+                                                     nullptr);
+  state->viewfinder.viewport = GPU_viewport_create();
+}
+
 void WM_xr_session_state_viewfinder_reset(wmXrSessionState *state)
 {
   /* Runtime values. */
@@ -882,22 +920,6 @@ void WM_xr_session_state_viewfinder_reset(wmXrSessionState *state)
   state->viewfinder.last_flash_trigger_time = 0.0;
   state->viewfinder.last_focus_hit_time = 0.0;
   state->viewfinder.last_focus_hit_success = false;
-
-  /* Create a Camera data ID to override the View3D camera (for setting parameters such as DoF).
-   * This ID is freed in #wm_xr_session_data_free. */
-  if (state->viewfinder.render_cam_data_id == nullptr) {
-    state->viewfinder.render_cam_data_id = BKE_id_new_nomain<Camera>("ViewfinderCamera");
-  }
-
-  /* Create a Camera logo texture to draw on the backside of the viewfinder. */
-  if (state->viewfinder.backside_logo_texture == nullptr) {
-    ImBuf *ibuf = ui::svg_icon_bitmap(ICON_RESTRICT_RENDER_OFF, 256.0f, false);
-    if (ibuf) {
-      state->viewfinder.backside_logo_texture = IMB_create_gpu_texture(
-          "viewfinder_backside_logo", ibuf, false, true, true);
-      IMB_freeImBuf(ibuf);
-    }
-  }
 
   /* Capture settings. */
   state->viewfinder.capture_dof_enabled = false;

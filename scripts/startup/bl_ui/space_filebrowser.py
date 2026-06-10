@@ -532,7 +532,7 @@ class FILEBROWSER_PT_directory_path(Panel):
 
         subsubrow = subrow.row()
         subsubrow.operator_context = 'EXEC_DEFAULT'
-        subsubrow.operator("file.directory_new", icon="NEWFOLDER", text="")
+        subsubrow.operator("file.directory_new", icon="NEWFOLDER", text="").confirm = False
 
         subrow.template_file_select_path(params)
 
@@ -655,20 +655,16 @@ class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
         st = context.space_data
         params = st.params
 
-        layout.operator("file.previous", text="Back", icon="BACK")
-        layout.operator("file.next", text="Forward", icon="FORWARD")
-        layout.operator("file.parent", text="Go to Parent", icon="FILE_PARENT")
-        layout.operator("file.refresh", text="Refresh", icon="FILE_REFRESH")
+        layout.operator("file.previous", text="Back", icon='BACK')
+        layout.operator("file.next", text="Forward", icon='FORWARD')
+        layout.operator("file.parent", text="Go to Parent", icon='FILE_PARENT')
+        layout.operator("file.refresh", text="Refresh", icon='FILE_REFRESH')
         layout.menu("FILEBROWSER_MT_operations_menu")
 
         layout.separator()
 
-        layout.operator(
-            "file.filenum", text="Increase Number", icon="ADD"
-        ).increment = 1
-        layout.operator(
-            "file.filenum", text="Decrease Number", icon="REMOVE"
-        ).increment = -1
+        layout.operator("file.filenum", text="Increase Number", icon='ADD').increment = 1
+        layout.operator("file.filenum", text="Decrease Number", icon='REMOVE').increment = -1
 
         layout.separator()
 
@@ -681,7 +677,7 @@ class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
 
         sub = layout.row()
         sub.operator_context = 'EXEC_DEFAULT'
-        sub.operator("file.directory_new", text="New Folder", icon="FILE_FOLDER")
+        sub.operator("file.directory_new", text="New Folder", icon="FILE_FOLDER").confirm = False
         layout.operator("file.bookmark_add", text="Add Bookmark", icon="BOOKMARKS")
 
         layout.separator()
@@ -854,7 +850,7 @@ class ASSETBROWSER_MT_library(AssetBrowserMenu, Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("asset.library_refresh", text="Refresh")
+        layout.operator("asset.library_refresh", text="Refresh", icon='FILE_REFRESH')
         layout.operator("asset.library_reload_listing", text="Refresh Remote Listing")
 
 

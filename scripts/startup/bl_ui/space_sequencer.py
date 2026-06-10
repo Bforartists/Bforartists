@@ -1323,7 +1323,7 @@ class SEQUENCER_MT_strip_input(Menu):
 class SEQUENCER_MT_strip_lock_mute(Menu):
     bl_label = "Lock/Mute"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.operator("sequencer.lock", icon="LOCKED")
@@ -1340,10 +1340,12 @@ class SEQUENCER_MT_strip_lock_mute(Menu):
 class SEQUENCER_MT_strip_modifiers(Menu):
     bl_label = "Modifiers"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        layout.menu("SEQUENCER_MT_modifier_add", text="Add Modifier")
+        col = layout.column()
+        col.menu("SEQUENCER_MT_modifier_add", text="Add Modifier")
+        col.enabled = context.active_strip is not None
 
         layout.operator("sequencer.strip_modifier_copy", text="Copy to Selected Strips", icon="COPYDOWN")
 
@@ -1526,10 +1528,10 @@ class SEQUENCER_MT_strip(Menu):
 
             layout.separator()
 
-            layout.operator("sequencer.copy", text="Copy", icon="COPYDOWN")
-            layout.operator("sequencer.paste", text="Paste", icon="PASTEDOWN")
-            layout.operator("sequencer.duplicate_move", icon="DUPLICATE")
-            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked", icon="DUPLICATE")
+            layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
+            layout.operator("sequencer.paste", text="Paste", icon='PASTEDOWN')
+            layout.operator("sequencer.duplicate_move", text="Duplicate")
+            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked")
 
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
@@ -1946,6 +1948,7 @@ class SEQUENCER_MT_modifier_add(Menu):
         layout = self.layout
         strip = context.active_strip
         if not strip:
+            layout.label(text="No active strip", icon="INFO")
             return
 
         if layout.operator_context == "EXEC_REGION_WIN":

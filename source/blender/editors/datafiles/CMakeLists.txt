@@ -1655,6 +1655,7 @@ if(WITH_BLENDER)
       prev_keyframe
       preview_range
       previousactive
+      project
       project_point
       projectfromview
       projectfromview_bounds

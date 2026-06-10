@@ -4018,7 +4018,8 @@ static void mesh_data_to_grease_pencil(const Mesh &mesh_eval,
     array_utils::copy(faces_span, offsets);
     attributes.add<bool>("cyclic", bke::AttrDomain::Curve, bke::AttributeInitValue(true));
 
-    VArray<int> mesh_materials = *mesh_eval.attributes().lookup_or_default(
+    const bke::AttributeAccessor mesh_attributes = mesh_eval.attributes();
+    VArray<int> mesh_materials = *mesh_attributes.lookup_or_default(
         "material_index", bke::AttrDomain::Face, 0);
     bke::SpanAttributeWriter<int> material_indices =
         attributes.lookup_or_add_for_write_only_span<int>("material_index",
@@ -4044,6 +4045,13 @@ static void mesh_data_to_grease_pencil(const Mesh &mesh_eval,
     bke::SpanAttributeWriter<bool> hide_stroke = attributes.lookup_or_add_for_write_span<bool>(
         "hide_stroke", bke::AttrDomain::Curve, bke::AttributeInitValue(true));
     hide_stroke.finish();
+
+    bke::gather_attributes(mesh_attributes,
+                           bke::AttrDomain::Point,
+                           bke::AttrDomain::Point,
+                           bke::attribute_filter_from_skip_ref({"position"}),
+                           corner_verts,
+                           attributes);
   }
 
   Mesh *mesh_copied = BKE_mesh_copy_for_eval(mesh_eval);
@@ -4355,10 +4363,11 @@ static Object *convert_grease_pencil_to_mesh(Base &base,
       }
       if (geometries.size() > 0) {
         bke::GeometrySet joined_curves = geometry::join_geometries(geometries, {});
-
-        new_curves->geometry.wrap() = joined_curves.get_curves()->geometry.wrap();
-        new_curves->geometry.wrap().tag_topology_changed();
-        BKE_object_material_from_eval_data(info.bmain, newob, &joined_curves.get_curves()->id);
+        if (const Curves *joined_curves_data = joined_curves.get_curves()) {
+          new_curves->geometry.wrap() = joined_curves_data->geometry.wrap();
+          new_curves->geometry.wrap().tag_topology_changed();
+          BKE_object_material_from_eval_data(info.bmain, newob, &joined_curves_data->id);
+        }
       }
     }
 
@@ -4679,7 +4688,7 @@ static Object *convert_curves_legacy_to_grease_pencil(Base &base,
   Object *ob = base.object;
   ob->flag |= OB_DONE;
   Object *newob = get_object_for_conversion(base, info, r_new_base);
-  BLI_assert(newob->type == OB_CURVES_LEGACY);
+  BLI_assert(ELEM(newob->type, OB_CURVES_LEGACY, OB_SURF));
 
   Curve *legacy_curve_id = id_cast<Curve *>(newob->data);
   Curves *curves_nomain = bke::curve_legacy_to_curves(*legacy_curve_id);
