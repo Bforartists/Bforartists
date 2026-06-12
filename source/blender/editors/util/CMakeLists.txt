@@ -28,6 +28,7 @@ set(SRC
   # general includes
   ../include/BIF_glutil.hh
   ../include/ED_anim_api.hh
+  ../include/ED_anim_transformable.hh
   ../include/ED_armature.hh
   ../include/ED_asset.hh
   ../include/ED_asset_menu_utils.hh

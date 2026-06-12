@@ -30,7 +30,6 @@ namespace blender {
 
 namespace compositor {
 class RenderContext;
-class Profiler;
 enum class NodeGroupOutputTypes : uint8_t;
 }  // namespace compositor
 
@@ -52,12 +51,12 @@ struct BaseRender {
    * highlight. */
   virtual render::TilesHighlight *get_tile_highlight() = 0;
 
-  virtual void compositor_execute(const Scene &scene,
+  virtual void compositor_execute(const Main &main,
+                                  const Scene &scene,
                                   const RenderData &render_data,
                                   const bNodeTree &node_tree,
                                   const char *view_name,
                                   compositor::RenderContext *render_context,
-                                  compositor::Profiler *profiler,
                                   compositor::NodeGroupOutputTypes needed_outputs) = 0;
   virtual void compositor_free() = 0;
 
@@ -97,12 +96,12 @@ struct ViewRender : public BaseRender {
     return nullptr;
   }
 
-  void compositor_execute(const Scene & /*scene*/,
+  void compositor_execute(const Main & /*main*/,
+                          const Scene & /*scene*/,
                           const RenderData & /*render_data*/,
                           const bNodeTree & /*node_tree*/,
                           const char * /*view_name*/,
                           compositor::RenderContext * /*render_context*/,
-                          compositor::Profiler * /*profiler*/,
                           compositor::NodeGroupOutputTypes /*needed_outputs*/) override
   {
   }
@@ -125,12 +124,12 @@ struct Render : public BaseRender {
     return &tile_highlight;
   }
 
-  void compositor_execute(const Scene &scene,
+  void compositor_execute(const Main &main,
+                          const Scene &scene,
                           const RenderData &render_data,
                           const bNodeTree &node_tree,
                           const char *view_name,
                           compositor::RenderContext *render_context,
-                          compositor::Profiler *profiler,
                           compositor::NodeGroupOutputTypes needed_outputs) override;
   void compositor_free() override;
 

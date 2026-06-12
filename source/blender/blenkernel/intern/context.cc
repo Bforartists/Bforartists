@@ -330,14 +330,10 @@ static std::string ctx_result_brief_repr(const bContextDataResult &result)
                              member_name,
                              reinterpret_cast<uintptr_t>(result.ptr.data));
         }
-        else {
-          return fmt::format(
-              "<{} at 0x{:x}>", rna_type_name, reinterpret_cast<uintptr_t>(result.ptr.data));
-        }
+        return fmt::format(
+            "<{} at 0x{:x}>", rna_type_name, reinterpret_cast<uintptr_t>(result.ptr.data));
       }
-      else {
-        return "None";
-      }
+      return "None";
 
     case ContextDataType::Collection:
       return fmt::format("[{} item(s)]", result.list.size());
@@ -358,13 +354,9 @@ static std::string ctx_result_brief_repr(const bContextDataResult &result)
         if (result.index >= 0) {
           return fmt::format("<Property({}.{}[{}])>", rna_type_name, prop_name, result.index);
         }
-        else {
-          return fmt::format("<Property({}.{})>", rna_type_name, prop_name);
-        }
+        return fmt::format("<Property({}.{})>", rna_type_name, prop_name);
       }
-      else {
-        return "<Property(None)>";
-      }
+      return "<Property(None)>";
 
     case ContextDataType::Int64:
       if (result.int_value.has_value()) {
@@ -1176,6 +1168,15 @@ SpaceSpreadsheet *CTX_wm_space_spreadsheet(const bContext *C)
   return nullptr;
 }
 
+SpaceProject *CTX_wm_space_project(const bContext *C)
+{
+  ScrArea *area = CTX_wm_area(C);
+  if (area && area->spacetype == SPACE_PROJECT) {
+    return static_cast<SpaceProject *>(area->spacedata.first);
+  }
+  return nullptr;
+}
+
 void CTX_wm_manager_set(bContext *C, wmWindowManager *wm)
 {
   C->wm.manager = wm;
@@ -1494,7 +1495,7 @@ enum eContextObjectMode CTX_data_mode_enum(const bContext *C)
 {
   Object *obedit = CTX_data_edit_object(C);
   Object *obact = obedit ? nullptr : CTX_data_active_object(C);
-  return CTX_data_mode_enum_ex(obedit, obact, obact ? eObjectMode(obact->mode) : OB_MODE_OBJECT);
+  return CTX_data_mode_enum_ex(obedit, obact, obact ? obact->mode : OB_MODE_OBJECT);
 }
 
 /**

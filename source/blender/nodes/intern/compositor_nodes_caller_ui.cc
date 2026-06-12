@@ -94,9 +94,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
             SOCK_VECTOR,
             SOCK_INT_VECTOR,
             SOCK_RGBA,
+            SOCK_ROTATION,
             SOCK_MATRIX,
             SOCK_MENU,
             SOCK_STRING,
+            SOCK_FONT,
             SOCK_OBJECT))
   {
     return;
@@ -135,6 +137,19 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       }
       break;
     }
+    case SOCK_FONT: {
+      template_id(&row,
+                  &ctx.C,
+                  socket_props_ptr,
+                  "value",
+                  nullptr,
+                  "FONT_OT_open",
+                  "FONT_OT_unlink",
+                  ui::TEMPLATE_ID_FILTER_ALL,
+                  false,
+                  name);
+      break;
+    }
     default: {
       row.prop(socket_props_ptr, "value", UI_ITEM_NONE, name, ICON_NONE);
       break;
@@ -150,8 +165,8 @@ static void draw_interface_root_panel_content(DrawGroupInputsContext &ctx,
   bool found_image_input = false;
   bool found_mask_input = false;
   for (const bNodeTreeInterfaceItem *item : interface_panel.items()) {
-    switch (eNodeTreeInterfaceItemType(item->item_type)) {
-      case NODE_INTERFACE_PANEL: {
+    switch (item->item_type) {
+      case NodeTreeInterfaceItemType::Panel: {
         const auto &sub_interface_panel = *reinterpret_cast<const bNodeTreeInterfacePanel *>(item);
         draw_interface_panel_as_panel(
             ctx.C,
@@ -168,7 +183,7 @@ static void draw_interface_root_panel_content(DrawGroupInputsContext &ctx,
             });
         break;
       }
-      case NODE_INTERFACE_SOCKET: {
+      case NodeTreeInterfaceItemType::Socket: {
         const auto &interface_socket = *reinterpret_cast<const bNodeTreeInterfaceSocket *>(item);
         const bke::bNodeSocketType *typeinfo = interface_socket.socket_typeinfo();
         const eNodeSocketDatatype socket_type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
@@ -303,6 +318,15 @@ void draw_compositor_nodes_modifier_ui(const bContext &C,
           &C, modifier_ptr, "open_mask_input_panel", IFACE_("Mask Input")))
   {
     draw_mask_input_type_settings(C, *mask_input_layout, modifier_ptr);
+  }
+
+  /* BFA - Open Compositor Modifier Editor Operator */
+  if (cmd.node_group != nullptr && !ID_MISSING(cmd.node_group)) {
+    layout.separator();
+    PointerRNA op_ptr = layout.op("SEQUENCER_OT_strip_modifier_compositor_open_editor",
+                                    IFACE_("Open Compositor Editor"),
+                                    ICON_NODE_COMPOSITING);
+    RNA_string_set(&op_ptr, "modifier", cmd.modifier.name);
   }
 }
 

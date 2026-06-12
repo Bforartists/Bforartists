@@ -76,14 +76,14 @@ wmGesture *WM_gesture_new(wmWindow *window, const ARegion *region, const wmEvent
     float *lasso;
     gesture->points_alloc = 1024;
     gesture->customdata = lasso = MEM_new_array_uninitialized<float>(
-        size_t(2 * gesture->points_alloc), "lasso points");
+        size_t(2) * gesture->points_alloc, "lasso points");
     lasso[0] = xy[0] - gesture->winrct.xmin;
     lasso[1] = xy[1] - gesture->winrct.ymin;
     gesture->points = 1;
   }
   else if (ELEM(type, WM_GESTURE_POLYLINE)) {
     gesture->points_alloc = 64;
-    short *border = MEM_new_array_uninitialized<short>(size_t(2 * gesture->points_alloc),
+    short *border = MEM_new_array_uninitialized<short>(size_t(2) * gesture->points_alloc,
                                                        "polyline points");
     gesture->customdata = border;
     border[0] = xy[0] - gesture->winrct.xmin;
@@ -350,24 +350,19 @@ static void draw_filled_lasso(wmGesture *gt, const int2 *lasso_pt_extra)
 
     GPU_blend(GPU_BLEND_ADDITIVE_PREMULT);
 
-    IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_2D_IMAGE_SHUFFLE_COLOR);
-    GPU_shader_bind(state.shader);
+    PixelBitmapDrawer drawer(GPU_SHADER_2D_IMAGE_SHUFFLE_COLOR);
     GPU_shader_uniform_float_ex(
-        state.shader, GPU_shader_get_uniform(state.shader, "shuffle"), 4, 1, red);
-
-    immDrawPixelsTexTiled(&state,
-                          rect.xmin,
-                          rect.ymin,
-                          w,
-                          h,
-                          gpu::TextureFormat::UNORM_8,
-                          false,
-                          pixel_buf,
-                          1.0f,
-                          1.0f,
-                          nullptr);
-
-    GPU_shader_unbind();
+        drawer.shader_get(), GPU_shader_get_uniform(drawer.shader_get(), "shuffle"), 4, 1, red);
+    drawer.draw(rect.xmin,
+                rect.ymin,
+                w,
+                h,
+                gpu::TextureFormat::UNORM_8,
+                false,
+                pixel_buf,
+                1.0f,
+                1.0f,
+                nullptr);
 
     MEM_delete(pixel_buf);
 

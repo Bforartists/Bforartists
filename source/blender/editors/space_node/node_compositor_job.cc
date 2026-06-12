@@ -26,12 +26,13 @@
 
 #include "RE_compositor.hh"
 
+#include "NOD_eval_log.hh"
+
 #include "ED_image.hh"
 #include "ED_node.hh"
 #include "ED_screen.hh"
 
 #include "COM_node_group_operation.hh"
-#include "COM_profiler.hh"
 
 namespace blender {
 
@@ -41,7 +42,6 @@ struct CompositorJob {
   ViewLayer *view_layer;
   bNodeTree *evaluated_node_tree;
   Render *render;
-  compositor::Profiler profiler;
   compositor::NodeGroupOutputTypes needed_outputs;
   bool is_animation_playing;
 };
@@ -110,12 +110,12 @@ static void compositor_job_start(void *compositor_job_data, wmJobWorkerStatus *w
   Scene *evaluated_scene = DEG_get_evaluated_scene(compositor_runtime.preview_depsgraph);
   if (!(evaluated_scene->r.scemode & R_MULTIVIEW)) {
     RE_compositor_execute(*compositor_job->render,
+                          *compositor_job->bmain,
                           *evaluated_scene,
                           evaluated_scene->r,
                           *compositor_job->evaluated_node_tree,
                           "",
                           nullptr,
-                          &compositor_job->profiler,
                           compositor_job->needed_outputs);
   }
   else {
@@ -124,12 +124,12 @@ static void compositor_job_start(void *compositor_job_data, wmJobWorkerStatus *w
         continue;
       }
       RE_compositor_execute(*compositor_job->render,
+                            *compositor_job->bmain,
                             *evaluated_scene,
                             evaluated_scene->r,
                             *compositor_job->evaluated_node_tree,
                             scene_render_view.name,
                             nullptr,
-                            &compositor_job->profiler,
                             compositor_job->needed_outputs);
     }
   }
@@ -142,10 +142,10 @@ static void compositor_job_complete(void *compositor_job_data)
   Scene *scene = compositor_job->scene;
   BKE_callback_exec_id(compositor_job->bmain, &scene->id, BKE_CB_EVT_COMPOSITE_POST);
 
-  bke::node_preview_merge_tree(
-      scene->compositing_node_group, compositor_job->evaluated_node_tree, true);
-  scene->runtime->compositor.per_node_execution_time =
-      compositor_job->profiler.get_nodes_evaluation_times();
+  Scene *evaluated_scene = DEG_get_evaluated_scene(scene->runtime->compositor.preview_depsgraph);
+  scene->runtime->compositor.nodes_evaluation_log = std::move(
+      evaluated_scene->runtime->compositor.nodes_evaluation_log);
+
   WM_main_add_notifier(NC_SCENE | ND_COMPO_RESULT, nullptr);
 }
 
@@ -172,6 +172,10 @@ static void compositor_job_free(void *compositor_job_data)
 
 static bool is_compositing_possible(const Scene *scene)
 {
+  if (G.background) {
+    return false;
+  }
+
   if (G.is_rendering) {
     return false;
   }
@@ -188,7 +192,7 @@ static bool is_compositing_possible(const Scene *scene)
   /* The render size exceeds what can be allocated as a GPU texture. */
   int width, height;
   BKE_render_resolution(&scene->r, false, &width, &height);
-  if (!GPU_is_safe_texture_size(width, height)) {
+  if (width > 8192 || height > 8192) {
     WM_global_report(RPT_ERROR, "Render size too large for GPU, use CPU compositor instead");
     return false;
   }

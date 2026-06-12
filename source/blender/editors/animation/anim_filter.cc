@@ -62,7 +62,6 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_alloca.h"
-#include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
@@ -400,6 +399,7 @@ bool ANIM_animdata_context_getdata(bAnimContext *ac)
       case SPACE_STATUSBAR:
       case SPACE_TOOLBAR: /*bfa - the toolbar editor*/
       case SPACE_SPREADSHEET:
+      case SPACE_PROJECT:
         break;
     }
   }
@@ -1041,7 +1041,7 @@ static bool skip_fcurve_selected_data(bAnimContext *ac,
           bArmature *arm = id_cast<bArmature *>(ob->data);
 
           /* Skipping - is currently hidden. */
-          if (!animrig::bone_is_visible(arm, pchan)) {
+          if (!animrig::bone_is_visible(arm, {pchan, pchan->bone_get(*ob)})) {
             return true;
           }
         }
@@ -1397,7 +1397,7 @@ static inline bool fcurve_span_must_be_selected(const eAnimFilter_Flags filter_m
  *    used later to look up the ID* of the user of the slot, which in turn is
  *    used to construct a suitable F-Curve label for in the channels list.
  *
- * \param owner_id: The ID whose 'animdata->action' pointer was followed to get to
+ * \param animated_id: The ID whose 'animdata->action' pointer was followed to get to
  *    these F-Curves. This ID may be animated by a different slot than referenced by
  *    `slot_handle`, so do _not_ treat this as "the ID animated by these F-Curves".
  *
@@ -1447,6 +1447,12 @@ static size_t animfilter_fcurves_span(bAnimContext *ac,
     }
     if (skip_fcurve_selected_data(ac, fcu, animated_id, filter_mode)) {
       continue;
+    }
+    if (ac->spacetype == SPACE_GRAPH) {
+      const SpaceGraph *sipo = reinterpret_cast<SpaceGraph *>(ac->sl);
+      if ((sipo->local_view_bit) && (fcu->local_view_bits & sipo->local_view_bit) == 0) {
+        continue;
+      }
     }
 
     bAnimListElem *ale = make_new_animlistelem(
@@ -1575,7 +1581,7 @@ static size_t animfilter_act_group(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -1815,7 +1821,9 @@ static size_t animfilter_nla(bAnimContext *ac,
 
             if (track_ok == false) {
               for (NlaStrip &strip : nlt->strips) {
-                if (name_matches_dopesheet_filter(ac->ads, strip.name)) {
+                if (name_matches_dopesheet_filter(ac->ads, strip.name) ||
+                    (strip.flag & NLASTRIP_FLAG_TEMP_META))
+                {
                   strip_ok = true;
                   break;
                 }
@@ -1887,7 +1895,7 @@ static size_t animfilter_nla_controls(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2140,7 +2148,7 @@ static size_t animdata_filter_grease_pencil_layer_node_recursive(
 
     /* Add the list of collected channels. */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
   return items;
@@ -2195,7 +2203,7 @@ static size_t animdata_filter_gpencil_layers_data_legacy(bAnimContext *ac,
     }
 
     /* Skip empty layers. */
-    if (BLI_listbase_is_empty(&gpl.frames)) {
+    if (gpl.frames.is_empty()) {
       continue;
     }
 
@@ -2259,7 +2267,7 @@ static size_t animdata_filter_grease_pencil_data(bAnimContext *ac,
 
     /* Add the list of collected channels. */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2355,7 +2363,7 @@ static size_t animdata_filter_ds_gpencil(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2393,7 +2401,7 @@ static size_t animdata_filter_ds_cachefile(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2469,7 +2477,7 @@ static size_t animdata_filter_mask(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2508,7 +2516,7 @@ static size_t animdata_filter_ds_nodetree_group(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2597,7 +2605,7 @@ static size_t animdata_filter_ds_linestyle(bAnimContext *ac,
 
         /* now add the list of collected channels */
         BLI_movelisttolist(anim_data, &tmp_data);
-        BLI_assert(BLI_listbase_is_empty(&tmp_data));
+        BLI_assert(tmp_data.is_empty());
         items += tmp_items;
       }
     }
@@ -2648,7 +2656,7 @@ static size_t animdata_filter_ds_texture(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2741,7 +2749,7 @@ static size_t animdata_filter_ds_material(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -2861,7 +2869,7 @@ static size_t animdata_filter_ds_modifiers(bAnimContext *ac,
   if (afm.items) {
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &afm.tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&afm.tmp_data));
+    BLI_assert(afm.tmp_data.is_empty());
     items += afm.items;
   }
 
@@ -2913,7 +2921,7 @@ static size_t animdata_filter_ds_particles(bAnimContext *ac,
 
       /* now add the list of collected channels */
       BLI_movelisttolist(anim_data, &tmp_data);
-      BLI_assert(BLI_listbase_is_empty(&tmp_data));
+      BLI_assert(tmp_data.is_empty());
       items += tmp_items;
     }
   }
@@ -3121,7 +3129,7 @@ static size_t animdata_filter_ds_obdata(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -3158,7 +3166,7 @@ static size_t animdata_filter_ds_keyanim(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -3223,7 +3231,7 @@ static size_t animdata_filter_ds_obanim(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -3307,7 +3315,7 @@ static size_t animdata_filter_dopesheet_ob(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -3350,7 +3358,7 @@ static size_t animdata_filter_ds_world(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -3414,7 +3422,7 @@ static size_t animdata_filter_ds_scene(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -3499,7 +3507,7 @@ static size_t animdata_filter_dopesheet_scene(bAnimContext *ac,
 
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
 
@@ -3532,7 +3540,7 @@ static size_t animdata_filter_ds_movieclip(bAnimContext *ac,
     }
     /* now add the list of collected channels */
     BLI_movelisttolist(anim_data, &tmp_data);
-    BLI_assert(BLI_listbase_is_empty(&tmp_data));
+    BLI_assert(tmp_data.is_empty());
     items += tmp_items;
   }
   /* return the number of items added to the list */
@@ -3668,12 +3676,12 @@ static Base **animdata_filter_ds_sorted_bases(bAnimContext *ac,
   /* Create an array with space for all the bases, but only containing the usable ones */
   BKE_view_layer_synced_ensure(*ac->bmain, scene, view_layer);
   ListBaseT<Base> *object_bases = BKE_view_layer_object_bases_get(view_layer);
-  size_t tot_bases = BLI_listbase_count(object_bases);
+  size_t tot_bases = object_bases->count();
   size_t num_bases = 0;
 
   Base **sorted_bases = MEM_new_array_zeroed<Base *>(tot_bases, "Dopesheet Usable Sorted Bases");
   for (Base &base : *object_bases) {
-    const eObjectMode object_mode = eObjectMode(base.object->mode);
+    const eObjectMode object_mode = base.object->mode;
     if (animdata_filter_base_is_ok(ac, &base, object_mode, filter_mode)) {
       sorted_bases[num_bases++] = &base;
     }
@@ -3778,7 +3786,7 @@ static size_t animdata_filter_dopesheet(bAnimContext *ac,
      * NOTE: This saves performance in cases where order doesn't matter
      */
     Object *obact = BKE_view_layer_active_object_get(view_layer);
-    const eObjectMode object_mode = (obact != nullptr) ? eObjectMode(obact->mode) : OB_MODE_OBJECT;
+    const eObjectMode object_mode = (obact != nullptr) ? obact->mode : OB_MODE_OBJECT;
     for (Base &base : *object_bases) {
       if (animdata_filter_base_is_ok(ac, &base, object_mode, filter_mode)) {
         /* since we're still here, this object should be usable */

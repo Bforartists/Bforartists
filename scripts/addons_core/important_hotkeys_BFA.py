@@ -20,7 +20,7 @@ bl_info = {
     "version": (1, 4, 0),
     "blender": (3, 60, 0),
     "location": "3D View > Properties Sidebar > Important Hotkeys",
-    "description": "This addon displays some important hotkeys in the upper left corner of the 3D view",
+    "description": "This addon displays some important hotkeys in the upper left corner of the 3D View",
     "warning": "",
     "doc_url": "https://github.com/Bforartists/Manual",
     "tracker_url": "https://github.com/Bforartists/Bforartists",
@@ -31,13 +31,15 @@ bl_info = {
 # ---------------------- Some variables, needed to position the text
 
 pos_x = 160 # Initial X position.
-pos_y = 120 # initial Y position. This value gets substracted from the screen height.
-subpos_y = 0 # needed to calculate the position of the array strings below the title.
+pos_y = 120 # Initial Y position. This value gets substracted from the screen height.
+subpos_y = 0 # Needed to calculate the position of the array strings below the title.
+
+NOT_FOUND_STRING = "Not Found"
 
 # With this function we retreive the hotkey.
 def handle_keys(km, keystring):
 
-    if keystring == "Not found": # Let's make the string empty when text is "Not Found". We want to fill it with our hotkey now.
+    if keystring == NOT_FOUND_STRING: # Let's make the string empty when text is "Not Found". We want to fill it with our hotkey now.
         keystring = ""
     else:     # if keystring has already a content.
         keystring += ("  |  ") # There might be more than one hotkey. So we separate them by a |
@@ -59,11 +61,11 @@ def draw_modetext(self, context, obj):
     # ------------ Get the hotkeys -------------------------------------------------
     wm = context.window_manager # Blender window manager
 
-    # -------------------------------------- 3D View section
-    keymaps_3DV = wm.keyconfigs.active.keymaps['3D View'] # Hotkeys in the '3D View' section, 'Blender' for actual hotkeys
+    # -------------------------------------- 3D View Section
+    keymaps_3DV = wm.keyconfigs.active.keymaps['3D View'] # Hotkeys in the '3D View' Section, 'Blender' for actual hotkeys
 
     if not self._flag: # self._flag is false
-        # print(tuple(keymaps_3DV.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        # print(tuple(keymaps_3DV.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_3DV.keymap_items.items(): # all the items in the tuple
 
             # ------------- Move object
@@ -78,11 +80,11 @@ def draw_modetext(self, context, obj):
             elif item == 'transform.resize':
                 self.scale_obj_string = handle_keys(km, self.scale_obj_string)
 
-     # -------------------------------------- Object Mode section
+     # -------------------------------------- Object Mode Section
     keymaps_OBJECTMODE = wm.keyconfigs.active.keymaps['Object Mode']
 
     if not self._flag: # self._flag is false
-        # print(tuple(keymaps_OBJECTMODE.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        # print(tuple(keymaps_OBJECTMODE.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_OBJECTMODE.keymap_items.items(): # all the items in the tuple
 
             # ------------- Make parent
@@ -98,12 +100,12 @@ def draw_modetext(self, context, obj):
                 self.join_mesh = handle_keys(km, self.join_mesh)
 
 
-    # ----------------------------------------- Mesh section -------------------------------------
+    # ----------------------------------------- Mesh Section -------------------------------------
     keymaps_MESH = wm.keyconfigs.active.keymaps['Mesh']
 
 
     if not self._flag:
-        #print(tuple(keymaps_MESH.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        #print(tuple(keymaps_MESH.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_MESH.keymap_items.items(): # all the items in the tuple
 
 
@@ -159,22 +161,22 @@ def draw_modetext(self, context, obj):
                 elif km.properties.toggle == True:
                     self.mesh_edgering_select_add = handle_keys(km, self.mesh_edgering_select_add)
 
-    # ----------------------------------------- Pose section -------------------------------------
+    # ----------------------------------------- Pose Section -------------------------------------
     keymaps_MESH = wm.keyconfigs.active.keymaps['Pose']
 
     if not self._flag:
-        #print(tuple(keymaps_MESH.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        #print(tuple(keymaps_MESH.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_MESH.keymap_items.items(): # all the items in the tuple
 
             # ------------- Make Parent
             if item == 'object.parent_set':
                 self.pose_parent_set = handle_keys(km, self.pose_parent_set)
 
-    # ----------------------------------------- Sculpt section -------------------------------------
+    # ----------------------------------------- Sculpt Section -------------------------------------
     keymaps_SCULPT = wm.keyconfigs.active.keymaps['Sculpt']
 
     if not self._flag:
-        #print(tuple(keymaps_SCULPT.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        #print(tuple(keymaps_SCULPT.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_SCULPT.keymap_items.items(): # all the items in the tuple
 
             if item == 'wm.radial_control':
@@ -203,11 +205,11 @@ def draw_modetext(self, context, obj):
                 elif item == 'brush.stencil_control' and km.properties.mode == 'SCALE' and km.properties.texmode == 'SECONDARY':
                     self.stencil_control_scale = handle_keys(km, self.stencil_control_scale)
 
-    # ----------------------------------------- Vertexpaint section -------------------------------------
+    # ----------------------------------------- Vertex Paint Section -------------------------------------
     keymaps_VERTEXPAINT = wm.keyconfigs.active.keymaps['Vertex Paint']
 
     if not self._flag:
-        #print(tuple(keymaps_VERTEXPAINT.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        #print(tuple(keymaps_VERTEXPAINT.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_VERTEXPAINT.keymap_items.items(): # all the items in the tuple
 
 
@@ -250,11 +252,11 @@ def draw_modetext(self, context, obj):
                 elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'SECONDARY':
                     self.vertexpaint_stencil_control_rotate_sec = handle_keys(km, self.vertexpaint_stencil_control_rotate_sec)
 
-     # ----------------------------------------- Weightpaint section -------------------------------------
+     # ----------------------------------------- Weight Paint Section -------------------------------------
     keymaps_WEIGHTPAINT = wm.keyconfigs.active.keymaps['Weight Paint']
 
     if not self._flag:
-        #print(tuple(keymaps_WEIGHTPAINT.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        #print(tuple(keymaps_WEIGHTPAINT.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_WEIGHTPAINT.keymap_items.items(): # all the items in the tuple
 
             # ------------- Select bone
@@ -273,23 +275,23 @@ def draw_modetext(self, context, obj):
                 elif km.properties.data_path_primary == "tool_settings.weight_paint.brush.strength" and km.properties.data_path_secondary == "tool_settings.unified_paint_settings.strength" and km.properties.use_secondary == "tool_settings.unified_paint_settings.use_unified_strength" and km.properties.rotation_path == "tool_settings.weight_paint.brush.texture_slot.angle" and km.properties.color_path == "tool_settings.weight_paint.brush.cursor_color_add" and km.properties.image_id == "tool_settings.weight_paint.brush":
                     self.weightpaint_brush_strength = handle_keys(km, self.weightpaint_brush_strength)
 
-                # ------------- Brush weight
+                # ------------- Brush wWeight
                 elif km.properties.data_path_primary == "tool_settings.weight_paint.brush.weight" and km.properties.data_path_secondary == "tool_settings.unified_paint_settings.weight" and km.properties.use_secondary == "tool_settings.unified_paint_settings.use_unified_weight" and km.properties.rotation_path == "tool_settings.weight_paint.brush.texture_slot.angle" and km.properties.color_path == "tool_settings.weight_paint.brush.cursor_color_add" and km.properties.image_id == "tool_settings.weight_paint.brush":
                     self.weightpaint_brush_weight = handle_keys(km, self.weightpaint_brush_weight)
 
 
-      # ----------------------------------------- Paint Curve section -------------------------------------
+      # ----------------------------------------- Paint Curve Section -------------------------------------
     keymaps_PAINTCURVE = wm.keyconfigs.active.keymaps['Paint Curve']
 
     if not self._flag:
-        #print(tuple(keymaps_PAINTCURVE.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        #print(tuple(keymaps_PAINTCURVE.keymap_items.keys()))      # debug. prints the tuple content for the 3D View keymaps.
         for item, km in keymaps_PAINTCURVE.keymap_items.items(): # all the items in the tuple
 
             # ------------- Select bone
             if item == 'paintcurve.add_point_slide':
                 self.texturepaint_strokemethod_curve = handle_keys(km, self.texturepaint_strokemethod_curve)
 
- # ----------------------------------------- texturepaint section -------------------------------------
+ # ----------------------------------------- Texture Paint Section -------------------------------------
     keymaps_TEXTUREPAINT = wm.keyconfigs.active.keymaps['Image Paint']
 
     if not self._flag:
@@ -340,7 +342,7 @@ def draw_modetext(self, context, obj):
                 elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'SECONDARY':
                     self.texturepaint_stencil_control_rotate_sec = handle_keys(km, self.texturepaint_stencil_control_rotate_sec)
 
- # ----------------------------------------- Particle section -------------------------------------
+ # ----------------------------------------- Particle Section -------------------------------------
     keymaps_PARTICLE = wm.keyconfigs.active.keymaps['Particle']
 
     if not self._flag:
@@ -357,7 +359,7 @@ def draw_modetext(self, context, obj):
                 elif item == 'wm.radial_control' and km.properties.data_path_primary == "tool_settings.particle_edit.brush.strength":
                     self.particle_brush_strength = handle_keys(km, self.particle_brush_strength)
 
- # ----------------------------------------- Curve section -------------------------------------
+ # ----------------------------------------- Curve Section -------------------------------------
     keymaps_CURVE = wm.keyconfigs.active.keymaps['Curve']
 
     if not self._flag:
@@ -372,7 +374,7 @@ def draw_modetext(self, context, obj):
             elif item == 'curve.vertex_add':
                 self.curve_vertex_add = handle_keys(km, self.curve_vertex_add)
 
- # ----------------------------------------- Armature section -------------------------------------
+ # ----------------------------------------- Armature Section -------------------------------------
     keymaps_ARMATURE = wm.keyconfigs.active.keymaps['Armature']
 
     if not self._flag:
@@ -423,8 +425,8 @@ def draw_modetext(self, context, obj):
                 self.armature_sketching_finish_stroke = handle_keys(km, self.armature_sketching_finish_stroke)
 
 
-     # ----------------------------------------- Weightpaint section Grease Pencil -------------------------------------
-    keymaps_WEIGHT_GPENCIL_LEGACY = wm.keyconfigs.active.keymaps['Grease Pencil Stroke Weight Mode'] # Hotkeys in the 'Grease Pencil Stroke Weight Mode' section,
+     # ----------------------------------------- Weight Paint Section Grease Pencil -------------------------------------
+    keymaps_WEIGHT_GPENCIL_LEGACY = wm.keyconfigs.active.keymaps['Grease Pencil Stroke Weight Mode'] # Hotkeys in the 'Grease Pencil Stroke Weight Mode' Section,
     # keymaps_WEIGHT_GPENCIL_LEGACY is a variable name that we freely choose. I have chosen the blender internal variable name for Grease Pencil Stroke Weight Mode here.
     # The keymap categories in the blender keymap manager doesn't count. Important is just the name.
     # Have a look into the bfa or blender keymap to get the name of the keymap chapter that you want to retreive.
@@ -675,15 +677,15 @@ def draw_modetext(self, context, obj):
             ]))
 
 
-    self.mod_Y = 8.2 * scene.important_hotkeys_font_size # our second text block needs a bit offset. Every new line adds 0.55. Plus a bit more because of the + 1 to have a spacing between the lines.
+    self.mod_Y = 8.2 * context.window_manager.important_hotkeys_text_size # our second text block needs a bit offset. Every new line adds 0.55. Plus a bit more because of the + 1 to have a spacing between the lines.
 
     # Draw the text
     for data in texts:
-        subpos_y = context.region.height-pos_y-context.scene.important_hotkeys_font_size-self.mod_Y # initial texts position
+        subpos_y = context.region.height-pos_y-context.window_manager.important_hotkeys_text_size-self.mod_Y # initial texts position
         for d in data:
             blf.position(0, pos_x, subpos_y-self.mod_Y, 0)
             blf.draw(0, d)
-            subpos_y -= context.scene.important_hotkeys_font_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
+            subpos_y -= context.window_manager.important_hotkeys_text_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
 
 
 # The main text. Always shown. Navigation is the same everywhere.
@@ -694,7 +696,7 @@ def draw_maintext(self, context):
     wm            = bpy.context.window_manager # Blender window manager
     keymaps_3DV   = wm.keyconfigs.active.keymaps['3D View'] # 3D View hotkeys
 
-    # ------------------------ 3d view section
+    # ------------------------ 3D View Section
     if self._flag2 == False:
 
         #self.select_with = bpy.context.user_preferences.inputs.select_mouse # Select with left or right
@@ -730,7 +732,7 @@ def draw_maintext(self, context):
             elif item == 'view3d.cursor3d':
                 self.set_3d_cursor = handle_keys(km, self.set_3d_cursor)
 
-    # -------------------- Screen section
+    # -------------------- Screen Section
     keymaps_3DV   = wm.keyconfigs.active.keymaps['Screen']
 
     if self._flag2 == False:
@@ -741,11 +743,11 @@ def draw_maintext(self, context):
             if item == 'render.render' and km.properties.animation == False:
                 self.render_image = handle_keys(km, self.render_image)
 
-            # Show/Hide Renderview
+            # Show/Hide Render View
             if item == 'render.view_show':
                 self.render_view_show = handle_keys(km, self.render_view_show)
 
-    # ---------------------- Window section
+    # ---------------------- Window Section
     keymaps_WIN   = wm.keyconfigs.active.keymaps['Window']
 
     if self._flag2 == False:
@@ -764,40 +766,40 @@ def draw_maintext(self, context):
     font_id = 0  # XXX, need to find out how best to get this.
 
     # color variables
-    font_color_r, font_color_g, font_color_b, font_color_alpha = context.scene.important_hotkeys_text_color
+    font_color_r, font_color_g, font_color_b, font_color_alpha = context.window_manager.important_hotkeys_text_color
 
     # Calculate the text
     blf.position(0, pos_x, context.region.height-pos_y, 0) #titleposition
-    blf.size(font_id, context.scene.important_hotkeys_font_size) # bfa - dpi defaults to 72 when ommited
+    blf.size(font_id, context.window_manager.important_hotkeys_text_size) # bfa - dpi defaults to 72 when ommited
     blf.color(font_id,font_color_r, font_color_g, font_color_b, font_color_alpha * 0.8) # color variables
 
 
     texts = []
     texts.append(([
-        "Important hotkeys",
+        "Important Hotkeys",
         " ",
         #"Select with - "+ self.select_with + " Mouse Button",
-        "Add to / subtract from selection - "+ self.add_to_selection,
-        "Selection methods Circle, Border and Lasso select can be negated by holding Shift key",
-        "Move view - "+ self.move_view_string,
-        "Rotate view - "+ self.rotate_view_string,
-        "Zoom view - " + self.zoom_view_string,
-        "Reset 3D view - " + self.resetview_string,
+        "Add To / Subtract from Selection - "+ self.add_to_selection,
+        " - (Circle, Border and Lasso Select can be negated by holding Shift key)",
+        "Move View - "+ self.move_view_string,
+        "Rotate View - "+ self.rotate_view_string,
+        "Zoom View - " + self.zoom_view_string,
+        "Reset 3D View - " + self.resetview_string,
         "Set 3D Cursor - " + self.set_3d_cursor,
         "Search Menu - " + self.search_menu,
         "------",
-        "Switch to / from Camera view - " + self.switch_to_camera,
-        "Render image - " + self.render_image,
-        "Show/Hide Renderview - " + self.render_view_show,
+        "Switch To / From Camera View - " + self.switch_to_camera,
+        "Render Image - " + self.render_image,
+        "Show/Hide Render View - " + self.render_view_show,
         ]))
 
     # Draw the text
     for data in texts:
-        subpos_y = context.region.height-pos_y-context.scene.important_hotkeys_font_size # initial texts position
+        subpos_y = context.region.height-pos_y-context.window_manager.important_hotkeys_text_size # initial texts position
         for d in data:
             blf.position(0, pos_x, subpos_y, 0)
             blf.draw(0, d)
-            subpos_y -= context.scene.important_hotkeys_font_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
+            subpos_y -= context.window_manager.important_hotkeys_text_size + 1 # Our spacing between the lines is the font size plus 1 to have a gap between the lines.
 
 
     # the second part of the text. When an object is selected ...
@@ -807,10 +809,10 @@ def draw_maintext(self, context):
 
 # ----------------------- Mainclass. Here happens the work.
 
-class IH_OT_ModalDrawOperator(bpy.types.Operator):
+class IH_OT_DrawImportantHotkeysModal(bpy.types.Operator):
     """Shows a list with important hotkeys\nNote that the hotkeys from the tool shelf tools can't be read\nThis is a design mistake in the tool shelf which can't be bypassed by this addon"""
-    bl_idname = "view3d.modal_operator"
-    bl_label = "Simple Modal View3D Operator"
+    bl_idname = "view3d.draw_important_hotkeys"
+    bl_label = "Draw Important Hotkeys"
 
     # We need to limit the check loop so that it only runs once.
     # For that we need the involved variables to be accessible across the functions
@@ -825,110 +827,109 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
 
         #print(keymap_name) #debug test
 
-        # ------------Fixed strings
-        # 3d view
-        #self.select_with = "Not found"
-        self.add_to_selection = "Not found"
-        self.move_view_string = "Not found"
-        self.rotate_view_string = "Not found"
-        self.zoom_view_string = "Not found"
-        self.resetview_string = "Not found" # plugin reset 3d view
-        self.set_3d_cursor = "Not found" # plugin reset 3d view
-        # Window
-        self.search_menu = "Not found" # plugin reset 3d view
-        # Screen
-        self.switch_to_camera = "Not found"
-        self.render_image = "Not found"
-        self.render_view_show = "Not found"
-
-        # ---------- Modal strings
+        # ------------ Fixed Strings
         # 3D View
+        #self.select_with = NOT_FOUND_STRING
+        self.add_to_selection = NOT_FOUND_STRING
+        self.move_view_string = NOT_FOUND_STRING
+        self.rotate_view_string = NOT_FOUND_STRING
+        self.zoom_view_string = NOT_FOUND_STRING
+        self.resetview_string = NOT_FOUND_STRING # plugin reset 3D View
+        self.set_3d_cursor = NOT_FOUND_STRING # plugin reset 3D View
+        # Window
+        self.search_menu = NOT_FOUND_STRING # plugin reset 3D View
+        # Screen
+        self.switch_to_camera = NOT_FOUND_STRING
+        self.render_image = NOT_FOUND_STRING
+        self.render_view_show = NOT_FOUND_STRING
 
+        # ---------- Modal Strings
+        # 3D View
         if keymap_name in {'bforartists', 'Bforartists-macOS'} :
             self.move_obj_string = "Not readable. Key in default keymap W"
             self.rotate_obj_string = "Not readable. Key in default keymap E"
             self.scale_obj_string = "Not readable. Key in default keymap R"
         else :
-            self.move_obj_string = "Not found"
-            self.rotate_obj_string = "Not found"
-            self.scale_obj_string = "Not found"
+            self.move_obj_string = NOT_FOUND_STRING
+            self.rotate_obj_string = NOT_FOUND_STRING
+            self.scale_obj_string = NOT_FOUND_STRING
 
         # Object Mode
-        self.make_parent = "Not found"
-        self.clear_parent = "Not found"
-        self.join_mesh = "Not found"
+        self.make_parent = NOT_FOUND_STRING
+        self.clear_parent = NOT_FOUND_STRING
+        self.join_mesh = NOT_FOUND_STRING
         # Mesh
-        self.mesh_select_verts = "Not found"
-        self.mesh_select_edges = "Not found"
-        self.mesh_select_faces = "Not found"
-        self.mesh_shortest_path = "Not found"
-        self.mesh_extrude = "Not found"
-        self.mesh_separate = "Not found"
-        self.mesh_loop_select = "Not found"
-        self.mesh_loop_select_add = "Not found"
-        self.mesh_edgering_select = "Not found"
-        self.mesh_edgering_select_add = "Not found"
-        self.mesh_mark_seam = "Not found"
-        self.clear_seam = "Not found"
+        self.mesh_select_verts = NOT_FOUND_STRING
+        self.mesh_select_edges = NOT_FOUND_STRING
+        self.mesh_select_faces = NOT_FOUND_STRING
+        self.mesh_shortest_path = NOT_FOUND_STRING
+        self.mesh_extrude = NOT_FOUND_STRING
+        self.mesh_separate = NOT_FOUND_STRING
+        self.mesh_loop_select = NOT_FOUND_STRING
+        self.mesh_loop_select_add = NOT_FOUND_STRING
+        self.mesh_edgering_select = NOT_FOUND_STRING
+        self.mesh_edgering_select_add = NOT_FOUND_STRING
+        self.mesh_mark_seam = NOT_FOUND_STRING
+        self.clear_seam = NOT_FOUND_STRING
         # Pose
-        self.pose_parent_set = "Not found"
+        self.pose_parent_set = NOT_FOUND_STRING
         # Sculpt
-        self.sculpt_brush_size = "Not found"
-        self.sculpt_brush_strength = "Not found"
-        self.sculpt_brush_angle = "Not found"
-        self.stencil_control_translate = "Not found"
-        self.stencil_control_translate_sec = "Not found"
-        self.stencil_control_scale = "Not found"
-        # Vertexpaint
-        self.vertexpaint_brush_size = "Not found"
-        self.vertexpaint_brush_strength = "Not found"
-        self.vertexpaint_brush_angle = "Not found"
-        self.vertexpaint_stencil_control_translate = "Not found"
-        self.vertexpaint_stencil_control_rotate = "Not found"
-        self.vertexpaint_stencil_control_scale = "Not found"
-        self.vertexpaint_stencil_control_translate_sec = "Not found"
-        self.vertexpaint_stencil_control_rotate_sec = "Not found"
-        self.vertexpaint_stencil_control_scale_sec = "Not found"
-        # Weightpaint
-        self.weightpaint_bone_select = "Not found"
-        self.weightpaint_draw_gradient = "Not found"
-        self.weightpaint_brush_size = "Not found"
-        self.weightpaint_brush_strength = "Not found"
-        self.weightpaint_brush_weight = "Not found"
-        # grease pencil Weightpaint
-        self.gp_weightpaint_bone_select = "Not found"
-        self.gp_weightpaint_brush_size = "Not found"
-        self.gp_weightpaint_brush_strength = "Not found"
-        self.gp_weightpaint_brush_weight = "Not found"
-        # Texturepaint
-        self.texturepaint_brush_size = "Not found"
-        self.texturepaint_brush_strength = "Not found"
-        self.texturepaint_brush_angle = "Not found"
-        self.texturepaint_mask_angle = "Not found"
-        self.texturepaint_stencil_control_translate = "Not found"
-        self.texturepaint_stencil_control_rotate = "Not found"
-        self.texturepaint_stencil_control_scale = "Not found"
-        self.texturepaint_stencil_control_translate_sec = "Not found"
-        self.texturepaint_stencil_control_rotate_sec = "Not found"
-        self.texturepaint_stencil_control_scale_sec = "Not found"
-        self.texturepaint_strokemethod_curve = "Not found"
+        self.sculpt_brush_size = NOT_FOUND_STRING
+        self.sculpt_brush_strength = NOT_FOUND_STRING
+        self.sculpt_brush_angle = NOT_FOUND_STRING
+        self.stencil_control_translate = NOT_FOUND_STRING
+        self.stencil_control_translate_sec = NOT_FOUND_STRING
+        self.stencil_control_scale = NOT_FOUND_STRING
+        # Vertex Paint
+        self.vertexpaint_brush_size = NOT_FOUND_STRING
+        self.vertexpaint_brush_strength = NOT_FOUND_STRING
+        self.vertexpaint_brush_angle = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_translate = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_rotate = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_scale = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_translate_sec = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_rotate_sec = NOT_FOUND_STRING
+        self.vertexpaint_stencil_control_scale_sec = NOT_FOUND_STRING
+        # Weight Paint
+        self.weightpaint_bone_select = NOT_FOUND_STRING
+        self.weightpaint_draw_gradient = NOT_FOUND_STRING
+        self.weightpaint_brush_size = NOT_FOUND_STRING
+        self.weightpaint_brush_strength = NOT_FOUND_STRING
+        self.weightpaint_brush_weight = NOT_FOUND_STRING
+        # Grease Pencil Weight Paint
+        self.gp_weightpaint_bone_select = NOT_FOUND_STRING
+        self.gp_weightpaint_brush_size = NOT_FOUND_STRING
+        self.gp_weightpaint_brush_strength = NOT_FOUND_STRING
+        self.gp_weightpaint_brush_weight = NOT_FOUND_STRING
+        # Texture Paint
+        self.texturepaint_brush_size = NOT_FOUND_STRING
+        self.texturepaint_brush_strength = NOT_FOUND_STRING
+        self.texturepaint_brush_angle = NOT_FOUND_STRING
+        self.texturepaint_mask_angle = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_translate = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_rotate = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_scale = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_translate_sec = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_rotate_sec = NOT_FOUND_STRING
+        self.texturepaint_stencil_control_scale_sec = NOT_FOUND_STRING
+        self.texturepaint_strokemethod_curve = NOT_FOUND_STRING
         # Particle Edit
-        self.particle_brush_size = "Not found"
-        self.particle_brush_strength = "Not found"
+        self.particle_brush_size = NOT_FOUND_STRING
+        self.particle_brush_strength = NOT_FOUND_STRING
         # Curve
-        self.curve_extrude = "Not found"
-        self.curve_vertex_add ="Not found"
+        self.curve_extrude = NOT_FOUND_STRING
+        self.curve_vertex_add =NOT_FOUND_STRING
         # Armature
-        self.armature_extrude = "Not found"
-        self.armature_extrude_forked = "Not found"
-        self.armature_parent_set = "Not found"
-        self.armature_parent_clear = "Not found"
-        self.armature_separate = "Not found"
-        self.armature_sketching_draw = "Not found"
-        self.armature_sketching_draw_snap = "Not found"
-        self.armature_sketching_preview = "Not found"
-        self.armature_sketching_preview_snap = "Not found"
-        self.armature_sketching_finish_stroke = "Not found"
+        self.armature_extrude = NOT_FOUND_STRING
+        self.armature_extrude_forked = NOT_FOUND_STRING
+        self.armature_parent_set = NOT_FOUND_STRING
+        self.armature_parent_clear = NOT_FOUND_STRING
+        self.armature_separate = NOT_FOUND_STRING
+        self.armature_sketching_draw = NOT_FOUND_STRING
+        self.armature_sketching_draw_snap = NOT_FOUND_STRING
+        self.armature_sketching_preview = NOT_FOUND_STRING
+        self.armature_sketching_preview_snap = NOT_FOUND_STRING
+        self.armature_sketching_finish_stroke = NOT_FOUND_STRING
 
 
     # Our modal function. The text will display as long as it is not cancelled.
@@ -962,7 +963,7 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
             self.report({'WARNING'}, "View3D not found, cannot run operator")
             return {'CANCELLED'}
 
-#------------------------ Menu - a buttton in the 3d View in the Properties sidebar in the Show Text panel
+#------------------------ Menu - a buttton in the 3D View in the Properties sidebar in the Show Text panel
 
 class VIEW3D_PT_ShowtextPanel(bpy.types.Panel):
     bl_label = "Important Hotkeys"
@@ -971,30 +972,25 @@ class VIEW3D_PT_ShowtextPanel(bpy.types.Panel):
     bl_category = "View"
 
     def draw(self, context):
-        sc = context.scene
         layout = self.layout
-
         wm = context.window_manager
 
         if not wm.showhide_flag:
-            layout.operator("view3d.modal_operator", text="Show text")
+            layout.operator("view3d.draw_important_hotkeys", text="Show Text")
         else:
-            layout.operator("view3d.modal_operator", text="Hide text")
-
-        # --------------------------- color and text variables
+            layout.operator("view3d.draw_important_hotkeys", text="Hide Text", depress=True)
 
         row = layout.row(align=True)
         split = row.split(factor=0.2)
         left_side = split.column(align=True)
-        left_side.prop(sc , "important_hotkeys_text_color", text="")
+        left_side.prop(wm, "important_hotkeys_text_color", text="")
         split = split.split()
         right_side = split.column()
-        right_side.prop(sc, "important_hotkeys_font_size", text="Fontsize")
+        right_side.prop(wm, "important_hotkeys_text_size")
 
 
 # properties used by the script
 def init_properties():
-    scene = bpy.types.Scene
     wm = bpy.types.WindowManager
 
     # Runstate initially always set to False
@@ -1003,13 +999,13 @@ def init_properties():
     wm.showhide_flag = bpy.props.BoolProperty(default=False)
 
     # the font size.
-    scene.important_hotkeys_font_size = bpy.props.IntProperty(
+    wm.important_hotkeys_text_size = bpy.props.IntProperty(
         name="Text Size",
         description="Text size displayed on 3D View",
         default=11, min=8, max=150)
 
     # color variables
-    scene.important_hotkeys_text_color = bpy.props.FloatVectorProperty(
+    wm.important_hotkeys_text_color = bpy.props.FloatVectorProperty(
         name="Text Color",
         description="Color for the text",
         default=(1.0, 1.0, 1.0, 1.0),
@@ -1023,14 +1019,17 @@ def init_properties():
 def clear_properties():
     props = (
         "showhide_flag",
-        "important_hotkeys_font_size",
+        "important_hotkeys_text_size",
         "important_hotkeys_text_color", # color variables
     )
+
+    for prop in props:
+        delattr(bpy.types.WindowManager, prop)
 
 # -------------------------- Register - Unregister
 
 classes = (
-    IH_OT_ModalDrawOperator,
+    IH_OT_DrawImportantHotkeysModal,
     VIEW3D_PT_ShowtextPanel,
 )
 

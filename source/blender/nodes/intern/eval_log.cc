@@ -14,6 +14,8 @@
 #include "BLI_string_ref.hh"
 #include "BLI_string_utf8.h"
 
+#include "IMB_imbuf.hh"
+
 #include "BKE_anonymous_attribute_id.hh"
 #include "BKE_compute_context_cache.hh"
 #include "BKE_compute_contexts.hh"
@@ -26,6 +28,7 @@
 #include "BKE_node_runtime.hh"
 #include "BKE_node_socket_value.hh"
 #include "BKE_report.hh"
+#include "BKE_scene_runtime.hh"
 #include "BKE_type_conversions.hh"
 #include "BKE_volume.hh"
 #include "BKE_volume_grid.hh"
@@ -272,15 +275,44 @@ NodeWarning::NodeWarning(const Report &report)
   this->message = report.message;
 }
 
+ImageInfoLog::ImageInfoLog(const int2 data_size,
+                           const int2 display_size,
+                           const int2 data_offset,
+                           const float3x3 transformation,
+                           const StringRefNull interpolation,
+                           const StringRefNull extension_x,
+                           const StringRefNull extension_y,
+                           const StringRefNull precision)
+    : data_size(data_size),
+      display_size(display_size),
+      data_offset(data_offset),
+      transformation(transformation),
+      interpolation(interpolation),
+      extension_x(extension_x),
+      extension_y(extension_y),
+      precision(precision)
+{
+}
+
 /* Avoid generating these in every translation unit. */
 NodesEvalLog::NodesEvalLog() = default;
 NodesEvalLog::~NodesEvalLog() = default;
 
 NodeTreeLogger::NodeTreeLogger() = default;
-NodeTreeLogger::~NodeTreeLogger() = default;
+
+NodeTreeLogger::~NodeTreeLogger()
+{
+  for (const NodeTreeLogger::NodeImagePreview &preview : this->node_image_previews) {
+    IMB_freeImBuf(preview.image_preview);
+  }
+}
 
 NodeLog::NodeLog() = default;
-NodeLog::~NodeLog() = default;
+
+NodeLog::~NodeLog()
+{
+  IMB_freeImBuf(image_preview);
+}
 
 NodeTreeLog::NodeTreeLog(NodesEvalLog *root_log, Vector<NodeTreeLogger *> tree_loggers)
     : root_log_(root_log), tree_loggers_(std::move(tree_loggers))
@@ -338,12 +370,12 @@ void NodeTreeLogger::log_value(const bNode &node, const bNodeSocket &socket, con
           if (const BundleItemSocketValue *socket_value = std::get_if<BundleItemSocketValue>(
                   &item.value.value))
           {
-            items.append({item.key, {socket_value->type}});
+            items.append({item.key.ustr(), {socket_value->type}});
           }
           if (const BundleItemInternalValue *internal_value = std::get_if<BundleItemInternalValue>(
                   &item.value.value))
           {
-            items.append({item.key, {internal_value->value->type_name()}});
+            items.append({item.key.ustr(), {internal_value->value->type_name()}});
           }
         }
       }
@@ -381,7 +413,13 @@ void NodeTreeLogger::log_value(const bNode &node, const bNodeSocket &socket, con
     }
   }
   else {
-    log_generic_value(type, value.get());
+    if (type.is<std::string>()) {
+      const std::string &string = *value.get<std::string>();
+      store_logged_value(this->allocator->construct<StringLog>(string, *this->allocator));
+    }
+    else {
+      log_generic_value(type, value.get());
+    }
   }
 }
 
@@ -483,7 +521,7 @@ void NodeTreeLog::ensure_node_warnings(
       NodeWarningPropagation propagation = NODE_WARNING_PROPAGATION_ALL;
       if (tree) {
         if (const bNode *node = tree->node_by_id(warning.node_id)) {
-          propagation = NodeWarningPropagation(node->warning_propagation);
+          propagation = node->warning_propagation;
         }
       }
       this->nodes.lookup_or_add_default(warning.node_id).warnings.add(warning.warning);
@@ -502,7 +540,7 @@ void NodeTreeLog::ensure_node_warnings(
     const std::optional<int32_t> &caller_node_id = first_child_logger.parent_node_id;
     if (tree && caller_node_id) {
       if (const bNode *caller_node = tree->node_by_id(*caller_node_id)) {
-        propagation = NodeWarningPropagation(caller_node->warning_propagation);
+        propagation = caller_node->warning_propagation;
       }
     }
     child_log.ensure_node_warnings(orig_tree_by_session_uid);
@@ -688,6 +726,22 @@ void NodeTreeLog::ensure_layer_names()
   }
 
   reduced_layer_names_ = true;
+}
+
+void NodeTreeLog::ensure_node_image_previews()
+{
+  if (reduced_node_image_previews_) {
+    return;
+  }
+
+  for (NodeTreeLogger *tree_logger : tree_loggers_) {
+    for (const NodeTreeLogger::NodeImagePreview &preview : tree_logger->node_image_previews) {
+      IMB_refImBuf(preview.image_preview);
+      this->nodes.lookup_or_add_default_as(preview.node_id).image_preview = preview.image_preview;
+    }
+  }
+
+  reduced_node_image_previews_ = true;
 }
 
 ValueLog *NodeTreeLog::find_socket_value_log(const bNodeSocket &query_socket)
@@ -937,12 +991,8 @@ Map<const bNodeTreeZone *, ComputeContextHash> NodesEvalLog::
   return hash_by_zone;
 }
 
-static NodesEvalLog *get_root_log(const SpaceNode &snode)
+static NodesEvalLog *get_geometry_nodes_root_log(const SpaceNode &snode)
 {
-  if (!ED_node_is_geometry(&snode)) {
-    return nullptr;
-  }
-
   switch (SpaceNodeGeometryNodesType(snode.node_tree_sub_type)) {
     case SNODE_GEOMETRY_MODIFIER: {
       std::optional<ed::space_node::ObjectAndModifier> object_and_modifier =
@@ -961,6 +1011,38 @@ static NodesEvalLog *get_root_log(const SpaceNode &snode)
       return log.log.get();
     }
   }
+
+  return nullptr;
+}
+
+static NodesEvalLog *get_compositor_root_log(const SpaceNode &space_node)
+{
+  switch (SpaceNodeCompositorNodesType(space_node.node_tree_sub_type)) {
+    case SNODE_COMPOSITOR_SCENE: {
+      const Scene *scene = reinterpret_cast<Scene *>(space_node.id);
+      if (!scene) {
+        return nullptr;
+      }
+      return scene->runtime->compositor.nodes_evaluation_log.get();
+    }
+    case SNODE_COMPOSITOR_SEQUENCER: {
+      return nullptr;
+    }
+  }
+
+  return nullptr;
+}
+
+static NodesEvalLog *get_root_log(const SpaceNode &snode)
+{
+  if (ED_node_is_geometry(&snode)) {
+    return get_geometry_nodes_root_log(snode);
+  }
+
+  if (ED_node_is_compositor(&snode)) {
+    return get_compositor_root_log(snode);
+  }
+
   return nullptr;
 }
 

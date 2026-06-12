@@ -46,14 +46,19 @@ static void node_declare(NodeDeclarationBuilder &b)
   const eNodeSocketDatatype data_type = eNodeSocketDatatype(node->custom1);
 
   b.add_input(data_type, "Grid"_ustr).hide_value().structure_type(StructureType::Grid);
-  b.add_input<decl::Vector>("Position"_ustr).implicit_field(NODE_DEFAULT_INPUT_POSITION_FIELD);
+  auto &position = b.add_input<decl::Vector>("Position"_ustr)
+                       .default_input_type(NODE_DEFAULT_INPUT_POSITION_FIELD)
+                       .structure_type(StructureType::Dynamic);
   b.add_input<decl::Menu>("Interpolation"_ustr)
       .static_items(interpolation_mode_items)
       .default_value(InterpolationMode::TriLinear)
       .optional_label()
       .description("How to interpolate the values between neighboring voxels");
 
-  b.add_output(data_type, "Value"_ustr).dependent_field({1});
+  const std::array<int, 1> dynamic_inputs = {position.index()};
+  b.add_output(data_type, "Value"_ustr)
+      .inferred_structure_type(dynamic_inputs)
+      .propagate_references(dynamic_inputs);
 }
 
 static std::optional<eNodeSocketDatatype> node_type_for_socket_type(const bNodeSocket &socket)
@@ -86,7 +91,7 @@ static void node_gather_link_search_ops(GatherLinkSearchOpParams &params)
       node.custom1 = *node_type;
       params.update_and_connect_available_socket(node, "Grid"_ustr);
     });
-    const eNodeSocketDatatype other_type = eNodeSocketDatatype(params.other_socket().type);
+    const eNodeSocketDatatype other_type = params.other_socket().type;
     if (params.node_tree().typeinfo->validate_link(other_type, SOCK_VECTOR)) {
       params.add_item(IFACE_("Position"), [](LinkSearchOpParams &params) {
         bNode &node = params.add_node("GeometryNodeSampleGrid"_ustr);

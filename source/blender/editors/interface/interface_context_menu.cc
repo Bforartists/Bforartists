@@ -92,7 +92,7 @@ static IDProperty *shortcut_property_from_rna_for_enum(bContext *C,
 
   const char *identifier = nullptr;
   RNA_property_enum_identifier(
-      C, &but_parent->rnapoin, but_parent->rnaprop, int(but->hardmin), &identifier);
+      C, &but_parent->rnapoin, but_parent->rnaprop, but->retval, &identifier);
 
   if (identifier == nullptr) {
     /* Return early when valid identifier is not found for the button representing enum value. */
@@ -617,9 +617,9 @@ bool popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *even
     const bool is_array_component = (is_array && but->rnaindex != -1);
     const bool is_whole_array = (is_array && but->rnaindex == -1);
 
-    const uint override_status = RNA_property_override_library_status(
+    const eRNAOverrideStatus override_status = RNA_property_override_library_status(
         CTX_data_main(C), ptr, prop, -1);
-    const bool is_overridable = (override_status & RNA_OVERRIDE_STATUS_OVERRIDABLE) != 0;
+    const bool is_overridable = flag_is_set(override_status, eRNAOverrideStatus::LibOverridable);
 
     /* Set the (button_pointer, button_prop)
      * and pointer data for Python access to the hovered UI element. */
@@ -1060,9 +1060,7 @@ bool popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *even
 
   /* Expose id specific operators in context menu when button has no operator associated. Otherwise
    * they would appear in nested context menus, see: #126006. */
-  if ((but->optype == nullptr) && (but->apply_func == nullptr) &&
-      (but->menu_create_func == nullptr))
-  {
+  if ((but->optype == nullptr) && (but->menu_create_func == nullptr)) {
     /* If the button represents an id, it can set the "id" context pointer. */
     if (ed::asset::can_mark_single_from_context(C)) {
       const ID *id = static_cast<const ID *>(CTX_data_pointer_get_type(C, "id", RNA_ID).data);

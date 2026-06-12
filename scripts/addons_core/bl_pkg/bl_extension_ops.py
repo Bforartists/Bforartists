@@ -3570,7 +3570,7 @@ class EXTENSIONS_OT_package_uninstall(Operator, _ExtCmdMixIn):
 
 # Only exists for an error message.
 class EXTENSIONS_OT_package_uninstall_system(Operator):
-    # Copy `EXTENSIONS_OT_package_uninstall` doc-string.
+    # Copy `EXTENSIONS_OT_package_uninstall` docstring.
     bl_label = "Uninstall"
 
     bl_idname = "extensions.package_uninstall_system"
@@ -4003,9 +4003,10 @@ class EXTENSIONS_OT_userpref_show_online(Operator):
 
 
 class EXTENSIONS_OT_userpref_allow_online(Operator):
-    """Opt-in to allow internet access to download Extensions. """ \
-        """Bforartists may access configured online extension repositories to download and update. """ \
-        """Installed third party Extensions add-ons may access the internet for their own functionality""" #BFA - not Blender, made explicit
+    """Opt-in to allow internet access to download Extensions and Online Assets. """ \
+        """Bforartists may access configured online repositories to download and update extensions and assets. """ \
+        """However, installed third party Extensions add-ons may access the internet for their own functionality """ \
+        """and cannot be restricted.""" #BFA - not Blender, made explicit
     bl_idname = "extensions.userpref_allow_online"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -4030,8 +4031,10 @@ class EXTENSIONS_OT_userpref_allow_online(Operator):
 # NOTE: this is a wrapper for `extensions.userpref_allow_online`.
 # It exists *only* show a dialog.
 class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
-    """Allow internet access. Bforartists may access configured online extension repositories. """ \
-        """Installed third party add-ons may access the internet for their own functionality"""  # BFA - not Blender
+    """Opt-in to allow internet access to download Extensions and Online Assets. """ \
+        """Bforartists may access configured online repositories to download and update extensions and assets. """ \
+        """However, installed third party Extensions add-ons may access the internet for their own functionality """ \
+        """and cannot be restricted.""" #BFA - not Blender, made explicit
     bl_idname = "extensions.userpref_allow_online_popup"
     bl_label = ""
     bl_options = {'INTERNAL'}

@@ -361,7 +361,7 @@ static ImBuf *thumb_create_ex(const char *file_path,
       return nullptr;
     }
     if (size == THB_FAIL) {
-      img = IMB_allocImBuf(1, 1, 32, IB_byte_data | IB_metadata);
+      img = IMB_allocImBuf(1, 1, ImBufFlags::ByteData | ImBufFlags::Metadata);
       if (!img) {
         return nullptr;
       }
@@ -403,9 +403,9 @@ static ImBuf *thumb_create_ex(const char *file_path,
         /* Image buffer is converted from float to byte and only the latter one is used, and the
          * conversion process is aware of the float color-space. So it is possible to save some
          * compute time by keeping the original color-space for movies. */
-        anim = MOV_open_file(file_path, IB_byte_data | IB_metadata, 0, true, nullptr);
+        anim = MOV_open_file(file_path, ImBufFlags::Zero, 0, true, nullptr);
         if (anim != nullptr) {
-          img = MOV_decode_frame(anim, 0, IMB_TC_NONE, IMB_PROXY_NONE);
+          img = MOV_decode_frame(anim, 0, IMB_PROXY_NONE);
           if (img == nullptr) {
             // printf("not an anim; %s\n", file_path);
           }
@@ -439,22 +439,22 @@ static ImBuf *thumb_create_ex(const char *file_path,
       }
     }
     SNPRINTF_UTF8(desc, "Thumbnail for %s", uri);
-    IMB_metadata_ensure(&img->metadata);
-    IMB_metadata_set_field(img->metadata, "Software", "Blender");
-    IMB_metadata_set_field(img->metadata, "Thumb::URI", uri);
-    IMB_metadata_set_field(img->metadata, "Description", desc);
-    IMB_metadata_set_field(img->metadata, "Thumb::MTime", mtime);
+    IDProperty *metadata = img->metadata_for_write();
+    IMB_metadata_set_field(metadata, "Software", "Blender");
+    IMB_metadata_set_field(metadata, "Thumb::URI", uri);
+    IMB_metadata_set_field(metadata, "Description", desc);
+    IMB_metadata_set_field(metadata, "Thumb::MTime", mtime);
     if (use_hash) {
-      IMB_metadata_set_field(img->metadata, "X-Blender::Hash", hash);
+      IMB_metadata_set_field(metadata, "X-Blender::Hash", hash);
     }
     img->ftype = IMB_FTYPE_PNG;
-    img->planes = 32;
+    img->color_mode = ImColorMode::RGBA;
 
     /* If we generated from a 16bit PNG e.g., we have a float rect, not a byte one - fix this. */
     IMB_byte_from_float(img);
     IMB_free_float_pixels(img);
 
-    if (IMB_save_image(img, temp, IB_byte_data | IB_metadata)) {
+    if (IMB_save_image(img, temp, ImBufFlags::ByteData | ImBufFlags::Metadata)) {
 #ifndef WIN32
       chmod(temp, S_IRUSR | S_IWUSR);
 #endif
@@ -540,7 +540,7 @@ ImBuf *IMB_thumb_read(const char *file_or_lib_path, ThumbSize size)
     return nullptr;
   }
   if (thumbpath_from_uri(uri, thumb, sizeof(thumb), size)) {
-    img = IMB_load_image_from_filepath(thumb, IB_byte_data | IB_metadata);
+    img = IMB_load_image_from_filepath(thumb, ImBufFlags::ByteData | ImBufFlags::Metadata);
   }
 
   return img;
@@ -576,7 +576,8 @@ ImBuf *IMB_thumb_manage(const char *file_or_lib_path, ThumbSize size, ThumbSourc
       return nullptr;
     }
 
-    ImBuf *thumb = IMB_load_image_from_filepath(file_or_lib_path, IB_byte_data | IB_metadata);
+    ImBuf *thumb = IMB_load_image_from_filepath(file_or_lib_path,
+                                                ImBufFlags::ByteData | ImBufFlags::Metadata);
     if (!thumb) {
       return nullptr;
     }
@@ -622,7 +623,7 @@ ImBuf *IMB_thumb_manage(const char *file_or_lib_path, ThumbSize size, ThumbSourc
   if (file_attributes & FILE_ATTR_OFFLINE) {
     char thumb_path[FILE_MAX];
     if (thumbpath_from_uri(uri, thumb_path, sizeof(thumb_path), size)) {
-      return IMB_load_image_from_filepath(thumb_path, IB_byte_data | IB_metadata);
+      return IMB_load_image_from_filepath(thumb_path, ImBufFlags::ByteData | ImBufFlags::Metadata);
     }
     return nullptr;
   }
@@ -649,10 +650,10 @@ ImBuf *IMB_thumb_manage(const char *file_or_lib_path, ThumbSize size, ThumbSourc
     /* The requested path points to a generated thumbnail already (path into the thumbnail cache
      * directory). Attempt to load that, there's nothing we can recreate. */
     if (BLI_path_ncmp(file_or_lib_path, thumb_path, sizeof(thumb_path)) == 0) {
-      img = IMB_load_image_from_filepath(file_or_lib_path, IB_byte_data);
+      img = IMB_load_image_from_filepath(file_or_lib_path, ImBufFlags::ByteData);
     }
     else {
-      img = IMB_load_image_from_filepath(thumb_path, IB_byte_data | IB_metadata);
+      img = IMB_load_image_from_filepath(thumb_path, ImBufFlags::ByteData | ImBufFlags::Metadata);
       if (img) {
         bool regenerate = false;
 
@@ -662,7 +663,7 @@ ImBuf *IMB_thumb_manage(const char *file_or_lib_path, ThumbSize size, ThumbSourc
 
         const bool use_hash = thumbhash_from_path(file_path, source, thumb_hash);
 
-        if (IMB_metadata_get_field(img->metadata, "Thumb::MTime", mtime, sizeof(mtime))) {
+        if (IMB_metadata_get_field(img->metadata(), "Thumb::MTime", mtime, sizeof(mtime))) {
           regenerate = (st.st_mtime != atol(mtime));
         }
         else {
@@ -672,7 +673,7 @@ ImBuf *IMB_thumb_manage(const char *file_or_lib_path, ThumbSize size, ThumbSourc
 
         if (use_hash && !regenerate) {
           if (IMB_metadata_get_field(
-                  img->metadata, "X-Blender::Hash", thumb_hash_curr, sizeof(thumb_hash_curr)))
+                  img->metadata(), "X-Blender::Hash", thumb_hash_curr, sizeof(thumb_hash_curr)))
           {
             regenerate = !STREQ(thumb_hash, thumb_hash_curr);
           }

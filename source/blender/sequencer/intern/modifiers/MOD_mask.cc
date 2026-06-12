@@ -14,6 +14,8 @@
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
 
+#include "PRF_profile.hh"
+
 #include "SEQ_modifier.hh"
 #include "SEQ_render.hh"
 
@@ -41,7 +43,7 @@ struct MaskApplyOp {
           image[3] = uchar(image[3] * m);
         }
         else if constexpr (std::is_same_v<ImageT, float>) {
-          /* Float buffers are premultiplied, so need to premul color as well to make it
+          /* Float buffers are pre-multiplied, so need to pre-multiply color as well to make it
            * easy to alpha-over masked strip. */
           float4 pix(image);
           pix *= m;
@@ -55,6 +57,7 @@ struct MaskApplyOp {
 
 static void maskmodifier_apply(ModifierApplyContext &context, StripModifierData *smd)
 {
+  PRF_scope_with_name("SeqModMask", ProfileCategory::Draw);
   ImBuf *mask = modifier_render_mask_input(context, *smd);
   if (mask != nullptr && (mask->byte_data() != nullptr || mask->float_data() != nullptr)) {
     ensure_ibuf_is_sequencer_space(context.render_data.scene, context.image, false);
@@ -63,7 +66,7 @@ static void maskmodifier_apply(ModifierApplyContext &context, StripModifierData 
     apply_modifier_op(op, context.image, mask, context.transform);
 
     /* Image has gained transparency. */
-    context.image->planes = R_IMF_PLANES_RGBA;
+    context.image->color_mode = ImColorMode::RGBA;
   }
 
   if (mask != nullptr) {

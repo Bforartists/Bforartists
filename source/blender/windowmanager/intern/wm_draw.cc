@@ -56,6 +56,8 @@
 #include "GPU_texture.hh"
 #include "GPU_viewport.hh"
 
+#include "PRF_profile.hh"
+
 #include "RE_engine.h"
 
 #include "WM_api.hh"
@@ -330,7 +332,7 @@ static void wm_software_cursor_draw_crosshair(const float system_scale, const in
    * are set by the operating-system, where the pixel information isn't easily available. */
 
   /* The cursor scaled by the "default" size. */
-  const float cursor_scale = float(WM_cursor_preferred_logical_size()) /
+  const float cursor_scale = float(WM_cursor_preferred_logical_size(false)) /
                              float(WM_CURSOR_DEFAULT_LOGICAL_SIZE);
   const float unit = max_ff(system_scale * cursor_scale, 1.0f);
   uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
@@ -608,6 +610,7 @@ static const char *wm_area_name(const ScrArea *area)
     SPACE_NAME(SPACE_NODE);
     SPACE_NAME(SPACE_CONSOLE);
     SPACE_NAME(SPACE_USERPREF);
+    SPACE_NAME(SPACE_PROJECT);
     SPACE_NAME(SPACE_CLIP);
     SPACE_NAME(SPACE_TOPBAR);
     SPACE_NAME(SPACE_STATUSBAR);
@@ -1234,6 +1237,7 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
 
 static void wm_draw_window(bContext *C, wmWindow *win)
 {
+  PRF_scope(ProfileCategory::Draw);
   GPU_context_begin_frame(static_cast<GPUContext *>(win->runtime->gpuctx));
 
   bScreen *screen = WM_window_get_active_screen(win);
@@ -1363,9 +1367,8 @@ uint8_t *WM_window_pixels_read_from_frontbuffer(const wmWindowManager *wm,
    * See it's comments for details on why it's needed, see also #98462. */
   bool setup_context = wm->runtime->windrawable != win;
 
-  GHOST_IWindow *ghost_window = static_cast<GHOST_IWindow *>(win->runtime->ghostwin);
   if (setup_context) {
-    ghost_window->activateDrawingContext();
+    static_cast<GHOST_IWindow *>(win->runtime->ghostwin)->activateDrawingContext();
     GPU_context_active_set(static_cast<GPUContext *>(win->runtime->gpuctx));
   }
 
@@ -1377,7 +1380,8 @@ uint8_t *WM_window_pixels_read_from_frontbuffer(const wmWindowManager *wm,
 
   if (setup_context) {
     if (wm->runtime->windrawable) {
-      ghost_window->activateDrawingContext();
+      static_cast<GHOST_IWindow *>(wm->runtime->windrawable->runtime->ghostwin)
+          ->activateDrawingContext();
       GPU_context_active_set(static_cast<GPUContext *>(wm->runtime->windrawable->runtime->gpuctx));
     }
   }
@@ -1402,9 +1406,8 @@ void WM_window_pixels_read_sample_from_frontbuffer(const wmWindowManager *wm,
   BLI_assert(WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ);
   bool setup_context = wm->runtime->windrawable != win;
 
-  GHOST_IWindow *ghost_window = static_cast<GHOST_IWindow *>(win->runtime->ghostwin);
   if (setup_context) {
-    ghost_window->activateDrawingContext();
+    static_cast<GHOST_IWindow *>(win->runtime->ghostwin)->activateDrawingContext();
     GPU_context_active_set(static_cast<GPUContext *>(win->runtime->gpuctx));
   }
 
@@ -1420,7 +1423,8 @@ void WM_window_pixels_read_sample_from_frontbuffer(const wmWindowManager *wm,
 
   if (setup_context) {
     if (wm->runtime->windrawable) {
-      ghost_window->activateDrawingContext();
+      static_cast<GHOST_IWindow *>(wm->runtime->windrawable->runtime->ghostwin)
+          ->activateDrawingContext();
       GPU_context_active_set(static_cast<GPUContext *>(wm->runtime->windrawable->runtime->gpuctx));
     }
   }
@@ -1639,6 +1643,8 @@ void WM_paint_cursor_tag_redraw(wmWindow *win, ARegion * /*region*/)
 
 void wm_draw_update(bContext *C)
 {
+  PRF_scope(ProfileCategory::Draw);
+
   Main *bmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   const bool rna_disallow_writes = true;
@@ -1674,6 +1680,7 @@ void wm_draw_update(bContext *C)
     CTX_wm_window_set(C, &win);
 
     if (wm_draw_update_test_window(bmain, C, &win)) {
+      PRF_frame_mark_start("Window Drawing"_ustr);
       /* Sets context window+screen. */
       wm_window_make_drawable(wm, &win);
       wm_window_swap_buffer_acquire(&win);
@@ -1685,6 +1692,7 @@ void wm_draw_update(bContext *C)
       wm_draw_update_clear_window(C, &win);
 
       wm_window_swap_buffer_release(&win);
+      PRF_frame_mark_end("Window Drawing"_ustr);
     }
   }
 

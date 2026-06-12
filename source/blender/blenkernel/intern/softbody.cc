@@ -153,7 +153,7 @@ static float SoftHeunTol = 1.0f;
 /* local prototypes */
 static void free_softbody_intern(SoftBody *sb);
 
-/*+++ frame based timing +++ */
+/* +++ frame based timing +++ */
 
 /* Physical unit of force is `kg * m / sec^2`. */
 
@@ -1033,12 +1033,12 @@ static int sb_detect_face_pointCached(const float face_v1[3],
   float facedist, outerfacethickness, tune = 10.0f;
   int a, deflected = 0;
 
-  aabbmin[0] = min_fff(face_v1[0], face_v2[0], face_v3[0]);
-  aabbmin[1] = min_fff(face_v1[1], face_v2[1], face_v3[1]);
-  aabbmin[2] = min_fff(face_v1[2], face_v2[2], face_v3[2]);
-  aabbmax[0] = max_fff(face_v1[0], face_v2[0], face_v3[0]);
-  aabbmax[1] = max_fff(face_v1[1], face_v2[1], face_v3[1]);
-  aabbmax[2] = max_fff(face_v1[2], face_v2[2], face_v3[2]);
+  aabbmin[0] = std::min({face_v1[0], face_v2[0], face_v3[0]});
+  aabbmin[1] = std::min({face_v1[1], face_v2[1], face_v3[1]});
+  aabbmin[2] = std::min({face_v1[2], face_v2[2], face_v3[2]});
+  aabbmax[0] = std::max({face_v1[0], face_v2[0], face_v3[0]});
+  aabbmax[1] = std::max({face_v1[1], face_v2[1], face_v3[1]});
+  aabbmax[2] = std::max({face_v1[2], face_v2[2], face_v3[2]});
 
   /* calculate face normal once again SIGH */
   sub_v3_v3v3(edge1, face_v1, face_v2);
@@ -1122,12 +1122,12 @@ static int sb_detect_face_collisionCached(const float face_v1[3],
   float t, tune = 10.0f;
   int a, deflected = 0;
 
-  aabbmin[0] = min_fff(face_v1[0], face_v2[0], face_v3[0]);
-  aabbmin[1] = min_fff(face_v1[1], face_v2[1], face_v3[1]);
-  aabbmin[2] = min_fff(face_v1[2], face_v2[2], face_v3[2]);
-  aabbmax[0] = max_fff(face_v1[0], face_v2[0], face_v3[0]);
-  aabbmax[1] = max_fff(face_v1[1], face_v2[1], face_v3[1]);
-  aabbmax[2] = max_fff(face_v1[2], face_v2[2], face_v3[2]);
+  aabbmin[0] = std::min({face_v1[0], face_v2[0], face_v3[0]});
+  aabbmin[1] = std::min({face_v1[1], face_v2[1], face_v3[1]});
+  aabbmin[2] = std::min({face_v1[2], face_v2[2], face_v3[2]});
+  aabbmax[0] = std::max({face_v1[0], face_v2[0], face_v3[0]});
+  aabbmax[1] = std::max({face_v1[1], face_v2[1], face_v3[1]});
+  aabbmax[2] = std::max({face_v1[2], face_v2[2], face_v3[2]});
 
   for (const auto &item : vertexowner->soft->scratch->colliderhash->items()) {
     Object *ob = item.key;
@@ -1226,7 +1226,7 @@ static void scan_for_ext_face_forces(Object *ob, float timenow)
     bf = sb->scratch->bodyface;
     for (a = 0; a < sb->scratch->bodyface_num; a++, bf++) {
       bf->ext_force[0] = bf->ext_force[1] = bf->ext_force[2] = 0.0f;
-      /*+++edges intruding. */
+      /* +++edges intruding. */
       bf->flag &= ~BFF_INTERSECT;
       zero_v3(feedback);
       if (sb_detect_face_collisionCached(sb->bpoint[bf->v1].pos,
@@ -1244,9 +1244,9 @@ static void scan_for_ext_face_forces(Object *ob, float timenow)
         bf->flag |= BFF_INTERSECT;
         choke = min_ff(max_ff(damp, choke), 1.0f);
       }
-      /*---edges intruding. */
+      /* ---edges intruding. */
 
-      /*+++ close vertices. */
+      /* +++ close vertices. */
       if ((bf->flag & BFF_INTERSECT) == 0) {
         bf->flag &= ~BFF_CLOSEVERT;
         tune = -1.0f;
@@ -1267,7 +1267,7 @@ static void scan_for_ext_face_forces(Object *ob, float timenow)
           choke = min_ff(max_ff(damp, choke), 1.0f);
         }
       }
-      /*--- close vertices. */
+      /* --- close vertices. */
     }
     bf = sb->scratch->bodyface;
     for (a = 0; a < sb->scratch->bodyface_num; a++, bf++) {
@@ -1280,7 +1280,7 @@ static void scan_for_ext_face_forces(Object *ob, float timenow)
   }
 }
 
-/*  --- the face external section. */
+/* --- the face external section. */
 
 /* +++ the spring external section. */
 
@@ -2224,7 +2224,7 @@ static void softbody_calc_forces(
   // float gravity;           /* UNUSED */
   // float iks;
   float fieldfactor = -1.0f, windfactor = 0.25;
-  int do_deflector /*, do_selfcollision */, do_springcollision, do_aero;
+  int do_deflector /* , do_selfcollision */, do_springcollision, do_aero;
 
   // gravity = sb->grav * sb_grav_force_scale(ob); /* UNUSED */
 
@@ -2936,7 +2936,7 @@ static void curve_surf_to_softbody(Object *ob)
 
   if (ob->softflag & OB_SB_EDGES) {
     if (ob->type == OB_CURVES_LEGACY) {
-      totspring = totvert - BLI_listbase_count(&cu->nurb);
+      totspring = totvert - cu->nurb.count();
     }
   }
 
@@ -3618,7 +3618,7 @@ void sbObjectStep(Depsgraph *depsgraph,
   if (cache_result == PTCACHE_READ_OLD) {
     /* pass */
   }
-  else if (/*ob->id.lib || */
+  else if (/* ob->id.lib || */
            /* "library linking & point-caches" has to be solved properly at some point. */
            (cache->flag & PTCACHE_BAKED))
   {

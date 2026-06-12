@@ -166,22 +166,20 @@ class OBJECT_PT_relations(ObjectButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(ob, "parent")
+        sub = col.column()
+        sub.prop(ob, "parent_type")
         parent = ob.parent
-        if parent:
-            row = col.row()
-            row.separator()
-            sub = row.column()
-            sub.prop(ob, "parent_type")
-            if ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
-                sub.prop_search(ob, "parent_bone", parent.data, "bones")
-            elif ob.parent_type == 'VERTEX':
-                col.prop(ob, "parent_vertices", text="Parent Vertex", index=0)
-                sub.prop(ob, "use_parent_final_indices")
-            elif ob.parent_type == 'VERTEX_3':
-                col.prop(ob, "parent_vertices", text="Parent Vertices")
-                sub.prop(ob, "use_parent_final_indices")
-            sub.use_property_split = False
-            sub.prop(ob, "use_camera_lock_parent")
+        if parent and ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
+            sub.prop_search(ob, "parent_bone", parent.data, "bones")
+            sub.prop(ob, "parent_bone_head_tail_factor", text="Head/Tail")
+        elif ob.parent_type == 'VERTEX':
+            col.prop(ob, "parent_vertices", text="Parent Vertex", index=0)
+            sub.prop(ob, "use_parent_final_indices")
+        elif ob.parent_type == 'VERTEX_3':
+            col.prop(ob, "parent_vertices", text="Parent Vertices")
+            sub.prop(ob, "use_parent_final_indices")
+        sub.active = (parent is not None)
+        sub.prop(ob, "use_camera_lock_parent")
 
         col.separator()
 
@@ -252,9 +250,19 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
 
         obj = context.object
         obj_type = obj.type
-        is_geometry = (obj_type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'VOLUME', 'CURVES', 'POINTCLOUD'})
+        # Empties can have evaluated geometry
+        is_geometry = (
+            obj_type in {
+                'EMPTY',
+                'MESH',
+                'CURVE',
+                'SURFACE',
+                'META',
+                'FONT',
+                'VOLUME',
+                'CURVES',
+                'POINTCLOUD'})
         has_bounds = (is_geometry or obj_type in {'LATTICE', 'ARMATURE'})
-        is_wire = (obj_type in {'CAMERA', 'EMPTY'})
         is_empty_image = (obj_type == 'EMPTY' and obj.empty_display_type == 'IMAGE')
         is_dupli = (obj.instance_type != 'NONE')
         is_gpencil = (obj_type == 'GREASEPENCIL')
@@ -307,9 +315,9 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         #    col.prop(obj, "show_transparent", text="Transparency") #bfa - we have it in the output
 
         sub = layout.column()
-        if is_wire:
-            # wire objects only use the max. display type for duplis
-            sub.active = is_dupli
+        # wire objects only use the max. display type for duplis
+        # and empties with geometry nodes modifier
+        sub.active = obj_type != 'CAMERA'
         sub.prop(obj, "display_type", text="Display As")
 
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
@@ -521,17 +529,16 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         if context.engine == 'BLENDER_EEVEE':
             if ob.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME'}:
                 layout.separator()
+                col = layout.column(heading="Ray Visibility")
+                col.prop(ob, "visible_camera", text="Camera", toggle=False)
+                col.prop(ob, "visible_shadow", text="Shadow", toggle=False)
+                col.prop(ob, "visible_raycast", text="Raycast", toggle=False)
+
+            if ob.type in {'LIGHT'}:
                 col.label(text = "Ray Visibility")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_camera", text="Camera", toggle=False)
-                row = col.row()
-                row.separator()
-                row.prop(ob, "visible_shadow", text="Shadow", toggle=False)
-                col.separator()
-
-            if ob.type in {'LIGHT'}:
-                col.label(text = "Ray Visibility")
                 row = col.row()
                 row.separator()
                 row.prop(ob, "visible_diffuse", text="Diffuse", toggle=False)

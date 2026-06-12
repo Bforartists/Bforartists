@@ -139,11 +139,11 @@ bool OSLRenderServices::get_inverse_matrix(OSL::ShaderGlobals *sg,
 }
 
 bool OSLRenderServices::get_array_attribute(OSL::ShaderGlobals * /*sg*/,
-                                            bool /* derivatives*/,
-                                            OSLUStringHash /* object*/,
-                                            const TypeDesc /* type*/,
-                                            OSLUStringHash /* name*/,
-                                            const int /* index*/,
+                                            bool /*derivatives*/,
+                                            OSLUStringHash /*object*/,
+                                            const TypeDesc /*type*/,
+                                            OSLUStringHash /*name*/,
+                                            const int /*index*/,
                                             void * /*val*/)
 {
   return false;
@@ -238,8 +238,8 @@ bool OSLRenderServices::get_attribute(ShaderGlobals *globals,
 }
 
 bool OSLRenderServices::get_userdata(bool /*derivatives*/,
-                                     OSLUStringHash /* name*/,
-                                     const TypeDesc /* type*/,
+                                     OSLUStringHash /*name*/,
+                                     const TypeDesc /*type*/,
                                      OSL::ShaderGlobals * /*sg*/,
                                      void * /*val*/)
 {
@@ -570,7 +570,8 @@ bool OSLRenderServices::trace(TraceOpt &options,
   }
   else {
     /* Ray-trace, leaving out shadow opaque to avoid early exit. */
-    const uint visibility = PATH_RAY_ALL_VISIBILITY - PATH_RAY_SHADOW_OPAQUE;
+    const PathRayVisibility visibility = PATH_RAY_VISIBILITY_ALL &
+                                         ~PATH_RAY_VISIBILITY_SHADOW_OPAQUE;
     tracedata->hit = scene_intersect(kg, &ray, visibility, &tracedata->isect);
     if (tracedata->hit) {
       tracedata->self_hit = tracedata->isect.object == sd->object;

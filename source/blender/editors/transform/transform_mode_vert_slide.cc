@@ -54,7 +54,7 @@ struct VertSlideData {
   {
     ARegion *region = t->region;
 
-    if (UNLIKELY(region == nullptr)) {
+    if (region == nullptr) [[unlikely]] {
       this->win_half = {1.0f, 1.0f};
       this->proj_mat = float4x4::identity();
       return;
@@ -283,7 +283,9 @@ static eRedrawFlag handleEventVertSlide(TransInfo *t, const wmEvent *event)
             /* Update the slide direction for every selected object. */
             FOREACH_TRANS_DATA_CONTAINER (t, tc) {
               VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
-              sld->update_active_edges(t, tc, dir_unit);
+              if (sld) {
+                sld->update_active_edges(t, tc, dir_unit);
+              }
             }
             if (slp->op) {
               if (PropertyRNA *prop = RNA_struct_find_property(slp->op->ptr, "direction")) {

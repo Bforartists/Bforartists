@@ -9,6 +9,7 @@
 #pragma once
 
 #include <bit>
+#include <cstdio>
 #include <functional>
 #include <optional>
 #include <string>
@@ -95,7 +96,7 @@ struct Block;
 /**
  * Character used for splitting labels (right align text after this character).
  * Users should never see this character.
- * Only applied when #BUT_HAS_SEP_CHAR flag is enabled, see it's doc-string for details.
+ * Only applied when #BUT_HAS_SEP_CHAR flag is enabled, see it's docstring for details.
  */
 #define UI_SEP_CHAR '|'
 #define UI_SEP_CHAR_S "|"
@@ -350,6 +351,8 @@ enum ButtonFlag {
   BUT_NODE_LINK = 1 << 10,
   BUT_NODE_ACTIVE = 1 << 11,
   BUT_DRAG_LOCK = 1 << 12,
+  BUT_DRAG_LOCK_X = BUT_DRAG_LOCK | 1 << 21,
+
   /** Grayed out and un-editable. */
   BUT_DISABLED = 1 << 13,
 
@@ -361,7 +364,6 @@ enum ButtonFlag {
   BUT_INACTIVE = 1 << 18,
   BUT_LAST_ACTIVE = 1 << 19,
   BUT_UNDO = 1 << 20,
-  /* UNUSED = 1 << 21, */
   BUT_NO_UTF8 = 1 << 22,
 
   /** For popups, pressing return activates this button, overriding the highlighted button.
@@ -435,31 +437,31 @@ enum {
 #define UI_NAVIGATION_REGION_WIDTH UI_COMPACT_PANEL_WIDTH
 #define UI_NARROW_NAVIGATION_REGION_WIDTH 100
 
+/** BFA - Compact tabs */
+#define UI_COMPACT_TABS (U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT)
+/** BFA - Toolbar Width Defaults */
+#define UI_TOOLBAR_WIDTH_SINGLE 90
+#define UI_TOOLBAR_WIDTH_DOUBLE 132
+
 /** The width of one icon column of the Toolbar. */
 #define UI_TOOLBAR_COLUMN (1.25f * ICON_DEFAULT_HEIGHT_TOOLBAR)
 /** The space between the Toolbar and the area's edge. */
-/* bfa - margin changed from 0.5f > 0.75f to fix icons size */
-#define UI_TOOLBAR_MARGIN (0.75f * ICON_DEFAULT_HEIGHT_TOOLBAR)
+/* BFA - We use HIDE_BG for headers, so we need this to be wider */
+#define UI_TOOLBAR_MARGIN (1.0f * ICON_DEFAULT_HEIGHT_TOOLBAR)
 /** Total width of Toolbar showing one icon column. */
-#define UI_TOOLBAR_WIDTH UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN
-
-/** Offset for toolbar when tabs are visible. */
-#define UI_TOOLBAR_TAB_OFFSET 20.f /* BFA */
-
-/* Minimum width threshold for storing preferred toolbar width */
-#define UI_TOOLBAR_MIN_WIDTH_THRESHOLD 1.0f /* BFA */
+#define UI_TOOLBAR_WIDTH (UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN) /* BFA */
 
 #define UI_PANEL_CATEGORY_MARGIN_WIDTH \
-  (((U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 1.4f : 1.0f) * U.widget_unit)
+  ((UI_COMPACT_TABS ? 1.4f : 1.0f) * U.widget_unit)
 
 /* Minimum width for a panel showing only category tabs. */
-#define UI_PANEL_CATEGORY_MIN_WIDTH ((U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 32.0f : 26.0f)
+#define UI_PANEL_CATEGORY_MIN_WIDTH (UI_COMPACT_TABS ? 32.0f : 26.0f) /** BFA - UI_COMPACT_TABS */
 /* Minimum width for a panel showing content and category tabs. */
 #define UI_PANEL_CATEGORY_MIN_SNAP_WIDTH 90.0f
 
 /* Both these margins should be ignored if the panel doesn't show a background (check
  * #panel_should_show_background()). */
-#define UI_PANEL_MARGIN_X (U.widget_unit * 0.2f) /*bfa - margin from 0.4 to 0.2 for now*/
+#define UI_PANEL_MARGIN_X (U.widget_unit * 0.4f) /* BFA - keep 0.4f same has blender */
 #define UI_PANEL_MARGIN_Y (U.widget_unit * 0.1f)
 
 /**
@@ -754,7 +756,7 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
 Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
                                              const char *str,
                                              char *clipped_str_buf,
-                                             const size_t max_len_clipped_str_buf,
+                                             const size_t clipped_str_buf_maxncpy,
                                              const float max_line_width,
                                              const int max_lines);
 
@@ -777,7 +779,6 @@ Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
 struct SearchItems;
 
 using ButtonHandleFunc = void (*)(bContext *C, void *arg1, void *arg2);
-using ButtonHandleRenameFunc = void (*)(bContext *C, void *arg, char *origstr);
 using ButtonHandleNFunc = void (*)(bContext *C, void *argN, void *arg2);
 using ButtonHandleHoldFunc = void (*)(bContext *C, ARegion *butregion, Button *but);
 using ButtonCompleteFunc = int (*)(bContext *C, char *str, void *arg);
@@ -1578,6 +1579,7 @@ Button *uiDefIconTextButO_ptr(Block *block,
                               short height,
                               std::optional<StringRef> tip);
 
+void button_enum_prop_value_set(Button *but, int retval);
 void button_retval_set(Button *but, int retval);
 
 void button_operator_set(Button *but,
@@ -1776,7 +1778,8 @@ enum AutoPropButsReturn {
 ENUM_OPERATORS(AutoPropButsReturn);
 
 /**
- * \param button_type_override \parblock
+ * \param button_type_override:
+ * \parblock
  * Overrides the default button type defined for some properties:
  * - Int/Float properties allows #ButtonType::Num or #ButtonType::NumSlider.
  * - Enum properties allows #ButtonType::Menu or #ButtonType::SearchMenu.
@@ -1939,9 +1942,10 @@ void block_funcN_set(Block *block,
                      ButtonArgNFree func_argN_free_fn = MEM_delete_void,
                      ButtonArgNCopy func_argN_copy_fn = MEM_dupalloc_void);
 
-void button_func_rename_set(Button *but, ButtonHandleRenameFunc func, void *arg1);
-void button_func_rename_full_set(Button *but,
-                                 std::function<void(std::string &new_name)> rename_full_func);
+void text_button_func_rename_set(
+    Button *but, std::function<void(bContext &C, StringRefNull oldname)> rename_func);
+void text_button_func_rename_full_set(
+    Button *but, std::function<void(StringRefNull new_name)> rename_full_func);
 void button_func_set(Button *but, ButtonHandleFunc func, void *arg1, void *arg2);
 void button_funcN_set(Button *but,
                       ButtonHandleNFunc funcN,
@@ -2041,8 +2045,7 @@ void tooltip_text_field_add(TooltipData &data,
                             const bool is_pad = false);
 
 /**
- * \param image: Image buffer (duplicated, ownership is *not* transferred to `data`).
- * \param image_size: Display size for the image (pixels without UI scale applied).
+ * \param image_data: Image buffer (duplicated, ownership is *not* transferred to `data`).
  */
 void tooltip_image_field_add(TooltipData &data, const TooltipImage &image_data);
 
@@ -2238,7 +2241,9 @@ void panel_category_clear_all(ARegion *region);
 /**
  * Draw vertical tabs on the left side of the region, one tab per category.
  */
-void panel_category_tabs_draw_all(ARegion *region, const char *category_id_active);
+void panel_category_tabs_draw_all(const bContext *C,
+                                  ARegion *region,
+                                  const char *category_id_active);
 
 void panel_stop_animation(const bContext *C, Panel *panel);
 
@@ -2568,7 +2573,7 @@ void template_color_picker(Layout *layout,
                            bool lock,
                            bool lock_luminosity,
                            bool cubic);
-void template_palette(Layout *layout, PointerRNA *ptr, StringRefNull propname, bool colors);
+void template_palette(Layout *layout, PointerRNA *ptr, StringRefNull propname);
 void template_crypto_picker(Layout *layout, PointerRNA *ptr, StringRefNull propname, int icon);
 /**
  * TODO: for now, grouping of layers is determined by dividing up the length of
@@ -3021,10 +3026,6 @@ ARegion *tooltip_create_from_button_or_extra_icon(bContext *C,
                                                   ButtonExtraOpIcon *extra_icon,
                                                   bool is_quick_tip);
 ARegion *tooltip_create_from_gizmo(bContext *C, wmGizmo *gz);
-ARegion *tooltip_create_from_panel_category(bContext *C,
-                                            const std::string &category_name,
-                                            const int x,
-                                            const int y);
 
 void tooltip_free(bContext *C, bScreen *screen, ARegion *region);
 

@@ -25,6 +25,7 @@
 #include "AS_asset_representation.hh"
 
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h"
 #include "DNA_space_types.h"
 #include "DNA_userdef_types.h"
 
@@ -66,6 +67,7 @@
 
 #include "AS_essentials_library.hh"
 
+#include "file_banner.hh"
 #include "file_intern.hh"
 #include "filelist.hh"
 
@@ -443,7 +445,11 @@ static void fileselect_refresh_asset_params(FileAssetSelectParams *asset_params)
   switch (eAssetLibraryType(library->type)) {
     case ASSET_LIBRARY_ESSENTIALS:
       STRNCPY(base_params->dir, asset_system::essentials_directory_path().c_str());
-      base_params->type = FILE_ASSET_LIBRARY;
+      base_params->type = FILE_ASSET_LIBRARY_ESSENTIALS;
+      break;
+    case ASSET_LIBRARY_ONLINE_ESSENTIALS:
+      STRNCPY(base_params->dir, asset_system::online_essentials_cache_directory_path().c_str());
+      base_params->type = FILE_ASSET_LIBRARY_ESSENTIALS;
       break;
     case ASSET_LIBRARY_ALL:
       base_params->dir[0] = '\0';
@@ -1075,6 +1081,7 @@ void ED_fileselect_init_layout(SpaceFile *sfile, ARegion *region)
   /* Slightly increased than font height for padding. */
   layout->text_line_height = file_font_pointsize();
   layout->text_lines_count = 1;
+  layout->offset_top = 0;
 
   if (params->display == FILE_IMGDISPLAY) {
     /* More compact spacing for asset browser. */
@@ -1164,6 +1171,10 @@ void ED_fileselect_init_layout(SpaceFile *sfile, ARegion *region)
     layout->flag = FILE_LAYOUT_HOR;
   }
   layout->dirty = false;
+
+  if (sfile->runtime->banners_state.any_visible) {
+    layout->offset_top += UI_UNIT_Y + 2 * sfile->layout->tile_border_y;
+  }
 }
 
 FileLayout *ED_fileselect_get_layout(SpaceFile *sfile, ARegion *region)

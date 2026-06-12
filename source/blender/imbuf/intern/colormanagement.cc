@@ -26,7 +26,6 @@
 #include "IMB_filter.hh"
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
-#include "IMB_metadata.hh"
 
 #include "MEM_guardedalloc.h"
 
@@ -77,6 +76,14 @@ static CLG_LogRef LOG = {"color_management"};
 /* -------------------------------------------------------------------- */
 /** \name Global declarations
  * \{ */
+
+static void processor_transform_apply_threaded(uchar *byte_buffer,
+                                               float *float_buffer,
+                                               int width,
+                                               int height,
+                                               int channels,
+                                               ColormanageProcessor *cm_processor,
+                                               bool predivide);
 
 static bool g_config_is_custom = false;
 
@@ -524,7 +531,9 @@ void colormanage_imbuf_make_linear(ImBuf *ibuf,
   const ColorSpace *colorspace = g_config()->get_color_space(from_colorspace);
 
   if (colorspace && colorspace->is_data()) {
-    ibuf->colormanage_flag |= IMB_COLORMANAGE_IS_DATA;
+    if (ibuf->float_data()) {
+      ibuf->float_buffer.colorspace = colorspace;
+    }
     return;
   }
 
@@ -544,14 +553,26 @@ void colormanage_imbuf_make_linear(ImBuf *ibuf,
       }
     }
 
-    IMB_colormanagement_transform_float(ibuf->float_data_for_write(),
-                                        ibuf->x,
-                                        ibuf->y,
-                                        ibuf->channels,
-                                        from_colorspace,
-                                        to_colorspace,
-                                        predivide);
+    /* Clear colorspace to indicate it's scene linear. */
     ibuf->float_buffer.colorspace = nullptr;
+
+    if (from_colorspace[0] == '\0') {
+      return;
+    }
+
+    ColormanageProcessor cm_processor = ColormanageProcessor::colorspace_processor_new(
+        from_colorspace, to_colorspace);
+    if (cm_processor.is_noop()) {
+      return;
+    }
+
+    processor_transform_apply_threaded(nullptr,
+                                       ibuf->float_data_for_write(),
+                                       ibuf->x,
+                                       ibuf->y,
+                                       ibuf->channels,
+                                       &cm_processor,
+                                       predivide);
   }
 }
 
@@ -612,8 +633,8 @@ static StringRefNull colormanage_find_matching_view_name(const ocio::Display *di
     return "Standard";
   }
 
-  /* Try to find a similar name, so that we can match e.g. "ACES 2.0" and "ACES 2.0 - HDR
-   * 1000 when switching between SDR and HDR displays. */
+  /* Try to find a similar name, so that we can match e.g. "ACES 2.0" and "ACES 2.0 - HDR 1000"
+   * when switching between SDR and HDR displays. */
   for (const int view_index : IndexRange(display->get_num_views())) {
     const ocio::View *view = display->get_view_by_index(view_index);
     if (view->name().startswith(view_name) || view_name.startswith(view->name())) {
@@ -889,61 +910,33 @@ const char *IMB_colormanagement_role_colorspace_name_get(int role)
   return nullptr;
 }
 
-void IMB_colormanagement_check_is_data(ImBuf *ibuf, const char *name)
-{
-  const ColorSpace *colorspace = g_config()->get_color_space(name);
-
-  if (colorspace && colorspace->is_data()) {
-    ibuf->colormanage_flag |= IMB_COLORMANAGE_IS_DATA;
-  }
-  else {
-    ibuf->colormanage_flag &= ~IMB_COLORMANAGE_IS_DATA;
-  }
-}
-
 void IMB_colormanagement_copy_settings(ImBuf *ibuf_src, ImBuf *ibuf_dst)
 {
   IMB_colormanagement_assign_byte_colorspace(ibuf_dst,
                                              IMB_colormanagement_get_byte_colorspace(ibuf_src));
   IMB_colormanagement_assign_float_colorspace(ibuf_dst,
                                               IMB_colormanagement_get_float_colorspace(ibuf_src));
-  if (ibuf_src->flags & IB_alphamode_premul) {
-    ibuf_dst->flags |= IB_alphamode_premul;
+  if (flag_is_set(ibuf_src->flags, ImBufFlags::AlphaPremul)) {
+    ibuf_dst->flags |= ImBufFlags::AlphaPremul;
   }
-  else if (ibuf_src->flags & IB_alphamode_channel_packed) {
-    ibuf_dst->flags |= IB_alphamode_channel_packed;
+  else if (flag_is_set(ibuf_src->flags, ImBufFlags::AlphaChannelPacked)) {
+    ibuf_dst->flags |= ImBufFlags::AlphaChannelPacked;
   }
-  else if (ibuf_src->flags & IB_alphamode_ignore) {
-    ibuf_dst->flags |= IB_alphamode_ignore;
+  else if (flag_is_set(ibuf_src->flags, ImBufFlags::AlphaIgnore)) {
+    ibuf_dst->flags |= ImBufFlags::AlphaIgnore;
   }
 }
 
 void IMB_colormanagement_assign_float_colorspace(ImBuf *ibuf, const char *name)
 {
   const ColorSpace *colorspace = g_config()->get_color_space(name);
-
   ibuf->float_buffer.colorspace = colorspace;
-
-  if (colorspace && colorspace->is_data()) {
-    ibuf->colormanage_flag |= IMB_COLORMANAGE_IS_DATA;
-  }
-  else {
-    ibuf->colormanage_flag &= ~IMB_COLORMANAGE_IS_DATA;
-  }
 }
 
 void IMB_colormanagement_assign_byte_colorspace(ImBuf *ibuf, const char *name)
 {
   const ColorSpace *colorspace = g_config()->get_color_space(name);
-
   ibuf->byte_buffer.colorspace = colorspace;
-
-  if (colorspace && colorspace->is_data()) {
-    ibuf->colormanage_flag |= IMB_COLORMANAGE_IS_DATA;
-  }
-  else {
-    ibuf->colormanage_flag &= ~IMB_COLORMANAGE_IS_DATA;
-  }
 }
 
 const char *IMB_colormanagement_get_float_colorspace(const ImBuf *ibuf)
@@ -1336,7 +1329,7 @@ static void display_buffer_init_handle(DisplayBufferThread *handle,
 
   int channels = ibuf->channels;
   float dither = ibuf->dither;
-  bool is_data = (ibuf->colormanage_flag & IMB_COLORMANAGE_IS_DATA) != 0;
+  bool is_data = ibuf->colorspace_is_data();
 
   size_t offset = size_t(channels) * start_line * ibuf->x;
   size_t display_buffer_byte_offset = size_t(DISPLAY_BUFFER_CHANNELS) * start_line * ibuf->x;
@@ -1461,27 +1454,16 @@ static void do_display_buffer_apply_no_processor(DisplayBufferThread *handle)
   const int height = handle->tot_line;
   if (handle->display_buffer_byte && handle->display_buffer_byte != handle->byte_buffer) {
     if (handle->byte_buffer) {
-      IMB_buffer_byte_from_byte(handle->display_buffer_byte,
-                                handle->byte_buffer,
-                                IB_PROFILE_SRGB,
-                                IB_PROFILE_SRGB,
-                                false,
-                                width,
-                                height,
-                                width,
-                                width);
+      memcpy(handle->display_buffer_byte, handle->byte_buffer, size_t(width) * height * 4);
     }
     else if (handle->buffer) {
       IMB_buffer_byte_from_float(handle->display_buffer_byte,
                                  handle->buffer,
                                  handle->channels,
                                  handle->dither,
-                                 IB_PROFILE_SRGB,
-                                 IB_PROFILE_SRGB,
                                  handle->predivide,
                                  width,
                                  height,
-                                 width,
                                  width,
                                  handle->start_line);
     }
@@ -1489,27 +1471,12 @@ static void do_display_buffer_apply_no_processor(DisplayBufferThread *handle)
 
   if (handle->display_buffer) {
     if (handle->byte_buffer) {
-      IMB_buffer_float_from_byte(handle->display_buffer,
-                                 handle->byte_buffer,
-                                 IB_PROFILE_SRGB,
-                                 IB_PROFILE_SRGB,
-                                 false,
-                                 width,
-                                 height,
-                                 width,
-                                 width);
+      IMB_buffer_float_from_byte(
+          handle->display_buffer, handle->byte_buffer, width, height, width, width);
     }
     else if (handle->buffer && handle->display_buffer != handle->buffer) {
-      IMB_buffer_float_from_float(handle->display_buffer,
-                                  handle->buffer,
-                                  handle->channels,
-                                  IB_PROFILE_SRGB,
-                                  IB_PROFILE_SRGB,
-                                  handle->predivide,
-                                  width,
-                                  height,
-                                  width,
-                                  width);
+      IMB_buffer_float_rgba_from_float(
+          handle->display_buffer, handle->buffer, handle->channels, width, height);
     }
   }
 }
@@ -1547,12 +1514,9 @@ static void do_display_buffer_apply_thread(DisplayBufferThread *handle)
                                linear_buffer,
                                channels,
                                handle->dither,
-                               IB_PROFILE_SRGB,
-                               IB_PROFILE_SRGB,
                                predivide,
                                width,
                                height,
-                               width,
                                width,
                                handle->start_line);
   }
@@ -1897,8 +1861,7 @@ void IMB_colormanagement_transform_byte_to_float(float *float_buffer,
     const size_t offset = size_t(channels) * y_range.first() * width;
     const uchar *src = byte_buffer + offset;
     float *dst = float_buffer + offset;
-    IMB_buffer_float_from_byte(
-        dst, src, IB_PROFILE_SRGB, IB_PROFILE_SRGB, false, width, y_range.size(), width, width);
+    IMB_buffer_float_from_byte(dst, src, width, y_range.size(), width, width);
     cm_processor.apply(dst, width, y_range.size(), channels, false);
     IMB_premultiply_rect_float(dst, 4, width, y_range.size());
   });
@@ -2269,16 +2232,8 @@ static ImBuf *imbuf_ensure_editable(ImBuf *ibuf, ImBuf *colormanaged_ibuf, bool 
 
   if (allocate_result) {
     /* Copy full image buffer. */
-    colormanaged_ibuf = IMB_dupImBuf(ibuf);
-    IMB_metadata_copy(colormanaged_ibuf, ibuf);
-    return colormanaged_ibuf;
+    return IMB_dupImBuf(ibuf);
   }
-
-  /* Render pipeline is constructing image buffer itself,
-   * but it's re-using byte and float buffers from render result make copy of this buffers
-   * here sine this buffers would be transformed to other color space here. */
-  IMB_make_writable_byte_buffer(ibuf);
-  IMB_make_writable_float_buffer(ibuf);
 
   return ibuf;
 }
@@ -2328,7 +2283,7 @@ ImBuf *IMB_colormanagement_imbuf_for_write(ImBuf *ibuf,
    * made already. helps keep things locally here, not spreading it to all possible image writers
    * we've got.
    */
-  if (image_format->planes != R_IMF_PLANES_RGBA) {
+  if (image_format->color_mode != ImColorMode::RGBA) {
     float color[3] = {0, 0, 0};
 
     colormanaged_ibuf = imbuf_ensure_editable(ibuf, colormanaged_ibuf, allocate_result);
@@ -2466,17 +2421,7 @@ void IMB_colormanagement_scene_linear_to_display_buffer(
                                                      "display transform temp buffer");
   memcpy(buffer, linear_buffer, sizeof(float) * 4 * width * height);
   processor.apply(buffer, width, height, 4, true);
-  IMB_buffer_byte_from_float(display_buffer,
-                             buffer,
-                             4,
-                             0.0f,
-                             IB_PROFILE_SRGB,
-                             IB_PROFILE_SRGB,
-                             false,
-                             width,
-                             height,
-                             width,
-                             width);
+  IMB_buffer_byte_from_float(display_buffer, buffer, 4, 0.0f, false, width, height, width);
   MEM_delete(buffer);
 }
 
@@ -3707,7 +3652,7 @@ bool IMB_colormanagement_setup_glsl_draw_from_space(
   const float exposure = applied_view_settings->exposure;
   const float gamma = applied_view_settings->gamma;
 
-  /* TODO)sergey): Use designated initializer. */
+  /* TODO(@sergey): Use designated initializer. */
   ocio::GPUDisplayParameters display_parameters;
   display_parameters.from_colorspace = from_colorspace ? from_colorspace->name().c_str() :
                                                          global_role_scene_linear;
@@ -3791,7 +3736,7 @@ void IMB_colormanagement_finish_glsl_draw()
  * \{ */
 
 /* Calculate color in range 800..12000 using an approximation
- * a/x+bx+c for R and G and ((at + b)t + c)t + d) for B
+ * a/x+bx+c for R and G and ((at + b)t + c)t + d for B
  *
  * The result of this can be negative to support gamut wider than
  * than rec.709, just needs to be clamped. */

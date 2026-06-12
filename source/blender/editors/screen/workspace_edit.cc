@@ -30,6 +30,7 @@
 #include "BLO_readfile.hh"
 
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 
@@ -210,6 +211,12 @@ bool ED_workspace_change(WorkSpace *workspace_new, bContext *C, wmWindowManager 
   screen_change_update(C, win, screen_new);
   workspace_change_update(workspace_new, workspace_old, C, wm);
 
+  /* BFA - Recalculate toolbar widths for the new workspace screen.
+   * When switching workspaces, the new screen's regions may not have
+   * been fully initialized during startup, so we need to recalculate
+   * widths now that runtime->type is available. */
+  ED_screen_toolbar_widths_update(C, nullptr, screen_new, true, true);
+
   BLI_assert(CTX_wm_workspace(C) == workspace_new);
 
   /* Automatic mode switching. */
@@ -257,7 +264,7 @@ WorkSpace *ED_workspace_duplicate(WorkSpace *workspace_old, Main *bmain, wmWindo
 
 bool ED_workspace_delete(WorkSpace *workspace, Main *bmain, bContext *C, wmWindowManager *wm)
 {
-  if (BLI_listbase_is_single(&bmain->workspaces)) {
+  if (bmain->workspaces.is_single()) {
     return false;
   }
 
@@ -605,7 +612,7 @@ static void workspace_add_menu_draw(ui::Layout &layout)
     layout.menu_fn_argN_free(display_name, ICON_NONE, workspace_add_menu, app_template);
   }
 
-  BLI_freelistN(&templates);
+  templates.free_no_destruct();
 
   /* BFA - Removed as this is redundant and logical in the context menu on the tab*/
   /*layout.separator();*/

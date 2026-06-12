@@ -13,6 +13,7 @@
 #include "BKE_material.hh"
 #include "BKE_node.hh"
 #include "BKE_node_legacy_types.hh"
+#include "BKE_scene.hh"
 
 #include "NOD_shader.h"
 
@@ -109,6 +110,17 @@ MaterialModule::~MaterialModule()
 
 void MaterialModule::begin_sync()
 {
+  float frame = BKE_scene_frame_get(inst_.scene);
+
+  Scene *scene = inst_.scene;
+  bool frame_change = assign_if_different(material_frame, frame);
+  bool time_change = assign_if_different(material_time, float(FRA2TIME(frame)));
+
+  material_time_changed = (time_change || frame_change);
+
+  inst_.uniform_data.data.scene.time = material_time;
+  inst_.uniform_data.data.scene.frame = material_frame;
+
   queued_shaders_count = 0;
   queued_textures_count = 0;
   queued_optimize_shaders_count = 0;
@@ -275,7 +287,8 @@ MaterialPass MaterialModule::material_pass_get(Object *ob,
     matpass.sub_pass = nullptr;
   }
   else {
-    ShaderKey shader_key(matpass.gpumat, blender_mat, probe_capture);
+    const bool hide_from_raycast = ob->visibility_flag & OB_HIDE_RAYCAST;
+    ShaderKey shader_key(matpass.gpumat, blender_mat, probe_capture, hide_from_raycast);
 
     PassMain::Sub *shader_sub = shader_map_.lookup_or_add_cb(shader_key, [&]() {
       /* First time encountering this shader. Create a sub that will contain materials using it. */

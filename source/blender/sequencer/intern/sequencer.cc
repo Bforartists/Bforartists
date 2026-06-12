@@ -26,6 +26,7 @@
 #include "BLI_listbase.h"
 #include "BLI_map.hh"
 #include "BLI_path_utils.hh"
+#include "BLI_string.h"
 #include "BLI_string_utf8.h"
 
 #include "BKE_context.hh" /*BFA - 3D Sequencer*/
@@ -82,8 +83,6 @@ StripProxy *seq_strip_proxy_alloc()
 {
   StripProxy *strip_proxy = MEM_new<StripProxy>("StripProxy");
   strip_proxy->quality = 50;
-  strip_proxy->build_tc_flags = SEQ_PROXY_TC_RECORD_RUN | SEQ_PROXY_TC_RECORD_RUN_NO_GAPS;
-  strip_proxy->tc = SEQ_PROXY_TC_RECORD_RUN;
   return strip_proxy;
 }
 
@@ -257,6 +256,8 @@ static void seq_strip_free_ex(Scene *scene,
     strip->retiming_keys_num = 0;
   }
 
+  MEM_SAFE_DELETE(strip->scene_view_layer_name);
+
   MEM_SAFE_DELETE(strip->runtime);
   MEM_delete(strip);
 }
@@ -329,7 +330,7 @@ void editing_free(Scene *scene, const bool do_id_user)
     seq_free_strip_recurse(scene, &strip, do_id_user);
   }
 
-  BLI_freelistN(&ed->metastack);
+  ed->metastack.free_no_destruct();
   strip_lookup_free(ed);
   media_presence_free(scene);
   thumbnail_cache_destroy(scene);
@@ -476,7 +477,7 @@ void meta_stack_set(const Scene *scene, Strip *dst)
 {
   Editing *ed = editing_get(scene);
   /* Clear metastack */
-  BLI_freelistN(&ed->metastack);
+  ed->metastack.free_no_destruct();
 
   if (dst != nullptr) {
     /* Allocate meta stack in a way, that represents meta hierarchy in timeline. */
@@ -631,6 +632,7 @@ static Strip *strip_duplicate(StripDuplicateContext &ctx,
                               Strip *strip)
 {
   Strip *strip_new = MEM_new<Strip>(__func__, *strip);
+  strip_new->scene_view_layer_name = BLI_strdup_null(strip->scene_view_layer_name);
   strip_new->runtime = MEM_new<StripRuntime>(__func__);
   strip_new->runtime->flag = strip->runtime->flag;
 
@@ -670,22 +672,22 @@ static Strip *strip_duplicate(StripDuplicateContext &ctx,
   }
 
   if (strip_new->modifiers.first) {
-    BLI_listbase_clear(&strip_new->modifiers);
+    strip_new->modifiers.clear_no_delete();
 
     modifier_list_copy(strip_new, strip, ctx.copy_flag);
   }
   BLI_assert(modifier_persistent_uids_are_valid(*strip));
 
   if (is_strip_connected(strip)) {
-    BLI_listbase_clear(&strip_new->connections);
+    strip_new->connections.clear_no_delete();
     connections_duplicate(&strip_new->connections, &strip->connections);
   }
 
   if (strip->type == STRIP_TYPE_META) {
     strip_new->data->stripdata = nullptr;
 
-    BLI_listbase_clear(&strip_new->seqbase);
-    BLI_listbase_clear(&strip_new->channels);
+    strip_new->seqbase.clear_no_delete();
+    strip_new->channels.clear_no_delete();
     channels_duplicate(&strip_new->channels, &strip->channels);
   }
   else if (strip->type == STRIP_TYPE_SCENE) {
@@ -873,6 +875,7 @@ static bool strip_write_data_cb(Strip *strip, void *userdata)
 {
   BlendWriter *writer = static_cast<BlendWriter *>(userdata);
   writer->write_struct(strip);
+  writer->write_string(strip->scene_view_layer_name);
   if (strip->data) {
     /* TODO this doesn't depend on the `Strip` data to be present? */
     if (strip->effectdata) {
@@ -974,6 +977,7 @@ static bool strip_read_data_cb(Strip *strip, void *user_data)
 
   BLO_read_struct(reader, Strip, &strip->input1);
   BLO_read_struct(reader, Strip, &strip->input2);
+  BLO_read_string(reader, &strip->scene_view_layer_name);
 
   if (strip->effectdata) {
     switch (strip->type) {
@@ -1190,7 +1194,7 @@ static void seq_update_sound_strips(Scene *scene, Strip *strip)
   }
 
   /* Ensure strip is playing correct sound. */
-  if (BLI_listbase_is_empty(&strip->modifiers)) {
+  if (strip->modifiers.is_empty()) {
     /* No modifiers: ensure we are playing the sound ID. However do not do this
      * if we are pitch correcting, as the proper playback handle will be assigned there.
      * Changing between original file sound and the pitch correction sound produces garbage

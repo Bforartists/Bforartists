@@ -1681,7 +1681,7 @@ static void walker_select_count(BMEditMesh *em,
   {
     r_count_by_select[BM_elem_flag_test(ele, BM_ELEM_SELECT) ? 1 : 0] += 1;
 
-    /* Early exit when mixed (could be optional if needed. */
+    /* Early exit when mixed (could be optional if needed). */
     if (r_count_by_select[0] && r_count_by_select[1]) {
       r_count_by_select[0] = r_count_by_select[1] = -1;
       break;
@@ -2537,7 +2537,7 @@ void MESH_OT_loop_select(wmOperatorType *ot)
   ot->poll_property = edbm_select_loop_poll_property;
 
   /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_DEPENDS_ON_CURSOR;
 
   /* Properties. */
 
@@ -2572,7 +2572,7 @@ void MESH_OT_edgering_select(wmOperatorType *ot)
   ot->poll = ED_operator_editmesh_region_view3d;
 
   /* Flags. */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_DEPENDS_ON_CURSOR;
 
   /* Properties. */
   RNA_def_enum_flag(ot->srna,
@@ -6028,7 +6028,7 @@ static bool edbm_select_ungrouped_poll(bContext *C)
     if ((em->selectmode & SCE_SELECT_VERTEX) == 0) {
       CTX_wm_operator_poll_msg_set(C, "Must be in vertex selection mode");
     }
-    else if (BLI_listbase_is_empty(defbase) || cd_dvert_offset == -1) {
+    else if (defbase->is_empty() || cd_dvert_offset == -1) {
       CTX_wm_operator_poll_msg_set(C, "No weights/vertex groups on object");
     }
     else {

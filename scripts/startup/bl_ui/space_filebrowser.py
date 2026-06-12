@@ -532,7 +532,7 @@ class FILEBROWSER_PT_directory_path(Panel):
 
         subsubrow = subrow.row()
         subsubrow.operator_context = 'EXEC_DEFAULT'
-        subsubrow.operator("file.directory_new", icon="NEWFOLDER", text="")
+        subsubrow.operator("file.directory_new", icon="NEWFOLDER", text="").confirm = False
 
         subrow.template_file_select_path(params)
 
@@ -579,6 +579,7 @@ class FILEBROWSER_MT_editor_menus(FileBrowserMenu, Menu):
         layout = self.layout
 
         layout.menu("FILEBROWSER_MT_view")
+        layout.menu("FILEBROWSER_MT_navigation") # BFA: Add navigation menu
         layout.menu("FILEBROWSER_MT_select")
 
 
@@ -601,11 +602,27 @@ class FILEBROWSER_MT_view(FileBrowserMenu, Menu):
         layout.menu("FILEBROWSER_MT_view_pie_menus")
 
 
-class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
-    bl_label = "Select"
+# BFA: Add navigation menu
+class FILEBROWSER_MT_navigation(FileBrowserMenu, Menu):
+    bl_label = "Navigation"
 
     def draw(self, _context):
         layout = self.layout
+        layout.operator("file.previous", text="Back", icon="BACK")
+        layout.operator("file.next", text="Forward", icon="FORWARD")
+        layout.operator("file.parent", text="Parent Directory", icon="FILE_PARENT")
+        layout.operator("file.refresh", text="Refresh", icon="FILE_REFRESH")
+        layout.separator()
+        layout.operator("file.select_first_last", text="To Top", icon="TRIA_UP").direction = 'FIRST'
+        layout.operator("file.select_first_last", text="To Bottom", icon="TRIA_DOWN").direction = 'LAST'
+
+
+class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+        params = context.space_data.params
 
         layout.operator(
             "file.select_all", text="All", icon="SELECT_ALL"
@@ -621,6 +638,14 @@ class FILEBROWSER_MT_select(FileBrowserMenu, Menu):
 
         layout.operator("file.select_box", icon="BORDER_RECT")
 
+        layout.separator()
+
+        layout.operator("file.select_walk", text="Up", icon="TRIA_UP").direction = 'UP'
+        layout.operator("file.select_walk", text="Down", icon="TRIA_DOWN").direction = 'DOWN'
+        if params.display_type != 'LIST_VERTICAL':
+            layout.operator("file.select_walk", text="Left", icon="TRIA_LEFT").direction = 'LEFT'
+            layout.operator("file.select_walk", text="Right", icon="TRIA_RIGHT").direction = 'RIGHT'
+
 
 class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
     bl_label = "Files"
@@ -630,20 +655,16 @@ class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
         st = context.space_data
         params = st.params
 
-        layout.operator("file.previous", text="Back", icon="BACK")
-        layout.operator("file.next", text="Forward", icon="FORWARD")
-        layout.operator("file.parent", text="Go to Parent", icon="FILE_PARENT")
-        layout.operator("file.refresh", text="Refresh", icon="FILE_REFRESH")
+        layout.operator("file.previous", text="Back", icon='BACK')
+        layout.operator("file.next", text="Forward", icon='FORWARD')
+        layout.operator("file.parent", text="Go to Parent", icon='FILE_PARENT')
+        layout.operator("file.refresh", text="Refresh", icon='FILE_REFRESH')
         layout.menu("FILEBROWSER_MT_operations_menu")
 
         layout.separator()
 
-        layout.operator(
-            "file.filenum", text="Increase Number", icon="ADD"
-        ).increment = 1
-        layout.operator(
-            "file.filenum", text="Decrease Number", icon="REMOVE"
-        ).increment = -1
+        layout.operator("file.filenum", text="Increase Number", icon='ADD').increment = 1
+        layout.operator("file.filenum", text="Decrease Number", icon='REMOVE').increment = -1
 
         layout.separator()
 
@@ -656,7 +677,7 @@ class FILEBROWSER_MT_context_menu(FileBrowserMenu, Menu):
 
         sub = layout.row()
         sub.operator_context = 'EXEC_DEFAULT'
-        sub.operator("file.directory_new", text="New Folder", icon="FILE_FOLDER")
+        sub.operator("file.directory_new", text="New Folder", icon="FILE_FOLDER").confirm = False
         layout.operator("file.bookmark_add", text="Add Bookmark", icon="BOOKMARKS")
 
         layout.separator()
@@ -743,7 +764,10 @@ class ASSETBROWSER_PT_filter(asset_utils.AssetBrowserPanel, Panel):
                     row.prop(filter_id, identifier, toggle=False)
 
         if use_remote_asset_libraries:
-            layout.prop(params, "show_online_assets", text="Online Assets")
+            col = layout.column()
+            col.use_property_split = True
+            col.use_property_decorate = False
+            col.prop(params, "asset_access", text="Access")
 
 
 class AssetBrowserMenu:
@@ -762,6 +786,7 @@ class ASSETBROWSER_MT_editor_menus(AssetBrowserMenu, Menu):
 
         layout.menu("ASSETBROWSER_MT_view")
         layout.menu("ASSETBROWSER_MT_select")
+        layout.menu("ASSETBROWSER_MT_library")
         layout.menu("ASSETBROWSER_MT_catalog")
 
 
@@ -817,6 +842,16 @@ class ASSETBROWSER_MT_select(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.operator("file.select_box", icon="BORDER_RECT")
+
+
+class ASSETBROWSER_MT_library(AssetBrowserMenu, Menu):
+    bl_label = "Library"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("asset.library_refresh", text="Refresh", icon='FILE_REFRESH')
+        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing")
 
 
 class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
@@ -988,6 +1023,43 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
         self.metadata_prop(layout, metadata, "author")
 
 
+class ASSETBROWSER_PT_import(asset_utils.AssetMetaDataPanel, Panel):
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Import"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        if not asset_utils.AssetMetaDataPanel.poll(context):
+            return False
+
+        metadata = context.asset.metadata
+        is_editable = not metadata.is_property_readonly("use_preferred_import_method")
+
+        # Hide the import options when the import method cannot be edited and isn't used. Otherwise
+        # show them.
+        return is_editable or metadata.use_preferred_import_method
+
+    def draw(self, context):
+        layout = self.layout
+        metadata = context.asset.metadata
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        heading = "Preferred Method"
+        if metadata.is_property_readonly("use_preferred_import_method"):
+            # Don't show the checkbox when the metadata cannot be edited. We only show the preferred
+            # import method as indicator to the user in that case.
+            layout.prop(metadata, "preferred_import_method", text=heading)
+        else:
+            row = layout.row(align=True, heading=heading)
+            row.prop(metadata, "use_preferred_import_method", text="")
+            sub = row.row(align=True)
+            sub.active = metadata.use_preferred_import_method
+            sub.prop(metadata, "preferred_import_method", text="")
+
+
 class ASSETBROWSER_PT_metadata_preview(asset_utils.AssetMetaDataPanel, Panel):
     bl_label = "Preview"
 
@@ -1087,10 +1159,11 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         params = st.params
 
         if bpy.ops.asset.assets_download.poll():
-            layout.operator("asset.assets_download")
+            layout.operator("asset.assets_download", icon='DOWNLOAD')
             layout.separator()
 
         layout.operator("asset.library_refresh", icon='FILE_REFRESH')
+        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing")
 
         layout.separator()
 
@@ -1106,6 +1179,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.operator("asset.open_containing_blend_file", icon='FILE_FOLDER')
+        layout.operator("asset.browse_containing_blend_file")
 
         layout.separator()
 
@@ -1129,6 +1203,7 @@ classes = (
     FILEBROWSER_PT_directory_path,
     FILEBROWSER_MT_editor_menus,
     FILEBROWSER_MT_view,
+    FILEBROWSER_MT_navigation,  # BFA
     FILEBROWSER_MT_view_pie_menus,  # BFA
     FILEBROWSER_MT_select,
     FILEBROWSER_MT_context_menu,
@@ -1138,6 +1213,7 @@ classes = (
     ASSETBROWSER_MT_editor_menus,
     ASSETBROWSER_MT_view,
     ASSETBROWSER_MT_select,
+    ASSETBROWSER_MT_library,
     ASSETBROWSER_MT_catalog,
     ASSETBROWSER_PT_import_settings,
     ASSETBROWSER_MT_metadata_preview_menu,
@@ -1146,6 +1222,7 @@ classes = (
     ASSETBROWSER_PT_metadata_preview,
     ASSETBROWSER_PT_metadata_tags,
     ASSETBROWSER_UL_metadata_tags,
+    ASSETBROWSER_PT_import,
     ASSETBROWSER_MT_context_menu,
 )
 

@@ -81,7 +81,6 @@ namespace blender {
 
 /* ******************* view3d space & buttons ************** */
 enum {
-  B_REDR = 2,
   B_TRANSFORM_PANEL_MEDIAN = 1008,
   B_TRANSFORM_PANEL_DIMS = 1009,
 };
@@ -1102,8 +1101,7 @@ static void v3d_editvertex_buts(
                       0,
                       0,
                       TIP_("Displays global values"));
-    button_retval_set(but, B_REDR);
-
+    ui::button_func_set(but, [](bContext &C) { ED_area_tag_redraw(CTX_wm_area(&C)); });
     but = uiDefButBit(block,
                       ui::ButtonType::ToggleN,
                       V3D_GLOBAL_STATS,
@@ -1116,7 +1114,8 @@ static void v3d_editvertex_buts(
                       0,
                       0,
                       TIP_("Displays local values"));
-    blender::ui::button_retval_set(but, B_REDR);
+    ui::button_func_set(but, [](bContext &C) { ED_area_tag_redraw(CTX_wm_area(&C)); });
+    block_align_end(block);
 
     /* bfa - restore layout, otherwise following UI elements will be messed up */
     blender::ui::block_layout_set_current(block, layout);
@@ -1958,7 +1957,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
     vgroup_validmap = BKE_object_defgroup_subset_from_select_type(
         ob, subset_type, &vgroup_tot, &subset_count);
     const ListBaseT<bDeformGroup> *defbase = BKE_object_defgroup_list(ob);
-    const int vgroup_num = BLI_listbase_count(defbase);
+    const int vgroup_num = defbase->count();
     tfp->vertex_weights.resize(vgroup_num);
 
     for (i = 0, dg = static_cast<bDeformGroup *>(defbase->first); dg; i++, dg = dg->next) {
@@ -2361,11 +2360,6 @@ static void do_view3d_region_buttons(bContext *C, void * /*index*/, int event)
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   switch (event) {
-
-    case B_REDR:
-      ED_area_tag_redraw(CTX_wm_area(C));
-      return; /* no notifier! */
-
     case B_TRANSFORM_PANEL_MEDIAN:
       if (ob) {
         v3d_editvertex_buts(C, nullptr, v3d, ob, 1.0);
@@ -2495,7 +2489,7 @@ static void apply_to_active_object(
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
 }
 
-static void handle_curves_cyclic(bContext *C, void *, void *)
+static void handle_curves_cyclic(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   apply_to_active_object(C,
                          [](const CurvesDataPanelState &modified_state,
@@ -2543,7 +2537,7 @@ static void update_custom_knots(const OffsetIndices<int> &src_custom_knots_by_cu
   }
 }
 
-static void handle_curves_knot_mode(bContext *C, void *, void *)
+static void handle_curves_knot_mode(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   apply_to_active_object(
       C,
@@ -2584,7 +2578,7 @@ static void handle_curves_knot_mode(bContext *C, void *, void *)
       });
 }
 
-static void handle_curves_order(bContext *C, void *, void *)
+static void handle_curves_order(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   apply_to_active_object(
       C,
@@ -2631,7 +2625,7 @@ static void handle_curves_order(bContext *C, void *, void *)
       });
 }
 
-static void handle_curves_resolution(bContext *C, void *, void *)
+static void handle_curves_resolution(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   apply_to_active_object(C,
                          [](const CurvesDataPanelState &modified_state,
@@ -2643,7 +2637,7 @@ static void handle_curves_resolution(bContext *C, void *, void *)
                          });
 }
 
-static void handle_curves_aspect_ratio(bContext *C, void *, void *)
+static void handle_curves_aspect_ratio(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   using namespace blender;
 
@@ -2663,7 +2657,7 @@ static void handle_curves_aspect_ratio(bContext *C, void *, void *)
       });
 }
 
-static void handle_curves_softness(bContext *C, void *, void *)
+static void handle_curves_softness(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   using namespace blender;
 
@@ -2680,7 +2674,7 @@ static void handle_curves_softness(bContext *C, void *, void *)
       });
 }
 
-static void handle_curves_u_scale(bContext *C, void *, void *)
+static void handle_curves_u_scale(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   using namespace blender;
 
@@ -2699,7 +2693,7 @@ static void handle_curves_u_scale(bContext *C, void *, void *)
       });
 }
 
-static void handle_curves_fill_opacity(bContext *C, void *, void *)
+static void handle_curves_fill_opacity(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   using namespace blender;
 
@@ -2709,17 +2703,17 @@ static void handle_curves_fill_opacity(bContext *C, void *, void *)
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<float> fill_opacity =
-            attributes.lookup_or_add_for_write_span<float>(
-                "fill_opacity",
-                bke::AttrDomain::Curve,
-                bke::AttributeInitVArray(VArray<float>::from_single(1.0f, curves.curves_num())));
-        index_mask::masked_fill(fill_opacity.span, modified_state.fill_opacity, selection);
-        fill_opacity.finish();
+        if (bke::SpanAttributeWriter<float> fill_opacity =
+                attributes.lookup_or_add_for_write_span<float>(
+                    "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f)))
+        {
+          index_mask::masked_fill(fill_opacity.span, modified_state.fill_opacity, selection);
+          fill_opacity.finish();
+        }
       });
 }
 
-static void handle_curves_end_cap(bContext *C, void *, void *)
+static void handle_curves_end_cap(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   using namespace blender;
 
@@ -2741,7 +2735,7 @@ static void handle_curves_end_cap(bContext *C, void *, void *)
       });
 }
 
-static void handle_curves_start_cap(bContext *C, void *, void *)
+static void handle_curves_start_cap(bContext *C, void * /*arg1*/, void * /*arg2*/)
 {
   using namespace blender;
 
@@ -2799,17 +2793,18 @@ static void knot_modes_menu(bContext * /*C*/, ui::Layout *layout, void *knot_mod
   layout->column(false);
 
   for (const EnumPropertyItem &item : enum_curve_knot_mode_items) {
-    uiDefButV(block,
-              ui::ButtonType::ButMenu,
-              CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
-              0,
-              0,
-              UI_UNIT_X * 5,
-              UI_UNIT_Y,
-              reinterpret_cast<int *>(knot_mode_p),
-              item.value,
-              0.0,
-              "");
+    ui::Button *but = uiDefButV(block,
+                                ui::ButtonType::ButMenu,
+                                CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
+                                0,
+                                0,
+                                UI_UNIT_X * 5,
+                                UI_UNIT_Y,
+                                reinterpret_cast<int *>(knot_mode_p),
+                                0.0,
+                                0.0,
+                                "");
+    button_enum_prop_value_set(but, item.value);
   }
 }
 
@@ -2825,17 +2820,18 @@ static void grease_pencil_cap_menu(bContext * /*C*/, ui::Layout *layout, void *c
   layout->column(false);
 
   for (const EnumPropertyItem &item : enum_grease_pencil_cap_items) {
-    uiDefButV(block,
-              ui::ButtonType::ButMenu,
-              CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
-              0,
-              0,
-              UI_UNIT_X * 5,
-              UI_UNIT_Y,
-              reinterpret_cast<int *>(cap_type_p),
-              item.value,
-              0.0,
-              "");
+    ui::Button *but = uiDefButV(block,
+                                ui::ButtonType::ButMenu,
+                                CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
+                                0,
+                                0,
+                                UI_UNIT_X * 5,
+                                UI_UNIT_Y,
+                                reinterpret_cast<int *>(cap_type_p),
+                                0.0,
+                                0.0,
+                                "");
+    button_enum_prop_value_set(but, item.value);
   }
 }
 

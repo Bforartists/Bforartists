@@ -50,7 +50,7 @@ void asset_tooltip(const asset_system::AssetRepresentation &asset,
 
   switch (asset.owner_asset_library().library_type()) {
     case ASSET_LIBRARY_CUSTOM: {
-      if (asset.is_online()) {
+      if (asset.is_online_only()) {
         /* Don't show file path or .blend name. Data on disk is just a cache. */
         break;
       }
@@ -76,6 +76,7 @@ void asset_tooltip(const asset_system::AssetRepresentation &asset,
           tip, TIP_("Asset Library: Current File"), {}, ui::TIP_STYLE_NORMAL, ui::TIP_LC_VALUE);
       break;
     case ASSET_LIBRARY_ESSENTIALS:
+    case ASSET_LIBRARY_ONLINE_ESSENTIALS:
       tooltip_text_field_add(tip, {}, {}, ui::TIP_STYLE_SPACER, ui::TIP_LC_NORMAL, false);
       tooltip_text_field_add(
           tip, TIP_("Asset Library: Essentials"), {}, ui::TIP_STYLE_NORMAL, ui::TIP_LC_VALUE);
@@ -85,7 +86,7 @@ void asset_tooltip(const asset_system::AssetRepresentation &asset,
       break;
   }
 
-  if (asset.is_online()) {
+  if (asset.is_online_only()) {
     if (std::optional<int64_t> combined_size = asset.online_asset_files_combined_size_in_bytes()) {
       tooltip_text_field_add(tip, {}, {}, ui::TIP_STYLE_SPACER, ui::TIP_LC_NORMAL, false);
 

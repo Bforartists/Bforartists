@@ -847,7 +847,7 @@ static char *rna_def_property_get_func(
           if (dp->dnaarraylength == 1) {
             if (prop->type == PROP_BOOLEAN && dp->booleanbit) {
               fprintf(f,
-                      "        values[i] = %s((data->%s & (uint64_t(",
+                      "        values[i] = %s((uint64_t(data->%s) & (uint64_t(",
                       (dp->booleannegative) ? "!" : "",
                       dp->dnaname.c_str());
               rna_int_print(f, dp->booleanbit);
@@ -864,7 +864,7 @@ static char *rna_def_property_get_func(
           else {
             if (prop->type == PROP_BOOLEAN && dp->booleanbit) {
               fprintf(f,
-                      "        values[i] = %s((data->%s[i] & ",
+                      "        values[i] = %s((uint64_t(data->%s[i]) & ",
                       (dp->booleannegative) ? "!" : "",
                       dp->dnaname.c_str());
               rna_int_print(f, dp->booleanbit);
@@ -927,14 +927,14 @@ static char *rna_def_property_get_func(
           rna_print_data_get(f, dp);
           if (prop->type == PROP_BOOLEAN && dp->booleanbit) {
             fprintf(f,
-                    "    return %s(((data->%s) & ",
+                    "    return %s((uint64_t(data->%s) & ",
                     (dp->booleannegative) ? "!" : "",
                     dp->dnaname.c_str());
             rna_int_print(f, dp->booleanbit);
             fprintf(f, ") != 0);\n");
           }
           else if (prop->type == PROP_ENUM && dp->enumbitflags) {
-            fprintf(f, "    return ((data->%s) & ", dp->dnaname.c_str());
+            fprintf(f, "    return (uint64_t(data->%s) & ", dp->dnaname.c_str());
             rna_int_print(f, rna_enum_bitmask(prop));
             fprintf(f, ");\n");
           }
@@ -3970,7 +3970,7 @@ static void rna_generate_struct_register_func(BlenderRNA * /*brna*/, StructRNA *
       rna_generate_property(f, srna, func->identifier, &parm);
     }
     fprintf(f, "\t\tauto func = std::make_unique<FunctionRNA>();\n");
-    if (!BLI_listbase_is_empty(&func->cont.properties)) {
+    if (!func->cont.properties.is_empty()) {
       fprintf(f,
               "\t\tfunc->cont.properties = {&rna_%s_%s_%s, &rna_%s_%s_%s};\n",
               srna->identifier,
@@ -4025,6 +4025,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_armature.cc", "rna_armature_api.cc", RNA_def_armature},
     {"rna_attribute.cc", nullptr, RNA_def_attribute},
     {"rna_asset.cc", nullptr, RNA_def_asset},
+    {"rna_blender_project.cc", nullptr, RNA_def_blender_project},
     {"rna_boid.cc", nullptr, RNA_def_boid},
     {"rna_brush.cc", nullptr, RNA_def_brush},
     {"rna_cachefile.cc", nullptr, RNA_def_cachefile},
@@ -4231,8 +4232,8 @@ static void make_bad_file(const char *file, int line)
 }
 
 /**
- * \param extern_outfile: Directory to put public headers into. Can be nullptr, in which case
- *                        everything is put into \a outfile.
+ * \param public_header_outfile: Directory to put public headers into.
+ * Can be nullptr, in which case everything is put into \a outfile.
  */
 static int rna_preprocess(const char *outfile, const char *public_header_outfile)
 {

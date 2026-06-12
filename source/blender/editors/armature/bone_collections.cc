@@ -18,6 +18,7 @@
 #include "BLI_listbase.h"
 
 #include "BKE_action.hh"
+#include "BKE_armature.hh"
 #include "BKE_context.hh"
 #include "BKE_lib_override.hh"
 #include "BKE_library.hh"
@@ -807,7 +808,7 @@ static void bone_collection_select(bContext *C,
       Bone *bone = member.bone;
       bPoseChannel *pose_bone = BKE_pose_channel_find_name(active_object->pose, bone->name);
       BLI_assert_msg(pose_bone != nullptr, "The pose bones and armature bones are out of sync");
-      if (!animrig::bone_is_visible(armature, pose_bone)) {
+      if (!animrig::bone_is_visible(armature, {pose_bone, pose_bone->bone_get(*active_object)})) {
         continue;
       }
       if (bone->flag & BONE_UNSELECTABLE) {

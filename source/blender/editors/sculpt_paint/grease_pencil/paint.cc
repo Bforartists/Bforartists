@@ -45,6 +45,7 @@
 #include "GEO_set_curve_type.hh"
 #include "GEO_simplify_curves.hh"
 #include "GEO_smooth_curves.hh"
+#include "GEO_subdivide_curves.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -243,7 +244,7 @@ class PaintOperation : public GreasePencilStrokeOperation {
   /** Set to true when the paint operation is used to draw fill guides. */
   bool do_fill_guides_;
 
-  /* Used when hiding the fill while drawing. (#GP_BRUSH_DISSABLE_LASSO)*/
+  /** Used when hiding the fill while drawing. (#GP_BRUSH_DISSABLE_LASSO). */
   float start_opacity_;
 
   friend struct PaintOperationExecutor;
@@ -465,22 +466,26 @@ struct PaintOperationExecutor {
     }
 
     if ((settings_->flag2 & GP_BRUSH_USE_STROKE) == 0) {
-      bke::SpanAttributeWriter<bool> hide_stroke = attributes.lookup_or_add_for_write_span<bool>(
-          "hide_stroke", bke::AttrDomain::Curve);
-      hide_stroke.span[active_curve] = true;
-      curve_attributes_to_skip.add("hide_stroke");
-      hide_stroke.finish();
+      if (bke::SpanAttributeWriter<bool> hide_stroke =
+              attributes.lookup_or_add_for_write_span<bool>("hide_stroke", bke::AttrDomain::Curve))
+      {
+        hide_stroke.span[active_curve] = true;
+        curve_attributes_to_skip.add("hide_stroke");
+        hide_stroke.finish();
+      }
     }
     if (use_fill) {
-      bke::SpanAttributeWriter<int> fill_id = attributes.lookup_or_add_for_write_span<int>(
-          "fill_id", bke::AttrDomain::Curve);
-      /* Set new fill id to zero, because it will have uninitialized memory otherwise.
-       * Then get the #VArray of all fill ids to compute a new one. */
-      fill_id.span[active_curve] = 0;
-      const int new_fill_id = bke::greasepencil::get_next_available_fill_id(fill_id.span);
-      fill_id.span[active_curve] = new_fill_id;
-      curve_attributes_to_skip.add("fill_id");
-      fill_id.finish();
+      if (bke::SpanAttributeWriter<int> fill_id = attributes.lookup_or_add_for_write_span<int>(
+              "fill_id", bke::AttrDomain::Curve))
+      {
+        /* Set new fill id to zero, because it will have uninitialized memory otherwise.
+         * Then get the #VArray of all fill ids to compute a new one. */
+        fill_id.span[active_curve] = 0;
+        const int new_fill_id = bke::greasepencil::get_next_available_fill_id(fill_id.span);
+        fill_id.span[active_curve] = new_fill_id;
+        curve_attributes_to_skip.add("fill_id");
+        fill_id.finish();
+      }
     }
 
     if (settings_->uv_random > 0.0f || attributes.contains("rotation")) {
@@ -1368,6 +1373,22 @@ static void smooth_stroke(bke::greasepencil::Drawing &drawing,
   }
 }
 
+static void subdivide_stroke(bke::greasepencil::Drawing &drawing,
+                             const float subdivisions,
+                             const int active_curve)
+{
+  bke::CurvesGeometry &curves = drawing.strokes_for_write();
+  const IndexRange stroke = IndexRange::from_single(active_curve);
+  const OffsetIndices<int> points_by_curve = curves.points_by_curve();
+
+  Array<int> use_cuts(curves.points_num(), 0);
+
+  use_cuts.as_mutable_span().slice(points_by_curve[active_curve]).fill(subdivisions);
+  const VArray<int> cuts = VArray<int>::from_span(use_cuts.as_span());
+
+  curves = geometry::subdivide_curves(curves, stroke, cuts);
+}
+
 static void simplify_stroke(bke::greasepencil::Drawing &drawing,
                             const float epsilon,
                             const int active_curve)
@@ -1774,6 +1795,9 @@ void PaintOperation::on_stroke_done(const bContext &C)
   trim_end_points(drawing, 1e-5f, on_back, active_curve);
 
   if (do_post_processing) {
+    if (settings->draw_subdivide > 0 && settings->simplify_px == 0.0f) {
+      subdivide_stroke(drawing, settings->draw_subdivide, active_curve);
+    }
     if (settings->draw_smoothfac > 0.0f && settings->draw_smoothlvl > 0) {
       smooth_stroke(drawing, settings->draw_smoothfac, settings->draw_smoothlvl, active_curve);
     }

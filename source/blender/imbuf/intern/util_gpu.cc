@@ -28,7 +28,7 @@ static CLG_LogRef LOG = {"image.gpu"};
 
 static bool imb_is_grayscale_texture_format_compatible(const ImBuf *ibuf)
 {
-  if (ibuf->planes > 8) {
+  if (ibuf->color_mode != ImColorMode::BW) {
     return false;
   }
 
@@ -219,23 +219,36 @@ static void *imb_gpu_get_data(ImBuf *ibuf,
   }
 
   if (do_rescale) {
-    const uint8_t *rect = (is_float_rect) ? nullptr : static_cast<uint8_t *>(data_rect);
-    const float *rect_float = (is_float_rect) ? static_cast<float *>(data_rect) : nullptr;
-
-    ImBuf *scale_ibuf = IMB_allocFromBuffer(rect, rect_float, ibuf->x, ibuf->y, 4);
-    IMB_scale(scale_ibuf, UNPACK2(rescale_size), IMBScaleFilter::Box, false);
-
-    if (freedata) {
-      MEM_delete_void(data_rect);
+    if (is_float_rect) {
+      float *new_rect = MEM_new_array_uninitialized<float>(
+          4 * size_t(rescale_size[0]) * size_t(rescale_size[1]), __func__);
+      IMB_scale_box(static_cast<float *>(data_rect),
+                    int2(ibuf->x, ibuf->y),
+                    4,
+                    new_rect,
+                    rescale_size,
+                    true);
+      if (freedata) {
+        MEM_delete_void(data_rect);
+      }
+      data_rect = new_rect;
+      *r_freedata = freedata = true;
     }
-
-    data_rect = (is_float_rect) ? static_cast<void *>(scale_ibuf->float_data_for_write()) :
-                                  static_cast<void *>(scale_ibuf->byte_data_for_write());
-    *r_freedata = freedata = true;
-    /* Steal the rescaled buffer to avoid double free. */
-    (void)IMB_steal_byte_buffer(scale_ibuf);
-    (void)IMB_steal_float_buffer(scale_ibuf);
-    IMB_freeImBuf(scale_ibuf);
+    else {
+      uchar *new_rect = MEM_new_array_uninitialized<uchar>(
+          4 * size_t(rescale_size[0]) * size_t(rescale_size[1]), __func__);
+      IMB_scale_box(static_cast<uchar *>(data_rect),
+                    int2(ibuf->x, ibuf->y),
+                    4,
+                    new_rect,
+                    rescale_size,
+                    true);
+      if (freedata) {
+        MEM_delete_void(data_rect);
+      }
+      data_rect = new_rect;
+      *r_freedata = freedata = true;
+    }
   }
 
   /* Pack first channel data manually at the start of the buffer. */
@@ -339,12 +352,15 @@ void IMB_update_gpu_texture_sub(gpu::Texture *tex,
   }
 }
 
-gpu::Texture *IMB_create_gpu_texture(
-    const char *name, ImBuf *ibuf, bool use_high_bitdepth, bool use_premult, const bool limit_size)
+gpu::Texture *IMB_create_gpu_texture(const char *name,
+                                     ImBuf *ibuf,
+                                     const GPUTextureCreateFlags flags)
 {
+  const bool use_mipmap = flag_is_set(flags, GPUTextureCreateFlags::EnableMipmaps);
+
   gpu::Texture *tex = nullptr;
   int size[2] = {ibuf->x, ibuf->y};
-  if (limit_size) {
+  if (flag_is_set(flags, GPUTextureCreateFlags::LimitSize)) {
     size[0] = GPU_texture_size_with_limit(ibuf->x);
     size[1] = GPU_texture_size_with_limit(ibuf->y);
   }
@@ -389,7 +405,7 @@ gpu::Texture *IMB_create_gpu_texture(
         tex = GPU_texture_create_compressed_2d(name,
                                                ibuf->x,
                                                ibuf->y,
-                                               mip_count,
+                                               use_mipmap ? mip_count : 1,
                                                compressed_format,
                                                GPU_TEXTURE_USAGE_GENERAL,
                                                compressed_data);
@@ -410,24 +426,36 @@ gpu::Texture *IMB_create_gpu_texture(
   }
 
   gpu::TextureFormat tex_format;
-  imb_gpu_get_format(ibuf, use_high_bitdepth, true, &tex_format);
+  imb_gpu_get_format(
+      ibuf, flag_is_set(flags, GPUTextureCreateFlags::HighBitDepth), true, &tex_format);
 
   bool freebuf = false;
 
   /* Create Texture. Specify read usage to allow both shader and host reads, the latter is needed
    * by the GPU compositor. */
-  const eGPUTextureUsage usage = GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_SHADER_WRITE |
-                                 GPU_TEXTURE_USAGE_HOST_READ;
-  tex = GPU_texture_create_2d(name, UNPACK2(size), 9999, tex_format, usage, nullptr);
+  const eGPUTextureUsage usage = use_mipmap ?
+                                     GPU_TEXTURE_USAGE_SHADER_READ |
+                                         GPU_TEXTURE_USAGE_SHADER_WRITE |
+                                         GPU_TEXTURE_USAGE_HOST_READ :
+                                     GPU_TEXTURE_USAGE_SHADER_READ | GPU_TEXTURE_USAGE_HOST_READ;
+  tex = GPU_texture_create_2d(
+      name, UNPACK2(size), use_mipmap ? 9999 : 1, tex_format, usage, nullptr);
   if (tex == nullptr) {
     size[0] = max_ii(1, size[0] / 2);
     size[1] = max_ii(1, size[1] / 2);
-    tex = GPU_texture_create_2d(name, UNPACK2(size), 9999, tex_format, usage, nullptr);
+    tex = GPU_texture_create_2d(
+        name, UNPACK2(size), use_mipmap ? 9999 : 1, tex_format, usage, nullptr);
     do_rescale = true;
   }
   BLI_assert(tex != nullptr);
   eGPUDataFormat data_format;
-  void *data = imb_gpu_get_data(ibuf, do_rescale, size, use_premult, true, &freebuf, &data_format);
+  void *data = imb_gpu_get_data(ibuf,
+                                do_rescale,
+                                size,
+                                flag_is_set(flags, GPUTextureCreateFlags::Premultiplied),
+                                true,
+                                &freebuf,
+                                &data_format);
   GPU_texture_update(tex, data_format, data);
 
   GPU_texture_swizzle_set(tex, imb_gpu_get_swizzle(ibuf));

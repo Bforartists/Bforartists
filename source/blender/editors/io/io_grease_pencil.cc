@@ -197,6 +197,7 @@ static void grease_pencil_import_svg_draw(bContext * /*C*/, wmOperator *op)
   ui::Layout &col = layout.box().column(false);
   col.prop(op->ptr, "resolution", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col.prop(op->ptr, "scale", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  col.prop(op->ptr, "use_scene_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 }
 
 static bool grease_pencil_import_svg_poll(bContext *C)
@@ -221,6 +222,8 @@ void WM_OT_grease_pencil_import_svg(wmOperatorType *ot)
   ot->poll = ed::io::grease_pencil_import_svg_poll;
   ot->ui = ed::io::grease_pencil_import_svg_draw;
   ot->check = ed::io::grease_pencil_import_svg_check;
+
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_PRESET;
 
   WM_operator_properties_filesel(ot,
                                  FILE_TYPE_FOLDER | FILE_TYPE_OBJECT_IO,
@@ -438,6 +441,8 @@ void WM_OT_grease_pencil_export_svg(wmOperatorType *ot)
   ot->ui = ed::io::grease_pencil_export_svg_draw;
   ot->check = ed::io::grease_pencil_export_svg_check;
 
+  ot->flag = OPTYPE_PRESET;
+
   WM_operator_properties_filesel(ot,
                                  FILE_TYPE_FOLDER | FILE_TYPE_OBJECT_IO,
                                  FILE_BLENDER,
@@ -575,6 +580,8 @@ void WM_OT_grease_pencil_export_pdf(wmOperatorType *ot)
   ot->poll = ed::io::grease_pencil_export_pdf_poll;
   ot->ui = ed::io::grease_pencil_export_pdf_draw;
   ot->check = ed::io::grease_pencil_export_pdf_check;
+
+  ot->flag = OPTYPE_PRESET;
 
   WM_operator_properties_filesel(ot,
                                  FILE_TYPE_FOLDER | FILE_TYPE_OBJECT_IO,

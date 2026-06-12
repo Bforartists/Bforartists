@@ -68,6 +68,8 @@ enum eImage_Flag : int {
   IMA_USE_VIEWS = (1 << 14),
   IMA_FLAG_UNUSED_15 = (1 << 15), /* cleared */
   IMA_FLAG_UNUSED_16 = (1 << 16), /* cleared */
+  /** Indicates that the image has autosave information */
+  IMA_AUTOSAVE_TEMPPACK = (1 << 17),
 };
 ENUM_OPERATORS(eImage_Flag)
 
@@ -75,6 +77,8 @@ ENUM_OPERATORS(eImage_Flag)
 enum eImage_GPUFlag : int {
   /** All mipmap levels in OpenGL texture set? */
   IMA_GPU_MIPMAP_COMPLETE = (1 << 0),
+  /** Disable mipmap updates, primarily used for texture painting. */
+  IMA_GPU_DISABLE_MIPMAP_UPDATE = (1 << 1),
 };
 ENUM_OPERATORS(eImage_GPUFlag)
 
@@ -238,6 +242,8 @@ struct Image {
   DNA_DEPRECATED struct PackedFile *packedfile = nullptr;
   ListBaseT<ImagePackedFile> packedfiles = {nullptr, nullptr};
   struct PreviewImage *preview = nullptr;
+
+  ListBaseT<ImagePackedFile> autosave_packedfiles = {nullptr, nullptr};
 
   char _pad3[4] = {};
 

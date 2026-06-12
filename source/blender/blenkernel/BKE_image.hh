@@ -10,7 +10,11 @@
 #include "DNA_listBase.h"
 
 #include "BLI_compiler_attrs.h"
+#include "BLI_function_ref.hh"
 #include "BLI_mutex.hh"
+#include "BLI_string_ref.hh"
+
+#include "IMB_imbuf_enums.h"
 
 #include <cstdint>
 #include <limits>
@@ -92,6 +96,12 @@ struct ImageRuntime {
 };
 
 }  // namespace bke
+/**
+ * Clear the autosave information.
+ *
+ * \note At minimum, this should be called anytime the `packedfiles` list would be written to.
+ */
+void BKE_image_clear_autosave(Image *image);
 
 void BKE_image_free_packedfiles(Image *image);
 void BKE_image_free_views(Image *image);
@@ -166,12 +176,12 @@ bool BKE_imbuf_write_as(ImBuf *ibuf,
  * Used by sequencer too.
  */
 MovieReader *openanim(const char *filepath,
-                      int ibuf_flags,
+                      ImBufFlags ibuf_flags,
                       int streamindex,
                       bool keep_original_colorspace,
                       char colorspace[IMA_MAX_SPACE]);
 MovieReader *openanim_noload(const char *filepath,
-                             int flags,
+                             ImBufFlags flags,
                              int streamindex,
                              bool keep_original_colorspace,
                              char colorspace[IMA_MAX_SPACE]);
@@ -438,6 +448,18 @@ void BKE_image_packfile_ensure(
     Main *bmain, Image *image, ReportList *reports, const char *data, int data_len);
 
 /**
+ * Populate the runtime cache for an image based on the autosave information.
+ */
+void BKE_image_populate_cache_from_autosave(Image *ima);
+
+/**
+ * Pack the current buffer data as part of the autosave process.
+ *
+ * \see BKE_image_memorypack
+ */
+bool BKE_image_autosave_memorypack(Image *ima);
+
+/**
  * Prints memory statistics for images.
  */
 void BKE_image_print_memlist(Main *bmain);
@@ -453,14 +475,14 @@ void BKE_image_merge(Main *bmain, Image *dest, Image *source);
 bool BKE_image_scale(Image *image, int width, int height, ImageUser *iuser);
 
 /**
- * Check if texture has alpha `planes == 32 || planes == 16`.
+ * Check if image might contain alpha.
  */
 bool BKE_image_has_alpha(Image *image);
 
 /**
- * Check if texture has GPU texture code.
+ * Check if image has an associated GPU texture.
  */
-bool BKE_image_has_opengl_texture(Image *ima);
+bool BKE_image_has_gpu_texture(Image *ima);
 
 /**
  * Get tile index for tiled images.
@@ -545,6 +567,15 @@ int BKE_image_find_nearest_tile_with_offset(const Image *image,
                                             float r_uv_offset[2]) ATTR_NONNULL(2, 3);
 int BKE_image_find_nearest_tile(const Image *image, const float co[2])
     ATTR_NONNULL(2) ATTR_WARN_UNUSED_RESULT;
+
+/**
+ * Iterate over Cycles texture cache associated with #source_filepath_abs, in
+ * texture cache directory #cache_dir.
+ */
+void BKE_image_texture_cache_filepaths_foreach(
+    const char *source_filepath_abs,
+    const char *cache_dir,
+    blender::FunctionRef<void(blender::StringRef cache_filepath)> callback);
 
 void BKE_image_get_size(Image *image, ImageUser *iuser, int *r_width, int *r_height);
 void BKE_image_get_size_fl(Image *image, ImageUser *iuser, float r_size[2]);

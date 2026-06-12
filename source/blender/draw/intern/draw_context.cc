@@ -143,7 +143,7 @@ DRWContext::DRWContext(Mode mode_,
   /* Active object. Set to nullptr for render (when region is nullptr). */
   this->obact = (this->region) ? BKE_view_layer_active_object_get(this->view_layer) : nullptr;
   /* Object mode. */
-  this->object_mode = (this->obact) ? eObjectMode(this->obact->mode) : OB_MODE_OBJECT;
+  this->object_mode = (this->obact) ? this->obact->mode : OB_MODE_OBJECT;
   /* Edit object. */
   this->object_edit = (this->object_mode & OB_MODE_EDIT) ? this->obact : nullptr;
   /* Pose object. */
@@ -1247,6 +1247,8 @@ static bool gpencil_any_exists(Depsgraph *depsgraph)
   return (DEG_id_type_any_exists(depsgraph, ID_GD_LEGACY) ||
           DEG_id_type_any_exists(depsgraph, ID_GP));
 }
+
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Callbacks

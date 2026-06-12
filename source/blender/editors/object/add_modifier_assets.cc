@@ -35,6 +35,8 @@
 
 #include "MOD_nodes.hh"
 
+#include "NOD_geometry.hh"
+
 #include "UI_interface.hh"
 #include "UI_interface_layout.hh"
 
@@ -68,7 +70,8 @@ static asset::AssetItemTree build_catalog_tree(const bContext &C)
   };
   const AssetLibraryReference library = asset_system::all_library_reference();
   asset_system::all_library_reload_catalogs_if_dirty();
-  return asset::build_filtered_all_catalog_tree(library, C, type_filter, meta_data_filter);
+  return asset::build_filtered_all_catalog_tree(
+      library, C, type_filter, meta_data_filter, ntreeType_Geometry->asset_catalog_path_prefix);
 }
 
 static asset::AssetItemTree *get_static_item_tree()
@@ -109,7 +112,10 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
   wmOperatorType *ot = WM_operatortype_find("OBJECT_OT_modifier_add_node_group", true);
   for (const asset_system::AssetRepresentation *asset : assets) {
     if (skip_essentials) {
-      if (asset->owner_asset_library().library_reference()->type == ASSET_LIBRARY_ESSENTIALS) {
+      if (ELEM(asset->owner_asset_library().library_reference()->type,
+               ASSET_LIBRARY_ESSENTIALS,
+               ASSET_LIBRARY_ONLINE_ESSENTIALS))
+      {
         continue;
       }
     }

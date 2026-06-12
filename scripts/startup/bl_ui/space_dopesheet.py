@@ -727,8 +727,7 @@ class DOPESHEET_MT_select(Menu):
 
             layout.separator()
 
-            layout.operator("action.select_linked") # BFA - WIP
-            layout.operator_menu_enum("action.select_by_type", "type") # BFA - WIP
+            layout.operator_menu_enum("action.select_by_type", "type", text="Type",)
 
         props = layout.operator("action.select_leftright", text="Before Current Frame", icon="BEFORE_CURRENT_FRAME")
         props.extend = False
@@ -876,8 +875,10 @@ class DOPESHEET_MT_key(Menu):
         ob = context.active_object
 
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
+        # BFa - snap submenu
         layout.menu("DOPESHEET_MT_key_snap")
         layout.operator_menu_enum("action.mirror", "type", text="Mirror")
+        layout.operator_menu_enum("action.snap", "type", text="Snap")
 
         layout.separator()
 
@@ -885,20 +886,19 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
 
+        # BFa - WIP - Added frame_jump operator alongside new Blender key operators
         layout.operator("action.frame_jump", icon="JUMP_TO_KEYFRAMES", text="Jump to Selected")
-
-        layout.separator()
-
-        layout.operator("action.copy", text="Copy Keyframes", icon="COPYDOWN")
-        layout.operator("action.paste", text="Paste Keyframes", icon="PASTEDOWN")
+        layout.operator("action.copy", icon="COPYDOWN")
+        layout.operator("action.paste", icon="PASTEDOWN")
         layout.operator("action.paste", text="Paste Flipped", icon="PASTEFLIPDOWN").flipped = True
+        layout.separator()
+        layout.operator("action.keyframe_insert")
+        layout.operator("action.duplicate_move", icon="DUPLICATE")
 
         layout.separator()
 
-        layout.operator("action.duplicate_move", icon="DUPLICATE")
-        layout.operator("action.delete", icon="DELETE")
         if ob and ob.type == "GREASEPENCIL":
-            layout.operator("grease_pencil.delete_breakdown", icon="DELETE")
+            layout.operator("grease_pencil.delete_breakdown")
 
         layout.separator()
 
@@ -963,6 +963,8 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+        layout.separator()
+        layout.operator("action.delete", icon='X')
 
         layout.separator()
 
@@ -1185,7 +1187,10 @@ class DOPESHEET_MT_context_menu(Menu):
         layout.operator("action.copy", text="Copy", icon="COPYDOWN")
         layout.operator("action.paste", text="Paste", icon="PASTEDOWN")
         layout.operator("action.paste", text="Paste Flipped", icon="PASTEFLIPDOWN").flipped = True
+        layout.separator()
 
+        layout.operator("action.keyframe_insert").type = 'SEL'
+        layout.operator("action.duplicate_move", icon='DUPLICATE')
         layout.separator()
 
         layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
@@ -1195,22 +1200,19 @@ class DOPESHEET_MT_context_menu(Menu):
             layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
             layout.operator_menu_enum("action.easing_type", "type", text="Easing Mode")
 
-        layout.separator()
-
-        layout.operator("action.keyframe_insert", icon="COPYDOWN").type = "SEL"
-        layout.operator("action.duplicate_move", icon="DUPLICATE")
-
         if st.mode == "GPENCIL":
             layout.separator()
             layout.operator("grease_pencil.delete_breakdown")
-
-        layout.operator_context = "EXEC_REGION_WIN"
-        layout.operator("action.delete", icon="DELETE")
 
         layout.separator()
 
         layout.operator_menu_enum("action.mirror", "type", text="Mirror")
         layout.operator_menu_enum("action.snap", "type", text="Snap")
+
+        layout.separator()
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("action.delete", icon='X')
 
 
 class DOPESHEET_MT_channel_context_menu(Menu):

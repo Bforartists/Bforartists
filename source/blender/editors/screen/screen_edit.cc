@@ -17,6 +17,7 @@
 #include "DNA_userdef_types.h"
 
 #include "BLI_listbase.h"
+#include "BLI_math_base.h"
 #include "BLI_rect.h"
 #include "BLI_string_utf8.h"
 #include "BLI_utildefines.h"
@@ -47,6 +48,7 @@
 #include "RNA_enum_types.hh"
 
 #include "UI_interface.hh"
+#include "UI_interface_c.hh"
 
 #include "WM_message.hh"
 #include "WM_toolsystem.hh"
@@ -452,6 +454,7 @@ static bool screen_area_join_aligned(
   }
 
   screen_delarea(C, screen, sa2);
+  BKE_screen_remove_double_scrverts(screen);
   /* Update preview thumbnail */
   BKE_icon_changed(screen->id.icon_id);
 
@@ -603,7 +606,7 @@ void screen_area_spacelink_add(const Scene *scene, ScrArea *area, eSpace_Type sp
   area->regionbase = slink->regionbase;
 
   BLI_addhead(&area->spacedata, slink);
-  BLI_listbase_clear(&slink->regionbase);
+  slink->regionbase.clear_no_delete();
 }
 
 /* ****************** EXPORTED API TO OTHER MODULES *************************** */
@@ -837,6 +840,48 @@ void ED_screens_init(bContext *C, Main *bmain, wmWindowManager *wm)
 {
   wmWindow *prev_ctx_win = CTX_wm_window(C);
   BLI_SCOPED_DEFER([&]() { CTX_wm_window_set(C, prev_ctx_win); });
+
+  /* BFA - Recalculate tools region widths to match current compact mode and tab settings. */
+  for (bScreen *screen = static_cast<bScreen *>(bmain->screens.first); screen;
+       screen = static_cast<bScreen *>(screen->id.next))
+  {
+    for (ScrArea *area = static_cast<ScrArea *>(screen->areabase.first); area;
+         area = area->next)
+    {
+      if (ELEM(area->spacetype, SPACE_FILE, SPACE_SPREADSHEET)) {
+        continue;
+      }
+      for (ARegion *region = static_cast<ARegion *>(area->regionbase.first); region;
+           region = region->next)
+      {
+        if (region->regiontype == RGN_TYPE_TOOLS && region->runtime &&
+            region->runtime->type && region->runtime->type->snap_size)
+        {
+          /* Only proceed if v2d is initialized. */
+          const float v2d_y = BLI_rctf_size_y(&region->v2d.cur);
+          const int mask_y = BLI_rcti_size_y(&region->v2d.mask);
+          if (v2d_y > 0.0f && mask_y > 0) {
+            if (region->sizex == 0) {
+              /* Uninitialized: set to minimum snap size */
+              region->sizex = region->runtime->type->snap_size(region, 0, 0);
+              screen->do_refresh = true;
+            }
+            else {
+              /* Snap to nearest valid unit on startup, preserving user's saved width. */
+              const short old_sizex = region->sizex;
+              const short new_sizex = region->runtime->type->snap_size(region, old_sizex, 0);
+              if (new_sizex > 0 && new_sizex != old_sizex) {
+                region->sizex = new_sizex;
+                screen->do_refresh = true;
+                ED_area_tag_region_size_update(area, region);
+                ED_region_tag_redraw(region);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   for (wmWindow &win : wm->windows) {
     /* Region polls may need window/screen context. */
@@ -2167,5 +2212,89 @@ wmWindow *ED_screen_window_find(const bScreen *screen, const wmWindowManager *wm
   }
   return nullptr;
 }
+
+/* -------------------------------------------------------------------- */
+/** \name Toolbar Widths
+ * \{ */
+
+/* Internal helper to process toolbar widths for a single screen */
+static void ED_screen_process_toolbar_regions(bScreen *screen,
+                                              bool process_uninitialized,
+                                              bool process_existing)
+{
+  bool needs_refresh = false;
+
+  for (ScrArea &area : screen->areabase) {
+    if (ELEM(area.spacetype, SPACE_FILE, SPACE_SPREADSHEET)) {
+      continue;
+    }
+
+    for (ARegion &region : area.regionbase) {
+      if (region.regiontype != RGN_TYPE_TOOLS) {
+        continue;
+      }
+      if (!region.runtime || !region.runtime->type || !region.runtime->type->snap_size) {
+        continue;
+      }
+
+      /* Check v2d initialization to avoid crashes */
+      if (BLI_rctf_size_y(&region.v2d.cur) <= 0.0f || 
+          BLI_rcti_size_y(&region.v2d.mask) <= 0) {
+        continue;
+      }
+
+      /* Process uninitialized regions */
+      if (process_uninitialized && region.sizex == 0) {
+        region.sizex = region.runtime->type->snap_size(&region, 0, 0);
+        ED_area_tag_region_size_update(&area, &region);
+        needs_refresh = true;
+      }
+      /* Process existing regions - just snap to appropriate column count */
+      else if (process_existing && region.sizex > 0) {
+        const short old_sizex = region.sizex;
+        const short new_sizex = region.runtime->type->snap_size(&region, old_sizex, 0);
+        if (new_sizex > 0 && new_sizex != old_sizex) {
+          region.sizex = new_sizex;
+          ED_area_tag_region_size_update(&area, &region);
+          needs_refresh = true;
+        }
+      }
+    }
+  }
+
+  if (needs_refresh) {
+    screen->do_refresh = true;
+  }
+}
+
+/* BFA - Unified toolbar width management function.
+ * Skip file browser and spreadsheet - their tools regions have different sizing. */
+void ED_screen_toolbar_widths_update(const bContext * /*C*/,
+                                      wmWindowManager *wm,
+                                      bScreen *target_screen,
+                                      bool process_uninitialized,
+                                      bool process_existing)
+{
+  /* Determine screen iteration scope */
+  if (target_screen) {
+    /* Single screen mode */
+    ED_screen_process_toolbar_regions(target_screen,
+                                       process_uninitialized,
+                                       process_existing);
+  }
+  else if (wm) {
+    /* Multi-screen mode */
+    for (wmWindow &win : wm->windows) {
+      bScreen *screen = WM_window_get_active_screen(&win);
+      if (screen) {
+        ED_screen_process_toolbar_regions(screen,
+                                          process_uninitialized,
+                                          process_existing);
+      }
+    }
+  }
+}
+
+/* \} */
 
 }  // namespace blender

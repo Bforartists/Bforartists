@@ -126,6 +126,11 @@ class TEXTURE_PT_context(TextureButtonsPanel, Panel):
         if user or pin_id:
             col.separator()
 
+            # BFA - Open Texture Node Editor
+            if tex:
+                col.operator("texture.open_node_editor", icon='TEXTURE')
+                col.separator()
+
             if pin_id:
                 col.template_ID(space, "pin_id")
             else:

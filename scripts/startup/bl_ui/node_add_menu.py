@@ -3,16 +3,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 __all__ = (
-    "add_closure_zone",
-    "add_color_mix_node",
-    "add_foreach_geometry_element_zone",
-    "add_node_type",
-    "add_node_type_with_outputs",
-    "add_node_type_with_searchable_enum",
-    "add_node_type_with_searchable_enum_socket",
-    "add_repeat_zone",
-    "add_simulation_zone",
-    "draw_node_group_add_menu",
     "set_math_node_default_props",
     "set_int_math_node_default_props",
     "set_vector_math_node_defaults"
@@ -114,99 +104,15 @@ def draw_node_groups(context, layout, operator_id="node.add_node", use_transform
 
     return operators
 
-# NOTE: This is kept for compatibility's sake, as some scripts import node_add_menu.add_node_type.
-def add_node_type(layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True):
-    """Add a node type to a menu."""
-    return AddNodeMenu.node_operator(
-        layout,
-        node_type,
-        label=label,
-        poll=poll,
-        search_weight=search_weight,
-        translate=translate,
-    )
-
-
-def add_node_type_with_searchable_enum(context, layout, node_idname, property_name, search_weight=0.0):
-    return AddNodeMenu.node_operator_with_searchable_enum(context, layout, node_idname, property_name, search_weight)
-
-
-def add_node_type_with_searchable_enum_socket(
-        context,
-        layout,
-        node_idname,
-        socket_identifier,
-        enum_names,
-        search_weight=0.0,
-):
-    return AddNodeMenu.node_operator_with_searchable_enum_socket(
-        context, layout, node_idname, socket_identifier, enum_names, search_weight,
-    )
-
-
-def add_node_type_with_outputs(context, layout, node_type, subnames, *, label=None, search_weight=0.0):
-    return AddNodeMenu.node_operator_with_outputs(
-        context,
-        layout,
-        node_type,
-        subnames,
-        label=label,
-        search_weight=search_weight,
-    )
-
-
-def add_color_mix_node(context, layout, search_weight=0.0):
-    return AddNodeMenu.color_mix_node(context, layout, search_weight=search_weight)
-
-
+# BFA - Function to add an empty node group
 def add_empty_group(layout):
-    return AddNodeMenu.new_empty_group(layout)
-
-
-def draw_node_group_add_menu(context, layout):
-    """Add items to the layout used for interacting with node groups."""
-    return AddNodeMenu.draw_group_menu(context, layout)
-
-
-def add_simulation_zone(layout, label):
-    """Add simulation zone to a menu."""
-    props = layout.operator("node.add_simulation_zone", text=label, text_ctxt=i18n_contexts.default, icon = "TIME") #BFA - added icon to Add Menu
-    props.use_transform = True
-    return props
-
-
-def add_repeat_zone(layout, label):
-    props = layout.operator("node.add_repeat_zone", text=label, text_ctxt=i18n_contexts.default, icon = "REPEAT") #BFA - added icon to Add Menu
-    props.use_transform = True
-    return props
-
-
-def add_foreach_geometry_element_zone(layout, label):
+    """Standalone function used by the toolshelf sidebar panel."""
     props = layout.operator(
-        "node.add_foreach_geometry_element_zone",
-        icon = "FOR_EACH", #BFA - added icon to Add Menu
-        text=label,
+        "node.add_empty_group",
+        text="New Group",
         text_ctxt=i18n_contexts.default,
+        icon='ADD',
     )
-    props.use_transform = True
-    return props
-
-
-def add_closure_zone(layout, label):
-    props = layout.operator(
-        "node.add_closure_zone",
-        text=label,
-        text_ctxt=i18n_contexts.default,
-        icon="NODE_CLOSURE"  #BFA - added icon to Add Menu
-    )
-    props.use_transform = True
-    return props
-
-
-def add_typed_bundle(layout):
-    props = layout.operator("node.add_typed_bundle", text="Typed Bundle", text_ctxt=i18n_contexts.default)
-    props.use_transform = True
-    return props
 
 
 def set_socket_default_value(settings, socket_identifier, socket_default_value):
@@ -455,7 +361,7 @@ class NodeMenu(Menu):
 
     @classmethod
     def typed_bundle(cls, layout, label):
-        props = layout.operator("node.add_typed_bundle", text=label, text_ctxt=i18n_contexts.default)
+        props = layout.operator(cls.typed_bundle_operator_id, text=label, text_ctxt=i18n_contexts.default)
 
         if hasattr(props, "use_transform"):
             props.use_transform = cls.use_transform
@@ -483,13 +389,15 @@ class NodeMenu(Menu):
         node_tree = space_node.edit_tree
         all_node_groups = context.blend_data.node_groups
 
-        operators = []
-        operators.append(cls.new_empty_group(layout))
+        cls.new_empty_group(layout)
 
         if node_tree in all_node_groups.values():
             layout.separator()
             cls.node_operator(layout, "NodeGroupInput")
             cls.node_operator(layout, "NodeGroupOutput")
+
+        operators = []
+        operators.append(cls.new_empty_group(layout))
 
         # BFA - Draw node groups with corresponding icons
         use_transform = getattr(cls, "use_transform", False)
@@ -497,6 +405,78 @@ class NodeMenu(Menu):
         operators.extend(groups)
 
         return operators
+
+        # BFA - WIP
+        if node_tree:
+            prefs = bpy.context.preferences
+            show_hidden = prefs.show_hidden_ids
+
+            local_groups = []
+            has_non_local_groups = False
+
+            for group in context.blend_data.node_groups:
+                if group.bl_idname != node_tree.bl_idname:
+                    continue
+                if group.contains_tree(node_tree):
+                    continue
+                if not show_hidden:
+                    if group.name.startswith('.'):
+                        continue
+                if group.library is not None:
+                    has_non_local_groups = True
+                    continue
+                local_groups.append(group)
+
+            if has_non_local_groups:
+                layout.separator()
+                cls.draw_menu(layout, path="Group/Linked")
+
+            if local_groups:
+                layout.separator()
+                for group in local_groups:
+                    cls.draw_group(context, layout, group)
+
+    @classmethod
+    def draw_linked_groups(cls, context, layout):
+        space_node = context.space_data
+        node_tree = space_node.edit_tree
+        prefs = bpy.context.preferences
+        show_hidden = prefs.show_hidden_ids
+
+        for group in context.blend_data.node_groups:
+            if group.library is None:
+                continue
+            if group.bl_idname != node_tree.bl_idname:
+                continue
+            if group.is_library_indirect:
+                continue
+            if not show_hidden:
+                if group.name.startswith('.'):
+                    continue
+            cls.draw_group(context, layout, group)
+
+    @classmethod
+    def draw_group(cls, context, layout, group):
+        from nodeitems_builtins import node_tree_group_type
+        search_weight = -1.0 if group.is_linked_packed else 0.0
+        props = cls.node_operator(
+            layout,
+            node_tree_group_type[group.bl_idname],
+            label=group.name,
+            search_weight=search_weight,
+        )
+        ops = props.settings.add()
+        ops.name = "node_tree"
+        ops.value = "bpy.data.node_groups[{!r}]".format(group.name)
+        ops = props.settings.add()
+        ops.name = "width"
+        ops.value = repr(group.default_group_node_width)
+        ops = props.settings.add()
+        ops.name = "name"
+        ops.value = repr(group.name)
+
+        if hasattr(props, "use_transform"):
+            props.use_transform = cls.use_transform
 
     @classmethod
     def draw_menu(cls, layout, path):
@@ -570,6 +550,7 @@ class AddNodeMenu(NodeMenu):
     main_operator_id = "node.add_node"
     zone_operator_id = "node.add_zone"
     new_empty_group_operator_id = "node.add_empty_group"
+    typed_bundle_operator_id = "node.add_typed_bundle"
 
     root_asset_menu = "NODE_MT_node_add_root_catalogs"
 
@@ -586,6 +567,7 @@ class SwapNodeMenu(NodeMenu):
     main_operator_id = "node.swap_node"
     zone_operator_id = "node.swap_zone"
     new_empty_group_operator_id = "node.swap_empty_group"
+    typed_bundle_operator_id = "node.swap_typed_bundle"
 
     root_asset_menu = "NODE_MT_node_swap_root_catalogs"
 
@@ -605,6 +587,14 @@ class NODE_MT_group_base(NodeMenu):
         self.draw_assets_for_catalog(layout, self.bl_label)
 
 
+class NODE_MT_linked_group_base(NodeMenu):
+    bl_label = "Linked"
+
+    def draw(self, context):
+        layout = self.layout
+        self.draw_linked_groups(context, layout)
+
+
 class NODE_MT_layout_base(NodeMenu):
     bl_label = "Layout"
 
@@ -618,12 +608,14 @@ class NODE_MT_layout_base(NodeMenu):
 
 add_base_pathing_dict = {
     "Group": "NODE_MT_group_add",
+    "Group/Linked": "NODE_MT_linked_group_add",
     "Layout": "NODE_MT_category_layout",
 }
 
 
 swap_base_pathing_dict = {
     "Group": "NODE_MT_group_swap",
+    "Group/Linked": "NODE_MT_linked_group_swap",
     "Layout": "NODE_MT_layout_swap",
 }
 
@@ -654,10 +646,36 @@ def generate_pathing_dict(pathing_dict, menus):
 
 
 classes = (
-    generate_menu("NODE_MT_group_add", template=AddNodeMenu, layout_base=NODE_MT_group_base),
-    generate_menu("NODE_MT_group_swap", template=SwapNodeMenu, layout_base=NODE_MT_group_base),
-    generate_menu("NODE_MT_category_layout", template=AddNodeMenu, layout_base=NODE_MT_layout_base),
-    generate_menu("NODE_MT_layout_swap", template=SwapNodeMenu, layout_base=NODE_MT_layout_base),
+    generate_menu(
+        "NODE_MT_group_add",
+        template=AddNodeMenu,
+        layout_base=NODE_MT_group_base,
+        pathing_dict=add_base_pathing_dict),
+    generate_menu(
+        "NODE_MT_group_swap",
+        template=SwapNodeMenu,
+        layout_base=NODE_MT_group_base,
+        pathing_dict=swap_base_pathing_dict),
+    generate_menu(
+        "NODE_MT_linked_group_add",
+        template=AddNodeMenu,
+        layout_base=NODE_MT_linked_group_base,
+        pathing_dict=add_base_pathing_dict),
+    generate_menu(
+        "NODE_MT_linked_group_swap",
+        template=SwapNodeMenu,
+        layout_base=NODE_MT_linked_group_base,
+        pathing_dict=swap_base_pathing_dict),
+    generate_menu(
+        "NODE_MT_category_layout",
+        template=AddNodeMenu,
+        layout_base=NODE_MT_layout_base,
+        pathing_dict=add_base_pathing_dict),
+    generate_menu(
+        "NODE_MT_layout_swap",
+        template=SwapNodeMenu,
+        layout_base=NODE_MT_layout_base,
+        pathing_dict=swap_base_pathing_dict),
 )
 
 if __name__ == "__main__":  # only for live edit.

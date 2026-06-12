@@ -566,8 +566,8 @@ class NODE_MT_view(Menu):
 
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
-        layout.prop(snode, "show_toolshelf_tabs")
         layout.prop(snode, "show_region_asset_shelf")  # BFA - we dont need is_compositor since we show here!
+        layout.prop(snode, "show_toolshelf_tabs")
 
         layout.separator()
 
@@ -747,7 +747,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()  # BFA - exposed context menu operator to header
 
-        props = layout.operator("wm.call_panel", text="Rename...", icon="RENAME")
+        props = layout.operator("wm.call_panel", text="Rename Active Node", icon="RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -1114,7 +1114,7 @@ class NODE_MT_context_menu(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename", icon="RENAME")
+        props = layout.operator("wm.call_panel", text="Rename Active Node", icon="RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -1123,7 +1123,11 @@ class NODE_MT_context_menu(Menu):
         layout.menu("NODE_MT_context_menu_select_menu")
         layout.menu("NODE_MT_context_menu_show_hide_menu")
 
-        # BFA - removed blender online manual
+        # BFA - WIP - to be chamged frp, blender online manual to our one
+        if active_node:
+            layout.separator()
+            props = layout.operator("wm.doc_view_manual", text="Online Manual", icon='URL')
+            props.doc_id = active_node.bl_idname
 
 
 class NODE_PT_active_node_generic(Panel):
@@ -1168,7 +1172,7 @@ class NODE_PT_active_node_generic(Panel):
         col.prop(node, "show_options")
         col.prop(node, "mute")
 
-        if tree.type == 'GEOMETRY':
+        if tree.type in ('GEOMETRY', 'COMPOSITING'):
             layout.prop(node, "warning_propagation", text="Propagate")
 
 
@@ -1475,6 +1479,12 @@ class NODE_PT_node_tree_properties(Panel):
                 col.use_property_split = False  # BFA - Align booleans left
                 col.prop(group, "is_modifier")
                 col.prop(group, "is_tool")
+        elif group.bl_idname == "CompositorNodeTree":
+            header, body = col.panel("group_usage")
+            header.label(text="Usage")
+            if body:
+                col = body.column(align=True)
+                col.prop(group, "is_strip_modifier")
 
 
 class NODE_PT_node_tree_animation(Panel):
@@ -1617,6 +1627,10 @@ class NODE_AST_compositor(NodeAssetShelf, bpy.types.AssetShelf):
             "Combine Spherical",
             "Separate Cylindrical",
             "Separate Spherical",
+            "3D to Screen Space",
+            "Screen to 3D Space",
+            "Project with Depth",
+            "Transform and Project",
         }
 
         compositor_essentials_path = Path(os.path.join(

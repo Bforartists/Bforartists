@@ -1184,7 +1184,7 @@ void CLIP_OT_change_frame(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Rebuild Proxies Operator
+/** \name Rebuild Proxy Operator
  * \{ */
 
 struct ProxyJob {
@@ -1377,7 +1377,7 @@ static void proxy_task_func(TaskPool *__restrict pool, void *task_data)
 
     ibuf = IMB_load_image_from_memory(mem,
                                       size,
-                                      IB_byte_data | IB_multilayer | IB_alphamode_detect,
+                                      ImBufFlags::ByteData | ImBufFlags::AlphaDetect,
                                       "proxy frame",
                                       nullptr,
                                       data->clip->colorspace_settings.name);
@@ -1548,11 +1548,10 @@ static wmOperatorStatus clip_rebuild_proxy_exec(bContext *C, wmOperator * /*op*/
   pj->scene = scene;
   pj->main = CTX_data_main(C);
   pj->clip = clip;
-  pj->clip_flag = MovieClipFlag(clip->flag & MCLIP_TIMECODE_FLAGS);
+  pj->clip_flag = MovieClipFlag(clip->flag & MCLIP_PROXY_FLAGS);
 
   if (clip->anim) {
     pj->proxy_builder = MOV_proxy_builder_start(clip->anim,
-                                                IMB_Timecode_Type(clip->proxy.build_tc_flag),
                                                 IMB_Proxy_Size(clip->proxy.build_size_flag),
                                                 clip->proxy.quality,
                                                 true,
@@ -1575,9 +1574,9 @@ static wmOperatorStatus clip_rebuild_proxy_exec(bContext *C, wmOperator * /*op*/
 void CLIP_OT_rebuild_proxy(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Rebuild Proxy and Timecode Indices";
+  ot->name = "Rebuild Proxy";
   ot->idname = "CLIP_OT_rebuild_proxy";
-  ot->description = "Rebuild all selected proxies and timecode indices in the background";
+  ot->description = "Rebuild all selected proxies in the background";
 
   /* API callbacks. */
   ot->exec = clip_rebuild_proxy_exec;

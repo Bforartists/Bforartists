@@ -1584,7 +1584,8 @@ class VIEW3D_PT_gp_gpencil_tab_dissolve(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.dissolve", text="Dissolve", icon='DISSOLVE_VERTS', props={"type": 'POINTS'}),
+            OperatorEntry("
+                          ", text="Dissolve", icon='DISSOLVE_VERTS', props={"type": 'POINTS'}),
             OperatorEntry("grease_pencil.dissolve", text="Dissolve Between", icon='DISSOLVE_BETWEEN', props={"type": 'BETWEEN'}),
             OperatorEntry("grease_pencil.dissolve", text="Dissolve Unselected", icon='DISSOLVE_UNSELECTED', props={"type": 'UNSELECT'}),
         )

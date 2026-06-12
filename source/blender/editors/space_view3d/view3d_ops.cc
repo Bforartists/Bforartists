@@ -103,7 +103,7 @@ static wmOperatorStatus view3d_copybuffer_exec(bContext *C, wmOperator *op)
 
   char filepath[FILE_MAX];
   view3d_copybuffer_filepath_get(filepath, sizeof(filepath));
-  copybuffer.write(filepath, *op->reports);
+  copybuffer.write_as_copypaste_buffer(filepath, *op->reports);
 
   BKE_reportf(op->reports, RPT_INFO, "Copied %d selected object(s)", num_copied);
 
@@ -258,6 +258,10 @@ void view3d_operatortypes()
   WM_operatortype_append(VIEW3D_OT_ruler_add);
   WM_operatortype_append(VIEW3D_OT_ruler_remove);
 
+#ifdef WITH_XR_OPENXR
+  WM_operatortype_append(VIEW3D_OT_vr_location_scouting_capture_review);
+#endif
+
   ed::transform::transform_operatortypes();
 }
 
@@ -275,6 +279,7 @@ void view3d_keymap(wmKeyConfig *keyconf)
   viewzoom_modal_keymap(keyconf);
   viewdolly_modal_keymap(keyconf);
   viewplace_modal_keymap(keyconf);
+  vr_location_scouting_capture_review_modal_keymap(keyconf);
 }
 
 /** \} */

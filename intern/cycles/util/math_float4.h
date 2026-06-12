@@ -233,7 +233,7 @@ ccl_device_inline float4 clamp(const float4 a, const float4 mn, const float4 mx)
 {
   return min(max(a, mn), mx);
 }
-#endif /* !__KERNEL_METAL__*/
+#endif /* !__KERNEL_METAL__ */
 
 ccl_device_inline float4 madd(const float4 a, const float4 b, const float4 c)
 {
@@ -530,16 +530,6 @@ ccl_device_inline float4 floorfrac(const float4 x, ccl_private int4 *i)
 #  endif
 }
 
-ccl_device_inline float4 mix(const float4 a, const float4 b, const float t)
-{
-  return a + t * (b - a);
-}
-
-ccl_device_inline float4 mix(const float4 a, const float4 b, const float4 t)
-{
-  return a + t * (b - a);
-}
-
 ccl_device_inline float4 saturate(const float4 a)
 {
   return make_float4(saturatef(a.x), saturatef(a.y), saturatef(a.z), saturatef(a.w));
@@ -555,7 +545,7 @@ ccl_device_inline float4 log(const float4 v)
   return make_float4(logf(v.x), logf(v.y), logf(v.z), logf(v.z));
 }
 
-#endif /* !__KERNEL_METAL__*/
+#endif /* !__KERNEL_METAL__ */
 
 ccl_device_inline bool isequal(const float4 a, const float4 b)
 {

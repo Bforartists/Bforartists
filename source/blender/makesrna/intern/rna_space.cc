@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "BLI_math_base.h"
 #include "BLI_math_constants.h"
 #include "BLI_string_ref.hh"
 #include "BLT_translation.hh"
@@ -19,7 +20,6 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_movieclip.hh"
 #include "BKE_object_types.hh"
-#include "BKE_toolshelf_runtime.h" /* BFA */
 
 #include "ED_asset.hh"
 #include "ED_buttons.hh"
@@ -30,9 +30,11 @@
 #include "BLI_sys_types.h"
 
 #include "DNA_action_types.h"
+#include "DNA_camera_types.h"
 #include "DNA_layer_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_object_types.h"
+#include "DNA_screen_types.h" /* BFA - RGN_FLAG_HIDE_CATEGORY_TABS */
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 
@@ -77,6 +79,11 @@ const EnumPropertyItem rna_enum_geometry_component_type_items[] = {
      ICON_GREASEPENCIL,
      "Grease Pencil",
      "Grease Pencil component containing layers and curves data"},
+    {int(bke::GeometryComponent::Type::Volume),
+     "VOLUME",
+     ICON_VOLUME_DATA,
+     "Volume",
+     "Volume component containing volume grids"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -188,6 +195,11 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      ICON_PREFERENCES,
      "Preferences",
      "Edit persistent configuration settings"},
+    {SPACE_PROJECT,
+     "PROJECT",
+     ICON_PROJECT,
+     "Project Setup",
+     "Manage the current Blender project"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -398,11 +410,11 @@ const EnumPropertyItem rna_enum_fileselect_params_sort_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static const EnumPropertyItem rna_enum_asset_import_method_items[] = {
+static const EnumPropertyItem rna_enum_fileselect_params_asset_import_method_items[] = {
     {FILE_ASSET_IMPORT_FOLLOW_PREFS,
      "FOLLOW_PREFS",
      ICON_PREFERENCES,
-     "Follow Preferences",
+     "Follow Asset or Preferences",
      "Use the import method set in the Preferences for this asset library, don't override it "
      "for this Asset Browser"},
     {FILE_ASSET_IMPORT_LINK,
@@ -436,6 +448,25 @@ static const EnumPropertyItem rna_enum_asset_import_method_items[] = {
      "Link (Override)",
      "Import the assets as linked library overrided data.\nThis will only override the active "
      "hierarchy.\nTo override all selected contents, use the Outliner Editor"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+const EnumPropertyItem rna_enum_asset_access_items[] = {
+    {int(AssetAccess::OnlineAndOffline),
+     "ALL",
+     0,
+     "Online and Offline",
+     "Show assets that are both hosted online (need downloading) and available on disk already"},
+    {int(AssetAccess::OnlyOnline),
+     "ONLY_ONLINE",
+     0,
+     "Online Only",
+     "Show only assets that need downloading (requires internet access)"},
+    {int(AssetAccess::OnlyOffline),
+     "ONLY_OFFLINE",
+     0,
+     "Offline Only",
+     "Show only assets that are available on disk already (no internet access needed)"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -745,6 +776,8 @@ static const EnumPropertyItem spreadsheet_table_id_type_items[] = {
 
 #  include "RE_engine.h"
 
+#  include "rna_screen_utils.hh"
+
 namespace blender {
 
 /* -------------------------------------------------------------------- */
@@ -790,6 +823,8 @@ static StructRNA *rna_Space_refine(PointerRNA *ptr)
       return RNA_SpaceToolbarEditor;
     case SPACE_SPREADSHEET:
       return RNA_SpaceSpreadsheet;
+    case SPACE_PROJECT:
+      return RNA_SpaceProject;
 
       /* Currently no type info. */
     case SPACE_SCRIPT:
@@ -992,6 +1027,61 @@ static void rna_Space_show_region_toolbar_set(PointerRNA *ptr, bool value)
 static void rna_Space_show_region_toolbar_update(bContext *C, PointerRNA *ptr)
 {
   rna_Space_bool_from_region_flag_update_by_type(C, ptr, RGN_TYPE_TOOLS, RGN_FLAG_HIDDEN);
+}
+
+static bool rna_Space_show_toolshelf_tabs_get(PointerRNA *ptr)
+{
+  ScrArea *area = rna_area_from_space(ptr);
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  return region ? !(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS) : false;
+}
+
+static void rna_Space_show_toolshelf_tabs_set(PointerRNA *ptr, bool value)
+{
+  ScrArea *area = rna_area_from_space(ptr);
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  if (region) {
+    /* Check if tabs visibility actually changes */
+    const bool was_visible = !(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS);
+    const bool will_visible = value;
+
+    /* Preserve column count when tab visibility changes.
+     * Read snap[0] in the old state BEFORE changing the flag, then apply
+     * the new state using the shared helper. */
+    const short old_sizex = region->sizex;
+    short old_min_sizex = 0;
+    if (was_visible != will_visible && region->runtime && region->runtime->type &&
+        region->runtime->type->snap_size && old_sizex > 0)
+    {
+      old_min_sizex = region->runtime->type->snap_size(region, 0, 0);
+    }
+
+    if (value) {
+      region->flag &= ~RGN_FLAG_HIDE_CATEGORY_TABS;
+    }
+    else {
+      region->flag |= RGN_FLAG_HIDE_CATEGORY_TABS;
+    }
+
+    /* Apply preserved column count with new state active. */
+    if (was_visible != will_visible && old_sizex > 0 && old_min_sizex > 0) {
+      const short new_sizex = ED_region_toolbar_snap_preserve_columns(
+          region, old_sizex, old_min_sizex);
+      if (new_sizex > 0) {
+        region->sizex = new_sizex;
+      }
+    }
+
+    ED_area_tag_region_size_update(area, region);
+  }
+}
+static void rna_Space_show_toolshelf_tabs_update(bContext * /*C*/, PointerRNA *ptr)
+{
+  ScrArea *area = rna_area_from_space(ptr);
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  if (region) {
+    ED_region_tag_redraw(region);
+  }
 }
 
 static bool rna_Space_show_region_tool_props_get(PointerRNA *ptr)
@@ -1843,155 +1933,6 @@ static void rna_SpaceView3D_mirror_xr_session_update(Main *main,
 #  endif
 }
 
-/* Structure to hold space-specific information for toolshelf tabs update */
-struct ToolshelfTabsUpdateInfo {
-  eSpace_Type space_type;
-  int notifier_type;
-  bool (*get_tabs_visible)(void *space_data);
-};
-
-/* Helper functions to get tabs visibility for each space type */
-static bool get_view3d_tabs_visible(void *space_data)
-{
-  View3D *v3d = static_cast<View3D *>(space_data);
-  return (v3d->flag2 & V3D_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-static bool get_image_tabs_visible(void *space_data)
-{
-  SpaceImage *sima = static_cast<SpaceImage *>(space_data);
-  return (sima->flag & SI_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-static bool get_sequencer_tabs_visible(void *space_data)
-{
-  SpaceSeq *seq = static_cast<SpaceSeq *>(space_data);
-  return (seq->flag & SEQ_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-static bool get_node_tabs_visible(void *space_data)
-{
-  SpaceNode *snode = static_cast<SpaceNode *>(space_data);
-  return (snode->flag & SNODE_SHOW_TOOLSHELF_TABS) == 0; /* negative boolean */
-}
-
-/**
- * Generic function to handle toolshelf tabs updates for any space type.
- *
- * This function handles the showing/hiding of toolshelf tabs by:
- * - Storing the current toolbar width when tabs are hidden
- * - Restoring the preferred width when tabs are shown
- * - Always preserving snap sizes (64/84/104 when tabs off, 84/104/124 when tabs on)
- * - Updating region size and triggering redraws
- *
- * \param bmain: Main database
- * \param ptr: RNA pointer to the space data
- * \param info: Space-specific information
- */
-static void rna_space_generic_show_toolshelf_tabs_update(Main *bmain,
-                                                         PointerRNA *ptr,
-                                                         const ToolshelfTabsUpdateInfo *info)
-{
-  if (!bmain || !ptr || !ptr->data || !info) {
-    return;
-  }
-
-  wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
-  if (!wm) {
-    return;
-  }
-
-  void *space_data = ptr->data;
-  bool tabs_being_shown = info->get_tabs_visible(space_data);
-
-#  define LISTBASE_FOREACH(type, var, list) \
-    for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
-
-  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-    if (!win) {
-      continue;
-    }
-    bScreen *screen = WM_window_get_active_screen(win);
-    if (!screen) {
-      continue;
-    }
-    LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
-      if (area->spacetype == info->space_type) {
-        void *space_iter = area->spacedata.first;
-        if (space_iter == space_data) {
-          LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
-            if (region->regiontype == RGN_TYPE_TOOLS) {
-              if (tabs_being_shown) {
-                /* Tabs are being shown - restore preferred width if available */
-                float preferred_width = BKE_toolshelf_category_tabs_offset_get(region);
-                if (preferred_width > UI_TOOLBAR_MIN_WIDTH_THRESHOLD) {
-                  region->sizex = preferred_width;
-                }
-                else {
-                  /* No preferred width stored, let snap_size function calculate optimal width */
-                  region->sizex = 0;
-                }
-              }
-              else {
-                /* Tabs are being hidden - store current width as preferred */
-                if (region->sizex > UI_TOOLBAR_MIN_WIDTH_THRESHOLD) {
-                  BKE_toolshelf_category_tabs_offset_set(region, region->sizex);
-                }
-                /* Let snap_size function calculate minimal width for tabs-only view */
-                region->sizex = 0;
-              }
-
-              ED_area_tag_region_size_update(area, region);
-              ED_region_tag_redraw(region);
-            }
-          }
-          break;
-        }
-      }
-    }
-  }
-
-  WM_main_add_notifier(NC_SPACE | info->notifier_type, nullptr);
-}
-
-/**
- * Update function for the show_toolshelf_tabs property in 3D viewport.
- */
-static void rna_SpaceView3D_show_toolshelf_tabs_update(Main *bmain,
-                                                       Scene * /*scene*/,
-                                                       PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {
-      SPACE_VIEW3D, ND_SPACE_VIEW3D, get_view3d_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
-}
-
-static void rna_SpaceImageEditor_show_toolshelf_tabs_update(Main *bmain,
-                                                            Scene * /*scene*/,
-                                                            PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {
-      SPACE_IMAGE, ND_SPACE_IMAGE, get_image_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
-}
-
-static void rna_SpaceSequenceEditor_show_toolshelf_tabs_update(Main *bmain,
-                                                               Scene * /*scene*/,
-                                                               PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {
-      SPACE_SEQ, ND_SPACE_SEQUENCER, get_sequencer_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
-}
-
-static void rna_SpaceNodeEditor_show_toolshelf_tabs_update(Main *bmain,
-                                                           Scene * /*scene*/,
-                                                           PointerRNA *ptr)
-{
-  static const ToolshelfTabsUpdateInfo info = {SPACE_NODE, ND_SPACE_NODE, get_node_tabs_visible};
-  rna_space_generic_show_toolshelf_tabs_update(bmain, ptr, &info);
-}
-
 static int rna_SpaceView3D_icon_from_show_object_viewport_get(PointerRNA *ptr)
 {
   const View3D *v3d = static_cast<View3D *>(ptr->data);
@@ -2740,6 +2681,22 @@ static void rna_SpaceGraphEditor_normalize_update(bContext *C, PointerRNA * /*pt
     return;
   }
 
+  ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
+  /* This has to use the same filters as the graph editor uses to get its FCurves. */
+  const eAnimFilter_Flags filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE |
+                                    ANIMFILTER_NODUPLIS | ANIMFILTER_FCURVESONLY |
+                                    ANIMFILTER_CURVE_VISIBLE);
+  ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, eAnimCont_Types(ac.datatype));
+  for (bAnimListElem &ale : anim_data) {
+    FCurve *fcu = static_cast<FCurve *>(ale.key_data);
+    float offset;
+    /* Calling this function updates the cached values in the `FCurve`. Doing so makes it so that
+     * the normalization will be correct after enabling the normalization, even with auto normalize
+     * disabled. */
+    ANIM_unit_mapping_get_factor(ac.scene, ale.id, fcu, ANIM_UNITCONV_NORMALIZE, &offset);
+  }
+  ANIM_animdata_freelist(&anim_data);
+
   ANIM_frame_channel_y_extents(C, &ac);
   ED_area_tag_refresh(ac.area);
 }
@@ -2747,7 +2704,7 @@ static void rna_SpaceGraphEditor_normalize_update(bContext *C, PointerRNA * /*pt
 static bool rna_SpaceGraphEditor_has_ghost_curves_get(PointerRNA *ptr)
 {
   SpaceGraph *sipo = static_cast<SpaceGraph *>(ptr->data);
-  return (BLI_listbase_is_empty(&sipo->runtime.ghost_curves) == false);
+  return (sipo->runtime.ghost_curves.is_empty() == false);
 }
 
 static void rna_SpaceConsole_rect_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
@@ -4092,7 +4049,9 @@ static const EnumPropertyItem *rna_FileAssetSelectParams_import_method_itemf(
 
   EnumPropertyItem *items = nullptr;
   int items_num = 0;
-  for (const EnumPropertyItem *item = rna_enum_asset_import_method_items; item->identifier; item++)
+  for (const EnumPropertyItem *item = rna_enum_fileselect_params_asset_import_method_items;
+       item->identifier;
+       item++)
   {
     if ((item->value == FILE_ASSET_IMPORT_LINK) &&
         (params->asset_library_ref.type == ASSET_LIBRARY_CUSTOM))
@@ -4143,6 +4102,39 @@ static void rna_FileAsset_instance_collection_set(PointerRNA *ptr, bool value)
   }
 }
 // bfa end
+
+static ARegion *rna_SpaceProject_main_region_get(PointerRNA *ptr)
+{
+  if (!ptr->owner_id || (GS(ptr->owner_id->name) != ID_SCR)) {
+    return nullptr;
+  }
+
+  const bScreen *screen = blender::id_cast<bScreen *>(ptr->owner_id);
+  const SpaceProject *space_project = static_cast<SpaceProject *>(ptr->data);
+
+  return BKE_screen_find_region_in_space(
+      screen, reinterpret_cast<const SpaceLink *>(space_project), RGN_TYPE_WINDOW);
+}
+
+static int rna_SpaceProject_active_section_get(PointerRNA *ptr)
+{
+  ARegion *main_region = rna_SpaceProject_main_region_get(ptr);
+  return rna_region_active_panel_category_get(main_region);
+}
+static void rna_SpaceProject_active_section_set(PointerRNA *ptr, int value)
+{
+  ARegion *main_region = rna_SpaceProject_main_region_get(ptr);
+  rna_region_active_panel_category_set(main_region, value);
+}
+const EnumPropertyItem *rna_SpaceProject_active_section_itemf(bContext * /*C*/,
+                                                              PointerRNA *ptr,
+                                                              PropertyRNA * /*prop*/,
+                                                              bool *r_free)
+{
+  ARegion *main_region = rna_SpaceProject_main_region_get(ptr);
+  return rna_region_active_panel_category_itemf(main_region, r_free);
+}
+
 }  // namespace blender
 
 #else
@@ -6043,12 +6035,13 @@ static void rna_def_space_view3d(BlenderRNA *brna)
                            "Use a local camera in this view, rather than scene's active camera");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
-  /*bfa - the toolshelf tabs*/
+  /* Additional toggle for category tabs visibility on the toolbar. */
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag2", V3D_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_SpaceView3D_show_toolshelf_tabs_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
 
   prop = RNA_def_property(srna, "region_3d", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "RegionView3D");
@@ -6704,10 +6697,11 @@ static void rna_def_space_image(BlenderRNA *brna)
 
   /*bfa - the toolshelf tabs*/
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SI_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_IMAGE, "rna_SpaceImageEditor_show_toolshelf_tabs_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
 
   /* Overlays */
   prop = RNA_def_property(srna, "overlay", PROP_POINTER, PROP_NONE);
@@ -6749,6 +6743,63 @@ static void rna_def_space_sequencer_preview_overlay(BlenderRNA *brna)
       prop, "Center-Cut Safe Areas", "Show safe areas to fit content in a different aspect ratio");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
+  /* Composition Guides */
+  prop = RNA_def_property(srna, "show_composition_center", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_CENTER);
+  RNA_def_property_ui_text(prop, "Center", "Display center composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_center_diagonal", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_CENTER_DIAG);
+  RNA_def_property_ui_text(prop, "Center Diagonal", "Display diagonal center composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_thirds", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_THIRDS);
+  RNA_def_property_ui_text(prop, "Thirds", "Display rule of thirds composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_golden", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_GOLDEN);
+  RNA_def_property_ui_text(prop, "Golden Ratio", "Display golden ratio composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_golden_tria_a", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_GOLDEN_TRI_A);
+  RNA_def_property_ui_text(
+      prop, "Golden Triangle A", "Display golden triangle A composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_golden_tria_b", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_GOLDEN_TRI_B);
+  RNA_def_property_ui_text(
+      prop, "Golden Triangle B", "Display golden triangle B composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_harmony_tri_a", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_HARMONY_TRI_A);
+  RNA_def_property_ui_text(prop, "Harmonious Triangle A", "Display harmony A composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_harmony_tri_b", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.composition_guide_flags", COMPOSITION_GUIDES_HARMONY_TRI_B);
+  RNA_def_property_ui_text(prop, "Harmonious Triangle B", "Display harmony B composition guide");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "composition_guide_color", PROP_FLOAT, PROP_COLOR);
+  RNA_def_property_float_sdna(prop, nullptr, "preview_overlay.composition_guide_color");
+  RNA_def_property_ui_text(
+      prop, "Composition Guide Color", "Color and alpha for compositional guide overlays");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
   prop = RNA_def_property(srna, "show_metadata", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_METADATA);
   RNA_def_property_ui_text(prop, "Show Metadata", "Show metadata of first visible strip");
@@ -6768,6 +6819,13 @@ static void rna_def_space_sequencer_preview_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_cursor", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_2D_CURSOR);
   RNA_def_property_ui_text(prop, "2D Cursor", "");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
+  prop = RNA_def_property(srna, "show_composition_guides", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(
+      prop, nullptr, "preview_overlay.flag", SEQ_PREVIEW_SHOW_COMPOSITION_GUIDES);
+  RNA_def_property_ui_text(
+      prop, "Composition Guides", "Display composition guides over the preview");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 }
 
@@ -7057,6 +7115,13 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
       prop, "Limit View to Contents", "Limit timeline height to maximum used channel slot");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
+  prop = RNA_def_property(srna, "show_scrubbing_region", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_SHOW_SCRUBBING_REGION);
+  RNA_def_property_ui_text(prop,
+                           "Show Scrubbing Region",
+                           "Region with full playback range for scrubbing in the sequencer");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
+
   /* Annotations */
   prop = RNA_def_property(srna, "annotation", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, nullptr, "gpd");
@@ -7104,10 +7169,11 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
 
   /*bfa - the toolshelf tabs*/
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SEQ_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SpaceSequenceEditor_show_toolshelf_tabs_update");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
 
   /* Overlay settings. */
   prop = RNA_def_property(srna, "show_overlays", PROP_BOOLEAN, PROP_NONE);
@@ -8129,9 +8195,9 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Asset Select Parameters", "Settings for the file selection in Asset Browser mode");
 
-  prop = rna_def_asset_library_reference_common(srna,
-                                                "rna_FileAssetSelectParams_asset_library_get",
-                                                "rna_FileAssetSelectParams_asset_library_set");
+  prop = rna_def_asset_library_ui_reference_common(srna,
+                                                   "rna_FileAssetSelectParams_asset_library_get",
+                                                   "rna_FileAssetSelectParams_asset_library_set");
   RNA_def_property_ui_text(prop, "Asset Library", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 
@@ -8153,7 +8219,7 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
                            "Which asset types to show/hide, when browsing an asset library");
 
   prop = RNA_def_property(srna, "import_method", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, rna_enum_asset_import_method_items);
+  RNA_def_property_enum_items(prop, rna_enum_fileselect_params_asset_import_method_items);
   RNA_def_property_enum_funcs(
       prop, nullptr, nullptr, "rna_FileAssetSelectParams_import_method_itemf");
   RNA_def_property_ui_text(prop, "Import Method", "Determine how the asset will be imported");
@@ -8170,11 +8236,10 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
                            "them directly to the scene");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 
-  prop = RNA_def_property(srna, "show_online_assets", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "asset_flags", FILE_ASSETS_HIDE_ONLINE);
-  RNA_def_property_ui_text(prop,
-                           "Show Online Assets",
-                           "When internet access is enabled, load and display online assets");
+  prop = RNA_def_property(srna, "asset_access", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_asset_access_items);
+  RNA_def_property_ui_text(
+      prop, "Asset Access", "Choose the visibility of online and offline assets");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, nullptr);
 
   prop = RNA_def_property(srna, "instance_collections_on_append", PROP_BOOLEAN, PROP_NONE);
@@ -8861,11 +8926,11 @@ static void rna_def_space_node(BlenderRNA *brna)
 
   /*bfa - the toolshelf tabs*/
   prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SNODE_SHOW_TOOLSHELF_TABS);
-  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show tabs in the toolbar");
-  RNA_def_property_update(
-      prop, NC_SPACE | ND_SPACE_NODE, "rna_SpaceNodeEditor_show_toolshelf_tabs_update");
- 
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_boolean_funcs(
+      prop, "rna_Space_show_toolshelf_tabs_get", "rna_Space_show_toolshelf_tabs_set");
+  RNA_def_property_ui_text(prop, "Toolbar Tabs", "Show category tabs on the toolbar");
+  RNA_def_property_update(prop, 0, "rna_Space_show_toolshelf_tabs_update");
   /* bfa node minimap gizmo. */
   prop = RNA_def_property(srna, "minimap_aspect_ratio", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "minimap_aspect_ratio");
@@ -9784,6 +9849,27 @@ static void rna_def_space_spreadsheet(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, nullptr);
 }
 
+static void rna_def_space_project(BlenderRNA *brna)
+{
+  StructRNA *srna;
+
+  srna = RNA_def_struct(brna, "SpaceProject", "Space");
+  RNA_def_struct_sdna(srna, "SpaceProject");
+  RNA_def_struct_ui_text(srna, "Space Project", "Project space data");
+
+  rna_def_space_generic_show_region_toggles(srna, 1 << RGN_TYPE_UI);
+
+  PropertyRNA *prop;
+
+  prop = RNA_def_property(srna, "active_section", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_region_panel_category_items);
+  RNA_def_property_enum_funcs(prop,
+                              "rna_SpaceProject_active_section_get",
+                              "rna_SpaceProject_active_section_set",
+                              "rna_SpaceProject_active_section_itemf");
+  RNA_def_property_ui_text(prop, "Active Section", "Choose the category of options to display");
+}
+
 void RNA_def_space(BlenderRNA *brna)
 {
   rna_def_space(brna);
@@ -9813,6 +9899,7 @@ void RNA_def_space(BlenderRNA *brna)
   rna_def_space_node(brna);
   rna_def_space_clip(brna);
   rna_def_space_spreadsheet(brna);
+  rna_def_space_project(brna);
 }
 
 }  // namespace blender

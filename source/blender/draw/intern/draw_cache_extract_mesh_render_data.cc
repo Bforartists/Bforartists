@@ -21,6 +21,7 @@
 #include "BKE_material.hh"
 #include "BKE_mesh.hh"
 #include "BKE_object.hh"
+#include "BKE_object_types.hh"
 
 #include "ED_mesh.hh"
 
@@ -394,6 +395,15 @@ static void retrieve_active_attribute_names(MeshRenderData &mr,
   mr.default_color_name = mesh_final.default_color_attribute;
 }
 
+static BMEditMesh *mesh_get_original_edit_mesh(const Object &object)
+{
+  BLI_assert(object.type == OB_MESH);
+  if (const ID *data_orig = object.runtime->data_orig) {
+    return id_cast<const Mesh *>(data_orig)->runtime->edit_mesh.get();
+  }
+  return nullptr;
+}
+
 MeshRenderData mesh_render_data_create(Object &object,
                                        Mesh &mesh,
                                        const bool is_editmode,
@@ -409,12 +419,11 @@ MeshRenderData mesh_render_data_create(Object &object,
 
   mr.use_hide = use_hide;
 
-  const Mesh *editmesh_orig = BKE_object_get_pre_modified_mesh(&object);
-  if (editmesh_orig && editmesh_orig->runtime->edit_mesh) {
+  if (BMEditMesh *edit_mesh = mesh_get_original_edit_mesh(object)) {
     const Mesh *eval_cage = DRW_object_get_editmesh_cage_for_drawing(object);
 
-    mr.bm = editmesh_orig->runtime->edit_mesh->bm;
-    mr.edit_bmesh = editmesh_orig->runtime->edit_mesh.get();
+    mr.bm = edit_mesh->bm;
+    mr.edit_bmesh = edit_mesh;
     mr.mesh = (do_final) ? &mesh : eval_cage;
     mr.edit_data = is_editmode ? mr.mesh->runtime->edit_data.get() : nullptr;
 

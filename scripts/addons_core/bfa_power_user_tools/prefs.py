@@ -56,6 +56,12 @@ class BFA_UI_preferences(bpy.types.AddonPreferences):
         col.label(text="File Operators:", icon="FILE_FOLDER")
         layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_file")
 
+        row = layout.row()
+        col = row.column(align=True)
+        col.label(text="File Operators:", icon="GREASEPENCIL")
+        layout.prop(wm.BFA_UI_addon_props, "BFA_PROP_toggle_gplayerselect")
+
+
 preferences_classes = [
     BFA_UI_preferences,
 ]

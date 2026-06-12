@@ -1305,6 +1305,40 @@ class NODES_PT_toolshelf_compositor_add_utilities_matrix(bpy.types.Panel, NodePa
 
         self.draw_entries(context, layout, entries)
 
+class NODES_PT_toolshelf_compositor_add_utilities_rotation(bpy.types.Panel, NodePanel):
+    bl_label = "Rotation"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("FunctionNodeAlignRotationToVector", pad=0),
+            OperatorEntry("FunctionNodeAxesToRotation", pad=14),
+            OperatorEntry("FunctionNodeAxisAngleToRotation", pad=6),
+            OperatorEntry("FunctionNodeEulerToRotation", pad=16),
+            OperatorEntry("FunctionNodeInvertRotation", pad=18),
+            OperatorEntry("ShaderNodeMix", pad=23, text=iface_("Mix Rotation"), settings={"data_type": "'ROTATION'"}),
+            OperatorEntry("FunctionNodeRotateRotation", pad=18),
+            OperatorEntry("FunctionNodeRotateVector", pad=22),
+            OperatorEntry("FunctionNodeRotationToAxisAngle", pad=6),
+            OperatorEntry("FunctionNodeRotationToEuler", pad=16),
+            OperatorEntry("FunctionNodeRotationToQuaternion", pad=7),
+            OperatorEntry("FunctionNodeQuaternionToRotation", pad=7),
+        )
+
+        self.draw_entries(context, layout, entries)
 
 class NODES_PT_toolshelf_compositor_add_utilities_vector(bpy.types.Panel, NodePanel):
     bl_label = "Vector"
@@ -1927,18 +1961,19 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeBake", pad=32),
-            OperatorEntry("GeometryNodeBoundBox", pad=16),
-            OperatorEntry("GeometryNodeConvexHull", pad=19),
-            OperatorEntry("GeometryNodeDeleteGeometry", pad=11),
-            OperatorEntry("GeometryNodeDuplicateElements", pad=7),
-            OperatorEntry("GeometryNodeMergePoints", pad=16),
-            OperatorEntry("GeometryNodeSortElements", pad=16),
-            OperatorEntry("GeometryNodeTransform", pad=4),
+            OperatorEntry("GeometryNodeBake", pad=37),
+            OperatorEntry("GeometryNodeBoundBox", pad=21),
+            OperatorEntry("GeometryNodeConvexHull", pad=24),
+            OperatorEntry("GeometryNodeDeleteGeometry", pad=16),
+            OperatorEntry("GeometryNodeDuplicateElements", pad=12),
+            OperatorEntry("GeometryNodeMergePoints", pad=22),
+            OperatorEntry("GeometryNodeSortElements", pad=22),
+            OperatorEntry("GeometryNodeTransform", pad=10),
             Separator,
-            OperatorEntry("GeometryNodeSeparateComponents", pad=1),
-            OperatorEntry("GeometryNodeSeparateGeometry", pad=6),
-            OperatorEntry("GeometryNodeSplitToInstances", pad=9),
+            OperatorEntry("GeometryNodeGetGeometryComponent", pad=0),
+            OperatorEntry("GeometryNodeSeparateComponents", pad=6),
+            OperatorEntry("GeometryNodeSeparateGeometry", pad=11),
+            OperatorEntry("GeometryNodeSplitToInstances", pad=14),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2267,6 +2302,7 @@ class NODES_PT_toolshelf_gn_add_instances(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeTranslateInstances", pad=8),
             Separator,
             OperatorEntry("GeometryNodeInputInstanceBounds", pad=12),
+            OperatorEntry("GeometryNodeInputInstanceReference", pad=4),
             OperatorEntry("GeometryNodeInstanceTransform", pad=7),
             OperatorEntry("GeometryNodeInputInstanceRotation", pad=11),
             OperatorEntry("GeometryNodeInputInstanceScale", pad=16),
@@ -3061,6 +3097,7 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry("GeometryNodeFieldToList", pad=8),
+            OperatorEntry("GeometryNodeFilterList", pad=10),
             OperatorEntry("GeometryNodeListGetItem", pad=8),
             OperatorEntry("GeometryNodeListLength", pad=10),
         )
@@ -3236,6 +3273,7 @@ classes = (
     NODES_PT_toolshelf_compositor_add_utilities,
     NODES_PT_toolshelf_compositor_add_utilities_math,
     NODES_PT_toolshelf_compositor_add_utilities_matrix,
+    NODES_PT_toolshelf_compositor_add_utilities_rotation,
     NODES_PT_toolshelf_compositor_add_utilities_vector,
     NODES_PT_toolshelf_compositor_add_utilities_text,
     #-----------------------

@@ -66,6 +66,12 @@ enum eUserPref_Flag : int {
 };
 ENUM_OPERATORS(eUserPref_Flag)
 
+/** #UserDef.asset_flag */
+enum eUserPref_AssetFlag : char {
+  USER_ASSETS_USE_ONLINE_ESSENTIALS = 1 << 0,
+};
+ENUM_OPERATORS(eUserPref_AssetFlag)
+
 /** #UserDef.extension_flag */
 enum eUserPref_ExtensionFlag : char {
   USER_EXTENSION_FLAG_ONLINE_ACCESS_HANDLED = 1 << 0,
@@ -89,6 +95,7 @@ enum eUserpref_Save_Modified_Images : char {
 
 enum eUserPref_PrefFlag : char {
   USER_PREF_FLAG_SAVE = (1 << 0),
+  USER_PREF_FLAG_PROJECT_SAVE = (1 << 1),
 };
 ENUM_OPERATORS(eUserPref_PrefFlag)
 
@@ -672,12 +679,20 @@ struct bUserAssetLibrary {
    * (#ASSET_LIBRARY_USE_REMOTE_URL), this is the download cache directory, where already
    * downloaded assets will be placed. */
   char dirpath[/*FILE_MAX*/ 1024] = "";
-  /** Only for remote asset libraries (#ASSET_LIBRARY_USE_REMOTE_URL is set). */
+  /** Only for remote asset libraries (#ASSET_LIBRARY_USE_REMOTE_URL is set). Update using
+   * #BKE_preferences_remote_asset_library_url_set() only. */
   char remote_url[/*FILE_MAX*/ 1024];
 
   short import_method = ASSET_IMPORT_PACK;  /* eAssetImportMethod */
   short flag = ASSET_LIBRARY_RELATIVE_PATH; /* eAssetLibrary_Flag */
   char _pad0[4] = {};
+
+#ifdef __cplusplus
+  bool is_enabled() const
+  {
+    return (this->flag & ASSET_LIBRARY_DISABLED) == 0;
+  }
+#endif
 };
 
 enum eUserExtensionRepo_Flag : uint8_t {
@@ -840,6 +855,7 @@ struct UserDef_TempWinBounds {
   rctf image = {50.0f, 1360.0f, 50.0f, 830.0f};
   rctf graph = {50.0f, 950.0f, 200.0f, 780.0f};
   rctf info = {100.0f, 1000.0f, 300.0f, 880.0f};
+  rctf project = {100.0f, 800.0f, 500.0f, 850.0f};
   rctf outliner = {100.0f, 550.0f, 350.0f, 800.0f};
 };
 
@@ -869,11 +885,11 @@ struct UserDef_Experimental {
   char use_extended_asset_browser = 0;
   char use_sculpt_texture_paint = 0;
   char use_shader_node_previews = 0;
-  char use_geometry_bundle = 0;
-  char use_remote_asset_libraries = 0;
+  /* As a temporary exception to the above sanitation rules, this flag is always ON. The work to
+   * actually remove this flag is tracked in #158903. */
+  char use_remote_asset_libraries = 1;
   char use_collection_importer = 0;
-  char use_geometry_nodes_hair_dynamics = 0;
-  char _pad[2] = {};
+  char _pad[4] = {};
 };
 
 #define USER_EXPERIMENTAL_TEST(userdef, member) (((userdef)->experimental).member)
@@ -931,7 +947,7 @@ struct UserDef {
                          USER_DUP_CAMERA | USER_DUP_SPEAKER | USER_DUP_ACT | USER_DUP_LIGHTPROBE |
                          USER_DUP_GPENCIL | USER_DUP_CURVES | USER_DUP_POINTCLOUD | USER_DUP_NTREE;
   /** Preferences for the preferences. */
-  eUserPref_PrefFlag pref_flag = USER_PREF_FLAG_SAVE;
+  eUserPref_PrefFlag pref_flag = USER_PREF_FLAG_SAVE | USER_PREF_FLAG_PROJECT_SAVE;
   char savetime = 2;
   eUserpref_EmulateMMBMod mouse_emulate_3_button_modifier = {};
   /**
@@ -965,7 +981,9 @@ struct UserDef {
   short versions = 1;
   short dbl_click_time = 350;
 
-  char _pad0[2] = {};
+  AssetAccess asset_access = AssetAccess::OnlineAndOffline;
+
+  char _pad0 = {};
 
   /** Space around each area. Inter-editor gap width. */
   char border_width = 2;
@@ -1078,9 +1096,6 @@ struct UserDef {
 
   char keyconfigstr[64] = "Bforartists"; /*bfa - the active keymap*/
 
-  /** Index of the asset library being edited in the Preferences UI. */
-  short active_asset_library = 0;
-
   /** Index of the extension repo in the Preferences UI. */
   short active_extension_repo = 0;
   /** Flag for all extensions. */
@@ -1093,7 +1108,13 @@ struct UserDef {
   /** Maximum number of simulations connection limit for online operations. */
   uint8_t network_connection_limit = 5;
 
-  char _pad14[3] = {};
+  char _pad2[1] = {};
+
+  /** Index of the asset library being edited in the Preferences UI. */
+  short active_asset_library = 0;
+  eUserPref_AssetFlag asset_flag = USER_ASSETS_USE_ONLINE_ESSENTIALS;
+
+  char _pad14[1] = {};
 
   short undosteps = 32;
   int undomemory = 0;
@@ -1193,7 +1214,8 @@ struct UserDef {
   /** Auto-keying mode. */
   eAutokey_Mode autokey_mode = eAutokey_Mode(AUTOKEY_MODE_NORMAL & ~AUTOKEY_ON);
   /** Flags for inserting keyframes. */
-  eKeying_Flag keying_flag = KEYING_FLAG_XYZ2RGB | AUTOKEY_FLAG_INSERTNEEDED;
+  eKeying_Flag keying_flag = KEYING_FLAG_XYZ2RGB | AUTOKEY_FLAG_INSERTNEEDED |
+                             AUTOKEY_FLAG_INSERTAVAILABLE;
   /** Flags for which channels to insert keys at. */
   eKeyInsertChannels key_insert_channels = USER_ANIM_KEY_CHANNEL_LOCATION |
                                            USER_ANIM_KEY_CHANNEL_ROTATION |

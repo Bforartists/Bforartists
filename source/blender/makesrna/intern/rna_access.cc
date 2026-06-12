@@ -2526,7 +2526,9 @@ static void rna_property_update(
     /* End message bus. */
   }
 
-  if (!is_rna || (prop->flag & PROP_IDPROPERTY)) {
+  const bool is_idprop = prop->flag & PROP_IDPROPERTY;
+  const bool use_deg_update = !(prop->flag & PROP_NO_DEG_UPDATE);
+  if (!is_rna || (is_idprop && use_deg_update)) {
 
     /* Disclaimer: this logic is not applied consistently, causing some confusing behavior.
      *
@@ -4161,6 +4163,7 @@ int RNA_property_string_length(PointerRNA *ptr, PropertyRNA *prop)
    * length. Otherwise, get the 'storage length', which is typically more efficient to compute. */
   if (sprop->get_transform) {
     std::string string_final = property_string_get(ptr, prop_rna_or_id);
+    string_final = sprop->get_transform(ptr, sprop, string_final, prop_rna_or_id.is_set);
     return int(string_final.size());
   }
   return int(property_string_length_storage(ptr, prop_rna_or_id));
@@ -6439,6 +6442,8 @@ void rna_iterator_array_begin(CollectionPropertyIterator *iter,
   iter->parent = *ptr;
 
   ArrayIterator *internal;
+  /* Ensure clearing `data` doesn't prevent it from being freed. */
+  void *data_free = data;
 
   if (data == nullptr) {
     length = 0;
@@ -6456,7 +6461,7 @@ void rna_iterator_array_begin(CollectionPropertyIterator *iter,
 
   internal = &iter->internal.array;
   internal->ptr = static_cast<char *>(data);
-  internal->free_ptr = free_ptr ? data : nullptr;
+  internal->free_ptr = free_ptr ? data_free : nullptr;
   internal->endptr = (static_cast<char *>(data)) + itemsize * length;
   internal->itemsize = itemsize;
   internal->skip = skip;
@@ -7328,19 +7333,9 @@ std::string RNA_property_as_string(
       }
       break;
     case PROP_STRING: {
-      char *buf_esc;
-      char *buf;
-      int length;
-
-      length = RNA_property_string_length(ptr, prop);
-      buf = MEM_new_array_uninitialized<char>(size_t(length) + 1, "RNA_property_as_string");
-      buf_esc = MEM_new_array_uninitialized<char>(size_t(length) * 2 + 1,
-                                                  "RNA_property_as_string esc");
-      RNA_property_string_get(ptr, prop, buf);
-      BLI_str_escape(buf_esc, buf, length * 2 + 1);
-      MEM_delete(buf);
-      ss << fmt::format("\"{}\"", buf_esc);
-      MEM_delete(buf_esc);
+      const std::string str_value = RNA_property_string_get(ptr, prop);
+      const std::string escaped = BLI_str_escape(str_value.c_str());
+      ss << fmt::format("\"{}\"", escaped.c_str());
       break;
     }
     case PROP_ENUM: {

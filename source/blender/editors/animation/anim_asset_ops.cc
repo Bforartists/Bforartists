@@ -62,7 +62,8 @@ static const EnumPropertyItem *rna_asset_library_reference_itemf(bContext * /*C*
   const EnumPropertyItem *items = ed::asset::library_reference_to_rna_enum_itemf(
       /*include_readonly=*/false,
       /*include_current_file=*/true,
-      /*include_remote_libraries=*/false);
+      /*include_remote_libraries=*/false,
+      /*include_separate_online_essentials=*/false);
   *r_free = true;
   BLI_assert(items != nullptr);
   return items;
@@ -141,7 +142,9 @@ static blender::animrig::Action &extract_pose(Main &bmain, const Span<Object *> 
     }
 
     for (bPoseChannel &pose_bone : pose_object->pose->chanbase) {
-      if (!blender::animrig::bone_is_selected(armature, &pose_bone)) {
+      if (!blender::animrig::bone_is_selected(armature,
+                                              {&pose_bone, pose_bone.bone_get(*pose_object)}))
+      {
         continue;
       }
       PointerRNA bone_pointer = RNA_pointer_create_discrete(
@@ -277,7 +280,8 @@ static wmOperatorStatus create_pose_asset_local(bContext *C,
    * Just being defensive here. */
   BLI_assert(library);
   if (catalog_path_c[0] && library) {
-    const asset_system::AssetCatalogPath catalog_path(catalog_path_c);
+    const asset_system::AssetCatalogPath catalog_path =
+        asset_system::AssetCatalogPath::from_user_input(catalog_path_c);
     asset_system::AssetCatalog &catalog = asset::library_ensure_catalogs_in_path(*library,
                                                                                  catalog_path);
     BKE_asset_metadata_catalog_id_set(&meta_data, catalog.catalog_id, catalog.simple_name.c_str());
@@ -338,7 +342,8 @@ static wmOperatorStatus create_pose_asset_user_library(bContext *C,
 
   AssetMetaData &meta_data = *pose_action.id.asset_data;
   if (catalog_path_c[0]) {
-    const asset_system::AssetCatalogPath catalog_path(catalog_path_c);
+    const asset_system::AssetCatalogPath catalog_path =
+        asset_system::AssetCatalogPath::from_user_input(catalog_path_c);
     const asset_system::AssetCatalog &catalog = asset::library_ensure_catalogs_in_path(
         *library, catalog_path);
     BKE_asset_metadata_catalog_id_set(&meta_data, catalog.catalog_id, catalog.simple_name.c_str());
@@ -570,7 +575,9 @@ static Vector<PathValue> generate_path_values(Object &pose_object)
   Vector<PathValue> path_values;
   const bArmature *armature = id_cast<bArmature *>(pose_object.data);
   for (bPoseChannel &pose_bone : pose_object.pose->chanbase) {
-    if (!blender::animrig::bone_is_selected(armature, &pose_bone)) {
+    if (!blender::animrig::bone_is_selected(armature,
+                                            {&pose_bone, pose_bone.bone_get(pose_object)}))
+    {
       continue;
     }
     PointerRNA bone_pointer = RNA_pointer_create_discrete(

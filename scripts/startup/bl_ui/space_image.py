@@ -243,28 +243,30 @@ class IMAGE_MT_select(Menu):
         myop.deselect = False
         layout.operator("uv.shortest_path_select", text="Shortest Path", icon="SELECT_SHORTESTPATH")
         layout.operator("uv.shortest_path_pick", text="Shortest Path Pick", icon="SELECT_SHORTESTPATHPICK")
-        layout.operator("uv.select_tile", icon="SELECT_TILE")
 
         layout.separator()
+        layout.operator("uv.select_tile", text="Tile", icon="SELECT_TILE")
         layout.operator("uv.select_pinned", text="Pinned", icon="PINNED")
         layout.operator("uv.select_split", text="Split", icon="SPLIT")
         layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
         layout.operator("uv.select_similar", text="Similar", icon="SIMILAR")
-        layout.menu("IMAGE_MT_select_all_by_trait")
+        #layout.menu("IMAGE_MT_select_all_by_trait") # BFA - not used, these are exposed to top level
 
         layout.separator()
         layout.menu("IMAGE_MT_select_more_less")
 
 
+# BFA - not used
 class IMAGE_MT_select_all_by_trait(Menu):
     bl_label = "Select All by Trait"
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("uv.select_tile", text="Tile") # BFA - WIP
-        layout.operator("uv.select_pinned", text="Pinned") # BFA - WIP
-        layout.operator("uv.select_overlap", text="Overlap") # BFA - WIP
-        layout.operator("uv.select_by_winding", text="Winding") # BFA - WIP
+        layout.operator("uv.select_tile", text="Tile", icon="SELECT_TILE")
+        layout.operator("uv.select_pinned", text="Pinned", icon="PINNED")
+        layout.operator("uv.select_split", text="Split", icon="SPLIT")
+        layout.operator("uv.select_overlap", text="Overlap", icon="OVERLAP")
+        layout.operator("uv.select_by_winding", text="Winding", icon="WINDING")
 
 # BFA - menu
 class IMAGE_MT_select_more_less(Menu):
@@ -464,8 +466,8 @@ class IMAGE_MT_image(Menu):
             del _ghost_backend
 
         if has_image_clipboard:
-            layout.operator("image.clipboard_copy", text="Copy", icon="COPYDOWN")
-            layout.operator("image.clipboard_paste", text="Paste", icon="PASTEDOWN")
+            layout.operator("image.clipboard_copy", text="Copy", icon='COPYDOWN')
+            layout.operator("image.clipboard_paste", text="Paste", icon='PASTEDOWN')
             layout.separator()
 
         if ima:
@@ -774,8 +776,8 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.operator("uv.copy", icon="COPYDOWN")
-        layout.operator("uv.paste", icon="PASTEDOWN")
+        layout.operator("uv.copy", icon='COPYDOWN')
+        layout.operator("uv.paste", icon='PASTEDOWN')
 
         layout.separator()
 
@@ -1154,7 +1156,8 @@ class IMAGE_HT_header(Header):
                 uvedit = sima.uv_editor
 
                 mesh = context.edit_object.data
-                layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="")
+                layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="", icon='GROUP_UVS')
+
 
     def draw(self, context):
         self.draw_editor_type_menu(context)
@@ -1257,7 +1260,7 @@ class IMAGE_HT_header(Header):
         sub.active = overlay.show_overlays
         sub.popover(panel="IMAGE_PT_overlay", text="")
 
-        # BFA - moved search above to be consistent
+        # BFA - moved Search above to be consistent
         if ima:
             seq_scene = context.sequencer_scene
             scene = context.scene
@@ -2010,12 +2013,6 @@ class IMAGE_PT_overlay_guides(Panel):
     bl_label = "Guides"
     bl_parent_id = "IMAGE_PT_overlay"
 
-    @classmethod
-    def poll(cls, context):
-        sima = context.space_data
-
-        return sima.show_uvedit
-
     def draw(self, context):
         layout = self.layout
 
@@ -2317,7 +2314,7 @@ classes = (
     IMAGE_MT_select,
     IMAGE_MT_select_legacy,  # BFA menu
     IMAGE_MT_select_linked, # BFA - not used
-    IMAGE_MT_select_all_by_trait,
+    IMAGE_MT_select_all_by_trait, # BFA - not used
     IMAGE_MT_select_more_less,  # BFA menu
     IMAGE_MT_image,
     IMAGE_MT_image_transform,

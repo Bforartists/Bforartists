@@ -767,6 +767,7 @@ class TOPBAR_MT_edit(Menu):
             )
 
         layout.operator("screen.userpref_show", text="Preferences", icon="PREFERENCES")
+        layout.operator("screen.project_setup_show", text="Project Setup", icon='PROJECT') # BFA - WIP - To document
 
 
 # BFA - Workaround to separate the tooltips for the preferences folder

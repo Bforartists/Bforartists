@@ -475,7 +475,7 @@ static int rna_Image_active_tile_index_get(PointerRNA *ptr)
 static void rna_Image_active_tile_index_set(PointerRNA *ptr, int value)
 {
   Image *image = static_cast<Image *>(ptr->data);
-  int num_tiles = BLI_listbase_count(&image->tiles);
+  int num_tiles = image->tiles.count();
 
   image->active_tile_index = min_ii(value, num_tiles - 1);
 }
@@ -484,7 +484,7 @@ static void rna_Image_active_tile_index_range(
     PointerRNA *ptr, int *min, int *max, int * /*softmin*/, int * /*softmax*/)
 {
   Image *image = static_cast<Image *>(ptr->data);
-  int num_tiles = BLI_listbase_count(&image->tiles);
+  int num_tiles = image->tiles.count();
 
   *min = 0;
   *max = max_ii(0, num_tiles - 1);
@@ -572,25 +572,23 @@ static void rna_Image_resolution_set(PointerRNA *ptr, const float *values)
 static int rna_Image_depth_get(PointerRNA *ptr)
 {
   Image *im = static_cast<Image *>(ptr->data);
-  ImBuf *ibuf;
   void *lock;
-  int planes;
+  ImBuf *ibuf = BKE_image_acquire_ibuf(im, nullptr, &lock);
 
-  ibuf = BKE_image_acquire_ibuf(im, nullptr, &lock);
-
+  int depth = 0;
   if (!ibuf) {
-    planes = 0;
+    depth = 0;
   }
   else if (ibuf->float_data()) {
-    planes = ibuf->planes * 4;
+    depth = ibuf->color_mode_channels_get() * 8 * 4;
   }
   else {
-    planes = ibuf->planes;
+    depth = ibuf->color_mode_channels_get() * 8;
   }
 
   BKE_image_release_ibuf(im, ibuf, lock);
 
-  return planes;
+  return depth;
 }
 
 static int rna_Image_frame_duration_get(PointerRNA *ptr)
@@ -608,7 +606,7 @@ static int rna_Image_frame_duration_get(PointerRNA *ptr)
   if (BKE_image_has_anim(ima)) {
     MovieReader *anim = (static_cast<ImageAnim *>(ima->anims.first))->anim;
     if (anim) {
-      duration = MOV_get_duration_frames(anim, IMB_TC_RECORD_RUN);
+      duration = MOV_get_duration_frames(anim);
     }
   }
 
@@ -783,7 +781,7 @@ static int rna_render_slots_active_index_get(PointerRNA *ptr)
 static void rna_render_slots_active_index_set(PointerRNA *ptr, int value)
 {
   Image *image = id_cast<Image *>(ptr->owner_id);
-  int num_slots = BLI_listbase_count(&image->renderslots);
+  int num_slots = image->renderslots.count();
   image->render_slot = value;
   BKE_image_partial_update_mark_full_update(image);
   CLAMP(image->render_slot, 0, num_slots - 1);
@@ -794,7 +792,7 @@ static void rna_render_slots_active_index_range(
 {
   Image *image = id_cast<Image *>(ptr->owner_id);
   *min = 0;
-  *max = max_ii(0, BLI_listbase_count(&image->renderslots) - 1);
+  *max = max_ii(0, image->renderslots.count() - 1);
 }
 
 static ImageTile *rna_UDIMTile_new(Image *image, int tile_number, const char *label)

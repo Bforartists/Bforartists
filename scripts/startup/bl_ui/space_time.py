@@ -51,24 +51,16 @@ def playback_controls(layout, context):
 
     if not scene:
         return
-    layout.popover(
-        panel="TIME_PT_playback",
-        text="Playback",
-    )
 
-    if tool_settings and not is_timeline:
-        # The Keyframe settings are not exposed in the Timeline view.
-        icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
-        layout.popover(
-            panel="TIME_PT_keyframing_settings",
-            text_ctxt=i18n_contexts.id_windowmanager,
-            icon=icon_keytype,
-        )
+    ### Left
+
+    # BFA - moved the playback and keying panels to the right, for consistency
 
     # BFA - exposed to top sequencer header, where contextually relevant, make sure 3D Sequencer is enabled
     if is_sequencer and not addon_utils.check("bfa_3Dsequencer")[0]:
         layout.prop(context.workspace, "use_scene_time_sync", text="Sync Scene Time")
 
+    ### Center
     layout.separator_spacer()
     # BFA - moved dropdowns to consistently float right
 
@@ -129,6 +121,7 @@ def playback_controls(layout, context):
             sub.prop(scene, "frame_preview_end", text="End")
         row.operator("anim.end_frame_set", text="", icon="SET_POSITION")
 
+        ### Right
         layout.separator_spacer()
 
         # BFA - Keyframing controls

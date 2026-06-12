@@ -402,6 +402,14 @@ add_blender_test(
   --use-vfont-render
 )
 
+
+# Build RST documentation & PYI stubs (without building the full HTML docs).
+# See the `bl_pyapi_doc_gen.py` doc-string for details.
+add_blender_test(
+  script_pyapi_doc_gen
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_doc_gen.py --
+)
+
 # ------------------------------------------------------------------------------
 # DATA MANAGEMENT TESTS
 # ------------------------------------------------------------------------------
@@ -434,6 +442,7 @@ add_blender_test(
 add_blender_test(
   blendfile_autosave
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_blendfile_autosave.py --
+  --src-test-dir ${TEST_SRC_DIR}/io_tests/blend_autosave/
   --output-dir ${TEST_OUT_DIR}/blendfile_autosave/
 )
 
@@ -707,6 +716,8 @@ endif()
 add_blender_test(
   bl_animation_armature
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_armature.py
+  --
+  --testdir "${TEST_SRC_DIR}/animation"
 )
 
 add_blender_test(
@@ -888,6 +899,7 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
     light
     light_group
     light_linking
+    lightprobe
     mesh
     node_inlining
     pointcloud
@@ -898,6 +910,7 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
     shadow_catcher
     sss
     texture
+    transparency
   )
 
   set(workbench_tests
@@ -964,7 +977,7 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
             "Supported devices are: ${_cycles_all_test_devices}")
       endif()
       string(TOLOWER "${_cycles_device}" _cycles_device_lower)
-      set(_cycles_render_tests bake;${render_tests};osl;image_mipmap)
+      set(_cycles_render_tests bake;bake_raytrace;${render_tests};osl;image_mipmap;updates)
 
       set(_cycles_osl_test_type none)
       if(WITH_CYCLES_OSL)
@@ -1099,7 +1112,6 @@ if(TEST_SRC_DIR_EXISTS)
     texture
     utilities
     vector
-    rotation
     group
 
     pixel_nodes
@@ -1138,7 +1150,6 @@ if(WITH_GPU_COMPOSITOR_TESTS AND TEST_SRC_DIR_EXISTS)
     texture
     utilities
     vector
-    rotation
     group
 
     pixel_nodes
@@ -1227,6 +1238,8 @@ if(TEST_SRC_DIR_EXISTS)
     curve_primitives
     curves
     curves/interpolate_curves
+    empty_object
+    essentials
     foreach_geometry_element_zone
     geometry
     grease_pencil
@@ -1236,6 +1249,7 @@ if(TEST_SRC_DIR_EXISTS)
     repeat_zone
     mesh_primitives
     mesh
+    mesh/bevel
     mesh/extrude
     mesh/split_edges
     mesh/triangulate

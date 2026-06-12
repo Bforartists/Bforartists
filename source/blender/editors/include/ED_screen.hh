@@ -333,6 +333,20 @@ void ED_screen_draw_edges(wmWindow *win);
 void ED_screen_refresh(bContext *C, wmWindowManager *wm, wmWindow *win);
 void ED_screen_ensure_updated(bContext *C, wmWindowManager *wm, wmWindow *win);
 void ED_screen_do_listen(bContext *C, const wmNotifier *note);
+
+/* Unified toolbar width management function.
+ * Handles initialization, startup recalculation, and workspace switching scenarios. */
+void ED_screen_toolbar_widths_update(const bContext *C,
+                                      wmWindowManager *wm,
+                                      bScreen *target_screen,
+                                      bool process_uninitialized,
+                                      bool process_existing);
+/* BFA - Snap toolbar width to correct column count after a tab-width state change
+ * (compact mode or tab visibility toggle). Pass old_min_sizex = snap_size(region, 0, 0)
+ * in the PREVIOUS state; call this after the new state is active. */
+short ED_region_toolbar_snap_preserve_columns(const ARegion *region,
+                                               short old_sizex,
+                                               short old_min_sizex);
 /**
  * \brief Change the active screen.
  *
@@ -390,7 +404,6 @@ ScrArea *ED_screen_state_toggle(bContext *C, wmWindow *win, ScrArea *area, eScre
  * as defined by \a display_type.
  *
  * \param title: Title to set for the window, if a window is spawned.
- * \param rect_unscaled: Position & size of the window, if a window is spawned.
  */
 ScrArea *ED_screen_temp_space_open(bContext *C,
                                    const char *title,
@@ -593,6 +606,7 @@ bool ED_operator_region_gizmo_active(bContext *C);
  * Generic for any view2d which uses anim_ops.
  */
 bool ED_operator_animview_active(bContext *C);
+bool ED_operator_region_animview_active(bContext *C);
 bool ED_operator_outliner_active(bContext *C);
 bool ED_operator_region_outliner_active(bContext *C);
 bool ED_operator_outliner_active_no_editobject(bContext *C);
@@ -602,6 +616,7 @@ bool ED_operator_outliner_active_no_editobject(bContext *C);
  * #ED_operator_asset_browsing_active() (asset browsing only).
  */
 bool ED_operator_file_active(bContext *C);
+bool ED_operator_region_file_active(bContext *C);
 /**
  * \note Will only return true if the file space is in file browsing mode, not asset browsing! See
  * #ED_operator_file_active() (file or asset browsing) and
@@ -611,6 +626,7 @@ bool ED_operator_file_browsing_active(bContext *C);
 bool ED_operator_asset_browsing_active(bContext *C);
 bool ED_operator_spreadsheet_active(bContext *C);
 bool ED_operator_action_active(bContext *C);
+bool ED_operator_region_action_active(bContext *C);
 bool ED_operator_buttons_active(bContext *C);
 bool ED_operator_node_active(bContext *C);
 bool ED_operator_node_editable(bContext *C);
@@ -628,6 +644,11 @@ bool ED_operator_object_active_only(bContext *C);
 bool ED_operator_object_active(bContext *C);
 bool ED_operator_object_active_editable_ex(bContext *C, const Object *ob);
 bool ED_operator_object_active_editable(bContext *C);
+
+/** Use in cases where it's essential the object is the active object in the current view layer. */
+bool ED_operator_object_active_only_from_view_layer(bContext *C);
+bool ED_operator_object_active_from_view_layer(bContext *C);
+
 /**
  * Object must be editable and fully local (i.e. not an override).
  */

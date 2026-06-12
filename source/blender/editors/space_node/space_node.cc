@@ -81,7 +81,7 @@ void ED_node_tree_start(ARegion *region, SpaceNode *snode, bNodeTree *ntree, ID 
   for (bNodeTreePath &path : snode->treepath.items_mutable()) {
     MEM_delete(&path);
   }
-  BLI_listbase_clear(&snode->treepath);
+  snode->treepath.clear_no_delete();
 
   if (ntree) {
     bNodeTreePath *path = MEM_new<bNodeTreePath>("node tree path");
@@ -200,7 +200,7 @@ void ED_node_tree_pop(ARegion *region, SpaceNode *snode)
 
 int ED_node_tree_depth(SpaceNode *snode)
 {
-  return BLI_listbase_count(&snode->treepath);
+  return snode->treepath.count();
 }
 
 bNodeTree *ED_node_tree_get(SpaceNode *snode, int level)
@@ -509,6 +509,21 @@ static const ComputeContext *get_node_editor_root_compute_context(
     }
     return nullptr;
   }
+  if (snode.nodetree->type == NTREE_COMPOSIT) {
+    switch (SpaceNodeCompositorNodesType(snode.node_tree_sub_type)) {
+      case SNODE_COMPOSITOR_SCENE: {
+        const Scene *scene = reinterpret_cast<Scene *>(snode.id);
+        if (!scene) {
+          return nullptr;
+        }
+        return &compute_context_cache.for_data_block(nullptr, scene->id);
+      }
+      case SNODE_COMPOSITOR_SEQUENCER: {
+        return nullptr;
+      }
+    }
+    return nullptr;
+  }
   if (snode.nodetree->type == NTREE_SHADER) {
     return &compute_context_cache.for_shader(nullptr, snode.nodetree);
   }
@@ -521,7 +536,7 @@ static const ComputeContext *get_node_editor_root_compute_context(
   if (!snode.edittree) {
     return nullptr;
   }
-  if (!ELEM(snode.edittree->type, NTREE_GEOMETRY, NTREE_SHADER)) {
+  if (!ELEM(snode.edittree->type, NTREE_GEOMETRY, NTREE_SHADER, NTREE_COMPOSIT)) {
     return nullptr;
   }
   const ComputeContext *root_context = get_node_editor_root_compute_context(snode,
@@ -668,7 +683,7 @@ static SpaceLink *node_create(const ScrArea * /*area*/, const Scene * /*scene*/)
 static void node_free(SpaceLink *sl)
 {
   SpaceNode *snode = reinterpret_cast<SpaceNode *>(sl);
-  BLI_freelistN(&snode->treepath);
+  snode->treepath.free_no_destruct();
   MEM_delete(snode->runtime);
 }
 
@@ -1400,7 +1415,8 @@ static int /*eContextResult*/ node_context(const bContext *C,
     if (snode->edittree) {
       for (bNode *node : snode->edittree->all_nodes()) {
         if (node->flag & NODE_SELECT) {
-          CTX_data_list_add(result, &snode->edittree->id, RNA_Node, node);
+          PointerRNA ptr = RNA_pointer_create_id_subdata(snode->edittree->id, RNA_Node, node);
+          CTX_data_list_add_ptr(result, &ptr);
         }
       }
     }
@@ -1410,16 +1426,8 @@ static int /*eContextResult*/ node_context(const bContext *C,
   if (CTX_data_equals(member, "active_node")) {
     if (snode->edittree) {
       bNode *node = bke::node_get_active(*snode->edittree);
-      CTX_data_pointer_set(result, &snode->edittree->id, RNA_Node, node);
-    }
-
-    CTX_data_type_set(result, ContextDataType::Pointer);
-    return CTX_RESULT_OK;
-  }
-  if (CTX_data_equals(member, "node_previews")) {
-    if (snode->nodetree) {
-      CTX_data_pointer_set(
-          result, &snode->nodetree->id, RNA_NodeInstanceHash, &snode->nodetree->runtime->previews);
+      PointerRNA ptr = RNA_pointer_create_id_subdata(snode->edittree->id, RNA_Node, node);
+      CTX_data_pointer_set_ptr(result, &ptr);
     }
 
     CTX_data_type_set(result, ContextDataType::Pointer);
@@ -1479,7 +1487,7 @@ static void node_id_remap(ID *old_id, ID *new_id, SpaceNode *snode)
     /* nasty DNA logic for SpaceNode:
      * ideally should be handled by editor code, but would be bad level call
      */
-    BLI_freelistN(&snode->treepath);
+    snode->treepath.free_no_destruct();
 
     /* XXX Untested in case new_id != nullptr... */
     snode->id = new_id;
@@ -1867,7 +1875,8 @@ void ED_spacetype_node()
   /* regions: toolbar */
   art = MEM_new_zeroed<ARegionType>("spacetype view3d tools region");
   art->regionid = RGN_TYPE_TOOLS;
-  art->prefsizex = int(UI_TOOLBAR_WIDTH);
+  art->flag = ARegionTypeFlag::UsePanelCategoryTabs;
+  art->prefsizex = int(UI_TOOLBAR_WIDTH_SINGLE);
   art->prefsizey = 50; /* XXX */
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
   art->listener = node_region_listener;

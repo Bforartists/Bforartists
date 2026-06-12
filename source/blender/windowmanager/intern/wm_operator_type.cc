@@ -99,6 +99,8 @@ wmOperatorType *WM_operatortype_find(const char *idname, bool quiet)
   return nullptr;
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Operator Type Append
  * \{ */
@@ -161,6 +163,10 @@ void WM_operatortype_append_ptr(void (*opfunc)(wmOperatorType *, void *), void *
 }
 
 /** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Operator Type Removal & Property Search
+ * \{ */
 
 void WM_operatortype_remove_ptr(wmOperatorType *ot)
 {
@@ -586,7 +592,7 @@ static void wm_operatortype_free_macro(wmOperatorType *ot)
       MEM_delete(otmacro.ptr);
     }
   }
-  BLI_freelistN(&ot->macro);
+  ot->macro.free_no_destruct();
 }
 
 std::string WM_operatortype_name(wmOperatorType *ot, PointerRNA *properties)

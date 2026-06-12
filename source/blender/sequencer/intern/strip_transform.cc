@@ -50,7 +50,7 @@ bool transform_is_locked(const ListBaseT<SeqTimelineChannel> *channels, const St
 {
   const SeqTimelineChannel *channel = channel_get_by_index(channels, strip->channel);
   return strip->flag & SEQ_LOCK ||
-         (channel_is_locked(channel) &&
+         (channel->is_locked() &&
           !flag_is_set(strip->runtime->flag, StripRuntimeFlag::IgnoreChannelLock));
 }
 
@@ -96,7 +96,7 @@ void transform_translate_strip(Scene *evil_scene, Strip *strip, int delta)
   /* Meta strips requires their content is to be translated, and then frame range of the meta is
    * updated based on nested strips. This won't work for empty meta-strips,
    * so they can be treated as normal strip. */
-  if (strip->type == STRIP_TYPE_META && !BLI_listbase_is_empty(&strip->seqbase)) {
+  if (strip->type == STRIP_TYPE_META && !strip->seqbase.is_empty()) {
     for (Strip &strip_child : strip->seqbase) {
       transform_translate_strip(evil_scene, &strip_child, delta);
     }
@@ -133,8 +133,8 @@ bool transform_seqbase_shuffle_ex(ListBaseT<Strip> *seqbasep,
 
   bool use_fallback_translation = false;
 
-  while (transform_test_overlap(evil_scene, seqbasep, test) || channel_is_muted(channel) ||
-         channel_is_locked(channel))
+  while (transform_test_overlap(evil_scene, seqbasep, test) || channel->is_muted() ||
+         channel->is_locked())
   {
     if ((channel_delta > 0) ? (test->channel + channel_delta >= MAX_CHANNELS) :
                               (test->channel + channel_delta < 1))
@@ -621,20 +621,18 @@ float2 image_transform_raw_size_get(const Scene *scene, const Strip *strip)
     }
   }
 
+  if (strip->type == STRIP_TYPE_COLOR) {
+    const SolidColorVars *data = static_cast<const SolidColorVars *>(strip->effectdata);
+    return {float(data->width), float(data->height)};
+  }
+
   if (strip->type == STRIP_TYPE_TEXT) {
-    const TextVars *data = static_cast<TextVars *>(strip->effectdata);
-    const FontFlags font_flags = ((data->flag & SEQ_TEXT_BOLD) ? BLF_BOLD : BLF_NONE) |
-                                 ((data->flag & SEQ_TEXT_ITALIC) ? BLF_ITALIC : BLF_NONE);
-
-    std::unique_lock<Mutex> lock = text_runtime_scoped_lock_get();
-    const int font = text_effect_font_init(nullptr, strip, font_flags);
-    const TextVarsRuntime *runtime = text_effect_calc_runtime(
-        strip, font, int2(scene_render_size));
-    BLF_disable(font, font_flags);
-
-    const float2 text_size(float(BLI_rcti_size_x(&runtime->text_boundbox)),
-                           float(BLI_rcti_size_y(&runtime->text_boundbox)));
-    MEM_delete(runtime);
+    TextVars *data = static_cast<TextVars *>(strip->effectdata);
+    std::scoped_lock runtime_lock(text_runtime_mutex_get());
+    text_effect_update_runtime(nullptr, *data, int2(scene_render_size));
+    BLF_disable(data->runtime->font, BLF_BOLD | BLF_ITALIC);
+    const float2 text_size(float(BLI_rcti_size_x(&data->runtime->text_boundbox)),
+                           float(BLI_rcti_size_y(&data->runtime->text_boundbox)));
     return text_size;
   }
 

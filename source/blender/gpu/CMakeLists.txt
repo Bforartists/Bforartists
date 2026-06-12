@@ -185,8 +185,6 @@ set(SRC
   intern/gpu_shader_interface.hh
   intern/gpu_shader_metadata_private.hh
   intern/gpu_shader_private.hh
-  intern/gpu_shader_srd_cpp.hh
-  intern/gpu_shader_srd_info.hh
   intern/gpu_state_private.hh
   intern/gpu_storage_buffer_private.hh
   intern/gpu_texture_pool_private.hh
@@ -250,6 +248,7 @@ set(VULKAN_SRC
   vulkan/vk_backend.cc
   vulkan/vk_batch.cc
   vulkan/vk_buffer.cc
+  vulkan/vk_buffer_pool.cc
   vulkan/vk_common.cc
   vulkan/vk_context.cc
   vulkan/vk_data_conversion.cc
@@ -300,6 +299,7 @@ set(VULKAN_SRC
   vulkan/vk_backend.hh
   vulkan/vk_batch.hh
   vulkan/vk_buffer.hh
+  vulkan/vk_buffer_pool.hh
   vulkan/vk_common.hh
   vulkan/vk_context.hh
   vulkan/vk_data_conversion.hh
@@ -625,7 +625,7 @@ set(GLSL_SRC
   shaders/common/gpu_shader_sequencer_lib.glsl
   shaders/common/gpu_shader_shared_exponent_lib.glsl
   shaders/common/gpu_shader_smaa_lib.glsl
-  shaders/common/gpu_shader_test_lib.glsl
+  shaders/common/gpu_shader_test_lib.bsl.hh
   shaders/common/gpu_shader_tiled_image_lookup_lib.glsl
   shaders/common/gpu_shader_utildefines_lib.glsl
 
@@ -639,6 +639,7 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_bevel.glsl
   shaders/material/gpu_shader_material_wavelength.glsl
   shaders/material/gpu_shader_material_blackbody.glsl
+  shaders/material/gpu_shader_material_boolean_math.glsl
   shaders/material/gpu_shader_material_bright_contrast.glsl
   shaders/material/gpu_shader_material_bump.glsl
   shaders/material/gpu_shader_material_camera.glsl
@@ -695,6 +696,7 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_rotation_to_axis_angle.glsl
   shaders/material/gpu_shader_material_rotation_to_euler.glsl
   shaders/material/gpu_shader_material_rotation_to_quaternion.glsl
+  shaders/material/gpu_shader_material_scene_time.glsl
   shaders/material/gpu_shader_material_separate_color.glsl
   shaders/material/gpu_shader_material_separate_xyz.glsl
   shaders/material/gpu_shader_material_set.glsl
@@ -755,7 +757,7 @@ set(GLSL_SRC
 set(GLSL_TEST_SRC
   shaders/infos/gpu_shader_test_infos.hh
 
-  tests/shaders/gpu_math_test.glsl
+  tests/shaders/gpu_math_test.bsl.hh
   tests/shaders/gpu_buffer_texture_test.glsl
   tests/shaders/gpu_compute_1d_test.glsl
   tests/shaders/gpu_compute_2d_test.glsl

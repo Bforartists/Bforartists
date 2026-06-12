@@ -28,6 +28,8 @@
 #include "BLI_string.h"
 #include "BLI_utility_mixins.hh"
 
+#include "DNA_asset_types.h"
+#include "DNA_space_enums.h"
 #include "DNA_space_types.h"
 
 #include "WM_api.hh"
@@ -142,8 +144,13 @@ void AssetList::ensure_updated()
 {
   FileList *files = filelist_;
 
-  const bool show_online_assets = (U.uiflag2 & USER_UIFLAG2_SHOW_ONLINE_ASSETS) != 0;
   filelist_setlibrary(files, &library_ref_);
+
+  const bool show_online = ELEM(
+      U.asset_access, AssetAccess::OnlineAndOffline, AssetAccess::OnlyOnline);
+  const bool show_offline = ELEM(
+      U.asset_access, AssetAccess::OnlineAndOffline, AssetAccess::OnlyOffline);
+
   filelist_setfilter_options(
       files,
       true,
@@ -152,10 +159,11 @@ void AssetList::ensure_updated()
       FILE_TYPE_BLENDERLIB,
       FILTER_ID_ALL,
       true,
-      (U.uiflag2 & USER_UIFLAG2_SHOW_ONLINE_ASSETS) == 0,
+      /*filter_assets_hide_online=*/!show_online,
+      /*filter_assets_hide_offline=*/!show_offline,
       "",
       "");
-  filelist_set_asset_include_online(files, show_online_assets);
+  filelist_set_asset_include_online(files, show_online);
 }
 
 void AssetList::fetch(const bContext &C)
@@ -366,10 +374,17 @@ static std::optional<eFileSelectType> asset_library_reference_to_fileselect_type
     case ASSET_LIBRARY_ALL:
       return FILE_ASSET_LIBRARY_ALL;
     case ASSET_LIBRARY_ESSENTIALS:
-      return FILE_ASSET_LIBRARY;
+    case ASSET_LIBRARY_ONLINE_ESSENTIALS:
+      return FILE_ASSET_LIBRARY_ESSENTIALS;
     case ASSET_LIBRARY_CUSTOM: {
       const bUserAssetLibrary *user_library = BKE_preferences_asset_library_find_index(
           &U, library_reference.custom_library_index);
+      if (!user_library) {
+        /* The caller should make sure the passed library reference is valid. */
+        BLI_assert_unreachable();
+        return std::nullopt;
+      }
+
       if (user_library->flag & ASSET_LIBRARY_USE_REMOTE_URL) {
         return FILE_ASSET_LIBRARY_REMOTE;
       }
@@ -541,7 +556,9 @@ void clear_all_library(const bContext *C)
   clear(&all_lib_ref, CTX_wm_manager(C));
 }
 
-void on_remote_assets_downloaded(wmWindowManager &wm, const StringRef library_url)
+void on_remote_assets_downloaded(wmWindowManager &wm,
+                                 const StringRef library_url,
+                                 const StringRef downloaded_file_abspath)
 {
   for (const wmWindow &win : wm.windows) {
     const bScreen *screen = WM_window_get_active_screen(&win);
@@ -551,14 +568,16 @@ void on_remote_assets_downloaded(wmWindowManager &wm, const StringRef library_ur
       if (area.spacetype == SPACE_FILE) {
         SpaceFile *sfile = reinterpret_cast<SpaceFile *>(area.spacedata.first);
         if (sfile->browse_mode == FILE_BROWSE_MODE_ASSETS) {
-          filelist_remote_asset_library_refresh_online_assets_status(sfile->files, library_url);
+          filelist_remote_asset_library_refresh_online_assets_status(
+              sfile->files, library_url, downloaded_file_abspath);
         }
       }
     }
   }
 
   for (AssetList &list : libraries_map().values()) {
-    filelist_remote_asset_library_refresh_online_assets_status(list.filelist_, library_url);
+    filelist_remote_asset_library_refresh_online_assets_status(
+        list.filelist_, library_url, downloaded_file_abspath);
   }
 
   WM_event_add_notifier_ex(&wm, nullptr, NC_ASSET | NA_DOWNLOAD_FINISHED, nullptr);

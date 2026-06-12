@@ -613,6 +613,8 @@ if(WITH_BLENDER)
       double_left
       double_right
       downarrow_hlt
+      download
+      download_done
       drawsize
       driver
       driver_active
@@ -724,6 +726,7 @@ if(WITH_BLENDER)
       filter
       filter_off
       fixed_size
+      flatten
       flatten_handler
       flip
       flip_normals
@@ -1313,6 +1316,7 @@ if(WITH_BLENDER)
       node_fieldatindex
       node_fieldtogrid
       node_fieldtolist
+      node_filterlist
       node_frame
       node_framejoin
       node_frameparent
@@ -1320,6 +1324,7 @@ if(WITH_BLENDER)
       node_fresnel
       node_gamma
       node_geometry
+      node_getgeometrycomponent
       node_get_named_grid
       node_glare
       node_glasshader
@@ -1343,6 +1348,7 @@ if(WITH_BLENDER)
       node_insert_on # bfa - don't change the order of the icons
       node_insert_off # bfa - don't change the order of the icons
 
+      node_instancereference
       node_invert
       node_joingroup
       node_joinframenamed
@@ -1649,6 +1655,7 @@ if(WITH_BLENDER)
       prev_keyframe
       preview_range
       previousactive
+      project
       project_point
       projectfromview
       projectfromview_bounds
@@ -2005,6 +2012,7 @@ if(WITH_BLENDER)
       sound
       space2
       space3
+      space_loops_evenly
       spanish_exclamation
       spanish_question
       speaker

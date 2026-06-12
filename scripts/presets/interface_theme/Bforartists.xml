@@ -5,8 +5,9 @@
         menu_shadow_fac="0.01"
         menu_shadow_width="0"
         icon_alpha="1"
-        icon_saturation="1.0"
+        icon_saturation="1"
         widget_emboss="#ffffff05"
+        link="#6fa9e6ff"
         editor_border="#161616"
         editor_outline="#1f1f1fff"
         editor_outline_active="#ffffff1a"
@@ -202,6 +203,22 @@
             >
           </ThemeWidgetColors>
         </wcol_box>
+        <wcol_curve>
+          <ThemeWidgetColors
+            outline="#727272ff"
+            outline_sel="#9a9a9aff"
+            inner="#545454ff"
+            inner_sel="#000000ff"
+            item="#00000059"
+            text="#080808"
+            text_sel="#c9c9c9"
+            show_shaded="FALSE"
+            shadetop="0"
+            shadedown="0"
+            roundness="0.4"
+            >
+          </ThemeWidgetColors>
+        </wcol_curve>
         <wcol_menu>
           <ThemeWidgetColors
             outline="#252525ff"
@@ -238,7 +255,7 @@
           <ThemeWidgetColors
             outline="#252525ff"
             outline_sel="#242424ff"
-            inner="#191919cf"
+            inner="#191919f2"
             inner_sel="#2d2d2de6"
             item="#646464ff"
             text="#cccccc"
@@ -396,7 +413,7 @@
         <channels>
           <ThemeRegionsChannels
             back="#404141"
-            text="#000000"
+            text="#ffffff"
             text_selected="#ffffff"
             >
           </ThemeRegionsChannels>
@@ -425,6 +442,7 @@
           <ThemeCommonAnim
             playhead="#54b933"
             preview_range="#a14d0066"
+            scene_strip_range="#00000080"
             channels="#6677894b"
             channels_sub="#5563723b"
             channel_group="#59725237"
@@ -471,10 +489,13 @@
     <view_3d>
       <ThemeView3D
         grid="#8c8c8cff"
+        grid_major="#8c8c8cff"
+        grid_axis_brightness="0.46"
         clipping_border_3d="#313131ff"
         wire="#000000"
         wire_edit="#000000"
         edge_width="1"
+        gp_wire_edit="#99999980"
         gp_vertex="#000000"
         gp_vertex_select="#ff8500"
         gp_vertex_size="3"
@@ -488,24 +509,19 @@
         vertex="#000000"
         vertex_select="#ff8500"
         vertex_size="4"
-        vertex_bevel="#00a5ff"
-        vertex_unreferenced="#000000"
         edge_select="#e69000"
         edge_mode_select="#ff8500"
-        edge_seam="#db2512"
-        edge_sharp="#00ffff"
-        edge_crease="#cc0099"
-        edge_bevel="#00a5ff"
-        freestyle_edge_mark="#7fff7f"
         face="#ffffff14"
         face_select="#3e5f8e3c"
         face_mode_select="#ff85003c"
-        face_dot="#ff8500"
         facedot_size="3"
-        freestyle_face_mark="#7fff7f33"
-        face_retopology="#50c8ff0f"
         face_back="#ff0000b3"
         face_front="#0000ffb3"
+        bevel="#00a5ff"
+        seam="#db2512"
+        sharp="#00ffff"
+        crease="#cc0099"
+        freestyle="#7fff7f4d"
         extra_edge_len="#00fbff"
         extra_edge_angle="#ffff00"
         extra_face_angle="#12ff00"
@@ -514,11 +530,12 @@
         normal="#22dddd"
         vertex_normal="#2361dd"
         split_normal="#dd23dd"
+        vertex_unreferenced="#000000"
+        face_retopology="#50c8ff0f"
         nurb_uline="#909000"
         nurb_vline="#803060"
         nurb_sel_uline="#f0ff40"
         nurb_sel_vline="#f090a0"
-        act_spline="#db2512"
         bone_pose="#50c8ff"
         bone_pose_active="#8cffff"
         bone_solid="#c8c8c8"
@@ -531,8 +548,6 @@
         skin_root="#b44d4d"
         view_overlay="#ffffff"
         transform="#ffffff"
-        paint_curve_handle="#7fff7f7f"
-        paint_curve_pivot="#ff7f7f7f"
         outline_width="1"
         object_origin_size="6"
         >
@@ -637,7 +652,9 @@
         keyframe_border_selected="#000000ff"
         keyframe_scale_factor="1"
         summary="#cc701a66"
-        interpolation_line="#94e575cc"
+        anim_interpolation_linear="#94e575cc"
+        anim_interpolation_constant="#e59c7bcc"
+        anim_interpolation_other="#5dbabeb3"
         simulated_frames="#721e65ff"
         >
         <space>
@@ -663,7 +680,6 @@
         face="#ffffff0a"
         face_select="#5680c23c"
         face_mode_select="#ff85003c"
-        face_dot="#ff8500"
         facedot_size="4"
         editmesh_active="#ff85003c"
         wire_edit="#858585"
@@ -679,8 +695,6 @@
         uv_shadow="#707070ff"
         metadatabg="#000000"
         metadatatext="#ffffff"
-        paint_curve_handle="#7fff7f7f"
-        paint_curve_pivot="#ff7f7f7f"
         >
         <space>
           <ThemeSpaceGeneric
@@ -785,6 +799,7 @@
     <node_editor>
       <ThemeNodeEditor
         grid="#666666"
+        node_outline="#ffffff26"
         node_selected="#f15800"
         node_active="#eefcff"
         wire="#808080ff"
@@ -882,7 +897,9 @@
       </ThemeInfo>
     </info>
     <preferences>
-      <ThemePreferences>
+      <ThemePreferences
+        match="#4772b3"
+        >
         <space>
           <ThemeSpaceGeneric
             back="#424242"

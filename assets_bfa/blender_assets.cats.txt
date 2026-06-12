@@ -1,4 +1,6 @@
-# This is an Asset Catalog Definition file for Blender.
+# This is an Asset Catalog Definition file for Bforartists based on Blender.
+# This has unique ID's to not conflict with Blender online assets.
+# Key differences here is that they are nested into a sub-category for "Nodegroups" to not convolute the add menu UX.
 #
 # Empty lines and lines starting with `#` will be ignored.
 # The first non-ignored line should be the version indicator.
@@ -27,7 +29,6 @@ ca10d93d-0283-480d-b868-b4275f8bc79a:Brushes/Grease Pencil Sculpt/Utilities:Brus
 650ad315-0880-451e-8f49-7339af60808a:Brushes/Mesh Sculpt/General/Contrast:Brushes-Mesh Sculpt-General-Contrast
 a1131a99-c34b-4a28-b6d7-ce61fdbf2573:Brushes/Mesh Sculpt/General/Transform:Brushes-Mesh Sculpt-General-Transform
 4900134b-ead6-413d-b6bf-3fb6ff43bbe4:Brushes/Mesh Sculpt/General/Utilities:Brushes-Mesh Sculpt-General-Utilities
-eb98fe9e-0baa-417f-8ff1-d56dd79d2ce2:Brushes/Mesh Sculpt/General/Utilities:Brushes-Mesh Sculpt-General-Utilities
 722259b1-4abf-4d15-8b17-7875c8efb248:Brushes/Mesh Sculpt/Paint:Brushes-Mesh Sculpt-Paint
 abea2557-f13e-4e21-b4d8-11a1fffd7d57:Brushes/Mesh Sculpt/Simulation:Brushes-Mesh Sculpt-Simulation
 a82f0b44-1d89-4ca7-ae21-86296257be99:Brushes/Mesh Texture Paint:Brushes-Mesh Texture Paint
@@ -38,7 +39,7 @@ f57862b2-0845-4ce7-a860-ce343dee67b9:Brushes/Mesh Texture Paint/Utilities:Brushe
 27cbc8dc-80c8-45d5-863c-7ecc48bccf20:Brushes/Mesh Vertex Paint:Brushes-Mesh Vertex Paint
 77635e98-1a5a-482e-9cb1-ba9ec4bc5b74:Brushes/Mesh Weight Paint:Brushes-Mesh Weight Paint
 36584c79-a99e-4b1c-bd5c-8e4865ae3abe:Compositor Nodegroups:Compositor Nodegroups
-679c9c61-2227-41c9-b483-0112dcd65b71:Compositor Nodegroups/Color:Compositor Nodegroups-Color
+42cc3ad5-2475-4b63-800a-0f1f65b21056:Compositor Nodegroups/Color:Compositor Nodegroups-Color
 f6d4a6a3-884c-42eb-a109-4cea52ba0d34:Compositor Nodegroups/Filters:Compositor Nodegroups-Filters
 d1c404ad-8d6d-4f1f-9e4a-a213a4c95346:Compositor Nodegroups/Lenses:Compositor Nodegroups-Lenses
 6b797445-b178-47a3-8733-33494410e95b:Compositor Nodegroups/Lenses/Grains:Compositor Nodegroups-Lenses-Grains
@@ -47,23 +48,22 @@ e1c91f8e-d5fc-4581-b94b-d41a2de7b964:Compositor Nodegroups/Lenses/Vignettes:Comp
 2168a3f4-fe6a-4a14-b9b1-c56c4fa6a023:Compositor Nodegroups/Utilities:Compositor Nodegroups-Utilities
 4a0f5ef6-6395-40cc-b064-d9b97473c1aa:Compositor Nodegroups/Utilities/Vector:Compositor Nodegroups-Utilities-Vector
 007a2c8d-f113-421b-a39c-8fbc76c4f7fe:Generate:Generate
-6ecdfe44-a0d7-40b9-8518-b92c97a1b4f2:Generate:Generate
 9d4e67fc-363a-4999-8361-74e5401947b0:Geometry Nodegroups:Geometry Nodegroups
-a7b80fd1-5de6-4c15-9049-52f25f4376de:Geometry Nodegroups/Geometry:Geometry Nodegroups-Geometry
-463e71f0-6db1-41af-bc96-6f875196aac7:Geometry Nodegroups/Geometry/Operations:Geometry Nodegroups-Geometry-Operations
-5fa1e91c-e798-4051-8e4d-5d47f76f789b:Geometry Nodegroups/Geometry/Selection:Geometry Nodegroups-Geometry-Selection
-f14d3c5d-8223-4e8c-b3b3-cbce81e4b3ee:Geometry Nodegroups/Hair:Geometry Nodegroups-Hair
-87cbaad7-ae4e-404c-9b6b-4fe60ecc39dc:Geometry Nodegroups/Hair/Deformation:Geometry Nodegroups-Hair-Deformation
-40aedbf9-be4b-4ddb-8eec-8a9cd37d0921:Geometry Nodegroups/Hair/Generation:Geometry Nodegroups-Hair-Generation
-09af8c50-8c07-4039-821c-be801761d7cf:Geometry Nodegroups/Hair/Guides:Geometry Nodegroups-Hair-Guides
-c676fe02-8d25-49a1-b672-11aee0918221:Geometry Nodegroups/Hair/Read:Geometry Nodegroups-Hair-Read
-9dedc75a-afe5-472a-9e3f-a555a8df3dff:Geometry Nodegroups/Hair/Utility:Geometry Nodegroups-Hair-Utility
-63a83f9c-5a95-476a-9bd5-fcb72414ea0b:Geometry Nodegroups/Hair/Write:Geometry Nodegroups-Hair-Write
-a01301f0-5ae0-4627-91a4-b7fde91e5c5a:Geometry Nodegroups/Instances:Geometry Nodegroups-Instances
-b9d488d7-441e-4f1a-905a-64ab84c31706:Geometry Nodegroups/Mesh:Geometry Nodegroups-Mesh
-b6bb38bb-bfe1-4a12-b2bc-fc87d060864f:Geometry Nodegroups/Mesh/Read:Geometry Nodegroups-Mesh-Read
-b8945cf7-3045-4675-aae3-0b0eba853415:Geometry Nodegroups/Utilities:Geometry Nodegroups-Utilities
-8c0273f0-3645-449f-9d95-c4f17fb910db:Geometry Nodegroups/Utilities/Vector:Geometry Nodegroups-Utilities-Vector
+10b9306c-aa36-4c23-b8c2-bfe2df691820:Geometry Nodegroups/Geometry:Geometry Nodegroups-Geometry
+64011d4f-7a82-4d24-8e45-a1f95d0269f0:Geometry Nodegroups/Geometry/Operations:Geometry Nodegroups-Geometry-Operations
+a554189c-b845-41c2-b5d7-483907d203e3:Geometry Nodegroups/Geometry/Selection:Geometry Nodegroups-Geometry-Selection
+4425813a-3247-4d4c-854e-1df6d5b3d72e:Geometry Nodegroups/Hair:Geometry Nodegroups-Hair
+46c6b7fe-fcdb-40eb-b814-7d6256cbd04f:Geometry Nodegroups/Hair/Deformation:Geometry Nodegroups-Hair-Deformation
+25c1d10d-c21b-4149-8e5f-dc4af4995d48:Geometry Nodegroups/Hair/Generation:Geometry Nodegroups-Hair-Generation
+2c8a3123-408d-4a45-bd96-a80954994d5d:Geometry Nodegroups/Hair/Guides:Geometry Nodegroups-Hair-Guides
+b2b3b330-0ac2-486f-9d32-be8543df7df1:Geometry Nodegroups/Hair/Read:Geometry Nodegroups-Hair-Read
+eef16020-291c-4cbd-9fdb-f604e462bad9:Geometry Nodegroups/Hair/Utility:Geometry Nodegroups-Hair-Utility
+12600508-f915-4f81-b6bc-9f3387544d91:Geometry Nodegroups/Hair/Write:Geometry Nodegroups-Hair-Write
+57b316a9-4d18-40c5-ad55-d05d92ba63a6:Geometry Nodegroups/Instances:Geometry Nodegroups-Instances
+145a0fb0-58a7-4481-9e1f-2b42649ef788:Geometry Nodegroups/Mesh:Geometry Nodegroups-Mesh
+54e46017-547f-4274-8a51-c98352bfecad:Geometry Nodegroups/Mesh/Read:Geometry Nodegroups-Mesh-Read
+919ad70f-cb4e-46f0-81a7-f429c00ace6b:Geometry Nodegroups/Utilities:Geometry Nodegroups-Utilities
+d5e23ae8-052e-4411-9794-531a1a9e0189:Geometry Nodegroups/Utilities/Vector:Geometry Nodegroups-Utilities-Vector
 9e98eca8-e987-44d3-88a1-6633d0a8ad82:Normals:Normals
 939c73e4-b240-4627-ab68-0e8f3fa93bb1:Shader Nodegroups:Shader Nodegroups
 91c5274c-ec0f-4023-9bb5-973a37ffd80b:Shader Nodegroups/Utility:Shader Nodegroups-Utility

@@ -59,6 +59,7 @@
 #include "BKE_object.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
+#include "BKE_screen.hh" /* BFA */
 #include "BKE_texture.h"
 #include "BKE_vfont.hh"
 #include "BKE_workspace.hh"
@@ -85,6 +86,7 @@
 #include "ED_curve.hh"
 #include "ED_mesh.hh"
 #include "ED_node.hh"
+#include "ED_node_c.hh" /* BFA */
 #include "ED_object.hh"
 #include "ED_paint.hh"
 #include "ED_render.hh"
@@ -1036,6 +1038,11 @@ static wmOperatorStatus view_layer_add_exec(bContext *C, wmOperator *op)
   const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
 
+  /* Only make the view layer active if the windows scene matches the context. */
+  if (scene != WM_window_get_active_scene(win)) {
+    win = nullptr;
+  }
+
   ViewLayer *view_layer_current = win ? WM_window_get_active_view_layer(win) : nullptr;
   int type = RNA_enum_get(op->ptr, "type");
   /* Copy requires a source. */
@@ -1504,9 +1511,10 @@ static Vector<Object *> lightprobe_cache_irradiance_volume_subset_get(bContext *
       break;
     }
     case LIGHTCACHE_SUBSET_ACTIVE: {
-      Object *active_ob = CTX_data_active_object(C);
-      if (is_irradiance_volume(active_ob)) {
-        irradiance_volume_setup(active_ob);
+      if (Object *active_ob = CTX_data_active_object(C)) {
+        if (is_irradiance_volume(active_ob)) {
+          irradiance_volume_setup(active_ob);
+        }
       }
       break;
     }
@@ -1756,7 +1764,7 @@ static wmOperatorStatus render_view_add_exec(bContext *C, wmOperator * /*op*/)
   Scene *scene = CTX_data_scene(C);
 
   BKE_scene_add_render_view(scene, nullptr);
-  scene->r.actview = BLI_listbase_count(&scene->r.views) - 1;
+  scene->r.actview = scene->r.views.count() - 1;
 
   WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
@@ -2805,7 +2813,7 @@ static wmOperatorStatus copy_material_exec(bContext *C, wmOperator *op)
 
   char filepath[FILE_MAX];
   material_copybuffer_filepath_get(filepath, sizeof(filepath));
-  copybuffer.write(filepath, *op->reports);
+  copybuffer.write_as_copypaste_buffer(filepath, *op->reports);
 
   /* We are all done! */
   BKE_report(op->reports, RPT_INFO, "Copied material to internal clipboard");
@@ -3235,6 +3243,127 @@ void TEXTURE_OT_slot_paste(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 }
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - Open Shader Editor Operator
+ * \{ */
+
+static wmOperatorStatus material_open_node_editor_exec(bContext *C, wmOperator *op)
+{
+  Material *ma = static_cast<Material *>(
+      CTX_data_pointer_get_type(C, "material", RNA_Material).data);
+  if (!ma) {
+    BKE_report(op->reports, RPT_ERROR, "No active material");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!ma->nodetree) {
+    BKE_report(op->reports, RPT_ERROR, "Material has no node tree");
+    return OPERATOR_CANCELLED;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Shader Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Shader Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  STRNCPY(snode->tree_idname, "ShaderNodeTree");
+  snode->shaderfrom = SNODE_SHADER_OBJECT;
+  snode->selected_node_group = nullptr;
+
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, ma->nodetree, &ma->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  WM_event_add_notifier(C, NC_MATERIAL | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static bool material_open_node_editor_poll(bContext *C)
+{
+  Material *ma = static_cast<Material *>(
+      CTX_data_pointer_get_type(C, "material", RNA_Material).data);
+  return ma != nullptr && ma->nodetree != nullptr;
+}
+
+void MATERIAL_OT_open_node_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Shader Editor";
+  ot->idname = "MATERIAL_OT_open_node_editor";
+  ot->description = "Open a Shader Editor window for this material";
+  ot->exec = material_open_node_editor_exec;
+  ot->poll = material_open_node_editor_poll;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - Open Texture Node Editor Operator
+ * \{ */
+
+static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *op)
+{
+  Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
+  if (!tex) {
+    BKE_report(op->reports, RPT_ERROR, "No active texture");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!tex->use_nodes) {
+    tex->use_nodes = true;
+    if (tex->nodetree == nullptr) {
+      ED_node_texture_default(C, tex);
+    }
+  }
+
+  if (!tex->nodetree) {
+    BKE_report(op->reports, RPT_ERROR, "Texture has no node tree");
+    return OPERATOR_CANCELLED;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Texture Node Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Texture Node Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  STRNCPY(snode->tree_idname, "TextureNodeTree");
+  snode->texfrom = SNODE_TEX_BRUSH;
+  snode->selected_node_group = nullptr;
+
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, tex->nodetree, &tex->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  WM_event_add_notifier(C, NC_TEXTURE | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static bool texture_open_node_editor_poll(bContext *C)
+{
+  Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
+  return tex != nullptr;
+}
+
+void TEXTURE_OT_open_node_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Texture Node Editor";
+  ot->idname = "TEXTURE_OT_open_node_editor";
+  ot->description = "Open a Texture Node Editor window for this texture";
+  ot->exec = texture_open_node_editor_exec;
+  ot->poll = texture_open_node_editor_poll;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
 
 /** \} */
 

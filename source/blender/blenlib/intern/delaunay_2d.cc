@@ -1344,7 +1344,7 @@ inline bool dc_tri_valid(SymEdge<T> *se, SymEdge<T> *basel, SymEdge<T> *basel_sy
 }
 
 /**
- * Delaunay triangulate sites[start} to sites[end-1].
+ * Delaunay triangulate sites[start] to sites[end-1].
  * Assume sites are lexicographically sorted by coordinate.
  * Return #SymEdge of CCW convex hull at left-most point in *r_le
  * and that of right-most point of cw convex null in *r_re.
@@ -1672,7 +1672,7 @@ template<typename T> inline int tri_orient(const SymEdge<T> *t)
  * in the path we will take to insert an edge constraint.
  * Each such point will either be
  * (a) a vertex or
- * (b) a fraction lambda (0 < lambda < 1) along some #SymEdge.]
+ * (b) a fraction lambda (0 < lambda < 1) along some #SymEdge.
  *
  * In general, lambda=0 indicates case a and lambda != 0 indicates case be.
  * The 'in' edge gives the destination attachment point of a diagonal from the previous crossing,
@@ -1906,7 +1906,7 @@ bool get_next_crossing_from_vert(CDT_state<T> *cdt_state,
      * loop, check to see if the ray goes along `vcur-va`
      * or between `vcur-va` and `vcur-vb`, where va is the end of t
      * and vb is the next vertex (on the next rot edge around vcur, but
-     * should also be the next vert of triangle starting with `vcur-va`. */
+     * should also be the next vert of triangle starting with `vcur-va`). */
     if (t->face != cdt_state->cdt.outer_face && tri_orient(t) < 0) {
       BLI_assert(false); /* Shouldn't happen. */
     }
@@ -2316,7 +2316,7 @@ static uint32_t power_of_10_greater_equal_to(uint32_t x)
  * back to the original face edge (using a numbering system for those edges
  * that starts with cdt->face_edge_offset, and continues with the edges in
  * order around each face in turn. And then the next face starts at
- * cdt->face_edge_offset beyond the start for the previous face.
+ * cdt->face_edge_offset beyond the start for the previous face).
  * Return the number of faces added, which may be less than input.face.size()
  * in the case that some faces have less than 3 sides.
  */
@@ -2402,7 +2402,7 @@ int add_face_constraints(CDT_state<T> *cdt_state,
           BLI_assert(face_symedge0->vert == v1);
         }
         /* Per-edge: count polygon boundaries
-         * (deduplicated per face when #USE_FACE_ORDERED_EDGE_DEDUPE`)
+         * (deduplicated per face when #USE_FACE_ORDERED_EDGE_DEDUPE)
          * for even-odd, accumulate signed winding for non-zero.
          * Mechanism documented on the maps themselves. */
         if (cdt_state->polygon_boundary_count_map || need_winding) {
@@ -2797,18 +2797,18 @@ template<typename T> void detect_holes_with_fillrule_even_odd(CDT_state<T> *cdt_
     if (f_init->deleted || !f_init->symedge || f_init->visit_index != VISIT_INDEX_UNVISITED) {
       continue;
     }
-    fstack.append(f_init);
     cur_region++;
+    /* Mark-on-push: visit_index is assigned the moment a face is queued, never on pop.
+     * This guarantees each face is pushed at most once, removing the per-pop recheck. */
+    f_init->visit_index = cur_region;
+    fstack.append(f_init);
     /* `outer_parity` doubles as a "this region touches outer_face" flag: -1 = no outer-face
      * contact yet; 0/1 = parity reached, with "filled wins" merge on conflict. */
     int8_t outer_parity = -1;
 
     while (!fstack.is_empty()) {
       CDTFace<T> *f = fstack.pop_last();
-      if (f->visit_index != VISIT_INDEX_UNVISITED) {
-        continue;
-      }
-      f->visit_index = cur_region;
+      BLI_assert(f->visit_index == cur_region);
 
       SymEdge<T> *se_start = f->symedge;
       SymEdge<T> *se = se_start;
@@ -2845,6 +2845,7 @@ template<typename T> void detect_holes_with_fillrule_even_odd(CDT_state<T> *cdt_
         else if (!constrained && !neighbor->deleted &&
                  neighbor->visit_index == VISIT_INDEX_UNVISITED)
         {
+          neighbor->visit_index = cur_region;
           fstack.append(neighbor);
         }
       } while ((se = se->next) != se_start);
@@ -2960,18 +2961,18 @@ template<typename T> void detect_holes_with_fillrule_nonzero(CDT_state<T> *cdt_s
     if (f_init->deleted || !f_init->symedge || f_init->visit_index != VISIT_INDEX_UNVISITED) {
       continue;
     }
-    fstack.append(f_init);
     cur_region++;
+    /* Mark-on-push: visit_index is assigned the moment a face is queued, never on pop.
+     * This guarantees each face is pushed at most once, removing the per-pop recheck. */
+    f_init->visit_index = cur_region;
+    fstack.append(f_init);
     bool found_constrained_outer = false;
     bool found_any_outer = false;
     int outer_winding = 0;
 
     while (!fstack.is_empty()) {
       CDTFace<T> *f = fstack.pop_last();
-      if (f->visit_index != VISIT_INDEX_UNVISITED) {
-        continue;
-      }
-      f->visit_index = cur_region;
+      BLI_assert(f->visit_index == cur_region);
 
       SymEdge<T> *se_start = f->symedge;
       SymEdge<T> *se = se_start;
@@ -3017,6 +3018,7 @@ template<typename T> void detect_holes_with_fillrule_nonzero(CDT_state<T> *cdt_s
           found_any_outer = true;
         }
         else if (!neighbor->deleted && neighbor->visit_index == VISIT_INDEX_UNVISITED) {
+          neighbor->visit_index = cur_region;
           fstack.append(neighbor);
         }
       } while ((se = se->next) != se_start);

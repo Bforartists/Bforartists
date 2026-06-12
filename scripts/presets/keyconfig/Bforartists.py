@@ -1,4 +1,4 @@
-keyconfig_version = (5, 2, 7)
+keyconfig_version = (5, 2, 36)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -2182,6 +2182,20 @@ keyconfig_data = \
        ],
       },
      ),
+    ("file.select_first_last",
+     {"type": 'HOME', "value": 'PRESS'},
+     {"properties":
+      [("direction", 'FIRST'),
+       ],
+      },
+     ),
+    ("file.select_first_last",
+     {"type": 'HOME', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("direction", 'LAST'),
+       ],
+      },
+     ),
     ("file.select_all",
      {"type": 'A', "value": 'PRESS'},
      {"properties":
@@ -2608,6 +2622,13 @@ keyconfig_data = \
     ("screen.animation_cancel", {"type": 'ESC', "value": 'PRESS'}, None),
     ("screen.animation_play", {"type": 'MEDIA_PLAY', "value": 'PRESS'}, None),
     ("screen.animation_cancel", {"type": 'MEDIA_STOP', "value": 'PRESS'}, None),
+    ],
+   },
+  ),
+ ("Generic Gizmo Maybe Drag",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": -1, "ctrl": -1, "oskey": -1, "hyper": -1}, None),
     ],
    },
   ),
@@ -3683,7 +3704,7 @@ keyconfig_data = \
    [("paint.image_paint",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'None'),
+      [("brush_toggle", 'None'),
        ],
       },
      ),
@@ -6795,7 +6816,7 @@ keyconfig_data = \
    [("sculpt.brush_stroke",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'None'),
+      [("brush_toggle", 'None'),
        ],
       },
      ),
@@ -7046,7 +7067,7 @@ keyconfig_data = \
    [("sculpt_curves.brush_stroke",
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
-      [("mode", 'None'),
+      [("brush_toggle", 'None'),
        ],
       },
      ),
@@ -7519,6 +7540,13 @@ keyconfig_data = \
      ),
     ("sequencer.retiming_key_delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
+    ("sequencer.select",
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
+     {"properties":
+      [("side_of_frame", True),
+       ],
+      },
+     ),
     ],
    },
   ),

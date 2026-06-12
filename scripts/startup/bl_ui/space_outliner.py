@@ -76,7 +76,6 @@ class OUTLINER_HT_header(Header):
             row.popover(
                 panel="OUTLINER_PT_filter",
                 text="",
-                icon='FILTER',
             )
 
         if display_mode in {'LIBRARIES', 'ORPHAN_DATA'}:
@@ -237,9 +236,7 @@ class OUTLINER_MT_context_menu(Menu):
     bl_label = "Outliner"
 
     @staticmethod
-    def draw_common_operators(layout):
-        layout.separator()
-
+    def draw_common_operators(space, layout):
         ## BFA - The original from blender
         # layout.menu("OUTLINER_MT_liboverride", icon='LIBRARY_DATA_OVERRIDE')
 
@@ -274,8 +271,16 @@ class OUTLINER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.menu_contents("OUTLINER_MT_asset")
+        # Mark/clear asset options does not belongs in certain outliner views.
+        if space.display_mode not in {'SEQUENCE', 'LIBRARY_OVERRIDES'}:
+                layout.menu_contents("OUTLINER_MT_asset")
 
+        if space.display_mode in {'LIBRARY_OVERRIDES'}:
+            layout.operator(
+                "outliner.liboverride_property_remove",
+                text="Remove",
+                icon="DELETE",
+            ) # BFA - WIP - To document
 
 
     def draw(self, context):
@@ -287,7 +292,7 @@ class OUTLINER_MT_context_menu(Menu):
             OUTLINER_MT_collection_new.draw_without_context_menu(context, layout)
             layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(space, layout)
 
 
 class OUTLINER_MT_context_menu_view(Menu):
@@ -439,7 +444,7 @@ class OUTLINER_MT_collection(Menu):
 
         layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(space, layout)
 
 
 class OUTLINER_MT_collection_new(Menu):
@@ -459,7 +464,7 @@ class OUTLINER_MT_collection_new(Menu):
 
         layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(context.space_data, layout)
 
 
 class OUTLINER_MT_object(Menu):
@@ -502,7 +507,7 @@ class OUTLINER_MT_object(Menu):
         
         layout.separator()
 
-        OUTLINER_MT_context_menu.draw_common_operators(layout)
+        OUTLINER_MT_context_menu.draw_common_operators(space, layout)
 
 
 class OUTLINER_MT_asset(Menu):
@@ -556,7 +561,7 @@ class OUTLINER_MT_liboverride(Menu):
 class OUTLINER_PT_filter(Panel):
     bl_space_type = 'OUTLINER'
     bl_region_type = 'HEADER'
-    bl_label = "Filter"
+    bl_label = "Options"
 
     # BFA - Helper method to simplify drawing of properties            
     @staticmethod
@@ -587,7 +592,6 @@ class OUTLINER_PT_filter(Panel):
             row.prop(space, "show_restrict_column_holdout", icon_only=True)
             row.prop(space, "show_restrict_column_indirect_only", icon_only=True)
             layout.separator()
-            
         elif display_mode == 'SCENES':
             layout.label(text="Restriction Toggles")
             row = layout.row(align=True)
@@ -598,110 +602,141 @@ class OUTLINER_PT_filter(Panel):
             row.prop(space, "show_restrict_column_render", icon_only=True)
             layout.separator()
 
-        col = layout.column(align=True)
-        
         if display_mode != 'DATA_API':
+            col = layout.column(align=True)
             col.prop(space, "use_sort_alpha")
+
         if display_mode != 'LIBRARY_OVERRIDES':
             col = layout.column(align=True)
-            row = col.row(align=True)
-            row.prop(space, "use_sync_select", text="Sync Selection")
-            row = col.row(align=True)
-            row.active = space.use_sync_select
-            row.prop(space, "scroll_to_active", text="Scroll to Active") # BFA - WIP, float left
+            split = col.split(factor=0.65)
+            split.prop(space, "use_sync_select", text="Sync Selection")
+            split.label(icon='DISCLOSURE_TRI_DOWN' if space.use_sync_select else 'DISCLOSURE_TRI_RIGHT')
+            if space.use_sync_select:
+                row = col.row(align=True)
+                row.separator(factor=2.5)
+                row.prop(space, "scroll_to_active", text="Scroll to Active") # BFA - WIP, float left
 
             row = layout.row(align=True)
             row.prop(space, "show_mode_column", text="Show Mode Column")
             layout.separator()
 
+
+class OUTLINER_PT_options_search(Panel):
+    bl_space_type = 'OUTLINER'
+    bl_region_type = 'HEADER'
+    bl_label = "Search"
+    bl_parent_id = "OUTLINER_PT_filter"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        space = context.space_data
+        display_mode = space.display_mode
+
+        filter_text_supported = True
         # Same exception for library overrides as in OUTLINER_HT_header.
         if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'HIERARCHIES':
             filter_text_supported = False
-        else:
-            col = layout.column(align=True)
-            col.label(text="Search")
-            
-            row = col.row()
-            row.separator()
-            col = row.column(align=True)
-            
-            col.prop(space, "use_filter_complete", text="Exact Match")
-            col.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
 
-        if display_mode == 'LIBRARY_OVERRIDES' and space.lib_override_view_mode == 'PROPERTIES' and bpy.data.libraries:
-            row = layout.row()
-            row.label(icon='LIBRARY_DATA_OVERRIDE')
-            row.prop(space, "use_filter_lib_override_system", text="System Overrides")
+        return filter_text_supported
 
-        if display_mode == 'VIEW_LAYER':
-            layout.label(text="Filter")
-            row = layout.row()
-            row.separator()
-            col = row.column(align=True)        
+    def draw(self, context):
+        layout = self.layout
+        space = context.space_data
+        display_mode = space.display_mode
 
-            self.draw_prop_row(col, space, "use_filter_view_layers", text="All View Layers", icon='RENDERLAYERS')
-            self.draw_prop_row(col, space, "use_filter_collection", text="Collections", icon='OUTLINER_COLLECTION')
-                
-            row = col.row()
-            row.label(icon='OBJECT_DATAMODE')
-            row = row.row(align=True)
-            row.alignment = 'LEFT'
-            row.prop(space, "use_filter_object", text="Objects")
+        col = layout.column(align=True)
+        col.prop(space, "use_filter_complete", text="Exact Match")
+        col.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
 
-            if space.use_filter_object:
-                row.label(icon='DISCLOSURE_TRI_DOWN')
-            else:
-                row.label(icon='DISCLOSURE_TRI_RIGHT')
-            
-            if space.use_filter_object:
-                row = col.row(align=True)
-                row.prop(space, "filter_state", text="")
-                if space.filter_state != 'ALL':
-                    row.prop(space, "filter_invert", text="", icon='ARROW_LEFTRIGHT')
-                
-                row = col.row()
-                row.separator()
-                col = row.column(align=True)
-                
-                self.draw_prop_row(col, space, "use_filter_object_content", text="Object Contents", icon='OBJECT_CONTENTS')
-                self.draw_prop_row(col, space, "use_filter_children", text="Object Children", icon='CHILD')
 
-                if bpy.data.meshes:
-                    self.draw_prop_row(col, space, "use_filter_object_mesh", text="Meshes", icon='MESH_DATA')
 
-                if bpy.data.armatures:
-                    self.draw_prop_row(col, space, "use_filter_object_armature", text="Armatures", icon='ARMATURE_DATA')
+class OUTLINER_PT_options_filter(Panel):
+    bl_space_type = 'OUTLINER'
+    bl_region_type = 'HEADER'
+    bl_label = "Filter"
+    bl_parent_id = "OUTLINER_PT_filter"
 
-                    if space.use_filter_object_armature:
-                        self.draw_prop_row(col, space, "use_filter_pose_bones", text="Pose Bones", icon='BONE_DATA')
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        display_mode = space.display_mode
+        return display_mode == 'VIEW_LAYER'
 
-                if bpy.data.lights:
-                    self.draw_prop_row(col, space, "use_filter_object_light", text="Lights", icon='LIGHT_DATA')
+    def draw(self, context):
+        layout = self.layout
+        space = context.space_data
+        display_mode = space.display_mode
+        col = layout.column(align=True)
 
-                if bpy.data.cameras:
-                    self.draw_prop_row(col, space, "use_filter_object_camera", text="Cameras", icon='CAMERA_DATA')
-                
-                if bpy.data.grease_pencils:
-                    self.draw_prop_row(col, space, "use_filter_object_grease_pencil", text="Grease Pencil", icon='STROKE')
-                
-                self.draw_prop_row(col, space, "use_filter_object_empty", text="Empties", icon='EMPTY_DATA')
-                
-                other_data = (
-                    "curves",
-                    "metaballs",
-                    "hair_curves",
-                    "pointclouds",
-                    "volumes",
-                    "lightprobes",
-                    "lattices",
-                    "fonts",
-                    "speakers",
-                )    
-                
-                has_others = any((getattr(bpy.data, data_type, False) for data_type in other_data))
-                
-                if has_others:
-                    self.draw_prop_row(col, space, "use_filter_object_others", text="Others", icon='OBJECT_DATAMODE')
+        row = col.row()
+        row.label(icon='RENDERLAYERS')
+        row.prop(space, "use_filter_view_layers", text="All View Layers")
+
+        row = col.row()
+        row.label(icon='GROUP')
+        row.prop(space, "use_filter_collection", text="Collections")
+
+        row = col.row()
+        row.label(icon='OBJECT_DATAMODE')
+        split = row.split(factor=0.60)
+        split.prop(space, "use_filter_object", text="Objects")
+        split.label(icon='DISCLOSURE_TRI_DOWN' if space.use_filter_object else 'DISCLOSURE_TRI_RIGHT')
+        if space.use_filter_object:
+            row = col.row(align=True)
+            row.label(icon='BLANK1')
+            row.prop(space, "filter_state", text="")
+            sub = row.row(align=True)
+            sub.enabled = space.filter_state != 'ALL'
+            sub.prop(space, "filter_invert", text="", icon='ARROW_LEFTRIGHT')
+
+            sub = col.column(align=True)
+
+            row = sub.row()
+            row.label(icon='BLANK1')
+            row.prop(space, "use_filter_object_content", text="Object Contents")
+            row = sub.row()
+            row.label(icon='BLANK1')
+            row.prop(space, "use_filter_children", text="Object Children")
+
+            if bpy.data.meshes:
+                row = sub.row()
+                row.label(icon='MESH_DATA')
+                row.prop(space, "use_filter_object_mesh", text="Meshes")
+            if bpy.data.armatures:
+                row = sub.row()
+                row.label(icon='ARMATURE_DATA')
+                row.prop(space, "use_filter_object_armature", text="Armatures")
+            if bpy.data.lights:
+                row = sub.row()
+                row.label(icon='LIGHT_DATA')
+                row.prop(space, "use_filter_object_light", text="Lights")
+            if bpy.data.cameras:
+                row = sub.row()
+                row.label(icon='CAMERA_DATA')
+                row.prop(space, "use_filter_object_camera", text="Cameras")
+            if bpy.data.grease_pencils:
+                row = sub.row()
+                row.label(icon='STROKE')
+                row.prop(space, "use_filter_object_grease_pencil", text="Grease Pencil")
+            row = sub.row()
+            row.label(icon='EMPTY_DATA')
+            row.prop(space, "use_filter_object_empty", text="Empties")
+
+            if (
+                    bpy.data.curves or
+                    bpy.data.metaballs or
+                    (hasattr(bpy.data, "hair_curves") and bpy.data.hair_curves) or
+                    (hasattr(bpy.data, "pointclouds") and bpy.data.pointclouds) or
+                    bpy.data.volumes or
+                    bpy.data.lightprobes or
+                    bpy.data.lattices or
+                    bpy.data.fonts or
+                    bpy.data.speakers
+            ):
+                row = sub.row()
+                row.label(icon='BLANK1')
+                row.prop(space, "use_filter_object_others", text="Others")
 
 classes = (
     OUTLINER_HT_header,
@@ -723,6 +758,8 @@ classes = (
     OUTLINER_MT_context_menu_view,#BFA - not used
     OUTLINER_MT_view_pie,
     OUTLINER_PT_filter,
+    OUTLINER_PT_options_search,
+    OUTLINER_PT_options_filter,
 )
 
 if __name__ == "__main__":  # only for live edit.

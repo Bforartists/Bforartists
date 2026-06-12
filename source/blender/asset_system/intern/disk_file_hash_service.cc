@@ -32,9 +32,28 @@ DiskFileHashService::DiskFileHashService(const StringRef storage_path)
 {
 }
 
-std::string DiskFileHashService::get_hash(bContext &C,
-                                          const StringRef filepath,
-                                          const StringRef hash_algorithm)
+DiskFileHashService::~DiskFileHashService()
+{
+  release_python();
+}
+
+void DiskFileHashService::release_python()
+{
+#ifdef WITH_PYTHON
+  constexpr const char *SCRIPT = R"(
+import _bpy_internal.disk_file_hash_service as dfhs
+from pathlib import Path
+
+dfhs.release_service(Path(storage_path))
+)";
+  std::unique_ptr locals = bke::idprop::create_group("locals");
+  IDP_AddToGroup(locals.get(), IDP_NewString(this->storage_path_, "storage_path"));
+
+  BPY_run_string_exec_with_locals(nullptr, SCRIPT, *locals);
+#endif
+}
+
+std::string DiskFileHashService::get_hash(const StringRef filepath, const StringRef hash_algorithm)
 {
 #ifdef WITH_PYTHON
   /* NOTE: this is a somewhat inefficient implementation for frequently-repeated calls, as each
@@ -56,9 +75,9 @@ _result = service.get_hash(Path(filepath), hash_algorithm)
   IDP_AddToGroup(locals.get(), IDP_NewString(filepath, "filepath"));
   IDP_AddToGroup(locals.get(), IDP_NewString(hash_algorithm, "hash_algorithm"));
 
-  /* Run the script.*/
+  /* Run the script. */
   std::optional<IDProperty *> idprop_optptr = BPY_run_string_exec_with_locals_return_idprop(
-      &C, SCRIPT, *locals, "_result");
+      nullptr, SCRIPT, *locals, "_result");
   if (!idprop_optptr.has_value()) {
     const std::string filepath_str = filepath;
     CLOG_ERROR(&LOG, "Failed to run hash script for file [%s].", filepath_str.c_str());
@@ -90,8 +109,7 @@ _result = service.get_hash(Path(filepath), hash_algorithm)
 #endif
 }
 
-bool DiskFileHashService::file_matches(bContext &C,
-                                       const StringRef filepath,
+bool DiskFileHashService::file_matches(const StringRef filepath,
                                        const StringRef hash_algorithm,
                                        const StringRef hexhash,
                                        const int64_t size_in_bytes)
@@ -127,9 +145,9 @@ _result = service.file_matches(Path(filepath), hash_algorithm, hexhash, size_in_
   IDP_AddToGroup(locals.get(), IDP_NewInt(size_in_bytes_high, "size_in_bytes_high"));
   IDP_AddToGroup(locals.get(), IDP_NewInt(size_in_bytes_low, "size_in_bytes_low"));
 
-  /* Run the script.*/
+  /* Run the script. */
   std::optional<IDProperty *> idprop_optptr = BPY_run_string_exec_with_locals_return_idprop(
-      &C, SCRIPT, *locals, "_result");
+      nullptr, SCRIPT, *locals, "_result");
   if (!idprop_optptr.has_value()) {
     const std::string filepath_str = filepath;
     CLOG_ERROR(&LOG, "Failed to run hash match script for file [%s].", filepath_str.c_str());

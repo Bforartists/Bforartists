@@ -2,6 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+#include "BLI_compute_context.hh"
 #include "BLI_set.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_vector_set.hh"
@@ -10,6 +11,8 @@
 
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
+
+#include "NOD_eval_log.hh"
 
 #include "COM_compile_state.hh"
 #include "COM_context.hh"
@@ -34,15 +37,15 @@ namespace blender::compositor {
 NodeGroupOperation::NodeGroupOperation(Context &context,
                                        const bNodeTree &node_group,
                                        const NodeGroupOutputTypes needed_outputs,
-                                       Map<bNodeInstanceKey, bke::bNodePreview> *node_previews,
                                        const bNodeInstanceKey active_node_group_instance_key,
-                                       const bNodeInstanceKey instance_key)
+                                       const bNodeInstanceKey instance_key,
+                                       const ComputeContext &compute_context)
     : Operation(context),
       node_group_(node_group),
       needed_output_types_(needed_outputs),
-      node_previews_(node_previews),
       active_node_group_instance_key_(active_node_group_instance_key),
-      instance_key_(instance_key)
+      instance_key_(instance_key),
+      compute_context_(compute_context)
 {
   node_group.ensure_interface_cache();
   for (const bNodeTreeInterfaceSocket *input : node_group.interface_inputs()) {
@@ -52,13 +55,39 @@ NodeGroupOperation::NodeGroupOperation(Context &context,
   }
 
   for (const bNodeTreeInterfaceSocket *output : node_group.interface_outputs()) {
-    const ResultType result_type = get_node_interface_socket_result_type(*output);
-    this->populate_result(output->identifier, context.create_result(result_type));
+    this->populate_result(output->identifier, get_node_interface_socket_result_type(*output));
   }
 }
 
+class ScopedNodeGroupTimer {
+ private:
+  const ComputeContext &compute_context_;
+  nodes::eval_log::NodesEvalLog *log_;
+
+  nodes::eval_log::TimePoint start_;
+
+ public:
+  ScopedNodeGroupTimer(const ComputeContext &compute_context, nodes::eval_log::NodesEvalLog *log)
+      : compute_context_(compute_context), log_(log)
+  {
+    start_ = nodes::eval_log::Clock::now();
+  }
+
+  ~ScopedNodeGroupTimer()
+  {
+    if (!log_) {
+      return;
+    }
+    const nodes::eval_log::TimePoint end = nodes::eval_log::Clock::now();
+    nodes::eval_log::NodeTreeLogger &tree_logger = log_->get_local_tree_logger(compute_context_);
+    tree_logger.execution_time = end - start_;
+  }
+};
+
 void NodeGroupOperation::execute()
 {
+  const ScopedNodeGroupTimer node_group_timer{compute_context_,
+                                              this->context().nodes_evaluation_log()};
   const Schedule schedule = compute_schedule(this->context(),
                                              node_group_,
                                              *this,
@@ -95,12 +124,12 @@ void NodeGroupOperation::evaluate_node(const bNode &node, CompileState &compile_
 {
   NodeOperation *operation = this->get_node_operation(node);
   operation->set_instance_key(bke::node_instance_key(instance_key_, &node_group_, &node));
+  operation->set_compute_context(compute_context_);
 
-  /* Only set previews if the node group is currently being viewed. Except if the node is a group
-   * node, because a child node group might be the active one. */
-  if (node.is_group() || instance_key_ == active_node_group_instance_key_) {
-    operation->set_node_previews(node_previews_);
-  }
+  /* Only compute previews if the node group is currently being viewed. */
+  operation->set_needs_node_previews(
+      bool(needed_output_types_ & NodeGroupOutputTypes::NodePreviews) &&
+      instance_key_ == active_node_group_instance_key_);
 
   compile_state.map_node_to_node_operation(node, operation);
 
@@ -159,11 +188,21 @@ void NodeGroupOperation::map_node_operation_inputs_to_their_results(const bNode 
       continue;
     }
 
-    /* Otherwise, the input is essentially unlinked. So map the input to the result of a newly
-     * created Input Single Value Operation. */
-    SingleValueNodeInputOperation *input_operation = new SingleValueNodeInputOperation(
-        this->context(), *input);
-    operations_stream_.append(std::unique_ptr<SingleValueNodeInputOperation>(input_operation));
+    const InputDescriptor input_descriptor = input_descriptor_from_input_socket(input);
+    if (!input_descriptor.implicit_input.has_value()) {
+      /* The input is unlinked with no implicit value. So map the input to the result of a newly
+       * created Input Single Value Operation. */
+      SingleValueNodeInputOperation *input_operation = new SingleValueNodeInputOperation(
+          this->context(), *input);
+      operations_stream_.append(std::unique_ptr<SingleValueNodeInputOperation>(input_operation));
+      input_operation->evaluate();
+      operation->map_input_to_result(input->identifier, &input_operation->get_result());
+      continue;
+    }
+
+    ImplicitInputOperation *input_operation = new ImplicitInputOperation(
+        this->context(), input_descriptor.implicit_input.value());
+    operations_stream_.append(std::unique_ptr<ImplicitInputOperation>(input_operation));
     input_operation->evaluate();
     operation->map_input_to_result(input->identifier, &input_operation->get_result());
   }
@@ -171,7 +210,9 @@ void NodeGroupOperation::map_node_operation_inputs_to_their_results(const bNode 
 
 /* Create one of the concrete subclasses of the PixelOperation based on the context and compile
  * state. Deleting the operation is the caller's responsibility. */
-static PixelOperation *create_pixel_operation(Context &context, CompileState &compile_state)
+static PixelOperation *create_pixel_operation(Context &context,
+                                              CompileState &compile_state,
+                                              const ComputeContext &compute_context)
 {
   const Schedule &schedule = compile_state.get_schedule();
   PixelCompileUnit &compile_unit = compile_state.get_pixel_compile_unit();
@@ -180,10 +221,11 @@ static PixelOperation *create_pixel_operation(Context &context, CompileState &co
    * compile unit is single value and would thus be more efficient to execute on the CPU. */
   const bool is_single_value = compile_state.is_pixel_compile_unit_single_value();
   if (!context.use_gpu() || is_single_value) {
-    return new MultiFunctionProcedureOperation(context, compile_unit, schedule, is_single_value);
+    return new MultiFunctionProcedureOperation(
+        context, compile_unit, schedule, is_single_value, compute_context);
   }
 
-  return new ShaderOperation(context, compile_unit, schedule);
+  return new ShaderOperation(context, compile_unit, schedule, compute_context);
 }
 
 void NodeGroupOperation::evaluate_pixel_compile_unit(CompileState &compile_state)
@@ -213,13 +255,13 @@ void NodeGroupOperation::evaluate_pixel_compile_unit(CompileState &compile_state
     return;
   }
 
-  PixelOperation *operation = create_pixel_operation(this->context(), compile_state);
-  operation->set_instance_key(instance_key_);
+  PixelOperation *operation = create_pixel_operation(
+      this->context(), compile_state, compute_context_);
 
-  /* Only compute previews if the node group is active. */
-  if (instance_key_ == active_node_group_instance_key_) {
-    operation->set_node_previews(node_previews_);
-  }
+  /* Only compute previews if the node group is currently being viewed. */
+  operation->set_needs_node_previews(
+      bool(needed_output_types_ & NodeGroupOutputTypes::NodePreviews) &&
+      instance_key_ == active_node_group_instance_key_);
 
   for (const bNode *node : compile_unit) {
     compile_state.map_node_to_pixel_operation(*node, operation);

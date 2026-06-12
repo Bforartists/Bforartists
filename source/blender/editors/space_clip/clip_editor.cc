@@ -856,7 +856,7 @@ static void prefetch_task_func(TaskPool *__restrict pool, void *task_data)
   while ((mem = prefetch_thread_next_frame(queue, clip, &size, &current_frame))) {
     ImBuf *ibuf;
     MovieClipUser user = {};
-    int flag = IB_byte_data | IB_multilayer | IB_alphamode_detect | IB_metadata;
+    ImBufFlags flag = ImBufFlags::ByteData | ImBufFlags::AlphaDetect | ImBufFlags::Metadata;
     int result;
     char *colorspace_name = nullptr;
     const bool use_proxy = (clip->flag & MCLIP_USE_PROXY) &&
@@ -875,7 +875,6 @@ static void prefetch_task_func(TaskPool *__restrict pool, void *task_data)
     if (ibuf == nullptr) {
       continue;
     }
-    BKE_movieclip_convert_multilayer_ibuf(ibuf);
 
     result = BKE_movieclip_put_frame_if_possible(clip, &user, ibuf);
 

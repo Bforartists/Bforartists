@@ -436,7 +436,6 @@ struct PlayAnimPict {
   ImBuf *ibuf;
   MovieReader *anim;
   int frame;
-  int IB_flags;
 
 #ifdef USE_FRAME_CACHE_LIMIT
   /** Back pointer to the #LinkData node for this struct in the #g_frame_cache.pics list. */
@@ -551,16 +550,16 @@ static ImBuf *ibuf_from_picture(PlayAnimPict *pic)
     ibuf = pic->ibuf;
   }
   else if (pic->anim) {
-    ibuf = MOV_decode_frame(pic->anim, pic->frame, IMB_TC_NONE, IMB_PROXY_NONE);
+    ibuf = MOV_decode_frame(pic->anim, pic->frame, IMB_PROXY_NONE);
   }
   else if (pic->mem) {
     /* Use correct color-space here. */
     ibuf = IMB_load_image_from_memory(
-        pic->mem, pic->size, pic->IB_flags, pic->filepath, pic->filepath);
+        pic->mem, pic->size, ImBufFlags::ByteData, pic->filepath, pic->filepath);
   }
   else {
     /* Use correct color-space here. */
-    ibuf = IMB_load_image_from_filepath(pic->filepath, pic->IB_flags);
+    ibuf = IMB_load_image_from_filepath(pic->filepath, ImBufFlags::ByteData);
   }
 
   return ibuf;
@@ -743,7 +742,7 @@ static void playanim_toscreen_ex(GhostData &ghost_data,
     CLAMP(offs_y, 0.0f, 1.0f);
 
     /* Checkerboard for case alpha. */
-    if (ibuf->planes == 32) {
+    if (ibuf->can_contain_alpha()) {
       GPU_blend(GPU_BLEND_ALPHA);
 
       imm_draw_box_checker_2d_ex(offs_x,
@@ -905,8 +904,7 @@ static void playanim_toscreen(PlayState &ps, const PlayAnimPict *picture, const 
       frame_indicator_factor = float(double(picture->frame) / double(frame_range));
     }
     else {
-      BLI_assert_msg(BLI_listbase_is_single(&ps.picsbase),
-                     "Multiple frames without a valid range!");
+      BLI_assert_msg(ps.picsbase.is_single(), "Multiple frames without a valid range!");
     }
   }
 
@@ -938,23 +936,22 @@ static void build_pict_list_from_anim(ListBaseT<PlayAnimPict> &picsbase,
                                       const int frame_offset)
 {
   /* OCIO_TODO: support different input color space. */
-  MovieReader *anim = MOV_open_file(filepath_first, IB_byte_data, 0, false, nullptr);
+  MovieReader *anim = MOV_open_file(filepath_first, ImBufFlags::Zero, 0, false, nullptr);
   if (anim == nullptr) {
     CLOG_WARN(&LOG, "couldn't open anim '%s'", filepath_first);
     return;
   }
 
-  ImBuf *ibuf = MOV_decode_frame(anim, 0, IMB_TC_NONE, IMB_PROXY_NONE);
+  ImBuf *ibuf = MOV_decode_frame(anim, 0, IMB_PROXY_NONE);
   if (ibuf) {
     playanim_toscreen_on_load(ghost_data, display_ctx, nullptr, ibuf);
     IMB_freeImBuf(ibuf);
   }
 
-  for (int pic = 0; pic < MOV_get_duration_frames(anim, IMB_TC_NONE); pic++) {
+  for (int pic = 0; pic < MOV_get_duration_frames(anim); pic++) {
     PlayAnimPict *picture = MEM_new_zeroed<PlayAnimPict>("Pict");
     picture->anim = anim;
     picture->frame = pic + frame_offset;
-    picture->IB_flags = IB_byte_data;
     picture->filepath = BLI_sprintfN("%s : %4.d", filepath_first, pic + 1);
     BLI_addtail(&picsbase, picture);
   }
@@ -1021,7 +1018,6 @@ static void build_pict_list_from_image_sequence(ListBaseT<PlayAnimPict> &picsbas
 
     PlayAnimPict *picture = MEM_new_zeroed<PlayAnimPict>("picture");
     picture->size = size;
-    picture->IB_flags = IB_byte_data;
     picture->mem = static_cast<uchar *>(mem);
     picture->filepath = BLI_strdup(filepath);
     picture->error_message = error_message;
@@ -1941,9 +1937,9 @@ static std::optional<int> wm_main_playanim_intern(int argc, const char **argv, P
         /* OCIO_TODO: support different input color spaces. */
         /* Image buffer is used for display, which does support displaying any buffer from any
          * colorspace. Skip colorspace conversions in the movie module to improve performance. */
-        MovieReader *anim = MOV_open_file(filepath, IB_byte_data, 0, true, nullptr);
+        MovieReader *anim = MOV_open_file(filepath, ImBufFlags::Zero, 0, true, nullptr);
         if (anim) {
-          ibuf = MOV_decode_frame(anim, 0, IMB_TC_NONE, IMB_PROXY_NONE);
+          ibuf = MOV_decode_frame(anim, 0, IMB_PROXY_NONE);
           MOV_close(anim);
           anim = nullptr;
         }
@@ -1958,7 +1954,7 @@ static std::optional<int> wm_main_playanim_intern(int argc, const char **argv, P
 
       if (ibuf == nullptr) {
         /* OCIO_TODO: support different input color space. */
-        ibuf = IMB_load_image_from_filepath(filepath, IB_byte_data);
+        ibuf = IMB_load_image_from_filepath(filepath, ImBufFlags::ByteData);
       }
 
       if (ibuf == nullptr) {
@@ -2278,7 +2274,7 @@ static std::optional<int> wm_main_playanim_intern(int argc, const char **argv, P
 #endif
 
 #ifdef USE_FRAME_CACHE_LIMIT
-  BLI_freelistN(&g_frame_cache.pics);
+  g_frame_cache.pics.free_no_destruct();
   g_frame_cache.pics_len = 0;
   g_frame_cache.pics_size_in_memory = 0;
 #endif

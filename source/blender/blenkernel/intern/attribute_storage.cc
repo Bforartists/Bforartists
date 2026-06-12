@@ -13,6 +13,8 @@
 #include "BLI_string_utils.hh"
 #include "BLI_vector_set.hh"
 
+#include "PRF_profile.hh"
+
 #include "BLT_translation.hh"
 
 #include "BLO_read_write.hh"
@@ -143,18 +145,6 @@ Attribute::SingleData Attribute::SingleData::from_value(const GPointer &value)
 Attribute::SingleData Attribute::SingleData::from_default_value(const CPPType &type)
 {
   return from_value(default_value_for_type(type));
-}
-
-AttrStorageType Attribute::storage_type() const
-{
-  if (std::get_if<Attribute::ArrayData>(&data_)) {
-    return AttrStorageType::Array;
-  }
-  if (std::get_if<Attribute::SingleData>(&data_)) {
-    return AttrStorageType::Single;
-  }
-  BLI_assert_unreachable();
-  return AttrStorageType::Array;
 }
 
 Attribute::DataVariant &Attribute::data_for_write()
@@ -309,10 +299,24 @@ bool AttributeStorage::remove(const StringRef name)
 
 bool AttributeStorage::remove(const Set<StringRef> &names)
 {
-  const int start_size = this->runtime->attributes.size();
-  this->runtime->attributes.remove_if(
+  const int removed_num = this->runtime->attributes.remove_if(
       [&](const std::unique_ptr<Attribute> &attr) { return names.contains(attr->name()); });
-  return this->runtime->attributes.size() != start_size;
+  return removed_num > 0;
+}
+
+bool AttributeStorage::remove(const Set<const Attribute *> &attributes)
+{
+#ifndef NDEBUG
+  for (const Attribute *attr : attributes) {
+    BLI_assert(this->runtime->attributes.lookup_key_as(attr->name()).get() == attr);
+  }
+#endif
+  if (attributes.is_empty()) {
+    return false;
+  }
+  const int removed_num = this->runtime->attributes.remove_if(
+      [&](const std::unique_ptr<Attribute> &attr) { return attributes.contains(attr.get()); });
+  return removed_num > 0;
 }
 
 std::string AttributeStorage::unique_name_calc(const StringRef name) const
@@ -354,6 +358,9 @@ void AttributeStorage::rename(const Map<Attribute *, StringRef> &renames)
                        this->runtime->attributes.end(),
                        [&](const std::unique_ptr<Attribute> &a) { return a.get() == attr; });
   }));
+  if (renames.is_empty()) {
+    return;
+  }
   Vector<std::unique_ptr<Attribute>, 16> renamed;
   renamed.reserve(this->runtime->attributes.size());
   while (!this->runtime->attributes.is_empty()) {
@@ -370,6 +377,7 @@ void AttributeStorage::rename(const Map<Attribute *, StringRef> &renames)
 
 void AttributeStorage::resize(const AttrDomain domain, const int64_t new_size)
 {
+  PRF_scope_with_name("AttributeStorage::resize", ProfileCategory::Default);
   for (Attribute &attr : *this) {
     if (attr.domain() != domain) {
       continue;
@@ -647,7 +655,7 @@ void attribute_storage_blend_write_prepare(AttributeStorage &data,
       if (use_5_0_compatibility) {
         attribute_dna.storage_type = int8_t(AttrStorageType::Array);
         /* Convert single value storage to array storage for forward compatibility.
-         * See #AttributeArray::is_single) comment for more details. */
+         * See #AttributeArray::is_single comment for more details. */
         const CPPType &cpp_type = attribute_type_to_cpp_type(attr.data_type());
         const GPointer value(cpp_type, data->value);
         const int domain_size = get_domain_size(attr.domain());

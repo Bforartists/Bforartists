@@ -28,6 +28,7 @@ from bl_ui.space_toolsystem_common import (
 
 from rna_prop_ui import PropertyPanel
 from bl_ui.space_time import playback_controls
+from bl_ui.properties_data_camera import DATA_PT_camera_display_composition_guides
 
 
 def _space_view_types(st):
@@ -278,11 +279,12 @@ class SEQUENCER_PT_preview_overlay(Panel):
         col.prop(overlay_settings, "show_image_outline")
         col.prop(ed, "show_overlay_frame", text="Frame Overlay")
         col.prop(overlay_settings, "show_metadata", text="Metadata")
+        col.prop(overlay_settings, "show_annotation", text="Annotations")
 
         col = split.column()
         col.prop(overlay_settings, "show_cursor")
         col.prop(overlay_settings, "show_safe_areas", text="Safe Areas")
-        col.prop(overlay_settings, "show_annotation", text="Annotations")
+        col.prop(overlay_settings, "show_composition_guides", text="Guides")
 
 
 class SEQUENCER_PT_sequencer_overlay(Panel):
@@ -747,6 +749,8 @@ class SEQUENCER_MT_select(Menu):
         col.separator()
 
         if has_sequencer:
+            col.operator("sequencer.select", text="Side of Cursor", icon="RESTRICT_SELECT_OFF").side_of_frame = True
+            layout.separator()
             col.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
             col.menu("SEQUENCER_MT_select_handle", text="Handle")
             col.menu("SEQUENCER_MT_select_channel", text="Channel")
@@ -1319,7 +1323,7 @@ class SEQUENCER_MT_strip_input(Menu):
 class SEQUENCER_MT_strip_lock_mute(Menu):
     bl_label = "Lock/Mute"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.operator("sequencer.lock", icon="LOCKED")
@@ -1336,10 +1340,12 @@ class SEQUENCER_MT_strip_lock_mute(Menu):
 class SEQUENCER_MT_strip_modifiers(Menu):
     bl_label = "Modifiers"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        layout.menu("SEQUENCER_MT_modifier_add", text="Add Modifier")
+        col = layout.column()
+        col.menu("SEQUENCER_MT_modifier_add", text="Add Modifier")
+        col.enabled = context.active_strip is not None
 
         layout.operator("sequencer.strip_modifier_copy", text="Copy to Selected Strips", icon="COPYDOWN")
 
@@ -1522,10 +1528,10 @@ class SEQUENCER_MT_strip(Menu):
 
             layout.separator()
 
-            layout.operator("sequencer.copy", text="Copy", icon="COPYDOWN")
-            layout.operator("sequencer.paste", text="Paste", icon="PASTEDOWN")
-            layout.operator("sequencer.duplicate_move", icon="DUPLICATE")
-            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked", icon="DUPLICATE")
+            layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
+            layout.operator("sequencer.paste", text="Paste", icon='PASTEDOWN')
+            layout.operator("sequencer.duplicate_move", text="Duplicate")
+            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked")
 
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
@@ -1942,6 +1948,7 @@ class SEQUENCER_MT_modifier_add(Menu):
         layout = self.layout
         strip = context.active_strip
         if not strip:
+            layout.label(text="No active strip", icon="INFO")
             return
 
         if layout.operator_context == "EXEC_REGION_WIN":
@@ -1959,16 +1966,15 @@ class SEQUENCER_MT_modifier_add(Menu):
             self.operator_modifier_add(layout, 'SOUND_EQUALIZER')
             self.operator_modifier_add(layout, 'PITCH')
             self.operator_modifier_add(layout, 'ECHO')
-
         else:
             self.operator_modifier_add(layout, "BRIGHT_CONTRAST")
             self.operator_modifier_add(layout, "COLOR_BALANCE")
             self.operator_modifier_add(layout, 'COMPOSITOR')
-            self.operator_modifier_add(layout, "CURVES")
-            self.operator_modifier_add(layout, "HUE_CORRECT")
-            self.operator_modifier_add(layout, "MASK")
-            self.operator_modifier_add(layout, "TONEMAP")
-            self.operator_modifier_add(layout, "WHITE_BALANCE")
+            self.operator_modifier_add(layout, 'CURVES')
+            self.operator_modifier_add(layout, 'HUE_CORRECT')
+            self.operator_modifier_add(layout, 'MASK')
+            self.operator_modifier_add(layout, 'TONEMAP')
+            self.operator_modifier_add(layout, 'WHITE_BALANCE')
 
 
 class SequencerButtonsPanel:
@@ -2907,8 +2913,6 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
                 )
 
 # BFA - Legacy
-
-
 class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
     bl_category = "Strip"
@@ -3292,7 +3296,7 @@ class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
 
 
 class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
-    bl_label = "Strip Proxy & Timecode"
+    bl_label = "Strip Proxy"
     bl_category = "Proxy"
 
     @classmethod
@@ -3352,64 +3356,6 @@ class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
 
             col = layout.column()
             col.prop(proxy, "quality", text="Quality")
-
-            if strip.type == "MOVIE":
-                col = layout.column()
-
-                col.prop(proxy, "timecode", text="Timecode Index")
-
-
-class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
-    bl_label = "Strip Cache"
-    bl_category = "Cache"
-    bl_options = {"DEFAULT_CLOSED"}
-
-    @classmethod
-    def poll(cls, context):
-        show_developer_ui = context.preferences.view.show_developer_ui
-        if not cls.has_sequencer(context):
-            return False
-        if context.active_strip is not None and show_developer_ui:
-            return True
-        return False
-
-    def draw_header(self, context):
-        strip = context.active_strip
-        self.layout.prop(strip, "override_cache_settings", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = False
-        layout.use_property_decorate = False
-
-        strip = context.active_strip
-        layout.active = strip.override_cache_settings
-
-        col = layout.column()
-        col.prop(strip, "use_cache_raw")
-
-        show_cache_size = show_developer_ui and (ed.use_cache_raw or ed.use_cache_final)
-        if show_cache_size:
-            cache_raw_size = ed.cache_raw_size
-            cache_final_size = ed.cache_final_size
-
-            col = layout.box()
-            col = col.column(align=True)
-
-            # BFA - Rework UI to avoid labels cutting off
-            split = col.split(factor=0.75, align=True)
-            col1 = split.column(align=True)
-            col2 = split.column(align=True)
-            col1.alignment = "LEFT"
-            col2.alignment = "RIGHT"
-
-            col1.label(text="Current Cache Size")
-            col1.label(text="Raw")
-            col1.label(text="Final")
-
-            col2.label(text=iface_("{:d} MB").format(cache_raw_size + cache_final_size), translate=False)
-            col2.label(text=iface_("{:d} MB").format(cache_raw_size), translate=False)
-            col2.label(text=iface_("{:d} MB").format(cache_final_size), translate=False)
 
 
 class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
@@ -3589,6 +3535,26 @@ class SEQUENCER_PT_view_safe_areas_center_cut(SequencerButtonsPanel_Output, Pane
         col = layout.column()
         col.prop(safe_data, "title_center", slider=True)
         col.prop(safe_data, "action_center", slider=True)
+
+
+class SEQUENCER_PT_view_composition_guides(SequencerButtonsPanel_Output, Panel):
+    bl_label = "Composition Guides"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_category = "View"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
+        return is_preview and (st.display_mode == 'IMAGE') and context.sequencer_scene
+
+    def draw_header(self, context):
+        layout = self.layout
+        overlay_settings = context.space_data.preview_overlay
+
+    def draw(self, context):
+        overlay_settings = context.space_data.preview_overlay
+        DATA_PT_camera_display_composition_guides.draw_panel(self.layout, overlay_settings)
 
 
 class SEQUENCER_PT_annotation(AnnotationDataPanel, SequencerButtonsPanel_Output, Panel):
@@ -3784,7 +3750,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 col.prop(st, "show_transform_preview", text="Preview During Transform")
 
             col = layout.column(align=True)
-            col.prop(st, "show_seconds")
+
             col.prop(st, "show_locked_time")
 
             # BFA - Cache settings
@@ -3823,6 +3789,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             col.prop(st, "use_marker_sync")
             col.prop(st, "use_clamp_view")
 
+        layout.separator()
+        layout.prop(st, "show_seconds")
 
 # BFA menu
 class SEQUENCER_MT_fades_add(Menu):
@@ -3927,6 +3895,7 @@ classes = (
     SEQUENCER_PT_frame_overlay,
     SEQUENCER_PT_view_safe_areas,
     SEQUENCER_PT_view_safe_areas_center_cut,
+    SEQUENCER_PT_view_composition_guides,
     SEQUENCER_PT_preview,
     SEQUENCER_PT_annotation,
     SEQUENCER_PT_annotation_onion,

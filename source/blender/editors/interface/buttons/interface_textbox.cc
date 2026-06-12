@@ -48,7 +48,7 @@ void textbox_scroll_to_cursor(ButtonTextBox *textbox)
 #ifdef WITH_INPUT_IME
   /* Include the ime composition string when scrolling to the cursor. */
   const wmIMEData *ime_data = button_ime_data_get(textbox);
-  if (ime_data && ime_data->composite.size() && ime_data->cursor_pos != -1) {
+  if (ime_data && !ime_data->composite.empty() && ime_data->cursor_pos != -1) {
     but_pos += ime_data->cursor_pos;
   }
 #endif
@@ -78,7 +78,7 @@ void textbox_textedit_set_cursor_pos(ButtonTextBox *textbox,
                                      const float2 xy)
 {
 
-  /* Don't include grip bounds when selecting text with the mouse.*/
+  /* Don't include grip bounds when selecting text with the mouse. */
   float2 start = {textbox->rect.xmin, textbox->rect.ymin};
   float2 end = {textbox->rect.xmax, textbox->rect.ymax};
 
@@ -208,7 +208,7 @@ Vector<StringRef> textbox_wrap_lines(ButtonTextBox *textbox)
   StringRef text = textbox->drawstr;
 #ifdef WITH_INPUT_IME
   const wmIMEData *ime_data = button_ime_data_get(textbox);
-  if (ime_data && ime_data->composite.size() > 0) {
+  if (ime_data && !ime_data->composite.empty()) {
     StringRef edit_str = textbox->editstr;
     StringRef l = edit_str.is_empty() ? StringRef("") : edit_str.substr(0, textbox->pos);
     StringRef r = edit_str.is_empty() ? StringRef("") : edit_str.substr(textbox->pos);
@@ -306,7 +306,8 @@ void ButtonTextBox::line_scroll_set(int line_scroll)
 
 float textbox_vertical_padding()
 {
-  return U.pixelsize + 2.0f * UI_SCALE_FAC;
+  /* Allow aligning text buttons with single line text-box buttons. */
+  return float(UI_UNIT_Y - fontstyle_height_max(UI_FSTYLE_WIDGET)) / 2.0f;
 }
 
 TextboxState *textbox_ensure_state(ARegion *region, StringRefNull idname)
@@ -331,7 +332,7 @@ int ButtonTextBox::line_scroll() const
 
 int ButtonTextBox::visible_lines() const
 {
-  return std::max<int>(this->state->visible_lines, 3);
+  return std::max<int>(this->state->visible_lines, textbox_minimum_visible_lines);
 }
 
 }  // namespace blender::ui

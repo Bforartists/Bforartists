@@ -41,6 +41,8 @@
 #include "BLI_string_utils.hh"
 #include "BLI_utildefines.h"
 
+#include "PRF_profile.hh"
+
 #ifndef NDEBUG
 #  include "BLI_dynstr.h"
 #endif
@@ -1318,6 +1320,8 @@ static void layerAdd_propfloat4(void *data1, const void *data2)
   vec1->w += vec2->w;
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Callbacks for (#vec3f, #CD_PROP_FLOAT3)
  * \{ */
@@ -1503,6 +1507,8 @@ static void layerInterp_propquaternion(const void **sources,
   mixer.finalize();
   *static_cast<Quaternion *>(dest) = result;
 }
+
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Callbacks for (#math::Quaternion, #CD_PROP_FLOAT4X4)
@@ -2431,6 +2437,7 @@ void CustomData_realloc(CustomData *data,
                         const int new_size,
                         const eCDAllocType alloctype)
 {
+  PRF_scope(ProfileCategory::Default);
   BLI_assert(new_size >= 0);
   for (int i = 0; i < data->totlayer; i++) {
     CustomDataLayer *layer = &data->layers[i];
