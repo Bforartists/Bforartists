@@ -506,26 +506,26 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
 
   switch (type) {
     case SOCK_OBJECT: {
-      row.use_property_split_set(false); /*BFA - made this wide*/
+      row.use_property_decorate_set(false); /* BFA - disable auto decorator for consistent split */
       row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "objects", name, ICON_OBJECT_DATA);
-      row.label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
+      row.decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
       break;
     }
     case SOCK_COLLECTION: {
-      row.use_property_split_set(false); /*BFA - made this wide*/
+      row.use_property_split_set(false); /* BFA - made this wide */
       row.prop_search(
           socket_props_ptr, "value", ctx.bmain_ptr, "collections", name, ICON_OUTLINER_COLLECTION);
       row.label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_MATERIAL: {
-      row.use_property_split_set(false); /*BFA - made this wide*/
+      row.use_property_split_set(false); /* BFA - made this wide */
       row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "materials", name, ICON_MATERIAL);
       row.label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
     case SOCK_TEXTURE: {
-      row.use_property_split_set(false); /*BFA - made this wide*/
+      row.use_property_split_set(false); /* BFA - made this wide */
       row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "textures", name, ICON_TEXTURE);
       row.label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
@@ -579,6 +579,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
     case SOCK_IMAGE: {
       PropertyRNA *prop = RNA_struct_find_property(socket_props_ptr, "value");
       if (prop && RNA_property_type(prop) == PROP_POINTER) {
+        row.use_property_decorate_set(false); /* BFA - disable auto decorator to prevent extra space in template_id row */
         template_id(&row,
                     &ctx.C,
                     socket_props_ptr,
@@ -589,6 +590,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
                     ui::TEMPLATE_ID_FILTER_ALL,
                     false,
                     name);
+        row.label("", ICON_BLANK1); /* BFA - blank space to align with decorator column on other rows */
       }
       else {
         /* #template_id only supports pointer properties currently. Node tools store
@@ -598,19 +600,11 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       break;
     }
     case SOCK_MENU: {
-      row.use_property_split_set(false); /*BFA - made this wide*/
+      row.use_property_decorate_set(false); /* BFA - disable auto decorator column to keep split aligned with other rows */
       if (socket.flag & NODE_INTERFACE_SOCKET_MENU_EXPANDED) {
-        /* BFA - Add colon to property label */
-        if (!StringRef(name).is_empty()){
-          row.label(name + ":", ICON_NONE);
-        }
-        /* Use a single space when the name is empty to work around a bug with expanded enums. Also
-         * see #ui_item_enum_expand_exec. */
-        row.prop(socket_props_ptr,
-                 "value",
-                 ui::ITEM_R_EXPAND,
-                 " ", /* BFA - Don't use property label */
-                 ICON_NONE);
+        /* BFA - pass actual name so Layout::prop draws the label inside the property split,
+         * aligning the value column with other properties. */
+        row.prop(socket_props_ptr, "value", ui::ITEM_R_EXPAND, name, ICON_NONE);
       }
       else {
         row.prop(socket_props_ptr, "value", UI_ITEM_NONE, name, ICON_NONE);
@@ -639,9 +633,6 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
           case SOCK_INT: {
             row.use_property_decorate_set(false);
             row.prop(socket_props_ptr, rna_path, UI_ITEM_NONE, name, ICON_NONE);
-            row.label(
-                "",
-                ICON_BLANK1); /* BFA - added blank label so int sliders are aligned correctly */
             row.decorator(socket_props_ptr, std::optional<StringRefNull>(StringRefNull(rna_path.c_str())), -1);
             break;
           }
