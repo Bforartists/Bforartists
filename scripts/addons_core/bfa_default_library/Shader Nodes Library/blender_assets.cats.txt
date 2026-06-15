@@ -14,4 +14,4 @@ f5318d0a-60f8-445b-8437-e8ef7a83efd5:Shader Nodegroups:Shader Nodegroups
 88d85651-caec-46fd-b9bd-cce5353c7c6b:Shader Nodegroups/Texture:Shader Nodegroups-Texture
 9198ac32-1f2c-4c69-9118-c15708a9e1aa:Shader Nodegroups/Texture/Patterns:Shader Nodegroups-Texture-Patterns
 ad19c330-0bbb-4814-a160-38e5730f56ce:Shader Nodegroups/Texture/Shapes:Shader Nodegroups-Texture-Shapes
-5857c487-d783-478b-b72f-b0b2edeaa6fa:Shader Nodegroups/Utility:Shader Nodegroups-Utility
+5857c487-d783-478b-b72f-b0b2edeaa6fa:Shader Nodegroups/Utilities:Shader Nodegroups-Utilities

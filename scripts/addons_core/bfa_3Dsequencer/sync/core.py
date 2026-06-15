@@ -16,24 +16,33 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     """3D View Sync Settings."""
 
     def is_sync(self):
-        return bpy.context.workspace.use_scene_time_sync if self.sync_mode == 'BUILTIN' else self.enabled
+        workspace = bpy.context.workspace
+        if workspace is None:
+            return False
+        return workspace.use_scene_time_sync if self.sync_mode == 'BUILTIN' else self.enabled
 
     def set_sync(self, toggle):
+        workspace = bpy.context.workspace
+        if workspace is None:
+            return
         if self.sync_mode == 'BUILTIN':
-            bpy.context.workspace.use_scene_time_sync = toggle
+            workspace.use_scene_time_sync = toggle
         else:
             self.enabled = toggle
         # Update overlay toggle
-        bpy.context.workspace.use_scene_sync_bfa = toggle and self.use_preview_range
+        workspace.use_scene_sync_bfa = toggle and self.use_preview_range
 
     def update_sync(self, context):
         """Update the sync toggle on changing mode"""
+        workspace = bpy.context.workspace
+        if workspace is None:
+            return
         if self.sync_mode == 'BUILTIN':
-            bpy.context.workspace.use_scene_time_sync = self.enabled
+            workspace.use_scene_time_sync = self.enabled
             self.enabled = False
         else:
-            self.enabled = bpy.context.workspace.use_scene_time_sync
-            bpy.context.workspace.use_scene_time_sync = False
+            self.enabled = workspace.use_scene_time_sync
+            workspace.use_scene_time_sync = False
 
     def is_legacy(self):
         return self.sync_mode == 'LEGACY'

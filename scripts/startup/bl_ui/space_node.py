@@ -1575,7 +1575,8 @@ class NodeAssetShelf:
 
 class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
     bl_region_type = 'UI'
-    bl_options = {'DEFAULT_VISIBLE'}
+    #bfa: added STORE_ENABLED_CATALOGS_IN_PREFERENCES so default catalogs from preferences show up
+    bl_options = {'DEFAULT_VISIBLE', 'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
 
     @classmethod
     def poll(cls, context):
@@ -1589,7 +1590,8 @@ class NODE_AST_geometry_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
 
 class NODE_AST_shader_node_groups(NodeAssetShelf, bpy.types.AssetShelf):
     bl_region_type = 'UI'
-    bl_options = {'DEFAULT_VISIBLE'}
+    #bfa: added STORE_ENABLED_CATALOGS_IN_PREFERENCES so default catalogs from preferences show up
+    bl_options = {'DEFAULT_VISIBLE', 'STORE_ENABLED_CATALOGS_IN_PREFERENCES'}
 
     @classmethod
     def poll(cls, context):
