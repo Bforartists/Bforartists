@@ -30,6 +30,17 @@ from rna_prop_ui import PropertyPanel
 from bl_ui.space_time import playback_controls
 from bl_ui.properties_data_camera import DATA_PT_camera_display_composition_guides
 
+# BFA - use the existing strip panels
+from bl_ui.properties_strip import (
+    STRIP_PT_effect,
+    STRIP_PT_effect_text_style,
+    STRIP_PT_effect_text_layout,
+    STRIP_PT_adjust_comp,
+    STRIP_PT_adjust_transform,
+    STRIP_PT_adjust_crop,
+    STRIP_PT_time,
+)
+
 
 def _space_view_types(st):
     view_type = st.view_type
@@ -55,11 +66,11 @@ def are_selected_strips_connected(context):
     selected_strips = getattr(context, "selected_strips", None)
     if not selected_strips or len(selected_strips) <= 1:
         return False
-    
+
     # Check if all selected strips are connected to each other
     # We need to check if each strip has connections to the other selected strips
     selected_strip_set = set(selected_strips)
-    
+
     for strip in selected_strips:
         connected_strips = getattr(strip, "connections", [])
         # Check if any of the connected strips are in our selection
@@ -70,7 +81,7 @@ def are_selected_strips_connected(context):
                 break
         if not found_connection:
             return False
-    
+
     return True
 
 
@@ -1598,7 +1609,7 @@ class SEQUENCER_MT_strip(Menu):
             layout.menu("SEQUENCER_MT_strip_input")
 
             layout.separator()
-            
+
             # BFA - Show connect or disconnect based on connection state
             if are_selected_strips_connected(context):
                 layout.operator("sequencer.disconnect", icon="UNLINKED")
@@ -1826,7 +1837,7 @@ class SEQUENCER_MT_context_menu(Menu):
         layout.menu("SEQUENCER_MT_strip_lock_mute")
 
         layout.separator()
-        
+
         # BFA - Show connect or disconnect based on connection state
         if are_selected_strips_connected(context):
             layout.operator("sequencer.disconnect", icon="UNLINKED")
@@ -2041,8 +2052,6 @@ class SEQUENCER_MT_color_tag_picker(SequencerColorTagPicker, Menu):
         row = layout.row(align=True)
         row.operator_enum("sequencer.strip_color_tag_set", "color", icon_only=True)
 
-# BFA - Legacy
-
 
 class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
     bl_label = ""
@@ -2113,315 +2122,62 @@ class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
             icon = "STRIP_" + strip.color_tag
             sub.popover(panel="SEQUENCER_PT_color_tag_picker", text="", icon=icon)
 
-# BFA - Legacy
-
 
 class SEQUENCER_PT_adjust_crop(SequencerButtonsPanel, Panel):
-    bl_label = "Crop"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_label = STRIP_PT_adjust_crop.bl_label # BFA
+    bl_options = STRIP_PT_adjust_crop.bl_options # BFA
     bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
         if not cls.has_sequencer(context):
             return False
+        return STRIP_PT_adjust_crop.poll(context) # BFA
 
-        strip = context.active_strip
-        if not strip:
-            return False
-
-        return strip.type != "SOUND"
-
-    def draw(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.use_property_split = True
-        layout.active = not strip.mute
-
-        col = layout.column(align=True)
-        col.prop(strip.crop, "min_x")
-        col.prop(strip.crop, "max_x")
-        col.prop(strip.crop, "max_y")
-        col.prop(strip.crop, "min_y")
+    draw = STRIP_PT_adjust_crop.draw # BFA
 
 
 class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
-    bl_label = "Effect Strip"
+    bl_label = STRIP_PT_effect.bl_label
     bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
         if not cls.has_sequencer(context):
             return False
+        return STRIP_PT_effect.poll(context)
 
-        strip = context.active_strip
-        if not strip:
-            return False
-
-        return strip.type in {
-            "ADD",
-            "SUBTRACT",
-            "ALPHA_OVER",
-            "ALPHA_UNDER",
-            "CROSS",
-            "GAMMA_CROSS",
-            "MULTIPLY",
-            "WIPE",
-            "GLOW",
-            "TRANSFORM",
-            "COLOR",
-            "SPEED",
-            "MULTICAM",
-            "GAUSSIAN_BLUR",
-            "TEXT",
-            "COLORMIX",
-        }
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        strip = context.active_strip
-
-        layout.active = not strip.mute
-
-        if strip.input_count > 0:
-            col = layout.column()
-            row = col.row()
-            row.prop(strip, "input_1")
-
-            if strip.input_count > 1:
-                row.operator("sequencer.swap_inputs", text="", icon="SORT_ASC")
-                row = col.row()
-                row.prop(strip, "input_2")
-                row.operator("sequencer.swap_inputs", text="", icon="SORT_DESC")
-
-        strip_type = strip.type
-
-        if strip_type == "COLOR":
-            layout.template_color_picker(strip, "color", value_slider=True, cubic=True)
-            layout.prop(strip, "color", text="")
-
-        elif strip_type == "WIPE":
-            col = layout.column()
-            col.prop(strip, "transition_type")
-            col.alignment = "RIGHT"
-            col.row().prop(strip, "direction", expand=True)
-
-            col = layout.column()
-            col.prop(strip, "blur_width", slider=True)
-            if strip.transition_type in {"SINGLE", "DOUBLE"}:
-                col.prop(strip, "angle")
-
-        elif strip_type == "GLOW":
-            flow = layout.column_flow()
-            flow.prop(strip, "threshold", slider=True)
-            flow.prop(strip, "clamp", slider=True)
-            flow.prop(strip, "boost_factor")
-            flow.prop(strip, "blur_radius")
-            flow.prop(strip, "quality", slider=True)
-            flow.use_property_split = False
-            flow.prop(strip, "use_only_boost")
-
-        elif strip_type == "SPEED":
-            col = layout.column(align=True)
-            col.prop(strip, "speed_control", text="Speed Control")
-            if strip.speed_control == "MULTIPLY":
-                col.prop(strip, "speed_factor", text=" ")
-            elif strip.speed_control == "LENGTH":
-                col.prop(strip, "speed_length", text=" ")
-            elif strip.speed_control == "FRAME_NUMBER":
-                col.prop(strip, "speed_frame_number", text=" ")
-
-            row = layout.row(align=True)
-            if strip.speed_control != "STRETCH":
-                row.use_property_split = False
-                row.prop(strip, "use_frame_interpolate", text="Interpolation")
-
-        elif strip_type == "MULTICAM":
-            col = layout.column(align=True)
-            strip_channel = strip.channel
-
-            col.prop(strip, "multicam_source", text="Source Channel")
-
-            # The multicam strip needs at least 2 strips to be useful
-            if strip_channel > 2:
-                BT_ROW = 4
-                col.label(text="Cut To")
-                row = col.row()
-
-                for i in range(1, strip_channel):
-                    if (i % BT_ROW) == 1:
-                        row = col.row(align=True)
-
-                    # Workaround - .enabled has to have a separate UI block to work
-                    if i == strip.multicam_source:
-                        sub = row.row(align=True)
-                        sub.enabled = False
-                        sub.operator(
-                            "sequencer.split_multicam",
-                            text="{:d}".format(i),
-                            translate=False,
-                        ).camera = i
-                    else:
-                        sub_1 = row.row(align=True)
-                        sub_1.enabled = True
-                        sub_1.operator(
-                            "sequencer.split_multicam",
-                            text="{:d}".format(i),
-                            translate=False,
-                        ).camera = i
-
-                if strip.channel > BT_ROW and (strip_channel - 1) % BT_ROW:
-                    for i in range(
-                        strip.channel,
-                        strip_channel + ((BT_ROW + 1 - strip_channel) % BT_ROW),
-                    ):
-                        row.label(text="")
-            else:
-                col.separator()
-                col.label(text="Two or more channels are needed below this strip", icon="INFO")
-
-        elif strip_type == "TEXT":
-            layout = self.layout
-            col = layout.column()
-            col.scale_x = 1.3
-            col.scale_y = 1.3
-            col.use_property_split = False
-            col.prop(strip, "text", text="")
-            col.use_property_split = True
-            layout.prop(strip, "wrap_width", text="Wrap Width")
-
-        col = layout.column(align=True)
-        if strip_type in {
-            "CROSS",
-            "GAMMA_CROSS",
-            "WIPE",
-            "ALPHA_OVER",
-            "ALPHA_UNDER",
-        }:
-            col.use_property_split = False
-            col.prop(strip, "use_default_fade", text="Default Fade")
-            col.use_property_split = True
-            if not strip.use_default_fade:
-                col.prop(strip, "effect_fader", text="Effect Fader")
-        elif strip_type == "GAUSSIAN_BLUR":
-            col = layout.column(align=True)
-            col.prop(strip, "size_x", text="Size X")
-            col.prop(strip, "size_y", text="Y")
-        elif strip_type == "COLORMIX":
-            layout.prop(strip, "blend_effect", text="Blend Mode")
-            row = layout.row(align=True)
-            row.prop(strip, "factor", slider=True)
-
-# BFA - Legacy
+    draw_header_preset = STRIP_PT_effect.draw_header_preset
+    draw = STRIP_PT_effect.draw
 
 
 class SEQUENCER_PT_effect_text_layout(SequencerButtonsPanel, Panel):
-    bl_label = "Layout"
+    bl_label = STRIP_PT_effect_text_layout.bl_label # BFA
     bl_parent_id = "SEQUENCER_PT_effect"
     bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
-        strip = context.active_strip
-        return strip.type == "TEXT"
+        if not cls.has_sequencer(context): # BFA
+            return False
+        return STRIP_PT_effect_text_layout.poll(context) # BFA
 
-    def draw(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.use_property_split = True
-        col = layout.column()
-        col.prop(strip, "location", text="Location")
-        col.prop(strip, "alignment_x", text="Alignment")
-
-        col = layout.column()  # BFA - label and indent
-        col.label(text="Anchor")
-
-        row = col.row()
-        row.separator()
-        row.prop(strip, "anchor_x", text="X")
-        row = col.row()
-        row.separator()
-        row.prop(strip, "anchor_y", text="Y")
-
-# BFA - Legacy
+    draw = STRIP_PT_effect_text_layout.draw # BFA
 
 
 class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
-    bl_label = "Style"
+    bl_label = STRIP_PT_effect_text_style.bl_label # BFA
     bl_parent_id = "SEQUENCER_PT_effect"
     bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
-        strip = context.active_strip
-        return strip.type == 'TEXT'
-    
-    @staticmethod
-    def sublayout(layout, strip, toggle_prop, color_prop):
-        header = layout.row(align=True)
-        header.use_property_split = False
-        
-        split = header.split(factor=0.4)
-        split.prop(strip, toggle_prop)
-        
-        if getattr(strip, toggle_prop):
-            row = layout.row()
-            row.separator(factor=1)
-            col = row.column()
-        
-            split.use_property_split = True
-            split.prop(strip, color_prop, text="")
-            return col
-            
-        else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')
-            return None
+        if not cls.has_sequencer(context): # BFA
+            return False
+        return STRIP_PT_effect_text_style.poll(context) # BFA
 
-    def draw(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.use_property_split = True
-        col = layout.column()
-
-        row = col.row(align=True)
-        row.use_property_decorate = False
-        row.template_ID(strip, "font", open="font.open", unlink="font.unlink")
-        row.prop(strip, "use_bold", text="", icon="BOLD")
-        row.prop(strip, "use_italic", text="", icon="ITALIC")
-
-        col = layout.column()
-        split = col.split(factor=0.4)
-        col1 = split.column()
-        col2 = split.column()
-        
-        col1.label(text="Size")
-        col2.prop(strip, "font_size", text="")
-        
-        col1.label(text="Color")
-        col2.prop(strip, "color", text="")
-        
-        col.separator(type='LINE', factor=1.5)
-        
-        main_col = layout.column()
-        
-        if (col := self.sublayout(main_col, strip, toggle_prop="use_shadow", color_prop="shadow_color")):
-            col.prop(strip, "shadow_angle", text="Angle")
-            col.prop(strip, "shadow_offset", text="Offset")
-            col.prop(strip, "shadow_blur", text="Blur")
-            col.separator()
-
-        if (col := self.sublayout(main_col, strip, toggle_prop="use_outline", color_prop="outline_color")):
-            col.prop(strip, "outline_width", text="Width")
-            col.separator()
-            
-        if (col := self.sublayout(main_col, strip, toggle_prop="use_box", color_prop="box_color")):
-            col.prop(strip, "box_margin", text="Margin")
-            col.separator()
-
-# BFA - Legacy
+    sublayout = staticmethod(STRIP_PT_effect_text_style.sublayout) # BFA
+    draw = STRIP_PT_effect_text_style.draw # BFA
 
 
 class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
@@ -2552,8 +2308,6 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 split.alignment = "LEFT"
                 split.label(text="{:.2f}".format(elem.orig_fps), translate=False)
 
-# BFA - Legacy
-
 
 class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
     bl_label = "Movie Clip"
@@ -2594,8 +2348,6 @@ class SEQUENCER_PT_movie_clip(SequencerButtonsPanel, Panel):
                 text=rpt_("Original frame range: {:d}-{:d} ({:d})").format(sta, end, end - sta + 1),
                 translate=False,
             )
-
-# BFA - Legacy
 
 
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
@@ -2643,8 +2395,6 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
                 # Warning, this is not a good convention to follow.
                 # Expose here because setting the alpha from the "Render" menu is very inconvenient.
                 col.prop(scene.render, "film_transparent")
-
-# BFA - Legacy
 
 
 class SEQUENCER_PT_scene_sound(SequencerButtonsPanel, Panel):
@@ -2715,11 +2465,9 @@ class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
                 translate=False,
             )
 
-# BFA - Legacy
-
 
 class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
-    bl_label = "Time"
+    bl_label = STRIP_PT_time.bl_label # BFA
     bl_options = {"DEFAULT_CLOSED"}
     bl_category = "Strip"
 
@@ -2727,192 +2475,12 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
     def poll(cls, context):
         if not cls.has_sequencer(context):
             return False
+        return STRIP_PT_time.poll(context) # BFA
 
-        strip = context.active_strip
-        if not strip:
-            return False
+    draw_header_preset = STRIP_PT_time.draw_header_preset # BFA
+    draw = STRIP_PT_time.draw # BFA
 
-        return strip.type
 
-    def draw_header_preset(self, context):
-        layout = self.layout
-        layout.alignment = "RIGHT"
-        strip = context.active_strip
-
-        layout.prop(strip, "lock", text="", icon_only=True, emboss=False)
-
-    def draw(self, context):
-        from bpy.utils import smpte_from_frame
-
-        layout = self.layout
-        layout.use_property_split = False
-        layout.use_property_decorate = False
-
-        scene = context.sequencer_scene
-        frame_current = scene.frame_current
-        strip = context.active_strip
-
-        is_effect = isinstance(strip, bpy.types.EffectStrip)
-
-        # Get once.
-        frame_start = strip.frame_start
-        frame_final_start = strip.frame_final_start
-        frame_final_end = strip.frame_final_end
-        frame_final_duration = strip.frame_final_duration
-        frame_offset_start = strip.frame_offset_start
-        frame_offset_end = strip.frame_offset_end
-
-        length_list = (
-            str(round(frame_start, 0)),
-            str(round(frame_final_end, 0)),
-            str(round(frame_final_duration, 0)),
-            str(round(frame_offset_start, 0)),
-            str(round(frame_offset_end, 0)),
-        )
-
-        if not is_effect:
-            length_list = length_list + (
-                str(round(strip.animation_offset_start, 0)),
-                str(round(strip.animation_offset_end, 0)),
-            )
-
-        max_length = max(len(x) for x in length_list)
-        max_factor = (1.9 - max_length) / 30
-        factor = 0.45
-
-        layout.enabled = not strip.lock
-        layout.active = not strip.mute
-
-        sub = layout.row(align=True)
-        split = sub.split(factor=factor + max_factor)
-        split.alignment = "RIGHT"
-
-        try:  # BFA - detect if correct relevant strip is selected to apply as a clearer UX. Only works on Movie and Image strips
-            is_retiming = context.sequencer_scene.sequence_editor.selected_retiming_keys
-            strip = context.active_strip
-            layout = self.layout
-
-            layout.operator_context = "INVOKE_REGION_WIN"  # BFA
-
-            strip = context.active_strip  # BFA
-            strip_type = strip.type  # BFA
-
-            if strip and strip_type == "MOVIE" or strip_type == "IMAGE" or strip_type == "SOUND":
-                # BFA - Made the show_retiming_keys conditional
-                col = layout.column()
-                col.prop(strip, "show_retiming_keys", text="Show Retiming Keys")
-            else:
-                layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
-        except Exception:
-            layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
-
-        sub = layout.row(align=True)
-        split = sub.split(factor=factor + max_factor)
-        split.alignment = "RIGHT"
-        split.label(text="Channel")
-        split.prop(strip, "channel", text="")
-
-        sub = layout.column(align=True)
-        split = sub.split(factor=factor + max_factor, align=True)
-        split.alignment = "RIGHT"
-        split.label(text="Start")
-        split.prop(strip, "frame_start", text=smpte_from_frame(frame_start))
-
-        split = sub.split(factor=factor + max_factor, align=True)
-        split.alignment = "RIGHT"
-        split.label(text="Duration")
-        split.prop(strip, "frame_final_duration", text=smpte_from_frame(frame_final_duration))
-
-        # Use label, editing this value from the UI allows negative values,
-        # users can adjust duration.
-        split_factor = factor + max_factor - 0.005  # BFA - Nudge split to the left for better text alignment
-        split = sub.split(factor=split_factor, align=True)
-        row = split.row()
-        row.alignment = "LEFT"
-        row.label(text="End")
-
-        # BFA - Improve text alignment
-        row = split.row()
-        row.separator(factor=0)  # BFA - slight indent
-        row.label(text="{:>14s}".format(smpte_from_frame(frame_final_end)), translate=False)
-        row = row.row()
-        row.alignment = "RIGHT"
-        row.label(text=str(frame_final_end) + " ")
-        row.separator(factor=0)  # BFA - slight indent
-        # BFA - Improve text alignment (end)
-
-        if not is_effect:
-            layout.alignment = "RIGHT"
-            sub = layout.column(align=True)
-
-            split = sub.split(factor=factor + max_factor, align=True)
-            split.alignment = "RIGHT"
-            split.label(text="Strip Offset Start")
-            split.prop(strip, "frame_offset_start", text=smpte_from_frame(frame_offset_start))
-
-            split = sub.split(factor=factor + max_factor, align=True)
-            split.alignment = "RIGHT"
-            split.label(text="End")
-            split.prop(strip, "frame_offset_end", text=smpte_from_frame(frame_offset_end))
-
-            layout.alignment = "RIGHT"
-            sub = layout.column(align=True)
-
-            split = sub.split(factor=factor + max_factor, align=True)
-            split.alignment = "RIGHT"
-            split.label(text="Hold Offset Start")
-            split.prop(
-                strip,
-                "animation_offset_start",
-                text=smpte_from_frame(strip.animation_offset_start),
-            )
-
-            split = sub.split(factor=factor + max_factor, align=True)
-            split.alignment = "RIGHT"
-            split.label(text="End")
-            split.prop(
-                strip,
-                "animation_offset_end",
-                text=smpte_from_frame(strip.animation_offset_end),
-            )
-            if strip.type == "SOUND":
-                sub2 = layout.column(align=True)
-                split = sub2.split(factor=factor + max_factor, align=True)
-                split.alignment = "RIGHT"
-                split.label(text="Sound Offset", text_ctxt=i18n_contexts.id_sound)
-                split.prop(strip, "sound_offset", text="")
-
-        col = layout.column(align=True)
-        col = col.box()
-        col.active = (frame_current >= frame_final_start) and (
-            frame_current <= frame_final_start + frame_final_duration
-        )
-
-        split = col.split(factor=factor + max_factor, align=True)
-        split.alignment = "RIGHT"
-        split.label(text="Current Frame")
-        split = split.split(factor=factor + 0.3 + max_factor, align=True)
-        frame_display = frame_current - frame_final_start
-        split.label(text="{:>14s}".format(smpte_from_frame(frame_display)), translate=False)
-        split.alignment = "RIGHT"
-        split.label(text=str(frame_display) + " ")
-
-        if strip.type == "SCENE":
-            scene = strip.scene
-
-            if scene:
-                sta = scene.frame_start
-                end = scene.frame_end
-                split = col.split(factor=factor + max_factor)
-                split.alignment = "RIGHT"
-                split.label(text="Original Frame Range")
-                split.alignment = "LEFT"
-                split.label(
-                    text="{:d}-{:d} ({:d})".format(sta, end, end - sta + 1),
-                    translate=False,
-                )
-
-# BFA - Legacy
 class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
     bl_category = "Strip"
@@ -2991,84 +2559,33 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
             if overlay_settings.waveform_display_type == "DEFAULT_WAVEFORMS":
                 col.prop(strip, "show_waveform")
 
-# BFA - Legacy
-
 
 class SEQUENCER_PT_adjust_comp(SequencerButtonsPanel, Panel):
-    bl_label = "Compositing"
+    bl_label = STRIP_PT_adjust_comp.bl_label # BFA
     bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
         if not cls.has_sequencer(context):
             return False
+        return STRIP_PT_adjust_comp.poll(context) # BFA
 
-        strip = context.active_strip
-        if not strip:
-            return False
-
-        return strip.type != "SOUND"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        strip = context.active_strip
-
-        layout.active = not strip.mute
-
-        col = layout.column()
-        col.prop(strip, "blend_type", text="Blend")
-        col.prop(strip, "blend_alpha", text="Opacity", slider=True)
-
-# BFA - Legacy
+    draw = STRIP_PT_adjust_comp.draw # BFA
 
 
 class SEQUENCER_PT_adjust_transform(SequencerButtonsPanel, Panel):
-    bl_label = "Transform"
-    bl_category = "Strip"
+    bl_label = STRIP_PT_adjust_transform.bl_label # BFA
     bl_options = {"DEFAULT_CLOSED"}
+    bl_category = "Strip" # BFA
 
     @classmethod
     def poll(cls, context):
         if not cls.has_sequencer(context):
             return False
+        return STRIP_PT_adjust_transform.poll(context) # BFA
 
-        strip = context.active_strip
-        if not strip:
-            return False
-
-        return strip.type != "SOUND"
-
-    def draw(self, context):
-        strip = context.active_strip
-        layout = self.layout
-        layout.use_property_split = True
-        layout.active = not strip.mute
-
-        col = layout.column(align=True)
-        col.prop(strip.transform, "filter", text="Filter")
-
-        col = layout.column(align=True)
-        col.prop(strip.transform, "offset_x", text="Position X")
-        col.prop(strip.transform, "offset_y", text="Y")
-
-        col = layout.column(align=True)
-        col.prop(strip.transform, "scale_x", text="Scale X")
-        col.prop(strip.transform, "scale_y", text="Y")
-
-        col = layout.column(align=True)
-        col.prop(strip.transform, "rotation", text="Rotation")
-
-        col = layout.column(align=True)
-        col.prop(strip.transform, "origin")
-
-        row = layout.row(heading="Mirror", heading_ctxt=i18n_contexts.id_image)
-        sub = row.row(align=True)
-        sub.prop(strip, "use_flip_x", text="X", toggle=True)
-        sub.prop(strip, "use_flip_y", text="Y", toggle=True)
-
-# BFA - Legacy
+    indented_layout = staticmethod(STRIP_PT_adjust_transform.indented_layout) # BFA
+    draw = STRIP_PT_adjust_transform.draw # BFA
 
 
 class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
@@ -3124,8 +2641,6 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
         # BFA - Align bool property left
         col.use_property_split = False
         col.prop(strip, "use_reverse_frames")
-
-# BFA - Legacy
 
 
 class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
@@ -3859,10 +3374,10 @@ classes = (
     SEQUENCER_MT_view_pie,
     SEQUENCER_MT_preview_view_pie,
     SEQUENCER_MT_modifier_add,
-    SEQUENCER_PT_color_tag_picker,  # BFA - Legacy
+    SEQUENCER_PT_color_tag_picker,
     SEQUENCER_PT_active_tool,
-    SEQUENCER_MT_change_scene_with_icons,  # BFA
-    SEQUENCER_PT_strip,  # BFA - Legacy
+    SEQUENCER_MT_change_scene_with_icons, # BFA
+    SEQUENCER_PT_strip, # BFA
     SEQUENCER_PT_gizmo_display,
     SEQUENCER_PT_overlay,
     SEQUENCER_PT_preview_overlay,
@@ -3870,21 +3385,21 @@ classes = (
     SEQUENCER_PT_sequencer_overlay_strips,
     SEQUENCER_PT_sequencer_overlay_thumbnails,
     SEQUENCER_PT_sequencer_overlay_waveforms,
-    SEQUENCER_PT_effect,  # BFA - Legacy
-    SEQUENCER_PT_scene,  # BFA - Legacy
-    SEQUENCER_PT_scene_sound,  # BFA - Legacy
-    SEQUENCER_PT_mask,  # BFA - Legacy
-    SEQUENCER_PT_effect_text_style,  # BFA - Legacy
-    SEQUENCER_PT_effect_text_layout,  # BFA - Legacy
-    SEQUENCER_PT_movie_clip,  # BFA - Legacy
-    SEQUENCER_PT_adjust_comp,  # BFA - Legacy
-    SEQUENCER_PT_adjust_transform,  # BFA - Legacy
-    SEQUENCER_PT_adjust_crop,  # BFA - Legacy
-    SEQUENCER_PT_adjust_video,  # BFA - Legacy
-    SEQUENCER_PT_adjust_color,  # BFA - Legacy
-    SEQUENCER_PT_adjust_sound,  # BFA - Legacy
-    SEQUENCER_PT_time,  # BFA - Legacy
-    SEQUENCER_PT_source,  # BFA - Legacy
+    SEQUENCER_PT_effect, # BFA
+    SEQUENCER_PT_scene, # BFA
+    SEQUENCER_PT_scene_sound, # BFA
+    SEQUENCER_PT_mask, # BFA
+    SEQUENCER_PT_effect_text_style, # BFA
+    SEQUENCER_PT_effect_text_layout, # BFA
+    SEQUENCER_PT_movie_clip, # BFA
+    SEQUENCER_PT_adjust_comp, # BFA
+    SEQUENCER_PT_adjust_transform, # BFA
+    SEQUENCER_PT_adjust_crop, # BFA
+    SEQUENCER_PT_adjust_video, # BFA
+    SEQUENCER_PT_adjust_color, # BFA
+    SEQUENCER_PT_adjust_sound, # BFA
+    SEQUENCER_PT_time,
+    SEQUENCER_PT_source,
     SEQUENCER_PT_cache_settings,
     SEQUENCER_PT_cache_view_settings,
     SEQUENCER_PT_proxy_settings,
