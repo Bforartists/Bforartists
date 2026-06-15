@@ -1646,65 +1646,73 @@ UserDef *BKE_blendfile_userdef_from_defaults()
   /* start BFA asset shelf default catalogs */
     /* 3D Viewport*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Geometry Nodes/Primitives");
+        userdef, "VIEW3D_AST_object", "Geometry Nodegroups/Primitives");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Collections/Lights");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "VIEW3D_AST_object", "Materials");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Geometry Nodes/Generate");
+        userdef, "VIEW3D_AST_object", "Geometry Nodegroups/Generate");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "VIEW3D_AST_object", "Geometry Nodes");
+        userdef, "VIEW3D_AST_object", "Geometry Nodegroups");
 
     /* Node editors*/
 
     /*Shader*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodes/Color");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Color");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodes/Mapping");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Mapping");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodes/Masks");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Masks");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodes/Texture/Patterns");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Texture/Patterns");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodes/Shader");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Shader");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodes/Texture/Shapes");
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Texture/Shapes");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_shader_node_groups", "Shader Nodes/Utility");
-
+        userdef, "NODE_AST_shader_node_groups", "Shader Nodegroups/Utilities");
 
     /*Geometry Nodes*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodes/Grease Pencil");
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Geometry");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Grease Pencil");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_geometry_node_groups", "Hair");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodes/Normals");
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Instances");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodes/Mesh");
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Material");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodes/Mesh/UV");
-
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Normals");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Simulation");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Mesh/UV");
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_geometry_node_groups", "Geometry Nodegroups/Utilities");
 
     /*Compositor*/
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Color");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Color");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Creative");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Creative");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Distortion");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Distortion");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Filters");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Filters");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Lenses");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Lenses");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Output");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Output");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Texture");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Texture");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
-        userdef, "NODE_AST_compositor", "Compositing/Utilities");
+        userdef, "NODE_AST_compositor", "Compositing Nodegroups/Utilities");
   }
   /* end BFA asset shelf default catalogs */
 

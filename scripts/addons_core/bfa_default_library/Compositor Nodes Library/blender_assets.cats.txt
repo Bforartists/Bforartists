@@ -6,26 +6,26 @@
 
 VERSION 1
 
-22bd02a7-be5e-4be1-b225-2db10ee6f9bf:Compositing:Compositing
-8b7c1825-4730-4b2c-9470-fc89c1ace80a:Compositing/Color:Compositing-Color
-ffdb4adb-8aea-4ca3-966b-dadaee1afcc4:Compositing/Creative:Compositing-Creative
-54577834-5d3f-491a-ae51-d1c1113da3e7:Compositing/Creative/Design:Compositing-Creative-Design
-0b3f4cf3-f7c0-49d3-acfd-e3813f4e2105:Compositing/Distortion:Compositing-Distortion
-ee3d94c8-07ff-4b66-ba0e-a78e35be5c5a:Compositing/Filters:Compositing-Filters
-92b77f83-10f9-4fcd-9143-7f932bd632a1:Compositing/Filters/Dithering:Compositing-Filters-Dithering
-00dce0bd-3082-443b-99fb-dea3cfbb9182:Compositing/Lenses:Compositing-Lenses
-d76fbecb-401d-42a9-944b-775c4d17dbac:Compositing/Lenses/Blooms:Compositing-Lenses-Blooms
-fb53ef76-7ca6-4c7d-95ef-20867fe4bd82:Compositing/Lenses/Depth of Field:Compositing-Lenses-Depth of Field
-1507ed99-5e49-4b7d-9904-f5fc3a1e5500:Compositing/Lenses/Dirt:Compositing-Lenses-Dirt
-d319ef17-db19-4d19-a5ac-921559d8b5ce:Compositing/Lenses/Flares:Compositing-Lenses-Flares
-41b85fe8-3c33-450e-a802-fa7f40b6d442:Compositing/Lenses/Glares:Compositing-Lenses-Glares
-234ca712-e056-4892-8c8e-5a81e3708b5c:Compositing/Lenses/Grains:Compositing-Lenses-Grains
-a460062a-8ff4-404e-a89d-9105aeba4cba:Compositing/Lenses/Quality:Compositing-Lenses-Quality
-84715fd6-a1b7-4ce0-a872-a427e9bc7e37:Compositing/Lenses/Shake:Compositing-Lenses-Shake
-ae7717ab-bda5-45ec-81ae-a43fcf9ee210:Compositing/Lenses/Vignettes:Compositing-Lenses-Vignettes
-8181af84-956a-4a7f-8408-20b0973f0465:Compositing/Output:Compositing-Output
-272707d5-7d13-4976-bfab-0355d7634be6:Compositing/Texture:Compositing-Texture
-292bdd29-f46d-43d2-aabf-730153d92171:Compositing/Texture/Patterns:Compositing-Texture-Patterns
-94147fd2-f202-4ca8-9487-25f46d6950d2:Compositing/Texture/Shapes:Compositing-Texture-Shapes
-026f0dde-f339-4a12-891f-997123616c52:Compositing/Utilities:Compositing-Utilities
-421c36e6-c9c2-43e3-934c-c1d0aa08265d:Compositing/Utilities/Vector:Compositing-Utilities-Vector
+22bd02a7-be5e-4be1-b225-2db10ee6f9bf:Compositing Nodegroups:Compositing Nodegroups
+8b7c1825-4730-4b2c-9470-fc89c1ace80a:Compositing Nodegroups/Color:Compositing Nodegroups-Color
+ffdb4adb-8aea-4ca3-966b-dadaee1afcc4:Compositing Nodegroups/Creative:Compositing Nodegroups-Creative
+54577834-5d3f-491a-ae51-d1c1113da3e7:Compositing Nodegroups/Creative/Design:Compositing Nodegroups-Creative-Design
+0b3f4cf3-f7c0-49d3-acfd-e3813f4e2105:Compositing Nodegroups/Distortion:Compositing Nodegroups-Distortion
+ee3d94c8-07ff-4b66-ba0e-a78e35be5c5a:Compositing Nodegroups/Filters:Compositing Nodegroups-Filters
+92b77f83-10f9-4fcd-9143-7f932bd632a1:Compositing Nodegroups/Filters/Dithering:Compositing Nodegroups-Filters-Dithering
+00dce0bd-3082-443b-99fb-dea3cfbb9182:Compositing Nodegroups/Lenses:Compositing Nodegroups-Lenses
+d76fbecb-401d-42a9-944b-775c4d17dbac:Compositing Nodegroups/Lenses/Blooms:Compositing Nodegroups-Lenses-Blooms
+fb53ef76-7ca6-4c7d-95ef-20867fe4bd82:Compositing Nodegroups/Lenses/Depth of Field:Compositing Nodegroups-Lenses-Depth of Field
+1507ed99-5e49-4b7d-9904-f5fc3a1e5500:Compositing Nodegroups/Lenses/Dirt:Compositing Nodegroups-Lenses-Dirt
+d319ef17-db19-4d19-a5ac-921559d8b5ce:Compositing Nodegroups/Lenses/Flares:Compositing Nodegroups-Lenses-Flares
+41b85fe8-3c33-450e-a802-fa7f40b6d442:Compositing Nodegroups/Lenses/Glares:Compositing Nodegroups-Lenses-Glares
+234ca712-e056-4892-8c8e-5a81e3708b5c:Compositing Nodegroups/Lenses/Grains:Compositing Nodegroups-Lenses-Grains
+a460062a-8ff4-404e-a89d-9105aeba4cba:Compositing Nodegroups/Lenses/Quality:Compositing Nodegroups-Lenses-Quality
+84715fd6-a1b7-4ce0-a872-a427e9bc7e37:Compositing Nodegroups/Lenses/Shake:Compositing Nodegroups-Lenses-Shake
+ae7717ab-bda5-45ec-81ae-a43fcf9ee210:Compositing Nodegroups/Lenses/Vignettes:Compositing Nodegroups-Lenses-Vignettes
+8181af84-956a-4a7f-8408-20b0973f0465:Compositing Nodegroups/Output:Compositing Nodegroups-Output
+272707d5-7d13-4976-bfab-0355d7634be6:Compositing Nodegroups/Texture:Compositing Nodegroups-Texture
+292bdd29-f46d-43d2-aabf-730153d92171:Compositing Nodegroups/Texture/Patterns:Compositing Nodegroups-Texture-Patterns
+94147fd2-f202-4ca8-9487-25f46d6950d2:Compositing Nodegroups/Texture/Shapes:Compositing Nodegroups-Texture-Shapes
+026f0dde-f339-4a12-891f-997123616c52:Compositing Nodegroups/Utilities:Compositing Nodegroups-Utilities
+421c36e6-c9c2-43e3-934c-c1d0aa08265d:Compositing Nodegroups/Utilities/Vector:Compositing Nodegroups-Utilities-Vector
