@@ -396,15 +396,9 @@ class NodeMenu(Menu):
             cls.node_operator(layout, "NodeGroupInput")
             cls.node_operator(layout, "NodeGroupOutput")
 
-        operators = []
-        operators.append(cls.new_empty_group(layout))
-
         # BFA - Draw node groups with corresponding icons
         use_transform = getattr(cls, "use_transform", False)
-        groups = draw_node_groups(context, layout, cls.main_operator_id, use_transform)
-        operators.extend(groups)
-
-        return operators
+        draw_node_groups(context, layout, cls.main_operator_id, use_transform)
 
         # BFA - WIP
         if node_tree:
