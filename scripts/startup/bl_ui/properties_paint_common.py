@@ -132,7 +132,7 @@ class BrushAssetShelf:
         if not tool or not tool.use_brushes:
             return None
 
-        paint_settings = UnifiedPaintPanel.paint_settings(bpy.context)
+        paint_settings = UnifiedPaintPanel.paint_settings_from_active_tool(bpy.context)
         return paint_settings.brush_asset_reference if paint_settings else None
 
     @classmethod
@@ -256,12 +256,7 @@ class UnifiedPaintPanel:
         return None
 
     @staticmethod
-    def paint_settings(context):
-        tool_settings = context.tool_settings
-
-        mode = UnifiedPaintPanel.get_brush_mode(context)
-
-        # 3D paint settings
+    def _paint_settings(tool_settings, mode):
         if mode == 'SCULPT':
             return tool_settings.sculpt
         elif mode == 'PAINT_VERTEX':
@@ -272,12 +267,10 @@ class UnifiedPaintPanel:
             return tool_settings.image_paint
         elif mode == 'PARTICLE':
             return tool_settings.particle_edit
-        # 2D paint settings
         elif mode == 'PAINT_2D':
             return tool_settings.image_paint
         elif mode == 'SCULPT_CURVES':
             return tool_settings.curves_sculpt
-        # Grease Pencil settings
         elif mode == 'PAINT_GREASE_PENCIL':
             return tool_settings.gpencil_paint
         elif mode == 'SCULPT_GREASE_PENCIL':
@@ -287,6 +280,19 @@ class UnifiedPaintPanel:
         elif mode == 'VERTEX_GREASE_PENCIL':
             return tool_settings.gpencil_vertex_paint
         return None
+
+    @staticmethod
+    def paint_settings_from_active_tool(context):
+        """Retrieve the Paint settings based on the current active tool, may return None for tools with no associated
+        brush"""
+        tool_settings = context.tool_settings
+        mode = UnifiedPaintPanel.get_brush_mode(context)
+        return UnifiedPaintPanel._paint_settings(tool_settings, mode)
+
+    @staticmethod
+    def paint_settings_from_mode(context, mode):
+        """Retrieve the Paint settings based on a hardcoded 'mode' string."""
+        return UnifiedPaintPanel._paint_settings(context.tool_settings, mode)
 
     @staticmethod
     def prop_unified(
@@ -307,16 +313,17 @@ class UnifiedPaintPanel:
             :param unified_paint_settings_override allows a caller to pass in a specific object for usage. Needed for
             some 'brush-like' tools."""
         row = layout.row(align=True)
-        settings = UnifiedPaintPanel.paint_settings(context)
-
-        # BFA - Modified early return to allow unified_paint_settings_override for tools like Gradient Weight
-        if settings is None and not unified_paint_settings_override:
-            return
-        ups = unified_paint_settings_override if unified_paint_settings_override else settings.unified_paint_settings
+        if unified_paint_settings_override:
+            ups = unified_paint_settings_override
+        else:
+            settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
+            # BFA - Early return if settings is None for the Annotation tool
+            if settings is None:
+                return
+            ups = settings.unified_paint_settings
         # BFA - Added check for brush being None to prevent errors
         if not brush:
             return
-
         prop_owner = brush
         if unified_name and getattr(ups, unified_name):
             prop_owner = ups
@@ -357,7 +364,7 @@ class UnifiedPaintPanel:
             curve_visibility_name,
             custom_curve_name,
     ):
-        paint = UnifiedPaintPanel.paint_settings(context)
+        paint = UnifiedPaintPanel.paint_settings_from_active_tool(context)
 
         is_active = getattr(paint, curve_visibility_name)
         parent_row.prop(
@@ -374,7 +381,7 @@ class UnifiedPaintPanel:
 
     @staticmethod
     def prop_unified_color(parent, context, brush, prop_name, *, text=None):
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         if settings is None:  # BFA - Early return if settings is None for the Annotation tool
             return
         ups = settings.unified_paint_settings
@@ -383,7 +390,7 @@ class UnifiedPaintPanel:
 
     @staticmethod
     def prop_unified_color_picker(parent, context, brush, prop_name, value_slider=True):
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         if settings is None:  # BFA - Early return if settings is None for the Annotation tool
             return
         ups = settings.unified_paint_settings
@@ -403,7 +410,7 @@ class VIEW3D_PT_brush_settings_pressure_size(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         if settings is None:
             return
             
@@ -430,7 +437,7 @@ class VIEW3D_PT_brush_settings_pressure_strength(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         if settings is None:
             return
             
@@ -459,7 +466,7 @@ class BrushSelectPanel(BrushPanel):
     def draw_header_preset(self, context):
         # layout = self.layout  # UNUSED.
 
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if settings is None:
             return
 
@@ -474,7 +481,7 @@ class BrushSelectPanel(BrushPanel):
 
     def draw(self, context):
         layout = self.layout
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if settings is None:
             return
 
@@ -537,7 +544,7 @@ class ColorPalettePanel(BrushPanel):
         if not super().poll(context):
             return False
 
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
         if (brush := settings.brush) is None:
             return False
 
@@ -556,7 +563,7 @@ class ColorPalettePanel(BrushPanel):
 
     def draw(self, context):
         layout = self.layout
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
 
         layout.template_ID(settings, "palette", new="palette.new")
         if settings.palette:
@@ -572,7 +579,7 @@ class ClonePanel(BrushPanel):
         if not super().poll(context):
             return False
 
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
 
         mode = cls.get_brush_mode(context)
         if mode == "PAINT_TEXTURE":
@@ -581,12 +588,12 @@ class ClonePanel(BrushPanel):
         return False
 
     def draw_header(self, context):
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         self.layout.prop(settings, "use_clone_layer", text="")
 
     def draw(self, context):
         layout = self.layout
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
 
         layout.active = settings.use_clone_layer
 
@@ -684,7 +691,7 @@ class StrokePanel(BrushPanel):
         layout.use_property_decorate = False
 
         mode = self.get_brush_mode(context)
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if not settings:  # BFA - Early return if settings is None for the Annotation tool
             return
         brush = settings.brush
@@ -779,18 +786,19 @@ class SmoothStrokePanel(BrushPanel):
     def poll(cls, context):
         if not super().poll(context):
             return False
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
+        if settings is None:
+            return False
         brush = settings.brush
         if brush.brush_capabilities.has_smooth_stroke:
             return True
         return False
 
     def draw_header(self, context):
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if settings is None:
             layout = self.layout
             return
-
         brush = settings.brush
         if brush is None:
             layout = self.layout
@@ -805,10 +813,9 @@ class SmoothStrokePanel(BrushPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if settings is None:
             return
-
         brush = settings.brush
         if brush is None:
             return
@@ -834,7 +841,7 @@ class FalloffPanel(BrushPanel):
     def poll(cls, context):
         if not super().poll(context):
             return False
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
         if not (settings and settings.brush and settings.brush.curve_distance_falloff):
             return False
         if cls.get_brush_mode(context) == "SCULPT_CURVES":
@@ -845,7 +852,7 @@ class FalloffPanel(BrushPanel):
 
     def draw(self, context):
         layout = self.layout
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if not settings or not settings.brush:  # BFA - Early return if settings or brush is None
             return
         mode = self.get_brush_mode(context)
@@ -890,7 +897,7 @@ class DisplayPanel(BrushPanel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw_header(self, context):
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if settings and not self.is_popover:
             self.layout.prop(settings, "show_brush", text="")
 
@@ -900,7 +907,7 @@ class DisplayPanel(BrushPanel):
         layout.use_property_decorate = False
 
         mode = self.get_brush_mode(context)
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         if settings is None:
             return
         brush = settings.brush
@@ -1029,6 +1036,10 @@ def brush_settings(layout, context, brush, popover=False):
                 row.prop(brush, "invert_hardness_pressure", text="")
                 row.prop(brush, "use_hardness_pressure", text="")
 
+        if capabilities.has_tip_roundness:
+            layout.prop(brush, "tip_roundness", slider=True)
+            layout.prop(brush, "tip_scale_x", slider=True)
+
         layout.separator()
 
         # auto_smooth_factor and use_inverse_smooth_pressure
@@ -1111,7 +1122,7 @@ def brush_settings(layout, context, brush, popover=False):
             layout.separator()
 
         if capabilities.has_color:
-            settings = UnifiedPaintPanel.paint_settings(context)
+            settings = UnifiedPaintPanel.paint_settings_from_mode(context, 'SCULPT')
             if settings is None:  # BFA - Early return if settings is None for the Annotation tool
                 return
             ups = settings.unified_paint_settings
@@ -1125,14 +1136,7 @@ def brush_settings(layout, context, brush, popover=False):
 
         # Per sculpt tool options.
 
-        if sculpt_brush_type == "CLAY_STRIPS":
-            row = layout.row()
-            row.prop(brush, "tip_roundness")
-
-            row = layout.row()
-            row.prop(brush, "tip_scale_x")
-
-        elif sculpt_brush_type == "ELASTIC_DEFORM":
+        if sculpt_brush_type == 'ELASTIC_DEFORM':
             layout.separator()
             layout.prop(brush, "elastic_deform_type")
             layout.prop(brush, "elastic_deform_volume_preservation", slider=True)
@@ -1239,12 +1243,6 @@ def brush_settings(layout, context, brush, popover=False):
             row.prop(brush, "density")
             row.prop(brush, "invert_density_pressure", text="")
             row.prop(brush, "use_density_pressure", text="")
-
-            row = layout.row()
-            row.prop(brush, "tip_roundness")
-
-            row = layout.row()
-            row.prop(brush, "tip_scale_x")
 
         elif sculpt_brush_type == 'SMEAR':
             col = layout.column()
@@ -1380,7 +1378,7 @@ def brush_settings(layout, context, brush, popover=False):
 def brush_shared_settings(layout, context, brush, popover=False):
     """Draw simple brush settings that are shared between different paint modes."""
 
-    # paint    paint = UnifiedPaintPanel.paint_settings(context)  # UNUSED.
+    # paint    paint = UnifiedPaintPanel.paint_settings_from_active_tool(context)  # UNUSED.
     mode = UnifiedPaintPanel.get_brush_mode(context)
     mode_string = context.mode
 
@@ -1455,7 +1453,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
         size_pressure = True
 
     ### Draw settings. ###
-    settings = UnifiedPaintPanel.paint_settings(context)
+    settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
     if settings is None:  # BFA - Early return if settings is None for the Annotation tool
         return
     ups = settings.unified_paint_settings
@@ -1553,10 +1551,10 @@ def brush_shared_settings(layout, context, brush, popover=False):
 
 
 def draw_color_jitter_panel(layout, context, brush):
-    ups = UnifiedPaintPanel.paint_settings(context).unified_paint_settings
-
-    if ups is None:  # BFA - Early return if settings is None for the Annotation tool
+    settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
+    if settings is None:  # BFA - Early return if settings is None for the Annotation tool
         return
+    ups = settings.unified_paint_settings
 
     prop_owner = ups if ups.use_unified_color else brush
     layout.use_property_split = False
@@ -1789,10 +1787,10 @@ def draw_auto_masking_panel(layout, brush):
 
 def draw_color_settings(context, layout, brush, color_type=False):
     """Draw color wheel and gradient settings."""
-    ups = UnifiedPaintPanel.paint_settings(context).unified_paint_settings
-
-    if ups is None:  # BFA - Early return if settings is None for the Annotation tool
+    settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
+    if settings is None:  # BFA - Early return if settings is None for the Annotation tool
         return
+    ups = settings.unified_paint_settings
 
     if color_type:
         row = layout.row()
@@ -2063,7 +2061,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
 
 
         ## BFA - WIP - collapsed pressure curves start
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         header = context.region.type == 'TOOL_HEADER'
         
         if settings and not header:
@@ -2097,7 +2095,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
                 emboss=False)
 
         ## BFA - WIP collapsed strength curves start
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         header = context.region.type == 'TOOL_HEADER'
 
         if settings and not header:

@@ -357,7 +357,8 @@ class NLA_MT_tracks(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("nla.tracks_delete", text="Delete", icon='DELETE')
+        layout.operator("nla.tracks_add", text="Add").above_selected = False
+        layout.operator("nla.tracks_add", text="Add Above Selected").above_selected = True
 
         layout.separator()
 
@@ -366,6 +367,7 @@ class NLA_MT_tracks(Menu):
         layout.separator()
 
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
+        layout.operator("nla.tracks_delete", text="Delete", icon='DELETE')
 
 
 class NLA_MT_strips(Menu):
@@ -425,6 +427,8 @@ class NLA_MT_strips(Menu):
                 text="Tweak Action (Lower Stack)",
                 icon="ACTION_TWEAK",
             ).use_upper_stack_evaluation = False
+        layout.separator()
+        layout.operator("nla.delete", text="Delete", icon='X')
 
 # BFA - menu
 
@@ -579,6 +583,10 @@ class NLA_MT_context_menu(Menu):
         layout.separator()
 
         layout.operator_menu_enum("nla.snap", "type", text="Snap")
+        layout.separator()
+
+        layout.operator("nla.split")
+        layout.operator("nla.delete", icon='X')
 
 
 class NLA_MT_channel_context_menu(Menu):
@@ -594,7 +602,7 @@ class NLA_MT_channel_context_menu(Menu):
         layout.operator("nla.tracks_add", text="Add Track").above_selected = False
         layout.operator("nla.tracks_add", text="Add Track Above Selected").above_selected = True
         layout.separator()
-        layout.operator("nla.tracks_delete")
+        layout.operator("nla.tracks_delete", icon='DELETE')
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")
 
 

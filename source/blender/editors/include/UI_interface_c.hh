@@ -15,11 +15,11 @@
 #include <string>
 #include <type_traits>
 
-#include "BLI_compiler_attrs.h"
+#include "BLI_compiler_attrs.hh"
 #include "BLI_enum_flags.hh"
 #include "BLI_string_ref.hh"
-#include "BLI_string_utf8_symbols.h"
-#include "BLI_sys_types.h" /* size_t */
+#include "BLI_string_utf8_symbols.hh"
+#include "BLI_sys_types.hh" /* size_t */
 
 #include "DNA_listBase.h"
 #include "DNA_userdef_types.h"
@@ -629,7 +629,7 @@ inline char but_pointer_bit_max_index(ButPointerType pointer_type)
 /** Deduce the #ButPointerType matching \a T. */
 template<typename T> constexpr ButPointerType but_pointer_type_for()
 {
-  constexpr ButPointerType ptr_type = (std::is_floating_point_v<T>) ?
+  constexpr ButPointerType ptr_type = (std::is_same_v<T, float>) ?
                                           ButPointerType::Float :
                                       (std::is_integral_v<T> || std::is_enum_v<T>) ?
                                           (sizeof(T) == 1) ? ButPointerType::Char :

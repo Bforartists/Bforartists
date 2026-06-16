@@ -11,7 +11,7 @@
 #include "BLI_array.hh"
 #include "BLI_array_utils.hh"
 #include "BLI_enumerable_thread_specific.hh"
-#include "BLI_math_geom.h"
+#include "BLI_math_geom_c.hh"
 #include "BLI_task.hh"
 #include "BLI_virtual_array.hh"
 
@@ -399,7 +399,9 @@ static BMEditMesh *mesh_get_original_edit_mesh(const Object &object)
 {
   BLI_assert(object.type == OB_MESH);
   if (const ID *data_orig = object.runtime->data_orig) {
-    return id_cast<const Mesh *>(data_orig)->runtime->edit_mesh.get();
+    if (GS(data_orig->name) == blender::ID_ME) {
+      return id_cast<const Mesh *>(data_orig)->runtime->edit_mesh.get();
+    }
   }
   return nullptr;
 }

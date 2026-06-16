@@ -1621,7 +1621,7 @@ class IMAGE_PT_paint_settings(Panel, ImagePaintPanel):
 
     @classmethod
     def poll(cls, context):
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
         return settings and settings.brush is not None
 
     def draw(self, context):
@@ -1630,7 +1630,7 @@ class IMAGE_PT_paint_settings(Panel, ImagePaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         if brush:
@@ -1646,7 +1646,7 @@ class IMAGE_PT_paint_settings_advanced(Panel, ImagePaintPanel):
 
     @classmethod
     def poll(cls, context):
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
         return settings and settings.brush is not None
 
     def draw(self, context):
@@ -1655,7 +1655,7 @@ class IMAGE_PT_paint_settings_advanced(Panel, ImagePaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
         if brush:
             brush_settings_advanced(layout.column(), context, settings, brush, self.is_popover)

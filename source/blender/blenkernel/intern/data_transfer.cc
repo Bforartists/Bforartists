@@ -14,10 +14,10 @@
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
-#include "BLI_math_base.h"
-#include "BLI_math_matrix.h"
-#include "BLI_string.h"
-#include "BLI_utildefines.h"
+#include "BLI_math_base_c.hh"
+#include "BLI_math_matrix_c.hh"
+#include "BLI_string.hh"
+#include "BLI_utildefines.hh"
 
 #include "BKE_attribute.h"
 #include "BKE_attribute.hh"
@@ -1477,7 +1477,13 @@ bool BKE_object_data_transfer_ex(Depsgraph *depsgraph,
       space_transform = &auto_space_transform;
     }
 
-    BKE_mesh_remap_find_best_match_from_mesh(me_dst->vert_positions(), me_src, space_transform);
+    if ((me_src->verts_num != 0) && (me_dst->verts_num != 0)) {
+      BKE_mesh_remap_find_best_match_from_mesh(me_dst->vert_positions(), me_src, space_transform);
+    }
+    else {
+      /* Just use the object matrices if there is no geometry, #160022. */
+      BLI_SPACE_TRANSFORM_SETUP(space_transform, ob_dst, ob_src);
+    }
   }
 
   /* Check all possible data types.

@@ -273,7 +273,7 @@ def marker_menu_generic(layout, context):
 
     if len(bpy.data.scenes) > 10:
         layout.operator_context = "INVOKE_DEFAULT"
-        layout.operator("marker.make_links_scene", text="Duplicate Marker to Scene...", icon="OUTLINER_OB_EMPTY")
+        layout.operator("marker.make_links_scene", text="Duplicate Marker to Scene", icon="OUTLINER_OB_EMPTY")
     else:
         layout.operator_menu_enum("marker.make_links_scene", "scene", text="Duplicate Marker to Scene")
 

@@ -24,14 +24,14 @@
 #include "DNA_screen_types.h"
 #include "DNA_userdef_types.h"
 
-#include "BLI_listbase.h"
-#include "BLI_rect.h"
+#include "BLI_listbase.hh"
+#include "BLI_rect.hh"
 #include "BLI_set.hh"
-#include "BLI_string.h"
-#include "BLI_string_utf8.h"
+#include "BLI_string.hh"
+#include "BLI_string_utf8.hh"
 #include "BLI_vector.hh"
 
-#include "BLI_utildefines.h"
+#include "BLI_utildefines.hh"
 
 #include "BKE_animsys.h"
 #include "BKE_context.hh"
@@ -1095,10 +1095,10 @@ static bool but_update_from_old_block(Block *block,
 
   /* As long as old and new buttons are aligned, avoid loop-in-loop (calling #but_find_old). */
   std::unique_ptr<Button> *oldbut_uptr;
-  if (LIKELY(but_old_idx->has_value() &&
-             /* Ignore previously matched buttons. */
-             !matched_old_buttons.contains(oldblock->buttons_ptrs[**but_old_idx].get()) &&
-             but_equals_old(but, oldblock->buttons_ptrs[**but_old_idx].get())))
+  if (but_old_idx->has_value() &&
+      /* Ignore previously matched buttons. */
+      !matched_old_buttons.contains(oldblock->buttons_ptrs[**but_old_idx].get()) &&
+      but_equals_old(but, oldblock->buttons_ptrs[**but_old_idx].get())) [[likely]]
   {
     oldbut_uptr = &oldblock->buttons_ptrs[**but_old_idx];
   }
@@ -3271,7 +3271,7 @@ char *button_string_get_dynamic(Button *but, int *r_str_size)
     BLI_assert(0);
   }
 
-  if (UNLIKELY(str == nullptr)) {
+  if (str == nullptr) [[unlikely]] {
     /* should never happen, paranoid check */
     *r_str_size = 1;
     str = BLI_strdup("");

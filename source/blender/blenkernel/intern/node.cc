@@ -35,21 +35,21 @@
 #include "DNA_world_types.h"
 
 #include "BLI_color_types.hh"
-#include "BLI_ghash.h"
-#include "BLI_listbase.h"
+#include "BLI_ghash.hh"
+#include "BLI_listbase.hh"
 #include "BLI_map.hh"
 #include "BLI_math_rotation.hh"
 #include "BLI_math_rotation_types.hh"
-#include "BLI_math_vector.h"
 #include "BLI_math_vector.hh"
+#include "BLI_math_vector_c.hh"
 #include "BLI_rand.hh"
 #include "BLI_set.hh"
 #include "BLI_stack.hh"
-#include "BLI_string.h"
-#include "BLI_string_utf8.h"
+#include "BLI_string.hh"
+#include "BLI_string_utf8.hh"
 #include "BLI_string_utils.hh"
-#include "BLI_time.h"
-#include "BLI_utildefines.h"
+#include "BLI_time.hh"
+#include "BLI_utildefines.hh"
 #include "BLI_vector_set.hh"
 #include "BLT_translation.hh"
 
@@ -2114,9 +2114,12 @@ static void ntree_blend_read_after_liblink(BlendLibReader *reader, ID *id)
    * to match the static layout. */
   if (!BLO_read_lib_is_undo(reader)) {
     for (bNode &node : ntree->nodes) {
-      /* Don't update node groups here because they may depend on other node groups which are not
-       * fully versioned yet and don't have `typeinfo` pointers set. */
-      if (!node.is_group()) {
+      /* Don't update nodes whose declaration may depend on other IDs which may not be fully linked
+       * and versioned yet. */
+      const bool is_context_dependent = node.typeinfo->static_declaration &&
+                                        node.typeinfo->static_declaration->is_context_dependent;
+      const bool references_another_id = node.id != nullptr;
+      if (!(is_context_dependent && references_another_id)) {
         node_verify_sockets(reader->main, ntree, &node, false);
       }
     }
@@ -4353,7 +4356,7 @@ static void *node_static_value_storage_for(bNode &node, const bNodeSocket &socke
   if (node.is_type("FunctionNodeInputMenu"_ustr)) {
     return &reinterpret_cast<NodeInputMenu *>(node.storage)->value;
   }
-  if (node.is_type("ShaderNodeRGB"_ustr)) {
+  if (node.is_type("ShaderNodeRGB"_ustr) || node.is_type("CompositorNodeRGB"_ustr)) {
     return &node.output_socket(0).default_value_typed<bNodeSocketValueRGBA>()->value;
   }
   if (node.is_type("ShaderNodeValue"_ustr)) {

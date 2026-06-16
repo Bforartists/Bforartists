@@ -6,8 +6,8 @@
  * \ingroup spseq
  */
 
-#include "BLI_listbase.h"
-#include "BLI_utildefines.h"
+#include "BLI_listbase.hh"
+#include "BLI_utildefines.hh"
 
 #include "BLT_translation.hh"
 
@@ -25,7 +25,7 @@
 #include "ED_screen.hh" /* BFA */
 #include "ED_sequencer.hh"
 
-#include "BLI_string.h" /* BFA */
+#include "BLI_string.hh" /* BFA */
 
 #include "WM_api.hh"
 #include "WM_types.hh"

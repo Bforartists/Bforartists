@@ -22,14 +22,14 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_build_config.h"
+#include "BLI_build_config.hh"
 #include "BLI_enum_flags.hh"
-#include "BLI_listbase.h"
-#include "BLI_math_base.h"
-#include "BLI_math_rotation.h"
+#include "BLI_listbase.hh"
+#include "BLI_math_base_c.hh"
+#include "BLI_math_rotation_c.hh"
 #include "BLI_path_utils.hh"
-#include "BLI_string.h"
-#include "BLI_threads.h"
+#include "BLI_string.hh"
+#include "BLI_threads.hh"
 
 #include "BLT_translation.hh"
 
@@ -1381,7 +1381,9 @@ static void sound_update_base(Scene *scene, Object *object, Set<AUD_SequenceEntr
 
       bke::NlaStripRuntime &strip_runtime = strip.runtime_get();
 
-      if (scene->runtime->audio.speaker_handles.remove(strip_runtime.speaker_handle)) {
+      if ((strip_runtime.speaker_handle != nullptr) &&
+          scene->runtime->audio.speaker_handles.remove(strip_runtime.speaker_handle))
+      {
         if (speaker->sound) {
           strip_runtime.speaker_handle->move(
               double(strip.start) / scene->frames_per_second(), FLT_MAX, 0);
@@ -1879,7 +1881,7 @@ bool bke::sound_mixdown(AUD_Sequence sequence,
 
 #else /* WITH_AUDASPACE */
 
-#  include "BLI_utildefines.h"
+#  include "BLI_utildefines.hh"
 
 void BKE_sound_force_device(const char * /*device*/) {}
 void BKE_sound_init_once() {}
