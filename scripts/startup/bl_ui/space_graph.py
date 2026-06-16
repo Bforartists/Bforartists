@@ -716,6 +716,8 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_density")
         layout.menu("GRAPH_MT_key_blending")
         layout.menu("GRAPH_MT_key_smoothing")
+        layout.separator()
+        layout.operator("graph.delete", text="Delete", icon='X')
 
 
 class GRAPH_MT_key_snap(Menu):
@@ -811,6 +813,9 @@ class GRAPH_MT_context_menu(Menu):
 
         layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
         layout.operator_menu_enum("graph.snap", "type", text="Snap")
+        layout.separator()
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("graph.delete", icon='X')
 
 
 class GRAPH_MT_pivot_pie(Menu):

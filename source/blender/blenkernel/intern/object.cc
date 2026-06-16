@@ -49,16 +49,16 @@
 
 #include "BLI_bounds.hh"
 #include "BLI_kdtree.hh"
-#include "BLI_linklist.h"
-#include "BLI_listbase.h"
-#include "BLI_math_matrix.h"
-#include "BLI_math_rotation.h"
+#include "BLI_linklist.hh"
+#include "BLI_listbase.hh"
+#include "BLI_math_matrix_c.hh"
+#include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_path_utils.hh"
-#include "BLI_string.h"
-#include "BLI_string_utf8.h"
-#include "BLI_threads.h"
-#include "BLI_utildefines.h"
+#include "BLI_string.hh"
+#include "BLI_string_utf8.hh"
+#include "BLI_threads.hh"
+#include "BLI_utildefines.hh"
 
 #include "BLT_translation.hh"
 
@@ -3566,6 +3566,7 @@ float4x4 BKE_object_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *ob)
   workob.par1 = ob->par1;
   workob.par2 = ob->par2;
   workob.par3 = ob->par3;
+  workob.parent_bone_head_tail_factor = ob->parent_bone_head_tail_factor;
 
   /* The effects of constraints should NOT be included in the parent-inverse matrix. Constraints
    * are supposed to be applied after the object's local loc/rot/scale. If the (inverted) effect of

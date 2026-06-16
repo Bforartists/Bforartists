@@ -12,8 +12,8 @@
 #include <type_traits>
 
 #include "BLI_linear_allocator.hh"
-#include "BLI_math_rotation.h"
-#include "BLI_string.h"
+#include "BLI_math_rotation_c.hh"
+#include "BLI_string.hh"
 
 #include "BLT_translation.hh"
 
@@ -334,12 +334,12 @@ const EnumPropertyItem rna_enum_node_integer_math_items[] = {
      "DIVIDE_FLOOR",
      0,
      "Divide Floor",
-     "Divide and floor result, the largest integer smaller than or equal A"},
+     "Divide and floor to the largest integer smaller than or equal to the result"},
     {NODE_INTEGER_MATH_DIVIDE_CEIL,
      "DIVIDE_CEIL",
      0,
      "Divide Ceiling",
-     "Divide and ceil result, the smallest integer greater than or equal A"},
+     "Divide and ceil to the smallest integer greater than or equal to the result"},
     RNA_ENUM_ITEM_SEPR,
     {NODE_INTEGER_MATH_FLOORED_MODULO,
      "FLOORED_MODULO",
@@ -616,8 +616,8 @@ static const EnumPropertyItem node_cryptomatte_layer_name_items[] = {
 
 #  include <fmt/format.h>
 
-#  include "BLI_string.h"
-#  include "BLI_string_utf8.h"
+#  include "BLI_string.hh"
+#  include "BLI_string_utf8.hh"
 
 #  include "BKE_context.hh"
 #  include "BKE_cryptomatte.hh"
@@ -10706,6 +10706,12 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilColor", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilDrawTime", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilFillID", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilOpacity", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeSoftness", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeVisibility", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
   define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NODE_ADVECTGRID);
   define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NODE_GRIDCURL);

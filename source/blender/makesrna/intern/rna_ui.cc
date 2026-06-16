@@ -95,10 +95,10 @@ static const EnumPropertyItem asset_shelf_import_method_items[] = {
 
 #  include "RNA_access.hh"
 
-#  include "BLI_dynstr.h"
-#  include "BLI_listbase.h"
-#  include "BLI_string.h"
-#  include "BLI_string_utf8.h"
+#  include "BLI_dynstr.hh"
+#  include "BLI_listbase.hh"
+#  include "BLI_string.hh"
+#  include "BLI_string_utf8.hh"
 
 #  include "BKE_context.hh"
 #  include "BKE_main.hh"

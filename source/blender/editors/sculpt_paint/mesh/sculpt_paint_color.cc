@@ -11,8 +11,8 @@
 
 #include "BLI_color.hh"
 #include "BLI_enumerable_thread_specific.hh"
-#include "BLI_hash.h"
-#include "BLI_math_color_blend.h"
+#include "BLI_hash_c.hh"
+#include "BLI_math_color_blend.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_vector.hh"
 #include "BLI_vector.hh"
@@ -40,17 +40,6 @@
 #include <cmath>
 
 namespace blender::ed::sculpt_paint::color {
-
-static void calc_local_positions(const float4x4 &mat,
-                                 const Span<int> verts,
-                                 const Span<float3> positions,
-                                 const MutableSpan<float3> local_positions)
-{
-  PRF_scope(ProfileCategory::Editor);
-  for (const int i : verts.index_range()) {
-    local_positions[i] = math::transform_point(mat, positions[verts[i]]);
-  }
-}
 
 template<typename Func> inline void to_static_color_type(const CPPType &type, const Func &func)
 {
@@ -255,6 +244,8 @@ struct ColorPaintLocalData {
   Vector<float> factors;
   Vector<float> auto_mask;
   Vector<float3> positions;
+  Vector<float2> xy_positions;
+  Vector<float> z_positions;
   Vector<float> distances;
   Vector<float4> colors;
   Vector<float4> new_colors;
@@ -384,9 +375,10 @@ static void do_paint_brush_task(const Depsgraph &depsgraph,
   tls.distances.resize(verts.size());
   const MutableSpan<float> distances = tls.distances;
   if (brush.tip_roundness < 1.0f) {
-    tls.positions.resize(verts.size());
-    calc_local_positions(mat, verts, vert_positions, tls.positions);
-    calc_brush_cube_distances<float3>(brush, tls.positions, distances);
+    tls.xy_positions.resize(verts.size());
+    tls.z_positions.resize(verts.size());
+    calc_local_positions(vert_positions, verts, mat, tls.xy_positions, tls.z_positions);
+    calc_brush_cube_distances<float2>(brush, tls.xy_positions, distances);
     radius = 1.0f;
   }
   else {

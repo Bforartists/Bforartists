@@ -15,11 +15,11 @@
 #include "BLI_bit_vector.hh"
 #include "BLI_bounds.hh"
 #include "BLI_enumerable_thread_specific.hh"
-#include "BLI_listbase.h"
-#include "BLI_math_color_blend.h"
-#include "BLI_math_geom.h"
+#include "BLI_listbase.hh"
+#include "BLI_math_color_blend.hh"
+#include "BLI_math_geom_c.hh"
 #ifdef DEBUG_PIXEL_NODES
-#  include "BLI_hash.h"
+#  include "BLI_hash_c.hh"
 #endif
 
 #include "IMB_colormanagement.hh"
@@ -50,6 +50,9 @@ ImageData::~ImageData()
 
   BLI_assert(buffers.size() <= image->tiles.count());
   for (ImBuf *buffer : buffers.values()) {
+    if (buffer) {
+      buffer->gpu.flag &= ~IMB_GPU_DISABLE_MIPMAP_UPDATE;
+    }
     BKE_image_release_ibuf(image, buffer, nullptr);
   }
   buffers.clear();
@@ -80,7 +83,11 @@ static void fetch_image_buffers(ImageData &image_data,
       ImageUser tile_user = *image_data.image_user;
       tile_user.tile = tile.tile_number;
 
-      return BKE_image_acquire_ibuf(image_data.image, &tile_user, nullptr);
+      ImBuf *ibuf = BKE_image_acquire_ibuf(image_data.image, &tile_user, nullptr);
+      if (ibuf) {
+        ibuf->gpu.flag |= IMB_GPU_DISABLE_MIPMAP_UPDATE;
+      }
+      return ibuf;
     });
 
     if (buffer) {

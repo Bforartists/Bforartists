@@ -783,7 +783,8 @@ class VIEW3D_HT_header(Header):
             ):
                 show_snap = True
             else:
-                paint_settings = UnifiedPaintPanel.paint_settings(context)
+
+                paint_settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
 
                 if paint_settings:
                     brush = paint_settings.brush
@@ -8026,6 +8027,7 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon="DUPLICATE")
 
         layout.separator()
+        layout.separator()
         layout.operator("grease_pencil.stroke_split", text="Split", icon="SPLIT")
         layout.separator()
         layout.operator("grease_pencil.copy", text="Copy", icon="COPYDOWN")
@@ -8181,7 +8183,8 @@ class VIEW3D_MT_edit_curves(Menu):
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
-        layout.operator("curves.duplicate_move", icon="DUPLICATE")
+
+        layout.operator("curves.duplicate_move", icon='DUPLICATE')
 
         layout.separator()
         layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
@@ -12005,7 +12008,7 @@ class VIEW3D_PT_curves_sculpt_add_shape(Panel):
         layout.use_property_split = False  # BFA - set to False
         layout.use_property_decorate = False  # No animation.
 
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_mode(context, 'SCULPT_CURVES')
         brush = settings.brush
 
         col = layout.column(align=True)
@@ -12052,7 +12055,7 @@ class VIEW3D_PT_curves_sculpt_parameter_falloff(Panel):
     def draw(self, context):
         layout = self.layout
 
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_mode(context, 'SCULPT_CURVES')
         brush = settings.brush
 
         layout.template_curve_mapping(
@@ -12076,7 +12079,7 @@ class VIEW3D_PT_curves_sculpt_grow_shrink_scaling(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         layout.prop(brush.curves_sculpt_settings, "use_uniform_scale")

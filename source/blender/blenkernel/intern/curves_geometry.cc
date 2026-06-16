@@ -14,7 +14,7 @@
 #include "BLI_bounds.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_length_parameterize.hh"
-#include "BLI_listbase.h"
+#include "BLI_listbase.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_rotation_legacy.hh"
 #include "BLI_memory_counter.hh"
@@ -980,7 +980,7 @@ static void rotate_directions_around_axes(MutableSpan<float3> directions,
 {
   for (const int i : directions.index_range()) {
     const float3 axis = axes[i];
-    if (UNLIKELY(math::is_zero(axis))) {
+    if (math::is_zero(axis)) [[unlikely]] {
       continue;
     }
     directions[i] = math::rotate_direction_around_axis(directions[i], axis, angles[i]);

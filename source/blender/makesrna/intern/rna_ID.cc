@@ -215,9 +215,9 @@ const IDFilterEnumPropertyItem rna_enum_id_type_filter_items[] = {
 
 #  include "DNA_anim_types.h"
 
-#  include "BLI_listbase.h"
-#  include "BLI_math_base.h"
-#  include "BLI_string.h"
+#  include "BLI_listbase.hh"
+#  include "BLI_math_base_c.hh"
+#  include "BLI_string.hh"
 
 #  include "BLT_translation.hh"
 
@@ -408,7 +408,7 @@ static PointerRNA rna_ID_original_get(PointerRNA *ptr)
 short RNA_type_to_ID_code(const StructRNA *type)
 {
   const StructRNA *base_type = RNA_struct_base_child_of(type, RNA_ID);
-  if (UNLIKELY(base_type == nullptr)) {
+  if (base_type == nullptr) [[unlikely]] {
     return 0;
   }
   if (base_type == RNA_Action) {

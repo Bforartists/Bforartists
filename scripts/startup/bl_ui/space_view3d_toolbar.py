@@ -42,7 +42,7 @@ class VIEW3D_MT_brush_context_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         brush = getattr(settings, "brush", None)
 
         if context.region.type == "UI" and context.space_data.type == "VIEW_3D":
@@ -426,7 +426,7 @@ class VIEW3D_PT_tools_brush_settings(Panel, View3DPaintBrushPanel):
 
     @classmethod
     def poll(cls, context):
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
         return settings and settings.brush is not None
 
     def draw(self, context):
@@ -435,7 +435,7 @@ class VIEW3D_PT_tools_brush_settings(Panel, View3DPaintBrushPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         brush_settings(layout.column(), context, brush, popover=self.is_popover)
@@ -451,8 +451,8 @@ class VIEW3D_PT_tools_brush_settings_advanced(Panel, View3DPaintBrushPanel):
     @classmethod
     def poll(cls, context):
         mode = cls.get_brush_mode(context)
-        if mode == "SCULPT_GREASE_PENCIL":
-            settings = cls.paint_settings(context)
+        if mode == 'SCULPT_GREASE_PENCIL':
+            settings = cls.paint_settings_from_active_tool(context)
             tool = settings.brush.gpencil_sculpt_brush_type
             return tool in {"SMOOTH", "RANDOMIZE"}
 
@@ -464,7 +464,7 @@ class VIEW3D_PT_tools_brush_settings_advanced(Panel, View3DPaintBrushPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        settings = UnifiedPaintPanel.paint_settings(context)
+        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         brush_settings_advanced(layout.column(), context, settings, brush, self.is_popover)
@@ -477,7 +477,7 @@ class VIEW3D_PT_tools_brush_color(Panel, View3DPaintPanel):
 
     @classmethod
     def poll(cls, context):
-        settings = cls.paint_settings(context)
+        settings = cls.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         if context.image_paint_object:
@@ -494,7 +494,7 @@ class VIEW3D_PT_tools_brush_color(Panel, View3DPaintPanel):
 
     def draw(self, context):
         layout = self.layout
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         draw_color_settings(context, layout, brush, color_type=not context.vertex_paint_object)
@@ -887,7 +887,7 @@ class VIEW3D_PT_tools_brush_texture(Panel, View3DPaintPanel):
     def draw(self, context):
         layout = self.layout
 
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
         tex_slot = brush.texture_slot
 
@@ -907,8 +907,8 @@ class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel, TextureMaskPanel):
 
     @classmethod
     def poll(cls, context):
-        settings = cls.paint_settings(context)
-        return settings and settings.brush and context.image_paint_object
+        settings = cls.paint_settings_from_active_tool(context)
+        return (settings and settings.brush and context.image_paint_object)
 
     def draw(self, context):
         layout = self.layout
@@ -994,13 +994,13 @@ class VIEW3D_PT_tools_brush_falloff_frontface(View3DPaintPanel, Panel):
         return context.weight_paint_object or context.vertex_paint_object
 
     def draw_header(self, context):
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         self.layout.prop(brush, "use_frontface_falloff", text=self.bl_label if self.is_popover else "")
 
     def draw(self, context):
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         layout = self.layout
@@ -1051,8 +1051,8 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
 
     @classmethod
     def poll(cls, context):
-        paint_settings = cls.paint_settings(context)
-        return context.sculpt_object and context.tool_settings.sculpt and paint_settings
+        paint_settings = cls.paint_settings_from_active_tool(context)
+        return (context.sculpt_object and context.tool_settings.sculpt and paint_settings)
 
     def draw_header(self, context):
         is_popover = self.is_popover
@@ -1071,7 +1071,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
 
         tool_settings = context.tool_settings
         sculpt = tool_settings.sculpt
-        settings = self.paint_settings(context)
+        settings = self.paint_settings_from_active_tool(context)
         brush = settings.brush
 
         col = layout.column()

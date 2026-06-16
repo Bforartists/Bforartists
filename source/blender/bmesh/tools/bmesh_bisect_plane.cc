@@ -20,17 +20,17 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_array.hh"
-#include "BLI_linklist_stack.h"
-#include "BLI_math_geom.h"
+#include "BLI_linklist_stack.hh"
+#include "BLI_math_geom_c.hh"
 
-#include "BLI_math_vector.h"
-#include "BLI_utildefines.h"
-#include "BLI_utildefines_stack.h"
+#include "BLI_math_vector_c.hh"
+#include "BLI_utildefines.hh"
+#include "BLI_utildefines_stack.hh"
 
 #include "bmesh.hh"
 #include "bmesh_bisect_plane.hh" /* Own include. */
 
-#include "BLI_strict_flags.h" /* IWYU pragma: keep. Keep last. */
+#include "BLI_strict_flags.hh" /* IWYU pragma: keep. Keep last. */
 
 namespace blender {
 
@@ -177,7 +177,7 @@ static void bm_face_bisect_verts(
   } while ((l_iter = l_iter->next) != l_first);
 
   if ((STACK_SIZE(vert_split_arr) > 1) && (use_dirs[0] && use_dirs[2])) {
-    if (LIKELY(STACK_SIZE(vert_split_arr) == 2)) {
+    if (STACK_SIZE(vert_split_arr) == 2) [[likely]] {
       BMLoop *l_new;
       BMLoop *l_a, *l_b;
 
@@ -266,7 +266,7 @@ static void bm_face_bisect_verts(
        * (`sort_dir` could be flipped either way). */
       BLI_assert(BM_face_is_normal_valid(f));
       cross_v3_v3v3(sort_dir, f->no, plane);
-      if (UNLIKELY(normalize_v3(sort_dir) == 0.0f)) {
+      if (normalize_v3(sort_dir) == 0.0f) [[unlikely]] {
         /* find any 2 verts and get their direction */
         for (i = 0; i < STACK_SIZE(vert_split_arr); i++) {
           if (!equals_v3v3(vert_split_arr[0]->co, vert_split_arr[i]->co)) {
@@ -274,7 +274,7 @@ static void bm_face_bisect_verts(
             normalize_v3(sort_dir);
           }
         }
-        if (UNLIKELY(i == STACK_SIZE(vert_split_arr))) {
+        if (i == STACK_SIZE(vert_split_arr)) [[unlikely]] {
           /* Ok, we can't do anything useful here,
            * face has no area or so, bail out, this is highly unlikely but not impossible. */
           goto finally;
