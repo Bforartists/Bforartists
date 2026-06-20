@@ -202,11 +202,20 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
 
         entries = [
             OperatorEntry("transform.tosphere", text="To Sphere", icon='TOSPHERE'),
-            OperatorEntry("mesh.circularize", text="To Circle", icon='TOCIRCLE', poll=context.mode in {'EDIT_MESH'}),
+        ]
+
+        if context.mode in {'EDIT_MESH'}:
+            entries.extend([
+                OperatorEntry("mesh.circularize", text="To Circle", icon='TOCIRCLE'),
+                OperatorEntry("mesh.flatten", text="Flatten", icon="FLATTEN"),
+                OperatorEntry("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon='SPACE_LOOPS_EVENLY'),
+            ])
+
+        entries.extend([
             OperatorEntry("transform.shear", text="Shear", icon='SHEAR'),
             OperatorEntry("transform.bend", text="Bend", icon='BEND'),
             OperatorEntry("transform.push_pull", text="Push/Pull", icon='PUSH_PULL'),
-        ]
+        ])
 
         if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}:
             entries.extend([
@@ -227,6 +236,11 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
             entries.extend([
                 Separator,
                 OperatorEntry("transform.transform", text="Radius", icon='SHRINK_FATTEN', props={"mode": 'CURVE_SHRINKFATTEN'}),
+            ])
+        elif context.mode == 'EDIT_CURVE':
+            entries.extend([
+                Separator,
+                OperatorEntry("transform.transform", text="Opacity", icon='GP_OPACITY', props={"mode": 'GPENCIL_OPACITY'}),
             ])
 
         if context.active_object is not None and obj.type != 'ARMATURE':
@@ -1003,7 +1017,7 @@ class VIEW3D_PT_uv_tab_uv(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("uv.unwrap", text="Unwrap ABF", icon='UNWRAP_ABF', props={"method": 'ANGLE_BASED'}),
+            OperatorEntry("uv.unwrap", text="Unwrap Angle Based", icon='UNWRAP_ABF', props={"method": 'ANGLE_BASED'}),
             OperatorEntry("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM', props={"method": 'CONFORMAL'}),
             OperatorEntry("uv.unwrap", text="Unwrap Minimum Stretch", icon='UNWRAP_MINSTRETCH', props={"method": 'MINIMUM_STRETCH'}),
             Separator,
@@ -1112,7 +1126,7 @@ class VIEW3D_PT_sculpt_tab_sculpt(ToolsystemPanel):
 
 
 class VIEW3D_PT_sculpt_tab_filters(ToolsystemPanel):
-    bl_label = "Meshfilter"
+    bl_label = "Filter"
     bl_category = "Sculpt"
     bl_context="sculpt_mode"
     bl_options = {'HIDE_BG'}
@@ -1363,11 +1377,6 @@ class VIEW3D_PT_curve_tab_curve(ToolsystemPanel):
             Separator,
             OperatorEntry("curve.cyclic_toggle", icon='TOGGLE_CYCLIC'),
             OperatorEntry("curve.decimate", icon='DECIMATE'),
-            Separator,
-            OperatorEntry("transform.tilt", icon='TILT'),
-            OperatorEntry("curve.tilt_clear", icon='CLEAR_TILT'),
-            Separator,
-            OperatorEntry("curve.normals_make_consistent", icon='RECALC_NORMALS'),
             Separator,
             OperatorEntry("curve.dissolve_verts", icon='DISSOLVE_VERTS'),
         )
@@ -1623,11 +1632,11 @@ class VIEW3D_PT_gp_gpencil_tab_separate(ToolsystemPanel):
         layout = self.layout
 
         entries = (
-            OperatorEntry("grease_pencil.separate", text="Separate Selected", icon='SEPARATE', props={"mode": 'SELECTED'}),
-            OperatorEntry("grease_pencil.separate", text="Separate Selected Strokes", icon='SEPARATE_BYMATERIAL', props={"mode": 'MATERIAL'}),
-            OperatorEntry("grease_pencil.separate", text="Separate Active Layer", icon='SEPARATE_GP_STROKES', props={"mode": 'LAYER'}),
+            OperatorEntry("grease_pencil.separate", text="Selection", icon='SEPARATE', props={"mode": 'SELECTED'}),
+            OperatorEntry("grease_pencil.separate", text="By Material", icon='SEPARATE_BYMATERIAL', props={"mode": 'MATERIAL'}),
+            OperatorEntry("grease_pencil.separate", text="By Layer", icon='SEPARATE_GP_STROKES', props={"mode": 'LAYER'}),
             Separator,
-            OperatorEntry("grease_pencil.stroke_split", text="Stroke Split", icon='SPLIT'),
+            OperatorEntry("grease_pencil.stroke_split", text="Split", icon='SPLIT'),
         )
 
         draw_entries(layout, context, entries)
@@ -1687,7 +1696,7 @@ class VIEW3D_PT_gp_stroke_tab_simplify(ToolsystemPanel):
 
 
 class VIEW3D_PT_gp_stroke_tab_toggle_caps(ToolsystemPanel):
-    bl_label = "Toggle Caps"
+    bl_label = "Set Caps"
     bl_context="grease_pencil_edit"
     bl_category = "Stroke"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
@@ -1697,9 +1706,10 @@ class VIEW3D_PT_gp_stroke_tab_toggle_caps(ToolsystemPanel):
 
         entries = (
             OperatorEntry("grease_pencil.caps_set", text="Rounded", icon='TOGGLECAPS_DEFAULT', props={"type": 'ROUND'}),
-            OperatorEntry("grease_pencil.caps_set", text="Start", icon='TOGGLECAPS_BOTH', props={"type": 'FLAT'}),
-            OperatorEntry("grease_pencil.caps_set", text="End", icon='TOGGLECAPS_START', props={"type": 'START'}),
-            OperatorEntry("grease_pencil.caps_set", text="Default", icon='TOGGLECAPS_END', props={"type": 'END'}),
+            OperatorEntry("grease_pencil.caps_set", text="Flat", icon='TOGGLECAPS_BOTH', props={"type": 'FLAT'}),
+            Separator,
+            OperatorEntry("grease_pencil.caps_set", text="Toggle Start", icon='TOGGLECAPS_START', props={"type": 'START'}),
+            OperatorEntry("grease_pencil.caps_set", text="Toggle End", icon='TOGGLECAPS_END', props={"type": 'END'}),
         )
 
         draw_entries(layout, context, entries)
