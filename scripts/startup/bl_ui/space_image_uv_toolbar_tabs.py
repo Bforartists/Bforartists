@@ -4,7 +4,7 @@
 
 import bpy
 from bpy.types import Panel
-import math, re, dataclasses
+import math
 
 from bl_ui.properties_paint_common import (
     UnifiedPaintPanel,
@@ -34,144 +34,15 @@ from bpy.app.translations import pgettext_iface as iface_
 
 from bl_ui.space_toolsystem_common import (
     toolsystem_column_count,
+    Separator,
+    OperatorEntry,
+    MenuEntry,
+    SetOperatorContext,
+    draw_entries,
 )
 
 
-# Null object used to abstractly represent a separator
-Separator = object()
-
-
-@dataclasses.dataclass(slots=True)
-class OperatorEntry:
-    operator : str
-    text : str = None
-    text_ctxt : str = None
-    icon : str = 'ICON_NONE'
-    props : dict = None
-    poll : bool = True
-
-    as_dict = dataclasses.asdict
-
-    @property
-    def op_params(self):
-        params = ("text", "text_ctxt", "icon")
-        return {key: getattr(self, key) for key in params}
-    
-    def draw(self, layout, *, as_icon):
-        if not self.poll:
-            return
-        
-        if as_icon:
-            props = layout.operator(self.operator, text="", icon=self.icon)
-        else:
-            props = layout.operator(self.operator, **self.op_params)
-            
-        if self.props:
-            for key, value in self.props.items():
-                setattr(props, key, value)
-
-
-@dataclasses.dataclass(slots=True)
-class MenuEntry:
-    menu : str
-    text : str = None
-    text_ctxt : str = None
-    icon : str = 'ICON_NONE'
-    poll : bool = True
-
-    as_dict = dataclasses.asdict
-
-    @property
-    def menu_params(self):
-        params = ("text", "text_ctxt", "icon")
-        return {key: getattr(self, key) for key in params}
-    
-    def draw(self, layout, *, as_icon):
-        if not self.poll:
-            return
-        
-        if as_icon:
-            layout.menu(self.menu, text="", icon=self.icon)
-        else:
-            layout.menu(self.menu, **self.menu_params)
-
-
-@dataclasses.dataclass(slots=True)
-class SetOperatorContext:
-    context_value : str
-
-    def set_context(self, layout):
-        layout.operator_context = self.context_value
-
-
-def draw_entries(layout, context, entries):
-    column_count = toolsystem_column_count(context.region)
-
-    if column_count == 4:
-        draw_text_buttons(layout, entries)
-    else:
-        draw_icon_buttons(layout, entries, column_count)
-
-
-def draw_text_buttons(layout, entries):
-    col = layout.column(align=True)
-    col.scale_y = 2
-    
-    for entry in entries:
-        if entry is Separator:
-            col.separator(factor=0.5)
-        elif isinstance(entry, SetOperatorContext):
-            entry.set_context(col)
-        else:
-            if entry.poll:
-                entry.draw(col, as_icon=False)
-        
-
-# NOTE: There is no OperatorEnumEntry because `layout.operator_enum` is not compatible with this.
-# Each option in an operator_enum must be defined as individual instances of OperatorEntry.
-def draw_icon_buttons(layout, entries, column_count):
-    index = 0
-    
-    col = layout.column(align=True)
-    
-    for entry in entries:
-        if entry is Separator:
-            col = layout.column(align=True)
-            row = col.row(align=True)
-            row.scale_x = 2
-            row.scale_y = 2
-            row.alignment = 'LEFT'
-            
-            index = 0
-        elif isinstance(entry, SetOperatorContext):
-            entry.set_context(col)
-        else:
-            if not entry.poll:
-                continue
-
-            if index == 0:
-                row = col.row(align=True)
-                row.scale_x = 2
-                row.scale_y = 2
-                row.alignment = 'LEFT'
-            
-            entry.draw(row, as_icon=True)
-                    
-            index = (index + 1) % column_count
-
-
-class ToolsystemPanel(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return view.show_toolshelf_tabs == True
-
-
-class IMAGE_PT_uvtab_transform(ToolsystemPanel):
+class IMAGE_PT_uvtab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -218,7 +89,7 @@ class IMAGE_PT_uvtab_transform(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_uvtab_mirror(ToolsystemPanel):
+class IMAGE_PT_uvtab_mirror(Panel):
     bl_label = "Mirror"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -246,7 +117,7 @@ class IMAGE_PT_uvtab_mirror(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_uvtab_snap(ToolsystemPanel):
+class IMAGE_PT_uvtab_snap(Panel):
     bl_label = "Snap"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -278,7 +149,7 @@ class IMAGE_PT_uvtab_snap(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_uvtab_unwrap(ToolsystemPanel):
+class IMAGE_PT_uvtab_unwrap(Panel):
     bl_label = "Unwrap"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -314,7 +185,7 @@ class IMAGE_PT_uvtab_unwrap(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_uvtab_merge(ToolsystemPanel):
+class IMAGE_PT_uvtab_merge(Panel):
     bl_label = "Merge"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -342,7 +213,7 @@ class IMAGE_PT_uvtab_merge(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_uvtab_uvtools(ToolsystemPanel):
+class IMAGE_PT_uvtab_uvtools(Panel):
     bl_label = "UV Tools"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -380,7 +251,7 @@ class IMAGE_PT_uvtab_uvtools(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_uvtab_align(ToolsystemPanel):
+class IMAGE_PT_uvtab_align(Panel):
     bl_label = "Align"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -411,7 +282,7 @@ class IMAGE_PT_uvtab_align(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_image_masktab_add(ToolsystemPanel):
+class IMAGE_PT_image_masktab_add(Panel):
     bl_label = "Add"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -440,7 +311,7 @@ class IMAGE_PT_image_masktab_add(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_image_masktab_transform(ToolsystemPanel):
+class IMAGE_PT_image_masktab_transform(Panel):
     bl_label = "Transform"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -470,7 +341,7 @@ class IMAGE_PT_image_masktab_transform(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_image_masktab_mask(ToolsystemPanel):
+class IMAGE_PT_image_masktab_mask(Panel):
     bl_label = "Mask"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -500,7 +371,7 @@ class IMAGE_PT_image_masktab_mask(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_image_masktab_handletype(ToolsystemPanel):
+class IMAGE_PT_image_masktab_handletype(Panel):
     bl_label = "Set Handle Type"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -529,7 +400,7 @@ class IMAGE_PT_image_masktab_handletype(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
-class IMAGE_PT_image_masktab_animation(ToolsystemPanel):
+class IMAGE_PT_image_masktab_animation(Panel):
     bl_label = "Animation"
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
