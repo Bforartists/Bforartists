@@ -60,14 +60,22 @@ class IMAGE_PT_uvtab_transform(Panel):
     def draw(self, context):
         layout = self.layout
 
-        entries = (
+        entries = [
             SetOperatorContext('EXEC_REGION_WIN'),
             OperatorEntry("transform.rotate", text="Rotate Clockwise 90\u00B0", icon="ROTATE_PLUS_90", props={"value": math.pi / 2}),
             OperatorEntry("transform.rotate", text="Rotate Counter-Clockwise 90\u00B0", icon="ROTATE_MINUS_90", props={"value": math.pi / -2}),
             SetOperatorContext('INVOKE_DEFAULT'),
             Separator,
             OperatorEntry("transform.shear", icon='SHEAR'),
-        )
+        ]
+
+        ts = context.tool_settings
+        if ts.use_uv_select_sync:
+            is_vert_mode, is_edge_mode, _ = ts.mesh_select_mode
+        else:
+            uv_select_mode = ts.uv_select_mode
+            is_vert_mode = uv_select_mode == 'VERTEX'
+            is_edge_mode = uv_select_mode == 'EDGE'
 
         if is_vert_mode or is_edge_mode:
             if is_vert_mode:
