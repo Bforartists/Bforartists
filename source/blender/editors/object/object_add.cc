@@ -2329,7 +2329,11 @@ static wmOperatorStatus collection_drop_exec(bContext *C, wmOperator *op)
   }
   const bool use_override = RNA_boolean_get(
       op->ptr, "use_override");  // bfa use override for linked data-block
-  if (RNA_boolean_get(op->ptr, "use_instance")) {
+  /* bfa: When creating a library override of a linked collection, force the instancing path so
+   * that the override system can find the collection via the instance empty's
+   * `instance_collection` pointer. The instance empty will be removed by
+   * #collection_drop_override() after the override is created. */
+  if (RNA_boolean_get(op->ptr, "use_instance") || use_override) {
     BKE_collection_child_remove(bmain, active_collection, add_info->collection);
     DEG_id_tag_update(&active_collection->id, ID_RECALC_SYNC_TO_EVAL);
     DEG_relations_tag_update(bmain);
