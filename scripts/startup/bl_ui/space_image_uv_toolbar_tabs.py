@@ -32,6 +32,15 @@ from bl_ui.space_toolsystem_common import (
 
 from bpy.app.translations import pgettext_iface as iface_
 
+from bl_ui.space_toolsystem_common import (
+    toolsystem_column_count,
+    Separator,
+    OperatorEntry,
+    MenuEntry,
+    SetOperatorContext,
+    draw_entries,
+)
+
 
 class IMAGE_PT_uvtab_transform(Panel):
     bl_label = "Transform"
@@ -51,11 +60,15 @@ class IMAGE_PT_uvtab_transform(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = [
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("transform.rotate", text="Rotate Clockwise 90\u00B0", icon="ROTATE_PLUS_90", props={"value": math.pi / 2}),
+            OperatorEntry("transform.rotate", text="Rotate Counter-Clockwise 90\u00B0", icon="ROTATE_MINUS_90", props={"value": math.pi / -2}),
+            SetOperatorContext('INVOKE_DEFAULT'),
+            Separator,
+            OperatorEntry("transform.shear", icon='SHEAR'),
+        ]
 
-        obj = context.object
-
-        # Conditional to define what selection mode you're in for the slide operators
         ts = context.tool_settings
         if ts.use_uv_select_sync:
             is_vert_mode, is_edge_mode, _ = ts.mesh_select_mode
@@ -63,88 +76,25 @@ class IMAGE_PT_uvtab_transform(Panel):
             uv_select_mode = ts.uv_select_mode
             is_vert_mode = uv_select_mode == 'VERTEX'
             is_edge_mode = uv_select_mode == 'EDGE'
-            # is_face_mode = uv_select_mode == 'FACE'
-            # is_island_mode = uv_select_mode == 'ISLAND'
 
-        # text buttons
-        if column_count == 4:
+        if is_vert_mode or is_edge_mode:
+            if is_vert_mode:
+                entries.extend([
+                    SetOperatorContext('INVOKE_DEFAULT'),
+                    OperatorEntry("transform.vert_slide", icon='SLIDE_VERTEX'),
+                ])
 
-            col = layout.column(align=True)
-            col.scale_y = 2
+            if is_edge_mode:
+                entries.extend([
+                    SetOperatorContext('INVOKE_DEFAULT'),
+                    OperatorEntry("transform.edge_slide", icon='SLIDE_EDGE'),
+                ])
 
-            col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("transform.rotate", text="Rotate Clockwise 90\u00B0", icon="ROTATE_PLUS_90").value = math.pi / 2
-            col.operator("transform.rotate", text="Rotate Counter-Clockwise 90\u00B0", icon="ROTATE_MINUS_90").value = math.pi / -2
-            col.operator_context = 'INVOKE_DEFAULT'
+        entries.extend([
+            OperatorEntry("uv.randomize_uv_transform", icon='RANDOMIZE'),
+        ])
 
-            col.separator()
-
-            col.operator("transform.shear", icon='SHEAR')
-            if is_vert_mode or is_edge_mode:
-                layout.operator_context = 'INVOKE_DEFAULT'
-                if is_vert_mode:
-                    col.operator("transform.vert_slide", icon='SLIDE_VERTEX')
-                if is_edge_mode:
-                    col.operator("transform.edge_slide", icon='SLIDE_EDGE')
-            col.operator("uv.randomize_uv_transform", icon = 'RANDOMIZE')
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("transform.rotate", text="", icon="ROTATE_PLUS_90").value = math.pi / 2
-                row.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
-                row.operator("transform.shear", text="", icon='SHEAR')
-                row = col.row(align=True)
-                if is_vert_mode or is_edge_mode:
-                    layout.operator_context = 'INVOKE_DEFAULT'
-                    if is_vert_mode:
-                        row.operator("transform.vert_slide", text="", icon='SLIDE_VERTEX')
-                    if is_edge_mode:
-                        row.operator("transform.edge_slide", text="", icon='SLIDE_EDGE')
-                row.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("transform.rotate", text="", icon="ROTATE_PLUS_90").value = math.pi / 2
-                row.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
-
-                row = col.row(align=True)
-                row.operator("transform.shear", text="", icon='SHEAR')
-                if is_vert_mode:
-                    layout.operator_context = 'INVOKE_DEFAULT'
-                    row.operator("transform.vert_slide", text="", icon='SLIDE_VERTEX')
-
-                row = col.row(align=True)
-                if is_edge_mode:
-                    layout.operator_context = 'INVOKE_DEFAULT'
-                    row.operator("transform.edge_slide", text="", icon='SLIDE_EDGE')
-                row.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
-
-            elif column_count == 1:
-
-                col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("transform.rotate", text="", icon="ROTATE_PLUS_90").value = math.pi / 2
-                col.operator("transform.rotate", text="", icon="ROTATE_MINUS_90").value = math.pi / -2
-                col.operator_context = 'INVOKE_DEFAULT'
-
-                col.separator()
-
-                col.operator("transform.shear", text="", icon='SHEAR')
-                if is_vert_mode or is_edge_mode:
-                    layout.operator_context = 'INVOKE_DEFAULT'
-                    if is_vert_mode:
-                        col.operator("transform.vert_slide", text="", icon='SLIDE_VERTEX')
-                    if is_edge_mode:
-                        col.operator("transform.edge_slide", text="", icon='SLIDE_EDGE')
-                col.operator("uv.randomize_uv_transform", text="", icon = 'RANDOMIZE')
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_uvtab_mirror(Panel):
@@ -165,54 +115,14 @@ class IMAGE_PT_uvtab_mirror(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("uv.copy_mirrored_faces", icon="COPYMIRRORED"),
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("transform.mirror", text="X Axis", icon="MIRROR_X", props={"constraint_axis": (True, False, False)}),
+            OperatorEntry("transform.mirror", text="Y Axis", icon="MIRROR_Y", props={"constraint_axis": (False, True, False)}),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("uv.copy_mirrored_faces", icon="COPYMIRRORED")
-
-            col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("transform.mirror", text="X Axis", icon="MIRROR_X").constraint_axis[0] = True
-            col.operator("transform.mirror", text="Y Axis", icon="MIRROR_Y").constraint_axis[1] = True
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("uv.copy_mirrored_faces", text="", icon="COPYMIRRORED")
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
-                row.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("uv.copy_mirrored_faces", text="", icon="COPYMIRRORED")
-
-                row = col.row(align=True)
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
-                row.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
-
-            elif column_count == 1:
-
-                col.operator("uv.copy_mirrored_faces", text="", icon="COPYMIRRORED")
-
-                col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("transform.mirror", text="", icon="MIRROR_X").constraint_axis[0] = True
-                col.operator("transform.mirror", text="", icon="MIRROR_Y").constraint_axis[1] = True
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_uvtab_snap(Panel):
@@ -233,76 +143,18 @@ class IMAGE_PT_uvtab_snap(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("uv.snap_selected", text="Selected to Pixels", icon="SNAP_TO_PIXELS", props={"target": 'PIXELS'}),
+            OperatorEntry("uv.snap_selected", text="Selected to Cursor", icon="SELECTIONTOCURSOR", props={"target": 'CURSOR'}),
+            OperatorEntry("uv.snap_selected", text="Selected to Cursor (Offset),", icon="SELECTIONTOCURSOROFFSET", props={"target": 'CURSOR_OFFSET'}),
+            OperatorEntry("uv.snap_selected", text="Selected to Adjacent Unselected", icon="SNAP_TO_ADJACENT", props={"target": 'ADJACENT_UNSELECTED'}),
+            Separator,
+            OperatorEntry("uv.snap_cursor", text="Cursor to Pixels", icon="CURSOR_TO_PIXELS", props={"target": 'PIXELS'}),
+            OperatorEntry("uv.snap_cursor", text="Cursor to Selected", icon="CURSORTOSELECTION", props={"target": 'SELECTED'}),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("uv.snap_selected", text="Selected to Pixels", icon="SNAP_TO_PIXELS").target = 'PIXELS'
-            col.operator("uv.snap_selected", text="Selected to Cursor", icon="SELECTIONTOCURSOR").target = 'CURSOR'
-            col.operator("uv.snap_selected", text="Selected to Cursor (Offset)",
-                         icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-            col.operator("uv.snap_selected", text="Selected to Adjacent Unselected",
-                         icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
-
-            col.separator()
-
-            col.operator("uv.snap_cursor", text="Cursor to Pixels", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
-            col.operator("uv.snap_cursor", text="Cursor to Selected", icon="CURSORTOSELECTION").target = 'SELECTED'
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.snap_selected", text="", icon="SNAP_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOR").target = 'CURSOR'
-                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-
-                row = col.row(align=True)
-                row.operator("uv.snap_selected", text="", icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
-                row.operator("uv.snap_cursor", text="", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_cursor", text="", icon="CURSORTOSELECTION").target = 'SELECTED'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.snap_selected", text="", icon="SNAP_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOR").target = 'CURSOR'
-
-                row = col.row(align=True)
-                row.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-                row.operator("uv.snap_selected", text="", icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
-
-                row = col.row(align=True)
-                row.operator("uv.snap_cursor", text="", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
-                row.operator("uv.snap_cursor", text="", icon="CURSORTOSELECTION").target = 'SELECTED'
-
-            elif column_count == 1:
-
-                col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("uv.snap_selected", text="", icon="SNAP_TO_PIXELS").target = 'PIXELS'
-                col.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOR").target = 'CURSOR'
-                col.operator("uv.snap_selected", text="", icon="SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
-                col.operator("uv.snap_selected", text="", icon="SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
-
-                col.separator()
-
-                col.operator("uv.snap_cursor", text="", icon="CURSOR_TO_PIXELS").target = 'PIXELS'
-                col.operator("uv.snap_cursor", text="", icon="CURSORTOSELECTION").target = 'SELECTED'
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_uvtab_unwrap(Panel):
@@ -323,96 +175,22 @@ class IMAGE_PT_uvtab_unwrap(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("uv.unwrap", text="Unwrap Angle Based", icon='UNWRAP_ABF', props={"method": 'ANGLE_BASED'}),
+            OperatorEntry("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM', props={"method": 'CONFORMAL'}),
+            Separator,
+            SetOperatorContext('INVOKE_DEFAULT'),
+            OperatorEntry("uv.smart_project", icon="MOD_UVPROJECT"),
+            OperatorEntry("uv.lightmap_pack", icon="LIGHTMAPPACK"),
+            OperatorEntry("uv.follow_active_quads", icon="FOLLOWQUADS"),
+            Separator,
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("uv.cube_project", icon="CUBEPROJECT"),
+            OperatorEntry("uv.cylinder_project", icon="CYLINDERPROJECT"),
+            OperatorEntry("uv.sphere_project", icon="SPHEREPROJECT"),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("uv.unwrap", text="Unwrap Angle Based", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-            col.operator("uv.unwrap", text="Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
-
-            col.separator()
-
-            col.operator_context = 'INVOKE_DEFAULT'
-            col.operator("uv.smart_project", icon="MOD_UVPROJECT")
-            col.operator("uv.lightmap_pack", icon="LIGHTMAPPACK")
-            col.operator("uv.follow_active_quads", icon="FOLLOWQUADS")
-
-            col.separator()
-
-            col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("uv.cube_project", icon="CUBEPROJECT")
-            col.operator("uv.cylinder_project", icon="CYLINDERPROJECT")
-            col.operator("uv.sphere_project", icon="SPHEREPROJECT")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("uv.unwrap", text="", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-                row.operator("uv.unwrap", text="", icon='UNWRAP_LSCM').method = 'CONFORMAL'
-                row.operator_context = 'INVOKE_DEFAULT'
-                row.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
-
-                row = col.row(align=True)
-                row.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
-                row.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.cube_project", text="", icon="CUBEPROJECT")
-
-                row = col.row(align=True)
-                row.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
-                row.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("uv.unwrap", text="", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-                row.operator("uv.unwrap", text="", icon='UNWRAP_LSCM').method = 'CONFORMAL'
-
-                row = col.row(align=True)
-                row.operator_context = 'INVOKE_DEFAULT'
-                row.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
-                row.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
-
-                row = col.row(align=True)
-                row.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator("uv.cube_project", text="", icon="CUBEPROJECT")
-
-                row = col.row(align=True)
-                row.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
-                row.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
-
-            elif column_count == 1:
-
-                col.operator("uv.unwrap", text="", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-                col.operator("uv.unwrap", text="", icon='UNWRAP_LSCM').method = 'CONFORMAL'
-
-                col.separator()
-
-                col.operator_context = 'INVOKE_DEFAULT'
-                col.operator("uv.smart_project", text="", icon="MOD_UVPROJECT")
-                col.operator("uv.lightmap_pack", text="", icon="LIGHTMAPPACK")
-                col.operator("uv.follow_active_quads", text="", icon="FOLLOWQUADS")
-
-                col.separator()
-
-                col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("uv.cube_project", text="", icon="CUBEPROJECT")
-                col.operator("uv.cylinder_project", text="", icon="CYLINDERPROJECT")
-                col.operator("uv.sphere_project", text="", icon="SPHEREPROJECT")
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_uvtab_merge(Panel):
@@ -433,54 +211,14 @@ class IMAGE_PT_uvtab_merge(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("uv.weld", text="At Center", icon='MERGE_CENTER'),
+            OperatorEntry("uv.snap_selected", text="At Cursor", icon='MERGE_CURSOR', props={"target": 'CURSOR'}),
+            Separator,
+            OperatorEntry("uv.remove_doubles", text="By Distance", icon='REMOVE_DOUBLES'),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("uv.weld", text="At Center", icon='MERGE_CENTER')
-            col.operator("uv.snap_selected", text="At Cursor", icon='MERGE_CURSOR').target = 'CURSOR'
-
-            col.separator()
-
-            col.operator("uv.remove_doubles", text="By Distance", icon='REMOVE_DOUBLES')
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("uv.weld", text="", icon='MERGE_CENTER')
-                row.operator("uv.snap_selected", text="", icon='MERGE_CURSOR').target = 'CURSOR'
-                row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("uv.weld", text="", icon='MERGE_CENTER')
-                row.operator("uv.snap_selected", text="", icon='MERGE_CURSOR').target = 'CURSOR'
-
-                row = col.row(align=True)
-                row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
-
-            elif column_count == 1:
-
-                col.operator("uv.weld", text="", icon='MERGE_CENTER')
-                col.operator("uv.snap_selected", text="", icon='MERGE_CURSOR').target = 'CURSOR'
-
-                col.separator()
-
-                col.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_uvtab_uvtools(Panel):
@@ -501,111 +239,24 @@ class IMAGE_PT_uvtab_uvtools(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("uv.pin", icon="PINNED", props={"clear": False}),
+            OperatorEntry("uv.pin", text="Unpin", icon="UNPINNED", props={"clear": True}),
+            OperatorEntry("uv.select_split", text="Split Selection", icon='SPLIT'),
+            Separator,
+            OperatorEntry("uv.pack_islands", icon="PACKISLAND"),
+            OperatorEntry("uv.average_islands_scale", icon="AVERAGEISLANDSCALE"),
+            OperatorEntry("uv.minimize_stretch", icon="MINIMIZESTRETCH"),
+            OperatorEntry("uv.stitch", icon="STITCH"),
+            Separator,
+            OperatorEntry("uv.mark_seam", icon="MARK_SEAM", props={"clear": False}),
+            OperatorEntry("uv.clear_seam", text="Clear Seam", icon='CLEAR_SEAM'),
+            OperatorEntry("uv.seams_from_islands", icon="SEAMSFROMISLAND"),
+            Separator,
+            OperatorEntry("uv.reset", icon="RESET"),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("uv.pin", icon="PINNED").clear = False
-            col.operator("uv.pin", text="Unpin", icon="UNPINNED").clear = True
-            col.operator("uv.select_split", text="Split Selection", icon='SPLIT')
-
-            col.separator()
-
-            col.operator("uv.pack_islands", icon="PACKISLAND")
-            col.operator("uv.average_islands_scale", icon="AVERAGEISLANDSCALE")
-            col.operator("uv.minimize_stretch", icon="MINIMIZESTRETCH")
-            col.operator("uv.stitch", icon="STITCH")
-
-            col.separator()
-
-            col.operator("uv.mark_seam", icon="MARK_SEAM").clear = False
-            col.operator("uv.clear_seam", text="Clear Seam", icon='CLEAR_SEAM')
-            col.operator("uv.seams_from_islands", icon="SEAMSFROMISLAND")
-
-            col.separator()
-
-            col.operator("uv.reset", icon="RESET")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("uv.pin", text="", icon="PINNED").clear = False
-                row.operator("uv.pin", text="", icon="UNPINNED").clear = True
-                row.operator("uv.select_split", text="", icon='SPLIT')
-
-                row = col.row(align=True)
-                row.operator("uv.pack_islands", text="", icon="PACKISLAND")
-                row.operator("uv.average_islands_scale", text="", icon="AVERAGEISLANDSCALE")
-                row.operator("uv.minimize_stretch", text="", icon="MINIMIZESTRETCH")
-
-                row = col.row(align=True)
-                row.operator("uv.stitch", text="", icon="STITCH")
-                row.operator("uv.mark_seam", text="", icon="MARK_SEAM").clear = False
-                row.operator("uv.clear_seam", text="", icon='CLEAR_SEAM')
-
-                row = col.row(align=True)
-                row.operator("uv.seams_from_islands", text="", icon="SEAMSFROMISLAND")
-                row.operator("uv.reset", text="", icon="RESET")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("uv.pin", text="", icon="PINNED").clear = False
-                row.operator("uv.pin", text="", icon="UNPINNED").clear = True
-
-                row = col.row(align=True)
-                row.operator("uv.select_split", text="", icon='SPLIT')
-                row.operator("uv.pack_islands", text="", icon="PACKISLAND")
-
-                row = col.row(align=True)
-                row.operator("uv.average_islands_scale", text="", icon="AVERAGEISLANDSCALE")
-                row.operator("uv.minimize_stretch", text="", icon="MINIMIZESTRETCH")
-
-                row = col.row(align=True)
-                row.operator("uv.stitch", text="", icon="STITCH")
-                row.operator("uv.mark_seam", text="", icon="MARK_SEAM").clear = False
-
-                row = col.row(align=True)
-                row.operator("uv.clear_seam", text="", icon='CLEAR_SEAM')
-                row.operator("uv.seams_from_islands", text="", icon="SEAMSFROMISLAND")
-                row = col.row(align=True)
-                row.operator("uv.reset", text="", icon="RESET")
-
-            elif column_count == 1:
-
-                col.operator("uv.pin", text="", icon="PINNED").clear = False
-                col.operator("uv.pin", text="", icon="UNPINNED").clear = True
-                col.operator("uv.select_split", text="", icon='SPLIT')
-
-                col.separator()
-
-                col.operator("uv.pack_islands", text="", icon="PACKISLAND")
-                col.operator("uv.average_islands_scale", text="", icon="AVERAGEISLANDSCALE")
-                col.operator("uv.minimize_stretch", text="", icon="MINIMIZESTRETCH")
-                col.operator("uv.stitch", text="", icon="STITCH")
-
-                col.separator()
-
-                col.operator("uv.mark_seam", text="", icon="MARK_SEAM").clear = False
-                col.operator("uv.clear_seam", text="", icon='CLEAR_SEAM')
-                col.operator("uv.seams_from_islands", text="", icon="SEAMSFROMISLAND")
-
-                col.separator()
-
-                col.operator("uv.reset", text="", icon="RESET")
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_uvtab_align(Panel):
@@ -626,75 +277,17 @@ class IMAGE_PT_uvtab_align(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("uv.align", text="Straighten", icon="ALIGN", props={"axis": 'ALIGN_S'}),
+            OperatorEntry("uv.align", text="Straighten X", icon="STRAIGHTEN_X", props={"axis": 'ALIGN_T'}),
+            OperatorEntry("uv.align", text="Straighten Y", icon="STRAIGHTEN_Y", props={"axis": 'ALIGN_U'}),
+            OperatorEntry("uv.align", text="Align Auto", icon="ALIGNAUTO", props={"axis": 'ALIGN_AUTO'}),
+            OperatorEntry("uv.align", text="Align X", icon="ALIGN_X", props={"axis": 'ALIGN_X'}),
+            OperatorEntry("uv.align", text="Align Y", icon="ALIGN_Y", props={"axis": 'ALIGN_Y'}),
+            OperatorEntry("uv.align_rotation", text="Align Rotation", icon="DRIVER_ROTATIONAL_DIFFERENCE"),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("uv.align", text="Straighten", icon="ALIGN").axis = 'ALIGN_S'
-            col.operator("uv.align", text="Straighten X", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
-            col.operator("uv.align", text="Straighten Y", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
-            col.operator("uv.align", text="Align Auto", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-            col.operator("uv.align", text="Align X", icon="ALIGN_X").axis = 'ALIGN_X'
-            col.operator("uv.align", text="Align Y", icon="ALIGN_Y").axis = 'ALIGN_Y'
-            col.operator("uv.align_rotation", text="Align Rotation", icon="DRIVER_ROTATIONAL_DIFFERENCE")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("uv.align", text="", icon="ALIGN").axis = 'ALIGN_S'
-                row.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
-                row.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
-
-                row = col.row(align=True)
-                row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-                row.operator("uv.align", text="", icon="ALIGN_X").axis = 'ALIGN_X'
-                row.operator("uv.align", text="", icon="ALIGN_Y").axis = 'ALIGN_Y'
-
-                row = col.row(align=True)
-                row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
-                row.label(text="")
-                row.label(text="")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("uv.align", text="", icon="ALIGN").axis = 'ALIGN_S'
-                row.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
-
-                row = col.row(align=True)
-                row.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
-                row.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-
-                row = col.row(align=True)
-                row.operator("uv.align", text="", icon="ALIGN_X").axis = 'ALIGN_X'
-                row.operator("uv.align", text="", icon="ALIGN_Y").axis = 'ALIGN_Y'
-
-                row = col.row(align=True)
-                row.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
-                row.label(text="")
-
-            elif column_count == 1:
-
-                col.operator("uv.align", text="", icon="ALIGN").axis = 'ALIGN_S'
-                col.operator("uv.align", text="", icon="STRAIGHTEN_X").axis = 'ALIGN_T'
-                col.operator("uv.align", text="", icon="STRAIGHTEN_Y").axis = 'ALIGN_U'
-                col.operator("uv.align", text="", icon="ALIGNAUTO").axis = 'ALIGN_AUTO'
-                col.operator("uv.align", text="", icon="ALIGN_X").axis = 'ALIGN_X'
-                col.operator("uv.align", text="", icon="ALIGN_Y").axis = 'ALIGN_Y'
-                col.operator("uv.align_rotation", text="", icon="DRIVER_ROTATIONAL_DIFFERENCE")
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_image_masktab_add(Panel):
@@ -715,55 +308,15 @@ class IMAGE_PT_image_masktab_add(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            SetOperatorContext('INVOKE_REGION_WIN'),
+            OperatorEntry("mask.primitive_circle_add", text="Circle", icon='MESH_CIRCLE'),
+            OperatorEntry("mask.primitive_square_add", text="Square", icon='MESH_PLANE'),
+            Separator,
+            OperatorEntry("mask.add_vertex_slide", text="Add Vertex and Slide", icon='SLIDE_VERTEX'),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator_context = 'INVOKE_REGION_WIN'
-            col.operator("mask.primitive_circle_add", text="Circle", icon='MESH_CIRCLE')
-            col.operator("mask.primitive_square_add", text="Square", icon='MESH_PLANE')
-
-            col.separator()
-
-            col.operator("mask.add_vertex_slide", text="Add Vertex and Slide", icon='SLIDE_VERTEX')
-
-        # icon buttons
-        else:
-            col = layout.column(align=True)
-            col.operator_context = 'INVOKE_REGION_WIN'
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mask.primitive_circle_add", text="", icon='MESH_CIRCLE')
-                row.operator("mask.primitive_square_add", text="", icon='MESH_PLANE')
-                row.operator("mask.add_vertex_slide", text="", icon='SLIDE_VERTEX')
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mask.primitive_circle_add", text="", icon='MESH_CIRCLE')
-                row.operator("mask.primitive_square_add", text="", icon='MESH_PLANE')
-
-                row = col.row(align=True)
-                row.operator("mask.add_vertex_slide", text="", icon='SLIDE_VERTEX')
-
-            elif column_count == 1:
-
-                col.operator("mask.primitive_circle_add", text="", icon='MESH_CIRCLE')
-                col.operator("mask.primitive_square_add", text="", icon='MESH_PLANE')
-
-                col.separator()
-
-                col.operator("mask.add_vertex_slide", text="", icon='SLIDE_VERTEX')
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_image_masktab_transform(Panel):
@@ -784,66 +337,16 @@ class IMAGE_PT_image_masktab_transform(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("transform.tosphere", text="To Sphere", icon="TOSPHERE"),
+            OperatorEntry("transform.shear", text="Shear", icon="SHEAR"),
+            OperatorEntry("transform.push_pull", text="Push/Pull", icon="PUSH_PULL"),
+            Separator,
+            OperatorEntry("transform.transform", text="Scale Feather", icon='SHRINK_FATTEN', props={"mode": 'MASK_SHRINKFATTEN'}),
+            OperatorEntry("mask.feather_weight_clear", text="  Clear Feather Weight", icon="CLEAR"),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("transform.tosphere", text = "To Sphere", icon = "TOSPHERE")
-            col.operator("transform.shear", text = "Shear", icon = "SHEAR")
-            col.operator("transform.push_pull", text = "Push/Pull", icon = "PUSH_PULL")
-
-            col.separator()
-
-            col.operator("transform.transform", text = "Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
-            col.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
-
-        # icon buttons
-        else:
-            col = layout.column(align=True)
-            col.operator_context = 'INVOKE_REGION_WIN'
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("transform.tosphere", text = "", icon = "TOSPHERE")
-                row.operator("transform.shear", text = "", icon = "SHEAR")
-                row.operator("transform.push_pull", text = "", icon = "PUSH_PULL")
-
-                row = col.row(align=True)
-                row.operator("transform.transform", text = "", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
-                row.operator("mask.feather_weight_clear", text = "", icon = "CLEAR")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("transform.tosphere", text = "", icon = "TOSPHERE")
-                row.operator("transform.shear", text = "", icon = "SHEAR")
-
-                row = col.row(align=True)
-                row.operator("transform.push_pull", text = "", icon = "PUSH_PULL")
-                row.operator("transform.transform", text = "", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
-
-                row = col.row(align=True)
-                row.operator("mask.feather_weight_clear", text = "", icon = "CLEAR")
-
-            elif column_count == 1:
-
-                col.operator("transform.tosphere", text = "", icon = "TOSPHERE")
-                col.operator("transform.shear", text = "", icon = "SHEAR")
-                col.operator("transform.push_pull", text = "", icon = "PUSH_PULL")
-
-                col.separator()
-
-                col.operator("transform.transform", text = "", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
-                col.operator("mask.feather_weight_clear", text = "", icon = "CLEAR")
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_image_masktab_mask(Panel):
@@ -864,66 +367,16 @@ class IMAGE_PT_image_masktab_mask(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("mask.parent_set", icon="PARENT_SET"),
+            OperatorEntry("mask.parent_clear", icon="PARENT_CLEAR"),
+            Separator,
+            OperatorEntry("mask.cyclic_toggle", icon='TOGGLE_CYCLIC'),
+            OperatorEntry("mask.switch_direction", icon='SWITCH_DIRECTION'),
+            OperatorEntry("mask.normals_make_consistent", icon="RECALC_NORMALS"),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mask.parent_set", icon = "PARENT_SET")
-            col.operator("mask.parent_clear", icon = "PARENT_CLEAR")
-
-            col.separator()
-
-            col.operator("mask.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-            col.operator("mask.switch_direction", icon = 'SWITCH_DIRECTION')
-            col.operator("mask.normals_make_consistent", icon = "RECALC_NORMALS")
-
-        # icon buttons
-        else:
-            col = layout.column(align=True)
-            col.operator_context = 'INVOKE_REGION_WIN'
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mask.parent_set", text="", icon = "PARENT_SET")
-                row.operator("mask.parent_clear", text="", icon = "PARENT_CLEAR")
-                row.operator("mask.cyclic_toggle", text="", icon = 'TOGGLE_CYCLIC')
-
-                row = col.row(align=True)
-                row.operator("mask.switch_direction", text="", icon = 'SWITCH_DIRECTION')
-                row.operator("mask.normals_make_consistent", text="", icon = "RECALC_NORMALS")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mask.parent_set", text="", icon = "PARENT_SET")
-                row.operator("mask.parent_clear", text="", icon = "PARENT_CLEAR")
-
-                row = col.row(align=True)
-                row.operator("mask.cyclic_toggle", text="", icon = 'TOGGLE_CYCLIC')
-                row.operator("mask.switch_direction", text="", icon = 'SWITCH_DIRECTION')
-
-                row = col.row(align=True)
-                row.operator("mask.normals_make_consistent", text="", icon = "RECALC_NORMALS")
-
-            elif column_count == 1:
-
-                col.operator("mask.parent_set", text="", icon = "PARENT_SET")
-                col.operator("mask.parent_clear", text="", icon = "PARENT_CLEAR")
-
-                col.separator()
-
-                col.operator("mask.cyclic_toggle", text="", icon = 'TOGGLE_CYCLIC')
-                col.operator("mask.switch_direction", text="", icon = 'SWITCH_DIRECTION')
-                col.operator("mask.normals_make_consistent", text="", icon = "RECALC_NORMALS")
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_image_masktab_handletype(Panel):
@@ -944,59 +397,15 @@ class IMAGE_PT_image_masktab_handletype(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("mask.handle_type_set", text="Auto", icon="HANDLE_AUTO", props={"type": 'AUTO'}),
+            OperatorEntry("mask.handle_type_set", text="Vector", icon="HANDLE_VECTOR", props={"type": 'VECTOR'}),
+            OperatorEntry("mask.handle_type_set", text="Aligned Single", icon='HANDLE_ALIGN_SINGLE', props={"type": 'ALIGNED'}),
+            OperatorEntry("mask.handle_type_set", text="Aligned", icon='HANDLE_ALIGNED', props={"type": 'ALIGNED_DOUBLESIDE'}),
+            OperatorEntry("mask.handle_type_set", text="Free", icon="HANDLE_FREE", props={"type": 'FREE'}),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mask.handle_type_set", text="Auto", icon = "HANDLE_AUTO").type = 'AUTO'
-            col.operator("mask.handle_type_set", text="Vector", icon = "HANDLE_VECTOR").type = 'VECTOR'
-            col.operator("mask.handle_type_set", text="Aligned Single", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
-            col.operator("mask.handle_type_set", text="Aligned", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
-            col.operator("mask.handle_type_set", text="Free", icon = "HANDLE_FREE").type = 'FREE'
-
-        # icon buttons
-        else:
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mask.handle_type_set", text="", icon = "HANDLE_AUTO").type = 'AUTO'
-                row.operator("mask.handle_type_set", text="", icon = "HANDLE_VECTOR").type = 'VECTOR'
-                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
-
-                row = col.row(align=True)
-                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
-                row.operator("mask.handle_type_set", text="", icon = "HANDLE_FREE").type = 'FREE'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mask.handle_type_set", text="", icon = "HANDLE_AUTO").type = 'AUTO'
-                row.operator("mask.handle_type_set", text="", icon = "HANDLE_VECTOR").type = 'VECTOR'
-
-                row = col.row(align=True)
-                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
-                row.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
-
-                row = col.row(align=True)
-                row.operator("mask.handle_type_set", text="", icon = "HANDLE_FREE").type = 'FREE'
-
-            elif column_count == 1:
-
-                col.operator("mask.handle_type_set", text="", icon = "HANDLE_AUTO").type = 'AUTO'
-                col.operator("mask.handle_type_set", text="", icon = "HANDLE_VECTOR").type = 'VECTOR'
-                col.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGN_SINGLE').type = 'ALIGNED'
-                col.operator("mask.handle_type_set", text="", icon = 'HANDLE_ALIGNED').type = 'ALIGNED_DOUBLESIDE'
-                col.operator("mask.handle_type_set", text="", icon = "HANDLE_FREE").type = 'FREE'
+        draw_entries(layout, context, entries)
 
 
 class IMAGE_PT_image_masktab_animation(Panel):
@@ -1017,57 +426,17 @@ class IMAGE_PT_image_masktab_animation(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("mask.shape_key_insert", text="Insert Shape Key", icon="KEYFRAMES_INSERT"),
+            OperatorEntry("mask.shape_key_clear", text="Clear Shape", icon="CLEAR"),
+            OperatorEntry("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET'),
+            OperatorEntry("mask.shape_key_rekey", text="Re-key Shape Points", icon="SHAPEKEY_DATA"),
+        )
 
-        obj = context.object
-
-        # text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("mask.shape_key_insert", text="Insert Shape Key", icon = "KEYFRAMES_INSERT")
-            col.operator("mask.shape_key_clear", text="Clear Shape", icon = "CLEAR")
-            col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET')
-            col.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
-
-        # icon buttons
-        else:
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("mask.shape_key_insert", text="", icon = "KEYFRAMES_INSERT")
-                row.operator("mask.shape_key_clear", text="", icon = "CLEAR")
-                row.operator("mask.shape_key_feather_reset", text="", icon='RESET')
-
-                row = col.row(align=True)
-                row.operator("mask.shape_key_rekey", text="", icon = "SHAPEKEY_DATA")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("mask.shape_key_insert", text="", icon = "KEYFRAMES_INSERT")
-                row.operator("mask.shape_key_clear", text="", icon = "CLEAR")
-
-                row = col.row(align=True)
-                row.operator("mask.shape_key_feather_reset", text="", icon='RESET')
-                row.operator("mask.shape_key_rekey", text="", icon = "SHAPEKEY_DATA")
-
-            elif column_count == 1:
-
-                col.operator("mask.shape_key_insert", text="", icon = "KEYFRAMES_INSERT")
-                col.operator("mask.shape_key_clear", text="", icon = "CLEAR")
-                col.operator("mask.shape_key_feather_reset", text="", icon='RESET')
-                col.operator("mask.shape_key_rekey", text="", icon = "SHAPEKEY_DATA")
+        draw_entries(layout, context, entries)
 
 
 classes = (
-
     IMAGE_PT_uvtab_transform,
     IMAGE_PT_uvtab_mirror,
     IMAGE_PT_uvtab_snap,

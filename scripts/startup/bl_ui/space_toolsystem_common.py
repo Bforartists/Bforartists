@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
+import dataclasses
+
 from bpy.types import (
     Menu,
 )
@@ -1266,6 +1268,129 @@ def toolsystem_column_count(region):
         column_count = 1
 
     return column_count
+
+
+# Null object used to abstractly represent a separator
+Separator = object()
+
+
+@dataclasses.dataclass(slots=True)
+class OperatorEntry:
+    operator : str
+    text : str = None
+    text_ctxt : str = None
+    icon : str = 'ICON_NONE'
+    props : dict = None
+    poll : bool = True
+
+    as_dict = dataclasses.asdict
+
+    @property
+    def op_params(self):
+        params = ("text", "text_ctxt", "icon")
+        return {key: getattr(self, key) for key in params}
+    
+    def draw(self, layout, *, as_icon):
+        if not self.poll:
+            return
+        
+        if as_icon:
+            props = layout.operator(self.operator, text="", icon=self.icon)
+        else:
+            props = layout.operator(self.operator, **self.op_params)
+            
+        if self.props:
+            for key, value in self.props.items():
+                setattr(props, key, value)
+
+
+@dataclasses.dataclass(slots=True)
+class MenuEntry:
+    menu : str
+    text : str = None
+    text_ctxt : str = None
+    icon : str = 'ICON_NONE'
+    poll : bool = True
+
+    as_dict = dataclasses.asdict
+
+    @property
+    def menu_params(self):
+        params = ("text", "text_ctxt", "icon")
+        return {key: getattr(self, key) for key in params}
+    
+    def draw(self, layout, *, as_icon):
+        if not self.poll:
+            return
+        
+        if as_icon:
+            layout.menu(self.menu, text="", icon=self.icon)
+        else:
+            layout.menu(self.menu, **self.menu_params)
+
+
+@dataclasses.dataclass(slots=True)
+class SetOperatorContext:
+    context_value : str
+
+    def set_context(self, layout):
+        layout.operator_context = self.context_value
+
+
+def draw_entries(layout, context, entries):
+    column_count = toolsystem_column_count(context.region)
+
+    if column_count == 4:
+        draw_text_buttons(layout, entries)
+    else:
+        draw_icon_buttons(layout, entries, column_count)
+
+
+def draw_text_buttons(layout, entries):
+    col = layout.column(align=True)
+    col.scale_y = 2
+    
+    for entry in entries:
+        if entry is Separator:
+            col.separator(factor=0.5)
+        elif isinstance(entry, SetOperatorContext):
+            entry.set_context(col)
+        else:
+            if entry.poll:
+                entry.draw(col, as_icon=False)
+        
+
+# NOTE: There is no OperatorEnumEntry because `layout.operator_enum` is not compatible with this.
+# Each option in an operator_enum must be defined as individual instances of OperatorEntry.
+def draw_icon_buttons(layout, entries, column_count):
+    index = 0
+    
+    col = layout.column(align=True)
+    
+    for entry in entries:
+        if entry is Separator:
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.scale_x = 2
+            row.scale_y = 2
+            row.alignment = 'LEFT'
+            
+            index = 0
+        elif isinstance(entry, SetOperatorContext):
+            entry.set_context(col)
+        else:
+            if not entry.poll:
+                continue
+
+            if index == 0:
+                row = col.row(align=True)
+                row.scale_x = 2
+                row.scale_y = 2
+                row.alignment = 'LEFT'
+            
+            entry.draw(row, as_icon=True)
+                    
+            index = (index + 1) % column_count
 
 
 classes = (
