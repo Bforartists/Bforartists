@@ -68,7 +68,12 @@ def align_view_buttons(self, context):
 
     if addon_prefs.lock_view_rotation:
         row.prop(context.space_data.region_3d, 'lock_rotation', icon = "LOCK_ROTATION", icon_only=True )
-
+    
+    if addon_prefs.lock_object_mode:
+        ts = context.tool_settings
+        icon = "LOCKED" if ts.lock_object_mode else "UNLOCKED"
+        row.prop(ts, "lock_object_mode", icon = icon, icon_only=True )
+        
     if addon_prefs.quad_view:
         row.operator("screen.region_quadview", text = "", icon = "QUADVIEW")
 
@@ -149,6 +154,9 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row.prop(addon_prefs, "lock_view_rotation")
         row = col.row()
         row.separator()
+        row.prop(addon_prefs, "lock_object_mode")
+        row = col.row()
+        row.separator()
         row.prop(addon_prefs, "camera_switch")
         row = col.row()
         row.separator()
@@ -198,6 +206,7 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
     # Navigation
     lock_camera_to_view : BoolProperty(name="Lock Camera to View", default=False, description = "Navigate either the camera passepartout or the camera content\nJust active in camera view", )
     lock_view_rotation : BoolProperty(name="Lock View Rotation", default=False, description = "Lock the view rotations in side views", )
+    lock_object_mode : BoolProperty(name="Lock Object Mode", default=False, description = "Restrict selection to objects using the same mode as the active object, to prevent accidental mode switch when selecting", )
     camera_view : BoolProperty(name="Active Camera", default=False, description = "View through the render camera or through the viewport camera", )
     camera_switch : BoolProperty(name="Set Active Camera", default=False, description = "Set the currently selected camera as the active camera", )
 
