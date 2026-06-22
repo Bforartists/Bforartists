@@ -522,6 +522,7 @@ class VIEW_PT_PlayAnimationPanel(bpy.types.Panel):
         col.label(text="Slides:")
 
         row = col.row(align=True)
+        row.scale_y = 2
         row.operator("screen.play_back_animation", icon="PREV_KEYFRAME")
         row.operator("screen.play_animation", icon="NEXT_KEYFRAME")
 
@@ -534,7 +535,7 @@ class VIEW_PT_PlayAnimationPanel(bpy.types.Panel):
 
         # Big button for Insert Slide
         row = layout.row()
-        row.scale_y = 2.0
+        row.scale_y = 1.2
         row.operator("scene.setup_slide_scene", icon="ADD")
 
         # Property field for frames
