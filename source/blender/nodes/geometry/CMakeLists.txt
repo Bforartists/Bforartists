@@ -118,6 +118,7 @@ set(SRC
   nodes/node_geo_grid_advect.cc
   nodes/node_geo_grid_clip.cc
   nodes/node_geo_grid_curl.cc
+  nodes/node_geo_grid_deactivate_voxels.cc
   nodes/node_geo_grid_dilate_erode.cc
   nodes/node_geo_grid_divergence.cc
   nodes/node_geo_grid_gradient.cc
@@ -128,6 +129,7 @@ set(SRC
   nodes/node_geo_grid_prune.cc
   nodes/node_geo_grid_to_mesh.cc
   nodes/node_geo_grid_to_points.cc
+  nodes/node_geo_grid_topology_boolean.cc
   nodes/node_geo_grid_voxelize.cc
   nodes/node_geo_image.cc
   nodes/node_geo_image_info.cc
@@ -216,6 +218,8 @@ set(SRC
   nodes/node_geo_mesh_topology_offset_corner_in_face.cc
   nodes/node_geo_mesh_topology_vertex_of_corner.cc
   nodes/node_geo_mouse_position.cc
+  nodes/node_geo_nurbs_order.cc
+  nodes/node_geo_nurbs_weight.cc
   nodes/node_geo_object_info.cc
   nodes/node_geo_offset_point_in_curve.cc
   nodes/node_geo_points.cc
