@@ -10715,10 +10715,11 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
   define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NODE_ADVECTGRID);
   define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NODE_GRIDCURL);
+  define(brna, "GeometryNode", "GeometryNodeGridDeactivateVoxels", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGridDilateAndErode", nullptr, ICON_NODE_GRIDERODE);
   define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NODE_GRIDDIVERGENCE);
   define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NODE_GRIDGRADIENT);
   define(brna, "GeometryNode", "GeometryNodeGridInfo", nullptr, ICON_NODE_GRID_INFO);
-  define(brna, "GeometryNode", "GeometryNodeGridDilateAndErode", nullptr, ICON_NODE_GRIDERODE);
   define(brna, "GeometryNode", "GeometryNodeGridLaplacian", nullptr, ICON_NODE_GRIDLAPLACIAN);
   define(brna, "GeometryNode", "GeometryNodeGridMean", nullptr, ICON_NODE_GRIDMEAN);
   define(brna, "GeometryNode", "GeometryNodeGridMedian", nullptr, ICON_NODE_GRIDMEDIAN);
@@ -10726,6 +10727,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridClip", nullptr, ICON_CLIPPINGBORDER);
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NODE_GRIDTOMESH);
   define(brna, "GeometryNode", "GeometryNodeGridToPoints", nullptr, ICON_MESH_TO_POINTS);
+  define(brna, "GeometryNode", "GeometryNodeGridTopologyBoolean", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGridVoxelize", nullptr, ICON_NODE_VOXELIZEGRID);
   define(brna, "GeometryNode", "GeometryNodeImageInfo", nullptr, ICON_IMAGE_INFO);
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);
@@ -10804,6 +10806,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMeshToSDFGrid", nullptr, ICON_NODE_MESHTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodeMeshToVolume", nullptr, ICON_MESH_TO_VOLUME);
   define(brna, "GeometryNode", "GeometryNodeMeshUVSphere", nullptr, ICON_MESH_UVSPHERE);
+  define(brna, "GeometryNode", "GeometryNodeNURBSOrder", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeNURBSWeight", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeObjectInfo", nullptr, ICON_NODE_OBJECTINFO);
   define(brna, "GeometryNode", "GeometryNodeOffsetCornerInFace", nullptr, ICON_OFFSET_CORNER_IN_FACE);
   define(brna, "GeometryNode", "GeometryNodeOffsetPointInCurve", nullptr, ICON_OFFSET_POINT_IN_CURVE);

@@ -746,16 +746,14 @@ class SEQUENCER_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.select_box", text="Box Select", icon="BORDER_RECT")
-
         col = layout.column()
         if has_sequencer:
-            props = col.operator(
-                "sequencer.select_box",
-                text="Box Select (Include Handles)",
-                icon="BORDER_RECT",
-            )
+            layout.operator("sequencer.select_box", text="Box Select")
+            props = layout.operator("sequencer.select_box", text="Box Select (Include Handles)", icon="BORDER_RECT")
             props.include_handles = True
+        elif has_preview:
+            layout.operator_context = 'INVOKE_REGION_PREVIEW'
+            layout.operator("sequencer.select_box", text="Box Select", icon="BORDER_RECT")
 
         col.separator()
 
@@ -765,9 +763,14 @@ class SEQUENCER_MT_select(Menu):
             col.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
             col.menu("SEQUENCER_MT_select_handle", text="Handle")
             col.menu("SEQUENCER_MT_select_channel", text="Channel")
-            col.menu("SEQUENCER_MT_select_linked", text="Linked")
+            if has_sequencer:
+                col.operator("sequencer.select_linked", text="Linked") # BFA - WIP, check if this is right UX
+            else:
+                col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
+        col.operator_menu_enum("sequencer.select_by_type", "type", text="Select All by Type")
         col.operator_menu_enum("sequencer.select_grouped", "type", text="Select Grouped")
+        col.enabled = not is_retiming
 
         # BFA - start
         strip = context.active_strip

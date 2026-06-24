@@ -273,7 +273,7 @@ static void get_pose_bones_for_slide(bContext *C, ListBaseT<SlideSubject> &slide
   prev_ob = nullptr;
   ob_pose_armature = nullptr;
   /* Used to avoid duplicates when using mirroring. */
-  Set<StringRefNull> inserted_bones;
+  Set<bPoseChannel *> inserted_bones;
   CTX_DATA_BEGIN_WITH_ID (C, bPoseChannel *, pchan, selected_pose_bones, Object *, ob) {
     BLI_assert(pchan != nullptr);
     if (ob != prev_ob) {
@@ -289,14 +289,14 @@ static void get_pose_bones_for_slide(bContext *C, ListBaseT<SlideSubject> &slide
       continue;
     }
 
-    if (!inserted_bones.add(pchan->name)) {
+    if (!inserted_bones.add(pchan)) {
       continue;
     }
     pchan_to_slide_subject(slide_subjects, *ob_pose_armature, *pchan);
 
     if (ob_pose_armature->pose->flag & POSE_MIRROR_EDIT) {
       bPoseChannel *pchan_mirror = BKE_pose_channel_get_mirrored(ob->pose, pchan->name);
-      if (pchan_mirror && inserted_bones.add(pchan_mirror->name)) {
+      if (pchan_mirror && inserted_bones.add(pchan_mirror)) {
         pchan_to_slide_subject(slide_subjects, *ob_pose_armature, *pchan_mirror);
       }
     }
@@ -414,6 +414,7 @@ void slide_subjects_refresh(bContext *C, const SlideSubject &slide_subject)
       break;
     case ed::AnimTransformable::Type::OBJECT:
       WM_event_add_notifier(C, NC_OBJECT | ND_TRANSFORM, id_cast<Object *>(id));
+      break;
   }
 
   AnimData *adt = BKE_animdata_from_id(id);
@@ -533,6 +534,7 @@ void slide_subjects_autokey(bContext *C,
   /* This includes all motion paths for bones. Could be more fine grained in the future to avoid
    * needless updates to data that was not changed. */
   ed::object::motion_paths_recalc(C, scene, ANIMVIZ_CALC_RANGE_CHANGED, objects);
+  WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_ADDED, nullptr);
 }
 
 /* *********************************************** */

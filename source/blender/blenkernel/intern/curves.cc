@@ -33,6 +33,7 @@
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
+#include "BKE_material.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
@@ -117,7 +118,9 @@ static void curves_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   curves->geometry.wrap().blend_write_prepare(write_data, !BLO_write_is_undo(writer));
 
   /* Write LibData */
-  writer->write_id_struct(id_address, curves);
+  writer->write_id_struct(id_address, curves, [](BlendStructWriter &struct_writer) {
+    struct_writer.generated_ptr(offsetof(Curves, geometry.attribute_storage.dna_attributes));
+  });
   BKE_id_blend_write(writer, &curves->id);
 
   /* Direct data */
@@ -182,6 +185,12 @@ Curves *BKE_curves_add(Main *bmain, const char *name)
 bool BKE_curves_attribute_required(const Curves * /*curves*/, const StringRef name)
 {
   return name == ATTR_POSITION;
+}
+
+void BKE_curves_material_remap(Curves *curves_id, const uint *remap, const int remap_num)
+{
+  BKE_material_attr_indices_remap(
+      curves_id->geometry.wrap().attributes_for_write(), remap, remap_num);
 }
 
 Curves *BKE_curves_copy_for_eval(const Curves *curves_src)

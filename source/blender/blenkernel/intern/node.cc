@@ -1276,7 +1276,10 @@ void node_tree_blend_write(BlendWriter *writer, bNodeTree *ntree)
       node->custom1 = data->parametrization;
     }
 
-    writer->write_struct(node);
+    writer->write_struct(node, [](BlendStructWriter &struct_writer) {
+      struct_writer.runtime_ptr(offsetof(bNode, runtime));
+      struct_writer.runtime_ptr(offsetof(bNode, typeinfo));
+    });
 
     if (node->prop) {
       IDP_BlendWrite(writer, node->prop);
@@ -3884,8 +3887,7 @@ bNodeSocket *node_add_static_socket(bNodeTree &ntree,
 static void node_socket_free(bNodeSocket *sock, const bool do_id_user)
 {
   if (sock->prop) {
-    IDP_FreePropertyContent_ex(sock->prop, do_id_user);
-    MEM_delete(sock->prop);
+    IDP_FreeProperty_ex(sock->prop, do_id_user);
   }
 
   if (sock->default_value) {
@@ -4609,9 +4611,84 @@ bool node_link_is_hidden(const bNodeLink &link)
   return !(link.fromsock->is_visible() && link.tosock->is_visible());
 }
 
+static bool check_link_selected_backward(const bNodeLink &link, Set<const bNode *> &visited_nodes)
+{
+  const bNode *node = link.fromnode;
+  if (!node) {
+    return false;
+  }
+  if ((node->flag & NODE_SELECT)) {
+    return true;
+  }
+  if (!node->is_reroute()) {
+    return false;
+  }
+  if (!visited_nodes.add(node)) {
+    return false;
+  }
+  if (node->input_sockets().is_empty()) {
+    return false;
+  }
+  const bNodeSocket &input_socket = node->input_socket(0);
+  for (const bNodeLink *prev_link : input_socket.directly_linked_links()) {
+    if (check_link_selected_backward(*prev_link, visited_nodes)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static bool check_link_selected_forward(const bNodeLink &link, Set<const bNode *> &visited_nodes)
+{
+  const bNode *node = link.tonode;
+  if (!node) {
+    return false;
+  }
+  if ((node->flag & NODE_SELECT)) {
+    return true;
+  }
+  if (!node->is_reroute()) {
+    return false;
+  }
+  if (!visited_nodes.add(node)) {
+    return false;
+  }
+  if (node->output_sockets().is_empty()) {
+    return false;
+  }
+  const bNodeSocket &output_socket = node->output_socket(0);
+  for (const bNodeLink *next_link : output_socket.directly_linked_links()) {
+    if (check_link_selected_forward(*next_link, visited_nodes)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool node_link_is_selected(const bNodeLink &link)
 {
-  return (link.fromnode->flag & NODE_SELECT) || (link.tonode->flag & NODE_SELECT);
+  if ((link.fromnode->flag & NODE_SELECT) || (link.tonode->flag & NODE_SELECT)) {
+    return true;
+  }
+  if (!link.fromnode->is_reroute() && !link.tonode->is_reroute()) {
+    return false;
+  }
+
+  BLI_assert(bke::node_tree_runtime::topology_cache_is_available(*link.fromnode));
+
+  if (link.fromnode->is_reroute()) {
+    Set<const bNode *> visited_backward;
+    if (check_link_selected_backward(link, visited_backward)) {
+      return true;
+    }
+  }
+  if (link.tonode->is_reroute()) {
+    Set<const bNode *> visited_forward;
+    if (check_link_selected_forward(link, visited_forward)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /* Adjust the indices of links connected to the given multi input socket after deleting the link at
@@ -4935,13 +5012,11 @@ void node_free_node(bNodeTree *ntree, bNode &node)
 
   if (node.prop) {
     /* Remember, no ID user refcount management here! */
-    IDP_FreePropertyContent_ex(node.prop, false);
-    MEM_delete(node.prop);
+    IDP_FreeProperty_ex(node.prop, false);
   }
   if (node.system_properties) {
     /* Remember, no ID user refcount management here! */
-    IDP_FreePropertyContent_ex(node.system_properties, false);
-    MEM_delete(node.system_properties);
+    IDP_FreeProperty_ex(node.system_properties, false);
   }
 
   if (node.runtime->declaration) {

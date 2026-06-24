@@ -11,9 +11,8 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_listbase.hh"
-#include "BLI_string_utf8.hh"
-#include "BLI_utildefines.hh"
+#include "AS_asset_library.hh"
+#include "AS_asset_representation.hh"
 
 #include "BLT_translation.hh"
 
@@ -22,9 +21,14 @@
 #include "BKE_idprop.hh"
 #include "BKE_screen.hh"
 
+#include "BLI_listbase.hh"
+#include "BLI_string_utf8.hh"
+
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "ED_asset_list.hh"
+#include "ED_asset_menu_utils.hh"
 #include "ED_screen.hh"
 
 #include "UI_interface.hh"
@@ -116,7 +120,8 @@ bUserMenuItem_Op *ED_screen_user_menu_item_find_operator(ListBaseT<bUserMenuItem
   for (bUserMenuItem &umi : *lb) {
     if (umi.type == USER_MENU_TYPE_OPERATOR) {
       bUserMenuItem_Op *umi_op = reinterpret_cast<bUserMenuItem_Op *>(&umi);
-      const bool ok_idprop = IDP_EqualsProperties_ex(prop, umi_op->prop, false);
+      const bool is_strict = prop && umi_op->prop;
+      const bool ok_idprop = IDP_EqualsProperties_ex(prop, umi_op->prop, is_strict);
       const bool ok_prop_enum = (umi_op->op_prop_enum[0] != '\0') ?
                                     STREQ(umi_op->op_prop_enum, op_prop_enum) :
                                     true;
@@ -763,6 +768,59 @@ static void SCREEN_OT_user_menu_item_remove(wmOperatorType *ot)
 /** \name Menu Definition
  * \{ */
 
+static bool all_loading_finished()
+{
+  AssetLibraryReference all_library_ref = asset_system::all_library_reference();
+  return ed::asset::list::is_loaded(&all_library_ref);
+}
+
+/**
+ * When adding operators that reference an asset (see
+ * `ed::asset::operator_asset_reference_props_is_set`) make sure the asset libraries are loaded.
+ */
+static void handle_operator_asset_reference_props(const bContext &C,
+                                                  bUserMenuItem_Op &umi_op,
+                                                  ui::Layout &row,
+                                                  wmOperatorType *ot,
+                                                  int &r_icon,
+                                                  bool &r_add_operator)
+{
+  if (!umi_op.prop) {
+    return;
+  }
+  PointerRNA opptr = WM_operator_properties_create_ptr(ot);
+  opptr.data = bke::idprop::create_group("wmOperatorProperties").release();
+  IDP_CopyPropertyContent(opptr.data_as<IDProperty>(), umi_op.prop);
+  if (ed::asset::operator_asset_reference_props_is_set(opptr)) {
+    const bool loading_finished = all_loading_finished();
+    if (!loading_finished) {
+      row.label(IFACE_("Loading Asset Libraries"), ICON_INFO);
+      r_add_operator = false;
+    }
+    else {
+      /* Set `check_context_asset` to false because we're setting the context pointer after getting
+       * the asset from the operator properties. */
+      const asset_system::AssetRepresentation *asset =
+          ed::asset::operator_asset_reference_props_get_asset_from_all_library(
+              C, opptr, CTX_wm_reports(&C));
+      if (asset) {
+        if (asset->is_online_only()) {
+          r_icon = ICON_INTERNET;
+        }
+        PointerRNA asset_ptr = RNA_pointer_create_discrete(
+            nullptr,
+            RNA_AssetRepresentation,
+            const_cast<asset_system::AssetRepresentation *>(asset));
+        row.context_ptr_set("asset", &asset_ptr);
+      }
+      else {
+        r_add_operator = false;
+      }
+    }
+  }
+  WM_operator_properties_free(&opptr);
+}
+
 static void screen_user_menu_draw(const bContext *C, Menu *menu)
 {
   /* Enable when we have the ability to edit menus. */
@@ -815,10 +873,16 @@ static void screen_user_menu_draw(const bContext *C, Menu *menu)
             ui_name = CTX_IFACE_(ot->translation_context, ui_name->c_str());
           }
           if (umi_op->op_prop_enum[0] == '\0') {
-            PointerRNA ptr = menu->layout->op(
-                ot, ui_name, umi_op->icon, wm::OpCallContext(umi_op->opcontext), UI_ITEM_NONE);
-            if (umi_op->prop) {
-              IDP_CopyPropertyContent(ptr.data_as<IDProperty>(), umi_op->prop);
+            ui::Layout &row = menu->layout->row(true);
+            int icon = umi_op->icon; /*BFA - start with user-set icon*/
+            bool add_operator = true;
+            handle_operator_asset_reference_props(*C, *umi_op, row, ot, icon, add_operator);
+            if (add_operator) {
+              PointerRNA ptr = row.op(
+                  ot, ui_name, icon, wm::OpCallContext(umi_op->opcontext), UI_ITEM_NONE);
+              if (umi_op->prop) {
+                IDP_CopyPropertyContent(ptr.data_as<IDProperty>(), umi_op->prop);
+              }
             }
           }
           else {
@@ -1043,6 +1107,7 @@ void ED_screen_user_menu_register()
   STRNCPY_UTF8(mt->label, N_("Quick Favorites"));
   STRNCPY_UTF8(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
   mt->draw = screen_user_menu_draw;
+  mt->listener = ed::asset::list::asset_reading_region_listen_fn;
   WM_menutype_add(mt);
 
   WM_operatortype_append(SCREEN_OT_user_menu_item_move);

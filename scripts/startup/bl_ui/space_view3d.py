@@ -1421,13 +1421,8 @@ class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base, Menu):
 
         layout.separator()
 
-        layout.operator_context = "EXEC_REGION_WIN"
-        # XXX: see `alignmenu()` in `edit.c` of b2.4x to get this working.
-        layout.operator(
-            "transform.transform",
-            text="Align to Transform Orientation",
-            icon="ALIGN_TRANSFORM",
-        ).mode = "ALIGN"
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("transform.transform", text="Align to Transform Orientation", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
 
         layout.separator()
 
@@ -1459,27 +1454,28 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base, Menu):
                 layout.operator_context = 'EXEC_REGION_WIN'
                 layout.operator("transform.vertex_random", text="Randomize").offset = 0.1 # BFA - WIP
                 layout.operator_context = 'INVOKE_REGION_WIN'
+            elif obj.mode == 'POSE':
+                layout.separator()
+
+                # Only show Align to Transform Orientation operator in pose mode, because in edit mode
+                # it might change the parent bone's length, or fail to align in certain cases.
+                layout.operator_context = 'EXEC_REGION_WIN'
+                layout.operator("transform.transform", text="Align to Transform Orientation").mode = 'ALIGN'
+                layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.data.display_type == 'BBONE':
                 layout.separator()
+                layout.operator("transform.transform", text="Scale BBone", icon="TRANSFORM_SCALE").mode = 'BONE_SIZE'
 
-                layout.operator("transform.transform", text="Scale BBone", icon="TRANSFORM_SCALE").mode = "BONE_SIZE"
-            elif obj.data.display_type == "ENVELOPE":
+            elif obj.data.display_type == 'ENVELOPE':
                 layout.separator()
-
-                layout.operator(
-                    "transform.transform",
-                    text="Scale Envelope Distance",
-                    icon="TRANSFORM_SCALE",
-                ).mode = "BONE_SIZE"
-                layout.operator(
-                    "transform.transform", text="Scale Radius", icon="TRANSFORM_SCALE"
-                ).mode = "BONE_ENVELOPE"
+                layout.operator("transform.transform", text="Scale Envelope Distance", icon="TRANSFORM_SCALE").mode = 'BONE_ENVELOPE_DIST'
+                layout.operator("transform.transform", text="Scale Radius", icon="TRANSFORM_SCALE").mode = 'BONE_ENVELOPE'
 
         if context.edit_object and context.edit_object.type == "ARMATURE":
             layout.separator()
 
-            layout.operator("armature.align", icon="ALIGN")
+            layout.operator("armature.align", text="Align to Active Bone or Parent", icon="ALIGN") # BFA - Document
 
 
 class VIEW3D_MT_mirror(Menu):
@@ -5996,11 +5992,14 @@ class VIEW3D_MT_pose_slide(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        operator_context = layout.operator_context
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("pose.blend_with_rest", icon="PUSH_POSE")
         layout.operator("pose.push", icon="POSE_FROM_BREAKDOWN")
         layout.operator("pose.relax", icon="POSE_RELAX_TO_BREAKDOWN")
         layout.operator("pose.breakdown", icon="BREAKDOWNER_POSE")
         layout.operator("pose.blend_to_neighbor", icon="BLEND_TO_NEIGHBOUR")
+        layout.operator_context = operator_context
 
 
 class VIEW3D_MT_pose_propagate(Menu):

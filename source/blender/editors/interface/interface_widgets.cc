@@ -127,7 +127,7 @@ enum class WidgetStyle {
  */
 struct WidgetStateInfo {
   /** Copy of #Button.flag (possibly with overrides for drawing). */
-  int but_flag;
+  int64_t but_flag;
   /** Copy of #Button.drawflag (possibly with overrides for drawing). */
   int but_drawflag;
   /** Copy of #Button.emboss. */
@@ -1369,7 +1369,7 @@ static void widget_draw_icon(
     return;
   }
 
-  const float aspect = but->block->aspect * UI_INV_SCALE_FAC;
+  const float aspect = (1.0f / but->icon_scale) * but->block->aspect * UI_INV_SCALE_FAC;
   const float height = ICON_DEFAULT_HEIGHT / aspect;
   bool force_outline = false;
 
@@ -3173,20 +3173,13 @@ static void widget_state(WidgetType *wt, const WidgetStateInfo *state, EmbossTyp
 
   if (state->but_flag & BUT_REDALERT) {
     if (wt->draw && emboss != EmbossType::None) {
-      uchar red[4];
-      theme::get_color_3ubv(TH_REDALERT, red);
-
-      /* Outline uses a mix to emphasize it a bit. */
-      color_blend_v3_v3(wt->wcol.outline, red, 0.6f);
-      /* Darken the alert for the inner color. */
-      color_mul_hsl_v3(red, 1.0f, 1.0f, 0.6f);
-      copy_v3_v3_uchar(wt->wcol.inner, red);
+      theme::get_color_3ubv(TH_REDALERT, wt->wcol.inner);
     }
     else {
       uchar red[4];
       theme::get_color_3ubv(TH_REDALERT, red);
       color_mul_hsl_v3(red, 1.0f, 1.5f, 1.5f);
-      color_blend_v3_v3(wt->wcol.text, red, 0.6f);
+      color_blend_v3_v3(wt->wcol.text, red, 0.5f);
     }
   }
 
@@ -5041,7 +5034,7 @@ static void widget_state_label(WidgetType *wt, const WidgetStateInfo *state, Emb
     uchar red[4];
     theme::get_color_3ubv(TH_REDALERT, red);
     color_mul_hsl_v3(red, 1.0f, 1.5f, 1.5f);
-    color_blend_v3_v3(wt->wcol.text, red, 0.6f);
+    color_blend_v3_v3(wt->wcol.text, red, 0.5f);
   }
 }
 
@@ -5139,11 +5132,31 @@ static void widget_roundbut_exec(Button *but,
     shape_preset_init_hold_action(&wtb.tria1, rect, 0.75f, 'r');
   }
 
-  const float rad = widget_radius_from_zoom(zoom, wcol);
+  float rad = widget_radius_from_zoom(zoom, wcol);
+
+  wtb.draw_emboss = draw_emboss(but);
+
+  if (const ButtonPush *push_but = dynamic_cast<ButtonPush *>(but)) {
+    if (push_but->draw_as_overlay) {
+      /* Enforce a full circle. */
+      rad = BLI_rcti_size_y(rect) * 0.5f;
+      roundboxalign = CNR_ALL;
+      wtb.draw_inner = true;
+      wtb.draw_outline = false;
+      wtb.draw_emboss = true;
+      /* Use a black transparent background and a white icon color, to ensure good contrast. */
+      const uchar background_col[4] = {0, 0, 0, (but->flag & UI_HOVER) ? uchar(120) : uchar(100)};
+      copy_v4_v4_uchar(wcol->inner, background_col);
+      copy_v4_v4_uchar(wcol->inner_sel, background_col);
+      const uchar foreground_col[4] = {
+          255, 255, 255, (but->flag & UI_HOVER) ? uchar(255) : uchar(230)};
+      copy_v4_v4_uchar(wcol->text, foreground_col);
+      copy_v4_v4_uchar(wcol->text_sel, foreground_col);
+    }
+  }
 
   /* half rounded */
   round_box_edges(&wtb, roundboxalign, rect, rad);
-  wtb.draw_emboss = draw_emboss(but);
   widgetbase_draw(&wtb, wcol);
 }
 
@@ -6281,7 +6294,7 @@ void draw_menu_item(const uiFontStyle *fstyle,
                     const bool use_unpadded,
                     const char *name,
                     int iconid,
-                    int but_flag,
+                    int64_t but_flag,
                     MenuItemSeparatorType separator_type,
                     int *r_xmax)
 {
@@ -6468,7 +6481,7 @@ void draw_preview_item(const uiFontStyle *fstyle,
                        const float zoom,
                        const char *name,
                        int iconid,
-                       int but_flag,
+                       int64_t but_flag,
                        FontStyleAlign text_align)
 {
   WidgetType *wt = widget_type(WidgetStyle::MenuItemUnpadded);

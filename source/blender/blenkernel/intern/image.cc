@@ -693,8 +693,6 @@ void BKE_image_free_buffers_ex(Image *ima, bool do_lock)
     ima->rr = nullptr;
   }
 
-  BKE_image_free_gputextures(ima);
-
   if (do_lock) {
     ima->runtime->cache_mutex.unlock();
   }
@@ -1757,6 +1755,14 @@ void BKE_image_packfiles_from_mem(ReportList *reports,
 void BKE_image_packfile_ensure(
     Main *bmain, Image *image, ReportList *reports, const char *data, const int data_len)
 {
+  if (ID_IS_LINKED(image)) {
+    BKE_reportf(reports, RPT_ERROR, "Cannot pack linked image '%s'", image->id.name + 2);
+    return;
+  }
+  if (ELEM(image->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE)) {
+    BKE_report(reports, RPT_ERROR, "Cannot pack render result or viewer node images");
+    return;
+  }
   const bool is_packed = BKE_image_has_packedfile(image);
   const bool is_dirty = BKE_image_is_dirty(image);
 
@@ -1768,6 +1774,7 @@ void BKE_image_packfile_ensure(
      *
      * See #152638.
      */
+    BKE_report(reports, RPT_INFO, "Image is already packed");
     return;
   }
 
@@ -5280,6 +5287,13 @@ void BKE_image_pool_release_ibuf(Image *ima, ImBuf *ibuf, ImagePool *pool)
   if (pool == nullptr) {
     BKE_image_release_ibuf(ima, ibuf, nullptr);
   }
+}
+
+bool BKE_image_user_match(const ImageUser &a, const ImageUser &b)
+{
+  return a.frames == b.frames && a.offset == b.offset && a.sfra == b.sfra && a.cycl == b.cycl &&
+         a.multi_index == b.multi_index && a.view == b.view && a.layer == b.layer &&
+         a.pass == b.pass && a.tile == b.tile;
 }
 
 int BKE_image_user_frame_get(const ImageUser *iuser, int cfra, bool *r_is_in_range)
