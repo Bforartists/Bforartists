@@ -877,7 +877,7 @@ class VIEW3D_PT_tools_brush_texture(Panel, View3DPaintPanel):
 
     @classmethod
     def poll(cls, context):
-        if (settings := cls.paint_settings(context)) and (brush := settings.brush):
+        if (settings := cls.paint_settings_from_active_tool(context)) and (brush := settings.brush):
             if context.sculpt_object or context.vertex_paint_object:
                 return True
             elif context.image_paint_object:

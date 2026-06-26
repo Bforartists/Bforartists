@@ -615,12 +615,12 @@ class VIEW3D_PT_mesh_tab_merge(ToolsystemPanel):
 
         edit_obj = context.edit_object
 
+        first_sel_is_vert = False
+        last_sel_is_vert = False
+
         if edit_obj and edit_obj.type == "MESH":
             mesh = bmesh.from_edit_mesh(edit_obj.data)
             if "VERT" in mesh.select_mode:
-                first_sel_is_vert = False
-                last_sel_is_vert = False
-
                 if len(mesh.select_history) >= 1:
                     first_sel_is_vert = isinstance(mesh.select_history[0], bmesh.types.BMVert)
                     last_sel_is_vert = isinstance(mesh.select_history[-1], bmesh.types.BMVert)
