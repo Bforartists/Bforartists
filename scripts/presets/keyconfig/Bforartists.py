@@ -1,4 +1,4 @@
-keyconfig_version = (5, 2, 36)
+keyconfig_version = (5, 3, 4)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1884,6 +1884,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
     ],
    },
   ),
@@ -2628,7 +2629,7 @@ keyconfig_data = \
  ("Generic Gizmo Maybe Drag",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": -1, "ctrl": -1, "oskey": -1, "hyper": -1}, None),
+   [("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": -1, "ctrl": -1, "oskey": -1, "hyper": -1}, None),
     ],
    },
   ),
@@ -2803,6 +2804,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
     ],
    },
   ),
