@@ -357,6 +357,24 @@ static void rna_userdef_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *
   USERDEF_TAG_DIRTY;
 }
 
+#if 0
+/* BFA - Unused: upstream Blender renamed this callback but Bforartists uses
+ * the more featureful rna_userdef_panel_tabs_compact_update instead which also
+ * preserves toolbar column counts when toggling compact tab display. */
+static void rna_userdef_update_compact_tabs(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+  rna_userdef_update(bmain, scene, ptr);
+  auto *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+  if (!wm) {
+    return;
+  }
+  for (wmWindow &win : wm->windows) {
+    /* Notify regions so they can update its category tab width when showing only tabs. */
+    WM_event_add_notifier_ex(wm, &win, NC_SCREEN | NA_EDITED, nullptr);
+  }
+}
+#endif
+
 static void rna_userdef_theme_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
   /* Recreate gizmos when changing themes. */
@@ -6430,6 +6448,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
       prop,
       "Compact Sidebar Tabs",
       "Display sidebar tabs in a compact size that shows icons when available");
+  /* BFA - Preserves toolbar column counts on compact tab toggle; uses custom callback. */
   RNA_def_property_update(prop, 0, "rna_userdef_panel_tabs_compact_update");
 
   prop = RNA_def_property(srna, "viewport_aa", PROP_ENUM, PROP_NONE);

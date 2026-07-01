@@ -25,7 +25,7 @@
 
 #include "BKE_action.hh"
 #include "BKE_anim_data.hh"
-#include "BKE_animsys.h"
+#include "BKE_animsys.hh"
 #include "BKE_armature.hh"
 #include "BKE_context.hh"
 #include "BKE_fcurve.hh"
@@ -1357,6 +1357,8 @@ static wmOperatorStatus insert_key_button_exec(bContext *C, wmOperator *op)
         }
       }
       else {
+        /* This special case exists because we have to allow drivers and clearing the
+         * PROP_ANIMATABLE flag from the properties would prevent that. */
         BKE_report(op->reports,
                    RPT_ERROR,
                    "This property cannot be animated as it will not get updated correctly");
