@@ -24,7 +24,7 @@
 #include "IMB_imbuf.hh"
 
 #include "BKE_anim_data.hh"
-#include "BKE_animsys.h"
+#include "BKE_animsys.hh"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_layer.hh"
@@ -482,12 +482,15 @@ static bool seq_prefetch_scene_strip_is_rendered(const Scene *scene,
       int target_timeline_frame = give_frame_index(scene, strip, timeline_frame) +
                                   target_scene->r.sfra;
 
-      return seq_prefetch_scene_strip_is_rendered(target_scene,
-                                                  target_ed->current_channels(),
-                                                  target_ed->current_strips(),
-                                                  target_scene_strips,
-                                                  target_timeline_frame,
-                                                  state);
+      if (seq_prefetch_scene_strip_is_rendered(target_scene,
+                                               target_ed->current_channels(),
+                                               target_ed->current_strips(),
+                                               target_scene_strips,
+                                               target_timeline_frame,
+                                               state))
+      {
+        return true;
+      }
     }
 
     for (Strip *strip_scene : scene_strips) {
