@@ -38,7 +38,7 @@ jobs:
       working-directory: ${{ github.workspace }}
       if: ${{ inputs.os == 'ubuntu-latest' }}
       run: |
-        python ./build_files/build_environment/install_linux_packages.py
+        python ./build_files/linux/install_linux_packages.py
 
     - name: Run make update
       working-directory: ${{ github.workspace }}

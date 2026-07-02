@@ -21,7 +21,7 @@
 
 #include "BLT_translation.hh"
 
-#include "BKE_animsys.h"
+#include "BKE_animsys.hh"
 #include "BKE_customdata.hh"
 #include "BKE_data_transfer.h"
 #include "BKE_mesh_remap.hh"
@@ -2256,7 +2256,7 @@ void rna_NodesModifierBake_override_diff(Main *bmain, RNAPropertyOverrideDiffCon
       BKE_lib_override_library_property_operation_ui_info_set(
           *opop,
           node->name,
-          fmt::format(fmt::runtime(DATA_("{}::{}::{}")),
+          fmt::format("{}::{}::{}",
                       owner_ntree->id.lib ? BKE_id_name(owner_ntree->id.lib->id) : "LOCAL",
                       BKE_id_name(owner_ntree->id),
                       node->name));

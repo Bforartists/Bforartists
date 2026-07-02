@@ -1387,9 +1387,6 @@ static Image *image_open_single(Main *bmain,
   ima = BKE_image_load_exists_in_lib(bmain, owner_library, range->filepath, &exists);
 
   if (!ima) {
-    if (op->customdata) {
-      MEM_delete(static_cast<ImageOpenData *>(op->customdata));
-    }
     BKE_reportf(op->reports,
                 RPT_ERROR,
                 "Cannot read '%s': %s",
@@ -1477,6 +1474,8 @@ static wmOperatorStatus image_open_exec(bContext *C, wmOperator *op)
   ranges.free_no_destruct();
 
   if (ima == nullptr) {
+    op->customdata = nullptr;
+    MEM_delete(iod);
     return OPERATOR_CANCELLED;
   }
 

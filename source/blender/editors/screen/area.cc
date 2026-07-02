@@ -1747,12 +1747,17 @@ static void region_rect_recursive(
       region->flag |= RGN_FLAG_TOO_SMALL;
     }
     else if (width < prefsizex) {
-      const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
-                           (BLI_rcti_size_y(&region->v2d.mask) + 1);
+      /* BFA - V2D_IS_INIT guard from upstream Blender to prevent division-by-zero. */
+      const float aspect = (region->v2d.flag & V2D_IS_INIT) ?
+                               (BLI_rctf_size_y(&region->v2d.cur) /
+                                (BLI_rcti_size_y(&region->v2d.mask) + 1)) :
+                               1.0f;
       const bool has_tabs = BKE_regiontype_uses_category_tabs(region->runtime->type) &&
                             !(region->flag & RGN_FLAG_HIDE_CATEGORY_TABS);
       int previous_min_width;
       if (has_tabs) {
+        /* BFA - Use toolbar width for tools region to respect 3-column snapping,
+         * not the wider panel category snap width. */
         if (region->regiontype == RGN_TYPE_TOOLS) {
           previous_min_width = UI_TOOLBAR_WIDTH;
         }
@@ -1786,6 +1791,18 @@ static void region_rect_recursive(
       }
     }
     else {
+      if (BKE_regiontype_uses_category_tabs(region->runtime->type)) {
+        /* Update category tab width when #USER_UIFLAG2_PANEL_TABS_COMPACT flag is set/unset. */
+        const float aspect = (region->v2d.flag & V2D_IS_INIT) ?
+                                 (BLI_rctf_size_y(&region->v2d.cur) /
+                                  (BLI_rcti_size_y(&region->v2d.mask) + 1)) :
+                                 1.0f;
+        const int tab_auto_snap_width = (UI_PANEL_CATEGORY_MIN_WIDTH + ui::PANEL_MIN_DRAW_WIDTH) *
+                                        UI_SCALE_FAC / aspect;
+        if (prefsizex < tab_auto_snap_width) {
+          prefsizex = UI_PANEL_CATEGORY_MIN_WIDTH * UI_SCALE_FAC / aspect;
+        }
+      }
       int fac = rct_fits(winrct, SCREEN_AXIS_H, prefsizex);
 
       if (fac < 0) {

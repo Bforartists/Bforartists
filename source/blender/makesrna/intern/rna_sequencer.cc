@@ -17,7 +17,7 @@
 
 #include "BLT_translation.hh"
 
-#include "BKE_animsys.h"
+#include "BKE_animsys.hh"
 #include "BKE_layer.hh"
 
 #include "RNA_define.hh"
@@ -802,7 +802,7 @@ static void rna_Strip_channel_set(PointerRNA *ptr, int value)
 
   /* check channel increment or decrement */
   const int channel_delta = (value >= strip->channel) ? 1 : -1;
-  seq::strip_channel_set(strip, value);
+  strip->channel_set(value);
 
   if (seq::transform_test_overlap(scene, seqbase, strip)) {
     seq::transform_seqbase_shuffle_ex(seqbase, strip, scene, channel_delta);

@@ -9,8 +9,8 @@
 #pragma once
 
 #include <atomic>
+#include <thread>
 
-#include "BLI_task_c.hh"
 #include "BLI_threads.hh"
 #include "BLI_utility_mixins.hh"
 #include "BLI_vector.hh"
@@ -159,13 +159,14 @@ class VKDevice : public NonCopyable {
   bool is_initialized_ = false;
 
   /**
-   * Task pool for render graph submission.
+   * Render graph submission thread.
    *
-   * Multiple threads in Blender can build a render graph. Building the command buffer for a render
-   * graph is faster when doing it in serial. Submission pool ensures that only one task is
-   * building at a time (background_serial).
+   * Multiple threads in Blender can build a render graph. All submitted
+   * render graphs are queued and consumed one at a time by this thread.
    */
-  TaskPool *submission_pool_ = nullptr;
+  std::thread submission_thread_;
+  std::atomic<bool> submission_thread_should_exit_ = false;
+
   /**
    * All created render graphs.
    */
@@ -239,44 +240,7 @@ class VKDevice : public NonCopyable {
   /** Buffer to bind to unbound resource locations. */
   VKBuffer dummy_buffer;
 
-  /**
-   * This struct contains the functions pointer to extension provided functions.
-   */
-  struct {
-    /* Extension: VK_KHR_dynamic_rendering */
-    PFN_vkCmdBeginRendering vkCmdBeginRendering = nullptr;
-    PFN_vkCmdEndRendering vkCmdEndRendering = nullptr;
-
-    /* Extension: VK_EXT_debug_utils */
-    PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabel = nullptr;
-    PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabel = nullptr;
-    PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectName = nullptr;
-    PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessenger = nullptr;
-    PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessenger = nullptr;
-
-    /* Extension: VK_EXT_extended_dynamic_state */
-    PFN_vkCmdSetFrontFace vkCmdSetFrontFace = nullptr;
-
-    /* Extension: VK_EXT_vertex_input_dynamic_state */
-    PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInput = nullptr;
-
-    /* Extension: VK_KHR_external_memory_fd */
-    PFN_vkGetMemoryFdKHR vkGetMemoryFd = nullptr;
-
-    /* Extension: VK_EXT_host_image_copy */
-    PFN_vkCopyMemoryToImageEXT vkCopyMemoryToImage = nullptr;
-    PFN_vkTransitionImageLayoutEXT vkTransitionImageLayout = nullptr;
-
-    /* Extension: VK_KHR_maintenance4 */
-    PFN_vkGetDeviceImageMemoryRequirements vkGetDeviceImageMemoryRequirements = nullptr;
-    PFN_vkGetDeviceBufferMemoryRequirements vkGetDeviceBufferMemoryRequirements = nullptr;
-
-#ifdef _WIN32
-    /* Extension: VK_KHR_external_memory_win32 */
-    PFN_vkGetMemoryWin32HandleKHR vkGetMemoryWin32Handle = nullptr;
-#endif
-
-  } functions;
+  VolkDeviceTable functions = {};
 
   VKMemoryPools vma_pools;
 
@@ -406,7 +370,7 @@ class VKDevice : public NonCopyable {
   /* -------------------------------------------------------------------- */
   /** \name Render graph
    * \{ */
-  static void submission_runner(TaskPool *__restrict pool, void *task_data);
+  static void submission_runner(VKDevice *device);
   render_graph::VKRenderGraph *render_graph_new();
 
   TimelineValue render_graph_submit(render_graph::VKRenderGraph *render_graph,
@@ -428,7 +392,7 @@ class VKDevice : public NonCopyable {
   {
     BLI_assert(vk_timeline_semaphore_ != VK_NULL_HANDLE);
     TimelineValue current_timeline;
-    VkResult result = vkGetSemaphoreCounterValue(
+    VkResult result = functions.vkGetSemaphoreCounterValue(
         vk_device_, vk_timeline_semaphore_, &current_timeline);
     UNUSED_VARS(result);
     BLI_assert_msg(
@@ -481,8 +445,8 @@ class VKDevice : public NonCopyable {
   void init_physical_device_features();
   void init_physical_device_extensions();
   void init_debug_callbacks();
-  void init_submission_pool();
-  void deinit_submission_pool();
+  void init_submission_thread();
+  void deinit_submission_thread();
   /**
    * Initialize the functions struct with extension specific function pointer.
    */
