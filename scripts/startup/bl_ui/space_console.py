@@ -129,10 +129,6 @@ class CONSOLE_MT_edit(Menu):
         layout.operator("console.history_cycle", text = "Forward in History", icon = "HISTORY_CYCLE_FORWARD").reverse = False
         layout.operator("console.history_cycle", text = "Backward in History", icon = "HISTORY_CYCLE_BACK").reverse = True
 
-        layout.separator()
-
-        layout.menu("CONSOLE_MT_language") # BFA - to Document
-
 
 class CONSOLE_MT_language(Menu):
     bl_label = "Languages"
