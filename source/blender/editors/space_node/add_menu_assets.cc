@@ -263,7 +263,7 @@ static void root_catalogs_draw(const bContext *C, Menu *menu, const StringRefNul
   layout->separator();
 
   if (!loading_finished) {
-    layout->label(IFACE_("Loading Asset Libraries"), ICON_INFO); /*BFA - preserved from Blender, they removed this*/
+    layout->label(IFACE_("Loading Asset Libraries"), ICON_STATUS_INFO); /*BFA - preserved from Blender, they removed this*/
   }
 
   const Set<StringRef> all_builtin_menus = get_builtin_menus(edit_tree->type);

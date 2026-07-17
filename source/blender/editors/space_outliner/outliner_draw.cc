@@ -2447,7 +2447,7 @@ static void outliner_draw_warning_tree_element(ui::Block *block,
   block_emboss_set(block, ui::EmbossType::NoneOrStatus);
   ui::Button *but = uiDefIconBut(block,
                                  ui::ButtonType::IconToggle,
-                                 ICON_ERROR,
+                                 ICON_STATUS_WARNING,
                                  mode_column_offset,
                                  te_ys,
                                  UI_UNIT_X,
@@ -2632,7 +2632,6 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
       case TSE_CONSTRAINT_BASE:
       case TSE_MODIFIER_BASE:
       case TSE_MODIFIER:
-      case TSE_RNA_STRUCT:
       case TSE_GPENCIL_EFFECT_BASE:
       case TSE_GPENCIL_EFFECT:
         data.drag_id = tselem->id;
@@ -3936,10 +3935,11 @@ void draw_outliner(const bContext *C, bool do_rebuild)
                 SO_DATA_API,
                 SO_ID_ORPHANS))
       {
-        if (outliner_sync_selection(C, tvc, space_outliner) &&
+        short idcode = 0;
+        if (outliner_sync_selection(C, tvc, space_outliner, idcode) &&
             (space_outliner->flag & SO_SCROLL_TO_ACTIVE))
         {
-          outliner_scroll_to_active(C, space_outliner, region, &tvc);
+          outliner_scroll_to_active(space_outliner, region, idcode);
         }
       }
     }

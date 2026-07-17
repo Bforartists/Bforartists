@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "GPU_framebuffer.hh"
 #include "vk_vertex_input_description.hh"
 
 namespace blender::gpu::render_graph {
@@ -54,8 +55,8 @@ struct VKPipelineData {
  * draw nodes.
  */
 struct VKViewportData {
-  Vector<VkViewport> viewports;
-  Vector<VkRect2D> scissors;
+  Vector<VkViewport, GPU_MAX_VIEWPORTS> viewports;
+  Vector<VkRect2D, GPU_MAX_VIEWPORTS> scissors;
 
   bool operator==(const VKViewportData &other) const
   {
@@ -80,6 +81,30 @@ struct VKViewportData {
   {
     return !(*this == other);
   }
+
+  void reset()
+  {
+    viewports.clear();
+    scissors.clear();
+  }
+
+  /**
+   * Assign operator to reuse memory.
+   *
+   * Has been added to improve the performance of larger scenes where the viewport is often
+   * switched. Without a custom assign operator calling `assign_if_different` inside
+   * `vk_pipeline_dynamic_graphics_build_commands` would construct a temp VKViewportData with
+   * unneeded frees/allocs and reallocs.
+   */
+  VKViewportData &operator=(const VKViewportData &other)
+  {
+    viewports.clear();
+    scissors.clear();
+    viewports.extend(other.viewports);
+    scissors.extend(other.scissors);
+
+    return *this;
+  }
 };
 
 struct VKPipelineDataGraphics {
@@ -89,6 +114,16 @@ struct VKPipelineDataGraphics {
   std::optional<float> line_width;
   std::optional<StencilState> stencil_state;
   std::optional<VkFrontFace> front_face;
+
+  void reset()
+  {
+    pipeline_data = {};
+    viewport.reset();
+    vertex_input_description.reset();
+    line_width.reset();
+    stencil_state.reset();
+    front_face.reset();
+  }
 };
 
 /** Resources bound for a compute/graphics pipeline. */

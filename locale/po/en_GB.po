@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Beta (b'e65907bec1c9')\n"
+"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-29 10:51+0000\n"
+"POT-Creation-Date: 2026-07-13 07:34+0000\n"
 "PO-Revision-Date: 2026-02-16 18:12+0000\n"
 "Last-Translator: Deniz Jones <sdfoakes@gmail.com>\n"
 "Language-Team: English (United Kingdom) <https://translate.blender.org/projects/blender-ui/ui/en_GB/>\n"
@@ -13786,10 +13786,6 @@ msgstr "Normalised Sine"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiple"
-msgstr "Phase Multiple"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -34950,16 +34946,120 @@ msgid "Editor menu containing buttons"
 msgstr "Editor menu containing buttons"
 
 
+msgid "Face Data"
+msgstr "Face Data"
+
+
+msgid "Select by Face Strength"
+msgstr "Select by Face Strength"
+
+
+msgid "Set Face Strength"
+msgstr "Set Face Strength"
+
+
 msgid "Render Preview"
 msgstr "Render Preview"
 
 
-msgid "Mirror"
-msgstr "Mirror"
+msgid "Clean Up"
+msgstr "Clean Up"
+
+
+msgid "Merge"
+msgstr "Merge"
+
+
+msgid "Show/Hide"
+msgstr "Show/Hide"
+
+
+msgid "Special Characters"
+msgstr "Special Characters"
+
+
+msgid "Kerning"
+msgstr "Kerning"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Math"
+msgstr "Maths"
+
+
+msgid "Names"
+msgstr "Names"
+
+
+msgid "Utilities"
+msgstr "Utilities"
+
+
+msgid "Bone Roll"
+msgstr "Bone Roll"
+
+
+msgid "Read"
+msgstr "Read"
+
+
+msgid "Sample"
+msgstr "Sample"
+
+
+msgid "Pivot Point"
+msgstr "Pivot Point"
+
+
+msgid "Write"
+msgstr "Write"
 
 
 msgid "Snap"
 msgstr "Snap"
+
+
+msgid "Primitives"
+msgstr "Primitives"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Proportional Editing Falloff"
+
+
+msgid "Mask Edit"
+msgstr "Mask Edit"
+
+
+msgid "Automasking"
+msgstr "Automasking"
+
+
+msgid "Face Sets Edit"
+msgstr "Face Sets Edit"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Group Locks"
+
+
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Instances"
+msgstr "Instances"
+
+
+msgid "Import"
+msgstr "Import"
+
+
+msgid "Mirror"
+msgstr "Mirror"
 
 
 msgid "UV Mapping"
@@ -34968,6 +35068,10 @@ msgstr "UV Mapping"
 
 msgid "Local View"
 msgstr "Local View"
+
+
+msgid "Deprecated"
+msgstr "Deprecated"
 
 
 msgid "Viewpoint"
@@ -34990,16 +35094,12 @@ msgid "View Regions"
 msgstr "View Regions"
 
 
-msgid "Math"
-msgstr "Maths"
-
-
 msgid "Select More/Less"
 msgstr "Select More/Less"
 
 
-msgid "Utilities"
-msgstr "Utilities"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -35022,40 +35122,12 @@ msgid "Assign Material"
 msgstr "Assign Material"
 
 
-msgid "Read"
-msgstr "Read"
-
-
-msgid "Sample"
-msgstr "Sample"
-
-
-msgid "Write"
-msgstr "Write"
-
-
-msgid "Primitives"
-msgstr "Primitives"
-
-
-msgid "Metaball"
-msgstr "Metaball"
-
-
 msgid "Light"
 msgstr "Light"
 
 
 msgid "Light Probe"
 msgstr "Light Probe"
-
-
-msgid "Gizmo"
-msgstr "Gizmo"
-
-
-msgid "Instances"
-msgstr "Instances"
 
 
 msgid "Add Image"
@@ -35070,10 +35142,6 @@ msgid "Rigid Body"
 msgstr "Rigid Body"
 
 
-msgid "Import"
-msgstr "Import"
-
-
 msgid "Apply"
 msgstr "Apply"
 
@@ -35086,16 +35154,12 @@ msgid "Quick Effects"
 msgstr "Quick Effects"
 
 
-msgid "Show/Hide"
-msgstr "Show/Hide"
+msgid "Linked"
+msgstr "Linked"
 
 
-msgid "Deprecated"
-msgstr "Deprecated"
-
-
-msgid "Clean Up"
-msgstr "Clean Up"
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Asset"
@@ -35118,16 +35182,12 @@ msgid "Hooks"
 msgstr "Hooks"
 
 
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Vertex Group Locks"
-msgstr "Vertex Group Locks"
-
-
 msgid "Trim/Add"
 msgstr "Trim/Add"
+
+
+msgid "Adjust"
+msgstr "Adjust"
 
 
 msgid "Sculpt Set Pivot"
@@ -35138,8 +35198,16 @@ msgid "Face Sets Init"
 msgstr "Face Sets Init"
 
 
+msgid "Keying"
+msgstr "Keying"
+
+
 msgid "Random Mask"
 msgstr "Random Mask"
+
+
+msgid "Tracking"
+msgstr "Tracking"
 
 
 msgid "Clear Transform"
@@ -35158,8 +35226,8 @@ msgid "Bone Collections"
 msgstr "Bone Collections"
 
 
-msgid "Names"
-msgstr "Names"
+msgid "Creative"
+msgstr "Creative"
 
 
 msgid "Toggle Bone Options"
@@ -35176,78 +35244,6 @@ msgstr "Disable Bone Options"
 
 msgid "Mesh Select Mode"
 msgstr "Mesh Select Mode"
-
-
-msgid "Face Data"
-msgstr "Face Data"
-
-
-msgid "Select by Face Strength"
-msgstr "Select by Face Strength"
-
-
-msgid "Set Face Strength"
-msgstr "Set Face Strength"
-
-
-msgid "Merge"
-msgstr "Merge"
-
-
-msgid "Linked"
-msgstr "Linked"
-
-
-msgid "Layout"
-msgstr "Layout"
-
-
-msgid "Special Characters"
-msgstr "Special Characters"
-
-
-msgid "Kerning"
-msgstr "Kerning"
-
-
-msgid "Bone Roll"
-msgstr "Bone Roll"
-
-
-msgid "Adjust"
-msgstr "Adjust"
-
-
-msgid "Keying"
-msgstr "Keying"
-
-
-msgid "Tracking"
-msgstr "Tracking"
-
-
-msgid "Creative"
-msgstr "Creative"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Point"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportional Editing Falloff"
-
-
-msgid "Mask Edit"
-msgstr "Mask Edit"
-
-
-msgid "Automasking"
-msgstr "Automasking"
-
-
-msgid "Face Sets Edit"
-msgstr "Face Sets Edit"
 
 
 msgid "Keyframe Insert Pie"
@@ -91297,6 +91293,14 @@ msgid "Panel containing UI elements"
 msgstr "Panel containing UI elements"
 
 
+msgid "Active Tool"
+msgstr "Active Tool"
+
+
+msgid "View Lock"
+msgstr "View Lock"
+
+
 msgid "Selectability & Visibility"
 msgstr "Selectability & Visibility"
 
@@ -91319,6 +91323,14 @@ msgstr "Render Pass"
 
 msgid "Compositor"
 msgstr "Compositor"
+
+
+msgid "glTF Variants"
+msgstr "glTF Variants"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF Material Variants"
 
 
 msgid "Overlays"
@@ -91351,6 +91363,14 @@ msgstr "Curve Edit Mode"
 
 msgid "Curves Edit Mode"
 msgstr "Curves Edit Mode"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF Animations"
 
 
 msgid "Transform Orientations"
@@ -91405,36 +91425,12 @@ msgid "Viewport Debug"
 msgstr "Viewport Debug"
 
 
-msgid "glTF Variants"
-msgstr "glTF Variants"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF Material Variants"
-
-
 msgid "VR"
 msgstr "VR"
 
 
 msgid "VR Info"
 msgstr "VR Info"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF Animations"
-
-
-msgid "Active Tool"
-msgstr "Active Tool"
-
-
-msgid "View Lock"
-msgstr "View Lock"
 
 
 msgid "Import Settings"
@@ -136255,10 +136251,6 @@ msgid "No Rigid Body World to add Rigid Body Constraint to"
 msgstr "No Rigid Body World to add Rigid Body Constraint to"
 
 
-msgid "Object has no Rigid Body Constraint to remove"
-msgstr "Object has no Rigid Body Constraint to remove"
-
-
 msgid "Object '%s' already has a Rigid Body Constraint"
 msgstr "Object '%s' already has a Rigid Body Constraint"
 
@@ -137039,10 +137031,6 @@ msgstr "Active group is locked, aborting"
 
 msgid "Fill tool needs active material"
 msgstr "Fill tool needs active material"
-
-
-msgid "Unable to fill unclosed areas"
-msgstr "Unable to fill unclosed areas"
 
 
 msgid "GPencil Interpolation: "
@@ -152865,6 +152853,10 @@ msgid "Compress scene-referred values from common cameras into the ACEScg gamut"
 msgstr "Compress scene-referred values from common cameras into the ACEScg gamut"
 
 
+msgid "Utility"
+msgstr "Utility"
+
+
 msgid "blender:pq_rec2020_display_203nits"
 msgstr "blender:pq_rec2020_display_203nits"
 
@@ -152907,10 +152899,6 @@ msgstr "Mesh Weight Paint"
 
 msgid "Pixel Art"
 msgstr "Pixel Art"
-
-
-msgid "Utility"
-msgstr "Utility"
 
 
 msgid "Chromatic Aberration"

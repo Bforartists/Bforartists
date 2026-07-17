@@ -617,12 +617,7 @@ void BLI_windows_exception_show_dialog(const char *filepath_crashlog,
 
   TASKDIALOGCONFIG config = {0};
   const TASKDIALOG_BUTTON buttons[] = {{IDRETRY, L"Restart"},
-#if 0
-    /* This lead to a large influx of low quality reports on the tracker,
-     * and has been disabled for that reason, we can re-enable this when
-     * a better workflow has been established. */
-    {IDOK, L"Report a Bug"},
-#endif
+                                       {IDOK, L"Report a Bug"},
                                        {IDHELP, L"View Crash Log"},
                                        {IDCLOSE, L"Close"}};
 

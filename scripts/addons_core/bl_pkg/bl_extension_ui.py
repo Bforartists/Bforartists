@@ -294,7 +294,7 @@ def addon_draw_item_expanded(
     if item_warnings:
         # Only for legacy add-ons.
         col_a.label(text="Warning")
-        col_b.label(text=item_warnings[0], icon='ERROR')
+        col_b.label(text=item_warnings[0], icon='STATUS_WARNING')
         if len(item_warnings) > 1:
             for value in item_warnings[1:]:
                 col_a.label(text="")
@@ -325,8 +325,8 @@ def addons_panel_draw_missing_with_extension_impl(
         layout,  # `bpy.types.UILayout`
         missing_modules  # `set[str]`
 ):
-    layout_header, layout_panel = layout.panel("Built-in_addons", default_closed=True)
-    layout_header.label(text="Missing Built-in Legacy Add-ons ", icon='ERROR')
+    layout_header, layout_panel = layout.panel("builtin_addons", default_closed=True)
+    layout_header.label(text="Missing Built-in Add-ons", icon='STATUS_WARNING')
 
     if layout_panel is None:
         return
@@ -363,9 +363,9 @@ def addons_panel_draw_missing_with_extension_impl(
 
     if repo is None:
         # Most likely the user manually removed this.
-        box.label(text="Online Extensions repository not found!", icon='ERROR') # BFA - Made explicit
+        box.label(text="Online Extensions repository not found!", icon='STATUS_ERROR') # BFA - Made explicit
     elif not repo.enabled:
-        box.label(text="Online access to the Extensions repository must be enabled to install extensions!", icon='ERROR') # BFA - Made explicit
+        box.label(text="Online access to the Extensions repository must be enabled to install extensions!", icon='STATUS_ERROR') # BFA - Made explicit
         repo_index = -1
     else:
         # Ensure the remote data is available from which to install the extensions.
@@ -375,7 +375,7 @@ def addons_panel_draw_missing_with_extension_impl(
         pkg_manifest_remote = repo_cache_store.refresh_remote_from_directory(directory=repo.directory, error_fn=print)
         if pkg_manifest_remote is None:
             row = box.row()
-            row.label(text="The Extension repository must be refreshed!", icon='ERROR') # BFA - explicit
+            row.label(text="The Extension repository must be refreshed!", icon='STATUS_WARNING_FILLED') # BFA - explicit
             # Ideally this would only sync one repository, but there is no operator to do this
             # and this one corner-case doesn't justify adding a new operator.
             rowsub = row.row()
@@ -432,7 +432,7 @@ def addons_panel_draw_missing_impl(
         missing_modules,  # `set[str]`
 ):
     layout_header, layout_panel = layout.panel("missing_script_files", default_closed=True)
-    layout_header.label(text="Missing Add-ons", icon='ERROR')
+    layout_header.label(text="Missing Add-ons", icon='STATUS_WARNING')
 
     if layout_panel is None:
         return
@@ -619,7 +619,7 @@ def addons_panel_draw_items(
         if item_warnings:
             row.active = True # BFA - Float left
             row_right.alignment = 'RIGHT'# BFA - Float left
-            row_right.label(icon='ERROR')
+            row_right.label(icon='STATUS_WARNING')
             row_right.label(icon=addon_type_icon[addon_type]) # BFA - Added icon type
         elif USE_SHOW_ADDON_TYPE_AS_ICON:
             row.active = True # BFA - Float left
@@ -662,7 +662,7 @@ def addons_panel_draw_error_duplicates(layout):
     box = layout.box()
     row = box.row()
     row.label(text="Multiple add-ons with the same name found!")
-    row.label(icon='ERROR')
+    row.label(icon='STATUS_ERROR')
     box.label(text="Delete one of each pair to resolve:")
     for (addon_name, addon_file, addon_path) in addon_utils.error_duplicates:
         box.separator()
@@ -682,7 +682,7 @@ def addons_panel_draw_error_generic(layout, lines):
     box = layout.box()
     sub = box.row()
     sub.label(text=lines[0])
-    sub.label(icon='ERROR')
+    sub.label(icon='STATUS_ERROR')
     for l in lines[1:]:
         box.label(text=l)
 
@@ -1153,7 +1153,7 @@ class display_errors:
         box_header = layout.box()
         # Don't clip longer names.
         row = box_header.split(factor=0.9)
-        row.label(text="Repository Alert:", icon='ERROR')
+        row.label(text="Repository Alert:", icon='STATUS_WARNING_FILLED')
         rowsub = row.row(align=True)
         rowsub.alignment = 'RIGHT'
         rowsub.operator("extensions.status_clear_errors", text="", icon='X', emboss=False)
@@ -1422,7 +1422,7 @@ def extension_draw_item(
     # extensions based on them being used or not.
     icon = 'PLUGIN' if item.type == 'add-on' else 'COLOR' # BFA - Add visual indicators to listings
     if pkg_block or item_warnings:
-        sub.label(text=item.name, icon='ERROR', translate=False)
+        sub.label(text=item.name, icon='STATUS_WARNING', translate=False)
     else:
         # BFA - Add ability to toggle extension from Extension tab
         if is_installed and item.type == "add-on":
@@ -2235,9 +2235,9 @@ def extensions_panel_draw(panel, context):
         # Don't clip longer names.
         row = box.split(factor=0.9, align=True)
         if repo_status_text.running:
-            row.label(text=iface_(repo_status_text.title) + "...", icon='INFO', translate=False)
+            row.label(text=iface_(repo_status_text.title) + "...", icon='STATUS_INFO', translate=False)
         else:
-            row.label(text=repo_status_text.title, icon='INFO')
+            row.label(text=repo_status_text.title, icon='STATUS_INFO')
         if show_development_reports:
             rowsub = row.row(align=True)
             rowsub.alignment = 'RIGHT'
