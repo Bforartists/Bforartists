@@ -1401,7 +1401,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
         if context.mode == 'EDIT_MESH':
             layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
             layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
-            layout.operator("transform.shrink_fatten", text="Shrink/Fatten")
+            layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon="SHRINK_FATTEN")
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
             layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops")
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
