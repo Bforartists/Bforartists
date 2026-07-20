@@ -1320,7 +1320,7 @@ class PREFERENCES_OT_filepaths_show(Operator):
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
-        context.preferences.active_section = 'ASSET_LIBRARIES'
+        context.preferences.active_section = 'ASSETS'
         bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
         return {'FINISHED'}
 
