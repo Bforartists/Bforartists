@@ -11,7 +11,6 @@ from bpy_extras import (
 )
 
 from bpy.app.translations import contexts as i18n_contexts
-from torch import layout
 
 # BFA - Added icons and floated properties left
 
