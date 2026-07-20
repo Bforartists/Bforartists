@@ -730,6 +730,7 @@ class SEQUENCER_MT_select(Menu):
 
         st = context.space_data
         has_sequencer, has_preview = _space_view_types(st)
+
         # BFA - is_redtiming not used
         is_retiming = (
             context.sequencer_scene is not None and
@@ -746,16 +747,20 @@ class SEQUENCER_MT_select(Menu):
 
         layout.separator()
 
-        col = layout.column()
+        # BFA - Draw box select in its own group, right after All/None/Invert,
+        # so it doesn't end up at the end of the menu (layout items draw in creation order).
         if has_sequencer:
-            layout.operator("sequencer.select_box", text="Box Select")
+            layout.operator("sequencer.select_box", text="Box Select (Legacy)", icon="BORDER_RECT")
             props = layout.operator("sequencer.select_box", text="Box Select (Include Handles)", icon="BORDER_RECT")
             props.include_handles = True
         elif has_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
-            layout.operator("sequencer.select_box", text="Box Select", icon="BORDER_RECT")
+            layout.operator("sequencer.select_box", text="Box Select (Legacy)", icon="BORDER_RECT")
+            layout.operator_context = "INVOKE_REGION_WIN"
 
-        col.separator()
+        layout.separator()
+
+        col = layout.column()
 
         if has_sequencer:
             col.operator("sequencer.select", text="Side of Cursor", icon="RESTRICT_SELECT_OFF").side_of_frame = True
@@ -763,13 +768,16 @@ class SEQUENCER_MT_select(Menu):
             col.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
             col.menu("SEQUENCER_MT_select_handle", text="Handle")
             col.menu("SEQUENCER_MT_select_channel", text="Channel")
+
+            col.separator()
+
             if has_sequencer:
-                col.operator("sequencer.select_linked", text="Linked") # BFA - WIP, check if this is right UX
+                col.operator("sequencer.select_linked", text="Linked", icon="LINKED")
             else:
                 col.menu("SEQUENCER_MT_select_linked", text="Linked")
 
-        col.operator_menu_enum("sequencer.select_by_type", "type", text="Select All by Type")
-        col.operator_menu_enum("sequencer.select_grouped", "type", text="Select Grouped")
+        col.operator_menu_enum("sequencer.select_by_type", "type", text="All by Type")
+        col.operator_menu_enum("sequencer.select_grouped", "type", text="Grouped")
         col.enabled = not is_retiming
 
         # BFA - start
@@ -1617,10 +1625,13 @@ class SEQUENCER_MT_strip(Menu):
 
             # BFA - Show connect or disconnect based on connection state
             if are_selected_strips_connected(context):
-                layout.operator("sequencer.connect", text="Connect Selected", icon='LINKED').toggle = True # BFA - to document
+                layout.operator("sequencer.connect", text="Connect Selected", icon="LINKED").toggle = False
+                #layout.operator("sequencer.connect", text="Toggle Selected", icon='LINKED').toggle = True # BFA - to document
                 layout.operator("sequencer.disconnect", icon="UNLINKED")
             else:
+                #layout.operator("sequencer.connect", text="Toggle Selected", icon='LINKED').toggle = True # BFA - to document
                 layout.operator("sequencer.connect", icon="LINKED").toggle = False
+
 
         # BFA - preview mode only
         if has_preview:
@@ -1846,9 +1857,11 @@ class SEQUENCER_MT_context_menu(Menu):
 
         # BFA - Show connect or disconnect based on connection state
         if are_selected_strips_connected(context):
-            layout.operator("sequencer.connect", text="Connect Selected", icon='LINKED').toggle = True # BFA - to document
+            layout.operator("sequencer.connect", text="Connect Selected", icon="LINKED").toggle = False
+            #layout.operator("sequencer.connect", text="Toggle Selected", icon='LINKED').toggle = True # BFA - to document
             layout.operator("sequencer.disconnect", icon="UNLINKED")
         else:
+            #layout.operator("sequencer.connect", text="Toggle Selected", icon='LINKED').toggle = True # BFA - to document
             layout.operator("sequencer.connect", icon="LINKED").toggle = False
 
     def draw_retime(self, context):
