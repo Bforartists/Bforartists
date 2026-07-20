@@ -690,11 +690,11 @@ class OUTLINER_PT_options_filter(Panel):
             sub = col.column(align=True)
 
             row = sub.row()
-            row.label(icon='BLANK1')
-            row.prop(space, "use_filter_object_content", text="Object Contents", icon="OBJECT_CONTENTS")
+            row.label(icon='OBJECT_CONTENTS')
+            row.prop(space, "use_filter_object_content", text="Object Contents")
             row = sub.row()
-            row.label(icon='BLANK1')
-            row.prop(space, "use_filter_children", text="Object Children", icon="CHILD")
+            row.label(icon='CHILD')
+            row.prop(space, "use_filter_children", text="Object Children")
 
             if bpy.data.meshes:
                 row = sub.row()
