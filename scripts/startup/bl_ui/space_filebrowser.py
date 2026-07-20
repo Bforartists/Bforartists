@@ -863,6 +863,12 @@ class ASSETBROWSER_MT_library(AssetBrowserMenu, Menu):
         layout.operator("asset.library_refresh", text="Refresh Asset Library", icon='FILE_REFRESH') # BFA - WIP - these are redundant with the refresh button in the sidebar
         layout.operator("asset.library_reload_listing", text="Refresh Remote Listing", icon='LIBRARY_REFRESH')
 
+        # BFA - operators for managing the remote assets cache (covers online essentials + all third-party remote libraries)
+        layout.separator()
+        layout.operator("asset.open_remote_assets_cache", text="Open Remote Assets Cache", icon='FILE_FOLDER')
+        layout.operator("asset.clear_remote_assets_cache", text="Clear Remote Assets Cache", icon='TRASH')
+
+
 
 class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
     bl_label = "Catalog"
