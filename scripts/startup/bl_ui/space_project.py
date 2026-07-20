@@ -134,6 +134,7 @@ class PROJECT_PT_main(Panel, CenterAlignMixIn):
     bl_space_type = 'PROJECT'
     bl_region_type = 'WINDOW'
     bl_category = MAIN_SECTION_NAME
+    bl_icon = 'PROJECT'
 
     @classmethod
     def poll(cls, context):
@@ -153,6 +154,7 @@ class PROJECT_PT_main_unset(Panel, CenterAlignMixIn):
     bl_region_type = 'WINDOW'
     bl_options = {'HIDE_HEADER'}
     bl_category = MAIN_SECTION_NAME
+    bl_icon = 'PROJECT'
 
     @classmethod
     def poll(cls, context):
