@@ -343,9 +343,9 @@ enum class UVMoveDirection {
 
 /* BFA - Make shift_items accessible in outside scope, for `move_on_axis_description`*/
 static const EnumPropertyItem shift_items[] = {
-    {int(UVMoveType::Dynamic), "DYNAMIC", 0, "Dynamic", "Snap movement to the dynamic grid"}, /* BFA - make description clearer */
-    {int(UVMoveType::Pixel), "PIXEL", 0, "Pixel", "Movement is measured in pixels"}, /* BFA - make description clearer */
-    {int(UVMoveType::Udim), "UDIM", 0, "UDIM", "Movement is measured in UDIM tiles"}, /* BFA - make description clearer */
+    {int(UVMoveType::Dynamic), "DYNAMIC", ICON_SNAP_GRID, "Dynamic", "Snap movement to the dynamic grid"}, /* BFA - make description clearer */
+    {int(UVMoveType::Pixel), "PIXEL", ICON_SNAP_TO_PIXELS, "Pixel", "Movement is measured in pixels"}, /* BFA - make description clearer */
+    {int(UVMoveType::Udim), "UDIM", ICON_SNAP_UDIM, "UDIM", "Movement is measured in UDIM tiles"}, /* BFA - make description clearer */
     {0, nullptr, 0, nullptr, nullptr},
 };
 
