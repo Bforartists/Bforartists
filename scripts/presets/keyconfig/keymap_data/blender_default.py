@@ -1299,6 +1299,8 @@ def km_property_editor(_params):
         ("constraint.apply", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("report", True)]}),
         # Strip modifiers
         ("sequencer.strip_modifier_duplicate", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("sequencer.add_strip_modifier_menu", {"type": 'A', "value": 'PRESS', "shift": True}, None),
+        ("sequencer.strip_modifier_set_active", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -3209,6 +3211,8 @@ def km_sequencer(params):
         ("sequencer.retiming_key_delete", {"type": 'DEL', "value": 'PRESS'}, None),
         ("sequencer.delete", {"type": 'X', "value": 'PRESS'}, None),
         ("sequencer.delete", {"type": 'DEL', "value": 'PRESS'}, None),
+        ("sequencer.ripple_delete", {"type": 'X', "value": 'PRESS', "shift": True}, None),
+        ("sequencer.ripple_delete", {"type": 'DEL', "value": 'PRESS', "shift": True}, None),
         ("sequencer.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
         ("sequencer.paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
         ("sequencer.paste", {"type": 'V', "value": 'PRESS', "ctrl": True, "shift": True},
@@ -5160,6 +5164,8 @@ def km_vertex_paint(params):
         ("wm.context_menu_enum", {"type": 'E', "value": 'PRESS', "alt": True},
          {"properties": [("data_path", "tool_settings.vertex_paint.brush.stroke_method")]}),
         ("paint.face_vert_reveal", {"type": 'H', "value": 'PRESS', "alt": True}, None),
+        # Pie Menu
+        op_menu_pie("VIEW3D_MT_mesh_paint_automasking_pie", {"type": 'A', "alt": True, "value": 'PRESS'}),
         *_template_items_context_panel("VIEW3D_PT_paint_vertex_context_menu", params.context_menu_event),
         *_template_asset_shelf_popup("VIEW3D_AST_brush_vertex_paint", params.spacebar_action),
     ])
@@ -5219,6 +5225,8 @@ def km_weight_paint(params):
          {"properties": [("data_path", "weight_paint_object.data.use_paint_bone_selection")]}),
         ("wm.context_toggle", {"type": 'S', "value": 'PRESS', "shift": True},
          {"properties": [("data_path", "tool_settings.weight_paint.brush.use_smooth_stroke")]}),
+        # Pie Menu
+        op_menu_pie("VIEW3D_MT_mesh_paint_automasking_pie", {"type": 'A', "alt": True, "value": 'PRESS'}),
         op_menu_pie("VIEW3D_MT_wpaint_vgroup_lock_pie", {"type": 'K', "value": 'PRESS'}),
         *_template_items_context_panel("VIEW3D_PT_paint_weight_context_menu", params.context_menu_event),
         *_template_asset_shelf_popup("VIEW3D_AST_brush_weight_paint", params.spacebar_action),
@@ -5431,7 +5439,7 @@ def km_sculpt(params):
         ("wm.context_toggle", {"type": 'S', "value": 'PRESS', "shift": True},
          {"properties": [("data_path", "tool_settings.sculpt.brush.use_smooth_stroke")]}),
         op_menu_pie("VIEW3D_MT_sculpt_mask_edit_pie", {"type": 'A', "value": 'PRESS'}),
-        op_menu_pie("VIEW3D_MT_sculpt_automasking_pie", {"type": 'A', "alt": True, "value": 'PRESS'}),
+        op_menu_pie("VIEW3D_MT_mesh_paint_automasking_pie", {"type": 'A', "alt": True, "value": 'PRESS'}),
         op_menu_pie("VIEW3D_MT_sculpt_face_sets_edit_pie", {"type": 'W', "value": 'PRESS', "alt": True}),
         *_template_items_context_panel("VIEW3D_PT_sculpt_context_menu", params.context_menu_event),
         # Brushes

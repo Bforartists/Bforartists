@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Beta (b'e65907bec1c9')\n"
+"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-29 10:51+0000\n"
+"POT-Creation-Date: 2026-07-13 07:34+0000\n"
 "PO-Revision-Date: 2025-07-23 15:31+0000\n"
 "Last-Translator: VertexSelection <amacsizk2021@gmail.com>\n"
 "Language-Team: Turkish <https://translate.blender.org/projects/blender-ui/ui/tr/>\n"
@@ -11101,10 +11101,6 @@ msgstr "Normalize edilmiş sinüs"
 
 msgid "sin(x) / x"
 msgstr "günah(x) / x"
-
-
-msgid "Phase Multiple"
-msgstr "Faz Çoklu"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -28799,12 +28795,112 @@ msgid "Editor menu containing buttons"
 msgstr "Düğmeler içeren düzenleyici menüsü"
 
 
-msgid "Mirror"
-msgstr "Yansıtma"
+msgid "Face Data"
+msgstr "Yüz Verileri"
+
+
+msgid "Select by Face Strength"
+msgstr "Yüz Gücüne Göre Seç"
+
+
+msgid "Set Face Strength"
+msgstr "Yüz Gücünü Ayarla"
+
+
+msgid "Clean Up"
+msgstr "Temizle"
+
+
+msgid "Merge"
+msgstr "Birleştir"
+
+
+msgid "Show/Hide"
+msgstr "Göster/Gizle"
+
+
+msgid "Special Characters"
+msgstr "Özel Karakterler"
+
+
+msgid "Kerning"
+msgstr "Harf aralığı"
+
+
+msgid "Metaball"
+msgstr "Metabol"
+
+
+msgid "Math"
+msgstr "Matematik"
+
+
+msgid "Names"
+msgstr "Adlar"
+
+
+msgid "Utilities"
+msgstr "Kamu hizmetleri"
+
+
+msgid "Bone Roll"
+msgstr "Kemik Rulosu"
+
+
+msgid "Read"
+msgstr "Okumak"
+
+
+msgid "Sample"
+msgstr "Örnek"
+
+
+msgid "Pivot Point"
+msgstr "Pivot Noktası"
+
+
+msgid "Write"
+msgstr "Yazmak"
 
 
 msgid "Snap"
 msgstr "Yakala"
+
+
+msgid "Primitives"
+msgstr "İlkel"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Orantılı Düzenleme Düşüşü"
+
+
+msgid "Mask Edit"
+msgstr "Maske Düzenleme"
+
+
+msgid "Automasking"
+msgstr "Otomatik maskeleme"
+
+
+msgid "Face Sets Edit"
+msgstr "Yüz Setleri Düzenle"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Grup Kilitleri"
+
+
+msgid "Instances"
+msgstr "Örnekler"
+
+
+msgid "Import"
+msgstr "İçe Aktar"
+
+
+msgid "Mirror"
+msgstr "Yansıtma"
 
 
 msgid "UV Mapping"
@@ -28813,6 +28909,10 @@ msgstr "UV Haritalama"
 
 msgid "Local View"
 msgstr "Yerel Görünüm"
+
+
+msgid "Deprecated"
+msgstr "Kullanım dışı bırakıldı"
 
 
 msgid "Viewpoint"
@@ -28835,16 +28935,12 @@ msgid "View Regions"
 msgstr "Bölgeleri Görüntüle"
 
 
-msgid "Math"
-msgstr "Matematik"
-
-
 msgid "Select More/Less"
 msgstr "Daha Fazla/Daha Az Seç"
 
 
-msgid "Utilities"
-msgstr "Kamu hizmetleri"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -28867,36 +28963,12 @@ msgid "Assign Material"
 msgstr "Malzeme Atamak"
 
 
-msgid "Read"
-msgstr "Okumak"
-
-
-msgid "Sample"
-msgstr "Örnek"
-
-
-msgid "Write"
-msgstr "Yazmak"
-
-
-msgid "Primitives"
-msgstr "İlkel"
-
-
-msgid "Metaball"
-msgstr "Metabol"
-
-
 msgid "Light"
 msgstr "Işık"
 
 
 msgid "Light Probe"
 msgstr "Işık Sondası"
-
-
-msgid "Instances"
-msgstr "Örnekler"
 
 
 msgid "Add Image"
@@ -28911,10 +28983,6 @@ msgid "Rigid Body"
 msgstr "Sert Gövde"
 
 
-msgid "Import"
-msgstr "İçe Aktar"
-
-
 msgid "Apply"
 msgstr "Uygula"
 
@@ -28927,16 +28995,12 @@ msgid "Quick Effects"
 msgstr "Hızlı Etkiler"
 
 
-msgid "Show/Hide"
-msgstr "Göster/Gizle"
+msgid "Linked"
+msgstr "Bağlantılı"
 
 
-msgid "Deprecated"
-msgstr "Kullanım dışı bırakıldı"
-
-
-msgid "Clean Up"
-msgstr "Temizle"
+msgid "Layout"
+msgstr "Yerleşim"
 
 
 msgid "Asset"
@@ -28959,16 +29023,12 @@ msgid "Hooks"
 msgstr "Kancalar"
 
 
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Vertex Group Locks"
-msgstr "Vertex Grup Kilitleri"
-
-
 msgid "Trim/Add"
 msgstr "Kırp/Ekle"
+
+
+msgid "Adjust"
+msgstr "Ayarlamak"
 
 
 msgid "Sculpt Set Pivot"
@@ -28979,8 +29039,16 @@ msgid "Face Sets Init"
 msgstr "Yüz Setleri Başlatma"
 
 
+msgid "Keying"
+msgstr "Anahtarlama"
+
+
 msgid "Random Mask"
 msgstr "Rastgele Maske"
+
+
+msgid "Tracking"
+msgstr "Takip"
 
 
 msgid "Clear Transform"
@@ -28999,10 +29067,6 @@ msgid "Bone Collections"
 msgstr "Kemik Koleksiyonları"
 
 
-msgid "Names"
-msgstr "Adlar"
-
-
 msgid "Toggle Bone Options"
 msgstr "Kemik Seçeneklerini Değiştir"
 
@@ -29017,74 +29081,6 @@ msgstr "Kemik Seçeneklerini Devre Dışı Bırak"
 
 msgid "Mesh Select Mode"
 msgstr "Örgü Seçim Kipi"
-
-
-msgid "Face Data"
-msgstr "Yüz Verileri"
-
-
-msgid "Select by Face Strength"
-msgstr "Yüz Gücüne Göre Seç"
-
-
-msgid "Set Face Strength"
-msgstr "Yüz Gücünü Ayarla"
-
-
-msgid "Merge"
-msgstr "Birleştir"
-
-
-msgid "Linked"
-msgstr "Bağlantılı"
-
-
-msgid "Layout"
-msgstr "Yerleşim"
-
-
-msgid "Special Characters"
-msgstr "Özel Karakterler"
-
-
-msgid "Kerning"
-msgstr "Harf aralığı"
-
-
-msgid "Bone Roll"
-msgstr "Kemik Rulosu"
-
-
-msgid "Adjust"
-msgstr "Ayarlamak"
-
-
-msgid "Keying"
-msgstr "Anahtarlama"
-
-
-msgid "Tracking"
-msgstr "Takip"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Noktası"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Orantılı Düzenleme Düşüşü"
-
-
-msgid "Mask Edit"
-msgstr "Maske Düzenleme"
-
-
-msgid "Automasking"
-msgstr "Otomatik maskeleme"
-
-
-msgid "Face Sets Edit"
-msgstr "Yüz Setleri Düzenle"
 
 
 msgid "Keyframe Insert Pie"
@@ -75550,6 +75546,14 @@ msgid "Panel containing UI elements"
 msgstr "UI öğelerini içeren panel"
 
 
+msgid "Active Tool"
+msgstr "Etkin Araç"
+
+
+msgid "View Lock"
+msgstr "Görünüm Kilidi"
+
+
 msgid "Selectability & Visibility"
 msgstr "Seçilebilirlik ve Görünürlük"
 
@@ -75572,6 +75576,14 @@ msgstr "Render Geçişi"
 
 msgid "Compositor"
 msgstr "Dizgici"
+
+
+msgid "glTF Variants"
+msgstr "glTF Çeşitleri"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF Malzeme Varyantları"
 
 
 msgid "Overlays"
@@ -75650,28 +75662,12 @@ msgid "Viewport Debug"
 msgstr "Görüş Alanı Hata Ayıklaması"
 
 
-msgid "glTF Variants"
-msgstr "glTF Çeşitleri"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF Malzeme Varyantları"
-
-
 msgid "VR"
 msgstr "Sanal Gerçeklik"
 
 
 msgid "VR Info"
 msgstr "VR Bilgisi"
-
-
-msgid "Active Tool"
-msgstr "Etkin Araç"
-
-
-msgid "View Lock"
-msgstr "Görünüm Kilidi"
 
 
 msgid "Chain Scaling"
@@ -111318,10 +111314,6 @@ msgid "No Rigid Body World to add Rigid Body Constraint to"
 msgstr "Sert gövde kısıtlamasının ekleneceği bir sert gövde yok"
 
 
-msgid "Object has no Rigid Body Constraint to remove"
-msgstr "Nesnenin kaldırılacak bir sert gövde kısıtlaması yok"
-
-
 msgid "Object '%s' already has a Rigid Body Constraint"
 msgstr "“%s” nesnesinin halihazırda bir sert gövde kısıtlaması var"
 
@@ -121213,16 +121205,16 @@ msgid "Inspired By"
 msgstr "İlham Alındı"
 
 
+msgid "Utility"
+msgstr "Faydalılık"
+
+
 msgid "Add & Subtract"
 msgstr "Ekle ve Çıkar"
 
 
 msgid "Generation"
 msgstr "Nesil"
-
-
-msgid "Utility"
-msgstr "Faydalılık"
 
 
 msgid "Curve Info"

@@ -289,7 +289,7 @@ def draw_material_surface_settings(layout, mat, is_eevee=True):
         if mat.displacement_method == 'DISPLACEMENT':
             row = col.row()
             row.separator()
-            row.label(text="Unsupported displacement method", icon='ERROR')
+            row.label(text="Unsupported displacement method", icon='STATUS_ERROR')
 
         col = layout.column()
         col.label(text="Transparency")

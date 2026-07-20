@@ -1550,6 +1550,7 @@ class SEQUENCER_MT_strip(Menu):
 
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
+        layout.operator("sequencer.ripple_delete", text="Ripple Delete") # BFA - WIP
 
         if strip and strip.type == "SCENE":
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon="DELETE_DUPLICATE").delete_data = True
@@ -1616,6 +1617,7 @@ class SEQUENCER_MT_strip(Menu):
 
             # BFA - Show connect or disconnect based on connection state
             if are_selected_strips_connected(context):
+                layout.operator("sequencer.connect", text="Connect Selected", icon='LINKED').toggle = True # BFA - to document
                 layout.operator("sequencer.disconnect", icon="UNLINKED")
             else:
                 layout.operator("sequencer.connect", icon="LINKED").toggle = False
@@ -1844,6 +1846,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         # BFA - Show connect or disconnect based on connection state
         if are_selected_strips_connected(context):
+            layout.operator("sequencer.connect", text="Connect Selected", icon='LINKED').toggle = True # BFA - to document
             layout.operator("sequencer.disconnect", icon="UNLINKED")
         else:
             layout.operator("sequencer.connect", icon="LINKED").toggle = False
@@ -3068,8 +3071,7 @@ class SEQUENCER_PT_view_composition_guides(SequencerButtonsPanel_Output, Panel):
         return is_preview and (st.display_mode == 'IMAGE') and context.sequencer_scene
 
     def draw_header(self, context):
-        layout = self.layout
-        overlay_settings = context.space_data.preview_overlay
+        pass
 
     def draw(self, context):
         overlay_settings = context.space_data.preview_overlay

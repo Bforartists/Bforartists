@@ -53,6 +53,7 @@ class AssetRepresentation;
 
 /** Defined in `buttons_intern.hh`. */
 struct SpaceProperties_Runtime;
+struct SpaceConsole_Runtime;
 
 namespace ed::space_node {
 struct SpaceNode_Runtime;
@@ -731,7 +732,7 @@ struct SpaceText {
   eSpaceText_Flags flags = {};
 
   /** User preference, is font_size! */
-  short lheight = 0;
+  short line_height = 0;
 
   int tabnumber = 0;
 
@@ -959,7 +960,7 @@ struct SpaceConsole {
   /** Multiple consoles are possible, not just python. */
   char language[32] = "";
 
-  int lheight = 0;
+  int line_height = 0;
 
   /** Index into history of most recent up/down arrow keys. */
   int history_index = 0;
@@ -967,6 +968,9 @@ struct SpaceConsole {
   /** Selection offset in bytes. */
   int sel_start = 0;
   int sel_end = 0;
+
+  /** Keep last. */
+  SpaceConsole_Runtime *runtime = nullptr;
 };
 
 /** \} */

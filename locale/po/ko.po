@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Beta (b'e65907bec1c9')\n"
+"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-29 10:51+0000\n"
+"POT-Creation-Date: 2026-07-13 07:34+0000\n"
 "PO-Revision-Date: 2026-03-27 12:12+0000\n"
 "Last-Translator: kim nahyeong <weiing0123@ajou.ac.kr>\n"
 "Language-Team: Korean <https://translate.blender.org/projects/blender-ui/ui/ko/>\n"
@@ -13774,10 +13774,6 @@ msgstr "노멀라이즈된 사인"
 
 msgid "sin(x) / x"
 msgstr "사인(x) / x"
-
-
-msgid "Phase Multiple"
-msgstr "위상 다중"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -34805,16 +34801,120 @@ msgid "Editor menu containing buttons"
 msgstr "버튼이 포함된 에디터 메뉴"
 
 
+msgid "Face Data"
+msgstr "페이스 데이터"
+
+
+msgid "Select by Face Strength"
+msgstr "페이스 강도로 선택"
+
+
+msgid "Set Face Strength"
+msgstr "페이스 강도를 설정"
+
+
 msgid "Render Preview"
 msgstr "렌더링 미리보기"
 
 
-msgid "Mirror"
-msgstr "미러"
+msgid "Clean Up"
+msgstr "정리"
+
+
+msgid "Merge"
+msgstr "병합"
+
+
+msgid "Show/Hide"
+msgstr "표시/숨기기"
+
+
+msgid "Special Characters"
+msgstr "특수 문자"
+
+
+msgid "Kerning"
+msgstr "자간"
+
+
+msgid "Metaball"
+msgstr "메타볼"
+
+
+msgid "Math"
+msgstr "수학"
+
+
+msgid "Names"
+msgstr "이름"
+
+
+msgid "Utilities"
+msgstr "유틸리티"
+
+
+msgid "Bone Roll"
+msgstr "뼈대 롤"
+
+
+msgid "Read"
+msgstr "읽기"
+
+
+msgid "Sample"
+msgstr "샘플"
+
+
+msgid "Pivot Point"
+msgstr "피벗 포인트"
+
+
+msgid "Write"
+msgstr "쓰기"
 
 
 msgid "Snap"
 msgstr "스냅"
+
+
+msgid "Primitives"
+msgstr "프리미티브"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "비례 편집 감소"
+
+
+msgid "Mask Edit"
+msgstr "마스크 편집"
+
+
+msgid "Automasking"
+msgstr "오토마스킹"
+
+
+msgid "Face Sets Edit"
+msgstr "페이스 세트 편집"
+
+
+msgid "Vertex Group Locks"
+msgstr "버텍스 그룹 잠금"
+
+
+msgid "Gizmo"
+msgstr "기즈모"
+
+
+msgid "Instances"
+msgstr "인스턴스"
+
+
+msgid "Import"
+msgstr "가져오기"
+
+
+msgid "Mirror"
+msgstr "미러"
 
 
 msgid "UV Mapping"
@@ -34823,6 +34923,10 @@ msgstr "UV 맵핑"
 
 msgid "Local View"
 msgstr "로컬 뷰"
+
+
+msgid "Deprecated"
+msgstr "사용 중단"
 
 
 msgid "Viewpoint"
@@ -34845,16 +34949,12 @@ msgid "View Regions"
 msgstr "뷰 지역"
 
 
-msgid "Math"
-msgstr "수학"
-
-
 msgid "Select More/Less"
 msgstr "선택 증가/감소"
 
 
-msgid "Utilities"
-msgstr "유틸리티"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -34877,40 +34977,12 @@ msgid "Assign Material"
 msgstr "머티리얼을 할당"
 
 
-msgid "Read"
-msgstr "읽기"
-
-
-msgid "Sample"
-msgstr "샘플"
-
-
-msgid "Write"
-msgstr "쓰기"
-
-
-msgid "Primitives"
-msgstr "프리미티브"
-
-
-msgid "Metaball"
-msgstr "메타볼"
-
-
 msgid "Light"
 msgstr "라이트"
 
 
 msgid "Light Probe"
 msgstr "라이트 프로브"
-
-
-msgid "Gizmo"
-msgstr "기즈모"
-
-
-msgid "Instances"
-msgstr "인스턴스"
 
 
 msgid "Add Image"
@@ -34925,10 +34997,6 @@ msgid "Rigid Body"
 msgstr "리지드 바디"
 
 
-msgid "Import"
-msgstr "가져오기"
-
-
 msgid "Apply"
 msgstr "적용"
 
@@ -34941,16 +35009,12 @@ msgid "Quick Effects"
 msgstr "빠른 이펙트"
 
 
-msgid "Show/Hide"
-msgstr "표시/숨기기"
+msgid "Linked"
+msgstr "연결됨"
 
 
-msgid "Deprecated"
-msgstr "사용 중단"
-
-
-msgid "Clean Up"
-msgstr "정리"
+msgid "Layout"
+msgstr "레이아웃"
 
 
 msgid "Asset"
@@ -34973,16 +35037,12 @@ msgid "Hooks"
 msgstr "후크"
 
 
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Vertex Group Locks"
-msgstr "버텍스 그룹 잠금"
-
-
 msgid "Trim/Add"
 msgstr "트림/추가"
+
+
+msgid "Adjust"
+msgstr "조정"
 
 
 msgid "Sculpt Set Pivot"
@@ -34993,8 +35053,16 @@ msgid "Face Sets Init"
 msgstr "페이스 세트 초기화"
 
 
+msgid "Keying"
+msgstr "키잉"
+
+
 msgid "Random Mask"
 msgstr "랜덤 마스크"
+
+
+msgid "Tracking"
+msgstr "트래킹"
 
 
 msgid "Clear Transform"
@@ -35013,8 +35081,8 @@ msgid "Bone Collections"
 msgstr "뼈대 컬렉션"
 
 
-msgid "Names"
-msgstr "이름"
+msgid "Creative"
+msgstr "크리에이티브"
 
 
 msgid "Toggle Bone Options"
@@ -35031,78 +35099,6 @@ msgstr "뼈대 옵션을 사용 중지"
 
 msgid "Mesh Select Mode"
 msgstr "메시 선택 모드"
-
-
-msgid "Face Data"
-msgstr "페이스 데이터"
-
-
-msgid "Select by Face Strength"
-msgstr "페이스 강도로 선택"
-
-
-msgid "Set Face Strength"
-msgstr "페이스 강도를 설정"
-
-
-msgid "Merge"
-msgstr "병합"
-
-
-msgid "Linked"
-msgstr "연결됨"
-
-
-msgid "Layout"
-msgstr "레이아웃"
-
-
-msgid "Special Characters"
-msgstr "특수 문자"
-
-
-msgid "Kerning"
-msgstr "자간"
-
-
-msgid "Bone Roll"
-msgstr "뼈대 롤"
-
-
-msgid "Adjust"
-msgstr "조정"
-
-
-msgid "Keying"
-msgstr "키잉"
-
-
-msgid "Tracking"
-msgstr "트래킹"
-
-
-msgid "Creative"
-msgstr "크리에이티브"
-
-
-msgid "Pivot Point"
-msgstr "피벗 포인트"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "비례 편집 감소"
-
-
-msgid "Mask Edit"
-msgstr "마스크 편집"
-
-
-msgid "Automasking"
-msgstr "오토마스킹"
-
-
-msgid "Face Sets Edit"
-msgstr "페이스 세트 편집"
 
 
 msgid "Keyframe Insert Pie"
@@ -90366,6 +90362,14 @@ msgid "Panel containing UI elements"
 msgstr "UI 요소가 포함된 패널"
 
 
+msgid "Active Tool"
+msgstr "활성 도구"
+
+
+msgid "View Lock"
+msgstr "뷰 잠금"
+
+
 msgid "Selectability & Visibility"
 msgstr "선택성 및 가시성"
 
@@ -90388,6 +90392,14 @@ msgstr "렌더 패스"
 
 msgid "Compositor"
 msgstr "컴포지터"
+
+
+msgid "glTF Variants"
+msgstr "glTF 변형"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF 머티리얼 배리언트"
 
 
 msgid "Overlays"
@@ -90420,6 +90432,14 @@ msgstr "커브 에디트 모드"
 
 msgid "Curves Edit Mode"
 msgstr "커브 편집 모드"
+
+
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 애니메이션"
 
 
 msgid "Transform Orientations"
@@ -90474,36 +90494,12 @@ msgid "Viewport Debug"
 msgstr "뷰포트 디버그"
 
 
-msgid "glTF Variants"
-msgstr "glTF 변형"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF 머티리얼 배리언트"
-
-
 msgid "VR"
 msgstr "VR"
 
 
 msgid "VR Info"
 msgstr "VR 정보"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF 애니메이션"
-
-
-msgid "Active Tool"
-msgstr "활성 도구"
-
-
-msgid "View Lock"
-msgstr "뷰 잠금"
 
 
 msgid "Import Settings"
@@ -134430,10 +134426,6 @@ msgid "No Rigid Body World to add Rigid Body Constraint to"
 msgstr "다음으로 리디지 바디를 추가는 리지드 바디 월드가 없음"
 
 
-msgid "Object has no Rigid Body Constraint to remove"
-msgstr "오브젝트는 제거하는 리지드 바디 제약을 가지고 있지 않음"
-
-
 msgid "Object '%s' already has a Rigid Body Constraint"
 msgstr "오브젝트 '%s' 는 이미 리지드 바디 제약을 가지고 있음"
 
@@ -135202,10 +135194,6 @@ msgstr "활성 그룹은 잠김, 중단"
 
 msgid "Fill tool needs active material"
 msgstr "필 도구에 활성 머티리얼 필요"
-
-
-msgid "Unable to fill unclosed areas"
-msgstr "닫히지 않은 영역을 필할 수 없음"
 
 
 msgid "GPencil Interpolation: "
@@ -150604,6 +150592,10 @@ msgid "Compress scene-referred values from common cameras into the ACEScg gamut"
 msgstr "일반 카메라에서 얻은 장면 참조 값을 ACEScg 가무트로 압축"
 
 
+msgid "Utility"
+msgstr "유틸리티"
+
+
 msgid "blender:pq_rec2020_display_203nits"
 msgstr "blender:pq_rec2020_display_203nits"
 
@@ -150646,10 +150638,6 @@ msgstr "메시 웨이트 페인트"
 
 msgid "Pixel Art"
 msgstr "픽셀 아트"
-
-
-msgid "Utility"
-msgstr "유틸리티"
 
 
 msgid "Chromatic Aberration"

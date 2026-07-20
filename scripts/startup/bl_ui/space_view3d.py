@@ -15,6 +15,7 @@ from bl_ui.properties_paint_common import (
     brush_basic_grease_pencil_weight_settings,
     brush_basic_grease_pencil_vertex_settings,
     BrushAssetShelf,
+    draw_mesh_automasking_settings,
 )
 from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
@@ -653,6 +654,8 @@ class _draw_tool_settings_context_mode:
             layout.popover("VIEW3D_PT_curves_sculpt_add_shape", text="Curve Shape")
         elif curves_tool == "SLIDE":
             layout.popover("VIEW3D_PT_tools_brush_falloff")
+        elif curves_tool == 'CUT':
+            layout.prop(brush, "falloff_shape", expand=True)
 
         return True
 
@@ -1027,9 +1030,9 @@ class VIEW3D_HT_header(Header):
 
             tool = ToolSelectPanelHelper.tool_active_from_context(context)
 
+            paint = UnifiedPaintPanel.paint_settings_from_mode(context, 'SCULPT')
             is_paint_tool = False
             if tool.use_brushes:
-                paint = tool_settings.sculpt
                 brush = paint.brush
                 if brush:
                     is_paint_tool = brush.sculpt_brush_type in {"PAINT", "SMEAR"}
@@ -1060,25 +1063,41 @@ class VIEW3D_HT_header(Header):
             )
 
             layout.popover(
-                panel="VIEW3D_PT_sculpt_automasking",
+                panel="VIEW3D_PT_mesh_paint_automasking",
                 text="",
-                icon=VIEW3D_HT_header._mesh_paint_automasking_icon(tool_settings.sculpt),
+                icon=VIEW3D_HT_header._mesh_paint_automasking_icon(paint),
             )
 
         elif object_mode == "VERTEX_PAINT":
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_color_attributes", icon="GROUP_VCOL")
+
+            paint = UnifiedPaintPanel.paint_settings_from_mode(context, 'PAINT_VERTEX')
+
+            layout.popover(
+                panel="VIEW3D_PT_mesh_paint_automasking",
+                text="",
+                icon=VIEW3D_HT_header._mesh_paint_automasking_icon(paint),
+            )
         elif object_mode == "VERTEX_GREASE_PENCIL":
             draw_topbar_grease_pencil_layer_panel(context, layout)
         elif object_mode == "WEIGHT_PAINT":
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon="GROUP_VERTEX")
 
+            paint = UnifiedPaintPanel.paint_settings_from_mode(context, 'PAINT_WEIGHT')
+
             layout.popover(
                 panel="VIEW3D_PT_sculpt_snapping",
                 icon="SNAP_INCREMENT",
                 text="",
                 translate=False,
+            )
+
+            layout.popover(
+                panel="VIEW3D_PT_mesh_paint_automasking",
+                text="",
+                icon=VIEW3D_HT_header._mesh_paint_automasking_icon(paint),
             )
         elif object_mode == "WEIGHT_GREASE_PENCIL":
             row = layout.row()
@@ -1384,6 +1403,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
             layout.operator("transform.shrink_fatten", text="Shrink/Fatten")
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
+            layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops")
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
         elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES', 'EDIT_POINTCLOUD'}:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
@@ -1797,7 +1817,7 @@ class VIEW3D_MT_view_pie_menus(Menu):
         ).name = "VIEW3D_MT_sculpt_face_sets_edit_pie"
         layout.operator(
             "wm.call_menu_pie", text="Automasking", icon="MENU_PANEL"
-        ).name = "VIEW3D_MT_sculpt_automasking_pie"
+        ).name = "VIEW3D_MT_mesh_paint_automasking_pie"
         layout.operator(
             "wm.call_menu_pie", text="Weightpaint Vertexgroup Lock", icon="MENU_PANEL"
         ).name = "VIEW3D_MT_wpaint_vgroup_lock_pie"
@@ -2904,7 +2924,7 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
         layout.operator("grease_pencil.select_fill", text="Fill", icon="GP_FILL_SELECT")
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
-
+        layout.operator("grease_pencil.select_linked", text="Deselect Linked").deselect = True
 
         layout.separator()
 
@@ -3920,6 +3940,7 @@ class VIEW3D_MT_object_animation(Menu):
             icon="BAKE_ACTION")
         layout.operator("anim.replace_action", icon="ACTION_REPLACE")
         layout.operator("anim.replace_action_new", icon="ACTION_REPLACE_NEW")
+        layout.operator("anim.replace_action_duplicate")
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -4854,7 +4875,7 @@ class VIEW3D_MT_brush(Menu):
 
         # skip if no active brush
         if not brush:
-            layout.label(text="No Brush selected. Please select a brush first", icon="INFO")
+            layout.label(text="No Brush selected. Please select a brush first", icon="STATUS_INFO")
             return
 
         tex_slot = brush.texture_slot
@@ -7882,7 +7903,9 @@ class VIEW3D_MT_edit_armature_delete(Menu):
 
         layout.separator()
 
-        layout.operator("armature.dissolve", text="Dissolve Bones", icon="DELETE")
+        row = layout.row()
+        row.operator_context = 'INVOKE_REGION_WIN'
+        row.operator("armature.dissolve", text="Dissolve Bones", icon="DELETE")
 
 
 # BFA - menu
@@ -8488,22 +8511,28 @@ class VIEW3D_MT_sculpt_mask_edit_pie(Menu):
         props.auto_iteration_count = False
 
 
-class VIEW3D_MT_sculpt_automasking_pie(Menu):
+class VIEW3D_MT_mesh_paint_automasking_pie(Menu):
     bl_label = "Automasking"
 
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
 
-        tool_settings = context.tool_settings
-        paint = tool_settings.sculpt
+        mode = context.mode
+        paint = UnifiedPaintPanel.paint_settings_from_mode(context, mode)
 
         settings = paint.mesh_automasking_settings
 
         pie.prop(settings, "use_automasking_topology", text="Topology")
-        pie.prop(settings, "use_automasking_face_sets", text="Face Sets")
+        if mode == 'SCULPT':
+            pie.prop(settings, "use_automasking_face_sets", text="Face Sets")
+        else:
+            pie.separator()
         pie.prop(settings, "use_automasking_boundary_edges", text="Mesh Boundary")
-        pie.prop(settings, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+        if mode == 'SCULPT':
+            pie.prop(settings, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+        else:
+            pie.separator()
         pie.prop(settings, "use_automasking_cavity", text="Cavity")
         pie.prop(settings, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
         pie.prop(settings, "use_automasking_start_normal", text="Area Normal")
@@ -11133,7 +11162,7 @@ class VIEW3D_PT_active_spline(Panel):
                     if col is None:
                         layout.separator()
                         col = layout.column(align=True)
-                    col.label(text=message, icon="INFO")
+                    col.label(text=message, icon="STATUS_INFO")
                 del col
 
 
@@ -11192,7 +11221,7 @@ class VIEW3D_MT_grease_pencil_assign_material(Menu):
 
         if len(ob.material_slots) == 0:
             row = layout.row()
-            row.label(text="No Materials", icon="INFO")  # BFA - icon added
+            row.label(text="No Materials", icon="STATUS_INFO")  # BFA - icon added
             row.enabled = False
             return
 
@@ -11692,7 +11721,7 @@ class VIEW3D_PT_paint_weight_context_menu(Panel):
 
 
 # BFA - these are made consistent with the Sidebar>Tool>Brush Settings>Advanced Automasking panel, heavily changed
-class VIEW3D_PT_sculpt_automasking(Panel):
+class VIEW3D_PT_mesh_paint_automasking(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
     bl_label = "Global Auto Masking"
@@ -11705,10 +11734,15 @@ class VIEW3D_PT_sculpt_automasking(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        tool_settings = context.tool_settings
-        paint = tool_settings.sculpt
-
+        mode = context.mode
+        paint = UnifiedPaintPanel.paint_settings_from_mode(context, mode)
         settings = paint.mesh_automasking_settings
+
+        use_face_set = False
+        use_operators = False
+        if mode == 'SCULPT':
+            use_face_set = True
+            use_operators = True
 
         layout.label(text="Global Auto Masking")
         layout.label(text="Overrides brush settings", icon="QUESTION")
@@ -12427,7 +12461,7 @@ classes = (
     VIEW3D_MT_orientations_pie,
     VIEW3D_MT_proportional_editing_falloff_pie,
     VIEW3D_MT_sculpt_mask_edit_pie,
-    VIEW3D_MT_sculpt_automasking_pie,
+    VIEW3D_MT_mesh_paint_automasking_pie,
     VIEW3D_MT_grease_pencil_sculpt_automasking_pie,
     VIEW3D_MT_wpaint_vgroup_lock_pie,
     VIEW3D_MT_sculpt_face_sets_edit_pie,
@@ -12489,7 +12523,7 @@ classes = (
     VIEW3D_PT_paint_vertex_context_menu,
     VIEW3D_PT_paint_texture_context_menu,
     VIEW3D_PT_paint_weight_context_menu,
-    VIEW3D_PT_sculpt_automasking,
+    VIEW3D_PT_mesh_paint_automasking,
     VIEW3D_PT_sculpt_context_menu,
     TOPBAR_PT_grease_pencil_materials,
     TOPBAR_PT_grease_pencil_vertex_color,

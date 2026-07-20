@@ -48,16 +48,16 @@ class VIEW3D_MT_brush_context_menu(Menu):
         if context.region.type == "UI" and context.space_data.type == "VIEW_3D":
             # skip if no active brush
             if not brush:
-                layout.label(text="No brush selected", icon="INFO")
+                layout.label(text="No brush selected", icon="STATUS_INFO")
                 return
 
             if brush.library and brush.library.is_editable:
-                layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="INFO")  # BFA - icon added
+                layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="STATUS_INFO")  # BFA - icon added
                 layout.operator(
                     "brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA"
                 )  # BFA - icon added
             else:
-                layout.label(text="This brush is built-in and not editable", icon="INFO")
+                layout.label(text="This brush is built-in and not editable", icon="STATUS_INFO")
 
         else:
             # skip if no active brush
@@ -81,13 +81,13 @@ class VIEW3D_MT_brush_context_menu(Menu):
 
                 layout.separator()
 
-                layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="INFO")  # BFA - icon added
+                layout.operator("brush.asset_edit_metadata", text="Edit Metadata", icon="STATUS_INFO")  # BFA - icon added
                 layout.operator(
                     "brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA"
                 )  # BFA - icon added
 
             else:
-                layout.label(text="This brush is built-in and not editable", icon="INFO")
+                layout.label(text="This brush is built-in and not editable", icon="STATUS_INFO")
 
     @classmethod
     def poll(cls, context):
@@ -625,7 +625,7 @@ class SelectPaintSlotHelper:
         if settings.missing_uvs:
             layout.separator()
             split = layout.split()
-            split.label(text="UV Map Needed", icon="INFO")
+            split.label(text="UV Map Needed", icon="STATUS_INFO")
             split.operator("paint.add_simple_uvs", icon="ADD", text="Add Simple UVs")
         elif have_image:
             layout.separator()

@@ -678,6 +678,7 @@ static void clip_main_region_draw(const bContext *C, ARegion *region)
   /* draw entirely, view changes should be handled here */
   SpaceClip *sc = CTX_wm_space_clip(C);
   MovieClip *clip = ED_space_clip_get_clip(sc);
+  ScrArea *area = CTX_wm_area(C);
   float aspx, aspy, zoomx, zoomy, x, y;
   int width, height;
   bool show_cursor = false;
@@ -789,6 +790,8 @@ static void clip_main_region_draw(const bContext *C, ARegion *region)
     WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_TOOLS);
     WM_gizmomap_draw(region->runtime->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D_UI); // bfa node minimap rename with _UI
   }
+
+  ED_area_hud_region_set_padding_flag(area, region, true);
 }
 
 static void clip_main_region_listener(const wmRegionListenerParams *params)

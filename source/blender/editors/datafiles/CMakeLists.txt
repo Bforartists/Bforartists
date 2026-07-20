@@ -1905,6 +1905,8 @@ if(WITH_BLENDER)
       seq_snap_strip
       seq_snap_to_frame
       seq_splitview
+      seq_strip
+      seq_strip_data
       seq_strip_duplicate
       seq_strip_expand
       seq_strip_overwrite
@@ -2039,6 +2041,12 @@ if(WITH_BLENDER)
       spreadsheet
       startpoint
       statusbar
+      status_error
+      status_error_filled
+      status_info
+      status_info_filled
+      status_warning
+      status_warning_filled
       stepped_modifier
       sticky_uvs_disable
       sticky_uvs_loc

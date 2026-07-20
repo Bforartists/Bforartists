@@ -1485,6 +1485,7 @@ bool BKE_paint_ensure(ToolSettings *ts, Paint **r_paint)
     VPaint *data = MEM_new<VPaint>(__func__);
     paint = &data->paint;
     paint_init_data(*paint);
+    BKE_paint_mesh_automasking_settings_ensure(*paint);
   }
   else if (reinterpret_cast<Sculpt **>(r_paint) == &ts->sculpt) {
     Sculpt *data = MEM_new<Sculpt>(__func__);
@@ -1565,7 +1566,7 @@ void BKE_paint_init(Main *bmain, Scene *sce, PaintMode mode, const bool ensure_b
     BKE_paint_cavity_curve_preset(paint, CURVE_PRESET_LINE);
   }
 
-  if (mode == PaintMode::Sculpt) {
+  if (ELEM(mode, PaintMode::Sculpt, PaintMode::Vertex, PaintMode::Weight)) {
     BKE_paint_mesh_automasking_settings_ensure(*paint);
   }
 }
@@ -2396,7 +2397,7 @@ static void sculpt_update_object(Depsgraph *depsgraph,
 
     if (ob->mode & (OB_MODE_VERTEX_PAINT | OB_MODE_WEIGHT_PAINT)) {
       const Mesh *me_eval_deform = BKE_object_get_mesh_deform_eval(ob_eval);
-
+      BLI_assert(me_eval_deform != nullptr);
       /* If the fully evaluated mesh has the same topology as the deform-only version, use it.
        * This matters because crazyspace evaluation is very restrictive and excludes even modifiers
        * that simply recompute vertex weights (which can even include Geometry Nodes). */

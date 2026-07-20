@@ -767,7 +767,7 @@ class USERPREF_PT_animation_timeline_advanced(AnimationPanel, CenterAlignMixIn, 
         row = layout.row(align=False)
         row.active = edit.use_negative_frames
         row.alignment = 'RIGHT'
-        row.label(icon="ERROR", text="Negative frames can cause issues with audio playback and exporters.")
+        row.label(icon='STATUS_WARNING', text="Negative frames can cause issues with audio playback and exporters.")
 
 
 # -----------------------------------------------------------------------------
@@ -809,12 +809,12 @@ class USERPREF_PT_system_cycles_devices(SystemPanel, CenterAlignMixIn, Panel):
         if bpy.app.build_options.cycles:
             addon = prefs.addons.get("cycles")
             if addon is None:
-                layout.label(text="Enable Cycles Render Engine add-on to use Cycles", icon='INFO')
+                layout.label(text="Enable Cycles Render Engine add-on to use Cycles", icon='STATUS_INFO')
             else:
                 addon.preferences.draw_impl(col, context)
             del addon
         else:
-            layout.label(text="Cycles is disabled in this build", icon='INFO')
+            layout.label(text="Cycles is disabled in this build", icon='STATUS_INFO')
 
 
 class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
@@ -839,12 +839,12 @@ class USERPREF_PT_system_display_graphics(SystemPanel, CenterAlignMixIn, Panel):
             col.prop(system, "gpu_preferred_device")
 
         if system.gpu_backend != gpu.platform.backend_type_get():
-            layout.label(text="A restart of Bforartists is required", icon='INFO') # bfa - our name
+            layout.label(text="A restart of Bforartists is required", icon='STATUS_INFO') # bfa - our name
 
         if system.gpu_backend == 'VULKAN':
             if sys.platform == "win32" and gpu.platform.device_type_get() == 'QUALCOMM':
                 col = layout.column()
-                col.label(text="Current Vulkan backend limitations:", icon='INFO')
+                col.label(text="Current Vulkan backend limitations:", icon='STATUS_INFO')
                 col.label(text="\u2022 Windows on ARM requires driver 31.0.112.0 or higher", icon='BLANK1')
 
 
@@ -1877,7 +1877,7 @@ class USERPREF_UL_extension_repos(UIList):
                     (repo.use_custom_directory and repo.custom_directory == "") or
                     (repo.use_remote_url and repo.remote_url == "")
             ):
-                layout.label(text="", icon='ERROR')
+                layout.label(text="", icon='STATUS_ERROR')
 
         layout.prop(repo, "enabled", text="", emboss=False, icon='CHECKBOX_HLT' if repo.enabled else 'CHECKBOX_DEHLT')
 
@@ -2598,7 +2598,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
         except Exception:
             import traceback
             traceback.print_exc()
-            box_prefs.label(text="Error (see console)", icon='ERROR')
+            box_prefs.label(text="Error (see console)", icon='STATUS_ERROR')
         del addon_preferences_class.layout
 
     @staticmethod
@@ -2607,7 +2607,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
         box = layout.box()
         sub = box.row()
         sub.label(text=lines[0])
-        sub.label(icon='ERROR')
+        sub.label(icon='STATUS_ERROR')
         for line in lines[1:]:
             box.label(text=line)
 
@@ -2678,7 +2678,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
             box = col.box()
             row = box.row()
             row.label(text="Multiple add-ons with the same name found!")
-            row.label(icon='ERROR')
+            row.label(icon='STATUS_ERROR')
             box.label(text="Delete one of each pair to resolve:")
             for (addon_name, addon_file, addon_path) in addon_utils.error_duplicates:
                 box.separator()
@@ -2765,7 +2765,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
             sub.label(text="{:s}: {:s}".format(iface_(bl_info["category"]), iface_(bl_info["name"])))
 
             if bl_info["warning"]:
-                sub.label(icon='ERROR')
+                sub.label(icon='STATUS_WARNING')
 
             # icon showing support level.
             sub.label(icon=self._support_icon_mapping.get(bl_info["support"], 'QUESTION'))
@@ -2795,7 +2795,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                 if value := bl_info["warning"]:
                     split = colsub.row().split(factor=0.15)
                     split.label(text="Warning:")
-                    split.label(text="  " + iface_(value), icon='ERROR')
+                    split.label(text="  " + iface_(value), icon='STATUS_WARNING')
                 del value
 
                 user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths)
@@ -2845,7 +2845,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                     colsub = box.column()
                     row = colsub.row(align=True)
 
-                    row.label(text="", icon='ERROR')
+                    row.label(text="", icon='STATUS_ERROR')
 
                     if is_enabled:
                         row.operator(

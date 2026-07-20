@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Beta (b'e65907bec1c9')\n"
+"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-06-29 10:51+0000\n"
+"POT-Creation-Date: 2026-07-13 07:34+0000\n"
 "PO-Revision-Date: 2026-04-13 10:12+0000\n"
 "Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -21188,12 +21188,64 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Mirror"
-msgstr "Espelhar"
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Merge"
+msgstr "Fundir"
+
+
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Special Characters"
+msgstr "Caracteres especiais"
+
+
+msgid "Metaball"
+msgstr "Meta-esfera"
+
+
+msgid "Math"
+msgstr "Matemática"
+
+
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem dos ossos"
+
+
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
 
 
 msgid "Snap"
 msgstr "Atrair"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
+
+
+msgid "Instances"
+msgstr "Instâncias"
+
+
+msgid "Import"
+msgstr "Importar"
+
+
+msgid "Mirror"
+msgstr "Espelhar"
 
 
 msgid "UV Mapping"
@@ -21224,12 +21276,12 @@ msgid "View Regions"
 msgstr "Visualizar Regiões"
 
 
-msgid "Math"
-msgstr "Matemática"
-
-
 msgid "Select More/Less"
 msgstr "Selecionar mais ou menos"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Select Similar"
@@ -21248,20 +21300,12 @@ msgid "Select Loops"
 msgstr "Selecionar anéis"
 
 
-msgid "Metaball"
-msgstr "Meta-esfera"
-
-
 msgid "Light"
 msgstr "Luz"
 
 
 msgid "Light Probe"
 msgstr "Sonda de Luz"
-
-
-msgid "Instances"
-msgstr "Instâncias"
 
 
 msgid "Add Image"
@@ -21276,10 +21320,6 @@ msgid "Rigid Body"
 msgstr "Corpo rígido"
 
 
-msgid "Import"
-msgstr "Importar"
-
-
 msgid "Apply"
 msgstr "Aplicar"
 
@@ -21292,12 +21332,12 @@ msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
 
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
+msgid "Linked"
+msgstr "Vinculando"
 
 
-msgid "Clean Up"
-msgstr "Limpeza"
+msgid "Layout"
+msgstr "Organizar"
 
 
 msgid "Make Single User"
@@ -21312,12 +21352,16 @@ msgid "Hooks"
 msgstr "Ganchos"
 
 
-msgid "UV"
-msgstr "UV"
+msgid "Keying"
+msgstr "Inserção de chaves"
 
 
 msgid "Random Mask"
 msgstr "Máscara Aleatória"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
 
 
 msgid "Clear Transform"
@@ -21330,10 +21374,6 @@ msgstr "Entre as continuidades"
 
 msgid "Propagate"
 msgstr "Propagar"
-
-
-msgid "Names"
-msgstr "Nomes"
 
 
 msgid "Toggle Bone Options"
@@ -21350,46 +21390,6 @@ msgstr "Desabilitar as opções de ossos"
 
 msgid "Mesh Select Mode"
 msgstr "Modo de seleção de malhas"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Merge"
-msgstr "Fundir"
-
-
-msgid "Linked"
-msgstr "Vinculando"
-
-
-msgid "Layout"
-msgstr "Organizar"
-
-
-msgid "Special Characters"
-msgstr "Caracteres especiais"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem dos ossos"
-
-
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
-
-
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
 
 
 msgid "Basic"
@@ -64377,10 +64377,6 @@ msgstr "Copiando sistema de partículas para os selecionados: %d concluído, %d 
 
 msgid "No Rigid Body World to add Rigid Body Constraint to"
 msgstr "Sem ambiente (mundo) de \"Corpo rígido\" definido para adicionar uma restrição do tipo \"Corpo rígido\"."
-
-
-msgid "Object has no Rigid Body Constraint to remove"
-msgstr "Objeto não possui restrição do tipo \"Corpo rígido\" para remover."
 
 
 msgid "Object '%s' already has a Rigid Body Constraint"

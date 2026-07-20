@@ -26,6 +26,7 @@
 
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_vector_c.hh"
+#include "BLI_offset_indices.hh"
 #include "BLI_utildefines.hh"
 
 #include "../generic/py_capi_utils.hh"
@@ -1795,8 +1796,9 @@ static PyObject *M_Geometry_delaunay_2d_cdt(PyObject * /*self*/, PyObject *args)
     return nullptr;
   }
 
-  Array<Vector<int>> in_faces;
-  if (!mathutils_array_parse_alloc_viseq(faces, error_prefix, in_faces)) {
+  Array<int> face_offsets;
+  Array<int> face_vert_indices;
+  if (!mathutils_array_parse_alloc_viseq(faces, error_prefix, face_offsets, face_vert_indices)) {
     return nullptr;
   }
 
@@ -1806,9 +1808,10 @@ static PyObject *M_Geometry_delaunay_2d_cdt(PyObject * /*self*/, PyObject *args)
   }
 
   meshintersect::CDT_input<double> in;
-  in.vert = std::move(verts);
-  in.edge = Span(reinterpret_cast<std::pair<int, int> *>(in_edges), edges_len);
-  in.face = std::move(in_faces);
+  in.vert = verts;
+  in.edge = Span(reinterpret_cast<int2 *>(in_edges), edges_len);
+  in.face_offsets = face_offsets.as_span();
+  in.face_vert_indices = face_vert_indices;
   in.epsilon = epsilon;
   in.need_ids = need_ids;
 
@@ -1833,8 +1836,8 @@ static PyObject *M_Geometry_delaunay_2d_cdt(PyObject * /*self*/, PyObject *args)
   out_edges = PyList_New(res.edge.size());
   for (const int i : res.edge.index_range()) {
     PyObject *item = PyTuple_New(2);
-    PyTuple_SET_ITEM(item, 0, PyLong_FromLong(long(res.edge[i].first)));
-    PyTuple_SET_ITEM(item, 1, PyLong_FromLong(long(res.edge[i].second)));
+    PyTuple_SET_ITEM(item, 0, PyLong_FromLong(long(res.edge[i][0])));
+    PyTuple_SET_ITEM(item, 1, PyLong_FromLong(long(res.edge[i][1])));
     PyList_SET_ITEM(out_edges, i, item);
   }
   PyTuple_SET_ITEM(ret_value, 1, out_edges);

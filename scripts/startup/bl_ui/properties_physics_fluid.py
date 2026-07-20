@@ -229,7 +229,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
                     note = info.row()
                     note.enabled = note_flag
                     note.alignment = 'RIGHT'
-                    note.label(icon='INFO', text=label)
+                    note.label(icon='STATUS_INFO', text=label)
 
                 split = layout.split()
                 split.enabled = note_flag and ob.mode == 'OBJECT'
@@ -859,7 +859,7 @@ class PHYSICS_PT_noise(PhysicButtonsPanel, Panel):
                     note_flag = False
                     note.enabled = note_flag
                     note.alignment = 'RIGHT'
-                    note.label(icon='INFO', text=label)
+                    note.label(icon='STATUS_INFO', text=label)
 
             split = layout.split()
             split.enabled = domain.has_cache_baked_data and note_flag and ob.mode == 'OBJECT'
@@ -960,7 +960,7 @@ class PHYSICS_PT_mesh(PhysicButtonsPanel, Panel):
                     note_flag = False
                     note.enabled = note_flag
                     note.alignment = 'RIGHT'
-                    note.label(icon='INFO', text=label)
+                    note.label(icon='STATUS_INFO', text=label)
 
             split = layout.split()
             split.enabled = domain.has_cache_baked_data and note_flag and ob.mode == 'OBJECT'
@@ -1093,7 +1093,7 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
                     note_flag = False
                     note.enabled = note_flag
                     note.alignment = 'RIGHT'
-                    note.label(icon='INFO', text=label)
+                    note.label(icon='STATUS_INFO', text=label)
 
             split = layout.split()
             split.enabled = (
@@ -1636,7 +1636,7 @@ class PHYSICS_PT_viewport_display_debug(PhysicButtonsPanel, Panel):
 
         if not domain.use_guide and domain.vector_field == 'GUIDE_VELOCITY':
             note = layout.split()
-            note.label(icon='INFO', text="Enable Guides first! Defaulting to Fluid Velocity")
+            note.label(icon='STATUS_INFO', text="Enable Guides first! Defaulting to Fluid Velocity")
 
         if domain.vector_display_type == 'MAC':
             sub = col.column() # BFA
@@ -1690,9 +1690,9 @@ class PHYSICS_PT_viewport_display_advanced(PhysicButtonsPanel, Panel):
             else:
                 note = layout.split()
                 if not domain.use_color_ramp:
-                    note.label(icon='INFO', text="Enable Grid Display to use range highlighting!")
+                    note.label(icon='STATUS_INFO', text="Enable Grid Display to use range highlighting!")
                 else:
-                    note.label(icon='INFO', text="Range highlighting for flags is not available!")
+                    note.label(icon='STATUS_INFO', text="Range highlighting for flags is not available!")
 
 
 class PHYSICS_PT_fluid_domain_render(PhysicButtonsPanel, Panel):

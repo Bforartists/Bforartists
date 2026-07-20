@@ -50,6 +50,8 @@ BLOCKLIST = [
     "transparent_shadow_limit_.*",
     # Redundant with transparent_shadow_hair.
     "transparent_shadow_hair_blur.blend",
+    # Unsupported feature. Renders differently on different backends due to hair transparency.
+    "transparent_shadow_hair_colored.blend",
     # Unsupported feature. Redundant tests. (except osl_camera_advanced which tests triangular bokeh)
     "osl_camera_advanced_manual_dof.blend",
     "osl_camera_advanced_manual_dof_138188.blend",
@@ -342,7 +344,7 @@ def main():
     elif args.gpu_backend == "opengl":
         blocklist += BLOCKLIST_OPENGL
 
-    gpu_vendor = render_report.get_gpu_device_vendor(args.blender)
+    gpu_vendor = render_report.get_gpu_device_vendor(args.blender, args.gpu_backend)
     if os.getenv("BLENDER_TEST_IGNORE_VENDOR_BLOCKLIST") is None:
         if gpu_vendor == "INTEL":
             blocklist += BLOCKLIST_INTEL

@@ -1110,6 +1110,7 @@ static wmOperatorStatus grease_pencil_set_active_material_exec(bContext *C, wmOp
     const VArray<int> materials = *curves.attributes().lookup_or_default<int>(
         "material_index", bke::AttrDomain::Curve, 0);
     object->actcol = materials[strokes.first()] + 1;
+    BKE_object_material_active_index_sanitize(object);
     break;
   };
 
@@ -2113,8 +2114,12 @@ static wmOperatorStatus grease_pencil_move_to_layer_exec(bContext *C, wmOperator
     }
 
     if (has_active_key && is_key_inserted) {
+      /* If we inserted new key frame on target layer, then it means target layer/drawing was newly
+       * created, so we move strokes to that drawing instead, otherwise insert to their original
+       * frames. */
+      const int frame_number_dst = is_key_inserted ? scene->r.cfra : info.frame_number;
       /* Move geometry to a new drawing in target layer. */
-      Drawing &drawing_dst = *grease_pencil.get_drawing_at(layer_dst, info.frame_number);
+      Drawing &drawing_dst = *grease_pencil.get_drawing_at(layer_dst, frame_number_dst);
       drawing_dst.strokes_for_write() = bke::curves_copy_curve_selection(
           curves_src, selected_strokes, {});
 
@@ -2241,24 +2246,6 @@ static const EnumPropertyItem prop_separate_modes[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static void remove_unused_materials(Main *bmain, Object *object)
-{
-  int actcol = object->actcol;
-  for (int slot = 1; slot <= object->totcol; slot++) {
-    while (slot <= object->totcol && !BKE_object_material_slot_used(object, slot)) {
-      object->actcol = slot;
-      if (!BKE_object_material_slot_remove(bmain, object)) {
-        break;
-      }
-
-      if (actcol >= slot) {
-        actcol--;
-      }
-    }
-  }
-  object->actcol = actcol;
-}
-
 static Object *duplicate_grease_pencil_object(Main *bmain,
                                               Scene *scene,
                                               ViewLayer *view_layer,
@@ -2369,7 +2356,7 @@ static bool grease_pencil_separate_selected(bContext &C,
                                      *BKE_object_material_len_p(&object_src),
                                      false);
 
-    remove_unused_materials(&bmain, object_dst);
+    BKE_object_material_remove_unused(&bmain, object_dst);
     DEG_id_tag_update(&grease_pencil_dst.id, ID_RECALC_GEOMETRY);
     WM_event_add_notifier(&C, NC_OBJECT | ND_DRAW, &grease_pencil_dst);
   }
@@ -2445,7 +2432,7 @@ static bool grease_pencil_separate_layer(bContext &C,
                            src_to_dst_layer_indices.as_span(),
                            grease_pencil_dst.attributes_for_write());
 
-    remove_unused_materials(&bmain, object_dst);
+    BKE_object_material_remove_unused(&bmain, object_dst);
 
     DEG_id_tag_update(&grease_pencil_dst.id, ID_RECALC_GEOMETRY);
     WM_event_add_notifier(&C, NC_OBJECT | ND_DRAW, &grease_pencil_dst);
@@ -2523,14 +2510,14 @@ static bool grease_pencil_separate_material(bContext &C,
                            src_to_dst_layer_indices.as_span(),
                            grease_pencil_dst.attributes_for_write());
 
-    remove_unused_materials(&bmain, object_dst);
+    BKE_object_material_remove_unused(&bmain, object_dst);
 
     DEG_id_tag_update(&grease_pencil_dst.id, ID_RECALC_GEOMETRY);
     WM_event_add_notifier(&C, NC_OBJECT | ND_DRAW, &grease_pencil_dst);
   }
 
   if (changed) {
-    remove_unused_materials(&bmain, &object_src);
+    BKE_object_material_remove_unused(&bmain, &object_src);
   }
 
   return changed;
@@ -5875,7 +5862,7 @@ static void join_object_with_active(Main &bmain,
         if (name_dst != name_src) {
           const char *old_path = fcu->rna_path;
           fcu->rna_path = BKE_animsys_fix_rna_path_rename(
-              id, fcu->rna_path, "layers", name_src.c_str(), name_dst.c_str(), 0, 0, false);
+              id, fcu->rna_path, "layers", name_src, name_dst);
           if (old_path != fcu->rna_path) {
             /* Stop after first match. */
             break;
@@ -5898,7 +5885,7 @@ static void join_object_with_active(Main &bmain,
               if (name_dst != name_src) {
                 const char *old_path = fcu->rna_path;
                 dtar->rna_path = BKE_animsys_fix_rna_path_rename(
-                    id, dtar->rna_path, "layers", name_src.c_str(), name_dst.c_str(), 0, 0, false);
+                    id, dtar->rna_path, "layers", name_src, name_dst);
                 if (old_path != dtar->rna_path) {
                   break;
                 }

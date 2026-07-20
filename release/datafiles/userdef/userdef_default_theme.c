@@ -470,7 +470,6 @@ const bTheme U_theme_default = {
     .header = RGBA(0x333333ff),
     .header_text = RGBA(0xccccccff),
     .header_text_hi = RGBA(0xffffffff),
-    .hilite = RGBA(0xff8c19ff),
     .vertex_size = 3,
     .outline_width = 1,
     .facedot_size = 4,

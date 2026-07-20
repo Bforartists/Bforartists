@@ -825,6 +825,10 @@ class NODE_MT_view_annotations(Menu):
             text="Erase Annotation Active Keyframe",
             icon='DELETE')
 
+        layout.separator()
+        layout.operator("node.delete_reconnect")
+        layout.operator("node.delete", icon='X')
+
 
 class NODE_MT_view_pie(Menu):
     bl_label = "View"
@@ -963,7 +967,7 @@ class NODE_PT_geometry_node_tool_options(Panel):
         layout.prop(group, "node_tool_idname", text="Identifier")
         layout.template_node_operator_registration_errors(idname=group.node_tool_idname)
         if len(group.node_tool_idname) == 0:
-            layout.label(icon='ERROR', text="Missing operator identifier")
+            layout.label(icon='STATUS_ERROR', text="Missing operator identifier")
 
 
 class NODE_PT_node_color_presets(PresetPanel, Panel):

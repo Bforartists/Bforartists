@@ -639,13 +639,8 @@ Object *add_type_with_obdata(bContext *C,
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
-  {
-    BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
-    Object *obedit = BKE_view_layer_edit_object_get(view_layer);
-    if (obedit != nullptr) {
-      editmode_exit_ex(bmain, scene, obedit, EM_FREEDATA);
-    }
-  }
+  /* Ensure we leave edit-mode for all objects (NOOP outside of edit-mode). */
+  editmode_exit_multi_ex(bmain, scene, view_layer, EM_FREEDATA);
 
   /* deselects all, sets active object */
   Object *ob;
@@ -2627,7 +2622,7 @@ static NodesModifierData *add_essential_asset_modifier(bContext &C,
   id_us_plus(&node_group->id);
   nmd->flag |= NODES_MODIFIER_HIDE_DATABLOCK_SELECTOR;
   BKE_modifier_unique_name(&object.modifiers, &nmd->modifier);
-  MOD_nodes_update_interface(&object, nmd);
+  MOD_nodes_update_interface(bmain, &object, nmd);
   DEG_id_tag_update(&object.id, ID_RECALC_GEOMETRY);
   return nmd;
 }
