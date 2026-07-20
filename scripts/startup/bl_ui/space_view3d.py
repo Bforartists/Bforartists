@@ -5255,7 +5255,7 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_add_object", text="Add Primitive") # BFA - WIP
+        #layout.menu("VIEW3D_MT_add_object", text="Add Primitive") # BFA - Disabled, already in toolshelf
 
         # Add
         props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon="BOX_ADD")
