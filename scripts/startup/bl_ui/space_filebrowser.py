@@ -885,6 +885,11 @@ class ASSETBROWSER_MT_asset(Menu):
     def draw(self, _context) -> None:
         layout = self.layout
 
+        # BFA - expose to asset menu so not hidden in context only
+        if bpy.ops.asset.assets_download.poll():
+            layout.operator("asset.assets_download", icon='DOWNLOAD')
+            layout.separator()
+
         col = layout.column()
         col.operator_context = 'EXEC_DEFAULT'
         col.operator("asset.clear", text="Clear Asset", icon="CLEAR").set_fake_user = False
