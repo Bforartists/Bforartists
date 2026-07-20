@@ -976,6 +976,7 @@ if(WITH_BLENDER)
       library_data_indirect
       library_data_override
       library_object
+      library_refresh
       light
       light_area
       light_data

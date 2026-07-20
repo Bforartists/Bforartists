@@ -851,8 +851,17 @@ class ASSETBROWSER_MT_library(AssetBrowserMenu, Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("asset.library_refresh", text="Refresh", icon='FILE_REFRESH')
-        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing")
+        layout.operator(
+            "preferences.filepaths_show",
+            emboss=False,
+            text="Asset Library Paths",
+            icon="PREFERENCES",
+        )
+
+        layout.separator()
+
+        layout.operator("asset.library_refresh", text="Refresh Asset Library", icon='FILE_REFRESH') # BFA - WIP - these are redundant with the refresh button in the sidebar
+        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing", icon='LIBRARY_REFRESH')
 
 
 class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
@@ -865,15 +874,6 @@ class ASSETBROWSER_MT_catalog(AssetBrowserMenu, Menu):
         layout.operator("asset.catalog_redo", text="Redo", icon="REDO")
 
         layout.separator()
-
-        layout.operator(
-            "preferences.filepaths_show",
-            emboss=False,
-            text="Asset Library Paths",
-            icon="PREFERENCES",
-        )
-
-        layout.separator()
         layout.operator("asset.catalogs_save", icon="FILE_TICK")
         layout.operator("asset.catalog_new", icon="ADD").parent_path = ""
 
@@ -884,15 +884,20 @@ class ASSETBROWSER_MT_asset(Menu):
     def draw(self, _context) -> None:
         layout = self.layout
 
+        # BFA - expose to asset menu so not hidden in context only
+        if bpy.ops.asset.assets_download.poll():
+            layout.operator("asset.assets_download", icon='DOWNLOAD')
+            layout.separator()
+
         col = layout.column()
         col.operator_context = 'EXEC_DEFAULT'
-        col.operator("asset.clear", text="Clear Asset").set_fake_user = False
-        col.operator("asset.clear", text="Clear Asset (Set Fake User)").set_fake_user = True
+        col.operator("asset.clear", text="Clear Asset", icon="CLEAR").set_fake_user = False
+        col.operator("asset.clear", text="Clear Asset (Set Fake User)", icon="CLEAR").set_fake_user = True
 
         layout.separator()
 
         layout.operator("asset.open_containing_blend_file", icon='FILE_BLEND')
-        layout.operator("asset.browse_containing_blend_file")
+        layout.operator("asset.browse_containing_blend_file", icon='FILE_FOLDER')
 
 
 class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
@@ -1031,7 +1036,7 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
         if not asset.is_online:
             row = layout.row(align=True)
             row.prop(wm, "asset_path_dummy", text="Source", icon='CURRENT_FILE' if is_local_asset else 'NONE')
-            row.operator("asset.open_containing_blend_file", text="", icon='FILE_FOLDER')
+            row.operator("asset.open_containing_blend_file", text="", icon='FILE_BLEND')
 
         metadata = asset.metadata
         self.metadata_prop(layout, metadata, "description")
@@ -1180,7 +1185,7 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
             layout.separator()
 
         layout.operator("asset.library_refresh", icon='FILE_REFRESH')
-        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing")
+        layout.operator("asset.library_reload_listing", text="Refresh Remote Listing", icon='LIBRARY_REFRESH')
 
         layout.separator()
 
@@ -1195,8 +1200,8 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
         layout.separator()
 
-        layout.operator("asset.open_containing_blend_file", icon='FILE_FOLDER')
-        layout.operator("asset.browse_containing_blend_file")
+        layout.operator("asset.open_containing_blend_file", icon='FILE_BLEND')
+        layout.operator("asset.browse_containing_blend_file", icon='FILE_FOLDER')
 
         layout.separator()
 
