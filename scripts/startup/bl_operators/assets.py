@@ -235,10 +235,113 @@ class ASSET_OT_browse_containing_blend_file(Operator):
         return bpy.ops.wm.path_open(filepath=str(asset_path.parent))
 
 
+# BFA - Clear the entire local remote assets cache directory.
+# This covers online essentials AND all third-party remote asset libraries.
+# All cached listings, previews, and thumbnails are deleted, forcing a fresh
+# download on the next library refresh. Useful when the cache becomes stale
+# or corrupted.
+class ASSET_OT_clear_remote_assets_cache(Operator):
+    """Deletes the entire remote assets cache (Online Essentials + all third-party libraries), forcing fresh downloads of files and thumbnails"""
+
+    bl_idname = "asset.clear_remote_assets_cache"
+    bl_label = "Clear Remote Assets Cache"
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        prefs = context.preferences
+        if not prefs.experimental.use_remote_asset_libraries:
+            cls.poll_message_set("Remote asset libraries are not enabled")
+            return False
+        # User needs at least one remote source enabled.
+        has_remote = (
+            prefs.asset_libraries.use_online_essentials or
+            any(lib.enabled and lib.use_remote_url for lib in prefs.filepaths.asset_libraries)
+        )
+        if not has_remote:
+            cls.poll_message_set("No remote asset libraries or online essentials enabled")
+            return False
+        return True
+
+    def execute(self, context):
+        import shutil
+        from pathlib import Path
+
+        # The online-essentials cache lives under {cache}/remote-assets/online-essentials/.
+        # All third-party remote libraries also cache under {cache}/remote-assets/{md5_hash}/.
+        # So removing the parent directory clears everything globally.
+        cache_root = Path(bpy.types.AssetLibrary.online_assets_cache_path()).parent
+
+        if not cache_root.exists():
+            self.report({'INFO'}, "Remote assets cache is already empty")
+            return {'FINISHED'}
+
+        shutil.rmtree(str(cache_root))
+        self.report({'INFO'}, "Remote assets cache cleared")
+
+        # Auto-refresh remote asset listings so the user doesn't have to do it manually.
+        if bpy.ops.asset.library_reload_listing.poll():
+            bpy.ops.asset.library_reload_listing()
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self, width=360)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(
+            text="Warning: This will permanently delete all locally cached files",
+            icon='ERROR',
+        )
+        layout.label(
+            text="for every remote asset library, including thumbnails and files.",
+        )
+
+
+
+# BFA - Open the remote assets cache folder in the system file browser.
+# Shows the directory containing cached data for online essentials and all
+# third-party remote asset libraries. Useful for inspection and troubleshooting.
+class ASSET_OT_open_remote_assets_cache(Operator):
+    """Open the system file browser at the remote assets cache directory (Online Essentials + all third-party libraries)"""
+
+    bl_idname = "asset.open_remote_assets_cache"
+    bl_label = "Open Remote Assets Cache"
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        prefs = context.preferences
+        if not prefs.experimental.use_remote_asset_libraries:
+            cls.poll_message_set("Remote asset libraries are not enabled")
+            return False
+        # User needs at least one remote source enabled.
+        has_remote = (
+            prefs.asset_libraries.use_online_essentials or
+            any(lib.enabled and lib.use_remote_url for lib in prefs.filepaths.asset_libraries)
+        )
+        if not has_remote:
+            cls.poll_message_set("No remote asset libraries or online essentials enabled")
+            return False
+        return True
+
+    def execute(self, context):
+        from pathlib import Path
+
+        cache_root = Path(bpy.types.AssetLibrary.online_assets_cache_path()).parent
+        # Ensure the directory exists before trying to open it.
+        cache_root.mkdir(parents=True, exist_ok=True)
+        return bpy.ops.wm.path_open(filepath=str(cache_root))
+
+
 classes = (
     ASSET_OT_tag_add,
     ASSET_OT_tag_remove,
     ASSET_OT_tag_add_shelf, # BFA
     ASSET_OT_open_containing_blend_file,
     ASSET_OT_browse_containing_blend_file,
+    # BFA - operators for managing the remote assets cache (covers online essentials + all third-party remote libraries)
+    ASSET_OT_clear_remote_assets_cache,
+    ASSET_OT_open_remote_assets_cache,
 )
