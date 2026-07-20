@@ -60,7 +60,7 @@ class PROJECT_MT_save_load(Menu):
         prefs = context.preferences
 
         layout.prop(prefs, "use_project_auto_save", text="Auto-Save Project")
-        layout.operator("project.save_project", text="Save Project")
+        layout.operator("project.save_project", text="Save Project", icon='FILE_TICK')
 
 
 # -------------------------------------------------------------
