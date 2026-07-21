@@ -130,6 +130,11 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
                             except:
                                 # If dissolve fails, delete the vertices
                                 bmesh.ops.delete(bm, geom=dissolve_verts, context='VERTS')
+
+                    # Final cleanup: remove any floating vertices left after dissolve/delete
+                    floating_verts = [v for v in bm.verts if len(v.link_edges) == 0 and len(v.link_faces) == 0]
+                    if floating_verts:
+                        bmesh.ops.delete(bm, geom=floating_verts, context='VERTS')
                     
                     bmesh.update_edit_mesh(me)
                     
@@ -230,7 +235,7 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
                         
                         # Final cleanup: Check for and remove any remaining isolated vertices
                         # This handles the case where deleting edges leaves floating vertices
-                        isolated_verts = [v for v in bm.verts if v.select and len(v.link_edges) == 0 and len(v.link_faces) == 0]
+                        isolated_verts = [v for v in bm.verts if len(v.link_edges) == 0 and len(v.link_faces) == 0]
                         if isolated_verts:
                             bmesh.ops.delete(bm, geom=isolated_verts, context='VERTS')
                         
@@ -251,6 +256,10 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
                     selected_faces = [f for f in bm.faces if f.select]
                     if selected_faces:
                         bmesh.ops.delete(bm, geom=selected_faces, context='FACES')
+                        # Clean up floating vertices left after face deletion
+                        floating_verts = [v for v in bm.verts if len(v.link_edges) == 0 and len(v.link_faces) == 0]
+                        if floating_verts:
+                            bmesh.ops.delete(bm, geom=floating_verts, context='VERTS')
                         bmesh.update_edit_mesh(me)
                 except:
                     # Fallback to standard operation if bmesh fails
