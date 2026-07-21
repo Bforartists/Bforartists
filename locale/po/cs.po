@@ -26692,7 +26692,7 @@ msgstr "Vložit zrcadlenou pózu z bufferu"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Pózy kostí"
 
 

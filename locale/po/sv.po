@@ -79550,7 +79550,7 @@ msgstr "Gör den aktuella posen mer lik, eller mer olik, vilopositionen."
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Uppdelning av poser"
 
 
@@ -79783,7 +79783,7 @@ msgstr "Sprid posen till alla nyckelrutor som förekommer i rutor med scenmarkö
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Push Pose från Breakdown"
 
 
@@ -79801,7 +79801,7 @@ msgstr "Vänd kvaternionvärden för att uppnå önskade rotationer, samtidigt s
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Avslappningsställning för att bryta ner"
 
 

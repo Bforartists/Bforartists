@@ -81519,7 +81519,7 @@ msgstr "Rendre la pose actuelle plus similaire à, ou plus éloignée de la pose
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Intervallage"
 
 
@@ -81752,7 +81752,7 @@ msgstr "Propager la pose à toutes les images clés coïncidant avec des marqueu
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Exagérer depuis l’intervalle"
 
 
@@ -81770,7 +81770,7 @@ msgstr "Inverser les valeurs des quaternions pour réaliser les rotations voulue
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Relâcher la pose vers l’intervalle"
 
 

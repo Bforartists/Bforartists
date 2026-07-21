@@ -81518,7 +81518,7 @@ msgstr "使当前姿态与静置姿态更相似，或更远离静置姿态"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "姿态补间器"
 
 
@@ -81751,7 +81751,7 @@ msgstr "将姿态传导至当前帧后的场景标记所在的所有关键帧"
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "从补间姿态推移姿态"
 
 
@@ -81769,7 +81769,7 @@ msgstr "翻转四元数值以达到期望的旋转结果, 同时保持原始方�
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "松弛姿态到补间姿态"
 
 
