@@ -78293,7 +78293,7 @@ msgstr "현재 포즈를 원래 포즈와 더 비슷하거나 더 멀어지게 �
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "포즈 브레이크다우너"
 
 
@@ -78526,7 +78526,7 @@ msgstr "현재 프레임 이후 씬 마커와 프레임에서 발생하는 모�
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "브레이크다운에서 포즈를 밀기"
 
 
@@ -78544,7 +78544,7 @@ msgstr "같은 방향을 유지하면서 원하는 회전을 위한 쿼터니언
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "포즈 브레이크다운 방향으로 릴렉스"
 
 

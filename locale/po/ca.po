@@ -81516,7 +81516,7 @@ msgstr "[Blend Pose with Rest Pose]: Fa que la posa actual sigui més similar a,
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Partionador de poses"
 
 
@@ -81749,7 +81749,7 @@ msgstr "Propagar posa a totes les fotofites que ocorren en fotogrames amb els Ma
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Empènyer posa des de partió"
 
 
@@ -81767,7 +81767,7 @@ msgstr "Capgira els valors de quaternió per a aconseguir les rotacions desitjad
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Relaxar posa a partió"
 
 

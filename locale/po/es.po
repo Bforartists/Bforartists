@@ -81516,7 +81516,7 @@ msgstr "Hace que la pose actual se acerque (o aleje) más a la pose de reposo"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Intermediador de pose"
 
 
@@ -81749,7 +81749,7 @@ msgstr "Propaga la pose a todos los fotogramas clave en fotogramas con marcadore
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Empujar pose desde intermedio"
 
 
@@ -81767,7 +81767,7 @@ msgstr "Invierte los valores de los cuaternios para lograr las rotaciones desead
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Distender pose hacia intermedio"
 
 

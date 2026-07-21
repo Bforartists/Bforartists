@@ -78990,8 +78990,8 @@ msgstr "Make the current pose more similar to, or further away from, the rest po
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
-msgstr "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Pose Breakdowner (Legacy)"
 
 
 msgid "Create a suitable breakdown pose on the current frame"
@@ -79223,8 +79223,8 @@ msgstr "Propagate pose to all keyframes occurring on frames with Scene Markers a
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
-msgstr "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "Push Pose from Breakdown (Legacy)"
 
 
 msgid "Exaggerate the current pose in regards to the breakdown pose"
@@ -79241,8 +79241,8 @@ msgstr "Flip quaternion values to achieve desired rotations, while maintaining t
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
-msgstr "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "Relax Pose to Breakdown (Legacy)"
 
 
 msgid "Make the current pose more similar to its breakdown pose"

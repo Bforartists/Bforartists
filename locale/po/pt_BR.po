@@ -42261,7 +42261,7 @@ msgstr "Número do quadro de quadro-chave imediatamente antes do quadro atual."
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Ruptura de poses"
 
 

@@ -1255,7 +1255,7 @@ static wmOperatorStatus pose_slide_push_exec(bContext *C, wmOperator *op)
 void POSE_OT_push(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Push Pose from Breakdown";
+  ot->name = "Push Pose from Breakdown (Legacy)"; /*BFA*/
   ot->idname = "POSE_OT_push";
   ot->description = "Exaggerate the current pose in regards to the breakdown pose";
 
@@ -1312,7 +1312,7 @@ static wmOperatorStatus pose_slide_relax_exec(bContext *C, wmOperator *op)
 void POSE_OT_relax(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Relax Pose to Breakdown";
+  ot->name = "Relax Pose to Breakdown (Legacy)"; /*BFA*/
   ot->idname = "POSE_OT_relax";
   ot->description = "Make the current pose more similar to its breakdown pose";
 
@@ -1433,7 +1433,7 @@ static wmOperatorStatus pose_slide_breakdown_exec(bContext *C, wmOperator *op)
 void POSE_OT_breakdown(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Pose Breakdowner";
+  ot->name = "Pose Breakdowner (Legacy)"; /*BFA*/
   ot->idname = "POSE_OT_breakdown";
   ot->description = "Create a suitable breakdown pose on the current frame";
 

@@ -45420,7 +45420,7 @@ msgstr "Prelij pozo v mirovalno pozo"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Razčlenitev poze"
 
 
@@ -45480,7 +45480,7 @@ msgstr "Pred okvirjem"
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Porini pozo iz razčlenitve"
 
 
@@ -45490,7 +45490,7 @@ msgstr "Preobrni kvaternione"
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Zrahljaj pozo proti razčlenitvi"
 
 

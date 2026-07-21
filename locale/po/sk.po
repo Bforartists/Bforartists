@@ -81516,7 +81516,7 @@ msgstr "Priblíži alebo oddiali aktuálnu pózu k odpočinkovej póze"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Rozkladač pózy"
 
 
@@ -81749,7 +81749,7 @@ msgstr "Rozšíri pózu na všetky kľúčové snímky vyskytujúce sa na snímk
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Stlačiť pózu z rozkladu"
 
 
@@ -81767,7 +81767,7 @@ msgstr "Preklopí hodnoty kvaterniónu na dosiahnutie požadovanej rotácie, pri
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Uvoľniť pózu pre rozklad"
 
 

@@ -6015,10 +6015,10 @@ class VIEW3D_MT_pose_slide(Menu):
 
         operator_context = layout.operator_context
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("pose.blend_with_rest", icon="PUSH_POSE")
-        layout.operator("pose.push", icon="POSE_FROM_BREAKDOWN")
-        layout.operator("pose.relax", icon="POSE_RELAX_TO_BREAKDOWN")
-        layout.operator("pose.breakdown", icon="BREAKDOWNER_POSE")
+        layout.operator("pose.blend_with_rest", icon="BLEND_TO_DEFAULT")
+        layout.operator("pose.push", icon="PUSH_POSE", text="Push Pose from Breakdown (Legacy)")
+        layout.operator("pose.relax", icon="RELAX_POSE", text="Relax Pose to Breakdown (Legacy)")
+        layout.operator("pose.breakdown", icon="BREAKDOWNER_POSE", text="Pose Breakdowner (Legacy)")
         layout.operator("pose.blend_to_neighbor", icon="BLEND_TO_NEIGHBOUR")
         layout.operator_context = operator_context
 

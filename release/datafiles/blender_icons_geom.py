@@ -2,18 +2,106 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# BFA - Added extensive documentation to this file, since it is not obvious how to use it.
 """
-Example Usage
-=============
+Geometry Icon Generation
+=========================
 
-Command line::
+This script reads a .blend file containing icon geometry and outputs binary
+``.dat`` files (one per icon) to the ``release/datafiles/icons/`` directory.
 
-   ./blender.bin \
-       icon_file.blend --background --python ./release/datafiles/blender_icons_geom.py -- \
-       --output-dir=./release/datafiles/blender_icons_geom
+Quick Start (Windows)
+---------------------
 
-Icon Format
-===========
+The recommended way to generate .dat files on Windows::
+
+    # Set BLENDER_BIN to your blender.exe / bforartists.exe
+    set BLENDER_BIN=D:\path\to\blender.exe
+
+    # Run the convenience target
+    .\make.bat icons_geom
+
+Or, if ``BLENDER_BIN`` is already set in your environment::
+
+    .\make.bat icons_geom
+
+Example: $env:BLENDER_BIN = "D:\Software\Blender\daily\blender-5.3.0-alpha+daily.aaf615437aae\blender.exe"; .\make.bat icons_geom
+
+
+Quick Start (Linux / macOS)
+---------------------------
+
+::
+
+    make icons_geom BLENDER_BIN=/path/to/blender
+
+Manual invocation (any platform)::
+
+    /path/to/blender --background --factory-startup ^
+        release/datafiles/icons_blend/toolbar.blend ^
+        --python release/datafiles/blender_icons_geom.py -- ^
+        --group Export ^
+        --output-dir release/datafiles/icons
+
+Example: & "D:\Software\Blender\daily\blender-5.3.0-alpha+daily.aaf615437aae\blender.exe" --background --factory-startup release/datafiles/icons_blend/toolbar.blend --python release/datafiles/blender_icons_geom.py -- --group Export --output-dir release/datafiles/icons
+
+What Gets Called
+----------------
+
+``make.bat icons_geom`` (or ``make icons_geom``) invokes:
+  ``release/datafiles/blender_icons_geom_update.py``
+
+Which in turn:
+  1. Launches Blender in background mode with ``toolbar.blend``.
+  2. Runs **this** script (``blender_icons_geom.py``) inside Blender.
+  3. Reads the ``Export`` collection in the .blend file.
+  4. For each root object (and its children), triangulates the mesh,
+     converts vertex positions/colors, and writes a ``.dat`` file.
+  5. Updates ``source/blender/editors/datafiles/CMakeLists.txt`` with
+     the icon file list (for the build system).
+
+Blend File Preparation (How to Create or Edit Icons)
+----------------------------------------------------
+
+1. **SVG creation (optional)** — Create a vector graphic in Inkscape or
+   similar.  Set the document size to 15×15 cm.  Name the SVG element ID
+   to match the target icon name (e.g., ``ops.mesh.knife_tool``).
+
+2. **Import SVG into ``toolbar.blend``** — Use File → Import → SVG.
+
+3. **Convert curves to mesh** — Select imported curve objects, then
+   Object → Convert → Mesh.
+
+4. **Assign vertex colors** — Every mesh *must* have a vertex color
+   attribute (``Color Attribute``, domain *Face Corner*).  Objects
+   without vertex colors are skipped with a warning.
+
+5. **Set up materials** — All materials must use nodes.  Assign an
+   *Emission* shader with an ``RGB`` node (the script reads the
+   ``RGB`` node's output default color).  Duplicate and re-tint per
+   part as needed.
+
+6. **Parent child meshes** to a root boundary/container object.
+   The root object's name becomes the ``.dat`` filename.
+
+7. **Link the root object** (and its children) into the ``Export``
+   collection.  The script only processes objects in this collection.
+
+8. **Save** the ``toolbar.blend`` file in
+   ``release/datafiles/icons_blend/``.
+
+9. **Run** ``make.bat icons_geom`` (see above).
+
+Important Notes
+---------------
+
+- The .blend must be saved with a Blender version compatible with the
+  one used to run the script (otherwise a file-version warning appears).
+- Materials with colors outside 0–1 range are clamped (warning printed).
+- The script only processes meshes and curves; it skips all other types.
+
+Icon Format (Binary)
+====================
 
 This is a simple binary format (all bytes, so no endian).
 
