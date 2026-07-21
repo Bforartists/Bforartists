@@ -259,6 +259,145 @@ class IMAGE_PT_uvtab_uvtools(Panel):
         draw_entries(layout, context, entries)
 
 
+class IMAGE_PT_uvtab_move(Panel):
+    bl_label = "Move"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        pass
+
+
+class IMAGE_PT_uvtab_move_x_positive(Panel):
+    bl_label = "▶ +X"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_parent_id = "IMAGE_PT_uvtab_move"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("uv.move_on_axis", text="Dynamic Grid", icon="SNAP_GRID",
+                          props={"type": 'DYNAMIC', "axis": 'X', "distance": 1}),
+            OperatorEntry("uv.move_on_axis", text="Pixel", icon="SNAP_TO_PIXELS",
+                          props={"type": 'PIXEL', "axis": 'X', "distance": 1}),
+            OperatorEntry("uv.move_on_axis", text="UDIM", icon="SNAPTOUDIM",
+                          props={"type": 'UDIM', "axis": 'X', "distance": 1}),
+        )
+
+        draw_entries(layout, context, entries)
+
+
+class IMAGE_PT_uvtab_move_x_negative(Panel):
+    bl_label = "◀ -X"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_parent_id = "IMAGE_PT_uvtab_move"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("uv.move_on_axis", text="Dynamic Grid", icon="SNAP_GRID",
+                          props={"type": 'DYNAMIC', "axis": 'X', "distance": -1}),
+            OperatorEntry("uv.move_on_axis", text="Pixel", icon="SNAP_TO_PIXELS",
+                          props={"type": 'PIXEL', "axis": 'X', "distance": -1}),
+            OperatorEntry("uv.move_on_axis", text="UDIM", icon="SNAPTOUDIM",
+                          props={"type": 'UDIM', "axis": 'X', "distance": -1}),
+        )
+
+        draw_entries(layout, context, entries)
+
+
+class IMAGE_PT_uvtab_move_y_positive(Panel):
+    bl_label = "▲ +Y"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_parent_id = "IMAGE_PT_uvtab_move"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("uv.move_on_axis", text="Dynamic Grid", icon="SNAP_GRID",
+                          props={"type": 'DYNAMIC', "axis": 'Y', "distance": 1}),
+            OperatorEntry("uv.move_on_axis", text="Pixel", icon="SNAP_TO_PIXELS",
+                          props={"type": 'PIXEL', "axis": 'Y', "distance": 1}),
+            OperatorEntry("uv.move_on_axis", text="UDIM", icon="SNAPTOUDIM",
+                          props={"type": 'UDIM', "axis": 'Y', "distance": 1}),
+        )
+
+        draw_entries(layout, context, entries)
+
+
+class IMAGE_PT_uvtab_move_y_negative(Panel):
+    bl_label = "▼ -Y"
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_parent_id = "IMAGE_PT_uvtab_move"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        sima = context.space_data
+        show_uvedit = sima.show_uvedit
+        return space.show_toolshelf_tabs and show_uvedit == True and sima.mode == 'UV'
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            SetOperatorContext('EXEC_REGION_WIN'),
+            OperatorEntry("uv.move_on_axis", text="Dynamic Grid", icon="SNAP_GRID",
+                          props={"type": 'DYNAMIC', "axis": 'Y', "distance": -1}),
+            OperatorEntry("uv.move_on_axis", text="Pixel", icon="SNAP_TO_PIXELS",
+                          props={"type": 'PIXEL', "axis": 'Y', "distance": -1}),
+            OperatorEntry("uv.move_on_axis", text="UDIM", icon="SNAPTOUDIM",
+                          props={"type": 'UDIM', "axis": 'Y', "distance": -1}),
+        )
+
+        draw_entries(layout, context, entries)
+
+
 class IMAGE_PT_uvtab_align(Panel):
     bl_label = "Align"
     bl_space_type = 'IMAGE_EDITOR'
@@ -443,6 +582,11 @@ classes = (
     IMAGE_PT_uvtab_unwrap,
     IMAGE_PT_uvtab_merge,
     IMAGE_PT_uvtab_uvtools,
+    IMAGE_PT_uvtab_move,
+    IMAGE_PT_uvtab_move_x_positive,
+    IMAGE_PT_uvtab_move_x_negative,
+    IMAGE_PT_uvtab_move_y_positive,
+    IMAGE_PT_uvtab_move_y_negative,
     IMAGE_PT_uvtab_align,
 
     IMAGE_PT_image_masktab_add,

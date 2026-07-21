@@ -2003,6 +2003,7 @@ if(WITH_BLENDER)
       snaptopixel_center
       snaptopixel_corner
       snaptopixel_off
+      snaptoudim
       solidify
       solo_off
       solo_on
