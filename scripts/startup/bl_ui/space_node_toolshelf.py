@@ -2729,6 +2729,7 @@ class NODES_PT_toolshelf_gn_add_volume_operations(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("GeometryNodeFieldToGrid", pad=23),
             OperatorEntry("GeometryNodeGridClip", pad=29),
+            OperatorEntry("GeometryNodeGridDeactivateVoxels", pad=13),
             OperatorEntry("GeometryNodeGridDilateAndErode", pad=11),
             OperatorEntry("GeometryNodeGridMean", pad=26),
             OperatorEntry("GeometryNodeGridMedian", pad=23),
