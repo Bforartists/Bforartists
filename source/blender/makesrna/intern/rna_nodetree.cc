@@ -10815,8 +10815,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMeshToSDFGrid", nullptr, ICON_NODE_MESHTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodeMeshToVolume", nullptr, ICON_MESH_TO_VOLUME);
   define(brna, "GeometryNode", "GeometryNodeMeshUVSphere", nullptr, ICON_MESH_UVSPHERE);
-  define(brna, "GeometryNode", "GeometryNodeNURBSOrder", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeNURBSWeight", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeNURBSOrder", nullptr, ICON_NODE_NURBS_ORDER);
+  define(brna, "GeometryNode", "GeometryNodeNURBSWeight", nullptr, ICON_NODE_NURBS_WEIGHT);
   define(brna, "GeometryNode", "GeometryNodeObjectInfo", nullptr, ICON_NODE_OBJECTINFO);
   define(brna, "GeometryNode", "GeometryNodeOffsetCornerInFace", nullptr, ICON_OFFSET_CORNER_IN_FACE);
   define(brna, "GeometryNode", "GeometryNodeOffsetPointInCurve", nullptr, ICON_OFFSET_POINT_IN_CURVE);
@@ -10868,8 +10868,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetMaterial", nullptr, ICON_MATERIAL_ADD);
   define(brna, "GeometryNode", "GeometryNodeSetMaterialIndex", nullptr, ICON_SET_MATERIAL_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSetMeshNormal", nullptr, ICON_SET_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NODE_NURBS_ORDER);
-  define(brna, "GeometryNode", "GeometryNodeSetNURBSWeight", nullptr, ICON_NODE_NURBS_WEIGHT);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NODE_SET_NURBS_ORDER);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSWeight", nullptr, ICON_NODE_SET_NURBS_WEIGHT);
   define(brna, "GeometryNode", "GeometryNodeSetPointRadius", nullptr, ICON_SET_CURVE_RADIUS);
   define(brna, "GeometryNode", "GeometryNodeSetPosition", nullptr, ICON_SET_POSITION);
   define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);

@@ -2019,6 +2019,8 @@ class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeInputCurveTilt", pad=24),
             OperatorEntry("GeometryNodeCurveEndpointSelection", pad=8),
             OperatorEntry("GeometryNodeCurveHandleTypeSelection", pad=2),
+            OperatorEntry("GeometryNodeNURBSOrder", pad=17),
+            OperatorEntry("GeometryNodeNURBSWeight", pad=15),
             OperatorEntry("GeometryNodeInputSplineCyclic", pad=14),
             OperatorEntry("GeometryNodeSplineLength", pad=18),
             OperatorEntry("GeometryNodeSplineParameter", pad=12),
