@@ -10653,7 +10653,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeBoundBox", nullptr, ICON_PIVOT_BOUNDBOX);
   define(brna, "GeometryNode", "GeometryNodeCameraInfo", nullptr, ICON_CAMERA_DATA);
   define(brna, "GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute, ICON_ATTRIBUTE_CAPTURE);
-  define(brna, "GeometryNode", "GeometryNodeClosureToList", def_geo_closure_to_list, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeClosureToList", def_geo_closure_to_list, ICON_NODE_CLOSURETOLIST);
   define(brna, "GeometryNode", "GeometryNodeClusterByConnected", nullptr, ICON_NODE_CLUSTERBYCONNECTED);
   define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NODE_CLUSTERBYDISTANCE);
   define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_COLLECTION_CHILDREN);
@@ -10883,7 +10883,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSortElements", nullptr, ICON_SORTSIZE);
-  define(brna, "GeometryNode", "GeometryNodeSortList", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeSortList", nullptr, ICON_NODE_SORTLIST);
   define(brna, "GeometryNode", "GeometryNodeSplineLength", nullptr, ICON_SPLINE_LENGTH);
   define(brna, "GeometryNode", "GeometryNodeSplineParameter", nullptr, ICON_CURVE_PARAMETER);
   define(brna, "GeometryNode", "GeometryNodeSplitEdges", nullptr, ICON_SPLITEDGE);

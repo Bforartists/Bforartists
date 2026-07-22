@@ -3099,10 +3099,12 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
 
         entries = (
+            OperatorEntry("GeometryNodeClosureToList", pad=6),
             OperatorEntry("GeometryNodeFieldToList", pad=8),
             OperatorEntry("GeometryNodeFilterList", pad=10),
             OperatorEntry("GeometryNodeListGetItem", pad=8),
             OperatorEntry("GeometryNodeListLength", pad=10),
+            OperatorEntry("GeometryNodeSortList", pad=17),
         )
 
         self.draw_entries(context, layout, entries)

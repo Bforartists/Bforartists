@@ -1285,6 +1285,7 @@ if(WITH_BLENDER)
       node_clusterbydistance
       node_clouds
       node_closure
+      node_closuretolist
       node_closure_evaluate
       node_colorbalance
       node_colorcorrection
@@ -1417,6 +1418,7 @@ if(WITH_BLENDER)
       node_set_nurbs_weight
       node_side
       node_sky
+      node_sortlist
       node_spill
       node_sss
       node_stabilize2d
