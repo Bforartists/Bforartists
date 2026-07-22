@@ -1413,6 +1413,8 @@ if(WITH_BLENDER)
       node_separatexyz
       node_setgridbackground
       node_setgridtransform
+      node_set_nurbs_order
+      node_set_nurbs_weight
       node_side
       node_sky
       node_spill
