@@ -10724,7 +10724,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
   define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NODE_ADVECTGRID);
   define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NODE_GRIDCURL);
-  define(brna, "GeometryNode", "GeometryNodeGridDeactivateVoxels", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGridDeactivateVoxels", nullptr, ICON_NODE_DEACTIVATE_VOXEL);
   define(brna, "GeometryNode", "GeometryNodeGridDilateAndErode", nullptr, ICON_NODE_GRIDERODE);
   define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NODE_GRIDDIVERGENCE);
   define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NODE_GRIDGRADIENT);

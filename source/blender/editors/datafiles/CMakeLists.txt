@@ -1300,6 +1300,7 @@ if(WITH_BLENDER)
       node_cornerpin
       node_crop
       node_curve_time
+      node_deactivate_voxel
       node_defocus
       node_denoise
       node_despeckle
