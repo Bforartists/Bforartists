@@ -10736,7 +10736,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridClip", nullptr, ICON_CLIPPINGBORDER);
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NODE_GRIDTOMESH);
   define(brna, "GeometryNode", "GeometryNodeGridToPoints", nullptr, ICON_MESH_TO_POINTS);
-  define(brna, "GeometryNode", "GeometryNodeGridTopologyBoolean", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGridTopologyBoolean", nullptr, ICON_NODE_GRIDTOPLOGYBOOLEAN);
   define(brna, "GeometryNode", "GeometryNodeGridVoxelize", nullptr, ICON_NODE_VOXELIZEGRID);
   define(brna, "GeometryNode", "GeometryNodeImageInfo", nullptr, ICON_IMAGE_INFO);
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);

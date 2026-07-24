@@ -1348,6 +1348,7 @@ if(WITH_BLENDER)
       node_gridmean
       node_gridmedian
       node_gridtomesh
+      node_gridtoplogyboolean
       node_grid_info
       node_hairinfo
       node_holdoutshader
