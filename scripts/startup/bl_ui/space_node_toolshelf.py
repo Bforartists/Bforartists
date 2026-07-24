@@ -2217,13 +2217,13 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeGreasePencilColor", pad=1),
-            OperatorEntry("GeometryNodeGreasePencilDrawTime", pad=1),
-            OperatorEntry("GeometryNodeGreasePencilFillId", pad=1),
-            OperatorEntry("GeometryNodeGreasePencilOpacity", pad=1),
-            OperatorEntry("GeometryNodeGreasePencilStrokeSoftness", pad=1),
+            OperatorEntry("GeometryNodeGreasePencilColor", pad=17),
+            OperatorEntry("GeometryNodeGreasePencilDrawTime", pad=12),
+            OperatorEntry("GeometryNodeGreasePencilFillID", pad=16),
+            OperatorEntry("GeometryNodeGreasePencilOpacity", pad=14),
+            OperatorEntry("GeometryNodeGreasePencilStrokeSoftness", pad=4),
             OperatorEntry("GeometryNodeGreasePencilStrokeVisibility", pad=1),
-            OperatorEntry("GeometryNodeInputNamedLayerSelection", pad=1),
+            OperatorEntry("GeometryNodeInputNamedLayerSelection", pad=8),
         )
 
         self.draw_entries(context, layout, entries)
@@ -3107,10 +3107,10 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry("GeometryNodeClosureToList", pad=6),
-            OperatorEntry("GeometryNodeFieldToList", pad=8),
-            OperatorEntry("GeometryNodeFilterList", pad=10),
-            OperatorEntry("GeometryNodeListGetItem", pad=8),
-            OperatorEntry("GeometryNodeListLength", pad=10),
+            OperatorEntry("GeometryNodeFieldToList", pad=10),
+            OperatorEntry("GeometryNodeFilterList", pad=12),
+            OperatorEntry("GeometryNodeListGetItem", pad=10),
+            OperatorEntry("GeometryNodeListLength", pad=12),
             OperatorEntry("GeometryNodeSortList", pad=17),
         )
 
