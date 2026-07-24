@@ -2452,7 +2452,7 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeEdgePathsToSelection", pad=0),
             OperatorEntry("GeometryNodeExtrudeMesh", pad=17),
             OperatorEntry("GeometryNodeFlipFaces", pad=23),
-            OperatorEntry("GeometryNodeMeshBevel", pad=23),
+            OperatorEntry("GeometryNodeMeshBevel", pad=22),
             Separator,
             OperatorEntry("GeometryNodeMeshBoolean", pad=16),
             OperatorEntry("GeometryNodeMeshToCurve", pad=15),
