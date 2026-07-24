@@ -10717,7 +10717,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilColor", nullptr, ICON_NODE_GP_COLOR);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilDrawTime", nullptr, ICON_NODE_GP_DRAWTIME);
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilFillId", nullptr, ICON_NODE_GP_FILLID);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilFillID", nullptr, ICON_NODE_GP_FILLID);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilOpacity", nullptr, ICON_GP_OPACITY);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeSoftness", nullptr, ICON_NODE_GP_STROKESOFTNESS);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeVisibility", nullptr, ICON_NODE_GP_STROKEVISIBILITY);
@@ -10799,7 +10799,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMergeByDistance", nullptr, ICON_REMOVE_DOUBLES);
   define(brna, "GeometryNode", "GeometryNodeMergeLayers", nullptr, ICON_MERGE);
   define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_MERGE_CENTER);
-  define(brna, "GeometryNode", "GeometryNodeMeshBevel", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeMeshBevel", nullptr, ICON_BEVEL);
   define(brna, "GeometryNode", "GeometryNodeMeshBoolean", nullptr, ICON_MOD_BOOLEAN);
   define(brna, "GeometryNode", "GeometryNodeMeshCircle", nullptr, ICON_MESH_CIRCLE);
   define(brna, "GeometryNode", "GeometryNodeMeshCone", nullptr, ICON_MESH_CONE);
