@@ -10715,12 +10715,12 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilColor", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilDrawTime", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilFillID", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilOpacity", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeSoftness", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeVisibility", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilColor", nullptr, ICON_NODE_GP_COLOR);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilDrawTime", nullptr, ICON_NODE_GP_DRAWTIME);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilFillId", nullptr, ICON_NODE_GP_FILLID);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilOpacity", nullptr, ICON_GP_OPACITY);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeSoftness", nullptr, ICON_NODE_GP_STROKESOFTNESS);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeVisibility", nullptr, ICON_NODE_GP_STROKEVISIBILITY);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
   define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NODE_ADVECTGRID);
   define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NODE_GRIDCURL);
@@ -10875,7 +10875,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);
   define(brna, "GeometryNode", "GeometryNodeSetSplineCyclic", nullptr, ICON_TOGGLE_CYCLIC);
   define(brna, "GeometryNode", "GeometryNodeSetSplineResolution", nullptr, ICON_SET_SPLINE_RESOLUTION);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_COLOR);
+  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_NODE_GP_SETCOLOR);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_DEPTH);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_FALLOFFSTROKE);
   define(brna, "GeometryNode", "GeometryNodeSetGridBackground", nullptr, ICON_NODE_SETGRIDBACKGROUND);
