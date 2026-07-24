@@ -2217,7 +2217,13 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeInputNamedLayerSelection"),
+            OperatorEntry("GeometryNodeGreasePencilColor", pad=1),
+            OperatorEntry("GeometryNodeGreasePencilDrawTime", pad=1),
+            OperatorEntry("GeometryNodeGreasePencilFillId", pad=1),
+            OperatorEntry("GeometryNodeGreasePencilOpacity", pad=1),
+            OperatorEntry("GeometryNodeGreasePencilStrokeSoftness", pad=1),
+            OperatorEntry("GeometryNodeGreasePencilStrokeVisibility", pad=1),
+            OperatorEntry("GeometryNodeInputNamedLayerSelection", pad=1),
         )
 
         self.draw_entries(context, layout, entries)

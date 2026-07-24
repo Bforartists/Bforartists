@@ -1333,6 +1333,12 @@ if(WITH_BLENDER)
       node_glasshader
       node_glossyshader
       node_gradient
+      node_gp_color
+      node_gp_drawtime
+      node_gp_fillid
+      node_gp_setcolor
+      node_gp_strokesoftness
+      node_gp_strokevisibility
       node_groupinsert
       node_gridcurl
       node_griddivergence
