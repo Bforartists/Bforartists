@@ -2743,6 +2743,7 @@ class NODES_PT_toolshelf_gn_add_volume_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeGridMean", pad=26),
             OperatorEntry("GeometryNodeGridMedian", pad=23),
             OperatorEntry("GeometryNodeGridPrune", pad=25),
+            OperatorEntry("GeometryNodeGridTopologyBoolean", pad=1),
             OperatorEntry("GeometryNodeGridVoxelize", pad=21),
         )
 
