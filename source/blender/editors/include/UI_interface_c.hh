@@ -323,6 +323,12 @@ enum {
    * and inherited by sub-menus from their parent.
    */
   BLOCK_NO_ACCELERATOR_KEYS = 1 << 27,
+  /**
+   * BFA - Tear-Off Menu/Panel
+   * The block is a tear-off menu that should remain visible and allow
+   * interaction with the rest of the UI when events occur outside it.
+   */
+  BLOCK_TEAR_OFF = 1 << 28,
 };
 
 /** #PopupBlockHandle.menuretval */
@@ -920,7 +926,10 @@ bool popup_menu_end_or_cancel(bContext *C, PopupMenu *pup);
 Layout *popup_menu_layout(PopupMenu *pup);
 
 void popup_menu_reports(bContext *C, ReportList *reports) ATTR_NONNULL();
-wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports)
+wmOperatorStatus popup_menu_invoke(bContext *C,
+                                     const char *idname,
+                                     ReportList *reports, // BFA - Tear-Off Menu/Panel
+                                     struct PopupBlockHandle **r_handle = nullptr) // BFA - Tear-Off Menu/Panel
     ATTR_NONNULL(1, 2);
 
 /**
@@ -963,7 +972,8 @@ struct Popover;
 wmOperatorStatus popover_panel_invoke(bContext *C,
                                       const char *idname,
                                       bool keep_open,
-                                      ReportList *reports);
+                                      ReportList *reports, // BFA - Tear-Off Menu/Panel
+                                      struct PopupBlockHandle **r_handle = nullptr); // BFA - Tear-Off Menu/Panel
 
 /**
  * Only return handler, and set optional title.
@@ -2323,6 +2333,11 @@ void popup_handlers_add(bContext *C,
                         char flag);
 void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle *popup);
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers);
+/**
+ * BFA - Tear-Off Menu/Panel: close all popups including tear-offs.
+ * Needed for script reload where Python callbacks become invalid.
+ */
+void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *handlers);
 
 /**
  * Tags for refresh popup/menu handlers referencing a #StructRNA that is being unregistered,

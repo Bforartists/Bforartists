@@ -234,6 +234,9 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
 
     if (pup->menu_func) {
       pup->block->handle = handle;
+      if (handle && handle->is_tear_off) {
+        block_flag_enable(pup->block, BLOCK_TEAR_OFF);
+      }
       pup->menu_func(C, pup->layout);
       pup->block->handle = nullptr;
     }
@@ -405,7 +408,7 @@ static PopupBlockHandle *popup_menu_create_impl(
   /* menu is created from a callback */
   pup->menu_func = menu_func;
   if (but) {
-    pup->slideout = block_is_menu(but->block);
+    pup->slideout = block_is_menu(but->block) || (but->block->flag & BLOCK_TEAR_OFF); // BFA - Tear-Off Menu/Panel
     pup->but = but;
 
     if (but->type == ButtonType::Pulldown) {
@@ -604,10 +607,10 @@ void popup_menu_reports(bContext *C, ReportList *reports)
   }
 }
 
-static void popup_menu_create_from_menutype(bContext *C,
-                                            MenuType *mt,
-                                            const char *title,
-                                            const int icon)
+static PopupBlockHandle *popup_menu_create_from_menutype(bContext *C, // BFA - Tear-Off Menu/Panel
+                                                         MenuType *mt,
+                                                         const char *title,
+                                                         const int icon)
 {
   PopupBlockHandle *handle = popup_menu_create_impl(
       C,
@@ -615,7 +618,8 @@ static void popup_menu_create_from_menutype(bContext *C,
       nullptr,
       title,
       [mt, title, icon](bContext *C, Layout *layout) -> void {
-        if (title && title[0]) {
+        Block *block = layout->block(); // BFA - Tear-Off Menu/Panel
+        if (title && title[0] && !(block->handle && block->handle->is_tear_off)) { // BFA - Tear-Off Menu/Panel
           create_title_button(*layout, title, icon);
         }
         item_menutype_func(C, layout, mt);
@@ -632,9 +636,11 @@ static void popup_menu_create_from_menutype(bContext *C,
   else if (mt->idname[0]) {
     status.item(IFACE_("Search"), ICON_EVENT_SPACEKEY);
   }
+  // BFA - Tear-Off Menu/Panel
+  return handle; // BFA - Tear-Off Menu/Panel
 }
 
-wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports)
+wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports, PopupBlockHandle **r_handle) // BFA - Tear-Off Menu/Panel
 {
   MenuType *mt = WM_menutype_find(idname, true);
 
@@ -652,8 +658,9 @@ wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *
   const bool allow_refresh = true;
 
   const char *title = CTX_IFACE_(mt->translation_context, mt->label);
+  PopupBlockHandle *handle = nullptr; // BFA - Tear-Off Menu/Panel
   if (allow_refresh) {
-    popup_menu_create_from_menutype(C, mt, title, ICON_NONE);
+    handle = popup_menu_create_from_menutype(C, mt, title, ICON_NONE); // BFA - Tear-Off Menu/Panel
   }
   else {
     /* If no refresh is needed, create the block directly. */
@@ -661,6 +668,10 @@ wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *
     Layout *layout = popup_menu_layout(pup);
     menutype_draw(C, mt, layout);
     popup_menu_end(C, pup);
+  }
+
+  if (r_handle) { // BFA - Tear-Off Menu/Panel
+    *r_handle = handle; // BFA - Tear-Off Menu/Panel
   }
 
   return OPERATOR_INTERFACE;

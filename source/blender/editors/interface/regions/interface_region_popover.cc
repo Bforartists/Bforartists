@@ -315,7 +315,8 @@ PopupBlockHandle *popover_panel_create(bContext *C,
 wmOperatorStatus popover_panel_invoke(bContext *C,
                                       const char *idname,
                                       bool keep_open,
-                                      ReportList *reports)
+                                      ReportList *reports, // BFA - Tear-Off Menu/Panel
+                                      PopupBlockHandle **r_handle) // BFA - Tear-Off Menu/Panel
 {
   Layout *layout;
   PanelType *pt = WM_paneltype_find(idname, true);
@@ -330,8 +331,9 @@ wmOperatorStatus popover_panel_invoke(bContext *C,
   }
 
   Block *block = nullptr;
+  PopupBlockHandle *handle = nullptr; // BFA - Tear-Off Menu/Panel
   if (keep_open) {
-    PopupBlockHandle *handle = popover_panel_create(C, nullptr, nullptr, item_paneltype_func, pt);
+    handle = popover_panel_create(C, nullptr, nullptr, item_paneltype_func, pt); // BFA - Tear-Off Menu/Panel
     Popover *pup = static_cast<Popover *>(handle->popup_create_vars.arg);
     block = pup->block;
 
@@ -349,11 +351,15 @@ wmOperatorStatus popover_panel_invoke(bContext *C,
     ui::UI_paneltype_draw(C, pt, layout);
     ui::popover_end(C, pup, nullptr);
     block = pup->block;
+    handle = block ? block->handle : nullptr; // BFA - Tear-Off Menu/Panel
   }
 
   if (block) {
-    PopupBlockHandle *handle = block->handle;
+    handle = block->handle; // BFA - Tear-Off Menu/Panel
     block_active_only_flagged_buttons(C, handle->region, block);
+  }
+  if (r_handle) { // BFA - Tear-Off Menu/Panel
+    *r_handle = handle; // BFA - Tear-Off Menu/Panel
   }
   return OPERATOR_INTERFACE;
 }

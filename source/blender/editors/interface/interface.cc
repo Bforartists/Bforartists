@@ -587,6 +587,35 @@ static void block_bounds_calc_popup(
     }
   }
 
+  /* BFA - Tear-Off Menu: reposition the close button to the right edge of the
+   * menu without changing its width. The header row is compact
+   * (LayoutAlign::Left), but the menu width may be determined by wider items
+   * below. Move the close button so its right edge aligns with the menu's
+   * right edge, matching the panel version's layout. */
+  if (block->flag & BLOCK_TEAR_OFF) {
+    Button *close_but = nullptr;
+    for (Button &but : block->buttons()) {
+      if (but.optype && STREQ(but.optype->idname, "WM_OT_menu_tear_off_close")) {
+        close_but = &but;
+        break;
+      }
+    }
+
+    if (close_but) {
+      float menu_xmax = 0.0f;
+      for (const Button &but : block->buttons()) {
+        menu_xmax = max_ff(menu_xmax, but.rect.xmax);
+      }
+
+      if (menu_xmax > close_but->rect.xmax) {
+        const float but_width = BLI_rctf_size_x(&close_but->rect);
+        close_but->rect.xmax = menu_xmax;
+        close_but->rect.xmin = menu_xmax - but_width;
+        button_update(close_but);
+      }
+    }
+  }
+
   /* next we recompute bounds */
   block->bounds = oldbounds;
   block_bounds_calc(block);

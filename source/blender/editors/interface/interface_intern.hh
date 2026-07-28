@@ -1084,6 +1084,9 @@ struct PopupBlockHandle {
   int grab_xy_prev[2] = {0, 0};
   /* #endif */
 
+  /** BFA - Tear-Off Menu/Panel True when this popup was created as a tear-off menu. */
+  bool is_tear_off = false;
+
   char menu_idname[64] = "";
 
   bool mmb_panning = false;

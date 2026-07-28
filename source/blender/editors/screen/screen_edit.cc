@@ -51,6 +51,7 @@
 
 #include "UI_interface.hh"
 #include "UI_interface_c.hh"
+#include "../interface/interface_intern.hh" // BFA - Tear-Off Menu/Panel
 
 #include "WM_message.hh"
 #include "WM_toolsystem.hh"
@@ -1412,6 +1413,19 @@ void screen_change_prepare(
      * in a console too, so it's not such a priority to relocate these to the new screen.
      * See: #144958. */
     ui::popup_handlers_remove_all(C, &win->runtime->modalhandlers);
+
+    /* BFA - Tear-Off Menu/Panel: transfer persistent tear-off popups to the new screen. */
+    for (ARegion *region = static_cast<ARegion *>(screen_old->regionbase.last); region; ) {
+      ARegion *region_prev = region->prev;
+      if (region->regiontype == RGN_TYPE_TEMPORARY && region->runtime->uiblocks.first) {
+        ui::Block *block = static_cast<ui::Block *>(region->runtime->uiblocks.first);
+        if (block->flag & ui::BLOCK_TEAR_OFF) {
+          BLI_remlink(&screen_old->regionbase, region);
+          BLI_addtail(&screen_new->regionbase, region);
+        }
+      }
+      region = region_prev;
+    }
 
     /* remove handlers referencing areas in old screen */
     for (ScrArea &area : screen_old->areabase) {

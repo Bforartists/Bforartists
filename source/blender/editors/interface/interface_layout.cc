@@ -24,6 +24,7 @@
 #include "BLI_math_base_c.hh"
 #include "BLI_path_utils.hh"
 #include "BLI_rect.hh"
+#include "BLI_string.hh" // BFA - Tear-Off Menu/Panel
 #include "BLI_string_ref.hh"
 #include "BLI_string_utf8.hh"
 
@@ -6090,7 +6091,43 @@ void menutype_draw(bContext *C, MenuType *mt, Layout *layout)
     printf("%s: opening menu \"%s\"\n", __func__, mt->idname);
   }
 
+  /* BFA - Tear-Off Menu/Panel AFFORDANCE */
   Block *block = layout->block();
+  const bool is_context_menu = BLI_strcasestr(mt->idname, "_context_menu") != nullptr;
+  const bool is_tear_off = block->handle && block->handle->is_tear_off;
+  if (!STREQ(mt->idname, "WM_MT_tear_off_menu") && block->handle && !is_context_menu)
+  {
+    if (is_tear_off) {
+      /* BFA - Tear-Off Menu: show menu label and close button in a row.
+       * Uses LayoutAlign::Left for variable-size buttons so the row is
+       * compact (tight fit), not 20 units wide like Expand gives.
+       * Extra margin is added to the close button rect because
+       * block_bounds_calc_text doesn't resize individual buttons in a
+       * row alignment group, and text_icon_width's tight fit can clip. */
+      const EmbossType prev_emboss = layout->emboss_or_undefined();
+      layout->emboss_set(EmbossType::Pulldown);
+      Layout *row = &layout->row(true);
+      row->alignment_set(LayoutAlign::Left);
+      row->label(CTX_IFACE_(mt->translation_context, mt->label), ICON_GRIP);
+      row->op("WM_OT_menu_tear_off_close", "Close Menu", ICON_PANEL_CLOSE);
+      /* BFA - Prevent "Close Menu" text truncation at draw time. */
+      if (!block->buttons_ptrs.is_empty()) {
+        block->buttons_ptrs.last()->rect.xmax += int(UI_UNIT_X * 1.0f);
+        /* BFA - Center text like the panel version (default alignment). */
+        block->buttons_ptrs.last()->drawflag &= ~BUT_TEXT_LEFT;
+      }
+      layout->emboss_set(prev_emboss);
+      layout->separator(1.0f, LayoutSeparatorType::Line);
+    }
+    else {
+      PointerRNA opptr = layout->op("WM_OT_menu_tear_off", "Tear Off Menu", ICON_GRIP);
+      if (opptr.data) {
+        RNA_string_set(&opptr, "menu_idname", mt->idname);
+      }
+      layout->separator(1.0f, LayoutSeparatorType::Line);
+    }
+  }
+
   // bfa - disable_search_on_keypress
   if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) &&
       !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS))
@@ -6189,6 +6226,31 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
   }
 
   if (body) {
+    /* BFA - Tear-Off Menu/Panel Tear-off affordance for popover root panels. */
+    if ((block->flag & BLOCK_POPOVER) && !show_header) {
+      const bool is_tear_off = block->handle && block->handle->is_tear_off;
+      if (is_tear_off) {
+        /* BFA - Tear-Off Menu/Panel: show panel label and close button in a row */
+        const EmbossType prev_emboss = body->emboss_or_undefined();
+        body->emboss_set(EmbossType::Pulldown);
+        Layout *row = &body->row(true);
+        row->label(CTX_IFACE_(pt->translation_context, pt->label), ICON_GRIP);
+        row->op("WM_OT_panel_tear_off_close", "Close Panel", ICON_PANEL_CLOSE);
+        body->emboss_set(prev_emboss);
+        body->separator(2.0f, LayoutSeparatorType::Line);
+      }
+      else {
+        const EmbossType prev_emboss = body->emboss_or_undefined();
+        body->emboss_set(EmbossType::Pulldown);
+        PointerRNA opptr = body->op("WM_OT_panel_tear_off", "Tear Off Panel", ICON_GRIP);
+        if (opptr.data) {
+          RNA_string_set(&opptr, "panel_idname", pt->idname);
+        }
+        body->emboss_set(prev_emboss);
+        body->separator(1.0f, LayoutSeparatorType::Line);
+      }
+    }
+
     panel->layout = body;
     pt->draw(C, panel);
     panel->layout = nullptr;

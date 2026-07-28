@@ -24,6 +24,8 @@
 
 #include "ED_screen.hh"
 
+#include "UI_interface.hh" // BFA - Tear-Off Menu/Panel
+
 #include "script_intern.hh" /* own include */
 
 #ifdef WITH_PYTHON
@@ -100,6 +102,18 @@ static wmOperatorStatus script_reload_exec(bContext *C, wmOperator *op)
   if (script_test_modal_operators(C)) {
     BKE_report(op->reports, RPT_ERROR, "Cannot reload with running modal operators");
     return OPERATOR_CANCELLED;
+  }
+
+  /* BFA - Tear-Off Menu/Panel: close all popups including tear-offs.
+   * Python draw callbacks in popups become invalid after script reload.
+   * Must happen before the async reload to avoid segfaults. */
+  wmWindowManager *wm = CTX_wm_manager(C);
+  if (wm) {
+    for (wmWindow &win : wm->windows) {
+      CTX_wm_window_set(C, &win);
+      ui::popup_handlers_remove_all_force(C, &win.runtime->modalhandlers);
+    }
+    CTX_wm_window_set(C, nullptr);
   }
 
   /* TODO(@ideasman42): this crashes on netrender and keying sets, need to look into why

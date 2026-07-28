@@ -708,6 +708,14 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
   if (but && but->block->flag & BLOCK_NO_ACCELERATOR_KEYS) {
     block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
   }
+  /* BFA - Tear-Off Menu/Panel: propagate no-accelerator to sub-menus of tear-off menus. */
+  if (but && but->block->handle && but->block->handle->is_tear_off) {
+    block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
+  }
+  /* BFA - Tear-Off Menu/Panel: preserve no-accelerator state across refreshes. */
+  if (block_old && (block_old->flag & BLOCK_NO_ACCELERATOR_KEYS)) {
+    block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
+  }
 
   /* callbacks _must_ leave this for us, otherwise we can't call block_update_from_old */
   BLI_assert(!block->endblock);
@@ -842,6 +850,9 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
       block_translate(block, 0, -unit_half);
     }
 
+    /* BFA - Tear-Off Menu/Panel: close button is now added through the layout system
+     * in menutype_draw / paneltype_draw_impl, which gives proper sizing. */
+
     /* clip block with window boundary */
     popup_block_clip(window, block);
 
@@ -896,6 +907,16 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
   if (block_old) {
     block->oldblock = block_old;
     block_update_from_old(C, block);
+    /* BFA - Tear-Off Menu/Panel: preserve tear-off state across refreshes. */
+    if (block_old->flag & BLOCK_KEEP_OPEN) {
+      block->flag |= BLOCK_KEEP_OPEN;
+    }
+    if (block_old->flag & BLOCK_TEAR_OFF) {
+      block->flag |= BLOCK_TEAR_OFF;
+    }
+    if (block_old->flag & BLOCK_NO_ACCELERATOR_KEYS) {
+      block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
+    }
     blocklist_free_inactive(C, region);
   }
 

@@ -9777,6 +9777,12 @@ static void button_activate_exit(
       menu->menuretval = (data->cancel) ? RETURN_CANCEL : RETURN_OK;
     }
   }
+  /* BFA - Tear-Off Menu/Panel: tear-off panel operators are handled differently.
+   * We do NOT set menuretval here because that would close the popover before
+   * the operator runs (via apply_but_funcs_after). Instead, the operator saves
+   * CTX_wm_region_popup, creates the tear-off, then sets RETURN_CANCEL on the
+   * original. The delayed check in popup_handler closes it after the operator
+   * finishes. This ensures the operator can properly access the original popover. */
 
   if (!onfree && !data->cancel) {
     /* autokey & undo push */
@@ -11618,7 +11624,10 @@ static int handle_menu_event(bContext *C,
   if (retval != WM_UI_HANDLER_CONTINUE) {
   }
   else if (but && button_modal_state(but->active->state)) {
-    if (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER)) {
+    /* BFA - Tear-Off Menu/Panel: exclude tear-off from mouse-leave quit */
+    if (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER) &&
+        !(block->flag & BLOCK_TEAR_OFF)) // BFA - Tear-Off Menu/Panel
+    {
       /* if a button is activated modal, always reset the start mouse
        * position of the towards mechanism to avoid losing focus,
        * and don't handle events */
@@ -11638,7 +11647,10 @@ static int handle_menu_event(bContext *C,
   else {
     /* for mouse_motion_towards_block */
     if (event->type == MOUSEMOVE) {
-      if (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER)) {
+      /* BFA - Tear-Off Menu/Panel: exclude tear-off from mouse-leave quit */
+      if (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER) &&
+          !(block->flag & BLOCK_TEAR_OFF)) // BFA - Tear-Off Menu/Panel
+      {
         mouse_motion_towards_init(menu, event->xy);
       }
 
@@ -12082,21 +12094,37 @@ static int handle_menu_event(bContext *C,
           if (ELEM(event->val, KM_PRESS, KM_DBL_CLICK)) {
             if ((is_parent_menu == false) && (U.uiflag & USER_MENUOPENAUTO) == 0) {
               /* for root menus, allow clicking to close */
-              if (block->flag & BLOCK_OUT_1) {
-                menu->menuretval = RETURN_OK;
+              if (!(block->flag & BLOCK_TEAR_OFF)) { /* BFA - Tear-Off Menu/Panel */
+                if (block->flag & BLOCK_OUT_1) {
+                  menu->menuretval = RETURN_OK;
+                }
+                else {
+                  menu->menuretval = RETURN_OUT;
+                }
+                // printf("MENUDBG: click outside set menuretval=%d flags=0x%x\n",
+                //        menu->menuretval,
+                //        block->flag);
               }
               else {
-                menu->menuretval = RETURN_OUT;
+                // printf("MENUDBG: click outside SKIPPED tear-off flags=0x%x\n", block->flag);
               }
             }
             else if (saferct && !BLI_rctf_isect_pt(
                                     &saferct->parent, float(event->xy[0]), float(event->xy[1])))
             {
-              if (block->flag & BLOCK_OUT_1) {
-                menu->menuretval = RETURN_OK;
+              if (!(block->flag & BLOCK_TEAR_OFF)) { /* BFA - Tear-Off Menu/Panel */
+                if (block->flag & BLOCK_OUT_1) {
+                  menu->menuretval = RETURN_OK;
+                }
+                else {
+                  menu->menuretval = (U.flag & USER_MENU_CLOSE_LEAVE) ? RETURN_OUT : RETURN_CANCEL;
+                }
+                // printf("MENUDBG: saferct outside set menuretval=%d flags=0x%x\n",
+                //        menu->menuretval,
+                //        block->flag);
               }
               else {
-                menu->menuretval = (U.flag & USER_MENU_CLOSE_LEAVE) ? RETURN_OUT : RETURN_CANCEL;
+                // printf("MENUDBG: saferct outside SKIPPED tear-off flags=0x%x\n", block->flag);
               }
             }
           }
@@ -12123,8 +12151,11 @@ static int handle_menu_event(bContext *C,
       }
 #endif
       else if (event->type == EVT_ESCKEY && event->val == KM_PRESS) {
-        /* Escape cancels this and all preceding menus. */
-        menu->menuretval = RETURN_CANCEL;
+        /* Escape cancels this and all preceding menus.
+         * Don't close tear-off menus so they stay open until the Close Menu button is used. */
+        if (!(block->flag & BLOCK_TEAR_OFF)) {
+          menu->menuretval = RETURN_CANCEL;
+        }
       }
       else if (ELEM(event->type, EVT_RETKEY, EVT_PADENTER) && event->val == KM_PRESS) {
         Button *but_default = region_find_first_but_test_flag(
@@ -12166,9 +12197,16 @@ static int handle_menu_event(bContext *C,
       }
 #endif
       else {
+        // printf("MENUDBG: mouse-towards check inside=%d flags=0x%x event=%d\n",
+        //        inside,
+        //        block->flag,
+        //        event->type);
 
         /* check mouse moving outside of the menu */
-        if (inside == false && (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER))) {
+        /* BFA - Tear-Off Menu/Panel: exclude tear-off from mouse-leave quit */
+        if (inside == false && (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER)) &&
+            !(block->flag & BLOCK_TEAR_OFF))
+        {
           SafetyRect *saferct;
 
           mouse_motion_towards_check(block, menu, event->xy, is_parent_inside == false);
@@ -12284,7 +12322,10 @@ static int handle_menu_return_submenu(bContext *C, const wmEvent *event, PopupBl
     }
   }
 
-  if (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER)) {
+  /* BFA - Tear-Off Menu/Panel: exclude tear-off from mouse-leave quit */
+  if (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER) &&
+      !(block->flag & BLOCK_TEAR_OFF)) // BFA - Tear-Off Menu/Panel
+  {
     /* for cases where close does not cascade, allow the user to
      * move the mouse back towards the menu without closing */
     mouse_motion_towards_reinit(menu, event->xy);
@@ -12553,7 +12594,9 @@ static int pie_handler(bContext *C, const wmEvent *event, PopupBlockHandle *menu
 
         case EVT_ESCKEY:
         case RIGHTMOUSE:
-          menu->menuretval = RETURN_CANCEL;
+          if (!(block->flag & BLOCK_TEAR_OFF)) { // BFA - Tear-Off Menu/Panel
+            menu->menuretval = RETURN_CANCEL;
+          } // BFA - Tear-Off Menu/Panel
           break;
 
         case EVT_AKEY:
@@ -13038,6 +13081,16 @@ static int handler_region_menu(bContext *C, const wmEvent *event, void * /*userd
   /* delayed apply callbacks */
   apply_but_funcs_after(C);
 
+  /* BFA - Tear-Off Menu/Panel: if a deferred callback (e.g., the tear-off
+   * operator) set menuretval on the popover, close it immediately rather than
+   * waiting for the next event. This mirrors the delayed RETURN_CANCEL check
+   * in popup_handler and ensures the original popover closes right away when
+   * a tear-off is performed, even if the mouse is still hovering over it. */
+  if (but && but->active && but->active->menu && but->active->menu->menuretval) {
+    handle_button_return_submenu(C, event, but);
+    retval = WM_UI_HANDLER_BREAK;
+  }
+
   /* Reset to previous context region. */
   CTX_wm_region_popup_set(C, region_popup);
 
@@ -13061,6 +13114,7 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
    * except for drop events which is described below */
   int retval = WM_UI_HANDLER_BREAK;
   bool reset_pie = false;
+  bool popup_closed = false; // BFA - Tear-Off Menu/Panel
 
   ARegion *region_popup = CTX_wm_region_popup(C);
   CTX_wm_region_popup_set(C, menu->region);
@@ -13080,54 +13134,101 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 
   handle_menus_recursive(C, event, menu, 0, false, false, true);
 
+  /* BFA - Tear-Off Menu/Panel */
   /* free if done, does not free handle itself */
   if (menu->menuretval) {
-    wmWindow *win = CTX_wm_window(C);
-    /* copy values, we have to free first (closes region) */
-    const PopupBlockHandle temp = *menu;
     Block *block = static_cast<Block *>(menu->region->runtime->uiblocks.first);
 
-    /* set last pie event to allow chained pie spawning */
-    if (block->flag & BLOCK_PIE_MENU) {
-      win->pie_event_type_last = block->pie_data->event_type;
-      reset_pie = true;
+    if ((block->flag & BLOCK_TEAR_OFF) && !(menu->menuretval & RETURN_CANCEL)) {
+      /* BFA - Tear-Off Menu/Panel: tear-off menus stay open after selecting an item or clicking outside. */
+      wmWindow *win = CTX_wm_window(C);
+      menu->menuretval = 0;
+      ED_region_tag_redraw(menu->region);
+      WM_event_add_mousemove(win);
     }
+    else {
+      // BFA - Tear-Off Menu/Panel
+      wmWindow *win = CTX_wm_window(C);
+      /* copy values, we have to free first (closes region) */
+      const PopupBlockHandle temp = *menu;
 
-    popup_block_free(C, menu);
-    popup_handlers_remove(&win->runtime->modalhandlers, menu);
-    CTX_wm_region_popup_set(C, nullptr);
+      /* set last pie event to allow chained pie spawning */
+      if (block->flag & BLOCK_PIE_MENU) {
+        win->pie_event_type_last = block->pie_data->event_type;
+        reset_pie = true;
+      }
+
+      popup_block_free(C, menu);
+      popup_handlers_remove(&win->runtime->modalhandlers, menu);
+      CTX_wm_region_popup_set(C, nullptr);
+      popup_closed = true; // BFA - Tear-Off Menu/Panel
 
 #ifdef USE_DRAG_TOGGLE
-    {
-      WM_event_free_ui_handler_all(C,
-                                   &win->runtime->modalhandlers,
-                                   handler_region_drag_toggle,
-                                   handler_region_drag_toggle_remove);
-    }
+      {
+        WM_event_free_ui_handler_all(C,
+                                     &win->runtime->modalhandlers,
+                                     handler_region_drag_toggle,
+                                     handler_region_drag_toggle_remove);
+      }
 #endif
 
-    if ((temp.menuretval & RETURN_OK) || (temp.menuretval & RETURN_POPUP_OK)) {
-      if (temp.popup_func) {
-        temp.popup_func(C, temp.popup_arg, temp.retvalue);
+      if ((temp.menuretval & RETURN_OK) || (temp.menuretval & RETURN_POPUP_OK)) {
+        if (temp.popup_func) {
+          temp.popup_func(C, temp.popup_arg, temp.retvalue);
+        }
       }
-    }
-    else if (temp.cancel_func) {
-      temp.cancel_func(C, temp.popup_arg);
-    }
+      else if (temp.cancel_func) {
+        temp.cancel_func(C, temp.popup_arg);
+      }
 
-    WM_event_add_mousemove(win);
+      WM_event_add_mousemove(win);
+    }
   }
-  else {
-    /* Re-enable tool-tips */
-    if (event->type == MOUSEMOVE &&
-        (event->xy[0] != event->prev_xy[0] || event->xy[1] != event->prev_xy[1]))
-    {
-      blocks_set_tooltips(menu->region, true);
+  // BFA - Tear-Off Menu/Panel
+  if (!popup_closed) {
+    if (menu->menuretval == 0) {
+      /* Re-enable tool-tips */
+      if (event->type == MOUSEMOVE &&
+          (event->xy[0] != event->prev_xy[0] || event->xy[1] != event->prev_xy[1]))
+      {
+        blocks_set_tooltips(menu->region, true);
+      }
+
+      /* BFA - Tear-Off Menu/Panel, pass through events that occur outside the menu. */
+      Block *block = static_cast<Block *>(menu->region->runtime->uiblocks.first);
+      if (block->flag & BLOCK_TEAR_OFF) {
+        Button *but = region_find_active_but(menu->region);
+        HandleButtonData *data = (but) ? but->active : nullptr;
+        PopupBlockHandle *submenu = (data) ? data->menu : nullptr;
+
+        if (!submenu) {
+          int mx = event->xy[0];
+          int my = event->xy[1];
+          window_to_block(menu->region, block, &mx, &my);
+          const bool inside = BLI_rctf_isect_pt(&block->rect, mx, my);
+
+          if (!inside) {
+            retval = WM_UI_HANDLER_CONTINUE;
+          }
+        }
+      }
     }
   }
 
   /* delayed apply callbacks */
   apply_but_funcs_after(C);
+  // BFA - Tear-Off Menu/Panel
+  /* If a delayed callback (e.g. Close Menu operator, or the tear-off panel operator
+   * closing the original popover) set RETURN_CANCEL, close the popup now rather than
+   * waiting for the next event. */
+  if (!popup_closed && (menu->menuretval & RETURN_CANCEL)) {
+    wmWindow *win = CTX_wm_window(C);
+    popup_block_free(C, menu);
+    popup_handlers_remove(&win->runtime->modalhandlers, menu);
+    CTX_wm_region_popup_set(C, nullptr);
+    WM_event_add_mousemove(win);
+    popup_closed = true;
+  }
 
   if (reset_pie) {
     /* Reacquire window in case pie invalidates it somehow. */
@@ -13208,7 +13309,52 @@ void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle
 
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
 {
-  WM_event_free_ui_handler_all(C, handlers, popup_handler, popup_handler_remove);
+  /* BFA - Tear-Off Menu/Panel: keep tear-off popups open across screen/workspace changes. */
+  for (wmEventHandler &handler_base : handlers->items_mutable()) {
+    if (handler_base.type == WM_HANDLER_TYPE_UI) {
+      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+      if (handler->handle_fn == popup_handler && handler->remove_fn == popup_handler_remove) {
+        PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
+        if (menu->is_tear_off) {
+          /* BFA - Tear-Off Menu/Panel: clear stale context so
+           * WM_event_remove_handlers_by_area doesn't remove this handler. */
+          handler->context.area = nullptr;
+          handler->context.region = nullptr;
+          continue;
+        }
+        if (menu->region && menu->region->runtime->uiblocks.first) {
+          Block *block = static_cast<Block *>(menu->region->runtime->uiblocks.first);
+          if (block->flag & BLOCK_TEAR_OFF) {
+            /* BFA - Tear-Off Menu/Panel: clear stale context so
+             * WM_event_remove_handlers_by_area doesn't remove this handler. */
+            handler->context.area = nullptr;
+            handler->context.region = nullptr;
+            continue;
+          }
+        }
+        popup_handler_remove(C, menu);
+        BLI_remlink(handlers, handler);
+        wm_event_free_handler(&handler->head);
+      }
+    }
+  }
+}
+// BFA - Tear-Off Menu/Panel
+void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *handlers)
+{
+  /* BFA - Tear-Off Menu/Panel: remove ALL popups including tear-offs.
+   * Needed for script reload where Python callbacks become invalid. */
+  for (wmEventHandler &handler_base : handlers->items_mutable()) {
+    if (handler_base.type == WM_HANDLER_TYPE_UI) {
+      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+      if (handler->handle_fn == popup_handler && handler->remove_fn == popup_handler_remove) {
+        PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
+        popup_handler_remove(C, menu);
+        BLI_remlink(handlers, handler);
+        wm_event_free_handler(&handler->head);
+      }
+    }
+  }
 }
 
 /**

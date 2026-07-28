@@ -10,6 +10,8 @@
  */
 
 #include "UI_interface_c.hh"
+#include "interface_intern.hh" /* BFA - Tear-Off Menu/Panel */
+
 #include <algorithm>
 #include <cctype>
 #include <cerrno>
@@ -2486,6 +2488,191 @@ static void WM_OT_quit_blender(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Tear-Off Menu Operator
+ * \{ */
+
+/* BFA - Tear-Off Menu/Panel */
+static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
+{
+  char idname[MAX_NAME];
+  RNA_string_get(op->ptr, "menu_idname", idname);
+
+  /* Open the popup menu in the current window */
+  ui::PopupBlockHandle *handle = nullptr;
+  wmOperatorStatus status = ui::popup_menu_invoke(C, idname, op->reports, &handle);
+
+  if (handle) {
+    handle->is_tear_off = true;
+  }
+
+  /* BFA - Tear-Off Menu/Panel */
+  /* Make the popup persistent and pass-through for outside events */
+  if (handle && handle->region && handle->region->runtime->uiblocks.first) {
+    ui::Block *block = static_cast<ui::Block *>(handle->region->runtime->uiblocks.first);
+    ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
+    ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
+    ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
+    ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
+  }
+
+  if (handle) {
+    ED_region_tag_refresh_ui(handle->region);
+  }
+
+  return status;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_menu_tear_off(wmOperatorType *ot)
+{
+  ot->name = "Tear-Off Menu";
+  ot->idname = "WM_OT_menu_tear_off";
+  ot->description = "Tear-Off menu to a persistent floating window";
+
+  ot->exec = wm_menu_tear_off_exec;
+  ot->poll = WM_operator_winactive;
+
+  RNA_def_string(ot->srna, "menu_idname", "Menu", MAX_NAME, "Menu", "");
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static wmOperatorStatus wm_menu_tear_off_close_exec(bContext *C, wmOperator * /*op*/)
+{
+  wmWindow *win = CTX_wm_window(C);
+  if (!win) {
+    return OPERATOR_CANCELLED;
+  }
+
+  /* popup_handler sets region_popup to the popup region before dispatching events. */
+  ARegion *region = CTX_wm_region_popup(C);
+  if (!region) {
+    return OPERATOR_CANCELLED;
+  }
+
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (handler_base.type == WM_HANDLER_TYPE_UI) {
+      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
+      if (menu && menu->is_tear_off && menu->region == region) {
+        menu->menuretval = ui::RETURN_CANCEL;
+        return OPERATOR_FINISHED;
+      }
+    }
+  }
+
+  return OPERATOR_CANCELLED;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_menu_tear_off_close(wmOperatorType *ot)
+{
+  ot->name = "Close Menu";
+  ot->idname = "WM_OT_menu_tear_off_close";
+  ot->description = "Close the torn-off menu";
+
+  ot->exec = wm_menu_tear_off_close_exec;
+  ot->poll = WM_operator_winactive;
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Tear-Off Panel Operator
+ * \{ */
+
+static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
+{
+  char idname[MAX_NAME];
+  RNA_string_get(op->ptr, "panel_idname", idname);
+
+  /* BFA - Tear-Off Menu/Panel: save the original popup region before creating
+   * the tear-off, since popover_panel_invoke changes CTX_wm_region_popup. */
+  ARegion *region_popup_orig = CTX_wm_region_popup(C);
+
+  ui::PopupBlockHandle *handle = nullptr;
+  wmOperatorStatus status = ui::popover_panel_invoke(C, idname, true, op->reports, &handle);
+
+  if (handle) {
+    handle->is_tear_off = true;
+  }
+
+  /* BFA - Tear-Off Menu/Panel */
+  if (handle && handle->region && handle->region->runtime->uiblocks.first) {
+    ui::Block *block = static_cast<ui::Block *>(handle->region->runtime->uiblocks.first);
+    ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
+    ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
+    ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
+    ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
+  }
+
+  if (handle) {
+    ED_region_tag_refresh_ui(handle->region);
+  }
+
+  /* BFA - Tear-Off Menu/Panel: close the original popover/menu
+   * so it behaves like tear-off menus (original closes when torn off). */
+  if (region_popup_orig) {
+    for (ui::Block &block : region_popup_orig->runtime->uiblocks) {
+      if (block.handle) {
+        block.handle->menuretval = ui::RETURN_CANCEL;
+        break;
+      }
+    }
+  }
+
+  return status;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_panel_tear_off(wmOperatorType *ot)
+{
+  ot->name = "Tear-Off Panel";
+  ot->idname = "WM_OT_panel_tear_off";
+  ot->description = "Tear-Off panel to a persistent floating window";
+
+  ot->exec = wm_panel_tear_off_exec;
+  ot->poll = WM_operator_winactive;
+
+  RNA_def_string(ot->srna, "panel_idname", "Panel", MAX_NAME, "Panel", "");
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static wmOperatorStatus wm_panel_tear_off_close_exec(bContext *C, wmOperator * /*op*/)
+{
+  wmWindow *win = CTX_wm_window(C);
+  if (!win) {
+    return OPERATOR_CANCELLED;
+  }
+
+  ARegion *region = CTX_wm_region_popup(C);
+  if (!region) {
+    return OPERATOR_CANCELLED;
+  }
+
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (handler_base.type == WM_HANDLER_TYPE_UI) {
+      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
+      if (menu && menu->is_tear_off && menu->region == region) {
+        menu->menuretval = ui::RETURN_CANCEL;
+        return OPERATOR_FINISHED;
+      }
+    }
+  }
+
+  return OPERATOR_CANCELLED;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_panel_tear_off_close(wmOperatorType *ot)
+{
+  ot->name = "Close Panel";
+  ot->idname = "WM_OT_panel_tear_off_close";
+  ot->description = "Close the torn-off panel";
+
+  ot->exec = wm_panel_tear_off_close_exec;
+  ot->poll = WM_operator_winactive;
+}
+
+/* -------------------------------------------------------------------- */
 /** \name Console Toggle Operator (WIN32 only)
  * \{ */
 
@@ -4304,6 +4491,10 @@ void wm_operatortypes_register()
   WM_operatortype_append(WM_OT_search_single_menu);
   WM_operatortype_append(WM_OT_call_menu);
   WM_operatortype_append(WM_OT_call_menu_pie);
+  WM_operatortype_append(WM_OT_menu_tear_off); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_menu_tear_off_close); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_panel_tear_off); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_panel_tear_off_close); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_call_panel);
   WM_operatortype_append(WM_OT_call_asset_shelf_popover);
   WM_operatortype_append(WM_OT_radial_control);
