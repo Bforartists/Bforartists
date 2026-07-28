@@ -937,7 +937,7 @@ void do_versions_after_setup(Main *new_bmain,
           /* BFA minimap - enable if not already configured. */
           if ((space_node->gizmo_flag & SNODE_GIZMO_SHOW_MINIMAP) == 0) {
             space_node->minimap_aspect_ratio = 2.0f;
-            space_node->minimap_scale = 2.0f;
+            space_node->minimap_scale = 1.5f;
             space_node->gizmo_flag |= SNODE_GIZMO_SHOW_MINIMAP |
                                       SNODE_GIZMO_MINIMAP_SHOW_NODES_IN_FRAME |
                                       SNODE_GIZMO_MINIMAP_USE_FRAME_COLORS |
