@@ -1401,7 +1401,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
         if context.mode == 'EDIT_MESH':
             layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
             layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
-            layout.operator("transform.shrink_fatten", text="Shrink/Fatten")
+            layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon="SHRINK_FATTEN")
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
             layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops")
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
@@ -5255,7 +5255,7 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_add_object", text="Add Primitive") # BFA - WIP
+        #layout.menu("VIEW3D_MT_add_object", text="Add Primitive") # BFA - Disabled, already in toolshelf
 
         # Add
         props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon="BOX_ADD")
@@ -6015,10 +6015,10 @@ class VIEW3D_MT_pose_slide(Menu):
 
         operator_context = layout.operator_context
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("pose.blend_with_rest", icon="PUSH_POSE")
-        layout.operator("pose.push", icon="POSE_FROM_BREAKDOWN")
-        layout.operator("pose.relax", icon="POSE_RELAX_TO_BREAKDOWN")
-        layout.operator("pose.breakdown", icon="BREAKDOWNER_POSE")
+        layout.operator("pose.blend_with_rest", icon="BLEND_TO_DEFAULT")
+        layout.operator("pose.push", icon="PUSH_POSE", text="Push Pose from Breakdown (Legacy)")
+        layout.operator("pose.relax", icon="RELAX_POSE", text="Relax Pose to Breakdown (Legacy)")
+        layout.operator("pose.breakdown", icon="BREAKDOWNER_POSE", text="Pose Breakdowner (Legacy)")
         layout.operator("pose.blend_to_neighbor", icon="BLEND_TO_NEIGHBOUR")
         layout.operator_context = operator_context
 

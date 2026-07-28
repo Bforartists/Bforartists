@@ -81516,7 +81516,7 @@ msgstr "Spraw, aby obecna poza była bardziej podobna do pozostałych lub bardzi
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Rozbijacz pozy"
 
 
@@ -81749,7 +81749,7 @@ msgstr "Propaguj pozycję do wszystkich klatek kluczowych występujących w klat
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Pchaj pozę z rozbicia"
 
 
@@ -81767,7 +81767,7 @@ msgstr "Odwróć wartości kwaternionów, aby uzyskać pożądane obroty, zachow
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Poza spoczynkowa do załamania"
 
 

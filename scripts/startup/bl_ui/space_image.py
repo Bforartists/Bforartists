@@ -662,6 +662,79 @@ class IMAGE_MT_uvs_merge(Menu):
         layout.operator("uv.remove_doubles", text="By Distance", icon="REMOVE_DOUBLES")
 
 
+# BFA - New menu: Move on Axis split into positive/negative X/Y operators
+class IMAGE_MT_uvs_move(Menu):
+    bl_label = "Move"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = "EXEC_REGION_WIN"
+
+        # Positive
+        layout.label(text="▶ +X")
+        op = layout.operator("uv.move_on_axis", text="  Dynamic Grid", icon="SNAP_GRID")
+        op.type = "DYNAMIC"
+        op.axis = "X"
+        op.distance = 1
+        op = layout.operator("uv.move_on_axis", text="  Pixel", icon="SNAP_TO_PIXELS")
+        op.type = "PIXEL"
+        op.axis = "X"
+        op.distance = 1
+        op = layout.operator("uv.move_on_axis", text="  UDIM", icon="SNAPTOUDIM")
+        op.type = "UDIM"
+        op.axis = "X"
+        op.distance = 1
+
+        layout.separator()
+
+        # Negative
+        layout.label(text="◀ -X")
+        op = layout.operator("uv.move_on_axis", text="  Dynamic Grid", icon="SNAP_GRID")
+        op.type = "DYNAMIC"
+        op.axis = "X"
+        op.distance = -1
+        op = layout.operator("uv.move_on_axis", text="  Pixel", icon="SNAP_TO_PIXELS")
+        op.type = "PIXEL"
+        op.axis = "X"
+        op.distance = -1
+        op = layout.operator("uv.move_on_axis", text="  UDIM", icon="SNAPTOUDIM")
+        op.type = "UDIM"
+        op.axis = "X"
+        op.distance = -1
+
+        layout.separator()
+
+        layout.label(text="▲ +Y")
+        op = layout.operator("uv.move_on_axis", text="  Dynamic Grid", icon="SNAP_GRID")
+        op.type = "DYNAMIC"
+        op.axis = "Y"
+        op.distance = 1
+        op = layout.operator("uv.move_on_axis", text="  Pixel", icon="SNAP_TO_PIXELS")
+        op.type = "PIXEL"
+        op.axis = "Y"
+        op.distance = 1
+        op = layout.operator("uv.move_on_axis", text="  UDIM", icon="SNAPTOUDIM")
+        op.type = "UDIM"
+        op.axis = "Y"
+        op.distance = 1
+
+        layout.separator()
+
+        layout.label(text="▼ -Y")
+        op = layout.operator("uv.move_on_axis", text="  Dynamic Grid", icon="SNAP_GRID")
+        op.type = "DYNAMIC"
+        op.axis = "Y"
+        op.distance = -1
+        op = layout.operator("uv.move_on_axis", text="  Pixel", icon="SNAP_TO_PIXELS")
+        op.type = "PIXEL"
+        op.axis = "Y"
+        op.distance = -1
+        op = layout.operator("uv.move_on_axis", text="  UDIM", icon="SNAPTOUDIM")
+        op.type = "UDIM"
+        op.axis = "Y"
+        op.distance = -1
+
+
 class IMAGE_MT_uvs_split(Menu):
     bl_label = "Split"
 
@@ -771,7 +844,7 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.menu("IMAGE_MT_uvs_align")
-        layout.operator_menu_enum("uv.move_on_axis", "type", text="Move on Axis")
+        layout.menu("IMAGE_MT_uvs_move")
         # layout.menu("IMAGE_MT_uvs_select_mode") # BFA - double as they are in the header
 
         layout.separator()
@@ -2327,6 +2400,7 @@ classes = (
     IMAGE_MT_uvs_mirror,
     IMAGE_MT_uvs_align,
     IMAGE_MT_uvs_merge,
+    IMAGE_MT_uvs_move,  # BFA menu
     IMAGE_MT_uvs_split,
     IMAGE_MT_uvs_unwrap,
     IMAGE_MT_uvs_legacy,  # BFA menu

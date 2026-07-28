@@ -80023,7 +80023,7 @@ msgstr "Làm cho tư thế hiện tại giống hơn, hoặc xa hơn, với tư 
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Máy Phân Tích Tư Thế"
 
 
@@ -80256,7 +80256,7 @@ msgstr "Lan truyền tư thế đến toàn bộ các khung khóa nằm cùng tr
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Cường Điệu Tư Thế từ Dáng Phân Tích"
 
 
@@ -80274,7 +80274,7 @@ msgstr "Bật/tắt các giá trị Quatenion để đạt được sự xoay ch
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Thả Lỏng về Tư Thế Phân Tích"
 
 

@@ -63262,7 +63262,7 @@ msgstr "Fanya mkao wa sasa ufanane zaidi na, au mbali zaidi na, mkao uliobaki"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Pozi Breakdowner"
 
 
@@ -63459,7 +63459,7 @@ msgstr "Weka mkao kwa fremu zote muhimu zinazotokea kwenye fremu zenye Alama za 
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Sukuma Pozi kutoka kwa Kuvunjika"
 
 
@@ -63472,7 +63472,7 @@ msgstr "Geuza thamani za quaternion ili kufikia mizunguko inayotaka, huku ukidum
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Tulia Pozi Kuvunjika"
 
 

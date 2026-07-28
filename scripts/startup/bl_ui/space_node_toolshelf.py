@@ -2019,6 +2019,8 @@ class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeInputCurveTilt", pad=24),
             OperatorEntry("GeometryNodeCurveEndpointSelection", pad=8),
             OperatorEntry("GeometryNodeCurveHandleTypeSelection", pad=2),
+            OperatorEntry("GeometryNodeNURBSOrder", pad=17),
+            OperatorEntry("GeometryNodeNURBSWeight", pad=15),
             OperatorEntry("GeometryNodeInputSplineCyclic", pad=14),
             OperatorEntry("GeometryNodeSplineLength", pad=18),
             OperatorEntry("GeometryNodeSplineParameter", pad=12),
@@ -2215,7 +2217,13 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeInputNamedLayerSelection"),
+            OperatorEntry("GeometryNodeGreasePencilColor", pad=17),
+            OperatorEntry("GeometryNodeGreasePencilDrawTime", pad=12),
+            OperatorEntry("GeometryNodeGreasePencilFillID", pad=16),
+            OperatorEntry("GeometryNodeGreasePencilOpacity", pad=14),
+            OperatorEntry("GeometryNodeGreasePencilStrokeSoftness", pad=4),
+            OperatorEntry("GeometryNodeGreasePencilStrokeVisibility", pad=1),
+            OperatorEntry("GeometryNodeInputNamedLayerSelection", pad=8),
         )
 
         self.draw_entries(context, layout, entries)
@@ -2444,6 +2452,7 @@ class NODES_PT_toolshelf_gn_add_mesh_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeEdgePathsToSelection", pad=0),
             OperatorEntry("GeometryNodeExtrudeMesh", pad=17),
             OperatorEntry("GeometryNodeFlipFaces", pad=23),
+            OperatorEntry("GeometryNodeMeshBevel", pad=22),
             Separator,
             OperatorEntry("GeometryNodeMeshBoolean", pad=16),
             OperatorEntry("GeometryNodeMeshToCurve", pad=15),
@@ -2729,10 +2738,12 @@ class NODES_PT_toolshelf_gn_add_volume_operations(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("GeometryNodeFieldToGrid", pad=23),
             OperatorEntry("GeometryNodeGridClip", pad=29),
+            OperatorEntry("GeometryNodeGridDeactivateVoxels", pad=13),
             OperatorEntry("GeometryNodeGridDilateAndErode", pad=11),
             OperatorEntry("GeometryNodeGridMean", pad=26),
             OperatorEntry("GeometryNodeGridMedian", pad=23),
             OperatorEntry("GeometryNodeGridPrune", pad=25),
+            OperatorEntry("GeometryNodeGridTopologyBoolean", pad=1),
             OperatorEntry("GeometryNodeGridVoxelize", pad=21),
         )
 
@@ -3096,10 +3107,12 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
 
         entries = (
-            OperatorEntry("GeometryNodeFieldToList", pad=8),
-            OperatorEntry("GeometryNodeFilterList", pad=10),
-            OperatorEntry("GeometryNodeListGetItem", pad=8),
-            OperatorEntry("GeometryNodeListLength", pad=10),
+            OperatorEntry("GeometryNodeClosureToList", pad=6),
+            OperatorEntry("GeometryNodeFieldToList", pad=10),
+            OperatorEntry("GeometryNodeFilterList", pad=12),
+            OperatorEntry("GeometryNodeListGetItem", pad=10),
+            OperatorEntry("GeometryNodeListLength", pad=12),
+            OperatorEntry("GeometryNodeSortList", pad=17),
         )
 
         self.draw_entries(context, layout, entries)

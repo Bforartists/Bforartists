@@ -1309,8 +1309,12 @@ class NODE_PT_quality(Panel):
             col.prop(rd, "compositor_precision", text="Precision")
 
         if snode.node_tree_sub_type == 'SCENE':
-            col = layout.column(heading="Cache", align=True)
-            col.prop(rd, "use_compositor_frames_cache", text="Frames")
+            # BFA - label with indented checkbox on its own line
+            col = layout.column(align=True)
+            col.label(text="Cache")
+            row = col.row()
+            row.separator()
+            row.prop(rd, "use_compositor_frames_cache", text="Frames")
 
 
 class NODE_PT_overlay(Panel):

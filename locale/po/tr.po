@@ -65428,7 +65428,7 @@ msgstr "Dinlenme Pozuyla Karıştırma Pozu"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Poz Bozucu"
 
 
@@ -65641,7 +65641,7 @@ msgstr "Pozu seçili tüm anahtar karelere yay"
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Arızadan İtme Pozu"
 
 
@@ -65654,7 +65654,7 @@ msgstr "Aynı yönelimleri korurken, istenilen dönüşleri elde etmek için kua
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Rahatlama Pozu Yıkım İçin"
 
 

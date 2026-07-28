@@ -976,6 +976,7 @@ if(WITH_BLENDER)
       library_data_indirect
       library_data_override
       library_object
+      library_refresh
       light
       light_area
       light_data
@@ -1284,6 +1285,7 @@ if(WITH_BLENDER)
       node_clusterbydistance
       node_clouds
       node_closure
+      node_closuretolist
       node_closure_evaluate
       node_colorbalance
       node_colorcorrection
@@ -1299,6 +1301,7 @@ if(WITH_BLENDER)
       node_cornerpin
       node_crop
       node_curve_time
+      node_deactivate_voxel
       node_defocus
       node_denoise
       node_despeckle
@@ -1330,6 +1333,12 @@ if(WITH_BLENDER)
       node_glasshader
       node_glossyshader
       node_gradient
+      node_gp_color
+      node_gp_drawtime
+      node_gp_fillid
+      node_gp_setcolor
+      node_gp_strokesoftness
+      node_gp_strokevisibility
       node_groupinsert
       node_gridcurl
       node_griddivergence
@@ -1339,6 +1348,7 @@ if(WITH_BLENDER)
       node_gridmean
       node_gridmedian
       node_gridtomesh
+      node_gridtoplogyboolean
       node_grid_info
       node_hairinfo
       node_holdoutshader
@@ -1411,8 +1421,11 @@ if(WITH_BLENDER)
       node_separatexyz
       node_setgridbackground
       node_setgridtransform
+      node_set_nurbs_order
+      node_set_nurbs_weight
       node_side
       node_sky
+      node_sortlist
       node_spill
       node_sss
       node_stabilize2d
@@ -2002,6 +2015,7 @@ if(WITH_BLENDER)
       snaptopixel_center
       snaptopixel_corner
       snaptopixel_off
+      snaptoudim
       solidify
       solo_off
       solo_on

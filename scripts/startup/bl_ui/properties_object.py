@@ -508,10 +508,12 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         layout.use_property_split = True # bfa - this just sets decorators for all the props below, since we internally align left with 6162.
         ob = context.object
 
-        row = layout.row()
-        row.separator()
         # bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
         # col.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
+        col = layout.column(align = True)
+        col.label(text = "Selection")
+        row = col.row()
+        row.separator()
         row.prop(ob, "hide_surface_pick", text="Surface Picking", toggle=False, invert_checkbox=True)
         
         col = layout.column(align = True)
@@ -528,11 +530,17 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
         if context.engine == 'BLENDER_EEVEE':
             if ob.type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'CURVES', 'POINTCLOUD', 'VOLUME'}:
-                layout.separator()
-                col = layout.column(heading="Ray Visibility")
-                col.prop(ob, "visible_camera", text="Camera", toggle=False)
-                col.prop(ob, "visible_shadow", text="Shadow", toggle=False)
-                col.prop(ob, "visible_raycast", text="Raycast", toggle=False)
+                col = layout.column(align = True)
+                col.label(text = "Ray Visibility")
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_camera", text="Camera", toggle=False)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_shadow", text="Shadow", toggle=False)
+                row = col.row()
+                row.separator()
+                row.prop(ob, "visible_raycast", text="Raycast", toggle=False)
 
             if ob.type in {'LIGHT'}:
                 col.label(text = "Ray Visibility")

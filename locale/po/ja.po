@@ -82623,7 +82623,7 @@ msgstr "現在のポーズをレストポーズに似た，またはかけ離れ
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "ポーズの中割"
 
 
@@ -82860,7 +82860,7 @@ msgstr "現在のフレーム以降のシーンマーカーを持つフレーム
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "中割からポーズをプッシュ"
 
 
@@ -82878,7 +82878,7 @@ msgstr "同じ方向を維持しつつ，希望の回転にするためクォー
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "中割にポーズをリラックス"
 
 

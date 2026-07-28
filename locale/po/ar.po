@@ -25513,7 +25513,7 @@ msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻥﺍﺯﻭﺍ ﻭ ﻲﻟﺎﺤﻟﺍ ﺓﺎ�
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "ﺔﻔﻗﻮﻟﺍ ﻞﺼّﻔﻣ"
 
 

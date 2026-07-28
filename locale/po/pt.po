@@ -81523,7 +81523,7 @@ msgstr "Tornar a pose actual mais semelhante ou mais afastada da pode se descans
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Ruptura de poses"
 
 
@@ -81756,7 +81756,7 @@ msgstr "Propaga a pose para todos os fotogramas chave que ocorrem em fotogramas 
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Empurrar pose a partir da Pose de Transição"
 
 
@@ -81774,7 +81774,7 @@ msgstr "Vira os valores de quaterniões para conseguir as rotações desejadas, 
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Relaxar Pose até Pose de Transição"
 
 

@@ -377,6 +377,7 @@ const EnumPropertyItem *rna_region_active_panel_category_itemf(const ARegion *re
     item.value = category_index;
     item.identifier = pc_dyn.idname;
     item.name = pc_dyn.idname;
+    item.icon = pc_dyn.icon; /*BFA - icon to sidebar in projects*/
     RNA_enum_item_add(&items, &totitems, &item);
   }
 

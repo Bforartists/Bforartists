@@ -466,10 +466,10 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
         me = context.mesh
         col = layout.column()
 
-        col.operator("mesh.customdata_mask_clear", icon="X")
-        col.operator("mesh.customdata_face_sets_clear", icon='X')
-        col.operator("mesh.customdata_skin_clear", icon="X")
-        col.operator("mesh.reorder_vertices_spatial")
+        col.operator("mesh.customdata_mask_clear", icon="CLEAR_MASK")
+        col.operator("mesh.customdata_face_sets_clear", icon='CLEAR')
+        col.operator("mesh.customdata_skin_clear", icon="CLEAR")
+        col.operator("mesh.reorder_vertices_spatial", icon="SORTSIZE")
 
         layout.separator()  # BFA
 

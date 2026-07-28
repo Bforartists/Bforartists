@@ -45076,7 +45076,7 @@ msgstr "Numero del fotogramma del keyframe immediatamente prima del fotogramma c
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Posa di Interruzione"
 
 

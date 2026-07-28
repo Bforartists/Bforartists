@@ -34544,7 +34544,7 @@ msgstr "Vorheriges Schlüsselbild"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Markierungen löschen"
 
 

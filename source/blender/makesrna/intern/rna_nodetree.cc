@@ -10653,7 +10653,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeBoundBox", nullptr, ICON_PIVOT_BOUNDBOX);
   define(brna, "GeometryNode", "GeometryNodeCameraInfo", nullptr, ICON_CAMERA_DATA);
   define(brna, "GeometryNode", "GeometryNodeCaptureAttribute", rna_def_geo_capture_attribute, ICON_ATTRIBUTE_CAPTURE);
-  define(brna, "GeometryNode", "GeometryNodeClosureToList", def_geo_closure_to_list, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeClosureToList", def_geo_closure_to_list, ICON_NODE_CLOSURETOLIST);
   define(brna, "GeometryNode", "GeometryNodeClusterByConnected", nullptr, ICON_NODE_CLUSTERBYCONNECTED);
   define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NODE_CLUSTERBYDISTANCE);
   define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_COLLECTION_CHILDREN);
@@ -10715,16 +10715,16 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoTransform", rna_def_geo_gizmo_transform, ICON_TRANSFORM_GIZMO);
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilColor", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilDrawTime", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilFillID", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilOpacity", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeSoftness", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeVisibility", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilColor", nullptr, ICON_NODE_GP_COLOR);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilDrawTime", nullptr, ICON_NODE_GP_DRAWTIME);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilFillID", nullptr, ICON_NODE_GP_FILLID);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilOpacity", nullptr, ICON_GP_OPACITY);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeSoftness", nullptr, ICON_NODE_GP_STROKESOFTNESS);
+  define(brna, "GeometryNode", "GeometryNodeGreasePencilStrokeVisibility", nullptr, ICON_NODE_GP_STROKEVISIBILITY);
   define(brna, "GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
   define(brna, "GeometryNode", "GeometryNodeGridAdvect", nullptr, ICON_NODE_ADVECTGRID);
   define(brna, "GeometryNode", "GeometryNodeGridCurl", nullptr, ICON_NODE_GRIDCURL);
-  define(brna, "GeometryNode", "GeometryNodeGridDeactivateVoxels", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGridDeactivateVoxels", nullptr, ICON_NODE_DEACTIVATE_VOXEL);
   define(brna, "GeometryNode", "GeometryNodeGridDilateAndErode", nullptr, ICON_NODE_GRIDERODE);
   define(brna, "GeometryNode", "GeometryNodeGridDivergence", nullptr, ICON_NODE_GRIDDIVERGENCE);
   define(brna, "GeometryNode", "GeometryNodeGridGradient", nullptr, ICON_NODE_GRIDGRADIENT);
@@ -10736,7 +10736,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridClip", nullptr, ICON_CLIPPINGBORDER);
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NODE_GRIDTOMESH);
   define(brna, "GeometryNode", "GeometryNodeGridToPoints", nullptr, ICON_MESH_TO_POINTS);
-  define(brna, "GeometryNode", "GeometryNodeGridTopologyBoolean", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGridTopologyBoolean", nullptr, ICON_NODE_GRIDTOPLOGYBOOLEAN);
   define(brna, "GeometryNode", "GeometryNodeGridVoxelize", nullptr, ICON_NODE_VOXELIZEGRID);
   define(brna, "GeometryNode", "GeometryNodeImageInfo", nullptr, ICON_IMAGE_INFO);
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);
@@ -10799,7 +10799,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMergeByDistance", nullptr, ICON_REMOVE_DOUBLES);
   define(brna, "GeometryNode", "GeometryNodeMergeLayers", nullptr, ICON_MERGE);
   define(brna, "GeometryNode", "GeometryNodeMergePoints", nullptr, ICON_MERGE_CENTER);
-  define(brna, "GeometryNode", "GeometryNodeMeshBevel", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeMeshBevel", nullptr, ICON_BEVEL);
   define(brna, "GeometryNode", "GeometryNodeMeshBoolean", nullptr, ICON_MOD_BOOLEAN);
   define(brna, "GeometryNode", "GeometryNodeMeshCircle", nullptr, ICON_MESH_CIRCLE);
   define(brna, "GeometryNode", "GeometryNodeMeshCone", nullptr, ICON_MESH_CONE);
@@ -10815,8 +10815,8 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeMeshToSDFGrid", nullptr, ICON_NODE_MESHTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodeMeshToVolume", nullptr, ICON_MESH_TO_VOLUME);
   define(brna, "GeometryNode", "GeometryNodeMeshUVSphere", nullptr, ICON_MESH_UVSPHERE);
-  define(brna, "GeometryNode", "GeometryNodeNURBSOrder", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "GeometryNode", "GeometryNodeNURBSWeight", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeNURBSOrder", nullptr, ICON_NODE_NURBS_ORDER);
+  define(brna, "GeometryNode", "GeometryNodeNURBSWeight", nullptr, ICON_NODE_NURBS_WEIGHT);
   define(brna, "GeometryNode", "GeometryNodeObjectInfo", nullptr, ICON_NODE_OBJECTINFO);
   define(brna, "GeometryNode", "GeometryNodeOffsetCornerInFace", nullptr, ICON_OFFSET_CORNER_IN_FACE);
   define(brna, "GeometryNode", "GeometryNodeOffsetPointInCurve", nullptr, ICON_OFFSET_POINT_IN_CURVE);
@@ -10868,14 +10868,14 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSetMaterial", nullptr, ICON_MATERIAL_ADD);
   define(brna, "GeometryNode", "GeometryNodeSetMaterialIndex", nullptr, ICON_SET_MATERIAL_INDEX);
   define(brna, "GeometryNode", "GeometryNodeSetMeshNormal", nullptr, ICON_SET_SMOOTH);
-  define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NODE_NURBS_ORDER);
-  define(brna, "GeometryNode", "GeometryNodeSetNURBSWeight", nullptr, ICON_NODE_NURBS_WEIGHT);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSOrder", nullptr, ICON_NODE_SET_NURBS_ORDER);
+  define(brna, "GeometryNode", "GeometryNodeSetNURBSWeight", nullptr, ICON_NODE_SET_NURBS_WEIGHT);
   define(brna, "GeometryNode", "GeometryNodeSetPointRadius", nullptr, ICON_SET_CURVE_RADIUS);
   define(brna, "GeometryNode", "GeometryNodeSetPosition", nullptr, ICON_SET_POSITION);
   define(brna, "GeometryNode", "GeometryNodeSetShadeSmooth", nullptr, ICON_SET_SHADE_SMOOTH);
   define(brna, "GeometryNode", "GeometryNodeSetSplineCyclic", nullptr, ICON_TOGGLE_CYCLIC);
   define(brna, "GeometryNode", "GeometryNodeSetSplineResolution", nullptr, ICON_SET_SPLINE_RESOLUTION);
-  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_COLOR);
+  define(brna, "GeometryNode", "GeometryNodeSetGreasePencilColor", nullptr, ICON_NODE_GP_SETCOLOR);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilDepth", nullptr, ICON_DEPTH);
   define(brna, "GeometryNode", "GeometryNodeSetGreasePencilSoftness", nullptr, ICON_FALLOFFSTROKE);
   define(brna, "GeometryNode", "GeometryNodeSetGridBackground", nullptr, ICON_NODE_SETGRIDBACKGROUND);
@@ -10883,7 +10883,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSimulationInput", def_geo_simulation_input, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSimulationOutput", def_geo_simulation_output, ICON_TIME);
   define(brna, "GeometryNode", "GeometryNodeSortElements", nullptr, ICON_SORTSIZE);
-  define(brna, "GeometryNode", "GeometryNodeSortList", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeSortList", nullptr, ICON_NODE_SORTLIST);
   define(brna, "GeometryNode", "GeometryNodeSplineLength", nullptr, ICON_SPLINE_LENGTH);
   define(brna, "GeometryNode", "GeometryNodeSplineParameter", nullptr, ICON_CURVE_PARAMETER);
   define(brna, "GeometryNode", "GeometryNodeSplitEdges", nullptr, ICON_SPLITEDGE);

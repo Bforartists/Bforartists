@@ -53137,7 +53137,7 @@ msgstr "Номер кадру або ключовий кадр безпосер�
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Розбивник пози"
 
 
@@ -53330,7 +53330,7 @@ msgstr "Поширити позу на всі ключові кадри післ
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown"
+msgid "Push Pose from Breakdown (Legacy)"
 msgstr "Штовхнути Позу від Розбивки"
 
 
@@ -53343,7 +53343,7 @@ msgstr "Розвернути значення кватерніона для до
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown"
+msgid "Relax Pose to Breakdown (Legacy)"
 msgstr "Розслабити позу до розбивки"
 
 

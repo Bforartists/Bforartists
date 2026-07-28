@@ -2874,7 +2874,7 @@ static const EnumPropertyItem sequencer_prop_select_by_type_items[] = {
     {SEQ_SELECT_TYPE_EFFECT, "EFFECT", ICON_SHADERFX, "Effect", ""},
     {SEQ_SELECT_TYPE_VISUAL,
      "VISUAL",
-     ICON_BLANK1,
+     ICON_HIDE_OFF,
      "Visual",
      "All strips that can produce an image in the preview, which includes everything but sound "
      "strips"},

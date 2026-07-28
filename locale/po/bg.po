@@ -1767,7 +1767,7 @@ msgstr "Показване"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "Разбивач на Пози"
 
 

@@ -53657,7 +53657,7 @@ msgstr "與目前影格緊鄰的前一個關鍵影格幀號"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner"
+msgid "Pose Breakdowner (Legacy)"
 msgstr "姿勢分解器"
 
 
