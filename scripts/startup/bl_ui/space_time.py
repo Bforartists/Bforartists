@@ -400,7 +400,6 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
     bl_label = "Keyframing Settings"
     bl_options = {"HIDE_HEADER"}
     bl_region_type = "HEADER"
-    bl_ui_units_x = 10
     bl_description = "Active keying set and keyframing settings"
 
     @classmethod
