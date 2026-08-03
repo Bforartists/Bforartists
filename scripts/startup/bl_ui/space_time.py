@@ -156,7 +156,7 @@ def playback_controls(layout, context):
 
         # BFA - Keying set selector and keyframing settings popover in the same row
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
-        if tool_settings and tool_settings.use_keyframe_insert_auto:
+        if tool_settings:
             icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
             row.popover(
                 panel="TIME_PT_keyframing_settings",
@@ -400,6 +400,7 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
     bl_label = "Keyframing Settings"
     bl_options = {"HIDE_HEADER"}
     bl_region_type = "HEADER"
+    bl_ui_units_x = 13
     bl_description = "Active keying set and keyframing settings"
 
     @classmethod
@@ -425,18 +426,28 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
 
         # BFA - keying set search and insert/delete are exposed at the header top level, not here
 
-        # BFA - consolidated auto-keyframing settings, greyed out when auto-key is off
-        layout.active = tool_settings.use_keyframe_insert_auto
+        # BFA - consolidated auto-keyframing settings (hidden when auto-key is off)
+        if tool_settings.use_keyframe_insert_auto:
+            col = layout.column(align=True)
+            col.label(text="Auto Keyframing")
+            row = col.row()
+            row.separator()
+            row.prop(tool_settings, "auto_keying_mode", expand=True, text="Mode")
 
         col = layout.column(align=True)
-        col.label(text="Auto Keyframing")
-        col.prop(tool_settings, "auto_keying_mode", expand=True, text="Mode")
-        col.prop(tool_settings, "use_keyframe_insert_keyingset", text="Only Active Keying Set", toggle=False)
+        col.label(text="Keyframing")
 
         if not prefs.edit.use_keyframe_insert_available:
-            col.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
+            row = col.row()
+            row.separator()
+            row.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
 
-        col.prop(tool_settings, "use_keyframe_cycle_aware")
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_keyframe_insert_keyingset", text="Only Active Keying Set", toggle=False)
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_keyframe_cycle_aware")
 
 
 ############# Panels in sidebar #########################
