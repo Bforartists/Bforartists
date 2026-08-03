@@ -430,9 +430,7 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
         if tool_settings.use_keyframe_insert_auto:
             col = layout.column(align=True)
             col.label(text="Auto Keyframing")
-            row = col.row()
-            row.separator()
-            row.prop(tool_settings, "auto_keying_mode", expand=True, text="Mode")
+            col.prop(tool_settings, "auto_keying_mode", expand=True, text="Mode")
 
         col = layout.column(align=True)
         col.label(text="Keyframing")
