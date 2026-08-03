@@ -22,6 +22,7 @@
 
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
+#include "RNA_path.hh"
 #include "RNA_types.hh"
 #include "rna_internal.hh"
 
@@ -795,6 +796,13 @@ static int rna_Strip_time_editable(const PointerRNA *ptr, const char ** /*r_info
   return strip->is_effect_with_inputs() ? PropertyFlag(0) : PROP_EDITABLE;
 }
 
+static int rna_Strip_retimable(const PointerRNA *ptr, const char ** /*r_info*/)
+{
+  Strip *strip = static_cast<Strip *>(ptr->data);
+  /* Effect strips' start frame and length must be readonly! */
+  return seq::retiming_is_allowed(strip) ? PROP_EDITABLE : PropertyFlag(0);
+}
+
 static void rna_Strip_channel_set(PointerRNA *ptr, int value)
 {
   Strip *strip = static_cast<Strip *>(ptr->data);
@@ -975,7 +983,6 @@ static void rna_Strip_name_set(PointerRNA *ptr, const char *value)
   Scene *scene = id_cast<Scene *>(ptr->owner_id);
   Strip *strip = static_cast<Strip *>(ptr->data);
   char oldname[sizeof(strip->name)];
-  AnimData *adt;
 
   seq::prefetch_stop(scene);
 
@@ -987,26 +994,14 @@ static void rna_Strip_name_set(PointerRNA *ptr, const char *value)
 
   /* make sure the name is unique */
   seq::strip_unique_name_set(scene, &scene->ed->seqbase, strip);
-  /* fix all the animation data which may link to this */
 
-  /* Don't rename everywhere because these are per scene. */
-#  if 0
-  BKE_animdata_fix_paths_rename_all(
-      nullptr, "sequence_editor.strips_all", oldname, strip->name + 2);
-#  endif
-  adt = BKE_animdata_from_id(&scene->id);
-  if (adt) {
-    BKE_animdata_fix_paths_rename(&scene->id,
-                                  adt,
-                                  nullptr,
-                                  "sequence_editor.strips_all",
-                                  oldname,
-                                  strip->name + 2,
-                                  0,
-                                  0,
-                                  /*verify_paths=*/true,
-                                  /*infix_is_name=*/true);
-  }
+  /* Fix all the animation data which may link to this. */
+  BKE_animdata_fix_paths(scene->id,
+                         "sequence_editor.strips_all",
+                         RNA_path_name_to_infix(oldname),
+                         RNA_path_name_to_infix(strip->name + 2),
+                         /*verify_paths=*/true,
+                         *G_MAIN);
 }
 
 static int rna_Strip_text_length(PointerRNA *ptr)
@@ -1648,7 +1643,6 @@ static void rna_StripModifier_name_set(PointerRNA *ptr, const char *value)
   Scene *scene = id_cast<Scene *>(ptr->owner_id);
   Editing *ed = seq::editing_get(scene);
   Strip *strip = strip_get_by_modifier(ed, smd);
-  AnimData *adt;
   char oldname[sizeof(smd->name)];
 
   /* make a copy of the old name first */
@@ -1661,25 +1655,14 @@ static void rna_StripModifier_name_set(PointerRNA *ptr, const char *value)
   seq::modifier_unique_name(strip, smd);
 
   /* fix all the animation data which may link to this */
-  adt = BKE_animdata_from_id(&scene->id);
-  if (adt) {
-    char rna_path_prefix[1024];
-
-    char strip_name_esc[(sizeof(strip->name) - 2) * 2];
-    BLI_str_escape(strip_name_esc, strip->name + 2, sizeof(strip_name_esc));
-
-    SNPRINTF(rna_path_prefix, "sequence_editor.strips_all[\"%s\"].modifiers", strip_name_esc);
-    BKE_animdata_fix_paths_rename(&scene->id,
-                                  adt,
-                                  nullptr,
-                                  rna_path_prefix,
-                                  oldname,
-                                  smd->name,
-                                  0,
-                                  0,
-                                  /*verify_paths=*/true,
-                                  /*infix_is_name=*/true);
-  }
+  std::string rna_path_prefix = fmt::format("sequence_editor.strips_all{}.modifiers",
+                                            RNA_path_name_to_infix(strip->name + 2));
+  BKE_animdata_fix_paths(scene->id,
+                         rna_path_prefix,
+                         RNA_path_name_to_infix(oldname),
+                         RNA_path_name_to_infix(smd->name),
+                         /* verify_paths= */ true,
+                         *G_MAIN);
 }
 
 static void rna_StripModifier_is_active_set(PointerRNA *ptr, bool value)
@@ -1868,7 +1851,7 @@ static void rna_Strip_separate(ID *id, Strip *strip_meta, Main *bmain)
     seq::edit_move_strip_to_seqbase(scene, &strip_meta->seqbase, &strip, seqbase);
   }
 
-  seq::edit_flag_for_removal(scene, seqbase, strip_meta);
+  seq::edit_flag_for_removal(scene, strip_meta);
   seq::edit_remove_flagged_strips(scene, seqbase);
 
   /* Update depsgraph. */
@@ -2629,7 +2612,7 @@ static void rna_def_strip(BlenderRNA *brna)
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.duration'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.duration'.", 501, 600);
 
   prop = RNA_def_property(srna, "duration", PROP_INT, PROP_TIME);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -2647,7 +2630,7 @@ static void rna_def_strip(BlenderRNA *brna)
   RNA_def_property_range(prop, 1, MAXFRAME);
   RNA_def_property_ui_text(
       prop, "Length", "The length of the contents of this strip before the handles are applied");
-  RNA_def_property_deprecated(prop, "Replaced by '.content_duration'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.content_duration'.", 501, 600);
 
   prop = RNA_def_property(srna, "content_duration", PROP_INT, PROP_TIME);
   RNA_def_property_int_funcs(prop, "rna_Strip_content_duration_get", nullptr, nullptr);
@@ -2667,7 +2650,7 @@ static void rna_def_strip(BlenderRNA *brna)
   RNA_def_property_editable_func(prop, "rna_Strip_time_editable");
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.content_start'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.content_start'.", 501, 600);
 
   prop = RNA_def_property(srna, "content_start", PROP_FLOAT, PROP_TIME);
   RNA_def_property_float_sdna(prop, nullptr, "start");
@@ -2704,7 +2687,7 @@ static void rna_def_strip(BlenderRNA *brna)
   /* overlap tests and calc_seq_disp */
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.left_handle'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.left_handle'.", 501, 600);
 
   prop = RNA_def_property(srna, "left_handle", PROP_INT, PROP_TIME);
   RNA_def_property_int_funcs(prop,
@@ -2732,7 +2715,7 @@ static void rna_def_strip(BlenderRNA *brna)
   /* overlap tests and calc_seq_disp */
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.right_handle'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.right_handle'.", 501, 600);
 
   prop = RNA_def_property(srna, "right_handle", PROP_INT, PROP_TIME);
   RNA_def_property_int_funcs(prop,
@@ -2756,7 +2739,7 @@ static void rna_def_strip(BlenderRNA *brna)
   RNA_def_property_float_funcs(
       prop, nullptr, "rna_Strip_left_handle_offset_set", "rna_Strip_left_handle_offset_range");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_frame_change_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.left_handle_offset'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.left_handle_offset'.", 501, 600);
 
   prop = RNA_def_property(srna, "left_handle_offset", PROP_FLOAT, PROP_TIME);
   RNA_def_property_float_sdna(prop, nullptr, "startofs");
@@ -2775,7 +2758,7 @@ static void rna_def_strip(BlenderRNA *brna)
   RNA_def_property_float_funcs(
       prop, nullptr, "rna_Strip_right_handle_offset_set", "rna_Strip_right_handle_offset_range");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_frame_change_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.right_handle_offset'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.right_handle_offset'.", 501, 600);
 
   prop = RNA_def_property(srna, "right_handle_offset", PROP_FLOAT, PROP_TIME);
   RNA_def_property_float_sdna(prop, nullptr, "endofs");
@@ -2848,6 +2831,7 @@ static void rna_def_strip(BlenderRNA *brna)
   rna_def_strip_modifiers(brna, prop);
 
   prop = RNA_def_property(srna, "show_retiming_keys", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_editable_func(prop, "rna_Strip_retimable");
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_SHOW_RETIMING);
   RNA_def_property_ui_text(prop, "Show Retiming Keys", "Show retiming keys, so they can be moved");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
@@ -3199,7 +3183,7 @@ static void rna_def_input(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Animation Start Offset", "Animation start offset (trim start)");
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.content_trim_start'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.content_trim_start'.", 501, 600);
 
   prop = RNA_def_property(srna, "content_trim_start", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, nullptr, "anim_startofs");
@@ -3226,7 +3210,7 @@ static void rna_def_input(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Animation End Offset", "Animation end offset (trim end)");
   RNA_def_property_update(
       prop, NC_SCENE | ND_SEQUENCER, "rna_Strip_invalidate_preprocessed_update");
-  RNA_def_property_deprecated(prop, "Replaced by '.content_trim_end'.", 510, 600);
+  RNA_def_property_deprecated(prop, "Replaced by '.content_trim_end'.", 501, 600);
 
   prop = RNA_def_property(srna, "content_trim_end", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, nullptr, "anim_endofs");

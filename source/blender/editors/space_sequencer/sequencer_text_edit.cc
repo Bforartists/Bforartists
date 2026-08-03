@@ -100,7 +100,6 @@ std::optional<int2> sequencer_text_editing_cursor_region_xy_get(const Scene *sce
         co += float2(0.0f, float(runtime->font_descender));
         co += float2(-scene->r.xsch / 2.0f, -scene->r.ysch / 2.0f);
         co = math::transform_point(seq::image_transform_matrix_get(scene, strip), co);
-        co.x *= scene->r.xasp / scene->r.yasp;
 
         int2 r;
         ui::view2d_view_to_region(&region->v2d, co.x, co.y, &r.x, &r.y);
@@ -903,13 +902,9 @@ static void cursor_set_by_mouse_position(const bContext *C, const wmEvent *event
 
   /* Convert cursor coordinates to domain of CharInfo::position. */
   const float2 view_offs{-scene->r.xsch / 2.0f, -scene->r.ysch / 2.0f};
-  const float view_aspect = scene->r.xasp / scene->r.yasp;
   float3x3 transform_mat = seq::image_transform_matrix_get(CTX_data_sequencer_scene(C), strip);
-  // MSVC 2019 can't decide here for some reason, pick the template for it.
-  transform_mat = math::invert<float, 3>(transform_mat);
 
-  mouse_loc.x /= view_aspect;
-  mouse_loc = math::transform_point(transform_mat, mouse_loc);
+  mouse_loc = math::transform_point(math::invert(transform_mat), mouse_loc);
   mouse_loc -= view_offs;
   data->cursor_offset = find_closest_cursor_offset(data, float2(mouse_loc));
 }

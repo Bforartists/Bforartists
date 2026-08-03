@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'af9ba6af7621')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 07:34+0000\n"
+"POT-Creation-Date: 2026-08-03 07:24+0000\n"
 "PO-Revision-Date: 2025-07-23 15:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -1035,6 +1035,10 @@ msgid "Particles"
 msgstr "Честице"
 
 
+msgid "Project"
+msgstr "Пројекција"
+
+
 msgid "Screens"
 msgstr "Екрани"
 
@@ -1049,6 +1053,10 @@ msgstr "Верзија"
 
 msgid "Window Managers"
 msgstr "Управљачи прозорима"
+
+
+msgid "Dirty"
+msgstr "Прљаво"
 
 
 msgid "Blender RNA"
@@ -2762,10 +2770,6 @@ msgstr "Удаљеност пројекције"
 
 msgid "Nearest Surface Point"
 msgstr "Најближа тачка на површи"
-
-
-msgid "Project"
-msgstr "Пројекција"
 
 
 msgid "Nearest Vertex"
@@ -5787,10 +5791,6 @@ msgid "Generated image width"
 msgstr "Ширина створене слике"
 
 
-msgid "Dirty"
-msgstr "Прљаво"
-
-
 msgid "Image has changed and is not saved"
 msgstr "Слика је промењена, али није сачувана"
 
@@ -8498,6 +8498,22 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
+msgid "Toggle Bone Options"
+msgstr "Мање/више информација"
+
+
+msgid "Enable Bone Options"
+msgstr "Омогући опције костију"
+
+
+msgid "Disable Bone Options"
+msgstr "Онемогући опције костију"
+
+
+msgid "Mesh Select Mode"
+msgstr "Мод избора мреже"
+
+
 msgid "Merge"
 msgstr "Сједини"
 
@@ -8514,16 +8530,16 @@ msgid "Metaball"
 msgstr "Мета лопта"
 
 
-msgid "Math"
-msgstr "Математика"
-
-
 msgid "Names"
 msgstr "Имена"
 
 
 msgid "Bone Roll"
 msgstr "Ролна костију"
+
+
+msgid "Math"
+msgstr "Математика"
 
 
 msgid "Snap"
@@ -8598,10 +8614,6 @@ msgid "Keying"
 msgstr "Збирка тастера"
 
 
-msgid "Tracking"
-msgstr "Праћење"
-
-
 msgid "Clear Transform"
 msgstr "Очисти трансформације"
 
@@ -8610,24 +8622,12 @@ msgid "In-Betweens"
 msgstr "У међувремену"
 
 
+msgid "Tracking"
+msgstr "Праћење"
+
+
 msgid "Propagate"
 msgstr "Пренеси"
-
-
-msgid "Toggle Bone Options"
-msgstr "Мање/више информација"
-
-
-msgid "Enable Bone Options"
-msgstr "Омогући опције костију"
-
-
-msgid "Disable Bone Options"
-msgstr "Онемогући опције костију"
-
-
-msgid "Mesh Select Mode"
-msgstr "Мод избора мреже"
 
 
 msgid "Basic"
@@ -8755,10 +8755,6 @@ msgstr "Секвенцер"
 
 msgid "Inputs"
 msgstr "Улази"
-
-
-msgid "Movie Strip"
-msgstr "Трака филма"
 
 
 msgid "Texture Specials"
@@ -11058,6 +11054,10 @@ msgid "Value to Normal"
 msgstr "Вредност у нормалу"
 
 
+msgid "Scalar"
+msgstr "Скалар"
+
+
 msgid "Name of the socket"
 msgstr "Име утичнице"
 
@@ -11597,11 +11597,6 @@ msgstr "Нервозно"
 
 msgid "Generated"
 msgstr "Генерисано"
-
-
-msgctxt "Operator"
-msgid "Make Markers Local"
-msgstr "Створи везе..."
 
 
 msgctxt "Operator"
@@ -12244,10 +12239,6 @@ msgstr "Филтрирај текстуалне датотеке"
 msgctxt "Operator"
 msgid "Remove Boid State"
 msgstr "Изаберите слику за позадину"
-
-
-msgid "Scalar"
-msgstr "Скалар"
 
 
 msgid "Factor to scale brush size by"
@@ -17539,6 +17530,10 @@ msgid "Set Render Size"
 msgstr "Подеси величину рендеринга"
 
 
+msgid "Markers"
+msgstr "Маркери"
+
+
 msgid "Linked Handle"
 msgstr "Повезана ручка"
 
@@ -17547,24 +17542,12 @@ msgid "Linked Time"
 msgstr "Повезано време"
 
 
-msgid "Global Type"
-msgstr "Општа врста"
+msgid "Movie"
+msgstr "Филм"
 
 
 msgid "Effect"
 msgstr "Ефекат"
-
-
-msgid "Shared effects"
-msgstr "Дељени ефекти"
-
-
-msgid "Effect/Linked"
-msgstr "Повезани ефекти"
-
-
-msgid "Overlap"
-msgstr "Преклапање"
 
 
 msgid "Cache the sound in memory"
@@ -20781,10 +20764,6 @@ msgid "Individual Origins"
 msgstr "Индивидуални центри"
 
 
-msgid "Markers"
-msgstr "Маркери"
-
-
 msgid "Gray Scale"
 msgstr "Сиви тонови"
 
@@ -20801,16 +20780,8 @@ msgid "Slider Max"
 msgstr "Клизач макс."
 
 
-msgid "Maximum for slider"
-msgstr "Максимум клизача"
-
-
 msgid "Slider Min"
 msgstr "Клизач мин."
-
-
-msgid "Minimum for slider"
-msgstr "Минимум клизача"
 
 
 msgid "Handle 1 Location"
@@ -21481,6 +21452,10 @@ msgid "Undistort Clip"
 msgstr "Клип без изобличавања"
 
 
+msgid "Movie Strip"
+msgstr "Трака филма"
+
+
 msgid "Scene Strip"
 msgstr "Трака сцене"
 
@@ -21751,10 +21726,6 @@ msgid "Color of summary channel"
 msgstr "Боја канала резимеа"
 
 
-msgid "Selected File"
-msgstr "Изабрана датотека"
-
-
 msgid "Font Style"
 msgstr "Стил фонта"
 
@@ -21909,10 +21880,6 @@ msgstr "Позадина прегледа"
 
 msgid "Window Background"
 msgstr "Позадина прозора"
-
-
-msgid "Header Text Highlight"
-msgstr "Текст истакнутог наслова"
 
 
 msgid "Text Highlight"
@@ -22610,11 +22577,6 @@ msgid "File:"
 msgstr "Датотека:"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Примени"
-
-
 msgid "Options:"
 msgstr "Опције:"
 
@@ -22794,6 +22756,10 @@ msgstr "Родитељ:"
 
 msgid "Transform:"
 msgstr "Трансформација:"
+
+
+msgid "Overlap"
+msgstr "Преклапање"
 
 
 msgid "Date"
@@ -23771,6 +23737,11 @@ msgstr "Брза измена"
 
 
 msgctxt "Operator"
+msgid "Apply"
+msgstr "Примени"
+
+
+msgctxt "Operator"
 msgid "Apply Camera Image"
 msgstr "Примени слику камере"
 
@@ -24065,10 +24036,6 @@ msgstr "У реду"
 
 msgid "Menu \"%s\" not found"
 msgstr "Није пронађен мени \"%s\""
-
-
-msgid "Movie"
-msgstr "Филм"
 
 
 msgid "Pos"
@@ -24404,10 +24371,6 @@ msgstr "Објекат (задржи трансформацију)"
 
 msgid "No active bone"
 msgstr "Без активне кости"
-
-
-msgid "Editmode lattice is not supported yet"
-msgstr "Формат није подржан у датотеци: \"%s\"."
 
 
 msgid "Vertex group is locked"
@@ -24864,10 +24827,6 @@ msgstr "Тежине темена"
 
 msgid "Object as Camera"
 msgstr "Објекат као камера"
-
-
-msgid "Cannot fly an object with constraints"
-msgstr "Ограничења објекта"
 
 
 msgid "No active camera"

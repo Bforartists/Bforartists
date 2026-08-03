@@ -50,6 +50,7 @@
 #include "BKE_lib_remap.hh"
 #include "BKE_library.hh"
 #include "BKE_main.hh"
+#include "BKE_main_invariants.hh"
 #include "BKE_main_namemap.hh"
 #include "BKE_node.hh"
 #include "BKE_report.hh"
@@ -2881,7 +2882,12 @@ static bool lib_override_library_resync(Main *bmain,
   /* Cleanup, many pointers in this Map are already invalid now. */
   linkedref_to_old_override.clear();
 
-  BKE_id_multi_tagged_delete(bmain, {.prevent_liboverride_hierarchy_root_ensure = true});
+  /* Prevent any expansive update process, as this is a in-progress cleanup,
+   * #lib_override_cleanup_after_resync will ensure that this is called properly at the end of the
+   * whole resync process. */
+  BKE_id_multi_tagged_delete(
+      bmain,
+      {.prevent_liboverride_hierarchy_root_ensure = true, .prevent_invariants_update = true});
 
   /* At this point, `id_root` may have been resynced, therefore deleted. In that case we need to
    * update it to its new version.
@@ -2928,6 +2934,11 @@ static bool lib_override_library_resync(Main *bmain,
 /** Cleanup: Remove unused 'place holder' linked IDs. */
 static void lib_override_cleanup_after_resync(Main *bmain)
 {
+  /* Deletions during the resync itself skip the invariants update. Ensure it happened before
+   * searching for unused IDs, since obsolete node sockets kept alive by an outdated node tree
+   * still count as users of the IDs they reference. */
+  BKE_main_ensure_invariants(*bmain);
+
   LibQueryUnusedIDsData parameters;
   parameters.do_local_ids = true;
   parameters.do_linked_ids = true;
@@ -2984,6 +2995,7 @@ static void lib_override_cleanup_after_resync(Main *bmain)
                parameters.num_total[INDEX_ID_NULL],
                parameters.num_local[INDEX_ID_NULL]);
   }
+  /* Do ensure invariants after deletion here, as this is a final cleanup call. */
   BKE_id_multi_tagged_delete(bmain, {.prevent_liboverride_hierarchy_root_ensure = true});
 }
 
@@ -3777,8 +3789,14 @@ static bool lib_override_library_main_resync_on_library_indirect_level(
   }
   FOREACH_MAIN_ID_END;
 
-  /* Delete 'isolated from root' remaining IDs tagged in above check loop. */
-  BKE_id_multi_tagged_delete(bmain, {.prevent_liboverride_hierarchy_root_ensure = true});
+  /* Delete 'isolated from root' remaining IDs tagged in above check loop.
+   *
+   * Prevent any expansive update process, as this is a in-progress cleanup,
+   * #lib_override_cleanup_after_resync will ensure that this is called properly at the end of the
+   * whole resync process. */
+  BKE_id_multi_tagged_delete(
+      bmain,
+      {.prevent_liboverride_hierarchy_root_ensure = true, .prevent_invariants_update = true});
   BKE_main_id_tag_all(bmain, ID_TAG_DOIT, false);
 
   for (LinkNodePair *pair : id_roots.values()) {

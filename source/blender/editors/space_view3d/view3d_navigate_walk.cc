@@ -20,12 +20,16 @@
 
 #include "BLI_enum_flags.hh"
 #include "BLI_kdopbvh.hh"
+#include "BLI_listbase.hh"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_matrix_c.hh"
+#include "BLI_math_rotation.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
 #include "BLI_time.hh" /* Smooth-view. */
 
+#include "BKE_constraint.h"
 #include "BKE_context.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_report.hh"
@@ -362,7 +366,7 @@ static void drawWalkPixel(const bContext * /*C*/, ARegion *region, void *arg)
 
   if (ED_view3d_cameracontrol_object_get(walk->v3d_camera_control)) {
     ED_view3d_calc_camera_border(
-        walk->scene, walk->depsgraph, region, walk->v3d, walk->rv3d, false, &viewborder);
+        walk->scene, walk->depsgraph, region, walk->v3d, walk->rv3d, false, false, &viewborder);
     xoff = viewborder.xmin + BLI_rctf_size_x(&viewborder) * 0.5f;
     yoff = viewborder.ymin + BLI_rctf_size_y(&viewborder) * 0.5f;
   }
@@ -565,9 +569,14 @@ static bool initWalkInfo(bContext *C, WalkInfo *walk, wmOperator *op, const int 
     return false;
   }
 
-  if (walk->rv3d->persp == RV3D_CAMOB && walk->v3d->camera->constraints.first) {
-    BKE_report(op->reports, RPT_ERROR, "Cannot navigate an object with constraints");
-    return false;
+  if (walk->rv3d->persp == RV3D_CAMOB) {
+    for (const bConstraint &con : walk->v3d->camera->constraints) {
+      if (!BKE_constraint_has_influence(&con)) {
+        continue;
+      }
+      BKE_report(op->reports, RPT_ERROR, "Cannot navigate an object with effective constraints");
+      return false;
+    }
   }
 
   walk->state = WALK_RUNNING;
