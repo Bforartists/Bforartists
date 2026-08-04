@@ -1776,6 +1776,7 @@ if(WITH_BLENDER)
       rimlight
       rip
       rip_fill
+      ripple_delete
       rna
       rndcurve
       roll_left
