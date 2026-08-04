@@ -243,6 +243,7 @@ if(WITH_BLENDER)
       action
       action_replace
       action_replace_new
+      action_replace_duplicate
       action_slot
       action_tweak
       action_tweak_solo
