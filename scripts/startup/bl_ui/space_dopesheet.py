@@ -863,7 +863,7 @@ class DOPESHEET_MT_action(Menu):
         layout.operator("anim.separate_slots", icon="SEPARATE")
         layout.operator("anim.replace_action", icon="ACTION_REPLACE")
         layout.operator("anim.replace_action_new", icon="ACTION_REPLACE_NEW")
-        layout.operator("anim.replace_action_duplicate") # BFA - wip
+        layout.operator("anim.replace_action_duplicate", icon="ACTION_REPLACE_DUPLICATE")
 
         layout.separator()
         layout.operator("anim.slot_channels_move_to_new_action", icon="ACTION_SLOT")
