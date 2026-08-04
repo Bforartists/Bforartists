@@ -43,7 +43,7 @@ class TIME_PT_playhead_snapping(Panel):
 def playback_controls(layout, context):
     st = context.space_data
     is_sequencer = st.type == 'SEQUENCE_EDITOR'
-    is_timeline = st.type == 'DOPESHEET_EDITOR' and st.mode == 'TIMELINE'
+    is_timeline = st.mode == 'TIMELINE'  # BFA
 
     scene = context.scene if not is_sequencer else context.sequencer_scene
     tool_settings = scene.tool_settings if scene else None
@@ -64,6 +64,7 @@ def playback_controls(layout, context):
     layout.separator_spacer()
     # BFA - moved dropdowns to consistently float right
 
+    # BFA - auto-keyframe toggle is intentionally on the RIGHT side of the header, not center
     # Time jump
     row = layout.row(align=True)
     row.operator("screen.time_jump", text="", icon='FRAME_PREV').backward = True
@@ -149,29 +150,24 @@ def playback_controls(layout, context):
             sub.prop(tool_settings, "use_snap_playhead", text="")
             sub.popover(panel="TIME_PT_playhead_snapping", text="")
 
-        # BFA - Auto keyframing toggle
+        # BFA - Auto keyframing toggle (opens consolidated keyframing settings popover)
         row = layout.row(align=True)
-        if tool_settings.use_keyframe_insert_auto:
-            sub = row.row(align=True)
-            sub.popover(panel="TIME_PT_auto_keyframing", text="")
         row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
 
-        # BFA - Keying set selector
+        # BFA - Keying set selector and keyframing settings popover in the same row
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
+        if tool_settings:
+            icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
+            row.popover(
+                panel="TIME_PT_keyframing_settings",
+                text="",
+                icon=icon_keytype,
+            )
 
         if scene:
             layout.popover(
                 panel="TIME_PT_playback",
                 text="Playback",
-            )
-
-        if tool_settings:
-            # BFA - The Keyframe settings are exposed in the Timeline view.
-            icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
-            layout.popover(
-                panel="TIME_PT_keyframing_settings",
-                text_ctxt=i18n_contexts.id_windowmanager,
-                icon=icon_keytype,
             )
 
         # BFA - Make this only show in the timeline editor to not show this in the footer.
@@ -181,7 +177,7 @@ def playback_controls(layout, context):
         # BFA - Power User Tools insert/remove operators
         if not is_timeline:
             wm = context.window_manager
-            if bpy.context.preferences.addons.get("bfa_power_user_tools"):
+            if context.preferences.addons.get("bfa_power_user_tools"):
                 row = layout.row(align=True)
                 if wm.BFA_UI_addon_props.BFA_PROP_toggle_insertframes:
                     row.operator("anim.removeframe_left", text="", icon="PANEL_CLOSE")
@@ -327,95 +323,99 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
         is_sequencer = st.type == "SEQUENCE_EDITOR" and st.view_type == "SEQUENCER"
         scene = context.scene if not is_sequencer else context.sequencer_scene
 
-        col = layout.column(align=True)
-        col.label(text="Audio")
-        row = col.row()
-        row.separator()
-        row.use_property_split = True
-        row.prop(scene, "sync_mode", text="Sync Mode")
-        row = col.row()
-        row.separator()
-        row.prop(scene, "use_audio_scrub", text="Scrubbing")
-        row = col.row()
-        row.separator()
-        row.prop(scene, "use_audio", text="Play Audio")
+        # Timeline settings.
+        header, panel = layout.panel("TIME_PT_playback_timeline")
+        header.label(text="Timeline")
+        if panel:
+            panel.prop(scene, "sync_mode", text="Sync")
 
-        col = layout.column(align=True)
-        col.label(text="Playback")
-        row = col.row()
-        row.separator()
-        row.prop(scene, "lock_frame_selection_to_range", text="Limit to Frame Range")
-        row = col.row()
-        row.active = not scene.lock_frame_selection_to_range
-        row.prop(scene, "allow_preroll")
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_follow", text="Follow Current Frame")
-        row = col.row()
-        row.separator()
-        row.prop(scene, "playback_loop_mode", text="Loop")
+            col = panel.column(heading="Playback")
+            col.prop(scene, "lock_frame_selection_to_range", text="Limit to Frame Range")
+            row = col.row()
+            row.active = not scene.lock_frame_selection_to_range
+            row.prop(scene, "allow_preroll")
+            col.prop(screen, "use_follow", text="Follow Current Frame")
 
-        col = layout.column(align=True)
-        col.label(text="Play in")  # BFA - capitals on prepositions is bad grammar
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_top_left_3d_editor", text="Active Editor")
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_3d_editors", text="3D Viewport")
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_animation_editors", text="Animation Editors")
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_image_editors", text="Image Editor")
-        row = col.row()
-        row.separator()
-        row.prop(
-            screen, "use_play_properties_editors", text="Properties Editor and Sidebars"
-        )  # BFA - changed name, sidebars aren't editors...
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_node_editors", text="Node Editors")
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_sequence_editors", text="Video Sequencer")
-        row = col.row()
-        row.separator()
-        row.prop(screen, "use_play_spreadsheet_editors", text="Spreadsheet")
+            col = panel.column()
+            col.prop(scene, "playback_loop_mode", text="Loop")
+            col.separator()
 
-        col = layout.column()
-        col.prop(scene, "show_subframe", text="Show Subframes")
+            col = panel.column(heading="Show")
+            col.prop(scene, "show_subframe", text="Subframes")
+
+        # Audio settings.
+        header, panel = layout.panel("TIME_PT_playback_audio")
+        header.label(text="Audio")
+        if panel:
+            col = panel.column()
+            col.prop(scene, "use_audio")
+            col.prop(scene, "use_audio_scrub", text="Scrubbing")
+
+        # Region playback settings.
+        header, panel = layout.panel("TIME_PT_playback_editors", default_closed=True)
+        header.label(text="Editors")
+        if panel:
+            col = panel.column(heading="Play in")  # BFA - capitals on prepositions is bad grammar
+            col.prop(screen, "use_play_top_left_3d_editor", text="Active Editor")
+            col.prop(screen, "use_play_3d_editors", text="3D Viewport")
+            col.prop(screen, "use_play_animation_editors", text="Animation Editors")
+            col.prop(screen, "use_play_image_editors", text="Image Editor")
+            col.prop(
+                screen, "use_play_properties_editors", text="Properties Editor and Sidebars"
+            )  # BFA - changed name, sidebars aren't editors...
+            col.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
+            col.prop(screen, "use_play_node_editors", text="Node Editors")
+            col.prop(screen, "use_play_sequence_editors", text="Video Sequencer")
+            col.prop(screen, "use_play_spreadsheet_editors", text="Spreadsheet")
+
+        # BFA - Sequencer sub-panel commented out: use_scene_time_sync is already exposed
+        # in the header via playback_controls(), no need to duplicate in popover.
+        # if st.type == 'SEQUENCE_EDITOR':
+        #     header, panel = layout.panel("TIME_PT_playback_sequencer")
+        #     header.label(text="Sequencer")
+        #     if panel:
+        #         col = panel.column(heading="Sync")
+        #         col.prop(context.workspace, "use_scene_time_sync", text="Scene Time")
+
+        # BFA - start/end frame set operators commented out: already in the header with
+        # SET_POSITION icons inline with the frame range fields, no need to duplicate.
+        # layout.separator()
+        # row = layout.row(align=True)
+        # row.operator("anim.start_frame_set")
+        # row.operator("anim.end_frame_set")
+
+
+class TIME_PT_keyframing(TimelinePanelButtons, Panel):
+    bl_label = "Keyframing"
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 13
+
+    # The actual content is within child sub-panels.
+    def draw(self, _context):
+        pass
 
 
 class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
+    # BFA - standalone popover, not a child of TIME_PT_keyframing
     bl_label = "Keyframing Settings"
     bl_options = {"HIDE_HEADER"}
     bl_region_type = "HEADER"
     bl_description = "Active keying set and keyframing settings"
 
-    def draw_header(self, context):
+    @classmethod
+    def poll(cls, context):
+        # The keyframe settings are not exposed in the Timeline.
         st = context.space_data
         is_sequencer = st.type == "SEQUENCE_EDITOR" and st.view_type == "SEQUENCER"
         scene = context.scene if not is_sequencer else context.sequencer_scene
-        if scene.keying_sets_all.active:
-            self.bl_label = scene.keying_sets_all.active.bl_label
-            if scene.keying_sets_all.active.bl_label in scene.keying_sets:
-                # Do not translate, this keying set is user-defined.
-                self.bl_translation_context = i18n_contexts.no_translation
-            else:
-                # Use the keying set's translation context (default).
-                self.bl_translation_context = scene.keying_sets_all.active.bl_rna.translation_context
-        else:
-            # Use a custom translation context to differentiate from compositing keying.
-            self.bl_label = n_("Keying", i18n_contexts.id_windowmanager)
-            self.bl_translation_context = i18n_contexts.id_windowmanager
+        tool_settings = scene.tool_settings if scene else None
+
+        return tool_settings
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         st = context.space_data
         is_sequencer = st.type == "SEQUENCE_EDITOR" and st.view_type == "SEQUENCER"
@@ -423,20 +423,28 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
         tool_settings = context.tool_settings
         prefs = context.preferences
 
-        col = layout.column(align=True)
-        col.label(text="New Keyframe Type")
-        col.prop(tool_settings, "keyframe_type", text="")
+        # BFA - keying set search and insert/delete are exposed at the header top level, not here
+
+        # BFA - consolidated auto-keyframing settings (hidden when auto-key is off)
+        if tool_settings.use_keyframe_insert_auto:
+            col = layout.column(align=True)
+            col.label(text="Auto Keyframing")
+            col.prop(tool_settings, "auto_keying_mode", expand=True, text="Mode")
 
         col = layout.column(align=True)
-        col.label(text="Auto Keyframing")
-        row = col.row()
-        row.prop(tool_settings, "auto_keying_mode", text="")
-        row.prop(tool_settings, "use_keyframe_insert_keyingset", text="")
+        col.label(text="Keyframing")
 
         if not prefs.edit.use_keyframe_insert_available:
-            layout.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
+            row = col.row()
+            row.separator()
+            row.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
 
-        layout.prop(tool_settings, "use_keyframe_cycle_aware")
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_keyframe_insert_keyingset", text="Only Active Keying Set", toggle=False)
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_keyframe_cycle_aware")
 
 
 ############# Panels in sidebar #########################
@@ -496,30 +504,6 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
             row.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
-class TIME_PT_auto_keyframing(TimelinePanelButtons, Panel):
-    bl_label = "Auto Keyframing"
-    bl_options = {"HIDE_HEADER"}
-    bl_region_type = "HEADER"
-    bl_ui_units_x = 9
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        prefs = context.preferences
-
-        layout.active = tool_settings.use_keyframe_insert_auto
-
-        layout.prop(tool_settings, "auto_keying_mode", expand=True)
-
-        col = layout.column(align=True)
-        col.prop(tool_settings, "use_keyframe_insert_keyingset", text="Only Active Keying Set", toggle=False)
-        if not prefs.edit.use_keyframe_insert_available:
-            col.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
-
-        col.prop(tool_settings, "use_keyframe_cycle_aware")
-
-
 class TIME_PT_jump(TimelinePanelButtons, Panel):
     bl_label = "Time Jump"
     bl_options = {'HIDE_HEADER'}
@@ -546,9 +530,9 @@ classes = (
     TIME_MT_marker,  # BFA - Legacy
     TIME_MT_view,  # BFA - Legacy
     TIME_PT_playback,
+    TIME_PT_keyframing,
     TIME_PT_keyframing_settings,
     TIME_PT_view_view_options,  # BFA - menu
-    TIME_PT_auto_keyframing,
     TIME_PT_jump,
     TIME_PT_playhead_snapping,
 )

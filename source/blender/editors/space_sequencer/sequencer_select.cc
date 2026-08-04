@@ -523,10 +523,10 @@ static void sequencer_select_side_of_frame(const bContext *C,
         if (((x < scene->r.cfra) && (tmarker.frame <= scene->r.cfra)) ||
             ((x >= scene->r.cfra) && (tmarker.frame >= scene->r.cfra)))
         {
-          tmarker.flag |= SEQ_SELECT;
+          tmarker.flag |= SELECT;
         }
         else {
-          tmarker.flag &= ~SEQ_SELECT;
+          tmarker.flag &= ~SELECT;
         }
       }
     }
@@ -2744,7 +2744,7 @@ static bool select_grouped_visual_overlap(const Scene *scene,
     strips_to_select.add(strip);
   }
 
-  seq::iterator_set_expand(ed, strips_to_select, seq::query_strip_effect_chain);
+  seq::expand_strips(ed, strips_to_select, seq::StripRelation::EffectChain);
 
   const bool changed = !strips_to_select.is_empty();
   if (changed) {

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'af9ba6af7621')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 07:34+0000\n"
+"POT-Creation-Date: 2026-08-03 07:24+0000\n"
 "PO-Revision-Date: 2025-07-23 14:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Arabic <https://translate.blender.org/projects/blender-ui/ui/ar/>\n"
@@ -1400,6 +1400,10 @@ msgid "Particles"
 msgstr "ﺕﺎﺌﻳﺰﺟ"
 
 
+msgid "Project"
+msgstr "ﻂﻘﺳﺍ"
+
+
 msgid "Screens"
 msgstr "ﺕﺎﺷﺎﺸﻟﺍ"
 
@@ -1418,6 +1422,10 @@ msgstr "ﺔﺨﺴﻧ"
 
 msgid "Window Managers"
 msgstr "ﺓﺬﻓﺎﻨﻟﺍ ءﺍﺭﺪﻣ"
+
+
+msgid "Dirty"
+msgstr "ﺔﺨﺳﻭ"
 
 
 msgid "Blender RNA"
@@ -4551,10 +4559,6 @@ msgstr "ﺢﻄﺳ ﺔﻄﻘﻧ ﺏﺮﻗﺍ"
 
 msgid "Shrink the location to the nearest target surface"
 msgstr "ﻑﺪﻬﻠﻟ ﺢﻄﺳ ﺏﺮﻗﻻ﻿ ﻊﻗﻮﻤﻟﺍ ﺺﻠﻗ"
-
-
-msgid "Project"
-msgstr "ﻂﻘﺳﺍ"
 
 
 msgid "Shrink the location to the nearest target surface along a given axis"
@@ -8969,14 +8973,6 @@ msgid "Use Front-Face"
 msgstr "ﻲﻣﺎﻣﻻ﻿ﺍ ﻪﺟﻮﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Inverse Smooth Pressure"
-msgstr "ﻢﻴﻌﻨﺘﻟﺍ ﻂﻐﺿ ﺲﻜﻋﺍ"
-
-
-msgid "Lighter pressure causes more smoothing to be applied"
-msgstr "ﻢﻴﻌﻨﺘﻠﻟ ﺮﺜﻛﺍ ﻖﻴﺒﻄﺗ ﺐﺒﺴﻳ ﻒﺧﺍ ﻂﻐﺿ"
-
-
 msgid "Plane Offset Pressure"
 msgstr "ﺢﻄﺴﻟﺍ ﻂﻐﺿ ﺔﺣﺍﺯﺍ"
 
@@ -10443,10 +10439,6 @@ msgstr "ﺽﺮﻌﻟﺍ ﺪﻟّﻭ"
 
 msgid "Generated image width"
 msgstr "ﺪﻟّﻮﻣ ﺓﺭﻮﺻ ﺽﺮﻋ"
-
-
-msgid "Dirty"
-msgstr "ﺔﺨﺳﻭ"
 
 
 msgid "Image has changed and is not saved"
@@ -15672,16 +15664,16 @@ msgid "Metaball"
 msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
 
 
-msgid "Math"
-msgstr "ﺏﺎﺴﺣ"
-
-
 msgid "Names"
 msgstr "ءﺎﻤﺳﺃ"
 
 
 msgid "Bone Roll"
 msgstr "ﺔﻤﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
+
+
+msgid "Math"
+msgstr "ﺏﺎﺴﺣ"
 
 
 msgid "Snap"
@@ -15720,12 +15712,12 @@ msgid "Select More/Less"
 msgstr "ﻞﻗﺍ/ﺮﺜﻛﺍ ﺭﺎﻴﺘﺧﺍ"
 
 
-msgid "UV"
-msgstr "ﺭﻭﺎﺤﻣ"
-
-
 msgid "Select Similar"
 msgstr "ﻞﺛﺎﻤﻤﻟﺍ ﺮﺘﺧﺇ"
+
+
+msgid "UV"
+msgstr "ﺭﻭﺎﺤﻣ"
 
 
 msgid "Select All by Trait"
@@ -15760,12 +15752,12 @@ msgid "Quick Effects"
 msgstr "ﺔﻌﻳﺮﺳ ﺕﺍﺮﻴﺛﺄﺗ"
 
 
-msgid "Layout"
-msgstr "ﻖﻴﺴﻨﺗ"
-
-
 msgid "Make Single User"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺪﻴﺣﻭ ﻪﻠﻌﺟﺍ"
+
+
+msgid "Layout"
+msgstr "ﻖﻴﺴﻨﺗ"
 
 
 msgid "Hooks"
@@ -15776,12 +15768,12 @@ msgid "Keying"
 msgstr "ﺺﺤﻔﻟﺍ"
 
 
-msgid "Tracking"
-msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ"
-
-
 msgid "In-Betweens"
 msgstr "ﻦﻴﺑ ﺎﻣ"
+
+
+msgid "Tracking"
+msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ"
 
 
 msgid "Propagate"
@@ -20052,11 +20044,6 @@ msgstr "ﻲﺋﺎﻬﻧ"
 
 msgid "Generated"
 msgstr "ﺪﻟﻮﺘﻣ"
-
-
-msgctxt "Operator"
-msgid "Make Markers Local"
-msgstr "ﺔﻴﻠﺤﻣ ﺕﺎﻣﻼ﻿ﻌﻟﺍ ﻞﻌﺟﺍ"
 
 
 msgctxt "Operator"
@@ -25332,10 +25319,6 @@ msgid "Weight from Bones"
 msgstr "ﻡﺎﻈﻌﻟﺍ ﻦﻣ ﻥﺍﺯﻭﻷ﻿ﺍ"
 
 
-msgid "Set the weights of the groups matching the attached armature's selected bones, using the distance between the vertices and the bones"
-msgstr "ﻡﺎﻈﻌﻟﺍ ﻭ ﻂﻘﻨﻟﺍ ﻦﻴﺑ ﺔﻓﺎﺴﻤﻟﺍ ﻝﺎﻤﻌﺘﺳﺎﺑ ،ﺔﻄﺒﺗﺮﻤﻟﺍ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻞﻜﻴﻬﻟﺍ ﻡﺎﻈﻌﻟ ﺔﻘﺑﺎﻄﻤﻟﺍ ﺕﺎﻋﻮﻤﺠﻤﻟﺍ ﻥﺍﺯﻭﺃ ﺩﺪﺣ"
-
-
 msgid "Automatic weights from bones"
 msgstr "ﻡﺎﻈﻌﻟﺍ ﻦﻣ ﺔﻴﺗﺍﺫ ﻥﺍﺯﻭﺃ"
 
@@ -26308,8 +26291,8 @@ msgid "Linked Time"
 msgstr "ﻂﺒﺗﺮﻤﻟﺍ ﻦﻣﺰﻟﺍ"
 
 
-msgid "Shared strip effect type (if active strip is not an effect one, select all non-effect strips)"
-msgstr "(ﺕﺍﺮﺛﺆﻤﻟﺍ ﺮﻴﻏ ﻂﺋﺍﺮﺸﻟﺍ ﻞﻛ ﺮﺘﺧﺍ ,ﺕﺍﺮﺛﺆﻣ ﻂﻳﺮﺷ ﺲﻴﻟ ﻝﺎﻌﻔﻟﺍ ﻂﻳﺮﺸﻟﺍ ﻥﺎﻛ ﺍﺫﺍ) ﻙﺮﺘﺸﻤﻟﺍ ﻂﻳﺮﺸﻟﺍ ﺮﻴﺛﺄﺗ ﻉﻮﻧ"
+msgid "Movie"
+msgstr "ﻢﻠﻔﻟﺍ"
 
 
 msgctxt "Operator"
@@ -27955,6 +27938,10 @@ msgstr "ﺮﻇﺎﻨﻤﻟﺍ"
 
 msgid "Note"
 msgstr "ﺔﻈﺣﻼ﻿ﻣ"
+
+
+msgid "Auto Keying"
+msgstr "ﺔﻴﺗﺍﺫ ﺔﻓﺎﺿﺇ"
 
 
 msgid "Playback"
@@ -30997,10 +30984,6 @@ msgid "Slider Max"
 msgstr "ﺔﻘﻟﺰﻤﻟﺍ ﻰﺼﻗﺍ"
 
 
-msgid "Maximum for slider"
-msgstr "ﺔﻘﻟﺰﻤﻟﺍ ﻰﺼﻗﺍ"
-
-
 msgid "Value of shape key at the current frame"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻹ﻿ﺍ ﺪﻨﻋ ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻣ ﺔﻤﻴﻗ"
 
@@ -32148,10 +32131,6 @@ msgid "Theme settings for the File Browser"
 msgstr "ﺕﺎﻔﻠﻤﻟﺍ ﺢﻔﺼﺘﻤﻟ ﻂﻤﻨﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
-msgid "Selected File"
-msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﻒﻠﻤﻟﺍ"
-
-
 msgid "Font Style"
 msgstr "ﻂﺨﻟﺍ ﺏﻮﻠﺳﺍ"
 
@@ -32574,10 +32553,6 @@ msgstr "ﻂﻘﻨﻟﺍ ﺕﺎﻳﺎﻬﻧ ﻂﻘﻓ"
 
 msgid "Only use the first and last parts of the stroke for snapping"
 msgstr "ﺓﺍﺫﺎﺤﻤﻠﻟ ﺔﺒﻄﺸﻠﻟ ءﺍﺰﺟﺍ ﺮﺧﺁ ﻭ ﻝﻭﺍ ﻂﻘﻓ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Auto Keying"
-msgstr "ﺔﻴﺗﺍﺫ ﺔﻓﺎﺿﺇ"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -33403,11 +33378,6 @@ msgstr "ﻖﻴﺛﻮﺘﻟﺍ"
 
 msgid "File:"
 msgstr ":ﻒﻠﻣ"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "ﻖﺒﻃ"
 
 
 msgid "Options:"
@@ -34890,6 +34860,11 @@ msgstr "ﻊﻳﺮﺳ ﻞﻳﺪﻌﺗ"
 
 
 msgctxt "Operator"
+msgid "Apply"
+msgstr "ﻖﺒﻃ"
+
+
+msgctxt "Operator"
 msgid "Apply Camera Image"
 msgstr "ﺍﺮﻤﻛ ﺓﺭﻮﺻ ﻖﺒﻃ"
 
@@ -35017,10 +34992,6 @@ msgid "Plane Track"
 msgstr "ﺢﻄﺴﻤﻟﺍ ﺭﺎﺴﻣ"
 
 
-msgid "unknown error reading file"
-msgstr ".\"%s‬‪\" :ﻞﻴﻤﺤﺗ ءﺎﻨﺛﺃ ﻑﻭﺮﻌﻣ ﺮﻴﻏ ﺄﻄﺧ"
-
-
 msgid "Unable to read"
 msgstr "ﻒﻠﻤﻟﺍ ﺢﺘﻓ ﻰﻠﻋ ﺭﺩﺎﻗ ﺮﻴﻏ"
 
@@ -35034,7 +35005,7 @@ msgstr "ﻒﻠﻤﻟﺍ ﺢﺘﻓ ﻰﻠﻋ ﺭﺩﺎﻗ ﺮﻴﻏ"
 
 
 msgid "Cannot open file %s for writing: %s"
-msgstr ".%s‬\", ‪%s‬‪\" :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
+msgstr ".\"%s\"‬, ‪%s‬‪ :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
 
 
 msgid "Could not connect vertices"
@@ -35302,10 +35273,6 @@ msgstr "ﻉﻮﻄﺴﻟﺍ"
 
 msgid "OK"
 msgstr "ﺎﻨﺴﺣ"
-
-
-msgid "Movie"
-msgstr "ﻢﻠﻔﻟﺍ"
 
 
 msgid "Delete the active position"
@@ -35631,12 +35598,12 @@ msgid "You have to select a string of connected vertices too"
 msgstr "ﺔﻠﺼﺘﻤﻟﺍ UV ـﻟﺍ ﻂﻘﻧ ﻦﻣ ﻞﺴﻠﺴﺗ ﺮﺘﺧﺇ"
 
 
-msgid "Must be in vertex selection mode"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﺭﺎﻴﺘﺧﺍ ﻊﺿﻭ ﻲﻓ ﻥﻮﻜﺗ ﻥﺍ ﺐﺠﻳ"
-
-
 msgid "No edges selected"
 msgstr "ﺓﺭﺎﺘﺨﻣ ﻑﺍﻮﺣ ﺪﺟﻮﻳ ﻻ﻿"
+
+
+msgid "Must be in vertex selection mode"
+msgstr "ﺔﻄﻘﻨﻟﺍ ﺭﺎﻴﺘﺧﺍ ﻊﺿﻭ ﻲﻓ ﻥﻮﻜﺗ ﻥﺍ ﺐﺠﻳ"
 
 
 msgid "Invalid selection order"
@@ -35821,10 +35788,6 @@ msgid "Cannot apply to a multi user armature"
 msgstr "ﻞﻜﻴﻫ ﺊﺸﻧﺍ"
 
 
-msgid "Editmode lattice is not supported yet"
-msgstr ".\"%s‬‪\" :ﻒﻠﻤﻟﺍ ﻲﻓ ﻡﻮﻋﺪﻣ ﺮﻴﻏ ﻖﻴﺴﻨﺘﻟﺍ"
-
-
 msgid "Vertex group is locked"
 msgstr "ﺔﻠﻔﻘﻣ ﺙﺪﺤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
@@ -36006,7 +35969,7 @@ msgstr "ﺓﺮﻛﺍﺬﻠﻟ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺪﻘﻌﻟﺍ ﺦﺴﻧ
 
 
 msgid "Cannot read '%s': %s"
-msgstr ".%s‬\", ‪%s‬‪\" :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
+msgstr ".\"%s\"‬, ‪%s‬‪ :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
 
 
 msgid "No active track to join to"
@@ -36193,10 +36156,6 @@ msgid "Make text internal"
 msgstr "ﻲﻠﺧﺍﺩ ﺺﻨﻟﺍ ﻞﻌﺟﺍ"
 
 
-msgid "unknown error writing file"
-msgstr ".\"%s‬‪\" :ﻞﻴﻤﺤﺗ ءﺎﻨﺛﺃ ﻑﻭﺮﻌﻣ ﺮﻴﻏ ﺄﻄﺧ"
-
-
 msgid "No Recent Files"
 msgstr "ﺔﺜﻳﺪﺣ ﺕﺎﻔﻠﻣ ﻻ﻿"
 
@@ -36321,14 +36280,6 @@ msgid "Vertex Weights"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﺍﺯﻭﺃ"
 
 
-msgid "Cannot fly an object with constraints"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﺩﻮﻴﻗ ﻝﺯﺍ"
-
-
-msgid "Cannot navigate an object with constraints"
-msgstr "ﺩﻮﻴﻘﺑ ﻦﺋﺎﻜﻟﺍ ﺢﻔّﺼﺗ ﻦﻜﻤﻳ ﻻ﻿"
-
-
 msgid "Depth too large"
 msgstr "ﻖﻤﻌﻟﺍ ﺮﻴﻴﻐﺗ"
 
@@ -36418,10 +36369,6 @@ msgid "No valid formats found"
 msgstr "ﻝﻮﺤﺗ ﻥﻭﺪﺑ"
 
 
-msgid "Could not open file for writing"
-msgstr ".%s‬\", ‪%s‬‪\" :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
-
-
 msgid "Keying set path could not be added"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺭﺎﺴﻣ"
 
@@ -36491,7 +36438,7 @@ msgstr "ﺪﻘﻋ ﺓﺮﺠﺷ ﻲﻓ ﺪﻘﻋ ﻦﻴﺑ ﻂﺑﺍﺭ"
 
 
 msgid "Unable to locate socket '%s' in node"
-msgstr "ﺓﺪﻘﻌﻟﺍ ﻲﻓ '%s‬‪' ﺔﺤﺘﻔﻟﺍ ﺪﻳﺪﺤﺗ ﻰﻠﻋ ﺭﺩﺎﻗ ﺮﻴﻏ"
+msgstr "ﺓﺪﻘﻌﻟﺍ ﻲﻓ '%s'‬‪ ﺔﺤﺘﻔﻟﺍ ﺪﻳﺪﺤﺗ ﻰﻠﻋ ﺭﺩﺎﻗ ﺮﻴﻏ"
 
 
 msgid "ShapeKey not found"
@@ -36863,11 +36810,11 @@ msgstr "ﺭﺎﺘﺨﻣ ءﻲﺷ ﻻ﻿"
 
 
 msgid "'%s': nothing indicated"
-msgstr "'‪%s‬': ﺩﺪﺤﻣ ءﻲﺷ ﻻ﻿"
+msgstr "‪'%s'‬: ﺩﺪﺤﻣ ءﻲﺷ ﻻ﻿"
 
 
 msgid "'%s': not a library"
-msgstr "'‪%s‬': ﺔﺒﺘﻜﻣ ﺲﻴﻟ"
+msgstr "‪'%s'‬: ﺔﺒﺘﻜﻣ ﺲﻴﻟ"
 
 
 msgid "unsupported format"
@@ -36888,11 +36835,11 @@ msgstr "ﺔﺿﻭﺮﻌﻤﻟﺍ ﺪﻘﻌﻟﺍ ﺓﺮﺠﺷ"
 
 
 msgid "Cannot read %s '%s': %s"
-msgstr "‬%s‬ '‪%s‬': ‪%s‪ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
+msgstr "‬%s‬ ‪'%s'‬: ‪%s‪ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
 
 
 msgid "%s '%s' not found"
-msgstr "‪%s‬ '‪%s‬' ﺩﻮﺟﻮﻣ ﺮﻴﻏ"
+msgstr "‪%s‬ ‪'%s'‬ ﺩﻮﺟﻮﻣ ﺮﻴﻏ"
 
 
 msgid "Pose Library"

@@ -3942,6 +3942,10 @@ class VIEW3D_MT_object_animation(Menu):
         layout.operator("anim.replace_action_new", icon="ACTION_REPLACE_NEW")
         layout.operator("anim.replace_action_duplicate")
 
+        layout.separator()
+
+        layout.operator("anim.rotation_mode_convert")
+
 
 class VIEW3D_MT_object_rigid_body(Menu):
     bl_label = "Rigid Body"

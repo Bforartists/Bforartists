@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'af9ba6af7621')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 07:34+0000\n"
+"POT-Creation-Date: 2026-08-03 07:24+0000\n"
 "PO-Revision-Date: 2026-07-08 11:12+0000\n"
 "Last-Translator: Timo Hoetmer <timo@timohoetmer.nl>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -5888,16 +5888,16 @@ msgid "Quick Effects"
 msgstr "Snelle Effecten"
 
 
+msgid "Convert"
+msgstr "Converteer"
+
+
 msgid "Linked"
 msgstr "Gekoppeld"
 
 
 msgid "Layout"
 msgstr "Indeling"
-
-
-msgid "Convert"
-msgstr "Converteer"
 
 
 msgid "Hooks"
@@ -5956,6 +5956,10 @@ msgid "Generate"
 msgstr "Genereer"
 
 
+msgid "Save & Load"
+msgstr "Opslaan & Laden"
+
+
 msgid "Select Handle"
 msgstr "Selecteer Handle"
 
@@ -5994,10 +5998,6 @@ msgstr "Herstellen"
 
 msgid "Help"
 msgstr "Help"
-
-
-msgid "Save & Load"
-msgstr "Opslaan & Laden"
 
 
 msgctxt "Operator"
@@ -6596,11 +6596,6 @@ msgstr "Afbreken"
 
 msgid "Generated"
 msgstr "Gegenereerd"
-
-
-msgctxt "Operator"
-msgid "Make Markers Local"
-msgstr "Maak Markeringen Lokaal"
 
 
 msgctxt "Operator"
@@ -8954,6 +8949,10 @@ msgid "Select Handles"
 msgstr "Selecteer Handles"
 
 
+msgid "Movie"
+msgstr "Film"
+
+
 msgctxt "Operator"
 msgid "Select Handle"
 msgstr "Selecteer Handle"
@@ -10311,10 +10310,6 @@ msgid "Summary"
 msgstr "Overzicht"
 
 
-msgid "Selected File"
-msgstr "Geselecteerde Bestand"
-
-
 msgid "Background Type"
 msgstr "Achtergrond Type"
 
@@ -10601,11 +10596,6 @@ msgstr "Documentatie"
 
 msgid "File:"
 msgstr "Bestand:"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Toevoegen"
 
 
 msgid "Options:"
@@ -11818,6 +11808,11 @@ msgid "Quick Edit"
 msgstr "Snel Bewerken"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Toevoegen"
+
+
 msgid "User Library"
 msgstr "Gebruikersbibliotheek"
 
@@ -12003,10 +11998,6 @@ msgstr "Kopieer Alles naar Geselecteerd"
 
 msgid "OK"
 msgstr "OK"
-
-
-msgid "Movie"
-msgstr "Film"
 
 
 msgid "Zoom in"
@@ -12215,6 +12206,10 @@ msgid "Close"
 msgstr "Sluit"
 
 
+msgid "No edges selected"
+msgstr "Geen randen geselecteerd"
+
+
 msgid "No face selected"
 msgstr "Geen vlakken geselecteerd"
 
@@ -12225,10 +12220,6 @@ msgstr "Geen randen geselecteerd"
 
 msgid "No vertex selected"
 msgstr "Geen punten geselecteerd"
-
-
-msgid "No edges selected"
-msgstr "Geen randen geselecteerd"
 
 
 msgid "Use mouse"

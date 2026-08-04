@@ -550,6 +550,9 @@ class SEQUENCER_MT_view(Menu):
         layout.prop(st, "show_toolshelf_tabs")
 
         layout.prop(st, "show_region_footer", text="Playback Controls")
+        col = layout.column()
+        col.prop(st, "show_scrubbing_region", text="Scrubbing")
+        col.enabled = st.show_region_footer
         layout.separator()
 
         layout.menu("SEQUENCER_MT_view_annotations")  # BFA
@@ -1595,9 +1598,12 @@ class SEQUENCER_MT_strip(Menu):
                     layout.menu("SEQUENCER_MT_strip_movie")
                 elif strip_type == "IMAGE":
                     layout.separator()
-                    layout.operator("sequencer.rendersize", icon="RENDER_REGION")
-                    layout.operator("sequencer.images_separate", icon="SEPARATE")
-                elif strip_type == "TEXT":
+                    layout.operator("sequencer.rendersize")
+                    layout.operator("sequencer.images_separate")
+                elif strip_type != 'SOUND':
+                    layout.separator()
+                    layout.operator("sequencer.rendersize")
+                elif strip_type == 'META':
                     layout.separator()
                     layout.menu("SEQUENCER_MT_strip_effect")
                     layout.menu("SEQUENCER_MT_strip_effect_change")
@@ -1831,7 +1837,11 @@ class SEQUENCER_MT_context_menu(Menu):
             elif strip_type == "IMAGE":
                 layout.separator()
                 layout.operator("sequencer.rendersize", icon="RENDER_REGION")
-                layout.operator("sequencer.images_separate", icon="SEPARATE")
+                if has_selection:
+                   layout.operator("sequencer.images_separate", icon="SEPARATE")
+            elif strip_type != 'SOUND':
+                layout.separator()
+                layout.operator("sequencer.rendersize")
             elif strip_type == "TEXT":
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_effect")
