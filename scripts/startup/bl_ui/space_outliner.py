@@ -398,7 +398,7 @@ class OUTLINER_MT_collection(Menu):
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection)
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection).nested = True
         layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon="DUPLICATE")
-        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE") #BFA - exposed hidden operator
+        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE") # BFA - WIP - Make a Duplicate Linked icon #BFA - exposed hidden operator
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
@@ -504,7 +504,7 @@ class OUTLINER_MT_object(Menu):
         layout.separator()
 
         layout.menu("OUTLINER_MT_id_data")
-        
+
         layout.separator()
 
         OUTLINER_MT_context_menu.draw_common_operators(space, layout)
@@ -563,14 +563,14 @@ class OUTLINER_PT_filter(Panel):
     bl_region_type = 'HEADER'
     bl_label = "Options"
 
-    # BFA - Helper method to simplify drawing of properties            
+    # BFA - Helper method to simplify drawing of properties
     @staticmethod
     def draw_prop_row(layout, data, prop_name, text, *, icon=None):
         row = layout.row()
-        
+
         if icon is not None:
             row.label(text='', icon=icon)
-        
+
         row.prop(data, prop_name, text=text)
         return row
 
@@ -579,7 +579,7 @@ class OUTLINER_PT_filter(Panel):
 
         space = context.space_data
         display_mode = space.display_mode
-        
+
         if display_mode == 'VIEW_LAYER':
             layout.label(text="Restriction Toggles")
             row = layout.row(align=True)

@@ -1557,11 +1557,11 @@ class SEQUENCER_MT_strip(Menu):
             layout.operator("sequencer.paste", text="Paste", icon='PASTEDOWN')
             layout.separator()
             layout.operator("sequencer.duplicate_move", text="Duplicate", icon='DUPLICATE')
-            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked")
+            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked", icon="DUPLICATE") # BFA - WIP - Make a Duplicate Linked icon # BFA - WIP - Make a Duplicate Linked icon
 
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
-        layout.operator("sequencer.ripple_delete", text="Ripple Delete") # BFA - WIP
+        layout.operator("sequencer.ripple_delete", text="Ripple Delete", icon="RIPPLE_DELETE")
 
         if strip and strip.type == "SCENE":
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon="DELETE_DUPLICATE").delete_data = True
