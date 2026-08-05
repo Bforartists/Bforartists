@@ -43,7 +43,8 @@ class TIME_PT_playhead_snapping(Panel):
 def playback_controls(layout, context):
     st = context.space_data
     is_sequencer = st.type == 'SEQUENCE_EDITOR'
-    is_timeline = st.mode == 'TIMELINE'  # BFA
+    is_timeline = st.type == 'DOPESHEET_EDITOR' and st.mode == 'TIMELINE'  # BFA
+    is_nla = st.type == 'NLA_EDITOR'  # BFA
 
     scene = context.scene if not is_sequencer else context.sequencer_scene
     tool_settings = scene.tool_settings if scene else None
@@ -127,10 +128,27 @@ def playback_controls(layout, context):
 
         # BFA - Keyframing controls
         row = layout.row(align=True)
-        row.operator("anim.keyframe_insert", text="", icon="KEYFRAMES_INSERT")  # BFA - updated icon
+        # BFA - NLA uses action.keyframe_insert instead of anim.keyframe_insert
+        if is_nla:
+            row.operator("action.keyframe_insert", text="", icon="KEYFRAMES_INSERT")
+        else:
+            row.operator("anim.keyframe_insert", text="", icon="KEYFRAMES_INSERT")
         row.operator(
             "anim.keyframe_delete_v3d", text="", icon="KEYFRAMES_REMOVE"
         )  # BFA - updated to work like it would in the 3D View (as expected)
+
+        # BFA - Auto keyframing toggle (opens consolidated keyframing settings popover)
+        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+
+        # BFA - Keying set selector and keyframing settings popover in the same row
+        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
+        if tool_settings:
+            icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
+            row.popover(
+                panel="TIME_PT_keyframing_settings",
+                text="",
+                icon=icon_keytype,
+            )
 
         # BFA - Grease Pencil mode doesn't need snapping, as it's frame-aligned only
         if is_timeline:
@@ -149,20 +167,6 @@ def playback_controls(layout, context):
             sub = row.row(align=True)
             sub.prop(tool_settings, "use_snap_playhead", text="")
             sub.popover(panel="TIME_PT_playhead_snapping", text="")
-
-        # BFA - Auto keyframing toggle (opens consolidated keyframing settings popover)
-        row = layout.row(align=True)
-        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
-
-        # BFA - Keying set selector and keyframing settings popover in the same row
-        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
-        if tool_settings:
-            icon_keytype = 'KEYTYPE_{:s}_VEC'.format(tool_settings.keyframe_type)
-            row.popover(
-                panel="TIME_PT_keyframing_settings",
-                text="",
-                icon=icon_keytype,
-            )
 
         if scene:
             layout.popover(
@@ -394,12 +398,13 @@ class TIME_PT_keyframing(TimelinePanelButtons, Panel):
     def draw(self, _context):
         pass
 
-
+# BFA - consolidated keyframing settings into a single popover, instead of multiple sub-panels
 class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
     # BFA - standalone popover, not a child of TIME_PT_keyframing
     bl_label = "Keyframing Settings"
     bl_options = {"HIDE_HEADER"}
     bl_region_type = "HEADER"
+    bl_ui_units_x = 12
     bl_description = "Active keying set and keyframing settings"
 
     @classmethod
@@ -426,13 +431,30 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
         # BFA - keying set search and insert/delete are exposed at the header top level, not here
 
         # BFA - consolidated auto-keyframing settings (hidden when auto-key is off)
+        # BFA - Use a manual row to avoid property_split label column stealing space from buttons
         if tool_settings.use_keyframe_insert_auto:
             col = layout.column(align=True)
             col.label(text="Auto Keyframing")
-            col.prop(tool_settings, "auto_keying_mode", expand=True, text="Mode")
+            col.use_property_split = False
+            row = col.row()
+            row.separator()
+            split = row.split(factor=0.3)
+            split.label(text="Mode")
+            split.prop(tool_settings, "auto_keying_mode", text="")
+
+            col.separator()
+            row = col.row()
+            row.separator()
+            row.prop(tool_settings, "use_keyframe_insert_keyingset", text="Only Active Keying Set", icon="KEYINGSET")
 
         col = layout.column(align=True)
         col.label(text="Keyframing")
+
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.label(text="Type")
+        row.prop(tool_settings, "keyframe_type", expand=True, text="")
 
         if not prefs.edit.use_keyframe_insert_available:
             row = col.row()

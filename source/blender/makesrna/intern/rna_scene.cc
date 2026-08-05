@@ -3322,8 +3322,8 @@ static void rna_def_tool_settings(BlenderRNA *brna)
    * exclusive options but which will only have any effect when autokey is enabled
    */
   static const EnumPropertyItem auto_key_items[] = {
-      {AUTOKEY_MODE_NORMAL & ~AUTOKEY_ON, "ADD_REPLACE_KEYS", 0, "Add & Replace", ""},
-      {AUTOKEY_MODE_EDITKEYS & ~AUTOKEY_ON, "REPLACE_KEYS", 0, "Replace", ""},
+      {AUTOKEY_MODE_NORMAL & ~AUTOKEY_ON, "ADD_REPLACE_KEYS", ICON_ADD, "Add & Replace", ""},
+      {AUTOKEY_MODE_EDITKEYS & ~AUTOKEY_ON, "REPLACE_KEYS", ICON_SWAP, "Replace", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
