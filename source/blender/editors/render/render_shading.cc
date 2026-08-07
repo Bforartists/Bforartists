@@ -3249,6 +3249,64 @@ void MATERIAL_OT_open_node_editor(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name BFA - Open World Shader Editor Operator
+ * \{ */
+
+static wmOperatorStatus world_open_node_editor_exec(bContext *C, wmOperator *op)
+{
+  World *wo = static_cast<World *>(
+      CTX_data_pointer_get_type(C, "world", RNA_World).data);
+  if (!wo) {
+    BKE_report(op->reports, RPT_ERROR, "No active world");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!wo->nodetree) {
+    BKE_report(op->reports, RPT_ERROR, "World has no node tree");
+    return OPERATOR_CANCELLED;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Shader Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Shader Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  STRNCPY(snode->tree_idname, "ShaderNodeTree");
+  snode->shaderfrom = SNODE_SHADER_WORLD;
+  snode->selected_node_group = nullptr;
+
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, wo->nodetree, &wo->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  WM_event_add_notifier(C, NC_WORLD | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static bool world_open_node_editor_poll(bContext *C)
+{
+  World *wo = static_cast<World *>(
+      CTX_data_pointer_get_type(C, "world", RNA_World).data);
+  return wo != nullptr && wo->nodetree != nullptr;
+}
+
+void WORLD_OT_open_node_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Shader Editor";
+  ot->idname = "WORLD_OT_open_node_editor";
+  ot->description = "Open a Shader Editor window for this world";
+  ot->exec = world_open_node_editor_exec;
+  ot->poll = world_open_node_editor_poll;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name BFA - Open Texture Node Editor Operator
  * \{ */
 
