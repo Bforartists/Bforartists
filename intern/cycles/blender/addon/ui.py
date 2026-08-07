@@ -1586,6 +1586,12 @@ class CYCLES_PT_context_material(CyclesButtonsPanel, Panel):
                 icon_link = "MESH_DATA" if slot.link == "DATA" else "OBJECT_DATA"
                 row.prop(slot, "link", text="", icon=icon_link, icon_only=True)
 
+            # BFA - Open Shader Editor
+            if mat:
+                col = layout.column(align=True)
+                col.separator()
+                col.operator("material.open_node_editor", icon='NODE_MATERIAL')
+
         elif mat:
             layout.template_ID(space, "pin_id")
             layout.separator()
