@@ -40,6 +40,7 @@ void ED_operatortypes_render()
   /* BFA - Open Node Editor Operators */
   WM_operatortype_append(MATERIAL_OT_open_node_editor);
   WM_operatortype_append(TEXTURE_OT_open_node_editor);
+  WM_operatortype_append(WORLD_OT_open_node_editor);
 
   WM_operatortype_append(MATERIAL_OT_copy);
   WM_operatortype_append(MATERIAL_OT_paste);

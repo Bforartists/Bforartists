@@ -71,6 +71,12 @@ class WORLD_PT_context_world(WorldButtonsPanel, Panel):
         elif world:
             layout.template_ID(space, "pin_id")
 
+        # BFA - Open Shader Editor
+        if world:
+            col = layout.column(align=True)
+            col.separator()
+            col.operator("world.open_node_editor", icon='NODE_MATERIAL')
+
 
 # bfa - move mist panel to view layers
 # class EEVEE_WORLD_PT_mist(WorldButtonsPanel, Panel):
