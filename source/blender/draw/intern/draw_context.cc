@@ -669,8 +669,8 @@ namespace draw {
 static bool supports_handle_ranges(DupliObject *dupli, Object *parent, const DRWContext &draw_ctx)
 {
   int ob_type = dupli->ob_data ? BKE_object_obdata_to_type(dupli->ob_data) : OB_EMPTY;
-  if (!ELEM(ob_type, OB_MESH, OB_CURVES_LEGACY, OB_SURF, OB_FONT, OB_POINTCLOUD, OB_GREASE_PENCIL))
-  {
+  if (!ELEM(ob_type, OB_MESH, OB_CURVES_LEGACY, OB_SURF, OB_FONT, OB_POINTCLOUD)) {
+    /* TODO: Add Grease Pencil support. */
     return false;
   }
 
@@ -698,11 +698,6 @@ static bool supports_handle_ranges(DupliObject *dupli, Object *parent, const DRW
     }
     /* Smoke drawing doesn't support handle ranges. */
     return !BKE_modifiers_findby_type(ob, eModifierType_Fluid);
-  }
-
-  if (ob_type == OB_GREASE_PENCIL) {
-    GreasePencil *grease_pencil = reinterpret_cast<GreasePencil *>(dupli->ob_data);
-    return grease_pencil->flag & GREASE_PENCIL_STROKE_ORDER_3D;
   }
 
   return true;
@@ -1736,7 +1731,7 @@ static bool depsgraph_contains_visible_grease_pencil_geometry(Depsgraph *depsgra
     if (found) {
       return;
     }
-    if (GS(id_eval->name) == ID_OB) {
+    if (id_eval->id_type() == ID_OB) {
       const Object *ob = reinterpret_cast<const Object *>(id_eval);
       const bool is_self_visible = BKE_object_visibility(ob, DAG_EVAL_RENDER) & OB_VISIBLE_SELF;
       const bool contains_grease_pencil_geometry =

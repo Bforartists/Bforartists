@@ -234,8 +234,10 @@ def addon_draw_item_expanded(
     col_b = split.column()
 
     if item_description:
-        col_a.label(
-            text=" {:s}.".format(item_description),
+        col_a_row = col_a.row()
+        col_a_row.separator(factor=0.1)
+        col_a_row.label_multiline(
+            text="{:s}.".format(item_description),
             translate=False,
         )
 
@@ -1507,8 +1509,8 @@ def extension_draw_item(
         row = grid.row()
         row.active = is_enabled
 
-        # The full tagline may be multiple lines (not yet supported by Blender's UI).
-        row.label(text=" {:s}.".format(item.tagline), translate=False)
+        row.separator(factor=0.1)
+        row.label_multiline(text="{:s}.".format(item.tagline), translate=False)
 
         ## BFA - expose uninstall in a consistent way to the addons - START ##
         if is_installed:

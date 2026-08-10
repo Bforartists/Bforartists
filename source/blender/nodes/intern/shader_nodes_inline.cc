@@ -320,7 +320,7 @@ class ShaderNodesInliner {
     };
 
     /* owner_id can be null for DefaultSurfaceNodeTree. */
-    ID_Type tree_type = src_tree_.owner_id ? GS(src_tree_.owner_id->name) : ID_MA;
+    ID_Type tree_type = src_tree_.owner_id ? src_tree_.owner_id->id_type() : ID_MA;
 
     switch (tree_type) {
       case ID_MA:
@@ -565,6 +565,14 @@ class ShaderNodesInliner {
     }
     if (node->is_type("GeometryNodeMenuSwitch"_ustr)) {
       this->handle_output_socket__menu_switch(socket);
+      return;
+    }
+    if (node->is_type("GeometryNodeIndexSwitch"_ustr)) {
+      this->handle_output_socket__index_switch(socket);
+      return;
+    }
+    if (node->is_type("GeometryNodeSwitch"_ustr)) {
+      this->handle_output_socket__switch(socket);
       return;
     }
     if (node->is_type("FunctionNodeInputMenu"_ustr)) {
@@ -1097,6 +1105,267 @@ class ShaderNodesInliner {
     /* Set the value of the mask output. */
     const bool is_selected = selected_index == socket->index() - 1;
     this->store_socket_value(socket, {PrimitiveSocketValue{is_selected}});
+  }
+
+  struct MixNodeInfo {
+    bNode *node = nullptr;
+    bNodeSocket *factor_in = nullptr;
+    bNodeSocket *a_in = nullptr;
+    bNodeSocket *b_in = nullptr;
+    bNodeSocket *result_out = nullptr;
+  };
+
+  MixNodeInfo create_mix_node(const eNodeSocketDatatype socket_type)
+  {
+    MixNodeInfo mix;
+    switch (socket_type) {
+      case SOCK_FLOAT:
+      case SOCK_VECTOR:
+      case SOCK_RGBA: {
+        /* The ShaderNodeMix node uses different socket identifiers based on the data type, so find
+         * the correct socket based on the name instead. */
+        auto find_socket_by_name =
+            [](bNode &node, const eNodeSocketInOut in_out, const StringRef name) -> bNodeSocket * {
+          for (bNodeSocket &socket : in_out == SOCK_IN ? node.inputs : node.outputs) {
+            if (socket.is_available()) {
+              if (socket.name == name) {
+                return &socket;
+              }
+            }
+          }
+          BLI_assert_unreachable();
+          return nullptr;
+        };
+
+        mix.node = this->add_node("ShaderNodeMix"_ustr);
+        auto &mix_storage = *static_cast<NodeShaderMix *>(mix.node->storage);
+        mix_storage.data_type = socket_type;
+        mix_storage.clamp_result = false;
+        /* Use clamping of the mix node to avoid the need for a separate clamp node. */
+        mix_storage.clamp_factor = true;
+        /* This makes the right sockets for the given data type available. */
+        mix.node->typeinfo->updatefunc(&dst_tree_, mix.node);
+        mix.factor_in = find_socket_by_name(*mix.node, SOCK_IN, "Factor");
+        mix.a_in = find_socket_by_name(*mix.node, SOCK_IN, "A");
+        mix.b_in = find_socket_by_name(*mix.node, SOCK_IN, "B");
+        mix.result_out = find_socket_by_name(*mix.node, SOCK_OUT, "Result");
+        break;
+      }
+      case SOCK_SHADER: {
+        mix.node = this->add_node("ShaderNodeMixShader"_ustr);
+        mix.factor_in = static_cast<bNodeSocket *>(mix.node->inputs.first);
+        mix.a_in = mix.factor_in->next;
+        mix.b_in = mix.a_in->next;
+        mix.result_out = static_cast<bNodeSocket *>(mix.node->outputs.first);
+        break;
+      }
+      default: {
+        BLI_assert_unreachable();
+      }
+    }
+    return mix;
+  }
+
+  /**
+   * Returns the socket type that's used internally to emulate switch nodes. Not all types are
+   * natively supported by render engines.
+   */
+  std::optional<eNodeSocketDatatype> get_internal_mix_socket_type(
+      const eNodeSocketDatatype socket_type) const
+  {
+    switch (socket_type) {
+      case SOCK_FLOAT:
+      case SOCK_INT:
+      case SOCK_BOOLEAN:
+        return SOCK_FLOAT;
+      case SOCK_VECTOR:
+        return SOCK_VECTOR;
+      case SOCK_RGBA:
+        return SOCK_RGBA;
+      case SOCK_SHADER:
+        return SOCK_SHADER;
+      default:
+        return std::nullopt;
+    }
+  }
+
+  void handle_output_socket__index_switch(const SocketInContext &socket)
+  {
+    const NodeInContext node = socket.owner_node();
+    const auto &storage = *static_cast<const NodeIndexSwitch *>(node->storage);
+
+    if (storage.items_num == 0) {
+      this->store_socket_value_fallback(socket);
+      return;
+    }
+
+    const SocketInContext index_input = node.input_socket(0);
+    const SocketValue *index_input_value = value_by_socket_.lookup_ptr(index_input);
+    if (!index_input_value) {
+      /* The index is not known yet, so schedule it for now. */
+      this->schedule_socket(index_input);
+      return;
+    }
+
+    if (const std::optional<PrimitiveSocketValue> primitive_index_value_opt =
+            index_input_value->to_primitive(*index_input->typeinfo))
+    {
+      const int index = std::get<int>(primitive_index_value_opt->value);
+      if (index < 0 || index >= storage.items_num) {
+        this->store_socket_value_fallback(socket);
+        params_.r_error_messages.append(
+            {node.node, fmt::format("{}: {}", TIP_("Index out of range"), index)});
+        return;
+      }
+      this->forward_value_or_schedule(socket, node.input_socket(index + 1));
+      return;
+    }
+
+    /* If the index is not a constant value, we immitate the index switch node using a chain of
+     * mix nodes. This allows renderers using the Index Switch node with rendering backends which
+     * don't support it natively. */
+    const std::optional<eNodeSocketDatatype> internal_mix_type =
+        this->get_internal_mix_socket_type(storage.data_type);
+    if (!internal_mix_type) {
+      params_.r_error_messages.append(
+          {node.node, TIP_("Index must be a constant value for this data type")});
+      this->store_socket_value_fallback(socket);
+      return;
+    }
+
+    const EnsureInputsResult ensured_inputs = this->ensure_node_inputs(node);
+    if (ensured_inputs.has_missing_inputs) {
+      /* Wait until all inputs values are available. */
+      return;
+    }
+
+    /* Use a truncate node to turn the input value into an int. */
+    bNode &truncate_math_node = *this->add_node("ShaderNodeMath"_ustr);
+    truncate_math_node.custom1 = NODE_MATH_TRUNC;
+    bNodeSocket &truncate_input = *static_cast<bNodeSocket *>(truncate_math_node.inputs.first);
+    bNodeSocket &truncate_output = *static_cast<bNodeSocket *>(truncate_math_node.outputs.first);
+    this->set_input_socket_value(*node, truncate_math_node, truncate_input, *index_input_value);
+
+    bNode *prev_mix = nullptr;
+    bNodeSocket *prev_mix_result = nullptr;
+    for (const int i : IndexRange(storage.items_num + 1)) {
+      /* Use a math node to turn the index into a factor for the mix node.*/
+      const int index_to_factor_offset = 1 - i;
+
+      bNode *factor_node = nullptr;
+      bNodeSocket *factor_out = nullptr;
+      if (index_to_factor_offset == 0) {
+        /* No need to add an extra math node here that just computes +0. */
+        factor_node = &truncate_math_node;
+        factor_out = &truncate_output;
+      }
+      else {
+        bNode &add_math_node = *this->add_node("ShaderNodeMath"_ustr);
+        add_math_node.custom1 = NODE_MATH_ADD;
+        bNodeSocket &add_in_1 = *static_cast<bNodeSocket *>(add_math_node.inputs.first);
+        bNodeSocket &add_in_2 = *add_in_1.next;
+        bke::node_add_link(
+            dst_tree_, truncate_math_node, truncate_output, add_math_node, add_in_1);
+        static_cast<bNodeSocketValueFloat *>(add_in_2.default_value)->value =
+            index_to_factor_offset;
+        factor_node = &add_math_node;
+        factor_out = static_cast<bNodeSocket *>(add_math_node.outputs.first);
+      }
+
+      const MixNodeInfo mix = this->create_mix_node(*internal_mix_type);
+      bke::node_add_link(dst_tree_, *factor_node, *factor_out, *mix.node, *mix.factor_in);
+      if (i == 0) {
+        this->set_input_socket_value(*node, *mix.node, *mix.a_in, {FallbackValue{}});
+      }
+      else {
+        bke::node_add_link(dst_tree_, *prev_mix, *prev_mix_result, *mix.node, *mix.a_in);
+      }
+      if (i < storage.items_num) {
+        const SocketInContext input_socket = node.input_socket(i + 1);
+        const SocketValue &input_value = value_by_socket_.lookup(input_socket);
+        const SocketValue converted_value = this->handle_implicit_conversion(
+            input_value, *input_socket->typeinfo, *mix.b_in->typeinfo);
+        this->set_input_socket_value(*node, *mix.node, *mix.b_in, converted_value);
+      }
+      else {
+        this->set_input_socket_value(*node, *mix.node, *mix.b_in, {FallbackValue{}});
+      }
+
+      prev_mix = mix.node;
+      prev_mix_result = mix.result_out;
+    }
+
+    this->store_socket_value(socket, {LinkedSocketValue{prev_mix, prev_mix_result}});
+  }
+
+  void handle_output_socket__switch(const SocketInContext &socket)
+  {
+    const NodeInContext node = socket.owner_node();
+    const auto &storage = *static_cast<const NodeSwitch *>(node->storage);
+
+    const SocketInContext switch_input = node.input_socket(0);
+    const SocketValue *switch_input_value = value_by_socket_.lookup_ptr(switch_input);
+    if (!switch_input_value) {
+      /* The switch condition is not known yet, so schedule it for now. */
+      this->schedule_socket(switch_input);
+      return;
+    }
+
+    if (const std::optional<PrimitiveSocketValue> primitive_switch_value_opt =
+            switch_input_value->to_primitive(*switch_input->typeinfo))
+    {
+      const bool condition = std::get<bool>(primitive_switch_value_opt->value);
+      this->forward_value_or_schedule(socket, node.input_socket(condition ? 2 : 1));
+      return;
+    }
+
+    /* If the switch condition is not a constant value, imitate the Switch node using a mix node.
+     * This allows using the Switch node with rendering backends which don't support it natively.
+     */
+    const std::optional<eNodeSocketDatatype> internal_mix_type =
+        this->get_internal_mix_socket_type(storage.input_type);
+    if (!internal_mix_type) {
+      params_.r_error_messages.append(
+          {node.node, TIP_("Switch must be a constant value for this data type")});
+      this->store_socket_value_fallback(socket);
+      return;
+    }
+
+    const EnsureInputsResult ensured_inputs = this->ensure_node_inputs(node);
+    if (ensured_inputs.has_missing_inputs) {
+      /* Wait until all inputs values are available. */
+      return;
+    }
+
+    /* Convert the condition to either 0 or 1 so that it can be used as factor input without
+     * accidentally mixing between the two input values. */
+    bNode &to_bool_math_node = *this->add_node("ShaderNodeMath"_ustr);
+    to_bool_math_node.custom1 = NODE_MATH_GREATER_THAN;
+    bNodeSocket &to_bool_in_1 = *static_cast<bNodeSocket *>(to_bool_math_node.inputs.first);
+    bNodeSocket &to_bool_in_2 = *to_bool_in_1.next;
+    bNodeSocket &to_bool_out = *static_cast<bNodeSocket *>(to_bool_math_node.outputs.first);
+    this->set_input_socket_value(*node, to_bool_math_node, to_bool_in_1, *switch_input_value);
+    static_cast<bNodeSocketValueFloat *>(to_bool_in_2.default_value)->value = 0.0f;
+
+    const MixNodeInfo mix = this->create_mix_node(*internal_mix_type);
+    bke::node_add_link(dst_tree_, to_bool_math_node, to_bool_out, *mix.node, *mix.factor_in);
+
+    const SocketInContext false_input = node.input_socket(1);
+    const SocketInContext true_input = node.input_socket(2);
+    const SocketValue &false_value = value_by_socket_.lookup(false_input);
+    const SocketValue &true_value = value_by_socket_.lookup(true_input);
+    this->set_input_socket_value(*node,
+                                 *mix.node,
+                                 *mix.a_in,
+                                 this->handle_implicit_conversion(
+                                     false_value, *false_input->typeinfo, *mix.a_in->typeinfo));
+    this->set_input_socket_value(
+        *node,
+        *mix.node,
+        *mix.b_in,
+        this->handle_implicit_conversion(true_value, *true_input->typeinfo, *mix.b_in->typeinfo));
+
+    this->store_socket_value(socket, {LinkedSocketValue{mix.node, mix.result_out}});
   }
 
   void handle_output_socket__input_menu(const SocketInContext &socket)

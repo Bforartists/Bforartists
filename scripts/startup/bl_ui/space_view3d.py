@@ -5353,18 +5353,10 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         layout.separator()
 
-        props = layout.operator(
-            "paint.hide_show_polyline_gesture",
-            text="Polyline Hide",
-            icon="POLYLINE_HIDE",
-        )
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide", icon="POLYLINE_HIDE",)
         props.action = "HIDE"
 
-        props = layout.operator(
-            "paint.hide_show_polyline_gesture",
-            text="Polyline Show",
-            icon="POLYLINE_SHOW",
-        )
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show", icon="POLYLINE_SHOW")
         props.action = "SHOW"
 
         layout.separator()
@@ -5381,6 +5373,14 @@ class VIEW3D_MT_sculpt_legacy(Menu):
         layout.separator()
 
         layout.operator("sculpt.project_line_gesture", text="Line Project", icon="LINE_PROJECT")
+
+        layout.separator()
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add") # BFA - WIP
+        props.trim_mode = "JOIN"
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")  # BFA - WIP
+        props.trim_mode = "DIFFERENCE"
 
 
 # bfa menu
@@ -5477,13 +5477,13 @@ class VIEW3D_MT_sculpt_trim(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim")
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim", icon="BOX_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim")
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim", icon="LASSO_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_line_gesture", text="Line Trim")
+        props = layout.operator("sculpt.trim_line_gesture", text="Line Trim", icon="LINE_TRIM")
         props.trim_mode = "DIFFERENCE"
 
         props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")
@@ -5491,10 +5491,10 @@ class VIEW3D_MT_sculpt_trim(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Add")
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon="BOX_ADD")
         props.trim_mode = "JOIN"
 
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add")
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
         props.trim_mode = "JOIN"
 
         props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add")

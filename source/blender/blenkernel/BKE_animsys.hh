@@ -16,6 +16,8 @@
 #include "BLI_string.hh"
 #include "BLI_sys_types.hh" /* for bool */
 
+#include "RNA_path_fwd.hh"
+
 #include <string>
 
 namespace blender {
@@ -127,14 +129,16 @@ void BKE_keyingsets_blend_read_data(BlendDataReader *reader, ListBaseT<KeyingSet
  * This is just an external wrapper for the RNA-Path fixing function,
  * with input validity checks on top of the basic method.
  *
- * \warning If the path fixing was successful, `old_path` will be freed after this function.
- * Always use the returned char * to update whatever was passed in as `old_path`.
+ * \return The new path, to be owned by the caller, or nullptr if the path should not be changed.
  *
  * \note it is assumed that the structure we're replacing is `<prefix><["><name><"]>`
  * i.e. `pose.bones["Bone"]`.
  */
-char *BKE_animsys_fix_rna_path_rename(
-    ID *owner_id, char *old_path, StringRef prefix, StringRefNull old_name, StringRefNull newName);
+char *BKE_animsys_fix_rna_path_rename(ID *owner_id,
+                                      const char *old_path,
+                                      StringRef prefix,
+                                      StringRefNull old_name,
+                                      StringRefNull newName);
 
 /**
  * Fix all the paths for the given ID + Action.
@@ -304,6 +308,10 @@ enum eAnimData_Recalc {
 
 bool BKE_animsys_rna_path_resolve(PointerRNA *ptr,
                                   const char *rna_path,
+                                  int array_index,
+                                  PathResolvedRNA *r_result);
+bool BKE_animsys_rna_path_resolve(PointerRNA *ptr,
+                                  ParsedRNAPathRef rna_path,
                                   int array_index,
                                   PathResolvedRNA *r_result);
 bool BKE_animsys_read_from_rna_path(PathResolvedRNA *anim_rna, float *r_value);
