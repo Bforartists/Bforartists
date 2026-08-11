@@ -132,11 +132,11 @@ bool check_show_strip(const SpaceSeq &sseq)
 
 static bool sequencer_fcurves_targets_color_strip(const FCurve *fcurve)
 {
-  if (!BLI_str_startswith(fcurve->rna_path, "sequence_editor.strips_all[\"")) {
+  if (!fcurve->rna_path().startswith("sequence_editor.strips_all[\"")) {
     return false;
   }
 
-  if (!BLI_str_endswith(fcurve->rna_path, "\"].color")) {
+  if (!fcurve->rna_path().endswith("\"].color")) {
     return false;
   }
 
@@ -348,6 +348,16 @@ static bool sequencer_swap_inputs_poll(bContext *C)
   Scene *scene = CTX_data_sequencer_scene(C);
   Strip *active_strip = seq::select_active_get(scene);
   if (active_strip && active_strip->effect_num_inputs_get() == 2) {
+    const Strip *input1 = active_strip->input1;
+    const Strip *input2 = active_strip->input2;
+    const bool inputs_fully_overlap = input1->left_handle() == input2->left_handle() &&
+                                      input1->right_handle(scene) == input2->right_handle(scene);
+    if (seq::effect_is_transition(active_strip->type) && !inputs_fully_overlap) {
+      CTX_wm_operator_poll_msg_set(C,
+                                   "Transition inputs can only be swapped if the order is "
+                                   "ambiguous (i.e. if inputs fully overlap horizontally)");
+      return false;
+    }
     return true;
   }
 
@@ -601,7 +611,7 @@ void SEQUENCER_OT_gap_insert(wmOperatorType *ot)
 /** \name Snap Strips to the Current Frame Operator
  * \{ */
 
-static int mouse_frame_side_get(View2D *v2d, short mouse_x, int frame)
+static seq::Side mouse_frame_side_get(View2D *v2d, short mouse_x, int frame)
 {
   int mval[2];
   float mouseloc[2];
@@ -612,7 +622,7 @@ static int mouse_frame_side_get(View2D *v2d, short mouse_x, int frame)
   /* Choose the side based on which side of the current frame the mouse is on. */
   ui::view2d_region_to_view(v2d, mval[0], mval[1], &mouseloc[0], &mouseloc[1]);
 
-  return mouseloc[0] > frame ? seq::SIDE_RIGHT : seq::SIDE_LEFT;
+  return mouseloc[0] > frame ? seq::Side::Right : seq::Side::Left;
 }
 
 static wmOperatorStatus sequencer_snap_exec(bContext *C, wmOperator *op)
@@ -623,7 +633,7 @@ static wmOperatorStatus sequencer_snap_exec(bContext *C, wmOperator *op)
   const ListBaseT<SeqTimelineChannel> *channels = seq::channels_displayed_get(ed);
   const bool keep_offset = RNA_boolean_get(op->ptr, "keep_offset");
   const int snap_frame = RNA_int_get(op->ptr, "frame");
-  const int snap_side = RNA_enum_get(op->ptr, "side");
+  const auto snap_side = seq::Side(RNA_enum_get(op->ptr, "side"));
 
   VectorSet<Strip *> selected = seq::query_selected_strips(ed->current_strips());
   selected.remove_if([&](Strip *strip) { return seq::transform_is_locked(channels, strip); });
@@ -636,8 +646,8 @@ static wmOperatorStatus sequencer_snap_exec(bContext *C, wmOperator *op)
    * behavior feels more natural when mouse cursor on the right side of the snap frame means that
    * the whole strip ends up on the right, and left side -> whole strip on the left. */
   auto strip_snap_delta_get = [&](Strip *strip) {
-    return (snap_side == seq::SIDE_RIGHT) ? snap_frame - strip->left_handle() :
-                                            snap_frame - strip->right_handle(scene);
+    return (snap_side == seq::Side::Right) ? snap_frame - strip->left_handle() :
+                                             snap_frame - strip->right_handle(scene);
   };
 
   std::optional<int> group_delta;
@@ -746,15 +756,15 @@ static wmOperatorStatus sequencer_snap_invoke(bContext *C, wmOperator *op, const
   int snap_frame = scene->r.cfra;
   RNA_int_set(op->ptr, "frame", snap_frame);
 
-  int snap_side = RNA_enum_get(op->ptr, "side");
+  auto snap_side = seq::Side(RNA_enum_get(op->ptr, "side"));
   if (ED_operator_sequencer_active(C) && v2d) {
     snap_side = mouse_frame_side_get(v2d, event->mval[0], snap_frame);
   }
   else {
-    snap_side = seq::SIDE_LEFT;
+    snap_side = seq::Side::Left;
   }
 
-  RNA_enum_set(op->ptr, "side", snap_side);
+  RNA_enum_set(op->ptr, "side", int(snap_side));
   return sequencer_snap_exec(C, op);
 }
 
@@ -790,7 +800,7 @@ void SEQUENCER_OT_snap(wmOperatorType *ot)
       ot->srna,
       "side",
       prop_snap_side_types,
-      seq::SIDE_LEFT,
+      int(seq::Side::Left),
       "Snap Side",
       "Which side of the playhead strips should snap to when no handles are selected");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
@@ -957,12 +967,14 @@ static SlipData *slip_data_init(bContext *C, const wmOperator *op, const wmEvent
   data->clamp_warning = false;
   data->can_clamp = false;
 
-  data->clamp = true;
+  const bool clamp_default = (U.sequencer_editor_flag & USER_SEQ_ED_CLAMP_STRIPS_BY_DEFAULT);
+  data->clamp = clamp_default;
+
   for (Strip *strip : strips) {
     strip->runtime->flag |= seq::StripRuntimeFlag::ShowOffsets;
 
     /* If any strips start out with hold offsets visible, disable clamping on initialization. */
-    if (strip->startofs < 0 || strip->end_offset() < 0) {
+    if (clamp_default && (strip->startofs < 0 || strip->end_offset() < 0)) {
       data->clamp = false;
     }
     /* If any strips do not have enough underlying content to
@@ -1707,26 +1719,18 @@ VectorSet<Strip *> strip_effect_get_new_inputs(const Scene *scene,
     inputs.pop();
   }
 
-  if (inputs.size() == 2 && num_inputs == 2) {
+  /* Reorganize inputs before creating effect strip. Note that transition inputs are automatically
+   * swapped after add & during transform by #strip_time_effect_range_set, so ignore that here. */
+  if (inputs.size() == 2 && num_inputs == 2 && !seq::effect_is_transition(effect_type)) {
     Strip *first = inputs[0];
     Strip *second = inputs[1];
-    bool do_swap = false;
-    if (seq::effect_is_transition(effect_type)) {
-      /* Sort by timeline frame so 2-input transitions go "from" earlier "to" later. */
-      const int first_start = first->left_handle();
-      const int second_start = second->left_handle();
-      do_swap = (first_start > second_start) ||
-                (first_start == second_start &&
-                 first->right_handle(scene) > second->right_handle(scene));
-    }
-    else if (first == seq::select_active_get(scene) ||
-             (ignore_active && first->channel < second->channel))
+
+    /* Blend-modes make the active strip the second input. If neither strip is active (as in
+     * reassign inputs), make it the strip on the lower channel. */
+    if (first == seq::select_active_get(scene) ||
+        (ignore_active && first->channel < second->channel))
     {
-      /* Other 2-input effects (blend-modes) make the active strip the second input. If neither
-       * strip is active (as in reassign inputs), make it the strip on the lower channel. */
-      do_swap = true;
-    }
-    if (do_swap) {
+      /* Swap inputs. */
       inputs.clear();
       inputs.add(second);
       inputs.add(first);
@@ -1869,32 +1873,32 @@ static const EnumPropertyItem prop_split_types[] = {
 };
 
 const EnumPropertyItem prop_snap_side_types[] = {
-    {seq::SIDE_LEFT, "LEFT", 0, "Left", ""},
-    {seq::SIDE_RIGHT, "RIGHT", 0, "Right", ""},
+    {int(seq::Side::Left), "LEFT", 0, "Left", ""},
+    {int(seq::Side::Right), "RIGHT", 0, "Right", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 const EnumPropertyItem prop_split_side_types[] = {
-    {seq::SIDE_MOUSE, "MOUSE", 0, "Mouse Position", ""},
-    {seq::SIDE_LEFT, "LEFT", 0, "Left", ""},
-    {seq::SIDE_RIGHT, "RIGHT", 0, "Right", ""},
-    {seq::SIDE_BOTH, "BOTH", 0, "Both", ""},
-    {seq::SIDE_NO_CHANGE, "NO_CHANGE", 0, "No Change", ""},
+    {int(seq::Side::Mouse), "MOUSE", 0, "Mouse Position", ""},
+    {int(seq::Side::Left), "LEFT", 0, "Left", ""},
+    {int(seq::Side::Right), "RIGHT", 0, "Right", ""},
+    {int(seq::Side::Both), "BOTH", 0, "Both", ""},
+    {int(seq::Side::NoChange), "NO_CHANGE", 0, "No Change", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
 /* Get the splitting side for the Split Strips's operator exec() callback. */
-static int sequence_split_side_for_exec_get(wmOperator *op)
+static seq::Side sequence_split_side_for_exec_get(wmOperator *op)
 {
-  const int split_side = RNA_enum_get(op->ptr, "side");
+  const auto split_side = seq::Side(RNA_enum_get(op->ptr, "side"));
 
   /* The mouse position can not be resolved from the exec() as the mouse coordinate is not
    * accessible. So fall-back to the RIGHT side instead.
    *
-   * The seq::SIDE_MOUSE is used by the Strip menu, together with the EXEC_DEFAULT operator
+   * seq::Side::Mouse is used by the Strip menu, together with the EXEC_DEFAULT operator
    * context in order to have properly resolved shortcut in the menu. */
-  if (split_side == seq::SIDE_MOUSE) {
-    return seq::SIDE_RIGHT;
+  if (split_side == seq::Side::Mouse) {
+    return seq::Side::Right;
   }
 
   return split_side;
@@ -1916,7 +1920,7 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
   const int split_channel = RNA_int_get(op->ptr, "channel");
 
   const seq::eSplitMethod method = seq::eSplitMethod(RNA_enum_get(op->ptr, "type"));
-  const int split_side = sequence_split_side_for_exec_get(op);
+  const seq::Side split_side = sequence_split_side_for_exec_get(op);
   const bool ignore_selection = RNA_boolean_get(op->ptr, "ignore_selection");
   const bool ignore_connections = RNA_boolean_get(op->ptr, "ignore_connections");
 
@@ -1964,9 +1968,9 @@ static wmOperatorStatus sequencer_split_exec(bContext *C, wmOperator *op)
       }
     }
     else {
-      if (split_side != seq::SIDE_BOTH) {
+      if (split_side != seq::Side::Both) {
         for (Strip &strip : *seq::active_seqbase_get(ed)) {
-          if (split_side == seq::SIDE_LEFT) {
+          if (split_side == seq::Side::Left) {
             if (strip.left_handle() >= split_frame) {
               strip.flag &= ~STRIP_ALLSEL;
             }
@@ -1994,15 +1998,15 @@ static wmOperatorStatus sequencer_split_invoke(bContext *C, wmOperator *op, cons
   Scene *scene = CTX_data_sequencer_scene(C);
   View2D *v2d = ui::view2d_fromcontext(C);
 
-  int split_side = RNA_enum_get(op->ptr, "side");
+  auto split_side = seq::Side(RNA_enum_get(op->ptr, "side"));
   int split_frame = scene->r.cfra;
 
-  if (split_side == seq::SIDE_MOUSE) {
+  if (split_side == seq::Side::Mouse) {
     if (ED_operator_sequencer_active(C) && v2d) {
       split_side = mouse_frame_side_get(v2d, event->mval[0], split_frame);
     }
     else {
-      split_side = seq::SIDE_BOTH;
+      split_side = seq::Side::Both;
     }
   }
   float mouseloc[2];
@@ -2021,7 +2025,7 @@ static wmOperatorStatus sequencer_split_invoke(bContext *C, wmOperator *op, cons
     RNA_int_set(op->ptr, "channel", mouseloc[1]);
   }
   RNA_int_set(op->ptr, "frame", split_frame);
-  RNA_enum_set(op->ptr, "side", split_side);
+  RNA_enum_set(op->ptr, "side", int(split_side));
   // RNA_enum_set(op->ptr, "type", split_hard);
 
   return sequencer_split_exec(C, op);
@@ -2126,7 +2130,7 @@ void SEQUENCER_OT_split(wmOperatorType *ot)
   prop = RNA_def_enum(ot->srna,
                       "side",
                       prop_split_side_types,
-                      seq::SIDE_MOUSE,
+                      int(seq::Side::Mouse),
                       "Side",
                       "The side that remains selected after splitting");
 
@@ -3198,7 +3202,7 @@ void SEQUENCER_OT_meta_separate(wmOperatorType *ot)
  * \{ */
 
 static bool strip_jump_internal(Scene *scene,
-                                const short side,
+                                const seq::Side side,
                                 const bool do_skip_mute,
                                 const bool do_center)
 {
@@ -3232,7 +3236,7 @@ static wmOperatorStatus sequencer_strip_jump_exec(bContext *C, wmOperator *op)
   const bool center = RNA_boolean_get(op->ptr, "center");
 
   /* Currently do_skip_mute is always true. */
-  if (!strip_jump_internal(scene, next ? seq::SIDE_RIGHT : seq::SIDE_LEFT, true, center)) {
+  if (!strip_jump_internal(scene, next ? seq::Side::Right : seq::Side::Left, true, center)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -3280,8 +3284,8 @@ void SEQUENCER_OT_strip_jump(wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem prop_side_lr_types[] = {
-    {seq::SIDE_LEFT, "LEFT", 0, "Left", ""},
-    {seq::SIDE_RIGHT, "RIGHT", 0, "Right", ""},
+    {int(seq::Side::Left), "LEFT", 0, "Left", ""},
+    {int(seq::Side::Right), "RIGHT", 0, "Right", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -3300,7 +3304,7 @@ static void swap_strips(Scene *scene, Strip *strip_a, Strip *strip_b)
   seq::relations_invalidate_cache(scene, strip_a);
 }
 
-static Strip *find_next_prev_strip(Scene *scene, Strip *test, int lr, int sel)
+static Strip *find_next_prev_strip(Scene *scene, Strip *test, seq::Side lr, int sel)
 {
   /* sel: 0==unselected, 1==selected, -1==don't care. */
   Strip *strip, *best_strip = nullptr;
@@ -3321,15 +3325,17 @@ static Strip *find_next_prev_strip(Scene *scene, Strip *test, int lr, int sel)
       dist = MAXFRAME * 2;
 
       switch (lr) {
-        case seq::SIDE_LEFT:
+        case seq::Side::Left:
           if (strip->right_handle(scene) <= test->left_handle()) {
             dist = test->right_handle(scene) - strip->left_handle();
           }
           break;
-        case seq::SIDE_RIGHT:
+        case seq::Side::Right:
           if (strip->left_handle() >= test->right_handle(scene)) {
             dist = strip->left_handle() - test->right_handle(scene);
           }
+          break;
+        default:
           break;
       }
 
@@ -3359,7 +3365,7 @@ static wmOperatorStatus sequencer_swap_exec(bContext *C, wmOperator *op)
   Strip *active_strip = seq::select_active_get(scene);
   ListBaseT<Strip> *seqbase = seq::active_seqbase_get(ed);
   Strip *strip;
-  int side = RNA_enum_get(op->ptr, "side");
+  auto side = seq::Side(RNA_enum_get(op->ptr, "side"));
 
   if (active_strip == nullptr) {
     return OPERATOR_CANCELLED;
@@ -3388,11 +3394,13 @@ static wmOperatorStatus sequencer_swap_exec(bContext *C, wmOperator *op)
     }
 
     switch (side) {
-      case seq::SIDE_LEFT:
+      case seq::Side::Left:
         swap_strips(scene, strip, active_strip);
         break;
-      case seq::SIDE_RIGHT:
+      case seq::Side::Right:
         swap_strips(scene, active_strip, strip);
+        break;
+      default:
         break;
     }
 
@@ -3419,10 +3427,10 @@ static wmOperatorStatus sequencer_swap_exec(bContext *C, wmOperator *op)
 /*bfa - tool name*/
 static std::string SEQUENCER_OT_swap_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
-  if (RNA_enum_get(ptr, "side") == seq::SIDE_RIGHT) {
+  if (RNA_enum_get(ptr, "side") == int(seq::Side::Right)) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Right");
   }
-  if (RNA_enum_get(ptr, "side") == seq::SIDE_LEFT) {
+  if (RNA_enum_get(ptr, "side") == int(seq::Side::Left)) {
     return CTX_IFACE_(ot->translation_context, "Swap Strip Left");
   }
   return "";
@@ -3434,11 +3442,11 @@ static std::string SEQUENCER_OT_swap_get_description(bContext * /*C*/,
                                                      PointerRNA *ptr)
 {
   /*Select*/
-  if (RNA_enum_get(ptr, "side") == seq::SIDE_RIGHT) {
+  if (RNA_enum_get(ptr, "side") == int(seq::Side::Right)) {
     return "Swap active strip with strip to the right";
   }
   /*Deselect*/
-  if (RNA_enum_get(ptr, "side") == seq::SIDE_LEFT) {
+  if (RNA_enum_get(ptr, "side") == int(seq::Side::Left)) {
     return "Swap active strip with strip to the left";
   }
   return "";
@@ -3461,8 +3469,12 @@ void SEQUENCER_OT_swap(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* Properties. */
-  RNA_def_enum(
-      ot->srna, "side", prop_side_lr_types, seq::SIDE_RIGHT, "Side", "Side of the strip to swap");
+  RNA_def_enum(ot->srna,
+               "side",
+               prop_side_lr_types,
+               int(seq::Side::Right),
+               "Side",
+               "Side of the strip to swap");
 }
 
 /** \} */

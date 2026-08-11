@@ -887,6 +887,7 @@ if(WITH_BLENDER)
       imgdisplay
       implicit_conversion
       import
+      import_export
       inc_contrast
       increase_kerning
       indent
@@ -899,8 +900,8 @@ if(WITH_BLENDER)
       info
       input_bool
       inset_faces
-	  instances_to_points
-	  instance_bounds
+      instances_to_points
+      instance_bounds
       instance_rotate
       instance_scale
       instance_transform

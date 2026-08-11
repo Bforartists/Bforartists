@@ -407,7 +407,7 @@ static void split_libdata(ListBaseT<ID> *lb_src,
       if (uint(id->lib->runtime->temp_index) < lib_main_array.size()) {
         Main *mainvar = lib_main_array[id->lib->runtime->temp_index];
         BLI_assert(mainvar->curlib == id->lib);
-        ListBaseT<ID> *lb_dst = which_libbase(mainvar, GS(id->name));
+        ListBaseT<ID> *lb_dst = which_libbase(mainvar, id->id_type());
         BLI_remlink(lb_src, id);
         BLI_addtail(lb_dst, id);
       }
@@ -467,7 +467,7 @@ void blo_split_main(Main *bmain, const bool do_split_packed_ids)
   i = lbarray.size();
   while (i--) {
     ID *id = static_cast<ID *>(lbarray[i]->first);
-    if (id == nullptr || GS(id->name) == ID_LI) {
+    if (id == nullptr || id->id_type() == ID_LI) {
       /* No ID_LI data-block should ever be linked anyway, but just in case, better be explicit. */
       continue;
     }
@@ -1032,7 +1032,7 @@ static void long_id_names_process_action_slots_identifiers(Main *bmain)
 
   ID *id_iter;
   FOREACH_MAIN_ID_BEGIN (bmain, id_iter) {
-    switch (GS(id_iter->name)) {
+    switch (id_iter->id_type()) {
       case ID_AC: {
         bool has_truncated_slot_identifier = false;
         bAction *act = reinterpret_cast<bAction *>(id_iter);
@@ -1498,7 +1498,7 @@ static void change_link_placeholder_to_real_ID_pointer_fd(FileData *fd,
     if (old == entry.newp && entry.nr == ID_LINK_PLACEHOLDER) {
       entry.newp = newp;
       if (newp) {
-        entry.nr = GS(((ID *)newp)->name);
+        entry.nr = ((ID *)newp)->id_type();
       }
     }
   }
@@ -1515,7 +1515,7 @@ static void change_ID_pointer_to_real_ID_pointer_fd(FileData *fd, const void *ol
       BLI_assert(BKE_idtype_idcode_is_valid(short(entry.nr)));
       entry.newp = newp;
       if (newp) {
-        entry.nr = GS(((ID *)newp)->name);
+        entry.nr = ((ID *)newp)->id_type();
       }
     }
   }
@@ -1998,7 +1998,7 @@ static void after_liblink_id_embedded_id_process(BlendLibReader *reader, ID *id)
     }
   }
 
-  if (GS(id->name) == ID_SCE) {
+  if (id->id_type() == ID_SCE) {
     Scene *scene = id_cast<Scene *>(id);
     if (scene->master_collection != nullptr) {
       after_liblink_id_process(reader, &scene->master_collection->id);
@@ -2023,7 +2023,7 @@ static void after_liblink_id_embedded_id_process(BlendLibReader *reader, ID *id)
 static void after_liblink_id_process(BlendLibReader *reader, ID *id)
 {
   /* NOTE: WM IDProperties are never written to file, hence they should always be nullptr here. */
-  BLI_assert((GS(id->name) != ID_WM) || id->properties == nullptr);
+  BLI_assert((id->id_type() != ID_WM) || id->properties == nullptr);
 
   after_liblink_id_embedded_id_process(reader, id);
 
@@ -2056,7 +2056,7 @@ static void direct_link_id_common(BlendDataReader *reader,
                                   Library *current_library,
                                   ID *id,
                                   ID *id_old,
-                                  int id_tag,
+                                  eID_Tag id_tag,
                                   ID_Readfile_Data::Tags id_read_tags);
 
 static void direct_link_id_embedded_id(BlendDataReader *reader,
@@ -2065,7 +2065,7 @@ static void direct_link_id_embedded_id(BlendDataReader *reader,
                                        ID *id_old)
 {
   /* Handle 'private IDs'. */
-  if (GS(id->name) == ID_SCE) {
+  if (id->id_type() == ID_SCE) {
     Scene *scene = id_cast<Scene *>(id);
     if (scene->compositing_node_group) {
       /* If `scene->compositing_node_group != nullptr`, then this means the blend file was created
@@ -2077,7 +2077,7 @@ static void direct_link_id_embedded_id(BlendDataReader *reader,
   bNodeTree **nodetree = bke::node_tree_ptr_from_id(id);
   if (nodetree != nullptr && *nodetree != nullptr) {
     BLO_read_struct(reader, bNodeTree, nodetree);
-    if (!*nodetree || !BKE_idtype_idcode_is_valid(GS((*nodetree)->id.name))) {
+    if (!*nodetree || !BKE_idtype_idcode_is_valid((*nodetree)->id.id_type())) {
       BLO_reportf_wrap(
           reader->fd->reports,
           RPT_ERROR,
@@ -2091,18 +2091,18 @@ static void direct_link_id_embedded_id(BlendDataReader *reader,
                             id_cast<ID *>(*nodetree),
                             id_old != nullptr ? id_cast<ID *>(bke::node_tree_from_id(id_old)) :
                                                 nullptr,
-                            0,
+                            {},
                             ID_Readfile_Data::Tags{});
       bke::node_tree_blend_read_data(reader, id, *nodetree);
     }
   }
 
-  if (GS(id->name) == ID_SCE) {
+  if (id->id_type() == ID_SCE) {
     Scene *scene = id_cast<Scene *>(id);
     if (scene->master_collection != nullptr) {
       BLO_read_struct(reader, Collection, &scene->master_collection);
       if (!scene->master_collection ||
-          !BKE_idtype_idcode_is_valid(GS(scene->master_collection->id.name)))
+          !BKE_idtype_idcode_is_valid(scene->master_collection->id.id_type()))
       {
         BLO_reportf_wrap(
             reader->fd->reports,
@@ -2117,7 +2117,7 @@ static void direct_link_id_embedded_id(BlendDataReader *reader,
             current_library,
             &scene->master_collection->id,
             id_old != nullptr ? &(id_cast<Scene *>(id_old))->master_collection->id : nullptr,
-            0,
+            {},
             ID_Readfile_Data::Tags{});
         BKE_collection_blend_read_data(reader, scene->master_collection, &scene->id);
       }
@@ -2129,7 +2129,7 @@ static int direct_link_id_restore_recalc_exceptions(const ID *id_current)
 {
   /* Exception for armature objects, where the pose has direct points to the
    * armature data-block. */
-  if (GS(id_current->name) == ID_OB && (id_cast<Object *>(const_cast<ID *>(id_current)))->pose) {
+  if (id_current->id_type() == ID_OB && (id_cast<Object *>(const_cast<ID *>(id_current)))->pose) {
     return ID_RECALC_GEOMETRY;
   }
 
@@ -2219,7 +2219,7 @@ void BLO_readfile_id_runtime_data_free_all(Main &bmain)
     BLO_readfile_id_runtime_data_free(*id);
 
     /* Handle its embedded IDs, because they do not get referenced by bmain. */
-    if (GS(id->name) == ID_SCE) {
+    if (id->id_type() == ID_SCE) {
       Collection *collection = reinterpret_cast<Scene *>(id)->master_collection;
       if (collection) {
         BLO_readfile_id_runtime_data_free(collection->id);
@@ -2238,12 +2238,12 @@ static void direct_link_id_common(BlendDataReader *reader,
                                   Library *current_library,
                                   ID *id,
                                   ID *id_old,
-                                  const int id_tag,
+                                  const eID_Tag id_tag,
                                   const ID_Readfile_Data::Tags id_read_tags)
 {
   /* This should have been caught already, either by a call to `#blo_bhead_is_id_valid_type` for
    * regular IDs, or in `#direct_link_id_embedded_id` for embedded ones. */
-  BLI_assert_msg(BKE_idtype_idcode_is_valid(GS(id->name)),
+  BLI_assert_msg(BKE_idtype_idcode_is_valid(id->id_type()),
                  "Unknown or invalid ID type, this should never happen");
 
   BLI_assert(id->runtime == nullptr);
@@ -2255,22 +2255,6 @@ static void direct_link_id_common(BlendDataReader *reader,
     id->session_uid = MAIN_ID_SESSION_UID_UNSET;
   }
 
-  if (id->flag & ID_FLAG_LINKED_AND_PACKED) {
-    if (!current_library) {
-      CLOG_ERROR(&LOG,
-                 "Data-block '%s' flagged as packed, but without a valid library, fixing by "
-                 "making fully local...",
-                 id->name);
-      id->flag &= ~ID_FLAG_LINKED_AND_PACKED;
-    }
-    else if ((current_library->flag & LIBRARY_FLAG_IS_ARCHIVE) == 0) {
-      CLOG_ERROR(&LOG,
-                 "Data-block '%s' flagged as packed, but using a regular library, fixing by "
-                 "making fully linked...",
-                 id->name);
-      id->flag &= ~ID_FLAG_LINKED_AND_PACKED;
-    }
-  }
   id->lib = current_library;
   if (id->lib) {
     /* Always fully clear fake user flag for linked data. */
@@ -2288,6 +2272,28 @@ static void direct_link_id_common(BlendDataReader *reader,
   }
   else {
     id->tag = id_tag;
+  }
+
+  if (id->flag & ID_FLAG_LINKED_AND_PACKED) {
+    if (!id->lib) {
+      CLOG_ERROR(&LOG,
+                 "Data-block '%s' flagged as packed, but without a valid library, fixing by "
+                 "making fully local...",
+                 id->name);
+      id->tag &= ~(ID_TAG_INDIRECT | ID_TAG_EXTERN);
+      id->flag &= ~(ID_FLAG_INDIRECT_WEAK_LINK | ID_FLAG_LINKED_AND_PACKED);
+    }
+    else if ((id->lib->flag & LIBRARY_FLAG_IS_ARCHIVE) == 0) {
+      CLOG_ERROR(&LOG,
+                 "Data-block '%s' flagged as packed, but using a regular library, fixing by "
+                 "making fully indirectly linked...",
+                 id->name);
+      id->flag &= ~ID_FLAG_LINKED_AND_PACKED;
+      if (id->tag & ID_TAG_EXTERN) {
+        id->tag &= ~ID_TAG_EXTERN;
+        id->tag |= ID_TAG_INDIRECT;
+      }
+    }
   }
 
   readfile_id_runtime_data_ensure(*id);
@@ -2760,7 +2766,7 @@ static void placeholders_ensure_valid(Main *bmain)
 
 static bool direct_link_id(FileData *fd,
                            Main *main,
-                           const int tag,
+                           const eID_Tag id_tag,
                            const ID_Readfile_Data::Tags id_read_tags,
                            ID *id,
                            ID *id_old)
@@ -2771,11 +2777,11 @@ static bool direct_link_id(FileData *fd,
   reader.shared_data_by_stored_address.clear();
 
   /* Read part of datablock that is common between real and embedded datablocks. */
-  direct_link_id_common(&reader, main->curlib, id, id_old, tag, id_read_tags);
+  direct_link_id_common(&reader, main->curlib, id, id_old, id_tag, id_read_tags);
 
   if (BLO_readfile_id_runtime_tags(*id).is_link_placeholder) {
     /* For placeholder we only need to set the tag, no further data to read. */
-    id->tag = tag;
+    id->tag = id_tag;
     return true;
   }
 
@@ -2788,7 +2794,7 @@ static bool direct_link_id(FileData *fd,
    * use it for anything new. */
   bool success = true;
 
-  switch (GS(id->name)) {
+  switch (id->id_type()) {
     case ID_SCR:
       success = BKE_screen_blend_read_data(&reader, id_cast<bScreen *>(id));
       break;
@@ -2996,7 +3002,7 @@ static void read_undo_move_libmain_data(FileData *fd, Main *libmain, BHead *bhea
   curlib->id.tag |= ID_TAG_UNDO_OLD_ID_REUSED_NOUNDO;
   BKE_main_idmap_insert_id(fd->new_idmap_uid, &curlib->id);
   if (bhead != nullptr) {
-    oldnewmap_lib_insert(fd, bhead->old, &curlib->id, GS(curlib->id.name));
+    oldnewmap_lib_insert(fd, bhead->old, &curlib->id, curlib->id.id_type());
   }
 
   BLI_assert(curlib->runtime->unused_ids_on_undo.is_empty());
@@ -3136,7 +3142,7 @@ static void read_undo_libraries_cleanup_unused_ids(FileData *fd)
 #endif
       CLOG_DEBUG(&LOG_UNDO, "Unused linked ID '%s' will be discarded", unused_id->name);
 
-      const short idcode = GS(unused_id->name);
+      const short idcode = unused_id->id_type();
       ListBaseT<ID> *new_lb = which_libbase(lib_bmain, idcode);
       ListBaseT<ID> *old_lb = which_libbase(old_bmain, idcode);
       BLI_remlink(new_lb, unused_id);
@@ -3195,7 +3201,7 @@ static bool read_libblock_undo_restore_linked(
                static_cast<ID *>(BKE_main_idmap_lookup_uid(fd->new_idmap_uid, id->session_uid)));
   }
 
-  oldnewmap_lib_insert(fd, bhead->old, *r_id_old, GS((*r_id_old)->name));
+  oldnewmap_lib_insert(fd, bhead->old, *r_id_old, (*r_id_old)->id_type());
   /* This old linked ID is still being used. */
   libmain->curlib->runtime->unused_ids_on_undo.remove(*r_id_old);
 
@@ -3206,7 +3212,7 @@ static bool read_libblock_undo_restore_linked(
 
 /* For undo, restore unchanged local datablock from old main. */
 static void read_libblock_undo_restore_identical(
-    FileData *fd, Main *main, const ID * /*id*/, ID *id_old, BHead *bhead, const int id_tag)
+    FileData *fd, Main *main, const ID * /*id*/, ID *id_old, BHead *bhead, const eID_Tag id_tag)
 {
   BLI_assert((fd->skip_flags & BLO_READ_SKIP_UNDO_OLD_MAIN) == 0);
   BLI_assert(id_old != nullptr);
@@ -3226,7 +3232,7 @@ static void read_libblock_undo_restore_identical(
   id_old->newid = nullptr;
   id_old->orig_id = nullptr;
 
-  const short idcode = GS(id_old->name);
+  const short idcode = id_old->id_type();
   Main *old_bmain = fd->old_bmain;
   ListBaseT<ID> *old_lb = which_libbase(old_bmain, idcode);
   ListBaseT<ID> *new_lb = which_libbase(main, idcode);
@@ -3244,13 +3250,13 @@ static void read_libblock_undo_restore_identical(
 
   BKE_main_idmap_insert_id(fd->new_idmap_uid, id_old);
 
-  if (GS(id_old->name) == ID_OB) {
+  if (id_old->id_type() == ID_OB) {
     Object *ob = id_cast<Object *>(id_old);
     /* For undo we stay in object mode during undo presses, so keep editmode disabled for re-used
      * data-blocks too. */
     ob->mode &= ~OB_MODE_EDIT;
   }
-  if (GS(id_old->name) == ID_LI) {
+  if (id_old->id_type() == ID_LI) {
     Library *lib = reinterpret_cast<Library *>(id_old);
     if (lib->flag & LIBRARY_FLAG_IS_ARCHIVE) {
       BLI_assert(lib->runtime->filedata == nullptr);
@@ -3289,7 +3295,7 @@ static void read_libblock_undo_restore_at_old_address(FileData *fd, Main *main, 
   BLI_assert((fd->skip_flags & BLO_READ_SKIP_UNDO_OLD_MAIN) == 0);
   BLI_assert(id_old != nullptr);
 
-  const short idcode = GS(id->name);
+  const short idcode = id->id_type();
 
   Main *old_bmain = fd->old_bmain;
   ListBaseT<ID> *old_lb = which_libbase(old_bmain, idcode);
@@ -3332,7 +3338,7 @@ static void read_libblock_undo_restore_at_old_address(FileData *fd, Main *main, 
    *   - The new split main should still be empty at this stage (this code and adding the split
    *     Main in #direct_link_library are part of the same #read_libblock call).
    */
-  if (GS(id_old->name) == ID_LI) {
+  if (id_old->id_type() == ID_LI) {
     Library *lib_old = id_cast<Library *>(id_old);
     Library *lib = id_cast<Library *>(id);
     BLI_assert(lib_old->flag & LIBRARY_FLAG_IS_ARCHIVE);
@@ -3347,7 +3353,7 @@ static void read_libblock_undo_restore_at_old_address(FileData *fd, Main *main, 
 }
 
 static bool read_libblock_undo_restore(
-    FileData *fd, Main *main, BHead *bhead, const int id_tag, ID **r_id_old)
+    FileData *fd, Main *main, BHead *bhead, const eID_Tag id_tag, ID **r_id_old)
 {
   BLI_assert(fd->old_idmap_uid != nullptr);
 
@@ -3454,7 +3460,7 @@ static bool read_libblock_undo_restore(
 static BHead *read_libblock(FileData *fd,
                             Main *main,
                             BHead *bhead,
-                            int id_tag,
+                            eID_Tag id_tag,
                             ID_Readfile_Data::Tags id_read_tags,
                             const bool placeholder_set_indirect_extern,
                             ID **r_id)
@@ -3515,7 +3521,7 @@ static BHead *read_libblock(FileData *fd,
   }
 
   /* Determine ID type and add to main database list. */
-  const short idcode = GS(id->name);
+  const short idcode = id->id_type();
   ListBaseT<ID> *lb = which_libbase(main, idcode);
   if (lb == nullptr) {
     /* Unknown ID type. */
@@ -4133,6 +4139,10 @@ static BHead *read_userdef(BlendFileData *bfd, FileData *fd, BHead *bhead)
     IDP_BlendDataRead(reader, &addon.prop);
   }
 
+  for (bUserAssetLibrary &asset_library_ref : user->asset_libraries) {
+    BKE_preferences_asset_library_read_data(reader, &asset_library_ref);
+  }
+
   for (bUserExtensionRepo &repo_ref : user->extension_repos) {
     BKE_preferences_extension_repo_read_data(reader, &repo_ref);
   }
@@ -4299,6 +4309,7 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
     /* If not-null after the `switch`, the BHead is an ID one and needs to be read. */
     Main *bmain_to_read_into = nullptr;
     bool placeholder_set_indirect_extern = false;
+    bool is_linked_packed_id = false;
 
     switch (bhead->code) {
       case BLO_CODE_DATA:
@@ -4368,15 +4379,16 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
          * definition. So we can use the entry at the end of `fd->bmain->split_mains`, typically
          * the one last added in #direct_link_library. */
         bmain_to_read_into = (*fd->bmain->split_mains)[fd->bmain->split_mains->size() - 1];
-        BLI_assert_msg((bmain_to_read_into == fd->bmain ||
-                        (blo_bhead_id_flag(fd, bhead) & ID_FLAG_LINKED_AND_PACKED) != 0),
+        is_linked_packed_id = (blo_bhead_id_flag(fd, bhead) & ID_FLAG_LINKED_AND_PACKED) != 0;
+        BLI_assert_msg((bmain_to_read_into == fd->bmain || is_linked_packed_id),
                        "Local IDs should always be put in the first Main split data-base, not in "
                        "a 'linked data' one");
       }
     }
     if (bmain_to_read_into) {
+      const eID_Tag id_tag = is_linked_packed_id ? ID_TAG_EXTERN : ID_TAG_LOCAL;
       bhead = read_libblock(
-          fd, bmain_to_read_into, bhead, 0, {}, placeholder_set_indirect_extern, nullptr);
+          fd, bmain_to_read_into, bhead, id_tag, {}, placeholder_set_indirect_extern, nullptr);
     }
 
     /* It's not enough to check `bfd->main->is_read_invalid` because the error may have
@@ -4482,10 +4494,18 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
   if ((fd->skip_flags & BLO_READ_SKIP_DATA) == 0) {
     fd->reports->duration.libraries = BLI_time_now_seconds();
     read_libraries(fd);
+    if (bfd->main->is_read_invalid) {
+      return bfd;
+    }
+
     BLI_assert((*bfd->main->split_mains)[0] == bfd->main);
     blo_join_main(bfd->main);
 
     lib_link_all(fd, bfd->main);
+    if (bfd->main->is_read_invalid) {
+      return bfd;
+    }
+
     after_liblink_merged_bmain_process(bfd->main, fd->reports);
 
     if (is_undo) {
@@ -4618,6 +4638,9 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
       /* Update invariants after re-generating overrides. */
       BKE_main_ensure_invariants(*bfd->main);
 
+      /* Some versioning code can leave some ID link status tags in invalid state, due to low-level
+       * manipulations of these instead of using API like `id_lib_extern`, which will be also fixed
+       * by this call. */
       BKE_main_id_indirect_linked_update(*bfd->main);
 
       fd->reports->duration.lib_overrides = BLI_time_now_seconds() -
@@ -5017,6 +5040,7 @@ static void read_id_in_lib(FileData *fd,
   if (id == nullptr) {
     /* ID has not been read yet, add placeholder to the main of the
      * library it belongs to, so that it will be read later. */
+    BLI_assert((fd->id_tag_extra & ID_TAG_EXTERN) == 0);
     read_libblock(
         fd, libmain, bhead, fd->id_tag_extra | ID_TAG_INDIRECT, id_read_tags, false, &id);
     /* A corrupt block may fail to read, leaving `id` null.
@@ -5025,7 +5049,7 @@ static void read_id_in_lib(FileData *fd,
     if (id == nullptr) {
       return;
     }
-    id_sort_by_name(which_libbase(libmain, GS(id->name)), id, static_cast<ID *>(id->prev));
+    id_sort_by_name(which_libbase(libmain, id->id_type()), id, static_cast<ID *>(id->prev));
 
     /* commented because this can print way too much */
     // if (G.debug & G_DEBUG) printf("expand_doit: other lib %s\n", lib->filepath);
@@ -5296,10 +5320,11 @@ static ID *link_named_part(
     id = library_id_is_yet_read(fd, mainl, bhead);
     if (id == nullptr) {
       /* not read yet */
-      const int tag = ((force_indirect ? ID_TAG_INDIRECT : ID_TAG_EXTERN) | fd->id_tag_extra);
+      const eID_Tag id_tag = eID_Tag((force_indirect ? ID_TAG_INDIRECT : ID_TAG_EXTERN) |
+                                     fd->id_tag_extra);
       ID_Readfile_Data::Tags id_read_tags{};
       id_read_tags.needs_expanding = true;
-      read_libblock(fd, mainl, bhead, tag, id_read_tags, false, &id);
+      read_libblock(fd, mainl, bhead, id_tag, id_read_tags, false, &id);
 
       if (id) {
         /* sort by name in list */
@@ -5356,7 +5381,7 @@ ID *BLO_library_link_named_part(Main *mainl,
 static Main *library_link_begin(Main *mainvar,
                                 FileData *fd,
                                 const char *filepath,
-                                const int id_tag_extra)
+                                const eID_Tag id_tag_extra)
 {
   Main *mainl;
 
@@ -5433,7 +5458,7 @@ Main *BLO_library_link_begin(BlendHandle **bh,
                              const LibraryLink_Params *params)
 {
   FileData *fd = reinterpret_cast<FileData *>(*bh);
-  return library_link_begin(params->bmain, fd, filepath, params->id_tag_extra);
+  return library_link_begin(params->bmain, fd, filepath, eID_Tag(params->id_tag_extra));
 }
 
 static void split_main_newid(Main *mainptr, Main *main_newid)
@@ -5642,7 +5667,8 @@ static void read_library_linked_id(
     FileData *basefd, FileData *fd, Main *mainvar, ID *id, ID **r_id)
 {
   BHead *bhead = nullptr;
-  const bool is_valid = BKE_idtype_idcode_is_linkable(GS(id->name)) ||
+  BLI_assert_msg(!ID_IS_PACKED(id), "Packed IDs should never take this codepath.");
+  const bool is_valid = BKE_idtype_idcode_is_linkable(id->id_type()) ||
                         ((id->tag & ID_TAG_EXTERN) == 0);
 
   if (fd) {
@@ -5658,7 +5684,7 @@ static void read_library_linked_id(
                      RPT_ERROR,
                      RPT_("LIB: %s: '%s' is directly linked from '%s' (parent '%s'), but is a "
                           "non-linkable data type"),
-                     BKE_idtype_idcode_to_name(GS(id->name)),
+                     BKE_idtype_idcode_to_name(id->id_type()),
                      id->name + 2,
                      mainvar->curlib->runtime->filepath_abs,
                      library_parent_filepath(mainvar->curlib));
@@ -5670,12 +5696,13 @@ static void read_library_linked_id(
   if (bhead) {
     BLO_readfile_id_runtime_tags_for_write(*id).needs_expanding = true;
     // printf("read lib block %s\n", id->name);
-    read_libblock(fd, mainvar, bhead, id->tag, BLO_readfile_id_runtime_tags(*id), false, r_id);
+    read_libblock(
+        fd, mainvar, bhead, eID_Tag(id->tag), BLO_readfile_id_runtime_tags(*id), false, r_id);
   }
   else {
     CLOG_DEBUG(&LOG,
                "LIB: %s: '%s' missing from '%s', parent '%s'",
-               BKE_idtype_idcode_to_name(GS(id->name)),
+               BKE_idtype_idcode_to_name(id->id_type()),
                id->name + 2,
                mainvar->curlib->runtime->filepath_abs,
                library_parent_filepath(mainvar->curlib));
@@ -5684,7 +5711,7 @@ static void read_library_linked_id(
     /* Generate a placeholder for this ID (simplified version of read_libblock actually...). */
     if (r_id) {
       *r_id = is_valid ? create_placeholder(mainvar,
-                                            GS(id->name),
+                                            id->id_type(),
                                             id->name + 2,
                                             id->tag,
                                             id->override_library != nullptr) :

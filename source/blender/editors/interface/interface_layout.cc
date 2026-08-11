@@ -3340,7 +3340,15 @@ static Button *uiItem_simple(Layout *layout,
     icon = ICON_BLANK1;
   }
 
-  const int w = text_icon_width_ex(layout, name, icon, text_pad_none, UI_FSTYLE_WIDGET);
+  /* When drawing text over an emboss background (like for a normal push button), the widget needs
+   * to be slightly wider than just the text, since the text will get some horizontal padding
+   * inside the background box when drawing. Otherwise drawing would truncate the text to fit.
+   * This is not the most thorough check, but should work well enough and can be expanded as
+   * needed. */
+  const bool has_emboss = but_type != ButtonType::Label &&
+                          layout->emboss() == ui::EmbossType::Emboss;
+  const int w = text_icon_width_ex(
+      layout, name, icon, has_emboss ? text_pad_default : text_pad_none, UI_FSTYLE_WIDGET);
   Button *but;
   if (icon && !name.is_empty()) {
     but = uiDefIconTextBut(block, but_type, icon, name, 0, 0, w, UI_UNIT_Y, nullptr, tooltip);
@@ -3431,6 +3439,9 @@ void Layout::label_multiline(StringRefNull text, int icon, FontStyleAlign align,
   label->text_align = align;
   label->is_multiline = true;
   label->max_lines = max_lines;
+  if (this->red_alert()) {
+    button_flag_enable(button, BUT_REDALERT);
+  }
 }
 
 void Layout::link(const StringRef url, const StringRef name, int icon)
@@ -5797,8 +5808,11 @@ void Layout::resolve_dynamic_height()
 
   /* For simplicity a column is a grid of n rows and 1 columns, and a row is a grid of 1 rows and n
    * columns. */
-  const LayoutDirection direction = this->type() == ItemType::LayoutRoot ? this->root_->direction :
-                                                                           this->local_direction();
+  const LayoutDirection direction = this->type() == ItemType::LayoutRoot ?
+                                        this->root_->direction :
+                                    this->type() == ItemType::LayoutSplit ?
+                                        LayoutDirection::Horizontal :
+                                        this->local_direction();
   int rows = direction == LayoutDirection::Vertical ? this->items().size() : 1;
   int cols = direction == LayoutDirection::Horizontal ? this->items().size() : 1;
   bool row_major = direction == LayoutDirection::Vertical;
