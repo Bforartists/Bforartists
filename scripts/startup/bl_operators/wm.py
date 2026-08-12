@@ -3467,7 +3467,7 @@ class WM_MT_splash(Menu):
         col2 = split.column()
         col2_title = col2.row()
 
-        found_recent = col2.template_recent_files(rows=5)
+        found_recent = col2.template_recent_files(rows=6)
 
         if found_recent:
             col2_title.label(text="Recent Files")

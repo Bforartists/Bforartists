@@ -339,7 +339,7 @@ class TOPBAR_MT_file_new(Menu):
 
         # Limit number of templates in splash screen, spill over into more menu.
         paths = TOPBAR_MT_file_new.app_template_paths()
-        splash_limit = 6
+        splash_limit = 7
 
         if use_splash:
             icon = "FILE_NEW"
