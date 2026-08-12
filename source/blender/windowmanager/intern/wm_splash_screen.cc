@@ -281,7 +281,7 @@ static ui::Block *wm_block_splash_create(bContext *C, ARegion *region, void * /*
   block_flag_enable(block, ui::BLOCK_LOOP | ui::BLOCK_KEEP_OPEN | ui::BLOCK_NO_WIN_CLIP);
   block_theme_style_set(block, ui::BLOCK_THEME_STYLE_POPUP);
 
-  int splash_width = style->widget.points * 45 * UI_SCALE_FAC;
+  int splash_width = style->widget.points * 54 * UI_SCALE_FAC; /* BFA - increased 20% from 45 */
   CLAMP_MAX(splash_width, WM_window_native_pixel_x(CTX_wm_window(C)) * 0.7f);
   int splash_height;
 
