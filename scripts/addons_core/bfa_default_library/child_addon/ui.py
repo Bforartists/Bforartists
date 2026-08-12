@@ -89,7 +89,7 @@ class WIZARD_OT_TriggerAssetWizard(Operator):
 # -----------------------------------------------------------------------------
 
 class LIBADDON_APT_child_preferences(bpy.types.AddonPreferences):
-    bl_idname = "modular_child_addons"
+    bl_idname = "bl_ext.user_default.modular_child_addons"  # BFA - Must match the bl_ext namespace used by the parent addon for 5.3+ policy compliance
 
     def draw(self, context):
         layout = self.layout
