@@ -71,6 +71,11 @@ CHILD_ADDON_DISPLAY_NAME = "Default Asset Library Functions"
 # Fallback if the manifest cannot be read (should never happen in a packaged addon).
 CHILD_ADDON_VERSION = (1, 0, 0)
 
+# Use bl_ext namespace for Blender 5.3+ extension policy compliance.
+_EXT_REPO_MODULE = "user_default"
+CHILD_ADDON_PKG_NAME = "modular_child_addons"
+CHILD_ADDON_MODULE_NAME = "bl_ext.{}.{}".format(_EXT_REPO_MODULE, CHILD_ADDON_PKG_NAME)
+
 # -----------------------------------------------------------------------------
 # Version Comparison Utilities
 # -----------------------------------------------------------------------------
@@ -588,19 +593,16 @@ def is_child_addon_active():
         return True
 
     # Fallback: Check sys.modules
-    child_addon_name = "modular_child_addons"
-
-    # Check if any of the child addon modules are loaded
+    # Check bl_ext namespace and legacy names
     module_prefixes = [
-        f"{child_addon_name}.",
+        f"{CHILD_ADDON_MODULE_NAME}.",
+        "modular_child_addons.",
         "child_addon.",
     ]
 
     for module_name in sys.modules:
         for prefix in module_prefixes:
-            if module_name.startswith(prefix):
-                # Found a module from our child addon
-                #print(f"⚠ Child addon module found in sys.modules but tracking says not loaded: {module_name}")
+            if module_name.startswith(prefix) or module_name == CHILD_ADDON_MODULE_NAME or module_name == "modular_child_addons":
                 return True
 
     # Also check for direct module names (use centralized constant)
@@ -611,7 +613,6 @@ def is_child_addon_active():
             if hasattr(module_obj, '__file__'):
                 filepath = module_obj.__file__
                 if filepath and 'modular_child_addons' in filepath:
-                    #print(f"⚠ Child addon module found in sys.modules but tracking says not loaded: {module}")
                     return True
 
     return False
@@ -667,9 +668,11 @@ def reconcile_tracking_with_actual_state():
     """Check if the tracking data matches the actual module state."""
     tracking_data = get_child_addon_tracking_data()
     
-    # Check if modules are actually loaded - look for any modules in our package
+    # Check bl_ext namespace and legacy names
     actual_loaded = any(
-        name.startswith("modular_child_addons") 
+        name == CHILD_ADDON_MODULE_NAME
+        or name.startswith(CHILD_ADDON_MODULE_NAME + ".")
+        or name.startswith("modular_child_addons")
         for name in sys.modules.keys()
     )
     
@@ -822,17 +825,25 @@ def _ensure_child_version_updated():
 
 
 def _nuke_child_modules_from_sys():
-    """Remove ALL modular_child_addons modules from sys.modules.
+    """Remove ALL child addon modules from sys.modules.
 
     After a file update, old .pyc caches and previously-imported modules
     must be purged so that importlib re-executes the new source files.
-    Also handles legacy underscore-style module names for compatibility.
+    Handles bl_ext namespace and legacy names.
     """
-    package_name = "modular_child_addons"
-    to_delete = [name for name in sys.modules
-                 if name == package_name
-                 or name.startswith(package_name + ".")
-                 or name.startswith(package_name + "_")]
+    # Clean bl_ext namespace and legacy names
+    prefixes = [
+        CHILD_ADDON_MODULE_NAME,          # bl_ext.user_default.modular_child_addons
+        "modular_child_addons",           # legacy top-level
+    ]
+    to_delete = []
+    for name in sys.modules:
+        for prefix in prefixes:
+            if (name == prefix
+                    or name.startswith(prefix + ".")
+                    or name.startswith(prefix + "_")):
+                to_delete.append(name)
+                break
     for name in to_delete:
         try:
             del sys.modules[name]
@@ -876,87 +887,67 @@ def load_child_addon_functionality():
                 #print(f"❌ Could not install child addon")
                 return False
 
-        #print("🔄 Loading child addon functionality...")
+        # Import via bl_ext junction module for 5.3+ policy compliance.
+        import importlib
 
-        # We need to load the child addon as a proper package
-        # The child addon is in a directory like: .../modular_child_addons/
-        # We'll add the parent directory to sys.path and import it as a package
+        package_name = CHILD_ADDON_MODULE_NAME
 
-        # Get the parent directory (where modular_child_addons folder is located)
-        parent_dir = p.dirname(child_addon_dir)
-        package_name = p.basename(child_addon_dir)  # Should be "modular_child_addons"
+        # Verify the extension junction module is available
+        junction_module_name = "bl_ext.{}".format(_EXT_REPO_MODULE)
+        if junction_module_name not in sys.modules:
+            print(f"⚠ Extension junction module {junction_module_name} not available - cannot load child addon")
+            return False
 
-        # Save original sys.path
-        original_sys_path = sys.path.copy()
-
+        # Import the main package (this will load __init__.py)
         try:
-            # Add parent directory to sys.path if not already there
-            if parent_dir not in sys.path:
-                sys.path.insert(0, parent_dir)
+            child_package = importlib.import_module(package_name)
+        except ImportError as e:
+            print(f"⚠ Failed to import child addon package: {e}")
+            return False
 
-            # Now import the child addon as a package
-            import importlib
+        # Now import the submodules (use centralized constant)
+        loaded_modules = {}
 
-            # Import the main package (this will load __init__.py)
+        for submodule_name in CHILD_ADDON_SUBMODULES:
             try:
-                child_package = importlib.import_module(package_name)
-                #print(f"✓ Imported child addon package: {package_name}")
+                full_name = f"{package_name}.{submodule_name}"
+                module = importlib.import_module(full_name)
+                loaded_modules[submodule_name] = module
             except ImportError as e:
-                print(f"⚠ Failed to import child addon package: {e}")
-                return False
+                print(f"⚠ Failed to import module {submodule_name}: {e}")
 
-            # Now import the submodules (use centralized constant)
-            loaded_modules = {}
+        # Load operators subpackage
+        operators_module = None
+        try:
+            operators_module = importlib.import_module(f"{package_name}.operators")
+        except ImportError as e:
+            print(f"⚠ Failed to import operators subpackage: {e}")
 
-            for submodule_name in CHILD_ADDON_SUBMODULES:
-                try:
-                    full_name = f"{package_name}.{submodule_name}"
-                    module = importlib.import_module(full_name)
-                    loaded_modules[submodule_name] = module
-                    #print(f"✓ Loaded module: {submodule_name}")
-                except ImportError as e:
-                    print(f"⚠ Failed to import module {submodule_name}: {e}")
-
-            # Load operators subpackage
-            operators_module = None
+        # Register all modules that have a register function
+        # Register operators first (if it has a register function at the package level)
+        if operators_module and hasattr(operators_module, 'register'):
             try:
-                operators_module = importlib.import_module(f"{package_name}.operators")
-                #print(f"✓ Loaded operators subpackage")
-            except ImportError as e:
-                print(f"⚠ Failed to import operators subpackage: {e}")
+                operators_module.register()
+            except Exception as e:
+                print(f"⚠ Failed to register operators subpackage: {e}")
 
-            # Register all modules that have a register function
-            # Register operators first (if it has a register function at the package level)
-            if operators_module and hasattr(operators_module, 'register'):
+        # Register other modules
+        for module_name, module in loaded_modules.items():
+            if hasattr(module, 'register'):
                 try:
-                    operators_module.register()
-                    #print(f"✓ Registered operators subpackage")
+                    module.register()
                 except Exception as e:
-                    print(f"⚠ Failed to register operators subpackage: {e}")
+                    print(f"⚠ Failed to register module {module_name}: {e}")
 
-            # Register other modules
-            for module_name, module in loaded_modules.items():
-                if hasattr(module, 'register'):
-                    try:
-                        module.register()
-                        #print(f"✓ Registered module: {module_name}")
-                    except Exception as e:
-                        print(f"⚠ Failed to register module {module_name}: {e}")
+        # Update tracking data
+        tracking_data = get_child_addon_tracking_data()
+        tracking_data["is_functionality_loaded"] = True
+        if PARENT_ADDON_UNIQUE_ID not in tracking_data["active_parents"]:
+            tracking_data["active_parents"].append(PARENT_ADDON_UNIQUE_ID)
+        tracking_data["last_activated_by"] = PARENT_ADDON_UNIQUE_ID
+        save_child_addon_tracking_data(tracking_data)
 
-            # Update tracking data
-            tracking_data = get_child_addon_tracking_data()
-            tracking_data["is_functionality_loaded"] = True
-            if PARENT_ADDON_UNIQUE_ID not in tracking_data["active_parents"]:
-                tracking_data["active_parents"].append(PARENT_ADDON_UNIQUE_ID)
-            tracking_data["last_activated_by"] = PARENT_ADDON_UNIQUE_ID
-            save_child_addon_tracking_data(tracking_data)
-
-            #print("✅ Child addon functionality loaded and registered")
-            return True
-
-        finally:
-            # Restore original sys.path
-            sys.path = original_sys_path
+        return True
 
     except Exception as e:
         print(f"❌ Error loading child addon functionality: {e}")
@@ -976,11 +967,7 @@ def unload_child_addon_functionality(force=False):
             #print(f"⚠ Not unloading child addon - other parent addons still active")
             return True
 
-        # We need to look for the modules we loaded in sys.modules
-        # With our new approach, modules can be loaded as:
-        # 1. "modular_child_addons" (package)
-        # 2. "modular_child_addons.panels" (module in package)
-        # 3. "modular_child_addons_panels" (old style, for compatibility)
+        # Unregister bl_ext namespace and legacy module names.
         import sys
 
         # Use centralized module list
@@ -988,26 +975,36 @@ def unload_child_addon_functionality(force=False):
 
         all_module_names = []
 
-        # Add package-style module names (new approach)
-        package_name = "modular_child_addons"
-        all_module_names.append(package_name)  # Main package
+        # bl_ext namespace module names
+        ext_package = CHILD_ADDON_MODULE_NAME
+        all_module_names.append(ext_package)  # Main package
 
-        # Add dot-notation module names
+        # Add dot-notation module names under bl_ext namespace
         for name in CHILD_ADDON_ALL_MODULES:
-            all_module_names.append(f"{package_name}.{name}")
+            all_module_names.append(f"{ext_package}.{name}")
 
-        # Add operator submodules
-        all_module_names.append(f"{package_name}.operators")
+        # Add operator submodules under bl_ext namespace
+        all_module_names.append(f"{ext_package}.operators")
         for name in operator_submodules:
-            all_module_names.append(f"{package_name}.operators.{name}")
+            all_module_names.append(f"{ext_package}.operators.{name}")
 
-        # Add underscore-style module names (old approach, for compatibility)
+        # Legacy: Add top-level module names (old approach, for backward compat)
+        legacy_package = "modular_child_addons"
+        all_module_names.append(legacy_package)
+
         for name in CHILD_ADDON_ALL_MODULES:
-            all_module_names.append(f"{package_name}_{name}")
+            all_module_names.append(f"{legacy_package}.{name}")
 
-        # Add operator submodules with underscores
+        all_module_names.append(f"{legacy_package}.operators")
         for name in operator_submodules:
-            all_module_names.append(f"{package_name}_operators_{name}")
+            all_module_names.append(f"{legacy_package}.operators.{name}")
+
+        # Legacy: Add underscore-style module names
+        for name in CHILD_ADDON_ALL_MODULES:
+            all_module_names.append(f"{legacy_package}_{name}")
+
+        for name in operator_submodules:
+            all_module_names.append(f"{legacy_package}_operators_{name}")
 
         # Also check for the original module names (without prefix) as fallback
         for name in CHILD_ADDON_ALL_MODULES:
@@ -1024,20 +1021,26 @@ def unload_child_addon_functionality(force=False):
         # 2. Unregister top-level modules
         # 3. Unregister the main package
         unregister_order = [
-            # Submodules
-            *[f"modular_child_addons.operators.{name}" for name in operator_submodules],
-            "modular_child_addons.operators",
-            *[f"modular_child_addons.{name}" for name in CHILD_ADDON_SUBMODULES],
+            # bl_ext namespace submodules
+            *[f"{ext_package}.operators.{name}" for name in operator_submodules],
+            f"{ext_package}.operators",
+            *[f"{ext_package}.{name}" for name in CHILD_ADDON_SUBMODULES],
             
-            # Top-level modules
+            # Legacy submodules
+            *[f"{legacy_package}.operators.{name}" for name in operator_submodules],
+            f"{legacy_package}.operators",
+            *[f"{legacy_package}.{name}" for name in CHILD_ADDON_SUBMODULES],
+            
+            # Legacy top-level modules
             "modular_child_addons_operators_geometry_nodes",
             "modular_child_addons_operators_compositor",
             "modular_child_addons_operators_shader",
             *[f"modular_child_addons_{name}" for name in CHILD_ADDON_SUBMODULES],
             "modular_child_addons_operators",
             
-            # Main package
-            "modular_child_addons"
+            # Main packages (bl_ext first, then legacy)
+            ext_package,
+            legacy_package,
         ]
         
         # Add any other modules that might have been missed
@@ -1089,31 +1092,24 @@ def unload_child_addon_functionality(force=False):
                     print(f"⚠ Error removing {module_name} from sys.modules: {e}")
 
 
-        # Also clean up the main package if it exists
-        if package_name in sys.modules:
-            # Only process if not already unregistered
-            if package_name not in modules_unregistered:
-                try:
-                    module = sys.modules[package_name]
-                    
-                    # Try to unregister if it has the method
-                    if hasattr(module, 'unregister') and callable(module.unregister):
-                        try:
-                            module.unregister()
-                            #print(f"✓ Unregistered package: {package_name}")
-                            unregistered_count += 1
-                            modules_unregistered.append(package_name)
-                        except Exception as e:
-                            print(f"⚠ Failed to unregister package {package_name}: {e}")
-                    
-                    # Always remove from sys.modules
-                    del sys.modules[package_name]
-                    #print(f"✓ Removed package from sys.modules: {package_name}")
-                except KeyError:
-                    pass
-                except Exception as e:
-                    print(f"⚠ Error cleaning up package {package_name}: {e}")
-                    pass
+        # Clean up main packages
+        for pkg_name in (ext_package, legacy_package):
+            if pkg_name in sys.modules:
+                if pkg_name not in modules_unregistered:
+                    try:
+                        module = sys.modules[pkg_name]
+                        if hasattr(module, 'unregister') and callable(module.unregister):
+                            try:
+                                module.unregister()
+                                unregistered_count += 1
+                                modules_unregistered.append(pkg_name)
+                            except Exception as e:
+                                print(f"⚠ Failed to unregister package {pkg_name}: {e}")
+                        del sys.modules[pkg_name]
+                    except KeyError:
+                        pass
+                    except Exception as e:
+                        print(f"⚠ Error cleaning up package {pkg_name}: {e}")
 
         if unregistered_count > 0:
             # Update tracking data
