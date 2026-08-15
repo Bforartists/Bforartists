@@ -1099,6 +1099,9 @@ class VIEW3D_HT_header(Header):
                 text="",
                 icon=VIEW3D_HT_header._mesh_paint_automasking_icon(paint),
             )
+
+            # BFA - expose loop select operator in header
+            layout.operator("mesh.loop_select", text="", icon="LOOPSEL")
         elif object_mode == "WEIGHT_GREASE_PENCIL":
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon="GROUP_VERTEX")
