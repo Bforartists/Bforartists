@@ -3032,17 +3032,17 @@ class VIEW3D_MT_select_paint_mask(Menu):
 
         layout.separator()
 
-        if _context.mode == "PAINT_TEXTURE":
-            myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
+        # BFA - exposed to all paint modes, not just texture paint
+        myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
 
-            myvar = layout.operator("paint.face_select_loop", text="Add Loop to Selection", icon="SELECT_EDGERING")
-            myvar.extend = True
+        myvar = layout.operator("paint.face_select_loop", text="Add Loop to Selection", icon="SELECT_EDGERING")
+        myvar.extend = True
 
-            myvar = layout.operator("paint.face_select_loop", text="Remove Loop from Selection", icon="SELECT_EDGERING")
-            myvar.select = False
-            myvar.extend = True
+        myvar = layout.operator("paint.face_select_loop", text="Remove Loop from Selection", icon="SELECT_EDGERING")
+        myvar.select = False
+        myvar.extend = True
 
-            layout.separator()
+        layout.separator()
 
         layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")  # bfa menu
 
@@ -3069,9 +3069,9 @@ class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
         layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
         layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden")
-        layout.operator("paint.face_select_hide", text="Hide Selected")
-        props = layout.operator("paint.face_select_hide", text="Hide Unselected")
+        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
+        layout.operator("paint.face_select_hide", text="Hide Selected") # BFA - WIP
+        props = layout.operator("paint.face_select_hide", text="Hide Unselected") # BFA - WIP
         props.unselected = True
 
 
@@ -3111,9 +3111,9 @@ class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
         layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
 
         layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden")
-        layout.operator("paint.vert_select_hide", text="Hide Selected")
-        props = layout.operator("paint.vert_select_hide", text="Hide Unselected")
+        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
+        layout.operator("paint.vert_select_hide", text="Hide Selected") # BFA - WIP
+        props = layout.operator("paint.vert_select_hide", text="Hide Unselected") # BFA - WIP
         props.unselected = True
 
 
