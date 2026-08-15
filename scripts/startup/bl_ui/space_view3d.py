@@ -1480,7 +1480,7 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base, Menu):
                 # Only show Align to Transform Orientation operator in pose mode, because in edit mode
                 # it might change the parent bone's length, or fail to align in certain cases.
                 layout.operator_context = 'EXEC_REGION_WIN'
-                layout.operator("transform.transform", text="Align to Transform Orientation").mode = 'ALIGN'
+                layout.operator("transform.transform", text="Align to Transform Orientation", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
                 layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.data.display_type == 'BBONE':
