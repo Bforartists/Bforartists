@@ -38,7 +38,7 @@ def create_wizard_entry(obj, text, icon):
         return False
 
     try:
-        wizard_handlers = sys.modules["modular_child_addons.wizard_handlers"]
+        wizard_handlers = sys.modules["bl_ext.user_default.modular_child_addons.wizard_handlers"]
 
         # Debug: print all attributes of the module
         #print(f"DEBUG: wizard_handlers module attributes: {dir(wizard_handlers)}")
