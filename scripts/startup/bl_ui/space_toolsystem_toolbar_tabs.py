@@ -799,6 +799,7 @@ class VIEW3D_PT_vertex_tab_vertex(ToolsystemPanel):
         layout = self.layout
 
         entries = (
+            OperatorEntry("mesh.dupli_extrude_cursor", text="Extrude to Cursor or Add", icon='EXTRUDE_REGION', props={"rotate_source": True}),
             OperatorEntry("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE'),
             OperatorEntry("mesh.vert_connect_path", text="Connect Vertex Path", icon='VERTEXCONNECTPATH'),
             OperatorEntry("mesh.vert_connect", text="Connect Vertex Pairs", icon='VERTEXCONNECT'),
