@@ -17,6 +17,7 @@ class TIME_PT_playhead_snapping(Panel):
     bl_space_type = "DOPESHEET_EDITOR"
     bl_region_type = "HEADER"
     bl_label = "Playhead"
+    bl_ui_units_x = 12
 
     @classmethod
     def poll(cls, context):
@@ -27,17 +28,17 @@ class TIME_PT_playhead_snapping(Panel):
         tool_settings = context.tool_settings
         layout = self.layout
         col = layout.column()
+        col.use_property_split = True
+        col.use_property_decorate = False
 
-        col.prop(tool_settings, "playhead_snap_distance")
-        col.separator()
-        col.label(text="Snap Target")
-        col.prop(tool_settings, "snap_playhead_element", expand=True)
+        col.prop(tool_settings, "playhead_snap_distance", text="Distance")
+        col.prop(tool_settings, "snap_playhead_element", text="Snap to", expand=True)
         col.separator()
 
         if "FRAME" in tool_settings.snap_playhead_element:
-            col.prop(tool_settings, "snap_playhead_frame_step")
+            col.prop(tool_settings, "snap_playhead_frame_step", text="Frame")
         if "SECOND" in tool_settings.snap_playhead_element:
-            col.prop(tool_settings, "snap_playhead_second_step")
+            col.prop(tool_settings, "snap_playhead_second_step", text="Second")
 
 
 def playback_controls(layout, context):
