@@ -785,12 +785,72 @@ class VIEW3D_PT_mask(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
     bl_label = "Masking"
-    bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
-        pass
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
+
+        # BFA - Stencil Mask and Cavity Mask are drawn directly in this popover
+        # as checkbox toggles with the split label system, instead of being
+        # collapsible child panels. (Fixes double dropdown, issue #6470)
+
+        # Stencil Mask
+        brush = ipaint.brush
+        ob = context.active_object
+        if brush is not None and ob is not None:
+            row = layout.row()
+            split = row.split(factor=0.5)
+            split.prop(ipaint, "use_stencil_layer", text="Stencil Mask")
+            if ipaint.use_stencil_layer:
+                split.label(icon="DISCLOSURE_TRI_DOWN")
+            else:
+                split.label(icon="DISCLOSURE_TRI_RIGHT")
+
+            if ipaint.use_stencil_layer:
+                col = layout.column()
+                col.use_property_split = True
+                col.use_property_decorate = False
+                col.active = ipaint.use_stencil_layer
+
+                col.label(text="Stencil Image")
+                col.template_ID(ipaint, "stencil_image", new="image.new", open="image.open")
+
+                mesh = ob.data
+                stencil_text = mesh.uv_layer_stencil.name if mesh.uv_layer_stencil else ""
+
+                col.separator()
+
+                split = col.split()
+                colsub = split.column()
+                colsub.alignment = "RIGHT"
+                colsub.label(text="UV Layer")
+                split.column().menu("VIEW3D_MT_tools_projectpaint_stencil", text=stencil_text, translate=False)
+
+                col.separator()
+
+                row = col.row(align=True)
+                row.prop(ipaint, "stencil_color", text="Display Color")
+                row.prop(ipaint, "invert_stencil", text="", icon="IMAGE_ALPHA")
+
+        # Cavity Mask
+        layout.separator()
+
+        row = layout.row()
+        split = row.split(factor=0.5)
+        split.prop(ipaint, "use_cavity", text="Cavity Mask")
+        if ipaint.use_cavity:
+            split.label(icon="DISCLOSURE_TRI_DOWN")
+        else:
+            split.label(icon="DISCLOSURE_TRI_RIGHT")
+
+        if ipaint.use_cavity:
+            layout.template_curve_mapping(ipaint, "cavity_curve", brush=True)
 
 
+# BFA - Not used. Stencil Mask is now drawn directly in VIEW3D_PT_mask to avoid
+# the double dropdown from collapsible child panels. (issue #6470)
 class VIEW3D_PT_stencil_projectpaint(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
@@ -840,6 +900,32 @@ class VIEW3D_PT_stencil_projectpaint(Panel):
         row = col.row(align=True)
         row.prop(ipaint, "stencil_color", text="Display Color")
         row.prop(ipaint, "invert_stencil", text="", icon="IMAGE_ALPHA")
+
+
+# BFA - Not used. Cavity Mask is now drawn directly in VIEW3D_PT_mask to avoid
+# the double dropdown from collapsible child panels. (issue #6470)
+class VIEW3D_PT_tools_imagepaint_options_cavity(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "HEADER"
+    bl_label = "Cavity Mask"
+    bl_parent_id = "VIEW3D_PT_mask"
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
+
+        row = layout.row()
+        split = row.split(factor=0.5)
+        split.prop(ipaint, "use_cavity", text=self.bl_label if self.is_popover else "")
+        if ipaint.use_cavity:
+            split.label(icon="DISCLOSURE_TRI_DOWN")
+        else:
+            split.label(icon="DISCLOSURE_TRI_RIGHT")
+
+        if ipaint.use_cavity:
+            layout.template_curve_mapping(ipaint, "cavity_curve", brush=True)
 
 
 class VIEW3D_PT_tools_brush_display(Panel, View3DPaintBrushPanel, DisplayPanel):
@@ -1566,35 +1652,6 @@ class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
         col.use_property_split = False
         col.prop(ipaint, "use_occlude")
         col.prop(ipaint, "use_backface_culling", text="Backface Culling")
-
-
-class VIEW3D_PT_tools_imagepaint_options_cavity(Panel):
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "HEADER"
-    bl_label = "Cavity Mask"
-    bl_parent_id = "VIEW3D_PT_mask"
-    bl_options = {"DEFAULT_CLOSED"}
-
-    def draw_header(self, context):
-        tool_settings = context.tool_settings
-        ipaint = tool_settings.image_paint
-
-        row = self.layout.row()
-        split = row.split(factor=0.5)
-        split.prop(ipaint, "use_cavity", text=self.bl_label if self.is_popover else "")
-        if ipaint.use_cavity:
-            split.label(icon="DISCLOSURE_TRI_DOWN")
-        else:
-            split.label(icon="DISCLOSURE_TRI_RIGHT")
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        ipaint = tool_settings.image_paint
-
-        if ipaint.use_cavity:
-            layout.template_curve_mapping(ipaint, "cavity_curve", brush=True)
 
 
 class VIEW3D_PT_imagepaint_options(View3DPaintPanel):
@@ -2675,8 +2732,8 @@ classes = (
     VIEW3D_PT_tools_vertexpaint_options,
 
     VIEW3D_PT_mask,
-    VIEW3D_PT_stencil_projectpaint,
-    VIEW3D_PT_tools_imagepaint_options_cavity,
+    VIEW3D_PT_stencil_projectpaint, # BFA - Not used (kept for merge compatibility, issue #6470)
+    VIEW3D_PT_tools_imagepaint_options_cavity, # BFA - Not used (kept for merge compatibility, issue #6470)
 
     VIEW3D_PT_tools_imagepaint_symmetry,
     VIEW3D_PT_tools_imagepaint_options,
