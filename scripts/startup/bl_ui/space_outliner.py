@@ -614,7 +614,11 @@ class OUTLINER_PT_filter(Panel):
             if space.use_sync_select:
                 row = col.row(align=True)
                 row.separator(factor=2.5)
-                row.prop(space, "scroll_to_active", text="Scroll to Active") # BFA - WIP, float left
+                row.prop(space, "scroll_to_active", text="Scroll to Active")
+                row = col.row(align=True)
+                row.separator(factor=2.5)
+                row.active = space.scroll_to_active and space.use_sync_select 
+                row.prop(space, "expand_on_focus") # BFA - WIP - cascade cpñña´se
 
             row = layout.row(align=True)
             row.prop(space, "show_mode_column", text="Show Mode Column")

@@ -861,6 +861,11 @@ static bNodeTreeInterfaceItem *rna_NodeTreeInterfaceItems_copy(ID *id,
                                                                ReportList *reports,
                                                                bNodeTreeInterfaceItem *item)
 {
+  if (item == &interface->root_panel.item) {
+    BKE_report(reports, RPT_ERROR_INVALID_INPUT, "Root panel can not be copied.");
+    return nullptr;
+  }
+
   /* Copy to same parent as the item. */
   bNodeTreeInterfacePanel *parent = interface->find_item_parent(*item);
   return rna_NodeTreeInterfaceItems_copy_to_parent(id, interface, bmain, reports, item, parent);
@@ -869,9 +874,15 @@ static bNodeTreeInterfaceItem *rna_NodeTreeInterfaceItems_copy(ID *id,
 static void rna_NodeTreeInterfaceItems_remove(ID *id,
                                               bNodeTreeInterface *interface,
                                               Main *bmain,
+                                              ReportList *reports,
                                               bNodeTreeInterfaceItem *item,
                                               bool move_content_to_parent)
 {
+  if (item == &interface->root_panel.item) {
+    BKE_report(reports, RPT_ERROR_INVALID_INPUT, "Root panel can not be removed.");
+    return;
+  }
+
   interface->remove_item(*item, move_content_to_parent);
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
@@ -891,9 +902,15 @@ static void rna_NodeTreeInterfaceItems_clear(ID *id, bNodeTreeInterface *interfa
 static void rna_NodeTreeInterfaceItems_move(ID *id,
                                             bNodeTreeInterface *interface,
                                             Main *bmain,
+                                            ReportList *reports,
                                             bNodeTreeInterfaceItem *item,
                                             int to_position)
 {
+  if (item == &interface->root_panel.item) {
+    BKE_report(reports, RPT_ERROR_INVALID_INPUT, "Root panel can not be moved.");
+    return;
+  }
+
   interface->move_item(*item, to_position);
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
@@ -904,11 +921,16 @@ static void rna_NodeTreeInterfaceItems_move(ID *id,
 static void rna_NodeTreeInterfaceItems_move_to_parent(ID *id,
                                                       bNodeTreeInterface *interface,
                                                       Main *bmain,
-                                                      ReportList * /*reports*/,
+                                                      ReportList *reports,
                                                       bNodeTreeInterfaceItem *item,
                                                       bNodeTreeInterfacePanel *parent,
                                                       int to_position)
 {
+  if (item == &interface->root_panel.item) {
+    BKE_report(reports, RPT_ERROR_INVALID_INPUT, "Root panel can not be moved.");
+    return;
+  }
+
   interface->move_item_to_parent(*item, parent, to_position);
 
   bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
@@ -1580,7 +1602,7 @@ static void rna_def_node_tree_interface_items_api(StructRNA *srna)
 
   func = RNA_def_function(srna, "remove", "rna_NodeTreeInterfaceItems_remove");
   RNA_def_function_ui_description(func, "Remove an item from the interface");
-  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
   parm = RNA_def_pointer(func, "item", "NodeTreeInterfaceItem", "Item", "The item to remove");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
   RNA_def_boolean(
@@ -1596,7 +1618,7 @@ static void rna_def_node_tree_interface_items_api(StructRNA *srna)
 
   func = RNA_def_function(srna, "move", "rna_NodeTreeInterfaceItems_move");
   RNA_def_function_ui_description(func, "Move an item to another position");
-  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
   parm = RNA_def_pointer(func, "item", "NodeTreeInterfaceItem", "Item", "The item to move");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
   parm = RNA_def_int(func,

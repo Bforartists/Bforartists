@@ -12,10 +12,11 @@ merges Blender main into the new branch, pauses for conflict resolution,
 then performs LFS checkout with BFA bias.
 
 Usage:
-    python tools/utils/bforartists_merge_blender.py --week-number 30
-    python tools/utils/bforartists_merge_blender.py --week-number 30 --force
-    python tools/utils/bforartists_merge_blender.py --week-number 30 --dry-run
-    python tools/utils/bforartists_merge_blender.py --week-number 30 --skip-master-update
+    python tools/utils/bforartists_merge_blender.py --week-number 30                      # Standard run
+    python tools/utils/bforartists_merge_blender.py --week-number 30 --force              # Force skip confirmation
+    python tools/utils/bforartists_merge_blender.py --week-number 30 --dry-run            # Simulate run
+    python tools/utils/bforartists_merge_blender.py --week-number 30 --skip-master-update # Skip master update
+    python tools/utils/bforartists_merge_blender.py --week-number 30 --resume             # Resume from conflicts
 
 Help:
     python tools/utils/bforartists_merge_blender.py --help
@@ -30,6 +31,15 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+
+# Ensure Unicode output (→, ⚠, ✓, ═ ...) works even when the console codepage is not
+# UTF-8 (e.g. cp1252 on Windows). Without this, printing these glyphs raises
+# UnicodeEncodeError.
+for stream in (sys.stdout, sys.stderr):
+    try:
+        stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -553,6 +563,50 @@ def phase_status_report(args):
     print()
 
 
+def phase_resume_merge(args):
+    """Phase 6 (resume): Continue the merge workflow after manual conflict resolution.
+
+    Assumes the user already resolved all conflicts and ran 'git add' on the resolved
+    files. Verifies the merge state, then continues with submodule update, LFS checkout
+    with BFA bias, and the status report — skipping the setup phases (1-5).
+    """
+    print_header("Phase 6: Resume Merge (after conflict resolution)")
+
+    # 1. Verify a merge is actually in progress
+    if not git_has_merge_in_progress():
+        print_warn("No merge is in progress on this branch — nothing to resume")
+        print_warn("Continuing with LFS checkout and status report...")
+    else:
+        # 2. Verify no unresolved conflicts remain
+        conflicted = git_get_conflicted_files()
+        if conflicted:
+            print_warn(f"{len(conflicted)} conflict(s) still unresolved — resolve them now")
+            _conflict_prompt(args)
+        else:
+            print_ok("No unresolved conflicts")
+
+        # 3. Warn about unstaged changes (resolved files must be 'git add'ed)
+        unstaged = run_output(["git", "diff", "--name-only"], exit_on_error=False)
+        if unstaged:
+            print_warn(
+                "Unstaged changes detected — make sure resolved files were staged with "
+                "'git add'"
+            )
+            for f in unstaged.splitlines()[:10]:
+                print(f"    {Color.YELLOW}{f}{Color.RESET}")
+
+    # 4. Update submodules (same as the normal merge path)
+    print_step("Updating submodules after merge...")
+    run(["git", "submodule", "update", "--init", "--recursive"])
+    print_ok("Submodules updated")
+
+    # 5. LFS checkout with BFA bias
+    phase_lfs_checkout(args)
+
+    # 6. Status report
+    phase_status_report(args)
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -596,9 +650,14 @@ Examples:
         help="Skip updating the local master branch (Phase 2)",
     )
     parser.add_argument(
-        "--dry-run", "-n",
+        "--dry-run",
         action="store_true",
-        help="Print what would be done without executing anything",
+        help="Simulate the full merge process without making changes.",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume the merge and LFS checkout after manual conflict resolution was completed.",
     )
     return parser.parse_args()
 
@@ -617,11 +676,20 @@ def main():
         print("  3. Create merge-week{} branch from master".format(args.week_number))
         print("  4. Update Blender main (reset, pull, make update, clean submodules)")
         print("  5. Pre-fetch LFS objects (cache only)")
-        print("  6. Merge blender/main → merge-week{} (pause on conflicts)".format(args.week_number))
-        print("  7. LFS checkout (BFA bias) + fsck")
+        if args.resume:
+            print("  6. Resume merge: verify conflicts resolved")
+            print("  7. LFS checkout (BFA bias) + fsck")
+        else:
+            print("  6. Merge blender/main → merge-week{} (pause on conflicts)".format(args.week_number))
+            print("  7. LFS checkout (BFA bias) + fsck")
         print("  8. Status report")
         print()
         print("Run without --dry-run to execute.")
+        return 0
+
+    # ── Resume path: setup phases are skipped — the merge state is already in progress ──
+    if args.resume:
+        phase_resume_merge(args)
         return 0
 
     # ── Phase 1: Preflight ──
@@ -639,7 +707,7 @@ def main():
     # ── Phase 5: Pre-fetch LFS ──
     phase_prefetch_lfs(args)
 
-    # ── Phase 6: Merge (with pause/resume) ──
+    # ── Phase 6: Merge Blender main ──
     phase_merge(args)
 
     # ── Phase 7: LFS checkout ──

@@ -14,6 +14,8 @@
 
 #include "RNA_types.hh"
 
+#include "WM_types.hh"
+
 #include "UI_resources.hh" /*BFA - for icons*/
 
 namespace blender {
@@ -42,8 +44,9 @@ void draw_node_menu_for_catalog(const asset_system::AssetCatalogTreeItem &item,
                                 ui::Layout &layout);
 void draw_asset_menu_item(const asset_system::AssetRepresentation *asset,
                           StringRefNull opname,
+                          const wm::OpCallContext operator_call_context,
                           ui::Layout &layout,
-                          int icon = ICON_NONE);
+                          int icon = ICON_NONE); /*BFA*/
 
 void operator_asset_reference_props_set(const asset_system::AssetRepresentation &asset,
                                         PointerRNA &ptr);

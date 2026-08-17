@@ -66,6 +66,9 @@ struct ReportList;
 struct wmKeyConfig;
 struct wmKeyMap;
 struct wmOperatorType;
+namespace bke::bvh {
+class Tree;
+}
 
 /* -------------------------------------------------------------------- */
 /** \name Sculpt Types
@@ -153,7 +156,7 @@ enum class TransformDisplacementMode {
 static constexpr int plane_brush_max_rolling_average_num = 20;
 
 struct ProjectBrushTarget {
-  bke::BVHTreeFromMesh tree_data;
+  const bke::bvh::Tree *tree_data;
   float4x4 active_to_target_matrix;
 };
 
@@ -667,6 +670,23 @@ void fake_neighbors_free(Object &ob);
 /** \name Brush Utilities.
  * \{ */
 
+/**
+ * Calculates the local matrix of the brush and its inverse, which are used to transform points
+ * from object-space to brush-space and vice versa respectively.
+ *
+ * \param tip_normal Tip normal is the sculpt normal under spherical falloff, but when under
+ * projected falloff, it is the view normal.
+ */
+void calc_brush_local_mat(const float rotation,
+                          const float special_rotation,
+                          const ViewContext &vc,
+                          const Object &ob,
+                          const float3 &tip_normal,
+                          const float3 &tip_location,
+                          const float radius,
+                          float local_mat[4][4],
+                          float local_mat_inv[4][4]);
+
 float brush_plane_offset_get(const Brush &brush, const SculptSession &ss);
 
 /**
@@ -947,8 +967,6 @@ inline bool brush_uses_vector_displacement(const Brush &brush)
          brush.flag2 & BRUSH_USE_COLOR_AS_DISPLACEMENT &&
          brush.mtex.brush_map_mode == MTEX_MAP_MODE_AREA;
 }
-
-void ensure_valid_pivot(const Object &ob, Paint &paint);
 
 /** Retrieve or calculate the object space radius depending on brush settings. */
 float object_space_radius_get(const ViewContext &vc,
