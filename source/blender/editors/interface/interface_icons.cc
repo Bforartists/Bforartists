@@ -2103,7 +2103,7 @@ int icon_from_rnaptr(const bContext *C, PointerRNA *ptr, int rnaicon, const bool
 {
   ID *id = nullptr;
 
-  if (!ptr->data) {
+  if (!*ptr) {
     return rnaicon;
   }
 

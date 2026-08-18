@@ -311,7 +311,7 @@ struct wmGizmo {
 struct wmGizmoProperty {
   const wmGizmoPropertyType *type = nullptr;
 
-  PointerRNA ptr = PointerRNA_NULL;
+  PointerRNA ptr = {};
   PropertyRNA *prop = nullptr;
   int index = -1;
 

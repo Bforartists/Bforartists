@@ -270,13 +270,11 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   layout.use_property_split_set(true);
 
-  ui::Layout *col = &layout.column(false);
-  col->prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  if (!RNA_pointer_is_null(&hook_object_ptr) &&
-      RNA_enum_get(&hook_object_ptr, "type") == OB_ARMATURE)
-  {
+  ui::Layout &col = layout.column(false);
+  col.prop(ptr, "object", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  if (hook_object_ptr && RNA_enum_get(&hook_object_ptr, "type") == OB_ARMATURE) {
     PointerRNA hook_object_data_ptr = RNA_pointer_get(&hook_object_ptr, "data");
-    col->prop_search(ptr, "subtarget", &hook_object_data_ptr, "bones", IFACE_("Bone"), ICON_NONE);
+    col.prop_search(ptr, "subtarget", &hook_object_data_ptr, "bones", IFACE_("Bone"), ICON_NONE);
   }
 
   layout.prop(ptr, "strength", ui::ITEM_R_SLIDER, std::nullopt, ICON_NONE);
@@ -292,8 +290,8 @@ static void panel_draw(const bContext *C, Panel *panel)
     row->active_set(use_falloff);
     row->prop(ptr, "falloff_radius", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-    col = &sub->column(true);           /* bfa - our layout */
-    row = &col->row(true);              /* bfa - our layout */
+    ui::Layout &col_falloff = sub->column(true); /* bfa - our layout */
+    row = &col_falloff.row(true);                /* bfa - our layout */
     row->use_property_split_set(false); /* bfa - use_property_split = False */
     row->separator();                   /*bfa - indent*/
     row->prop(ptr, "use_falloff_uniform", UI_ITEM_NONE, std::nullopt, ICON_NONE);

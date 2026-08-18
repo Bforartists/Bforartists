@@ -120,7 +120,8 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
     }
     ensure_separator();
 
-    asset::draw_asset_menu_item(asset, "OBJECT_OT_modifier_add_node_group", layout, ICON_NODETREE); /*BFA*/
+    asset::draw_asset_menu_item(
+        asset, "OBJECT_OT_modifier_add_node_group", wm::OpCallContext::InvokeDefault, layout, ICON_NODETREE); /*BFA*/
   }
 
   catalog_item->foreach_child([&](const asset_system::AssetCatalogTreeItem &item) {
@@ -153,8 +154,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
   ui::Layout &layout = *menu->layout;
   wmOperatorType *ot = WM_operatortype_find("OBJECT_OT_modifier_add_node_group", true);
   for (const asset_system::AssetRepresentation *asset : tree.unassigned_assets) {
-
-    asset::draw_asset_menu_item(asset, ot->idname, layout, ICON_NODETREE); /*BFA*/
+    asset::draw_asset_menu_item(asset, ot->idname, wm::OpCallContext::InvokeDefault, layout, ICON_NODETREE); /*BFA*/
   }
 
   bool first = true;

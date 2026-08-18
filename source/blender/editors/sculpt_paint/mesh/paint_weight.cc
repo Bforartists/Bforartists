@@ -58,13 +58,15 @@
 /* For IMB_BlendMode only. */
 #include "IMB_imbuf.hh"
 
+#include "ED_object_vgroup.hh"
+
 #include "bmesh.hh"
 
 #include "RNA_define.hh"
 
 #include "../paint_intern.hh" /* own include */
 #include "mesh_brush_common.hh"
-#include "mesh_stroke_common.hh"
+#include "mesh_paint.hh"
 #include "sculpt_automask.hh"
 #include "sculpt_intern.hh"
 #include "vw_paint_intern.hh" /* own include */
@@ -72,7 +74,6 @@
 namespace blender {
 
 using namespace blender::ed::sculpt_paint;
-using ed::sculpt_paint::vwpaint::NormalAnglePrecalc;
 
 struct WPaintAverageAccum {
   uint len;
@@ -141,7 +142,6 @@ struct WeightPaintInfo {
 
 struct WPaintData : public PaintModeData {
   ViewContext vc;
-  NormalAnglePrecalc normal_angle_precalc;
 
   WeightPaintGroupData active, mirror;
 
@@ -999,9 +999,6 @@ bool WeightPaintStroke::test_start(wmOperator *op, const float mouse[2])
   wpd->vc = this->vc;
 
   const Brush *brush = BKE_paint_brush_for_read(&wp.paint);
-  vwpaint::view_angle_limits_init(&wpd->normal_angle_precalc,
-                                  brush->falloff_angle,
-                                  (brush->flag & BRUSH_FRONTFACE_FALLOFF) != 0);
 
   wpd->active.index = vgroup_index.active;
   wpd->mirror.index = vgroup_index.mirror;
@@ -1244,9 +1241,7 @@ static void do_wpaint_brush_blur(const Depsgraph &depsgraph,
         const float angle_cos = use_normal ?
                                     dot_v3v3(sculpt_normal_frontface, vert_normals[vert]) :
                                     1.0f;
-        if (!vwpaint::test_brush_angle_falloff(
-                brush, wpd.normal_angle_precalc, angle_cos, &brush_strength))
-        {
+        if (!vwpaint::test_brush_angle_falloff(brush, angle_cos)) {
           continue;
         }
 
@@ -1350,9 +1345,7 @@ static void do_wpaint_brush_smear(const Depsgraph &depsgraph,
         const float angle_cos = use_normal ?
                                     dot_v3v3(sculpt_normal_frontface, vert_normals[vert]) :
                                     1.0f;
-        if (!vwpaint::test_brush_angle_falloff(
-                brush, wpd.normal_angle_precalc, angle_cos, &brush_strength))
-        {
+        if (!vwpaint::test_brush_angle_falloff(brush, angle_cos)) {
           continue;
         }
 
@@ -1476,9 +1469,7 @@ static void do_wpaint_brush_draw(const Depsgraph &depsgraph,
         const float angle_cos = use_normal ?
                                     dot_v3v3(sculpt_normal_frontface, vert_normals[vert]) :
                                     1.0f;
-        if (!vwpaint::test_brush_angle_falloff(
-                brush, wpd.normal_angle_precalc, angle_cos, &brush_strength))
-        {
+        if (!vwpaint::test_brush_angle_falloff(brush, angle_cos)) {
           continue;
         }
         const float final_alpha = factors[i] * brush_strength * brush_alpha_pressure;
@@ -1633,7 +1624,13 @@ static void wpaint_paint_leaves(const Depsgraph &depsgraph,
 
 void ED_object_wpaintmode_enter_ex(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob)
 {
-  vwpaint::mode_enter_generic(bmain, depsgraph, scene, ob, OB_MODE_WEIGHT_PAINT);
+  ed::sculpt_paint::mode_enter_generic(bmain, depsgraph, scene, ob, OB_MODE_WEIGHT_PAINT);
+
+  ED_mesh_mirror_spatial_table_end(&ob);
+  ed::object::vgroup_sync_from_pose(&ob);
+
+  /* Flush object mode. */
+  DEG_id_tag_update(&ob.id, ID_RECALC_SYNC_TO_EVAL);
 }
 void ED_object_wpaintmode_enter(bContext *C, Depsgraph &depsgraph)
 {
@@ -1650,7 +1647,9 @@ void ED_object_wpaintmode_enter(bContext *C, Depsgraph &depsgraph)
 
 void ED_object_wpaintmode_exit_ex(Object &ob)
 {
-  vwpaint::mode_exit_generic(ob, OB_MODE_WEIGHT_PAINT);
+  ed::sculpt_paint::mode_exit_generic(ob, OB_MODE_WEIGHT_PAINT);
+  ED_mesh_mirror_spatial_table_end(&ob);
+  ED_mesh_mirror_topo_table_end(&ob);
 }
 void ED_object_wpaintmode_exit(bContext *C)
 {
@@ -1715,7 +1714,6 @@ static wmOperatorStatus wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
   const int mode_flag = OB_MODE_WEIGHT_PAINT;
   const bool is_mode_set = (ob.mode & mode_flag) != 0;
   Scene &scene = *CTX_data_scene(C);
-  ToolSettings &ts = *scene.toolsettings;
 
   if (!is_mode_set) {
     if (!ed::object::mode_compat_set(C, &ob, eObjectMode(mode_flag), op->reports)) {
@@ -1734,7 +1732,6 @@ static wmOperatorStatus wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
       depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
     }
     ED_object_wpaintmode_enter_ex(bmain, *depsgraph, scene, ob);
-    BKE_paint_brushes_validate(&bmain, &ts.wpaint->paint);
   }
 
   ed::object::posemode_set_for_weight_paint(C, &bmain, &ob, is_mode_set);

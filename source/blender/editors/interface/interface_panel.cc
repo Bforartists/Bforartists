@@ -565,7 +565,7 @@ static bool panel_custom_pin_to_last_get(const Panel *panel)
 {
   if (panel->type->pin_to_last_property[0] != '\0') {
     PointerRNA *ptr = panel_custom_data_get(panel);
-    if (ptr != nullptr && !RNA_pointer_is_null(ptr)) {
+    if (ptr != nullptr && *ptr) {
       return RNA_boolean_get(ptr, panel->type->pin_to_last_property);
     }
   }
@@ -583,7 +583,7 @@ static bool panel_custom_data_active_get(const Panel *panel)
 
   if (panel->type->active_property[0] != '\0') {
     PointerRNA *ptr = panel_custom_data_get(panel);
-    if (ptr != nullptr && !RNA_pointer_is_null(ptr)) {
+    if (ptr != nullptr && *ptr) {
       return RNA_boolean_get(ptr, panel->type->active_property);
     }
   }
@@ -600,7 +600,7 @@ static void panel_custom_data_active_set(Panel *panel)
   if (panel->type->active_property[0] != '\0') {
     PointerRNA *ptr = panel_custom_data_get(panel);
     BLI_assert(RNA_struct_find_property(ptr, panel->type->active_property) != nullptr);
-    if (ptr != nullptr && !RNA_pointer_is_null(ptr)) {
+    if (ptr != nullptr && *ptr) {
       RNA_boolean_set(ptr, panel->type->active_property, true);
     }
   }

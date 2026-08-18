@@ -2935,23 +2935,6 @@ def draw_device(self, context):
             osl_col.prop(cscene, "shading_system")
 
 
-def draw_pause(self, context):
-    layout = self.layout
-    scene = context.scene
-
-    if context.engine == "CYCLES":
-        view = context.space_data
-
-        if view.shading.type == "RENDERED":
-            cscene = scene.cycles
-            layout.prop(
-                cscene,
-                "preview_pause",
-                icon="PLAY" if cscene.preview_pause else "PAUSE",
-                text="",
-            )
-
-
 def get_panels():
     exclude_panels = {
         "DATA_PT_camera_dof",
@@ -3092,7 +3075,6 @@ def register():
     from bpy.utils import register_class
 
     bpy.types.RENDER_PT_context.append(draw_device)
-    bpy.types.VIEW3D_HT_header.append(draw_pause)
 
     for panel in get_panels():
         panel.COMPAT_ENGINES.add("CYCLES")
@@ -3105,7 +3087,6 @@ def unregister():
     from bpy.utils import unregister_class
 
     bpy.types.RENDER_PT_context.remove(draw_device)
-    bpy.types.VIEW3D_HT_header.remove(draw_pause)
 
     for panel in get_panels():
         if "CYCLES" in panel.COMPAT_ENGINES:
