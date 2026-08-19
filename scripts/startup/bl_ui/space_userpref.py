@@ -1072,7 +1072,9 @@ class USERPREF_PT_viewport_quality(ViewportPanel, CenterAlignMixIn, Panel):
 
         import gpu
 
-        col = layout.column(heading="Shadows")
+        layout.label(text="Shadows")
+        
+        col = layout.column()
         col.active = gpu.capabilities.ray_query_support_get()
         col.prop(system, "use_rt_shadows", text="Hardware Raytracing")
 
