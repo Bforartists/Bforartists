@@ -440,29 +440,35 @@ class NODE_PT_gizmo_display(Panel):
             colsub.active = snode.node_tree is not None and col.active
             colsub.prop(snode, "show_gizmo_active_node", text="Active Node")
         
-        col.separator()
-        col = col.column(align=True)
-        row = col.row()
-        row.prop(snode, "show_minimap", text="Show Minimap")
-        if not snode.show_minimap:
-            row.label(icon="DISCLOSURE_TRI_RIGHT")
+        header, col = col.indented_column(align=False, draw_body=snode.show_minimap)        
+        header_row = header.row()
+        header_row.alignment = 'LEFT'
+        header_row.prop(snode, "show_minimap", text="Show Minimap")
+
+        if col:
+            header_row.label(icon="DISCLOSURE_TRI_DOWN")
+            col.use_property_split = True
+            col.use_property_decorate = False
+
+            col.separator()
+            col.prop(snode, "minimap_aspect_ratio", text="Aspect Ratio")
+            col.prop(snode, "minimap_scale", text="Scale")
+            col.separator()
+        
+            col.prop(snode, "minimap_auto_hide", text="Auto Hide")
+            col.prop(snode, "minimap_top", text="Draw on Top")
+            col.prop(snode, "show_nodes_in_frame", text="Show Nodes in Frame")
+
+            col.separator()
+            subheader, subcol = col.indented_column()        
+            subheader.label(text="Color")
+
+            split = subcol.split()
+            split.prop(snode, "use_node_colors", text="Nodes")
+            split.prop(snode, "use_frame_colors", text="Frames")
         else:
-            row.label(icon="DISCLOSURE_TRI_DOWN")
-            
-            split = col.split()
-            row = split.column()
-            row.separator()
-            row.use_property_split = True
-            row.prop(snode, "minimap_top")
-            row.prop(snode, "minimap_auto_hide")
-            row.separator()
-            row.prop(snode, "minimap_aspect_ratio")
-            row.prop(snode, "minimap_scale")
-            row.separator()
-            row.prop(snode, "use_node_colors")
-            row.separator()
-            row.prop(snode, "use_frame_colors")
-            row.prop(snode, "show_nodes_in_frame")
+            header_row.label(icon="DISCLOSURE_TRI_RIGHT")
+
 
 class NODE_MT_editor_menus(Menu):
     bl_idname = "NODE_MT_editor_menus"

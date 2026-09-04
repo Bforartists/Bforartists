@@ -9122,7 +9122,7 @@ static void rna_def_space_node(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "minimap_top", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "gizmo_flag", SNODE_GIZMO_MINIMAP_MOVE_TO_TOP);
-  RNA_def_property_ui_text(prop, "Minimap Top", "Move the minimap to top right, otherwise it will be in the bottom right");
+  RNA_def_property_ui_text(prop, "Minimap Draw on Top", "Move the minimap to top right, otherwise it will be in the bottom right");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NODE_VIEW, nullptr);
 
   prop = RNA_def_property(srna, "minimap_auto_hide", PROP_BOOLEAN, PROP_NONE);
