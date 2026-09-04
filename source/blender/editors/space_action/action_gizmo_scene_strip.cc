@@ -9,9 +9,9 @@
  *
  * Interactive scene-strip gizmos for the dope-sheet, driven by the 3D Sequencer
  * scene-time sync. Provides green/red retime handles, a move bar, a slip bar and
- * a master-timeline scrub area. The visuals are drawn by
- * `ANIM_draw_scene_strip_gizmos()` in `anim_draw.cc`; this file only provides the
- * hit-areas and the modal operators that edit the strip.
+ * a master-timeline scrub area. The group renders its own visuals (in the draw
+ * callback of the first gizmo) and provides the hit-areas plus the modal
+ * operators that edit the strip.
  */
 
 #include <algorithm>
@@ -38,10 +38,14 @@
 #include "ED_sequencer.hh"
 #include "ED_screen.hh"
 
+#include "GPU_immediate.hh"
+#include "GPU_state.hh"
+
 #include "MEM_guardedalloc.h"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
+#include "RNA_path.hh"
 #include "RNA_prototypes.hh"
 
 #include "SEQ_sequencer.hh"
@@ -52,7 +56,6 @@
 #include "UI_view2d.hh"
 
 #include "WM_api.hh"
-#include "WM_gizmo_api.hh"
 #include "WM_types.hh"
 
 #include "action_intern.hh"
@@ -92,7 +95,7 @@ static bool timeline_sync_settings_ptr(const bContext *C, PointerRNA *r_settings
   if (!wm) {
     return false;
   }
-  PointerRNA wm_ptr = RNA_pointer_create(&wm->id, &RNA_WindowManager, wm);
+  PointerRNA wm_ptr = RNA_pointer_create_discrete(&wm->id, RNA_WindowManager, wm);
   PropertyRNA *settings_prop = nullptr;
   return RNA_path_resolve_property(&wm_ptr, "timeline_sync_settings", r_settings, &settings_prop);
 }
@@ -222,13 +225,158 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
 
 /** \} */
 
+/* Shared per-region state of the gizmo group (gizmo hit-areas and scrub area).
+ * The visuals of the whole group are rendered by the draw callback of
+ * gizmos[0], see #action_gizmo_scene_strip_draw. */
+struct SceneStripWidgetGroup {
+  wmGizmo *gizmos[4]; /* left, right, move, slip */
+  wmGizmo *scrub;
+};
+
 /* -------------------------------------------------------------------- */
 /** \name Scene strip gizmo types
  * \{ */
 
-static void action_gizmo_scene_strip_draw(const bContext * /*C*/, wmGizmo * /*gz*/)
+static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
 {
-  /* Drawing is handled by ANIM_draw_scene_strip_gizmos() in anim_draw.cc. */
+  /* Only the first gizmo of the group renders the bar, the other gizmos only
+   * provide their own hit-areas (test_select) and cursor feedback. */
+  wmGizmoGroup *parent_gzgroup = gz->parent_gzgroup;
+  SceneStripWidgetGroup *group = (parent_gzgroup != nullptr) ?
+                                     static_cast<SceneStripWidgetGroup *>(parent_gzgroup->customdata) :
+                                     nullptr;
+  if (group == nullptr || gz != group->gizmos[0]) {
+    return;
+  }
+
+  /* Mirrors WIDGETGROUP_scene_strip_poll, in case the overlay flags or the sync
+   * state changed without the gizmo-map being refreshed. */
+  SpaceAction *space_action = CTX_wm_space_action(C);
+  if (space_action == nullptr || (space_action->overlays.flag & ADS_OVERLAY_SHOW_OVERLAYS) == 0 ||
+      (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0)
+  {
+    return;
+  }
+  Scene *master_scene = nullptr;
+  const Strip *strip = scene_strip_master_get(C, &master_scene);
+  if (strip == nullptr || strip->scene == nullptr) {
+    return;
+  }
+  const Scene *active_scene = CTX_data_scene(C);
+  if (strip->scene != active_scene) {
+    return;
+  }
+  ARegion *region = CTX_wm_region(C);
+  if (region == nullptr || region->winy < ACTION_STRIP_GIZMO_MIN_REGION_HEIGHT) {
+    return;
+  }
+  View2D *v2d = &region->v2d;
+
+  /* The highlight state is fresh here: the gizmo-map runs the draw_prepare of all
+   * groups before any gizmo draw call. This replaces the previous cross-file
+   * caching through SpaceAction_Runtime (which lagged one redraw behind). */
+  int highlight = -1;
+  for (int i = 0; i < 4; i++) {
+    if (group->gizmos[i]->state & WM_GIZMO_STATE_HIGHLIGHT) {
+      highlight = i;
+      break;
+    }
+  }
+
+  const float ui_scale = UI_SCALE_FAC;
+  const bool has_markers = !BLI_listbase_is_empty(&active_scene->markers);
+  const float baseline = has_markers ? float(UI_MARKER_MARGIN_Y) : 14.0f * ui_scale;
+  const float timeline_height = 28.0f * ui_scale;
+  const float strip_height = 20.0f * ui_scale;
+
+  GPU_blend(GPU_BLEND_ALPHA);
+
+  GPUVertFormat *format = immVertexFormat();
+  uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+
+  /* The gizmos draw in region pixel space, so view (frame) coordinates need to
+   * be mapped to region pixels for the x-axis (y is already in region pixels,
+   * same space as the marker margin and the hit-areas). */
+  const auto region_x_from_view = [v2d](float frame) {
+    int x = 0, y = 0;
+    ui::view2d_view_to_region(v2d, frame, 0.0f, &x, &y);
+    return float(x);
+  };
+
+  /* Current master-frame highlight (scrub position). */
+  immUniformColor4f(0.1f, 0.5f, 0.8f, 0.6f);
+  const float cfra_x = region_x_from_view(float(master_scene->r.cfra));
+  immRectf(pos, cfra_x, baseline, cfra_x + 1.0f, baseline + timeline_height);
+
+  /* Other scene strips referencing the same scene. */
+  const Editing *ed = seq::editing_get(master_scene);
+  if (ed != nullptr) {
+    for (const Strip &other : ed->seqbase) {
+      if (&other == strip || other.type != STRIP_TYPE_SCENE || other.scene != active_scene) {
+        continue;
+      }
+      const float left_handle = other.left_handle();
+      const float right_handle = other.right_handle(master_scene);
+      float frame_in = seq::give_frame_index(master_scene, &other, left_handle) +
+                       other.scene->r.sfra + other.anim_startofs;
+      float frame_out = seq::give_frame_index(master_scene, &other, right_handle - 1) +
+                        other.scene->r.sfra + other.anim_startofs;
+      if (frame_in > frame_out) {
+        std::swap(frame_in, frame_out);
+      }
+      const float x_in = region_x_from_view(frame_in);
+      const float x_out = region_x_from_view(frame_out);
+      const float y = baseline + 4.0f * ui_scale;
+      immUniformColor4f(0.1f, 0.1f, 0.1f, 0.5f);
+      immRectf(pos, x_in, y, x_out, y + strip_height);
+      immUniformColor4f(0.3f, 0.3f, 0.3f, 0.7f);
+      immRectf(pos, x_in, y, x_in + 2.0f * ui_scale, y + strip_height);
+      immRectf(pos, x_out - 2.0f * ui_scale, y, x_out, y + strip_height);
+    }
+  }
+
+  /* Master strip: base, move/slip zones and handles. The rects are shared with
+   * the hit-areas, so what is drawn always matches what can be grabbed. */
+  SceneStripGizmoRects rects;
+  if (scene_strip_gizmo_rects_get(C, &rects)) {
+    const float x_in = float(rects.move.xmin);
+    const float x_out = float(rects.move.xmax);
+    const float y_strip = float(rects.left.ymin);
+
+    immUniformColor4f(0.1f, 0.1f, 0.1f, 0.8f);
+    immRectf(pos, x_in, y_strip, x_out, y_strip + strip_height);
+
+    if (highlight == GZ_PART_MOVE) {
+      immUniformColor4f(0.35f, 0.55f, 0.75f, 0.55f);
+      immRectf(pos, x_in, float(rects.move.ymin), x_out, float(rects.move.ymax));
+    }
+    else if (highlight == GZ_PART_SLIP) {
+      immUniformColor4f(0.35f, 0.55f, 0.75f, 0.55f);
+      immRectf(pos, x_in, float(rects.slip.ymin), x_out, float(rects.slip.ymax));
+    }
+
+    if (highlight == GZ_PART_LEFT) {
+      immUniformColor4f(0.3f, 0.95f, 0.4f, 0.95f);
+    }
+    else {
+      immUniformColor4f(0.3f, 0.95f, 0.4f, 0.6f);
+    }
+    immRectf(pos, float(rects.left.xmin), y_strip, float(rects.left.xmax), y_strip + strip_height);
+
+    if (highlight == GZ_PART_RIGHT) {
+      immUniformColor4f(0.95f, 0.3f, 0.4f, 0.95f);
+    }
+    else {
+      immUniformColor4f(0.95f, 0.3f, 0.4f, 0.6f);
+    }
+    immRectf(pos, float(rects.right.xmin), y_strip, float(rects.right.xmax), y_strip + strip_height);
+  }
+
+  immUnbindProgram();
+
+  GPU_blend(GPU_BLEND_NONE);
 }
 
 static int action_gizmo_scene_strip_test_select(bContext *C, wmGizmo *gz, const int mval[2])
@@ -312,11 +460,6 @@ void ACTION_GT_scene_strip_scrub(wmGizmoType *gzt)
 /** \name Scene strip gizmo group
  * \{ */
 
-struct SceneStripWidgetGroup {
-  wmGizmo *gizmos[4]; /* left, right, move, slip */
-  wmGizmo *scrub;
-};
-
 static bool WIDGETGROUP_scene_strip_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
 {
   SpaceAction *saction = CTX_wm_space_action(C);
@@ -376,7 +519,9 @@ static void WIDGETGROUP_scene_strip_setup(const bContext * /*C*/, wmGizmoGroup *
 static void WIDGETGROUP_scene_strip_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
 {
   SceneStripWidgetGroup *group = static_cast<SceneStripWidgetGroup *>(gzgroup->customdata);
-  SpaceAction *saction = CTX_wm_space_action(C);
+  if (group == nullptr) {
+    return;
+  }
 
   SceneStripGizmoRects rects;
   const bool has_rects = scene_strip_gizmo_rects_get(C, &rects);
@@ -385,18 +530,6 @@ static void WIDGETGROUP_scene_strip_draw_prepare(const bContext *C, wmGizmoGroup
     WM_gizmo_set_flag(group->gizmos[i], WM_GIZMO_HIDDEN, !has_rects);
   }
   WM_gizmo_set_flag(group->scrub, WM_GIZMO_HIDDEN, !has_rects);
-
-  /* Pass the highlight state to the overlay draw. */
-  if (saction) {
-    char highlight = -1;
-    for (int i = 0; i < 4; i++) {
-      if (group->gizmos[i]->state & WM_GIZMO_STATE_HIGHLIGHT) {
-        highlight = i;
-        break;
-      }
-    }
-    saction->runtime.scene_strip_gizmo_highlight = highlight;
-  }
 }
 
 void ACTION_GGT_scene_strip_gizmos(wmGizmoGroupType *gzgt)
@@ -486,8 +619,8 @@ static void adjust_shot_duration_right(Scene *master_scene, Strip *strip, const 
   Vector<Strip *> impacted = strips_after_same_channel(master_scene, strip);
   if (new_frame_offset > 0) {
     /* Extend: move impacted strips to the right first (reversed order). */
-    for (Strip *s : impacted.as_span().reversed()) {
-      seq::transform_translate_strip(master_scene, s, new_frame_offset);
+    for (int i = impacted.size() - 1; i >= 0; i--) {
+      seq::transform_translate_strip(master_scene, impacted[i], new_frame_offset);
     }
     strip->endofs -= new_frame_offset;
   }
@@ -524,8 +657,8 @@ static void adjust_shot_duration_left(Scene *master_scene, Strip *strip, const i
   }
   else {
     /* Shrink from the left: move impacted strips to the right first (reversed order). */
-    for (Strip *s : impacted.as_span().reversed()) {
-      seq::transform_translate_strip(master_scene, s, -new_frame_offset);
+    for (int i = impacted.size() - 1; i >= 0; i--) {
+      seq::transform_translate_strip(master_scene, impacted[i], -new_frame_offset);
     }
     strip->start -= new_frame_offset;
     strip->startofs += new_frame_offset;
@@ -756,15 +889,15 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
         return OPERATOR_FINISHED;
       }
       break;
-    case RETKEY:
-    case NUMPAD_ENTER:
+    case EVT_RETKEY:
+    case EVT_PADENTER:
       if (event->val == KM_PRESS) {
         scene_strip_timing_ui_cleanup(C, op);
         return OPERATOR_FINISHED;
       }
       break;
     case RIGHTMOUSE:
-    case ESCKEY:
+    case EVT_ESCKEY:
       if (event->val == KM_PRESS) {
         /* Restore the strip by re-applying with a zero offset, then restore the
          * frame ranges that were possibly extended. */
@@ -854,7 +987,7 @@ static wmOperatorStatus scene_strip_scrub_modal(bContext *C, wmOperator *op, con
       }
       break;
     case RIGHTMOUSE:
-    case ESCKEY:
+    case EVT_ESCKEY:
       if (event->val == KM_PRESS) {
         op->customdata = nullptr;
         return OPERATOR_CANCELLED;

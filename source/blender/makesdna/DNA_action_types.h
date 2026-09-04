@@ -1159,9 +1159,7 @@ struct bDopeSheet {
 
 struct SpaceAction_Runtime {
   eSAction_Runtime_Flag flag = {};
-  /** BFA - 3D Sequencer: which scene strip gizmo is highlighted (0-3: left/right/move/slip), -1 = none. */
-  char scene_strip_gizmo_highlight = -1;
-  char _pad0[6] = {};
+  char _pad0[7] = {};
 };
 
 struct SpaceActionOverlays {

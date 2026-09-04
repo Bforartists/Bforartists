@@ -40,6 +40,7 @@ set(LIB
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::animrig
   PRIVATE bf::windowmanager
+  PRIVATE bf::sequencer # BFA - 3d sequencer scene strip gizmos need SEQ_ headers
 )
 
 blender_add_lib(bf_editor_space_action "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
