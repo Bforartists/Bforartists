@@ -307,17 +307,19 @@ eWM_GizmoFlagMapDrawStep WM_gizmomap_drawstep_from_gizmo_group(const wmGizmoGrou
   if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) {
     step = WM_GIZMOMAP_DRAWSTEP_3D;
   }
-  // bfa node minimap add, rename with _TOOL and _UI
-  else if (!(gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) || (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI)) {
-    step = WM_GIZMOMAP_DRAWSTEP_2D_UI;
-  }
+  /* BFA - Two 2D draw-steps: explicit tool gizmos keep the tools pass, while 2D_UI flagged and
+   * unflagged groups (Python gizmo-groups, scene strip gizmos) use the UI pass on top, matching
+   * upstream behavior of the single 2D draw-step. */
   else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) {
     step = WM_GIZMOMAP_DRAWSTEP_2D_TOOLS;
   }
+  else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) {
+    step = WM_GIZMOMAP_DRAWSTEP_2D_UI;
+  }
   else {
-    /* BFA - Default 2D draw-step for gizmo-groups without an explicit one (e.g. Python gizmo-groups),
-     * matching the previous behavior of the single `WM_GIZMOMAP_DRAWSTEP_2D`. */
-    step = WM_GIZMOMAP_DRAWSTEP_2D_TOOLS;
+    /* BFA - Default 2D draw-step for gizmo-groups without an explicit one (e.g. Python
+     * gizmo-groups): the UI pass, matching the previous behavior of the single 2D step. */
+    step = WM_GIZMOMAP_DRAWSTEP_2D_UI;
   }
   return step;
 }

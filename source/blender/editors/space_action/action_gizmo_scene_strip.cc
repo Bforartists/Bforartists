@@ -668,7 +668,8 @@ void ACTION_GGT_scene_strip_gizmos(wmGizmoGroupType *gzgt)
   gzgt->name = "Scene Strip Gizmos";
   gzgt->idname = "ACTION_GGT_scene_strip_gizmos";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT;
+  /* BFA - UI pass: on-top overlay gizmo, mirrors unflagged/Python gizmo-group behavior. */
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_2D_UI;
 
   gzgt->poll = WIDGETGROUP_scene_strip_poll;
   gzgt->setup = WIDGETGROUP_scene_strip_setup;
