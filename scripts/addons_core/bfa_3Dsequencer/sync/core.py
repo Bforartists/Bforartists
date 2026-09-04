@@ -6,8 +6,7 @@ from typing import Any, Callable, Optional, Union, Type
 
 import bpy
 
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
-
+from ..utils import register_classes, unregister_classes
 
 SequenceType = Type[bpy.types.Strip]
 

@@ -5,11 +5,12 @@ from typing import Callable
 
 import bpy
 
-from bfa_3Dsequencer.preferences import get_addon_prefs
-from bfa_3Dsequencer.sync.core import (
+from ..preferences import get_addon_prefs
+from ..sync.core import (
     get_sync_settings,
     remap_frame_value,
 )
+
 
 # Data structure to map source-to-duplicated datablock
 DuplicationManifest = dict[bpy.types.ID, bpy.types.ID]

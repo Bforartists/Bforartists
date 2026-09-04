@@ -5,8 +5,8 @@ from typing import Optional
 
 import bpy
 
-from bfa_3Dsequencer.preferences import get_addon_prefs
-from bfa_3Dsequencer.scene.core import (
+from ..preferences import get_addon_prefs
+from .core import (
     adjust_shot_duration,
     delete_scene,
     duplicate_scene,
@@ -14,13 +14,13 @@ from bfa_3Dsequencer.scene.core import (
     rename_scene,
     slip_shot_content,
 )
-from bfa_3Dsequencer.scene.naming import shot_naming, ShotNamingProperty
-from bfa_3Dsequencer.sync.core import (
+from .naming import shot_naming, ShotNamingProperty
+from ..sync.core import (
     get_sync_master_strip,
     get_sync_settings,
     remap_frame_value,
 )
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
+from ..utils import register_classes, unregister_classes
 
 
 def get_last_sequence(
@@ -196,10 +196,10 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
 
         source_scene = bpy.data.scenes[self.source_scene]
         # Create sequence editor data if needed.
-        if not context.scene.sequence_editor:
+        if not context.sequencer_scene.sequence_editor:
             context.scene.sequence_editor_create()
 
-        strips = context.scene.sequence_editor.strips
+        strips = context.sequencer_scene.sequence_editor.strips
         frame_offset_start = 0
 
         # Source scene handling.
@@ -228,17 +228,17 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
         new_strip.frame_final_duration = self.duration
         slip_shot_content(new_strip, frame_offset_start)
         new_strip.scene_camera = new_strip.scene.camera
-        context.scene.sequence_editor.active_strip = new_strip
+        context.sequencer_scene.sequence_editor.active_strip = new_strip
 
         if self.scene_mode == "EXISTING":
             shot_scene.camera = source_scene.camera
 
-        context.scene.frame_end = max(
-            new_strip.frame_final_end - 1, context.scene.frame_end
+        context.sequencer_scene.frame_end = max(
+            new_strip.frame_final_end - 1, context.sequencer_scene.frame_end
         )
 
         # Move current frame to the new strip's start frame.
-        context.scene.frame_set(insert_frame)
+        context.sequencer_scene.frame_set(insert_frame)
 
         # Ensure newly created scene is visible.
         ensure_sequencer_frame_visible(context, new_strip.frame_final_end)
