@@ -7554,9 +7554,11 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_GIZMOS);
   RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop,
-                           "Show Scene Strip Gizmos",
+                           "Scene Strip Gizmo",
                            "When using scene time synchronization, show interactive gizmos to retime, "
-                           "move or slip the current scene strip and to scrub the master sequence");
+                           "move or slip the current scene strip and to scrub the master sequence. "
+                           "The built-in and addon overlays both bind this single toggle; turning "
+                           "it off fully hides the scene strip gizmo system");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 
   /* bfa 3d sequencer scene strip adjustments (no addon needed, defaults on) */
@@ -7564,18 +7566,20 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_USE_PREVIEW_RANGE);
   RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop,
-                           "Use Preview Range",
-                           "Update the scene strip's scene preview range to match the strip when "
-                           "retiming, moving or slipping it");
+                           "Set Preview Range",
+                           "Update the strip scene's preview start/end frames (preview "
+                           "range) to match the strip when retiming, moving or slipping it. "
+                           "Off: the gizmo only changes the strip itself");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 
   prop = RNA_def_property(srna, "use_scene_range", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_USE_SCENE_RANGE);
   RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop,
-                           "Use Scene Frame Range",
-                           "Update the scene strip's scene frame range to match the strip when "
-                           "retiming, moving or slipping it");
+                           "Set Scene Range",
+                           "Update the strip scene's start/end frames (scene frame range) to "
+                           "match the strip when retiming, moving or slipping it. Off: the "
+                           "gizmo only changes the strip itself");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 

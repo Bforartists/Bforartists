@@ -182,7 +182,7 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
   const bool has_markers = !BLI_listbase_is_empty(&active_scene->markers);
   const int baseline = int(has_markers ? UI_MARKER_MARGIN_Y : 14.0f * ui_scale);
   const int timeline_height = int(28.0f * ui_scale);
-  const int strip_height = int(20.0f * ui_scale);
+  const int strip_height = int(26.0f * ui_scale);
   const int y_strip = baseline + int(14.0f * ui_scale);
 
   float frame_in, frame_out;
@@ -194,10 +194,10 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
   ui::view2d_view_to_region(v2d, frame_out, 0.0f, &x_out, &y_dummy);
 
   const int handle_width = int(8.0f * ui_scale);
-  /* bfa 3d sequencer: the move bar (strip location) is the smaller bottom zone, the
-   * slip bar (strip content) is the larger top zone. */
-  const int move_bar_height = int(strip_height * 0.3f);
-  const int slip_bar_height = int(strip_height * 0.7f);
+  /* bfa 3d sequencer: the move bar (strip location) is the bottom half and the
+   * slip bar (strip content) the top half - split 50/50 so both zones stay easy
+   * to grab (the move bar was too thin to hit comfortably before). */
+  const int move_bar_height = int(strip_height * 0.5f);
 
   BLI_rcti_init(&rects->left,
                 x_in - handle_width / 2,
@@ -210,11 +210,7 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
                 y_strip,
                 y_strip + strip_height);
   BLI_rcti_init(&rects->move, x_in, x_out, y_strip, y_strip + move_bar_height);
-  BLI_rcti_init(&rects->slip,
-                x_in,
-                x_out,
-                y_strip + strip_height - slip_bar_height,
-                y_strip + strip_height);
+  BLI_rcti_init(&rects->slip, x_in, x_out, y_strip + move_bar_height, y_strip + strip_height);
   BLI_rcti_init(&rects->scrub, 0, region->winx, baseline, baseline + timeline_height);
   return true;
 }
@@ -357,18 +353,21 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
    * groups before any gizmo draw call. This replaces the previous cross-file
    * caching through SpaceAction_Runtime (which lagged one redraw behind). */
   int highlight = -1;
+  int modal_part = -1;
   for (int i = 0; i < 4; i++) {
     if (group->gizmos[i]->state & WM_GIZMO_STATE_HIGHLIGHT) {
       highlight = i;
-      break;
+    }
+    /* A gizmo keeps WM_GIZMO_STATE_MODAL while its operator runs (grab). */
+    if (group->gizmos[i]->state & WM_GIZMO_STATE_MODAL) {
+      modal_part = i;
     }
   }
 
   const float ui_scale = UI_SCALE_FAC;
   const bool has_markers = !BLI_listbase_is_empty(&active_scene->markers);
   const float baseline = has_markers ? float(UI_MARKER_MARGIN_Y) : 14.0f * ui_scale;
-  const float timeline_height = 28.0f * ui_scale;
-  const float strip_height = 20.0f * ui_scale;
+  const float strip_height = 26.0f * ui_scale;
 
   GPU_blend(GPU_BLEND_ALPHA);
 
@@ -386,10 +385,9 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     return float(x);
   };
 
-  /* Current master-frame highlight (scrub position). */
-  immUniformColor4f(0.1f, 0.5f, 0.8f, 0.6f);
-  const float cfra_x = region_x_from_view(float(master_scene->r.cfra));
-  immRectf(pos, cfra_x, baseline, cfra_x + 1.0f, baseline + timeline_height);
+  /* BFA (#6780): no playhead line is drawn on or above the strip bar - the earlier
+   * in-bar master-frame cursor read as a stray blue line artifact, so playhead
+   * position is only communicated by the master timeline itself. */
 
   /* Other scene strips referencing the same scene. */
   const Editing *ed = seq::editing_get(master_scene);
@@ -428,23 +426,36 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     const float y_top = y_strip + strip_height;
     const float y_move_max = float(rects.move.ymax); /* boundary: bottom move | top slip */
 
-    /* BFA: bar backdrop + outline, node-minimap style (rounded, theme-based). */
+    /* BFA (#6780): minimap-style bar. The rounded chip is drawn from the same
+     * hit-area rects used for grabbing; hovering lights an outline around the whole
+     * gizmo (handles included) plus a wash of the hovered zone. Colors are
+     * theme-driven with a translucent body. */
+    const float border_w = 1.5f * ui_scale;
+    const float chip_rad = 3.0f * ui_scale;
+    const float lx0 = float(rects.left.xmin);
+    const float lx1 = float(rects.left.xmax);
+    const float rx0 = float(rects.right.xmin);
+    const float rx1 = float(rects.right.xmax);
+    const bool left_hovered = (highlight == GZ_PART_LEFT);
+    const bool right_hovered = (highlight == GZ_PART_RIGHT);
+    const bool slip_hovered = (highlight == GZ_PART_SLIP);
+    const bool move_hovered = (highlight == GZ_PART_MOVE);
+    const bool left_grabbed = (modal_part == GZ_PART_LEFT);
+    const bool right_grabbed = (modal_part == GZ_PART_RIGHT);
+
     float backdrop_color[4];
     float backdrop_color_outline[4];
-    ui::theme::get_color_shade_alpha_4fv(TH_BACK, -40, 0, backdrop_color);
-    ui::theme::get_color_shade_alpha_4fv(TH_BACK, 25, 0, backdrop_color_outline);
-    /* Brighten the border on hover, like the node minimap. */
-    if (highlight != -1) {
-      backdrop_color_outline[0] = 0.7f;
-      backdrop_color_outline[1] = 0.7f;
-      backdrop_color_outline[2] = 0.7f;
-      backdrop_color_outline[3] = 0.5f;
-    }
+    ui::theme::get_color_shade_alpha_4fv(TH_BACK, -45, 0, backdrop_color);
+    ui::theme::get_color_shade_alpha_4fv(TH_BACK, 30, 0, backdrop_color_outline);
+    /* Semi-transparent body; the border stays subtle at rest, the hover ring below
+     * carries the highlight instead. */
+    backdrop_color[3] = 0.75f;
+    backdrop_color_outline[3] = 0.55f;
     rctf bar_rect;
-    BLI_rctf_init(&bar_rect, x_in, y_strip, x_out, y_top);
+    BLI_rctf_init(&bar_rect, x_in, x_out, y_strip, y_top);
     ui::draw_roundbox_corner_set(ui::CNR_ALL);
     ui::draw_roundbox_4fv_ex(
-        &bar_rect, backdrop_color, nullptr, 1.0f, backdrop_color_outline, 2.0f * ui_scale, 3.0f * ui_scale);
+        &bar_rect, backdrop_color, nullptr, 1.0f, backdrop_color_outline, border_w, chip_rad);
     GPU_blend(GPU_BLEND_NONE);
 
     /* BFA - `draw_roundbox_4fv_ex` renders through a batch which unbinds the GPU
@@ -454,47 +465,106 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     GPU_blend(GPU_BLEND_ALPHA);
 
-    /* Two-tone zones + divider so the slip (top) and move (bottom) areas read as
-     * two zones even without hovering. */
-    immUniformColor4f(0.17f, 0.17f, 0.17f, 0.35f);
-    immRectf(pos, x_in, float(rects.slip.ymin), x_out, y_top);
-    immUniformColor4f(0.08f, 0.08f, 0.08f, 0.4f);
-    immRectf(pos, x_in, y_strip, x_out, y_move_max);
-    immUniformColor4f(0.45f, 0.45f, 0.45f, 0.5f);
-    immRectf(pos, x_in, y_move_max - 0.5f, x_out, y_move_max + 0.5f);
+    /* The grip handles cap the strip ends, so the zones only run between their
+     * inner edges - exactly the area a zone drag can grab. */
+    const float zone_x0 = lx1;
+    const float zone_x1 = rx0;
+    if (zone_x1 > zone_x0) {
+      /* Zone shading: slip (top, content) lighter, move (bottom, location) darker,
+       * with a thin seam in between so both areas read even without hovering. */
+      float zone_slip[4];
+      float zone_move[4];
+      ui::theme::get_color_shade_alpha_4fv(TH_BACK, 12, 0, zone_slip);
+      ui::theme::get_color_shade_alpha_4fv(TH_BACK, -60, 0, zone_move);
+      zone_slip[3] = 0.85f;
+      zone_move[3] = 0.85f;
+      immUniformColor4f(zone_slip[0], zone_slip[1], zone_slip[2], zone_slip[3]);
+      /* Inset from the chip top/bottom so the rounded border band stays visible. */
+      immRectf(pos, zone_x0, y_move_max, zone_x1, y_top - border_w);
+      immUniformColor4f(zone_move[0], zone_move[1], zone_move[2], zone_move[3]);
+      immRectf(pos, zone_x0, y_strip + border_w, zone_x1, y_move_max);
+      immUniformColor4f(0.55f, 0.58f, 0.66f, 0.6f);
+      immRectf(pos, zone_x0, y_move_max - 0.5f, zone_x1, y_move_max + 0.5f);
 
-    /* Clearly visible hover fill for the active zone. */
-    if (highlight == GZ_PART_SLIP) {
-      immUniformColor4f(0.4f, 0.65f, 0.9f, 0.65f);
-      immRectf(pos, x_in, float(rects.slip.ymin), x_out, float(rects.slip.ymax));
-    }
-    else if (highlight == GZ_PART_MOVE) {
-      immUniformColor4f(0.4f, 0.65f, 0.9f, 0.65f);
-      immRectf(pos, x_in, y_strip, x_out, y_move_max);
+      /* Hover: translucent accent wash over the whole active zone. */
+      if (slip_hovered) {
+        immUniformColor4f(0.42f, 0.62f, 0.95f, 0.4f);
+        immRectf(pos, zone_x0, y_move_max, zone_x1, y_top - border_w);
+      }
+      else if (move_hovered) {
+        immUniformColor4f(0.42f, 0.62f, 0.95f, 0.4f);
+        immRectf(pos, zone_x0, y_strip + border_w, zone_x1, y_move_max);
+      }
     }
 
-    /* Handles: a glow behind the hovered one, plus the green/red fill. */
-    if (highlight == GZ_PART_LEFT) {
-      immUniformColor4f(0.3f, 0.95f, 0.4f, 0.35f);
-      immRectf(pos,
-               float(rects.left.xmin) - 2.0f * ui_scale,
-               y_strip,
-               float(rects.left.xmax) + 2.0f * ui_scale,
-               y_top);
+    /* Grip handles: green/red caps with a soft halo. The halo is white on hover
+     * and switches to the accent color while the handle is grabbed (modal). */
+    if (left_hovered || left_grabbed) {
+      if (left_grabbed) {
+        immUniformColor4f(0.3f, 0.95f, 0.45f, 0.5f);
+      }
+      else {
+        immUniformColor4f(1.0f, 1.0f, 1.0f, 0.45f);
+      }
+      immRectf(pos, lx0 - 2.0f * ui_scale, y_strip - 1.0f, lx1 + 2.0f * ui_scale, y_top + 1.0f);
     }
-    immUniformColor4f(0.3f, 0.95f, 0.4f, (highlight == GZ_PART_LEFT) ? 0.95f : 0.6f);
-    immRectf(pos, float(rects.left.xmin), y_strip, float(rects.left.xmax), y_top);
+    if (right_hovered || right_grabbed) {
+      if (right_grabbed) {
+        immUniformColor4f(0.95f, 0.35f, 0.42f, 0.5f);
+      }
+      else {
+        immUniformColor4f(1.0f, 1.0f, 1.0f, 0.45f);
+      }
+      immRectf(pos, rx0 - 2.0f * ui_scale, y_strip - 1.0f, rx1 + 2.0f * ui_scale, y_top + 1.0f);
+    }
+    immUniformColor4f(0.3f, 0.92f, 0.45f, (left_hovered || left_grabbed) ? 0.95f : 0.8f);
+    immRectf(pos, lx0, y_strip, lx1, y_top);
+    immUniformColor4f(0.95f, 0.33f, 0.4f, (right_hovered || right_grabbed) ? 0.95f : 0.8f);
+    immRectf(pos, rx0, y_strip, rx1, y_top);
+    /* White wash over the hovered cap (hover = white, grab = accent). */
+    if (left_hovered && !left_grabbed) {
+      immUniformColor4f(1.0f, 1.0f, 1.0f, 0.8f);
+      immRectf(pos, lx0, y_strip, lx1, y_top);
+    }
+    if (right_hovered && !right_grabbed) {
+      immUniformColor4f(1.0f, 1.0f, 1.0f, 0.8f);
+      immRectf(pos, rx0, y_strip, rx1, y_top);
+    }
+    /* Detach the grip caps from the zones with a subtle 1px dark seam. */
+    immUniformColor4f(0.0f, 0.0f, 0.0f, 0.4f);
+    immRectf(pos, lx1 - 1.0f, y_strip, lx1, y_top);
+    immRectf(pos, rx0, y_strip, rx0 + 1.0f, y_top);
 
-    if (highlight == GZ_PART_RIGHT) {
-      immUniformColor4f(0.95f, 0.3f, 0.4f, 0.35f);
-      immRectf(pos,
-               float(rects.right.xmin) - 2.0f * ui_scale,
-               y_strip,
-               float(rects.right.xmax) + 2.0f * ui_scale,
-               y_top);
+    /* Hover / grab ring around the whole gizmo (caps included): near-white on
+     * hover, accent color while a handle is grabbed. */
+    if (highlight != -1 || modal_part != -1) {
+      float ring_color[4] = {0.82f, 0.82f, 0.85f, 0.9f};
+      if (modal_part == GZ_PART_LEFT) {
+        ring_color[0] = 0.3f;
+        ring_color[1] = 0.95f;
+        ring_color[2] = 0.45f;
+        ring_color[3] = 0.95f;
+      }
+      else if (modal_part == GZ_PART_RIGHT) {
+        ring_color[0] = 0.95f;
+        ring_color[1] = 0.33f;
+        ring_color[2] = 0.4f;
+        ring_color[3] = 0.95f;
+      }
+      /* bfa 3d sequencer: dragging the move or slip zone rings the bar in a
+       * blue accent so a zone drag reads differently from a handle grab. */
+      else if (ELEM(modal_part, GZ_PART_MOVE, GZ_PART_SLIP)) {
+        ring_color[0] = 0.45f;
+        ring_color[1] = 0.65f;
+        ring_color[2] = 0.95f;
+        ring_color[3] = 0.95f;
+      }
+      rctf ring_rect;
+      BLI_rctf_init(&ring_rect, lx0, rx1, y_strip, y_top);
+      ui::draw_roundbox_corner_set(ui::CNR_ALL);
+      ui::draw_roundbox_4fv_ex(
+          &ring_rect, nullptr, nullptr, 1.0f, ring_color, 1.5f * ui_scale, chip_rad);
     }
-    immUniformColor4f(0.95f, 0.3f, 0.4f, (highlight == GZ_PART_RIGHT) ? 0.95f : 0.6f);
-    immRectf(pos, float(rects.right.xmin), y_strip, float(rects.right.xmax), y_top);
 
     /* BFA - overlap-mode bump feedback: while a move drag leaves the strip
      * overlapping a strip on the same channel, ring the bar in the color of the
@@ -658,8 +728,16 @@ static void WIDGETGROUP_scene_strip_draw_prepare(const bContext *C, wmGizmoGroup
     return;
   }
 
+  /* BFA (#6780): mirror the poll gates here too - set WM_GIZMO_HIDDEN while the
+   * overlays or the "Scene Strip Gizmo" toggle are off, so the gizmos are neither
+   * drawn nor hover/click-able even if the gizmo-map refresh lags the toggle. */
+  const SpaceAction *saction = CTX_wm_space_action(C);
+  const bool enabled = (saction != nullptr) &&
+                       (saction->overlays.flag & ADS_OVERLAY_SHOW_OVERLAYS) != 0 &&
+                       (saction->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) != 0;
+
   SceneStripGizmoRects rects;
-  const bool has_rects = scene_strip_gizmo_rects_get(C, &rects);
+  const bool has_rects = enabled && scene_strip_gizmo_rects_get(C, &rects);
 
   for (int i = 0; i < 4; i++) {
     WM_gizmo_set_flag(group->gizmos[i], WM_GIZMO_HIDDEN, !has_rects);
@@ -744,7 +822,10 @@ static int remap_frame_value(const Strip *strip, int frame)
   return frame - strip->start + strip->scene->r.sfra;
 }
 
-static void adjust_shot_duration_right(Scene *master_scene, Strip *strip, const int frame_offset)
+static void adjust_shot_duration_right(Scene *master_scene,
+                                    Strip *strip,
+                                    const int frame_offset,
+                                    const bool allow_scene_range)
 {
   const int duration = strip->right_handle(master_scene) - strip->left_handle();
   const int new_duration = max_ii(duration + frame_offset, 1);
@@ -767,7 +848,11 @@ static void adjust_shot_duration_right(Scene *master_scene, Strip *strip, const 
       seq::transform_translate_strip(master_scene, s, new_frame_offset);
     }
   }
-  adapt_scene_range(master_scene, strip);
+  /* BFA (#6780): only extend the scene frame range when the dope-sheet "Set Scene
+   * Range" toggle is on; otherwise the gizmo only changes the strip itself. */
+  if (allow_scene_range) {
+    adapt_scene_range(master_scene, strip);
+  }
 }
 
 /* The exclusive end frame of the last strip on the same channel before `strip`
@@ -794,12 +879,12 @@ static int previous_strip_end_frame(Scene *master_scene, const Strip *strip)
  * master-timeline start edge (and the dope-sheet bar edge) back in lockstep while
  * the end edge stays put, so the strip feels "in sync" with the dope-sheet. First
  * the trimmed content is consumed; once that runs out, the scene's start frame is
- * extended (only when the "Use Scene Frame Range" toggle allows it), never past
+ * extended (only when the "Set Scene Range" toggle allows it), never past
  * the preceding strip on the same channel. */
 static void adjust_shot_duration_left(Scene *master_scene,
                                       Strip *strip,
                                       const int frame_offset,
-                                      const bool allow_scene_start_extend)
+                                      const bool allow_scene_range)
 {
   const int duration = strip->right_handle(master_scene) - strip->left_handle();
   const int new_duration = max_ii(duration + frame_offset, 1);
@@ -813,7 +898,7 @@ static void adjust_shot_duration_left(Scene *master_scene,
     const int trim = min_ii(new_frame_offset, int(strip->startofs));
     strip->startofs -= trim;
     const int remaining = new_frame_offset - trim;
-    if (remaining > 0 && allow_scene_start_extend) {
+    if (remaining > 0 && allow_scene_range) {
       /* Only extend into free room before the previous strip on this channel. */
       const int room = max_ii(
           strip->left_handle() - previous_strip_end_frame(master_scene, strip), 0);
@@ -838,19 +923,33 @@ static void adjust_shot_duration_left(Scene *master_scene,
      * strips) stay put. */
     strip->startofs -= new_frame_offset;
   }
-  adapt_scene_range(master_scene, strip);
+  /* BFA (#6780): only extend the scene frame range when the dope-sheet "Set Scene
+   * Range" toggle is on; otherwise the gizmo only changes the strip itself. */
+  if (allow_scene_range) {
+    adapt_scene_range(master_scene, strip);
+  }
 }
 
-static void move_shot(Scene *master_scene, Strip *strip, const int frame_offset)
+static void move_shot(Scene *master_scene,
+                       Strip *strip,
+                       const int frame_offset,
+                       const bool allow_scene_range)
 {
   if (frame_offset == 0) {
     return;
   }
   seq::transform_translate_strip(master_scene, strip, frame_offset);
-  adapt_scene_range(master_scene, strip);
+  /* BFA (#6780): only extend the scene frame range when the dope-sheet "Set Scene
+   * Range" toggle is on; otherwise the gizmo only changes the strip itself. */
+  if (allow_scene_range) {
+    adapt_scene_range(master_scene, strip);
+  }
 }
 
-static void slip_shot_content(Scene *master_scene, Strip *strip, const int frame_offset)
+static void slip_shot_content(Scene *master_scene,
+                              Strip *strip,
+                              const int frame_offset,
+                              const bool allow_scene_range)
 {
   const int remapped_start = remap_frame_value(strip, strip->left_handle());
   const int new_start = max_ii(remapped_start + frame_offset, strip->scene->r.sfra);
@@ -860,7 +959,16 @@ static void slip_shot_content(Scene *master_scene, Strip *strip, const int frame
   }
   strip->startofs += new_frame_offset;
   strip->start -= new_frame_offset;
-  adapt_scene_range(master_scene, strip);
+  /* BFA (#6780): the end offset must move the opposite way too, otherwise the
+   * strip end edge (and its duration) changes and the slip "extends" the shot
+   * instead of offsetting both edges of the internal range (same math as
+   * seq::time_slip_strip and the addon slip_shot_content). */
+  strip->endofs -= new_frame_offset;
+  /* BFA (#6780): only extend the scene frame range when the dope-sheet "Set Scene
+   * Range" toggle is on; otherwise the gizmo only changes the strip itself. */
+  if (allow_scene_range) {
+    adapt_scene_range(master_scene, strip);
+  }
 }
 
 /* Update the strip's scene preview range to match the strip (dope-sheet overlay toggle). */
@@ -878,7 +986,7 @@ static void update_preview_range(Scene *master_scene, Strip *strip)
   strip->scene->r.pefra = end;
 }
 
-/* bfa 3d sequencer: the "Use Scene Frame Range" toggle makes the strip scene's
+/* bfa 3d sequencer: the "Set Scene Range" dope-sheet toggle makes the strip scene's
  * frame range follow the strip in both directions (only ever extending, so scene
  * data is never discarded). Extending the left edge is what makes the dope-sheet
  * frame start follow the gizmo; extending the right edge makes the end follow. */
@@ -998,7 +1106,9 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
     master_scene->r.cfra = frame_end;
   }
   master_scene->r.efra = max_ii(frame_end, data->orig_master_efra);
-  strip->scene->r.efra = max_ii(remap_frame_value(strip, frame_end), data->orig_scene_efra);
+  /* BFA (#6780): the strip scene's own frame range only follows the gizmo when
+   * the dope-sheet "Set Scene Range" toggle is on (see update_scene_frame_range
+   * below); otherwise the gizmo only changes the strip itself. */
 
   if (use_preview_range) {
     update_preview_range(master_scene, strip);
@@ -1021,23 +1131,25 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
   int delta = 0;
 
   const int duration = strip->right_handle(master_scene) - strip->left_handle();
+  /* BFA (#6780): scene-range writes are gated on the dope-sheet "Set Scene
+   * Range" toggle, so with it off the gizmo only retimes/moves/slips the strip. */
+  const bool use_scene_range = scene_strip_use_scene_range_get(C);
   switch (data->mode) {
     case GZ_PART_LEFT:
       delta = duration - data->orig_duration;
-      adjust_shot_duration_left(
-          master_scene, strip, -offset - delta, scene_strip_use_scene_range_get(C));
+      adjust_shot_duration_left(master_scene, strip, -offset - delta, use_scene_range);
       break;
     case GZ_PART_RIGHT:
       delta = duration - data->orig_duration;
-      adjust_shot_duration_right(master_scene, strip, offset - delta);
+      adjust_shot_duration_right(master_scene, strip, offset - delta, use_scene_range);
       break;
     case GZ_PART_MOVE:
       delta = int(strip->start) - int(data->orig_start);
-      move_shot(master_scene, strip, offset - delta);
+      move_shot(master_scene, strip, offset - delta, use_scene_range);
       break;
     case GZ_PART_SLIP:
       delta = int(strip->startofs) - int(data->orig_startofs);
-      slip_shot_content(master_scene, strip, offset - delta);
+      slip_shot_content(master_scene, strip, offset - delta, use_scene_range);
       break;
   }
 

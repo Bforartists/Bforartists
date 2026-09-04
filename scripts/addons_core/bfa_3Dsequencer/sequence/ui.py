@@ -27,10 +27,12 @@ class DOPESHEET_PT_Sequence(bpy.types.Panel):
         return get_sync_settings().is_sync()
 
     def draw(self, context: bpy.types.Context):
+        # BFA (#6780): merged with the built-in overlay toggle - one "Scene Strip Gizmo"
+        # switch (per dope-sheet space) controls the whole scene-strip gizmo system.
         self.layout.prop(
-            context.window_manager.sequence_settings,
-            "overlay_dopesheet",
-            text="Scene Strip Overlay",
+            context.space_data.overlays,
+            "show_scene_strip_gizmos",
+            text="Scene Strip Gizmo",
         )
 
 
@@ -107,7 +109,7 @@ class SEQUENCE_UL_shot(bpy.types.UIList):
         flt_neworder = []
 
         # Prepare data for sorting and perform sort
-        sort_data = [(idx, obj.frame_final_start) for idx, obj in enumerate(objects)]
+        sort_data = [(idx, obj.left_handle) for idx, obj in enumerate(objects)]
         flt_neworder = helper_funcs.sort_items_helper(sort_data, key=lambda obj: obj[1])
 
         return flt_flags, flt_neworder

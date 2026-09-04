@@ -13,12 +13,6 @@ class SequenceSettings(bpy.types.PropertyGroup):
     Sequence related settings.
     """
 
-    overlay_dopesheet: bpy.props.BoolProperty(
-        name="Dopesheet Overlay",
-        description="Display Sequence timeline overlay in dopesheet editors",
-        default=True,
-    )
-
     def shot_active_index_get_cb(self):
         """Get sequence active scene index."""
         return get_sync_settings().last_master_strip_idx
@@ -27,7 +21,7 @@ class SequenceSettings(bpy.types.PropertyGroup):
         """Set sequence active scene index."""
         # Move to beginning of scene strip in master scene.
         scene = get_sync_settings().master_scene
-        frame = scene.sequence_editor.strips[idx].frame_final_start
+        frame = scene.sequence_editor.strips[idx].left_handle
         scene.frame_set(frame)
 
     shot_active_index: bpy.props.IntProperty(

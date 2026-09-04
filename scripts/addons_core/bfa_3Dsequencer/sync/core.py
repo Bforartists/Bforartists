@@ -174,6 +174,28 @@ def get_sync_settings() -> TimelineSyncSettings:
     return bpy.context.window_manager.timeline_sync_settings
 
 
+def get_dopesheet_range_toggles() -> tuple[bool, bool]:
+    """Return the dope-sheet \"Set Preview/Scene Range\" overlay toggles.
+
+    BFA: single source of truth shared with the built-in C gizmos, so the addon
+    sync and the gizmo always agree and turning a toggle off really stops the
+    scene/preview frame range updates.
+    """
+    use_preview_range = False
+    use_scene_range = False
+    for window in bpy.context.window_manager.windows:
+        for area in window.screen.areas:
+            if area.type != "DOPESHEET_EDITOR":
+                continue
+            overlays = getattr(area.spaces.active, "overlays", None)
+            if (overlays is None or not overlays.show_overlays or
+                not overlays.show_scene_strip_gizmos):
+                continue
+            use_preview_range |= overlays.use_preview_range
+            use_scene_range |= overlays.use_scene_range
+    return use_preview_range, use_scene_range
+
+
 def get_master_scene() -> Union[bpy.types.Scene, None]:
     """Return the synchronization timeline scene.
 
@@ -234,7 +256,7 @@ def remap_frame_value(frame: int, scene_strip: bpy.types.Strip) -> int:
     :param scene_strip: The scene strip to remap to.
     :returns: The remapped frame value
     """
-    return int(frame - scene_strip.frame_start + scene_strip.scene.frame_start)
+    return int(frame - scene_strip.content_start + scene_strip.scene.frame_start)
 
 
 def get_strips_at_frame(
@@ -258,7 +280,7 @@ def get_strips_at_frame(
         if (
             (not type_filter or isinstance(s, type_filter))
             and (not skip_muted or not s.mute)
-            and (frame >= s.frame_final_start and frame < s.frame_final_end)
+            and (frame >= s.left_handle and frame < s.right_handle)
         )
     ]
 
@@ -449,8 +471,8 @@ def update_preview_range(scene_strip: bpy.types.Strip):
         scene_strip.scene.use_preview_range = True
 
     # Compute and update preview range if necessary
-    start = remap_frame_value(scene_strip.frame_final_start, scene_strip)
-    end = remap_frame_value(scene_strip.frame_final_end, scene_strip) - 1
+    start = remap_frame_value(scene_strip.left_handle, scene_strip)
+    end = remap_frame_value(scene_strip.right_handle, scene_strip) - 1
     if start != scene_strip.scene.frame_preview_start:
         scene_strip.scene.frame_preview_start = start
     if end != scene_strip.scene.frame_preview_end:
@@ -470,8 +492,8 @@ def update_scene_frame_range(scene_strip: bpy.types.Strip):
         return
 
     # Compute the strip's used range in the scene's time reference
-    start = remap_frame_value(scene_strip.frame_final_start, scene_strip)
-    end = remap_frame_value(scene_strip.frame_final_end, scene_strip) - 1
+    start = remap_frame_value(scene_strip.left_handle, scene_strip)
+    end = remap_frame_value(scene_strip.right_handle, scene_strip) - 1
 
     # Only extend the range so moving/shrinking strips never break scene data.
     if start < scene_strip.scene.frame_start:
@@ -558,12 +580,12 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
                 return
 
             # Compute strip range in scene's referential
-            frame_start = remap_frame_value(strip.frame_final_start, strip)
-            frame_end = remap_frame_value(strip.frame_final_end - 1, strip)
+            frame_start = remap_frame_value(strip.left_handle, strip)
+            frame_end = remap_frame_value(strip.right_handle - 1, strip)
 
             # Compute new strip range in current strip referential
-            new_strip_start = remap_frame_value(new_strip.frame_final_start, strip)
-            new_strip_end = remap_frame_value(new_strip.frame_final_end - 1, strip)
+            new_strip_start = remap_frame_value(new_strip.left_handle, strip)
+            new_strip_end = remap_frame_value(new_strip.right_handle - 1, strip)
 
             # If current frame is not consecutive to current strip boundary
             # or equal to one of the new strip's boundary,
@@ -620,10 +642,13 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     if strip.scene.frame_current != inner_frame and sync_settings.is_legacy():
         scene_frame_set(context, strip.scene, inner_frame)
 
-    # Update the shot scene's preview/frame range to match the strip (per settings).
-    if sync_settings.use_preview_range:
+    # Update the shot scene's preview/frame range to match the strip (per the
+    # dope-sheet overlays popup toggles - BFA: single source of truth shared with
+    # the built-in C gizmo, so unchecking them really stops the updates).
+    use_preview_range, use_scene_range = get_dopesheet_range_toggles()
+    if use_preview_range:
         update_preview_range(strip)
-    if sync_settings.use_scene_range:
+    if use_scene_range:
         update_scene_frame_range(strip)
 
     # Synchronize target windows

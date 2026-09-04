@@ -63,9 +63,9 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
             s
             for s in strips
             if (
-                remap_frame_value(s.frame_final_start, s)
+                remap_frame_value(s.left_handle, s)
                 <= self.frame
-                <= remap_frame_value(s.frame_final_end, s)
+                <= remap_frame_value(s.right_handle, s)
             )
         ]
 
@@ -75,7 +75,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
 
         # Update master scene current frame to enter target strip.
         if strip and strip != master_strip:
-            master_scene.frame_set(strip.frame_final_start)
+            master_scene.frame_set(strip.left_handle)
 
         # Set frame_current directly for context's active scene.
         # This proves to be enough and reacts better than frame_set which
@@ -182,13 +182,13 @@ class SEQUENCE_OT_check_obj_users_scene(bpy.types.Operator):
             if strip.type == "SCENE"
         ]
 
-        for strip in sorted(strips, key=lambda f: f.frame_final_start):
+        for strip in sorted(strips, key=lambda f: f.left_handle):
             scene_msg = f" - Scene '{strip.scene.name}' from strips:\n"
             if scene_msg not in info_msg:
                 info_msg += scene_msg
             info_msg += (
                 f"   - {strip.name} "
-                f"[{strip.frame_final_start}, {strip.frame_final_end}]\n"
+                f"[{strip.left_handle}, {strip.right_handle}]\n"
             )
 
         report = f"Object '{obj.name}' is used in '{master_scene.name}' by:\n{info_msg}"

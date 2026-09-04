@@ -91,8 +91,9 @@ class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
         if settings.sync_mode == "LEGACY":
             self.layout.prop(settings, "bidirectional")
         self.layout.prop(settings, "keep_gpencil_tool_settings")
-        self.layout.prop(settings, "use_preview_range")
-        self.layout.prop(settings, "use_scene_range")
+        # BFA (#6780): the preview/scene range toggles live in the dope-sheet
+        # Overlays popup (single source of truth shared with the built-in gizmos),
+        # so they are not duplicated here anymore.
         self.layout.prop(settings, "sync_all_windows")
         self.layout.prop(settings, "active_follows_playhead")
 

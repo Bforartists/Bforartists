@@ -71,8 +71,8 @@ def draw_shot_strip(
     strip_height = ui_scaled(STRIP_HEIGHT)
     base_y_pos = shot_baseline_y_pos(bpy.context)
 
-    frame_in = remap_frame_value(strip.frame_final_start, strip)
-    frame_out = remap_frame_value(strip.frame_final_end, strip)
+    frame_in = remap_frame_value(strip.left_handle, strip)
+    frame_out = remap_frame_value(strip.right_handle, strip)
     frame_in = region.view2d.view_to_region(frame_in, 0, clip=False)[0]
     frame_out = region.view2d.view_to_region(frame_out, 0, clip=False)[0]
     duration = frame_out - frame_in
@@ -113,19 +113,12 @@ def draw_sequence_overlay_cb(drawer: OverlayDrawer):
 
     :param drawer: PolyDrawer instance.
     """
-    context = bpy.context
-    sync_settings = get_sync_settings()
-    sequence_settings = context.window_manager.sequence_settings
-
-    # Early return if sync or overlay options are disabled.
-    if not sync_settings.is_sync() or not sequence_settings.overlay_dopesheet:
-        return
-
-    # The built-in C implementation (overlays.show_scene_strip_gizmos) draws and
-    # handles the scene strip gizmos itself; skip to avoid drawing twice.
-    overlays = getattr(context.space_data, "overlays", None)
-    if overlays is not None and getattr(overlays, "show_scene_strip_gizmos", False):
-        return
+    # BFA (#6780): this addon overlay is superseded by the built-in C scene-strip gizmos
+    # (action_gizmo_scene_strip.cc). The single "Scene Strip Gizmo" toggle
+    # (space_data.overlays.show_scene_strip_gizmos) controls the whole system, so the
+    # legacy fallback is retired and must never draw - whether the toggle is on or off.
+    # The rest of this function is kept (unreachable) for reference when rebasing.
+    return
 
     # Only draw overlay if current scene matches master strip's scene.
     master_strip = get_sync_master_strip(use_cache=True)[0]
@@ -203,16 +196,10 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        # The built-in C gizmos take over when their overlay toggle is enabled.
-        overlays = getattr(context.space_data, "overlays", None)
-        if overlays is not None and getattr(overlays, "show_scene_strip_gizmos", False):
-            return False
-        master_strip = get_sync_master_strip(use_cache=True)[0]
-        return (
-            context.window_manager.sequence_settings.overlay_dopesheet
-            and master_strip
-            and master_strip.scene == context.scene
-        )
+        # BFA (#6780): superseded by the built-in C scene-strip gizmos - the single
+        # "Scene Strip Gizmo" toggle owns this feature, so this legacy Python gizmo
+        # group is retired and never registers (kept for reference when rebasing).
+        return False
 
     @staticmethod
     def set_gizmo_geom(gizmo: bpy.types.Gizmo, x, y, width, height):
@@ -255,8 +242,8 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
         if not strip:
             return
 
-        frame_in = remap_frame_value(strip.frame_final_start, strip)
-        frame_out = remap_frame_value(strip.frame_final_end, strip)
+        frame_in = remap_frame_value(strip.left_handle, strip)
+        frame_out = remap_frame_value(strip.right_handle, strip)
         frame_in = region.view2d.view_to_region(frame_in, 0, clip=False)[0]
         frame_out = region.view2d.view_to_region(frame_out, 0, clip=False)[0]
 

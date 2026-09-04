@@ -31,7 +31,7 @@ def get_last_sequence(
     strips: list[bpy.types.Strip],
 ) -> Optional[bpy.types.Strip]:
     """Get the last sequence, i.e. the one with the greatest final frame number."""
-    return max(strips, key=lambda x: x.frame_final_end) if strips else None
+    return max(strips, key=lambda x: x.right_handle) if strips else None
 
 
 def get_last_used_frame(
@@ -49,7 +49,7 @@ def get_last_used_frame(
     if not scene_strips:
         return scene.frame_start - 1
 
-    return max(remap_frame_value(s.frame_final_end - 1, s) for s in scene_strips)
+    return max(remap_frame_value(s.right_handle - 1, s) for s in scene_strips)
 
 
 def get_selected_scene_sequences(
@@ -221,7 +221,7 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
 
         last_seq = get_last_sequence(strips)
         insert_frame = (
-            last_seq.frame_final_end if last_seq else context.scene.frame_start
+            last_seq.right_handle if last_seq else context.scene.frame_start
         )
 
         bpy.ops.sequencer.select_all(action="DESELECT")
@@ -229,7 +229,7 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
         new_strip = strips.new_scene(
             self.naming.to_string(), shot_scene, self.channel, insert_frame
         )
-        new_strip.frame_final_duration = self.duration
+        new_strip.duration = self.duration
         slip_shot_content(new_strip, frame_offset_start)
         new_strip.scene_camera = new_strip.scene.camera
         context.sequencer_scene.sequence_editor.active_strip = new_strip
@@ -238,14 +238,14 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
             shot_scene.camera = source_scene.camera
 
         context.sequencer_scene.frame_end = max(
-            new_strip.frame_final_end - 1, context.sequencer_scene.frame_end
+            new_strip.right_handle - 1, context.sequencer_scene.frame_end
         )
 
         # Move current frame to the new strip's start frame.
         context.sequencer_scene.frame_set(insert_frame)
 
         # Ensure newly created scene is visible.
-        ensure_sequencer_frame_visible(context, new_strip.frame_final_end)
+        ensure_sequencer_frame_visible(context, new_strip.right_handle)
 
         self.report({"INFO"}, f"Created new scene '{new_strip.name}'")
 
@@ -283,14 +283,14 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
             shot_scene = strip.scene
 
         # Find the frame where to insert the duplicated strip
-        insert_frame = get_last_sequence(sed.strips).frame_final_end
+        insert_frame = get_last_sequence(sed.strips).right_handle
 
         # Create new strip
         new_strip = sed.strips.new_scene(
             name, shot_scene, strip.channel, insert_frame
         )
 
-        new_strip.frame_final_duration = strip.frame_final_duration
+        new_strip.duration = strip.duration
 
         if not duplicate_scene:
             new_strip.scene_camera = strip.scene_camera
@@ -314,7 +314,7 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Move current frame to the new strip's start frame.
-        context.scene.frame_set(new_strips[0].frame_final_start)
+        context.scene.frame_set(new_strips[0].left_handle)
 
         # Deselect all strips
         bpy.ops.sequencer.select_all(action="DESELECT")
@@ -325,11 +325,11 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
             strip.select = True
 
         context.scene.frame_end = max(
-            new_strips[-1].frame_final_end - 1, context.scene.frame_end
+            new_strips[-1].right_handle - 1, context.scene.frame_end
         )
 
         # Ensure created strips are visible.
-        ensure_sequencer_frame_visible(context, new_strips[0].frame_final_end)
+        ensure_sequencer_frame_visible(context, new_strips[0].right_handle)
 
         self.report({"INFO"}, f"Duplicated {len(new_strips)} scene(s)")
 
@@ -482,10 +482,10 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
         if context.area.type == "SEQUENCE_EDITOR":
             self.strip_handle = "LEFT" if self.strip.select_left_handle else "RIGHT"
 
-        self.original_strip_duration = self.strip.frame_final_duration
+        self.original_strip_duration = self.strip.duration
         self.original_strip_scene_end = self.strip.scene.frame_end
-        self.original_strip_offset_start = self.strip.frame_offset_start
-        self.original_strip_start = self.strip.frame_start
+        self.original_strip_offset_start = self.strip.left_handle_offset
+        self.original_strip_start = self.strip.content_start
         self.original_edit_frame_end = get_master_scene().frame_end
 
         context.window_manager.modal_handler_add(self)
@@ -494,7 +494,7 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
     def update_header_text(self, context, event):
         text = (
             f"Offset: {self.offset}"
-            f" | New Scene Duration: {self.strip.frame_final_duration}"
+            f" | New Scene Duration: {self.strip.duration}"
         )
         context.area.header_text_set(text)
 
@@ -541,13 +541,13 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
         offset = -self.offset if from_frame_start else self.offset
         # Compute current absolute offset from original values
         if self.mode == "MOVE":
-            delta = self.strip.frame_start - self.original_strip_start
+            delta = self.strip.content_start - self.original_strip_start
             move_shot(self.strip, offset - delta)
         elif self.mode == "SLIP":
-            delta = self.strip.frame_offset_start - self.original_strip_offset_start
+            delta = self.strip.left_handle_offset - self.original_strip_offset_start
             slip_shot_content(self.strip, offset - delta, clamp_start=True)
         else:
-            delta = self.strip.frame_final_duration - self.original_strip_duration
+            delta = self.strip.duration - self.original_strip_duration
             adjust_shot_duration(self.strip, offset - delta, from_frame_start)
 
         edit_scene = get_master_scene()
@@ -558,22 +558,22 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
             if self.mode == "MOVE":
                 # Keep the master playhead inside the moved strip.
                 master_frame = min(
-                    max(edit_scene.frame_current, self.strip.frame_final_start),
-                    self.strip.frame_final_end - 1,
+                    max(edit_scene.frame_current, self.strip.left_handle),
+                    self.strip.right_handle - 1,
                 )
                 edit_scene.frame_set(-1)
                 update_frame = master_frame
             else:
                 edit_scene.frame_set(-1)
-                update_frame = self.strip.frame_final_start
+                update_frame = self.strip.left_handle
         else:
-            update_frame = self.strip.frame_final_end - 1
+            update_frame = self.strip.right_handle - 1
 
         # Set sequencer's frame to strip's new end frame
         edit_scene.frame_set(update_frame)
 
         # Update both edit and internal scene's end frame if going past original ones
-        frame_end = self.strip.frame_final_end - 1
+        frame_end = self.strip.right_handle - 1
         edit_scene.frame_end = max(frame_end, self.original_edit_frame_end)
         self.strip.scene.frame_end = max(
             remap_frame_value(frame_end, self.strip),
@@ -770,7 +770,7 @@ class SEQUENCER_OT_shot_chronological_numbering(bpy.types.Operator):
         items_to_rename: dict[bpy.types.SceneStrip, tuple[str, bool]] = dict()
 
         # Go through the shots chronologically (sorted by the start frame)
-        sorted_scene_strips = sorted(scene_strips, key=lambda x: x.frame_final_start)
+        sorted_scene_strips = sorted(scene_strips, key=lambda x: x.left_handle)
 
         # 1st pass: list items (strips/scenes) to rename.
         for strip in sorted_scene_strips:
