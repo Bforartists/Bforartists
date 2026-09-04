@@ -3,12 +3,12 @@
 
 import bpy
 
-from bfa_3Dsequencer.scene.core import (
+from ..scene.core import (
     get_scene_cameras,
     get_valid_shot_scenes,
 )
 
-from bfa_3Dsequencer.sync.core import (
+from ..sync.core import (
     get_sync_master_strip,
     get_sync_settings,
 )

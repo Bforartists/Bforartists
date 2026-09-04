@@ -3,9 +3,8 @@
 
 import bpy
 
-from bfa_3Dsequencer.sync.core import get_sync_settings
-from bfa_3Dsequencer.sync.ops import SEQUENCER_OT_set_master_scene
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
+from .core import get_sync_settings
+from ..utils import register_classes, unregister_classes
 
 
 class SEQUENCER_PT_SyncPanel(bpy.types.Panel):

@@ -3,9 +3,9 @@
 
 import bpy
 
-from bfa_3Dsequencer.sync.core import get_sync_settings
+from ..sync.core import get_sync_settings
 
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
+from ..utils import register_classes, unregister_classes
 
 
 class SequenceSettings(bpy.types.PropertyGroup):
