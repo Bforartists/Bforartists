@@ -31,7 +31,7 @@
 #include "RNA_enum_types.hh"
 
 #include "WM_api.hh"
-#include "WM_gizmo_api.hh"
+#include "WM_gizmo_api.hh" /* bfa 3d sequencer scene strip gizmos */
 #include "WM_message.hh"
 #include "WM_types.hh"
 

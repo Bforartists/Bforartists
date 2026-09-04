@@ -20,6 +20,7 @@ struct Scene;
 struct SpaceAction;
 struct bAnimContext;
 struct bContext;
+// bfa 3d sequencer scene strip gizmos
 struct wmGizmoGroupType;
 struct wmGizmoType;
 struct wmKeyConfig;

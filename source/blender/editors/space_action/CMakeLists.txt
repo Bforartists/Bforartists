@@ -14,7 +14,7 @@ set(INC
 
 set(INC_SYS
 )
-
+# BFA - the action_gizmo_scene_strip.cc is a BFA addition
 set(SRC
   action_buttons.cc
   action_data.cc
