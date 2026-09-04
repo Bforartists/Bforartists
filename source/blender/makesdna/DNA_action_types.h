@@ -498,6 +498,10 @@ enum SpaceActionOverlays_Flag : int {
   ADS_SHOW_SCENE_STRIP_FRAME_RANGE = (1 << 1),
   /** BFA - 3D Sequencer: interactive scene strip gizmos drawn in the dope-sheet. */
   ADS_SHOW_SCENE_STRIP_GIZMOS = (1 << 2),
+  /** BFA - 3D Sequencer: keep the strip's scene preview range in sync with the strip. */
+  ADS_SHOW_USE_PREVIEW_RANGE = (1 << 3),
+  /** BFA - 3D Sequencer: keep the strip's scene frame range in sync with the strip. */
+  ADS_SHOW_USE_SCENE_RANGE = (1 << 4),
 };
 ENUM_OPERATORS(SpaceActionOverlays_Flag);
 

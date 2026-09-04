@@ -122,6 +122,11 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   {
     return;
   }
+  // bfa 3d sequencer: the single "Show Scene Strip" toggle (ADS_SHOW_SCENE_STRIP_GIZMOS) controls
+  // both the range shading here and the interactive gizmos, so they always stay in sync.
+  if ((space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0) {
+    return;
+  }
   WorkSpace *workspace = CTX_wm_workspace(C);
   if (!workspace) {
     return;

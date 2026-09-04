@@ -25,6 +25,8 @@
 #include "BLI_utildefines.hh"
 #include "BLI_vector.hh"
 
+#include "BLT_translation.hh"
+
 #include "DNA_action_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
@@ -52,6 +54,7 @@
 #include "SEQ_time.hh"
 #include "SEQ_transform.hh"
 
+#include "UI_interface_c.hh"
 #include "UI_resources.hh"
 #include "UI_view2d.hh"
 
@@ -98,15 +101,6 @@ static bool timeline_sync_settings_ptr(const bContext *C, PointerRNA *r_settings
   PointerRNA wm_ptr = RNA_pointer_create_discrete(&wm->id, RNA_WindowManager, wm);
   PropertyRNA *settings_prop = nullptr;
   return RNA_path_resolve_property(&wm_ptr, "timeline_sync_settings", r_settings, &settings_prop);
-}
-
-static bool timeline_sync_bool_get(const bContext *C, const char *prop_name)
-{
-  PointerRNA settings;
-  if (!timeline_sync_settings_ptr(C, &settings)) {
-    return false;
-  }
-  return RNA_boolean_get(&settings, prop_name);
 }
 
 static Scene *timeline_sync_master_scene_get(const bContext *C)
@@ -200,8 +194,10 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
   ui::view2d_view_to_region(v2d, frame_out, 0.0f, &x_out, &y_dummy);
 
   const int handle_width = int(8.0f * ui_scale);
-  const int move_bar_height = int(strip_height * 0.7f);
-  const int slip_bar_height = int(strip_height * 0.3f);
+  /* bfa 3d sequencer: the move bar (strip location) is the smaller bottom zone, the
+   * slip bar (strip content) is the larger top zone. */
+  const int move_bar_height = int(strip_height * 0.3f);
+  const int slip_bar_height = int(strip_height * 0.7f);
 
   BLI_rcti_init(&rects->left,
                 x_in - handle_width / 2,
@@ -213,14 +209,99 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
                 x_out + handle_width / 2,
                 y_strip,
                 y_strip + strip_height);
-  BLI_rcti_init(&rects->move,
+  BLI_rcti_init(&rects->move, x_in, x_out, y_strip, y_strip + move_bar_height);
+  BLI_rcti_init(&rects->slip,
                 x_in,
                 x_out,
-                y_strip + strip_height - move_bar_height,
+                y_strip + strip_height - slip_bar_height,
                 y_strip + strip_height);
-  BLI_rcti_init(&rects->slip, x_in, x_out, y_strip, y_strip + slip_bar_height);
   BLI_rcti_init(&rects->scrub, 0, region->winx, baseline, baseline + timeline_height);
   return true;
+}
+
+/* Overlap mode of the master timeline - the same setting the VSE header cycles
+ * (expand, overwrite, shuffle). Falls back to the file default when no sequencer
+ * tool settings exist yet. */
+static eSeqOverlapMode scene_strip_overlap_mode_get(const Scene *master_scene)
+{
+  if (master_scene->toolsettings != nullptr &&
+      master_scene->toolsettings->sequencer_tool_settings != nullptr)
+  {
+    return eSeqOverlapMode(
+        master_scene->toolsettings->sequencer_tool_settings->overlap_mode);
+  }
+  return SEQ_OVERLAP_EXPAND;
+}
+
+/* True while the moved strip overlaps another strip on the same channel (the "bump"
+ * the gizmo warns about). Same condition the VSE flags while a strip is grabbed. */
+static bool strip_move_bump_active(const Scene *master_scene, const Strip *strip)
+{
+  const Editing *ed = seq::editing_get(master_scene);
+  if (ed == nullptr) {
+    return false;
+  }
+  for (const Strip &other : ed->seqbase) {
+    if (&other == strip || other.channel != strip->channel) {
+      continue;
+    }
+    if (other.left_handle() < strip->right_handle(master_scene) &&
+        strip->left_handle() < other.right_handle(master_scene))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* Color that flags a move bump by the master timeline's overlap mode: green expand
+ * (the bumped strip is pushed along the same lane), sky blue shuffle (the strip
+ * slides to the nearest free spot), red overwrite (the bumped strip is trimmed). */
+static void strip_move_bump_color(const Scene *master_scene, float r_color[4])
+{
+  switch (scene_strip_overlap_mode_get(master_scene)) {
+    case SEQ_OVERLAP_EXPAND:
+      r_color[0] = 0.3f;
+      r_color[1] = 0.9f;
+      r_color[2] = 0.45f;
+      r_color[3] = 0.9f;
+      break;
+    case SEQ_OVERLAP_OVERWRITE:
+      r_color[0] = 0.95f;
+      r_color[1] = 0.3f;
+      r_color[2] = 0.4f;
+      r_color[3] = 0.9f;
+      break;
+    case SEQ_OVERLAP_SHUFFLE:
+      r_color[0] = 0.35f;
+      r_color[1] = 0.78f;
+      r_color[2] = 1.0f;
+      r_color[3] = 0.9f;
+      break;
+  }
+}
+
+/* Resolve overlaps left by a move drag, like the VSE does when a strip grab is
+ * released: the master timeline's overlap mode decides - expand pushes the bumped
+ * strips along, shuffle slides this strip to the nearest free spot, overwrite trims
+ * the bumped strips. The dope-sheet move never leaves its track: if the sequencer's
+ * last-resort fallback channel-shuffled the strip away, slide it back into the
+ * nearest free time spot on the original channel instead. */
+static void resolve_move_overlap(Scene *master_scene, Strip *strip)
+{
+  Editing *ed = seq::editing_get(master_scene);
+  if (ed == nullptr) {
+    return;
+  }
+  const int orig_channel = strip->channel;
+  Vector<Strip *> source;
+  source.append(strip);
+  seq::transform_handle_overlap(master_scene, &ed->seqbase, source, false);
+  if (strip->channel != orig_channel) {
+    strip->channel_set(orig_channel);
+    seq::transform_seqbase_shuffle_time(
+        source, &ed->seqbase, master_scene, &master_scene->markers, false);
+  }
 }
 
 /** \} */
@@ -344,34 +425,84 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     const float x_in = float(rects.move.xmin);
     const float x_out = float(rects.move.xmax);
     const float y_strip = float(rects.left.ymin);
+    const float y_top = y_strip + strip_height;
+    const float y_move_max = float(rects.move.ymax); /* boundary: bottom move | top slip */
 
-    immUniformColor4f(0.1f, 0.1f, 0.1f, 0.8f);
-    immRectf(pos, x_in, y_strip, x_out, y_strip + strip_height);
-
-    if (highlight == GZ_PART_MOVE) {
-      immUniformColor4f(0.35f, 0.55f, 0.75f, 0.55f);
-      immRectf(pos, x_in, float(rects.move.ymin), x_out, float(rects.move.ymax));
+    /* BFA: bar backdrop + outline, node-minimap style (rounded, theme-based). */
+    float backdrop_color[4];
+    float backdrop_color_outline[4];
+    ui::theme::get_color_shade_alpha_4fv(TH_BACK, -40, 0, backdrop_color);
+    ui::theme::get_color_shade_alpha_4fv(TH_BACK, 25, 0, backdrop_color_outline);
+    /* Brighten the border on hover, like the node minimap. */
+    if (highlight != -1) {
+      backdrop_color_outline[0] = 0.7f;
+      backdrop_color_outline[1] = 0.7f;
+      backdrop_color_outline[2] = 0.7f;
+      backdrop_color_outline[3] = 0.5f;
     }
-    else if (highlight == GZ_PART_SLIP) {
-      immUniformColor4f(0.35f, 0.55f, 0.75f, 0.55f);
+    rctf bar_rect;
+    BLI_rctf_init(&bar_rect, x_in, y_strip, x_out, y_top);
+    ui::draw_roundbox_corner_set(ui::CNR_ALL);
+    ui::draw_roundbox_4fv_ex(
+        &bar_rect, backdrop_color, nullptr, 1.0f, backdrop_color_outline, 2.0f * ui_scale, 3.0f * ui_scale);
+    GPU_blend(GPU_BLEND_NONE);
+
+    immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+    GPU_blend(GPU_BLEND_ALPHA);
+
+    /* Two-tone zones + divider so the slip (top) and move (bottom) areas read as
+     * two zones even without hovering. */
+    immUniformColor4f(0.17f, 0.17f, 0.17f, 0.35f);
+    immRectf(pos, x_in, float(rects.slip.ymin), x_out, y_top);
+    immUniformColor4f(0.08f, 0.08f, 0.08f, 0.4f);
+    immRectf(pos, x_in, y_strip, x_out, y_move_max);
+    immUniformColor4f(0.45f, 0.45f, 0.45f, 0.5f);
+    immRectf(pos, x_in, y_move_max - 0.5f, x_out, y_move_max + 0.5f);
+
+    /* Clearly visible hover fill for the active zone. */
+    if (highlight == GZ_PART_SLIP) {
+      immUniformColor4f(0.4f, 0.65f, 0.9f, 0.65f);
       immRectf(pos, x_in, float(rects.slip.ymin), x_out, float(rects.slip.ymax));
     }
+    else if (highlight == GZ_PART_MOVE) {
+      immUniformColor4f(0.4f, 0.65f, 0.9f, 0.65f);
+      immRectf(pos, x_in, y_strip, x_out, y_move_max);
+    }
 
+    /* Handles: a glow behind the hovered one, plus the green/red fill. */
     if (highlight == GZ_PART_LEFT) {
-      immUniformColor4f(0.3f, 0.95f, 0.4f, 0.95f);
+      immUniformColor4f(0.3f, 0.95f, 0.4f, 0.35f);
+      immRectf(pos,
+               float(rects.left.xmin) - 2.0f * ui_scale,
+               y_strip,
+               float(rects.left.xmax) + 2.0f * ui_scale,
+               y_top);
     }
-    else {
-      immUniformColor4f(0.3f, 0.95f, 0.4f, 0.6f);
-    }
-    immRectf(pos, float(rects.left.xmin), y_strip, float(rects.left.xmax), y_strip + strip_height);
+    immUniformColor4f(0.3f, 0.95f, 0.4f, (highlight == GZ_PART_LEFT) ? 0.95f : 0.6f);
+    immRectf(pos, float(rects.left.xmin), y_strip, float(rects.left.xmax), y_top);
 
     if (highlight == GZ_PART_RIGHT) {
-      immUniformColor4f(0.95f, 0.3f, 0.4f, 0.95f);
+      immUniformColor4f(0.95f, 0.3f, 0.4f, 0.35f);
+      immRectf(pos,
+               float(rects.right.xmin) - 2.0f * ui_scale,
+               y_strip,
+               float(rects.right.xmax) + 2.0f * ui_scale,
+               y_top);
     }
-    else {
-      immUniformColor4f(0.95f, 0.3f, 0.4f, 0.6f);
+    immUniformColor4f(0.95f, 0.3f, 0.4f, (highlight == GZ_PART_RIGHT) ? 0.95f : 0.6f);
+    immRectf(pos, float(rects.right.xmin), y_strip, float(rects.right.xmax), y_top);
+
+    /* BFA - overlap-mode bump feedback: while a move drag leaves the strip
+     * overlapping a strip on the same channel, ring the bar in the color of the
+     * master timeline's overlap mode so the user sees what releasing will do to
+     * the bumped strip (green expand, sky blue shuffle, red overwrite). */
+    if (strip_move_bump_active(master_scene, strip)) {
+      float bump_color[4];
+      strip_move_bump_color(master_scene, bump_color);
+      ui::draw_roundbox_corner_set(ui::CNR_ALL);
+      ui::draw_roundbox_4fv_ex(
+          &bar_rect, nullptr, nullptr, 1.0f, bump_color, 2.0f * ui_scale, 3.0f * ui_scale);
     }
-    immRectf(pos, float(rects.right.xmin), y_strip, float(rects.right.xmax), y_strip + strip_height);
   }
 
   immUnbindProgram();
@@ -634,34 +765,73 @@ static void adjust_shot_duration_right(Scene *master_scene, Strip *strip, const 
   adapt_scene_range(master_scene, strip);
 }
 
-static void adjust_shot_duration_left(Scene *master_scene, Strip *strip, const int frame_offset)
+/* The exclusive end frame of the last strip on the same channel before `strip`
+ * (0 when no strip precedes it). Used to clamp the master start edge so an
+ * extended strip never overlaps its left neighbour. */
+static int previous_strip_end_frame(Scene *master_scene, const Strip *strip)
+{
+  int prev_end = 0;
+  const Editing *ed = seq::editing_get(master_scene);
+  if (ed != nullptr) {
+    for (const Strip &s : ed->seqbase) {
+      if (&s == strip || s.channel != strip->channel ||
+          s.left_handle() >= strip->left_handle())
+      {
+        continue;
+      }
+      prev_end = max_ii(prev_end, s.right_handle(master_scene));
+    }
+  }
+  return prev_end;
+}
+
+/* bfa 3d sequencer: retime from the left handle. Dragging to the left moves the
+ * master-timeline start edge (and the dope-sheet bar edge) back in lockstep while
+ * the end edge stays put, so the strip feels "in sync" with the dope-sheet. First
+ * the trimmed content is consumed; once that runs out, the scene's start frame is
+ * extended (only when the "Use Scene Frame Range" toggle allows it), never past
+ * the preceding strip on the same channel. */
+static void adjust_shot_duration_left(Scene *master_scene,
+                                      Strip *strip,
+                                      const int frame_offset,
+                                      const bool allow_scene_start_extend)
 {
   const int duration = strip->right_handle(master_scene) - strip->left_handle();
   const int new_duration = max_ii(duration + frame_offset, 1);
-  int new_frame_offset = new_duration - duration;
-  /* Clamp so the strip's start never goes before the internal scene's frame start. */
-  const int remapped = remap_frame_value(strip, strip->left_handle());
-  const int new_start = max_ii(remapped - new_frame_offset, strip->scene->r.sfra);
-  new_frame_offset = new_start - remapped;
+  const int new_frame_offset = new_duration - duration;
   if (new_frame_offset == 0) {
     return;
   }
-  Vector<Strip *> impacted = strips_after_same_channel(master_scene, strip);
   if (new_frame_offset > 0) {
-    /* Extend to the left: adjust the strip, then move impacted strips to the left. */
-    strip->startofs += new_frame_offset;
-    strip->start -= new_frame_offset;
-    for (Strip *s : impacted) {
-      seq::transform_translate_strip(master_scene, s, -new_frame_offset);
+    /* Extend: first consume trimmed content (master start edge moves left), then
+     * optionally extend the scene's start frame. Following strips never move. */
+    const int trim = min_ii(new_frame_offset, int(strip->startofs));
+    strip->startofs -= trim;
+    const int remaining = new_frame_offset - trim;
+    if (remaining > 0 && allow_scene_start_extend) {
+      /* Only extend into free room before the previous strip on this channel. */
+      const int room = max_ii(
+          strip->left_handle() - previous_strip_end_frame(master_scene, strip), 0);
+      const int scene_extend = min_ii(remaining, room);
+      if (scene_extend > 0) {
+        strip->start -= scene_extend;
+        strip->scene->r.sfra -= scene_extend;
+        /* Re-evaluate the content length for the extended scene, keeping the
+         * (already moved) handles so the end edge stays fixed. */
+        const int left = strip->left_handle();
+        const int right = strip->right_handle(master_scene);
+        const int new_len = max_ii(strip->scene->r.efra - strip->scene->r.sfra + 1 -
+                                       strip->anim_startofs - strip->anim_endofs,
+                                   0);
+        strip->content_length_set(new_len);
+        strip->handles_set(master_scene, left, right);
+      }
     }
   }
   else {
-    /* Shrink from the left: move impacted strips to the right first (reversed order). */
-    for (int i = impacted.size() - 1; i >= 0; i--) {
-      seq::transform_translate_strip(master_scene, impacted[i], -new_frame_offset);
-    }
-    strip->start -= new_frame_offset;
-    strip->startofs += new_frame_offset;
+    /* Shrink: the master start edge moves right; the end edge (and any following
+     * strips) stay put. */
+    strip->startofs -= new_frame_offset;
   }
   adapt_scene_range(master_scene, strip);
 }
@@ -688,7 +858,7 @@ static void slip_shot_content(Scene *master_scene, Strip *strip, const int frame
   adapt_scene_range(master_scene, strip);
 }
 
-/* Update the strip's scene preview range to match the strip (addon setting). */
+/* Update the strip's scene preview range to match the strip (dope-sheet overlay toggle). */
 static void update_preview_range(Scene *master_scene, Strip *strip)
 {
   if (!strip->scene) {
@@ -703,7 +873,10 @@ static void update_preview_range(Scene *master_scene, Strip *strip)
   strip->scene->r.pefra = end;
 }
 
-/* Extend the strip's scene frame range to cover the strip (addon setting). */
+/* bfa 3d sequencer: the "Use Scene Frame Range" toggle makes the strip scene's
+ * frame range follow the strip in both directions (only ever extending, so scene
+ * data is never discarded). Extending the left edge is what makes the dope-sheet
+ * frame start follow the gizmo; extending the right edge makes the end follow. */
 static void update_scene_frame_range(Scene *master_scene, Strip *strip)
 {
   if (!strip->scene) {
@@ -744,40 +917,64 @@ struct SceneStripTimingOp {
 };
 
 static const EnumPropertyItem rna_enum_scene_strip_timing_mode_items[] = {
-    {GZ_PART_LEFT, "LEFT", 0, "Left Handle", "Adjust the strip's start frame"},
-    {GZ_PART_RIGHT, "RIGHT", 0, "Right Handle", "Adjust the strip's end frame"},
-    {GZ_PART_MOVE, "MOVE", 0, "Move", "Move the strip in the timeline"},
-    {GZ_PART_SLIP, "SLIP", 0, "Slip", "Slip the strip's content"},
+    {GZ_PART_LEFT, "LEFT", 0, "Left Handle", "Shift the shot's start frame in the master timeline"},
+    {GZ_PART_RIGHT, "RIGHT", 0, "Right Handle", "Shift the shot's end frame in the master timeline"},
+    {GZ_PART_MOVE, "MOVE", 0, "Move", "Move the strip in the master timeline"},
+    {GZ_PART_SLIP, "SLIP", 0, "Slip", "Slip the shot content in the scene"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static void scene_strip_timing_apply(bContext *C, wmOperator *op)
+/* bfa 3d sequencer: per-zone tooltips (each gizmo of the group shares the same
+ * operator but carries a different "mode" property). */
+static std::string scene_strip_timing_get_description(bContext * /*C*/,
+                                                      wmOperatorType * /*ot*/,
+                                                      PointerRNA *ptr)
+{
+  switch (RNA_enum_get(ptr, "mode")) {
+    case GZ_PART_LEFT:
+      return TIP_("Retime the shot start: shift the start frame in the master timeline, "
+                  "keeping the end frame fixed");
+    case GZ_PART_RIGHT:
+      return TIP_("Retime the shot end: shift the end frame in the master timeline, "
+                  "keeping the start frame fixed");
+    case GZ_PART_MOVE:
+      return TIP_("Move the strip in the master timeline. When it bumps into another "
+                  "strip the sequencer overlap mode applies on release: expand pushes "
+                  "the strip, shuffle slides to the nearest free space, overwrite trims it");
+    case GZ_PART_SLIP:
+      return TIP_("Slip the shot content: shift which scene frames are shown without "
+                  "moving the strip in the master timeline");
+    default:
+      return "";
+  }
+}
+
+/* dope-sheet overlay toggles that let the gizmos adjust the scene and preview frame
+ * range (BFA - built-in, works without the 3D Sequencer addon). */
+static bool scene_strip_use_preview_range_get(const bContext *C)
+{
+  const SpaceAction *space_action = CTX_wm_space_action(C);
+  return space_action != nullptr &&
+         (space_action->overlays.flag & ADS_SHOW_USE_PREVIEW_RANGE) != 0;
+}
+
+static bool scene_strip_use_scene_range_get(const bContext *C)
+{
+  const SpaceAction *space_action = CTX_wm_space_action(C);
+  return space_action != nullptr &&
+         (space_action->overlays.flag & ADS_SHOW_USE_SCENE_RANGE) != 0;
+}
+
+/* bfa 3d sequencer: keep the master playhead and frame range, and the strip scene's
+ * preview/scene frame range, in sync with the strip (per the dope-sheet overlay
+ * toggles). Runs after every drag update and again when a move resolves overlaps. */
+static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
 {
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
-  Strip *strip = data->strip;
   Scene *master_scene = data->master_scene;
-  const int offset = data->offset;
-  int delta = 0;
-
-  const int duration = strip->right_handle(master_scene) - strip->left_handle();
-  switch (data->mode) {
-    case GZ_PART_LEFT:
-      delta = duration - data->orig_duration;
-      adjust_shot_duration_left(master_scene, strip, -offset - delta);
-      break;
-    case GZ_PART_RIGHT:
-      delta = duration - data->orig_duration;
-      adjust_shot_duration_right(master_scene, strip, offset - delta);
-      break;
-    case GZ_PART_MOVE:
-      delta = int(strip->start) - int(data->orig_start);
-      move_shot(master_scene, strip, offset - delta);
-      break;
-    case GZ_PART_SLIP:
-      delta = int(strip->startofs) - int(data->orig_startofs);
-      slip_shot_content(master_scene, strip, offset - delta);
-      break;
-  }
+  Strip *strip = data->strip;
+  const bool use_preview_range = scene_strip_use_preview_range_get(C);
+  const bool use_scene_range = scene_strip_use_scene_range_get(C);
 
   /* Keep the master playhead and frame range in sync with the strip. */
   const bool from_frame_start = (data->mode == GZ_PART_LEFT);
@@ -798,12 +995,10 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
   master_scene->r.efra = max_ii(frame_end, data->orig_master_efra);
   strip->scene->r.efra = max_ii(remap_frame_value(strip, frame_end), data->orig_scene_efra);
 
-  /* Range sync per the 3D Sequencer addon settings (built-in defaults when the
-   * addon is disabled). */
-  if (timeline_sync_bool_get(C, "use_preview_range")) {
+  if (use_preview_range) {
     update_preview_range(master_scene, strip);
   }
-  if (timeline_sync_bool_get(C, "use_scene_range")) {
+  if (use_scene_range) {
     update_scene_frame_range(master_scene, strip);
   }
 
@@ -812,12 +1007,57 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
   ED_region_tag_redraw(CTX_wm_region(C));
 }
 
+static void scene_strip_timing_apply(bContext *C, wmOperator *op)
+{
+  SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
+  Strip *strip = data->strip;
+  Scene *master_scene = data->master_scene;
+  const int offset = data->offset;
+  int delta = 0;
+
+  const int duration = strip->right_handle(master_scene) - strip->left_handle();
+  switch (data->mode) {
+    case GZ_PART_LEFT:
+      delta = duration - data->orig_duration;
+      adjust_shot_duration_left(
+          master_scene, strip, -offset - delta, scene_strip_use_scene_range_get(C));
+      break;
+    case GZ_PART_RIGHT:
+      delta = duration - data->orig_duration;
+      adjust_shot_duration_right(master_scene, strip, offset - delta);
+      break;
+    case GZ_PART_MOVE:
+      delta = int(strip->start) - int(data->orig_start);
+      move_shot(master_scene, strip, offset - delta);
+      break;
+    case GZ_PART_SLIP:
+      delta = int(strip->startofs) - int(data->orig_startofs);
+      slip_shot_content(master_scene, strip, offset - delta);
+      break;
+  }
+
+  scene_strip_timing_sync_ranges(C, op);
+}
+
 static void scene_strip_timing_ui_cleanup(bContext *C, wmOperator *op)
 {
   ED_area_status_text(CTX_wm_area(C), nullptr);
   WM_cursor_modal_restore(CTX_wm_window(C));
   MEM_delete(static_cast<SceneStripTimingOp *>(op->customdata));
   op->customdata = nullptr;
+}
+
+/* bfa 3d sequencer: end of a drag. A move can leave the strip overlapping its
+ * neighbours; resolve it with the master timeline's overlap mode - the same as
+ * releasing a strip grab in the VSE - before the undo step is recorded. */
+static void scene_strip_timing_finish(bContext *C, wmOperator *op)
+{
+  SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
+  if (data->mode == GZ_PART_MOVE) {
+    resolve_move_overlap(data->master_scene, data->strip);
+    scene_strip_timing_sync_ranges(C, op);
+  }
+  scene_strip_timing_ui_cleanup(C, op);
 }
 
 static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
@@ -865,7 +1105,24 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
   }
 
   char header_text[64];
-  SNPRINTF(header_text, "Offset: %d", data->offset);
+  if (data->mode == GZ_PART_MOVE && strip_move_bump_active(data->master_scene, data->strip)) {
+    const char *bump_name = "";
+    switch (scene_strip_overlap_mode_get(data->master_scene)) {
+      case SEQ_OVERLAP_EXPAND:
+        bump_name = "expand";
+        break;
+      case SEQ_OVERLAP_OVERWRITE:
+        bump_name = "overwrite";
+        break;
+      case SEQ_OVERLAP_SHUFFLE:
+        bump_name = "shuffle";
+        break;
+    }
+    SNPRINTF(header_text, "Offset: %d - bump (%s)", data->offset, bump_name);
+  }
+  else {
+    SNPRINTF(header_text, "Offset: %d", data->offset);
+  }
   ED_area_status_text(CTX_wm_area(C), header_text);
 
   switch (event->type) {
@@ -885,14 +1142,14 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
     }
     case LEFTMOUSE:
       if (event->val == KM_RELEASE) {
-        scene_strip_timing_ui_cleanup(C, op);
+        scene_strip_timing_finish(C, op);
         return OPERATOR_FINISHED;
       }
       break;
     case EVT_RETKEY:
     case EVT_PADENTER:
       if (event->val == KM_PRESS) {
-        scene_strip_timing_ui_cleanup(C, op);
+        scene_strip_timing_finish(C, op);
         return OPERATOR_FINISHED;
       }
       break;
@@ -924,6 +1181,7 @@ void ACTION_OT_scene_strip_timing(wmOperatorType *ot)
 
   ot->invoke = scene_strip_timing_invoke;
   ot->modal = scene_strip_timing_modal;
+  ot->get_description = scene_strip_timing_get_description;
 
   ot->flag |= OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_X;
 
