@@ -75,6 +75,7 @@ class OUTLINER_HT_header(Header):
         if display_mode in {'SCENES', 'VIEW_LAYER', 'LIBRARY_OVERRIDES'}:
             row.popover(
                 panel="OUTLINER_PT_filter",
+                icon="FILTER", # BFA - add icon back
                 text="",
             )
 
