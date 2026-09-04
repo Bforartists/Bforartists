@@ -495,7 +495,9 @@ ENUM_OPERATORS(eDopeSheet_Flag);
 
 enum SpaceActionOverlays_Flag : int {
   ADS_OVERLAY_SHOW_OVERLAYS = (1 << 0),
-  ADS_SHOW_SCENE_STRIP_FRAME_RANGE = (1 << 1)
+  ADS_SHOW_SCENE_STRIP_FRAME_RANGE = (1 << 1),
+  /** BFA - 3D Sequencer: interactive scene strip gizmos drawn in the dope-sheet. */
+  ADS_SHOW_SCENE_STRIP_GIZMOS = (1 << 2),
 };
 ENUM_OPERATORS(SpaceActionOverlays_Flag);
 
@@ -1157,7 +1159,9 @@ struct bDopeSheet {
 
 struct SpaceAction_Runtime {
   eSAction_Runtime_Flag flag = {};
-  char _pad0[7] = {};
+  /** BFA - 3D Sequencer: which scene strip gizmo is highlighted (0-3: left/right/move/slip), -1 = none. */
+  char scene_strip_gizmo_highlight = -1;
+  char _pad0[6] = {};
 };
 
 struct SpaceActionOverlays {

@@ -121,6 +121,12 @@ def draw_sequence_overlay_cb(drawer: OverlayDrawer):
     if not sync_settings.is_sync() or not sequence_settings.overlay_dopesheet:
         return
 
+    # The built-in C implementation (overlays.show_scene_strip_gizmos) draws and
+    # handles the scene strip gizmos itself; skip to avoid drawing twice.
+    overlays = getattr(context.space_data, "overlays", None)
+    if overlays is not None and getattr(overlays, "show_scene_strip_gizmos", False):
+        return
+
     # Only draw overlay if current scene matches master strip's scene.
     master_strip = get_sync_master_strip(use_cache=True)[0]
     if not master_strip or master_strip.scene != context.scene:
@@ -197,6 +203,10 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
+        # The built-in C gizmos take over when their overlay toggle is enabled.
+        overlays = getattr(context.space_data, "overlays", None)
+        if overlays is not None and getattr(overlays, "show_scene_strip_gizmos", False):
+            return False
         master_strip = get_sync_master_strip(use_cache=True)[0]
         return (
             context.window_manager.sequence_settings.overlay_dopesheet

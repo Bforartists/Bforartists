@@ -916,6 +916,12 @@ void ANIM_draw_previewrange(const Scene *scene, View2D *v2d, int end_frame_width
  */
 void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d);
 
+/**
+ * Draw the interactive scene-strip bar, retime handles and scrub highlight for the 3D Sequencer.
+ * Must be called with the region in `view2d_view_orthoSpecial` space.
+ */
+void ANIM_draw_scene_strip_gizmos(const bContext *C, View2D *v2d);
+
 /** \} */
 
 /* -------------------------------------------------------------------- */

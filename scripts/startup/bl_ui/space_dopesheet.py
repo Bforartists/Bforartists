@@ -1429,6 +1429,8 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
         row = layout.row()
         row.active = context.workspace.use_scene_time_sync
         row.prop(overlay_settings, "show_scene_strip_range")
+        # bfa 3d sequencer interactive scene strip gizmos
+        row.prop(overlay_settings, "show_scene_strip_gizmos")
 
 
 classes = (

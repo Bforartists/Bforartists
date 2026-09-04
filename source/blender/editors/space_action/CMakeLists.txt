@@ -20,6 +20,7 @@ set(SRC
   action_data.cc
   action_draw.cc
   action_edit.cc
+  action_gizmo_scene_strip.cc
   action_ops.cc
   action_select.cc
   space_action.cc

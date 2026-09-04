@@ -31,6 +31,7 @@
 #include "RNA_enum_types.hh"
 
 #include "WM_api.hh"
+#include "WM_gizmo_api.hh"
 #include "WM_message.hh"
 #include "WM_types.hh"
 
@@ -277,6 +278,9 @@ static void action_main_region_draw(const bContext *C, ARegion *region)
   if (ED_markers_region_visible(CTX_wm_area(C), region)) {
     ED_markers_draw(C, marker_flag);
   }
+
+  /* bfa 3d sequencer scene strip gizmos (still in orthoSpecial space) */
+  ANIM_draw_scene_strip_gizmos(C, v2d);
 
   /* preview range */
   ui::view2d_view_ortho(v2d);
@@ -1050,6 +1054,9 @@ void ED_spacetype_action()
 
   art = ui::ED_area_type_hud(st->spaceid);
   BLI_addhead(&st->regiontypes, art);
+
+  /* bfa 3d sequencer scene strip gizmos */
+  action_widgets();
 
   BKE_spacetype_register(std::move(st));
 }

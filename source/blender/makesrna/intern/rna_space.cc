@@ -7548,6 +7548,16 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
                            "When using scene time synchronization in the sequence editor, display "
                            "the range of the current scene strip");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* bfa 3d sequencer interactive scene strip gizmos */
+  prop = RNA_def_property(srna, "show_scene_strip_gizmos", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_GIZMOS);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop,
+                           "Show Scene Strip Gizmos",
+                           "When using scene time synchronization, show interactive gizmos to retime, "
+                           "move or slip the current scene strip and to scrub the master sequence");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 
 static void rna_def_space_dopesheet(BlenderRNA *brna)
