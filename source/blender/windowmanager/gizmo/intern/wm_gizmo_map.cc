@@ -314,6 +314,11 @@ eWM_GizmoFlagMapDrawStep WM_gizmomap_drawstep_from_gizmo_group(const wmGizmoGrou
   else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) {
     step = WM_GIZMOMAP_DRAWSTEP_2D_TOOLS;
   }
+  else {
+    /* BFA - Default 2D draw-step for gizmo-groups without an explicit one (e.g. Python gizmo-groups),
+     * matching the previous behavior of the single `WM_GIZMOMAP_DRAWSTEP_2D`. */
+    step = WM_GIZMOMAP_DRAWSTEP_2D_TOOLS;
+  }
   return step;
 }
 

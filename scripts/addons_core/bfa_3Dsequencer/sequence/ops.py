@@ -5,6 +5,7 @@ import bpy
 
 from bfa_3Dsequencer.utils import register_classes, unregister_classes
 from bfa_3Dsequencer.sync.core import (
+    get_master_scene,
     get_sync_master_strip,
     get_sync_settings,
     remap_frame_value,
@@ -27,7 +28,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        return get_sync_settings().master_scene is not None
+        return get_master_scene() is not None
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
         frame_value = int(
@@ -48,7 +49,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
         return {"RUNNING_MODAL"}
 
     def execute(self, context: bpy.types.Context):
-        master_scene = get_sync_settings().master_scene
+        master_scene = get_master_scene()
         master_strip, _ = get_sync_master_strip()
 
         # Find a strip that matches the timing
@@ -174,7 +175,7 @@ class SEQUENCE_OT_check_obj_users_scene(bpy.types.Operator):
 
     def build_obj_user_scene_report(self, obj):
         info_msg = ""
-        master_scene = get_sync_settings().master_scene
+        master_scene = get_master_scene()
         strips = [
             strip
             for strip in master_scene.sequence_editor.strips_all

@@ -93,6 +93,7 @@ class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
             self.layout.prop(settings, "bidirectional")
         self.layout.prop(settings, "keep_gpencil_tool_settings")
         self.layout.prop(settings, "use_preview_range")
+        self.layout.prop(settings, "use_scene_range")
         self.layout.prop(settings, "sync_all_windows")
         self.layout.prop(settings, "active_follows_playhead")
 

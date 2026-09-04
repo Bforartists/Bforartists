@@ -632,6 +632,21 @@ def slip_shot_content(
     adapt_scene_range(strip)
 
 
+def move_shot(strip: bpy.types.SceneStrip, frame_offset: int):
+    """
+    Move `strip` in its timeline by `frame_offset` frames.
+    Both the start and end frames of the strip are shifted together, keeping
+    the strip's content mapping unchanged.
+
+    :param strip: The scene strip to move.
+    :param frame_offset: The frame offset to apply.
+    """
+    if frame_offset == 0:
+        return
+    strip.frame_start += frame_offset
+    adapt_scene_range(strip)
+
+
 def get_valid_shot_scenes() -> list[bpy.types.Scene]:
     """Return the list of scenes considered as usable by a scene strip."""
     prefs = get_addon_prefs()

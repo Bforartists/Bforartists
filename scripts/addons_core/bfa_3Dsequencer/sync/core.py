@@ -97,6 +97,11 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     )
 
     def use_preview_range_update_callback(self, context):
+        # Update master strip preview range when the option is changed
+        if (
+            strip := get_sync_master_strip(use_cache=True)[0]
+        ) and self.use_preview_range:
+            update_preview_range(strip)
         bpy.context.workspace.use_scene_sync_bfa = self.is_sync() and self.use_preview_range
 
     use_preview_range: bpy.props.BoolProperty(
@@ -107,6 +112,15 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
         ),
         default=True,
         update=use_preview_range_update_callback,
+    )
+
+    use_scene_range: bpy.props.BoolProperty(
+        name="Use Scene Frame Range",
+        description=(
+            "Update the current Scene Strip's scene start/end frame to match "
+            "the useful range of the strip"
+        ),
+        default=False,
     )
 
     # Cached values from last update
@@ -159,6 +173,18 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
 def get_sync_settings() -> TimelineSyncSettings:
     """Return the TimelineSyncSettings instance."""
     return bpy.context.window_manager.timeline_sync_settings
+
+
+def get_master_scene() -> Union[bpy.types.Scene, None]:
+    """Return the synchronization timeline scene.
+
+    Falls back to the workspace's pinned sequencer scene so the sync system,
+    overlay and gizmos also work with the built-in scene-time sync.
+    """
+    settings = get_sync_settings()
+    return settings.master_scene or getattr(
+        bpy.context.workspace, "sequencer_scene", None
+    )
 
 
 # Main scene frame set function that will use the optimized or fallback to default
@@ -392,7 +418,7 @@ def get_sync_master_strip(
     :param use_cache: If True, return last cached value. Compute from current master time otherwise.
     """
     settings = get_sync_settings()
-    master_scene = settings.master_scene
+    master_scene = get_master_scene()
     if not settings.is_sync() or not master_scene or not master_scene.sequence_editor:
         return None, -1
 
@@ -408,6 +434,53 @@ def get_sync_master_strip(
     )
 
 
+def update_preview_range(scene_strip: bpy.types.Strip):
+    """Update `scene_strip`'s scene preview range to match `scene_strip`'s range.
+
+    :param scene_strip: The scene strip to update.
+    """
+    # Discard scene strip without scene
+    if not scene_strip.scene:
+        return
+
+    # Ensure strip's scene is using preview range.
+    # NOTE: This has to be done only if it's not the case, otherwise playback
+    #       performance are degraded due to UI updates caused by this action.
+    if not scene_strip.scene.use_preview_range:
+        scene_strip.scene.use_preview_range = True
+
+    # Compute and update preview range if necessary
+    start = remap_frame_value(scene_strip.frame_final_start, scene_strip)
+    end = remap_frame_value(scene_strip.frame_final_end, scene_strip) - 1
+    if start != scene_strip.scene.frame_preview_start:
+        scene_strip.scene.frame_preview_start = start
+    if end != scene_strip.scene.frame_preview_end:
+        scene_strip.scene.frame_preview_end = end
+
+
+def update_scene_frame_range(scene_strip: bpy.types.Strip):
+    """Update `scene_strip`'s scene start/end frame to match `scene_strip`'s range.
+
+    The scene frame range is only ever extended, so shrinking strips never
+    discard scene data.
+
+    :param scene_strip: The scene strip to update.
+    """
+    # Discard scene strip without scene
+    if not scene_strip.scene:
+        return
+
+    # Compute the strip's used range in the scene's time reference
+    start = remap_frame_value(scene_strip.frame_final_start, scene_strip)
+    end = remap_frame_value(scene_strip.frame_final_end, scene_strip) - 1
+
+    # Only extend the range so moving/shrinking strips never break scene data.
+    if start < scene_strip.scene.frame_start:
+        scene_strip.scene.frame_start = start
+    if end > scene_strip.scene.frame_end:
+        scene_strip.scene.frame_end = end
+
+
 def sync_system_update(context: bpy.types.Context, force: bool = False):
     """Perform the synchronization system update.
 
@@ -420,7 +493,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
         return
 
     sync_settings = get_sync_settings()
-    master_scene = sync_settings.master_scene
+    master_scene = get_master_scene()
     win_scene = context.window.scene
 
     # Discard update if disabled or not properly configured
@@ -547,6 +620,12 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     # to avoid unwanted updates in case bidirectional sync is enabled.
     if strip.scene.frame_current != inner_frame and sync_settings.is_legacy():
         scene_frame_set(context, strip.scene, inner_frame)
+
+    # Update the shot scene's preview/frame range to match the strip (per settings).
+    if sync_settings.use_preview_range:
+        update_preview_range(strip)
+    if sync_settings.use_scene_range:
+        update_scene_frame_range(strip)
 
     # Synchronize target windows
     for window in (

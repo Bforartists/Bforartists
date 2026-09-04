@@ -11,14 +11,18 @@ from bfa_3Dsequencer.scene.core import (
     delete_scene,
     duplicate_scene,
     get_valid_shot_scenes,
+    move_shot,
     rename_scene,
     slip_shot_content,
 )
 from bfa_3Dsequencer.scene.naming import shot_naming, ShotNamingProperty
 from bfa_3Dsequencer.sync.core import (
+    get_master_scene,
     get_sync_master_strip,
     get_sync_settings,
     remap_frame_value,
+    update_preview_range,
+    update_scene_frame_range,
 )
 from bfa_3Dsequencer.utils import register_classes, unregister_classes
 
@@ -423,6 +427,7 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
         name="Mode",
         items=(
             ("DURATION", "Duration", "Adjust strip duration"),
+            ("MOVE", "Move", "Move strip in the timeline"),
             ("SLIP", "Slip", "Slip strip content"),
         ),
         default="DURATION",
@@ -480,7 +485,8 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
         self.original_strip_duration = self.strip.frame_final_duration
         self.original_strip_scene_end = self.strip.scene.frame_end
         self.original_strip_offset_start = self.strip.frame_offset_start
-        self.original_edit_frame_end = get_sync_settings().master_scene.frame_end
+        self.original_strip_start = self.strip.frame_start
+        self.original_edit_frame_end = get_master_scene().frame_end
 
         context.window_manager.modal_handler_add(self)
         return {"RUNNING_MODAL"}
@@ -533,21 +539,33 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
         #  - SHRINKS the strip if using left handle (from frame start)
         #  - EXTENDS the strip otherwise (from frame end)
         offset = -self.offset if from_frame_start else self.offset
-        # Compute current absolute offset from original duration
-        if self.mode == "SLIP":
+        # Compute current absolute offset from original values
+        if self.mode == "MOVE":
+            delta = self.strip.frame_start - self.original_strip_start
+            move_shot(self.strip, offset - delta)
+        elif self.mode == "SLIP":
             delta = self.strip.frame_offset_start - self.original_strip_offset_start
             slip_shot_content(self.strip, offset - delta, clamp_start=True)
         else:
             delta = self.strip.frame_final_duration - self.original_strip_duration
             adjust_shot_duration(self.strip, offset - delta, from_frame_start)
 
-        edit_scene = get_sync_settings().master_scene
-        if from_frame_start or self.mode == "SLIP":
+        edit_scene = get_master_scene()
+        if from_frame_start or self.mode in ("SLIP", "MOVE"):
             # NOTE: When adjusting from frame start, the current frame does not change.
             #       Set time to a non meaningful value before re-setting the correct frame
             #       value, to trigger time-dependent updates (e.g: synchronization).
-            edit_scene.frame_set(-1)
-            update_frame = self.strip.frame_final_start
+            if self.mode == "MOVE":
+                # Keep the master playhead inside the moved strip.
+                master_frame = min(
+                    max(edit_scene.frame_current, self.strip.frame_final_start),
+                    self.strip.frame_final_end - 1,
+                )
+                edit_scene.frame_set(-1)
+                update_frame = master_frame
+            else:
+                edit_scene.frame_set(-1)
+                update_frame = self.strip.frame_final_start
         else:
             update_frame = self.strip.frame_final_end - 1
 
@@ -561,6 +579,13 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
             remap_frame_value(frame_end, self.strip),
             self.original_strip_scene_end,
         )
+
+        # Update the shot scene's preview/frame range to match the strip (per settings).
+        sync_settings = get_sync_settings()
+        if sync_settings.use_preview_range:
+            update_preview_range(self.strip)
+        if sync_settings.use_scene_range:
+            update_scene_frame_range(self.strip)
 
         return {"FINISHED"}
 

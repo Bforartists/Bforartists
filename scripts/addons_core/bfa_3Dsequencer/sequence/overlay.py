@@ -45,7 +45,9 @@ def ui_scaled(val):
 
 
 def ui_baseline_y_pos(context):
-    return ui_scaled(45 if context.scene.timeline_markers else 14)
+    # The marker row is `UI_MARKER_MARGIN_Y` (34 * ui_scale) tall at the bottom of the
+    # dopesheet region. Sit the strip snug on top of it when timeline markers exist.
+    return ui_scaled(34 if context.scene.timeline_markers else 14)
 
 
 def shot_baseline_y_pos(context):
@@ -237,7 +239,7 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
         strip, _ = get_sync_master_strip(use_cache=True)
 
         # Toggle strip handles based on whether there is an active master strip
-        for gizmo in (self.right_handle, self.left_handle, self.shot_handle):
+        for gizmo in (self.right_handle, self.left_handle, self.shot_handle, self.slip_handle):
             gizmo.hide = not strip
         # Early return if not active strip
         if not strip:
@@ -270,14 +272,23 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
             height=strip_height,
         )
 
-        strip_handle_height = strip_height * 0.5
-        # Scene handle
+        # Move bar (larger, top): displace the strip in the master timeline.
+        move_bar_height = strip_height * 0.7
         self.set_gizmo_geom(
             self.shot_handle,
             x=frame_in,
-            y=strip_y + strip_height - strip_handle_height * 0.5,
+            y=strip_y + strip_height - move_bar_height,
             width=frame_out - frame_in,
-            height=strip_handle_height,
+            height=move_bar_height,
+        )
+        # Slip bar (smaller, bottom): slip the strip's content.
+        slip_bar_height = strip_height * 0.3
+        self.set_gizmo_geom(
+            self.slip_handle,
+            x=frame_in,
+            y=strip_y,
+            width=frame_out - frame_in,
+            height=slip_bar_height,
         )
 
     def add_gizmo(self, operator: str):
@@ -300,10 +311,15 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
         # - Right handle
         self.right_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
         props.strip_handle = "RIGHT"
-        # - Scene handle (slip content)
+        # - Move bar (larger, top): displace the strip in the master timeline
         self.shot_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
         self.shot_handle.alpha = 0.2
         self.shot_handle.alpha_highlight = 0.7
+        props.mode = "MOVE"
+        # - Slip bar (smaller, bottom): slip the strip's content
+        self.slip_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
+        self.slip_handle.alpha = 0.15
+        self.slip_handle.alpha_highlight = 0.7
         props.mode = "SLIP"
 
         # Sequence timeline scrub gizmo
