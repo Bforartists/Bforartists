@@ -302,9 +302,9 @@ bool wm_gizmogroup_is_visible_in_drawstep(const wmGizmoGroup *gzgroup,
   switch (drawstep) {
     // bfa node minimap rename with _TOOL and _UI
     case WM_GIZMOMAP_DRAWSTEP_2D_TOOLS:
-      return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) != 0;
+      return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) == 0 || (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) != 0;
     case WM_GIZMOMAP_DRAWSTEP_2D_UI:
-      return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) == 0 || (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) != 0;
+      return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) != 0;
     case WM_GIZMOMAP_DRAWSTEP_3D:
       return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D);
     default:

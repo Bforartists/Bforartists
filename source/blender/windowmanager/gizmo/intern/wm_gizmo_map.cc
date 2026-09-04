@@ -308,10 +308,10 @@ eWM_GizmoFlagMapDrawStep WM_gizmomap_drawstep_from_gizmo_group(const wmGizmoGrou
     step = WM_GIZMOMAP_DRAWSTEP_3D;
   }
   // bfa node minimap add, rename with _TOOL and _UI
-  else if (!(gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) || (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI)) {
+  else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) {
     step = WM_GIZMOMAP_DRAWSTEP_2D_UI;
   }
-  else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) {
+  else if (!(gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) || (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL)) {
     step = WM_GIZMOMAP_DRAWSTEP_2D_TOOLS;
   }
   return step;
