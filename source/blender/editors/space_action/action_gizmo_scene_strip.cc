@@ -447,6 +447,10 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
         &bar_rect, backdrop_color, nullptr, 1.0f, backdrop_color_outline, 2.0f * ui_scale, 3.0f * ui_scale);
     GPU_blend(GPU_BLEND_NONE);
 
+    /* BFA - `draw_roundbox_4fv_ex` renders through a batch which unbinds the GPU
+     * program but leaves the immediate-mode shader state bound, so end it before
+     * rebinding here (a second bind asserts `imm->shader == nullptr`). */
+    immUnbindProgram();
     immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
     GPU_blend(GPU_BLEND_ALPHA);
 
