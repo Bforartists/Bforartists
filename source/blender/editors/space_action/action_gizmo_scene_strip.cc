@@ -987,22 +987,26 @@ static void update_preview_range(Scene *master_scene, Strip *strip)
 }
 
 /* bfa 3d sequencer: the "Set Scene Range" dope-sheet toggle makes the strip scene's
- * frame range follow the strip in both directions (only ever extending, so scene
- * data is never discarded). Extending the left edge is what makes the dope-sheet
- * frame start follow the gizmo; extending the right edge makes the end follow. */
+ * start/end frames follow the strip exactly - same as the preview range - so the
+ * dope-sheet scene range (the active strip scene's frame start/end) visibly moves
+ * with the gizmo. The strip's content length is derived live from the scene range
+ * (see Strip::content_length), so the handles are re-pinned afterwards to keep the
+ * strip's edges exactly where the drag put them. */
 static void update_scene_frame_range(Scene *master_scene, Strip *strip)
 {
   if (!strip->scene) {
     return;
   }
-  const int start = remap_frame_value(strip, strip->left_handle());
-  const int end = remap_frame_value(strip, strip->right_handle(master_scene) - 1);
-  if (start < strip->scene->r.sfra) {
-    strip->scene->r.sfra = start;
+  const int left = strip->left_handle();
+  const int right = strip->right_handle(master_scene);
+  const int start = remap_frame_value(strip, left);
+  const int end = remap_frame_value(strip, right - 1);
+  if (start == strip->scene->r.sfra && end == strip->scene->r.efra) {
+    return;
   }
-  if (end > strip->scene->r.efra) {
-    strip->scene->r.efra = end;
-  }
+  strip->scene->r.sfra = start;
+  strip->scene->r.efra = end;
+  strip->handles_set(master_scene, left, right);
 }
 
 /** \} */
@@ -1026,6 +1030,7 @@ struct SceneStripTimingOp {
   float orig_startofs;
   /* Original frame ranges to restore/keep on cancel. */
   int orig_master_efra;
+  int orig_scene_sfra;
   int orig_scene_efra;
 };
 
@@ -1196,6 +1201,7 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
   data->orig_start = strip->start;
   data->orig_startofs = strip->startofs;
   data->orig_master_efra = master_scene->r.efra;
+  data->orig_scene_sfra = strip->scene->r.sfra;
   data->orig_scene_efra = strip->scene->r.efra;
 
   ARegion *region = CTX_wm_region(C);
@@ -1278,6 +1284,7 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
         data->offset = 0;
         scene_strip_timing_apply(C, op);
         data->master_scene->r.efra = data->orig_master_efra;
+        data->strip->scene->r.sfra = data->orig_scene_sfra;
         data->strip->scene->r.efra = data->orig_scene_efra;
         scene_strip_timing_ui_cleanup(C, op);
         return OPERATOR_CANCELLED;

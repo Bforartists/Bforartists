@@ -482,8 +482,9 @@ def update_preview_range(scene_strip: bpy.types.Strip):
 def update_scene_frame_range(scene_strip: bpy.types.Strip):
     """Update `scene_strip`'s scene start/end frame to match `scene_strip`'s range.
 
-    The scene frame range is only ever extended, so shrinking strips never
-    discard scene data.
+    BFA (#6780): the scene frame range is *set* to the strip's remapped range
+    (exactly like the preview range), so with the dope-sheet "Set Scene Range"
+    toggle on, the strip scene's start/end frames visibly follow the gizmo.
 
     :param scene_strip: The scene strip to update.
     """
@@ -495,11 +496,20 @@ def update_scene_frame_range(scene_strip: bpy.types.Strip):
     start = remap_frame_value(scene_strip.left_handle, scene_strip)
     end = remap_frame_value(scene_strip.right_handle, scene_strip) - 1
 
-    # Only extend the range so moving/shrinking strips never break scene data.
-    if start < scene_strip.scene.frame_start:
-        scene_strip.scene.frame_start = start
-    if end > scene_strip.scene.frame_end:
-        scene_strip.scene.frame_end = end
+    # Set the range exactly (only when the values changed, to keep playback
+    # performance - same guard as update_preview_range).
+    if start == scene_strip.scene.frame_start and end == scene_strip.scene.frame_end:
+        return
+
+    # Re-pin the strip handles: the strip content length is derived live from the
+    # scene frame range (content_length), so changing it would otherwise
+    # shrink/stretch the strip's edges.
+    left = scene_strip.left_handle
+    right = scene_strip.right_handle
+    scene_strip.scene.frame_start = start
+    scene_strip.scene.frame_end = end
+    scene_strip.left_handle = left
+    scene_strip.right_handle = right
 
 
 def sync_system_update(context: bpy.types.Context, force: bool = False):
