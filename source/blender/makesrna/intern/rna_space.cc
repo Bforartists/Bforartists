@@ -7574,15 +7574,25 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
                            "strip itself");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 
-  prop = RNA_def_property(srna, "use_scene_range", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_USE_SCENE_RANGE);
+  /* bfa 3d sequencer scene strip gizmo display options (no addon needed) */
+  prop = RNA_def_property(srna, "show_scene_strip_all", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_ALL);
+  RNA_def_property_boolean_default(prop, false);
+  RNA_def_property_ui_text(prop,
+                           "Show All Strips",
+                           "Show every scene strip on the master timeline in the dope-sheet "
+                           "(layered indicators), so overlapping, pushed or frame-aligned "
+                           "strips are visible from the dope-sheet. Off: only strips "
+                           "referencing the same scene are shown");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  prop = RNA_def_property(srna, "show_scene_strip_scene_name", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_SCENE_NAME);
   RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop,
-                           "Set Scene Range",
-                           "Extend the strip scene's start/end frames (scene frame range) so they "
-                           "cover the strip when retiming it - the range never shrinks and "
-                           "slip/move leave it alone. Off: the gizmo only changes the strip "
-                           "itself");
+                           "Show Scene Names",
+                           "Append the referenced scene name to the scene strip bar label "
+                           "and the layered strip indicators in the dope-sheet");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 

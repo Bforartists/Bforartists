@@ -500,8 +500,10 @@ enum SpaceActionOverlays_Flag : int {
   ADS_SHOW_SCENE_STRIP_GIZMOS = (1 << 2),
   /** BFA - 3D Sequencer: keep the strip's scene preview range in sync with the strip. */
   ADS_SHOW_USE_PREVIEW_RANGE = (1 << 3),
-  /** BFA - 3D Sequencer: keep the strip's scene frame range in sync with the strip. */
-  ADS_SHOW_USE_SCENE_RANGE = (1 << 4),
+  /** BFA - 3D Sequencer: opt-in dope-sheet display of every master-timeline scene strip. */
+  ADS_SHOW_SCENE_STRIP_ALL = (1 << 4),
+  /** BFA - 3D Sequencer: opt-in scene name on the scene strip labels/indicators. */
+  ADS_SHOW_SCENE_STRIP_SCENE_NAME = (1 << 5),
 };
 ENUM_OPERATORS(SpaceActionOverlays_Flag);
 

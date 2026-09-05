@@ -22,7 +22,6 @@ from ..sync.core import (
     get_sync_settings,
     remap_frame_value,
     update_preview_range,
-    update_scene_frame_range,
 )
 from ..utils import register_classes, unregister_classes
 
@@ -584,8 +583,6 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
         sync_settings = get_sync_settings()
         if sync_settings.use_preview_range:
             update_preview_range(self.strip)
-        if sync_settings.use_scene_range:
-            update_scene_frame_range(self.strip)
 
         return {"FINISHED"}
 

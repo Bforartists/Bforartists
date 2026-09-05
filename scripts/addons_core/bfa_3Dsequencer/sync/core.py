@@ -113,14 +113,6 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
         update=use_preview_range_update_callback,
     )
 
-    use_scene_range: bpy.props.BoolProperty(
-        name="Use Scene Frame Range",
-        description=(
-            "Update the current Scene Strip's scene start/end frame to match "
-            "the useful range of the strip"
-        ),
-        default=False,
-    )
 
     # Cached values from last update
     # See sync_system_update function for details
@@ -174,15 +166,15 @@ def get_sync_settings() -> TimelineSyncSettings:
     return bpy.context.window_manager.timeline_sync_settings
 
 
-def get_dopesheet_range_toggles() -> tuple[bool, bool]:
-    """Return the dope-sheet \"Set Preview/Scene Range\" overlay toggles.
+def get_dopesheet_preview_range() -> bool:
+    """Return the dope-sheet "Set Preview Range" overlay toggle.
 
     BFA: single source of truth shared with the built-in C gizmos, so the addon
-    sync and the gizmo always agree and turning a toggle off really stops the
-    scene/preview frame range updates.
+    sync and the gizmo always agree and turning the toggle off really stops the
+    preview range updates. (The separate scene frame range feature was removed -
+    extend-only proved unreliable for scene strips.)
     """
     use_preview_range = False
-    use_scene_range = False
     for window in bpy.context.window_manager.windows:
         for area in window.screen.areas:
             if area.type != "DOPESHEET_EDITOR":
@@ -192,8 +184,7 @@ def get_dopesheet_range_toggles() -> tuple[bool, bool]:
                 not overlays.show_scene_strip_gizmos):
                 continue
             use_preview_range |= overlays.use_preview_range
-            use_scene_range |= overlays.use_scene_range
-    return use_preview_range, use_scene_range
+    return use_preview_range
 
 
 def get_master_scene() -> Union[bpy.types.Scene, None]:
@@ -477,30 +468,6 @@ def update_preview_range(scene_strip: bpy.types.Strip):
         scene_strip.scene.frame_preview_end = end
 
 
-def update_scene_frame_range(scene_strip: bpy.types.Strip):
-    """Update `scene_strip`'s scene start/end frame to match `scene_strip`'s range.
-
-    BFA (#6780): only ever *extends* the strip scene's frame range so it contains
-    the strip's rendered window - never shrinks, never moves on slip/move. Setting
-    the range exactly was reverted: for scene strips the content length is derived
-    live from the scene range, so a "set" re-anchored the scene to the strip's
-    trims and every following slip/retime compounded the offset (jumping/rushing).
-
-    :param scene_strip: The scene strip to update.
-    """
-    # Discard scene strip without scene
-    if not scene_strip.scene:
-        return
-
-    # Compute the strip's used range in the scene's time reference
-    start = remap_frame_value(scene_strip.left_handle, scene_strip)
-    end = remap_frame_value(scene_strip.right_handle, scene_strip) - 1
-
-    # Only extend the range so moving/shrinking strips never break scene data.
-    if start < scene_strip.scene.frame_start:
-        scene_strip.scene.frame_start = start
-    if end > scene_strip.scene.frame_end:
-        scene_strip.scene.frame_end = end
 
 
 def sync_system_update(context: bpy.types.Context, force: bool = False):
@@ -646,11 +613,9 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     # Update the shot scene's preview/frame range to match the strip (per the
     # dope-sheet overlays popup toggles - BFA: single source of truth shared with
     # the built-in C gizmo, so unchecking them really stops the updates).
-    use_preview_range, use_scene_range = get_dopesheet_range_toggles()
+    use_preview_range = get_dopesheet_preview_range()
     if use_preview_range:
         update_preview_range(strip)
-    if use_scene_range:
-        update_scene_frame_range(strip)
 
     # Synchronize target windows
     for window in (
