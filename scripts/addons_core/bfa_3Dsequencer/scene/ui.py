@@ -30,6 +30,14 @@ class SEQUENCER_MT_shot(bpy.types.Menu):
         # Operator to slip and adjust time of active scene strip
         layout.operator("sequencer.shot_timing_adjust", icon="TIME")
 
+        # BFA (#6780): batch-align every scene strip's scene range to its visible
+        # extent in the timeline, with lead-in/out padding (operator dialog).
+        layout.operator(
+            "sequencer.sync_scene_strip_ranges",
+            text="Sync Scene Strip Frame Ranges",
+            icon="TIME",
+        )
+
         # Operator to update to active scene strip
         layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
 

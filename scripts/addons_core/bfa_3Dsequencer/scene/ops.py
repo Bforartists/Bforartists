@@ -600,6 +600,115 @@ class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
         self.restore_ui(context)
 
 
+# BFA (#6780): batch operator aligning every scene strip's internal scene range to
+# its visible extent in the sequencer timeline, with optional lead-in/out padding.
+# Groundwork for the future "Clamp to Scene Strip" batch op discussed when the
+# broken per-drag "Set Scene Range" feature was removed. Non-destructive: strip
+# positions (left/right handles) in the timeline are never moved, only the
+# underlying scenes' frame_start/frame_end and the strips' internal anchoring
+# (content_start) are rewritten so the displayed content stays exactly where it is.
+class SEQUENCER_OT_sync_scene_strip_ranges(bpy.types.Operator):
+    """Set start and end frame of each scene strip's scene so they align to the strip's preview range in the sequencer timeline"""
+
+    bl_idname = "sequencer.sync_scene_strip_ranges"
+    bl_label = "Sync Scene Strip Frame Ranges"
+    bl_description = (
+        "Set start and end frame of each scene strip in the sequencer timeline "
+        "so they align to the strips preview range, with optional lead-in/out "
+        "padding. Non-destructive: the strips keep their position in the timeline"
+    )
+    bl_options = {'REGISTER', 'UNDO'}
+
+    lead_in: bpy.props.IntProperty(
+        name="Lead In",
+        description="Frames of padding added before each scene strip's content",
+        default=0,
+        min=0,
+    )
+    lead_out: bpy.props.IntProperty(
+        name="Lead Out",
+        description="Frames of padding added after each scene strip's content",
+        default=0,
+        min=0,
+    )
+
+    @classmethod
+    def poll(cls, context: bpy.types.Context):
+        ed = context.scene.sequence_editor
+        return ed is not None and any(
+            isinstance(s, bpy.types.SceneStrip) for s in ed.strips_all
+        )
+
+    @staticmethod
+    def iter_scene_strips(context: bpy.types.Context) -> list[bpy.types.SceneStrip]:
+        ed = context.scene.sequence_editor
+        if not ed:
+            return []
+        # strips_all: recursive, meta-inclusive.
+        return [s for s in ed.strips_all if isinstance(s, bpy.types.SceneStrip)]
+
+    def invoke(self, context: bpy.types.Context, _event):
+        # Operator dialog asking for lead-in/out, then Confirm runs execute().
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context: bpy.types.Context):
+        from ..sync.core import remap_frame_value as _remap
+
+        strips = self.iter_scene_strips(context)
+        todo = [s for s in strips if s.scene is not None]
+
+        # 1. Per-scene target range: union of the visible extents of every strip
+        #    sharing the scene, remapped into the scene's referential, padded.
+        targets: dict[str, tuple[int, int]] = {}
+        for strip in todo:
+            # Scene frame shown at the strip's left handle (remap_frame_value identity).
+            v_start = _remap(strip.left_handle, strip)
+            v_end = _remap(strip.right_handle - 1, strip)
+            if strip.scene.name in targets:
+                old_start, old_end = targets[strip.scene.name]
+                targets[strip.scene.name] = (
+                    min(old_start, v_start),
+                    max(old_end, v_end),
+                )
+            else:
+                targets[strip.scene.name] = (v_start, v_end)
+
+        # 2. Apply scene ranges, remembering each strip's pre-state.
+        pre_state = []
+        for strip in todo:
+            v_start, v_end = targets[strip.scene.name]
+            scene = strip.scene
+            pre_state.append(
+                (
+                    strip,
+                    strip.content_start,
+                    strip.left_handle,
+                    strip.right_handle,
+                    strip.channel,
+                    strip.duration,
+                )
+            )
+            scene.frame_start = max(v_start - self.lead_in, 1)
+            scene.frame_end = v_end + self.lead_out
+
+        # 3. Re-anchor strips: the scene-range write above can auto-derive a
+        #    scene strip's content length (the Set-Scene-Range lesson), so read
+        #    back and restore handles/content position exactly.
+        for strip, content_start, left, right, channel, duration in pre_state:
+            strip.content_start = content_start
+            strip.channel = channel
+            strip.duration = duration
+            strip.left_handle = left
+            strip.right_handle = right
+
+        self.report(
+            {'INFO'},
+            f"Updated {len(targets)} scene strip range(s)"
+            + (f", {len(strips) - len(todo)} skipped (no scene)" if len(todo) != len(strips) else ""),
+        )
+        return {'FINISHED'}
+
+
 class SEQUENCER_OT_shot_rename(bpy.types.Operator):
     bl_idname = "sequencer.shot_rename"
     bl_label = "Rename"
@@ -825,6 +934,7 @@ classes = (
     SEQUENCER_OT_shot_duplicate,
     SEQUENCER_OT_shot_delete,
     SEQUENCER_OT_shot_timing_adjust,
+    SEQUENCER_OT_sync_scene_strip_ranges,
     SEQUENCER_OT_shot_rename,
     SEQUENCER_OT_shot_chronological_numbering,
 )
