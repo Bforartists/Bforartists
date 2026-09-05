@@ -282,24 +282,28 @@ static void strip_move_bump_color(const Scene *master_scene, float r_color[4])
 /* Resolve overlaps left by a move drag, like the VSE does when a strip grab is
  * released: the master timeline's overlap mode decides - expand pushes the bumped
  * strips along, shuffle slides this strip to the nearest free spot, overwrite trims
- * the bumped strips. The dope-sheet move never leaves its track: if the sequencer's
- * last-resort fallback channel-shuffled the strip away, slide it back into the
- * nearest free time spot on the original channel instead. */
+ * the bumped strips. BFA (#6780): shuffle never leaves its lane - it seeks the
+ * nearest free spot at the start/end of the same lane (transform_seqbase_shuffle_time)
+ * or bounces back, matching the VSE; the previous "never leaves its track" fallback
+ * forced the strip back to its original channel and re-shuffled in time, which fought
+ * the shuffle mode and could re-create the overlap it just resolved. */
 static void resolve_move_overlap(Scene *master_scene, Strip *strip)
 {
   Editing *ed = seq::editing_get(master_scene);
   if (ed == nullptr) {
     return;
   }
-  const int orig_channel = strip->channel;
   Vector<Strip *> source;
   source.append(strip);
-  seq::transform_handle_overlap(master_scene, &ed->seqbase, source, false);
-  if (strip->channel != orig_channel) {
-    strip->channel_set(orig_channel);
+  if (scene_strip_overlap_mode_get(master_scene) == SEQ_OVERLAP_SHUFFLE) {
+    /* Lane-only shuffle: seek the nearest free spot at the start/end of the same
+     * lane, never move to another channel. */
     seq::transform_seqbase_shuffle_time(
         source, &ed->seqbase, master_scene, &master_scene->markers, false);
+    strip->runtime->flag &= ~seq::StripRuntimeFlag::Overlap;
+    return;
   }
+  seq::transform_handle_overlap(master_scene, &ed->seqbase, source, false);
 }
 
 /** \} */
@@ -1185,6 +1189,9 @@ struct SceneStripTimingOp {
   float orig_startofs;
   /* Original frame range to restore/keep on cancel. */
   int orig_master_efra;
+  /* BFA (#6780): whether the strip was selected before the drag, so the
+   * temporary SEQ_SELECT set during the drag can be restored on release. */
+  bool orig_select;
 };
 
 static const EnumPropertyItem rna_enum_scene_strip_timing_mode_items[] = {
@@ -1291,6 +1298,16 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
     case GZ_PART_MOVE:
       delta = int(strip->start) - int(data->orig_start);
       move_shot(master_scene, strip, offset - delta);
+      /* BFA (#6780): live overlap feedback during the drag, same as the VSE -
+       * set the Overlap runtime flag while the moved strip overlaps a neighbour
+       * so the dope-sheet bar shows the red outline; cleared on release after
+       * resolve_move_overlap() applies the overlap mode. */
+      strip->runtime->flag &= ~seq::StripRuntimeFlag::Overlap;
+      if (Editing *ed = seq::editing_get(master_scene)) {
+        if (seq::transform_test_overlap(master_scene, &ed->seqbase, strip)) {
+          strip->runtime->flag |= seq::StripRuntimeFlag::Overlap;
+        }
+      }
       break;
     case GZ_PART_SLIP:
       delta = int(strip->startofs) - int(data->orig_startofs);
@@ -1319,6 +1336,10 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
     resolve_move_overlap(data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
+  /* BFA (#6780): restore the strip's selection state from before the drag. */
+  if (!data->orig_select) {
+    data->strip->flag &= ~SEQ_SELECT;
+  }
   scene_strip_timing_ui_cleanup(C, op);
 }
 
@@ -1341,6 +1362,13 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
   data->orig_start = strip->start;
   data->orig_startofs = strip->startofs;
   data->orig_master_efra = master_scene->r.efra;
+
+  /* BFA (#6780): mark the dragged strip as selected for the duration of the
+   * drag, like the VSE does. The overlap resolution (query_overwrite_targets)
+   * excludes selected strips, so without this the overwrite mode would target
+   * the dragged strip itself and fall back to a shuffle. */
+  data->orig_select = (strip->flag & SEQ_SELECT) != 0;
+  strip->flag |= SEQ_SELECT;
 
   ARegion *region = CTX_wm_region(C);
   if (region != nullptr) {
@@ -1422,6 +1450,10 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
         data->offset = 0;
         scene_strip_timing_apply(C, op);
         data->master_scene->r.efra = data->orig_master_efra;
+        /* BFA (#6780): restore the strip's selection state from before the drag. */
+        if (!data->orig_select) {
+          data->strip->flag &= ~SEQ_SELECT;
+        }
         scene_strip_timing_ui_cleanup(C, op);
         return OPERATOR_CANCELLED;
       }
