@@ -131,8 +131,11 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   if (!workspace) {
     return;
   }
-  // bfa 3d sequencer overlay use WORKSPACE_SYNC_SCENE_BFA instead WORKSPACE_SYNC_SCENE_TIME
-  if ((workspace->flags & WORKSPACE_SYNC_SCENE_BFA) == 0) {
+  // BFA (#6780): the strip range shading follows either sync switch - the 3D
+  // Sequencer addon's flag (WORKSPACE_SYNC_SCENE_BFA) or the built-in scene time
+  // sync (WORKSPACE_SYNC_SCENE_TIME, the core Sync toggle in the sequencer
+  // header) - so both affordances light up the dope-sheet the same way.
+  if ((workspace->flags & (WORKSPACE_SYNC_SCENE_BFA | WORKSPACE_SYNC_SCENE_TIME)) == 0) {
     return;
   }
   const Scene *sequencer_scene = workspace->sequencer_scene;
