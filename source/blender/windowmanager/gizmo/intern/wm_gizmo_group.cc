@@ -304,7 +304,7 @@ bool wm_gizmogroup_is_visible_in_drawstep(const wmGizmoGroup *gzgroup,
      * tool gizmos in the tools pass, 2D_UI flagged or unflagged groups (Python gizmo-groups,
      * scene strip gizmos) in the UI pass on top. */
     case WM_GIZMOMAP_DRAWSTEP_2D_TOOLS:
-      return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) != 0;
+       return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) == 0 || (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) != 0;
     case WM_GIZMOMAP_DRAWSTEP_2D_UI:
       return (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) != 0 ||
              /* BFA - Unflagged 2D gizmo-groups (e.g. Python gizmo-groups) default to the UI pass. */
