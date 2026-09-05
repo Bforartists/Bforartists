@@ -209,22 +209,6 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
 
 ################################ BFA -Switch between the editors ##########################################
 
-# BFA (#6780): open the sequencer from the dope-sheet, so the master timeline
-# behind the scene strip gizmos is one click away (the gizmo overlays popup
-# offers this as "Open Sequencer").
-class ANIM_OT_switch_editors_to_sequencer(bpy.types.Operator):
-    """Switch to the Sequencer Editor"""  # blender will use this as a tooltip for menu items and buttons.
-
-    bl_idname = "wm.switch_editor_to_sequencer"  # unique identifier for buttons and menu items to reference.
-    # display name in the interface.
-    bl_label = "Switch to the Sequencer Editor"
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="SEQUENCE_EDITOR")
-        return {"FINISHED"}
-
-
 class ANIM_OT_switch_editors_to_timeline(bpy.types.Operator):
     """Switch to Dope Sheet Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
@@ -1443,11 +1427,6 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
 
         layout.active = overlay_settings.show_overlays
 
-        # BFA (#6780): jump to the sequencer - the master timeline the scene strip
-        # gizmos act on is one click away from the dope-sheet.
-        row = layout.row()
-        row.operator("wm.switch_editor_to_sequencer", text="Open Sequencer", icon="SEQUENCE")
-
         # BFA (#6780): the scene strip gizmos are sync-agnostic now - they work
         # whenever a master sequencer timeline is configured, sync on or off -
         # so the section is not grayed by the sync state anymore. Collapsible
@@ -1480,7 +1459,6 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
 
 
 classes = (
-    ANIM_OT_switch_editors_to_sequencer,  # BFA menu
     ANIM_OT_switch_editors_to_timeline,  # BFA menu
     ANIM_OT_switch_editors_to_dopesheet,  # BFA menu
     ANIM_OT_switch_editors_to_graph,  # BFA menu

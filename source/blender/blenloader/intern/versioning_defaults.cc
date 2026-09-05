@@ -157,6 +157,12 @@ static void blo_update_defaults_screen(bScreen *screen,
       /* Show markers region, hide channels and collapse summary in timelines. */
       SpaceAction *saction = static_cast<SpaceAction *>(area.spacedata.first);
       saction->flag |= SACTION_SHOW_MARKERS;
+      /* BFA (#6780): scene strip gizmo defaults - overlays on with the
+       * interactive gizmos, the layered "Show All Strips" indicators and both
+       * strip and scene name labels enabled, indicator opacity at 0.5. */
+      saction->overlays.flag |= (ADS_SHOW_SCENE_STRIP_GIZMOS | ADS_SHOW_SCENE_STRIP_ALL |
+                                 ADS_SHOW_SCENE_STRIP_STRIP_NAME | ADS_SHOW_SCENE_STRIP_SCENE_NAME);
+      saction->overlays.all_strips_opacity = 0.5f;
       if (saction->mode == SACTCONT_TIMELINE) {
         saction->ads.flag |= ADS_FLAG_SUMMARY_COLLAPSED;
 
