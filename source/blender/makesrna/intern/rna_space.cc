@@ -7586,6 +7586,16 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
                            "referencing the same scene are shown");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 
+  /* BFA - 3D Sequencer: strip name on the scene strip labels/indicators. */
+  prop = RNA_def_property(srna, "show_scene_strip_names", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_STRIP_NAME);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop,
+                           "Show Strip Names",
+                           "Show the strip name on the scene strip bar and the layered strip "
+                           "indicators in the dope-sheet");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
   prop = RNA_def_property(srna, "show_scene_strip_scene_name", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_SCENE_NAME);
   RNA_def_property_boolean_default(prop, true);
@@ -7593,6 +7603,17 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
                            "Show Scene Names",
                            "Append the referenced scene name to the scene strip bar label "
                            "and the layered strip indicators in the dope-sheet");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* BFA - 3D Sequencer: opacity multiplier for the layered/stacked strip indicators. */
+  prop = RNA_def_property(srna, "all_strips_opacity", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, nullptr, "overlays.all_strips_opacity");
+  RNA_def_property_range(prop, 0.0, 1.0);
+  RNA_def_property_float_default(prop, 1.0);
+  RNA_def_property_ui_text(
+      prop,
+      "All Strips Opacity",
+      "Opacity of the layered strip indicators drawn behind/above the scene strip bar");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 

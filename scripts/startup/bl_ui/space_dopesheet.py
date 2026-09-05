@@ -1440,7 +1440,11 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
         col.prop(overlay_settings, "use_preview_range", text="Set Preview Range")
         # BFA (#6780): layered strip indicator display options (opt-in).
         col.prop(overlay_settings, "show_scene_strip_all", text="Show All Strips")
+        # BFA (#6780): label options - strip name and referenced scene name.
+        col.prop(overlay_settings, "show_scene_strip_names", text="Show Strip Names")
         col.prop(overlay_settings, "show_scene_strip_scene_name", text="Show Scene Names")
+        # BFA (#6780): opacity of the layered/stacked strip indicators.
+        col.prop(overlay_settings, "all_strips_opacity", text="Strips Opacity")
 
 
 classes = (

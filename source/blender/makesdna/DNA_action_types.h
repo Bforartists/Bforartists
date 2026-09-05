@@ -504,6 +504,8 @@ enum SpaceActionOverlays_Flag : int {
   ADS_SHOW_SCENE_STRIP_ALL = (1 << 4),
   /** BFA - 3D Sequencer: opt-in scene name on the scene strip labels/indicators. */
   ADS_SHOW_SCENE_STRIP_SCENE_NAME = (1 << 5),
+  /** BFA - 3D Sequencer: strip name on the scene strip labels/indicators. */
+  ADS_SHOW_SCENE_STRIP_STRIP_NAME = (1 << 6),
 };
 ENUM_OPERATORS(SpaceActionOverlays_Flag);
 
@@ -1170,7 +1172,8 @@ struct SpaceAction_Runtime {
 
 struct SpaceActionOverlays {
   SpaceActionOverlays_Flag flag = {};
-  char _pad0[4] = {};
+  /* BFA - 3D Sequencer: opacity multiplier for the layered/stacked strip indicators. */
+  float all_strips_opacity = 1.0f;
 };
 
 /* Action Editor Space. This is defined here instead of in DNA_space_types.h */

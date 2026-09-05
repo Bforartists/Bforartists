@@ -382,10 +382,12 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
 
   /* BFA (#6780): dope-sheet overlay toggles for the layered strip indicators -
    * "Show All Strips" draws every scene strip on the master timeline (not just
-   * same-scene ones); "Show Scene Names" appends the referenced scene name to
-   * the bar label and the layered strip indicators. */
+   * same-scene ones); "Show Strip Names" / "Show Scene Names" control the strip
+   * and scene name labels; "All Strips Opacity" scales the indicator alpha. */
   const bool show_all_strips =
       (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_ALL) != 0;
+  const bool show_strip_names =
+      (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_STRIP_NAME) != 0;
   const bool show_scene_names =
       (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_SCENE_NAME) != 0;
 
@@ -430,12 +432,23 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
    * position is only communicated by the master timeline itself. */
 
   /* BFA (#6780): layered-strip row snug on the marker row - other scene strips
-   * referencing the same scene are always shown behind the bar, tinted with each
-   * strip's own color (color tag or scene-strip theme color). With the opt-in
-   * "Show All Strips" overlay toggle, every scene strip on the master timeline is
-   * drawn instead, so the full layout (overlaps, pushes, alignment) is visible. */
+   * referencing the same scene are always shown as full rounded chips, tinted
+   * with each strip's own color (color tag or scene-strip theme color), like the
+   * sequencer strips. With the opt-in "Show All Strips" overlay toggle, every
+   * scene strip on the master timeline is drawn instead, so the full layout
+   * (overlaps, pushes, alignment) is visible. Chips that overlap the bar or
+   * another chip stack snugly in a lane above (the bar row is lane 0), so
+   * crossing/stacking layers pile up instead of overpainting each other. The
+   * "All Strips Opacity" overlay setting scales the chip alpha. */
   const Editing *ed = seq::editing_get(master_scene);
   if (ed != nullptr) {
+    const float all_opacity = clamp_f(space_action->overlays.all_strips_opacity, 0.0f, 1.0f);
+    struct LayeredStripDraw {
+      float x_in, x_out;
+      float col[4];
+      const Strip *strip;
+    };
+    blender::Vector<LayeredStripDraw> layered_strips;
     for (const Strip &other : ed->seqbase) {
       if (&other == strip || other.type != STRIP_TYPE_SCENE || other.scene == nullptr) {
         continue;
@@ -452,31 +465,73 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
       if (frame_in > frame_out) {
         std::swap(frame_in, frame_out);
       }
-      const float x_in = region_x_from_view(frame_in);
-      const float x_out = region_x_from_view(frame_out);
-      const float y = baseline + 2.0f * ui_scale;
+      LayeredStripDraw item;
+      item.x_in = region_x_from_view(frame_in);
+      item.x_out = region_x_from_view(frame_out);
+      item.strip = &other;
+      scene_strip_color_get(&other, item.col);
+      layered_strips.append(item);
+    }
+
+    /* Lane packing: lane 0 is the bar's own row (occupied by the bar over its
+     * span), so chips overlapping it or each other are placed one lane up -
+     * stacked snug (1 px apart) on top of whatever they cross. */
+    constexpr int lane_max = 8;
+    struct LaneInterval {
+      float x_in, x_out;
+    };
+    blender::Vector<LaneInterval> lane_intervals[lane_max + 1];
+    float bar_frame_in = seq::give_frame_index(master_scene, strip, strip->left_handle()) +
+                         strip->scene->r.sfra + strip->anim_startofs;
+    float bar_frame_out = seq::give_frame_index(
+                              master_scene, strip, strip->right_handle(master_scene) - 1) +
+                          strip->scene->r.sfra + strip->anim_startofs;
+    if (bar_frame_in > bar_frame_out) {
+      std::swap(bar_frame_in, bar_frame_out);
+    }
+    lane_intervals[0].append({region_x_from_view(bar_frame_in), region_x_from_view(bar_frame_out)});
+
+    const float lane_gap = 1.0f * ui_scale;
+    for (const LayeredStripDraw &item : layered_strips) {
+      int lane = 0;
+      for (; lane <= lane_max; lane++) {
+        bool overlaps = false;
+        for (const LaneInterval &occupant : lane_intervals[lane]) {
+          if (item.x_in < occupant.x_out + lane_gap && occupant.x_in - lane_gap < item.x_out) {
+            overlaps = true;
+            break;
+          }
+        }
+        if (!overlaps) {
+          break;
+        }
+      }
+      if (lane > lane_max) {
+        lane = lane_max;
+      }
+      lane_intervals[lane].append({item.x_in, item.x_out});
+
+      const float y = baseline + 2.0f * ui_scale + float(lane) * strip_height;
       const float y_top_other = y + strip_height;
-      float other_col[4];
-      scene_strip_color_get(&other, other_col);
-      /* BFA (#6780): rounded chip with outline, matching the master bar - the
-       * strip's own color (color tag or scene-strip theme color) shaded for the
-       * body and outline, so the layered strips read like the sequencer strips. */
-      uchar other_uc[3] = {uchar(other_col[0] * 255.0f),
-                           uchar(other_col[1] * 255.0f),
-                           uchar(other_col[2] * 255.0f)};
+      /* BFA (#6780): full rounded chip with outline, matching the master bar and
+       * the sequencer scene strips - the strip's own color (color tag or
+       * scene-strip theme color) shaded for the body and outline. */
+      uchar other_uc[3] = {uchar(item.col[0] * 255.0f),
+                           uchar(item.col[1] * 255.0f),
+                           uchar(item.col[2] * 255.0f)};
       uchar other_body_uc[3], other_outline_uc[3];
       ui::theme::get_color_shade_3ubv(other_uc, -35, other_body_uc);
       ui::theme::get_color_shade_3ubv(other_uc, 25, other_outline_uc);
       float other_body[4] = {other_body_uc[0] / 255.0f,
                              other_body_uc[1] / 255.0f,
                              other_body_uc[2] / 255.0f,
-                             0.45f};
+                             0.45f * all_opacity};
       float other_outline[4] = {other_outline_uc[0] / 255.0f,
                                 other_outline_uc[1] / 255.0f,
                                 other_outline_uc[2] / 255.0f,
-                                0.6f};
+                                0.6f * all_opacity};
       rctf other_rect;
-      BLI_rctf_init(&other_rect, x_in, x_out, y, y_top_other);
+      BLI_rctf_init(&other_rect, item.x_in, item.x_out, y, y_top_other);
       ui::draw_roundbox_corner_set(ui::CNR_ALL);
       ui::draw_roundbox_4fv_ex(&other_rect,
                                other_body,
@@ -492,29 +547,35 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
       immUnbindProgram();
       immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
       GPU_blend(GPU_BLEND_ALPHA);
-      /* Edge caps: brighter strip color at the strip ends. */
-      immUniformColor4f(other_col[0], other_col[1], other_col[2], 0.75f);
-      immRectf(pos, x_in, y, x_in + 2.0f * ui_scale, y_top_other);
-      immRectf(pos, x_out - 2.0f * ui_scale, y, x_out, y_top_other);
-      /* BFA (#6780): scene name inside the layered strip when wide enough. */
-      if (show_scene_names && x_out - x_in > 14.0f * ui_scale) {
+      /* BFA (#6780): label per the "Show Strip Names" / "Show Scene Names"
+       * overlay toggles, drawn inside the chip when wide enough. */
+      if ((show_strip_names || show_scene_names) && item.x_out - item.x_in > 14.0f * ui_scale) {
+        char label[128];
+        if (show_strip_names && show_scene_names) {
+          SNPRINTF(label, "%s | %s", item.strip->name + 2, item.strip->scene->id.name + 2);
+        }
+        else if (show_strip_names) {
+          SNPRINTF(label, "%s", item.strip->name + 2);
+        }
+        else {
+          SNPRINTF(label, "%s", item.strip->scene->id.name + 2);
+        }
         const uiStyle *style = ui::style_get();
         uiFontStyle fs = style->widget;
         rcti text_rect;
         BLI_rcti_init(&text_rect,
-                      int(x_in) + int(4.0f * ui_scale),
-                      int(x_out) - int(4.0f * ui_scale),
+                      int(item.x_in) + int(4.0f * ui_scale),
+                      int(item.x_out) - int(4.0f * ui_scale),
                       int(y),
                       int(y_top_other));
-        uchar text_col[4] = {235, 238, 245, 210};
+        uchar text_col[4] = {235, 238, 245, uchar(210.0f * all_opacity)};
         ui::FontStyleDrawParams text_params{};
         text_params.align = ui::UI_STYLE_TEXT_CENTER;
         text_params.word_clip = false;
         ui::fontstyle_draw(&fs,
                            &text_rect,
-                           other.scene->id.name + 2,
-                           int(BLI_strnlen(other.scene->id.name + 2,
-                                           sizeof(other.scene->id.name) - 2)),
+                           label,
+                           int(BLI_strnlen(label, sizeof(label))),
                            text_col,
                            &text_params);
       }
@@ -657,44 +718,8 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     immRectf(pos, lx1 - 1.0f, y_strip, lx1, y_top);
     immRectf(pos, rx0, y_strip, rx0 + 1.0f, y_top);
 
-    /* BFA (#6780): opt-in "Show All Strips" indicators - every scene strip on a
-     * channel below the active one that overlaps it in time gets a faint
-     * half-height extent band plus edge ticks on the dope-sheet axis, tinted with
-     * the strip's own color, so overlapping, pushed or frame-aligned layers are
-     * visible without cluttering the gizmo. Drawn while the imm program is still
-     * bound: the roundbox ring/bump batches below swap the bound shader, and any
-     * imm draw after them asserts on Vulkan (context.shader == imm shader). */
-    if (show_all_strips && ed != nullptr) {
-      const float y_mid = (y_strip + y_top) * 0.5f;
-      const float y0 = y_mid - strip_height * 0.25f;
-      const float y1 = y_mid + strip_height * 0.25f;
-      const float axis_shift = -strip->start + strip->scene->r.sfra + strip->anim_startofs;
-      const float active_in = strip->left_handle() + axis_shift;
-      const float active_out = strip->right_handle(master_scene) - 1 + axis_shift;
-      for (const Strip &other : ed->seqbase) {
-        if (&other == strip || other.type != STRIP_TYPE_SCENE ||
-            other.channel >= strip->channel)
-        {
-          continue;
-        }
-        const float o_in = other.left_handle() + axis_shift;
-        const float o_out = other.right_handle(master_scene) - 1 + axis_shift;
-        if (o_out < active_in || o_in > active_out) {
-          continue;
-        }
-        const float x_a = region_x_from_view(o_in);
-        const float x_b = region_x_from_view(o_out);
-        float other_col[4];
-        scene_strip_color_get(&other, other_col);
-        /* Faint extent band over the bar. */
-        immUniformColor4f(other_col[0], other_col[1], other_col[2], 0.15f);
-        immRectf(pos, x_a, y0, x_b, y1);
-        /* 1px edge ticks - coinciding edges read as frame alignment. */
-        immUniformColor4f(other_col[0], other_col[1], other_col[2], 0.55f);
-        immRectf(pos, x_a, y0, x_a + 1.0f, y1);
-        immRectf(pos, x_b, y0, x_b + 1.0f, y1);
-      }
-    }
+    /* BFA (#6780): the layered strip chips above no longer draw in-bar bands or
+     * edge ticks - the lane-stacked chips carry that information instead. */
 
     /* Hover / grab ring around the whole gizmo (caps included): near-white on
      * hover, accent color while a handle is grabbed. */
@@ -738,15 +763,21 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
       ui::draw_roundbox_4fv_ex(
           &bar_rect, nullptr, nullptr, 1.0f, bump_color, 2.0f * ui_scale, 3.0f * ui_scale);
     }
-    /* BFA (#6780): strip name centered in the top (slip) zone so the bar always
-     * identifies the shot it belongs to; with the "Show Scene Names" overlay
-     * toggle the referenced scene name is appended ("Name | Scene"). Dark label
-     * for contrast on the lightened top zone; drawn last (BLF manages its own GPU
-     * state, nothing imm follows). */
-    if (zone_x1 - zone_x0 > 6.0f * ui_scale) {
+    /* BFA (#6780): label per the "Show Strip Names" / "Show Scene Names"
+     * overlay toggles, centered in the top (slip) zone so the bar always
+     * identifies the shot it belongs to ("Name | Scene" when both are on).
+     * Dark label for contrast on the lightened top zone; drawn last (BLF manages
+     * its own GPU state, nothing imm follows). */
+    if ((show_strip_names || show_scene_names) && zone_x1 - zone_x0 > 6.0f * ui_scale) {
       char label[128];
-      if (show_scene_names && strip->scene) {
+      if (show_strip_names && show_scene_names && strip->scene) {
         SNPRINTF(label, "%s | %s", strip->name + 2, strip->scene->id.name + 2);
+      }
+      else if (show_strip_names) {
+        SNPRINTF(label, "%s", strip->name + 2);
+      }
+      else if (strip->scene) {
+        SNPRINTF(label, "%s", strip->scene->id.name + 2);
       }
       else {
         SNPRINTF(label, "%s", strip->name + 2);
