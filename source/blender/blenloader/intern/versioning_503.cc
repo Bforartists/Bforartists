@@ -417,6 +417,7 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
           if (space.spacetype == SPACE_ACTION) {
             SpaceAction *space_action = reinterpret_cast<SpaceAction *>(&space);
             space_action->overlays.flag |= (ADS_SHOW_SCENE_STRIP_GIZMOS |
+                                            ADS_SHOW_USE_PREVIEW_RANGE |
                                             ADS_SHOW_SCENE_STRIP_ALL |
                                             ADS_SHOW_SCENE_STRIP_STRIP_NAME |
                                             ADS_SHOW_SCENE_STRIP_SCENE_NAME);
