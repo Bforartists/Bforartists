@@ -115,16 +115,16 @@ static Scene *timeline_sync_master_scene_get(const bContext *C)
   return static_cast<Scene *>(master_ptr.data);
 }
 
-/* Returns the master scene strip used by the scene-time sync, and optionally the
+/* Returns the master scene strip the gizmos operate on, and optionally the
  * master scene itself. Works with both the built-in sync (workspace sequencer
- * scene) and the legacy 3D Sequencer addon sync (addon master scene). */
+ * scene) and the legacy 3D Sequencer addon sync (addon master scene).
+ * BFA (#6780): the gizmos are sync-agnostic - they operate whenever a master
+ * sequencer timeline is configured, whether or not scene time sync is on
+ * (the sync only drives the playhead, not the gizmos). */
 static const Strip *scene_strip_master_get(const bContext *C, Scene **r_master_scene)
 {
   WorkSpace *workspace = CTX_wm_workspace(C);
-  if (!workspace || (workspace->flags & WORKSPACE_SYNC_SCENE_BFA) == 0) {
-    return nullptr;
-  }
-  Scene *master_scene = workspace->sequencer_scene;
+  Scene *master_scene = workspace ? workspace->sequencer_scene : nullptr;
   if (!master_scene) {
     /* Legacy 3D Sequencer sync: master scene is stored on the addon settings. */
     master_scene = timeline_sync_master_scene_get(C);

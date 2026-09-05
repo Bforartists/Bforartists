@@ -7555,10 +7555,12 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
   RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop,
                            "Scene Strip Gizmo",
-                           "When using scene time synchronization, show interactive gizmos to retime, "
+                           "Show interactive gizmos to retime, "
                            "move or slip the current scene strip and to scrub the master sequence. "
-                           "The built-in and addon overlays both bind this single toggle; turning "
-                           "it off fully hides the scene strip gizmo system");
+                           "Works with or without scene time synchronization - the gizmos act on "
+                           "the workspace sequencer scene (or the 3D Sequencer addon's master "
+                           "scene). The built-in and addon overlays both bind this single toggle; "
+                           "turning it off fully hides the scene strip gizmo system");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 
   /* bfa 3d sequencer scene strip adjustments (no addon needed, defaults on) */
@@ -7609,7 +7611,8 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
   prop = RNA_def_property(srna, "all_strips_opacity", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, nullptr, "overlays.all_strips_opacity");
   RNA_def_property_range(prop, 0.0, 1.0);
-  RNA_def_property_float_default(prop, 1.0);
+  /* Default comes from the DNA struct (SpaceActionOverlays.all_strips_opacity = 1.0f);
+   * RNA_def_property_float_default would error here because the value is already set. */
   RNA_def_property_ui_text(
       prop,
       "All Strips Opacity",

@@ -209,6 +209,22 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
 
 ################################ BFA -Switch between the editors ##########################################
 
+# BFA (#6780): open the sequencer from the dope-sheet, so the master timeline
+# behind the scene strip gizmos is one click away (the gizmo overlays popup
+# offers this as "Open Sequencer").
+class ANIM_OT_switch_editors_to_sequencer(bpy.types.Operator):
+    """Switch to the Sequencer Editor"""  # blender will use this as a tooltip for menu items and buttons.
+
+    bl_idname = "wm.switch_editor_to_sequencer"  # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to the Sequencer Editor"
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="SEQUENCE_EDITOR")
+        return {"FINISHED"}
+
+
 class ANIM_OT_switch_editors_to_timeline(bpy.types.Operator):
     """Switch to Dope Sheet Editor"""  # blender will use this as a tooltip for menu items and buttons.
 
@@ -1426,28 +1442,45 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
         layout = self.layout
 
         layout.active = overlay_settings.show_overlays
+
+        # BFA (#6780): jump to the sequencer - the master timeline the scene strip
+        # gizmos act on is one click away from the dope-sheet.
         row = layout.row()
-        row.active = context.workspace.use_scene_time_sync
+        row.operator("wm.switch_editor_to_sequencer", text="Open Sequencer", icon="SEQUENCE")
+
+        # BFA (#6780): the scene strip gizmos are sync-agnostic now - they work
+        # whenever a master sequencer timeline is configured, sync on or off -
+        # so the section is not grayed by the sync state anymore. Collapsible
+        # section in the View3D overlays style (indented_column + disclosure tri).
+        subheader, subcol = layout.indented_column(draw_body=overlay_settings.show_scene_strip_gizmos)
+        header_row = subheader.row()
+        header_row.alignment = 'LEFT'
         # bfa 3d sequencer interactive scene strip gizmos - single merged toggle (built-in and
         # addon "Sequencer Sync" panel both bind here); off fully hides the gizmo system
-        row.prop(overlay_settings, "show_scene_strip_gizmos", text="Scene Strip Gizmo")
-        # bfa 3d sequencer scene strip adjustments, like in the sequencer sync panel
-        col = layout.column(align=True)
-        col.active = context.workspace.use_scene_time_sync and overlay_settings.show_scene_strip_gizmos
-        # BFA (#6780): Set Preview Range = gizmo writes the strip scene's preview
-        # start/end (only while preview mode is enabled on the scene, via the
-        # timeline Preview Range toggle); off = the gizmo only changes the strip.
-        col.prop(overlay_settings, "use_preview_range", text="Set Preview Range")
-        # BFA (#6780): layered strip indicator display options (opt-in).
-        col.prop(overlay_settings, "show_scene_strip_all", text="Show All Strips")
-        # BFA (#6780): label options - strip name and referenced scene name.
-        col.prop(overlay_settings, "show_scene_strip_names", text="Show Strip Names")
-        col.prop(overlay_settings, "show_scene_strip_scene_name", text="Show Scene Names")
-        # BFA (#6780): opacity of the layered/stacked strip indicators.
-        col.prop(overlay_settings, "all_strips_opacity", text="Strips Opacity")
+        header_row.prop(overlay_settings, "show_scene_strip_gizmos", text="Scene Strip Gizmo")
+
+        if subcol:
+            header_row.label(icon="DISCLOSURE_TRI_DOWN")
+
+            subcol.use_property_split = True
+            subcol.use_property_decorate = False
+            # BFA (#6780): Set Preview Range = gizmo writes the strip scene's preview
+            # start/end (only while preview mode is enabled on the scene, via the
+            # timeline Preview Range toggle); off = the gizmo only changes the strip.
+            subcol.prop(overlay_settings, "use_preview_range", text="Set Preview Range")
+            # BFA (#6780): layered strip indicator display options (opt-in).
+            subcol.prop(overlay_settings, "show_scene_strip_all", text="Show All Strips")
+            # BFA (#6780): label options - strip name and referenced scene name.
+            subcol.prop(overlay_settings, "show_scene_strip_names", text="Show Strip Names")
+            subcol.prop(overlay_settings, "show_scene_strip_scene_name", text="Show Scene Names")
+            # BFA (#6780): opacity of the layered/stacked strip indicators.
+            subcol.prop(overlay_settings, "all_strips_opacity", text="Strips Opacity")
+        else:
+            header_row.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 classes = (
+    ANIM_OT_switch_editors_to_sequencer,  # BFA menu
     ANIM_OT_switch_editors_to_timeline,  # BFA menu
     ANIM_OT_switch_editors_to_dopesheet,  # BFA menu
     ANIM_OT_switch_editors_to_graph,  # BFA menu
