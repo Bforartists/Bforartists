@@ -3,6 +3,7 @@
 
 import bpy
 
+from ..sync.core import get_sync_settings
 from ..utils import register_classes, unregister_classes
 
 
@@ -42,7 +43,11 @@ class SEQUENCER_MT_shot(bpy.types.Menu):
         layout.operator('sequencer.change_3d_view_scene', text='Toggle Active Scene Strip', icon="FILE_REFRESH")
 
         # Operator to playback the master scene
-        layout.operator('wm.timeline_sync_play_master', icon="PLAY")
+        # BFA (#6780): legacy sync only - in built-in sync mode playback is
+        # natively synchronized bidirectionally, so this master-scene jump is
+        # unnecessary there.
+        if get_sync_settings().is_legacy():
+            layout.operator('wm.timeline_sync_play_master', icon="PLAY")
 
         #layout.operator("sequencer.shot_new", text="New...")  #BFA - temporariliy removed
         #layout.operator("sequencer.shot_duplicate")  #BFA - temporariliy removed
