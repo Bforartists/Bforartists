@@ -1435,8 +1435,10 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
         col = layout.column(align=True)
         col.active = context.workspace.use_scene_time_sync and overlay_settings.show_scene_strip_gizmos
         # BFA (#6780): Set Preview Range = gizmo writes the strip scene's preview
-        # start/end; Set Scene Range = gizmo writes the strip scene's start/end;
-        # both off = the gizmo only changes the strip itself.
+        # start/end (only while preview mode is enabled on the scene, via the
+        # timeline Preview Range toggle); Set Scene Range = gizmo extends the strip
+        # scene's start/end to cover the strip (never shrinks); both off = the
+        # gizmo only changes the strip itself.
         col.prop(overlay_settings, "use_preview_range", text="Set Preview Range")
         col.prop(overlay_settings, "use_scene_range", text="Set Scene Range")
 

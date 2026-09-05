@@ -474,7 +474,7 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
        * with a thin seam in between so both areas read even without hovering. */
       float zone_slip[4];
       float zone_move[4];
-      ui::theme::get_color_shade_alpha_4fv(TH_BACK, 12, 0, zone_slip);
+      ui::theme::get_color_shade_alpha_4fv(TH_BACK, 50, 0, zone_slip);
       ui::theme::get_color_shade_alpha_4fv(TH_BACK, -60, 0, zone_move);
       zone_slip[3] = 0.85f;
       zone_move[3] = 0.85f;
@@ -535,6 +535,43 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     immRectf(pos, lx1 - 1.0f, y_strip, lx1, y_top);
     immRectf(pos, rx0, y_strip, rx0 + 1.0f, y_top);
 
+    /* BFA (#6780): layered-strip indicators - every scene strip on a channel below
+     * the active one that overlaps it in time gets a faint half-height extent band
+     * plus edge ticks on the dope-sheet axis, so overlapping, pushed or
+     * frame-aligned layers are visible without cluttering the gizmo. Drawn while
+     * the imm program is still bound: the roundbox ring/bump batches below swap
+     * the bound shader, and any imm draw after them asserts on Vulkan
+     * (context.shader == imm shader) and crashes. */
+    const float y_mid = (y_strip + y_top) * 0.5f;
+    const float y0 = y_mid - strip_height * 0.25f;
+    const float y1 = y_mid + strip_height * 0.25f;
+    const float axis_shift = -strip->start + strip->scene->r.sfra + strip->anim_startofs;
+    const float active_in = strip->left_handle() + axis_shift;
+    const float active_out = strip->right_handle(master_scene) - 1 + axis_shift;
+    if (ed != nullptr) {
+      for (const Strip &other : ed->seqbase) {
+        if (&other == strip || other.type != STRIP_TYPE_SCENE ||
+            other.channel >= strip->channel)
+        {
+          continue;
+        }
+        const float o_in = other.left_handle() + axis_shift;
+        const float o_out = other.right_handle(master_scene) - 1 + axis_shift;
+        if (o_out < active_in || o_in > active_out) {
+          continue;
+        }
+        const float x_a = region_x_from_view(o_in);
+        const float x_b = region_x_from_view(o_out);
+        /* Faint extent band over the bar. */
+        immUniformColor4f(0.62f, 0.68f, 0.80f, 0.10f);
+        immRectf(pos, x_a, y0, x_b, y1);
+        /* 1px edge ticks - coinciding edges read as frame alignment. */
+        immUniformColor4f(0.72f, 0.77f, 0.88f, 0.50f);
+        immRectf(pos, x_a, y0, x_a + 1.0f, y1);
+        immRectf(pos, x_b, y0, x_b + 1.0f, y1);
+      }
+    }
+
     /* Hover / grab ring around the whole gizmo (caps included): near-white on
      * hover, accent color while a handle is grabbed. */
     if (highlight != -1 || modal_part != -1) {
@@ -576,6 +613,32 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
       ui::draw_roundbox_corner_set(ui::CNR_ALL);
       ui::draw_roundbox_4fv_ex(
           &bar_rect, nullptr, nullptr, 1.0f, bump_color, 2.0f * ui_scale, 3.0f * ui_scale);
+    }
+    /* BFA (#6780): strip name centered in the top (slip) zone so the bar always
+     * identifies the shot it belongs to. Dark label for contrast on the lightened
+     * top zone; drawn last (BLF manages its own GPU state, nothing imm follows). */
+    if (zone_x1 - zone_x0 > 6.0f * ui_scale) {
+      const uiStyle *style = ui::style_get();
+      uiFontStyle fs = style->widget;
+      rcti text_rect;
+      BLI_rcti_init(&text_rect,
+                    int(zone_x0) + int(2.0f * ui_scale),
+                    int(zone_x1) - int(2.0f * ui_scale),
+                    int(y_move_max),
+                    int(y_top));
+      uchar text_col[4] = {30, 33, 40, 235};
+      ui::FontStyleDrawParams text_params{};
+      text_params.align = ui::UI_STYLE_TEXT_CENTER;
+      /* BFA (#6780): verbatim strip name - no clipping, show the full name. The
+       * name field reserves its first two bytes for the ID_SEQ ("SQ") code, so
+       * the actual name starts at name + 2 (same as the RNA Strip.name getter). */
+      text_params.word_clip = false;
+      ui::fontstyle_draw(&fs,
+                         &text_rect,
+                         strip->name + 2,
+                         BLI_strnlen(strip->name + 2, sizeof(strip->name) - 2),
+                         text_col,
+                         &text_params);
     }
   }
 
@@ -790,21 +853,12 @@ static Vector<Strip *> strips_after_same_channel(Scene *master_scene, const Stri
   return result;
 }
 
-/* Re-evaluate the scene strip content length from its scene's frame range,
- * preserving the current handles. Same as `bpy.ops.sequencer.reload()`. */
-static void scene_strip_reload_range(Scene *master_scene, Strip *strip)
-{
-  const int prev_left = strip->left_handle();
-  const int prev_right = strip->right_handle(master_scene);
-  const int new_len = max_ii(strip->scene->r.efra - strip->scene->r.sfra + 1 -
-                                 strip->anim_startofs - strip->anim_endofs,
-                             0);
-  strip->content_length_set(new_len);
-  strip->handles_set(master_scene, prev_left, prev_right);
-}
-
 /* Ensure the strip's internal range is contained in its scene's frame range
- * (only ever extends the scene's end frame). */
+ * (only ever extends the scene's end frame). BFA (#6780): the handles are
+ * snapshotted *before* extending the scene range and re-pinned afterwards - the
+ * strip's content length is derived live from the scene range, so extending it
+ * first would push the end edge out twice (with the scene range set tight by the
+ * gizmo, retime drags lurched by double the mouse delta). */
 static void adapt_scene_range(Scene *master_scene, Strip *strip)
 {
   const int new_frame_end = strip->right_handle(master_scene) - 1 - strip->start +
@@ -812,8 +866,10 @@ static void adapt_scene_range(Scene *master_scene, Strip *strip)
   if (new_frame_end <= strip->scene->r.efra) {
     return;
   }
+  const int left = strip->left_handle();
+  const int right = strip->right_handle(master_scene);
   strip->scene->r.efra = new_frame_end;
-  scene_strip_reload_range(master_scene, strip);
+  strip->handles_set(master_scene, left, right);
 }
 
 /* Map a master-timeline frame to the strip's scene frame reference. */
@@ -971,14 +1027,18 @@ static void slip_shot_content(Scene *master_scene,
   }
 }
 
-/* Update the strip's scene preview range to match the strip (dope-sheet overlay toggle). */
+/* Update the strip's scene preview range to match the strip (dope-sheet overlay
+ * toggle), but only while the preview range mode is actually enabled on the scene
+ * (SCER_PRV_RANGE). The user opts into preview mode from the timeline controls, so
+ * this toggle never forces the preview range on by itself - with preview mode off
+ * it simply does nothing. */
 static void update_preview_range(Scene *master_scene, Strip *strip)
 {
   if (!strip->scene) {
     return;
   }
   if ((strip->scene->r.flag & SCER_PRV_RANGE) == 0) {
-    strip->scene->r.flag |= SCER_PRV_RANGE;
+    return;
   }
   const int start = remap_frame_value(strip, strip->left_handle());
   const int end = remap_frame_value(strip, strip->right_handle(master_scene) - 1);
@@ -986,26 +1046,34 @@ static void update_preview_range(Scene *master_scene, Strip *strip)
   strip->scene->r.pefra = end;
 }
 
-/* bfa 3d sequencer: the "Set Scene Range" dope-sheet toggle makes the strip scene's
- * start/end frames follow the strip exactly - same as the preview range - so the
- * dope-sheet scene range (the active strip scene's frame start/end) visibly moves
- * with the gizmo. The strip's content length is derived live from the scene range
- * (see Strip::content_length), so the handles are re-pinned afterwards to keep the
- * strip's edges exactly where the drag put them. */
+/* bfa 3d sequencer: the "Set Scene Range" dope-sheet toggle *extends* the strip
+ * scene's frame range so it always contains the strip's rendered window - it never
+ * shrinks and never moves on slip/move (slipping slides the content inside the
+ * scene, moving changes the master position only). Setting the range exactly was
+ * reverted (#6780): for scene strips the content length is derived live from the
+ * scene range, so a "set" re-anchored the scene to the strip's trims and every
+ * following slip/retime compounded the offset (slip rushed forward, start/end
+ * retimes jumped). The drag paths extend and re-pin the handles themselves (see
+ * adjust_shot_duration_left / adapt_scene_range); this is the safety net for the
+ * remaining paths (e.g. move-overlap resolution), extending without moving edges. */
 static void update_scene_frame_range(Scene *master_scene, Strip *strip)
 {
   if (!strip->scene) {
     return;
   }
-  const int left = strip->left_handle();
-  const int right = strip->right_handle(master_scene);
-  const int start = remap_frame_value(strip, left);
-  const int end = remap_frame_value(strip, right - 1);
-  if (start == strip->scene->r.sfra && end == strip->scene->r.efra) {
+  const int start = remap_frame_value(strip, strip->left_handle());
+  const int end = remap_frame_value(strip, strip->right_handle(master_scene) - 1);
+  if (start >= strip->scene->r.sfra && end <= strip->scene->r.efra) {
     return;
   }
-  strip->scene->r.sfra = start;
-  strip->scene->r.efra = end;
+  const int left = strip->left_handle();
+  const int right = strip->right_handle(master_scene);
+  if (start < strip->scene->r.sfra) {
+    strip->scene->r.sfra = start;
+  }
+  if (end > strip->scene->r.efra) {
+    strip->scene->r.efra = end;
+  }
   strip->handles_set(master_scene, left, right);
 }
 

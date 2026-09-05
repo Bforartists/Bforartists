@@ -7569,7 +7569,9 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
                            "Set Preview Range",
                            "Update the strip scene's preview start/end frames (preview "
                            "range) to match the strip when retiming, moving or slipping it. "
-                           "Off: the gizmo only changes the strip itself");
+                           "Only applies while preview mode is enabled on the strip scene "
+                           "(timeline Preview Range toggle). Off: the gizmo only changes the "
+                           "strip itself");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 
   prop = RNA_def_property(srna, "use_scene_range", PROP_BOOLEAN, PROP_NONE);
@@ -7577,9 +7579,10 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
   RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop,
                            "Set Scene Range",
-                           "Update the strip scene's start/end frames (scene frame range) to "
-                           "match the strip when retiming, moving or slipping it. Off: the "
-                           "gizmo only changes the strip itself");
+                           "Extend the strip scene's start/end frames (scene frame range) so they "
+                           "cover the strip when retiming it - the range never shrinks and "
+                           "slip/move leave it alone. Off: the gizmo only changes the strip "
+                           "itself");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 
