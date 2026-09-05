@@ -1128,9 +1128,7 @@ static void move_shot(Scene *master_scene,
   seq::transform_translate_strip(master_scene, strip, frame_offset);
 }
 
-static void slip_shot_content(Scene *master_scene,
-                              Strip *strip,
-                              const int frame_offset)
+static void slip_shot_content(Strip *strip, const int frame_offset)
 {
   const int remapped_start = remap_frame_value(strip, strip->left_handle());
   const int new_start = max_ii(remapped_start + frame_offset, strip->scene->r.sfra);
@@ -1296,7 +1294,7 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
       break;
     case GZ_PART_SLIP:
       delta = int(strip->startofs) - int(data->orig_startofs);
-      slip_shot_content(master_scene, strip, offset - delta);
+      slip_shot_content(strip, offset - delta);
       break;
   }
 
