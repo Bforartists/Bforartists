@@ -24,6 +24,7 @@
 
 #include "BLT_translation.hh"
 
+#include "DNA_action_types.h" /* BFA (#6780) */
 #include "DNA_anim_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
@@ -400,11 +401,23 @@ static Scene *get_sequencer_scene_for_time_sync(const bContext &C)
     if (sad->do_scene_syncing) {
       return sad->scene;
     }
-    /* If we're playing a scene that's not a sequence scene, don't try and sync. */
-    return nullptr;
+    /* If we're playing a scene that's not a sequence scene, don't try and sync
+     * the forward way. BFA (#6780): fall through to the workspace fallback so
+     * playback started outside the sequencer (dope-sheet, 3D view) still drives
+     * the reverse mapping - the shot playhead moves the sequencer playhead. */
   }
-  if (is_scene_time_sync_needed(C)) {
+  else if (is_scene_time_sync_needed(C)) {
     return CTX_data_sequencer_scene(&C);
+  }
+  /* BFA (#6780): bidirectional playhead for the built-in sync - when the frame
+   * change comes from outside the sequencer (dope-sheet scrub, 3D view, playback),
+   * still run the sync seam so the shot time maps back onto the sequencer
+   * playhead. Only for the built-in sync mode (WORKSPACE_SYNC_SCENE_TIME). */
+  const WorkSpace *workspace_fallback = CTX_wm_workspace(&C);
+  if (workspace_fallback && workspace_fallback->sequencer_scene &&
+      (workspace_fallback->flags & WORKSPACE_SYNC_SCENE_TIME) != 0)
+  {
+    return workspace_fallback->sequencer_scene;
   }
   return nullptr;
 }
@@ -437,10 +450,113 @@ const Strip *get_scene_strip_for_time_sync(const Scene *sequencer_scene)
   return nullptr;
 }
 
+/* BFA (#6780): bidirectional playhead cache for the built-in scene time sync.
+ * Remembers the last frame pair the seam applied in each direction so the next
+ * call can tell which side the user moved: if only the sequencer (master) time
+ * changed the mapping runs forward (sequencer to shot), if only the active
+ * shot's time changed it runs in reverse (shot to sequencer). Both sides
+ * unchanged means the last application already updated both values - bail out
+ * to break potential feedback loops (e.g. with the 3D Sequencer addon's own
+ * handlers). */
+struct SceneStripTimeSyncCache {
+  const Scene *master_scene = nullptr;
+  const Scene *shot_scene = nullptr;
+  int last_master_cfra = -1;
+  int last_shot_cfra = -1;
+};
+static SceneStripTimeSyncCache g_scene_strip_time_sync_cache;
+
 void sync_active_scene_and_time_with_scene_strip(bContext &C)
 {
   Scene *sequencer_scene = get_sequencer_scene_for_time_sync(C);
   if (!sequencer_scene) {
+    return;
+  }
+
+  /* BFA (#6780): reverse mapping (shot playhead to sequencer playhead) for the
+   * built-in sync mode. The forward path below stays responsible for the
+   * sequencer to shot direction and for re-caching the pair afterwards. */
+  wmWindow *win_pre = CTX_wm_window(&C);
+  Scene *active_scene_pre = win_pre ? WM_window_get_active_scene(win_pre) : nullptr;
+  SceneStripTimeSyncCache &cache = g_scene_strip_time_sync_cache;
+  const bool cache_matches = (cache.master_scene == sequencer_scene &&
+                              cache.shot_scene == active_scene_pre &&
+                              active_scene_pre != nullptr);
+  const bool master_changed = cache.last_master_cfra != sequencer_scene->r.cfra;
+  const bool shot_changed = (active_scene_pre != nullptr &&
+                             cache.last_shot_cfra != active_scene_pre->r.cfra);
+  /* BFA (#6780): first call after startup/scene switch only primes the cache so
+   * the direction detection has a reference point (same warm-up as the 3D
+   * Sequencer addon's handler). */
+  if (!cache_matches) {
+    cache.master_scene = sequencer_scene;
+    cache.shot_scene = active_scene_pre;
+    cache.last_master_cfra = sequencer_scene->r.cfra;
+    cache.last_shot_cfra = active_scene_pre ? active_scene_pre->r.cfra : -1;
+  }
+  const bool reverse_sync = cache_matches && shot_changed && !master_changed &&
+                            active_scene_pre != sequencer_scene &&
+                            active_scene_pre != nullptr;
+  if (reverse_sync) {
+    /* Find a scene strip on the sequencer timeline showing the active scene. */
+    Editing *ed_rev = seq::editing_get(sequencer_scene);
+    Strip *strip_rev = nullptr;
+    float best_master_t = 0.0f;
+    if (ed_rev != nullptr) {
+      for (Strip &strip_iter : ed_rev->seqbase) {
+        if (strip_iter.type != STRIP_TYPE_SCENE || strip_iter.scene != active_scene_pre) {
+          continue;
+        }
+        /* Invert the forward mapping: the strip shows
+         * scene_frame(timeline_frame) = timeline_frame - content_start +
+         * scene.frame_start (retiming ignored, matching the forward path's
+         * simple scenes). target = shot frame + content_start -
+         * scene.frame_start. */
+        const float target = float(active_scene_pre->r.cfra) +
+                             strip_iter.content_start() -
+                             float(active_scene_pre->r.frame_start);
+        const int left = strip_iter.left_handle();
+        const int right = strip_iter.right_handle(sequencer_scene);
+        const bool inside = !(target < left) && target < right;
+        if (inside) {
+          best_master_t = target;
+          strip_rev = &strip_iter;
+          break;
+        }
+        /* Lead-in/out territory: clamp to the nearest edge. */
+        if (strip_rev == nullptr || (target < left && left < best_master_t)) {
+          best_master_t = left;
+          strip_rev = &strip_iter;
+        }
+        else if (!(target < right) &&
+                 (strip_rev == nullptr || right > best_master_t))
+        {
+          best_master_t = right;
+          strip_rev = &strip_iter;
+        }
+      }
+    }
+    if (strip_rev != nullptr) {
+      const int target_cfra = int(best_master_t);
+      if (target_cfra != sequencer_scene->r.cfra) {
+        sequencer_scene->r.cfra = target_cfra;
+        sequencer_scene->r.subframe = 0.0f;
+        FRAMENUMBER_MIN_CLAMP(sequencer_scene->r.cfra);
+        /* Re-cache both values: the forward path would see nothing changed
+         * and bail out, breaking the feedback loop. */
+        cache.master_scene = sequencer_scene;
+        cache.shot_scene = active_scene_pre;
+        cache.last_master_cfra = sequencer_scene->r.cfra;
+        cache.last_shot_cfra = active_scene_pre->r.cfra;
+        /* Refresh the sequencer and dope-sheet playheads. */
+        WM_event_add_notifier(&C, NC_SCENE | ND_FRAME, sequencer_scene);
+      }
+      /* Either way, the shot time is authoritative now - done. */
+      return;
+    }
+    /* BFA (#6780): no strip on the timeline shows the active scene - the shot
+     * time is still authoritative, do not run the forward mapping (it would
+     * switch the window's scene). */
     return;
   }
 
@@ -511,6 +627,14 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
       object::mode_set(&C, prev_obact->mode);
     }
   }
+
+  /* BFA (#6780): re-cache the applied frame pair so the next call can tell
+   * which side moved (bidirectional playhead detection for the built-in sync). */
+  SceneStripTimeSyncCache &cache_fwd = g_scene_strip_time_sync_cache;
+  cache_fwd.master_scene = sequencer_scene;
+  cache_fwd.shot_scene = active_scene;
+  cache_fwd.last_master_cfra = sequencer_scene->r.cfra;
+  cache_fwd.last_shot_cfra = active_scene->r.cfra;
 
   DEG_id_tag_update(&active_scene->id, ID_RECALC_FRAME_CHANGE);
   WM_event_add_notifier(&C, NC_WINDOW, nullptr);
