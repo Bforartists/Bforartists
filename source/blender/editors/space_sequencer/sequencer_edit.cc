@@ -24,7 +24,6 @@
 
 #include "BLT_translation.hh"
 
-#include "DNA_action_types.h" /* BFA (#6780) */
 #include "DNA_anim_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
@@ -509,12 +508,12 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
         }
         /* Invert the forward mapping: the strip shows
          * scene_frame(timeline_frame) = timeline_frame - content_start +
-         * scene.frame_start (retiming ignored, matching the forward path's
+         * scene.sfra (retiming ignored, matching the forward path's
          * simple scenes). target = shot frame + content_start -
-         * scene.frame_start. */
+         * scene.sfra. */
         const float target = float(active_scene_pre->r.cfra) +
                              strip_iter.content_start() -
-                             float(active_scene_pre->r.frame_start);
+                             float(active_scene_pre->r.sfra);
         const int left = strip_iter.left_handle();
         const int right = strip_iter.right_handle(sequencer_scene);
         const bool inside = !(target < left) && target < right;
