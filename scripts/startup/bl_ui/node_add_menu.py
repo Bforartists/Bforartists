@@ -67,6 +67,7 @@ def draw_node_groups(context, layout, operator_id="node.add_node", use_transform
         group for group in context.blend_data.node_groups
         if (group.bl_idname == node_tree.bl_idname and
             not group.contains_tree(node_tree) and
+            not group.is_library_indirect and
             (show_hidden or not group.name.startswith('.')))
     ]
 
@@ -80,12 +81,7 @@ def draw_node_groups(context, layout, operator_id="node.add_node", use_transform
             for group in groups:
                 search_weight = -1.0 if group.is_linked_packed else 0.0
 
-                props = layout.operator(
-                    operator_id, 
-                    text=group.name, 
-                    icon=node_group_icon(group), 
-                    search_weight=search_weight
-                )
+                props = layout.operator(operator_id, text=group.name, icon=icon, search_weight=search_weight)
 
                 if hasattr(props, "use_transform"):
                     props.use_transform = use_transform
@@ -402,36 +398,6 @@ class NodeMenu(Menu):
         use_transform = getattr(cls, "use_transform", False)
         draw_node_groups(context, layout, cls.main_operator_id, use_transform)
 
-        # BFA - WIP
-        if node_tree:
-            prefs = bpy.context.preferences
-            show_hidden = prefs.show_hidden_ids
-
-            local_groups = []
-            has_non_local_groups = False
-
-            for group in context.blend_data.node_groups:
-                if group.bl_idname != node_tree.bl_idname:
-                    continue
-                if group.contains_tree(node_tree):
-                    continue
-                if not show_hidden:
-                    if group.name.startswith('.'):
-                        continue
-                if group.library is not None:
-                    has_non_local_groups = True
-                    continue
-                local_groups.append(group)
-
-            if has_non_local_groups:
-                layout.separator()
-                cls.draw_menu(layout, path="Group/Linked")
-
-            if local_groups:
-                layout.separator()
-                for group in local_groups:
-                    cls.draw_group(context, layout, group)
-
     @classmethod
     def draw_linked_groups(cls, context, layout):
         space_node = context.space_data
@@ -652,16 +618,17 @@ classes = (
         template=SwapNodeMenu,
         layout_base=NODE_MT_group_base,
         pathing_dict=swap_base_pathing_dict),
-    generate_menu(
-        "NODE_MT_linked_group_add",
-        template=AddNodeMenu,
-        layout_base=NODE_MT_linked_group_base,
-        pathing_dict=add_base_pathing_dict),
-    generate_menu(
-        "NODE_MT_linked_group_swap",
-        template=SwapNodeMenu,
-        layout_base=NODE_MT_linked_group_base,
-        pathing_dict=swap_base_pathing_dict),
+    # BFA - Keep linked nodes in main `Group` submenu
+    # generate_menu(
+    #     "NODE_MT_linked_group_add",
+    #     template=AddNodeMenu,
+    #     layout_base=NODE_MT_linked_group_base,
+    #     pathing_dict=add_base_pathing_dict),
+    # generate_menu(
+    #     "NODE_MT_linked_group_swap",
+    #     template=SwapNodeMenu,
+    #     layout_base=NODE_MT_linked_group_base,
+    #     pathing_dict=swap_base_pathing_dict),
     generate_menu(
         "NODE_MT_category_layout",
         template=AddNodeMenu,
