@@ -506,6 +506,9 @@ enum SpaceActionOverlays_Flag : int {
   ADS_SHOW_SCENE_STRIP_SCENE_NAME = (1 << 5),
   /** BFA - 3D Sequencer: strip name on the scene strip labels/indicators. */
   ADS_SHOW_SCENE_STRIP_STRIP_NAME = (1 << 6),
+  /** BFA - 3D Sequencer: clamp the strip scene's frame range to the strip's
+   * visible extent (with lead-in/out padding) when the gizmo edits the strip. */
+  ADS_SHOW_CLAMP_TO_SCENE_STRIP = (1 << 7),
 };
 ENUM_OPERATORS(SpaceActionOverlays_Flag);
 

@@ -1407,7 +1407,7 @@ class DOPESHEET_PT_overlay(Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Overlays"
-    bl_ui_units_x = 10
+    bl_ui_units_x = 14
 
     def draw(self, _context):
         pass
@@ -1454,6 +1454,10 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
             subcol.prop(overlay_settings, "show_scene_strip_scene_name", text="Show Scene Names")
             # BFA (#6780): opacity of the layered/stacked strip indicators.
             subcol.prop(overlay_settings, "all_strips_opacity", text="Strips Opacity")
+            # BFA (#6780): Clamp to Scene Strip = gizmo clamps the strip scene's frame
+            # range (start/end frame) to the strip's visible extent when editing it,
+            # with optional lead-in/out padding. Only the scene frame range is affected.
+            subcol.prop(overlay_settings, "clamp_to_scene_strip", text="Extend Frame Range")
         else:
             header_row.label(icon="DISCLOSURE_TRI_RIGHT")
 

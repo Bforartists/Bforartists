@@ -7618,6 +7618,24 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
       "All Strips Opacity",
       "Opacity of the layered strip indicators drawn behind/above the scene strip bar");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* BFA - 3D Sequencer: clamp the strip scene's frame range to the strip's visible
+   * extent when the gizmo edits it (retime/move/slip). Only the scene frame range
+   * (sfra/efra, the render range) is affected - the preview range, the strip's
+   * position in the master timeline and the strip's internal time range all stay
+   * untouched. */
+  prop = RNA_def_property(srna, "clamp_to_scene_strip", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_CLAMP_TO_SCENE_STRIP);
+  RNA_def_property_boolean_default(prop, false);
+  RNA_def_property_ui_text(prop,
+                           "Clamp to Scene Strip",
+                           "Clamp the strip scene's frame range (start/end frame) to the "
+                           "strip's visible extent when retiming, moving or slipping it, "
+                           "with optional lead-in/out padding. Only the scene frame range "
+                           "is affected - the preview range, the strip's position in the "
+                           "master timeline and the strip's internal time range stay "
+                           "untouched");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 
 static void rna_def_space_dopesheet(BlenderRNA *brna)

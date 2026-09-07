@@ -1236,6 +1236,72 @@ static bool scene_strip_use_preview_range_get(const bContext *C)
          (space_action->overlays.flag & ADS_SHOW_USE_PREVIEW_RANGE) != 0;
 }
 
+/* BFA (#6780): "Clamp to Scene Strip" opt-in toggle - when on, the gizmo clamps
+ * the strip scene's frame range (sfra/efra) to the strip's visible extent after
+ * editing it. */
+static bool scene_strip_clamp_to_strip_get(const bContext *C)
+{
+  const SpaceAction *space_action = CTX_wm_space_action(C);
+  return space_action != nullptr &&
+         (space_action->overlays.flag & ADS_SHOW_CLAMP_TO_SCENE_STRIP) != 0;
+}
+
+/* BFA (#6780): clamp the strip scene's frame range to the strip's visible extent.
+ * Only sfra/efra (the render range) are touched - the preview range, the strip's
+ * position in the master timeline and the strip's internal time range all stay
+ * unchanged. The start is allowed to go negative (Blender only clamps cfra via
+ * FRAMENUMBER_MIN_CLAMP; sfra/efra can be negative) so extending/moving the strip
+ * backward is never blocked; the end is never clamped down below the start.
+ *
+ * BFA (#6780): the scene frame shown at a master-timeline frame is
+ * `frame - strip->start + sfra`, so sfra feeds back into the remap. Setting
+ * sfra alone would shift the displayed content by the strip's trim offset on the
+ * next evaluation (the start edge "jumps" like a cyclic dependency; the end edge
+ * is unaffected because efra is not part of the remap). To keep the displayed
+ * content fixed we shift sfra and strip->start in lockstep (same delta) and
+ * compensate startofs so the master left_handle stays put.
+ *
+ * BFA (#6780): for scene strips the content length is derived live from the scene
+ * range, so writing sfra/efra auto-derives a new content length and would shift the
+ * strip's handles (the Set-Scene-Range lesson). The handles are snapshotted before
+ * the write and re-pinned afterwards (same as adjust_shot_duration_left does when
+ * it extends the scene) so the strip's master position and displayed content stay
+ * exactly where they were. */
+static void clamp_scene_strip_range(Scene *master_scene, Strip *strip)
+{
+  if (!strip->scene) {
+    return;
+  }
+  const int left = strip->left_handle();
+  const int right = strip->right_handle(master_scene);
+  const int visible_start = remap_frame_value(strip, left);
+  const int visible_end = remap_frame_value(strip, right - 1);
+  /* BFA (#6780): extend-only, non-destructive clamp - sfra only moves backward
+   * (min) and efra only moves forward (max). Setting the range exactly would
+   * shrink it when the strip is trimmed (removing the trim), which made MOVE
+   * "snap" on release and, once the trim was gone, LEFT-extend got stuck on the
+   * previous-strip room guard (no trim left to consume). */
+  const int new_sfra = min_ii(strip->scene->r.sfra, visible_start);
+  const int new_efra = max_ii(strip->scene->r.efra, visible_end);
+  if (new_sfra == strip->scene->r.sfra && new_efra == strip->scene->r.efra) {
+    return;
+  }
+  /* Shift sfra and strip->start in lockstep so the remap (displayed content) stays
+   * constant, and compensate startofs so the master left_handle stays put. */
+  const int delta_sfra = new_sfra - strip->scene->r.sfra;
+  strip->scene->r.sfra = new_sfra;
+  strip->scene->r.efra = new_efra;
+  strip->start += delta_sfra;
+  strip->startofs -= delta_sfra;
+  /* Re-evaluate the content length for the new scene range and re-pin the handles
+   * so the strip's master position stays fixed. */
+  const int new_len = max_ii(new_efra - new_sfra + 1 - strip->anim_startofs -
+                                 strip->anim_endofs,
+                             0);
+  strip->content_length_set(new_len);
+  strip->handles_set(master_scene, left, right);
+}
+
 
 /* bfa 3d sequencer: keep the master playhead and frame range, and the strip scene's
  * preview/scene frame range, in sync with the strip (per the dope-sheet overlay
@@ -1271,6 +1337,12 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
   if (use_preview_range) {
     update_preview_range(master_scene, strip);
   }
+  /* BFA (#6780): "Clamp to Scene Strip" is intentionally NOT applied during the
+   * drag - clamp_scene_strip_range() shifts strip->start/startofs, which feeds
+   * back into the modal drag's delta tracking and makes the strip race/exponentially
+   * accelerate (the end handle is unaffected because efra is not in the remap
+   * formula). The clamp runs once on release (scene_strip_timing_finish), where it
+   * cannot fight the drag. Only the render range (sfra/efra) is touched then. */
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, master_scene);
   WM_event_add_notifier(C, NC_SCENE | ND_FRAME, master_scene);
@@ -1334,6 +1406,15 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
   if (data->mode == GZ_PART_MOVE) {
     resolve_move_overlap(data->master_scene, data->strip);
+    scene_strip_timing_sync_ranges(C, op);
+  }
+  /* BFA (#6780): "Clamp to Scene Strip" runs once on release, never during the
+   * drag - clamp_scene_strip_range() shifts strip->start/startofs which feeds
+   * back into the modal drag's delta tracking and would make the strip race.
+   * At release the strip's final geometry is settled, so the clamp only touches
+   * the scene render range (sfra/efra) and keeps everything else fixed. */
+  if (scene_strip_clamp_to_strip_get(C)) {
+    clamp_scene_strip_range(data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
   /* BFA (#6780): restore the strip's selection state from before the drag. */
