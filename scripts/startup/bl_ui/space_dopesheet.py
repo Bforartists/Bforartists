@@ -1457,7 +1457,7 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
             # BFA (#6780): Clamp to Scene Strip = gizmo clamps the strip scene's frame
             # range (start/end frame) to the strip's visible extent when editing it,
             # with optional lead-in/out padding. Only the scene frame range is affected.
-            subcol.prop(overlay_settings, "clamp_to_scene_strip", text="Extend Frame Range")
+            subcol.prop(overlay_settings, "clamp_to_scene_strip", text="Clamp Frame Range")
             # BFA (#6780): lead-in/out padding for the "Extend Frame Range" gizmo.
             subcol.prop(overlay_settings, "clamp_lead_in", text="Lead In")
             subcol.prop(overlay_settings, "clamp_lead_out", text="Lead Out")
