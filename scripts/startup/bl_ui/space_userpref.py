@@ -1016,29 +1016,27 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         view = prefs.view
 
-        layout.label(text="Text Info Overlay")
+        header, col = layout.indented_column()
+        header.label(text="Text Info Overlay")
+        
+        col.use_property_split = True
+        col.use_property_decorate = False
+        col.prop(view, "show_object_info", text="Object Info")
+        col.prop(view, "show_view_name", text="View Name")
+        
+        header, col = col.indented_column(draw_body=view.show_playback_fps)
+        header_row = header.row()
+        header_row.alignment = 'LEFT'
+        header_row.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
 
-        col = layout.column()
-
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(view, "show_object_info", text="Object Info")
-        row = col.row()
-        row.separator()
-        row.prop(view, "show_view_name", text="View Name")
-        row = col.row()
-        row.separator()
-
-        split = row.split()
-        col = split.column()
-        col.use_property_split = False
-        col.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
-
-        if view.show_playback_fps:
-            split.prop(view, "playback_fps_samples", text="Samples")
+        if col:
+            header_row.label(icon='DISCLOSURE_TRI_DOWN')
+            
+            col.use_property_split = True
+            col.use_property_decorate = False
+            col.prop(view, "playback_fps_samples", text="Samples")
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')
+            header_row.label(icon='DISCLOSURE_TRI_RIGHT')
 
         layout.separator()
 
