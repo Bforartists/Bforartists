@@ -1249,9 +1249,14 @@ static bool scene_strip_clamp_to_strip_get(const bContext *C)
 /* BFA (#6780): clamp the strip scene's frame range to the strip's visible extent.
  * Only sfra/efra (the render range) are touched - the preview range, the strip's
  * position in the master timeline and the strip's internal time range all stay
- * unchanged. The start is allowed to go negative (Blender only clamps cfra via
- * FRAMENUMBER_MIN_CLAMP; sfra/efra can be negative) so extending/moving the strip
- * backward is never blocked; the end is never clamped down below the start.
+ * unchanged. The start is clamped to >= 0 (a scene can't start at a negative
+ * frame); the end is never clamped down below the start.
+ *
+ * BFA (#6780): SET semantics (1:1), matching the addon's
+ * SEQUENCER_OT_sync_scene_strip_ranges operator - the scene range is set to the
+ * strip's visible extent (with lead-in/out padding), not extend-only. Extend-only
+ * never shrinks, which made the range drift ("cuts/compresses at edges then pushes
+ * out on release") and blocked the left handle from moving the start frame forward.
  *
  * BFA (#6780): the scene frame shown at a master-timeline frame is
  * `frame - strip->start + sfra`, so sfra feeds back into the remap. Setting
@@ -1267,22 +1272,22 @@ static bool scene_strip_clamp_to_strip_get(const bContext *C)
  * the write and re-pinned afterwards (same as adjust_shot_duration_left does when
  * it extends the scene) so the strip's master position and displayed content stay
  * exactly where they were. */
-static void clamp_scene_strip_range(Scene *master_scene, Strip *strip)
+static void clamp_scene_strip_range(const bContext *C, Scene *master_scene, Strip *strip)
 {
   if (!strip->scene) {
     return;
   }
+  const SpaceAction *space_action = CTX_wm_space_action(C);
+  const int lead_in = space_action ? space_action->overlays.clamp_lead_in : 0;
+  const int lead_out = space_action ? space_action->overlays.clamp_lead_out : 0;
   const int left = strip->left_handle();
   const int right = strip->right_handle(master_scene);
   const int visible_start = remap_frame_value(strip, left);
   const int visible_end = remap_frame_value(strip, right - 1);
-  /* BFA (#6780): extend-only, non-destructive clamp - sfra only moves backward
-   * (min) and efra only moves forward (max). Setting the range exactly would
-   * shrink it when the strip is trimmed (removing the trim), which made MOVE
-   * "snap" on release and, once the trim was gone, LEFT-extend got stuck on the
-   * previous-strip room guard (no trim left to consume). */
-  const int new_sfra = min_ii(strip->scene->r.sfra, visible_start);
-  const int new_efra = max_ii(strip->scene->r.efra, visible_end);
+  /* SET (1:1): align the scene range to the strip's visible extent, clamped to
+   * >= 0, with lead padding. */
+  const int new_sfra = max_ii(visible_start - lead_in, 0);
+  const int new_efra = visible_end + lead_out;
   if (new_sfra == strip->scene->r.sfra && new_efra == strip->scene->r.efra) {
     return;
   }
@@ -1414,7 +1419,7 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
    * At release the strip's final geometry is settled, so the clamp only touches
    * the scene render range (sfra/efra) and keeps everything else fixed. */
   if (scene_strip_clamp_to_strip_get(C)) {
-    clamp_scene_strip_range(data->master_scene, data->strip);
+    clamp_scene_strip_range(C, data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
   /* BFA (#6780): restore the strip's selection state from before the drag. */

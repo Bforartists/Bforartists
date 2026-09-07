@@ -1177,6 +1177,11 @@ struct SpaceActionOverlays {
   SpaceActionOverlays_Flag flag = {};
   /* BFA - 3D Sequencer: opacity multiplier for the layered/stacked strip indicators. */
   float all_strips_opacity = 1.0f;
+  /* BFA - 3D Sequencer: lead-in/out padding (frames) for the "Clamp to Scene
+   * Strip" gizmo - added before/after the strip's visible extent when the gizmo
+   * sets the scene frame range (sfra/efra). */
+  int clamp_lead_in = 0;
+  int clamp_lead_out = 0;
 };
 
 /* Action Editor Space. This is defined here instead of in DNA_space_types.h */

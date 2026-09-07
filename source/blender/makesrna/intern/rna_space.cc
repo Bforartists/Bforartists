@@ -7636,6 +7636,25 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
                            "master timeline and the strip's internal time range stay "
                            "untouched");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* BFA - 3D Sequencer: lead-in/out padding for the "Clamp to Scene Strip" gizmo. */
+  prop = RNA_def_property(srna, "clamp_lead_in", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "overlays.clamp_lead_in");
+  RNA_def_property_range(prop, 0, INT_MAX);
+  RNA_def_property_ui_text(prop,
+                           "Lead In",
+                           "Frames of padding added before the strip's visible extent "
+                           "when the gizmo sets the scene start frame");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  prop = RNA_def_property(srna, "clamp_lead_out", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "overlays.clamp_lead_out");
+  RNA_def_property_range(prop, 0, INT_MAX);
+  RNA_def_property_ui_text(prop,
+                           "Lead Out",
+                           "Frames of padding added after the strip's visible extent "
+                           "when the gizmo sets the scene end frame");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 
 static void rna_def_space_dopesheet(BlenderRNA *brna)
