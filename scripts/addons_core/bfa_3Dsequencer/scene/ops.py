@@ -464,54 +464,52 @@ class SEQUENCER_OT_sync_scene_strip_ranges(bpy.types.Operator):
         strips = self.iter_scene_strips(context)
         todo = [s for s in strips if s.scene is not None]
 
-        # 1. Per-scene target range: union of the visible extents of every strip
-        #    sharing the scene, remapped into the scene's referential, padded.
-        targets: dict[str, tuple[int, int]] = {}
+        # 1. Per-scene union of the visible extents of every strip sharing the
+        #    scene, remapped into the scene's referential.
+        visible: dict[bpy.types.Scene, list[int]] = {}
         for strip in todo:
-            # Scene frame shown at the strip's left handle (remap_frame_value identity).
+            scene = strip.scene
             v_start = remap_frame_value(strip.left_handle, strip)
             v_end = remap_frame_value(strip.right_handle - 1, strip)
-            if strip.scene.name in targets:
-                old_start, old_end = targets[strip.scene.name]
-                targets[strip.scene.name] = (
-                    min(old_start, v_start),
-                    max(old_end, v_end),
-                )
+            if scene in visible:
+                visible[scene][0] = min(visible[scene][0], v_start)
+                visible[scene][1] = max(visible[scene][1], v_end)
             else:
-                targets[strip.scene.name] = (v_start, v_end)
+                visible[scene] = [v_start, v_end]
 
-        # 2. Apply scene ranges, remembering each strip's pre-state.
-        pre_state = []
+        # 2. SET target range + delta per scene. The range is set to the strip's
+        #    visible extent (with lead padding), clamped to >= 0 (no negative
+        #    frames). The delta is the frame_start shift, used to re-anchor the
+        #    strips in lockstep so their displayed content stays fixed.
+        plan: dict[bpy.types.Scene, tuple[int, int, int]] = {}
+        for scene, (v_start, v_end) in visible.items():
+            new_start = max(v_start - self.lead_in, 0)
+            new_end = v_end + self.lead_out
+            plan[scene] = (new_start, new_end, new_start - scene.frame_start)
+
+        # 3. Apply ranges and re-anchor strips. Writing frame_start/frame_end
+        #    auto-derives a scene strip's content length (the Set-Scene-Range
+        #    lesson), so shift content_start in lockstep with frame_start (keeps
+        #    the remap / displayed content constant) and re-pin the handles (keeps
+        #    the master position fixed). Without the lockstep shift the strip's
+        #    visible content would jump by the frame_start delta.
         for strip in todo:
-            v_start, v_end = targets[strip.scene.name]
             scene = strip.scene
-            pre_state.append(
-                (
-                    strip,
-                    strip.content_start,
-                    strip.left_handle,
-                    strip.right_handle,
-                    strip.channel,
-                    strip.duration,
-                )
-            )
-            # A scene cannot start at a negative frame.
-            scene.frame_start = max(v_start - self.lead_in, 1)
-            scene.frame_end = v_end + self.lead_out
-
-        # 3. Re-anchor strips: the scene-range write above can auto-derive a
-        #    scene strip's content length (the Set-Scene-Range lesson), so read
-        #    back and restore handles/content position exactly.
-        for strip, content_start, left, right, channel, duration in pre_state:
-            strip.content_start = content_start
-            strip.channel = channel
-            strip.duration = duration
+            new_start, new_end, delta = plan[scene]
+            content_start = strip.content_start
+            left = strip.left_handle
+            right = strip.right_handle
+            channel = strip.channel
+            scene.frame_start = new_start
+            scene.frame_end = new_end
+            strip.content_start = content_start + delta
             strip.left_handle = left
             strip.right_handle = right
+            strip.channel = channel
 
         self.report(
             {'INFO'},
-            f"Updated {len(targets)} scene strip range(s)"
+            f"Updated {len(plan)} scene strip range(s)"
             + (f", {len(strips) - len(todo)} skipped (no scene)" if len(todo) != len(strips) else ""),
         )
         return {'FINISHED'}
